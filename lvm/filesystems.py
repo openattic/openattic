@@ -4,6 +4,8 @@
 import os
 from procutils import invoke
 
+from lvm.conf import settings as lvm_settings
+
 class FileSystem(object):
     name = "failfs"
     desc = "failing file system"
@@ -17,7 +19,7 @@ class FileSystem(object):
         if not self.mountable:
             raise SystemError("File System type '%s' is not mountable" % self.name)
 
-        return os.path.join("/media", self.lv.vg.name, self.lv.name)
+        return os.path.join(lvm_settings.MOUNT_PREFIX, self.lv.vg.name, self.lv.name)
 
     def mount(self):
         if not os.path.exists(self.mountpoint):
