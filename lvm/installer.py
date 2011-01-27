@@ -4,7 +4,13 @@
 from lvm.procutils   import invoke
 from lvm.models      import VolumeGroup, LogicalVolume
 
-def run():
+def register_options(parser):
+    parser.add_option( "-r", "--remount",
+        help="Remount all LVs.",
+        action="store_true", default=False
+        )
+
+def inst(options, args):
     if LogicalVolume.objects.filter(state="new").count() > 0:
         for lv in LogicalVolume.objects.filter(state="new"):
             lv.state = "pending"
@@ -26,6 +32,14 @@ def run():
             lv.state = "active"
             lv.save()
 
+def postinst(options, args):
+    if options.remount:
+        for lv in LogicalVolume.objects.filter(state="active"):
+            if lv.filesystem and lv.fs.mountable:
+                lv.fs.unmount()
+                lv.fs.mount()
+
+def rm(options, args):
     if LogicalVolume.objects.filter(state="delete").count() > 0:
         for lv in LogicalVolume.objects.filter(state="delete"):
             lv.state = "dpend"
@@ -35,12 +49,7 @@ def run():
                 lv.fs.unmount()
 
             invoke(["lvchange", '-an', lv.path])
-
-            invoke(["lvcreate",
-                "-L", ("%dM" % lv.megs),
-                '-n', lv.name,
-                lv.vg.name
-                ])
+            invoke(["lvremove", lv.path])
 
             lv.state = "done"
             lv.save()

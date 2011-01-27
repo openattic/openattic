@@ -5,10 +5,10 @@ from lvm.procutils import invoke
 from nfs.models    import Export
 from nfs.views     import conf
 
-def run():
-    if Export.objects.filter(state="new").count() > 0:
+def postinst(options, args):
+    if Export.objects.filter(state="new").count() > 0 or options.confupdate:
 
-        fd = open( "/tmp/exports", "w" )
+        fd = open( "/etc/exports", "w" )
         fd.write( conf() )
         fd.close()
 

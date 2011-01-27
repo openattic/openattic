@@ -16,4 +16,4 @@ class Export(models.Model):
 
     @property
     def path(self):
-        return self.volume.path
+        return self.volume.fs.mountpoint

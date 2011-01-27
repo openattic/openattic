@@ -26,6 +26,8 @@ class FileSystem(object):
 
     def unmount(self):
         invoke(["umount", self.lv.path])
+        if os.path.exists(self.mountpoint):
+            os.rmdir(self.mountpoint)
 
     def format(self):
         raise NotImplementedError("FileSystem::format needs to be overridden")
@@ -48,7 +50,7 @@ class Ext3(Ext2):
     mountable = True
 
     def format(self):
-        invoke(["mke2fs", "-j", self.lv.path])
+        invoke(["mke2fs", "-L", self.lv.name, "-j", self.lv.path])
 
 class Ntfs(FileSystem):
     name = "ntfs"
