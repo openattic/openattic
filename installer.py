@@ -1,3 +1,4 @@
+#!/usr/bin/env python
 # -*- coding: utf-8 -*-
 # kate: space-indent on; indent-width 4; replace-tabs on;
 
@@ -52,7 +53,7 @@ PROJECT_ROOT = None
 
 # Path auto-detection
 if not PROJECT_ROOT or not exists( PROJECT_ROOT ):
-    PROJECT_ROOT = dirname(dirname(abspath(__file__)))
+    PROJECT_ROOT = dirname(abspath(__file__))
 
 # environment variables
 sys.path.append( PROJECT_ROOT )
