@@ -10,6 +10,16 @@ def register_options(parser):
         action="store_true", default=False
         )
 
+    parser.add_option( "-u", "--unmount",
+        help="Unmount all LVs.",
+        action="store_true", default=False
+        )
+
+    parser.add_option( "-m", "--mount",
+        help="Mount all LVs.",
+        action="store_true", default=False
+        )
+
 def inst(options, args):
     if LogicalVolume.objects.filter(state="new").count() > 0:
         for lv in LogicalVolume.objects.filter(state="new"):
@@ -33,10 +43,11 @@ def inst(options, args):
             lv.save()
 
 def postinst(options, args):
-    if options.remount:
-        for lv in LogicalVolume.objects.filter(state="active"):
-            if lv.filesystem and lv.fs.mountable:
+    for lv in LogicalVolume.objects.filter(state="active"):
+        if lv.filesystem and lv.fs.mountable:
+            if options.remount or options.unmount:
                 lv.fs.unmount()
+            if options.remount or options.mount:
                 lv.fs.mount()
 
 def rm(options, args):
