@@ -1,0 +1,10 @@
+{% extends "index.html" %}
+{# kate: space-indent on; indent-width 2; replace-tabs on; #}
+{% block Title %} :: LV List{% endblock %}
+{% block Body %}
+  <ul>
+  {% for lv in LVs %}
+    <li> {{ lv.name }}
+  {% endfor %}
+  </ul>
+{% endblock %}

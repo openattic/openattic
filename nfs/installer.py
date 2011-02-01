@@ -9,7 +9,8 @@ from nfs.conf      import settings as nfs_settings
 def postinst(options, args):
     if Export.objects.filter(state="new").count() > 0 or options.confupdate:
         fd = open( nfs_settings.EXPORTS, "w" )
-        fd.write( conf() )
+        for export in Export.objects.all():
+            fd.write( "%-50s %s(%s)\n" % ( export.path, export.address, export.options ) )
         fd.close()
 
         invoke(["exportfs", "-a"])
