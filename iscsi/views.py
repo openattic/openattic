@@ -19,6 +19,7 @@ def lunedit(request, lid):
         lunform = LunForm(request.POST, instance=lun)
         if lunform.is_valid():
             lunform.save()
+            return HttpResponseRedirect(reverse('lvm.views.lvlist'))
     else:
         lunform = LunForm(instance=lun)
 

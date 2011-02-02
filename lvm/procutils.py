@@ -26,7 +26,7 @@ def invoke(args):
 
 
 def lvm_command(cmd):
-    proc = subprocess.Popen([cmd, "--noheadings", "--nameprefixes"],
+    proc = subprocess.Popen([cmd, "--noheadings", "--nameprefixes", "--unquoted"],
         stdin = None, stdout = subprocess.PIPE, stderr = subprocess.PIPE, close_fds = True
         )
     out, err = proc.communicate()
@@ -35,7 +35,7 @@ def lvm_command(cmd):
         raise SystemError(err)
 
     return [
-        dict( [ vardef.split('=', 1) for vardef in line.replace("'", "").split(" ") if vardef ] )
+        dict( [ vardef.split('=', 1) for vardef in line.split(" ") if vardef ] )
         for line in out.split("\n") if line.strip()
         ]
 

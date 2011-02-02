@@ -24,10 +24,10 @@ class FileSystem(object):
     def mount(self):
         if not os.path.exists(self.mountpoint):
             os.makedirs(self.mountpoint)
-        invoke(["mount", "-t", self.name, self.lv.path, self.mountpoint])
+        invoke(["/bin/mount", "-t", self.name, self.lv.path, self.mountpoint])
 
     def unmount(self):
-        invoke(["umount", self.lv.path])
+        invoke(["/bin/umount", self.lv.path])
         if os.path.exists(self.mountpoint):
             os.rmdir(self.mountpoint)
 
@@ -44,7 +44,7 @@ class Ext2(FileSystem):
     mountable = True
 
     def format(self):
-        invoke(["mke2fs", "-L", self.lv.name, self.lv.path])
+        invoke(["/sbin/mke2fs", "-L", self.lv.name, self.lv.path])
 
 class Ext3(Ext2):
     name = "ext3"
@@ -52,7 +52,7 @@ class Ext3(Ext2):
     mountable = True
 
     def format(self):
-        invoke(["mke2fs", "-L", self.lv.name, "-j", self.lv.path])
+        invoke(["/sbin/mke2fs", "-L", self.lv.name, "-j", self.lv.path])
 
 class Ntfs(FileSystem):
     name = "ntfs"
@@ -60,14 +60,14 @@ class Ntfs(FileSystem):
     mountable = True
 
     def format(self):
-        invoke(["mkntfs", self.lv.path])
+        invoke(["/sbin/mkntfs", self.lv.path])
 
 class Qcow2(FileSystem):
     name = "qcow2"
     desc = "QCOW2 (Virtualization)"
 
     def format(self):
-        invoke(["qemu-img", "create", "-f", "qcow2", self.lv.path])
+        invoke(["/usr/bin/qemu-img", "create", "-f", "qcow2", self.lv.path])
 
 
 FILESYSTEMS = (Ext2, Ext3, Ntfs, Qcow2)

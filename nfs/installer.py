@@ -11,7 +11,7 @@ def writeconf():
         fd.write( "%-50s %s(%s)\n" % ( export.path, export.address, export.options ) )
     fd.close()
 
-    invoke(["exportfs", "-a"])
+    invoke(["/usr/sbin/exportfs", "-a"])
 
 
 def postinst(options, args):

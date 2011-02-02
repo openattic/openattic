@@ -14,7 +14,7 @@ class Target(models.Model):
 class Lun(models.Model):
     target      = models.ForeignKey(Target)
     volume      = models.ForeignKey(LogicalVolume)
-    number      = models.IntegerField()
+    number      = models.IntegerField( default=-1 )
     alias       = models.CharField(max_length=20, blank=True)
     ltype       = models.CharField(max_length=10, default="fileio",
                     choices=(("fileio", "fileio"), ("blockio", "blockio")))
@@ -33,3 +33,9 @@ class Lun(models.Model):
         if self.alias:
             return "%s LUN %d (%s)" % ( self.target, self.number, self.alias )
         return "%s LUN %d" % ( self.target, self.number )
+
+    def save(self, *args, **kwargs):
+        if self.number == -1:
+            self.number = max( [ rec['number'] for rec in Lun.objects.filter(target=self.target).values('number') ] ) + 1
+
+        models.Model.save(self, *args, **kwargs)

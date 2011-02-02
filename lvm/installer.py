@@ -26,13 +26,13 @@ def inst(options, args):
             lv.state = "pending"
             lv.save()
 
-            invoke(["lvcreate",
+            invoke(["/sbin/lvcreate",
                 "-L", ("%dM" % lv.megs),
                 '-n', lv.name,
                 lv.vg.name
                 ])
 
-            invoke(["lvchange", '-ay', lv.path])
+            invoke(["/sbin/lvchange", '-ay', lv.path])
 
             if lv.filesystem:
                 lv.fs.format()
@@ -59,8 +59,8 @@ def rm(options, args):
             if lv.filesystem and lv.fs.mountable:
                 lv.fs.unmount()
 
-            invoke(["lvchange", '-an', lv.path])
-            invoke(["lvremove", lv.path])
+            invoke(["/sbin/lvchange", '-an', lv.path])
+            invoke(["/sbin/lvremove", lv.path])
 
             lv.state = "done"
             lv.save()

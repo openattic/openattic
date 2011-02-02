@@ -45,13 +45,11 @@
     <div class="lv">
       <img alt="lv" src="/static/icons/drive.png" />
       <ul   class="lvtools">
-        {% if lv.state == "active" %}
+        {% if lv.state == "new" or lv.state == "active" %}
           <li><img
             alt="add share" title="add share" src="/static/icons/add.png"
             onclick="show_addshare_type_selector(this, {{ lv.id }})" />
           </li>
-        {% endif %}
-        {% if lv.state == "new" or lv.state == "active" %}
           <li><a href="{% url lvm.views.lvedit   lv.id %}"><img alt="edit"   src="/static/icons/drive_edit.png"   /></a></li>
         {% endif %}
         {% if lv.state == "new" or lv.state == "active" or lv.state == "done" %}
