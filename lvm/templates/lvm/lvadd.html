@@ -2,6 +2,7 @@
 {# kate: space-indent on; indent-width 2; replace-tabs on; #}
 {% block Title %} :: Edit LV :: {{ LV.name }}{% endblock %}
 {% block Body %}
+  <h1>Add LV</h1>
   <form action="" method="POST">
     {% csrf_token %}
     <table>

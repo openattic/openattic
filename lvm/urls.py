@@ -11,5 +11,6 @@ urlpatterns = patterns('lvm.views',
     ( r'(?P<lvid>\d+)/?$',           'lvedit' ),
     ( r'add/$',                      'lvadd'  ),
 
+    ( r'vgs/?$',                     'vglist' ),
     ( r'/?$',                        'lvlist' ),
     )

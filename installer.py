@@ -68,7 +68,7 @@ print "Detecting modules..."
 for app in settings.INSTALLED_APPS:
     try:
         module = __import__( app+".installer" )
-    except ImportError:
+    except ImportError, err:
         pass
     else:
         INSTALLERS.append(module)

@@ -15,7 +15,7 @@ div.lvlistheader img {
 
 div.lv {
 	width: 800px;
-	min-height: 75px;
+	min-height: 90px;
 	margin: 5px auto;
 	background-color: #EDF3FE;
 	border: 1px dotted darkgrey;
@@ -25,6 +25,20 @@ div.lv {
 div.lv img {
 	border: none;
 }
+
+div.vg {
+	width: 800px;
+	min-height: 90px;
+	margin: 5px auto;
+	background-color: #EDF3FE;
+	border: 1px dotted darkgrey;
+	clear: both;
+}
+
+div.vg img {
+	border: none;
+}
+
 
 
 span.lvname {
@@ -68,10 +82,17 @@ ul.lvshares {
 	width: 400px;
 	background-color: white;
 	margin-bottom: 0;
-	min-height: 45px;
+	min-height: 60px;
 	list-style-image: url('/static/icons/drive_network.png');
 }
 
+ul.vgshares {
+	width: 400px;
+	background-color: white;
+	margin-bottom: 0;
+	min-height: 60px;
+	list-style-image: url('/static/icons/drive.png');
+}
 
 span.lvstate {
 	margin-left: 5px;
@@ -87,8 +108,24 @@ span.state_new {
 	background-image: url('/static/icons/time_go.png');
 }
 
+span.state_pending {
+	background-image: url('/static/icons/time_go.png');
+}
+
 span.state_active {
 	background-image: url('/static/icons/tick.png');
+}
+
+span.state_delete {
+	background-image: url('/static/icons/time_delete.png');
+}
+
+span.state_dpend {
+	background-image: url('/static/icons/time_delete.png');
+}
+
+span.state_done {
+	background-image: url('/static/icons/cross.png');
 }
 
 #addshare_type_selector {

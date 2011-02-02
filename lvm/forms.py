@@ -12,4 +12,5 @@ class LvForm(forms.ModelForm):
 
 class LvEditForm(LvForm):
     class Meta:
+        model = LogicalVolume
         fields = ['megs']

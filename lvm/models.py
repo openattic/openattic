@@ -4,6 +4,7 @@
 from django.db import models
 
 from lvm.filesystems import FILESYSTEMS, get_by_name as get_fs_by_name
+from lvm.procutils   import lvm_vgs, lvm_lvs
 
 SETUP_STATE_CHOICES = (
     ("new",     "[new]     Installation ordered, but has not yet started"),
@@ -19,6 +20,10 @@ class VolumeGroup(models.Model):
 
     def __unicode__(self):
         return self.name
+
+    @property
+    def lvm_info(self):
+        return lvm_vgs()[self.name]
 
 class LogicalVolume(models.Model):
     name        = models.CharField(max_length=130, unique=True)
@@ -56,3 +61,9 @@ class LogicalVolume(models.Model):
 
             for relmdl in relobj.model.objects.filter( **{ relobj.field.name: self } ):
                 yield relmdl
+
+    @property
+    def lvm_info(self):
+        if self.state != "active":
+            return None
+        return lvm_lvs()[self.name]

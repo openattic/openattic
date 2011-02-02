@@ -7,7 +7,7 @@ from django.http       import HttpResponseRedirect
 from django.core.urlresolvers import reverse
 
 
-from lvm.models        import LogicalVolume
+from lvm.models        import VolumeGroup, LogicalVolume
 from lvm.forms         import LvForm, LvEditForm
 
 
@@ -22,6 +22,12 @@ def lvlist(request):
     return render_to_response( "lvm/lvlist.html", {
         "Types":  sharetypes,
         "LVs":    LogicalVolume.objects.all().order_by("name")
+        }, context_instance = RequestContext(request) )
+
+
+def vglist(request):
+    return render_to_response( "lvm/vglist.html", {
+        "VGs":    VolumeGroup.objects.all().order_by("name")
         }, context_instance = RequestContext(request) )
 
 
@@ -64,5 +70,17 @@ def lvaddshare(request):
 
 def lvdelete(request, lvid):
     lv = get_object_or_404( LogicalVolume, id=lvid )
+    if lv.state == "active":
+        for share in lv.get_shares():
+            share.state = "delete"
+            share.save()
+        lv.state = "delete"
+        lv.save()
+    elif lv.state in ("new", "done"):
+        for share in lv.get_shares():
+            if share.state == "done":
+                share.delete()
+        lv.delete()
+    return HttpResponseRedirect(reverse(lvlist))
 
 
