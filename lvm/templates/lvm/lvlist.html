@@ -2,9 +2,84 @@
 {# kate: space-indent on; indent-width 2; replace-tabs on; #}
 {% block Title %} :: LV List{% endblock %}
 {% block Body %}
-  <ul>
+  <div class="lvlistheader">
+    Logical Volume options
+    <ul   class="lvtools">
+      <li><a href="{% url lvm.views.lvadd %}"><img alt="add lv" src="/static/icons/add.png"          /></a></li>
+    </ul>
+  </div>
+  <script type="text/javascript">
+    function findPos(obj){
+      var curleft = curtop = 0;
+      if( obj.offsetParent ){
+        do{
+          curleft += obj.offsetLeft;
+          curtop  += obj.offsetTop;
+        } while( obj = obj.offsetParent );
+      }
+      return [curleft, curtop];
+    }
+
+    function show_addshare_type_selector(button, id){
+      var el   = document.getElementById('addshare_type_selector');
+      var lvid = document.getElementById('addshare_type_selector__lvid');
+      buttonpos = findPos(button);
+      el.style.left       = buttonpos[0] + button.width + "px";
+      el.style.top        = buttonpos[1] + "px";
+      el.style.visibility = "visible";
+      lvid.value = id;
+    }
+  </script>
+  <div id="addshare_type_selector">
+    <form method="post" action="{% url lvm.views.lvaddshare %}">
+      {% csrf_token %}
+      <input type="hidden" id="addshare_type_selector__lvid" name="lvid" value="1337"  />
+      {% for stype in Types %}
+        <button type="submit" name="type" value="{{ stype }}">{{ stype }}</button>
+      {% endfor %}
+      <button type="reset"  onclick="document.getElementById('addshare_type_selector').style.visibility = 'hidden';">&nbsp;</button>
+    </form>
+  </div>
   {% for lv in LVs %}
-    <li> {{ lv.name }}
+    <div class="lv">
+      <img alt="lv" src="/static/icons/drive.png" />
+      <ul   class="lvtools">
+        <li><img
+          alt="add share" title="add share" src="/static/icons/add.png"
+          onclick="show_addshare_type_selector(this, {{ lv.id }})" />
+        </li>
+        <li><a href="{% url lvm.views.lvedit     lv.id %}"><img alt="edit"      src="/static/icons/drive_edit.png"   /></a></li>
+        <li><a href="{% url lvm.views.lvdelete   lv.id %}"><img alt="delete"    src="/static/icons/drive_delete.png" /></a></li>
+      </ul>
+      <ul   class="lvinfo">
+        <li>In volume group {{ lv.vg }}</li>
+        <li>{% if lv.fs %}Formatted as {{ lv.fs.name }}{% else %}Unformatted{% endif %}</li>
+        <li>{% if lv.snapshot %}Snapshot of {{ lv.snapshot.name }}{% else %}Standard volume{% endif %}</li>
+      </ul>
+      <span class="lvname">{{ lv.name }}</span>
+      <span class="lvstate state_{{ lv.state }}">{{ lv.get_state_display }}</span>
+      <ul   class="lvshares">
+        {% for share in lv.get_shares %}
+          {% if share.share_type == "nfs" %}
+            <li>
+              <ul class="sharetools">
+                <li><a href="{% url nfs.views.exportdelete share.id %}"><img alt="delete" src="/static/icons/delete.png" /></a></li>
+              </ul>
+              <a href="{% url nfs.views.exportedit share.id %}">{{ share.address }}({{ share.options }})</a>
+              <span class="lvstate state_{{ lv.state }}" />
+            </li>
+          {% endif %}
+          {% if share.share_type == "iscsi" %}
+            <li>
+              <ul class="sharetools">
+                <li><a href="{% url iscsi.views.lundelete share.id %}"><img alt="delete" src="/static/icons/delete.png" /></a></li>
+              </ul>
+              <a href="{% url iscsi.views.lunedit share.id %}">{{ share.target }} LUN {{ share.number }}</a>
+              <span class="lvstate state_{{ lv.state }}" />
+            </li>
+          {% endif %}
+        {% endfor %}
+      </ul>
+    </div>
   {% endfor %}
-  </ul>
 {% endblock %}

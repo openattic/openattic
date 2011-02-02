@@ -5,5 +5,11 @@ from django.conf.urls.defaults import url, patterns, include
 from django.conf import settings
 
 urlpatterns = patterns('lvm.views',
-    ( r'/?$',    'lvlist' ),
+    ( r'addshare/$',                 'lvaddshare' ),
+
+    ( r'(?P<lvid>\d+)/del/$',        'lvdelete' ),
+    ( r'(?P<lvid>\d+)/?$',           'lvedit' ),
+    ( r'add/$',                      'lvadd'  ),
+
+    ( r'/?$',                        'lvlist' ),
     )

@@ -1,0 +1,12 @@
+{% extends "index.html" %}
+{# kate: space-indent on; indent-width 2; replace-tabs on; #}
+{% block Title %} :: Edit Export :: {{ Export.volume.name }}{% endblock %}
+{% block Body %}
+  <form action="" method="POST">
+    {% csrf_token %}
+    <table>
+      {{ ExportForm }}
+    </table>
+    <input type="submit" />
+  </form>
+{% endblock %}
