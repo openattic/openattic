@@ -20,6 +20,8 @@ class Lun(models.Model):
                     choices=(("fileio", "fileio"), ("blockio", "blockio")))
     state       = models.CharField(max_length=20, editable=False, default="new", choices=SETUP_STATE_CHOICES)
 
+    share_type  = "iscsi"
+
     class Meta:
         unique_together = [("target", "number")]
 

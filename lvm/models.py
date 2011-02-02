@@ -48,3 +48,11 @@ class LogicalVolume(models.Model):
 
     def __unicode__(self):
         return self.name
+
+    def get_shares( self, app_label=None ):
+        for relobj in ( self._meta.get_all_related_objects() + self._meta.get_all_related_many_to_many_objects() ):
+            if app_label  and relobj.model._meta.app_label != app_label:
+                continue;
+
+            for relmdl in relobj.model.objects.filter( **{ relobj.field.name: self } ):
+                yield relmdl
