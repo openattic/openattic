@@ -108,6 +108,19 @@
               <span class="lvstate state_{{ share.state }}" />
             </li>
           {% endif %}
+          {% if share.share_type == "samba" %}
+            <li>
+              <ul class="sharetools">
+                <li>
+                  <a href="{# url samba.views.sharedelete share.id #}">
+                    <img alt="delete" src="{{ MEDIA_URL }}/icons/delete.png" />
+                  </a>
+                </li>
+              </ul>
+              <a href="{# url samba.views.shareedit share.id #}">{{ share }}</a>
+              <span class="lvstate state_{{ share.state }}" />
+            </li>
+          {% endif %}
         {% empty %}
           Volume is not currently shared.
         {% endfor %}

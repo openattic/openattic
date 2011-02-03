@@ -13,6 +13,7 @@ urlpatterns = patterns('',
     (r'^lvm/',   include("lvm.urls")),
     (r'^nfs/',   include("nfs.urls")),
     (r'^iscsi/', include("iscsi.urls")),
+    (r'^samba/', include("samba.urls")),
 
     (r'^/?$', 'django.views.generic.simple.redirect_to', {'url': settings.PROJECT_URL + '/lvm/'} ),
 )

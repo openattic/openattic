@@ -125,4 +125,5 @@ INSTALLED_APPS = (
     'lvm',
     'iscsi',
     'nfs',
+    'samba',
 )
