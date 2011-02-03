@@ -87,6 +87,9 @@ except NameError:
             Exception('Please create a %s file with random characters to generate your secret key!' % SECRET_FILE)
 
 
+PAM_AUTH_SERVICE = "itn_activedirectory"
+AUTHENTICATION_BACKENDS = ( 'pam-auth.PamBackend', )
+
 # List of callables that know how to import templates from various sources.
 TEMPLATE_LOADERS = (
     'django.template.loaders.filesystem.Loader',
