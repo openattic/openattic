@@ -60,7 +60,7 @@ class Ntfs(FileSystem):
     mountable = True
 
     def format(self):
-        invoke(["/sbin/mkntfs", self.lv.path])
+        invoke(["/usr/sbin/mkntfs", "--fast", self.lv.path])
 
 class Qcow2(FileSystem):
     name = "qcow2"
