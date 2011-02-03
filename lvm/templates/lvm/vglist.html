@@ -5,12 +5,12 @@
   <div class="lvlistheader">
     Volume Group options
     <ul   class="lvtools">
-      <li><a href="{% url lvm.views.lvlist %}"><img alt="vg list" src="/static/icons/drive.png"   /></a></li>
+      <li><a href="{% url lvm.views.lvlist %}"><img alt="vg list" src="{{ MEDIA_URL }}/icons/drive.png"   /></a></li>
     </ul>
   </div>
   {% for vg in VGs %}
     <div class="vg">
-      <img alt="lv" src="/static/icons/database.png" />
+      <img alt="lv" src="{{ MEDIA_URL }}/icons/database.png" />
       <ul   class="lvinfo">
         <li>{{ vg.lvm_info.LVM2_LV_COUNT }} LVs</li>
         <li>{{ vg.lvm_info.LVM2_PV_COUNT }} PVs</li>
@@ -24,7 +24,7 @@
         {% for lv in vg.logicalvolume_set.all %}
           <li>
             {{ lv.name }}
-            <span class="lvstate state_{{ lv.state }}">{{ lv.get_state_display }}</span>
+            <span class="lvstate state_{{ lv.state }}" />
           </li>
         {% endfor %}
       </ul>

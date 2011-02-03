@@ -7,15 +7,14 @@ admin.autodiscover()
 from django.conf import settings
 
 urlpatterns = patterns('',
-    # Example:
-    # (r'^pyfiler/', include('pyfiler.foo.urls')),
-
     (r'^admin/doc/', include('django.contrib.admindocs.urls')),
     (r'^admin/', include(admin.site.urls)),
 
     (r'^lvm/',   include("lvm.urls")),
     (r'^nfs/',   include("nfs.urls")),
     (r'^iscsi/', include("iscsi.urls")),
+
+    (r'^/?$', 'django.views.generic.simple.redirect_to', {'url': settings.PROJECT_URL + '/lvm/'} ),
 )
 
 

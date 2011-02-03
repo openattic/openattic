@@ -84,7 +84,7 @@ ul.lvshares {
 	background-color: white;
 	margin-bottom: 0;
 	min-height: 60px;
-	list-style-image: url('/static/icons/drive_network.png');
+	list-style-image: url('icons/drive_network.png');
 }
 
 ul.vgshares {
@@ -92,7 +92,7 @@ ul.vgshares {
 	background-color: white;
 	margin-bottom: 0;
 	min-height: 60px;
-	list-style-image: url('/static/icons/drive.png');
+	list-style-image: url('icons/drive.png');
 }
 
 span.lvstate {
@@ -106,27 +106,27 @@ span.lvstate {
 }
 
 span.state_new {
-	background-image: url('/static/icons/time_go.png');
+	background-image: url('icons/time_go.png');
 }
 
 span.state_pending {
-	background-image: url('/static/icons/time_go.png');
+	background-image: url('icons/time_go.png');
 }
 
 span.state_active {
-	background-image: url('/static/icons/tick.png');
+	background-image: url('icons/tick.png');
 }
 
 span.state_delete {
-	background-image: url('/static/icons/time_delete.png');
+	background-image: url('icons/time_delete.png');
 }
 
 span.state_dpend {
-	background-image: url('/static/icons/time_delete.png');
+	background-image: url('icons/time_delete.png');
 }
 
 span.state_done {
-	background-image: url('/static/icons/cross.png');
+	background-image: url('icons/cross.png');
 }
 
 #addshare_type_selector {
@@ -152,7 +152,7 @@ span.state_done {
 }
 
 #addshare_type_selector button[type=reset] {
-	background-image: url('/static/icons/cancel.png');
+	background-image: url('icons/cancel.png');
  	background-repeat: no-repeat;
 	background-position: 1px 1px;
 	padding-left: 8px;
