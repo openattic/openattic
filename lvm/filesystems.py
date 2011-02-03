@@ -37,6 +37,14 @@ class FileSystem(object):
     def resize(self):
         raise NotImplementedError("FileSystem::resize needs to be overridden")
 
+    def chown(self):
+        if lvm_settings.CHOWN_GROUP:
+            invoke(["/bin/chown", "-R", (
+                "%s:%s" % (self.lv.owner.username, lvm_settings.CHOWN_GROUP)
+                ), self.mountpoint])
+        else:
+            invoke(["/bin/chown", "-R", self.lv.owner.username, self.mountpoint])
+
 
 class Ext2(FileSystem):
     name = "ext2"

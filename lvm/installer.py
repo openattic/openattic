@@ -38,6 +38,7 @@ def inst(options, args):
                 lv.fs.format()
                 if lv.fs.mountable:
                     lv.fs.mount()
+                    lv.fs.chown()
 
             lv.state = "active"
             lv.save()
