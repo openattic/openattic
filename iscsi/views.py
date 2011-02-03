@@ -5,6 +5,7 @@ from django.shortcuts  import render_to_response, get_object_or_404, get_list_or
 from django.template   import RequestContext
 from django.http       import HttpResponseRedirect
 from django.core.urlresolvers import reverse
+from django.contrib.auth.decorators import login_required
 
 from lvm.models   import LogicalVolume
 
@@ -12,6 +13,7 @@ from iscsi.models import Lun
 from iscsi.forms  import LunForm
 
 
+@login_required
 def lunedit(request, lid):
     lun = get_object_or_404( Lun, id=lid )
 
@@ -29,6 +31,7 @@ def lunedit(request, lid):
         }, context_instance = RequestContext(request) )
 
 
+@login_required
 def lundelete(request, lid):
     lun = get_object_or_404( Lun, id=lid )
     if lun.state == "active":
@@ -38,6 +41,7 @@ def lundelete(request, lid):
         lun.delete()
     return HttpResponseRedirect(reverse('lvm.views.lvlist'))
 
+@login_required
 def add_share_for_lv(request, lvid):
     lv = get_object_or_404( LogicalVolume, id=lvid )
 
