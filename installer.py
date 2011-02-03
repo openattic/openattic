@@ -86,6 +86,9 @@ parser.add_option( "-c", "--confupdate",
     action="store_true", default=False
     )
 
+parser.add_option( "-o", "--only-module",
+    help="Ignore detected modules and only call the stages of the given module.",
+    )
 
 for module in INSTALLERS:
     try:
@@ -97,6 +100,13 @@ for module in INSTALLERS:
 
 options, args = parser.parse_args()
 
+if options.only_module:
+    try:
+        module = __import__( options.only_module+".installer" )
+    except ImportError, err:
+        sys.exit(err)
+    else:
+        INSTALLERS = [module]
 
 
 for stage in ("init", "prerm", "rm", "postrm", "preinst", "inst", "postinst", "cleanup"):
