@@ -78,7 +78,7 @@
           {% endif %}
         </li>
       </ul>
-      <span class="lvname">{{ lv.name }}</span>
+      <span class="lvname">{{ lv.name }} <small>({{ lv.owner }})</small></span>
       <span class="lvstate state_{{ lv.state }}">{{ lv.get_state_display }}</span>
       <ul   class="lvshares">
         {% for share in lv.get_shares %}
