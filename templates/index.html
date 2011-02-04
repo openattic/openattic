@@ -8,6 +8,21 @@
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
   </head>
   <body>
+    <div class="pgheader">
+      <a href="{{ PROJECT_URL }}/">Home</a>
+      {% if user.is_authenticated %}
+        -- Welcome, {% if user.first_name %}{{ user.first_name }}{% else %}{{ user.username }}{% endif %}
+        {% if user.is_staff %}
+          -- <a href="{% url admin:index %}">Administration</a>
+        {% endif %}
+        {% if user.is_superuser %}
+          -- logged in as SuperUser
+        {% endif %}
+        -- <a href="{% url django.contrib.auth.views.logout %}">Logout</a>
+      {% else %}
+        -- You are not <a href="{% url django.contrib.auth.views.login %}">logged in</a>.
+      {% endif %}
+    </div>
     {% block Body %}
       There should be some content here.
     {% endblock %}

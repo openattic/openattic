@@ -1,4 +1,6 @@
 # -*- coding: utf-8 -*-
+# kate: space-indent on; indent-width 4; replace-tabs on;
+
 from django.conf.urls.defaults import *
 
 from django.contrib import admin
@@ -9,6 +11,9 @@ from django.conf import settings
 urlpatterns = patterns('',
     (r'^admin/doc/', include('django.contrib.admindocs.urls')),
     (r'^admin/', include(admin.site.urls)),
+
+    (r'^accounts/login/$',  'django.contrib.auth.views.login' ),
+    (r'^accounts/logout/$', 'django.contrib.auth.views.logout', {'next_page': settings.PROJECT_URL+"/"}),
 
     (r'^lvm/',   include("lvm.urls")),
     (r'^nfs/',   include("nfs.urls")),

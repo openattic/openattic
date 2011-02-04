@@ -66,7 +66,8 @@ MEDIA_URL = PROJECT_URL + '/static'
 # Examples: "http://foo.com/media/", "/media/".
 ADMIN_MEDIA_PREFIX = PROJECT_URL + '/media/'
 
-LOGIN_URL = PROJECT_URL + '/admin/login'
+LOGIN_URL = PROJECT_URL + '/accounts/login/'
+LOGIN_REDIRECT_URL = PROJECT_URL + "/"
 
 # Automatically generate a .secret.txt file containing the SECRET_KEY.
 # Shamelessly stolen from ByteFlow: <http://www.byteflow.su>
@@ -104,6 +105,14 @@ MIDDLEWARE_CLASSES = (
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
 )
+
+TEMPLATE_CONTEXT_PROCESSORS = [
+    "django.core.context_processors.auth",
+    "django.core.context_processors.debug",
+    "django.core.context_processors.i18n",
+    "django.core.context_processors.media",
+    'processors.project_url',
+]
 
 ROOT_URLCONF = 'urls'
 

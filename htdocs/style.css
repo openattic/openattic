@@ -1,4 +1,13 @@
 
+div.pgheader {
+	width: 800px;
+	min-height: 20px;
+	margin: 5px auto;
+	background-color: #EDF3FE;
+	border: 1px dotted darkgrey;
+	clear: both;
+}
+
 div.lvlistheader {
 	width: 800px;
 	min-height: 20px;

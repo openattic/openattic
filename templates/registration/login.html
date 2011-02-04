@@ -1,0 +1,22 @@
+{% extends "index.html" %}
+{# kate: space-indent on; indent-width 2; replace-tabs on; #}
+{% load i18n %}
+
+{% block Title %}:: Login{% endblock %}
+
+{% block Body %}
+  <h2>Login</h2>
+
+  {% if form.errors %}
+    <p>Username or password don't exist or are not correct. Please try again.</p>
+  {% endif %}
+
+  <form method="post" action=".">{% csrf_token %}
+  <table>
+    {{ form }}
+  </table>
+
+  <input type="submit" value="login" />
+  <input type="hidden" name="next" value="{{ next }}" />
+  </form>
+{% endblock %}
