@@ -7,4 +7,6 @@ from django.conf import settings
 urlpatterns = patterns('samba.views',
     ( r'addshare/(?P<lvid>\d+)/$', 'add_share_for_lv' ),
 
+    ( r'(?P<sid>\d+)/del/$',       'sharedelete' ),
+    ( r'(?P<sid>\d+)/?$',          'shareedit' ),
     )

@@ -20,20 +20,16 @@ def writeconf():
 
 
 def preinst(options, args):
-    if Share.objects.filter(state="active", volume__state="update").count() > 0:
+    if Share.objects.filter(state__in=("active", "update"), volume__state="update").count() > 0:
         writeconf()
 
 def postinst(options, args):
-    if Share.objects.filter( Q( Q(state="new") | Q(volume__state="pending") ) ).count() > 0 or \
+    if Share.objects.filter( Q( Q(state__in=("new", "update")) | Q(volume__state="pending") ) ).count() > 0 or \
        options.confupdate:
         writeconf()
-        for share in Share.objects.filter(state="new"):
-            share.state = "active"
-            share.save()
+        Share.objects.filter(state__in=("new", "update")).update(state="active")
 
 def prerm(options, args):
     if Share.objects.filter(state="delete").count() > 0:
         writeconf()
-        for share in Share.objects.filter(state="delete"):
-            share.state = "done"
-            share.save()
+        Share.objects.filter(state="delete").update(state="done")

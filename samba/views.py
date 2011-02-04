@@ -13,6 +13,37 @@ from samba.models import Share
 from samba.forms  import ShareForm
 
 @login_required
+def shareedit(request, sid):
+    share = get_object_or_404( Share, id=sid )
+
+    if request.method == "POST":
+        shareform = ShareForm(request.POST, instance=share)
+        if shareform.is_valid():
+            share = shareform.save(commit=False)
+            share.state = "update"
+            share.save()
+            return HttpResponseRedirect(reverse('lvm.views.lvlist'))
+    else:
+        shareform = ShareForm(instance=share)
+
+    return render_to_response( "samba/shareedit.html", {
+        "Share":     share,
+        "ShareForm": shareform,
+        }, context_instance = RequestContext(request) )
+
+
+@login_required
+def sharedelete(request, sid):
+    share = get_object_or_404( Share, id=sid )
+    if share.state == "active":
+        share.state = "delete"
+        share.save()
+    elif share.state in ("new", "done"):
+        share.delete()
+    return HttpResponseRedirect(reverse('lvm.views.lvlist'))
+
+
+@login_required
 def add_share_for_lv(request, lvid):
     lv = get_object_or_404( LogicalVolume, id=lvid )
 
