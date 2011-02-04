@@ -106,23 +106,27 @@ span.lvstate {
 }
 
 span.state_new {
-	background-image: url('icons/time_go.png');
+	background-image: url('icons/clock_add.png');
 }
 
 span.state_pending {
-	background-image: url('icons/time_go.png');
+	background-image: url('icons/clock_go.png');
 }
 
 span.state_active {
 	background-image: url('icons/tick.png');
 }
 
+span.state_update {
+	background-image: url('icons/clock_edit.png');
+}
+
 span.state_delete {
-	background-image: url('icons/time_delete.png');
+	background-image: url('icons/clock_delete.png');
 }
 
 span.state_dpend {
-	background-image: url('icons/time_delete.png');
+	background-image: url('icons/clock_delete.png');
 }
 
 span.state_done {
