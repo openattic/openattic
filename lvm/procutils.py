@@ -23,6 +23,7 @@ def invoke(args):
     signal(SIGTERM, SIG_DFL)
     signal(SIGINT, SIG_DFL)
 
+    return proc.returncode
 
 
 def lvm_command(cmd):
