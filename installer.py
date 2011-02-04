@@ -109,7 +109,11 @@ if options.only_module:
         INSTALLERS = [module]
 
 
-for stage in ("init", "prerm", "rm", "postrm", "preinst", "inst", "postinst", "cleanup"):
+for stage in (
+        "init",
+        "prerm",     "rm",     "postrm",
+        "preinst",   "inst",   "postinst",
+        "cleanup"):
     print ("%-10s" % stage),
     for module in INSTALLERS:
         try:
