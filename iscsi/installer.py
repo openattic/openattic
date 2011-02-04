@@ -49,13 +49,9 @@ def preinst(options, args):
 def postinst(options, args):
     if Lun.objects.filter( Q( Q(state="new") | Q(volume__state="pending") ) ).count() > 0 or options.confupdate:
         writeconf()
-        for lun in Lun.objects.filter(state="new"):
-            lun.state = "active"
-            lun.save()
+        Lun.objects.filter(state="new").update(state="active")
 
 def prerm(options, args):
     if Lun.objects.filter(state="delete").count() > 0:
         writeconf()
-        for lun in Lun.objects.filter(state="delete"):
-            lun.state = "done"
-            lun.save()
+        Lun.objects.filter(state="delete").update(state="done")

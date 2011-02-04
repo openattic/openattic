@@ -8,6 +8,6 @@ urlpatterns = patterns('nfs.views',
     ( r'addshare/(?P<lvid>\d+)/$', 'add_share_for_lv' ),
 
     ( r'(?P<eid>\d+)/del/$',    'exportdelete' ),
-    ( r'(?P<eid>\d+)/?$',    'exportedit' ),
-    #( r'/?$',                'exportlist' ),
+    ( r'(?P<eid>\d+)/?$',       'exportedit' ),
+    #( r'/?$',                   'exportlist' ),
     )

@@ -25,14 +25,10 @@ def postinst(options, args):
     if Export.objects.filter( Q( Q(state="new") | Q(volume__state="pending") ) ).count() > 0 or \
        options.confupdate:
         writeconf()
-        for export in Export.objects.filter(state="new"):
-            export.state = "active"
-            export.save()
+        Export.objects.filter(state="new").update(state="active")
 
 
 def prerm(options, args):
     if Export.objects.filter(state="delete").count() > 0:
         writeconf()
-        for export in Export.objects.filter(state="delete"):
-            export.state = "done"
-            export.save()
+        Export.objects.filter(state="delete").update(state="done")
