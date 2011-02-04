@@ -5,14 +5,14 @@ from django.shortcuts  import render_to_response, get_object_or_404, get_list_or
 from django.template   import RequestContext
 from django.http       import HttpResponseRedirect
 from django.core.urlresolvers import reverse
-from django.contrib.auth.decorators import login_required
+from django.contrib.auth.decorators import login_required, permission_required
 
 from lvm.models   import LogicalVolume
 
 from nfs.models import Export
 from nfs.forms  import ExportForm
 
-@login_required
+@permission_required("nfs.change_export")
 def exportedit(request, eid):
     export = get_object_or_404( Export, id=eid )
 
@@ -31,7 +31,7 @@ def exportedit(request, eid):
         "ExportForm": exportform,
         }, context_instance = RequestContext(request) )
 
-@login_required
+@permission_required("nfs.delete_export")
 def exportdelete(request, eid):
     export = get_object_or_404( Export, id=eid )
     if export.state == "active":
@@ -41,7 +41,7 @@ def exportdelete(request, eid):
         export.delete()
     return HttpResponseRedirect(reverse('lvm.views.lvlist'))
 
-@login_required
+@permission_required("nfs.add_export")
 def add_share_for_lv(request, lvid):
     lv = get_object_or_404( LogicalVolume, id=lvid )
 

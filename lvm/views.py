@@ -5,7 +5,7 @@ from django.shortcuts  import render_to_response, get_object_or_404, get_list_or
 from django.template   import RequestContext
 from django.http       import HttpResponseRedirect
 from django.core.urlresolvers import reverse
-from django.contrib.auth.decorators import login_required
+from django.contrib.auth.decorators import login_required, permission_required
 
 from lvm.models        import VolumeGroup, LogicalVolume
 from lvm.forms         import LvForm, LvEditForm
@@ -31,7 +31,7 @@ def vglist(request):
         }, context_instance = RequestContext(request) )
 
 
-@login_required
+@permission_required("lvm.add_logicalvolume")
 def lvadd(request):
     if request.method == "POST":
         lvform = LvForm(request.POST)
@@ -47,7 +47,7 @@ def lvadd(request):
 
 
 
-@login_required
+@permission_required("lvm.change_logicalvolume")
 def lvedit(request, lvid):
     lv = get_object_or_404( LogicalVolume, id=lvid )
 
@@ -66,7 +66,6 @@ def lvedit(request, lvid):
         "LvForm": lvform,
         }, context_instance = RequestContext(request) )
 
-
 @login_required
 def lvaddshare(request):
     lvid  = request.POST["lvid"]
@@ -74,7 +73,7 @@ def lvaddshare(request):
 
     return HttpResponseRedirect(reverse( ("%s.views.add_share_for_lv" % stype), args=(lvid,) ))
 
-@login_required
+@permission_required("lvm.delete_logicalvolume")
 def lvdelete(request, lvid):
     lv = get_object_or_404( LogicalVolume, id=lvid )
     if lv.state == "active":

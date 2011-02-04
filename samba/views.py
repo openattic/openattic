@@ -5,14 +5,14 @@ from django.shortcuts  import render_to_response, get_object_or_404, get_list_or
 from django.template   import RequestContext
 from django.http       import HttpResponseRedirect
 from django.core.urlresolvers import reverse
-from django.contrib.auth.decorators import login_required
+from django.contrib.auth.decorators import login_required, permission_required
 
 from lvm.models   import LogicalVolume
 
 from samba.models import Share
 from samba.forms  import ShareForm
 
-@login_required
+@permission_required("samba.change_share")
 def shareedit(request, sid):
     share = get_object_or_404( Share, id=sid )
 
@@ -32,7 +32,7 @@ def shareedit(request, sid):
         }, context_instance = RequestContext(request) )
 
 
-@login_required
+@permission_required("samba.delete_share")
 def sharedelete(request, sid):
     share = get_object_or_404( Share, id=sid )
     if share.state == "active":
@@ -43,7 +43,7 @@ def sharedelete(request, sid):
     return HttpResponseRedirect(reverse('lvm.views.lvlist'))
 
 
-@login_required
+@permission_required("samba.add_share")
 def add_share_for_lv(request, lvid):
     lv = get_object_or_404( LogicalVolume, id=lvid )
 
