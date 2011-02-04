@@ -66,7 +66,7 @@ MEDIA_URL = PROJECT_URL + '/static'
 # Examples: "http://foo.com/media/", "/media/".
 ADMIN_MEDIA_PREFIX = PROJECT_URL + '/media/'
 
-LOGIN_URL = PROJECT_URL + '/accounts/login'
+LOGIN_URL = PROJECT_URL + '/admin/login'
 
 # Automatically generate a .secret.txt file containing the SECRET_KEY.
 # Shamelessly stolen from ByteFlow: <http://www.byteflow.su>
