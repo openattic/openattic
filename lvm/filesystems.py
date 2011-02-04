@@ -66,6 +66,7 @@ class Ext3(Ext2):
     def format(self):
         invoke(["/sbin/mke2fs", "-L", self.lv.name, "-j", self.lv.path])
 
+
 class Ntfs(FileSystem):
     name = "ntfs"
     desc = "NTFS (Windows)"
@@ -75,7 +76,26 @@ class Ntfs(FileSystem):
         invoke(["/usr/sbin/mkntfs", "--fast", self.lv.path])
 
     def resize(self, grow):
-        invoke(["/usr/sbin/ntfsresize", "--size", ("%dM" % self.lv.megs), self.lv.path])
+        import sys
+        import subprocess
+        from signal import signal, SIGTERM, SIGINT, SIG_DFL
+
+        proc = subprocess.Popen(
+            ["/usr/sbin/ntfsresize", "--force", "--size", ("%dM" % self.lv.megs), self.lv.path],
+            stdin  = subprocess.PIPE, stdout = sys.stdout, stderr = sys.stderr
+            )
+
+        def fwdsigterm(signum, frame):
+            proc.send_signal(SIGTERM)
+            signal(SIGTERM, fwdsigterm)
+
+        signal(SIGTERM, fwdsigterm)
+        signal(SIGINT, fwdsigterm)
+        proc.communicate("y\n")
+        signal(SIGTERM, SIG_DFL)
+        signal(SIGINT, SIG_DFL)
+
+
 
 class Qcow2(FileSystem):
     name = "qcow2"
@@ -85,7 +105,7 @@ class Qcow2(FileSystem):
         invoke(["/usr/bin/qemu-img", "create", "-f", "qcow2", self.lv.path])
 
     def resize(self, grow):
-        invoke(["/usr/bin/qemu-img", self.lv.path, ("%dM" % self.lv.megs)])
+        invoke(["/usr/bin/qemu-img", "resize", self.lv.path, ("%dM" % self.lv.megs)])
 
 
 FILESYSTEMS = (Ext2, Ext3, Ntfs, Qcow2)
