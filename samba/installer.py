@@ -12,7 +12,7 @@ from samba.conf    import settings as samba_settings
 def writeconf():
     fd = open( samba_settings.SMB_CONF, "w" )
     fd.write( render_to_string( "samba/smb.conf", {
-        'Shares': Share.objects.filter(state__in=("new", "active")).exclude(volume__state="update")
+        'Shares': Share.objects.filter(state__in=("new", "update", "active")).exclude(volume__state="update")
         } ) )
     fd.close()
 

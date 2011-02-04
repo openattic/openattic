@@ -9,7 +9,7 @@ from nfs.conf      import settings as nfs_settings
 
 def writeconf():
     fd = open( nfs_settings.EXPORTS, "w" )
-    for export in Export.objects.filter(state__in=("new", "active")).exclude(volume__state="update"):
+    for export in Export.objects.filter(state__in=("new", "update", "active")).exclude(volume__state="update"):
         fd.write( "%-50s %s(%s)\n" % ( export.path, export.address, export.options ) )
     fd.close()
 
@@ -22,10 +22,10 @@ def preinst(options, args):
 
 
 def postinst(options, args):
-    if Export.objects.filter( Q( Q(state="new") | Q(volume__state="pending") ) ).count() > 0 or \
+    if Export.objects.filter( Q( Q(state__in=("new", "update")) | Q(volume__state="pending") ) ).count() > 0 or \
        options.confupdate:
         writeconf()
-        Export.objects.filter(state="new").update(state="active")
+        Export.objects.filter(state__in=("new", "update")).update(state="active")
 
 
 def prerm(options, args):

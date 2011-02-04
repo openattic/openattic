@@ -19,7 +19,9 @@ def exportedit(request, eid):
     if request.method == "POST":
         exportform = ExportForm(request.POST, instance=export)
         if exportform.is_valid():
-            exportform.save()
+            export = exportform.save(commit=False)
+            export.state = "update"
+            export.save()
             return HttpResponseRedirect(reverse('lvm.views.lvlist'))
     else:
         exportform = ExportForm(instance=export)

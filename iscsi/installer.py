@@ -15,7 +15,7 @@ def writeconf():
     for target in Target.objects.all():
         ietd.write( "Target %s\n" % target.iscsiname )
 
-        for lun in target.lun_set.filter(state__in=("new", "active")):
+        for lun in target.lun_set.filter(state__in=("new", "update", "active")):
             ietd.write( "\tLun %d Path=%s,Type=%s\n" % (lun.number, lun.volume.path, lun.ltype) )
             if lun.alias:
                 ietd.write( "\tAlias %s\n" % lun.alias )
@@ -47,9 +47,9 @@ def preinst(options, args):
 
 
 def postinst(options, args):
-    if Lun.objects.filter( Q( Q(state="new") | Q(volume__state="pending") ) ).count() > 0 or options.confupdate:
+    if Lun.objects.filter( Q( Q(state__in=("new", "update")) | Q(volume__state="pending") ) ).count() > 0 or options.confupdate:
         writeconf()
-        Lun.objects.filter(state="new").update(state="active")
+        Lun.objects.filter(state__in=("new", "update")).update(state="active")
 
 def prerm(options, args):
     if Lun.objects.filter(state="delete").count() > 0:
