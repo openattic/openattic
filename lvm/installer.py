@@ -40,8 +40,32 @@ def inst(options, args):
                     lv.fs.mount()
                     lv.fs.chown()
 
-            lv.state = "active"
+    if LogicalVolume.objects.filter(state="update").count() > 0:
+        for lv in LogicalVolume.objects.filter(state="update"):
+            lv.state = "pending"
             lv.save()
+
+            if lv.filesystem and lv.fs.mountable:
+                lv.fs.unmount()
+
+            if lv.megs < lv.lvm_megs:
+                # Shrink FS, then Volume
+                if lv.filesystem:
+                    lv.fs.resize(grow=False)
+                invoke(["/sbin/lvchange", '-an', lv.path])
+                invoke(["/sbin/lvresize", '-L',  ("%dM" % lv.megs), lv.path])
+                invoke(["/sbin/lvchange", '-ay', lv.path])
+            else:
+                # Grow Volume, then FS
+                invoke(["/sbin/lvchange", '-an', lv.path])
+                invoke(["/sbin/lvresize", '-L',  ("%dM" % lv.megs), lv.path])
+                invoke(["/sbin/lvchange", '-ay', lv.path])
+                if lv.filesystem:
+                    lv.fs.resize(grow=True)
+
+            if lv.filesystem and lv.fs.mountable:
+                lv.fs.mount()
+
 
 def postinst(options, args):
     for lv in LogicalVolume.objects.filter(state="active"):
@@ -63,6 +87,7 @@ def rm(options, args):
             invoke(["/sbin/lvchange", '-an', lv.path])
             invoke(["/sbin/lvremove", lv.path])
 
-            lv.state = "done"
-            lv.save()
+def cleanup(options, args):
+    LogicalVolume.objects.filter(state="pending").update(state="active")
+    LogicalVolume.objects.filter(state="dpend"  ).update(state="done"  )
 

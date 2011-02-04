@@ -1,6 +1,8 @@
 # -*- coding: utf-8 -*-
 # kate: space-indent on; indent-width 4; replace-tabs on;
 
+from django.db.models import Q
+
 from django.template.loader import render_to_string
 
 from lvm.procutils import invoke
@@ -10,15 +12,20 @@ from samba.conf    import settings as samba_settings
 def writeconf():
     fd = open( samba_settings.SMB_CONF, "w" )
     fd.write( render_to_string( "samba/smb.conf", {
-        'Shares': Share.objects.filter(state__in=("new", "active"))
+        'Shares': Share.objects.filter(state__in=("new", "active")).exclude(volume__state="update")
         } ) )
     fd.close()
 
     invoke([samba_settings.INITSCRIPT, "restart"])
 
 
+def preinst(options, args):
+    if Share.objects.filter(state="active", volume__state="update").count() > 0:
+        writeconf()
+
 def postinst(options, args):
-    if Share.objects.filter(state="new").count() > 0 or options.confupdate:
+    if Share.objects.filter( Q( Q(state="new") | Q(volume__state="pending") ) ).count() > 0 or \
+       options.confupdate:
         writeconf()
         for share in Share.objects.filter(state="new"):
             share.state = "active"

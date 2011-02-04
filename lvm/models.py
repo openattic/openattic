@@ -8,10 +8,11 @@ from lvm.filesystems import FILESYSTEMS, get_by_name as get_fs_by_name
 from lvm.procutils   import lvm_vgs, lvm_lvs
 
 SETUP_STATE_CHOICES = (
-    ("new",     "[new]     Installation ordered, but has not yet started"),
+    ("new",     "[new]     Set for installation, but has not yet started"),
     ("pending", "[pending] Installation is running"),
     ("active",  "[active]  Installation has finished"),
-    ("delete",  "[delete]  Removal ordered, but has not yet started"),
+    ("update",  "[update]  Configuration changes need to be applied"),
+    ("delete",  "[delete]  Set for removal, but has not yet started"),
     ("dpend",   "[dpend]   Removal is running"),
     ("done",    "[done]    Removal has finished")
     )
@@ -66,6 +67,10 @@ class LogicalVolume(models.Model):
 
     @property
     def lvm_info(self):
-        if self.state != "active":
-            return None
+        if self.state not in ("active", "update", "pending"):
+           return None
         return lvm_lvs()[self.name]
+
+    @property
+    def lvm_megs(self):
+        return float(self.lvm_info["LVM2_LV_SIZE"][:-1])

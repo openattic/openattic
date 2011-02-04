@@ -54,7 +54,9 @@ def lvedit(request, lvid):
     if request.method == "POST":
         lvform = LvEditForm(request.POST, instance=lv)
         if lvform.is_valid():
-            lvform.save()
+            lv = lvform.save(commit=False)
+            lv.state = "update"
+            lv.save()
             return HttpResponseRedirect(reverse(lvlist))
     else:
         lvform = LvEditForm(instance=lv)

@@ -31,7 +31,7 @@ def lvm_command(cmd):
     else:
         args = ["sudo"]
 
-    args.extend([cmd, "--noheadings", "--nameprefixes", "--unquoted"])
+    args.extend([cmd, "--noheadings", "--nameprefixes", "--unquoted", "--units", "m"])
 
     proc = subprocess.Popen(args,
         stdin = None, stdout = subprocess.PIPE, stderr = subprocess.PIPE, close_fds = True

@@ -34,7 +34,7 @@ class FileSystem(object):
     def format(self):
         raise NotImplementedError("FileSystem::format needs to be overridden")
 
-    def resize(self):
+    def resize(self, grow):
         raise NotImplementedError("FileSystem::resize needs to be overridden")
 
     def chown(self):
@@ -54,6 +54,10 @@ class Ext2(FileSystem):
     def format(self):
         invoke(["/sbin/mke2fs", "-L", self.lv.name, self.lv.path])
 
+    def resize(self, grow):
+        invoke(["/sbin/e2fsck", "-y", "-f", self.lv.path])
+        invoke(["/sbin/resize2fs", self.lv.path, ("%dM" % self.lv.megs)])
+
 class Ext3(Ext2):
     name = "ext3"
     desc = "Ext3 (Linux Journalling)"
@@ -70,12 +74,18 @@ class Ntfs(FileSystem):
     def format(self):
         invoke(["/usr/sbin/mkntfs", "--fast", self.lv.path])
 
+    def resize(self, grow):
+        invoke(["/usr/sbin/ntfsresize", "--size", ("%dM" % self.lv.megs), self.lv.path])
+
 class Qcow2(FileSystem):
     name = "qcow2"
     desc = "QCOW2 (Virtualization)"
 
     def format(self):
         invoke(["/usr/bin/qemu-img", "create", "-f", "qcow2", self.lv.path])
+
+    def resize(self, grow):
+        invoke(["/usr/bin/qemu-img", self.lv.path, ("%dM" % self.lv.megs)])
 
 
 FILESYSTEMS = (Ext2, Ext3, Ntfs, Qcow2)

@@ -1,6 +1,8 @@
 # -*- coding: utf-8 -*-
 # kate: space-indent on; indent-width 4; replace-tabs on;
 
+from django.db.models import Q
+
 from lvm.procutils import invoke
 from iscsi.models import Target, Lun
 from iscsi.conf   import settings as iscsi_settings
@@ -39,8 +41,13 @@ def writeconf():
     invoke([iscsi_settings.INITSCRIPT, "restart"])
 
 
+def preinst(options, args):
+    if Lun.objects.filter(state="active", volume__state="update").count() > 0:
+        writeconf()
+
+
 def postinst(options, args):
-    if Lun.objects.filter(state="new").count() > 0 or options.confupdate:
+    if Lun.objects.filter( Q( Q(state="new") | Q(volume__state="pending") ) ).count() > 0 or options.confupdate:
         writeconf()
         for lun in Lun.objects.filter(state="new"):
             lun.state = "active"
