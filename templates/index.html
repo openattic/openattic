@@ -16,7 +16,7 @@
           -- <a href="{% url admin:index %}">Administration</a>
         {% endif %}
         {% if user.is_superuser %}
-          -- logged in as SuperUser
+          <span title="you are a superuser">*</span>
         {% endif %}
         -- <a href="{% url django.contrib.auth.views.logout %}">Logout</a>
       {% else %}

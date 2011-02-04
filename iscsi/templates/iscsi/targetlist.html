@@ -1,0 +1,19 @@
+{% extends "index.html" %}
+{# kate: space-indent on; indent-width 2; replace-tabs on; #}
+{% block Title %} :: Targets{% endblock %}
+{% block Body %}
+  <a href="{% url iscsi_target_add %}"><img src="{{ MEDIA_URL }}/icons/add.png" alt="add" /></a><br />
+  <table>
+    {% for target in object_list %}
+      <tr>
+        <td><a href="{% url iscsi_target_edit target.id %}">{{ target.name }}</a></td>
+        <td>{{ target.iscsiname }}</td>
+        <td>
+          <a href="{% url iscsi_target_delete target.id %}">
+            <img src="{{ MEDIA_URL }}/icons/delete.png" alt="delete" />
+          </a>
+        </td>
+      </tr>
+    {% endfor %}
+  </table>
+{% endblock %}

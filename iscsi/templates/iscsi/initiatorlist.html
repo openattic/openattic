@@ -1,0 +1,19 @@
+{% extends "index.html" %}
+{# kate: space-indent on; indent-width 2; replace-tabs on; #}
+{% block Title %} :: Initiators{% endblock %}
+{% block Body %}
+  <a href="{% url iscsi_initiator_add %}"><img src="{{ MEDIA_URL }}/icons/add.png" alt="add" /></a><br />
+  <table>
+    {% for initr in object_list %}
+      <tr>
+        <td><a href="{% url iscsi_initiator_edit initr.id %}">{{ initr.name }}</a></td>
+        <td>{{ initr.address }}</td>
+        <td>
+          <a href="{% url iscsi_initiator_delete initr.id %}">
+            <img src="{{ MEDIA_URL }}/icons/delete.png" alt="delete" />
+          </a>
+        </td>
+      </tr>
+    {% endfor %}
+  </table>
+{% endblock %}
