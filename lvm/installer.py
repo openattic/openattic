@@ -26,11 +26,14 @@ def inst(options, args):
             lv.state = "pending"
             lv.save()
 
-            invoke(["/sbin/lvcreate",
-                "-L", ("%dM" % lv.megs),
+            cmd = ["/sbin/lvcreate"]
+            if lv.snapshot:
+                cmd.extend(["-s", lv.snapshot.path])
+            cmd.extend(["-L", ("%dM" % lv.megs),
                 '-n', lv.name,
                 lv.vg.name
                 ])
+            invoke(cmd)
 
             invoke(["/sbin/lvchange", '-ay', lv.path])
 
