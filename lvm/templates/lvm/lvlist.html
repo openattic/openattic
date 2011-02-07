@@ -2,15 +2,7 @@
 {# kate: space-indent on; indent-width 2; replace-tabs on; #}
 {% block Title %} :: LV List{% endblock %}
 {% block Body %}
-  <div class="lvlistheader">
-    Logical Volume options
-    <ul   class="lvtools">
-      <li><a href="{% url lvm.views.lvadd %}"><img  alt="add lv"  src="{{ MEDIA_URL }}/icons/add.png"        /></a></li>
-      <li><a href="{% url lvm.views.vglist %}"><img alt="vg list" src="{{ MEDIA_URL }}/icons/database.png"   /></a></li>
-      <li><a href="{% url iscsi_target_list %}"><img alt="target list" src="{{ MEDIA_URL }}/icons/package.png"   /></a></li>
-      <li><a href="{% url iscsi_initiator_list %}"><img alt="initiator list" src="{{ MEDIA_URL }}/icons/computer.png"   /></a></li>
-    </ul>
-  </div>
+
   <script type="text/javascript">
     function findPos(obj){
       var curleft = curtop = 0;
@@ -45,88 +37,109 @@
       </button>
     </form>
   </div>
-  {% for lv in LVs %}
-    <div class="lv">
-      <img alt="lv" src="{{ MEDIA_URL }}/icons/drive.png" />
-      <ul   class="lvtools">
-        {% if lv.state == "new" or lv.state == "active" %}
-          <li><img
-            alt="add share" title="add share" src="{{ MEDIA_URL }}/icons/add.png"
-            onclick="show_addshare_type_selector(this, {{ lv.id }})" />
-          </li>
-          <li>
-            <a href="{% url lvm.views.lvedit   lv.id %}">
-              <img alt="edit"   src="{{ MEDIA_URL }}/icons/drive_edit.png"   />
-            </a>
-          </li>
-        {% endif %}
-        {% if lv.state == "new" or lv.state == "active" or lv.state == "done" %}
-          <li>
-            <a href="{% url lvm.views.lvdelete lv.id %}">
-              <img alt="delete" src="{{ MEDIA_URL }}/icons/drive_delete.png" />
-            </a>
-          </li>
-        {% endif %}
-      </ul>
-      <ul   class="lvinfo">
-        <li>{{ lv.megs }}MB</li>
-        <li>In volume group <img alt="lv" src="{{ MEDIA_URL }}/icons/database.png" />{{ lv.vg }}</li>
-        <li>{% if lv.fs %}Formatted as {{ lv.fs.name }}{% else %}Unformatted{% endif %}</li>
-        <li>
-          {% if lv.snapshot %}
-            Snapshot of {{ lv.snapshot.name }} ({{ lv.lvm_info.LVM2_SNAP_PERCENT }}%)
-          {% else %}
-            Standard volume
-          {% endif %}
-        </li>
-      </ul>
-      <span class="lvname">{{ lv.name }} <small>({{ lv.owner }})</small></span>
-      <span class="lvstate state_{{ lv.state }}">{{ lv.get_state_display }}</span>
-      <ul   class="lvshares">
-        {% for share in lv.get_shares %}
-          {% if share.share_type == "nfs" %}
-            <li>
-              <ul class="sharetools">
+  {% for lv in LVs %}      
+  <div class="widget_template">
+    <div class="widget_head">
+      </div>
+        <div class="widget_main">
+          <div class="lv">
+            <img alt="lv" src="{{ MEDIA_URL }}/icons/drive.png" />
+            <ul   class="lvtools">
+            {% if lv.state == "new" or lv.state == "active" %}
+              <li>
+                <img
+                  alt="add share" title="add share" src="{{ MEDIA_URL }}/icons/add.png"
+                  onclick="show_addshare_type_selector(this, {{ lv.id }})" />
+              </li>
+              <li>
+                <a href="{% url lvm.views.lvedit   lv.id %}">
+                  <img alt="edit"   src="{{ MEDIA_URL }}/icons/drive_edit.png"   />
+                </a>
+              </li>
+            {% endif %}
+            {% if lv.state == "new" or lv.state == "active" or lv.state == "done" %}
+              <li>
+                <a href="{% url lvm.views.lvdelete lv.id %}">
+                  <img alt="delete" src="{{ MEDIA_URL }}/icons/drive_delete.png" />
+                </a>
+              </li>
+            {% endif %}
+            </ul>
+            <ul   class="lvinfo">
+              <li>{{ lv.megs }}MB</li>
+              <li>In volume group <img alt="lv" src="{{ MEDIA_URL }}/icons/database.png" />{{ lv.vg }}</li>
+              <li>{% if lv.fs %}Formatted as {{ lv.fs.name }}{% else %}Unformatted{% endif %}</li>
+              <li>
+                {% if lv.snapshot %}
+                  Snapshot of {{ lv.snapshot.name }} ({{ lv.lvm_info.LVM2_SNAP_PERCENT }}%)
+                {% else %}
+                  Standard volume
+                {% endif %}
+              </li>
+            </ul>
+            <span class="lvname">{{ lv.name }} <small>({{ lv.owner }})</small></span>
+            <span class="lvstate state_{{ lv.state }}">{{ lv.get_state_display }}</span>
+            <ul   class="lvshares">
+            {% for share in lv.get_shares %}
+              {% if share.share_type == "nfs" %}
+              <li>
+                <ul class="sharetools">
                 <li>
                   <a href="{% url nfs.views.exportdelete share.id %}">
-                    <img alt="delete" src="{{ MEDIA_URL }}/icons/delete.png" />
+                  <img alt="delete" src="{{ MEDIA_URL }}/icons/delete.png" />
                   </a>
                 </li>
-              </ul>
-              <a href="{% url nfs.views.exportedit share.id %}">{{ share.address }}</a>
-              <span class="lvstate state_{{ share.state }}" />
-            </li>
-          {% endif %}
-          {% if share.share_type == "iscsi" %}
-            <li>
-              <ul class="sharetools">
+                </ul>
+                <a href="{% url nfs.views.exportedit share.id %}">{{ share.address }}</a>
+                <span class="lvstate state_{{ share.state }}" />
+              </li>
+              {% endif %}
+              {% if share.share_type == "iscsi" %}
+              <li>
+                <ul class="sharetools">
                 <li>
                   <a href="{% url iscsi.views.lundelete share.id %}">
-                    <img alt="delete" src="{{ MEDIA_URL }}/icons/delete.png" />
+                  <img alt="delete" src="{{ MEDIA_URL }}/icons/delete.png" />
                   </a>
                 </li>
-              </ul>
-              <a href="{% url iscsi.views.lunedit share.id %}">{{ share.target }} LUN {{ share.number }}</a>
-              <span class="lvstate state_{{ share.state }}" />
-            </li>
-          {% endif %}
-          {% if share.share_type == "samba" %}
-            <li>
-              <ul class="sharetools">
+                </ul>
+                <a href="{% url iscsi.views.lunedit share.id %}">{{ share.target }} LUN {{ share.number }}</a>
+                <span class="lvstate state_{{ share.state }}" />
+              </li>
+              {% endif %}
+              {% if share.share_type == "samba" %}
+              <li>
+                <ul class="sharetools">
                 <li>
                   <a href="{% url samba.views.sharedelete share.id %}">
-                    <img alt="delete" src="{{ MEDIA_URL }}/icons/delete.png" />
+                  <img alt="delete" src="{{ MEDIA_URL }}/icons/delete.png" />
                   </a>
                 </li>
-              </ul>
-              <a href="{% url samba.views.shareedit share.id %}">{{ share }}</a>
-              <span class="lvstate state_{{ share.state }}" />
-            </li>
-          {% endif %}
-        {% empty %}
-          Volume is not currently shared.
-        {% endfor %}
-      </ul>
+                </ul>
+                <a href="{% url samba.views.shareedit share.id %}">{{ share }}</a>
+                <span class="lvstate state_{{ share.state }}" />
+              </li>
+              {% endif %}
+            {% empty %}
+              Volume is not currently shared.
+            {% endfor %}
+            </ul>
+          </div>
+        </div>
+      <div class="widget_bottom">
     </div>
+  </div>
   {% endfor %}
+{% endblock %}
+
+{% block submenu %}
+<ul>
+  <li>
+    <strong class="toggler visible">LVM</strong>
+    <ul id="menu_view1" class="togglee" style="">
+      <li><a href="{% url lvm.views.lvadd %}"><img alt="add lv"  src="{{ MEDIA_URL }}/icons/add.png"/> Add LV </a></li>
+      <li><a href="{% url lvm.views.vglist %}"><img alt="vg list" src="{{ MEDIA_URL }}/icons/database.png"/> VG List</a></li>
+    </ul>
+  </li>
+</ul>
 {% endblock %}
