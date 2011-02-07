@@ -1,0 +1,21 @@
+@CHARSET "UTF-8";
+
+rect.pie_bg {
+	fill:#EEEEEE;
+	opacity:1;
+}
+rect.caption_color {
+	stroke-width:1px;
+	stroke:#eee;
+}
+text.child_name {
+	text-anchor:start;
+	font-size:11px;
+}
+text.head {
+	text-anchor:middle;	
+}
+text.rpl {
+	text-anchor:middle;	
+}
+

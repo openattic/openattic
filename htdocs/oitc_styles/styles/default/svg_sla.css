@@ -1,0 +1,100 @@
+@CHARSET "UTF-8";
+
+polygon.graph {
+	stroke:black;
+	/*fill:url(../../svg/report_sla.svg.php#gyr);*/
+	stroke-width:1px;
+	opacity:0.9;	
+}
+
+polygon.graph_line {
+	fill:#AAFFAA;
+	opacity:0.8;stroke:black;
+	stroke-width:1px
+}
+
+polygon.graph_bm {
+	opacity:0.7; 
+	fill:#FF7755; 
+	stroke:#AAAA44; 
+	stroke-width:0px; 
+}
+
+polygon.now_tri {
+	opacity:1; 
+	fill:#FF8C00; 
+	stroke:#FF8C00; 
+	stroke-width:0px; 
+}
+
+polygon.cntrct_tri {
+	opacity:1; 
+	fill:#5555FF; 
+	stroke:#5555FF;
+	stroke-width:0px; 
+}
+
+text {
+	font-size:1em;
+}
+	text.graph_mark_y {
+		text-anchor:end;
+		font-size:.8em;
+	}
+	
+	text.graph_mark_x {
+		text-anchor:middle;
+		font-size:.8em;
+	}
+	
+	text.now_text {
+		fill:#EE8000;
+		text-anchor:middle;
+		font-size:.8em;
+	}
+	text.cntrct_text {
+		fill:#3333FF;
+		text-anchor:middle;
+		font-size:.8em;
+	}
+
+text.el_desc {
+	text-anchor:end;
+}
+
+text.el_name {
+	text-anchor:start;
+	fill:blue;
+}
+
+line.divider {
+	stroke:#444444;
+	stroke-width:0.7px;
+	opacity:.9;
+}
+line.now_line {
+	stroke:#FF8C00;
+	stroke-width:1px;
+	opacity:1;
+}
+
+line.cntrct_line {
+	stroke:#5555FF;
+	stroke-width:1px;
+	opacity:1;
+}
+
+line.subdivider {
+	stroke:#888888;
+	stroke-width:0.2px;
+	opacity:.9;
+}
+
+rect.clipper {
+	fill:#EEEEEE;
+	opacity:1;
+}
+rect.graph_bg {
+	fill:#FFFFFF;
+	opacity:1;
+}

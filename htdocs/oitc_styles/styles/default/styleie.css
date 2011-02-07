@@ -1,0 +1,12 @@
+﻿@charset "utf-8";
+
+#main {
+	width: expression(document.body.clientWidth - 180 + "px");
+	height: expression(document.body.clientHeight - 100 + "px");
+}
+
+#content {
+	margin: 10px;
+	overflow: visible;
+	height: expression(document.body.clientHeight - 120 + "px");
+}

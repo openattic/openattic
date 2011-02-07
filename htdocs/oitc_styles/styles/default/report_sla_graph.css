@@ -1,0 +1,52 @@
+@CHARSET "UTF-8";
+
+div.sla_svg_graph {
+	display:none;
+}
+
+div.sla_svg_graph_active {
+	display:block;
+}
+
+div.graph_selector {
+	border:1px solid #ccc;
+}
+div.graph_selector:hover {
+	cursor:pointer;
+	border:1px solid green;
+}
+div.graph_selectorActive {
+	border:1px solid #f91;
+}
+
+/*.graph_selector table {
+	border-collapse:separate;
+	position:relative;
+	top:0px;
+	vertical-align:top;
+}*/
+
+/*.graph_selector tr {
+	display:block;
+	border-collapse:separate;
+	vertical-align:top;
+}*/
+table.graph_selector td {
+	vertical-align:top;
+}
+
+table.graph_selector table {
+	width:100%;
+}
+object.sla_piechart_object {
+	display:block;
+	position:relative;
+	top:-500px;
+	left:399px;
+}
+td.viewed_element {
+	color:blue;
+}
+img.phys_info:hover {
+	cursor:pointer;
+}
