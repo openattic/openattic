@@ -1,0 +1,32 @@
+ 
+ 
+    .boxheader{
+    
+    top: auto;
+    width: auto;
+    height: 20px;
+    background-color: #C0C0C0;
+
+        
+    } 
+    
+    
+    .boxcontent{
+    
+    background-color: #red;
+    width: 500px;
+    height: 80px;
+    }
+    
+                        
+    
+    .boxfooter{
+        
+    top: auto;
+	width: auto;    
+    height: 20px;
+    background-color: #C0C0C0    
+    }
+    
+     
+   
