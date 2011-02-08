@@ -7,6 +7,7 @@
 <head>
   <title>pyfiler{% block Title %}{% endblock %}</title>
   <link rel="stylesheet" href="{{ MEDIA_URL }}/style.css" />
+  <link rel="stylesheet" href="{{ MEDIA_URL }}/box_style.css" />
   <link href="{{ MEDIA_URL }}/oitc_styles/styles/default/style.css" rel="stylesheet" type="text/css" />
   <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
   <!--[if gte IE 7]>
@@ -50,7 +51,7 @@
   <div id="main">
     <div id="content">
       {% block Body %}
-      There should be some content here.
+        There should be some content here.
       {% endblock %}
     </div>
   </div>
