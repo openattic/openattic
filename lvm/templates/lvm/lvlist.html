@@ -1,7 +1,7 @@
 {% extends "index.html" %}
 {# kate: space-indent on; indent-width 2; replace-tabs on; #}
 {% block Title %} :: LV List{% endblock %}
-{% block Body %}
+{% block BodyHeader %}
   <script type="text/javascript">
     function findPos(obj){
       var curleft = curtop = 0;
@@ -18,7 +18,7 @@
       var el   = document.getElementById('addshare_type_selector');
       var lvid = document.getElementById('addshare_type_selector__lvid');
       buttonpos = findPos(button);
-      el.style.left       = buttonpos[0] + button.width + "px";
+      el.style.right      = (window.innerWidth - buttonpos[0] - button.width) + "px";
       el.style.top        = buttonpos[1] + "px";
       el.style.visibility = "visible";
       lvid.value = id;
@@ -36,6 +36,8 @@
       </button>
     </form>
   </div>
+{% endblock %}
+{% block Body %}
   {% for lv in LVs %}
     <div id="test" style="border: 0px solid black height; position: relative;">
       <div class="boxheader">
