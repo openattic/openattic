@@ -14,28 +14,26 @@
   <link href="{{ MEDIA_URL }}/oitc_styles/styles/default/styleie.css" rel="stylesheet" type="text/css" />
   <![endif]-->
 </head>
-  <body>
-    <div id="head">
-      <div id="head_tools">
-
+<body>
+  <div id="head">
+    <div id="head_tools">
       {% if user.is_authenticated %}
-      <a href="{% url django.contrib.auth.views.logout %}"><img src="{{ MEDIA_URL }}/icons/door_out.png" title="Ausloggen" /></a>
-      <a href="#" style="cursor:help"><img src="{{ MEDIA_URL }}/icons/door_open.png" title="{% if user.first_name %}{{ user.first_name }}{% else %}{{ user.username }}{% endif %}" /></a>
+        <a href="{% url django.contrib.auth.views.logout %}"><img src="{{ MEDIA_URL }}/icons/door_out.png" title="Ausloggen" /></a>
+        <a href="#" style="cursor:help"><img src="{{ MEDIA_URL }}/icons/door_open.png" title="{% if user.first_name %}{{ user.first_name }}{% else %}{{ user.username }}{% endif %}" /></a>
       {% else %}
-      <a href="{% url django.contrib.auth.views.login %}"><img src="{{ MEDIA_URL }}/icons/door_in.png" title="Einloggen" /></a>.
+        <a href="{% url django.contrib.auth.views.login %}"><img src="{{ MEDIA_URL }}/icons/door_in.png" title="Einloggen" /></a>.
       {% endif %}
-      </div>
     </div>
-    <div id="topmenu">
-      <div id="topnav">
-        <ul>
-          <li><a href="{{ PROJECT_URL }}/"><img src="{{ MEDIA_URL }}/icons/door.png" title="Einloggen" /> Home</a></li>
-          <li><a href="{% url lvm.views.lvlist %}"><img alt="target list" src="{{ MEDIA_URL }}/icons/package.png"/> LVM</a></li>
-          <li><a href="{% url iscsi_target_list %}"><img alt="target list" src="{{ MEDIA_URL }}/icons/package.png"/> iSCSI</a></li>
-          <li><a href="{# url iscsi_target_list #}"><img alt="target list" src="{{ MEDIA_URL }}/icons/package.png"/> Samba</a></li>
-          <li><a href="{# url iscsi_target_list #}"><img alt="target list" src="{{ MEDIA_URL }}/icons/package.png"/> NFS</a></li>
-        </ul>
-      </div>
+  </div>
+  <div id="topmenu">
+    <div id="topnav">
+      <ul>
+        <li><a href="{{ PROJECT_URL }}/"><img src="{{ MEDIA_URL }}/icons/door.png" title="Einloggen" /> Home</a></li>
+        <li><a href="{% url lvm.views.lvlist %}"><img alt="target list" src="{{ MEDIA_URL }}/icons/package.png"/> LVM</a></li>
+        <li><a href="{% url iscsi_target_list %}"><img alt="target list" src="{{ MEDIA_URL }}/icons/package.png"/> iSCSI</a></li>
+        <li><a href="{# url iscsi_target_list #}"><img alt="target list" src="{{ MEDIA_URL }}/icons/package.png"/> Samba</a></li>
+        <li><a href="{# url iscsi_target_list #}"><img alt="target list" src="{{ MEDIA_URL }}/icons/package.png"/> NFS</a></li>
+      </ul>
     </div>
   </div>
   <div id="submenu">
