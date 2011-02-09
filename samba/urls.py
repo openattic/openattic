@@ -4,9 +4,22 @@
 from django.conf.urls.defaults import url, patterns, include
 from django.conf import settings
 
-urlpatterns = patterns('samba.views',
-    ( r'addshare/(?P<lvid>\d+)/$', 'add_share_for_lv' ),
+from samba import models
 
-    ( r'(?P<sid>\d+)/del/$',       'sharedelete' ),
-    ( r'(?P<sid>\d+)/?$',          'shareedit' ),
+urlpatterns = patterns('',
+    ( r'addshare/(?P<lvid>\d+)/$', 'samba.views.add_share_for_lv' ),
+
+    ( r'(?P<object_id>\d+)/del/$',   'view_wrappers.delete_if_perm', {
+        'perm':          'samba.delete_lun',
+        'template_name': 'samba/sharedelete.html',
+        'model':         models.Share,
+        'post_delete_redirect': settings.PROJECT_URL+'/'
+        }, 'samba_share_delete' ),
+
+    ( r'(?P<object_id>\d+)/$',     'view_wrappers.update_if_perm', {
+        'perm':          'samba.change_share',
+        'template_name': 'samba/shareedit.html',
+        'model':         models.Share,
+        'post_save_redirect': settings.PROJECT_URL+'/'
+        }, 'samba_share_edit' ),
     )

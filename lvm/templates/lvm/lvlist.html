@@ -115,12 +115,12 @@
                 <li>
                   <ul class="sharetools">
                     <li>
-                      <a href="{% url samba.views.sharedelete share.id %}">
+                      <a href="{% url samba_share_delete share.id %}">
                         <img alt="delete" src="{{ MEDIA_URL }}/icons/delete.png" />
                       </a>
                     </li>
                   </ul>
-                  <a href="{% url samba.views.shareedit share.id %}">{{ share }}</a>
+                  <a href="{% url samba_share_edit share.id %}">{{ share }}</a>
                   <span class="lvstate state_{{ share.state }}" />
                 </li>
               {% endif %}

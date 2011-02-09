@@ -4,11 +4,10 @@
 from django.contrib.auth.models import User
 from django.db import models
 
-from lvm.models import LogicalVolume, SETUP_STATE_CHOICES
+from lvm.models import StatefulModel, LogicalVolume
 
-class Share(models.Model):
+class Share(StatefulModel):
     volume        = models.ForeignKey(LogicalVolume)
-    state         = models.CharField(max_length=20, editable=False, default="new", choices=SETUP_STATE_CHOICES)
     available     = models.BooleanField(default=True,  blank=True)
     browseable    = models.BooleanField(default=True,  blank=True)
     guest_ok      = models.BooleanField(default=False, blank=True)
