@@ -17,6 +17,56 @@ SETUP_STATE_CHOICES = (
     ("done",    "[done]    Removal has finished")
     )
 
+class StatefulModel(models.Model):
+    state       = models.CharField(max_length=20, editable=False, default="new", choices=SETUP_STATE_CHOICES)
+
+    def save(self, *args, **kwargs):
+        if self.id is None:
+            self.state = "new"
+        elif self.state == "active":
+            self.state = "update"
+        elif self.state in ("pending", "delete", "dpend"):
+            raise RuntimeError("Cannot save while in a pending state (installation running!)")
+        return models.Model.save(self, *args, **kwargs)
+
+    def set_active(self):
+        if self.state != "pending":
+            raise RuntimeError("Cannot transition from '%s' to 'active'" % self.state)
+        self.state = "active"
+        return models.Model.save(self)
+
+    def set_pending(self):
+        if self.state not in ("new", "update"):
+            raise RuntimeError("Cannot transition from '%s' to 'pending'" % self.state)
+        self.state = "pending"
+        return models.Model.save(self)
+
+    def set_dpend(self):
+        if self.state != "delete":
+            raise RuntimeError("Cannot transition from '%s' to 'dpend'" % self.state)
+        self.state = "dpend"
+        return models.Model.save(self)
+
+    def set_done(self):
+        if self.state != "dpend":
+            raise RuntimeError("Cannot transition from '%s' to 'done'" % self.state)
+        self.state = "done"
+        return models.Model.save(self)
+
+    def delete(self):
+        if self.state == "active":
+            self.state = "delete"
+            models.Model.save(self)
+        elif self.state in ("new", "done"):
+            models.Model.delete(self)
+        elif self.state == "delete":
+            pass
+        else:
+            raise RuntimeError("Cannot transition from '%s' to 'delete'" % self.state)
+
+    class Meta:
+        abstract = True
+
 class VolumeGroup(models.Model):
     name        = models.CharField(max_length=130, unique=True)
 
@@ -27,7 +77,7 @@ class VolumeGroup(models.Model):
     def lvm_info(self):
         return lvm_vgs()[self.name]
 
-class LogicalVolume(models.Model):
+class LogicalVolume(StatefulModel):
     name        = models.CharField(max_length=130, unique=True)
     megs        = models.IntegerField()
     vg          = models.ForeignKey(VolumeGroup)
@@ -35,10 +85,9 @@ class LogicalVolume(models.Model):
     filesystem  = models.CharField(max_length=20, blank=True, null=True,
                     choices=[(fs.name, fs.desc) for fs in FILESYSTEMS] )
     owner       = models.ForeignKey(User)
-    state       = models.CharField(max_length=20, editable=False, default="new", choices=SETUP_STATE_CHOICES)
 
     def __init__( self, *args, **kwargs ):
-        models.Model.__init__( self, *args, **kwargs )
+        StatefulModel.__init__( self, *args, **kwargs )
         self._fs = None
 
     @property
@@ -74,3 +123,20 @@ class LogicalVolume(models.Model):
     @property
     def lvm_megs(self):
         return float(self.lvm_info["LVM2_LV_SIZE"][:-1])
+
+    def delete(self):
+        if self.state == "active":
+            for share in self.get_shares():
+                share.delete()
+            StatefulModel.delete(self)
+        elif self.state in ("new", "done"):
+            for share in lv.get_shares():
+                if share.state == "done":
+                    share.delete()
+                else:
+                    return
+            StatefulModel.delete(self)
+        elif self.state == "delete":
+            pass
+        else:
+            raise RuntimeError("Cannot transition from '%s' to 'delete'" % self.state)
