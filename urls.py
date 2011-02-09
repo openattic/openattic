@@ -20,7 +20,11 @@ urlpatterns = patterns('',
     (r'^iscsi/', include("iscsi.urls")),
     (r'^samba/', include("samba.urls")),
 
-    (r'^/?$', 'django.views.generic.simple.redirect_to', {'url': settings.PROJECT_URL + '/lvm/'} ),
+    (r'^dummy/status/$', 'django.views.generic.simple.direct_to_template', {'template': 'dummy_status.html'}, 'dummy_status'),
+    (r'^dummy/system/$', 'django.views.generic.simple.direct_to_template', {'template': 'dummy_system.html'}, 'dummy_system'),
+    (r'^dummy/services/$', 'django.views.generic.simple.direct_to_template', {'template': 'dummy_services.html'}, 'dummy_services'),
+
+    (r'^/?$', 'django.views.generic.simple.redirect_to', {'url': settings.PROJECT_URL + '/lvm/'}, '__main__' ),
 )
 
 

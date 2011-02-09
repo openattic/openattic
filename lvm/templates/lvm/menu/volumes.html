@@ -1,0 +1,16 @@
+{# kate: space-indent on; indent-width 2; replace-tabs on; #}
+<li>
+  <strong class="toggler visible">LVM</strong>
+  <ul id="menu_view1" class="togglee" style="">
+    <li>
+      <a href="{% url lvm_logicalvolume_add %}">
+        <img alt="add lv" src="{{ MEDIA_URL }}/icons/add.png"/> Add LV
+      </a>
+    </li>
+    <li>
+      <a href="{% url lvm.views.vglist %}">
+        <img alt="VG List" src="{{ MEDIA_URL }}/icons/database.png"/> VG List
+      </a>
+    </li>
+  </ul>
+</li>

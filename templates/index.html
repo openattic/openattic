@@ -18,26 +18,58 @@
   <div id="head">
     <div id="head_tools">
       {% if user.is_authenticated %}
-        <a href="{% url django.contrib.auth.views.logout %}"><img src="{{ MEDIA_URL }}/icons/door_out.png" title="Ausloggen" /></a>
-        <a href="#" style="cursor:help"><img src="{{ MEDIA_URL }}/icons/door_open.png" title="{% if user.first_name %}{{ user.first_name }}{% else %}{{ user.username }}{% endif %}" /></a>
+        <a href="{% url django.contrib.auth.views.logout %}">
+          <img src="{{ MEDIA_URL }}/icons/door_out.png" title="Ausloggen" />
+        </a>
+        <a href="#" style="cursor:help">
+          <img src="{{ MEDIA_URL }}/icons/door_open.png"
+            title="{% if user.first_name %}{{ user.first_name }}{% else %}{{ user.username }}{% endif %}" />
+        </a>
       {% else %}
-        <a href="{% url django.contrib.auth.views.login %}"><img src="{{ MEDIA_URL }}/icons/door_in.png" title="Einloggen" /></a>.
+        <a href="{% url django.contrib.auth.views.login %}">
+          <img src="{{ MEDIA_URL }}/icons/door_in.png" title="Einloggen" />
+        </a>
       {% endif %}
     </div>
   </div>
   <div id="topmenu">
     <div id="topnav">
       <ul>
-        <li><a href="{{ PROJECT_URL }}/"><img src="{{ MEDIA_URL }}/icons/door.png" title="Einloggen" /> Home</a></li>
-        <li><a href="{% url lvm.views.lvlist %}"><img alt="target list" src="{{ MEDIA_URL }}/icons/package.png"/> LVM</a></li>
-        <li><a href="{% url iscsi_target_list %}"><img alt="target list" src="{{ MEDIA_URL }}/icons/package.png"/> iSCSI</a></li>
-        <li><a href="{# url iscsi_target_list #}"><img alt="target list" src="{{ MEDIA_URL }}/icons/package.png"/> Samba</a></li>
-        <li><a href="{# url iscsi_target_list #}"><img alt="target list" src="{{ MEDIA_URL }}/icons/package.png"/> NFS</a></li>
+        <li>
+          <a href="{% url __main__ %}">
+            <img src="{{ MEDIA_URL }}/icons/door.png" /> Startseite
+          </a>
+        </li>
+        <li>
+          <a href="{% url dummy_status %}">
+            <img alt="status" src="{{ MEDIA_URL }}/icons/package.png"/> Status
+          </a>
+        </li>
+        <li>
+          <a href="{% url lvm.views.lvlist %}">
+            <img alt="lvs" src="{{ MEDIA_URL }}/icons/drive.png"/> Laufwerke
+          </a>
+        </li>
+        <li>
+          <a href="{% url iscsi_target_list %}">
+            <img alt="target list" src="{{ MEDIA_URL }}/icons/drive_network.png"/> Freigaben
+          </a>
+        </li>
+        <li>
+          <a href="{% url dummy_services %}">
+            <img alt="target list" src="{{ MEDIA_URL }}/icons/application_lightning.png"/> Dienste
+          </a>
+        </li>
+        <li>
+          <a href="{% url dummy_system %}">
+            <img alt="target list" src="{{ MEDIA_URL }}/icons/server.png"/> System
+          </a>
+        </li>
       </ul>
     </div>
   </div>
   <div id="submenu">
-    <a href="{{ PROJECT_URL }}/"><img src="{{ MEDIA_URL }}/oitc_styles/styles/default/images/logo_trans.gif" /></a>
+    <a href="{% url __main__ %}"><img src="{{ MEDIA_URL }}/oitc_styles/styles/default/images/logo_trans.gif" /></a>
     <div id="subnav">
       <div id="menu_accordion">
         {% block submenu %}

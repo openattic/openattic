@@ -2,23 +2,53 @@
 {# kate: space-indent on; indent-width 2; replace-tabs on; #}
 {% block Title %} :: LV List{% endblock %}
 {% block Body %}
-  <div class="lvlistheader">
+   
+     	<div id="test" style="border: 0px solid black height; position: relative;"> 
+		<div class="boxheader">
+			<img src="{{ MEDIA_URL }}/boxicons/oben_links1.png" style="position: absolute; left: 0px; top: 0px"/>
+			<img src="{{ MEDIA_URL }}/boxicons/oben_rechts.png" style="position: absolute; right: 0px; top: 0px"/>
+		</div>   
+ 
+ <div class="lvlistheader">
     Volume Group options
     <ul   class="lvtools">
       <li><a href="{% url lvm.views.lvlist %}"><img alt="vg list" src="{{ MEDIA_URL }}/icons/drive.png"   /></a></li>
     </ul>
   </div>
+  
+  	<div class="boxfooter">
+		<img src="{{ MEDIA_URL }}/boxicons/unten_links1.png" style="position:absolute ; left: 0px"/>
+		<img src="{{ MEDIA_URL }}/boxicons/unten_rechts1.png" style="position:absolute ; right: 0px"/>
+	</div>
+  <br>
+  
   {% for vg in VGs %}
-    <div class="vg">
+     	<div id="test" style="border: 0px solid black height; position: relative;"> 
+		<div class="boxheader">
+			<img src="{{ MEDIA_URL }}/boxicons/oben_links1.png" style="position: absolute; left: 0px; top: 0px"/>
+			<img src="{{ MEDIA_URL }}/boxicons/oben_rechts.png" style="position: absolute; right: 0px; top: 0px"/>
+		</div>   
+	
+	<div class="vg">
       <img alt="lv" src="{{ MEDIA_URL }}/icons/database.png" />
-      <ul   class="lvinfo">
-        <li>{{ vg.lvm_info.LVM2_LV_COUNT }} LVs</li>
-        <li>{{ vg.lvm_info.LVM2_PV_COUNT }} PVs</li>
-        <li>{{ vg.lvm_info.LVM2_SNAP_COUNT }} Snapshots</li>
-        <li>{{ vg.lvm_info.LVM2_VG_SIZE }} total</li>
-        <li>{{ vg.lvm_info.LVM2_VG_FREE }} free</li>
-        <li>{{ vg.lvm_info.LVM2_VG_ATTR }}</li>
-      </ul>
+     <table>
+		<tr>
+			<td>
+			  <ul   class="lvinfo">
+				<li>{{ vg.lvm_info.LVM2_LV_COUNT }} LVs</li>
+				<li>{{ vg.lvm_info.LVM2_PV_COUNT }} PVs</li>
+				<li>{{ vg.lvm_info.LVM2_SNAP_COUNT }} Snapshots</li>
+			  </ul>
+		    </td>
+			<td>
+			  <ul   class="lvinfo">
+				<li>{{ vg.lvm_info.LVM2_VG_SIZE }} total</li>
+				<li>{{ vg.lvm_info.LVM2_VG_FREE }} free</li>
+				<li>{{ vg.lvm_info.LVM2_VG_ATTR }}</li>
+			  </ul>
+		    </td>
+		</tr>
+	  </table>
       <span class="lvname">{{ vg.name }}</span>
       <ul   class="vgshares">
         {% for lv in vg.logicalvolume_set.all %}
@@ -29,5 +59,13 @@
         {% endfor %}
       </ul>
     </div>
+	
+	<div class="boxfooter">
+		<img src="{{ MEDIA_URL }}/boxicons/unten_links1.png" style="position:absolute ; left: 0px"/>
+		<img src="{{ MEDIA_URL }}/boxicons/unten_rechts1.png" style="position:absolute ; right: 0px"/>
+	</div>
+  <br>
+  
   {% endfor %}
+  		
 {% endblock %}
