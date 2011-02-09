@@ -22,4 +22,10 @@ urlpatterns = patterns('',
         'model':         models.Share,
         'post_save_redirect': settings.PROJECT_URL+'/'
         }, 'samba_share_edit' ),
+
+    ( r'/?$', 'django.views.generic.list_detail.object_list', {
+        'template_name': 'samba/sharelist.html',
+        'queryset': models.Share.objects.all(),
+        }, 'samba_share_list' ),
+
     )

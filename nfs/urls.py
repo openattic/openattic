@@ -23,5 +23,9 @@ urlpatterns = patterns('',
         'post_save_redirect': settings.PROJECT_URL+'/'
         }, 'nfs_export_edit' ),
 
-    #( r'/?$',                   'exportlist' ),
+    ( r'/?$', 'django.views.generic.list_detail.object_list', {
+        'template_name': 'nfs/exportlist.html',
+        'queryset': models.Export.objects.all(),
+        }, 'lvm_export_list' ),
+
     )
