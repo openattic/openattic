@@ -89,12 +89,12 @@
                 <li>
                   <ul class="sharetools">
                     <li>
-                      <a href="{% url nfs.views.exportdelete share.id %}">
+                      <a href="{% url nfs_export_delete share.id %}">
                       <img alt="delete" src="{{ MEDIA_URL }}/icons/delete.png" />
                       </a>
                     </li>
                   </ul>
-                  <a href="{% url nfs.views.exportedit share.id %}">{{ share.address }}</a>
+                  <a href="{% url nfs_export_edit share.id %}">{{ share.address }}</a>
                   <span class="lvstate state_{{ share.state }}" />
                 </li>
               {% endif %}

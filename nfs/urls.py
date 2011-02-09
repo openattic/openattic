@@ -4,10 +4,24 @@
 from django.conf.urls.defaults import url, patterns, include
 from django.conf import settings
 
-urlpatterns = patterns('nfs.views',
-    ( r'addshare/(?P<lvid>\d+)/$', 'add_share_for_lv' ),
+from nfs import models
 
-    ( r'(?P<eid>\d+)/del/$',    'exportdelete' ),
-    ( r'(?P<eid>\d+)/?$',       'exportedit' ),
+urlpatterns = patterns('',
+    ( r'addshare/(?P<lvid>\d+)/$', 'nfs.views.add_share_for_lv' ),
+
+    ( r'(?P<object_id>\d+)/del/$',   'view_wrappers.delete_if_perm', {
+        'perm':          'nfs.delete_export',
+        'template_name': 'nfs/exportdelete.html',
+        'model':         models.Export,
+        'post_delete_redirect': settings.PROJECT_URL+'/'
+        }, 'nfs_export_delete' ),
+
+    ( r'(?P<object_id>\d+)/$',     'view_wrappers.update_if_perm', {
+        'perm':          'nfs.change_export',
+        'template_name': 'nfs/exportedit.html',
+        'model':         models.Export,
+        'post_save_redirect': settings.PROJECT_URL+'/'
+        }, 'nfs_export_edit' ),
+
     #( r'/?$',                   'exportlist' ),
     )

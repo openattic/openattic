@@ -3,13 +3,12 @@
 
 from django.db import models
 
-from lvm.models import LogicalVolume, SETUP_STATE_CHOICES
+from lvm.models import StatefulModel, LogicalVolume
 
-class Export(models.Model):
+class Export(StatefulModel):
     volume      = models.ForeignKey(LogicalVolume)
     address     = models.CharField(max_length=250)
     options     = models.CharField(max_length=250, default="rw,no_subtree_check,no_root_squash")
-    state       = models.CharField(max_length=20, editable=False, default="new", choices=SETUP_STATE_CHOICES)
 
     share_type  = "nfs"
 

@@ -1,8 +1,8 @@
 {% extends "index.html" %}
 {# kate: space-indent on; indent-width 2; replace-tabs on; #}
-{% block Title %} :: Edit Export :: {{ object.volume.name }}{% endblock %}
+{% block Title %} :: Delete Export :: {{ object.volume.name }}{% endblock %}
 {% block Body %}
-  <h1>Edit Export {{ object.volume.name }}</h1>
+  <h1>Delete Export {{ object.volume.name }}</h1>
   <form action="" method="POST">
     {% csrf_token %}
     <table>
