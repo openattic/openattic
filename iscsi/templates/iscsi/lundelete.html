@@ -1,8 +1,8 @@
 {% extends "iscsi/iscsibase.html" %}
 {# kate: space-indent on; indent-width 2; replace-tabs on; #}
-{% block Title %} :: Edit LUN :: {{ object.volume.name }}{% endblock %}
+{% block Title %} :: Delete LUN :: {{ object.volume.name }}{% endblock %}
 {% block Body %}
-  <h1>Edit {{ object.name }}</h1>
+  <h1>Delete {{ object.name }}</h1>
   <form action="" method="POST">
     {% csrf_token %}
     <table>

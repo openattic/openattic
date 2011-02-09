@@ -35,6 +35,7 @@ urlpatterns = patterns('',
         'queryset': models.Initiator.objects.all(),
         }, 'iscsi_initiator_list' ),
 
+
     ( r't/add/$',  'view_wrappers.create_if_perm', {
         'perm': 'iscsi.add_target',
         'template_name': 'iscsi/targetedit.html',
@@ -61,7 +62,20 @@ urlpatterns = patterns('',
         'queryset': models.Target.objects.all(),
         }, 'iscsi_target_list' ),
 
-    ( r'(?P<lid>\d+)/del/$', 'iscsi.views.lundelete' ),
-    ( r'(?P<lid>\d+)/?$',    'iscsi.views.lunedit' ),
+
+    ( r'(?P<object_id>\d+)/del/$',   'view_wrappers.delete_if_perm', {
+        'perm':          'iscsi.delete_lun',
+        'template_name': 'iscsi/lundelete.html',
+        'model':         models.Lun,
+        'post_delete_redirect': settings.PROJECT_URL+'/'
+        }, 'iscsi_lun_delete' ),
+
+    ( r'(?P<object_id>\d+)/$',     'view_wrappers.update_if_perm', {
+        'perm':          'iscsi.change_lun',
+        'template_name': 'iscsi/lunedit.html',
+        'model':         models.Lun,
+        'post_save_redirect': settings.PROJECT_URL+'/'
+        }, 'iscsi_lun_edit' ),
+
     #( r'/?$',                'exportlist' ),
     )

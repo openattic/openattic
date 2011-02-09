@@ -102,12 +102,12 @@
                 <li>
                   <ul class="sharetools">
                     <li>
-                      <a href="{% url iscsi.views.lundelete share.id %}">
+                      <a href="{% url iscsi_lun_delete share.id %}">
                         <img alt="delete" src="{{ MEDIA_URL }}/icons/delete.png" />
                       </a>
                     </li>
                   </ul>
-                  <a href="{% url iscsi.views.lunedit share.id %}">{{ share.target }} LUN {{ share.number }}</a>
+                  <a href="{% url iscsi_lun_edit share.id %}">{{ share.target }} LUN {{ share.number }}</a>
                   <span class="lvstate state_{{ share.state }}" />
                 </li>
               {% endif %}

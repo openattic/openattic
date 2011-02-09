@@ -3,7 +3,7 @@
 
 from django.db import models
 
-from lvm.models import LogicalVolume, SETUP_STATE_CHOICES
+from lvm.models import StatefulModel, LogicalVolume
 
 class Initiator(models.Model):
     name        = models.CharField(max_length=50,  unique=True)
@@ -22,14 +22,13 @@ class Target(models.Model):
     def __unicode__(self):
         return self.name
 
-class Lun(models.Model):
+class Lun(StatefulModel):
     target      = models.ForeignKey(Target)
     volume      = models.ForeignKey(LogicalVolume)
     number      = models.IntegerField( default=-1 )
     alias       = models.CharField(max_length=20, blank=True)
     ltype       = models.CharField(max_length=10, default="fileio",
                     choices=(("fileio", "fileio"), ("blockio", "blockio")))
-    state       = models.CharField(max_length=20, editable=False, default="new", choices=SETUP_STATE_CHOICES)
 
     share_type  = "iscsi"
 
@@ -52,4 +51,4 @@ class Lun(models.Model):
             except ValueError: # first LUN, so the list is empty
                 self.number = 0
 
-        models.Model.save(self, *args, **kwargs)
+        StatefulModel.save(self, *args, **kwargs)
