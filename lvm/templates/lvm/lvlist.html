@@ -56,14 +56,14 @@
                 onclick="show_addshare_type_selector(this, {{ lv.id }})" />
             </li>
             <li>
-              <a href="{% url lvm.views.lvedit   lv.id %}">
+              <a href="{% url lvm_logicalvolume_edit lv.id %}">
                 <img alt="edit"   src="{{ MEDIA_URL }}/icons/drive_edit.png"   />
               </a>
             </li>
           {% endif %}
           {% if lv.state == "new" or lv.state == "active" or lv.state == "done" %}
             <li>
-              <a href="{% url lvm.views.lvdelete lv.id %}">
+              <a href="{% url lvm_logicalvolume_delete lv.id %}">
                 <img alt="delete" src="{{ MEDIA_URL }}/icons/drive_delete.png" />
               </a>
             </li>

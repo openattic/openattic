@@ -49,6 +49,7 @@ def lvadd(request):
 
 @permission_required("lvm.change_logicalvolume")
 def lvedit(request, lvid):
+    raise RuntimeError("meeeeeeeeeep")
     lv = get_object_or_404( LogicalVolume, id=lvid )
 
     if request.method == "POST":
@@ -75,6 +76,7 @@ def lvaddshare(request):
 
 @permission_required("lvm.delete_logicalvolume")
 def lvdelete(request, lvid):
+    raise RuntimeError("meeeeeeeeeep")
     lv = get_object_or_404( LogicalVolume, id=lvid )
     if lv.state == "active":
         for share in lv.get_shares():

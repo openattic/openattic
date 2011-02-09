@@ -23,8 +23,7 @@ def register_options(parser):
 def inst(options, args):
     if LogicalVolume.objects.filter(state="new").count() > 0:
         for lv in LogicalVolume.objects.filter(state="new"):
-            lv.state = "pending"
-            lv.save()
+            lv.set_pending()
 
             cmd = ["/sbin/lvcreate"]
             if lv.snapshot:
@@ -45,8 +44,7 @@ def inst(options, args):
 
     if LogicalVolume.objects.filter(state="update").count() > 0:
         for lv in LogicalVolume.objects.filter(state="update"):
-            lv.state = "pending"
-            lv.save()
+            lv.set_pending()
 
             if lv.filesystem and lv.fs.mountable:
                 lv.fs.unmount()
@@ -81,8 +79,7 @@ def postinst(options, args):
 def rm(options, args):
     if LogicalVolume.objects.filter(state="delete").count() > 0:
         for lv in LogicalVolume.objects.filter(state="delete"):
-            lv.state = "dpend"
-            lv.save()
+            lv.set_dpend()
 
             if lv.filesystem and lv.fs.mountable:
                 lv.fs.unmount()
