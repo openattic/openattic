@@ -130,7 +130,7 @@ class LogicalVolume(StatefulModel):
                 share.delete()
             StatefulModel.delete(self)
         elif self.state in ("new", "done"):
-            for share in lv.get_shares():
+            for share in self.get_shares():
                 if share.state == "done":
                     share.delete()
                 else:
