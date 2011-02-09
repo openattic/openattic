@@ -9,9 +9,12 @@ from lvm import models
 urlpatterns = patterns('',
     ( r'addshare/$',                 'lvm.views.lvaddshare' ),
 
-    #( r'(?P<lvid>\d+)/del/$',        'lvm.views.lvdelete' ),
-    #( r'(?P<lvid>\d+)/?$',           'lvm.views.lvedit' ),
-    ( r'add/$',                      'lvm.views.lvadd'  ),
+    ( r'add/$',                      'view_wrappers.create_if_perm', {
+        'perm':               'lvm.add_logicalvolume',
+        'template_name':      'lvm/lvadd.html',
+        'model':              models.LogicalVolume,
+        'post_save_redirect': settings.PROJECT_URL+'/'
+        }, 'lvm_logicalvolume_add' ),
 
     ( r'(?P<object_id>\d+)/$',       'view_wrappers.update_if_perm', {
         'perm':               'lvm.change_logicalvolume',

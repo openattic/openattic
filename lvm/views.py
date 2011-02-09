@@ -31,64 +31,9 @@ def vglist(request):
         }, context_instance = RequestContext(request) )
 
 
-@permission_required("lvm.add_logicalvolume")
-def lvadd(request):
-    if request.method == "POST":
-        lvform = LvForm(request.POST)
-        if lvform.is_valid():
-            lvform.save()
-            return HttpResponseRedirect(reverse(lvlist))
-    else:
-        lvform = LvForm()
-
-    return render_to_response( "lvm/lvadd.html", {
-        "LvForm": lvform,
-        }, context_instance = RequestContext(request) )
-
-
-
-@permission_required("lvm.change_logicalvolume")
-def lvedit(request, lvid):
-    raise RuntimeError("meeeeeeeeeep")
-    lv = get_object_or_404( LogicalVolume, id=lvid )
-
-    if request.method == "POST":
-        lvform = LvEditForm(request.POST, instance=lv)
-        if lvform.is_valid():
-            lv = lvform.save(commit=False)
-            lv.state = "update"
-            lv.save()
-            return HttpResponseRedirect(reverse(lvlist))
-    else:
-        lvform = LvEditForm(instance=lv)
-
-    return render_to_response( "lvm/lvedit.html", {
-        "LV":     lv,
-        "LvForm": lvform,
-        }, context_instance = RequestContext(request) )
-
 @login_required
 def lvaddshare(request):
     lvid  = request.POST["lvid"]
     stype = request.POST["type"].lower()
 
     return HttpResponseRedirect(reverse( ("%s.views.add_share_for_lv" % stype), args=(lvid,) ))
-
-@permission_required("lvm.delete_logicalvolume")
-def lvdelete(request, lvid):
-    raise RuntimeError("meeeeeeeeeep")
-    lv = get_object_or_404( LogicalVolume, id=lvid )
-    if lv.state == "active":
-        for share in lv.get_shares():
-            share.state = "delete"
-            share.save()
-        lv.state = "delete"
-        lv.save()
-    elif lv.state in ("new", "done"):
-        for share in lv.get_shares():
-            if share.state == "done":
-                share.delete()
-        lv.delete()
-    return HttpResponseRedirect(reverse(lvlist))
-
-
