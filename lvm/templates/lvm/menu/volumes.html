@@ -3,6 +3,11 @@
   <strong class="toggler visible">LVM</strong>
   <ul id="menu_view1" class="togglee" style="">
     <li>
+      <a href="{% url lvm.views.lvlist %}">
+        <img alt="LV List" src="{{ MEDIA_URL }}/icons/drive.png"/> VG List
+      </a>
+    </li>
+    <li>
       <a href="{% url lvm_logicalvolume_add %}">
         <img alt="add lv" src="{{ MEDIA_URL }}/icons/add.png"/> Add LV
       </a>

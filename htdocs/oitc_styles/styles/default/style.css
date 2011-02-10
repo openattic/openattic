@@ -36,6 +36,8 @@ table-layout:auto;
 border-collapse:collapse;
 empty-cells:show;
 padding:0;
+float: right;
+width:500;
 }
 
 th {
