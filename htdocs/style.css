@@ -55,6 +55,9 @@ div.vg td {
 	width: 100px;
 }
 
+div.vg table {
+	float: right;
+}
 
 span.lvname {
 	font: 14pt bold;
