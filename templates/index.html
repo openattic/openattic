@@ -36,32 +36,32 @@
     <div id="topnav">
       <ul>
         <li>
-          <a href="{% url __main__ %}">
+          <a href="{% url __main__ %}" class="{% block topnav_class_home %}{% endblock %}">
             <img src="{{ MEDIA_URL }}/icons/door.png" /> Startseite
           </a>
         </li>
         <li>
-          <a href="{% url dummy_status %}">
+          <a href="{% url dummy_status %}" class="{% block topnav_class_status %}{% endblock %}">
             <img alt="status" src="{{ MEDIA_URL }}/icons/information.png"/> Status
           </a>
         </li>
         <li>
-          <a href="{% url lvm.views.lvlist %}">
+          <a href="{% url lvm.views.lvlist %}" class="{% block topnav_class_volumes %}{% endblock %}">
             <img alt="lvs" src="{{ MEDIA_URL }}/icons/drive.png"/> Laufwerke
           </a>
         </li>
         <li>
-          <a href="{% url iscsi_target_list %}">
+          <a href="{% url iscsi_target_list %}" class="{% block topnav_class_shares %}{% endblock %}">
             <img alt="target list" src="{{ MEDIA_URL }}/icons/drive_network.png"/> Freigaben
           </a>
         </li>
         <li>
-          <a href="{% url dummy_services %}">
+          <a href="{% url dummy_services %}" class="{% block topnav_class_services %}{% endblock %}">
             <img alt="target list" src="{{ MEDIA_URL }}/icons/application_lightning.png"/> Dienste
           </a>
         </li>
         <li>
-          <a href="{% url dummy_system %}">
+          <a href="{% url dummy_system %}" class="{% block topnav_class_system %}{% endblock %}">
             <img alt="target list" src="{{ MEDIA_URL }}/icons/server.png"/> System
           </a>
         </li>
