@@ -46,6 +46,9 @@
 """
 
 import os, sys
+import errno
+import time
+import stat
 from os.path  import join, dirname, abspath, exists
 from optparse import OptionParser
 
@@ -58,6 +61,61 @@ if not PROJECT_ROOT or not exists( PROJECT_ROOT ):
 # environment variables
 sys.path.append( PROJECT_ROOT )
 os.environ['DJANGO_SETTINGS_MODULE'] = 'settings'
+
+
+# LOCKFILE
+# http://www.velocityreviews.com/forums/t359733-how-to-lock-files-the-easiest-best-way.html
+
+# the maximum reasonable time for a process to be
+max_wait = 5*60
+lockfile = join(PROJECT_ROOT, ".installer.lock")
+
+while True:
+    try:
+        fd = os.open(lockfile, os.O_EXCL | os.O_RDWR | os.O_CREAT)
+        # we created the lockfile, so we're the owner
+        break
+
+    except OSError, e:
+        if e.errno != errno.EEXIST:
+            # should not occur
+            raise
+
+        try:
+            # the lock file exists, try to stat it to get its age
+            # and read it's contents to report the owner PID
+            f = open(lockfile, "r")
+            s = os.stat(lockfile)
+        except OSError, e:
+            if e.errno != errno.ENOENT:
+                sys.exit("%s exists but stat() failed: %s" %
+                         (lockfile, e.strerror))
+            # we didn't create the lockfile, so it did exist, but it's
+            # gone now. Just try again
+            continue
+
+        # we didn't create the lockfile and it's still there, check
+        # its age
+        now = int(time.time())
+        if now - s[stat.ST_MTIME] > max_wait:
+            pid = f.readline()
+            sys.exit("%s has been locked for more than " \
+                     "%d seconds (PID %s)" % (lockfile, max_wait,
+                     pid))
+
+        # it's not been locked too long, wait a while and retry
+        f.close()
+        time.sleep(1)
+
+# if we get here. we have the lockfile. Convert the os.open file
+# descriptor into a Python file object and record our PID in it
+
+f = os.fdopen(fd, "w")
+f.write("%d\n" % os.getpid())
+f.close()
+
+
+# RUN INSTALLER
 
 from django.conf import settings
 
@@ -125,4 +183,6 @@ for stage in (
             installer(options, args)
     print
 
+
+os.unlink(lockfile)
 
