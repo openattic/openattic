@@ -155,8 +155,6 @@ span.state_done {
 	padding: 10px;
 	border: 1px solid maroon;
 	background-color: white;
-	top: 150px;
-	left: 550px;
 	position: absolute;
 	z-index: 10;
 	visibility: hidden;
@@ -171,6 +169,7 @@ span.state_done {
 	border: 1px solid maroon;
 	height: 20px;
 	padding: 0;
+	margin: 0;
 }
 
 #addshare_type_selector button[type=reset] {
