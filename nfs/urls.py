@@ -7,7 +7,12 @@ from django.conf import settings
 from nfs import models
 
 urlpatterns = patterns('',
-    ( r'addshare/(?P<lvid>\d+)/$', 'nfs.views.add_share_for_lv' ),
+    ( r'addshare/(?P<lvid>\d+)/$', 'lvm.views.generic.add_share_for_lv', {
+        'perm':          'nfs.create_export',
+        'template_name': 'nfs/addshare.html',
+        'model':         models.Export,
+        'post_create_redirect': settings.PROJECT_URL+'/'
+        }, 'nfs_share_create' ),
 
     ( r'(?P<object_id>\d+)/del/$',   'view_wrappers.delete_if_perm', {
         'perm':          'nfs.delete_export',

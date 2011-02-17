@@ -7,8 +7,6 @@ from django.conf import settings
 from iscsi import models
 
 urlpatterns = patterns('',
-    ( r'addshare/(?P<lvid>\d+)/$', 'iscsi.views.add_share_for_lv' ),
-
     ( r'i/add/$',  'view_wrappers.create_if_perm', {
         'perm': 'iscsi.add_initiator',
         'template_name': 'iscsi/initiatoredit.html',
@@ -62,6 +60,13 @@ urlpatterns = patterns('',
         'queryset': models.Target.objects.all(),
         }, 'iscsi_target_list' ),
 
+
+    ( r'addshare/(?P<lvid>\d+)/$', 'lvm.views.generic.add_share_for_lv', {
+        'perm':          'iscsi.create_export',
+        'template_name': 'iscsi/addshare.html',
+        'model':         models.Lun,
+        'post_create_redirect': settings.PROJECT_URL+'/'
+        }, 'iscsi_share_create' ),
 
     ( r'(?P<object_id>\d+)/del/$',   'view_wrappers.delete_if_perm', {
         'perm':          'iscsi.delete_lun',

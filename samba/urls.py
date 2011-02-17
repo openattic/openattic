@@ -7,7 +7,12 @@ from django.conf import settings
 from samba import models
 
 urlpatterns = patterns('',
-    ( r'addshare/(?P<lvid>\d+)/$', 'samba.views.add_share_for_lv' ),
+    ( r'addshare/(?P<lvid>\d+)/$', 'lvm.views.generic.add_share_for_lv', {
+        'perm':          'samba.create_share',
+        'template_name': 'samba/addshare.html',
+        'model':         models.Share,
+        'post_create_redirect': settings.PROJECT_URL+'/'
+        }, 'samba_share_create' ),
 
     ( r'(?P<object_id>\d+)/del/$',   'view_wrappers.delete_if_perm', {
         'perm':          'samba.delete_lun',
