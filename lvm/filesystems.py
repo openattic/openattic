@@ -74,6 +74,14 @@ class Ext3(Ext2):
     def format(self):
         invoke(["/sbin/mke2fs", "-L", self.lv.name, "-j", self.lv.path])
 
+class Ext4(Ext2):
+    name = "ext4"
+    desc = "Ext4 (Linux Journalling)"
+    mountable = True
+
+    def format(self):
+        invoke(["/sbin/mkfs.ext4", "-L", self.lv.name, self.lv.path])
+
 
 class Ntfs(FileSystem):
     name = "ntfs"
@@ -116,7 +124,7 @@ class Qcow2(FileSystem):
         invoke(["/usr/bin/qemu-img", "resize", self.lv.path, ("%dM" % self.lv.megs)])
 
 
-FILESYSTEMS = (Ext2, Ext3, Ntfs, Qcow2)
+FILESYSTEMS = (Ext2, Ext3, Ext4, Ntfs, Qcow2)
 
 def get_by_name(name):
     for fs in FILESYSTEMS:
