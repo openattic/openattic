@@ -36,4 +36,4 @@ def lvaddshare(request):
     lvid  = request.POST["lvid"]
     stype = request.POST["type"].lower()
 
-    return HttpResponseRedirect(reverse( ("%s.views.add_share_for_lv" % stype), args=(lvid,) ))
+    return HttpResponseRedirect(reverse( ("%s_share_create" % stype), args=(lvid,) ))
