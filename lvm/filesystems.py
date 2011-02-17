@@ -45,6 +45,14 @@ class FileSystem(object):
         else:
             invoke(["/bin/chown", "-R", self.lv.owner.username, self.mountpoint])
 
+    @property
+    def stat(self):
+        s = os.statvfs(self.mountpoint)
+        return {
+            'size': (s.f_blocks * s.f_frsize) / 1024 / 1000.,
+            'free': (s.f_bavail * s.f_frsize) / 1024 / 1000.,
+            'used': ((s.f_blocks - s.f_bfree) * s.f_frsize) / 1024 / 1000.,
+            }
 
 class Ext2(FileSystem):
     name = "ext2"
