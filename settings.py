@@ -29,6 +29,13 @@ DATABASES = {
     }
 }
 
+
+ISCSI_IETD_CONF     = "/etc/iet/ietd.conf"
+ISCSI_TARGETS_ALLOW = "/etc/iet/targets.allow"
+ISCSI_TARGETS_DENY  = "/etc/iet/targets.deny"
+ISCSI_INITR_ALLOW   = "/etc/iet/initiators.allow"
+ISCSI_INITR_DENY    = "/etc/iet/initiators.deny"
+
 # Local time zone for this installation. Choices can be found here:
 # http://en.wikipedia.org/wiki/List_of_tz_zones_by_name
 # although not all choices may be available on all operating systems.
@@ -131,6 +138,9 @@ INSTALLED_APPS = (
     'django.contrib.messages',
     'django.contrib.admin',
     'django.contrib.admindocs',
+    'django.contrib.markup',
+    'piston',
+    'api',
     'lvm',
     'iscsi',
     'nfs',

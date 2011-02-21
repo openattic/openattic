@@ -15,6 +15,8 @@ urlpatterns = patterns('',
     (r'^accounts/login/$',  'django.contrib.auth.views.login' ),
     (r'^accounts/logout/$', 'django.contrib.auth.views.logout', {'next_page': settings.PROJECT_URL+"/"}),
 
+    (r'^api/',   include("api.urls")),
+
     (r'^lvm/',   include("lvm.urls")),
     (r'^nfs/',   include("nfs.urls")),
     (r'^iscsi/', include("iscsi.urls")),
