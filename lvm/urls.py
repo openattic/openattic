@@ -30,6 +30,7 @@ urlpatterns = patterns('',
         'post_delete_redirect': settings.PROJECT_URL+'/'
         }, 'lvm_logicalvolume_delete' ),
 
+    ( r'mem/(?P<lv>\d+).png',        'lvm.views.lvmemchart' ),
 
     ( r'vgs/?$',                     'lvm.views.vglist' ),
     ( r'/?$',                        'lvm.views.lvlist' ),

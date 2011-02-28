@@ -22,6 +22,8 @@ urlpatterns = patterns('',
     (r'^iscsi/', include("iscsi.urls")),
     (r'^samba/', include("samba.urls")),
 
+    (r'^stats/', include("hoststats.urls")),
+
     (r'^dummy/status/$', 'django.views.generic.simple.direct_to_template', {'template': 'dummy_status.html'}, 'dummy_status'),
     (r'^dummy/system/$', 'django.views.generic.simple.direct_to_template', {'template': 'dummy_system.html'}, 'dummy_system'),
     (r'^dummy/services/$', 'django.views.generic.simple.direct_to_template', {'template': 'dummy_services.html'}, 'dummy_services'),

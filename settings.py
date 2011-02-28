@@ -35,6 +35,7 @@ ISCSI_TARGETS_ALLOW = "/etc/iet/targets.allow"
 ISCSI_TARGETS_DENY  = "/etc/iet/targets.deny"
 ISCSI_INITR_ALLOW   = "/etc/iet/initiators.allow"
 ISCSI_INITR_DENY    = "/etc/iet/initiators.deny"
+SAMBA_INITSCRIPT    = "/etc/init.d/samba"
 
 # Local time zone for this installation. Choices can be found here:
 # http://en.wikipedia.org/wiki/List_of_tz_zones_by_name
@@ -142,6 +143,7 @@ INSTALLED_APPS = (
     'piston',
     'api',
     'lvm',
+    'hoststats',
     'iscsi',
     'nfs',
     'samba',
