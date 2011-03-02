@@ -31,10 +31,14 @@ resource r{{ Device.id }} {
 	on {{ Hostname }} {
 		device     {{ Device.path }};        # Name of virtual block dev
 		disk       {{ Device.basedev }};     # block dev to be mirrored
-		address    {{ Device.selfaddress }}; # peer address
+		address    {{ Device.selfaddress }};
 		meta-disk  internal;
 	}
 	
-	# Our peer is {{ Device.peername }} at {{ Device.peeraddress }}
-	# I don't know their parameters, so please check the config on the other host.
+	on {{ Device.peername }} {
+		device     ??????????
+		disk       ??????????
+		address    {{ Device.peeraddress }};
+		meta-disk  ??????????
+	}
 }
