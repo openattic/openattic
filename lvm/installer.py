@@ -36,7 +36,7 @@ def inst(options, args):
 
             invoke(["/sbin/lvchange", '-ay', lv.path])
 
-            if lv.filesystem:
+            if lv.filesystem and lv.mods_active:
                 lv.fs.format()
                 if lv.fs.mountable:
                     lv.fs.mount()

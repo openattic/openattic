@@ -178,6 +178,14 @@ class LogicalVolume(StatefulModel):
         return mc[-1].path
 
     @property
+    def mods_active(self):
+        """ True if no mods are in use or all mods are active. """
+        for mod in self.modchain:
+            if mod.state != "active":
+                return False
+        return True
+
+    @property
     def lvm_info(self):
         """ LV information from LVM. """
         if self.state not in ("active", "update", "pending"):
@@ -232,13 +240,13 @@ class LVChainedModule(StatefulModel):
     def basedev(self):
         """ Return the device on which this mod is operating. """
         mc = self.volume.modchain
-        if mc == [self]:
+        if mc[0] == self:
             return self.volume.device
         else:
             last = self.volume
             for curr in mc:
                 if curr == self:
-                    return last
+                    return last.path
                 last = curr
 
     class Meta:
