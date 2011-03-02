@@ -29,13 +29,23 @@ DATABASES = {
     }
 }
 
-
-ISCSI_IETD_CONF     = "/etc/iet/ietd.conf"
-ISCSI_TARGETS_ALLOW = "/etc/iet/targets.allow"
-ISCSI_TARGETS_DENY  = "/etc/iet/targets.deny"
-ISCSI_INITR_ALLOW   = "/etc/iet/initiators.allow"
-ISCSI_INITR_DENY    = "/etc/iet/initiators.deny"
-SAMBA_INITSCRIPT    = "/etc/init.d/samba"
+# Auto-Configure distro defaults
+import lsb_release
+distro = lsb_release.get_distro_information()
+if distro['ID'] == 'Debian' and distro['RELEASE'] >= "6.0":
+    ISCSI_IETD_CONF     = "/etc/iet/ietd.conf"
+    ISCSI_TARGETS_ALLOW = "/etc/iet/targets.allow"
+    ISCSI_TARGETS_DENY  = "/etc/iet/targets.deny"
+    ISCSI_INITR_ALLOW   = "/etc/iet/initiators.allow"
+    ISCSI_INITR_DENY    = "/etc/iet/initiators.deny"
+    SAMBA_INITSCRIPT    = "/etc/init.d/samba"
+elif distro['ID'] == 'Ubuntu' and distro['RELEASE'] >= "10.04":
+    ISCSI_IETD_CONF     = "/etc/ietd.conf"
+    ISCSI_TARGETS_ALLOW = "/etc/targets.allow"
+    ISCSI_TARGETS_DENY  = "/etc/targets.deny"
+    ISCSI_INITR_ALLOW   = "/etc/initiators.allow"
+    ISCSI_INITR_DENY    = "/etc/initiators.deny"
+    SAMBA_INITSCRIPT    = "/etc/init.d/smbd"
 
 # Local time zone for this installation. Choices can be found here:
 # http://en.wikipedia.org/wiki/List_of_tz_zones_by_name
@@ -148,5 +158,3 @@ INSTALLED_APPS = (
     'nfs',
     'samba',
 )
-
-
