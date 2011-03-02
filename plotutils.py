@@ -1,0 +1,33 @@
+# -*- coding: utf-8 -*-
+# kate: space-indent on; indent-width 4; replace-tabs on;
+
+from django.http       import HttpResponse
+
+def piechart(fracs, heading=None, titles=None, legend=None, explode=None):
+    import os
+    os.environ["MPLCONFIGDIR"] = "/tmp/.matplotlib"
+    import matplotlib
+    import matplotlib.cbook
+    matplotlib.use("Agg")
+    import matplotlib.pyplot as plt
+    from matplotlib.backends.backend_agg import FigureCanvasAgg as FigureCanvas
+
+    fig = plt.Figure()
+    fig.patch.set_alpha(0)
+    canvas = FigureCanvas(fig)
+    ax = fig.add_subplot(111)
+    ax.patch.set_alpha(0)
+
+    if heading:
+        ax.set_title(heading)
+
+    patches = ax.pie(fracs, explode=explode, autopct='%1.1f%%', shadow=True)
+
+    if titles:
+        ax.legend(patches[0], titles, loc=(0,-.05))
+
+    canvas.draw()
+
+    resp = HttpResponse(mimetype="image/png")
+    canvas.print_png(resp, transparent=True)
+    return resp

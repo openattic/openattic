@@ -1,0 +1,21 @@
+{% extends "index_status.html" %}
+{# kate: space-indent on; indent-width 2; replace-tabs on; #}
+{% load lvm_extras %}
+{% block Title %} :: Dashboard{% endblock %}
+{% block Body %}
+  <table>
+    <tr>
+      <td>
+        <ul>
+          <li><b>{{ hostinfo.hostname }}</b></li>
+          <li>Up {{ uptime }}</li>
+          <li>{{ hostinfo.os_name }} {{ hostinfo.platform }}</li>
+          <li>{{ hostinfo.os_release }}</li>
+          <li>Load: {{ load.min1 }} {{ load.min5 }} {{ load.min15 }}</li>
+        </ul>
+      </td>
+      <td><img src="{% url hoststats.views.cpustats %}" style="width: 100%" /></td>
+      <td><img src="{% url hoststats.views.memstats %}" style="width: 100%" /></td>
+    </tr>
+  </table>
+{% endblock %}
