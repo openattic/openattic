@@ -18,9 +18,23 @@ SETUP_STATE_CHOICES = (
     )
 
 class StatefulModel(models.Model):
+    """ Base class for stateful models.
+
+        This model has a state field, which is checked and updated on save()
+        calls. Newly created models set the state to "new", active models
+        change state to "update" when save()d.
+
+        In order to change the state to other states, call the according
+        set_* method. Those methods are intended to be called by installer
+        modules only.
+    """
+
     state       = models.CharField(max_length=20, editable=False, default="new", choices=SETUP_STATE_CHOICES)
 
     def save(self, *args, **kwargs):
+        """ Set state to new/update and call the original save() method.
+            Also prevent the model from being save()d while in a "pending" state.
+        """
         if self.id is None:
             self.state = "new"
         elif self.state == "active":
@@ -30,30 +44,35 @@ class StatefulModel(models.Model):
         return models.Model.save(self, *args, **kwargs)
 
     def set_active(self):
+        """ If state is pending, transition to active. """
         if self.state != "pending":
             raise RuntimeError("Cannot transition from '%s' to 'active'" % self.state)
         self.state = "active"
         return models.Model.save(self)
 
     def set_pending(self):
+        """ If state is not new or update, transition to pending. """
         if self.state not in ("new", "update"):
             raise RuntimeError("Cannot transition from '%s' to 'pending'" % self.state)
         self.state = "pending"
         return models.Model.save(self)
 
     def set_dpend(self):
+        """ If state is delete, transition to dpend. """
         if self.state != "delete":
             raise RuntimeError("Cannot transition from '%s' to 'dpend'" % self.state)
         self.state = "dpend"
         return models.Model.save(self)
 
     def set_done(self):
+        """ If state is dpend, transition to done. """
         if self.state != "dpend":
             raise RuntimeError("Cannot transition from '%s' to 'done'" % self.state)
         self.state = "done"
         return models.Model.save(self)
 
     def delete(self):
+        """ If active, transition to delete; if new or done, actually call delete(). """
         if self.state == "active":
             self.state = "delete"
             models.Model.save(self)
@@ -68,6 +87,8 @@ class StatefulModel(models.Model):
         abstract = True
 
 class VolumeGroup(models.Model):
+    """ Represents a LVM Volume Group. """
+
     name        = models.CharField(max_length=130, unique=True)
 
     def __unicode__(self):
@@ -75,9 +96,15 @@ class VolumeGroup(models.Model):
 
     @property
     def lvm_info(self):
+        """ VG information from LVM. """
         return lvm_vgs()[self.name]
 
 class LogicalVolume(StatefulModel):
+    """ Represents a LVM Logical Volume and offers management functions.
+
+        This is the main class of openATTIC's design.
+    """
+
     name        = models.CharField(max_length=130, unique=True)
     megs        = models.IntegerField()
     vg          = models.ForeignKey(VolumeGroup)
@@ -90,12 +117,17 @@ class LogicalVolume(StatefulModel):
         StatefulModel.__init__( self, *args, **kwargs )
         self._fs = None
 
+    def __unicode__(self):
+        return self.name
+
     @property
-    def path(self):
+    def device(self):
+        """ The actual device under which this LV operates. """
         return "/dev/%s/%s" % ( self.vg.name, self.name )
 
     @property
     def fs(self):
+        """ An instance of the filesystem handler class for this LV (if any). """
         if not self.filesystem:
             return None
         else:
@@ -103,31 +135,71 @@ class LogicalVolume(StatefulModel):
                 self._fs = get_fs_by_name(self.filesystem)(self)
             return self._fs
 
-    def __unicode__(self):
-        return self.name
-
     def get_shares( self, app_label=None ):
+        """ Iterate all the shares configured for this LV. """
         for relobj in ( self._meta.get_all_related_objects() + self._meta.get_all_related_many_to_many_objects() ):
             if app_label  and relobj.model._meta.app_label != app_label:
                 continue;
+
+            if not hasattr( relobj.model, "share_type" ):
+                # not a share
+                continue
 
             for relmdl in relobj.model.objects.filter( **{ relobj.field.name: self } ):
                 yield relmdl
 
     @property
+    def modchain( self, app_label=None ):
+        """ A list of block device modules operating on this LV, in the order
+            in which they are chained.
+        """
+        modchain = []
+        for relobj in ( self._meta.get_all_related_objects() + self._meta.get_all_related_many_to_many_objects() ):
+            if app_label  and relobj.model._meta.app_label != app_label:
+                continue;
+
+            if not issubclass( relobj.model, LVChainedModule ):
+                # not a mod
+                continue
+
+            modchain.extend( relobj.model.objects.filter( **{ relobj.field.name: self } ) )
+
+        modchain.sort(lambda a,b: cmp(a.ordering, b.ordering))
+        return modchain
+
+    @property
+    def path(self):
+        """ Returns the block device on which the file system resides,
+            taking block device modules into account.
+        """
+        mc = self.modchain
+        if not mc:
+            return self.device
+        return mc[-1].path
+
+    @property
     def lvm_info(self):
+        """ LV information from LVM. """
         if self.state not in ("active", "update", "pending"):
            return None
         return lvm_lvs()[self.name]
 
     @property
     def lvm_megs(self):
+        """ The actual size of this LV in Megs, retrieved from LVM. """
         return float(self.lvm_info["LVM2_LV_SIZE"][:-1])
 
     def delete(self):
+        """ If active, transition to delete; if new or done, actually call delete().
+
+            Overrides StatefulModel.delete() in order to cascade to all shares and
+            block device modules.
+        """
         if self.state == "active":
             for share in self.get_shares():
                 share.delete()
+            for mod in self.modchain:
+                mod.delete()
             StatefulModel.delete(self)
         elif self.state in ("new", "done"):
             for share in self.get_shares():
@@ -135,8 +207,40 @@ class LogicalVolume(StatefulModel):
                     share.delete()
                 else:
                     return
+            for mod in self.modchain():
+                if mod.state == "done":
+                    mod.delete()
+                else:
+                    return
             StatefulModel.delete(self)
         elif self.state == "delete":
             pass
         else:
             raise RuntimeError("Cannot transition from '%s' to 'delete'" % self.state)
+
+
+class LVChainedModule(StatefulModel):
+    """ Represents block device oriented modules that create a block device
+        themselves, like DRBD or openDedup. This class only manages the
+        ordering and the link to the LV.
+    """
+
+    volume      = models.ForeignKey(LogicalVolume)
+    ordering    = models.IntegerField(default=0)
+
+    @property
+    def basedev(self):
+        """ Return the device on which this mod is operating. """
+        mc = self.volume.modchain
+        if mc == [self]:
+            return self.volume.device
+        else:
+            last = self.volume
+            for curr in mc:
+                if curr == self:
+                    return last
+                last = curr
+
+    class Meta:
+        unique_together=("volume", "ordering")
+        abstract = True
