@@ -36,9 +36,9 @@ resource r{{ Device.id }} {
 	}
 	
 	on {{ Device.peername }} {
-		device     ??????????
-		disk       ??????????
+		device     /dev/drbd{{ Device.peerdevice.id }};
+		disk       /dev/{{ Device.peerdevice.volume.vg.name }}/{{ Device.peerdevice.volume.name }};
 		address    {{ Device.peeraddress }};
-		meta-disk  ??????????
+		meta-disk  internal;
 	}
 }
