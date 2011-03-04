@@ -41,7 +41,7 @@ class PeerHost(models.Model):
         self.connection.request("GET", urlinfo.path, body=body, headers=headers)
         response = self.connection.getresponse()
         res = response.read()
-        print "RESPONSE", res
+        #print "RESPONSE", res
         return res
 
     def getjson(self, url, body=None, headers={}):
