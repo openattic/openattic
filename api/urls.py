@@ -6,10 +6,10 @@ from django.conf import settings
 
 from piston.resource import Resource
 from piston.handler import BaseHandler, AnonymousBaseHandler
-from piston.authentication import OAuthAuthentication
+from piston.authentication import HttpBasicAuthentication
 from piston.doc import documentation_view
 
-auth = OAuthAuthentication(realm="openATTIC API")
+auth = HttpBasicAuthentication(realm="openATTIC API")
 
 urlpatterns = []
 
@@ -37,8 +37,5 @@ for app in settings.INSTALLED_APPS:
                 urlpatterns.append(url(pattern, resource, name=urlname))
 
 urlpatterns.extend([
-    url(r'^oauth/request_token/$', 'piston.authentication.oauth_request_token'),
-    url(r'^oauth/access_token/$',  'piston.authentication.oauth_access_token'),
-    url(r'^oauth/authorize/$',     'piston.authentication.oauth_user_auth'),
     url(r'$', documentation_view)
     ])
