@@ -3,11 +3,5 @@
 {% load lvm_extras %}
 {% block Title %} :: OAuth{% endblock %}
 {% block Body %}
-  <h1>Authorize Token</h1>
-
-  <form action="{% url piston.authentication.oauth_user_auth %}" method="POST">
-    {% csrf_token %}
-    {{ form.as_table }}
-    <input type="submit" />
-  </form>
+  Dat here be challenge for oauth, lads!
 {% endblock %}
