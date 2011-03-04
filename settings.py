@@ -154,6 +154,7 @@ INSTALLED_APPS = (
     'api',
     'lvm',
     'hoststats',
+    'peering',
     'iscsi',
     'nfs',
     'samba',
