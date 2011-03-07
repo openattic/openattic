@@ -19,6 +19,9 @@ class PeerHost(models.Model):
         models.Model.__init__( self, *args, **kwargs )
         self._connection = None
 
+    def __unicode__(self):
+        return self.name
+
     @property
     def connection(self):
         if self._connection is None:
