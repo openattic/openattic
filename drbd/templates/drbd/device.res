@@ -1,4 +1,4 @@
-resource r{{ Device.id }} {
+resource {{ Device.res }} {
 	protocol C;
 	
 	startup {
