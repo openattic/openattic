@@ -6,8 +6,8 @@ from drbd.models import DrbdDevice
 
 class DrbdDeviceHandler(BaseHandler):
     allowed_methods = ('GET',)
-    model = DrbdDevice
-    exclude = ()
+    model   = DrbdDevice
+    fields  = ("id", "peeraddress", "selfaddress", "volume", "path", "basedev", "peerhost")
 
     @staticmethod
     def resource_uri():
