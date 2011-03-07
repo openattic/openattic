@@ -5,4 +5,7 @@ from django.contrib import admin
 
 from models import DrbdDevice
 
-admin.site.register( DrbdDevice )
+class DrbdDeviceAdmin(admin.ModelAdmin):
+    list_display   = [ 'volume', 'selfaddress', 'peeraddress' ]
+
+admin.site.register( DrbdDevice, DrbdDeviceAdmin )

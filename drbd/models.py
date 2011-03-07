@@ -27,7 +27,7 @@ class DrbdDevice(LVChainedModule):
 
     @property
     def dstate(self):
-        return drbd_dstate(self.res)
+        return drbd_dstate(self.res).split('/')
 
     @property
     def role(self):
