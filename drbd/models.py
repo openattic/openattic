@@ -23,14 +23,20 @@ class DrbdDevice(LVChainedModule):
 
     @property
     def cstate(self):
+        if self.state not in ("pending", "active"):
+            return None
         return drbd_cstate(self.res)
 
     @property
     def dstate(self):
+        if self.state not in ("pending", "active"):
+            return None
         return drbd_dstate(self.res).split('/')
 
     @property
     def role(self):
+        if self.state not in ("pending", "active"):
+            return None
         return drbd_role(self.res)
 
     @property

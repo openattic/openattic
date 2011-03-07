@@ -8,7 +8,7 @@ class DrbdDeviceHandler(BaseHandler):
     allowed_methods = ('GET',)
     model   = DrbdDevice
     fields  = ("id", "peeraddress", "selfaddress", "volume", "path", "basedev", "peerhost",
-               "res", "cstate", "dstate", "role" )
+               "res", "cstate", "dstate", "role", "state" )
 
     @staticmethod
     def resource_uri():
