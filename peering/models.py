@@ -41,7 +41,12 @@ class PeerHost(models.Model):
         headers.update({ 'Authorization': "Basic " + base64.encodestring(
             "%s:%s" % (self.username, self.password)
             ) })
-        self.connection.request("GET", urlinfo.path, body=body, headers=headers)
+        try:
+            self.connection.request("GET", urlinfo.path, body=body, headers=headers)
+        except httplib.CannotSendRequest:
+            # retry once with a new connection, in case the old one died in the meantime
+            self._connection = None
+            self.connection.request("GET", urlinfo.path, body=body, headers=headers)
         response = self.connection.getresponse()
         res = response.read()
         #print "RESPONSE", res
