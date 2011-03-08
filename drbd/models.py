@@ -134,13 +134,13 @@ class DrbdDevice(LVChainedModule):
     def dstate(self):
         if self.state not in ("pending", "active"):
             return None
-        return drbd_dstate(self.res).split('/')
+        return dict(zip(("self", "peer"), drbd_dstate(self.res).split('/')))
 
     @property
     def role(self):
         if self.state not in ("pending", "active"):
             return None
-        return drbd_role(self.res)
+        return dict(zip(("self", "peer"), drbd_role(self.res).split('/')))
 
     @property
     def peerdevice(self):
