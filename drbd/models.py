@@ -83,9 +83,10 @@ class DrbdDevice(LVChainedModule):
                                       "unlimited. The unit is seconds."))
     degr_wfc_timeout     = models.IntegerField(blank=True, null=True, default=120,
                            help_text=("Wait for connection timeout, if this node was a degraded cluster. In case a "
-                                      "degraded cluster (= cluster with only one node left) is rebooted, this timeout "
-                                      "value is used instead of wfc-timeout, because the peer is less likely to "
-                                      "show up in time, if it had been dead before. Value 0 means unlimited."))
+                                      "degraded cluster (= cluster with only one node left) is rebooted, this "
+                                      "timeout value is used instead of wfc-timeout, because the peer is less "
+                                      "likely to show up in time, if it had been dead before. Value 0 means "
+                                      "unlimited."))
     outdated_wfc_timeout = models.IntegerField(blank=True, null=True, default=15,
                            help_text=("Wait for connection timeout, if the peer was outdated. In case a degraded "
                                       "cluster (= cluster with only one node left) with an outdated peer disk is "

@@ -1,3 +1,9 @@
+# This file is generated automatically by openATTIC and will be overwritten
+# automatically when the configuration changes.
+#
+# To alter sections of this file, edit `<openATTIC>/drbd/templates/drbd/device.res`,
+# and run `<openATTIC>/installer.py -c -o drbd` to update DRBD.
+
 resource {{ Device.res }} {
 	protocol {{ Device.protocol }};
 	
@@ -18,16 +24,20 @@ resource {{ Device.res }} {
 	}
 	
 	net {
+		{% if Device.cram_hmac_alg and Device.secret %}
 		cram-hmac-alg {{ Device.cram_hmac_alg }};
 		shared-secret {{ Device.secret  }};
+		{% endif %}
 		after-sb-0pri {{ Device.sb_0pri }};
 		after-sb-1pri {{ Device.sb_1pri }};
 		after-sb-2pri {{ Device.sb_2pri }};
 	}
 	
+	{% if Device.syncer_rate %}
 	syncer {
-		{% if Device.syncer_rate %}rate {{ Device.syncer_rate }};{% endif %}
+		rate {{ Device.syncer_rate }};
 	}
+	{% endif %}
 	
 	on {{ Hostname }} {
 		device     {{ Device.path }};        # Name of virtual block dev

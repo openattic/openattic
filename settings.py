@@ -1,6 +1,5 @@
 # -*- coding: utf-8 -*-
 # kate: space-indent on; indent-width 4; replace-tabs on;
-# Django settings for pyfiler project.
 
 PROJECT_ROOT = None
 PROJECT_URL  = '/filer'
