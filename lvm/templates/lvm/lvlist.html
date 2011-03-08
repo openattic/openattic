@@ -79,7 +79,7 @@
                 {% if lv.fs %}
                   Formatted as {{ lv.fs.name }}
                   {% if lv.fs.mounted %}
-                    ({{ lv.fs.stat.free }} MB free)
+                    (<a href="{% url lvm.views.lvmemchart lv.id %}">{{ lv.fs.stat.free }} MB free</a>)
                   {% else %}
                     (Not mounted)
                   {% endif %}
