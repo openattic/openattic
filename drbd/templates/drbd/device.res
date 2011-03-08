@@ -1,15 +1,15 @@
 resource {{ Device.res }} {
-	protocol C;
+	protocol {{ Device.protocol }};
 	
 	startup {
-		wfc-timeout           10;
-		degr-wfc-timeout     120;
-		outdated-wfc-timeout  15;
+		{% if Device.wfc_timeout          %}wfc-timeout          {{ Device.wfc_timeout          }};{% endif %}
+		{% if Device.degr_wfc_timeout     %}degr-wfc-timeout     {{ Device.degr_wfc_timeout     }};{% endif %}
+		{% if Device.outdated_wfc_timeout %}outdated-wfc-timeout {{ Device.outdated_wfc_timeout }};{% endif %}
 	}
 	
 	disk {
-		on-io-error detach;
-		fencing resource-only;
+		on-io-error {{ Device.on_io_error }};
+		fencing     {{ Device.fencing     }};
 	}
 	
 	handlers {
@@ -18,14 +18,15 @@ resource {{ Device.res }} {
 	}
 	
 	net {
-		cram-hmac-alg sha1;
-		shared-secret "geheim";
-		after-sb-0pri discard-younger-primary;
-		after-sb-1pri discard-secondary;
+		cram-hmac-alg {{ Device.cram_hmac_alg }};
+		shared-secret {{ Device.secret  }};
+		after-sb-0pri {{ Device.sb_0pri }};
+		after-sb-1pri {{ Device.sb_1pri }};
+		after-sb-2pri {{ Device.sb_2pri }};
 	}
 	
 	syncer {
-		rate 100M;
+		{% if Device.syncer_rate %}rate {{ Device.syncer_rate }};{% endif %}
 	}
 	
 	on {{ Hostname }} {
