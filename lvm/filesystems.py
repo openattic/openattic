@@ -26,6 +26,10 @@ class FileSystem(object):
             os.makedirs(self.mountpoint)
         invoke(["/bin/mount", "-t", self.name, self.lv.path, self.mountpoint])
 
+    @property
+    def mounted(self):
+        return os.path.ismount(self.mountpoint)
+
     def unmount(self):
         invoke(["/bin/umount", self.lv.path])
         if os.path.exists(self.mountpoint):

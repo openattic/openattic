@@ -75,7 +75,18 @@
             <li>{{ lv.megs }}MB</li>
             <li>In volume group <img alt="lv" src="{{ MEDIA_URL }}/icons/database.png" />{{ lv.vg }}</li>
             {% if lv.state == "active" %}
-              <li>{% if lv.fs %}Formatted as {{ lv.fs.name }} ({{ lv.fs.stat.free }} MB free){% else %}Unformatted{% endif %}</li>
+              <li>
+                {% if lv.fs %}
+                  Formatted as {{ lv.fs.name }}
+                  {% if lv.fs.mounted %}
+                    ({{ lv.fs.stat.free }} MB free)
+                  {% else %}
+                    (Not mounted)
+                  {% endif %}
+                {% else %}
+                  Unformatted
+                {% endif %}
+              </li>
             {% endif %}
             <li>
               {% if lv.snapshot %}
