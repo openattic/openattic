@@ -31,16 +31,17 @@ class StatefulModel(models.Model):
 
     state       = models.CharField(max_length=20, editable=False, default="new", choices=SETUP_STATE_CHOICES)
 
-    def save(self, *args, **kwargs):
+    def save(self, ignore_state=False, *args, **kwargs):
         """ Set state to new/update and call the original save() method.
             Also prevent the model from being save()d while in a "pending" state.
         """
-        if self.id is None:
-            self.state = "new"
-        elif self.state == "active":
-            self.state = "update"
-        elif self.state in ("pending", "delete", "dpend"):
-            raise RuntimeError("Cannot save while in a pending state (installation running!)")
+        if not ignore_state:
+            if self.id is None:
+                self.state = "new"
+            elif self.state == "active":
+                self.state = "update"
+            elif self.state in ("pending", "delete", "dpend"):
+                raise RuntimeError("Cannot save while in a pending state (installation running!)")
         return models.Model.save(self, *args, **kwargs)
 
     def set_active(self):
@@ -111,6 +112,7 @@ class LogicalVolume(StatefulModel):
     snapshot    = models.ForeignKey("self", blank=True, null=True)
     filesystem  = models.CharField(max_length=20, blank=True, null=True,
                     choices=[(fs.name, fs.desc) for fs in FILESYSTEMS] )
+    formatted   = models.BooleanField(default=False, editable=False)
     owner       = models.ForeignKey(User)
 
     def __init__( self, *args, **kwargs ):
@@ -248,6 +250,14 @@ class LVChainedModule(StatefulModel):
                 if curr == self:
                     return last.path
                 last = curr
+
+    # format_policy:
+    #  * "ok"      if ready to be formatted/used otherwise
+    #  * "skip"    if formatting is not necessary (DRBD Secondaries)
+    format_policy = "ok"
+
+    def install(self):
+        raise NotImplementedError("This module lacks an installer")
 
     class Meta:
         unique_together=("volume", "ordering")

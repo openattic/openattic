@@ -150,3 +150,15 @@ class DrbdDevice(LVChainedModule):
             if dev['peeraddress'] == self.selfaddress and dev['selfaddress'] == self.peeraddress:
                 return dev
         return None
+
+    @property
+    def format_policy(self):
+        if not self.init_master:
+            return "skip"
+        if self.state != "active":
+            return "not-yet"
+        return "ok"
+
+    def install(self):
+        from drbd.installer import install_resource
+        return install_resource(self)

@@ -7,32 +7,26 @@ from django.db.models import Q
 from django.template.loader import render_to_string
 
 from lvm.procutils import invoke
-from drbd.models   import DrbdDevice
+#from drbd.models   import DrbdDevice
 #from drbd.conf     import settings as nfs_settings
 
-def writeconf():
-    for dev in DrbdDevice.objects.filter(state__in=("new", "update", "active")).exclude(volume__state="update"):
-        fd = open("/etc/drbd.d/%s_%s_%d.res" % (dev.volume.vg.name, dev.volume.name, dev.id), "w")
-        fd.write( render_to_string( "drbd/device.res", {
-            'Hostname':  socket.gethostname(),
-            'Device':    dev
-            } ) )
-        fd.close()
 
+def install_resource(dev):
+    dev.set_pending()
 
-def preinst(options, args):
-    if DrbdDevice.objects.filter(state="active", volume__state="update").count() > 0:
-        writeconf()
+    fd = open("/etc/drbd.d/%s_%s_%d.res" % (dev.volume.vg.name, dev.volume.name, dev.id), "w")
+    fd.write( render_to_string( "drbd/device.res", {
+        'Hostname':  socket.gethostname(),
+        'Device':    dev
+        } ) )
+    fd.close()
 
+    invoke(["drbdadm", "create-md", dev.res])
+    invoke(["drbdadm", "attach",    dev.res])
+    invoke(["drbdadm", "connect",   dev.res])
 
-def postinst(options, args):
-    if DrbdDevice.objects.filter( Q( Q(state__in=("new", "update")) | Q(volume__state="pending") ) ).count() > 0 or \
-       options.confupdate:
-        writeconf()
-        #DrbdDevice.objects.filter(state__in=("new", "update")).update(state="active")
+    if dev.init_master:
+        invoke(["drbdsetup", dev.path, "primary", "--overwrite-data-of-peer"])
 
+    dev.set_active()
 
-def prerm(options, args):
-    if DrbdDevice.objects.filter(state="delete").count() > 0:
-        writeconf()
-        #DrbdDevice.objects.filter(state="delete").update(state="done")
