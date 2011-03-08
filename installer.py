@@ -98,13 +98,14 @@ while True:
         # its age
         now = int(time.time())
         if now - s[stat.ST_MTIME] > max_wait:
-            pid = f.readline()
+            pid = f.readline().strip()
             sys.exit("%s has been locked for more than " \
                      "%d seconds (PID %s)" % (lockfile, max_wait,
                      pid))
 
         # it's not been locked too long, wait a while and retry
         f.close()
+        print "Lockfile exists and didn't yet expire. Sleeping."
         time.sleep(1)
 
 # if we get here. we have the lockfile. Convert the os.open file
