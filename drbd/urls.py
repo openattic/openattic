@@ -31,6 +31,6 @@ urlpatterns = patterns('',
     ( r'/?$', 'django.views.generic.list_detail.object_list', {
         'template_name': 'drbd/devicelist.html',
         'queryset': models.DrbdDevice.objects.all(),
-        }, 'lvm_export_list' ),
+        }, 'drbd_export_list' ),
 
     )
