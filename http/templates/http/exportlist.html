@@ -1,0 +1,16 @@
+{% extends "http/httpbase.html" %}
+{# kate: space-indent on; indent-width 2; replace-tabs on; #}
+{% block Title %} :: NFS Exports{% endblock %}
+{% block Body %}
+  <table>
+    {% for export in object_list %}
+      <tr>
+        <td><a href="{% url http_export_edit export.id %}">{{ export.volume.name }}</a></td>
+        <td>{{ export.address }}</td>
+      </tr>
+    {% empty %}
+      No exports
+    {% endfor %}
+  </table>
+{% endblock %}
+

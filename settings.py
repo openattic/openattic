@@ -157,5 +157,6 @@ INSTALLED_APPS = (
     'iscsi',
     'nfs',
     'samba',
+    'http',
     'drbd',
 )
