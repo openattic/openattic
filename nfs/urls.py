@@ -31,6 +31,6 @@ urlpatterns = patterns('',
     ( r'/?$', 'django.views.generic.list_detail.object_list', {
         'template_name': 'nfs/exportlist.html',
         'queryset': models.Export.objects.all(),
-        }, 'lvm_export_list' ),
+        }, 'nfs_export_list' ),
 
     )
