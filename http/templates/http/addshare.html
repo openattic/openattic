@@ -2,7 +2,7 @@
 {# kate: space-indent on; indent-width 2; replace-tabs on; #}
 {% block Title %} :: Add NFS Export{% endblock %}
 {% block Body %}
-  <h1>Add NFS export for volume {{ LV.name }}</h1>
+  <h1>Add HTTP export for volume {{ LV.name }}</h1>
   <form action="" method="POST">
     {% csrf_token %}
     <table>
