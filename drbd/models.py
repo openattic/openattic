@@ -71,7 +71,8 @@ class DrbdDevice(LVChainedModule):
     selfaddress = models.CharField(max_length=250, help_text="The <b>local</b> address to bind this device to.")
     peeraddress = models.CharField(max_length=250, help_text="The <b>remote</b> address to connect this device to.")
     resname     = models.CharField(max_length=25, blank=True, help_text=(
-                                   "Resource name to use in the config. Will default to r<i>id</i> if not given."))
+                                   "Resource name to use in the config. Will default to 'r<i>&lt;id&gt;</i>' "
+                                   "if not given."))
     init_master = models.BooleanField(blank=True, help_text=(
                                       "True if the <b>local</b> side is to be initialized as master."))
     protocol    = models.CharField(max_length=1, default="C", choices=DRBD_PROTOCOL_CHOICES)

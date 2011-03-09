@@ -21,6 +21,7 @@ urlpatterns = patterns('',
     (r'^nfs/',   include("nfs.urls")),
     (r'^iscsi/', include("iscsi.urls")),
     (r'^samba/', include("samba.urls")),
+    (r'^drbd/',  include("drbd.urls")),
 
     (r'^stats/', include("hoststats.urls")),
 
