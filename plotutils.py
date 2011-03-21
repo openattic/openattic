@@ -2,10 +2,14 @@
 # kate: space-indent on; indent-width 4; replace-tabs on;
 
 from django.http       import HttpResponse
+from django.conf       import settings
 
 def piechart(fracs, heading=None, titles=None, legend=None, explode=None):
     import os
-    os.environ["MPLCONFIGDIR"] = "/tmp/.matplotlib"
+    if not os.path.exists(settings.MPLCONFIGDIR):
+        os.makedirs(settings.MPLCONFIGDIR)
+    os.environ["MPLCONFIGDIR"] = settings.MPLCONFIGDIR
+
     import matplotlib
     import matplotlib.cbook
     matplotlib.use("Agg")

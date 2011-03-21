@@ -140,6 +140,8 @@ TEMPLATE_DIRS = (
     join(PROJECT_ROOT, 'templates'),
 )
 
+MPLCONFIGDIR = "/tmp/.matplotlib"
+
 INSTALLED_APPS = (
     'django.contrib.auth',
     'django.contrib.contenttypes',
