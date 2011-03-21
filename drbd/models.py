@@ -27,7 +27,7 @@ DRBD_IO_ERROR_CHOICES = (
 DRBD_FENCING_CHOICES = (
     ('dont-care',               'dont-care: This is the default policy. No fencing actions are undertaken.'),
     ('resource-only',           'resource-only: Try to fence the peer´s disk by calling the fence-peer handler.'),
-    ('resource-and-stonith',    'resource-and-stonith: Try to fence the peer´s disk by calling the fence-peer'
+    ('resource-and-stonith',    'resource-and-stonith: Try to fence the peer´s disk by calling the fence-peer '
                                 'handler, which has to outdate or STONITH the peer.'),
     )
 
