@@ -6,7 +6,7 @@
     {% for export in object_list %}
       <tr>
         <td><a href="{% url http_export_edit export.id %}">{{ export.volume.name }}</a></td>
-        <td>{{ export.address }}</td>
+        <td><a href="/volumes/{{ export.volume.name }}/">Browse</a></td>
       </tr>
     {% empty %}
       No exports
