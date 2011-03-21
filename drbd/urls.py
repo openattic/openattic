@@ -4,20 +4,20 @@
 from django.conf.urls.defaults import url, patterns, include
 from django.conf import settings
 
-from drbd import models
+from drbd import models, forms
 
 urlpatterns = patterns('',
     ( r'add/$',                      'view_wrappers.create_if_perm', {
         'perm':               'drbd.add_drbddevice',
         'template_name':      'drbd/deviceadd.html',
-        'model':              models.DrbdDevice,
+        'form_class':         forms.DrbdDeviceForm,
         'post_save_redirect': settings.PROJECT_URL+'/'
         }, 'drbd_device_add' ),
 
     ( r'(?P<object_id>\d+)/$',       'view_wrappers.update_if_perm', {
         'perm':               'drbd.change_drbddevice',
         'template_name':      'drbd/deviceedit.html',
-        'model':              models.DrbdDevice,
+        'form_class':         forms.DrbdDeviceForm,
         'post_save_redirect': settings.PROJECT_URL+'/'
         }, 'drbd_device_edit' ),
 
