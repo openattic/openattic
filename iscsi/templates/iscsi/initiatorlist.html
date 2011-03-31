@@ -1,10 +1,17 @@
 {% extends "iscsi/iscsibase.html" %}
 {# kate: space-indent on; indent-width 2; replace-tabs on; #}
 {% block Title %} :: Initiators{% endblock %}
+
 {% block Body %}
-  <a href="{% url iscsi_initiator_add %}"><img src="{{ MEDIA_URL }}/icons/add.png" alt="add" /></a><br />
-  <table>
-    {% for initr in object_list %}
+    <div id="iscsi" style="border: 0px solid black height; position: relative;">
+      <div class="boxheader">
+        <img src="{{ MEDIA_URL }}/boxicons/oben_links1.png" style="position: absolute; left: 0px; top: 0px"/>
+       <a style="margin-left:20px;font-size:12px;" href="{% url iscsi_initiator_add %}"><img src="{{ MEDIA_URL }}/icons/add.png" alt="add" /> Objekt hinzufügen  </a>
+        <img src="{{ MEDIA_URL }}/boxicons/oben_rechts.png" style="position: absolute; right: 0px; top: 0px"/>
+      </div>
+  <table border="1">
+    <colgroup width="300" span="3"></colgroup>
+      {% for initr in object_list %}
       <tr>
         <td><a href="{% url iscsi_initiator_edit initr.id %}">{{ initr.name }}</a></td>
         <td>{{ initr.address }}</td>
@@ -15,6 +22,12 @@
         </td>
       </tr>
     {% endfor %}
-  </table>
+  </table> </br>
+      <div class="boxfooter">
+        <img src="{{ MEDIA_URL }}/boxicons/unten_links1.png" style="position:absolute ; left: 0px"/>
+        <img src="{{ MEDIA_URL }}/boxicons/unten_rechts1.png" style="position:absolute ; right: 0px"/>
+      </div>
+    </div>
+
 {% endblock %}
 

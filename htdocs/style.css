@@ -2,6 +2,34 @@ input[type=text], input[type=password], select  {
 	width: 500px;
 }
 
+Inhalte stammen von: http://www.web-toolbox.net/webtoolbox/css/css-textformatierung.htm#ixzz1EnTFlrGC
+www.clickstart.de
+
+#text {
+font-size: 5pt
+}
+
+#list {
+width: 600pt;
+}
+
+#iscsi {
+width: 300pt;
+}
+
+#targetiscsi {
+width: 200pt;
+}
+
+#topnav {
+font-size: 10pt;
+}
+
+#submenu {
+font-size: 9pt;
+}
+
+
 div.pgheader {
 	width: 800px;
 	min-height: 20px;

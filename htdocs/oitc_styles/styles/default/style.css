@@ -47,9 +47,9 @@ line-height:20px;
 text-align:left;
 margin:0;
 }
-
+/* padding-left umgeändert von 20px in 0px */
 td {
-padding-left:20px;
+padding-left:0px;
 font-family:Verdana, Geneva, Arial, Helvetica, sans-serif;
 font-size:11px;
 font-weight:400;
