@@ -155,7 +155,7 @@ class LogicalVolume(StatefulModel):
         """ A list of block device modules operating on this LV, in the order
             in which they are chained.
         """
-        modchain = []
+        mc = []
         for relobj in ( self._meta.get_all_related_objects() + self._meta.get_all_related_many_to_many_objects() ):
             if app_label  and relobj.model._meta.app_label != app_label:
                 continue;
@@ -164,10 +164,10 @@ class LogicalVolume(StatefulModel):
                 # not a mod
                 continue
 
-            modchain.extend( relobj.model.objects.filter( **{ relobj.field.name: self } ) )
+            mc.extend( relobj.model.objects.filter( **{ relobj.field.name: self } ) )
 
-        modchain.sort(lambda a,b: cmp(a.ordering, b.ordering))
-        return modchain
+        mc.sort(lambda a,b: cmp(a.ordering, b.ordering))
+        return mc
 
     @property
     def path(self):
