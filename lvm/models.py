@@ -217,7 +217,7 @@ class LogicalVolume(StatefulModel):
                     share.delete()
                 else:
                     return
-            for mod in self.modchain():
+            for mod in self.modchain:
                 if mod.state == "done":
                     mod.delete()
                 else:
