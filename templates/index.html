@@ -18,6 +18,11 @@
   <div id="head">
     <div id="head_tools">
       {% if user.is_authenticated %}
+        {% if user.is_staff %}
+          <a href="{% url django.contrib.auth.views.logout %}">
+            <img src="{{ MEDIA_URL }}/icons/bullet_wrench.png" title="Admin" />
+          </a>
+        {% endif %}
         <a href="{% url django.contrib.auth.views.logout %}">
           <img src="{{ MEDIA_URL }}/icons/door_out.png" title="Ausloggen" />
         </a>
