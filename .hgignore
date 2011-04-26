@@ -4,3 +4,7 @@ syntax: glob
 *~
 
 .secret.txt
+
+# Symlinks to the respective Debian packages
+htdocs/prototype.js
+htdocs/scriptaculous
