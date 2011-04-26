@@ -164,3 +164,7 @@ class DrbdDevice(LVChainedModule):
     def install(self):
         from drbd.installer import install_resource
         return install_resource(self)
+
+    def uninstall(self):
+        from drbd.installer import uninstall_resource
+        return uninstall_resource(self)

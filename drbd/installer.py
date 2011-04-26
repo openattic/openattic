@@ -2,6 +2,7 @@
 # kate: space-indent on; indent-width 4; replace-tabs on;
 
 import socket
+import os
 
 from django.db.models import Q
 from django.template.loader import render_to_string
@@ -40,3 +41,9 @@ def postinst(options, args):
         invoke(["drbdadm", "adjust", dev.res])
         dev.set_active()
 
+def uninstall_resource(dev):
+    dev.set_dpend()
+    invoke(["drbdadm", "disconnect",   dev.res])
+    invoke(["drbdadm", "detach",    dev.res])
+    os.unlink("/etc/drbd.d/%s_%s_%d.res" % (dev.volume.vg.name, dev.volume.name, dev.id))
+    dev.set_done()
