@@ -259,6 +259,9 @@ class LVChainedModule(StatefulModel):
     def install(self):
         raise NotImplementedError("This module lacks an installer")
 
+    def uninstall(self):
+        raise NotImplementedError("This module lacks an installer")
+
     class Meta:
         unique_together=("volume", "ordering")
         abstract = True

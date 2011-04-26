@@ -36,7 +36,7 @@ def inst(options, args):
                 ])
             invoke(cmd)
 
-            invoke(["/sbin/lvchange", '-ay', lv.path])
+            invoke(["/sbin/lvchange", '-ay', lv.device])
 
             mc = lv.modchain
 
@@ -84,14 +84,14 @@ def inst(options, args):
                 # Shrink FS, then Volume
                 if lv.filesystem:
                     lv.fs.resize(grow=False)
-                invoke(["/sbin/lvchange", '-an', lv.path])
-                invoke(["/sbin/lvresize", '-L',  ("%dM" % lv.megs), lv.path])
-                invoke(["/sbin/lvchange", '-ay', lv.path])
+                invoke(["/sbin/lvchange", '-an', lv.device])
+                invoke(["/sbin/lvresize", '-L',  ("%dM" % lv.megs), lv.device])
+                invoke(["/sbin/lvchange", '-ay', lv.device])
             else:
                 # Grow Volume, then FS
-                invoke(["/sbin/lvchange", '-an', lv.path])
-                invoke(["/sbin/lvresize", '-L',  ("%dM" % lv.megs), lv.path])
-                invoke(["/sbin/lvchange", '-ay', lv.path])
+                invoke(["/sbin/lvchange", '-an', lv.device])
+                invoke(["/sbin/lvresize", '-L',  ("%dM" % lv.megs), lv.device])
+                invoke(["/sbin/lvchange", '-ay', lv.device])
                 if lv.filesystem:
                     lv.fs.resize(grow=True)
 
@@ -115,8 +115,14 @@ def rm(options, args):
             if lv.filesystem and lv.fs.mountable:
                 lv.fs.unmount()
 
-            invoke(["/sbin/lvchange", '-an', lv.path])
-            invoke(["/sbin/lvremove", lv.path])
+            mc = lv.modchain[:]
+            mc.reverse()
+            for mod in mc:
+                if mod.state == "delete":
+                    mod.uninstall()
+
+            invoke(["/sbin/lvchange", '-an', lv.device])
+            invoke(["/sbin/lvremove", lv.device])
 
 def cleanup(options, args):
     LogicalVolume.objects.filter(
