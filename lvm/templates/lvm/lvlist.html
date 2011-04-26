@@ -26,6 +26,8 @@
       lvid.value = id;
     }
   </script>
+{% endblock %}
+{% block Body %}
   <div id="addshare_type_selector">
     <form method="post" action="{% url lvm.views.lvaddshare %}">
       {% csrf_token %}
@@ -38,8 +40,6 @@
       </button>
     </form>
   </div>
-{% endblock %}
-{% block Body %}
   {% for lv in LVs %}
     <div id="list" style="border: 0px solid black height; position: relative; width= 10px;">
       <div class="boxheader">
