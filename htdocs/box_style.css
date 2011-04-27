@@ -1,32 +1,19 @@
- 
- 
-    .boxheader{
-    
+.boxheader{
     top: auto;
     width: auto;
     height: 20px;
     background-color: #C0C0C0;
+}
 
-        
-    } 
-    
-    
-    .boxcontent{
-    
+.boxcontent{
     background-color: #red;
     width: 500px;
     height: 80px;
-    }
-    
-                        
-    
-    .boxfooter{
-        
+}
+
+.boxfooter{
     top: auto;
-	width: auto;    
+    width: auto;
     height: 20px;
-    background-color: #C0C0C0    
-    }
-    
-     
-   
+    background-color: #C0C0C0
+}
