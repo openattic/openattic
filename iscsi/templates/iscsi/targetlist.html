@@ -2,31 +2,36 @@
 {# kate: space-indent on; indent-width 2; replace-tabs on; #}
 {% block Title %} :: Targets{% endblock %}
 {% block Body %}
-<div id="iscsi" style="border: 0px solid black height; position: relative;">
-  <div class="boxheader">
-    <img src="{{ MEDIA_URL }}/boxicons/oben_links1.png" style="position: absolute; left: 0px; top: 0px"/>
-    <a style="margin-left:20px;font-size:12px;" href="{% url iscsi_target_add %}">
-      <img src="{{ MEDIA_URL }}/icons/add.png" alt="add" /> Objekt hinzufügen
-    </a>
-    <img src="{{ MEDIA_URL }}/boxicons/oben_rechts.png" style="position: absolute; right: 0px; top: 0px"/>
-  </div>
-  <table border="0" style="width: 400px">
-    {% for target in object_list %}
-    <tr>
-      <td><a href="{% url iscsi_target_edit target.id %}">{{ target.name }}</a></td>
-      <td>{{ target.iscsiname }}</td>
-      <td>
-        <a href="{% url iscsi_target_delete target.id %}">
-          <img src="{{ MEDIA_URL }}/icons/delete.png" alt="delete" />
-        </a>
-      </td>
-    </tr>
-    {% endfor %}
-  </table>
-  </br>
-  <div class="boxfooter">
-    <img src="{{ MEDIA_URL }}/boxicons/unten_links1.png" style="position:absolute ; left: 0px"/>
-    <img src="{{ MEDIA_URL }}/boxicons/unten_rechts1.png" style="position:absolute ; right: 0px"/>
-  </div>
-</div>
+  {% if object_list %}
+    <table class="main">
+      <tr>
+        <th class="left">Target</th>
+        <th>Address</th>
+        <th class="right">
+          <a style="margin-left:20px;font-size:12px;" href="{% url iscsi_target_add %}">
+            <img src="{{ MEDIA_URL }}/icons/add.png" alt="add" />
+          </a>
+        </th>
+      </tr>
+      {% for target in object_list %}
+      <tr>
+        <td><a href="{% url iscsi_target_edit target.id %}">{{ target.name }}</a></td>
+        <td>{{ target.iscsiname }}</td>
+        <td align="right">
+          <a href="{% url iscsi_target_delete target.id %}">
+            <img src="{{ MEDIA_URL }}/icons/delete.png" alt="delete" />
+          </a>
+        </td>
+      </tr>
+      {% endfor %}
+      <tr style="height: 10px">
+        <td class="footer_left"></td>
+        <td class="footer"></td>
+        <td class="footer_right"></td>
+      </tr>
+    </table>
+  {% else %}
+    <div class="msgnotice">No exports...</div>
+  {% endif %}
 {% endblock %}
+

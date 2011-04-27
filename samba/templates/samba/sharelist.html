@@ -8,7 +8,7 @@
         <td><a href="{% url samba_share_edit share.id %}">{{ share.volume.name }}</a></td>
       </tr>
     {% empty %}
-      No shares
+      <div class="msgnotice">No shares added yet...</div>
     {% endfor %}
   </table>
 {% endblock %}
