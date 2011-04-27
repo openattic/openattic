@@ -59,14 +59,14 @@
             </li>
             <li>
               <a href="{% url lvm_logicalvolume_edit lv.id %}">
-                <img alt="edit"   src="{{ MEDIA_URL }}/icons/drive_edit.png"   />
+                <img alt="edit" title="edit LV" src="{{ MEDIA_URL }}/icons/drive_edit.png"   />
               </a>
             </li>
           {% endif %}
           {% if lv.state == "new" or lv.state == "active" or lv.state == "done" %}
             <li>
               <a href="{% url lvm_logicalvolume_delete lv.id %}">
-                <img alt="delete" src="{{ MEDIA_URL }}/icons/drive_delete.png" />
+                <img alt="delete" title="delete LV" src="{{ MEDIA_URL }}/icons/drive_delete.png" />
               </a>
             </li>
           {% endif %}
