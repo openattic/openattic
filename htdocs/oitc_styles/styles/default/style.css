@@ -180,7 +180,7 @@ padding-right:5px;
 
 form label {
 clear:left;
-float:left;
+/* float:left; */
 width:199px;
 margin-right:.4em;
 padding-top:.1em;
@@ -459,7 +459,22 @@ background-color:#C00;
 background-image:url(images/style/background_topnav.gif);
 }
 
-#subnav li a {
+#subnav li strong.toggler a {
+width:169px;
+letter-spacing:.03em;
+line-height:17px;
+display:block;
+font-weight:700;
+text-decoration:none;
+color:#c0c0c0;
+background-image:url(images/neueseite/sub_li_bg.gif);
+background-repeat: repeat-x;
+background-color: #161616;
+cursor:pointer;
+padding:0;
+}
+
+#subnav ul.togglee li a {
 width:169px;
 letter-spacing:.03em;
 line-height:10px;
