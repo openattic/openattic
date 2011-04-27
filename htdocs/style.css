@@ -55,10 +55,8 @@ div.lvlistheader img {
 
 div.lv {
 	width: 800px;
-	min-height: 90px;
-	margin: 5px auto;
+	margin: 0 auto;
 	background-color: #EDF3FE;
-	border: 1px dotted darkgrey;
 	clear: both;
 }
 
@@ -91,10 +89,38 @@ span.lvname {
 	font: 14pt bold;
 }
 
+div.lvbody {
+	overflow: auto;
+	margin: 0px;
+	padding: 0px;
+	padding-right:10px;
+	padding-left: 10px;
+	background-repeat: repeat-x;
+	background-color:#f0f0f0;
+}
+
+div.lvhandle {
+	cursor: pointer;
+	height: 24px;
+	background-image:url(oitc_styles/styles/default/images/style/report_head.gif);
+	background-repeat: repeat-x;
+	background-color: #CCCCCC;
+	border-top: solid 1px black;
+	border-bottom: solid 1px gray;
+	margin: 0;
+	padding-top: 4px;
+	padding-left: 20px;
+	cursor: pointer;
+	-moz-user-select: none;
+	 /* -khtml-user-select: none; */
+	font-weight: bold;
+	color: #000000;
+	line-height: 20px;
+}
 
 ul.lvtools {
-	margin: 0;
-	background-color: #EDF3FE;
+	margin: 5px 5px 0 0;
+	background-color: transparent;
 	float: right;
 	list-style-type: none;
 }
@@ -118,18 +144,19 @@ ul.sharetools li {
 
 ul.lvinfo {
 	margin: 0;
-	background-color: #EDF3FE;
+	background-color: transparent;
 	clear: both;
 	float: right;
-	width: 300px;
+	width: 350px;
 	list-style-type: none;
 }
 
 ul.lvshares {
-	width: 400px;
+	width: 300px;
+	border: 1px dotted darkgrey;
 	background-color: white;
 	margin-bottom: 0;
-	min-height: 60px;
+	min-height: 90px;
 	list-style-image: url('icons/drive_network.png');
 }
 
@@ -207,4 +234,32 @@ span.state_done {
 	padding-left: 8px;
 }
 
+div.msgnotice {
+	background: #DDDEFF url('icons/information.png') no-repeat 6px 6px;
+	border: 1px solid blue;
+	display: block;
+	font-weight: bold;
+	margin: 2px auto 14px;
+	padding: 6px 6px 6px 30px;
+	text-align: left;
+}
+
+div.msgerror {
+	background: #FDD url('icons/brick_error.png') no-repeat 6px 6px;
+	border: 1px solid #F00;
+	display: block;
+	font-weight: bold;
+	margin: 2px auto 14px;
+	padding: 6px 6px 6px 30px;
+	text-align: left;
+}
+
+#main {
+	padding: 20px;
+}
+
+table.main th,td {
+	padding-left:  15px;
+	padding-right: 15px;
+}
 
