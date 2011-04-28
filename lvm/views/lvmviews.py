@@ -52,5 +52,6 @@ def lvmemchart(request, lv):
 
     return piechart([lvstat['used'], lvstat['free'], reserved],
         heading=lv.name, explode=[0, 0.05, 0],
+        colors = ('#DB6D7C', '#B3DBA2', '#F9F9B8' ),
         titles = ('used', 'free', 'reserved'),
         )
