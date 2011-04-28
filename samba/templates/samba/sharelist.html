@@ -2,14 +2,24 @@
 {# kate: space-indent on; indent-width 2; replace-tabs on; #}
 {% block Title %} :: Samba Shares{% endblock %}
 {% block Body %}
-  <table>
-    {% for share in object_list %}
+  {% if object_list %}
+    <table class="main">
       <tr>
-        <td><a href="{% url samba_share_edit share.id %}">{{ share.volume.name }}</a></td>
+        <th class="left">Volume</th>
+        <th class="right">Comment</th>
       </tr>
-    {% empty %}
-      <div class="msgnotice">No shares added yet...</div>
-    {% endfor %}
-  </table>
+      {% for share in object_list %}
+        <tr>
+          <td><a href="{% url samba_share_edit share.id %}">{{ share.volume.name }}</a></td>
+          <td>{{ share.comment }}</td>
+        </tr>
+      {% endfor %}
+      <tr style="height: 10px">
+        <td class="footer_left"></td>
+        <td class="footer_right"></td>
+      </tr>
+    </table>
+  {% else %}
+    <div class="msgnotice">No exports...</div>
+  {% endif %}
 {% endblock %}
-
