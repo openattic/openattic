@@ -3,15 +3,10 @@
 {% block topnav_class_status %}active{% endblock %}
 {% block submenu %}
 <ul>
-  <li>
-    <strong class="toggler visible">Dashboard</strong>
-    <ul id="menu_view1" class="togglee" style="">
-      <li><a href="{% url stats_dashboard %}">Dashboard</a></li>
-    </ul>
-  </li>
-  <li><strong class="toggler visible">Protokolle</strong></li>
-  <li><strong class="toggler visible">Performance</strong></li>
-  <li><strong class="toggler visible">Speicherverteilung</strong></li>
-  <li><strong class="toggler visible">Dienste</strong></li>
+  <li><strong class="toggler"><a href="{% url stats_dashboard %}">Dashboard</a></strong></li>
+  <li><strong class="toggler"><a href="#">Protokolle</a></strong></li>
+  <li><strong class="toggler"><a href="{% url dummy_performance %}">Performance</a></strong></li>
+  <li><strong class="toggler"><a href="#">Speicherverteilung</a></strong></li>
+  <li><strong class="toggler"><a href="#">Dienste</a></strong></li>
 </ul>
 {% endblock %}
