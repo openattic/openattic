@@ -8,3 +8,4 @@ syntax: glob
 # Symlinks to the respective Debian packages
 htdocs/prototype.js
 htdocs/scriptaculous
+htdocs/jquery*
