@@ -93,7 +93,7 @@ class VolumeGroup(models.Model):
     name        = models.CharField(max_length=130, unique=True)
 
     def __unicode__(self):
-        return self.name
+        return "%s (%s MB free)" % (self.name, self.lvm_info['LVM2_VG_FREE'])
 
     @property
     def lvm_info(self):
@@ -107,7 +107,7 @@ class LogicalVolume(StatefulModel):
     """
 
     name        = models.CharField(max_length=130, unique=True)
-    megs        = models.IntegerField()
+    megs        = models.IntegerField("Size in MB")
     vg          = models.ForeignKey(VolumeGroup)
     snapshot    = models.ForeignKey("self", blank=True, null=True)
     filesystem  = models.CharField(max_length=20, blank=True, null=True,
