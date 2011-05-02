@@ -73,7 +73,7 @@
       <div style="border: none;" class="lvbody" id="lvbody_{{ lv.id }}">
         <ul   class="lvinfo">
           <li>{{ lv.megs }}MB</li>
-          <li>In volume group <img alt="lv" src="{{ MEDIA_URL }}/icons/database.png" />{{ lv.vg }}</li>
+          <li>In volume group <img alt="lv" src="{{ MEDIA_URL }}/icons/database.png" />{{ lv.vg.name }}</li>
           {% if lv.state == "active" %}
             <li>
               {% if lv.fs %}
@@ -82,7 +82,7 @@
                   (<span style="border-bottom: 1px dotted silver"
                          class="lvmemchart" title="{% url lvm.views.lvmemchart lv.id %}"
                     >{{ lv.fs.stat.free }} MB free</span>
-                    <a href="{% url lvm.views.lvmemchart lv.id %}" target="_blank"
+                    <a href="{% url lvm.views.lvmemchart lv.id %}" target="_blank" title="open chart in new window"
                       ><img alt="open in new window" src="{{ MEDIA_URL }}/icons/application_double.png"></a>)
                 {% else %}
                   (Not mounted)
@@ -114,19 +114,25 @@
   {% endfor %}
   </div>
   <script>
+    function lvmemchart_pos(ev){
+      return  $('#lvmemchart')
+        .css( "left", (window.innerWidth  - ev.pageX > 250 ? ev.pageX - 30 : ev.pageX - 280) + "px" )
+        .css( "top",  (window.innerHeight - ev.pageY > 200 ? ev.pageY + 10 : ev.pageY - 210) + "px" );
+    }
     $('span.lvmemchart').hover(
-      function(e){
+      function(ev){
         this.tt = this.title;
         this.title = "";
-        $('body').append("<div id='lvmemchart'><img src='" + this.tt + "' alt='chart' /></div>");
-        $('#lvmemchart')
-          .css( "left", (e.pageX - 30) + "px" )
-          .css( "top",  (e.pageY - 10) + "px" )
-          .fadeIn("fast");
+        $('body').append("<div id='lvmemchart'><img style='width: 250px' src='" + this.tt + "' alt='chart' /></div>");
+          lvmemchart_pos(ev).fadeIn("fast");
       },
       function(){
         this.title = this.tt;
         $('#lvmemchart').remove();
+      });
+    $('span.lvmemchart').mousemove(
+      function(ev){
+        lvmemchart_pos(ev);
       });
   </script>
 {% endblock %}
