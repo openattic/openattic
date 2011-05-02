@@ -263,3 +263,15 @@ table.main th,td {
 	padding-right: 15px;
 }
 
+form table tr {
+	border: 1px dotted silver;
+}
+
+#lvmemchart{
+	position:   absolute;
+	border:     1px solid #ccc;
+	background: #333;
+	padding:    5px;
+	display:    none;
+	color:      #fff;
+}

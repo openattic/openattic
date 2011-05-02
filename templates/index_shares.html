@@ -7,13 +7,15 @@
   {% include "samba/menu/shares.html" %}
   {% include "nfs/menu/shares.html" %}
   {% include "http/menu/shares.html" %}
-  <li><strong class="toggler visible">NFS</strong></li>
-  <li><strong class="toggler visible">FC</strong></li>
-  <li><strong class="toggler visible">HTTP</strong></li>
-  <ul id="menu_view1" class="togglee" style="">
-    <li><a href="">WebDAV</a></li>
-    <li><a href="">Webinterface</a></li>
-  </ul>
-  <li><strong class="toggler visible">AFP</strong></li>
+  <li><strong class="toggler">FC</strong>
+    <ul id="menu_FC" class="togglee" style="">
+      <li><a href="#">FC Targets</a></li>
+    </ul>
+  </li>
+  <li><strong class="toggler">AFP</strong>
+    <ul id="menu_AFP" class="togglee" style="">
+      <li><a href="#">AFP Shares</a></li>
+    </ul>
+  </li>
 </ul>
 {% endblock %}

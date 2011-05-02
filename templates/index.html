@@ -5,12 +5,24 @@
 <head>
   <title>openATTIC{% block Title %}{% endblock %}</title>
   <link rel="stylesheet" href="{{ MEDIA_URL }}/style.css" />
-  <link rel="stylesheet" href="{{ MEDIA_URL }}/box_style.css" />
   <link href="{{ MEDIA_URL }}/oitc_styles/styles/default/style.css" rel="stylesheet" type="text/css" />
+  <script language="JavaScript" type="text/javascript" src="{{ MEDIA_URL }}/jquery/jquery.min.js"></script>
+  <script language="JavaScript" type="text/javascript" src="{{ MEDIA_URL }}/jquery-ui/jquery-ui.min.js"></script>
+  <script language="JavaScript" type="text/javascript" src="{{ MEDIA_URL }}/jquery-ui/ui/jquery.ui.accordion.js"></script>
   <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
   <!--[if gte IE 7]>
   <link href="{{ MEDIA_URL }}/oitc_styles/styles/default/styleie.css" rel="stylesheet" type="text/css" />
   <![endif]-->
+  <script type="text/javascript">
+    $(document).ready(function(){
+      $("#menu_accordion").accordion({
+        header: "strong.toggler",
+        });
+
+      {% block DocumentReadyFunction %}
+      {% endblock %}
+    });
+  </script>
 </head>
 <body>
   {% block BodyHeader %}
@@ -19,7 +31,7 @@
     <div id="head_tools">
       {% if user.is_authenticated %}
         {% if user.is_staff %}
-          <a href="{% url django.contrib.auth.views.logout %}">
+          <a href="{% url admin:index %}">
             <img src="{{ MEDIA_URL }}/icons/bullet_wrench.png" title="Admin" />
           </a>
         {% endif %}
@@ -46,7 +58,7 @@
           </a>
         </li>
         <li>
-          <a href="{% url dummy_status %}" class="{% block topnav_class_status %}{% endblock %}">
+          <a href="{% url stats_dashboard %}" class="{% block topnav_class_status %}{% endblock %}">
             <img alt="status" src="{{ MEDIA_URL }}/icons/information.png"/> Status
           </a>
         </li>
@@ -82,7 +94,6 @@
       </div>
     </div>
   </div>
-
   <div id="main">
     <div id="content">
       {% block Body %}
