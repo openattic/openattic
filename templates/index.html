@@ -17,6 +17,7 @@
     $(document).ready(function(){
       $("#menu_accordion").accordion({
         header: "strong.toggler",
+        autoHeight: false,
         active: {% block MenuActive %}0{% endblock %}
         });
 
