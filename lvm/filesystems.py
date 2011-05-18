@@ -52,11 +52,15 @@ class FileSystem(object):
     @property
     def stat(self):
         s = os.statvfs(self.mountpoint)
-        return {
+        stats = {
             'size': (s.f_blocks * s.f_frsize) / 1024 / 1000.,
             'free': (s.f_bavail * s.f_frsize) / 1024 / 1000.,
             'used': ((s.f_blocks - s.f_bfree) * s.f_frsize) / 1024 / 1000.,
             }
+        stats['sizeG'] = stats['size'] / 1024.
+        stats['freeG'] = stats['free'] / 1024.
+        stats['usedG'] = stats['used'] / 1024.
+        return stats
 
 class Ext2(FileSystem):
     name = "ext2"
