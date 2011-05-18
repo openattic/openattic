@@ -20,7 +20,7 @@ def writeconf():
         } ) )
     fd.close()
 
-    invoke([samba_settings.INITSCRIPT, "restart"])
+    invoke([samba_settings.INITSCRIPT, "reload"])
 
 
 def preinst(options, args):
