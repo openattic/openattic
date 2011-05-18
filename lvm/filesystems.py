@@ -68,7 +68,7 @@ class Ext2(FileSystem):
     mountable = True
 
     def format(self):
-        invoke(["/sbin/mke2fs", "-L", self.lv.name, self.lv.path])
+        invoke(["/sbin/mke2fs", "-m0", "-L", self.lv.name, self.lv.path])
 
     def resize(self, grow):
         invoke(["/sbin/e2fsck", "-y", "-f", self.lv.path])
@@ -80,7 +80,7 @@ class Ext3(Ext2):
     mountable = True
 
     def format(self):
-        invoke(["/sbin/mke2fs", "-L", self.lv.name, "-j", self.lv.path])
+        invoke(["/sbin/mke2fs", "-m0", "-L", self.lv.name, "-j", self.lv.path])
 
 class Ext4(Ext2):
     name = "ext4"
@@ -88,7 +88,7 @@ class Ext4(Ext2):
     mountable = True
 
     def format(self):
-        invoke(["/sbin/mkfs.ext4", "-L", self.lv.name, self.lv.path])
+        invoke(["/sbin/mkfs.ext4", "-m0", "-L", self.lv.name, self.lv.path])
 
 
 class Ntfs(FileSystem):
