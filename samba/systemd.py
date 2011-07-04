@@ -3,19 +3,24 @@
 
 import os, sys
 import dbus.service
+import socket
 
 from django.conf import settings
 from django.template.loader import render_to_string
 
 from lvm.procutils import invoke
+from lvm.systemd   import logged
 from samba.models  import Share
 from samba.conf    import settings as samba_settings
 
+@logged
 class SystemD(dbus.service.Object):
+    dbus_path = "/samba"
+
     def __init__(self, bus, busname):
         self.bus     = bus
         self.busname = busname
-        dbus.service.Object.__init__(self, self.bus, "/samba")
+        dbus.service.Object.__init__(self, self.bus, self.dbus_path)
 
     @dbus.service.method(settings.DBUS_IFACE_SYSTEMD, in_signature="", out_signature="i")
     def writeconf(self):

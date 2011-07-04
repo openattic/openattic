@@ -7,14 +7,18 @@ import dbus.service
 from django.conf import settings
 
 from lvm.procutils import invoke
+from lvm.systemd   import logged
 from nfs.models    import Export
 from nfs.conf      import settings as nfs_settings
 
+@logged
 class SystemD(dbus.service.Object):
+    dbus_path = "/nfs"
+
     def __init__(self, bus, busname):
         self.bus     = bus
         self.busname = busname
-        dbus.service.Object.__init__(self, self.bus, "/nfs")
+        dbus.service.Object.__init__(self, self.bus, self.dbus_path)
 
     @dbus.service.method(settings.DBUS_IFACE_SYSTEMD, in_signature="", out_signature="i")
     def writeconf(self):
