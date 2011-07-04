@@ -5,12 +5,13 @@ import os, sys
 import subprocess
 from signal import signal, SIGTERM, SIGINT, SIG_DFL
 
-def invoke(args):
+def invoke(args, close_fds=True):
     print args
     proc = subprocess.Popen(args,
         stdin  = sys.stdin,
         stdout = sys.stdout,
-        stderr = sys.stderr
+        stderr = sys.stderr,
+        close_fds = close_fds
         )
 
     def fwdsigterm(signum, frame):
