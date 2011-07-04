@@ -9,33 +9,23 @@ from lvm.conf import settings as lvm_settings
 class FileSystem(object):
     name = "failfs"
     desc = "failing file system"
-    mountable = False
 
     def __init__(self, logical_volume):
         self.lv = logical_volume
 
     @property
     def mountpoint(self):
-        if not self.mountable:
-            raise SystemError("File System type '%s' is not mountable" % self.name)
-
         return os.path.join(lvm_settings.MOUNT_PREFIX, self.lv.vg.name, self.lv.name)
 
     def mount(self):
-        if not os.path.exists(self.mountpoint):
-            os.makedirs(self.mountpoint)
-        invoke(["/bin/mount", "-t", self.name, self.lv.path, self.mountpoint])
+        return self.lv.lvm.fs_mount( self.name, self.lv.path, self.mountpoint )
 
     @property
     def mounted(self):
-        if not self.mountable:
-            return False
         return os.path.ismount(self.mountpoint)
 
     def unmount(self):
-        invoke(["/bin/umount", self.lv.path])
-        if os.path.exists(self.mountpoint):
-            os.rmdir(self.mountpoint)
+        return self.lv.lvm.fs_unmount( self.lv.path, self.mountpoint )
 
     def format(self):
         raise NotImplementedError("FileSystem::format needs to be overridden")
@@ -44,12 +34,7 @@ class FileSystem(object):
         raise NotImplementedError("FileSystem::resize needs to be overridden")
 
     def chown(self):
-        if lvm_settings.CHOWN_GROUP:
-            invoke(["/bin/chown", "-R", (
-                "%s:%s" % (self.lv.owner.username, lvm_settings.CHOWN_GROUP)
-                ), self.mountpoint])
-        else:
-            invoke(["/bin/chown", "-R", self.lv.owner.username, self.mountpoint])
+        return self.lv.lvm.fs_chown( self.mountpoint, self.lv.owner.username, lvm_settings.CHOWN_GROUP )
 
     @property
     def stat(self):
@@ -67,74 +52,43 @@ class FileSystem(object):
 class Ext2(FileSystem):
     name = "ext2"
     desc = "Ext2 (Linux)"
-    mountable = True
 
     def format(self):
-        invoke(["/sbin/mke2fs", "-m0", "-L", self.lv.name, self.lv.path])
+        return self.lv.lvm.e2fs_format( self.lv.path, self.lv.name )
 
     def resize(self, grow):
-        invoke(["/sbin/e2fsck", "-y", "-f", self.lv.path])
-        invoke(["/sbin/resize2fs", self.lv.path, ("%dM" % self.lv.megs)])
+        if self.lv.lvm.e2fs_check( self.lv.path ) != 0:
+            raise SystemError("File System is not clean, aborting.")
+        return self.lv.lvm.e2fs_resize( self.lv.path, self.lv.megs )
 
 class Ext3(Ext2):
     name = "ext3"
     desc = "Ext3 (Linux Journalling)"
-    mountable = True
 
     def format(self):
-        invoke(["/sbin/mke2fs", "-m0", "-L", self.lv.name, "-j", self.lv.path])
+        return self.lv.lvm.e3fs_format( self.lv.path, self.lv.name )
 
 class Ext4(Ext2):
     name = "ext4"
     desc = "Ext4 (Linux Journalling)"
-    mountable = True
 
     def format(self):
-        invoke(["/sbin/mkfs.ext4", "-m0", "-L", self.lv.name, self.lv.path])
+        return self.lv.lvm.e4fs_format( self.lv.path, self.lv.name )
 
 
 class Ntfs(FileSystem):
     name = "ntfs"
     desc = "NTFS (Windows)"
-    mountable = True
 
     def format(self):
-        invoke(["/usr/sbin/mkntfs", "--fast", self.lv.path])
+        return self.lv.lvm.ntfs_format( self.lv.path )
 
     def resize(self, grow):
-        import sys
-        import subprocess
-        from signal import signal, SIGTERM, SIGINT, SIG_DFL
-
-        proc = subprocess.Popen(
-            ["/usr/sbin/ntfsresize", "--force", "--size", ("%dM" % self.lv.megs), self.lv.path],
-            stdin  = subprocess.PIPE, stdout = sys.stdout, stderr = sys.stderr
-            )
-
-        def fwdsigterm(signum, frame):
-            proc.send_signal(SIGTERM)
-            signal(SIGTERM, fwdsigterm)
-
-        signal(SIGTERM, fwdsigterm)
-        signal(SIGINT, fwdsigterm)
-        proc.communicate("y\n")
-        signal(SIGTERM, SIG_DFL)
-        signal(SIGINT, SIG_DFL)
+        return self.lv.lvm.ntfs_resize( self.lv.path, self.lv.megs )
 
 
 
-class Qcow2(FileSystem):
-    name = "qcow2"
-    desc = "QCOW2 (Virtualization)"
-
-    def format(self):
-        invoke(["/usr/bin/qemu-img", "create", "-f", "qcow2", self.lv.path])
-
-    def resize(self, grow):
-        invoke(["/usr/bin/qemu-img", "resize", self.lv.path, ("%dM" % self.lv.megs)])
-
-
-FILESYSTEMS = (Ext2, Ext3, Ext4, Ntfs, Qcow2)
+FILESYSTEMS = (Ext2, Ext3, Ext4, Ntfs)
 
 def get_by_name(name):
     for fs in FILESYSTEMS:

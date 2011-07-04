@@ -125,11 +125,18 @@ class LogicalVolume(StatefulModel):
 
     def __init__( self, *args, **kwargs ):
         StatefulModel.__init__( self, *args, **kwargs )
+        self._lvm = None
         self._lvm_info = None
         self._fs = None
 
     def __unicode__(self):
         return self.name
+
+    @property
+    def lvm(self):
+        if self._lvm is None:
+            self._lvm = dbus.SystemBus().get_object(settings.DBUS_IFACE_SYSTEMD, "/lvm")
+        return self._lvm
 
     @property
     def device(self):
@@ -202,14 +209,47 @@ class LogicalVolume(StatefulModel):
         if self.state not in ("active", "update", "pending"):
             return None
         if self._lvm_info is None:
-            lvm = dbus.SystemBus().get_object(settings.DBUS_IFACE_SYSTEMD, "/lvm")
-            self._lvm_info = lvm.lvs()[self.name]
+            self._lvm_info = self.lvm.lvs()[self.name]
         return self._lvm_info
 
     @property
     def lvm_megs(self):
         """ The actual size of this LV in Megs, retrieved from LVM. """
         return float(self.lvm_info["LVM2_LV_SIZE"][:-1])
+
+    def save( self, *args, **kwargs ):
+        if not self.id:
+            if self.snapshot:
+                snap = self.snapshot.device
+            else:
+                snap = ""
+            self.lvm.lvcreate( self.vg.name, self.name, self.megs, snap )
+            self.lvm.lvchange( self.device, True )
+
+            if self.filesystem:
+                self.fs.format()
+                self.fs.mount()
+                self.fs.chown()
+
+        elif self.megs != self.lvm_megs:
+            if self.filesystem:
+                self.fs.unmount()
+
+            self.lvm.lvchange(self.device, False)
+            if self.megs < self.lvm_megs:
+                # Shrink FS, then Volume
+                if self.filesystem:
+                    self.fs.resize(grow=False)
+                self.lvm.lvresize(self.device, self.megs)
+            else:
+                # Grow Volume, then FS
+                self.lvm.lvresize(self.device, self.megs)
+                if self.filesystem:
+                    self.fs.resize(grow=True)
+
+            if self.filesystem:
+                self.fs.mount()
+        return StatefulModel.save(self, *args, **kwargs)
 
     def delete(self):
         """ If active, transition to delete; if new or done, actually call delete().

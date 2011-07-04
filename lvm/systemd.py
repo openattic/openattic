@@ -72,3 +72,67 @@ class SystemD(dbus.service.Object):
         return invoke(["/sbin/lvremove", '-f', device])
 
 
+    @dbus.service.method(settings.DBUS_IFACE_SYSTEMD, in_signature="sss", out_signature="i")
+    def fs_mount(self, fstype, devpath, mountpoint):
+        if not os.path.exists(mountpoint):
+            os.makedirs(mountpoint)
+        return invoke(["/bin/mount", "-t", fstype, devpath, mountpoint])
+
+    @dbus.service.method(settings.DBUS_IFACE_SYSTEMD, in_signature="ss", out_signature="i")
+    def fs_unmount(self, devpath, mountpoint):
+        ret = invoke(["/bin/umount", devpath])
+        if ret == 0 and os.path.exists(mountpoint):
+            os.rmdir(mountpoint)
+        return ret
+
+    @dbus.service.method(settings.DBUS_IFACE_SYSTEMD, in_signature="sss", out_signature="i")
+    def fs_chown(self, mountpoint, user, group):
+        if group:
+            return invoke(["/bin/chown", "-R", ("%s:%s" % (user, group)), mountpoint])
+        else:
+            return invoke(["/bin/chown", "-R", user, mountpoint])
+
+    @dbus.service.method(settings.DBUS_IFACE_SYSTEMD, in_signature="ss", out_signature="i")
+    def e2fs_format(self, devpath, label):
+        return invoke(["/sbin/mke2fs", "-m0", "-L", label, devpath])
+
+    @dbus.service.method(settings.DBUS_IFACE_SYSTEMD, in_signature="s", out_signature="i")
+    def e2fs_check(self, devpath):
+        return invoke(["/sbin/e2fsck", "-y", "-f", devpath])
+
+    @dbus.service.method(settings.DBUS_IFACE_SYSTEMD, in_signature="si", out_signature="i")
+    def e2fs_resize(self, devpath, megs):
+        return invoke(["/sbin/resize2fs", devpath, ("%dM" % megs)])
+
+    @dbus.service.method(settings.DBUS_IFACE_SYSTEMD, in_signature="ss", out_signature="i")
+    def e3fs_format(self, devpath, label):
+        return invoke(["/sbin/mke2fs", "-j", "-m0", "-L", label, devpath])
+
+    @dbus.service.method(settings.DBUS_IFACE_SYSTEMD, in_signature="ss", out_signature="i")
+    def e4fs_format(self, devpath, label):
+        return invoke(["/sbin/mkfs.ext4", "-m0", "-L", label, devpath])
+
+    @dbus.service.method(settings.DBUS_IFACE_SYSTEMD, in_signature="s", out_signature="i")
+    def ntfs_format(self, devpath):
+        return invoke(["/usr/sbin/mkntfs", "--fast", self.lv.path])
+
+    @dbus.service.method(settings.DBUS_IFACE_SYSTEMD, in_signature="si", out_signature="i")
+    def ntfs_resize(self, devpath, megs):
+        import subprocess
+        from signal import signal, SIGTERM, SIGINT, SIG_DFL
+
+        proc = subprocess.Popen(
+            ["/usr/sbin/ntfsresize", "--force", "--size", ("%dM" % megs), devpath],
+            stdin  = subprocess.PIPE, stdout = sys.stdout, stderr = sys.stderr
+            )
+
+        def fwdsigterm(signum, frame):
+            proc.send_signal(SIGTERM)
+            signal(SIGTERM, fwdsigterm)
+
+        signal(SIGTERM, fwdsigterm)
+        signal(SIGINT, fwdsigterm)
+        proc.communicate("y\n")
+        signal(SIGTERM, SIG_DFL)
+        signal(SIGINT, SIG_DFL)
+        return proc.returncode
