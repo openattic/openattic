@@ -78,16 +78,14 @@
             <li>
               {% if lv.fs %}
                 Formatted as {{ lv.fs.name }}
-                {% if lv.fs.mountable %}
-                  {% if lv.fs.mounted %}
-                    (<span style="border-bottom: 1px dotted silver"
-                          class="lvmemchart" title="{% url lvm.views.lvmemchart lv.id %}"
-                      >{{ lv.fs.stat.free }} MB free</span>
-                      <a href="{% url lvm.views.lvmemchart lv.id %}" target="_blank" title="open chart in new window"
-                        ><img alt="open in new window" src="{{ MEDIA_URL }}/icons/application_double.png"></a>)
-                  {% else %}
-                    (Not mounted)
-                  {% endif %}
+                {% if lv.fs.mounted %}
+                  (<span style="border-bottom: 1px dotted silver"
+                        class="lvmemchart" title="{% url lvm.views.lvmemchart lv.id %}"
+                    >{{ lv.fs.stat.free }} MB free</span>
+                    <a href="{% url lvm.views.lvmemchart lv.id %}" target="_blank" title="open chart in new window"
+                      ><img alt="open in new window" src="{{ MEDIA_URL }}/icons/application_double.png"></a>)
+                {% else %}
+                  (Not mounted)
                 {% endif %}
               {% else %}
                 Unformatted
