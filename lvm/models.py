@@ -1,11 +1,12 @@
 # -*- coding: utf-8 -*-
 # kate: space-indent on; indent-width 4; replace-tabs on;
 
+import dbus
 from django.contrib.auth.models import User
 from django.db import models
+from django.conf import settings
 
 from lvm.filesystems import FILESYSTEMS, get_by_name as get_fs_by_name
-from lvm.procutils   import lvm_vgs, lvm_lvs
 
 SETUP_STATE_CHOICES = (
     ("new",     "[new]     Set for installation, but has not yet started"),
@@ -92,13 +93,20 @@ class VolumeGroup(models.Model):
 
     name        = models.CharField(max_length=130, unique=True)
 
+    def __init__( self, *args, **kwargs ):
+        models.Model.__init__( self, *args, **kwargs )
+        self._lvm_info = None
+
     def __unicode__(self):
         return "%s (%s MB free)" % (self.name, self.lvm_info['LVM2_VG_FREE'])
 
     @property
     def lvm_info(self):
         """ VG information from LVM. """
-        return lvm_vgs()[self.name]
+        if self._lvm_info is None:
+            lvm = dbus.SystemBus().get_object(settings.DBUS_IFACE_SYSTEMD, "/lvm")
+            self._lvm_info = lvm.vgs()[self.name]
+        return self._lvm_info
 
 class LogicalVolume(StatefulModel):
     """ Represents a LVM Logical Volume and offers management functions.
@@ -117,6 +125,7 @@ class LogicalVolume(StatefulModel):
 
     def __init__( self, *args, **kwargs ):
         StatefulModel.__init__( self, *args, **kwargs )
+        self._lvm_info = None
         self._fs = None
 
     def __unicode__(self):
@@ -191,8 +200,11 @@ class LogicalVolume(StatefulModel):
     def lvm_info(self):
         """ LV information from LVM. """
         if self.state not in ("active", "update", "pending"):
-           return None
-        return lvm_lvs()[self.name]
+            return None
+        if self._lvm_info is None:
+            lvm = dbus.SystemBus().get_object(settings.DBUS_IFACE_SYSTEMD, "/lvm")
+            self._lvm_info = lvm.lvs()[self.name]
+        return self._lvm_info
 
     @property
     def lvm_megs(self):
