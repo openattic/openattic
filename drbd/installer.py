@@ -9,7 +9,6 @@ from django.template.loader import render_to_string
 
 from lvm.procutils import invoke
 from drbd.models   import DrbdDevice
-#from drbd.conf     import settings as nfs_settings
 
 def writeconf(dev):
     fd = open("/etc/drbd.d/%s_%s_%d.res" % (dev.volume.vg.name, dev.volume.name, dev.id), "w")
@@ -29,7 +28,7 @@ def install_resource(dev):
     invoke(["drbdadm", "connect",   dev.res])
 
     if dev.init_master:
-        invoke(["drbdsetup", dev.path, "primary", "--overwrite-data-of-peer"])
+        invoke(["drbdadm", "--", "--overwrite-data-of-peer", dev.path, "primary" ])
 
     dev.set_active()
 
