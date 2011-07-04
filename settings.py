@@ -28,6 +28,8 @@ DATABASES = {
     }
 }
 
+DBUS_IFACE_SYSTEMD = "org.openattic.systemd"
+
 # Auto-Configure distro defaults
 import lsb_release
 distro = lsb_release.get_distro_information()
