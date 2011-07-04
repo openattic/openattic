@@ -65,6 +65,8 @@ class Command( BaseCommand ):
             sys.stdout = open( options['logfile'], "wb", False )
             sys.stderr = sys.stdout
 
+        os.environ["LANG"] = "en_US.UTF-8"
+
         print "Detecting modules...",
         INSTALLERS = []
         for app in settings.INSTALLED_APPS:
