@@ -28,6 +28,8 @@ class FileSystem(object):
 
     @property
     def mounted(self):
+        if not self.mountable:
+            return False
         return os.path.ismount(self.mountpoint)
 
     def unmount(self):
