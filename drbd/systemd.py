@@ -10,15 +10,6 @@ from django.conf import settings
 from lvm.procutils import invoke
 from drbd.models   import DrbdDevice
 
-def getstate(resource, state):
-    proc = subprocess.Popen(["/sbin/drbdadm", state, resource],
-        stdin=None, stdout=subprocess.PIPE, stderr=subprocess.PIPE, close_fds=True
-        )
-    out, err = proc.communicate()
-    if err:
-        raise SystemError(err)
-    return out
-
 class SystemD(dbus.service.Object):
     def __init__(self, bus, busname):
         self.bus     = bus
@@ -75,15 +66,18 @@ class SystemD(dbus.service.Object):
 
     @dbus.service.method(settings.DBUS_IFACE_SYSTEMD, in_signature="s", out_signature="as")
     def get_dstate(self, resource):
-        return getstate(resource, "dstate").split("/")
+        ret, out, err = invoke(["/sbin/drbdadm", "dstate", resource], return_out_err=True)
+        return out.split("/")
 
     @dbus.service.method(settings.DBUS_IFACE_SYSTEMD, in_signature="s", out_signature="s")
     def get_cstate(self, resource):
-        return getstate(resource, "cstate")
+        ret, out, err = invoke(["/sbin/drbdadm", "cstate", resource], return_out_err=True)
+        return out
 
     @dbus.service.method(settings.DBUS_IFACE_SYSTEMD, in_signature="s", out_signature="as")
     def get_role(self, resource):
-        return getstate(resource, "role").split("/")
+        ret, out, err = invoke(["/sbin/drbdadm", "role", resource], return_out_err=True)
+        return out.split("/")
 
     @dbus.service.method(settings.DBUS_IFACE_SYSTEMD, in_signature="i", out_signature="")
     def conf_write(self, devid):
