@@ -29,3 +29,9 @@ class Export(StatefulModel):
         nfs.writeconf()
         return ret
 
+    def delete( self ):
+        self.state = "done"
+        ret = StatefulModel.delete(self)
+        nfs = dbus.SystemBus().get_object(settings.DBUS_IFACE_SYSTEMD, "/nfs")
+        nfs.writeconf()
+        return ret
