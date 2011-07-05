@@ -159,6 +159,7 @@ INSTALLED_APPS = (
     'piston',
     'api',
     'lvm',
+    'cmdlog',
     'hoststats',
     'peering',
     'iscsi',

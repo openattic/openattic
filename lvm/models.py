@@ -257,28 +257,18 @@ class LogicalVolume(StatefulModel):
             Overrides StatefulModel.delete() in order to cascade to all shares and
             block device modules.
         """
-        if self.state == "active":
-            for share in self.get_shares():
-                share.delete()
-            for mod in self.modchain:
-                mod.delete()
-            StatefulModel.delete(self)
-        elif self.state in ("new", "done"):
-            for share in self.get_shares():
-                if share.state == "done":
-                    share.delete()
-                else:
-                    return
-            for mod in self.modchain:
-                if mod.state == "done":
-                    mod.delete()
-                else:
-                    return
-            StatefulModel.delete(self)
-        elif self.state == "delete":
-            pass
-        else:
-            raise RuntimeError("Cannot transition from '%s' to 'delete'" % self.state)
+        if self.filesystem:
+            self.fs.unmount()
+
+        #mc = lv.modchain[:]
+        #mc.reverse()
+        #for mod in mc:
+            #if mod.state == "delete":
+                #mod.uninstall()
+
+        self.lvm.lvchange(self.device, False)
+        self.lvm.lvremove(self.device)
+        models.Model.delete(self)
 
 
 class LVChainedModule(StatefulModel):

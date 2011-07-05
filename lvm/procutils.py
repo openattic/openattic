@@ -4,41 +4,42 @@
 import os, sys
 import subprocess
 from signal import signal, SIGTERM, SIGINT, SIG_DFL
+from datetime import datetime
+from select import select
 
-def invoke(args, close_fds=True):
-    print args
+from cmdlog.models import LogEntry
+
+def invoke(args, close_fds=True, return_out_err=False, log=True):
+    if log:
+        log = LogEntry( starttime=datetime.now(), command=args[0][:250] )
+
     proc = subprocess.Popen(args,
-        stdin  = sys.stdin,
-        stdout = sys.stdout,
-        stderr = sys.stderr,
+        stdin  = None,
+        stdout = subprocess.PIPE,
+        stderr = subprocess.PIPE,
         close_fds = close_fds
         )
+    procout, procerr = proc.communicate()
 
-    def fwdsigterm(signum, frame):
-        proc.send_signal(SIGTERM)
-        signal(SIGTERM, fwdsigterm)
+    if log:
+        out = [ "> " +  ' '.join(['"' + arg + '"' for arg in args])]
+        out.extend([ "E " + line for line in procerr.split("\n") if line ])
+        out.extend([ "O " + line for line in procout.split("\n") if line ])
 
-    signal(SIGTERM, fwdsigterm)
-    signal(SIGINT, fwdsigterm)
-    proc.wait()
-    signal(SIGTERM, SIG_DFL)
-    signal(SIGINT, SIG_DFL)
+        log.endtime  = datetime.now()
+        log.exitcode = proc.returncode
+        log.text     = '\n'.join(out)
+        log.save()
 
+        print log.text
+
+    if return_out_err:
+        return proc.returncode, procout, procerr
     return proc.returncode
 
 
 def lvm_command(cmd):
-    if os.getuid() == 0:
-        args = []
-    else:
-        args = ["sudo"]
-
-    args.extend([cmd, "--noheadings", "--nameprefixes", "--unquoted", "--units", "m"])
-
-    proc = subprocess.Popen(args,
-        stdin = None, stdout = subprocess.PIPE, stderr = subprocess.PIPE, close_fds = True
-        )
-    out, err = proc.communicate()
+    ret, out, err = invoke([cmd, "--noheadings", "--nameprefixes", "--unquoted", "--units", "m"], return_out_err=True, log=False)
 
     if err:
         raise SystemError(err)
