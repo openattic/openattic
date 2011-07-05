@@ -217,49 +217,21 @@ class LogicalVolume(StatefulModel):
         """ The actual size of this LV in Megs, retrieved from LVM. """
         return float(self.lvm_info["LVM2_LV_SIZE"][:-1])
 
-    def save( self, *args, **kwargs ):
-        if not self.id:
-            if self.snapshot:
-                snap = self.snapshot.device
-            else:
-                snap = ""
-            self.lvm.lvcreate( self.vg.name, self.name, self.megs, snap )
-            self.lvm.lvchange( self.device, True )
+    ##########################
+    ### PROCESSING METHODS ###
+    ##########################
 
-            if self.filesystem:
-                self.fs.format()
-                self.fs.mount()
-                self.fs.chown()
+    def install( self ):
+        if self.snapshot:
+            snap = self.snapshot.device
+        else:
+            snap = ""
+        self.lvm.lvcreate( self.vg.name, self.name, self.megs, snap )
+        self.lvm.lvchange( self.device, True )
 
-        elif self.megs != self.lvm_megs:
-            if self.filesystem:
-                self.fs.unmount()
-
-            self.lvm.lvchange(self.device, False)
-            if self.megs < self.lvm_megs:
-                # Shrink FS, then Volume
-                if self.filesystem:
-                    self.fs.resize(grow=False)
-                self.lvm.lvresize(self.device, self.megs)
-            else:
-                # Grow Volume, then FS
-                self.lvm.lvresize(self.device, self.megs)
-                if self.filesystem:
-                    self.fs.resize(grow=True)
-
-            if self.filesystem:
-                self.fs.mount()
-        self.state = "active"
-        return StatefulModel.save(self, ignore_state=True, *args, **kwargs)
-
-    def delete(self):
-        """ If active, transition to delete; if new or done, actually call delete().
-
-            Overrides StatefulModel.delete() in order to cascade to all shares and
-            block device modules.
-        """
-        if self.filesystem:
-            self.fs.unmount()
+    def uninstall( self ):
+        for share in self.get_shares():
+            share.delete()
 
         #mc = lv.modchain[:]
         #mc.reverse()
@@ -269,6 +241,50 @@ class LogicalVolume(StatefulModel):
 
         self.lvm.lvchange(self.device, False)
         self.lvm.lvremove(self.device)
+
+    def resize( self ):
+        self.lvm.lvchange(self.device, False)
+        if self.megs < self.lvm_megs:
+            # Shrink FS, then Volume
+            if self.filesystem:
+                self.fs.resize(grow=False)
+            self.lvm.lvresize(self.device, self.megs)
+        else:
+            # Grow Volume, then FS
+            self.lvm.lvresize(self.device, self.megs)
+            if self.filesystem:
+                self.fs.resize(grow=True)
+        self.lvm.lvchange( self.device, True )
+
+    def setupfs( self ):
+        if not self.formatted:
+            self.fs.format()
+        self.fs.mount()
+        if not self.formatted:
+            self.fs.chown()
+            self.formatted = True
+
+    def save( self, *args, **kwargs ):
+        if self.filesystem and self.fs.mounted:
+            self.fs.unmount()
+        if not self.id:
+            self.install()
+        elif self.megs != self.lvm_megs:
+            self.resize()
+        if self.filesystem:
+            self.setupfs()
+        self.state = "active"
+        return StatefulModel.save(self, ignore_state=True, *args, **kwargs)
+
+    def delete(self):
+        """ If active, transition to delete; if new or done, actually call delete().
+
+            Overrides StatefulModel.delete() in order to cascade to all shares and
+            block device modules.
+        """
+        if self.filesystem and self.fs.mounted:
+            self.fs.unmount()
+        self.uninstall()
         models.Model.delete(self)
 
 
