@@ -33,6 +33,12 @@ DATABASES = {
 
 DBUS_IFACE_SYSTEMD = "org.openattic.systemd"
 
+# Log execution of "lvs" and "vgs" commands.
+# Those don't usually fail and are executed quite often (tm) to generate the LV and VG lists,
+# so logging them might not make too much sense, but it's up to you. :)
+# Logging commands like lvcreate/lvresize/lvremove won't be affected by this.
+LVM_LOG_COMMANDS = False
+
 # Auto-Configure distro defaults
 import lsb_release
 distro = lsb_release.get_distro_information()

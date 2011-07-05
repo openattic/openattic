@@ -7,6 +7,7 @@ from signal import signal, SIGTERM, SIGINT, SIG_DFL
 from datetime import datetime
 from select import select
 
+from lvm.conf import settings as lvm_settings
 from cmdlog.models import LogEntry
 
 def invoke(args, close_fds=True, return_out_err=False, log=True):
@@ -39,7 +40,7 @@ def invoke(args, close_fds=True, return_out_err=False, log=True):
 
 
 def lvm_command(cmd):
-    ret, out, err = invoke([cmd, "--noheadings", "--nameprefixes", "--unquoted", "--units", "m"], return_out_err=True, log=False)
+    ret, out, err = invoke([cmd, "--noheadings", "--nameprefixes", "--unquoted", "--units", "m"], return_out_err=True, log=lvm_settings.LOG_COMMANDS)
 
     if err:
         raise SystemError(err)
