@@ -249,7 +249,8 @@ class LogicalVolume(StatefulModel):
 
             if self.filesystem:
                 self.fs.mount()
-        return StatefulModel.save(self, *args, **kwargs)
+        self.state = "active"
+        return StatefulModel.save(self, ignore_state=True, *args, **kwargs)
 
     def delete(self):
         """ If active, transition to delete; if new or done, actually call delete().

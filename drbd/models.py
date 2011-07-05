@@ -4,12 +4,13 @@
 # This file contains excerpts from `man drbd.conf`.
 # Copyright 2001-2008 LINBIT Information Technologies, Philipp Reisner, Lars Ellenberg.
 
-from django.db import models
+import dbus
+
+from django.conf import settings
+from django.db   import models
 
 from lvm.models import LogicalVolume, LVChainedModule
 from peering.models import PeerHost
-
-from drbd.procutils import drbd_cstate, drbd_dstate, drbd_role
 
 DRBD_PROTOCOL_CHOICES = (
     ('A', 'Protocol A: write IO is reported as completed, if it has reached local disk and local TCP send buffer.'),
@@ -116,11 +117,19 @@ class DrbdDevice(LVChainedModule):
                                    "Bandwidth limit for background synchronization, measured in "
                                    "K/M/G<b><i>Bytes</i></b>."))
 
+    def __init__( self, *args, **kwargs ):
+        LVChainedModule.__init__( self, *args, **kwargs )
+        self._drbd = None
+
+    @property
+    def drbd(self):
+        if self._drbd is None:
+            self._drbd = dbus.SystemBus().get_object(settings.DBUS_IFACE_SYSTEMD, "/drbd")
+        return self._drbd
+
     @property
     def res(self):
-        if self.resname:
-            return self.resname
-        return "r%d" % self.id
+        return self.volume.name
 
     @property
     def path(self):
@@ -130,19 +139,20 @@ class DrbdDevice(LVChainedModule):
     def cstate(self):
         if self.state not in ("pending", "active"):
             return None
-        return drbd_cstate(self.res)
+        return self.drbd.get_cstate(self.res)
 
     @property
     def dstate(self):
         if self.state not in ("pending", "active"):
             return None
-        return dict(zip(("self", "peer"), drbd_dstate(self.res).split('/')))
+        return dict(zip(("self", "peer"), self.drbd.get_dstate(self.res).split('/')))
 
     @property
     def role(self):
         if self.state not in ("pending", "active"):
             return None
-        return dict(zip(("self", "peer"), drbd_role(self.res).split('/')))
+        drbd = dbus.SystemBus().get_object(settings.DBUS_IFACE_SYSTEMD, "/drbd")
+        return dict(zip(("self", "peer"), self.drbd.get_role(self.res).split('/')))
 
     @property
     def peerdevice(self):
@@ -162,9 +172,11 @@ class DrbdDevice(LVChainedModule):
         return "ok"
 
     def install(self):
-        from drbd.installer import install_resource
-        return install_resource(self)
+        self.drbd.conf_write(self.id)
+        self.drbd.up(self.res)
+        if self.init_master:
+            self.drbd.primary_overwrite(self.path)
 
     def uninstall(self):
-        from drbd.installer import uninstall_resource
-        return uninstall_resource(self)
+        self.drbd.down(self.res)
+        self.drbd.conf_delete(self.id)

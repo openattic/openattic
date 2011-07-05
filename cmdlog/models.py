@@ -11,4 +11,8 @@ class LogEntry(models.Model):
     text      = models.TextField()
 
     def __unicode__(self):
-        return "%s at %s" % ( self.command, self.starttime )
+        if self.exitcode == 0:
+            templ = "%s at %s"
+        else:
+            templ = "%s at %s (failed)"
+        return templ % ( self.command, self.starttime )

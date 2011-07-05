@@ -1,7 +1,10 @@
 # -*- coding: utf-8 -*-
 # kate: space-indent on; indent-width 4; replace-tabs on;
 
-from django.db import models
+import dbus
+
+from django.db   import models
+from django.conf import settings
 
 from lvm.models import StatefulModel, LogicalVolume
 
@@ -18,3 +21,11 @@ class Export(StatefulModel):
     @property
     def path(self):
         return self.volume.fs.mountpoint
+
+    def save( self, *args, **kwargs ):
+        self.state = "active"
+        ret = StatefulModel.save(self, ignore_state=True, *args, **kwargs)
+        nfs = dbus.SystemBus().get_object(settings.DBUS_IFACE_SYSTEMD, "/nfs")
+        nfs.writeconf()
+        return ret
+
