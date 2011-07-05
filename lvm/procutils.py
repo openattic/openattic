@@ -10,17 +10,17 @@ from select import select
 from lvm.conf import settings as lvm_settings
 from cmdlog.models import LogEntry
 
-def invoke(args, close_fds=True, return_out_err=False, log=True):
+def invoke(args, close_fds=True, return_out_err=False, log=True, stdin=None):
     if log:
         log = LogEntry( starttime=datetime.now(), command=args[0][:250] )
 
     proc = subprocess.Popen(args,
-        stdin  = None,
+        stdin  = (None if stdin is None else subprocess.PIPE),
         stdout = subprocess.PIPE,
         stderr = subprocess.PIPE,
         close_fds = close_fds
         )
-    procout, procerr = proc.communicate()
+    procout, procerr = proc.communicate(stdin)
 
     if log:
         out = [ "> " +  ' '.join(['"' + arg + '"' for arg in args])]

@@ -118,21 +118,4 @@ class SystemD(dbus.service.Object):
 
     @dbus.service.method(settings.DBUS_IFACE_SYSTEMD, in_signature="si", out_signature="i")
     def ntfs_resize(self, devpath, megs):
-        import subprocess
-        from signal import signal, SIGTERM, SIGINT, SIG_DFL
-
-        proc = subprocess.Popen(
-            ["/usr/sbin/ntfsresize", "--force", "--size", ("%dM" % megs), devpath],
-            stdin  = subprocess.PIPE, stdout = sys.stdout, stderr = sys.stderr
-            )
-
-        def fwdsigterm(signum, frame):
-            proc.send_signal(SIGTERM)
-            signal(SIGTERM, fwdsigterm)
-
-        signal(SIGTERM, fwdsigterm)
-        signal(SIGINT, fwdsigterm)
-        proc.communicate("y\n")
-        signal(SIGTERM, SIG_DFL)
-        signal(SIGINT, SIG_DFL)
-        return proc.returncode
+        return invoke(["/usr/sbin/ntfsresize", "--force", "--size", ("%dM" % megs), devpath], stdin="y\n")
