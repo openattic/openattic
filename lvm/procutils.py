@@ -2,6 +2,7 @@
 # kate: space-indent on; indent-width 4; replace-tabs on;
 
 import os, sys
+import logging
 import subprocess
 from signal import signal, SIGTERM, SIGINT, SIG_DFL
 from datetime import datetime
@@ -32,7 +33,10 @@ def invoke(args, close_fds=True, return_out_err=False, log=True, stdin=None):
         log.text     = '\n'.join(out)
         log.save()
 
-        print log.text
+        if log.exitcode == 0:
+            logging.debug(log.text)
+        else:
+            logging.error(log.text)
 
     if return_out_err:
         return proc.returncode, procout, procerr
