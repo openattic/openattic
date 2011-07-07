@@ -16,6 +16,7 @@ set -u
 
 PIDFILE="/var/run/openattic_systemd.pid"
 LOGFILE="/var/log/openattic_systemd"
+LOGLEVEL="DEBUG"
 PYTHON="/usr/bin/python"
 OADIR="/srv/pyfiler"
 SYSTEMD="$OADIR/manage.py systemd"
@@ -32,7 +33,7 @@ case $1 in
 	start)
 		log_daemon_msg "Starting" "openATTIC systemd"
 		start-stop-daemon --pidfile=$PIDFILE --make-pidfile --background --oknodo --start \
-			--exec $PYTHON --chdir $OADIR -- $SYSTEMD -l $LOGFILE
+			--exec $PYTHON --chdir $OADIR -- $SYSTEMD -l $LOGFILE -L $LOGLEVEL -q
 		log_end_msg 0
 		;;
 	
