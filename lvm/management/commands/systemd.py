@@ -108,7 +108,7 @@ class Command( BaseCommand ):
             rootlogger.addHandler(logsh)
 
         logging.info("Detecting modules...")
-        INSTALLERS = []
+        sysdplugins = []
         for app in settings.INSTALLED_APPS:
             try:
                 module = __import__( app+".systemd" )
@@ -116,11 +116,11 @@ class Command( BaseCommand ):
                 if unicode(err) != "No module named systemd":
                     logging.error("Got error when checking app %s: %s", app, unicode(err))
             else:
-                INSTALLERS.append(module)
-        logging.info( "Loaded modules: %s", ', '.join([module.__name__ for module in INSTALLERS]) )
+                sysdplugins.append(module)
+        logging.info( "Loaded modules: %s", ', '.join([module.__name__ for module in sysdplugins]) )
 
         logging.info( "Running." )
         dbus.mainloop.glib.DBusGMainLoop(set_as_default=True)
         loop = gobject.MainLoop()
-        master = SystemD(INSTALLERS)
+        master = SystemD(sysdplugins)
         loop.run()
