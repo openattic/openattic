@@ -5,6 +5,7 @@ import os, sys
 import dbus.service
 
 from django.conf import settings
+from django.template.loader import render_to_string
 
 from lvm.procutils import invoke
 from lvm.systemd   import logged
@@ -24,7 +25,7 @@ class SystemD(dbus.service.Object):
     def writeconf(self):
         fd = open(http_settings.APACHE2_CONF, "w")
         fd.write( render_to_string( "http/apache2.conf", {
-        'Exports': Export.objects.filter(state__in=("new", "update", "active")).exclude(volume__state="update")
-        } ) )
+            'Exports': Export.objects.filter(state__in=("new", "update", "active")).exclude(volume__state="update")
+            } ) )
         fd.close()
-        return invoke(["/etc/init.d/apache2", "reload"])
+        return invoke([http_settings.APACHE2_INITSCRIPT, "reload"])
