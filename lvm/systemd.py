@@ -3,6 +3,7 @@
 
 import os, sys
 import dbus.service
+import logging
 from functools import wraps
 
 from django.conf import settings
@@ -14,12 +15,13 @@ def makeloggedfunc(func):
     if hasattr(func, "im_class") and hasattr(func.im_class, "dbus_path"):
         @wraps(func)
         def loggedfunc(*args, **kwargs):
-            print "Calling %s::%s(%s)" % (func.im_class.dbus_path, func.__name__, ', '.join([repr(arg) for arg in args[1:]]))
+            logging.info( "Calling %s::%s(%s)", func.im_class.dbus_path, func.__name__,
+                ', '.join([repr(arg) for arg in args[1:]]))
             return func(*args, **kwargs)
     else:
         @wraps(func)
         def loggedfunc(*args, **kwargs):
-            print "Calling %s(%s)" % (func.__name__, ', '.join([repr(arg) for arg in args[1:]]))
+            logging.info( "Calling %s(%s)", func.__name__, ', '.join([repr(arg) for arg in args[1:]]))
             return func(*args, **kwargs)
     return loggedfunc
 
@@ -92,6 +94,11 @@ class SystemD(dbus.service.Object):
         else:
             return invoke(["/bin/chown", "-R", user, mountpoint])
 
+    @dbus.service.method(settings.DBUS_IFACE_SYSTEMD, in_signature="s", out_signature="a{ss}")
+    def e2fs_info(self, devpath):
+        ret, out, err = invoke(["/sbin/tune2fs", "-l", devpath], return_out_err=True)
+        return dict([ [part.strip() for part in line.split(":", 1)] for line in out.split("\n")[1:] if line ])
+
     @dbus.service.method(settings.DBUS_IFACE_SYSTEMD, in_signature="ss", out_signature="i")
     def e2fs_format(self, devpath, label):
         return invoke(["/sbin/mke2fs", "-m0", "-L", label, devpath])
@@ -114,8 +121,8 @@ class SystemD(dbus.service.Object):
 
     @dbus.service.method(settings.DBUS_IFACE_SYSTEMD, in_signature="s", out_signature="i")
     def ntfs_format(self, devpath):
-        return invoke(["/usr/sbin/mkntfs", "--fast", self.lv.path])
+        return invoke(["/sbin/mkntfs", "--fast", devpath])
 
     @dbus.service.method(settings.DBUS_IFACE_SYSTEMD, in_signature="si", out_signature="i")
     def ntfs_resize(self, devpath, megs):
-        return invoke(["/usr/sbin/ntfsresize", "--force", "--size", ("%dM" % megs), devpath], stdin="y\n")
+        return invoke(["/sbin/ntfsresize", "--force", "--size", ("%dM" % megs), devpath], stdin="y\n")

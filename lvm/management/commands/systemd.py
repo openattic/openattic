@@ -3,7 +3,9 @@
 
 import os, sys
 import traceback
+import logging
 
+from logging.handlers import SysLogHandler
 from functools import wraps
 from os.path import dirname, abspath
 from optparse import make_option
@@ -48,39 +50,76 @@ class SystemD(dbus.service.Object):
     def ping(self):
         return "pong"
 
+
+def getloglevel(levelstr):
+    numeric_level = getattr(logging, levelstr.upper(), None)
+    if not isinstance(numeric_level, int):
+        raise ValueError('Invalid log level: %s' % levelstr)
+    return numeric_level
+
+
 class Command( BaseCommand ):
     help = "Daemon that executes all commands for which root is needed."
     option_list = BaseCommand.option_list + (
         make_option( "-l", "--logfile",
-        help="Redirect stdout and stderr to a logfile.",
-        default=None
-        ),
+            help="Log to a logfile.",
+            default=None
+            ),
+        make_option( "-L", "--loglevel",
+            help="loglevel of said logfile, defaults to INFO.",
+            default="INFO"
+            ),
+        make_option( "-s", "--sysloglevel",
+            help="loglevel with which to log to syslog, defaults to WARNING. OFF disables syslog altogether.",
+            default="WARNING"
+            ),
+        make_option( "-q", "--quiet",
+            help="Don't log to stdout.",
+            default=False, action="store_true"
+            ),
     )
 
     def handle(self, **options):
         if os.getuid() != 0:
             raise SystemError( "I need to run as root." )
 
-        if 'logfile' in options and options['logfile']:
-            sys.stdout = open( options['logfile'], "wb", False )
-            sys.stderr = sys.stdout
-
         os.environ["LANG"] = "en_US.UTF-8"
 
-        print "Detecting modules...",
+        rootlogger = logging.getLogger()
+        rootlogger.name = "openattic_systemd"
+        rootlogger.setLevel(logging.DEBUG)
+
+        if not options['quiet']:
+            logch = logging.StreamHandler()
+            logch.setLevel(logging.DEBUG)
+            logch.setFormatter( logging.Formatter('%(asctime)s - %(levelname)s - %(message)s') )
+            rootlogger.addHandler(logch)
+
+        if 'logfile' in options and options['logfile']:
+            logfh = logging.FileHandler(options['logfile'])
+            logfh.setLevel( getloglevel(options['loglevel']) )
+            logfh.setFormatter( logging.Formatter('%(asctime)s - %(levelname)s - %(message)s') )
+            rootlogger.addHandler(logfh)
+
+        if 'sysloglevel' in options and options['sysloglevel'].upper() != 'OFF':
+            logsh = SysLogHandler(address="/dev/log")
+            logsh.setLevel( getloglevel(options['sysloglevel']) )
+            logsh.setFormatter( logging.Formatter('%(name)s: %(levelname)s %(message)s') )
+            rootlogger.addHandler(logsh)
+
+        logging.info("Detecting modules...")
         INSTALLERS = []
         for app in settings.INSTALLED_APPS:
             try:
                 module = __import__( app+".systemd" )
             except ImportError, err:
                 if unicode(err) != "No module named systemd":
-                    print >> sys.stdout, app, unicode(err)
+                    logging.error("Got error when checking app %s: %s", app, unicode(err))
             else:
                 INSTALLERS.append(module)
-                print module.__name__,
-        print
+        logging.info( "Loaded modules: %s", ', '.join([module.__name__ for module in INSTALLERS]) )
 
-        print "Running."
+        logging.info( "Running." )
         dbus.mainloop.glib.DBusGMainLoop(set_as_default=True)
         loop = gobject.MainLoop()
         master = SystemD(INSTALLERS)
