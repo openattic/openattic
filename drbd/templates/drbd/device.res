@@ -20,7 +20,7 @@ resource {{ Device.res }} {
 	
 	handlers {
 		fence-peer          "/usr/lib/drbd/crm-fence-peer.sh";
-		after-resync-target "/usr/lib/drbd/crm-unfence-peer.sh";	
+		after-resync-target "/usr/lib/drbd/crm-unfence-peer.sh";
 	}
 	
 	net {
@@ -40,8 +40,8 @@ resource {{ Device.res }} {
 	{% endif %}
 	
 	on {{ Hostname }} {
-		device     {{ Device.path }};        # Name of virtual block dev
-		disk       {{ Device.basedev }};     # block dev to be mirrored
+		device     {{ Device.path }};
+		disk       {{ Device.basedev }};
 		address    {{ Device.selfaddress }};
 		meta-disk  internal;
 	}
