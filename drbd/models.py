@@ -160,13 +160,12 @@ class DrbdDevice(LVChainedModule):
                 return dev
         return None
 
-    @property
-    def format_policy(self):
-        if not self.init_master:
-            return "skip"
-        if self.state != "active":
-            return "not-yet"
-        return "ok"
+    def setupfs(self):
+        if self.role[0] == "Primary":
+            self.volume.setupfs()
+        else:
+            self.volume.formatted = True
+            self.volume.save()
 
     def install(self):
         if self.state != 'active':

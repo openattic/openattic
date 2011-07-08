@@ -228,16 +228,18 @@ class LogicalVolume(StatefulModel):
             snap = ""
         self.lvm.lvcreate( self.vg.name, self.name, self.megs, snap )
         self.lvm.lvchange( self.device, True )
+        for mod in self.modchain:
+            mod.install()
 
     def uninstall( self ):
         for share in self.get_shares():
             share.delete()
 
-        #mc = lv.modchain[:]
-        #mc.reverse()
-        #for mod in mc:
-            #if mod.state == "delete":
-                #mod.uninstall()
+        mc = self.modchain[:]
+        mc.reverse()
+        for mod in mc:
+            mod.uninstall()
+            mod.delete()
 
         self.lvm.lvchange(self.device, False)
         self.lvm.lvremove(self.device)
@@ -271,8 +273,14 @@ class LogicalVolume(StatefulModel):
             self.install()
         elif self.megs != self.lvm_megs:
             self.resize()
+        for mod in self.modchain:
+            mod.install()
         if self.filesystem:
-            self.setupfs()
+            mc = self.modchain
+            if mc:
+                mc[-1].setupfs()
+            else:
+                self.setupfs()
         self.state = "active"
         return StatefulModel.save(self, ignore_state=True, *args, **kwargs)
 
@@ -310,10 +318,8 @@ class LVChainedModule(StatefulModel):
                     return last.path
                 last = curr
 
-    # format_policy:
-    #  * "ok"      if ready to be formatted/used otherwise
-    #  * "skip"    if formatting is not necessary (DRBD Secondaries)
-    format_policy = "ok"
+    def setupfs(self):
+        self.volume.setupfs()
 
     def install(self):
         raise NotImplementedError("This module lacks an installer")
