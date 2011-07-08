@@ -51,4 +51,13 @@ class Lun(StatefulModel):
             except ValueError: # first LUN, so the list is empty
                 self.number = 0
 
-        StatefulModel.save(self, *args, **kwargs)
+        self.state = "active"
+        ret = StatefulModel.save(self, ignore_state=True, *args, **kwargs)
+        dbus.SystemBus().get_object(settings.DBUS_IFACE_SYSTEMD, "/iscsi").writeconf()
+        return ret
+
+    def delete( self ):
+        self.state = "done"
+        ret = StatefulModel.delete(self)
+        dbus.SystemBus().get_object(settings.DBUS_IFACE_SYSTEMD, "/iscsi").writeconf()
+        return ret
