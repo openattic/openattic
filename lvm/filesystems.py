@@ -14,18 +14,24 @@ class FileSystem(object):
         self.lv = logical_volume
 
     @property
-    def mountpoint(self):
-        return os.path.join(lvm_settings.MOUNT_PREFIX, self.lv.vg.name, self.lv.name)
+    def mountpoints(self):
+        return [os.path.join(lvm_settings.MOUNT_PREFIX, self.lv.vg.name, self.lv.name)]
 
     def mount(self):
-        return self.lv.lvm.fs_mount( self.name, self.lv.path, self.mountpoint )
+        if mountpoint is None and len(self.mountpoints) == 1:
+            mountpoint = self.mountpoints[0]
+        return self.lv.lvm.fs_mount( self.name, self.lv.path, mountpoint )
 
     @property
-    def mounted(self):
-        return os.path.ismount(self.mountpoint)
+    def mounted(self, mountpoint=None):
+        if mountpoint is None and len(self.mountpoints) == 1:
+            mountpoint = self.mountpoints[0]
+        return os.path.ismount(mountpoint)
 
-    def unmount(self):
-        return self.lv.lvm.fs_unmount( self.lv.path, self.mountpoint )
+    def unmount(self, mountpoint=None):
+        if mountpoint is None and len(self.mountpoints) == 1:
+            mountpoint = self.mountpoints[0]
+        return self.lv.lvm.fs_unmount( self.lv.path, mountpoint )
 
     def format(self):
         raise NotImplementedError("FileSystem::format needs to be overridden")
