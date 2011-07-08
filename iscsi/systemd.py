@@ -27,30 +27,32 @@ class SystemD(dbus.service.Object):
         allw = open( iscsi_settings.INITR_ALLOW, "w" )
         deny = open( iscsi_settings.INITR_DENY,  "w" )
 
-        for target in Target.objects.all():
-            ietd.write( "Target %s\n" % target.iscsiname )
+        try:
+            for target in Target.objects.all():
+                ietd.write( "Target %s\n" % target.iscsiname )
 
-            for lun in target.lun_set.filter(state__in=("new", "update", "active")):
-                ietd.write( "\tLun %d Path=%s,Type=%s\n" % (lun.number, lun.volume.path, lun.ltype) )
-                if lun.alias:
-                    ietd.write( "\tAlias %s\n" % lun.alias )
+                for lun in target.lun_set.filter(state__in=("new", "update", "active")):
+                    ietd.write( "\tLun %d Path=%s,Type=%s\n" % (lun.number, lun.volume.path, lun.ltype) )
+                    if lun.alias:
+                        ietd.write( "\tAlias %s\n" % lun.alias )
 
-            if target.init_allow.all().count() == target.init_deny.all().count() == 0:
-                if target.allowall:
-                    allw.write( "%s ALL\n" % target.iscsiname )
+                if target.init_allow.all().count() == target.init_deny.all().count() == 0:
+                    if target.allowall:
+                        allw.write( "%s ALL\n" % target.iscsiname )
+                    else:
+                        deny.write( "%s ALL\n" % target.iscsiname )
                 else:
-                    deny.write( "%s ALL\n" % target.iscsiname )
-            else:
-                if target.init_allow.all().count():
-                    allw.write( "%s %s\n" % ( target.iscsiname,
-                        ', '.join([rec["address"] for rec in target.init_allow.values("address")])
-                        ))
-                if target.init_deny.all().count():
-                    deny.write( "%s %s\n" % ( target.iscsiname,
-                        ', '.join([rec["address"] for rec in target.init_deny.values("address")])
-                        ))
+                    if target.init_allow.all().count():
+                        allw.write( "%s %s\n" % ( target.iscsiname,
+                            ', '.join([rec["address"] for rec in target.init_allow.values("address")])
+                            ))
+                    if target.init_deny.all().count():
+                        deny.write( "%s %s\n" % ( target.iscsiname,
+                            ', '.join([rec["address"] for rec in target.init_deny.values("address")])
+                            ))
 
-        ietd.close()
-        allw.close()
-        deny.close()
+        finally:
+            ietd.close()
+            allw.close()
+            deny.close()
         return invoke([iscsi_settings.INITSCRIPT, "restart"])

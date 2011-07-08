@@ -24,8 +24,10 @@ class SystemD(dbus.service.Object):
     @dbus.service.method(settings.DBUS_IFACE_SYSTEMD, in_signature="", out_signature="i")
     def writeconf(self):
         fd = open(http_settings.APACHE2_CONF, "w")
-        fd.write( render_to_string( "http/apache2.conf", {
-            'Exports': Export.objects.filter(state__in=("new", "update", "active")).exclude(volume__state="update")
-            } ) )
-        fd.close()
+        try:
+            fd.write( render_to_string( "http/apache2.conf", {
+                'Exports': Export.objects.filter(state__in=("new", "update", "active")).exclude(volume__state="update")
+                } ) )
+        finally:
+            fd.close()
         return invoke([http_settings.APACHE2_INITSCRIPT, "reload"])

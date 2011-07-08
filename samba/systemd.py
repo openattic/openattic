@@ -29,13 +29,15 @@ class SystemD(dbus.service.Object):
         self.lock.acquire()
         try:
             fd = open( samba_settings.SMB_CONF, "wb" )
-            fd.write( render_to_string( "samba/smb.conf", {
-                'Hostname':  socket.gethostname(),
-                'Domain':    samba_settings.DOMAIN,
-                'Workgroup': samba_settings.WORKGROUP,
-                'Shares':    Share.objects.filter(state__in=("new", "update", "active")).exclude(volume__state="update")
-                } ) )
-            fd.close()
+            try:
+                fd.write( render_to_string( "samba/smb.conf", {
+                    'Hostname':  socket.gethostname(),
+                    'Domain':    samba_settings.DOMAIN,
+                    'Workgroup': samba_settings.WORKGROUP,
+                    'Shares':    Share.objects.filter(state__in=("new", "update", "active")).exclude(volume__state="update")
+                    } ) )
+            finally:
+                fd.close()
 
             return invoke([samba_settings.INITSCRIPT, "reload"])
         finally:

@@ -83,11 +83,13 @@ class SystemD(dbus.service.Object):
     def conf_write(self, devid):
         dev = Device.objects.get(id=devid)
         fd = open("/etc/drbd.d/%s_%s.res" % (dev.volume.vg.name, dev.volume.name), "w")
-        fd.write( render_to_string( "drbd/device.res", {
-            'Hostname':  socket.gethostname(),
-            'Device':    dev
-            } ) )
-        fd.close()
+        try:
+            fd.write( render_to_string( "drbd/device.res", {
+                'Hostname':  socket.gethostname(),
+                'Device':    dev
+                } ) )
+        finally:
+            fd.close()
 
     @dbus.service.method(settings.DBUS_IFACE_SYSTEMD, in_signature="i", out_signature="")
     def conf_delete(self, devid):

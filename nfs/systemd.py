@@ -28,9 +28,11 @@ class SystemD(dbus.service.Object):
         self.lock.acquire()
         try:
             fd = open( nfs_settings.EXPORTS, "wb" )
-            for export in Export.objects.filter(state__in=("new", "update", "active")).exclude(volume__state="update"):
-                fd.write( "%-50s %s(%s)\n" % ( export.path, export.address, export.options ) )
-            fd.close()
+            try:
+                for export in Export.objects.filter(state__in=("new", "update", "active")).exclude(volume__state="update"):
+                    fd.write( "%-50s %s(%s)\n" % ( export.path, export.address, export.options ) )
+            finally:
+                fd.close()
 
             return invoke(["/usr/sbin/exportfs", "-a"])
         finally:
