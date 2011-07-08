@@ -5,11 +5,12 @@ from django.shortcuts  import render_to_response, get_object_or_404
 from django.template   import RequestContext
 from django.http       import HttpResponseRedirect
 from django.forms.models import ModelFormMetaclass, ModelForm
+from django.forms      import ValidationError
 
 from lvm.models   import LogicalVolume
 
 def add_share_for_lv(request, lvid, model, template_name, perm=None, form_class=None,
-                     volume_field="volume", post_create_redirect='lvm.views.lvlist',
+                     volume_field="volume", path_field="path", post_create_redirect='lvm.views.lvlist',
                      other_field_defaults=None ):
     """ Generic view that creates a form for a new share, and pre-populates
         the form's volume field with the previously selected LV.
@@ -29,6 +30,34 @@ def add_share_for_lv(request, lvid, model, template_name, perm=None, form_class=
             })
 
     lv = get_object_or_404( LogicalVolume, id=lvid )
+
+    if path_field in form_class.base_fields:
+        def clean_path(self):
+            path = self.cleaned_data[path_field]
+            if not lv.filesystem:
+                if path.startswith("/dev"):
+                    return path
+                raise ValidationError("This volume has no mount point, so you need to export some device from /dev.")
+            else:
+                for mp in lv.fs.mountpoints:
+                    if path.startswith(mp):
+                        return path
+                raise ValidationError("This path is not under one of the mountpoints of the target volume.")
+
+        setattr( form_class, "clean_"+path_field, clean_path )
+
+        if lv.filesystem:
+            initpath = lv.fs.mountpoints[0]
+            if len(lv.fs.mountpoints) == 1:
+                helptext = "Must be under '%s'." % lv.fs.mountpoints[0]
+            else:
+                helptext = "Must be under one of '%s'." % "', '".join(lv.fs.mountpoints)
+        else:
+            initpath = lv.path
+            helptext = "This volume has no mount point."
+        form_class.base_fields[path_field].initial   = initpath
+        form_class.base_fields[path_field].help_text = helptext
+
 
     if request.method == "POST":
         form = form_class(request.POST)
