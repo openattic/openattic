@@ -5,7 +5,7 @@ PROJECT_ROOT = None
 PROJECT_URL  = '/filer'
 # das folgende wird gebraucht weil gunicorn SCRIPT_URL und PATH_INFO nicht setzt
 # fyi: SCRIPT_URL=/filer/lvm/ PATH_INFO=/lvm/ würde klären
-FORCE_SCRIPT_NAME = "/filer"
+#FORCE_SCRIPT_NAME = "/filer"
 
 from os.path import join, dirname, abspath, exists
 if not PROJECT_ROOT or not exists( PROJECT_ROOT ):
