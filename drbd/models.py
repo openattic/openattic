@@ -169,11 +169,14 @@ class DrbdDevice(LVChainedModule):
         return "ok"
 
     def install(self):
-        self.drbd.conf_write(self.id)
-        self.drbd.createmd(self.res)
-        self.drbd.up(self.res)
-        if self.init_master:
-            self.drbd.primary_overwrite(self.path)
+        if self.state != 'active':
+            self.drbd.conf_write(self.id)
+            self.drbd.createmd(self.res)
+            self.drbd.up(self.res)
+            if self.init_master:
+                self.drbd.primary_overwrite(self.path)
+            self.state = 'active'
+            self.save(ignore_state=True)
 
     def uninstall(self):
         self.drbd.down(self.res)
