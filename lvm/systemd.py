@@ -82,7 +82,9 @@ class SystemD(dbus.service.Object):
 
     @dbus.service.method(settings.DBUS_IFACE_SYSTEMD, in_signature="ss", out_signature="i")
     def fs_unmount(self, devpath, mountpoint):
-        ret = invoke(["/bin/umount", devpath])
+        if not os.path.exists(mountpoint) or not os.path.ismount(mountpoint):
+            return -1
+        ret = invoke(["/bin/umount", mountpoint])
         if ret == 0 and os.path.exists(mountpoint):
             os.rmdir(mountpoint)
         return ret
