@@ -11,6 +11,7 @@ from lvm.models import StatefulModel, LogicalVolume
 
 class Share(StatefulModel):
     volume        = models.ForeignKey(LogicalVolume)
+    path          = models.CharField(max_length=255)
     available     = models.BooleanField(default=True,  blank=True)
     browseable    = models.BooleanField(default=True,  blank=True)
     guest_ok      = models.BooleanField(default=False, blank=True)
@@ -29,10 +30,6 @@ class Share(StatefulModel):
 
     def __unicode__(self):
         return unicode(self.volume)
-
-    @property
-    def path(self):
-        return self.volume.fs.mountpoint
 
     @property
     def valid_users_str(self):

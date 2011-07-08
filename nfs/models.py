@@ -10,6 +10,7 @@ from lvm.models import StatefulModel, LogicalVolume
 
 class Export(StatefulModel):
     volume      = models.ForeignKey(LogicalVolume)
+    path        = models.CharField(max_length=255)
     address     = models.CharField(max_length=250)
     options     = models.CharField(max_length=250, default="rw,no_subtree_check,no_root_squash")
 
@@ -17,10 +18,6 @@ class Export(StatefulModel):
 
     def __unicode__(self):
         return "%s - %s" % ( self.volume, self.address )
-
-    @property
-    def path(self):
-        return self.volume.fs.mountpoint
 
     def save( self, *args, **kwargs ):
         self.state = "active"

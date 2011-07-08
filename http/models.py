@@ -10,15 +10,12 @@ from lvm.models import StatefulModel, LogicalVolume
 
 class Export(StatefulModel):
     volume      = models.ForeignKey(LogicalVolume, related_name="http_export_set")
+    path        = models.CharField(max_length=255)
 
     share_type  = "http"
 
     def __unicode__(self):
         return unicode( self.volume )
-
-    @property
-    def path(self):
-        return self.volume.fs.mountpoint
 
     def save( self, *args, **kwargs ):
         self.state = "active"
