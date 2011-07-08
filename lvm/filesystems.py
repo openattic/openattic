@@ -33,6 +33,10 @@ class FileSystem(object):
     def resize(self, grow):
         raise NotImplementedError("FileSystem::resize needs to be overridden")
 
+    @property
+    def info(self):
+        raise NotImplementedError("FileSystem::info needs to be overridden")
+
     def chown(self):
         return self.lv.lvm.fs_chown( self.mountpoint, self.lv.owner.username, lvm_settings.CHOWN_GROUP )
 
@@ -52,6 +56,10 @@ class FileSystem(object):
 class Ext2(FileSystem):
     name = "ext2"
     desc = "Ext2 (Linux)"
+
+    @property
+    def info(self):
+        return self.lv.lvm.e2fs_info( self.lv.path )
 
     def format(self):
         return self.lv.lvm.e2fs_format( self.lv.path, self.lv.name )
@@ -79,6 +87,10 @@ class Ext4(Ext2):
 class Ntfs(FileSystem):
     name = "ntfs"
     desc = "NTFS (Windows)"
+
+    @property
+    def info(self):
+        return {}
 
     def format(self):
         return self.lv.lvm.ntfs_format( self.lv.path )
