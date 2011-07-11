@@ -14,8 +14,8 @@
 set -e
 set -u
 
-PIDFILE="/var/run/openattic_systemd.pid"
-LOGFILE="/var/log/openattic_systemd"
+PIDFILE="/var/run/openattic_rpcd.pid"
+LOGFILE="/var/log/openattic_rpcd"
 LOGLEVEL="DEBUG"
 PYTHON="/usr/bin/python"
 OADIR="/srv/pyfiler"
@@ -31,14 +31,14 @@ fi
 
 case $1 in
 	start)
-		log_daemon_msg "Starting" "openATTIC systemd"
+		log_daemon_msg "Starting" "openATTIC rpcd"
 		start-stop-daemon --pidfile=$PIDFILE --make-pidfile --background --oknodo --start \
 			--exec $PYTHON --chdir $OADIR -- $OPTIONS -l $LOGFILE -L $LOGLEVEL -q
 		log_end_msg 0
 		;;
 	
 	stop)
-		log_daemon_msg "Stopping" "openATTIC systemd"
+		log_daemon_msg "Stopping" "openATTIC rpcd"
 		start-stop-daemon --pidfile=$PIDFILE --stop --exec $PYTHON
 		log_end_msg 0
 		;;
