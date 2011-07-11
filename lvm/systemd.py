@@ -10,6 +10,26 @@ from django.conf import settings
 
 from procutils import invoke, lvm_vgs, lvm_lvs
 
+def dbus_type_to_python(obj):
+    conv = {
+        dbus.Array: list,
+        dbus.Dictionary: dict,
+        dbus.Boolean: bool,
+        dbus.Int16: int,
+        dbus.Int32: int,
+        dbus.Int64: int,
+        dbus.String: unicode
+        }
+    return conv[type(obj)](obj)
+
+def dbus_to_python(obj):
+    py = dbus_type_to_python(obj)
+    if isinstance(py, list):
+        return [dbus_to_python(el) for el in py]
+    elif isinstance(py, dict):
+        return dict([(dbus_type_to_python(key), dbus_to_python(obj[key])) for key in py])
+    return py
+
 def makeloggedfunc(func):
     """ Create a wrapper around the method that does some logging """
     if hasattr(func, "im_class") and hasattr(func.im_class, "dbus_path"):

@@ -6,6 +6,7 @@ from django.contrib.auth.models import User
 from django.db import models
 from django.conf import settings
 
+from lvm.systemd import dbus_to_python
 from lvm.filesystems import FILESYSTEMS, get_by_name as get_fs_by_name
 
 SETUP_STATE_CHOICES = (
@@ -17,6 +18,7 @@ SETUP_STATE_CHOICES = (
     ("dpend",   "[dpend]   Removal is running"),
     ("done",    "[done]    Removal has finished")
     )
+
 
 class StatefulModel(models.Model):
     """ Base class for stateful models.
@@ -105,7 +107,7 @@ class VolumeGroup(models.Model):
         """ VG information from LVM. """
         if self._lvm_info is None:
             lvm = dbus.SystemBus().get_object(settings.DBUS_IFACE_SYSTEMD, "/lvm")
-            self._lvm_info = lvm.vgs()[self.name]
+            self._lvm_info = dbus_to_python(lvm.vgs())[self.name]
         return self._lvm_info
 
 class LogicalVolume(StatefulModel):
@@ -209,7 +211,7 @@ class LogicalVolume(StatefulModel):
         if self.state not in ("active", "update", "pending"):
             return None
         if self._lvm_info is None:
-            self._lvm_info = self.lvm.lvs()[self.name]
+            self._lvm_info = dbus_to_python(self.lvm.lvs())[self.name]
         return self._lvm_info
 
     @property

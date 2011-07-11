@@ -4,6 +4,7 @@
 import os
 from procutils import invoke
 
+from systemd import dbus_to_python
 from lvm.conf import settings as lvm_settings
 
 class FileSystem(object):
@@ -44,11 +45,17 @@ class FileSystem(object):
         raise NotImplementedError("FileSystem::info needs to be overridden")
 
     def chown(self):
-        return self.lv.lvm.fs_chown( self.mountpoint, self.lv.owner.username, lvm_settings.CHOWN_GROUP )
+        for mp in self.mountpoints:
+            ret = self.lv.lvm.fs_chown( mp, self.lv.owner.username, lvm_settings.CHOWN_GROUP )
+            if ret != 0:
+                return ret
+        return 0
 
     @property
-    def stat(self):
-        s = os.statvfs(self.mountpoint)
+    def stat(self, mountpoint=None):
+        if mountpoint is None and len(self.mountpoints) == 1:
+            mountpoint = self.mountpoints[0]
+        s = os.statvfs(mountpoint)
         stats = {
             'size': (s.f_blocks * s.f_frsize) / 1024 / 1000.,
             'free': (s.f_bavail * s.f_frsize) / 1024 / 1000.,
@@ -65,7 +72,7 @@ class Ext2(FileSystem):
 
     @property
     def info(self):
-        return self.lv.lvm.e2fs_info( self.lv.path )
+        return dbus_to_python( self.lv.lvm.e2fs_info( self.lv.path ) )
 
     def format(self):
         return self.lv.lvm.e2fs_format( self.lv.path, self.lv.name )
