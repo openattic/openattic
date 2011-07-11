@@ -23,13 +23,16 @@ class BaseHandler(object):
 
     def ids(self):
         """ Get a list of all existing object IDs. """
-        return [o.id for o in self.model.objects.all()]
+        return [self._idobj(o) for o in self.model.objects.all()]
 
     def _idobj(self, obj):
-        return {'id': obj.id}
+        return {'id': obj.id, 'app': obj._meta.app_label, 'obj': obj._meta.object_name}
 
     def get(self, id):
         return self._getobj( self.model.objects.get(id=id) )
+
+    def filter(self, kwds):
+        return [ self._getobj(obj) for obj in self.model.objects.filter(**kwds) ]
 
     def _getobj(self, obj):
         data = {}
