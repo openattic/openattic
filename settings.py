@@ -173,4 +173,5 @@ INSTALLED_APPS = (
     'samba',
     'http',
     'drbd',
+    'rpcd',
 )
