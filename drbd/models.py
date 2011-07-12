@@ -211,7 +211,7 @@ class DrbdDevice(LVChainedModule):
             self.drbd.up(self.res)
 
             if self.init_master:
-                self.drbd.primary_overwrite(self.path)
+                self.drbd.primary_overwrite(self.res)
 
             self.state = 'active'
             StatefulModel.save(self, ignore_state=True)

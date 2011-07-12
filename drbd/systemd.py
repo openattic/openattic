@@ -35,16 +35,16 @@ class SystemD(dbus.service.Object):
         return invoke(["/sbin/drbdadm", "up", resource])
 
     @dbus.service.method(settings.DBUS_IFACE_SYSTEMD, in_signature="s", out_signature="i")
-    def primary(self, path):
-        return invoke(["/sbin/drbdadm", "--", path, "primary"])
+    def primary(self, resource):
+        return invoke(["/sbin/drbdadm", "--", "primary", resource])
 
     @dbus.service.method(settings.DBUS_IFACE_SYSTEMD, in_signature="s", out_signature="i")
-    def primary_overwrite(self, path):
-        return invoke(["/sbin/drbdadm", "--", "--overwrite-data-of-peer", path, "primary"])
+    def primary_overwrite(self, resource):
+        return invoke(["/sbin/drbdadm", "--", "--overwrite-data-of-peer", "primary", resource])
 
     @dbus.service.method(settings.DBUS_IFACE_SYSTEMD, in_signature="s", out_signature="i")
-    def primary_force(self, path):
-        return invoke(["/sbin/drbdadm", "--", "--force", path, "primary"])
+    def primary_force(self, resource):
+        return invoke(["/sbin/drbdadm", "--", "--force", "primary", resource])
 
     @dbus.service.method(settings.DBUS_IFACE_SYSTEMD, in_signature="s", out_signature="i")
     def secondary(self, path):
