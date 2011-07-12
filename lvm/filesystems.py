@@ -18,7 +18,7 @@ class FileSystem(object):
     def mountpoints(self):
         return [os.path.join(lvm_settings.MOUNT_PREFIX, self.lv.vg.name, self.lv.name)]
 
-    def mount(self):
+    def mount(self, mountpoint=None):
         if mountpoint is None and len(self.mountpoints) == 1:
             mountpoint = self.mountpoints[0]
         return self.lv.lvm.fs_mount( self.name, self.lv.path, mountpoint )
