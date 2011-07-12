@@ -1,6 +1,8 @@
 # -*- coding: utf-8 -*-
 # kate: space-indent on; indent-width 4; replace-tabs on;
 
+import socket
+
 from xmlrpclib import ServerProxy
 from django.db import models
 
@@ -22,6 +24,13 @@ class PeerHost(models.Model):
         if self._connection is None:
             self._connection = ServerProxy(self.base_url, allow_none=True)
         return self._connection
+
+    @property
+    def thishost(self):
+        found = self.connection.peering.PeerHost.filter({'name': socket.gethostname()})
+        if len(found) == 1:
+            return found[0]
+        raise self.DoesNotExist("No host named %s found on peer %s." % ( socket.gethostname(), self.name ))
 
     def __getattr__(self, attr):
         return getattr( self.connection, attr)

@@ -154,10 +154,12 @@ class DrbdDevice(LVChainedModule):
     @property
     def peerdevice(self):
         """ The counterpart device on our peer, if any. """
-        alldevs = self.peerhost.getjson("/api/drbd/devs/")
-        for dev in alldevs:
-            if dev['peeraddress'] == self.selfaddress and dev['selfaddress'] == self.peeraddress:
-                return dev
+        dev = self.peerhost.drbd.DrbdDevice.fiter({
+            'peeraddress': self.selfaddress,
+            'selfaddress': self.peeraddress
+            })
+        if len(dev) == 1:
+            return dev[0]
         return None
 
     def setupfs(self):
@@ -169,14 +171,48 @@ class DrbdDevice(LVChainedModule):
 
     def install(self):
         if self.state != 'active':
+            self.save(ignore_state=True)
+            if self.init_master:
+                vgid = self.peerhost.lvm.VolumeGroup.ids()[0]
+                user = self.peerhost.auth.User.filter({'username': self.volume.owner.username})[0]
+                lv   = self.peerhost.lvm.LogicalVolume.new({
+                    'name':  self.volume.name,
+                    'megs':  self.volume.megs,
+                    'vg':    vgid,
+                    'owner': {'app': 'auth', 'id': user.id, 'obj': 'User'},
+                    })
+                thishost = {'app': 'peering', 'obj': 'PeerHost', 'id': self.peerhost.thishost['id']}
+                ddev = self.peerhost.drbd.DrbdDevice.new({
+                    'peeraddress':      self.selfaddress,
+                    'peerhost':         thishost,
+                    'init_master':      False,
+                    'volume':           lv,
+                    'cram_hmac_alg':    self.cram_hmac_alg,
+                    'degr_wfc_timeout': self.degr_wfc_timeout,
+                    'fencing':          self.fencing,
+                    'on_io_error':      self.on_io_error,
+                    'outdated_wfc_timeout': self.outdated_wfc_timeout,
+                    'protocol':         self.protocol,
+                    'sb_0pri':          self.sb_0pri,
+                    'sb_1pri':          self.sb_1pri,
+                    'sb_2pri':          self.sb_2pri,
+                    'secret':           self.secret,
+                    'selfaddress':      self.peeraddress,
+                    'syncer_rate':      self.syncer_rate,
+                    'wfc_timeout':      self.wfc_timeout,
+                    })
+
             self.drbd.conf_write(self.id)
             self.drbd.createmd(self.res)
             self.drbd.up(self.res)
+
             if self.init_master:
                 self.drbd.primary_overwrite(self.path)
+
             self.state = 'active'
             self.save(ignore_state=True)
 
     def uninstall(self):
         self.drbd.down(self.res)
         self.drbd.conf_delete(self.id)
+
