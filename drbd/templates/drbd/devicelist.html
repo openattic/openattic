@@ -7,17 +7,33 @@
       <tr>
         <th class="left">Volume</th>
         <th>Peer</th>
-        <th class="right">API</th>
+        <th>Conn state</th>
+        <th>Disk state</th>
+        <th>Role</th>
+        <th class="right"></th>
       </tr>
       {% for dev in object_list %}
         <tr>
           <td><a href="{% url drbd_device_edit dev.id %}">{{ dev.volume.name }}</a></td>
           <td>{{ dev.selfaddress }} → {{ dev.peeraddress }}</td>
-          <td><a href="{% url api_drbd_device_handler dev.id %}">API</a></td>
+          <td>{{ dev.cstate }}
+          <td>{{ dev.dstate.self }}
+          <td>{{ dev.role.self }}
+          <td>
+            <a href="{% url drbd_device_delete dev.id %}">
+              <img alt="delete" src="{{ MEDIA_URL }}/icons/delete.png" />
+            </a>
+          </td>
         </tr>
       {% endfor %}
       <tr style="height: 10px">
-        <td class="footer_left"></td>
+        <td class="footer_left" colspan="2">
+          <a style="margin-left:20px;font-size:12px;" href="{% url drbd_device_add %}">
+            <img src="{{ MEDIA_URL }}/icons/add.png" alt="add" /> Add DRBD Device
+          </a>
+        </td>
+        <td class="footer"></td>
+        <td class="footer"></td>
         <td class="footer"></td>
         <td class="footer_right"></td>
       </tr>
