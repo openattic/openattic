@@ -154,7 +154,7 @@ class DrbdDevice(LVChainedModule):
     @property
     def peerdevice(self):
         """ The counterpart device on our peer, if any. """
-        dev = self.peerhost.drbd.DrbdDevice.fiter({
+        dev = self.peerhost.drbd.DrbdDevice.filter({
             'peeraddress': self.selfaddress,
             'selfaddress': self.peeraddress
             })
