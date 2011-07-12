@@ -81,7 +81,7 @@ class SystemD(dbus.service.Object):
 
     @dbus.service.method(settings.DBUS_IFACE_SYSTEMD, in_signature="i", out_signature="")
     def conf_write(self, devid):
-        dev = Device.objects.get(id=devid)
+        dev = DrbdDevice.objects.get(id=devid)
         fd = open("/etc/drbd.d/%s_%s.res" % (dev.volume.vg.name, dev.volume.name), "w")
         try:
             fd.write( render_to_string( "drbd/device.res", {
@@ -93,5 +93,5 @@ class SystemD(dbus.service.Object):
 
     @dbus.service.method(settings.DBUS_IFACE_SYSTEMD, in_signature="i", out_signature="")
     def conf_delete(self, devid):
-        dev = Device.objects.get(id=devid)
+        dev = DrbdDevice.objects.get(id=devid)
         os.unlink("/etc/drbd.d/%s_%s.res" % (dev.volume.vg.name, dev.volume.name))
