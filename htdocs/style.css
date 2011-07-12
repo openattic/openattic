@@ -275,3 +275,16 @@ form table tr {
 	display:    none;
 	z-index:    9;
 }
+
+span.commandline {
+	color: green;
+}
+
+span.commandstdout {
+	color: black;
+}
+
+span.commandstderr {
+	color: red;
+}
+
