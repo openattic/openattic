@@ -4,7 +4,9 @@
 import os, sys
 import dbus.service
 import subprocess
+import socket
 
+from django.template.loader import render_to_string
 from django.conf import settings
 
 from lvm.procutils import invoke
