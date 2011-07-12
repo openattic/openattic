@@ -20,7 +20,7 @@ class SystemD(dbus.service.Object):
 
     @dbus.service.method(settings.DBUS_IFACE_SYSTEMD, in_signature="s", out_signature="i")
     def createmd(self, resource):
-        return invoke(["/sbin/drbdadm", "create-md", resource])
+        return invoke(["/sbin/drbdadm", "create-md", resource], stdin="yes\n")
 
     @dbus.service.method(settings.DBUS_IFACE_SYSTEMD, in_signature="s", out_signature="i")
     def attach(self, resource):
