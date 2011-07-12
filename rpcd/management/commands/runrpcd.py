@@ -47,6 +47,12 @@ class SecureXMLRPCServer(HTTPServer, SimpleXMLRPCDispatcher):
         self.server_bind()
         self.server_activate()
 
+    def get_request(self):
+        try:
+            return HTTPServer.get_request(self)
+        except SSL.SSLError, e:
+            logging.error( "Error accepting connection: " + unicode(e) )
+            raise socket.error(unicode(e))
 
 class SecureXMLRPCRequestHandler(SimpleXMLRPCRequestHandler):
     """ Secure XML-RPC request handler class.
