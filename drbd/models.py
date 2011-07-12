@@ -143,14 +143,14 @@ class DrbdDevice(LVChainedModule):
     def dstate(self):
         if self.state not in ("pending", "active"):
             return None
-        return dict(zip(("self", "peer"), self.drbd.get_dstate(self.res).split('/')))
+        return self.drbd.get_dstate(self.res)
 
     @property
     def role(self):
         if self.state not in ("pending", "active"):
             return None
         drbd = dbus.SystemBus().get_object(settings.DBUS_IFACE_SYSTEMD, "/drbd")
-        return dict(zip(("self", "peer"), self.drbd.get_role(self.res).split('/')))
+        return self.drbd.get_role(self.res)
 
     @property
     def peerdevice(self):
@@ -167,7 +167,7 @@ class DrbdDevice(LVChainedModule):
         return self._peerdev
 
     def setupfs(self):
-        if self.role[0] == "Primary":
+        if self.role['self'] == "Primary":
             self.volume.setupfs()
         else:
             self.volume.formatted = True

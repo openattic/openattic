@@ -66,20 +66,20 @@ class SystemD(dbus.service.Object):
     def down(self, resource):
         return invoke(["/sbin/drbdadm", "down", resource])
 
-    @dbus.service.method(settings.DBUS_IFACE_SYSTEMD, in_signature="s", out_signature="as")
+    @dbus.service.method(settings.DBUS_IFACE_SYSTEMD, in_signature="s", out_signature="a{ss}")
     def get_dstate(self, resource):
         ret, out, err = invoke(["/sbin/drbdadm", "dstate", resource], return_out_err=True)
-        return out.split("/")
+        return dict(zip(("self", "peer"), out.strip().split("/")))
 
     @dbus.service.method(settings.DBUS_IFACE_SYSTEMD, in_signature="s", out_signature="s")
     def get_cstate(self, resource):
         ret, out, err = invoke(["/sbin/drbdadm", "cstate", resource], return_out_err=True)
-        return out
+        return out.strip()
 
-    @dbus.service.method(settings.DBUS_IFACE_SYSTEMD, in_signature="s", out_signature="as")
+    @dbus.service.method(settings.DBUS_IFACE_SYSTEMD, in_signature="s", out_signature="a{ss}")
     def get_role(self, resource):
         ret, out, err = invoke(["/sbin/drbdadm", "role", resource], return_out_err=True)
-        return out.split("/")
+        return dict(zip(("self", "peer"), out.strip().split("/")))
 
     @dbus.service.method(settings.DBUS_IFACE_SYSTEMD, in_signature="i", out_signature="")
     def conf_write(self, devid):
