@@ -117,6 +117,7 @@ class DrbdDevice(LVChainedModule):
     def __init__( self, *args, **kwargs ):
         LVChainedModule.__init__( self, *args, **kwargs )
         self._drbd = None
+        self._peerdev = None
 
     @property
     def drbd(self):
@@ -154,13 +155,16 @@ class DrbdDevice(LVChainedModule):
     @property
     def peerdevice(self):
         """ The counterpart device on our peer, if any. """
-        dev = self.peerhost.drbd.DrbdDevice.filter({
-            'peeraddress': self.selfaddress,
-            'selfaddress': self.peeraddress
-            })
-        if len(dev) == 1:
-            return dev[0]
-        return None
+        if self._peerdev is None:
+            dev = self.peerhost.drbd.DrbdDevice.filter({
+                'peeraddress': self.selfaddress,
+                'selfaddress': self.peeraddress
+                })
+            if len(dev) == 1:
+                self._peerdev = dev[0]
+            else:
+                return None
+        return self._peerdev
 
     def setupfs(self):
         if self.role[0] == "Primary":
