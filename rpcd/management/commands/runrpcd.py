@@ -198,7 +198,7 @@ def getloglevel(levelstr):
 
 
 class Command( BaseCommand ):
-    help = "Daemon that executes all commands for which root is needed."
+    help = "Daemon that handles communication over XMLRPC."
     option_list = BaseCommand.option_list + (
         make_option( "-l", "--logfile",
             help="Log to a logfile.",
