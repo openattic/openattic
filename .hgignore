@@ -9,3 +9,4 @@ syntax: glob
 htdocs/prototype.js
 htdocs/scriptaculous
 htdocs/jquery*
+certs/
