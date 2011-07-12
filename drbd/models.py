@@ -179,7 +179,7 @@ class DrbdDevice(LVChainedModule):
                     'name':  self.volume.name,
                     'megs':  self.volume.megs,
                     'vg':    vgid,
-                    'owner': {'app': 'auth', 'id': user.id, 'obj': 'User'},
+                    'owner': {'app': 'auth', 'id': user['id'], 'obj': 'User'},
                     })
                 thishost = {'app': 'peering', 'obj': 'PeerHost', 'id': self.peerhost.thishost['id']}
                 ddev = self.peerhost.drbd.DrbdDevice.new({
