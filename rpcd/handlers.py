@@ -31,6 +31,13 @@ class BaseHandler(object):
         """ Return the handler class for the given model. """
         return cls.__metaclass__.handlers[model]
 
+    @classmethod
+    def _get_object_by_id_dict(cls, id_dict):
+        for model in cls.__metaclass__.handlers:
+            if model._meta.app_label == id_dict['app'] and model._meta.object_name == id_dict['obj']:
+                return model.objects.get(id=id_dict['id'])
+        return None
+
     def ids(self):
         """ Get a list of all existing object IDs. """
         return [self._idobj(o) for o in self.model.objects.all()]
@@ -79,6 +86,10 @@ class BaseHandler(object):
         return self._override_get(obj, data)
 
 
+    def new(self, data):
+        """ Create a new object with values from the data dict. """
+        return self._setobj( self.model(), data )
+
     def set(self, id, data):
         """ Update the object given by ID with values from the data dict. """
         return self._setobj( self.model.objects.get(id=id), data )
@@ -87,9 +98,17 @@ class BaseHandler(object):
         """ Update the given object with values from the data dict. """
         for field in obj._meta.fields:
             if field.name in data:
-                setattr(obj, field.name, data[field.name])
+                if isinstance( field, models.ForeignKey ):
+                    if data[field.name] is not None:
+                        setattr(obj, field.name, BaseHandler._get_object_by_id_dict(data[field.name]))
+                    else:
+                        setattr(obj, field.name, None)
+                else:
+                    setattr(obj, field.name, data[field.name])
         self._override_set(obj, data)
-        return obj.save()
+        obj.full_clean()
+        obj.save()
+        return self._idobj(obj)
 
 
     def _override_get(self, obj, data):
