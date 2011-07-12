@@ -25,6 +25,8 @@ from django.conf import settings
 
 from lvm.systemd import makeloggedfunc
 
+from rpcd.handlers import BaseHandler
+
 class SecureXMLRPCServer(HTTPServer, SimpleXMLRPCDispatcher):
     """ Secure XML-RPC server.
 
@@ -189,6 +191,12 @@ class RPCd(object):
         if args[0] == 'self':
             return args[1:]
         return args
+
+    def get_object(self, id):
+        """ Return an object resolved from an ID dictionary. """
+        obj = BaseHandler._get_object_by_id_dict(id)
+        handler = BaseHandler._get_handler_for_model(obj.__class__)()
+        return handler._getobj(obj)
 
 def getloglevel(levelstr):
     numeric_level = getattr(logging, levelstr.upper(), None)
