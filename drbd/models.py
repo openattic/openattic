@@ -9,7 +9,7 @@ import dbus
 from django.conf import settings
 from django.db   import models
 
-from lvm.models import LogicalVolume, LVChainedModule
+from lvm.models import StatefulModel, LogicalVolume, LVChainedModule
 from peering.models import PeerHost
 
 DRBD_PROTOCOL_CHOICES = (
