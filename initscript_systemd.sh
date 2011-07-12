@@ -19,7 +19,7 @@ LOGFILE="/var/log/openattic_systemd"
 LOGLEVEL="DEBUG"
 PYTHON="/usr/bin/python"
 OADIR="/srv/pyfiler"
-SYSTEMD="$OADIR/manage.py systemd"
+SYSTEMD="$OADIR/manage.py runsystemd"
 
 if [ $# -lt 1 ]
 then
