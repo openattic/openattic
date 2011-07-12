@@ -273,20 +273,26 @@ class LogicalVolume(StatefulModel):
             self.formatted = True
 
     def save( self, *args, **kwargs ):
-        if self.filesystem and self.fs.mounted:
-            self.fs.unmount()
-        if not self.id:
+        self.state = "active"
+        install = (self.id is None)
+        ret = StatefulModel.save(self, ignore_state=True, *args, **kwargs)
+
+        if install:
             self.install()
         elif self.megs != self.lvm_megs:
+            if self.filesystem and self.fs.mounted:
+                self.fs.unmount()
             self.resize()
+            self.megs = self.lvm_megs
+
         if self.filesystem:
             mc = self.modchain
             if mc:
                 mc[-1].setupfs()
             else:
                 self.setupfs()
-        self.state = "active"
-        return StatefulModel.save(self, ignore_state=True, *args, **kwargs)
+
+        return ret
 
     def delete(self):
         """ If active, transition to delete; if new or done, actually call delete().
