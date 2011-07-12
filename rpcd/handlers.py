@@ -38,6 +38,10 @@ class BaseHandler(object):
                 return model.objects.get(id=id_dict['id'])
         return None
 
+    def idobj(self, numeric_id):
+        """ Get an ID object for the object given by numeric_id. """
+        return self._idobj( self.model.objects.get(id=numeric_id) )
+
     def ids(self):
         """ Get a list of all existing object IDs. """
         return [self._idobj(o) for o in self.model.objects.all()]
