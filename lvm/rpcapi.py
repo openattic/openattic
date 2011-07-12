@@ -2,13 +2,8 @@
 # kate: space-indent on; indent-width 4; replace-tabs on;
 
 from rpcd.handlers import BaseHandler
-from django.contrib.auth.models import User
 
 from lvm.models import VolumeGroup, LogicalVolume, LVChainedModule
-
-class UserHandler(BaseHandler):
-    model = User
-    exclude = ["password"]
 
 class VgHandler(BaseHandler):
     model = VolumeGroup
