@@ -233,8 +233,6 @@ class LogicalVolume(StatefulModel):
             snap = ""
         self.lvm.lvcreate( self.vg.name, self.name, self.megs, snap )
         self.lvm.lvchange( self.device, True )
-        for mod in self.modchain:
-            mod.install()
 
     def uninstall( self ):
         for share in self.get_shares():
@@ -243,7 +241,6 @@ class LogicalVolume(StatefulModel):
         mc = self.modchain[:]
         mc.reverse()
         for mod in mc:
-            mod.uninstall()
             mod.delete()
 
         self.lvm.lvchange(self.device, False)
@@ -255,10 +252,14 @@ class LogicalVolume(StatefulModel):
             # Shrink FS, then Volume
             if self.filesystem:
                 self.fs.resize(grow=False)
+            for mod in self.modchain:
+                mod.resize()
             self.lvm.lvresize(self.device, self.megs)
         else:
             # Grow Volume, then FS
             self.lvm.lvresize(self.device, self.megs)
+            for mod in self.modchain:
+                mod.resize()
             if self.filesystem:
                 self.fs.resize(grow=True)
         self.lvm.lvchange( self.device, True )
@@ -278,8 +279,6 @@ class LogicalVolume(StatefulModel):
             self.install()
         elif self.megs != self.lvm_megs:
             self.resize()
-        for mod in self.modchain:
-            mod.install()
         if self.filesystem:
             mc = self.modchain
             if mc:
@@ -327,11 +326,24 @@ class LVChainedModule(StatefulModel):
         self.volume.setupfs()
 
     def install(self):
-        raise NotImplementedError("This module lacks an installer")
+        return
+
+    def resize(self):
+        return
 
     def uninstall(self):
-        raise NotImplementedError("This module lacks an installer")
+        return
 
     class Meta:
         unique_together=("volume", "ordering")
         abstract = True
+
+    def save( self, *args, **kwargs ):
+        if not self.id:
+            self.install()
+        self.state = "active"
+        return StatefulModel.save(self, ignore_state=True, *args, **kwargs)
+
+    def delete(self):
+        self.uninstall()
+        models.Model.delete(self)
