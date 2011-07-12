@@ -16,3 +16,9 @@ class DrbdDeviceForm(forms.ModelForm):
             'fencing': forms.RadioSelect,
             'on_io_error': forms.RadioSelect,
         }
+
+    def clean_volume(self):
+        volume = self.cleaned_data['volume']
+        if volume.filesystem:
+            raise forms.ValidationError("Cannot create a DRBD device on a volume which has a filesystem.")
+        return volume
