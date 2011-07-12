@@ -4,6 +4,7 @@
 from django.db import models
 
 class BaseHandlerMeta(type):
+    """ Handler meta class that keeps track of Model→Handler associations. """
     handlers = {}
 
     def __init__( cls, name, bases, attrs ):
@@ -12,13 +13,22 @@ class BaseHandlerMeta(type):
             BaseHandlerMeta.handlers[attrs['model']] = cls
 
 class BaseHandler(object):
+    """ Base RPC handler class.
+
+        Any methods whose names do not start with an underscore (_) will
+        be automatically exported via RPC.
+
+        In order to change the data included in records, override the _idobj,
+        _override_get and _override_set methods.
+    """
     __metaclass__ = BaseHandlerMeta
 
     exclude = None
     fields  = None
 
     @classmethod
-    def get_handler_for_model(cls, model):
+    def _get_handler_for_model(cls, model):
+        """ Return the handler class for the given model. """
         return cls.__metaclass__.handlers[model]
 
     def ids(self):
@@ -26,15 +36,27 @@ class BaseHandler(object):
         return [self._idobj(o) for o in self.model.objects.all()]
 
     def _idobj(self, obj):
+        """ Return an ID for the given object, including the app label and object name. """
         return {'id': obj.id, 'app': obj._meta.app_label, 'obj': obj._meta.object_name}
 
+    def all(self):
+        """ Return all objects. """
+        return [ self._getobj(obj) for obj in self.model.objects.all() ]
+
     def get(self, id):
+        """ Return an object given by ID. """
         return self._getobj( self.model.objects.get(id=id) )
 
     def filter(self, kwds):
+        """ Search for objects with the keywords specified in the kwds dict. """
         return [ self._getobj(obj) for obj in self.model.objects.filter(**kwds) ]
 
+    def delete(self, id):
+        """ Delete an object given by ID. """
+        return self.model.objects.get(id=id).delete()
+
     def _getobj(self, obj):
+        """ Return the data for one given object. """
         data = {}
         for field in obj._meta.fields:
             if self.fields is not None and field.name not in self.fields:
@@ -46,7 +68,7 @@ class BaseHandler(object):
             if isinstance( field, models.ForeignKey ):
                 if value is not None:
                     try:
-                        handler = BaseHandler.get_handler_for_model(value.__class__)()
+                        handler = BaseHandler._get_handler_for_model(value.__class__)()
                     except KeyError:
                         data[field.name] = unicode(value)
                     else:
@@ -58,9 +80,11 @@ class BaseHandler(object):
 
 
     def set(self, id, data):
+        """ Update the object given by ID with values from the data dict. """
         return self._setobj( self.model.objects.get(id=id), data )
 
     def _setobj(self, obj, data):
+        """ Update the given object with values from the data dict. """
         for field in obj._meta.fields:
             if field.name in data:
                 setattr(obj, field.name, data[field.name])
@@ -69,7 +93,11 @@ class BaseHandler(object):
 
 
     def _override_get(self, obj, data):
+        """ Stub method called right before _getobj returns the data dict.
+            Override this to change the data from a Handler subclass.
+        """
         return data
 
     def _override_set(self, obj, data):
+        """ Stub method called right before _getobj calls obj.save(). """
         return
