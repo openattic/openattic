@@ -171,7 +171,7 @@ class DrbdDevice(LVChainedModule):
 
     def install(self):
         if self.state != 'active':
-            self.save(ignore_state=True)
+            StatefulModel.save(self, ignore_state=True)
             if self.init_master:
                 vgid = self.peerhost.lvm.VolumeGroup.ids()[0]
                 user = self.peerhost.auth.User.filter({'username': self.volume.owner.username})[0]
@@ -210,7 +210,7 @@ class DrbdDevice(LVChainedModule):
                 self.drbd.primary_overwrite(self.path)
 
             self.state = 'active'
-            self.save(ignore_state=True)
+            StatefulModel.save(self, ignore_state=True)
 
     def uninstall(self):
         self.drbd.down(self.res)
