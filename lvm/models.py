@@ -226,6 +226,9 @@ class LogicalVolume(StatefulModel):
     def install( self ):
         if self.snapshot:
             snap = self.snapshot.device
+            # Don't reformat the snapshot :)
+            self.filesystem = self.snapshot.filesystem
+            self.formatted  = self.snapshot.formatted
         else:
             snap = ""
         self.lvm.lvcreate( self.vg.name, self.name, self.megs, snap )
