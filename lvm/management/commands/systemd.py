@@ -91,7 +91,7 @@ class Command( BaseCommand ):
 
         if not options['quiet']:
             logch = logging.StreamHandler()
-            logch.setLevel(logging.DEBUG)
+            logch.setLevel({2: logging.DEBUG, 1: logging.INFO, 0: logging.WARNING}[options['verbosity']])
             logch.setFormatter( logging.Formatter('%(asctime)s - %(levelname)s - %(message)s') )
             rootlogger.addHandler(logch)
 
