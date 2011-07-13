@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 # kate: space-indent on; indent-width 4; replace-tabs on;
 
-import os, sys
+import os
 import traceback
 import logging
 import inspect
@@ -12,7 +12,6 @@ from SimpleXMLRPCServer import list_public_methods, SimpleXMLRPCServer
 from SimpleXMLRPCServer import SimpleXMLRPCRequestHandler, SimpleXMLRPCDispatcher
 from BaseHTTPServer import HTTPServer
 from logging.handlers import SysLogHandler
-from os.path  import dirname, abspath
 from optparse import make_option
 from base64   import b64decode
 from M2Crypto import SSL
@@ -22,8 +21,6 @@ import dbus
 from django.core.management.base import BaseCommand
 from django.contrib.auth import authenticate
 from django.conf import settings
-
-from lvm.systemd import makeloggedfunc
 
 from rpcd.handlers import BaseHandler
 
