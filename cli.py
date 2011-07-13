@@ -442,6 +442,7 @@ else:
         class subsection_shell(BaseCommand):
             prompt = "%s:%s> " % ( hostcolorize(hostname), sectcolorize('shell') )
             def do_outformat(self, args):
+                """ Display and switch the output format of the running shell. """
                 args = args.strip()
                 if not args:
                     print options.outformat
@@ -449,6 +450,42 @@ else:
                     options.outformat = args
                 else:
                     print >> sys.stderr, ("Invalid arguments, must be one of '%s'." % "', '".join(formatters.keys()))
+
+            def do_history(self, args):
+                """ Display the command history. """
+                for i in range(readline.get_current_history_length()):
+                    print readline.get_history_item(i)
+
+            def do_clear_history(self, args):
+                """ Clears the command history (warning: no confirmation or backup!). """
+                readline.clear_history()
+
+            def do_syntax(self, args):
+                """ Display some notes about syntax. """
+                print  ("""Syntax in this shell:\n"""
+                        """\n"""
+                        """ command [arguments]\n"""
+                        """\n"""
+                        """Arguments may be enclosed in double or single quotes in order to keep\n"""
+                        """white space, whereas in double quotes, the quotes themselves can be added\n"""
+                        """by escaping them. So, "hello \"friend\"" will be parsed to 'hello "friend"',\n"""
+                        """while 'hello \'friend\'' is a syntax error.\n"""
+                        """\n"""
+                        """In cases where lists or dictionaries need to be passed, enter them\n"""
+                        """as JSON like so:\n"""
+                        """ command some "other args" {"key": "value", 13: 37}\n"""
+                        """ command some "other args" ["value", 1, 2, 3]\n"""
+                        """\n"""
+                        """Beware though that JSON does not support strings enclosed in single quotes.\n"""
+                        """\n"""
+                        """The shell is organized in sections, each section containing a distinct set\n"""
+                        """of commands. The ``help'' command will list commands that exist in each\n"""
+                        """section, and if called with a command name as its first argument, it displays\n"""
+                        """some information about that command.\n"""
+                        """If you enter a partial command name, pressing the tab key will auto-complete\n"""
+                        """the command name if possible.\n"""
+                        """To leave a section, you can either use the exit command, or hit ^d. To quit\n"""
+                        """the shell altogether, do the same on the root section (#).\n""")
 
         class subsection_system(BaseCommand):
             """ The automatically generated system section causes the server proxy to fail somehow. """
