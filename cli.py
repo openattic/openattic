@@ -214,4 +214,5 @@ else:
 
     print >> sys.stderr, "Building shell..."
     main = buildShellSection("main", [], methods)()
+    main.prompt = "#> "
     main.cmdloop()
