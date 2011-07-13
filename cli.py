@@ -2,6 +2,7 @@
 # -*- coding: utf-8 -*-
 # kate: space-indent on; indent-width 4; replace-tabs on;
 
+import socket
 import os, sys
 import json
 
@@ -190,7 +191,7 @@ else:
     def buildShellSection(name, prevparts, methods):
         """ Creates a BaseCommand sub*class* that implements a shell section. """
         attrs = {
-            'prompt':  name + '> ',
+            'prompt':  socket.gethostname() + ':' + name + '> ',
             }
         for cmd in methods:
             if methods[cmd]:
@@ -214,5 +215,5 @@ else:
 
     print >> sys.stderr, "Building shell..."
     main = buildShellSection("main", [], methods)()
-    main.prompt = "#> "
+    main.prompt = socket.gethostname() + ":#> "
     main.cmdloop()
