@@ -4,5 +4,9 @@
 from django.contrib import admin
 
 from models import PeerHost
+from forms  import PeerHostForm
 
-admin.site.register( PeerHost )
+class PeerHostAdmin(admin.ModelAdmin):
+    form = PeerHostForm
+
+admin.site.register( PeerHost, PeerHostAdmin )
