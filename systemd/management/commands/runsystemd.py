@@ -19,7 +19,7 @@ import dbus.mainloop.glib
 from django.core.management.base import BaseCommand
 from django.conf import settings
 
-from lvm.systemd import makeloggedfunc
+from systemd.helpers import makeloggedfunc
 
 class SystemD(dbus.service.Object):
     def __init__(self, detected_modules):
@@ -30,7 +30,7 @@ class SystemD(dbus.service.Object):
         self.modules = {}
         for module in detected_modules:
             try:
-                daemon = getattr( getattr( module, "systemd" ), "SystemD" )
+                daemon = getattr( getattr( module, "systemapi" ), "SystemD" )
                 self.modules[ module.__name__ ] = daemon(self.bus, self.busname)
             except:
                 traceback.print_exc()
@@ -111,9 +111,9 @@ class Command( BaseCommand ):
         sysdplugins = []
         for app in settings.INSTALLED_APPS:
             try:
-                module = __import__( app+".systemd" )
+                module = __import__( app+".systemapi" )
             except ImportError, err:
-                if unicode(err) != "No module named systemd":
+                if unicode(err) != "No module named systemapi":
                     logging.error("Got error when checking app %s: %s", app, unicode(err))
             else:
                 sysdplugins.append(module)
