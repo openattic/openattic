@@ -328,8 +328,8 @@ else:
             """ Check if the last command was an exit command. If so exit, otherwise add it to the history. """
             if line in ("exit", "EOF"):
                 return True
-            if line:
-                readline.add_history(line)
+            #if line:
+                #readline.add_history(line)
             return False
 
         def enter_subsection(self, name):
