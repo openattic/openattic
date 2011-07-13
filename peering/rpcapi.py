@@ -9,4 +9,8 @@ class PeerHostHandler(BaseHandler):
     model  = PeerHost
     fields = ["id", "name"]
 
+    def ping(self, id):
+        obj = PeerHost.objects.get(id=id)
+        return obj.ping()
+
 RPCD_HANDLERS = [PeerHostHandler]
