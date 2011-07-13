@@ -8,10 +8,9 @@ import json
 import os.path
 
 from xmlrpclib    import ServerProxy, DateTime
-from ConfigParser import ConfigParser
+#from ConfigParser import ConfigParser
 from optparse     import OptionParser
 from datetime     import datetime
-from pprint import pprint
 from cmd import Cmd
 
 
@@ -315,8 +314,14 @@ else:
             """
             print
 
+        def precmd(self, line):
+            """ If the line starts with a comment, ignore it. """
+            if line.strip().startswith('#'):
+                return ''
+            return line
+
         def emptyline(self):
-            # srsly what the fuck
+            # srsly what the fuck - by default, Cmd repeats the last command if the line is empty...
             pass
 
         def postcmd(self, stop, line):
@@ -414,8 +419,18 @@ else:
 
     if options.verbose:
         print >> sys.stderr, "Building shell..."
-    main = buildShellSection("main", [], methods)()
-    main.prompt = "%s:%s> " % ( hostcolorize(hostname), sectcolorize('#') )
+    MainSection = buildShellSection("main", [], methods)
+
+    class ShellMain(MainSection):
+        prompt = "%s:%s> " % ( hostcolorize(hostname), sectcolorize('#') )
+        def do_outformat(self, args):
+            args = args.strip()
+            if args in formatters:
+                options.outformat = args
+            else:
+                print >> sys.stderr, ("Invalid arguments, must be one of '%s'." % "', '".join(formatters.keys()))
+
+    main = ShellMain()
 
     while True:
         try:
