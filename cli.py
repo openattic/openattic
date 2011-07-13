@@ -1,14 +1,15 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
-# kate: space-indent on; indent-width 4; replace-tabs on;
+# kate: space-indent on; indent-width 4; replace-tabs on
 
 import socket
 import os, sys
 import json
 
-from xmlrpclib    import ServerProxy
+from xmlrpclib    import ServerProxy, DateTime
 from ConfigParser import ConfigParser
 from optparse     import OptionParser
+from datetime     import datetime
 from pprint import pprint
 from cmd import Cmd
 
@@ -44,14 +45,33 @@ if options.encoding is None:
     except (KeyError, ValueError):
         options.encoding = "UTF-8"
 
-print >> sys.stderr, "Connecting..."
+if options.verbose:
+    print >> sys.stderr, "Connecting..."
+
 server = ServerProxy(options.connect, allow_none=True)
 try:
     server.ping()
 except Exception, e:
     sys.exit("Could not connect to the server: " + unicode(e))
 
+
+# Retrieve displayed hostname
 hostname = server.hostname()
+
+
+# Check for colors
+if sys.stdout.isatty():
+    HOSTCOLOR = '\033[1;32m'
+    SECTCOLOR = '\033[1;34m'
+    CLRCOLOR  = '\033[0m'
+else:
+    HOSTCOLOR = SECTCOLOR = CLRCOLOR = ""
+
+def hostcolorize(text):
+    return HOSTCOLOR + text + CLRCOLOR
+
+def sectcolorize(text):
+    return SECTCOLOR + text + CLRCOLOR
 
 # Output formatters
 
@@ -67,10 +87,125 @@ def out_shell(something):
         lines.append(unicode(something))
     return "\n".join(lines)
 
+def json_format(something):
+    if isinstance(something, DateTime):
+        # This is a DateTime object from xmlrpclib. Convert to a standard datetime.
+        something = datetime( *something.timetuple()[:6] )
+    if hasattr(something, 'isoformat'):
+        return something.isoformat()
+    return json.dumps(something)
+
 formatters = {
-    'json':  lambda something: json.dumps(something, indent=4),
+    'json':  lambda something: json.dumps(something, indent=4, default=json_format),
     'shell': out_shell
     }
+
+
+
+# Argument line parser
+def shlox( line, escape='\\', comment='#', sep=(' ', '\t', '\r', '\n' ) ):
+    """ State machine that parses stuff like bash does, with the additional benefit of also
+        being able to parse JSON for more complex arguments.
+    """
+    ST_NORMAL, ST_ESCAPE, ST_SINGLE_QUOTED, ST_DOUBLE_QUOTED, ST_DOUBLE_ESCAPE, ST_JSON_DICT, ST_JSON_LIST = range(7)
+
+    state = ST_NORMAL
+    bracelevel = 0
+
+    word  = ''
+    empty = True
+
+    for char in line:
+        if   state == ST_NORMAL:
+            if   char == escape:
+                state = ST_ESCAPE
+            elif char == '"':
+                empty = False
+                state = ST_DOUBLE_QUOTED
+            elif char == "'":
+                empty = False
+                state = ST_SINGLE_QUOTED
+            elif char == '{':
+                empty = False
+                state = ST_JSON_DICT
+                bracelevel = 0
+                word += char
+            elif char == '[':
+                empty = False
+                state = ST_JSON_LIST
+                bracelevel = 0
+                word += char
+            elif char == comment:
+                if empty:
+                    raise StopIteration
+                else:
+                    word += char
+            elif char in sep:
+                if not empty:
+                    yield word
+                    empty = True
+                    word  = ''
+            else:
+                empty = False
+                word += char
+
+        elif state == ST_ESCAPE:
+            word += char
+            state = ST_NORMAL
+
+        elif state == ST_SINGLE_QUOTED:
+            if   char == "'":
+                state = ST_NORMAL
+            else:
+                word += char
+
+        elif state == ST_DOUBLE_QUOTED:
+            if   char == escape:
+                state = ST_DOUBLE_ESCAPE
+            elif char == '"':
+                state = ST_NORMAL
+            else:
+                word += char
+
+        elif state == ST_DOUBLE_ESCAPE:
+            if   char in ( escape, comment, '"', "'" ) + sep:
+                word += char
+            else:
+                word += '\\' + char
+            state = ST_DOUBLE_QUOTED
+
+        elif state == ST_JSON_DICT:
+            word += char
+            if char == '{':
+                bracelevel += 1
+            elif char == '}':
+                if bracelevel > 0:
+                    bracelevel -= 1
+                else:
+                    yield json.loads(word)
+                    empty = True
+                    word  = ''
+                    state = ST_NORMAL
+
+        elif state == ST_JSON_LIST:
+            word += char
+            if char == '[':
+                bracelevel += 1
+            elif char == ']':
+                if bracelevel > 0:
+                    bracelevel -= 1
+                else:
+                    yield json.loads(word)
+                    empty = True
+                    word  = ''
+                    state = ST_NORMAL
+
+    if state != ST_NORMAL:
+        raise ValueError( "Unclosed quote or \\ at end of line." )
+
+    elif not empty:
+        yield word
+
 
 
 
@@ -80,6 +215,9 @@ def clean_args(args):
     """
     cleanargs = []
     for param in args:
+        if isinstance( param, (list, dict) ):
+            cleanargs.append(param)
+            continue
         try:
             argtype, argval = param.split(':', 1)
         except ValueError:
@@ -123,7 +261,12 @@ def call(sectname, cmd, args):
 def call_argstr(sectname, cmd, argstr):
     stripped = argstr.strip()
     if stripped:
-        return call(sectname, cmd, stripped.split(' ')) #TODO: shlex
+        try:
+            parsed = list(shlox(stripped))
+        except Exception, e:
+            print >> sys.stderr, "Error when parsing command line:", unicode(e)
+        else:
+            return call(sectname, cmd, parsed)
     else:
         return call(sectname, cmd, [])
 
@@ -138,14 +281,18 @@ if progargs:
     call(section, cmd, progargs[1:])
 
 else:
-    # You are SO gonna hate me.
+    # You are SO gonna hate me. If you don't already.
 
     class BaseCommand(Cmd, object):
         """ Implements basic functions of each shell section. """
         def do_exit(self, args):
+            """ Leave this section (or the shell altogether if in the highest section). """
             print "Bye"
 
         def do_EOF(self, args):
+            """ Leave this section (or the shell altogether if in the highest section).
+                This command is invoked by typing ^d.
+            """
             print
 
         def postcmd(self, stop, line):
@@ -157,9 +304,17 @@ else:
             """ Check if we have an attribute named subsection_<name>, and if so,
                 execute it as a subshell.
             """
-            subsect = getattr(self, 'subsection_'+name, None)
+            subsect = getattr(self, 'subsection_'+name, None)()
             if subsect is not None:
-                subsect().cmdloop()
+                while True:
+                    try:
+                        subsect.cmdloop()
+                    except KeyboardInterrupt:
+                        # Eat this exception. I want to be able to hit ^c to cancel typing stuff, so just...
+                        print '^C' # and restart the shell.
+                    else:
+                        # Subshell terminated normally, so break the while loop.
+                        break
 
 
     def buildCallFunction(cmd, prevparts):
@@ -192,7 +347,7 @@ else:
     def buildShellSection(name, prevparts, methods):
         """ Creates a BaseCommand sub*class* that implements a shell section. """
         attrs = {
-            'prompt':  hostname + ':' + name + '> ',
+            'prompt': "%s:%s> " % ( hostcolorize(hostname), sectcolorize('.'.join(prevparts)) ),
             }
         for cmd in methods:
             if methods[cmd]:
@@ -214,7 +369,17 @@ else:
                 container[part] = {}
             container = container[part]
 
-    print >> sys.stderr, "Building shell..."
+    if options.verbose:
+        print >> sys.stderr, "Building shell..."
     main = buildShellSection("main", [], methods)()
-    main.prompt = hostname + ":#> "
-    main.cmdloop()
+    main.prompt = "%s:%s> " % ( hostcolorize(hostname), sectcolorize('#') )
+
+    while True:
+        try:
+            main.cmdloop()
+        except KeyboardInterrupt:
+            # Eat this exception. I want to be able to hit ^c to cancel typing stuff, so just...
+            print '^C' # and restart the shell.
+        else:
+            # Subshell terminated normally, so break the while loop.
+            break
