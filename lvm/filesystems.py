@@ -20,7 +20,7 @@ class FileSystem(object):
     def mount(self, mountpoint=None):
         if mountpoint is None and len(self.mountpoints) == 1:
             mountpoint = self.mountpoints[0]
-        return self.lv.lvm.fs_mount( self.name, self.lv.path, mountpoint )
+        return dbus_to_python(self.lv.lvm.fs_mount( self.name, self.lv.path, mountpoint ))
 
     @property
     def mounted(self, mountpoint=None):
@@ -31,7 +31,7 @@ class FileSystem(object):
     def unmount(self, mountpoint=None):
         if mountpoint is None and len(self.mountpoints) == 1:
             mountpoint = self.mountpoints[0]
-        return self.lv.lvm.fs_unmount( self.lv.path, mountpoint )
+        return dbus_to_python(self.lv.lvm.fs_unmount( self.lv.path, mountpoint ))
 
     def format(self):
         raise NotImplementedError("FileSystem::format needs to be overridden")
