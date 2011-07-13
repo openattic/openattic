@@ -28,6 +28,11 @@ parser.add_option( "-c", "--connect",
     default="http://localhost:31234/"
     )
 
+parser.add_option( "-u", "--uidcheck",
+    help="If not logged in as root, make sure the current user is a superuser before doing anything.",
+    action="store_true", default=False
+    )
+
 parser.add_option( "-o", "--outformat",
     help="Output format. Standard is JSON.",
     default="json"
@@ -63,6 +68,11 @@ except Exception, e:
 # Retrieve hostname from the server
 hostname = server.hostname()
 
+
+if options.uidcheck:
+    user = server.auth.User.filter({"username": os.getlogin()})
+    if len(user) != 1 or not user[0]['is_superuser']:
+        sys.exit("Access denied, sorry mate.")
 
 
 # Check if using colors on stdout is sensible
