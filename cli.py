@@ -51,6 +51,7 @@ try:
 except Exception, e:
     sys.exit("Could not connect to the server: " + unicode(e))
 
+hostname = server.hostname()
 
 # Output formatters
 
@@ -191,7 +192,7 @@ else:
     def buildShellSection(name, prevparts, methods):
         """ Creates a BaseCommand sub*class* that implements a shell section. """
         attrs = {
-            'prompt':  socket.gethostname() + ':' + name + '> ',
+            'prompt':  hostname + ':' + name + '> ',
             }
         for cmd in methods:
             if methods[cmd]:
@@ -215,5 +216,5 @@ else:
 
     print >> sys.stderr, "Building shell..."
     main = buildShellSection("main", [], methods)()
-    main.prompt = socket.gethostname() + ":#> "
+    main.prompt = hostname + ":#> "
     main.cmdloop()

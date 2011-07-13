@@ -182,6 +182,10 @@ class RPCd(object):
         """ Noop to test the connection. """
         return "pong"
 
+    def hostname(self):
+        """ Get this host's hostname. """
+        return socket.gethostname()
+
     def get_function_args(self, method):
         """ Return a list of function argument names. """
         args = inspect.getargspec(self._resolve( method )).args
