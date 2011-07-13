@@ -132,12 +132,12 @@ def shlox( line, escape='\\', comment='#', sep=(' ', '\t', '\r', '\n' ) ):
             elif char == "'":
                 empty = False
                 state = ST_SINGLE_QUOTED
-            elif char == '{':
+            elif char == '{' and empty:
                 empty = False
                 state = ST_JSON_DICT
                 bracelevel = 0
                 word += char
-            elif char == '[':
+            elif char == '[' and empty:
                 empty = False
                 state = ST_JSON_LIST
                 bracelevel = 0
