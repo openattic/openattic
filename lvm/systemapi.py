@@ -2,11 +2,7 @@
 # kate: space-indent on; indent-width 4; replace-tabs on;
 
 import os
-import dbus.service
-
-from django.conf import settings
-
-from systemd import invoke, logged
+from systemd import invoke, logged, BasePlugin, method
 
 from lvm.conf import settings as lvm_settings
 
@@ -32,23 +28,18 @@ def lvm_lvs():
 
 
 @logged
-class SystemD(dbus.service.Object):
+class SystemD(BasePlugin):
     dbus_path = "/lvm"
 
-    def __init__(self, bus, busname):
-        self.bus     = bus
-        self.busname = busname
-        dbus.service.Object.__init__(self, self.bus, self.dbus_path)
-
-    @dbus.service.method(settings.DBUS_IFACE_SYSTEMD, in_signature="", out_signature="a{sa{ss}}")
+    @method(in_signature="", out_signature="a{sa{ss}}")
     def vgs(self):
         return lvm_vgs()
 
-    @dbus.service.method(settings.DBUS_IFACE_SYSTEMD, in_signature="", out_signature="a{sa{ss}}")
+    @method(in_signature="", out_signature="a{sa{ss}}")
     def lvs(self):
         return lvm_lvs()
 
-    @dbus.service.method(settings.DBUS_IFACE_SYSTEMD, in_signature="ssis", out_signature="i")
+    @method(in_signature="ssis", out_signature="i")
     def lvcreate(self, vgname, lvname, megs, snapshot):
         cmd = ["/sbin/lvcreate"]
         if snapshot:
@@ -59,26 +50,26 @@ class SystemD(dbus.service.Object):
             ])
         return invoke(cmd)
 
-    @dbus.service.method(settings.DBUS_IFACE_SYSTEMD, in_signature="sb", out_signature="i")
+    @method(in_signature="sb", out_signature="i")
     def lvchange(self, device, active):
         return invoke(["/sbin/lvchange", ('-a' + {False: 'n', True: 'y'}[active]), device])
 
-    @dbus.service.method(settings.DBUS_IFACE_SYSTEMD, in_signature="si", out_signature="i")
+    @method(in_signature="si", out_signature="i")
     def lvresize(self, device, megs):
         return invoke(["/sbin/lvresize", '-L', ("%dM" % megs), device])
 
-    @dbus.service.method(settings.DBUS_IFACE_SYSTEMD, in_signature="s", out_signature="i")
+    @method(in_signature="s", out_signature="i")
     def lvremove(self, device):
         return invoke(["/sbin/lvremove", '-f', device])
 
 
-    @dbus.service.method(settings.DBUS_IFACE_SYSTEMD, in_signature="sss", out_signature="i")
+    @method(in_signature="sss", out_signature="i")
     def fs_mount(self, fstype, devpath, mountpoint):
         if not os.path.exists(mountpoint):
             os.makedirs(mountpoint)
         return invoke(["/bin/mount", "-t", fstype, devpath, mountpoint])
 
-    @dbus.service.method(settings.DBUS_IFACE_SYSTEMD, in_signature="ss", out_signature="i")
+    @method(in_signature="ss", out_signature="i")
     def fs_unmount(self, devpath, mountpoint):
         if not os.path.exists(mountpoint) or not os.path.ismount(mountpoint):
             return -1
@@ -87,42 +78,42 @@ class SystemD(dbus.service.Object):
             os.rmdir(mountpoint)
         return ret
 
-    @dbus.service.method(settings.DBUS_IFACE_SYSTEMD, in_signature="sss", out_signature="i")
+    @method(in_signature="sss", out_signature="i")
     def fs_chown(self, mountpoint, user, group):
         if group:
             return invoke(["/bin/chown", "-R", ("%s:%s" % (user, group)), mountpoint])
         else:
             return invoke(["/bin/chown", "-R", user, mountpoint])
 
-    @dbus.service.method(settings.DBUS_IFACE_SYSTEMD, in_signature="s", out_signature="a{ss}")
+    @method(in_signature="s", out_signature="a{ss}")
     def e2fs_info(self, devpath):
         ret, out, err = invoke(["/sbin/tune2fs", "-l", devpath], return_out_err=True)
         return dict([ [part.strip() for part in line.split(":", 1)] for line in out.split("\n")[1:] if line ])
 
-    @dbus.service.method(settings.DBUS_IFACE_SYSTEMD, in_signature="ss", out_signature="i")
+    @method(in_signature="ss", out_signature="i")
     def e2fs_format(self, devpath, label):
         return invoke(["/sbin/mke2fs", "-m0", "-L", label, devpath])
 
-    @dbus.service.method(settings.DBUS_IFACE_SYSTEMD, in_signature="s", out_signature="i")
+    @method(in_signature="s", out_signature="i")
     def e2fs_check(self, devpath):
         return invoke(["/sbin/e2fsck", "-y", "-f", devpath])
 
-    @dbus.service.method(settings.DBUS_IFACE_SYSTEMD, in_signature="si", out_signature="i")
+    @method(in_signature="si", out_signature="i")
     def e2fs_resize(self, devpath, megs):
         return invoke(["/sbin/resize2fs", devpath, ("%dM" % megs)])
 
-    @dbus.service.method(settings.DBUS_IFACE_SYSTEMD, in_signature="ss", out_signature="i")
+    @method(in_signature="ss", out_signature="i")
     def e3fs_format(self, devpath, label):
         return invoke(["/sbin/mke2fs", "-j", "-m0", "-L", label, devpath])
 
-    @dbus.service.method(settings.DBUS_IFACE_SYSTEMD, in_signature="ss", out_signature="i")
+    @method(in_signature="ss", out_signature="i")
     def e4fs_format(self, devpath, label):
         return invoke(["/sbin/mkfs.ext4", "-m0", "-L", label, devpath])
 
-    @dbus.service.method(settings.DBUS_IFACE_SYSTEMD, in_signature="s", out_signature="i")
+    @method(in_signature="s", out_signature="i")
     def ntfs_format(self, devpath):
         return invoke(["/sbin/mkntfs", "--fast", devpath])
 
-    @dbus.service.method(settings.DBUS_IFACE_SYSTEMD, in_signature="si", out_signature="i")
+    @method(in_signature="si", out_signature="i")
     def ntfs_resize(self, devpath, megs):
         return invoke(["/sbin/ntfsresize", "--force", "--size", ("%dM" % megs), devpath], stdin="y\n")

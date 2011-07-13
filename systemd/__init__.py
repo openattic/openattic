@@ -3,3 +3,4 @@
 
 from systemd.helpers   import dbus_to_python, logged
 from systemd.procutils import invoke
+from systemd.plugins   import BasePlugin, LockingPlugin, method

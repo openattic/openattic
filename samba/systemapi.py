@@ -1,28 +1,19 @@
 # -*- coding: utf-8 -*-
 # kate: space-indent on; indent-width 4; replace-tabs on;
 
-import dbus.service
 import socket
-from threading import Lock
 
-from django.conf import settings
 from django.template.loader import render_to_string
 
-from systemd       import logged, invoke
+from systemd       import logged, invoke, LockingPlugin, method
 from samba.models  import Share
 from samba.conf    import settings as samba_settings
 
 @logged
-class SystemD(dbus.service.Object):
+class SystemD(LockingPlugin):
     dbus_path = "/samba"
 
-    def __init__(self, bus, busname):
-        self.bus     = bus
-        self.busname = busname
-        self.lock    = Lock()
-        dbus.service.Object.__init__(self, self.bus, self.dbus_path)
-
-    @dbus.service.method(settings.DBUS_IFACE_SYSTEMD, in_signature="", out_signature="i")
+    @method(in_signature="", out_signature="i")
     def writeconf(self):
         self.lock.acquire()
         try:
