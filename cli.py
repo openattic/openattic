@@ -24,7 +24,12 @@ parser.add_option( "-v", "--verbose",
     action="store_true", default=False
     )
 
-parser.add_option( "-c", "--connect",
+parser.add_option( "-c", "--command",
+    help="A command to execute.",
+    default=""
+    )
+
+parser.add_option( "-C", "--connect",
     help="An URL to connect to.",
     default="http://localhost:31234/"
     )
@@ -46,6 +51,8 @@ parser.add_option( "-e", "--encoding",
 
 options, progargs = parser.parse_args()
 
+if options.command:
+    progargs.insert(0, options.command)
 
 # Make sure we have an encoding defined
 if options.encoding is None:
