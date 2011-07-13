@@ -2,9 +2,11 @@
 # -*- coding: utf-8 -*-
 # kate: space-indent on; indent-width 4; replace-tabs on
 
+import readline
 import socket
 import os, sys
 import json
+import os.path
 
 from xmlrpclib    import ServerProxy, DateTime
 from ConfigParser import ConfigParser
@@ -38,6 +40,7 @@ parser.add_option( "-e", "--encoding",
 
 options, progargs = parser.parse_args()
 
+
 if options.encoding is None:
     try:
         locale = os.environ['LANG']
@@ -48,11 +51,21 @@ if options.encoding is None:
 if options.verbose:
     print >> sys.stderr, "Connecting..."
 
+
+
 server = ServerProxy(options.connect, allow_none=True)
 try:
     server.ping()
 except Exception, e:
     sys.exit("Could not connect to the server: " + unicode(e))
+
+
+# Load command history, if possible
+if sys.stdin.isatty() and "HOME" in os.environ and os.environ["HOME"]:
+    try:
+        readline.read_history_file( os.path.join( os.environ["HOME"], '.oacli_history' ) )
+    except Exception, e:
+        print >> sys.stderr, "Error loading the history file:", unicode(e)
 
 
 # Retrieve displayed hostname
@@ -72,6 +85,8 @@ def hostcolorize(text):
 
 def sectcolorize(text):
     return SECTCOLOR + text + CLRCOLOR
+
+
 
 # Output formatters
 
@@ -270,6 +285,8 @@ def call_argstr(sectname, cmd, argstr):
     else:
         return call(sectname, cmd, [])
 
+
+
 if progargs:
     # handle the command given on the shell and exit.
     parts = progargs[0].rsplit('.', 1)
@@ -298,6 +315,7 @@ else:
         def postcmd(self, stop, line):
             if line in ("exit", "EOF"):
                 return True
+            readline.add_history(line)
             return False
 
         def enter_subsection(self, name):
@@ -383,3 +401,10 @@ else:
         else:
             # Subshell terminated normally, so break the while loop.
             break
+
+
+if sys.stdin.isatty() and "HOME" in os.environ and os.environ["HOME"]:
+    try:
+        readline.write_history_file( os.path.join( os.environ["HOME"], '.oacli_history' ) )
+    except Exception, e:
+        print >> sys.stderr, "Error writing the history file:", unicode(e)
