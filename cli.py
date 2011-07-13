@@ -3,7 +3,6 @@
 # kate: space-indent on; indent-width 4; replace-tabs on
 
 import readline
-import socket
 import os, sys
 import json
 import os.path
@@ -15,6 +14,8 @@ from datetime     import datetime
 from pprint import pprint
 from cmd import Cmd
 
+
+# First of all, let's do some option parsing, shall we?
 
 parser = OptionParser()
 
@@ -41,6 +42,7 @@ parser.add_option( "-e", "--encoding",
 options, progargs = parser.parse_args()
 
 
+# Make sure we have an encoding defined
 if options.encoding is None:
     try:
         locale = os.environ['LANG']
@@ -48,10 +50,10 @@ if options.encoding is None:
     except (KeyError, ValueError):
         options.encoding = "UTF-8"
 
+
+# Try to connect to the given server.
 if options.verbose:
     print >> sys.stderr, "Connecting..."
-
-
 
 server = ServerProxy(options.connect, allow_none=True)
 try:
@@ -59,20 +61,12 @@ try:
 except Exception, e:
     sys.exit("Could not connect to the server: " + unicode(e))
 
-
-# Load command history, if possible
-if sys.stdin.isatty() and "HOME" in os.environ and os.environ["HOME"]:
-    try:
-        readline.read_history_file( os.path.join( os.environ["HOME"], '.oacli_history' ) )
-    except Exception, e:
-        print >> sys.stderr, "Error loading the history file:", unicode(e)
-
-
-# Retrieve displayed hostname
+# Retrieve hostname from the server
 hostname = server.hostname()
 
 
-# Check for colors
+
+# Check if using colors on stdout is sensible
 if sys.stdout.isatty():
     HOSTCOLOR = '\033[1;32m'
     SECTCOLOR = '\033[1;34m'
@@ -88,8 +82,7 @@ def sectcolorize(text):
 
 
 
-# Output formatters
-
+# Output formatters that turn whatever the server returns into useful shell output
 def out_shell(something):
     lines = []
     if isinstance(something, list):
@@ -273,7 +266,9 @@ def call(sectname, cmd, args):
         except Exception, e:
             print >> sys.stderr, unicode(e)
 
+
 def call_argstr(sectname, cmd, argstr):
+    """ Parse the given argstr into a list, then call() the method given in cmd. """
     stripped = argstr.strip()
     if stripped:
         try:
@@ -298,7 +293,15 @@ if progargs:
     call(section, cmd, progargs[1:])
 
 else:
-    # You are SO gonna hate me. If you don't already.
+    # You are SO gonna hate me. If you don't already. Brace yourself, lots'a closures ahead.
+    # Load command history, if possible
+    if sys.stdin.isatty() and "HOME" in os.environ and os.environ["HOME"]:
+        try:
+            readline.read_history_file( os.path.join( os.environ["HOME"], '.oacli_history' ) )
+        except Exception, e:
+            print >> sys.stderr, "Error loading the history file:", unicode(e)
+
+
 
     class BaseCommand(Cmd, object):
         """ Implements basic functions of each shell section. """
@@ -312,10 +315,16 @@ else:
             """
             print
 
+        def emptyline(self):
+            # srsly what the fuck
+            pass
+
         def postcmd(self, stop, line):
+            """ Check if the last command was an exit command. If so exit, otherwise add it to the history. """
             if line in ("exit", "EOF"):
                 return True
-            readline.add_history(line)
+            if line:
+                readline.add_history(line)
             return False
 
         def enter_subsection(self, name):
@@ -336,14 +345,18 @@ else:
 
 
     def buildCallFunction(cmd, prevparts):
-        """ Create a wrapper function around call_argstr(). """
+        """ Create a wrapper function around call_argstr(). Prevparts contains
+            the section names, cmd is the command name, args will be passed at runtime.
+        """
         def do_cmd(self, args):
             return call_argstr( '.'.join(prevparts), cmd, args )
         do_cmd.__name__ = 'do_'+cmd
         return do_cmd
 
     def buildHelpFunction(cmd, prevparts):
-        """ Create a wrapper function around call_argstr(). """
+        """ Create a function that prints help text for the given command by
+            requesting the Docstring of the exported function from the server.
+        """
         fullname = '.'.join(prevparts + [cmd])
         def help_cmd(self):
             argspec = server.get_function_args( fullname )
@@ -354,7 +367,7 @@ else:
 
 
     def buildSubSectionWrapper(name, prevparts):
-        """ Create a wrapper function around BaseCommand.enter_subsection(). """
+        """ Create a wrapper function around enter_subsection to change the shell in foreground. """
         def do_cmd(self, args):
             return self.enter_subsection(name)
         do_cmd.__name__ = 'do_'+name
@@ -363,7 +376,11 @@ else:
 
 
     def buildShellSection(name, prevparts, methods):
-        """ Creates a BaseCommand sub*class* that implements a shell section. """
+        """ Creates a BaseCommand sub*class* that implements a shell section.
+
+            The methods dict specified what commands are to exist here. Non-empty values
+            mean subsections, empty values mean commands.
+        """
         attrs = {
             'prompt': "%s:%s> " % ( hostcolorize(hostname), sectcolorize('.'.join(prevparts)) ),
             }
@@ -378,7 +395,15 @@ else:
         return type('Cmd'+name, (BaseCommand, ), attrs)
 
 
-    # Build a method tree structure to build the shell from
+    # Build a method tree structure to build the shell from. The structure looks like:
+    # { 'lvm': { 'LogicalVolume': { 'add': {},
+    #                               'get': {} },
+    #            'VolumeGroup': { 'add': {},
+    #                             'get': {} } },
+    #   'nfs': { 'Export': { 'add': {},
+    #                        'get': {} } }
+    # }
+    # That is, each key with a non-empty value will become a section, others will be commands.
     methods = {}
     for method in server.system.listMethods():
         container = methods
@@ -402,9 +427,9 @@ else:
             # Subshell terminated normally, so break the while loop.
             break
 
-
-if sys.stdin.isatty() and "HOME" in os.environ and os.environ["HOME"]:
-    try:
-        readline.write_history_file( os.path.join( os.environ["HOME"], '.oacli_history' ) )
-    except Exception, e:
-        print >> sys.stderr, "Error writing the history file:", unicode(e)
+    # Write the history file, if possible
+    if sys.stdin.isatty() and "HOME" in os.environ and os.environ["HOME"]:
+        try:
+            readline.write_history_file( os.path.join( os.environ["HOME"], '.oacli_history' ) )
+        except Exception, e:
+            print >> sys.stderr, "Error writing the history file:", unicode(e)
