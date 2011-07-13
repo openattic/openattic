@@ -429,16 +429,38 @@ else:
 
     if options.verbose:
         print >> sys.stderr, "Building shell..."
+
     MainSection = buildShellSection("main", [], methods)
 
     class ShellMain(MainSection):
         prompt = "%s:%s> " % ( hostcolorize(hostname), sectcolorize('#') )
-        def do_outformat(self, args):
-            args = args.strip()
-            if args in formatters:
-                options.outformat = args
-            else:
-                print >> sys.stderr, ("Invalid arguments, must be one of '%s'." % "', '".join(formatters.keys()))
+
+        def do_shell( self, args ):
+            """ Enter section 'shell'. """
+            return self.enter_subsection("shell")
+
+        class subsection_shell(BaseCommand):
+            prompt = "%s:%s> " % ( hostcolorize(hostname), sectcolorize('shell') )
+            def do_outformat(self, args):
+                args = args.strip()
+                if not args:
+                    print options.outformat
+                elif args in formatters:
+                    options.outformat = args
+                else:
+                    print >> sys.stderr, ("Invalid arguments, must be one of '%s'." % "', '".join(formatters.keys()))
+
+        class subsection_system(BaseCommand):
+            """ The automatically generated system section causes the server proxy to fail somehow. """
+            prompt = "%s:%s> " % ( hostcolorize(hostname), sectcolorize('system') )
+            def do_listMethods(self, args):
+                print formatters[options.outformat]( server.system.listMethods() )
+
+            def do_methodHelp(self, args):
+                print formatters[options.outformat]( server.system.methodHelp( args.strip() ) )
+
+            def do_methodSignature(self, args):
+                print formatters[options.outformat]( server.system.methodSignature( args.strip() ) )
 
     main = ShellMain()
 
