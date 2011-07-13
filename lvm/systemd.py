@@ -1,57 +1,35 @@
 # -*- coding: utf-8 -*-
 # kate: space-indent on; indent-width 4; replace-tabs on;
 
-import os, sys
+import os
 import dbus.service
-import logging
-from functools import wraps
 
 from django.conf import settings
 
-from procutils import invoke, lvm_vgs, lvm_lvs
+from systemd import invoke, logged
 
-def dbus_type_to_python(obj):
-    conv = {
-        dbus.Array: list,
-        dbus.Dictionary: dict,
-        dbus.Boolean: bool,
-        dbus.Int16: int,
-        dbus.Int32: int,
-        dbus.Int64: int,
-        dbus.String: unicode
-        }
-    return conv[type(obj)](obj)
+from lvm.conf import settings as lvm_settings
 
-def dbus_to_python(obj):
-    py = dbus_type_to_python(obj)
-    if isinstance(py, list):
-        return [dbus_to_python(el) for el in py]
-    elif isinstance(py, dict):
-        return dict([(dbus_type_to_python(key), dbus_to_python(obj[key])) for key in py])
-    return py
+def lvm_command(cmd):
+    ret, out, err = invoke(
+        [cmd, "--noheadings", "--nameprefixes", "--unquoted", "--units", "m"],
+        return_out_err=True, log=lvm_settings.LOG_COMMANDS
+        )
 
-def makeloggedfunc(func):
-    """ Create a wrapper around the method that does some logging """
-    if hasattr(func, "im_class") and hasattr(func.im_class, "dbus_path"):
-        @wraps(func)
-        def loggedfunc(*args, **kwargs):
-            logging.info( "Calling %s::%s(%s)", func.im_class.dbus_path, func.__name__,
-                ', '.join([repr(arg) for arg in args[1:]]))
-            return func(*args, **kwargs)
-    else:
-        @wraps(func)
-        def loggedfunc(*args, **kwargs):
-            logging.info( "Calling %s(%s)", func.__name__, ', '.join([repr(arg) for arg in args[1:]]))
-            return func(*args, **kwargs)
-    return loggedfunc
+    if err:
+        raise SystemError(err)
 
-def logged(cls):
-    """ Search for methods that are exported via DBus and put a log wrapper around them """
-    for attr in dir(cls):
-        func = getattr(cls, attr)
-        if hasattr(func, "_dbus_is_method") and func._dbus_is_method and func.__name__ != "Introspect":
-            setattr( cls, attr, makeloggedfunc(func) )
-    return cls
+    return [
+        dict( [ vardef.split('=', 1) for vardef in line.split(" ") if vardef ] )
+        for line in out.split("\n") if line.strip()
+        ]
+
+def lvm_vgs():
+    return dict( [ (lv["LVM2_VG_NAME"], lv) for lv in lvm_command("/sbin/vgs") ] )
+
+def lvm_lvs():
+    return dict( [ (lv["LVM2_LV_NAME"], lv) for lv in lvm_command("/sbin/lvs") ] )
+
 
 @logged
 class SystemD(dbus.service.Object):

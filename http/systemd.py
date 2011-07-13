@@ -1,14 +1,12 @@
 # -*- coding: utf-8 -*-
 # kate: space-indent on; indent-width 4; replace-tabs on;
 
-import os, sys
 import dbus.service
 
 from django.conf import settings
 from django.template.loader import render_to_string
 
-from lvm.procutils import invoke
-from lvm.systemd   import logged
+from systemd       import invoke, logged
 from http.models   import Export
 from http.conf     import settings as http_settings
 

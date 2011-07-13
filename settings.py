@@ -174,4 +174,5 @@ INSTALLED_APPS = (
     'http',
     'drbd',
     'rpcd',
+    'systemd',
 )

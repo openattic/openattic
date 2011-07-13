@@ -1,13 +1,11 @@
 # -*- coding: utf-8 -*-
 # kate: space-indent on; indent-width 4; replace-tabs on;
 
-import os, sys
 import dbus.service
 
 from django.conf import settings
 
-from lvm.procutils import invoke
-from lvm.systemd   import logged
+from systemd import invoke, logged
 
 from iscsi.models import Target, Lun
 from iscsi.conf   import settings as iscsi_settings

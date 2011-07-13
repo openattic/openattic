@@ -6,7 +6,7 @@ from django.contrib.auth.models import User
 from django.db import models
 from django.conf import settings
 
-from lvm.systemd import dbus_to_python
+from systemd.helpers import dbus_to_python
 from lvm.filesystems import FILESYSTEMS, get_by_name as get_fs_by_name
 
 SETUP_STATE_CHOICES = (

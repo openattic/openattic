@@ -2,7 +2,6 @@
 # kate: space-indent on; indent-width 4; replace-tabs on;
 
 import os
-from procutils import invoke
 
 from systemd import dbus_to_python
 from lvm.conf import settings as lvm_settings

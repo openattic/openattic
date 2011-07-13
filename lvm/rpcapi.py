@@ -3,7 +3,7 @@
 
 from rpcd.handlers import BaseHandler
 
-from lvm.models import VolumeGroup, LogicalVolume, LVChainedModule
+from lvm.models import VolumeGroup, LogicalVolume
 
 class VgHandler(BaseHandler):
     model = VolumeGroup

@@ -1,17 +1,17 @@
 # -*- coding: utf-8 -*-
 # kate: space-indent on; indent-width 4; replace-tabs on;
 
-import os, sys
+import os
 import dbus.service
-import subprocess
 import socket
 
 from django.template.loader import render_to_string
 from django.conf import settings
 
-from lvm.procutils import invoke
+from systemd import invoke, logged
 from drbd.models   import DrbdDevice
 
+@logged
 class SystemD(dbus.service.Object):
     def __init__(self, bus, busname):
         self.bus     = bus

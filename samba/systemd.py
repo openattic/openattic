@@ -1,7 +1,6 @@
 # -*- coding: utf-8 -*-
 # kate: space-indent on; indent-width 4; replace-tabs on;
 
-import os, sys
 import dbus.service
 import socket
 from threading import Lock
@@ -9,8 +8,7 @@ from threading import Lock
 from django.conf import settings
 from django.template.loader import render_to_string
 
-from lvm.procutils import invoke
-from lvm.systemd   import logged
+from systemd       import logged, invoke
 from samba.models  import Share
 from samba.conf    import settings as samba_settings
 
