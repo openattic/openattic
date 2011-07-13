@@ -11,6 +11,7 @@ from xmlrpclib    import ServerProxy, DateTime
 #from ConfigParser import ConfigParser
 from optparse     import OptionParser
 from datetime     import datetime
+from getpass      import getuser
 from cmd import Cmd
 
 
@@ -69,8 +70,8 @@ except Exception, e:
 hostname = server.hostname()
 
 
-if options.uidcheck:
-    user = server.auth.User.filter({"username": os.getlogin()})
+if options.uidcheck and os.geteuid() != 0:
+    user = server.auth.User.filter({"username": getuser()})
     if len(user) != 1 or not user[0]['is_superuser']:
         sys.exit("Access denied, sorry mate.")
 
