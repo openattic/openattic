@@ -14,15 +14,7 @@
 set -e
 set -u
 
-PIDFILE="/var/run/openattic_rpcd.pid"
-CHUID="www-data:www-data"
-LOGFILE="/var/log/openattic_rpcd"
-LOGLEVEL="DEBUG"
-PYTHON="/usr/bin/python"
-OADIR="/srv/pyfiler"
-OPTIONS="$OADIR/manage.py runrpcd"
-CERTFILE="$OADIR/certs/ssl-cert-snakeoil.pem"
-KEYFILE="$OADIR/certs/ssl-cert-snakeoil.key"
+. /etc/default/openattic
 
 if [ $# -lt 1 ]
 then
@@ -35,17 +27,18 @@ fi
 case $1 in
 	start)
 		log_daemon_msg "Starting" "openATTIC rpcd"
-		if [ ! -z "$CERTFILE" -a ! -z "$KEYFILE" ]; then
-			OPTIONS="$OPTIONS -c $CERTFILE -k $KEYFILE"
+		if [ ! -z "$RPCD_CERTFILE" -a ! -z "$RPCD_KEYFILE" ]; then
+			RPCD_OPTIONS="$RPCD_OPTIONS -c $RPCD_CERTFILE -k $RPCD_KEYFILE"
 		fi
-		start-stop-daemon --pidfile=$PIDFILE --make-pidfile --background --oknodo --start \
-			--exec $PYTHON --chdir $OADIR --chuid $CHUID -- $OPTIONS -l $LOGFILE -L $LOGLEVEL -q
+		start-stop-daemon --pidfile=$RPCD_PIDFILE --make-pidfile --background --oknodo --start \
+			--exec $PYTHON --chdir $OADIR --chuid $RPCD_CHUID -- \
+			$RPCD_OPTIONS -l $RPCD_LOGFILE -L $RPCD_LOGLEVEL -q
 		log_end_msg 0
 		;;
 	
 	stop)
 		log_daemon_msg "Stopping" "openATTIC rpcd"
-		start-stop-daemon --pidfile=$PIDFILE --stop --exec $PYTHON
+		start-stop-daemon --pidfile=$RPCD_PIDFILE --stop --exec $PYTHON
 		log_end_msg 0
 		;;
 	
@@ -55,12 +48,12 @@ case $1 in
 		;;
 	
 	status)
-		if start-stop-daemon --pidfile=$PIDFILE --test --stop --exec $PYTHON --quiet
+		if start-stop-daemon --pidfile=$RPCD_PIDFILE --test --stop --exec $PYTHON --quiet
 		then
-			echo "systemd is running"
+			echo "rpcd is running"
 			exit 0
 		else
-			echo "systemd is not running"
+			echo "rpcd is not running"
 			exit 3
 		fi
 		;;
