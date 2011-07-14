@@ -11,4 +11,8 @@ class UserHandler(BaseHandler):
     model = User
     exclude = ["password"]
 
+    def set_password(self, id, passwd):
+        """ Set the password for the given user. """
+        return User.objects.get(id=id).set_password(passwd)
+
 RPCD_HANDLERS = [GroupHandler, UserHandler]
