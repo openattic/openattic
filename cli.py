@@ -10,7 +10,7 @@ import subprocess
 import traceback
 
 from xmlrpclib    import ServerProxy, DateTime
-#from ConfigParser import ConfigParser
+from ConfigParser import ConfigParser
 from optparse     import OptionParser
 from datetime     import datetime
 from getpass      import getuser
@@ -80,6 +80,11 @@ parser.add_option( "-e", "--encoding",
 
 options, progargs = parser.parse_args()
 
+conf = ConfigParser()
+conf.read("/etc/openattic-cli.conf")
+for key in options.__dict__:
+    if getattr(options, key) == parser.defaults[key] and conf.has_option("options", key):
+        setattr(options, key, conf.get("options", key))
 
 # Make sure we have an encoding defined
 if options.encoding is None:
