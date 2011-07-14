@@ -323,6 +323,7 @@ else:
 
     class BaseCommand(Cmd, object):
         """ Implements basic functions of each shell section. """
+
         def _shellcmd(self, cmd, argstr):
             """ Run a system shell command, passing all signals to it that are received. """
             stripped = argstr.strip()
@@ -353,18 +354,14 @@ else:
 
         def do_exit(self, args):
             """ Leave this section (or the shell altogether if in the highest section). """
-            print "Bye"
-
-        def do_EOF(self, args):
-            """ Leave this section (or the shell altogether if in the highest section).
-                This command is invoked by typing ^d.
-            """
-            print
+            print ""
 
         def precmd(self, line):
             """ If the line starts with a comment, ignore it. """
             if line.strip().startswith('#'):
                 return ''
+            if line == "EOF":
+                return "exit"
             return line
 
         def emptyline(self):
