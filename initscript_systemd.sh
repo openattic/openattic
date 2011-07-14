@@ -34,7 +34,7 @@ case $1 in
 	
 	stop)
 		log_daemon_msg "Stopping" "openATTIC systemd"
-		start-stop-daemon --pidfile=$PIDFILE --stop --exec $PYTHON
+		start-stop-daemon --pidfile=$SYSD_PIDFILE --stop --exec $PYTHON
 		log_end_msg 0
 		;;
 	
