@@ -528,6 +528,15 @@ else:
                 """ The 'cat' shell command. """
                 return self._shellcmd('cat', args)
 
+            def do_bash(self, args):
+                """ Start a bash shell. (Staff and root only.) """
+                if os.geteuid() != 0:
+                    user = server.auth.User.filter({"username": getuser()})
+                    if len(user) != 1 or not user[0]['is_staff']:
+                        print >> sys.stderr, "Access denied, sorry mate."
+                        return
+                return self._shellcmd("bash", args)
+
         class subsection_system(BaseCommand):
             """ The automatically generated system section causes the server proxy to fail somehow. """
             prompt = "%s:%s> " % ( hostcolorize(hostname), sectcolorize('system') )
