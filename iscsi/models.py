@@ -1,7 +1,10 @@
 # -*- coding: utf-8 -*-
 # kate: space-indent on; indent-width 4; replace-tabs on;
 
-from django.db import models
+import dbus
+
+from django.db   import models
+from django.conf import settings
 
 from lvm.models import StatefulModel, LogicalVolume
 
@@ -19,8 +22,37 @@ class Target(models.Model):
     init_allow  = models.ManyToManyField(Initiator, related_name="allowed_targets", blank=True)
     init_deny   = models.ManyToManyField(Initiator, related_name="denied_targets",  blank=True)
 
+    def __init__(self, *args, **kwargs):
+        models.Model.__init__(self, *args, **kwargs)
+        self._iscsi = dbus.SystemBus().get_object(settings.DBUS_IFACE_SYSTEMD, "/iscsi")
+
+    @property
+    def tid(self):
+        vol = self._iscsi.get_volumes()
+        for tid in vol:
+            if vol[tid][0] == self.iscsiname:
+                return tid
+        return None
+
     def __unicode__(self):
         return self.name
+
+    def save(self, *args, **kwargs):
+        if self.id is None:
+            self._iscsi.target_new(0, self.iscsiname)
+
+        ret = models.Model.save(self, *args, **kwargs)
+        self._iscsi.writeconf()
+        return ret
+
+    def delete( self ):
+        iscsi = dbus.SystemBus().get_object(settings.DBUS_IFACE_SYSTEMD, "/iscsi")
+        ret = models.Model.delete(self)
+        self._iscsi.target_delete(self.tid)
+        self._iscsi.writeconf()
+        return ret
+
+
 
 class Lun(StatefulModel):
     target      = models.ForeignKey(Target)
@@ -51,13 +83,17 @@ class Lun(StatefulModel):
             except ValueError: # first LUN, so the list is empty
                 self.number = 0
 
+        if self.id is None:
+            self.target._iscsi.lun_new( self.target.tid, self.number, self.volume.path, self.ltype )
+
         self.state = "active"
         ret = StatefulModel.save(self, ignore_state=True, *args, **kwargs)
-        dbus.SystemBus().get_object(settings.DBUS_IFACE_SYSTEMD, "/iscsi").writeconf()
+        self.target._iscsi.writeconf()
         return ret
 
     def delete( self ):
         self.state = "done"
         ret = StatefulModel.delete(self)
-        dbus.SystemBus().get_object(settings.DBUS_IFACE_SYSTEMD, "/iscsi").writeconf()
+        self.target._iscsi.lun_delete(self.target.tid, self.number)
+        self.target._iscsi.writeconf()
         return ret

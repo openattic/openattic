@@ -12,7 +12,7 @@ from iscsi.conf   import settings as iscsi_settings
 class SystemD(LockingPlugin):
     dbus_path = "/iscsi"
 
-    @method(in_signature="", out_signature="i")
+    @method(in_signature="", out_signature="")
     def writeconf(self):
         self.lock.acquire()
         try:
@@ -48,7 +48,7 @@ class SystemD(LockingPlugin):
                 ietd.close()
                 allw.close()
                 deny.close()
-            return invoke([iscsi_settings.INITSCRIPT, "restart"])
+            #return invoke([iscsi_settings.INITSCRIPT, "restart"])
         finally:
             self.lock.release()
 
