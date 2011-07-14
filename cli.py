@@ -7,6 +7,7 @@ import os, sys
 import json
 import os.path
 import subprocess
+import traceback
 
 from xmlrpclib    import ServerProxy, DateTime
 #from ConfigParser import ConfigParser
@@ -61,13 +62,14 @@ parser.add_option( "-u", "--uidcheck",
     )
 
 parser.add_option( "-o", "--outformat",
-    help="Output format. Standard is JSON.",
-    default="json"
+    help="Output format. Default is JSON if interactive, shell otherwise.",
+    default=None
     )
 
 parser.add_option( "-f", "--outfield",
-    help="Output the given field only.",
-    default="json"
+    help="Output the given field only. You can query nested fields by specifying "
+         "them in a dotted notation, e.g. 'fs.stat.free'.",
+    default=None
     )
 
 parser.add_option( "-e", "--encoding",
@@ -86,7 +88,6 @@ if options.encoding is None:
         _, options.encoding = locale.split('.')
     except (KeyError, ValueError):
         options.encoding = "UTF-8"
-
 
 # Try to connect to the given server.
 if options.verbose:
@@ -306,11 +307,14 @@ def call(sectname, cmd, args):
         try:
             result = func(*args)
             if options.outfield:
-                result = result[options.outfield]
+                for field in options.outfield.split('.'):
+                    result = result[field]
             formatted = formatters[options.outformat](result)
             print formatted.encode(options.encoding)
         except Exception, e:
-            print >> sys.stderr, unicode(e)
+            print >> sys.stderr, "Error processing the command:", unicode(type(e)), unicode(e)
+            if options.verbose:
+                traceback.print_exc()
 
 
 def call_argstr(sectname, cmd, argstr):
@@ -321,6 +325,8 @@ def call_argstr(sectname, cmd, argstr):
             parsed = list(shlox(stripped))
         except Exception, e:
             print >> sys.stderr, "Error when parsing command line:", unicode(e)
+            if options.verbose:
+                traceback.print_exc()
         else:
             return call(sectname, cmd, parsed)
     else:
@@ -332,6 +338,8 @@ if options.command:
 
 if progargs:
     # handle the command given on the shell and exit.
+    if not options.outformat:
+        options.outformat = "shell"
     parts = progargs[0].rsplit('.', 1)
     if len(parts) == 2:
         section, cmd = parts
@@ -352,13 +360,19 @@ if progargs:
         call(section, cmd, progargs[1:])
 
 else:
-    # You are SO gonna hate me. If you don't already. Brace yourself, lots'a closures ahead.
+    # No command given → interactive mode.
+
+    if not options.outformat:
+        options.outformat = "json"
+
     # Load command history, if possible
     if sys.stdin.isatty() and "HOME" in os.environ and os.environ["HOME"]:
         try:
             readline.read_history_file( os.path.join( os.environ["HOME"], '.oacli_history' ) )
         except Exception, e:
             print >> sys.stderr, "Error loading the history file:", unicode(e)
+            if options.verbose:
+                traceback.print_exc()
 
 
 
@@ -373,6 +387,8 @@ else:
                     args = [cmd] + list(shlox(stripped))
                 except Exception, e:
                     print >> sys.stderr, "Error when parsing command line:", unicode(e)
+                    if options.verbose:
+                        traceback.print_exc()
             else:
                 args = [cmd]
 
@@ -434,6 +450,8 @@ else:
                         break
 
 
+    # You are SO gonna hate me. If you don't already. Brace yourself, lots'a closures ahead.
+
     def buildCallFunction(cmd, prevparts):
         """ Create a wrapper function around call_argstr(). Prevparts contains
             the section names, cmd is the command name, args will be passed at runtime.
@@ -475,10 +493,10 @@ else:
             'prompt': "%s:%s> " % ( hostcolorize(hostname), sectcolorize('.'.join(prevparts)) ),
             }
         for cmd in methods:
-            if methods[cmd]:
+            if methods[cmd]: # value is non-empty → section
                 attrs['subsection_'+cmd] = buildShellSection(cmd, prevparts+[cmd], methods[cmd])
                 attrs['do_'+cmd]   = buildSubSectionWrapper(cmd, prevparts)
-            else:
+            else:            # value is empty → command
                 attrs['do_'+cmd]   = buildCallFunction(cmd, prevparts)
                 attrs['help_'+cmd] = buildHelpFunction(cmd, prevparts)
 
@@ -508,6 +526,7 @@ else:
     MainSection = buildShellSection("main", [], methods)
 
     class ShellMain(MainSection):
+        """ The actual main section of the shell. Inherits generated stuff from MainSection. """
         prompt = "%s:%s> " % ( hostcolorize(hostname), sectcolorize('#') )
 
         def do_shell( self, args ):
@@ -515,7 +534,9 @@ else:
             return self.enter_subsection("shell")
 
         class subsection_shell(BaseCommand):
+            """ The 'shell' subsection handler. """
             prompt = "%s:%s> " % ( hostcolorize(hostname), sectcolorize('shell') )
+
             def do_outformat(self, args):
                 """ Display and switch the output format of the running shell. """
                 args = args.strip()
@@ -579,7 +600,10 @@ else:
                 return self._shellcmd("bash", args)
 
         class subsection_system(BaseCommand):
-            """ The automatically generated system section causes the server proxy to fail somehow. """
+            """ The "system" section handler.
+
+                The automatically generated system section causes the server proxy to fail somehow.
+            """
             prompt = "%s:%s> " % ( hostcolorize(hostname), sectcolorize('system') )
             def do_listMethods(self, args):
                 print formatters[options.outformat]( server.system.listMethods() )
@@ -608,3 +632,5 @@ else:
             readline.write_history_file( os.path.join( os.environ["HOME"], '.oacli_history' ) )
         except Exception, e:
             print >> sys.stderr, "Error writing the history file:", unicode(e)
+            if options.verbose:
+                traceback.print_exc()
