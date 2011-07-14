@@ -15,10 +15,27 @@ from datetime     import datetime
 from getpass      import getuser
 from cmd import Cmd
 
-
 # First of all, let's do some option parsing, shall we?
 
-parser = OptionParser()
+parser = OptionParser(
+    usage="""Usage: %prog [options] [<method> [<args...>]]
+
+Each method argument has the form:
+    [<data type: bool|int|float|string|json>:]value
+
+If you do not specify a data type, string will be assumed, otherwise
+`value' will be converted to the given type first. The bool conversion
+interprets each of 'True', 'true', '1', 'Yes', 'yes' as True, everything
+else as False. For the JSON parsing to work, the argument must be passed
+as one single argument, including all spaces and special characters needed.
+
+Example:
+    int:4 float:3.5 string:oh:hai foobar bool:yes 'json:{ "a": "test" }'
+
+In order to get a list of the available methods, run:
+    %prog system.listMethods
+"""
+)
 
 parser.add_option( "-v", "--verbose",
     help="Verbose output of messages.",
@@ -26,7 +43,9 @@ parser.add_option( "-v", "--verbose",
     )
 
 parser.add_option( "-c", "--command",
-    help="A command to execute.",
+    help="A command to execute. The argument to this option will be parsed "
+         "like a command line typed in the shell. If this option is used, all "
+         "positional arguments on the shell will be ignored.",
     default=""
     )
 
@@ -36,7 +55,8 @@ parser.add_option( "-C", "--connect",
     )
 
 parser.add_option( "-u", "--uidcheck",
-    help="If not logged in as root, make sure the current user is a superuser before doing anything.",
+    help="If not logged in as root, make sure the current user is a superuser "
+         "before doing anything.",
     action="store_true", default=False
     )
 
@@ -46,14 +66,13 @@ parser.add_option( "-o", "--outformat",
     )
 
 parser.add_option( "-e", "--encoding",
-    help="Character set arguments are encoded in. Default: Read from LANG env variable with fallback to UTF-8.",
+    help="Character set arguments are encoded in. Default: Read from LANG env "
+         "variable with fallback to UTF-8.",
     default=None
     )
 
 options, progargs = parser.parse_args()
 
-if options.command:
-    progargs.insert(0, options.command)
 
 # Make sure we have an encoding defined
 if options.encoding is None:
@@ -253,7 +272,8 @@ def clean_args(args):
                 'bool':   lambda val: val in ('True', 'true', '1', 'Yes', 'yes'),
                 'int':    int,
                 'float':  float,
-                'string': str
+                'string': str,
+                'json':   json.loads,
                 }[ argtype ]( argval )
 
             if argtype == 'string':
@@ -299,6 +319,8 @@ def call_argstr(sectname, cmd, argstr):
         return call(sectname, cmd, [])
 
 
+if options.command:
+    progargs = list(shlox(options.command))
 
 if progargs:
     # handle the command given on the shell and exit.
@@ -308,7 +330,18 @@ if progargs:
     else:
         section = ""
         cmd = parts[0]
-    call(section, cmd, progargs[1:])
+    if parts[0] == "system":
+        if parts[1] == "listMethods":
+            formatted = formatters[options.outformat]( server.system.listMethods() )
+        elif parts[1] == "methodHelp":
+            formatted = formatters[options.outformat]( server.system.methodHelp(*clean_args(progargs[1:])) )
+        elif parts[1] == "methodSignature":
+            formatted = formatters[options.outformat]( server.system.methodSignature(*clean_args(progargs[1:])) )
+        else:
+            sys.exit("Command 'system'.'%s' is not defined." % parts[1])
+        print formatted.encode(options.encoding)
+    else:
+        call(section, cmd, progargs[1:])
 
 else:
     # You are SO gonna hate me. If you don't already. Brace yourself, lots'a closures ahead.
