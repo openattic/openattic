@@ -494,11 +494,10 @@ else:
                 """ Clears the command history (warning: no confirmation or backup!). """
                 readline.clear_history()
 
-            def do_syntax(self, args):
-                """ Display some notes about syntax. """
+            def help_syntax(self):
                 print  ("""Syntax in this shell:\n"""
                         """\n"""
-                        """ command [arguments]\n"""
+                        """ command [arguments ...]\n"""
                         """\n"""
                         """Arguments may be enclosed in double or single quotes in order to keep\n"""
                         """white space, whereas in double quotes, the quotes themselves can be added\n"""
