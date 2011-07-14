@@ -6,6 +6,7 @@ import readline
 import os, sys
 import json
 import os.path
+import subprocess
 
 from xmlrpclib    import ServerProxy, DateTime
 #from ConfigParser import ConfigParser
@@ -322,6 +323,34 @@ else:
 
     class BaseCommand(Cmd, object):
         """ Implements basic functions of each shell section. """
+        def _shellcmd(self, cmd, argstr):
+            """ Run a system shell command, passing all signals to it that are received. """
+            stripped = argstr.strip()
+            if stripped:
+                try:
+                    args = [cmd] + list(shlox(stripped))
+                except Exception, e:
+                    print >> sys.stderr, "Error when parsing command line:", unicode(e)
+            else:
+                args = [cmd]
+
+            if options.verbose:
+                print " ".join(args)
+            from signal import signal, SIGTERM, SIGINT, SIG_DFL, default_int_handler
+
+            proc = subprocess.Popen(args, stdin=sys.stdin, stdout=sys.stdout, stderr=sys.stderr)
+
+            def fwdsigterm(signum, frame):
+                proc.send_signal(SIGTERM)
+                signal(SIGTERM, fwdsigterm)
+
+            signal(SIGTERM, fwdsigterm)
+            signal(SIGINT, fwdsigterm)
+            proc.wait()
+            signal(SIGTERM, SIG_DFL)
+            signal(SIGINT, default_int_handler)
+            return proc.returncode
+
         def do_exit(self, args):
             """ Leave this section (or the shell altogether if in the highest section). """
             print "Bye"
@@ -494,6 +523,14 @@ else:
                         """the command name if possible.\n"""
                         """To leave a section, you can either use the exit command, or hit ^d. To quit\n"""
                         """the shell altogether, do the same on the root section (#).\n""")
+
+            def do_man(self, args):
+                """ The 'man' shell command. """
+                return self._shellcmd('man', args)
+
+            def do_cat(self, args):
+                """ The 'cat' shell command. """
+                return self._shellcmd('cat', args)
 
         class subsection_system(BaseCommand):
             """ The automatically generated system section causes the server proxy to fail somehow. """
