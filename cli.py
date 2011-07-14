@@ -65,6 +65,11 @@ parser.add_option( "-o", "--outformat",
     default="json"
     )
 
+parser.add_option( "-f", "--outfield",
+    help="Output the given field only.",
+    default="json"
+    )
+
 parser.add_option( "-e", "--encoding",
     help="Character set arguments are encoded in. Default: Read from LANG env "
          "variable with fallback to UTF-8.",
@@ -299,7 +304,10 @@ def call(sectname, cmd, args):
         print "Usage: %s %s" % ( fullname, ' '.join([('<%s>' % a) for a in argspec]) )
     else:
         try:
-            formatted = formatters[options.outformat]( func(*args) )
+            result = func(*args)
+            if options.outfield:
+                result = result[options.outfield]
+            formatted = formatters[options.outformat](result)
             print formatted.encode(options.encoding)
         except Exception, e:
             print >> sys.stderr, unicode(e)
