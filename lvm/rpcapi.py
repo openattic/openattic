@@ -14,14 +14,21 @@ class LvHandler(BaseHandler):
     def _override_get(self, obj, data):
         if obj.filesystem:
             data['fs'] = {
-                'info':  obj.fs.info,
-                'stat':  obj.fs.stat,
-                'mount': obj.fs.mountpoints,
+                'mountpoints': obj.fs.mountpoints,
+                'mounted':     obj.fs.mounted
                 }
+            if obj.fs.mounted:
+                data['fs']['stat'] = obj.fs.stat
         else:
             data['fs'] = None
         data['lvm_info'] = obj.lvm_info
         return data
+
+    def fs_info(self, id):
+        lv = LogicalVolume.objects.get(id=id)
+        if lv.filesystem:
+            return lv.fs.info
+        return {}
 
     def mount_all(self):
         """ Mount all volumes which are not currently mounted. """
