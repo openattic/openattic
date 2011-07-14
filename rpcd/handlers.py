@@ -56,13 +56,12 @@ class BaseHandler(object):
 
     def get(self, id):
         """ Return an object given by ID. """
-        return self._getobj( self.model.objects.get(id=id) )
+        if not isinstance( id, dict ):
+            id = {'id': int(id)}
+        return self._getobj( self.model.objects.get(**id) )
 
     def filter(self, kwds):
-        """ Search for objects with the keywords specified in the kwds dict.
-            For the semantics of the kwds dict, see the Django documentation at:
-            https://docs.djangoproject.com/en/dev/topics/db/queries/#field-lookups
-        """
+        """ Search for objects with the keywords specified in the kwds dict. """
         return [ self._getobj(obj) for obj in self.model.objects.filter(**kwds) ]
 
     def delete(self, id):
