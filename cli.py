@@ -552,6 +552,13 @@ else:
                 else:
                     print >> sys.stderr, ("Invalid arguments, must be one of '%s'." % "', '".join(formatters.keys()))
 
+            def do_verbose(self, args):
+                args = args.strip()
+                if not args:
+                    print options.verbose
+                else:
+                    options.verbose = (args.lower() == "true")
+
             def do_history(self, args):
                 """ Display the command history. """
                 for i in range(readline.get_current_history_length()):
