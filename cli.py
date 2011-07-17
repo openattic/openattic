@@ -116,9 +116,11 @@ if options.uidcheck and os.geteuid() != 0:
 
 # Check if using colors on stdout is sensible
 if sys.stdout.isatty():
-    HOSTCOLOR = '\033[1;32m'
-    SECTCOLOR = '\033[1;34m'
-    CLRCOLOR  = '\033[0m'
+    # Readline escape: \001 = Beginning of non-printable character section, \002 = end
+    # \033 = ESC
+    HOSTCOLOR = '\001\033[1;32m\002'
+    SECTCOLOR = '\001\033[1;34m\002'
+    CLRCOLOR  = '\001\033[0m\002'
 else:
     HOSTCOLOR = SECTCOLOR = CLRCOLOR = ""
 
@@ -414,6 +416,34 @@ else:
             signal(SIGINT, default_int_handler)
             return proc.returncode
 
+        def help_syntax(self):
+            print  ("""Syntax in this shell:\n"""
+                    """\n"""
+                    """ command [arguments ...]\n"""
+                    """\n"""
+                    """Arguments may be enclosed in double or single quotes in order to keep\n"""
+                    """white space, whereas in double quotes, the quotes themselves can be added\n"""
+                    """by escaping them. So, "hello \\"friend\\"" will be parsed to 'hello "friend"',\n"""
+                    """while 'hello \\'friend\\'' is a syntax error.\n"""
+                    """\n"""
+                    """In cases where lists or dictionaries need to be passed, enter them\n"""
+                    """as JSON like so:\n"""
+                    """ command some "other args" {"key": "value", 13: 37}\n"""
+                    """ command some "other args" ["value", 1, 2, 3]\n"""
+                    """\n"""
+                    """Beware though that JSON does not support strings enclosed in single quotes.\n"""
+                    """\n"""
+                    """The shell is organized in sections, each section containing a distinct set\n"""
+                    """of commands. The ``help'' command will list commands that exist in each\n"""
+                    """section, and if called with a command name as its first argument, it displays\n"""
+                    """some information about that command.\n"""
+                    """\n"""
+                    """If you enter a partial command name, pressing the tab key will auto-complete\n"""
+                    """the command name if possible. Pressing it twice will show available options.\n"""
+                    """\n"""
+                    """To leave a section, you can either use the exit command, or hit ^d. To quit\n"""
+                    """the shell altogether, do the same on the root section (#).\n""")
+
         def do_exit(self, args):
             """ Leave this section (or the shell altogether if in the highest section). """
             print ""
@@ -567,32 +597,6 @@ else:
             def do_clear_history(self, args):
                 """ Clears the command history (warning: no confirmation or backup!). """
                 readline.clear_history()
-
-            def help_syntax(self):
-                print  ("""Syntax in this shell:\n"""
-                        """\n"""
-                        """ command [arguments ...]\n"""
-                        """\n"""
-                        """Arguments may be enclosed in double or single quotes in order to keep\n"""
-                        """white space, whereas in double quotes, the quotes themselves can be added\n"""
-                        """by escaping them. So, "hello \\"friend\\"" will be parsed to 'hello "friend"',\n"""
-                        """while 'hello \\'friend\\'' is a syntax error.\n"""
-                        """\n"""
-                        """In cases where lists or dictionaries need to be passed, enter them\n"""
-                        """as JSON like so:\n"""
-                        """ command some "other args" {"key": "value", 13: 37}\n"""
-                        """ command some "other args" ["value", 1, 2, 3]\n"""
-                        """\n"""
-                        """Beware though that JSON does not support strings enclosed in single quotes.\n"""
-                        """\n"""
-                        """The shell is organized in sections, each section containing a distinct set\n"""
-                        """of commands. The ``help'' command will list commands that exist in each\n"""
-                        """section, and if called with a command name as its first argument, it displays\n"""
-                        """some information about that command.\n"""
-                        """If you enter a partial command name, pressing the tab key will auto-complete\n"""
-                        """the command name if possible.\n"""
-                        """To leave a section, you can either use the exit command, or hit ^d. To quit\n"""
-                        """the shell altogether, do the same on the root section (#).\n""")
 
             def do_man(self, args):
                 """ The 'man' shell command. """
