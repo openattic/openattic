@@ -7,12 +7,18 @@ from django.contrib.auth.models import User, Group
 class GroupHandler(BaseHandler):
     model = Group
 
+    def _override_get(self, obj, data):
+        h = UserHandler()
+        data['members'] = [ h._idobj(member) for member in obj.user_set.all() ]
+        return data
+
 class UserHandler(BaseHandler):
     model = User
     exclude = ["password"]
 
-    def set_password(self, id, passwd):
-        """ Set the password for the given user. """
-        return User.objects.get(id=id).set_password(passwd)
+    def _override_get(self, obj, data):
+        h = GroupHandler()
+        data['groups'] = [ h._idobj(grp) for grp in obj.groups.all() ]
+        return data
 
 RPCD_HANDLERS = [GroupHandler, UserHandler]
