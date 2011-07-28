@@ -117,3 +117,11 @@ class SystemD(BasePlugin):
     @method(in_signature="si", out_signature="i")
     def ntfs_resize(self, devpath, megs):
         return invoke(["/sbin/ntfsresize", "--force", "--size", ("%dM" % megs), devpath], stdin="y\n")
+
+    @method(in_signature="", out_signature="a{ss}")
+    def modprobe_dmsnapshot_version(self):
+        invoke(["/sbin/modprobe", "dm-snapshot"])
+        ret, out, err = invoke(["/sbin/dmsetup", "targets"], return_out_err=True)
+        if ret != 0:
+            raise SystemError("dmsetup targets failed: " + err)
+        return dict([ line.split() for line in out.split("\n") if line.strip()])
