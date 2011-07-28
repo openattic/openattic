@@ -61,6 +61,14 @@ class SystemD(BasePlugin):
     def down(self, resource):
         return invoke(["/sbin/drbdadm", "down", resource])
 
+    @method( in_signature="s", out_signature="i")
+    def pausesync(self, resource):
+        return invoke(["/sbin/drbdadm", "pause-sync", resource])
+
+    @method( in_signature="s", out_signature="i")
+    def resumesync(self, resource):
+        return invoke(["/sbin/drbdadm", "resume-sync", resource])
+
     @method( in_signature="s", out_signature="a{ss}")
     def get_dstate(self, resource):
         ret, out, err = invoke(["/sbin/drbdadm", "dstate", resource], return_out_err=True)
