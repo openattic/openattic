@@ -7,7 +7,7 @@ from datetime import datetime
 
 from cmdlog.models import LogEntry
 
-def invoke(args, close_fds=True, return_out_err=False, log=True, stdin=None):
+def invoke(args, close_fds=True, return_out_err=False, log=True, stdin=None, fail_on_err=True):
     """ Invoke a subprocess with the given args and log the output. """
     if log:
         log = LogEntry( starttime=datetime.now(), command=args[0][:250] )
@@ -20,8 +20,10 @@ def invoke(args, close_fds=True, return_out_err=False, log=True, stdin=None):
         )
     procout, procerr = proc.communicate(stdin)
 
+    cmdline = ' '.join(['"' + arg + '"' for arg in args])
+
     if log:
-        out = [ "> " +  ' '.join(['"' + arg + '"' for arg in args])]
+        out = [ "> " + cmdline ]
         out.extend([ "E " + line for line in procerr.split("\n") if line ])
         out.extend([ "O " + line for line in procout.split("\n") if line ])
 
@@ -34,6 +36,9 @@ def invoke(args, close_fds=True, return_out_err=False, log=True, stdin=None):
             logging.debug(log.text)
         else:
             logging.error(log.text)
+
+    if fail_on_err and proc.returncode != 0:
+        raise SystemError("%s failed: %s" % (cmdline, procerr))
 
     if return_out_err:
         return proc.returncode, procout, procerr
