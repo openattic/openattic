@@ -1,6 +1,9 @@
 # -*- coding: utf-8 -*-
 # kate: space-indent on; indent-width 4; replace-tabs on;
 
+from os.path import join, exists, islink
+from os import unlink, symlink
+
 from django.template.loader import render_to_string
 
 from systemd       import invoke, logged, LockingPlugin, method
@@ -19,10 +22,25 @@ class SystemD(LockingPlugin):
             try:
                 fd.write( render_to_string( "http/apache2.conf", {
                     'Exports': Export.objects.filter(state__in=("new", "update", "active"))\
-                                .exclude(volume__state="update")
+                                .exclude(volume__state="update"),
+                    'Basedir': http_settings.APACHE2_BASEDIR
                     } ) )
             finally:
                 fd.close()
             return invoke([http_settings.APACHE2_INITSCRIPT, "reload"])
         finally:
             self.lock.release()
+
+    @method(in_signature="ss", out_signature="i")
+    def addlink(self, volume_name, path):
+        linkname = join(http_settings.APACHE2_BASEDIR, volume_name)
+        if not exists( linkname ):
+            symlink( path, linkname )
+        return 0
+
+    @method(in_signature="s", out_signature="i")
+    def dellink(self, volume_name):
+        linkname = join(http_settings.APACHE2_BASEDIR, volume_name)
+        if islink( linkname ):
+            unlink( linkname )
+        return 0
