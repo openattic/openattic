@@ -13,4 +13,8 @@ class DrbdDeviceHandler(BaseHandler):
         data['basedev'] = obj.basedev
         return data
 
+    def primary(self, id):
+        dev = DrbdDevice.objects.get(id=id)
+        return dev.primary()
+
 RPCD_HANDLERS = [DrbdDeviceHandler]

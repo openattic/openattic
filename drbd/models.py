@@ -149,8 +149,12 @@ class DrbdDevice(LVChainedModule):
     def role(self):
         if self.state not in ("pending", "active"):
             return None
-        drbd = dbus.SystemBus().get_object(settings.DBUS_IFACE_SYSTEMD, "/drbd")
         return self.drbd.get_role(self.res)
+
+    def primary(self):
+        if self.state not in ("pending", "active"):
+            return None
+        return self.drbd.primary(self.res)
 
     @property
     def peerdevice(self):
