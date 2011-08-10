@@ -247,7 +247,6 @@ class LogicalVolume(StatefulModel):
         self.lvm.lvremove(self.device)
 
     def resize( self ):
-        self.lvm.lvchange(self.device, False)
         if self.megs < self.lvm_megs:
             # Shrink FS, then Volume
             if self.filesystem:
@@ -262,7 +261,6 @@ class LogicalVolume(StatefulModel):
                 mod.resize()
             if self.filesystem:
                 self.fs.resize(grow=True)
-        self.lvm.lvchange( self.device, True )
 
     def setupfs( self ):
         if not self.formatted:
