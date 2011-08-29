@@ -2,6 +2,9 @@
 <li>
   <ul class="sharetools">
     <li>
+      <a href="/volumes/{{ share.volume.name }}/" target="_blank" title="Browse">
+        <img alt="Browser" src="{{ MEDIA_URL }}/icons/application_double.png">
+      </a>
       <a href="{% url http_export_delete share.id %}">
         <img alt="delete" src="{{ MEDIA_URL }}/icons/delete.png" />
       </a>
