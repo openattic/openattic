@@ -12,14 +12,14 @@
         <table border="0">
           <tr>
             <td>{{ vg.lvm_info.LVM2_LV_COUNT }} LVs</td>
-            <td>{{ vg.lvm_info.LVM2_PV_COUNT }} PVs</td>
-          </tr>
-          <tr>
-            <td>{{ vg.lvm_info.LVM2_SNAP_COUNT }} Snapshots</td>
             <td>{{ vg.lvm_info.LVM2_VG_SIZE }} total</td>
           </tr>
           <tr>
+            <td>{{ vg.lvm_info.LVM2_PV_COUNT }} PVs</td>
             <td>{{ vg.lvm_info.LVM2_VG_FREE }} free</td>
+          </tr>
+          <tr>
+            <td>{{ vg.lvm_info.LVM2_SNAP_COUNT }} Snapshots</td>
             <td>{{ vg.lvm_info.LVM2_VG_ATTR }}</td>
           </tr>
         </table>
