@@ -64,6 +64,12 @@ class BaseHandler(object):
         """ Search for objects with the keywords specified in the kwds dict. """
         return [ self._getobj(obj) for obj in self.model.objects.filter(**kwds) ]
 
+    def values(self, kwds, fields):
+        if "id" not in fields:
+            fields.append("id")
+        return list(self.model.objects.filter(**kwds).values(*fields))
+
+
     def delete(self, id):
         """ Delete an object given by ID. """
         return self.model.objects.get(id=id).delete()
@@ -115,7 +121,6 @@ class BaseHandler(object):
         obj.full_clean()
         obj.save()
         return self._idobj(obj)
-
 
     def _override_get(self, obj, data):
         """ Stub method called right before _getobj returns the data dict.
