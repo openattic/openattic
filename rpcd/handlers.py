@@ -65,6 +65,9 @@ class BaseHandler(object):
         return [ self._getobj(obj) for obj in self.model.objects.filter(**kwds) ]
 
     def values(self, kwds, fields):
+        """ Filter records using the specified keywords (see filter), but return only
+            the fields named in the `fields' list (plus ID).
+        """
         if "id" not in fields:
             fields.append("id")
         return list(self.model.objects.filter(**kwds).values(*fields))
