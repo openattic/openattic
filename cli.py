@@ -476,12 +476,14 @@ else:
                 #readline.add_history(line)
             return False
 
-        def enter_subsection(self, name):
+        def enter_subsection(self, name, args):
             """ Check if we have an attribute named subsection_<name>, and if so,
                 execute it as a subshell.
             """
             subsect = getattr(self, 'subsection_'+name, None)()
             if subsect is not None:
+                if args:
+                    return subsect.onecmd(args)
                 while True:
                     try:
                         subsect.cmdloop()
@@ -520,7 +522,7 @@ else:
     def buildSubSectionWrapper(name, prevparts):
         """ Create a wrapper function around enter_subsection to change the shell in foreground. """
         def do_cmd(self, args):
-            return self.enter_subsection(name)
+            return self.enter_subsection(name, args)
         do_cmd.__name__ = 'do_'+name
         do_cmd.__doc__  = ("Enter section '%s'." % '.'.join(prevparts + [name]))
         return do_cmd
