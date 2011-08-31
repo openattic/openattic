@@ -444,9 +444,15 @@ else:
                     """To leave a section, you can either use the exit command, or hit ^d. To quit\n"""
                     """the shell altogether, do the same on the root section (#).\n""")
 
-        def do_exit(self, args):
+        def do_end(self, args):
             """ Leave this section (or the shell altogether if in the highest section). """
-            print ""
+            # see postcmd()
+            pass
+
+        def do_exit(self, args):
+            """ Quit the shell. """
+            print "Bye."
+            sys.exit(0)
 
         def precmd(self, line):
             """ If the line starts with a comment, ignore it. """
@@ -454,6 +460,8 @@ else:
                 return ''
             if line == "EOF":
                 return "exit"
+            if line == "..":
+                return "end"
             return line
 
         def emptyline(self):
@@ -462,7 +470,7 @@ else:
 
         def postcmd(self, stop, line):
             """ Check if the last command was an exit command. If so exit, otherwise add it to the history. """
-            if line in ("exit", "EOF"):
+            if line in ("end", "EOF"):
                 return True
             #if line:
                 #readline.add_history(line)
