@@ -3,8 +3,9 @@
 
 import os
 
-from systemd import dbus_to_python
+from systemd  import dbus_to_python
 from lvm.conf import settings as lvm_settings
+from lvm      import signals  as lvm_signals
 
 class FileSystem(object):
     name = "failfs"
@@ -20,7 +21,11 @@ class FileSystem(object):
     def mount(self, mountpoint=None):
         if mountpoint is None and len(self.mountpoints) == 1:
             mountpoint = self.mountpoints[0]
-        return dbus_to_python(self.lv.lvm.fs_mount( self.name, self.lv.path, mountpoint ))
+        lvm_signals.pre_mount.send(sender=self.lv, device=self.lv.path, mountpoint=mountpoint)
+        try:
+            return dbus_to_python(self.lv.lvm.fs_mount( self.name, self.lv.path, mountpoint ))
+        finally:
+            lvm_signals.post_mount.send(sender=self.lv, device=self.lv.path, mountpoint=mountpoint)
 
     @property
     def mounted(self, mountpoint=None):
@@ -31,7 +36,11 @@ class FileSystem(object):
     def unmount(self, mountpoint=None):
         if mountpoint is None and len(self.mountpoints) == 1:
             mountpoint = self.mountpoints[0]
-        return dbus_to_python(self.lv.lvm.fs_unmount( self.lv.path, mountpoint ))
+        lvm_signals.pre_unmount.send(sender=self.lv, mountpoint=mountpoint)
+        try:
+            return dbus_to_python(self.lv.lvm.fs_unmount( self.lv.path, mountpoint ))
+        finally:
+            lvm_signals.post_unmount.send(sender=self.lv, mountpoint=mountpoint)
 
     def format(self):
         raise NotImplementedError("FileSystem::format needs to be overridden")

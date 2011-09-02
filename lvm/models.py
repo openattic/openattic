@@ -8,6 +8,7 @@ from django.conf import settings
 
 from systemd.helpers import dbus_to_python
 from lvm.filesystems import FILESYSTEMS, get_by_name as get_fs_by_name
+from lvm             import signals as lvm_signals
 
 SETUP_STATE_CHOICES = (
     ("new",     "[new]     Set for installation, but has not yet started"),
@@ -224,6 +225,7 @@ class LogicalVolume(StatefulModel):
     ##########################
 
     def install( self ):
+        lvm_signals.pre_install.send(sender=self)
         if self.snapshot:
             snap = self.snapshot.device
             # Don't reformat the snapshot :)
@@ -233,8 +235,10 @@ class LogicalVolume(StatefulModel):
             snap = ""
         self.lvm.lvcreate( self.vg.name, self.name, self.megs, snap )
         self.lvm.lvchange( self.device, True )
+        lvm_signals.post_install.send(sender=self)
 
     def uninstall( self ):
+        lvm_signals.pre_uninstall.send(sender=self)
         for share in self.get_shares():
             share.delete()
 
@@ -245,22 +249,27 @@ class LogicalVolume(StatefulModel):
 
         self.lvm.lvchange(self.device, False)
         self.lvm.lvremove(self.device)
+        lvm_signals.post_uninstall.send(sender=self)
 
     def resize( self ):
         if self.megs < self.lvm_megs:
             # Shrink FS, then Volume
+            lvm_signals.pre_shrink.send(sender=self)
             if self.filesystem:
                 self.fs.resize(grow=False)
             for mod in self.modchain:
                 mod.resize()
             self.lvm.lvresize(self.device, self.megs)
+            lvm_signals.post_shrink.send(sender=self)
         else:
             # Grow Volume, then FS
+            lvm_signals.pre_grow.send(sender=self)
             self.lvm.lvresize(self.device, self.megs)
             for mod in self.modchain:
                 mod.resize()
             if self.filesystem:
                 self.fs.resize(grow=True)
+            lvm_signals.post_grow.send(sender=self)
 
     def setupfs( self ):
         if not self.formatted:
