@@ -8,12 +8,16 @@ admin.autodiscover()
 
 from django.conf import settings
 
+from rpcd.extdirect import PROVIDER
+
 urlpatterns = patterns('',
     (r'^admin/doc/', include('django.contrib.admindocs.urls')),
     (r'^admin/', include(admin.site.urls)),
 
     (r'^accounts/login/$',  'django.contrib.auth.views.login' ),
     (r'^accounts/logout/$', 'django.contrib.auth.views.logout', {'next_page': settings.PROJECT_URL+"/"}),
+
+    (r'^direct/', include(PROVIDER.urls)),
 
     (r'^api/',   include("api.urls")),
     (r'^log/',   include("cmdlog.urls")),
