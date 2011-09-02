@@ -168,6 +168,7 @@ INSTALLED_APPS = (
     'cmdlog',
     'hoststats',
     'peering',
+    'munin',
     'iscsi',
     'nfs',
     'samba',
