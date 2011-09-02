@@ -21,14 +21,19 @@ class LvHandler(BaseHandler):
                 data['fs']['stat'] = obj.fs.stat
         else:
             data['fs'] = None
-        data['lvm_info'] = obj.lvm_info
         return data
 
     def fs_info(self, id):
+        """ Return detailed information about the given file system. """
         lv = LogicalVolume.objects.get(id=id)
         if lv.filesystem:
             return lv.fs.info
         return {}
+
+    def lvm_info(self, id):
+        """ Return information about the LV retrieved from LVM. """
+        lv = LogicalVolume.objects.get(id=id)
+        return lv.lvm_info
 
     def mount_all(self):
         """ Mount all volumes which are not currently mounted. """
