@@ -64,7 +64,7 @@ class BaseHandler(object):
         """ Search for objects with the keywords specified in the kwds dict. """
         return [ self._getobj(obj) for obj in self.model.objects.filter(**kwds) ]
 
-    def values(self, kwds, fields):
+    def filter_values(self, kwds, fields):
         """ Filter records using the specified keywords (see filter), but return only
             the fields named in the `fields' list (plus ID).
         """
@@ -72,6 +72,12 @@ class BaseHandler(object):
             fields.append("id")
         return list(self.model.objects.filter(**kwds).values(*fields))
 
+    def all_values(self, fields):
+        """ Return only the fields named in the `fields' list (plus ID).
+        """
+        if "id" not in fields:
+            fields.append("id")
+        return list(self.model.objects.all().values(*fields))
 
     def delete(self, id):
         """ Delete an object given by ID. """
