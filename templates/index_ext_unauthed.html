@@ -21,6 +21,9 @@
           title:      'Login',
           url:        '{% url login %}',
           serverResponseHandlers: {
+            headers: {
+              "X-CSRFToken": Ext.util.Cookies.get("csrftoken")
+            },
             success: function( f, a ){
               location.href=window.nexturl;
             },

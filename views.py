@@ -8,7 +8,6 @@ from django.contrib.auth            import authenticate, login, logout
 from django.views.decorators.csrf   import csrf_exempt
 from django.contrib.auth.decorators import login_required
 
-@csrf_exempt
 def do_login( request ):
     """ Check login credentials sent by ExtJS. """
     if "username" not in request.POST or "password" not in request.POST:

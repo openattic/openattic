@@ -7,6 +7,11 @@
     <script>
       Ext.onReady( function(){
         Ext.QuickTips.init();
+        Ext.Ajax.on("beforerequest", function(conn, options){
+          if( !options.headers )
+            options.headers = {};
+          options.headers["X-CSRFToken"] = Ext.util.Cookies.get("csrftoken");
+        });
         Ext.Direct.addProvider( Ext.app.REMOTING_API );
         mainpanel = new Ext.Panel({
           renderTo: document.body,
@@ -252,7 +257,7 @@
               conn.request({
                 url: '{% url logout %}',
                 success: function( response, options ){
-                  redirect = function(){
+                  var redirect = function(){
                     location.href = '{% url index %}';
                     };
                   window.setTimeout( redirect, 20000 );
