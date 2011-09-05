@@ -1,0 +1,75 @@
+<html>
+  <head>
+    <link rel="stylesheet" href="{{ MEDIA_URL }}/extjs/resources/css/ext-all.css" />
+    <script src="{{ MEDIA_URL }}/extjs/adapter/ext/ext-base.js"></script>
+    <script src="{{ MEDIA_URL }}/extjs/ext-all.js"></script>
+    <script>
+      Ext.onReady( function(){
+        Ext.QuickTips.init();
+        window.nexturl = "{% url index %}";
+        window.errmsg = {
+          invalid_credentials: "Die eingegebenen Login-Daten sind ungültig.",
+          invalid_request:     "Die Anfrage die an den Server gesendet wurde war ungültig - das sollte eigentlich nicht passieren...",
+          disabled_account:    "Ihr Account wurde deaktiviert. Wenden Sie sich an einen Administrator.",
+          undefined:           "Sie haben nicht alle Felder ausgefüllt.",
+        };
+        login_form = new Ext.FormPanel({
+          autoScroll: true,
+          frame:      true,
+          renderTo:   'x-login-form',
+          id:         'form_allgemeines',
+          title:      'Login',
+          url:        '{% url login %}',
+          serverResponseHandlers: {
+            success: function( f, a ){
+              location.href=window.nexturl;
+            },
+            failure: function( f, a ){
+              if( a.result )
+                Ext.Msg.alert( "Error", this.errmsg[a.result.errormsg] );
+              else
+                Ext.Msg.alert( "Error", this.errmsg['undefined'] );
+            }
+          },
+          items: [{
+              xtype:      'textfield',
+              fieldLabel: 'Benutzername',
+              name:       'username',
+              allowBlank: false,
+              listeners: {
+                specialkey: function( f, e ){
+                  if( e.getKey() == e.ENTER )
+                    login_form.items.items[1].focus();
+                  }
+                }
+            }, {
+              xtype:      'textfield',
+              inputType:  'password',
+              fieldLabel: 'Passwort',
+              name:       'password',
+              allowBlank: false,
+              listeners: {
+                specialkey: function( f, e ){
+                  if( e.getKey() == e.ENTER )
+                    login_form.getForm().submit( login_form.serverResponseHandlers );
+                }
+              }
+          }],
+          buttons: [ {
+            text:    Ext.MessageBox.buttonText['ok'],
+            handler: function(){
+              login_form.getForm().submit( login_form.serverResponseHandlers );
+            }
+          }],
+        });
+        login_form.show();
+      });
+    </script>
+  </head>
+  <body style="padding: 20px 20px 0;">
+    <div id="x-login-form" style="margin: 150px auto; width: 280px;">
+    </div>
+  </body>
+  <!-- kate: space-indent on; indent-width 2; replace-tabs on; -->
+  <!-- vim:set shiftwidth=2 softtabstop=2 expandtab: -->
+</html>

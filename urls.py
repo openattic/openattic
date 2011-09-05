@@ -37,6 +37,10 @@ urlpatterns = patterns('',
     (r'^dummy/system/$', 'django.views.generic.simple.direct_to_template', {'template': 'dummy_system.html'}, 'dummy_system'),
     (r'^dummy/services/$', 'django.views.generic.simple.direct_to_template', {'template': 'dummy_services.html'}, 'dummy_services'),
 
+    (r'^accounts/logout.js$',  'views.do_logout', {}, 'logout' ),
+    (r'^accounts/login.js$',  'views.do_login', {}, 'login' ),
+    (r'^index.html$', 'views.index', {}, 'index'),
+
     (r'^/?$', 'django.views.generic.simple.redirect_to', {'url': settings.PROJECT_URL + '/lvm/'}, '__main__' ),
 )
 
