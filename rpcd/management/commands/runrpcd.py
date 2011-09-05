@@ -189,7 +189,7 @@ class RPCd(object):
         return self.handlers.keys()
 
     def ping(self):
-        """ Noop to test the connection. """
+        """ Noop to test the XMLRPC connection. """
         return "pong"
 
     def hostname(self):
