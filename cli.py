@@ -424,8 +424,35 @@ else:
             signal(SIGINT, default_int_handler)
             return proc.returncode
 
+        def help_help(self):
+            print  ("""Usage: help [<topic>]\n\n"""
+                    """Displays help.\n\n"""
+                    """If no topic is given, help will list all available topics. Those are\n"""
+                    """either commands or miscellaneous information.\n"""
+                    """If a topic is given which represents a command, its usage and help text\n"""
+                    """will be displayed. If the topic does not correspond to a command,\n"""
+                    """its text will be displayed without an invocation hint.\n""")
+
+        def help_sections(self):
+            print  ("""Sections:\n"""
+                    """\n"""
+                    """This shell's commands are grouped into sections. Each section represents\n"""
+                    """one module in the openATTIC core and provides a roughly equal set of\n"""
+                    """commands, depending on what the module provides.\n"""
+                    """\n"""
+                    """To enter a section, simply enter its name. If you pass in any arguments,\n"""
+                    """the shell will execute these arguments inside the given section and return\n"""
+                    """to the current section. That way, you can invoke single-shot commands without\n"""
+                    """having to change sections. If you do not pass in any arguments to the section\n"""
+                    """command, a new subshell will be started in that given section.\n"""
+                    """\n"""
+                    """To leave a section, you can either use the end command, or "..". To quit\n"""
+                    """the shell altogether, do the same on the root section (#), type the exit\n"""
+                    """command, or hit ^d to send an EOF.\n""")
+
+
         def help_syntax(self):
-            print  ("""Syntax in this shell:\n"""
+            print  ("""Syntax:\n"""
                     """\n"""
                     """ command [arguments ...]\n"""
                     """\n"""
@@ -447,10 +474,7 @@ else:
                     """some information about that command.\n"""
                     """\n"""
                     """If you enter a partial command name, pressing the tab key will auto-complete\n"""
-                    """the command name if possible. Pressing it twice will show available options.\n"""
-                    """\n"""
-                    """To leave a section, you can either use the exit command, or hit ^d. To quit\n"""
-                    """the shell altogether, do the same on the root section (#).\n""")
+                    """the command name if possible. Pressing it twice will show available options.\n""")
 
         def do_end(self, args):
             """ Leave this section (or the shell altogether if in the highest section). """
@@ -521,8 +545,8 @@ else:
         fullname = '.'.join(prevparts + [cmd])
         def help_cmd(self):
             argspec = server.get_function_args( fullname )
+            print "Usage: %s %s\n" % ( fullname, ' '.join([('<%s>' % a) for a in argspec]) )
             print server.system.methodHelp( fullname )
-            print "Usage: %s %s" % ( fullname, ' '.join([('<%s>' % a) for a in argspec]) )
         help_cmd.__name__ = 'help_'+cmd
         return help_cmd
 
@@ -584,7 +608,7 @@ else:
 
         def do_shell( self, args ):
             """ Enter section 'shell'. """
-            return self.enter_subsection("shell")
+            return self.enter_subsection("shell", "")
 
         class subsection_shell(BaseCommand):
             """ The 'shell' subsection handler. """
