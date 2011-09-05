@@ -22,6 +22,7 @@ from django.core.management.base import BaseCommand
 from django.contrib.auth import authenticate
 from django.conf import settings
 
+from rpcd.models   import APIKey
 from rpcd.handlers import BaseHandler
 
 class SecureXMLRPCServer(HTTPServer, SimpleXMLRPCDispatcher):
@@ -132,9 +133,18 @@ class VerifyingRequestHandler(SecureXMLRPCRequestHandler):
                 method, encoded = header.split(' ', 1)
                 if method.lower() == "basic":
                     username, password = b64decode(encoded).split(':', 1)
-                    user = authenticate(username=username, password=password)
-                    if user is not None and user.is_active:
-                        return True
+                    if username == '__':
+                        try:
+                            key = APIKey.objects.get(apikey=password, active=True)
+                        except APIKey.DoesNotExist:
+                            self.send_error(401, 'Authentication failed')
+                            return False
+                        else:
+                            return True
+                    else:
+                        user = authenticate(username=username, password=password)
+                        if user is not None and user.is_active:
+                            return True
             # if authentication fails, tell the client
             self.send_error(401, 'Authentication failed')
         return False
