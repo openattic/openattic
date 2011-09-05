@@ -81,7 +81,11 @@ parser.add_option( "-e", "--encoding",
 options, progargs = parser.parse_args()
 
 conf = ConfigParser()
-conf.read("/etc/openattic-cli.conf")
+confs = conf.read(["/etc/openattic-cli.conf", os.path.expanduser("~/.openattic-cli.conf")])
+
+if sys.stdout.isatty():
+    print >> sys.stderr, "Initialized config from %s" % ', '.join(confs)
+
 for key in options.__dict__:
     if getattr(options, key) == parser.defaults[key] and conf.has_option("options", key):
         setattr(options, key, conf.get("options", key))
