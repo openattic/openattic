@@ -7,6 +7,11 @@
     <script>
       Ext.onReady( function(){
         Ext.QuickTips.init();
+        Ext.Ajax.on("beforerequest", function(conn, options){
+          if( !options.headers )
+            options.headers = {};
+          options.headers["X-CSRFToken"] = Ext.util.Cookies.get("csrftoken");
+        });
         Ext.Direct.addProvider( Ext.app.REMOTING_API );
         mainpanel = new Ext.Panel({
           renderTo: document.body,
@@ -248,7 +253,7 @@
           buttons: [{
             text: "Drueck mich",
             handler: function(){
-              lvm__LogicalVolume.is_mounted( 69, function( provider, result ){
+              lvm__LogicalVolume.is_mounted( 15, function( provider, result ){
                 if( result.result ){
                   Ext.Msg.alert("Mounted?", "svedrilicious");
                 }
