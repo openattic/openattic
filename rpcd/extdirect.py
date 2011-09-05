@@ -41,6 +41,8 @@ class Provider(BaseProvider):
     def make_call_wrapper(self, func):
         @wraps(func)
         def wrapper(request, *args, **kwargs):
+            if not request.user.is_authenticated():
+                raise Exception("Access Denied!")
             return func(*args, **kwargs)
         return wrapper
 
