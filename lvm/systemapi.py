@@ -92,7 +92,7 @@ class SystemD(BasePlugin):
 
     @method(in_signature="ss", out_signature="i")
     def e2fs_format(self, devpath, label):
-        return invoke(["/sbin/mke2fs", "-m0", "-L", label, devpath])
+        return invoke(["/sbin/mke2fs", "-q", "-m0", "-L", label, devpath])
 
     @method(in_signature="s", out_signature="i")
     def e2fs_check(self, devpath):
@@ -104,11 +104,11 @@ class SystemD(BasePlugin):
 
     @method(in_signature="ss", out_signature="i")
     def e3fs_format(self, devpath, label):
-        return invoke(["/sbin/mke2fs", "-j", "-m0", "-L", label, devpath])
+        return invoke(["/sbin/mke2fs", "-q", "-j", "-m0", "-L", label, devpath])
 
     @method(in_signature="ss", out_signature="i")
     def e4fs_format(self, devpath, label):
-        return invoke(["/sbin/mkfs.ext4", "-m0", "-L", label, devpath])
+        return invoke(["/sbin/mkfs.ext4", "-q", "-m0", "-L", label, devpath])
 
     @method(in_signature="s", out_signature="i")
     def ntfs_format(self, devpath):
