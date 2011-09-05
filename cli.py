@@ -98,6 +98,10 @@ if options.encoding is None:
     except (KeyError, ValueError):
         options.encoding = "UTF-8"
 
+# See if there's a hosts section that re-defines our connstring
+if conf.has_section("hosts") and conf.has_option("hosts", options.connect):
+    options.connect = conf.get("hosts", options.connect)
+
 # Try to connect to the given server.
 if options.verbose:
     print >> sys.stderr, "Connecting..."
