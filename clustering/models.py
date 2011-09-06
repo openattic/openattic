@@ -1,6 +1,9 @@
 # -*- coding: utf-8 -*-
 # kate: space-indent on; indent-width 4; replace-tabs on;
 
+import dbus
+
+from django.conf import settings
 from django.db import models
 
 from lvm.models import StatefulModel
