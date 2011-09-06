@@ -50,11 +50,18 @@ class Share(StatefulModel):
     def save( self, *args, **kwargs ):
         self.state = "active"
         ret = StatefulModel.save(self, ignore_state=True, *args, **kwargs)
-        dbus.SystemBus().get_object(settings.DBUS_IFACE_SYSTEMD, "/samba").writeconf()
+        samba = dbus.SystemBus().get_object(settings.DBUS_IFACE_SYSTEMD, "/samba")
+        samba.writeconf()
+        if not self.volume.standby:
+            samba.reload()
         return ret
 
     def delete( self ):
         self.state = "done"
+        volume = self.volume
         ret = StatefulModel.delete(self)
-        dbus.SystemBus().get_object(settings.DBUS_IFACE_SYSTEMD, "/samba").writeconf()
+        samba = dbus.SystemBus().get_object(settings.DBUS_IFACE_SYSTEMD, "/samba")
+        samba.writeconf()
+        if not volume.standby:
+            samba.reload()
         return ret

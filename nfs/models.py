@@ -24,6 +24,8 @@ class Export(StatefulModel):
         ret = StatefulModel.save(self, ignore_state=True, *args, **kwargs)
         nfs = dbus.SystemBus().get_object(settings.DBUS_IFACE_SYSTEMD, "/nfs")
         nfs.writeconf()
+        if not self.volume.standby:
+            nfs.exportfs()
         return ret
 
     def delete( self ):
@@ -31,4 +33,6 @@ class Export(StatefulModel):
         ret = StatefulModel.delete(self)
         nfs = dbus.SystemBus().get_object(settings.DBUS_IFACE_SYSTEMD, "/nfs")
         nfs.writeconf()
+        if not self.volume.standby:
+            nfs.exportfs()
         return ret

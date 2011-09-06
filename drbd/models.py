@@ -170,6 +170,10 @@ class DrbdDevice(LVChainedModule):
                 return None
         return self._peerdev
 
+    @property
+    def standby(self):
+        return self.role['self'] != "Primary"
+
     def setupfs(self):
         if self.role['self'] == "Primary":
             self.volume.setupfs()

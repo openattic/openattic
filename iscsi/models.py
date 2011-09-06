@@ -38,7 +38,7 @@ class Target(models.Model):
         return self.name
 
     def save(self, *args, **kwargs):
-        if self.id is None:
+        if self.id is None and not self.volume.standby:
             self._iscsi.target_new(0, self.iscsiname)
 
         ret = models.Model.save(self, *args, **kwargs)
@@ -46,9 +46,11 @@ class Target(models.Model):
         return ret
 
     def delete( self ):
+        volume = self.volume
         iscsi = dbus.SystemBus().get_object(settings.DBUS_IFACE_SYSTEMD, "/iscsi")
         ret = models.Model.delete(self)
-        self._iscsi.target_delete(self.tid)
+        if not volume.standby:
+            self._iscsi.target_delete(self.tid)
         self._iscsi.writeconf()
         return ret
 
@@ -83,7 +85,7 @@ class Lun(StatefulModel):
             except ValueError: # first LUN, so the list is empty
                 self.number = 0
 
-        if self.id is None:
+        if self.id is None and not self.volume.standby:
             self.target._iscsi.lun_new( self.target.tid, self.number, self.volume.path, self.ltype )
 
         self.state = "active"
@@ -93,7 +95,9 @@ class Lun(StatefulModel):
 
     def delete( self ):
         self.state = "done"
+        volume = self.volume
         ret = StatefulModel.delete(self)
-        self.target._iscsi.lun_delete(self.target.tid, self.number)
+        if not volume.standby:
+            self.target._iscsi.lun_delete(self.target.tid, self.number)
         self.target._iscsi.writeconf()
         return ret

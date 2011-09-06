@@ -19,8 +19,9 @@ class SystemD(LockingPlugin):
                     fd.write( "%-50s %s(%s)\n" % ( export.path, export.address, export.options ) )
             finally:
                 fd.close()
-
-            return invoke(["/usr/sbin/exportfs", "-a"])
         finally:
             self.lock.release()
 
+    @method(in_signature="", out_signature="i")
+    def exportfs(self):
+        return invoke(["/usr/sbin/exportfs", "-a"])

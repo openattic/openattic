@@ -76,4 +76,9 @@ class LvHandler(BaseHandler):
         lv = LogicalVolume.objects.get(id=id)
         return lv.filesystem and lv.fs.mounted
 
+    def is_in_standby(self, id):
+        """ Check if the given volume is currently in standby. """
+        lv = LogicalVolume.objects.get(id=id)
+        return lv.standby
+
 RPCD_HANDLERS = [VgHandler, LvHandler]

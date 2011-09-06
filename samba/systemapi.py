@@ -27,7 +27,9 @@ class SystemD(LockingPlugin):
                     } ) )
             finally:
                 fd.close()
-
-            return invoke([samba_settings.INITSCRIPT, "reload"])
         finally:
             self.lock.release()
+
+    @method(in_signature="", out_signature="i")
+    def reload(self):
+        return invoke([samba_settings.INITSCRIPT, "reload"])

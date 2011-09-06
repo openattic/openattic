@@ -199,6 +199,16 @@ class LogicalVolume(StatefulModel):
         return mc[-1].path
 
     @property
+    def standby(self):
+        """ Returns true if mods are configured and at least one reports
+            itself as in standby.
+        """
+        for mod in self.modchain:
+            if mod.standby:
+                return True
+        return False
+
+    @property
     def mods_active(self):
         """ True if no mods are in use or all mods are active. """
         for mod in self.modchain:
@@ -324,6 +334,8 @@ class LVChainedModule(StatefulModel):
 
     volume      = models.ForeignKey(LogicalVolume)
     ordering    = models.IntegerField(default=0)
+
+    standby     = False
 
     @property
     def basedev(self):
