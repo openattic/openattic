@@ -82,7 +82,7 @@ def get_provider():
             meta = handler.model._meta
             handlers[ meta.app_label+'__'+meta.object_name ] = handler()
 
-    return Provider(handlers, autoadd=False)
+    return Provider(handlers, autoadd=True)
 
 
 PROVIDER = get_provider()
