@@ -176,4 +176,5 @@ INSTALLED_APPS = (
     'drbd',
     'rpcd',
     'systemd',
+    'clustering',
 )
