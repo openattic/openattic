@@ -106,7 +106,7 @@ class Ext4(Ext2):
 
 
 class Ntfs(FileSystem):
-    name = "ntfs"
+    name = "ntfs-3g"
     desc = "NTFS (Windows)"
 
     @property

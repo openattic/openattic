@@ -4,7 +4,8 @@
 import os
 from systemd import invoke, logged, BasePlugin, method
 
-from lvm.conf import settings as lvm_settings
+from lvm.conf   import settings as lvm_settings
+from lvm.models import LogicalVolume
 
 def lvm_command(cmd):
     ret, out, err = invoke(
@@ -125,3 +126,37 @@ class SystemD(BasePlugin):
         if ret != 0:
             raise SystemError("dmsetup targets failed: " + err)
         return dict([ line.split() for line in out.split("\n") if line.strip()])
+
+    @method(in_signature="", out_signature="i")
+    def write_fstab(self):
+        # read current fstab
+        fd = open( "/etc/fstab", "rb" )
+        try:
+            fstab = fd.read()
+        finally:
+            fd.close()
+
+        delim = "# # openATTIC mounts. Insert your own before this line. # #"
+
+        # find lines at the beginning that need to be kept
+        newlines = []
+        for line in fstab.split("\n"):
+            if line == delim:
+                break
+            newlines.append(line)
+
+        newlines.append(delim)
+
+        for lv in LogicalVolume.objects.filter(filesystem__isnull=False):
+            newlines.append( "%-50s %-50s %-8s %s %d %d" % (
+                lv.path, lv.fs.mountpoints[0], lv.fs.name, "defaults", 0, 0
+                ) )
+
+        fstab = open("/etc/fstab", "wb")
+        try:
+            for line in newlines:
+                fstab.write( line + "\n" )
+        finally:
+            fstab.close()
+
+        return True

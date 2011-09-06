@@ -298,6 +298,7 @@ class LogicalVolume(StatefulModel):
                 mc[-1].setupfs()
             else:
                 self.setupfs()
+            self.lvm.write_fstab()
 
         return ret
 
@@ -311,6 +312,8 @@ class LogicalVolume(StatefulModel):
             self.fs.unmount()
         self.uninstall()
         models.Model.delete(self)
+        if self.filesystem:
+            self.lvm.write_fstab()
 
 
 class LVChainedModule(StatefulModel):
