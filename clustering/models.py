@@ -3,6 +3,7 @@
 
 import dbus
 
+from django.core.exceptions import ValidationError
 from django.conf import settings
 from django.db import models
 
@@ -15,6 +16,17 @@ class ServiceIP4(StatefulModel):
     peerhost    = models.ForeignKey(PeerHost, help_text='The host with which this address is shared.')
     resname     = models.CharField(max_length=100, default="service_ip")
     init_master = models.BooleanField(default=True)
+
+    def clean_fields(self, exclude=None):
+        if self.peerhost_id is not None:
+            if not self.peerhost.clusterpeer:
+                raise ValidationError('The given peer is not marked as being in a Pacemaker cluster with us.')
+        else:
+            try:
+                self.peerhost = PeerHost.objects.get(clusterpeer=True)
+            except PeerHost.DoesNotExist:
+                raise ValidationError('There is no peer that is marked as being in a Pacemaker cluster with us.')
+        return StatefulModel.clean_fields(self, exclude)
 
     def save(self):
         if self.state != 'active':
