@@ -3,53 +3,70 @@
 
 import socket
 
-from urlparse  import urlparse
+from urlparse  import urlparse, ParseResult
 from xmlrpclib import ServerProxy
 from django.db import models
+from django.core import exceptions
+
+
+class PeerURL(unicode):
+    def set_result(self, result):
+        self._result = result
+
+    def __getattr__(self, attr):
+        return getattr(self._result, attr)
+
+
+class PeerUrlField(models.CharField):
+    __metaclass__ = models.SubfieldBase
+
+    def __init__(self, *args, **kwargs):
+        kwargs["max_length"] = 250
+        super(PeerUrlField, self).__init__(*args, **kwargs)
+
+    def validate(self, value, instance):
+        if isinstance(value, (ParseResult, PeerURL)):
+            value = value.geturl()
+        sp = ServerProxy(value)
+        try:
+            sp.ping()
+        except Exception, e:
+            raise exceptions.ValidationError(unicode(e))
+
+    def to_python(self, value):
+        if isinstance(value, (ParseResult, PeerURL)):
+            return value
+        pu = PeerURL(value)
+        pu.set_result( urlparse(value) )
+        return pu
+
+    def get_db_prep_value( self, value, connection=None, prepared=False ):
+        if prepared or not isinstance(value, (ParseResult, PeerURL)):
+            return value
+        return value.geturl()
+
 
 class PeerHost(models.Model):
     name         = models.CharField(max_length=250)
-    base_url     = models.CharField(max_length=250)
+    base_url     = PeerUrlField()
     clusterpeer  = models.BooleanField(default=False,
                        help_text="Set to true if I am in a Pacemaker cluster with this peer.")
 
     def __init__( self, *args, **kwargs ):
         models.Model.__init__( self, *args, **kwargs )
         self._connection = None
-        self._parsed_url = None
 
     def __unicode__(self):
         return self.name
 
-    @property
-    def parsed_url(self):
-        if self._parsed_url is None and self.base_url:
-            self._parsed_url = urlparse(self.base_url)
-        return self._parsed_url
-
-    @property
-    def username(self):
-        if not self.base_url:
-            return None
-        return self.parsed_url.username
-
-    @property
-    def password(self):
-        if not self.base_url:
-            return None
-        return self.parsed_url.password
-
-    @property
-    def hostname(self):
-        if not self.base_url:
-            return None
-        return self.parsed_url.hostname
-
-    @property
-    def port(self):
-        if not self.base_url:
-            return None
-        return self.parsed_url.port
+    def clean(self):
+        from django.core.exceptions import ValidationError
+        if self.id is None:
+            if self.clusterpeer and PeerHost.objects.filter(clusterpeer=True).count() > 0:
+                raise ValidationError('Another cluster peer already exists.')
+        else:
+            if self.clusterpeer and PeerHost.objects.filter(clusterpeer=True).exclude(id=self.id).count() > 0:
+                raise ValidationError('Another cluster peer already exists.')
 
     @property
     def connection(self):

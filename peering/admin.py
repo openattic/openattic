@@ -4,9 +4,13 @@
 from django.contrib import admin
 
 from models import PeerHost
-from forms  import PeerHostForm
 
 class PeerHostAdmin(admin.ModelAdmin):
-    form = PeerHostForm
+    list_display   = [ 'name', 'clusterpeer', 'address' ]
+
+    def address(self, obj):
+        if obj.base_url:
+            return obj.base_url.hostname
+        return ''
 
 admin.site.register( PeerHost, PeerHostAdmin )
