@@ -91,7 +91,7 @@
               }]
             }),
             listeners: {
-              cellclick: function( self, rowIndex, colIndex, evt ){
+              cellmousedown: function( self, rowIndex, colIndex, evt ){
                 var record = self.getStore().getAt(rowIndex);
                 if( window.freeChartWindow )
                   freeChartWindow.hide();
@@ -108,7 +108,7 @@
                       '<tpl for=".">',
                         '<div class="thumb-wrap" id="{name}">',
                           '<img src="/filer/lvm/mem/{id}.png" width="450" title="{name}" />',
-                          '<span class="fsstat">{fsused} GB used -- {fsfree} GB free -- {total} GB total</span>',
+                          '<span class="fsstat">{fsused} GB used &ndash; {fsfree} GB free &ndash; {total} GB total</span>',
                         '</div>',
                       '</tpl>'),
                     singleSelect: true,
