@@ -1,7 +1,9 @@
 <html>
   <head>
     <link rel="stylesheet" href="{{ MEDIA_URL }}/extjs/resources/css/ext-all.css" />
-    <link rel="stylesheet" type="text/css" href="{{ MEDIA_URL }}/extjs_themes/css/xtheme-access.css" />
+    {% if THEME %}
+      <link rel="stylesheet" type="text/css" href="{{ MEDIA_URL }}/extjs_themes/css/xtheme-{{ THEME }}.css" />
+    {% endif %}
     <script src="{{ MEDIA_URL }}/extjs/adapter/ext/ext-base.js"></script>
     <script src="{{ MEDIA_URL }}/extjs/ext-all.js"></script>
     <script>

@@ -2,7 +2,9 @@
   <head>
     <title>openATTIC</title>
     <link rel="stylesheet" href="{{ MEDIA_URL }}/extjs/resources/css/ext-all.css" />
-    <link rel="stylesheet" type="text/css" href="{{ MEDIA_URL }}/extjs_themes/css/xtheme-access.css" />
+    {% if THEME %}
+      <link rel="stylesheet" type="text/css" href="{{ MEDIA_URL }}/extjs_themes/css/xtheme-{{ THEME }}.css" />
+    {% endif %}
     <script src="{{ MEDIA_URL }}/extjs/adapter/ext/ext-base.js"></script>
     <script src="{{ MEDIA_URL }}/extjs/ext-all.js"></script>
     <script src="/filer/direct/api.js"></script>
@@ -302,6 +304,23 @@
             }]
           }],
           buttons: [{
+            text: 'Theme',
+            handler: function(){
+              Ext.Msg.prompt(
+                'Welches Schweinderl hättens denn gern?',
+                'Momentan gibts nur access und nix.',
+                function(btn, text){
+                  if( btn == 'ok' ){
+                    Ext.Ajax.request({
+                      url: '{% url settheme %}',
+                      success: function(){ window.location.reload(); },
+                      params: { 'theme': text }
+                    });
+                  }
+                }
+              );
+            }
+          }, {
             text:     'Raus hier',
             handler: function() {
               var conn = new Ext.data.Connection();
@@ -335,7 +354,7 @@
           },{
             text: "Waka",
             handler: function(){ Ext.Msg.alert("Alert", "caprilicious"); }
-            }
+          }
         ]
         });
         function updateLayout(){

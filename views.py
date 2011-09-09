@@ -37,7 +37,20 @@ def do_logout( request ):
         return HttpResponse( "{ success: true }", "application/json" );
 
 def index(request):
+    theme = request.session.get("theme", None)
     if not request.user.is_authenticated():
-        return render_to_response('index_ext_unauthed.html', {}, context_instance = RequestContext(request))
+        return render_to_response('index_ext_unauthed.html', {
+            'THEME': theme
+            }, context_instance = RequestContext(request))
     else:
-        return render_to_response('index_ext_authed.html', {}, context_instance = RequestContext(request))
+        return render_to_response('index_ext_authed.html', {
+            'THEME': theme
+            }, context_instance = RequestContext(request))
+
+def settheme(request):
+    theme = request.POST["theme"]
+    if not theme:
+        request.session["theme"] = None
+    else:
+        request.session["theme"] = theme
+    return HttpResponse( "{ success: true }", "application/json" );
