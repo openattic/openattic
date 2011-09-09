@@ -1,12 +1,14 @@
 <html>
   <head>
     <link rel="stylesheet" href="{{ MEDIA_URL }}/extjs/resources/css/ext-all.css" />
+    <link rel="stylesheet" type="text/css" href="{{ MEDIA_URL }}/extjs_themes/xtheme-access.css" />
     <script src="{{ MEDIA_URL }}/extjs/adapter/ext/ext-base.js"></script>
     <script src="{{ MEDIA_URL }}/extjs/ext-all.js"></script>
     <script src="/filer/direct/api.js"></script>
     <script>
       Ext.onReady( function(){
         Ext.QuickTips.init();
+        currentChartId = null;
         mainpanel = new Ext.Panel({
           renderTo: document.body,
           layout: 'border',
@@ -93,10 +95,13 @@
             listeners: {
               cellmousedown: function( self, rowIndex, colIndex, evt ){
                 var record = self.getStore().getAt(rowIndex);
-                if( window.freeChartWindow )
+                if( window.freeChartWindow ){
                   freeChartWindow.hide();
-                if( !record.data.filesystem )
+                }
+                if( !record.data.filesystem || currentChartId === record.data.id ){
+                  currentChartId = null;
                   return;
+                }
                 freeChartWindow = new Ext.Window({
                   title: record.data.name,
                   closable: true,
@@ -126,6 +131,7 @@
                   })
                 });
                 freeChartWindow.show();
+                currentChartId = record.data.id;
               }
             }
           }), {
@@ -256,22 +262,7 @@
                 listeners: {
                   cellclick: function( self, rowIndex, colIndex, evt ){
                     var record = self.getStore().getAt(rowIndex);
-                    // {0} als Ressource sorgt dafür dass die URL als Template für String.format() benutzt werden kann
-                    munin__MuninNode.get_module_url( 1, record.data.name, "{0}", function( provider, result ){
-                      var urlpattern = result.result;
-                      if( self.ownerCt.imagespanel.items.items[0].el )
-                        self.ownerCt.imagespanel.items.items[0].el.update(
-                          String.format( '<img src="{0}" />', String.format( urlpattern, "day"  ) ) );
-                      if( self.ownerCt.imagespanel.items.items[1].el )
-                        self.ownerCt.imagespanel.items.items[1].el.update(
-                          String.format( '<img src="{0}" />', String.format( urlpattern, "week" ) ) );
-                      if( self.ownerCt.imagespanel.items.items[2].el )
-                        self.ownerCt.imagespanel.items.items[2].el.update(
-                          String.format( '<img src="{0}" />', String.format( urlpattern, "month") ) );
-                      if( self.ownerCt.imagespanel.items.items[3].el )
-                        self.ownerCt.imagespanel.items.items[3].el.update(
-                          String.format( '<img src="{0}" />', String.format( urlpattern, "year" ) ) );
-                    } );
+                    muninStore.loadData([[ record.data.name.replace(/\./g, '_') ]]);
                   }
                 }
               }, {
@@ -280,12 +271,32 @@
                 ref: "imagespanel",
                 tabPosition: 'bottom',
                 activeTab: 0,
-                cls: 'munin-graphs',
-                items: [
-                  { title: "Day",   html: "blub" },
-                  { title: "Week",  html: "blub" },
-                  { title: "Month", html: "blub" },
-                  { title: "Year",  html: "blub" }]
+                items: (function(){
+                  // muninStore needs to be global so the listener can access it
+                  muninStore = new Ext.data.ArrayStore({
+                      fields: ['name'],
+                      data: [['apache_accesses']]
+                    });
+                  var dv = function(when){
+                    return new Ext.DataView({
+                      title: when,
+                      tpl: new Ext.XTemplate(
+                        '<tpl for=".">',
+                          '<div class="munin-graphs">',
+                            '<img src="/munin/localdomain/localhost.localdomain/{name}-'+when+'.png" />',
+                          '</div>',
+                        '</tpl>'),
+                      singleSelect: true,
+                      autoHeight: true,
+                      itemSelector: 'div.thumb_wrap',
+                      loadingText: 'Loading...',
+                      store: muninStore
+                    });
+                  };
+                  // Create four DataViews that use the same store to get the module name
+                  // from, but that use different templates in order to display the final images
+                  return [ dv("day"), dv("week"), dv("month"), dv("year") ];
+                }())
               }]
             }]
           }],
@@ -339,9 +350,15 @@
       });
     </script>
     <style>
-      div.munin-graphs div.x-panel { /* Siehe imagespanel.cls */
+      .x-tab-panel-body { /* For some reason, the author of xtheme-access set this to white which looks stupid */
+        background-color: #1F2730;
+        border-color: #18181A;
+        color: #FFFFF6;
+      }
+      div.munin-graphs { /* Siehe imagespanel.cls */
         padding-top: 10px;
         text-align: center;
+        background-color: transparent;
       }
       div.thumb-wrap {
         text-align: center;
