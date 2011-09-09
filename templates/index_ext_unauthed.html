@@ -11,7 +11,7 @@
           invalid_credentials: "Die eingegebenen Login-Daten sind ungültig.",
           invalid_request:     "Die Anfrage die an den Server gesendet wurde war ungültig - das sollte eigentlich nicht passieren...",
           disabled_account:    "Ihr Account wurde deaktiviert. Wenden Sie sich an einen Administrator.",
-          undefined:           "Sie haben nicht alle Felder ausgefüllt.",
+          undefined:           "Sie haben nicht alle Felder ausgefüllt."
         };
         login_form = new Ext.FormPanel({
           autoScroll: true,
@@ -63,7 +63,7 @@
             handler: function(){
               login_form.getForm().submit( login_form.serverResponseHandlers );
             }
-          }],
+          }]
         });
         login_form.show();
       });

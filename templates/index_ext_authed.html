@@ -1,5 +1,6 @@
 <html>
   <head>
+    <title>openATTIC</title>
     <link rel="stylesheet" href="{{ MEDIA_URL }}/extjs/resources/css/ext-all.css" />
     <link rel="stylesheet" type="text/css" href="{{ MEDIA_URL }}/extjs_themes/xtheme-access.css" />
     <script src="{{ MEDIA_URL }}/extjs/adapter/ext/ext-base.js"></script>
@@ -38,14 +39,14 @@
                       return val.stat.usedG.toFixed(2);
                     }
                   }],
-                directFn: lvm__LogicalVolume.all,
+                directFn: lvm__LogicalVolume.all
               });
               store.setDefaultSort("name");
               return store;
             }()),
             colModel:  new Ext.grid.ColumnModel({
               defaults: {
-                sortable: true,
+                sortable: true
               },
               columns: [{
                 header: "LV",
@@ -144,11 +145,11 @@
               store: new Ext.data.DirectStore({
                 autoLoad: true,
                 fields: ['address', 'path', 'options', 'state'],
-                directFn: nfs__Export.all,
+                directFn: nfs__Export.all
               }),
               colModel: new Ext.grid.ColumnModel({
                 defaults: {
-                  sortable: true,
+                  sortable: true
                 },
                 columns: [{
                   header: "address",
@@ -174,11 +175,11 @@
               store: new Ext.data.DirectStore({
                 autoLoad: true,
                 fields: ['path', 'state', 'available'],
-                directFn: samba__Share.all,
+                directFn: samba__Share.all
               }),
               colModel: new Ext.grid.ColumnModel({
                 defaults: {
-                  sortable: true,
+                  sortable: true
                 },
                 columns: [{
                   header: "path",
@@ -200,11 +201,11 @@
               store: new Ext.data.DirectStore({
                 autoLoad: true,
                 fields: ['path', 'state'],
-                directFn: http__Export.all,
+                directFn: http__Export.all
               }),
               colModel: new Ext.grid.ColumnModel({
                 defaults: {
-                  sortable: true,
+                  sortable: true
                 },
                 columns: [{
                   header: "path",
@@ -315,11 +316,11 @@
                     title:   'Logout',
                     msg:     'Sie haben sich erfolgreich ausgeloggt!',
                     buttons: Ext.MessageBox.OK,
-                    fn:      redirect,
+                    fn:      redirect
                     });
-                  },
+                  }
                 });
-              },
+              }
           }, {
             text: "Drueck mich",
             handler: function(){
@@ -334,7 +335,7 @@
           },{
             text: "Waka",
             handler: function(){ Ext.Msg.alert("Alert", "caprilicious"); }
-            },
+            }
         ]
         });
         function updateLayout(){
@@ -343,7 +344,7 @@
             height: Ext.lib.Dom.getViewHeight()
           };
           mainpanel.setHeight( viewsize.height - 20 );
-          mainpanel.setWidth( viewsize.width - 40 );
+          mainpanel.setWidth(  viewsize.width  - 40 );
         }
         updateLayout();
         Ext.EventManager.onWindowResize(updateLayout);
