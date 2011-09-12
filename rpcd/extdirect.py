@@ -2,21 +2,14 @@
 # kate: space-indent on; indent-width 4; replace-tabs on;
 
 import inspect
+import logging
 from functools import wraps
 
-try:
-    import json
-except ImportError:
-    import simplejson as json
-
 from django.conf import settings
-from django.http import HttpResponse
-from django.core.urlresolvers  import reverse
-from django.conf.urls.defaults import patterns
 
 from djextdirect.provider import Provider as BaseProvider, getname
 
-
+from rpcd.handlers import MainHandler
 
 class Provider(BaseProvider):
     """ Ext.Direct provider class that inherits from DjExtDirect's provider.
@@ -28,6 +21,7 @@ class Provider(BaseProvider):
 
     def __init__( self, handlers, name="Ext.app.REMOTING_API", autoadd=True ):
         self.handlers = handlers
+        self.handlers["__main__"] = MainHandler(self, '__')
         BaseProvider.__init__( self, name, autoadd )
         for action in handlers:
             self.classes[action] = {}
@@ -38,7 +32,7 @@ class Provider(BaseProvider):
                 if inspect.ismethod(attrval):
                     self._register_method(action, attrval)
 
-    def make_call_wrapper(self, func):
+    def _make_call_wrapper(self, func):
         @wraps(func)
         def wrapper(request, *args, **kwargs):
             if not request.user.is_authenticated():
@@ -55,7 +49,7 @@ class Provider(BaseProvider):
             flags = {}
         # Since we don't want the request to be passed through to the handler,
         # we need to create a wrapper around it that strips away the first argument.
-        wrapper = self.make_call_wrapper( method )
+        wrapper = self._make_call_wrapper( method )
         self.classes[ clsname ][ method.__name__ ] = wrapper
         wrapper.EXT_argnames = inspect.getargspec( method )[0][1:]
         wrapper.EXT_len      = len( wrapper.EXT_argnames )

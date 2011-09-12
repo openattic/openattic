@@ -23,7 +23,7 @@ from django.contrib.auth import authenticate
 from django.conf import settings
 
 from rpcd.models   import APIKey
-from rpcd.handlers import BaseHandler
+from rpcd.handlers import BaseHandler, MainHandler
 
 class SecureXMLRPCServer(HTTPServer, SimpleXMLRPCDispatcher):
     """ Secure XML-RPC server.
@@ -94,7 +94,8 @@ class SecureXMLRPCRequestHandler(SimpleXMLRPCRequestHandler):
             response = self.server._marshaled_dispatch(
                     data, getattr(self, '_dispatch', None)
                 )
-        except: # This should only happen if the module is buggy
+        except Exception, e:
+            # This should only happen if the module is buggy
             # internal error, report as HTTP server error
             self.send_response(500)
 
@@ -150,8 +151,9 @@ class VerifyingRequestHandler(SecureXMLRPCRequestHandler):
         return False
 
 
-class RPCd(object):
+class RPCd(MainHandler):
     def __init__(self, rpcdplugins):
+        MainHandler.__init__(self, self, '.')
         self.bus = dbus.SystemBus()
         self.handlers = {}
 
@@ -183,18 +185,6 @@ class RPCd(object):
                 for method in list_public_methods(self.handlers[hndname])
                 if method != "model" ])
         return methods
-
-    def get_loaded_modules(self):
-        """ Return a list of loaded handler modules. """
-        return self.handlers.keys()
-
-    def ping(self):
-        """ Noop to test the XMLRPC connection. """
-        return "pong"
-
-    def hostname(self):
-        """ Get this host's hostname. """
-        return socket.gethostname()
 
     def get_function_args(self, method):
         """ Return a list of function argument names. """
