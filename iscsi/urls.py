@@ -11,21 +11,21 @@ urlpatterns = patterns('',
         'perm': 'iscsi.add_initiator',
         'template_name': 'iscsi/initiatoredit.html',
         'model': models.Initiator,
-        'post_save_redirect': settings.PROJECT_URL+'/'
+        'post_save_redirect': settings.PROJECT_URL+'/iscsi/i/'
         }, 'iscsi_initiator_add' ),
 
     ( r'i/(?P<object_id>\d+)/del/$', 'view_wrappers.delete_if_perm', {
         'perm': 'iscsi.delete_initiator',
         'template_name': 'iscsi/initiatoredit.html',
         'model': models.Initiator,
-        'post_delete_redirect': settings.PROJECT_URL+'/'
+        'post_delete_redirect': settings.PROJECT_URL+'/iscsi/i/'
         }, 'iscsi_initiator_delete' ),
 
     ( r'i/(?P<object_id>\d+)/$',     'view_wrappers.update_if_perm', {
         'perm': 'iscsi.change_initiator',
         'template_name': 'iscsi/initiatoredit.html',
         'model': models.Initiator,
-        'post_save_redirect': settings.PROJECT_URL+'/'
+        'post_save_redirect': settings.PROJECT_URL+'/iscsi/i/'
         }, 'iscsi_initiator_edit' ),
 
     ( r'i/$', 'django.views.generic.list_detail.object_list', {
@@ -38,21 +38,21 @@ urlpatterns = patterns('',
         'perm': 'iscsi.add_target',
         'template_name': 'iscsi/targetedit.html',
         'model': models.Target,
-        'post_save_redirect': settings.PROJECT_URL+'/'
+        'post_save_redirect': settings.PROJECT_URL+'/iscsi/t/'
         }, 'iscsi_target_add' ),
 
     ( r't/(?P<object_id>\d+)/del/$', 'view_wrappers.delete_if_perm', {
         'perm': 'iscsi.delete_target',
         'template_name': 'iscsi/targetedit.html',
         'model': models.Target,
-        'post_delete_redirect': settings.PROJECT_URL+'/'
+        'post_delete_redirect': settings.PROJECT_URL+'/iscsi/t/'
         }, 'iscsi_target_delete' ),
 
     ( r't/(?P<object_id>\d+)/$',     'view_wrappers.update_if_perm', {
         'perm': 'iscsi.change_target',
         'template_name': 'iscsi/targetedit.html',
         'model': models.Target,
-        'post_save_redirect': settings.PROJECT_URL+'/'
+        'post_save_redirect': settings.PROJECT_URL+'/iscsi/t/'
         }, 'iscsi_target_edit' ),
 
     ( r't/$', 'django.views.generic.list_detail.object_list', {
