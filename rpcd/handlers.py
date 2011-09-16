@@ -15,7 +15,8 @@ class MainHandler(object):
         """ Return a list of loaded handler modules. """
         res = []
         for hname in self.provider.handlers.keys():
-            if hname == '__main__': continue
+            if hname == '__main__':
+                continue
             app = hname.split(self.delim)[0]
             if app not in res:
                 res.append(app)
