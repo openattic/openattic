@@ -32,9 +32,9 @@ def do_login( request ):
 
 @login_required
 def do_logout( request ):
-        """ Log out the user. """
-        logout( request );
-        return HttpResponse( "{ success: true }", "application/json" );
+    """ Log out the user. """
+    logout( request );
+    return HttpResponse( "{ success: true }", "application/json" );
 
 def index(request):
     theme = request.session.get("theme", None)
