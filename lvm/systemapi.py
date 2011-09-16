@@ -9,7 +9,7 @@ from lvm.models import LogicalVolume
 
 def lvm_command(cmd):
     ret, out, err = invoke(
-        [cmd, "--noheadings", "--nameprefixes", "--unquoted", "--units", "m"],
+        (cmd + ["--noheadings", "--nameprefixes", "--unquoted", "--units", "m"]),
         return_out_err=True, log=lvm_settings.LOG_COMMANDS
         )
 
@@ -22,10 +22,10 @@ def lvm_command(cmd):
         ]
 
 def lvm_vgs():
-    return dict( [ (lv["LVM2_VG_NAME"], lv) for lv in lvm_command("/sbin/vgs") ] )
+    return dict( [ (lv["LVM2_VG_NAME"], lv) for lv in lvm_command(["/sbin/vgs"]) ] )
 
 def lvm_lvs():
-    return dict( [ (lv["LVM2_LV_NAME"], lv) for lv in lvm_command("/sbin/lvs") ] )
+    return dict( [ (lv["LVM2_LV_NAME"], lv) for lv in lvm_command(["/sbin/lvs", '-o', '+seg_pe_ranges']) ] )
 
 
 @logged
