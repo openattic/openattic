@@ -329,17 +329,17 @@
                 success: function( response, options ){
                   var redirect = function(){
                     location.href = '{% url index %}';
-                    };
+                  };
                   window.setTimeout( redirect, 20000 );
                   Ext.Msg.show({
                     title:   'Logout',
                     msg:     'Sie haben sich erfolgreich ausgeloggt!',
                     buttons: Ext.MessageBox.OK,
                     fn:      redirect
-                    });
-                  }
-                });
-              }
+                  });
+                }
+              });
+            }
           }, {
             text: "Drueck mich",
             handler: function(){
