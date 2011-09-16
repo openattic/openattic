@@ -38,7 +38,7 @@ class Target(models.Model):
         return self.name
 
     def save(self, *args, **kwargs):
-        if self.id is None and not self.volume.standby:
+        if self.id is None:
             self._iscsi.target_new(0, self.iscsiname)
 
         ret = models.Model.save(self, *args, **kwargs)
@@ -49,8 +49,7 @@ class Target(models.Model):
         volume = self.volume
         iscsi = dbus.SystemBus().get_object(settings.DBUS_IFACE_SYSTEMD, "/iscsi")
         ret = models.Model.delete(self)
-        if not volume.standby:
-            self._iscsi.target_delete(self.tid)
+        self._iscsi.target_delete(self.tid)
         self._iscsi.writeconf()
         return ret
 
