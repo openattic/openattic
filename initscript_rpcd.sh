@@ -38,7 +38,7 @@ case $1 in
 	
 	stop)
 		log_daemon_msg "Stopping" "openATTIC rpcd"
-		start-stop-daemon --pidfile=$RPCD_PIDFILE --stop --exec $PYTHON
+		start-stop-daemon --pidfile=$RPCD_PIDFILE --stop --oknodo --exec $PYTHON
 		log_end_msg 0
 		;;
 	
