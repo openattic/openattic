@@ -23,6 +23,11 @@ class LvHandler(BaseHandler):
             data['fs'] = None
         return data
 
+    def avail_fs(self):
+        """ Return a list of available file systems. """
+        from lvm.filesystems import FILESYSTEMS
+        return [ {'name': fs.name, 'desc': fs.desc } for fs in FILESYSTEMS ]
+
     def fs_info(self, id):
         """ Return detailed information about the given file system. """
         lv = LogicalVolume.objects.get(id=id)
