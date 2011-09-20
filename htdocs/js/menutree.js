@@ -25,22 +25,11 @@ Ext.oa.MenuTree = Ext.extend(Ext.tree.TreePanel, {
         icon: '/filer/static/icons2/22x22/emblems/emblem-web.png',
         children: [
           {
-            text: 'Log', 
-            icon: '/filer/static/icons2/22x22/actions/bookmark-new.png',
-            children: [
-              {
-                text: 'System-Log',       leaf: true
-              },
-              {
-                text: 'Error-Log',        leaf: true
-              }
-            ]
-          },
-          {
-            text: 'Disk Usage', leaf: true,
+            text: 'Disk Usage',
+            leaf: true,
             icon: '/filer/static/icons2/22x22/apps/disk_use.png'
           },
-          {text: 'Service State',            leaf: true}
+          {text: 'Service State',  leaf: true}
         ],
       }, {
         id: 'menu_storage',
@@ -84,7 +73,7 @@ Ext.oa.MenuTree = Ext.extend(Ext.tree.TreePanel, {
         expanded: Ext.state.Manager.get("expand_root_nodes", false),
         icon: '/filer/static/icons2/22x22/mimetypes/gnome-mime-application-x-killustrator.png',
         children: [
-          {text: 'DRBD',       leaf:true},
+          {text: 'DRBD',        leaf: true},
           {text: 'rSync',       leaf: true},
           {text: 'Snapmanager', leaf: true},
           {text: 'VTL',         leaf: true},
@@ -100,38 +89,31 @@ Ext.oa.MenuTree = Ext.extend(Ext.tree.TreePanel, {
           {
             text: 'Network',
             icon: '/filer/static/icons2/22x22/places/gnome-fs-network.png',
-            children: [
-              {
-                text: 'General',          leaf: true,
+            children: [ {
+                text: 'General',
+                leaf: true,
                 icon: '/filer/static/icons2/22x22/apps/network.png'
-              },
-              {
+              }, {
                 text: 'Bonding',          leaf: true
-              },
-              {
+              }, {
                 text: 'Proxy',            leaf: true,
                 icon: '/filer/static/icons2/22x22/apps/preferences-system-network-proxy.png'  
-              },
-              {
+              }, {
                 text: 'Domain',
                 icon: '/filer/static/icons2/128x128/apps/domain.png',
                 children: [
                   {text: 'Active Directory',  leaf: true},
                   {text: 'LDAP',   leaf: true}
                 ]
-              }
-            ]
-          },
-          {
+            } ]
+          }, {
             text: 'User Management',  leaf: true,
             icon: '/filer/static/icons2/22x22/apps/config-users.png'
-            
-          },
-          {
-            text: 'Date/Time',    leaf: true,
+          }, {
+            text: 'Date/Time',
+            leaf: true,
             icon: '/filer/static/icons2/22x22/apps/date_time.png'
-          },
-          {
+          }, {
             text: 'E-Mail',           leaf: true,
             icon: '/filer/static/icons2/22x22/apps/email.png'
           },
@@ -139,10 +121,10 @@ Ext.oa.MenuTree = Ext.extend(Ext.tree.TreePanel, {
           {text: 'openQRM',          leaf: true},
           {text: 'WebSSH',           leaf: true},
           {
-            text: 'Online Update',    leaf: true,
+            text: 'Online Update',
+            leaf: true,
             icon: '/filer/static/icons2/22x22/apps/update.png'
-          },
-          {
+          }, {
             text: 'Shutdown/Reboot',  leaf: true,
             icon: '/filer/static/icons2/22x22/actions/system-log-out.png'
           }
