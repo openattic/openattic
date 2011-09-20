@@ -25,10 +25,6 @@ Ext.oa.MenuTree = Ext.extend(Ext.tree.TreePanel, {
         icon: '/filer/static/icons2/22x22/emblems/emblem-web.png',
         children: [
           {
-            text: 'Dashboard',          leaf: true,
-            icon: '/filer/static/icons2/22x22/apps/gnome-session.png'
-          },
-          {
             text: 'Log', 
             icon: '/filer/static/icons2/22x22/actions/bookmark-new.png',
             children: [
@@ -40,29 +36,15 @@ Ext.oa.MenuTree = Ext.extend(Ext.tree.TreePanel, {
               }
             ]
           },
-          {
-            text: 'Performance',        leaf: true,
-            icon: '/filer/static/icons2/22x22/mimetypes/x-office-spreadsheet.png'
-          },
           {text: 'Disk Usage', leaf: true},
           {text: 'Service State',            leaf: true}
         ],
       }, {
-        id: 'menu_status',
+        id: 'menu_storage',
         text: 'Storage',
         expanded: Ext.state.Manager.get("expand_root_nodes", false),
         icon: '/filer/static/icons2/22x22/devices/gnome-dev-harddisk.png',
-        children: [{
-            text: 'Disk Management', leaf: true,
-            icon: '/filer/static/icons2/22x22/apps/database.png'
-          }, {
-            text: 'Volume Management', leaf: true,
-            icon: '/filer/static/icons2/22x22/apps/volume.png'
-          },
-          {
-            text: 'Snapshots',     leaf: true,
-            icon: '/filer/static/icons2/22x22/apps/snapshot.png'
-          }],
+        children: [],
       }, {
         id: 'menu_shares',
         text: 'Shares',
@@ -73,21 +55,6 @@ Ext.oa.MenuTree = Ext.extend(Ext.tree.TreePanel, {
             children: [
               {text: 'Target List',    leaf: true},
               {text: 'Initiator List', leaf: true}
-            ]
-          }, {
-            text: 'Samba',
-            icon: '/filer/static/icons2/22x22/apps/samba.png',
-            children: [{text: 'Share List', leaf: true}]
-          }, {
-            text: 'NFS',
-            icon: '/filer/static/icons2/22x22/apps/nfs.png',
-            children: [{text: 'Export List', leaf: true}]
-          }, {
-            text: 'HTTP',
-            children: [
-              {text: 'Export List',  leaf: true},
-              {text: 'WebDAV',       leaf: true},
-              {text: 'Webinterface', leaf: true}
             ]
           }, {
             text: 'FC',
