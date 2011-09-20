@@ -22,26 +22,48 @@ Ext.oa.MenuTree = Ext.extend(Ext.tree.TreePanel, {
     children: [
       {
         text: 'Status',
-        icon: '/filer/static/icons/television.png',
+        icon: '/filer/static/icons2/22x22/emblems/emblem-web.png',
         children: [
-          {text: 'Dashboard',          leaf: true},
-          {text: 'Protokolle',         leaf: true},
-          {text: 'Performance',        leaf: true},
-          {text: 'Speicherverteilung', leaf: true},
-          {text: 'Dienste',            leaf: true}
+          {
+            text: 'Dashboard',          leaf: true,
+            icon: '/filer/static/icons2/22x22/apps/gnome-session.png'
+          },
+          {
+            text: 'Log', 
+            icon: '/filer/static/icons2/22x22/actions/bookmark-new.png',
+            children: [
+              {
+                text: 'System-Log',       leaf: true
+              },
+              {
+                text: 'Error-Log',        leaf: true
+              }
+            ]
+          },
+          {
+            text: 'Performance',        leaf: true,
+            icon: '/filer/static/icons2/22x22/mimetypes/x-office-spreadsheet.png'
+          },
+          {text: 'Disk Usage', leaf: true},
+          {text: 'Service State',            leaf: true}
         ],
       }, {
       text: 'Storage',
-      icon: '/filer/static/icons/heart.png',
+      icon: '/filer/static/icons2/22x22/devices/gnome-dev-harddisk.png',
       children: [{
-          text: 'Disk Management', leaf: true
+          text: 'Disk Management', leaf: true,
+          icon: '/filer/static/icons2/22x22/apps/database.png'
         }, {
-          text: 'Volume Management', leaf: true
+          text: 'Volume Management', leaf: true,
+          icon: '/filer/static/icons2/22x22/apps/volume.png'
         },
-        {text: 'Snapshots',     leaf: true}],
+        {
+          text: 'Snapshots',     leaf: true,
+          icon: '/filer/static/icons2/22x22/apps/snapshot.png'
+        }],
       }, {
         text: 'Shares',
-        icon: '/filer/static/icons/bug.png',
+        icon: '/filer/static/icons2/22x22/places/gnome-fs-share.png',
         children: [ {
             text: 'iSCSI',
             children: [
@@ -50,9 +72,11 @@ Ext.oa.MenuTree = Ext.extend(Ext.tree.TreePanel, {
             ]
           }, {
             text: 'Samba',
+            icon: '/filer/static/icons2/22x22/apps/samba.png',
             children: [{text: 'Share List', leaf: true}]
           }, {
             text: 'NFS',
+            icon: '/filer/static/icons2/22x22/apps/nfs.png',
             children: [{text: 'Export List', leaf: true}]
           }, {
             text: 'HTTP',
@@ -63,6 +87,7 @@ Ext.oa.MenuTree = Ext.extend(Ext.tree.TreePanel, {
             ]
           }, {
             text: 'FC',
+            icon: '/filer/static/icons2/22x22/apps/fibre_channel.png',
             children: [{text: 'FC Targets', leaf: true}]
           }, {
             text: 'AFP',
@@ -70,13 +95,16 @@ Ext.oa.MenuTree = Ext.extend(Ext.tree.TreePanel, {
           } ]
       }, {
         text: 'Applications',
-        icon: '/filer/static/icons/heart.png',
+        icon: '/filer/static/icons2/22x22/mimetypes/application-certificate.png',
         children: [
           {text: 'DDNS',       leaf: true},
-          {text: 'SSH/Telnet', leaf: true}],
+          {
+            text: 'SSH/Telnet', leaf: true,
+            icon: '/filer/static/icons2/22x22/apps/gnome-terminal.png'
+          }],
       }, {
         text: 'Services',
-        icon: '/filer/static/icons/heart.png',
+        icon: '/filer/static/icons2/22x22/mimetypes/gnome-mime-application-x-killustrator.png',
         children: [
           {
             text: 'DRBD',
@@ -90,16 +118,22 @@ Ext.oa.MenuTree = Ext.extend(Ext.tree.TreePanel, {
         ]
       }, {
         text: 'System',
-        icon: '/filer/static/icons/cog.png',
-        children: [ {
-            text: 'Log',
-            children: [{text: 'Log-Entries',      leaf: true}]
-          }, {
+        icon: '/filer/static/icons2/22x22/mimetypes/application-x-executable.png',
+        children: [ 
+          {
             text: 'Network',
+            icon: '/filer/static/icons2/22x22/places/gnome-fs-network.png',
             children: [
-              {text: 'General',          leaf: true},
-              {text: 'Bonding',          leaf: true},
-              {text: 'Proxy',            leaf: true},
+              {
+                text: 'General',          leaf: true
+              },
+              {
+                text: 'Bonding',          leaf: true
+              },
+              {
+                text: 'Proxy',            leaf: true,
+                icon: '/filer/static/icons2/22x22/apps/preferences-system-network-proxy.png'  
+              },
               {
                 text: 'Domain',
                 children: [
@@ -109,14 +143,24 @@ Ext.oa.MenuTree = Ext.extend(Ext.tree.TreePanel, {
               }
             ]
           },
-          {text: 'User Management',  leaf: true},
+          {
+            text: 'User Management',  leaf: true,
+            icon: '/filer/static/icons2/22x22/apps/config-users.png'
+            
+          },
           {text: 'Date/Time',    leaf: true},
-          {text: 'E-Mail',           leaf: true},
+          {
+            text: 'E-Mail',           leaf: true,
+            icon: '/filer/static/icons2/22x22/apps/email.png'
+          },
           {text: 'openITCockpit',    leaf: true},
           {text: 'openQRM',          leaf: true},
           {text: 'WebSSH',           leaf: true},
           {text: 'Online Update',    leaf: true},
-          {text: 'Shutdown/Reboot',  leaf: true}
+          {
+            text: 'Shutdown/Reboot',  leaf: true,
+            icon: '/filer/static/icons2/22x22/actions/system-log-out.png'
+          }
         ]
       }
     ],
