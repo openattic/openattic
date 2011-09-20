@@ -86,4 +86,8 @@ class LvHandler(BaseHandler):
         lv = LogicalVolume.objects.get(id=id)
         return lv.standby
 
+    def get_mounts(self):
+        mounts = open("/proc/mounts", "rb").read()
+        return [ line.split(" ") for line in mounts.split("\n") if line]
+
 RPCD_HANDLERS = [VgHandler, LvHandler]
