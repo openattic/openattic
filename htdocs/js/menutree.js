@@ -85,11 +85,17 @@ Ext.oa.MenuTree = Ext.extend(Ext.tree.TreePanel, {
         icon: '/filer/static/icons2/22x22/mimetypes/gnome-mime-application-x-killustrator.png',
         children: [
           {text: 'DRBD',       leaf:true},
-          {text: 'rSync',       leaf: true},
+          {
+            text: 'rSync',       leaf: true,
+            icon: '/filer/static/icons2/22x22/apps/sync.png'
+          },
           {text: 'Snapmanager', leaf: true},
           {text: 'VTL',         leaf: true},
           {text: 'Revisioning', leaf: true},
-          {text: 'Backup',      leaf: true}
+          {
+            text: 'Backup',      leaf: true,
+            icon: '/filer/static/icons2/22x22/apps/backup.png'
+          }
         ]
       }, {
         id: 'menu_system',
