@@ -11,144 +11,23 @@
     <script src="/filer/direct/api.js"></script>
     <script src="{{ MEDIA_URL }}/js/directstateprovider.js"></script>
     <script src="{{ MEDIA_URL }}/js/menutree.js"></script>
+    <script src="{{ MEDIA_URL }}/js/lvm__logicalvolume.js"></script>
     <script>
       Ext.onReady( function(){
         Ext.QuickTips.init();
 
-        currentChartId = null;
         mainpanel = new Ext.Panel({
           renderTo: document.body,
           layout: 'border',
           items: [ new Ext.oa.MenuTree({
             region: 'west',
+            collapsible: true,
           }), {
             xtype: "tabpanel",
             region: "center",
             activeTab: 0,
-            items: [ new Ext.grid.GridPanel({
-              width: 480,
-              title: 'LVM',
-              split: true,
-              store: (function(){
-                // Anon function that is called immediately to set up the store's DefaultSort
-                var store = new Ext.data.DirectStore({
-                  autoLoad: true,
-                  fields: ['name', 'megs', 'filesystem',  'formatted', 'id', 'state', 'fs',
-                    {
-                      name: 'fsfree',
-                      mapping: 'fs',
-                      convert: function( val, row ){
-                        if( val === null || typeof val.stat === "undefined" )
-                          return '';
-                        return val.stat.freeG.toFixed(2);
-                      }
-                    }, {
-                      name: 'fsused',
-                      mapping: 'fs',
-                      convert: function( val, row ){
-                        if( val === null || typeof val.stat === "undefined" )
-                          return '';
-                        return val.stat.usedG.toFixed(2);
-                      }
-                    }],
-                  directFn: lvm__LogicalVolume.all
-                });
-                store.setDefaultSort("name");
-                return store;
-              }()),
-              colModel:  new Ext.grid.ColumnModel({
-                defaults: {
-                  sortable: true
-                },
-                columns: [{
-                  header: "LV",
-                  width: 200,
-                  dataIndex: "name"
-                }, {
-                  header: "Size",
-                  width: 75,
-                  dataIndex: "megs",
-                  align: 'right',
-                  renderer: function( val, x, store ){
-                    if( val >= 1000 )
-                      return String.format("{0} GB", (val / 1000).toFixed(2));
-                    return String.format("{0} MB", val);
-                  }
-                }, {
-                  header: "FS",
-                  width: 50,
-                  dataIndex: "filesystem",
-                  renderer: function( val, x, store ){
-                    if( val )
-                      return val;
-                    return "unformatted";
-                  }
-                }, {
-                  header: "Free",
-                  width: 75,
-                  dataIndex: "fsfree",
-                  align: 'right',
-                  renderer: function( val, x, store ){
-                    if( !val )
-                      return '';
-                    return String.format("{0} GB", val);
-                  }
-                }, {
-                  header: "Used",
-                  width: 75,
-                  dataIndex: "fsused",
-                  align: 'right',
-                  renderer: function( val, x, store ){
-                    if( !val )
-                      return '';
-                    return String.format("{0} GB", val);
-                  }
-                }]
-              }),
-              listeners: {
-                cellmousedown: function( self, rowIndex, colIndex, evt ){
-                  var record = self.getStore().getAt(rowIndex);
-                  if( window.freeChartWindow ){
-                    freeChartWindow.hide();
-                  }
-                  if( !record.data.filesystem || currentChartId === record.data.id ){
-                    currentChartId = null;
-                    return;
-                  }
-                  freeChartWindow = new Ext.Window({
-                    title: record.data.name,
-                    closable: true,
-                    width:  460,
-                    height: 400,
-                    layout: "fit",
-                    items: new Ext.DataView({
-                      tpl: new Ext.XTemplate(
-                        '<tpl for=".">',
-                          '<div class="thumb-wrap" id="{name}">',
-                            '<img src="/filer/lvm/mem/{id}.png" width="450" title="{name}" />',
-                            '<span class="fsstat">{fsused} GB used &ndash; {fsfree} GB free &ndash; {total} GB total</span>',
-                          '</div>',
-                        '</tpl>'),
-                      singleSelect: true,
-                      autoHeight: true,
-                      itemSelector: 'div.thumb_wrap',
-                      loadingText: 'Loading...',
-                      store: new Ext.data.ArrayStore({
-                        fields: ['id', 'name', 'fsused', 'fsfree', 'total'],
-                        data: [[
-                          record.data.id, record.data.name,
-                          record.data.fsused, record.data.fsfree,
-                          (record.data.megs / 1000).toFixed(2)
-                        ]]
-                      })
-                    })
-                  });
-                  freeChartWindow.show();
-                  currentChartId = record.data.id;
-                }
-              }
-            }),
-            new Ext.grid.GridPanel({
+            items: [ new Ext.oa.Lvm__LogicalVolume_Panel(), {
+              xtype: 'grid',
               title: "NFS",
               split: true,
               store: new Ext.data.DirectStore({
@@ -178,7 +57,8 @@
                   dataIndex: "state"
                 }]
               })
-            }), new Ext.grid.GridPanel({
+            }, {
+              xtype: 'grid',
               title: "Samba",
               split: true,
               store: new Ext.data.DirectStore({
@@ -204,7 +84,8 @@
                   dataIndex: "available"
                 }]
               })
-            }), new Ext.grid.GridPanel({
+            }, {
+              xtype: 'grid',
               title: "http",
               split: true,
               store: new Ext.data.DirectStore({
@@ -226,7 +107,7 @@
                   dataIndex: "state"
                 } ]
               })
-            }),  new Ext.ListView({
+            },  new Ext.ListView({
               title: "System",
               store: new Ext.data.DirectStore({
                 autoLoad: true,
