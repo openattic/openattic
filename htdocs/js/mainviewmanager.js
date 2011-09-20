@@ -17,14 +17,33 @@ Ext.oa.MainViewManager = Ext.extend(Ext.Panel, {
         region: 'west',
         collapsible: true,
       }), {
-        xtype: "tabpanel",
         region: "center",
-        activeTab: 0,
+        activeItem: 0,
+        layout: "card",
         items: modules
       }],
       modules: modules
     }));
     Ext.oa.MainViewManager.superclass.initComponent.apply(this, arguments);
+
+    this.menutree = this.items.items[0];
+    this.modcontainer = this.items.items[1];
+    this.currentComponent = modules[0];
+
+    for( var i = 0; i < modules.length; i++ ){
+      modules[i].prepareMenuTree(this.menutree);
+    }
+
+    this.menutree.on( 'beforeclick', this.treenodeClicked, this );
+  },
+
+  treenodeClicked: function( node, event ){
+    if( node.leaf && typeof node.attributes.panel != "undefined" )
+      this.switchComponent( node.attributes.panel );
+  },
+
+  switchComponent: function( toComponent ){
+    this.modcontainer.layout.setActiveItem( toComponent.id );
   }
 });
 
