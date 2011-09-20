@@ -33,6 +33,8 @@ DATABASES = {
 
 DBUS_IFACE_SYSTEMD = "org.openattic.systemd"
 
+AUTH_PROFILE_MODULE = 'userprefs.UserProfile'
+
 # Log execution of "lvs" and "vgs" commands.
 # Those don't usually fail and are executed quite often (tm) to generate the LV and VG lists,
 # so logging them might not make too much sense, but it's up to you. :)
@@ -162,8 +164,9 @@ INSTALLED_APPS = (
     'django.contrib.admin',
     'django.contrib.admindocs',
     'django.contrib.markup',
-    'piston',
-    'api',
+    #'piston',
+    'userprefs',
+    #'api',
     'lvm',
     'cmdlog',
     'hoststats',
@@ -177,4 +180,6 @@ INSTALLED_APPS = (
     'rpcd',
     'systemd',
     'clustering',
+    'ifconfig',
+    'django_extensions',
 )

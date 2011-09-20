@@ -21,6 +21,7 @@ urlpatterns = patterns('',
 
     (r'^api/',   include("api.urls")),
     (r'^log/',   include("cmdlog.urls")),
+    (r'^userprefs/',   include("userprefs.urls")),
 
     (r'^lvm/',   include("lvm.urls")),
     (r'^nfs/',   include("nfs.urls")),
