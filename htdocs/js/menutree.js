@@ -2,8 +2,6 @@ Ext.namespace("Ext.oa");
 
 Ext.oa.MenuTree = Ext.extend(Ext.tree.TreePanel, {
   title: 'openATTIC',
-  style: 'padding: 0px 5px 10px 10px',
-  xtype: 'portal',
   border: false,
   rootVisible: false,
   region: 'west',
@@ -17,11 +15,13 @@ Ext.oa.MenuTree = Ext.extend(Ext.tree.TreePanel, {
   width: 200,
   minSize: 175,
   maxSize: 400,
-  margins: '35 0 5 5', //beginnt da, wo die anderen panels auch starten
   root: {
+    text: 'root',
     children: [
       {
+        id: 'menu_status',
         text: 'Status',
+        expanded: Ext.state.Manager.get("expand_root_nodes", false),
         icon: '/filer/static/icons2/22x22/emblems/emblem-web.png',
         children: [
           {
@@ -48,21 +48,25 @@ Ext.oa.MenuTree = Ext.extend(Ext.tree.TreePanel, {
           {text: 'Service State',            leaf: true}
         ],
       }, {
-      text: 'Storage',
-      icon: '/filer/static/icons2/22x22/devices/gnome-dev-harddisk.png',
-      children: [{
-          text: 'Disk Management', leaf: true,
-          icon: '/filer/static/icons2/22x22/apps/database.png'
-        }, {
-          text: 'Volume Management', leaf: true,
-          icon: '/filer/static/icons2/22x22/apps/volume.png'
-        },
-        {
-          text: 'Snapshots',     leaf: true,
-          icon: '/filer/static/icons2/22x22/apps/snapshot.png'
-        }],
+        id: 'menu_status',
+        text: 'Storage',
+        expanded: Ext.state.Manager.get("expand_root_nodes", false),
+        icon: '/filer/static/icons2/22x22/devices/gnome-dev-harddisk.png',
+        children: [{
+            text: 'Disk Management', leaf: true,
+            icon: '/filer/static/icons2/22x22/apps/database.png'
+          }, {
+            text: 'Volume Management', leaf: true,
+            icon: '/filer/static/icons2/22x22/apps/volume.png'
+          },
+          {
+            text: 'Snapshots',     leaf: true,
+            icon: '/filer/static/icons2/22x22/apps/snapshot.png'
+          }],
       }, {
+        id: 'menu_shares',
         text: 'Shares',
+        expanded: Ext.state.Manager.get("expand_root_nodes", false),
         icon: '/filer/static/icons2/22x22/places/gnome-fs-share.png',
         children: [ {
             text: 'iSCSI',
@@ -94,7 +98,9 @@ Ext.oa.MenuTree = Ext.extend(Ext.tree.TreePanel, {
             children: [{text: 'AFP Shares', leaf: true}]
           } ]
       }, {
+        id: 'menu_applications',
         text: 'Applications',
+        expanded: Ext.state.Manager.get("expand_root_nodes", false),
         icon: '/filer/static/icons2/22x22/mimetypes/application-certificate.png',
         children: [
           {text: 'DDNS',       leaf: true},
@@ -103,7 +109,9 @@ Ext.oa.MenuTree = Ext.extend(Ext.tree.TreePanel, {
             icon: '/filer/static/icons2/22x22/apps/gnome-terminal.png'
           }],
       }, {
+        id: 'menu_services',
         text: 'Services',
+        expanded: Ext.state.Manager.get("expand_root_nodes", false),
         icon: '/filer/static/icons2/22x22/mimetypes/gnome-mime-application-x-killustrator.png',
         children: [
           {
@@ -117,7 +125,9 @@ Ext.oa.MenuTree = Ext.extend(Ext.tree.TreePanel, {
           {text: 'Backup',      leaf: true}
         ]
       }, {
+        id: 'menu_system',
         text: 'System',
+        expanded: Ext.state.Manager.get("expand_root_nodes", false),
         icon: '/filer/static/icons2/22x22/mimetypes/application-x-executable.png',
         children: [ 
           {
@@ -146,7 +156,6 @@ Ext.oa.MenuTree = Ext.extend(Ext.tree.TreePanel, {
           {
             text: 'User Management',  leaf: true,
             icon: '/filer/static/icons2/22x22/apps/config-users.png'
-            
           },
           {text: 'Date/Time',    leaf: true},
           {
@@ -163,9 +172,17 @@ Ext.oa.MenuTree = Ext.extend(Ext.tree.TreePanel, {
           }
         ]
       }
-    ],
-    text: 'root',
-  }
+    ]
+  },
+  fbar: [ 'Auto-expand root nodes', {
+    xtype: "checkbox",
+    checked: Ext.state.Manager.get("expand_root_nodes", false),
+    listeners: {
+      check: function( self, checked ){
+        Ext.state.Manager.set("expand_root_nodes", checked);
+      }
+    },
+  }]
 });
 
 
