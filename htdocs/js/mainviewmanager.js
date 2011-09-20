@@ -4,6 +4,7 @@ Ext.oa.MainViewManager = Ext.extend(Ext.Panel, {
   initComponent: function(){
     var modules = [
       new Ext.oa.Lvm__LogicalVolume_Panel(),
+      new Ext.oa.Lvm__Mounts_Panel(),
       new Ext.oa.Nfs__Export_Panel(),
       new Ext.oa.Samba__Share_Panel(),
       new Ext.oa.Http__Export_Panel(),
