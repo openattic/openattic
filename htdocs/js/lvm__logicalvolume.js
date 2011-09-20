@@ -42,6 +42,14 @@ Ext.oa.Lvm__LogicalVolume_Panel = Ext.extend(Ext.Panel, {
                     return '';
                   return val.stat.usedG.toFixed(2);
                 }
+              }, {
+                name: 'fspercent',
+                mapping: 'fs',
+                convert: function( val, row ){
+                  if( val === null || typeof val.stat === "undefined" )
+                    return '';
+                  return (val.stat.used / val.stat.size * 100 ).toFixed(2);
+                }
               }],
             directFn: lvm__LogicalVolume.all
           });
@@ -94,6 +102,20 @@ Ext.oa.Lvm__LogicalVolume_Panel = Ext.extend(Ext.Panel, {
               if( !val )
                 return '';
               return String.format("{0} GB", val);
+            }
+          }, {
+            header: "Used%",
+            width: 75,
+            dataIndex: "fspercent",
+            align: 'right',
+            renderer: function( val, x, store ){
+              if( !val )
+                return '';
+              if( val > 90 )
+                var color = "red";
+              else
+                var color = "green";
+              return String.format('<span style="color:{1};">{0}%</span>', val, color);
             }
           }]
         }),
