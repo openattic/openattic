@@ -17,82 +17,66 @@
     <script src="{{ MEDIA_URL }}/js/munin__muninnode.js"></script>
     <script src="{{ MEDIA_URL }}/js/nfs__export.js"></script>
     <script src="{{ MEDIA_URL }}/js/samba__share.js"></script>
+    <script src="{{ MEDIA_URL }}/js/mainviewmanager.js"></script>
     <script>
       Ext.onReady( function(){
         Ext.QuickTips.init();
 
-        mainpanel = new Ext.Panel({
+        mainpanel = new Ext.oa.MainViewManager({
           renderTo: document.body,
-          layout: 'border',
-          items: [ new Ext.oa.MenuTree({
-            region: 'west',
-            collapsible: true,
-          }), {
-            xtype: "tabpanel",
-            region: "center",
-            activeTab: 0,
-            items: [
-              new Ext.oa.Lvm__LogicalVolume_Panel(),
-              new Ext.oa.Nfs__Export_Panel(),
-              new Ext.oa.Samba__Share_Panel(),
-              new Ext.oa.Http__Export_Panel(),
-              new Ext.oa.Cmdlog__LogEntry_Panel(),
-              new Ext.oa.Munin__MuninNode_Panel()
-            ]
-          }],
           buttons: [{
-            text: 'Theme',
-            handler: function(){
-              Ext.Msg.prompt(
-                'Welches Schweinderl hättens denn gern?',
-                'Momentan gibts nur access und nix.',
-                function(btn, text){
-                  if( btn == 'ok' ){
-                    Ext.Ajax.request({
-                      url: '{% url settheme %}',
-                      success: function(){ window.location.reload(); },
-                      params: { 'theme': text }
+              text: 'Theme',
+              handler: function(){
+                Ext.Msg.prompt(
+                  'Welches Schweinderl hättens denn gern?',
+                  'Momentan gibts nur access und nix.',
+                  function(btn, text){
+                    if( btn == 'ok' ){
+                      Ext.Ajax.request({
+                        url: '{% url settheme %}',
+                        success: function(){ window.location.reload(); },
+                        params: { 'theme': text }
+                      });
+                    }
+                  }
+                );
+              }
+            }, {
+              text:     'Raus hier',
+              handler: function() {
+                var conn = new Ext.data.Connection();
+                conn.request({
+                  url: '{% url logout %}',
+                  success: function( response, options ){
+                    var redirect = function(){
+                      location.href = '{% url index %}';
+                    };
+                    window.setTimeout( redirect, 20000 );
+                    Ext.Msg.show({
+                      title:   'Logout',
+                      msg:     'Sie haben sich erfolgreich ausgeloggt!',
+                      buttons: Ext.MessageBox.OK,
+                      fn:      redirect
                     });
                   }
-                }
-              );
+                });
+              }
+            }, {
+              text: "Drueck mich",
+              handler: function(){
+                lvm__LogicalVolume.is_mounted( 15, function( provider, result ){
+                  if( result.result ){
+                    Ext.Msg.alert("Mounted?", "svedrilicious");
+                  }
+                  else
+                    Ext.Msg.alert("Mounted?", "oh noez");
+                });
+              }
+            },{
+              text: "Waka",
+              handler: function(){ Ext.Msg.alert("Alert", "caprilicious"); }
             }
-          }, {
-            text:     'Raus hier',
-            handler: function() {
-              var conn = new Ext.data.Connection();
-              conn.request({
-                url: '{% url logout %}',
-                success: function( response, options ){
-                  var redirect = function(){
-                    location.href = '{% url index %}';
-                  };
-                  window.setTimeout( redirect, 20000 );
-                  Ext.Msg.show({
-                    title:   'Logout',
-                    msg:     'Sie haben sich erfolgreich ausgeloggt!',
-                    buttons: Ext.MessageBox.OK,
-                    fn:      redirect
-                  });
-                }
-              });
-            }
-          }, {
-            text: "Drueck mich",
-            handler: function(){
-              lvm__LogicalVolume.is_mounted( 15, function( provider, result ){
-                if( result.result ){
-                  Ext.Msg.alert("Mounted?", "svedrilicious");
-                }
-                else
-                  Ext.Msg.alert("Mounted?", "oh noez");
-              });
-            }
-          },{
-            text: "Waka",
-            handler: function(){ Ext.Msg.alert("Alert", "caprilicious"); }
-          }
-        ]
+          ]
         });
         function updateLayout(){
           viewsize = {
