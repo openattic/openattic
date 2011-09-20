@@ -18,6 +18,8 @@ ADMINS = (
     # ('Your Name', 'your_email@domain.com'),
 )
 
+LVM_CHOWN_GROUP="users"
+
 MANAGERS = ADMINS
 
 DATABASES = {
