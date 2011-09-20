@@ -1,3 +1,5 @@
+Ext.namespace("Ext.oa");
+
 Ext.oa.MenuTree = Ext.extend(Ext.tree.TreePanel, {
   style: 'padding: 0px 5px 10px 10px',
   xtype: 'portal',
