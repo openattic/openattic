@@ -9,6 +9,9 @@ class HostStatsHandler(object):
             app_label = "hoststats"
             object_name = "HostStats"
 
+    def __init__(self, user):
+        self.user = user
+
     def get_host_info(self):
         """ Return some general information about this host. """
         return statgrab.sg_get_host_info().attrs

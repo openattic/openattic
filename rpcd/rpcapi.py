@@ -8,7 +8,7 @@ class GroupHandler(BaseHandler):
     model = Group
 
     def _override_get(self, obj, data):
-        h = UserHandler()
+        h = UserHandler(self.user)
         data['members'] = [ h._idobj(member) for member in obj.user_set.all() ]
         return data
 
@@ -17,8 +17,12 @@ class UserHandler(BaseHandler):
     exclude = ["password"]
 
     def _override_get(self, obj, data):
-        h = GroupHandler()
+        h = GroupHandler(self.user)
         data['groups'] = [ h._idobj(grp) for grp in obj.groups.all() ]
         return data
+
+    def whoami(self):
+        """ Return the user we are identified with. """
+        return self._getobj(self.user)
 
 RPCD_HANDLERS = [GroupHandler, UserHandler]

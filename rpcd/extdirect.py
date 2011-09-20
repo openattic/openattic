@@ -6,10 +6,37 @@ import logging
 from functools import wraps
 
 from django.conf import settings
+from django.contrib.auth.models import User
 
 from djextdirect.provider import Provider as BaseProvider, getname
 
-from rpcd.handlers import MainHandler
+class MainHandler(object):
+    def __init__(self, user):
+        self.user = user
+
+    def get_installed_apps(self):
+        """ Return a list of installed Django apps. """
+        return settings.INSTALLED_APPS
+
+    def ping(self):
+        """ Noop to test the XMLRPC connection. """
+        return "pong %s" % self.user.username
+
+    def hostname(self):
+        """ Get this host's hostname. """
+        return socket.gethostname()
+
+    def get_loaded_modules(self):
+        """ Return a list of loaded handler modules. """
+        res = []
+        for hname in self.provider.handlers.keys():
+            if hname == '__main__':
+                continue
+            app = hname.split('__')[0]
+            if app not in res:
+                res.append(app)
+        return res
+
 
 class Provider(BaseProvider):
     """ Ext.Direct provider class that inherits from DjExtDirect's provider.
@@ -21,7 +48,9 @@ class Provider(BaseProvider):
 
     def __init__( self, handlers, name="Ext.app.REMOTING_API", autoadd=True ):
         self.handlers = handlers
-        self.handlers["__main__"] = MainHandler(self, '__')
+        self.handlers["__main__"] = MainHandler
+        MainHandler.provider = self
+
         BaseProvider.__init__( self, name, autoadd )
         for action in handlers:
             self.classes[action] = {}
@@ -37,7 +66,11 @@ class Provider(BaseProvider):
         def wrapper(request, *args, **kwargs):
             if not request.user.is_authenticated():
                 raise Exception("Access Denied!")
-            return func(*args, **kwargs)
+            # func is an UNBOUND class method. Get the handler class,
+            # instantiate it with the current user, and...
+            hh = func.im_class(request.user)
+            # call the BOUND method from that instance.
+            return getattr(hh, func.__name__)(*args, **kwargs)
         return wrapper
 
     def _register_method( self, cls_or_name, method, flags=None ):
@@ -74,7 +107,7 @@ def get_provider():
     for plugin in rpcdplugins:
         for handler in getattr(getattr(plugin, "rpcapi"), "RPCD_HANDLERS", []):
             meta = handler.model._meta
-            handlers[ meta.app_label+'__'+meta.object_name ] = handler()
+            handlers[ meta.app_label+'__'+meta.object_name ] = handler
 
     return Provider(handlers, autoadd=True)
 

@@ -6,36 +6,6 @@ import socket
 from django.conf import settings
 from django.db import models
 
-class MainHandler(object):
-    def __init__(self, provider, modname_delimiter):
-        self.provider = provider
-        self.delim    = modname_delimiter
-
-    def get_loaded_modules(self):
-        """ Return a list of loaded handler modules. """
-        res = []
-        for hname in self.provider.handlers.keys():
-            if hname == '__main__':
-                continue
-            app = hname.split(self.delim)[0]
-            if app not in res:
-                res.append(app)
-        return res
-
-    def get_installed_apps(self):
-        """ Return a list of installed Django apps. """
-        return settings.INSTALLED_APPS
-
-    def ping(self):
-        """ Noop to test the XMLRPC connection. """
-        return "pong"
-
-    def hostname(self):
-        """ Get this host's hostname. """
-        return socket.gethostname()
-
-
-
 class BaseHandlerMeta(type):
     """ Handler meta class that keeps track of Model→Handler associations. """
     handlers = {}
@@ -58,6 +28,9 @@ class BaseHandler(object):
 
     exclude = None
     fields  = None
+
+    def __init__(self, user):
+        self.user = user
 
     @classmethod
     def _get_handler_for_model(cls, model):
@@ -129,7 +102,7 @@ class BaseHandler(object):
             if isinstance( field, models.ForeignKey ):
                 if value is not None:
                     try:
-                        handler = BaseHandler._get_handler_for_model(value.__class__)()
+                        handler = BaseHandler._get_handler_for_model(value.__class__)(self.user)
                     except KeyError:
                         data[field.name] = unicode(value)
                     else:

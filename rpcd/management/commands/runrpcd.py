@@ -7,6 +7,7 @@ import logging
 import inspect
 import SocketServer
 import socket
+import traceback
 
 from SimpleXMLRPCServer import list_public_methods, SimpleXMLRPCServer
 from SimpleXMLRPCServer import SimpleXMLRPCRequestHandler, SimpleXMLRPCDispatcher
@@ -23,7 +24,7 @@ from django.contrib.auth import authenticate
 from django.conf import settings
 
 from rpcd.models   import APIKey
-from rpcd.handlers import BaseHandler, MainHandler
+from rpcd.handlers import BaseHandler
 
 class SecureXMLRPCServer(HTTPServer, SimpleXMLRPCDispatcher):
     """ Secure XML-RPC server.
@@ -123,10 +124,13 @@ class VerifyingRequestHandler(SecureXMLRPCRequestHandler):
     """ RequestHandler that authenticates requests against Django's auth system.
 
         See http://www.acooke.org/cute/BasicHTTPA0.html
+
+        This RequestHandler also stores the user and passes it on to _dispatch.
     """
     def parse_request(self):
         # first, call the original implementation which returns
         # True if all OK so far
+        self.current_user = None
         if SimpleXMLRPCRequestHandler.parse_request(self):
             # next we authenticate
             header = self.headers.get('Authorization')
@@ -141,39 +145,53 @@ class VerifyingRequestHandler(SecureXMLRPCRequestHandler):
                             self.send_error(401, 'Authentication failed')
                             return False
                         else:
+                            self.current_user = key.owner
                             return True
                     else:
                         user = authenticate(username=username, password=password)
                         if user is not None and user.is_active:
+                            self.current_user = user
                             return True
             # if authentication fails, tell the client
             self.send_error(401, 'Authentication failed')
         return False
 
+    def _dispatch(self, method, params):
+        if method in self.server.funcs:
+            # the system.* namespace is listed in funcs, those don't understand the user param
+            return self.server.funcs[method]( *params )
+        # pass the user to the instance.
+        return self.server.instance._dispatch( method, params, self.current_user )
 
-class RPCd(MainHandler):
+
+
+class RPCd(object):
     def __init__(self, rpcdplugins):
-        MainHandler.__init__(self, self, '.')
         self.bus = dbus.SystemBus()
         self.handlers = {}
 
         for plugin in rpcdplugins:
             for handler in getattr(getattr(plugin, "rpcapi"), "RPCD_HANDLERS", []):
                 meta = handler.model._meta
-                self.handlers[ meta.app_label+'.'+meta.object_name ] = handler()
+                self.handlers[ meta.app_label+'.'+meta.object_name ] = handler
 
-    def _resolve(self, method):
+    def _resolve(self, method, user):
         if '.' in method:
             obj, methname = method.rsplit(".", 1)
-            return getattr( self.handlers[obj], methname )
+            # Before calling the method, instantiate the handler and pass the current user to it
+            return getattr( self.handlers[obj](user), methname )
         else:
             return getattr( self, method )
 
-    def _dispatch(self, method, params):
-        return self._resolve( method )( *params )
+    def _dispatch(self, method, params, user):
+        try:
+            return self._resolve( method, user )( *params )
+        except Exception:
+            logging.error( traceback.format_exc() )
+            raise
 
     def _methodHelp(self, method):
-        doc = self._resolve(method).__doc__
+        doc = self._resolve(method, None).__doc__
         if doc is not None:
             return doc.strip()
         return ""
@@ -186,14 +204,37 @@ class RPCd(MainHandler):
                 if method != "model" ])
         return methods
 
+    def get_loaded_modules(self):
+        """ Return a list of loaded handler modules. """
+        res = []
+        for hname in self.handlers.keys():
+            app = hname.split('.')[0]
+            if app not in res:
+                res.append(app)
+        return res
+
     def get_function_args(self, method):
         """ Return a list of function argument names. """
-        args = inspect.getargspec(self._resolve( method )).args
+        args = inspect.getargspec(self._resolve( method, None )).args
         if args[0] == 'self':
-            return args[1:]
+            args = args[1:]
+        if args and args[-1] == 'user':
+            args = args[:-1]
         return args
 
-    def get_object(self, id):
+    def get_installed_apps(self):
+        """ Return a list of installed Django apps. """
+        return settings.INSTALLED_APPS
+
+    def ping(self):
+        """ Noop to test the XMLRPC connection. """
+        return "pong"
+
+    def hostname(self):
+        """ Get this host's hostname. """
+        return socket.gethostname()
+
+    def get_object(self, id, user):
         """ Return an object resolved from an ID dictionary. """
         obj = BaseHandler._get_object_by_id_dict(id)
         handler = BaseHandler._get_handler_for_model(obj.__class__)()
