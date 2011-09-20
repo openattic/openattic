@@ -1,9 +1,9 @@
 Ext.namespace("Ext.oa");
 
-currentChartId = null;
 
 Ext.oa.Lvm__LogicalVolume_Panel = Ext.extend(Ext.Panel, {
   initComponent: function(){
+    var currentChartId = null;
     Ext.apply(this, Ext.apply(this.initialConfig, {
       title: 'LVM',
       layout: 'border',
@@ -73,7 +73,7 @@ Ext.oa.Lvm__LogicalVolume_Panel = Ext.extend(Ext.Panel, {
             renderer: function( val, x, store ){
               if( val )
                 return val;
-              return "unformatted";
+              return "&ndash;";
             }
           }, {
             header: "Free",
