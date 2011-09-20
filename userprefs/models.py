@@ -15,7 +15,7 @@ class UserProfile(models.Model):
         except UserPreference.DoesNotExist:
             raise KeyError( item )
         else:
-            return json.loads(pref)
+            return json.loads(pref.value)
 
     def __setitem__(self, item, value):
         try:
