@@ -31,19 +31,16 @@ Ext.oa.MenuTree = Ext.extend(Ext.tree.TreePanel, {
           {text: 'Dienste',            leaf: true}
         ],
       }, {
-      text: 'Laufwerke',
+      text: 'Storage',
       icon: '/filer/static/icons/heart.png',
       children: [{
-          text: 'LVM',
-          children: [
-            {text: 'LV List', leaf: true},
-            {text: 'VG List', leaf: true}
-          ]
+          text: 'Disk Management', leaf: true
+        }, {
+          text: 'Volume Management', leaf: true
         },
-        {text: 'Snapshots',     leaf: true},
-        {text: 'Block Devices', leaf: true}]
+        {text: 'Snapshots',     leaf: true}],
       }, {
-        text: 'Freigaben',
+        text: 'Shares',
         icon: '/filer/static/icons/bug.png',
         children: [ {
             text: 'iSCSI',
@@ -72,13 +69,18 @@ Ext.oa.MenuTree = Ext.extend(Ext.tree.TreePanel, {
             children: [{text: 'AFP Shares', leaf: true}]
           } ]
       }, {
-        text: 'Dienste',
+        text: 'Applications',
         icon: '/filer/static/icons/heart.png',
         children: [
-          {text: 'Deduplizierung', leaf: true},
+          {text: 'DDNS',       leaf: true},
+          {text: 'SSH/Telnet', leaf: true}],
+      }, {
+        text: 'Services',
+        icon: '/filer/static/icons/heart.png',
+        children: [
           {
             text: 'DRBD',
-            children: [{text: 'DRBD', leaf: true}]
+            children: [{text: 'DRBD',         leaf: true}]
           },
           {text: 'rSync',       leaf: true},
           {text: 'Snapmanager', leaf: true},
@@ -90,18 +92,25 @@ Ext.oa.MenuTree = Ext.extend(Ext.tree.TreePanel, {
         text: 'System',
         icon: '/filer/static/icons/cog.png',
         children: [ {
-            text: 'Kommando-Log',
-            children: [{text: 'Log-Entries', leaf: true}]
+            text: 'Log',
+            children: [{text: 'Log-Entries',      leaf: true}]
           }, {
-            text: 'Netzwerk',
+            text: 'Network',
             children: [
               {text: 'General',          leaf: true},
-              {text: 'Management-Iface', leaf: true},
-              {text: 'Zugriffs-Iface',   leaf: true}
+              {text: 'Bonding',          leaf: true},
+              {text: 'Proxy',            leaf: true},
+              {
+                text: 'Domain',
+                children: [
+                  {text: 'Active Directory',  leaf: true},
+                  {text: 'LDAP',   leaf: true}
+                ]
+              }
             ]
           },
           {text: 'User Management',  leaf: true},
-          {text: 'Datum/Uhrzeit',    leaf: true},
+          {text: 'Date/Time',    leaf: true},
           {text: 'E-Mail',           leaf: true},
           {text: 'openITCockpit',    leaf: true},
           {text: 'openQRM',          leaf: true},
