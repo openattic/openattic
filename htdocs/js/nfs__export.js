@@ -34,6 +34,16 @@ Ext.oa.Nfs__Export_Panel = Ext.extend(Ext.grid.GridPanel, {
       })
     }));
     Ext.oa.Nfs__Export_Panel.superclass.initComponent.apply(this, arguments);
+  },
+
+  prepareMenuTree: function(tree){
+    tree.root.attributes.children[2].children.push({
+      text: 'Linux (NFS)',
+      leaf: true,
+      icon: '/filer/static/icons2/22x22/apps/nfs.png',
+      panel: this,
+      href: '#',
+    });
   }
 });
 

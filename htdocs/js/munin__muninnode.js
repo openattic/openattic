@@ -70,6 +70,16 @@ Ext.oa.Munin__MuninNode_Panel = Ext.extend(Ext.Panel, {
       }]
     }));
     Ext.oa.Munin__MuninNode_Panel.superclass.initComponent.apply(this, arguments);
+  },
+
+  prepareMenuTree: function(tree){
+    tree.root.attributes.children[0].children.push({
+      text: 'Performance',
+      leaf: true,
+      icon: '/filer/static/icons2/22x22/apps/samba.png',
+      panel: this,
+      href: '#',
+    });
   }
 });
 

@@ -26,6 +26,16 @@ Ext.oa.Cmdlog__LogEntry_Panel = Ext.extend(Ext.grid.GridPanel, {
       })
     }));
     Ext.oa.Cmdlog__LogEntry_Panel.superclass.initComponent.apply(this, arguments);
+  },
+
+  prepareMenuTree: function(tree){
+    tree.root.attributes.children[5].children.push({
+      text: 'Command Log',
+      leaf: true,
+      icon: '/filer/static/icons2/22x22/mimetypes/x-office-spreadsheet.png',
+      panel: this,
+      href: '#',
+    });
   }
 });
 
