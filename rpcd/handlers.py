@@ -60,6 +60,32 @@ class BaseHandler(object):
         """ Return all objects. """
         return [ self._getobj(obj) for obj in self.model.objects.all() ]
 
+    def range(self, start, limit, sort, dir ):
+        """ Return a range of objects ordered by the `sort' field. """
+        start = int(start)
+        limit = int(limit)
+        if dir == "DESC":
+            sort = "-" + sort
+        total  = self.model.objects.all().count()
+        qryset = self.model.objects.all().order_by(sort)[start:(start + limit)]
+        return {
+            'objects': [ self._getobj(obj) for obj in qryset ],
+            'total':   total
+            }
+
+    def range_values(self, start, limit, sort, dir, fields):
+        """ Return a range of objects ordered by the `sort' field. """
+        start = int(start)
+        limit = int(limit)
+        if dir == "DESC":
+            sort = "-" + sort
+        total  = self.model.objects.all().count()
+        qryset = self.model.objects.all().order_by(sort)[start:(start + limit)].values(*fields)
+        return {
+            'objects': list(qryset),
+            'total':   total
+            }
+
     def get(self, id):
         """ Return an object given by ID. """
         if not isinstance( id, dict ):
