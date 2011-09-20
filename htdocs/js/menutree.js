@@ -1,6 +1,7 @@
 Ext.namespace("Ext.oa");
 
 Ext.oa.MenuTree = Ext.extend(Ext.tree.TreePanel, {
+  title: 'openATTIC',
   style: 'padding: 0px 5px 10px 10px',
   xtype: 'portal',
   border: false,
@@ -16,7 +17,6 @@ Ext.oa.MenuTree = Ext.extend(Ext.tree.TreePanel, {
   width: 200,
   minSize: 175,
   maxSize: 400,
-  collapsible: true,
   margins: '35 0 5 5', //beginnt da, wo die anderen panels auch starten
   root: {
     children: [
