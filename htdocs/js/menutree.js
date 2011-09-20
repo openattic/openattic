@@ -73,8 +73,12 @@ Ext.oa.MenuTree = Ext.extend(Ext.tree.TreePanel, {
         expanded: Ext.state.Manager.get("expand_root_nodes", false),
         icon: '/filer/static/icons2/22x22/mimetypes/gnome-mime-application-x-killustrator.png',
         children: [
-          {text: 'DRBD',        leaf: true},
-          {text: 'rSync',       leaf: true},
+          {text: 'DRBD',        leaf:true},
+          {
+            text: 'rSync',
+            leaf: true,
+            icon: '/filer/static/icons2/22x22/apps/sync.png'
+          },
           {text: 'Snapmanager', leaf: true},
           {text: 'VTL',         leaf: true},
           {text: 'Revisioning', leaf: true},
