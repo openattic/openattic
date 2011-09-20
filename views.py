@@ -43,6 +43,8 @@ def index(request):
             'THEME': theme
             }, context_instance = RequestContext(request))
     else:
+        if not theme and "theme" in request.user.get_profile():
+            theme = request.user.get_profile()["theme"]
         return render_to_response('index_ext_authed.html', {
             'THEME': theme
             }, context_instance = RequestContext(request))
@@ -53,4 +55,9 @@ def settheme(request):
         request.session["theme"] = None
     else:
         request.session["theme"] = theme
+    if request.user.is_authenticated():
+        if not theme and "theme" in request.user.get_profile():
+            del request.user.get_profile()["theme"]
+        elif theme:
+            request.user.get_profile()["theme"] = theme
     return HttpResponse( "{ success: true }", "application/json" );
