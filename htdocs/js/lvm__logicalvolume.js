@@ -9,13 +9,13 @@ Ext.oa.Lvm__LogicalVolume_Panel = Ext.extend(Ext.Panel, {
       layout: 'border',
       buttons: [{
           text: "Add Volume",
-          icon: "/filer/static/icons2/22x22/actions/add.png"
+          icon: "/filer/static/icons2/16x16/add.png"
         }, {
           text: "Resize Volume",
-          icon: "/filer/static/icons2/22x22/actions/gtk-execute.png"
+          icon: "/filer/static/icons2/16x16/gtk-execute.png"
         }, {
           text: "Delete Volume",
-          icon: "/filer/static/icons2/22x22/actions/remove.png"
+          icon: "/filer/static/icons2/16x16/remove.png"
       }],
       items: [{
         xtype: 'grid',
