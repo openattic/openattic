@@ -2,6 +2,7 @@
 # kate: space-indent on; indent-width 4; replace-tabs on;
 
 import dbus
+import re
 from django.contrib.auth.models import User
 from django.db import models
 from django.conf import settings
@@ -102,6 +103,38 @@ class VolumeGroup(models.Model):
 
     def __unicode__(self):
         return "%s (%s MB free)" % (self.name, self.lvm_info['LVM2_VG_FREE'])
+
+    @classmethod
+    def get_mounts(cls):
+        fd = open("/proc/mounts", "rb")
+        try:
+            mounts = fd.read()
+        finally:
+            fd.close()
+        return [ line.split(" ") for line in mounts.split("\n") if line ]
+
+    @classmethod
+    def get_devices(cls):
+        fd = open("/proc/partitions", "rb")
+        try:
+            partitions = fd.read()
+        finally:
+            fd.close()
+        regex = re.compile("^\s*\d+\s+\d+\s+\d+\s([a-zA-Z]+)$")
+        devs = []
+        for line in partitions.split("\n"):
+            m = regex.match(line)
+            if m:
+                devs.append(m.group(1))
+        return devs
+
+    @classmethod
+    def get_partitions(cls, device):
+        lvm = dbus.SystemBus().get_object(settings.DBUS_IFACE_SYSTEMD, "/lvm")
+        ret, disk, part = lvm.get_partitions(device)
+        if ret:
+            raise SystemError("parted failed, check the log")
+        return dbus_to_python(disk), dbus_to_python(part)
 
     @property
     def lvm_info(self):

@@ -8,6 +8,15 @@ from lvm.models import VolumeGroup, LogicalVolume
 class VgHandler(BaseHandler):
     model = VolumeGroup
 
+    def get_mounts(self):
+        return VolumeGroup.get_mounts()
+
+    def get_devices(self):
+        return VolumeGroup.get_devices()
+
+    def get_partitions(self, device):
+        return VolumeGroup.get_partitions(device)
+
 class LvHandler(BaseHandler):
     model = LogicalVolume
 
@@ -89,9 +98,5 @@ class LvHandler(BaseHandler):
         """ Check if the given volume is currently in standby. """
         lv = LogicalVolume.objects.get(id=id)
         return lv.standby
-
-    def get_mounts(self):
-        mounts = open("/proc/mounts", "rb").read()
-        return [ line.split(" ") for line in mounts.split("\n") if line]
 
 RPCD_HANDLERS = [VgHandler, LvHandler]
