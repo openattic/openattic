@@ -200,13 +200,6 @@ Ext.oa.Lvm__LogicalVolume_Panel = Ext.extend(Ext.Panel, {
 
   prepareMenuTree: function(tree){
     tree.root.attributes.children[1].children.push({
-      text: 'Disk Management',
-      leaf: true,
-      icon: '/filer/static/icons2/22x22/apps/database.png',
-      panel: this,
-      href: '#',
-    });
-    tree.root.attributes.children[1].children.push({
       text: 'Volume Management',
       leaf: true,
       icon: '/filer/static/icons2/22x22/apps/volume.png',
