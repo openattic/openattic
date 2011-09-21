@@ -1,61 +1,56 @@
 Ext.namespace("Ext.oa");
 
-Ext.oa.Lvm__Partitions_Panel = Ext.extend(Ext.Panel, {
+Ext.oa.Lvm__Partitions_Panel = Ext.extend(Ext.grid.GridPanel, {
   initComponent: function(){
-    var diskStore = new Ext.data.JsonStore({
-      fields: [
-        "physical-sector-size", "logical-sector-size", "partition-table-type",
-        "path", "model-name", "transport-type", "size"
-      ],
-      data: []
-    });
     var partStore = new Ext.data.JsonStore({
       fields: [ "begin", "end", "flags-set", "number", "partition-name", "filesystem-type", "size" ],
       data: []
     });
     Ext.apply(this, Ext.apply(this.initialConfig, {
-      layout: 'border',
-      items: [ new Ext.DataView({
-        title: "Disk information",
-        height: 200,
-        region: "north",
-        tpl: new Ext.XTemplate(
-          '<tpl for=".">',
-            '<table>',
-              '<tr><th>Path</th><td>{path}</td></tr>',
-              '<tr><th>Size</th><td>{size}</td></tr>',
-            '</table>',
-          '</tpl>'),
-        singleSelect: true,
-        autoHeight: true,
-        itemSelector: 'div.thumb_wrap',
-        loadingText: 'Loading...',
-        store: diskStore
-      }), {
-        xtype: "grid",
-        title: "Partitions",
-        region: 'center',
-        store: partStore,
-        colModel:  new Ext.grid.ColumnModel({
-          defaults: {
-            sortable: true
-          },
-          columns: [{
-              header: "#",
-              width: 20,
-              dataIndex: "number"
-            }, {
-              header: "Size",
-              width: 100,
-              dataIndex: "size"
-          }]
-        })
-      }]
+      store: partStore,
+      colModel:  new Ext.grid.ColumnModel({
+        defaults: {
+          sortable: true
+        },
+        columns: [{
+            header: "#",
+            width: 20,
+            dataIndex: "number"
+          }, {
+            header: "Size",
+            width: 100,
+            dataIndex: "size"
+          }, {
+            header: "Begin",
+            width: 100,
+            dataIndex: "begin"
+          }, {
+            header: "End",
+            width: 100,
+            dataIndex: "end"
+          }, {
+            header: "FS Type",
+            width: 100,
+            dataIndex: "filesystem-type"
+          }, {
+            header: "Label",
+            width: 100,
+            dataIndex: "partition-name"
+          }, {
+            header: "Flags",
+            width: 100,
+            dataIndex: "flags-set"
+        }]
+      })
     }));
     Ext.oa.Lvm__Partitions_Panel.superclass.initComponent.apply(this, arguments);
+    var self = this;
     lvm__VolumeGroup.get_partitions(this.device, function(provider, response){
       if( response.result ){
-        diskStore.loadData( [ response.result[0] ] );
+        var disk = response.result[0];
+        self.setTitle( String.format( "{0} &mdash; {1}, {2}, {3}",
+          disk["path"], disk["size"], disk["transport-type"], disk["model-name"]
+        ));
         partStore.loadData( response.result[1] );
       }
     });
@@ -64,10 +59,15 @@ Ext.oa.Lvm__Partitions_Panel = Ext.extend(Ext.Panel, {
 
 
 
-Ext.oa.Lvm__Disks_Panel = Ext.extend(Ext.TabPanel, {
+Ext.oa.Lvm__Disks_Panel = Ext.extend(Ext.Panel, {
   initComponent: function(){
     Ext.apply(this, Ext.apply(this.initialConfig, {
       title: "Disk Management",
+      layout: 'accordion',
+      buttons: [ {
+        text: "Initialize",
+        handler: function(){ alert("add me to a VG"); }
+      } ]
     }));
     Ext.oa.Lvm__Disks_Panel.superclass.initComponent.apply(this, arguments);
     var self = this;
@@ -78,9 +78,6 @@ Ext.oa.Lvm__Disks_Panel = Ext.extend(Ext.TabPanel, {
             title: response.result[i],
             device: ('/dev/' + response.result[i])
           }));
-        }
-        if( self.getActiveTab() === null ){
-          self.setActiveTab(0);
         }
       }
     });
