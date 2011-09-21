@@ -9,7 +9,7 @@ Ext.oa.Lvm__Mounts_Panel = Ext.extend(Ext.grid.GridPanel, {
       store: new Ext.data.DirectStore({
         autoLoad: true,
         fields: fields,
-        directFn: lvm__LogicalVolume.get_mounts,
+        directFn: lvm__VolumeGroup.get_mounts,
         reader: new Ext.data.ArrayReader({
           fields: fields
         })
