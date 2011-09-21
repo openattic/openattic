@@ -8,7 +8,7 @@ Ext.oa.Ftp__User_Panel = Ext.extend(Ext.grid.GridPanel, {
       title: "ftp",
       buttons: [{
         text: "Add User",
-        icon: "/filer/static/icons2/16x16/add.png",
+        icon: "/filer/static/icons2/16x16/actions/add.png",
         handler: function(){
           var addwin = new Ext.Window({
             title: "Add FTP User",
@@ -60,8 +60,10 @@ Ext.oa.Ftp__User_Panel = Ext.extend(Ext.grid.GridPanel, {
                     select: function(self, record, index){
                       lvm__LogicalVolume.get( record.data.id, function( provider, response ){
                         if( !response.result.filesystem ){
-                          alert( "No fs, this sucks, kthxbai" );
+                          alert( "This volume does not have a file system, so it cannot be used for FTP." );
+                          self.ownerCt.dirfield.setValue("");
                           self.ownerCt.dirfield.disable();
+                          self.expand();
                         }
                         else{
                           self.ownerCt.dirfield.setValue( response.result.fs.mountpoints[0] );
@@ -77,7 +79,8 @@ Ext.oa.Ftp__User_Panel = Ext.extend(Ext.grid.GridPanel, {
                   ref: 'dirfield'
               }],
               buttons: [{
-                text: 'gogogo',
+                text: 'Create User',
+                icon: "/filer/static/icons/accept.png",
                 handler: function(self){
                   ftp__User.new({
                     'username': self.ownerCt.ownerCt.namefield.getValue(),
@@ -97,6 +100,12 @@ Ext.oa.Ftp__User_Panel = Ext.extend(Ext.grid.GridPanel, {
                     }
                   });
                 }
+              }, {
+                text: 'Cancel',
+                icon: "/filer/static/icons2/16x16/actions/gtk-cancel.png",
+                handler: function(self){
+                  addwin.hide();
+                }
               }]
             }]
           });
@@ -104,7 +113,7 @@ Ext.oa.Ftp__User_Panel = Ext.extend(Ext.grid.GridPanel, {
         }
       }, {
         text: "Delete User",
-        icon: "/filer/static/icons2/16x16/remove.png",
+        icon: "/filer/static/icons2/16x16/actions/remove.png",
         handler: function(self){
           var sm = ftpGrid.getSelectionModel();
           if( sm.hasSelection() ){

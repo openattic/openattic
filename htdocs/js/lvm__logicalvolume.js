@@ -9,7 +9,7 @@ Ext.oa.Lvm__LogicalVolume_Panel = Ext.extend(Ext.Panel, {
       layout: 'border',
       buttons: [{
           text: "",
-          icon: "/filer/static/icons2/16x16/reload.png",
+          icon: "/filer/static/icons2/16x16/actions/reload.png",
           handler: function(self){
             self.ownerCt.ownerCt.items.items[0].store.reload();
           }
@@ -29,13 +29,13 @@ Ext.oa.Lvm__LogicalVolume_Panel = Ext.extend(Ext.Panel, {
           }
         }, {
           text: "Add Volume",
-          icon: "/filer/static/icons2/16x16/add.png"
+          icon: "/filer/static/icons2/16x16/actions/add.png"
         }, {
           text: "Resize Volume",
-          icon: "/filer/static/icons2/16x16/gtk-execute.png"
+          icon: "/filer/static/icons2/16x16/actions/gtk-execute.png"
         }, {
           text: "Delete Volume",
-          icon: "/filer/static/icons2/16x16/remove.png"
+          icon: "/filer/static/icons2/16x16/actions/remove.png"
       }],
       items: [{
         xtype: 'grid',
