@@ -1,6 +1,8 @@
 # -*- coding: utf-8 -*-
 # kate: space-indent on; indent-width 4; replace-tabs on;
 
+from pwd import getpwnam
+
 from django.db import models
 
 from lvm.models import LogicalVolume
@@ -14,8 +16,8 @@ class User(models.Model):
     volume      = models.ForeignKey(LogicalVolume, related_name="ftp_user_set")
     username    = models.CharField( max_length=50, unique=True )
     passwd      = models.CharField( max_length=50, blank=True, null=True )
-    uid         = models.IntegerField( unique=True )
-    gid         = models.IntegerField()
+    uid         = models.IntegerField(editable=False)
+    gid         = models.IntegerField(editable=False)
     homedir     = models.CharField( max_length=500 )
     shell       = models.CharField( max_length=50, default="/bin/true" )
 
@@ -28,6 +30,11 @@ class User(models.Model):
                 return
         raise ValidationError('The homedir must be within the mount directory of the selected volume.')
 
+    def save(self, *args, **kwargs):
+        sysuser = getpwnam(self.volume.owner.username)
+        self.uid = sysuser.pw_uid
+        self.gid = sysuser.pw_gid
+        return models.Model.save(self, *args, **kwargs)
 
 class FileLog(models.Model):
     username    = models.ForeignKey( User, to_field="username" )

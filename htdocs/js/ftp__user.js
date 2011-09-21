@@ -31,16 +31,6 @@ Ext.oa.Ftp__User_Panel = Ext.extend(Ext.grid.GridPanel, {
                   inputType: 'password',
                   ref: 'passwdfield',
                 }, {
-                  fieldLabel: "UID",
-                  name: "uid",
-                  xtype: "numberfield",
-                  ref: 'uidfield',
-                }, {
-                  fieldLabel: "GID",
-                  name: "gid",
-                  xtype: "numberfield",
-                  ref: 'gidfield',
-                }, {
                   xtype:      'combo',
                   fieldLabel: 'Volume',
                   name:       'volume',
@@ -85,8 +75,6 @@ Ext.oa.Ftp__User_Panel = Ext.extend(Ext.grid.GridPanel, {
                   ftp__User.new({
                     'username': self.ownerCt.ownerCt.namefield.getValue(),
                     'passwd':   self.ownerCt.ownerCt.passwdfield.getValue(),
-                    'uid':      self.ownerCt.ownerCt.uidfield.getValue(),
-                    'gid':      self.ownerCt.ownerCt.gidfield.getValue(),
                     'volume': {
                       'app': 'lvm',
                       'obj': 'LogicalVolume',
@@ -126,7 +114,7 @@ Ext.oa.Ftp__User_Panel = Ext.extend(Ext.grid.GridPanel, {
       }],
       store: new Ext.data.DirectStore({
         autoLoad: true,
-        fields: ['id', 'username', 'shell', 'homedir', 'gid', 'uid', 'volume', {
+        fields: ['id', 'username', 'shell', 'homedir', 'volume', {
           name: 'volumename',
           mapping: 'volume',
           convert: function( val, row ){
@@ -147,14 +135,6 @@ Ext.oa.Ftp__User_Panel = Ext.extend(Ext.grid.GridPanel, {
           header: "User name",
           width: 100,
           dataIndex: "username",
-        }, {
-          header: "uid",
-          width: 100,
-          dataIndex: "uid",
-        }, {
-          header: "gid",
-          width: 100,
-          dataIndex: "gid",
         } ]
       })
     }));

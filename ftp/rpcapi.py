@@ -7,7 +7,7 @@ from ftp.models import User, Group, FileLog
 
 class FtpUserHandler(BaseHandler):
     model = User
-    exclude = ["passwd"]
+    exclude = ["passwd", "uid", "gid"]
 
 class FtpGroupHandler(BaseHandler):
     model = Group
