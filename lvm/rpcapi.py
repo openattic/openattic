@@ -23,6 +23,10 @@ class LvHandler(BaseHandler):
             data['fs'] = None
         return data
 
+    def _idobj(self, obj):
+        """ Return an ID for the given object, including the app label and object name. """
+        return {'id': obj.id, 'app': obj._meta.app_label, 'obj': obj._meta.object_name, 'name': obj.name}
+
     def avail_fs(self):
         """ Return a list of available file systems. """
         from lvm.filesystems import FILESYSTEMS

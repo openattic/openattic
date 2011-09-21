@@ -8,6 +8,26 @@ Ext.oa.Lvm__LogicalVolume_Panel = Ext.extend(Ext.Panel, {
       title: 'LVM',
       layout: 'border',
       buttons: [{
+          text: "",
+          icon: "/filer/static/icons2/22x22/actions/reload.png",
+          handler: function(self){
+            self.ownerCt.ownerCt.items.items[0].store.reload();
+          }
+        }, {
+          text: "Set warning threshold",
+          handler: function(self){
+            Ext.Msg.prompt(
+              'Enter threshold',
+              'Enter the usage threshold above which you want LVs to appear red.',
+              function(btn, text){
+                if( btn == 'ok' ){
+                  Ext.state.Manager.set("lv_red_threshold", parseFloat(text));
+                  self.ownerCt.ownerCt.items.items[0].store.reload();
+                }
+              }
+            );
+          }
+        }, {
           text: "Add Volume",
           icon: "/filer/static/icons2/16x16/add.png"
         }, {
@@ -29,25 +49,28 @@ Ext.oa.Lvm__LogicalVolume_Panel = Ext.extend(Ext.Panel, {
               {
                 name: 'fsfree',
                 mapping: 'fs',
+                sortType: 'asInt',
                 convert: function( val, row ){
                   if( val === null || typeof val.stat === "undefined" )
-                    return '';
+                    return null;
                   return val.stat.freeG.toFixed(2);
                 }
               }, {
                 name: 'fsused',
                 mapping: 'fs',
+                sortType: 'asInt',
                 convert: function( val, row ){
                   if( val === null || typeof val.stat === "undefined" )
-                    return '';
+                    return null;
                   return val.stat.usedG.toFixed(2);
                 }
               }, {
                 name: 'fspercent',
                 mapping: 'fs',
+                sortType: 'asInt',
                 convert: function( val, row ){
                   if( val === null || typeof val.stat === "undefined" )
-                    return '';
+                    return null;
                   return (val.stat.used / val.stat.size * 100 ).toFixed(2);
                 }
               }],
@@ -66,7 +89,7 @@ Ext.oa.Lvm__LogicalVolume_Panel = Ext.extend(Ext.Panel, {
             dataIndex: "name"
           }, {
             header: "Size",
-            width: 75,
+            width: 150,
             dataIndex: "megs",
             align: 'right',
             renderer: function( val, x, store ){
@@ -85,7 +108,7 @@ Ext.oa.Lvm__LogicalVolume_Panel = Ext.extend(Ext.Panel, {
             }
           }, {
             header: "Free",
-            width: 75,
+            width: 100,
             dataIndex: "fsfree",
             align: 'right',
             renderer: function( val, x, store ){
@@ -95,7 +118,7 @@ Ext.oa.Lvm__LogicalVolume_Panel = Ext.extend(Ext.Panel, {
             }
           }, {
             header: "Used",
-            width: 75,
+            width: 100,
             dataIndex: "fsused",
             align: 'right',
             renderer: function( val, x, store ){
@@ -111,7 +134,7 @@ Ext.oa.Lvm__LogicalVolume_Panel = Ext.extend(Ext.Panel, {
             renderer: function( val, x, store ){
               if( !val )
                 return '';
-              if( val > 90 )
+              if( val > Ext.state.Manager.get("lv_red_threshold", 90.0) )
                 var color = "red";
               else
                 var color = "green";

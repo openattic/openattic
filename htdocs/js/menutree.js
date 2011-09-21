@@ -29,7 +29,11 @@ Ext.oa.MenuTree = Ext.extend(Ext.tree.TreePanel, {
             leaf: true,
             icon: '/filer/static/icons2/22x22/apps/disk_use.png'
           },
-          {text: 'Service State',  leaf: true}
+          {
+            text: 'Service State',
+            leaf: true,
+            icon: '/filer/static/icons2/22x22/status/network-receive.png'
+          }
         ],
       }, {
         id: 'menu_storage',
@@ -43,18 +47,18 @@ Ext.oa.MenuTree = Ext.extend(Ext.tree.TreePanel, {
         expanded: Ext.state.Manager.get("expand_root_nodes", false),
         icon: '/filer/static/icons2/22x22/places/gnome-fs-share.png',
         children: [ {
-            text: 'iSCSI',
+            text: 'LAN (iSCSI)',
             children: [
-              {text: 'Target List',    leaf: true},
-              {text: 'Initiator List', leaf: true}
+              {text: 'Targets',    leaf: true},
+              {text: 'Initiators', leaf: true}
             ]
           }, {
-            text: 'FC',
+            text: 'SAN (FibreChannel)',
             icon: '/filer/static/icons2/22x22/apps/fibre_channel.png',
-            children: [{text: 'FC Targets', leaf: true}]
+            leaf: true
           }, {
-            text: 'AFP',
-            children: [{text: 'AFP Shares', leaf: true}]
+            text: 'Mac OS-X (AFP)',
+            leaf: true
           } ]
       }, {
         id: 'menu_applications',
@@ -98,10 +102,8 @@ Ext.oa.MenuTree = Ext.extend(Ext.tree.TreePanel, {
                 leaf: true,
                 icon: '/filer/static/icons2/22x22/apps/network.png'
               }, {
-                text: 'Bonding',          leaf: true
-              }, {
                 text: 'Proxy',            leaf: true,
-                icon: '/filer/static/icons2/22x22/apps/preferences-system-network-proxy.png'  
+                icon: '/filer/static/icons2/22x22/apps/preferences-system-network-proxy.png'
               }, {
                 text: 'Domain',
                 icon: '/filer/static/icons2/128x128/apps/domain.png',

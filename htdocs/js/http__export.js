@@ -7,21 +7,34 @@ Ext.oa.Http__Export_Panel = Ext.extend(Ext.grid.GridPanel, {
       title: "http",
       store: new Ext.data.DirectStore({
         autoLoad: true,
-        fields: ['path', 'state'],
+        fields: ['path', 'state', 'id', 'volume', {
+          name: 'volumename',
+          mapping: 'volume',
+          convert: function( val, row ){
+            return val.name;
+          }
+        }],
         directFn: http__Export.all
       }),
       colModel: new Ext.grid.ColumnModel({
         defaults: {
           sortable: true
         },
-        columns: [{
-          header: "path",
-          width: 280,
+        columns: [ {
+          header: "Path",
+          width: 350,
           dataIndex: "path"
         }, {
-          header: "state",
-          width: 50,
-          dataIndex: "state"
+          header: "Browse",
+          width: 100,
+          dataIndex: "volumename",
+          renderer: function(val, x, store){
+            return String.format(
+              '<a href="/volumes/{0}" target="_blank" title="Browse">' +
+                '<img alt="Browser" src="/filer/static/icons/application_double.png">' +
+              '</a>',
+              val );
+          }
         } ]
       })
     }));
@@ -30,9 +43,10 @@ Ext.oa.Http__Export_Panel = Ext.extend(Ext.grid.GridPanel, {
 
   prepareMenuTree: function(tree){
     tree.root.attributes.children[2].children.push({
-      text: 'HTTP',
+      text: 'Web (HTTP)',
       leaf: true,
       panel: this,
+      icon: '/filer/static/icons2/22x22/mimetypes/www.png',
       href: '#',
     });
   }
