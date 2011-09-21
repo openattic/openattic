@@ -21,6 +21,8 @@ class User(models.Model):
     homedir     = models.CharField( max_length=500 )
     shell       = models.CharField( max_length=50, default="/bin/true" )
 
+    share_type  = "ftp"
+
     def clean(self):
         from django.core.exceptions import ValidationError
         if not self.volume.filesystem:
