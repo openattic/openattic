@@ -3,6 +3,7 @@
 
 import dbus
 import re
+import os.path
 from django.contrib.auth.models import User
 from django.db import models
 from django.conf import settings
@@ -106,6 +107,7 @@ class VolumeGroup(models.Model):
 
     @classmethod
     def get_mounts(cls):
+        """ Get currently mounted devices. """
         fd = open("/proc/mounts", "rb")
         try:
             mounts = fd.read()
@@ -115,6 +117,7 @@ class VolumeGroup(models.Model):
 
     @classmethod
     def get_devices(cls):
+        """ Get existing block devices that correspond to hardware disks. """
         fd = open("/proc/partitions", "rb")
         try:
             partitions = fd.read()
@@ -130,11 +133,30 @@ class VolumeGroup(models.Model):
 
     @classmethod
     def get_partitions(cls, device):
+        """ Get partitions from the given device. """
         lvm = dbus.SystemBus().get_object(settings.DBUS_IFACE_SYSTEMD, "/lvm")
         ret, disk, part = lvm.get_partitions(device)
         if ret:
             raise SystemError("parted failed, check the log")
         return dbus_to_python(disk), dbus_to_python(part)
+
+    @classmethod
+    def get_disk_stats(cls, device):
+        """ Get disk stats from `/sys/block/X/stat'. """
+        if not os.path.exists( "/sys/block/%s/stat" % device ):
+            raise SystemError( "No such device: '%s'" % device )
+
+        fd = open("/sys/block/%s/stat" % device, "rb")
+        try:
+            stats = fd.read().split()
+        finally:
+            fd.close()
+
+        return dict( zip( [
+            "reads_completed",  "reads_merged",  "sectors_read",    "millisecs_reading",
+            "writes_completed", "writes_merged", "sectors_written", "millisecs_writing",
+            "ios_in_progress",  "millisecs_in_io", "weighted_millisecs_in_io"
+            ], [ int(num) for num in stats ] ) )
 
     @property
     def lvm_info(self):
@@ -143,6 +165,8 @@ class VolumeGroup(models.Model):
             lvm = dbus.SystemBus().get_object(settings.DBUS_IFACE_SYSTEMD, "/lvm")
             self._lvm_info = dbus_to_python(lvm.vgs())[self.name]
         return self._lvm_info
+
+
 
 class LogicalVolume(StatefulModel):
     """ Represents a LVM Logical Volume and offers management functions.
@@ -177,7 +201,17 @@ class LogicalVolume(StatefulModel):
     @property
     def device(self):
         """ The actual device under which this LV operates. """
-        return "/dev/%s/%s" % ( self.vg.name, self.name )
+        return os.path.join( "/dev", self.vg.name, self.name )
+
+    @property
+    def dmdevice( self ):
+        """ Returns the dm-X device that represents this LV. """
+        return os.path.realpath( self.device )
+
+    @property
+    def disk_stats( self ):
+        """ Return disk stats from the LV retrieved from the kernel. """
+        return VolumeGroup.get_disk_stats( self.dmdevice[5:] )
 
     @property
     def fs(self):

@@ -17,6 +17,9 @@ class VgHandler(BaseHandler):
     def get_partitions(self, device):
         return VolumeGroup.get_partitions(device)
 
+    def get_disk_stats(self, device):
+        return VolumeGroup.get_disk_stats(device)
+
 class LvHandler(BaseHandler):
     model = LogicalVolume
 
@@ -52,6 +55,11 @@ class LvHandler(BaseHandler):
         """ Return information about the LV retrieved from LVM. """
         lv = LogicalVolume.objects.get(id=id)
         return lv.lvm_info
+
+    def disk_stats(self, id):
+        """ Return disk stats from the LV retrieved from the kernel. """
+        lv = LogicalVolume.objects.get(id=id)
+        return lv.disk_stats
 
     def mount_all(self):
         """ Mount all volumes which are not currently mounted. """
