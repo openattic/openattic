@@ -171,7 +171,8 @@ class SystemD(BasePlugin):
         splittedlines = []
         for line in lines:
             if line:
-                splittedlines.append( line.split(":") )
+                # lines end with ";", strip that before splitting
+                splittedlines.append( line[:-1].split(":") )
 
         partitions = []
         for currentline in splittedlines[2:]:
