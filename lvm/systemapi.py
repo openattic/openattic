@@ -127,7 +127,7 @@ class SystemD(BasePlugin):
             raise SystemError("dmsetup targets failed: " + err)
         return dict([ line.split() for line in out.split("\n") if line.strip()])
 
-    @method(in_signature="", out_signature="i")
+    @method(in_signature="", out_signature="")
     def write_fstab(self):
         # read current fstab
         fd = open( "/etc/fstab", "rb" )
@@ -158,8 +158,6 @@ class SystemD(BasePlugin):
                 fstab.write( line + "\n" )
         finally:
             fstab.close()
-
-        return True
 
     @method(in_signature="s", out_signature="ia{ss}aa{ss}")
     def get_partitions(self, device):

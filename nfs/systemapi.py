@@ -9,7 +9,7 @@ from nfs.conf      import settings as nfs_settings
 class SystemD(LockingPlugin):
     dbus_path = "/nfs"
 
-    @method(in_signature="", out_signature="i")
+    @method(in_signature="", out_signature="")
     def writeconf(self):
         self.lock.acquire()
         try:
