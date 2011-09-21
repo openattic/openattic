@@ -10,11 +10,13 @@ Ext.oa.Lvm__LogicalVolume_Panel = Ext.extend(Ext.Panel, {
       buttons: [{
           text: "",
           icon: "/filer/static/icons2/16x16/actions/reload.png",
+          tooltip: 'Reload',
           handler: function(self){
             self.ownerCt.ownerCt.items.items[0].store.reload();
           }
         }, {
           text: "Set warning threshold",
+          icon: "/filer/static/icons2/16x16/status/dialog-warning.png",
           handler: function(self){
             Ext.Msg.prompt(
               'Enter threshold',
