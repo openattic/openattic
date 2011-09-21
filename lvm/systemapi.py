@@ -160,3 +160,37 @@ class SystemD(BasePlugin):
             fstab.close()
 
         return True
+
+    @method(in_signature="s", out_signature="ia{ss}aa{ss}")
+    def get_partitions(self, device):
+        from systemd.procutils import invoke
+
+        ret, out, err = invoke(["parted", "-s", "-m", device, "unit", "MB", "print"],
+                return_out_err=True, log=False)
+
+        lines = out.split("\n")
+        splittedlines = []
+        for line in lines:
+            if line:
+                splittedlines.append( line.split(":") )
+
+        partitions = []
+        for currentline in splittedlines[2:]:
+            partitions.append({
+                "number":currentline[0] ,
+                "begin":currentline[1],
+                "end":currentline[2],
+                "size":currentline[3],
+                "filesystem-type":currentline[4],
+                "partition-name":currentline[5],
+                "flags-set":currentline[6],
+                })
+        return ret, {
+            "path": splittedlines[1][0],
+            "size":splittedlines[1][1],
+            "transport-type": splittedlines[1][2],
+            "logical-sector-size": splittedlines[1][3],
+            "physical-sector-size":splittedlines[1][4],
+            "partition-table-type":splittedlines[1][5],
+            "model-name":splittedlines[1][6],
+            }, partitions
