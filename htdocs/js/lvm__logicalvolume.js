@@ -9,7 +9,7 @@ Ext.oa.Lvm__LogicalVolume_Panel = Ext.extend(Ext.Panel, {
       layout: 'border',
       buttons: [{
           text: "",
-          icon: "/filer/static/icons2/22x22/actions/reload.png",
+          icon: "/filer/static/icons2/16x16/reload.png",
           handler: function(self){
             self.ownerCt.ownerCt.items.items[0].store.reload();
           }
