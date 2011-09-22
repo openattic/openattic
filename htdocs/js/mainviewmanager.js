@@ -12,7 +12,8 @@ Ext.oa.MainViewManager = Ext.extend(Ext.Panel, {
       new Ext.oa.Http__Export_Panel(),
       new Ext.oa.Ftp__User_Panel(),
       new Ext.oa.Cmdlog__LogEntry_Panel(),
-      new Ext.oa.Munin__MuninNode_Panel()
+      new Ext.oa.Munin__MuninNode_Panel(),
+      new Ext.oa.WebSSHPanel()
     ];
 
     Ext.apply(this, Ext.apply(this.initialConfig, {

@@ -67,10 +67,7 @@ Ext.oa.MenuTree = Ext.extend(Ext.tree.TreePanel, {
         icon: '/filer/static/icons2/22x22/mimetypes/application-certificate.png',
         children: [
           {text: 'DDNS',       leaf: true},
-          {
-            text: 'SSH/Telnet', leaf: true,
-            icon: '/filer/static/icons2/22x22/apps/gnome-terminal.png'
-          }],
+          ],
       }, {
         id: 'menu_services',
         text: 'Services',
@@ -125,7 +122,6 @@ Ext.oa.MenuTree = Ext.extend(Ext.tree.TreePanel, {
           },
           {text: 'openITCockpit',    leaf: true},
           {text: 'openQRM',          leaf: true},
-          {text: 'WebSSH',           leaf: true},
           {
             text: 'Online Update',
             leaf: true,
