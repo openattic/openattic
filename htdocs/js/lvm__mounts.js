@@ -3,9 +3,18 @@ Ext.namespace("Ext.oa");
 Ext.oa.Lvm__Mounts_Panel = Ext.extend(Ext.grid.GridPanel, {
   initComponent: function(){
     var fields = ['dev', 'mountpoint', 'fstype', 'options', 'dump', 'pass'];
+    var mountGrid = this;
     Ext.apply(this, Ext.apply(this.initialConfig, {
       title: "Mount Points",
       viewConfig: { forceFit: true },
+      buttons: [{
+        text: "",
+        icon: "/filer/static/icons2/16x16/actions/reload.png",
+        tooltip: 'Reload',
+        handler: function(self){
+          mountGrid.store.reload();
+        }
+      } ],
       store: new Ext.data.DirectStore({
         autoLoad: true,
         fields: fields,
