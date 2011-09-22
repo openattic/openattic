@@ -36,6 +36,7 @@ def do_logout( request ):
     return HttpResponse( "{ success: true }", "application/json" );
 
 def index(request):
+    request.META["CSRF_COOKIE_USED"] = True
     theme = request.session.get("theme", None)
     if not request.user.is_authenticated():
         return render_to_response('index_ext_unauthed.html', {
