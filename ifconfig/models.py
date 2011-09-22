@@ -4,7 +4,9 @@
 import socket
 import netifaces
 import netaddr
+import dbus
 
+from django.conf import settings
 from django.db import models
 
 AF_CHOICES = (
@@ -12,20 +14,50 @@ AF_CHOICES = (
     (socket.AF_INET6, "IPv6"),
     )
 
+# balance-rr or 0
+# active-backup or 1
+# balance-xor or 2
+# broadcast or 3
+# 802.3ad or 4
+# balance-tlb or 5
+# balance-alb or 6
+
+BOND_MODE_CHOICES = (
+    ("balance-rr",     "balance-rr: Balanced Round Robin"),
+    ("active-backup",  "active-backup: Failover"),
+    ("balance-xor",    "balance-xor"),
+    ("broadcast",      "broadcast"),
+    ("802.3ad",        "802.3ad"),
+    ("balance-tlb",    "balance-tlb"),
+    ("balance-alb",    "balance-alb"),
+    )
 
 
 class NetDevice(models.Model):
-    devname     = models.CharField(max_length=10)
+    devname     = models.CharField(max_length=10, unique=True)
+    auto        = models.BooleanField(default=True, blank=True)
     address     = models.CharField(max_length=250, unique=True, blank=True, null=True,
                     help_text='Enter a static IP address, "dhcp" or leave this field blank for ifaces without an IP.')
+    gateway     = models.CharField(max_length=50, blank=True, null=True)
+    nameservers = models.CharField(max_length=50, blank=True, null=True)
+    domain      = models.CharField(max_length=250, blank=True, null=True)
     prefixlen   = models.IntegerField(default=24, blank=True, null=True)
     family      = models.IntegerField(default=socket.AF_INET, choices=AF_CHOICES, blank=True, null=True)
-    slaves      = models.ManyToManyField('self', blank=True,
+    slaves      = models.ManyToManyField('self', blank=True, symmetrical=False, related_name="bond_dev_set",
                     help_text="If this interface is a bonding device, add the slave devices here.")
-    brports     = models.ManyToManyField('self', blank=True,
+    brports     = models.ManyToManyField('self', blank=True, symmetrical=False, related_name="bridge_dev_set",
                     help_text="If this interface is a bridge, add the ports here.")
-    vlanrawdev  = models.ForeignKey('self', blank=True, null=True,
+    vlanrawdev  = models.ForeignKey('self', blank=True, null=True, related_name="vlan_dev_set",
                     help_text="If this interface is VLAN device, name the raw device here.")
+
+    bond_mode      = models.CharField( max_length=50, default="active-backup", choices=BOND_MODE_CHOICES )
+    bond_miimon    = models.IntegerField( default=100 )
+    bond_downdelay = models.IntegerField( default=200 )
+    bond_updelay   = models.IntegerField( default=200 )
+
+
+    def __unicode__(self):
+        return self.devname
 
     def get_addresses(self, af=None):
         addrs = []
@@ -46,6 +78,10 @@ class NetDevice(models.Model):
                 addrs.append( curaddr )
         return addrs
 
+    @classmethod
+    def write_interfaces(self):
+        ifconfig = dbus.SystemBus().get_object(settings.DBUS_IFACE_SYSTEMD, "/ifconfig")
+        ifconfig.write_interfaces()
 
 
 def get_addresses(af=None, loopback=False, linklocal=False, cluster=True):
