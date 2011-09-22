@@ -99,12 +99,14 @@
       });
     </script>
     <style>
-      .x-tab-panel-body {
-        /* For some reason, the author of xtheme-access set this to white which looks stupid */
-        background-color: #1F2730;
-        border-color: #18181A;
-        color: #FFFFF6;
-      }
+      {% if THEME == "access" %}
+        .x-tab-panel-body {
+          /* For some reason, the author of xtheme-access set this to white which looks stupid */
+          background-color: #1F2730;
+          border-color: #18181A;
+          color: #FFFFF6;
+        }
+      {% endif %}
       div.munin-graphs { /* Siehe imagespanel.cls */
         padding-top: 10px;
         text-align: center;
