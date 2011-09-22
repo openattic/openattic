@@ -89,7 +89,7 @@ Ext.oa.Lvm__Disks_Panel = Ext.extend(Ext.Panel, {
       leaf: true,
       icon: '/filer/static/icons2/22x22/apps/database.png',
       panel: this,
-      href: '#',
+      href: '#'
     });
   }
 });

@@ -38,7 +38,7 @@ Ext.oa.Samba__Share_Panel = Ext.extend(Ext.grid.GridPanel, {
       leaf: true,
       icon: '/filer/static/icons2/22x22/apps/samba.png',
       panel: this,
-      href: '#',
+      href: '#'
     });
   }
 });

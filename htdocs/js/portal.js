@@ -43,14 +43,14 @@ Ext.oa.Portal = Ext.extend(Ext.ux.Portal, {
                     return (val.stat.used / val.stat.size * 100 ).toFixed(2);
                     }
                   }],
-                directFn: lvm__LogicalVolume.all,
+                directFn: lvm__LogicalVolume.all
               });
               store.setDefaultSort("fsused", "DESC");
               return store;
             }()),
             colModel:  new Ext.grid.ColumnModel({
                 defaults: {
-                  sortable: true,
+                  sortable: true
                 },
                 columns: [{
                   header: "LV",
@@ -92,11 +92,11 @@ Ext.oa.Portal = Ext.extend(Ext.ux.Portal, {
             store: new Ext.data.DirectStore({
               autoLoad: true,
               fields: ['address', 'path', 'options', 'state'],
-              directFn: nfs__Export.all,
+              directFn: nfs__Export.all
             }),
             colModel: new Ext.grid.ColumnModel({
               defaults: {
-                sortable: true,
+                sortable: true
               },
               columns: [{
                   header: "address",
@@ -116,14 +116,14 @@ Ext.oa.Portal = Ext.extend(Ext.ux.Portal, {
                   dataIndex: "state"
               }]
             })
-          }),
+          })
         }, {
           title: 'CPU Stats',
           id: 'portlet_cpu',
           tools: tools,
           items: (function(){
             var store = new Ext.data.JsonStore({
-              fields: ['field', 'value'],
+              fields: ['field', 'value']
             });
             hoststats__HostStats.get_cpu(function(provider, result){
               if(result.result){
@@ -160,7 +160,7 @@ Ext.oa.Portal = Ext.extend(Ext.ux.Portal, {
           tools: tools,
           items: (function(){
             var store = new Ext.data.JsonStore({
-              fields: ['field', 'value'],
+              fields: ['field', 'value']
             });
             hoststats__HostStats.get_mem(function(provider, result){
               if(result.result){
@@ -238,7 +238,7 @@ Ext.oa.Portal = Ext.extend(Ext.ux.Portal, {
       leaf: true,
       icon: '/filer/static/icons2/22x22/apps/gnome-session.png',
       panel: this,
-      href: '#',
+      href: '#'
     });
   }
 });

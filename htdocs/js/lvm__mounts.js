@@ -46,7 +46,7 @@ Ext.oa.Lvm__Mounts_Panel = Ext.extend(Ext.grid.GridPanel, {
       leaf: true,
       icon: '/filer/static/icons2/22x22/devices/hdd_unmount.png',
       panel: this,
-      href: '#',
+      href: '#'
     });
   }
 });

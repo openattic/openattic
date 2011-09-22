@@ -78,7 +78,7 @@ Ext.oa.Munin__MuninNode_Panel = Ext.extend(Ext.Panel, {
       leaf: true,
       icon: '/filer/static/icons2/22x22/apps/samba.png',
       panel: this,
-      href: '#',
+      href: '#'
     });
   }
 });

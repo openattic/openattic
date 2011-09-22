@@ -34,13 +34,13 @@ Ext.oa.MenuTree = Ext.extend(Ext.tree.TreePanel, {
             leaf: true,
             icon: '/filer/static/icons2/22x22/status/network-receive.png'
           }
-        ],
+        ]
       }, {
         id: 'menu_storage',
         text: 'Storage',
         expanded: Ext.state.Manager.get("expand_root_nodes", false),
         icon: '/filer/static/icons2/22x22/devices/gnome-dev-harddisk.png',
-        children: [],
+        children: []
       }, {
         id: 'menu_shares',
         text: 'Shares',
@@ -66,8 +66,8 @@ Ext.oa.MenuTree = Ext.extend(Ext.tree.TreePanel, {
         expanded: Ext.state.Manager.get("expand_root_nodes", false),
         icon: '/filer/static/icons2/22x22/mimetypes/application-certificate.png',
         children: [
-          {text: 'DDNS',       leaf: true},
-          ],
+          {text: 'DDNS',       leaf: true}
+          ]
       }, {
         id: 'menu_services',
         text: 'Services',
@@ -141,7 +141,7 @@ Ext.oa.MenuTree = Ext.extend(Ext.tree.TreePanel, {
       check: function( self, checked ){
         Ext.state.Manager.set("expand_root_nodes", checked);
       }
-    },
+    }
   }]
 });
 

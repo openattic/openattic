@@ -17,7 +17,7 @@ Ext.oa.Cmdlog__LogEntry_Panel = Ext.extend(Ext.grid.GridPanel, {
       reader: new Ext.data.JsonReader({
         root:           'objects',
         totalProperty:  'total',
-        fields:         fields,
+        fields:         fields
       }),
       paramOrder: ['start', 'limit', 'sort', 'dir', 'fields']
     });
@@ -27,7 +27,7 @@ Ext.oa.Cmdlog__LogEntry_Panel = Ext.extend(Ext.grid.GridPanel, {
       store: store,
       colModel: new Ext.grid.ColumnModel({
         defaults: {
-          sortable: true,
+          sortable: true
         },
         columns: [{
             header: 'Zeitpunkt (Ende)',
@@ -42,7 +42,7 @@ Ext.oa.Cmdlog__LogEntry_Panel = Ext.extend(Ext.grid.GridPanel, {
       }),
       bbar: new Ext.PagingToolbar({
         pageSize: 100,
-        store:    store,
+        store:    store
       })
     }));
     Ext.oa.Cmdlog__LogEntry_Panel.superclass.initComponent.apply(this, arguments);
@@ -54,7 +54,7 @@ Ext.oa.Cmdlog__LogEntry_Panel = Ext.extend(Ext.grid.GridPanel, {
       leaf: true,
       icon: '/filer/static/icons2/22x22/actions/bookmark-new.png',
       panel: this,
-      href: '#',
+      href: '#'
     });
   }
 });

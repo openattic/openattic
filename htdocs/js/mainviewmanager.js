@@ -2,7 +2,7 @@ Ext.namespace("Ext.oa");
 
 Ext.oa.MainViewManager = Ext.extend(Ext.Panel, {
   initComponent: function(){
-    var modules = [
+    var modules = [ 
       new Ext.oa.Portal(),
       new Ext.oa.Lvm__Disks_Panel(),
       new Ext.oa.Lvm__LogicalVolume_Panel(),
@@ -20,7 +20,7 @@ Ext.oa.MainViewManager = Ext.extend(Ext.Panel, {
       layout: 'border',
       items: [ new Ext.oa.MenuTree({
         region: 'west',
-        collapsible: true,
+        collapsible: true
       }), {
         region: "center",
         activeItem: 0,
