@@ -111,7 +111,7 @@ class BaseHandler(object):
             fields.append("id")
         return list(self.model.objects.all().values(*fields))
 
-    def delete(self, id):
+    def remove(self, id):
         """ Delete an object given by ID. """
         return self.model.objects.get(id=id).delete()
 
@@ -139,7 +139,7 @@ class BaseHandler(object):
         return self._override_get(obj, data)
 
 
-    def new(self, data):
+    def create(self, data):
         """ Create a new object with values from the data dict. """
         return self._setobj( self.model(), data )
 

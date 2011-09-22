@@ -19,7 +19,7 @@ Ext.oa.Nfs__Export_Panel = Ext.extend(Ext.grid.GridPanel, {
               xtype: "form",
               defaults: {
                 xtype: "textfield",
-                anchor: '-20px',
+                anchor: '-20px'
               },
               items: [{
                   xtype:      'combo',
@@ -71,7 +71,7 @@ Ext.oa.Nfs__Export_Panel = Ext.extend(Ext.grid.GridPanel, {
                 text: 'Create Export',
                 icon: "/filer/static/icons/accept.png",
                 handler: function(self){
-                  nfs__Export.new({
+                  nfs__Export.create({
                     'volume': {
                       'app': 'lvm',
                       'obj': 'LogicalVolume',
@@ -105,7 +105,7 @@ Ext.oa.Nfs__Export_Panel = Ext.extend(Ext.grid.GridPanel, {
           var sm = nfsGrid.getSelectionModel();
           if( sm.hasSelection() ){
             var sel = sm.selections.items[0];
-            nfs__Export.delete( sel.data.id, function(provider, response){
+            nfs__Export.remove( sel.data.id, function(provider, response){
               nfsGrid.store.reload();
             } );
           }
@@ -148,7 +148,7 @@ Ext.oa.Nfs__Export_Panel = Ext.extend(Ext.grid.GridPanel, {
       leaf: true,
       icon: '/filer/static/icons2/22x22/apps/nfs.png',
       panel: this,
-      href: '#',
+      href: '#'
     });
   }
 });

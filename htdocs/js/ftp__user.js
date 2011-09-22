@@ -19,17 +19,17 @@ Ext.oa.Ftp__User_Panel = Ext.extend(Ext.grid.GridPanel, {
               xtype: "form",
               defaults: {
                 xtype: "textfield",
-                anchor: '-20px',
+                anchor: '-20px'
               },
               items: [{
                   fieldLabel: "Name",
                   name: "username",
-                  ref: 'namefield',
+                  ref: 'namefield'
                 }, {
                   fieldLabel: "Password",
                   name: "passwd",
                   inputType: 'password',
-                  ref: 'passwdfield',
+                  ref: 'passwdfield'
                 }, {
                   xtype:      'combo',
                   fieldLabel: 'Volume',
@@ -72,7 +72,7 @@ Ext.oa.Ftp__User_Panel = Ext.extend(Ext.grid.GridPanel, {
                 text: 'Create User',
                 icon: "/filer/static/icons/accept.png",
                 handler: function(self){
-                  ftp__User.new({
+                  ftp__User.create({
                     'username': self.ownerCt.ownerCt.namefield.getValue(),
                     'passwd':   self.ownerCt.ownerCt.passwdfield.getValue(),
                     'volume': {
@@ -80,7 +80,7 @@ Ext.oa.Ftp__User_Panel = Ext.extend(Ext.grid.GridPanel, {
                       'obj': 'LogicalVolume',
                       'id': self.ownerCt.ownerCt.volfield.getValue()
                     },
-                    'homedir':  self.ownerCt.ownerCt.dirfield.getValue(),
+                    'homedir':  self.ownerCt.ownerCt.dirfield.getValue()
                   }, function(provider, response){
                     if( response.result ){
                       ftpGrid.store.reload();
@@ -106,7 +106,7 @@ Ext.oa.Ftp__User_Panel = Ext.extend(Ext.grid.GridPanel, {
           var sm = ftpGrid.getSelectionModel();
           if( sm.hasSelection() ){
             var sel = sm.selections.items[0];
-            ftp__User.delete( sel.data.id, function(provider, response){
+            ftp__User.remove( sel.data.id, function(provider, response){
               ftpGrid.store.reload();
             } );
           }
@@ -134,7 +134,7 @@ Ext.oa.Ftp__User_Panel = Ext.extend(Ext.grid.GridPanel, {
         }, {
           header: "User name",
           width: 100,
-          dataIndex: "username",
+          dataIndex: "username"
         } ]
       })
     }));
@@ -147,7 +147,7 @@ Ext.oa.Ftp__User_Panel = Ext.extend(Ext.grid.GridPanel, {
       leaf: true,
       panel: this,
       icon: '/filer/static/icons2/22x22/mimetypes/www.png',
-      href: '#',
+      href: '#'
     });
   }
 });

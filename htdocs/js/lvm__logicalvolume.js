@@ -43,7 +43,7 @@ Ext.oa.Lvm__LogicalVolume_Panel = Ext.extend(Ext.Panel, {
                 xtype: "form",
                 defaults: {
                   xtype: "textfield",
-                  anchor: '-20px',
+                  anchor: '-20px'
                 },
                 items: [{
                     fieldLabel: "Name",
@@ -85,7 +85,7 @@ Ext.oa.Lvm__LogicalVolume_Panel = Ext.extend(Ext.Panel, {
                     xtype: "label",
                     text:  "If you want to use DRBD with this device, do not yet create a file system on it, "+
                            "even if you want to share it using NAS services later on.",
-                    cls:   "form_hint_label",
+                    cls:   "form_hint_label"
                   }, {
                     fieldLabel: "Size in MB",
                     name: "megs",
@@ -120,7 +120,7 @@ Ext.oa.Lvm__LogicalVolume_Panel = Ext.extend(Ext.Panel, {
                       html: '<b>Please wait while your volume is being created...</b>'
                     });
                     progresswin.show();
-                    lvm__LogicalVolume.new({
+                    lvm__LogicalVolume.create({
                       'vg': {
                         'app': 'lvm',
                         'obj': 'VolumeGroup',
@@ -170,7 +170,7 @@ Ext.oa.Lvm__LogicalVolume_Panel = Ext.extend(Ext.Panel, {
                   '<b>There is no undo and you will lose all data.</b>', sel.data.name ),
                 function(btn, text){
                   if( btn == 'yes' ){
-                    lvm__LogicalVolume.delete( sel.data.id, function(provider, response){
+                    lvm__LogicalVolume.remove( sel.data.id, function(provider, response){
                       lvmGrid.store.reload();
                     } );
                   }
@@ -348,14 +348,14 @@ Ext.oa.Lvm__LogicalVolume_Panel = Ext.extend(Ext.Panel, {
       leaf: true,
       icon: '/filer/static/icons2/22x22/apps/volume.png',
       panel: this,
-      href: '#',
+      href: '#'
     });
     tree.root.attributes.children[1].children.push({
       text: 'Snapshots',
       leaf: true,
       icon: '/filer/static/icons2/22x22/apps/snapshot.png',
       panel: this,
-      href: '#',
+      href: '#'
     });
   }
 });

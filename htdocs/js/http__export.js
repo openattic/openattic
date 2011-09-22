@@ -19,7 +19,7 @@ Ext.oa.Http__Export_Panel = Ext.extend(Ext.grid.GridPanel, {
               xtype: "form",
               defaults: {
                 xtype: "textfield",
-                anchor: '-20px',
+                anchor: '-20px'
               },
               items: [{
                   xtype:      'combo',
@@ -63,13 +63,13 @@ Ext.oa.Http__Export_Panel = Ext.extend(Ext.grid.GridPanel, {
                 text: 'Create Export',
                 icon: "/filer/static/icons/accept.png",
                 handler: function(self){
-                  http__Export.new({
+                  http__Export.create({
                     'volume': {
                       'app': 'lvm',
                       'obj': 'LogicalVolume',
                       'id': self.ownerCt.ownerCt.volfield.getValue()
                     },
-                    'path':  self.ownerCt.ownerCt.dirfield.getValue(),
+                    'path':  self.ownerCt.ownerCt.dirfield.getValue()
                   }, function(provider, response){
                     if( response.result ){
                       httpGrid.store.reload();
@@ -95,7 +95,7 @@ Ext.oa.Http__Export_Panel = Ext.extend(Ext.grid.GridPanel, {
           var sm = httpGrid.getSelectionModel();
           if( sm.hasSelection() ){
             var sel = sm.selections.items[0];
-            http__Export.delete( sel.data.id, function(provider, response){
+            http__Export.remove( sel.data.id, function(provider, response){
               httpGrid.store.reload();
             } );
           }
@@ -143,7 +143,7 @@ Ext.oa.Http__Export_Panel = Ext.extend(Ext.grid.GridPanel, {
       leaf: true,
       panel: this,
       icon: '/filer/static/icons2/22x22/mimetypes/www.png',
-      href: '#',
+      href: '#'
     });
   }
 });
