@@ -8,6 +8,10 @@ from lvm.models import VolumeGroup, LogicalVolume
 class VgHandler(BaseHandler):
     model = VolumeGroup
 
+    def _idobj(self, obj):
+        """ Return an ID for the given object, including the app label and object name. """
+        return {'id': obj.id, 'app': obj._meta.app_label, 'obj': obj._meta.object_name, 'name': obj.name}
+
     def get_mounts(self):
         return VolumeGroup.get_mounts()
 

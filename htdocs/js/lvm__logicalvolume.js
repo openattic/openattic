@@ -4,6 +4,7 @@ Ext.namespace("Ext.oa");
 Ext.oa.Lvm__LogicalVolume_Panel = Ext.extend(Ext.Panel, {
   initComponent: function(){
     var currentChartId = null;
+    var lvmPanel = this;
     Ext.apply(this, Ext.apply(this.initialConfig, {
       title: 'LVM',
       layout: 'border',
@@ -12,7 +13,7 @@ Ext.oa.Lvm__LogicalVolume_Panel = Ext.extend(Ext.Panel, {
           icon: "/filer/static/icons2/16x16/actions/reload.png",
           tooltip: 'Reload',
           handler: function(self){
-            self.ownerCt.ownerCt.items.items[0].store.reload();
+            lvmPanel.items.items[0].store.reload();
           }
         }, {
           text: "Set warning threshold",
@@ -24,20 +25,145 @@ Ext.oa.Lvm__LogicalVolume_Panel = Ext.extend(Ext.Panel, {
               function(btn, text){
                 if( btn == 'ok' ){
                   Ext.state.Manager.set("lv_red_threshold", parseFloat(text));
-                  self.ownerCt.ownerCt.items.items[0].store.reload();
+                  lvmPanel.items.items[0].store.reload();
                 }
               }
             );
           }
         }, {
           text: "Add Volume",
-          icon: "/filer/static/icons2/16x16/actions/add.png"
+          icon: "/filer/static/icons2/16x16/actions/add.png",
+          handler: function(){
+            var addwin = new Ext.Window({
+              title: "Add Volume",
+              layout: "fit",
+              height: 300,
+              width: 500,
+              items: [{
+                xtype: "form",
+                defaults: {
+                  xtype: "textfield",
+                  anchor: '-20px',
+                },
+                items: [{
+                    fieldLabel: "Name",
+                    name: "name",
+                    ref: 'namefield'
+                  }, {
+                    xtype:      'combo',
+                    fieldLabel: 'Volume',
+                    name:       'volume',
+                    hiddenName: 'volume_id',
+                    store: new Ext.data.DirectStore({
+                      fields: ["app", "obj", "id", "name"],
+                      directFn: lvm__VolumeGroup.ids
+                    }),
+                    typeAhead:     true,
+                    triggerAction: 'all',
+                    emptyText:     'Select...',
+                    selectOnFocus: true,
+                    displayField:  'name',
+                    valueField:    'id',
+                    ref:      'volfield'
+                  }, {
+                    xtype:      'combo',
+                    fieldLabel: 'File System',
+                    name:       'filesystem_desc',
+                    hiddenName: 'filesystem_name',
+                    store: new Ext.data.DirectStore({
+                      fields: ["name", "desc"],
+                      directFn: lvm__LogicalVolume.avail_fs
+                    }),
+                    typeAhead:     true,
+                    triggerAction: 'all',
+                    emptyText:     'Select...',
+                    selectOnFocus: true,
+                    displayField:  'desc',
+                    valueField:    'name',
+                    ref:      'fsfield'
+                  }, {
+                    fieldLabel: "Size in MB",
+                    name: "megs",
+                    ref: 'sizefield'
+                  }, {
+                    xtype:      'combo',
+                    fieldLabel: 'Owner',
+                    name:       'owner',
+                    hiddenName: 'owner_id',
+                    store: new Ext.data.DirectStore({
+                      fields: ["username", "id"],
+                      baseParams: { fields: ["username", "id"] },
+                      directFn: auth__User.all_values
+                    }),
+                    typeAhead:     true,
+                    triggerAction: 'all',
+                    emptyText:     'Select...',
+                    selectOnFocus: true,
+                    displayField:  'username',
+                    valueField:    'id',
+                    ref:      'ownerfield'
+                }],
+                buttons: [{
+                  text: 'Create Volume',
+                  icon: "/filer/static/icons/accept.png",
+                  handler: function(self){
+                    var progresswin = new Ext.Window({
+                      title: "Adding Volume",
+                      layout: "fit",
+                      height: 250,
+                      width: 400,
+                      html: '<b>Please wait while your volume is being created...</b>'
+                    });
+                    progresswin.show();
+                    lvm__LogicalVolume.new({
+                      'vg': {
+                        'app': 'lvm',
+                        'obj': 'VolumeGroup',
+                        'id': self.ownerCt.ownerCt.volfield.getValue()
+                      },
+                      'filesystem': self.ownerCt.ownerCt.fsfield.getValue(),
+                      'name':       self.ownerCt.ownerCt.namefield.getValue(),
+                      'megs':       self.ownerCt.ownerCt.sizefield.getValue(),
+                      'owner': {
+                        'app': 'auth',
+                        'obj': 'User',
+                        'id': self.ownerCt.ownerCt.ownerfield.getValue()
+                      }
+                    }, function(provider, response){
+                      if( response.result ){
+                        lvmPanel.items.items[0].store.reload();
+                        progresswin.hide();
+                        addwin.hide();
+                      }
+                    });
+                  }
+                }, {
+                  text: 'Cancel',
+                  icon: "/filer/static/icons2/16x16/actions/gtk-cancel.png",
+                  handler: function(self){
+                    addwin.hide();
+                  }
+                }]
+              }]
+            });
+            addwin.show();
+          }
         }, {
           text: "Resize Volume",
           icon: "/filer/static/icons2/16x16/actions/gtk-execute.png"
         }, {
           text: "Delete Volume",
-          icon: "/filer/static/icons2/16x16/actions/remove.png"
+          icon: "/filer/static/icons2/16x16/actions/remove.png",
+          handler: function(self){
+            var lvmGrid = lvmPanel.items.items[0];
+            var sm = lvmGrid.getSelectionModel();
+            if( sm.hasSelection() ){
+              var sel = sm.selections.items[0];
+              lvm__LogicalVolume.delete( sel.data.id, function(provider, response){
+                lvmGrid.store.reload();
+              } );
+            }
+          }
       }],
       items: [{
         xtype: 'grid',
