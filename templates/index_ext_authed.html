@@ -40,11 +40,8 @@
                   'Momentan gibts nur access und nix.',
                   function(btn, text){
                     if( btn == 'ok' ){
-                      Ext.Ajax.request({
-                        url: '{% url settheme %}',
-                        success: function(){ window.location.reload(); },
-                        params: { 'theme': text }
-                      });
+                      Ext.state.Manager.set( "theme", text );
+                      window.location.reload.defer(200);
                     }
                   }
                 );
