@@ -19,7 +19,12 @@ Ext.oa.MainViewManager = Ext.extend(Ext.Panel, {
     Ext.apply(this, Ext.apply(this.initialConfig, {
       layout: 'border',
       items: [ new Ext.oa.MenuTree({
+        split: true,
+        width: 250,
+        minSize: 175,
+        maxSize: 400,
         region: 'west',
+        border: false,
         collapsible: true
       }), {
         region: "center",
