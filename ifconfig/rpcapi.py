@@ -8,6 +8,16 @@ from ifconfig.models import NetDevice
 class NetDeviceHandler(BaseHandler):
     model = NetDevice
 
+    def _override_get(self, obj, data):
+        data['brports'] = [ self._idobj(member) for member in obj.brports.all() ]
+        data['slaves']  = [ self._idobj(member) for member in obj.slaves.all()  ]
+        if obj.vlanrawdev:
+            data['vlanrawdev'] = self._idobj(obj.vlanrawdev)
+        else:
+            data['vlanrawdev'] = None
+        return data
+
+
     def write_interfaces(self):
         return NetDevice.write_interfaces()
 
