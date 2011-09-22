@@ -82,6 +82,11 @@ Ext.oa.Lvm__LogicalVolume_Panel = Ext.extend(Ext.Panel, {
                     valueField:    'name',
                     ref:      'fsfield'
                   }, {
+                    xtype: "label",
+                    text:  "If you want to use DRBD with this device, do not yet create a file system on it, "+
+                           "even if you want to share it using NAS services later on.",
+                    cls:   "form_hint_label",
+                  }, {
                     fieldLabel: "Size in MB",
                     name: "megs",
                     ref: 'sizefield'
@@ -159,9 +164,20 @@ Ext.oa.Lvm__LogicalVolume_Panel = Ext.extend(Ext.Panel, {
             var sm = lvmGrid.getSelectionModel();
             if( sm.hasSelection() ){
               var sel = sm.selections.items[0];
-              lvm__LogicalVolume.delete( sel.data.id, function(provider, response){
-                lvmGrid.store.reload();
-              } );
+              Ext.Msg.confirm(
+                'Confirm delete',
+                String.format( 'Really delete volume {0} and all its shares?<br />'+
+                  '<b>There is no undo and you will lose all data.</b>', sel.data.name ),
+                function(btn, text){
+                  if( btn == 'yes' ){
+                    lvm__LogicalVolume.delete( sel.data.id, function(provider, response){
+                      lvmGrid.store.reload();
+                    } );
+                  }
+                  else
+                    alert("Aborted.");
+                }
+              );
             }
           }
       }],
