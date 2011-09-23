@@ -6,9 +6,12 @@ Ext.oa.DangerousMessage = function(){
   var f = function(){};
   f.prototype = Ext.MessageBox;
   var o = Ext.extend(f, {
-    getDialog : function() {
+    getDialog: function() {
       var d = o.superclass.getDialog.apply(this, arguments);
       d.mask.addClass("redmask");
+      d.on("hide", function(){
+        d.mask.removeClass("redmask");
+      });
       return d;
     }
   });
