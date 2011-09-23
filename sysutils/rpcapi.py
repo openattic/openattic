@@ -4,6 +4,9 @@
 import dbus
 from django.conf import settings
 
+from rpcd.handlers import BaseHandler
+from sysutils.models import InitScript
+
 class SysUtilsHandler(object):
     class model:
         class _meta:
@@ -14,12 +17,24 @@ class SysUtilsHandler(object):
         self.user = user
 
     def shutdown(self):
-   	shutdown = dbus.SystemBus().get_object(settings.DBUS_IFACE_SYSTEMD, "/sysutils")
-        shutdown.shutdown()
- 
+        dbus.SystemBus().get_object(settings.DBUS_IFACE_SYSTEMD, "/sysutils").shutdown()
+
     def reboot(self):
-   	reboot = dbus.SystemBus().get_object(settings.DBUS_IFACE_SYSTEMD, "/sysutils")
-        reboot.reboot()
+        dbus.SystemBus().get_object(settings.DBUS_IFACE_SYSTEMD, "/sysutils").reboot()
 
+class InitScriptHandler(BaseHandler):
+    model = InitScript
 
-RPCD_HANDLERS = [SysUtilsHandler]
+    def get_status(self, id):
+        return InitScript.objects.get(id=id).status
+
+    def all_with_status(self):
+        """ Get all initscripts with their current status values """
+        data = []
+        for obj in self.model.objects.all():
+            objdata = self._getobj(obj)
+            objdata["status"] = obj.status
+            data.append(objdata)
+        return data
+
+RPCD_HANDLERS = [SysUtilsHandler, InitScriptHandler]

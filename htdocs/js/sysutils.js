@@ -16,8 +16,53 @@ Ext.oa.DangerousMessage = function(){
 }();
 
 
-Ext.oa.SysUtils_Panel = Ext.extend(Ext.Panel, {
+Ext.oa.SysUtils_Panel = Ext.extend(Ext.grid.GridPanel, {
+  initComponent: function(){
+    Ext.apply(this, Ext.apply(this.initialConfig, {
+      title: "Service State",
+      store: (function(){
+        var st = new Ext.data.DirectStore({
+          autoLoad: true,
+          fields: ['id', 'name', 'status'],
+          directFn: sysutils__InitScript.all_with_status
+        });
+        st.setDefaultSort("name");
+        return st;
+      }()),
+      colModel: new Ext.grid.ColumnModel({
+        defaults: {
+          sortable: true
+        },
+        columns: [{
+          header: "Service name",
+          width: 200,
+          dataIndex: "name"
+        }, {
+          header: "Status",
+          width: 50,
+          dataIndex: "status",
+          renderer: function( val, x, store ){
+            if( val === 0 )
+              return '<img src="/filer/static/oxygen/16x16/status/security-high.png" title="running" />';
+            else if( val === 3 )
+              return '<img src="/filer/static/oxygen/16x16/status/security-low.png" title="stopped" />';
+            else
+              return '<img src="/filer/static/oxygen/16x16/status/security-medium.png" title="failure" />';
+          }
+        }]
+      })
+    }));
+    Ext.oa.SysUtils_Panel.superclass.initComponent.apply(this, arguments);
+  },
+
   prepareMenuTree: function(tree){
+    tree.root.attributes.children[0].children.push({
+      text: 'Service State',
+      leaf: true,
+      icon: '/filer/static/icons2/22x22/status/network-receive.png',
+      panel: this,
+      href: '#'
+    });
     tree.root.attributes.children[5].children.push({
       text: 'Reboot',
       leaf: true,

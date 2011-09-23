@@ -21,11 +21,6 @@ Ext.oa.MenuTree = Ext.extend(Ext.tree.TreePanel, {
             text: 'Disk Usage',
             leaf: true,
             icon: '/filer/static/icons2/22x22/apps/disk_use.png'
-          },
-          {
-            text: 'Service State',
-            leaf: true,
-            icon: '/filer/static/icons2/22x22/status/network-receive.png'
           }
         ]
       }, {
