@@ -104,33 +104,22 @@ Ext.oa.Lvm__Snapshot_Panel = Ext.extend(Ext.grid.GridPanel, {
         // Anon function that is called immediately to set up the store's DefaultSort
         var store = new Ext.data.DirectStore({
           autoLoad: true,
-          fields: ['name', 'megs', 'filesystem',  'formatted', 'id', 'state', 'fs',
+          fields: ['name', 'megs', 'filesystem',  'snapshot', 'formatted', 'id', 'state', 'fs',
             {
-              name: 'fsfree',
-              mapping: 'fs',
-              sortType: 'asInt',
+              name: 'origvolid',
+              mapping: 'snapshot',
               convert: function( val, row ){
-                if( val === null || typeof val.stat === "undefined" )
+                if( val === null )
                   return null;
-                return val.stat.freeG.toFixed(2);
+                return val.id;
               }
             }, {
-              name: 'fsused',
-              mapping: 'fs',
-              sortType: 'asInt',
+              name: 'origvolname',
+              mapping: 'snapshot',
               convert: function( val, row ){
-                if( val === null || typeof val.stat === "undefined" )
+                if( val === null )
                   return null;
-                return val.stat.usedG.toFixed(2);
-              }
-            }, {
-              name: 'fspercent',
-              mapping: 'fs',
-              sortType: 'asInt',
-              convert: function( val, row ){
-                if( val === null || typeof val.stat === "undefined" )
-                  return null;
-                return (val.stat.used / val.stat.size * 100 ).toFixed(2);
+                return val.name;
               }
             }],
           baseParams: { 'snapshot__isnull': false },
@@ -158,48 +147,9 @@ Ext.oa.Lvm__Snapshot_Panel = Ext.extend(Ext.grid.GridPanel, {
             return String.format("{0} MB", val);
           }
         }, {
-          header: "FS",
-          width: 50,
-          dataIndex: "filesystem",
-          renderer: function( val, x, store ){
-            if( val )
-              return val;
-            return "&ndash;";
-          }
-        }, {
-          header: "Free",
-          width: 100,
-          dataIndex: "fsfree",
-          align: 'right',
-          renderer: function( val, x, store ){
-            if( !val )
-              return '';
-            return String.format("{0} GB", val);
-          }
-        }, {
-          header: "Used",
-          width: 100,
-          dataIndex: "fsused",
-          align: 'right',
-          renderer: function( val, x, store ){
-            if( !val )
-              return '';
-            return String.format("{0} GB", val);
-          }
-        }, {
-          header: "Used%",
-          width: 75,
-          dataIndex: "fspercent",
-          align: 'right',
-          renderer: function( val, x, store ){
-            if( !val )
-              return '';
-            if( val > Ext.state.Manager.get("lv_red_threshold", 90.0) )
-              var color = "red";
-            else
-              var color = "green";
-            return String.format('<span style="color:{1};">{0}%</span>', val, color);
-          }
+          header: "Original Volume",
+          width: 200,
+          dataIndex: "origvolname"
         }]
       }),
     }));
