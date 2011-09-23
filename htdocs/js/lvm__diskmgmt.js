@@ -75,8 +75,10 @@ Ext.oa.Lvm__Disks_Panel = Ext.extend(Ext.Panel, {
       if( response.result ){
         for( var i = 0; i < response.result.length; i++ ){
           self.add(new Ext.oa.Lvm__Partitions_Panel({
-            title: response.result[i],
-            device: ('/dev/' + response.result[i])
+            title: String.format("/dev/{0} &mdash; {1} {2} {3}",
+              response.result[i].block, response.result[i].vendor,
+              response.result[i].model, response.result[i].rev),
+            device: ('/dev/' + response.result[i].block)
           }));
         }
       }

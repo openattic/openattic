@@ -3,6 +3,7 @@
 
 import dbus
 import re
+import os
 import os.path
 from django.contrib.auth.models import User
 from django.db import models
@@ -117,19 +118,28 @@ class VolumeGroup(models.Model):
 
     @classmethod
     def get_devices(cls):
-        """ Get existing block devices that correspond to hardware disks. """
-        fd = open("/proc/partitions", "rb")
-        try:
-            partitions = fd.read()
-        finally:
-            fd.close()
-        regex = re.compile("^\s*\d+\s+\d+\s+\d+\s([a-zA-Z]+)$")
-        devs = []
-        for line in partitions.split("\n"):
-            m = regex.match(line)
-            if m:
-                devs.append(m.group(1))
-        return devs
+        """ Get existing block devices. """
+        devinfo = []
+
+        def getfile(basefir, fname):
+            fd = open( os.path.join( basedir, fname ), "rb")
+            try:
+                return fd.read().strip()
+            finally:
+                fd.close()
+
+        for dirname in os.listdir("/sys/bus/scsi/devices"):
+            if re.match( "^\d:\d:\d:\d$", dirname ):
+                basedir = os.path.join( "/sys/bus/scsi/devices", dirname )
+                devinfo.append({
+                    "type":   getfile(basedir, "type"),
+                    "vendor": getfile(basedir, "vendor"),
+                    "model":  getfile(basedir, "model"),
+                    "rev":    getfile(basedir, "rev"),
+                    "block":  os.listdir( os.path.join( basedir, "block" ) )[0]
+                    })
+
+        return devinfo
 
     @classmethod
     def get_partitions(cls, device):
