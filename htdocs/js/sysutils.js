@@ -10,7 +10,7 @@ Ext.oa.DangerousMessage = function(){
       var d = o.superclass.getDialog.apply(this, arguments);
       d.mask.addClass("redmask");
       return d;
-    },
+    }
   });
   return new o();
 }();
