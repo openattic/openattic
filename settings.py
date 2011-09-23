@@ -184,5 +184,6 @@ INSTALLED_APPS = (
     'systemd',
     'clustering',
     'ifconfig',
+    'sysutils',
     'django_extensions',
 )
