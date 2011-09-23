@@ -8,7 +8,8 @@ Ext.oa.Munin__MuninNode_Panel = Ext.extend(Ext.Panel, {
       items: [{
         region: 'west',
         xtype:  'grid',
-        width: 130,
+        width: 160,
+        viewConfig: { forceFit: true },
         ref: "../modulespanel",
         store: new Ext.data.DirectStore({
           autoLoad: true,
@@ -24,7 +25,6 @@ Ext.oa.Munin__MuninNode_Panel = Ext.extend(Ext.Panel, {
         colModel: new Ext.grid.ColumnModel({
           columns: [{
             header: "Modul",
-            width: 110,
             dataIndex: "name"
           } ]
         }),
