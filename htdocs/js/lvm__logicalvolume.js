@@ -275,7 +275,8 @@ Ext.oa.Lvm__LogicalVolume_Panel = Ext.extend(Ext.Panel, {
                   return (val.stat.used / val.stat.size * 100 ).toFixed(2);
                 }
               }],
-            directFn: lvm__LogicalVolume.all
+            baseParams: { "snapshot__isnull": true },
+            directFn: lvm__LogicalVolume.filter
           });
           store.setDefaultSort("name");
           return store;
