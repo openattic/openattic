@@ -2,7 +2,6 @@ Ext.namespace("Ext.oa");
 
 Ext.oa.Samba__Share_Panel = Ext.extend(Ext.grid.GridPanel, {
   initComponent: function(){
-    var currentChartId = null;
     Ext.apply(this, Ext.apply(this.initialConfig, {
       title: "Samba",
       store: new Ext.data.DirectStore({

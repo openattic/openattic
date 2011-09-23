@@ -2,7 +2,6 @@ Ext.namespace("Ext.oa");
 
 Ext.oa.Ftp__User_Panel = Ext.extend(Ext.grid.GridPanel, {
   initComponent: function(){
-    var currentChartId = null;
     var ftpGrid = this;
     Ext.apply(this, Ext.apply(this.initialConfig, {
       title: "ftp",

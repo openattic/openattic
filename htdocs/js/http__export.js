@@ -2,7 +2,6 @@ Ext.namespace("Ext.oa");
 
 Ext.oa.Http__Export_Panel = Ext.extend(Ext.grid.GridPanel, {
   initComponent: function(){
-    var currentChartId = null;
     var httpGrid = this;
     Ext.apply(this, Ext.apply(this.initialConfig, {
       title: "http",

@@ -2,7 +2,6 @@ Ext.namespace("Ext.oa");
 
 Ext.oa.Cmdlog__LogEntry_Panel = Ext.extend(Ext.grid.GridPanel, {
   initComponent: function(){
-    var currentChartId = null;
     var fields = ['command', 'exitcode', 'endtime'];
     var store = new Ext.data.DirectStore({
       autoLoad: true,

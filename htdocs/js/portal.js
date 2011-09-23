@@ -2,7 +2,6 @@ Ext.namespace("Ext.oa");
 
 Ext.oa.Portal = Ext.extend(Ext.ux.Portal, {
   initComponent: function(){
-    var currentChartId = null;
     var tools = [{
         id:'gear',
         handler: function(){

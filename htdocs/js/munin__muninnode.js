@@ -2,7 +2,6 @@ Ext.namespace("Ext.oa");
 
 Ext.oa.Munin__MuninNode_Panel = Ext.extend(Ext.Panel, {
   initComponent: function(){
-    var currentChartId = null;
     Ext.apply(this, Ext.apply(this.initialConfig, {
       title: 'Performance',
       layout: 'border',
