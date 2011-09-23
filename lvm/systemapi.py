@@ -47,8 +47,9 @@ class SystemD(BasePlugin):
             cmd.extend(["-s", snapshot])
         cmd.extend(["-L", ("%dM" % megs),
             '-n', lvname,
-            vgname
             ])
+        if not snapshot:
+            cmd.append(vgname)
         return invoke(cmd)
 
     @method(in_signature="sb", out_signature="i")
