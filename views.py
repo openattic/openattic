@@ -7,6 +7,8 @@ from django.http       import HttpResponse, HttpResponseRedirect, Http404
 from django.contrib.auth            import authenticate, login, logout
 from django.contrib.auth.decorators import login_required
 
+from userprefs.models import UserProfile
+
 def do_login( request ):
     """ Check login credentials sent by ExtJS. """
     if "username" not in request.POST or "password" not in request.POST:
@@ -37,27 +39,21 @@ def do_logout( request ):
 
 def index(request):
     request.META["CSRF_COOKIE_USED"] = True
-    theme = request.session.get("theme", None)
     if not request.user.is_authenticated():
         return render_to_response('index_ext_unauthed.html', {
-            'THEME': theme
             }, context_instance = RequestContext(request))
     else:
-        if not theme and "theme" in request.user.get_profile():
-            theme = request.user.get_profile()["theme"]
+        try:
+            profile = request.user.get_profile()
+        except UserProfile.DoesNotExist:
+            profile = UserProfile(user=request.user)
+            profile.save()
+
+        if "theme" in profile:
+            theme = profile["theme"]
+        else:
+            theme = None
+
         return render_to_response('index_ext_authed.html', {
             'THEME': theme
             }, context_instance = RequestContext(request))
-
-def settheme(request):
-    theme = request.POST["theme"]
-    if not theme:
-        request.session["theme"] = None
-    else:
-        request.session["theme"] = theme
-    if request.user.is_authenticated():
-        if not theme and "theme" in request.user.get_profile():
-            del request.user.get_profile()["theme"]
-        elif theme:
-            request.user.get_profile()["theme"] = theme
-    return HttpResponse( "{ success: true }", "application/json" );
