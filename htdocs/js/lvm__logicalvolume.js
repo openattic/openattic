@@ -31,6 +31,63 @@ Ext.oa.Lvm__LogicalVolume_Panel = Ext.extend(Ext.Panel, {
             );
           }
         }, {
+          text: "Mount",
+          icon: "/filer/static/oxygen/16x16/emblems/emblem-mounted.png",
+          handler: function(self){
+            var lvmGrid = lvmPanel.items.items[0];
+            var sm = lvmGrid.getSelectionModel();
+            if( sm.hasSelection() ){
+              var sel = sm.selections.items[0];
+              if( !sel.data.filesystem ){
+                Ext.Msg.alert(sel.data.name,
+                  String.format( "Volume {0} does not have a file system and therefore cannot be mounted.", sel.data.name ));
+                return;
+              }
+              lvm__LogicalVolume.is_mounted( sel.data.id, function(provider, response){
+                if( response.result ){
+                  Ext.Msg.alert(sel.data.name, String.format( "Volume {0} is already mounted.", sel.data.name ));
+                  return;
+                }
+                lvm__LogicalVolume.is_in_standby( sel.data.id, function(provider, response){
+                  if( response.result ){
+                    Ext.Msg.alert(sel.data.name,
+                      String.format( "Volume {0} cannot be mounted at the current time.", sel.data.name ));
+                    return;
+                  }
+                  lvm__LogicalVolume.mount( sel.data.id, function(provider, response){
+                    if( response.type === "exception" )
+                      Ext.Msg.alert(sel.data.name, String.format( "Volume {0} could not be mounted, please check the logs.", sel.data.name ));
+                    else
+                      Ext.Msg.alert(sel.data.name, String.format( "Volume {0} has been mounted.", sel.data.name ));
+                  } );
+                } );
+              } );
+            }
+          }
+        }, {
+          text: "Unmount",
+          icon: "/filer/static/oxygen/16x16/emblems/emblem-unmounted.png",
+          handler: function(self){
+            var lvmGrid = lvmPanel.items.items[0];
+            var sm = lvmGrid.getSelectionModel();
+            if( sm.hasSelection() ){
+              var sel = sm.selections.items[0];
+              lvm__LogicalVolume.is_mounted( sel.data.id, function(provider, response){
+                if( !response.result ){
+                  Ext.Msg.alert(sel.data.name, String.format( "Volume {0} is not mounted.", sel.data.name ));
+                }
+                else{
+                  lvm__LogicalVolume.unmount( sel.data.id, function(provider, response){
+                    if( response.type === "exception" )
+                      Ext.Msg.alert(sel.data.name, String.format( "Volume {0} could not be unmounted, please check the logs.", sel.data.name ));
+                    else
+                      Ext.Msg.alert(sel.data.name, String.format( "Volume {0} has been unmounted.", sel.data.name ));
+                  } );
+                }
+              } );
+            }
+          }
+        }, {
           text: "Add Volume",
           icon: "/filer/static/icons2/16x16/actions/add.png",
           handler: function(){
