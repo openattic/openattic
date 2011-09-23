@@ -407,13 +407,6 @@ Ext.oa.Lvm__LogicalVolume_Panel = Ext.extend(Ext.Panel, {
       panel: this,
       href: '#'
     });
-    tree.root.attributes.children[1].children.push({
-      text: 'Snapshots',
-      leaf: true,
-      icon: '/filer/static/icons2/22x22/apps/snapshot.png',
-      panel: this,
-      href: '#'
-    });
   }
 });
 

@@ -7,6 +7,7 @@ Ext.oa.MainViewManager = Ext.extend(Ext.Panel, {
       new Ext.oa.Lvm__Disks_Panel(),
       new Ext.oa.Lvm__LogicalVolume_Panel(),
       new Ext.oa.Lvm__Mounts_Panel(),
+      new Ext.oa.Lvm__Snapshot_Panel(),
       new Ext.oa.Nfs__Export_Panel(),
       new Ext.oa.Samba__Share_Panel(),
       new Ext.oa.Http__Export_Panel(),
