@@ -16,13 +16,7 @@ Ext.oa.MenuTree = Ext.extend(Ext.tree.TreePanel, {
         text: 'Status',
         expanded: Ext.state.Manager.get("expand_root_nodes", false),
         icon: '/filer/static/icons2/22x22/emblems/emblem-web.png',
-        children: [
-          {
-            text: 'Disk Usage',
-            leaf: true,
-            icon: '/filer/static/icons2/22x22/apps/disk_use.png'
-          }
-        ]
+        children: []
       }, {
         id: 'menu_storage',
         text: 'Storage',
