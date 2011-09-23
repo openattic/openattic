@@ -25,6 +25,7 @@
     <script src="{{ MEDIA_URL }}/js/nfs__export.js"></script>
     <script src="{{ MEDIA_URL }}/js/samba__share.js"></script>
     <script src="{{ MEDIA_URL }}/js/ajaxterm.js"></script>
+    <script src="{{ MEDIA_URL }}/js/sysutils.js"></script>
     <script src="{{ MEDIA_URL }}/js/mainviewmanager.js"></script>
     <script>
       Ext.onReady( function(){
@@ -48,6 +49,7 @@
               }
             }, {
               text:     'Raus hier',
+              icon: '/filer/static/oxygen/22x22/actions/system-log-out.png',
               handler: function() {
                 var conn = new Ext.data.Connection();
                 conn.request({
@@ -116,6 +118,9 @@
       .x-tree-node-icon {
         height: 22px !important;
         width:  22px !important;
+      }
+      .redmask {
+        background-color: #FF0000;
       }
     </style>
   </head>

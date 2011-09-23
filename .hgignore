@@ -11,3 +11,5 @@ htdocs/scriptaculous
 htdocs/jquery*
 htdocs/extjs
 certs/
+
+htdocs/oxygen

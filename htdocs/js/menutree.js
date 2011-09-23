@@ -119,9 +119,6 @@ Ext.oa.MenuTree = Ext.extend(Ext.tree.TreePanel, {
             text: 'Online Update',
             leaf: true,
             icon: '/filer/static/icons2/22x22/apps/update.png'
-          }, {
-            text: 'Shutdown/Reboot',  leaf: true,
-            icon: '/filer/static/icons2/22x22/actions/system-log-out.png'
           }
         ]
       }
