@@ -164,7 +164,7 @@ class SystemD(BasePlugin):
     def get_partitions(self, device):
         from systemd.procutils import invoke
 
-        ret, out, err = invoke(["parted", "-s", "-m", device, "unit", "MB", "print"], return_out_err=True)
+        ret, out, err = invoke(["parted", "-s", "-m", device, "unit", "MB", "print"], return_out_err=True, log=False)
 
         lines = out.split("\n")
         splittedlines = []
