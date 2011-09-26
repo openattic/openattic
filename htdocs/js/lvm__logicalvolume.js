@@ -108,7 +108,7 @@ Ext.oa.Lvm__LogicalVolume_Panel = Ext.extend(Ext.Panel, {
                     ref: 'namefield'
                   }, {
                     xtype:      'combo',
-                    fieldLabel: 'Volume',
+                    fieldLabel: 'Volume Group',
                     name:       'volume',
                     hiddenName: 'volume_id',
                     store: new Ext.data.DirectStore({
