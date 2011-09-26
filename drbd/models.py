@@ -187,14 +187,14 @@ class DrbdDevice(LVChainedModule):
             if self.init_master:
                 vgid = self.peerhost.lvm.VolumeGroup.ids()[0]
                 user = self.peerhost.auth.User.filter({'username': self.volume.owner.username})[0]
-                lv   = self.peerhost.lvm.LogicalVolume.new({
+                lv   = self.peerhost.lvm.LogicalVolume.create({
                     'name':  self.volume.name,
                     'megs':  self.volume.megs,
                     'vg':    vgid,
                     'owner': {'app': 'auth', 'id': user['id'], 'obj': 'User'},
                     })
                 thishost = {'app': 'peering', 'obj': 'PeerHost', 'id': self.peerhost.thishost['id']}
-                ddev = self.peerhost.drbd.DrbdDevice.new({
+                ddev = self.peerhost.drbd.DrbdDevice.create({
                     'peeraddress':      self.selfaddress,
                     'peerhost':         thishost,
                     'init_master':      False,
