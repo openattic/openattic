@@ -151,7 +151,7 @@ Ext.oa.Lvm__Snapshot_Panel = Ext.extend(Ext.grid.GridPanel, {
           width: 200,
           dataIndex: "origvolname"
         }]
-      }),
+      })
     }));
     Ext.oa.Lvm__Snapshot_Panel.superclass.initComponent.apply(this, arguments);
   },
