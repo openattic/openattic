@@ -46,7 +46,6 @@ class Target(models.Model):
         return ret
 
     def delete( self ):
-        volume = self.volume
         iscsi = dbus.SystemBus().get_object(settings.DBUS_IFACE_SYSTEMD, "/iscsi")
         ret = models.Model.delete(self)
         self._iscsi.target_delete(self.tid)
