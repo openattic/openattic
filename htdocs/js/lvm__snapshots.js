@@ -2,15 +2,22 @@ Ext.namespace("Ext.oa");
 
 Ext.oa.Lvm__Snapshot_Panel = Ext.extend(Ext.grid.GridPanel, {
   initComponent: function(){
-    var httpGrid = this;
+    var lvmSnapPanel = this;
     Ext.apply(this, Ext.apply(this.initialConfig, {
       title: "Volume Snapshots",
       buttons: [{
-        text: "Add Export",
+        text: "",
+        icon: "/filer/static/icons2/16x16/actions/reload.png",
+        tooltip: 'Reload',
+        handler: function(self){
+          lvmSnapPanel.store.reload();
+        }
+      }, {
+        text: "Add Snapshot",
         icon: "/filer/static/icons2/16x16/actions/add.png",
         handler: function(){
           var addwin = new Ext.Window({
-            title: "Add Export",
+            title: "Add Snapshot",
             layout: "fit",
             height: 300,
             width: 500,
@@ -21,13 +28,21 @@ Ext.oa.Lvm__Snapshot_Panel = Ext.extend(Ext.grid.GridPanel, {
                 anchor: '-20px'
               },
               items: [{
+                  fieldLabel: "Name",
+                  name: "name",
+                  allowBlank: false,
+                  ref: 'namefield'
+                }, {
                   xtype:      'combo',
-                  fieldLabel: 'Volume',
+                  allowBlank: false,
+                  fieldLabel: 'Original Volume',
                   name:       'volume',
                   hiddenName: 'volume_id',
                   store: new Ext.data.DirectStore({
-                    fields: ["app", "obj", "id", "name"],
-                    directFn: lvm__LogicalVolume.ids
+                    fields: ["id", "name", "megs", "vg"],
+                    baseParams: { kwds: { "snapshot__isnull": true }, fields: ["name", "megs", "vg"] },
+                    paramOrder: ["kwds", "fields"],
+                    directFn: lvm__LogicalVolume.filter_values
                   }),
                   typeAhead:     true,
                   triggerAction: 'all',
@@ -35,43 +50,72 @@ Ext.oa.Lvm__Snapshot_Panel = Ext.extend(Ext.grid.GridPanel, {
                   selectOnFocus: true,
                   displayField:  'name',
                   valueField:    'id',
-                  ref: 'volfield',
+                  ref:      'volfield',
                   listeners: {
                     select: function(self, record, index){
-                      lvm__LogicalVolume.get( record.data.id, function( provider, response ){
-                        if( !response.result.filesystem ){
-                          alert( "This volume does not have a file system, so it cannot be used for HTTP." );
-                          self.ownerCt.dirfield.setValue("");
-                          self.ownerCt.dirfield.disable();
-                          self.expand();
+                      if( self.ownerCt.volume_id === null || typeof self.ownerCt.volume_id == "undefined" ||
+                        self.ownerCt.volume_id != record.data.vg
+                       ){
+                        self.ownerCt.volume_free_megs = null;
+                        self.ownerCt.volume_id = null;
+                        self.ownerCt.sizelabel.setText( "Querying data..." );
+                        self.ownerCt.sizefield.disable();
+                        lvm__VolumeGroup.get_free_megs( record.data.vg, function( provider, response ){
+                        self.ownerCt.volume_id = record.data.vg;
+                          self.ownerCt.volume_free_megs = response.result;
+                          self.ownerCt.sizelabel.setText( String.format( "Max. {0} MB", response.result ) );
+                          if( record.data.megs <= self.ownerCt.volume_free_megs ){
+                            self.ownerCt.sizefield.setValue( record.data.megs );
+                            self.ownerCt.sizefield.enable();
+                          }
+                        } );
+                      }
+                      else{
+                        if( record.data.megs <= self.ownerCt.volume_free_megs ){
+                          self.ownerCt.sizefield.setValue( record.data.megs );
+                          self.ownerCt.sizefield.enable();
                         }
-                        else{
-                          self.ownerCt.dirfield.setValue( response.result.fs.mountpoints[0] );
-                          self.ownerCt.dirfield.enable();
-                        }
-                      } );
+                      }
                     }
                   }
                 }, {
-                  fieldLabel: "Directory",
-                  name: "path",
-                  disabled: true,
-                  ref: 'dirfield'
+                  fieldLabel: "Size in MB",
+                  allowBlank: false,
+                  name: "megs",
+                  ref: 'sizefield'
+                }, {
+                  xtype: "label",
+                  ref:   "sizelabel",
+                  text:  "Waiting for volume selection...",
+                  cls:   "form_hint_label"
               }],
               buttons: [{
-                text: 'Create Export',
+                text: 'Create Snapshot',
                 icon: "/filer/static/icons/accept.png",
                 handler: function(self){
-                  http__Export.create({
-                    'volume': {
+                  if( !self.ownerCt.ownerCt.getForm().isValid() ){
+                    return;
+                  }
+                  var free = self.ownerCt.ownerCt.volume_free_megs;
+                  if( free === null || typeof free == "undefined" ){
+                    Ext.Msg.alert("Error", "Please wait for the query for available space to complete.");
+                    return;
+                  }
+                  if( free < self.ownerCt.ownerCt.sizefield.getValue() ){
+                    Ext.Msg.alert("Error", "Your volume exceeds the available capacity of "+response.result+" MB.");
+                    return;
+                  }
+                  lvm__LogicalVolume.create({
+                    'snapshot': {
                       'app': 'lvm',
                       'obj': 'LogicalVolume',
                       'id': self.ownerCt.ownerCt.volfield.getValue()
                     },
-                    'path':  self.ownerCt.ownerCt.dirfield.getValue()
+                    'name':       self.ownerCt.ownerCt.namefield.getValue(),
+                    'megs':       self.ownerCt.ownerCt.sizefield.getValue()
                   }, function(provider, response){
                     if( response.result ){
-                      httpGrid.store.reload();
+                      lvmSnapPanel.store.reload();
                       addwin.hide();
                     }
                   });
@@ -88,15 +132,26 @@ Ext.oa.Lvm__Snapshot_Panel = Ext.extend(Ext.grid.GridPanel, {
           addwin.show();
         }
       }, {
-        text: "Delete Export",
+        text: "Delete Snapshot",
         icon: "/filer/static/icons2/16x16/actions/remove.png",
         handler: function(self){
-          var sm = httpGrid.getSelectionModel();
+          var sm = lvmSnapPanel.getSelectionModel();
           if( sm.hasSelection() ){
             var sel = sm.selections.items[0];
-            http__Export.remove( sel.data.id, function(provider, response){
-              httpGrid.store.reload();
-            } );
+            Ext.Msg.confirm(
+              'Confirm delete',
+              String.format( 'Really delete snapshot {0} and all its shares?<br />'+
+                '<b>There is no undo and you will lose all data.</b>', sel.data.name ),
+              function(btn, text){
+                if( btn == 'yes' ){
+                  lvm__LogicalVolume.remove( sel.data.id, function(provider, response){
+                    lvmSnapPanel.store.reload();
+                  } );
+                }
+                else
+                  alert("Aborted.");
+              }
+            );
           }
         }
       }],
