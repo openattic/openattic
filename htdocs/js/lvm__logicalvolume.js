@@ -104,10 +104,12 @@ Ext.oa.Lvm__LogicalVolume_Panel = Ext.extend(Ext.Panel, {
                 },
                 items: [{
                     fieldLabel: "Name",
+                    allowBlank: false,
                     name: "name",
                     ref: 'namefield'
                   }, {
                     xtype:      'combo',
+                    allowBlank: false,
                     fieldLabel: 'Volume Group',
                     name:       'volume',
                     hiddenName: 'volume_id',
@@ -121,7 +123,17 @@ Ext.oa.Lvm__LogicalVolume_Panel = Ext.extend(Ext.Panel, {
                     selectOnFocus: true,
                     displayField:  'name',
                     valueField:    'id',
-                    ref:      'volfield'
+                    ref:           'volfield',
+                    listeners: {
+                      select: function(self, record, index){
+                        self.ownerCt.volume_free_megs = null;
+                        self.ownerCt.sizelabel.setText( "Querying data..." );
+                        lvm__VolumeGroup.get_free_megs( record.data.id, function( provider, response ){
+                          self.ownerCt.volume_free_megs = response.result;
+                          self.ownerCt.sizelabel.setText( String.format( "Max. {0} MB", response.result ) );
+                        } );
+                      }
+                    }
                   }, {
                     xtype:      'combo',
                     fieldLabel: 'File System',
@@ -145,10 +157,17 @@ Ext.oa.Lvm__LogicalVolume_Panel = Ext.extend(Ext.Panel, {
                     cls:   "form_hint_label"
                   }, {
                     fieldLabel: "Size in MB",
+                    allowBlank: false,
                     name: "megs",
                     ref: 'sizefield'
                   }, {
+                    xtype: "label",
+                    ref:   "sizelabel",
+                    text:  "Waiting for volume selection...",
+                    cls:   "form_hint_label"
+                  }, {
                     xtype:      'combo',
+                    allowBlank: false,
                     fieldLabel: 'Owner',
                     name:       'owner',
                     hiddenName: 'owner_id',
@@ -169,6 +188,18 @@ Ext.oa.Lvm__LogicalVolume_Panel = Ext.extend(Ext.Panel, {
                   text: 'Create Volume',
                   icon: "/filer/static/icons/accept.png",
                   handler: function(self){
+                    if( !self.ownerCt.ownerCt.getForm().isValid() ){
+                      return;
+                    }
+                    var free = self.ownerCt.ownerCt.volume_free_megs;
+                    if( free === null || typeof free == "undefined" ){
+                      Ext.Msg.alert("Error", "Please wait for the query for available space to complete.");
+                      return;
+                    }
+                    if( free < self.ownerCt.ownerCt.sizefield.getValue() ){
+                      Ext.Msg.alert("Error", "Your volume exceeds the available capacity of "+response.result+" MB.");
+                      return;
+                    }
                     var progresswin = new Ext.Window({
                       title: "Adding Volume",
                       layout: "fit",
