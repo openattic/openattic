@@ -7,6 +7,7 @@ from lvm.models import VolumeGroup, LogicalVolume
 
 class VgHandler(BaseHandler):
     model = VolumeGroup
+    order = ("name",)
 
     def _idobj(self, obj):
         """ Return an ID for the given object, including the app label and object name. """
@@ -24,8 +25,12 @@ class VgHandler(BaseHandler):
     def get_disk_stats(self, device):
         return VolumeGroup.get_disk_stats(device)
 
+    def get_free_megs(self, id):
+        return VolumeGroup.objects.get(id=id).lvm_free_megs
+
 class LvHandler(BaseHandler):
     model = LogicalVolume
+    order = ("name",)
 
     def _override_get(self, obj, data):
         if obj.filesystem:

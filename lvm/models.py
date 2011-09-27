@@ -176,7 +176,10 @@ class VolumeGroup(models.Model):
             self._lvm_info = dbus_to_python(lvm.vgs())[self.name]
         return self._lvm_info
 
-
+    @property
+    def lvm_free_megs(self):
+        # get "free" info from LVM, strip away the "m" and return a float
+        return float( self.lvm_info["LVM2_VG_FREE"][:-1] )
 
 class LogicalVolume(StatefulModel):
     """ Represents a LVM Logical Volume and offers management functions.
