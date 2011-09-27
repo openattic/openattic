@@ -28,6 +28,7 @@ class BaseHandler(object):
 
     exclude = None
     fields  = None
+    order   = tuple()
 
     def __init__(self, user):
         self.user = user
@@ -50,7 +51,7 @@ class BaseHandler(object):
 
     def ids(self):
         """ Get a list of all existing object IDs. """
-        return [self._idobj(o) for o in self.model.objects.all()]
+        return [self._idobj(o) for o in self.model.objects.all().order_by(*self.order) ]
 
     def _idobj(self, obj):
         """ Return an ID for the given object, including the app label and object name. """
@@ -58,7 +59,7 @@ class BaseHandler(object):
 
     def all(self):
         """ Return all objects. """
-        return [ self._getobj(obj) for obj in self.model.objects.all() ]
+        return [ self._getobj(obj) for obj in self.model.objects.all().order_by(*self.order) ]
 
     def range(self, start, limit, sort, dir ):
         """ Return a range of objects ordered by the `sort' field. """
@@ -94,7 +95,7 @@ class BaseHandler(object):
 
     def filter(self, kwds):
         """ Search for objects with the keywords specified in the kwds dict. """
-        return [ self._getobj(obj) for obj in self.model.objects.filter(**kwds) ]
+        return [ self._getobj(obj) for obj in self.model.objects.filter(**kwds).order_by(*self.order) ]
 
     def filter_values(self, kwds, fields):
         """ Filter records using the specified keywords (see filter), but return only
@@ -102,14 +103,14 @@ class BaseHandler(object):
         """
         if "id" not in fields:
             fields.append("id")
-        return list(self.model.objects.filter(**kwds).values(*fields))
+        return list(self.model.objects.filter(**kwds).order_by(*self.order).values(*fields))
 
     def all_values(self, fields):
         """ Return only the fields named in the `fields' list (plus ID).
         """
         if "id" not in fields:
             fields.append("id")
-        return list(self.model.objects.all().values(*fields))
+        return list(self.model.objects.all().order_by(*self.order).values(*fields))
 
     def remove(self, id):
         """ Delete an object given by ID. """
