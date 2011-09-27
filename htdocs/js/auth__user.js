@@ -134,7 +134,7 @@ Ext.oa.Auth__User_Panel = Ext.extend(Ext.grid.GridPanel, {
           renderer: function( val, x, store ){
             if( val )
               return '<img src="/filer/static/oxygen/16x16/actions/dialog-ok-apply.png" title="yes" />';
-            return '<img src="/filer/static/oxygen/16x16/actions/dialog-close.png" title="no" />';
+            return '<img src="/filer/static/oxygen/16x16/actions/dialog-cancel.png" title="no" />';
           }
         }, {
           header: "Staff",
@@ -143,7 +143,7 @@ Ext.oa.Auth__User_Panel = Ext.extend(Ext.grid.GridPanel, {
           renderer: function( val, x, store ){
             if( val )
               return '<img src="/filer/static/oxygen/16x16/actions/dialog-ok-apply.png" title="yes" />';
-            return '<img src="/filer/static/oxygen/16x16/actions/dialog-close.png" title="no" />';
+            return '<img src="/filer/static/oxygen/16x16/actions/dialog-cancel.png" title="no" />';
           }
         }, {
           header: "SU",
@@ -152,7 +152,7 @@ Ext.oa.Auth__User_Panel = Ext.extend(Ext.grid.GridPanel, {
           renderer: function( val, x, store ){
             if( val )
               return '<img src="/filer/static/oxygen/16x16/actions/dialog-ok-apply.png" title="yes" />';
-            return '<img src="/filer/static/oxygen/16x16/actions/dialog-close.png" title="no" />';
+            return '<img src="/filer/static/oxygen/16x16/actions/dialog-cancel.png" title="no" />';
           }
         }, {
           header: "Last Login",
