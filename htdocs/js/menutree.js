@@ -49,9 +49,7 @@ Ext.oa.MenuTree = Ext.extend(Ext.tree.TreePanel, {
         text: 'Services',
         expanded: Ext.state.Manager.get("expand_root_nodes", false),
         icon: '/filer/static/icons2/22x22/mimetypes/gnome-mime-application-x-killustrator.png',
-        children: [
-          {text: 'DRBD',        leaf:true},
-          {
+        children: [ {
             text: 'rSync',
             leaf: true,
             icon: '/filer/static/icons2/22x22/apps/sync.png'
@@ -85,9 +83,6 @@ Ext.oa.MenuTree = Ext.extend(Ext.tree.TreePanel, {
                   {text: 'LDAP',   leaf: true}
                 ]
             } ]
-          }, {
-            text: 'User Management',  leaf: true,
-            icon: '/filer/static/icons2/22x22/apps/config-users.png'
           }, {
             text: 'Date/Time',
             leaf: true,
