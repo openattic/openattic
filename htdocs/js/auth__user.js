@@ -70,7 +70,7 @@ Ext.oa.Auth__User_Panel = Ext.extend(Ext.grid.GridPanel, {
                     'email':       self.ownerCt.ownerCt.emailfield.getValue(),
                     'is_active':   self.ownerCt.ownerCt.activefield.getValue(),
                     'is_superuser':self.ownerCt.ownerCt.sufield.getValue(),
-                    'is_staff':    self.ownerCt.ownerCt.stafffield.getValue(),
+                    'is_staff':    self.ownerCt.ownerCt.stafffield.getValue()
                   }, function(provider, response){
                     if( response.result ){
                       authUserGrid.store.reload();

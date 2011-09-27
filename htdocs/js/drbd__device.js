@@ -30,7 +30,7 @@ Ext.oa.Drbd__Device_Panel = Ext.extend(Ext.grid.GridPanel, {
                 icon: "/filer/static/icons/accept.png",
                 handler: function(self){
                   drbd__DrbdDevice.create({
-                    'protocol': self.ownerCt.ownerCt.protofield.getValue(),
+                    'protocol': self.ownerCt.ownerCt.protofield.getValue()
                   }, function(provider, response){
                     if( response.result ){
                       drbdDevGrid.store.reload();
