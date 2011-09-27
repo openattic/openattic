@@ -31,6 +31,7 @@
     <script>
       Ext.onReady( function(){
         Ext.QuickTips.init();
+        Ext.chart.Chart.CHART_URL = '{{ MEDIA_URL }}/extjs_charts.swf';
 
         mainpanel = new Ext.oa.MainViewManager({
           renderTo: document.body,
