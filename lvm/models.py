@@ -189,12 +189,12 @@ class LogicalVolume(StatefulModel):
 
     name        = models.CharField(max_length=130, unique=True)
     megs        = models.IntegerField("Size in MB")
-    vg          = models.ForeignKey(VolumeGroup)
+    vg          = models.ForeignKey(VolumeGroup, blank=True)
     snapshot    = models.ForeignKey("self", blank=True, null=True)
     filesystem  = models.CharField(max_length=20, blank=True, null=True,
                     choices=[(fs.name, fs.desc) for fs in FILESYSTEMS] )
     formatted   = models.BooleanField(default=False, editable=False)
-    owner       = models.ForeignKey(User)
+    owner       = models.ForeignKey(User, blank=True)
 
     def __init__( self, *args, **kwargs ):
         StatefulModel.__init__( self, *args, **kwargs )
@@ -318,13 +318,11 @@ class LogicalVolume(StatefulModel):
         lvm_signals.pre_install.send(sender=self)
         if self.snapshot:
             snap = self.snapshot.device
-            # Don't reformat the snapshot :)
-            self.filesystem = self.snapshot.filesystem
-            self.formatted  = self.snapshot.formatted
         else:
             snap = ""
         self.lvm.lvcreate( self.vg.name, self.name, self.megs, snap )
-        self.lvm.lvchange( self.device, True )
+        if not self.snapshot:
+            self.lvm.lvchange( self.device, True )
         lvm_signals.post_install.send(sender=self)
 
     def uninstall( self ):
@@ -337,7 +335,8 @@ class LogicalVolume(StatefulModel):
         for mod in mc:
             mod.delete()
 
-        self.lvm.lvchange(self.device, False)
+        if not self.snapshot:
+            self.lvm.lvchange(self.device, False)
         self.lvm.lvremove(self.device)
         lvm_signals.post_uninstall.send(sender=self)
 
@@ -369,9 +368,26 @@ class LogicalVolume(StatefulModel):
             self.fs.chown()
             self.formatted = True
 
+    def clean(self):
+        if not self.snapshot:
+            from django.core.exceptions import ValidationError
+            if not self.owner:
+                raise ValidationError('The owner field is required unless you are creating a snapshot.')
+            if not self.vg:
+                raise ValidationError('The vg field is required unless you are creating a snapshot.')
+        elif self.snapshot.snapshot:
+            raise ValidationError('LVM does not support snapshotting snapshots.')
+
     def save( self, *args, **kwargs ):
         self.state = "active"
         install = (self.id is None)
+
+        if self.snapshot:
+            self.owner = self.snapshot.owner
+            self.vg    = self.snapshot.vg
+            self.filesystem = self.snapshot.filesystem
+            self.formatted  = self.snapshot.formatted
+
         ret = StatefulModel.save(self, ignore_state=True, *args, **kwargs)
 
         if install:
