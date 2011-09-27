@@ -29,12 +29,6 @@ Ext.oa.MenuTree = Ext.extend(Ext.tree.TreePanel, {
         expanded: Ext.state.Manager.get("expand_root_nodes", false),
         icon: '/filer/static/icons2/22x22/places/gnome-fs-share.png',
         children: [ {
-            text: 'LAN (iSCSI)',
-            children: [
-              {text: 'Targets',    leaf: true},
-              {text: 'Initiators', leaf: true}
-            ]
-          }, {
             text: 'SAN (FibreChannel)',
             icon: '/filer/static/icons2/22x22/apps/fibre_channel.png',
             leaf: true
