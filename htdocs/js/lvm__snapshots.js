@@ -102,7 +102,7 @@ Ext.oa.Lvm__Snapshot_Panel = Ext.extend(Ext.grid.GridPanel, {
                     return;
                   }
                   if( free < self.ownerCt.ownerCt.sizefield.getValue() ){
-                    Ext.Msg.alert("Error", "Your volume exceeds the available capacity of "+response.result+" MB.");
+                    Ext.Msg.alert("Error", "Your volume exceeds the available capacity of "+free+" MB.");
                     return;
                   }
                   lvm__LogicalVolume.create({
