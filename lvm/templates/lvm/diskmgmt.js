@@ -1,3 +1,5 @@
+{% load i18n %}
+
 Ext.namespace("Ext.oa");
 
 Ext.oa.Lvm__Partitions_Panel = Ext.extend(Ext.grid.GridPanel, {
@@ -17,27 +19,27 @@ Ext.oa.Lvm__Partitions_Panel = Ext.extend(Ext.grid.GridPanel, {
             width: 20,
             dataIndex: "number"
           }, {
-            header: gettext("Size"),
+            header: "{% trans "Size" %}",
             width: 100,
             dataIndex: "size"
           }, {
-            header: gettext("Begin"),
+            header: "{% trans "Begin" %}",
             width: 100,
             dataIndex: "begin"
           }, {
-            header: gettext("End"),
+            header: "{% trans "End" %}",
             width: 100,
             dataIndex: "end"
           }, {
-            header: gettext("FS Type"),
+            header: "{% trans "FS Type" %}",
             width: 100,
             dataIndex: "filesystem-type"
           }, {
-            header: gettext("Label"),
+            header: "{% trans "Label" %}",
             width: 100,
             dataIndex: "partition-name"
           }, {
-            header: gettext("Flags"),
+            header: "{% trans "Flags" %}",
             width: 100,
             dataIndex: "flags-set"
         }]
@@ -62,10 +64,10 @@ Ext.oa.Lvm__Partitions_Panel = Ext.extend(Ext.grid.GridPanel, {
 Ext.oa.Lvm__Disks_Panel = Ext.extend(Ext.Panel, {
   initComponent: function(){
     Ext.apply(this, Ext.apply(this.initialConfig, {
-      title: gettext("Disk Management"),
+      title: "{% trans "Disk Management" %}",
       layout: 'accordion',
       buttons: [ {
-        text: gettext("Initialize"),
+        text: "{% trans "Initialize" %}",
         handler: function(){ alert("add me to a VG"); }
       } ]
     }));
@@ -87,7 +89,7 @@ Ext.oa.Lvm__Disks_Panel = Ext.extend(Ext.Panel, {
 
   prepareMenuTree: function(tree){
     tree.root.attributes.children[1].children.push({
-      text: gettext('Disk Management'),
+      text: "{% trans 'Disk Management' %}",
       leaf: true,
       icon: MEDIA_URL + '/icons2/22x22/apps/database.png',
       panel: this,
