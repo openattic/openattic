@@ -8,6 +8,7 @@ import os.path
 from django.contrib.auth.models import User
 from django.db import models
 from django.conf import settings
+from django.utils.translation   import ugettext_noop, ugettext_lazy as _
 
 from systemd.helpers import dbus_to_python
 from lvm.filesystems import FILESYSTEMS, get_by_name as get_fs_by_name
@@ -188,7 +189,7 @@ class LogicalVolume(StatefulModel):
     """
 
     name        = models.CharField(max_length=130, unique=True)
-    megs        = models.IntegerField("Size in MB")
+    megs        = models.IntegerField(_("Size in MB"))
     vg          = models.ForeignKey(VolumeGroup, blank=True)
     snapshot    = models.ForeignKey("self", blank=True, null=True)
     filesystem  = models.CharField(max_length=20, blank=True, null=True,
@@ -372,11 +373,11 @@ class LogicalVolume(StatefulModel):
         if not self.snapshot:
             from django.core.exceptions import ValidationError
             if not self.owner:
-                raise ValidationError('The owner field is required unless you are creating a snapshot.')
+                raise ValidationError(_('The owner field is required unless you are creating a snapshot.'))
             if not self.vg:
-                raise ValidationError('The vg field is required unless you are creating a snapshot.')
+                raise ValidationError(_('The vg field is required unless you are creating a snapshot.'))
         elif self.snapshot.snapshot:
-            raise ValidationError('LVM does not support snapshotting snapshots.')
+            raise ValidationError(_('LVM does not support snapshotting snapshots.'))
 
     def save( self, *args, **kwargs ):
         self.state = "active"

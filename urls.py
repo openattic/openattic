@@ -11,6 +11,8 @@ from django.conf import settings
 
 from rpcd.extdirect import PROVIDER
 
+js_info_dict = { "packages": ("lvm",) }
+
 urlpatterns = patterns('',
     (r'^admin/doc/', include('django.contrib.admindocs.urls')),
     (r'^admin/', include(admin.site.urls)),
@@ -34,6 +36,8 @@ urlpatterns = patterns('',
         'javascript'
     ),
 
+    (r'^jsi18n/$', 'django.views.i18n.javascript_catalog', js_info_dict),
+
     (r'^/?$', 'views.index', {}, '__main__' ),
 )
 
@@ -43,4 +47,9 @@ if settings.DEBUG or True:
         (r'^%s(?P<path>.*)$' % settings.MEDIA_URL[1:],
         'django.views.static.serve',
         {'document_root': settings.MEDIA_ROOT, 'show_indexes': True} ),
+    )
+
+if "rosetta" in settings.INSTALLED_APPS:
+    urlpatterns += patterns( '',
+        ( r'rosetta/', include( 'rosetta.urls' ) )
     )

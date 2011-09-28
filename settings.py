@@ -134,6 +134,7 @@ MIDDLEWARE_CLASSES = (
     'django.middleware.common.CommonMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
+    'django.middleware.locale.LocaleMiddleware',
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
 )
@@ -157,7 +158,7 @@ TEMPLATE_DIRS = (
 
 MPLCONFIGDIR = "/tmp/.matplotlib"
 
-INSTALLED_APPS = (
+INSTALLED_APPS = [
     'django.contrib.auth',
     'django.contrib.contenttypes',
     'django.contrib.sessions',
@@ -183,5 +184,16 @@ INSTALLED_APPS = (
     'clustering',
     'ifconfig',
     'sysutils',
-    'django_extensions',
-)
+]
+
+def modprobe( name ):
+    """ Try to import the named module, and if that works add it to INSTALLED_APPS. """
+    try:
+        __import__( name )
+    except ImportError:
+        pass
+    else:
+        INSTALLED_APPS.append( name )
+
+modprobe('django_extensions')
+modprobe('rosetta')
