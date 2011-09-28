@@ -2,6 +2,7 @@
 # kate: space-indent on; indent-width 4; replace-tabs on;
 
 from django.conf.urls.defaults import *
+from django.views.generic.simple import direct_to_template
 
 from django.contrib import admin
 admin.autodiscover()
@@ -41,6 +42,12 @@ urlpatterns = patterns('',
     (r'^accounts/logout.js$',  'views.do_logout', {}, 'logout' ),
     (r'^accounts/login.js$',  'views.do_login', {}, 'login' ),
     (r'^index.html$', 'views.index', {}, 'index'),
+
+    (r'^js/(?P<app>\w+)/(?P<file>\w+)\.js$',
+        lambda request, app, file: direct_to_template(request, template="%s/%s.js" % (app, file), mimetype="text/javascript"),
+        {},
+        'javascript'
+    ),
 
     (r'^/?$', 'django.views.generic.simple.redirect_to', {'url': settings.PROJECT_URL + '/lvm/'}, '__main__' ),
 )
