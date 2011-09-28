@@ -17,27 +17,27 @@ Ext.oa.Lvm__Partitions_Panel = Ext.extend(Ext.grid.GridPanel, {
             width: 20,
             dataIndex: "number"
           }, {
-            header: "Size",
+            header: gettext("Size"),
             width: 100,
             dataIndex: "size"
           }, {
-            header: "Begin",
+            header: gettext("Begin"),
             width: 100,
             dataIndex: "begin"
           }, {
-            header: "End",
+            header: gettext("End"),
             width: 100,
             dataIndex: "end"
           }, {
-            header: "FS Type",
+            header: gettext("FS Type"),
             width: 100,
             dataIndex: "filesystem-type"
           }, {
-            header: "Label",
+            header: gettext("Label"),
             width: 100,
             dataIndex: "partition-name"
           }, {
-            header: "Flags",
+            header: gettext("Flags"),
             width: 100,
             dataIndex: "flags-set"
         }]
@@ -62,10 +62,10 @@ Ext.oa.Lvm__Partitions_Panel = Ext.extend(Ext.grid.GridPanel, {
 Ext.oa.Lvm__Disks_Panel = Ext.extend(Ext.Panel, {
   initComponent: function(){
     Ext.apply(this, Ext.apply(this.initialConfig, {
-      title: "Disk Management",
+      title: gettext("Disk Management"),
       layout: 'accordion',
       buttons: [ {
-        text: "Initialize",
+        text: gettext("Initialize"),
         handler: function(){ alert("add me to a VG"); }
       } ]
     }));
@@ -87,7 +87,7 @@ Ext.oa.Lvm__Disks_Panel = Ext.extend(Ext.Panel, {
 
   prepareMenuTree: function(tree){
     tree.root.attributes.children[1].children.push({
-      text: 'Disk Management',
+      text: gettext('Disk Management'),
       leaf: true,
       icon: MEDIA_URL + '/icons2/22x22/apps/database.png',
       panel: this,

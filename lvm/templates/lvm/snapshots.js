@@ -4,20 +4,20 @@ Ext.oa.Lvm__Snapshot_Panel = Ext.extend(Ext.grid.GridPanel, {
   initComponent: function(){
     var lvmSnapPanel = this;
     Ext.apply(this, Ext.apply(this.initialConfig, {
-      title: "Volume Snapshots",
+      title: gettext("Volume Snapshots"),
       buttons: [{
         text: "",
         icon: MEDIA_URL + "/icons2/16x16/actions/reload.png",
-        tooltip: 'Reload',
+        tooltip: gettext('Reload'),
         handler: function(self){
           lvmSnapPanel.store.reload();
         }
       }, {
-        text: "Add Snapshot",
+        text: gettext("Add Snapshot"),
         icon: MEDIA_URL + "/icons2/16x16/actions/add.png",
         handler: function(){
           var addwin = new Ext.Window({
-            title: "Add Snapshot",
+            title: gettext("Add Snapshot"),
             layout: "fit",
             height: 300,
             width: 500,
@@ -28,14 +28,14 @@ Ext.oa.Lvm__Snapshot_Panel = Ext.extend(Ext.grid.GridPanel, {
                 anchor: '-20px'
               },
               items: [{
-                  fieldLabel: "Name",
+                  fieldLabel: gettext("Name"),
                   name: "name",
                   allowBlank: false,
                   ref: 'namefield'
                 }, {
                   xtype:      'combo',
                   allowBlank: false,
-                  fieldLabel: 'Original Volume',
+                  fieldLabel: gettext('Original Volume'),
                   name:       'volume',
                   hiddenName: 'volume_id',
                   store: new Ext.data.DirectStore({
@@ -46,7 +46,7 @@ Ext.oa.Lvm__Snapshot_Panel = Ext.extend(Ext.grid.GridPanel, {
                   }),
                   typeAhead:     true,
                   triggerAction: 'all',
-                  emptyText:     'Select...',
+                  emptyText:     gettext('Select...'),
                   selectOnFocus: true,
                   displayField:  'name',
                   valueField:    'id',
@@ -58,7 +58,7 @@ Ext.oa.Lvm__Snapshot_Panel = Ext.extend(Ext.grid.GridPanel, {
                        ){
                         self.ownerCt.volume_free_megs = null;
                         self.ownerCt.volume_id = null;
-                        self.ownerCt.sizelabel.setText( "Querying data..." );
+                        self.ownerCt.sizelabel.setText( gettext("Querying data...") );
                         self.ownerCt.sizefield.disable();
                         lvm__VolumeGroup.get_free_megs( record.data.vg, function( provider, response ){
                         self.ownerCt.volume_id = record.data.vg;
@@ -79,18 +79,18 @@ Ext.oa.Lvm__Snapshot_Panel = Ext.extend(Ext.grid.GridPanel, {
                     }
                   }
                 }, {
-                  fieldLabel: "Size in MB",
+                  fieldLabel: gettext("Size in MB"),
                   allowBlank: false,
                   name: "megs",
                   ref: 'sizefield'
                 }, {
                   xtype: "label",
                   ref:   "sizelabel",
-                  text:  "Waiting for volume selection...",
+                  text:  gettext("Waiting for volume selection..."),
                   cls:   "form_hint_label"
               }],
               buttons: [{
-                text: 'Create Snapshot',
+                text: gettext('Create Snapshot'),
                 icon: MEDIA_URL + "/icons/accept.png",
                 handler: function(self){
                   if( !self.ownerCt.ownerCt.getForm().isValid() ){
@@ -98,11 +98,13 @@ Ext.oa.Lvm__Snapshot_Panel = Ext.extend(Ext.grid.GridPanel, {
                   }
                   var free = self.ownerCt.ownerCt.volume_free_megs;
                   if( free === null || typeof free == "undefined" ){
-                    Ext.Msg.alert("Error", "Please wait for the query for available space to complete.");
+                    Ext.Msg.alert(gettext("Error"),
+                      gettext("Please wait for the query for available space to complete."));
                     return;
                   }
                   if( free < self.ownerCt.ownerCt.sizefield.getValue() ){
-                    Ext.Msg.alert("Error", "Your volume exceeds the available capacity of "+free+" MB.");
+                    Ext.Msg.alert(gettext("Error"),
+                      interpolate(gettext("Your volume exceeds the available capacity of %s MB."), [free]));
                     return;
                   }
                   lvm__LogicalVolume.create({
@@ -121,7 +123,7 @@ Ext.oa.Lvm__Snapshot_Panel = Ext.extend(Ext.grid.GridPanel, {
                   });
                 }
               }, {
-                text: 'Cancel',
+                text: gettext('Cancel'),
                 icon: MEDIA_URL + "/icons2/16x16/actions/gtk-cancel.png",
                 handler: function(self){
                   addwin.hide();
@@ -132,16 +134,17 @@ Ext.oa.Lvm__Snapshot_Panel = Ext.extend(Ext.grid.GridPanel, {
           addwin.show();
         }
       }, {
-        text: "Delete Snapshot",
+        text: gettext("Delete Snapshot"),
         icon: MEDIA_URL + "/icons2/16x16/actions/remove.png",
         handler: function(self){
           var sm = lvmSnapPanel.getSelectionModel();
           if( sm.hasSelection() ){
             var sel = sm.selections.items[0];
             Ext.Msg.confirm(
-              'Confirm delete',
-              String.format( 'Really delete snapshot {0} and all its shares?<br />'+
-                '<b>There is no undo and you will lose all data.</b>', sel.data.name ),
+              gettext('Confirm delete'),
+              interpolate(
+                gettext('Really delete snapshot %s and all its shares?<br /><b>There is no undo and you will lose all data.</b>'),
+                [sel.data.name] ),
               function(btn, text){
                 if( btn == 'yes' ){
                   lvm__LogicalVolume.remove( sel.data.id, function(provider, response){
@@ -149,7 +152,7 @@ Ext.oa.Lvm__Snapshot_Panel = Ext.extend(Ext.grid.GridPanel, {
                   } );
                 }
                 else
-                  alert("Aborted.");
+                  alert(gettext("Aborted."));
               }
             );
           }
@@ -188,11 +191,11 @@ Ext.oa.Lvm__Snapshot_Panel = Ext.extend(Ext.grid.GridPanel, {
           sortable: true
         },
         columns: [{
-          header: "LV",
+          header: gettext("LV"),
           width: 200,
           dataIndex: "name"
         }, {
-          header: "Size",
+          header: gettext("Size"),
           width: 150,
           dataIndex: "megs",
           align: 'right',
@@ -202,7 +205,7 @@ Ext.oa.Lvm__Snapshot_Panel = Ext.extend(Ext.grid.GridPanel, {
             return String.format("{0} MB", val);
           }
         }, {
-          header: "Original Volume",
+          header: gettext("Original Volume"),
           width: 200,
           dataIndex: "origvolname"
         }]
@@ -213,7 +216,7 @@ Ext.oa.Lvm__Snapshot_Panel = Ext.extend(Ext.grid.GridPanel, {
 
   prepareMenuTree: function(tree){
     tree.root.attributes.children[1].children.push({
-      text: 'Snapshots',
+      text: gettext('Snapshots'),
       leaf: true,
       icon: MEDIA_URL + '/icons2/22x22/apps/snapshot.png',
       panel: this,
