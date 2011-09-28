@@ -3,12 +3,17 @@ Ext.namespace("Ext.oa");
 Ext.oa.Auth__User_Panel = Ext.extend(Ext.grid.GridPanel, {
   initComponent: function(){
     var authUserGrid = this;
+    var renderBoolean = function( val, x, store ){
+      if( val )
+        return '<img src="' + MEDIA_URL + '/oxygen/16x16/actions/dialog-ok-apply.png" title="yes" />';
+      return '<img src="' + MEDIA_URL + '/oxygen/16x16/actions/dialog-cancel.png" title="no" />';
+    };
     Ext.apply(this, Ext.apply(this.initialConfig, {
       title: "Users",
       viewConfig: { forceFit: true },
       buttons: [{
         text: "Add User",
-        icon: "/filer/static/icons2/16x16/actions/add.png",
+        icon: MEDIA_URL + "/icons2/16x16/actions/add.png",
         handler: function(){
           var addwin = new Ext.Window({
             title: "Add User",
@@ -60,7 +65,7 @@ Ext.oa.Auth__User_Panel = Ext.extend(Ext.grid.GridPanel, {
               }],
               buttons: [{
                 text: 'Create User',
-                icon: "/filer/static/icons/accept.png",
+                icon: MEDIA_URL + "/icons/accept.png",
                 handler: function(self){
                   auth__User.create({
                     'username':    self.ownerCt.ownerCt.usernamefield.getValue(),
@@ -80,7 +85,7 @@ Ext.oa.Auth__User_Panel = Ext.extend(Ext.grid.GridPanel, {
                 }
               }, {
                 text: 'Cancel',
-                icon: "/filer/static/icons2/16x16/actions/gtk-cancel.png",
+                icon: MEDIA_URL + "/icons2/16x16/actions/gtk-cancel.png",
                 handler: function(self){
                   addwin.hide();
                 }
@@ -91,7 +96,7 @@ Ext.oa.Auth__User_Panel = Ext.extend(Ext.grid.GridPanel, {
         }
       }, {
         text: "Delete User",
-        icon: "/filer/static/icons2/16x16/actions/remove.png",
+        icon: MEDIA_URL + "/icons2/16x16/actions/remove.png",
         handler: function(self){
           var sm = authUserGrid.getSelectionModel();
           if( sm.hasSelection() ){
@@ -131,29 +136,17 @@ Ext.oa.Auth__User_Panel = Ext.extend(Ext.grid.GridPanel, {
           header: "Active",
           width: 50,
           dataIndex: "is_active",
-          renderer: function( val, x, store ){
-            if( val )
-              return '<img src="/filer/static/oxygen/16x16/actions/dialog-ok-apply.png" title="yes" />';
-            return '<img src="/filer/static/oxygen/16x16/actions/dialog-cancel.png" title="no" />';
-          }
+          renderer: renderBoolean
         }, {
           header: "Staff",
           width: 50,
           dataIndex: "is_staff",
-          renderer: function( val, x, store ){
-            if( val )
-              return '<img src="/filer/static/oxygen/16x16/actions/dialog-ok-apply.png" title="yes" />';
-            return '<img src="/filer/static/oxygen/16x16/actions/dialog-cancel.png" title="no" />';
-          }
+          renderer: renderBoolean
         }, {
           header: "SU",
           width: 50,
           dataIndex: "is_superuser",
-          renderer: function( val, x, store ){
-            if( val )
-              return '<img src="/filer/static/oxygen/16x16/actions/dialog-ok-apply.png" title="yes" />';
-            return '<img src="/filer/static/oxygen/16x16/actions/dialog-cancel.png" title="no" />';
-          }
+          renderer: renderBoolean
         }, {
           header: "Last Login",
           width: 200,
@@ -167,7 +160,7 @@ Ext.oa.Auth__User_Panel = Ext.extend(Ext.grid.GridPanel, {
   prepareMenuTree: function(tree){
     tree.root.attributes.children[5].children.push({
       text: 'User Management',
-      icon: '/filer/static/icons2/22x22/apps/config-users.png',
+      icon: MEDIA_URL + '/icons2/22x22/apps/config-users.png',
       leaf: true,
       panel: this,
       href: '#'

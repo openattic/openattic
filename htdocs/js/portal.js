@@ -235,7 +235,7 @@ Ext.oa.Portal = Ext.extend(Ext.ux.Portal, {
     tree.root.attributes.children[0].children.push({
       text: 'Dashboard',
       leaf: true,
-      icon: '/filer/static/icons2/22x22/apps/gnome-session.png',
+      icon: MEDIA_URL + '/icons2/22x22/apps/gnome-session.png',
       panel: this,
       href: '#'
     });

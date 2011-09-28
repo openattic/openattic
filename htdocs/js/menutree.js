@@ -15,22 +15,22 @@ Ext.oa.MenuTree = Ext.extend(Ext.tree.TreePanel, {
         id: 'menu_status',
         text: 'Status',
         expanded: Ext.state.Manager.get("expand_root_nodes", false),
-        icon: '/filer/static/icons2/22x22/emblems/emblem-web.png',
+        icon: MEDIA_URL + '/icons2/22x22/emblems/emblem-web.png',
         children: []
       }, {
         id: 'menu_storage',
         text: 'Storage',
         expanded: Ext.state.Manager.get("expand_root_nodes", false),
-        icon: '/filer/static/icons2/22x22/devices/gnome-dev-harddisk.png',
+        icon: MEDIA_URL + '/icons2/22x22/devices/gnome-dev-harddisk.png',
         children: []
       }, {
         id: 'menu_shares',
         text: 'Shares',
         expanded: Ext.state.Manager.get("expand_root_nodes", false),
-        icon: '/filer/static/icons2/22x22/places/gnome-fs-share.png',
+        icon: MEDIA_URL + '/icons2/22x22/places/gnome-fs-share.png',
         children: [ {
             text: 'SAN (FibreChannel)',
-            icon: '/filer/static/icons2/22x22/apps/fibre_channel.png',
+            icon: MEDIA_URL + '/icons2/22x22/apps/fibre_channel.png',
             leaf: true
           }, {
             text: 'Mac OS-X (AFP)',
@@ -40,7 +40,7 @@ Ext.oa.MenuTree = Ext.extend(Ext.tree.TreePanel, {
         id: 'menu_applications',
         text: 'Applications',
         expanded: Ext.state.Manager.get("expand_root_nodes", false),
-        icon: '/filer/static/icons2/22x22/mimetypes/application-certificate.png',
+        icon: MEDIA_URL + '/icons2/22x22/mimetypes/application-certificate.png',
         children: [
           {text: 'DDNS',       leaf: true}
           ]
@@ -48,11 +48,11 @@ Ext.oa.MenuTree = Ext.extend(Ext.tree.TreePanel, {
         id: 'menu_services',
         text: 'Services',
         expanded: Ext.state.Manager.get("expand_root_nodes", false),
-        icon: '/filer/static/icons2/22x22/mimetypes/gnome-mime-application-x-killustrator.png',
+        icon: MEDIA_URL + '/icons2/22x22/mimetypes/gnome-mime-application-x-killustrator.png',
         children: [ {
             text: 'rSync',
             leaf: true,
-            icon: '/filer/static/icons2/22x22/apps/sync.png'
+            icon: MEDIA_URL + '/icons2/22x22/apps/sync.png'
           },
           {text: 'Snapmanager', leaf: true},
           {text: 'VTL',         leaf: true},
@@ -63,21 +63,21 @@ Ext.oa.MenuTree = Ext.extend(Ext.tree.TreePanel, {
         id: 'menu_system',
         text: 'System',
         expanded: Ext.state.Manager.get("expand_root_nodes", false),
-        icon: '/filer/static/icons2/22x22/mimetypes/application-x-executable.png',
+        icon: MEDIA_URL + '/icons2/22x22/mimetypes/application-x-executable.png',
         children: [ 
           {
             text: 'Network',
-            icon: '/filer/static/icons2/22x22/places/gnome-fs-network.png',
+            icon: MEDIA_URL + '/icons2/22x22/places/gnome-fs-network.png',
             children: [ {
                 text: 'General',
                 leaf: true,
-                icon: '/filer/static/icons2/22x22/apps/network.png'
+                icon: MEDIA_URL + '/icons2/22x22/apps/network.png'
               }, {
                 text: 'Proxy',            leaf: true,
-                icon: '/filer/static/icons2/22x22/apps/preferences-system-network-proxy.png'
+                icon: MEDIA_URL + '/icons2/22x22/apps/preferences-system-network-proxy.png'
               }, {
                 text: 'Domain',
-                icon: '/filer/static/icons2/128x128/apps/domain.png',
+                icon: MEDIA_URL + '/icons2/128x128/apps/domain.png',
                 children: [
                   {text: 'Active Directory',  leaf: true},
                   {text: 'LDAP',   leaf: true}
@@ -86,17 +86,17 @@ Ext.oa.MenuTree = Ext.extend(Ext.tree.TreePanel, {
           }, {
             text: 'Date/Time',
             leaf: true,
-            icon: '/filer/static/icons2/22x22/apps/date_time.png'
+            icon: MEDIA_URL + '/icons2/22x22/apps/date_time.png'
           }, {
             text: 'E-Mail',           leaf: true,
-            icon: '/filer/static/icons2/22x22/apps/email.png'
+            icon: MEDIA_URL + '/icons2/22x22/apps/email.png'
           },
           {text: 'openITCockpit',    leaf: true},
           {text: 'openQRM',          leaf: true},
           {
             text: 'Online Update',
             leaf: true,
-            icon: '/filer/static/icons2/22x22/apps/update.png'
+            icon: MEDIA_URL + '/icons2/22x22/apps/update.png'
           }
         ]
       }

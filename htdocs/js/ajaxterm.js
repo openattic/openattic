@@ -41,7 +41,7 @@ Ext.oa.WebSSHPanel = Ext.extend(Ext.Panel, {
       text: 'SSH/Telnet',
       leaf: true,
       panel: this,
-      icon: '/filer/static/icons2/22x22/apps/gnome-terminal.png',
+      icon: MEDIA_URL + '/icons2/22x22/apps/gnome-terminal.png',
       href: '#',
       layout: 'absolute'
      });
