@@ -10,14 +10,14 @@ Ext.oa.Lvm__LogicalVolume_Panel = Ext.extend(Ext.Panel, {
       layout: 'border',
       buttons: [{
           text: "",
-          icon: "/filer/static/icons2/16x16/actions/reload.png",
+          icon: MEDIA_URL + "/icons2/16x16/actions/reload.png",
           tooltip: gettext('Reload'),
           handler: function(self){
             lvmPanel.items.items[0].store.reload();
           }
         }, {
           text: gettext("Set warning threshold"),
-          icon: "/filer/static/icons2/16x16/status/dialog-warning.png",
+          icon: MEDIA_URL + "/icons2/16x16/status/dialog-warning.png",
           handler: function(self){
             Ext.Msg.prompt(
               gettext('Enter threshold'),
@@ -32,7 +32,7 @@ Ext.oa.Lvm__LogicalVolume_Panel = Ext.extend(Ext.Panel, {
           }
         }, {
           text: gettext("Mount"),
-          icon: "/filer/static/oxygen/16x16/emblems/emblem-mounted.png",
+          icon: MEDIA_URL + "/oxygen/16x16/emblems/emblem-mounted.png",
           handler: function(self){
             var lvmGrid = lvmPanel.items.items[0];
             var sm = lvmGrid.getSelectionModel();
@@ -70,7 +70,7 @@ Ext.oa.Lvm__LogicalVolume_Panel = Ext.extend(Ext.Panel, {
           }
         }, {
           text: gettext("Unmount"),
-          icon: "/filer/static/oxygen/16x16/emblems/emblem-unmounted.png",
+          icon: MEDIA_URL + "/oxygen/16x16/emblems/emblem-unmounted.png",
           handler: function(self){
             var lvmGrid = lvmPanel.items.items[0];
             var sm = lvmGrid.getSelectionModel();
@@ -95,7 +95,7 @@ Ext.oa.Lvm__LogicalVolume_Panel = Ext.extend(Ext.Panel, {
           }
         }, {
           text: gettext("Add Volume"),
-          icon: "/filer/static/icons2/16x16/actions/add.png",
+          icon: MEDIA_URL + "/icons2/16x16/actions/add.png",
           handler: function(){
             var addwin = new Ext.Window({
               title: gettext("Add Volume"),
@@ -191,7 +191,7 @@ Ext.oa.Lvm__LogicalVolume_Panel = Ext.extend(Ext.Panel, {
                 }],
                 buttons: [{
                   text: gettext('Create Volume'),
-                  icon: "/filer/static/icons/accept.png",
+                  icon: MEDIA_URL + "/icons/accept.png",
                   handler: function(self){
                     if( !self.ownerCt.ownerCt.getForm().isValid() ){
                       return;
@@ -240,7 +240,7 @@ Ext.oa.Lvm__LogicalVolume_Panel = Ext.extend(Ext.Panel, {
                   }
                 }, {
                   text: gettext('Cancel'),
-                  icon: "/filer/static/icons2/16x16/actions/gtk-cancel.png",
+                  icon: MEDIA_URL + "/icons2/16x16/actions/gtk-cancel.png",
                   handler: function(self){
                     addwin.hide();
                   }
@@ -251,10 +251,10 @@ Ext.oa.Lvm__LogicalVolume_Panel = Ext.extend(Ext.Panel, {
           }
         }, {
           text: gettext("Resize Volume"),
-          icon: "/filer/static/icons2/16x16/actions/gtk-execute.png"
+          icon: MEDIA_URL + "/icons2/16x16/actions/gtk-execute.png"
         }, {
           text: gettext("Delete Volume"),
-          icon: "/filer/static/icons2/16x16/actions/remove.png",
+          icon: MEDIA_URL + "/icons2/16x16/actions/remove.png",
           handler: function(self){
             var lvmGrid = lvmPanel.items.items[0];
             var sm = lvmGrid.getSelectionModel();
@@ -443,7 +443,7 @@ Ext.oa.Lvm__LogicalVolume_Panel = Ext.extend(Ext.Panel, {
     tree.root.attributes.children[1].children.push({
       text: gettext('Volume Management'),
       leaf: true,
-      icon: '/filer/static/icons2/22x22/apps/volume.png',
+      icon: MEDIA_URL + '/icons2/22x22/apps/volume.png',
       panel: this,
       href: '#'
     });

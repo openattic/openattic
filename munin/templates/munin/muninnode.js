@@ -75,7 +75,7 @@ Ext.oa.Munin__MuninNode_Panel = Ext.extend(Ext.Panel, {
     tree.root.attributes.children[0].children.push({
       text: 'Performance',
       leaf: true,
-      icon: '/filer/static/icons2/22x22/apps/samba.png',
+      icon: MEDIA_URL + '/icons2/22x22/apps/samba.png',
       panel: this,
       href: '#'
     });

@@ -46,11 +46,11 @@ Ext.oa.SysUtils_Panel = Ext.extend(Ext.grid.GridPanel, {
           dataIndex: "status",
           renderer: function( val, x, store ){
             if( val === 0 )
-              return '<img src="/filer/static/oxygen/16x16/status/security-high.png" title="running" />';
+              return '<img src="{{ MEDIA_URL }}/oxygen/16x16/status/security-high.png" title="running" />';
             else if( val === 3 )
-              return '<img src="/filer/static/oxygen/16x16/status/security-low.png" title="stopped" />';
+              return '<img src="{{ MEDIA_URL }}/oxygen/16x16/status/security-low.png" title="stopped" />';
             else
-              return '<img src="/filer/static/oxygen/16x16/status/security-medium.png" title="failure" />';
+              return '<img src="{{ MEDIA_URL }}/oxygen/16x16/status/security-medium.png" title="failure" />';
           }
         }]
       })
@@ -62,14 +62,14 @@ Ext.oa.SysUtils_Panel = Ext.extend(Ext.grid.GridPanel, {
     tree.root.attributes.children[0].children.push({
       text: 'Service State',
       leaf: true,
-      icon: '/filer/static/icons2/22x22/status/network-receive.png',
+      icon: '{{ MEDIA_URL }}/icons2/22x22/status/network-receive.png',
       panel: this,
       href: '#'
     });
     tree.root.attributes.children[5].children.push({
       text: 'Reboot',
       leaf: true,
-      icon: '/filer/static/oxygen/22x22/actions/system-reboot.png',
+      icon: '{{ MEDIA_URL }}/oxygen/22x22/actions/system-reboot.png',
       listeners: {
         click: function(self, ev){
           Ext.oa.DangerousMessage.confirm(
@@ -89,7 +89,7 @@ Ext.oa.SysUtils_Panel = Ext.extend(Ext.grid.GridPanel, {
     tree.root.attributes.children[5].children.push({
       text: 'Shutdown',
       leaf: true,
-      icon: '/filer/static/oxygen/22x22/actions/system-shutdown.png',
+      icon: '{{ MEDIA_URL }}/oxygen/22x22/actions/system-shutdown.png',
       listeners: {
         click: function(self, ev){
           Ext.oa.DangerousMessage.confirm(

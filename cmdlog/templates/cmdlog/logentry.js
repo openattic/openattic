@@ -92,7 +92,7 @@ Ext.oa.Cmdlog__LogEntry_Panel = Ext.extend(Ext.Panel, {
     tree.root.attributes.children[0].children.push({
       text: 'Command Log',
       leaf: true,
-      icon: '/filer/static/icons2/22x22/actions/bookmark-new.png',
+      icon: MEDIA_URL + '/icons2/22x22/actions/bookmark-new.png',
       panel: this,
       href: '#'
     });

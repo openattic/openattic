@@ -7,14 +7,14 @@ Ext.oa.Lvm__Snapshot_Panel = Ext.extend(Ext.grid.GridPanel, {
       title: "Volume Snapshots",
       buttons: [{
         text: "",
-        icon: "/filer/static/icons2/16x16/actions/reload.png",
+        icon: MEDIA_URL + "/icons2/16x16/actions/reload.png",
         tooltip: 'Reload',
         handler: function(self){
           lvmSnapPanel.store.reload();
         }
       }, {
         text: "Add Snapshot",
-        icon: "/filer/static/icons2/16x16/actions/add.png",
+        icon: MEDIA_URL + "/icons2/16x16/actions/add.png",
         handler: function(){
           var addwin = new Ext.Window({
             title: "Add Snapshot",
@@ -91,7 +91,7 @@ Ext.oa.Lvm__Snapshot_Panel = Ext.extend(Ext.grid.GridPanel, {
               }],
               buttons: [{
                 text: 'Create Snapshot',
-                icon: "/filer/static/icons/accept.png",
+                icon: MEDIA_URL + "/icons/accept.png",
                 handler: function(self){
                   if( !self.ownerCt.ownerCt.getForm().isValid() ){
                     return;
@@ -122,7 +122,7 @@ Ext.oa.Lvm__Snapshot_Panel = Ext.extend(Ext.grid.GridPanel, {
                 }
               }, {
                 text: 'Cancel',
-                icon: "/filer/static/icons2/16x16/actions/gtk-cancel.png",
+                icon: MEDIA_URL + "/icons2/16x16/actions/gtk-cancel.png",
                 handler: function(self){
                   addwin.hide();
                 }
@@ -133,7 +133,7 @@ Ext.oa.Lvm__Snapshot_Panel = Ext.extend(Ext.grid.GridPanel, {
         }
       }, {
         text: "Delete Snapshot",
-        icon: "/filer/static/icons2/16x16/actions/remove.png",
+        icon: MEDIA_URL + "/icons2/16x16/actions/remove.png",
         handler: function(self){
           var sm = lvmSnapPanel.getSelectionModel();
           if( sm.hasSelection() ){
@@ -215,7 +215,7 @@ Ext.oa.Lvm__Snapshot_Panel = Ext.extend(Ext.grid.GridPanel, {
     tree.root.attributes.children[1].children.push({
       text: 'Snapshots',
       leaf: true,
-      icon: '/filer/static/icons2/22x22/apps/snapshot.png',
+      icon: MEDIA_URL + '/icons2/22x22/apps/snapshot.png',
       panel: this,
       href: '#'
     });

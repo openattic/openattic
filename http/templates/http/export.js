@@ -7,7 +7,7 @@ Ext.oa.Http__Export_Panel = Ext.extend(Ext.grid.GridPanel, {
       title: "http",
       buttons: [{
         text: "Add Export",
-        icon: "/filer/static/icons2/16x16/actions/add.png",
+        icon: MEDIA_URL + "/icons2/16x16/actions/add.png",
         handler: function(){
           var addwin = new Ext.Window({
             title: "Add Export",
@@ -60,7 +60,7 @@ Ext.oa.Http__Export_Panel = Ext.extend(Ext.grid.GridPanel, {
               }],
               buttons: [{
                 text: 'Create Export',
-                icon: "/filer/static/icons/accept.png",
+                icon: MEDIA_URL + "/icons/accept.png",
                 handler: function(self){
                   http__Export.create({
                     'volume': {
@@ -78,7 +78,7 @@ Ext.oa.Http__Export_Panel = Ext.extend(Ext.grid.GridPanel, {
                 }
               }, {
                 text: 'Cancel',
-                icon: "/filer/static/icons2/16x16/actions/gtk-cancel.png",
+                icon: MEDIA_URL + "/icons2/16x16/actions/gtk-cancel.png",
                 handler: function(self){
                   addwin.hide();
                 }
@@ -89,7 +89,7 @@ Ext.oa.Http__Export_Panel = Ext.extend(Ext.grid.GridPanel, {
         }
       }, {
         text: "Delete Export",
-        icon: "/filer/static/icons2/16x16/actions/remove.png",
+        icon: MEDIA_URL + "/icons2/16x16/actions/remove.png",
         handler: function(self){
           var sm = httpGrid.getSelectionModel();
           if( sm.hasSelection() ){
@@ -126,7 +126,7 @@ Ext.oa.Http__Export_Panel = Ext.extend(Ext.grid.GridPanel, {
           renderer: function(val, x, store){
             return String.format(
               '<a href="/volumes/{0}" target="_blank" title="Browse">' +
-                '<img alt="Browser" src="/filer/static/icons/application_double.png">' +
+                '<img alt="Browser" src="{{ MEDIA_URL }}/icons/application_double.png">' +
               '</a>',
               val );
           }
@@ -141,7 +141,7 @@ Ext.oa.Http__Export_Panel = Ext.extend(Ext.grid.GridPanel, {
       text: 'Web (HTTP)',
       leaf: true,
       panel: this,
-      icon: '/filer/static/icons2/22x22/mimetypes/www.png',
+      icon: MEDIA_URL + '/icons2/22x22/mimetypes/www.png',
       href: '#'
     });
   }

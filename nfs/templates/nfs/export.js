@@ -7,7 +7,7 @@ Ext.oa.Nfs__Export_Panel = Ext.extend(Ext.grid.GridPanel, {
       title: "NFS",
       buttons: [{
         text: "Add Export",
-        icon: "/filer/static/icons2/16x16/actions/add.png",
+        icon: MEDIA_URL + "/icons2/16x16/actions/add.png",
         handler: function(){
           var addwin = new Ext.Window({
             title: "Add Export",
@@ -68,7 +68,7 @@ Ext.oa.Nfs__Export_Panel = Ext.extend(Ext.grid.GridPanel, {
               }],
               buttons: [{
                 text: 'Create Export',
-                icon: "/filer/static/icons/accept.png",
+                icon: MEDIA_URL + "/icons/accept.png",
                 handler: function(self){
                   nfs__Export.create({
                     'volume': {
@@ -88,7 +88,7 @@ Ext.oa.Nfs__Export_Panel = Ext.extend(Ext.grid.GridPanel, {
                 }
               }, {
                 text: 'Cancel',
-                icon: "/filer/static/icons2/16x16/actions/gtk-cancel.png",
+                icon: MEDIA_URL + "/icons2/16x16/actions/gtk-cancel.png",
                 handler: function(self){
                   addwin.hide();
                 }
@@ -99,7 +99,7 @@ Ext.oa.Nfs__Export_Panel = Ext.extend(Ext.grid.GridPanel, {
         }
       }, {
         text: "Delete Export",
-        icon: "/filer/static/icons2/16x16/actions/remove.png",
+        icon: MEDIA_URL + "/icons2/16x16/actions/remove.png",
         handler: function(self){
           var sm = nfsGrid.getSelectionModel();
           if( sm.hasSelection() ){
@@ -145,7 +145,7 @@ Ext.oa.Nfs__Export_Panel = Ext.extend(Ext.grid.GridPanel, {
     tree.root.attributes.children[2].children.push({
       text: 'Linux (NFS)',
       leaf: true,
-      icon: '/filer/static/icons2/22x22/apps/nfs.png',
+      icon: MEDIA_URL + '/icons2/22x22/apps/nfs.png',
       panel: this,
       href: '#'
     });

@@ -7,7 +7,7 @@ Ext.oa.Iscsi__Initiator_Panel = Ext.extend(Ext.grid.GridPanel, {
       title: "iSCSI Initiators",
       buttons: [{
         text: "Add Initiator",
-        icon: "/filer/static/icons2/16x16/actions/add.png",
+        icon: MEDIA_URL + "/icons2/16x16/actions/add.png",
         handler: function(){
           var addwin = new Ext.Window({
             title: "Add Initiator",
@@ -31,7 +31,7 @@ Ext.oa.Iscsi__Initiator_Panel = Ext.extend(Ext.grid.GridPanel, {
               }],
               buttons: [{
                 text: 'Create Initiator',
-                icon: "/filer/static/icons/accept.png",
+                icon: MEDIA_URL + "/icons/accept.png",
                 handler: function(self){
                   iscsi__Initiator.create({
                     'name':    self.ownerCt.ownerCt.namefield.getValue(),
@@ -45,7 +45,7 @@ Ext.oa.Iscsi__Initiator_Panel = Ext.extend(Ext.grid.GridPanel, {
                 }
               }, {
                 text: 'Cancel',
-                icon: "/filer/static/icons2/16x16/actions/gtk-cancel.png",
+                icon: MEDIA_URL + "/icons2/16x16/actions/gtk-cancel.png",
                 handler: function(self){
                   addwin.hide();
                 }
@@ -56,7 +56,7 @@ Ext.oa.Iscsi__Initiator_Panel = Ext.extend(Ext.grid.GridPanel, {
         }
       }, {
         text: "Delete Initiator",
-        icon: "/filer/static/icons2/16x16/actions/remove.png",
+        icon: MEDIA_URL + "/icons2/16x16/actions/remove.png",
         handler: function(self){
           var sm = iscsiInitGrid.getSelectionModel();
           if( sm.hasSelection() ){
@@ -99,7 +99,7 @@ Ext.oa.Iscsi__Initiator_Panel = Ext.extend(Ext.grid.GridPanel, {
       children: [{
         text: 'Initiators',
         leaf: true,
-        icon: '/filer/static/icons2/22x22/apps/nfs.png',
+        icon: MEDIA_URL + '/icons2/22x22/apps/nfs.png',
         panel: this,
         href: '#'
       }]

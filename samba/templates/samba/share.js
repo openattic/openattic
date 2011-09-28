@@ -35,7 +35,7 @@ Ext.oa.Samba__Share_Panel = Ext.extend(Ext.grid.GridPanel, {
     tree.root.attributes.children[2].children.push({
       text: 'Windows (Samba)',
       leaf: true,
-      icon: '/filer/static/icons2/22x22/apps/samba.png',
+      icon: MEDIA_URL + '/icons2/22x22/apps/samba.png',
       panel: this,
       href: '#'
     });

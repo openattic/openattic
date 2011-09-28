@@ -89,7 +89,7 @@ Ext.oa.Lvm__Disks_Panel = Ext.extend(Ext.Panel, {
     tree.root.attributes.children[1].children.push({
       text: 'Disk Management',
       leaf: true,
-      icon: '/filer/static/icons2/22x22/apps/database.png',
+      icon: MEDIA_URL + '/icons2/22x22/apps/database.png',
       panel: this,
       href: '#'
     });

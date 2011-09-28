@@ -9,7 +9,7 @@ Ext.oa.Lvm__Mounts_Panel = Ext.extend(Ext.grid.GridPanel, {
       viewConfig: { forceFit: true },
       buttons: [{
         text: "",
-        icon: "/filer/static/icons2/16x16/actions/reload.png",
+        icon: MEDIA_URL + "/icons2/16x16/actions/reload.png",
         tooltip: 'Reload',
         handler: function(self){
           mountGrid.store.reload();
@@ -53,7 +53,7 @@ Ext.oa.Lvm__Mounts_Panel = Ext.extend(Ext.grid.GridPanel, {
     tree.root.attributes.children[0].children.push({
       text: 'Mount Points',
       leaf: true,
-      icon: '/filer/static/icons2/22x22/devices/hdd_unmount.png',
+      icon: MEDIA_URL + '/icons2/22x22/devices/hdd_unmount.png',
       panel: this,
       href: '#'
     });

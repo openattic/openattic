@@ -7,7 +7,7 @@ Ext.oa.Ftp__User_Panel = Ext.extend(Ext.grid.GridPanel, {
       title: "ftp",
       buttons: [{
         text: "Add User",
-        icon: "/filer/static/icons2/16x16/actions/add.png",
+        icon: MEDIA_URL + "/icons2/16x16/actions/add.png",
         handler: function(){
           var addwin = new Ext.Window({
             title: "Add FTP User",
@@ -69,7 +69,7 @@ Ext.oa.Ftp__User_Panel = Ext.extend(Ext.grid.GridPanel, {
               }],
               buttons: [{
                 text: 'Create User',
-                icon: "/filer/static/icons/accept.png",
+                icon: MEDIA_URL + "/icons/accept.png",
                 handler: function(self){
                   ftp__User.create({
                     'username': self.ownerCt.ownerCt.namefield.getValue(),
@@ -89,7 +89,7 @@ Ext.oa.Ftp__User_Panel = Ext.extend(Ext.grid.GridPanel, {
                 }
               }, {
                 text: 'Cancel',
-                icon: "/filer/static/icons2/16x16/actions/gtk-cancel.png",
+                icon: MEDIA_URL + "/icons2/16x16/actions/gtk-cancel.png",
                 handler: function(self){
                   addwin.hide();
                 }
@@ -100,7 +100,7 @@ Ext.oa.Ftp__User_Panel = Ext.extend(Ext.grid.GridPanel, {
         }
       }, {
         text: "Delete User",
-        icon: "/filer/static/icons2/16x16/actions/remove.png",
+        icon: MEDIA_URL + "/icons2/16x16/actions/remove.png",
         handler: function(self){
           var sm = ftpGrid.getSelectionModel();
           if( sm.hasSelection() ){
@@ -145,7 +145,7 @@ Ext.oa.Ftp__User_Panel = Ext.extend(Ext.grid.GridPanel, {
       text: 'Web (FTP)',
       leaf: true,
       panel: this,
-      icon: '/filer/static/icons2/22x22/mimetypes/www.png',
+      icon: MEDIA_URL + '/icons2/22x22/mimetypes/www.png',
       href: '#'
     });
   }
