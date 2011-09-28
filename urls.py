@@ -19,25 +19,10 @@ urlpatterns = patterns('',
     (r'^accounts/logout/$', 'django.contrib.auth.views.logout', {'next_page': settings.PROJECT_URL+"/"}),
 
     (r'^direct/', include(PROVIDER.urls)),
-
-    (r'^api/',   include("api.urls")),
-    (r'^log/',   include("cmdlog.urls")),
     (r'^userprefs/',   include("userprefs.urls")),
 
     (r'^lvm/',   include("lvm.urls")),
-    (r'^nfs/',   include("nfs.urls")),
-    (r'^http/',  include("http.urls")),
-    (r'^iscsi/', include("iscsi.urls")),
-    (r'^samba/', include("samba.urls")),
-    (r'^drbd/',  include("drbd.urls")),
-
-
     (r'^stats/', include("hoststats.urls")),
-
-    (r'^dummy/status/$', 'django.views.generic.simple.direct_to_template', {'template': 'dummy_status.html'}, 'dummy_status'),
-    (r'^dummy/performance/$', 'django.views.generic.simple.direct_to_template', {'template': 'dummy_performance.html'}, 'dummy_performance'),
-    (r'^dummy/system/$', 'django.views.generic.simple.direct_to_template', {'template': 'dummy_system.html'}, 'dummy_system'),
-    (r'^dummy/services/$', 'django.views.generic.simple.direct_to_template', {'template': 'dummy_services.html'}, 'dummy_services'),
 
     (r'^accounts/logout.js$',  'views.do_logout', {}, 'logout' ),
     (r'^accounts/login.js$',  'views.do_login', {}, 'login' ),
@@ -49,7 +34,7 @@ urlpatterns = patterns('',
         'javascript'
     ),
 
-    (r'^/?$', 'django.views.generic.simple.redirect_to', {'url': settings.PROJECT_URL + '/lvm/'}, '__main__' ),
+    (r'^/?$', 'views.index', {}, '__main__' ),
 )
 
 

@@ -9,6 +9,4 @@ from lvm import models
 urlpatterns = patterns('',
     ( r'mem.png',        'hoststats.views.memstats' ),
     ( r'cpu.png',        'hoststats.views.cpustats' ),
-
-    ( r'/?$',            'hoststats.views.dashboard', None, 'stats_dashboard' ),
     )
