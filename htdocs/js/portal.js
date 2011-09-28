@@ -243,4 +243,6 @@ Ext.oa.Portal = Ext.extend(Ext.ux.Portal, {
 });
 
 
+window.MainViewModules.push( new Ext.oa.Portal() );
+
 // kate: space-indent on; indent-width 2; replace-tabs on;

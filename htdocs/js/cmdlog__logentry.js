@@ -99,5 +99,6 @@ Ext.oa.Cmdlog__LogEntry_Panel = Ext.extend(Ext.Panel, {
   }
 });
 
+window.MainViewModules.push( new Ext.oa.Cmdlog__LogEntry_Panel() );
 
 // kate: space-indent on; indent-width 2; replace-tabs on;

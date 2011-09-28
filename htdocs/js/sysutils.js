@@ -109,4 +109,7 @@ Ext.oa.SysUtils_Panel = Ext.extend(Ext.grid.GridPanel, {
   }
 });
 
+
+window.MainViewModules.push( new Ext.oa.SysUtils_Panel() );
+
 // kate: space-indent on; indent-width 2; replace-tabs on;

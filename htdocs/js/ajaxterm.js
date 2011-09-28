@@ -14,19 +14,19 @@ Ext.oa.WebSSHIframe = Ext.extend(Ext.BoxComponent, {
     });
   }
 });
-      
+
 Ext.oa.WebSSHPanel = Ext.extend(Ext.Panel, {
   initComponent: function(){
     var currentChartId = null;
     var nfsGrid = this;
-    
+
     Ext.apply(this, Ext.apply(this.initialConfig, {
       layout: 'vbox',
       layoutConfig: {
         align: 'center',
         defaultMargins: {top:25, right:0, bottom:0, left:0}
       },
-       
+
       items: [{
         title: 'SSH',
         items: new Ext.oa.WebSSHIframe()
@@ -34,7 +34,7 @@ Ext.oa.WebSSHPanel = Ext.extend(Ext.Panel, {
     }));
     Ext.oa.WebSSHPanel.superclass.initComponent.apply(this, arguments);
   },
-    
+
 
   prepareMenuTree: function(tree){
     tree.root.attributes.children[3].children.push({
@@ -47,3 +47,8 @@ Ext.oa.WebSSHPanel = Ext.extend(Ext.Panel, {
      });
   }
 });
+
+window.MainViewModules.push( new Ext.oa.WebSSHPanel() );
+
+// kate: space-indent on; indent-width 2; replace-tabs on;
+

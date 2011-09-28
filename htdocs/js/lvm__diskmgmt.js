@@ -97,4 +97,6 @@ Ext.oa.Lvm__Disks_Panel = Ext.extend(Ext.Panel, {
 });
 
 
+window.MainViewModules.push( new Ext.oa.Lvm__Disks_Panel() );
+
 // kate: space-indent on; indent-width 2; replace-tabs on;
