@@ -15,6 +15,8 @@ Ext.oa.MainViewManager = Ext.extend(Ext.Panel, {
       }), {
         region: "center",
         activeItem: 0,
+        border: false,
+        hideBorders: true,
         layout: "card",
         items: window.MainViewModules
       }],
