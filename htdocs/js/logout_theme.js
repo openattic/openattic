@@ -1,7 +1,7 @@
 window.MainViewModules.push({
   prepareMenuTree: function(tree){
     tree.root.attributes.children[5].children.push({
-      text: 'Raus hier',
+      text: 'Logout',
       leaf: true,
       icon: MEDIA_URL + '/oxygen/22x22/actions/system-log-out.png',
       listeners: {
