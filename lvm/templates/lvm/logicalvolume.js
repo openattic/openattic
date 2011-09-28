@@ -40,25 +40,29 @@ Ext.oa.Lvm__LogicalVolume_Panel = Ext.extend(Ext.Panel, {
               var sel = sm.selections.items[0];
               if( !sel.data.filesystem ){
                 Ext.Msg.alert(sel.data.name,
-                  String.format( "Volume {0} does not have a file system and therefore cannot be mounted.", sel.data.name ));
+                  interpolate(
+                    gettext("Volume %s does not have a file system and therefore cannot be mounted."),
+                    [sel.data.name] ));
                 return;
               }
               lvm__LogicalVolume.is_mounted( sel.data.id, function(provider, response){
                 if( response.result ){
-                  Ext.Msg.alert(sel.data.name, String.format( "Volume {0} is already mounted.", sel.data.name ));
+                  Ext.Msg.alert(sel.data.name, interpolate( gettext("Volume %s is already mounted."), [sel.data.name] ));
                   return;
                 }
                 lvm__LogicalVolume.is_in_standby( sel.data.id, function(provider, response){
                   if( response.result ){
                     Ext.Msg.alert(sel.data.name,
-                      String.format( "Volume {0} cannot be mounted at the current time.", sel.data.name ));
+                      interpolate( gettext("Volume %s cannot be mounted at the current time."), [sel.data.name] ));
                     return;
                   }
                   lvm__LogicalVolume.mount( sel.data.id, function(provider, response){
                     if( response.type === "exception" )
-                      Ext.Msg.alert(sel.data.name, String.format( "Volume {0} could not be mounted, please check the logs.", sel.data.name ));
+                      Ext.Msg.alert(sel.data.name, interpolate(
+                        gettext("Volume %s could not be mounted, please check the logs."), [sel.data.name] ));
                     else
-                      Ext.Msg.alert(sel.data.name, String.format( "Volume {0} has been mounted.", sel.data.name ));
+                      Ext.Msg.alert(sel.data.name, interpolate(
+                        gettext("Volume %s has been mounted."), [sel.data.name] ));
                   } );
                 } );
               } );
@@ -74,14 +78,16 @@ Ext.oa.Lvm__LogicalVolume_Panel = Ext.extend(Ext.Panel, {
               var sel = sm.selections.items[0];
               lvm__LogicalVolume.is_mounted( sel.data.id, function(provider, response){
                 if( !response.result ){
-                  Ext.Msg.alert(sel.data.name, String.format( "Volume {0} is not mounted.", sel.data.name ));
+                  Ext.Msg.alert(sel.data.name, interpolate( gettext("Volume %s is not mounted."), [sel.data.name] ));
                 }
                 else{
                   lvm__LogicalVolume.unmount( sel.data.id, function(provider, response){
                     if( response.type === "exception" )
-                      Ext.Msg.alert(sel.data.name, String.format( "Volume {0} could not be unmounted, please check the logs.", sel.data.name ));
+                      Ext.Msg.alert(sel.data.name, interpolate(
+                        gettext("Volume %s could not be unmounted, please check the logs."), [sel.data.name] ));
                     else
-                      Ext.Msg.alert(sel.data.name, String.format( "Volume {0} has been unmounted.", sel.data.name ));
+                      Ext.Msg.alert(sel.data.name, interpolate(
+                        gettext("Volume %s has been unmounted."), [sel.data.name] ));
                   } );
                 }
               } );
@@ -127,7 +133,7 @@ Ext.oa.Lvm__LogicalVolume_Panel = Ext.extend(Ext.Panel, {
                     listeners: {
                       select: function(self, record, index){
                         self.ownerCt.volume_free_megs = null;
-                        self.ownerCt.sizelabel.setText( "Querying data..." );
+                        self.ownerCt.sizelabel.setText( gettext("Querying data...") );
                         lvm__VolumeGroup.get_free_megs( record.data.id, function( provider, response ){
                           self.ownerCt.volume_free_megs = response.result;
                           self.ownerCt.sizelabel.setText( String.format( "Max. {0} MB", response.result ) );
@@ -152,8 +158,7 @@ Ext.oa.Lvm__LogicalVolume_Panel = Ext.extend(Ext.Panel, {
                     ref:      'fsfield'
                   }, {
                     xtype: "label",
-                    text:  "If you want to use DRBD with this device, do not yet create a file system on it, "+
-                           "even if you want to share it using NAS services later on.",
+                    text:  gettext("If you want to use DRBD with this device, do not yet create a file system on it, even if you want to share it using NAS services later on."),
                     cls:   "form_hint_label"
                   }, {
                     fieldLabel: gettext("Size in MB"),
@@ -193,11 +198,14 @@ Ext.oa.Lvm__LogicalVolume_Panel = Ext.extend(Ext.Panel, {
                     }
                     var free = self.ownerCt.ownerCt.volume_free_megs;
                     if( free === null || typeof free == "undefined" ){
-                      Ext.Msg.alert("Error", "Please wait for the query for available space to complete.");
+                      Ext.Msg.alert(gettext("Error"),
+                        gettext("Please wait for the query for available space to complete."));
                       return;
                     }
                     if( free < self.ownerCt.ownerCt.sizefield.getValue() ){
-                      Ext.Msg.alert("Error", "Your volume exceeds the available capacity of "+response.result+" MB.");
+                      Ext.Msg.alert(gettext("Error"),
+                        interpolate( gettext("Your volume exceeds the available capacity of %s MB."),
+                          [response.result]) );
                       return;
                     }
                     var progresswin = new Ext.Window({
@@ -205,7 +213,7 @@ Ext.oa.Lvm__LogicalVolume_Panel = Ext.extend(Ext.Panel, {
                       layout: "fit",
                       height: 250,
                       width: 400,
-                      html: '<b>Please wait while your volume is being created...</b>'
+                      html: gettext('Please wait while your volume is being created...')
                     });
                     progresswin.show();
                     lvm__LogicalVolume.create({
