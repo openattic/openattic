@@ -1,0 +1,78 @@
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) YEAR THE PACKAGE'S COPYRIGHT HOLDER
+# This file is distributed under the same license as the PACKAGE package.
+# FIRST AUTHOR <EMAIL@ADDRESS>, YEAR.
+# 
+#, fuzzy
+msgid ""
+msgstr ""
+"Project-Id-Version: PACKAGE VERSION\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2011-09-29 09:47+0200\n"
+"PO-Revision-Date: 2011-09-29 09:48\n"
+"Last-Translator: Michael Ziegler <michael.ziegler@it-novum.com>\n"
+"Language-Team: LANGUAGE <LL@li.org>\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Language: \n"
+"Plural-Forms: nplurals=2; plural=(n != 1)\n"
+"X-Translated-Using: django-rosetta 0.6.0\n"
+
+#: templates/ftp/user.js:11
+msgid "Add User"
+msgstr "Benutzer hinzufügen"
+
+#: templates/ftp/user.js:15
+msgid "Add FTP User"
+msgstr "FTP-Benutzer hinzufügen"
+
+#: templates/ftp/user.js:26
+msgid "Name"
+msgstr "Name"
+
+#: templates/ftp/user.js:30
+msgid "Password"
+msgstr "Passwort"
+
+#: templates/ftp/user.js:36
+msgid "Volume"
+msgstr "Volume"
+
+#: templates/ftp/user.js:45
+msgid "Select..."
+msgstr "Bitte wählen..."
+
+#: templates/ftp/user.js:54
+msgid "This volume does not have a file system, so it cannot be used for FTP."
+msgstr ""
+"Dieses Volume hat kein Dateisystem und kann daher nicht für FTP benutzt "
+"werden."
+
+#: templates/ftp/user.js:67
+msgid "Directory"
+msgstr "Verzeichnis"
+
+#: templates/ftp/user.js:73
+msgid "Create User"
+msgstr "Benutzer erstellen"
+
+#: templates/ftp/user.js:93
+msgid "Cancel"
+msgstr "Abbrechen"
+
+#: templates/ftp/user.js:104
+msgid "Delete User"
+msgstr "Benutzer löschen"
+
+#: templates/ftp/user.js:132
+msgid "Path"
+msgstr "Pfad"
+
+#: templates/ftp/user.js:136
+msgid "User name"
+msgstr "Benutzername"
+
+#: templates/ftp/user.js:147
+msgid "Web (FTP)"
+msgstr "Web (FTP)"

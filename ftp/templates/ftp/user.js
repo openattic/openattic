@@ -1,3 +1,5 @@
+{% load i18n %}
+
 Ext.namespace("Ext.oa");
 
 Ext.oa.Ftp__User_Panel = Ext.extend(Ext.grid.GridPanel, {
@@ -6,11 +8,11 @@ Ext.oa.Ftp__User_Panel = Ext.extend(Ext.grid.GridPanel, {
     Ext.apply(this, Ext.apply(this.initialConfig, {
       title: "ftp",
       buttons: [{
-        text: "Add User",
+        text: "{% trans 'Add User' %}",
         icon: MEDIA_URL + "/icons2/16x16/actions/add.png",
         handler: function(){
           var addwin = new Ext.Window({
-            title: "Add FTP User",
+            title: "{% trans 'Add FTP User' %}",
             layout: "fit",
             height: 300,
             width: 500,
@@ -21,17 +23,17 @@ Ext.oa.Ftp__User_Panel = Ext.extend(Ext.grid.GridPanel, {
                 anchor: '-20px'
               },
               items: [{
-                  fieldLabel: "Name",
+                  fieldLabel: "{% trans 'Name' %}",
                   name: "username",
                   ref: 'namefield'
                 }, {
-                  fieldLabel: "Password",
+                  fieldLabel: "{% trans 'Password' %}",
                   name: "passwd",
                   inputType: 'password',
                   ref: 'passwdfield'
                 }, {
                   xtype:      'combo',
-                  fieldLabel: 'Volume',
+                  fieldLabel: "{% trans 'Volume' %}",
                   name:       'volume',
                   hiddenName: 'volume_id',
                   store: new Ext.data.DirectStore({
@@ -40,7 +42,7 @@ Ext.oa.Ftp__User_Panel = Ext.extend(Ext.grid.GridPanel, {
                   }),
                   typeAhead:     true,
                   triggerAction: 'all',
-                  emptyText:     'Select...',
+                  emptyText:     "{% trans 'Select...' %}",
                   selectOnFocus: true,
                   displayField:  'name',
                   valueField:    'id',
@@ -49,7 +51,7 @@ Ext.oa.Ftp__User_Panel = Ext.extend(Ext.grid.GridPanel, {
                     select: function(self, record, index){
                       lvm__LogicalVolume.get( record.data.id, function( provider, response ){
                         if( !response.result.filesystem ){
-                          alert( "This volume does not have a file system, so it cannot be used for FTP." );
+                          alert("{% trans 'This volume does not have a file system, so it cannot be used for FTP.' %}");
                           self.ownerCt.dirfield.setValue("");
                           self.ownerCt.dirfield.disable();
                           self.expand();
@@ -62,13 +64,13 @@ Ext.oa.Ftp__User_Panel = Ext.extend(Ext.grid.GridPanel, {
                     }
                   }
                 }, {
-                  fieldLabel: "Directory",
+                  fieldLabel: "{% trans 'Directory' %}",
                   name: "homedir",
                   disabled: true,
                   ref: 'dirfield'
               }],
               buttons: [{
-                text: 'Create User',
+                text: "{% trans 'Create User' %}",
                 icon: MEDIA_URL + "/icons/accept.png",
                 handler: function(self){
                   ftp__User.create({
@@ -88,7 +90,7 @@ Ext.oa.Ftp__User_Panel = Ext.extend(Ext.grid.GridPanel, {
                   });
                 }
               }, {
-                text: 'Cancel',
+                text: "{% trans 'Cancel' %}",
                 icon: MEDIA_URL + "/icons2/16x16/actions/gtk-cancel.png",
                 handler: function(self){
                   addwin.hide();
@@ -99,7 +101,7 @@ Ext.oa.Ftp__User_Panel = Ext.extend(Ext.grid.GridPanel, {
           addwin.show();
         }
       }, {
-        text: "Delete User",
+        text: "{% trans 'Delete User' %}",
         icon: MEDIA_URL + "/icons2/16x16/actions/remove.png",
         handler: function(self){
           var sm = ftpGrid.getSelectionModel();
@@ -127,11 +129,11 @@ Ext.oa.Ftp__User_Panel = Ext.extend(Ext.grid.GridPanel, {
           sortable: true
         },
         columns: [ {
-          header: "Path",
+          header: "{% trans 'Path' %}",
           width: 350,
           dataIndex: "homedir"
         }, {
-          header: "User name",
+          header: "{% trans 'User name' %}",
           width: 100,
           dataIndex: "username"
         } ]
@@ -142,7 +144,7 @@ Ext.oa.Ftp__User_Panel = Ext.extend(Ext.grid.GridPanel, {
 
   prepareMenuTree: function(tree){
     tree.root.attributes.children[2].children.push({
-      text: 'Web (FTP)',
+      text: "{% trans 'Web (FTP)' %}",
       leaf: true,
       panel: this,
       icon: MEDIA_URL + '/icons2/22x22/mimetypes/www.png',
