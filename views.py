@@ -4,6 +4,7 @@
 from django.shortcuts  import render_to_response, get_object_or_404, get_list_or_404
 from django.template   import RequestContext
 from django.http       import HttpResponse, HttpResponseRedirect, Http404
+from django.conf       import settings
 from django.contrib.auth            import authenticate, login, logout
 from django.contrib.auth.decorators import login_required
 
@@ -55,5 +56,6 @@ def index(request):
             theme = None
 
         return render_to_response('index_ext_authed.html', {
-            'THEME': theme
+            'THEME': theme,
+            'INSTALLED_APPS': settings.INSTALLED_APPS
             }, context_instance = RequestContext(request))
