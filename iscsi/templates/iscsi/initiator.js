@@ -1,16 +1,18 @@
+{% load i18n %}
+
 Ext.namespace("Ext.oa");
 
 Ext.oa.Iscsi__Initiator_Panel = Ext.extend(Ext.grid.GridPanel, {
   initComponent: function(){
     var iscsiInitGrid = this;
     Ext.apply(this, Ext.apply(this.initialConfig, {
-      title: "iSCSI Initiators",
+      title: "{% trans 'iSCSI Initiators' %}",
       buttons: [{
-        text: "Add Initiator",
+        text: "{% trans 'Add Initiator' %}",
         icon: MEDIA_URL + "/icons2/16x16/actions/add.png",
         handler: function(){
           var addwin = new Ext.Window({
-            title: "Add Initiator",
+            title: "{% trans 'Add Initiator' %}",
             layout: "fit",
             height: 300,
             width: 500,
@@ -21,16 +23,16 @@ Ext.oa.Iscsi__Initiator_Panel = Ext.extend(Ext.grid.GridPanel, {
                 anchor: '-20px'
               },
               items: [{
-                fieldLabel: "Name",
+                fieldLabel: "{% trans 'Name' %}",
                 name: "name",
                 ref: 'namefield'
               }, {
-                fieldLabel: "Address (IQN/IP)",
+                fieldLabel: "{% trans 'Address (IQN/IP)' %}",
                 name: "address",
                 ref: 'addrfield'
               }],
               buttons: [{
-                text: 'Create Initiator',
+                text: "{% trans 'Create Initiator' %}",
                 icon: MEDIA_URL + "/icons/accept.png",
                 handler: function(self){
                   iscsi__Initiator.create({
@@ -44,7 +46,7 @@ Ext.oa.Iscsi__Initiator_Panel = Ext.extend(Ext.grid.GridPanel, {
                   });
                 }
               }, {
-                text: 'Cancel',
+                text: "{% trans 'Cancel' %}",
                 icon: MEDIA_URL + "/icons2/16x16/actions/gtk-cancel.png",
                 handler: function(self){
                   addwin.hide();
@@ -55,7 +57,7 @@ Ext.oa.Iscsi__Initiator_Panel = Ext.extend(Ext.grid.GridPanel, {
           addwin.show();
         }
       }, {
-        text: "Delete Initiator",
+        text: "{% trans 'Delete Initiator' %}",
         icon: MEDIA_URL + "/icons2/16x16/actions/remove.png",
         handler: function(self){
           var sm = iscsiInitGrid.getSelectionModel();
@@ -77,11 +79,11 @@ Ext.oa.Iscsi__Initiator_Panel = Ext.extend(Ext.grid.GridPanel, {
           sortable: true
         },
         columns: [{
-          header: "Name",
+          header: "{% trans 'Name' %}",
           width: 200,
           dataIndex: "name"
         }, {
-          header: "Address",
+          header: "{% trans 'Address' %}",
           width: 100,
           dataIndex: "address"
         }]
@@ -93,11 +95,11 @@ Ext.oa.Iscsi__Initiator_Panel = Ext.extend(Ext.grid.GridPanel, {
   prepareMenuTree: function(tree){
     iscsiTreeIndex = tree.root.attributes.children[2].children.length;
     tree.root.attributes.children[2].children.push({
-      text: 'LAN (iSCSI)',
+      text: "{% trans 'LAN (iSCSI)' %}",
       panel: this,
       href: '#',
       children: [{
-        text: 'Initiators',
+        text: "{% trans 'Initiators' %}",
         leaf: true,
         icon: MEDIA_URL + '/icons2/22x22/apps/nfs.png',
         panel: this,

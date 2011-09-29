@@ -1,16 +1,18 @@
+{% load i18n %}
+
 Ext.namespace("Ext.oa");
 
 Ext.oa.Iscsi__Lun_Panel = Ext.extend(Ext.grid.GridPanel, {
   initComponent: function(){
     var iscsiLunGrid = this;
     Ext.apply(this, Ext.apply(this.initialConfig, {
-      title: "iSCSI Luns",
+      title: "{% trans 'iSCSI Luns' %}",
       buttons: [{
-        text: "Add Lun",
+        text: "{% trans 'Add Lun' %}",
         icon: MEDIA_URL + "/icons2/16x16/actions/add.png",
         handler: function(){
           var addwin = new Ext.Window({
-            title: "Add Lun",
+            title: "{% trans 'Add Lun' %}",
             layout: "fit",
             height: 300,
             width: 500,
@@ -22,7 +24,7 @@ Ext.oa.Iscsi__Lun_Panel = Ext.extend(Ext.grid.GridPanel, {
               },
               items: [{
                 xtype:      'combo',
-                fieldLabel: 'Volume',
+                fieldLabel: "{% trans 'Volume' %}",
                 name:       'volume',
                 hiddenName: 'volume_id',
                 store: new Ext.data.DirectStore({
@@ -31,20 +33,20 @@ Ext.oa.Iscsi__Lun_Panel = Ext.extend(Ext.grid.GridPanel, {
                 }),
                 typeAhead:     true,
                 triggerAction: 'all',
-                emptyText:     'Select...',
+                emptyText:     "{% trans 'Select...' %}",
                 selectOnFocus: true,
                 displayField:  'name',
                 valueField:    'id',
                 ref: 'volfield'
               }, {
-                fieldLabel: "Number",
+                fieldLabel: "{% trans 'Number' %}",
                 name: "number",
                 xtype: 'numberfield',
                 value: -1,
                 ref: 'numberfield'
               }, {
                 xtype:      'combo',
-                fieldLabel: 'Target',
+                fieldLabel: "{% trans 'Target' %}",
                 name:       'target',
                 hiddenName: 'target_id',
                 store: new Ext.data.DirectStore({
@@ -54,13 +56,13 @@ Ext.oa.Iscsi__Lun_Panel = Ext.extend(Ext.grid.GridPanel, {
                 }),
                 typeAhead:     true,
                 triggerAction: 'all',
-                emptyText:     'Select...',
+                emptyText:     "{% trans 'Select...' %}",
                 selectOnFocus: true,
                 displayField:  'name',
                 valueField:    'id',
                 ref: 'targetfield'
               }, {
-                fieldLabel: "Type",
+                fieldLabel: "{% trans 'Type' %}",
                 name: "ltype",
                 ref: 'typefield',
                 hiddenName: 'l_type',
@@ -72,12 +74,12 @@ Ext.oa.Iscsi__Lun_Panel = Ext.extend(Ext.grid.GridPanel, {
                 selectOnFocus: true,
                 value: "fileio"
               }, {
-                fieldLabel: "Alias",
+                fieldLabel: "{% trans 'Alias' %}",
                 name: "alias",
                 ref: 'aliasfield'
               } ],
               buttons: [{
-                text: 'Create Lun',
+                text: "{% trans 'Create Lun' %}",
                 icon: MEDIA_URL + "/icons/accept.png",
                 handler: function(self){
                   iscsi__Lun.create({
@@ -102,7 +104,7 @@ Ext.oa.Iscsi__Lun_Panel = Ext.extend(Ext.grid.GridPanel, {
                   });
                 }
               }, {
-                text: 'Cancel',
+                text: "{% trans 'Cancel' %}",
                 icon: MEDIA_URL + "/icons2/16x16/actions/gtk-cancel.png",
                 handler: function(self){
                   addwin.hide();
@@ -113,7 +115,7 @@ Ext.oa.Iscsi__Lun_Panel = Ext.extend(Ext.grid.GridPanel, {
           addwin.show();
         }
       }, {
-        text: "Delete Lun",
+        text: "{% trans 'Delete Lun' %}",
         icon: MEDIA_URL + "/icons2/16x16/actions/remove.png",
         handler: function(self){
           var sm = iscsiLunGrid.getSelectionModel();
@@ -139,23 +141,23 @@ Ext.oa.Iscsi__Lun_Panel = Ext.extend(Ext.grid.GridPanel, {
           sortable: true
         },
         columns: [{
-          header: "Target",
+          header: "{% trans 'Target' %}",
           width: 200,
           dataIndex: "targetname"
         }, {
-          header: "LUN",
+          header: "{% trans 'LUN' %}",
           width: 50,
           dataIndex: "number"
         }, {
-          header: "Alias",
+          header: "{% trans 'Alias' %}",
           width: 100,
           dataIndex: "alias"
         }, {
-          header: "Type",
+          header: "{% trans 'Type' %}",
           width: 50,
           dataIndex: "ltype"
         }, {
-          header: "Volume",
+          header: "{% trans 'Volume' %}",
           width: 150,
           dataIndex: "volumename"
         }]
@@ -166,7 +168,7 @@ Ext.oa.Iscsi__Lun_Panel = Ext.extend(Ext.grid.GridPanel, {
 
   prepareMenuTree: function(tree){
     tree.root.attributes.children[2].children[iscsiTreeIndex].children.push({
-      text: 'Luns',
+      text: "{% trans 'Luns' %}",
       leaf: true,
       icon: MEDIA_URL + '/icons2/22x22/apps/nfs.png',
       panel: this,

@@ -1,16 +1,18 @@
+{% load i18n %}
+
 Ext.namespace("Ext.oa");
 
 Ext.oa.Iscsi__Target_Panel = Ext.extend(Ext.grid.GridPanel, {
   initComponent: function(){
     var iscsiTrgGrid = this;
     Ext.apply(this, Ext.apply(this.initialConfig, {
-      title: "iSCSI Targets",
+      title: "{% trans 'iSCSI Targets' %}",
       buttons: [{
-        text: "Add Target",
+        text: "{% trans 'Add Target' %}",
         icon: MEDIA_URL + "/icons2/16x16/actions/add.png",
         handler: function(){
           var addwin = new Ext.Window({
-            title: "Add Target",
+            title: "{% trans 'Add Target' %}",
             layout: "fit",
             height: 300,
             width: 500,
@@ -21,21 +23,21 @@ Ext.oa.Iscsi__Target_Panel = Ext.extend(Ext.grid.GridPanel, {
                 anchor: '-20px'
               },
               items: [{
-                fieldLabel: "Name",
+                fieldLabel: "{% trans 'Name' %}",
                 name: "name",
                 ref: 'namefield'
               }, {
-                fieldLabel: "IQN",
+                fieldLabel: "{% trans 'IQN' %}",
                 name: "iscsiname",
                 ref: 'addrfield'
               }, {
-                fieldLabel: "Allow All",
+                fieldLabel: "{% trans 'Allow All' %}",
                 xtype: 'checkbox',
                 name: "allowall",
                 ref: 'allowfield'
               }],
               buttons: [{
-                text: 'Create Target',
+                text: "{% trans 'Create Target' %}",
                 icon: MEDIA_URL + "/icons/accept.png",
                 handler: function(self){
                   iscsi__Target.create({
@@ -50,7 +52,7 @@ Ext.oa.Iscsi__Target_Panel = Ext.extend(Ext.grid.GridPanel, {
                   });
                 }
               }, {
-                text: 'Cancel',
+                text: "{% trans 'Cancel' %}",
                 icon: MEDIA_URL + "/icons2/16x16/actions/gtk-cancel.png",
                 handler: function(self){
                   addwin.hide();
@@ -61,7 +63,7 @@ Ext.oa.Iscsi__Target_Panel = Ext.extend(Ext.grid.GridPanel, {
           addwin.show();
         }
       }, {
-        text: "Delete Target",
+        text: "{% trans 'Delete Target' %}",
         icon: MEDIA_URL + "/icons2/16x16/actions/remove.png",
         handler: function(self){
           var sm = iscsiTrgGrid.getSelectionModel();
@@ -83,11 +85,11 @@ Ext.oa.Iscsi__Target_Panel = Ext.extend(Ext.grid.GridPanel, {
           sortable: true
         },
         columns: [{
-          header: "Name",
+          header: "{% trans 'Name' %}",
           width: 200,
           dataIndex: "name"
         }, {
-          header: "IQN",
+          header: "{% trans 'IQN' %}",
           width: 400,
           dataIndex: "iscsiname"
         }]
@@ -98,7 +100,7 @@ Ext.oa.Iscsi__Target_Panel = Ext.extend(Ext.grid.GridPanel, {
 
   prepareMenuTree: function(tree){
     tree.root.attributes.children[2].children[iscsiTreeIndex].children.push({
-      text: 'Targets',
+      text: "{% trans 'Targets' %}",
       leaf: true,
       icon: MEDIA_URL + '/icons2/22x22/apps/nfs.png',
       panel: this,

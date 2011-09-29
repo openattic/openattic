@@ -5,6 +5,7 @@ import dbus
 
 from django.db   import models
 from django.conf import settings
+from django.utils.translation   import ugettext_noop, ugettext_lazy as _
 
 from lvm.models import StatefulModel, LogicalVolume
 
@@ -16,9 +17,9 @@ class Initiator(models.Model):
         return self.name
 
 class Target(models.Model):
-    name        = models.CharField(max_length=250, help_text="Human readable name.")
-    iscsiname   = models.CharField(max_length=250, help_text="ISCSI Target name (e.g. 'iqn.2011-01.storage:sto1').")
-    allowall    = models.BooleanField(default=True, blank=True, help_text="Sets the default action if both the allow and deny ACLs are empty. True = Allow all initiators to connect, False = deny all.")
+    name        = models.CharField(max_length=250, help_text=_("Human readable name."))
+    iscsiname   = models.CharField(max_length=250, help_text=_("ISCSI Target name (e.g. 'iqn.2011-01.storage:sto1')."))
+    allowall    = models.BooleanField(default=True, blank=True, help_text=_("Sets the default action if both the allow and deny ACLs are empty. True = Allow all initiators to connect, False = deny all."))
     init_allow  = models.ManyToManyField(Initiator, related_name="allowed_targets", blank=True)
     init_deny   = models.ManyToManyField(Initiator, related_name="denied_targets",  blank=True)
 

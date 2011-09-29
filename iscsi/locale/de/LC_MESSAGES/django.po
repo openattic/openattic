@@ -1,0 +1,158 @@
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) YEAR THE PACKAGE'S COPYRIGHT HOLDER
+# This file is distributed under the same license as the PACKAGE package.
+# FIRST AUTHOR <EMAIL@ADDRESS>, YEAR.
+# 
+#, fuzzy
+msgid ""
+msgstr ""
+"Project-Id-Version: PACKAGE VERSION\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2011-09-29 09:36+0200\n"
+"PO-Revision-Date: 2011-09-29 09:36\n"
+"Last-Translator: Michael Ziegler <michael.ziegler@it-novum.com>\n"
+"Language-Team: LANGUAGE <LL@li.org>\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Language: \n"
+"Plural-Forms: nplurals=2; plural=(n != 1)\n"
+"X-Translated-Using: django-rosetta 0.6.0\n"
+
+#: models.py:20
+msgid "Human readable name."
+msgstr "Menschenlesbarer Name."
+
+#: models.py:21
+msgid "ISCSI Target name (e.g. 'iqn.2011-01.storage:sto1')."
+msgstr "ISCSI Target-Name (z.B. 'iqn.2011-01.storage:sto1')."
+
+#: models.py:22
+msgid ""
+"Sets the default action if both the allow and deny ACLs are empty. True = "
+"Allow all initiators to connect, False = deny all."
+msgstr ""
+"Legt die Standardberechtigung fest, wenn weder eine \"Allow\"- noch eine "
+"\"Deny\"-ACL angegeben ist. An = Alle Initiatoren dürfen verbinden, Aus = "
+"Keiner darf."
+
+#: templates/iscsi/initiator.js:9
+#, fuzzy
+msgid "iSCSI Initiators"
+msgstr "iSCSI Targets"
+
+#: templates/iscsi/initiator.js:11 templates/iscsi/initiator.js.py:15
+msgid "Add Initiator"
+msgstr "Initiator hinzufügen"
+
+#: templates/iscsi/initiator.js:26 templates/iscsi/initiator.js.py:82
+#: templates/iscsi/target.js:26 templates/iscsi/target.js.py:88
+msgid "Name"
+msgstr "Name"
+
+#: templates/iscsi/initiator.js:30
+msgid "Address (IQN/IP)"
+msgstr "Adresse (IQN/IP)"
+
+#: templates/iscsi/initiator.js:35
+#, fuzzy
+msgid "Create Initiator"
+msgstr "Target erzeugen"
+
+#: templates/iscsi/initiator.js:49 templates/iscsi/lun.js:107
+#: templates/iscsi/target.js:55
+msgid "Cancel"
+msgstr "Abbrechen"
+
+#: templates/iscsi/initiator.js:60
+#, fuzzy
+msgid "Delete Initiator"
+msgstr "Target löschen"
+
+#: templates/iscsi/initiator.js:86
+msgid "Address"
+msgstr "Adresse"
+
+#: templates/iscsi/initiator.js:98
+msgid "LAN (iSCSI)"
+msgstr "LAN (iSCSI)"
+
+#: templates/iscsi/initiator.js:102
+msgid "Initiators"
+msgstr "Initiatoren"
+
+#: templates/iscsi/lun.js:9
+msgid "iSCSI Luns"
+msgstr "iSCSI Luns"
+
+#: templates/iscsi/lun.js:11 templates/iscsi/lun.js.py:15
+msgid "Add Lun"
+msgstr "Lun hinzufügen"
+
+#: templates/iscsi/lun.js:27 templates/iscsi/lun.js.py:160
+msgid "Volume"
+msgstr "Volume"
+
+#: templates/iscsi/lun.js:36 templates/iscsi/lun.js.py:59
+msgid "Select..."
+msgstr "Bitte wählen..."
+
+#: templates/iscsi/lun.js:42
+msgid "Number"
+msgstr "Nummer"
+
+#: templates/iscsi/lun.js:49 templates/iscsi/lun.js.py:144
+msgid "Target"
+msgstr "Target"
+
+#: templates/iscsi/lun.js:65 templates/iscsi/lun.js.py:156
+msgid "Type"
+msgstr "Typ"
+
+#: templates/iscsi/lun.js:77 templates/iscsi/lun.js.py:152
+msgid "Alias"
+msgstr "Alias"
+
+#: templates/iscsi/lun.js:82
+msgid "Create Lun"
+msgstr "Lun erzeugen"
+
+#: templates/iscsi/lun.js:118
+msgid "Delete Lun"
+msgstr "Lun löschen"
+
+#: templates/iscsi/lun.js:148
+msgid "LUN"
+msgstr "LUN"
+
+#: templates/iscsi/lun.js:171
+msgid "Luns"
+msgstr "Luns"
+
+#: templates/iscsi/target.js:9
+msgid "iSCSI Targets"
+msgstr "iSCSI Targets"
+
+#: templates/iscsi/target.js:11 templates/iscsi/target.js.py:15
+msgid "Add Target"
+msgstr "Target hinzufügen"
+
+#: templates/iscsi/target.js:30 templates/iscsi/target.js.py:92
+msgid "IQN"
+msgstr "IQN"
+
+#: templates/iscsi/target.js:34
+msgid "Allow All"
+msgstr "Alle erlauben"
+
+#: templates/iscsi/target.js:40
+msgid "Create Target"
+msgstr "Target erzeugen"
+
+#: templates/iscsi/target.js:66
+msgid "Delete Target"
+msgstr "Target löschen"
+
+#: templates/iscsi/target.js:103
+msgid "Targets"
+msgstr "Targets"
