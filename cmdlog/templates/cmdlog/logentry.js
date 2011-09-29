@@ -1,3 +1,5 @@
+{% load i18n %}
+
 Ext.namespace("Ext.oa");
 
 Ext.oa.Cmdlog__LogEntry_Panel = Ext.extend(Ext.Panel, {
@@ -45,13 +47,13 @@ Ext.oa.Cmdlog__LogEntry_Panel = Ext.extend(Ext.Panel, {
       region: 'south',
       split: true,
       height: 200,
-      loadingText: "Select a log entry to see the command's output here.",
+      loadingText: "{% trans "Select a log entry to see the command's output here." %}",
       itemSelector: 'div.logcommandtext',
-      loadingText: 'Loading...',
+      loadingText: "{% trans 'Loading...' %}",
       store: textStore
     });
     Ext.apply(this, Ext.apply(this.initialConfig, {
-      title: "Log Entries",
+      title: "{% trans 'Log Entries' %}",
       layout: "border",
       items: [{
         xtype: "grid",
@@ -63,13 +65,13 @@ Ext.oa.Cmdlog__LogEntry_Panel = Ext.extend(Ext.Panel, {
             sortable: true
           },
           columns: [{
-              header: 'Zeitpunkt (Ende)',
+              header: "{% trans 'End time' %}",
               dataIndex: 'endtime'
             }, {
-              header: 'Befehl',
+              header: "{% trans 'Command' %}",
               dataIndex: 'command'
             }, {
-              header: "Exit-Status",
+              header: "{% trans 'Exit Status' %}",
               dataIndex: 'exitcode'
           }]
         }),
@@ -90,7 +92,7 @@ Ext.oa.Cmdlog__LogEntry_Panel = Ext.extend(Ext.Panel, {
 
   prepareMenuTree: function(tree){
     tree.root.attributes.children[0].children.push({
-      text: 'Command Log',
+      text: "{% trans 'Command Log' %}",
       leaf: true,
       icon: MEDIA_URL + '/icons2/22x22/actions/bookmark-new.png',
       panel: this,

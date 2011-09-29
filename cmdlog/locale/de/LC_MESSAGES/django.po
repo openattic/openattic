@@ -1,0 +1,61 @@
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) YEAR THE PACKAGE'S COPYRIGHT HOLDER
+# This file is distributed under the same license as the PACKAGE package.
+# FIRST AUTHOR <EMAIL@ADDRESS>, YEAR.
+# 
+#, fuzzy
+msgid ""
+msgstr ""
+"Project-Id-Version: PACKAGE VERSION\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2011-09-29 09:43+0200\n"
+"PO-Revision-Date: 2011-09-29 09:43\n"
+"Last-Translator: Michael Ziegler <michael.ziegler@it-novum.com>\n"
+"Language-Team: LANGUAGE <LL@li.org>\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Language: \n"
+"Plural-Forms: nplurals=2; plural=(n != 1)\n"
+"X-Translated-Using: django-rosetta 0.6.0\n"
+
+#: models.py:8 templates/cmdlog/logentry.js:71
+msgid "Command"
+msgstr "Befehl"
+
+#: models.py:9
+msgid "Start time"
+msgstr "Start-Zeitpunkt"
+
+#: models.py:10 templates/cmdlog/logentry.js:68
+msgid "End time"
+msgstr "End-Zeitpunkt"
+
+#: models.py:11
+msgid "Exit code"
+msgstr "Rückgabewert"
+
+#: models.py:12
+msgid "Output"
+msgstr "Ausgabe"
+
+#: templates/cmdlog/logentry.js:50
+msgid "Select a log entry to see the command's output here."
+msgstr ""
+"Bitte wählen Sie einen Log-Eintrag aus, um die Ausgabe des Befehls zu sehen."
+
+#: templates/cmdlog/logentry.js:52
+msgid "Loading..."
+msgstr "Lade..."
+
+#: templates/cmdlog/logentry.js:56
+msgid "Log Entries"
+msgstr "Log-Einträge"
+
+#: templates/cmdlog/logentry.js:74
+msgid "Exit Status"
+msgstr "Rückgabewert"
+
+#: templates/cmdlog/logentry.js:95
+msgid "Command Log"
+msgstr "Befehls-Log"
