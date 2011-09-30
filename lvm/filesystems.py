@@ -83,7 +83,8 @@ class Ext2(FileSystem):
         return dbus_to_python( self.lv.lvm.e2fs_info( self.lv.path ) )
 
     def format(self):
-        return self.lv.lvm.e2fs_format( self.lv.path, self.lv.name )
+        return self.lv.lvm.e2fs_format( self.lv.path, self.lv.name,
+            self.lv.owner.username, lvm_settings.CHOWN_GROUP, self.mountpoints[0] )
 
     def resize(self, grow):
         if self.lv.lvm.e2fs_check( self.lv.path ) != 0:
@@ -95,14 +96,16 @@ class Ext3(Ext2):
     desc = "Ext3 (Linux Journalling)"
 
     def format(self):
-        return self.lv.lvm.e3fs_format( self.lv.path, self.lv.name )
+        return self.lv.lvm.e3fs_format( self.lv.path, self.lv.name,
+            self.lv.owner.username, lvm_settings.CHOWN_GROUP, self.mountpoints[0] )
 
 class Ext4(Ext2):
     name = "ext4"
     desc = "Ext4 (Linux Journalling)"
 
     def format(self):
-        return self.lv.lvm.e4fs_format( self.lv.path, self.lv.name )
+        return self.lv.lvm.e4fs_format( self.lv.path, self.lv.name,
+            self.lv.owner.username, lvm_settings.CHOWN_GROUP, self.mountpoints[0] )
 
 
 class Ntfs(FileSystem):
@@ -114,7 +117,8 @@ class Ntfs(FileSystem):
         return {}
 
     def format(self):
-        return self.lv.lvm.ntfs_format( self.lv.path )
+        return self.lv.lvm.ntfs_format( self.lv.path,
+            self.lv.owner.username, lvm_settings.CHOWN_GROUP, self.mountpoints[0] )
 
     def resize(self, grow):
         return self.lv.lvm.ntfs_resize( self.lv.path, self.lv.megs )

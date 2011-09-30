@@ -2,5 +2,5 @@
 # kate: space-indent on; indent-width 4; replace-tabs on;
 
 from systemd.helpers   import dbus_to_python, logged
-from systemd.procutils import invoke
+from systemd.procutils import invoke, create_job
 from systemd.plugins   import BasePlugin, LockingPlugin, method

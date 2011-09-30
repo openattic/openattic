@@ -2,7 +2,7 @@
 # kate: space-indent on; indent-width 4; replace-tabs on;
 
 import os
-from systemd import invoke, logged, BasePlugin, method
+from systemd import invoke, create_job, logged, BasePlugin, method
 
 from lvm.conf   import settings as lvm_settings
 from lvm.models import LogicalVolume
@@ -92,9 +92,15 @@ class SystemD(BasePlugin):
         ret, out, err = invoke(["/sbin/tune2fs", "-l", devpath], return_out_err=True)
         return dict([ [part.strip() for part in line.split(":", 1)] for line in out.split("\n")[1:] if line ])
 
-    @method(in_signature="ss", out_signature="i")
-    def e2fs_format(self, devpath, label):
-        return invoke(["/sbin/mke2fs", "-q", "-m0", "-L", label, devpath])
+    @method(in_signature="sssss", out_signature="i")
+    def e2fs_format(self, devpath, label, chown, chgrp, mountpoint):
+        if not os.path.exists(mountpoint):
+            os.makedirs(mountpoint)
+        return create_job([
+            ["/sbin/mke2fs", "-q", "-m0", "-L", label, devpath],
+            ["/bin/mount", "-t", "ext2", devpath, mountpoint],
+            ["/bin/chown", "-R", ("%s:%s" % (chown, chgrp)), mountpoint]
+            ])
 
     @method(in_signature="s", out_signature="i")
     def e2fs_check(self, devpath):
@@ -104,17 +110,35 @@ class SystemD(BasePlugin):
     def e2fs_resize(self, devpath, megs):
         return invoke(["/sbin/resize2fs", devpath, ("%dM" % megs)])
 
-    @method(in_signature="ss", out_signature="i")
-    def e3fs_format(self, devpath, label):
-        return invoke(["/sbin/mke2fs", "-q", "-j", "-m0", "-L", label, devpath])
+    @method(in_signature="sssss", out_signature="i")
+    def e3fs_format(self, devpath, label, chown, chgrp, mountpoint):
+        if not os.path.exists(mountpoint):
+            os.makedirs(mountpoint)
+        return create_job([
+            ["/sbin/mke2fs", "-q", "-j", "-m0", "-L", label, devpath],
+            ["/bin/mount", "-t", "ext3", devpath, mountpoint],
+            ["/bin/chown", "-R", ("%s:%s" % (chown, chgrp)), mountpoint]
+            ])
 
-    @method(in_signature="ss", out_signature="i")
-    def e4fs_format(self, devpath, label):
-        return invoke(["/sbin/mkfs.ext4", "-q", "-m0", "-L", label, devpath])
+    @method(in_signature="sssss", out_signature="i")
+    def e4fs_format(self, devpath, label, chown, chgrp, mountpoint):
+        if not os.path.exists(mountpoint):
+            os.makedirs(mountpoint)
+        return create_job([
+            ["/sbin/mkfs.ext4", "-q", "-m0", "-L", label, devpath],
+            ["/bin/mount", "-t", "ext4", devpath, mountpoint],
+            ["/bin/chown", "-R", ("%s:%s" % (chown, chgrp)), mountpoint]
+            ])
 
-    @method(in_signature="s", out_signature="i")
-    def ntfs_format(self, devpath):
-        return invoke(["/sbin/mkntfs", "--fast", devpath])
+    @method(in_signature="ssss", out_signature="i")
+    def ntfs_format(self, devpath, chown, chgrp, mountpoint):
+        if not os.path.exists(mountpoint):
+            os.makedirs(mountpoint)
+        return create_job([
+            ["/sbin/mkntfs", "--fast", devpath],
+            ["/bin/mount", "-t", "ntfs-3g", devpath, mountpoint],
+            ["/bin/chown", "-R", ("%s:%s" % (chown, chgrp)), mountpoint]
+            ])
 
     @method(in_signature="si", out_signature="i")
     def ntfs_resize(self, devpath, megs):

@@ -2,7 +2,9 @@
 # kate: space-indent on; indent-width 4; replace-tabs on;
 
 import logging
+import threading
 import subprocess
+
 from datetime import datetime
 
 from cmdlog.models import LogEntry
@@ -43,3 +45,13 @@ def invoke(args, close_fds=True, return_out_err=False, log=True, stdin=None, fai
     if return_out_err:
         return proc.returncode, procout, procerr
     return proc.returncode
+
+
+def run_queue(q):
+    for cmd in q:
+        invoke(cmd)
+
+def create_job(commands):
+    proc = threading.Thread(target=run_queue, args=(commands,))
+    proc.start()
+    return True

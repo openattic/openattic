@@ -83,6 +83,8 @@ class Command( BaseCommand ):
         if os.getuid() != 0:
             raise SystemError( "I need to run as root." )
 
+        gobject.threads_init()
+
         os.environ["LANG"] = "en_US.UTF-8"
 
         rootlogger = logging.getLogger()

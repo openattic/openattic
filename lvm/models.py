@@ -364,10 +364,9 @@ class LogicalVolume(StatefulModel):
     def setupfs( self ):
         if not self.formatted:
             self.fs.format()
-        self.fs.mount()
-        if not self.formatted:
-            self.fs.chown()
             self.formatted = True
+        else:
+            self.fs.mount()
 
     def clean(self):
         if not self.snapshot:
