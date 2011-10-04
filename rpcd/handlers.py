@@ -6,16 +6,26 @@ import socket
 from django.conf import settings
 from django.db import models
 
+
+class BaseHandler(object):
+    def __init__(self, user):
+        self.user = user
+
+    @classmethod
+    def _get_handler_name(cls):
+        return "bogus.Handler"
+
+
 class ModelHandlerMeta(type):
     """ Handler meta class that keeps track of Model→Handler associations. """
     handlers = {}
 
     def __init__( cls, name, bases, attrs ):
         type.__init__( cls, name, bases, attrs )
-        if 'model' in attrs:
+        if 'model' in attrs and attrs['model'] is not None:
             ModelHandlerMeta.handlers[attrs['model']] = cls
 
-class ModelHandler(object):
+class ModelHandler(BaseHandler):
     """ Base RPC handler class.
 
         Any methods whose names do not start with an underscore (_) will
@@ -26,12 +36,14 @@ class ModelHandler(object):
     """
     __metaclass__ = ModelHandlerMeta
 
+    model   = None
     exclude = None
     fields  = None
     order   = tuple()
 
-    def __init__(self, user):
-        self.user = user
+    @classmethod
+    def _get_handler_name(cls):
+        return cls.model._meta.app_label + '.' + cls.model._meta.object_name
 
     @classmethod
     def _get_handler_for_model(cls, model):

@@ -172,8 +172,7 @@ class RPCd(object):
 
         for plugin in rpcdplugins:
             for handler in getattr(getattr(plugin, "rpcapi"), "RPCD_HANDLERS", []):
-                meta = handler.model._meta
-                self.handlers[ meta.app_label+'.'+meta.object_name ] = handler
+                self.handlers[ handler._get_handler_name() ] = handler
 
     def _resolve(self, method, user):
         if '.' in method:

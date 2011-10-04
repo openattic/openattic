@@ -4,17 +4,13 @@
 import dbus
 from django.conf import settings
 
-from rpcd.handlers import ModelHandler
+from rpcd.handlers import BaseHandler, ModelHandler
 from sysutils.models import InitScript
 
-class SysUtilsHandler(object):
-    class model:
-        class _meta:
-            app_label = "sysutils"
-            object_name = "System"
-
-    def __init__(self, user):
-        self.user = user
+class SysUtilsHandler(BaseHandler):
+    @classmethod
+    def _get_handler_name(cls):
+        return "sysutils.System"
 
     def shutdown(self):
         dbus.SystemBus().get_object(settings.DBUS_IFACE_SYSTEMD, "/sysutils").shutdown()
