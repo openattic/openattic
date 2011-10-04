@@ -8,6 +8,15 @@ from django.db import models
 
 
 class BaseHandler(object):
+    """ Base RPC handler class.
+
+        Any methods whose names do not start with an underscore (_) will
+        be automatically exported via RPC.
+
+        The name of the section this handler will reside in is defined
+        by the _get_handler_name class method, which you will have to
+        override in order to set the name.
+    """
     def __init__(self, user):
         self.user = user
 
@@ -26,10 +35,8 @@ class ModelHandlerMeta(type):
             ModelHandlerMeta.handlers[attrs['model']] = cls
 
 class ModelHandler(BaseHandler):
-    """ Base RPC handler class.
-
-        Any methods whose names do not start with an underscore (_) will
-        be automatically exported via RPC.
+    """ Base Model aware RPC handler class. Inherits from BaseHandler and exports
+        a sensible set of methods which can be used with every standard Django model.
 
         In order to change the data included in records, override the _idobj,
         _override_get and _override_set methods.
