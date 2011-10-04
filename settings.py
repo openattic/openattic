@@ -184,6 +184,7 @@ INSTALLED_APPS = [
     'clustering',
     'ifconfig',
     'sysutils',
+    'pkgapt',
 ]
 
 def modprobe( name ):
