@@ -648,6 +648,10 @@ else:
                 """ The 'cat' shell command. """
                 return self._shellcmd('cat', args)
 
+            def do_env(self, args):
+                for key in os.environ:
+                    print "%-20s %s" % ( key, os.environ[key] )
+
             def do_bash(self, args):
                 """ Start a bash shell. (Staff and root only.) """
                 if os.geteuid() != 0:
