@@ -360,6 +360,7 @@ class LogicalVolume(StatefulModel):
             if self.filesystem:
                 self.fs.resize(grow=True)
             lvm_signals.post_grow.send(sender=self)
+        self._lvm_info = None # outdate cached information
 
     def setupfs( self ):
         if not self.formatted:
@@ -396,7 +397,6 @@ class LogicalVolume(StatefulModel):
             if self.filesystem and self.fs.mounted:
                 self.fs.unmount()
             self.resize()
-            self.megs = self.lvm_megs
 
         if self.filesystem:
             mc = self.modchain

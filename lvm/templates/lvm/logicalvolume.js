@@ -215,6 +215,7 @@ Ext.oa.Lvm__LogicalVolume_Panel = Ext.extend(Ext.Panel, {
                       layout: "fit",
                       height: 250,
                       width: 400,
+                      modal: true,
                       html: "{% trans 'Please wait while your volume is being created...' %}"
                     });
                     progresswin.show();
@@ -253,7 +254,39 @@ Ext.oa.Lvm__LogicalVolume_Panel = Ext.extend(Ext.Panel, {
           }
         }, {
           text: "{% trans "Resize Volume" %}",
-          icon: MEDIA_URL + "/icons2/16x16/actions/gtk-execute.png"
+          icon: MEDIA_URL + "/icons2/16x16/actions/gtk-execute.png",
+          handler: function(self){
+            var lvmGrid = lvmPanel.items.items[0];
+            var sm = lvmGrid.getSelectionModel();
+            if( sm.hasSelection() ){
+              var sel = sm.selections.items[0];
+              Ext.Msg.prompt(
+                "{% trans 'Enter new size' %}",
+                interpolate(
+                  "{% trans 'Please enter the size in MB you wish to resize volume %s to.<br />The current size is %s MB.' %}",
+                  [sel.data.name, sel.data.megs] ),
+                function(btn, text){
+                  if( btn == 'ok' ){
+                    var progresswin = new Ext.Window({
+                      title: "{% trans "Resizing Volume" %}",
+                      layout: "fit",
+                      height: 250,
+                      width: 400,
+                      modal: true,
+                      html: "{% trans 'Please wait while your volume is being resized...' %}"
+                    });
+                    progresswin.show();
+                    lvm__LogicalVolume.set( sel.data.id, {"megs": parseFloat(text)}, function(provider, response){
+                      lvmGrid.store.reload();
+                      progresswin.hide();
+                    } );
+                  }
+                  else
+                  alert("{% trans "Aborted." %}");
+                }
+              );
+            }
+          }
         }, {
           text: "{% trans "Delete Volume" %}",
           icon: MEDIA_URL + "/icons2/16x16/actions/remove.png",
