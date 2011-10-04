@@ -3,10 +3,10 @@
 
 import json
 
-from rpcd.handlers import BaseHandler
+from rpcd.handlers import ModelHandler
 from userprefs.models import UserProfile
 
-class UserProfileHandler(BaseHandler):
+class UserProfileHandler(ModelHandler):
     model = UserProfile
 
     def all_preferences(self):

@@ -4,7 +4,7 @@
 import dbus
 from django.conf import settings
 
-from rpcd.handlers import BaseHandler
+from rpcd.handlers import ModelHandler
 from sysutils.models import InitScript
 
 class SysUtilsHandler(object):
@@ -22,7 +22,7 @@ class SysUtilsHandler(object):
     def reboot(self):
         dbus.SystemBus().get_object(settings.DBUS_IFACE_SYSTEMD, "/sysutils").reboot()
 
-class InitScriptHandler(BaseHandler):
+class InitScriptHandler(ModelHandler):
     model = InitScript
 
     def get_status(self, id):

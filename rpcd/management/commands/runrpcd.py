@@ -24,7 +24,7 @@ from django.contrib.auth import authenticate
 from django.conf import settings
 
 from rpcd.models   import APIKey
-from rpcd.handlers import BaseHandler
+from rpcd.handlers import ModelHandler
 
 class SecureXMLRPCServer(HTTPServer, SimpleXMLRPCDispatcher):
     """ Secure XML-RPC server.
@@ -236,8 +236,8 @@ class RPCd(object):
 
     def get_object(self, id, user):
         """ Return an object resolved from an ID dictionary. """
-        obj = BaseHandler._get_object_by_id_dict(id)
-        handler = BaseHandler._get_handler_for_model(obj.__class__)()
+        obj = ModelHandler._get_object_by_id_dict(id)
+        handler = ModelHandler._get_handler_for_model(obj.__class__)()
         return handler._getobj(obj)
 
 def getloglevel(levelstr):

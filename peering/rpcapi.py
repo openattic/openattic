@@ -1,11 +1,11 @@
 # -*- coding: utf-8 -*-
 # kate: space-indent on; indent-width 4; replace-tabs on;
 
-from rpcd.handlers import BaseHandler
+from rpcd.handlers import ModelHandler
 
 from peering.models import PeerHost
 
-class PeerHostHandler(BaseHandler):
+class PeerHostHandler(ModelHandler):
     model  = PeerHost
     fields = ["id", "name"]
 

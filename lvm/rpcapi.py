@@ -1,11 +1,11 @@
 # -*- coding: utf-8 -*-
 # kate: space-indent on; indent-width 4; replace-tabs on;
 
-from rpcd.handlers import BaseHandler
+from rpcd.handlers import ModelHandler
 
 from lvm.models import VolumeGroup, LogicalVolume
 
-class VgHandler(BaseHandler):
+class VgHandler(ModelHandler):
     model = VolumeGroup
     order = ("name",)
 
@@ -28,7 +28,7 @@ class VgHandler(BaseHandler):
     def get_free_megs(self, id):
         return VolumeGroup.objects.get(id=id).lvm_free_megs
 
-class LvHandler(BaseHandler):
+class LvHandler(ModelHandler):
     model = LogicalVolume
     order = ("name",)
 

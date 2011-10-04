@@ -1,10 +1,10 @@
 # -*- coding: utf-8 -*-
 # kate: space-indent on; indent-width 4; replace-tabs on;
 
-from rpcd.handlers import BaseHandler
+from rpcd.handlers import ModelHandler
 from django.contrib.auth.models import User, Group
 
-class GroupHandler(BaseHandler):
+class GroupHandler(ModelHandler):
     model = Group
 
     def _override_get(self, obj, data):
@@ -12,7 +12,7 @@ class GroupHandler(BaseHandler):
         data['members'] = [ h._idobj(member) for member in obj.user_set.all() ]
         return data
 
-class UserHandler(BaseHandler):
+class UserHandler(ModelHandler):
     model = User
     exclude = ["password"]
 

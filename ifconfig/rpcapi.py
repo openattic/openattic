@@ -1,11 +1,11 @@
 # -*- coding: utf-8 -*-
 # kate: space-indent on; indent-width 4; replace-tabs on;
 
-from rpcd.handlers import BaseHandler
+from rpcd.handlers import ModelHandler
 
 from ifconfig.models import NetDevice
 
-class NetDeviceHandler(BaseHandler):
+class NetDeviceHandler(ModelHandler):
     model = NetDevice
 
     def _override_get(self, obj, data):

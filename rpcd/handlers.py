@@ -6,16 +6,16 @@ import socket
 from django.conf import settings
 from django.db import models
 
-class BaseHandlerMeta(type):
+class ModelHandlerMeta(type):
     """ Handler meta class that keeps track of Model→Handler associations. """
     handlers = {}
 
     def __init__( cls, name, bases, attrs ):
         type.__init__( cls, name, bases, attrs )
         if 'model' in attrs:
-            BaseHandlerMeta.handlers[attrs['model']] = cls
+            ModelHandlerMeta.handlers[attrs['model']] = cls
 
-class BaseHandler(object):
+class ModelHandler(object):
     """ Base RPC handler class.
 
         Any methods whose names do not start with an underscore (_) will
@@ -24,7 +24,7 @@ class BaseHandler(object):
         In order to change the data included in records, override the _idobj,
         _override_get and _override_set methods.
     """
-    __metaclass__ = BaseHandlerMeta
+    __metaclass__ = ModelHandlerMeta
 
     exclude = None
     fields  = None
@@ -129,7 +129,7 @@ class BaseHandler(object):
             if isinstance( field, models.ForeignKey ):
                 if value is not None:
                     try:
-                        handler = BaseHandler._get_handler_for_model(value.__class__)(self.user)
+                        handler = ModelHandler._get_handler_for_model(value.__class__)(self.user)
                     except KeyError:
                         data[field.name] = unicode(value)
                     else:
@@ -154,7 +154,7 @@ class BaseHandler(object):
             if field.name in data:
                 if isinstance( field, models.ForeignKey ):
                     if data[field.name] is not None:
-                        setattr(obj, field.name, BaseHandler._get_object_by_id_dict(data[field.name]))
+                        setattr(obj, field.name, ModelHandler._get_object_by_id_dict(data[field.name]))
                     else:
                         setattr(obj, field.name, None)
                 else:

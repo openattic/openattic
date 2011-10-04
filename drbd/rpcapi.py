@@ -1,11 +1,11 @@
 # -*- coding: utf-8 -*-
 # kate: space-indent on; indent-width 4; replace-tabs on;
 
-from rpcd.handlers import BaseHandler
+from rpcd.handlers import ModelHandler
 
 from drbd.models import DrbdDevice
 
-class DrbdDeviceHandler(BaseHandler):
+class DrbdDeviceHandler(ModelHandler):
     model = DrbdDevice
 
     def _override_get(self, obj, data):
