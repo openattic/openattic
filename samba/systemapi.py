@@ -13,7 +13,7 @@ from samba.conf    import settings as samba_settings
 class SystemD(LockingPlugin):
     dbus_path = "/samba"
 
-    @method(in_signature="", out_signature="i")
+    @method(in_signature="", out_signature="")
     def writeconf(self):
         self.lock.acquire()
         try:
