@@ -1,16 +1,17 @@
+{% load i18n %}
 Ext.namespace("Ext.oa");
 
 Ext.oa.Drbd__Device_Panel = Ext.extend(Ext.grid.GridPanel, {
   initComponent: function(){
     var drbdDevGrid = this;
     Ext.apply(this, Ext.apply(this.initialConfig, {
-      title: "DRBD",
+      title: "{% trans 'DRBD' %}",
       buttons: [{
-        text: "Add DRBD Device",
+        text: "{% trans 'Add DRBD Device' %}",
         icon: MEDIA_URL + "/icons2/16x16/actions/add.png",
         handler: function(){
           var addwin = new Ext.Window({
-            title: "Add DRBD Device",
+            title: "{% trans 'Add DRBD Device' %}",
             layout: "fit",
             height: 300,
             width: 500,
@@ -21,7 +22,7 @@ Ext.oa.Drbd__Device_Panel = Ext.extend(Ext.grid.GridPanel, {
                 anchor: '-20px'
               },
               items: [{
-                fieldLabel: "Protocol",
+                fieldLabel: "{% trans 'Protocol' %}",
                 name: "protocol",
                 ref: 'protofield'
               }],
@@ -39,7 +40,7 @@ Ext.oa.Drbd__Device_Panel = Ext.extend(Ext.grid.GridPanel, {
                   });
                 }
               }, {
-                text: 'Cancel',
+                text: "{% trans 'Cancel' %}",
                 icon: MEDIA_URL + "/icons2/16x16/actions/gtk-cancel.png",
                 handler: function(self){
                   addwin.hide();
@@ -50,7 +51,7 @@ Ext.oa.Drbd__Device_Panel = Ext.extend(Ext.grid.GridPanel, {
           addwin.show();
         }
       }, {
-        text: "Delete DRBD Device",
+        text: "{% trans 'Delete DRBD Device' %}",
         icon: MEDIA_URL + "/icons2/16x16/actions/remove.png",
         handler: function(self){
           var sm = drbdDevGrid.getSelectionModel();
@@ -74,15 +75,15 @@ Ext.oa.Drbd__Device_Panel = Ext.extend(Ext.grid.GridPanel, {
           sortable: true
         },
         columns: [{
-          header: "Volume",
+          header: "{% trans 'Volume' %}",
           width: 200,
           dataIndex: "volumename"
         }, {
-          header: "Protocol",
+          header: "{% trans 'Protocol' %}",
           width:     80,
           dataIndex: "protocol"
         }, {
-          header: "Peer Address",
+          header: "{% trans 'Peer Address' %}",
           width: 200,
           dataIndex: "peeraddress"
         }]
@@ -93,7 +94,7 @@ Ext.oa.Drbd__Device_Panel = Ext.extend(Ext.grid.GridPanel, {
 
   prepareMenuTree: function(tree){
     tree.root.attributes.children[4].children.push({
-      text: 'DRBD',
+      text: "{% trans 'DRBD' %}",
       leaf: true,
       icon: MEDIA_URL + '/icons2/22x22/apps/nfs.png',
       panel: this,

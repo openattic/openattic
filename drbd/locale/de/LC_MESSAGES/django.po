@@ -1,0 +1,48 @@
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) YEAR THE PACKAGE'S COPYRIGHT HOLDER
+# This file is distributed under the same license as the PACKAGE package.
+# FIRST AUTHOR <EMAIL@ADDRESS>, YEAR.
+#
+#, fuzzy
+msgid ""
+msgstr ""
+"Project-Id-Version: PACKAGE VERSION\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2011-10-05 16:39+0200\n"
+"PO-Revision-Date: 2011-10-05 11:30\n"
+"Last-Translator:   <>\n"
+"Language-Team: LANGUAGE <LL@li.org>\n"
+"Language: \n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=2; plural=(n != 1)\n"
+"X-Translated-Using: django-rosetta 0.6.0\n"
+
+#: templates/drbd/device.js:8 templates/drbd/device.js.py:97
+msgid "DRBD"
+msgstr "DRBD"
+
+#: templates/drbd/device.js:10 templates/drbd/device.js.py:14
+msgid "Add DRBD Device"
+msgstr "Füge DRBD Laufwerk hinzu"
+
+#: templates/drbd/device.js:25 templates/drbd/device.js.py:82
+msgid "Protocol"
+msgstr "Protokoll"
+
+#: templates/drbd/device.js:43
+msgid "Cancel"
+msgstr "Abbrechen"
+
+#: templates/drbd/device.js:54
+msgid "Delete DRBD Device"
+msgstr "Lösche DRBD "
+
+#: templates/drbd/device.js:78
+msgid "Volume"
+msgstr "Volume"
+
+#: templates/drbd/device.js:86
+msgid "Peer Address"
+msgstr "Adresse der Gegenstelle"

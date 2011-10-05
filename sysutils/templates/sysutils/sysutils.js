@@ -1,3 +1,4 @@
+{% load i18n %}
 Ext.namespace("Ext.oa");
 
 
@@ -22,7 +23,7 @@ Ext.oa.DangerousMessage = function(){
 Ext.oa.SysUtils_Panel = Ext.extend(Ext.grid.GridPanel, {
   initComponent: function(){
     Ext.apply(this, Ext.apply(this.initialConfig, {
-      title: "Service State",
+      title: "{% trans 'Service State' %}",
       store: (function(){
         var st = new Ext.data.DirectStore({
           autoLoad: true,
@@ -37,11 +38,11 @@ Ext.oa.SysUtils_Panel = Ext.extend(Ext.grid.GridPanel, {
           sortable: true
         },
         columns: [{
-          header: "Service name",
+          header: "{% trans 'Service Name' %}",
           width: 200,
           dataIndex: "name"
         }, {
-          header: "Status",
+          header: "{% trans 'Status' %}",
           width: 50,
           dataIndex: "status",
           renderer: function( val, x, store ){
@@ -60,14 +61,14 @@ Ext.oa.SysUtils_Panel = Ext.extend(Ext.grid.GridPanel, {
 
   prepareMenuTree: function(tree){
     tree.root.attributes.children[0].children.push({
-      text: 'Service State',
+      text: "{% trans 'Service State'%}",
       leaf: true,
       icon: '{{ MEDIA_URL }}/icons2/22x22/status/network-receive.png',
       panel: this,
       href: '#'
     });
     tree.root.attributes.children[5].children.push({
-      text: 'Reboot',
+      text: "{% trans 'Reboot' %}",
       leaf: true,
       icon: '{{ MEDIA_URL }}/oxygen/22x22/actions/system-reboot.png',
       listeners: {
@@ -87,7 +88,7 @@ Ext.oa.SysUtils_Panel = Ext.extend(Ext.grid.GridPanel, {
       href: '#'
     });
     tree.root.attributes.children[5].children.push({
-      text: 'Shutdown',
+      text: "{% trans 'Shutdown' %}",
       leaf: true,
       icon: '{{ MEDIA_URL }}/oxygen/22x22/actions/system-shutdown.png',
       listeners: {

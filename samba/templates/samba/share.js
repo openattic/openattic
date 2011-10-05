@@ -1,9 +1,11 @@
+{% load i18n %}
+
 Ext.namespace("Ext.oa");
 
 Ext.oa.Samba__Share_Panel = Ext.extend(Ext.grid.GridPanel, {
   initComponent: function(){
     Ext.apply(this, Ext.apply(this.initialConfig, {
-      title: "Samba",
+      title: "{% trans 'Samba' %}",
       store: new Ext.data.DirectStore({
         autoLoad: true,
         fields: ['path', 'state', 'available'],
@@ -14,15 +16,15 @@ Ext.oa.Samba__Share_Panel = Ext.extend(Ext.grid.GridPanel, {
           sortable: true
         },
         columns: [{
-          header: "path",
+          header: "{% trans 'Path' %}",
           width: 200,
           dataIndex: "path"
         }, {
-          header: "state",
+          header: "{% trans 'State' %}",
           width: 50,
           dataIndex: "state"
         }, {
-          header: "available",
+          header: "{% trans 'Available' %}",
           width: 50,
           dataIndex: "available"
         }]
@@ -33,7 +35,7 @@ Ext.oa.Samba__Share_Panel = Ext.extend(Ext.grid.GridPanel, {
 
   prepareMenuTree: function(tree){
     tree.root.attributes.children[2].children.push({
-      text: 'Windows (Samba)',
+      text: "{% trans 'Windows (Samba)' %}",
       leaf: true,
       icon: MEDIA_URL + '/icons2/22x22/apps/samba.png',
       panel: this,

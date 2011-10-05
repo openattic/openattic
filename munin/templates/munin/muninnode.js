@@ -1,9 +1,10 @@
+{% load i18n %}
 Ext.namespace("Ext.oa");
 
 Ext.oa.Munin__MuninNode_Panel = Ext.extend(Ext.Panel, {
   initComponent: function(){
     Ext.apply(this, Ext.apply(this.initialConfig, {
-      title: 'Performance',
+      title: "{% trans 'Performance' %}",
       layout: 'border',
       items: [{
         region: 'west',
@@ -24,7 +25,7 @@ Ext.oa.Munin__MuninNode_Panel = Ext.extend(Ext.Panel, {
         }),
         colModel: new Ext.grid.ColumnModel({
           columns: [{
-            header: "Modul",
+            header: "{% trans 'Modul' %}",
             dataIndex: "name"
           } ]
         }),
@@ -73,7 +74,7 @@ Ext.oa.Munin__MuninNode_Panel = Ext.extend(Ext.Panel, {
 
   prepareMenuTree: function(tree){
     tree.root.attributes.children[0].children.push({
-      text: 'Performance',
+      text: "{% trans 'Performance' %}",
       leaf: true,
       icon: MEDIA_URL + '/icons2/22x22/apps/samba.png',
       panel: this,
