@@ -106,8 +106,8 @@ def get_provider():
 
     for plugin in rpcdplugins:
         for handler in getattr(getattr(plugin, "rpcapi"), "RPCD_HANDLERS", []):
-            meta = handler.model._meta
-            handlers[ meta.app_label+'__'+meta.object_name ] = handler
+            name = handler._get_handler_name()
+            handlers[ name.replace('.', '__') ] = handler
 
     return Provider(handlers, autoadd=True)
 
