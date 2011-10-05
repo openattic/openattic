@@ -14,7 +14,8 @@ def dbus_type_to_python(obj):
         dbus.Int16: int,
         dbus.Int32: int,
         dbus.Int64: int,
-        dbus.String: unicode
+        dbus.String: unicode,
+        tuple: tuple
         }
     return conv[type(obj)](obj)
 
@@ -25,6 +26,8 @@ def dbus_to_python(obj):
     py = dbus_type_to_python(obj)
     if isinstance(py, list):
         return [dbus_to_python(el) for el in py]
+    elif isinstance(py, tuple):
+        return tuple([dbus_to_python(el) for el in py])
     elif isinstance(py, dict):
         return dict([(dbus_type_to_python(key), dbus_to_python(obj[key])) for key in py])
     return py
