@@ -2,7 +2,7 @@
 # kate: space-indent on; indent-width 4; replace-tabs on;
 
 import os
-from systemd import invoke, create_job, logged, BasePlugin, method
+from systemd import invoke, create_job, logged, BasePlugin, method, signal
 
 from lvm.conf   import settings as lvm_settings
 from lvm.models import LogicalVolume
@@ -100,7 +100,7 @@ class SystemD(BasePlugin):
             ["/sbin/mke2fs", "-q", "-m0", "-L", label, devpath],
             ["/bin/mount", "-t", "ext2", devpath, mountpoint],
             ["/bin/chown", "-R", ("%s:%s" % (chown, chgrp)), mountpoint]
-            ])
+            ], self.format_complete, (devpath, mountpoint, "ext2"))
 
     @method(in_signature="s", out_signature="i")
     def e2fs_check(self, devpath):
@@ -118,7 +118,7 @@ class SystemD(BasePlugin):
             ["/sbin/mke2fs", "-q", "-j", "-m0", "-L", label, devpath],
             ["/bin/mount", "-t", "ext3", devpath, mountpoint],
             ["/bin/chown", "-R", ("%s:%s" % (chown, chgrp)), mountpoint]
-            ])
+            ], self.format_complete, (devpath, mountpoint, "ext3"))
 
     @method(in_signature="sssss", out_signature="i")
     def e4fs_format(self, devpath, label, chown, chgrp, mountpoint):
@@ -128,7 +128,7 @@ class SystemD(BasePlugin):
             ["/sbin/mkfs.ext4", "-q", "-m0", "-L", label, devpath],
             ["/bin/mount", "-t", "ext4", devpath, mountpoint],
             ["/bin/chown", "-R", ("%s:%s" % (chown, chgrp)), mountpoint]
-            ])
+            ], self.format_complete, (devpath, mountpoint, "ext4"))
 
     @method(in_signature="ssss", out_signature="i")
     def ntfs_format(self, devpath, chown, chgrp, mountpoint):
@@ -138,7 +138,11 @@ class SystemD(BasePlugin):
             ["/sbin/mkntfs", "--fast", devpath],
             ["/bin/mount", "-t", "ntfs-3g", devpath, mountpoint],
             ["/bin/chown", "-R", ("%s:%s" % (chown, chgrp)), mountpoint]
-            ])
+            ], self.format_complete, (devpath, mountpoint, "ntfs-3g"))
+
+    @signal(signature="sss")
+    def format_complete(self, devpath, mountpoint, fstype):
+        pass
 
     @method(in_signature="si", out_signature="i")
     def ntfs_resize(self, devpath, megs):
@@ -217,3 +221,4 @@ class SystemD(BasePlugin):
             "partition-table-type":splittedlines[1][5],
             "model-name":splittedlines[1][6],
             }, partitions
+
