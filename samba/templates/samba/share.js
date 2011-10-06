@@ -4,6 +4,12 @@ Ext.namespace("Ext.oa");
 
 Ext.oa.Samba__Share_Panel = Ext.extend(Ext.grid.GridPanel, {
   initComponent: function(){
+    var sambaShareGrid = this;
+    var renderBoolean = function (val, x, store){
+     if (val)
+       return '<img src="' + MEDIA_URL + '/oxygen/16x16/actions/dialog-ok-apply.png" title="yes" />';
+     return '<img src="' + MEDIA_URL + '/oxygen/16x16/actions/dialog-cancel.png" title="no" />';
+      };
     Ext.apply(this, Ext.apply(this.initialConfig, {
       title: "{% trans 'Samba' %}",
       store: new Ext.data.DirectStore({
@@ -19,14 +25,17 @@ Ext.oa.Samba__Share_Panel = Ext.extend(Ext.grid.GridPanel, {
           header: "{% trans 'Path' %}",
           width: 200,
           dataIndex: "path"
+          
         }, {
           header: "{% trans 'State' %}",
           width: 50,
-          dataIndex: "state"
+          dataIndex: "state",
+          renderer: renderBoolean
         }, {
           header: "{% trans 'Available' %}",
-          width: 50,
-          dataIndex: "available"
+          width: 70,
+          dataIndex: "available",
+          renderer: renderBoolean
         }]
       })
     }));
