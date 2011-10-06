@@ -19,3 +19,4 @@ class LockingPlugin(BasePlugin):
         self.lock    = Lock()
 
 method = partial( dbus.service.method, settings.DBUS_IFACE_SYSTEMD )
+signal = partial( dbus.service.signal, settings.DBUS_IFACE_SYSTEMD )

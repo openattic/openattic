@@ -47,11 +47,13 @@ def invoke(args, close_fds=True, return_out_err=False, log=True, stdin=None, fai
     return proc.returncode
 
 
-def run_queue(q):
+def run_queue(q, signal=None, sigargs=None):
     for cmd in q:
         invoke(cmd)
+    if signal is not None:
+        signal(*sigargs)
 
-def create_job(commands):
-    proc = threading.Thread(target=run_queue, args=(commands,))
+def create_job(commands, signal=None, sigargs=None):
+    proc = threading.Thread(target=run_queue, args=(commands, signal, sigargs))
     proc.start()
     return True
