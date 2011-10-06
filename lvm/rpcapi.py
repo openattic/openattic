@@ -53,6 +53,11 @@ class LvHandler(ModelHandler):
         from lvm.filesystems import FILESYSTEMS
         return [ {'name': fs.name, 'desc': fs.desc } for fs in FILESYSTEMS ]
 
+    def get_shares(self, id):
+        lv = LogicalVolume.objects.get(id=id)
+        return [ ModelHandler._get_handler_for_model(sh.__class__)(self.user)._idobj(sh)
+            for sh in lv.get_shares() ]
+
     def fs_info(self, id):
         """ Return detailed information about the given file system. """
         lv = LogicalVolume.objects.get(id=id)
