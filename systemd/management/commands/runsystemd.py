@@ -7,6 +7,7 @@ import logging
 
 from logging.handlers import SysLogHandler
 from functools import wraps
+from threading import Lock
 from os.path import dirname, abspath
 from optparse import make_option
 
@@ -19,13 +20,18 @@ import dbus.mainloop.glib
 from django.core.management.base import BaseCommand
 from django.conf import settings
 
-from systemd.helpers import makeloggedfunc
+from systemd.helpers   import makeloggedfunc
+from systemd.procutils import create_job
 
 class SystemD(dbus.service.Object):
     def __init__(self, detected_modules):
         self.bus = dbus.SystemBus()
         dbus.service.Object.__init__(self, self.bus, "/")
         self.busname = dbus.service.BusName(settings.DBUS_IFACE_SYSTEMD, self.bus)
+
+        self.job_lock = Lock()
+        self.job_id = 0
+        self.jobs = {}
 
         self.modules = {}
         for module in detected_modules:
@@ -49,6 +55,38 @@ class SystemD(dbus.service.Object):
     @dbus.service.method(settings.DBUS_IFACE_SYSTEMD, in_signature="", out_signature="s")
     def ping(self):
         return "pong"
+
+    @makeloggedfunc
+    @dbus.service.method(settings.DBUS_IFACE_SYSTEMD, in_signature="", out_signature="i")
+    def build_job(self):
+        self.job_lock.acquire()
+        self.job_id += 1
+        jid = self.job_id
+        self.jobs[jid] = []
+        self.job_lock.release()
+        return jid
+
+    @makeloggedfunc
+    @dbus.service.method(settings.DBUS_IFACE_SYSTEMD, in_signature="", out_signature="")
+    def add_job(self, jid, cmd):
+        self.job_lock.acquire()
+        self.jobs[jid].append(cmd)
+        self.job_lock.release()
+
+    @makeloggedfunc
+    @dbus.service.method(settings.DBUS_IFACE_SYSTEMD, in_signature="", out_signature="")
+    def enqueue_job(self, jid):
+        self.job_lock.acquire()
+        create_job( self.jobs[jid], self.job_finished, (jid,) )
+        self.job_lock.release()
+
+    @makeloggedfunc
+    @dbus.service.signal(settings.DBUS_IFACE_SYSTEMD, signature="i")
+    def job_finished(self, jid):
+        self.job_lock.acquire()
+        del self.jobs[jid]
+        self.job_lock.release()
+
 
 
 def getloglevel(levelstr):
