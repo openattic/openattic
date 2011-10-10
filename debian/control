@@ -42,27 +42,27 @@ Description: LVM module for openATTIC.
 
 Package: openattic-module-nfs
 Architecture: all
-Depends: openattic-lvm,
+Depends: openattic-module-lvm,
  nfs-kernel-server
 Description: NFS module for openATTIC.
  Installs the NFS module for openATTIC.
 
 Package: openattic-module-iet-iscsi
 Architecture: all
-Depends: openattic-lvm,
+Depends: openattic-module-lvm,
  iscsitarget, iscsitarget-dkms
 Description: IET iSCSI module for openATTIC.
  Installs the IET iSCSI module for openATTIC.
 
 Package: openattic-module-samba
 Architecture: all
-Depends: openattic-lvm, samba
+Depends: openattic-module-lvm, samba
 Description: Samba module for openATTIC.
  Installs the Samba module for openATTIC.
 
 Package: openattic-module-ftp
 Architecture: all
-Depends: openattic-lvm,
+Depends: openattic-module-lvm,
  proftpd
 Description: FTP module for openATTIC.
  Installs the FTP module for openATTIC.
@@ -76,14 +76,14 @@ Description: Munin module for openATTIC.
 
 Package: openattic-module-drbd
 Architecture: all
-Depends: openattic-lvm,
+Depends: openattic-module-lvm,
  drbd8-utils
 Description: DRBD module for openATTIC.
  Installs the DRBD module for openATTIC.
 
 Package: openattic-module-http
 Architecture: all
-Depends: openattic-lvm,
+Depends: openattic-module-lvm,
  apache2
 Description: HTTP module for openATTIC.
  Installs the HTTP module for openATTIC.
