@@ -23,7 +23,8 @@ Depends: ${misc:Depends},
  python-django,
  dbus,
  python-dbus,
- python-m2crypto
+ python-m2crypto,
+ python-django-extdirect (>= 0.6)
 Recommends: libapache2-mod-wsgi
 Description: Basic requirements for openATTIC.
  Installs the basic set of dependencies required to run
