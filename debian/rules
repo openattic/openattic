@@ -11,4 +11,3 @@
 
 %:
 	dh $@ 
-	dh_installdebconf
