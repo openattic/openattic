@@ -1,0 +1,13 @@
+# This file is generated automatically by openATTIC and will be overwritten
+# automatically when the configuration changes.
+#
+# To alter sections of this file, edit `<openATTIC>/http/templates/http/apache2.conf`,
+# and run `<openATTIC>/installer.py -c -o http` to update Apache2.
+
+<Directory /var/www/volumes>
+	Options Indexes FollowSymlinks 
+	AllowOverride Indexes Limit AuthConfig
+</Directory>
+
+# Redirect /volumes/ -- without any specific volume given -- to the openATTIC GUI
+RedirectMatch ^/volumes/$ /openattic/

@@ -1,0 +1,26 @@
+#!/bin/sh
+
+set -e
+
+if [ "$1" = "configure" ] ; then
+    setperm(){
+        FILE="$1"
+        PERM="$2"
+        dpkg-statoverride --list "$FILE" >/dev/null || \
+            dpkg-statoverride --update --add www-data www-data "$PERM" "$FILE"
+    }
+
+    setperm "/usr/share/openattic" 0750
+    setperm "/var/lib/openattic"   0750
+    setperm "/var/lib/openattic/openattic.sqlite3" 0640
+
+    if [ -x /etc/init.d/apache2 ]; then
+        invoke-rc.d --quiet apache2 reload
+    fi
+
+    if [ -x /etc/init.d/dbus ]; then
+        invoke-rc.d --quiet dbus reload
+    fi
+fi
+
+#DEBHELPER#
