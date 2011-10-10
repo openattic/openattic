@@ -1,1 +1,1 @@
-debian/database_install/mysql-template.ini /etc/openattic/databases
+debian/database_install/mysql_template.ini /etc/openattic/databases
