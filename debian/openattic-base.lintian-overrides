@@ -1,0 +1,2 @@
+openattic-base: package-contains-broken-symlink usr/share/openattic/htdocs/extjs ../../javascript/extjs
+openattic-base: package-contains-broken-symlink usr/share/openattic/htdocs/extjs_themes/images/default ../../extjs/resources/images/default
