@@ -56,9 +56,15 @@ class SystemD(BasePlugin):
     def lvchange(self, device, active):
         return invoke(["/sbin/lvchange", ('-a' + {False: 'n', True: 'y'}[active]), device])
 
-    @method(in_signature="si", out_signature="i")
-    def lvresize(self, device, megs):
-        return invoke(["/sbin/lvresize", '-L', ("%dM" % megs), device])
+    @method(in_signature="isib", out_signature="")
+    def lvresize(self, jid, device, megs, grow):
+        if not grow:
+            self.job_add_command(jid, ["/sbin/lvchange", '-an', device])
+
+        self.job_add_command(jid, ["/sbin/lvresize", '-L', ("%dM" % megs), device])
+
+        if not grow:
+            self.job_add_command(jid, ["/sbin/lvchange", '-ay', device])
 
     @method(in_signature="s", out_signature="i")
     def lvremove(self, device):
@@ -92,11 +98,11 @@ class SystemD(BasePlugin):
         ret, out, err = invoke(["/sbin/tune2fs", "-l", devpath], return_out_err=True)
         return dict([ [part.strip() for part in line.split(":", 1)] for line in out.split("\n")[1:] if line ])
 
-    @method(in_signature="sssss", out_signature="i")
+    @method(in_signature="sssss", out_signature="")
     def e2fs_format(self, devpath, label, chown, chgrp, mountpoint):
         if not os.path.exists(mountpoint):
             os.makedirs(mountpoint)
-        return create_job([
+        create_job([
             ["/sbin/mke2fs", "-q", "-m0", "-L", label, devpath],
             ["/bin/mount", "-t", "ext2", devpath, mountpoint],
             ["/bin/chown", "-R", ("%s:%s" % (chown, chgrp)), mountpoint]
@@ -106,35 +112,36 @@ class SystemD(BasePlugin):
     def e2fs_check(self, devpath):
         return invoke(["/sbin/e2fsck", "-y", "-f", devpath])
 
-    @method(in_signature="si", out_signature="i")
-    def e2fs_resize(self, devpath, megs):
-        return invoke(["/sbin/resize2fs", devpath, ("%dM" % megs)])
+    @method(in_signature="isib", out_signature="")
+    def e2fs_resize(self, jid, devpath, megs, grow):
+        self.job_add_command(jid, ["/sbin/e2fsck", "-f", "-y", devpath])
+        self.job_add_command(jid, ["/sbin/resize2fs", devpath, ("%dM" % megs)])
 
-    @method(in_signature="sssss", out_signature="i")
+    @method(in_signature="sssss", out_signature="")
     def e3fs_format(self, devpath, label, chown, chgrp, mountpoint):
         if not os.path.exists(mountpoint):
             os.makedirs(mountpoint)
-        return create_job([
+        create_job([
             ["/sbin/mke2fs", "-q", "-j", "-m0", "-L", label, devpath],
             ["/bin/mount", "-t", "ext3", devpath, mountpoint],
             ["/bin/chown", "-R", ("%s:%s" % (chown, chgrp)), mountpoint]
             ], self.format_complete, (devpath, mountpoint, "ext3"))
 
-    @method(in_signature="sssss", out_signature="i")
+    @method(in_signature="sssss", out_signature="")
     def e4fs_format(self, devpath, label, chown, chgrp, mountpoint):
         if not os.path.exists(mountpoint):
             os.makedirs(mountpoint)
-        return create_job([
+        create_job([
             ["/sbin/mkfs.ext4", "-q", "-m0", "-L", label, devpath],
             ["/bin/mount", "-t", "ext4", devpath, mountpoint],
             ["/bin/chown", "-R", ("%s:%s" % (chown, chgrp)), mountpoint]
             ], self.format_complete, (devpath, mountpoint, "ext4"))
 
-    @method(in_signature="ssss", out_signature="i")
+    @method(in_signature="ssss", out_signature="")
     def ntfs_format(self, devpath, chown, chgrp, mountpoint):
         if not os.path.exists(mountpoint):
             os.makedirs(mountpoint)
-        return create_job([
+        create_job([
             ["/sbin/mkntfs", "--fast", devpath],
             ["/bin/mount", "-t", "ntfs-3g", devpath, mountpoint],
             ["/bin/chown", "-R", ("%s:%s" % (chown, chgrp)), mountpoint]
@@ -144,9 +151,9 @@ class SystemD(BasePlugin):
     def format_complete(self, devpath, mountpoint, fstype):
         pass
 
-    @method(in_signature="si", out_signature="i")
-    def ntfs_resize(self, devpath, megs):
-        return invoke(["/sbin/ntfsresize", "--force", "--size", ("%dM" % megs), devpath], stdin="y\n")
+    @method(in_signature="isib", out_signature="")
+    def ntfs_resize(self, jid, devpath, megs, grow):
+        self.job_add_command(jid, ["/sbin/ntfsresize", "--force", "--size", ("%dM" % megs), devpath], stdin="y\n")
 
     @method(in_signature="", out_signature="a{ss}")
     def modprobe_dmsnapshot_version(self):

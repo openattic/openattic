@@ -45,7 +45,7 @@ class FileSystem(object):
     def format(self):
         raise NotImplementedError("FileSystem::format needs to be overridden")
 
-    def resize(self, grow):
+    def resize(self, jid, grow):
         raise NotImplementedError("FileSystem::resize needs to be overridden")
 
     @property
@@ -86,10 +86,8 @@ class Ext2(FileSystem):
         return self.lv.lvm.e2fs_format( self.lv.path, self.lv.name,
             self.lv.owner.username, lvm_settings.CHOWN_GROUP, self.mountpoints[0] )
 
-    def resize(self, grow):
-        if self.lv.lvm.e2fs_check( self.lv.path ) != 0:
-            raise SystemError("File System is not clean, aborting.")
-        return self.lv.lvm.e2fs_resize( self.lv.path, self.lv.megs )
+    def resize(self, jid, grow):
+        return self.lv.lvm.e2fs_resize( jid, self.lv.path, self.lv.megs, grow )
 
 class Ext3(Ext2):
     name = "ext3"
@@ -121,7 +119,7 @@ class Ntfs(FileSystem):
             self.lv.owner.username, lvm_settings.CHOWN_GROUP, self.mountpoints[0] )
 
     def resize(self, grow):
-        return self.lv.lvm.ntfs_resize( self.lv.path, self.lv.megs )
+        return self.lv.lvm.ntfs_resize( jid, self.lv.path, self.lv.megs, grow )
 
 
 

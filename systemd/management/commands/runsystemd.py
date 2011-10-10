@@ -37,7 +37,7 @@ class SystemD(dbus.service.Object):
         for module in detected_modules:
             try:
                 daemon = getattr( getattr( module, "systemapi" ), "SystemD" )
-                self.modules[ module.__name__ ] = daemon(self.bus, self.busname)
+                self.modules[ module.__name__ ] = daemon(self.bus, self.busname, self)
             except:
                 traceback.print_exc()
 
@@ -66,15 +66,18 @@ class SystemD(dbus.service.Object):
         self.job_lock.release()
         return jid
 
-    @makeloggedfunc
-    @dbus.service.method(settings.DBUS_IFACE_SYSTEMD, in_signature="", out_signature="")
-    def add_job(self, jid, cmd):
+    def _job_add_command(self, jid, cmd):
         self.job_lock.acquire()
         self.jobs[jid].append(cmd)
         self.job_lock.release()
 
     @makeloggedfunc
-    @dbus.service.method(settings.DBUS_IFACE_SYSTEMD, in_signature="", out_signature="")
+    @dbus.service.method(settings.DBUS_IFACE_SYSTEMD, in_signature="is", out_signature="")
+    def job_add_command(self, jid, cmd):
+        self._job_add_command(jid, cmd)
+
+    @makeloggedfunc
+    @dbus.service.method(settings.DBUS_IFACE_SYSTEMD, in_signature="i", out_signature="")
     def enqueue_job(self, jid):
         self.job_lock.acquire()
         create_job( self.jobs[jid], self.job_finished, (jid,) )

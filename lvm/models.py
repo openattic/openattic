@@ -342,32 +342,51 @@ class LogicalVolume(StatefulModel):
         lvm_signals.post_uninstall.send(sender=self)
 
     def resize( self ):
+        sysd = dbus.SystemBus().get_object(settings.DBUS_IFACE_SYSTEMD, "/")
+        jid  = sysd.build_job()
+
+        sysd.job_add_command(jid, ["umount", self.fs.mountpoints[0].encode("ascii")])
+
         if self.megs < self.lvm_megs:
             # Shrink FS, then Volume
             lvm_signals.pre_shrink.send(sender=self)
+
             if self.filesystem:
-                self.fs.resize(grow=False)
+                self.fs.resize(jid, grow=False)
+
             for mod in self.modchain:
-                mod.resize()
-            self.lvm.lvresize(self.device, self.megs)
+                mod.resize(jid)
+
+            self.lvm.lvresize(jid, self.device, self.megs, False)
+
             lvm_signals.post_shrink.send(sender=self)
         else:
             # Grow Volume, then FS
             lvm_signals.pre_grow.send(sender=self)
-            self.lvm.lvresize(self.device, self.megs)
+
+            self.lvm.lvresize(jid, self.device, self.megs, True)
+
             for mod in self.modchain:
-                mod.resize()
+                mod.resize(jid)
+
             if self.filesystem:
-                self.fs.resize(grow=True)
+                self.fs.resize(jid, grow=True)
+
             lvm_signals.post_grow.send(sender=self)
+
+        sysd.job_add_command(jid, ["mount", self.fs.mountpoints[0].encode("ascii")])
+
+        sysd.enqueue_job(jid)
         self._lvm_info = None # outdate cached information
 
     def setupfs( self ):
         if not self.formatted:
             self.fs.format()
             self.formatted = True
+            return True
         else:
             self.fs.mount()
+            return False
 
     def clean(self):
         if not self.snapshot:
@@ -393,18 +412,21 @@ class LogicalVolume(StatefulModel):
 
         if install:
             self.install()
-        elif self.megs != self.lvm_megs:
-            if self.filesystem and self.fs.mounted:
-                self.fs.unmount()
-            self.resize()
 
-        if self.filesystem:
-            mc = self.modchain
-            if mc:
-                mc[-1].setupfs()
-            else:
-                self.setupfs()
-            self.lvm.write_fstab()
+            if self.filesystem:
+                mc = self.modchain
+                modified = False
+                if mc:
+                    modified = mc[-1].setupfs()
+                else:
+                    modified = self.setupfs()
+                self.lvm.write_fstab()
+
+                if modified:
+                    ret = StatefulModel.save(self, ignore_state=True, *args, **kwargs)
+
+        elif self.megs != self.lvm_megs:
+            self.resize()
 
         return ret
 
@@ -447,12 +469,12 @@ class LVChainedModule(StatefulModel):
                 last = curr
 
     def setupfs(self):
-        self.volume.setupfs()
+        return self.volume.setupfs()
 
     def install(self):
         return
 
-    def resize(self):
+    def resize(self, jid):
         return
 
     def uninstall(self):

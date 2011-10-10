@@ -177,9 +177,10 @@ class DrbdDevice(LVChainedModule):
     def setupfs(self):
         if self.role['self'] == "Primary":
             self.volume.setupfs()
+            return False
         else:
             self.volume.formatted = True
-            self.volume.save()
+            return True
 
     def install(self):
         if self.state != 'active':
