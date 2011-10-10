@@ -22,7 +22,10 @@ Architecture: all
 Depends: ${misc:Depends}, sqlite3
 Conflicts: openattic-database-mysql, openattic-database-pgsql
 Description: Configures openATTIC with an SQLite3 database
- Configures openATTIC with an SQLite3 database.
+ Configures openATTIC with an SQLite3 database. This setup is recommended
+ in cases where you do not plan on using the FTP module later on, because
+ SQLite keeps its database in one single file and does not require an
+ extra database server to run.
 
 Package: openattic-database-mysql
 Architecture: all
@@ -31,7 +34,10 @@ Depends: ${misc:Depends}, python-mysqldb,
 Recommends: mysql-client
 Conflicts: openattic-database-sqlite, openattic-database-pgsql
 Description: Configures openATTIC with a MySQL database
- Configures openATTIC with a MySQL database.
+ Configures openATTIC with a MySQL database. This setup is recommended
+ if you are more experienced in MySQL (or just like it better) than
+ PGSQL and you want to use the FTP module, which requires sharing a
+ database with ProFTPd.
 
 Package: openattic-database-pgsql
 Architecture: all
@@ -40,7 +46,10 @@ Depends: ${misc:Depends}, python-psycopg2,
 Recommends: postgresql-client
 Conflicts: openattic-database-sqlite, openattic-database-mysql
 Description: Configures openATTIC with a PGSQL database
- Configures openATTIC with a PGSQL database.
+ Configures openATTIC with a PGSQL database. This setup is recommended
+ if you are more experienced in PGSQL (or just like it better) than
+ MySQL and you want to use the FTP module, which requires sharing a
+ database with ProFTPd.
 
 Package: openattic-base
 Architecture: all
@@ -56,60 +65,72 @@ Depends: ${misc:Depends},
  openattic-database-sqlite | openattic-database-mysql | openattic-database-pgsql
 Recommends: libapache2-mod-wsgi
 Description: Basic requirements for openATTIC
- Installs the basic set of dependencies required to run
- openATTIC, namely the web GUI, RPCd and Systemd.
+ Installs the most basic set of packages required to run openATTIC, namely
+ the web GUI, RPCd and Systemd, along with a basic set of modules.
 
 Package: openattic-module-lvm
 Architecture: all
 Depends: ${misc:Depends}, openattic-base,
  lvm2, parted, ntfs-3g
 Description: LVM module for openATTIC
- Installs the LVM module for openATTIC.
+ Installs the LVM module, which handles partitioning physical disks into
+ logical volumes and creating snapshots. This module is required by most
+ modules that create shares.
 
 Package: openattic-module-nfs
 Architecture: all
 Depends: ${misc:Depends}, openattic-module-lvm,
  nfs-kernel-server
 Description: NFS module for openATTIC
- Installs the NFS module for openATTIC.
+ Installs the NFS module, which handles sharing volumes for other *nix
+ hosts via NFS.
 
 Package: openattic-module-iet-iscsi
 Architecture: all
 Depends: ${misc:Depends}, openattic-module-lvm,
  iscsitarget, iscsitarget-dkms
 Description: IET iSCSI module for openATTIC
- Installs the IET iSCSI module for openATTIC.
+ Installs the IET iSCSI module, which uses the iSCSI Enterprise Target
+ implementation in order to share volumes in a block-oriented manner.
 
 Package: openattic-module-samba
 Architecture: all
 Depends: ${misc:Depends}, openattic-module-lvm, samba
 Description: Samba module for openATTIC
- Installs the Samba module for openATTIC.
+ Installs the Samba module, which handles sharing volumes for Windows
+ hosts using SMB/CIFS.
 
 Package: openattic-module-ftp
 Architecture: all
 Depends: ${misc:Depends}, openattic-module-lvm, proftpd,
  openattic-database-mysql | openattic-database-pgsql
 Description: FTP module for openATTIC
- Installs the FTP module for openATTIC.
+ Installs the FTP module, which provides FTP accounts for volumes using
+ ProFTPd.
 
 Package: openattic-module-munin
 Architecture: all
 Depends: ${misc:Depends}, openattic-base,
  munin-node, munin
 Description: Munin module for openATTIC
- Installs the Munin module for openATTIC.
+ Installs the Munin module, which provides statistics and graphs using Munin.
 
 Package: openattic-module-drbd
 Architecture: all
 Depends: ${misc:Depends}, openattic-module-lvm,
  drbd8-utils
 Description: DRBD module for openATTIC
- Installs the DRBD module for openATTIC.
+ Installs the DRBD module, which uses Linbit's Distributed Replicated Block
+ Device (DRBD) to mirror volumes to another openATTIC host in a block oriented
+ fashion.
+ .
+ This module provides the groundwork for building high availability clusters
+ using openATTIC.
 
 Package: openattic-module-http
 Architecture: all
 Depends: ${misc:Depends}, openattic-module-lvm,
  apache2
 Description: HTTP module for openATTIC
- Installs the HTTP module for openATTIC.
+ Installs the HTTP module, which allows accessing data in a volume via HTTP.
+ This is useful e.g. for software repositories.
