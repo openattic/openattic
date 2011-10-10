@@ -11,7 +11,8 @@ Homepage: http://www.open-attic.org
 Package: openattic
 Architecture: all
 Depends: ${misc:Depends}, openattic-base,
- openattic-module-lvm
+ openattic-module-lvm, openattic-module-nfs, openattic-module-http
+Recommends: openattic-module-mysql
 Suggests: python-django-rosetta
 Description: Comprehensive storage management system
  Meta Package that installs the most common set of openATTIC modules along
