@@ -12,6 +12,7 @@ Package: openattic
 Architecture: all
 Depends: openattic-base,
  openattic-module-lvm
+Suggests: python-django-rosetta
 Description: Comprehensive storage management system
  Meta Package that installs the most common set of openATTIC modules along
  with the basic requirements.

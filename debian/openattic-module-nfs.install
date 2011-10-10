@@ -1,1 +1,2 @@
 nfs     /usr/share/openattic
+installed_apps.nfs /usr/share/openattic/installed_apps.d
