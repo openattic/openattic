@@ -15,6 +15,7 @@ cli.py         /usr/share/openattic
 settings.py    /etc/openattic
 manage.py      /usr/share/openattic
 plotutils.py   /usr/share/openattic
+processors.py  /usr/share/openattic
 urls.py        /usr/share/openattic
 views.py       /usr/share/openattic
 openattic.wsgi /usr/share/openattic
