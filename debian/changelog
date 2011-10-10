@@ -1,0 +1,5 @@
+openattic (0.1-1) unstable; urgency=low
+
+  * Initial release (Closes: #nnnn)  <nnnn is the bug number of your ITP>
+
+ -- Michael Ziegler <diese-addy@funzt-halt.net>  Mon, 10 Oct 2011 11:22:20 +0200

@@ -1,0 +1,44 @@
+Source: openattic
+Section: python
+Priority: optional
+Maintainer: Michael Ziegler <diese-addy@funzt-halt.net>
+Build-Depends: debhelper (>= 8.0.0)
+Standards-Version: 3.9.2
+Homepage: http://www.open-attic.org
+#Vcs-Git: git://git.debian.org/collab-maint/openattic.git
+#Vcs-Browser: http://git.debian.org/?p=collab-maint/openattic.git;a=summary
+
+Package: openattic
+Architecture: all
+Depends: openattic-base,
+ openattic-module-lvm
+Description: Comprehensive storage management system
+ Meta Package that installs the most common set of openATTIC modules along
+ with the basic requirements.
+
+Package: openattic-base
+Architecture: all
+Depends: ${misc:Depends},
+ ${python:Depends},
+ python-django,
+ dbus,
+ python-dbus,
+ python-m2crypto
+Recommends: libapache2-mod-wsgi
+Description: Basic requirements for openATTIC.
+ Installs the basic set of dependencies required to run
+ openATTIC, namely the web GUI, RPCd and Systemd.
+
+Package: openattic-module-lvm
+Architecture: all
+Depends: openattic-base,
+ lvm2
+Description: LVM module for openATTIC.
+ Installs the LVM module for openATTIC.
+
+Package: openattic-module-nfs
+Architecture: all
+Depends: openattic-base,
+ nfs-kernel-server
+Description: NFS module for openATTIC.
+ Installs the NFS module for openATTIC.

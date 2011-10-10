@@ -1,0 +1,5 @@
+rpcd    /usr/share/openattic
+systemd /usr/share/openattic
+htdocs  /usr/share/openattic
+*.py    /usr/share/openattic
+*.sh    /usr/share/openattic

@@ -1,0 +1,3 @@
+/usr/share/openattic/cli.py                /usr/bin/oacli
+/usr/share/openattic/initscript_rpcd.sh    /etc/init.d/openattic_rpcd
+/usr/share/openattic/initscript_systemd.sh /etc/init.d/openattic_systemd
