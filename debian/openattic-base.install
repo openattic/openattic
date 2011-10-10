@@ -17,5 +17,6 @@ templates /usr/share/openattic
 *.sh      /usr/share/openattic
 
 # System Configs
-debian/apache2_conf.d/openattic /etc/apache2/conf.d
-debian/default/openattic        /etc/default
+debian/apache2_conf.d/openattic     /etc/apache2/conf.d
+debian/default/openattic            /etc/default
+debian/dbus_system.d/openattic.conf /etc/dbus-1/system.d
