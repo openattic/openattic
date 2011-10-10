@@ -2,3 +2,4 @@
 /etc/openattic/settings.py                 /usr/share/openattic/settings.py
 /usr/share/openattic/initscript_rpcd.sh    /etc/init.d/openattic_rpcd
 /usr/share/openattic/initscript_systemd.sh /etc/init.d/openattic_systemd
+/usr/share/javascript/extjs                /usr/share/openattic/htdocs/extjs
