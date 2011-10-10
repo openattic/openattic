@@ -2,6 +2,7 @@
 rpcd      /usr/share/openattic
 systemd   /usr/share/openattic
 cmdlog    /usr/share/openattic
+hoststats /usr/share/openattic
 peering   /usr/share/openattic
 sysutils  /usr/share/openattic
 userprefs /usr/share/openattic
