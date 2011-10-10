@@ -1,1 +1,2 @@
 munin /usr/share/openattic
+installed_apps.d/munin /usr/share/openattic/installed_apps.d

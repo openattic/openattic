@@ -1,1 +1,2 @@
 http /usr/share/openattic
+installed_apps.d/http /usr/share/openattic/installed_apps.d
