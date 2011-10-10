@@ -1,0 +1,23 @@
+Alias                   /openattic/static/      /usr/share/openattic/htdocs/
+Alias                   /openattic/media/       /usr/share/pyshared/django/contrib/admin/media/
+
+WSGIScriptAlias         /openattic              /usr/share/openattic/openattic.wsgi
+WSGIDaemonProcess       openattic threads=25
+WSGIProcessGroup        openattic
+WSGIScriptReloading     Off
+WSGIPassAuthorization   On
+
+<Location /openattic>
+        FileETag None
+        <IfModule mod_deflate.c>
+                AddOutputFilterByType DEFLATE text/html text/plain text/css text/javascript image/png image/jpeg image/gif
+                <IfModule mod_headers.c>
+                        # properly handle requests coming from behind proxies
+                        Header unset ETag
+                        Header append Vary User-Agent
+                        <FilesMatch "\.(ico|pdf|flv|jpg|jpeg|png|gif|js|css|swf)$">
+                                Header set Cache-Control "max-age=86400, must-revalidate"
+                        </FilesMatch>
+                </IfModule>
+        </IfModule>
+</Location>

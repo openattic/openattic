@@ -1,5 +1,9 @@
-rpcd    /usr/share/openattic
-systemd /usr/share/openattic
-htdocs  /usr/share/openattic
-*.py    /usr/share/openattic
-*.sh    /usr/share/openattic
+rpcd      /usr/share/openattic
+systemd   /usr/share/openattic
+htdocs    /usr/share/openattic
+templates /usr/share/openattic
+*.py      /usr/share/openattic
+*.sh      /usr/share/openattic
+
+debian/apache2_conf.d/openattic /etc/apache2/conf.d
+debian/default/openattic        /etc/default
