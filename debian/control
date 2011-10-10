@@ -17,6 +17,31 @@ Description: Comprehensive storage management system
  Meta Package that installs the most common set of openATTIC modules along
  with the basic requirements.
 
+Package: openattic-database-sqlite
+Architecture: all
+Depends: ${python:Depends}, sqlite3
+Conflicts: openattic-database-mysql, openattic-database-pgsql
+Description: Configures openATTIC with an SQLite3 database.
+ Configures openATTIC with an SQLite3 database.
+
+Package: openattic-database-mysql
+Architecture: all
+Depends: ${python:Depends}, python-mysqldb,
+ dbconfig-common, mysql-server
+Recommends: mysql-client
+Conflicts: openattic-database-sqlite, openattic-database-pgsql
+Description: Configures openATTIC with a MySQL database.
+ Configures openATTIC with a MySQL database.
+
+Package: openattic-database-pgsql
+Architecture: all
+Depends: ${python:Depends}, python-psycopg2,
+ dbconfig-common, postgresql
+Recommends: postgresql-client
+Conflicts: openattic-database-sqlite, openattic-database-mysql
+Description: Configures openATTIC with a PGSQL database.
+ Configures openATTIC with a PGSQL database.
+
 Package: openattic-base
 Architecture: all
 Depends: ${misc:Depends},
@@ -27,7 +52,8 @@ Depends: ${misc:Depends},
  python-m2crypto,
  python-django-extdirect (>= 0.6),
  python-statgrab,
- libjs-extjs (>= 3.0.0), libjs-extjs (<< 4.0)
+ libjs-extjs (>= 3.0.0), libjs-extjs (<< 4.0),
+ openattic-database-sqlite | openattic-database-mysql | openattic-database-pgsql
 Recommends: libapache2-mod-wsgi
 Description: Basic requirements for openATTIC.
  Installs the basic set of dependencies required to run
@@ -62,8 +88,8 @@ Description: Samba module for openATTIC.
 
 Package: openattic-module-ftp
 Architecture: all
-Depends: openattic-module-lvm,
- proftpd
+Depends: openattic-module-lvm, proftpd,
+ openattic-database-mysql | openattic-database-pgsql
 Description: FTP module for openATTIC.
  Installs the FTP module for openATTIC.
 
