@@ -1,4 +1,4 @@
 /usr/share/openattic/cli.py                /usr/bin/oacli
-/etc/openattic/settings.py                 /usr/share/openattic
+/etc/openattic/settings.py                 /usr/share/openattic/settings.py
 /usr/share/openattic/initscript_rpcd.sh    /etc/init.d/openattic_rpcd
 /usr/share/openattic/initscript_systemd.sh /etc/init.d/openattic_systemd
