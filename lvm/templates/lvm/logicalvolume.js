@@ -457,7 +457,7 @@ Ext.oa.Lvm__LogicalVolume_Panel = Ext.extend(Ext.Panel, {
           tpl: new Ext.XTemplate(
             '<tpl for=".">',
               '<div class="thumb-wrap" id="{name}">',
-                '<img src="/filer/lvm/mem/{id}.png" width="450" title="{name}" />',
+                '<img src="{{ PROJECT_URL }}/lvm/mem/{id}.png" width="450" title="{name}" />',
                 '<span class="fsstat">{fsused} GB used &ndash; {fsfree} GB free &ndash; {total} GB total</span>',
               '</div>',
             '</tpl>'),

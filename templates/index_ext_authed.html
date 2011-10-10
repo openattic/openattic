@@ -9,8 +9,8 @@
     <script src="{{ MEDIA_URL }}/extjs/adapter/ext/ext-base.js"></script>
     <script src="{{ MEDIA_URL }}/extjs/ext-all.js"></script>
     <script src="{% url django.views.i18n.javascript_catalog %}"></script>
-    <script src="/filer/userprefs/initprefs.js"></script>
-    <script src="/filer/direct/api.js"></script>
+    <script src="{{ PROJECT_URL }}/userprefs/initprefs.js"></script>
+    <script src="{{ PROJECT_URL }}/direct/api.js"></script>
     <script type="text/javascript">
       window.MainViewModules = [];
       window.MEDIA_URL  = '{{ MEDIA_URL  }}';
@@ -79,11 +79,6 @@
       .redmask {
         background-color: #FF0000;
       }
-
-      .yellowmask {
-        background-color: #FFFF00;
-      }
-
     </style>
   </head>
   <body style="padding: 20px 20px 0; ">
