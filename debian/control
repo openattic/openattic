@@ -26,7 +26,7 @@ Depends: ${misc:Depends},
  python-m2crypto,
  python-django-extdirect (>= 0.6),
  python-statgrab,
- libjs-extjs (>= 3.0.0), libjs-extjs (< 4.0)
+ libjs-extjs (>= 3.0.0), libjs-extjs (<< 4.0)
 Recommends: libapache2-mod-wsgi
 Description: Basic requirements for openATTIC.
  Installs the basic set of dependencies required to run
