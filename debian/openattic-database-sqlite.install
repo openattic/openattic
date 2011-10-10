@@ -1,0 +1,1 @@
+debian/database_install/sqlite.ini  /etc/openattic/databases
