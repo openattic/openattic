@@ -6,3 +6,5 @@ if [ "$1" = "purge" ] ; then
     update-rc.d openattic_systemd remove >/dev/null
     update-rc.d openattic_rpcd    remove >/dev/null
 fi
+
+#DEBHELPER#
