@@ -11,6 +11,8 @@ from os.path import join, dirname, abspath, exists
 if not PROJECT_ROOT or not exists( PROJECT_ROOT ):
     PROJECT_ROOT = dirname(abspath(__file__))
 
+from ConfigParser import ConfigParser
+
 DEBUG = True
 TEMPLATE_DEBUG = DEBUG
 
@@ -22,16 +24,20 @@ LVM_CHOWN_GROUP="users"
 
 MANAGERS = ADMINS
 
-DATABASES = {
-    'default': {
-        'ENGINE':   'django.db.backends.postgresql_psycopg2',
-        'NAME':     'pyfiler',
-        'USER':     'pyfiler',
-        'PASSWORD': 'pyf!l0r',
-        'HOST':     '127.0.0.1',
-        'PORT':     '',
+# Read database.ini
+DATABASES = {}
+
+conf = ConfigParser()
+conf.read("/etc/openattic/database.ini")
+for sec in conf.sections():
+    DATABASES[sec] = {
+        "ENGINE":   conf.get(sec, "engine"),
+        "NAME":     conf.get(sec, "name"),
+        "USER":     conf.get(sec, "user"),
+        "PASSWORD": conf.get(sec, "password"),
+        "HOST":     conf.get(sec, "host"),
+        "PORT":     conf.get(sec, "port"),
     }
-}
 
 DBUS_IFACE_SYSTEMD = "org.openattic.systemd"
 
