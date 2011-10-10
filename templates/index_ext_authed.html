@@ -27,7 +27,7 @@
     <!--script src="{{ MEDIA_URL }}/js/ajaxterm.js"></script-->
     <script src="{{ MEDIA_URL }}/js/logout_theme.js"></script>
     {% for app in INSTALLED_APPS %}
-      {% with apptemplate=app|stringformat:"s/mainhead.html" %}
+      {% with app|stringformat:"s/mainhead.html" as apptemplate %}
         {% if apptemplate|template_exists %}
           {% include apptemplate %}
         {% endif %}
