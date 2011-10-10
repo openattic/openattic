@@ -81,7 +81,7 @@ parser.add_option( "-e", "--encoding",
 options, progargs = parser.parse_args()
 
 conf = ConfigParser()
-confs = conf.read(["/etc/openattic-cli.conf", os.path.expanduser("~/.openattic-cli.conf")])
+confs = conf.read(["/etc/openattic/cli.conf", os.path.expanduser("~/.openattic-cli.conf")])
 
 if sys.stdout.isatty():
     print >> sys.stderr, "Initialized config from %s" % ', '.join(confs)
