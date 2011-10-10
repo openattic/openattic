@@ -1,9 +1,21 @@
+# Python Modules
 rpcd      /usr/share/openattic
 systemd   /usr/share/openattic
+cmdlog    /usr/share/openattic
+peering   /usr/share/openattic
+sysutils  /usr/share/openattic
+userprefs /usr/share/openattic
+
+# Static files, Templates
 htdocs    /usr/share/openattic
 templates /usr/share/openattic
+
+# Python files
 *.py      /usr/share/openattic
+
+# Init scripts
 *.sh      /usr/share/openattic
 
+# System Configs
 debian/apache2_conf.d/openattic /etc/apache2/conf.d
 debian/default/openattic        /etc/default
