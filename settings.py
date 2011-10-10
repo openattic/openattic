@@ -168,23 +168,12 @@ INSTALLED_APPS = [
     'django.contrib.admindocs',
     'django.contrib.markup',
     'userprefs',
-    'lvm',
     'cmdlog',
     'hoststats',
     'peering',
-    'munin',
-    'iscsi',
-    'nfs',
-    'samba',
-    'ftp',
-    'http',
-    'drbd',
     'rpcd',
     'systemd',
-    'clustering',
-    'ifconfig',
     'sysutils',
-    'pkgapt',
 ]
 
 def modprobe( name ):
@@ -195,6 +184,10 @@ def modprobe( name ):
         pass
     else:
         INSTALLED_APPS.append( name )
+
+import os
+for name in os.listdir( join( PROJECT_ROOT, "installed_apps.d") ):
+    modprobe(name)
 
 modprobe('django_extensions')
 modprobe('rosetta')
