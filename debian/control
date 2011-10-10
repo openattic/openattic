@@ -10,7 +10,7 @@ Homepage: http://www.open-attic.org
 
 Package: openattic
 Architecture: all
-Depends: openattic-base,
+Depends: ${misc:Depends}, openattic-base,
  openattic-module-lvm
 Suggests: python-django-rosetta
 Description: Comprehensive storage management system
@@ -19,27 +19,27 @@ Description: Comprehensive storage management system
 
 Package: openattic-database-sqlite
 Architecture: all
-Depends: ${python:Depends}, sqlite3
+Depends: ${misc:Depends}, sqlite3
 Conflicts: openattic-database-mysql, openattic-database-pgsql
-Description: Configures openATTIC with an SQLite3 database.
+Description: Configures openATTIC with an SQLite3 database
  Configures openATTIC with an SQLite3 database.
 
 Package: openattic-database-mysql
 Architecture: all
-Depends: ${python:Depends}, python-mysqldb,
+Depends: ${misc:Depends}, python-mysqldb,
  dbconfig-common, mysql-server
 Recommends: mysql-client
 Conflicts: openattic-database-sqlite, openattic-database-pgsql
-Description: Configures openATTIC with a MySQL database.
+Description: Configures openATTIC with a MySQL database
  Configures openATTIC with a MySQL database.
 
 Package: openattic-database-pgsql
 Architecture: all
-Depends: ${python:Depends}, python-psycopg2,
+Depends: ${misc:Depends}, python-psycopg2,
  dbconfig-common, postgresql
 Recommends: postgresql-client
 Conflicts: openattic-database-sqlite, openattic-database-mysql
-Description: Configures openATTIC with a PGSQL database.
+Description: Configures openATTIC with a PGSQL database
  Configures openATTIC with a PGSQL database.
 
 Package: openattic-base
@@ -55,61 +55,61 @@ Depends: ${misc:Depends},
  libjs-extjs (>= 3.0.0), libjs-extjs (<< 4.0),
  openattic-database-sqlite | openattic-database-mysql | openattic-database-pgsql
 Recommends: libapache2-mod-wsgi
-Description: Basic requirements for openATTIC.
+Description: Basic requirements for openATTIC
  Installs the basic set of dependencies required to run
  openATTIC, namely the web GUI, RPCd and Systemd.
 
 Package: openattic-module-lvm
 Architecture: all
-Depends: openattic-base,
+Depends: ${misc:Depends}, openattic-base,
  lvm2, parted, ntfs-3g
-Description: LVM module for openATTIC.
+Description: LVM module for openATTIC
  Installs the LVM module for openATTIC.
 
 Package: openattic-module-nfs
 Architecture: all
-Depends: openattic-module-lvm,
+Depends: ${misc:Depends}, openattic-module-lvm,
  nfs-kernel-server
-Description: NFS module for openATTIC.
+Description: NFS module for openATTIC
  Installs the NFS module for openATTIC.
 
 Package: openattic-module-iet-iscsi
 Architecture: all
-Depends: openattic-module-lvm,
+Depends: ${misc:Depends}, openattic-module-lvm,
  iscsitarget, iscsitarget-dkms
-Description: IET iSCSI module for openATTIC.
+Description: IET iSCSI module for openATTIC
  Installs the IET iSCSI module for openATTIC.
 
 Package: openattic-module-samba
 Architecture: all
-Depends: openattic-module-lvm, samba
-Description: Samba module for openATTIC.
+Depends: ${misc:Depends}, openattic-module-lvm, samba
+Description: Samba module for openATTIC
  Installs the Samba module for openATTIC.
 
 Package: openattic-module-ftp
 Architecture: all
-Depends: openattic-module-lvm, proftpd,
+Depends: ${misc:Depends}, openattic-module-lvm, proftpd,
  openattic-database-mysql | openattic-database-pgsql
-Description: FTP module for openATTIC.
+Description: FTP module for openATTIC
  Installs the FTP module for openATTIC.
 
 Package: openattic-module-munin
 Architecture: all
-Depends: openattic-base,
+Depends: ${misc:Depends}, openattic-base,
  munin-node, munin
-Description: Munin module for openATTIC.
+Description: Munin module for openATTIC
  Installs the Munin module for openATTIC.
 
 Package: openattic-module-drbd
 Architecture: all
-Depends: openattic-module-lvm,
+Depends: ${misc:Depends}, openattic-module-lvm,
  drbd8-utils
-Description: DRBD module for openATTIC.
+Description: DRBD module for openATTIC
  Installs the DRBD module for openATTIC.
 
 Package: openattic-module-http
 Architecture: all
-Depends: openattic-module-lvm,
+Depends: ${misc:Depends}, openattic-module-lvm,
  apache2
-Description: HTTP module for openATTIC.
+Description: HTTP module for openATTIC
  Installs the HTTP module for openATTIC.
