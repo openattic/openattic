@@ -19,7 +19,7 @@ Ext.oa.Portal = Ext.extend(Ext.ux.Portal, {
       margins:'35 5 5 0',
       items: (function(){
         var state = Ext.state.Manager.get("portalstate",
-          [["portlet_lvs", "portlet_nfs"], ["portlet_cpu", "portlet_system"], ["portlet_ram"]]);
+          [["portlet_lvs", "portlet_nfs"], ["portlet_cpu"], ["portlet_ram"]]);
         var all_portlets = [{
           title: 'LVs',
           layout:'fit',
@@ -211,24 +211,22 @@ Ext.oa.Portal = Ext.extend(Ext.ux.Portal, {
           });
         }
         return items;
-      }()),
-      listeners: {
-        'drop': function(e){
-          var portal = self.ownerCt.ownerCt;
-          var state = [];
-          for( var c = 0; c < portal.items.getCount(); c++ ){
-            var colIds = [];
-            var col = portal.items.get(c);
-            for( var p = 0; p < col.items.getCount(); p++ ){
-              colIds.push(col.items.get(p).id);
-            }
-            state.push(colIds);
-          }
-          Ext.state.Manager.set("portalstate", state);
-        }
-      }
+      }())
     }));
     Ext.oa.Portal.superclass.initComponent.apply(this, arguments);
+    this.on("drop", function(e){
+      var portal = this;
+      var state = [];
+      for( var c = 0; c < portal.items.getCount(); c++ ){
+        var colIds = [];
+        var col = portal.items.get(c);
+        for( var p = 0; p < col.items.getCount(); p++ ){
+          colIds.push(col.items.get(p).id);
+        }
+        state.push(colIds);
+      }
+      Ext.state.Manager.set("portalstate", state);
+    }, this);
   },
 
   prepareMenuTree: function(tree){

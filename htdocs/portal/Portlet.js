@@ -9,7 +9,10 @@ Ext.ux.Portlet = Ext.extend(Ext.Panel, {
     frame : true,
     collapsible : true,
     draggable : true,
-    cls : 'x-portlet'
+    cls : 'x-portlet',
+    saveState: function(){
+        // Don't call the standard saveState method as it sends garbage
+    },
 });
 
 Ext.reg('portlet', Ext.ux.Portlet);
