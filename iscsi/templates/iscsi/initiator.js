@@ -7,7 +7,15 @@ Ext.oa.Iscsi__Initiator_Panel = Ext.extend(Ext.grid.GridPanel, {
     var iscsiInitGrid = this;
     Ext.apply(this, Ext.apply(this.initialConfig, {
       title: "{% trans 'iSCSI Initiators' %}",
+      viewConfig: { forceFit: true },
       buttons: [{
+        text: "",
+        icon: MEDIA_URL + "/icons2/16x16/actions/reload.png",
+        tooltip: "{% trans 'Reload' %}",
+        handler: function(self){
+          iscsiInitGrid.store.reload();
+        }
+      }, {
         text: "{% trans 'Add Initiator' %}",
         icon: MEDIA_URL + "/icons2/16x16/actions/add.png",
         handler: function(){

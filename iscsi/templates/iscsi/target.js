@@ -7,7 +7,15 @@ Ext.oa.Iscsi__Target_Panel = Ext.extend(Ext.grid.GridPanel, {
     var iscsiTrgGrid = this;
     Ext.apply(this, Ext.apply(this.initialConfig, {
       title: "{% trans 'iSCSI Targets' %}",
+      viewConfig: { forceFit: true },
       buttons: [{
+        text: "",
+        icon: MEDIA_URL + "/icons2/16x16/actions/reload.png",
+        tooltip: "{% trans 'Reload' %}",
+        handler: function(self){
+          iscsiTargetGrid.store.reload();
+        }
+      }, {
         text: "{% trans 'Add Target' %}",
         icon: MEDIA_URL + "/icons2/16x16/actions/add.png",
         handler: function(){

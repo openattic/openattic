@@ -7,7 +7,15 @@ Ext.oa.Iscsi__Lun_Panel = Ext.extend(Ext.grid.GridPanel, {
     var iscsiLunGrid = this;
     Ext.apply(this, Ext.apply(this.initialConfig, {
       title: "{% trans 'iSCSI Luns' %}",
+      viewConfig: { forceFit: true },
       buttons: [{
+        text: "",
+        icon: MEDIA_URL + "/icons2/16x16/actions/reload.png",
+        tooltip: "{% trans 'Reload' %}",
+        handler: function(self){
+          iscsiLunGrid.store.reload();
+        }
+      }, {
         text: "{% trans 'Add Lun' %}",
         icon: MEDIA_URL + "/icons2/16x16/actions/add.png",
         handler: function(){
