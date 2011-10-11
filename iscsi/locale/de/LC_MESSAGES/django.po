@@ -8,8 +8,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2011-09-29 09:36+0200\n"
-"PO-Revision-Date: 2011-09-29 09:36\n"
+"POT-Creation-Date: 2011-10-11 13:12+0200\n"
+"PO-Revision-Date: 2011-10-11 13:12\n"
 "Last-Translator: Michael Ziegler <michael.ziegler@it-novum.com>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
 "MIME-Version: 1.0\n"
@@ -37,47 +37,49 @@ msgstr ""
 "Keiner darf."
 
 #: templates/iscsi/initiator.js:9
-#, fuzzy
 msgid "iSCSI Initiators"
-msgstr "iSCSI Targets"
+msgstr "iSCSI Initiatoren"
 
-#: templates/iscsi/initiator.js:11 templates/iscsi/initiator.js.py:15
+#: templates/iscsi/initiator.js:14 templates/iscsi/lun.js:14
+#: templates/iscsi/target.js:14
+msgid "Reload"
+msgstr "Neu laden"
+
+#: templates/iscsi/initiator.js:19 templates/iscsi/initiator.js.py:23
 msgid "Add Initiator"
 msgstr "Initiator hinzufügen"
 
-#: templates/iscsi/initiator.js:26 templates/iscsi/initiator.js.py:82
-#: templates/iscsi/target.js:26 templates/iscsi/target.js.py:88
+#: templates/iscsi/initiator.js:34 templates/iscsi/initiator.js.py:90
+#: templates/iscsi/target.js:34 templates/iscsi/target.js.py:96
 msgid "Name"
 msgstr "Name"
 
-#: templates/iscsi/initiator.js:30
+#: templates/iscsi/initiator.js:38
 msgid "Address (IQN/IP)"
 msgstr "Adresse (IQN/IP)"
 
-#: templates/iscsi/initiator.js:35
-#, fuzzy
+#: templates/iscsi/initiator.js:43
 msgid "Create Initiator"
-msgstr "Target erzeugen"
+msgstr "Initiator erzeugen"
 
-#: templates/iscsi/initiator.js:49 templates/iscsi/lun.js:107
-#: templates/iscsi/target.js:55
+#: templates/iscsi/initiator.js:57 templates/iscsi/lun.js:115
+#: templates/iscsi/target.js:63
 msgid "Cancel"
 msgstr "Abbrechen"
 
-#: templates/iscsi/initiator.js:60
-#, fuzzy
+#: templates/iscsi/initiator.js:68
 msgid "Delete Initiator"
-msgstr "Target löschen"
+msgstr "Initiator löschen"
 
-#: templates/iscsi/initiator.js:86
+#: templates/iscsi/initiator.js:94
 msgid "Address"
 msgstr "Adresse"
 
-#: templates/iscsi/initiator.js:98
+#: templates/iscsi/initiator.js:106
 msgid "LAN (iSCSI)"
 msgstr "LAN (iSCSI)"
 
-#: templates/iscsi/initiator.js:102
+#: templates/iscsi/initiator.js:110
 msgid "Initiators"
 msgstr "Initiatoren"
 
@@ -85,47 +87,47 @@ msgstr "Initiatoren"
 msgid "iSCSI Luns"
 msgstr "iSCSI Luns"
 
-#: templates/iscsi/lun.js:11 templates/iscsi/lun.js.py:15
+#: templates/iscsi/lun.js:19 templates/iscsi/lun.js.py:23
 msgid "Add Lun"
 msgstr "Lun hinzufügen"
 
-#: templates/iscsi/lun.js:27 templates/iscsi/lun.js.py:160
+#: templates/iscsi/lun.js:35 templates/iscsi/lun.js.py:168
 msgid "Volume"
 msgstr "Volume"
 
-#: templates/iscsi/lun.js:36 templates/iscsi/lun.js.py:59
+#: templates/iscsi/lun.js:44 templates/iscsi/lun.js.py:67
 msgid "Select..."
 msgstr "Bitte wählen..."
 
-#: templates/iscsi/lun.js:42
+#: templates/iscsi/lun.js:50
 msgid "Number"
 msgstr "Nummer"
 
-#: templates/iscsi/lun.js:49 templates/iscsi/lun.js.py:144
+#: templates/iscsi/lun.js:57 templates/iscsi/lun.js.py:152
 msgid "Target"
 msgstr "Target"
 
-#: templates/iscsi/lun.js:65 templates/iscsi/lun.js.py:156
+#: templates/iscsi/lun.js:73 templates/iscsi/lun.js.py:164
 msgid "Type"
 msgstr "Typ"
 
-#: templates/iscsi/lun.js:77 templates/iscsi/lun.js.py:152
+#: templates/iscsi/lun.js:85 templates/iscsi/lun.js.py:160
 msgid "Alias"
 msgstr "Alias"
 
-#: templates/iscsi/lun.js:82
+#: templates/iscsi/lun.js:90
 msgid "Create Lun"
 msgstr "Lun erzeugen"
 
-#: templates/iscsi/lun.js:118
+#: templates/iscsi/lun.js:126
 msgid "Delete Lun"
 msgstr "Lun löschen"
 
-#: templates/iscsi/lun.js:148
+#: templates/iscsi/lun.js:156
 msgid "LUN"
 msgstr "LUN"
 
-#: templates/iscsi/lun.js:171
+#: templates/iscsi/lun.js:179
 msgid "Luns"
 msgstr "Luns"
 
@@ -133,26 +135,26 @@ msgstr "Luns"
 msgid "iSCSI Targets"
 msgstr "iSCSI Targets"
 
-#: templates/iscsi/target.js:11 templates/iscsi/target.js.py:15
+#: templates/iscsi/target.js:19 templates/iscsi/target.js.py:23
 msgid "Add Target"
 msgstr "Target hinzufügen"
 
-#: templates/iscsi/target.js:30 templates/iscsi/target.js.py:92
+#: templates/iscsi/target.js:38 templates/iscsi/target.js.py:100
 msgid "IQN"
 msgstr "IQN"
 
-#: templates/iscsi/target.js:34
+#: templates/iscsi/target.js:42
 msgid "Allow All"
 msgstr "Alle erlauben"
 
-#: templates/iscsi/target.js:40
+#: templates/iscsi/target.js:48
 msgid "Create Target"
 msgstr "Target erzeugen"
 
-#: templates/iscsi/target.js:66
+#: templates/iscsi/target.js:74
 msgid "Delete Target"
 msgstr "Target löschen"
 
-#: templates/iscsi/target.js:103
+#: templates/iscsi/target.js:111
 msgid "Targets"
 msgstr "Targets"
