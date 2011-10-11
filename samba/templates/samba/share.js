@@ -12,6 +12,7 @@ Ext.oa.Samba__Share_Panel = Ext.extend(Ext.grid.GridPanel, {
       };
     Ext.apply(this, Ext.apply(this.initialConfig, {
       title: "{% trans 'Samba' %}",
+      viewConfig: { forceFit: true },
       store: new Ext.data.DirectStore({
         autoLoad: true,
         fields: ['path', 'state', 'available'],
@@ -41,6 +42,12 @@ Ext.oa.Samba__Share_Panel = Ext.extend(Ext.grid.GridPanel, {
     }));
     Ext.oa.Samba__Share_Panel.superclass.initComponent.apply(this, arguments);
   },
+  
+//   Ext.apply(this, Ext.apply(this.initialConfig, {
+//     title: ""
+//     
+//     
+//   }
 
   prepareMenuTree: function(tree){
     tree.root.attributes.children[2].children.push({

@@ -2,7 +2,7 @@
 # kate: space-indent on; indent-width 4; replace-tabs on;
 
 PROJECT_ROOT = None
-PROJECT_URL  = '/filer'
+PROJECT_URL  = '/openattic'
 # das folgende wird gebraucht weil gunicorn SCRIPT_URL und PATH_INFO nicht setzt
 # fyi: SCRIPT_URL=/filer/lvm/ PATH_INFO=/lvm/ würde klären
 #FORCE_SCRIPT_NAME = "/filer"
