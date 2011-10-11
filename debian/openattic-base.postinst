@@ -25,7 +25,7 @@ if [ "$1" = "configure" ] ; then
         cp /etc/ssl/certs/ssl-cert-snakeoil.pem   /usr/share/openattic/certs
         cp /etc/ssl/private/ssl-cert-snakeoil.key /usr/share/openattic/certs
     fi
-    setperm /usr/share/openattic/certs 0600
+    setperm /usr/share/openattic/certs 0700
     setperm /usr/share/openattic/certs/ssl-cert-snakeoil.pem 0600
     setperm /usr/share/openattic/certs/ssl-cert-snakeoil.key 0600
 
