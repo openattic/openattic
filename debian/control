@@ -11,12 +11,50 @@ Homepage: http://www.open-attic.org
 Package: openattic
 Architecture: all
 Depends: ${misc:Depends}, openattic-base,
- openattic-module-lvm, openattic-module-nfs, openattic-module-http,
- libapache2-mod-wsgi, apache2, openattic-database-mysql
+ openattic-module-lvm,
+ openattic-module-nfs,
+ openattic-module-http,
+ libapache2-mod-wsgi,
+ apache2,
+ openattic-database-mysql
 Suggests: python-django-rosetta
 Description: Comprehensive storage management system
  Meta Package that installs the most common set of openATTIC modules along
  with the basic requirements.
+
+Package: openattic-full-mysql
+Architecture: all
+Depends: ${misc:Depends}, openattic-base,
+ openattic-module-lvm,
+ openattic-module-nfs,
+ openattic-module-http,
+ openattic-module-iet-iscsi,
+ openattic-module-samba,
+ openattic-module-munin,
+ openattic-module-drbd,
+ openattic-module-ftp,
+ libapache2-mod-wsgi, apache2,
+ openattic-database-mysql
+Suggests: python-django-rosetta
+Description: Comprehensive storage management system
+ Meta Package that installs all openATTIC modules on a MySQL database.
+
+Package: openattic-full-pgsql
+Architecture: all
+Depends: ${misc:Depends}, openattic-base,
+ openattic-module-lvm,
+ openattic-module-nfs,
+ openattic-module-http,
+ openattic-module-iet-iscsi,
+ openattic-module-samba,
+ openattic-module-munin,
+ openattic-module-drbd,
+ openattic-module-ftp,
+ libapache2-mod-wsgi, apache2,
+ openattic-database-pgsql
+Suggests: python-django-rosetta
+Description: Comprehensive storage management system
+ Meta Package that installs all openATTIC modules on a PGSQL database.
 
 Package: openattic-database-sqlite
 Architecture: all
