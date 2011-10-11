@@ -8,9 +8,9 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2011-09-28 16:53+0200\n"
-"PO-Revision-Date: 2011-09-28 16:54\n"
-"Last-Translator: Michael Ziegler <michael.ziegler@it-novum.com>\n"
+"POT-Creation-Date: 2011-10-11 09:47+0200\n"
+"PO-Revision-Date: 2011-10-11 09:49\n"
+"Last-Translator:   <>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
@@ -24,20 +24,20 @@ msgstr ""
 msgid "Size in MB"
 msgstr "Größe in MB"
 
-#: models.py:376
+#: models.py:395
 msgid "The owner field is required unless you are creating a snapshot."
 msgstr ""
 "Das Besitzer-Feld wird benötigt, es sei denn Sie erstellen einen Snapshot."
 
-#: models.py:378
+#: models.py:397
 msgid "The vg field is required unless you are creating a snapshot."
 msgstr "Das VG-Feld wird benötigt, es sei denn Sie erstellen einen Snapshot."
 
-#: models.py:380
+#: models.py:399
 msgid "LVM does not support snapshotting snapshots."
 msgstr "LVM unterstützt nicht, Snapshots von Snapshots anzulegen."
 
-#: templates/lvm/diskmgmt.js:22 templates/lvm/logicalvolume.js:335
+#: templates/lvm/diskmgmt.js:22 templates/lvm/logicalvolume.js:369
 #: templates/lvm/snapshots.js:200
 msgid "Size"
 msgstr "Größe"
@@ -199,27 +199,56 @@ msgstr "Ihr Volume überschreitet den vorhandenen Speicherplatz von %s MB."
 msgid "Adding Volume"
 msgstr "Lege Volume an"
 
-#: templates/lvm/logicalvolume.js:218
+#: templates/lvm/logicalvolume.js:219
 msgid "Please wait while your volume is being created..."
 msgstr "Bitte warten Sie während Ihr Volume angelegt wird..."
 
-#: templates/lvm/logicalvolume.js:244 templates/lvm/snapshots.js:128
+#: templates/lvm/logicalvolume.js:245 templates/lvm/snapshots.js:128
 msgid "Cancel"
 msgstr "Abbrechen"
 
-#: templates/lvm/logicalvolume.js:255
+#: templates/lvm/logicalvolume.js:256
 msgid "Resize Volume"
-msgstr "Volume vergrößern"
+msgstr "Volume anpassen"
 
-#: templates/lvm/logicalvolume.js:258
+#: templates/lvm/logicalvolume.js:264
+msgid "Enter new size"
+msgstr "Neue Größe"
+
+#: templates/lvm/logicalvolume.js:266
+#, python-format
+msgid "Please enter the size in MB you wish to resize volume %s to."
+msgstr "Die neue Größe für das Volume %s muss in MB angegeben werden"
+
+#: templates/lvm/logicalvolume.js:267
+#, python-format
+msgid "The current size is %s MB."
+msgstr "Die aktuelle Größe entspricht %s MB"
+
+#: templates/lvm/logicalvolume.js:272
+#, fuzzy
+msgid "Resizing Volume"
+msgstr "Volume anpassen"
+
+#: templates/lvm/logicalvolume.js:277
+#, fuzzy
+msgid "Please wait while your volume is being resized..."
+msgstr "Bitte warten Sie während Ihr Volume angelegt wird..."
+
+#: templates/lvm/logicalvolume.js:286 templates/lvm/logicalvolume.js.py:311
+#: templates/lvm/snapshots.js:157
+msgid "Aborted."
+msgstr "Abgebrochen."
+
+#: templates/lvm/logicalvolume.js:292
 msgid "Delete Volume"
 msgstr "Volume löschen"
 
-#: templates/lvm/logicalvolume.js:266 templates/lvm/snapshots.js:146
+#: templates/lvm/logicalvolume.js:300 templates/lvm/snapshots.js:146
 msgid "Confirm delete"
 msgstr "Löschen bestätigen"
 
-#: templates/lvm/logicalvolume.js:268
+#: templates/lvm/logicalvolume.js:302
 #, python-format
 msgid ""
 "Really delete volume %s and all its shares?<br /><b>There is no undo and you"
@@ -229,35 +258,35 @@ msgstr ""
 "rückgängig gemacht werden und Sie werden alle Daten des Volume "
 "verlieren.</b>"
 
-#: templates/lvm/logicalvolume.js:331 templates/lvm/snapshots.js:196
+#: templates/lvm/logicalvolume.js:365 templates/lvm/snapshots.js:196
 msgid "LV"
 msgstr "LV"
 
-#: templates/lvm/logicalvolume.js:345
+#: templates/lvm/logicalvolume.js:379
 msgid "FS"
 msgstr "FS"
 
-#: templates/lvm/logicalvolume.js:354
+#: templates/lvm/logicalvolume.js:388
 msgid "Free"
 msgstr "Frei"
 
-#: templates/lvm/logicalvolume.js:364
+#: templates/lvm/logicalvolume.js:398
 msgid "Used"
 msgstr "Benutzt"
 
-#: templates/lvm/logicalvolume.js:374
+#: templates/lvm/logicalvolume.js:408
 msgid "Used%"
 msgstr "Benutzt%"
 
-#: templates/lvm/logicalvolume.js:417
+#: templates/lvm/logicalvolume.js:451
 msgid "Storage usage"
 msgstr "Speicherausnutzung"
 
-#: templates/lvm/logicalvolume.js:434
+#: templates/lvm/logicalvolume.js:468
 msgid "Loading..."
 msgstr "Lade..."
 
-#: templates/lvm/logicalvolume.js:447
+#: templates/lvm/logicalvolume.js:481
 msgid "Volume Management"
 msgstr "Volume-Verwaltung"
 
@@ -310,10 +339,6 @@ msgstr ""
 "Snapshot %s und alle Freigaben wirklich löschen?<br /><b>Dies kann nicht "
 "rückgängig gemacht werden und Sie werden alle Daten des Snapshots "
 "verlieren.</b>"
-
-#: templates/lvm/snapshots.js:157
-msgid "Aborted."
-msgstr "Abgebrochen."
 
 #: templates/lvm/snapshots.js:221
 msgid "Snapshots"

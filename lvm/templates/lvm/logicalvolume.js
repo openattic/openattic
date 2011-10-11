@@ -204,173 +204,174 @@ Ext.oa.Lvm__LogicalVolume_Panel = Ext.extend(Ext.Panel, {
                         "{% trans "Please wait for the query for available space to complete." %}");
                       return;
                     }
-                    if( free < self.ownerCt.ownerCt.sizefield.getValue() ){
-                      Ext.Msg.alert("{% trans "Error" %}",
-                        interpolate( "{% trans "Your volume exceeds the available capacity of %s MB." %}",
-                          [response.result]) );
-                      return;
-                    }
-                    var progresswin = new Ext.Window({
-                      title: "{% trans "Adding Volume" %}",
-                      layout: "fit",
-                      height: 250,
-                      width: 400,
-                      modal: true,
-                      html: "{% trans 'Please wait while your volume is being created...' %}"
-                    });
-                    progresswin.show();
-                    lvm__LogicalVolume.create({
-                      'vg': {
-                        'app': 'lvm',
-                        'obj': 'VolumeGroup',
-                        'id': self.ownerCt.ownerCt.volfield.getValue()
-                      },
-                      'filesystem': self.ownerCt.ownerCt.fsfield.getValue(),
-                      'name':       self.ownerCt.ownerCt.namefield.getValue(),
-                      'megs':       self.ownerCt.ownerCt.sizefield.getValue(),
-                      'owner': {
-                        'app': 'auth',
-                        'obj': 'User',
-                        'id': self.ownerCt.ownerCt.ownerfield.getValue()
+                        if( free < self.ownerCt.ownerCt.sizefield.getValue() ){
+                          Ext.Msg.alert("{% trans "Error" %}",
+                            interpolate( "{% trans "Your volume exceeds the available capacity of %s MB." %}",
+                              [response.result]) );
+                          return;
+                        }
+                        var progresswin = new Ext.Window({
+                          title: "{% trans "Adding Volume" %}",
+                          layout: "fit",
+                          height: 250,
+                          width: 400,
+                          modal: true,
+                          html: "{% trans 'Please wait while your volume is being created...' %}"
+                        });
+                        progresswin.show();
+                        lvm__LogicalVolume.create({
+                          'vg': {
+                            'app': 'lvm',
+                            'obj': 'VolumeGroup',
+                            'id': self.ownerCt.ownerCt.volfield.getValue()
+                          },
+                          'filesystem': self.ownerCt.ownerCt.fsfield.getValue(),
+                          'name':       self.ownerCt.ownerCt.namefield.getValue(),
+                          'megs':       self.ownerCt.ownerCt.sizefield.getValue(),
+                          'owner': {
+                            'app': 'auth',
+                            'obj': 'User',
+                            'id': self.ownerCt.ownerCt.ownerfield.getValue()
+                          }
+                        }, function(provider, response){
+                          if( response.result ){
+                            lvmPanel.items.items[0].store.reload();
+                            progresswin.hide();
+                            addwin.hide();
+                          }
+                        });
                       }
-                    }, function(provider, response){
-                      if( response.result ){
-                        lvmPanel.items.items[0].store.reload();
-                        progresswin.hide();
+                    }, {
+                      text: "{% trans 'Cancel' %}",
+                      icon: MEDIA_URL + "/icons2/16x16/actions/gtk-cancel.png",
+                      handler: function(self){
                         addwin.hide();
                       }
-                    });
-                  }
-                }, {
-                  text: "{% trans 'Cancel' %}",
-                  icon: MEDIA_URL + "/icons2/16x16/actions/gtk-cancel.png",
-                  handler: function(self){
-                    addwin.hide();
-                  }
-                }]
-              }]
-            });
-            addwin.show();
-          }
-        }, {
-          text: "{% trans "Resize Volume" %}",
-          icon: MEDIA_URL + "/icons2/16x16/actions/gtk-execute.png",
-          handler: function(self){
-            var lvmGrid = lvmPanel.items.items[0];
-            var sm = lvmGrid.getSelectionModel();
-            if( sm.hasSelection() ){
-              var sel = sm.selections.items[0];
-              Ext.Msg.prompt(
-                "{% trans 'Enter new size' %}",
-                interpolate(
-                  "{% trans 'Please enter the size in MB you wish to resize volume %s to.<br />The current size is %s MB.' %}",
-                  [sel.data.name, sel.data.megs] ),
-                function(btn, text){
-                  if( btn == 'ok' ){
-                    var progresswin = new Ext.Window({
-                      title: "{% trans "Resizing Volume" %}",
-                      layout: "fit",
-                      height: 250,
-                      width: 400,
-                      modal: true,
-                      html: "{% trans 'Please wait while your volume is being resized...' %}"
-                    });
-                    progresswin.show();
-                    lvm__LogicalVolume.set( sel.data.id, {"megs": parseFloat(text)}, function(provider, response){
-                      lvmGrid.store.reload();
-                      progresswin.hide();
-                    } );
-                  }
-                  else
-                  alert("{% trans "Aborted." %}");
+                    }]
+                  }]
+                });
+                addwin.show();
+              }
+            }, {
+              text: "{% trans "Resize Volume" %}",
+              icon: MEDIA_URL + "/icons2/16x16/actions/gtk-execute.png",
+              handler: function(self){
+                var lvmGrid = lvmPanel.items.items[0];
+                var sm = lvmGrid.getSelectionModel();
+                if( sm.hasSelection() ){
+                  var sel = sm.selections.items[0];
+                  Ext.Msg.prompt(
+                    "{% trans 'Enter new size' %}",
+                    interpolate(
+                      "{% trans 'Please enter the desired size in MB you wish to resize volume <b>%s</b> to.' %}" + "<br/>" + 
+                      "{% trans 'The current size is %s MB.' %}",
+                      [sel.data.name, sel.data.megs] ),
+                    function(btn, text){
+                      if( btn == 'ok' ){
+                        var progresswin = new Ext.Window({
+                          title: "{% trans "Resizing Volume" %}",
+                          layout: "fit",
+                          height: 250,
+                          width: 400,
+                          modal: true,
+                          html: "{% trans 'Please wait while your volume is being resized...' %}"
+                        });
+                        progresswin.show();
+                        lvm__LogicalVolume.set( sel.data.id, {"megs": parseFloat(text)}, function(provider, response){
+                          lvmGrid.store.reload();
+                          progresswin.hide();
+                        } );
+                      }
+                      else
+                      alert("{% trans "Aborted." %}");
+                    }
+                  );
                 }
-              );
-            }
-          }
-        }, {
-          text: "{% trans "Delete Volume" %}",
-          icon: MEDIA_URL + "/icons2/16x16/actions/remove.png",
-          handler: function(self){
-            var lvmGrid = lvmPanel.items.items[0];
-            var sm = lvmGrid.getSelectionModel();
-            if( sm.hasSelection() ){
-              var sel = sm.selections.items[0];
-              Ext.Msg.confirm(
-                "{% trans 'Confirm delete' %}",
-                interpolate(
-                  "{% trans 'Really delete volume %s and all its shares?<br /><b>There is no undo and you will lose all data.</b>' %}",
-                  [sel.data.name] ),
-                function(btn, text){
-                  if( btn == 'yes' ){
-                    lvm__LogicalVolume.remove( sel.data.id, function(provider, response){
-                      lvmGrid.store.reload();
-                    } );
-                  }
-                  else
-                  alert("{% trans "Aborted." %}");
+              }
+            }, {
+              text: "{% trans "Delete Volume" %}",
+              icon: MEDIA_URL + "/icons2/16x16/actions/remove.png",
+              handler: function(self){
+                var lvmGrid = lvmPanel.items.items[0];
+                var sm = lvmGrid.getSelectionModel();
+                if( sm.hasSelection() ){
+                  var sel = sm.selections.items[0];
+                  Ext.Msg.confirm(
+                    "{% trans 'Confirm delete' %}",
+                    interpolate(
+                      "{% trans 'Really delete volume %s and all its shares?<br /><b>There is no undo and you will lose all data.</b>' %}",
+                      [sel.data.name] ),
+                    function(btn, text){
+                      if( btn == 'yes' ){
+                        lvm__LogicalVolume.remove( sel.data.id, function(provider, response){
+                          lvmGrid.store.reload();
+                        } );
+                      }
+                      else
+                      alert("{% trans "Aborted." %}");
+                    }
+                  );
                 }
-              );
-            }
-          }
-      }],
-      items: [{
-        xtype: 'grid',
-        region: "center",
-        ref: 'lvpanel',
-        store: (function(){
-          // Anon function that is called immediately to set up the store's DefaultSort
-          var store = new Ext.data.DirectStore({
-            autoLoad: true,
-            fields: ['name', 'megs', 'filesystem',  'formatted', 'id', 'state', 'fs',
-              {
-                name: 'fsfree',
-                mapping: 'fs',
-                sortType: 'asInt',
-                convert: function( val, row ){
-                  if( val === null || typeof val.stat === "undefined" )
-                    return null;
-                  return val.stat.freeG.toFixed(2);
-                }
+              }
+          }],
+          items: [{
+            xtype: 'grid',
+            region: "center",
+            ref: 'lvpanel',
+            store: (function(){
+              // Anon function that is called immediately to set up the store's DefaultSort
+              var store = new Ext.data.DirectStore({
+                autoLoad: true,
+                fields: ['name', 'megs', 'filesystem',  'formatted', 'id', 'state', 'fs',
+                  {
+                    name: 'fsfree',
+                    mapping: 'fs',
+                    sortType: 'asInt',
+                    convert: function( val, row ){
+                      if( val === null || typeof val.stat === "undefined" )
+                        return null;
+                      return val.stat.freeG.toFixed(2);
+                    }
+                  }, {
+                    name: 'fsused',
+                    mapping: 'fs',
+                    sortType: 'asInt',
+                    convert: function( val, row ){
+                      if( val === null || typeof val.stat === "undefined" )
+                        return null;
+                      return val.stat.usedG.toFixed(2);
+                    }
+                  }, {
+                    name: 'fspercent',
+                    mapping: 'fs',
+                    sortType: 'asInt',
+                    convert: function( val, row ){
+                      if( val === null || typeof val.stat === "undefined" )
+                        return null;
+                      return (val.stat.used / val.stat.size * 100 ).toFixed(2);
+                    }
+                  }],
+                baseParams: { "snapshot__isnull": true },
+                directFn: lvm__LogicalVolume.filter
+              });
+              store.setDefaultSort("name");
+              return store;
+            }()),
+            colModel:  new Ext.grid.ColumnModel({
+              defaults: {
+                sortable: true
+              },
+              columns: [{
+                header: "{% trans "LV" %}",
+                width: 200,
+                dataIndex: "name"
               }, {
-                name: 'fsused',
-                mapping: 'fs',
-                sortType: 'asInt',
-                convert: function( val, row ){
-                  if( val === null || typeof val.stat === "undefined" )
-                    return null;
-                  return val.stat.usedG.toFixed(2);
-                }
-              }, {
-                name: 'fspercent',
-                mapping: 'fs',
-                sortType: 'asInt',
-                convert: function( val, row ){
-                  if( val === null || typeof val.stat === "undefined" )
-                    return null;
-                  return (val.stat.used / val.stat.size * 100 ).toFixed(2);
-                }
-              }],
-            baseParams: { "snapshot__isnull": true },
-            directFn: lvm__LogicalVolume.filter
-          });
-          store.setDefaultSort("name");
-          return store;
-        }()),
-        colModel:  new Ext.grid.ColumnModel({
-          defaults: {
-            sortable: true
-          },
-          columns: [{
-            header: "{% trans "LV" %}",
-            width: 200,
-            dataIndex: "name"
-          }, {
-            header: "{% trans "Size" %}",
-            width: 150,
-            dataIndex: "megs",
-            align: 'right',
-            renderer: function( val, x, store ){
-              if( val >= 1000 )
+                header: "{% trans "Size" %}",
+                width: 150,
+                dataIndex: "megs",
+                align: 'right',
+                renderer: function( val, x, store ){
+                  if( val >= 1000 )
                 return String.format("{0} GB", (val / 1000).toFixed(2));
               return String.format("{0} MB", val);
             }
