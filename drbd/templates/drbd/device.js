@@ -6,7 +6,16 @@ Ext.oa.Drbd__Device_Panel = Ext.extend(Ext.grid.GridPanel, {
     var drbdDevGrid = this;
     Ext.apply(this, Ext.apply(this.initialConfig, {
       title: "{% trans 'DRBD' %}",
-      buttons: [{
+      viewConfig:{ forceFit: true },
+      buttons: [
+       {
+          text: "",
+          icon: MEDIA_URL + "/icons2/16x16/actions/reload.png",
+          tooltip: "{% trans 'Reload' %}",
+          handler: function(self){
+          drbdDevGrid.store.reload();
+        }
+      }, {
         text: "{% trans 'Add DRBD Device' %}",
         icon: MEDIA_URL + "/icons2/16x16/actions/add.png",
         handler: function(){
@@ -65,8 +74,12 @@ Ext.oa.Drbd__Device_Panel = Ext.extend(Ext.grid.GridPanel, {
       }],
       store: new Ext.data.DirectStore({
         autoLoad: true,
-        fields: ['id', 'protocol', 'peeraddress', 'volume', {
+        fields: ['id', 'protocol', 'peeraddress', 'volume', 'cstate', 'role',{
           name: 'volumename', mapping: 'volume', convert: function(val, row){ return val.name }
+        }, {
+          name: 'dstate_self', mapping: 'dstate', convert: function(val, row){ return val.self }
+        }, {
+          name: 'role_self', mapping: 'role', convert: function (val, row) { return val.self }
         }],
         directFn: drbd__DrbdDevice.all
       }),
@@ -86,6 +99,18 @@ Ext.oa.Drbd__Device_Panel = Ext.extend(Ext.grid.GridPanel, {
           header: "{% trans 'Peer Address' %}",
           width: 200,
           dataIndex: "peeraddress"
+        }, {
+          header: "{% trans 'Disk state (here)' %}",
+          width: 200,
+          dataIndex: "dstate_self"
+        }, {
+          header: "{% trans 'Connections state' %}",
+          width: 200,
+          dataIndex: "cstate"
+        }, {
+          header: "{% trans 'Role' %}",
+          width: 200,
+          dataIndex: "role_self"
         }]
       })
     }));

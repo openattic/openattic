@@ -8,6 +8,13 @@ Ext.oa.Ftp__User_Panel = Ext.extend(Ext.grid.GridPanel, {
     Ext.apply(this, Ext.apply(this.initialConfig, {
       title: "ftp",
       buttons: [{
+          text: "",
+          icon: MEDIA_URL + "/icons2/16x16/actions/reload.png",
+          tooltip: "{% trans 'Reload' %}",
+          handler: function(self){
+            ftpGrid.store.reload();
+          }
+      }, {
         text: "{% trans 'Add User' %}",
         icon: MEDIA_URL + "/icons2/16x16/actions/add.png",
         handler: function(){
