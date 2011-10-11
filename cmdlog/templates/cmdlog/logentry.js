@@ -83,7 +83,66 @@ Ext.oa.Cmdlog__LogEntry_Panel = Ext.extend(Ext.Panel, {
         },
         bbar: new Ext.PagingToolbar({
           pageSize: 100,
-          store:    store
+          store:    store,
+          items: ['->', {
+            xtype: 'button',
+            text:  "{% trans 'Delete old entries' %}",
+            handler: function(){
+              var win = new Ext.Window({
+                title: "{% trans 'Delete old entries' %}",
+                layout: "fit",
+                height: 300,
+                width: 500,
+                modal: true,
+                items: [{
+                  xtype: "form",
+                  defaults: {
+                    xtype: "textfield",
+                    anchor: '-20px'
+                  },
+                  items: [{
+                    fieldLabel: "Date",
+                    allowBlank: false,
+                    name:  "date",
+                    xtype: 'datefield',
+                    ref:   'datefield',
+                    listeners: {
+                      change: function( self, newValue, oldValue ){
+                        cmdlog__LogEntry.count_older_than(
+                          parseInt(newValue.format("U")),
+                          function(provider, response){
+                            self.ownerCt.countlabel.setText(
+                              interpolate("{% trans '%s Entries matched' %}", [response.result])
+                            );
+                          }
+                        );
+                      }
+                    }
+                  }, {
+                    xtype: "label",
+                    text:  "{% trans 'Waiting for date selection...' %}",
+                    cls:   "form_hint_label",
+                    ref:   "countlabel"
+                  }],
+                  buttons: [{
+                    text: 'Do it',
+                    ref:   'shoopmit',
+                    handler: function(self){
+                      var date = self.ownerCt.ownerCt.datefield.getValue();
+                      cmdlog__LogEntry.remove_older_than(
+                        parseInt(date.format("U")),
+                        function(provider, response){
+                          win.hide();
+                          store.reload();
+                        }
+                      );
+                    }
+                  }]
+                }]
+              });
+              win.show();
+            }
+          }]
         })
       }, textView ]
     }));
