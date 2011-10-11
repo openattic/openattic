@@ -233,6 +233,10 @@ class RPCd(object):
         """ Get this host's hostname. """
         return socket.gethostname()
 
+    def fqdn(self):
+        """ Get this host's fully qualified domain name (FQDN). """
+        return socket.getfqdn()
+
     def get_object(self, id, user):
         """ Return an object resolved from an ID dictionary. """
         obj = ModelHandler._get_object_by_id_dict(id)

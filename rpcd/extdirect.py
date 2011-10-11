@@ -1,6 +1,7 @@
 # -*- coding: utf-8 -*-
 # kate: space-indent on; indent-width 4; replace-tabs on;
 
+import socket
 import inspect
 import logging
 from functools import wraps
@@ -25,6 +26,10 @@ class MainHandler(object):
     def hostname(self):
         """ Get this host's hostname. """
         return socket.gethostname()
+
+    def fqdn(self):
+        """ Get this host's fully qualified domain name (FQDN). """
+        return socket.getfqdn()
 
     def get_loaded_modules(self):
         """ Return a list of loaded handler modules. """
