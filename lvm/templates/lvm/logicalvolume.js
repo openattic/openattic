@@ -268,22 +268,31 @@ Ext.oa.Lvm__LogicalVolume_Panel = Ext.extend(Ext.Panel, {
                       [sel.data.name, sel.data.megs] ),
                     function(btn, text){
                       if( btn == 'ok' ){
-                        var progresswin = new Ext.Window({
-                          title: "{% trans "Resizing Volume" %}",
-                          layout: "fit",
-                          height: 250,
-                          width: 400,
-                          modal: true,
-                          html: "{% trans 'Please wait while your volume is being resized...' %}"
-                        });
-                        progresswin.show();
-                        lvm__LogicalVolume.set( sel.data.id, {"megs": parseFloat(text)}, function(provider, response){
-                          lvmGrid.store.reload();
-                          progresswin.hide();
-                        } );
+                        Ext.Msg.confirm(
+                          "{% trans 'Warning' %}",
+                          interpolate(
+                            "{% trans 'Do you really want to change Volume size of <b>%s</b> to <b>%s</b> MB' %}",
+                            [sel.data.name, text] ),
+                              function(btn){
+                                if( btn == 'ok' ){
+                                var progresswin = new Ext.Window({
+                                  title: "{% trans "Resizing Volume" %}",
+                                  layout: "fit",
+                                  height: 250,
+                                  width: 400,
+                                  modal: true,
+                                  html: "{% trans 'Please wait while your volume is being resized...' %}"
+                                });
+                                progresswin.show();
+                                lvm__LogicalVolume.set( sel.data.id, {"megs": parseFloat(text)}, function(provider, response){
+                                  lvmGrid.store.reload();
+                                  progresswin.hide();
+                                } );
+                            }}
+                          );
                       }
                       else
-                      alert("{% trans "Aborted." %}");
+                        alert("{% trans "Aborted." %}");
                     }
                   );
                 }
