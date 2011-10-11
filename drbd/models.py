@@ -9,6 +9,8 @@ import dbus
 from django.conf import settings
 from django.db   import models
 
+from systemd.helpers import dbus_to_python
+
 from lvm.models import StatefulModel, LogicalVolume, LVChainedModule
 from peering.models import PeerHost
 
@@ -137,19 +139,19 @@ class DrbdDevice(LVChainedModule):
     def cstate(self):
         if self.state not in ("pending", "active"):
             return None
-        return self.drbd.get_cstate(self.res)
+        return dbus_to_python(self.drbd.get_cstate(self.res))
 
     @property
     def dstate(self):
         if self.state not in ("pending", "active"):
             return None
-        return self.drbd.get_dstate(self.res)
+        return dbus_to_python(self.drbd.get_dstate(self.res))
 
     @property
     def role(self):
         if self.state not in ("pending", "active"):
             return None
-        return self.drbd.get_role(self.res)
+        return dbus_to_python(self.drbd.get_role(self.res))
 
     def primary(self):
         if self.state not in ("pending", "active"):

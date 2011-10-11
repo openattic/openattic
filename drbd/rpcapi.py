@@ -11,6 +11,9 @@ class DrbdDeviceHandler(ModelHandler):
     def _override_get(self, obj, data):
         data['path']    = obj.path
         data['basedev'] = obj.basedev
+        data['cstate']  = obj.cstate
+        data['dstate']  = obj.dstate
+        data['role']    = obj.role
         return data
 
     def primary(self, id):
