@@ -7,6 +7,7 @@ Ext.oa.Lvm__LogicalVolume_Panel = Ext.extend(Ext.Panel, {
   initComponent: function(){
     var currentChartId = null;
     var lvmPanel = this;
+    var lvmGrid = this;
     Ext.apply(this, Ext.apply(this.initialConfig, {
       title: "{% trans 'LVM' %}",
       layout: 'border',
@@ -65,10 +66,11 @@ Ext.oa.Lvm__LogicalVolume_Panel = Ext.extend(Ext.Panel, {
                     else
                       Ext.Msg.alert(sel.data.name, interpolate(
                         "{% trans "Volume %s has been mounted." %}", [sel.data.name] ));
+                      lvmGrid.store.reload();
                   } );
                 } );
-              } );
-            }
+              } );        
+          }
           }
         }, {
           text: "{% trans "Unmount" %}",
@@ -78,19 +80,34 @@ Ext.oa.Lvm__LogicalVolume_Panel = Ext.extend(Ext.Panel, {
             var sm = lvmGrid.getSelectionModel();
             if( sm.hasSelection() ){
               var sel = sm.selections.items[0];
-              lvm__LogicalVolume.is_mounted( sel.data.id, function(provider, response){
-                if( !response.result ){
-                  Ext.Msg.alert(sel.data.name, interpolate( "{% trans "Volume %s is not mounted." %}", [sel.data.name] ));
-                }
-                else{
-                  lvm__LogicalVolume.unmount( sel.data.id, function(provider, response){
-                    if( response.type === "exception" )
-                      Ext.Msg.alert(sel.data.name, interpolate(
-                        "{% trans "Volume %s could not be unmounted, please check the logs." %}", [sel.data.name] ));
-                    else
-                      Ext.Msg.alert(sel.data.name, interpolate(
-                        "{% trans "Volume %s has been unmounted." %}", [sel.data.name] ));
+              Ext.Msg.confirm(
+                "{% trans 'Unmount' %}",
+                interpolate(
+                  "{% trans 'Do you really want to umount %s?' %}",
+                  [sel.data.name]),
+                function(btn){
+                  if(btn == 'yes'){
+                    lvm__LogicalVolume.is_mounted( sel.data.id, function(provider, response){
+                      if( !response.result ){
+                        Ext.Msg.alert(sel.data.name, interpolate( "{% trans 'Volume %s is not mounted.' %}",
+                                                                  [sel.data.name] ));
+                      }
+                      else{
+                        lvm__LogicalVolume.unmount( sel.data.id, function(provider, response){
+                          if( response.type === "exception" )
+                            Ext.Msg.alert(sel.data.name, interpolate(
+                              "{% trans 'Volume %s could not be unmounted, please check the logs.' %}",
+                              [sel.data.name] ));
+                          else{
+                            Ext.Msg.alert(sel.data.name, interpolate(
+                              "{% trans 'Volume %s has been unmounted.' %}",
+                              [sel.data.name] ));
+                            lvmGrid.store.reload();
+                          }
+                        });
+                      }
                   } );
+                      
                 }
               } );
             }
@@ -274,7 +291,7 @@ Ext.oa.Lvm__LogicalVolume_Panel = Ext.extend(Ext.Panel, {
                             "{% trans 'Do you really want to change Volume size of <b>%s</b> to <b>%s</b> MB' %}",
                             [sel.data.name, text] ),
                               function(btn){
-                                if( btn == 'ok' ){
+                                if( btn == 'yes' ){
                                 var progresswin = new Ext.Window({
                                   title: "{% trans "Resizing Volume" %}",
                                   layout: "fit",
