@@ -4,8 +4,8 @@
 from os.path import join, exists, islink
 from os import unlink, symlink
 
-from django.conf import settings
-from django.db   import models
+from http.conf import settings as http_settings
+from django.db import models
 
 from lvm.models import StatefulModel, LogicalVolume
 
@@ -21,7 +21,7 @@ class Export(StatefulModel):
     def save( self, *args, **kwargs ):
         self.state = "active"
         ret = StatefulModel.save(self, ignore_state=True, *args, **kwargs)
-        linkname = join(settings.PROJECT_ROOT, "http", "volumes", self.volume.name)
+        linkname = join(http_settings.VOLUMESDIR, self.volume.name)
         if not exists( linkname ):
             symlink( self.path, linkname )
         return ret
@@ -29,7 +29,7 @@ class Export(StatefulModel):
     def delete( self ):
         self.state = "done"
         ret = StatefulModel.delete(self)
-        linkname = join(settings.PROJECT_ROOT, "http", "volumes", self.volume.name)
+        linkname = join(http_settings.VOLUMESDIR, self.volume.name)
         if islink( linkname ):
             unlink( linkname )
         return ret
