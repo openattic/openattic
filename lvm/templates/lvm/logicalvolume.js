@@ -42,7 +42,7 @@ Ext.oa.Lvm__LogicalVolume_Panel = Ext.extend(Ext.Panel, {
             if( sm.hasSelection() ){
               var sel = sm.selections.items[0];
               if( !sel.data.filesystem ){
-                Ext.Msg.alert(sel.data.name,
+                Ext.Msg.alert('Mounted',
                   interpolate(
                     "{% trans "Volume %s does not have a file system and therefore cannot be mounted." %}",
                     [sel.data.name] ));
@@ -50,21 +50,21 @@ Ext.oa.Lvm__LogicalVolume_Panel = Ext.extend(Ext.Panel, {
               }
               lvm__LogicalVolume.is_mounted( sel.data.id, function(provider, response){
                 if( response.result ){
-                  Ext.Msg.alert(sel.data.name, interpolate( "{% trans "Volume %s is already mounted." %}", [sel.data.name] ));
+                  Ext.Msg.alert('Mounted', interpolate( "{% trans "Volume %s is already mounted." %}", [sel.data.name] ));
                   return;
                 }
                 lvm__LogicalVolume.is_in_standby( sel.data.id, function(provider, response){
                   if( response.result ){
-                    Ext.Msg.alert(sel.data.name,
+                    Ext.Msg.alert('Mounted',
                       interpolate( "{% trans "Volume %s cannot be mounted at the current time." %}", [sel.data.name] ));
                     return;
                   }
                   lvm__LogicalVolume.mount( sel.data.id, function(provider, response){
                     if( response.type === "exception" )
-                      Ext.Msg.alert(sel.data.name, interpolate(
+                      Ext.Msg.alert('Mounted', interpolate(
                         "{% trans "Volume %s could not be mounted, please check the logs." %}", [sel.data.name] ));
                     else
-                      Ext.Msg.alert(sel.data.name, interpolate(
+                      Ext.Msg.alert('Mounted', interpolate(
                         "{% trans "Volume %s has been mounted." %}", [sel.data.name] ));
                       lvmGrid.store.reload();
                   } );
@@ -89,17 +89,17 @@ Ext.oa.Lvm__LogicalVolume_Panel = Ext.extend(Ext.Panel, {
                   if(btn == 'yes'){
                     lvm__LogicalVolume.is_mounted( sel.data.id, function(provider, response){
                       if( !response.result ){
-                        Ext.Msg.alert(sel.data.name, interpolate( "{% trans 'Volume %s is not mounted.' %}",
+                        Ext.Msg.alert('Unmount', interpolate( "{% trans 'Volume %s is not mounted.' %}",
                                                                   [sel.data.name] ));
                       }
                       else{
                         lvm__LogicalVolume.unmount( sel.data.id, function(provider, response){
                           if( response.type === "exception" )
-                            Ext.Msg.alert(sel.data.name, interpolate(
+                            Ext.Msg.alert('Unmount', interpolate(
                               "{% trans 'Volume %s could not be unmounted, please check the logs.' %}",
                               [sel.data.name] ));
                           else{
-                            Ext.Msg.alert(sel.data.name, interpolate(
+                            Ext.Msg.alert('Unmount', interpolate(
                               "{% trans 'Volume %s has been unmounted.' %}",
                               [sel.data.name] ));
                             lvmGrid.store.reload();

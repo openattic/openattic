@@ -13,6 +13,79 @@ Ext.oa.Samba__Share_Panel = Ext.extend(Ext.grid.GridPanel, {
     Ext.apply(this, Ext.apply(this.initialConfig, {
       title: "{% trans 'Samba' %}",
       viewConfig: { forceFit: true },
+      buttons: [{
+        text: "",
+        icon: MEDIA_URL + "/icons2/16x16/actions/reload.png",
+        tooltip: "{% trans 'Reload' %}",
+        handler: function(self){
+        sambaShareGrid.store.reload();
+        }
+      },{
+        text: "{% trans "Add Share" %}",
+        icon: MEDIA_URL + "/icons2/16x16/actions/add.png",
+        handler: function(){
+          var addwin = new Ext.Window({
+            title: "{% trans "Add Share" %}",
+            layout: "fit",
+            height: 300,
+            width: 500,
+            items: [{
+              xtype: "form",
+              defaults: {
+                xtype: "textfield",
+                anchor: '-20px'
+              },
+              items: [{ 
+                fieldLabel: "Name",
+                allowBlank: false,
+                name: "name",
+                ref: 'namefield'
+              }, {
+                xtype:      'combo',
+                allowBlank: false,
+                fieldLabel: "{% trans 'Volume' %}",
+                name:       'volume',
+                hiddenName: 'volume_id',
+                store: new Ext.data.DirectStore({
+                  fields: ["app", "obj", "id", "name"],
+                  directFn: lvm__LogicalVolume.ids
+                }),
+                typeAhead:     true,
+                triggerAction: 'all',
+                emptyText:     'Select...',
+                selectOnFocus: true,
+                displayField:  'name',
+                valueField:    'id',
+                ref:           'volfield',
+              }, {
+                fieldLabel: "{% trans "Path" %}",
+                allowBlank: false,
+                name: "path",
+                ref: 'pathfield'
+              }, {
+                xtype:      'combo',
+                allowBlank: false,
+                fieldLabel: "{% trans 'Owner' %}",
+                name:       'owner',
+                hiddenName: 'owner_id',
+                store: new Ext.data.DirectStore({
+                  fields: ["username", "id"],
+                  baseParams: { fields: ["username", "id"] },
+                  directFn: auth__User.all_values
+                }),
+                typeAhead:     true,
+                triggerAction: 'all',
+                emptyText:     "{% trans 'Select...' %}",
+                selectOnFocus: true,
+                displayField:  'username',
+                valueField:    'id',
+                ref:      'ownerfield'
+              } ]
+            }]
+          });
+          addwin.show();
+        }
+      }],
       store: new Ext.data.DirectStore({
         autoLoad: true,
         fields: ['path', 'state', 'available'],
@@ -38,8 +111,8 @@ Ext.oa.Samba__Share_Panel = Ext.extend(Ext.grid.GridPanel, {
           dataIndex: "available",
           renderer: renderBoolean
         }]
-      })
-    }));
+      }),
+     }));
     Ext.oa.Samba__Share_Panel.superclass.initComponent.apply(this, arguments);
   },
   

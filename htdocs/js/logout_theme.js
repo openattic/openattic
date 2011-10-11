@@ -12,7 +12,7 @@ window.MainViewModules.push({
             buttons: {
               yes:    'access',
               no:     'default',
-              cancel: Ext.Msg.CANCEL
+              cancel: 'gray'
             },
             fn: function(btn, text){
               if( btn == 'yes' ){
@@ -21,6 +21,11 @@ window.MainViewModules.push({
               }
               else if( btn == 'no' ){
                 Ext.state.Manager.clear( "theme" );
+                window.location.reload.defer(200);
+              }
+                
+              else if( btn == 'cancel' ){
+                Ext.state.Manager.set( "theme", "gray" );
                 window.location.reload.defer(200);
               }
             }

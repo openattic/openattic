@@ -108,12 +108,20 @@ Ext.oa.Nfs__Export_Panel = Ext.extend(Ext.grid.GridPanel, {
           var sm = nfsGrid.getSelectionModel();
           if( sm.hasSelection() ){
             var sel = sm.selections.items[0];
-            nfs__Export.remove( sel.data.id, function(provider, response){
-              nfsGrid.store.reload();
+            Ext.Msg.confirm(
+              "{% trans 'Delete Export' %}",
+              interpolate(
+                "{% trans 'Do you really want to delete %s?' %}",[sel.data.path]),
+                function(btn){
+                  if(btn == 'yes'){
+                    nfs__Export.remove( sel.data.id, function(provider, response){
+                    nfsGrid.store.reload();
             } );
           }
-        }
-      }],
+        });
+      }
+        }}  
+      ],
       store: new Ext.data.DirectStore({
         autoLoad: true,
         fields: ['id', 'address', 'path', 'options', 'state'],
