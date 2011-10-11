@@ -1,6 +1,6 @@
-Alias /volumes /usr/share/openattic/http/volumes
+Alias /volumes /var/lib/openattic/http/volumes
 
-<Directory /usr/share/openattic/http/volumes>
+<Directory /var/lib/openattic/http/volumes>
 	Options Indexes FollowSymlinks 
 	AllowOverride Indexes Limit AuthConfig
 </Directory>

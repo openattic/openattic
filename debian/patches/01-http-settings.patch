@@ -1,0 +1,14 @@
+Description: Configure the directory where HTTP volume symlinks are to be created.
+Forwarded: not-needed
+Author: Michael Ziegler <diese-addy@funzt-halt.net>
+
+Index: openattic-0.1/http/conf/settings.py
+===================================================================
+--- openattic-0.1.orig/http/conf/settings.py	2011-10-11 11:07:31.000000000 +0200
++++ openattic-0.1/http/conf/settings.py	2011-10-11 11:12:24.000000000 +0200
+@@ -5,4 +5,4 @@
+ 
+ from django.conf import settings
+ 
+-VOLUMESDIR = getattr( settings, "HTTP_VOLUMESDIR", join(settings.PROJECT_ROOT, "http", "volumes") )
++VOLUMESDIR = '/var/lib/openattic/http/volumes'
