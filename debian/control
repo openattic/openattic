@@ -101,6 +101,7 @@ Depends: ${misc:Depends},
  python-m2crypto,
  python-django-extdirect (>= 0.6),
  python-statgrab,
+ ssl-cert,
  libjs-extjs (>= 3.0.0), libjs-extjs (<< 4.0),
  openattic-database-sqlite | openattic-database-mysql | openattic-database-pgsql
 Description: Basic requirements for openATTIC
