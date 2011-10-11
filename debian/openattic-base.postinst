@@ -20,9 +20,11 @@ if [ "$1" = "configure" ] ; then
     touch /var/log/openattic_rpcd
     setperm /var/log/openattic_rpcd 0640
 
-    mkdir /usr/share/openattic/certs
-    cp /etc/ssl/certs/ssl-cert-snakeoil.pem   /usr/share/openattic/certs
-    cp /etc/ssl/private/ssl-cert-snakeoil.key /usr/share/openattic/certs
+    if [ ! -d /usr/share/openattic/certs ]; then
+        mkdir /usr/share/openattic/certs
+        cp /etc/ssl/certs/ssl-cert-snakeoil.pem   /usr/share/openattic/certs
+        cp /etc/ssl/private/ssl-cert-snakeoil.key /usr/share/openattic/certs
+    fi
     setperm /usr/share/openattic/certs 0600
     setperm /usr/share/openattic/certs/ssl-cert-snakeoil.pem 0600
     setperm /usr/share/openattic/certs/ssl-cert-snakeoil.key 0600
