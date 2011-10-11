@@ -5,6 +5,8 @@ syntax: glob
 
 .secret.txt
 
+http/volumes
+
 htdocs/extjs
 certs/
 
