@@ -1,7 +1,8 @@
 # -*- coding: utf-8 -*-
 # kate: space-indent on; indent-width 4; replace-tabs on;
 
-import dbus
+from os.path import join, exists, islink
+from os import unlink, symlink
 
 from django.conf import settings
 from django.db   import models
@@ -20,11 +21,15 @@ class Export(StatefulModel):
     def save( self, *args, **kwargs ):
         self.state = "active"
         ret = StatefulModel.save(self, ignore_state=True, *args, **kwargs)
-        dbus.SystemBus().get_object(settings.DBUS_IFACE_SYSTEMD, "/http").addlink(self.volume.name, self.path)
+        linkname = join(settings.PROJECT_ROOT, "http", "volumes", self.volume.name)
+        if not exists( linkname ):
+            symlink( self.path, linkname )
         return ret
 
     def delete( self ):
         self.state = "done"
         ret = StatefulModel.delete(self)
-        dbus.SystemBus().get_object(settings.DBUS_IFACE_SYSTEMD, "/http").dellink(self.volume.name)
+        linkname = join(settings.PROJECT_ROOT, "http", "volumes", self.volume.name)
+        if islink( linkname ):
+            unlink( linkname )
         return ret
