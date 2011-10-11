@@ -3,15 +3,15 @@ Ext.namespace("Ext.oa");
 Ext.oa.Portal = Ext.extend(Ext.ux.Portal, {
   initComponent: function(){
     var tools = [{
-        id:'gear',
-        handler: function(){
-          Ext.Msg.alert('Message', 'The Settings tool was clicked.');
-        }
-      },{
-        id:'close',
-        handler: function(e, target, panel){
-          panel.ownerCt.remove(panel, true);
-        }
+      id: 'gear',
+      handler: function(){
+        Ext.Msg.alert('Message', 'The Settings tool was clicked.');
+      }
+    },{
+      id: 'close',
+      handler: function(e, target, panel){
+        panel.ownerCt.remove(panel, true);
+      }
     }];
     Ext.apply(this, Ext.apply(this.initialConfig, {
       id: "masterportalofduhm",
@@ -34,50 +34,50 @@ Ext.oa.Portal = Ext.extend(Ext.ux.Portal, {
               var store = new Ext.data.DirectStore({
                 autoLoad: true,
                 fields: ['name', 'megs', 'filesystem',  'formatted', 'id', 'state', 'fs', {
-                    name: 'fsused',
-                    mapping: 'fs',
-                    convert: function( val, row ){
+                  name: 'fsused',
+                  mapping: 'fs',
+                  convert: function( val, row ){
                     if( val === null || typeof val.stat === "undefined" )
                       return '';
                     return (val.stat.used / val.stat.size * 100 ).toFixed(2);
-                    }
-                  }],
+                  }
+                }],
                 directFn: lvm__LogicalVolume.all
               });
               store.setDefaultSort("fsused", "DESC");
               return store;
             }()),
             colModel:  new Ext.grid.ColumnModel({
-                defaults: {
-                  sortable: true
-                },
-                columns: [{
-                  header: "LV",
-                  width: 200,
-                  dataIndex: "name"
-                }, {
-                  header: "Size",
-                  width: 75,
-                  dataIndex: "megs",
-                  align: 'right',
-                  renderer: function( val, x, store ){
-                    return String.format("{0} GB", (val / 1000).toFixed(2));
-                  }
-                }, {
-                  header: "Used",
-                  width: 75,
-                  dataIndex: "fsused",
-                  align: 'right',
-                  renderer: function( val, x, store ){
-                    if( !val )
-                      return '';
-                    if( val > Ext.state.Manager.get("lv_red_threshold", 90.0) )
-                      var color = "red";
-                    else
-                      var color = "green";
-                    return String.format('<span style="color:{1};">{0}%</span>', val, color);
-                  }
-                }]
+              defaults: {
+                sortable: true
+              },
+              columns: [{
+                header: "LV",
+                width: 200,
+                dataIndex: "name"
+              }, {
+                header: "Size",
+                width: 75,
+                dataIndex: "megs",
+                align: 'right',
+                renderer: function( val, x, store ){
+                  return String.format("{0} GB", (val / 1000).toFixed(2));
+                }
+              }, {
+                header: "Used",
+                width: 75,
+                dataIndex: "fsused",
+                align: 'right',
+                renderer: function( val, x, store ){
+                  if( !val )
+                    return '';
+                  if( val > Ext.state.Manager.get("lv_red_threshold", 90.0) )
+                    var color = "red";
+                  else
+                    var color = "green";
+                  return String.format('<span style="color:{1};">{0}%</span>', val, color);
+                }
+              }]
             })
           })
         }, {
@@ -98,21 +98,21 @@ Ext.oa.Portal = Ext.extend(Ext.ux.Portal, {
                 sortable: true
               },
               columns: [{
-                  header: "address",
-                  width: 100,
-                  dataIndex: "address"
-                }, {
-                  header: "path",
-                  width: 200,
-                  dataIndex: "path"
-                }, {
-                  header: "options",
-                  width: 200,
-                  dataIndex: "options"
-                }, {
-                  header: "state",
-                  width: 50,
-                  dataIndex: "state"
+                header: "address",
+                width: 100,
+                dataIndex: "address"
+              }, {
+                header: "path",
+                width: 200,
+                dataIndex: "path"
+              }, {
+                header: "options",
+                width: 200,
+                dataIndex: "options"
+              }, {
+                header: "state",
+                width: 50,
+                dataIndex: "state"
               }]
             })
           })
