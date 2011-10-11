@@ -1,0 +1,8 @@
+#!/bin/bash
+
+set -e
+
+rm -f /usr/share/openattic/certs/ssl-cert-snakeoil.pem
+rm -f /usr/share/openattic/certs/ssl-cert-snakeoil.key
+
+#DEBHELPER#

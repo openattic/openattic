@@ -14,6 +14,19 @@ if [ "$1" = "configure" ] ; then
     setperm "/var/lib/openattic"   0750
     setperm "/var/lib/openattic/openattic.sqlite3" 0640
 
+    touch /var/log/openattic_systemd
+    setperm /var/log/openattic_systemd 0640
+
+    touch /var/log/openattic_rpcd
+    setperm /var/log/openattic_rpcd 0640
+
+    mkdir /usr/share/openattic/certs
+    cp /etc/ssl/certs/ssl-cert-snakeoil.pem   /usr/share/openattic/certs
+    cp /etc/ssl/private/ssl-cert-snakeoil.key /usr/share/openattic/certs
+    setperm /usr/share/openattic/certs 0600
+    setperm /usr/share/openattic/certs/ssl-cert-snakeoil.pem 0600
+    setperm /usr/share/openattic/certs/ssl-cert-snakeoil.key 0600
+
     if [ -x /etc/init.d/apache2 ]; then
         invoke-rc.d --quiet apache2 reload
     fi
