@@ -7,6 +7,7 @@ Ext.oa.Http__Export_Panel = Ext.extend(Ext.grid.GridPanel, {
     var httpGrid = this;
     Ext.apply(this, Ext.apply(this.initialConfig, {
       title: "http",
+      viewConfig: { forceFit: true },
       buttons: [{
         text: "",
         icon: MEDIA_URL + "/icons2/16x16/actions/reload.png",
