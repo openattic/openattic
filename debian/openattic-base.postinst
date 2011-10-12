@@ -46,6 +46,10 @@ if [ "$1" = "configure" ] ; then
         update-rc.d openattic_rpcd defaults >/dev/null
         invoke-rc.d openattic_rpcd restart || exit $?
     fi
+
+    tput bold
+    echo "Please run oaconfig install to complete the installation of openATTIC."
+    tput sgr0
 fi
 
 #DEBHELPER#

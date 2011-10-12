@@ -1,0 +1,49 @@
+#!/bin/bash
+
+set -e
+set -u
+
+. /etc/default/openattic
+
+cd $OADIR
+
+if [ "$#" = "0" ]; then
+    echo "Usage: $0 <command> [<args>]"
+    echo
+    echo "Wrapper around the openATTIC management system."
+    echo
+    echo "Valid commands are:"
+    echo
+    echo "    install      Run this command after you installed new openATTIC modules."
+    echo "    restart      Restart all services that are needed to run openATTIC."
+    echo "    reload       Reload all services that are needed to run openATTIC."
+    echo
+    echo "Any other command will be passed as-is to the openATTIC management system,"
+    echo "which supports the commands and options listed below."
+    echo
+
+    su www-data -c 'python manage.py help'
+    exit 1
+fi
+
+case $1 in
+	install)
+		su www-data -c 'python manage.py syncdb'
+		;;
+
+	restart|force-reload)
+		/etc/init.d/openattic_systemd restart
+		/etc/init.d/openattic_rpcd restart
+		/etc/init.d/apache2 restart
+		;;
+
+	reload)
+		/etc/init.d/openattic_systemd restart
+		/etc/init.d/openattic_rpcd restart
+		/etc/init.d/apache2 reload
+		;;
+
+	*)
+		su www-data -c "python manage.py $@"
+		;;
+esac
