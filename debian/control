@@ -14,12 +14,14 @@ Depends: ${misc:Depends}, openattic-base,
  openattic-module-lvm,
  openattic-module-nfs,
  openattic-module-http,
+ openattic-module-samba,
+ openattic-module-ftp-mysql,
  libapache2-mod-wsgi,
  apache2,
  openattic-mysql
 Suggests: python-django-rosetta
 Description: Comprehensive storage management system
- Meta Package that installs the most common set of openATTIC modules along
+ Metapackage that installs the most common set of openATTIC modules along
  with the basic requirements.
 
 Package: openattic-full-mysql
@@ -36,8 +38,8 @@ Depends: ${misc:Depends}, openattic-base,
  libapache2-mod-wsgi, apache2,
  openattic-mysql
 Suggests: python-django-rosetta
-Description: Comprehensive storage management system
- Meta Package that installs all openATTIC modules on a MySQL database.
+Description: Comprehensive storage management system using MySQL
+ Metapackage that installs all openATTIC modules on a MySQL database.
 
 Package: openattic-full-pgsql
 Architecture: all
@@ -53,8 +55,8 @@ Depends: ${misc:Depends}, openattic-base,
  libapache2-mod-wsgi, apache2,
  openattic-pgsql
 Suggests: python-django-rosetta
-Description: Comprehensive storage management system
- Meta Package that installs all openATTIC modules on a PGSQL database.
+Description: Comprehensive storage management system using PGSQL
+ Metapackage that installs all openATTIC modules on a PGSQL database.
 
 Package: openattic-sqlite
 Architecture: all
