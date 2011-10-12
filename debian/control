@@ -140,13 +140,29 @@ Description: Samba module for openATTIC
  Installs the Samba module, which handles sharing volumes for Windows
  hosts using SMB/CIFS.
 
-Package: openattic-module-ftp
+Package: openattic-module-ftp-mysql
 Architecture: all
 Depends: ${misc:Depends}, openattic-module-lvm, proftpd,
- openattic-mysql | openattic-pgsql
+ openattic-mysql, proftpd-mod-mysql
+Conflicts: openattic-module-ftp-pgsql
 Description: FTP module for openATTIC
  Installs the FTP module, which provides FTP accounts for volumes using
  ProFTPd.
+ .
+ This package configures ProFTPd to use a shared MySQL database with
+ openATTIC.
+
+Package: openattic-module-ftp-pgsql
+Architecture: all
+Depends: ${misc:Depends}, openattic-module-lvm, proftpd,
+ openattic-mysql, proftpd-mod-pgsql
+Conflicts: openattic-module-ftp-mysql
+Description: FTP module for openATTIC
+ Installs the FTP module, which provides FTP accounts for volumes using
+ ProFTPd.
+ .
+ This package configures ProFTPd to use a shared Postgresql database with
+ openATTIC.
 
 Package: openattic-module-munin
 Architecture: all

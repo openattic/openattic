@@ -1,0 +1,18 @@
+#!/bin/bash
+
+set -e
+
+. /usr/share/debconf/confmodule
+
+. /usr/share/dbconfig-common/dpkg/postinst.pgsql
+
+INIFILE=/etc/proftpd/conf.d/openattic.conf
+
+dbc_generate_include_args="-o template_infile=/etc/openattic/proftpd/pgsql.conf"
+dbc_generate_include="template:$INIFILE"
+
+if ! dbc_go openattic-pgsql $@ ; then
+    echo 'Automatic configuration using dbconfig-common failed!'
+fi
+
+#DEBHELPER#
