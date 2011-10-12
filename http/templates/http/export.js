@@ -36,8 +36,10 @@ Ext.oa.Http__Export_Panel = Ext.extend(Ext.grid.GridPanel, {
                   name:       'volume',
                   hiddenName: 'volume_id',
                   store: new Ext.data.DirectStore({
-                    fields: ["app", "obj", "id", "name"],
-                    directFn: lvm__LogicalVolume.ids
+                    fields: ["id", "name"],
+                    directFn: lvm__LogicalVolume.filter_values,
+                    paramOrder: ["kwds", "fields"],
+                    baseParams: {"kwds": {"filesystem__isnull": false}, "fields": ["name"]}
                   }),
                   typeAhead:     true,
                   triggerAction: 'all',
@@ -49,16 +51,7 @@ Ext.oa.Http__Export_Panel = Ext.extend(Ext.grid.GridPanel, {
                   listeners: {
                     select: function(self, record, index){
                       lvm__LogicalVolume.get( record.data.id, function( provider, response ){
-                        if( !response.result.filesystem ){
-                          alert( "{% trans 'This volume does not have a file system, so it cannot be used for HTTP.' %}" );
-                          self.ownerCt.dirfield.setValue("");
-                          self.ownerCt.dirfield.disable();
-                          self.expand();
-                        }
-                        else{
-                          self.ownerCt.dirfield.setValue( response.result.fs.mountpoints[0] );
-                          self.ownerCt.dirfield.enable();
-                        }
+                        self.ownerCt.dirfield.setValue( response.result.fs.mountpoints[0] );
                       } );
                     }
                   }

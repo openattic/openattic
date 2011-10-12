@@ -36,8 +36,10 @@ Ext.oa.Iscsi__Lun_Panel = Ext.extend(Ext.grid.GridPanel, {
                 name:       'volume',
                 hiddenName: 'volume_id',
                 store: new Ext.data.DirectStore({
-                  fields: ["app", "obj", "id", "name"],
-                  directFn: lvm__LogicalVolume.ids
+                  fields: ["id", "name"],
+                  directFn: lvm__LogicalVolume.filter_values,
+                  paramOrder: ["kwds", "fields"],
+                  baseParams: {"kwds": {"filesystem__isnull": true}, "fields": ["name"]}
                 }),
                 typeAhead:     true,
                 triggerAction: 'all',
@@ -45,17 +47,7 @@ Ext.oa.Iscsi__Lun_Panel = Ext.extend(Ext.grid.GridPanel, {
                 selectOnFocus: true,
                 displayField:  'name',
                 valueField:    'id',
-                ref: 'volfield',
-                listeners: {
-                  select: function(self, record, index){
-                    lvm__LogicalVolume.get( record.data.id, function( provider, response ){
-                      if( response.result.filesystem ){
-                        alert("{% trans 'This volume has a file system, so it cannot be used for iSCSI.' %}");
-                        self.expand();
-                      }
-                    } );
-                  }
-                }
+                ref: 'volfield'
               }, {
                 fieldLabel: "{% trans 'Number' %}",
                 name: "number",
