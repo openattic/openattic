@@ -45,7 +45,17 @@ Ext.oa.Iscsi__Lun_Panel = Ext.extend(Ext.grid.GridPanel, {
                 selectOnFocus: true,
                 displayField:  'name',
                 valueField:    'id',
-                ref: 'volfield'
+                ref: 'volfield',
+                listeners: {
+                  select: function(self, record, index){
+                    lvm__LogicalVolume.get( record.data.id, function( provider, response ){
+                      if( response.result.filesystem ){
+                        alert("{% trans 'This volume has a file system, so it cannot be used for iSCSI.' %}");
+                        self.expand();
+                      }
+                    } );
+                  }
+                }
               }, {
                 fieldLabel: "{% trans 'Number' %}",
                 name: "number",
