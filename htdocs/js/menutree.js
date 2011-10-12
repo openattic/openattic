@@ -1,7 +1,7 @@
 Ext.namespace("Ext.oa");
 
+
 Ext.oa.MenuTree = Ext.extend(Ext.tree.TreePanel, {
-  title: 'openATTIC',
   rootVisible: false,
   useArrows: true,
   autoScroll: true,

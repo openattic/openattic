@@ -4,15 +4,26 @@ Ext.oa.MainViewManager = Ext.extend(Ext.Panel, {
   initComponent: function(){
     Ext.apply(this, Ext.apply(this.initialConfig, {
       layout: 'border',
-      items: [ new Ext.oa.MenuTree({
+      items: [ {
+        title: 'openATTIC',
+        region: "west",
+        layout: "border",
         split: true,
         width: 250,
         minSize: 175,
         maxSize: 400,
-        region: 'west',
+        collapsible: true,
         border: false,
-        collapsible: true
-      }), {
+        items: [
+          new Ext.BoxComponent({
+            autoEl: { tag: "img", src: MEDIA_URL + '/openattic.png' }, region: "north", height: 80
+          }),
+          new Ext.oa.MenuTree({
+            border: false,
+            region: "center"
+          })
+        ],
+      }, {
         region: "center",
         activeItem: 0,
         border: false,
@@ -24,7 +35,7 @@ Ext.oa.MainViewManager = Ext.extend(Ext.Panel, {
     }));
     Ext.oa.MainViewManager.superclass.initComponent.apply(this, arguments);
 
-    this.menutree = this.items.items[0];
+    this.menutree = this.items.items[0].items.items[1];
     this.modcontainer = this.items.items[1];
     this.currentComponent = window.MainViewModules[0];
 
