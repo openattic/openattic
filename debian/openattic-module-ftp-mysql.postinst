@@ -2,17 +2,9 @@
 
 set -e
 
-. /usr/share/debconf/confmodule
-
-. /usr/share/dbconfig-common/dpkg/postinst.mysql
-
-INIFILE=/etc/proftpd/conf.d/openattic.conf
-
-dbc_generate_include_args="-o template_infile=/etc/openattic/proftpd/mysql.conf"
-dbc_generate_include="template:$INIFILE"
-
-if ! dbc_go openattic-mysql $@ ; then
-    echo 'Automatic configuration using dbconfig-common failed!'
-fi
+dbconfig-generate-include -f template \
+    -o template_infile=/etc/openattic/proftpd/mysql.conf \
+    /etc/dbconfig-common/openattic-mysql.conf \
+    /etc/proftpd/conf.d/openattic.conf
 
 #DEBHELPER#
