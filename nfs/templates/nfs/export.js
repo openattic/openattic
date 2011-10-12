@@ -8,7 +8,15 @@ Ext.oa.Nfs__Export_Panel = Ext.extend(Ext.grid.GridPanel, {
     Ext.apply(this, Ext.apply(this.initialConfig, {
       title: "{% trans 'NFS' %}",
       viewConfig: { forceFit: true },
-      buttons: [{
+      buttons: [
+        {
+          text: "",
+          icon: MEDIA_URL + "/icons2/16x16/actions/reload.png",
+          tooltip: "{% trans 'Reload' %}",
+          handler: function(self){
+            nfsGrid.store.reload();
+          }
+        }, {
         text: "{% trans 'Add Export' %}",
         icon: MEDIA_URL + "/icons2/16x16/actions/add.png",
         handler: function(){
