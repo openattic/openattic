@@ -147,7 +147,7 @@ Architecture: all
 Depends: ${misc:Depends}, openattic-module-lvm, proftpd,
  openattic-mysql, proftpd-mod-mysql
 Conflicts: openattic-module-ftp-pgsql
-Description: FTP module for openATTIC
+Description: FTP module for openATTIC using MySQL
  Installs the FTP module, which provides FTP accounts for volumes using
  ProFTPd.
  .
@@ -159,7 +159,7 @@ Architecture: all
 Depends: ${misc:Depends}, openattic-module-lvm, proftpd,
  openattic-mysql, proftpd-mod-pgsql
 Conflicts: openattic-module-ftp-mysql
-Description: FTP module for openATTIC
+Description: FTP module for openATTIC using PGSQL
  Installs the FTP module, which provides FTP accounts for volumes using
  ProFTPd.
  .
