@@ -25,4 +25,10 @@ class UserHandler(ModelHandler):
         """ Return the user we are identified with. """
         return self._getobj(self.user)
 
+    def set_password(self, id, password):
+        user = User.objects.get(id=id)
+        user.set_password(password)
+        user.save()
+
+
 RPCD_HANDLERS = [GroupHandler, UserHandler]
