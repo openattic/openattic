@@ -1,1 +1,1 @@
-openattic-database-mysql: package-contains-broken-symlink etc/openattic/database.ini databases/mysql.ini
+openattic-mysql: package-contains-broken-symlink etc/openattic/database.ini databases/mysql.ini
