@@ -83,7 +83,7 @@ Ext.oa.Auth__User_Panel = Ext.extend(Ext.grid.GridPanel, {
                     }
                   });
                 }
-              }, {
+              },{
                 text: 'Cancel',
                 icon: MEDIA_URL + "/icons2/16x16/actions/gtk-cancel.png",
                 handler: function(self){
@@ -106,7 +106,139 @@ Ext.oa.Auth__User_Panel = Ext.extend(Ext.grid.GridPanel, {
             } );
           }
         }
-      }],
+      },{
+        text: 'Edit',
+        handler: function(self){
+        var sm = authUserGrid.getSelectionModel();
+        if( sm.hasSelection() ){
+            var sel = sm.selections.items[0];
+            var addwin = new Ext.Window({
+            title: "Edit User",
+              layout: "fit",
+              height: 300,
+              width: 500,
+              items: [{
+              xtype: "form",
+                defaults: {
+                xtype: "textfield",
+                anchor: '-20px'
+                },
+                items: [{
+                  fieldLabel: "User Name",
+                  name: "username",
+                  ref: 'usernamefield',
+                  value: sel.data.username
+                },{
+                  fieldLabel: "First Name",
+                  inputType: 'first_name',
+                  name: "first_name",
+                  ref: 'firstnamefield',
+                  value: sel.data.first_name
+                },{
+                  fieldLabel: "Last Name",
+                  inputType: 'last_name',
+                  name: "last_name",
+                  ref: 'lastnamefield',
+                  value: sel.data.last_name
+                },{
+                  fieldLabel: "Email",
+                  inputType: 'email',
+                  name: "email",
+                  ref: 'emailfield',
+                  value: sel.data.email
+                },{
+                  xtype: 'checkbox',
+                  fieldLabel: "Active",
+                  name: "active",
+                  ref: 'activefield',
+                  checked: sel.data.is_active
+                },{
+                  xtype: 'checkbox',
+                  fieldLabel: "Staff",
+                  name: "staff",
+                  ref: 'stafffield',
+                  checked: sel.data.is_staff
+                },{
+                  xtype: 'checkbox',
+                  fieldLabel: "SU",
+                  name: "su",
+                  ref: 'sufield',
+                  checked: sel.data.is_superuser
+                }],
+                buttons: [{
+                  text: 'Save',
+                  handler: function(self){
+                    var sm = authUserGrid.getSelectionModel();
+                    if( sm.hasSelection() ){
+                      var sel = sm.selections.items[0];
+                      auth__User.set(sel.data.id, {
+                        'username':    self.ownerCt.ownerCt.usernamefield.getValue(),
+                        'first_name':  self.ownerCt.ownerCt.firstnamefield.getValue(),
+                        'last_name':   self.ownerCt.ownerCt.lastnamefield.getValue(),
+                        'email':       self.ownerCt.ownerCt.emailfield.getValue(),
+                        'is_active':   self.ownerCt.ownerCt.activefield.getValue(),
+                        'is_superuser':self.ownerCt.ownerCt.sufield.getValue(),
+                        'is_staff':    self.ownerCt.ownerCt.stafffield.getValue()
+                      }, function(provider, response){
+                        if( response.result ){
+                          authUserGrid.store.reload();
+                          addwin.hide();
+                        }
+                      });
+                  }
+                  }
+                }]   
+              }]
+            });
+            addwin.show();
+        }
+       }},{
+         text: 'Change Password',
+         handler: function(self){
+         var sm = authUserGrid.getSelectionModel();
+         if( sm.hasSelection() ){
+            var sel = sm.selections.items[0];
+            var addwin = new Ext.Window({
+            title: "Change Password",
+              layout: "fit",
+              height: 150,
+              width: 300,
+              items: [{
+              xtype: "form",
+                defaults: {
+                xtype: "textfield",
+                anchor: '-20px'
+                },
+                items: [{
+                  fieldLabel: "User Name",
+                  disabled: true,
+                  name: "username",
+                  ref: 'usernamefield',
+                  value: sel.data.username
+                },{
+                  fieldLabel: "Password",
+                  inputType: 'password',
+                  name: "password",
+                  ref: 'passwordfield'
+                }
+                ],
+                 buttons: [{
+                 text: 'Save',
+                 handler: function(self){
+                   auth__User.set_password(sel.data.id, self.ownerCt.ownerCt.passwordfield.getValue(), 
+                       function(provider, response){
+                         addwin.hide();
+                       });
+                   
+                 }
+                }]
+               }]
+                  });
+                  addwin.show();
+            }
+         }
+      }
+   ],
       store: new Ext.data.DirectStore({
         autoLoad: true,
         fields: ['id', 'username', 'first_name', 'last_name', 'email', 'is_active', 'is_staff', 'is_superuser', 'last_login'],
