@@ -23,7 +23,7 @@ class SystemD(BasePlugin):
         spath = os.path.join( "/etc/init.d", sname )
         if not os.path.exists(spath):
             raise ValueError("No such file or directory: '%s'" % spath)
-        return invoke([spath, command], log=( command != "status" ))
+        return invoke([spath, command], log=( command != "status" ), fail_on_err=False)
 
     @method(in_signature="i", out_signature="i")
     def set_time(self, seconds):
