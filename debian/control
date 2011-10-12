@@ -157,7 +157,7 @@ Description: FTP module for openATTIC using MySQL
 Package: openattic-module-ftp-pgsql
 Architecture: all
 Depends: ${misc:Depends}, openattic-module-lvm, proftpd,
- openattic-mysql, proftpd-mod-pgsql
+ openattic-pgsql, proftpd-mod-pgsql
 Conflicts: openattic-module-ftp-mysql
 Description: FTP module for openATTIC using PGSQL
  Installs the FTP module, which provides FTP accounts for volumes using
