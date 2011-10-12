@@ -92,7 +92,7 @@ Ext.oa.Iscsi__Initiator_Panel = Ext.extend(Ext.grid.GridPanel, {
           dataIndex: "name"
         }, {
           header: "{% trans 'Address' %}",
-          width: 100,
+          width: 400,
           dataIndex: "address"
         }]
       })
