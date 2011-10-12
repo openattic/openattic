@@ -21,7 +21,7 @@ Depends: ${misc:Depends}, openattic-base,
  openattic-mysql
 Suggests: python-django-rosetta
 Description: Comprehensive storage management system
- Metapackage that installs the most common set of openATTIC modules along
+ metapackage that installs the most common set of openATTIC modules along
  with the basic requirements.
 
 Package: openattic-full-mysql
@@ -39,7 +39,7 @@ Depends: ${misc:Depends}, openattic-base,
  openattic-mysql
 Suggests: python-django-rosetta
 Description: Comprehensive storage management system using MySQL
- Metapackage that installs all openATTIC modules on a MySQL database.
+ metapackage that installs all openATTIC modules on a MySQL database.
 
 Package: openattic-full-pgsql
 Architecture: all
@@ -56,7 +56,7 @@ Depends: ${misc:Depends}, openattic-base,
  openattic-pgsql
 Suggests: python-django-rosetta
 Description: Comprehensive storage management system using PGSQL
- Metapackage that installs all openATTIC modules on a PGSQL database.
+ metapackage that installs all openATTIC modules on a PGSQL database.
 
 Package: openattic-sqlite
 Architecture: all
