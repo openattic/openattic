@@ -16,7 +16,7 @@ Depends: ${misc:Depends}, openattic-base,
  openattic-module-http,
  libapache2-mod-wsgi,
  apache2,
- openattic-database-mysql
+ openattic-mysql
 Suggests: python-django-rosetta
 Description: Comprehensive storage management system
  Meta Package that installs the most common set of openATTIC modules along
@@ -34,7 +34,7 @@ Depends: ${misc:Depends}, openattic-base,
  openattic-module-drbd,
  openattic-module-ftp,
  libapache2-mod-wsgi, apache2,
- openattic-database-mysql
+ openattic-mysql
 Suggests: python-django-rosetta
 Description: Comprehensive storage management system
  Meta Package that installs all openATTIC modules on a MySQL database.
@@ -51,39 +51,39 @@ Depends: ${misc:Depends}, openattic-base,
  openattic-module-drbd,
  openattic-module-ftp,
  libapache2-mod-wsgi, apache2,
- openattic-database-pgsql
+ openattic-pgsql
 Suggests: python-django-rosetta
 Description: Comprehensive storage management system
  Meta Package that installs all openATTIC modules on a PGSQL database.
 
-Package: openattic-database-sqlite
+Package: openattic-sqlite
 Architecture: all
 Depends: ${misc:Depends}, sqlite3
-Conflicts: openattic-database-mysql, openattic-database-pgsql
+Conflicts: openattic-mysql, openattic-pgsql
 Description: Configures openATTIC with an SQLite3 database
  Configures openATTIC with an SQLite3 database. This setup is recommended
  in cases where you do not plan on using the FTP module later on, because
  SQLite keeps its database in one single file and does not require an
  extra database server to run.
 
-Package: openattic-database-mysql
+Package: openattic-mysql
 Architecture: all
 Depends: ${misc:Depends}, python-mysqldb,
  dbconfig-common, mysql-server
 Recommends: mysql-client
-Conflicts: openattic-database-sqlite, openattic-database-pgsql
+Conflicts: openattic-sqlite, openattic-pgsql
 Description: Configures openATTIC with a MySQL database
  Configures openATTIC with a MySQL database. This setup is recommended
  if you are more experienced in MySQL (or just like it better) than
  PGSQL and you want to use the FTP module, which requires sharing a
  database with ProFTPd.
 
-Package: openattic-database-pgsql
+Package: openattic-pgsql
 Architecture: all
 Depends: ${misc:Depends}, python-psycopg2,
  dbconfig-common, postgresql
 Recommends: postgresql-client
-Conflicts: openattic-database-sqlite, openattic-database-mysql
+Conflicts: openattic-sqlite, openattic-mysql
 Description: Configures openATTIC with a PGSQL database
  Configures openATTIC with a PGSQL database. This setup is recommended
  if you are more experienced in PGSQL (or just like it better) than
@@ -103,7 +103,7 @@ Depends: ${misc:Depends},
  python-statgrab,
  ssl-cert,
  libjs-extjs (>= 3.0.0), libjs-extjs (<< 4.0),
- openattic-database-sqlite | openattic-database-mysql | openattic-database-pgsql
+ openattic-sqlite | openattic-mysql | openattic-pgsql
 Description: Basic requirements for openATTIC
  Installs the most basic set of packages required to run openATTIC, namely
  the web GUI, RPCd and Systemd, along with a basic set of modules.
@@ -143,7 +143,7 @@ Description: Samba module for openATTIC
 Package: openattic-module-ftp
 Architecture: all
 Depends: ${misc:Depends}, openattic-module-lvm, proftpd,
- openattic-database-mysql | openattic-database-pgsql
+ openattic-mysql | openattic-pgsql
 Description: FTP module for openATTIC
  Installs the FTP module, which provides FTP accounts for volumes using
  ProFTPd.
