@@ -32,7 +32,7 @@ Depends: ${misc:Depends}, openattic-base,
  openattic-module-samba,
  openattic-module-munin,
  openattic-module-drbd,
- openattic-module-ftp,
+ openattic-module-ftp-mysql,
  libapache2-mod-wsgi, apache2,
  openattic-mysql
 Suggests: python-django-rosetta
@@ -49,7 +49,7 @@ Depends: ${misc:Depends}, openattic-base,
  openattic-module-samba,
  openattic-module-munin,
  openattic-module-drbd,
- openattic-module-ftp,
+ openattic-module-ftp-pgsql,
  libapache2-mod-wsgi, apache2,
  openattic-pgsql
 Suggests: python-django-rosetta
