@@ -33,4 +33,11 @@ class InitScriptHandler(ModelHandler):
             data.append(objdata)
         return data
 
+    def start(self, id):
+        return InitScript.objects.get(id=id).start()
+    
+    def stop(self, id):
+        return InitScript.objects.get(id=id).stop()
+    
+
 RPCD_HANDLERS = [SysUtilsHandler, InitScriptHandler]

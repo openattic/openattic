@@ -26,6 +26,7 @@ Ext.oa.YellowDangerousMessage = Ext.oa.DangerousMessage("yellowmask");
 
 Ext.oa.SysUtils_Panel = Ext.extend(Ext.grid.GridPanel, {
   initComponent: function(){
+    var sysUtilsGrid = this;
     Ext.apply(this, Ext.apply(this.initialConfig, {
       title: "{% trans 'Service State' %}",
       store: (function(){
@@ -58,7 +59,31 @@ Ext.oa.SysUtils_Panel = Ext.extend(Ext.grid.GridPanel, {
               return '<img src="{{ MEDIA_URL }}/oxygen/16x16/status/security-medium.png" title="failure" />';
           }
         }]
-      })
+      }),
+        buttons: [{
+          text: 'Start',
+          handler: function(self){
+          var sm = sysUtilsGrid.getSelectionModel();
+          if( sm.hasSelection() ){
+            var sel = sm.selections.items[0];
+            sysutils__InitScript.start(sel.data.id, function(provider, response){
+              sysUtilsGrid.store.reload();
+            });
+          }
+          }
+        },{
+          text: 'Stop',
+          handler: function(self){
+          var sm = sysUtilsGrid.getSelectionModel();
+          if( sm.hasSelection() ){
+            var sel = sm.selections.items[0];
+            sysutils__InitScript.stop(sel.data.id, function(provider, response){
+              sysUtilsGrid.store.reload();
+            });
+          }
+          }
+        }]
+      
     }));
     Ext.oa.SysUtils_Panel.superclass.initComponent.apply(this, arguments);
   },
