@@ -15,6 +15,8 @@ if [ "$#" = "0" ]; then
     echo "Valid commands are:"
     echo
     echo "    install      Run this command after you installed new openATTIC modules."
+    echo "    install-cli  Generate an API Key and a corresponding oacli configuration."
+    echo "    add-vg       Make an already existing LVM Volume Group known to openATTIC."
     echo "    restart      Restart all services that are needed to run openATTIC."
     echo "    reload       Reload all services that are needed to run openATTIC."
     echo
@@ -31,6 +33,39 @@ case $1 in
 		su www-data -c 'python manage.py syncdb'
 		;;
 
+	install-cli)
+		if [ -f "/etc/openattic/cli.conf" ]; then
+			echo "/etc/openattic/cli.conf already exists, quitting" >&2
+			exit 1
+		fi
+		echo "Please enter the username of the system admin you created using $0 install."
+		read USERNAME
+		KEY=$( $0 mkapikey -u $USERNAME )
+		
+		if [ ! -z "$RPCD_CERTFILE" -a ! -z "$RPCD_KEYFILE" ]; then
+			PROTO="https"
+		else
+			PROTO="http"
+		fi
+		
+		echo "[options]"                                    > /etc/openattic/cli.conf
+		echo "connect = $PROTO://__:$KEY@localhost:31234/" >> /etc/openattic/cli.conf
+		echo "uidcheck = True"                             >> /etc/openattic/cli.conf
+		echo "Successfully created /etc/openattic/cli.conf, oacli should now be ready to go."
+		;;
+
+	add-vg)
+		if [ "$#" != "2" ]; then
+			echo "Usage: $0 $1 <vgname>" >&2
+			exit 1
+		fi
+		if [ ! -f "/etc/openattic/cli.conf" ]; then
+			echo "This command requires oacli to be configured (run $0 install-cli)."
+			exit 1
+		fi
+		oacli lvm.VolumeGroup.create "json:{\"name\": \"$2\"}"
+		;;
+
 	restart|force-reload)
 		/etc/init.d/openattic_systemd restart
 		/etc/init.d/openattic_rpcd restart
@@ -44,6 +79,6 @@ case $1 in
 		;;
 
 	*)
-		su www-data -c "python manage.py $@"
+		su www-data -s /bin/sh <<< "python manage.py $@"
 		;;
 esac

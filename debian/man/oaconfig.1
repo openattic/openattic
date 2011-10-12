@@ -21,6 +21,14 @@ Show general usage information along with a list of commands.
 \fBinstall\fR
 Run the installation sequence required to update the database.
 .TP
+\fBinstall-cli\fR
+Generate an API Key and a corresponding oacli configuration, so that oacli
+becomes usable.
+.TP
+\fBadd-vg\fR
+Make an already existing LVM Volume Group known to openATTIC. (Requires oacli
+to have been configured beforehand, run oaconfig install-cli as needed.)
+.TP
 \fBrestart\fR
 Restart all services that are needed in order to run openATTIC.
 .TP
