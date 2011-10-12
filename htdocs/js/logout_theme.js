@@ -6,30 +6,32 @@ window.MainViewModules.push({
       icon: MEDIA_URL + '/oxygen/22x22/apps/preferences-desktop-theme.png',
       listeners: {
         click: function(self, ev){
-          Ext.Msg.show({
-            title: 'Theme',
-            msg:   'Please select a theme.',
-            buttons: {
-              yes:    'access',
-              no:     'default',
-              cancel: 'gray'
+          var addwin = new Ext.Window({
+            title: "Please select a theme",
+            layout: "fit",
+            height: 100,
+            width: 250,
+            items:{
+                html: "Please select your wanted Theme"
             },
-            fn: function(btn, text){
-              if( btn == 'yes' ){
-                Ext.state.Manager.set( "theme", "access" );
-                window.location.reload.defer(200);
-              }
-              else if( btn == 'no' ){
-                Ext.state.Manager.clear( "theme" );
-                window.location.reload.defer(200);
-              }
-                
-              else if( btn == 'cancel' ){
-                Ext.state.Manager.set( "theme", "gray" );
-                window.location.reload.defer(200);
-              }
-            }
+            buttons: [{
+                text:  'access',
+                handler: function(btn){
+                  Ext.state.Manager.set( "theme", "access" );
+                  window.location.reload.defer(200);
+            }},{ 
+                text:  'gray',
+                handler: function(btn){
+                  Ext.state.Manager.set( "theme", "gray" );
+                  window.location.reload.defer(200);
+            }},{
+                text:  'default',
+                handler: function(btn){
+                  Ext.state.Manager.clear( "theme" );
+                  window.location.reload.defer(200);
+            }}]
           });
+          addwin.show()
         }
       }
     });
