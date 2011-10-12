@@ -161,7 +161,7 @@ Description: FTP module for openATTIC
  Installs the FTP module, which provides FTP accounts for volumes using
  ProFTPd.
  .
- This package configures ProFTPd to use a shared Postgresql database with
+ This package configures ProFTPd to use a shared PostgreSQL database with
  openATTIC.
 
 Package: openattic-module-munin
