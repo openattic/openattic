@@ -107,7 +107,7 @@ Ext.oa.Cmdlog__LogEntry_Panel = Ext.extend(Ext.Panel, {
                     xtype: 'datefield',
                     ref:   'datefield',
                     listeners: {
-                      change: function( self, newValue, oldValue ){
+                      select: function( self, newValue ){
                         cmdlog__LogEntry.count_older_than(
                           parseInt(newValue.format("U")),
                           function(provider, response){

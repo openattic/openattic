@@ -56,12 +56,20 @@
     </script>
     <style>
       {% if THEME == "access" %}
-        a.x-tab-panel-body:hover
-        {
+        .x-tab-panel-body{
           /* For some reason, the author of xtheme-access set this to white which looks stupid */
           color: #1BE0C6;
           background-color: #1F2730;
           border-color: #18181A;
+        }
+        .x-tab-panel-body {
+          /* For some reason, the author of xtheme-access set this to white which looks stupid */
+          background-color: #1F2730;
+          border-color: #18181A;
+          color: #FFFFF6;
+        }
+        .x-grid3-row-over .x-grid3-row-table {
+          background-color:#454657 !important;
         }
       {% endif %}
       div.munin-graphs { /* Siehe imagespanel.cls */
