@@ -118,7 +118,7 @@ Ext.oa.Drbd__Device_Panel = Ext.extend(Ext.grid.GridPanel, {
   },
 
   prepareMenuTree: function(tree){
-    tree.root.attributes.children[4].children.push({
+    tree.root.attributes.children[3].children.push({
       text: "{% trans 'DRBD' %}",
       leaf: true,
       icon: MEDIA_URL + '/icons2/22x22/apps/nfs.png',

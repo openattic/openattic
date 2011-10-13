@@ -290,7 +290,7 @@ Ext.oa.Auth__User_Panel = Ext.extend(Ext.grid.GridPanel, {
   },
 
   prepareMenuTree: function(tree){
-    tree.root.attributes.children[5].children.push({
+    tree.root.attributes.children[4].children.push({
       text: 'User Management',
       icon: MEDIA_URL + '/icons2/22x22/apps/config-users.png',
       leaf: true,
