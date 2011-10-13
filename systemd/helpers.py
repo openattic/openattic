@@ -15,6 +15,7 @@ def dbus_type_to_python(obj):
         dbus.Int32: int,
         dbus.Int64: int,
         dbus.String: unicode,
+        dbus.Struct: tuple,
         tuple: tuple
         }
     return conv[type(obj)](obj)
