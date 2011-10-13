@@ -42,34 +42,34 @@ Ext.oa.Nfs__Export_Panel = Ext.extend(Ext.grid.GridPanel, {
                     paramOrder: ["kwds", "fields"],
                     baseParams: {"kwds": {"filesystem__isnull": false}, "fields": ["name"]}
                   }),
-                  typeAhead:     true,
-                  triggerAction: 'all',
-                  emptyText:     "{% trans 'Select...' %}",
-                  selectOnFocus: true,
-                  displayField:  'name',
-                  valueField:    'id',
-                  ref: 'volfield',
-                  listeners: {
-                    select: function(self, record, index){
-                      lvm__LogicalVolume.get( record.data.id, function( provider, response ){
-                        self.ownerCt.dirfield.setValue( response.result.fs.mountpoints[0] );
-                      } );
-                    }
+                typeAhead:     true,
+                triggerAction: 'all',
+                emptyText:     "{% trans 'Select...' %}",
+                selectOnFocus: true,
+                displayField:  'name',
+                valueField:    'id',
+                ref: 'volfield',
+                listeners: {
+                  select: function(self, record, index){
+                    lvm__LogicalVolume.get( record.data.id, function( provider, response ){
+                      self.ownerCt.dirfield.setValue( response.result.fs.mountpoints[0] );
+                    } );
                   }
-                }, {
-                  fieldLabel: "{% trans 'Directory' %}",
-                  name: "path",
-                  disabled: true,
-                  ref: 'dirfield'
-                }, {
-                  fieldLabel: "{% trans 'Address' %}",
-                  name: "address",
-                  ref: 'addrfield'
-                }, {
-                  fieldLabel: "{% trans 'Options' %}",
-                  name: "options",
-                  ref: 'optfield',
-                  value: "rw,no_subtree_check,no_root_squash"
+                }
+              }, {
+                fieldLabel: "{% trans 'Directory' %}",
+                name: "path",
+                disabled: true,
+                ref: 'dirfield'
+              }, {
+                fieldLabel: "{% trans 'Address' %}",
+                name: "address",
+                ref: 'addrfield'
+              }, {
+                fieldLabel: "{% trans 'Options' %}",
+                name: "options",
+                ref: 'optfield',
+                value: "rw,no_subtree_check,no_root_squash"
               }],
               buttons: [{
                 text: "{% trans 'Create Export' %}",
@@ -117,11 +117,12 @@ Ext.oa.Nfs__Export_Panel = Ext.extend(Ext.grid.GridPanel, {
                   if(btn == 'yes'){
                     nfs__Export.remove( sel.data.id, function(provider, response){
                     nfsGrid.store.reload();
-            } );
+                  } );
+                }
+              });
+            }
           }
-        });
-      }
-        }}  
+        }
       ],
       store: new Ext.data.DirectStore({
         autoLoad: true,
