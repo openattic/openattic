@@ -436,8 +436,10 @@ class LogicalVolume(StatefulModel):
             Overrides StatefulModel.delete() in order to cascade to all shares and
             block device modules.
         """
-        if self.filesystem and self.fs.mounted:
-            self.fs.unmount()
+        if self.filesystem:
+            if self.fs.mounted:
+                self.fs.unmount()
+            self.fs.destroy()
         self.uninstall()
         models.Model.delete(self)
         if self.filesystem:

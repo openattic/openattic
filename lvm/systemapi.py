@@ -183,10 +183,11 @@ class SystemD(BasePlugin):
 
         newlines.append(delim)
 
-        for lv in LogicalVolume.objects.filter(filesystem__isnull=False):
-            newlines.append( "%-50s %-50s %-8s %s %d %d" % (
-                lv.path, lv.fs.mountpoints[0], lv.fs.name, "defaults", 0, 0
-                ) )
+        for lv in LogicalVolume.objects.filter(filesystem__isnull=False).exclude(filesystem=""):
+            if lv.fs.mount_in_fstab:
+                newlines.append( "%-50s %-50s %-8s %s %d %d" % (
+                    lv.path, lv.fs.mountpoints[0], lv.fs.name, "defaults", 0, 0
+                    ) )
 
         fstab = open("/etc/fstab", "wb")
         try:
@@ -228,4 +229,35 @@ class SystemD(BasePlugin):
             "partition-table-type":splittedlines[1][5],
             "model-name":splittedlines[1][6],
             }, partitions
+
+
+    @method(in_signature="ss", out_signature="a(ssss)")
+    def zfs_get(self, device, field):
+        ret, out, err = invoke(["zfs", "get", "-H", field, device], return_out_err=True, log=False)
+        return [line.split("\t") for line in out.split("\n")[:-1]]
+
+    @method(in_signature="sss", out_signature="i")
+    def zfs_set(self, device, field, value):
+        return invoke(["zfs", "set", ("%s=%s" % (field, value)), device])
+
+    @method(in_signature="s", out_signature="i")
+    def zfs_mount(self, device):
+        return invoke(["zfs", "mount", device])
+
+    @method(in_signature="s", out_signature="i")
+    def zfs_unmount(self, device):
+        return invoke(["zfs", "unmount", device])
+
+    @method(in_signature="s", out_signature="i")
+    def zfs_destroy(self, device):
+        return invoke(["zpool", "destroy", device])
+
+    @method(in_signature="sssss", out_signature="")
+    def zfs_format(self, devpath, label, chown, chgrp, mountpoint):
+        if not os.path.exists(mountpoint):
+            os.makedirs(mountpoint)
+        create_job([
+            ["zpool", "create", "-m", mountpoint, label, devpath],
+            ["/bin/chown", "-R", ("%s:%s" % (chown, chgrp)), mountpoint]
+            ], self.format_complete, (devpath, mountpoint, "zfs"))
 

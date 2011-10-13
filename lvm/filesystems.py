@@ -10,6 +10,7 @@ from lvm      import signals  as lvm_signals
 class FileSystem(object):
     name = "failfs"
     desc = "failing file system"
+    mount_in_fstab = True
 
     def __init__(self, logical_volume):
         self.lv = logical_volume
@@ -59,6 +60,9 @@ class FileSystem(object):
                 return ret
         return 0
 
+    def destroy(self):
+        pass
+
     @property
     def stat(self, mountpoint=None):
         if mountpoint is None and len(self.mountpoints) == 1:
@@ -106,6 +110,40 @@ class Ext4(Ext2):
             self.lv.owner.username, lvm_settings.CHOWN_GROUP, self.mountpoints[0] )
 
 
+class Zfs(FileSystem):
+    name = "zfs"
+    desc = "ZFS on FUSE"
+    mount_in_fstab = False
+
+    @property
+    def info(self):
+        return dbus_to_python(self.lv.lvm.zfs_get(self.lv.name, "all"))
+
+    def format(self):
+        return self.lv.lvm.zfs_format(self.lv.path, self.lv.name,
+            self.lv.owner.username, lvm_settings.CHOWN_GROUP,
+            os.path.join(lvm_settings.MOUNT_PREFIX, self.lv.vg.name, self.lv.name))
+
+    def mount(self, mountpoint):
+        return self.lv.lvm.zfs_mount(self.lv.name, mountpoint)
+
+    def unmount(self):
+        return self.lv.lvm.zfs_unmount(self.lv.name)
+
+    def destroy(self):
+        return self.lv.lvm.zfs_destroy(self.lv.name)
+
+    @property
+    def mounted(self):
+        return self["mounted"] == "yes"
+
+    def __getitem__(self, item):
+        return dbus_to_python(self.lv.lvm.zfs_get(self.lv.name, item))[0][2]
+
+    def __setitem__(self, item, value):
+        dbus_to_python(self.lv.lvm.zfs_set(self.lv.name, item, str(value)))
+
+
 class Ntfs(FileSystem):
     name = "ntfs-3g"
     desc = "NTFS (Windows)"
@@ -123,7 +161,7 @@ class Ntfs(FileSystem):
 
 
 
-FILESYSTEMS = (Ext2, Ext3, Ext4, Ntfs)
+FILESYSTEMS = (Ext2, Ext3, Ext4, Ntfs, Zfs)
 
 def get_by_name(name):
     for fs in FILESYSTEMS:
