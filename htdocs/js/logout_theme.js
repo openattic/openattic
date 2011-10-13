@@ -12,7 +12,7 @@ window.MainViewModules.push({
             height: 100,
             width: 250,
             items:{
-              html: "Please select your wanted Theme"
+              html: "Please select your desired theme"
             },
             buttons: [{
               text:  'access',
