@@ -96,7 +96,7 @@ Ext.oa.SysUtils_Panel = Ext.extend(Ext.grid.GridPanel, {
       panel: this,
       href: '#'
     });
-    tree.root.attributes.children[5].children.push({
+    tree.root.attributes.children[4].children.push({
       text: "{% trans 'Reboot' %}",
       leaf: true,
       icon: '{{ MEDIA_URL }}/oxygen/22x22/actions/system-reboot.png',
@@ -116,7 +116,7 @@ Ext.oa.SysUtils_Panel = Ext.extend(Ext.grid.GridPanel, {
       },
       href: '#'
     });
-    tree.root.attributes.children[5].children.push({
+    tree.root.attributes.children[4].children.push({
       text: "{% trans 'Shutdown' %}",
       leaf: true,
       icon: '{{ MEDIA_URL }}/oxygen/22x22/actions/system-shutdown.png',

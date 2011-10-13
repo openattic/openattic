@@ -1,7 +1,7 @@
 Ext.namespace("Ext.oa");
 
-
 Ext.oa.MenuTree = Ext.extend(Ext.tree.TreePanel, {
+  title: 'Menu',
   rootVisible: false,
   useArrows: true,
   autoScroll: true,
@@ -28,37 +28,13 @@ Ext.oa.MenuTree = Ext.extend(Ext.tree.TreePanel, {
         text: 'Shares',
         expanded: Ext.state.Manager.get("expand_root_nodes", false),
         icon: MEDIA_URL + '/icons2/22x22/places/gnome-fs-share.png',
-        children: [ {
-            text: 'SAN (FibreChannel)',
-            icon: MEDIA_URL + '/icons2/22x22/apps/fibre_channel.png',
-            leaf: true
-          }, {
-            text: 'Mac OS-X (AFP)',
-            leaf: true
-          } ]
-      }, {
-        id: 'menu_applications',
-        text: 'Applications',
-        expanded: Ext.state.Manager.get("expand_root_nodes", false),
-        icon: MEDIA_URL + '/icons2/22x22/mimetypes/application-certificate.png',
-        children: [
-          {text: 'DDNS',       leaf: true}
-          ]
+        children: [] 
       }, {
         id: 'menu_services',
         text: 'Services',
         expanded: Ext.state.Manager.get("expand_root_nodes", false),
         icon: MEDIA_URL + '/icons2/22x22/mimetypes/gnome-mime-application-x-killustrator.png',
-        children: [ {
-            text: 'rSync',
-            leaf: true,
-            icon: MEDIA_URL + '/icons2/22x22/apps/sync.png'
-          },
-          {text: 'Snapmanager', leaf: true},
-          {text: 'VTL',         leaf: true},
-          {text: 'Revisioning', leaf: true},
-          {text: 'Backup',      leaf: true}
-        ]
+        children: []
       }, {
         id: 'menu_system',
         text: 'System',
@@ -91,8 +67,6 @@ Ext.oa.MenuTree = Ext.extend(Ext.tree.TreePanel, {
             text: 'E-Mail',           leaf: true,
             icon: MEDIA_URL + '/icons2/22x22/apps/email.png'
           },
-          {text: 'openITCockpit',    leaf: true},
-          {text: 'openQRM',          leaf: true},
           {
             text: 'Online Update',
             leaf: true,
