@@ -124,8 +124,8 @@ class Zfs(FileSystem):
             self.lv.owner.username, lvm_settings.CHOWN_GROUP,
             os.path.join(lvm_settings.MOUNT_PREFIX, self.lv.vg.name, self.lv.name))
 
-    def mount(self, mountpoint):
-        return self.lv.lvm.zfs_mount(self.lv.name, mountpoint)
+    def mount(self, mountpoint=None):
+        return self.lv.lvm.zfs_mount(self.lv.name)
 
     def unmount(self):
         return self.lv.lvm.zfs_unmount(self.lv.name)
