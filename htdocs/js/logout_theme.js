@@ -12,24 +12,28 @@ window.MainViewModules.push({
             height: 100,
             width: 250,
             items:{
-                html: "Please select your wanted Theme"
+              html: "Please select your wanted Theme"
             },
             buttons: [{
-                text:  'access',
-                handler: function(btn){
-                  Ext.state.Manager.set( "theme", "access" );
-                  window.location.reload.defer(200);
-            }},{ 
-                text:  'gray',
-                handler: function(btn){
-                  Ext.state.Manager.set( "theme", "gray" );
-                  window.location.reload.defer(200);
-            }},{
-                text:  'default',
-                handler: function(btn){
-                  Ext.state.Manager.clear( "theme" );
-                  window.location.reload.defer(200);
-            }}]
+              text:  'access',
+              handler: function(btn){
+                Ext.state.Manager.set( "theme", "access" );
+                // For some reason, window.location.reload.defer() does not work in chrome.
+                setTimeout( function(){window.location.reload()}, 200 );
+              }
+            },{
+              text:  'gray',
+              handler: function(btn){
+                Ext.state.Manager.set( "theme", "gray" );
+                setTimeout( function(){window.location.reload()}, 200 );
+              }
+            },{
+              text:  'default',
+              handler: function(btn){
+                Ext.state.Manager.clear( "theme" );
+                setTimeout( function(){window.location.reload()}, 200 );
+              }
+            }]
           });
           addwin.show()
         }
