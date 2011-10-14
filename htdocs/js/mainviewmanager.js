@@ -22,7 +22,7 @@ Ext.oa.MainViewManager = Ext.extend(Ext.Panel, {
             border: false,
             region: "center"
           })
-        ],
+        ]
       }, {
         region: "center",
         activeItem: 0,

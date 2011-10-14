@@ -31,7 +31,7 @@ Ext.oa.Iscsi__Lun_Panel = Ext.extend(Ext.grid.GridPanel, {
                 anchor: '-20px'
               },
               items: [{
-                xtype:      'volumefield',
+                xtype:      'volumefield'
               }, {
                 fieldLabel: "{% trans 'Number' %}",
                 name: "number",

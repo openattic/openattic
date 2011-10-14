@@ -174,7 +174,7 @@ Ext.oa.Lvm__LogicalVolume_Panel = Ext.extend(Ext.Panel, {
                       selectOnFocus: true,
                       displayField:  'desc',
                       valueField:    'name',
-                      ref:      'fsfield',
+                      ref:      'fsfield'
                     }, "{% trans 'If you want to use DRBD with this device, do not yet create a file system on it, even if you want to share it using NAS services later on.' %}"),
                   {
                     fieldLabel: "{% trans "Size in MB" %}",

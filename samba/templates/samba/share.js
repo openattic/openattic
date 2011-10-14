@@ -197,12 +197,12 @@ Ext.oa.Samba__Share_Panel = Ext.extend(Ext.grid.GridPanel, {
                   if(btn == 'yes'){
                     samba__Share.remove( sel.id, function(provider, response){
                     sambaShareGrid.store.reload();
-            } );
+                } );
+              }
+            });
           }
-        });
-      }
-        }}
-      ],
+        }
+      } ],
       store: new Ext.data.DirectStore({
         autoLoad: true,
         fields: ['path', 'state', 'available'],
@@ -216,7 +216,6 @@ Ext.oa.Samba__Share_Panel = Ext.extend(Ext.grid.GridPanel, {
           header: "{% trans 'Path' %}",
           width: 200,
           dataIndex: "path"
-          
         }, {
           header: "{% trans 'State' %}",
           width: 50,
@@ -228,7 +227,7 @@ Ext.oa.Samba__Share_Panel = Ext.extend(Ext.grid.GridPanel, {
           dataIndex: "available",
           renderer: renderBoolean
         }]
-      }),
+      })
      }));
     Ext.oa.Samba__Share_Panel.superclass.initComponent.apply(this, arguments);
   },
