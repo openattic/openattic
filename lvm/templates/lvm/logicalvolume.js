@@ -2,6 +2,44 @@
 
 Ext.namespace("Ext.oa");
 
+function mkFocusFunc(tiptext){
+  return function( self ){
+    if( !Ext.state.Manager.get("form_tooltip_show", true) )
+      return;
+    self.fieldtip = new Ext.ToolTip({
+      target: ( self.trigger ? self.trigger.id : self.id ),
+      anchor: 'left',
+      html: tiptext,
+      width: Ext.state.Manager.get("form_tooltip_width", 200),
+      autoHide: false,
+      dismissDelay: 0,
+      listeners: {
+        hide: function( ttip ){
+          ttip.destroy();
+          self.fieldtip = null;
+        }
+      }
+    });
+    self.fieldtip.show();
+  }
+}
+
+function mkBlurFunc(){
+  return function( self ){
+    if( self.fieldtip ){
+      self.fieldtip.hide();
+    }
+  }
+}
+
+function tipify(config, tiptext){
+  if( typeof config.listeners === "undefined" )
+    config.listeners = {};
+  config.listeners.focus = mkFocusFunc(tiptext);
+  config.listeners.blur = mkBlurFunc();
+  return config;
+}
+
 
 Ext.oa.Lvm__LogicalVolume_Panel = Ext.extend(Ext.Panel, {
   initComponent: function(){
@@ -131,77 +169,60 @@ Ext.oa.Lvm__LogicalVolume_Panel = Ext.extend(Ext.Panel, {
                     allowBlank: false,
                     name: "name",
                     ref: 'namefield'
-                  }, {
-                    xtype:      'combo',
-                    allowBlank: false,
-                    fieldLabel: "{% trans 'Volume Group' %}",
-                    name:       'volume',
-                    hiddenName: 'volume_id',
-                    store: new Ext.data.DirectStore({
-                      fields: ["app", "obj", "id", "name"],
-                      directFn: lvm__VolumeGroup.ids
-                    }),
-                    typeAhead:     true,
-                    triggerAction: 'all',
-                    emptyText:     'Select...',
-                    selectOnFocus: true,
-                    displayField:  'name',
-                    valueField:    'id',
-                    ref:           'volfield',
-                    listeners: {
-                      select: function(self, record, index){
-                        self.ownerCt.volume_free_megs = null;
-                        self.ownerCt.sizelabel.setText( "{% trans "Querying data..." %}" );
-                        lvm__VolumeGroup.get_free_megs( record.data.id, function( provider, response ){
-                          self.ownerCt.volume_free_megs = response.result;
-                          self.ownerCt.sizelabel.setText( String.format( "Max. {0} MB", response.result ) );
-                        } );
+                  },
+                  tipify({
+                      xtype:      'combo',
+                      allowBlank: false,
+                      fieldLabel: "{% trans 'Volume Group' %}",
+                      name:       'volume',
+                      hiddenName: 'volume_id',
+                      store: new Ext.data.DirectStore({
+                        fields: ["app", "obj", "id", "name"],
+                        directFn: lvm__VolumeGroup.ids
+                      }),
+                      typeAhead:     true,
+                      triggerAction: 'all',
+                      emptyText:     'Select...',
+                      selectOnFocus: true,
+                      displayField:  'name',
+                      valueField:    'id',
+                      ref:           'volfield',
+                      listeners: {
+                        select: function(self, record, index){
+                          self.ownerCt.volume_free_megs = null;
+                          self.ownerCt.sizelabel.setText( "{% trans "Querying data..." %}" );
+                          lvm__VolumeGroup.get_free_megs( record.data.id, function( provider, response ){
+                            self.ownerCt.volume_free_megs = response.result;
+                            self.ownerCt.sizelabel.setText( String.format( "Max. {0} MB", response.result ) );
+                          } );
+                        }
                       }
-                    }
-                  }, {
-                    xtype:      'combo',
-                    fieldLabel: "{% trans 'File System' %}",
-                    name:       'filesystem_desc',
-                    hiddenName: 'filesystem_name',
-                    store: new Ext.data.DirectStore({
-                      fields: ["name", "desc"],
-                      directFn: lvm__LogicalVolume.avail_fs
-                    }),
-                    typeAhead:     true,
-                    triggerAction: 'all',
-                    emptyText:     'Select...',
-                    selectOnFocus: true,
-                    displayField:  'desc',
-                    valueField:    'name',
-                    ref:      'fsfield',
-                    id: 'lvm_lv_fsfield',
-                    listeners: {
-                      focus: function( self ){
-                        self.fieldtip = new Ext.ToolTip({
-                          target: self.id,
-                          anchor: 'left',
-                          html: "{% trans 'If you want to use DRBD with this device, do not yet create a file system on it, even if you want to share it using NAS services later on.' %}",
-                          width: 150,
-                          autoHide: false,
-                          listeners: {
-                            hide: function( ttip ){
-                              self.fieldtip.destroy();
-                              self.fieldtip = null;
-                            }
-                          }
-                        });
-                        self.fieldtip.show();
-                      },
-                      blur: function( self ){
-                        self.fieldtip.hide();
-                      }
-                    }
-                  }, {
-                    fieldLabel: "{% trans "Size in MB" %}",
-                    allowBlank: false,
-                    name: "megs",
-                    ref: 'sizefield'
-                  }, {
+                    }, "{% trans 'The volume group in which you want the Volume to be created.' %}"),
+                  tipify({
+                      xtype:      'combo',
+                      fieldLabel: "{% trans 'File System' %}",
+                      name:       'filesystem_desc',
+                      hiddenName: 'filesystem_name',
+                      store: new Ext.data.DirectStore({
+                        fields: ["name", "desc"],
+                        directFn: lvm__LogicalVolume.avail_fs
+                      }),
+                      typeAhead:     true,
+                      triggerAction: 'all',
+                      emptyText:     'Select...',
+                      selectOnFocus: true,
+                      displayField:  'desc',
+                      valueField:    'name',
+                      ref:      'fsfield',
+                    }, "{% trans 'If you want to use DRBD with this device, do not yet create a file system on it, even if you want to share it using NAS services later on.' %}"),
+                  tipify({
+                      fieldLabel: "{% trans "Size in MB" %}",
+                      allowBlank: false,
+                      name: "megs",
+                      ref: 'sizefield',
+                      xtype: "numberfield"
+                    }, "Enter the desired size of the new Volume in Megabytes."),
+                  {
                     xtype: "label",
                     ref:   "sizelabel",
                     text:  "{% trans "Waiting for volume selection..." %}",
