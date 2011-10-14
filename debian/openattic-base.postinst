@@ -39,7 +39,10 @@ if [ "$1" = "configure" ] ; then
     fi
 
     tput bold
-    echo "Please run oaconfig install to complete the installation of openATTIC."
+    echo "#############################################"
+    echo "#  Please run oaconfig install to complete  #"
+    echo "#      the installation of openATTIC.       #"
+    echo "#############################################"
     tput sgr0
 fi
 
