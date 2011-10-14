@@ -2,45 +2,6 @@
 
 Ext.namespace("Ext.oa");
 
-function mkFocusFunc(tiptext){
-  return function( self ){
-    if( !Ext.state.Manager.get("form_tooltip_show", true) )
-      return;
-    self.fieldtip = new Ext.ToolTip({
-      target: ( self.trigger ? self.trigger.id : self.id ),
-      anchor: 'left',
-      html: tiptext,
-      width: Ext.state.Manager.get("form_tooltip_width", 200),
-      autoHide: false,
-      dismissDelay: 0,
-      listeners: {
-        hide: function( ttip ){
-          ttip.destroy();
-          self.fieldtip = null;
-        }
-      }
-    });
-    self.fieldtip.show();
-  }
-}
-
-function mkBlurFunc(){
-  return function( self ){
-    if( self.fieldtip ){
-      self.fieldtip.hide();
-    }
-  }
-}
-
-function tipify(config, tiptext){
-  if( typeof config.listeners === "undefined" )
-    config.listeners = {};
-  config.listeners.focus = mkFocusFunc(tiptext);
-  config.listeners.blur = mkBlurFunc();
-  return config;
-}
-
-
 Ext.oa.Lvm__LogicalVolume_Panel = Ext.extend(Ext.Panel, {
   initComponent: function(){
     var currentChartId = null;
@@ -215,14 +176,13 @@ Ext.oa.Lvm__LogicalVolume_Panel = Ext.extend(Ext.Panel, {
                       valueField:    'name',
                       ref:      'fsfield',
                     }, "{% trans 'If you want to use DRBD with this device, do not yet create a file system on it, even if you want to share it using NAS services later on.' %}"),
-                  tipify({
-                      fieldLabel: "{% trans "Size in MB" %}",
-                      allowBlank: false,
-                      name: "megs",
-                      ref: 'sizefield',
-                      xtype: "numberfield"
-                    }, "Enter the desired size of the new Volume in Megabytes."),
                   {
+                    fieldLabel: "{% trans "Size in MB" %}",
+                    allowBlank: false,
+                    name: "megs",
+                    ref: 'sizefield',
+                    xtype: "numberfield"
+                  }, {
                     xtype: "label",
                     ref:   "sizelabel",
                     text:  "{% trans "Waiting for volume selection..." %}",
