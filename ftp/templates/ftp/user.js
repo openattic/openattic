@@ -30,44 +30,29 @@ Ext.oa.Ftp__User_Panel = Ext.extend(Ext.grid.GridPanel, {
                 anchor: '-20px'
               },
               items: [{
-                  fieldLabel: "{% trans 'Name' %}",
-                  name: "username",
-                  ref: 'namefield'
-                }, {
-                  fieldLabel: "{% trans 'Password' %}",
-                  name: "passwd",
-                  inputType: 'password',
-                  ref: 'passwdfield'
-                }, {
-                  xtype:      'combo',
-                  fieldLabel: "{% trans 'Volume' %}",
-                  name:       'volume',
-                  hiddenName: 'volume_id',
-                  store: new Ext.data.DirectStore({
-                    fields: ["id", "name"],
-                    directFn: lvm__LogicalVolume.filter_values,
-                    paramOrder: ["kwds", "fields"],
-                    baseParams: {"kwds": {"filesystem__isnull": false}, "fields": ["name"]}
-                  }),
-                  typeAhead:     true,
-                  triggerAction: 'all',
-                  emptyText:     "{% trans 'Select...' %}",
-                  selectOnFocus: true,
-                  displayField:  'name',
-                  valueField:    'id',
-                  ref: 'volfield',
-                  listeners: {
-                    select: function(self, record, index){
-                      lvm__LogicalVolume.get( record.data.id, function( provider, response ){
-                        self.ownerCt.dirfield.setValue( response.result.fs.mountpoints[0] );
-                      } );
-                    }
+                fieldLabel: "{% trans 'Name' %}",
+                name: "username",
+                ref: 'namefield'
+              }, {
+                fieldLabel: "{% trans 'Password' %}",
+                name: "passwd",
+                inputType: 'password',
+                ref: 'passwdfield'
+              }, {
+                xtype:      'volumefield',
+                listeners: {
+                  select: function(self, record, index){
+                    lvm__LogicalVolume.get( record.data.id, function( provider, response ){
+                      self.ownerCt.dirfield.setValue( response.result.fs.mountpoints[0] );
+                      self.ownerCt.dirfield.enable();
+                    } );
                   }
-                }, {
-                  fieldLabel: "{% trans 'Directory' %}",
-                  name: "homedir",
-                  disabled: true,
-                  ref: 'dirfield'
+                }
+              }, {
+                fieldLabel: "{% trans 'Directory' %}",
+                name: "homedir",
+                disabled: true,
+                ref: 'dirfield'
               }],
               buttons: [{
                 text: "{% trans 'Create User' %}",

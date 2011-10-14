@@ -31,23 +31,7 @@ Ext.oa.Iscsi__Lun_Panel = Ext.extend(Ext.grid.GridPanel, {
                 anchor: '-20px'
               },
               items: [{
-                xtype:      'combo',
-                fieldLabel: "{% trans 'Volume' %}",
-                name:       'volume',
-                hiddenName: 'volume_id',
-                store: new Ext.data.DirectStore({
-                  fields: ["id", "name"],
-                  directFn: lvm__LogicalVolume.filter_values,
-                  paramOrder: ["kwds", "fields"],
-                  baseParams: {"kwds": {"filesystem__isnull": true}, "fields": ["name"]}
-                }),
-                typeAhead:     true,
-                triggerAction: 'all',
-                emptyText:     "{% trans 'Select...' %}",
-                selectOnFocus: true,
-                displayField:  'name',
-                valueField:    'id',
-                ref: 'volfield'
+                xtype:      'volumefield',
               }, {
                 fieldLabel: "{% trans 'Number' %}",
                 name: "number",
