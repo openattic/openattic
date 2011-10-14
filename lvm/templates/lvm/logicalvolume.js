@@ -174,11 +174,29 @@ Ext.oa.Lvm__LogicalVolume_Panel = Ext.extend(Ext.Panel, {
                     selectOnFocus: true,
                     displayField:  'desc',
                     valueField:    'name',
-                    ref:      'fsfield'
-                  }, {
-                    xtype: "label",
-                    text:  "{% trans "If you want to use DRBD with this device, do not yet create a file system on it, even if you want to share it using NAS services later on." %}",
-                    cls:   "form_hint_label"
+                    ref:      'fsfield',
+                    id: 'lvm_lv_fsfield',
+                    listeners: {
+                      focus: function( self ){
+                        self.fieldtip = new Ext.ToolTip({
+                          target: self.id,
+                          anchor: 'left',
+                          html: "{% trans 'If you want to use DRBD with this device, do not yet create a file system on it, even if you want to share it using NAS services later on.' %}",
+                          width: 150,
+                          autoHide: false,
+                          listeners: {
+                            hide: function( ttip ){
+                              self.fieldtip.destroy();
+                              self.fieldtip = null;
+                            }
+                          }
+                        });
+                        self.fieldtip.show();
+                      },
+                      blur: function( self ){
+                        self.fieldtip.hide();
+                      }
+                    }
                   }, {
                     fieldLabel: "{% trans "Size in MB" %}",
                     allowBlank: false,
