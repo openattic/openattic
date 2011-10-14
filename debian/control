@@ -113,7 +113,7 @@ Description: Basic requirements for openATTIC
 Package: openattic-module-lvm
 Architecture: all
 Depends: ${misc:Depends}, openattic-base,
- lvm2, parted, ntfs-3g
+ lvm2, parted, ntfs-3g, zfs-fuse
 Description: LVM module for openATTIC
  Installs the LVM module, which handles partitioning physical disks into
  logical volumes and creating snapshots. This module is required by most
