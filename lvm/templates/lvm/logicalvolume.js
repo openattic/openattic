@@ -69,8 +69,8 @@ Ext.oa.Lvm__LogicalVolume_Panel = Ext.extend(Ext.Panel, {
                       lvmGrid.store.reload();
                   } );
                 } );
-              } );        
-          }
+              } );
+            }
           }
         }, {
           text: "{% trans "Unmount" %}",
@@ -80,19 +80,19 @@ Ext.oa.Lvm__LogicalVolume_Panel = Ext.extend(Ext.Panel, {
             var sm = lvmGrid.getSelectionModel();
             if( sm.hasSelection() ){
               var sel = sm.selections.items[0];
-              Ext.Msg.confirm(
-                "{% trans 'Unmount' %}",
-                interpolate(
-                  "{% trans 'Do you really want to umount %s?' %}",
-                  [sel.data.name]),
-                function(btn){
-                  if(btn == 'yes'){
-                    lvm__LogicalVolume.is_mounted( sel.data.id, function(provider, response){
-                      if( !response.result ){
-                        Ext.Msg.alert('Unmount', interpolate( "{% trans 'Volume %s is not mounted.' %}",
-                                                                  [sel.data.name] ));
-                      }
-                      else{
+              lvm__LogicalVolume.is_mounted( sel.data.id, function(provider, response){
+                if( !response.result ){
+                  Ext.Msg.alert('Unmount', interpolate( "{% trans 'Volume %s is not mounted.' %}",
+                                                            [sel.data.name] ));
+                }
+                else{
+                  Ext.Msg.confirm(
+                    "{% trans 'Unmount' %}",
+                    interpolate(
+                      "{% trans 'Do you really want to umount %s?' %}",
+                      [sel.data.name]),
+                    function(btn){
+                      if(btn == 'yes'){
                         lvm__LogicalVolume.unmount( sel.data.id, function(provider, response){
                           if( response.type === "exception" )
                             Ext.Msg.alert('Unmount', interpolate(
@@ -107,7 +107,6 @@ Ext.oa.Lvm__LogicalVolume_Panel = Ext.extend(Ext.Panel, {
                         });
                       }
                   } );
-                      
                 }
               } );
             }
