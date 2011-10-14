@@ -31,6 +31,7 @@ fi
 case $1 in
 	install)
 		su www-data -c 'python manage.py syncdb'
+		$0 reload
 		;;
 
 	install-cli)
