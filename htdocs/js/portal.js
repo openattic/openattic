@@ -36,6 +36,7 @@ Ext.oa.Portal = Ext.extend(Ext.ux.Portal, {
                 fields: ['name', 'megs', 'filesystem',  'formatted', 'id', 'state', 'fs', {
                   name: 'fsused',
                   mapping: 'fs',
+                  sortType: 'asInt',
                   convert: function( val, row ){
                     if( val === null || typeof val.stat === "undefined" )
                       return '';
