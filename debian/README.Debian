@@ -1,6 +1,17 @@
 openattic for Debian
 --------------------
 
-<possible notes regarding this package - if none, delete this file>
+Installation
+------------
 
- -- root <root@srvopenqrmsto01.master.dns>  Mon, 10 Oct 2011 11:22:20 +0200
+After installing or removing module packages, be sure to run `oaconfig install`
+in order to update the openATTIC configuration accordingly.
+
+If you are installing openATTIC for the first time, you will need to run
+`oaconfig install-cli` to create a basic configuration file for oacli.
+
+If you have an already existing LVM Volume Group which you would like
+openATTIC to use, run `oaconfig add-vg <vg>` in order to make it known. This
+command requires oacli to work.
+
+ -- Michael Ziegler <diese-addy@funzt-halt.net>  Mon, 10 Oct 2011 11:22:20 +0200
