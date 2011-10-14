@@ -16,6 +16,7 @@ if [ "$#" = "0" ]; then
     echo
     echo "    install      Run this command after you installed new openATTIC modules."
     echo "    install-cli  Generate an API Key and a corresponding oacli configuration."
+    echo "    svan-vg      Instruct LVM to search for existing VGs."
     echo "    add-vg       Make an already existing LVM Volume Group known to openATTIC."
     echo "    restart      Restart all services that are needed to run openATTIC."
     echo "    reload       Reload all services that are needed to run openATTIC."
@@ -53,6 +54,11 @@ case $1 in
 		echo "connect = $PROTO://__:$KEY@localhost:31234/" >> /etc/openattic/cli.conf
 		echo "uidcheck = True"                             >> /etc/openattic/cli.conf
 		echo "Successfully created /etc/openattic/cli.conf, oacli should now be ready to go."
+		;;
+
+	scan-vg|scan-vgs)
+		vgscan --mknodes
+		vgchange -ay
 		;;
 
 	add-vg)
