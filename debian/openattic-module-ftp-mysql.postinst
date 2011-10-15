@@ -2,9 +2,15 @@
 
 set -e
 
-dbconfig-generate-include -f template \
-    -o template_infile=/etc/openattic/proftpd/mysql.conf \
-    /etc/dbconfig-common/openattic-mysql.conf \
-    /etc/proftpd/conf.d/openattic.conf
+if [ "$1" = "configure" ] ; then
+    dbconfig-generate-include -f template \
+        -o template_infile=/etc/openattic/proftpd/mysql.conf \
+        /etc/dbconfig-common/openattic-mysql.conf \
+        /etc/proftpd/conf.d/openattic.conf
+
+    if [ -x /etc/init.d/proftpd ]; then
+        invoke-rc.d --quiet proftpd reload
+    fi
+fi
 
 #DEBHELPER#
