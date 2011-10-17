@@ -39,10 +39,16 @@ if [ "$1" = "configure" ] ; then
     fi
 
     tput bold
-    echo "#############################################"
-    echo "#  Please run oaconfig install to complete  #"
-    echo "#      the installation of openATTIC.       #"
-    echo "#############################################"
+    echo "###############################################"
+    echo "#                                             #"
+    echo "#  Please run \"oaconfig install\" to complete  #"
+    echo "#  the installation of openATTIC.             #"
+    echo "#                                             #"
+    echo "#  Afterwards, you can reach openATTIC under  #"
+    echo "#  the following URL:                         #"
+    echo "#     http://`hostname --fqdn`/openattic"
+    echo "#                                             #"
+    echo "###############################################"
     tput sgr0
 fi
 

@@ -16,7 +16,7 @@ if [ "$#" = "0" ]; then
     echo
     echo "    install      Run this command after you installed new openATTIC modules."
     echo "    install-cli  Generate an API Key and a corresponding oacli configuration."
-    echo "    svan-vg      Instruct LVM to search for existing VGs."
+    echo "    scan-vgs     Instruct LVM to search for existing VGs."
     echo "    add-vg       Make an already existing LVM Volume Group known to openATTIC."
     echo "    restart      Restart all services that are needed to run openATTIC."
     echo "    reload       Reload all services that are needed to run openATTIC."
