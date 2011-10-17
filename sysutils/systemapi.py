@@ -4,10 +4,10 @@
 import os.path
 import ctypes
 
-from systemd import invoke, logged, BasePlugin, method
-
+from systemd import invoke, logged, LockingPlugin, method
+from sysutils.models import NTP
 @logged
-class SystemD(BasePlugin):
+class SystemD(LockingPlugin):
     dbus_path = "/sysutils"
 
     @method(in_signature="", out_signature="i")
@@ -36,4 +36,17 @@ class SystemD(BasePlugin):
 
         timeobj = timespec(int(seconds), 0)
         return librt.clock_settime( 0, ctypes.pointer(timeobj) )
+
+    @method(in_signature="", out_signature="")
+    def write_ntp(self):
+        self.lock.acquire()
+        try:
+            fd = open( "/etc/ntp.conf", "wb" )
+            try:
+                    ntp = NTP.objects.all()[0]
+                    fd.write( "server=%s\n" % ntp.server )
+            finally:      
+                fd.close()    
+        finally:
+            self.lock.release()
 

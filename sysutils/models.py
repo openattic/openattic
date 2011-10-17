@@ -2,6 +2,7 @@
 # kate: space-indent on; indent-width 4; replace-tabs on;
 
 import dbus
+import socket
 
 from django.db import models
 from django.conf import settings
@@ -33,3 +34,18 @@ class InitScript(models.Model):
     @property
     def stopped(self):
         return self.state == 3
+
+class NTP(models.Model):
+    server = models.CharField(max_length=50)
+    
+    def save( self, *args, **kwargs ):
+        ret = models.Model.save(self, *args, **kwargs)
+        ntp = dbus.SystemBus().get_object(settings.DBUS_IFACE_SYSTEMD, "/sysutils")
+        ntp.write_ntp()
+        return ret
+  
+    def delete( self ):
+        ret = models.Model.delete(self)
+        ntp = dbus.SystemBus().get_object(settings.DBUS_IFACE_SYSTEMD, "/sysutils")
+        ntp.write_ntp()
+        return ret

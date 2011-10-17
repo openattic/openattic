@@ -5,7 +5,7 @@ import dbus
 from django.conf import settings
 
 from rpcd.handlers import BaseHandler, ModelHandler
-from sysutils.models import InitScript
+from sysutils.models import InitScript, NTP
 
 class SysUtilsHandler(BaseHandler):
     @classmethod
@@ -39,5 +39,7 @@ class InitScriptHandler(ModelHandler):
     def stop(self, id):
         return InitScript.objects.get(id=id).stop()
     
+class NTPHandler(ModelHandler):
+    model = NTP
 
-RPCD_HANDLERS = [SysUtilsHandler, InitScriptHandler]
+RPCD_HANDLERS = [SysUtilsHandler, InitScriptHandler, NTPHandler]

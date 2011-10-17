@@ -60,14 +60,6 @@ Ext.oa.MenuTree = Ext.extend(Ext.tree.TreePanel, {
                 ]
             } ]
           }, {
-            text: 'Date/Time',
-            leaf: true,
-            icon: MEDIA_URL + '/icons2/22x22/apps/date_time.png'
-          }, {
-            text: 'E-Mail',           leaf: true,
-            icon: MEDIA_URL + '/icons2/22x22/apps/email.png'
-          },
-          {
             text: 'Online Update',
             leaf: true,
             icon: MEDIA_URL + '/icons2/22x22/apps/update.png'

@@ -112,6 +112,12 @@ class ModelHandler(BaseHandler):
             id = {'id': int(id)}
         return self._getobj( self.model.objects.get(**id) )
 
+    def get_ext(self, id):
+        """ Return an object given by ID. """
+        if not isinstance( id, dict ):
+            id = {'id': int(id)}
+        return { "success": True, "data": self._getobj( self.model.objects.get(**id) ) }
+
     def filter(self, kwds):
         """ Search for objects with the keywords specified in the kwds dict. """
         return [ self._getobj(obj) for obj in self.model.objects.filter(**kwds).order_by(*self.order) ]
