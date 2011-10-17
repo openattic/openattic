@@ -86,6 +86,7 @@ case $1 in
 		;;
 
 	*)
-		su www-data -s /bin/sh <<< "python manage.py $@"
+		# I couldn't get this thing to work with su properly...
+		sudo -u www-data -- python manage.py "$@"
 		;;
 esac
