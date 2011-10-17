@@ -2,6 +2,12 @@
 
 Ext.namespace("Ext.oa");
 
+Ext.apply(Ext.form.VTypes, {
+  LVName:     function(v) { return /^[A-Za-z0-9_\-]+$/.test(v); },
+  LVNameText: "Must only contain alphanumeric characters or _ and -.",
+  LVNameMask: /[A-Za-z0-9_\-]/
+});
+
 Ext.oa.Lvm__LogicalVolume_Panel = Ext.extend(Ext.Panel, {
   initComponent: function(){
     var currentChartId = null;
@@ -129,7 +135,8 @@ Ext.oa.Lvm__LogicalVolume_Panel = Ext.extend(Ext.Panel, {
                     fieldLabel: "Name",
                     allowBlank: false,
                     name: "name",
-                    ref: 'namefield'
+                    ref: 'namefield',
+                    vtype: "LVName"
                   },
                   tipify({
                       xtype:      'combo',

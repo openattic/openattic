@@ -73,7 +73,13 @@ Ext.oa.MenuTree = Ext.extend(Ext.tree.TreePanel, {
             icon: MEDIA_URL + '/icons2/22x22/apps/update.png'
           }
         ]
-      }
+      }, {
+            id: 'menu_usersettings',
+            text: 'Personal Settings',
+            expanded: Ext.state.Manager.get("expand_root_nodes", false),
+            icon: MEDIA_URL + '/icons2/22x22/actions/stock_about.png',
+            children: []
+         }
     ]
   },
   fbar: [ 'Auto-expand root nodes', {
