@@ -52,9 +52,6 @@ Ext.oa.Time_Panel = Ext.extend(Ext.Panel, {
     }));
     Ext.oa.Time_Panel.superclass.initComponent.apply(this, arguments);
     this.items.items[0].getForm().load({
-       failure: function(form, action) {
-          Ext.Msg.alert("Email Form Load Failed", action.result.errorMessage);
-        }
     });
   },
 
