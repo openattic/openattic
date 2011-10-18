@@ -1,0 +1,57 @@
+#!/bin/bash
+
+set -e
+set -u
+
+if [ "$#" == "0" ] ; then
+	echo "Usage: $0 <iface>" >&2
+	exit 1
+fi
+
+IFACE=$1
+SYSFS="/sys/class/net/$IFACE"
+IFSTATS="/var/spool/ifstats_$IFACE"
+
+if [ ! -d "$SYSFS" ] ; then
+	echo "Cannot access device information at $SYSFS" >&2
+	exit 2
+fi
+
+if [ -f $IFSTATS ] ; then
+	. $IFSTATS
+else
+	RXOLDBYTES=0
+	TXOLDBYTES=0
+	OLDTIMESTAMP=0
+fi
+
+STATE=`cat $SYSFS/operstate`
+if [ "$STATE" != "up" ] ; then
+	echo "Interface $IFACE is $STATE"
+	exit 2
+fi
+
+NOW=`date +%s`
+
+SPEED=`cat $SYSFS/speed 2>/dev/null || echo 0`
+RXBYTES=`cat $SYSFS/statistics/rx_bytes`
+TXBYTES=`cat $SYSFS/statistics/tx_bytes`
+
+RXDIFF=`echo \( $RXBYTES - $RXOLDBYTES \) / \( $NOW - $OLDTIMESTAMP \) | bc`
+TXDIFF=`echo \( $TXBYTES - $TXOLDBYTES \) / \( $NOW - $OLDTIMESTAMP \) | bc`
+
+if [ "$SPEED" != "0" ]; then
+	WARN=`echo $SPEED \* 0.75 \* 1000000 | bc`
+	CRIT=`echo $SPEED \* 0.85 \* 1000000 | bc`
+	
+	# perfdata=cur;warn;crit;min;max
+	echo "Interface $IFACE is $STATE ($SPEED MBit/s)|rxbytes=${RXDIFF}bit/s;${WARN};${CRIT} txbytes=${TXDIFF}bit/s;${WARN};${CRIT}"
+else
+	echo "Interface $IFACE is $STATE|rxbytes=${RXDIFF}bit/s txbytes=${TXDIFF}bit/s"
+fi
+
+cat >$IFSTATS <<EOF
+RXOLDBYTES=$RXBYTES
+TXOLDBYTES=$TXBYTES
+OLDTIMESTAMP=$NOW
+EOF
