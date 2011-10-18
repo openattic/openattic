@@ -3,7 +3,7 @@
 
 from django.template.loader import render_to_string
 
-from systemd       import invoke, logged, LockingPlugin, method
+from systemd       import invoke, logged, LockingPlugin, method, create_job
 from nagios.models import Command, Service
 
 @logged
@@ -25,9 +25,12 @@ class SystemD(LockingPlugin):
         finally:
             self.lock.release()
 
-    @method(in_signature="", out_signature="i")
+    @method(in_signature="", out_signature="")
     def restart(self):
-        return invoke(["/etc/init.d/nagios3", "restart"])
+        create_job([
+            ["nagios3", "--verify-config", "/etc/nagios3/nagios.cfg"],
+            ["/etc/init.d/nagios3", "restart"]
+            ])
 
     @method(in_signature="", out_signature="i")
     def check_conf(self):
