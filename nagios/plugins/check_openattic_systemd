@@ -1,0 +1,14 @@
+#!/bin/bash
+
+set -e
+set -u
+
+OUT=` dbus-send --system --dest=org.openattic.systemd --print-reply=literal / org.openattic.systemd.ping `
+
+if [ "$OUT" = "   pong" ]; then
+    echo "Systemd responded to DBus ping."
+    exit 0
+else
+    echo "Systemd did not respond to DBus ping."
+    exit 2
+fi

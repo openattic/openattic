@@ -1,0 +1,16 @@
+#!/bin/bash
+
+set -e
+set -u
+
+. /etc/default/openattic
+
+if [ ! -z "$RPCD_CERTFILE" -a ! -z "$RPCD_KEYFILE" ]; then
+    CHECKSSL="-S"
+else
+    CHECKSSL=""
+fi
+
+set +e
+/usr/lib/nagios/plugins/check_tcp -H 127.0.0.1 -p 31234 $CHECKSSL
+exit $?
