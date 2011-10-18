@@ -180,7 +180,7 @@ Description: Munin module for openATTIC
 
 Package: nagios-plugins-openattic
 Architecture: all
-Depends: ${misc:Depends}, nagios-plugins-basic
+Depends: ${misc:Depends}, nagios-plugins-basic, openattic-base
 Description: Nagios plugins for openATTIC
  Installs Nagios plugins that check the state of openATTIC's Systemd and
  RPCd daemons which are essential for openATTIC to function.
