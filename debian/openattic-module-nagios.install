@@ -1,0 +1,2 @@
+nagios /usr/share/openattic
+installed_apps.d/nagios /usr/share/openattic/installed_apps.d

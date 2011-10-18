@@ -1,0 +1,2 @@
+nagios/plugins/* /usr/lib/nagios/plugins
+debian/nagios_plugins_conf.d/openattic.cfg /etc/nagios-plugins/config
