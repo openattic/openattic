@@ -6,6 +6,7 @@ import dbus
 from django.conf      import settings
 from django.db        import models
 from django.db.models import signals
+from django.utils.translation   import ugettext_noop, ugettext_lazy as _
 
 from lvm.models import LogicalVolume
 
@@ -19,10 +20,11 @@ class Command(models.Model):
         return self.name
 
 class Service(models.Model):
-    volume      = models.ForeignKey(LogicalVolume)
+    volume      = models.ForeignKey(LogicalVolume, blank=True, null=True)
     description = models.CharField(max_length=250, unique=True)
     command     = models.ForeignKey(Command)
-    arguments   = models.CharField(max_length=500)
+    arguments   = models.CharField(max_length=500, blank=True)
+    query_only  = models.BooleanField(default=False, help_text=_("Check this if openATTIC should not configure this service, only query it."))
 
     nagstate    = NagiosState()
 

@@ -11,6 +11,7 @@ class CommandHandler(ModelHandler):
 
 class ServiceHandler(ModelHandler):
     model = Service
+    order = ("description",)
 
     def write_conf(self):
         Services.write_conf()
