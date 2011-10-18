@@ -37,7 +37,8 @@ class Service(models.Model):
         for service in Service.nagstate["servicestatus"]:
             if service['service_description'] == self.description:
                 return service
-        raise SystemError("The status for this service could not be found in Nagios's status cache.")
+        raise KeyError("The status for this service could not be found in Nagios's status cache.")
+
 
 def create_service_for_lv(**kwargs):
     if not kwargs["instance"].filesystem:
