@@ -105,6 +105,7 @@ Depends: ${misc:Depends},
  python-django-extdirect (>= 0.6),
  python-statgrab,
  sudo,
+ oxygen-icon-theme,
  libjs-extjs (>= 3.0.0), libjs-extjs (<< 4.0),
  openattic-sqlite | openattic-mysql | openattic-pgsql
 Description: Basic requirements for openATTIC
