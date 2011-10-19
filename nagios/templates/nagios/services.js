@@ -75,6 +75,8 @@ Ext.oa.Nagios__Service_Panel = Ext.extend(Ext.grid.GridPanel, {
 
     this.on("cellmousedown", function( self, rowIndex, colIndex, evt ){
         var record = self.getStore().getAt(rowIndex);
+        if( record.json.perfdata.length === 0 )
+          return;
         var graphwin = new Ext.Window({
           title: record.data.description,
           height: 230,
@@ -83,8 +85,8 @@ Ext.oa.Nagios__Service_Panel = Ext.extend(Ext.grid.GridPanel, {
             autoEl: {
               tag: "img",
               src: String.format(
-                "/pnp4nagios/image?host=localhost&srv={0}&source={1}&start={2}&end={3}",
-                record.data.description.replace(/\s/g, '_'), 0, 1318993244, 1319007644
+                PROJECT_URL + "/nagios/{0}/{1}.png",
+                record.data.id, 0
               )
             },
             listeners: {
