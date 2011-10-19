@@ -18,9 +18,11 @@ class ServiceHandler(ModelHandler):
 
     def _override_get(self, obj, data):
         try:
-            data['state'] = obj.state
+            data['state']    = obj.state
+            data['perfdata'] = obj.perfdata
         except KeyError:
-            data["state"] = None
+            data["state"]    = None
+            data["perfdata"] = None
         return data
 
 
