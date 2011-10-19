@@ -1,0 +1,145 @@
+[
+    {
+        "pk": 1,
+        "model": "nagios.command",
+        "fields": {
+            "name": "check_disk"
+        }
+    },
+    {
+        "pk": 2,
+        "model": "nagios.command",
+        "fields": {
+            "name": "check_all_disks"
+        }
+    },
+    {
+        "pk": 3,
+        "model": "nagios.command",
+        "fields": {
+            "name": "check_users"
+        }
+    },
+    {
+        "pk": 4,
+        "model": "nagios.command",
+        "fields": {
+            "name": "check_procs"
+        }
+    },
+    {
+        "pk": 5,
+        "model": "nagios.command",
+        "fields": {
+            "name": "check_load"
+        }
+    },
+    {
+        "pk": 6,
+        "model": "nagios.command",
+        "fields": {
+            "name": "check_http"
+        }
+    },
+    {
+        "pk": 7,
+        "model": "nagios.command",
+        "fields": {
+            "name": "check_ssh"
+        }
+    },
+    {
+        "pk": 8,
+        "model": "nagios.command",
+        "fields": {
+            "name": "check_iface_traffic"
+        }
+    },
+    {
+        "pk": 9,
+        "model": "nagios.command",
+        "fields": {
+            "name": "check_diskstats"
+        }
+    },
+    {
+        "pk": 1,
+        "model": "nagios.graph",
+        "fields": {
+            "verttitle": "read (-) / write (+)",
+            "fields": "-0 1",
+            "command": 9,
+            "title": "IOs per second"
+        }
+    },
+    {
+        "pk": 2,
+        "model": "nagios.graph",
+        "fields": {
+            "verttitle": "",
+            "fields": "2",
+            "command": 9,
+            "title": "Total IOs per second"
+        }
+    },
+    {
+        "pk": 3,
+        "model": "nagios.graph",
+        "fields": {
+            "verttitle": "Byte/s read (-) / write (+)",
+            "fields": "-3 4",
+            "command": 9,
+            "title": "Throughput"
+        }
+    },
+    {
+        "pk": 4,
+        "model": "nagios.graph",
+        "fields": {
+            "verttitle": "ms",
+            "fields": "5",
+            "command": 9,
+            "title": "Service Time"
+        }
+    },
+    {
+        "pk": 5,
+        "model": "nagios.graph",
+        "fields": {
+            "verttitle": "ms",
+            "fields": "6",
+            "command": 9,
+            "title": "Average Latency"
+        }
+    },
+    {
+        "pk": 6,
+        "model": "nagios.graph",
+        "fields": {
+            "verttitle": "ms read (-) / write (+)",
+            "fields": "-7 8",
+            "command": 9,
+            "title": "Average Latency (r/w)"
+        }
+    },
+    {
+        "pk": 7,
+        "model": "nagios.graph",
+        "fields": {
+            "verttitle": "ms read (-) / write (+)",
+            "fields": "-9 10",
+            "command": 9,
+            "title": "Average Request size (r/w)"
+        }
+    },
+    {
+        "pk": 8,
+        "model": "nagios.graph",
+        "fields": {
+            "verttitle": "%",
+            "fields": "11",
+            "command": 9,
+            "title": "Disk Load"
+        }
+    }
+]
