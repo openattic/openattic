@@ -10,7 +10,7 @@ fi
 
 IFACE=$1
 SYSFS="/sys/class/net/$IFACE"
-IFSTATS="/var/spool/ifstats_$IFACE"
+IFSTATS="/var/lib/nagios3/ifstats_$IFACE"
 
 if [ ! -d "$SYSFS" ] ; then
 	echo "Cannot access device information at $SYSFS" >&2
