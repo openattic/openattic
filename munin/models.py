@@ -15,7 +15,7 @@ class MuninNode(models.Model):
     @property
     def modules(self):
         """ Retrieve a list of running modules from munin-node. """
-        addrlist = socket.getaddrinfo( self.nodeaddr, self.nodeport, 0, 0, socket.SOL_TCP )
+        addrlist = socket.getaddrinfo( self.nodeaddr, int(self.nodeport), 0, 0, socket.SOL_TCP )
         for (family, socktype, proto, canonname, sockaddr) in addrlist:
             sock = socket.socket( family, socktype, proto )
             try:
