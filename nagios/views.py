@@ -10,14 +10,22 @@ from django.shortcuts  import get_object_or_404
 from systemd.procutils import invoke
 
 from nagios.conf   import settings as nagios_settings
-from nagios.models import Service
+from nagios.models import Service, Graph
 
 def graph(request, service_id, srcidx):
-    serv = get_object_or_404(Service, pk=int(service_id))
+    serv  = get_object_or_404(Service, pk=int(service_id))
 
+    srcidx = int(srcidx)
     try:
-        perfdata = serv.perfdata[int(srcidx)]
-    except IndexError:
+        graph = Graph.objects.get(pk=srcidx, command=serv.command)
+    except Graph.DoesNotExist:
+        graph = None
+        indexes = [str(srcidx)]
+    else:
+        indexes = graph.fields.split(' ')
+
+    perfdata = serv.perfdata
+    if not perfdata:
         raise Http404("Performance data not available")
 
     rrdpath = nagios_settings.RRD_PATH % serv.description.replace(' ', '_').encode("UTF-8")
@@ -29,60 +37,83 @@ def graph(request, service_id, srcidx):
     height = request.GET.get("height", "150")
     width  = request.GET.get("width",  "700")
     color  = request.GET.get("color",  "00AA00CC")
+    negidx = request.GET.get("negidx", None)
+
+    graphtitle = serv.description
+    if graph is not None:
+        graphtitle += ' - ' + graph.title
 
     args = [
         "rrdtool", "graph", "-", "--start", start, "--end", end, "--height", height,
-        "--width", width, "--imgformat", "PNG", "--title", serv.description
+        "--width", width, "--imgformat", "PNG", "--title", graphtitle,
         ]
 
-    # Try to match the unit of the current value
-    m = re.match( '\d+(?P<value>\.\d+)?(?P<unit>[^\d;]+)?(?:;.*)?', perfdata[1] )
-    if m:
-        currval = m.group("value")
-        if m.group("unit"):
-            args.extend([ "--vertical-label", m.group("unit") ])
-    else:
-        currval = perfdata[1]
+    if graph is None:
+        # Try to match the unit of the current value
+        m = re.match( '\d+(?:\.\d+)?(?P<unit>[^\d;]+)?(?:;.*)?', perfdata[srcidx][1] )
+        if m:
+            if m.group("unit"):
+                args.extend([ "--vertical-label", m.group("unit") ])
+    elif graph.verttitle:
+        args.extend([ "--vertical-label", graph.verttitle ])
 
-    # Max length of the field is currently the length of the only field which we print :)
-    maxlen = len(perfdata[0])
+    # See the "for" loop below for that if statement. boils down to "get x if index == -x else index"
+    maxlen = max( [ len( perfdata[ int(srcidx[1:]) if srcidx[0] == '-' else int(srcidx) ][0] )
+                    for srcidx in indexes ] )
 
     args.extend([
         "COMMENT:" + (" " * maxlen),
-        "COMMENT:Cur",
-        "COMMENT:Min",
-        "COMMENT:Avg",
-        "COMMENT:Max\\j",
+        "COMMENT:        Cur",
+        "COMMENT:        Min",
+        "COMMENT:        Avg",
+        "COMMENT:        Max\\j",
+        "HRULE:0#000000",
         ])
 
-    args.extend([
-        "DEF:var%s=%s:%d:AVERAGE"     % (srcidx, rrdpath, int(srcidx) + 1),
-        "AREA:var%s#%s:%s"            % (srcidx, color, perfdata[0]),
-        "GPRINT:var%s:LAST:%%.2lf"    % srcidx,
-        "GPRINT:var%s:MIN:%%.2lf"     % srcidx,
-        "GPRINT:var%s:AVERAGE:%%.2lf" % srcidx,
-        "GPRINT:var%s:MAX:%%.2lf\\j"  % srcidx,
-        ])
+    for srcidx in indexes:
+        invert = False
+        if srcidx[0] == '-':
+            invert = True
+            srcidx = int(srcidx[1:])
+        else:
+            srcidx = int(srcidx)
 
-    perfvalues = perfdata[1].split(';')
-    if len(perfvalues) > 1:
-        # maybe we have curr;warn;crit;min;max
-        warn = perfvalues[1]
-        crit = perfvalues[2] if len(perfvalues) > 2 else None
-        vmin = perfvalues[3] if len(perfvalues) > 3 else None
-        vmax = perfvalues[4] if len(perfvalues) > 4 else None
+        args.append( "DEF:var%d=%s:%d:AVERAGE" % (srcidx, rrdpath, int(srcidx) + 1) )
 
-        if warn is not None:
-            args.append( "HRULE:%s#F0F700" % warn )
+        if not invert:
+            args.append("AREA:var%d#%s:%s" % (srcidx, color, perfdata[srcidx][0]))
+        else:
+            args.extend([
+                "CDEF:var%dneg=var%d,-1,*" % (srcidx, srcidx),
+                "AREA:var%dneg#%s:%s"      % (srcidx, color, perfdata[srcidx][0]),
+                ])
 
-        if crit is not None:
-            args.append( "HRULE:%s#FF0000" % crit )
+        args.extend([
+            "GPRINT:var%d:LAST:%%8.2lf"     % srcidx,
+            "GPRINT:var%d:MIN:%%8.2lf"      % srcidx,
+            "GPRINT:var%d:AVERAGE:%%8.2lf"  % srcidx,
+            "GPRINT:var%d:MAX:%%8.2lf\\j"   % srcidx,
+            ])
 
-        if vmin is not None:
-            args.extend([ "-l", vmin ])
+        perfvalues = perfdata[srcidx][1].split(';')
+        if len(perfvalues) > 1:
+            # maybe we have curr;warn;crit;min;max
+            warn = perfvalues[1]
+            crit = perfvalues[2] if len(perfvalues) > 2 else None
+            vmin = perfvalues[3] if len(perfvalues) > 3 else None
+            vmax = perfvalues[4] if len(perfvalues) > 4 else None
 
-        if vmax is not None:
-            args.extend([ "-u", vmax ])
+            if warn is not None:
+                args.append( "HRULE:%s#F0F700" % (warn * (-1 if invert else 1) ) )
+
+            if crit is not None:
+                args.append( "HRULE:%s#FF0000" % (crit * (-1 if invert else 1) ) )
+
+            #if vmin is not None:
+                #args.extend([ "-l", vmin ])
+
+            #if vmax is not None:
+                #args.extend([ "-u", vmax ])
 
 
     #print args
