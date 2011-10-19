@@ -20,11 +20,22 @@ class ServiceHandler(ModelHandler):
 
     def _override_get(self, obj, data):
         try:
-            data['state']    = obj.state
-            data['perfdata'] = obj.perfdata
+            data['state']  = obj.state
+            data['graphs'] = obj.perfdata
+
+            qryset = Graph.objects.filter( command=obj.command )
+            if qryset.count():
+                data["graphs"] = [ { "id": gr.id, "title": gr.title } for gr in qryset ]
+            else:
+                perfd = obj.perfdata
+                data["graphs"] = []
+                for i in range(len(perfd)): # someone please shoot me
+                    data["graphs"].append( { "id": i, "title": perfd[i][0] } )
+
         except KeyError:
-            data["state"]    = None
-            data["perfdata"] = None
+            data["state"]  = None
+            data["graphs"] = None
+
         return data
 
 
