@@ -41,6 +41,11 @@ class Service(models.Model):
                 return service
         raise KeyError("The status for this service could not be found in Nagios's status cache.")
 
+    @property
+    def perfdata(self):
+        """ Get current performance data. """
+        return [ pv.split('=', 1) for pv in self.state["performance_data"].split() ]
+
 
 def create_service_for_lv(**kwargs):
     if not kwargs["instance"].filesystem:
