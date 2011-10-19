@@ -71,17 +71,17 @@ class SystemD(BasePlugin):
 
     @method( in_signature="s", out_signature="a{ss}")
     def get_dstate(self, resource):
-        ret, out, err = invoke(["/sbin/drbdadm", "dstate", resource], return_out_err=True)
+        ret, out, err = invoke(["/sbin/drbdadm", "dstate", resource], return_out_err=True, log=False)
         return dict(zip(("self", "peer"), out.strip().split("/")))
 
     @method( in_signature="s", out_signature="s")
     def get_cstate(self, resource):
-        ret, out, err = invoke(["/sbin/drbdadm", "cstate", resource], return_out_err=True)
+        ret, out, err = invoke(["/sbin/drbdadm", "cstate", resource], return_out_err=True, log=False)
         return out.strip()
 
     @method( in_signature="s", out_signature="a{ss}")
     def get_role(self, resource):
-        ret, out, err = invoke(["/sbin/drbdadm", "role", resource], return_out_err=True)
+        ret, out, err = invoke(["/sbin/drbdadm", "role", resource], return_out_err=True, log=False)
         return dict(zip(("self", "peer"), out.strip().split("/")))
 
     @method( in_signature="i", out_signature="")
