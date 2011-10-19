@@ -11,6 +11,8 @@ disk = sys.argv[-1]
 state = ConfigParser()
 havestate = bool( state.read("/var/lib/nagios3/diskstats.%s" % disk) )
 
+exit = 0
+
 with open("/sys/block/%s/stat" % disk, "rb") as fd:
     currstate = dict(zip((
         "rd_ios", "rd_merges", "rd_sectors", "rd_ticks",
@@ -72,6 +74,11 @@ if havestate:
 
     util_percent = utilization / 10.
 
+    if util_percent > 75:
+        exit = 1
+    if util_percent > 85:
+        exit = 2
+
     print  ("Disk load for %(disk)s is at %(util_percent).2f%%.|"
             #"rd_ios=%(rd_ios)d wr_ios=%(wr_ios)d "
             #"rd_ticks=%(rd_ticks)d wr_ticks=%(wr_ticks)d "
@@ -83,7 +90,7 @@ if havestate:
             "tot_avg_wait=%(tot_avg_wait).2fms "
             "rd_avg_wait=%(rd_avg_wait).2fms wr_avg_wait=%(wr_avg_wait).2fms "
             "rd_avg_size=%(rd_avg_size).2fB wr_avg_size=%(wr_avg_size).2fB "
-            "load_percent=%(util_percent).2f ") % {
+            "load_percent=%(util_percent).2f%%;75;85;0;100 ") % {
         "disk":         disk,
         "util_percent": util_percent,
         "rd_ios":       rd_ios,
@@ -105,9 +112,12 @@ if havestate:
         "tot_avg_wait": tot_avg_wait,
         }
 else:
+    print "Need state info, please wait until Nagios checks again."
+    exit = 1
     state.add_section("state")
 
 for key in currstate:
     state.set("state", key, currstate[key])
 state.write( open( "/var/lib/nagios3/diskstats.%s" % disk, "wb" ) )
 
+sys.exit(exit)
