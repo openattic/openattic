@@ -3,11 +3,13 @@
 
 from rpcd.handlers import ModelHandler
 
-from nagios.models import Command, Service
+from nagios.models import Command, Service, Graph
 
 class CommandHandler(ModelHandler):
     model = Command
 
+class GraphHandler(ModelHandler):
+    model = Graph
 
 class ServiceHandler(ModelHandler):
     model = Service
@@ -26,4 +28,4 @@ class ServiceHandler(ModelHandler):
         return data
 
 
-RPCD_HANDLERS = [CommandHandler, ServiceHandler]
+RPCD_HANDLERS = [CommandHandler, ServiceHandler, GraphHandler]
