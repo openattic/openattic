@@ -36,13 +36,32 @@ def graph(request, service_id, srcidx):
         ]
 
     # Try to match the unit of the current value
-    m = re.match( '\d+(?:\.\d+)?([^\d;]+)?(?:;.*)?', perfdata[1] )
-    if m and m.group(1):
-        args.extend([ "--vertical-label", m.group(1) ])
+    m = re.match( '\d+(?P<value>\.\d+)?(?P<unit>[^\d;]+)?(?:;.*)?', perfdata[1] )
+    if m:
+        currval = m.group("value")
+        if m.group("unit"):
+            args.extend([ "--vertical-label", m.group("unit") ])
+    else:
+        currval = perfdata[1]
+
+    # Max length of the field is currently the length of the only field which we print :)
+    maxlen = len(perfdata[0])
 
     args.extend([
-        "DEF:var%s=%s:%d:AVERAGE" % (srcidx, rrdpath, int(srcidx) + 1),
-        "AREA:var%s#%s:%s" % (srcidx, color, perfdata[0])
+        "COMMENT:" + (" " * maxlen),
+        "COMMENT:Cur",
+        "COMMENT:Min",
+        "COMMENT:Avg",
+        "COMMENT:Max\\j",
+        ])
+
+    args.extend([
+        "DEF:var%s=%s:%d:AVERAGE"     % (srcidx, rrdpath, int(srcidx) + 1),
+        "AREA:var%s#%s:%s"            % (srcidx, color, perfdata[0]),
+        "GPRINT:var%s:LAST:%%.2lf"    % srcidx,
+        "GPRINT:var%s:MIN:%%.2lf"     % srcidx,
+        "GPRINT:var%s:AVERAGE:%%.2lf" % srcidx,
+        "GPRINT:var%s:MAX:%%.2lf\\j"  % srcidx,
         ])
 
     perfvalues = perfdata[1].split(';')
