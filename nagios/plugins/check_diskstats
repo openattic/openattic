@@ -1,0 +1,113 @@
+#!/usr/bin/env python
+# -*- coding: utf-8 -*-
+# kate: space-indent on; indent-width 4; replace-tabs on;
+
+import os, sys
+from time import time
+from ConfigParser import ConfigParser
+
+disk = sys.argv[-1]
+
+state = ConfigParser()
+havestate = bool( state.read("/var/lib/nagios3/diskstats.%s" % disk) )
+
+with open("/sys/block/%s/stat" % disk, "rb") as fd:
+    currstate = dict(zip((
+        "rd_ios", "rd_merges", "rd_sectors", "rd_ticks",
+        "wr_ios", "wr_merges", "wr_sectors", "wr_ticks",
+        "ios_in_prog", "tot_ticks", "rq_ticks"
+      ), [
+        int(count) for count in fd.read().split()
+    ]))
+    currstate["timestamp"] = time()
+
+if havestate:
+    bytes_per_sector = 512
+    interval = float(currstate["timestamp"] - state.getfloat("state", "timestamp"))
+    rd_ios = currstate["rd_ios"] - state.getfloat("state", "rd_ios")
+    wr_ios = currstate["wr_ios"] - state.getfloat("state", "wr_ios")
+
+    rd_ticks = currstate["rd_ticks"] - state.getfloat("state", "rd_ticks")
+    wr_ticks = currstate["wr_ticks"] - state.getfloat("state", "wr_ticks")
+
+    rd_sectors = currstate["rd_sectors"] - state.getfloat("state", "rd_sectors")
+    wr_sectors = currstate["wr_sectors"] - state.getfloat("state", "wr_sectors")
+
+    tot_ticks  = currstate["tot_ticks"] - state.getfloat("state", "tot_ticks")
+
+    rd_iops = rd_ios / interval
+    wr_iops = wr_ios / interval
+
+    rd_bps  = rd_sectors / interval * bytes_per_sector
+    wr_bps  = wr_sectors / interval * bytes_per_sector
+
+    tot_ios = rd_ios + wr_ios
+    tot_iops = tot_ios / interval
+
+    utilization = tot_ticks / interval
+
+    if tot_iops:
+        servicetime = utilization / tot_iops
+    else:
+        servicetime = 0
+
+    if tot_ios:
+        tot_avg_wait = (rd_ticks + wr_ticks) / tot_ios
+    else:
+        tot_avg_wait = 0
+
+    if rd_ios:
+        rd_avg_wait = rd_ticks / rd_ios
+        rd_avg_size = rd_sectors * bytes_per_sector / 1024. / rd_ios
+    else:
+        rd_avg_wait = 0
+        rd_avg_size = 0
+
+    if wr_ios:
+        wr_avg_wait = wr_ticks / wr_ios
+        wr_avg_size = wr_sectors * bytes_per_sector / 1024. / wr_ios
+    else:
+        wr_avg_wait = 0
+        wr_avg_size = 0
+
+    util_percent = utilization / 10.
+
+    print  ("Disk load for %(disk)s is at %(util_percent).2f%%.|"
+            #"rd_ios=%(rd_ios)d wr_ios=%(wr_ios)d "
+            #"rd_ticks=%(rd_ticks)d wr_ticks=%(wr_ticks)d "
+            #"rd_sectors=%(rd_sectors)d wr_sectors=%(wr_sectors)d "
+            "rd_iops=%(rd_iops).2f wr_iops=%(wr_iops).2f "
+            "tot_iops=%(tot_iops).2f "
+            "rd_bps=%(rd_bps).2fB/s wr_bps=%(wr_bps).2fB/s "
+            "servicetime=%(servicetime).2fms "
+            "tot_avg_wait=%(tot_avg_wait).2fms "
+            "rd_avg_wait=%(rd_avg_wait).2fms wr_avg_wait=%(wr_avg_wait).2fms "
+            "rd_avg_size=%(rd_avg_size).2fB wr_avg_size=%(wr_avg_size).2fB "
+            "load_percent=%(util_percent).2f ") % {
+        "disk":         disk,
+        "util_percent": util_percent,
+        "rd_ios":       rd_ios,
+        "wr_ios":       wr_ios,
+        "rd_ticks":     rd_ticks,
+        "wr_ticks":     wr_ticks,
+        "rd_sectors":   rd_sectors,
+        "wr_sectors":   wr_sectors,
+        "rd_iops":      rd_iops,
+        "wr_iops":      wr_iops,
+        "tot_iops":     tot_iops,
+        "rd_bps":       rd_bps,
+        "wr_bps":       wr_bps,
+        "servicetime":  servicetime,
+        "rd_avg_wait":  rd_avg_wait,
+        "wr_avg_wait":  wr_avg_wait,
+        "rd_avg_size":  rd_avg_size,
+        "wr_avg_size":  wr_avg_size,
+        "tot_avg_wait": tot_avg_wait,
+        }
+else:
+    state.add_section("state")
+
+for key in currstate:
+    state.set("state", key, currstate[key])
+state.write( open( "/var/lib/nagios3/diskstats.%s" % disk, "wb" ) )
+
