@@ -192,7 +192,8 @@ def modprobe( name ):
         INSTALLED_APPS.append( name )
 
 import os
-for name in os.listdir( join( PROJECT_ROOT, "installed_apps.d") ):
+INSTALLED_MODULES = os.listdir( join( PROJECT_ROOT, "installed_apps.d") )
+for name in INSTALLED_MODULES:
     modprobe(name)
 
 modprobe('django_extensions')
