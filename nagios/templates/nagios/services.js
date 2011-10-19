@@ -59,10 +59,6 @@ Ext.oa.Nagios__Service_Panel = Ext.extend(Ext.grid.GridPanel, {
           width: 100,
           dataIndex: "volumename"
         }, {
-          header: "{% trans 'Plugin Output' %}",
-          width: 150,
-          dataIndex: "plugin_output"
-        }, {
           header: "{% trans 'Last Check' %}",
           width: 120,
           dataIndex: "last_check",
@@ -76,6 +72,36 @@ Ext.oa.Nagios__Service_Panel = Ext.extend(Ext.grid.GridPanel, {
       })
     }));
     Ext.oa.Nagios__Service_Panel.superclass.initComponent.apply(this, arguments);
+
+    this.on("cellmousedown", function( self, rowIndex, colIndex, evt ){
+        var record = self.getStore().getAt(rowIndex);
+        var graphwin = new Ext.Window({
+          title: record.data.description,
+          height: 230,
+          width:  610,
+          items: new Ext.BoxComponent({
+            autoEl: {
+              tag: "img",
+              src: String.format(
+                "/pnp4nagios/image?host=localhost&srv={0}&source={1}&start={2}&end={3}",
+                record.data.description.replace(/\s/g, '_'), 0, 1318993244, 1319007644
+              )
+            },
+            listeners: {
+              render: function(self){
+                self.el.on("load", function(ev, target, options){
+                  var offsetH = this.ownerCt.getHeight() - this.ownerCt.getInnerHeight()
+                  this.ownerCt.setHeight( target.height + offsetH );
+                  var offsetW = this.ownerCt.getWidth() - this.ownerCt.getInnerWidth()
+                  this.ownerCt.setWidth( target.width + offsetW );
+                }, self);
+              }
+            }
+          }),
+        });
+        graphwin.show();
+      }, this);
+
   },
 
   prepareMenuTree: function(tree){
