@@ -141,5 +141,15 @@
             "command": 9,
             "title": "Disk Load"
         }
+    },
+    {
+        "pk": 9,
+        "model": "nagios.graph",
+        "fields": {
+            "verttitle": "bit/s read (-) / write (+)",
+            "fields": "-0 1",
+            "command": 8,
+            "title": "Traffic"
+        }
     }
 ]
