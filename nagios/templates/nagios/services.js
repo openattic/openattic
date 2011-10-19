@@ -107,6 +107,10 @@ Ext.oa.Nagios__Service_Panel = Ext.extend(Ext.Panel, {
             dataIndex: "description",
             renderer: renderDesc
           }, {
+            header: "{% trans 'Plugin Output' %}",
+            width: 200,
+            dataIndex: "plugin_output"
+          }, {
             header: "{% trans 'Volume' %}",
             width: 100,
             dataIndex: "volumename"
@@ -158,11 +162,6 @@ Ext.oa.Nagios__Service_Panel = Ext.extend(Ext.Panel, {
             xtype: "naggraphimage",
             title: "1 year",
             timespan: 365*24*60*60
-          }, {
-            html:  "coming soon",
-            title: "Plugin output",
-            loadRecord: function( record ){
-            }
           }],
           loadRecord: function( record, id ){
             this.items.each( function(item){
