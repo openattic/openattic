@@ -45,9 +45,9 @@ if [ "$SPEED" != "0" ]; then
 	CRIT=`echo $SPEED \* 0.85 \* 1000000 | bc`
 	
 	# perfdata=cur;warn;crit;min;max
-	echo "Interface $IFACE is $STATE ($SPEED MBit/s)|rxbytes=${RXDIFF}bit/s;${WARN};${CRIT} txbytes=${TXDIFF}bit/s;${WARN};${CRIT}"
+	echo "Interface $IFACE is $STATE ($SPEED MBit/s)|rxbytes=${RXDIFF}bytes/s;${WARN};${CRIT} txbytes=${TXDIFF}bytes/s;${WARN};${CRIT}"
 else
-	echo "Interface $IFACE is $STATE|rxbytes=${RXDIFF}bit/s txbytes=${TXDIFF}bit/s"
+	echo "Interface $IFACE is $STATE|rxbytes=${RXDIFF}bytes/s txbytes=${TXDIFF}bytes/s"
 fi
 
 cat >$IFSTATS <<EOF

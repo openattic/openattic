@@ -146,7 +146,7 @@
         "pk": 9,
         "model": "nagios.graph",
         "fields": {
-            "verttitle": "bit/s rx (-) / tx (+)",
+            "verttitle": "bytes/s rx (-) / tx (+)",
             "fields": "-0 1",
             "command": 8,
             "title": "Traffic"
