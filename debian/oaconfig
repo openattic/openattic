@@ -6,6 +6,7 @@ set -u
 . /etc/default/openattic
 
 cd $OADIR
+OAUSER=` cut -d: -f1 <<< "$RPCD_CHUID"`
 
 if [ "$#" = "0" ]; then
     echo "Usage: $0 <command> [<args>]"
@@ -25,13 +26,13 @@ if [ "$#" = "0" ]; then
     echo "which supports the commands and options listed below."
     echo
 
-    su www-data -c 'python manage.py help'
+    su "$OAUSER" -c 'python manage.py help'
     exit 1
 fi
 
 case $1 in
 	install)
-		su www-data -c 'python manage.py syncdb'
+		su "$OAUSER" -c 'python manage.py syncdb'
 		$0 reload
 		;;
 
@@ -86,7 +87,9 @@ case $1 in
 		;;
 
 	*)
-		# I couldn't get this thing to work with su properly...
-		sudo -u www-data -- python manage.py "$@"
+		# Big thanks to DireFog and pcgod for the following line
+		# First pass my "$@" in a whitespace-preserving way to su's subshell,
+		# which then passes it on to manage.py.
+		su "$OAUSER" -- -c 'python manage.py "$@"' manage.py "$@"
 		;;
 esac
