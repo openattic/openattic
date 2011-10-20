@@ -90,6 +90,6 @@ case $1 in
 		# Big thanks to DireFog and pcgod for the following line
 		# First pass my "$@" in a whitespace-preserving way to su's subshell,
 		# which then passes it on to manage.py.
-		su "$OAUSER" -- -c 'python manage.py "$@"' manage.py "$@"
+		su "$OAUSER" -- -c 'python manage.py "$@"' dummy "$@"
 		;;
 esac
