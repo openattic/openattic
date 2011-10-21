@@ -127,6 +127,7 @@ Ext.oa.Lvm__LogicalVolume_Panel = Ext.extend(Ext.Panel, {
             width: 500,
             items: [{
               xtype: "form",
+              border: false,
               defaults: {
                 xtype: "textfield",
                 anchor: '-20px'
