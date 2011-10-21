@@ -67,8 +67,116 @@ Ext.oa.Lvm__Disks_Panel = Ext.extend(Ext.Panel, {
       title: "{% trans "Disk Management" %}",
       layout: 'accordion',
       buttons: [ {
-        text: "{% trans "Initialize" %}",
-        handler: function(){ alert("add me to a VG"); }
+        text: "{% trans 'Initialize' %}",
+        handler: function(){
+          var initwin = new Ext.Window({
+            title: "{% trans 'Initialize' %}",
+            layout: "fit",
+            height: 300,
+            width: 500,
+            items: [{
+              xtype: "form",
+              border: false,
+              defaults: {
+                xtype: "textfield",
+                anchor: '-20px'
+              },
+              items: [{
+                xtype:      'combo',
+                allowBlank: false,
+                fieldLabel: "{% trans 'Disk' %}",
+                name:       'disk',
+                hiddenName: 'disk_id',
+                store: new Ext.data.DirectStore({
+                  fields: ["rev", "model", "vendor", "block", "type"],
+                  directFn: lvm__VolumeGroup.get_devices
+                }),
+                typeAhead:     true,
+                triggerAction: 'all',
+                emptyText:     'Select...',
+                selectOnFocus: true,
+                forceSelection: true,
+                displayField:  'block',
+                valueField:    'block',
+                ref:           'diskfield',
+                listeners: {
+                  select: function(self, record, index){
+                    var disk = self.getValue();
+                    self.ownerCt.usagelabel.setText( "{% trans 'Querying data...' %}" );
+                    lvm__VolumeGroup.is_device_in_use( disk, function( provider, response ){
+                      if( response.result === false ){
+                        self.ownerCt.usagelabel.setText(
+                          interpolate("{% trans 'Disk %s is not currently used.' %}", [disk])
+                          );
+                        self.ownerCt.initbutton.enable();
+                      }
+                      else if( response.result[1] === "pv" ){
+                        self.ownerCt.usagelabel.setText(
+                          interpolate( "{% trans 'Disk %s is part of the Volume Group %s, refusing to touch it.' %}", [disk, response.result[2]] )
+                        );
+                        self.ownerCt.initbutton.disable();
+                      }
+                      else{
+                        self.ownerCt.usagelabel.setText(
+                          interpolate( "{% trans 'Disk %s is mounted as %s, refusing to touch it.' %}", [disk, response.result[2]] )
+                        );
+                        self.ownerCt.initbutton.disable();
+                      }
+                    } );
+                  }
+                }
+              }, {
+                xtype: "label",
+                ref:   "usagelabel",
+                text:  "{% trans 'Waiting for disk selection...' %}",
+                cls:   "form_hint_label"
+              }, {
+                xtype:      'combo',
+                allowBlank: false,
+                fieldLabel: "{% trans 'Volume Group' %}",
+                name:       'volume',
+                hiddenName: 'volume_id',
+                store: new Ext.data.DirectStore({
+                  fields: ["app", "obj", "id", "name"],
+                  directFn: lvm__VolumeGroup.ids
+                }),
+                typeAhead:     true,
+                triggerAction: 'all',
+                emptyText:     'Select...',
+                selectOnFocus: true,
+                displayField:  'name',
+                valueField:    'id',
+                ref:           'vgfield',
+                listeners: {
+                  select: function(self, record, index){
+                  }
+                }
+              }],
+              buttons: [{
+                text: "{% trans 'Initialize' %}",
+                ref: "../initbutton",
+                disabled: true,
+                handler: function(self){
+                  var vg   = self.ownerCt.ownerCt.vgfield.getValue();
+                  var disk = self.ownerCt.ownerCt.diskfield.getValue();
+                  var done = function( provider, response ){
+                    Ext.Msg.alert("{% trans 'Success!' %}", "{% trans 'The Device has been successfully initialized.' %}");
+                    initwin.hide();
+                  }
+                  if( typeof vg === "number" ){
+                    lvm__VolumeGroup.join_device( vg, disk, done );
+                  }
+                  else if( typeof vg === "string" ){
+                    lvm__VolumeGroup.create({name: vg}, function( provider, response ){
+                      lvm__VolumeGroup.join_device( response.result.id, disk, done );
+                    });
+                  }
+                }
+              }]
+            }]
+          });
+          initwin.show();
+        }
       } ]
     }));
     Ext.oa.Lvm__Disks_Panel.superclass.initComponent.apply(this, arguments);

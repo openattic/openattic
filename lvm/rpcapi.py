@@ -13,20 +13,38 @@ class VgHandler(ModelHandler):
         """ Return an ID for the given object, including the app label and object name. """
         return {'id': obj.id, 'app': obj._meta.app_label, 'obj': obj._meta.object_name, 'name': obj.name}
 
+    def join_device(self, id, device):
+        """ Join the given device into this Volume Group. """
+        if device.startswith("/dev"):
+            raise ValueError("device must be given without leading /dev")
+        vg = VolumeGroup.objects.get(id=id)
+        return vg.join_device(device)
+
+    def get_free_megs(self, id):
+        """ Get amount of free space in a Volume Group. """
+        return VolumeGroup.objects.get(id=id).lvm_free_megs
+
     def get_mounts(self):
+        """ Get currently mounted devices. """
         return VolumeGroup.get_mounts()
 
     def get_devices(self):
+        """ Get all existing devices. """
         return VolumeGroup.get_devices()
 
+    def is_device_in_use(self, device):
+        """ Check if the given device is in use either as a PV, or by being mounted. """
+        if device.startswith("/dev"):
+            raise ValueError("device must be given without leading /dev")
+        return VolumeGroup.is_device_in_use(device)
+
     def get_partitions(self, device):
+        """ Get all partitions from a given device. """
         return VolumeGroup.get_partitions(device)
 
     def get_disk_stats(self, device):
+        """ Get Kernel disk stats for a given device. """
         return VolumeGroup.get_disk_stats(device)
-
-    def get_free_megs(self, id):
-        return VolumeGroup.objects.get(id=id).lvm_free_megs
 
 class LvHandler(ModelHandler):
     model = LogicalVolume

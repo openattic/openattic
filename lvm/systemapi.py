@@ -13,13 +13,16 @@ def lvm_command(cmd):
         return_out_err=True, log=lvm_settings.LOG_COMMANDS
         )
 
-    if err:
+    if err and err.strip() != "No volume groups found":
         raise SystemError(err)
 
     return [
         dict( [ vardef.split('=', 1) for vardef in line.split(" ") if vardef ] )
         for line in out.split("\n") if line.strip()
         ]
+
+def lvm_pvs():
+    return dict( [ (lv["LVM2_PV_NAME"], lv) for lv in lvm_command(["/sbin/pvs"]) ] )
 
 def lvm_vgs():
     return dict( [ (lv["LVM2_VG_NAME"], lv) for lv in lvm_command(["/sbin/vgs"]) ] )
@@ -33,12 +36,25 @@ class SystemD(BasePlugin):
     dbus_path = "/lvm"
 
     @method(in_signature="", out_signature="a{sa{ss}}")
+    def pvs(self):
+        return lvm_pvs()
+
+    @method(in_signature="", out_signature="a{sa{ss}}")
     def vgs(self):
         return lvm_vgs()
 
     @method(in_signature="", out_signature="a{sa{ss}}")
     def lvs(self):
         return lvm_lvs()
+
+    @method(in_signature="ss", out_signature="i")
+    def join_device_to_vg(self, device, vgname):
+        devpath = os.path.join("/dev", device)
+        invoke(["/sbin/pvcreate", devpath])
+        if vgname in lvm_vgs():
+            return invoke(["/sbin/vgextend", vgname, devpath])
+        else:
+            return invoke(["/sbin/vgcreate", vgname, devpath])
 
     @method(in_signature="ssis", out_signature="i")
     def lvcreate(self, vgname, lvname, megs, snapshot):

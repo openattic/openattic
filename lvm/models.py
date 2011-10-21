@@ -107,6 +107,13 @@ class VolumeGroup(models.Model):
     def __unicode__(self):
         return "%s (%s MB free)" % (self.name, self.lvm_info['LVM2_VG_FREE'])
 
+    def join_device(self, device):
+        """ Reformat a device as a Physical Volume and add it to this Volume Group. """
+        if VolumeGroup.is_device_in_use(device):
+            raise ValueError( "Device '%s' is in use, won't touch it." % device )
+        lvm = dbus.SystemBus().get_object(settings.DBUS_IFACE_SYSTEMD, "/lvm")
+        return lvm.join_device_to_vg(device, self.name)
+
     @classmethod
     def get_mounts(cls):
         """ Get currently mounted devices. """
@@ -141,6 +148,19 @@ class VolumeGroup(models.Model):
                     })
 
         return devinfo
+
+    @classmethod
+    def is_device_in_use(cls, device):
+        """ Check if this device is mounted somewhere or used as a physical volume. """
+        lvm = dbus.SystemBus().get_object(settings.DBUS_IFACE_SYSTEMD, "/lvm")
+        pvs = lvm.pvs()
+        for pvdev in pvs:
+            if device in pvdev:
+                return True, "pv", unicode(pvs[pvdev]["LVM2_VG_NAME"])
+        for mount in VolumeGroup.get_mounts():
+            if device in os.path.realpath(mount[0]):
+                return True, "mount", mount[1]
+        return False
 
     @classmethod
     def get_partitions(cls, device):
