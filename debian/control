@@ -185,6 +185,7 @@ Architecture: all
 Depends: ${misc:Depends},
  ${python:Depends},
  openattic-base,
+ bc,
  nagios3-core, nagios-plugins-standard, nagios-plugins-basic,
  pnp4nagios-bin
 Description: Nagios module for openATTIC
