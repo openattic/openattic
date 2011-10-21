@@ -12,7 +12,6 @@ htdocs/js               /usr/share/openattic/htdocs
 htdocs/extjs_themes     /usr/share/openattic/htdocs
 htdocs/extjs_charts.swf /usr/share/openattic/htdocs
 htdocs/portal           /usr/share/openattic/htdocs
-htdocs/icons            /usr/share/openattic/htdocs
 htdocs/icons2           /usr/share/openattic/htdocs
 
 templates /usr/share/openattic
