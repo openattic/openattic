@@ -3,7 +3,7 @@
 
 from rpcd.handlers import ModelHandler
 
-from lvm.models import VolumeGroup, LogicalVolume
+from lvm.models import VolumeGroup, LogicalVolume, ZfsSubvolume, ZfsSnapshot
 
 class VgHandler(ModelHandler):
     model = VolumeGroup
@@ -139,4 +139,12 @@ class LvHandler(ModelHandler):
         lv = LogicalVolume.objects.get(id=id)
         return lv.standby
 
-RPCD_HANDLERS = [VgHandler, LvHandler]
+
+class ZfsSubvolumeHandler(ModelHandler):
+    model = ZfsSubvolume
+
+class ZfsSnapshotHandler(ModelHandler):
+    model = ZfsSnapshot
+
+
+RPCD_HANDLERS = [VgHandler, LvHandler, ZfsSubvolumeHandler, ZfsSnapshotHandler]

@@ -277,3 +277,22 @@ class SystemD(BasePlugin):
             ["/bin/chown", "-R", ("%s:%s" % (chown, chgrp)), mountpoint]
             ], self.format_complete, (devpath, mountpoint, "zfs"))
 
+    @method(in_signature="ss", out_signature="i")
+    def zfs_create_volume(self, pool, volume):
+        return invoke(["zfs", "create", "%s/%s" % (pool, volume)])
+
+    @method(in_signature="ss", out_signature="i")
+    def zfs_destroy_volume(self, pool, volume):
+        return invoke(["zfs", "destroy", "%s/%s" % (pool, volume)])
+
+    @method(in_signature="ss", out_signature="i")
+    def zfs_create_snapshot(self, orig, snapshot):
+        invoke(["zfs", "snapshot", "%s@%s" % (orig, snapshot)])
+        return invoke(["zfs", "clone",
+            "%s@%s" % (orig, snapshot),
+            "%s/.%s" % (orig, snapshot)
+            ])
+
+    @method(in_signature="ss", out_signature="i")
+    def zfs_destroy_snapshot(self, orig, snapshot):
+        return invoke(["zfs", "destroy", "-R", "%s@%s" % (orig, snapshot)])

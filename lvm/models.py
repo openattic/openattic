@@ -11,7 +11,7 @@ from django.conf import settings
 from django.utils.translation   import ugettext_noop, ugettext_lazy as _
 
 from systemd.helpers import dbus_to_python
-from lvm.filesystems import FILESYSTEMS, get_by_name as get_fs_by_name
+from lvm.filesystems import Zfs, FILESYSTEMS, get_by_name as get_fs_by_name
 from lvm             import signals as lvm_signals
 
 SETUP_STATE_CHOICES = (
@@ -515,3 +515,92 @@ class LVChainedModule(StatefulModel):
     def delete(self):
         self.uninstall()
         models.Model.delete(self)
+
+
+class ZfsSubvolume(models.Model):
+    volume      = models.ForeignKey(LogicalVolume)
+    volname     = models.CharField(max_length=50)
+
+    lvm = LogicalVolume.lvm
+
+    def __init__( self, *args, **kwargs ):
+        models.Model.__init__( self, *args, **kwargs )
+        self._lvm = None
+        self._fs = None
+
+    def clean(self):
+        from django.core.exceptions import ValidationError
+        if self.volume.filesystem != Zfs.name:
+            raise ValidationError('This share type can only be used on ZFS volumes.')
+
+    @property
+    def name(self):
+        return "%s/%s" % (self.volume.name, self.volname)
+
+    @property
+    def fs(self):
+        """ An instance of the filesystem handler class for this Subvolume. """
+        if self._fs is None:
+            self._fs = get_fs_by_name(self.volume.filesystem)(self)
+        return self._fs
+
+    @property
+    def path(self):
+        return self.volume.path
+
+    def save( self, *args, **kwargs ):
+        ret = models.Model.save(self, *args, **kwargs)
+        self.volume.lvm.zfs_create_volume(self.volume.name, self.volname)
+        return ret
+
+    def delete( self ):
+        ret = models.Model.delete(self)
+        self.volume.lvm.zfs_destroy_volume(self.volume.name, self.volname)
+        return ret
+
+
+class ZfsSnapshot(models.Model):
+    volume      = models.ForeignKey(LogicalVolume)
+    subvolume   = models.ForeignKey(ZfsSubvolume, blank=True, null=True)
+    snapname    = models.CharField(max_length=50)
+
+    lvm = LogicalVolume.lvm
+
+    def __init__( self, *args, **kwargs ):
+        models.Model.__init__( self, *args, **kwargs )
+        self._lvm = None
+        self._fs  = None
+
+    def clean(self):
+        from django.core.exceptions import ValidationError
+        if self.volume.filesystem != Zfs.name:
+            raise ValidationError('This share type can only be used on ZFS volumes.')
+
+    @property
+    def origvolume(self):
+        if self.subvolume:
+            return self.subvolume
+        return self.volume
+
+    @property
+    def name(self):
+        return "%s@%s" % (self.origvolume.name, self.snapname)
+
+    @property
+    def fs(self):
+        """ An instance of the filesystem handler class for this Subvolume. """
+        if self._fs is None:
+            self._fs = get_fs_by_name(self.volume.filesystem)(self)
+        return self._fs
+
+    @property
+    def path(self):
+        return self.volume.path
+
+    def save( self, *args, **kwargs ):
+        self.volume.lvm.zfs_create_snapshot(self.origvolume.name, self.snapname)
+        return models.Model.save(self, *args, **kwargs)
+
+    def delete( self ):
+        self.volume.lvm.zfs_destroy_snapshot(self.origvolume.name, self.snapname)
+        return models.Model.delete(self)
