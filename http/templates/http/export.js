@@ -48,7 +48,7 @@ Ext.oa.Http__Export_Panel = Ext.extend(Ext.grid.GridPanel, {
               }],
               buttons: [{
                 text: "{% trans 'Create Export' %}",
-                icon: MEDIA_URL + "/icons/accept.png",
+                icon: MEDIA_URL + "/oxygen/16x16/actions/dialog-ok-apply.png",
                 handler: function(self){
                   http__Export.create({
                     'volume': {
@@ -113,8 +113,8 @@ Ext.oa.Http__Export_Panel = Ext.extend(Ext.grid.GridPanel, {
           dataIndex: "volumename",
           renderer: function(val, x, store){
             return String.format(
-              '<a href="/volumes/{0}" target="_blank" title="Browse">' +
-                '<img alt="Browser" src="{{ MEDIA_URL }}/icons/application_double.png">' +
+              '<a href="/volumes/{0}" target="_blank" title="{% trans "Browse in new window" %}">' +
+                '<img alt="Browser" src="{{ MEDIA_URL }}/oxygen/16x16/places/folder-remote.png">' +
               '</a>',
               val );
           }

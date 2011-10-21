@@ -65,7 +65,7 @@ Ext.oa.Auth__User_Panel = Ext.extend(Ext.grid.GridPanel, {
               }],
               buttons: [{
                 text: 'Create User',
-                icon: MEDIA_URL + "/icons/accept.png",
+                icon: MEDIA_URL + "/oxygen/16x16/actions/dialog-ok-apply.png",
                 handler: function(self){
                   auth__User.create({
                     'username':    self.ownerCt.ownerCt.usernamefield.getValue(),

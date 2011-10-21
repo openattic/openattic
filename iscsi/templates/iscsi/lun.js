@@ -74,7 +74,7 @@ Ext.oa.Iscsi__Lun_Panel = Ext.extend(Ext.grid.GridPanel, {
               } ],
               buttons: [{
                 text: "{% trans 'Create Lun' %}",
-                icon: MEDIA_URL + "/icons/accept.png",
+                icon: MEDIA_URL + "/oxygen/16x16/actions/dialog-ok-apply.png",
                 handler: function(self){
                   iscsi__Lun.create({
                     'ltype':     self.ownerCt.ownerCt.typefield.getValue(),

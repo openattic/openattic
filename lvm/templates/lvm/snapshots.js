@@ -93,7 +93,7 @@ Ext.oa.Lvm__Snapshot_Panel = Ext.extend(Ext.grid.GridPanel, {
               }],
               buttons: [{
                 text: "{% trans 'Create Snapshot' %}",
-                icon: MEDIA_URL + "/icons/accept.png",
+                icon: MEDIA_URL + "/oxygen/16x16/actions/dialog-ok-apply.png",
                 handler: function(self){
                   if( !self.ownerCt.ownerCt.getForm().isValid() ){
                     return;

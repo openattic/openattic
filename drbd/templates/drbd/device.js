@@ -37,7 +37,7 @@ Ext.oa.Drbd__Device_Panel = Ext.extend(Ext.grid.GridPanel, {
               }],
               buttons: [{
                 text: 'Create DRBD Device',
-                icon: MEDIA_URL + "/icons/accept.png",
+                icon: MEDIA_URL + "/oxygen/16x16/actions/dialog-ok-apply.png",
                 handler: function(self){
                   drbd__DrbdDevice.create({
                     'protocol': self.ownerCt.ownerCt.protofield.getValue()

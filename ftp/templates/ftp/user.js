@@ -56,7 +56,7 @@ Ext.oa.Ftp__User_Panel = Ext.extend(Ext.grid.GridPanel, {
               }],
               buttons: [{
                 text: "{% trans 'Create User' %}",
-                icon: MEDIA_URL + "/icons/accept.png",
+                icon: MEDIA_URL + "/oxygen/16x16/actions/dialog-ok-apply.png",
                 handler: function(self){
                   ftp__User.create({
                     'username': self.ownerCt.ownerCt.namefield.getValue(),

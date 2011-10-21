@@ -61,7 +61,7 @@ Ext.oa.Iscsi__Target_Panel = Ext.extend(Ext.grid.GridPanel, {
               }],
               buttons: [{
                 text: "{% trans 'Create Target' %}",
-                icon: MEDIA_URL + "/icons/accept.png",
+                icon: MEDIA_URL + "/oxygen/16x16/actions/dialog-ok-apply.png",
                 handler: function(self){
                   iscsi__Target.create({
                     'name':      self.ownerCt.ownerCt.namefield.getValue(),

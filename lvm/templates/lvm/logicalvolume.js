@@ -216,7 +216,7 @@ Ext.oa.Lvm__LogicalVolume_Panel = Ext.extend(Ext.Panel, {
               }],
               buttons: [{
                 text: "{% trans 'Create Volume' %}",
-                icon: MEDIA_URL + "/icons/accept.png",
+                icon: MEDIA_URL + "/icons2/16x16/actions/gtk-save.png",
                 handler: function(self){
                   if( !self.ownerCt.ownerCt.getForm().isValid() ){
                     return;
