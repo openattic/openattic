@@ -185,7 +185,7 @@ Architecture: all
 Depends: ${misc:Depends},
  ${python:Depends},
  openattic-base,
- nagios3, nagios-plugins-standard, nagios-plugins-basic,
+ nagios3-core, nagios-plugins-standard, nagios-plugins-basic,
  pnp4nagios-bin
 Description: Nagios module for openATTIC
  Installs the Nagios module, which provides monitoring, statistics and graphs
