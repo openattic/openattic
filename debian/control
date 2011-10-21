@@ -15,6 +15,7 @@ Depends: ${misc:Depends}, openattic-base,
  openattic-module-nfs,
  openattic-module-http,
  openattic-module-samba,
+ openattic-module-ssmtp,
  openattic-module-ftp-mysql,
  libapache2-mod-wsgi,
  apache2,
@@ -35,6 +36,7 @@ Depends: ${misc:Depends}, openattic-base,
  openattic-module-munin,
  openattic-module-nagios,
  openattic-module-drbd,
+ openattic-module-ssmtp,
  openattic-module-ftp-mysql,
  libapache2-mod-wsgi, apache2,
  openattic-mysql
@@ -52,6 +54,7 @@ Depends: ${misc:Depends}, openattic-base,
  openattic-module-samba,
  openattic-module-munin,
  openattic-module-nagios,
+ openattic-module-ssmtp,
  openattic-module-drbd,
  openattic-module-ftp-pgsql,
  libapache2-mod-wsgi, apache2,
@@ -217,3 +220,11 @@ Depends: ${misc:Depends}, openattic-module-lvm,
 Description: HTTP module for openATTIC
  Installs the HTTP module, which allows accessing data in a volume via HTTP.
  This is useful e.g. for software repositories.
+
+Package: openattic-module-ssmtp
+Architecture: all
+Depends: ${misc:Depends}, openattic-base,
+ ssmtp
+Description: SSMTP module for openATTIC
+ Installs the SSMTP module for openATTIC, which is used to provide emailing
+ support.
