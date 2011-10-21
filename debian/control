@@ -180,23 +180,20 @@ Depends: ${misc:Depends}, openattic-base,
 Description: Munin module for openATTIC
  Installs the Munin module, which provides statistics and graphs using Munin.
 
-Package: nagios-plugins-openattic
-Architecture: all
-Depends: ${misc:Depends},
- ${python:Depends},
- nagios-plugins-basic, openattic-base
-Description: Nagios plugins for openATTIC
- Installs Nagios plugins that check the state of openATTIC's Systemd and
- RPCd daemons which are essential for openATTIC to function.
-
 Package: openattic-module-nagios
 Architecture: all
 Depends: ${misc:Depends}, openattic-base,
  nagios3, nagios-plugins-standard, nagios-plugins-basic,
- nagios-plugins-openattic, pnp4nagios-bin
+ pnp4nagios-bin
 Description: Nagios module for openATTIC
  Installs the Nagios module, which provides monitoring, statistics and graphs
  using Nagios.
+ .
+ This package also contains the Nagios check plugins for openATTIC, namely:
+  check_diskstats
+  check_iface_traffic
+  check_openattic_systemd
+  check_openattic_rpcd
 
 Package: openattic-module-drbd
 Architecture: all

@@ -1,2 +1,3 @@
 nagios /usr/share/openattic
+debian/nagios_plugins_conf.d/openattic.cfg /etc/nagios-plugins/config
 installed_apps.d/nagios /usr/share/openattic/installed_apps.d

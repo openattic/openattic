@@ -1,0 +1,4 @@
+nagios/plugins/check_diskstats          /usr/lib/nagios/plugins/check_diskstats
+nagios/plugins/check_iface_traffic      /usr/lib/nagios/plugins/check_iface_traffic
+nagios/plugins/check_openattic_rpcd     /usr/lib/nagios/plugins/check_openattic_rpcd
+nagios/plugins/check_openattic_systemd  /usr/lib/nagios/plugins/check_openattic_systemd
