@@ -9,6 +9,7 @@ Ext.oa.Auth__User_Panel = Ext.extend(Ext.grid.GridPanel, {
       return '<img src="' + MEDIA_URL + '/oxygen/16x16/actions/dialog-cancel.png" title="no" />';
     };
     Ext.apply(this, Ext.apply(this.initialConfig, {
+      id: "auth__user_panel_inst",
       title: "Users",
       viewConfig: { forceFit: true },
       buttons: [{
@@ -109,19 +110,19 @@ Ext.oa.Auth__User_Panel = Ext.extend(Ext.grid.GridPanel, {
       },{
         text: 'Edit',
         handler: function(self){
-        var sm = authUserGrid.getSelectionModel();
-        if( sm.hasSelection() ){
+          var sm = authUserGrid.getSelectionModel();
+          if( sm.hasSelection() ){
             var sel = sm.selections.items[0];
             var addwin = new Ext.Window({
-            title: "Edit User",
+              title: "Edit User",
               layout: "fit",
               height: 300,
               width: 500,
               items: [{
-              xtype: "form",
+                xtype: "form",
                 defaults: {
-                xtype: "textfield",
-                anchor: '-20px'
+                  xtype: "textfield",
+                  anchor: '-20px'
                 },
                 items: [{
                   fieldLabel: "User Name",
@@ -185,18 +186,19 @@ Ext.oa.Auth__User_Panel = Ext.extend(Ext.grid.GridPanel, {
                           addwin.hide();
                         }
                       });
+                    }
                   }
-                  }
-                }]   
+                }]
               }]
             });
             addwin.show();
+          }
         }
-       }},{
-         text: 'Change Password',
-         handler: function(self){
-         var sm = authUserGrid.getSelectionModel();
-         if( sm.hasSelection() ){
+      },{
+        text: 'Change Password',
+        handler: function(self){
+          var sm = authUserGrid.getSelectionModel();
+          if( sm.hasSelection() ){
             var sel = sm.selections.items[0];
             var addwin = new Ext.Window({
             title: "Change Password",
@@ -204,10 +206,10 @@ Ext.oa.Auth__User_Panel = Ext.extend(Ext.grid.GridPanel, {
               height: 150,
               width: 300,
               items: [{
-              xtype: "form",
-                defaults: {
-                xtype: "textfield",
-                anchor: '-20px'
+                xtype: "form",
+                  defaults: {
+                  xtype: "textfield",
+                  anchor: '-20px'
                 },
                 items: [{
                   fieldLabel: "User Name",
@@ -220,30 +222,27 @@ Ext.oa.Auth__User_Panel = Ext.extend(Ext.grid.GridPanel, {
                   inputType: 'password',
                   name: "password",
                   ref: 'passwordfield'
-                }
-                ],
-                 buttons: [{
-                 text: 'Save',
-                 handler: function(self){
-                   auth__User.set_password(sel.data.id, self.ownerCt.ownerCt.passwordfield.getValue(), 
-                       function(provider, response){
-                         addwin.hide();
-                       });
-                   
-                 }
+                }],
+                buttons: [{
+                  text: 'Save',
+                  handler: function(self){
+                    auth__User.set_password(sel.data.id, self.ownerCt.ownerCt.passwordfield.getValue(),
+                      function(provider, response){
+                        addwin.hide();
+                      });
+                  }
                 }]
-               }]
-                  });
-                  addwin.show();
-            }
-         }
-      }
-   ],
-      store: new Ext.data.DirectStore({
-        autoLoad: true,
+              }]
+            });
+            addwin.show();
+          }
+        }
+      }],
+      store: {
+        xtype: "directstore",
         fields: ['id', 'username', 'first_name', 'last_name', 'email', 'is_active', 'is_staff', 'is_superuser', 'last_login'],
         directFn: auth__User.all
-      }),
+      },
       colModel: new Ext.grid.ColumnModel({
         defaults: {
           sortable: true
@@ -288,18 +287,28 @@ Ext.oa.Auth__User_Panel = Ext.extend(Ext.grid.GridPanel, {
     }));
     Ext.oa.Auth__User_Panel.superclass.initComponent.apply(this, arguments);
   },
+  onRender: function(){
+    Ext.oa.Auth__User_Panel.superclass.onRender.apply(this, arguments);
+    this.store.reload();
+  }
+});
+
+Ext.reg("auth__user_panel", Ext.oa.Auth__User_Panel);
+
+Ext.oa.Auth__User_Module = Ext.extend(Object, {
+  panel: "auth__user_panel",
 
   prepareMenuTree: function(tree){
     tree.root.attributes.children[4].children.push({
       text: 'User Management',
       icon: MEDIA_URL + '/icons2/22x22/apps/config-users.png',
       leaf: true,
-      panel: this,
+      panel: 'auth__user_panel_inst',
       href: '#'
     });
   }
 });
 
-window.MainViewModules.push( new Ext.oa.Auth__User_Panel() );
+window.MainViewModules.push( new Ext.oa.Auth__User_Module() );
 
 // kate: space-indent on; indent-width 2; replace-tabs on;
