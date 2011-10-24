@@ -74,7 +74,7 @@ Ext.oa.Nagios__Service_Panel = Ext.extend(Ext.Panel, {
           icon: MEDIA_URL + "/icons2/16x16/actions/reload.png",
           tooltip: "{% trans 'Reload' %}",
           handler: function(self){
-            nagiosGrid.store.reload();
+            nagiosGrid.items.items[0].store.reload();
           }
         }
       ],
