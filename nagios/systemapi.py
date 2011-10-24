@@ -41,12 +41,12 @@ class SystemD(LockingPlugin):
     def iptables_install_rules(self, device, socketproto, portno, protocolname):
         inp = invoke([
             "iptables", "-I", "INPUT", "-p", socketproto,
-            "-i", device, "--dport", portno, "-m", "comment",
+            "-i", device, "--dport", str(portno), "-m", "comment",
             "--comment", "OPENATTIC:%s:%s:IN" % ( device.upper(), protocolname.upper() )
             ])
         outp = invoke([
             "iptables", "-I", "OUTPUT", "-p", socketproto,
-            "-o", device, "--sport", portno, "-m", "comment",
+            "-o", device, "--sport", str(portno), "-m", "comment",
             "--comment", "OPENATTIC:%s:%s:OUT" % ( device.upper(), protocolname.upper() )
             ])
         return inp, outp
@@ -55,12 +55,12 @@ class SystemD(LockingPlugin):
     def iptables_remove_rules(self, device, socketproto, portno, protocolname):
         inp = invoke([
             "iptables", "-D", "INPUT", "-p", socketproto,
-            "-i", device, "--dport", portno, "-m", "comment",
+            "-i", device, "--dport", str(portno), "-m", "comment",
             "--comment", "OPENATTIC:%s:%s:IN" % ( device.upper(), protocolname.upper() )
             ])
         outp = invoke([
             "iptables", "-D", "OUTPUT", "-p", socketproto,
-            "-o", device, "--sport", portno, "-m", "comment",
+            "-o", device, "--sport", str(portno), "-m", "comment",
             "--comment", "OPENATTIC:%s:%s:OUT" % ( device.upper(), protocolname.upper() )
             ])
         return inp, outp
