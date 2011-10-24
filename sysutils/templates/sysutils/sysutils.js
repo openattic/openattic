@@ -40,7 +40,9 @@ Ext.oa.SysUtils_Panel = Ext.extend(Ext.grid.GridPanel, {
       }()),
       colModel: new Ext.grid.ColumnModel({
         defaults: {
-          sortable: true
+          sortable: true,
+          x: 500,
+          y: 500
         },
         columns: [{
           header: "{% trans 'Service Name' %}",

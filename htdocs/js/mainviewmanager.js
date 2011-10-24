@@ -4,38 +4,52 @@ Ext.oa.MainViewManager = Ext.extend(Ext.Panel, {
   initComponent: function(){
     Ext.apply(this, Ext.apply(this.initialConfig, {
       layout: 'border',
-      items: [ {
-        title: 'openATTIC',
+      tbar: new Ext.Toolbar({
+        items: [
+          new Ext.BoxComponent({
+            autoEl: { tag: "img", src: MEDIA_URL + '/openattic.png' }, region: "north", height: 50}), 
+        ],
+        region: 'center',
+        plugins : [
+          new Ext.ux.ToolbarDroppable({
+            createItem: function(data) {
+              var record = data.draggedRecord;
+              
+              return new Ext.Button({
+                text   : "test",
+                iconCls: '/srv/openattic/htdocs/openattic.png',
+                reorderable: true
+              });
+            }
+          }),
+          new Ext.ux.ToolbarReorderer({defaultReorderable: false})
+        ],
+      }),
+            
+      items: [ new Ext.oa.MenuTree({
+        title: 'Menu',
         region: "west",
-        layout: "border",
         split: true,
         width: 250,
         minSize: 175,
         maxSize: 400,
         collapsible: true,
-        border: false,
-        items: [
-          new Ext.BoxComponent({
-            autoEl: { tag: "img", src: MEDIA_URL + '/openattic.png' }, region: "north", height: 80
-          }),
-          new Ext.oa.MenuTree({
-            border: false,
-            region: "center"
-          })
-        ]
-      }, {
+        enableDD: true
+        
+      }), {
         region: "center",
         activeItem: 0,
         border: false,
         hideBorders: true,
         layout: "card",
         items: window.MainViewModules
-      }],
+      }
+    ],
       modules: window.MainViewModules
     }));
     Ext.oa.MainViewManager.superclass.initComponent.apply(this, arguments);
-
-    this.menutree = this.items.items[0].items.items[1];
+      
+    this.menutree = this.items.items[0];
     this.modcontainer = this.items.items[1];
     this.currentComponent = window.MainViewModules[0];
 
@@ -45,7 +59,7 @@ Ext.oa.MainViewManager = Ext.extend(Ext.Panel, {
 
     this.menutree.on( 'beforeclick', this.treenodeClicked, this );
   },
-
+  
   treenodeClicked: function( node, event ){
     if( node.leaf && typeof node.attributes.panel != "undefined" )
       this.switchComponent( node.attributes.panel );
@@ -53,7 +67,8 @@ Ext.oa.MainViewManager = Ext.extend(Ext.Panel, {
 
   switchComponent: function( toComponent ){
     this.modcontainer.layout.setActiveItem( toComponent.id );
-  }
+  },
+  
 });
 
 
