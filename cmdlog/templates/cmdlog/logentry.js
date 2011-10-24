@@ -6,7 +6,6 @@ Ext.oa.Cmdlog__LogEntry_Panel = Ext.extend(Ext.Panel, {
   initComponent: function(){
     var fields = ['id', 'command', 'exitcode', 'endtime'];
     var store = new Ext.data.DirectStore({
-      autoLoad: true,
       remoteSort: true,
       fields: fields,
       directFn: cmdlog__LogEntry.range_values,
@@ -53,6 +52,7 @@ Ext.oa.Cmdlog__LogEntry_Panel = Ext.extend(Ext.Panel, {
       store: textStore
     });
     Ext.apply(this, Ext.apply(this.initialConfig, {
+      id: "cmdlog__logentry_panel_inst",
       title: "{% trans 'Log Entries' %}",
       layout: "border",
       items: [{
@@ -148,18 +148,28 @@ Ext.oa.Cmdlog__LogEntry_Panel = Ext.extend(Ext.Panel, {
     }));
     Ext.oa.Cmdlog__LogEntry_Panel.superclass.initComponent.apply(this, arguments);
   },
+  onRender: function(){
+    Ext.oa.Cmdlog__LogEntry_Panel.superclass.onRender.apply(this, arguments);
+    this.items.items[0].store.reload();
+  }
+});
+
+Ext.reg("cmdlog__logentry_panel", Ext.oa.Cmdlog__LogEntry_Panel);
+
+Ext.oa.Cmdlog__LogEntry_Module = Ext.extend(Object, {
+  panel: "cmdlog__logentry_panel",
 
   prepareMenuTree: function(tree){
     tree.root.attributes.children[0].children.push({
       text: "{% trans 'Command Log' %}",
       leaf: true,
       icon: MEDIA_URL + '/icons2/22x22/actions/bookmark-new.png',
-      panel: this,
+      panel: "cmdlog__logentry_panel_inst",
       href: '#'
     });
   }
 });
 
-window.MainViewModules.push( new Ext.oa.Cmdlog__LogEntry_Panel() );
+window.MainViewModules.push( new Ext.oa.Cmdlog__LogEntry_Module() );
 
 // kate: space-indent on; indent-width 2; replace-tabs on;

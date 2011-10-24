@@ -66,6 +66,7 @@ Ext.oa.Nagios__Service_Panel = Ext.extend(Ext.Panel, {
     };
 
     Ext.apply(this, Ext.apply(this.initialConfig, {
+      id: "nagios__service_panel_inst",
       title: "{% trans 'Nagios Services' %}",
       layout: "border",
       buttons: [
@@ -82,8 +83,8 @@ Ext.oa.Nagios__Service_Panel = Ext.extend(Ext.Panel, {
         xtype: 'grid',
         region: "center",
         viewConfig: { forceFit: true },
-        store: new Ext.data.DirectStore({
-          autoLoad: true,
+        store: {
+          xtype: 'directstore',
           fields: ['id', 'description', {
             name: "volumename",    mapping: "volume", convert: function(val, row){ return val.name; }
           }, {
@@ -96,7 +97,7 @@ Ext.oa.Nagios__Service_Panel = Ext.extend(Ext.Panel, {
             name: "next_check",    mapping: "state",  convert: function(val, row){ return val.next_check; }
           }],
           directFn: nagios__Service.all
-        }),
+        },
         colModel: new Ext.grid.ColumnModel({
           defaults: {
             sortable: true
@@ -202,19 +203,29 @@ Ext.oa.Nagios__Service_Panel = Ext.extend(Ext.Panel, {
     }));
     Ext.oa.Nagios__Service_Panel.superclass.initComponent.apply(this, arguments);
   },
+  onRender: function(){
+    Ext.oa.Nagios__Service_Panel.superclass.onRender.apply(this, arguments);
+    this.items.items[0].store.reload();
+  }
+});
+
+Ext.reg("nagios__service_panel", Ext.oa.Nagios__Service_Panel);
+
+Ext.oa.Nagios__Service_Module = Ext.extend(Object, {
+  panel: "nagios__service_panel",
 
   prepareMenuTree: function(tree){
     tree.root.attributes.children[0].children.push({
       text: "{% trans 'Monitoring' %}",
       leaf: true,
       icon: MEDIA_URL + '/icons2/22x22/apps/nfs.png',
-      panel: this,
+      panel: "nagios__service_panel_inst",
       href: '#'
     });
   }
 });
 
 
-window.MainViewModules.push( new Ext.oa.Nagios__Service_Panel() );
+window.MainViewModules.push( new Ext.oa.Nagios__Service_Module() );
 
 // kate: space-indent on; indent-width 2; replace-tabs on;

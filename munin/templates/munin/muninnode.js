@@ -4,6 +4,7 @@ Ext.namespace("Ext.oa");
 Ext.oa.Munin__MuninNode_Panel = Ext.extend(Ext.Panel, {
   initComponent: function(){
     Ext.apply(this, Ext.apply(this.initialConfig, {
+      id: 'munin__muninnode_panel_inst',
       title: "{% trans 'Performance' %}",
       layout: 'border',
       items: [{
@@ -12,8 +13,8 @@ Ext.oa.Munin__MuninNode_Panel = Ext.extend(Ext.Panel, {
         width: 160,
         viewConfig: { forceFit: true },
         ref: "../modulespanel",
-        store: new Ext.data.DirectStore({
-          autoLoad: true,
+        store: {
+          xtype: 'directstore',
           fields: [{
             name: 'name',
             convert: function( val, row ){
@@ -22,7 +23,7 @@ Ext.oa.Munin__MuninNode_Panel = Ext.extend(Ext.Panel, {
           }],
           directFn: munin__MuninNode.get_modules,
           baseParams: {'obj': 1}
-        }),
+        },
         colModel: new Ext.grid.ColumnModel({
           columns: [{
             header: "{% trans 'Modul' %}",
@@ -44,9 +45,9 @@ Ext.oa.Munin__MuninNode_Panel = Ext.extend(Ext.Panel, {
         items: (function(){
           // muninStore needs to be global so the listener can access it
           muninStore = new Ext.data.ArrayStore({
-              fields: ['name'],
-              data: [['apache_accesses']]
-            });
+            fields: ['name'],
+            data: [['apache_accesses']]
+          });
           var dv = function(when){
             return new Ext.DataView({
               title: when,
@@ -71,19 +72,29 @@ Ext.oa.Munin__MuninNode_Panel = Ext.extend(Ext.Panel, {
     }));
     Ext.oa.Munin__MuninNode_Panel.superclass.initComponent.apply(this, arguments);
   },
+  onRender: function(){
+    Ext.oa.Munin__MuninNode_Panel.superclass.onRender.apply(this, arguments);
+    this.items.items[0].store.reload();
+  }
+});
+
+Ext.reg("munin__muninnode_panel", Ext.oa.Munin__MuninNode_Panel);
+
+Ext.oa.Munin__MuninNode_Module = Ext.extend(Object, {
+  panel: "munin__muninnode_panel",
 
   prepareMenuTree: function(tree){
     tree.root.attributes.children[0].children.push({
       text: "{% trans 'Performance' %}",
       leaf: true,
       icon: MEDIA_URL + '/icons2/22x22/apps/samba.png',
-      panel: this,
+      panel: 'munin__muninnode_panel_inst',
       href: '#'
     });
   }
 });
 
 
-window.MainViewModules.push( new Ext.oa.Munin__MuninNode_Panel() );
+window.MainViewModules.push( new Ext.oa.Munin__MuninNode_Module() );
 
 // kate: space-indent on; indent-width 2; replace-tabs on;

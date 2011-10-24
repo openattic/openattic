@@ -6,6 +6,7 @@ Ext.oa.Nfs__Export_Panel = Ext.extend(Ext.grid.GridPanel, {
   initComponent: function(){
     var nfsGrid = this;
     Ext.apply(this, Ext.apply(this.initialConfig, {
+      id: 'nfs__export_panel_inst',
       title: "{% trans 'NFS' %}",
       viewConfig: { forceFit: true },
       buttons: [
@@ -112,11 +113,11 @@ Ext.oa.Nfs__Export_Panel = Ext.extend(Ext.grid.GridPanel, {
           }
         }
       ],
-      store: new Ext.data.DirectStore({
-        autoLoad: true,
+      store: {
+        xtype: 'directstore',
         fields: ['id', 'address', 'path', 'options', 'state'],
         directFn: nfs__Export.all
-      }),
+      },
       colModel: new Ext.grid.ColumnModel({
         defaults: {
           sortable: true
@@ -138,19 +139,28 @@ Ext.oa.Nfs__Export_Panel = Ext.extend(Ext.grid.GridPanel, {
     }));
     Ext.oa.Nfs__Export_Panel.superclass.initComponent.apply(this, arguments);
   },
+  onRender: function(){
+    Ext.oa.Nfs__Export_Panel.superclass.onRender.apply(this, arguments);
+    this.store.reload();
+  }
+});
 
+Ext.reg("nfs__export_panel", Ext.oa.Nfs__Export_Panel);
+
+Ext.oa.Nfs__Export_Module = Ext.extend(Object, {
+  panel: "nfs__export_panel",
   prepareMenuTree: function(tree){
     tree.root.attributes.children[2].children.push({
       text: "{% trans 'Linux (NFS)' %}",
       leaf: true,
       icon: MEDIA_URL + '/icons2/22x22/apps/nfs.png',
-      panel: this,
+      panel: 'nfs__export_panel_inst',
       href: '#'
     });
   }
 });
 
 
-window.MainViewModules.push( new Ext.oa.Nfs__Export_Panel() );
+window.MainViewModules.push( new Ext.oa.Nfs__Export_Module() );
 
 // kate: space-indent on; indent-width 2; replace-tabs on;
