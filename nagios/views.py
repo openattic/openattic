@@ -62,11 +62,11 @@ def graph(request, service_id, srcidx):
                     for srcidx in indexes ] )
 
     args.extend([
-        "COMMENT:" + (" " * maxlen),
-        "COMMENT:        Cur",
-        "COMMENT:        Min",
-        "COMMENT:        Avg",
-        "COMMENT:        Max\\j",
+        "COMMENT:  " + (" " * maxlen),
+        "COMMENT:%8s " % "Cur",
+        "COMMENT:%8s " % "Min",
+        "COMMENT:%8s " % "Avg",
+        "COMMENT:%8s \\j" % "Max",
         "HRULE:0#000000",
         ])
 
@@ -81,18 +81,18 @@ def graph(request, service_id, srcidx):
         args.append( "DEF:var%d=%s:%d:AVERAGE" % (srcidx, rrdpath, int(srcidx) + 1) )
 
         if not invert:
-            args.append("AREA:var%d#%s:%s" % (srcidx, color, perfdata[srcidx][0]))
+            args.append("AREA:var%d#%s:%-*s" % (srcidx, color, maxlen, perfdata[srcidx][0]))
         else:
             args.extend([
                 "CDEF:var%dneg=var%d,-1,*" % (srcidx, srcidx),
-                "AREA:var%dneg#%s:%s"      % (srcidx, color, perfdata[srcidx][0]),
+                "AREA:var%dneg#%s:%-*s"    % (srcidx, color, maxlen, perfdata[srcidx][0]),
                 ])
 
         args.extend([
-            "GPRINT:var%d:LAST:%%8.2lf"     % srcidx,
-            "GPRINT:var%d:MIN:%%8.2lf"      % srcidx,
-            "GPRINT:var%d:AVERAGE:%%8.2lf"  % srcidx,
-            "GPRINT:var%d:MAX:%%8.2lf\\j"   % srcidx,
+            "GPRINT:var%d:LAST:%%8.2lf%%s"     % srcidx,
+            "GPRINT:var%d:MIN:%%8.2lf%%s"      % srcidx,
+            "GPRINT:var%d:AVERAGE:%%8.2lf%%s"  % srcidx,
+            "GPRINT:var%d:MAX:%%8.2lf%%s\\j"   % srcidx,
             ])
 
         perfvalues = perfdata[srcidx][1].split(';')
