@@ -64,6 +64,7 @@ Ext.oa.Lvm__Partitions_Panel = Ext.extend(Ext.grid.GridPanel, {
 Ext.oa.Lvm__Disks_Panel = Ext.extend(Ext.Panel, {
   initComponent: function(){
     Ext.apply(this, Ext.apply(this.initialConfig, {
+      id: 'lvm__disks_panel_inst',
       title: "{% trans "Disk Management" %}",
       layout: 'accordion',
       buttons: [ {
@@ -81,7 +82,7 @@ Ext.oa.Lvm__Disks_Panel = Ext.extend(Ext.Panel, {
                 xtype: "textfield",
                 anchor: '-20px'
               },
-              items: [{
+              items: [tipify({ 
                 xtype:      'combo',
                 allowBlank: false,
                 fieldLabel: "{% trans 'Disk' %}",
@@ -125,12 +126,12 @@ Ext.oa.Lvm__Disks_Panel = Ext.extend(Ext.Panel, {
                     } );
                   }
                 }
-              }, {
+              }, "Bitte wählen Sie eine Disk aus, welche Sie in die Volume Gruppe hinzufügen wollen."), {
                 xtype: "label",
                 ref:   "usagelabel",
                 text:  "{% trans 'Waiting for disk selection...' %}",
                 cls:   "form_hint_label"
-              }, {
+              }, tipify({
                 xtype:      'combo',
                 allowBlank: false,
                 fieldLabel: "{% trans 'Volume Group' %}",
@@ -151,7 +152,7 @@ Ext.oa.Lvm__Disks_Panel = Ext.extend(Ext.Panel, {
                   select: function(self, record, index){
                   }
                 }
-              }],
+              },"Bitte wählen Sie die gewünschte Volume Gruppe aus. Falls Sie eine neue VG erzeugen wollen, tippen Sie den Namen, den Ihre VG haben soll,einfach in das leere Textfeld ein.")],
               buttons: [{
                 text: "{% trans 'Initialize' %}",
                 ref: "../initbutton",
@@ -180,6 +181,9 @@ Ext.oa.Lvm__Disks_Panel = Ext.extend(Ext.Panel, {
       } ]
     }));
     Ext.oa.Lvm__Disks_Panel.superclass.initComponent.apply(this, arguments);
+  },
+  onRender: function(){
+    Ext.oa.Lvm__Disks_Panel.superclass.onRender.apply(this, arguments);
     var self = this;
     lvm__VolumeGroup.get_devices(function(provider, response){
       if( response.result ){
@@ -191,22 +195,28 @@ Ext.oa.Lvm__Disks_Panel = Ext.extend(Ext.Panel, {
             device: ('/dev/' + response.result[i].block)
           }));
         }
+        self.doLayout();
       }
     });
-  },
+  }
+});
 
+Ext.reg("lvm__disks_panel", Ext.oa.Lvm__Disks_Panel);
+
+Ext.oa.Lvm__Disks_Module = Ext.extend(Object, {
+  panel: "lvm__disks_panel",
   prepareMenuTree: function(tree){
     tree.root.attributes.children[1].children.push({
       text: "{% trans 'Disk Management' %}",
       leaf: true,
       icon: MEDIA_URL + '/icons2/22x22/apps/database.png',
-      panel: this,
+      panel: 'lvm__disks_panel_inst',
       href: '#'
     });
   }
 });
 
 
-window.MainViewModules.push( new Ext.oa.Lvm__Disks_Panel() );
+window.MainViewModules.push( new Ext.oa.Lvm__Disks_Module() );
 
 // kate: space-indent on; indent-width 2; replace-tabs on;

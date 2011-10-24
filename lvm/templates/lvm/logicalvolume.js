@@ -314,6 +314,8 @@ Ext.oa.Lvm__LogicalVolume_Panel = Ext.extend(Ext.Panel, {
                           }}
                         );
                     }
+                    else
+                      alert("{% trans "Aborted." %}");
                   }
                 );
               }
@@ -337,6 +339,8 @@ Ext.oa.Lvm__LogicalVolume_Panel = Ext.extend(Ext.Panel, {
                         lvmGrid.store.reload();
                       } );
                     }
+                    else
+                    alert("{% trans "Aborted." %}");
                   }
                 );
               }
