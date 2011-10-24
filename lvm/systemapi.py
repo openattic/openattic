@@ -28,7 +28,7 @@ def lvm_vgs():
     return dict( [ (lv["LVM2_VG_NAME"], lv) for lv in lvm_command(["/sbin/vgs"]) ] )
 
 def lvm_lvs():
-    return dict( [ (lv["LVM2_LV_NAME"], lv) for lv in lvm_command(["/sbin/lvs", '-o', '+seg_pe_ranges']) ] )
+    return dict( [ (lv["LVM2_LV_NAME"], lv) for lv in lvm_command(["/sbin/lvs", '-o', '+seg_pe_ranges,lv_kernel_minor,lv_minor']) ] )
 
 
 @logged
