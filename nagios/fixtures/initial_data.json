@@ -63,6 +63,13 @@
         }
     },
     {
+        "pk": 10,
+        "model": "nagios.command",
+        "fields": {
+            "name": "check_protocol_traffic"
+        }
+    },
+    {
         "pk": 1,
         "model": "nagios.graph",
         "fields": {
@@ -150,6 +157,16 @@
             "fields": "-0 1",
             "command": 8,
             "title": "Traffic"
+        }
+    },
+    {
+        "pk": 10,
+        "model": "nagios.graph",
+        "fields": {
+            "verttitle": "Bytes in (-) / out (+)",
+            "fields": "-0 1",
+            "command": 10,
+            "title": "In/Out"
         }
     }
 ]
