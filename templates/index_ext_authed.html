@@ -13,6 +13,7 @@
     <script src="{{ PROJECT_URL }}/direct/api.js"></script>
     <script type="text/javascript">
       window.MainViewModules = [];
+      Ext.namespace("Ext.ux");
       window.MEDIA_URL   = '{{ MEDIA_URL  }}';
       window.PROJECT_URL = '{{ PROJECT_URL  }}';
       window.LOGOUT_URL  = '{% url logout %}';
@@ -26,6 +27,10 @@
     <script src="{{ MEDIA_URL }}/js/menutree.js"></script>
     <script src="{{ MEDIA_URL }}/js/portal.js"></script>
     <script src="{{ MEDIA_URL }}/js/auth__user.js"></script>
+
+    <script src="{{ MEDIA_URL }}/js/Reorderer.js"></script>
+    <script src="{{ MEDIA_URL }}/js/ToolbarReorderer.js"></script>
+    <script src="{{ MEDIA_URL }}/js/ToolbarDroppable.js"></script>
     <!--script src="{{ MEDIA_URL }}/js/ajaxterm.js"></script-->
     <script src="{{ MEDIA_URL }}/js/logout_theme.js"></script>
     {% for app in INSTALLED_APPS %}
