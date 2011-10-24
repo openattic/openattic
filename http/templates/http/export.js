@@ -6,6 +6,7 @@ Ext.oa.Http__Export_Panel = Ext.extend(Ext.grid.GridPanel, {
   initComponent: function(){
     var httpGrid = this;
     Ext.apply(this, Ext.apply(this.initialConfig, {
+      id: "http__export_panel_inst",
       title: "http",
       viewConfig: { forceFit: true },
       buttons: [{
@@ -88,8 +89,8 @@ Ext.oa.Http__Export_Panel = Ext.extend(Ext.grid.GridPanel, {
           }
         }
       }],
-      store: new Ext.data.DirectStore({
-        autoLoad: true,
+      store: {
+        xtype: "directstore",
         fields: ['path', 'state', 'id', 'volume', {
           name: 'volumename',
           mapping: 'volume',
@@ -98,7 +99,7 @@ Ext.oa.Http__Export_Panel = Ext.extend(Ext.grid.GridPanel, {
           }
         }],
         directFn: http__Export.all
-      }),
+      },
       colModel: new Ext.grid.ColumnModel({
         defaults: {
           sortable: true
@@ -123,19 +124,28 @@ Ext.oa.Http__Export_Panel = Ext.extend(Ext.grid.GridPanel, {
     }));
     Ext.oa.Http__Export_Panel.superclass.initComponent.apply(this, arguments);
   },
+  onRender: function(){
+    Ext.oa.Http__Export_Panel.superclass.onRender.apply(this, arguments);
+    console.log("http rend0r");
+    this.store.reload();
+  }
+});
 
+Ext.reg("http__export_panel", Ext.oa.Http__Export_Panel);
+
+Ext.oa.Http__Export_Module = Ext.extend(Object, {
+  panel: "http__export_panel",
   prepareMenuTree: function(tree){
     tree.root.attributes.children[2].children.push({
       text: "{% trans 'Web (HTTP)' %}",
       leaf: true,
-      panel: this,
+      panel: "http__export_panel_inst",
       icon: MEDIA_URL + '/icons2/22x22/mimetypes/www.png',
       href: '#'
     });
   }
 });
 
-
-window.MainViewModules.push( new Ext.oa.Http__Export_Panel() );
+window.MainViewModules.push( new Ext.oa.Http__Export_Module() );
 
 // kate: space-indent on; indent-width 2; replace-tabs on;

@@ -6,6 +6,7 @@ Ext.oa.Ftp__User_Panel = Ext.extend(Ext.grid.GridPanel, {
   initComponent: function(){
     var ftpGrid = this;
     Ext.apply(this, Ext.apply(this.initialConfig, {
+      id: "ftp__user_panel_inst",
       title: "ftp",
       buttons: [{
           text: "",
@@ -98,8 +99,8 @@ Ext.oa.Ftp__User_Panel = Ext.extend(Ext.grid.GridPanel, {
           }
         }
       }],
-      store: new Ext.data.DirectStore({
-        autoLoad: true,
+      store: {
+        xtype: 'directstore',
         fields: ['id', 'username', 'shell', 'homedir', 'volume', {
           name: 'volumename',
           mapping: 'volume',
@@ -108,7 +109,7 @@ Ext.oa.Ftp__User_Panel = Ext.extend(Ext.grid.GridPanel, {
           }
         }],
         directFn: ftp__User.all
-      }),
+      },
       colModel: new Ext.grid.ColumnModel({
         defaults: {
           sortable: true
@@ -126,18 +127,28 @@ Ext.oa.Ftp__User_Panel = Ext.extend(Ext.grid.GridPanel, {
     }));
     Ext.oa.Ftp__User_Panel.superclass.initComponent.apply(this, arguments);
   },
+  onRender: function(){
+    Ext.oa.Ftp__User_Panel.superclass.onRender.apply(this, arguments);
+    console.log("ftp rend0r");
+    this.store.reload();
+  }
+});
 
+Ext.reg("ftp__user_panel", Ext.oa.Ftp__User_Panel);
+
+Ext.oa.Ftp__User_Module = Ext.extend(Object, {
+  panel: "ftp__user_panel",
   prepareMenuTree: function(tree){
     tree.root.attributes.children[2].children.push({
       text: "{% trans 'Web (FTP)' %}",
       leaf: true,
-      panel: this,
+      panel: "ftp__user_panel_inst",
       icon: MEDIA_URL + '/icons2/22x22/mimetypes/www.png',
       href: '#'
     });
   }
 });
 
-window.MainViewModules.push( new Ext.oa.Ftp__User_Panel() );
+window.MainViewModules.push( new Ext.oa.Ftp__User_Module() );
 
 // kate: space-indent on; indent-width 2; replace-tabs on;
