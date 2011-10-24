@@ -54,20 +54,28 @@ class Service(models.Model):
 
 
 def create_service_for_lv(**kwargs):
-    if not kwargs["instance"].filesystem:
+    lv = kwargs["instance"]
+    if not lv.filesystem:
         return
 
-    cmd = Command.objects.get(name=nagios_settings.LV_CHECK_CMD)
+    cmd = Command.objects.get(name=nagios_settings.LV_UTIL_CHECK_CMD)
+    if lv.filesystem and Service.objects.filter(command=cmd, volume=lv).count() == 0:
+        for mp in lv.fs.mountpoints:
+            serv = Service(
+                volume      = lv,
+                command     = cmd,
+                description = nagios_settings.LV_UTIL_DESCRIPTION % lv.name,
+                arguments   = "%d!%d!%s" % (nagios_settings.LV_UTIL_WARN_LEVEL, nagios_settings.LV_UTIL_CRIT_LEVEL, mp)
+                )
+            serv.save()
 
-    if Service.objects.filter(command=cmd, volume=kwargs["instance"]).count():
-        return
-
-    for mp in kwargs["instance"].fs.mountpoints:
+    cmd = Command.objects.get(name=nagios_settings.LV_PERF_CHECK_CMD)
+    if Service.objects.filter(command=cmd, volume=lv).count() == 0:
         serv = Service(
-            volume      = kwargs["instance"],
+            volume      = lv,
             command     = cmd,
-            description = nagios_settings.LV_DESCRIPTION % kwargs["instance"].name,
-            arguments   = "%d!%d!%s" % (nagios_settings.LV_WARN_LEVEL, nagios_settings.LV_CRIT_LEVEL, mp)
+            description = nagios_settings.LV_PERF_DESCRIPTION % lv.name,
+            arguments   = "dm-%s" % lv.lvm_info["LVM2_LV_KERNEL_MINOR"]
             )
         serv.save()
 
@@ -75,11 +83,11 @@ def create_service_for_lv(**kwargs):
 
 
 def delete_service_for_lv(**kwargs):
-    for serv in Service.objects.filter(volume=kwargs["instance"]):
+    lv = kwargs["instance"]
+    for serv in Service.objects.filter(volume=lv):
         serv.delete()
 
     Service.write_conf()
-
 
 signals.post_save.connect(  create_service_for_lv, sender=LogicalVolume )
 signals.pre_delete.connect( delete_service_for_lv, sender=LogicalVolume )

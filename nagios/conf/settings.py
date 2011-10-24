@@ -2,9 +2,12 @@
 
 from django.conf import settings
 
-LV_WARN_LEVEL       = getattr( settings, "NAGIOS_LV_WARN_LEVEL",     85 )
-LV_CRIT_LEVEL       = getattr( settings, "NAGIOS_LV_WARN_LEVEL",     95 )
-LV_DESCRIPTION      = getattr( settings, "NAGIOS_LV_DESCRIPTION",    "Disk Utilization for %s" )
-LV_CHECK_CMD        = getattr( settings, "NAGIOS_LV_CHECK_CMD",      "check_disk" )
+LV_UTIL_WARN_LEVEL       = getattr( settings, "NAGIOS_LV_UTIL_WARN_LEVEL",     85 )
+LV_UTIL_CRIT_LEVEL       = getattr( settings, "NAGIOS_LV_UTIL_WARN_LEVEL",     95 )
+LV_UTIL_DESCRIPTION      = getattr( settings, "NAGIOS_LV_UTIL_DESCRIPTION",    "Disk Utilization for %s" )
+LV_UTIL_CHECK_CMD        = getattr( settings, "NAGIOS_LV_UTIL_CHECK_CMD",      "check_disk" )
+
+LV_PERF_DESCRIPTION      = getattr( settings, "NAGIOS_LV_PERF_DESCRIPTION",    "Disk stats for %s" )
+LV_PERF_CHECK_CMD        = getattr( settings, "NAGIOS_LV_PERF_CHECK_CMD",      "check_diskstats" )
 
 RRD_PATH            = getattr( settings, "NAGIOS_RRD_PATH",          "/var/lib/pnp4nagios/perfdata/localhost/%s.rrd" )
