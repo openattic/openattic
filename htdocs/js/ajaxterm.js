@@ -21,6 +21,7 @@ Ext.oa.WebSSHPanel = Ext.extend(Ext.Panel, {
     var nfsGrid = this;
 
     Ext.apply(this, Ext.apply(this.initialConfig, {
+      id: "webssh_panel_inst",
       layout: 'vbox',
       layoutConfig: {
         align: 'center',
@@ -33,22 +34,26 @@ Ext.oa.WebSSHPanel = Ext.extend(Ext.Panel, {
        }]
     }));
     Ext.oa.WebSSHPanel.superclass.initComponent.apply(this, arguments);
-  },
+  }
+});
 
+Ext.reg("webssh_panel", Ext.oa.WebSSHPanel);
 
+Ext.oa.WebSSHModule = Ext.extend(Object, {
+  panel: "webssh_panel",
   prepareMenuTree: function(tree){
     tree.appendToRootNodeById("menu_system", ({
       text: 'SSH/Telnet',
       leaf: true,
-      panel: this,
+      panel: "webssh_panel_inst",
       icon: MEDIA_URL + '/icons2/22x22/apps/gnome-terminal.png',
       href: '#',
       layout: 'absolute'
-     });
+     }));
   }
 });
 
-window.MainViewModules.push( new Ext.oa.WebSSHPanel() );
+window.MainViewModules.push( new Ext.oa.WebSSHModule() );
 
 // kate: space-indent on; indent-width 2; replace-tabs on;
 
