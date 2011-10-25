@@ -1,3 +1,5 @@
+{% load i18n %}
+
 Ext.namespace("Ext.oa");
 
 Ext.oa.Auth__User_Panel = Ext.extend(Ext.grid.GridPanel, {
@@ -10,7 +12,7 @@ Ext.oa.Auth__User_Panel = Ext.extend(Ext.grid.GridPanel, {
     };
     Ext.apply(this, Ext.apply(this.initialConfig, {
       id: "auth__user_panel_inst",
-      title: "Users",
+      title: "{% trans 'Users' %}",
       viewConfig: { forceFit: true },
       buttons: [{
         text: "Add User",

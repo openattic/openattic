@@ -32,6 +32,11 @@ urlpatterns = [
         {},
         'javascript'
     ),
+    (r'^js/(?P<file>\w+)\.js$',
+        lambda request, file: direct_to_template(request, template="%s.js" % file, mimetype="text/javascript"),
+        {},
+        'javascript_main'
+    ),
 
     (r'^jsi18n/$', 'django.views.i18n.javascript_catalog', js_info_dict),
 
