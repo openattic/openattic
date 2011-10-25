@@ -74,7 +74,7 @@ stats = dict([
     ])
 
 
-def wrapdiff(last, curr):
+def wrapdiff(curr, last):
     """ Calculate the difference between last and curr.
 
         If last > curr, try to guess the boundary at which the value must have wrapped
