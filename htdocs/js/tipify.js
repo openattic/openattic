@@ -35,3 +35,5 @@ function tipify(config, tiptext){
   config.listeners.blur = mkBlurFunc();
   return config;
 }
+
+// kate: space-indent on; indent-width 2; replace-tabs on;
