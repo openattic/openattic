@@ -5,6 +5,7 @@ Ext.oa.Drbd__Device_Panel = Ext.extend(Ext.grid.GridPanel, {
   initComponent: function(){
     var drbdDevGrid = this;
     Ext.apply(this, Ext.apply(this.initialConfig, {
+      id: "drbd__device_panel_inst",
       title: "{% trans 'DRBD' %}",
       viewConfig:{ forceFit: true },
       buttons: [
@@ -73,7 +74,6 @@ Ext.oa.Drbd__Device_Panel = Ext.extend(Ext.grid.GridPanel, {
         }
       }],
       store: new Ext.data.DirectStore({
-        autoLoad: true,
         fields: ['id', 'protocol', 'peeraddress', 'volume', 'cstate', 'role',{
           name: 'volumename', mapping: 'volume', convert: function(val, row){ return val.name }
         }, {
@@ -116,19 +116,28 @@ Ext.oa.Drbd__Device_Panel = Ext.extend(Ext.grid.GridPanel, {
     }));
     Ext.oa.Drbd__Device_Panel.superclass.initComponent.apply(this, arguments);
   },
+  onRender: function(){
+    Ext.oa.Drbd__Device_Panel.superclass.onRender.apply(this, arguments);
+    this.store.reload();
+  }
+});
 
+Ext.reg("drbd__device_panel", Ext.oa.Drbd__Device_Panel);
+
+Ext.oa.Drbd__Device_Module = Ext.extend(Object, {
+  panel: "drbd__device_panel",
   prepareMenuTree: function(tree){
     tree.root.attributes.children[3].children.push({
       text: "{% trans 'DRBD' %}",
       leaf: true,
       icon: MEDIA_URL + '/icons2/22x22/apps/nfs.png',
-      panel: this,
+      panel: "drbd__device_panel_inst",
       href: '#'
     });
   }
 });
 
 
-window.MainViewModules.push( new Ext.oa.Drbd__Device_Panel() );
+window.MainViewModules.push( new Ext.oa.Drbd__Device_Module() );
 
 // kate: space-indent on; indent-width 2; replace-tabs on;
