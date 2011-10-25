@@ -2,9 +2,11 @@ Ext.namespace("Ext.oa");
 
 Ext.oa.MainViewManager = Ext.extend(Ext.Panel, {
   initComponent: function(){
+    var mainviewmanager = this;
     Ext.apply(this, Ext.apply(this.initialConfig, {
       layout: 'border',
       tbar: new Ext.Toolbar({
+        cls: "mainviewtoolbar",
         items: [
           new Ext.BoxComponent({
             autoEl: {
@@ -20,9 +22,14 @@ Ext.oa.MainViewManager = Ext.extend(Ext.Panel, {
             createItem: function(data) {
               var record = data.draggedRecord;
               return new Ext.Button({
-                text   : "test",
-                iconCls: '/srv/openattic/htdocs/openattic.png',
-                reorderable: true
+                text:  record.text,
+                icon:  record.icon,
+                panel: record.panel,
+                height: 50,
+                reorderable: true,
+                handler: function(self){
+                  mainviewmanager.switchComponent(record.panel);
+                }
               });
             }
           }),
@@ -37,7 +44,41 @@ Ext.oa.MainViewManager = Ext.extend(Ext.Panel, {
         minSize: 175,
         maxSize: 400,
         collapsible: true,
-        enableDD: true
+        enableDD: true,
+        listeners: {
+          'render': function(tree) {
+            tree.dragZone = new Ext.dd.DragZone(tree.getEl(), {
+              getDragData: function(evt){
+                var sourceEl = evt.getTarget(tree.itemSelector, 10);
+                var findTreeNode = function(node){
+                  if( node.text === sourceEl.textContent )
+                    return node;
+                  for( var i = 0; i < node.childNodes.length; i++ ){
+                    var cldnode = findTreeNode(node.childNodes[i]);
+                    if( cldnode )
+                      return cldnode;
+                  }
+                  return null;
+                };
+                if( sourceEl ){
+                  var ddEl = sourceEl.cloneNode(true);
+                  var treenode = findTreeNode(tree.getRootNode());
+                  ddEl.id = Ext.id();
+                  return {
+                    ddel:     ddEl,
+                    sourceEl: sourceEl,
+                    repairXY: Ext.fly(sourceEl).getXY(),
+                    sourceStore: tree.store,
+                    draggedRecord: treenode.attributes
+                  };
+                }
+              },
+              getRepairXY: function() {
+                return this.dragData.repairXY;
+              }
+            });
+          }
+        }
       }), {
         region: "center",
         activeItem: 0,
@@ -47,16 +88,17 @@ Ext.oa.MainViewManager = Ext.extend(Ext.Panel, {
         layoutConfig: { deferredRender: true },
         items: (function(){
           var it = [];
-          window.MainViewModules.forEach(function(mod){
+          for( var i = 0; i < window.MainViewModules.length; i++ ){
+            var mod = window.MainViewModules[i];
             if( typeof mod.panel === "string" ){
-              console.log( "Pushing xtype "+mod.panel );
+/*              console.log( "Pushing xtype "+mod.panel );*/
               it.push({ xtype: mod.panel });
             }
             else if( typeof mod !== "undefined" ){
-              console.log( "Pushing panel "+mod.title );
+/*              console.log( "Pushing panel "+mod.title );*/
               it.push( mod );
             }
-          });
+          }
           return it;
         }())
       }],
@@ -72,7 +114,32 @@ Ext.oa.MainViewManager = Ext.extend(Ext.Panel, {
       window.MainViewModules[i].prepareMenuTree(this.menutree);
     }
 
+    var currstate = Ext.state.Manager.get("toolbarbuttons");
+    for( var i = 0; i < currstate.length; i++ ){
+      this.topToolbar.add( new Ext.Button({
+        text:  currstate[i].text,
+        icon:  currstate[i].icon,
+        panel: currstate[i].panel,
+        height: 50,
+        reorderable: true,
+        handler: function(self){
+          mainviewmanager.switchComponent(self.initialConfig.panel);
+        }
+      }) );
+    }
+
     this.menutree.on( 'beforeclick', this.treenodeClicked, this );
+    this.topToolbar.on( 'add', function(evt){
+      var data = [];
+      for( var i = 1; i < this.topToolbar.items.items.length; i++ ){
+        data.push({
+          text:  this.topToolbar.items.items[i].initialConfig.text,
+          icon:  this.topToolbar.items.items[i].initialConfig.icon,
+          panel: this.topToolbar.items.items[i].initialConfig.panel
+        });
+      Ext.state.Manager.set("toolbarbuttons", data);
+      }
+    }, this );
   },
 
   treenodeClicked: function( node, event ){
@@ -85,7 +152,7 @@ Ext.oa.MainViewManager = Ext.extend(Ext.Panel, {
       this.modcontainer.layout.setActiveItem( toComponent );
     else
       this.modcontainer.layout.setActiveItem( toComponent.id );
-  }
+  },
 });
 
 
