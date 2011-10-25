@@ -21,7 +21,7 @@ Ext.oa.Nagios__Graph_ImagePanel = Ext.extend(Ext.Panel, {
             }, self);
           }
         }
-      }),
+      })
     }));
     Ext.oa.Nagios__Graph_ImagePanel.superclass.initComponent.apply(this, arguments);
     this.on( "afterrender", function(){
@@ -176,7 +176,7 @@ Ext.oa.Nagios__Service_Panel = Ext.extend(Ext.Panel, {
           width: 160,
           viewConfig: { forceFit: true },
           store: new Ext.data.JsonStore({
-            fields: ["id", "title"],
+            fields: ["id", "title"]
           }),
           colModel: new Ext.grid.ColumnModel({
             columns: [{

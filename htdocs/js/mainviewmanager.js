@@ -7,14 +7,18 @@ Ext.oa.MainViewManager = Ext.extend(Ext.Panel, {
       tbar: new Ext.Toolbar({
         items: [
           new Ext.BoxComponent({
-            autoEl: { tag: "img", src: MEDIA_URL + '/openattic.png' }, region: "north", height: 50}),
+            autoEl: {
+              tag: "img",
+              src: MEDIA_URL + '/openattic.png'
+            },
+            region: "north",
+            height: 50
+          })
         ],
-        region: 'center',
         plugins : [
           new Ext.ux.ToolbarDroppable({
             createItem: function(data) {
               var record = data.draggedRecord;
-
               return new Ext.Button({
                 text   : "test",
                 iconCls: '/srv/openattic/htdocs/openattic.png',
@@ -23,7 +27,7 @@ Ext.oa.MainViewManager = Ext.extend(Ext.Panel, {
             }
           }),
           new Ext.ux.ToolbarReorderer({defaultReorderable: false})
-        ],
+        ]
       }),
       items: [ new Ext.oa.MenuTree({
         title: 'Menu',
@@ -55,8 +59,7 @@ Ext.oa.MainViewManager = Ext.extend(Ext.Panel, {
           });
           return it;
         }())
-      }
-    ],
+      }],
       modules: window.MainViewModules
     }));
     Ext.oa.MainViewManager.superclass.initComponent.apply(this, arguments);
@@ -82,8 +85,7 @@ Ext.oa.MainViewManager = Ext.extend(Ext.Panel, {
       this.modcontainer.layout.setActiveItem( toComponent );
     else
       this.modcontainer.layout.setActiveItem( toComponent.id );
-  },
-
+  }
 });
 
 

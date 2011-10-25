@@ -15,12 +15,12 @@ Ext.oa.SSMTP_Panel = Ext.extend(Ext.Panel, {
         y: 30,
         frame: true,
         defaultType: 'textfield',
-        reader     : new Ext.data.JsonReader({fields: ['root','mailhub','rewriteDomain','id']}),
+        reader: new Ext.data.JsonReader({fields: ['root','mailhub','rewriteDomain','id']}),
         api: {
-            // The server-side method to call for load() requests
-            load: ssmtp__SSMTP.get_ext,
-            // The server-side must mark the submit handler as a 'formHandler'
-            submit: ssmtp__SSMTP.set
+          // The server-side method to call for load() requests
+          load: ssmtp__SSMTP.get_ext,
+          // The server-side must mark the submit handler as a 'formHandler'
+          submit: ssmtp__SSMTP.set
         },
         baseParams: {id:1},
         paramOrder: ["id"],
@@ -30,41 +30,40 @@ Ext.oa.SSMTP_Panel = Ext.extend(Ext.Panel, {
           width: 200,
           allowBlank: false,
           ref: 'emailfield'
-          },{
-           fieldLabel: 'Mailserver',
-           name: 'mailhub',
-           width: 200,
-           allowBlank: false,
-           ref: 'mailserverfield'
-          },{
-              fieldLabel: "Domainname",
-              name:  "rewriteDomain",
-              width: 200,
-              allowBlank: false,
-              ref: 'domainnamefield'
-          }],
-          buttons: [{
-           text: 'Save',
-           handler: function(self){
-             ssmtp__SSMTP.set(1, {
-               'root':            self.ownerCt.ownerCt.emailfield.getValue(), 
-               'mailhub':         self.ownerCt.ownerCt.mailserverfield.getValue(), 
-               'rewriteDomain':   self.ownerCt.ownerCt.domainnamefield.getValue()
-             }); 
-             Ext.Msg.show({
+        },{
+          fieldLabel: 'Mailserver',
+          name: 'mailhub',
+          width: 200,
+          allowBlank: false,
+          ref: 'mailserverfield'
+        },{
+          fieldLabel: "Domainname",
+          name:  "rewriteDomain",
+          width: 200,
+          allowBlank: false,
+          ref: 'domainnamefield'
+        }],
+        buttons: [{
+          text: 'Save',
+          handler: function(self){
+            ssmtp__SSMTP.set(1, {
+              'root':            self.ownerCt.ownerCt.emailfield.getValue(), 
+              'mailhub':         self.ownerCt.ownerCt.mailserverfield.getValue(), 
+              'rewriteDomain':   self.ownerCt.ownerCt.domainnamefield.getValue()
+            });
+            Ext.Msg.show({
                 title:   'Email',
                 msg:     'Successfully Updated',
                 buttons: Ext.MessageBox.OK
-            });     
+            });
           }
-         }],
-     }]
+        }]
+      }]
     }));
     Ext.oa.SSMTP_Panel.superclass.initComponent.apply(this, arguments);
-    
     this.items.items[0].getForm().load({
     });
-   },
+  },
 
   prepareMenuTree: function(tree){
     tree.root.attributes.children[4].children.push({

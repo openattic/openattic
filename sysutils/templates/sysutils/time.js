@@ -16,12 +16,12 @@ Ext.oa.Time_Panel = Ext.extend(Ext.Panel, {
         defaultType: 'textfield',
         autoHeight: true,
         frame: true,
-        reader     : new Ext.data.JsonReader({fields: ['server','id']}),
+        reader: new Ext.data.JsonReader({fields: ['server','id']}),
         api: {
-            // The server-side method to call for load() requests
-            load: sysutils__NTP.get_ext,
-            // The server-side must mark the submit handler as a 'formHandler'
-            submit: sysutils__NTP.set
+          // The server-side method to call for load() requests
+          load: sysutils__NTP.get_ext,
+          // The server-side must mark the submit handler as a 'formHandler'
+          submit: sysutils__NTP.set
         },
         baseParams: {id:1},
         paramOrder: ["id"],
@@ -30,25 +30,22 @@ Ext.oa.Time_Panel = Ext.extend(Ext.Panel, {
           name: 'server',
           width: 200,
           allowBlank: false,
-          
           ref: 'serverfield'
-          }],
-          buttons: [{
-           text: 'Save',
-           handler: function(self){
-             sysutils__NTP.set(1, {
-               'server':            self.ownerCt.ownerCt.emailfield.getValue()
-             }); 
-             Ext.Msg.show({
-                title:   'NTP',
-                msg:     'Successfully Updated NTP Server',
-                buttons: Ext.MessageBox.OK
-            });     
+        }],
+        buttons: [{
+          text: 'Save',
+          handler: function(self){
+            sysutils__NTP.set(1, {
+              'server':            self.ownerCt.ownerCt.emailfield.getValue()
+            });
+            Ext.Msg.show({
+              title:   'NTP',
+              msg:     'Successfully Updated NTP Server',
+              buttons: Ext.MessageBox.OK
+            });
           }
-         }],
-     }]
-  
-  
+        }]
+      }]
     }));
     Ext.oa.Time_Panel.superclass.initComponent.apply(this, arguments);
     this.items.items[0].getForm().load({

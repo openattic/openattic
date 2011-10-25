@@ -129,7 +129,6 @@ Ext.oa.Ftp__User_Panel = Ext.extend(Ext.grid.GridPanel, {
   },
   onRender: function(){
     Ext.oa.Ftp__User_Panel.superclass.onRender.apply(this, arguments);
-    console.log("ftp rend0r");
     this.store.reload();
   }
 });
