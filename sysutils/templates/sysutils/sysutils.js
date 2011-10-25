@@ -24,14 +24,14 @@ Ext.oa.YellowDangerousMessage = Ext.oa.DangerousMessage("yellowmask");
 
 
 
-Ext.oa.SysUtils_Panel = Ext.extend(Ext.grid.GridPanel, {
+Ext.oa.SysUtils__Service_Panel = Ext.extend(Ext.grid.GridPanel, {
   initComponent: function(){
     var sysUtilsGrid = this;
     Ext.apply(this, Ext.apply(this.initialConfig, {
+      id: "sysutils__service_panel_inst",
       title: "{% trans 'Service State' %}",
       store: (function(){
         var st = new Ext.data.DirectStore({
-          autoLoad: true,
           fields: ['id', 'name', 'status'],
           directFn: sysutils__InitScript.all_with_status
         });
@@ -62,40 +62,55 @@ Ext.oa.SysUtils_Panel = Ext.extend(Ext.grid.GridPanel, {
           }
         }]
       }),
-        buttons: [{
-          text: 'Start',
-          handler: function(self){
-          var sm = sysUtilsGrid.getSelectionModel();
-          if( sm.hasSelection() ){
-            var sel = sm.selections.items[0];
-            sysutils__InitScript.start(sel.data.id, function(provider, response){
-              sysUtilsGrid.store.reload();
-            });
-          }
-          }
-        },{
-          text: 'Stop',
-          handler: function(self){
-          var sm = sysUtilsGrid.getSelectionModel();
-          if( sm.hasSelection() ){
-            var sel = sm.selections.items[0];
-            sysutils__InitScript.stop(sel.data.id, function(provider, response){
-              sysUtilsGrid.store.reload();
-            });
-          }
-          }
-        }]
-      
+      buttons: [{
+        text: "",
+        icon: MEDIA_URL + "/icons2/16x16/actions/reload.png",
+        tooltip: "{% trans 'Reload' %}",
+        handler: function(self){
+          sysUtilsGrid.store.reload();
+        }
+      }, {
+        text: 'Start',
+        handler: function(self){
+        var sm = sysUtilsGrid.getSelectionModel();
+        if( sm.hasSelection() ){
+          var sel = sm.selections.items[0];
+          sysutils__InitScript.start(sel.data.id, function(provider, response){
+            sysUtilsGrid.store.reload();
+          });
+        }
+        }
+      },{
+        text: 'Stop',
+        handler: function(self){
+        var sm = sysUtilsGrid.getSelectionModel();
+        if( sm.hasSelection() ){
+          var sel = sm.selections.items[0];
+          sysutils__InitScript.stop(sel.data.id, function(provider, response){
+            sysUtilsGrid.store.reload();
+          });
+        }
+        }
+      }]
     }));
-    Ext.oa.SysUtils_Panel.superclass.initComponent.apply(this, arguments);
+    Ext.oa.SysUtils__Service_Panel.superclass.initComponent.apply(this, arguments);
   },
+  onRender: function(){
+    Ext.oa.SysUtils__Service_Panel.superclass.onRender.apply(this, arguments);
+    this.store.reload();
+  }
+});
 
+Ext.reg("sysutils__service_panel", Ext.oa.SysUtils__Service_Panel);
+
+Ext.oa.SysUtils__Service_Module = Ext.extend(Object, {
+  panel: "sysutils__service_panel",
   prepareMenuTree: function(tree){
     tree.root.attributes.children[0].children.push({
       text: "{% trans 'Service State'%}",
       leaf: true,
       icon: '{{ MEDIA_URL }}/icons2/22x22/status/network-receive.png',
-      panel: this,
+      panel: "sysutils__service_panel_inst",
       href: '#'
     });
     tree.root.attributes.children[4].children.push({
@@ -142,6 +157,6 @@ Ext.oa.SysUtils_Panel = Ext.extend(Ext.grid.GridPanel, {
 });
 
 
-window.MainViewModules.push( new Ext.oa.SysUtils_Panel() );
+window.MainViewModules.push( new Ext.oa.SysUtils__Service_Module() );
 
 // kate: space-indent on; indent-width 2; replace-tabs on;

@@ -6,6 +6,7 @@ Ext.oa.Iscsi__Initiator_Panel = Ext.extend(Ext.grid.GridPanel, {
   initComponent: function(){
     var iscsiInitGrid = this;
     Ext.apply(this, Ext.apply(this.initialConfig, {
+      id: 'iscsi__initiator_panel_inst',
       title: "{% trans 'iSCSI Initiators' %}",
       viewConfig: { forceFit: true },
       buttons: [{
@@ -78,7 +79,6 @@ Ext.oa.Iscsi__Initiator_Panel = Ext.extend(Ext.grid.GridPanel, {
         }
       }],
       store: new Ext.data.DirectStore({
-        autoLoad: true,
         fields: ['id', 'address', 'name'],
         directFn: iscsi__Initiator.all
       }),
@@ -99,18 +99,27 @@ Ext.oa.Iscsi__Initiator_Panel = Ext.extend(Ext.grid.GridPanel, {
     }));
     Ext.oa.Iscsi__Initiator_Panel.superclass.initComponent.apply(this, arguments);
   },
+  onRender: function(){
+    Ext.oa.Iscsi__Initiator_Panel.superclass.onRender.apply(this, arguments);
+    this.store.reload();
+  }
+});
 
+Ext.reg("iscsi__initiator_panel", Ext.oa.Iscsi__Initiator_Panel);
+
+Ext.oa.Iscsi__Initiator_Module = Ext.extend(Object, {
+  panel: "iscsi__initiator_panel",
   prepareMenuTree: function(tree){
     iscsiTreeIndex = tree.root.attributes.children[2].children.length;
     tree.root.attributes.children[2].children.push({
       text: "{% trans 'LAN (iSCSI)' %}",
-      panel: this,
+      panel: 'iscsi__initiator_panel_inst',
       href: '#',
       children: [{
         text: "{% trans 'Initiators' %}",
         leaf: true,
         icon: MEDIA_URL + '/icons2/22x22/apps/nfs.png',
-        panel: this,
+        panel: 'iscsi__initiator_panel_inst',
         href: '#'
       }]
     });
@@ -118,6 +127,6 @@ Ext.oa.Iscsi__Initiator_Panel = Ext.extend(Ext.grid.GridPanel, {
 });
 
 
-window.MainViewModules.push( new Ext.oa.Iscsi__Initiator_Panel() );
+window.MainViewModules.push( new Ext.oa.Iscsi__Initiator_Module() );
 
 // kate: space-indent on; indent-width 2; replace-tabs on;

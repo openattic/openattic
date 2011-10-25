@@ -6,6 +6,7 @@ Ext.oa.Iscsi__Target_Panel = Ext.extend(Ext.grid.GridPanel, {
   initComponent: function(){
     var iscsiTrgGrid = this;
     Ext.apply(this, Ext.apply(this.initialConfig, {
+      id: "iscsi__target_panel_inst",
       title: "{% trans 'iSCSI Targets' %}",
       viewConfig: { forceFit: true },
       buttons: [{
@@ -99,7 +100,6 @@ Ext.oa.Iscsi__Target_Panel = Ext.extend(Ext.grid.GridPanel, {
         }
       }],
       store: new Ext.data.DirectStore({
-        autoLoad: true,
         fields: ['id', 'iscsiname', 'name'],
         directFn: iscsi__Target.all
       }),
@@ -120,19 +120,28 @@ Ext.oa.Iscsi__Target_Panel = Ext.extend(Ext.grid.GridPanel, {
     }));
     Ext.oa.Iscsi__Target_Panel.superclass.initComponent.apply(this, arguments);
   },
+  onRender: function(){
+    Ext.oa.Iscsi__Target_Panel.superclass.onRender.apply(this, arguments);
+    this.store.reload();
+  }
+});
 
+Ext.reg("iscsi__target_panel", Ext.oa.Iscsi__Target_Panel);
+
+Ext.oa.Iscsi__Target_Module = Ext.extend(Object, {
+  panel: "iscsi__target_panel",
   prepareMenuTree: function(tree){
     tree.root.attributes.children[2].children[iscsiTreeIndex].children.push({
       text: "{% trans 'Targets' %}",
       leaf: true,
       icon: MEDIA_URL + '/icons2/22x22/apps/nfs.png',
-      panel: this,
+      panel: "iscsi__target_panel_inst",
       href: '#'
     });
   }
 });
 
 
-window.MainViewModules.push( new Ext.oa.Iscsi__Target_Panel() );
+window.MainViewModules.push( new Ext.oa.Iscsi__Target_Module() );
 
 // kate: space-indent on; indent-width 2; replace-tabs on;

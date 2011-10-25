@@ -6,6 +6,7 @@ Ext.oa.Iscsi__Lun_Panel = Ext.extend(Ext.grid.GridPanel, {
   initComponent: function(){
     var iscsiLunGrid = this;
     Ext.apply(this, Ext.apply(this.initialConfig, {
+      id: "iscsi__lun_panel_inst",
       title: "{% trans 'iSCSI Luns' %}",
       viewConfig: { forceFit: true },
       buttons: [{
@@ -122,7 +123,6 @@ Ext.oa.Iscsi__Lun_Panel = Ext.extend(Ext.grid.GridPanel, {
         }
       }],
       store: new Ext.data.DirectStore({
-        autoLoad: true,
         fields: ['id', 'volume', 'target', 'number', 'alias', 'ltype', {
           name: 'volumename', mapping: 'volume', convert: function(val, row){ return val.name }
         }, {
@@ -159,19 +159,28 @@ Ext.oa.Iscsi__Lun_Panel = Ext.extend(Ext.grid.GridPanel, {
     }));
     Ext.oa.Iscsi__Lun_Panel.superclass.initComponent.apply(this, arguments);
   },
+  onRender: function(){
+    Ext.oa.Iscsi__Lun_Panel.superclass.onRender.apply(this, arguments);
+    this.store.reload();
+  }
+});
 
+Ext.reg("iscsi__lun_panel", Ext.oa.Iscsi__Lun_Panel);
+
+Ext.oa.Iscsi__Lun_Module = Ext.extend(Object, {
+  panel: "iscsi__lun_panel",
   prepareMenuTree: function(tree){
     tree.root.attributes.children[2].children[iscsiTreeIndex].children.push({
       text: "{% trans 'Luns' %}",
       leaf: true,
       icon: MEDIA_URL + '/icons2/22x22/apps/nfs.png',
-      panel: this,
+      panel: "iscsi__lun_panel_inst",
       href: '#'
     });
   }
 });
 
 
-window.MainViewModules.push( new Ext.oa.Iscsi__Lun_Panel() );
+window.MainViewModules.push( new Ext.oa.Iscsi__Lun_Module() );
 
 // kate: space-indent on; indent-width 2; replace-tabs on;

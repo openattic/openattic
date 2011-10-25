@@ -126,7 +126,6 @@ Ext.oa.Http__Export_Panel = Ext.extend(Ext.grid.GridPanel, {
   },
   onRender: function(){
     Ext.oa.Http__Export_Panel.superclass.onRender.apply(this, arguments);
-    console.log("http rend0r");
     this.store.reload();
   }
 });

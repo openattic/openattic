@@ -6,6 +6,7 @@ Ext.oa.Lvm__Snapshot_Panel = Ext.extend(Ext.grid.GridPanel, {
   initComponent: function(){
     var lvmSnapPanel = this;
     Ext.apply(this, Ext.apply(this.initialConfig, {
+      id: "lvm__snapshot_panel_inst",
       title: "{% trans "Volume Snapshots" %}",
       buttons: [{
         text: "",
@@ -163,7 +164,6 @@ Ext.oa.Lvm__Snapshot_Panel = Ext.extend(Ext.grid.GridPanel, {
       store: (function(){
         // Anon function that is called immediately to set up the store's DefaultSort
         var store = new Ext.data.DirectStore({
-          autoLoad: true,
           fields: ['name', 'megs', 'filesystem',  'snapshot', 'formatted', 'id', 'state', 'fs',
             {
               name: 'origvolid',
@@ -215,19 +215,28 @@ Ext.oa.Lvm__Snapshot_Panel = Ext.extend(Ext.grid.GridPanel, {
     }));
     Ext.oa.Lvm__Snapshot_Panel.superclass.initComponent.apply(this, arguments);
   },
+  onRender: function(){
+    Ext.oa.Lvm__Snapshot_Panel.superclass.onRender.apply(this, arguments);
+    this.store.reload();
+  }
+});
 
+Ext.reg("lvm__snapshot_panel", Ext.oa.Lvm__Snapshot_Panel);
+
+Ext.oa.Lvm__Snapshot_Module = Ext.extend(Object, {
+  panel: "lvm__snapshot_panel",
   prepareMenuTree: function(tree){
     tree.root.attributes.children[1].children.push({
-      text: "{% trans 'Snapshots' %}",
+      text: "{% trans 'Volume Snapshots' %}",
       leaf: true,
       icon: MEDIA_URL + '/icons2/22x22/apps/snapshot.png',
-      panel: this,
+      panel: "lvm__snapshot_panel_inst",
       href: '#'
     });
   }
 });
 
 
-window.MainViewModules.push( new Ext.oa.Lvm__Snapshot_Panel() );
+window.MainViewModules.push( new Ext.oa.Lvm__Snapshot_Module() );
 
 // kate: space-indent on; indent-width 2; replace-tabs on;
