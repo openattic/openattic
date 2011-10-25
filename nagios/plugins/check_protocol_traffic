@@ -74,11 +74,29 @@ stats = dict([
     ])
 
 
+def wrapdiff(last, curr):
+    """ Calculate the difference between last and curr.
+
+        If last > curr, try to guess the boundary at which the value must have wrapped
+        by trying the maximum values of 64, 32 and 16 bit signed and unsigned ints.
+    """
+    if last <= curr:
+        return curr - last
+
+    boundary = None
+    for chkbound in (64,63,32,31,16,15):
+        if last > 2**chkbound:
+            break
+        boundary = chkbound
+    if boundary is None:
+        raise ArithmeticError("Couldn't determine boundary")
+    return 2**boundary - last + curr
+
 
 if havestate:
     dt   = time() - savedstate.getfloat("state", "timestamp")
-    din  = (float(stats[tag_in]["bytes"])  - savedstate.getfloat("in",  "bytes"))
-    dout = (float(stats[tag_out]["bytes"]) - savedstate.getfloat("out", "bytes"))
+    din  = wrapdiff(int(stats[tag_in]["bytes"]),  savedstate.getint("in",  "bytes"))
+    dout = wrapdiff(int(stats[tag_out]["bytes"]), savedstate.getint("out", "bytes"))
     print "Traffic for %s on %s|in=%sBytes/s out=%sBytes/s" % ( options.service, options.interface, din/dt, dout/dt )
 
 else:

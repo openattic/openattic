@@ -23,19 +23,40 @@ with open("/sys/block/%s/stat" % disk, "rb") as fd:
     ]))
     currstate["timestamp"] = time()
 
+
+def wrapdiff(last, curr):
+    """ Calculate the difference between last and curr.
+
+        If last > curr, try to guess the boundary at which the value must have wrapped
+        by trying the maximum values of 64, 32 and 16 bit signed and unsigned ints.
+    """
+    if last <= curr:
+        return curr - last
+
+    boundary = None
+    for chkbound in (64,63,32,31,16,15):
+        if last > 2**chkbound:
+            break
+        boundary = chkbound
+    if boundary is None:
+        raise ArithmeticError("Couldn't determine boundary")
+    return 2**boundary - last + curr
+
+
 if havestate:
     bytes_per_sector = 512
     interval = float(currstate["timestamp"] - state.getfloat("state", "timestamp"))
-    rd_ios = currstate["rd_ios"] - state.getfloat("state", "rd_ios")
-    wr_ios = currstate["wr_ios"] - state.getfloat("state", "wr_ios")
 
-    rd_ticks = currstate["rd_ticks"] - state.getfloat("state", "rd_ticks")
-    wr_ticks = currstate["wr_ticks"] - state.getfloat("state", "wr_ticks")
+    rd_ios = wrapdiff(currstate["rd_ios"], state.getfloat("state", "rd_ios"))
+    wr_ios = wrapdiff(currstate["wr_ios"], state.getfloat("state", "wr_ios"))
 
-    rd_sectors = currstate["rd_sectors"] - state.getfloat("state", "rd_sectors")
-    wr_sectors = currstate["wr_sectors"] - state.getfloat("state", "wr_sectors")
+    rd_ticks = wrapdiff(currstate["rd_ticks"], state.getfloat("state", "rd_ticks"))
+    wr_ticks = wrapdiff(currstate["wr_ticks"], state.getfloat("state", "wr_ticks"))
 
-    tot_ticks  = currstate["tot_ticks"] - state.getfloat("state", "tot_ticks")
+    rd_sectors = wrapdiff(currstate["rd_sectors"], state.getfloat("state", "rd_sectors"))
+    wr_sectors = wrapdiff(currstate["wr_sectors"], state.getfloat("state", "wr_sectors"))
+
+    tot_ticks  = wrapdiff(currstate["tot_ticks"], state.getfloat("state", "tot_ticks"))
 
     rd_iops = rd_ios / interval
     wr_iops = wr_ios / interval
