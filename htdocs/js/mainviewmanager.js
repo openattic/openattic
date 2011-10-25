@@ -115,17 +115,19 @@ Ext.oa.MainViewManager = Ext.extend(Ext.Panel, {
     }
 
     var currstate = Ext.state.Manager.get("toolbarbuttons");
-    for( var i = 0; i < currstate.length; i++ ){
-      this.topToolbar.add( new Ext.Button({
-        text:  currstate[i].text,
-        icon:  currstate[i].icon,
-        panel: currstate[i].panel,
-        height: 50,
-        reorderable: true,
-        handler: function(self){
-          mainviewmanager.switchComponent(self.initialConfig.panel);
-        }
-      }) );
+    if( currstate ){
+      for( var i = 0; i < currstate.length; i++ ){
+        this.topToolbar.add( new Ext.Button({
+          text:  currstate[i].text,
+          icon:  currstate[i].icon,
+          panel: currstate[i].panel,
+          height: 50,
+          reorderable: true,
+          handler: function(self){
+            mainviewmanager.switchComponent(self.initialConfig.panel);
+          }
+        }) );
+      }
     }
 
     this.menutree.on( 'beforeclick', this.treenodeClicked, this );
@@ -152,7 +154,7 @@ Ext.oa.MainViewManager = Ext.extend(Ext.Panel, {
       this.modcontainer.layout.setActiveItem( toComponent );
     else
       this.modcontainer.layout.setActiveItem( toComponent.id );
-  },
+  }
 });
 
 
