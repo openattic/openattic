@@ -76,7 +76,9 @@ Ext.oa.MenuTree = Ext.extend(Ext.tree.TreePanel, {
         text: 'Personal Settings',
         expanded: Ext.state.Manager.get("expand_root_nodes", true),
         icon: MEDIA_URL + '/icons2/22x22/actions/stock_about.png',
-        children: []
+        panel: "settings_panel_inst",
+        leaf: true,
+        href: '#'
       }, {
         id: 'menu_shutdown',
         text: 'Shutdown',
