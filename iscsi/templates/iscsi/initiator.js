@@ -107,26 +107,4 @@ Ext.oa.Iscsi__Initiator_Panel = Ext.extend(Ext.grid.GridPanel, {
 
 Ext.reg("iscsi__initiator_panel", Ext.oa.Iscsi__Initiator_Panel);
 
-Ext.oa.Iscsi__Initiator_Module = Ext.extend(Object, {
-  panel: "iscsi__initiator_panel",
-  prepareMenuTree: function(tree){
-    iscsiTreeIndex = tree.root.attributes.children[2].children.length;
-    tree.root.attributes.children[2].children.push({
-      text: "{% trans 'LAN (iSCSI)' %}",
-      panel: 'iscsi__initiator_panel_inst',
-      href: '#',
-      children: [{
-        text: "{% trans 'Initiators' %}",
-        leaf: true,
-        icon: MEDIA_URL + '/icons2/22x22/apps/nfs.png',
-        panel: 'iscsi__initiator_panel_inst',
-        href: '#'
-      }]
-    });
-  }
-});
-
-
-window.MainViewModules.push( new Ext.oa.Iscsi__Initiator_Module() );
-
 // kate: space-indent on; indent-width 2; replace-tabs on;

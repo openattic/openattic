@@ -95,7 +95,7 @@ Ext.oa.Zfs__Snapshot_Panel = Ext.extend(Ext.Panel, {
   },
 
   prepareMenuTree: function(tree){
-    tree.root.attributes.children[1].children.push({
+    tree.appendToRootNodeById("menu_storage", {
       text: "{% trans 'Zfs Snapshots' %}",
       leaf: true,
       icon: MEDIA_URL + '/icons2/22x22/apps/snapshot.png',

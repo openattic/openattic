@@ -138,7 +138,7 @@ Ext.reg("ftp__user_panel", Ext.oa.Ftp__User_Panel);
 Ext.oa.Ftp__User_Module = Ext.extend(Object, {
   panel: "ftp__user_panel",
   prepareMenuTree: function(tree){
-    tree.root.attributes.children[2].children.push({
+    tree.appendToRootNodeById("menu_shares", {
       text: "{% trans 'Web (FTP)' %}",
       leaf: true,
       panel: "ftp__user_panel_inst",

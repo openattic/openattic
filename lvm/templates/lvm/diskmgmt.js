@@ -206,7 +206,7 @@ Ext.reg("lvm__disks_panel", Ext.oa.Lvm__Disks_Panel);
 Ext.oa.Lvm__Disks_Module = Ext.extend(Object, {
   panel: "lvm__disks_panel",
   prepareMenuTree: function(tree){
-    tree.root.attributes.children[1].children.push({
+    tree.appendToRootNodeById("menu_storage", {
       text: "{% trans 'Disk Management' %}",
       leaf: true,
       icon: MEDIA_URL + '/icons2/22x22/apps/database.png',

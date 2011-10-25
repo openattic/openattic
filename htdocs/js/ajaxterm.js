@@ -37,7 +37,7 @@ Ext.oa.WebSSHPanel = Ext.extend(Ext.Panel, {
 
 
   prepareMenuTree: function(tree){
-    tree.root.attributes.children[3].children.push({
+    tree.appendToRootNodeById("menu_system", ({
       text: 'SSH/Telnet',
       leaf: true,
       panel: this,

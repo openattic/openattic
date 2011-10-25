@@ -242,7 +242,7 @@ Ext.reg("samba__share_panel", Ext.oa.Samba__Share_Panel);
 Ext.oa.Samba__Share_Module = Ext.extend(Object, {
   panel: "samba__share_panel",
   prepareMenuTree: function(tree){
-    tree.root.attributes.children[2].children.push({
+    tree.appendToRootNodeById("menu_shares", {
       text: "{% trans 'Windows (Samba)' %}",
       leaf: true,
       icon: MEDIA_URL + '/icons2/22x22/apps/samba.png',

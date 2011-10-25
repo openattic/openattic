@@ -138,11 +138,13 @@ Ext.oa.Nagios__Service_Panel = Ext.extend(Ext.Panel, {
       }, {
         region: "south",
         layout: "border",
+        border: false,
         height: 300,
         items: [{
           xtype: "tabpanel",
           region: "center",
           activeTab: 0,
+          border: false,
           items: [{
             xtype: "naggraphimage",
             title: "4 hours",
@@ -215,7 +217,7 @@ Ext.oa.Nagios__Service_Module = Ext.extend(Object, {
   panel: "nagios__service_panel",
 
   prepareMenuTree: function(tree){
-    tree.root.attributes.children[0].children.push({
+    tree.appendToRootNodeById("menu_status", {
       text: "{% trans 'Monitoring' %}",
       leaf: true,
       icon: MEDIA_URL + '/icons2/22x22/apps/nfs.png',

@@ -231,7 +231,7 @@ Ext.oa.Portal = Ext.extend(Ext.ux.Portal, {
   },
 
   prepareMenuTree: function(tree){
-    tree.root.attributes.children[0].children.push({
+    tree.appendToRootNodeById("menu_status", {
       text: 'Dashboard',
       leaf: true,
       icon: MEDIA_URL + '/icons2/22x22/apps/gnome-session.png',

@@ -44,6 +44,7 @@ Ext.oa.MainViewManager = Ext.extend(Ext.Panel, {
         minSize: 175,
         maxSize: 400,
         collapsible: true,
+        border: false,
         enableDD: true,
         listeners: {
           'render': function(tree) {
@@ -90,7 +91,11 @@ Ext.oa.MainViewManager = Ext.extend(Ext.Panel, {
           var it = [];
           for( var i = 0; i < window.MainViewModules.length; i++ ){
             var mod = window.MainViewModules[i];
-            if( typeof mod.panel === "string" ){
+            if( Ext.isArray(mod.panel) ){
+              for( var j = 0; j < mod.panel.length; j++ )
+                it.push({ xtype: mod.panel[j] });
+            }
+            else if( typeof mod.panel === "string" ){
 /*              console.log( "Pushing xtype "+mod.panel );*/
               it.push({ xtype: mod.panel });
             }

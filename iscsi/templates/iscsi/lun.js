@@ -167,20 +167,38 @@ Ext.oa.Iscsi__Lun_Panel = Ext.extend(Ext.grid.GridPanel, {
 
 Ext.reg("iscsi__lun_panel", Ext.oa.Iscsi__Lun_Panel);
 
-Ext.oa.Iscsi__Lun_Module = Ext.extend(Object, {
-  panel: "iscsi__lun_panel",
+Ext.oa.Iscsi__Module = Ext.extend(Object, {
+  panel: ["iscsi__initiator_panel", "iscsi__target_panel", "iscsi__lun_panel"],
   prepareMenuTree: function(tree){
-    tree.root.attributes.children[2].children[iscsiTreeIndex].children.push({
-      text: "{% trans 'Luns' %}",
-      leaf: true,
-      icon: MEDIA_URL + '/icons2/22x22/apps/nfs.png',
-      panel: "iscsi__lun_panel_inst",
-      href: '#'
+    tree.appendToRootNodeById("menu_luns", {
+      text: "{% trans 'iSCSI' %}",
+      panel: 'iscsi__initiator_panel_inst',
+      icon: MEDIA_URL + "/oxygen/22x22/places/repository.png",
+      href: '#',
+      children: [{
+        text: "{% trans 'Initiators' %}",
+        leaf: true,
+        icon: MEDIA_URL + '/oxygen/22x22/places/user-identity.png',
+        panel: 'iscsi__initiator_panel_inst',
+        href: '#'
+      }, {
+        text: "{% trans 'Targets' %}",
+        leaf: true,
+        icon: MEDIA_URL + '/icons2/22x22/places/folder-saved-search.png',
+        panel: 'iscsi__target_panel_inst',
+        href: '#'
+      }, {
+        text: "{% trans 'Luns' %}",
+        leaf: true,
+        icon: MEDIA_URL + '/icons2/22x22/mimetypes/contents2.png',
+        panel: "iscsi__lun_panel_inst",
+        href: '#'
+      }]
     });
   }
 });
 
 
-window.MainViewModules.push( new Ext.oa.Iscsi__Lun_Module() );
+window.MainViewModules.push( new Ext.oa.Iscsi__Module() );
 
 // kate: space-indent on; indent-width 2; replace-tabs on;

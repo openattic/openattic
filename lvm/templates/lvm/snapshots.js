@@ -226,7 +226,7 @@ Ext.reg("lvm__snapshot_panel", Ext.oa.Lvm__Snapshot_Panel);
 Ext.oa.Lvm__Snapshot_Module = Ext.extend(Object, {
   panel: "lvm__snapshot_panel",
   prepareMenuTree: function(tree){
-    tree.root.attributes.children[1].children.push({
+    tree.appendToRootNodeById("menu_storage", {
       text: "{% trans 'Volume Snapshots' %}",
       leaf: true,
       icon: MEDIA_URL + '/icons2/22x22/apps/snapshot.png',

@@ -106,14 +106,14 @@ Ext.reg("sysutils__service_panel", Ext.oa.SysUtils__Service_Panel);
 Ext.oa.SysUtils__Service_Module = Ext.extend(Object, {
   panel: "sysutils__service_panel",
   prepareMenuTree: function(tree){
-    tree.root.attributes.children[0].children.push({
+    tree.appendToRootNodeById("menu_status", {
       text: "{% trans 'Service State'%}",
       leaf: true,
       icon: '{{ MEDIA_URL }}/icons2/22x22/status/network-receive.png',
       panel: "sysutils__service_panel_inst",
       href: '#'
     });
-    tree.root.attributes.children[4].children.push({
+    tree.appendToRootNodeById("menu_shutdown", {
       text: "{% trans 'Reboot' %}",
       leaf: true,
       icon: '{{ MEDIA_URL }}/oxygen/22x22/actions/system-reboot.png',
@@ -133,7 +133,7 @@ Ext.oa.SysUtils__Service_Module = Ext.extend(Object, {
       },
       href: '#'
     });
-    tree.root.attributes.children[4].children.push({
+    tree.appendToRootNodeById("menu_shutdown", {
       text: "{% trans 'Shutdown' %}",
       leaf: true,
       icon: '{{ MEDIA_URL }}/oxygen/22x22/actions/system-shutdown.png',

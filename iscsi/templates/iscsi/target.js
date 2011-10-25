@@ -128,20 +128,4 @@ Ext.oa.Iscsi__Target_Panel = Ext.extend(Ext.grid.GridPanel, {
 
 Ext.reg("iscsi__target_panel", Ext.oa.Iscsi__Target_Panel);
 
-Ext.oa.Iscsi__Target_Module = Ext.extend(Object, {
-  panel: "iscsi__target_panel",
-  prepareMenuTree: function(tree){
-    tree.root.attributes.children[2].children[iscsiTreeIndex].children.push({
-      text: "{% trans 'Targets' %}",
-      leaf: true,
-      icon: MEDIA_URL + '/icons2/22x22/apps/nfs.png',
-      panel: "iscsi__target_panel_inst",
-      href: '#'
-    });
-  }
-});
-
-
-window.MainViewModules.push( new Ext.oa.Iscsi__Target_Module() );
-
 // kate: space-indent on; indent-width 2; replace-tabs on;

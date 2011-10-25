@@ -127,7 +127,7 @@ Ext.reg("drbd__device_panel", Ext.oa.Drbd__Device_Panel);
 Ext.oa.Drbd__Device_Module = Ext.extend(Object, {
   panel: "drbd__device_panel",
   prepareMenuTree: function(tree){
-    tree.root.attributes.children[3].children.push({
+    tree.appendToRootNodeById("menu_services", {
       text: "{% trans 'DRBD' %}",
       leaf: true,
       icon: MEDIA_URL + '/icons2/22x22/apps/nfs.png',

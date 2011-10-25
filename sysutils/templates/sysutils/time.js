@@ -53,7 +53,7 @@ Ext.oa.Time_Panel = Ext.extend(Ext.Panel, {
   },
 
   prepareMenuTree: function(tree){
-    tree.root.attributes.children[4].children.push({
+    tree.appendToRootNodeById("menu_system", {
       text: "{% trans 'Date/Time' %}",
       leaf: true,
       panel: this,

@@ -84,7 +84,7 @@ Ext.oa.Munin__MuninNode_Module = Ext.extend(Object, {
   panel: "munin__muninnode_panel",
 
   prepareMenuTree: function(tree){
-    tree.root.attributes.children[0].children.push({
+    tree.appendToRootNodeById("menu_status", {
       text: "{% trans 'Performance' %}",
       leaf: true,
       icon: MEDIA_URL + '/icons2/22x22/apps/samba.png',

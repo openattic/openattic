@@ -160,7 +160,7 @@ Ext.oa.Cmdlog__LogEntry_Module = Ext.extend(Object, {
   panel: "cmdlog__logentry_panel",
 
   prepareMenuTree: function(tree){
-    tree.root.attributes.children[0].children.push({
+    tree.appendToRootNodeById("menu_status", {
       text: "{% trans 'Command Log' %}",
       leaf: true,
       icon: MEDIA_URL + '/icons2/22x22/actions/bookmark-new.png',

@@ -135,7 +135,7 @@ Ext.reg("http__export_panel", Ext.oa.Http__Export_Panel);
 Ext.oa.Http__Export_Module = Ext.extend(Object, {
   panel: "http__export_panel",
   prepareMenuTree: function(tree){
-    tree.root.attributes.children[2].children.push({
+    tree.appendToRootNodeById("menu_shares", {
       text: "{% trans 'Web (HTTP)' %}",
       leaf: true,
       panel: "http__export_panel_inst",
