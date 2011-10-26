@@ -29,8 +29,8 @@ class ServiceHandler(ModelHandler):
             else:
                 perfd = obj.perfdata
                 data["graphs"] = []
-                for i in range(len(perfd)): # someone please shoot me
-                    data["graphs"].append( { "id": i, "title": perfd[i][0] } )
+                for i, graph in enumerate(perfd):
+                    data["graphs"].append( { "id": i, "title": graph[0] } )
 
         except KeyError:
             data["state"]  = None
