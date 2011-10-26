@@ -1,6 +1,6 @@
 window.MainViewModules.push({
   prepareMenuTree: function(tree){
-    tree.appendToRootNodeById("menu_usersettings", {
+    tree.appendToRootNodeById("menu_status", {
       text: 'Theme',
       leaf: true,
       icon: MEDIA_URL + '/oxygen/22x22/apps/preferences-desktop-theme.png',
