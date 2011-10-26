@@ -203,3 +203,5 @@ Ext.extend(Ext.ux.Portal.DropZone, Ext.dd.DropTarget, {
         Ext.ux.Portal.DropZone.superclass.unreg.call(this);
     }
 });
+
+// kate: space-indent on; indent-width 4; replace-tabs on;

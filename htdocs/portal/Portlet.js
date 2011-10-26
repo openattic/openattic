@@ -16,3 +16,5 @@ Ext.ux.Portlet = Ext.extend(Ext.Panel, {
 });
 
 Ext.reg('portlet', Ext.ux.Portlet);
+
+// kate: space-indent on; indent-width 4; replace-tabs on;
