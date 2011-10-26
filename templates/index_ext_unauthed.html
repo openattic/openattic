@@ -29,12 +29,15 @@
             },
             success: function( f, a ){
               location.href=window.nexturl;
+              login_form.getEl().unmask();
+              login_form.getEl().mask("Loading...");
             },
             failure: function( f, a ){
               if( a.result )
                 Ext.Msg.alert( "Error", this.errmsg[a.result.errormsg] );
               else
                 Ext.Msg.alert( "Error", this.errmsg['undefined'] );
+              login_form.getEl().unmask();
             }
           },
           items: [{
@@ -56,8 +59,10 @@
               allowBlank: false,
               listeners: {
                 specialkey: function( f, e ){
-                  if( e.getKey() == e.ENTER )
+                  if( e.getKey() == e.ENTER ){
                     login_form.getForm().submit( login_form.serverResponseHandlers );
+                    login_form.getEl().mask("Checking...");
+                  }
                 }
               }
           }],
@@ -65,6 +70,7 @@
             text:    Ext.MessageBox.buttonText['ok'],
             handler: function(){
               login_form.getForm().submit( login_form.serverResponseHandlers );
+              login_form.getEl().mask("Checking...");
             }
           }]
         });
