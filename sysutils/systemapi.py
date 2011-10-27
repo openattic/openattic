@@ -6,6 +6,8 @@ import ctypes
 
 from systemd import invoke, logged, LockingPlugin, method
 from sysutils.models import NTP
+
+
 @logged
 class SystemD(LockingPlugin):
     dbus_path = "/sysutils"

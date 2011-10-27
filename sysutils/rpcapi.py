@@ -2,6 +2,8 @@
 # kate: space-indent on; indent-width 4; replace-tabs on;
 
 import dbus
+from time import time
+
 from django.conf import settings
 
 from rpcd.handlers import BaseHandler, ModelHandler
@@ -17,6 +19,12 @@ class SysUtilsHandler(BaseHandler):
 
     def reboot(self):
         dbus.SystemBus().get_object(settings.DBUS_IFACE_SYSTEMD, "/sysutils").reboot()
+
+    def get_time(self):
+        return time()
+
+    def set_time(self, timestamp):
+        return dbus.SystemBus().get_object(settings.DBUS_IFACE_SYSTEMD, "/sysutils").set_time(timestamp)
 
 class InitScriptHandler(ModelHandler):
     model = InitScript
@@ -35,10 +43,10 @@ class InitScriptHandler(ModelHandler):
 
     def start(self, id):
         return InitScript.objects.get(id=id).start()
-    
+
     def stop(self, id):
         return InitScript.objects.get(id=id).stop()
-    
+
 class NTPHandler(ModelHandler):
     model = NTP
 
