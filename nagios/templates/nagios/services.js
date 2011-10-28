@@ -5,7 +5,8 @@ Ext.namespace("Ext.oa");
 
 Ext.oa.Nagios__Graph_ImagePanel = Ext.extend(Ext.Panel, {
   initComponent: function(){
-    Ext.apply(this, Ext.apply(this.initialConfig, {
+    Ext.apply(this, Ext.applyIf(this.initialConfig, {
+      graphwidth: false,
       layout: "vbox",
       layoutConfig: { "align": "center" },
       items: new Ext.BoxComponent({
@@ -39,10 +40,14 @@ Ext.oa.Nagios__Graph_ImagePanel = Ext.extend(Ext.Panel, {
     this.currentId = id;
     if( this.el ){
       this.el.mask("Loading...");
-      this.items.items[0].el.dom.src = String.format(
+      var url = String.format(
         PROJECT_URL + "/nagios/{0}/{1}.png?start={2}",
         record.data.id, id, (new Date().format("U") - this.timespan)
       );
+      if( this.graphwidth !== false ){
+        url += "&width=" + this.graphwidth;
+      }
+      this.items.items[0].el.dom.src = url;
     }
   }
 });
