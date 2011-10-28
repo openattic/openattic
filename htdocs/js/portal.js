@@ -19,7 +19,7 @@ Ext.oa.Portal = Ext.extend(Ext.ux.Portal, {
       margins:'35 5 5 0',
       items: (function(){
         var state = Ext.state.Manager.get("portalstate",
-          [["portlet_lvs", "portlet_nfs"], ["portlet_cpu"], ["portlet_ram"]]);
+          [["portlet_lvs", "portlet_nfs"], ["portlet_cpu", "portlet_iops_itcosm3"], ["portlet_ram", "portlet_iops_sdb"]]);
         var all_portlets = [{
           title: 'LVs',
           layout:'fit',
@@ -190,6 +190,34 @@ Ext.oa.Portal = Ext.extend(Ext.ux.Portal, {
               }
             };
           }())
+        }, {
+          title: 'itc_osm3 I/O',
+          id: 'portlet_iops_itcosm3',
+          tools: tools,
+          items: {
+            xtype: "naggraphimage",
+            title: "4 hours",
+            timespan: 4*60*60,
+            height: 250,
+            title: false,
+            graphwidth: 230,
+            currentRecord: { data: { id: 39 } },
+            currentId: 1
+          }
+        }, {
+          title: 'sdb I/O',
+          id: 'portlet_iops_sdb',
+          tools: tools,
+          items: {
+            xtype: "naggraphimage",
+            title: "4 hours",
+            timespan: 4*60*60,
+            height: 250,
+            title: false,
+            graphwidth: 230,
+            currentRecord: { data: { id: 90 } },
+            currentId: 1
+          }
         }];
         var items = [];
         // For each column...
@@ -242,6 +270,6 @@ Ext.oa.Portal = Ext.extend(Ext.ux.Portal, {
 });
 
 
-window.MainViewModules.push( new Ext.oa.Portal() );
+window.MainViewModules.unshift( new Ext.oa.Portal() );
 
 // kate: space-indent on; indent-width 2; replace-tabs on;
