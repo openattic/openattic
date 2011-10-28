@@ -27,11 +27,11 @@ class SystemD(BasePlugin):
             if pkg.installed:
                 pinfo["installed_version"] = pkg.installed.version
             else:
-                pinfo["installed_version"] = None
+                pinfo["installed_version"] = ""
             if pkg.candidate:
                 pinfo["candidate_version"] = pkg.candidate.version
             else:
-                pinfo["candidate_version"] = None
+                pinfo["candidate_version"] = ""
             data.append(pinfo)
 
         return {
