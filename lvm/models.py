@@ -567,6 +567,8 @@ class ZfsSnapshot(models.Model):
     lvm = LogicalVolume.lvm
 
     def __init__( self, *args, **kwargs ):
+        if "volume" not in kwargs and "subvolume" in kwargs:
+            kwargs["volume"] = kwargs["subvolume"].volume
         models.Model.__init__( self, *args, **kwargs )
         self._lvm = None
         self._fs  = None
