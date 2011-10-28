@@ -34,18 +34,17 @@ def graph(request, service_id, srcidx):
 
     start  = request.GET.get("start",  str(int(time() - 24*60*60)))
     end    = request.GET.get("end",    str(int(time())))
-    height = request.GET.get("height", "150")
-    width  = request.GET.get("width",  "700")
+    height = int(request.GET.get("height", 150))
+    width  = int(request.GET.get("width",  700))
     color  = request.GET.get("color",  "00AA00CC")
-    negidx = request.GET.get("negidx", None)
 
     graphtitle = serv.description
-    if graph is not None:
+    if graph is not None and width >= 350:
         graphtitle += ' - ' + graph.title
 
     args = [
-        "rrdtool", "graph", "-", "--start", start, "--end", end, "--height", height,
-        "--width", width, "--imgformat", "PNG", "--title", graphtitle,
+        "rrdtool", "graph", "-", "--start", start, "--end", end, "--height", str(height),
+        "--width", str(width), "--imgformat", "PNG", "--title", graphtitle,
         ]
 
     if graph is None:
@@ -61,14 +60,22 @@ def graph(request, service_id, srcidx):
     maxlen = max( [ len( perfdata[ int(srcidx[1:]) if srcidx[0] == '-' else int(srcidx) ][0] )
                     for srcidx in indexes ] )
 
-    args.extend([
-        "COMMENT:  " + (" " * maxlen),
-        "COMMENT:%8s " % "Cur",
-        "COMMENT:%8s " % "Min",
-        "COMMENT:%8s " % "Avg",
-        "COMMENT:%8s \\j" % "Max",
-        "HRULE:0#000000",
-        ])
+    args.append("COMMENT:  " + (" " * maxlen))
+
+    if width >= 350:
+        args.extend([
+            "COMMENT:%8s " % "Cur",
+            "COMMENT:%8s " % "Min",
+            "COMMENT:%8s " % "Avg",
+            "COMMENT:%8s \\j" % "Max",
+            ])
+    else:
+        args.extend([
+            "COMMENT:%8s " % "Cur",
+            "COMMENT:%8s \\j" % "Avg",
+            ])
+
+    args.append("HRULE:0#000000")
 
     for srcidx in indexes:
         invert = False
@@ -88,12 +95,19 @@ def graph(request, service_id, srcidx):
                 "AREA:var%dneg#%s:%-*s"    % (srcidx, color, maxlen, perfdata[srcidx][0]),
                 ])
 
-        args.extend([
-            "GPRINT:var%d:LAST:%%8.2lf%%s"     % srcidx,
-            "GPRINT:var%d:MIN:%%8.2lf%%s"      % srcidx,
-            "GPRINT:var%d:AVERAGE:%%8.2lf%%s"  % srcidx,
-            "GPRINT:var%d:MAX:%%8.2lf%%s\\j"   % srcidx,
-            ])
+
+        if width >= 350:
+            args.extend([
+                "GPRINT:var%d:LAST:%%8.2lf%%s"     % srcidx,
+                "GPRINT:var%d:MIN:%%8.2lf%%s"      % srcidx,
+                "GPRINT:var%d:AVERAGE:%%8.2lf%%s"  % srcidx,
+                "GPRINT:var%d:MAX:%%8.2lf%%s\\j"   % srcidx,
+                ])
+        else:
+            args.extend([
+                "GPRINT:var%d:LAST:%%8.2lf%%s"     % srcidx,
+                "GPRINT:var%d:AVERAGE:%%8.2lf%%s\\j"  % srcidx,
+                ])
 
         perfvalues = perfdata[srcidx][1].split(';')
         if len(perfvalues) > 1:
