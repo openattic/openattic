@@ -19,28 +19,6 @@ Ext.oa.Zfs__Snapshot_Panel = Ext.extend(Ext.Panel, {
           zfsSnapPanel.snapGrid.store.reload();
           }
         },{
-            text: "{% trans "Delete Snapshot" %}",
-            icon: MEDIA_URL + "/icons2/16x16/actions/remove.png",
-            handler: function(self){
-              var sm = zfsSnapPanel.snapGrid.getSelectionModel();
-              if( sm.hasSelection() ){
-                var sel = sm.selections.items[0];
-                Ext.Msg.confirm(
-                  "{% trans 'Confirm delete' %}",
-                   interpolate(
-                     "{% trans 'Really delete snapshot %s ?<br /><b>There is no undo.</b>' %}",
-                     [sel.data.snapname] ),
-                  function(btn, text){
-                    if( btn == 'yes' ) {
-                       lvm__ZfsSnapshot.remove( sel.data.id, function (provider, response){
-                       zfsSnapPanel.snapGrid.store.reload();
-                       })
-                    }
-                  }  
-                )
-              }
-            }
-        },{
           text: "{% trans "Create Snapshot" %}",
           icon: MEDIA_URL + "/icons2/16x16/actions/add.png",
           handler: function(){
@@ -104,10 +82,32 @@ Ext.oa.Zfs__Snapshot_Panel = Ext.extend(Ext.Panel, {
              }]
             });
             sysutils__System.get_time(function(provider, response){
-              addwin.items.items[0].snapshotnamefield.setValue(new Date(response.result * 1000).format("d-m-Y H:i:s"));
+              addwin.items.items[0].snapshotnamefield.setValue(new Date(response.result * 1000).format("d-m-Y_H:i:s"));
             });
             addwin.show();
           }    
+        },{
+            text: "{% trans "Delete Snapshot" %}",
+            icon: MEDIA_URL + "/icons2/16x16/actions/remove.png",
+            handler: function(self){
+              var sm = zfsSnapPanel.snapGrid.getSelectionModel();
+              if( sm.hasSelection() ){
+                var sel = sm.selections.items[0];
+                Ext.Msg.confirm(
+                  "{% trans 'Confirm delete' %}",
+                   interpolate(
+                     "{% trans 'Really delete snapshot %s ?<br /><b>There is no undo.</b>' %}",
+                     [sel.data.snapname] ),
+                  function(btn, text){
+                    if( btn == 'yes' ) {
+                       lvm__ZfsSnapshot.remove( sel.data.id, function (provider, response){
+                       zfsSnapPanel.snapGrid.store.reload();
+                       })
+                    }
+                  }  
+                )
+              }
+            }
         }
       ],
       items: [{
