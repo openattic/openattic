@@ -21,7 +21,7 @@ class SysUtilsHandler(BaseHandler):
         dbus.SystemBus().get_object(settings.DBUS_IFACE_SYSTEMD, "/sysutils").reboot()
 
     def get_time(self):
-        return time()
+        return int(time())
 
     def set_time(self, timestamp):
         return dbus.SystemBus().get_object(settings.DBUS_IFACE_SYSTEMD, "/sysutils").set_time(timestamp)

@@ -130,6 +130,11 @@ class ModelHandler(BaseHandler):
             fields.append("id")
         return list(self.model.objects.filter(**kwds).order_by(*self.order).values(*fields))
 
+    def filter_combo(self, field, query, kwds):
+        if query:
+            kwds[field + '__icontains'] = query
+        return [ self._getobj(obj) for obj in self.model.objects.filter(**kwds).order_by(field) ]
+
     def all_values(self, fields):
         """ Return only the fields named in the `fields' list (plus ID).
         """
