@@ -94,7 +94,12 @@ Ext.oa.Zfs__Snapshot_Panel = Ext.extend(Ext.Panel, {
                           zfsSnapPanel.snapGrid.store.reload();
                         })
                     }
-                      }}
+                      }
+                   else {
+                     addwin.hide();
+                     Ext.Msg.alert("Missing Volume","Please select a volume first");
+                   }
+                }
                }]
              }]
             });
