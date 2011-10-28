@@ -573,6 +573,17 @@ class ZfsSnapshot(models.Model):
         self._lvm = None
         self._fs  = None
 
+    def full_clean(self):
+        # this needs to be run before the fields are checked
+        try:
+            self.volume
+        except LogicalVolume.DoesNotExist:
+            if self.subvolume is not None:
+                self.volume = self.subvolume.volume
+            else:
+                raise
+        return models.Model.full_clean(self)
+
     def clean(self):
         from django.core.exceptions import ValidationError
         if self.volume.filesystem != Zfs.name:
