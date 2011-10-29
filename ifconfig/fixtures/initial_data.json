@@ -1,0 +1,29 @@
+[
+    {
+        "pk": 1,
+        "model": "ifconfig.ipaddress",
+        "fields": {
+            "nameservers": null,
+            "domain": null,
+            "gateway": "",
+            "address": "127.0.0.1"
+        }
+    },
+    {
+        "pk": 1,
+        "model": "ifconfig.netdevice",
+        "fields": {
+            "bond_downdelay": 200,
+            "bond_miimon": 100,
+            "auto": true,
+            "devname": "lo",
+            "bond_mode": "active-backup",
+            "brports": [],
+            "slaves": [],
+            "address": 1,
+            "dhcp": false,
+            "vlanrawdev": null,
+            "bond_updelay": 200
+        }
+    }
+]
