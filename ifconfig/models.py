@@ -33,16 +33,25 @@ BOND_MODE_CHOICES = (
     )
 
 
-class NetDevice(models.Model):
-    devname     = models.CharField(max_length=10, unique=True)
-    auto        = models.BooleanField(default=True, blank=True)
-    address     = models.CharField(max_length=250, unique=True, blank=True, null=True,
-                    help_text='Enter a static IP address, "dhcp" or leave this field blank for ifaces without an IP.')
-    gateway     = models.CharField(max_length=50, blank=True, null=True)
+class IPAddress(models.Model):
+    address     = models.CharField(max_length=250, unique=True)
+    gateway     = models.CharField(max_length=50, blank=True)
     nameservers = models.CharField(max_length=50, blank=True, null=True)
     domain      = models.CharField(max_length=250, blank=True, null=True)
-    prefixlen   = models.IntegerField(default=24, blank=True, null=True)
-    family      = models.IntegerField(default=socket.AF_INET, choices=AF_CHOICES, blank=True, null=True)
+
+    @property
+    def is_loopback(self):
+        return self.address in ("loopback", "localhost", "127.0.0.1", "::1")
+
+    @property
+    def is_ipv6(self):
+        return ":" in self.address
+
+class NetDevice(models.Model):
+    devname     = models.CharField(max_length=10, unique=True)
+    address     = models.ForeignKey(IPAddress, blank=True, null=True)
+    dhcp        = models.BooleanField(default=False, blank=True)
+    auto        = models.BooleanField(default=True, blank=True)
     slaves      = models.ManyToManyField('self', blank=True, symmetrical=False, related_name="bond_dev_set",
                     help_text="If this interface is a bonding device, add the slave devices here.")
     brports     = models.ManyToManyField('self', blank=True, symmetrical=False, related_name="bridge_dev_set",

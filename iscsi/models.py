@@ -8,6 +8,7 @@ from django.conf import settings
 from django.utils.translation   import ugettext_noop, ugettext_lazy as _
 
 from lvm.models import StatefulModel, LogicalVolume
+from ifconfig.models import IPAddress
 
 class Initiator(models.Model):
     name        = models.CharField(max_length=50,  unique=True)
@@ -22,6 +23,8 @@ class Target(models.Model):
     allowall    = models.BooleanField(default=True, blank=True, help_text=_("Sets the default action if both the allow and deny ACLs are empty. True = Allow all initiators to connect, False = deny all."))
     init_allow  = models.ManyToManyField(Initiator, related_name="allowed_targets", blank=True)
     init_deny   = models.ManyToManyField(Initiator, related_name="denied_targets",  blank=True)
+    tgt_allow   = models.ManyToManyField(IPAddress, related_name="allowed_targets", blank=True)
+    tgt_deny    = models.ManyToManyField(IPAddress, related_name="denied_targets",  blank=True)
 
     def __init__(self, *args, **kwargs):
         models.Model.__init__(self, *args, **kwargs)

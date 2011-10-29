@@ -50,14 +50,14 @@ class SystemD(LockingPlugin):
             for interface in NetDevice.objects.all():
                 depends[interface.devname] = []
 
-                if interface.address:
-                    addr = interface.address.split("/")
-                    if addr[0] == "dhcp":
-                        out.write("iface %s inet dhcp\n" % interface.devname)
-                        haveaddr = True
-                    elif addr[0] == "loopback":
+                if interface.dhcp:
+                    out.write("iface %s inet dhcp\n" % interface.devname)
+                    haveaddr = True
+                elif interface.address:
+                    if interface.address.is_loopback:
                         out.write("iface %s inet loopback\n" % interface.devname)
                     else:
+                        addr = interface.address.address.split("/")
                         out.write("iface %s inet static\n" % interface.devname)
                         out.write("\taddress %s\n" % addr[0])
                         haveaddr = True
@@ -68,12 +68,12 @@ class SystemD(LockingPlugin):
                                 out.write("\tnetmask %s\n" % addr[1])
                         else:
                             raise ValueError("Interface %s has an address without a netmask" % interface.devname)
-                        if interface.gateway:
-                            out.write("\tgateway %s\n" % interface.gateway)
-                        if interface.domain:
-                            out.write("\tdns-search %s\n" % interface.domain)
-                        if interface.nameservers:
-                            out.write("\tdns-nameservers %s\n" % interface.nameservers)
+                        if interface.address.gateway:
+                            out.write("\tgateway %s\n" % interface.address.gateway)
+                        if interface.address.domain:
+                            out.write("\tdns-search %s\n" % interface.address.domain)
+                        if interface.address.nameservers:
+                            out.write("\tdns-nameservers %s\n" % interface.address.nameservers)
                 else:
                     out.write("iface %s inet manual\n" % interface.devname)
 

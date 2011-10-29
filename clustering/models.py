@@ -8,13 +8,12 @@ from django.conf import settings
 from django.db import models
 
 from lvm.models      import StatefulModel
-from ifconfig.models import NetDevice
+from ifconfig.models import IPAddress
 from drbd.models     import DrbdDevice
 from peering.models  import PeerHost
 
 class ServiceIP4(StatefulModel):
-    address     = models.IPAddressField()
-    netdevice   = models.ForeignKey(NetDevice)
+    address     = models.ForeignKey(IPAddress)
     peerhost    = models.ForeignKey(PeerHost, help_text='The host with which this address is shared.')
     resname     = models.CharField(max_length=100, default="service_ip")
     init_master = models.BooleanField(default=True)
