@@ -65,10 +65,6 @@ Ext.oa.MenuTree = Ext.extend(Ext.tree.TreePanel, {
                   {text: 'LDAP',   leaf: true}
                 ]
             } ]
-          }, {
-            text: 'Online Update',
-            leaf: true,
-            icon: MEDIA_URL + '/icons2/22x22/apps/update.png'
           }
         ]
       }, {
