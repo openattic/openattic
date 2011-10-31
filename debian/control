@@ -136,6 +136,13 @@ Description: NFS module for openATTIC
  Installs the NFS module, which handles sharing volumes for other *nix
  hosts via NFS.
 
+Package: openattic-module-apt
+Architecture: all
+Depends: ${misc:Depends}, python-apt
+Description: APT module for openATTIC
+ Installs the APT module, which handles system upgrades using Debian's
+ Advanced Package Tool (APT).
+
 Package: openattic-module-iet-iscsi
 Architecture: all
 Depends: ${misc:Depends}, openattic-module-lvm,
