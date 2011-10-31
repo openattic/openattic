@@ -180,6 +180,7 @@ INSTALLED_APPS = [
     'rpcd',
     'systemd',
     'sysutils',
+    'ifconfig',
 ]
 
 def modprobe( name ):
