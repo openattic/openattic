@@ -325,10 +325,12 @@ class Command( BaseCommand ):
         logging.info( "Loaded modules: %s", ', '.join([module.__name__ for module in rpcdplugins]) )
 
         if options["certfile"] and options["keyfile"]:
+            logging.info( "Initializing SecureXMLRPCServer (using SSL)" )
             serv = SecureXMLRPCServer((options['bindaddr'], options['bindport']),
                 certFile=options["certfile"], keyFile=options["keyfile"],
                 allow_none=True, requestHandler=VerifyingRequestHandler)
         else:
+            logging.info( "Initializing SimpleXMLRPCServer (not using SSL)" )
             serv = SimpleXMLRPCServer((options['bindaddr'], options['bindport']),
                 allow_none=True, requestHandler=VerifyingRequestHandler)
         serv.register_introspection_functions()
