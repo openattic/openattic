@@ -75,7 +75,7 @@ def create_service_for_lv(**kwargs):
             volume      = lv,
             command     = cmd,
             description = nagios_settings.LV_PERF_DESCRIPTION % lv.name,
-            arguments   = "dm-%s" % lv.lvm_info["LVM2_LV_KERNEL_MINOR"]
+            arguments   = lv.device
             )
         serv.save()
 
