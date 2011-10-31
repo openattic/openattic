@@ -76,7 +76,59 @@ Ext.oa.Http__Export_Panel = Ext.extend(Ext.grid.GridPanel, {
           });
           addwin.show();
         }
-      }, {
+      },{
+        text:  "{% trans 'Edit' %}",
+        handler: function(self){
+          var sm = httpGrid.getSelectionModel();
+          if( sm.hasSelection() ){
+            var sel = sm.selections.items[0];
+            var addwin = new Ext.Window({
+              title: "Edit",
+              layout: "fit",
+              height: 200,
+              width: 500,
+              items: [{
+                xtype: "form",
+                defaults: {
+                  xtype: "textfield",
+                  anchor: '-20px'
+                },
+                items: [{
+                  fieldLabel: "Volume",
+                  name: "volume",
+                  readOnly: true,
+                  disabled: true,
+                  ref: 'volumefield',
+                  value: sel.data.volumename
+                },{
+                  fieldLabel: "Directory",
+                  name: "path",
+                  ref: 'pathfield',
+                  value: sel.data.path
+                }],
+                buttons: [{
+                  text: 'Save',
+                  handler: function(self){
+                    var sm = httpGrid.getSelectionModel();
+                    if( sm.hasSelection() ){
+                      var sel = sm.selections.items[0];
+                      http__Export.set(sel.data.id,{
+                        'path':    self.ownerCt.ownerCt.pathfield.getValue()
+                    }, function(provider, response){
+                        if( response.result ){
+                          
+                          addwin.hide();
+                        }
+                      });
+                    }
+                  }
+                }]
+              }]
+            });
+            addwin.show();
+          }
+        }
+      },{
         text: "{% trans 'Delete Export' %}",
         icon: MEDIA_URL + "/icons2/16x16/actions/remove.png",
         handler: function(self){
