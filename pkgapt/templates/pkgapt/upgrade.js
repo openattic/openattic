@@ -109,7 +109,7 @@ Ext.oa.Pkgapt__Upgrade_Module = Ext.extend(Object, {
     tree.appendToRootNodeById("menu_system", {
       text: "{% trans 'Online Update' %}",
       leaf: true,
-      icon: MEDIA_URL + '/icons2/22x22/categories/package_network.png',
+      icon: MEDIA_URL + '/icons2/22x22/apps/update.png',
       panel: 'pkgapt__upgrade_panel_inst',
       href: '#'
     });
