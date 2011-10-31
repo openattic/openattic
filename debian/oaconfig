@@ -86,6 +86,12 @@ case $1 in
 		/etc/init.d/apache2 reload
 		;;
 
+	status)
+		/etc/init.d/openattic_systemd status || /bin/true
+		/etc/init.d/openattic_rpcd status    || /bin/true
+		/etc/init.d/apache2 status           || /bin/true
+		;;
+
 	*)
 		# Big thanks to DireFog and pcgod for the following line
 		# First pass my "$@" in a whitespace-preserving way to su's subshell,
