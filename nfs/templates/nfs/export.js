@@ -80,7 +80,7 @@ Ext.oa.Nfs__Export_Panel = Ext.extend(Ext.grid.GridPanel, {
                     }
                   });
                 }
-              }, {
+              },{
                 text: "{% trans 'Cancel' %}",
                 icon: MEDIA_URL + "/icons2/16x16/actions/gtk-cancel.png",
                 handler: function(self){
@@ -91,7 +91,72 @@ Ext.oa.Nfs__Export_Panel = Ext.extend(Ext.grid.GridPanel, {
           });
           addwin.show();
         }
-      }, {
+      },{
+        text:  "{% trans 'Edit' %}",
+        handler: function(self){
+          var sm = nfsGrid.getSelectionModel();
+          if( sm.hasSelection() ){
+            var sel = sm.selections.items[0];
+            var addwin = new Ext.Window({
+              title: "Edit",
+              layout: "fit",
+              height: 200,
+              width: 500,
+              items: [{
+                xtype: "form",
+                defaults: {
+                  xtype: "textfield",
+                  anchor: '-20px'
+                },
+                items: [{
+                  fieldLabel: "Volume",
+                  name: "volume",
+                  readOnly: true,
+                  disabled: true,
+                  ref: 'volumefield',
+                  
+                  value: sel.json.volume.name
+                },{
+                  fieldLabel: "Directory",
+                  name: "directory",
+                  ref: 'directoryfield',
+                  value: sel.data.path
+                },{
+                  fieldLabel: "Address",
+                  name: "address",
+                  ref: 'addressfield',
+                  value: sel.data.address
+                },{
+                  fieldLabel: "Options",
+                  name: "options",
+                  ref: 'optionsfield',
+                  value: sel.data.options
+                }],
+                buttons: [{
+                  text: 'Save',
+                  handler: function(self){
+                    var sm = nfsGrid.getSelectionModel();
+                    if( sm.hasSelection() ){
+                      var sel = sm.selections.items[0];
+                      nfs__Export.set(sel.data.id, {
+                        'path':    self.ownerCt.ownerCt.directoryfield.getValue(),
+                        'address':  self.ownerCt.ownerCt.addressfield.getValue(),
+                        'options':   self.ownerCt.ownerCt.optionsfield.getValue()
+                      }, function(provider, response){
+                        if( response.result ){
+                          
+                          addwin.hide();
+                        }
+                      });
+                    }
+                  }
+                }]
+              }]
+            });
+            addwin.show();
+          }
+        }
+      },{
         text: "{% trans 'Delete Export' %}",
         icon: MEDIA_URL + "/icons2/16x16/actions/remove.png",
         handler: function(self){
