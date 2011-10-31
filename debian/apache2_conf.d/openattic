@@ -1,6 +1,6 @@
-Alias                   /openattic/htdocs/extjs_themes/images/default/ /usr/share/javascript/extjs/resources/images/default/
-Alias                   /openattic/htdocs/extjs/  /usr/share/javascript/extjs/
-Alias                   /openattic/htdocs/oxygen/ /usr/share/icons/oxygen/
+Alias                   /openattic/static/extjs_themes/images/default/ /usr/share/javascript/extjs/resources/images/default/
+Alias                   /openattic/static/extjs/  /usr/share/javascript/extjs/
+Alias                   /openattic/static/oxygen/ /usr/share/icons/oxygen/
 Alias                   /openattic/static/        /usr/share/openattic/htdocs/
 Alias                   /openattic/media/         /usr/share/pyshared/django/contrib/admin/media/
 
