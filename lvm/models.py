@@ -212,8 +212,7 @@ class LogicalVolume(StatefulModel):
     megs        = models.IntegerField(_("Size in MB"))
     vg          = models.ForeignKey(VolumeGroup, blank=True)
     snapshot    = models.ForeignKey("self", blank=True, null=True)
-    filesystem  = models.CharField(max_length=20, blank=True, null=True,
-                    choices=[(fs.name, fs.desc) for fs in FILESYSTEMS] )
+    filesystem  = models.CharField(max_length=20, blank=True, choices=[(fs.name, fs.desc) for fs in FILESYSTEMS] )
     formatted   = models.BooleanField(default=False, editable=False)
     owner       = models.ForeignKey(User, blank=True)
 
