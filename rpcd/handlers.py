@@ -120,7 +120,23 @@ class ModelHandler(BaseHandler):
         """ Return an object given by ID. """
         if not isinstance( id, dict ):
             id = {'id': int(id)}
-        return { "success": True, "data": self._getobj( self.model.objects.get(**id) ) }
+        data = {}
+        obj = self.model.objects.get(**id)
+        for field in obj._meta.fields:
+            if self.fields is not None and field.name not in self.fields:
+                continue
+            if self.exclude is not None and field.name in self.exclude:
+                continue
+
+            value = getattr(obj, field.name)
+            if isinstance( field, models.ForeignKey ):
+                data[field.name] = unicode(value)
+                data[field.name + "_id"] = value.id
+            else:
+                data[field.name] = value
+
+        data = self._override_get(obj, data)
+        return { "success": True, "data": data }
 
     def _filter_queryset(self, kwds, queryset=None):
         if queryset is None:
