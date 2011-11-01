@@ -36,7 +36,7 @@ Ext.oa.Zfs__Subvolume__Panel = Ext.extend(Ext.grid.GridPanel, {
           zfsSubvolumePanel.store.reload();;
           }
         },{
-           text: "Create Subvolume",
+           text: "{% trans 'Create Subvolume' %}",
            icon: MEDIA_URL + "/icons2/16x16/actions/add.png",
            handler: function() {
              var addwin = new Ext.Window({
@@ -75,7 +75,7 @@ Ext.oa.Zfs__Subvolume__Panel = Ext.extend(Ext.grid.GridPanel, {
                  }
                  ],
                  buttons: [{
-                   text: "Create",
+                   text: "{% trans 'Create' %}",
                    icon: MEDIA_URL + "/oxygen/16x16/actions/dialog-ok-apply.png",
                    handler: function(self){
                         lvm__ZfsSubvolume.create({

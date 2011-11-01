@@ -40,7 +40,7 @@ Ext.oa.Zfs__Snapshot_Panel = Ext.extend(Ext.Panel, {
                  ref: 'snapshotnamefield'
                }],
                buttons: [{
-                 text: "Create Snapshot",
+                 text: "{% trans 'Create Snapshot' %}",
                  icon: MEDIA_URL + "/oxygen/16x16/actions/dialog-ok-apply.png",
                  handler: function(self){
                   var sm = zfsSnapPanel.tabpanel.getActiveTab().getSelectionModel();
