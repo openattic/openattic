@@ -22,11 +22,11 @@ Ext.oa.Samba__Share_Panel = Ext.extend(Ext.grid.GridPanel, {
         sambaShareGrid.store.reload();
         }
       },{
-        text: "{% trans "Add Share" %}",
+        text: "{% trans 'Add Share' %}",
         icon: MEDIA_URL + "/icons2/16x16/actions/add.png",
         handler: function(){
           var addwin = new Ext.Window({
-            title: "{% trans "Add Share" %}",
+            title: "{% trans 'Add Share' %}",
             layout: "fit",
             height: 500,
             width: 500,
@@ -144,7 +144,7 @@ Ext.oa.Samba__Share_Panel = Ext.extend(Ext.grid.GridPanel, {
                 value:     '0775'
               }
               ],
-                buttons: [{
+              buttons: [{
                 text: "{% trans 'Create Share' %}",
                 icon: MEDIA_URL + "/oxygen/16x16/actions/dialog-ok-apply.png",
                 handler: function(self){

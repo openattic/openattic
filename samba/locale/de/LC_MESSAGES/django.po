@@ -8,8 +8,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2011-10-05 10:02+0200\n"
-"PO-Revision-Date: 2011-10-05 10:03\n"
+"POT-Creation-Date: 2011-10-28 12:01+0200\n"
+"PO-Revision-Date: 2011-10-28 12:15\n"
 "Last-Translator:   <>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
 "MIME-Version: 1.0\n"
@@ -19,22 +19,87 @@ msgstr ""
 "Plural-Forms: nplurals=2; plural=(n != 1)\n"
 "X-Translated-Using: django-rosetta 0.6.0\n"
 
-#: templates/samba/share.js:6
+#: templates/samba/share.js:15
 msgid "Samba"
 msgstr "Samba"
 
-#: templates/samba/share.js:17
+#: templates/samba/share.js:20
+msgid "Reload"
+msgstr ""
+
+#: templates/samba/share.js:25 templates/samba/share.js.py:29
+msgid "Add Share"
+msgstr "Füge Share hinzu"
+
+#: templates/samba/share.js:47
+msgid "Volume"
+msgstr "Volume"
+
+#: templates/samba/share.js:71 templates/samba/share.js.py:216
 msgid "Path"
 msgstr "Pfad"
 
-#: templates/samba/share.js:21
-msgid "State"
-msgstr "Status"
+#: templates/samba/share.js:78
+msgid "Owner"
+msgstr "Besitzer"
 
-#: templates/samba/share.js:25
+#: templates/samba/share.js:88
+msgid "Select..."
+msgstr "Bitte auswählen..."
+
+#: templates/samba/share.js:94
+msgid "Group"
+msgstr "Gruppe"
+
+#: templates/samba/share.js:99
+msgid "Browseable"
+msgstr ""
+
+#: templates/samba/share.js:105 templates/samba/share.js.py:225
 msgid "Available"
 msgstr "Verfügbar"
 
-#: templates/samba/share.js:36
+#: templates/samba/share.js:111
+msgid "Writeable"
+msgstr ""
+
+#: templates/samba/share.js:117
+msgid "Comment"
+msgstr "Kommentar"
+
+#: templates/samba/share.js:122
+msgid "Create Mode"
+msgstr ""
+
+#: templates/samba/share.js:128 templates/samba/share.js.py:220
+msgid "State"
+msgstr "Status"
+
+#: templates/samba/share.js:134
+msgid "Guest OK"
+msgstr ""
+
+#: templates/samba/share.js:140
+msgid "Dir Mode"
+msgstr ""
+
+#: templates/samba/share.js:148
+msgid "Create Share"
+msgstr "Erzeuge Share"
+
+#: templates/samba/share.js:176
+msgid "Cancel"
+msgstr "Abbrechzen"
+
+#: templates/samba/share.js:187 templates/samba/share.js.py:194
+msgid "Delete Share"
+msgstr "Share löschen"
+
+#: templates/samba/share.js:196
+#, python-format
+msgid "Do you really want to delete %s?"
+msgstr ""
+
+#: templates/samba/share.js:246
 msgid "Windows (Samba)"
 msgstr "Windows (Samba)"

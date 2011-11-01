@@ -38,7 +38,7 @@ Ext.oa.Cmdlog__LogEntry_Panel = Ext.extend(Ext.Panel, {
             '<span style="float: right">{starttime} &ndash; {endtime}</span>',
             '{command}: {state} ({exitcode})',
           '</div>',
-          '<div class="logcommandtext" style="height: 200px">',
+          '<div class="logcommandtext" style="height: 168px; overflow: auto">',
             '<pre style="white-space: pre-wrap">{text}</pre>',
           '</div>',
         '</tpl>'),

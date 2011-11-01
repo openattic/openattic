@@ -114,10 +114,11 @@ Ext.oa.Ftp__User_Panel = Ext.extend(Ext.grid.GridPanel, {
                 },{
                   fieldLabel: "Password",
                   name: "password",
-                  ref: 'passwordfield',
+                  inputType: 'password',
+                  ref: 'passwdfield'
                 },{
                 xtype:      'volumefield',
-                value: sel.data.volume.volumename,
+                value: sel.data.volumename,
                 listeners: {
                   select: function(self, record, index){
                     lvm__LogicalVolume.get( record.data.id, function( provider, response ){
@@ -129,8 +130,8 @@ Ext.oa.Ftp__User_Panel = Ext.extend(Ext.grid.GridPanel, {
               }, {
                 fieldLabel: "{% trans 'Directory' %}",
                 name: "homedir",
-                disabled: true,
-                ref: 'dirfield'
+                ref: 'dirfield',
+                value: sel.data.homedir
               }],
                 buttons: [{
                   text: 'Save',
@@ -139,14 +140,14 @@ Ext.oa.Ftp__User_Panel = Ext.extend(Ext.grid.GridPanel, {
                     if( sm.hasSelection() ){
                       var sel = sm.selections.items[0];
                       ftp__User.set(sel.data.id,{
-                        'username': self.ownerCt.ownerCt.namefield.getValue(),
+                        'username': sel.data.username,
                         'passwd':   self.ownerCt.ownerCt.passwdfield.getValue(),
                         'volume': {
                           'app': 'lvm',
                           'obj': 'LogicalVolume',
-                          'id': self.ownerCt.ownerCt.volfield.getValue()
+                          'id': sel.data.id
                         },
-                        'homedir':  self.ownerCt.ownerCt.dirfield.getValue()
+                        'homedir':  sel.data.homedir
                       }, function(provider, response){
                         if( response.result ){
                           ftpGrid.store.reload();

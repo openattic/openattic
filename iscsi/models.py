@@ -24,7 +24,6 @@ class Target(models.Model):
     init_allow  = models.ManyToManyField(Initiator, related_name="allowed_targets", blank=True)
     init_deny   = models.ManyToManyField(Initiator, related_name="denied_targets",  blank=True)
     tgt_allow   = models.ManyToManyField(IPAddress, related_name="allowed_targets", blank=True)
-    tgt_deny    = models.ManyToManyField(IPAddress, related_name="denied_targets",  blank=True)
 
     def __init__(self, *args, **kwargs):
         models.Model.__init__(self, *args, **kwargs)
