@@ -84,35 +84,43 @@ Ext.oa.Peering__Peerhost_Panel = Ext.extend(Ext.grid.GridPanel, {
               width: 500,
               items: [{
                 xtype: "form",
+                api: {
+                  load:   peering__PeerHost.get_ext,
+                  submit: peering__PeerHost.set_ext,
+                },
                 defaults: {
                   xtype: "textfield",
                   anchor: '-20px'
                 },
+                paramOrder: ["id"],
+                listeners: {
+                  afterrender: function(self){
+                    self.getForm().load({ params: { id: sel.data.id } });
+                  }
+                },
                 items: [ {
                   fieldLabel: "{% trans 'Name' %}",
                   name: "name",
-                  ref: 'namefield',
-                  value: sel.data.name
+                  ref: 'namefield'
                 }, {
                   fieldLabel: "{% trans 'Base URL' %}",
                   name: "base_url",
-                  ref: 'urlfield',
-                  value: sel.data.base_url
+                  ref: 'urlfield'
                 } ],
                 buttons: [{
                   text: "{% trans 'Edit Peer' %}",
                   icon: MEDIA_URL + "/oxygen/16x16/actions/dialog-ok-apply.png",
                   handler: function(self){
-                    peering__PeerHost.set(sel.data.id, {
-                      'name':     self.ownerCt.ownerCt.namefield.getValue(),
-                      'base_url': self.ownerCt.ownerCt.urlfield.getValue()
-                    }, function(provider, response){
-                      if( response.result ){
-                        peerhostGrid.store.reload();
-                        addwin.hide();
-                      }
-                      else if( response.type == "exception" ){
-                        Ext.Msg.alert("Error", "{% trans 'Could not add peer host. Is the URL valid?<br />' %}" + response.message);
+                    self.ownerCt.ownerCt.getForm().submit({
+                      params: { id: sel.data.id },
+                      success: function(provider, response){
+                        if( response.result ){
+                          peerhostGrid.store.reload();
+                          addwin.hide();
+                        }
+                        else if( response.type == "exception" ){
+                          Ext.Msg.alert("Error", "{% trans 'Could not edit peer host. Is the URL valid?<br />' %}" + response.message);
+                        }
                       }
                     });
                   }
