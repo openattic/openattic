@@ -6,7 +6,7 @@ Ext.oa.VolumeField = Ext.extend(Ext.form.ComboBox, {
   filesystem__isnull: false,
   initComponent: function(){
     var baseParams = {
-      "fields": ["name"]
+      "field": "name"
     };
 
     if( this.filesystem__isnull === false )
@@ -21,8 +21,8 @@ Ext.oa.VolumeField = Ext.extend(Ext.form.ComboBox, {
       hiddenName: 'volume_id',
       store: new Ext.data.DirectStore({
         fields: ["id", "name"],
-        directFn: lvm__LogicalVolume.filter_values,
-        paramOrder: ["kwds", "fields"],
+        directFn: lvm__LogicalVolume.filter_combo,
+        paramOrder: ["field", "query", "kwds"],
         baseParams: baseParams
       }),
       typeAhead:     true,
