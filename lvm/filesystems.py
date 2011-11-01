@@ -128,7 +128,9 @@ class Zfs(FileSystem):
         return self.lv.lvm.zfs_mount(self.lv.name)
 
     def unmount(self):
-        return self.lv.lvm.zfs_unmount(self.lv.name)
+        if not self.mounted:
+            return self.lv.lvm.zfs_unmount(self.lv.name)
+        return True
 
     def destroy(self):
         return self.lv.lvm.zfs_destroy(self.lv.name)
