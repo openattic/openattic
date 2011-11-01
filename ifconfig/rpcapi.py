@@ -3,7 +3,10 @@
 
 from rpcd.handlers import ModelHandler
 
-from ifconfig.models import NetDevice
+from ifconfig.models import IPAddress, NetDevice
+
+class IPAddressHandler(ModelHandler):
+    model = IPAddress
 
 class NetDeviceHandler(ModelHandler):
     model = NetDevice
@@ -21,4 +24,4 @@ class NetDeviceHandler(ModelHandler):
     def write_interfaces(self):
         return NetDevice.write_interfaces()
 
-RPCD_HANDLERS = [NetDeviceHandler]
+RPCD_HANDLERS = [NetDeviceHandler, IPAddressHandler]
