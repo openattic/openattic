@@ -64,7 +64,7 @@ class Provider(BaseProvider):
                     continue
                 attrval = getattr( handlers[action], attrname )
                 if inspect.ismethod(attrval):
-                    self._register_method(action, attrval)
+                    self._register_method(action, attrval, getattr(attrval, "EXT_flags", None))
 
     def _make_call_wrapper(self, func):
         @wraps(func)
@@ -73,7 +73,7 @@ class Provider(BaseProvider):
                 raise Exception("Access Denied!")
             # func is an UNBOUND class method. Get the handler class,
             # instantiate it with the current user, and...
-            hh = func.im_class(request.user)
+            hh = func.im_class(request.user, request)
             # call the BOUND method from that instance.
             return getattr(hh, func.__name__)(*args, **kwargs)
         return wrapper

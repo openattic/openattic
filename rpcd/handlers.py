@@ -17,8 +17,9 @@ class BaseHandler(object):
         by the _get_handler_name class method, which you will have to
         override in order to set the name.
     """
-    def __init__(self, user):
+    def __init__(self, user, request=None):
         self.user = user
+        self.request = request
 
     @classmethod
     def _get_handler_name(cls):
@@ -187,6 +188,33 @@ class ModelHandler(BaseHandler):
     def set(self, id, data):
         """ Update the object given by ID with values from the data dict. """
         return self._setobj( self.model.objects.get(id=id), data )
+
+    def set_ext(self):
+        """ Reads POST data from the request to update a given object. """
+        if self.request is None:
+            raise ValueError("Cannot access request")
+
+        id = int(self.request.POST["id"])
+        if id == -1:
+            instance = None
+        else:
+            instance = self.model.objects.get(id=id)
+
+        from django.forms.models import ModelFormMetaclass, ModelForm
+        formclass = ModelFormMetaclass( self.model._meta.object_name + "Form", (ModelForm,), {
+            'Meta': type("Meta", (object,), {"model": self.model})
+            } )
+        forminst = formclass(self.request.POST, instance=instance)
+        if forminst.is_valid():
+            forminst.save()
+            return { "success": True }
+        else:
+            errdict = {}
+            for errfld in forminst.errors:
+               errdict[errfld] = "\n".join( forminst.errors[errfld] )
+            return { "success": False, "errors": errdict }
+
+    set_ext.EXT_flags = {"formHandler": True}
 
     def _setobj(self, obj, data):
         """ Update the given object with values from the data dict. """
