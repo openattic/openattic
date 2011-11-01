@@ -620,8 +620,6 @@ class ZfsSnapshot(models.Model):
         return models.Model.delete(self)
 
     def rollback( self ):
-        self.origvolume.fs.unmount()
         for snap in ZfsSnapshot.objects.filter(volume=self.volume, subvolume=self.subvolume, created_at__gt=self.created_at):
             snap.delete(database_only=True) # -R will take care of them in the system
         self.volume.lvm.zfs_rollback_snapshot(self.origvolume.name, self.snapname)
-        self.origvolume.fs.mount()
