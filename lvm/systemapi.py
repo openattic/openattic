@@ -296,3 +296,7 @@ class SystemD(BasePlugin):
     @method(in_signature="ss", out_signature="i")
     def zfs_destroy_snapshot(self, orig, snapshot):
         return invoke(["zfs", "destroy", "-R", "%s@%s" % (orig, snapshot)])
+
+    @method(in_signature="ss", out_signature="i")
+    def zfs_rollback_snapshot(self, orig, snapshot):
+        return invoke(["zfs", "rollback", "-R", "%s@%s" % (orig, snapshot)])

@@ -563,6 +563,7 @@ class ZfsSnapshot(models.Model):
     volume      = models.ForeignKey(LogicalVolume)
     subvolume   = models.ForeignKey(ZfsSubvolume, blank=True, null=True)
     snapname    = models.CharField(max_length=50)
+    created_at  = models.DateTimeField(auto_now_add=True)
 
     lvm = LogicalVolume.lvm
 
@@ -614,6 +615,14 @@ class ZfsSnapshot(models.Model):
         self.volume.lvm.zfs_create_snapshot(self.origvolume.name, self.snapname)
         return models.Model.save(self, *args, **kwargs)
 
-    def delete( self ):
-        self.volume.lvm.zfs_destroy_snapshot(self.origvolume.name, self.snapname)
+    def delete( self, database_only=False ):
+        if not database_only:
+            self.volume.lvm.zfs_destroy_snapshot(self.origvolume.name, self.snapname)
         return models.Model.delete(self)
+
+    def rollback( self ):
+        self.origvolume.fs.unmount()
+        for snap in ZfsSnapshot.objects.filter(volume=self.volume, subvolume=self.subvolume, created_at__gt=self.created_at):
+            snap.delete(database_only=True) # -R will take care of them in the system
+        self.volume.lvm.zfs_rollback_snapshot(self.origvolume.name, self.snapname)
+        self.origvolume.fs.mount()
