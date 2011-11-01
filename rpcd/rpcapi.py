@@ -1,8 +1,13 @@
 # -*- coding: utf-8 -*-
 # kate: space-indent on; indent-width 4; replace-tabs on;
 
-from rpcd.handlers import ModelHandler
 from django.contrib.auth.models import User, Group
+
+from rpcd.handlers import ModelHandler
+from rpcd.models   import APIKey
+
+class APIKeyHandler(ModelHandler):
+    model = APIKey
 
 class GroupHandler(ModelHandler):
     model = Group
@@ -31,4 +36,4 @@ class UserHandler(ModelHandler):
         user.save()
 
 
-RPCD_HANDLERS = [GroupHandler, UserHandler]
+RPCD_HANDLERS = [GroupHandler, UserHandler, APIKeyHandler]
