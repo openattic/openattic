@@ -1,3 +1,4 @@
+{% load i18n %}
 <html>
   <head>
     <link rel="stylesheet" href="{{ MEDIA_URL }}/extjs/resources/css/ext-all.css" />
@@ -30,7 +31,7 @@
             success: function( f, a ){
               location.href=window.nexturl;
               login_form.getEl().unmask();
-              login_form.getEl().mask("Loading...");
+              login_form.getEl().mask("{% trans 'Loading...' %}");
             },
             failure: function( f, a ){
               if( a.result )
@@ -61,7 +62,7 @@
                 specialkey: function( f, e ){
                   if( e.getKey() == e.ENTER ){
                     login_form.getForm().submit( login_form.serverResponseHandlers );
-                    login_form.getEl().mask("Checking...");
+                    login_form.getEl().mask("{% trans 'Checking...' %}");
                   }
                 }
               }
@@ -70,7 +71,7 @@
             text:    Ext.MessageBox.buttonText['ok'],
             handler: function(){
               login_form.getForm().submit( login_form.serverResponseHandlers );
-              login_form.getEl().mask("Checking...");
+              login_form.getEl().mask("{% trans 'Checking...' %}");
             }
           }]
         });
