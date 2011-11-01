@@ -78,6 +78,7 @@ Ext.oa.Http__Export_Panel = Ext.extend(Ext.grid.GridPanel, {
         }
       },{
         text:  "{% trans 'Edit' %}",
+        icon: MEDIA_URL + "/icons2/16x16/actions/edit-redo.png",
         handler: function(self){
           var sm = httpGrid.getSelectionModel();
           if( sm.hasSelection() ){

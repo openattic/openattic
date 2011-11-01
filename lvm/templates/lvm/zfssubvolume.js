@@ -36,30 +36,8 @@ Ext.oa.Zfs__Subvolume__Panel = Ext.extend(Ext.grid.GridPanel, {
           zfsSubvolumePanel.store.reload();;
           }
         },{
-            text: "{% trans "Delete Subvolume" %}",
-            icon: MEDIA_URL + "/icons2/16x16/actions/remove.png",
-            handler: function(self){
-              var sm = zfsSubvolumePanel.getSelectionModel();
-              if( sm.hasSelection() ){
-                var sel = sm.selections.items[0];
-                Ext.Msg.confirm(
-                  "{% trans 'Confirm delete' %}",
-                   interpolate(
-                     "{% trans 'Really delete subvolume %s ?<br /><b>There is no undo.</b>' %}",
-                     [sel.data.volname] ),
-                  function(btn, text){
-                    if( btn == 'yes' ) {
-                       lvm__ZfsSubvolume.remove( sel.id, function (provider, response){
-                       zfsSubvolumePanel.store.reload();;
-                       })
-                    }
-                  }  
-                )
-              }
-            }
-        },{
            text: "Create Subvolume",
-           icon: MEDIA_URL + "/oxygen/16x16/actions/dialog-ok-apply.png",
+           icon: MEDIA_URL + "/icons2/16x16/actions/add.png",
            handler: function() {
              var addwin = new Ext.Window({
                title: "{% trans "Add Subvolume" %}",
@@ -116,6 +94,28 @@ Ext.oa.Zfs__Subvolume__Panel = Ext.extend(Ext.grid.GridPanel, {
              })
              addwin.show();
            }
+        },{
+            text: "{% trans "Delete Subvolume" %}",
+            icon: MEDIA_URL + "/icons2/16x16/actions/remove.png",
+            handler: function(self){
+              var sm = zfsSubvolumePanel.getSelectionModel();
+              if( sm.hasSelection() ){
+                var sel = sm.selections.items[0];
+                Ext.Msg.confirm(
+                  "{% trans 'Confirm delete' %}",
+                   interpolate(
+                     "{% trans 'Really delete subvolume %s ?<br /><b>There is no undo.</b>' %}",
+                     [sel.data.volname] ),
+                  function(btn, text){
+                    if( btn == 'yes' ) {
+                       lvm__ZfsSubvolume.remove( sel.id, function (provider, response){
+                       zfsSubvolumePanel.store.reload();;
+                       })
+                    }
+                  }  
+                )
+              }
+            }
         }
       ]
     }));

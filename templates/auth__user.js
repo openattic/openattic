@@ -111,6 +111,7 @@ Ext.oa.Auth__User_Panel = Ext.extend(Ext.grid.GridPanel, {
         }
       },{
         text: 'Edit',
+        icon: MEDIA_URL + "/icons2/16x16/actions/edit-redo.png",
         handler: function(self){
           var sm = authUserGrid.getSelectionModel();
           if( sm.hasSelection() ){
@@ -198,6 +199,7 @@ Ext.oa.Auth__User_Panel = Ext.extend(Ext.grid.GridPanel, {
         }
       },{
         text: 'Change Password',
+        icon: MEDIA_URL + "/icons2/16x16/emblems/emblem-readonly.png",
         handler: function(self){
           var sm = authUserGrid.getSelectionModel();
           if( sm.hasSelection() ){
