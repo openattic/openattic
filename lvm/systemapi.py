@@ -300,3 +300,12 @@ class SystemD(BasePlugin):
     @method(in_signature="ss", out_signature="i")
     def zfs_rollback_snapshot(self, orig, snapshot):
         return invoke(["zfs", "rollback", "-R", "%s@%s" % (orig, snapshot)])
+
+    @method(in_signature="s", out_signature="a(sssssss)")
+    def zfs_getspace(self, device):
+        args = ["zfs", "list", "-Ho", "space"]
+        if device:
+            args.append(device)
+        ret, out, err = invoke(args, return_out_err=True, log=False)
+        return [line.split("\t") for line in out.split("\n")[:-1]]
+
