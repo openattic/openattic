@@ -118,6 +118,47 @@ Ext.oa.Lvm__LogicalVolume_Panel = Ext.extend(Ext.Panel, {
           }
         }
       }, {
+        text: "{% trans 'Shares' %}",
+        icon: MEDIA_URL + "/oxygen/16x16/emblems/emblem-unmounted.png",
+        handler: function(self){
+          var lvmGrid = lvmPanel.items.items[0];
+          var sm = lvmGrid.getSelectionModel();
+          if( sm.hasSelection() ){
+            var sel = sm.selections.items[0];
+            var shareswin = new Ext.Window({
+              title: "{% trans "Add Volume" %}",
+              layout: "fit",
+              height: 300,
+              width: 500,
+              items: {
+                xtype: "grid",
+                store: {
+                  xtype: 'directstore',
+                  autoLoad: true,
+                  fields: ['id', 'app', 'obj'],
+                  directFn: lvm__LogicalVolume.get_shares,
+                  baseParams: {id: sel.data.id}
+                },
+                colModel: new Ext.grid.ColumnModel({
+                  defaults: {
+                    sortable: true
+                  },
+                  columns: [ {
+                    header: "{% trans 'App' %}",
+                    width: 350,
+                    dataIndex: "app"
+                  }, {
+                    header: "{% trans 'Object' %}",
+                    width: 100,
+                    dataIndex: "obj"
+                  } ]
+                })
+              }
+            } );
+            shareswin.show();
+          }
+        }
+      }, {
         text: "{% trans "Add Volume" %}",
         icon: MEDIA_URL + "/icons2/16x16/actions/add.png",
         handler: function(){
