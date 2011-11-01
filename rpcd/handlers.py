@@ -58,6 +58,9 @@ class ModelHandler(BaseHandler):
         """ Return the handler class for the given model. """
         return cls.__metaclass__.handlers[model]
 
+    def _get_handler_instance(self, model):
+        return  ModelHandler._get_handler_for_model(model)(self.user, self.request)
+
     @classmethod
     def _get_object_by_id_dict(cls, id_dict):
         for model in cls.__metaclass__.handlers:
@@ -160,17 +163,22 @@ class ModelHandler(BaseHandler):
     def _getobj(self, obj):
         """ Return the data for one given object. """
         data = {}
-        for field in obj._meta.fields:
+        for field in obj._meta.fields + obj._meta.many_to_many:
             if self.fields is not None and field.name not in self.fields:
                 continue
             if self.exclude is not None and field.name in self.exclude:
                 continue
 
             value = getattr(obj, field.name)
-            if isinstance( field, models.ForeignKey ):
+            if isinstance( field, models.ManyToManyField ):
+                data[field.name] = [
+                    self._get_handler_instance(val.__class__)._idobj(val)
+                    for val in value.all()
+                    ]
+            elif isinstance( field, models.ForeignKey ):
                 if value is not None:
                     try:
-                        handler = ModelHandler._get_handler_for_model(value.__class__)(self.user)
+                        handler = self._get_handler_instance(value.__class__)
                     except KeyError:
                         data[field.name] = unicode(value)
                     else:
@@ -227,6 +235,11 @@ class ModelHandler(BaseHandler):
                         setattr(obj, field.name, None)
                 else:
                     setattr(obj, field.name, data[field.name])
+        for field in obj._meta.many_to_many:
+            if field.name in data:
+                setattr(obj, field.name, [
+                    ModelHandler._get_object_by_id_dict(idobj) for idobj in data[field.name]
+                ])
         self._override_set(obj, data)
         obj.full_clean()
         obj.save()
