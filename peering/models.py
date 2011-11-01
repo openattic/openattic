@@ -69,6 +69,20 @@ class PeerHost(models.Model):
                 raise ValidationError('Another cluster peer already exists.')
 
     @property
+    def duplex(self):
+        try:
+            self.connection.ping()
+        except:
+            return "none"
+        else:
+            try:
+                self.connection.peering.PeerHost.ping(self.thishost["id"])
+            except:
+                return "half"
+            else:
+                return "full"
+
+    @property
     def connection(self):
         if self._connection is None:
             self._connection = ServerProxy(self.base_url, allow_none=True)

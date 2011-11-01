@@ -14,6 +14,7 @@ class PeerHostHandler(ModelHandler):
             data['base_url'] = unicode(obj.base_url)
             data['hostname'] = obj.base_url.hostname
             data['port']     = obj.base_url.port
+            data["duplex"]   = obj.duplex
         return data
 
     def ping(self, id):
