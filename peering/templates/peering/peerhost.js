@@ -3,72 +3,85 @@
 Ext.namespace("Ext.oa");
 
 Ext.oa.Peering__Peerhost_Panel = Ext.extend(Ext.grid.GridPanel, {
+  showEditWindow: function(config, record){
+    var peerhostGrid = this;
+    var addwin = new Ext.Window(Ext.applyIf(config, {
+      layout: "fit",
+      height: 300,
+      width: 500,
+      items: [{
+        xtype: "form",
+        api: {
+          load:   peering__PeerHost.get_ext,
+          submit: peering__PeerHost.set_ext,
+        },
+        defaults: {
+          xtype: "textfield",
+          anchor: '-20px'
+        },
+        paramOrder: ["id"],
+        baseParams: {
+          id: (record ? record.id : -1)
+        },
+        listeners: {
+          afterrender: function(self){
+            self.getForm().load();
+          }
+        },
+        items: [ {
+          fieldLabel: "{% trans 'Name' %}",
+          name: "name"
+        }, {
+          fieldLabel: "{% trans 'Base URL' %}",
+          name: "base_url",
+          value: "http://__:<<APIKEY>>@<<HOST>>:31234/"
+        } ],
+        buttons: [{
+          text: config.submitButtonText,
+          icon: MEDIA_URL + "/oxygen/16x16/actions/dialog-ok-apply.png",
+          handler: function(self){
+            self.ownerCt.ownerCt.getForm().submit({
+              success: function(provider, response){
+                if( response.result ){
+                  peerhostGrid.store.reload();
+                  addwin.hide();
+                }
+              }
+            });
+          }
+        }, {
+          text: "{% trans 'Cancel' %}",
+          icon: MEDIA_URL + "/icons2/16x16/actions/gtk-cancel.png",
+          handler: function(self){
+            addwin.hide();
+          }
+        }]
+      }]
+    }));
+    addwin.show();
+  },
+
   initComponent: function(){
     var peerhostGrid = this;
     Ext.apply(this, Ext.apply(this.initialConfig, {
       id: 'peering__peerhost_panel_inst',
       title: "{% trans 'openATTIC Peers' %}",
       viewConfig: { forceFit: true },
-      buttons: [
-        {
-          text: "",
-          icon: MEDIA_URL + "/icons2/16x16/actions/reload.png",
-          tooltip: "{% trans 'Reload' %}",
-          handler: function(self){
-            peerhostGrid.store.reload();
-          }
-        }, {
+      buttons: [ {
+        text: "",
+        icon: MEDIA_URL + "/icons2/16x16/actions/reload.png",
+        tooltip: "{% trans 'Reload' %}",
+        handler: function(self){
+          peerhostGrid.store.reload();
+        }
+      }, {
         text: "{% trans 'Add Peer' %}",
         icon: MEDIA_URL + "/icons2/16x16/actions/add.png",
         handler: function(){
-          var addwin = new Ext.Window({
+          peerhostGrid.showEditWindow({
             title: "{% trans 'Add Peer' %}",
-            layout: "fit",
-            height: 300,
-            width: 500,
-            items: [{
-              xtype: "form",
-              defaults: {
-                xtype: "textfield",
-                anchor: '-20px'
-              },
-              items: [ {
-                fieldLabel: "{% trans 'Name' %}",
-                name: "name",
-                ref: 'namefield'
-              }, {
-                fieldLabel: "{% trans 'Base URL' %}",
-                name: "base_url",
-                ref: 'urlfield',
-                value: "http://__:<<APIKEY>>@<<HOST>>:31234/"
-              } ],
-              buttons: [{
-                text: "{% trans 'Create Peer' %}",
-                icon: MEDIA_URL + "/oxygen/16x16/actions/dialog-ok-apply.png",
-                handler: function(self){
-                  peering__PeerHost.create({
-                    'name':     self.ownerCt.ownerCt.namefield.getValue(),
-                    'base_url': self.ownerCt.ownerCt.urlfield.getValue()
-                  }, function(provider, response){
-                    if( response.result ){
-                      peerhostGrid.store.reload();
-                      addwin.hide();
-                    }
-                    else if( response.type == "exception" ){
-                      Ext.Msg.alert("Error", "{% trans 'Could not add peer host. Is the URL valid?<br />' %}" + response.message);
-                    }
-                  });
-                }
-              }, {
-                text: "{% trans 'Cancel' %}",
-                icon: MEDIA_URL + "/icons2/16x16/actions/gtk-cancel.png",
-                handler: function(self){
-                  addwin.hide();
-                }
-              }]
-            }]
+            submitButtonText: "{% trans 'Create Peer' %}",
           });
-          addwin.show();
         }
       }, {
         text: "{% trans 'Edit Peer' %}",
@@ -77,63 +90,10 @@ Ext.oa.Peering__Peerhost_Panel = Ext.extend(Ext.grid.GridPanel, {
           var sm = peerhostGrid.getSelectionModel();
           if( sm.hasSelection() ){
             var sel = sm.selections.items[0];
-            var addwin = new Ext.Window({
+            peerhostGrid.showEditWindow({
               title: "{% trans 'Edit Peer' %}",
-              layout: "fit",
-              height: 300,
-              width: 500,
-              items: [{
-                xtype: "form",
-                api: {
-                  load:   peering__PeerHost.get_ext,
-                  submit: peering__PeerHost.set_ext,
-                },
-                defaults: {
-                  xtype: "textfield",
-                  anchor: '-20px'
-                },
-                paramOrder: ["id"],
-                listeners: {
-                  afterrender: function(self){
-                    self.getForm().load({ params: { id: sel.data.id } });
-                  }
-                },
-                items: [ {
-                  fieldLabel: "{% trans 'Name' %}",
-                  name: "name",
-                  ref: 'namefield'
-                }, {
-                  fieldLabel: "{% trans 'Base URL' %}",
-                  name: "base_url",
-                  ref: 'urlfield'
-                } ],
-                buttons: [{
-                  text: "{% trans 'Edit Peer' %}",
-                  icon: MEDIA_URL + "/oxygen/16x16/actions/dialog-ok-apply.png",
-                  handler: function(self){
-                    self.ownerCt.ownerCt.getForm().submit({
-                      params: { id: sel.data.id },
-                      success: function(provider, response){
-                        if( response.result ){
-                          peerhostGrid.store.reload();
-                          addwin.hide();
-                        }
-                        else if( response.type == "exception" ){
-                          Ext.Msg.alert("Error", "{% trans 'Could not edit peer host. Is the URL valid?<br />' %}" + response.message);
-                        }
-                      }
-                    });
-                  }
-                }, {
-                  text: "{% trans 'Cancel' %}",
-                  icon: MEDIA_URL + "/icons2/16x16/actions/gtk-cancel.png",
-                  handler: function(self){
-                    addwin.hide();
-                  }
-                }]
-              }]
-            });
-            addwin.show();
+              submitButtonText: "{% trans 'Edit Peer' %}"
+            }, sel.data);
           }
         }
       }, {
