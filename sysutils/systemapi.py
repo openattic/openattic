@@ -47,8 +47,8 @@ class SystemD(LockingPlugin):
             try:
                     ntp = NTP.objects.all()[0]
                     fd.write( "server=%s\n" % ntp.server )
-            finally:      
-                fd.close()    
+            finally:
+                fd.close()
         finally:
             self.lock.release()
 
