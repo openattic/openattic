@@ -86,7 +86,82 @@ Ext.oa.Ftp__User_Panel = Ext.extend(Ext.grid.GridPanel, {
           });
           addwin.show();
         }
-      }, {
+      },{
+        text:  "{% trans 'Edit' %}",
+        icon: MEDIA_URL + "/icons2/16x16/actions/edit-redo.png",
+        handler: function(self){
+          var sm = ftpGrid.getSelectionModel();
+          if( sm.hasSelection() ){
+            var sel = sm.selections.items[0];
+            var addwin = new Ext.Window({
+              title: "Edit",
+              layout: "fit",
+              height: 200,
+              width: 500,
+              items: [{
+                xtype: "form",
+                defaults: {
+                  xtype: "textfield",
+                  anchor: '-20px'
+                },
+                items: [{
+                  fieldLabel: "Name",
+                  name: "name",
+                  readOnly: true,
+                  disabled: true,
+                  ref: 'namefield',
+                  value: sel.data.username
+                },{
+                  fieldLabel: "Password",
+                  name: "password",
+                  ref: 'passwordfield',
+                },{
+                xtype:      'volumefield',
+                value: sel.data.volume.volumename,
+                listeners: {
+                  select: function(self, record, index){
+                    lvm__LogicalVolume.get( record.data.id, function( provider, response ){
+                      self.ownerCt.dirfield.setValue( response.result.fs.mountpoints[0] );
+                      self.ownerCt.dirfield.enable();
+                    } );
+                  }
+                }
+              }, {
+                fieldLabel: "{% trans 'Directory' %}",
+                name: "homedir",
+                disabled: true,
+                ref: 'dirfield'
+              }],
+                buttons: [{
+                  text: 'Save',
+                  handler: function(self){
+                    var sm = ftpGrid.getSelectionModel();
+                    if( sm.hasSelection() ){
+                      var sel = sm.selections.items[0];
+                      ftp__User.set(sel.data.id,{
+                        'username': self.ownerCt.ownerCt.namefield.getValue(),
+                        'passwd':   self.ownerCt.ownerCt.passwdfield.getValue(),
+                        'volume': {
+                          'app': 'lvm',
+                          'obj': 'LogicalVolume',
+                          'id': self.ownerCt.ownerCt.volfield.getValue()
+                        },
+                        'homedir':  self.ownerCt.ownerCt.dirfield.getValue()
+                      }, function(provider, response){
+                        if( response.result ){
+                          ftpGrid.store.reload();
+                          addwin.hide();
+                        }
+                      });
+                    }
+                  }
+                }]
+              }]
+            });
+            addwin.show();
+          }
+        }
+      },{
         text: "{% trans 'Delete User' %}",
         icon: MEDIA_URL + "/icons2/16x16/actions/remove.png",
         handler: function(self){
