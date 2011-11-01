@@ -29,7 +29,7 @@ Ext.oa.Lvm__LogicalVolume_Panel = Ext.extend(Ext.Panel, {
         icon: MEDIA_URL + "/icons2/16x16/status/dialog-warning.png",
         handler: function(self){
           Ext.Msg.prompt(
-            "{% trans 'Enter threshold' %}",
+            "{% trans 'Enter threshold in percent' %}",
             "{% trans 'Enter the usage threshold above which you want LVs to appear red.' %}",
             function(btn, text){
               if( btn == 'ok' ){
@@ -186,13 +186,14 @@ Ext.oa.Lvm__LogicalVolume_Panel = Ext.extend(Ext.Panel, {
                     valueField:    'name',
                     ref:      'fsfield'
                   }, "{% trans 'If you want to use DRBD with this device, do not yet create a file system on it, even if you want to share it using NAS services later on.' %}"),
-                {
+                
+                 {
                   fieldLabel: "{% trans "Size in MB" %}",
                   allowBlank: false,
                   name: "megs",
                   ref: 'sizefield',
                   xtype: "numberfield"
-                }, {
+                },{
                   xtype: "label",
                   ref:   "sizelabel",
                   text:  "{% trans "Waiting for volume selection..." %}",

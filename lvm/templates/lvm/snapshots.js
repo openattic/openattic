@@ -81,12 +81,12 @@ Ext.oa.Lvm__Snapshot_Panel = Ext.extend(Ext.grid.GridPanel, {
                       }
                     }
                   }
-                }, {
+                }, tipify({
                   fieldLabel: "{% trans "Size in MB" %}",
                   allowBlank: false,
                   name: "megs",
                   ref: 'sizefield'
-                }, {
+                },"Bitte bedenken Sie, dass der Snapshot je nach Art und Häufigkeit der Änderungen des Volumes entsprechend groß sein sollte."), {
                   xtype: "label",
                   ref:   "sizelabel",
                   text:  "{% trans "Waiting for volume selection..." %}",
