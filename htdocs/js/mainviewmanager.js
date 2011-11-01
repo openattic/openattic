@@ -15,6 +15,14 @@ Ext.oa.MainViewManager = Ext.extend(Ext.Panel, {
             },
             region: "north",
             height: 50
+/*          }), '->',
+          new Ext.BoxComponent({
+            autoEl: {
+              tag: "img",
+              src: MEDIA_URL + '/openattic.png'
+            },
+            region: "north",
+            height: 50*/
           })
         ],
         plugins : [
@@ -34,7 +42,24 @@ Ext.oa.MainViewManager = Ext.extend(Ext.Panel, {
             }
           }),
           new Ext.ux.ToolbarReorderer({defaultReorderable: false})
-        ]
+        ],
+        listeners: {
+          afterrender: function(self){
+            var td = self.getEl().query(".x-toolbar-extras-row");
+//             console.log("asdlasde");
+          }
+        },
+        smartInsert: function(obj){
+          var tbar = mainviewmanager.getTopToolbar();
+          for (var i = 0; i < tbar.items.length; i++) {
+            var c = tbar.items.items[i];
+            if (c.isFill) {
+              tbar.insert(i, obj);
+              return;
+            }
+          }
+          tbar.add(obj);
+        }
       }),
       items: [ new Ext.oa.MenuTree({
         title: 'Menu',
@@ -136,7 +161,7 @@ Ext.oa.MainViewManager = Ext.extend(Ext.Panel, {
     }
 
     this.menutree.on( 'beforeclick', this.treenodeClicked, this );
-    this.topToolbar.on( 'add', function(evt){
+    var tbupdate = function(evt){
       var data = [];
       for( var i = 1; i < this.topToolbar.items.items.length; i++ ){
         data.push({
@@ -144,9 +169,11 @@ Ext.oa.MainViewManager = Ext.extend(Ext.Panel, {
           icon:  this.topToolbar.items.items[i].initialConfig.icon,
           panel: this.topToolbar.items.items[i].initialConfig.panel
         });
-      Ext.state.Manager.set("toolbarbuttons", data);
       }
-    }, this );
+      Ext.state.Manager.set("toolbarbuttons", data);
+    };
+    this.topToolbar.on( 'add', tbupdate, this );
+    this.topToolbar.on( 'remove', tbupdate, this );
   },
 
   treenodeClicked: function( node, event ){

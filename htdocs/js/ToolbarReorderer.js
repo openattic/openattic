@@ -125,20 +125,43 @@ Ext.ux.ToolbarReorderer = Ext.extend(Ext.ux.Reorderer, {
                 //position in the toolbar did not change
                 me.updateButtonXCache();
 
-                el.moveTo(me.buttonXCache[button.id], el.getY(), {
-                    duration: me.animationDuration,
-                    scope   : this,
-                    callback: function() {
-                        button.resumeEvents();
-                        if (button.menu) {
-                            button.menu.un('beforeshow', menuDisabler, me);
+                var moveDatButton = function(){
+                    el.moveTo(me.buttonXCache[button.id], el.getY(), {
+                        duration: me.animationDuration,
+                        scope   : this,
+                        callback: function() {
+                            button.resumeEvents();
+                            if (button.menu) {
+                                button.menu.un('beforeshow', menuDisabler, me);
+                            }
+
+                            tbar.fireEvent('reordered', button, tbar);
                         }
+                    });
 
-                        tbar.fireEvent('reordered', button, tbar);
-                    }
-                });
+                    el.setStyle('zIndex', this.startZIndex);
+                };
 
-                el.setStyle('zIndex', this.startZIndex);
+                if( el.getXY()[0] > tbar.getWidth() * 0.85 ){
+                    Ext.Msg.confirm(
+                        "Delete Button?",
+                        "Do you really wish to remove this button from the toolbar?",
+                        function(btn){
+                            if( btn == "yes" ){
+                                for( var i = 0; i < tbar.items.items.length; i++ ){
+                                    if( tbar.items.items[i].getEl() == el ){
+                                        tbar.remove( tbar.items.items[i] );
+                                    }
+                                }
+                            }
+                            else
+                                moveDatButton();
+                        }
+                    );
+                }
+                else
+                    moveDatButton();
+
             }
         });
     },
