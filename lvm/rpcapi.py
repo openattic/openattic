@@ -146,7 +146,7 @@ class ZfsSubvolumeHandler(ModelHandler):
 class ZfsSnapshotHandler(ModelHandler):
     model = ZfsSnapshot
 
-    def rollback(id):
+    def rollback(self, id):
         return ZfsSnapshot.objects.get(id=id).rollback()
 
 RPCD_HANDLERS = [VgHandler, LvHandler, ZfsSubvolumeHandler, ZfsSnapshotHandler]
