@@ -44,7 +44,6 @@ Ext.oa.Cmdlog__LogEntry_Panel = Ext.extend(Ext.Panel, {
         '</tpl>'),
       singleSelect: true,
       region: 'south',
-      split: true,
       height: 200,
       loadingText: "{% trans "Select a log entry to see the command's output here." %}",
       itemSelector: 'div.logcommandtext',
