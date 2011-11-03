@@ -6,7 +6,6 @@ PROJECT_ROOT = None;
 ### DO NOT CHANGE ANYTHING BELOW THIS LINE ###
 
 PROJECT_ROOT = None
-PROJECT_URL  = '/filer'
 
 from os.path import join, dirname, abspath, exists
 if not PROJECT_ROOT or not exists( PROJECT_ROOT ):
