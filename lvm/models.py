@@ -364,7 +364,8 @@ class LogicalVolume(StatefulModel):
         sysd = dbus.SystemBus().get_object(settings.DBUS_IFACE_SYSTEMD, "/")
         jid  = sysd.build_job()
 
-        sysd.job_add_command(jid, ["umount", self.fs.mountpoints[0].encode("ascii")])
+        if self.filesystem:
+            sysd.job_add_command(jid, ["umount", self.fs.mountpoints[0].encode("ascii")])
 
         if self.megs < self.lvm_megs:
             # Shrink FS, then Volume
@@ -393,7 +394,8 @@ class LogicalVolume(StatefulModel):
 
             lvm_signals.post_grow.send(sender=self)
 
-        sysd.job_add_command(jid, ["mount", self.fs.mountpoints[0].encode("ascii")])
+        if self.filesystem:
+            sysd.job_add_command(jid, ["mount", self.fs.mountpoints[0].encode("ascii")])
 
         sysd.enqueue_job(jid)
         self._lvm_info = None # outdate cached information
