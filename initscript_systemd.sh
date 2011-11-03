@@ -46,7 +46,8 @@ case $1 in
 	status)
 		if start-stop-daemon --pidfile=$SYSD_PIDFILE --test --stop --exec $PYTHON --quiet
 		then
-			echo "systemd is running"
+			PID=`cat $SYSD_PIDFILE`
+			echo "systemd is running (pid $PID)."
 			exit 0
 		else
 			echo "systemd is not running"

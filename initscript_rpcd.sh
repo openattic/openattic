@@ -50,7 +50,8 @@ case $1 in
 	status)
 		if start-stop-daemon --pidfile=$RPCD_PIDFILE --test --stop --exec $PYTHON --quiet
 		then
-			echo "rpcd is running"
+			PID=`cat $RPCD_PIDFILE`
+			echo "rpcd is running (pid $PID)."
 			exit 0
 		else
 			echo "rpcd is not running"
