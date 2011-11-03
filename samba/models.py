@@ -1,12 +1,15 @@
 # -*- coding: utf-8 -*-
 # kate: space-indent on; indent-width 4; replace-tabs on;
 
+import new
 import dbus
 
 from django.conf import settings
 from django.contrib.auth.models import User
+from django.db.models import signals
 from django.db import models
 
+from pamauth    import PamBackend
 from lvm.models import StatefulModel, LogicalVolume
 
 class Share(StatefulModel):
@@ -65,3 +68,18 @@ class Share(StatefulModel):
         if not volume.standby:
             samba.reload()
         return ret
+
+
+def replace_set_password(instance=None, **kwargs):
+    """ Replace the standard *_password functions in the auth model. """
+    oldfunc = instance.set_password
+
+    def set_password_samba(self, raw_password):
+        """ "Authenticate" against a fake PAM service that updates smbpasswd. """
+        pb = PamBackend("openattic")
+        pb.authenticate(self.username, raw_password)
+        return oldfunc(raw_password)
+
+    instance.set_password = new.instancemethod(set_password_samba, instance, instance.__class__)
+
+signals.post_init.connect(replace_set_password, sender=User)
