@@ -13,7 +13,7 @@ Ext.oa.Peering__Peerhost_Panel = Ext.extend(Ext.grid.GridPanel, {
         xtype: "form",
         api: {
           load:   peering__PeerHost.get_ext,
-          submit: peering__PeerHost.set_ext,
+          submit: peering__PeerHost.set_ext
         },
         defaults: {
           xtype: "textfield",
@@ -80,7 +80,7 @@ Ext.oa.Peering__Peerhost_Panel = Ext.extend(Ext.grid.GridPanel, {
         handler: function(){
           peerhostGrid.showEditWindow({
             title: "{% trans 'Add Peer' %}",
-            submitButtonText: "{% trans 'Create Peer' %}",
+            submitButtonText: "{% trans 'Create Peer' %}"
           });
         }
       }, {

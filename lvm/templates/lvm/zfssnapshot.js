@@ -53,7 +53,7 @@ Ext.oa.Zfs__Snapshot_Panel = Ext.extend(Ext.Panel, {
                             "app": "lvm",
                             "obj": "LogicalVolume",
                             "id": sel.id},
-                          "snapname":  self.ownerCt.ownerCt.snapshotnamefield.getValue(),
+                          "snapname":  self.ownerCt.ownerCt.snapshotnamefield.getValue()
                         }, function (provider, response){
                           addwin.hide();
                           zfsSnapPanel.snapGrid.store.reload();
@@ -163,7 +163,7 @@ Ext.oa.Zfs__Snapshot_Panel = Ext.extend(Ext.Panel, {
                 var record = self.getStore().getAt(rowIndex);
                 zfsSnapPanel.snapGrid.store.load({ params: {"volume__name":record.data.name, "subvolume__isnull": true}});
               }
-            },
+            }
         },{
           xtype: "grid",
           title: "Subvolume",
@@ -221,7 +221,7 @@ Ext.oa.Zfs__Snapshot_Panel = Ext.extend(Ext.Panel, {
             dataIndex: "created_at"
           }
           ]
-        }),      
+        })      
       }
       ]
     }));

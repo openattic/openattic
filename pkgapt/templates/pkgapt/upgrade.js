@@ -48,7 +48,7 @@ Ext.oa.Pkgapt__Upgrade_Panel = Ext.extend(Ext.grid.GridPanel, {
       store: {
         xtype: 'jsonstore',
         fields: ['name', 'candidate_version', 'installed_version',
-          'marked_delete', 'marked_downgrade', 'marked_install', 'marked_upgrade'],
+          'marked_delete', 'marked_downgrade', 'marked_install', 'marked_upgrade']
       },
       colModel: new Ext.grid.ColumnModel({
         defaults: {

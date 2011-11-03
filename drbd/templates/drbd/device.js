@@ -29,7 +29,7 @@ Ext.oa.Drbd__Device_Panel = Ext.extend(Ext.grid.GridPanel, {
           anchor: '-20px',
           defaults: { //teehee
             anchor: "0px"
-          },
+          }
         },
         items: [{
           xtype: 'fieldset',
@@ -72,7 +72,7 @@ Ext.oa.Drbd__Device_Panel = Ext.extend(Ext.grid.GridPanel, {
             items: [
               {name: "protocol", boxLabel: "A: Asynchronous", inputValue: "A"},
               {name: "protocol", boxLabel: "B: Memory Synchronous (Semi-Synchronous)", inputValue: "B"},
-              {name: "protocol", boxLabel: "C: Synchronous", checked: true, inputValue: "C"},
+              {name: "protocol", boxLabel: "C: Synchronous", checked: true, inputValue: "C"}
             ]
           }, {
             fieldLabel: "{% trans 'Syncer Rate' %}",
@@ -105,7 +105,7 @@ Ext.oa.Drbd__Device_Panel = Ext.extend(Ext.grid.GridPanel, {
             items: [
               {name: "cram_hmac_alg", boxLabel: "SHA1",   inputValue: "sha1", checked: true},
               {name: "cram_hmac_alg", boxLabel: "MD5",    inputValue: "md5"    },
-              {name: "cram_hmac_alg", boxLabel: "CRC32C", inputValue: "crc32c" },
+              {name: "cram_hmac_alg", boxLabel: "CRC32C", inputValue: "crc32c" }
             ]
           } ]
         }, {
@@ -199,7 +199,7 @@ Ext.oa.Drbd__Device_Panel = Ext.extend(Ext.grid.GridPanel, {
               name: "sb_2pri", inputValue: "call-pri-lost-after-sb", checked: true,
               boxLabel: "If the current secondary has the right data, call the 'pri-lost-after-sb' handler on the primary."
             } ]
-          }],
+          }]
         } ],
         buttons: [{
           text: config.submitButtonText,

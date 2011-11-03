@@ -54,7 +54,7 @@ Ext.oa.Zfs__Subvolume__Panel = Ext.extend(Ext.grid.GridPanel, {
                  items: [{
                    fieldLabel: "Name",
                    allowBlank: false,
-                   ref: "namefield",
+                   ref: "namefield"
                  },{
                    xtype: "combo",
                    allowBlank: false,
@@ -83,7 +83,7 @@ Ext.oa.Zfs__Subvolume__Panel = Ext.extend(Ext.grid.GridPanel, {
                               "app": "lvm",
                               "obj": "LogicalVolume",
                               "id": self.ownerCt.ownerCt.volfield.getValue()},
-                            "volname":  self.ownerCt.ownerCt.namefield.getValue(),
+                            "volname":  self.ownerCt.ownerCt.namefield.getValue()
                           }, function (provider, response){
                             addwin.hide();
                             zfsSubvolumePanel.store.reload();
