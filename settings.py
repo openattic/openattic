@@ -127,7 +127,7 @@ except NameError:
 
 
 PAM_AUTH_SERVICE = "itn_activedirectory"
-AUTHENTICATION_BACKENDS = ( 'pam-auth.PamBackend', 'django.contrib.auth.backends.ModelBackend' )
+AUTHENTICATION_BACKENDS = ( 'pamauth.PamBackend', 'django.contrib.auth.backends.ModelBackend' )
 
 # List of callables that know how to import templates from various sources.
 TEMPLATE_LOADERS = (

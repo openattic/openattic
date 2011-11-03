@@ -16,8 +16,9 @@ from django.conf                  import settings
 class PamBackend( ModelBackend ):
 	""" The PAM authentication backend for Django. """
 	
-	def __init__( self, *args, **kwargs ):
+	def __init__( self, service=settings.PAM_AUTH_SERVICE, *args, **kwargs ):
 		ModelBackend.__init__( self, *args, **kwargs )
+		self.service = service
 		self.userPassword = ""
 	
 	def pam_conversation( self, auth, query_list, userData ):
@@ -30,7 +31,7 @@ class PamBackend( ModelBackend ):
 	def authenticate( self, username=None, password=None ):
 		""" Check the username/password and return a User. """
 		auth = PAM.pam();
-		auth.start( settings.PAM_AUTH_SERVICE );
+		auth.start( self.service );
 		
 		# For some reason or another, Kerberos requires the username to be all UPPERCASE.
 		auth.set_item( PAM.PAM_USER, username.upper() );
