@@ -70,9 +70,9 @@ Ext.oa.Drbd__Device_Panel = Ext.extend(Ext.grid.GridPanel, {
             fieldLabel: 'Protocol',
             columns: 1,
             items: [
-              {name: "protocol", boxLabel: "A: Asynchronous", inputValue: "A"},
-              {name: "protocol", boxLabel: "B: Memory Synchronous (Semi-Synchronous)", inputValue: "B"},
-              {name: "protocol", boxLabel: "C: Synchronous", checked: true, inputValue: "C"}
+              {name: "{% trans 'protocol' %}", boxLabel: "{% trans 'A: Asynchronous' %}", inputValue: "A"},
+              {name: "{% trans 'protocol' %}", boxLabel: "{% trans 'B: Memory Synchronous (Semi-Synchronous)'%}", inputValue: "B"},
+              {name: "{% trans 'protocol' %}", boxLabel: "{% trans 'C: Synchronous' %}", checked: true, inputValue: "C"}
             ]
           }, {
             fieldLabel: "{% trans 'Syncer Rate' %}",
@@ -111,6 +111,8 @@ Ext.oa.Drbd__Device_Panel = Ext.extend(Ext.grid.GridPanel, {
         }, {
           xtype: 'fieldset',
           title: 'Error handling',
+          collapsible: true,
+          collapsed: true,
           layout: 'form',
           items: [ {
             fieldLabel: "{% trans 'On I/O Error' %}",
@@ -118,13 +120,13 @@ Ext.oa.Drbd__Device_Panel = Ext.extend(Ext.grid.GridPanel, {
             columns: 1,
             items: [ {
               name: "on_io_error", inputValue: "pass_on", checked: true,
-              boxLabel: "Report the I/O error to the file system on the primary, ignore it on the secondary."
+              boxLabel: "{% trans 'Report the I/O error to the file system on the primary, ignore it on the secondary.' %}"
             }, {
               name: "on_io_error", inputValue: "call-local-io-error",
-              boxLabel: "Call the local-io-error handler script."
+              boxLabel: "{% trans 'Call the local-io-error handler script.' %}"
             }, {
               name: "on_io_error", inputValue: "detach",
-              boxLabel: "Detach and continue in diskless mode."
+              boxLabel: "{% trans 'Detach and continue in diskless mode.' %}"
             } ]
           }, {
             fieldLabel: "{% trans 'Fencing' %}",
@@ -132,18 +134,20 @@ Ext.oa.Drbd__Device_Panel = Ext.extend(Ext.grid.GridPanel, {
             columns: 1,
             items: [ {
               name: "fencing", inputValue: "dont-care", checked: true,
-              boxLabel: "No fencing actions are undertaken."
+              boxLabel: "{% trans 'No fencing actions are undertaken.' %}"
             }, {
               name: "fencing", inputValue: "resource-only",
-              boxLabel: "Call the fence-peer handler."
+              boxLabel: "{% trans 'Call the fence-peer handler.' %}"
             }, {
               name: "fencing", inputValue: "resource-and-stonith",
-              boxLabel: "Call the fence-peer handler, which outdates or STONITHes the peer."
+              boxLabel: "{% trans 'Call the fence-peer handler, which outdates or STONITHes the peer.' %}"
             } ]
           } ]
         }, {
           xtype: 'fieldset',
           title: 'Split Brain recovery',
+          collapsible: true,
+          collapsed: true,
           layout: 'form',
           items: [{
             fieldLabel: "{% trans 'No Primaries' %}",
@@ -151,19 +155,19 @@ Ext.oa.Drbd__Device_Panel = Ext.extend(Ext.grid.GridPanel, {
             columns: 1,
             items: [ {
               name: "sb_0pri", inputValue: "disconnect",
-              boxLabel: "Simply disconnect without resynchronization."
+              boxLabel: "{% trans 'Simply disconnect without resynchronization.' %}"
             }, {
               name: "sb_0pri", inputValue: "discard-younger-primary", checked: true,
-              boxLabel: "Discard the younger Primary and sync from the host who was primary before."
+              boxLabel: "{% trans 'Discard the younger Primary and sync from the host who was primary before.' %}"
             }, {
               name: "sb_0pri", inputValue: "discard-older-primary",
-              boxLabel: "Discard the older Primary and sync from the host who last became primary."
+              boxLabel: "{% trans 'Discard the older Primary and sync from the host who last became primary.' %}"
             }, {
               name: "sb_0pri", inputValue: "discard-zero-changes",
-              boxLabel: "Discard the node who has not written any changes. If both have changes, disconnect."
+              boxLabel: "{% trans 'Discard the node who has not written any changes. If both have changes, disconnect.' %}"
             }, {
               name: "sb_0pri", inputValue: "discard-least-changes",
-              boxLabel: "Discard the node with the least changes and sync from the one with most."
+              boxLabel: "{% trans 'Discard the node with the least changes and sync from the one with most.' %}"
             } ]
           }, {
             fieldLabel: "{% trans 'One Primary' %}",
@@ -171,19 +175,19 @@ Ext.oa.Drbd__Device_Panel = Ext.extend(Ext.grid.GridPanel, {
             columns: 1,
             items: [ {
               name: "sb_1pri", inputValue: "disconnect",
-              boxLabel: "Simply disconnect without resynchronization."
+              boxLabel: "{% trans 'Simply disconnect without resynchronization.' %}"
             }, {
               name: "sb_1pri", inputValue: "consensus", checked: true,
-              boxLabel: "Discard secondary if it would have also been discarded without any primaries, else disconnect."
+              boxLabel: "{% trans 'Discard secondary if it would have also been discarded without any primaries, else disconnect.' %}"
             }, {
               name: "sb_1pri", inputValue: "violently-as0p",
-              boxLabel: "Do what we would do if there were no primaries, even if we risk corrupting data."
+              boxLabel: "{% trans 'Do what we would do if there were no primaries, even if we risk corrupting data.' %}"
             }, {
               name: "sb_1pri", inputValue: "discard-secondary", checked: true,
-              boxLabel: "Discard the secondary's data."
+              boxLabel: "{% trans 'Discard the secondarys data.' %}"
             }, {
               name: "sb_1pri", inputValue: "call-pri-lost-after-sb", checked: true,
-              boxLabel: "If the current secondary has the right data, call the 'pri-lost-after-sb' handler on the primary."
+              boxLabel: "{% trans 'If the current secondary has the right data, call the pri-lost-after-sb handler on the primary.' %}"
             } ]
           }, {
             fieldLabel: "{% trans 'Two Primaries' %}",
@@ -191,13 +195,13 @@ Ext.oa.Drbd__Device_Panel = Ext.extend(Ext.grid.GridPanel, {
             columns: 1,
             items: [ {
               name: "sb_2pri", inputValue: "disconnect", checked: true,
-              boxLabel: "Simply disconnect without resynchronization."
+              boxLabel: "{% trans 'Simply disconnect without resynchronization.' %}"
             }, {
               name: "sb_2pri", inputValue: "violently-as0p",
-              boxLabel: "Do what we would do if there were no primaries, even if we risk corrupting data."
+              boxLabel: "{% trans 'Do what we would do if there were no primaries, even if we risk corrupting data.' %}"
             }, {
               name: "sb_2pri", inputValue: "call-pri-lost-after-sb", checked: true,
-              boxLabel: "If the current secondary has the right data, call the 'pri-lost-after-sb' handler on the primary."
+              boxLabel: "{% trans 'If the current secondary has the right data, call the pri-lost-after-sb handler on the primary.' %}"
             } ]
           }]
         } ],

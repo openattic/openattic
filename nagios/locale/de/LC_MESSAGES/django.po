@@ -1,0 +1,85 @@
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) YEAR THE PACKAGE'S COPYRIGHT HOLDER
+# This file is distributed under the same license as the PACKAGE package.
+# FIRST AUTHOR <EMAIL@ADDRESS>, YEAR.
+# 
+#, fuzzy
+msgid ""
+msgstr ""
+"Project-Id-Version: PACKAGE VERSION\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2011-11-03 10:44+0100\n"
+"PO-Revision-Date: 2011-11-03 10:46\n"
+"Last-Translator: Laura Paduano <laura.paduano@it-novum.com>\n"
+"Language-Team: LANGUAGE <LL@li.org>\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Language: \n"
+"Plural-Forms: nplurals=2; plural=(n != 1)\n"
+"X-Translated-Using: django-rosetta 0.6.0\n"
+
+#: models.py:33
+msgid ""
+"Check this if openATTIC should not configure this service, only query it."
+msgstr ""
+
+#: templates/nagios/services.js:75
+msgid "Nagios Services"
+msgstr "Nagios Services"
+
+#: templates/nagios/services.js:81
+msgid "Reload"
+msgstr "Neu laden"
+
+#: templates/nagios/services.js:111
+msgid "Service Description"
+msgstr "Service Beschreibung"
+
+#: templates/nagios/services.js:116
+msgid "Plugin Output"
+msgstr "Plugin Ausgabe"
+
+#: templates/nagios/services.js:120
+msgid "Volume"
+msgstr "Volume"
+
+#: templates/nagios/services.js:124
+msgid "Last Check"
+msgstr "Letzter Check"
+
+#: templates/nagios/services.js:129
+msgid "Next Check"
+msgstr "Nächster Check"
+
+#: templates/nagios/services.js:155
+msgid "4 hours"
+msgstr "4 Stunden"
+
+#: templates/nagios/services.js:159
+msgid "1 day"
+msgstr "1 Tag"
+
+#: templates/nagios/services.js:163
+msgid "1 week"
+msgstr "1 Woche"
+
+#: templates/nagios/services.js:167
+msgid "1 month"
+msgstr "1 Monat"
+
+#: templates/nagios/services.js:171
+msgid "1 year"
+msgstr "1 Jahr"
+
+#: templates/nagios/services.js:181
+msgid "Graphs"
+msgstr "Graphen"
+
+#: templates/nagios/services.js:190
+msgid "Graph"
+msgstr "Graph"
+
+#: templates/nagios/services.js:226
+msgid "Monitoring"
+msgstr "Monitoring"

@@ -15,11 +15,11 @@ Ext.oa.Auth__User_Panel = Ext.extend(Ext.grid.GridPanel, {
       title: "{% trans 'Users' %}",
       viewConfig: { forceFit: true },
       buttons: [{
-        text: "Add User",
+        text: "{% trans 'Add User' %}",
         icon: MEDIA_URL + "/icons2/16x16/actions/add.png",
         handler: function(){
           var addwin = new Ext.Window({
-            title: "Add User",
+            title: "{% trans 'Add User' %}",
             layout: "fit",
             height: 300,
             width: 500,
@@ -30,39 +30,39 @@ Ext.oa.Auth__User_Panel = Ext.extend(Ext.grid.GridPanel, {
                 anchor: '-20px'
               },
               items: [{
-                fieldLabel: "User Name",
+                fieldLabel: "{% trans 'User Name' %}",
                 name: "username",
                 ref: 'usernamefield'
               }, {
-                fieldLabel: "Password",
+                fieldLabel: "{% trans 'Password' %}",
                 inputType: 'password',
                 name: "password",
                 ref: 'passwordfield'
               }, {
-                fieldLabel: "First Name",
+                fieldLabel: "{% trans 'First Name' %}",
                 name: "firstname",
                 ref: 'firstnamefield'
               }, {
-                fieldLabel: "last Name",
+                fieldLabel: "{% trans 'last Name' %}",
                 name: "lastname",
                 ref: 'lastnamefield'
               }, {
-                fieldLabel: "E-Mail",
+                fieldLabel: "{% trans 'E-Mail' %}",
                 name: "email",
                 ref: 'emailfield'
               }, {
                 xtype: 'checkbox',
-                fieldLabel: "Active",
+                fieldLabel: "{% trans 'Active' %}",
                 name: "active",
                 ref: 'activefield'
               }, {
                 xtype: 'checkbox',
-                fieldLabel: "SuperUser",
+                fieldLabel: "{% trans 'SuperUser' %}",
                 name: "su",
                 ref: 'sufield'
               }, {
                 xtype: 'checkbox',
-                fieldLabel: "Staff",
+                fieldLabel: "{% trans 'Staff' %}",
                 name: "staff",
                 ref: 'stafffield'
               }],
@@ -98,7 +98,7 @@ Ext.oa.Auth__User_Panel = Ext.extend(Ext.grid.GridPanel, {
           addwin.show();
         }
       }, {
-        text: "Delete User",
+        text: "{% trans 'Delete User' %}",
         icon: MEDIA_URL + "/icons2/16x16/actions/remove.png",
         handler: function(self){
           var sm = authUserGrid.getSelectionModel();
@@ -198,14 +198,14 @@ Ext.oa.Auth__User_Panel = Ext.extend(Ext.grid.GridPanel, {
           }
         }
       },{
-        text: 'Change Password',
+        text: "{% trans 'Change Password' %}",
         icon: MEDIA_URL + "/icons2/16x16/emblems/emblem-readonly.png",
         handler: function(self){
           var sm = authUserGrid.getSelectionModel();
           if( sm.hasSelection() ){
             var sel = sm.selections.items[0];
             var addwin = new Ext.Window({
-            title: "Change Password",
+            title: "{% trans 'Change Password' %}",
               layout: "fit",
               height: 150,
               width: 300,
@@ -252,38 +252,38 @@ Ext.oa.Auth__User_Panel = Ext.extend(Ext.grid.GridPanel, {
           sortable: true
         },
         columns: [{
-          header: "User Name",
+          header: "{% trans 'User Name' %}",
           width: 200,
           dataIndex: "username"
         }, {
-          header: "First Name",
+          header: "{% trans 'First Name' %}",
           width: 200,
           dataIndex: "first_name"
         }, {
-          header: "Last Name",
+          header: "{% trans 'Last Name' %}",
           width: 200,
           dataIndex: "last_name"
         }, {
-          header: "E-Mail Address",
+          header: "{% trans 'E-Mail Address' %}",
           width: 200,
           dataIndex: "email"
         }, {
-          header: "Active",
+          header: "{% trans 'Active' %}",
           width: 50,
           dataIndex: "is_active",
           renderer: renderBoolean
         }, {
-          header: "Staff",
+          header: "{% trans 'Staff' %}",
           width: 50,
           dataIndex: "is_staff",
           renderer: renderBoolean
         }, {
-          header: "SU",
+          header: "{% trans 'SU' %}",
           width: 50,
           dataIndex: "is_superuser",
           renderer: renderBoolean
         }, {
-          header: "Last Login",
+          header: "{%trans 'Last Login' %}",
           width: 200,
           dataIndex: "last_login"
         }]

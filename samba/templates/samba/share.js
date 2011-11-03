@@ -68,7 +68,7 @@ Ext.oa.Samba__Share_Panel = Ext.extend(Ext.grid.GridPanel, {
                     }
                   }
               }, {
-                fieldLabel: "{% trans "Path" %}",
+                fieldLabel: "{% trans 'Path' %}",
                 allowBlank: false,
                 name: "path",
                 ref: 'dirfield'
@@ -91,53 +91,53 @@ Ext.oa.Samba__Share_Panel = Ext.extend(Ext.grid.GridPanel, {
                 valueField:    'username',
                 ref:      'ownerfield'
               },{
-                fieldLabel: "{% trans "Group" %}",
+                fieldLabel: "{% trans 'Group' %}",
                 allowBlank: true,
                 name: "group",
                 ref: 'groupfield'
               },{
-                fieldLabel: "{% trans "Browseable" %}",
+                fieldLabel: "{% trans 'Browseable' %}",
                 allowBlank: false,
                 name: "browseable",
                 ref: 'browseablefield',
                 value:     'True'
               },{
-                fieldLabel: "{% trans "Available" %}",
+                fieldLabel: "{% trans 'Available' %}",
                 allowBlank: false,
                 name: "available",
                 ref: 'availablefield',
                 value:     'True'
               },{
-                fieldLabel: "{% trans "Writeable" %}",
+                fieldLabel: "{% trans 'Writeable' %}",
                 allowBlank: false,
                 name: "writeable",
                 ref: 'writeablefield',
                 value:     'True'
               },{
-                fieldLabel: "{% trans "Comment" %}",
+                fieldLabel: "{% trans 'Comment' %}",
                 allowBlank: true,
                 name: "comment",
                 ref: 'commentfield'
               },{
-                fieldLabel: "{% trans "Create Mode" %}",
+                fieldLabel: "{% trans 'Create Mode' %}",
                 allowBlank: false,
                 name: "create mode",
                 ref: 'createmodefield',
                 value:     '0664'
               },{
-                fieldLabel: "{% trans "State" %}",
+                fieldLabel: "{% trans 'State' %}",
                 allowBlank: false,
                 name: "state",
                 ref: 'statefield',
                 value:     'active'
               },{
-                fieldLabel: "{% trans "Guest OK" %}",
+                fieldLabel: "{% trans 'Guest OK' %}",
                 allowBlank: false,
                 name: "guest ok",
                 ref: 'guestokfield',
                 value:     'True'
               },{
-                fieldLabel: "{% trans "Dir Mode" %}",
+                fieldLabel: "{% trans 'Dir Mode' %}",
                 allowBlank: false,
                 name: "dir mode",
                 ref: 'dirmodefield',

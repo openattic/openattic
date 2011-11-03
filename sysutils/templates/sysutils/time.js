@@ -6,7 +6,7 @@ Ext.oa.Time_Panel = Ext.extend(Ext.Panel, {
   initComponent: function(){
     var timeGrid = this;
     Ext.apply(this, Ext.apply(this.initialConfig, {
-      title: "Date/Time",
+      title: "{% trans 'Date/Time' %}",
       layout: 'absolute',
       items: [{
         xtype: 'form',
@@ -26,21 +26,21 @@ Ext.oa.Time_Panel = Ext.extend(Ext.Panel, {
         baseParams: {id:1},
         paramOrder: ["id"],
         items: [{
-          fieldLabel: 'NTP Server',
-          name: 'server',
+          fieldLabel: "{% trans 'NTP Server' %}",
+          name: "{% trans 'server' %}",
           width: 200,
           allowBlank: false,
           ref: 'serverfield'
         }],
         buttons: [{
-          text: 'Save',
+          text: "{% trans 'Save' %}",
           handler: function(self){
             sysutils__NTP.set(1, {
               'server':            self.ownerCt.ownerCt.emailfield.getValue()
             });
             Ext.Msg.show({
-              title:   'NTP',
-              msg:     'Successfully Updated NTP Server',
+              title:   "{% trans 'NTP' %}",
+              msg:     "{% trans 'Successfully Updated NTP Server' %}",
               buttons: Ext.MessageBox.OK
             });
           }

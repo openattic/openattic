@@ -11,3 +11,5 @@ htdocs/extjs
 certs/
 
 htdocs/oxygen
+
+templates/locale

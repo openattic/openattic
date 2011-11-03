@@ -91,7 +91,7 @@ Ext.oa.Nagios__Service_Panel = Ext.extend(Ext.Panel, {
         store: {
           xtype: 'directstore',
           fields: ['id', 'description', {
-            name: "volumename",    mapping: "volume", convert: function(val, row){ return val.name; }
+            name: "'volumename",    mapping: "volume", convert: function(val, row){ return val.name; }
           }, {
             name: "plugin_output", mapping: "state",  convert: function(val, row){ return val.plugin_output; }
           }, {
@@ -152,23 +152,23 @@ Ext.oa.Nagios__Service_Panel = Ext.extend(Ext.Panel, {
           border: false,
           items: [{
             xtype: "naggraphimage",
-            title: "4 hours",
+            title: "{% trans '4 hours' %}",
             timespan: 4*60*60
           }, {
             xtype: "naggraphimage",
-            title: "1 day",
+            title: "{% trans '1 day' %}",
             timespan: 24*60*60
           }, {
             xtype: "naggraphimage",
-            title: "1 week",
+            title: "{% trans '1 week' %}",
             timespan: 7*24*60*60
           }, {
             xtype: "naggraphimage",
-            title: "1 month",
+            title: "{% trans '1 month' %}",
             timespan: 30*24*60*60
           }, {
             xtype: "naggraphimage",
-            title: "1 year",
+            title: "{% trans '1 year' %}",
             timespan: 365*24*60*60
           }],
           loadRecord: function( record, id ){
@@ -178,7 +178,7 @@ Ext.oa.Nagios__Service_Panel = Ext.extend(Ext.Panel, {
           }
         }, {
           region: "west",
-          title: "Graphs",
+          title: "{% trans 'Graphs' %}",
           xtype:  'grid',
           width: 160,
           viewConfig: { forceFit: true },

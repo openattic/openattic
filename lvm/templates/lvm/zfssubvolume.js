@@ -40,7 +40,7 @@ Ext.oa.Zfs__Subvolume__Panel = Ext.extend(Ext.grid.GridPanel, {
            icon: MEDIA_URL + "/icons2/16x16/actions/add.png",
            handler: function() {
              var addwin = new Ext.Window({
-               title: "{% trans "Add Subvolume" %}",
+               title: "{% trans 'Add Subvolume' %}",
                layout: "fit",
                height: 150,
                width: 500,
@@ -95,7 +95,7 @@ Ext.oa.Zfs__Subvolume__Panel = Ext.extend(Ext.grid.GridPanel, {
              addwin.show();
            }
         },{
-            text: "{% trans "Delete Subvolume" %}",
+            text: "{% trans 'Delete Subvolume' %}",
             icon: MEDIA_URL + "/icons2/16x16/actions/remove.png",
             handler: function(self){
               var sm = zfsSubvolumePanel.getSelectionModel();

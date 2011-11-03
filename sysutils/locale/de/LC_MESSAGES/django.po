@@ -8,9 +8,9 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2011-10-05 12:13+0200\n"
-"PO-Revision-Date: 2011-10-05 12:19\n"
-"Last-Translator:   <>\n"
+"POT-Creation-Date: 2011-11-03 12:01+0100\n"
+"PO-Revision-Date: 2011-11-03 12:02\n"
+"Last-Translator: Laura Paduano <laura.paduano@it-novum.com>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
@@ -19,22 +19,58 @@ msgstr ""
 "Plural-Forms: nplurals=2; plural=(n != 1)\n"
 "X-Translated-Using: django-rosetta 0.6.0\n"
 
-#: templates/sysutils/sysutils.js:26 templates/sysutils/sysutils.js.py:64
+#: templates/sysutils/sysutils.js:9 templates/sysutils/sysutils.js.py:87
 msgid "Service State"
 msgstr "Dienststatus"
 
-#: templates/sysutils/sysutils.js:41
+#: templates/sysutils/sysutils.js:25
 msgid "Service Name"
 msgstr "Dienstname"
 
-#: templates/sysutils/sysutils.js:45
+#: templates/sysutils/sysutils.js:29
 msgid "Status"
 msgstr "Status"
 
-#: templates/sysutils/sysutils.js:71
+#: templates/sysutils/sysutils.js:45
+msgid "Reload"
+msgstr "Neu laden"
+
+#: templates/sysutils/sysutils.js:94
 msgid "Reboot"
 msgstr "Neustarten"
 
-#: templates/sysutils/sysutils.js:91
+#: templates/sysutils/sysutils.js:101
+msgid "Do you really want to reboot openATTIC?"
+msgstr "Wollen Sie openATTIC wirklich neustarten?"
+
+#: templates/sysutils/sysutils.js:114
 msgid "Shutdown"
 msgstr "Herunterfahren"
+
+#: templates/sysutils/sysutils.js:121
+msgid "Do you really want to shutdown openATTIC?"
+msgstr "Wollen Sie openATTIC wirklich herunterfahren?"
+
+#: templates/sysutils/time.js:9 templates/sysutils/time.js.py:57
+msgid "Date/Time"
+msgstr "Datum/Zeit"
+
+#: templates/sysutils/time.js:29
+msgid "NTP Server"
+msgstr "NTP Server"
+
+#: templates/sysutils/time.js:30
+msgid "server"
+msgstr "Server"
+
+#: templates/sysutils/time.js:36
+msgid "Save"
+msgstr "Speichern"
+
+#: templates/sysutils/time.js:42
+msgid "NTP"
+msgstr "NTP"
+
+#: templates/sysutils/time.js:43
+msgid "Successfully Updated NTP Server"
+msgstr "Der NTP Server wurde erfolgreich aktualisiert"

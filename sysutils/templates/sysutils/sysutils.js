@@ -98,7 +98,7 @@ Ext.oa.SysUtils__Service_Module = Ext.extend(Object, {
         click: function(self, ev){
           Ext.oa.YellowDangerousMessage.confirm(
             "Reboot",
-            "Do you really want to reboot openATTIC?",
+            "{% trans 'Do you really want to reboot openATTIC?' %}",
             function(btn, text){
               if( btn == 'yes' ){
                 sysutils__System.reboot( function(provider, response){
@@ -118,7 +118,7 @@ Ext.oa.SysUtils__Service_Module = Ext.extend(Object, {
         click: function(self, ev){
           Ext.oa.RedDangerousMessage.confirm(
             "Shutdown",
-            "Do you really want to shutdown openATTIC?",
+            "{% trans 'Do you really want to shutdown openATTIC?' %}",
             function(btn, text){
               if( btn == 'yes' ){
                 sysutils__System.shutdown( function(provider, response){

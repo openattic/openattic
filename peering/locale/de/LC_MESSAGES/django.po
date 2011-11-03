@@ -1,0 +1,66 @@
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) YEAR THE PACKAGE'S COPYRIGHT HOLDER
+# This file is distributed under the same license as the PACKAGE package.
+# FIRST AUTHOR <EMAIL@ADDRESS>, YEAR.
+# 
+#, fuzzy
+msgid ""
+msgstr ""
+"Project-Id-Version: PACKAGE VERSION\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2011-11-02 10:31+0100\n"
+"PO-Revision-Date: 2011-11-02 11:11\n"
+"Last-Translator: Laura Paduano <laura.paduano@it-novum.com>\n"
+"Language-Team: LANGUAGE <LL@li.org>\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Language: \n"
+"Plural-Forms: nplurals=2; plural=(n != 1)\n"
+"X-Translated-Using: django-rosetta 0.6.0\n"
+
+#: templates/peering/peerhost.js:32 templates/peering/peerhost.js.py:132
+msgid "Name"
+msgstr "Name"
+
+#: templates/peering/peerhost.js:35
+msgid "Base URL"
+msgstr "Basis URL"
+
+#: templates/peering/peerhost.js:53
+msgid "Cancel"
+msgstr "Löschen"
+
+#: templates/peering/peerhost.js:68 templates/peering/peerhost.js.py:156
+msgid "openATTIC Peers"
+msgstr ""
+
+#: templates/peering/peerhost.js:73
+msgid "Reload"
+msgstr "Neu laden"
+
+#: templates/peering/peerhost.js:78 templates/peering/peerhost.js.py:82
+msgid "Add Peer"
+msgstr "Eine Gegenstelle hinzufügen"
+
+#: templates/peering/peerhost.js:83
+msgid "Create Peer"
+msgstr "Erzeuge Gegenstelle"
+
+#: templates/peering/peerhost.js:87 templates/peering/peerhost.js.py:94
+#: templates/peering/peerhost.js:95
+msgid "Edit Peer"
+msgstr "Bearbeite Gegenstelle"
+
+#: templates/peering/peerhost.js:100 templates/peering/peerhost.js.py:107
+msgid "Delete Peer"
+msgstr "Lösche Gegenstelle"
+
+#: templates/peering/peerhost.js:109
+#, python-format
+msgid "Do you really want to delete %s?"
+msgstr ""
+
+#: templates/peering/peerhost.js:136
+msgid "Hostname"
+msgstr "Hostname"

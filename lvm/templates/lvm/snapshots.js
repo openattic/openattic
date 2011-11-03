@@ -82,11 +82,11 @@ Ext.oa.Lvm__Snapshot_Panel = Ext.extend(Ext.grid.GridPanel, {
                     }
                   }
                 }, tipify({
-                  fieldLabel: "{% trans "Size in MB" %}",
+                  fieldLabel: "{% trans 'Size in MB' %}",
                   allowBlank: false,
                   name: "megs",
                   ref: 'sizefield'
-                },"Bitte bedenken Sie, dass der Snapshot je nach Art und Häufigkeit der Änderungen des Volumes entsprechend groß sein sollte."), {
+                },"{%trans 'Please consider, that the size of your snapshot depends on the kind and frequency of change.' %}"), {
                   xtype: "label",
                   ref:   "sizelabel",
                   text:  "{% trans "Waiting for volume selection..." %}",
@@ -106,8 +106,8 @@ Ext.oa.Lvm__Snapshot_Panel = Ext.extend(Ext.grid.GridPanel, {
                     return;
                   }
                   if( free < self.ownerCt.ownerCt.sizefield.getValue() ){
-                    Ext.Msg.alert("{% trans "Error" %}",
-                      interpolate("{% trans "Your volume exceeds the available capacity of %s MB." %}", [free]));
+                    Ext.Msg.alert("{% trans 'Error' %}",
+                      interpolate("{% trans 'Your volume exceeds the available capacity of %s MB.' %}", [free]));
                     return;
                   }
                   lvm__LogicalVolume.create({
@@ -137,7 +137,7 @@ Ext.oa.Lvm__Snapshot_Panel = Ext.extend(Ext.grid.GridPanel, {
           addwin.show();
         }
       }, {
-        text: "{% trans "Delete Snapshot" %}",
+        text: "{% trans 'Delete Snapshot' %}",
         icon: MEDIA_URL + "/icons2/16x16/actions/remove.png",
         handler: function(self){
           var sm = lvmSnapPanel.getSelectionModel();
@@ -193,11 +193,11 @@ Ext.oa.Lvm__Snapshot_Panel = Ext.extend(Ext.grid.GridPanel, {
           sortable: true
         },
         columns: [{
-          header: "{% trans "LV" %}",
+          header: "{% trans 'LV' %}",
           width: 200,
           dataIndex: "name"
         }, {
-          header: "{% trans "Size" %}",
+          header: "{% trans 'Size' %}",
           width: 150,
           dataIndex: "megs",
           align: 'right',
@@ -207,7 +207,7 @@ Ext.oa.Lvm__Snapshot_Panel = Ext.extend(Ext.grid.GridPanel, {
             return String.format("{0} MB", val);
           }
         }, {
-          header: "{% trans "Original Volume" %}",
+          header: "{% trans 'Original Volume' %}",
           width: 200,
           dataIndex: "origvolname"
         }]

@@ -66,7 +66,7 @@ Ext.oa.Munin__MuninNode_Panel = Ext.extend(Ext.Panel, {
           };
           // Create four DataViews that use the same store to get the module name
           // from, but that use different templates in order to display the final images
-          return [ dv("day"), dv("week"), dv("month"), dv("year") ];
+          return [ dv("{% trans 'day' %}"), dv("{% trans 'week' %}"), dv("{% trans 'month' %}"), dv("{% trans 'year' %}") ];
         }())
       }]
     }));

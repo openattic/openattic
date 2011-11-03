@@ -212,7 +212,7 @@ Ext.oa.Iscsi__Panel = Ext.extend(Ext.Panel, {
               store: init_all,
               colModel: new Ext.grid.ColumnModel({
                 defaults: {
-                  sortable: true,
+                  sortable: true
                 },
                 columns: [{
                   header: "Name",
@@ -377,7 +377,7 @@ Ext.oa.Iscsi__Panel = Ext.extend(Ext.Panel, {
        store: targetStore,
        colModel: new Ext.grid.ColumnModel({
          defaults: {
-           sortable: true,
+           sortable: true
          },
          columns: [{
            header: "Name",

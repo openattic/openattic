@@ -1,0 +1,91 @@
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) YEAR THE PACKAGE'S COPYRIGHT HOLDER
+# This file is distributed under the same license as the PACKAGE package.
+# FIRST AUTHOR <EMAIL@ADDRESS>, YEAR.
+#
+#, fuzzy
+msgid ""
+msgstr ""
+"Project-Id-Version: PACKAGE VERSION\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2011-11-02 10:43+0100\n"
+"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language-Team: LANGUAGE <LL@li.org>\n"
+"Language: \n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=2; plural=(n != 1)\n"
+
+#: auth__user.js:15
+msgid "Users"
+msgstr ""
+
+#: auth__user.js:22
+msgid "Add User"
+msgstr ""
+
+#: auth__user.js:33 auth__user.js.py:255
+msgid "User Name"
+msgstr ""
+
+#: auth__user.js:37
+msgid "Password"
+msgstr ""
+
+#: auth__user.js:42 auth__user.js.py:259
+msgid "First Name"
+msgstr ""
+
+#: auth__user.js:46
+msgid "last Name"
+msgstr ""
+
+#: auth__user.js:50
+msgid "E-Mail"
+msgstr ""
+
+#: auth__user.js:55 auth__user.js.py:271
+msgid "Active"
+msgstr ""
+
+#: auth__user.js:60
+msgid "SuperUser"
+msgstr ""
+
+#: auth__user.js:65 auth__user.js.py:276
+msgid "Staff"
+msgstr ""
+
+#: auth__user.js:101
+msgid "Delete User"
+msgstr ""
+
+#: auth__user.js:201
+msgid "Change Password"
+msgstr ""
+
+#: auth__user.js:263
+msgid "Last Name"
+msgstr ""
+
+#: auth__user.js:267
+msgid "E-Mail Address"
+msgstr ""
+
+#: auth__user.js:281
+msgid "SU"
+msgstr ""
+
+#: auth__user.js:286
+msgid "Last Login"
+msgstr ""
+
+#: index_ext_unauthed.html:34
+msgid "Loading..."
+msgstr ""
+
+#: index_ext_unauthed.html:65 index_ext_unauthed.html.py:74
+msgid "Checking..."
+msgstr ""
