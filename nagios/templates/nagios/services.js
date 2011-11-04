@@ -64,10 +64,11 @@ Ext.oa.Nagios__Service_Panel = Ext.extend(Ext.Panel, {
     var stateicons = {
       0: MEDIA_URL + '/oxygen/16x16/actions/dialog-ok-apply.png',
       1: MEDIA_URL + '/oxygen/16x16/status/dialog-warning.png',
-      2: MEDIA_URL + '/oxygen/16x16/status/dialog-error.png'
+      2: MEDIA_URL + '/oxygen/16x16/status/dialog-error.png',
+      NaN: MEDIA_URL + '/oxygen/16x16/categories/system-help.png'
     };
     var renderDesc = function( val, x, store ){
-      return '<img src="' + stateicons[parseInt(store.data.current_state)] + '" title="no" /> ' + val;
+      return '<img src="' + stateicons[parseInt(store.data.current_state)] + '" /> ' + val;
     };
 
     Ext.apply(this, Ext.apply(this.initialConfig, {
@@ -91,15 +92,15 @@ Ext.oa.Nagios__Service_Panel = Ext.extend(Ext.Panel, {
         store: {
           xtype: 'directstore',
           fields: ['id', 'description', {
-            name: "'volumename",    mapping: "volume", convert: function(val, row){ return val.name; }
+            name: "'volumename",    mapping: "volume", convert: function(val, row){ if(val) return val.name; }
           }, {
-            name: "plugin_output", mapping: "state",  convert: function(val, row){ return val.plugin_output; }
+            name: "plugin_output", mapping: "state",  convert: function(val, row){ if(val) return val.plugin_output; }
           }, {
-            name: "current_state", mapping: "state",  convert: function(val, row){ return val.current_state; }
+            name: "current_state", mapping: "state",  convert: function(val, row){ if(val) return val.current_state; }
           }, {
-            name: "last_check",    mapping: "state",  convert: function(val, row){ return val.last_check; }
+            name: "last_check",    mapping: "state",  convert: function(val, row){ if(val) return val.last_check; }
           }, {
-            name: "next_check",    mapping: "state",  convert: function(val, row){ return val.next_check; }
+            name: "next_check",    mapping: "state",  convert: function(val, row){ if(val) return val.next_check; }
           }],
           directFn: nagios__Service.all
         },
@@ -135,7 +136,7 @@ Ext.oa.Nagios__Service_Panel = Ext.extend(Ext.Panel, {
         listeners: {
           cellmousedown: function( self, rowIndex, colIndex, evt ){
             var record = self.getStore().getAt(rowIndex);
-            if( record.json.graphs.length === 0 )
+            if( !record.json.graphs || record.json.graphs.length === 0 )
               return;
             self.ownerCt.items.items[1].loadRecord(record);
           }
