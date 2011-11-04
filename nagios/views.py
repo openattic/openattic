@@ -99,6 +99,15 @@ def graph(request, service_id, srcidx):
         # perfdata[srcidx] = (graph title, perfdata)
         graphname  = perfdata[srcidx][0]
         perfvalues = perfdata[srcidx][1].split(';')
+
+        # Find the current value (perfvalues[1] also contains the unit, simply float() won't work)
+        m = re.match( '^(?P<value>\d+(?:\.\d+)?)(?:[^\d;]*)$', perfvalues[0] )
+        if m:
+            if m.group("value"):
+                curr = float(m.group("value"))
+        else:
+            curr = None
+
         # maybe we have curr;warn;crit;min;max; get them and auto-convert if needed
         def getval(idx):
             if len(perfvalues) > idx and perfvalues[idx]:
@@ -115,10 +124,15 @@ def graph(request, service_id, srcidx):
 
         if warn and crit:
             # LIMIT the graphs so everything from 0 to WARN is green, warn to crit is yellow, > crit is red.
+            lineclr = "00AA00"
+            if curr >= warn:
+                lineclr = "AAAA00"
+            if curr >= crit:
+                lineclr = "AA0000"
             if not invert:
                 args.extend([
-                    # purple line above everything that holds the description
-                    "LINE1:var%d#AA00AACC:%-*s"         % (srcidx, maxlen, graphname),
+                    # line above everything that holds the description
+                    "LINE1:var%d#%sCC:%-*s"             % (srcidx, lineclr, maxlen, graphname),
                     # LIMIT 0 < value < warn
                     "CDEF:var%dok=var%d,0,%.1f,LIMIT"   % (srcidx, srcidx, warn),
                     "AREA:var%dok#00AA0050:"            % (srcidx),
@@ -135,7 +149,7 @@ def graph(request, service_id, srcidx):
                     # define the negative graph
                     "CDEF:var%dneg=var%d,-1,*"                % (srcidx, srcidx),
                     # purple line above everything that holds the description
-                    "LINE1:var%dneg#AA00AACC:%-*s"            % (srcidx, maxlen, graphname),
+                    "LINE1:var%dneg#%sCC:%-*s"                % (srcidx, lineclr, maxlen, graphname),
                     # LIMIT 0 > value > warn
                     "CDEF:var%dnegok=var%dneg,%.1f,0,LIMIT"   % (srcidx, srcidx, warn),
                     "AREA:var%dnegok#00AA0050:"               % (srcidx),
