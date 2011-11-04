@@ -342,6 +342,49 @@ Ext.oa.Iscsi__Panel = Ext.extend(Ext.Panel, {
           addwin.show();
         }
       },{
+          text: "{% trans 'Delete Initiator'%}",
+          icon: MEDIA_URL + "/icons2/16x16/actions/remove.png",
+          handler: function(self){
+           var deny = iscsiPanel.initiator.init_panel.deny_grid.getSelectionModel();
+           var allow = iscsiPanel.initiator.init_panel.allow_grid.getSelectionModel();
+           var parent = iscsiPanel.targets.getSelectionModel();
+           var parentid = parent.selections.items[0];
+           if( allow.hasSelection() ){
+             var selectedItem = allow.getSelected();
+             init_allow.remove(selectedItem);
+             var data = [];
+             for (var i = 0; i < init_allow.data.items.length; i++){
+               data.push(
+                 init_allow.data.items[i].data
+               );
+             }
+             iscsi__Target.set( parentid.data.id,{
+               "init_allow":data
+            },function(provider, response){
+              if( response.typ === 'exception' ){
+               alert('Error', 'Initiator delete has failed');
+              }
+             });
+           }
+           if( deny.hasSelection() ){
+             var selectedItem = deny.getSelected();
+             init_deny.remove(selectedItem);
+             var data = [];
+             for (var i = 0; i < init_deny.data.items.length; i++){
+               data.push(
+                 init_deny.data.items[i].data
+               );
+             }
+             iscsi__Target.set( parentid.data.id,{
+               "init_deny":data
+             },function(provider, response){
+               if( response.typ === 'exception' ){
+                alert('Error', 'Initiator delete has failed');
+                }
+             });
+           }
+          }
+      },{
         text: "{% trans 'Delete Lun' %}",
         icon: MEDIA_URL + "/icons2/16x16/actions/remove.png",
         handler: function(self){
@@ -426,15 +469,21 @@ Ext.oa.Iscsi__Panel = Ext.extend(Ext.Panel, {
       },{
         ref: 'initiator',
         border: true,
-      
         colspan: 2,
         items: [{
           layout: 'column',
           xtype: 'panel',
+          ref: 'init_panel',
           title: 'Initiator',
           defaults:{border: false},
           items: [{
             xtype: 'grid',
+            ref: 'allow_grid',
+            listeners: {
+            cellclick: function (self, rowIndex, colIndex, evt ){
+              iscsiPanel.initiator.init_panel.deny_grid.getSelectionModel().clearSelections();
+              }
+            }, 
             viewConfig: { forceFit: true },
             width: 240,
             height: 290,
@@ -450,7 +499,13 @@ Ext.oa.Iscsi__Panel = Ext.extend(Ext.Panel, {
           })
         },{
           xtype: 'grid',
+          ref: 'deny_grid',
           store: init_deny,
+          listeners: {
+          cellclick: function (self, rowIndex, colIndex, evt ){
+              iscsiPanel.initiator.init_panel.allow_grid.getSelectionModel().clearSelections();
+              }
+           }, 
           viewConfig: { forceFit: true },
           width: 240,
           height: 290,
