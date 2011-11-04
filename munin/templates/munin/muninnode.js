@@ -48,13 +48,13 @@ Ext.oa.Munin__MuninNode_Panel = Ext.extend(Ext.Panel, {
             fields: ['name'],
             data: [['apache_accesses']]
           });
-          var dv = function(when){
+          var dv = function(when, urlwhen){
             return new Ext.DataView({
               title: when,
               tpl: new Ext.XTemplate(
                 '<tpl for=".">',
                   '<div class="munin-graphs">',
-                    '<img src="/munin/localdomain/localhost.localdomain/{name}-'+when+'.png" />',
+                    '<img src="/munin/localdomain/localhost.localdomain/{name}-'+urlwhen+'.png" />',
                   '</div>',
                 '</tpl>'),
               singleSelect: true,
@@ -66,7 +66,12 @@ Ext.oa.Munin__MuninNode_Panel = Ext.extend(Ext.Panel, {
           };
           // Create four DataViews that use the same store to get the module name
           // from, but that use different templates in order to display the final images
-          return [ dv("{% trans 'day' %}"), dv("{% trans 'week' %}"), dv("{% trans 'month' %}"), dv("{% trans 'year' %}") ];
+          return [
+            dv("{% trans 'day' %}",   "day"),
+            dv("{% trans 'week' %}",  "week"),
+            dv("{% trans 'month' %}", "month"),
+            dv("{% trans 'year' %}",  "year")
+          ];
         }())
       }]
     }));
