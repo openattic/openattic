@@ -36,7 +36,6 @@ def graph(request, service_id, srcidx):
     end    = request.GET.get("end",    str(int(time())))
     height = int(request.GET.get("height", 150))
     width  = int(request.GET.get("width",  700))
-    color  = request.GET.get("color",  "00AA00CC")
 
     graphtitle = serv.description
     if graph is not None and width >= 350:
@@ -48,20 +47,24 @@ def graph(request, service_id, srcidx):
         ]
 
     if graph is None:
-        # Try to match the unit of the current value
+        # We don't have Graphing information, so read it from the perfdata.
+        # Try to match the unit of the current value for the vertical title.
         m = re.match( '\d+(?:\.\d+)?(?P<unit>[^\d;]+)?(?:;.*)?', perfdata[srcidx][1] )
         if m:
             if m.group("unit"):
                 args.extend([ "--vertical-label", m.group("unit") ])
+
     elif graph.verttitle:
         args.extend([ "--vertical-label", graph.verttitle ])
 
+    # Calc the maximum length required in the Graph name colum to be able to make it wide enough.
     # See the "for" loop below for that if statement. boils down to "get x if index == -x else index"
     maxlen = max( [ len( perfdata[ int(srcidx[1:]) if srcidx[0] == '-' else int(srcidx) ][0] )
                     for srcidx in indexes ] )
 
+    # Print the table titles. First some empty space for where the graph names are...
     args.append("COMMENT:  " + (" " * maxlen))
-
+    # ...then the actual titles + space for the unit identifier.
     if width >= 350:
         args.extend([
             "COMMENT:%8s " % "Cur",
@@ -75,9 +78,12 @@ def graph(request, service_id, srcidx):
             "COMMENT:%8s \\j" % "Avg",
             ])
 
+    # Draw an HRULE for the x axis. important for graphs that go +/-.
     args.append("HRULE:0#000000")
 
     for srcidx in indexes:
+        # srcidx gives the perfdata index which we are drawing. e.g. if perfdata contains
+        # rxbytes=13 txbytes=37, srcidx says what to draw. -0 = rxbytes inverted, 1 = txbytes etc.
         invert = False
         if srcidx[0] == '-':
             invert = True
@@ -85,17 +91,66 @@ def graph(request, service_id, srcidx):
         else:
             srcidx = int(srcidx)
 
+        # perfdata[srcidx] = (graph title, perfdata)
+        graphname  = perfdata[srcidx][0]
+        perfvalues = perfdata[srcidx][1].split(';')
+        # maybe we have curr;warn;crit;min;max; get them and auto-convert if needed
+        def getval(idx):
+            if len(perfvalues) > idx and perfvalues[idx]:
+                return float(perfvalues[idx]) * (-1 if invert else 1)
+            return None
+
+        warn = getval(1)
+        crit = getval(2)
+        vmin = getval(3)
+        vmax = getval(4)
+
+        # First of all, define the graph itself.
         args.append( "DEF:var%d=%s:%d:AVERAGE" % (srcidx, rrdpath, int(srcidx) + 1) )
 
-        if not invert:
-            args.append("AREA:var%d#%s:%-*s" % (srcidx, color, maxlen, perfdata[srcidx][0]))
+        if warn and crit:
+            # LIMIT the graphs so everything from 0 to WARN is green, warn to crit is yellow, > crit is red.
+            if not invert:
+                # purple line above everything that holds the description
+                args.append("LINE1:var%d#AA00AACC:%-*s"         % (srcidx, maxlen, graphname))
+                # LIMIT 0 < value < warn
+                args.append("CDEF:var%dok=var%d,0,%.1f,LIMIT"   % (srcidx, srcidx, warn))
+                args.append("AREA:var%dok#00AA0050:"            % (srcidx))
+                # LIMIT warn < value < crit
+                args.append("CDEF:var%dw=var%d,%.1f,%.1f,LIMIT" % (srcidx, srcidx, warn, crit))
+                args.append("AREA:var%dw#AAAA0050:"             % (srcidx))
+                # LIMIT crit < value < \infty
+                args.append("CDEF:var%dc=var%d,%.1f,INF,LIMIT"  % (srcidx, srcidx, crit) )
+                args.append("AREA:var%dc#AA000050:"             % (srcidx))
+            else:
+                # values are negative here, so we have to match inverted!
+                args.extend([
+                    # purple line above everything that holds the description
+                    "CDEF:var%dneg=var%d,-1,*"                % (srcidx, srcidx),
+                    "LINE1:var%dneg#AA00AACC:%-*s"            % (srcidx, maxlen, graphname),
+                    # LIMIT 0 > value > warn
+                    "CDEF:var%dnegok=var%dneg,%.1f,0,LIMIT"   % (srcidx, srcidx, warn),
+                    "AREA:var%dnegok#00AA0050:"               % (srcidx),
+                    # LIMIT warn > value > crit
+                    "CDEF:var%dnegw=var%dneg,%.1f,%.1f,LIMIT" % (srcidx, srcidx, crit, warn),
+                    "AREA:var%dnegw#AAAA0050:"                % (srcidx),
+                    # LIMIT crit > value > -\infty
+                    "CDEF:var%dnegc=var%dneg,INF,%.1f,LIMIT"  % (srcidx, srcidx, crit),
+                    "AREA:var%dnegc#AA000050:"                % (srcidx),
+                ])
         else:
-            args.extend([
-                "CDEF:var%dneg=var%d,-1,*" % (srcidx, srcidx),
-                "AREA:var%dneg#%s:%-*s"    % (srcidx, color, maxlen, perfdata[srcidx][0]),
+            # We don't know warn and crit, so use a blue color.
+            if not invert:
+                args.append("AREA:var%d#0000AA50:"      % (srcidx))
+                args.append("LINE1:var%d#0000AACC:%-*s" % (srcidx, maxlen, graphname))
+            else:
+                args.extend([
+                    "CDEF:var%dneg=var%d,-1,*"        % (srcidx, srcidx),
+                    "AREA:var%dneg#0000AA50:"         % (srcidx),
+                    "LINE1:var%dneg#0000AACC:%-*s"    % (srcidx, maxlen, graphname),
                 ])
 
-
+        # Now print the grap description table.
         if width >= 350:
             args.extend([
                 "GPRINT:var%d:LAST:%%8.2lf%%s"     % srcidx,
@@ -105,29 +160,16 @@ def graph(request, service_id, srcidx):
                 ])
         else:
             args.extend([
-                "GPRINT:var%d:LAST:%%8.2lf%%s"     % srcidx,
+                "GPRINT:var%d:LAST:%%8.2lf%%s"        % srcidx,
                 "GPRINT:var%d:AVERAGE:%%8.2lf%%s\\j"  % srcidx,
                 ])
 
-        perfvalues = perfdata[srcidx][1].split(';')
-        if len(perfvalues) > 1:
-            # maybe we have curr;warn;crit;min;max
-            warn = perfvalues[1]
-            crit = perfvalues[2] if len(perfvalues) > 2 else None
-            vmin = perfvalues[3] if len(perfvalues) > 3 else None
-            vmax = perfvalues[4] if len(perfvalues) > 4 else None
+        # If warn/crit are known, use HRULEs to draw them.
+        if warn:
+            args.append( "HRULE:%.1f#F0F700" % warn )
 
-            if warn is not None:
-                args.append( "HRULE:%s#F0F700" % (warn * (-1 if invert else 1) ) )
-
-            if crit is not None:
-                args.append( "HRULE:%s#FF0000" % (crit * (-1 if invert else 1) ) )
-
-            #if vmin is not None:
-                #args.extend([ "-l", vmin ])
-
-            #if vmax is not None:
-                #args.extend([ "-u", vmax ])
+        if crit:
+            args.append( "HRULE:%.1f#FF0000" % crit )
 
 
     #print args
