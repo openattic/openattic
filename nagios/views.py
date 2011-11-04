@@ -116,17 +116,19 @@ def graph(request, service_id, srcidx):
         if warn and crit:
             # LIMIT the graphs so everything from 0 to WARN is green, warn to crit is yellow, > crit is red.
             if not invert:
-                # purple line above everything that holds the description
-                args.append("LINE1:var%d#AA00AACC:%-*s"         % (srcidx, maxlen, graphname))
-                # LIMIT 0 < value < warn
-                args.append("CDEF:var%dok=var%d,0,%.1f,LIMIT"   % (srcidx, srcidx, warn))
-                args.append("AREA:var%dok#00AA0050:"            % (srcidx))
-                # LIMIT warn < value < crit
-                args.append("CDEF:var%dw=var%d,%.1f,%.1f,LIMIT" % (srcidx, srcidx, warn, crit))
-                args.append("AREA:var%dw#AAAA0050:"             % (srcidx))
-                # LIMIT crit < value < \infty
-                args.append("CDEF:var%dc=var%d,%.1f,INF,LIMIT"  % (srcidx, srcidx, crit) )
-                args.append("AREA:var%dc#AA000050:"             % (srcidx))
+                args.extend([
+                    # purple line above everything that holds the description
+                    "LINE1:var%d#AA00AACC:%-*s"         % (srcidx, maxlen, graphname),
+                    # LIMIT 0 < value < warn
+                    "CDEF:var%dok=var%d,0,%.1f,LIMIT"   % (srcidx, srcidx, warn),
+                    "AREA:var%dok#00AA0050:"            % (srcidx),
+                    # LIMIT warn < value < crit
+                    "CDEF:var%dw=var%d,%.1f,%.1f,LIMIT" % (srcidx, srcidx, warn, crit),
+                    "AREA:var%dw#AAAA0050:"             % (srcidx),
+                    # LIMIT crit < value < \infty
+                    "CDEF:var%dc=var%d,%.1f,INF,LIMIT"  % (srcidx, srcidx, crit),
+                    "AREA:var%dc#AA000050:"             % (srcidx),
+                    ])
             else:
                 # values are negative here, so we have to match inverted!
                 args.extend([
@@ -143,23 +145,27 @@ def graph(request, service_id, srcidx):
                     # LIMIT crit > value > -\infty
                     "CDEF:var%dnegc=var%dneg,INF,%.1f,LIMIT"  % (srcidx, srcidx, crit),
                     "AREA:var%dnegc#AA000050:"                % (srcidx),
-                ])
+                    ])
         else:
             # We don't know warn and crit, so use a blue color.
             if not invert:
-                args.append("AREA:var%d#0000AA50:"      % (srcidx))
-                args.append("LINE1:var%d#0000AACC:%-*s" % (srcidx, maxlen, graphname))
+                args.extend([
+                    "AREA:var%d#0000AA50:"      % (srcidx),
+                    "LINE1:var%d#0000AACC:%-*s" % (srcidx, maxlen, graphname),
+                    ])
             else:
                 args.extend([
                     "CDEF:var%dneg=var%d,-1,*"        % (srcidx, srcidx),
                     "AREA:var%dneg#0000AA50:"         % (srcidx),
                     "LINE1:var%dneg#0000AACC:%-*s"    % (srcidx, maxlen, graphname),
-                ])
+                    ])
 
         # In cases where the values are unknown, draw everything grey.
         # Define a graph that is ±INF if the graph is unknown, else 0; and draw it using a grey AREA.
-        args.append("CDEF:var%dun=var%d,UN,%sINF,0,IF" % (srcidx, srcidx, ('-' if invert else '')))
-        args.append("AREA:var%dun#88888850:"           % (srcidx))
+        args.extend([
+            "CDEF:var%dun=var%d,UN,%sINF,0,IF" % (srcidx, srcidx, ('-' if invert else '')),
+            "AREA:var%dun#88888850:"           % (srcidx),
+            ])
 
         # Now print the grap description table.
         if width >= 350:
