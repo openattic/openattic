@@ -32,8 +32,13 @@ def graph(request, service_id, srcidx):
     if not exists(rrdpath):
         raise Http404("RRD file not found")
 
-    start  = request.GET.get("start",  str(int(time() - 24*60*60)))
-    end    = request.GET.get("end",    str(int(time())))
+    try:
+        lastcheck = int(serv.state["last_check"])
+    except:
+        lastcheck = int(time())
+
+    start  = request.GET.get("start",  str(lastcheck - 24*60*60))
+    end    = request.GET.get("end",    str(lastcheck))
     height = int(request.GET.get("height", 150))
     width  = int(request.GET.get("width",  700))
 
@@ -154,7 +159,7 @@ def graph(request, service_id, srcidx):
         # In cases where the values are unknown, draw everything grey.
         # Define a graph that is ±INF if the graph is unknown, else 0; and draw it using a grey AREA.
         args.append("CDEF:var%dun=var%d,UN,%sINF,0,IF" % (srcidx, srcidx, ('-' if invert else '')))
-        args.append("AREA:var%dun#88888850:"  % (srcidx))
+        args.append("AREA:var%dun#88888850:"           % (srcidx))
 
         # Now print the grap description table.
         if width >= 350:
