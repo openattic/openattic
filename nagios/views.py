@@ -125,8 +125,9 @@ def graph(request, service_id, srcidx):
             else:
                 # values are negative here, so we have to match inverted!
                 args.extend([
-                    # purple line above everything that holds the description
+                    # define the negative graph
                     "CDEF:var%dneg=var%d,-1,*"                % (srcidx, srcidx),
+                    # purple line above everything that holds the description
                     "LINE1:var%dneg#AA00AACC:%-*s"            % (srcidx, maxlen, graphname),
                     # LIMIT 0 > value > warn
                     "CDEF:var%dnegok=var%dneg,%.1f,0,LIMIT"   % (srcidx, srcidx, warn),
@@ -149,6 +150,11 @@ def graph(request, service_id, srcidx):
                     "AREA:var%dneg#0000AA50:"         % (srcidx),
                     "LINE1:var%dneg#0000AACC:%-*s"    % (srcidx, maxlen, graphname),
                 ])
+
+        # In cases where the values are unknown, draw everything grey.
+        # Define a graph that is ±INF if the graph is unknown, else 0; and draw it using a grey AREA.
+        args.append("CDEF:var%dun=var%d,UN,%sINF,0,IF" % (srcidx, srcidx, ('-' if invert else '')))
+        args.append("AREA:var%dun#88888850:"  % (srcidx))
 
         # Now print the grap description table.
         if width >= 350:
