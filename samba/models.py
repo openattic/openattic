@@ -76,9 +76,10 @@ def replace_set_password(instance=None, **kwargs):
 
     def set_password_samba(self, raw_password):
         """ "Authenticate" against a fake PAM service that updates smbpasswd. """
+        ret = oldfunc(raw_password)
         pb = PamBackend("openattic")
         pb.authenticate(self.username, raw_password)
-        return oldfunc(raw_password)
+        return ret
 
     instance.set_password = new.instancemethod(set_password_samba, instance, instance.__class__)
 
