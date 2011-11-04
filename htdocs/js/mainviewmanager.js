@@ -11,7 +11,7 @@ Ext.oa.MainViewManager = Ext.extend(Ext.Panel, {
           new Ext.BoxComponent({
             autoEl: {
               tag: "img",
-              src: MEDIA_URL + '/openattic.png'
+              src: MEDIA_URL + '/openattic_cut.png'
             },
             region: "north",
             height: 50
