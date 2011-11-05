@@ -41,6 +41,8 @@ def graph(request, service_id, srcidx):
     end    = request.GET.get("end",    str(lastcheck))
     height = int(request.GET.get("height", 150))
     width  = int(request.GET.get("width",  700))
+    bgcol  = request.GET.get("bgcol", "")
+    fgcol  = request.GET.get("fgcol", "")
 
     graphtitle = serv.description
     if graph is not None and width >= 350:
@@ -62,11 +64,17 @@ def graph(request, service_id, srcidx):
     elif graph.verttitle:
         args.extend([ "--vertical-label", graph.verttitle ])
 
+    if bgcol:
+        args.extend([ "--color", "BACK#"+bgcol ])
+    if fgcol:
+        args.extend([ "--color", "FONT#"+fgcol ])
+
     # Calc the maximum length required in the Graph name colum to be able to make it wide enough.
     # See the "for" loop below for that if statement. boils down to "get x if index == -x else index"
     maxlen = max( [ len( perfdata[ int(srcidx[1:]) if srcidx[0] == '-' else int(srcidx) ][0] )
                     for srcidx in indexes ] )
 
+    args.append("COMMENT:  \\j")
     # Print the table titles. First some empty space for where the graph names are...
     args.append("COMMENT:  " + (" " * maxlen))
     # ...then the actual titles + space for the unit identifier.
