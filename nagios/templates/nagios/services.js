@@ -20,6 +20,10 @@ Ext.oa.Nagios__Graph_ImagePanel = Ext.extend(Ext.Panel, {
               this.ownerCt.doLayout();
               this.ownerCt.el.unmask();
             }, self);
+            self.el.on("error", function(ev, target, options){
+              this.ownerCt.el.unmask();
+              this.ownerCt.el.mask("{% trans 'Image not available yet' %}");
+            }, self);
           }
         }
       })
@@ -39,7 +43,7 @@ Ext.oa.Nagios__Graph_ImagePanel = Ext.extend(Ext.Panel, {
     this.currentRecord = record;
     this.currentId = id;
     if( this.el ){
-      this.el.mask("Loading...");
+      this.el.mask("{% trans 'Loading...' %}");
       var url = String.format(
         PROJECT_URL + "/nagios/{0}/{1}.png?start={2}",
         record.data.id, id, (new Date().format("U") - this.timespan)
