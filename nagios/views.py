@@ -93,7 +93,7 @@ def graph(request, service_id, srcidx):
     width  = int(request.GET.get("width",  700))
     bgcol  = request.GET.get("bgcol", nagios_settings.GRAPH_BGCOLOR)
     fgcol  = request.GET.get("fgcol", nagios_settings.GRAPH_FGCOLOR)
-    grcol  = request.GET.get("grcol", "")
+    grcol  = request.GET.get("grcol", nagios_settings.GRAPH_GRCOLOR)
     grad   = request.GET.get("grad", "false") == "true"
 
     try:

@@ -12,6 +12,7 @@ LV_PERF_CHECK_CMD        = getattr( settings, "NAGIOS_LV_PERF_CHECK_CMD",      "
 
 RRD_PATH                 = getattr( settings, "NAGIOS_RRD_PATH",          "/var/lib/pnp4nagios/perfdata/localhost/%s.rrd" )
 
+GRAPH_GRCOLOR            = "222222"
 GRAPH_BGCOLOR            = "1F2730"
 GRAPH_FGCOLOR            = "FFFFFF"
 GRAPH_BGIMAGE            = settings.MEDIA_ROOT + "/openattic_cut.png"
