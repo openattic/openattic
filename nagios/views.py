@@ -1,9 +1,15 @@
 # -*- coding: utf-8 -*-
 # kate: space-indent on; indent-width 4; replace-tabs on;
 
+# make "/" operator always use floats
+from __future__ import division
+
 import re
 from os.path import exists
 from time import time
+
+from numpy import array
+from colorsys import rgb_to_hls, hls_to_rgb
 
 from django.http       import HttpResponse, Http404
 from django.shortcuts  import get_object_or_404
@@ -11,6 +17,41 @@ from systemd.procutils import invoke
 
 from nagios.conf   import settings as nagios_settings
 from nagios.models import Service, Graph
+
+
+# All color values are either RGB strings or in [0..1].
+
+def rgbstr_to_hls(string, default="FFFFFF"):
+    if not string or len(string) < 6:
+        string = default
+    return rgb_to_hls( int(string[0:2], 16) / 0xFF, int(string[2:4], 16) / 0xFF, int(string[4:6], 16) / 0xFF )
+
+def get_hls_complementary(hlsfrom):
+    h = 0.5 + hlsfrom[0]
+    if h > 1.0:
+        h -= 1.0
+    return (h, 1 - hlsfrom[1], hlsfrom[2])
+
+def get_gradient_args(varname, hlsfrom, hlsto, steps=20):
+    # We do not allow hue to change because that looks stupid
+    allowed = array((False, True, True))
+
+    args = []
+
+    for grad in range(steps, 0, -1):
+        graphmult = grad/steps
+        colormult = (1 - graphmult) ** 2 # exponential gradient looks better than linear
+
+        hlsgrad = array(hlsfrom) + ( ( array(hlsto) - array(hlsfrom) ) * allowed * colormult )
+        rgbgrad = map( lambda x: x * 0xFF, hls_to_rgb( *hlsgrad ) )
+
+        tempvar = "%sgrd%d" % (varname, grad)
+        args.append("CDEF:%s=%s,%.2f,*" % ( tempvar, varname, graphmult ))
+        args.append("AREA:%s#%02X%02X%02XFF"  % ( (tempvar,) + tuple(rgbgrad) ))
+
+    return args
+
+
 
 def graph(request, service_id, srcidx):
     serv  = get_object_or_404(Service, pk=int(service_id))
@@ -43,6 +84,16 @@ def graph(request, service_id, srcidx):
     width  = int(request.GET.get("width",  700))
     bgcol  = request.GET.get("bgcol", "")
     fgcol  = request.GET.get("fgcol", "")
+    grcol  = request.GET.get("grcol", "")
+    grad   = request.GET.get("grad", "false") == "true"
+
+    try:
+        int(start)
+        int(end)
+    except ValueError:
+        raise Http404("Invalid start or end specified")
+    if (bgcol and len(bgcol) < 6) or (fgcol and len(fgcol) < 6) or (grcol and len(grcol) < 6):
+        raise Http404("Invalid color specified")
 
     graphtitle = serv.description
     if graph is not None and width >= 350:
@@ -68,12 +119,15 @@ def graph(request, service_id, srcidx):
         args.extend([ "--color", "BACK#"+bgcol ])
     if fgcol:
         args.extend([ "--color", "FONT#"+fgcol ])
+    if grcol:
+        args.extend([ "--color", "CANVAS#"+grcol ])
 
     # Calc the maximum length required in the Graph name colum to be able to make it wide enough.
     # See the "for" loop below for that if statement. boils down to "get x if index == -x else index"
     maxlen = max( [ len( perfdata[ int(srcidx[1:]) if srcidx[0] == '-' else int(srcidx) ][0] )
                     for srcidx in indexes ] )
 
+    # rrdtool uses \\j for newline.
     args.append("COMMENT:  \\j")
     # Print the table titles. First some empty space for where the graph names are...
     args.append("COMMENT:  " + (" " * maxlen))
@@ -93,6 +147,9 @@ def graph(request, service_id, srcidx):
 
     # Draw an HRULE for the x axis. important for graphs that go +/-.
     args.append("HRULE:0#000000")
+
+    if grad:
+        hlsbg = get_hls_complementary( rgbstr_to_hls( grcol ) )
 
     for srcidx in indexes:
         # srcidx gives the perfdata index which we are drawing. e.g. if perfdata contains
@@ -143,44 +200,61 @@ def graph(request, service_id, srcidx):
                     "LINE1:var%d#%sCC:%-*s"             % (srcidx, lineclr, maxlen, graphname),
                     # LIMIT 0 < value < warn
                     "CDEF:var%dok=var%d,0,%.1f,LIMIT"   % (srcidx, srcidx, warn),
-                    "AREA:var%dok#00AA0050:"            % (srcidx),
                     # LIMIT warn < value < crit
                     "CDEF:var%dw=var%d,%.1f,%.1f,LIMIT" % (srcidx, srcidx, warn, crit),
-                    "AREA:var%dw#AAAA0050:"             % (srcidx),
                     # LIMIT crit < value < \infty
                     "CDEF:var%dc=var%d,%.1f,INF,LIMIT"  % (srcidx, srcidx, crit),
-                    "AREA:var%dc#AA000050:"             % (srcidx),
                     ])
+                if not grad:
+                    args.extend([
+                        "AREA:var%dok#00AA0070:"        % (srcidx),
+                        "AREA:var%dw#AAAA0070:"         % (srcidx),
+                        "AREA:var%dc#AA000070:"         % (srcidx),
+                        ])
+                else:
+                    args.extend( get_gradient_args( ("var%dok" % srcidx), rgbstr_to_hls("00AA00"), hlsbg ) )
+                    args.extend( get_gradient_args( ("var%dw" % srcidx),  rgbstr_to_hls("AAAA00"), hlsbg ) )
+                    args.extend( get_gradient_args( ("var%dc" % srcidx),  rgbstr_to_hls("AA0000"), hlsbg ) )
             else:
                 # values are negative here, so we have to match inverted!
                 args.extend([
                     # define the negative graph
                     "CDEF:var%dneg=var%d,-1,*"                % (srcidx, srcidx),
-                    # purple line above everything that holds the description
+                    # line above everything that holds the description
                     "LINE1:var%dneg#%sCC:%-*s"                % (srcidx, lineclr, maxlen, graphname),
                     # LIMIT 0 > value > warn
                     "CDEF:var%dnegok=var%dneg,%.1f,0,LIMIT"   % (srcidx, srcidx, warn),
-                    "AREA:var%dnegok#00AA0050:"               % (srcidx),
                     # LIMIT warn > value > crit
                     "CDEF:var%dnegw=var%dneg,%.1f,%.1f,LIMIT" % (srcidx, srcidx, crit, warn),
-                    "AREA:var%dnegw#AAAA0050:"                % (srcidx),
                     # LIMIT crit > value > -\infty
                     "CDEF:var%dnegc=var%dneg,INF,%.1f,LIMIT"  % (srcidx, srcidx, crit),
-                    "AREA:var%dnegc#AA000050:"                % (srcidx),
                     ])
+                if not grad:
+                    args.extend([
+                        "AREA:var%dnegok#00AA0070:"           % (srcidx),
+                        "AREA:var%dnegw#AAAA0070:"            % (srcidx),
+                        "AREA:var%dnegc#AA000070:"            % (srcidx),
+                        ])
+                else:
+                    args.extend( get_gradient_args( ("var%dnegok" % srcidx), rgbstr_to_hls("00AA00"), hlsbg ) )
+                    args.extend( get_gradient_args( ("var%dnegw" % srcidx),  rgbstr_to_hls("AAAA00"), hlsbg ) )
+                    args.extend( get_gradient_args( ("var%dnegc" % srcidx),  rgbstr_to_hls("AA0000"), hlsbg ) )
+
         else:
             # We don't know warn and crit, so use a blue color.
             if not invert:
-                args.extend([
-                    "AREA:var%d#0000AA50:"      % (srcidx),
-                    "LINE1:var%d#0000AACC:%-*s" % (srcidx, maxlen, graphname),
-                    ])
+                if grad:
+                    args.extend( get_gradient_args( ("var%d" % srcidx), rgbstr_to_hls("0000AA"), hlsbg ) )
+                else:
+                    args.append( "AREA:var%d#0000AA50:"  % (srcidx) )
+                args.append( "LINE1:var%d#0000AACC:%-*s" % (srcidx, maxlen, graphname) )
             else:
-                args.extend([
-                    "CDEF:var%dneg=var%d,-1,*"        % (srcidx, srcidx),
-                    "AREA:var%dneg#0000AA50:"         % (srcidx),
-                    "LINE1:var%dneg#0000AACC:%-*s"    % (srcidx, maxlen, graphname),
-                    ])
+                args.append( "CDEF:var%dneg=var%d,-1,*"  % (srcidx, srcidx) )
+                if grad:
+                    args.extend( get_gradient_args( ("var%dneg" % srcidx), rgbstr_to_hls("0000AA"), hlsbg ) )
+                else:
+                    args.append( "AREA:var%dneg#0000AA50:"  % (srcidx) )
+                args.append( "LINE1:var%dneg#0000AACC:%-*s" % (srcidx, maxlen, graphname) )
 
         # In cases where the values are unknown, draw everything grey.
         # Define a graph that is ±INF if the graph is unknown, else 0; and draw it using a grey AREA.
@@ -189,7 +263,7 @@ def graph(request, service_id, srcidx):
             "AREA:var%dun#88888850:"           % (srcidx),
             ])
 
-        # Now print the grap description table.
+        # Now print the graph description table.
         if width >= 350:
             args.extend([
                 "GPRINT:var%d:LAST:%%8.2lf%%s"     % srcidx,
