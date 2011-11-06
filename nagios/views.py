@@ -8,8 +8,10 @@ import re
 from os.path import exists
 from time import time
 
-from numpy import array
+from numpy    import array
 from colorsys import rgb_to_hls, hls_to_rgb
+from StringIO import StringIO
+from PIL      import Image
 
 from django.http       import HttpResponse, Http404
 from django.shortcuts  import get_object_or_404
@@ -19,12 +21,19 @@ from nagios.conf   import settings as nagios_settings
 from nagios.models import Service, Graph
 
 
-# All color values are either RGB strings or in [0..1].
-
-def rgbstr_to_hls(string, default="FFFFFF"):
+def rgbstr_to_rgb_int(string, default="FFFFFF"):
     if not string or len(string) < 6:
         string = default
-    return rgb_to_hls( int(string[0:2], 16) / 0xFF, int(string[2:4], 16) / 0xFF, int(string[4:6], 16) / 0xFF )
+    return ( int(string[0:2], 16), int(string[2:4], 16), int(string[4:6], 16) )
+
+# All color values from here are either RGB strings or in [0..1].
+
+def rgbstr_to_rgb(string, default="FFFFFF"):
+    xff = rgbstr_to_rgb_int( string, default )
+    return ( xff[0] / 0xFF, xff[1] / 0xFF, xff[2] / 0xFF )
+
+def rgbstr_to_hls(string, default="FFFFFF"):
+    return rgb_to_hls( *rgbstr_to_rgb( string, default ) )
 
 def get_hls_complementary(hlsfrom):
     h = 0.5 + hlsfrom[0]
@@ -82,8 +91,8 @@ def graph(request, service_id, srcidx):
     end    = request.GET.get("end",    str(lastcheck))
     height = int(request.GET.get("height", 150))
     width  = int(request.GET.get("width",  700))
-    bgcol  = request.GET.get("bgcol", "")
-    fgcol  = request.GET.get("fgcol", "")
+    bgcol  = request.GET.get("bgcol", nagios_settings.GRAPH_BGCOLOR)
+    fgcol  = request.GET.get("fgcol", nagios_settings.GRAPH_FGCOLOR)
     grcol  = request.GET.get("grcol", "")
     grad   = request.GET.get("grad", "false") == "true"
 
@@ -116,7 +125,9 @@ def graph(request, service_id, srcidx):
         args.extend([ "--vertical-label", graph.verttitle ])
 
     if bgcol:
-        args.extend([ "--color", "BACK#"+bgcol ])
+        # User wants a background color. Make the background transparent
+        # here, so that we can apply the background color and image later.
+        args.extend([ "--color", "BACK#00000000" ])
     if fgcol:
         args.extend([ "--color", "FONT#"+fgcol ])
     if grcol:
@@ -288,6 +299,26 @@ def graph(request, service_id, srcidx):
     #print args
 
     ret, out, err = invoke(args, log=False, return_out_err=True)
+
+    if bgcol:
+        # User wants a background color, so we made the image transparent
+        # before. Now is the time to fix that.
+        rgbbg    = rgbstr_to_rgb_int( bgcol )
+        imggraph = Image.open(StringIO(out))
+        if imggraph.mode == "RGBA":
+            # Create a new image that has our background color
+            imgout   = Image.new( imggraph.mode, imggraph.size, rgbbg )
+            # Maybe paste the background image into it
+            if nagios_settings.GRAPH_BGIMAGE:
+                imgbg = Image.open(nagios_settings.GRAPH_BGIMAGE)
+                posbg = array(imgout.size) - array(imgbg.size)
+                imgout.paste( imgbg, (posbg[0], posbg[1], imgout.size[0], imgout.size[1]), imgbg )
+            # now paste the graph
+            imgout.paste( imggraph, None, imggraph )
+            # save into our "out" variable
+            buf = StringIO()
+            imgout.save( buf, "PNG" )
+            out = buf.getvalue()
 
     return HttpResponse( out, mimetype="image/png" )
 
