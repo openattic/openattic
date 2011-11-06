@@ -45,8 +45,9 @@ Ext.oa.Nagios__Graph_ImagePanel = Ext.extend(Ext.Panel, {
     if( this.el ){
       this.el.mask("{% trans 'Loading...' %}");
       var url = String.format(
-        PROJECT_URL + "/nagios/{0}/{1}.png?start={2}",
-        record.data.id, id, (new Date().format("U") - this.timespan)
+        PROJECT_URL + "/nagios/{0}/{1}.png?start={2}&grad={3}",
+        record.data.id, id, (new Date().format("U") - this.timespan),
+        Ext.state.Manager.get("nagios_graph_grad", "false")
       );
       if( this.graphwidth !== false ){
         url += "&width=" + this.graphwidth;
