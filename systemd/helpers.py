@@ -54,7 +54,8 @@ def logged(cls):
     for attr in dir(cls):
         func = getattr(cls, attr)
         if hasattr(func, "_dbus_is_method") and \
-           func._dbus_is_method and func.__name__ != "Introspect":
+           func._dbus_is_method and func.__name__ != "Introspect" and \
+           getattr(func, "_enable_logging", True):
             setattr( cls, attr, makeloggedfunc(func, "Calling") )
         elif hasattr(func, "_dbus_is_signal") and func._dbus_is_signal:
             setattr( cls, attr, makeloggedfunc(func, "Emitting") )
