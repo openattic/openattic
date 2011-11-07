@@ -72,7 +72,7 @@ def replace_set_password(instance=None, **kwargs):
             auth using the PAM compatible SHA1 hash.
         """
         if '$' in self.password:
-            return oldcheck(self, raw_password)
+            return oldcheck(raw_password)
         return str(hashlib.sha1( smart_str(raw_password) ).hexdigest()) == self.password
 
     instance.set_password = new.instancemethod(
