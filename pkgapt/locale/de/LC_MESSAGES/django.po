@@ -37,7 +37,7 @@ msgstr "Erlaube Installation/Löschung"
 
 #: templates/pkgapt/upgrade.js:38
 msgid "Do Upgrade"
-msgstr "Upgrade vornhemen"
+msgstr "Upgrade vornehmen"
 
 #: templates/pkgapt/upgrade.js:58
 msgid "Name"
