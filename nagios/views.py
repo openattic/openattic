@@ -22,6 +22,7 @@ from nagios.models import Service, Graph
 
 
 def rgbstr_to_rgb_int(string, default="FFFFFF"):
+    """ Turn the given RGB string into a tuple that contains its integer values. """
     if not string or len(string) < 6:
         string = default
     return ( int(string[0:2], 16), int(string[2:4], 16), int(string[4:6], 16) )
@@ -29,19 +30,28 @@ def rgbstr_to_rgb_int(string, default="FFFFFF"):
 # All color values from here are either RGB strings or in [0..1].
 
 def rgbstr_to_rgb(string, default="FFFFFF"):
+    """ Turn the given RGB string into a tuple that contains
+        its values as floats in [0..1].
+    """
     xff = rgbstr_to_rgb_int( string, default )
     return ( xff[0] / 0xFF, xff[1] / 0xFF, xff[2] / 0xFF )
 
 def rgbstr_to_hls(string, default="FFFFFF"):
+    """ Turn the given RGB string into an HLS tuple. """
     return rgb_to_hls( *rgbstr_to_rgb( string, default ) )
 
 def get_hls_complementary(hlsfrom):
+    """ Get the complementary color to the given color. """
     h = 0.5 + hlsfrom[0]
     if h > 1.0:
         h -= 1.0
     return (h, 1 - hlsfrom[1], hlsfrom[2])
 
 def get_gradient_args(varname, hlsfrom, hlsto, steps=20):
+    """ Return a list of RRDTool arguments that draw a color gradient for the
+        given graph variable. The gradient goes from hlsfrom at the top to
+        hlsto at the X axis and uses a resolution specified in `steps'.
+    """
     # We do not allow hue to change because that looks stupid
     allowed = array((False, True, True))
 
@@ -63,6 +73,7 @@ def get_gradient_args(varname, hlsfrom, hlsto, steps=20):
 
 
 def graph(request, service_id, srcidx):
+    """ The actual view that creates a graph image using RRDTool. """
     serv  = get_object_or_404(Service, pk=int(service_id))
 
     srcidx = int(srcidx)
@@ -184,7 +195,7 @@ def graph(request, service_id, srcidx):
         else:
             curr = None
 
-        # maybe we have curr;warn;crit;min;max; get them and auto-convert if needed
+        # maybe we have curr;warn;crit;min;max -- get them and auto-convert if needed
         def getval(idx):
             if len(perfvalues) > idx and perfvalues[idx]:
                 return float(perfvalues[idx]) * (-1 if invert else 1)
@@ -199,7 +210,9 @@ def graph(request, service_id, srcidx):
         args.append( "DEF:var%d=%s:%d:AVERAGE" % (srcidx, rrdpath, int(srcidx) + 1) )
 
         if warn and crit:
-            # LIMIT the graphs so everything from 0 to WARN is green, warn to crit is yellow, > crit is red.
+            # LIMIT the graphs so everything from 0 to WARN is green, WARN to CRIT is yellow, > CRIT is red.
+            # Using three lines here also creates three dots in the description table, so use a single one
+            # and set its color according to the current value.
             lineclr = "00AA00"
             if curr >= warn:
                 lineclr = "AAAA00"
@@ -213,7 +226,7 @@ def graph(request, service_id, srcidx):
                     "CDEF:var%dok=var%d,0,%.1f,LIMIT"   % (srcidx, srcidx, warn),
                     # LIMIT warn < value < crit
                     "CDEF:var%dw=var%d,%.1f,%.1f,LIMIT" % (srcidx, srcidx, warn, crit),
-                    # LIMIT crit < value < \infty
+                    # LIMIT crit < value < INF
                     "CDEF:var%dc=var%d,%.1f,INF,LIMIT"  % (srcidx, srcidx, crit),
                     ])
                 if not grad:
@@ -233,11 +246,11 @@ def graph(request, service_id, srcidx):
                     "CDEF:var%dneg=var%d,-1,*"                % (srcidx, srcidx),
                     # line above everything that holds the description
                     "LINE1:var%dneg#%sCC:%-*s"                % (srcidx, lineclr, maxlen, graphname),
-                    # LIMIT 0 > value > warn
+                    # LIMIT warn < value < 0
                     "CDEF:var%dnegok=var%dneg,%.1f,0,LIMIT"   % (srcidx, srcidx, warn),
-                    # LIMIT warn > value > crit
+                    # LIMIT crit < value < warn
                     "CDEF:var%dnegw=var%dneg,%.1f,%.1f,LIMIT" % (srcidx, srcidx, crit, warn),
-                    # LIMIT crit > value > -\infty
+                    # LIMIT -INF < value < warn
                     "CDEF:var%dnegc=var%dneg,INF,%.1f,LIMIT"  % (srcidx, srcidx, crit),
                     ])
                 if not grad:
@@ -306,11 +319,12 @@ def graph(request, service_id, srcidx):
         rgbbg    = rgbstr_to_rgb_int( bgcol )
         imggraph = Image.open(StringIO(out))
         if imggraph.mode == "RGBA":
-            # Create a new image that has our background color
+            # Create a new image that has our desired background color
             imgout   = Image.new( imggraph.mode, imggraph.size, rgbbg )
             # Maybe paste the background image into it
             if nagios_settings.GRAPH_BGIMAGE:
                 imgbg = Image.open(nagios_settings.GRAPH_BGIMAGE)
+                # position the background image at the bottom right
                 posbg = array(imgout.size) - array(imgbg.size)
                 imgout.paste( imgbg, (posbg[0], posbg[1], imgout.size[0], imgout.size[1]), imgbg )
             # now paste the graph
