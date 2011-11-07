@@ -15,4 +15,4 @@ RRD_PATH                 = getattr( settings, "NAGIOS_RRD_PATH",          "/var/
 GRAPH_GRCOLOR            = "222222"
 GRAPH_BGCOLOR            = "1F2730"
 GRAPH_FGCOLOR            = "FFFFFF"
-GRAPH_BGIMAGE            = settings.MEDIA_ROOT + "/openattic_cut.png"
+GRAPH_BGIMAGE            = settings.MEDIA_ROOT + "/openattic_cut_trans.png"
