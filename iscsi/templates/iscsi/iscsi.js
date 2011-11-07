@@ -568,7 +568,7 @@ Ext.oa.Iscsi__Panel = Ext.extend(Ext.Panel, {
                   ddGroup    : 'initiator',
                   notifyDrop : function(ddSource, e, data){
                     var records =  ddSource.dragData.selections;
-                    if( ddSource.grid.store.id === init_deny.id )
+                    if( ddSource.grid.store.storeId === init_deny.storeId )
                       Ext.each(records, ddSource.grid.store.remove, ddSource.grid.store);
                     self.store.add(records);
                     return true
@@ -652,6 +652,7 @@ Ext.oa.Iscsi__Panel = Ext.extend(Ext.Panel, {
               ddGroup    : 'target',
               notifyDrop : function(ddSource, e, data){
                 var records =  ddSource.dragData.selections;
+                Ext.each(records, ddSource.grid.store);
                 self.store.add(records);
                 return true
               }
