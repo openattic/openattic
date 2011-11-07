@@ -145,7 +145,7 @@ Ext.oa.Nfs__Export_Panel = Ext.extend(Ext.grid.GridPanel, {
                         'options':   self.ownerCt.ownerCt.optionsfield.getValue()
                       }, function(provider, response){
                         if( response.result ){
-                          
+                          nfsGrid.store.reload();
                           addwin.hide();
                         }
                       });
