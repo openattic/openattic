@@ -8,6 +8,10 @@ from ifconfig.models import IPAddress, NetDevice
 class IPAddressHandler(ModelHandler):
     model = IPAddress
 
+    def _idobj(self, obj):
+        """ Return an ID for the given object, including the app label and object name. """
+        return {'id': obj.id, 'app': obj._meta.app_label, 'obj': obj._meta.object_name, 'address': obj.address}
+
 class NetDeviceHandler(ModelHandler):
     model = NetDevice
 
