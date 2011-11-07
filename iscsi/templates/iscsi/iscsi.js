@@ -570,6 +570,12 @@ Ext.oa.Iscsi__Panel = Ext.extend(Ext.Panel, {
                     var records =  ddSource.dragData.selections;
                     if( ddSource.grid.store.storeId === init_deny.storeId )
                       Ext.each(records, ddSource.grid.store.remove, ddSource.grid.store);
+                    for( var i = 0; i < records.length; i++ ){
+                      Ext.applyIf( records[i].data, {
+                        app: "iscsi",
+                        obj: "Initiator"
+                      });
+                    }
                     self.store.add(records);
                     return true
                   }
@@ -607,6 +613,12 @@ Ext.oa.Iscsi__Panel = Ext.extend(Ext.Panel, {
                   var records =  ddSource.dragData.selections;
                   if( ddSource.grid.store.storeId === init_allow.storeId )
                     Ext.each(records, ddSource.grid.store.remove, ddSource.grid.store);
+                  for( var i = 0; i < records.length; i++ ){
+                    Ext.applyIf( records[i].data, {
+                      app: "iscsi",
+                      obj: "Initiator"
+                    });
+                  }
                   self.store.add(records);
                   return true
                 }
