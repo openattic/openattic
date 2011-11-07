@@ -9,7 +9,7 @@ msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2011-11-02 08:43+0100\n"
-"PO-Revision-Date: 2011-11-03 11:05\n"
+"PO-Revision-Date: 2011-11-07 11:04\n"
 "Last-Translator: Laura Paduano <laura.paduano@it-novum.com>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
 "MIME-Version: 1.0\n"
@@ -89,7 +89,7 @@ msgstr "Erzeuge Share"
 
 #: templates/samba/share.js:176
 msgid "Cancel"
-msgstr "Abbrechzen"
+msgstr "Abbrechen"
 
 #: templates/samba/share.js:187 templates/samba/share.js.py:194
 msgid "Delete Share"
