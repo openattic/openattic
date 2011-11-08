@@ -465,6 +465,19 @@ Ext.oa.Iscsi__Panel = Ext.extend(Ext.Panel, {
            }
           }
       },{
+          text: "{% trans 'Delete Bind IPs'%}",
+          icon: MEDIA_URL + "/icons2/16x16/actions/remove.png",
+          handler: function(self){
+           var bindIP = iscsiPanel.target_grid.getSelectionModel();
+           var parent = iscsiPanel.targets.getSelectionModel();
+           var parentid = parent.selections.items[0];
+           if( bindIP.hasSelection() ){
+             var selectedItem = bindIP.getSelected();
+             tgt_allow.remove(selectedItem);
+             storeUpdate(tgt_allow, parentid.data.id, "tgt_allow");
+           }
+          }
+      },{
         text: "{% trans 'Delete Lun' %}",
         icon: MEDIA_URL + "/icons2/16x16/actions/remove.png",
         handler: function(self){
@@ -553,6 +566,7 @@ Ext.oa.Iscsi__Panel = Ext.extend(Ext.Panel, {
       },{
         ref: 'initiator',
         border: true,
+        defaults:{border: false},
         colspan: 2,
         items: [{
           layout: 'column',
@@ -651,6 +665,7 @@ Ext.oa.Iscsi__Panel = Ext.extend(Ext.Panel, {
         id: 'west',
         border: true,
         ddGroup: 'target',
+        ref: 'target_grid',
         enableDragDrop: true,
         xtype: 'grid',
         viewConfig: { forceFit: true },
@@ -672,7 +687,6 @@ Ext.oa.Iscsi__Panel = Ext.extend(Ext.Panel, {
               ddGroup    : 'target',
               notifyDrop : function(ddSource, e, data){
                 var records =  ddSource.dragData.selections;
-                Ext.each(records, ddSource.grid.store);
                 self.store.add(records);
                 return true
               }
