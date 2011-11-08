@@ -21,17 +21,6 @@ Ext.oa.Ifconfig__NetDevice_Panel = Ext.extend(Ext.canvasXpress, {
           nfsGrid.store.reload();
         }
       } ],
-//       data: {
-//         nodes: [
-//         ],
-//         edges:  [
-//         ],
-//         legend: {
-//           nodes: [],
-//           edges: [],
-//           text:  []
-//         }
-//       },
       options: {
         graphType: 'Network',
         backgroundGradient1Color: 'rgb(0,183,217)',
@@ -43,7 +32,6 @@ Ext.oa.Ifconfig__NetDevice_Panel = Ext.extend(Ext.canvasXpress, {
     Ext.oa.Ifconfig__NetDevice_Panel.superclass.initComponent.apply(this, arguments);
     this.on("saveallchanges", function(obj){
       this.canvas.updateConfig({data: obj});
-//       this.canvas.updateData(obj);
       this.canvas.redraw();
     }, this);
   },
@@ -54,7 +42,69 @@ Ext.oa.Ifconfig__NetDevice_Panel = Ext.extend(Ext.canvasXpress, {
     this.store.reload();
   },
   updateView: function(){
-    console.log("Ohai");
+    // Sort our devices into groups by devtype. Each group that has nodes will then be drawn as a column.
+    var devgroups = {
+      native:  [],
+      vlan:    [],
+      bridge:  [],
+      bonding: []
+    };
+    var devmap = {};
+    var grouplen = {
+      native:  0,
+      vlan:    0,
+      bridge:  0,
+      bonding: 0
+    };
+    var maxgroup = "";
+    var maxlength = 0;
+    this.store.data.each(function(record){
+      devgroups[record.data.devtype].push(record.json);
+      devmap[record.data.devname] = record.json;
+      grouplen[record.data.devtype]++;
+      if( grouplen[record.data.devtype] > maxlength ){
+        maxgroup  = record.data.devtype;
+        maxlength = grouplen[record.data.devtype];
+      }
+    });
+
+    console.log(
+      String.format("We have {0} native, {1} bonding, {2} vlan, and {3} bridge devices.",
+      grouplen["native"], grouplen["bonding"], grouplen["vlan"], grouplen["bridge"] )
+    );
+    console.log(
+      String.format("Will start drawing with the {0} device group.", maxgroup)
+    );
+
+    debugger;
+
+    var srcnodes = [];
+    var haveids  = [];
+
+    var renderDevice = function( dev, startx, starty ){
+      srcnodes.push({id: dev.devname, x: startx, y: starty});
+      if( dev.devtype === "bridge" && dev.brports.length > 0 ){
+        var offset = (maxlength - dev.brports.length) / 2.0 * -1;
+        for( var i = 0; i < dev.brports.length; i++ ){
+          renderDevice( devmap[dev.brports[i].devname], startx - 1, offset - starty - i );
+        }
+      }
+      else if( dev.devtype === "bonding" && dev.slaves.length > 0 ){
+        var offset = (maxlength - dev.slaves.length) / 2.0 * -1;
+        for( var i = 0; i < dev.slaves.length; i++ ){
+          renderDevice( devmap[dev.slaves[i].devname], startx - 1, offset - starty - i );
+        }
+      }
+    }
+
+    var currgroup = "bridge";
+    for( var i = 0; i < grouplen[currgroup]; i++ ){
+      console.log( "Init render: " + devgroups[currgroup][i].devname );
+      renderDevice( devgroups[currgroup][i], 0, i * -1 );
+    }
+
+    debugger;
+
     this.addNode({id: 'eth0',  color: 'rgb(255,0,0)', shape: 'square', size: 1, x:   0, y:  50});
     this.addNode({id: 'eth3',  color: 'rgb(255,0,0)', shape: 'square', size: 1, x:   0, y: 150});
     this.addNode({id: 'bond0', color: 'rgb(255,0,0)', shape: 'square', size: 1, x: 250, y: 100});
@@ -68,7 +118,6 @@ Ext.oa.Ifconfig__NetDevice_Panel = Ext.extend(Ext.canvasXpress, {
     this.addEdge({id1: 'bond0', id2: 'vlan3', color: 'rgb(51,12,255)', width: '1', type: 'bezierArrowHeadLine'});
     this.updateOrder();
     this.saveMap();
-    console.log("Ohai iz done");
   },
   nodeOrEdgeClicked: function(obj, evt){
     console.log("I am ze ubermensch!");

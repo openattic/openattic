@@ -68,6 +68,33 @@ class NetDevice(models.Model):
     def __unicode__(self):
         return self.devname
 
+    @classmethod
+    def get_dependency_tree(self):
+        depends = {}
+        for interface in NetDevice.objects.all():
+            depends[interface.devname] = []
+
+            if interface.vlanrawdev:
+                depends[interface.devname].append(interface.vlanrawdev)
+
+            if interface.brports.all().count():
+                depends[interface.devname].extend(list(interface.brports.all()))
+
+            if interface.slaves.count():
+                depends[interface.devname].extend(list(interface.slaves.all()))
+
+        return depends
+
+    @property
+    def devtype(self):
+        if self.vlanrawdev is not None:
+            return "vlan"
+        if self.brports.count():
+            return "bridge"
+        if self.slaves.count():
+            return "bonding"
+        return "native"
+
     def get_addresses(self, af=None):
         addrs = []
         ifaddrs = netifaces.ifaddresses(iface)
