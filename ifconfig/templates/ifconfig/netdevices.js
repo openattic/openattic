@@ -49,6 +49,7 @@ Ext.oa.Ifconfig__NetDevice_Panel = Ext.extend(Ext.canvasXpress, {
   },
   onRender: function(){
     Ext.oa.Ifconfig__NetDevice_Panel.superclass.onRender.apply(this, arguments);
+    this.on("leftclick", this.nodeOrEdgeClicked, this);
     this.store.on("datachanged", this.updateView, this);
     this.store.reload();
   },
@@ -58,7 +59,7 @@ Ext.oa.Ifconfig__NetDevice_Panel = Ext.extend(Ext.canvasXpress, {
     this.addNode({id: 'eth3',  color: 'rgb(255,0,0)', shape: 'square', size: 1, x:   0, y: 150});
     this.addNode({id: 'bond0', color: 'rgb(255,0,0)', shape: 'square', size: 1, x: 250, y: 100});
     this.addNode({id: 'vlan1', color: 'rgb(255,0,0)', shape: 'square', size: 1, x: 500, y:   0});
-    this.addNode({id: 'vlan2', color: 'rgb(255,0,0)', shape: 'square', size: 1, x: 500, y: 100});
+    this.addNode({id: 'vlan2', color: 'rgb(255,0,0)', shape: 'square', size: 1, x: 500, y: 101});
     this.addNode({id: 'vlan3', color: 'rgb(255,0,0)', shape: 'square', size: 1, x: 500, y: 200});
     this.addEdge({id1: 'eth0',  id2: 'bond0', color: 'rgb(51,12,255)', width: '1', type: 'bezierArrowHeadLine'});
     this.addEdge({id1: 'eth3',  id2: 'bond0', color: 'rgb(51,12,255)', width: '1', type: 'bezierArrowHeadLine'});
@@ -68,6 +69,9 @@ Ext.oa.Ifconfig__NetDevice_Panel = Ext.extend(Ext.canvasXpress, {
     this.updateOrder();
     this.saveMap();
     console.log("Ohai iz done");
+  },
+  nodeOrEdgeClicked: function(obj, evt){
+    console.log("I am ze ubermensch!");
   }
 });
 
