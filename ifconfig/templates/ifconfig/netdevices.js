@@ -2,13 +2,13 @@
 
 Ext.namespace("Ext.oa");
 
-Ext.oa.Ifconfig__NetDevice_Panel = Ext.extend(Ext.grid.GridPanel, {
+
+Ext.oa.Ifconfig__NetDevice_Panel = Ext.extend(Ext.canvasXpress, {
   initComponent: function(){
     var nfsGrid = this;
     Ext.apply(this, Ext.apply(this.initialConfig, {
-      id: 'iscsi__netdevice_panel_inst',
+      id: 'ifconfig__netdevice_panel_inst',
       title: "{% trans 'Network interfaces' %}",
-      viewConfig: { forceFit: true },
       buttons: [
         {
           text: "",
@@ -19,61 +19,67 @@ Ext.oa.Ifconfig__NetDevice_Panel = Ext.extend(Ext.grid.GridPanel, {
           }
         }
       ],
-      store: {
-        xtype: 'directstore',
-        fields: ['id', 'devname', 'auto', 'dhcp'],
-        directFn: ifconfig__NetDevice.all
+      data: {
+        nodes: [
+          {id: 'Gene1', color: 'rgb(255,0,0)', shape: 'square', size: 1, x: 155, y: 160},
+          {id: 'Gene2', color: 'rgb(255,0,0)', shape: 'square', size: 1, x: 155, y: 340},
+          {id: 'Gene3', color: 'rgb(255,0,0)', shape: 'square', size: 1, x: 355, y: 160},
+          {id: 'Gene4', color: 'rgb(255,0,0)', shape: 'square', size: 1, x: 355, y: 340},
+          {id: 'Gene5', color: 'rgb(255,0,0)', shape: 'square', size: 1, x: 255, y: 100},
+          {id: 'Gene6', color: 'rgb(255,0,0)', shape: 'square', size: 1, x: 255, y: 400},
+          {id: 'Gene7', color: 'rgb(255,0,0)', shape: 'square', size: 1, x:  50, y: 250},
+          {id: 'Gene8', color: 'rgb(255,0,0)', shape: 'square', size: 1, x: 450, y: 250}
+        ],
+        edges:  [
+          {id1: 'Gene1', id2: 'Gene2', color: 'rgb(51,12,255)', width: '1', type: 'curvedArrowHeadLine'},
+          {id1: 'Gene4', id2: 'Gene3', color: 'rgb(51,12,255)', width: '1', type: 'curvedArrowHeadLine'},
+          {id1: 'Gene5', id2: 'Gene6', color: 'rgb(51,12,255)', width: '1', type: 'arrowHeadLine'},
+          {id1: 'Gene3', id2: 'Gene8', color: 'rgb(51,12,255)', width: '1', type: 'bezierArrowHeadLine'},
+          {id1: 'Gene7', id2: 'Gene1', color: 'rgb(51,12,255)', width: '1', type: 'bezierArrowHeadLine'}
+        ],
+        legend: {
+          nodes: [],
+          edges: [],
+          text:  []
+        }
       },
-      colModel: new Ext.grid.ColumnModel({
-        defaults: {
-          sortable: true
-        },
-        columns: [{
-          header: "{% trans 'Device' %}",
-          width: 100,
-          dataIndex: "devname"
-        }, {
-          header: "{% trans 'Auto' %}",
-          width: 200,
-          dataIndex: "auto"
-        }, {
-          header: "{% trans 'DHCP' %}",
-          width: 200,
-          dataIndex: "dhcp"
-        }]
-      })
+      options: {
+        graphType: 'Network',
+        backgroundGradient1Color: 'rgb(0,183,217)',
+        backgroundGradient2Color: 'rgb(4,112,174)',
+        nodeFontColor: 'rgb(29,34,43)',
+        calculateLayout: false
+      }
     }));
     Ext.oa.Ifconfig__NetDevice_Panel.superclass.initComponent.apply(this, arguments);
-  },
-  onRender: function(){
-    Ext.oa.Ifconfig__NetDevice_Panel.superclass.onRender.apply(this, arguments);
-    this.store.reload();
   }
 });
 
-Ext.reg("iscsi__netdevice_panel", Ext.oa.Ifconfig__NetDevice_Panel);
+Ext.reg("ifconfig__netdevice_panel", Ext.oa.Ifconfig__NetDevice_Panel);
 
 Ext.oa.Ifconfig__NetDevice_Module = Ext.extend(Object, {
-  panel: "iscsi__netdevice_panel",
+  panel: "ifconfig__netdevice_panel",
   prepareMenuTree: function(tree){
     tree.appendToRootNodeById("menu_system", {
       text: 'Network',
       icon: MEDIA_URL + '/icons2/22x22/places/gnome-fs-network.png',
+      panel: 'ifconfig__netdevice_panel_inst',
       children: [ {
-          text: 'General',
-          leaf: true,
-          icon: MEDIA_URL + '/icons2/22x22/apps/network.png',
-          panel: 'iscsi__netdevice_panel_inst',
-        }, {
-          text: 'Proxy',            leaf: true,
-          icon: MEDIA_URL + '/icons2/22x22/apps/preferences-system-network-proxy.png'
-        }, {
-          text: 'Domain',
-          icon: MEDIA_URL + '/icons2/128x128/apps/domain.png',
-          children: [
-            {text: 'Active Directory',  leaf: true},
-            {text: 'LDAP',   leaf: true}
-          ]
+        text: 'General',
+        leaf: true, href: '#',
+        icon: MEDIA_URL + '/icons2/22x22/apps/network.png',
+        panel: 'ifconfig__netdevice_panel_inst'
+      }, {
+        text: 'Proxy',
+        leaf: true, href: '#',
+        icon: MEDIA_URL + '/icons2/22x22/apps/preferences-system-network-proxy.png'
+      }, {
+        text: 'Domain',
+        icon: MEDIA_URL + '/icons2/128x128/apps/domain.png',
+        children: [
+          {text: 'Active Directory',  leaf: true, href: '#'},
+          {text: 'LDAP',              leaf: true, href: '#'}
+        ]
       } ]
     });
   }
