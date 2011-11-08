@@ -9,40 +9,29 @@ Ext.oa.Ifconfig__NetDevice_Panel = Ext.extend(Ext.canvasXpress, {
     Ext.apply(this, Ext.apply(this.initialConfig, {
       id: 'ifconfig__netdevice_panel_inst',
       title: "{% trans 'Network interfaces' %}",
-      buttons: [
-        {
-          text: "",
-          icon: MEDIA_URL + "/icons2/16x16/actions/reload.png",
-          tooltip: "{% trans 'Reload' %}",
-          handler: function(self){
-            nfsGrid.store.reload();
-          }
+      store: new Ext.data.DirectStore({
+        fields: ["devname", "devtype", "id"],
+        directFn: ifconfig__NetDevice.all,
+      }),
+      buttons: [ {
+        text: "",
+        icon: MEDIA_URL + "/icons2/16x16/actions/reload.png",
+        tooltip: "{% trans 'Reload' %}",
+        handler: function(self){
+          nfsGrid.store.reload();
         }
-      ],
-      data: {
-        nodes: [
-          {id: 'Gene1', color: 'rgb(255,0,0)', shape: 'square', size: 1, x: 155, y: 160},
-          {id: 'Gene2', color: 'rgb(255,0,0)', shape: 'square', size: 1, x: 155, y: 340},
-          {id: 'Gene3', color: 'rgb(255,0,0)', shape: 'square', size: 1, x: 355, y: 160},
-          {id: 'Gene4', color: 'rgb(255,0,0)', shape: 'square', size: 1, x: 355, y: 340},
-          {id: 'Gene5', color: 'rgb(255,0,0)', shape: 'square', size: 1, x: 255, y: 100},
-          {id: 'Gene6', color: 'rgb(255,0,0)', shape: 'square', size: 1, x: 255, y: 400},
-          {id: 'Gene7', color: 'rgb(255,0,0)', shape: 'square', size: 1, x:  50, y: 250},
-          {id: 'Gene8', color: 'rgb(255,0,0)', shape: 'square', size: 1, x: 450, y: 250}
-        ],
-        edges:  [
-          {id1: 'Gene1', id2: 'Gene2', color: 'rgb(51,12,255)', width: '1', type: 'curvedArrowHeadLine'},
-          {id1: 'Gene4', id2: 'Gene3', color: 'rgb(51,12,255)', width: '1', type: 'curvedArrowHeadLine'},
-          {id1: 'Gene5', id2: 'Gene6', color: 'rgb(51,12,255)', width: '1', type: 'arrowHeadLine'},
-          {id1: 'Gene3', id2: 'Gene8', color: 'rgb(51,12,255)', width: '1', type: 'bezierArrowHeadLine'},
-          {id1: 'Gene7', id2: 'Gene1', color: 'rgb(51,12,255)', width: '1', type: 'bezierArrowHeadLine'}
-        ],
-        legend: {
-          nodes: [],
-          edges: [],
-          text:  []
-        }
-      },
+      } ],
+//       data: {
+//         nodes: [
+//         ],
+//         edges:  [
+//         ],
+//         legend: {
+//           nodes: [],
+//           edges: [],
+//           text:  []
+//         }
+//       },
       options: {
         graphType: 'Network',
         backgroundGradient1Color: 'rgb(0,183,217)',
@@ -52,6 +41,33 @@ Ext.oa.Ifconfig__NetDevice_Panel = Ext.extend(Ext.canvasXpress, {
       }
     }));
     Ext.oa.Ifconfig__NetDevice_Panel.superclass.initComponent.apply(this, arguments);
+    this.on("saveallchanges", function(obj){
+      this.canvas.updateConfig({data: obj});
+//       this.canvas.updateData(obj);
+      this.canvas.redraw();
+    }, this);
+  },
+  onRender: function(){
+    Ext.oa.Ifconfig__NetDevice_Panel.superclass.onRender.apply(this, arguments);
+    this.store.on("datachanged", this.updateView, this);
+    this.store.reload();
+  },
+  updateView: function(){
+    console.log("Ohai");
+    this.addNode({id: 'eth0',  color: 'rgb(255,0,0)', shape: 'square', size: 1, x:   0, y:  50});
+    this.addNode({id: 'eth3',  color: 'rgb(255,0,0)', shape: 'square', size: 1, x:   0, y: 150});
+    this.addNode({id: 'bond0', color: 'rgb(255,0,0)', shape: 'square', size: 1, x: 250, y: 100});
+    this.addNode({id: 'vlan1', color: 'rgb(255,0,0)', shape: 'square', size: 1, x: 500, y:   0});
+    this.addNode({id: 'vlan2', color: 'rgb(255,0,0)', shape: 'square', size: 1, x: 500, y: 100});
+    this.addNode({id: 'vlan3', color: 'rgb(255,0,0)', shape: 'square', size: 1, x: 500, y: 200});
+    this.addEdge({id1: 'eth0',  id2: 'bond0', color: 'rgb(51,12,255)', width: '1', type: 'bezierArrowHeadLine'});
+    this.addEdge({id1: 'eth3',  id2: 'bond0', color: 'rgb(51,12,255)', width: '1', type: 'bezierArrowHeadLine'});
+    this.addEdge({id1: 'bond0', id2: 'vlan1', color: 'rgb(51,12,255)', width: '1', type: 'bezierArrowHeadLine'});
+    this.addEdge({id1: 'bond0', id2: 'vlan2', color: 'rgb(51,12,255)', width: '1', type: 'bezierArrowHeadLine'});
+    this.addEdge({id1: 'bond0', id2: 'vlan3', color: 'rgb(51,12,255)', width: '1', type: 'bezierArrowHeadLine'});
+    this.updateOrder();
+    this.saveMap();
+    console.log("Ohai iz done");
   }
 });
 
