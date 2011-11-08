@@ -237,15 +237,27 @@ Ext.oa.Zfs__Snapshot_Panel = Ext.extend(Ext.Panel, {
 Ext.reg("zfs__snapshot_panel", Ext.oa.Zfs__Snapshot_Panel);
 
 Ext.oa.Zfs__Snapshot_Module = Ext.extend(Object, {
-  panel: "zfs__snapshot_panel",
+  panel: ["zfs__snapshot_panel","zfs__subvolume_panel"],
   
   prepareMenuTree: function(tree){
     tree.appendToRootNodeById("menu_storage", {
-      text: "{% trans 'Zfs Snapshots' %}",
-      leaf: true,
-      icon: MEDIA_URL + '/icons2/22x22/apps/snapshot.png',
-      panel: "zfs__snapshot_panel_inst",
-      href: '#'
+        text: "ZFS",
+        panel: "zfs__panel_inst",
+        icon: MEDIA_URL + '/icons2/22x22/apps/snapshot.png',
+        href: "#",
+        children: [{
+            text: "{% trans 'Zfs Snapshots' %}",
+            leaf: true,
+            icon: MEDIA_URL + '/icons2/22x22/apps/snapshot.png',
+            panel: "zfs__snapshot_panel_inst",
+            href: '#'
+        },{
+            text: "{% trans 'Zfs Subvolume' %}",
+            leaf: true,
+            icon: MEDIA_URL + '/icons2/22x22/apps/snapshot.png',
+            panel: "zfs__subvolume_panel_inst",
+            href: '#'
+        }]
     });
   }
 });

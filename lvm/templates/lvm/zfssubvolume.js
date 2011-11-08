@@ -129,21 +129,5 @@ Ext.oa.Zfs__Subvolume__Panel = Ext.extend(Ext.grid.GridPanel, {
 
 Ext.reg("zfs__subvolume_panel", Ext.oa.Zfs__Subvolume__Panel);
 
-Ext.oa.Zfs__Subvolume_Module = Ext.extend(Object, {
-  panel: "zfs__subvolume_panel",
-
-  prepareMenuTree: function(tree){
-    tree.appendToRootNodeById("menu_storage", {
-      text: "{% trans 'Zfs Subvolume' %}",
-      leaf: true,
-      icon: MEDIA_URL + '/icons2/22x22/apps/snapshot.png',
-      panel: "zfs__subvolume_panel_inst",
-      href: '#'
-    });
-  }
-});
-
-
-window.MainViewModules.push( new Ext.oa.Zfs__Subvolume_Module() );
 
 // kate: space-indent on; indent-width 2; replace-tabs on;
