@@ -696,8 +696,11 @@ Ext.oa.Iscsi__Panel = Ext.extend(Ext.Panel, {
               ddGroup    : 'target',
               notifyDrop : function(ddSource, e, data){
                 var records =  ddSource.dragData.selections;
-                self.store.add(records);
-                return true
+                if( self.store.findExact("id",records[0].data.id) === -1 )
+                {
+                  self.store.add(records);
+                  return true
+                }
               }
             });
           }
