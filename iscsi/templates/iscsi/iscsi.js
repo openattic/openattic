@@ -261,14 +261,14 @@ Ext.oa.Iscsi__Panel = Ext.extend(Ext.Panel, {
         icon: MEDIA_URL + "/icons2/16x16/actions/gtk-execute.png",
         handler: function(){
           var addwin = new Ext.Window({
-            height: 500,
-            width: 750,
+            height: 350,
+            width: 600,
             frame: true,
             title: 'Overview',
             layout: 'column',
             bodyStyle:'padding:5px',
             items: [{
-              columnWidth: 0.55,
+              columnWidth: 0.50,
               xtype: 'grid',
               ref: 'initiator_all',
               ddGroup: "initiator",
@@ -296,7 +296,7 @@ Ext.oa.Iscsi__Panel = Ext.extend(Ext.Panel, {
                 }
               }
             },{
-                columnWidth: 0.45,
+                columnWidth: 0.5,
                 xtype: 'form',
                 defaultType: 'textfield',
                 bodyStyle: 'padding:5px 5px;',
@@ -409,12 +409,16 @@ Ext.oa.Iscsi__Panel = Ext.extend(Ext.Panel, {
           addwin.show();
         }
       },{
-        text: "{% trans 'Access IPs' %}",
+        text: "{% trans 'Bind IPs' %}",
         icon: MEDIA_URL + "/icons2/16x16/actions/gtk-execute.png",
+        layout: 'aboslute',
         handler: function(){
+          var iscsiSize = iscsiPanel.getSize();
           var addwin = new Ext.Window({
-            height: 500,
-            width: 300,
+            x: iscsiSize.width / 4 * 3,
+            y: iscsiSize.height / 5 * 3,
+            height: 300,
+            width: 200,
             frame: true,
             layout: 'fit',
             title: 'IPs',
@@ -481,6 +485,10 @@ Ext.oa.Iscsi__Panel = Ext.extend(Ext.Panel, {
              var sel = sm.selections.items[0];
              iscsi__Target.remove( sel.data.id, function(provider, response){
                targetStore.reload();
+               lunStore.reload();
+               init_allow.reload();
+               init_deny.reload();
+               tgt_allow.reload();
              });
            }
           }
@@ -513,7 +521,7 @@ Ext.oa.Iscsi__Panel = Ext.extend(Ext.Panel, {
           init_allow.loadData(record.json.init_allow);
           init_deny.loadData(record.json.init_deny);
           tgt_allow.loadData(record.json.tgt_allow);
-        }
+          }
        }
       },{
         ref: 'lun',
@@ -581,7 +589,7 @@ Ext.oa.Iscsi__Panel = Ext.extend(Ext.Panel, {
                   }
                 });
               }
-            }, 
+            },
             viewConfig: { forceFit: true },
             width: 298,
             height: 290,
@@ -646,7 +654,7 @@ Ext.oa.Iscsi__Panel = Ext.extend(Ext.Panel, {
         enableDragDrop: true,
         xtype: 'grid',
         viewConfig: { forceFit: true },
-        title: 'Access IPs',
+        title: 'Bind IPs',
         store: tgt_allow,
         colModel: new Ext.grid.ColumnModel({
           defaults: {
