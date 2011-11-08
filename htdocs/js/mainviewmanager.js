@@ -177,7 +177,7 @@ Ext.oa.MainViewManager = Ext.extend(Ext.Panel, {
   },
 
   treenodeClicked: function( node, event ){
-    if( node.leaf && typeof node.attributes.panel != "undefined" )
+    if( typeof node.attributes.panel != "undefined" )
       this.switchComponent( node.attributes.panel );
   },
 
