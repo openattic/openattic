@@ -112,7 +112,10 @@ Ext.oa.Iscsi__Panel = Ext.extend(Ext.Panel, {
       buttons: [{
           text: "",
           icon: MEDIA_URL + "/icons2/16x16/actions/reload.png",
-          tooltip: "{% trans 'Reload' %}"
+          tooltip: "{% trans 'Reload' %}",
+          handler: function(self){
+             targetStore.reload();
+          }
         },{
           text: "{% trans 'Create Target'%}",
           icon: MEDIA_URL + "/icons2/16x16/actions/add.png",
@@ -590,17 +593,20 @@ Ext.oa.Iscsi__Panel = Ext.extend(Ext.Panel, {
                   ddGroup    : 'initiator',
                   notifyDrop : function(ddSource, e, data){
                     var records =  ddSource.dragData.selections;
-                    if( ddSource.grid.store.storeId === init_deny.storeId )
-                      Ext.each(records, ddSource.grid.store.remove, ddSource.grid.store);
-                    for( var i = 0; i < records.length; i++ ){
-                      Ext.applyIf( records[i].data, {
-                        app: "iscsi",
-                        obj: "Initiator"
-                      });
+                    if( self.store.findExact("id",records[0].data.id) === -1 )
+                    {
+                      if( ddSource.grid.store.storeId === init_deny.storeId )
+                        Ext.each(records, ddSource.grid.store.remove, ddSource.grid.store);
+                      for( var i = 0; i < records.length; i++ ){
+                        Ext.applyIf( records[i].data, {
+                          app: "iscsi",
+                          obj: "Initiator"
+                        });
+                      }                             
+                        self.store.add(records);
+                        return true
                     }
-                    self.store.add(records);
-                    return true
-                  }
+                   }
                 });
               }
             },
@@ -633,16 +639,19 @@ Ext.oa.Iscsi__Panel = Ext.extend(Ext.Panel, {
                 ddGroup    : 'initiator',
                 notifyDrop : function(ddSource, e, data){
                   var records =  ddSource.dragData.selections;
-                  if( ddSource.grid.store.storeId === init_allow.storeId )
-                    Ext.each(records, ddSource.grid.store.remove, ddSource.grid.store);
-                  for( var i = 0; i < records.length; i++ ){
-                    Ext.applyIf( records[i].data, {
-                      app: "iscsi",
-                      obj: "Initiator"
-                    });
-                  }
-                  self.store.add(records);
-                  return true
+                  if( self.store.findExact("id",records[0].data.id) === -1 )
+                    {
+                    if( ddSource.grid.store.storeId === init_allow.storeId )
+                      Ext.each(records, ddSource.grid.store.remove, ddSource.grid.store);
+                    for( var i = 0; i < records.length; i++ ){
+                      Ext.applyIf( records[i].data, {
+                        app: "iscsi",
+                        obj: "Initiator"
+                      });
+                    }
+                    self.store.add(records);
+                    return true
+                    }
                 }
               });
             }
