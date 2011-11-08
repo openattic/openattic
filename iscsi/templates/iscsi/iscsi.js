@@ -61,7 +61,7 @@ Ext.oa.Iscsi__Panel = Ext.extend(Ext.Panel, {
           var parent = iscsiPanel.targets.getSelectionModel();
           var parentid = parent.selections.items[0];
           storeUpdate(init_allow, parentid.data.id, "init_allow");
-        },
+        }
       }
     });
     var init_deny = new Ext.data.DirectStore({
@@ -78,7 +78,7 @@ Ext.oa.Iscsi__Panel = Ext.extend(Ext.Panel, {
           var parent = iscsiPanel.targets.getSelectionModel();
           var parentid = parent.selections.items[0];
           storeUpdate(init_deny, parentid.data.id, "init_deny");
-        },
+        }
       }
     });
     var tgt_allow = new Ext.data.JsonStore({
@@ -94,7 +94,7 @@ Ext.oa.Iscsi__Panel = Ext.extend(Ext.Panel, {
           var parent = iscsiPanel.targets.getSelectionModel();
           var parentid = parent.selections.items[0];
           storeUpdate(tgt_allow, parentid.data.id, "tgt_allow");
-        },
+        }
       }
     });
     
