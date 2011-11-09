@@ -2,7 +2,6 @@
 
 Ext.namespace("Ext.oa");
 
-
 Ext.oa.Ifconfig__NetDevice_Panel = Ext.extend(Ext.canvasXpress, {
   initComponent: function(){
     var nfsGrid = this;
@@ -42,12 +41,12 @@ Ext.oa.Ifconfig__NetDevice_Panel = Ext.extend(Ext.canvasXpress, {
     this.store.reload();
   },
   updateView: function(){
-  
     var devmap = {};
     var clusters = [];
     var haveids  = {}; // Use an object so we can use the "in" operator
     var allconns = {};
-    
+
+    // Populate the allconns dict that lists *all* direct connections for a given node
     this.store.data.each(function(record){
       devmap[record.data.devname] = record.json;
       var src = (
@@ -63,9 +62,9 @@ Ext.oa.Ifconfig__NetDevice_Panel = Ext.extend(Ext.canvasXpress, {
         allconns[src[i].devname].push(record.data.devname);
       }
     });
-    
-//     debugger;
-    
+
+    // Now divide the nodes into clusters by recursing over the device classes
+    // and iterating over allconns[dev].
     var typeorder = ["bonding", "bridge", "vlan", "native"];
     for( var i = 0; i < typeorder.length; i++ ){
       var currtype = typeorder[i];
@@ -88,20 +87,21 @@ Ext.oa.Ifconfig__NetDevice_Panel = Ext.extend(Ext.canvasXpress, {
         }
       });
     }
-    
-//     debugger;
-    
+
+    // Now render each cluster individually
     var currY = 0;
     for( var i = 0; i < clusters.length; i++ ){
       console.log( "Drawing node cluster " + (i + 1) + "/" + clusters.length);
       currY -= this.updateViewLine(devmap, clusters[i], currY);
     }
 
+    // After all clusters have been rendered, save the map (which causes it to be redrawn).
     this.updateOrder();
     this.saveMap();
   },
   updateViewLine: function(devmap, cluster, currY){
     // Sort our devices into groups by devtype. Each group that has nodes will then be drawn as a column.
+    // Also find the group that has the most entries so we can calculate the height of this cluster row.
     var devgroups = {
       native:  [],
       vlan:    [],
@@ -135,7 +135,7 @@ Ext.oa.Ifconfig__NetDevice_Panel = Ext.extend(Ext.canvasXpress, {
     // Those virtual coordinates place the top right device at (0,0) and then move
     // to the left bottom side by using negative coordinates.
     // The advantage of this system is that we can use array indexes to calculate our
-    // virtual coordinates, and get the final ones by multiplying the virtuals with a
+    // virtual coordinates, and get the final ones simply by multiplying the virtuals with a
     // given step size in pixels.
 
     var srcnodes = [];
@@ -168,6 +168,8 @@ Ext.oa.Ifconfig__NetDevice_Panel = Ext.extend(Ext.canvasXpress, {
       }
     }
 
+    // Kickstart the rendering. Since renderDevice works recursively, this loop only
+    // needs to do stuff for the "topmost" devclass that actually has devices in it.
     var typeorder = ["bridge", "vlan", "bonding", "native"];
     for( var t = 0; t < typeorder.length; t++ ){
       var currgroup = typeorder[t];
@@ -182,14 +184,13 @@ Ext.oa.Ifconfig__NetDevice_Panel = Ext.extend(Ext.canvasXpress, {
 
     // (baseX,baseY) defines where in the canvas our virtual (0,0) will be located.
     // stepX and stepY define the step size that will be taken if the virtual coords move by 1.
-
     var baseX = 4 * 250,
         baseY = currY,
         stepX = 250,
         stepY = 100;
 
+    // Translate the virtual coordinates into real ones and add the Node with those coordinates.
     for( var i = 0; i < srcnodes.length; i++ ){
-      // Translate the virtual coordinates into real ones and add the Node with those coordinates.
       var realX =  baseX + (stepX * srcnodes[i].x),
           realY = (baseY + (stepY * srcnodes[i].y)) * -1;
       // Work around the arrow heads not appearing when two nodes have the same Y coordinate
@@ -199,6 +200,7 @@ Ext.oa.Ifconfig__NetDevice_Panel = Ext.extend(Ext.canvasXpress, {
       this.addDevNode(srcnodes[i].dev, realX, realY);
     }
 
+    // Now add the edges. At least those are easy.
     this.store.data.each(function(record){
       var dev = record.json;
       if( dev.devtype === "bridge" && dev.brports.length > 0 ){
@@ -206,7 +208,7 @@ Ext.oa.Ifconfig__NetDevice_Panel = Ext.extend(Ext.canvasXpress, {
           this.addDevEdge(dev, dev.brports[i]);
         }
       }
-      else if( typeof dev.vlanrawdev !== "undefined" ){
+      else if( dev.devtype === "vlan" ){
         this.addDevEdge(dev, dev.vlanrawdev);
       }
       else if( dev.devtype === "bonding" && dev.slaves.length > 0 ){
@@ -219,7 +221,7 @@ Ext.oa.Ifconfig__NetDevice_Panel = Ext.extend(Ext.canvasXpress, {
     return stepY * maxlength;
   },
   addDevNode: function(dev, x, y){
-    return this.addNode({id: dev.devname,  color: 'rgb(255,0,0)', shape: 'square', size: 1, x: x, y: y});
+    return this.addNode({id: dev.devname, dev: dev, color: 'rgb(255,0,0)', shape: 'square', size: 1, x: x, y: y});
   },
   addDevEdge: function(dev1, dev2){
     return this.addEdge({id1: dev1.devname, id2: dev2.devname, color: 'rgb(51,12,255)', width: '1', type: 'bezierArrowHeadLine'});
@@ -227,12 +229,107 @@ Ext.oa.Ifconfig__NetDevice_Panel = Ext.extend(Ext.canvasXpress, {
   nodeOrEdgeClicked: function(obj, evt){
     if( typeof obj.nodes !== "undefined" ){
       var clicked = obj.nodes[0];
-      console.log( "You clicked on the device " + clicked.id );
+      this.showEditWindow({
+        title: "{% trans 'Edit Device' %}",
+        submitButtonText: "{% trans 'Edit Device' %}"
+      }, clicked.dev);
     }
     else if( typeof obj.edges !== "undefined" ){
       var clicked = obj.edges[0];
       console.log( "You clicked on the edge between device " + clicked.id1 + " and " + clicked.id2 );
     }
+  },
+  showEditWindow: function(config, record){
+    var addwin = new Ext.Window(Ext.applyIf(config, {
+      layout: "fit",
+      height: 300,
+      width: 500,
+      items: [{
+        xtype: "form",
+        api: {
+          load:   ifconfig__NetDevice.get_ext,
+          submit: ifconfig__NetDevice.set_ext
+        },
+        defaults: {
+          xtype: "textfield",
+          anchor: '-20px'
+        },
+        paramOrder: ["id"],
+        baseParams: {
+          id: ( record ? record.id : -1 )
+        },
+        listeners: {
+          afterrender: function(self){
+            self.getForm().load();
+          }
+        },
+        items: [ {
+          fieldLabel: "{% trans 'Device' %}",
+          name: "devname"
+        }, {
+          fieldLabel: "{% trans 'Automatically configure' %}",
+          xtype: "checkbox",
+          name: "auto"
+        }, {
+          fieldLabel: "{% trans 'DHCP' %}",
+          xtype: "checkbox",
+          name: "dhcp"
+        }, {
+          fieldLabel: "{% trans 'IP Address' %}",
+          name: "address"
+        }, {
+          fieldLabel: "{% trans 'VLAN Raw Device' %}",
+          name: "vlanrawdev"
+        }, {
+          fieldLabel: "{% trans 'IP Address' %}",
+          name: "address"
+        }, {
+          xtype: 'fieldset',
+          title: 'Bonding options',
+          collapsible: true,
+          collapsed: true,
+          layout: 'form',
+          items: [ {
+            fieldLabel: "{% trans 'Downdelay' %}",
+            name: "bond_downdelay",
+            xtype: "numberfield"
+          }, {
+            fieldLabel: "{% trans 'Updelay' %}",
+            name: "bond_updelay",
+            xtype: "numberfield"
+          }, {
+            fieldLabel: "{% trans 'M2Mon' %}",
+            name: "bond_miimon",
+            xtype: "numberfield"
+          }, {
+            fieldLabel: "{% trans 'Mode' %}",
+            name: "bond_mode",
+            xtype: "textfield"
+          } ]
+        } ],
+        buttons: [{
+          text: config.submitButtonText,
+          icon: MEDIA_URL + "/oxygen/16x16/actions/dialog-ok-apply.png",
+          handler: function(self){
+            self.ownerCt.ownerCt.getForm().submit({
+              success: function(provider, response){
+                if( response.result ){
+                  peerhostGrid.store.reload();
+                  addwin.hide();
+                }
+              }
+            });
+          }
+        }, {
+          text: "{% trans 'Cancel' %}",
+          icon: MEDIA_URL + "/icons2/16x16/actions/gtk-cancel.png",
+          handler: function(self){
+            addwin.hide();
+          }
+        }]
+      }]
+    }));
+    addwin.show();
   }
 });
 
