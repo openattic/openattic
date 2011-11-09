@@ -118,7 +118,7 @@ Ext.oa.Ifconfig__NetDevice_Panel = Ext.extend(Ext.canvasXpress, {
     for( var i = 0; i < grouplen[currgroup]; i++ ){
       console.log( "Init render: " + devgroups[currgroup][i].devname );
       var offset = (maxlength - grouplen[currgroup]) / 2.0 * -1;
-      renderDevice( devgroups[currgroup][i], offset, 0, i );
+      renderDevice( devgroups[currgroup][i], offset, 0, -i );
     }
 
     // (baseX,baseY) defines where in the canvas our virtual (0,0) will be located.
