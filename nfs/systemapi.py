@@ -24,4 +24,4 @@ class SystemD(LockingPlugin):
 
     @method(in_signature="", out_signature="i")
     def exportfs(self):
-        return invoke(["/usr/sbin/exportfs", "-a"])
+        return invoke(["/usr/sbin/exportfs", "-ar"])
