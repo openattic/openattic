@@ -103,6 +103,9 @@ Ext.oa.Ifconfig__NetDevice_Panel = Ext.extend(Ext.canvasXpress, {
           renderDevice( devmap[dev.brports[i].devname], nextoffset, startx - 1, starty - i );
         }
       }
+      else if( typeof dev.vlanrawdev !== "undefined" ){
+        renderDevice( devmap[dev.vlanrawdev.devname], offset, startx - 1, starty );
+      }
       else if( dev.devtype === "bonding" && dev.slaves.length > 0 ){
         var nextoffset = (maxlength - dev.slaves.length) / 2.0 * -1;
         for( var i = 0; i < dev.slaves.length; i++ ){
