@@ -95,7 +95,7 @@ Ext.oa.Ifconfig__NetDevice_Panel = Ext.extend(Ext.canvasXpress, {
       if( dev.devname in haveids )
         return;
       console.log( "Render Device " + dev.devname + " at (" + startx + "," + (offset + starty) + ")" );
-      srcnodes.push({ id: dev.devname, x: startx, y: (offset + starty) });
+      srcnodes.push({ dev: dev, x: startx, y: (offset + starty) });
       haveids.push(dev.devname);
       if( dev.devtype === "bridge" && dev.brports.length > 0 ){
         var nextoffset = (maxlength - dev.brports.length) / 2.0 * -1;
@@ -136,26 +136,35 @@ Ext.oa.Ifconfig__NetDevice_Panel = Ext.extend(Ext.canvasXpress, {
       // Work around the arrow heads not appearing when two nodes have the same Y coordinate
       // by adding i to it. This moves the nodes by a few pixels which the user won't even notice.
       realY += i;
-      console.log( "Adding Node " + srcnodes[i].id + " at (" + realX + "," + realY + ")" );
-      this.addNode({id: srcnodes[i].id,  color: 'rgb(255,0,0)', shape: 'square', size: 1, x: realX, y: realY});
+      console.log( "Adding Node " + srcnodes[i].dev.devname + " at (" + realX + "," + realY + ")" );
+      this.addDevNode(srcnodes[i].dev, realX, realY);
     }
 
     this.store.data.each(function(record){
       var dev = record.json;
       if( dev.devtype === "bridge" && dev.brports.length > 0 ){
         for( var i = 0; i < dev.brports.length; i++ ){
-          this.addEdge({id1: dev.devname,  id2: dev.brports[i].devname, color: 'rgb(51,12,255)', width: '1', type: 'bezierArrowHeadLine'});
+          this.addDevEdge(dev, dev.brports[i]);
         }
+      }
+      else if( typeof dev.vlanrawdev !== "undefined" ){
+        this.addDevEdge(dev, dev.vlanrawdev);
       }
       else if( dev.devtype === "bonding" && dev.slaves.length > 0 ){
         for( var i = 0; i < dev.slaves.length; i++ ){
-          this.addEdge({id1: dev.devname,  id2: dev.slaves[i].devname, color: 'rgb(51,12,255)', width: '1', type: 'bezierArrowHeadLine'});
+          this.addDevEdge(dev, dev.slaves[i]);
         }
       }
     }, this);
 
     this.updateOrder();
     this.saveMap();
+  },
+  addDevNode: function(dev, x, y){
+    return this.addNode({id: dev.devname,  color: 'rgb(255,0,0)', shape: 'square', size: 1, x: x, y: y});
+  },
+  addDevEdge: function(dev1, dev2){
+    return this.addEdge({id1: dev1.devname, id2: dev2.devname, color: 'rgb(51,12,255)', width: '1', type: 'bezierArrowHeadLine'});
   },
   nodeOrEdgeClicked: function(obj, evt){
     if( typeof obj.nodes !== "undefined" ){
