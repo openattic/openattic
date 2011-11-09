@@ -332,10 +332,10 @@ Ext.oa.Lvm__LogicalVolume_Panel = Ext.extend(Ext.Panel, {
               "{% trans 'Enter new size' %}",
               interpolate(
                 "{% trans 'Please enter the desired size in MB you wish to resize volume <b>%s</b> to.' %}" + "<br/>" + 
-                "{% trans 'The current size is %s MB. - Max. %s MB' %}",[sel.data.name, sel.data.megs, response.result]),
+                "{% trans 'The current size is %s MB' %}" + "<br/>" + "<br/>" + "{% trans 'Max. +%s MB' %}",[sel.data.name, sel.data.megs, response.result]),
               function(btn, text){
                 if( btn == 'ok' ){
-                  if(text > response.result){
+                  if((text - sel.data.megs) > response.result){
                     Ext.Msg.alert("{% trans 'Error' %}","{% trans 'Your insert size is greater than the remaining size' %}");
                     return;
                   }
