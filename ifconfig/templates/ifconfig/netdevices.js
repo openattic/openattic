@@ -11,8 +11,7 @@ Ext.oa.Ifconfig__NetDevice_Panel = Ext.extend(Ext.canvasXpress, {
       title: "{% trans 'Network interfaces' %}",
       store: new Ext.data.DirectStore({
         fields: ["devname", "devtype", "id"],
-        directFn: ifconfig__NetDevice.filter,
-        baseParams: { '__exclude__': { 'devname': 'lo' } }
+        directFn: ifconfig__NetDevice.all
       }),
       buttons: [ {
         text: "",
@@ -43,6 +42,65 @@ Ext.oa.Ifconfig__NetDevice_Panel = Ext.extend(Ext.canvasXpress, {
     this.store.reload();
   },
   updateView: function(){
+  
+    var devmap = {};
+    var clusters = [];
+    var haveids  = {}; // Use an object so we can use the "in" operator
+    var allconns = {};
+    
+    this.store.data.each(function(record){
+      devmap[record.data.devname] = record.json;
+      var src = (
+        ( record.json.devtype === "bridge"  &&  record.json.brports ) ||
+        ( record.json.devtype === "bonding" &&  record.json.slaves  ) ||
+        ( record.json.devtype === "vlan"    && [record.json.vlanrawdev] ) || [] );
+      if( !( record.data.devname in allconns ))
+        allconns[record.data.devname] = [];
+      for( var i = 0; i < src.length; i++ ){
+        allconns[record.data.devname].push(src[i].devname);
+        if( !( src[i].devname in allconns ))
+          allconns[src[i].devname] = [];
+        allconns[src[i].devname].push(record.data.devname);
+      }
+    });
+    
+//     debugger;
+    
+    var typeorder = ["bonding", "bridge", "vlan", "native"];
+    for( var i = 0; i < typeorder.length; i++ ){
+      var currtype = typeorder[i];
+      this.store.data.each(function(storerecord){
+        if( storerecord.json.devtype === currtype ){
+          var currcluster = [];
+          var currempty = true;
+          var addDevs = function(record){
+            if( record.devname in haveids )
+              return;
+            currcluster.push(record.devname);
+            currempty = false;
+            haveids[record.devname] = true;
+            for( var i = 0; i < allconns[record.devname].length; i++ )
+              addDevs(devmap[allconns[record.devname][i]]);
+          };
+          addDevs(storerecord.json);
+          if( !currempty )
+            clusters.push(currcluster);
+        }
+      });
+    }
+    
+//     debugger;
+    
+    var currY = 0;
+    for( var i = 0; i < clusters.length; i++ ){
+      console.log( "Drawing node cluster " + (i + 1) + "/" + clusters.length);
+      currY -= this.updateViewLine(devmap, clusters[i], currY);
+    }
+
+    this.updateOrder();
+    this.saveMap();
+  },
+  updateViewLine: function(devmap, cluster, currY){
     // Sort our devices into groups by devtype. Each group that has nodes will then be drawn as a column.
     var devgroups = {
       native:  [],
@@ -50,7 +108,6 @@ Ext.oa.Ifconfig__NetDevice_Panel = Ext.extend(Ext.canvasXpress, {
       bridge:  [],
       bonding: []
     };
-    var devmap = {};
     var grouplen = {
       native:  0,
       vlan:    0,
@@ -59,22 +116,19 @@ Ext.oa.Ifconfig__NetDevice_Panel = Ext.extend(Ext.canvasXpress, {
     };
     var maxgroup = "";
     var maxlength = 0;
-    this.store.data.each(function(record){
-      devgroups[record.data.devtype].push(record.json);
-      devmap[record.data.devname] = record.json;
-      grouplen[record.data.devtype]++;
-      if( grouplen[record.data.devtype] > maxlength ){
-        maxgroup  = record.data.devtype;
-        maxlength = grouplen[record.data.devtype];
+    for( var i = 0; i < cluster.length; i++ ){
+      var dev = devmap[cluster[i]];
+      devgroups[dev.devtype].push(dev);
+      grouplen[dev.devtype]++;
+      if( grouplen[dev.devtype] > maxlength ){
+        maxgroup  = dev.devtype;
+        maxlength = grouplen[dev.devtype];
       }
-    });
+    }
 
     console.log(
       String.format("We have {0} native, {1} bonding, {2} vlan, and {3} bridge devices.",
       grouplen["native"], grouplen["bonding"], grouplen["vlan"], grouplen["bridge"] )
-    );
-    console.log(
-      String.format("Will start drawing with the {0} device group.", maxgroup)
     );
 
     // For now, the coordinates are VIRTUAL coordinates because those are easier to calculate.
@@ -85,7 +139,7 @@ Ext.oa.Ifconfig__NetDevice_Panel = Ext.extend(Ext.canvasXpress, {
     // given step size in pixels.
 
     var srcnodes = [];
-    var haveids  = [];
+    var haveids  = {};
 
     // The `offset' value is added to every Y coordinate for the current devgroup in order
     // to render devgroups with less than `maxlength' devices in it centered vertically.
@@ -96,7 +150,7 @@ Ext.oa.Ifconfig__NetDevice_Panel = Ext.extend(Ext.canvasXpress, {
         return;
       console.log( "Render Device " + dev.devname + " at (" + startx + "," + (offset + starty) + ")" );
       srcnodes.push({ dev: dev, x: startx, y: (offset + starty) });
-      haveids.push(dev.devname);
+      haveids[dev.devname] = true;
       if( dev.devtype === "bridge" && dev.brports.length > 0 ){
         var nextoffset = (maxlength - dev.brports.length) / 2.0 * -1;
         for( var i = 0; i < dev.brports.length; i++ ){
@@ -114,18 +168,23 @@ Ext.oa.Ifconfig__NetDevice_Panel = Ext.extend(Ext.canvasXpress, {
       }
     }
 
-    var currgroup = "bridge"; // TODO: Iterate over groups because we might not have any bridges
-    for( var i = 0; i < grouplen[currgroup]; i++ ){
-      console.log( "Init render: " + devgroups[currgroup][i].devname );
-      var offset = (maxlength - grouplen[currgroup]) / 2.0 * -1;
-      renderDevice( devgroups[currgroup][i], offset, 0, -i );
+    var typeorder = ["bridge", "vlan", "bonding", "native"];
+    for( var t = 0; t < typeorder.length; t++ ){
+      var currgroup = typeorder[t];
+      for( var i = 0; i < grouplen[currgroup]; i++ ){
+        console.log( "Init render: " + devgroups[currgroup][i].devname );
+        var offset = (maxlength - grouplen[currgroup]) / 2.0 * -1;
+        renderDevice( devgroups[currgroup][i], offset, 0, -i );
+      }
+      if( grouplen[currgroup] > 0 )
+        break;
     }
 
     // (baseX,baseY) defines where in the canvas our virtual (0,0) will be located.
     // stepX and stepY define the step size that will be taken if the virtual coords move by 1.
 
     var baseX = 4 * 250,
-        baseY = 0,
+        baseY = currY,
         stepX = 250,
         stepY = 100;
 
@@ -157,8 +216,7 @@ Ext.oa.Ifconfig__NetDevice_Panel = Ext.extend(Ext.canvasXpress, {
       }
     }, this);
 
-    this.updateOrder();
-    this.saveMap();
+    return stepY * maxlength;
   },
   addDevNode: function(dev, x, y){
     return this.addNode({id: dev.devname,  color: 'rgb(255,0,0)', shape: 'square', size: 1, x: x, y: y});
