@@ -9,7 +9,7 @@ msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2011-11-02 10:31+0100\n"
-"PO-Revision-Date: 2011-11-02 11:11\n"
+"PO-Revision-Date: 2011-11-09 11:21\n"
 "Last-Translator: Laura Paduano <laura.paduano@it-novum.com>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
 "MIME-Version: 1.0\n"
@@ -17,7 +17,7 @@ msgstr ""
 "Content-Transfer-Encoding: 8bit\n"
 "Language: \n"
 "Plural-Forms: nplurals=2; plural=(n != 1)\n"
-"X-Translated-Using: django-rosetta 0.6.0\n"
+"X-Translated-Using: django-rosetta 0.5.6\n"
 
 #: templates/peering/peerhost.js:32 templates/peering/peerhost.js.py:132
 msgid "Name"
@@ -29,7 +29,7 @@ msgstr "Basis URL"
 
 #: templates/peering/peerhost.js:53
 msgid "Cancel"
-msgstr "Löschen"
+msgstr "Abbrechen"
 
 #: templates/peering/peerhost.js:68 templates/peering/peerhost.js.py:156
 msgid "openATTIC Peers"
