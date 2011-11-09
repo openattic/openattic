@@ -11,7 +11,8 @@ Ext.oa.Ifconfig__NetDevice_Panel = Ext.extend(Ext.canvasXpress, {
       title: "{% trans 'Network interfaces' %}",
       store: new Ext.data.DirectStore({
         fields: ["devname", "devtype", "id"],
-        directFn: ifconfig__NetDevice.all,
+        directFn: ifconfig__NetDevice.filter,
+        baseParams: { '__exclude__': { 'devname': 'lo' } }
       }),
       buttons: [ {
         text: "",
@@ -76,51 +77,92 @@ Ext.oa.Ifconfig__NetDevice_Panel = Ext.extend(Ext.canvasXpress, {
       String.format("Will start drawing with the {0} device group.", maxgroup)
     );
 
-    debugger;
+    // For now, the coordinates are VIRTUAL coordinates because those are easier to calculate.
+    // Those virtual coordinates place the top right device at (0,0) and then move
+    // to the left bottom side by using negative coordinates.
+    // The advantage of this system is that we can use array indexes to calculate our
+    // virtual coordinates, and get the final ones by multiplying the virtuals with a
+    // given step size in pixels.
 
     var srcnodes = [];
     var haveids  = [];
 
-    var renderDevice = function( dev, startx, starty ){
-      srcnodes.push({id: dev.devname, x: startx, y: starty});
+    // The `offset' value is added to every Y coordinate for the current devgroup in order
+    // to render devgroups with less than `maxlength' devices in it centered vertically.
+    // startX and startY define the coordinates of the current node WITHOUT the offset.
+
+    var renderDevice = function( dev, offset, startx, starty ){
+      if( dev.devname in haveids )
+        return;
+      console.log( "Render Device " + dev.devname + " at (" + startx + "," + (offset + starty) + ")" );
+      srcnodes.push({ id: dev.devname, x: startx, y: (offset + starty) });
+      haveids.push(dev.devname);
       if( dev.devtype === "bridge" && dev.brports.length > 0 ){
-        var offset = (maxlength - dev.brports.length) / 2.0 * -1;
+        var nextoffset = (maxlength - dev.brports.length) / 2.0 * -1;
         for( var i = 0; i < dev.brports.length; i++ ){
-          renderDevice( devmap[dev.brports[i].devname], startx - 1, offset - starty - i );
+          renderDevice( devmap[dev.brports[i].devname], nextoffset, startx - 1, starty - i );
         }
       }
       else if( dev.devtype === "bonding" && dev.slaves.length > 0 ){
-        var offset = (maxlength - dev.slaves.length) / 2.0 * -1;
+        var nextoffset = (maxlength - dev.slaves.length) / 2.0 * -1;
         for( var i = 0; i < dev.slaves.length; i++ ){
-          renderDevice( devmap[dev.slaves[i].devname], startx - 1, offset - starty - i );
+          renderDevice( devmap[dev.slaves[i].devname], nextoffset, startx - 1, starty - i );
         }
       }
     }
 
-    var currgroup = "bridge";
+    var currgroup = "bridge"; // TODO: Iterate over groups because we might not have any bridges
     for( var i = 0; i < grouplen[currgroup]; i++ ){
       console.log( "Init render: " + devgroups[currgroup][i].devname );
-      renderDevice( devgroups[currgroup][i], 0, i * -1 );
+      var offset = (maxlength - grouplen[currgroup]) / 2.0 * -1;
+      renderDevice( devgroups[currgroup][i], offset, 0, i );
     }
 
-    debugger;
+    // (baseX,baseY) defines where in the canvas our virtual (0,0) will be located.
+    // stepX and stepY define the step size that will be taken if the virtual coords move by 1.
 
-    this.addNode({id: 'eth0',  color: 'rgb(255,0,0)', shape: 'square', size: 1, x:   0, y:  50});
-    this.addNode({id: 'eth3',  color: 'rgb(255,0,0)', shape: 'square', size: 1, x:   0, y: 150});
-    this.addNode({id: 'bond0', color: 'rgb(255,0,0)', shape: 'square', size: 1, x: 250, y: 100});
-    this.addNode({id: 'vlan1', color: 'rgb(255,0,0)', shape: 'square', size: 1, x: 500, y:   0});
-    this.addNode({id: 'vlan2', color: 'rgb(255,0,0)', shape: 'square', size: 1, x: 500, y: 101});
-    this.addNode({id: 'vlan3', color: 'rgb(255,0,0)', shape: 'square', size: 1, x: 500, y: 200});
-    this.addEdge({id1: 'eth0',  id2: 'bond0', color: 'rgb(51,12,255)', width: '1', type: 'bezierArrowHeadLine'});
-    this.addEdge({id1: 'eth3',  id2: 'bond0', color: 'rgb(51,12,255)', width: '1', type: 'bezierArrowHeadLine'});
-    this.addEdge({id1: 'bond0', id2: 'vlan1', color: 'rgb(51,12,255)', width: '1', type: 'bezierArrowHeadLine'});
-    this.addEdge({id1: 'bond0', id2: 'vlan2', color: 'rgb(51,12,255)', width: '1', type: 'bezierArrowHeadLine'});
-    this.addEdge({id1: 'bond0', id2: 'vlan3', color: 'rgb(51,12,255)', width: '1', type: 'bezierArrowHeadLine'});
+    var baseX = 4 * 250,
+        baseY = 0,
+        stepX = 250,
+        stepY = 100;
+
+    for( var i = 0; i < srcnodes.length; i++ ){
+      // Translate the virtual coordinates into real ones and add the Node with those coordinates.
+      var realX =  baseX + (stepX * srcnodes[i].x),
+          realY = (baseY + (stepY * srcnodes[i].y)) * -1;
+      // Work around the arrow heads not appearing when two nodes have the same Y coordinate
+      // by adding i to it. This moves the nodes by a few pixels which the user won't even notice.
+      realY += i;
+      console.log( "Adding Node " + srcnodes[i].id + " at (" + realX + "," + realY + ")" );
+      this.addNode({id: srcnodes[i].id,  color: 'rgb(255,0,0)', shape: 'square', size: 1, x: realX, y: realY});
+    }
+
+    this.store.data.each(function(record){
+      var dev = record.json;
+      if( dev.devtype === "bridge" && dev.brports.length > 0 ){
+        for( var i = 0; i < dev.brports.length; i++ ){
+          this.addEdge({id1: dev.devname,  id2: dev.brports[i].devname, color: 'rgb(51,12,255)', width: '1', type: 'bezierArrowHeadLine'});
+        }
+      }
+      else if( dev.devtype === "bonding" && dev.slaves.length > 0 ){
+        for( var i = 0; i < dev.slaves.length; i++ ){
+          this.addEdge({id1: dev.devname,  id2: dev.slaves[i].devname, color: 'rgb(51,12,255)', width: '1', type: 'bezierArrowHeadLine'});
+        }
+      }
+    }, this);
+
     this.updateOrder();
     this.saveMap();
   },
   nodeOrEdgeClicked: function(obj, evt){
-    console.log("I am ze ubermensch!");
+    if( typeof obj.nodes !== "undefined" ){
+      var clicked = obj.nodes[0];
+      console.log( "You clicked on the device " + clicked.id );
+    }
+    else if( typeof obj.edges !== "undefined" ){
+      var clicked = obj.edges[0];
+      console.log( "You clicked on the edge between device " + clicked.id1 + " and " + clicked.id2 );
+    }
   }
 });
 
