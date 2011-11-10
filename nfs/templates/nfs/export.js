@@ -54,12 +54,12 @@ Ext.oa.Nfs__Export_Panel = Ext.extend(Ext.grid.GridPanel, {
                 fieldLabel: "{% trans 'Address' %}",
                 name: "address",
                 ref: 'addrfield'
-              }, {
+              }, tipify({
                 fieldLabel: "{% trans 'Options' %}",
                 name: "options",
                 ref: 'optfield',
                 value: "rw,no_subtree_check,no_root_squash"
-              }],
+              },"{% trans 'this is default. rw: read/write rights are given,<br> no_subtree_check means that every file request is going to be checked to make sure that this file is in an exported subdirectory,<br> no_root_squash means share the folder (public), every IP-Adress has access, root can connect as root' %}"),],
               buttons: [{
                 text: "{% trans 'Create Export' %}",
                 icon: MEDIA_URL + "/oxygen/16x16/actions/dialog-ok-apply.png",
