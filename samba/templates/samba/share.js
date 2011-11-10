@@ -118,13 +118,13 @@ Ext.oa.Samba__Share_Panel = Ext.extend(Ext.grid.GridPanel, {
                 allowBlank: true,
                 name: "comment",
                 ref: 'commentfield'
-              },{
+              },tipify({
                 fieldLabel: "{% trans 'Create Mode' %}",
                 allowBlank: false,
                 name: "create mode",
                 ref: 'createmodefield',
                 value:     '0664'
-              },{
+              }, "{% trans 'Set rights for owner, group and others' %}"),{
                 fieldLabel: "{% trans 'State' %}",
                 allowBlank: false,
                 name: "state",
@@ -136,13 +136,13 @@ Ext.oa.Samba__Share_Panel = Ext.extend(Ext.grid.GridPanel, {
                 name: "guest ok",
                 ref: 'guestokfield',
                 value:     'True'
-              },{
+              },tipify({
                 fieldLabel: "{% trans 'Dir Mode' %}",
                 allowBlank: false,
                 name: "dir mode",
                 ref: 'dirmodefield',
                 value:     '0775'
-              }
+              },"{% trans 'Set rights for the Directory' %}"),
               ],
               buttons: [{
                 text: "{% trans 'Create Share' %}",

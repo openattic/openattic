@@ -8,8 +8,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2011-11-02 08:43+0100\n"
-"PO-Revision-Date: 2011-11-03 11:05\n"
+"POT-Creation-Date: 2011-11-07 14:02+0100\n"
+"PO-Revision-Date: 2011-11-07 14:04\n"
 "Last-Translator: Laura Paduano <laura.paduano@it-novum.com>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
 "MIME-Version: 1.0\n"
@@ -17,7 +17,7 @@ msgstr ""
 "Content-Transfer-Encoding: 8bit\n"
 "Language: \n"
 "Plural-Forms: nplurals=2; plural=(n != 1)\n"
-"X-Translated-Using: django-rosetta 0.6.0\n"
+"X-Translated-Using: django-rosetta 0.5.6\n"
 
 #: templates/samba/share.js:15
 msgid "Samba"
@@ -71,6 +71,10 @@ msgstr "Kommentar"
 msgid "Create Mode"
 msgstr "Setze Berechtigungen"
 
+#: templates/samba/share.js:127
+msgid "Set rights for owner, group and others"
+msgstr "Rechte für Besitzer, Gruppe und andere Personen"
+
 #: templates/samba/share.js:128 templates/samba/share.js.py:220
 msgid "State"
 msgstr "Status"
@@ -83,13 +87,17 @@ msgstr "erlaube Gast"
 msgid "Dir Mode"
 msgstr "Verzeichnis Berechtigungen"
 
+#: templates/samba/share.js:145
+msgid "Set rights for the Directory"
+msgstr "Setze Rechte für Verzeichnis"
+
 #: templates/samba/share.js:148
 msgid "Create Share"
 msgstr "Erzeuge Share"
 
 #: templates/samba/share.js:176
 msgid "Cancel"
-msgstr "Abbrechzen"
+msgstr "Abbrechen"
 
 #: templates/samba/share.js:187 templates/samba/share.js.py:194
 msgid "Delete Share"
