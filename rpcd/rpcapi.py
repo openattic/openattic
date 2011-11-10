@@ -26,6 +26,11 @@ class UserHandler(ModelHandler):
         data['groups'] = [ h._idobj(grp) for grp in obj.groups.all() ]
         return data
 
+    def _override_set(self, obj, data):
+        if 'password' in data and data["password"]:
+            obj.set_password(data["password"])
+        return data
+
     def whoami(self):
         """ Return the user we are identified with. """
         return self._getobj(self.user)
