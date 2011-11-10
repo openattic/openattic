@@ -3,13 +3,12 @@
 Ext.namespace("Ext.oa");
 
 var volumeGroups = new Ext.data.DirectStore({
-          fields: ['id', "LVM_VG_NAME","LVM_VG_FREE","LVM_VG_SIZE","LVM_VG_ATTR"],
+          fields: ['id', 'name',"LVM_VG_NAME","LVM_VG_FREE","LVM_VG_SIZE","LVM_VG_ATTR"],
           directFn: lvm__VolumeGroup.all,
           listeners: {
             load: function(self){
               var handleResponse = function(i){
                 return function(provider, response){
-                  self.data.items[i].set("LVM_VG_NAME",response.result.LVM2_VG_NAME);
                   if( response.result.LVM2_VG_SIZE >= 1000 ){
                     self.data.items[i].data.LVM_VG_SIZE= String.format("{0} GB", (response.result.LVM2_VG_SIZE / 1000).toFixed(2));
                   }
@@ -169,7 +168,7 @@ Ext.oa.volumeGroup_Panel = Ext.extend(Ext.grid.GridPanel, {
         },
         columns: [{
           header: "Name",
-          dataIndex: "LVM_VG_NAME"
+          dataIndex: "name"
         },{
           header: "Size",
           dataIndex: "LVM_VG_SIZE"
