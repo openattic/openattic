@@ -32,8 +32,13 @@ fi
 
 case $1 in
 	install)
-		su "$OAUSER" -c 'python manage.py syncdb'
+		su "$OAUSER" -c 'python manage.py syncdb --noinput'
 		$0 reload
+		if [ ! -e /var/lib/openattic/haveadmin ]; then
+			echo "You need to create an Administrator user in order to login to openATTIC now."
+			su "$OAUSER" -c 'python manage.py createsuperuser'
+			touch /var/lib/openattic/haveadmin
+		fi
 		;;
 
 	install-cli)
