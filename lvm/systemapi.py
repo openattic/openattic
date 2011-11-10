@@ -2,6 +2,7 @@
 # kate: space-indent on; indent-width 4; replace-tabs on;
 
 import os
+from time import time
 from systemd import invoke, create_job, logged, BasePlugin, method, signal
 
 from lvm.conf   import settings as lvm_settings
@@ -46,22 +47,42 @@ def lvm_lvs():
 class SystemD(BasePlugin):
     dbus_path = "/lvm"
 
+    def __init__(self, bus, busname, mainobj):
+        BasePlugin.__init__(self, bus, busname, mainobj)
+        self.pvs_cache = None
+        self.vgs_cache = None
+        self.lvs_cache = None
+        self.pvs_time  = 0
+        self.vgs_time  = 0
+        self.lvs_time  = 0
+
     @method(in_signature="", out_signature="a{sa{ss}}")
     def pvs(self):
-        return lvm_pvs()
+        if( time() - self.pvs_time > lvm_settings.SYSD_INFO_TTL ):
+            self.pvs_time = time()
+            self.pvs_cache = lvm_pvs()
+        return self.pvs_cache
 
     @method(in_signature="", out_signature="a{sa{ss}}")
     def vgs(self):
-        return lvm_vgs()
+        if( time() - self.vgs_time > lvm_settings.SYSD_INFO_TTL ):
+            self.vgs_time = time()
+            self.vgs_cache = lvm_vgs()
+        return self.vgs_cache
 
     @method(in_signature="", out_signature="a{sa{ss}}")
     def lvs(self):
-        return lvm_lvs()
+        if( time() - self.lvs_time > lvm_settings.SYSD_INFO_TTL ):
+            self.lvs_time = time()
+            self.lvs_cache = lvm_lvs()
+        return self.lvs_cache
 
     @method(in_signature="ss", out_signature="i")
     def join_device_to_vg(self, device, vgname):
         devpath = os.path.join("/dev", device)
         invoke(["/sbin/pvcreate", devpath])
+        self.pvs_time = 0
+        self.lvs_time = 0
         if vgname in lvm_vgs():
             return invoke(["/sbin/vgextend", vgname, devpath])
         else:
@@ -77,10 +98,12 @@ class SystemD(BasePlugin):
             ])
         if not snapshot:
             cmd.append(vgname)
+        self.lvs_time = 0
         return invoke(cmd)
 
     @method(in_signature="sb", out_signature="i")
     def lvchange(self, device, active):
+        self.lvs_time = 0
         return invoke(["/sbin/lvchange", ('-a' + {False: 'n', True: 'y'}[active]), device])
 
     @method(in_signature="isib", out_signature="")
@@ -95,6 +118,7 @@ class SystemD(BasePlugin):
 
     @method(in_signature="s", out_signature="i")
     def lvremove(self, device):
+        self.lvs_time = 0
         return invoke(["/sbin/lvremove", '-f', device])
 
 
