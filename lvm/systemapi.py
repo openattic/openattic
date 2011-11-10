@@ -25,10 +25,17 @@ def lvm_pvs():
     return dict( [ (lv["LVM2_PV_NAME"], lv) for lv in lvm_command(["/sbin/pvs"]) ] )
 
 def lvm_vgs():
-    return dict( [ (lv["LVM2_VG_NAME"], lv) for lv in lvm_command(["/sbin/vgs"]) ] )
+    info = dict( [ (lv["LVM2_VG_NAME"], lv) for lv in lvm_command(["/sbin/vgs"]) ] )
+    for field in ("LVM2_VG_SIZE", "LVM2_VG_FREE"):
+        for vg in info:
+            info[vg][field] = info[vg][field][:-1] # cut off the m from 13.37m
+    return info
 
 def lvm_lvs():
-    return dict( [ (lv["LVM2_LV_NAME"], lv) for lv in lvm_command(["/sbin/lvs", '-o', '+seg_pe_ranges,lv_kernel_minor,lv_minor']) ] )
+    info = dict( [ (lv["LVM2_LV_NAME"], lv) for lv in lvm_command(["/sbin/lvs", '-o', '+seg_pe_ranges,lv_kernel_minor,lv_minor']) ] )
+    for lv in info:
+        info[lv]["LVM2_LV_SIZE"] = info[lv]["LVM2_LV_SIZE"][:-1] # cut off the m from 13.37m
+    return info
 
 
 @logged
