@@ -9,7 +9,6 @@ from django.contrib.auth.models import User
 from django.db.models import signals
 from django.db import models
 
-from pamauth    import PamBackend
 from lvm.models import StatefulModel, LogicalVolume
 
 class Share(StatefulModel):
@@ -77,8 +76,9 @@ def replace_set_password(instance=None, **kwargs):
     def set_password_samba(self, raw_password):
         """ "Authenticate" against a fake PAM service that updates smbpasswd. """
         ret = oldfunc(raw_password)
-        pb = PamBackend("openattic")
-        pb.authenticate(self.username, raw_password)
+        # Yaay! Let's send the password to systemd! Why, in plain text, of course!
+        # Who needs encryption and shit! Security lolomgz
+        dbus.SystemBus().get_object(settings.DBUS_IFACE_SYSTEMD, "/samba").setpasswd(self.username, raw_password)
         return ret
 
     instance.set_password = new.instancemethod(set_password_samba, instance, instance.__class__)

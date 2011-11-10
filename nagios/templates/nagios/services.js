@@ -4,6 +4,17 @@ Ext.namespace("Ext.oa");
 
 
 Ext.oa.Nagios__Graph_ImagePanel = Ext.extend(Ext.Panel, {
+  graphcolors: {
+    {% if PROFILE.theme != "access" %}
+    bgcol: 'F3F3F3',
+    grcol: '',
+    fgcol: '111111'
+    {% else %}
+    bgcol: '1F2730',
+    grcol: '222222',
+    fgcol: 'FFFFFF'
+    {% endif %}
+  },
   initComponent: function(){
     Ext.apply(this, Ext.applyIf(this.initialConfig, {
       graphwidth: false,
@@ -45,9 +56,10 @@ Ext.oa.Nagios__Graph_ImagePanel = Ext.extend(Ext.Panel, {
     if( this.el ){
       this.el.mask("{% trans 'Loading...' %}");
       var url = String.format(
-        PROJECT_URL + "/nagios/{0}/{1}.png?start={2}&grad={3}",
-        record.data.id, id, (new Date().format("U") - this.timespan),
-        Ext.state.Manager.get("nagios_graph_grad", "false")
+        PROJECT_URL + "/nagios/{0}/{1}.png?start={2}&grad={3}&{4}",
+        record.data.id, id, parseInt((new Date().getTime() / 1000) - this.timespan),
+        Ext.state.Manager.get("nagios_graph_grad", "false"),
+        Ext.urlEncode(this.graphcolors)
       );
       if( this.graphwidth !== false ){
         url += "&width=" + this.graphwidth;

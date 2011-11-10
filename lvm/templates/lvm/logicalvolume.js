@@ -327,14 +327,18 @@ Ext.oa.Lvm__LogicalVolume_Panel = Ext.extend(Ext.Panel, {
           var sm = lvmGrid.getSelectionModel();
           if( sm.hasSelection() ){
             var sel = sm.selections.items[0];
-            Ext.Msg.prompt(
+            lvm__VolumeGroup.get_free_megs( sel.json.vg.id, function( provider, response ){
+              Ext.Msg.prompt(
               "{% trans 'Enter new size' %}",
               interpolate(
                 "{% trans 'Please enter the desired size in MB you wish to resize volume <b>%s</b> to.' %}" + "<br/>" + 
-                "{% trans 'The current size is %s MB.' %}",
-                [sel.data.name, sel.data.megs] ),
+                "{% trans 'The current size is %s MB. - Max. %s MB' %}",[sel.data.name, sel.data.megs, response.result]),
               function(btn, text){
                 if( btn == 'ok' ){
+                  if(text > response.result){
+                    Ext.Msg.alert("{% trans 'Error' %}","{% trans 'Your insert size is greater than the remaining size' %}");
+                    return;
+                  }
                   Ext.Msg.confirm(
                     "{% trans 'Warning' %}",
                     interpolate(
@@ -361,6 +365,7 @@ Ext.oa.Lvm__LogicalVolume_Panel = Ext.extend(Ext.Panel, {
                 }
               }
             );
+            });
           }
         }
       }, {

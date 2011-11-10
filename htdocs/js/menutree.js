@@ -46,27 +46,7 @@ Ext.oa.MenuTree = Ext.extend(Ext.tree.TreePanel, {
         text: 'System',
         expanded: Ext.state.Manager.get("expand_root_nodes", true),
         icon: MEDIA_URL + '/icons2/22x22/mimetypes/application-x-executable.png',
-        children: [ 
-          {
-            text: 'Network',
-            icon: MEDIA_URL + '/icons2/22x22/places/gnome-fs-network.png',
-            children: [ {
-                text: 'General',
-                leaf: true,
-                icon: MEDIA_URL + '/icons2/22x22/apps/network.png'
-              }, {
-                text: 'Proxy',            leaf: true,
-                icon: MEDIA_URL + '/icons2/22x22/apps/preferences-system-network-proxy.png'
-              }, {
-                text: 'Domain',
-                icon: MEDIA_URL + '/icons2/128x128/apps/domain.png',
-                children: [
-                  {text: 'Active Directory',  leaf: true},
-                  {text: 'LDAP',   leaf: true}
-                ]
-            } ]
-          }
-        ]
+        children: []
       }, {
         id: 'menu_usersettings',
         text: 'Personal Settings',

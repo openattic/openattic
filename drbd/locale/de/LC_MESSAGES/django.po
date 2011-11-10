@@ -50,7 +50,7 @@ msgstr "C: Synchron"
 
 #: templates/drbd/device.js:78
 msgid "Syncer Rate"
-msgstr "Synchronisationsgeschwindigkeit"
+msgstr "Sync-Rate"
 
 #: templates/drbd/device.js:83
 msgid "Secret"
