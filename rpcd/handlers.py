@@ -131,7 +131,8 @@ class ModelHandler(BaseHandler):
             value = getattr(obj, field.name)
             if isinstance( field, models.ForeignKey ):
                 data[field.name] = unicode(value)
-                data[field.name + "_id"] = value.id
+                if value is not None:
+                    data[field.name + "_id"] = value.id
             else:
                 data[field.name] = value
 

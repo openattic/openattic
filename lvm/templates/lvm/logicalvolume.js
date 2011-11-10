@@ -332,10 +332,10 @@ Ext.oa.Lvm__LogicalVolume_Panel = Ext.extend(Ext.Panel, {
               "{% trans 'Enter new size' %}",
               interpolate(
                 "{% trans 'Please enter the desired size in MB you wish to resize volume <b>%s</b> to.' %}" + "<br/>" + 
-                "{% trans 'The current size is %s MB. - Max. %s MB' %}",[sel.data.name, sel.data.megs, response.result]),
+                "{% trans 'The current size is %s MB' %}" + "<br/>" + "<br/>" + "{% trans 'Max. +%s MB' %}",[sel.data.name, sel.data.megs, response.result]),
               function(btn, text){
                 if( btn == 'ok' ){
-                  if(text > response.result){
+                  if((text - sel.data.megs) > response.result){
                     Ext.Msg.alert("{% trans 'Error' %}","{% trans 'Your insert size is greater than the remaining size' %}");
                     return;
                   }
@@ -401,7 +401,7 @@ Ext.oa.Lvm__LogicalVolume_Panel = Ext.extend(Ext.Panel, {
         store: (function(){
           // Anon function that is called immediately to set up the store's DefaultSort
           var store = new Ext.data.DirectStore({
-            fields: ['name', 'megs', 'filesystem',  'formatted', 'id', 'state', 'fs',
+            fields: ['name', 'megs', 'filesystem',  'formatted', 'id', 'state', 'fs','vg',
               {
                 name: 'fsfree',
                 mapping: 'fs',
@@ -428,6 +428,14 @@ Ext.oa.Lvm__LogicalVolume_Panel = Ext.extend(Ext.Panel, {
                   if( val === null || typeof val.stat === "undefined" )
                     return null;
                   return (val.stat.used / val.stat.size * 100 ).toFixed(2);
+                }
+              },{
+                name: 'vgname',
+                mapping: 'vg',
+                convert: function(val, row){
+                  if( val === null || typeof val === "undefined" )
+                    return null;
+                  return val.name;
                 }
               }],
             baseParams: { "snapshot__isnull": true },
@@ -497,6 +505,11 @@ Ext.oa.Lvm__LogicalVolume_Panel = Ext.extend(Ext.Panel, {
                 var color = "green";
               return String.format('<span style="color:{1};">{0}%</span>', val, color);
             }
+          },{
+            header: "{% trans "Group" %}",
+            width: 100,
+            dataIndex: "vgname",
+            align: 'center'
           }]
         }),
         listeners: {

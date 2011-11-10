@@ -5,7 +5,7 @@ Ext.namespace("Ext.oa");
 Ext.oa.Zfs__Snapshot_Panel = Ext.extend(Ext.Panel, {
   initComponent: function(){
     var zfsSnapPanel = this;
-      
+
     Ext.apply(this, Ext.apply(this.initialConfig, {
       title: "{% trans "Zfs Snapshots" %}",
       id: "zfs__snapshot_panel_inst",
@@ -85,7 +85,7 @@ Ext.oa.Zfs__Snapshot_Panel = Ext.extend(Ext.Panel, {
               addwin.items.items[0].snapshotnamefield.setValue(new Date(response.result * 1000).format("d-m-Y_H:i:s"));
             });
             addwin.show();
-          }    
+          }
         },{
           text: "{% trans "Rollback Snapshot" %}",
            icon: MEDIA_URL + "/icons2/16x16/actions/go-last.png",
@@ -104,7 +104,7 @@ Ext.oa.Zfs__Snapshot_Panel = Ext.extend(Ext.Panel, {
                        zfsSnapPanel.snapGrid.store.reload();
                        })
                     }
-                  }  
+                  }
                 )
               }
             }
@@ -126,7 +126,7 @@ Ext.oa.Zfs__Snapshot_Panel = Ext.extend(Ext.Panel, {
                        zfsSnapPanel.snapGrid.store.reload();
                        })
                     }
-                  }  
+                  }
                 )
               }
             }
@@ -221,7 +221,7 @@ Ext.oa.Zfs__Snapshot_Panel = Ext.extend(Ext.Panel, {
             dataIndex: "created_at"
           }
           ]
-        })      
+        })
       }
       ]
     }));
@@ -238,26 +238,26 @@ Ext.reg("zfs__snapshot_panel", Ext.oa.Zfs__Snapshot_Panel);
 
 Ext.oa.Zfs__Snapshot_Module = Ext.extend(Object, {
   panel: ["zfs__snapshot_panel","zfs__subvolume_panel"],
-  
+
   prepareMenuTree: function(tree){
     tree.appendToRootNodeById("menu_storage", {
-        text: "ZFS",
-        panel: "zfs__panel_inst",
+      text: "ZFS",
+      icon: MEDIA_URL + '/icons2/22x22/apps/snapshot.png',
+      panel: "zfs__snapshot_panel_inst",
+      href: "#",
+      children: [{
+        text: "{% trans 'Zfs Snapshots' %}",
+        leaf: true,
         icon: MEDIA_URL + '/icons2/22x22/apps/snapshot.png',
-        href: "#",
-        children: [{
-            text: "{% trans 'Zfs Snapshots' %}",
-            leaf: true,
-            icon: MEDIA_URL + '/icons2/22x22/apps/snapshot.png',
-            panel: "zfs__snapshot_panel_inst",
-            href: '#'
-        },{
-            text: "{% trans 'Zfs Subvolume' %}",
-            leaf: true,
-            icon: MEDIA_URL + '/icons2/22x22/apps/snapshot.png',
-            panel: "zfs__subvolume_panel_inst",
-            href: '#'
-        }]
+        panel: "zfs__snapshot_panel_inst",
+        href: '#'
+      },{
+        text: "{% trans 'Zfs Subvolume' %}",
+        leaf: true,
+        icon: MEDIA_URL + '/icons2/22x22/apps/snapshot.png',
+        panel: "zfs__subvolume_panel_inst",
+        href: '#'
+      }]
     });
   }
 });

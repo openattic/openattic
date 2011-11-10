@@ -46,6 +46,11 @@ class VgHandler(ModelHandler):
         """ Get Kernel disk stats for a given device. """
         return VolumeGroup.get_disk_stats(device)
 
+    def lvm_info(self, id):
+         """ Return information about the LV retrieved from LVM. """
+         vg = VolumeGroup.objects.get(id=id)
+         return vg.lvm_info
+
 class LvHandler(ModelHandler):
     model = LogicalVolume
     order = ("name",)

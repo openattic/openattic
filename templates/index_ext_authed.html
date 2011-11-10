@@ -7,8 +7,11 @@
     {% if THEME %}
       <link rel="stylesheet" type="text/css" href="{{ MEDIA_URL }}/extjs_themes/css/xtheme-{{ THEME }}.css" />
     {% endif %}
+    <!--[if IE]><script type="text/javascript" src="{{ MEDIA_URL }}/canvasxpress/excanvas.js"></script><![endif]-->
+    <script type="text/javascript" src="{{ MEDIA_URL }}/canvasxpress/canvasXpress.min.js"></script>
     <script src="{{ MEDIA_URL }}/extjs/adapter/ext/ext-base.js"></script>
     <script src="{{ MEDIA_URL }}/extjs/ext-all.js"></script>
+    <script type="text/javascript" src="{{ MEDIA_URL }}/canvasxpress/ext-canvasXpress.js"></script>
     <script src="{% url django.views.i18n.javascript_catalog %}"></script>
     <script src="{{ PROJECT_URL }}/userprefs/initprefs.js"></script>
     <script src="{{ PROJECT_URL }}/direct/api.js"></script>
