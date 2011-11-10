@@ -198,7 +198,7 @@ Description: Munin module for openATTIC
 Package: openattic-module-nagios
 Architecture: all
 Depends: ${misc:Depends},
- ${python:Depends},
+ ${python:Depends}, python-imaging, python-numpy,
  openattic-base,
  bc,
  nagios3-core, nagios-plugins-standard, nagios-plugins-basic,
