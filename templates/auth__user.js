@@ -15,6 +15,13 @@ Ext.oa.Auth__User_Panel = Ext.extend(Ext.grid.GridPanel, {
       title: "{% trans 'Users' %}",
       viewConfig: { forceFit: true },
       buttons: [{
+        text: "",
+        icon: MEDIA_URL + "/icons2/16x16/actions/reload.png",
+        tooltip: "{% trans 'Reload' %}",
+        handler: function(self){
+          authUserGrid.store.reload();
+        }
+      }, {
         text: "{% trans 'Add User' %}",
         icon: MEDIA_URL + "/icons2/16x16/actions/add.png",
         handler: function(){
