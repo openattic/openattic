@@ -188,17 +188,16 @@ Ext.oa.Lvm__Snapshot_Panel = Ext.extend(Ext.grid.GridPanel, {
         store.setDefaultSort("name");
         return store;
       }()),
+      viewConfig: { forceFit: true },
       colModel:  new Ext.grid.ColumnModel({
         defaults: {
           sortable: true
         },
         columns: [{
           header: "{% trans 'LV' %}",
-          width: 200,
           dataIndex: "name"
         }, {
           header: "{% trans 'Size' %}",
-          width: 150,
           dataIndex: "megs",
           align: 'right',
           renderer: function( val, x, store ){
