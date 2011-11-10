@@ -2,73 +2,55 @@
 
 Ext.namespace("Ext.oa");
 
-Ext.oa.Lvm__Partitions_Panel = Ext.extend(Ext.grid.GridPanel, {
+var volumeGroups = new Ext.data.DirectStore({
+          fields: ['id', "LVM_VG_NAME","LVM_VG_FREE","LVM_VG_SIZE","LVM_VG_ATTR"],
+          directFn: lvm__VolumeGroup.all,
+          listeners: {
+            load: function(self){
+              var handleResponse = function(i){
+                return function(provider, response){
+                  self.data.items[i].set("LVM_VG_NAME",response.result.LVM2_VG_NAME);
+                  if( response.result.LVM2_VG_SIZE >= 1000 ){
+                    self.data.items[i].data.LVM_VG_SIZE= String.format("{0} GB", (response.result.LVM2_VG_SIZE / 1000).toFixed(2));
+                  }
+                  else
+                  {
+                    self.data.items[i].data.LVM_VG_SIZE= String.format("{0} MB", response.result.LVM2_VG_SIZE);
+                  }
+                  if( response.result.LVM2_VG_FREE >= 1000 ){
+                    self.data.items[i].data.LVM_VG_FREE = String.format("{0} GB", (response.result.LVM2_VG_FREE / 1000).toFixed(2));   
+                  }
+                  else
+                  {
+                    self.data.items[i].data.LVM_VG_FREE= String.format("{0} MB", response.result.LVM2_VG_FREE);
+                  }
+                  self.data.items[i].data.LVM_VG_ATTR = response.result.LVM2_VG_ATTR;
+                  self.commitChanges();
+                };
+              }
+              for (var i = 0; i < self.data.length; i++){
+                lvm__VolumeGroup.lvm_info(self.data.items[i].id, handleResponse(i));
+              }
+            }
+          }
+        });
+
+Ext.oa.volumeGroup_Panel = Ext.extend(Ext.grid.GridPanel, {
   initComponent: function(){
-    var partStore = new Ext.data.JsonStore({
-      fields: [ "begin", "end", "flags-set", "number", "partition-name", "filesystem-type", "size" ],
-      data: []
-    });
+    var volumeGroupPanel = this;
     Ext.apply(this, Ext.apply(this.initialConfig, {
-      store: partStore,
-      colModel:  new Ext.grid.ColumnModel({
-        defaults: {
-          sortable: true
-        },
-        columns: [{
-            header: "#",
-            width: 20,
-            dataIndex: "number"
-          }, {
-            header: "{% trans "Size" %}",
-            width: 100,
-            dataIndex: "size"
-          }, {
-            header: "{% trans "Begin" %}",
-            width: 100,
-            dataIndex: "begin"
-          }, {
-            header: "{% trans "End" %}",
-            width: 100,
-            dataIndex: "end"
-          }, {
-            header: "{% trans "FS Type" %}",
-            width: 100,
-            dataIndex: "filesystem-type"
-          }, {
-            header: "{% trans "Label" %}",
-            width: 100,
-            dataIndex: "partition-name"
-          }, {
-            header: "{% trans "Flags" %}",
-            width: 100,
-            dataIndex: "flags-set"
-        }]
-      })
-    }));
-    Ext.oa.Lvm__Partitions_Panel.superclass.initComponent.apply(this, arguments);
-    var self = this;
-    lvm__VolumeGroup.get_partitions(this.device, function(provider, response){
-      if( response.result ){
-        var disk = response.result[0];
-        self.setTitle( String.format( "{0} &mdash; {1}, {2}, {3}",
-          disk["path"], disk["size"], disk["transport-type"], disk["model-name"]
-        ));
-        partStore.loadData( response.result[1] );
-      }
-    });
-  }
-});
-
-
-
-Ext.oa.Lvm__Disks_Panel = Ext.extend(Ext.Panel, {
-  initComponent: function(){
-    Ext.apply(this, Ext.apply(this.initialConfig, {
-      id: 'lvm__disks_panel_inst',
-      title: "{% trans "Disk Management" %}",
-      layout: 'accordion',
-      buttons: [ {
-        text: "{% trans 'Initialize' %}",
+      id: "volumeGroup_panel_inst",
+      title: "{% trans "Volume Groups" %}",
+      layout: 'fit',
+      buttons: [{
+        text: "",
+        icon: MEDIA_URL + "/icons2/16x16/actions/reload.png",
+        tooltip: "{% trans "Reload" %}",
+        handler: function(self){
+          volumeGroupPanel.store.reload();
+        }
+      },{
+        text: "{% trans 'Create VG or Add Disk' %}",
         handler: function(){
           var initwin = new Ext.Window({
             title: "{% trans 'Initialize' %}",
@@ -178,45 +160,54 @@ Ext.oa.Lvm__Disks_Panel = Ext.extend(Ext.Panel, {
           });
           initwin.show();
         }
-      } ]
+      }],
+      viewConfig: { forceFit: true },
+      store: volumeGroups,
+      colModel: new Ext.grid.ColumnModel({
+        defaults: {
+          sortable: true
+        },
+        columns: [{
+          header: "Name",
+          dataIndex: "LVM_VG_NAME"
+        },{
+          header: "Size",
+          dataIndex: "LVM_VG_SIZE"
+        },{
+          header: "Free",
+          dataIndex: "LVM_VG_FREE"
+        },{
+          header: "Attributes",
+          dataIndex: "LVM_VG_ATTR"
+        }]
+      })
+          
     }));
-    Ext.oa.Lvm__Disks_Panel.superclass.initComponent.apply(this, arguments);
+    Ext.oa.volumeGroup_Panel.superclass.initComponent.apply(this, arguments);
   },
   onRender: function(){
-    Ext.oa.Lvm__Disks_Panel.superclass.onRender.apply(this, arguments);
-    var self = this;
-    lvm__VolumeGroup.get_devices(function(provider, response){
-      if( response.result ){
-        for( var i = 0; i < response.result.length; i++ ){
-          self.add(new Ext.oa.Lvm__Partitions_Panel({
-            title: String.format("/dev/{0} &mdash; {1} {2} {3}",
-              response.result[i].block, response.result[i].vendor,
-              response.result[i].model, response.result[i].rev),
-            device: ('/dev/' + response.result[i].block)
-          }));
-        }
-        self.doLayout();
-      }
-    });
+    Ext.oa.volumeGroup_Panel.superclass.onRender.apply(this, arguments);
+    volumeGroups.load();
   }
+  
 });
 
-Ext.reg("lvm__disks_panel", Ext.oa.Lvm__Disks_Panel);
+Ext.reg("volumeGroup_Panel", Ext.oa.volumeGroup_Panel);
 
-Ext.oa.Lvm__Disks_Module = Ext.extend(Object, {
-  panel: "lvm__disks_panel",
+Ext.oa.volumeGroup_Module = Ext.extend(Object, {
+  panel: "volumeGroup_Panel",
   prepareMenuTree: function(tree){
     tree.appendToRootNodeById("menu_storage", {
       text: "{% trans 'Disk Management' %}",
       leaf: true,
       icon: MEDIA_URL + '/icons2/22x22/apps/database.png',
-      panel: 'lvm__disks_panel_inst',
+      panel: "volumeGroup_panel_inst",
       href: '#'
     });
   }
 });
 
 
-window.MainViewModules.push( new Ext.oa.Lvm__Disks_Module() );
+window.MainViewModules.push( new Ext.oa.volumeGroup_Module() );
 
 // kate: space-indent on; indent-width 2; replace-tabs on;
