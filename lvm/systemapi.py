@@ -22,7 +22,11 @@ def lvm_command(cmd):
         ]
 
 def lvm_pvs():
-    return dict( [ (lv["LVM2_PV_NAME"], lv) for lv in lvm_command(["/sbin/pvs"]) ] )
+    info = dict( [ (lv["LVM2_PV_NAME"], lv) for lv in lvm_command(["/sbin/pvs"]) ] )
+    for field in ("LVM2_PV_SIZE", "LVM2_PV_FREE"):
+        for pv in info:
+            info[pv][field] = info[pv][field][:-1] # cut off the m from 13.37m
+    return info
 
 def lvm_vgs():
     info = dict( [ (lv["LVM2_VG_NAME"], lv) for lv in lvm_command(["/sbin/vgs"]) ] )
