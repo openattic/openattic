@@ -3,27 +3,27 @@
 Ext.namespace("Ext.oa");
 
 var volumeGroups = new Ext.data.DirectStore({
-          fields: ['id', 'name',"LVM_VG_NAME","LVM_VG_FREE","LVM_VG_SIZE","LVM_VG_ATTR"],
+          fields: ['id', 'name',"LVM_VG_FREE","LVM_VG_SIZE","LVM_VG_ATTR"],
           directFn: lvm__VolumeGroup.all,
           listeners: {
             load: function(self){
               var handleResponse = function(i){
                 return function(provider, response){
                   if( response.result.LVM2_VG_SIZE >= 1000 ){
-                    self.data.items[i].data.LVM_VG_SIZE= String.format("{0} GB", (response.result.LVM2_VG_SIZE / 1000).toFixed(2));
+                    self.data.items[i].set("LVM_VG_SIZE", String.format("{0} GB", (response.result.LVM2_VG_SIZE / 1000).toFixed(2)));
                   }
                   else
                   {
-                    self.data.items[i].data.LVM_VG_SIZE= String.format("{0} MB", response.result.LVM2_VG_SIZE);
+                    self.data.items[i].set("LVM_VG_SIZE", String.format("{0} MB", response.result.LVM2_VG_SIZE));
                   }
                   if( response.result.LVM2_VG_FREE >= 1000 ){
-                    self.data.items[i].data.LVM_VG_FREE = String.format("{0} GB", (response.result.LVM2_VG_FREE / 1000).toFixed(2));   
+                    self.data.items[i].set("LVM_VG_FREE", String.format("{0} GB", (response.result.LVM2_VG_FREE / 1000).toFixed(2)));   
                   }
                   else
                   {
-                    self.data.items[i].data.LVM_VG_FREE= String.format("{0} MB", response.result.LVM2_VG_FREE);
+                    self.data.items[i].set("LVM_VG_FREE", String.format("{0} MB", response.result.LVM2_VG_FREE));
                   }
-                  self.data.items[i].data.LVM_VG_ATTR = response.result.LVM2_VG_ATTR;
+                  self.data.items[i].set("LVM_VG_ATTR", response.result.LVM2_VG_ATTR);
                   self.commitChanges();
                 };
               }
