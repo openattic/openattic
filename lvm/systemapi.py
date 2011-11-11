@@ -80,6 +80,9 @@ class SystemD(BasePlugin):
     @method(in_signature="ss", out_signature="i")
     def join_device_to_vg(self, device, vgname):
         devpath = os.path.join("/dev", device)
+        invoke(["/sbin/parted",devpath,"-s","mklabel", "gpt"])
+        invoke(["/sbin/parted",devpath,"--script","--","mkpart","primary","2048s","-1"])
+        devpath = devpath + "1"
         invoke(["/sbin/pvcreate", devpath])
         self.pvs_time = 0
         self.lvs_time = 0
