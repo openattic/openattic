@@ -17,6 +17,7 @@ Ext.oa.Nagios__Graph_ImagePanel = Ext.extend(Ext.Panel, {
   },
   initComponent: function(){
     Ext.apply(this, Ext.applyIf(this.initialConfig, {
+      reloadInterval: 0,
       graphwidth: false,
       layout: "vbox",
       layoutConfig: { "align": "center" },
@@ -65,6 +66,8 @@ Ext.oa.Nagios__Graph_ImagePanel = Ext.extend(Ext.Panel, {
         url += "&width=" + this.graphwidth;
       }
       this.items.items[0].el.dom.src = url;
+      if( this.reloadInterval )
+        this.loadRecord.defer(this.reloadInterval*1000, this, [this.currentRecord, this.currentId]);
     }
   }
 });

@@ -206,6 +206,7 @@ Ext.oa.Portal = Ext.extend(Ext.ux.Portal, {
             xtype: "naggraphimage",
             title: "4 hours",
             timespan: 4*60*60,
+            reloadInterval: 300,
             height: 280,
             title: false,
             graphwidth: 230,
