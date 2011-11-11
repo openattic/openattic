@@ -126,6 +126,7 @@ Ext.oa.volumeGroup_Panel = Ext.extend(Ext.grid.GridPanel, {
                 typeAhead:     true,
                 triggerAction: 'all',
                 emptyText:     'Select...',
+                forceSelection: false,
                 selectOnFocus: true,
                 displayField:  'name',
                 valueField:    'id',
@@ -145,6 +146,7 @@ Ext.oa.volumeGroup_Panel = Ext.extend(Ext.grid.GridPanel, {
                   var done = function( provider, response ){
                     Ext.Msg.alert("{% trans 'Success!' %}", "{% trans 'The Device has been successfully initialized.' %}");
                     initwin.hide();
+                    volumeGroupPanel.store.reload();
                   }
                   if( typeof vg === "number" ){
                     lvm__VolumeGroup.join_device( vg, disk, done );
@@ -172,18 +174,16 @@ Ext.oa.volumeGroup_Panel = Ext.extend(Ext.grid.GridPanel, {
           dataIndex: "name"
         },{
           header: "Size",
-          dataIndex: "LVM_VG_SIZE",
-          renderer: function(val){ if( val ) return val; return '♻' }
+          dataIndex: "LVM_VG_SIZE"
         },{
           header: "Free",
-          dataIndex: "LVM_VG_FREE",
-          renderer: function(val){ if( val ) return val; return '♻' }
+          dataIndex: "LVM_VG_FREE"
         },{
           header: "Attributes",
-          dataIndex: "LVM_VG_ATTR",
-          renderer: function(val){ if( val ) return val; return '♻' }
+          dataIndex: "LVM_VG_ATTR"
         }]
       })
+          
     }));
     Ext.oa.volumeGroup_Panel.superclass.initComponent.apply(this, arguments);
   },
