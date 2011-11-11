@@ -121,74 +121,83 @@ Ext.oa.Portal = Ext.extend(Ext.ux.Portal, {
           title: 'CPU Stats',
           id: 'portlet_cpu',
           tools: tools,
+          height: 300,
           items: (function(){
-            var store = new Ext.data.JsonStore({
-              fields: ['field', 'value']
+            var chart = new Ext.canvasXpress({
+              options: {
+                graphType: 'Pie',
+                background: 'rgb(244,244,244)',
+                colorScheme: 'pastel',
+                pieSegmentPrecision:  0,
+                pieSegmentSeparation: 0,
+                pieSegmentLabels: 'inside',
+                pieType: 'solid'
+              },
+              data: {y: {
+                vars:  ['a', 'b'],
+                smps:  ['CPU'],
+                data:  [[1], [2]]
+              }},
+              events: { click: function(){} }
             });
             hoststats__HostStats.get_cpu(function(provider, result){
               if(result.result){
-                var data = [];
+                var conf = {
+                  smps: ['CPU'],
+                  vars: [],
+                  data: []
+                }
                 for( var key in result.result ){
                   if( key === "time_taken" ) continue;
-                    data.push({field: key, value: (result.result[key]).toFixed(2)});
+                  conf.vars.push(key);
+                  conf.data.push([result.result[key]]);
                 }
-              store.loadData(data);
+                console.log(conf);
+                chart.canvas.updateData({ y: conf });
               }
             });
-            return {
-              store: store,
-              xtype: 'piechart',
-              height: 300,
-              dataField: 'value',
-              categoryField: 'field',
-              //extra styles get applied to the chart defaults
-              extraStyle: {
-                legend: {
-                  display: 'bottom',
-                  padding: 5,
-                  font: {
-                    family: 'Tahoma',
-                    size: 13
-                  }
-                }
-              }
-            };
+            return chart;
           }())
         }, {
           title: 'RAM Stats',
           id: 'portlet_ram',
           tools: tools,
+          height: 300,
           items: (function(){
-            var store = new Ext.data.JsonStore({
-              fields: ['field', 'value']
+            var chart = new Ext.canvasXpress({
+              options: {
+                graphType: 'Pie',
+                background: 'rgb(244,244,244)',
+                colorScheme: 'pastel',
+                pieSegmentPrecision:  0,
+                pieSegmentSeparation: 0,
+                pieSegmentLabels: 'inside',
+                pieType: 'solid'
+              },
+              data: {y: {
+                vars:  ['a', 'b'],
+                smps:  ['RAM'],
+                data:  [[1], [2]]
+              }},
+              events: { click: function(){} }
             });
             hoststats__HostStats.get_mem(function(provider, result){
               if(result.result){
-                var data = [];
-                for( var key in result.result ){
-                  data.push({field: key, value: (result.result[key] / 1000000).toFixed(2)});
+                var conf = {
+                  smps: ['RAM'],
+                  vars: [],
+                  data: []
                 }
-                store.loadData(data);
+                for( var key in result.result ){
+                  conf.vars.push(key);
+                  conf.data.push([result.result[key]]);
+                }
+                console.log(conf);
+                chart.canvas.updateData({ y: conf });
               }
             });
-            return {
-              store: store,
-              xtype: 'piechart',
-              height: 300,
-              dataField: 'value',
-              categoryField: 'field',
-              //extra styles get applied to the chart defaults
-              extraStyle: {
-                legend: {
-                  display: 'bottom',
-                  padding: 5,
-                  font: {
-                    family: 'Tahoma',
-                    size: 13
-                  }
-                }
-              }
-            };
+            chart.on("leftclick", function(){});
+            return chart;
           }())
         }, {
           title: 'itc_osm3 I/O',
