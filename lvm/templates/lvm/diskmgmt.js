@@ -184,16 +184,18 @@ Ext.oa.volumeGroup_Panel = Ext.extend(Ext.grid.GridPanel, {
           dataIndex: "name"
         },{
           header: "Size",
-          dataIndex: "LVM_VG_SIZE"
+          dataIndex: "LVM_VG_SIZE",
+          renderer: function(val){ if( val ) return val; return '♻' }
         },{
           header: "Free",
-          dataIndex: "LVM_VG_FREE"
+          dataIndex: "LVM_VG_FREE",
+          renderer: function(val){ if( val ) return val; return '♻' }
         },{
           header: "Attributes",
-          dataIndex: "LVM_VG_ATTR"
+          dataIndex: "LVM_VG_ATTR",
+          renderer: function(val){ if( val ) return val; return '♻' }
         }]
       })
-          
     }));
     Ext.oa.volumeGroup_Panel.superclass.initComponent.apply(this, arguments);
   },
@@ -201,7 +203,6 @@ Ext.oa.volumeGroup_Panel = Ext.extend(Ext.grid.GridPanel, {
     Ext.oa.volumeGroup_Panel.superclass.onRender.apply(this, arguments);
     volumeGroups.load();
   }
-  
 });
 
 Ext.reg("volumeGroup_Panel", Ext.oa.volumeGroup_Panel);
