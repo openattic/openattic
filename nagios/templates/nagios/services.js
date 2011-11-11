@@ -116,7 +116,7 @@ Ext.oa.Nagios__Service_Panel = Ext.extend(Ext.Panel, {
               "Please enter the title for the new Portlet.",
               function(btn, text){
                 if( btn === "ok" ){
-                  var portletstate = Ext.state.Manager.get( "nagios_portlets" );
+                  var portletstate = Ext.state.Manager.get( "nagios_portlets", [] );
                   var portletid = record.data.id + "_" + graph.id;
                   portletstate.push({
                     id:       portletid,
