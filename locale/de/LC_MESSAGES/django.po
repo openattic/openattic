@@ -2,90 +2,99 @@
 # Copyright (C) YEAR THE PACKAGE'S COPYRIGHT HOLDER
 # This file is distributed under the same license as the PACKAGE package.
 # FIRST AUTHOR <EMAIL@ADDRESS>, YEAR.
-#
+# 
 #, fuzzy
 msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2011-11-02 10:43+0100\n"
-"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
-"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"POT-Creation-Date: 2011-11-11 12:01+0100\n"
+"PO-Revision-Date: 2011-11-11 12:02\n"
+"Last-Translator: Michael Ziegler <michael.ziegler@it-novum.com>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
-"Language: \n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
+"Language: \n"
 "Plural-Forms: nplurals=2; plural=(n != 1)\n"
+"X-Translated-Using: django-rosetta 0.6.0\n"
 
 #: auth__user.js:15
 msgid "Users"
-msgstr ""
+msgstr "Benutzer"
 
-#: auth__user.js:22
+#: auth__user.js:20
+msgid "Reload"
+msgstr "Neu laden"
+
+#: auth__user.js:25 auth__user.js.py:29
 msgid "Add User"
-msgstr ""
+msgstr "Benutzer hinzufügen"
 
-#: auth__user.js:33 auth__user.js.py:255
+#: auth__user.js:40 auth__user.js.py:262
 msgid "User Name"
-msgstr ""
+msgstr "Benutzername"
 
-#: auth__user.js:37
+#: auth__user.js:44
 msgid "Password"
-msgstr ""
+msgstr "Passwort"
 
-#: auth__user.js:42 auth__user.js.py:259
+#: auth__user.js:49 auth__user.js.py:266
 msgid "First Name"
-msgstr ""
+msgstr "Vorname"
 
-#: auth__user.js:46
+#: auth__user.js:53
 msgid "last Name"
-msgstr ""
+msgstr "Nachname"
 
-#: auth__user.js:50
+#: auth__user.js:57
 msgid "E-Mail"
-msgstr ""
+msgstr "E-Mail"
 
-#: auth__user.js:55 auth__user.js.py:271
+#: auth__user.js:62 auth__user.js.py:278
 msgid "Active"
-msgstr ""
+msgstr "Aktiv"
 
-#: auth__user.js:60
+#: auth__user.js:67
 msgid "SuperUser"
-msgstr ""
+msgstr "Administrator"
 
-#: auth__user.js:65 auth__user.js.py:276
+#: auth__user.js:72 auth__user.js.py:283
 msgid "Staff"
-msgstr ""
+msgstr "Personal"
 
-#: auth__user.js:101
+#: auth__user.js:108
 msgid "Delete User"
-msgstr ""
+msgstr "Benutzer löschen"
 
-#: auth__user.js:201
+#: auth__user.js:208 auth__user.js.py:215
 msgid "Change Password"
-msgstr ""
+msgstr "Passwort ändern"
 
-#: auth__user.js:263
+#: auth__user.js:270
 msgid "Last Name"
-msgstr ""
+msgstr "Nachname"
 
-#: auth__user.js:267
+#: auth__user.js:274
 msgid "E-Mail Address"
-msgstr ""
+msgstr "E-Mail-Adresse"
 
-#: auth__user.js:281
+#: auth__user.js:288
 msgid "SU"
-msgstr ""
+msgstr "Admin"
 
-#: auth__user.js:286
+#: auth__user.js:293
 msgid "Last Login"
-msgstr ""
+msgstr "Letzter Login"
 
-#: index_ext_unauthed.html:34
+#: auth__user.js:314
+msgid "User Management"
+msgstr "Benutzer-Verwaltung"
+
+#: index_ext_unauthed.html:36
 msgid "Loading..."
-msgstr ""
+msgstr "Lade..."
 
-#: index_ext_unauthed.html:65 index_ext_unauthed.html.py:74
+#: index_ext_unauthed.html:67 index_ext_unauthed.html.py:76
 msgid "Checking..."
-msgstr ""
+msgstr "Prüfe..."
