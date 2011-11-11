@@ -50,6 +50,7 @@ Ext.oa.volumeGroup_Panel = Ext.extend(Ext.grid.GridPanel, {
         }
       },{
         text: "{% trans 'Create VG or Add Disk' %}",
+        icon: MEDIA_URL + "/icons2/16x16/actions/add.png",
         handler: function(){
           var initwin = new Ext.Window({
             title: "{% trans 'Initialize' %}",

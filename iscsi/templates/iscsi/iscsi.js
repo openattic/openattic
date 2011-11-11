@@ -280,18 +280,21 @@ Ext.oa.Iscsi__Panel = Ext.extend(Ext.Panel, {
               height: 400,
               viewConfig: { forceFit: true },
               store: init_all,
-              colModel: new Ext.grid.ColumnModel({
-                defaults: {
-                  sortable: true
-                },
-                columns: [{
-                  header: "Name",
-                  dataIndex: "name"
-                },{
-                  header: "IQN",
-                  dataIndex: "address"
-                }]
-              }),
+              colModel: (function(){
+                var cm = new Ext.grid.ColumnModel({
+                  defaults: {
+                    sortable: true
+                  },
+                  columns: [{
+                    header: "Name",
+                    dataIndex: "name"
+                  },{
+                    header: "IQN",
+                    dataIndex: "address"
+                  }]
+                });
+                return cm;
+              }()),
               listeners: {
                 cellclick: function (self, rowIndex, colIndex, evt ){
                 var record = self.getStore().getAt(rowIndex);
