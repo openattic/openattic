@@ -141,11 +141,21 @@ Ext.oa.volumeGroup_Panel = Ext.extend(Ext.grid.GridPanel, {
                 ref: "../initbutton",
                 disabled: true,
                 handler: function(self){
+                  var progresswin = new Ext.Window({
+                    title: "{% trans "Initialize" %}",
+                    layout: "fit",
+                    height: 250,
+                    width: 400,
+                    modal: true,
+                    html: "{% trans 'Please wait...' %}"
+                  });
+                  progresswin.show();
                   var vg   = self.ownerCt.ownerCt.vgfield.getValue();
                   var disk = self.ownerCt.ownerCt.diskfield.getValue();
                   var done = function( provider, response ){
-                    Ext.Msg.alert("{% trans 'Success!' %}", "{% trans 'The Device has been successfully initialized.' %}");
                     initwin.hide();
+                    progresswin.hide();
+                    Ext.Msg.alert("{% trans 'Success!' %}", "{% trans 'The Device has been successfully initialized.' %}");
                     volumeGroupPanel.store.reload();
                   }
                   if( typeof vg === "number" ){
