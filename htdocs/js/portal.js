@@ -149,6 +149,7 @@ Ext.oa.Portal = Ext.extend(Ext.ux.Portal, {
                 }
                 for( var key in result.result ){
                   if( key === "time_taken" ) continue;
+                  if( result.result[key] < 0.5 ) continue;
                   conf.vars.push(key);
                   conf.data.push([result.result[key]]);
                 }
