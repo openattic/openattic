@@ -50,7 +50,7 @@ Ext.oa.Auth__User_Panel = Ext.extend(Ext.grid.GridPanel, {
                 name: "firstname",
                 ref: 'firstnamefield'
               }, {
-                fieldLabel: "{% trans 'last Name' %}",
+                fieldLabel: "{% trans 'Last Name' %}",
                 name: "lastname",
                 ref: 'lastnamefield'
               }, {
