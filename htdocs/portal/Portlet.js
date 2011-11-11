@@ -13,6 +13,9 @@ Ext.ux.Portlet = Ext.extend(Ext.Panel, {
     saveState: function(){
         // Don't call the standard saveState method as it sends garbage
     },
+    onClose: function(){
+        this.ownerCt.remove(this, true)
+    }
 });
 
 Ext.reg('portlet', Ext.ux.Portlet);

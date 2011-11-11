@@ -3,14 +3,9 @@ Ext.namespace("Ext.oa");
 Ext.oa.Portal = Ext.extend(Ext.ux.Portal, {
   initComponent: function(){
     var tools = [{
-      id: 'gear',
-      handler: function(){
-        Ext.Msg.alert('Message', 'The Settings tool was clicked.');
-      }
-    },{
       id: 'close',
       handler: function(e, target, panel){
-        panel.ownerCt.remove(panel, true);
+        panel.onClose();
       }
     }];
     Ext.apply(this, Ext.apply(this.initialConfig, {
@@ -72,9 +67,10 @@ Ext.oa.Portal = Ext.extend(Ext.ux.Portal, {
   },
 
   makePortlet: function(config){
-    var portlet = new Ext.ux.Portlet(Ext.applyIf(config, {
+    var portlet = Ext.applyIf(config, {
+      xtype: "portlet",
       tools: this.portletTools
-    }));
+    });
     this.items.items[0].add(portlet);
     this.doLayout();
     this.items.items[0].doLayout();
