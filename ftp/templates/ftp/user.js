@@ -186,17 +186,16 @@ Ext.oa.Ftp__User_Panel = Ext.extend(Ext.grid.GridPanel, {
         }],
         directFn: ftp__User.all
       },
+      viewConfig: { forceFit: true },
       colModel: new Ext.grid.ColumnModel({
         defaults: {
           sortable: true
         },
         columns: [ {
           header: "{% trans 'Path' %}",
-          width: 350,
           dataIndex: "homedir"
         }, {
           header: "{% trans 'User name' %}",
-          width: 100,
           dataIndex: "username"
         } ]
       })
