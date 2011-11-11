@@ -17,6 +17,7 @@ Ext.oa.Portal = Ext.extend(Ext.ux.Portal, {
       id: "dashboard_inst",
       region:'center',
       margins:'35 5 5 0',
+      portletTools: tools,
       items: (function(){
         var state = Ext.state.Manager.get("portalstate",
           [["portlet_lvs", "portlet_nfs"], ["portlet_cpu", "portlet_iops_itcosm3"], ["portlet_ram", "portlet_iops_sdb"]]);
@@ -68,6 +69,15 @@ Ext.oa.Portal = Ext.extend(Ext.ux.Portal, {
       }
       Ext.state.Manager.set("portalstate", state);
     }, this);
+  },
+
+  makePortlet: function(config){
+    var portlet = new Ext.ux.Portlet(Ext.applyIf(config, {
+      tools: this.portletTools
+    }));
+    this.items.items[0].add(portlet);
+    this.doLayout();
+    this.items.items[0].doLayout();
   },
 
   prepareMenuTree: function(tree){
