@@ -311,7 +311,7 @@ Ext.oa.Auth__User_Module = Ext.extend(Object, {
 
   prepareMenuTree: function(tree){
     tree.appendToRootNodeById("menu_system", {
-      text: 'User Management',
+      text: "{% trans 'User Management' %}",
       icon: MEDIA_URL + '/icons2/22x22/apps/config-users.png',
       leaf: true,
       panel: 'auth__user_panel_inst',
