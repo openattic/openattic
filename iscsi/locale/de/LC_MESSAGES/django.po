@@ -8,8 +8,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2011-10-11 13:12+0200\n"
-"PO-Revision-Date: 2011-10-11 13:12\n"
+"POT-Creation-Date: 2011-11-11 11:41+0100\n"
+"PO-Revision-Date: 2011-11-11 11:41\n"
 "Last-Translator: Michael Ziegler <michael.ziegler@it-novum.com>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
 "MIME-Version: 1.0\n"
@@ -19,15 +19,15 @@ msgstr ""
 "Plural-Forms: nplurals=2; plural=(n != 1)\n"
 "X-Translated-Using: django-rosetta 0.6.0\n"
 
-#: models.py:20
+#: models.py:21
 msgid "Human readable name."
 msgstr "Menschenlesbarer Name."
 
-#: models.py:21
+#: models.py:22
 msgid "ISCSI Target name (e.g. 'iqn.2011-01.storage:sto1')."
 msgstr "ISCSI Target-Name (z.B. 'iqn.2011-01.storage:sto1')."
 
-#: models.py:22
+#: models.py:23
 msgid ""
 "Sets the default action if both the allow and deny ACLs are empty. True = "
 "Allow all initiators to connect, False = deny all."
@@ -36,125 +36,151 @@ msgstr ""
 "\"Deny\"-ACL angegeben ist. An = Alle Initiatoren dürfen verbinden, Aus = "
 "Keiner darf."
 
-#: templates/iscsi/initiator.js:9
-msgid "iSCSI Initiators"
-msgstr "iSCSI Initiatoren"
+#: templates/iscsi/iscsi.js:103 templates/iscsi/iscsi.js.py:730
+msgid "Iscsi"
+msgstr "ISCSI"
 
-#: templates/iscsi/initiator.js:14 templates/iscsi/lun.js:14
-#: templates/iscsi/target.js:14
+#: templates/iscsi/iscsi.js:115
 msgid "Reload"
 msgstr "Neu laden"
 
-#: templates/iscsi/initiator.js:19 templates/iscsi/initiator.js.py:23
-msgid "Add Initiator"
-msgstr "Initiator hinzufügen"
-
-#: templates/iscsi/initiator.js:34 templates/iscsi/initiator.js.py:90
-#: templates/iscsi/target.js:34 templates/iscsi/target.js.py:96
-msgid "Name"
-msgstr "Name"
-
-#: templates/iscsi/initiator.js:38
-msgid "Address (IQN/IP)"
-msgstr "Adresse (IQN/IP)"
-
-#: templates/iscsi/initiator.js:43
-msgid "Create Initiator"
-msgstr "Initiator erzeugen"
-
-#: templates/iscsi/initiator.js:57 templates/iscsi/lun.js:115
-#: templates/iscsi/target.js:63
-msgid "Cancel"
-msgstr "Abbrechen"
-
-#: templates/iscsi/initiator.js:68
-msgid "Delete Initiator"
-msgstr "Initiator löschen"
-
-#: templates/iscsi/initiator.js:94
-msgid "Address"
-msgstr "Adresse"
-
-#: templates/iscsi/initiator.js:106
-msgid "LAN (iSCSI)"
-msgstr "LAN (iSCSI)"
-
-#: templates/iscsi/initiator.js:110
-msgid "Initiators"
-msgstr "Initiatoren"
-
-#: templates/iscsi/lun.js:9
-msgid "iSCSI Luns"
-msgstr "iSCSI Luns"
-
-#: templates/iscsi/lun.js:19 templates/iscsi/lun.js.py:23
-msgid "Add Lun"
-msgstr "Lun hinzufügen"
-
-#: templates/iscsi/lun.js:35 templates/iscsi/lun.js.py:168
-msgid "Volume"
-msgstr "Volume"
-
-#: templates/iscsi/lun.js:44 templates/iscsi/lun.js.py:67
-msgid "Select..."
-msgstr "Bitte wählen..."
-
-#: templates/iscsi/lun.js:50
-msgid "Number"
-msgstr "Nummer"
-
-#: templates/iscsi/lun.js:57 templates/iscsi/lun.js.py:152
-msgid "Target"
-msgstr "Target"
-
-#: templates/iscsi/lun.js:73 templates/iscsi/lun.js.py:164
-msgid "Type"
-msgstr "Typ"
-
-#: templates/iscsi/lun.js:85 templates/iscsi/lun.js.py:160
-msgid "Alias"
-msgstr "Alias"
-
-#: templates/iscsi/lun.js:90
-msgid "Create Lun"
-msgstr "Lun erzeugen"
-
-#: templates/iscsi/lun.js:126
-msgid "Delete Lun"
-msgstr "Lun löschen"
-
-#: templates/iscsi/lun.js:156
-msgid "LUN"
-msgstr "LUN"
-
-#: templates/iscsi/lun.js:179
-msgid "Luns"
-msgstr "Luns"
-
-#: templates/iscsi/target.js:9
-msgid "iSCSI Targets"
-msgstr "iSCSI Targets"
-
-#: templates/iscsi/target.js:19 templates/iscsi/target.js.py:23
-msgid "Add Target"
-msgstr "Target hinzufügen"
-
-#: templates/iscsi/target.js:38 templates/iscsi/target.js.py:100
-msgid "IQN"
-msgstr "IQN"
-
-#: templates/iscsi/target.js:42
-msgid "Allow All"
-msgstr "Alle erlauben"
-
-#: templates/iscsi/target.js:48
+#: templates/iscsi/iscsi.js:120
 msgid "Create Target"
 msgstr "Target erzeugen"
 
-#: templates/iscsi/target.js:74
+#: templates/iscsi/iscsi.js:124
+msgid "Add Target"
+msgstr "Target hinzufügen"
+
+#: templates/iscsi/iscsi.js:138 templates/iscsi/iscsi.js.py:364
+msgid "Name"
+msgstr "Name"
+
+#: templates/iscsi/iscsi.js:144
+msgid "IP/IQN"
+msgstr "IP/IQN"
+
+#: templates/iscsi/iscsi.js:149
+msgid "Create"
+msgstr "Erzeugen"
+
+#: templates/iscsi/iscsi.js:169 templates/iscsi/iscsi.js.py:173
+msgid "Add Lun"
+msgstr "Lun hinzufügen"
+
+#: templates/iscsi/iscsi.js:187
+msgid "Number"
+msgstr "Nummer"
+
+#: templates/iscsi/iscsi.js:194
+msgid "Target"
+msgstr "Target"
+
+#: templates/iscsi/iscsi.js:204
+msgid "Select..."
+msgstr "Bitte wählen..."
+
+#: templates/iscsi/iscsi.js:210
+msgid "Type"
+msgstr "Typ"
+
+#: templates/iscsi/iscsi.js:215
+msgid "Buffered (File IO)"
+msgstr "Gepuffert (File-IO)"
+
+#: templates/iscsi/iscsi.js:215
+msgid "Unbuffered (Block IO)"
+msgstr "Ungepuffert (Block-IO)"
+
+#: templates/iscsi/iscsi.js:222
+msgid "Alias"
+msgstr "Alias"
+
+#: templates/iscsi/iscsi.js:227
+msgid "Create Lun"
+msgstr "Lun erzeugen"
+
+#: templates/iscsi/iscsi.js:252 templates/iscsi/iscsi.js.py:390
+msgid "Cancel"
+msgstr "Abbrechen"
+
+#: templates/iscsi/iscsi.js:263
+msgid "Manage Initiator"
+msgstr "Initiatoren verwalten"
+
+#: templates/iscsi/iscsi.js:329
+msgid "Save"
+msgstr "Speichern"
+
+#: templates/iscsi/iscsi.js:346
+msgid "Add"
+msgstr "Hinzufügen"
+
+#: templates/iscsi/iscsi.js:350
+msgid "Add Initiator"
+msgstr "Initiator hinzufügen"
+
+#: templates/iscsi/iscsi.js:371
+msgid "Address (IQN/IP)"
+msgstr "Adresse (IQN/IP)"
+
+#: templates/iscsi/iscsi.js:376
+msgid "Create Initiator"
+msgstr "Initiator erzeugen"
+
+#: templates/iscsi/iscsi.js:401
+msgid "Delete"
+msgstr "Löschen"
+
+#: templates/iscsi/iscsi.js:418
+msgid "Bind IPs"
+msgstr "Bind-Adressen"
+
+#: templates/iscsi/iscsi.js:455
+msgid "Delete Initiator"
+msgstr "Initiator löschen"
+
+#: templates/iscsi/iscsi.js:474
+msgid "Delete Bind IPs"
+msgstr "IPs löschen"
+
+#: templates/iscsi/iscsi.js:487
+msgid "Delete Lun"
+msgstr "Lun löschen"
+
+#: templates/iscsi/iscsi.js:499
 msgid "Delete Target"
 msgstr "Target löschen"
 
-#: templates/iscsi/target.js:111
-msgid "Targets"
-msgstr "Targets"
+#~ msgid "iSCSI Initiators"
+#~ msgstr "iSCSI Initiatoren"
+
+#~ msgid "LAN (iSCSI)"
+#~ msgstr "LAN (iSCSI)"
+
+#~ msgid "Initiators"
+#~ msgstr "Initiatoren"
+
+#~ msgid "iSCSI Luns"
+#~ msgstr "iSCSI Luns"
+
+#~ msgid "Volume"
+#~ msgstr "Volume"
+
+#~ msgid "LUN"
+#~ msgstr "LUN"
+
+#~ msgid "Luns"
+#~ msgstr "Luns"
+
+#~ msgid "iSCSI Targets"
+#~ msgstr "iSCSI Targets"
+
+#~ msgid "IQN"
+#~ msgstr "IQN"
+
+#~ msgid "Allow All"
+#~ msgstr "Alle erlauben"
+
+#~ msgid "Targets"
+#~ msgstr "Targets"

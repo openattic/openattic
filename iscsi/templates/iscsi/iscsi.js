@@ -212,7 +212,7 @@ Ext.oa.Iscsi__Panel = Ext.extend(Ext.Panel, {
                 ref: 'typefield',
                 hiddenName: 'l_type',
                 xtype:      'combo',
-                store: [ [ 'fileio',  'File IO'  ], [ 'blockio', 'Block IO' ] ],
+                store: [ [ 'fileio',  "{% trans 'Buffered (File IO)' %}"  ], [ 'blockio', "{% trans 'Unbuffered (Block IO)' %}" ] ],
                 typeAhead:     true,
                 triggerAction: 'all',
                 emptyText:     'Select...',
@@ -326,7 +326,7 @@ Ext.oa.Iscsi__Panel = Ext.extend(Ext.Panel, {
                   name: 'address'
                 }],
                 buttons: [{
-                text: "{% trans 'Save Edit' %}",
+                text: "{% trans 'Save' %}",
                 icon: MEDIA_URL + "/icons2/16x16/actions/edit-redo.png",
                 handler: function(self){
                   var sm = addwin.initiator_all.getSelectionModel();
