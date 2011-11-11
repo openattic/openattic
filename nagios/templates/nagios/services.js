@@ -298,7 +298,7 @@ Ext.oa.Nagios__Service_Module = Ext.extend(Object, {
   },
 
   getDashboardPortlets: function(tools){
-    var portletstate = Ext.state.Manager.get( "nagios_portlets" );
+    var portletstate = Ext.state.Manager.get( "nagios_portlets", [] );
     var portlets = [];
     for( var i = 0; i < portletstate.length; i++ ){
       portlets.push( {
