@@ -75,6 +75,42 @@ Ext.oa.Nagios__Graph_ImagePanel = Ext.extend(Ext.Panel, {
 Ext.reg("naggraphimage", Ext.oa.Nagios__Graph_ImagePanel);
 
 
+Ext.oa.Nagios__Graph_ImagePortlet = Ext.extend(Ext.ux.Portlet, {
+  initComponent: function(){
+    Ext.apply(this, Ext.applyIf(this.initialConfig, {
+      items: {
+        xtype: "naggraphimage",
+        reloadInterval: 300,
+        timespan: 4*60*60,
+        height: 280,
+        graphwidth: 230,
+      }
+    }));
+    if( this.recordId && this.graphId ){
+      Ext.applyIf( this.items, {
+        currentRecord: { data: { id: this.recordId } },
+        currentId: this.graphId
+      });
+    }
+    Ext.oa.Nagios__Graph_ImagePortlet.superclass.initComponent.apply(this, arguments);
+  },
+
+  onClose: function(){
+    Ext.oa.Nagios__Graph_ImagePortlet.superclass.onClose.apply(this, arguments);
+    var portletstate = Ext.state.Manager.get( "nagios_portlets", [] );
+    for( var i = 0; i < portletstate.length; i++ ){
+      if( "portlet_nagios_" + portletstate[i].id === this.id ){
+        portletstate.remove(portletstate[i]);
+        break;
+      }
+    }
+    Ext.state.Manager.set( "nagios_portlets", portletstate );
+  }
+});
+
+Ext.reg("naggraphportlet", Ext.oa.Nagios__Graph_ImagePortlet);
+
+
 Ext.oa.Nagios__Service_Panel = Ext.extend(Ext.Panel, {
   initComponent: function(){
     var nagiosGrid = this;
@@ -126,17 +162,11 @@ Ext.oa.Nagios__Service_Panel = Ext.extend(Ext.Panel, {
                   });
                   Ext.state.Manager.set( "nagios_portlets", portletstate );
                   dashboard.makePortlet({
+                    xtype: "naggraphportlet",
                     title: text,
                     id: "portlet_nagios_" + portletid,
-                    items: {
-                      xtype: "naggraphimage",
-                      reloadInterval: 300,
-                      timespan: 4*60*60,
-                      height: 280,
-                      graphwidth: 230,
-                      currentRecord: { data: { id: record.data.id } },
-                      currentId: graph.id
-                    }
+                    recordId: record.data.id,
+                    graphId:  graph.id
                   });
                 }
               },
@@ -302,18 +332,12 @@ Ext.oa.Nagios__Service_Module = Ext.extend(Object, {
     var portlets = [];
     for( var i = 0; i < portletstate.length; i++ ){
       portlets.push( {
+        xtype: "naggraphportlet",
         title: portletstate[i].title,
         id: 'portlet_nagios_' + portletstate[i].id,
         tools: tools,
-        items: {
-          xtype: "naggraphimage",
-          reloadInterval: 300,
-          timespan: 4*60*60,
-          height: 280,
-          graphwidth: 230,
-          currentRecord: { data: { id: portletstate[i].recordid } },
-          currentId: portletstate[i].graphid
-        }
+        recordId: portletstate[i].recordid,
+        graphId:  portletstate[i].graphid
       } );
     }
     return portlets;
