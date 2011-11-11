@@ -153,7 +153,6 @@ Ext.oa.Portal = Ext.extend(Ext.ux.Portal, {
                   conf.vars.push(key);
                   conf.data.push([result.result[key]]);
                 }
-                console.log(conf);
                 chart.canvas.updateData({ y: conf });
               }
             });
@@ -193,7 +192,6 @@ Ext.oa.Portal = Ext.extend(Ext.ux.Portal, {
                   conf.vars.push(key);
                   conf.data.push([result.result[key]]);
                 }
-                console.log(conf);
                 chart.canvas.updateData({ y: conf });
               }
             });
