@@ -32,13 +32,13 @@ Ext.oa.SSMTP_Panel = Ext.extend(Ext.Panel, {
           ref: 'emailfield'
         },{
           fieldLabel: "{% trans 'Mailserver' %}",
-          name: "{% trans 'mailhub' %}",
+          name: "mailhub",
           width: 200,
           allowBlank: false,
           ref: 'mailserverfield'
         },{
           fieldLabel: "{% trans 'Domainname' %}",
-          name:  "{% trans 'rewriteDomain' %}",
+          name:  "rewriteDomain",
           width: 200,
           allowBlank: false,
           ref: 'domainnamefield'
@@ -47,8 +47,8 @@ Ext.oa.SSMTP_Panel = Ext.extend(Ext.Panel, {
           text: "{% trans 'Save' %}",
           handler: function(self){
             ssmtp__SSMTP.set(1, {
-              'root':            self.ownerCt.ownerCt.emailfield.getValue(), 
-              'mailhub':         self.ownerCt.ownerCt.mailserverfield.getValue(), 
+              'root':            self.ownerCt.ownerCt.emailfield.getValue(),
+              'mailhub':         self.ownerCt.ownerCt.mailserverfield.getValue(),
               'rewriteDomain':   self.ownerCt.ownerCt.domainnamefield.getValue()
             });
             Ext.Msg.show({
