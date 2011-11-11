@@ -8,8 +8,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2011-11-11 12:01+0100\n"
-"PO-Revision-Date: 2011-11-11 12:02\n"
+"POT-Creation-Date: 2011-11-11 12:07+0100\n"
+"PO-Revision-Date: 2011-11-11 12:08\n"
 "Last-Translator: Michael Ziegler <michael.ziegler@it-novum.com>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
 "MIME-Version: 1.0\n"
@@ -31,11 +31,12 @@ msgstr "Neu laden"
 msgid "Add User"
 msgstr "Benutzer hinzufügen"
 
-#: auth__user.js:40 auth__user.js.py:262
+#: auth__user.js:40 auth__user.js.py:138 auth__user.js.py:226
+#: auth__user.js:262
 msgid "User Name"
 msgstr "Benutzername"
 
-#: auth__user.js:44
+#: auth__user.js:44 auth__user.js.py:232
 msgid "Password"
 msgstr "Passwort"
 
@@ -55,7 +56,7 @@ msgstr "E-Mail"
 msgid "Active"
 msgstr "Aktiv"
 
-#: auth__user.js:67
+#: auth__user.js:67 auth__user.js.py:174
 msgid "SuperUser"
 msgstr "Administrator"
 
@@ -66,6 +67,18 @@ msgstr "Personal"
 #: auth__user.js:108
 msgid "Delete User"
 msgstr "Benutzer löschen"
+
+#: auth__user.js:120
+msgid "Edit"
+msgstr "Bearbeiten"
+
+#: auth__user.js:127
+msgid "Edit User"
+msgstr "Benutzer bearbeiten"
+
+#: auth__user.js:180
+msgid "Save"
+msgstr "Speichern"
 
 #: auth__user.js:208 auth__user.js.py:215
 msgid "Change Password"

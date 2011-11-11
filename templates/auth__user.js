@@ -117,14 +117,14 @@ Ext.oa.Auth__User_Panel = Ext.extend(Ext.grid.GridPanel, {
           }
         }
       },{
-        text: 'Edit',
+        text: "{% trans 'Edit' %}",
         icon: MEDIA_URL + "/icons2/16x16/actions/edit-redo.png",
         handler: function(self){
           var sm = authUserGrid.getSelectionModel();
           if( sm.hasSelection() ){
             var sel = sm.selections.items[0];
             var addwin = new Ext.Window({
-              title: "Edit User",
+              title: "{% trans 'Edit User' %}",
               layout: "fit",
               height: 300,
               width: 500,
@@ -135,49 +135,49 @@ Ext.oa.Auth__User_Panel = Ext.extend(Ext.grid.GridPanel, {
                   anchor: '-20px'
                 },
                 items: [{
-                  fieldLabel: "User Name",
+                  fieldLabel: "{% trans 'User Name' %}",
                   name: "username",
                   ref: 'usernamefield',
                   value: sel.data.username
                 },{
-                  fieldLabel: "First Name",
+                  fieldLabel: "{% trans 'First Name' %}",
                   inputType: 'first_name',
                   name: "first_name",
                   ref: 'firstnamefield',
                   value: sel.data.first_name
                 },{
-                  fieldLabel: "Last Name",
+                  fieldLabel: "{% trans 'Last Name' %}",
                   inputType: 'last_name',
                   name: "last_name",
                   ref: 'lastnamefield',
                   value: sel.data.last_name
                 },{
-                  fieldLabel: "Email",
+                  fieldLabel: "{% trans 'E-Mail' %}",
                   inputType: 'email',
                   name: "email",
                   ref: 'emailfield',
                   value: sel.data.email
                 },{
                   xtype: 'checkbox',
-                  fieldLabel: "Active",
+                  fieldLabel: "{% trans 'Active' %}",
                   name: "active",
                   ref: 'activefield',
                   checked: sel.data.is_active
                 },{
                   xtype: 'checkbox',
-                  fieldLabel: "Staff",
+                  fieldLabel: "{% trans 'Staff' %}",
                   name: "staff",
                   ref: 'stafffield',
                   checked: sel.data.is_staff
                 },{
                   xtype: 'checkbox',
-                  fieldLabel: "SU",
+                  fieldLabel: "{% trans 'SuperUser' %}",
                   name: "su",
                   ref: 'sufield',
                   checked: sel.data.is_superuser
                 }],
                 buttons: [{
-                  text: 'Save',
+                  text: "{% trans 'Save' %}",
                   handler: function(self){
                     var sm = authUserGrid.getSelectionModel();
                     if( sm.hasSelection() ){
@@ -223,13 +223,13 @@ Ext.oa.Auth__User_Panel = Ext.extend(Ext.grid.GridPanel, {
                   anchor: '-20px'
                 },
                 items: [{
-                  fieldLabel: "User Name",
+                  fieldLabel: "{% trans 'User Name' %}",
                   disabled: true,
                   name: "username",
                   ref: 'usernamefield',
                   value: sel.data.username
                 },{
-                  fieldLabel: "Password",
+                  fieldLabel: "{% trans 'Password' %}",
                   inputType: 'password',
                   name: "password",
                   ref: 'passwordfield'
