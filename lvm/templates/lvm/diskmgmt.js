@@ -172,9 +172,47 @@ Ext.oa.volumeGroup_Panel = Ext.extend(Ext.grid.GridPanel, {
           });
           initwin.show();
         }
-      }],
+      },{
+        text: "{% trans "Delete Group" %}",
+        icon: MEDIA_URL + "/icons2/16x16/actions/remove.png",
+        handler: function(self){
+          var sm = volumeGroupPanel.getSelectionModel();
+          if( sm.hasSelection() ){
+            var sel = sm.selections.items[0];
+            lvm__LogicalVolume.filter({"vg__name":sel.data.name},function(provider, response){
+              var vgremove = function(){
+                Ext.Msg.confirm(
+                  "{% trans 'Confirm delete' %}",
+                  interpolate(
+                    "{% trans 'Really delete Group %s ?' %}",
+                    [sel.data.name] ),
+                  function(btn, text){
+                    if( btn == 'yes' ){
+                      lvm__VolumeGroup.remove( sel.data.id, function(provider, response){
+                        volumeGroupPanel.store.reload();
+                      } );
+                    }
+                  }
+                );
+              }
+              if(response.result.length > 0){
+                  Ext.Msg.confirm(
+                    "Confirm delete",
+                    interpolate("Volumes found in this group. Delete all remaining volumes?"),
+                      function(btn, text){
+                        if(btn == 'yes')                       
+                            vgremove();
+                            return 
+                      });
+              }
+              else{vgremove();}
+            });
+          }
+        }
+    }],
       viewConfig: { forceFit: true },
       store: volumeGroups,
+      ref: 'volumegroupGrid',
       colModel: new Ext.grid.ColumnModel({
         defaults: {
           sortable: true
@@ -184,18 +222,16 @@ Ext.oa.volumeGroup_Panel = Ext.extend(Ext.grid.GridPanel, {
           dataIndex: "name"
         },{
           header: "Size",
-          dataIndex: "LVM_VG_SIZE",
-          renderer: function(val){ if( val ) return val; return '♻' }
+          dataIndex: "LVM_VG_SIZE"
         },{
           header: "Free",
-          dataIndex: "LVM_VG_FREE",
-          renderer: function(val){ if( val ) return val; return '♻' }
+          dataIndex: "LVM_VG_FREE"
         },{
           header: "Attributes",
-          dataIndex: "LVM_VG_ATTR",
-          renderer: function(val){ if( val ) return val; return '♻' }
+          dataIndex: "LVM_VG_ATTR"
         }]
       })
+          
     }));
     Ext.oa.volumeGroup_Panel.superclass.initComponent.apply(this, arguments);
   },
@@ -203,6 +239,7 @@ Ext.oa.volumeGroup_Panel = Ext.extend(Ext.grid.GridPanel, {
     Ext.oa.volumeGroup_Panel.superclass.onRender.apply(this, arguments);
     volumeGroups.load();
   }
+  
 });
 
 Ext.reg("volumeGroup_Panel", Ext.oa.volumeGroup_Panel);
