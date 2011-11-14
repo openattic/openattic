@@ -100,7 +100,7 @@ Ext.oa.Iscsi__Panel = Ext.extend(Ext.Panel, {
     
     Ext.apply(this, Ext.apply(this.initialConfig, {
       id: 'iscsi__initiator_panel_inst',
-      title: "{% trans 'Iscsi' %}",
+      title: "{% trans 'iSCSI' %}",
       layout: 'table',
       layoutConfig:{columns: 3},
       autoScroll: true,
