@@ -1,5 +1,6 @@
 # -*- coding: utf-8 -*-
 # kate: space-indent on; indent-width 4; replace-tabs on;
+
 import socket
 from systemd       import invoke, logged, LockingPlugin, method
 from ssmtp.models  import SSMTP
