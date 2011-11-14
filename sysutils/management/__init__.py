@@ -5,7 +5,7 @@ import sysutils.models
 from sysutils.models  import NTP
 from django.db.models import signals
 
-def create_ssmtp(app, created_models, verbosity, **kwargs):
+def create_ntp(app, created_models, verbosity, **kwargs):
     try:
         NTP.objects.get(id=1)
     except NTP.DoesNotExist:
@@ -21,4 +21,4 @@ def create_ssmtp(app, created_models, verbosity, **kwargs):
         s.save()
         print "The NTP module has been initialized successfully."
 
-signals.post_syncdb.connect(create_ssmtp, sender=sysutils.models)
+signals.post_syncdb.connect(create_ntp, sender=sysutils.models)
