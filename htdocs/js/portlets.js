@@ -7,7 +7,7 @@ Ext.oa.getDefaultPortlets = function(tools){
     id: 'portlet_lvs',
     tools: tools,
     items: new Ext.grid.GridPanel({
-      height: 250,
+      height: 265,
       viewConfig: { forceFit: true },
       split: true,
       store: (function(){
@@ -68,7 +68,7 @@ Ext.oa.getDefaultPortlets = function(tools){
     id: 'portlet_nfs',
     tools: tools,
     items: new Ext.grid.GridPanel({
-    height: 320,
+    height: 265,
     split: true,
       store: new Ext.data.DirectStore({
         autoLoad: true,
