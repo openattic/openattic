@@ -287,7 +287,10 @@ class SystemD(BasePlugin):
 
     @method(in_signature="ss", out_signature="a(ssss)")
     def zfs_get(self, device, field):
-        ret, out, err = invoke(["zfs", "get", "-H", field, device], return_out_err=True, log=False)
+        args = ["zfs", "get", "-H", field]
+        if device:
+            args.append(device)
+        ret, out, err = invoke(args, return_out_err=True, log=False)
         return [line.split("\t") for line in out.split("\n")[:-1]]
 
     @method(in_signature="sss", out_signature="i")
