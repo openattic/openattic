@@ -15,7 +15,7 @@ Ext.oa.Portal = Ext.extend(Ext.ux.Portal, {
       portletTools: tools,
       items: (function(){
         var state = Ext.state.Manager.get("portalstate",
-          [["portlet_lvs", "portlet_nfs"], ["portlet_cpu", "portlet_iops_itcosm3"], ["portlet_ram", "portlet_iops_sdb"]]);
+          [["portlet_lvs", "portlet_nfs"], ["portlet_cpu"], ["portlet_ram"]]);
 
         var all_portlets = Ext.oa.getDefaultPortlets(tools);
 
