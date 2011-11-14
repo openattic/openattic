@@ -113,6 +113,18 @@ class VolumeGroup(models.Model):
             raise ValueError( "Device '%s' is in use, won't touch it." % device )
         lvm = dbus.SystemBus().get_object(settings.DBUS_IFACE_SYSTEMD, "/lvm")
         return lvm.join_device_to_vg(device, self.name)
+    
+    def delete(self):
+        lvm = dbus.SystemBus().get_object(settings.DBUS_IFACE_SYSTEMD, "/lvm")
+        for lv in LogicalVolume.objects.filter(vg=self):
+            lv.delete()
+        pvs = lvm.pvs()
+        lvm.vgremove(self.name)
+        if pvs:
+            for device in pvs:
+                if pvs[device]["LVM2_VG_NAME"] == self.name:
+                    lvm.pvremove(device) 
+        models.Model.delete(self)
 
     @classmethod
     def get_mounts(cls):
@@ -137,7 +149,7 @@ class VolumeGroup(models.Model):
                 fd.close()
 
         for dirname in os.listdir("/sys/bus/scsi/devices"):
-            if re.match( "^\d:\d:\d:\d$", dirname ):
+            if re.match( "^\d+:\d+:\d+:\d+$", dirname ):
                 basedir = os.path.join( "/sys/bus/scsi/devices", dirname )
                 devinfo.append({
                     "type":   getfile(basedir, "type"),
