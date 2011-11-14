@@ -124,6 +124,16 @@ class SystemD(BasePlugin):
         self.lvs_time = 0
         return invoke(["/sbin/lvremove", '-f', device])
 
+    @method(in_signature="s", out_signature="i")
+    def vgremove(self, device):
+        self.vgs_time = 0
+        return invoke(["/sbin/vgremove", '-f', device])
+
+    @method(in_signature="s", out_signature="i")
+    def pvremove(self, device):
+        self.pvs_time = 0
+        return invoke(["/sbin/pvremove", '-f', device])
+
 
     @method(in_signature="sss", out_signature="i")
     def fs_mount(self, fstype, devpath, mountpoint):
