@@ -727,7 +727,7 @@ Ext.oa.Iscsi__Module = Ext.extend(Object, {
   panel: "iscsi__panel",
   prepareMenuTree: function(tree){
     tree.appendToRootNodeById("menu_luns", {
-      text: "{% trans 'Iscsi' %}",
+      text: "{% trans 'iSCSI' %}",
       leaf: true,
       panel: 'iscsi__initiator_panel_inst',
       icon: MEDIA_URL + "/oxygen/22x22/places/repository.png",
