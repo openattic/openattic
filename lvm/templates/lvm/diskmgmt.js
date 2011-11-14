@@ -71,7 +71,16 @@ Ext.oa.volumeGroup_Panel = Ext.extend(Ext.grid.GridPanel, {
                 name:       'disk',
                 hiddenName: 'disk_id',
                 store: new Ext.data.DirectStore({
-                  fields: ["rev", "model", "vendor", "block", "type"],
+                  fields: ["rev", "model", "vendor", "block", "type",
+                   {
+                    name: 'block_model',
+                    mapping: 'block',
+                    convert: function(val, row) {
+                    if( val === null )
+                      return null;
+                    return val + " - " + row.model;
+                  }
+                }],
                   directFn: lvm__VolumeGroup.get_devices
                 }),
                 typeAhead:     true,
@@ -79,7 +88,7 @@ Ext.oa.volumeGroup_Panel = Ext.extend(Ext.grid.GridPanel, {
                 emptyText:     'Select...',
                 selectOnFocus: true,
                 forceSelection: true,
-                displayField:  'block',
+                displayField:  'block_model',
                 valueField:    'block',
                 ref:           'diskfield',
                 listeners: {
