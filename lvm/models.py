@@ -418,7 +418,10 @@ class LogicalVolume(StatefulModel):
         elif self.snapshot.snapshot:
             raise ValidationError(_('LVM does not support snapshotting snapshots.'))
 
-    def save( self, *args, **kwargs ):
+    def save( self, database_only=False, *args, **kwargs ):
+        if database_only:
+            return StatefulModel.save(self, ignore_state=True, *args, **kwargs)
+
         self.state = "active"
         install = (self.id is None)
 
