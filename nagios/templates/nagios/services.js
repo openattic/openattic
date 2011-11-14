@@ -82,7 +82,7 @@ Ext.oa.Nagios__Graph_ImagePortlet = Ext.extend(Ext.ux.Portlet, {
         xtype: "naggraphimage",
         reloadInterval: 300,
         timespan: 4*60*60,
-        height: 280,
+        height: 265,
         graphwidth: 230,
       }
     }));
