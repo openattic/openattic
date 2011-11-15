@@ -15,6 +15,7 @@ Ext.oa.Nagios__Graph_ImagePanel = Ext.extend(Ext.Panel, {
     fgcol: 'FFFFFF'
     {% endif %}
   },
+  reloadTimerId: 0,
   initComponent: function(){
     Ext.apply(this, Ext.applyIf(this.initialConfig, {
       reloadInterval: 0,
@@ -66,8 +67,11 @@ Ext.oa.Nagios__Graph_ImagePanel = Ext.extend(Ext.Panel, {
         url += "&width=" + this.graphwidth;
       }
       this.items.items[0].el.dom.src = url;
-      if( this.reloadInterval )
-        this.loadRecord.defer(this.reloadInterval*1000, this, [this.currentRecord, this.currentId]);
+      if( this.reloadInterval ){
+        if( this.reloadTimerId != 0 )
+          clearTimeout(this.reloadTimerId);
+        this.reloadTimerId = this.loadRecord.defer(this.reloadInterval*1000, this, [this.currentRecord, this.currentId]);
+      }
     }
   }
 });
@@ -247,7 +251,8 @@ Ext.oa.Nagios__Service_Panel = Ext.extend(Ext.Panel, {
           items: [{
             xtype: "naggraphimage",
             title: "{% trans '4 hours' %}",
-            timespan: 4*60*60
+            timespan: 4*60*60,
+            reloadInterval: 300
           }, {
             xtype: "naggraphimage",
             title: "{% trans '1 day' %}",
