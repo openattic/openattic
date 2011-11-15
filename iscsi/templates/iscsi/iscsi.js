@@ -404,9 +404,19 @@ Ext.oa.Iscsi__Panel = Ext.extend(Ext.Panel, {
                   var sm = addwin.initiator_all.getSelectionModel();
                   if( sm.hasSelection() ){
                     var sel = sm.selections.items[0];
-                    iscsi__Initiator.remove( sel.data.id, function(provider, response){
-                      init_all.reload();
-                    } );
+                     Ext.Msg.confirm(
+                      "{% trans 'Confirm delete' %}",
+                      interpolate(
+                        "{% trans 'Really delete Initiator %s' %}",
+                        [sel.data.name] ),
+                      function(btn, text){
+                        if( btn == 'yes' ){
+                          iscsi__Initiator.remove( sel.data.id, function(provider, response){
+                            init_all.reload();
+                            } );
+                        }
+                      }
+                    );
                   }
                 }
               }           
@@ -478,9 +488,18 @@ Ext.oa.Iscsi__Panel = Ext.extend(Ext.Panel, {
            var parent = iscsiPanel.targets.getSelectionModel();
            var parentid = parent.selections.items[0];
            if( bindIP.hasSelection() ){
-             var selectedItem = bindIP.getSelected();
-             tgt_allow.remove(selectedItem);
-             storeUpdate(tgt_allow, parentid.data.id, "tgt_allow");
+             var sel = bindIP.getSelected();
+             Ext.Msg.confirm(
+              "{% trans 'Confirm delete' %}",
+              interpolate(
+                "{% trans 'Really delete IP %s?' %}",
+                [sel.data.address] ),
+              function(btn, text){
+                if( btn == 'yes' ){
+                  tgt_allow.remove(sel);
+                  storeUpdate(tgt_allow, parentid.data.id, "tgt_allow");
+                  };
+              }); 
            }
           }
       },{
@@ -490,9 +509,19 @@ Ext.oa.Iscsi__Panel = Ext.extend(Ext.Panel, {
           var sm = iscsiPanel.lun.getSelectionModel();
           if( sm.hasSelection() ){
             var sel = sm.selections.items[0];
-            iscsi__Lun.remove( sel.data.id, function(provider, response){
-              lunStore.reload();
-            } );
+            Ext.Msg.confirm(
+              "{% trans 'Confirm delete' %}",
+              interpolate(
+                "{% trans 'Really delete Lun %s?' %}",
+                [sel.data.alias] ),
+              function(btn, text){
+                if( btn == 'yes' ){
+                  iscsi__Lun.remove( sel.data.id, function(provider, response){
+                  lunStore.reload();
+                  } );
+                }
+              }
+            );
           }
         }
       },{
@@ -502,13 +531,23 @@ Ext.oa.Iscsi__Panel = Ext.extend(Ext.Panel, {
            var sm = iscsiPanel.targets.getSelectionModel();
            if( sm.hasSelection() ){
              var sel = sm.selections.items[0];
-             iscsi__Target.remove( sel.data.id, function(provider, response){
-               targetStore.reload();
-               lunStore.reload();
-               init_allow.reload();
-               init_deny.reload();
-               tgt_allow.reload();
-             });
+             Ext.Msg.confirm(
+              "{% trans 'Confirm delete' %}",
+              interpolate(
+                "{% trans 'Really delete Target %s?' %}",
+                [sel.data.name] ),
+              function(btn, text){
+                if( btn == 'yes' ){
+                  iscsi__Target.remove( sel.data.id, function(provider, response){
+                  targetStore.reload();
+                  lunStore.removeAll();
+                  init_allow.removeAll();
+                  init_deny.removeAll();
+                  tgt_allow.removeAll();
+                  });
+                }
+              }
+            );  
            }
           }
         }
