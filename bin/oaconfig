@@ -1,0 +1,106 @@
+#!/bin/bash
+
+set -e
+set -u
+
+. /etc/default/openattic
+
+cd $OADIR
+OAUSER=` cut -d: -f1 <<< "$RPCD_CHUID"`
+
+if [ "$#" = "0" ]; then
+    echo "Usage: $0 <command> [<args>]"
+    echo
+    echo "Wrapper around the openATTIC management system."
+    echo
+    echo "Valid commands are:"
+    echo
+    echo "    install      Run this command after you installed new openATTIC modules."
+    echo "    install-cli  Generate an API Key and a corresponding oacli configuration."
+    echo "    scan-vgs     Instruct LVM to search for existing VGs."
+    echo "    add-vg       Make an already existing LVM Volume Group known to openATTIC."
+    echo "    restart      Restart all services that are needed to run openATTIC."
+    echo "    reload       Reload all services that are needed to run openATTIC."
+    echo
+    echo "Any other command will be passed as-is to the openATTIC management system,"
+    echo "which supports the commands and options listed below."
+    echo
+
+    su "$OAUSER" -c 'python manage.py help'
+    exit 1
+fi
+
+case $1 in
+	install)
+		su "$OAUSER" -c 'python manage.py syncdb --noinput'
+		$0 reload
+		if [ ! -e /var/lib/openattic/haveadmin ]; then
+			echo "You need to create an Administrator user in order to login to openATTIC now."
+			su "$OAUSER" -c 'python manage.py createsuperuser'
+			touch /var/lib/openattic/haveadmin
+		fi
+		;;
+
+	install-cli)
+		if [ -f "/etc/openattic/cli.conf" ]; then
+			echo "/etc/openattic/cli.conf already exists, quitting" >&2
+			exit 1
+		fi
+		echo "Please enter the username of the system admin you created using $0 install."
+		read USERNAME
+		KEY=$( $0 mkapikey -u $USERNAME )
+		
+		if [ ! -z "$RPCD_CERTFILE" -a ! -z "$RPCD_KEYFILE" ]; then
+			PROTO="https"
+		else
+			PROTO="http"
+		fi
+		
+		echo "[options]"                                    > /etc/openattic/cli.conf
+		echo "connect = $PROTO://__:$KEY@localhost:31234/" >> /etc/openattic/cli.conf
+		echo "uidcheck = True"                             >> /etc/openattic/cli.conf
+		echo "Successfully created /etc/openattic/cli.conf, oacli should now be ready to go."
+		;;
+
+	scan-vg|scan-vgs)
+		vgscan --mknodes
+		vgchange -ay
+		;;
+
+	add-vg)
+		if [ "$#" != "2" ]; then
+			echo "Usage: $0 $1 <vgname>" >&2
+			exit 1
+		fi
+		if [ ! -f "/etc/openattic/cli.conf" ]; then
+			echo "This command requires oacli to be configured (run $0 install-cli)."
+			exit 1
+		fi
+		oacli lvm.VolumeGroup.create "json:{\"name\": \"$2\"}"
+		;;
+
+	restart|force-reload)
+		/etc/init.d/openattic_systemd restart
+		/etc/init.d/openattic_rpcd restart
+		/etc/init.d/apache2 restart
+		;;
+
+	reload)
+		/etc/init.d/openattic_systemd restart
+		/etc/init.d/openattic_rpcd restart
+		/etc/init.d/apache2 reload
+		;;
+
+	status)
+		/etc/init.d/openattic_systemd status || /bin/true
+		/etc/init.d/openattic_rpcd status    || /bin/true
+		/etc/init.d/apache2 status           || /bin/true
+		;;
+
+	*)
+		# Big thanks to DireFog and pcgod for the following line
+		# First pass my "$@" in a whitespace-preserving way to su's subshell,
+		# which then passes it on to manage.py.
+		su "$OAUSER" -- -c 'python manage.py "$@"' dummy "$@"
+		;;
+esac
