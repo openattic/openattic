@@ -37,4 +37,4 @@ debian/apache2_conf.d/openattic     /etc/apache2/conf.d
 debian/default/openattic            /etc/default
 debian/dbus_system.d/openattic.conf /etc/dbus-1/system.d
 
-debian/oaconfig /usr/sbin
+bin/oaconfig /usr/sbin
