@@ -15,7 +15,17 @@ Ext.oa.Zfs__Subvolume__Panel = Ext.extend(Ext.grid.GridPanel, {
       viewConfig: { forceFit: true },
         store: new Ext.data.DirectStore({
           autoLoad: true,
-          fields: ['volname'],
+          fields: ['volname',
+          {
+            name: 'orivolume',
+            mapping: 'volume',
+            convert: function(val, row) {
+            if( val === null )
+              return null;
+            return val.name;
+            }     
+          }
+        ],
           directFn: lvm__ZfsSubvolume.all
         }),
         colModel: new Ext.grid.ColumnModel({
@@ -25,6 +35,9 @@ Ext.oa.Zfs__Subvolume__Panel = Ext.extend(Ext.grid.GridPanel, {
           columns: [{
             header: "{% trans 'Subvolume' %}",
             dataIndex: "volname"
+          },{
+            header: "{% trans 'Volume' %}",
+            dataIndex: "orivolume"
           }]
         }),
        buttons: [

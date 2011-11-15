@@ -171,7 +171,16 @@ Ext.oa.Zfs__Snapshot_Panel = Ext.extend(Ext.Panel, {
           autoScroll: true,
           viewConfig: { forceFit: true },
             store: new Ext.data.DirectStore({
-              fields: ['volname'],
+              fields: ['volname',
+              {
+                name: 'orivolume',
+                mapping: 'volume',
+                convert: function(val, row) {
+                if( val === null )
+                  return null;
+                return val.name;
+              }
+            }],     
               directFn: lvm__ZfsSubvolume.all
             }),
             colModel: new Ext.grid.ColumnModel({
@@ -181,6 +190,9 @@ Ext.oa.Zfs__Snapshot_Panel = Ext.extend(Ext.Panel, {
               columns: [{
                 header: "{% trans 'Subvolume' %}",
                 dataIndex: "volname"
+              },{
+                header: "{% trans 'Volume' %}",
+                dataIndex: "orivolume"
               }]
             }),
              listeners: {
