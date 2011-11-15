@@ -5,11 +5,16 @@ import os
 import socket
 import netifaces
 
-import ifconfig.models
-from ifconfig.models  import NetDevice, IPAddress
+from django.core.management import call_command
 from django.db.models import signals
 
-def create_interfaces(app, created_models, verbosity, **kwargs):
+import ifconfig.models
+from ifconfig.models  import NetDevice, IPAddress
+
+def create_interfaces(app, created_models, verbosity, interactive, db, **kwargs):
+    # First of all, make sure our fixtures have been loaded
+    call_command('loaddata', 'ifconfig/fixtures/initial_data.json', verbosity=verbosity, database=db)
+
     if os.path.exists("/proc/net/vlan/config"):
         with open("/proc/net/vlan/config") as vlanconf:
             vlans = [ [ field.strip() for field in line.split('|') ] for line in vlanconf ]
