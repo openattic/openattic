@@ -83,7 +83,7 @@ Ext.oa.Nagios__Graph_ImagePortlet = Ext.extend(Ext.ux.Portlet, {
         reloadInterval: 300,
         timespan: 4*60*60,
         height: 265,
-        graphwidth: 230,
+        graphwidth: 230
       }
     }));
     if( this.recordId && this.graphId ){

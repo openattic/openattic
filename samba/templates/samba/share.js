@@ -142,7 +142,7 @@ Ext.oa.Samba__Share_Panel = Ext.extend(Ext.grid.GridPanel, {
                 name: "dir mode",
                 ref: 'dirmodefield',
                 value:     '0775'
-              },"{% trans 'Set rights for the Directory' %}"),
+              },"{% trans 'Set rights for the Directory' %}")
               ],
               buttons: [{
                 text: "{% trans 'Create Share' %}",
