@@ -20,7 +20,7 @@ Ext.oa.getDefaultPortlets = function(tools){
             sortType: 'asInt',
             convert: function( val, row ){
               if( val === null || typeof val.stat === "undefined" )
-                return '';
+                return -1; // fake to sort unknown values always at the bottom
               return (val.stat.used / val.stat.size * 100 ).toFixed(2);
             }
           }],
@@ -51,7 +51,7 @@ Ext.oa.getDefaultPortlets = function(tools){
           dataIndex: "fsused",
           align: 'right',
           renderer: function( val, x, store ){
-            if( !val )
+            if( !val || val === -1 )
               return '';
             if( val > Ext.state.Manager.get("lv_red_threshold", 90.0) )
               var color = "red";
