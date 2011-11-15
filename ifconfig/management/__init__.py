@@ -40,7 +40,7 @@ def create_interfaces(app, created_models, verbosity, **kwargs):
         elif os.path.exists( "/sys/class/net/%s/bonding/slaves" % iface ):
             depends = open("/sys/class/net/%s/bonding/slaves" % iface).read().strip().split()
             iftype  = "BONDING"
-            args["bond_mode"]      = open("/sys/class/net/%s/bonding/mode"          % iface).read().strip().split()[0]
+            args["bond_mode"]      =     open("/sys/class/net/%s/bonding/mode"      % iface).read().strip().split()[0]
             args["bond_miimon"]    = int(open("/sys/class/net/%s/bonding/miimon"    % iface).read().strip())
             args["bond_downdelay"] = int(open("/sys/class/net/%s/bonding/updelay"   % iface).read().strip())
             args["bond_updelay"]   = int(open("/sys/class/net/%s/bonding/downdelay" % iface).read().strip())
@@ -63,10 +63,21 @@ def create_interfaces(app, created_models, verbosity, **kwargs):
         try:
             haveifaces[iface] = NetDevice.objects.get(devname=iface)
             print "Found", iface
+
         except NetDevice.DoesNotExist:
             print "Adding", iface
             haveifaces[iface] = NetDevice(**args)
-            #haveifaces[iface].save()
+            haveifaces[iface].save()
+
+            if iftype in ("BRIDGE", "BONDING"):
+                depifaces = [ haveifaces[depiface] for depiface in depends ]
+                if iftype == "BRIDGE":
+                    haveifaces[iface].brports = depifaces
+                else:
+                    haveifaces[iface].slaves  = depifaces
+
+            elif iftype == "VLAN":
+                haveifaces[iface].vlanrawdev  = depends[0]
 
         #print "%s is a %s device with depends to %s" % ( iface, iftype, ','.join(depends) )
         #print args
