@@ -14,6 +14,7 @@ Ext.oa.MainViewManager = Ext.extend(Ext.Panel, {
               src: MEDIA_URL + '/openattic.png'
             },
             region: "north",
+            cls: "atticlogo",
             listeners: {
               render: function(self){
                 self.el.on("click", function(ev, target, options){
