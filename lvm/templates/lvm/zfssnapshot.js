@@ -82,7 +82,7 @@ Ext.oa.Zfs__Snapshot_Panel = Ext.extend(Ext.Panel, {
              }]
             });
             sysutils__System.get_time(function(provider, response){
-              addwin.items.items[0].snapshotnamefield.setValue(new Date(response.result * 1000).format("d-m-Y_H:i:s"));
+              addwin.items.items[0].snapshotnamefield.setValue(new Date(response.result * 1000).format("d-m-Y_H-i-s"));
             });
             addwin.show();
           }
