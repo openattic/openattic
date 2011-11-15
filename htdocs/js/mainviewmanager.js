@@ -11,18 +11,10 @@ Ext.oa.MainViewManager = Ext.extend(Ext.Panel, {
           new Ext.BoxComponent({
             autoEl: {
               tag: "img",
-              src: MEDIA_URL + '/openattic_cut.png'
-            },
-            region: "north",
-            height: 50
-/*          }), '->',
-          new Ext.BoxComponent({
-            autoEl: {
-              tag: "img",
               src: MEDIA_URL + '/openattic.png'
             },
             region: "north",
-            height: 50*/
+            height: 75
           })
         ],
         plugins : [
@@ -33,7 +25,8 @@ Ext.oa.MainViewManager = Ext.extend(Ext.Panel, {
                 text:  record.text,
                 icon:  record.icon,
                 panel: record.panel,
-                height: 50,
+                height: 70,
+                iconAlign: "top",
                 reorderable: true,
                 handler: function(self){
                   mainviewmanager.switchComponent(record.panel);
@@ -151,7 +144,8 @@ Ext.oa.MainViewManager = Ext.extend(Ext.Panel, {
           text:  currstate[i].text,
           icon:  currstate[i].icon,
           panel: currstate[i].panel,
-          height: 50,
+          iconAlign: "top",
+          height: 70,
           reorderable: true,
           handler: function(self){
             mainviewmanager.switchComponent(self.initialConfig.panel);
