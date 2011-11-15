@@ -38,6 +38,8 @@ class IPAddress(models.Model):
     gateway     = models.CharField(max_length=50, blank=True)
     nameservers = models.CharField(max_length=50, blank=True, null=True)
     domain      = models.CharField(max_length=250, blank=True, null=True)
+    device      = models.ForeignKey("NetDevice", blank=True, null=True)
+    configure   = models.BooleanField(blank=True, default=True)
 
     @property
     def is_loopback(self):
@@ -49,7 +51,6 @@ class IPAddress(models.Model):
 
 class NetDevice(models.Model):
     devname     = models.CharField(max_length=10, unique=True)
-    address     = models.ForeignKey(IPAddress, blank=True, null=True)
     dhcp        = models.BooleanField(default=False, blank=True)
     auto        = models.BooleanField(default=True, blank=True)
     slaves      = models.ManyToManyField('self', blank=True, symmetrical=False, related_name="bond_dev_set",
