@@ -82,11 +82,19 @@ def create_interfaces(app, created_models, verbosity, **kwargs):
         #print "%s is a %s device with depends to %s" % ( iface, iftype, ','.join(depends) )
         #print args
 
-        ips = netifaces.ifaddresses(iface)
-        if socket.AF_INET in ips:
-            print "IPv4 addresses:", [ addr["addr"] + "/" + addr["netmask"] for addr in ips[socket.AF_INET] ]
-        if socket.AF_INET6 in ips:
-            print "IPv6 addresses:", [ addr["addr"] + "/" + addr["netmask"] for addr in ips[socket.AF_INET6] ]
+        for addrfam, addresses in netifaces.ifaddresses(iface).iteritems():
+            if addrfam not in ( socket.AF_INET, socket.AF_INET6 ):
+                continue
+            for addr in addresses:
+                if addrfam == socket.AF_INET6 and addr["addr"][:4] == "fe80":
+                    # Don't record link-local addresses
+                    continue
+                try:
+                    ip = IPAddress.objects.get( address__startswith=addr["addr"] )
+                except IPAddress.DoesNotExist:
+                    print "Adding ", addr
+                    ip = IPAddress(address=(addr["addr"] + "/" + addr["netmask"]), device=haveifaces[iface])
+                    ip.save()
 
 
 signals.post_syncdb.connect(create_interfaces, sender=ifconfig.models)
