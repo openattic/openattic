@@ -3,55 +3,15 @@
         "pk": 1,
         "model": "nagios.command",
         "fields": {
+            "query_only": false,
             "name": "check_disk"
-        }
-    },
-    {
-        "pk": 2,
-        "model": "nagios.command",
-        "fields": {
-            "name": "check_all_disks"
-        }
-    },
-    {
-        "pk": 3,
-        "model": "nagios.command",
-        "fields": {
-            "name": "check_users"
-        }
-    },
-    {
-        "pk": 4,
-        "model": "nagios.command",
-        "fields": {
-            "name": "check_procs"
-        }
-    },
-    {
-        "pk": 5,
-        "model": "nagios.command",
-        "fields": {
-            "name": "check_load"
-        }
-    },
-    {
-        "pk": 6,
-        "model": "nagios.command",
-        "fields": {
-            "name": "check_http"
-        }
-    },
-    {
-        "pk": 7,
-        "model": "nagios.command",
-        "fields": {
-            "name": "check_ssh"
         }
     },
     {
         "pk": 8,
         "model": "nagios.command",
         "fields": {
+            "query_only": false,
             "name": "check_iface_traffic"
         }
     },
@@ -59,6 +19,7 @@
         "pk": 9,
         "model": "nagios.command",
         "fields": {
+            "query_only": false,
             "name": "check_diskstats"
         }
     },
@@ -66,7 +27,56 @@
         "pk": 10,
         "model": "nagios.command",
         "fields": {
+            "query_only": false,
             "name": "check_protocol_traffic"
+        }
+    },
+    {
+        "pk": 2,
+        "model": "nagios.command",
+        "fields": {
+            "query_only": true,
+            "name": "check_all_disks"
+        }
+    },
+    {
+        "pk": 3,
+        "model": "nagios.command",
+        "fields": {
+            "query_only": true,
+            "name": "check_users"
+        }
+    },
+    {
+        "pk": 4,
+        "model": "nagios.command",
+        "fields": {
+            "query_only": true,
+            "name": "check_procs"
+        }
+    },
+    {
+        "pk": 5,
+        "model": "nagios.command",
+        "fields": {
+            "query_only": true,
+            "name": "check_load"
+        }
+    },
+    {
+        "pk": 6,
+        "model": "nagios.command",
+        "fields": {
+            "query_only": true,
+            "name": "check_http"
+        }
+    },
+    {
+        "pk": 7,
+        "model": "nagios.command",
+        "fields": {
+            "query_only": true,
+            "name": "check_ssh"
         }
     },
     {

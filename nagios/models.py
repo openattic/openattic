@@ -15,6 +15,7 @@ from nagios.readstatus import NagiosState
 
 class Command(models.Model):
     name        = models.CharField(max_length=250, unique=True)
+    query_only  = models.BooleanField(default=False, help_text=_("Check this if openATTIC should not configure services with this command, only query those that exist."))
 
     def __unicode__(self):
         return self.name
@@ -30,7 +31,6 @@ class Service(models.Model):
     description = models.CharField(max_length=250, unique=True)
     command     = models.ForeignKey(Command)
     arguments   = models.CharField(max_length=500, blank=True)
-    query_only  = models.BooleanField(default=False, help_text=_("Check this if openATTIC should not configure this service, only query it."))
 
     nagstate    = NagiosState()
 

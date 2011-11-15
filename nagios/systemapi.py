@@ -19,7 +19,7 @@ class SystemD(LockingPlugin):
             try:
                 fd.write( render_to_string( "nagios/services.cfg", {
                     "Commands": Command.objects.all(),
-                    "Services": Service.objects.filter(query_only=False),
+                    "Services": Service.objects.filter(command__query_only=False),
                     } ) )
             finally:
                 fd.close()
