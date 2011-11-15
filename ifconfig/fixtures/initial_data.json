@@ -6,7 +6,9 @@
             "nameservers": null,
             "domain": null,
             "gateway": "",
-            "address": "127.0.0.1"
+            "address": "127.0.0.1",
+            "device": 1,
+            "configure": true
         }
     },
     {
@@ -20,7 +22,6 @@
             "bond_mode": "active-backup",
             "brports": [],
             "slaves": [],
-            "address": 1,
             "dhcp": false,
             "vlanrawdev": null,
             "bond_updelay": 200
