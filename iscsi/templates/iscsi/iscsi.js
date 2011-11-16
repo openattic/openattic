@@ -13,13 +13,13 @@ var storeUpdate = function(store, parent_id, field){
     if( response.typ === 'exception' ){
       alert('Error', 'Initiator delete has failed');
     }
-  });  
+  });
 }
 
 var targetStore = new Ext.data.DirectStore({
-         fields: ["iscsiname", "name", "id"],
-         directFn: iscsi__Target.filter
-       });
+  fields: ["iscsiname", "name", "id"],
+  directFn: iscsi__Target.filter
+});
 var lunStore = new Ext.data.DirectStore({
   fields: ["ltype", "alias", "number", "id",
   {
@@ -97,7 +97,7 @@ Ext.oa.Iscsi__Panel = Ext.extend(Ext.Panel, {
         }
       }
     });
-    
+
     Ext.apply(this, Ext.apply(this.initialConfig, {
       id: 'iscsi__initiator_panel_inst',
       title: "{% trans 'iSCSI' %}",
@@ -133,38 +133,37 @@ Ext.oa.Iscsi__Panel = Ext.extend(Ext.Panel, {
                 },
                 items: [{
                   style: {
-                            "margin-top": "2px"  
+                            "margin-top": "2px"
                           },
                   fieldLabel: "{% trans 'Name' %}",
                   ref: "namefield"
                 },{
                   style: {
-                            "margin-top": "2px"  
+                            "margin-top": "2px"
                           },
                   fieldLabel: "{% trans 'IP/IQN' %}",
                   ref: "iqn_ip_field"
+                }],
+                buttons: [{
+                  text: "{% trans 'Create' %}",
+                  icon: MEDIA_URL + "/oxygen/16x16/actions/dialog-ok-apply.png",
+                  handler: function(self){
+                    iscsi__Target.create({
+                      'name': self.ownerCt.ownerCt.namefield.getValue(),
+                      'iscsiname': self.ownerCt.ownerCt.iqn_ip_field.getValue(),
+                      'allowall': false
+                  }, function(provider, response){
+                    if( response.result ) {
+                      targetStore.reload();
+                      addwin.hide();
+                    }
+                  })
                 }
-              ],
-              buttons: [{
-                text: "{% trans 'Create' %}",
-                icon: MEDIA_URL + "/oxygen/16x16/actions/dialog-ok-apply.png",
-                handler: function(self){
-                  iscsi__Target.create({
-                    'name': self.ownerCt.ownerCt.namefield.getValue(),
-                    'iscsiname': self.ownerCt.ownerCt.iqn_ip_field.getValue(),
-                    'allowall': false
-                }, function(provider, response){
-                  if( response.result ) {
-                    targetStore.reload();
-                    addwin.hide();
-                  }
-                })
-               } 
+                }]
               }]
-              }]
-              });
+            });
             addwin.show();
-        }
+          }
         },{
         text: "{% trans 'Add Lun' %}",
         icon: MEDIA_URL + "/icons2/16x16/actions/add.png",
@@ -307,8 +306,8 @@ Ext.oa.Iscsi__Panel = Ext.extend(Ext.Panel, {
                 defaultType: 'textfield',
                 bodyStyle: 'padding:5px 5px;',
                 style: {
-                  "margin-left": "5px", 
-                  "margin-right": "0"  
+                  "margin-left": "5px",
+                  "margin-right": "0"
                 },
                 title:'Details',
                 autoScroll: true,
@@ -359,16 +358,16 @@ Ext.oa.Iscsi__Panel = Ext.extend(Ext.Panel, {
                         },
                         items: [{
                           style: {
-                            "margin-top": "2px"  
+                            "margin-top": "2px"
                           },
                           fieldLabel: "{% trans 'Name' %}",
                           name: "name",
                           ref: 'namefield'
                         }, {
                           style: {
-                            "margin-top": "2px"  
+                            "margin-top": "2px"
                           },
-                          fieldLabel: "{% trans 'Address (IQN/IP)' %}",                   
+                          fieldLabel: "{% trans 'Address (IQN/IP)' %}",
                           name: "address",
                           ref: 'addrfield'
                         }],
@@ -419,8 +418,8 @@ Ext.oa.Iscsi__Panel = Ext.extend(Ext.Panel, {
                     );
                   }
                 }
-              }           
-              ]
+              }
+            ]
           });
           addwin.show();
         }
@@ -457,7 +456,6 @@ Ext.oa.Iscsi__Panel = Ext.extend(Ext.Panel, {
                 }]
               })
             }
-               
           });
           addwin.show();
         }
@@ -499,7 +497,7 @@ Ext.oa.Iscsi__Panel = Ext.extend(Ext.Panel, {
                   tgt_allow.remove(sel);
                   storeUpdate(tgt_allow, parentid.data.id, "tgt_allow");
                   };
-              }); 
+              });
            }
           }
       },{
@@ -547,7 +545,7 @@ Ext.oa.Iscsi__Panel = Ext.extend(Ext.Panel, {
                   });
                 }
               }
-            );  
+            );
            }
           }
         }
@@ -604,9 +602,7 @@ Ext.oa.Iscsi__Panel = Ext.extend(Ext.Panel, {
           },{
             header: "Volume",
             dataIndex: "origvolid"
-          }
-            
-          ]
+          }]
         })
       },{
         ref: 'initiator',
@@ -644,9 +640,9 @@ Ext.oa.Iscsi__Panel = Ext.extend(Ext.Panel, {
                           app: "iscsi",
                           obj: "Initiator"
                         });
-                      }                             
-                        self.store.add(records);
-                        return true
+                      }
+                      self.store.add(records);
+                      return true
                     }
                    }
                 });
@@ -697,7 +693,7 @@ Ext.oa.Iscsi__Panel = Ext.extend(Ext.Panel, {
                 }
               });
             }
-          }, 
+          },
           viewConfig: { forceFit: true },
           width: 298,
           height: 290,
@@ -710,7 +706,7 @@ Ext.oa.Iscsi__Panel = Ext.extend(Ext.Panel, {
               dataIndex: "name"
             }]
         })
-      }]  
+      }]
      }]
       },{
         id: 'west',
@@ -750,7 +746,6 @@ Ext.oa.Iscsi__Panel = Ext.extend(Ext.Panel, {
       }]
     }));
     Ext.oa.Iscsi__Panel.superclass.initComponent.apply(this, arguments);
-    
   },
   onRender: function(){
     Ext.oa.Iscsi__Panel.superclass.onRender.apply(this, arguments);
