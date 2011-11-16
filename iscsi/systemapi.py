@@ -16,9 +16,10 @@ class SystemD(LockingPlugin):
     def writeconf(self):
         self.lock.acquire()
         try:
-            ietd = open( iscsi_settings.IETD_CONF,   "w" )
-            allw = open( iscsi_settings.INITR_ALLOW, "w" )
-            deny = open( iscsi_settings.INITR_DENY,  "w" )
+            ietd = open( iscsi_settings.IETD_CONF,     "w" )
+            allw = open( iscsi_settings.INITR_ALLOW,   "w" )
+            deny = open( iscsi_settings.INITR_DENY,    "w" )
+            tgt  = open( iscsi_settings.TARGETS_ALLOW, "w" )
 
             try:
                 for target in Target.objects.all():
@@ -44,10 +45,18 @@ class SystemD(LockingPlugin):
                                 ', '.join([rec["address"] for rec in target.init_deny.values("address")])
                                 ))
 
+                    if target.tgt_allow.all().count():
+                        tgt.write( "%s %s\n" % ( target.iscsiname,
+                            ', '.join([rec.address.split('/')[0] for rec in target.tgt_allow.all()])
+                            ))
+                    else:
+                        tgt.write( "%s ALL\n" % target.iscsiname )
+
             finally:
                 ietd.close()
                 allw.close()
                 deny.close()
+                tgt.close()
             #return invoke([iscsi_settings.INITSCRIPT, "restart"])
         finally:
             self.lock.release()
