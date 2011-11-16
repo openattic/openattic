@@ -28,7 +28,7 @@ Ext.oa.Samba__Share_Panel = Ext.extend(Ext.grid.GridPanel, {
           var addwin = new Ext.Window({
             title: "{% trans 'Add Share' %}",
             layout: "fit",
-            height: 500,
+            height: 430,
             width: 500,
             items: [{
               xtype: "form",
@@ -114,6 +114,19 @@ Ext.oa.Samba__Share_Panel = Ext.extend(Ext.grid.GridPanel, {
                 name: "writeable",
                 ref: 'writeablefield'
               },{
+                xtype: 'checkbox',
+                fieldLabel: "{% trans 'Guest OK' %}",
+                allowBlank: false,
+                name: "guest ok",
+                ref: 'guestokfield'
+              },tipify({
+                fieldLabel: "{% trans 'Dir Mode' %}",
+                allowBlank: false,
+                name: "dir mode",
+                ref: 'dirmodefield',
+                value:     '0775'
+              },"{% trans 'Set rights for the Directory' %}"),
+              {
                 fieldLabel: "{% trans 'Comment' %}",
                 allowBlank: true,
                 name: "comment",
@@ -130,19 +143,7 @@ Ext.oa.Samba__Share_Panel = Ext.extend(Ext.grid.GridPanel, {
                 name: "state",
                 ref: 'statefield',
                 value:     'active'
-              },{
-                xtype: 'checkbox',
-                fieldLabel: "{% trans 'Guest OK' %}",
-                allowBlank: false,
-                name: "guest ok",
-                ref: 'guestokfield'
-              },tipify({
-                fieldLabel: "{% trans 'Dir Mode' %}",
-                allowBlank: false,
-                name: "dir mode",
-                ref: 'dirmodefield',
-                value:     '0775'
-              },"{% trans 'Set rights for the Directory' %}")
+              }
               ],
               buttons: [{
                 text: "{% trans 'Create Share' %}",
@@ -256,6 +257,12 @@ Ext.oa.Samba__Share_Panel = Ext.extend(Ext.grid.GridPanel, {
                   ref: 'writeablefield',
                   checked: sel.json.writeable
                 },{
+                  xtype: 'checkbox',
+                  fieldLabel: "{% trans 'Guest OK' %}",
+                  name: "guest_ok",
+                  ref: 'guestokfield',
+                  checked: sel.json.guest_ok
+                },{
                   fieldLabel: "{% trans 'Comment' %}",
                   name: "comment",
                   ref: 'commentfield',
@@ -270,12 +277,6 @@ Ext.oa.Samba__Share_Panel = Ext.extend(Ext.grid.GridPanel, {
                   name: "state",
                   ref: 'statefield',
                   value: sel.json.state
-                },{
-                  xtype: 'checkbox',
-                  fieldLabel: "{% trans 'Guest OK' %}",
-                  name: "guest_ok",
-                  ref: 'guestokfield',
-                  checked: sel.json.guest_ok
                 },{
                   fieldLabel: "{% trans 'Dir Mode' %}",
                   name: "dir_mode",
