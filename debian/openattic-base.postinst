@@ -2,6 +2,8 @@
 
 set -e
 
+. /usr/share/debconf/confmodule
+
 if [ "$1" = "configure" ] ; then
     setperm(){
         FILE="$1"
@@ -26,16 +28,6 @@ if [ "$1" = "configure" ] ; then
 
     if [ -x /etc/init.d/dbus ]; then
         invoke-rc.d --quiet dbus reload
-    fi
-
-    if [ -x "/etc/init.d/openattic_systemd" ]; then
-        update-rc.d openattic_systemd defaults >/dev/null
-        invoke-rc.d openattic_systemd restart || exit $?
-    fi
-
-    if [ -x "/etc/init.d/openattic_rpcd" ]; then
-        update-rc.d openattic_rpcd defaults >/dev/null
-        invoke-rc.d openattic_rpcd restart || exit $?
     fi
 
     db_info openattic-base/run-oaconfig-install
