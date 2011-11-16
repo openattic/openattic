@@ -39,6 +39,9 @@ case $1 in
 			su "$OAUSER" -c 'python manage.py createsuperuser'
 			touch /var/lib/openattic/haveadmin
 		fi
+		for hook in $OADIR/*/bin/oaconfig-install.sh; do
+			source $hook
+		done
 		;;
 
 	install-cli)
