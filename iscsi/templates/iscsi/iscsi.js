@@ -120,6 +120,10 @@ Ext.oa.Iscsi__Panel = Ext.extend(Ext.Panel, {
           text: "{% trans 'Create Target'%}",
           icon: MEDIA_URL + "/icons2/16x16/actions/add.png",
           handler: function(){
+            var fqdn = "";
+            __main__.fqdn(function(provider, response){
+              fqdn = response.result.split(".").reverse().join(".");
+            });
             var addwin = new Ext.Window({
               title: "{% trans 'Add Target' %}",
               layout: "fit",
@@ -136,7 +140,19 @@ Ext.oa.Iscsi__Panel = Ext.extend(Ext.Panel, {
                     "margin-top": "2px"
                   },
                   fieldLabel: "{% trans 'Name' %}",
-                  ref: "namefield"
+                  ref: "namefield",
+                  listeners: {
+                    change: function( self, newValue, oldValue ){
+                      var d = new Date();
+                      var m = d.getMonth();
+                      self.ownerCt.iqn_ip_field.setValue(
+                        String.format("iqn.{0}-{1}.{2}:{3}",
+                          d.getFullYear(), (m < 10 ? "0" + m : m),
+                          fqdn, self.getValue()
+                        )
+                      );
+                    }
+                  }
                 },{
                   style: {
                     "margin-top": "2px"

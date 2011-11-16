@@ -12,8 +12,9 @@ from django.contrib.auth.models import User
 from djextdirect.provider import Provider as BaseProvider, getname
 
 class MainHandler(object):
-    def __init__(self, user):
+    def __init__(self, user, request=None):
         self.user = user
+        self.request = request
 
     def get_installed_apps(self):
         """ Return a list of installed Django apps. """
