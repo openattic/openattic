@@ -96,23 +96,23 @@ Ext.oa.Samba__Share_Panel = Ext.extend(Ext.grid.GridPanel, {
                 name: "group",
                 ref: 'groupfield'
               },{
+                xtype: 'checkbox',
                 fieldLabel: "{% trans 'Browseable' %}",
                 allowBlank: false,
                 name: "browseable",
-                ref: 'browseablefield',
-                value:     'True'
+                ref: 'browseablefield'
               },{
+                xtype: 'checkbox',
                 fieldLabel: "{% trans 'Available' %}",
                 allowBlank: false,
                 name: "available",
-                ref: 'availablefield',
-                value:     'True'
+                ref: 'availablefield'
               },{
+                xtype: 'checkbox',
                 fieldLabel: "{% trans 'Writeable' %}",
                 allowBlank: false,
                 name: "writeable",
-                ref: 'writeablefield',
-                value:     'True'
+                ref: 'writeablefield'
               },{
                 fieldLabel: "{% trans 'Comment' %}",
                 allowBlank: true,
@@ -131,11 +131,11 @@ Ext.oa.Samba__Share_Panel = Ext.extend(Ext.grid.GridPanel, {
                 ref: 'statefield',
                 value:     'active'
               },{
+                xtype: 'checkbox',
                 fieldLabel: "{% trans 'Guest OK' %}",
                 allowBlank: false,
                 name: "guest ok",
-                ref: 'guestokfield',
-                value:     'True'
+                ref: 'guestokfield'
               },tipify({
                 fieldLabel: "{% trans 'Dir Mode' %}",
                 allowBlank: false,
@@ -184,6 +184,138 @@ Ext.oa.Samba__Share_Panel = Ext.extend(Ext.grid.GridPanel, {
           addwin.show();
         }
       }, {
+        text:  "{% trans 'Edit' %}",
+        icon: MEDIA_URL + "/icons2/16x16/actions/edit-redo.png",
+        handler: function(self){
+          var sm = sambaShareGrid.getSelectionModel();
+          if( sm.hasSelection() ){
+            var sel = sm.selections.items[0];
+            var addwin = new Ext.Window({
+              title: "{% trans 'Edit' %}",
+              layout: "fit",
+              height: 420,
+              width: 500,
+              items: [{
+                xtype: "form",
+                defaults: {
+                  xtype: "textfield",
+                  anchor: '-20px'
+                },
+                items: [{
+                  fieldLabel: "{% trans 'Volume' %}",
+                  name: "volume",
+                  ref: 'volumefield',
+                  readOnly: true,
+                  disabled: true,
+                  value: sel.json.volume.name
+                },{
+                  fieldLabel: "{% trans 'Path' %}",
+                  name: "path",
+                  ref: 'pathfield',
+                  value: sel.json.path
+                },{
+                  xtype:      'combo',
+                  allowBlank: true,
+                  fieldLabel: "{% trans 'Owner' %}",
+                  name:       'owner',
+                  hiddenName: 'owner_id',
+                  store: new Ext.data.DirectStore({
+                    fields: ["username", "id"],
+                    baseParams: { fields: ["username", "id"] },
+                    directFn: auth__User.all_values
+                  }),
+                  typeAhead:     true,
+                  triggerAction: 'all',
+                  emptyText:     "{% trans 'Select...' %}",
+                  selectOnFocus: true,
+                  displayField:  'username',
+                  valueField:    'username',
+                  ref:      'ownerfield',
+                  value: sel.json.force_user
+                },{
+                  fieldLabel: "{% trans 'Group' %}",
+                  name: "group",
+                  ref: 'groupfield',
+                  value: sel.json.force_group
+                },{
+                  xtype: 'checkbox',
+                  fieldLabel: "{% trans 'Browseable' %}",
+                  name: "browseable",
+                  ref: 'browseablefield',
+                  checked: sel.json.browseable
+                },{
+                  xtype: 'checkbox',
+                  fieldLabel: "{% trans 'Available' %}",
+                  name: "available",
+                  ref: 'availablefield',
+                  checked: sel.json.available
+                },{
+                  xtype: 'checkbox',
+                  fieldLabel: "{% trans 'Writeable' %}",
+                  name: "writeable",
+                  ref: 'writeablefield',
+                  checked: sel.json.writeable
+                },{
+                  fieldLabel: "{% trans 'Comment' %}",
+                  name: "comment",
+                  ref: 'commentfield',
+                  value: sel.json.comment
+                },{
+                  fieldLabel: "{% trans 'Create Mode' %}",
+                  name: "create_mode",
+                  ref: 'createmodefield',
+                  value: sel.json.create_mode
+                },{
+                  fieldLabel: "{% trans 'State' %}",
+                  name: "state",
+                  ref: 'statefield',
+                  value: sel.json.state
+                },{
+                  xtype: 'checkbox',
+                  fieldLabel: "{% trans 'Guest OK' %}",
+                  name: "guest_ok",
+                  ref: 'guestokfield',
+                  checked: sel.json.guest_ok
+                },{
+                  fieldLabel: "{% trans 'Dir Mode' %}",
+                  name: "dir_mode",
+                  ref: 'dirmodefield',
+                  value: sel.json.dir_mode
+                }],
+                buttons: [{
+                  text: "{% trans 'Save' %}",
+                  icon: MEDIA_URL + "/icons2/16x16/actions/edit-redo.png",
+                  handler: function(self){
+                    var sm = sambaShareGrid.getSelectionModel();
+                    if( sm.hasSelection() ){
+                      var sel = sm.selections.items[0];
+                      samba__Share.set(sel.id, {
+                        'path':    self.ownerCt.ownerCt.pathfield.getValue(),
+                        'force_user':    self.ownerCt.ownerCt.ownerfield.getValue(),
+                        'force_group':  self.ownerCt.ownerCt.groupfield.getValue(),
+                        'browseable':   self.ownerCt.ownerCt.browseablefield.getValue(),
+                        'available':   self.ownerCt.ownerCt.availablefield.getValue(),
+                        'writeable':   self.ownerCt.ownerCt.writeablefield.getValue(),
+                        'comment':   self.ownerCt.ownerCt.commentfield.getValue(),
+                        'create_mode':   self.ownerCt.ownerCt.createmodefield.getValue(),
+                        'state':   self.ownerCt.ownerCt.statefield.getValue(),
+                        'guest_ok':   self.ownerCt.ownerCt.guestokfield.getValue(),
+                        'dir_mode':   self.ownerCt.ownerCt.dirmodefield.getValue()
+                      }, function(provider, response){
+                        if( response.result ){
+                          sambaShareGrid.store.reload();
+                          addwin.hide();
+                        }
+                      });
+                    }
+                  }
+                }]
+              }]
+            });
+            addwin.show();
+          }
+        }
+      },{
         text: "{% trans 'Delete Share' %}",
         icon: MEDIA_URL + "/icons2/16x16/actions/remove.png",
         handler: function(self){
