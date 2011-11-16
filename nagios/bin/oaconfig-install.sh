@@ -14,6 +14,12 @@ if ! grep broker_module /etc/nagios3/nagios.cfg | grep -v '#' | grep -q npcdmod.
 	NAGIOS_RESTART_REQ="true"
 fi
 
+if grep -q 'RUN="no"' /etc/default/npcd; then
+	# Enable npcd
+	sed -i -e 's/RUN="no"/RUN="yes"/' /etc/default/npcd
+	invoke-rc.d npcd start
+fi
+
 if [ $NAGIOS_RESTART_REQ = "true" ]; then
 	invoke-rc.d nagios3 restart
 fi
