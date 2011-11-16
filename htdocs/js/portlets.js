@@ -107,6 +107,7 @@ Ext.oa.getDefaultPortlets = function(tools){
       var chart = new Ext.canvasXpress({
         options: {
           graphType: 'Pie',
+          imageDir: MEDIA_URL+'/canvasxpress/images/',
           background: 'rgb(244,244,244)',
           colorScheme: 'pastel',
           pieSegmentPrecision:  0,
@@ -148,6 +149,7 @@ Ext.oa.getDefaultPortlets = function(tools){
       var chart = new Ext.canvasXpress({
         options: {
           graphType: 'Pie',
+          imageDir: MEDIA_URL+'/canvasxpress/images/',
           background: 'rgb(244,244,244)',
           colorScheme: 'pastel',
           pieSegmentPrecision:  0,

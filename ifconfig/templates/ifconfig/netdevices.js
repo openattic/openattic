@@ -22,6 +22,7 @@ Ext.oa.Ifconfig__NetDevice_Panel = Ext.extend(Ext.canvasXpress, {
       } ],
       options: {
         graphType: 'Network',
+        imageDir: MEDIA_URL+'/canvasxpress/images/',
         backgroundGradient1Color: 'rgb(0,183,217)',
         backgroundGradient2Color: 'rgb(4,112,174)',
         nodeFontColor: 'rgb(29,34,43)',
