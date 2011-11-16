@@ -14,6 +14,7 @@ htdocs/extjs_themes     /usr/share/openattic/htdocs
 htdocs/portal           /usr/share/openattic/htdocs
 htdocs/icons2           /usr/share/openattic/htdocs
 htdocs/openattic*.png   /usr/share/openattic/htdocs
+htdocs/canvasxpress     /usr/share/openattic/htdocs
 
 templates /usr/share/openattic
 
