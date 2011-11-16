@@ -12,7 +12,13 @@ from lvm.models       import VolumeGroup, LogicalVolume
 from lvm.filesystems  import get_by_name as get_fs_by_name
 
 def create_vgs(app, created_models, verbosity, **kwargs):
-    lvm = dbus.SystemBus().get_object(settings.DBUS_IFACE_SYSTEMD, "/lvm")
+    try:
+        lvm = dbus.SystemBus().get_object(settings.DBUS_IFACE_SYSTEMD, "/lvm")
+    except dbus.exceptions.DBusException:
+        # apparently systemd is not yet running. oaconfig install will run syncdb a second time, warn and ignore.
+        print "WARNING: Could not connect to systemd, skipping initialization of the LVM module."
+        return
+
     vgs = lvm.vgs()
     lvs = lvm.lvs()
     mounts = VolumeGroup.get_mounts()
