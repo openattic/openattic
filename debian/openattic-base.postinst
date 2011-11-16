@@ -38,18 +38,7 @@ if [ "$1" = "configure" ] ; then
         invoke-rc.d openattic_rpcd restart || exit $?
     fi
 
-    tput bold
-    echo "###############################################"
-    echo "#                                             #"
-    echo "#  Please run \"oaconfig install\" to complete  #"
-    echo "#  the installation of openATTIC.             #"
-    echo "#                                             #"
-    echo "#  Afterwards, you can reach openATTIC under  #"
-    echo "#  the following URL:                         #"
-    echo "#     http://`hostname --fqdn`/openattic"
-    echo "#                                             #"
-    echo "###############################################"
-    tput sgr0
+    db_info openattic-base/run-oaconfig-install
 fi
 
 #DEBHELPER#

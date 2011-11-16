@@ -1,0 +1,5 @@
+This should give a little more detail about oaconfig install running the following stuff:
+ * Database initialization
+ * nsswitch.conf
+ * NPCd
+ * IETd
