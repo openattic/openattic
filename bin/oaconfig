@@ -32,16 +32,36 @@ fi
 
 case $1 in
 	install)
+		# Initialize the schema so our daemons can start
 		su "$OAUSER" -c 'python manage.py syncdb --noinput'
+		
+		# Configure nsswitch.conf
+		OADBENGINE=$(grep engine /etc/openattic/database.ini | cut -d= -f2)
+		if [ $OADBENGINE = "django.db.backends.postgresql_psycopg2" ]; then
+			if grep passwd: /etc/nsswitch.conf | grep -qv pgsql; then
+				# nsswitch does not yet include pgsql
+				echo "Configuring nsswitch.conf to include pgsql. The current version will be backuped as nsswitch.conf.bak."
+				sed -i.bak -e 's/^\(passwd:.*\)$/\0 pgsql/' /etc/nsswitch.conf
+			fi
+		fi
+		
+		# Actually start the daemons
 		$0 reload
+		
+		# Run the hook scripts to initialize modules
+		for hook in $OADIR/*/bin/oaconfig-install.sh; do
+			source $hook
+		done
+		
+		# Run database initializations that need to query the user for data
+		su "$OAUSER" -c 'python manage.py syncdb'
+		
+		# If necessary, create an admin user (--noinput suppressed that before)
 		if [ ! -e /var/lib/openattic/haveadmin ]; then
 			echo "You need to create an Administrator user in order to login to openATTIC now."
 			su "$OAUSER" -c 'python manage.py createsuperuser'
 			touch /var/lib/openattic/haveadmin
 		fi
-		for hook in $OADIR/*/bin/oaconfig-install.sh; do
-			source $hook
-		done
 		;;
 
 	install-cli)
