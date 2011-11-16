@@ -30,7 +30,8 @@ if [ "$1" = "configure" ] ; then
         invoke-rc.d --quiet dbus reload
     fi
 
-    db_info openattic-base/run-oaconfig-install
+    db_input high openattic-base/run-oaconfig-install
+    db_go
 fi
 
 #DEBHELPER#
