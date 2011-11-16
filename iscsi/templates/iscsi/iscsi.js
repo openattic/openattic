@@ -133,14 +133,14 @@ Ext.oa.Iscsi__Panel = Ext.extend(Ext.Panel, {
                 },
                 items: [{
                   style: {
-                            "margin-top": "2px"
-                          },
+                    "margin-top": "2px"
+                  },
                   fieldLabel: "{% trans 'Name' %}",
                   ref: "namefield"
                 },{
                   style: {
-                            "margin-top": "2px"
-                          },
+                    "margin-top": "2px"
+                  },
                   fieldLabel: "{% trans 'IP/IQN' %}",
                   ref: "iqn_ip_field"
                 }],
