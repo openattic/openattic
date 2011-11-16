@@ -7,6 +7,8 @@ from django.contrib.auth.models import User
 from django.db.models import signals
 from django.conf      import settings
 
+from systemd.helpers import dbus_to_python
+
 import lvm.models
 from lvm.models       import VolumeGroup, LogicalVolume
 from lvm.filesystems  import get_by_name as get_fs_by_name
@@ -19,10 +21,10 @@ def create_vgs(app, created_models, verbosity, **kwargs):
         print "WARNING: Could not connect to systemd, skipping initialization of the LVM module."
         return
 
-    vgs = lvm.vgs()
-    lvs = lvm.lvs()
+    vgs = dbus_to_python(lvm.vgs())
+    lvs = dbus_to_python(lvm.lvs())
     mounts = VolumeGroup.get_mounts()
-    zfs = lvm.zfs_getspace("")
+    zfs = dbus_to_python(lvm.zfs_getspace(""))
 
     for vgname in vgs:
         try:
