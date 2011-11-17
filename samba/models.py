@@ -49,6 +49,11 @@ class Share(StatefulModel):
     def write_list_str(self):
         return ' '.join([rec["username"] for rec in self.write_list.values("username")])
 
+    def clean(self):
+        from django.core.exceptions import ValidationError
+        if not self.volume.filesystem:
+            raise ValidationError('This share type can only be used on volumes with a file system.')
+
     def save( self, *args, **kwargs ):
         self.state = "active"
         ret = StatefulModel.save(self, ignore_state=True, *args, **kwargs)

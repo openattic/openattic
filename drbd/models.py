@@ -184,6 +184,11 @@ class DrbdDevice(LVChainedModule):
             self.volume.formatted = True
             return True
 
+    def clean(self):
+        from django.core.exceptions import ValidationError
+        if self.volume.filesystem:
+            raise ValidationError('This share type can not be used on volumes with a file system.')
+
     def install(self):
         if self.state != 'active':
             StatefulModel.save(self, ignore_state=True)

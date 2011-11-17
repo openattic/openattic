@@ -79,6 +79,11 @@ class Lun(StatefulModel):
             return "%s LUN %d (%s)" % ( self.target, self.number, self.alias )
         return "%s LUN %d" % ( self.target, self.number )
 
+    def clean(self):
+        from django.core.exceptions import ValidationError
+        if self.volume.filesystem:
+            raise ValidationError('This share type can not be used on volumes with a file system.')
+
     def save(self, *args, **kwargs):
         if self.number == -1:
             try:
