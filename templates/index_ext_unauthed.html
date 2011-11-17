@@ -36,10 +36,16 @@
               login_form.getEl().mask("{% trans 'Loading...' %}");
             },
             failure: function( f, a ){
-              if( a.result )
-                Ext.Msg.alert( "Error", this.errmsg[a.result.errormsg] );
-              else
+              if( a.result ){
+                Ext.Msg.alert( "Error", this.errmsg[a.result.errormsg], function(){
+                  (function(){
+                    login_form.lepassword.focus();
+                  }).defer(250);
+                } );
+              }
+              else{
                 Ext.Msg.alert( "Error", this.errmsg['undefined'] );
+              }
               login_form.getEl().unmask();
             }
           },
@@ -59,6 +65,7 @@
               inputType:  'password',
               fieldLabel: 'Passwort',
               name:       'password',
+              ref:        'lepassword',
               allowBlank: false,
               listeners: {
                 specialkey: function( f, e ){
