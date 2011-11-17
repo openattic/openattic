@@ -1,4 +1,6 @@
 syntax: glob
+
+*.swp
 *.kate-swp
 *.pyc
 *~
