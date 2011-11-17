@@ -3,6 +3,11 @@
 
 import dbus
 
+try:
+    import readline
+except ImportError:
+    pass
+
 from django.contrib.auth.models import User
 from django.db.models import signals
 from django.conf      import settings

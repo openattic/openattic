@@ -1,6 +1,11 @@
 # -*- coding: utf-8 -*-
 # kate: space-indent on; indent-width 4; replace-tabs on;
 
+try:
+    import readline
+except ImportError:
+    pass
+
 import ssmtp.models
 from ssmtp.models     import SSMTP
 from django.db.models import signals
