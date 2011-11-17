@@ -339,101 +339,58 @@ Ext.oa.Iscsi__Panel = Ext.extend(Ext.Panel, {
                   anchor: '100%',
                   ref: 'addressfield',
                   name: 'address'
-                }],
+                }]
+            }],
                 buttons: [{
+                  text: "{% trans 'Add' %}",
+                  icon: MEDIA_URL + "/icons2/16x16/actions/add.png",
+                  handler: function(self){
+                    iscsi__Initiator.create({
+                      'name':    self.ownerCt.ownerCt.items.items[1].namefield.getValue(),
+                      'address': self.ownerCt.ownerCt.items.items[1].addressfield.getValue()
+                    }, function(provider, response){
+                      if( response.result ){
+                        init_all.reload();
+                      }
+                    });
+                  }
+              },{
                 text: "{% trans 'Save' %}",
                 icon: MEDIA_URL + "/icons2/16x16/actions/edit-redo.png",
                 handler: function(self){
                   var sm = addwin.initiator_all.getSelectionModel();
                   var sel = sm.selections.items[0];
                       iscsi__Initiator.set(sel.data.id,{
-                        'name':    self.ownerCt.ownerCt.namefield.getValue(),
-                        'address': self.ownerCt.ownerCt.addressfield.getValue()
+                        'name':    self.ownerCt.ownerCt.items.items[1].namefield.getValue(),
+                        'address': self.ownerCt.ownerCt.items.items[1].addressfield.getValue()
                       }, function(provider, response){
                         if( response.result ){
                           init_all.reload();
                         }
                       });
                     }
-                }]
-            }],
-                buttons: [{
-                  text: "{% trans 'Add' %}",
-                  icon: MEDIA_URL + "/icons2/16x16/actions/add.png",
-                  handler: function(){
-                    var addwin = new Ext.Window({
-                      title: "{% trans 'Add Initiator' %}",
-                      layout: "fit",
-                      height: 150,
-                      width: 350,
-                      items: [{
-                        xtype: "form",
-                        defaults: {
-                          xtype: "textfield",
-                          anchor: '-20px'
-                        },
-                        items: [{
-                          style: {
-                            "margin-top": "2px"
-                          },
-                          fieldLabel: "{% trans 'Name' %}",
-                          name: "name",
-                          ref: 'namefield'
-                        }, {
-                          style: {
-                            "margin-top": "2px"
-                          },
-                          fieldLabel: "{% trans 'Address (IQN/IP)' %}",
-                          name: "address",
-                          ref: 'addrfield'
-                        }],
-                        buttons: [{
-                          text: "{% trans 'Create Initiator' %}",
-                          icon: MEDIA_URL + "/oxygen/16x16/actions/dialog-ok-apply.png",
-                          handler: function(self){
-                            iscsi__Initiator.create({
-                              'name':    self.ownerCt.ownerCt.namefield.getValue(),
-                              'address': self.ownerCt.ownerCt.addrfield.getValue()
-                            }, function(provider, response){
-                              if( response.result ){
-                                init_all.reload();
-                                addwin.hide();
-                              }
-                            });
+                },{
+                  text: "{% trans 'Delete' %}",
+                  icon: MEDIA_URL + "/icons2/16x16/actions/remove.png",
+                  handler: function(self){
+                    var sm = addwin.initiator_all.getSelectionModel();
+                    if( sm.hasSelection() ){
+                      var sel = sm.selections.items[0];
+                      Ext.Msg.confirm(
+                        "{% trans 'Confirm delete' %}",
+                        interpolate(
+                          "{% trans 'Really delete Initiator %s' %}",
+                          [sel.data.name] ),
+                        function(btn, text){
+                          if( btn == 'yes' ){
+                            iscsi__Initiator.remove( sel.data.id, function(provider, response){
+                              init_all.reload();
+                              } );
                           }
-                        }, {
-                          text: "{% trans 'Cancel' %}",
-                          icon: MEDIA_URL + "/icons2/16x16/actions/gtk-cancel.png",
-                          handler: function(self){
-                            addwin.hide();
-                          }
-                        }]
-                      }]
-                    });
-                    addwin.show();
-                }
-              },{
-                text: "{% trans 'Delete' %}",
-                icon: MEDIA_URL + "/icons2/16x16/actions/remove.png",
-                handler: function(self){
-                  var sm = addwin.initiator_all.getSelectionModel();
-                  if( sm.hasSelection() ){
-                    var sel = sm.selections.items[0];
-                     Ext.Msg.confirm(
-                      "{% trans 'Confirm delete' %}",
-                      interpolate(
-                        "{% trans 'Really delete Initiator %s' %}",
-                        [sel.data.name] ),
-                      function(btn, text){
-                        if( btn == 'yes' ){
-                          iscsi__Initiator.remove( sel.data.id, function(provider, response){
-                            init_all.reload();
-                            } );
                         }
-                      }
-                    );
+                      );
+                    }
                   }
-                }
               }
             ]
           });
