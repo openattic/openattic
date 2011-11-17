@@ -6,6 +6,7 @@ Ext.oa.Settings_Panel = Ext.extend(Ext.Panel,{
       title: 'Personal Settings',
       width:700,
       height:300,
+      labelWidth: 250,
       bodyStyle: 'padding:10px;',     // lazy inline style
       layout: 'form',
       items: [ {
