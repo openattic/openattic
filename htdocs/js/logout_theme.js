@@ -1,44 +1,6 @@
 window.MainViewModules.push({
   prepareMenuTree: function(tree){
-    tree.appendToRootNodeById("menu_status", {
-      text: 'Theme',
-      leaf: true,
-      icon: MEDIA_URL + '/oxygen/22x22/apps/preferences-desktop-theme.png',
-      listeners: {
-        click: function(self, ev){
-          var addwin = new Ext.Window({
-            title: "Please select a theme",
-            layout: "fit",
-            height: 100,
-            width: 250,
-            items:{
-              html: "Please select your desired theme"
-            },
-            buttons: [{
-              text:  'access',
-              handler: function(btn){
-                Ext.state.Manager.set( "theme", "access" );
-                // For some reason, window.location.reload.defer() does not work in chrome.
-                setTimeout( function(){window.location.reload()}, 200 );
-              }
-            },{
-              text:  'gray',
-              handler: function(btn){
-                Ext.state.Manager.set( "theme", "gray" );
-                setTimeout( function(){window.location.reload()}, 200 );
-              }
-            },{
-              text:  'default',
-              handler: function(btn){
-                Ext.state.Manager.clear( "theme" );
-                setTimeout( function(){window.location.reload()}, 200 );
-              }
-            }]
-          });
-          addwin.show()
-        }
-      }
-    });
+
     tree.appendToRootNodeById("menu_shutdown", {
       text: 'Logout',
       leaf: true,
