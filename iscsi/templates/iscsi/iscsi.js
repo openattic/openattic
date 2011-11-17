@@ -100,14 +100,16 @@ Ext.oa.Iscsi__Panel = Ext.extend(Ext.Panel, {
     Ext.apply(this, Ext.apply(this.initialConfig, {
       id: 'iscsi__initiator_panel_inst',
       title: "{% trans 'iSCSI' %}",
-      layout: 'table',
-      layoutConfig:{columns: 3},
-      autoScroll: true,
-      defaults:{
-        border: false,
-        height: 300,
-        width: 600
+      layout: 'hbox',
+      layoutConfig: {
+        align: "stretch"
       },
+      defaults: {
+        flex: 1,
+      },
+      border: false,
+      autoScroll: true,
+      //BEGIN buttons
       buttons: [{
         text: "",
         icon: MEDIA_URL + "/icons2/16x16/actions/reload.png",
@@ -521,77 +523,65 @@ Ext.oa.Iscsi__Panel = Ext.extend(Ext.Panel, {
           }
         }
       } ],
+      //END buttons
       items: [{
-        ref: 'targets',
-        colspan: 2,
-        border: true,
-        xtype: 'grid',
-        title: 'Targets',
-        viewConfig: { forceFit: true },
-        store: targetStore,
-        colModel: new Ext.grid.ColumnModel({
-          defaults: {
-            sortable: true
-          },
-          columns: [{
-            header: "Name",
-            dataIndex: "name"
-          },{
-            header: "Iscsi Name",
-            dataIndex: "iscsiname"
-          }]
-        }),
-        listeners: {
-          cellclick: function (self, rowIndex, colIndex, evt ){
-            var record = self.getStore().getAt(rowIndex);
-            lunStore.load({params: {"target__name":record.data.name}});
-            init_allow.loadData(record.json.init_allow);
-            init_deny.loadData(record.json.init_deny);
-            tgt_allow.loadData(record.json.tgt_allow);
-          }
-        }
-      },{
-        ref: 'lun',
-        border: true,
-        xtype: 'grid',
-        viewConfig: { forceFit: true },
-        title: 'LUNs',
-        store: lunStore,
-        colModel: new Ext.grid.ColumnModel({
-          defaults: {
-            sortable: true
-          },
-          columns: [{
-            header: "ID",
-            dataIndex: "number"
-          },{
-            header: "Alias",
-            dataIndex: "alias"
-          },{
-            header: "LType",
-            dataIndex: "ltype"
-          },{
-            header: "Volume",
-            dataIndex: "origvolid"
-          }]
-        })
-      },{
-        ref: 'initiator',
-        border: true,
-        defaults:{border: false},
-        colspan: 2,
+        //BEGIN le left column
+        border: false,
+        layout: "vbox",
+        layoutConfig: {
+          align: "stretch"
+        },
+        defaults: {
+          flex: 1,
+        },
         items: [{
-          layout: 'column',
-          xtype: 'panel',
-          ref: 'init_panel',
-          title: 'Initiator',
-          defaults:{border: false},
+          //BEGIN le target
+          ref: '../targets',
+          border: true,
+          xtype: 'grid',
+          title: 'Targets',
+          viewConfig: { forceFit: true },
+          store: targetStore,
+          colModel: new Ext.grid.ColumnModel({
+            defaults: {
+              sortable: true
+            },
+            columns: [{
+              header: "Name",
+              dataIndex: "name"
+            },{
+              header: "Iscsi Name",
+              dataIndex: "iscsiname"
+            }]
+          }),
+          listeners: {
+            cellclick: function (self, rowIndex, colIndex, evt ){
+              var record = self.getStore().getAt(rowIndex);
+              lunStore.load({params: {"target__name":record.data.name}});
+              init_allow.loadData(record.json.init_allow);
+              init_deny.loadData(record.json.init_deny);
+              tgt_allow.loadData(record.json.tgt_allow);
+            }
+          }
+          //END le target
+        },{
+          //BEGIN le initiator
+          ref: '../initiator',
+          border: true,
+          title: "Initiator",
+          defaults:{
+            flex: 1,
+            border: false
+          },
+          layout: "hbox",
+          layoutConfig: {
+            align: "stretch"
+          },
           items: [{
             xtype: 'grid',
             ref: 'allow_grid',
             enableDragDrop: true,
             ddGroup: 'initiator',
-            border: true,
             listeners: {
               cellclick: function (self, rowIndex, colIndex, evt ){
                 iscsiPanel.initiator.init_panel.deny_grid.getSelectionModel().clearSelections();
@@ -620,8 +610,6 @@ Ext.oa.Iscsi__Panel = Ext.extend(Ext.Panel, {
               }
             },
             viewConfig: { forceFit: true },
-            width: 298,
-            height: 290,
             store: init_allow,
             colModel: new Ext.grid.ColumnModel({
               defaults: {
@@ -677,41 +665,83 @@ Ext.oa.Iscsi__Panel = Ext.extend(Ext.Panel, {
               }]
             })
           }]
+          //END le initiator
         }]
-      },{
-        id: 'west',
-        border: true,
-        ddGroup: 'target',
-        ref: 'target_grid',
-        enableDragDrop: true,
-        xtype: 'grid',
-        viewConfig: { forceFit: true },
-        title: 'Bind IPs',
-        store: tgt_allow,
-        colModel: new Ext.grid.ColumnModel({
-          defaults: {
-            sortable: true
-          },
-          columns: [{
-            header: "Allow",
-            dataIndex: "address"
-          }]
-        }),
-        listeners: {
-          afterrender: function (self){
-            var firstGridDropTargetEl =  self.getView().scroller.dom;
-            var firstGridDropTarget = new Ext.dd.DropTarget(firstGridDropTargetEl, {
-              ddGroup    : 'target',
-              notifyDrop : function(ddSource, e, data){
-                var records =  ddSource.dragData.selections;
-                if( self.store.findExact("id",records[0].data.id) === -1 ){
-                  self.store.add(records);
-                  return true
+        //END le left column
+      }, {
+        //BEGIN le right column
+        border: false,
+        defaults: {
+          flex: 1,
+          border: true,
+        },
+        layout: "vbox",
+        layoutConfig: {
+          align: "stretch"
+        },
+        items: [{
+          //BEGIN le lun
+          ref: '../lun',
+          xtype: 'grid',
+          viewConfig: { forceFit: true },
+          title: 'LUNs',
+          store: lunStore,
+          colModel: new Ext.grid.ColumnModel({
+            defaults: {
+              sortable: true
+            },
+            columns: [{
+              header: "ID",
+              dataIndex: "number"
+            },{
+              header: "Alias",
+              dataIndex: "alias"
+            },{
+              header: "LType",
+              dataIndex: "ltype"
+            },{
+              header: "Volume",
+              dataIndex: "origvolid"
+            }]
+          })
+          //END le lun
+        },{
+          //BEGIN le bind IPs
+          id: 'west',
+          ddGroup: 'target',
+          ref: '../target_grid',
+          enableDragDrop: true,
+          xtype: 'grid',
+          viewConfig: { forceFit: true },
+          title: 'Bind IPs',
+          store: tgt_allow,
+          colModel: new Ext.grid.ColumnModel({
+            defaults: {
+              sortable: true
+            },
+            columns: [{
+              header: "Allow",
+              dataIndex: "address"
+            }]
+          }),
+          listeners: {
+            afterrender: function (self){
+              var firstGridDropTargetEl =  self.getView().scroller.dom;
+              var firstGridDropTarget = new Ext.dd.DropTarget(firstGridDropTargetEl, {
+                ddGroup    : 'target',
+                notifyDrop : function(ddSource, e, data){
+                  var records =  ddSource.dragData.selections;
+                  if( self.store.findExact("id",records[0].data.id) === -1 ){
+                    self.store.add(records);
+                    return true
+                  }
                 }
-              }
-            });
+              });
+            }
           }
-        }
+          //END le bind IPs
+        }]
+        //END le right column
       }]
     }));
     Ext.oa.Iscsi__Panel.superclass.initComponent.apply(this, arguments);
