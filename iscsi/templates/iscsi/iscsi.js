@@ -20,6 +20,8 @@ var targetStore = new Ext.data.DirectStore({
   fields: ["iscsiname", "name", "id"],
   directFn: iscsi__Target.filter
 });
+
+
 var lunStore = new Ext.data.DirectStore({
   fields: ["ltype", "alias", "number", "id", {
     name: 'origvolid',
@@ -109,421 +111,6 @@ Ext.oa.Iscsi__Panel = Ext.extend(Ext.Panel, {
       },
       border: false,
       autoScroll: true,
-      //BEGIN buttons
-      buttons: [{
-        text: "",
-        icon: MEDIA_URL + "/icons2/16x16/actions/reload.png",
-        tooltip: "{% trans 'Reload' %}",
-        handler: function(self){
-          targetStore.reload();
-        }
-      },{
-        text: "{% trans 'Create Target'%}",
-        icon: MEDIA_URL + "/icons2/16x16/actions/add.png",
-        handler: function(){
-          var fqdn = "";
-          __main__.fqdn(function(provider, response){
-            fqdn = response.result.split(".").reverse().join(".");
-          });
-          var addwin = new Ext.Window({
-            title: "{% trans 'Add Target' %}",
-            layout: "fit",
-            height: 150,
-            width: 500,
-            items: [{
-              xtype: "form",
-              defaults: {
-                xtype: "textfield",
-                anchor: "-20px"
-              },
-              items: [{
-                style: {
-                  "margin-top": "2px"
-                },
-                fieldLabel: "{% trans 'Name' %}",
-                ref: "namefield",
-                listeners: {
-                  change: function( self, newValue, oldValue ){
-                    var d = new Date();
-                    var m = d.getMonth();
-                    self.ownerCt.iqn_ip_field.setValue(
-                      String.format("iqn.{0}-{1}.{2}:{3}",
-                        d.getFullYear(), (m < 10 ? "0" + m : m),
-                        fqdn, self.getValue()
-                      )
-                    );
-                  }
-                }
-              },{
-                style: {
-                  "margin-top": "2px"
-                },
-                fieldLabel: "{% trans 'IP/IQN' %}",
-                ref: "iqn_ip_field"
-              }],
-              buttons: [{
-                text: "{% trans 'Create' %}",
-                icon: MEDIA_URL + "/oxygen/16x16/actions/dialog-ok-apply.png",
-                handler: function(self){
-                  iscsi__Target.create({
-                    'name': self.ownerCt.ownerCt.namefield.getValue(),
-                    'iscsiname': self.ownerCt.ownerCt.iqn_ip_field.getValue(),
-                    'allowall': false
-                  }, function(provider, response){
-                    if( response.result ) {
-                      targetStore.reload();
-                      addwin.hide();
-                    }
-                  })
-                }
-              }]
-            }]
-          });
-          addwin.show();
-        }
-      },{
-        text: "{% trans 'Add Lun' %}",
-        icon: MEDIA_URL + "/icons2/16x16/actions/add.png",
-        handler: function(){
-          var addwin = new Ext.Window({
-            title: "{% trans 'Add Lun' %}",
-            layout: "fit",
-            height: 300,
-            width: 500,
-            items: [{
-              xtype: "form",
-              defaults: {
-                xtype: "textfield",
-                anchor: '-20px'
-              },
-              items: [{
-                xtype:      'volumefield',
-                filesystem__isnull: true
-              }, {
-                fieldLabel: "{% trans 'Number' %}",
-                name: "number",
-                xtype: 'numberfield',
-                value: -1,
-                ref: 'numberfield'
-              }, {
-                xtype:      'combo',
-                fieldLabel: "{% trans 'Target' %}",
-                name:       'target',
-                hiddenName: 'target_id',
-                store: new Ext.data.DirectStore({
-                  fields: ["id", "name"],
-                  baseParams: { fields: ["id", "name"] },
-                  directFn: iscsi__Target.all_values
-                }),
-                typeAhead:     true,
-                triggerAction: 'all',
-                emptyText:     "{% trans 'Select...' %}",
-                selectOnFocus: true,
-                displayField:  'name',
-                valueField:    'id',
-                ref: 'targetfield'
-              }, {
-                fieldLabel: "{% trans 'Type' %}",
-                name: "ltype",
-                ref: 'typefield',
-                hiddenName: 'l_type',
-                xtype:      'combo',
-                store: [ [ 'fileio',  "{% trans 'Buffered (File IO)' %}"  ], [ 'blockio', "{% trans 'Unbuffered (Block IO)' %}" ] ],
-                typeAhead:     true,
-                triggerAction: 'all',
-                emptyText:     'Select...',
-                selectOnFocus: true,
-                value: "fileio"
-              }, {
-                fieldLabel: "{% trans 'Alias' %}",
-                name: "alias",
-                ref: 'aliasfield'
-              } ],
-              buttons: [{
-                text: "{% trans 'Create Lun' %}",
-                icon: MEDIA_URL + "/oxygen/16x16/actions/dialog-ok-apply.png",
-                handler: function(self){
-                  iscsi__Lun.create({
-                    'ltype':     self.ownerCt.ownerCt.typefield.getValue(),
-                    'number':    self.ownerCt.ownerCt.numberfield.getValue(),
-                    'alias':     self.ownerCt.ownerCt.aliasfield.getValue(),
-                    'volume':    {
-                      'app': 'lvm',
-                      'obj': 'LogicalVolume',
-                      'id': self.ownerCt.ownerCt.volfield.getValue()
-                    },
-                    'target':    {
-                      'app': 'iscsi',
-                      'obj': 'Target',
-                      'id': self.ownerCt.ownerCt.targetfield.getValue()
-                    }
-                  }, function(provider, response){
-                    if( response.result ){
-                      lunStore.reload();
-                      addwin.hide();
-                    }
-                  });
-                }
-              }, {
-                text: "{% trans 'Cancel' %}",
-                icon: MEDIA_URL + "/icons2/16x16/actions/gtk-cancel.png",
-                handler: function(self){
-                  addwin.hide();
-                }
-              }]
-            }]
-          });
-          addwin.show();
-        }
-      },{
-        text: "{% trans 'Manage Initiator' %}",
-        icon: MEDIA_URL + "/icons2/16x16/actions/gtk-execute.png",
-        handler: function(){
-          var addwin = new Ext.Window({
-            height: 350,
-            width: 600,
-            frame: true,
-            title: 'Overview',
-            layout: 'column',
-            bodyStyle:'padding:5px',
-            items: [{
-              columnWidth: 0.50,
-              xtype: 'grid',
-              ref: 'initiator_all',
-              ddGroup: "initiator",
-              enableDrag: true,
-              title: 'Initiator',
-              height: 400,
-              viewConfig: { forceFit: true },
-              store: init_all,
-              colModel: (function(){
-                var cm = new Ext.grid.ColumnModel({
-                  defaults: {
-                    sortable: true
-                  },
-                  columns: [{
-                    header: "Name",
-                    dataIndex: "name"
-                  },{
-                    header: "IQN",
-                    dataIndex: "address"
-                  }]
-                });
-                return cm;
-              }()),
-              listeners: {
-                cellclick: function (self, rowIndex, colIndex, evt ){
-                var record = self.getStore().getAt(rowIndex);
-                  self.ownerCt.items.items[1].getForm().loadRecord(record);
-                }
-              }
-            },{
-              columnWidth: 0.5,
-              xtype: 'form',
-              defaultType: 'textfield',
-              bodyStyle: 'padding:5px 5px;',
-              style: {
-                "margin-left": "5px",
-                "margin-right": "0"
-              },
-              title:'Details',
-              autoScroll: true,
-              autoHeight: true,
-              border: true,
-              items: [{
-                fieldLabel: 'Name',
-                anchor: '100%',
-                ref: 'namefield',
-                name: 'name'
-              },{
-                fieldLabel: 'IQN/IP',
-                anchor: '100%',
-                ref: 'addressfield',
-                name: 'address'
-              }]
-            }],
-            buttons: [{
-              text: "{% trans 'Add' %}",
-              icon: MEDIA_URL + "/icons2/16x16/actions/add.png",
-              handler: function(self){
-                iscsi__Initiator.create({
-                  'name':    self.ownerCt.ownerCt.items.items[1].namefield.getValue(),
-                  'address': self.ownerCt.ownerCt.items.items[1].addressfield.getValue()
-                }, function(provider, response){
-                  if( response.result ){
-                    init_all.reload();
-                  }
-                });
-              }
-            },{
-              text: "{% trans 'Save' %}",
-              icon: MEDIA_URL + "/icons2/16x16/actions/edit-redo.png",
-              handler: function(self){
-                var sm = addwin.initiator_all.getSelectionModel();
-                var sel = sm.selections.items[0];
-                iscsi__Initiator.set(sel.data.id, {
-                  'name':    self.ownerCt.ownerCt.items.items[1].namefield.getValue(),
-                  'address': self.ownerCt.ownerCt.items.items[1].addressfield.getValue()
-                }, function(provider, response){
-                  if( response.result ){
-                    init_all.reload();
-                  }
-                });
-              }
-            },{
-              text: "{% trans 'Delete' %}",
-              icon: MEDIA_URL + "/icons2/16x16/actions/remove.png",
-              handler: function(self){
-                var sm = addwin.initiator_all.getSelectionModel();
-                if( sm.hasSelection() ){
-                  var sel = sm.selections.items[0];
-                  Ext.Msg.confirm(
-                    "{% trans 'Confirm delete' %}",
-                    interpolate(
-                      "{% trans 'Really delete Initiator %s' %}",
-                      [sel.data.name] ),
-                    function(btn, text){
-                      if( btn == 'yes' ){
-                        iscsi__Initiator.remove( sel.data.id, function(provider, response){
-                          init_all.reload();
-                          } );
-                      }
-                    }
-                  );
-                }
-              }
-            }]
-          });
-          addwin.show();
-        }
-      },{
-        text: "{% trans 'Bind IPs' %}",
-        icon: MEDIA_URL + "/icons2/16x16/actions/gtk-execute.png",
-        layout: 'aboslute',
-        handler: function(){
-          var iscsiSize = iscsiPanel.getSize();
-          var addwin = new Ext.Window({
-            x: iscsiSize.width / 4 * 3,
-            y: iscsiSize.height / 5 * 3,
-            height: 300,
-            width: 200,
-            frame: true,
-            layout: 'fit',
-            title: 'IPs',
-            bodyStyle:'padding:5px',
-            items: {
-              xtype: 'grid',
-              ref: 'targets_all',
-              ddGroup: "target",
-              enableDrag: true,
-              height: 400,
-              viewConfig: { forceFit: true },
-              store: tgt_all,
-              colModel: new Ext.grid.ColumnModel({
-                defaults: {
-                  sortable: true
-                },
-                columns: [{
-                  header: "Address",
-                  dataIndex: "address"
-                }]
-              })
-            }
-          });
-          addwin.show();
-        }
-      },{
-        text: "{% trans 'Delete Initiator'%}",
-        icon: MEDIA_URL + "/icons2/16x16/actions/remove.png",
-        handler: function(self){
-          var deny = iscsiPanel.initiator.init_panel.deny_grid.getSelectionModel();
-          var allow = iscsiPanel.initiator.init_panel.allow_grid.getSelectionModel();
-          var parent = iscsiPanel.targets.getSelectionModel();
-          var parentid = parent.selections.items[0];
-          if( allow.hasSelection() ){
-            var selectedItem = allow.getSelected();
-            init_allow.remove(selectedItem);
-            storeUpdate(init_allow, parentid.data.id, "init_allow");
-          }
-          if( deny.hasSelection() ){
-            var selectedItem = deny.getSelected();
-            init_deny.remove(selectedItem);
-            storeUpdate(init_deny, parentid.data.id, "init_deny");
-          }
-        }
-      },{
-        text: "{% trans 'Delete Bind IPs'%}",
-        icon: MEDIA_URL + "/icons2/16x16/actions/remove.png",
-        handler: function(self){
-          var bindIP = iscsiPanel.target_grid.getSelectionModel();
-          var parent = iscsiPanel.targets.getSelectionModel();
-          var parentid = parent.selections.items[0];
-          if( bindIP.hasSelection() ){
-            var sel = bindIP.getSelected();
-            Ext.Msg.confirm(
-            "{% trans 'Confirm delete' %}",
-            interpolate(
-              "{% trans 'Really delete IP %s?' %}",
-              [sel.data.address] ),
-            function(btn, text){
-              if( btn == 'yes' ){
-                tgt_allow.remove(sel);
-                storeUpdate(tgt_allow, parentid.data.id, "tgt_allow");
-                };
-            });
-          }
-        }
-      },{
-        text: "{% trans 'Delete Lun' %}",
-        icon: MEDIA_URL + "/icons2/16x16/actions/remove.png",
-        handler: function(self){
-          var sm = iscsiPanel.lun.getSelectionModel();
-          if( sm.hasSelection() ){
-            var sel = sm.selections.items[0];
-            Ext.Msg.confirm(
-              "{% trans 'Confirm delete' %}",
-              interpolate(
-                "{% trans 'Really delete Lun %s?' %}",
-                [sel.data.alias] ),
-              function(btn, text){
-                if( btn == 'yes' ){
-                  iscsi__Lun.remove( sel.data.id, function(provider, response){
-                  lunStore.reload();
-                  } );
-                }
-              }
-            );
-          }
-        }
-      },{
-        text: "{% trans 'Delete Target'%}",
-        icon: MEDIA_URL + "/icons2/16x16/actions/remove.png",
-        handler: function(self){
-          var sm = iscsiPanel.targets.getSelectionModel();
-          if( sm.hasSelection() ){
-            var sel = sm.selections.items[0];
-            Ext.Msg.confirm(
-              "{% trans 'Confirm delete' %}",
-              interpolate(
-                "{% trans 'Really delete Target %s?' %}",
-                [sel.data.name] ),
-              function(btn, text){
-                if( btn == 'yes' ){
-                  iscsi__Target.remove( sel.data.id, function(provider, response){
-                    targetStore.reload();
-                    lunStore.removeAll();
-                    init_allow.removeAll();
-                    init_deny.removeAll();
-                    tgt_allow.removeAll();
-                    }
-                  );
-                }
-              }
-            );
-          }
-        }
-      } ],
-      //END buttons
       items: [{
         //BEGIN le left column
         border: false,
@@ -562,7 +149,106 @@ Ext.oa.Iscsi__Panel = Ext.extend(Ext.Panel, {
               init_deny.loadData(record.json.init_deny);
               tgt_allow.loadData(record.json.tgt_allow);
             }
-          }
+          },
+          buttons:[{  
+            text: "",
+            icon: MEDIA_URL + "/icons2/16x16/actions/reload.png",
+            tooltip: "{% trans 'Reload' %}",
+            handler: function(self){
+              targetStore.reload();
+            }
+          },{
+            text: "{% trans 'Create Target'%}",
+            icon: MEDIA_URL + "/icons2/16x16/actions/add.png",
+            handler: function(){
+              var fqdn = "";
+              __main__.fqdn(function(provider, response){
+                fqdn = response.result.split(".").join(".");
+              });
+              var addwin = new Ext.Window({
+                title: "{% trans 'Add Target' %}",
+                layout: "fit",
+                height: 150,
+                width: 500,
+                items: [{
+                  xtype: "form",
+                  defaults: {
+                    xtype: "textfield",
+                    anchor: "-20px"
+                  },
+                  items: [{
+                    style: {
+                      "margin-top": "2px"
+                    },
+                    fieldLabel: "{% trans 'Name' %}",
+                    ref: "namefield",
+                    listeners: {
+                      change: function( self, newValue, oldValue ){
+                        var d = new Date();
+                        var m = d.getMonth();
+                        self.ownerCt.iqn_ip_field.setValue(
+                          String.format("iqn.{0}-{1}.{2}:{3}",
+                            d.getFullYear(), (m < 10 ? "0" + m : m),
+                            fqdn, self.getValue()
+                          )
+                        );
+                      }
+                    }
+                  },{
+                    style: {
+                      "margin-top": "2px"
+                    },
+                    fieldLabel: "{% trans 'IP/IQN' %}",
+                    ref: "iqn_ip_field"
+                  }],
+                  buttons: [{
+                    text: "{% trans 'Create' %}",
+                    icon: MEDIA_URL + "/oxygen/16x16/actions/dialog-ok-apply.png",
+                    handler: function(self){
+                      iscsi__Target.create({
+                        'name': self.ownerCt.ownerCt.namefield.getValue(),
+                        'iscsiname': self.ownerCt.ownerCt.iqn_ip_field.getValue(),
+                        'allowall': false
+                      }, function(provider, response){
+                        if( response.result ) {
+                          targetStore.reload();
+                          addwin.hide();
+                        }
+                      })
+                    }
+                  }]
+                }]
+              });
+              addwin.show();
+            }
+          },{
+            text: "{% trans 'Delete Target'%}",
+            icon: MEDIA_URL + "/icons2/16x16/actions/remove.png",
+            handler: function(self){
+              var sm = iscsiPanel.targets.getSelectionModel();
+              if( sm.hasSelection() ){
+                var sel = sm.selections.items[0];
+                Ext.Msg.confirm(
+                  "{% trans 'Confirm delete' %}",
+                  interpolate(
+                    "{% trans 'Really delete Target %s?' %}",
+                    [sel.data.name] ),
+                  function(btn, text){
+                    if( btn == 'yes' ){
+                      iscsi__Target.remove( sel.data.id, function(provider, response){
+                        targetStore.reload();
+                        lunStore.removeAll();
+                        init_allow.removeAll();
+                        init_deny.removeAll();
+                        tgt_allow.removeAll();
+                        }
+                      );
+                    }
+                  }
+                );
+              }
+            }
+          }]
           //END le target
         },{
           //BEGIN le initiator
@@ -584,7 +270,7 @@ Ext.oa.Iscsi__Panel = Ext.extend(Ext.Panel, {
             ddGroup: 'initiator',
             listeners: {
               cellclick: function (self, rowIndex, colIndex, evt ){
-                iscsiPanel.initiator.init_panel.deny_grid.getSelectionModel().clearSelections();
+                iscsiPanel.initiator.deny_grid.getSelectionModel().clearSelections();
               },
               afterrender: function (self){
                 var firstGridDropTargetEl =  self.getView().scroller.dom;
@@ -628,7 +314,7 @@ Ext.oa.Iscsi__Panel = Ext.extend(Ext.Panel, {
             store: init_deny,
             listeners: {
               cellclick: function (self, rowIndex, colIndex, evt ){
-                iscsiPanel.initiator.init_panel.allow_grid.getSelectionModel().clearSelections();
+                iscsiPanel.initiator.allow_grid.getSelectionModel().clearSelections();
               },
               afterrender: function (self){
                 var firstGridDropTargetEl =  self.getView().scroller.dom;
@@ -664,7 +350,148 @@ Ext.oa.Iscsi__Panel = Ext.extend(Ext.Panel, {
                 dataIndex: "name"
               }]
             })
-          }]
+          }],
+          buttons:[{
+            text: "{% trans 'Manage Initiator' %}",
+            icon: MEDIA_URL + "/icons2/16x16/actions/gtk-execute.png",
+            handler: function(){
+              var addwin = new Ext.Window({
+                height: 350,
+                width: 600,
+                frame: true,
+                title: 'Overview',
+                layout: 'column',
+                bodyStyle:'padding:5px',
+                items: [{
+                  columnWidth: 0.50,
+                  xtype: 'grid',
+                  ref: 'initiator_all',
+                  ddGroup: "initiator",
+                  enableDrag: true,
+                  title: 'Initiator',
+                  height: 400,
+                  viewConfig: { forceFit: true },
+                  store: init_all,
+                  colModel: (function(){
+                    var cm = new Ext.grid.ColumnModel({
+                      defaults: {
+                        sortable: true
+                      },
+                      columns: [{
+                        header: "Name",
+                        dataIndex: "name"
+                      },{
+                        header: "IQN",
+                        dataIndex: "address"
+                      }]
+                    });
+                    return cm;
+                  }()),
+                  listeners: {
+                    cellclick: function (self, rowIndex, colIndex, evt ){
+                    var record = self.getStore().getAt(rowIndex);
+                      self.ownerCt.items.items[1].getForm().loadRecord(record);
+                    }
+                  }
+                },{
+                  columnWidth: 0.5,
+                  xtype: 'form',
+                  defaultType: 'textfield',
+                  bodyStyle: 'padding:5px 5px;',
+                  style: {
+                    "margin-left": "5px",
+                    "margin-right": "0"
+                  },
+                  title:'Details',
+                  autoScroll: true,
+                  autoHeight: true,
+                  border: true,
+                  items: [{
+                    fieldLabel: 'Name',
+                    anchor: '100%',
+                    ref: 'namefield',
+                    name: 'name'
+                  },{
+                    fieldLabel: 'IQN/IP',
+                    anchor: '100%',
+                    ref: 'addressfield',
+                    name: 'address'
+                  }]
+                }],
+                buttons: [{
+                  text: "{% trans 'Add' %}",
+                  icon: MEDIA_URL + "/icons2/16x16/actions/add.png",
+                  handler: function(self){
+                    iscsi__Initiator.create({
+                      'name':    self.ownerCt.ownerCt.items.items[1].namefield.getValue(),
+                      'address': self.ownerCt.ownerCt.items.items[1].addressfield.getValue()
+                    }, function(provider, response){
+                      if( response.result ){
+                        init_all.reload();
+                      }
+                    });
+                  }
+                },{
+                  text: "{% trans 'Save' %}",
+                  icon: MEDIA_URL + "/icons2/16x16/actions/edit-redo.png",
+                  handler: function(self){
+                    var sm = addwin.initiator_all.getSelectionModel();
+                    var sel = sm.selections.items[0];
+                    iscsi__Initiator.set(sel.data.id, {
+                      'name':    self.ownerCt.ownerCt.items.items[1].namefield.getValue(),
+                      'address': self.ownerCt.ownerCt.items.items[1].addressfield.getValue()
+                    }, function(provider, response){
+                      if( response.result ){
+                        init_all.reload();
+                      }
+                    });
+                  }
+                },{
+                  text: "{% trans 'Delete' %}",
+                  icon: MEDIA_URL + "/icons2/16x16/actions/remove.png",
+                  handler: function(self){
+                    var sm = addwin.initiator_all.getSelectionModel();
+                    if( sm.hasSelection() ){
+                      var sel = sm.selections.items[0];
+                      Ext.Msg.confirm(
+                        "{% trans 'Confirm delete' %}",
+                        interpolate(
+                          "{% trans 'Really delete Initiator %s' %}",
+                          [sel.data.name] ),
+                        function(btn, text){
+                          if( btn == 'yes' ){
+                            iscsi__Initiator.remove( sel.data.id, function(provider, response){
+                              init_all.reload();
+                              } );
+                          }
+                        }
+                      );
+                    }
+                  }
+                }]
+              });
+              addwin.show();
+            }
+        },{
+            text: "{% trans 'Delete Initiator'%}",
+            icon: MEDIA_URL + "/icons2/16x16/actions/remove.png",
+            handler: function(self){
+              var deny = iscsiPanel.initiator.deny_grid.getSelectionModel();
+              var allow = iscsiPanel.initiator.allow_grid.getSelectionModel();
+              var parent = iscsiPanel.targets.getSelectionModel();
+              var parentid = parent.selections.items[0];
+              if( allow.hasSelection() ){
+                var selectedItem = allow.getSelected();
+                init_allow.remove(selectedItem);
+                storeUpdate(init_allow, parentid.data.id, "init_allow");
+              }
+              if( deny.hasSelection() ){
+                var selectedItem = deny.getSelected();
+                init_deny.remove(selectedItem);
+                storeUpdate(init_deny, parentid.data.id, "init_deny");
+              }
+            }
+        }]
           //END le initiator
         }]
         //END le left column
@@ -703,7 +530,118 @@ Ext.oa.Iscsi__Panel = Ext.extend(Ext.Panel, {
               header: "Volume",
               dataIndex: "origvolid"
             }]
-          })
+          }),
+          buttons:[{
+            text: "{% trans 'Add Lun' %}",
+            icon: MEDIA_URL + "/icons2/16x16/actions/add.png",
+            handler: function(){
+              var addwin = new Ext.Window({
+                title: "{% trans 'Add Lun' %}",
+                layout: "fit",
+                height: 300,
+                width: 500,
+                items: [{
+                  xtype: "form",
+                  defaults: {
+                    xtype: "textfield",
+                    anchor: '-20px'
+                  },
+                  items: [{
+                    xtype:      'volumefield',
+                    filesystem__isnull: true,
+                    listeners: {
+                      select: function(self, record){
+                          self.ownerCt.aliasfield.setValue( record.data.name );
+                          self.ownerCt.aliasfield.enable();
+                      }
+                     }
+                  }, {
+                    fieldLabel: "{% trans 'Number' %}",
+                    name: "number",
+                    xtype: 'numberfield',
+                    value: -1,
+                    ref: 'numberfield'
+                  },{
+                    fieldLabel: "{% trans 'Type' %}",
+                    name: "ltype",
+                    ref: 'typefield',
+                    hiddenName: 'l_type',
+                    xtype:      'combo',
+                    store: [ [ 'fileio',  "{% trans 'Buffered (File IO)' %}"  ], [ 'blockio', "{% trans 'Unbuffered (Block IO)' %}" ] ],
+                    typeAhead:     true,
+                    triggerAction: 'all',
+                    emptyText:     'Select...',
+                    selectOnFocus: true,
+                    value: "fileio"
+                  }, {
+                    fieldLabel: "{% trans 'Alias' %}",
+                    name: "alias",
+                    ref: 'aliasfield'
+                  } ],
+                  buttons: [{
+                    text: "{% trans 'Create Lun' %}",
+                    icon: MEDIA_URL + "/oxygen/16x16/actions/dialog-ok-apply.png",
+                    handler: function(self){
+                      var sel = iscsiPanel.targets.getSelectionModel();
+                      if (sel.selections.items != "") {
+                        iscsi__Lun.create({
+                          'ltype':     self.ownerCt.ownerCt.typefield.getValue(),
+                          'number':    self.ownerCt.ownerCt.numberfield.getValue(),
+                          'alias':     self.ownerCt.ownerCt.aliasfield.getValue(),
+                          'volume':    {
+                            'app': 'lvm',
+                            'obj': 'LogicalVolume',
+                            'id': self.ownerCt.ownerCt.volfield.getValue()
+                          },
+                          'target':    {
+                            'app': 'iscsi',
+                            'obj': 'Target',
+                            'id': sel.selections.items[0].data.id
+                          }
+                        }, function(provider, response){
+                          if( response.result ){
+                            lunStore.reload();
+                            addwin.hide();
+                          }
+                        })
+                      }
+                      else {addwin.hide();Ext.Msg.alert("Warning","Please select Target first")}
+                      addwin.hide();
+                    }
+                  }, {
+                    text: "{% trans 'Cancel' %}",
+                    icon: MEDIA_URL + "/icons2/16x16/actions/gtk-cancel.png",
+                    handler: function(self){
+                      addwin.hide();
+                    }
+                  }]
+                }]
+              });
+              addwin.show();
+            }
+          },{
+            text: "{% trans 'Delete Lun' %}",
+            icon: MEDIA_URL + "/icons2/16x16/actions/remove.png",
+            handler: function(self){
+              var sm = iscsiPanel.lun.getSelectionModel();
+              if( sm.hasSelection() ){
+                var sel = sm.selections.items[0];
+                Ext.Msg.confirm(
+                  "{% trans 'Confirm delete' %}",
+                  interpolate(
+                    "{% trans 'Really delete Lun %s?' %}",
+                    [sel.data.alias] ),
+                  function(btn, text){
+                    if( btn == 'yes' ){
+                      iscsi__Lun.remove( sel.data.id, function(provider, response){
+                      lunStore.reload();
+                      } );
+                    }
+                  }
+                );
+              }
+            }
+          }]
           //END le lun
         },{
           //BEGIN le bind IPs
@@ -724,6 +662,65 @@ Ext.oa.Iscsi__Panel = Ext.extend(Ext.Panel, {
               dataIndex: "address"
             }]
           }),
+          buttons:[{
+              text: "{% trans 'Bind IPs' %}",
+              icon: MEDIA_URL + "/icons2/16x16/actions/gtk-execute.png",
+              layout: 'aboslute',
+              handler: function(){
+                var iscsiSize = iscsiPanel.getSize();
+                var addwin = new Ext.Window({
+                  x: iscsiSize.width / 4 * 3,
+                  y: iscsiSize.height / 5 * 3,
+                  height: 300,
+                  width: 200,
+                  frame: true,
+                  layout: 'fit',
+                  title: 'IPs',
+                  bodyStyle:'padding:5px',
+                  items: {
+                    xtype: 'grid',
+                    ref: 'targets_all',
+                    ddGroup: "target",
+                    enableDrag: true,
+                    height: 400,
+                    viewConfig: { forceFit: true },
+                    store: tgt_all,
+                    colModel: new Ext.grid.ColumnModel({
+                      defaults: {
+                        sortable: true
+                      },
+                      columns: [{
+                        header: "Address",
+                        dataIndex: "address"
+                      }]
+                    })
+                  }
+                });
+                addwin.show();
+              }
+            },{
+              text: "{% trans 'Delete Bind IPs'%}",
+              icon: MEDIA_URL + "/icons2/16x16/actions/remove.png",
+              handler: function(self){
+                var bindIP = iscsiPanel.target_grid.getSelectionModel();
+                var parent = iscsiPanel.targets.getSelectionModel();
+                var parentid = parent.selections.items[0];
+                if( bindIP.hasSelection() ){
+                  var sel = bindIP.getSelected();
+                  Ext.Msg.confirm(
+                  "{% trans 'Confirm delete' %}",
+                  interpolate(
+                    "{% trans 'Really delete IP %s?' %}",
+                    [sel.data.address] ),
+                  function(btn, text){
+                    if( btn == 'yes' ){
+                      tgt_allow.remove(sel);
+                      storeUpdate(tgt_allow, parentid.data.id, "tgt_allow");
+                      };
+                  });
+                }
+              }
+            }],
           listeners: {
             afterrender: function (self){
               var firstGridDropTargetEl =  self.getView().scroller.dom;
