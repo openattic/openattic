@@ -64,15 +64,6 @@ Ext.oa.MenuTree = Ext.extend(Ext.tree.TreePanel, {
       }
     ]
   },
-  fbar: [ 'Auto-expand root nodes', {
-    xtype: "checkbox",
-    checked: Ext.state.Manager.get("expand_root_nodes", true),
-    listeners: {
-      check: function( self, checked ){
-        Ext.state.Manager.set("expand_root_nodes", checked);
-      }
-    }
-  }],
   appendToRootNodeById: function(rootid, subnode){
     if( !this.root.loaded ){
       for( var i = 0; i < this.root.attributes.children.length; i++ ){
