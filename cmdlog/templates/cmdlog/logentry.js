@@ -82,6 +82,8 @@ Ext.oa.Cmdlog__LogEntry_Panel = Ext.extend(Ext.Panel, {
         },
         bbar: new Ext.PagingToolbar({
           pageSize: 100,
+          afterPageText:  "{% trans 'of {0}' %}",
+          beforePageText: "{% trans 'Page' %}",
           store:    store,
           items: ['->', {
             xtype: 'button',

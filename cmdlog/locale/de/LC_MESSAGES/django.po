@@ -8,8 +8,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2011-11-18 11:22+0100\n"
-"PO-Revision-Date: 2011-11-18 11:23\n"
+"POT-Creation-Date: 2011-11-18 14:20+0100\n"
+"PO-Revision-Date: 2011-11-18 14:20\n"
 "Last-Translator: Michael Ziegler <michael.ziegler@it-novum.com>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
 "MIME-Version: 1.0\n"
@@ -56,29 +56,37 @@ msgstr "Log-Einträge"
 msgid "Exit Status"
 msgstr "Rückgabewert"
 
-#: templates/cmdlog/logentry.js:88 templates/cmdlog/logentry.js.py:91
+#: templates/cmdlog/logentry.js:85
+msgid "of {0}"
+msgstr "von {0}"
+
+#: templates/cmdlog/logentry.js:86
+msgid "Page"
+msgstr "Seite"
+
+#: templates/cmdlog/logentry.js:90 templates/cmdlog/logentry.js.py:93
 msgid "Delete old entries"
 msgstr "Alte Einträge löschen"
 
-#: templates/cmdlog/logentry.js:115
+#: templates/cmdlog/logentry.js:117
 #, python-format
 msgid "%s Entries matched"
 msgstr "%s Einträge gefunden"
 
-#: templates/cmdlog/logentry.js:121
+#: templates/cmdlog/logentry.js:123
 msgid "Log Entries newer than the date you enter here will be kept."
 msgstr ""
 "Log-Einträge die neuer sind als das Datum das Sie hier eingeben werden "
 "beibehalten."
 
-#: templates/cmdlog/logentry.js:124
+#: templates/cmdlog/logentry.js:126
 msgid "Waiting for date selection..."
 msgstr "Warte auf Wahl eines Datums..."
 
-#: templates/cmdlog/logentry.js:129
+#: templates/cmdlog/logentry.js:131
 msgid "Delete"
 msgstr "Löschen"
 
-#: templates/cmdlog/logentry.js:165
+#: templates/cmdlog/logentry.js:167
 msgid "Command Log"
 msgstr "Befehls-Log"
