@@ -27,7 +27,7 @@ Ext.oa.Time_Panel = Ext.extend(Ext.Panel, {
         paramOrder: ["id"],
         items: [{
           fieldLabel: "{% trans 'NTP Server' %}",
-          name: "{% trans 'server' %}",
+          name: "server",
           width: 200,
           allowBlank: false,
           ref: 'serverfield'
@@ -36,7 +36,7 @@ Ext.oa.Time_Panel = Ext.extend(Ext.Panel, {
           text: "{% trans 'Save' %}",
           handler: function(self){
             sysutils__NTP.set(1, {
-              'server':            self.ownerCt.ownerCt.emailfield.getValue()
+              'server': self.ownerCt.ownerCt.serverfield.getValue()
             });
             Ext.Msg.show({
               title:   "{% trans 'NTP' %}",
