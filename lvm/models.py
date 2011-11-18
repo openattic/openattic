@@ -380,7 +380,7 @@ class LogicalVolume(StatefulModel):
 
         if self.megs < self.lvm_megs:
             # Shrink FS, then Volume
-            lvm_signals.pre_shrink.send(sender=self)
+            lvm_signals.pre_shrink.send(sender=self, jid=jid)
 
             if self.filesystem:
                 self.fs.resize(jid, grow=False)
@@ -390,10 +390,10 @@ class LogicalVolume(StatefulModel):
 
             self.lvm.lvresize(jid, self.device, self.megs, False)
 
-            lvm_signals.post_shrink.send(sender=self)
+            lvm_signals.post_shrink.send(sender=self, jid=jid)
         else:
             # Grow Volume, then FS
-            lvm_signals.pre_grow.send(sender=self)
+            lvm_signals.pre_grow.send(sender=self, jid=jid)
 
             self.lvm.lvresize(jid, self.device, self.megs, True)
 
@@ -403,7 +403,7 @@ class LogicalVolume(StatefulModel):
             if self.filesystem:
                 self.fs.resize(jid, grow=True)
 
-            lvm_signals.post_grow.send(sender=self)
+            lvm_signals.post_grow.send(sender=self, jid=jid)
 
         if self.filesystem:
             sysd.job_add_command(jid, ["mount", self.fs.mountpoints[0].encode("ascii")])
