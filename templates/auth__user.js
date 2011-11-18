@@ -157,6 +157,7 @@ Ext.oa.Auth__User_Panel = Ext.extend(Ext.grid.GridPanel, {
                   fieldLabel: "{% trans 'E-Mail' %}",
                   inputType: 'email',
                   name: "email",
+                  height: 22,
                   ref: 'emailfield',
                   value: sel.data.email
                 },{
@@ -228,7 +229,7 @@ Ext.oa.Auth__User_Panel = Ext.extend(Ext.grid.GridPanel, {
                 items: [{
                   fieldLabel: "{% trans 'User Name' %}",
                   name: "username",
-                  disabled: true,
+                  hidden: true,
                   ref: 'usernamefield',
                   value: sel.data.username
                 },{
