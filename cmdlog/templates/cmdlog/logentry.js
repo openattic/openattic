@@ -99,32 +99,34 @@ Ext.oa.Cmdlog__LogEntry_Panel = Ext.extend(Ext.Panel, {
                     xtype: "textfield",
                     anchor: '-20px'
                   },
-                  items: [{
-                    fieldLabel: "Date",
-                    allowBlank: false,
-                    name:  "date",
-                    xtype: 'datefield',
-                    ref:   'datefield',
-                    listeners: {
-                      select: function( self, newValue ){
-                        cmdlog__LogEntry.count_older_than(
-                          parseInt(newValue.format("U")),
-                          function(provider, response){
-                            self.ownerCt.countlabel.setText(
-                              interpolate("{% trans '%s Entries matched' %}", [response.result])
-                            );
-                          }
-                        );
+                  items: [
+                    tipify({
+                      fieldLabel: "Date",
+                      allowBlank: false,
+                      name:  "date",
+                      xtype: 'datefield',
+                      ref:   'datefield',
+                      listeners: {
+                        select: function( self, newValue ){
+                          cmdlog__LogEntry.count_older_than(
+                            parseInt(newValue.format("U")),
+                            function(provider, response){
+                              self.ownerCt.countlabel.setText(
+                                interpolate("{% trans '%s Entries matched' %}", [response.result])
+                              );
+                            }
+                          );
+                        }
                       }
-                    }
-                  }, {
+                    }, "{% trans 'Log Entries newer than the date you enter here will be kept.' %}"
+                  ), {
                     xtype: "label",
                     text:  "{% trans 'Waiting for date selection...' %}",
                     cls:   "form_hint_label",
                     ref:   "countlabel"
                   }],
                   buttons: [{
-                    text: 'Do it',
+                    text: "{% trans 'Delete' %}",
                     ref:   'shoopmit',
                     handler: function(self){
                       var date = self.ownerCt.ownerCt.datefield.getValue();

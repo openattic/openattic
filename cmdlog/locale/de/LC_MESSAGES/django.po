@@ -8,8 +8,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2011-09-29 09:43+0200\n"
-"PO-Revision-Date: 2011-09-29 09:43\n"
+"POT-Creation-Date: 2011-11-18 11:22+0100\n"
+"PO-Revision-Date: 2011-11-18 11:23\n"
 "Last-Translator: Michael Ziegler <michael.ziegler@it-novum.com>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
 "MIME-Version: 1.0\n"
@@ -19,7 +19,7 @@ msgstr ""
 "Plural-Forms: nplurals=2; plural=(n != 1)\n"
 "X-Translated-Using: django-rosetta 0.6.0\n"
 
-#: models.py:8 templates/cmdlog/logentry.js:71
+#: models.py:8 templates/cmdlog/logentry.js:70
 msgid "Command"
 msgstr "Befehl"
 
@@ -27,7 +27,7 @@ msgstr "Befehl"
 msgid "Start time"
 msgstr "Start-Zeitpunkt"
 
-#: models.py:10 templates/cmdlog/logentry.js:68
+#: models.py:10 templates/cmdlog/logentry.js:67
 msgid "End time"
 msgstr "End-Zeitpunkt"
 
@@ -39,23 +39,46 @@ msgstr "Rückgabewert"
 msgid "Output"
 msgstr "Ausgabe"
 
-#: templates/cmdlog/logentry.js:50
+#: templates/cmdlog/logentry.js:48
 msgid "Select a log entry to see the command's output here."
 msgstr ""
 "Bitte wählen Sie einen Log-Eintrag aus, um die Ausgabe des Befehls zu sehen."
 
-#: templates/cmdlog/logentry.js:52
+#: templates/cmdlog/logentry.js:50
 msgid "Loading..."
 msgstr "Lade..."
 
-#: templates/cmdlog/logentry.js:56
+#: templates/cmdlog/logentry.js:55
 msgid "Log Entries"
 msgstr "Log-Einträge"
 
-#: templates/cmdlog/logentry.js:74
+#: templates/cmdlog/logentry.js:73
 msgid "Exit Status"
 msgstr "Rückgabewert"
 
-#: templates/cmdlog/logentry.js:95
+#: templates/cmdlog/logentry.js:88 templates/cmdlog/logentry.js.py:91
+msgid "Delete old entries"
+msgstr "Alte Einträge löschen"
+
+#: templates/cmdlog/logentry.js:115
+#, python-format
+msgid "%s Entries matched"
+msgstr "%s Einträge gefunden"
+
+#: templates/cmdlog/logentry.js:121
+msgid "Log Entries newer than the date you enter here will be kept."
+msgstr ""
+"Log-Einträge die neuer sind als das Datum das Sie hier eingeben werden "
+"beibehalten."
+
+#: templates/cmdlog/logentry.js:124
+msgid "Waiting for date selection..."
+msgstr "Warte auf Wahl eines Datums..."
+
+#: templates/cmdlog/logentry.js:129
+msgid "Delete"
+msgstr "Löschen"
+
+#: templates/cmdlog/logentry.js:165
 msgid "Command Log"
 msgstr "Befehls-Log"
