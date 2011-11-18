@@ -7,7 +7,8 @@ from django.db   import models
 from django.conf import settings
 from django.utils.translation   import ugettext_noop, ugettext_lazy as _
 
-from lvm.models import StatefulModel, LogicalVolume
+from lvm.models  import StatefulModel, LogicalVolume
+from lvm.signals import post_shrink, post_grow
 from ifconfig.models import IPAddress
 
 class Initiator(models.Model):
@@ -84,6 +85,12 @@ class Lun(StatefulModel):
         if self.volume.filesystem:
             raise ValidationError('This share type can not be used on volumes with a file system.')
 
+    def iet_add(self, jid=-1):
+        self.target._iscsi.lun_new( self.target.tid, self.number, self.volume.path, self.ltype, jid )
+
+    def iet_delete(self, jid=-1):
+        self.target._iscsi.lun_delete(self.target.tid, self.number, jid)
+
     def save(self, *args, **kwargs):
         if self.number == -1:
             try:
@@ -92,7 +99,7 @@ class Lun(StatefulModel):
                 self.number = 0
 
         if self.id is None and not self.volume.standby:
-            self.target._iscsi.lun_new( self.target.tid, self.number, self.volume.path, self.ltype )
+            self.iet_add()
 
         self.state = "active"
         ret = StatefulModel.save(self, ignore_state=True, *args, **kwargs)
@@ -104,6 +111,15 @@ class Lun(StatefulModel):
         volume = self.volume
         ret = StatefulModel.delete(self)
         if not volume.standby:
-            self.target._iscsi.lun_delete(self.target.tid, self.number)
+            self.iet_delete()
         self.target._iscsi.writeconf()
         return ret
+
+
+def lv_resized(sender, **kwargs):
+    for lun in Lun.objects.filter(volume=sender):
+        lun.iet_delete(int(kwargs["jid"]))
+        lun.iet_add(int(kwargs["jid"]))
+
+post_shrink.connect(lv_resized)
+post_grow.connect(lv_resized)

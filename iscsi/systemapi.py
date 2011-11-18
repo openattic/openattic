@@ -98,14 +98,24 @@ class SystemD(LockingPlugin):
     def session_show(self, tid, sid):
         return invoke(["/usr/sbin/ietadm", "--op", "show", "--tid", str(tid), "--sid", str(sid)])
 
-    @method(in_signature="iiss", out_signature="i")
-    def lun_new(self, tid, lun, path, ltype):
-        return invoke(["/usr/sbin/ietadm", "--op", "new", "--tid", str(tid), "--lun", str(lun),
-                       "--params", "Path=%s,Type=%s" % (path, ltype)])
+    @method(in_signature="iissi", out_signature="i")
+    def lun_new(self, tid, lun, path, ltype, jid):
+        cmd = ["/usr/sbin/ietadm", "--op", "new", "--tid", str(tid), "--lun", str(lun),
+               "--params", "Path=%s,Type=%s" % (path, ltype)]
+        if jid == -1:
+            return invoke(cmd)
+        else:
+            self.job_add_command(jid, cmd)
+            return -1
 
-    @method(in_signature="ii", out_signature="i")
-    def lun_delete(self, tid, lun):
-        return invoke(["/usr/sbin/ietadm", "--op", "delete", "--tid", str(tid), "--lun", str(lun)])
+    @method(in_signature="iii", out_signature="i")
+    def lun_delete(self, tid, lun, jid):
+        cmd = ["/usr/sbin/ietadm", "--op", "delete", "--tid", str(tid), "--lun", str(lun)]
+        if jid == -1:
+            return invoke(cmd)
+        else:
+            self.job_add_command(jid, cmd)
+            return -1
 
     @method(in_signature="iii", out_signature="i")
     def conn_delete(self, tid, sid, cid):
