@@ -51,7 +51,7 @@
     <script src="{{ MEDIA_URL }}/js/ToolbarReorderer.js"></script>
     <script src="{{ MEDIA_URL }}/js/ToolbarDroppable.js"></script>
     <script src="{{ MEDIA_URL }}/js/ajaxterm.js"></script>
-    <script src="{{ MEDIA_URL }}/js/logout_theme.js"></script>
+    <script src="{{ MEDIA_URL }}/js/logout.js"></script>
     {% for app in INSTALLED_APPS %}
       {% with app|stringformat:"s/mainhead.html" as apptemplate %}
         {% if apptemplate|template_exists %}

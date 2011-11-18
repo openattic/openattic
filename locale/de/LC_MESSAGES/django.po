@@ -8,8 +8,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2011-11-11 12:07+0100\n"
-"PO-Revision-Date: 2011-11-11 12:08\n"
+"POT-Creation-Date: 2011-11-18 10:28+0100\n"
+"PO-Revision-Date: 2011-11-18 10:29\n"
 "Last-Translator: Michael Ziegler <michael.ziegler@it-novum.com>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
 "MIME-Version: 1.0\n"
@@ -40,19 +40,19 @@ msgstr "Benutzername"
 msgid "Password"
 msgstr "Passwort"
 
-#: auth__user.js:49 auth__user.js.py:266
+#: auth__user.js:49 auth__user.js.py:143 auth__user.js.py:266
 msgid "First Name"
 msgstr "Vorname"
 
-#: auth__user.js:53
-msgid "last Name"
+#: auth__user.js:53 auth__user.js.py:149 auth__user.js.py:270
+msgid "Last Name"
 msgstr "Nachname"
 
-#: auth__user.js:57
+#: auth__user.js:57 auth__user.js.py:155
 msgid "E-Mail"
 msgstr "E-Mail"
 
-#: auth__user.js:62 auth__user.js.py:278
+#: auth__user.js:62 auth__user.js.py:162 auth__user.js.py:278
 msgid "Active"
 msgstr "Aktiv"
 
@@ -60,7 +60,7 @@ msgstr "Aktiv"
 msgid "SuperUser"
 msgstr "Administrator"
 
-#: auth__user.js:72 auth__user.js.py:283
+#: auth__user.js:72 auth__user.js.py:168 auth__user.js.py:283
 msgid "Staff"
 msgstr "Personal"
 
@@ -84,10 +84,6 @@ msgstr "Speichern"
 msgid "Change Password"
 msgstr "Passwort ändern"
 
-#: auth__user.js:270
-msgid "Last Name"
-msgstr "Nachname"
-
 #: auth__user.js:274
 msgid "E-Mail Address"
 msgstr "E-Mail-Adresse"
@@ -108,6 +104,21 @@ msgstr "Benutzer-Verwaltung"
 msgid "Loading..."
 msgstr "Lade..."
 
-#: index_ext_unauthed.html:67 index_ext_unauthed.html.py:76
+#: index_ext_unauthed.html:74 index_ext_unauthed.html.py:83
 msgid "Checking..."
 msgstr "Prüfe..."
+
+#: logout.js:4 logout.js.py:10 logout.js.py:23
+msgid "Logout"
+msgstr "Abmelden"
+
+#: logout.js:11
+msgid "Do you really want to logout?"
+msgstr "Möchten Sie sich wirklich abmelden?"
+
+#: logout.js:24
+msgid "Successfully logged out"
+msgstr "Sie haben sich erfolgreich abgemeldet."
+
+#~ msgid "last Name"
+#~ msgstr "Nachname"
