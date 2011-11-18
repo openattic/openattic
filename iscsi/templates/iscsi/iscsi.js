@@ -21,6 +21,11 @@ var targetStore = new Ext.data.DirectStore({
   directFn: iscsi__Target.filter
 });
 
+var lunStore_number = new Ext.data.DirectStore({
+  fields: ["number"],
+  directFn: iscsi__Lun.all
+});
+
 
 var lunStore = new Ext.data.DirectStore({
   fields: ["ltype", "alias", "number", "id", {
@@ -205,16 +210,22 @@ Ext.oa.Iscsi__Panel = Ext.extend(Ext.Panel, {
                     text: "{% trans 'Create' %}",
                     icon: MEDIA_URL + "/oxygen/16x16/actions/dialog-ok-apply.png",
                     handler: function(self){
-                      iscsi__Target.create({
-                        'name': self.ownerCt.ownerCt.namefield.getValue(),
-                        'iscsiname': self.ownerCt.ownerCt.iqn_ip_field.getValue(),
-                        'allowall': false
-                      }, function(provider, response){
-                        if( response.result ) {
-                          targetStore.reload();
-                          addwin.hide();
-                        }
-                      })
+                      if(self.ownerCt.ownerCt.namefield.getValue() === "" || self.ownerCt.ownerCt.iqn_ip_field.getValue() === ""){
+                        Ext.Msg.alert("Warning","Please insert Name and IQN");
+                      }
+                      else
+                      {
+                        iscsi__Target.create({
+                          'name': self.ownerCt.ownerCt.namefield.getValue(),
+                          'iscsiname': self.ownerCt.ownerCt.iqn_ip_field.getValue(),
+                          'allowall': false
+                        }, function(provider, response){
+                          if( response.result ) {
+                            targetStore.reload();
+                            addwin.hide();
+                          }
+                        })
+                    }
                     }
                   }]
                 }]
@@ -422,29 +433,43 @@ Ext.oa.Iscsi__Panel = Ext.extend(Ext.Panel, {
                   text: "{% trans 'Add' %}",
                   icon: MEDIA_URL + "/icons2/16x16/actions/add.png",
                   handler: function(self){
-                    iscsi__Initiator.create({
-                      'name':    self.ownerCt.ownerCt.items.items[1].namefield.getValue(),
-                      'address': self.ownerCt.ownerCt.items.items[1].addressfield.getValue()
-                    }, function(provider, response){
-                      if( response.result ){
-                        init_all.reload();
-                      }
-                    });
+                    if( self.ownerCt.ownerCt.items.items[1].namefield.getValue() === "" || self.ownerCt.ownerCt.items.items[1].addressfield.getValue() === "") {
+                      Ext.Msg.alert("Warning","Please insert Name and IQN");
+                    }
+                    else
+                    {
+                      iscsi__Initiator.create({
+                        'name':    self.ownerCt.ownerCt.items.items[1].namefield.getValue(),
+                        'address': self.ownerCt.ownerCt.items.items[1].addressfield.getValue()
+                      }, function(provider, response){
+                        if( response.result ){
+                          init_all.reload();
+                        }
+                      });
+                    }
                   }
                 },{
                   text: "{% trans 'Save' %}",
                   icon: MEDIA_URL + "/icons2/16x16/actions/edit-redo.png",
                   handler: function(self){
                     var sm = addwin.initiator_all.getSelectionModel();
-                    var sel = sm.selections.items[0];
-                    iscsi__Initiator.set(sel.data.id, {
-                      'name':    self.ownerCt.ownerCt.items.items[1].namefield.getValue(),
-                      'address': self.ownerCt.ownerCt.items.items[1].addressfield.getValue()
-                    }, function(provider, response){
-                      if( response.result ){
-                        init_all.reload();
-                      }
-                    });
+                    var bla = sm.selections.items.length;
+                    if(sm.selections.items.length === 0) {
+                      Ext.Msg.alert("Warning","You cant save without any selection");
+                      return
+                    }
+                    else 
+                    {
+                      var sel = sm.selections.items[0];
+                      iscsi__Initiator.set(sel.data.id, {
+                        'name':    self.ownerCt.ownerCt.items.items[1].namefield.getValue(),
+                        'address': self.ownerCt.ownerCt.items.items[1].addressfield.getValue()
+                      }, function(provider, response){
+                        if( response.result ){
+                          init_all.reload();
+                        }
+                      });
+                    }
                   }
                 },{
                   text: "{% trans 'Delete' %}",
@@ -535,6 +560,11 @@ Ext.oa.Iscsi__Panel = Ext.extend(Ext.Panel, {
             text: "{% trans 'Add Lun' %}",
             icon: MEDIA_URL + "/icons2/16x16/actions/add.png",
             handler: function(){
+              var sel = iscsiPanel.targets.getSelectionModel();
+              if (sel.selections.items.length === 0){
+                Ext.Msg.alert("Warning","Please select a Target first");
+                return;
+              }
               var addwin = new Ext.Window({
                 title: "{% trans 'Add Lun' %}",
                 layout: "fit",
@@ -548,6 +578,7 @@ Ext.oa.Iscsi__Panel = Ext.extend(Ext.Panel, {
                   },
                   items: [{
                     xtype:      'volumefield',
+                    allowBlank: false,
                     filesystem__isnull: true,
                     listeners: {
                       select: function(self, record){
@@ -559,6 +590,7 @@ Ext.oa.Iscsi__Panel = Ext.extend(Ext.Panel, {
                     fieldLabel: "{% trans 'Number' %}",
                     name: "number",
                     xtype: 'numberfield',
+                    allowBlank: false,
                     value: -1,
                     ref: 'numberfield'
                   },{
@@ -583,9 +615,17 @@ Ext.oa.Iscsi__Panel = Ext.extend(Ext.Panel, {
                     icon: MEDIA_URL + "/oxygen/16x16/actions/dialog-ok-apply.png",
                     handler: function(self){
                       var sel = iscsiPanel.targets.getSelectionModel();
-                      if (sel.selections.items != "") {
+                      var number = lunStore_number.find("number",self.ownerCt.ownerCt.numberfield.getValue());
+                      if(number != -1 || self.ownerCt.ownerCt.numberfield.getValue() < 1){
+                        Ext.Msg.alert("Warning","This LUN Number allready exists or is negative. Please choose an other one");
+                      }
+                      else if(self.ownerCt.ownerCt.volfield.getValue() === ""){
+                        Ext.Msg.alert("Warning","You have to choose a Volume");
+                      }
+                      else
+                      {
                         iscsi__Lun.create({
-                          'ltype':     self.ownerCt.ownerCt.typefield.getValue(),
+                          'ltype':     self.ownerCt.ownerCt.typefield.getValue() ,
                           'number':    self.ownerCt.ownerCt.numberfield.getValue(),
                           'alias':     self.ownerCt.ownerCt.aliasfield.getValue(),
                           'volume':    {
@@ -604,11 +644,9 @@ Ext.oa.Iscsi__Panel = Ext.extend(Ext.Panel, {
                             addwin.hide();
                           }
                         })
-                      }
-                      else {addwin.hide();Ext.Msg.alert("Warning","Please select Target first")}
-                      addwin.hide();
                     }
-                  }, {
+                      }
+                    }, {
                     text: "{% trans 'Cancel' %}",
                     icon: MEDIA_URL + "/icons2/16x16/actions/gtk-cancel.png",
                     handler: function(self){
@@ -748,6 +786,7 @@ Ext.oa.Iscsi__Panel = Ext.extend(Ext.Panel, {
     targetStore.reload();
     init_all.load();
     tgt_all.load();
+    lunStore_number.load();
   }
 });
 
