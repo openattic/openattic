@@ -21,12 +21,6 @@ var targetStore = new Ext.data.DirectStore({
   directFn: iscsi__Target.filter
 });
 
-var lunStore_number = new Ext.data.DirectStore({
-  fields: ["number"],
-  directFn: iscsi__Lun.all
-});
-
-
 var lunStore = new Ext.data.DirectStore({
   fields: ["ltype", "alias", "number", "id", {
     name: 'origvolid',
@@ -615,9 +609,9 @@ Ext.oa.Iscsi__Panel = Ext.extend(Ext.Panel, {
                     icon: MEDIA_URL + "/oxygen/16x16/actions/dialog-ok-apply.png",
                     handler: function(self){
                       var sel = iscsiPanel.targets.getSelectionModel();
-                      var number = lunStore_number.find("number",self.ownerCt.ownerCt.numberfield.getValue());
-                      if(number != -1 || self.ownerCt.ownerCt.numberfield.getValue() < 1){
-                        Ext.Msg.alert("Warning","This LUN Number allready exists or is negative. Please choose an other one");
+                      var number = lunStore.find("number",self.ownerCt.ownerCt.numberfield.getValue());
+                      if(number != -1 || (self.ownerCt.ownerCt.numberfield.getValue() < 0 && self.ownerCt.ownerCt.numberfield.getValue() != -1)){
+                        Ext.Msg.alert("Warning","This LUN Number allready exists or is invalid. Please choose an other one");
                       }
                       else if(self.ownerCt.ownerCt.volfield.getValue() === ""){
                         Ext.Msg.alert("Warning","You have to choose a Volume");
@@ -786,7 +780,6 @@ Ext.oa.Iscsi__Panel = Ext.extend(Ext.Panel, {
     targetStore.reload();
     init_all.load();
     tgt_all.load();
-    lunStore_number.load();
   }
 });
 
