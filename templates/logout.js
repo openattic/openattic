@@ -1,3 +1,5 @@
+{% load i18n %}
+
 window.MainViewModules.push({
   prepareMenuTree: function(tree){
     tree.appendToRootNodeById("menu_shutdown", {
