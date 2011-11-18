@@ -87,7 +87,7 @@ class Lun(StatefulModel):
     def save(self, *args, **kwargs):
         if self.number == -1:
             try:
-                self.number = max( [ rec['number'] for rec in Lun.objects.filter(target=self.target).values('number') ] ) + 1
+                self.number = max( [ rec['number'] for rec in Lun.objects.values('number') ] ) + 1
             except ValueError: # first LUN, so the list is empty
                 self.number = 0
 
