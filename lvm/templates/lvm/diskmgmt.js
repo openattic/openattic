@@ -55,11 +55,12 @@ Ext.oa.volumeGroup_Panel = Ext.extend(Ext.grid.GridPanel, {
           var initwin = new Ext.Window({
             title: "{% trans 'Initialize' %}",
             layout: "fit",
-            height: 300,
+            height: 140,
             width: 500,
             items: [{
               xtype: "form",
               border: false,
+              bodyStyle: 'padding:5px 5px;',
               defaults: {
                 xtype: "textfield",
                 anchor: '-20px'

@@ -25,11 +25,12 @@ Ext.oa.Zfs__Snapshot_Panel = Ext.extend(Ext.Panel, {
             var addwin = new Ext.Window({
              title: "Add Snapshot",
              layout: "fit",
-             height: 100,
+             height: 110,
              width: 450,
              frame: true,
              items: [{
                xtype: "form",
+               bodyStyle: 'padding:5px 5px;',
                defaults: {
                  xtype: "textfield",
                  anchor: '-20px'

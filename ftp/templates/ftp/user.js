@@ -22,10 +22,11 @@ Ext.oa.Ftp__User_Panel = Ext.extend(Ext.grid.GridPanel, {
           var addwin = new Ext.Window({
             title: "{% trans 'Add FTP User' %}",
             layout: "fit",
-            height: 300,
+            height: 200,
             width: 500,
             items: [{
               xtype: "form",
+              bodyStyle: 'padding:5px 5px;',
               defaults: {
                 xtype: "textfield",
                 anchor: '-20px'
@@ -100,6 +101,7 @@ Ext.oa.Ftp__User_Panel = Ext.extend(Ext.grid.GridPanel, {
               width: 500,
               items: [{
                 xtype: "form",
+                bodyStyle: 'padding:5px 5px;',
                 defaults: {
                   xtype: "textfield",
                   anchor: '-20px'

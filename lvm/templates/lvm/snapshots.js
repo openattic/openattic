@@ -26,6 +26,7 @@ Ext.oa.Lvm__Snapshot_Panel = Ext.extend(Ext.grid.GridPanel, {
             width: 500,
             items: [{
               xtype: "form",
+              bodyStyle: 'padding:5px 5px;',
               defaults: {
                 xtype: "textfield",
                 anchor: '-20px'

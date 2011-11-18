@@ -11,6 +11,7 @@ Ext.oa.Drbd__Device_Panel = Ext.extend(Ext.grid.GridPanel, {
       width: 700,
       items: [{
         xtype: "form",
+        bodyStyle: 'padding:5px 5px;',
         api: {
           load:   drbd__DrbdDevice.get_ext,
           submit: drbd__DrbdDevice.set_ext

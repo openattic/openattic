@@ -7,10 +7,11 @@ Ext.oa.Peering__Peerhost_Panel = Ext.extend(Ext.grid.GridPanel, {
     var peerhostGrid = this;
     var addwin = new Ext.Window(Ext.applyIf(config, {
       layout: "fit",
-      height: 300,
+      height: 140,
       width: 500,
       items: [{
         xtype: "form",
+        bodyStyle: 'padding:5px 5px;',
         api: {
           load:   peering__PeerHost.get_ext,
           submit: peering__PeerHost.set_ext

@@ -167,7 +167,7 @@ Ext.oa.Iscsi__Panel = Ext.extend(Ext.Panel, {
               var addwin = new Ext.Window({
                 title: "{% trans 'Add Target' %}",
                 layout: "fit",
-                height: 150,
+                height: 140,
                 width: 500,
                 items: [{
                   xtype: "form",
@@ -176,10 +176,8 @@ Ext.oa.Iscsi__Panel = Ext.extend(Ext.Panel, {
                     allowBlank: false,
                     anchor: "-20px"
                   },
+                  bodyStyle: 'padding:5px 5px;',
                   items: [{
-                    style: {
-                      "margin-top": "2px"
-                    },
                     fieldLabel: "{% trans 'Name' %}",
                     ref: "namefield",
                     listeners: {
@@ -195,9 +193,6 @@ Ext.oa.Iscsi__Panel = Ext.extend(Ext.Panel, {
                       }
                     }
                   },{
-                    style: {
-                      "margin-top": "2px"
-                    },
                     fieldLabel: "{% trans 'IP/IQN' %}",
                     ref: "iqn_ip_field"
                   }],
@@ -364,7 +359,6 @@ Ext.oa.Iscsi__Panel = Ext.extend(Ext.Panel, {
                 frame: true,
                 title: 'Overview',
                 layout: 'column',
-                bodyStyle:'padding:5px',
                 items: [{
                   columnWidth: 0.50,
                   xtype: 'grid',
@@ -558,7 +552,7 @@ Ext.oa.Iscsi__Panel = Ext.extend(Ext.Panel, {
               var addwin = new Ext.Window({
                 title: "{% trans 'Add Lun' %}",
                 layout: "fit",
-                height: 300,
+                height: 200,
                 width: 500,
                 items: [{
                   xtype: "form",
@@ -566,6 +560,7 @@ Ext.oa.Iscsi__Panel = Ext.extend(Ext.Panel, {
                     xtype: "textfield",
                     anchor: '-20px'
                   },
+                  bodyStyle: 'padding:5px 5px;',
                   items: [{
                     xtype:      'volumefield',
                     allowBlank: false,
@@ -581,6 +576,7 @@ Ext.oa.Iscsi__Panel = Ext.extend(Ext.Panel, {
                     name: "number",
                     xtype: 'numberfield',
                     allowBlank: false,
+                    decimalPrecision : 0,
                     value: -1,
                     ref: 'numberfield'
                   },{
@@ -702,7 +698,6 @@ Ext.oa.Iscsi__Panel = Ext.extend(Ext.Panel, {
                   frame: true,
                   layout: 'fit',
                   title: 'IPs',
-                  bodyStyle:'padding:5px',
                   items: {
                     xtype: 'grid',
                     ref: 'targets_all',

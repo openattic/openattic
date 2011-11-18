@@ -28,10 +28,11 @@ Ext.oa.Auth__User_Panel = Ext.extend(Ext.grid.GridPanel, {
           var addwin = new Ext.Window({
             title: "{% trans 'Add User' %}",
             layout: "fit",
-            height: 300,
+            height: 290,
             width: 500,
             items: [{
               xtype: "form",
+              bodyStyle: 'padding:5px 5px;',
               defaults: {
                 xtype: "textfield",
                 anchor: '-20px'
@@ -126,10 +127,11 @@ Ext.oa.Auth__User_Panel = Ext.extend(Ext.grid.GridPanel, {
             var addwin = new Ext.Window({
               title: "{% trans 'Edit User' %}",
               layout: "fit",
-              height: 300,
+              height: 250,
               width: 500,
               items: [{
                 xtype: "form",
+                bodyStyle: 'padding:5px 5px;',
                 defaults: {
                   xtype: "textfield",
                   anchor: '-20px'
@@ -214,18 +216,19 @@ Ext.oa.Auth__User_Panel = Ext.extend(Ext.grid.GridPanel, {
             var addwin = new Ext.Window({
             title: "{% trans 'Change Password' %}",
               layout: "fit",
-              height: 150,
+              height: 140,
               width: 300,
               items: [{
                 xtype: "form",
+                bodyStyle: 'padding:5px 5px;',
                   defaults: {
                   xtype: "textfield",
                   anchor: '-20px'
                 },
                 items: [{
                   fieldLabel: "{% trans 'User Name' %}",
-                  disabled: true,
                   name: "username",
+                  disabled: true,
                   ref: 'usernamefield',
                   value: sel.data.username
                 },{
