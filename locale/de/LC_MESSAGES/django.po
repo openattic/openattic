@@ -8,8 +8,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2011-11-18 10:28+0100\n"
-"PO-Revision-Date: 2011-11-18 10:29\n"
+"POT-Creation-Date: 2011-11-18 10:52+0100\n"
+"PO-Revision-Date: 2011-11-18 10:53\n"
 "Last-Translator: Michael Ziegler <michael.ziegler@it-novum.com>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
 "MIME-Version: 1.0\n"
@@ -108,17 +108,53 @@ msgstr "Lade..."
 msgid "Checking..."
 msgstr "Prüfe..."
 
-#: logout.js:4 logout.js.py:10 logout.js.py:23
+#: logout.js:6 logout.js.py:12 logout.js.py:25
 msgid "Logout"
 msgstr "Abmelden"
 
-#: logout.js:11
+#: logout.js:13
 msgid "Do you really want to logout?"
 msgstr "Möchten Sie sich wirklich abmelden?"
 
-#: logout.js:24
+#: logout.js:26
 msgid "Successfully logged out"
 msgstr "Sie haben sich erfolgreich abgemeldet."
+
+#: menutree.js:6
+msgid "Menu"
+msgstr "Menü"
+
+#: menutree.js:18
+msgid "Status"
+msgstr "Status"
+
+#: menutree.js:24
+msgid "Storage"
+msgstr "Storage"
+
+#: menutree.js:30
+msgid "LUNs"
+msgstr "LUNs"
+
+#: menutree.js:36
+msgid "Shares"
+msgstr "Freigaben"
+
+#: menutree.js:42
+msgid "Services"
+msgstr "Dienste"
+
+#: menutree.js:48
+msgid "System"
+msgstr "System"
+
+#: menutree.js:54
+msgid "Personal Settings"
+msgstr "Persönliche Einstellungen"
+
+#: menutree.js:62
+msgid "Shutdown"
+msgstr "Herunterfahren"
 
 #~ msgid "last Name"
 #~ msgstr "Nachname"

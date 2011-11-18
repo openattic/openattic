@@ -63,7 +63,6 @@ Ext.oa.MainViewManager = Ext.extend(Ext.Panel, {
         }
       }),
       items: [ new Ext.oa.MenuTree({
-        title: 'Menu',
         region: "west",
         split: true,
         width: 250,
