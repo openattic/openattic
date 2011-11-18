@@ -9,7 +9,7 @@ msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2011-11-03 10:44+0100\n"
-"PO-Revision-Date: 2011-11-11 11:45\n"
+"PO-Revision-Date: 2011-11-18 10:44\n"
 "Last-Translator: Michael Ziegler <michael.ziegler@it-novum.com>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
 "MIME-Version: 1.0\n"
@@ -28,7 +28,7 @@ msgstr ""
 
 #: templates/nagios/services.js:75
 msgid "Nagios Services"
-msgstr "Nagios Services"
+msgstr "Nagios-Services"
 
 #: templates/nagios/services.js:81
 msgid "Reload"
@@ -36,11 +36,11 @@ msgstr "Neu laden"
 
 #: templates/nagios/services.js:111
 msgid "Service Description"
-msgstr "Service Beschreibung"
+msgstr "Service-Beschreibung"
 
 #: templates/nagios/services.js:116
 msgid "Plugin Output"
-msgstr "Plugin Ausgabe"
+msgstr "Plugin-Ausgabe"
 
 #: templates/nagios/services.js:120
 msgid "Volume"
