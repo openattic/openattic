@@ -25,7 +25,8 @@ parser.add_option( "-i", "--interface",
 options, progargs = parser.parse_args()
 
 savedstate = ConfigParser()
-havestate  = bool( savedstate.read("/var/lib/nagios3/protocol_traffic.%s.%s" % (options.interface, options.service)) )
+havestate  = bool( savedstate.read("/var/lib/nagios3/protocol_traffic.%s.%s" % (options.interface, options.service)) ) and \
+             savedstate.has_section("state") and savedstate.has_section("in") and savedstate.has_section("out")
 
 stats = dbus.SystemBus().get_object(options.dbus, "/nagios").iptables_get_stats()
 
