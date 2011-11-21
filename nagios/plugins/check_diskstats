@@ -10,7 +10,7 @@ from ConfigParser import ConfigParser
 disk = os.path.realpath(sys.argv[-1]).replace("/dev/", "")
 
 state = ConfigParser()
-havestate = bool( state.read("/var/lib/nagios3/diskstats.%s" % disk) )
+havestate = bool( state.read("/var/lib/nagios3/diskstats.%s" % disk) ) and state.has_section("state")
 
 exit = 0
 
