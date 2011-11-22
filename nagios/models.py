@@ -55,8 +55,6 @@ class Service(models.Model):
 
 def create_service_for_lv(**kwargs):
     lv = kwargs["instance"]
-    if not lv.filesystem:
-        return
 
     cmd = Command.objects.get(name=nagios_settings.LV_UTIL_CHECK_CMD)
     if lv.filesystem and Service.objects.filter(command=cmd, volume=lv).count() == 0:
