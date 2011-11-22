@@ -60,45 +60,30 @@ Ext.oa.Settings_Panel = Ext.extend(Ext.Panel,{
           }
         }
       },
-      ],
-      buttons: [{
-        text: 'Change THEME',
-        icon: MEDIA_URL + '/oxygen/16x16/apps/preferences-desktop-theme.png',
-        listeners: {
-          click: function(self, ev){
-            var addwin = new Ext.Window({
-              title: "Select Theme",
-              layout: "fit",
-              height: 100,
-              width: 250,
-              items:{
-                html: "Please select your desired theme"
-              },
-              buttons: [{
-                text: 'access',
-                handler: function(btn){
-                  Ext.state.Manager.set( "theme", "access" );
-                  // For some reason, window.location.reload.defer() does not work in chrome.
-                  setTimeout( function(){window.location.reload()}, 200);
-                }
-              },{
-                text:  'gray',
-                handler: function(btn){
-                  Ext.state.Manager.set( "theme", "gray" );
-                  setTimeout( function(){window.location.reload()}, 200);
-                }
-              },{
-                text:  'default',
-                handler: function(btn){
-                  Ext.state.Manager.clear( "theme" );
-                  setTimeout( function(){window.location.reload()}, 200);
-                }
-              }]
-            });
-            addwin.show()
+      {
+        xtype: 'radiogroup',
+        value: Ext.state.Manager.get("theme", "default"),
+        fieldLabel: 'Theme',
+        columns: 1,
+        listeners:{
+          change: function(self, checked){
+            if(checked.inputValue === "default"){
+              Ext.state.Manager.clear("theme");
+            }
+            else{
+              Ext.state.Manager.set("theme", checked.inputValue)
+            }
+            // For some reason, window.location.reload.defer() does not work in chrome.
+            setTimeout( function(){window.location.reload()}, 200);
           }
-        }
-      }],
+        },
+        items: [
+             {name:'theme',boxLabel:'Access', inputValue: "access"},
+             {name:'theme',boxLabel:'Gray',inputValue: "gray"},
+             {name: 'theme', boxLabel: 'Default', inputValue: "default"},
+        ]
+      },
+      ],
     }));
     Ext.oa.Settings_Panel.superclass.initComponent.apply(this, arguments);
   }
