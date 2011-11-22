@@ -44,6 +44,7 @@ Ext.oa.Settings_Panel = Ext.extend(Ext.Panel,{
       },{
         xtype: "checkbox",
         fieldLabel: "Erlaube Installation/Löschen von Paketen",
+        checked: Ext.state.Manager.get("pkgapt_distupgrade", true),
         listeners: {
           check: function(self, checked){
             Ext.state.Manager.set("pkgapt_distupgrade", checked);
@@ -52,6 +53,7 @@ Ext.oa.Settings_Panel = Ext.extend(Ext.Panel,{
       },{
         xtype: "checkbox",
         fieldLabel: "Graph with Gradient",
+        checked: Ext.state.Manager.get("nagios_graph_grad", false),
         listeners:{
           check: function(self, checked){
             Ext.state.Manager.set("nagios_graph_grad", checked);
@@ -60,18 +62,8 @@ Ext.oa.Settings_Panel = Ext.extend(Ext.Panel,{
       },
       ],
       buttons: [{
-        text: 'Save',
-        handler: function(self){
-          Ext.Msg.show({
-            title: 'Settings',
-            msg: 'Successfully changed threshold',
-            buttons: Ext.MessageBox.OK
-          });
-        }
-      },{
         text: 'Change THEME',
-        icon: MEDIA_URL +
-'/oxygen/16x16/apps/preferences-desktop-theme.png',
+        icon: MEDIA_URL + '/oxygen/16x16/apps/preferences-desktop-theme.png',
         listeners: {
           click: function(self, ev){
             var addwin = new Ext.Window({
