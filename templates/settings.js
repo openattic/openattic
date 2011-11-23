@@ -86,6 +86,13 @@ Ext.oa.Settings_Panel = Ext.extend(Ext.Panel,{
       ],
     }));
     Ext.oa.Settings_Panel.superclass.initComponent.apply(this, arguments);
+  },
+  onRender: function(){
+    Ext.oa.Settings_Panel.superclass.onRender.apply(this, arguments);
+    var prov = Ext.state.Manager.getProvider();
+    prov.on( "statechange", function(provider, key, value){
+      alert("voll die änderung");
+    }, this );
   }
 });
 
