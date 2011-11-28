@@ -35,10 +35,12 @@ Ext.oa.Settings_Panel = Ext.extend(Ext.Panel,{
         fieldLabel: "threshold for LV",
         name: "LV_test",
         ref: 'thresholdfield',
-        value: Ext.state.Manager.get("lv_red_threshold",90),
         listeners: {
           change: function( self, newValue, oldValue ){
             Ext.state.Manager.set("lv_red_threshold", parseFloat(newValue));
+          },
+          afterrender: function(self){
+            this.setRawValue(Ext.state.Manager.get("lv_red_threshold",90));
           }
         }
       },{
@@ -81,20 +83,25 @@ Ext.oa.Settings_Panel = Ext.extend(Ext.Panel,{
              {name:'theme',boxLabel:'Access', inputValue: "access"},
              {name:'theme',boxLabel:'Gray',inputValue: "gray"},
              {name: 'theme', boxLabel: 'Default', inputValue: "default"},
-        ]
-      },
-      ],
+        ],
+      } ],
     }));
     Ext.oa.Settings_Panel.superclass.initComponent.apply(this, arguments);
   },
   onRender: function(){
     Ext.oa.Settings_Panel.superclass.onRender.apply(this, arguments);
+    
     var prov = Ext.state.Manager.getProvider();
+    
     prov.on( "statechange", function(provider, key, value){
-      alert("voll die änderung");
-    }, this );
+      if (key === "lv_red_threshold"){
+        this.thresholdfield.setRawValue(value);
+      }
+    }, this);
+    
   }
 });
+
 
 Ext.reg("settings_panel", Ext.oa.Settings_Panel);
 
