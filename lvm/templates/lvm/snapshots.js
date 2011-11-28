@@ -44,7 +44,14 @@ Ext.oa.Lvm__Snapshot_Panel = Ext.extend(Ext.grid.GridPanel, {
                   hiddenName: 'volume_id',
                   store: new Ext.data.DirectStore({
                     fields: ["id", "name", "megs", "vg"],
-                    baseParams: { kwds: { "snapshot__isnull": true }, fields: ["name", "megs", "vg"] },
+                    baseParams: {
+                      kwds: {
+                        "snapshot__isnull": true,
+                        "__exclude__": {
+                          "filesystem": "zfs"
+                        }
+                      },
+                      fields: ["name", "megs", "vg"] },
                     paramOrder: ["kwds", "fields"],
                     directFn: lvm__LogicalVolume.filter_values
                   }),
