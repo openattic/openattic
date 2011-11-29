@@ -87,7 +87,7 @@ Ext.oa.Pkgapt__Upgrade_Panel = Ext.extend(Ext.grid.GridPanel, {
             (response.result[0]['req_download'] / 1024. / 1024.).toFixed(2)
           ) + String.format(
             (response.result[0]['req_space'] < 0 ? "{0} MiB will be freed." : "{0} MiB of additional disk space will be used."),
-            (response.result[0]['req_space'] / 1024. / 1024.).toFixed(2)
+            Math.abs(response.result[0]['req_space'] / 1024. / 1024.).toFixed(2)
           ));
           aptGrid.store.loadData(response.result[1]);
         });
