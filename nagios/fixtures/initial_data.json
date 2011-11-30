@@ -143,7 +143,7 @@
         "pk": 7,
         "model": "nagios.graph",
         "fields": {
-            "verttitle": "ms read (-) / write (+)",
+            "verttitle": "Bytes read (-) / write (+)",
             "fields": "-9 10",
             "command": 9,
             "title": "Average Request size (r/w)"
