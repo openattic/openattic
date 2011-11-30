@@ -1,4 +1,6 @@
 {% load lvm_extras %}
+{% load i18n %}
+{% get_language_info for LANGUAGE_CODE as language %}
 <html>
   <head>
     <title>openATTIC</title>
@@ -11,6 +13,9 @@
     <script type="text/javascript" src="{{ MEDIA_URL }}/canvasxpress/canvasXpress.min.js"></script>
     <script src="{{ MEDIA_URL }}/extjs/adapter/ext/ext-base.js"></script>
     <script src="{{ MEDIA_URL }}/extjs/ext-all.js"></script>
+    {% if language %}
+      <script src="{{ MEDIA_URL }}/extjs_languages/ext-lang-{{ language.code }}.js"></script>
+    {% endif %}
     <script type="text/javascript" src="{{ MEDIA_URL }}/canvasxpress/ext-canvasXpress.js"></script>
     <script src="{% url django.views.i18n.javascript_catalog %}"></script>
     <script src="{{ PROJECT_URL }}/userprefs/initprefs.js"></script>
