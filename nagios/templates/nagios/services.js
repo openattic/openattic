@@ -2,6 +2,101 @@
 
 Ext.namespace("Ext.oa");
 
+Ext.oa.DragSelector = function(cfg){
+  // Based upon Ext.DataView.DragSelector
+  cfg = cfg || {};
+  var view, proxy, tracker;
+  var bodyRegion, graphRegion, dragRegion = new Ext.lib.Region(0,0,0,0);
+
+  this.init = function(dataView){
+      view = dataView;
+      view.on('render', onRender);
+  };
+
+  function cancelClick(){
+    return false;
+  }
+
+  function onBeforeStart(e){
+    return true;
+  }
+
+  function onStart(e){
+    view.on('containerclick', cancelClick, view, {single:true});
+    if(!proxy){
+      proxy = view.el.createChild({cls:'x-view-selector'});
+    }else{
+      if(proxy.dom.parentNode !== view.el.dom){
+        view.el.dom.appendChild(proxy.dom);
+      }
+      proxy.setDisplayed('block');
+    }
+    graphRegion = view.el.getRegion();
+    bodyRegion = new Ext.lib.Region(
+      graphRegion.top   + 3 + 30, // top
+      graphRegion.right + 3 - 30, // right
+      graphRegion.top   + 3 + 30 + view.graphheight, // bottom
+      graphRegion.right + 3 - 30 - view.graphwidth   // left
+    );
+  }
+
+  function onDrag(e){
+    var startXY = tracker.startXY;
+    var xy = tracker.getXY();
+
+    var x = Math.min(startXY[0], xy[0]);
+    var y = Math.min(startXY[1], xy[1]);
+    var w = Math.abs(startXY[0] - xy[0]);
+    var h = Math.abs(startXY[1] - xy[1]);
+
+    dragRegion.left = x;
+    dragRegion.top = graphRegion.top;
+    dragRegion.right = x+w;
+    dragRegion.bottom = graphRegion.bottom;
+
+    dragRegion.constrainTo(bodyRegion);
+    proxy.setRegion(dragRegion);
+  }
+
+  function onEnd(e){
+    if (!Ext.isIE) {
+      view.un('containerclick', cancelClick, view);
+    }
+    if(proxy){
+      proxy.setDisplayed(false);
+    }
+    var startXY = tracker.startXY;
+    var xy = tracker.getXY();
+
+    var width = bodyRegion.right - bodyRegion.left;
+    var startFac = Math.min( Math.max( (startXY[0] - bodyRegion.left) / width, 0. ), 1. );
+    var endFac   = Math.min( Math.max( (xy[0] - bodyRegion.left)      / width, 0. ), 1. );
+
+    var currStart = view.currStart,
+      currEnd   = view.currEnd || currStart + view.timespan,
+      currSpan  = currEnd - currStart,
+      newStart  = currStart + (currSpan * startFac),
+      newEnd    = currStart + (currSpan * endFac);
+
+    if( newStart > newEnd ){
+      var tmp = newEnd;
+      newEnd = newStart;
+      newStart = tmp;
+    }
+    view.loadInterval( view.currentRecord, view.currentId, parseInt(newStart), parseInt(newEnd) );
+  }
+
+  function onRender(view){
+    tracker = new Ext.dd.DragTracker({
+      onBeforeStart: onBeforeStart,
+      onStart: onStart,
+      onDrag: onDrag,
+      onEnd: onEnd
+    });
+    tracker.initEl(view.el);
+  }
+};
+
 
 Ext.oa.Nagios__Graph_ImagePanel = Ext.extend(Ext.Panel, {
   graphcolors: {
@@ -19,9 +114,13 @@ Ext.oa.Nagios__Graph_ImagePanel = Ext.extend(Ext.Panel, {
   initComponent: function(){
     Ext.apply(this, Ext.applyIf(this.initialConfig, {
       reloadInterval: 0,
-      graphwidth: false,
+      graphheight: 150,
+      graphwidth:  700,
+      currStart: 0,
+      currEnd: 0,
       layout: "vbox",
       layoutConfig: { "align": "center" },
+      plugins: [ new Ext.oa.DragSelector() ],
       items: new Ext.BoxComponent({
         autoEl: {
           tag: "img",
@@ -37,6 +136,9 @@ Ext.oa.Nagios__Graph_ImagePanel = Ext.extend(Ext.Panel, {
               this.ownerCt.el.unmask();
               this.ownerCt.el.mask("{% trans 'Image not available yet' %}");
             }, self);
+            self.el.on("dblclick", function(ev, target, options){
+              this.loadRecord(this.currentRecord, this.currentId);
+            }, self.ownerCt);
           }
         }
       })
@@ -52,21 +154,35 @@ Ext.oa.Nagios__Graph_ImagePanel = Ext.extend(Ext.Panel, {
     }, this );
   },
 
+  loadInterval: function(record, id, start, end){
+    var params = {};
+    Ext.apply(params, this.graphcolors);
+
+    Ext.apply(params, {
+      start: start || parseInt((new Date().getTime() / 1000) - this.timespan),
+      grad:  Ext.state.Manager.get("nagios_graph_grad", false).toString(),
+      width: this.graphwidth,
+      height: this.graphheight,
+    });
+
+    this.currStart = params["start"];
+    if( end ){
+      params["end"] = end;
+      this.currEnd  = end;
+    }
+    else
+      this.currEnd  = 0;
+
+    this.el.mask("{% trans 'Loading...' %}");
+    var url = String.format( PROJECT_URL + "/nagios/{0}/{1}.png?{2}", record.data.id, id, Ext.urlEncode(params) );
+    this.items.items[0].el.dom.src = url;
+  },
+
   loadRecord: function(record, id){
     this.currentRecord = record;
     this.currentId = id;
     if( this.el ){
-      this.el.mask("{% trans 'Loading...' %}");
-      var url = String.format(
-        PROJECT_URL + "/nagios/{0}/{1}.png?start={2}&grad={3}&{4}",
-        record.data.id, id, parseInt((new Date().getTime() / 1000) - this.timespan),
-        Ext.state.Manager.get("nagios_graph_grad", "false"),
-        Ext.urlEncode(this.graphcolors)
-      );
-      if( this.graphwidth !== false ){
-        url += "&width=" + this.graphwidth;
-      }
-      this.items.items[0].el.dom.src = url;
+      this.loadInterval(record, id);
       if( this.reloadInterval ){
         if( this.reloadTimerId != 0 )
           clearTimeout(this.reloadTimerId);
