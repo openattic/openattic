@@ -31,12 +31,12 @@ Ext.oa.DragSelector = function(cfg){
       }
       proxy.setDisplayed('block');
     }
-    graphRegion = view.el.getRegion();
+    graphRegion = view.items.items[0].el.getRegion();
     bodyRegion = new Ext.lib.Region(
-      graphRegion.top   + 3 + 30, // top
-      graphRegion.right + 3 - 30, // right
-      graphRegion.top   + 3 + 30 + view.graphheight, // bottom
-      graphRegion.right + 3 - 30 - view.graphwidth   // left
+      graphRegion.top   + 30, // top
+      graphRegion.right - 30, // right
+      graphRegion.top   + 30 + view.graphheight, // bottom
+      graphRegion.right - 30 - view.graphwidth   // left
     );
   }
 
