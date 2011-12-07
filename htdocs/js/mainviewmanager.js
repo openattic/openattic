@@ -73,22 +73,30 @@ Ext.oa.MainViewManager = Ext.extend(Ext.Panel, {
         enableDD: true,
         listeners: {
           'render': function(tree) {
+            var findTreeNode = function(node, sourceEl){
+              if( node.text === sourceEl.textContent )
+                return node;
+              for( var i = 0; i < node.childNodes.length; i++ ){
+                var cldnode = findTreeNode(node.childNodes[i], sourceEl);
+                if( cldnode )
+                  return cldnode;
+              }
+              return null;
+            };
             tree.dragZone = new Ext.dd.DragZone(tree.getEl(), {
+              onBeforeDrag: function(evt){
+                var sourceEl = evt.sourceEl;
+                if( sourceEl ){
+                  var treenode = findTreeNode(tree.getRootNode(), sourceEl);
+                  return typeof treenode.attributes.panel !== "undefined";
+                }
+                return false;
+              },
               getDragData: function(evt){
                 var sourceEl = evt.getTarget(tree.itemSelector, 10);
-                var findTreeNode = function(node){
-                  if( node.text === sourceEl.textContent )
-                    return node;
-                  for( var i = 0; i < node.childNodes.length; i++ ){
-                    var cldnode = findTreeNode(node.childNodes[i]);
-                    if( cldnode )
-                      return cldnode;
-                  }
-                  return null;
-                };
                 if( sourceEl ){
                   var ddEl = sourceEl.cloneNode(true);
-                  var treenode = findTreeNode(tree.getRootNode());
+                  var treenode = findTreeNode(tree.getRootNode(), sourceEl);
                   ddEl.id = Ext.id();
                   return {
                     ddel:     ddEl,
