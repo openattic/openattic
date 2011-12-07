@@ -203,6 +203,7 @@ Ext.reg("naggraphimage", Ext.oa.Nagios__Graph_ImagePanel);
 Ext.oa.Nagios__Graph_ImagePortlet = Ext.extend(Ext.ux.Portlet, {
   initComponent: function(){
     Ext.apply(this, Ext.applyIf(this.initialConfig, {
+      bodyCssClass: "nagiosportlet",
       items: {
         xtype: "naggraphimage",
         reloadInterval: 300,

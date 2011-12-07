@@ -88,7 +88,7 @@
     </script>
     <style>
       {% if THEME == "access" %}
-        .x-tab-panel-body{
+        .x-tab-panel-body {
           /* For some reason, the author of xtheme-access set this to white which looks stupid */
           color: #1BE0C6;
           background-color: #1F2730;
@@ -102,6 +102,13 @@
         }
         .x-grid3-row-over .x-grid3-row-table {
           background-color:#454657 !important;
+        }
+        div.nagiosportlet div.x-box-inner {
+          background-color: #1F2730;
+        }
+      {% else %}
+        div.nagiosportlet div.x-box-inner {
+          background-color: #FFFFFF;
         }
       {% endif %}
       div.munin-graphs { /* Siehe imagespanel.cls */
