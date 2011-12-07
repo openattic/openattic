@@ -349,8 +349,8 @@ def graph(request, service_id, srcidx):
             if nagios_settings.GRAPH_BGIMAGE:
                 imgbg = Image.open(nagios_settings.GRAPH_BGIMAGE)
                 # position the background image at the bottom right
-                posbg = array(imgout.size) - array(imgbg.size)
-                imgout.paste( imgbg, (posbg[0], posbg[1], imgout.size[0], imgout.size[1]), imgbg )
+                posbg = array(imgout.size) - array(imgbg.size) - array((15, 15))
+                imgout.paste( imgbg, (posbg[0], posbg[1], imgout.size[0] - 15, imgout.size[1] - 15), imgbg )
             # now paste the graph
             imgout.paste( imggraph, None, imggraph )
             # save into our "out" variable
