@@ -9,8 +9,8 @@ Ext.oa.DragSelector = function(cfg){
   var bodyRegion, graphRegion, dragRegion = new Ext.lib.Region(0,0,0,0);
 
   this.init = function(dataView){
-      view = dataView;
-      view.on('render', onRender);
+    view = dataView;
+    view.on('render', onRender);
   };
 
   function cancelClick(){
@@ -18,7 +18,15 @@ Ext.oa.DragSelector = function(cfg){
   }
 
   function onBeforeStart(e){
-    return true;
+    graphRegion = view.items.items[0].el.getRegion();
+    bodyRegion = new Ext.lib.Region(
+      graphRegion.top   + 30, // top
+      graphRegion.right - 30, // right
+      graphRegion.top   + 30 + view.graphheight, // bottom
+      graphRegion.right - 30 - view.graphwidth   // left
+    );
+    var x = e.xy[0], y = e.xy[1];
+    return bodyRegion.contains(new Ext.lib.Region(y,x,y,x));
   }
 
   function onStart(e){
@@ -31,13 +39,6 @@ Ext.oa.DragSelector = function(cfg){
       }
       proxy.setDisplayed('block');
     }
-    graphRegion = view.items.items[0].el.getRegion();
-    bodyRegion = new Ext.lib.Region(
-      graphRegion.top   + 30, // top
-      graphRegion.right - 30, // right
-      graphRegion.top   + 30 + view.graphheight, // bottom
-      graphRegion.right - 30 - view.graphwidth   // left
-    );
   }
 
   function onDrag(e){
