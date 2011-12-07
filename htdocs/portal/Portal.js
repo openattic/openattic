@@ -118,7 +118,8 @@ Ext.extend(Ext.ux.Portal.DropZone, Ext.dd.DropTarget, {
         var overEvent = this.createEvent(dd, e, data, col, c, pos);
 
         if(portal.fireEvent('validatedrop', overEvent) !== false &&
-           portal.fireEvent('beforedragover', overEvent) !== false){
+           portal.fireEvent('beforedragover', overEvent) !== false &&
+           typeof px.getProxy !== "undefined" ){
 
             // make sure proxy width is fluid
             px.getProxy().setWidth('auto');
