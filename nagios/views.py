@@ -17,7 +17,7 @@ from PIL      import Image
 from django.http       import HttpResponse, Http404
 from django.shortcuts  import get_object_or_404
 
-from django.utils.translation import ugettext_noop, ugettext_lazy as _
+from django.utils.translation import ugettext as _
 from django.utils.dateformat  import format as format_date
 from django.utils.translation import get_date_formats
 
