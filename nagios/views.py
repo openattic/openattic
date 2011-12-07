@@ -111,6 +111,8 @@ def graph(request, service_id, srcidx):
     bgcol  = request.GET.get("bgcol", nagios_settings.GRAPH_BGCOLOR)
     fgcol  = request.GET.get("fgcol", nagios_settings.GRAPH_FGCOLOR)
     grcol  = request.GET.get("grcol", nagios_settings.GRAPH_GRCOLOR)
+    sacol  = request.GET.get("sacol", "")
+    sbcol  = request.GET.get("sbcol", "")
     grad   = request.GET.get("grad", "false") == "true"
 
     try:
@@ -149,6 +151,10 @@ def graph(request, service_id, srcidx):
         args.extend([ "--color", "FONT#"+fgcol ])
     if grcol:
         args.extend([ "--color", "CANVAS#"+grcol ])
+    if sacol:
+        args.extend([ "--color", "SHADEA#"+sacol ])
+    if sbcol:
+        args.extend([ "--color", "SHADEB#"+sbcol ])
 
     # Calc the maximum length required in the Graph name colum to be able to make it wide enough.
     # See the "for" loop below for that if statement. boils down to "get x if index == -x else index"

@@ -101,13 +101,17 @@ Ext.oa.DragSelector = function(cfg){
 Ext.oa.Nagios__Graph_ImagePanel = Ext.extend(Ext.Panel, {
   graphcolors: {
     {% if PROFILE.theme != "access" %}
-    bgcol: 'F3F3F3',
+    bgcol: 'FFFFFF',
     grcol: '',
-    fgcol: '111111'
+    fgcol: '111111',
+    sacol: 'FFFFFF',
+    sbcol: 'FFFFFF'
     {% else %}
     bgcol: '1F2730',
     grcol: '222222',
-    fgcol: 'FFFFFF'
+    fgcol: 'FFFFFF',
+    sacol: '1F2730',
+    sbcol: '1F2730'
     {% endif %}
   },
   reloadTimerId: 0,
