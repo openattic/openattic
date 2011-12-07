@@ -8,8 +8,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2011-11-21 15:16+0100\n"
-"PO-Revision-Date: 2011-11-21 15:16\n"
+"POT-Creation-Date: 2011-12-07 10:53+0100\n"
+"PO-Revision-Date: 2011-12-07 10:55\n"
 "Last-Translator: Michael Ziegler <michael.ziegler@it-novum.com>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
 "MIME-Version: 1.0\n"
@@ -20,78 +20,86 @@ msgstr ""
 "X-Translated-Using: django-rosetta 0.6.0\n"
 
 #: models.py:18
-#, fuzzy
 msgid ""
 "Check this if openATTIC should not configure services with this command, "
 "only query those that exist."
 msgstr ""
-"Wählen Sie diese Option wenn openATTIC diesen Service nur abfragen, aber "
-"nicht konfigurieren soll."
+"Wählen Sie diese Option wenn openATTIC dieses Kommando nicht für neu "
+"konfigurierte Services benutzen soll, sondern nur diejenigen Services "
+"abfragen, die bereits existieren."
 
-#: templates/nagios/services.js:38
+#: views.py:326
+msgid "Start time"
+msgstr "Startzeit"
+
+#: views.py:327
+msgid "End time"
+msgstr "Endzeit"
+
+#: templates/nagios/services.js:137
 msgid "Image not available yet"
 msgstr "Bild noch nicht verfügbar"
 
-#: templates/nagios/services.js:59
+#: templates/nagios/services.js:176
 msgid "Loading..."
 msgstr "Lade..."
 
-#: templates/nagios/services.js:136
+#: templates/nagios/services.js:252
 msgid "Nagios Services"
 msgstr "Nagios-Services"
 
-#: templates/nagios/services.js:141
+#: templates/nagios/services.js:257
 msgid "Reload"
 msgstr "Neu laden"
 
-#: templates/nagios/services.js:207
+#: templates/nagios/services.js:323
 msgid "Service Description"
 msgstr "Service-Beschreibung"
 
-#: templates/nagios/services.js:212
+#: templates/nagios/services.js:328
 msgid "Plugin Output"
 msgstr "Plugin-Ausgabe"
 
-#: templates/nagios/services.js:216
+#: templates/nagios/services.js:332
 msgid "Volume"
 msgstr "Volume"
 
-#: templates/nagios/services.js:220
+#: templates/nagios/services.js:336
 msgid "Last Check"
 msgstr "Letzter Check"
 
-#: templates/nagios/services.js:225
+#: templates/nagios/services.js:341
 msgid "Next Check"
 msgstr "Nächster Check"
 
-#: templates/nagios/services.js:253
+#: templates/nagios/services.js:369
 msgid "4 hours"
 msgstr "4 Stunden"
 
-#: templates/nagios/services.js:258
+#: templates/nagios/services.js:374
 msgid "1 day"
 msgstr "1 Tag"
 
-#: templates/nagios/services.js:262
+#: templates/nagios/services.js:378
 msgid "1 week"
 msgstr "1 Woche"
 
-#: templates/nagios/services.js:266
+#: templates/nagios/services.js:382
 msgid "1 month"
 msgstr "1 Monat"
 
-#: templates/nagios/services.js:270
+#: templates/nagios/services.js:386
 msgid "1 year"
 msgstr "1 Jahr"
 
-#: templates/nagios/services.js:282
+#: templates/nagios/services.js:398
 msgid "Graphs"
 msgstr "Graphen"
 
-#: templates/nagios/services.js:291
+#: templates/nagios/services.js:407
 msgid "Graph"
 msgstr "Graph"
 
-#: templates/nagios/services.js:327
+#: templates/nagios/services.js:443
 msgid "Monitoring"
 msgstr "Monitoring"
