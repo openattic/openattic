@@ -162,7 +162,7 @@ Ext.oa.Nagios__Graph_ImagePanel = Ext.extend(Ext.Panel, {
       start: start || parseInt((new Date().getTime() / 1000) - this.timespan),
       grad:  Ext.state.Manager.get("nagios_graph_grad", false).toString(),
       width: this.graphwidth,
-      height: this.graphheight,
+      height: this.graphheight
     });
 
     this.currStart = params["start"];

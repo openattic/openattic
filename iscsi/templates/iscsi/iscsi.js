@@ -106,7 +106,7 @@ Ext.oa.Iscsi__Panel = Ext.extend(Ext.Panel, {
         align: "stretch"
       },
       defaults: {
-        flex: 1,
+        flex: 1
       },
       border: false,
       autoScroll: true,
@@ -118,7 +118,7 @@ Ext.oa.Iscsi__Panel = Ext.extend(Ext.Panel, {
           align: "stretch"
         },
         defaults: {
-          flex: 1,
+          flex: 1
         },
         items: [{
           //BEGIN le target
@@ -509,7 +509,7 @@ Ext.oa.Iscsi__Panel = Ext.extend(Ext.Panel, {
         border: false,
         defaults: {
           flex: 1,
-          border: true,
+          border: true
         },
         layout: "vbox",
         layoutConfig: {
