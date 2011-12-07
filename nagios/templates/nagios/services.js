@@ -363,7 +363,13 @@ Ext.oa.Nagios__Service_Panel = Ext.extend(Ext.Panel, {
         region: "south",
         layout: "border",
         border: false,
-        height: 300,
+        height: Ext.state.Manager.get( "nagios_graphpanel_height", 300 ),
+        split: true,
+        listeners: {
+          resize: function( self, adjW, adjH, rawW, rawH ){
+            Ext.state.Manager.set( "nagios_graphpanel_height", adjH );
+          }
+        },
         items: [{
           xtype: "tabpanel",
           region: "center",
