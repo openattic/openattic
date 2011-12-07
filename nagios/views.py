@@ -5,8 +5,9 @@
 from __future__ import division
 
 import re
-from os.path import exists
-from time import time
+from os.path  import exists
+from time     import time
+from datetime import datetime
 
 from numpy    import array
 from colorsys import rgb_to_hls, hls_to_rgb
@@ -15,6 +16,11 @@ from PIL      import Image
 
 from django.http       import HttpResponse, Http404
 from django.shortcuts  import get_object_or_404
+
+from django.utils.translation import ugettext_noop, ugettext_lazy as _
+from django.utils.dateformat  import format as format_date
+from django.utils.translation import get_date_formats
+
 from systemd.procutils import invoke
 
 from nagios.conf   import settings as nagios_settings
@@ -108,8 +114,8 @@ def graph(request, service_id, srcidx):
     grad   = request.GET.get("grad", "false") == "true"
 
     try:
-        int(start)
-        int(end)
+        start = int(start)
+        end   = int(end)
     except ValueError:
         raise Http404("Invalid start or end specified")
     if (bgcol and len(bgcol) < 6) or (fgcol and len(fgcol) < 6) or (grcol and len(grcol) < 6):
@@ -120,7 +126,7 @@ def graph(request, service_id, srcidx):
         graphtitle += ' - ' + graph.title
 
     args = [
-        "rrdtool", "graph", "-", "--start", start, "--end", end, "--height", str(height),
+        "rrdtool", "graph", "-", "--start", str(start), "--end", str(end), "--height", str(height),
         "--width", str(width), "--imgformat", "PNG", "--title", graphtitle,
         ]
 
@@ -308,6 +314,18 @@ def graph(request, service_id, srcidx):
         if crit:
             args.append( "HRULE:%.1f#FF0000" % crit )
 
+
+    def mkdate(text, timestamp):
+        return "COMMENT:%-15s %-30s\\j" % (
+            text,
+            format_date( datetime.fromtimestamp(timestamp), get_date_formats()[1] ).replace(":", "\\:")
+            )
+
+    args.extend([
+        "COMMENT: \\j",
+        mkdate( _("Start time"), start ),
+        mkdate( _("End time"),   end   ),
+        ])
 
     #print args
 
