@@ -191,10 +191,14 @@ Ext.oa.MainViewManager = Ext.extend(Ext.Panel, {
   },
 
   switchComponent: function( toComponent ){
-    if( typeof toComponent === "string" )
+    if( typeof toComponent === "string" ){
       this.modcontainer.layout.setActiveItem( toComponent );
-    else
+      this.menutree.markAsActive( toComponent );
+    }
+    else{
       this.modcontainer.layout.setActiveItem( toComponent.id );
+      this.menutree.markAsActive( toComponent.id );
+    }
   }
 });
 

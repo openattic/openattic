@@ -80,6 +80,24 @@ Ext.oa.MenuTree = Ext.extend(Ext.tree.TreePanel, {
           this.root.childNodes[i].append(subnode);
       }
     }
+  },
+  markAsActive: function(panel, parent){
+    if( parent ){
+      for( var i = 0; i < parent.childNodes.length; i++ ){
+        var nodepanel = parent.childNodes[i].attributes.panel;
+        if( typeof nodepanel !== "undefined" && typeof nodepanel !== "string" )
+          nodepanel = nodepanel.id;
+        if( nodepanel === panel ){
+          parent.childNodes[i].select();
+          return true;
+        }
+        else if( !parent.childNodes[i].leaf && this.markAsActive( panel, parent.childNodes[i] ) )
+          return true;
+      }
+    }
+    else{
+      return this.markAsActive(panel, this.root);
+    }
   }
 });
 
