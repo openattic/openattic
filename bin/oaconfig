@@ -49,6 +49,7 @@ case $1 in
 		$0 reload
 		
 		# Run the hook scripts to initialize modules
+		shopt -s nullglob
 		for hook in $OADIR/*/bin/oaconfig-install.sh; do
 			source $hook
 		done
