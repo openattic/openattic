@@ -41,6 +41,10 @@ def create_vgs(app, created_models, verbosity, **kwargs):
         else:
             print "Volume Group", vgname, "already exists in the database"
 
+    if User.objects.count() == 0:
+        print "Can't add LVs, no users have been configured yet"
+        return
+
     currowner = None
     for lvname in lvs:
         vg = VolumeGroup.objects.get(name=lvs[lvname]["LVM2_VG_NAME"])
