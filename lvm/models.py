@@ -226,8 +226,8 @@ class LogicalVolume(StatefulModel):
     filesystem  = models.CharField(max_length=20, blank=True, choices=[(fs.name, fs.desc) for fs in FILESYSTEMS] )
     formatted   = models.BooleanField(default=False, editable=False)
     owner       = models.ForeignKey(User, blank=True)
-    fswarning   = models.IntegerField(_("Warning Level (%)"),  blank=True, null=True, default=75 )
-    fscritical  = models.IntegerField(_("Critical Level (%)"), blank=True, null=True, default=85 )
+    fswarning   = models.IntegerField(_("Warning Level (%)"),  default=75 )
+    fscritical  = models.IntegerField(_("Critical Level (%)"), default=85 )
 
     def __init__( self, *args, **kwargs ):
         StatefulModel.__init__( self, *args, **kwargs )
