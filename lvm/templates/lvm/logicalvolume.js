@@ -234,11 +234,25 @@ Ext.oa.Lvm__LogicalVolume_Panel = Ext.extend(Ext.Panel, {
                   name: "megs",
                   ref: 'sizefield',
                   xtype: "numberfield"
-                },{
+                }, {
                   xtype: "label",
                   ref:   "sizelabel",
                   text:  "{% trans "Waiting for volume selection..." %}",
                   cls:   "form_hint_label"
+                }, {
+                  fieldLabel: "{% trans 'Warning Level (%)' %}",
+                  allowBlank: false,
+                  name: "fswarning",
+                  ref: 'warnfield',
+                  value: 75,
+                  xtype: "numberfield"
+                }, {
+                  fieldLabel: "{% trans 'Critical Level (%)' %}",
+                  allowBlank: false,
+                  name: "fscritical",
+                  ref: 'critfield',
+                  value: 85,
+                  xtype: "numberfield"
                 }, {
                   xtype:      'combo',
                   allowBlank: false,
@@ -295,6 +309,8 @@ Ext.oa.Lvm__LogicalVolume_Panel = Ext.extend(Ext.Panel, {
                     'filesystem': self.ownerCt.ownerCt.fsfield.getValue(),
                     'name':       self.ownerCt.ownerCt.namefield.getValue(),
                     'megs':       self.ownerCt.ownerCt.sizefield.getValue(),
+                    'fswarning':  self.ownerCt.ownerCt.warnfield.getValue(),
+                    'fscritical': self.ownerCt.ownerCt.critfield.getValue(),
                     'owner': {
                       'app': 'auth',
                       'obj': 'User',
