@@ -14,7 +14,7 @@ Ext.oa.getDefaultPortlets = function(tools){
         // Anon function that is called immediately to set up the store's DefaultSort
         var store = new Ext.data.DirectStore({
           autoLoad: true,
-          fields: ['name', 'megs', 'filesystem',  'formatted', 'id', 'state', 'fs', {
+          fields: ['name', 'megs', 'filesystem',  'formatted', 'id', 'state', 'fs', 'fswarning', 'fscritical', {
             name: 'fsused',
             mapping: 'fs',
             sortType: 'asInt',
@@ -53,8 +53,10 @@ Ext.oa.getDefaultPortlets = function(tools){
           renderer: function( val, x, store ){
             if( !val || val === -1 )
               return '';
-            if( val > Ext.state.Manager.get("lv_red_threshold", 90.0) )
+            if( val > store.data.fscritical )
               var color = "red";
+            else if( val > store.data.fswarning )
+              var color = "gold";
             else
               var color = "green";
             return String.format('<span style="color:{1};">{0}%</span>', val, color);
