@@ -67,9 +67,9 @@ Ext.oa.Settings_Panel = Ext.extend(Ext.Panel,{
           }
         },
         items: [
-             {name:'theme',boxLabel:'Access', inputValue: "access"},
-             {name:'theme',boxLabel:'Gray',inputValue: "gray"},
-             {name: 'theme', boxLabel: 'Default', inputValue: "default"},
+          { name: 'theme', boxLabel: 'Access',  inputValue: "access"  },
+          { name: 'theme', boxLabel: 'Gray',    inputValue: "gray"    },
+          { name: 'theme', boxLabel: 'Default', inputValue: "default" },
         ],
       } ],
     }));
