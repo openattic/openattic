@@ -408,8 +408,8 @@ Ext.oa.Lvm__LogicalVolume_Panel = Ext.extend(Ext.Panel, {
                   Ext.Msg.confirm(
                     "{% trans 'Warning' %}",
                     interpolate(
-                      "{% trans 'Do you really want to change Volume size of <b>%s</b> to <b>%s</b> MB' %}",
-                      [sel.data.name, text] ),
+                      "{% trans 'Do you really want to change Volume size of <b>%(lv)s</b> to <b>%(megs)s</b> MB?' %}",
+                      { "lv": sel.data.name, "megs": text }, true ),
                     function(btn){
                       if( btn == 'yes' ){
                         var progresswin = new Ext.Window({

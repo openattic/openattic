@@ -105,13 +105,15 @@ Ext.oa.volumeGroup_Panel = Ext.extend(Ext.grid.GridPanel, {
                       }
                       else if( response.result[1] === "pv" ){
                         self.ownerCt.usagelabel.setText(
-                          interpolate( "{% trans 'Disk %s is part of the Volume Group %s, refusing to touch it.' %}", [disk, response.result[2]] )
+                          interpolate( "{% trans 'Disk %(disk)s is part of the Volume Group %(vg)s, refusing to touch it.' %}",
+                            { "disk": disk, "vg": response.result[2] }, true )
                         );
                         self.ownerCt.initbutton.disable();
                       }
                       else{
                         self.ownerCt.usagelabel.setText(
-                          interpolate( "{% trans 'Disk %s is mounted as %s, refusing to touch it.' %}", [disk, response.result[2]] )
+                          interpolate( "{% trans 'Disk %(disk)s is mounted as %(mount)s, refusing to touch it.' %}",
+                            { "disk": disk, "mount": response.result[2] }, true )
                         );
                         self.ownerCt.initbutton.disable();
                       }
