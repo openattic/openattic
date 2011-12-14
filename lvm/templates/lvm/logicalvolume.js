@@ -228,8 +228,7 @@ Ext.oa.Lvm__LogicalVolume_Panel = Ext.extend(Ext.Panel, {
                     valueField:    'name',
                     ref:      'fsfield'
                   }, "{% trans 'If you want to use DRBD with this device, do not yet create a file system on it, even if you want to share it using NAS services later on.' %}"),
-                
-                 {
+                {
                   fieldLabel: "{% trans "Size in MB" %}",
                   allowBlank: false,
                   name: "megs",
@@ -402,7 +401,7 @@ Ext.oa.Lvm__LogicalVolume_Panel = Ext.extend(Ext.Panel, {
         store: (function(){
           // Anon function that is called immediately to set up the store's DefaultSort
           var store = new Ext.data.DirectStore({
-            fields: ['name', 'megs', 'filesystem',  'formatted', 'id', 'state', 'fs','vg',
+            fields: ['name', 'megs', 'filesystem', 'formatted', 'id', 'state', 'fs', 'vg', 'fswarning', 'fscritical',
               {
                 name: 'fsfree',
                 mapping: 'fs',
@@ -500,8 +499,10 @@ Ext.oa.Lvm__LogicalVolume_Panel = Ext.extend(Ext.Panel, {
             renderer: function( val, x, store ){
               if( !val )
                 return '';
-              if( val > Ext.state.Manager.get("lv_red_threshold", 90.0) )
+              if( val > store.data.fscritical )
                 var color = "red";
+              else if( val > store.data.fswarning )
+                var color = "gold";
               else
                 var color = "green";
               return String.format('<span style="color:{1};">{0}%</span>', val, color);
