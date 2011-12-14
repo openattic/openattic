@@ -33,7 +33,7 @@ Ext.oa.Lvm__LogicalVolume_Panel = Ext.extend(Ext.Panel, {
           if( sm.hasSelection() ){
             var sel = sm.selections.items[0];
             var addwin = new Ext.Window({
-              title: "{% trans "Add Volume" %}",
+              title: "{% trans 'Update Levels' %}",
               layout: "fit",
               height: 300,
               width: 500,
@@ -397,12 +397,13 @@ Ext.oa.Lvm__LogicalVolume_Panel = Ext.extend(Ext.Panel, {
               Ext.Msg.prompt(
               "{% trans 'Enter new size' %}",
               interpolate(
-                "{% trans 'Please enter the desired size in MB you wish to resize volume <b>%s</b> to.' %}" + "<br/>" + 
-                "{% trans 'The current size is %s MB' %}" + "<br/>" + "<br/>" + "{% trans 'Max. +%s MB' %}",[sel.data.name, sel.data.megs, response.result]),
+                "{% trans 'Please enter the desired size in MB you wish to resize volume <b>%s</b> to.' %}" + "<br/>" +
+                "{% trans 'The current size is %s MB' %}" + "<br/>" + "<br/>" + "{% trans 'Max. +%s MB' %}",
+                [sel.data.name, sel.data.megs, response.result]),
               function(btn, text){
                 if( btn == 'ok' ){
                   if((text - sel.data.megs) > response.result){
-                    Ext.Msg.alert("{% trans 'Error' %}","{% trans 'Your insert size is greater than the remaining size' %}");
+                    Ext.Msg.alert("{% trans 'Error' %}","{% trans 'The size you entered exceeds the remaining space.' %}");
                     return;
                   }
                   Ext.Msg.confirm(
