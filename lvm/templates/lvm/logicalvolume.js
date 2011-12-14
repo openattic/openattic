@@ -474,7 +474,7 @@ Ext.oa.Lvm__LogicalVolume_Panel = Ext.extend(Ext.Panel, {
                 sortType: 'asInt',
                 convert: function( val, row ){
                   if( val === null || typeof val.stat === "undefined" )
-                    return null;
+                    return -1; // fake to sort unknown values always at the bottom
                   return val.stat.freeG.toFixed(2);
                 }
               }, {
@@ -483,7 +483,7 @@ Ext.oa.Lvm__LogicalVolume_Panel = Ext.extend(Ext.Panel, {
                 sortType: 'asInt',
                 convert: function( val, row ){
                   if( val === null || typeof val.stat === "undefined" )
-                    return null;
+                    return -1;
                   return val.stat.usedG.toFixed(2);
                 }
               }, {
@@ -492,7 +492,7 @@ Ext.oa.Lvm__LogicalVolume_Panel = Ext.extend(Ext.Panel, {
                 sortType: 'asInt',
                 convert: function( val, row ){
                   if( val === null || typeof val.stat === "undefined" )
-                    return null;
+                    return -1;
                   return (val.stat.used / val.stat.size * 100 ).toFixed(2);
                 }
               },{
@@ -500,7 +500,7 @@ Ext.oa.Lvm__LogicalVolume_Panel = Ext.extend(Ext.Panel, {
                 mapping: 'vg',
                 convert: function(val, row){
                   if( val === null || typeof val === "undefined" )
-                    return null;
+                    return '';
                   return val.name;
                 }
               }],
@@ -543,7 +543,7 @@ Ext.oa.Lvm__LogicalVolume_Panel = Ext.extend(Ext.Panel, {
             dataIndex: "fsfree",
             align: 'right',
             renderer: function( val, x, store ){
-              if( !val )
+              if( !val || val === -1 )
                 return '';
               return String.format("{0} GB", val);
             }
@@ -553,7 +553,7 @@ Ext.oa.Lvm__LogicalVolume_Panel = Ext.extend(Ext.Panel, {
             dataIndex: "fsused",
             align: 'right',
             renderer: function( val, x, store ){
-              if( !val )
+              if( !val || val === -1 )
                 return '';
               return String.format("{0} GB", val);
             }
@@ -563,7 +563,7 @@ Ext.oa.Lvm__LogicalVolume_Panel = Ext.extend(Ext.Panel, {
             dataIndex: "fspercent",
             align: 'right',
             renderer: function( val, x, store ){
-              if( !val )
+              if( !val || val === -1 )
                 return '';
               if( val > store.data.fscritical )
                 var color = "red";
