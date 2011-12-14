@@ -2,8 +2,6 @@
 
 from django.conf import settings
 
-LV_UTIL_WARN_LEVEL       = getattr( settings, "NAGIOS_LV_UTIL_WARN_LEVEL",     15 )
-LV_UTIL_CRIT_LEVEL       = getattr( settings, "NAGIOS_LV_UTIL_WARN_LEVEL",      5 )
 LV_UTIL_DESCRIPTION      = getattr( settings, "NAGIOS_LV_UTIL_DESCRIPTION",    "Disk Utilization for %s" )
 LV_UTIL_CHECK_CMD        = getattr( settings, "NAGIOS_LV_UTIL_CHECK_CMD",      "check_disk" )
 

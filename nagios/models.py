@@ -63,7 +63,7 @@ def create_service_for_lv(**kwargs):
                 volume      = lv,
                 command     = cmd,
                 description = nagios_settings.LV_UTIL_DESCRIPTION % lv.name,
-                arguments   = "%d!%d!%s" % (nagios_settings.LV_UTIL_WARN_LEVEL, nagios_settings.LV_UTIL_CRIT_LEVEL, mp)
+                arguments   = "%d!%d!%s" % (100 - lv.fswarning, 100 - lv.fscritical, mp)
                 )
             serv.save()
 
