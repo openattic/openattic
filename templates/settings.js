@@ -31,19 +31,6 @@ Ext.oa.Settings_Panel = Ext.extend(Ext.Panel,{
           }
         }
       },{
-        xtype:"numberfield",
-        fieldLabel: "threshold for LV",
-        name: "LV_test",
-        ref: 'thresholdfield',
-        listeners: {
-          change: function( self, newValue, oldValue ){
-            Ext.state.Manager.set("lv_red_threshold", parseFloat(newValue));
-          },
-          afterrender: function(self){
-            this.setRawValue(Ext.state.Manager.get("lv_red_threshold",90));
-          }
-        }
-      },{
         xtype: "checkbox",
         fieldLabel: "Erlaube Installation/Löschen von Paketen",
         checked: Ext.state.Manager.get("pkgapt_distupgrade", true),
@@ -88,18 +75,6 @@ Ext.oa.Settings_Panel = Ext.extend(Ext.Panel,{
     }));
     Ext.oa.Settings_Panel.superclass.initComponent.apply(this, arguments);
   },
-  onRender: function(){
-    Ext.oa.Settings_Panel.superclass.onRender.apply(this, arguments);
-    
-    var prov = Ext.state.Manager.getProvider();
-    
-    prov.on( "statechange", function(provider, key, value){
-      if (key === "lv_red_threshold"){
-        this.thresholdfield.setRawValue(value);
-      }
-    }, this);
-    
-  }
 });
 
 
