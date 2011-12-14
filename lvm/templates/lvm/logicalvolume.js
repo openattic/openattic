@@ -28,16 +28,66 @@ Ext.oa.Lvm__LogicalVolume_Panel = Ext.extend(Ext.Panel, {
         text: "{% trans "Set warning threshold" %}",
         icon: MEDIA_URL + "/icons2/16x16/status/dialog-warning.png",
         handler: function(self){
-          Ext.Msg.prompt(
-            "{% trans 'Enter threshold in percent' %}",
-            "{% trans 'Enter the usage threshold above which you want LVs to appear red.' %}",
-            function(btn, text){
-              if( btn == 'ok' ){
-                Ext.state.Manager.set("lv_red_threshold", parseFloat(text));
-                lvmPanel.items.items[0].store.reload();
-              }
-            }
-          );
+          var lvmGrid = lvmPanel.items.items[0];
+          var sm = lvmGrid.getSelectionModel();
+          if( sm.hasSelection() ){
+            var sel = sm.selections.items[0];
+            var addwin = new Ext.Window({
+              title: "{% trans "Add Volume" %}",
+              layout: "fit",
+              height: 300,
+              width: 500,
+              items: [{
+                xtype: "form",
+                border: false,
+                bodyStyle: 'padding:5px 5px;',
+                defaults: {
+                  xtype: "textfield",
+                  anchor: '-20px'
+                },
+                items: [ {
+                    fieldLabel: "{% trans 'Warning Level (%)' %}",
+                    allowBlank: false,
+                    name: "fswarning",
+                    ref: 'warnfield',
+                    value: sel.data.fswarning,
+                    xtype: "numberfield"
+                  }, {
+                    fieldLabel: "{% trans 'Critical Level (%)' %}",
+                    allowBlank: false,
+                    name: "fscritical",
+                    ref: 'critfield',
+                    value: sel.data.fscritical,
+                    xtype: "numberfield"
+                  } ],
+                buttons: [{
+                  text: "{% trans 'Update Levels' %}",
+                  icon: MEDIA_URL + "/icons2/16x16/actions/gtk-save.png",
+                  handler: function(self){
+                    if( !self.ownerCt.ownerCt.getForm().isValid() ){
+                      return;
+                    }
+                    lvm__LogicalVolume.set(sel.data.id, {
+                      'fswarning':  self.ownerCt.ownerCt.warnfield.getValue(),
+                      'fscritical': self.ownerCt.ownerCt.critfield.getValue(),
+                    }, function(provider, response){
+                      if( response.result ){
+                        lvmPanel.items.items[0].store.reload();
+                        addwin.hide();
+                      }
+                    });
+                  }
+                }, {
+                  text: "{% trans 'Cancel' %}",
+                  icon: MEDIA_URL + "/icons2/16x16/actions/gtk-cancel.png",
+                  handler: function(self){
+                    addwin.hide();
+                  }
+                }]
+              }]
+            });
+            addwin.show();
+          }
         }
       }, {
         text: "{% trans "Mount" %}",
