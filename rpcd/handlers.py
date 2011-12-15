@@ -84,32 +84,6 @@ class ModelHandler(BaseHandler):
         """ Return all objects. """
         return [ self._getobj(obj) for obj in self.model.objects.all().order_by(*self.order) ]
 
-    def range(self, start, limit, sort, dir ):
-        """ Return a range of objects ordered by the `sort' field. """
-        start = int(start)
-        limit = int(limit)
-        if dir == "DESC":
-            sort = "-" + sort
-        total  = self.model.objects.all().count()
-        qryset = self.model.objects.all().order_by(sort)[start:(start + limit)]
-        return {
-            'objects': [ self._getobj(obj) for obj in qryset ],
-            'total':   total
-            }
-
-    def range_values(self, start, limit, sort, dir, fields):
-        """ Return a range of objects ordered by the `sort' field. """
-        start = int(start)
-        limit = int(limit)
-        if dir == "DESC":
-            sort = "-" + sort
-        total  = self.model.objects.all().count()
-        qryset = self.model.objects.all().order_by(sort)[start:(start + limit)].values(*fields)
-        return {
-            'objects': list(qryset),
-            'total':   total
-            }
-
     def get(self, id):
         """ Return an object given by ID. """
         if not isinstance( id, dict ):
@@ -142,16 +116,44 @@ class ModelHandler(BaseHandler):
     def _filter_queryset(self, kwds, queryset=None):
         if queryset is None:
             queryset = self.model.objects
+
         if '__exclude__' in kwds:
             exclude_kwds = kwds['__exclude__']
             del kwds['__exclude__']
-            return queryset.filter(**kwds).exclude(**exclude_kwds)
         else:
-            return queryset.filter(**kwds)
+            exclude_kwds = None
+
+        if '__fields__' in kwds:
+            fields = kwds['__fields__']
+            del kwds['__fields__']
+        else:
+            fields = None
+
+        if kwds:
+            queryset = queryset.filter(**kwds)
+        if exclude_kwds:
+            queryset = queryset.exclude(**exclude_kwds)
+        if fields:
+            queryset = queryset.values(*fields)
+        return queryset
 
     def filter(self, kwds):
         """ Search for objects with the keywords specified in the kwds dict. """
         return [ self._getobj(obj) for obj in self._filter_queryset(kwds).order_by(*self.order) ]
+
+    def filter_range(self, start, limit, sort, dir, kwds ):
+        """ Return a range of objects ordered by the `sort' field. """
+        start = int(start)
+        limit = int(limit)
+        if dir == "DESC":
+            sort = "-" + sort
+        queryset = self._filter_queryset(kwds)
+        total  = queryset.count()
+        qryset = queryset.order_by(sort)[start:(start + limit)]
+        return {
+            'objects': [ self._getobj(obj) for obj in qryset ],
+            'total':   total
+            }
 
     def filter_values(self, kwds, fields):
         """ Filter records using the specified keywords (see filter), but return only
@@ -179,6 +181,9 @@ class ModelHandler(BaseHandler):
 
     def _getobj(self, obj):
         """ Return the data for one given object. """
+        if isinstance(obj, dict):
+            return obj
+
         data = {}
         for field in obj._meta.fields + obj._meta.many_to_many:
             if self.fields is not None and field.name not in self.fields:
