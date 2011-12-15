@@ -8,8 +8,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2011-11-18 10:52+0100\n"
-"PO-Revision-Date: 2011-11-18 10:53\n"
+"POT-Creation-Date: 2011-12-15 16:40+0100\n"
+"PO-Revision-Date: 2011-12-15 16:41\n"
 "Last-Translator: Michael Ziegler <michael.ziegler@it-novum.com>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
 "MIME-Version: 1.0\n"
@@ -31,80 +31,101 @@ msgstr "Neu laden"
 msgid "Add User"
 msgstr "Benutzer hinzufügen"
 
-#: auth__user.js:40 auth__user.js.py:138 auth__user.js.py:226
-#: auth__user.js:262
+#: auth__user.js:41 auth__user.js.py:140 auth__user.js.py:230
+#: auth__user.js:266
 msgid "User Name"
 msgstr "Benutzername"
 
-#: auth__user.js:44 auth__user.js.py:232
+#: auth__user.js:45 auth__user.js.py:236
 msgid "Password"
 msgstr "Passwort"
 
-#: auth__user.js:49 auth__user.js.py:143 auth__user.js.py:266
+#: auth__user.js:50 auth__user.js.py:145 auth__user.js.py:270
 msgid "First Name"
 msgstr "Vorname"
 
-#: auth__user.js:53 auth__user.js.py:149 auth__user.js.py:270
+#: auth__user.js:54 auth__user.js.py:151 auth__user.js.py:274
 msgid "Last Name"
 msgstr "Nachname"
 
-#: auth__user.js:57 auth__user.js.py:155
+#: auth__user.js:58 auth__user.js.py:157
 msgid "E-Mail"
 msgstr "E-Mail"
 
-#: auth__user.js:62 auth__user.js.py:162 auth__user.js.py:278
+#: auth__user.js:63 auth__user.js.py:165 auth__user.js.py:282
 msgid "Active"
 msgstr "Aktiv"
 
-#: auth__user.js:67 auth__user.js.py:174
+#: auth__user.js:68 auth__user.js.py:177
 msgid "SuperUser"
 msgstr "Administrator"
 
-#: auth__user.js:72 auth__user.js.py:168 auth__user.js.py:283
+#: auth__user.js:73 auth__user.js.py:171 auth__user.js.py:287
 msgid "Staff"
 msgstr "Personal"
 
-#: auth__user.js:108
+#: auth__user.js:109
 msgid "Delete User"
 msgstr "Benutzer löschen"
 
-#: auth__user.js:120
+#: auth__user.js:121
 msgid "Edit"
 msgstr "Bearbeiten"
 
-#: auth__user.js:127
+#: auth__user.js:128
 msgid "Edit User"
 msgstr "Benutzer bearbeiten"
 
-#: auth__user.js:180
+#: auth__user.js:183
 msgid "Save"
 msgstr "Speichern"
 
-#: auth__user.js:208 auth__user.js.py:215
+#: auth__user.js:211 auth__user.js.py:218
 msgid "Change Password"
 msgstr "Passwort ändern"
 
-#: auth__user.js:274
+#: auth__user.js:278
 msgid "E-Mail Address"
 msgstr "E-Mail-Adresse"
 
-#: auth__user.js:288
+#: auth__user.js:292
 msgid "SU"
 msgstr "Admin"
 
-#: auth__user.js:293
+#: auth__user.js:297
 msgid "Last Login"
 msgstr "Letzter Login"
 
-#: auth__user.js:314
+#: auth__user.js:318
 msgid "User Management"
 msgstr "Benutzer-Verwaltung"
 
-#: index_ext_unauthed.html:36
+#: index_ext_unauthed.html:20
+msgid "The credentials you entered are invalid."
+msgstr "Die eingegebenen Anmeldedaten sind ungültig."
+
+#: index_ext_unauthed.html:21
+msgid ""
+"The request that has been sent to the server has been invalid - this is not "
+"supposed to happen..."
+msgstr ""
+"Die Anfrage die an den Server gesendet wurde war ungültig - das sollte "
+"eigentlich nicht passieren..."
+
+#: index_ext_unauthed.html:22
+msgid "Your account has been deactivated. Please consult an administrator."
+msgstr ""
+"Ihr Account wurde deaktiviert. Bitte wenden Sie sich an einen Administrator."
+
+#: index_ext_unauthed.html:23
+msgid "Did you fill in all the fields?"
+msgstr "Haben Sie alle Felder ausgefüllt?"
+
+#: index_ext_unauthed.html:39
 msgid "Loading..."
 msgstr "Lade..."
 
-#: index_ext_unauthed.html:74 index_ext_unauthed.html.py:83
+#: index_ext_unauthed.html:77 index_ext_unauthed.html.py:86
 msgid "Checking..."
 msgstr "Prüfe..."
 
