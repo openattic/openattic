@@ -2,20 +2,20 @@
 # Copyright (C) YEAR THE PACKAGE'S COPYRIGHT HOLDER
 # This file is distributed under the same license as the PACKAGE package.
 # FIRST AUTHOR <EMAIL@ADDRESS>, YEAR.
-# 
+#
 #, fuzzy
 msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2011-12-14 14:06+0100\n"
-"PO-Revision-Date: 2011-12-14 14:09\n"
+"POT-Creation-Date: 2011-12-15 13:54+0100\n"
+"PO-Revision-Date: 2011-12-15 13:53\n"
 "Last-Translator: Michael Ziegler <michael.ziegler@it-novum.com>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
+"Language: \n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"Language: \n"
 "Plural-Forms: nplurals=2; plural=(n != 1)\n"
 "X-Translated-Using: django-rosetta 0.6.0\n"
 
@@ -82,8 +82,7 @@ msgstr "Disk %s ist nicht in Benutzung."
 
 #: templates/lvm/diskmgmt.js:108
 #, python-format
-msgid ""
-"Disk %(disk)s is part of the Volume Group %(vg)s, refusing to touch it."
+msgid "Disk %(disk)s is part of the Volume Group %(vg)s, refusing to touch it."
 msgstr ""
 "Disk %(disk)s ist Teil der Volume-Gruppe %(vg)s, werde sie nicht anrühren."
 
@@ -127,6 +126,23 @@ msgstr "Löschen bestätigen"
 msgid "Really delete Group %s ?"
 msgstr "Gruppe %s wirklich löschen?"
 
+#: templates/lvm/diskmgmt.js:233 templates/lvm/snapshots.js:35
+msgid "Name"
+msgstr "Name"
+
+#: templates/lvm/diskmgmt.js:236 templates/lvm/logicalvolume.js:523
+#: templates/lvm/snapshots.js:208
+msgid "Size"
+msgstr "Größe"
+
+#: templates/lvm/diskmgmt.js:239 templates/lvm/logicalvolume.js:542
+msgid "Free"
+msgstr "Frei"
+
+#: templates/lvm/diskmgmt.js:242
+msgid "Attributes"
+msgstr "Attribute"
+
 #: templates/lvm/diskmgmt.js:263
 msgid "Disk Management"
 msgstr "Disk-Verwaltung"
@@ -155,8 +171,7 @@ msgstr "Einhängen"
 #: templates/lvm/logicalvolume.js:103
 #, python-format
 msgid "Volume %s does not have a file system and therefore cannot be mounted."
-msgstr ""
-"Volume %s hat kein Dateisystem und kann daher nicht eingehängt werden."
+msgstr "Volume %s hat kein Dateisystem und kann daher nicht eingehängt werden."
 
 #: templates/lvm/logicalvolume.js:109
 #, python-format
@@ -229,8 +244,8 @@ msgstr "Dateisystem"
 
 #: templates/lvm/logicalvolume.js:280
 msgid ""
-"If you want to use DRBD with this device, do not yet create a file system on"
-" it, even if you want to share it using NAS services later on."
+"If you want to use DRBD with this device, do not yet create a file system on "
+"it, even if you want to share it using NAS services later on."
 msgstr ""
 "Wenn Sie DRBD mit diesem Volume benutzen möchten, erzeugen Sie noch kein "
 "Dateisystem, selbst wenn Sie es später mit NAS-Diensten freigeben möchten."
@@ -312,8 +327,8 @@ msgstr "Warnung"
 #: templates/lvm/logicalvolume.js:412
 #, python-format
 msgid ""
-"Do you really want to change Volume size of <b>%(lv)s</b> to <b>%(megs)s</b>"
-" MB?"
+"Do you really want to change Volume size of <b>%(lv)s</b> to <b>%(megs)s</b> "
+"MB?"
 msgstr ""
 "Möchten Sie wirklich die Volume-Größe von <b>%(lv)s</b> auf <b>%(megs)s</b> "
 "ändern?"
@@ -333,12 +348,11 @@ msgstr "Volume löschen"
 #: templates/lvm/logicalvolume.js:449
 #, python-format
 msgid ""
-"Really delete volume %s and all its shares?<br /><b>There is no undo and you"
-" will lose all data.</b>"
+"Really delete volume %s and all its shares?<br /><b>There is no undo and you "
+"will lose all data.</b>"
 msgstr ""
 "Volume %s und alle Freigaben wirklich löschen?<br /><b>Dies kann nicht "
-"rückgängig gemacht werden und Sie werden alle Daten des Volume "
-"verlieren.</b>"
+"rückgängig gemacht werden und Sie werden alle Daten des Volume verlieren.</b>"
 
 #: templates/lvm/logicalvolume.js:458 templates/lvm/snapshots.js:166
 msgid "Aborted."
@@ -348,17 +362,9 @@ msgstr "Abgebrochen."
 msgid "LV"
 msgstr "LV"
 
-#: templates/lvm/logicalvolume.js:523 templates/lvm/snapshots.js:208
-msgid "Size"
-msgstr "Größe"
-
 #: templates/lvm/logicalvolume.js:533
 msgid "FS"
 msgstr "FS"
-
-#: templates/lvm/logicalvolume.js:542
-msgid "Free"
-msgstr "Frei"
 
 #: templates/lvm/logicalvolume.js:552
 msgid "Used"
@@ -409,12 +415,9 @@ msgid "Volume Snapshots"
 msgstr "Volume-Snapshots"
 
 #: templates/lvm/snapshots.js:19 templates/lvm/snapshots.js.py:23
+#: templates/lvm/zfssnapshot.js:26
 msgid "Add Snapshot"
 msgstr "Snapshot hinzufügen"
-
-#: templates/lvm/snapshots.js:35
-msgid "Name"
-msgstr "Name"
 
 #: templates/lvm/snapshots.js:42 templates/lvm/snapshots.js.py:217
 msgid "Original Volume"
@@ -444,8 +447,8 @@ msgid ""
 "you will lose all data.</b>"
 msgstr ""
 "Snapshot %s und alle Freigaben wirklich löschen?<br /><b>Dies kann nicht "
-"rückgängig gemacht werden und Sie werden alle Daten des Snapshots "
-"verlieren.</b>"
+"rückgängig gemacht werden und Sie werden alle Daten des Snapshots verlieren."
+"</b>"
 
 #: templates/lvm/volumefield.js:19 templates/lvm/zfssnapshot.js:158
 #: templates/lvm/zfssnapshot.js.py:195 templates/lvm/zfssubvolume.js:39
@@ -477,8 +480,8 @@ msgstr ""
 msgid "Really delete snapshot %s ?<br /><b>There is no undo.</b>"
 msgstr ""
 "Snapshot %s und alle Freigaben wirklich löschen?<br /><b>Dies kann nicht "
-"rückgängig gemacht werden und Sie werden alle Daten des Snapshots "
-"verlieren.</b>"
+"rückgängig gemacht werden und Sie werden alle Daten des Snapshots verlieren."
+"</b>"
 
 #: templates/lvm/zfssnapshot.js:192 templates/lvm/zfssubvolume.js:36
 msgid "Subvolume"
@@ -517,8 +520,8 @@ msgstr "Subvolume löschen"
 msgid "Really delete subvolume %s ?<br /><b>There is no undo.</b>"
 msgstr ""
 "Subvolume %s und alle Freigaben wirklich löschen?<br /><b>Dies kann nicht "
-"rückgängig gemacht werden und Sie werden alle Daten des Subvolume "
-"verlieren.</b>"
+"rückgängig gemacht werden und Sie werden alle Daten des Subvolume verlieren."
+"</b>"
 
 #~ msgid "Begin"
 #~ msgstr "Anfang"
