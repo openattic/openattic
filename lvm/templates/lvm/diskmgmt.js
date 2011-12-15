@@ -230,16 +230,16 @@ Ext.oa.volumeGroup_Panel = Ext.extend(Ext.grid.GridPanel, {
           sortable: true
         },
         columns: [{
-          header: "Name",
+          header: "{% trans 'Name' %}",
           dataIndex: "name"
         },{
-          header: "Size",
+          header: "{% trans 'Size' %}",
           dataIndex: "LVM_VG_SIZE"
         },{
-          header: "Free",
+          header: "{% trans 'Free' %}",
           dataIndex: "LVM_VG_FREE"
         },{
-          header: "Attributes",
+          header: "{% trans 'Attributes' %}",
           dataIndex: "LVM_VG_ATTR"
         }]
       })

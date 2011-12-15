@@ -23,7 +23,7 @@ Ext.oa.Zfs__Snapshot_Panel = Ext.extend(Ext.Panel, {
           icon: MEDIA_URL + "/icons2/16x16/actions/add.png",
           handler: function(){
             var addwin = new Ext.Window({
-             title: "Add Snapshot",
+             title: "{% trans 'Add Snapshot' %}",
              layout: "fit",
              height: 110,
              width: 450,
