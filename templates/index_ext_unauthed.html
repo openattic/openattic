@@ -17,10 +17,10 @@
         Ext.QuickTips.init();
         window.nexturl = "{% url index %}";
         window.errmsg = {
-          invalid_credentials: "Die eingegebenen Login-Daten sind ungültig.",
-          invalid_request:     "Die Anfrage die an den Server gesendet wurde war ungültig - das sollte eigentlich nicht passieren...",
-          disabled_account:    "Ihr Account wurde deaktiviert. Wenden Sie sich an einen Administrator.",
-          undefined:           "Sie haben nicht alle Felder ausgefüllt."
+          invalid_credentials: "{% trans 'The credentials you entered are invalid.' %}",
+          invalid_request:     "{% trans 'The request that has been sent to the server has been invalid - this is not supposed to happen...' %}",
+          disabled_account:    "{% trans 'Your account has been deactivated. Please consult an administrator.' %}",
+          undefined:           "{% trans 'Did you fill in all the fields?' %}"
         };
         login_form = new Ext.FormPanel({
           autoScroll: true,
