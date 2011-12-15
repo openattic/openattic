@@ -8,9 +8,11 @@ Ext.oa.Cmdlog__LogEntry_Panel = Ext.extend(Ext.Panel, {
     var store = new Ext.data.DirectStore({
       remoteSort: true,
       fields: fields,
-      directFn: cmdlog__LogEntry.range_values,
+      directFn: cmdlog__LogEntry.filter_range,
       baseParams: {
-        'fields': fields,
+        kwds: {
+          '__fields__': fields
+        },
         'start': 0, 'limit': 100,
         'sort': 'endtime', 'dir': 'DESC'
       },
@@ -19,7 +21,7 @@ Ext.oa.Cmdlog__LogEntry_Panel = Ext.extend(Ext.Panel, {
         totalProperty:  'total',
         fields:         fields
       }),
-      paramOrder: ['start', 'limit', 'sort', 'dir', 'fields']
+      paramOrder: ['start', 'limit', 'sort', 'dir', 'kwds']
     });
     var textStore = new Ext.data.DirectStore({
       fields: ['id', 'command', 'exitcode', 'endtime', 'starttime', 'text', {
@@ -85,7 +87,21 @@ Ext.oa.Cmdlog__LogEntry_Panel = Ext.extend(Ext.Panel, {
           afterPageText:  "{% trans 'of {0}' %}",
           beforePageText: "{% trans 'Page' %}",
           store:    store,
-          items: ['->', {
+          items: [ {
+            xtype: "textfield",
+            emptyText: "{% trans 'Search...' %}",
+            listeners: {
+              change: function( self, newVal, oldVal ){
+                if( newVal !== '' ){
+                  store.baseParams["kwds"]["text__icontains"] = newVal;
+                }
+                else{
+                  delete store.baseParams["kwds"]["text__icontains"];
+                }
+                store.reload();
+              }
+            }
+          },'->', {
             xtype: 'button',
             text:  "{% trans 'Delete old entries' %}",
             handler: function(){
