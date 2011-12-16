@@ -51,19 +51,21 @@ Ext.oa.Portal = Ext.extend(Ext.ux.Portal, {
       }())
     }));
     Ext.oa.Portal.superclass.initComponent.apply(this, arguments);
-    this.on("drop", function(e){
-      var portal = this;
-      var state = [];
-      for( var c = 0; c < portal.items.getCount(); c++ ){
-        var colIds = [];
-        var col = portal.items.get(c);
-        for( var p = 0; p < col.items.getCount(); p++ ){
-          colIds.push(col.items.get(p).id);
-        }
-        state.push(colIds);
+    this.on("drop", this.savePortlets, this);
+  },
+
+  savePortlets: function(){
+    var portal = this;
+    var state = [];
+    for( var c = 0; c < portal.items.getCount(); c++ ){
+      var colIds = [];
+      var col = portal.items.get(c);
+      for( var p = 0; p < col.items.getCount(); p++ ){
+        colIds.push(col.items.get(p).id);
       }
-      Ext.state.Manager.set("portalstate", state);
-    }, this);
+      state.push(colIds);
+    }
+    Ext.state.Manager.set("portalstate", state);
   },
 
   makePortlet: function(config){
@@ -74,6 +76,7 @@ Ext.oa.Portal = Ext.extend(Ext.ux.Portal, {
     this.items.items[0].add(portlet);
     this.doLayout();
     this.items.items[0].doLayout();
+    this.savePortlets();
   },
 
   prepareMenuTree: function(tree){
