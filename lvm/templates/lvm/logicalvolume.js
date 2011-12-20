@@ -35,7 +35,7 @@ Ext.oa.Lvm__LogicalVolume_Panel = Ext.extend(Ext.Panel, {
             var addwin = new Ext.Window({
               title: "{% trans 'Update Levels' %}",
               layout: "fit",
-              height: 300,
+              height: 180,
               width: 500,
               items: [{
                 xtype: "form",
@@ -215,7 +215,7 @@ Ext.oa.Lvm__LogicalVolume_Panel = Ext.extend(Ext.Panel, {
           var addwin = new Ext.Window({
             title: "{% trans "Add Volume" %}",
             layout: "fit",
-            height: 300,
+            height: 350,
             width: 500,
             items: [{
               xtype: "form",
