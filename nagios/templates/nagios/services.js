@@ -305,6 +305,7 @@ Ext.oa.Nagios__Service_Panel = Ext.extend(Ext.Panel, {
       items: [ {
         xtype: 'grid',
         region: "center",
+        loadMask: true,
         viewConfig: { forceFit: true },
         store: {
           xtype: 'directstore',
