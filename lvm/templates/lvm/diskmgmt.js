@@ -235,13 +235,16 @@ Ext.oa.volumeGroup_Panel = Ext.extend(Ext.grid.GridPanel, {
           dataIndex: "name"
         },{
           header: "{% trans 'Size' %}",
-          dataIndex: "LVM_VG_SIZE"
+          dataIndex: "LVM_VG_SIZE",
+          renderer: function(val){ if( val ) return val; return '♻' }
         },{
           header: "{% trans 'Free' %}",
-          dataIndex: "LVM_VG_FREE"
+          dataIndex: "LVM_VG_FREE",
+          renderer: function(val){ if( val ) return val; return '♻' }
         },{
           header: "{% trans 'Attributes' %}",
-          dataIndex: "LVM_VG_ATTR"
+          dataIndex: "LVM_VG_ATTR",
+          renderer: function(val){ if( val ) return val; return '♻' }
         }]
       })
     }));
