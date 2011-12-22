@@ -189,7 +189,19 @@ Ext.oa.Lvm__Snapshot_Panel = Ext.extend(Ext.grid.GridPanel, {
                   return null;
                 return val.name;
               }
-            }],
+            }, 'LVM2_SNAP_PERCENT' ],
+          listeners: {
+            load: function(self){
+              for (var i = 0; i < self.data.length; i++){
+                lvm__LogicalVolume.lvm_info( self.data.items[i].id, function(idx){
+                  return function(provider, response){
+                    self.data.items[idx].set("LVM2_SNAP_PERCENT", response.result.LVM2_SNAP_PERCENT);
+                    self.commitChanges();
+                  };
+                }(i) );
+              }
+            }
+          },
           baseParams: { 'snapshot__isnull': false },
           directFn: lvm__LogicalVolume.filter
         });
@@ -213,6 +225,11 @@ Ext.oa.Lvm__Snapshot_Panel = Ext.extend(Ext.grid.GridPanel, {
               return String.format("{0} GB", (val / 1000).toFixed(2));
             return String.format("{0} MB", val);
           }
+        }, {
+          header: "{% trans 'Usage (%)' %}",
+          dataIndex: "LVM2_SNAP_PERCENT",
+          align: "right",
+          renderer: function(val){ if( val ) return val+'%'; return '♻' }
         }, {
           header: "{% trans 'Original Volume' %}",
           width: 200,
