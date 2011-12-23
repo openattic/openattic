@@ -15,10 +15,10 @@ parser.add_option( "-d", "--dbus",
     default="org.openattic.systemd"
     )
 
-parser.add_option( "-w", "--warning",
+parser.add_option( "-w", "--warning", type="float",
     help="snapshot is at 50 %.", default=50
     )
-parser.add_option("-c", "--critical",
+parser.add_option("-c", "--critical", type="float",
     help= "snapshot is at 70%", default=70
     )
 
