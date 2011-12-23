@@ -69,10 +69,10 @@ if stats[lvname]["LVM2_ORIGIN"] == "":
   sys.exit(2)
 
 lv_percent = float(stats[lvname]["LVM2_SNAP_PERCENT"])
-print("snapshot %s is at %.2f%% %.2f%% %.2f%%"%(lvname,lv_percent, options.warning, options.critical))
+print("snapshot %s is at %.2f%% "%(lvname,lv_percent)+"|"
+" util_percent=%.2f%%;%.f;%.f "%(lv_percent,options.warning,options.critical))
+
 #wenn snap_percent größer als 50% dann 'warning' zurückgegeben
-
-
 lv_origin = stats[lvname]["LVM2_ORIGIN"]
 
 # wenn original_lvsize kleiner als snapshot dann exitcode 2 
