@@ -33,6 +33,7 @@ class Command( BaseCommand ):
 
         uu = User.objects.get(username=options['user'])
         key = APIKey( owner=uu, description=options['description'], active=(not options['inactive']) )
+        key.full_clean()
         key.save()
         print key.apikey
 
