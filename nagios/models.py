@@ -7,6 +7,7 @@ from django.conf      import settings
 from django.db        import models
 from django.db.models import signals
 from django.utils.translation   import ugettext_noop, ugettext_lazy as _
+from django.contrib.auth.models import User
 
 from lvm.models import LogicalVolume
 
@@ -94,5 +95,13 @@ def delete_service_for_lv(**kwargs):
 
     Service.write_conf()
 
+def update_contacts(**kwargs):
+    nag = dbus.SystemBus().get_object(settings.DBUS_IFACE_SYSTEMD, "/nagios")
+    nag.write_contacts()
+    nag.restart()
+
 signals.post_save.connect(  create_service_for_lv, sender=LogicalVolume )
 signals.pre_delete.connect( delete_service_for_lv, sender=LogicalVolume )
+
+signals.post_save.connect(   update_contacts, sender=User )
+signals.post_delete.connect( update_contacts, sender=User )
