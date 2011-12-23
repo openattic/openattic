@@ -16,7 +16,7 @@ class ServiceHandler(ModelHandler):
     order = ("description",)
 
     def write_conf(self):
-        Services.write_conf()
+        Service.write_conf()
 
     def _override_get(self, obj, data):
         try:
