@@ -15,13 +15,13 @@ parser.add_option( "-d", "--dbus",
     default="org.openattic.systemd"
     )
 
-parser.add_option( "-s", "--service",
-    help="The service to query.",
+parser.add_option( "-w", "--warning",
+    help="snapshot is at 50 %.", default=50
+    )
+parser.add_option("-c", "--critical",
+    help= "snapshot is at 70%", default=70
     )
 
-parser.add_option( "-i", "--interface",
-    help="The interface to query.", default=''
-    )
 options, progargs = parser.parse_args()
 
 if len(progargs) != 1:
@@ -63,12 +63,13 @@ def dbus_to_python(obj):
 lvname = progargs[0]
 
 
+
 if stats[lvname]["LVM2_ORIGIN"] == "":
   print("Sie haben ein Originalvolume ausgewählt!")
   sys.exit(2)
 
-lv_percent = float(stats[lvname]["LVM2_SNAP_PERCENT"])  
-print("snapshot %s is at %.2f%%"%(lvname,lv_percent))
+lv_percent = float(stats[lvname]["LVM2_SNAP_PERCENT"])
+print("snapshot %s is at %.2f%% %.2f%% %.2f%%"%(lvname,lv_percent, options.warning, options.critical))
 #wenn snap_percent größer als 50% dann 'warning' zurückgegeben
 
 
@@ -76,11 +77,11 @@ lv_origin = stats[lvname]["LVM2_ORIGIN"]
 
 # wenn original_lvsize kleiner als snapshot dann exitcode 2 
 if float(stats[lvname]["LVM2_LV_SIZE"]) < float(stats[lv_origin]["LVM2_LV_SIZE"]):
-  if lv_percent > 50.00:
+  if lv_percent > options.warning:
     exit = 1
 
 ## wenn snap_percent größer als 70%, dann soll 'critical' zurückgegeben werden
-  if lv_percent > 70.00:
+  if lv_percent > options.critical:
     exit = 2
 
 sys.exit(exit)
