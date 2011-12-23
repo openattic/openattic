@@ -79,7 +79,7 @@ case $1 in
 		fi
 		echo "Please enter the username of the system admin you created using $0 install."
 		read USERNAME
-		KEY=$( $0 mkapikey -u $USERNAME )
+		KEY=$( $0 mkapikey -u $USERNAME -d "oacli access")
 		
 		if [ ! -z "$RPCD_CERTFILE" -a ! -z "$RPCD_KEYFILE" ]; then
 			PROTO="https"
