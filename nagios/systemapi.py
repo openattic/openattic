@@ -4,6 +4,8 @@
 import re
 from django.template.loader import render_to_string
 
+from django.contrib.auth.models import User
+
 from systemd       import invoke, logged, LockingPlugin, method, create_job
 from nagios.models import Command, Service
 
@@ -20,6 +22,20 @@ class SystemD(LockingPlugin):
                 fd.write( render_to_string( "nagios/services.cfg", {
                     "Commands": Command.objects.all(),
                     "Services": Service.objects.filter(command__query_only=False),
+                    } ) )
+            finally:
+                fd.close()
+        finally:
+            self.lock.release()
+
+    @method(in_signature="", out_signature="")
+    def write_contacts(self):
+        self.lock.acquire()
+        try:
+            fd = open( "/etc/nagios3/conf.d/openattic_contacts.cfg", "wb" )
+            try:
+                fd.write( render_to_string( "nagios/contacts.cfg", {
+                    "Admins": User.objects.filter(is_active=True, is_superuser=True).exclude(email=""),
                     } ) )
             finally:
                 fd.close()
