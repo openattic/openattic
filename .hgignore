@@ -1,5 +1,6 @@
 syntax: glob
 
+*.orig
 *.swp
 *.kate-swp
 *.pyc
