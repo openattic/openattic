@@ -16,7 +16,3 @@ class APIKey(models.Model):
         if not self.apikey:
             self.apikey = unicode(uuid.uuid4())
         return models.Model.full_clean(self)
-
-    def save(self, *args, **kwargs):
-        return models.Model.save(self, *args, **kwargs)
-
