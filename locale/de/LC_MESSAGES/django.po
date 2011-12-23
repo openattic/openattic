@@ -8,8 +8,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2011-12-15 16:40+0100\n"
-"PO-Revision-Date: 2011-12-15 16:41\n"
+"POT-Creation-Date: 2011-12-23 13:03+0100\n"
+"PO-Revision-Date: 2011-12-23 13:05\n"
 "Last-Translator: Michael Ziegler <michael.ziegler@it-novum.com>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
 "MIME-Version: 1.0\n"
@@ -19,13 +19,65 @@ msgstr ""
 "Plural-Forms: nplurals=2; plural=(n != 1)\n"
 "X-Translated-Using: django-rosetta 0.6.0\n"
 
+#: apikey.js:15 apikey.js.py:176
+msgid "API Keys"
+msgstr "API-Schlüssel"
+
+#: apikey.js:20 auth__user.js:20
+msgid "Reload"
+msgstr "Neu laden"
+
+#: apikey.js:25
+msgid "Show API URL"
+msgstr "API-URL anzeigen"
+
+#: apikey.js:32
+msgid "API URL"
+msgstr "API-URL"
+
+#: apikey.js:33
+msgid ""
+"Use this URL to connect to the openATTIC API using the API Key you selected."
+msgstr ""
+"Benutzen Sie diese URL, um die openATTIC-API mit dem gewählten Schlüssel zu "
+"nutzen."
+
+#: apikey.js:34
+msgid ""
+"Note that the input field only allows for easier copy-paste, any value you "
+"enter here will be ignored."
+msgstr ""
+"Das Eingabefeld dient nur dazu, das Herauskopieren der URL zu vereinfachen. "
+"Sämtliche Eingaben, die Sie hier machen, werden ignoriert."
+
+#: apikey.js:42 apikey.js.py:46
+msgid "Add Key"
+msgstr "Schlüssel hinzufügen"
+
+#: apikey.js:60 apikey.js.py:150
+msgid "Owner"
+msgstr "Besitzer"
+
+#: apikey.js:70
+msgid "Select..."
+msgstr "Bitte auswählen..."
+
+#: apikey.js:76 apikey.js.py:146
+msgid "Description"
+msgstr "Beschreibung"
+
+#: apikey.js:81 apikey.js.py:154 auth__user.js:63 auth__user.js.py:165
+#: auth__user.js.py:282
+msgid "Active"
+msgstr "Aktiv"
+
+#: apikey.js:116
+msgid "Delete Key"
+msgstr "Schlüssel löschen"
+
 #: auth__user.js:15
 msgid "Users"
 msgstr "Benutzer"
-
-#: auth__user.js:20
-msgid "Reload"
-msgstr "Neu laden"
 
 #: auth__user.js:25 auth__user.js.py:29
 msgid "Add User"
@@ -51,10 +103,6 @@ msgstr "Nachname"
 #: auth__user.js:58 auth__user.js.py:157
 msgid "E-Mail"
 msgstr "E-Mail"
-
-#: auth__user.js:63 auth__user.js.py:165 auth__user.js.py:282
-msgid "Active"
-msgstr "Aktiv"
 
 #: auth__user.js:68 auth__user.js.py:177
 msgid "SuperUser"
