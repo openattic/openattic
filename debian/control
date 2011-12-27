@@ -14,11 +14,12 @@ Depends: ${misc:Depends}, openattic-base,
  openattic-module-lvm,
  openattic-module-nfs,
  openattic-module-http,
+ openattic-module-iet-iscsi,
  openattic-module-samba,
- openattic-module-ssmtp,
+ openattic-module-apt,
+ openattic-module-nagios,
  openattic-module-ftp-mysql,
- libapache2-mod-wsgi,
- apache2,
+ libapache2-mod-wsgi, apache2,
  openattic-mysql
 Suggests: python-django-rosetta
 Description: Comprehensive storage management system
