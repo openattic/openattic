@@ -350,7 +350,7 @@ Ext.oa.Iscsi__Panel = Ext.extend(Ext.Panel, {
             })
           }],
           buttons:[{
-            text: "{% trans 'Manage Initiator' %}",
+            text: "{% trans 'Manage Initiators' %}",
             icon: MEDIA_URL + "/icons2/16x16/actions/gtk-execute.png",
             handler: function(){
               var addwin = new Ext.Window({
