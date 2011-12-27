@@ -2,20 +2,29 @@
 
 set -e
 
-. /usr/share/debconf/confmodule
+if [ "$1" = "configure" ] ; then
+    . /usr/share/debconf/confmodule
 
-. /usr/share/dbconfig-common/dpkg/postinst.mysql
+    . /usr/share/dbconfig-common/dpkg/postinst.mysql
 
-INIFILE=/etc/openattic/databases/mysql.ini
+    INIFILE=/etc/openattic/databases/mysql.ini
 
-dbc_generate_include_args="-o template_infile=/etc/openattic/databases/mysql_template.ini"
-dbc_generate_include="template:$INIFILE"
+    dbc_generate_include_args="-o template_infile=/etc/openattic/databases/mysql_template.ini"
+    dbc_generate_include="template:$INIFILE"
 
-if ! dbc_go openattic-mysql $@ ; then
+    if ! dbc_go openattic-mysql $@ ; then
     echo 'Automatic configuration using dbconfig-common failed!'
-else
+    else
     dpkg-statoverride --list "$INIFILE" >/dev/null || \
         dpkg-statoverride --update --add www-data www-data "0600" "$INIFILE"
+    fi
+
+    dbconfig-generate-include -f template \
+        -o template_infile=/etc/openattic/databases/nss_mysql_template.conf \
+        /etc/dbconfig-common/openattic-mysql.conf \
+        /etc/nss-mysql.conf
+
+    ln /etc/nss-mysql.conf /etc/nss-mysql-root.conf
 fi
 
 #DEBHELPER#
