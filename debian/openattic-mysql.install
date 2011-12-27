@@ -1,2 +1,2 @@
 debian/database_install/mysql_template.ini /etc/openattic/databases
-debian/database_install/nss_mysql_template.ini /etc/openattic/databases
+debian/database_install/nss_mysql_template.conf /etc/openattic/databases
