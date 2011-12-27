@@ -80,6 +80,30 @@
         }
     },
     {
+        "pk": 13,
+        "model": "nagios.command",
+        "fields": {
+            "query_only": false,
+            "name": "check_lvm_snapshot"
+        }
+    },
+    {
+        "pk": 11,
+        "model": "nagios.command",
+        "fields": {
+            "query_only": true,
+            "name": "check_openattic_rpcd"
+        }
+    },
+    {
+        "pk": 12,
+        "model": "nagios.command",
+        "fields": {
+            "query_only": true,
+            "name": "check_openattic_systemd"
+        }
+    },
+    {
         "pk": 1,
         "model": "nagios.graph",
         "fields": {
