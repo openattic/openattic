@@ -24,7 +24,7 @@ if [ "$1" = "configure" ] ; then
         /etc/dbconfig-common/openattic-mysql.conf \
         /etc/nss-mysql.conf
 
-    ln /etc/nss-mysql.conf /etc/nss-mysql-root.conf
+    ln -f /etc/nss-mysql.conf /etc/nss-mysql-root.conf
 fi
 
 #DEBHELPER#
