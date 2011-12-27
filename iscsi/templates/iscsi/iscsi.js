@@ -465,7 +465,7 @@ Ext.oa.Iscsi__Panel = Ext.extend(Ext.Panel, {
                       Ext.Msg.confirm(
                         "{% trans 'Confirm delete' %}",
                         interpolate(
-                          "{% trans 'Really delete Initiator %s' %}",
+                          "{% trans 'Really delete Initiator %s?' %}",
                           [sel.data.name] ),
                         function(btn, text){
                           if( btn == 'yes' ){
