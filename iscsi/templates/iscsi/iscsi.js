@@ -358,15 +358,14 @@ Ext.oa.Iscsi__Panel = Ext.extend(Ext.Panel, {
                 width: 600,
                 frame: true,
                 title: 'Overview',
-                layout: 'column',
+                layout: 'border',
                 items: [{
-                  columnWidth: 0.50,
+                  region: "center",
                   xtype: 'grid',
                   ref: 'initiator_all',
                   ddGroup: "initiator",
                   enableDrag: true,
                   title: 'Initiator',
-                  height: 400,
                   viewConfig: { forceFit: true },
                   store: init_all,
                   colModel: (function(){
@@ -391,7 +390,8 @@ Ext.oa.Iscsi__Panel = Ext.extend(Ext.Panel, {
                     }
                   }
                 },{
-                  columnWidth: 0.5,
+                  region: "east",
+                  width: 250,
                   xtype: 'form',
                   defaultType: 'textfield',
                   bodyStyle: 'padding:5px 5px;',
