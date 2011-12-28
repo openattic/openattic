@@ -127,17 +127,18 @@ else:
 
     for protocol, (socketproto, portno) in protocols.iteritems():
         for direction in ("in", "out"):
+            sectname = protocol + ':' + direction
+            mydata   = ifacedata[ protocol.upper() ][ direction.upper() ]
+
             for field in ("bytes", "pkgs"):
                 perfkey = "_".join( (protocol.lower(), direction, field) )
-                sectname = protocol + ':' + direction
-
-                mydata  = ifacedata[ protocol.upper() ][ direction.upper() ]
 
                 dvalue  = wrapdiff(int(mydata[field]), savedstate.getint(sectname, field))
                 sums[direction][field] += dvalue
                 perfdata[perfkey] = dvalue / dt
 
-                savedstate.set(sectname, field, int(mydata[field]))
+            for key, val in mydata.iteritems():
+                savedstate.set(sectname, key, val)
 
     # Kernel stats
     for direction in ("in", "out"):
