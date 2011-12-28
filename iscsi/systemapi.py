@@ -30,20 +30,17 @@ class SystemD(LockingPlugin):
                         if lun.alias:
                             ietd.write( "\tAlias %s\n" % lun.alias )
 
-                    if target.init_allow.all().count() == target.init_deny.all().count() == 0:
-                        if target.allowall:
-                            allw.write( "%s ALL\n" % target.iscsiname )
-                        else:
-                            deny.write( "%s ALL\n" % target.iscsiname )
+                    if target.init_allow.all().count():
+                        allw.write( "%s %s\n" % ( target.iscsiname,
+                            ', '.join([rec["address"] for rec in target.init_allow.values("address")])
+                            ))
+
+                    if target.init_deny.all().count():
+                        deny.write( "%s %s\n" % ( target.iscsiname,
+                            ', '.join([rec["address"] for rec in target.init_deny.values("address")])
+                            ))
                     else:
-                        if target.init_allow.all().count():
-                            allw.write( "%s %s\n" % ( target.iscsiname,
-                                ', '.join([rec["address"] for rec in target.init_allow.values("address")])
-                                ))
-                        if target.init_deny.all().count():
-                            deny.write( "%s %s\n" % ( target.iscsiname,
-                                ', '.join([rec["address"] for rec in target.init_deny.values("address")])
-                                ))
+                        deny.write( "%s ALL\n" % target.iscsiname )
 
                     if target.tgt_allow.all().count():
                         tgt.write( "%s %s\n" % ( target.iscsiname,
