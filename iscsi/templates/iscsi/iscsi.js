@@ -205,8 +205,7 @@ Ext.oa.Iscsi__Panel = Ext.extend(Ext.Panel, {
                        }
                         iscsi__Target.create({
                           'name': self.ownerCt.ownerCt.namefield.getValue(),
-                          'iscsiname': self.ownerCt.ownerCt.iqn_ip_field.getValue(),
-                          'allowall': false
+                          'iscsiname': self.ownerCt.ownerCt.iqn_ip_field.getValue()
                         }, function(provider, response){
                           if( response.result ) {
                             targetStore.reload();
