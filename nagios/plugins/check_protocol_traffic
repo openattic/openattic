@@ -5,6 +5,7 @@
 import sys
 import dbus
 from time import time
+from os.path import exists, join
 from optparse import OptionParser
 from ConfigParser import ConfigParser
 
@@ -29,10 +30,27 @@ protocols = {
     'HTTPS':   ('tcp', 80),
     'FTPCTRL': ('tcp', 21),
     'FTPDATA': ('tcp', 20),
+    'NFSTCP':  ('tcp', 2049),
+    'NFSUDP':  ('udp', 2049),
     }
 
 savedstate = ConfigParser()
 havestate  = bool( savedstate.read("/var/lib/nagios3/protocol_traffic.%s" % options.interface.lower()) )
+
+if not exists( join( "/sys/class/net", options.interface, "statistics" ) ):
+    print "Interface %s does not exist!" % options.interface
+    sys.exit(2)
+
+kernelstats = {
+    "in": {
+        "bytes": int( open( join( "/sys/class/net", options.interface, "statistics", "rx_bytes"   ), "r" ).read() ),
+        "pkgs":  int( open( join( "/sys/class/net", options.interface, "statistics", "rx_packets" ), "r" ).read() ),
+        },
+    "out": {
+        "bytes": int( open( join( "/sys/class/net", options.interface, "statistics", "tx_bytes"   ), "r" ).read() ),
+        "pkgs":  int( open( join( "/sys/class/net", options.interface, "statistics", "tx_packets" ), "r" ).read() ),
+        },
+    }
 
 nagios = dbus.SystemBus().get_object(options.dbus, "/nagios")
 stats = nagios.iptables_get_stats()
@@ -102,6 +120,11 @@ else:
 
     dt = time() - savedstate.getfloat("state", "timestamp")
 
+    sums = {
+        "in":  { "bytes": 0, "pkgs": 0 },
+        "out": { "bytes": 0, "pkgs": 0 },
+        }
+
     for protocol, (socketproto, portno) in protocols.iteritems():
         for direction in ("in", "out"):
             for field in ("bytes", "pkgs"):
@@ -111,9 +134,20 @@ else:
                 mydata  = ifacedata[ protocol.upper() ][ direction.upper() ]
 
                 dvalue  = wrapdiff(int(mydata[field]), savedstate.getint(sectname, field))
+                sums[direction][field] += dvalue
                 perfdata[perfkey] = dvalue / dt
 
                 savedstate.set(sectname, field, int(mydata[field]))
+
+    # Kernel stats
+    for direction in ("in", "out"):
+        for field in ("bytes", "pkgs"):
+            perfkey = "_".join( ("kernel", direction, field) )
+            dvalue  = wrapdiff(int(kernelstats[direction][field]), savedstate.getint("state", direction+'_'+field))
+            perfdata[perfkey] = dvalue / dt
+
+            perfkey = "_".join( ("other", direction, field) )
+            perfdata[perfkey] = (dvalue - sums[direction][field]) / dt
 
     # make sure the order of performance values in the output does never change.
     perfkeys = perfdata.keys()
@@ -125,6 +159,10 @@ else:
         )
 
 savedstate.set("state", "timestamp", time())
+
+for direction in ("in", "out"):
+    for field in ("bytes", "pkgs"):
+        savedstate.set("state", direction + '_' + field, kernelstats[direction][field])
 
 savedstate.write( open( "/var/lib/nagios3/protocol_traffic.%s" % options.interface, "wb" ) )
 
