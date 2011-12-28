@@ -241,7 +241,7 @@ Ext.oa.Nagios__Service_Panel = Ext.extend(Ext.Panel, {
   initComponent: function(){
     var nagiosGrid = this;
     var renderDate = function(val, x, store){
-      return new Date(val * 1000).format("Y-m-d H:m:s");
+      return new Date(val * 1000).format("Y-m-d H:i:s");
     };
     var stateicons = {
       0: MEDIA_URL + '/oxygen/16x16/actions/dialog-ok-apply.png',
