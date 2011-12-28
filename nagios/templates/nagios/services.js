@@ -305,6 +305,7 @@ Ext.oa.Nagios__Service_Panel = Ext.extend(Ext.Panel, {
       items: [ {
         xtype: 'grid',
         region: "center",
+        sm: new Ext.grid.RowSelectionModel({singleSelect:true}),
         loadMask: true,
         viewConfig: { forceFit: true },
         store: {
@@ -410,6 +411,7 @@ Ext.oa.Nagios__Service_Panel = Ext.extend(Ext.Panel, {
           region: "west",
           title: "{% trans 'Graphs' %}",
           xtype:  'grid',
+          sm: new Ext.grid.RowSelectionModel({singleSelect:true}),
           width: 160,
           viewConfig: { forceFit: true },
           store: new Ext.data.JsonStore({
