@@ -194,13 +194,23 @@
         }
     },
     {
-        "pk": 10,
+        "pk": 13,
         "model": "nagios.graph",
         "fields": {
-            "verttitle": "Bytes in (-) / out (+)",
-            "fields": "-0 1",
+            "verttitle": "bytes/s rx (-) / tx (+)",
+            "fields": "+s -0 -4 -8 -12 -16 -24 -28 -36 -40 -32 2 6 10 14 18 26 30 38 42 34",
             "command": 10,
-            "title": "In/Out"
+            "title": "Traffic in bytes/s"
+        }
+    },
+    {
+        "pk": 14,
+        "model": "nagios.graph",
+        "fields": {
+            "verttitle": "packets/s rx (-) / tx (+)",
+            "fields": "+s -1 -5 -9 -13 -17 -25 -29 -37 -41 -33 3 7 11 15 19 27 31 39 43 35",
+            "command": 10,
+            "title": "Traffic in packets/s"
         }
     }
 ]
