@@ -21,7 +21,6 @@ class Initiator(models.Model):
 class Target(models.Model):
     name        = models.CharField(max_length=250, help_text=_("Human readable name."))
     iscsiname   = models.CharField(max_length=250, help_text=_("ISCSI Target name (e.g. 'iqn.2011-01.storage:sto1')."))
-    allowall    = models.BooleanField(default=True, blank=True, help_text=_("Sets the default action if both the allow and deny ACLs are empty. True = Allow all initiators to connect, False = deny all."))
     init_allow  = models.ManyToManyField(Initiator, related_name="allowed_targets", blank=True)
     init_deny   = models.ManyToManyField(Initiator, related_name="denied_targets",  blank=True)
     tgt_allow   = models.ManyToManyField(IPAddress, related_name="allowed_targets", blank=True)
