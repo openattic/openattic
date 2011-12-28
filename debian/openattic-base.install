@@ -18,6 +18,7 @@ htdocs/openattic*.png   /usr/share/openattic/htdocs
 htdocs/canvasxpress     /usr/share/openattic/htdocs
 
 templates /usr/share/openattic
+locale    /usr/share/openattic
 
 # Python files
 __init__.py    /usr/share/openattic
