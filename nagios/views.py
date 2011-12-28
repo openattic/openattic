@@ -53,6 +53,18 @@ def get_hls_complementary(hlsfrom):
         h -= 1.0
     return (h, 1 - hlsfrom[1], hlsfrom[2])
 
+def get_hls_for_srcidx(hlsfrom, srcidx):
+    """ Get a unique color for the given srcidx. """
+    h = srcidx * 0.3 + hlsfrom[0]
+    if h > 1.0:
+        h -= 1.0
+    return (h, 1 - hlsfrom[1], hlsfrom[2])
+
+def hls_to_rgbstr(hlsfrom):
+    """ Turn the given hls tuple into an RGB string. """
+    rgbgrad = map( lambda x: x * 0xFF, hls_to_rgb( *hlsfrom ) )
+    return "%02X%02X%02X" % tuple(rgbgrad)
+
 def get_gradient_args(varname, hlsfrom, hlsto, steps=20):
     """ Return a list of RRDTool arguments that draw a color gradient for the
         given graph variable. The gradient goes from hlsfrom at the top to
@@ -68,11 +80,10 @@ def get_gradient_args(varname, hlsfrom, hlsto, steps=20):
         colormult = (1 - graphmult) ** 2 # exponential gradient looks better than linear
 
         hlsgrad = array(hlsfrom) + ( ( array(hlsto) - array(hlsfrom) ) * allowed * colormult )
-        rgbgrad = map( lambda x: x * 0xFF, hls_to_rgb( *hlsgrad ) )
 
         tempvar = "%sgrd%d" % (varname, grad)
         args.append("CDEF:%s=%s,%.2f,*" % ( tempvar, varname, graphmult ))
-        args.append("AREA:%s#%02X%02X%02XFF"  % ( (tempvar,) + tuple(rgbgrad) ))
+        args.append("AREA:%s#%sFF"      % ( tempvar, hls_to_rgbstr(hlsgrad) ))
 
     return args
 
@@ -159,7 +170,7 @@ def graph(request, service_id, srcidx):
     # Calc the maximum length required in the Graph name colum to be able to make it wide enough.
     # See the "for" loop below for that if statement. boils down to "get x if index == -x else index"
     maxlen = max( [ len( perfdata[ int(srcidx[1:]) if srcidx[0] == '-' else int(srcidx) ][0] )
-                    for srcidx in indexes ] )
+                    for srcidx in indexes if srcidx not in ('+s', '-s')] )
 
     # rrdtool uses \\j for newline.
     args.append("COMMENT:  \\j")
@@ -185,7 +196,14 @@ def graph(request, service_id, srcidx):
     if grad:
         hlsbg = get_hls_complementary( rgbstr_to_hls( grcol ) )
 
+    stacked = False
+    lastinv = None
+
     for srcidx in indexes:
+        if srcidx in ('+s', '-s'):
+            stacked = (srcidx == '+s')
+            continue
+
         # srcidx gives the perfdata index which we are drawing. e.g. if perfdata contains
         # rxbytes=13 txbytes=37, srcidx says what to draw. -0 = rxbytes inverted, 1 = txbytes etc.
         invert = False
@@ -221,7 +239,7 @@ def graph(request, service_id, srcidx):
         # First of all, define the graph itself.
         args.append( "DEF:var%d=%s:%d:AVERAGE" % (srcidx, rrdpath, int(srcidx) + 1) )
 
-        if warn and crit:
+        if warn and crit and not stacked:
             # LIMIT the graphs so everything from 0 to WARN is green, WARN to CRIT is yellow, > CRIT is red.
             # Using three lines here also creates three dots in the description table, so use a single one
             # and set its color according to the current value.
@@ -276,7 +294,7 @@ def graph(request, service_id, srcidx):
                     args.extend( get_gradient_args( ("var%dnegw" % srcidx),  rgbstr_to_hls("AAAA00"), hlsbg ) )
                     args.extend( get_gradient_args( ("var%dnegc" % srcidx),  rgbstr_to_hls("AA0000"), hlsbg ) )
 
-        else:
+        elif not stacked:
             # We don't know warn and crit, so use a blue color.
             if not invert:
                 if grad:
@@ -292,12 +310,31 @@ def graph(request, service_id, srcidx):
                     args.append( "AREA:var%dneg#0000AA50:"  % (srcidx) )
                 args.append( "LINE1:var%dneg#0000AACC:%-*s" % (srcidx, maxlen, graphname) )
 
-        # In cases where the values are unknown, draw everything grey.
-        # Define a graph that is ±INF if the graph is unknown, else 0; and draw it using a grey AREA.
-        args.extend([
-            "CDEF:var%dun=var%d,UN,%sINF,0,IF" % (srcidx, srcidx, ('-' if invert else '')),
-            "AREA:var%dun#88888850:"           % (srcidx),
-            ])
+        else:
+            # stacking has been enabled. Start from the same blue color as above, no warnings,
+            # no LINEs - just draw an AREA so future stuff won't be stacked on the wrong object.
+            color = rgbstr_to_hls("0000AA")
+            if stacked:
+                color = get_hls_for_srcidx(color, srcidx)
+            colorstr = hls_to_rgbstr(color)
+
+            if not invert:
+                arg = "AREA:var%d#%sAA:%-*s" % (srcidx, colorstr, maxlen, graphname)
+            else:
+                args.append( "CDEF:var%dneg=var%d,-1,*" % (srcidx, srcidx) )
+                arg = "AREA:var%dneg#%sAA:%-*s"         % (srcidx, colorstr, maxlen, graphname)
+
+            if lastinv == invert:
+                arg += ":STACK"
+            args.append( arg )
+
+        if not stacked:
+            # In cases where the values are unknown, draw everything grey.
+            # Define a graph that is ±INF if the graph is unknown, else 0; and draw it using a grey AREA.
+            args.extend([
+                "CDEF:var%dun=var%d,UN,%sINF,0,IF" % (srcidx, srcidx, ('-' if invert else '')),
+                "AREA:var%dun#88888850:"           % (srcidx),
+                ])
 
         # Now print the graph description table.
         if width >= 350:
@@ -313,13 +350,15 @@ def graph(request, service_id, srcidx):
                 "GPRINT:var%d:AVERAGE:%%8.2lf%%s\\j"  % srcidx,
                 ])
 
-        # If warn/crit are known, use HRULEs to draw them.
-        if warn:
-            args.append( "HRULE:%.1f#F0F700" % warn )
+        if not stacked:
+            # If warn/crit are known, use HRULEs to draw them.
+            if warn:
+                args.append( "HRULE:%.1f#F0F700" % warn )
 
-        if crit:
-            args.append( "HRULE:%.1f#FF0000" % crit )
+            if crit:
+                args.append( "HRULE:%.1f#FF0000" % crit )
 
+        lastinv = invert
 
     def mkdate(text, timestamp):
         return "COMMENT:%-15s %-30s\\j" % (
