@@ -8,6 +8,9 @@ LV_UTIL_CHECK_CMD        = getattr( settings, "NAGIOS_LV_UTIL_CHECK_CMD",      "
 LV_PERF_DESCRIPTION      = getattr( settings, "NAGIOS_LV_PERF_DESCRIPTION",    "Disk stats for %s" )
 LV_PERF_CHECK_CMD        = getattr( settings, "NAGIOS_LV_PERF_CHECK_CMD",      "check_diskstats" )
 
+LV_SNAP_DESCRIPTION      = getattr( settings, "NAGIOS_LV_SNAP_DESCRIPTION",    "Snapshot Utilization of %s" )
+LV_SNAP_CHECK_CMD        = getattr( settings, "NAGIOS_LV_SNAP_CHECK_CMD",      "check_lvm_snapshot" )
+
 RRD_PATH                 = getattr( settings, "NAGIOS_RRD_PATH",          "/var/lib/pnp4nagios/perfdata/localhost/%s.rrd" )
 
 GRAPH_GRCOLOR            = "222222"

@@ -85,6 +85,17 @@ def create_service_for_lv(**kwargs):
             )
         serv.save()
 
+    if lv.snapshot:
+        cmd = Command.objects.get(name=nagios_settings.LV_SNAP_CHECK_CMD)
+        if Service.objects.filter(command=cmd, volume=lv).count() == 0:
+            serv = Service(
+                volume      = lv,
+                command     = cmd,
+                description = nagios_settings.LV_SNAP_DESCRIPTION % lv.name,
+                arguments   = lv.name
+                )
+            serv.save()
+
     Service.write_conf()
 
 
