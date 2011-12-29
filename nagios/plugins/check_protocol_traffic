@@ -27,7 +27,7 @@ protocols = {
     'SMB':     ('tcp', 445),
     'SSH':     ('tcp', 22),
     'HTTP':    ('tcp', 80),
-    'HTTPS':   ('tcp', 80),
+    'HTTPS':   ('tcp', 443),
     'FTPCTRL': ('tcp', 21),
     'FTPDATA': ('tcp', 20),
     'NFSTCP':  ('tcp', 2049),
