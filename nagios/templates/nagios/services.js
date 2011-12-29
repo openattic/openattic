@@ -414,9 +414,14 @@ Ext.oa.Nagios__Service_Panel = Ext.extend(Ext.Panel, {
           sm: new Ext.grid.RowSelectionModel({singleSelect:true}),
           width: 160,
           viewConfig: { forceFit: true },
-          store: new Ext.data.JsonStore({
-            fields: ["id", "title"]
-          }),
+          store: (function(){
+            // Anon function that is called immediately to set up the store's DefaultSort
+            var store = new Ext.data.JsonStore({
+              fields: ["id", "title"]
+            });
+            store.setDefaultSort("title", "ASC");
+            return store;
+          }()),
           colModel: new Ext.grid.ColumnModel({
             columns: [{
               header: "{% trans 'Graph' %}",
