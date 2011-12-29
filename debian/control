@@ -102,7 +102,7 @@ Description: Configures openATTIC with a PGSQL database
 
 Package: openattic-base
 Architecture: all
-Depends: ${misc:Depends},
+Depends: ${misc:Depends}, python (>= 2.6),
  ${python:Depends},
  python-django,
  dbus,
@@ -200,7 +200,7 @@ Description: Munin module for openATTIC
 
 Package: openattic-module-nagios
 Architecture: all
-Depends: ${misc:Depends},
+Depends: ${misc:Depends}, python (>= 2.6),
  ${python:Depends}, python-imaging, python-numpy,
  openattic-base,
  bc,
