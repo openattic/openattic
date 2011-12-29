@@ -1,16 +1,16 @@
-# German translation for openATTIC.
-# Copyright (C) 2011 Michael Ziegler
-# This file is distributed under the same license as the openATTIC package.
-# Michael Ziegler <michael.ziegler@it-novum.com>, 2011.
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) YEAR THE PACKAGE'S COPYRIGHT HOLDER
+# This file is distributed under the same license as the PACKAGE package.
+# FIRST AUTHOR <EMAIL@ADDRESS>, YEAR.
 #
 #, fuzzy
 msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: openattic@packages.debian.org\n"
-"POT-Creation-Date: 2011-12-29 15:22+0100\n"
-"PO-Revision-Date: 2011-12-29 15:22+0100\n"
-"Last-Translator: Michael Ziegler <michael.ziegler@it-novum.com>\n"
+"POT-Creation-Date: 2011-12-29 15:47+0100\n"
+"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
 "Language: \n"
 "MIME-Version: 1.0\n"
@@ -21,7 +21,7 @@ msgstr ""
 #. Description
 #: ../openattic-base.templates:1001
 msgid "The base packages have been unpacked and configured, but in order to"
-msgstr "Die Pakete wurden entpackt und konfiguriert, aber um die"
+msgstr ""
 
 #. Type: note
 #. Description
@@ -30,14 +30,12 @@ msgid ""
 "complete the installation of openATTIC, you need to run the following "
 "command:"
 msgstr ""
-"Installation von openATTIC abzuschließen, müssen Sie folgendes Kommando "
-"ausführen:"
 
 #. Type: note
 #. Description
 #: ../openattic-base.templates:1001
 msgid "  oaconfig install"
-msgstr "  oaconfig install"
+msgstr ""
 
 #. Type: note
 #. Description
@@ -46,4 +44,3 @@ msgid ""
 "Please refer to /usr/share/doc/openattic-base/README.Debian for more "
 "information."
 msgstr ""
-"Siehe /usr/share/doc/openattic-base/README.Debian für mehr Informationen."
