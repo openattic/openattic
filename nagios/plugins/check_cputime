@@ -1,0 +1,123 @@
+#!/usr/bin/env python
+# -*- coding: utf-8 -*-
+# kate: space-indent on; indent-width 4; replace-tabs on;
+
+from __future__ import division
+
+import sys
+import posix
+
+from time import time
+from optparse import OptionParser
+from ConfigParser import ConfigParser
+
+
+sys_hz = posix.sysconf( posix.sysconf_names['SC_CLK_TCK'] )
+
+# read /proc/stat
+fd = open("/proc/stat", "r")
+try:
+    sys_stats = [ line.split() for line in fd ]
+except:
+    print "Failed reading system statistics."
+    sys.exit(2)
+
+
+parser = OptionParser()
+
+parser.add_option( "-c", "--cpu", help="The CPU id to check.", type="int" )
+
+options, progargs = parser.parse_args()
+
+
+if options.cpu is not None:
+    for record in sys_stats:
+        if record[0] == ("cpu%d" % options.cpu):
+            cpu_stats = record
+            break
+else:
+    cpu_stats = sys_stats[0]
+
+
+fields = ["cpu", "user", "nice", "system", "idle"]
+
+if len(cpu_stats) > 5:
+    fields.extend(["iowait", "irq", "softirq"])
+
+if len(cpu_stats) > 8:
+    fields.append("steal")
+
+if len(cpu_stats) > 9:
+    fields.extend(["guest", "guestnice"])
+
+stats = dict( zip( fields, cpu_stats ) )
+del stats["cpu"]
+
+#print cpu_stats
+#print stats
+
+# load savedstate
+savedstate = ConfigParser()
+havestate  = bool( savedstate.read("/var/lib/nagios3/cputime.%s" % options.cpu) ) and savedstate.has_section("state")
+
+
+def wrapdiff(curr, last):
+    """ Calculate the difference between last and curr.
+
+        If last > curr, try to guess the boundary at which the value must have wrapped
+        by trying the maximum values of 64, 32 and 16 bit signed and unsigned ints.
+    """
+    if last <= curr:
+        return curr - last
+
+    boundary = None
+    for chkbound in (64,63,32,31,16,15):
+        if last > 2**chkbound:
+            break
+        boundary = chkbound
+    if boundary is None:
+        raise ArithmeticError("Couldn't determine boundary")
+    return 2**boundary - last + curr
+
+
+exit = 0
+
+if havestate:
+    perfdata = {}
+
+    dt = time() - savedstate.getfloat("state", "timestamp")
+
+    for field in stats:
+        dticks = wrapdiff( int(stats[field]), savedstate.getint("state", field) )
+        dsecs  = dticks / sys_hz
+        perfdata[field] = dsecs / dt * 100
+
+    busy  = 100 - perfdata["idle"]
+
+    print "User %.2f%%, Sys %.2f%%, IOwait %.2f%%, Idle %.2f%%|%s" % (
+        perfdata["user"], perfdata["system"], perfdata["iowait"], perfdata["idle"],
+        ' '.join([ "%s=%.2f" % ( field, perfdata[field] ) for field in fields[1:] ])
+        )
+
+    if busy >= 50:
+        exit = 1
+    if busy >= 80:
+        exit = 2
+    if perfdata["iowait"] >= 30:
+        exit = 1
+    if perfdata["iowait"] >= 50:
+        exit = 2
+
+else:
+    print "Need state info, please wait until Nagios checks again."
+    exit = 1
+    savedstate.add_section("state")
+
+for field in stats:
+    savedstate.set("state", field, stats[field])
+
+savedstate.set("state", "timestamp", time())
+
+savedstate.write( open( "/var/lib/nagios3/cputime.%s" % options.cpu, "wb" ) )
+
+sys.exit(exit)
