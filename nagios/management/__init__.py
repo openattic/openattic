@@ -48,7 +48,6 @@ def create_nagios(app, created_models, verbosity, interactive, db, **kwargs):
         if rec[0] != "cpu" and rec[0].startswith("cpu"):
             cpumax = int(rec[0][3])
 
-    print "CPUCPUCPUC", cpumax
     cmd = Command.objects.get(name=nagios_settings.CPUTIME_CHECK_CMD)
     for cpu in range(cpumax + 1):
         if Service.objects.filter(command=cmd, arguments=str(cpu)).count() == 0:
