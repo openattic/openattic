@@ -200,7 +200,7 @@
             "verttitle": "bytes/s rx (-) / tx (+)",
             "fields": "+s -0 -4 -8 -12 -16 -24 -28 -36 -40 -32 2 6 10 14 18 26 30 38 42 34",
             "command": 10,
-            "title": "Traffic in bytes/s"
+            "title": "All protocols [bytes/s]"
         }
     },
     {
@@ -210,7 +210,227 @@
             "verttitle": "packets/s rx (-) / tx (+)",
             "fields": "+s -1 -5 -9 -13 -17 -25 -29 -37 -41 -33 3 7 11 15 19 27 31 39 43 35",
             "command": 10,
-            "title": "Traffic in packets/s"
+            "title": "All protocols [packets/s]"
+        }
+    },
+    {
+        "pk": 10,
+        "model": "nagios.graph",
+        "fields": {
+            "verttitle": "bytes/s rx (-) / tx (+)",
+            "fields": "-20 22",
+            "command": 10,
+            "title": "Traffic [bytes/s]"
+        }
+    },
+    {
+        "pk": 11,
+        "model": "nagios.graph",
+        "fields": {
+            "verttitle": "packets/s rx (-) / tx (+)",
+            "fields": "-21 23",
+            "command": 10,
+            "title": "Traffic [packets/s]"
+        }
+    },
+    {
+        "pk": 12,
+        "model": "nagios.graph",
+        "fields": {
+            "verttitle": "bytes/s rx (-) / tx (+)",
+            "fields": "-40 42",
+            "command": 10,
+            "title": "SSH [bytes/s]"
+        }
+    },
+    {
+        "pk": 15,
+        "model": "nagios.graph",
+        "fields": {
+            "verttitle": "packets/s rx (-) / tx (+)",
+            "fields": "-41 43",
+            "command": 10,
+            "title": "SSH [packets/s]"
+        }
+    },
+    {
+        "pk": 16,
+        "model": "nagios.graph",
+        "fields": {
+            "verttitle": "packets/s rx (-) / tx (+)",
+            "fields": "-9 11",
+            "command": 10,
+            "title": "HTTP [packets/s]"
+        }
+    },
+    {
+        "pk": 17,
+        "model": "nagios.graph",
+        "fields": {
+            "verttitle": "bytes/s rx (-) / tx (+)",
+            "fields": "-8 10",
+            "command": 10,
+            "title": "HTTP [bytes/s]"
+        }
+    },
+    {
+        "pk": 18,
+        "model": "nagios.graph",
+        "fields": {
+            "verttitle": "bytes/s rx (-) / tx (+)",
+            "fields": "-12 14",
+            "command": 10,
+            "title": "HTTPS [bytes/s]"
+        }
+    },
+    {
+        "pk": 19,
+        "model": "nagios.graph",
+        "fields": {
+            "verttitle": "packets/s rx (-) / tx (+)",
+            "fields": "-13 15",
+            "command": 10,
+            "title": "HTTPS [packets/s]"
+        }
+    },
+    {
+        "pk": 20,
+        "model": "nagios.graph",
+        "fields": {
+            "verttitle": "bytes/s rx (-) / tx (+)",
+            "fields": "-16 18",
+            "command": 10,
+            "title": "iSCSI [bytes/s]"
+        }
+    },
+    {
+        "pk": 21,
+        "model": "nagios.graph",
+        "fields": {
+            "verttitle": "packets/s rx (-) / tx (+)",
+            "fields": "-17 19",
+            "command": 10,
+            "title": "iSCSI [packets/s]"
+        }
+    },
+    {
+        "pk": 22,
+        "model": "nagios.graph",
+        "fields": {
+            "verttitle": "bytes/s rx (-) / tx (+)",
+            "fields": "-24 26",
+            "command": 10,
+            "title": "NFS (TCP) [bytes/s]"
+        }
+    },
+    {
+        "pk": 23,
+        "model": "nagios.graph",
+        "fields": {
+            "verttitle": "packets/s rx (-) / tx (+)",
+            "fields": "-25 27",
+            "command": 10,
+            "title": "NFS (TCP) [packets/s]"
+        }
+    },
+    {
+        "pk": 24,
+        "model": "nagios.graph",
+        "fields": {
+            "verttitle": "bytes/s rx (-) / tx (+)",
+            "fields": "-28 30",
+            "command": 10,
+            "title": "NFS (UDP) [bytes/s]"
+        }
+    },
+    {
+        "pk": 25,
+        "model": "nagios.graph",
+        "fields": {
+            "verttitle": "packets/s rx (-) / tx (+)",
+            "fields": "-29 31",
+            "command": 10,
+            "title": "NFS (UDP) [packets/s]"
+        }
+    },
+    {
+        "pk": 26,
+        "model": "nagios.graph",
+        "fields": {
+            "verttitle": "bytes/s rx (-) / tx (+)",
+            "fields": "-36 38",
+            "command": 10,
+            "title": "SMB [bytes/s]"
+        }
+    },
+    {
+        "pk": 27,
+        "model": "nagios.graph",
+        "fields": {
+            "verttitle": "packets/s rx (-) / tx (+)",
+            "fields": "-37 39",
+            "command": 10,
+            "title": "SMB [packets/s]"
+        }
+    },
+    {
+        "pk": 28,
+        "model": "nagios.graph",
+        "fields": {
+            "verttitle": "bytes/s rx (-) / tx (+)",
+            "fields": "-32 34",
+            "command": 10,
+            "title": "Other [bytes/s]"
+        }
+    },
+    {
+        "pk": 29,
+        "model": "nagios.graph",
+        "fields": {
+            "verttitle": "packets/s rx (-) / tx (+)",
+            "fields": "-33 35",
+            "command": 10,
+            "title": "Other [packets/s]"
+        }
+    },
+    {
+        "pk": 30,
+        "model": "nagios.graph",
+        "fields": {
+            "verttitle": "bytes/s rx (-) / tx (+)",
+            "fields": "-0 2",
+            "command": 10,
+            "title": "FTP (Control) [bytes/s]"
+        }
+    },
+    {
+        "pk": 31,
+        "model": "nagios.graph",
+        "fields": {
+            "verttitle": "packets/s rx (-) / tx (+)",
+            "fields": "-1 3",
+            "command": 10,
+            "title": "FTP (Control) [packets/s]"
+        }
+    },
+    {
+        "pk": 32,
+        "model": "nagios.graph",
+        "fields": {
+            "verttitle": "bytes/s rx (-) / tx (+)",
+            "fields": "-4 6",
+            "command": 10,
+            "title": "FTP (Data) [bytes/s]"
+        }
+    },
+    {
+        "pk": 33,
+        "model": "nagios.graph",
+        "fields": {
+            "verttitle": "packets/s rx (-) / tx (+)",
+            "fields": "-5 7",
+            "command": 10,
+            "title": "FTP (Data) [packets/s]"
         }
     }
 ]
