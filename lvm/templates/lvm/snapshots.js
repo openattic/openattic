@@ -16,6 +16,122 @@ Ext.oa.Lvm__Snapshot_Panel = Ext.extend(Ext.grid.GridPanel, {
           lvmSnapPanel.store.reload();
         }
       }, {
+        text: "{% trans "Mount" %}",
+        icon: MEDIA_URL + "/oxygen/16x16/emblems/emblem-mounted.png",
+        handler: function(self){
+          var sm = lvmSnapPanel.getSelectionModel();
+          if( sm.hasSelection() ){
+            var sel = sm.selections.items[0];
+            if( !sel.data.filesystem ){
+              Ext.Msg.alert('Mounted',
+                interpolate(
+                  "{% trans "Volume %s does not have a file system and therefore cannot be mounted." %}",
+                  [sel.data.name] ));
+              return;
+            }
+            lvm__LogicalVolume.is_mounted( sel.data.id, function(provider, response){
+              if( response.result ){
+                Ext.Msg.alert('Mounted', interpolate( "{% trans "Volume %s is already mounted." %}", [sel.data.name] ));
+                return;
+              }
+              lvm__LogicalVolume.is_in_standby( sel.data.id, function(provider, response){
+                if( response.result ){
+                  Ext.Msg.alert('Mounted',
+                    interpolate( "{% trans "Volume %s cannot be mounted at the current time." %}", [sel.data.name] ));
+                  return;
+                }
+                lvm__LogicalVolume.mount( sel.data.id, function(provider, response){
+                  if( response.type === "exception" )
+                    Ext.Msg.alert('Mounted', interpolate(
+                      "{% trans "Volume %s could not be mounted, please check the logs." %}", [sel.data.name] ));
+                  else
+                    Ext.Msg.alert('Mounted', interpolate(
+                      "{% trans "Volume %s has been mounted." %}", [sel.data.name] ));
+                    lvmSnapPanel.store.reload();
+                } );
+              } );
+            } );
+          }
+        }
+      }, {
+        text: "{% trans "Unmount" %}",
+        icon: MEDIA_URL + "/oxygen/16x16/emblems/emblem-unmounted.png",
+        handler: function(self){
+          var sm = lvmSnapPanel.getSelectionModel();
+          if( sm.hasSelection() ){
+            var sel = sm.selections.items[0];
+            lvm__LogicalVolume.is_mounted( sel.data.id, function(provider, response){
+              if( !response.result ){
+                Ext.Msg.alert('Unmount', interpolate( "{% trans 'Volume %s is not mounted.' %}",
+                                                          [sel.data.name] ));
+              }
+              else{
+                Ext.Msg.confirm(
+                  "{% trans 'Unmount' %}",
+                  interpolate(
+                    "{% trans 'Do you really want to umount %s?' %}",
+                    [sel.data.name]),
+                  function(btn){
+                    if(btn == 'yes'){
+                      lvm__LogicalVolume.unmount( sel.data.id, function(provider, response){
+                        if( response.type === "exception" )
+                          Ext.Msg.alert('Unmount', interpolate(
+                            "{% trans 'Volume %s could not be unmounted, please check the logs.' %}",
+                            [sel.data.name] ));
+                        else{
+                          Ext.Msg.alert('Unmount', interpolate(
+                            "{% trans 'Volume %s has been unmounted.' %}",
+                            [sel.data.name] ));
+                          lvmSnapPanel.store.reload();
+                        }
+                      });
+                    }
+                } );
+              }
+            } );
+          }
+        }
+      }, {
+        text: "{% trans 'Shares' %}",
+        icon: MEDIA_URL + "/oxygen/16x16/emblems/emblem-unmounted.png",
+        handler: function(self){
+          var sm = lvmSnapPanel.getSelectionModel();
+          if( sm.hasSelection() ){
+            var sel = sm.selections.items[0];
+            var shareswin = new Ext.Window({
+              title: "{% trans "Add Volume" %}",
+              layout: "fit",
+              height: 300,
+              width: 500,
+              items: {
+                xtype: "grid",
+                store: {
+                  xtype: 'directstore',
+                  autoLoad: true,
+                  fields: ['id', 'app', 'obj'],
+                  directFn: lvm__LogicalVolume.get_shares,
+                  baseParams: {id: sel.data.id}
+                },
+                colModel: new Ext.grid.ColumnModel({
+                  defaults: {
+                    sortable: true
+                  },
+                  columns: [ {
+                    header: "{% trans 'App' %}",
+                    width: 350,
+                    dataIndex: "app"
+                  }, {
+                    header: "{% trans 'Object' %}",
+                    width: 100,
+                    dataIndex: "obj"
+                  } ]
+                })
+              }
+            } );
+            shareswin.show();
+          }
+        }
+      }, {
         text: "{% trans "Add Snapshot" %}",
         icon: MEDIA_URL + "/icons2/16x16/actions/add.png",
         handler: function(){
