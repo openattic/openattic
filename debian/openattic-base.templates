@@ -1,6 +1,6 @@
 Template: openattic-base/run-oaconfig-install
 Type: note
-Description: The base packages have been unpacked and configured, but in order to
+_Description: The base packages have been unpacked and configured, but in order to
  complete the installation of openATTIC, you need to run the following command:
  .
    oaconfig install
