@@ -3,6 +3,8 @@
 
 from django.core.management import call_command
 
+from nagios.conf import settings as nagios_settings
+
 import nagios.models
 from nagios.models    import Service, Command
 from django.db.models import signals
@@ -32,6 +34,29 @@ def create_nagios(app, created_models, verbosity, interactive, db, **kwargs):
         except Service.DoesNotExist:
             print "Adding Service '%s'" % servstate["service_description"]
             serv = Service( description=servstate["service_description"], command=cmd, arguments=('!'.join(cmdargs)) )
+            serv.save()
+
+    # read /proc/stat
+    fd = open("/proc/stat", "r")
+    try:
+        sys_stats = [ line.split() for line in fd ]
+    except:
+        return
+
+    cpumax = 0
+    for rec in sys_stats:
+        if rec[0] != "cpu" and rec[0].startswith("cpu"):
+            cpumax = int(rec[0][3])
+
+    print "CPUCPUCPUC", cpumax
+    cmd = Command.objects.get(name=nagios_settings.CPUTIME_CHECK_CMD)
+    for cpu in range(cpumax + 1):
+        if Service.objects.filter(command=cmd, arguments=str(cpu)).count() == 0:
+            serv = Service(
+                command     = cmd,
+                description = nagios_settings.CPUTIME_DESCRIPTION % cpu,
+                arguments   = str(cpu)
+                )
             serv.save()
 
 signals.post_syncdb.connect(create_nagios, sender=nagios.models)
