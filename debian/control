@@ -37,6 +37,7 @@ Depends: ${misc:Depends}, openattic-base,
  openattic-module-apt,
  openattic-module-munin,
  openattic-module-nagios,
+ openattic-module-tftp,
  openattic-module-drbd,
  openattic-module-ssmtp,
  openattic-module-ftp-mysql,
@@ -57,6 +58,7 @@ Depends: ${misc:Depends}, openattic-base,
  openattic-module-apt,
  openattic-module-munin,
  openattic-module-nagios,
+ openattic-module-tftp,
  openattic-module-ssmtp,
  openattic-module-drbd,
  openattic-module-ftp-pgsql,
@@ -227,6 +229,14 @@ Description: DRBD module for openATTIC
  .
  This module provides the groundwork for building high availability clusters
  using openATTIC.
+
+Package: openattic-module-tftp
+Architecture: all
+Depends: ${misc:Depends}, openattic-module-lvm,
+ xinetd, tftpd-hpa
+Description: TFTP module for openATTIC
+ Installs the TFTP module, which handles sharing volumes for embedded devices
+ like switches and serving of PXE boot images.
 
 Package: openattic-module-http
 Architecture: all
