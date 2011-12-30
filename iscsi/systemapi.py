@@ -91,6 +91,18 @@ class SystemD(LockingPlugin):
         ret, out, err = invoke(["/usr/sbin/ietadm", "--op", "show", "--tid", str(tid)], return_out_err=True)
         return dict([ (a, int(b)) for (a, b) in [ part.strip().split('=', 1) for part in out.strip().split("\n") ]])
 
+    @method(in_signature="is", out_signature="i")
+    def target_new_user(self, tid, usertype, username, password):
+        return invoke(["/usr/sbin/ietadm", "--op", "new", "--tid", str(tid), "--user", "--params",
+            "%s=%s,Password=%s" % ( usertype, username, password )
+            ])
+
+    @method(in_signature="is", out_signature="i")
+    def target_delete_user(self, tid, usertype, username):
+        return invoke(["/usr/sbin/ietadm", "--op", "delete", "--tid", str(tid), "--user", "--params",
+            "%s=%s%s" % ( usertype, username )
+            ])
+
     @method(in_signature="ii", out_signature="i")
     def session_show(self, tid, sid):
         return invoke(["/usr/sbin/ietadm", "--op", "show", "--tid", str(tid), "--sid", str(sid)])
