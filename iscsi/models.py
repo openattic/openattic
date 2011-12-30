@@ -135,7 +135,7 @@ class ChapUser(models.Model):
     def delete( self ):
         iscsi = dbus.SystemBus().get_object(settings.DBUS_IFACE_SYSTEMD, "/iscsi")
         ret = models.Model.delete(self)
-        self.target._iscsi.target_delete_user(self.tid, self.username)
+        self.target._iscsi.target_delete_user(self.target.tid, self.usertype, self.username)
         self.target._iscsi.writeconf()
         return ret
 

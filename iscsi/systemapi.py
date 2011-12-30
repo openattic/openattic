@@ -49,6 +49,9 @@ class SystemD(LockingPlugin):
                     else:
                         tgt.write( "%s ALL\n" % target.iscsiname )
 
+                    for chapuser in target.chapuser_set.all():
+                        ietd.write( "\t%s %s %s\n" % (chapuser.usertype, chapuser.username, chapuser.passwd) )
+
             finally:
                 ietd.close()
                 allw.close()
@@ -91,16 +94,16 @@ class SystemD(LockingPlugin):
         ret, out, err = invoke(["/usr/sbin/ietadm", "--op", "show", "--tid", str(tid)], return_out_err=True)
         return dict([ (a, int(b)) for (a, b) in [ part.strip().split('=', 1) for part in out.strip().split("\n") ]])
 
-    @method(in_signature="is", out_signature="i")
+    @method(in_signature="isss", out_signature="i")
     def target_new_user(self, tid, usertype, username, password):
         return invoke(["/usr/sbin/ietadm", "--op", "new", "--tid", str(tid), "--user", "--params",
             "%s=%s,Password=%s" % ( usertype, username, password )
             ])
 
-    @method(in_signature="is", out_signature="i")
+    @method(in_signature="iss", out_signature="i")
     def target_delete_user(self, tid, usertype, username):
         return invoke(["/usr/sbin/ietadm", "--op", "delete", "--tid", str(tid), "--user", "--params",
-            "%s=%s%s" % ( usertype, username )
+            "%s=%s" % ( usertype, username )
             ])
 
     @method(in_signature="ii", out_signature="i")
