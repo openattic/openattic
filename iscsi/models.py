@@ -115,6 +115,13 @@ class Lun(StatefulModel):
         return ret
 
 
+class ChapUser(models.Model):
+    target      = models.ForeignKey(Target)
+    username    = models.CharField( max_length=50 )
+    passwd      = models.CharField( max_length=50 )
+    usertype    = models.CharField( max_length=50, choices=(("IncomingUser", "incoming"), ("OutgoingUser", "outgoing")) )
+
+
 def lv_resized(sender, **kwargs):
     for lun in Lun.objects.filter(volume=sender):
         lun.iet_delete(int(kwargs["jid"]))
