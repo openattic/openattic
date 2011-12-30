@@ -49,6 +49,10 @@ class IPAddress(models.Model):
     def is_ipv6(self):
         return ":" in self.address
 
+    @property
+    def host_part(self):
+        return self.address.split("/")[0]
+
 class NetDevice(models.Model):
     devname     = models.CharField(max_length=10, unique=True)
     dhcp        = models.BooleanField(default=False, blank=True)
