@@ -121,6 +121,21 @@ class ChapUser(models.Model):
     passwd      = models.CharField( max_length=50 )
     usertype    = models.CharField( max_length=50, choices=(("IncomingUser", "incoming"), ("OutgoingUser", "outgoing")) )
 
+    def save(self, *args, **kwargs):
+        if self.id is None:
+            self.target._iscsi.target_new_user(0, self.target.tid, self.username, self.passwd)
+
+        ret = models.Model.save(self, *args, **kwargs)
+        self._iscsi.writeconf()
+        return ret
+
+    def delete( self ):
+        iscsi = dbus.SystemBus().get_object(settings.DBUS_IFACE_SYSTEMD, "/iscsi")
+        ret = models.Model.delete(self)
+        self._iscsi.target_delete_user(self.tid, self.username)
+        self._iscsi.writeconf()
+        return ret
+
 
 def lv_resized(sender, **kwargs):
     for lun in Lun.objects.filter(volume=sender):
