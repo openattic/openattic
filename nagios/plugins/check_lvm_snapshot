@@ -71,35 +71,31 @@ if stats[lvname]["LVM2_ORIGIN"] == "":
   sys.exit(2)
 
 
-
-
-#wenn snap_percent größer als 50% dann 'warning' zurückgegeben
 lv_origin = stats[lvname]["LVM2_ORIGIN"]
 print(normal)
 
 # wenn original_lvsize kleiner als snapshot dann exitcode 2 
 if float(stats[lvname]["LVM2_LV_SIZE"]) < float(stats[lv_origin]["LVM2_LV_SIZE"]):
+  # wenn lv_percent größer als 50%
   if lv_percent > options.warning:
     exit = 1
-   
 
-
-# wenn snap_percent größer als 70%, dann soll 'critical' zurückgegeben werden
+# wenn lv_percent größer als options.critical, dann exitcode 0
   if lv_percent > options.critical:
     exit = 0
 
-# wenn snapshot genauso groß wie original_lv UND lv_percent größer ist als 75% dann exitcode 1
-if float(stats[lvname]["LVM2_LV_SIZE"]) == float(stats[lv_origin]["LVM2_LV_SIZE"]) and lv_percent >= 75:
+# wenn snapshot genauso groß wie original_lv UND lv_percent größer ist als options.warning dann exitcode 1
+if float(stats[lvname]["LVM2_LV_SIZE"]) == float(stats[lv_origin]["LVM2_LV_SIZE"]) and lv_percent > options.warning:
     exit = 1
 
-#wenn snapshot genauso groß wie orig UND lv_percent größer ist als 95%, dann exitcode 2
-if float(stats[lvname]["LVM2_LV_SIZE"]) == float(stats[lv_origin]["LVM2_LV_SIZE"]) and lv_percent >= 95:
+#wenn snapshot genauso groß wie original UND lv_percent größer ist als options.critical dann exitcode 2
+if float(stats[lvname]["LVM2_LV_SIZE"]) == float(stats[lv_origin]["LVM2_LV_SIZE"]) and lv_percent > options.critical:
     exit = 2
 
 
-#wenn snapshot genauso groß wie original, dann exitcode 'ok' (alles andere durch oberen if's abgefangen(?)
-if float(stats[lvname]["LVM2_LV_SIZE"]) == float(stats[lv_origin]["LVM2_LV_SIZE"]):
-   exit = 0
+#wenn snapshot genauso groß wie original, und lv_percent nicht größer als options.critical, dann exit code 0
 
+if float(stats[lvname]["LVM2_LV_SIZE"]) == float(stats[lv_origin]["LVM2_LV_SIZE"]) and lv_percent < options.warning:
+   exit = 0
 
 sys.exit(exit)
