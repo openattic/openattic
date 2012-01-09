@@ -24,11 +24,10 @@ class SystemD(LockingPlugin):
             try:
                 for target in Target.objects.all():
                     ietd.write( "Target %s\n" % target.iscsiname )
+                    ietd.write( "\tAlias %s\n" % target.name )
 
                     for lun in target.lun_set.filter(state__in=("new", "update", "active")):
                         ietd.write( "\tLun %d Path=%s,Type=%s\n" % (lun.number, lun.volume.path, lun.ltype) )
-                        if lun.alias:
-                            ietd.write( "\tAlias %s\n" % lun.alias )
 
                     if target.init_allow.all().count():
                         allw.write( "%s %s\n" % ( target.iscsiname,
