@@ -104,6 +104,24 @@
         }
     },
     {
+        "pk": 14,
+        "model": "nagios.command",
+        "fields": {
+            "query_only": false,
+            "name": "check_cputime"
+        }
+    },
+    {
+        "pk": 34,
+        "model": "nagios.graph",
+        "fields": {
+            "verttitle": "%",
+            "fields": "+s 0 1 2 3 4 5 6 7 8 9",
+            "command": 14,
+            "title": "CPU Time"
+        }
+    },
+    {
         "pk": 1,
         "model": "nagios.graph",
         "fields": {
