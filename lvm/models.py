@@ -151,6 +151,8 @@ class VolumeGroup(models.Model):
         for dirname in os.listdir("/sys/bus/scsi/devices"):
             if re.match( "^\d+:\d+:\d+:\d+$", dirname ):
                 basedir = os.path.join( "/sys/bus/scsi/devices", dirname )
+                if not os.path.exists(os.path.join( basedir, "block" )):
+                    continue
                 devinfo.append({
                     "type":   getfile(basedir, "type"),
                     "vendor": getfile(basedir, "vendor"),
