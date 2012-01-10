@@ -1,6 +1,0 @@
-/usr/share/openattic/nagios/plugins/check_diskstats          /usr/lib/nagios/plugins/check_diskstats
-/usr/share/openattic/nagios/plugins/check_iface_traffic      /usr/lib/nagios/plugins/check_iface_traffic
-/usr/share/openattic/nagios/plugins/check_openattic_rpcd     /usr/lib/nagios/plugins/check_openattic_rpcd
-/usr/share/openattic/nagios/plugins/check_openattic_systemd  /usr/lib/nagios/plugins/check_openattic_systemd
-/usr/share/openattic/nagios/plugins/check_lvm_snapshot       /usr/lib/nagios/plugins/check_lvm_snapshot
-/usr/share/openattic/nagios/plugins/check_cputime            /usr/lib/nagios/plugins/check_cputime

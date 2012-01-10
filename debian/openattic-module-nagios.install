@@ -1,4 +1,17 @@
-nagios /usr/share/openattic
+nagios/*.py       /usr/share/openattic/nagios
+nagios/bin        /usr/share/openattic/nagios
+nagios/conf       /usr/share/openattic/nagios
+nagios/templates  /usr/share/openattic/nagios
+nagios/management /usr/share/openattic/nagios
+
+installed_apps.d/nagios /usr/share/openattic/installed_apps.d
+
 debian/nagios_conf.d/openattic_static.cfg  /etc/nagios3/conf.d
 debian/nagios_plugins_conf.d/openattic.cfg /etc/nagios-plugins/config
-installed_apps.d/nagios /usr/share/openattic/installed_apps.d
+
+nagios/plugins/check_diskstats          /usr/lib/nagios/plugins
+nagios/plugins/check_iface_traffic      /usr/lib/nagios/plugins
+nagios/plugins/check_openattic_rpcd     /usr/lib/nagios/plugins
+nagios/plugins/check_openattic_systemd  /usr/lib/nagios/plugins
+nagios/plugins/check_lvm_snapshot       /usr/lib/nagios/plugins
+nagios/plugins/check_cputime            /usr/lib/nagios/plugins
