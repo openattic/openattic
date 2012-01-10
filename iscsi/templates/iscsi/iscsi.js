@@ -183,7 +183,7 @@ Ext.oa.Iscsi__Panel = Ext.extend(Ext.Panel, {
                     listeners: {
                       change: function( self, newValue, oldValue ){
                         var d = new Date();
-                        var m = d.getMonth();
+                        var m = d.getMonth() + 1;
                         self.ownerCt.iqn_ip_field.setValue(
                           String.format("iqn.{0}-{1}.{2}:{3}",
                             d.getFullYear(), (m < 10 ? "0" + m : m),
