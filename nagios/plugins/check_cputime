@@ -48,7 +48,10 @@ if len(cpu_stats) > 8:
     fields.append("steal")
 
 if len(cpu_stats) > 9:
-    fields.extend(["guest", "guestnice"])
+    fields.append("guest")
+
+if len(cpu_stats) > 10:
+    fields.append("guestnice")
 
 stats = dict( zip( fields, cpu_stats ) )
 del stats["cpu"]
