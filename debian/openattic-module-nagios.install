@@ -3,6 +3,8 @@ nagios/bin        /usr/share/openattic/nagios
 nagios/conf       /usr/share/openattic/nagios
 nagios/templates  /usr/share/openattic/nagios
 nagios/management /usr/share/openattic/nagios
+nagios/fixtures   /usr/share/openattic/nagios
+nagios/locale     /usr/share/openattic/nagios
 
 installed_apps.d/nagios /usr/share/openattic/installed_apps.d
 
