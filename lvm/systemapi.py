@@ -10,17 +10,48 @@ from lvm.models import LogicalVolume
 
 def lvm_command(cmd):
     ret, out, err = invoke(
-        (cmd + ["--noheadings", "--nameprefixes", "--unquoted", "--units", "m"]),
+        (cmd + ["--noheadings", "--nameprefixes", "--units", "m"]),
         return_out_err=True, log=lvm_settings.LOG_COMMANDS
         )
 
     if err and err.strip() != "No volume groups found":
         raise SystemError(err)
 
-    return [
-        dict( [ vardef.split('=', 1) for vardef in line.split(" ") if vardef ] )
-        for line in out.split("\n") if line.strip()
-        ]
+    ST_VARNAME, ST_DELIM, ST_VALUE = range(3)
+    state = ST_VARNAME
+
+    result   = []
+    currvar  = ""
+    valbuf   = ""
+    currdata = {}
+    for char in out:
+        if state == ST_VARNAME:
+            if char == '=':
+                state = ST_DELIM
+            elif char == '\n':
+                result.append(currdata)
+                currdata = {}
+            elif char in ('\t', '\r', ' '):
+                continue
+            else:
+                currvar += char
+
+        elif state == ST_DELIM:
+            if char == "'":
+                state = ST_VALUE
+            else:
+                raise ValueError("Expected \"'\", found \"%s\"" % char)
+
+        elif state == ST_VALUE:
+            if char == "'":
+                state = ST_VARNAME
+                currdata[currvar] = valbuf
+                currvar = ""
+                valbuf  = ""
+            else:
+                valbuf += char
+
+    return result
 
 def lvm_pvs():
     info = dict( [ (lv["LVM2_PV_NAME"], lv) for lv in lvm_command(["/sbin/pvs"]) ] )
