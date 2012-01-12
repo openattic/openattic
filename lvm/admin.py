@@ -7,16 +7,8 @@ class VgAdmin(admin.ModelAdmin):
     list_display   = [ "name" ]
 
 
-def lvremove(modeladmin, request, queryset):
-    for lv in queryset:
-        lv.state = "delete"
-        lv.save()
-
-lvremove.short_description = "Delete LV"
-
 class LvAdmin(admin.ModelAdmin):
-    list_display   = [ 'name', 'vg', 'megs', 'filesystem', 'snapshot', 'state' ]
-    actions        = [ lvremove ]
+    list_display   = [ 'name', 'vg', 'megs', 'filesystem', 'snapshot' ]
 
 
 from models import VolumeGroup, LogicalVolume

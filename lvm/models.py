@@ -215,7 +215,7 @@ class VolumeGroup(models.Model):
     def lvm_free_megs(self):
         return float( self.lvm_info["LVM2_VG_FREE"] )
 
-class LogicalVolume(StatefulModel):
+class LogicalVolume(models.Model):
     """ Represents a LVM Logical Volume and offers management functions.
 
         This is the main class of openATTIC's design.
@@ -232,7 +232,7 @@ class LogicalVolume(StatefulModel):
     fscritical  = models.IntegerField(_("Critical Level (%)"), default=85 )
 
     def __init__( self, *args, **kwargs ):
-        StatefulModel.__init__( self, *args, **kwargs )
+        models.Model.__init__( self, *args, **kwargs )
         self._lvm = None
         self._lvm_info = None
         self._fs = None
@@ -327,15 +327,12 @@ class LogicalVolume(StatefulModel):
     def mods_active(self):
         """ True if no mods are in use or all mods are active. """
         for mod in self.modchain:
-            if mod.state != "active":
-                return False
+            return False
         return True
 
     @property
     def lvm_info(self):
         """ LV information from LVM. """
-        if self.state not in ("active", "update", "pending"):
-            return None
         if self._lvm_info is None:
             self._lvm_info = dbus_to_python(self.lvm.lvs())[self.name]
             self._lvm_info['LVM2_SEG_PE_RANGES'] = self._lvm_info['LVM2_SEG_PE_RANGES'].split(' ')
@@ -437,9 +434,8 @@ class LogicalVolume(StatefulModel):
 
     def save( self, database_only=False, *args, **kwargs ):
         if database_only:
-            return StatefulModel.save(self, ignore_state=True, *args, **kwargs)
+            return models.Model.save(self, *args, **kwargs)
 
-        self.state = "active"
         install = (self.id is None)
 
         if self.snapshot:
@@ -448,7 +444,7 @@ class LogicalVolume(StatefulModel):
             self.filesystem = self.snapshot.filesystem
             self.formatted  = self.snapshot.formatted
 
-        ret = StatefulModel.save(self, ignore_state=True, *args, **kwargs)
+        ret = models.Model.save(self, *args, **kwargs)
 
         if install:
             self.install()
@@ -463,7 +459,7 @@ class LogicalVolume(StatefulModel):
                 self.lvm.write_fstab()
 
                 if modified:
-                    ret = StatefulModel.save(self, ignore_state=True, *args, **kwargs)
+                    ret = models.Model.save(self, *args, **kwargs)
 
         elif self.megs != self.lvm_megs:
             self.resize()
@@ -473,7 +469,7 @@ class LogicalVolume(StatefulModel):
     def delete(self):
         """ If active, transition to delete; if new or done, actually call delete().
 
-            Overrides StatefulModel.delete() in order to cascade to all shares and
+            Overrides models.Model.delete() in order to cascade to all shares and
             block device modules.
         """
         if self.filesystem:
@@ -486,7 +482,7 @@ class LogicalVolume(StatefulModel):
             self.lvm.write_fstab()
 
 
-class LVChainedModule(StatefulModel):
+class LVChainedModule(models.Model):
     """ Represents block device oriented modules that create a block device
         themselves, like DRBD or openDedup. This class only manages the
         ordering and the link to the LV.
@@ -529,8 +525,7 @@ class LVChainedModule(StatefulModel):
     def save( self, *args, **kwargs ):
         if not self.id:
             self.install()
-        self.state = "active"
-        return StatefulModel.save(self, ignore_state=True, *args, **kwargs)
+        return models.Model.save(self, *args, **kwargs)
 
     def delete(self):
         self.uninstall()
