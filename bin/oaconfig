@@ -1,14 +1,23 @@
 #!/bin/bash
 
-set -e
-set -u
+export OACONFIG="True"
 
 . /etc/default/openattic
 
 cd $OADIR
 OAUSER=` cut -d: -f1 <<< "$RPCD_CHUID"`
 
-export OACONFIG="True"
+if [ "$DJANGO_AUTO_COMPLETE" = "1" ]; then
+    MYCOMMANDS="install install-cli scan-vgs add-vg restart reload rootshell"
+    ARRAY_WORDS=( $COMP_WORDS )
+    compgen -W "$MYCOMMANDS" "${ARRAY_WORDS[COMP_CWORD]}"
+    su "$OAUSER" -c 'python manage.py'
+    exit $?
+fi
+
+set -e
+set -u
+
 
 usage () {
     echo "Usage: $0 <command> [<args>]"
