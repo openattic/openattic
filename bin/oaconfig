@@ -8,7 +8,7 @@ set -u
 cd $OADIR
 OAUSER=` cut -d: -f1 <<< "$RPCD_CHUID"`
 
-if [ "$#" = "0" ]; then
+usage () {
     echo "Usage: $0 <command> [<args>]"
     echo
     echo "Wrapper around the openATTIC management system."
@@ -30,9 +30,17 @@ if [ "$#" = "0" ]; then
 
     su "$OAUSER" -c 'python manage.py help'
     exit 1
+}
+
+if [ "$#" = "0" ]; then
+	usage
 fi
 
 case $1 in
+	help)
+		usage
+		;;
+
 	install)
 		if [ "$#" -gt 1 ]; then
 			shift
