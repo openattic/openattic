@@ -11,7 +11,7 @@ from django.db   import models
 
 from systemd.helpers import dbus_to_python
 
-from lvm.models import StatefulModel, LogicalVolume, LVChainedModule
+from lvm.models import LogicalVolume, LVChainedModule
 from peering.models import PeerHost
 
 DRBD_PROTOCOL_CHOICES = (
@@ -115,6 +115,7 @@ class DrbdDevice(LVChainedModule):
     syncer_rate = models.CharField(max_length=25, blank=True, default="5M", help_text=(
                                    "Bandwidth limit for background synchronization, measured in "
                                    "K/M/G<b><i>Bytes</i></b>."))
+    initialized = models.BooleanField(default=False, editable=False)
 
     def __init__( self, *args, **kwargs ):
         LVChainedModule.__init__( self, *args, **kwargs )
@@ -137,25 +138,17 @@ class DrbdDevice(LVChainedModule):
 
     @property
     def cstate(self):
-        if self.state not in ("pending", "active"):
-            return None
         return dbus_to_python(self.drbd.get_cstate(self.res))
 
     @property
     def dstate(self):
-        if self.state not in ("pending", "active"):
-            return None
         return dbus_to_python(self.drbd.get_dstate(self.res))
 
     @property
     def role(self):
-        if self.state not in ("pending", "active"):
-            return None
         return dbus_to_python(self.drbd.get_role(self.res))
 
     def primary(self):
-        if self.state not in ("pending", "active"):
-            return None
         return self.drbd.primary(self.res)
 
     @property
@@ -190,47 +183,49 @@ class DrbdDevice(LVChainedModule):
             raise ValidationError('This share type can not be used on volumes with a file system.')
 
     def install(self):
-        if self.state != 'active':
-            StatefulModel.save(self, ignore_state=True)
-            if self.init_master:
-                vgid = self.peerhost.lvm.VolumeGroup.ids()[0]
-                user = self.peerhost.auth.User.filter({'username': self.volume.owner.username})[0]
-                lv   = self.peerhost.lvm.LogicalVolume.create({
-                    'name':  self.volume.name,
-                    'megs':  self.volume.megs,
-                    'vg':    vgid,
-                    'owner': {'app': 'auth', 'id': user['id'], 'obj': 'User'},
-                    })
-                thishost = {'app': 'peering', 'obj': 'PeerHost', 'id': self.peerhost.thishost['id']}
-                ddev = self.peerhost.drbd.DrbdDevice.create({
-                    'peeraddress':      self.selfaddress,
-                    'peerhost':         thishost,
-                    'init_master':      False,
-                    'volume':           lv,
-                    'cram_hmac_alg':    self.cram_hmac_alg,
-                    'degr_wfc_timeout': self.degr_wfc_timeout,
-                    'fencing':          self.fencing,
-                    'on_io_error':      self.on_io_error,
-                    'outdated_wfc_timeout': self.outdated_wfc_timeout,
-                    'protocol':         self.protocol,
-                    'sb_0pri':          self.sb_0pri,
-                    'sb_1pri':          self.sb_1pri,
-                    'sb_2pri':          self.sb_2pri,
-                    'secret':           self.secret,
-                    'selfaddress':      self.peeraddress,
-                    'syncer_rate':      self.syncer_rate,
-                    'wfc_timeout':      self.wfc_timeout,
-                    })
+        if self.initialized:
+            return
 
-            self.drbd.conf_write(self.id)
-            self.drbd.createmd(self.res)
-            self.drbd.up(self.res)
+        models.Model.save(self)
+        if self.init_master:
+            vgid = self.peerhost.lvm.VolumeGroup.ids()[0]
+            user = self.peerhost.auth.User.filter({'username': self.volume.owner.username})[0]
+            lv   = self.peerhost.lvm.LogicalVolume.create({
+                'name':  self.volume.name,
+                'megs':  self.volume.megs,
+                'vg':    vgid,
+                'owner': {'app': 'auth', 'id': user['id'], 'obj': 'User'},
+                })
+            thishost = {'app': 'peering', 'obj': 'PeerHost', 'id': self.peerhost.thishost['id']}
+            ddev = self.peerhost.drbd.DrbdDevice.create({
+                'peeraddress':      self.selfaddress,
+                'peerhost':         thishost,
+                'init_master':      False,
+                'volume':           lv,
+                'cram_hmac_alg':    self.cram_hmac_alg,
+                'degr_wfc_timeout': self.degr_wfc_timeout,
+                'fencing':          self.fencing,
+                'on_io_error':      self.on_io_error,
+                'outdated_wfc_timeout': self.outdated_wfc_timeout,
+                'protocol':         self.protocol,
+                'sb_0pri':          self.sb_0pri,
+                'sb_1pri':          self.sb_1pri,
+                'sb_2pri':          self.sb_2pri,
+                'secret':           self.secret,
+                'selfaddress':      self.peeraddress,
+                'syncer_rate':      self.syncer_rate,
+                'wfc_timeout':      self.wfc_timeout,
+                })
 
-            if self.init_master:
-                self.drbd.primary_overwrite(self.res)
+        self.drbd.conf_write(self.id)
+        self.drbd.createmd(self.res)
+        self.drbd.up(self.res)
 
-            self.state = 'active'
-            StatefulModel.save(self, ignore_state=True)
+        if self.init_master:
+            self.drbd.primary_overwrite(self.res)
+
+        self.initialized = True
+        models.Model.save(self)
 
     def uninstall(self):
         self.drbd.down(self.res)
