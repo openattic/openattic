@@ -8,11 +8,11 @@ cd $OADIR
 OAUSER=` cut -d: -f1 <<< "$RPCD_CHUID"`
 
 if [ "$DJANGO_AUTO_COMPLETE" = "1" ]; then
-    MYCOMMANDS="install install-cli scan-vgs add-vg restart reload rootshell"
-    ARRAY_WORDS=( $COMP_WORDS )
-    compgen -W "$MYCOMMANDS" "${ARRAY_WORDS[COMP_CWORD]}"
-    su "$OAUSER" -c 'python manage.py'
-    exit $?
+	MYCOMMANDS="install install-cli scan-vgs add-vg restart reload rootshell"
+	ARRAY_WORDS=( $COMP_WORDS )
+	compgen -W "$MYCOMMANDS" "${ARRAY_WORDS[COMP_CWORD]}"
+	su "$OAUSER" -c 'python manage.py'
+	exit $?
 fi
 
 set -e
@@ -20,27 +20,27 @@ set -u
 
 
 usage () {
-    echo "Usage: $0 <command> [<args>]"
-    echo
-    echo "Wrapper around the openATTIC management system."
-    echo
-    echo "Valid commands are:"
-    echo
-    echo "    install      Run this command after you installed new openATTIC modules."
-    echo "                 Any arguments to this command will be passed to apt-get install."
-    echo "    install-cli  Generate an API Key and a corresponding oacli configuration."
-    echo "    scan-vgs     Instruct LVM to search for existing VGs."
-    echo "    add-vg       Make an already existing LVM Volume Group known to openATTIC."
-    echo "    restart      Restart all services that are needed to run openATTIC."
-    echo "    reload       Reload all services that are needed to run openATTIC."
-    echo "    rootshell    Start a python shell as root."
-    echo
-    echo "Any other command will be passed as-is to the openATTIC management system,"
-    echo "which supports the commands and options listed below."
-    echo
-
-    su "$OAUSER" -c 'python manage.py help'
-    exit 1
+	echo "Usage: $0 <command> [<args>]"
+	echo
+	echo "Wrapper around the openATTIC management system."
+	echo
+	echo "Valid commands are:"
+	echo
+	echo "    install      Run this command after you installed new openATTIC modules."
+	echo "                 Any arguments to this command will be passed to apt-get install."
+	echo "    install-cli  Generate an API Key and a corresponding oacli configuration."
+	echo "    scan-vgs     Instruct LVM to search for existing VGs."
+	echo "    add-vg       Make an already existing LVM Volume Group known to openATTIC."
+	echo "    restart      Restart all services that are needed to run openATTIC."
+	echo "    reload       Reload all services that are needed to run openATTIC."
+	echo "    rootshell    Start a python shell as root."
+	echo
+	echo "Any other command will be passed as-is to the openATTIC management system,"
+	echo "which supports the commands and options listed below."
+	echo
+	
+	su "$OAUSER" -c 'python manage.py help'
+	exit 1
 }
 
 if [ "$#" = "0" ]; then
