@@ -24,7 +24,7 @@ class SystemD(LockingPlugin):
                     'Hostname':  socket.gethostname(),
                     'Domain':    samba_settings.DOMAIN,
                     'Workgroup': samba_settings.WORKGROUP,
-                    'Shares':    Share.objects.filter(state__in=("new", "update", "active")).exclude(volume__state="update")
+                    'Shares':    Share.objects.all()
                     } ) )
             finally:
                 fd.close()

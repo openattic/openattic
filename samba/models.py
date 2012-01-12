@@ -9,9 +9,9 @@ from django.contrib.auth.models import User
 from django.db.models import signals
 from django.db import models
 
-from lvm.models import StatefulModel, LogicalVolume
+from lvm.models import LogicalVolume
 
-class Share(StatefulModel):
+class Share(models.Model):
     volume        = models.ForeignKey(LogicalVolume)
     path          = models.CharField(max_length=255)
     available     = models.BooleanField(default=True,  blank=True)
@@ -55,8 +55,7 @@ class Share(StatefulModel):
             raise ValidationError('This share type can only be used on volumes with a file system.')
 
     def save( self, *args, **kwargs ):
-        self.state = "active"
-        ret = StatefulModel.save(self, ignore_state=True, *args, **kwargs)
+        ret = models.Model.save(self, *args, **kwargs)
         samba = dbus.SystemBus().get_object(settings.DBUS_IFACE_SYSTEMD, "/samba")
         samba.writeconf()
         if not self.volume.standby:
@@ -64,9 +63,8 @@ class Share(StatefulModel):
         return ret
 
     def delete( self ):
-        self.state = "done"
         volume = self.volume
-        ret = StatefulModel.delete(self)
+        ret = models.Model.delete(self)
         samba = dbus.SystemBus().get_object(settings.DBUS_IFACE_SYSTEMD, "/samba")
         samba.writeconf()
         if not volume.standby:
