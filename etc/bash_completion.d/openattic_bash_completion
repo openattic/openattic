@@ -1,6 +1,9 @@
 # #########################################################################
-# This bash script adds tab-completion feature to django-admin.py and
-# manage.py.
+# This bash script adds tab-completion feature to oaconfig.
+#
+# Based on django_bash_completion. See
+# <http://code.djangoproject.com/svn/django/trunk/extras/django_bash_completion>
+# <http://code.djangoproject.com/svn/django/trunk/LICENSE>
 #
 # Testing it out without installing
 # =================================
