@@ -14,7 +14,12 @@
 set -e
 set -u
 
-. /etc/default/openattic
+if [ -f /etc/default/openattic ]; then
+	. /etc/default/openattic
+else
+	echo "Missing required file /etc/default/openattic."
+	exit 1
+fi
 
 if [ $# -lt 1 ]
 then
@@ -42,7 +47,7 @@ case $1 in
 		log_end_msg 0
 		;;
 	
-	restart|reload)
+	restart|reload|force-reload)
 		$0 stop
 		$0 start
 		;;
