@@ -8,6 +8,8 @@ set -u
 cd $OADIR
 OAUSER=` cut -d: -f1 <<< "$RPCD_CHUID"`
 
+export OACONFIG="True"
+
 usage () {
     echo "Usage: $0 <command> [<args>]"
     echo
