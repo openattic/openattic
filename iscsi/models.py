@@ -7,7 +7,7 @@ from django.db   import models
 from django.conf import settings
 from django.utils.translation   import ugettext_noop, ugettext_lazy as _
 
-from lvm.models  import StatefulModel, LogicalVolume
+from lvm.models  import LogicalVolume
 from lvm.signals import post_shrink, post_grow
 from ifconfig.models import IPAddress
 
@@ -57,7 +57,7 @@ class Target(models.Model):
 
 
 
-class Lun(StatefulModel):
+class Lun(models.Model):
     target      = models.ForeignKey(Target)
     volume      = models.ForeignKey(LogicalVolume)
     number      = models.IntegerField( default=-1 )
@@ -100,15 +100,13 @@ class Lun(StatefulModel):
         if self.id is None and not self.volume.standby:
             self.iet_add()
 
-        self.state = "active"
-        ret = StatefulModel.save(self, ignore_state=True, *args, **kwargs)
+        ret = models.Model.save(self, *args, **kwargs)
         self.target._iscsi.writeconf()
         return ret
 
     def delete( self ):
-        self.state = "done"
         volume = self.volume
-        ret = StatefulModel.delete(self)
+        ret = models.Model.delete(self)
         if not volume.standby:
             self.iet_delete()
         self.target._iscsi.writeconf()
