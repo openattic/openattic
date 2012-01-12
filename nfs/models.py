@@ -6,9 +6,9 @@ import dbus
 from django.db   import models
 from django.conf import settings
 
-from lvm.models import StatefulModel, LogicalVolume
+from lvm.models import LogicalVolume
 
-class Export(StatefulModel):
+class Export(models.Model):
     volume      = models.ForeignKey(LogicalVolume)
     path        = models.CharField(max_length=255)
     address     = models.CharField(max_length=250)
@@ -25,8 +25,7 @@ class Export(StatefulModel):
             raise ValidationError('This share type can only be used on volumes with a file system.')
 
     def save( self, *args, **kwargs ):
-        self.state = "active"
-        ret = StatefulModel.save(self, ignore_state=True, *args, **kwargs)
+        ret = models.Model.save(self, *args, **kwargs)
         nfs = dbus.SystemBus().get_object(settings.DBUS_IFACE_SYSTEMD, "/nfs")
         nfs.writeconf()
         if not self.volume.standby:
@@ -34,8 +33,7 @@ class Export(StatefulModel):
         return ret
 
     def delete( self ):
-        self.state = "done"
-        ret = StatefulModel.delete(self)
+        ret = models.Model.delete(self)
         nfs = dbus.SystemBus().get_object(settings.DBUS_IFACE_SYSTEMD, "/nfs")
         nfs.writeconf()
         if not self.volume.standby:

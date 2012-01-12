@@ -15,7 +15,7 @@ class SystemD(LockingPlugin):
         try:
             fd = open( nfs_settings.EXPORTS, "wb" )
             try:
-                for export in Export.objects.filter(state__in=("new", "update", "active")).exclude(volume__state="update"):
+                for export in Export.objects.all():
                     fd.write( "%-50s %s(%s)\n" % ( export.path, export.address, export.options ) )
             finally:
                 fd.close()
