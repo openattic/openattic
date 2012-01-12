@@ -389,7 +389,9 @@ else:
             if options.verbose:
                 traceback.print_exc()
 
-
+    class ExitShell(Exception):
+        """ Raised in order to quit all main loops at once. """
+        pass
 
     class BaseCommand(Cmd, object):
         """ Implements basic functions of each shell section. """
@@ -483,8 +485,7 @@ else:
 
         def do_exit(self, args):
             """ Quit the shell. """
-            print "Bye."
-            sys.exit(0)
+            raise ExitShell()
 
         def precmd(self, line):
             """ If the line starts with a comment, ignore it. """
@@ -684,6 +685,10 @@ else:
         except KeyboardInterrupt:
             # Eat this exception. I want to be able to hit ^c to cancel typing stuff, so just...
             print '^C' # and restart the shell.
+        except ExitShell:
+            # No subshell catches this exception, so the user wants to exit altogether.
+            print "Bye."
+            break
         else:
             # Subshell terminated normally, so break the while loop.
             break
