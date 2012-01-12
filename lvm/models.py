@@ -338,6 +338,7 @@ class LogicalVolume(StatefulModel):
             return None
         if self._lvm_info is None:
             self._lvm_info = dbus_to_python(self.lvm.lvs())[self.name]
+            self._lvm_info['LVM2_SEG_PE_RANGES'] = self._lvm_info['LVM2_SEG_PE_RANGES'].split(' ')
         return self._lvm_info
 
     @property
