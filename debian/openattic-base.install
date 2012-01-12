@@ -35,6 +35,8 @@ openattic.wsgi /usr/share/openattic
 # Init scripts
 *.sh      /usr/share/openattic
 
+etc/bash_completion.d/openattic_bash_completion /etc/bash_completion.d
+
 # System Configs
 debian/apache2_conf.d/openattic     /etc/apache2/conf.d
 debian/default/openattic            /etc/default
