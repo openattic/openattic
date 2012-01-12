@@ -33,8 +33,7 @@ views.py       /usr/share/openattic
 openattic.wsgi /usr/share/openattic
 
 # Init scripts
-*.sh      /usr/share/openattic
-
+etc/init.d/openattic_*                          /etc/init.d
 etc/bash_completion.d/openattic_bash_completion /etc/bash_completion.d
 
 # System Configs
