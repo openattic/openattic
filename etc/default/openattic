@@ -1,5 +1,5 @@
 PYTHON="/usr/bin/python"
-OADIR="/srv/pyfiler"
+OADIR="/srv/openattic"
 
 RPCD_PIDFILE="/var/run/openattic_rpcd.pid"
 RPCD_CHUID="www-data:www-data"
