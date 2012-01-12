@@ -28,11 +28,11 @@ class InitScript(models.Model):
 
     @property
     def running(self):
-        return self.state == 0
+        return self.status == 0
 
     @property
     def stopped(self):
-        return self.state == 3
+        return self.status == 3
 
 
 class NTP(models.Model):
