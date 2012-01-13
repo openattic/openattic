@@ -154,10 +154,10 @@ class ModelHandler(BaseHandler):
 
             `kwds` may contain the following special fields:
 
-            * __exclude__: **kwargs for an .exclude() call.
-            * __fields__: *args for a .values() call.
+            * __exclude__: ``**kwargs`` for an .exclude() call.
+            * __fields__: ``*args`` for a .values() call.
 
-            Any other fields will be passed as **kwargs to .filter().
+            Any other fields will be passed as ``**kwargs`` to .filter().
             See the `Django docs <https://docs.djangoproject.com/en/dev/topics/db/queries/>`_ for details.
         """
         return [ self._getobj(obj) for obj in self._filter_queryset(kwds).order_by(*self.order) ]
@@ -186,10 +186,10 @@ class ModelHandler(BaseHandler):
 
     def filter_combo(self, field, query, kwds):
         """ Filter method that is meant to be used in conjunction with ExtJS
-            ComboBoxes. Combos can be filtered by any text the user enters,#
+            ComboBoxes. Combos can be filtered by any text the user enters,
             which is passed in the `query` parameter.
             Before calling `filter`, this method augments the `kwds` dict
-            by adding `field`__icontains = query.
+            by adding ``<field>__icontains = <query>``.
         """
         if query:
             kwds[field + '__icontains'] = query
