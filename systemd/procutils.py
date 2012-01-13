@@ -10,7 +10,18 @@ from datetime import datetime
 from cmdlog.models import LogEntry
 
 def invoke(args, close_fds=True, return_out_err=False, log=True, stdin=None, fail_on_err=True):
-    """ Invoke a subprocess with the given args and log the output. """
+    """ Invoke a subprocess with the given args and log the output.
+
+        Parameters:
+
+        * close_fds=True       -- If False, file descriptors will not be closed for the child process.
+        * return_out_err=False -- If True, stdout and stderr of the child will be returned.
+        * log=True             -- If False, the command's execution will not be logged.
+        * stdin=None           -- Any string given will be sent to the child's stdin.
+        * fail_on_err=True     -- If the child's exit code is not zero, raise SystemError.
+
+        Returns the exit code if return_out_err is False, and a tuple of (exit code, stdout, stderr) otherwise.
+    """
     if log:
         log = LogEntry( starttime=datetime.now(), command=args[0][:250] )
 

@@ -24,6 +24,8 @@ from systemd.helpers   import makeloggedfunc
 from systemd.procutils import create_job
 
 class SystemD(dbus.service.Object):
+    """ Implements the main DBus section (/). """
+
     def __init__(self, detected_modules):
         self.bus = dbus.SystemBus()
         dbus.service.Object.__init__(self, self.bus, "/")
@@ -44,21 +46,31 @@ class SystemD(dbus.service.Object):
     @makeloggedfunc
     @dbus.service.method(settings.DBUS_IFACE_SYSTEMD, in_signature="", out_signature="as")
     def get_detected_modules(self):
+        """ Return a list of detected submodules, no matter if loaded or not. """
         return [module.__name__ for module in INSTALLERS]
 
     @makeloggedfunc
     @dbus.service.method(settings.DBUS_IFACE_SYSTEMD, in_signature="", out_signature="as")
     def get_loaded_modules(self):
+        """ Return a list of actually loaded submodules. """
         return self.modules.keys()
 
     @makeloggedfunc
     @dbus.service.method(settings.DBUS_IFACE_SYSTEMD, in_signature="", out_signature="s")
     def ping(self):
+        """ Return 'pong' for connectivity tests. """
         return "pong"
 
     @makeloggedfunc
     @dbus.service.method(settings.DBUS_IFACE_SYSTEMD, in_signature="", out_signature="i")
     def build_job(self):
+        """ Create a new empty job queue and return its `jid`.
+
+            Jobs can be enqueued using the `job_add_command` method and executed
+            using the `enqueue_job` method. The job queue will then run each command
+            sequentially in the background. Once finished, the `job_finished` event
+            will be fired.
+        """
         self.job_lock.acquire()
         self.job_id += 1
         jid = self.job_id
@@ -74,11 +86,13 @@ class SystemD(dbus.service.Object):
     @makeloggedfunc
     @dbus.service.method(settings.DBUS_IFACE_SYSTEMD, in_signature="is", out_signature="")
     def job_add_command(self, jid, cmd):
+        """ Add a job to the job queue given by `jid`. """
         self._job_add_command(jid, cmd)
 
     @makeloggedfunc
     @dbus.service.method(settings.DBUS_IFACE_SYSTEMD, in_signature="i", out_signature="")
     def enqueue_job(self, jid):
+        """ Start execution of the job queue given by `jid`. """
         self.job_lock.acquire()
         create_job( self.jobs[jid], self.job_finished, (jid,) )
         self.job_lock.release()
@@ -86,6 +100,7 @@ class SystemD(dbus.service.Object):
     @makeloggedfunc
     @dbus.service.signal(settings.DBUS_IFACE_SYSTEMD, signature="i")
     def job_finished(self, jid):
+        """ Event fired whenever a job has completed. """
         self.job_lock.acquire()
         del self.jobs[jid]
         self.job_lock.release()
