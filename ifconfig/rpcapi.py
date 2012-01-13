@@ -30,6 +30,7 @@ class NetDeviceHandler(ModelHandler):
         return {'id': obj.id, 'app': obj._meta.app_label, 'obj': obj._meta.object_name, 'devname': obj.devname}
 
     def write_interfaces(self):
+        """ Update /etc/network/interfaces. """
         return NetDevice.write_interfaces()
 
 RPCD_HANDLERS = [NetDeviceHandler, IPAddressHandler]

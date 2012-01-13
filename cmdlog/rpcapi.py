@@ -11,9 +11,11 @@ class LogEntryHandler(ModelHandler):
     model = LogEntry
 
     def count_older_than(self, timestamp):
+        """ Return the count of log entries that are older than `timestamp`. """
         return LogEntry.objects.filter( endtime__lt=datetime.fromtimestamp(timestamp) ).count()
 
     def remove_older_than(self, timestamp):
+        """ Delete log entries that are older than `timestamp`. """
         return LogEntry.objects.filter( endtime__lt=datetime.fromtimestamp(timestamp) ).delete()
 
 RPCD_HANDLERS = [LogEntryHandler]

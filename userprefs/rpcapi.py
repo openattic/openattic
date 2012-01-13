@@ -10,12 +10,15 @@ class UserProfileHandler(ModelHandler):
     model = UserProfile
 
     def all_preferences(self):
+        """ Return a dict with all preferences for the current user profile. """
         return dict([( pref.setting, json.loads(pref.value)) for pref in self.user.get_profile()])
 
     def has_preference(self, setting):
+        """ See if the user profile has the given `setting`. """
         return setting in self.user.get_profile()
 
     def get_preference_or_default(self, setting, default):
+        """ Get the given `setting` if it is set, `default` otherwise. """
         if setting not in self.user.get_profile():
             return default
         return self.user.get_profile()[setting]

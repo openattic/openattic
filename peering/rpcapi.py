@@ -18,6 +18,7 @@ class PeerHostHandler(ModelHandler):
         return data
 
     def ping(self, id):
+        """ Test connectivity by calling the Peer's ping method. """
         obj = PeerHost.objects.get(id=id)
         return obj.ping()
 

@@ -17,6 +17,7 @@ class DrbdDeviceHandler(ModelHandler):
         return data
 
     def primary(self, id):
+        """ Switch the DRBD resource given by `id` to the Primary role on this host. """
         dev = DrbdDevice.objects.get(id=id)
         return dev.primary()
 

@@ -41,6 +41,15 @@ class ModelHandler(BaseHandler):
 
         In order to change the data included in records, override the _idobj,
         _override_get and _override_set methods.
+
+        The following class attributes exist:
+
+        * model   (mandatory): The Model class to associate with this ModelHandler.
+        * exclude (optional):  Fields that should never be included in get() results.
+        * fields  (optional):  Only include fields named here in get() calls.
+        * order   (optional):  Fields to order all() and filter() calls by.
+
+        Section names will be generated from the Model automatically.
     """
     __metaclass__ = ModelHandlerMeta
 
@@ -59,6 +68,7 @@ class ModelHandler(BaseHandler):
         return cls.__metaclass__.handlers[model]
 
     def _get_handler_instance(self, model):
+        """ Return a Handler class *instance* for the given model. """
         return  ModelHandler._get_handler_for_model(model)(self.user, self.request)
 
     @classmethod
@@ -69,7 +79,7 @@ class ModelHandler(BaseHandler):
         return None
 
     def idobj(self, numeric_id):
-        """ Get an ID object for the object given by numeric_id. """
+        """ Get an ID object for the object given by `numeric_id`. """
         return self._idobj( self.model.objects.get(id=numeric_id) )
 
     def ids(self):
@@ -91,7 +101,9 @@ class ModelHandler(BaseHandler):
         return self._getobj( self.model.objects.get(**id) )
 
     def get_ext(self, id):
-        """ Return an object given by ID. """
+        """ Return an object given by ID.
+            Meant to be used in conjunction with ExtJS datastores.
+        """
         if not isinstance( id, dict ):
             id = {'id': int(id)}
         data = {}
@@ -138,11 +150,20 @@ class ModelHandler(BaseHandler):
         return queryset
 
     def filter(self, kwds):
-        """ Search for objects with the keywords specified in the kwds dict. """
+        """ Search for objects with the keywords specified in the kwds dict.
+
+            `kwds` may contain the following special fields:
+
+            * __exclude__: **kwargs for an .exclude() call.
+            * __fields__: *args for a .values() call.
+
+            Any other fields will be passed as **kwargs to .filter().
+            See the `Django docs <https://docs.djangoproject.com/en/dev/topics/db/queries/>`_ for details.
+        """
         return [ self._getobj(obj) for obj in self._filter_queryset(kwds).order_by(*self.order) ]
 
     def filter_range(self, start, limit, sort, dir, kwds ):
-        """ Return a range of objects ordered by the `sort' field. """
+        """ Return a range of objects ordered by the `sort` field. """
         start = int(start)
         limit = int(limit)
         if dir == "DESC":
@@ -157,19 +178,25 @@ class ModelHandler(BaseHandler):
 
     def filter_values(self, kwds, fields):
         """ Filter records using the specified keywords (see filter), but return only
-            the fields named in the `fields' list (plus ID).
+            the fields named in the `fields` list (plus ID).
         """
         if "id" not in fields:
             fields.append("id")
         return list(self._filter_queryset(kwds).order_by(*self.order).values(*fields))
 
     def filter_combo(self, field, query, kwds):
+        """ Filter method that is meant to be used in conjunction with ExtJS
+            ComboBoxes. Combos can be filtered by any text the user enters,#
+            which is passed in the `query` parameter.
+            Before calling `filter`, this method augments the `kwds` dict
+            by adding `field`__icontains = query.
+        """
         if query:
             kwds[field + '__icontains'] = query
         return [ self._getobj(obj) for obj in self._filter_queryset(kwds).order_by(field) ]
 
     def all_values(self, fields):
-        """ Return only the fields named in the `fields' list (plus ID).
+        """ Return only the fields named in the `fields` list (plus ID).
         """
         if "id" not in fields:
             fields.append("id")
@@ -212,15 +239,17 @@ class ModelHandler(BaseHandler):
 
 
     def create(self, data):
-        """ Create a new object with values from the data dict. """
+        """ Create a new object with values from the `data` dict. """
         return self._setobj( self.model(), data )
 
     def set(self, id, data):
-        """ Update the object given by ID with values from the data dict. """
+        """ Update the object given by ID with values from the `data` dict. """
         return self._setobj( self.model.objects.get(id=id), data )
 
     def set_ext(self):
-        """ Reads POST data from the request to update a given object. """
+        """ Reads POST data from the request to update a given object.
+            Meant to be used in conjunction with ExtJS forms.
+        """
         if self.request is None:
             raise ValueError("Cannot access request")
 
@@ -247,7 +276,7 @@ class ModelHandler(BaseHandler):
     set_ext.EXT_flags = {"formHandler": True}
 
     def _setobj(self, obj, data):
-        """ Update the given object with values from the data dict. """
+        """ Update the given object with values from the `data` dict. """
         for field in obj._meta.fields:
             if field.name in data:
                 if isinstance( field, models.ForeignKey ):

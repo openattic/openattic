@@ -43,6 +43,7 @@ class UserHandler(ModelHandler):
         return self._getobj(self.user)
 
     def set_password(self, id, password):
+        """ Set the passsword for the user given by `id` to `password`. """
         user = User.objects.get(id=id)
         user.set_password(password)
         user.save()

@@ -77,6 +77,7 @@ class LvHandler(ModelHandler):
         return [ {'name': fs.name, 'desc': fs.desc } for fs in FILESYSTEMS ]
 
     def get_shares(self, id):
+        """ Return ID objects for shares that are configured for the given volume. """
         lv = LogicalVolume.objects.get(id=id)
         return [ ModelHandler._get_handler_for_model(sh.__class__)(self.user)._idobj(sh)
             for sh in lv.get_shares() ]
@@ -152,6 +153,7 @@ class ZfsSnapshotHandler(ModelHandler):
     model = ZfsSnapshot
 
     def rollback(self, id):
+        """ Rollback the volume to the snapshot given by `id`. """
         return ZfsSnapshot.objects.get(id=id).rollback()
 
 RPCD_HANDLERS = [VgHandler, LvHandler, ZfsSubvolumeHandler, ZfsSnapshotHandler]

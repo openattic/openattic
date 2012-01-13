@@ -22,9 +22,11 @@ class HostStatsHandler(BaseHandler):
         return statgrab.sg_get_host_info().uptime
 
     def get_cpu(self):
+        """ Return current CPU utilization info. """
         return statgrab.sg_get_cpu_percents().attrs
 
     def get_mem(self):
+        """ Return current memory utilization info. """
         stat = statgrab.sg_get_mem_stats()
         return { 'used': (stat.used - stat.cache), 'cache': stat.cache, 'free': stat.free}
 
