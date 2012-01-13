@@ -90,7 +90,39 @@ def get_gradient_args(varname, hlsfrom, hlsto, steps=20):
 
 
 def graph(request, service_id, srcidx):
-    """ The actual view that creates a graph image using RRDTool. """
+    """ Creates a graph image using RRDTool.
+
+        Arguments passed in the URL are:
+
+        * service_id: The id of the :class:`nagios.models.Service` instance to monitor.
+        * srcidx: What to draw.
+
+          If `service_id` points to a service that uses a check command for which one or more
+          :class:`nagios.models.Graph` model instances exist, the srcidx names the ID of the
+          Graph instance which is to be drawn. In this case, a single image may contain multiple
+          graphs stacked on one another.
+
+          Otherwise, the service's performance data will be regarded as an array, and srcidx points to
+          the index of the value that is to be drawn. In this case, a single image only contains a
+          single graph, as Multigraph support is configured using the nagios.Graph entries.
+
+        Optionally, this view allows for a set of GET variables to be passed in order to modify
+        the image's appearance:
+
+        * start:  Beginning timestamp. Defaults to "24 hours ago".
+        * end:    End timestamp. Defaults to the time when the service was last checked.
+        * height: Height of the graph section (not the image itself!)
+        * width:  Width of the graph section (not the image itself!)
+        * bgcol:  Background color, in "rrggbb".
+        * fgcol:  Foreground (text) color.
+        * grcol:  Graph background color.
+        * sacol:  Shade-A color (top left border).
+        * sbcol:  Shade-B color (bottom right border).
+        * grad:   Use color gradients (true/false).
+
+        If the image should be rendered upon a background image, the image's path needs to be
+        configured in the Nagios module's settings.
+    """
     serv  = get_object_or_404(Service, pk=int(service_id))
 
     srcidx = int(srcidx)
