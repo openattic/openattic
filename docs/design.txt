@@ -45,9 +45,3 @@
              |                                       v                       |Events                                     |
              |                            System tools (lvcreate, exportfs, drbdadm, iscsiadm, e2fsck, mkntfs, ...)      |
 -------------´                                                                                                           `-------------
-
-
-
-* Everything apart from the models is as stupid as it can reasonably be.
-* If you need to do something from the client layer, go through a model.
-* If you can by any means use XMLRPC, do so.
