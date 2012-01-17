@@ -112,7 +112,7 @@ if not havedata or not havestate:
                     savedstate.set(sectname, key, val)
 
     print "Checks for %s have been initialized, please wait until Nagios checks again." % options.interface
-    exit = 1
+    exit = 3
 
 else:
     ifacedata = data[ options.interface.upper() ]

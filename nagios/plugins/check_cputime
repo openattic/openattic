@@ -113,7 +113,7 @@ if havestate:
 
 else:
     print "Need state info, please wait until Nagios checks again."
-    exit = 1
+    exit = 3
     savedstate.add_section("state")
 
 for field in stats:
