@@ -69,7 +69,7 @@ Ext.oa.Lvm__LogicalVolume_Panel = Ext.extend(Ext.Panel, {
                     }
                     lvm__LogicalVolume.set(sel.data.id, {
                       'fswarning':  self.ownerCt.ownerCt.warnfield.getValue(),
-                      'fscritical': self.ownerCt.ownerCt.critfield.getValue(),
+                      'fscritical': self.ownerCt.ownerCt.critfield.getValue()
                     }, function(provider, response){
                       if( response.result ){
                         lvmPanel.items.items[0].store.reload();
