@@ -247,6 +247,7 @@ Ext.oa.Nagios__Service_Panel = Ext.extend(Ext.Panel, {
       0: MEDIA_URL + '/oxygen/16x16/actions/dialog-ok-apply.png',
       1: MEDIA_URL + '/oxygen/16x16/status/dialog-warning.png',
       2: MEDIA_URL + '/oxygen/16x16/status/dialog-error.png',
+      3: MEDIA_URL + '/oxygen/16x16/categories/system-help.png',
       NaN: MEDIA_URL + '/oxygen/16x16/categories/system-help.png'
     };
     var renderDesc = function( val, x, store ){
