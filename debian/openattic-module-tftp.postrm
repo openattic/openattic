@@ -6,6 +6,7 @@ if [ "$1" = "purge" ] ; then
     rm -f /etc/xinetd.d/openattic-tftp
     invoke-rc.d xinetd reload
     update-rc.d tftpd-hpa defaults
+    invoke-rc.d tftpd-hpa start
 fi
 
 #DEBHELPER#
