@@ -4,8 +4,10 @@
 
 import os
 import sys
-from time import time
+from time import time, mktime
+from datetime import datetime
 from ConfigParser import ConfigParser
+from pyudev import Context, Device
 
 disk = os.path.realpath(sys.argv[-1]).replace("/dev/", "")
 
@@ -23,6 +25,34 @@ with open("/sys/block/%s/stat" % disk, "rb") as fd:
         int(count) for count in fd.read().split()
     ]))
     currstate["timestamp"] = time()
+
+
+# Sanity-Check the state file.
+
+ctx = Context()
+dev = Device.from_path(ctx, "block/" + disk)
+
+createstamp = int(mktime((datetime.now() - dev.time_since_initialized).timetuple()))
+
+if havestate:
+    if not state.has_section("device"):
+        havestate = False
+
+    if not state.has_option("device", "initialized") or createstamp != state.getint("device", "initialized"):
+        havestate = False
+
+    if "DM_UUID" in dev.keys() and (
+       not state.has_option("device", "uuid") or dev.get("DM_UUID") != state.get("device", "uuid") ):
+        havestate = False
+
+if not havestate:
+    if not state.has_section("device"):
+        state.add_section("device")
+
+    state.set("device", "initialized", createstamp)
+
+    if "DM_UUID" in dev.keys():
+        state.set("device", "uuid", dev.get("DM_UUID"))
 
 
 def wrapdiff(curr, last):
@@ -136,7 +166,8 @@ if havestate:
 else:
     print "Need state info, please wait until Nagios checks again."
     exit = 3
-    state.add_section("state")
+    if not state.has_section("state"):
+        state.add_section("state")
 
 for key in currstate:
     state.set("state", key, currstate[key])
