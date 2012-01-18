@@ -327,7 +327,7 @@ Ext.oa.Samba__Share_Panel = Ext.extend(Ext.grid.GridPanel, {
         }
       } ],
       store: new Ext.data.DirectStore({
-        fields: ['path', 'available'],
+        fields: ['name', 'path', 'available'],
         directFn: samba__Share.all
       }),
       colModel: new Ext.grid.ColumnModel({
@@ -335,12 +335,16 @@ Ext.oa.Samba__Share_Panel = Ext.extend(Ext.grid.GridPanel, {
           sortable: true
         },
         columns: [{
+          header: "{% trans 'Name' %}",
+          width: 100,
+          dataIndex: "name"
+        }, {
           header: "{% trans 'Path' %}",
           width: 200,
           dataIndex: "path"
         }, {
           header: "{% trans 'Available' %}",
-          width: 70,
+          width: 50,
           dataIndex: "available",
           renderer: renderBoolean
         }]
