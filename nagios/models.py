@@ -10,6 +10,7 @@ from django.utils.translation   import ugettext_noop, ugettext_lazy as _
 from django.contrib.auth.models import User
 
 from lvm.models import LogicalVolume
+from ifconfig.models import IPAddress
 
 from nagios.conf import settings as nagios_settings
 from nagios.readstatus import NagiosState
@@ -106,13 +107,42 @@ def delete_service_for_lv(**kwargs):
 
     Service.write_conf()
 
+
 def update_contacts(**kwargs):
     nag = dbus.SystemBus().get_object(settings.DBUS_IFACE_SYSTEMD, "/nagios")
     nag.write_contacts()
     nag.restart()
+
+
+def create_service_for_ip(**kwargs):
+    ip = kwargs["instance"]
+    if not ip.is_loopback:
+        cmd = Command.objects.get(name=nagios_settings.TRAFFIC_CHECK_CMD)
+        if Service.objects.filter(command=cmd, arguments=ip.device.devname).count() == 0:
+            serv = Service(
+                volume      = None,
+                command     = cmd,
+                description = nagios_settings.TRAFFIC_DESCRIPTION % ip.device.devname,
+                arguments   = ip.device.devname
+                )
+            serv.save()
+
+    Service.write_conf()
+
+def delete_service_for_ip(**kwargs):
+    ip = kwargs["instance"]
+    cmd = Command.objects.get(name=nagios_settings.TRAFFIC_CHECK_CMD)
+    for serv in Service.objects.filter(command=cmd, arguments=ip.device.devname):
+        serv.delete()
+
+    Service.write_conf()
+
 
 signals.post_save.connect(  create_service_for_lv, sender=LogicalVolume )
 signals.pre_delete.connect( delete_service_for_lv, sender=LogicalVolume )
 
 signals.post_save.connect(   update_contacts, sender=User )
 signals.post_delete.connect( update_contacts, sender=User )
+
+signals.post_save.connect(  create_service_for_ip, sender=IPAddress )
+signals.pre_delete.connect( delete_service_for_ip, sender=IPAddress )

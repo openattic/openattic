@@ -11,6 +11,9 @@ LV_PERF_CHECK_CMD        = getattr( settings, "NAGIOS_LV_PERF_CHECK_CMD",      "
 LV_SNAP_DESCRIPTION      = getattr( settings, "NAGIOS_LV_SNAP_DESCRIPTION",    "Snapshot Utilization of %s" )
 LV_SNAP_CHECK_CMD        = getattr( settings, "NAGIOS_LV_SNAP_CHECK_CMD",      "check_lvm_snapshot" )
 
+TRAFFIC_DESCRIPTION      = getattr( settings, "NAGIOS_TRAFFIC_DESCRIPTION",    "Traffic on %s" )
+TRAFFIC_CHECK_CMD        = getattr( settings, "NAGIOS_TRAFFIC_CHECK_CMD",      "check_protocol_traffic" )
+
 CPUTIME_DESCRIPTION      = getattr( settings, "NAGIOS_CPUTIME_DESCRIPTION",    "CPU Time for CPU %d" )
 CPUTIME_CHECK_CMD        = getattr( settings, "NAGIOS_CPUTIME_CHECK_CMD",      "check_cputime" )
 
