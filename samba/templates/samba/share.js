@@ -38,36 +38,21 @@ Ext.oa.Samba__Share_Panel = Ext.extend(Ext.grid.GridPanel, {
                 anchor: '-20px'
               },
               items: [{
-                fieldLabel: "Name",
+                xtype: 'volumefield',
+                listeners: {
+                  select: function(self, record, index){
+                    lvm__LogicalVolume.get( record.data.id, function( provider, response ){
+                      self.ownerCt.namefield.setValue( response.result.name );
+                      self.ownerCt.dirfield.setValue( response.result.fs.mountpoints[0] );
+                      self.ownerCt.dirfield.enable();
+                    } );
+                  }
+                }
+              }, {
+                fieldLabel: "{% trans 'Share name' %}",
                 allowBlank: false,
                 name: "name",
                 ref: 'namefield'
-              }, {
-                xtype:      'combo',
-                allowBlank: false,
-                fieldLabel: "{% trans 'Volume' %}",
-                name:       'volume',
-                hiddenName: 'volume_id',
-                store: new Ext.data.DirectStore({
-                  fields: ["id", "name"],
-                  directFn: lvm__LogicalVolume.filter_values,
-                  paramOrder: ["kwds", "fields"],
-                  baseParams: {"kwds": {"filesystem__isnull": false}, "fields": ["name"]}
-                }),
-                typeAhead:     true,
-                triggerAction: 'all',
-                emptyText:     'Select...',
-                selectOnFocus: true,
-                displayField:  'name',
-                valueField:    'id',
-                ref:           'volfield',
-                listeners: {
-                    select: function(self, record, index){
-                      lvm__LogicalVolume.get( record.data.id, function( provider, response ){
-                        self.ownerCt.dirfield.setValue( response.result.fs.mountpoints[0] );
-                      } );
-                    }
-                  }
               }, {
                 fieldLabel: "{% trans 'Path' %}",
                 allowBlank: false,
@@ -335,7 +320,7 @@ Ext.oa.Samba__Share_Panel = Ext.extend(Ext.grid.GridPanel, {
           sortable: true
         },
         columns: [{
-          header: "{% trans 'Name' %}",
+          header: "{% trans 'Share name' %}",
           width: 100,
           dataIndex: "name"
         }, {
