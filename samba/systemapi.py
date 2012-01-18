@@ -25,7 +25,7 @@ class SystemD(LockingPlugin):
                     'Domain':    samba_settings.DOMAIN,
                     'Workgroup': samba_settings.WORKGROUP,
                     'Shares':    Share.objects.all()
-                    } ) )
+                    } ).encode("UTF-8") )
             finally:
                 fd.close()
         finally:
