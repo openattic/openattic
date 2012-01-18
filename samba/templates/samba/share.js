@@ -138,14 +138,7 @@ Ext.oa.Samba__Share_Panel = Ext.extend(Ext.grid.GridPanel, {
                 name: "create mode",
                 ref: 'createmodefield',
                 value:     '0664'
-              }, "{% trans 'Set rights for owner, group and others' %}"),{
-                fieldLabel: "{% trans 'State' %}",
-                allowBlank: false,
-                name: "state",
-                ref: 'statefield',
-                value:     'active'
-              }
-              ],
+              }, "{% trans 'Set rights for owner, group and others' %}" ) ],
               buttons: [{
                 text: "{% trans 'Create Share' %}",
                 icon: MEDIA_URL + "/oxygen/16x16/actions/dialog-ok-apply.png",
@@ -164,7 +157,6 @@ Ext.oa.Samba__Share_Panel = Ext.extend(Ext.grid.GridPanel, {
                     'writeable':        self.ownerCt.ownerCt.writeablefield.getValue(),
                     'comment':          self.ownerCt.ownerCt.commentfield.getValue(),
                     'create_mode':      self.ownerCt.ownerCt.createmodefield.getValue(),
-                    'state':            self.ownerCt.ownerCt.statefield.getValue(),
                     'guest_ok':         self.ownerCt.ownerCt.guestokfield.getValue(),
                     'dir_mode':         self.ownerCt.ownerCt.dirmodefield.getValue()
                   }, function(provider, response){
@@ -275,11 +267,6 @@ Ext.oa.Samba__Share_Panel = Ext.extend(Ext.grid.GridPanel, {
                   ref: 'createmodefield',
                   value: sel.json.create_mode
                 },{
-                  fieldLabel: "{% trans 'State' %}",
-                  name: "state",
-                  ref: 'statefield',
-                  value: sel.json.state
-                },{
                   fieldLabel: "{% trans 'Dir Mode' %}",
                   name: "dir_mode",
                   ref: 'dirmodefield',
@@ -301,7 +288,6 @@ Ext.oa.Samba__Share_Panel = Ext.extend(Ext.grid.GridPanel, {
                         'writeable':   self.ownerCt.ownerCt.writeablefield.getValue(),
                         'comment':   self.ownerCt.ownerCt.commentfield.getValue(),
                         'create_mode':   self.ownerCt.ownerCt.createmodefield.getValue(),
-                        'state':   self.ownerCt.ownerCt.statefield.getValue(),
                         'guest_ok':   self.ownerCt.ownerCt.guestokfield.getValue(),
                         'dir_mode':   self.ownerCt.ownerCt.dirmodefield.getValue()
                       }, function(provider, response){
@@ -340,7 +326,7 @@ Ext.oa.Samba__Share_Panel = Ext.extend(Ext.grid.GridPanel, {
         }
       } ],
       store: new Ext.data.DirectStore({
-        fields: ['path', 'state', 'available'],
+        fields: ['path', 'available'],
         directFn: samba__Share.all
       }),
       colModel: new Ext.grid.ColumnModel({
@@ -351,11 +337,6 @@ Ext.oa.Samba__Share_Panel = Ext.extend(Ext.grid.GridPanel, {
           header: "{% trans 'Path' %}",
           width: 200,
           dataIndex: "path"
-        }, {
-          header: "{% trans 'State' %}",
-          width: 50,
-          dataIndex: "state",
-          renderer: renderBoolean
         }, {
           header: "{% trans 'Available' %}",
           width: 70,
