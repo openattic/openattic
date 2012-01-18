@@ -99,6 +99,7 @@ class SystemD(LockingPlugin):
 
         res = []
         for line in out.split("\n"):
+            line = line.strip()
             if not line or line[0] == '#':
                 continue
             elif line[0] == '*':
