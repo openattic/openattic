@@ -356,10 +356,16 @@ Ext.oa.Nagios__Service_Panel = Ext.extend(Ext.Panel, {
         listeners: {
           cellmousedown: function( self, rowIndex, colIndex, evt ){
             var record = self.getStore().getAt(rowIndex);
-            if( !record.json.graphs || record.json.graphs.length === 0 )
-              return;
-            self.ownerCt.items.items[1].items.items[1].getSelectionModel().clearSelections();
-            self.ownerCt.items.items[1].loadRecord(record);
+            if( !record.json.graphs || record.json.graphs.length === 0 ){
+              self.ownerCt.items.items[1].getEl().mask(
+                "{% trans 'No performance data available for service' %}<br />"+
+                "<center>" + record.data.description + "</center>");
+            }
+            else{
+              self.ownerCt.items.items[1].getEl().unmask();
+              self.ownerCt.items.items[1].items.items[1].getSelectionModel().clearSelections();
+              self.ownerCt.items.items[1].loadRecord(record);
+            }
           }
         }
       }, {
