@@ -30,7 +30,7 @@ with open("/sys/block/%s/stat" % disk, "rb") as fd:
 # Sanity-Check the state file.
 
 ctx = Context()
-dev = Device.from_path(ctx, "block/" + disk)
+dev = Device.from_name(ctx, "block", disk)
 
 try:
     createstamp = int(mktime((datetime.now() - dev.time_since_initialized).timetuple()))
