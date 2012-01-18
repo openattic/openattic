@@ -8,9 +8,9 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2011-11-07 14:02+0100\n"
-"PO-Revision-Date: 2011-11-16 13:15\n"
-"Last-Translator: Kai Wagner <kai.wagner@it-novum.com>\n"
+"POT-Creation-Date: 2012-01-18 16:35+0100\n"
+"PO-Revision-Date: 2012-01-18 16:36\n"
+"Last-Translator: Michael Ziegler <michael.ziegler@it-novum.com>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
@@ -31,83 +31,96 @@ msgstr "Neu laden"
 msgid "Add Share"
 msgstr "Füge Freigabe hinzu"
 
-#: templates/samba/share.js:47
-msgid "Volume"
-msgstr "Volume"
+#: templates/samba/share.js:52 templates/samba/share.js.py:323
+msgid "Share name"
+msgstr "Freigabename"
 
-#: templates/samba/share.js:71 templates/samba/share.js.py:216
+#: templates/samba/share.js:57 templates/samba/share.js.py:193
+#: templates/samba/share.js:327
 msgid "Path"
 msgstr "Pfad"
 
-#: templates/samba/share.js:78
+#: templates/samba/share.js:64 templates/samba/share.js.py:200
 msgid "Owner"
 msgstr "Besitzer"
 
-#: templates/samba/share.js:88
+#: templates/samba/share.js:74 templates/samba/share.js.py:210
 msgid "Select..."
 msgstr "Bitte auswählen..."
 
-#: templates/samba/share.js:94
+#: templates/samba/share.js:80 templates/samba/share.js.py:217
 msgid "Group"
 msgstr "Gruppe"
 
-#: templates/samba/share.js:99
+#: templates/samba/share.js:86 templates/samba/share.js.py:223
 msgid "Browseable"
 msgstr "Sichtbar"
 
-#: templates/samba/share.js:105 templates/samba/share.js.py:225
+#: templates/samba/share.js:92 templates/samba/share.js.py:229
+#: templates/samba/share.js:331
 msgid "Available"
 msgstr "Verfügbar"
 
-#: templates/samba/share.js:111
+#: templates/samba/share.js:98 templates/samba/share.js.py:235
 msgid "Writeable"
 msgstr "Schreibbar"
 
-#: templates/samba/share.js:117
-msgid "Comment"
-msgstr "Kommentar"
-
-#: templates/samba/share.js:122
-msgid "Create Mode"
-msgstr "Berechtigungen"
-
-#: templates/samba/share.js:127
-msgid "Set rights for owner, group and others"
-msgstr "Rechte für Besitzer, Gruppe und andere Personen"
-
-#: templates/samba/share.js:128 templates/samba/share.js.py:220
-msgid "State"
-msgstr "Status"
-
-#: templates/samba/share.js:134
+#: templates/samba/share.js:104 templates/samba/share.js.py:241
 msgid "Guest OK"
 msgstr "Erlaube Gast"
 
-#: templates/samba/share.js:140
+#: templates/samba/share.js:109 templates/samba/share.js.py:256
 msgid "Dir Mode"
 msgstr "Verzeichnis Berechtigungen"
 
-#: templates/samba/share.js:145
+#: templates/samba/share.js:114
 msgid "Set rights for the Directory"
 msgstr "Setze Rechte für Verzeichnis"
 
-#: templates/samba/share.js:148
+#: templates/samba/share.js:116 templates/samba/share.js.py:246
+msgid "Comment"
+msgstr "Kommentar"
+
+#: templates/samba/share.js:121 templates/samba/share.js.py:251
+msgid "Create Mode"
+msgstr "Berechtigungen"
+
+#: templates/samba/share.js:126
+msgid "Set rights for owner, group and others"
+msgstr "Rechte für Besitzer, Gruppe und andere Personen"
+
+#: templates/samba/share.js:128
 msgid "Create Share"
 msgstr "Erzeuge Share"
 
-#: templates/samba/share.js:176
+#: templates/samba/share.js:156
 msgid "Cancel"
 msgstr "Abbrechen"
 
-#: templates/samba/share.js:187 templates/samba/share.js.py:194
+#: templates/samba/share.js:167 templates/samba/share.js.py:174
+msgid "Edit"
+msgstr "Bearbeiten"
+
+#: templates/samba/share.js:186
+msgid "Volume"
+msgstr "Volume"
+
+#: templates/samba/share.js:262
+msgid "Save"
+msgstr "Speichern"
+
+#: templates/samba/share.js:294 templates/samba/share.js.py:301
 msgid "Delete Share"
 msgstr "Freigabe löschen"
 
-#: templates/samba/share.js:196
+#: templates/samba/share.js:303
 #, python-format
 msgid "Do you really want to delete %s?"
 msgstr "Möchten Sie %s wirklich löschen?"
 
-#: templates/samba/share.js:246
+#: templates/samba/share.js:352
 msgid "Windows (Samba)"
 msgstr "Windows (Samba)"
+
+#~ msgid "State"
+#~ msgstr "Status"
