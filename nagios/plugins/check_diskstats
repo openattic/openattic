@@ -32,13 +32,17 @@ with open("/sys/block/%s/stat" % disk, "rb") as fd:
 ctx = Context()
 dev = Device.from_path(ctx, "block/" + disk)
 
-createstamp = int(mktime((datetime.now() - dev.time_since_initialized).timetuple()))
+try:
+    createstamp = int(mktime((datetime.now() - dev.time_since_initialized).timetuple()))
+except AttributeError:
+    createstamp = None
 
 if havestate:
     if not state.has_section("device"):
         havestate = False
 
-    if not state.has_option("device", "initialized") or createstamp != state.getint("device", "initialized"):
+    if createstamp is not None and (
+       not state.has_option("device", "initialized") or createstamp != state.getint("device", "initialized")):
         havestate = False
 
     if "DM_UUID" in dev.keys() and (
@@ -49,7 +53,8 @@ if not havestate:
     if not state.has_section("device"):
         state.add_section("device")
 
-    state.set("device", "initialized", createstamp)
+    if createstamp is not None:
+        state.set("device", "initialized", createstamp)
 
     if "DM_UUID" in dev.keys():
         state.set("device", "uuid", dev.get("DM_UUID"))
