@@ -37,7 +37,7 @@ Ext.oa.Samba__Share_Panel = Ext.extend(Ext.grid.GridPanel, {
                 xtype: "textfield",
                 anchor: '-20px'
               },
-              items: [{ 
+              items: [{
                 fieldLabel: "Name",
                 allowBlank: false,
                 name: "name",
@@ -149,7 +149,8 @@ Ext.oa.Samba__Share_Panel = Ext.extend(Ext.grid.GridPanel, {
                       'obj': 'LogicalVolume',
                       'id': self.ownerCt.ownerCt.volfield.getValue()
                     },
-                    'path':    self.ownerCt.ownerCt.dirfield.getValue(),
+                    'name':             self.ownerCt.ownerCt.namefield.getValue(),
+                    'path':             self.ownerCt.ownerCt.dirfield.getValue(),
                     'force_user':       self.ownerCt.ownerCt.ownerfield.getValue(),
                     'browseable':       self.ownerCt.ownerCt.browseablefield.getValue(),
                     'available':        self.ownerCt.ownerCt.availablefield.getValue(),

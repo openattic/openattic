@@ -13,6 +13,7 @@ from lvm.models import LogicalVolume
 
 class Share(models.Model):
     volume        = models.ForeignKey(LogicalVolume)
+    name          = models.CharField(max_length=50, unique=True)
     path          = models.CharField(max_length=255)
     available     = models.BooleanField(default=True,  blank=True)
     browseable    = models.BooleanField(default=True,  blank=True)
