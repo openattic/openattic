@@ -43,7 +43,7 @@ class IPAddress(models.Model):
 
     @property
     def is_loopback(self):
-        return self.address in ("loopback", "localhost", "127.0.0.1", "::1")
+        return self.host_part in ("loopback", "localhost", "127.0.0.1", "::1")
 
     @property
     def is_ipv6(self):
