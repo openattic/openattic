@@ -127,7 +127,11 @@ def create_service_for_ip(**kwargs):
                 )
             serv.save()
 
-    Service.write_conf()
+    try:
+        Service.write_conf()
+    except dbus.DBusException:
+        # Fails during loaddata of initial installation
+        pass
 
 def delete_service_for_ip(**kwargs):
     ip = kwargs["instance"]
