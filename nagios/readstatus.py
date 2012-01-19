@@ -2,6 +2,7 @@
 # kate: space-indent on; indent-width 4; replace-tabs on;
 
 from os.path import getmtime
+from time import sleep
 
 class NagiosState(object):
     """ Dict-like class to access Nagios's status information.
@@ -35,7 +36,19 @@ class NagiosState(object):
         return self.nagstate.values()
 
     def update(self):
-        mtime = getmtime(self.statfile)
+        retried = 0
+        while True:
+            try:
+                mtime = getmtime(self.statfile)
+            except OSError, err:
+                if err.errno != 2 or retried >= 5:
+                    raise
+                else:
+                    sleep(0.1)
+                    retried += 1
+            else:
+                break
+
         if mtime > self.timestamp:
             self.nagstate  = self.parse_status()
             self.timestamp = mtime
