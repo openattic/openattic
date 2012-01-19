@@ -2,6 +2,7 @@
 # kate: space-indent on; indent-width 4; replace-tabs on;
 
 from pwd import getpwnam
+from grp import getgrnam
 
 from django.db import models
 
@@ -33,9 +34,17 @@ class User(models.Model):
         raise ValidationError('The homedir must be within the mount directory of the selected volume.')
 
     def save(self, *args, **kwargs):
-        sysuser = getpwnam(self.volume.owner.username)
-        self.uid = sysuser.pw_uid
-        self.gid = sysuser.pw_gid
+        try:
+            sysuser = getpwnam(self.volume.owner.username)
+            self.uid = sysuser.pw_uid
+            self.gid = sysuser.pw_gid
+        except KeyError:
+            self.uid = self.volume.owner.id + 2000
+            try:
+                self.gid = getgrnam("users").gr_gid
+            except KeyError:
+                self.gid = 100
+
         return models.Model.save(self, *args, **kwargs)
 
 class FileLog(models.Model):
