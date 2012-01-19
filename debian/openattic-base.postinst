@@ -5,11 +5,15 @@ set -e
 . /usr/share/debconf/confmodule
 
 if [ "$1" = "configure" ] ; then
+    adduser --system --shell /bin/bash --quiet --home /var/lib/openattic --group openattic
+    adduser www-data openattic
+    adduser openattic www-data
+
     setperm(){
         FILE="$1"
         PERM="$2"
         dpkg-statoverride --list "$FILE" >/dev/null || \
-            dpkg-statoverride --update --add www-data www-data "$PERM" "$FILE"
+            dpkg-statoverride --update --add openattic openattic "$PERM" "$FILE"
     }
 
     setperm "/usr/share/openattic" 0750

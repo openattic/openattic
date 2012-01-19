@@ -7,7 +7,7 @@ if [ "$1" = "configure" ] ; then
         FILE="$1"
         PERM="$2"
         dpkg-statoverride --list "$FILE" >/dev/null || \
-            dpkg-statoverride --update --add www-data www-data "$PERM" "$FILE"
+            dpkg-statoverride --update --add openattic openattic "$PERM" "$FILE"
     }
 
     setperm "/var/lib/openattic/http/volumes" 0750

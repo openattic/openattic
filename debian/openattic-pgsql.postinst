@@ -16,7 +16,7 @@ if [ "$1" = "configure" ] ; then
         echo 'Automatic configuration using dbconfig-common failed!'
     else
         dpkg-statoverride --list "$INIFILE" >/dev/null || \
-            dpkg-statoverride --update --add www-data www-data "0600" "$INIFILE"
+            dpkg-statoverride --update --add openattic openattic "0600" "$INIFILE"
     fi
 
     dbconfig-generate-include -f template \
