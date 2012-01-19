@@ -1,0 +1,79 @@
+[
+    {
+        "pk": 1,
+        "model": "sysutils.initscript",
+        "fields": {
+            "name": "ssh"
+        }
+    },
+    {
+        "pk": 2,
+        "model": "sysutils.initscript",
+        "fields": {
+            "name": "apache2"
+        }
+    },
+    {
+        "pk": 3,
+        "model": "sysutils.initscript",
+        "fields": {
+            "name": "openattic_systemd"
+        }
+    },
+    {
+        "pk": 4,
+        "model": "sysutils.initscript",
+        "fields": {
+            "name": "openattic_rpcd"
+        }
+    },
+    {
+        "pk": 5,
+        "model": "sysutils.initscript",
+        "fields": {
+            "name": "samba"
+        }
+    },
+    {
+        "pk": 6,
+        "model": "sysutils.initscript",
+        "fields": {
+            "name": "nfs-kernel-server"
+        }
+    },
+    {
+        "pk": 7,
+        "model": "sysutils.initscript",
+        "fields": {
+            "name": "proftpd"
+        }
+    },
+    {
+        "pk": 9,
+        "model": "sysutils.initscript",
+        "fields": {
+            "name": "dbus"
+        }
+    },
+    {
+        "pk": 10,
+        "model": "sysutils.initscript",
+        "fields": {
+            "name": "ntp"
+        }
+    },
+    {
+        "pk": 12,
+        "model": "sysutils.initscript",
+        "fields": {
+            "name": "nagios3"
+        }
+    },
+    {
+        "pk": 11,
+        "model": "sysutils.initscript",
+        "fields": {
+            "name": "iscsitarget"
+        }
+    }
+]
