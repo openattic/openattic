@@ -4,6 +4,7 @@
 from django.core.management import call_command
 
 from nagios.conf import settings as nagios_settings
+from ifconfig.models import IPAddress
 
 import nagios.models
 from nagios.models    import Service, Command
@@ -57,5 +58,8 @@ def create_nagios(app, created_models, verbosity, interactive, db, **kwargs):
                 arguments   = str(cpu)
                 )
             serv.save()
+
+    for ip in IPAddress.objects.all():
+        nagios.models.create_service_for_ip( instance=ip )
 
 signals.post_syncdb.connect(create_nagios, sender=nagios.models)

@@ -117,15 +117,21 @@ def update_contacts(**kwargs):
 def create_service_for_ip(**kwargs):
     ip = kwargs["instance"]
     if not ip.is_loopback:
-        cmd = Command.objects.get(name=nagios_settings.TRAFFIC_CHECK_CMD)
-        if Service.objects.filter(command=cmd, arguments=ip.device.devname).count() == 0:
-            serv = Service(
-                volume      = None,
-                command     = cmd,
-                description = nagios_settings.TRAFFIC_DESCRIPTION % ip.device.devname,
-                arguments   = ip.device.devname
-                )
-            serv.save()
+        try:
+            cmd = Command.objects.get(name=nagios_settings.TRAFFIC_CHECK_CMD)
+        except Command.DoesNotExist:
+            # fails during initial installation, when the ifconfig module does its iface
+            # recognition before my fixtures have been loaded.
+            pass
+        else:
+            if Service.objects.filter(command=cmd, arguments=ip.device.devname).count() == 0:
+                serv = Service(
+                    volume      = None,
+                    command     = cmd,
+                    description = nagios_settings.TRAFFIC_DESCRIPTION % ip.device.devname,
+                    arguments   = ip.device.devname
+                    )
+                serv.save()
 
     try:
         Service.write_conf()
