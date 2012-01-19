@@ -154,10 +154,10 @@ class ModelHandler(BaseHandler):
 
             `kwds` may contain the following special fields:
 
-            * __exclude__: ``**kwargs`` for an .exclude() call.
-            * __fields__: ``*args`` for a .values() call.
+            * __exclude__: ``**kwargs`` for an :meth:`~django.db.models.query.QuerySet.exclude` call.
+            * __fields__: ``*args`` for a :meth:`~django.db.models.query.QuerySet.values` call.
 
-            Any other fields will be passed as ``**kwargs`` to .filter().
+            Any other fields will be passed as ``**kwargs`` to :meth:`~django.db.models.query.QuerySet.filter`.
             See the `Django docs <https://docs.djangoproject.com/en/dev/topics/db/queries/>`_ for details.
         """
         return [ self._getobj(obj) for obj in self._filter_queryset(kwds).order_by(*self.order) ]
