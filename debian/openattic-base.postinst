@@ -5,10 +5,6 @@ set -e
 . /usr/share/debconf/confmodule
 
 if [ "$1" = "configure" ] ; then
-    adduser --system --shell /bin/bash --quiet --home /var/lib/openattic --group openattic
-    adduser www-data openattic
-    adduser openattic www-data
-
     setperm(){
         FILE="$1"
         PERM="$2"
