@@ -68,22 +68,12 @@ Suggests: python-django-rosetta, lsscsi
 Description: Comprehensive storage management system using PGSQL
  metapackage that installs all openATTIC modules on a PGSQL database.
 
-Package: openattic-sqlite
-Architecture: all
-Depends: ${misc:Depends}, sqlite3
-Conflicts: openattic-mysql, openattic-pgsql
-Description: Configures openATTIC with an SQLite3 database
- Configures openATTIC with an SQLite3 database. This setup is recommended
- in cases where you do not plan on using the FTP module later on, because
- SQLite keeps its database in one single file and does not require an
- extra database server to run.
-
 Package: openattic-mysql
 Architecture: all
 Depends: ${misc:Depends}, python-mysqldb,
  dbconfig-common, mysql-server, libnss-mysql
 Recommends: mysql-client
-Conflicts: openattic-sqlite, openattic-pgsql
+Conflicts: openattic-pgsql
 Description: Configures openATTIC with a MySQL database
  Configures openATTIC with a MySQL database. This setup is recommended
  if you are more experienced in MySQL (or just like it better) than
@@ -95,7 +85,7 @@ Architecture: all
 Depends: ${misc:Depends}, python-psycopg2,
  dbconfig-common, postgresql, libpam-pgsql, libnss-pgsql2
 Recommends: postgresql-client
-Conflicts: openattic-sqlite, openattic-mysql
+Conflicts: openattic-mysql
 Description: Configures openATTIC with a PGSQL database
  Configures openATTIC with a PGSQL database. This setup is recommended
  if you are more experienced in PGSQL (or just like it better) than
@@ -121,7 +111,7 @@ Depends: ${misc:Depends}, python (>= 2.6),
  oxygen-icon-theme,
  lsb-release,
  libjs-extjs (>= 3.0.0), libjs-extjs (<< 4.0),
- openattic-sqlite | openattic-mysql | openattic-pgsql
+ openattic-mysql | openattic-pgsql
 Description: Basic requirements for openATTIC
  Installs the most basic set of packages required to run openATTIC, namely
  the web GUI, RPCd and Systemd, along with a basic set of modules.
