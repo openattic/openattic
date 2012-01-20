@@ -265,6 +265,8 @@ Description: FTP module for openATTIC using MySQL
  transferring files on the internet. This package provides a configuration
  interface along with a ProFTPd server configuration that uses the openATTIC
  database as configuration backend.
+ .
+ Use this package if you installed openATTIC using the MySQL backend.
 
 Package: openattic-module-ftp-pgsql
 Architecture: all
@@ -282,6 +284,8 @@ Description: FTP module for openATTIC using PGSQL
  transferring files on the internet. This package provides a configuration
  interface along with a ProFTPd server configuration that uses the openATTIC
  database as configuration backend.
+ .
+ Use this package if you installed openATTIC using the PostgreSQL backend.
 
 Package: openattic-module-munin
 Architecture: all
