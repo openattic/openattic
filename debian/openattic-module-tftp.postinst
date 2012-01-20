@@ -6,3 +6,5 @@ if [ "$1" = "configure" ] ; then
     invoke-rc.d tftpd-hpa stop
     update-rc.d tftpd-hpa remove
 fi
+
+#DEBHELPER#
