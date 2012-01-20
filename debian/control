@@ -150,6 +150,7 @@ Description: Configures openATTIC with a PGSQL database
 
 Package: openattic-base
 Architecture: all
+Pre-Depends: adduser
 Depends: ${misc:Depends}, python (>= 2.6),
  ${python:Depends},
  python-django,
@@ -313,10 +314,10 @@ Description: Nagios module for openATTIC
  intuitive user interface to view the graphs.
  .
  This package also contains the Nagios check plugins for openATTIC, namely:
- * check_diskstats
- * check_iface_traffic
- * check_openattic_systemd
- * check_openattic_rpcd
+  * check_diskstats
+  * check_iface_traffic
+  * check_openattic_systemd
+  * check_openattic_rpcd
 
 Package: openattic-module-drbd
 Architecture: all
