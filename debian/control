@@ -23,8 +23,30 @@ Depends: ${misc:Depends}, openattic-base,
  openattic-mysql
 Suggests: python-django-rosetta, lsscsi
 Description: Comprehensive storage management system
- metapackage that installs the most common set of openATTIC modules along
- with the basic requirements.
+ openATTIC is a storage management system based upon Open Source tools with
+ a comprehensive user interface that allows you to create, share and backup
+ storage space on demand.
+ .
+ It comes with an extensible API focused on modularity, so you can tailor
+ your installation exactly to your needs and embed openATTIC in your existing
+ data center infrastructure.
+ .
+ This metapackage installs the most common set of openATTIC modules along
+ with the basic requirements using a MySQL database. Those modules are:
+ .
+  * LVM
+  * NFS
+  * HTTP
+  * IET (iSCSI)
+  * Samba
+  * Apt
+  * Nagios
+  * FTP
+ .
+ You can install additional modules yourself or use the openattic-full-*
+ packages.
+ .
+ Upstream URL: http://www.openattic.org
 
 Package: openattic-full-mysql
 Architecture: all
@@ -45,7 +67,23 @@ Depends: ${misc:Depends}, openattic-base,
  openattic-mysql
 Suggests: python-django-rosetta, lsscsi
 Description: Comprehensive storage management system using MySQL
- metapackage that installs all openATTIC modules on a MySQL database.
+ openATTIC is a storage management system based upon Open Source tools with
+ a comprehensive user interface that allows you to create, share and backup
+ storage space on demand.
+ .
+ It comes with an extensible API focused on modularity, so you can tailor
+ your installation exactly to your needs and embed openATTIC in your existing
+ data center infrastructure.
+ .
+ This metapackage installs the full set of openATTIC modules along
+ with the basic requirements using a MySQL database. Modules which are not
+ included in the openATTIC package are:
+ .
+  * TFTP
+  * DRBD
+  * SSMTP (EMail configuration)
+ .
+ Upstream URL: http://www.openattic.org
 
 Package: openattic-full-pgsql
 Architecture: all
@@ -66,7 +104,23 @@ Depends: ${misc:Depends}, openattic-base,
  openattic-pgsql
 Suggests: python-django-rosetta, lsscsi
 Description: Comprehensive storage management system using PGSQL
- metapackage that installs all openATTIC modules on a PGSQL database.
+ openATTIC is a storage management system based upon Open Source tools with
+ a comprehensive user interface that allows you to create, share and backup
+ storage space on demand.
+ .
+ It comes with an extensible API focused on modularity, so you can tailor
+ your installation exactly to your needs and embed openATTIC in your existing
+ data center infrastructure.
+ .
+ This metapackage installs the full set of openATTIC modules along
+ with the basic requirements using a PostgreSQL database. Modules which are not
+ included in the openATTIC package are:
+ .
+  * TFTP
+  * DRBD
+  * SSMTP (EMail configuration)
+ .
+ Upstream URL: http://www.openattic.org
 
 Package: openattic-mysql
 Architecture: all
@@ -75,10 +129,11 @@ Depends: ${misc:Depends}, python-mysqldb,
 Recommends: mysql-client
 Conflicts: openattic-pgsql
 Description: Configures openATTIC with a MySQL database
- Configures openATTIC with a MySQL database. This setup is recommended
- if you are more experienced in MySQL (or just like it better) than
- PGSQL and you want to use the FTP module, which requires sharing a
- database with ProFTPd.
+ openATTIC is a storage management system based upon Open Source tools with
+ a comprehensive user interface that allows you to create, share and backup
+ storage space on demand.
+ .
+ This package configures the MySQL database for openATTIC.
 
 Package: openattic-pgsql
 Architecture: all
@@ -87,10 +142,11 @@ Depends: ${misc:Depends}, python-psycopg2,
 Recommends: postgresql-client
 Conflicts: openattic-mysql
 Description: Configures openATTIC with a PGSQL database
- Configures openATTIC with a PGSQL database. This setup is recommended
- if you are more experienced in PGSQL (or just like it better) than
- MySQL and you want to use the FTP module, which requires sharing a
- database with ProFTPd.
+ openATTIC is a storage management system based upon Open Source tools with
+ a comprehensive user interface that allows you to create, share and backup
+ storage space on demand.
+ .
+ This package configures the PostgreSQL database for openATTIC.
 
 Package: openattic-base
 Architecture: all
@@ -113,47 +169,84 @@ Depends: ${misc:Depends}, python (>= 2.6),
  libjs-extjs (>= 3.0.0), libjs-extjs (<< 4.0),
  openattic-mysql | openattic-pgsql
 Description: Basic requirements for openATTIC
- Installs the most basic set of packages required to run openATTIC, namely
- the web GUI, RPCd and Systemd, along with a basic set of modules.
+ openATTIC is a storage management system based upon Open Source tools with
+ a comprehensive user interface that allows you to create, share and backup
+ storage space on demand.
+ .
+ This package installs the basic framework for openATTIC, which consists
+ of the RPC and System daemons and the Web Interface. You will not be able
+ to manage any storage using *just* this package, but the other packages
+ require this one to be available.
 
 Package: openattic-module-lvm
 Architecture: all
 Depends: ${misc:Depends}, openattic-base,
  lvm2, parted, ntfs-3g, zfs-fuse
 Description: LVM module for openATTIC
- Installs the LVM module, which handles partitioning physical disks into
- logical volumes and creating snapshots. This module is required by most
- modules that create shares.
+ openATTIC is a storage management system based upon Open Source tools with
+ a comprehensive user interface that allows you to create, share and backup
+ storage space on demand.
+ .
+ Handles partitioning of physical disks into volumes using the Linux Logical
+ Volume Manager. LVM supports enterprise level volume management of disk
+ and disk subsystems by grouping arbitrary disks into volume groups. The
+ total capacity of volume groups can be allocated to logical volumes, which
+ are accessed as regular block devices.
 
 Package: openattic-module-nfs
 Architecture: all
 Depends: ${misc:Depends}, openattic-module-lvm,
  nfs-kernel-server
 Description: NFS module for openATTIC
- Installs the NFS module, which handles sharing volumes for other *nix
- hosts via NFS.
+ openATTIC is a storage management system based upon Open Source tools with
+ a comprehensive user interface that allows you to create, share and backup
+ storage space on demand.
+ .
+ Network File System is the most widely used mechanism for sharing files
+ between UNIX hosts. This package installs a module that allows Volumes to
+ be shared using NFS, which is the recommended way not only for UNIXes, but
+ also for VMware ESX virtualization hosts.
 
 Package: openattic-module-apt
 Architecture: all
 Depends: ${misc:Depends}, python-apt
 Description: APT module for openATTIC
- Installs the APT module, which handles system upgrades using Debian's
- Advanced Package Tool (APT).
+ openATTIC is a storage management system based upon Open Source tools with
+ a comprehensive user interface that allows you to create, share and backup
+ storage space on demand.
+ .
+ Debian's Advanced Package Tool handles installing, upgrading and removing
+ programs using packages. It keeps track of installed and available programs
+ and automates various procedures. This module extends the User interface
+ for a Front End, which allows you to check for available upgrades easily.
 
 Package: openattic-module-iet-iscsi
 Architecture: all
 Depends: ${misc:Depends}, openattic-module-lvm,
  iscsitarget, iscsitarget-dkms
 Description: IET iSCSI module for openATTIC
- Installs the IET iSCSI module, which uses the iSCSI Enterprise Target
- implementation in order to share volumes in a block-oriented manner.
+ openATTIC is a storage management system based upon Open Source tools with
+ a comprehensive user interface that allows you to create, share and backup
+ storage space on demand.
+ .
+ iSCSI is a block-based Storage protocol, which allows a remote host to
+ access a Volume and treat it as if it were a locally attached disk drive.
+ Contrary to FibreChannel, iSCSI transmits its data over a standard Ethernet
+ connection and does not require a dedicated infrastructure. This package
+ offers configuration of iSCSI Targets and LUNs through the openATTIC
+ framework.
 
 Package: openattic-module-samba
 Architecture: all
 Depends: ${misc:Depends}, openattic-module-lvm, samba
 Description: Samba module for openATTIC
- Installs the Samba module, which handles sharing volumes for Windows
- hosts using SMB/CIFS.
+ openATTIC is a storage management system based upon Open Source tools with
+ a comprehensive user interface that allows you to create, share and backup
+ storage space on demand.
+ .
+ Samba implements the SMB/CIFS protocol and enables file sharing with hosts
+ that run the Microsoft Windows family of operating systems. This package
+ provides configuration facilities for Samba Shares.
 
 Package: openattic-module-ftp-mysql
 Architecture: all
@@ -163,11 +256,14 @@ Depends: ${misc:Depends}, openattic-module-lvm,
  proftpd-mod-mysql
 Conflicts: openattic-module-ftp-pgsql
 Description: FTP module for openATTIC using MySQL
- Installs the FTP module, which provides FTP accounts for volumes using
- ProFTPd.
+ openATTIC is a storage management system based upon Open Source tools with
+ a comprehensive user interface that allows you to create, share and backup
+ storage space on demand.
  .
- This package configures ProFTPd to use a shared MySQL database with
- openATTIC.
+ The File Transfer Protocol is one of the most widely supported protocols for
+ transferring files on the internet. This package provides a configuration
+ interface along with a ProFTPd server configuration that uses the openATTIC
+ database as configuration backend.
 
 Package: openattic-module-ftp-pgsql
 Architecture: all
@@ -177,18 +273,26 @@ Depends: ${misc:Depends}, openattic-module-lvm,
  proftpd-mod-pgsql
 Conflicts: openattic-module-ftp-mysql
 Description: FTP module for openATTIC using PGSQL
- Installs the FTP module, which provides FTP accounts for volumes using
- ProFTPd.
+ openATTIC is a storage management system based upon Open Source tools with
+ a comprehensive user interface that allows you to create, share and backup
+ storage space on demand.
  .
- This package configures ProFTPd to use a shared PostgreSQL database with
- openATTIC.
+ The File Transfer Protocol is one of the most widely supported protocols for
+ transferring files on the internet. This package provides a configuration
+ interface along with a ProFTPd server configuration that uses the openATTIC
+ database as configuration backend.
 
 Package: openattic-module-munin
 Architecture: all
 Depends: ${misc:Depends}, openattic-base,
  munin-node, munin
 Description: Munin module for openATTIC
- Installs the Munin module, which provides statistics and graphs using Munin.
+ openATTIC is a storage management system based upon Open Source tools with
+ a comprehensive user interface that allows you to create, share and backup
+ storage space on demand.
+ .
+ Munin is a performance graphing tool. This package makes its graphs available
+ in the openATTIC interface.
 
 Package: openattic-module-nagios
 Architecture: all
@@ -199,23 +303,33 @@ Depends: ${misc:Depends}, python (>= 2.6),
  nagios3-core, nagios-plugins-standard, nagios-plugins-basic,
  pnp4nagios-bin
 Description: Nagios module for openATTIC
- Installs the Nagios module, which provides monitoring, statistics and graphs
- using Nagios.
+ openATTIC is a storage management system based upon Open Source tools with
+ a comprehensive user interface that allows you to create, share and backup
+ storage space on demand.
+ .
+ Nagios is a widely used system monitoring solution. This package installs a
+ module which automatically configures service checks for your configured
+ volumes and shares, measures performance data, and provides you with an
+ intuitive user interface to view the graphs.
  .
  This package also contains the Nagios check plugins for openATTIC, namely:
-  check_diskstats
-  check_iface_traffic
-  check_openattic_systemd
-  check_openattic_rpcd
+ * check_diskstats
+ * check_iface_traffic
+ * check_openattic_systemd
+ * check_openattic_rpcd
 
 Package: openattic-module-drbd
 Architecture: all
 Depends: ${misc:Depends}, openattic-module-lvm,
  drbd8-utils
 Description: DRBD module for openATTIC
- Installs the DRBD module, which uses Linbit's Distributed Replicated Block
- Device (DRBD) to mirror volumes to another openATTIC host in a block oriented
- fashion.
+ openATTIC is a storage management system based upon Open Source tools with
+ a comprehensive user interface that allows you to create, share and backup
+ storage space on demand.
+ .
+ LINBIT's Distributed Replicated Block Device is a data replication tool that
+ mirrors volumes to another openATTIC host in a block oriented fashion. It is
+ often referred to as RAID-1 over IP.
  .
  This module provides the groundwork for building high availability clusters
  using openATTIC.
@@ -225,21 +339,46 @@ Architecture: all
 Depends: ${misc:Depends}, openattic-module-lvm,
  xinetd, tftpd-hpa
 Description: TFTP module for openATTIC
- Installs the TFTP module, which handles sharing volumes for embedded devices
- like switches and serving of PXE boot images.
+ openATTIC is a storage management system based upon Open Source tools with
+ a comprehensive user interface that allows you to create, share and backup
+ storage space on demand.
+ .
+ Trivial FTP is an extremely simple File Transfer Protocol often used in
+ situations where the standard FTP protocol causes too much overhead. This
+ situation is typically encountered when booting systems over the network,
+ or transferring configurations for routers and switches.
+ .
+ This package installs a module which allows you to configure TFTP services
+ through openATTIC.
 
 Package: openattic-module-http
 Architecture: all
 Depends: ${misc:Depends}, openattic-module-lvm,
  apache2
 Description: HTTP module for openATTIC
- Installs the HTTP module, which allows accessing data in a volume via HTTP.
- This is useful e.g. for software repositories.
+ openATTIC is a storage management system based upon Open Source tools with
+ a comprehensive user interface that allows you to create, share and backup
+ storage space on demand.
+ .
+ The Hypertext Transfer Protocol is not only used for serving web sites, but
+ can also be used for serving other files in a read-only fashion. This is
+ commonly used for disk images or software repositories.
+ .
+ This package installs a moduule which allows you to share volumes or
+ subdirectories using Apache2.
 
 Package: openattic-module-ssmtp
 Architecture: all
 Depends: ${misc:Depends}, openattic-base,
  ssmtp
 Description: SSMTP module for openATTIC
- Installs the SSMTP module for openATTIC, which is used to provide emailing
- support.
+ openATTIC is a storage management system based upon Open Source tools with
+ a comprehensive user interface that allows you to create, share and backup
+ storage space on demand.
+ .
+ SSMTP is an extremely simple sendmail replacement, which sends email using
+ a remote host and redirects all mail for the root user to a preconfigured
+ email address.
+ .
+ This package installs a module which allows you to configure these parameters
+ over the openATTIC interface.
