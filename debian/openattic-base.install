@@ -42,3 +42,4 @@ debian/default/openattic            /etc/default
 debian/dbus_system.d/openattic.conf /etc/dbus-1/system.d
 
 bin/oaconfig /usr/sbin
+bin/backuptime /usr/share/doc/openattic-base/examples/backuptime
