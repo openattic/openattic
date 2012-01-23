@@ -3,7 +3,7 @@
 
 from rpcd.handlers import ModelHandler
 
-from lvm.models import VolumeGroup, LogicalVolume, ZfsSubvolume, ZfsSnapshot
+from lvm.models import VolumeGroup, LogicalVolume, ZfsSubvolume, ZfsSnapshot, LVMetadata
 
 class VgHandler(ModelHandler):
     model = VolumeGroup
@@ -146,6 +146,9 @@ class LvHandler(ModelHandler):
         return lv.standby
 
 
+class LVMetadataHandler(ModelHandler):
+    model = LVMetadata
+
 class ZfsSubvolumeHandler(ModelHandler):
     model = ZfsSubvolume
 
@@ -156,4 +159,4 @@ class ZfsSnapshotHandler(ModelHandler):
         """ Rollback the volume to the snapshot given by `id`. """
         return ZfsSnapshot.objects.get(id=id).rollback()
 
-RPCD_HANDLERS = [VgHandler, LvHandler, ZfsSubvolumeHandler, ZfsSnapshotHandler]
+RPCD_HANDLERS = [VgHandler, LvHandler, ZfsSubvolumeHandler, ZfsSnapshotHandler, LVMetadataHandler]
