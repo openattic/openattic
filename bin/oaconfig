@@ -53,6 +53,8 @@ case $1 in
 		;;
 
 	install)
+		chown $RPCD_CHUID /etc/openattic/databases/*sql.ini
+		
 		if [ "$#" -gt 1 ]; then
 			shift
 			apt-get install $@
