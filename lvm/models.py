@@ -566,3 +566,8 @@ class ZfsSnapshot(models.Model):
         for snap in ZfsSnapshot.objects.filter(**kwds):
             snap.delete(database_only=True) # -R will take care of them in the system
         self.volume.lvm.zfs_rollback_snapshot(self.origvolume.name, self.snapname)
+
+class LVMetadata(models.Model):
+    volume = models.ForeignKey(LogicalVolume)
+    key = models.CharField(max_length=255)
+    value = models.CharField(max_length=255)
