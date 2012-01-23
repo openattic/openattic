@@ -71,9 +71,9 @@ Ext.oa.Drbd__Device_Panel = Ext.extend(Ext.grid.GridPanel, {
             fieldLabel: 'Protocol',
             columns: 1,
             items: [
-              {name: "{% trans 'protocol' %}", boxLabel: "{% trans 'A: Asynchronous' %}", inputValue: "A"},
-              {name: "{% trans 'protocol' %}", boxLabel: "{% trans 'B: Memory Synchronous (Semi-Synchronous)'%}", inputValue: "B"},
-              {name: "{% trans 'protocol' %}", boxLabel: "{% trans 'C: Synchronous' %}", checked: true, inputValue: "C"}
+              {name: "protocol", boxLabel: "{% trans 'A: Asynchronous' %}", inputValue: "A"},
+              {name: "protocol", boxLabel: "{% trans 'B: Memory Synchronous (Semi-Synchronous)'%}", inputValue: "B"},
+              {name: "protocol", boxLabel: "{% trans 'C: Synchronous' %}", checked: true, inputValue: "C"}
             ]
           }, {
             fieldLabel: "{% trans 'Syncer Rate' %}",
