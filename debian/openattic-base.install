@@ -22,7 +22,6 @@ locale    /usr/share/openattic
 
 # Python files
 __init__.py    /usr/share/openattic
-cli.py         /usr/share/openattic
 settings.py    /etc/openattic
 manage.py      /usr/share/openattic
 pamauth.py     /usr/share/openattic
@@ -42,4 +41,5 @@ debian/default/openattic            /etc/default
 debian/dbus_system.d/openattic.conf /etc/dbus-1/system.d
 
 bin/oaconfig /usr/sbin
+bin/oacli    /usr/bin
 bin/backuptime /usr/share/doc/openattic-base/examples/backuptime
