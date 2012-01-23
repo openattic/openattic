@@ -1,0 +1,52 @@
+#!/usr/bin/env python
+# -*- coding: utf-8 -*-
+# kate: space-indent on; indent-width 4; replace-tabs on;
+
+import sys
+from xmlrpclib import ServerProxy
+from time import time
+from optparse import OptionParser
+
+parser = OptionParser(usage="%prog [options] <volume name ...>\n\n"
+    "RPC API example that sets the BACKUP_TIMESTAMP metadata of a given LV to the current time.")
+
+parser.add_option( "-c", "--connect", help="API URL to connect to.")
+parser.add_option( "-k", "--key",     help="Meta data key to set. (BACKUP_TIMESTAMP)", default='BACKUP_TIMESTAMP' )
+parser.add_option( "-i", "--iexact",  help="Match volume names case insensitively.", default=False, action="store_true" )
+
+options, progargs = parser.parse_args()
+
+if len(progargs) < 1:
+    parser.print_help()
+    parser.exit()
+
+prx = ServerProxy(options.connect)
+
+for targetvol in progargs:
+    if options.iexact:
+        volumes = prx.lvm.LogicalVolume.filter({"name__iexact": targetvol})
+    else:
+        volumes = prx.lvm.LogicalVolume.filter({"name": targetvol})
+
+    if not volumes:
+        print "Volume %s not found!" % targetvol
+        continue
+    elif len(volumes) > 1:
+        print "More than one volume %s found!" % targetvol
+        continue
+
+    volume = volumes[0]
+
+    meta = prx.lvm.LVMetadata.filter({"volume__id": volume["id"], "key": options.key})
+    if not meta:
+        prx.lvm.LVMetadata.create({
+            "volume": { "app": "lvm", "obj": "LogicalVolume", "id": volume["id"] },
+            "key":    options.key,
+            "value":  str(time())
+        })
+    else:
+        prx.lvm.LVMetadata.set( meta[0]["id"], {
+            "value":  str(time())
+        } )
+
+    print "%s done." % volume["name"]
