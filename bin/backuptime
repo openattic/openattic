@@ -2,12 +2,16 @@
 # -*- coding: utf-8 -*-
 # kate: space-indent on; indent-width 4; replace-tabs on;
 
+# Example script that demonstrates using openATTIC's RPC API
+# in order to change a volume's Metadata.
+
+
 import sys
 from xmlrpclib import ServerProxy
 from time import time
 from optparse import OptionParser
 
-parser = OptionParser(usage="%prog [options] <volume name ...>\n\n"
+parser = OptionParser(usage="%prog [options] -c <url> <volume name ...>\n\n"
     "RPC API example that sets the BACKUP_TIMESTAMP metadata of a given LV to the current time.")
 
 parser.add_option( "-c", "--connect", help="API URL to connect to.")
