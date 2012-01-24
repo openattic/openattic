@@ -55,7 +55,7 @@ Ext.oa.volumeGroup_Panel = Ext.extend(Ext.grid.GridPanel, {
           var initwin = new Ext.Window({
             title: "{% trans 'Initialize' %}",
             layout: "fit",
-            height: 140,
+            height: 150,
             width: 500,
             items: [{
               xtype: "form",
@@ -121,10 +121,12 @@ Ext.oa.volumeGroup_Panel = Ext.extend(Ext.grid.GridPanel, {
                 }
               }, "{% trans 'Please select the disk you wish to add to the volume group.' %}"), {
                 xtype: "label",
+                height: 100,
                 ref:   "usagelabel",
-                text:  "{% trans 'Waiting for disk selection...' %}",
-                cls:   "form_hint_label"
-              }, tipify({
+                text:  "{% trans 'Waiting for disk selection...' %}"
+//                 cls:   "form_hint_label"
+              }, 
+              tipify({
                 xtype:      'combo',
                 allowBlank: false,
                 fieldLabel: "{% trans 'Volume Group' %}",
