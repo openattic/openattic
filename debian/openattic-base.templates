@@ -5,4 +5,8 @@ _Description: The base packages have been unpacked and configured, but in order 
  .
    oaconfig install
  .
+ Afterwards, you can browse to the openATTIC user interface via the URL:
+ .
+   http://<IP or hostname>/openattic
+ .
  Please refer to /usr/share/doc/openattic-base/README.Debian for more information.
