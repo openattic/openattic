@@ -136,7 +136,7 @@ Ext.oa.Iscsi__Panel = Ext.extend(Ext.Panel, {
               header: "Name",
               dataIndex: "name"
             },{
-              header: "Iscsi Name",
+              header: "iSCSI Name",
               dataIndex: "iscsiname"
             }]
           }),
