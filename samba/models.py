@@ -78,7 +78,6 @@ def replace_set_password(instance=None, **kwargs):
     oldfunc = instance.set_password
 
     def set_password_samba(self, raw_password):
-        """ "Authenticate" against a fake PAM service that updates smbpasswd. """
         ret = oldfunc(raw_password)
         if self.id is None:
             self.save() # need to save() first, because smbpasswd will fail if the user doesn't exist
