@@ -215,7 +215,7 @@ Ext.oa.Auth__User_Panel = Ext.extend(Ext.grid.GridPanel, {
           if( sm.hasSelection() ){
             var sel = sm.selections.items[0];
             var addwin = new Ext.Window({
-            title: "{% trans 'Change Password' %}",
+              title: "{% trans 'Change Password' %}",
               layout: "fit",
               height: 140,
               width: 300,
@@ -229,7 +229,7 @@ Ext.oa.Auth__User_Panel = Ext.extend(Ext.grid.GridPanel, {
                 items: [{
                   fieldLabel: "{% trans 'User Name' %}",
                   name: "username",
-                  hidden: true,
+                  disabled: true,
                   ref: 'usernamefield',
                   value: sel.data.username
                 },{
