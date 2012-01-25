@@ -368,7 +368,7 @@ Ext.oa.Lvm__LogicalVolume_Panel = Ext.extend(Ext.Panel, {
                       'id': self.ownerCt.ownerCt.ownerfield.getValue()
                     }
                   }, function(provider, response){
-                    if( response.rpc ){
+                    if( response.type == "rpc" ){
                       lvmPanel.items.items[0].store.reload();
                       progresswin.hide();
                       addwin.hide();
