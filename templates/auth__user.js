@@ -112,8 +112,28 @@ Ext.oa.Auth__User_Panel = Ext.extend(Ext.grid.GridPanel, {
           var sm = authUserGrid.getSelectionModel();
           if( sm.hasSelection() ){
             var sel = sm.selections.items[0];
-            auth__User.remove( sel.data.id, function(provider, response){
-              authUserGrid.store.reload();
+            lvm__LogicalVolume.filter( { 'owner__id': sel.data.id }, function(provider, response){
+              if( response.result.length > 0 ){
+                Ext.Msg.alert( "{% trans 'Delete User' %}", interpolate(
+                  "{% trans 'User %(user)s is the owner of %(volcount)s volumes.' %}", {
+                    'user': sel.data.username, 'volcount': response.result.length
+                  }, true ));
+              }
+              else{
+                Ext.Msg.confirm(
+                  "{% trans 'Unmount' %}",
+                  interpolate(
+                    "{% trans 'Do you really want to delete user %s?' %}",
+                    [sel.data.username]),
+                  function(btn){
+                    if(btn == 'yes'){
+                      auth__User.remove( sel.data.id, function(provider, response){
+                        authUserGrid.store.reload();
+                      } );
+                    }
+                  }
+                );
+              }
             } );
           }
         }
