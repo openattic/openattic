@@ -136,10 +136,10 @@ class Zfs(FileSystem):
 
     @property
     def mounted(self):
-	try:
+        try:
             return self["mounted"] == "yes"
-	except dbus.DBusException:
-	    return None
+        except dbus.DBusException:
+            return None
 
     def __getitem__(self, item):
         return dbus_to_python(self.lv.lvm.zfs_get(self.lv.name, item))[0][2]
