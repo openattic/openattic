@@ -52,7 +52,7 @@ LVM_LOG_COMMANDS = False
 # Auto-Configure distro defaults
 try:
     import lsb_release
-distro = lsb_release.get_distro_information()
+    distro = lsb_release.get_distro_information()
 except:
     pass
 else:
