@@ -144,8 +144,7 @@ Ext.ux.ToolbarReorderer = Ext.extend(Ext.ux.Reorderer, {
 
                 if( el.getXY()[0] > tbar.getWidth() * 0.85 ){
                     Ext.Msg.confirm(
-                        "Delete Button?",
-                        "Do you really wish to remove this button from the toolbar?",
+                        me.messages.title, me.messages.message,
                         function(btn){
                             if( btn == "yes" ){
                                 for( var i = 0; i < tbar.items.items.length; i++ ){

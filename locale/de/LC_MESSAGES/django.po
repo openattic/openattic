@@ -8,16 +8,16 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2011-12-23 13:03+0100\n"
-"PO-Revision-Date: 2011-12-23 13:05\n"
-"Last-Translator: Michael Ziegler <michael.ziegler@it-novum.com>\n"
+"POT-Creation-Date: 2012-01-25 17:43+0100\n"
+"PO-Revision-Date: 2012-01-25 17:48\n"
+"Last-Translator: Laura Paduano <laura.paduano@it-novum.com>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Language: \n"
 "Plural-Forms: nplurals=2; plural=(n != 1)\n"
-"X-Translated-Using: django-rosetta 0.6.0\n"
+"X-Translated-Using: django-rosetta 0.5.6\n"
 
 #: apikey.js:15 apikey.js.py:176
 msgid "API Keys"
@@ -66,8 +66,8 @@ msgstr "Bitte auswählen..."
 msgid "Description"
 msgstr "Beschreibung"
 
-#: apikey.js:81 apikey.js.py:154 auth__user.js:63 auth__user.js.py:165
-#: auth__user.js.py:282
+#: apikey.js:81 apikey.js.py:154 auth__user.js:63 auth__user.js.py:185
+#: auth__user.js.py:302
 msgid "Active"
 msgstr "Aktiv"
 
@@ -83,70 +83,88 @@ msgstr "Benutzer"
 msgid "Add User"
 msgstr "Benutzer hinzufügen"
 
-#: auth__user.js:41 auth__user.js.py:140 auth__user.js.py:230
-#: auth__user.js:266
+#: auth__user.js:41 auth__user.js.py:160 auth__user.js.py:250
+#: auth__user.js:286
 msgid "User Name"
 msgstr "Benutzername"
 
-#: auth__user.js:45 auth__user.js.py:236
+#: auth__user.js:45 auth__user.js.py:256
 msgid "Password"
 msgstr "Passwort"
 
-#: auth__user.js:50 auth__user.js.py:145 auth__user.js.py:270
+#: auth__user.js:50 auth__user.js.py:165 auth__user.js.py:290
 msgid "First Name"
 msgstr "Vorname"
 
-#: auth__user.js:54 auth__user.js.py:151 auth__user.js.py:274
+#: auth__user.js:54 auth__user.js.py:171 auth__user.js.py:294
 msgid "Last Name"
 msgstr "Nachname"
 
-#: auth__user.js:58 auth__user.js.py:157
+#: auth__user.js:58 auth__user.js.py:177
 msgid "E-Mail"
 msgstr "E-Mail"
 
-#: auth__user.js:68 auth__user.js.py:177
+#: auth__user.js:68 auth__user.js.py:197
 msgid "SuperUser"
 msgstr "Administrator"
 
-#: auth__user.js:73 auth__user.js.py:171 auth__user.js.py:287
+#: auth__user.js:73 auth__user.js.py:191 auth__user.js.py:307
 msgid "Staff"
 msgstr "Personal"
 
-#: auth__user.js:109
+#: auth__user.js:109 auth__user.js.py:117
 msgid "Delete User"
 msgstr "Benutzer löschen"
 
-#: auth__user.js:121
+#: auth__user.js:118
+#, python-format
+msgid "User %(user)s is the owner of %(volcount)s volumes."
+msgstr ""
+
+#: auth__user.js:124
+msgid "Unmount"
+msgstr ""
+
+#: auth__user.js:126
+#, fuzzy, python-format
+msgid "Do you really want to delete user %s?"
+msgstr "Möchten Sie sich wirklich abmelden?"
+
+#: auth__user.js:141
 msgid "Edit"
 msgstr "Bearbeiten"
 
-#: auth__user.js:128
+#: auth__user.js:148
 msgid "Edit User"
 msgstr "Benutzer bearbeiten"
 
-#: auth__user.js:183
+#: auth__user.js:203
 msgid "Save"
 msgstr "Speichern"
 
-#: auth__user.js:211 auth__user.js.py:218
+#: auth__user.js:231 auth__user.js.py:238
 msgid "Change Password"
 msgstr "Passwort ändern"
 
-#: auth__user.js:278
+#: auth__user.js:298
 msgid "E-Mail Address"
 msgstr "E-Mail-Adresse"
 
-#: auth__user.js:292
+#: auth__user.js:312
 msgid "SU"
 msgstr "Admin"
 
-#: auth__user.js:297
+#: auth__user.js:317
 msgid "Last Login"
 msgstr "Letzter Login"
 
-#: auth__user.js:318
+#: auth__user.js:338
 msgid "User Management"
 msgstr "Benutzer-Verwaltung"
+
+#: index_ext_authed.html:78
+msgid "Do you really wish to remove this button from the toolbar?"
+msgstr "Wollen Sie diesen Button wirklich aus der toolbar-Leiste entfernen?"
 
 #: index_ext_unauthed.html:20
 msgid "The credentials you entered are invalid."

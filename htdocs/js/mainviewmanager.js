@@ -42,7 +42,10 @@ Ext.oa.MainViewManager = Ext.extend(Ext.Panel, {
               });
             }
           }),
-          new Ext.ux.ToolbarReorderer({defaultReorderable: false})
+          new Ext.ux.ToolbarReorderer({
+            defaultReorderable: false,
+            messages: this.toolbarMessages,
+          })
         ],
         listeners: {
           afterrender: function(self){

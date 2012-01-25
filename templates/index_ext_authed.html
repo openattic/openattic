@@ -72,8 +72,11 @@
         Ext.QuickTips.init();
 
         mainpanel = new Ext.oa.MainViewManager({
-          renderTo: document.body
-        });
+          renderTo: document.body,
+          toolbarMessages: {
+            title: "Delete Button?",
+            message: "{% trans 'Do you really wish to remove this button from the toolbar?' %}"
+        }});
         function updateLayout(){
           viewsize = {
             width:  Ext.lib.Dom.getViewWidth(),
