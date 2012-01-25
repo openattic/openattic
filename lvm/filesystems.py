@@ -2,6 +2,7 @@
 # kate: space-indent on; indent-width 4; replace-tabs on;
 
 import os
+import dbus
 
 from systemd  import dbus_to_python
 from lvm.conf import settings as lvm_settings
@@ -135,7 +136,10 @@ class Zfs(FileSystem):
 
     @property
     def mounted(self):
-        return self["mounted"] == "yes"
+	try:
+            return self["mounted"] == "yes"
+	except dbus.DBusException:
+	    return None
 
     def __getitem__(self, item):
         return dbus_to_python(self.lv.lvm.zfs_get(self.lv.name, item))[0][2]
