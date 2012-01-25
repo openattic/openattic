@@ -349,6 +349,7 @@ Ext.oa.Lvm__LogicalVolume_Panel = Ext.extend(Ext.Panel, {
                     modal: true,
                     html: "{% trans 'Please wait while your volume is being created...' %}"
                   });
+                  
                   progresswin.show();
                   lvm__LogicalVolume.create({
                     'vg': {
@@ -367,14 +368,17 @@ Ext.oa.Lvm__LogicalVolume_Panel = Ext.extend(Ext.Panel, {
                       'id': self.ownerCt.ownerCt.ownerfield.getValue()
                     }
                   }, function(provider, response){
-                    if( response.result ){
+                    if( response.rpc ){
                       lvmPanel.items.items[0].store.reload();
                       progresswin.hide();
                       addwin.hide();
+                    }else{
+                      progresswin.hide();
+                      alert(response.message);                  
                     }
                   });
-                }
-              }, {
+                  }
+                },{
                 text: "{% trans 'Cancel' %}",
                 icon: MEDIA_URL + "/icons2/16x16/actions/gtk-cancel.png",
                 handler: function(self){
