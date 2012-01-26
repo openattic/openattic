@@ -1,3 +1,4 @@
+{% load i18n %}
 
 Ext.namespace("Ext.oa");
 Ext.oa.Settings_Panel = Ext.extend(Ext.Panel,{
@@ -13,7 +14,7 @@ Ext.oa.Settings_Panel = Ext.extend(Ext.Panel,{
       reader: new Ext.data.JsonReader({fields: ['LV_test', 'id']}),
       items: [ {
         xtype: "checkbox",
-        fieldLabel: "Auto-expand root nodes",
+        fieldLabel: "{% trans 'Auto-expand root nodes' %}",
         width: 80,
         checked: Ext.state.Manager.get("expand_root_nodes", true),
         listeners: {
@@ -23,7 +24,7 @@ Ext.oa.Settings_Panel = Ext.extend(Ext.Panel,{
         }
       },{
         xtype: "checkbox",
-        fieldLabel: "tipify",
+        fieldLabel: "{% trans 'show hints' %}",
         checked: Ext.state.Manager.get("form_tooltip_show", true),
         listeners: {
           check: function( self, checked){
@@ -32,7 +33,7 @@ Ext.oa.Settings_Panel = Ext.extend(Ext.Panel,{
         }
       },{
         xtype: "checkbox",
-        fieldLabel: "Erlaube Installation/Löschen von Paketen",
+        fieldLabel: "{% trans 'Allow installation/deletion' %}",
         checked: Ext.state.Manager.get("pkgapt_distupgrade", true),
         listeners: {
           check: function(self, checked){
@@ -41,7 +42,7 @@ Ext.oa.Settings_Panel = Ext.extend(Ext.Panel,{
         }
       },{
         xtype: "checkbox",
-        fieldLabel: "Graph with Gradient",
+        fieldLabel: "{% trans 'Graph with Gradient' %}",
         checked: Ext.state.Manager.get("nagios_graph_grad", false),
         listeners:{
           check: function(self, checked){
