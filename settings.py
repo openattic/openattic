@@ -204,3 +204,4 @@ for name in INSTALLED_MODULES:
 
 modprobe('django_extensions')
 modprobe('rosetta')
+
