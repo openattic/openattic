@@ -8,8 +8,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2012-01-25 17:43+0100\n"
-"PO-Revision-Date: 2012-01-25 17:48\n"
+"POT-Creation-Date: 2012-01-26 15:47+0100\n"
+"PO-Revision-Date: 2012-01-26 16:29\n"
 "Last-Translator: Laura Paduano <laura.paduano@it-novum.com>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
 "MIME-Version: 1.0\n"
@@ -123,12 +123,12 @@ msgstr ""
 
 #: auth__user.js:124
 msgid "Unmount"
-msgstr ""
+msgstr "Unmount"
 
 #: auth__user.js:126
 #, fuzzy, python-format
 msgid "Do you really want to delete user %s?"
-msgstr "Möchten Sie sich wirklich abmelden?"
+msgstr ""
 
 #: auth__user.js:141
 msgid "Edit"
@@ -242,6 +242,22 @@ msgstr "Persönliche Einstellungen"
 #: menutree.js:62
 msgid "Shutdown"
 msgstr "Herunterfahren"
+
+#: settings.js:17
+msgid "Auto-expand root nodes"
+msgstr "Blende Menüunterpunkte ein"
+
+#: settings.js:27
+msgid "show hints"
+msgstr "Blende Hinweise ein"
+
+#: settings.js:36
+msgid "Allow installation/deletion"
+msgstr "Erlaube Installation/Löschen von Paketen"
+
+#: settings.js:45
+msgid "Graph with Gradient"
+msgstr "Zeige Graph mit Farbverlauf"
 
 #~ msgid "last Name"
 #~ msgstr "Nachname"
