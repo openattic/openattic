@@ -440,7 +440,7 @@ Ext.oa.Lvm__LogicalVolume_Panel = Ext.extend(Ext.Panel, {
           }
         }
       }, {
-        text: "{% trans "Delete Volume" %}",
+        text: "{% trans 'Delete Volume' %}",
         icon: MEDIA_URL + "/icons2/16x16/actions/remove.png",
         handler: function(self){
           var lvmGrid = lvmPanel.items.items[0];
