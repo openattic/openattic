@@ -44,7 +44,7 @@ Ext.oa.MainViewManager = Ext.extend(Ext.Panel, {
           }),
           new Ext.ux.ToolbarReorderer({
             defaultReorderable: false,
-            messages: this.toolbarMessages,
+            messages: this.toolbarMessages
           })
         ],
         listeners: {
