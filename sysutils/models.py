@@ -24,7 +24,10 @@ class InitScript(models.Model):
 
     @property
     def status(self):
-        return self.run_initscript("status")
+        try:
+            return self.run_initscript("status")
+        except dbus.DBusException: 
+            return None
 
     @property
     def running(self):
