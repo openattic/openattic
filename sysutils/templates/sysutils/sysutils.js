@@ -34,6 +34,8 @@ Ext.oa.SysUtils__Service_Panel = Ext.extend(Ext.grid.GridPanel, {
               return '<img src="{{ MEDIA_URL }}/oxygen/16x16/status/security-high.png" title="running" />';
             else if( val === 3 )
               return '<img src="{{ MEDIA_URL }}/oxygen/16x16/status/security-low.png" title="stopped" />';
+            else if(val === null )
+                return  '<img src="{{ MEDIA_URL }}/oxygen/16x16/categories/system-help.png" title="not configured" />';
             else
               return '<img src="{{ MEDIA_URL }}/oxygen/16x16/status/security-medium.png" title="failure" />';
           }
