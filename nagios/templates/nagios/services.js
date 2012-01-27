@@ -212,7 +212,7 @@ Ext.oa.Nagios__Graph_ImagePortlet = Ext.extend(Ext.ux.Portlet, {
         graphwidth: 230
       }
     }));
-    if( this.recordId && this.graphId ){
+    if( this.recordId && typeof this.graphId !== "undefined" ){
       Ext.applyIf( this.items, {
         currentRecord: { data: { id: this.recordId } },
         currentId: this.graphId
