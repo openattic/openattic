@@ -65,42 +65,6 @@ Ext.oa.getDefaultPortlets = function(tools){
       })
     })
   }, {
-    title: 'NFS',
-    layout:'fit',
-    id: 'portlet_nfs',
-    tools: tools,
-    items: new Ext.grid.GridPanel({
-    height: 265,
-    split: true,
-      store: new Ext.data.DirectStore({
-        autoLoad: true,
-        fields: ['address', 'path', 'options', 'state'],
-        directFn: nfs__Export.all
-      }),
-      colModel: new Ext.grid.ColumnModel({
-        defaults: {
-          sortable: true
-        },
-        columns: [{
-          header: "address",
-          width: 100,
-          dataIndex: "address"
-        }, {
-          header: "path",
-          width: 200,
-          dataIndex: "path"
-        }, {
-          header: "options",
-          width: 200,
-          dataIndex: "options"
-        }, {
-          header: "state",
-          width: 50,
-          dataIndex: "state"
-        }]
-      })
-    })
-  }, {
     title: 'CPU Stats',
     id: 'portlet_cpu',
     tools: tools,
