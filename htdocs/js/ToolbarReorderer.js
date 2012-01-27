@@ -147,10 +147,13 @@ Ext.ux.ToolbarReorderer = Ext.extend(Ext.ux.Reorderer, {
                         me.messages.title, me.messages.message,
                         function(btn){
                             if( btn == "yes" ){
-                                for( var i = 0; i < tbar.items.items.length; i++ ){
-                                    if( tbar.items.items[i].getEl() == el ){
-                                        tbar.remove( tbar.items.items[i] );
-                                    }
+                                tbar.remove(tbar.items.items[tbar.items.items.length - 1]);
+                                me.updateButtonXCache();
+                                for (var index = 0; index < tbar.items.items.length; index++) {
+                                    var obj  = tbar.items.items[index],
+                                        newX = me.buttonXCache[obj.id];
+                                    var el = obj.getEl();
+                                    el.moveTo(newX, el.getY());
                                 }
                             }
                             else
