@@ -2,7 +2,7 @@
 # kate: space-indent on; indent-width 4; replace-tabs on;
 
 import os
-from time import time
+from time import time, sleep
 from systemd import invoke, create_job, logged, BasePlugin, method, signal
 
 from lvm.conf   import settings as lvm_settings
@@ -348,6 +348,7 @@ class SystemD(BasePlugin):
 
     @method(in_signature="s", out_signature="i")
     def zfs_destroy(self, device):
+        sleep (0.5)
         return invoke(["zpool", "destroy", device])
 
     @method(in_signature="sssss", out_signature="")
