@@ -515,17 +515,16 @@ Ext.oa.Lvm__LogicalVolume_Panel = Ext.extend(Ext.Panel, {
           store.setDefaultSort("name");
           return store;
         }()),
+        viewConfig: { forceFit: true },
         colModel:  new Ext.grid.ColumnModel({
           defaults: {
             sortable: true
           },
           columns: [{
             header: "{% trans "LV" %}",
-            width: 200,
             dataIndex: "name"
           }, {
             header: "{% trans "Size" %}",
-            width: 150,
             dataIndex: "megs",
             align: 'right',
             renderer: function( val, x, store ){
@@ -535,7 +534,6 @@ Ext.oa.Lvm__LogicalVolume_Panel = Ext.extend(Ext.Panel, {
             }
           }, {
             header: "{% trans "FS" %}",
-            width: 50,
             dataIndex: "filesystem",
             renderer: function( val, x, store ){
               if( val )
@@ -544,7 +542,6 @@ Ext.oa.Lvm__LogicalVolume_Panel = Ext.extend(Ext.Panel, {
             }
           }, {
             header: "{% trans "Free" %}",
-            width: 100,
             dataIndex: "fsfree",
             align: 'right',
             renderer: function( val, x, store ){
@@ -554,7 +551,6 @@ Ext.oa.Lvm__LogicalVolume_Panel = Ext.extend(Ext.Panel, {
             }
           }, {
             header: "{% trans "Used" %}",
-            width: 100,
             dataIndex: "fsused",
             align: 'right',
             renderer: function( val, x, store ){
@@ -564,7 +560,6 @@ Ext.oa.Lvm__LogicalVolume_Panel = Ext.extend(Ext.Panel, {
             }
           }, {
             header: "{% trans "Used%" %}",
-            width: 75,
             dataIndex: "fspercent",
             align: 'right',
             renderer: function( val, x, store ){
@@ -580,7 +575,6 @@ Ext.oa.Lvm__LogicalVolume_Panel = Ext.extend(Ext.Panel, {
             }
           },{
             header: "{% trans "Group" %}",
-            width: 100,
             dataIndex: "vgname",
             align: 'center'
           }]
@@ -615,8 +609,8 @@ Ext.oa.Lvm__LogicalVolume_Panel = Ext.extend(Ext.Panel, {
         region: "east",
         title: "{% trans "Storage usage" %}",
         collapsible: true,
+        width: 400,
         collapsed: true,
-        width:  460,
         layout: "fit",
         ref: 'chartpanel',
         items: new Ext.DataView({
