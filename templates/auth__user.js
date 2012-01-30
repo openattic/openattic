@@ -65,14 +65,14 @@ Ext.oa.Auth__User_Panel = Ext.extend(Ext.grid.GridPanel, {
                 ref: 'activefield'
               }, {
                 xtype: 'checkbox',
-                fieldLabel: "{% trans 'SuperUser' %}",
-                name: "su",
-                ref: 'sufield'
-              }, {
-                xtype: 'checkbox',
                 fieldLabel: "{% trans 'Staff' %}",
                 name: "staff",
                 ref: 'stafffield'
+              }, {
+                xtype: 'checkbox',
+                fieldLabel: "{% trans 'SuperUser' %}",
+                name: "su",
+                ref: 'sufield'
               }],
               buttons: [{
                 text: 'Create User',
