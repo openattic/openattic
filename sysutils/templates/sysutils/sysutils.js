@@ -15,19 +15,18 @@ Ext.oa.SysUtils__Service_Panel = Ext.extend(Ext.grid.GridPanel, {
         st.setDefaultSort("name");
         return st;
       }()),
+      viewConfig: { forceFit: true },
       colModel: new Ext.grid.ColumnModel({
         defaults: {
-          sortable: true,
-          x: 500,
-          y: 500
+          sortable: true
         },
         columns: [{
           header: "{% trans 'Service Name' %}",
-          width: 200,
           dataIndex: "name"
         }, {
           header: "{% trans 'Status' %}",
-          width: 50,
+          width: 5,
+          align: "center",
           dataIndex: "status",
           renderer: function( val, x, store ){
             if( val === 0 )
