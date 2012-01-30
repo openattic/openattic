@@ -219,58 +219,6 @@ Ext.oa.Iscsi__Panel = Ext.extend(Ext.Panel, {
               addwin.show();
             }
           },{
-            text:  "{% trans 'Edit' %}",
-            icon: MEDIA_URL + "/icons2/16x16/actions/edit-redo.png",
-            handler: function(self){
-              var sm = iscsiPanel.targets.getSelectionModel();
-              if( sm.hasSelection() ){
-                var sel = sm.selections.items[0];
-                var addwin = new Ext.Window({
-                title: "{% trans 'Edit Target' %}",
-                layout: "fit",
-                height: 140,
-                width: 500,
-                items: [{
-                  xtype: "form",
-                  defaults: {
-                    xtype: "textfield",
-                    allowBlank: false,
-                    anchor: "-20px"
-                  },
-                  bodyStyle: 'padding:5px 5px;',
-                  items: [{
-                    fieldLabel: "{% trans 'Name' %}",
-                    ref: "namefield",
-                    value: sel.data.name
-                  },{
-                    fieldLabel: "{% trans 'IP/IQN' %}",
-                    ref: "iqn_ip_field",
-                    value: sel.data.iscsiname
-                  }],
-                  buttons: [{
-                    text: "{% trans 'Save' %}",
-                    icon: MEDIA_URL + "/oxygen/16x16/actions/dialog-ok-apply.png",
-                    handler: function(self){
-                       if( !self.ownerCt.ownerCt.getForm().isValid() ){
-                          return;
-                       }
-                        iscsi__Target.set(sel.data.id,{
-                          'name': self.ownerCt.ownerCt.namefield.getValue(),
-                          'iscsiname': self.ownerCt.ownerCt.iqn_ip_field.getValue()
-                        }, function(provider, response){
-                          if( response.result ) {
-                            targetStore.reload();
-                            addwin.hide();
-                          }
-                        })
-                    }
-                  }]
-                }]
-              });
-              addwin.show();
-              }
-            }
-          },{
             text: "{% trans 'Delete Target'%}",
             icon: MEDIA_URL + "/icons2/16x16/actions/remove.png",
             handler: function(self){

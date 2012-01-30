@@ -43,7 +43,7 @@ class Target(models.Model):
     def save(self, *args, **kwargs):
         if self.id is None:
             self._iscsi.target_new(0, self.iscsiname)
-
+        
         ret = models.Model.save(self, *args, **kwargs)
         self._iscsi.writeconf()
         return ret
