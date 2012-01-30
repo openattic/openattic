@@ -42,13 +42,22 @@ Ext.oa.Settings_Panel = Ext.extend(Ext.Panel,{
         }
       },{
         xtype: "checkbox",
-        fieldLabel: "{% trans 'Graph with Gradient' %}",
+        fieldLabel: "{% trans 'Monitoring graph with radient' %}",
         checked: Ext.state.Manager.get("nagios_graph_grad", false),
         listeners:{
           check: function(self, checked){
             Ext.state.Manager.set("nagios_graph_grad", checked);
           }
         }
+      },{
+          xtype: "checkbox",
+          fieldLabel: "{% trans 'Show graph for storage utilization'%}",
+          checked: Ext.state.Manager.get("storage_utilization_graph", false),
+          listeners: {
+            check: function(self,checked){
+              Ext.state.Manager.set("storage_utilization_graph", checked)
+            }
+         }
       },
       {
         xtype: 'radiogroup',
