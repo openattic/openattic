@@ -9,6 +9,21 @@ from lvm.conf import settings as lvm_settings
 from lvm      import signals  as lvm_signals
 
 class FileSystem(object):
+    """ Base class from which filesystem objects should be derived.
+
+        Note that these are NOT models, they should fetch their information live from
+        the file system metadata.
+
+        The volume instance that is formatted with this file system instance can be
+        accessed through ``self.lv``.
+
+        Class variables:
+
+         * name: File system type that can be passed to mount -t.
+         * desc: Human-readable description.
+         * mount_in_fstab: If True, a mount line for this volume will be included in /etc/fstab.
+    """
+
     name = "failfs"
     desc = "failing file system"
     mount_in_fstab = True
@@ -18,9 +33,13 @@ class FileSystem(object):
 
     @property
     def mountpoints(self):
+        """ Return a list of mount points. Currently, only the first one is used. """
         return [os.path.join(lvm_settings.MOUNT_PREFIX, self.lv.vg.name, self.lv.name)]
 
     def mount(self, mountpoint=None):
+        """ Mount the file system at the given mountpoint, or the first one if
+            mountpoint is omitted.
+        """
         if mountpoint is None and len(self.mountpoints) == 1:
             mountpoint = self.mountpoints[0]
         lvm_signals.pre_mount.send(sender=self.lv, device=self.lv.path, mountpoint=mountpoint)
@@ -31,11 +50,13 @@ class FileSystem(object):
 
     @property
     def mounted(self, mountpoint=None):
+        """ True if the volume is currently mounted. """
         if mountpoint is None and len(self.mountpoints) == 1:
             mountpoint = self.mountpoints[0]
         return os.path.ismount(mountpoint)
 
     def unmount(self, mountpoint=None):
+        """ Unmount the volume. """
         if mountpoint is None and len(self.mountpoints) == 1:
             mountpoint = self.mountpoints[0]
         lvm_signals.pre_unmount.send(sender=self.lv, mountpoint=mountpoint)
@@ -45,16 +66,22 @@ class FileSystem(object):
             lvm_signals.post_unmount.send(sender=self.lv, mountpoint=mountpoint)
 
     def format(self):
+        """ Format the volume. """
         raise NotImplementedError("FileSystem::format needs to be overridden")
 
     def resize(self, jid, grow):
+        """ Add a command to the job with the given ``jid`` to resize the file system
+            to the current volume size.
+        """
         raise NotImplementedError("FileSystem::resize needs to be overridden")
 
     @property
     def info(self):
+        """ Return all file system metadata. """
         raise NotImplementedError("FileSystem::info needs to be overridden")
 
     def chown(self):
+        """ Change ownership of the filesystem to be the LV's owner. """
         for mp in self.mountpoints:
             ret = self.lv.lvm.fs_chown( mp, self.lv.owner.username, lvm_settings.CHOWN_GROUP )
             if ret != 0:
@@ -62,10 +89,12 @@ class FileSystem(object):
         return 0
 
     def destroy(self):
+        """ Destroy the file system. """
         pass
 
     @property
     def stat(self, mountpoint=None):
+        """ stat() the file system and return usage statistics. """
         if mountpoint is None and len(self.mountpoints) == 1:
             mountpoint = self.mountpoints[0]
         s = os.statvfs(mountpoint)
@@ -80,6 +109,7 @@ class FileSystem(object):
         return stats
 
 class Ext2(FileSystem):
+    """ Handler for Ext2 (without journal). """
     name = "ext2"
     desc = "Ext2 (Linux)"
 
@@ -95,6 +125,7 @@ class Ext2(FileSystem):
         return self.lv.lvm.e2fs_resize( jid, self.lv.path, self.lv.megs, grow )
 
 class Ext3(Ext2):
+    """ Handler for Ext3 (Ext2 + Journal). """
     name = "ext3"
     desc = "Ext3 (Linux Journalling)"
 
@@ -103,6 +134,7 @@ class Ext3(Ext2):
             self.lv.owner.username, lvm_settings.CHOWN_GROUP, self.mountpoints[0] )
 
 class Ext4(Ext2):
+    """ Handler for ext4. """
     name = "ext4"
     desc = "Ext4 (Linux Journalling)"
 
@@ -112,6 +144,7 @@ class Ext4(Ext2):
 
 
 class Zfs(FileSystem):
+    """ Handler for ZFS on Fuse. """
     name = "zfs"
     desc = "ZFS on FUSE"
     mount_in_fstab = False
@@ -149,6 +182,7 @@ class Zfs(FileSystem):
 
 
 class Ntfs(FileSystem):
+    """ Handler for NTFS-3g. """
     name = "ntfs-3g"
     desc = "NTFS (Windows)"
 
@@ -168,6 +202,7 @@ class Ntfs(FileSystem):
 FILESYSTEMS = (Ext2, Ext3, Ext4, Ntfs, Zfs)
 
 def get_by_name(name):
+    """ Return the file system class with the given ``name``. """
     for fs in FILESYSTEMS:
         if fs.name == name:
             return fs
