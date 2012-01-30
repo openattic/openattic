@@ -579,8 +579,10 @@ Ext.oa.Lvm__LogicalVolume_Panel = Ext.extend(Ext.Panel, {
             align: 'center'
           }]
         }),
+        
         listeners: {
           cellmousedown: function( self, rowIndex, colIndex, evt ){
+            var graph_enabled = Ext.state.Manager.get("storage_utilization_graph", false);
             var record = self.getStore().getAt(rowIndex);
             var chartpanel = self.ownerCt.items.items[1];
             var defer = false;
@@ -588,7 +590,7 @@ Ext.oa.Lvm__LogicalVolume_Panel = Ext.extend(Ext.Panel, {
               chartpanel.collapse();
               defer = true;
             }
-            if( !record.data.filesystem || currentChartId === record.data.id ){
+            if( !record.data.filesystem || currentChartId === record.data.id || graph_enabled == false){
               currentChartId = null;
               return;
             }
@@ -604,7 +606,8 @@ Ext.oa.Lvm__LogicalVolume_Panel = Ext.extend(Ext.Panel, {
               chartpanel.expand();
           }
         }
-      }, {
+      },
+      {
         split: true,
         region: "east",
         title: "{% trans "Storage usage" %}",
