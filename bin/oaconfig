@@ -8,7 +8,7 @@ cd $OADIR
 OAUSER=` cut -d: -f1 <<< "$RPCD_CHUID"`
 
 if [ "$DJANGO_AUTO_COMPLETE" = "1" ]; then
-	MYCOMMANDS="install install-cli scan-vgs add-vg add-disk restart reload rootshell"
+	MYCOMMANDS="install install-cli scan-vgs add-vg add-disk restart reload status rootshell"
 	ARRAY_WORDS=( $COMP_WORDS )
 	compgen -W "$MYCOMMANDS" "${ARRAY_WORDS[COMP_CWORD]}"
 	su "$OAUSER" -c 'python manage.py'
@@ -34,6 +34,7 @@ usage () {
 	echo "    add-disk     Create a PV on the given disk/partition and add it to openATTIC."
 	echo "    restart      Restart all services that are needed to run openATTIC."
 	echo "    reload       Reload all services that are needed to run openATTIC."
+	echo "    status       Show the status of all services that are needed to run openATTIC."
 	echo "    rootshell    Start a python shell as root."
 	echo
 	echo "Any other command will be passed as-is to the openATTIC management system,"
