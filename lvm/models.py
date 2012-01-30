@@ -43,7 +43,7 @@ class VolumeGroup(models.Model):
         if pvs:
             for device in pvs:
                 if pvs[device]["LVM2_VG_NAME"] == self.name:
-                    lvm.pvremove(device) 
+                    lvm.pvremove(device)
         models.Model.delete(self)
 
     @classmethod
