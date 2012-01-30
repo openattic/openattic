@@ -9,7 +9,7 @@ msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2012-01-30 12:57+0100\n"
-"PO-Revision-Date: 2012-01-30 18:11\n"
+"PO-Revision-Date: 2012-01-30 18:18\n"
 "Last-Translator: Laura Paduano <laura.paduano@it-novum.com>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
 "MIME-Version: 1.0\n"
@@ -256,7 +256,6 @@ msgid "Allow installation/deletion"
 msgstr "Erlaube Installation/Löschen von Paketen"
 
 #: settings.js:45
-#, fuzzy
 msgid "Monitoring graph with radient"
 msgstr "Zeige Monitoring Graph mit Farbverlauf"
 
