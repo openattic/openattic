@@ -8,8 +8,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2012-01-26 15:47+0100\n"
-"PO-Revision-Date: 2012-01-26 16:29\n"
+"POT-Creation-Date: 2012-01-30 12:57+0100\n"
+"PO-Revision-Date: 2012-01-30 13:00\n"
 "Last-Translator: Laura Paduano <laura.paduano@it-novum.com>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
 "MIME-Version: 1.0\n"
@@ -104,13 +104,13 @@ msgstr "Nachname"
 msgid "E-Mail"
 msgstr "E-Mail"
 
-#: auth__user.js:68 auth__user.js.py:197
-msgid "SuperUser"
-msgstr "Administrator"
-
-#: auth__user.js:73 auth__user.js.py:191 auth__user.js.py:307
+#: auth__user.js:68 auth__user.js.py:191 auth__user.js.py:307
 msgid "Staff"
 msgstr "Personal"
+
+#: auth__user.js:73 auth__user.js.py:197
+msgid "SuperUser"
+msgstr "Administrator"
 
 #: auth__user.js:109 auth__user.js.py:117
 msgid "Delete User"
@@ -126,7 +126,7 @@ msgid "Unmount"
 msgstr "Unmount"
 
 #: auth__user.js:126
-#, fuzzy, python-format
+#, python-format
 msgid "Do you really want to delete user %s?"
 msgstr ""
 
@@ -256,8 +256,13 @@ msgid "Allow installation/deletion"
 msgstr "Erlaube Installation/Löschen von Paketen"
 
 #: settings.js:45
-msgid "Graph with Gradient"
-msgstr "Zeige Graph mit Farbverlauf"
+#, fuzzy
+msgid "Monitoring graph with radient"
+msgstr "Zeige Monitoring Graph mit Farbverlauf"
+
+#: settings.js:54
+msgid "Show graph for storage utilization"
+msgstr ""
 
 #~ msgid "last Name"
 #~ msgstr "Nachname"
