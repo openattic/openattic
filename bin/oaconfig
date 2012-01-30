@@ -8,7 +8,7 @@ cd $OADIR
 OAUSER=` cut -d: -f1 <<< "$RPCD_CHUID"`
 
 if [ "$DJANGO_AUTO_COMPLETE" = "1" ]; then
-	MYCOMMANDS="install install-cli scan-vgs add-vg restart reload rootshell"
+	MYCOMMANDS="install install-cli scan-vgs add-vg add-disk restart reload rootshell"
 	ARRAY_WORDS=( $COMP_WORDS )
 	compgen -W "$MYCOMMANDS" "${ARRAY_WORDS[COMP_CWORD]}"
 	su "$OAUSER" -c 'python manage.py'
@@ -31,6 +31,7 @@ usage () {
 	echo "    install-cli  Generate an API Key and a corresponding oacli configuration."
 	echo "    scan-vgs     Instruct LVM to search for existing VGs."
 	echo "    add-vg       Make an already existing LVM Volume Group known to openATTIC."
+	echo "    add-disk     Create a PV on the given disk/partition and add it to openATTIC."
 	echo "    restart      Restart all services that are needed to run openATTIC."
 	echo "    reload       Reload all services that are needed to run openATTIC."
 	echo "    rootshell    Start a python shell as root."
@@ -136,6 +137,27 @@ case $1 in
 			exit 1
 		fi
 		oacli lvm.VolumeGroup.create "json:{\"name\": \"$2\"}"
+		;;
+
+	add-disk)
+		if [ "$#" != "3" ]; then
+			echo "Usage: $0 $1 <disk> <vgname>" >&2
+			exit 1
+		fi
+		if [ ! -f "/etc/openattic/cli.conf" ]; then
+			echo "This command requires oacli to be configured (run $0 install-cli)."
+			exit 1
+		fi
+		DISK=$2
+		VG=$3
+		pvcreate $DISK
+		VGINFO=$( oacli lvm.VolumeGroup.filter "json:{\"name\": \"$VG\"}" )
+		if [ -z "$VGINFO" ]; then
+			vgcreate $VG $DISK
+			$0 add-vg $VG
+		else
+			vgextend $VG $DISK
+		fi
 		;;
 
 	restart|force-reload)
