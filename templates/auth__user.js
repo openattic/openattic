@@ -28,7 +28,7 @@ Ext.oa.Auth__User_Panel = Ext.extend(Ext.grid.GridPanel, {
           var addwin = new Ext.Window({
             title: "{% trans 'Add User' %}",
             layout: "fit",
-            height: 290,
+            height: 320,
             width: 500,
             items: [{
               xtype: "form",
@@ -147,7 +147,7 @@ Ext.oa.Auth__User_Panel = Ext.extend(Ext.grid.GridPanel, {
             var addwin = new Ext.Window({
               title: "{% trans 'Edit User' %}",
               layout: "fit",
-              height: 250,
+              height: 300,
               width: 500,
               items: [{
                 xtype: "form",
