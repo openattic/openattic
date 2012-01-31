@@ -5,7 +5,16 @@ Ext.oa.getDefaultPortlets = function(tools){
     title: 'LVs',
     layout:'fit',
     id: 'portlet_lvs',
-    tools: tools,
+    tools: (function(){
+      var mytools = tools.slice();
+      mytools.unshift({
+        id: 'refresh',
+        handler: function(){
+          Ext.StoreMgr.lookup("portlet_lvs_store").reload();
+        }
+      });
+      return mytools;
+    }()),
     items: new Ext.grid.GridPanel({
       height: 265,
       viewConfig: { forceFit: true },
@@ -13,6 +22,7 @@ Ext.oa.getDefaultPortlets = function(tools){
       store: (function(){
         // Anon function that is called immediately to set up the store's DefaultSort
         var store = new Ext.data.DirectStore({
+          storeId: "portlet_lvs_store",
           autoLoad: true,
           fields: ['name', 'megs', 'filesystem',  'formatted', 'id', 'state', 'fs', 'fswarning', 'fscritical', {
             name: 'fsused',
