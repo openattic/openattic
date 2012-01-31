@@ -3,12 +3,15 @@
 Ext.namespace("Ext.oa");
 
 var volumeGroups = new Ext.data.DirectStore({
-  fields: ['id', 'name',"LVM_VG_FREE","LVM_VG_SIZE","LVM_VG_ATTR"],
+  fields: ['id', 'name',"LVM_VG_FREE","LVM_VG_SIZE","LVM_VG_ATTR", "LVM_VG_PERCENT"],
   directFn: lvm__VolumeGroup.all,
   listeners: {
     load: function(self){
       var handleResponse = function(i){
         return function(provider, response){
+          self.data.items[i].set( "LVM_VG_PERCENT",
+            ((response.result.LVM2_VG_SIZE - response.result.LVM2_VG_FREE) / response.result.LVM2_VG_SIZE * 100.).toFixed(2)
+          );
           if( response.result.LVM2_VG_SIZE >= 1000 ){
             self.data.items[i].set("LVM_VG_SIZE", String.format("{0} GB", (response.result.LVM2_VG_SIZE / 1000).toFixed(2)));
           }
@@ -17,7 +20,7 @@ var volumeGroups = new Ext.data.DirectStore({
             self.data.items[i].set("LVM_VG_SIZE", String.format("{0} MB", response.result.LVM2_VG_SIZE));
           }
           if( response.result.LVM2_VG_FREE >= 1000 ){
-            self.data.items[i].set("LVM_VG_FREE", String.format("{0} GB", (response.result.LVM2_VG_FREE / 1000).toFixed(2)));   
+            self.data.items[i].set("LVM_VG_FREE", String.format("{0} GB", (response.result.LVM2_VG_FREE / 1000).toFixed(2)));
           }
           else
           {
@@ -243,6 +246,24 @@ Ext.oa.volumeGroup_Panel = Ext.extend(Ext.grid.GridPanel, {
           header: "{% trans 'Free' %}",
           dataIndex: "LVM_VG_FREE",
           renderer: function(val){ if( val ) return val; return '♻' }
+        },{
+          header: "{% trans 'Used%' %}",
+          dataIndex: "LVM_VG_PERCENT",
+          renderer: function( val, x, store ){
+            if( !val || val === -1 )
+              return '♻';
+            var id = Ext.id();
+            (function(){
+              new Ext.ProgressBar({
+                renderTo: id,
+                value: val/100.,
+                text:  String.format("{0}%", val),
+                cls:   ( val > 85 ? "lv_used_crit" :
+                        (val > 70 ? "lv_used_warn" : "lv_used_ok"))
+              });
+            }).defer(25)
+            return '<span id="' + id + '"></span>';
+          }
         },{
           header: "{% trans 'Attributes' %}",
           dataIndex: "LVM_VG_ATTR",
