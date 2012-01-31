@@ -3,7 +3,7 @@
 Ext.namespace("Ext.oa");
 
 var volumeGroups = new Ext.data.DirectStore({
-  fields: ['id', 'name',"LVM_VG_FREE","LVM_VG_SIZE","LVM_VG_ATTR"],
+  fields: ['id', 'name',"LVM_VG_FREE","LVM_VG_SIZE","LVM_VG_ATTR", "LVM_VG_PERCENT"],
   directFn: lvm__VolumeGroup.all,
   listeners: {
     load: function(self){
@@ -251,7 +251,7 @@ Ext.oa.volumeGroup_Panel = Ext.extend(Ext.grid.GridPanel, {
           dataIndex: "LVM_VG_PERCENT",
           renderer: function( val, x, store ){
             if( !val || val === -1 )
-              return '';
+              return '♻';
             var id = Ext.id();
             (function(){
               new Ext.ProgressBar({
