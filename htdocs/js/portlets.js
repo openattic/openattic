@@ -38,28 +38,24 @@ Ext.oa.getDefaultPortlets = function(tools){
           width: 200,
           dataIndex: "name"
         }, {
-          header: "Size",
-          width: 75,
-          dataIndex: "megs",
-          align: 'right',
-          renderer: function( val, x, store ){
-            return String.format("{0} GB", (val / 1000).toFixed(2));
-          }
-        }, {
           header: "Used",
-          width: 75,
+          width: 150,
           dataIndex: "fsused",
           align: 'right',
           renderer: function( val, x, store ){
             if( !val || val === -1 )
               return '';
-            if( val > store.data.fscritical )
-              var color = "red";
-            else if( val > store.data.fswarning )
-              var color = "gold";
-            else
-              var color = "green";
-            return String.format('<span style="color:{1};">{0}%</span>', val, color);
+            var id = Ext.id();
+            (function(){
+              new Ext.ProgressBar({
+                renderTo: id,
+                value: val/100.,
+                text:  String.format("{0}%", val),
+                cls:   ( val > store.data.fscritical ? "lv_used_crit" :
+                        (val > store.data.fswarning  ? "lv_used_warn" : "lv_used_ok"))
+              });
+            }).defer(25)
+            return '<span id="' + id + '"></span>';
           }
         }]
       })
