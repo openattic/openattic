@@ -345,7 +345,21 @@ Ext.oa.Lvm__Snapshot_Panel = Ext.extend(Ext.grid.GridPanel, {
           header: "{% trans 'Usage (%)' %}",
           dataIndex: "LVM2_SNAP_PERCENT",
           align: "right",
-          renderer: function(val){ if( val ) return val+'%'; return '♻' }
+          renderer: function( val, x, store ){
+            if( !val || val === -1 )
+              return '♻';
+            var id = Ext.id();
+            (function(){
+              new Ext.ProgressBar({
+                renderTo: id,
+                value: val/100.,
+                text:  String.format("{0}%", val),
+                cls:   ( val > store.data.fscritical ? "lv_used_crit" :
+                        (val > store.data.fswarning  ? "lv_used_warn" : "lv_used_ok"))
+              });
+            }).defer(25)
+            return '<span id="' + id + '"></span>';
+          }
         }, {
           header: "{% trans 'Original Volume' %}",
           width: 200,
