@@ -25,7 +25,7 @@ Ext.oa.SysUtils__Service_Panel = Ext.extend(Ext.grid.GridPanel, {
           dataIndex: "name"
         }, {
           header: "{% trans 'Status' %}",
-          width: 5,
+          width: 50,
           align: "center",
           dataIndex: "status",
           renderer: function( val, x, store ){
