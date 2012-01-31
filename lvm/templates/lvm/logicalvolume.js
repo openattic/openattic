@@ -565,13 +565,17 @@ Ext.oa.Lvm__LogicalVolume_Panel = Ext.extend(Ext.Panel, {
             renderer: function( val, x, store ){
               if( !val || val === -1 )
                 return '';
-              if( val > store.data.fscritical )
-                var color = "red";
-              else if( val > store.data.fswarning )
-                var color = "gold";
-              else
-                var color = "green";
-              return String.format('<span style="color:{1};">{0}%</span>', val, color);
+              var id = Ext.id();
+              (function(){
+                new Ext.ProgressBar({
+                  renderTo: id,
+                  value: val/100.,
+                  text:  String.format("{0}%", val),
+                  cls:   ( val > store.data.fscritical ? "lv_used_crit" :
+                          (val > store.data.fswarning  ? "lv_used_warn" : "lv_used_ok"))
+                });
+              }).defer(25)
+              return '<span id="' + id + '"></span>';
             }
           },{
             header: "{% trans "Group" %}",
@@ -579,7 +583,6 @@ Ext.oa.Lvm__LogicalVolume_Panel = Ext.extend(Ext.Panel, {
             align: 'center'
           }]
         }),
-        
         listeners: {
           cellmousedown: function( self, rowIndex, colIndex, evt ){
             var graph_enabled = Ext.state.Manager.get("storage_utilization_graph", false);

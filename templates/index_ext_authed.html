@@ -135,6 +135,24 @@
         padding-left: 10px;
         padding-right: 10px;
       }
+      div.lv_used_crit .x-progress-bar {
+        background-image: url("{{ MEDIA_URL }}/progress_crit.gif");
+        border-bottom-color: #993333;
+        border-right-color: #2b3333;
+        border-top-color: #2b3300;
+      }
+      div.lv_used_warn .x-progress-bar {
+        background-image: url("{{ MEDIA_URL }}/progress_warn.gif");
+        border-bottom-color: #A66900;
+        border-right-color: #FFB941;
+        border-top-color: #A66900;
+      }
+      div.lv_used_ok .x-progress-bar {
+        background-image: url("{{ MEDIA_URL }}/progress_ok.gif");
+        border-bottom-color: #332b33;
+        border-right-color: #332b33;
+        border-top-color: #332b00;
+      }
     </style>
   </head>
   <body style="padding: 20px 20px 0; ">
