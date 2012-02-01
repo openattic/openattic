@@ -2,25 +2,81 @@
 
 Ext.namespace("Ext.oa");
 
-Ext.oa.Ifconfig__NetDevice_TreePanel = Ext.extend(Ext.Panel, {
-  initComponent: function(){
-    var netDevPanel = this;
-    Ext.apply(this, Ext.apply(this.initialConfig, {
-      id: 'ifconfig__netdevice_panel_inst',
-      title: "{% trans 'Network interfaces' %}",
-      layout: "border",
-      items: [{
-        region: "west",
-        xtype:  "tree"
-      }, {
-        region: "center",
-        html: "now,asdi"
-      }]
-    }));
-    Ext.oa.Ifconfig__NetDevice_Panel.superclass.initComponent.apply(this, arguments);
+Ext.oa.Ifconfig__NetDevice_TreeLoader = function(config){
+  Ext.apply(this, config);
+  Ext.applyIf(this, {
+    directFn: ifconfig__NetDevice.filter,
+    paramsAsHash: true,
+  });
+  Ext.oa.Ifconfig__NetDevice_TreeLoader.superclass.constructor.apply(this, arguments);
+}
+
+Ext.extend(Ext.oa.Ifconfig__NetDevice_TreeLoader, Ext.tree.TreeLoader, {
+  getParams: function(node){
+    return [{id: node.attributes.device.id}]
   },
+
+  handleResponse: function(response){
+    var myresp = {
+      responseData: [],
+      responseText: "",
+      argument: response.argument
+    };
+    var pushdevs = function(devlist){
+      for( var i = 0; i < devlist.length; i++ ){
+        myresp.responseData.push({
+          nodeType: "async",
+          text: devlist[i].devname,
+          id:   Ext.id(),
+          device: devlist[i]
+        });
+      }
+    }
+    pushdevs(response.responseData[0].childdevs);
+    pushdevs(response.responseData[0].basedevs);
+    return Ext.oa.Ifconfig__NetDevice_TreeLoader.superclass.handleResponse.apply(this, [myresp]);
+  }
+});
+
+Ext.oa.Ifconfig__NetDevice_TreePanel = Ext.extend(Ext.tree.TreePanel, {
+  initComponent: function(){
+    Ext.apply(this, Ext.apply(this.initialConfig, {
+      rootVisible: false,
+      loader: new Ext.oa.Ifconfig__NetDevice_TreeLoader(),
+      root: {
+        nodeType: "async",
+        text: "Loading...",
+        id: Ext.id(),
+        device: null
+      }
+    }));
+    Ext.oa.Ifconfig__NetDevice_TreePanel.superclass.initComponent.apply(this, arguments);
+    this.refresh();
+  },
+
   onRender: function(){
-    Ext.oa.Ifconfig__NetDevice_Panel.superclass.onRender.apply(this, arguments);
+    Ext.oa.Ifconfig__NetDevice_TreePanel.superclass.onRender.apply(this, arguments);
+  },
+
+  refresh: function(){
+    var self = this;
+    ifconfig__NetDevice.get_root_devices(function(provider, response){
+      var rootdevs = [];
+      for( var i = 0; i < response.result.length; i++ ){
+        rootdevs.push({
+          nodeType: "async",
+          text: response.result[i].devname,
+          id:   Ext.id(),
+          device: response.result[i]
+        });
+      }
+      self.setRootNode({
+        nodeType: "async",
+        text: "VollDerRoot",
+        id: Ext.id(),
+        children: rootdevs
+      });
+    });
   }
 });
 
@@ -32,10 +88,10 @@ Ext.oa.Ifconfig__NetDevice_Panel = Ext.extend(Ext.Panel, {
       id: 'ifconfig__netdevice_panel_inst',
       title: "{% trans 'Network interfaces' %}",
       layout: "border",
-      items: [{
+      items: [ new Ext.oa.Ifconfig__NetDevice_TreePanel({
         region: "west",
-        xtype:  "tree"
-      }, {
+        width: 300
+      }), {
         region: "center",
         html: "now,asdi"
       }]
