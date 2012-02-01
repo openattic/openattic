@@ -75,6 +75,15 @@ class NetDevice(models.Model):
     def __unicode__(self):
         return self.devname
 
+    @classmethod
+    def get_root_devices(cls):
+        rootdevs = list(NetDevice.objects.filter(slaves__isnull=False).distinct())
+        rootdevs.extend(filter(
+            lambda dev: dev.devtype == "native" and NetDevice.objects.filter(slaves__devname=dev.devname).count() == 0,
+            NetDevice.objects.all()
+            ))
+        return rootdevs
+
     @property
     def basedevs(self):
         """ Devices required for ``self`` to operate. """
