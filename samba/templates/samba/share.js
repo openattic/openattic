@@ -10,6 +10,23 @@ Ext.oa.Samba__Share_Panel = Ext.extend(Ext.grid.GridPanel, {
        return '<img src="' + MEDIA_URL + '/oxygen/16x16/actions/dialog-ok-apply.png" title="yes" />';
      return '<img src="' + MEDIA_URL + '/oxygen/16x16/actions/dialog-cancel.png" title="no" />';
       };
+    var deleteFunction = function(self){
+        var sm = sambaShareGrid.getSelectionModel();
+        if( sm.hasSelection() ){
+          var sel = sm.selections.items[0];
+          Ext.Msg.confirm(
+            "{% trans 'Delete Share' %}",
+            interpolate(
+              "{% trans 'Do you really want to delete %s?' %}",[sel.data.path]),
+              function(btn){
+                if(btn == 'yes'){
+                  samba__Share.remove( sel.id, function(provider, response){
+                  sambaShareGrid.store.reload();
+              } );
+            }
+          });
+        }
+      };
     Ext.apply(this, Ext.apply(this.initialConfig, {
       id: "samba__share_panel_inst",
       title: "{% trans 'Samba' %}",
@@ -293,24 +310,10 @@ Ext.oa.Samba__Share_Panel = Ext.extend(Ext.grid.GridPanel, {
       },{
         text: "{% trans 'Delete Share' %}",
         icon: MEDIA_URL + "/icons2/16x16/actions/remove.png",
-        handler: function(self){
-          var sm = sambaShareGrid.getSelectionModel();
-          if( sm.hasSelection() ){
-            var sel = sm.selections.items[0];
-            Ext.Msg.confirm(
-              "{% trans 'Delete Share' %}",
-              interpolate(
-                "{% trans 'Do you really want to delete %s?' %}",[sel.data.path]),
-                function(btn){
-                  if(btn == 'yes'){
-                    samba__Share.remove( sel.id, function(provider, response){
-                    sambaShareGrid.store.reload();
-                } );
-              }
-            });
-          }
-        }
-      } ],
+        handler: deleteFunction
+        } 
+      ],
+      keys: [{ key: [Ext.EventObject.DELETE], handler: deleteFunction}],
       store: new Ext.data.DirectStore({
         fields: ['name', 'path', 'available'],
         directFn: samba__Share.all
