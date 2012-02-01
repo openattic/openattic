@@ -47,6 +47,84 @@ var tgt_all = new Ext.data.DirectStore({
 Ext.oa.Iscsi__Panel = Ext.extend(Ext.Panel, {
   initComponent: function(){
     var iscsiPanel = this;
+    var deleteBindIPs = function(self){
+    var bindIP = iscsiPanel.target_grid.getSelectionModel();
+    var parent = iscsiPanel.targets.getSelectionModel();
+    var parentid = parent.selections.items[0];
+      if( bindIP.hasSelection() ){
+        var sel = bindIP.getSelected();
+        Ext.Msg.confirm(
+        "{% trans 'Confirm delete' %}",
+        interpolate(
+          "{% trans 'Really delete IP %s?' %}",
+          [sel.data.address] ),
+        function(btn, text){
+          if( btn == 'yes' ){
+            tgt_allow.remove(sel);
+            storeUpdate(tgt_allow, parentid.data.id, "tgt_allow");
+            };
+        });
+      }
+    };
+    var deleteLun = function(self){
+    var sm = iscsiPanel.lun.getSelectionModel();
+      if( sm.hasSelection() ){
+        var sel = sm.selections.items[0];
+        Ext.Msg.confirm(
+          "{% trans 'Confirm delete' %}",
+          interpolate(
+            "{% trans 'Really delete Lun %s?' %}",
+            [sel.data.alias] ),
+          function(btn, text){
+            if( btn == 'yes' ){
+              iscsi__Lun.remove( sel.data.id, function(provider, response){
+              lunStore.reload();
+              } );
+            }
+          }
+        );
+      }
+    };
+    var deleteInitiator = function(self){
+    var deny = iscsiPanel.initiator.deny_grid.getSelectionModel();
+    var allow = iscsiPanel.initiator.allow_grid.getSelectionModel();
+    var parent = iscsiPanel.targets.getSelectionModel();
+    var parentid = parent.selections.items[0];
+      if( allow.hasSelection() ){
+        var selectedItem = allow.getSelected();
+        init_allow.remove(selectedItem);
+        storeUpdate(init_allow, parentid.data.id, "init_allow");
+      }
+      if( deny.hasSelection() ){
+        var selectedItem = deny.getSelected();
+        init_deny.remove(selectedItem);
+        storeUpdate(init_deny, parentid.data.id, "init_deny");
+      }
+    };
+    var deleteTarget = function(self){
+    var sm = iscsiPanel.targets.getSelectionModel();
+      if( sm.hasSelection() ){
+        var sel = sm.selections.items[0];
+        Ext.Msg.confirm(
+          "{% trans 'Confirm delete' %}",
+          interpolate(
+            "{% trans 'Really delete Target %s?' %}",
+            [sel.data.name] ),
+          function(btn, text){
+            if( btn == 'yes' ){
+              iscsi__Target.remove( sel.data.id, function(provider, response){
+                targetStore.reload();
+                lunStore.removeAll();
+                init_allow.removeAll();
+                init_deny.removeAll();
+                tgt_allow.removeAll();
+                }
+              );
+            }
+          }
+        );
+      }
+    };       
     var init_allow = new Ext.data.DirectStore({
       id: "init_allow",
       fields: ["app","obj","id","name", "id"],
@@ -221,31 +299,9 @@ Ext.oa.Iscsi__Panel = Ext.extend(Ext.Panel, {
           },{
             text: "{% trans 'Delete Target'%}",
             icon: MEDIA_URL + "/icons2/16x16/actions/remove.png",
-            handler: function(self){
-              var sm = iscsiPanel.targets.getSelectionModel();
-              if( sm.hasSelection() ){
-                var sel = sm.selections.items[0];
-                Ext.Msg.confirm(
-                  "{% trans 'Confirm delete' %}",
-                  interpolate(
-                    "{% trans 'Really delete Target %s?' %}",
-                    [sel.data.name] ),
-                  function(btn, text){
-                    if( btn == 'yes' ){
-                      iscsi__Target.remove( sel.data.id, function(provider, response){
-                        targetStore.reload();
-                        lunStore.removeAll();
-                        init_allow.removeAll();
-                        init_deny.removeAll();
-                        tgt_allow.removeAll();
-                        }
-                      );
-                    }
-                  }
-                );
-              }
-            }
-          }]
+            handler: deleteTarget
+          }],
+          keys: [{ key: [Ext.EventObject.DELETE], handler: deleteTarget}],
           //END le target
         },{
           //BEGIN le initiator
@@ -483,23 +539,9 @@ Ext.oa.Iscsi__Panel = Ext.extend(Ext.Panel, {
         },{
             text: "{% trans 'Delete Initiator'%}",
             icon: MEDIA_URL + "/icons2/16x16/actions/remove.png",
-            handler: function(self){
-              var deny = iscsiPanel.initiator.deny_grid.getSelectionModel();
-              var allow = iscsiPanel.initiator.allow_grid.getSelectionModel();
-              var parent = iscsiPanel.targets.getSelectionModel();
-              var parentid = parent.selections.items[0];
-              if( allow.hasSelection() ){
-                var selectedItem = allow.getSelected();
-                init_allow.remove(selectedItem);
-                storeUpdate(init_allow, parentid.data.id, "init_allow");
-              }
-              if( deny.hasSelection() ){
-                var selectedItem = deny.getSelected();
-                init_deny.remove(selectedItem);
-                storeUpdate(init_deny, parentid.data.id, "init_deny");
-              }
-            }
-        }]
+            handler: deleteInitiator
+        }],
+        keys: [{ key: [Ext.EventObject.DELETE], handler: deleteInitiator}],
           //END le initiator
         }]
         //END le left column
@@ -643,26 +685,9 @@ Ext.oa.Iscsi__Panel = Ext.extend(Ext.Panel, {
           },{
             text: "{% trans 'Delete Lun' %}",
             icon: MEDIA_URL + "/icons2/16x16/actions/remove.png",
-            handler: function(self){
-              var sm = iscsiPanel.lun.getSelectionModel();
-              if( sm.hasSelection() ){
-                var sel = sm.selections.items[0];
-                Ext.Msg.confirm(
-                  "{% trans 'Confirm delete' %}",
-                  interpolate(
-                    "{% trans 'Really delete Lun %s?' %}",
-                    [sel.data.alias] ),
-                  function(btn, text){
-                    if( btn == 'yes' ){
-                      iscsi__Lun.remove( sel.data.id, function(provider, response){
-                      lunStore.reload();
-                      } );
-                    }
-                  }
-                );
-              }
-            }
-          }]
+            handler: deleteLun
+          }],
+          keys: [{ key: [Ext.EventObject.DELETE], handler: deleteLun}],
           //END le lun
         },{
           //BEGIN le bind IPs
@@ -721,26 +746,9 @@ Ext.oa.Iscsi__Panel = Ext.extend(Ext.Panel, {
             },{
               text: "{% trans 'Delete Bind IPs'%}",
               icon: MEDIA_URL + "/icons2/16x16/actions/remove.png",
-              handler: function(self){
-                var bindIP = iscsiPanel.target_grid.getSelectionModel();
-                var parent = iscsiPanel.targets.getSelectionModel();
-                var parentid = parent.selections.items[0];
-                if( bindIP.hasSelection() ){
-                  var sel = bindIP.getSelected();
-                  Ext.Msg.confirm(
-                  "{% trans 'Confirm delete' %}",
-                  interpolate(
-                    "{% trans 'Really delete IP %s?' %}",
-                    [sel.data.address] ),
-                  function(btn, text){
-                    if( btn == 'yes' ){
-                      tgt_allow.remove(sel);
-                      storeUpdate(tgt_allow, parentid.data.id, "tgt_allow");
-                      };
-                  });
-                }
-              }
+              handler: deleteBindIPs
             }],
+          keys: [{ key: [Ext.EventObject.DELETE], handler: deleteBindIPs}],
           listeners: {
             afterrender: function (self){
               var firstGridDropTargetEl =  self.getView().scroller.dom;
