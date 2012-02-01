@@ -144,10 +144,60 @@ Ext.oa.Ifconfig__NetDevice_Panel = Ext.extend(Ext.Panel, {
         },
         items: [{
           fieldLabel: "Device",
-          name: "devname"
+          name: "devname",
+          readOnly: true
         }, {
           fieldLabel: "Speed",
-          name: "speed"
+          name: "speed",
+          readOnly: true
+        }, {
+          fieldLabel: "MAC Address",
+          name: "macaddress",
+          readOnly: true
+        }, {
+          xtype: "checkbox",
+          fieldLabel: "Carrier",
+          name: "carrier",
+          readOnly: true
+        }, {
+          xtype: "checkbox",
+          fieldLabel: "Active",
+          name: "operstate",
+          readOnly: true
+        }, {
+          xtype: "checkbox",
+          fieldLabel: "Auto",
+          name: "auto"
+        }, {
+          xtype: "numberfield",
+          fieldLabel: "MTU",
+          name: "mtu"
+        }, {
+          xtype: "checkbox",
+          fieldLabel: "DHCP",
+          name: "dhcp"
+        }, {
+          xtype: 'fieldset',
+          title: 'Bonding options (if applicable)',
+          collapsible: true,
+          collapsed: true,
+          layout: 'form',
+          items: [ {
+            fieldLabel: "{% trans 'MII Monitoring interval' %}",
+            xtype: "numberfield",
+            name: "bond_miimon"
+          }, {
+            fieldLabel: "{% trans 'Down Delay' %}",
+            xtype: "numberfield",
+            name: "bond_downdelay"
+          }, {
+            fieldLabel: "{% trans 'Up Delay' %}",
+            xtype: "numberfield",
+            name: "bond_updelay"
+          }, {
+            fieldLabel: "{% trans 'Mode' %}",
+            name: "bond_mode"
+          } ]
         }],
         buttons: [{
           text: "{% trans 'Save' %}",
