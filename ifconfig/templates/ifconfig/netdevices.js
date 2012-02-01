@@ -25,7 +25,6 @@ Ext.extend(Ext.oa.Ifconfig__NetDevice_TreeLoader, Ext.tree.TreeLoader, {
     };
     var self = this;
     var pushdevs = function(devlist){
-      console.log(self.rootdevs);
       for( var i = 0; i < devlist.length; i++ ){
         if( devlist[i].devname in self.rootdevs )
           continue;
