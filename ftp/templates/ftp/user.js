@@ -23,6 +23,75 @@ Ext.oa.Ftp__User_Panel = Ext.extend(Ext.grid.GridPanel, {
           );
       }
     };
+    var addFunction = function(){
+    var addwin = new Ext.Window({
+      title: "{% trans 'Add FTP User' %}",
+      layout: "fit",
+      height: 200,
+      width: 500,
+      items: [{
+        xtype: "form",
+        bodyStyle: 'padding:5px 5px;',
+        defaults: {
+          xtype: "textfield",
+          anchor: '-20px'
+        },
+        items: [{
+          fieldLabel: "{% trans 'Name' %}",
+          name: "username",
+          ref: 'namefield'
+        }, {
+          fieldLabel: "{% trans 'Password' %}",
+          name: "passwd",
+          inputType: 'password',
+          ref: 'passwdfield'
+        }, {
+          xtype:      'volumefield',
+          listeners: {
+            select: function(self, record, index){
+              lvm__LogicalVolume.get( record.data.id, function( provider, response ){
+                self.ownerCt.dirfield.setValue( response.result.fs.mountpoints[0] );
+                self.ownerCt.dirfield.enable();
+              } );
+            }
+          }
+        }, {
+          fieldLabel: "{% trans 'Directory' %}",
+          name: "homedir",
+          disabled: true,
+          ref: 'dirfield'
+        }],
+        buttons: [{
+          text: "{% trans 'Create User' %}",
+          icon: MEDIA_URL + "/oxygen/16x16/actions/dialog-ok-apply.png",
+          handler: function(self){
+            ftp__User.create({
+              'username': self.ownerCt.ownerCt.namefield.getValue(),
+              'passwd':   self.ownerCt.ownerCt.passwdfield.getValue(),
+              'volume': {
+                'app': 'lvm',
+                'obj': 'LogicalVolume',
+                'id': self.ownerCt.ownerCt.volfield.getValue()
+              },
+              'homedir':  self.ownerCt.ownerCt.dirfield.getValue()
+            }, function(provider, response){
+              if( response.result ){
+                ftpGrid.store.reload();
+                addwin.hide();
+              }
+            });
+          }
+        }, {
+          text: "{% trans 'Cancel' %}",
+          icon: MEDIA_URL + "/icons2/16x16/actions/gtk-cancel.png",
+          handler: function(self){
+            addwin.hide();
+          }
+        }]
+      }]
+    });
+    addwin.show();
+  }
     Ext.apply(this, Ext.apply(this.initialConfig, {
       id: "ftp__user_panel_inst",
       title: "ftp",
@@ -36,75 +105,7 @@ Ext.oa.Ftp__User_Panel = Ext.extend(Ext.grid.GridPanel, {
       }, {
         text: "{% trans 'Add User' %}",
         icon: MEDIA_URL + "/icons2/16x16/actions/add.png",
-        handler: function(){
-          var addwin = new Ext.Window({
-            title: "{% trans 'Add FTP User' %}",
-            layout: "fit",
-            height: 200,
-            width: 500,
-            items: [{
-              xtype: "form",
-              bodyStyle: 'padding:5px 5px;',
-              defaults: {
-                xtype: "textfield",
-                anchor: '-20px'
-              },
-              items: [{
-                fieldLabel: "{% trans 'Name' %}",
-                name: "username",
-                ref: 'namefield'
-              }, {
-                fieldLabel: "{% trans 'Password' %}",
-                name: "passwd",
-                inputType: 'password',
-                ref: 'passwdfield'
-              }, {
-                xtype:      'volumefield',
-                listeners: {
-                  select: function(self, record, index){
-                    lvm__LogicalVolume.get( record.data.id, function( provider, response ){
-                      self.ownerCt.dirfield.setValue( response.result.fs.mountpoints[0] );
-                      self.ownerCt.dirfield.enable();
-                    } );
-                  }
-                }
-              }, {
-                fieldLabel: "{% trans 'Directory' %}",
-                name: "homedir",
-                disabled: true,
-                ref: 'dirfield'
-              }],
-              buttons: [{
-                text: "{% trans 'Create User' %}",
-                icon: MEDIA_URL + "/oxygen/16x16/actions/dialog-ok-apply.png",
-                handler: function(self){
-                  ftp__User.create({
-                    'username': self.ownerCt.ownerCt.namefield.getValue(),
-                    'passwd':   self.ownerCt.ownerCt.passwdfield.getValue(),
-                    'volume': {
-                      'app': 'lvm',
-                      'obj': 'LogicalVolume',
-                      'id': self.ownerCt.ownerCt.volfield.getValue()
-                    },
-                    'homedir':  self.ownerCt.ownerCt.dirfield.getValue()
-                  }, function(provider, response){
-                    if( response.result ){
-                      ftpGrid.store.reload();
-                      addwin.hide();
-                    }
-                  });
-                }
-              }, {
-                text: "{% trans 'Cancel' %}",
-                icon: MEDIA_URL + "/icons2/16x16/actions/gtk-cancel.png",
-                handler: function(self){
-                  addwin.hide();
-                }
-              }]
-            }]
-          });
-          addwin.show();
-        }
+        handler: addFunction
       },{
         text:  "{% trans 'Edit' %}",
         icon: MEDIA_URL + "/icons2/16x16/actions/edit-redo.png",
