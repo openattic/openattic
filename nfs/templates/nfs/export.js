@@ -5,6 +5,24 @@ Ext.namespace("Ext.oa");
 Ext.oa.Nfs__Export_Panel = Ext.extend(Ext.grid.GridPanel, {
   initComponent: function(){
     var nfsGrid = this;
+    var deleteFunction = function(self){
+      var sm = nfsGrid.getSelectionModel();
+      if( sm.hasSelection() ){
+        var sel = sm.selections.items[0];
+        Ext.Msg.confirm(
+          "{% trans 'Delete Export' %}",
+          interpolate(
+            "{% trans 'Do you really want to delete %s?' %}",[sel.data.path]),
+          function(btn){
+            if(btn == 'yes'){
+              nfs__Export.remove( sel.data.id, function(provider, response){
+                nfsGrid.store.reload();
+              } );
+            }
+          }
+        );
+      }
+    }
     Ext.apply(this, Ext.apply(this.initialConfig, {
       id: 'nfs__export_panel_inst',
       title: "{% trans 'NFS' %}",
@@ -162,25 +180,10 @@ Ext.oa.Nfs__Export_Panel = Ext.extend(Ext.grid.GridPanel, {
       },{
         text: "{% trans 'Delete Export' %}",
         icon: MEDIA_URL + "/icons2/16x16/actions/remove.png",
-        handler: function(self){
-          var sm = nfsGrid.getSelectionModel();
-          if( sm.hasSelection() ){
-            var sel = sm.selections.items[0];
-            Ext.Msg.confirm(
-              "{% trans 'Delete Export' %}",
-              interpolate(
-                "{% trans 'Do you really want to delete %s?' %}",[sel.data.path]),
-                function(btn){
-                  if(btn == 'yes'){
-                    nfs__Export.remove( sel.data.id, function(provider, response){
-                    nfsGrid.store.reload();
-                  } );
-                }
-              });
-            }
-          }
+        handler: deleteFunction
         }
       ],
+       keys: [{ key: [Ext.EventObject.DELETE], handler: deleteFunction}],
       store: {
         xtype: 'directstore',
         fields: ['id', 'address', 'path', 'options', 'state'],
