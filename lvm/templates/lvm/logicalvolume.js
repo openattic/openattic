@@ -13,6 +13,204 @@ Ext.oa.Lvm__LogicalVolume_Panel = Ext.extend(Ext.Panel, {
     var currentChartId = null;
     var lvmPanel = this;
     var lvmGrid = this;
+    var addVolume = function(){
+    var addwin = new Ext.Window({
+      title: "{% trans "Add Volume" %}",
+      layout: "fit",
+      height: 350,
+      width: 500,
+      items: [{
+        xtype: "form",
+        border: false,
+        bodyStyle: 'padding:5px 5px;',
+        defaults: {
+          xtype: "textfield",
+          anchor: '-20px'
+        },
+        items: [{
+            fieldLabel: "Name",
+            allowBlank: false,
+            name: "name",
+            ref: 'namefield',
+            vtype: "LVName"
+          },
+          tipify({
+              xtype:      'combo',
+              allowBlank: false,
+              fieldLabel: "{% trans 'Volume Group' %}",
+              name:       'volume',
+              hiddenName: 'volume_id',
+              store: {
+                xtype: "directstore",
+                fields: ["app", "obj", "id", "name"],
+                directFn: lvm__VolumeGroup.ids
+              },
+              typeAhead:     true,
+              triggerAction: 'all',
+              emptyText:     "{% trans 'Select...' %}",
+              selectOnFocus: true,
+              displayField:  'name',
+              valueField:    'id',
+              ref:           'volfield',
+              listeners: {
+                select: function(self, record, index){
+                  self.ownerCt.volume_free_megs = null;
+                  self.ownerCt.sizelabel.setText( "{% trans "Querying data..." %}" );
+                  lvm__VolumeGroup.get_free_megs( record.data.id, function( provider, response ){
+                    self.ownerCt.volume_free_megs = response.result;
+                    self.ownerCt.sizelabel.setText( String.format( "Max. {0} MB", response.result ) );
+                  } );
+                }
+              }
+            }, "{% trans 'The volume group in which you want the Volume to be created.' %}"),
+          tipify({
+              xtype:      'combo',
+              fieldLabel: "{% trans 'File System' %}",
+              name:       'filesystem_desc',
+              hiddenName: 'filesystem_name',
+              store: new Ext.data.DirectStore({
+                fields: ["name", "desc"],
+                directFn: lvm__LogicalVolume.avail_fs
+              }),
+              typeAhead:     true,
+              triggerAction: 'all',
+              emptyText:     "{% trans 'Select...' %}",
+              selectOnFocus: true,
+              displayField:  'desc',
+              valueField:    'name',
+              ref:      'fsfield'
+            }, "{% trans 'If you want to use DRBD with this device, do not yet create a file system on it, even if you want to share it using NAS services later on.' %}"),
+          {
+            fieldLabel: "{% trans "Size in MB" %}",
+            allowBlank: false,
+            name: "megs",
+            ref: 'sizefield',
+            xtype: "numberfield"
+          }, {
+            xtype: "label",
+            ref:   "sizelabel",
+            text:  "{% trans "Waiting for volume selection..." %}",
+            cls:   "form_hint_label"
+          }, {
+            fieldLabel: "{% trans 'Warning Level (%)' %}",
+            allowBlank: false,
+            name: "fswarning",
+            ref: 'warnfield',
+            value: 75,
+            xtype: "numberfield"
+          }, {
+            fieldLabel: "{% trans 'Critical Level (%)' %}",
+            allowBlank: false,
+            name: "fscritical",
+            ref: 'critfield',
+            value: 85,
+            xtype: "numberfield"
+          }, {
+            xtype:      'combo',
+            allowBlank: false,
+            fieldLabel: "{% trans 'Owner' %}",
+            name:       'owner',
+            hiddenName: 'owner_id',
+            store: new Ext.data.DirectStore({
+              fields: ["username", "id"],
+              baseParams: { fields: ["username", "id"] },
+              directFn: auth__User.all_values
+            }),
+            typeAhead:     true,
+            triggerAction: 'all',
+            emptyText:     "{% trans 'Select...' %}",
+            selectOnFocus: true,
+            displayField:  'username',
+            valueField:    'id',
+            ref:      'ownerfield'
+        }],
+        buttons: [{
+          text: "{% trans 'Create Volume' %}",
+          icon: MEDIA_URL + "/icons2/16x16/actions/gtk-save.png",
+          handler: function(self){
+            if( !self.ownerCt.ownerCt.getForm().isValid() ){
+              return;
+            }
+            var free = self.ownerCt.ownerCt.volume_free_megs;
+            if( free === null || typeof free == "undefined" ){
+              Ext.Msg.alert("{% trans "Error" %}",
+                "{% trans "Please wait for the query for available space to complete." %}");
+              return;
+            }
+            if( free < self.ownerCt.ownerCt.sizefield.getValue() ){
+              Ext.Msg.alert("{% trans "Error" %}",
+                interpolate( "{% trans "Your volume exceeds the available capacity of %s MB." %}",
+                  [response.result]) );
+              return;
+            }
+            var progresswin = new Ext.Window({
+              title: "{% trans "Adding Volume" %}",
+              layout: "fit",
+              height: 250,
+              width: 400,
+              modal: true,
+              html: "{% trans 'Please wait while your volume is being created...' %}"
+            });
+            
+            progresswin.show();
+            lvm__LogicalVolume.create({
+              'vg': {
+                'app': 'lvm',
+                'obj': 'VolumeGroup',
+                'id': self.ownerCt.ownerCt.volfield.getValue()
+              },
+              'filesystem': self.ownerCt.ownerCt.fsfield.getValue(),
+              'name':       self.ownerCt.ownerCt.namefield.getValue(),
+              'megs':       self.ownerCt.ownerCt.sizefield.getValue(),
+              'fswarning':  self.ownerCt.ownerCt.warnfield.getValue(),
+              'fscritical': self.ownerCt.ownerCt.critfield.getValue(),
+              'owner': {
+                'app': 'auth',
+                'obj': 'User',
+                'id': self.ownerCt.ownerCt.ownerfield.getValue()
+              }
+            }, function(provider, response){
+              if( response.type == "rpc" ){
+                lvmPanel.items.items[0].store.reload();
+                progresswin.hide();
+                addwin.hide();
+              }else{
+                progresswin.hide();
+                alert(response.message);                  
+              }
+            });
+            }
+          },{
+          text: "{% trans 'Cancel' %}",
+          icon: MEDIA_URL + "/icons2/16x16/actions/gtk-cancel.png",
+          handler: function(self){
+            addwin.hide();
+          }
+        }]
+      }]
+    });
+    addwin.show();
+  };
+    var deleteVolume = function(self){
+    var lvmGrid = lvmPanel.items.items[0];
+    var sm = lvmGrid.getSelectionModel();
+      if( sm.hasSelection() ){
+        var sel = sm.selections.items[0];
+        Ext.Msg.confirm(
+          "{% trans 'Confirm delete' %}",
+          interpolate(
+            "{% trans 'Really delete volume %s and all its shares?<br /><b>There is no undo and you will lose all data.</b>' %}",
+            [sel.data.name] ),
+          function(btn, text){
+            if( btn == 'yes' ){
+              lvm__LogicalVolume.remove( sel.data.id, function(provider, response){
+                lvmGrid.store.reload();
+              } );
+            }
+          }
+        );
+      }
+    };
     Ext.apply(this, Ext.apply(this.initialConfig, {
       id: "lvm__logicalvolume_panel_inst",
       title: "{% trans 'LVM' %}",
@@ -211,184 +409,7 @@ Ext.oa.Lvm__LogicalVolume_Panel = Ext.extend(Ext.Panel, {
       }, {
         text: "{% trans "Add Volume" %}",
         icon: MEDIA_URL + "/icons2/16x16/actions/add.png",
-        handler: function(){
-          var addwin = new Ext.Window({
-            title: "{% trans "Add Volume" %}",
-            layout: "fit",
-            height: 350,
-            width: 500,
-            items: [{
-              xtype: "form",
-              border: false,
-              bodyStyle: 'padding:5px 5px;',
-              defaults: {
-                xtype: "textfield",
-                anchor: '-20px'
-              },
-              items: [{
-                  fieldLabel: "Name",
-                  allowBlank: false,
-                  name: "name",
-                  ref: 'namefield',
-                  vtype: "LVName"
-                },
-                tipify({
-                    xtype:      'combo',
-                    allowBlank: false,
-                    fieldLabel: "{% trans 'Volume Group' %}",
-                    name:       'volume',
-                    hiddenName: 'volume_id',
-                    store: {
-                      xtype: "directstore",
-                      fields: ["app", "obj", "id", "name"],
-                      directFn: lvm__VolumeGroup.ids
-                    },
-                    typeAhead:     true,
-                    triggerAction: 'all',
-                    emptyText:     "{% trans 'Select...' %}",
-                    selectOnFocus: true,
-                    displayField:  'name',
-                    valueField:    'id',
-                    ref:           'volfield',
-                    listeners: {
-                      select: function(self, record, index){
-                        self.ownerCt.volume_free_megs = null;
-                        self.ownerCt.sizelabel.setText( "{% trans "Querying data..." %}" );
-                        lvm__VolumeGroup.get_free_megs( record.data.id, function( provider, response ){
-                          self.ownerCt.volume_free_megs = response.result;
-                          self.ownerCt.sizelabel.setText( String.format( "Max. {0} MB", response.result ) );
-                        } );
-                      }
-                    }
-                  }, "{% trans 'The volume group in which you want the Volume to be created.' %}"),
-                tipify({
-                    xtype:      'combo',
-                    fieldLabel: "{% trans 'File System' %}",
-                    name:       'filesystem_desc',
-                    hiddenName: 'filesystem_name',
-                    store: new Ext.data.DirectStore({
-                      fields: ["name", "desc"],
-                      directFn: lvm__LogicalVolume.avail_fs
-                    }),
-                    typeAhead:     true,
-                    triggerAction: 'all',
-                    emptyText:     "{% trans 'Select...' %}",
-                    selectOnFocus: true,
-                    displayField:  'desc',
-                    valueField:    'name',
-                    ref:      'fsfield'
-                  }, "{% trans 'If you want to use DRBD with this device, do not yet create a file system on it, even if you want to share it using NAS services later on.' %}"),
-                {
-                  fieldLabel: "{% trans "Size in MB" %}",
-                  allowBlank: false,
-                  name: "megs",
-                  ref: 'sizefield',
-                  xtype: "numberfield"
-                }, {
-                  xtype: "label",
-                  ref:   "sizelabel",
-                  text:  "{% trans "Waiting for volume selection..." %}",
-                  cls:   "form_hint_label"
-                }, {
-                  fieldLabel: "{% trans 'Warning Level (%)' %}",
-                  allowBlank: false,
-                  name: "fswarning",
-                  ref: 'warnfield',
-                  value: 75,
-                  xtype: "numberfield"
-                }, {
-                  fieldLabel: "{% trans 'Critical Level (%)' %}",
-                  allowBlank: false,
-                  name: "fscritical",
-                  ref: 'critfield',
-                  value: 85,
-                  xtype: "numberfield"
-                }, {
-                  xtype:      'combo',
-                  allowBlank: false,
-                  fieldLabel: "{% trans 'Owner' %}",
-                  name:       'owner',
-                  hiddenName: 'owner_id',
-                  store: new Ext.data.DirectStore({
-                    fields: ["username", "id"],
-                    baseParams: { fields: ["username", "id"] },
-                    directFn: auth__User.all_values
-                  }),
-                  typeAhead:     true,
-                  triggerAction: 'all',
-                  emptyText:     "{% trans 'Select...' %}",
-                  selectOnFocus: true,
-                  displayField:  'username',
-                  valueField:    'id',
-                  ref:      'ownerfield'
-              }],
-              buttons: [{
-                text: "{% trans 'Create Volume' %}",
-                icon: MEDIA_URL + "/icons2/16x16/actions/gtk-save.png",
-                handler: function(self){
-                  if( !self.ownerCt.ownerCt.getForm().isValid() ){
-                    return;
-                  }
-                  var free = self.ownerCt.ownerCt.volume_free_megs;
-                  if( free === null || typeof free == "undefined" ){
-                    Ext.Msg.alert("{% trans "Error" %}",
-                      "{% trans "Please wait for the query for available space to complete." %}");
-                    return;
-                  }
-                  if( free < self.ownerCt.ownerCt.sizefield.getValue() ){
-                    Ext.Msg.alert("{% trans "Error" %}",
-                      interpolate( "{% trans "Your volume exceeds the available capacity of %s MB." %}",
-                        [response.result]) );
-                    return;
-                  }
-                  var progresswin = new Ext.Window({
-                    title: "{% trans "Adding Volume" %}",
-                    layout: "fit",
-                    height: 250,
-                    width: 400,
-                    modal: true,
-                    html: "{% trans 'Please wait while your volume is being created...' %}"
-                  });
-                  
-                  progresswin.show();
-                  lvm__LogicalVolume.create({
-                    'vg': {
-                      'app': 'lvm',
-                      'obj': 'VolumeGroup',
-                      'id': self.ownerCt.ownerCt.volfield.getValue()
-                    },
-                    'filesystem': self.ownerCt.ownerCt.fsfield.getValue(),
-                    'name':       self.ownerCt.ownerCt.namefield.getValue(),
-                    'megs':       self.ownerCt.ownerCt.sizefield.getValue(),
-                    'fswarning':  self.ownerCt.ownerCt.warnfield.getValue(),
-                    'fscritical': self.ownerCt.ownerCt.critfield.getValue(),
-                    'owner': {
-                      'app': 'auth',
-                      'obj': 'User',
-                      'id': self.ownerCt.ownerCt.ownerfield.getValue()
-                    }
-                  }, function(provider, response){
-                    if( response.type == "rpc" ){
-                      lvmPanel.items.items[0].store.reload();
-                      progresswin.hide();
-                      addwin.hide();
-                    }else{
-                      progresswin.hide();
-                      alert(response.message);                  
-                    }
-                  });
-                  }
-                },{
-                text: "{% trans 'Cancel' %}",
-                icon: MEDIA_URL + "/icons2/16x16/actions/gtk-cancel.png",
-                handler: function(self){
-                  addwin.hide();
-                }
-              }]
-            }]
-          });
-          addwin.show();
-        }
+        handler: addVolume
       }, {
         text: "{% trans "Resize Volume" %}",
         icon: MEDIA_URL + "/icons2/16x16/actions/gtk-execute.png",
@@ -442,29 +463,9 @@ Ext.oa.Lvm__LogicalVolume_Panel = Ext.extend(Ext.Panel, {
       }, {
         text: "{% trans 'Delete Volume' %}",
         icon: MEDIA_URL + "/icons2/16x16/actions/remove.png",
-        handler: function(self){
-          var lvmGrid = lvmPanel.items.items[0];
-          var sm = lvmGrid.getSelectionModel();
-          if( sm.hasSelection() ){
-            var sel = sm.selections.items[0];
-            Ext.Msg.confirm(
-              "{% trans 'Confirm delete' %}",
-              interpolate(
-                "{% trans 'Really delete volume %s and all its shares?<br /><b>There is no undo and you will lose all data.</b>' %}",
-                [sel.data.name] ),
-              function(btn, text){
-                if( btn == 'yes' ){
-                  lvm__LogicalVolume.remove( sel.data.id, function(provider, response){
-                    lvmGrid.store.reload();
-                  } );
-                }
-                else
-                  alert("{% trans "Aborted." %}");
-              }
-            );
-          }
-        }
+        handler: deleteVolume
       }],
+      keys: [{ key: [Ext.EventObject.DELETE], handler: deleteVolume},{key: [Ext.EventObject.ALT && 65], handler: addVolume}],
       items: [{
         xtype: 'grid',
         region: "center",
