@@ -43,7 +43,7 @@ Ext.extend(Ext.oa.Ifconfig__NetDevice_TreeLoader, Ext.tree.TreeLoader, {
       nodeType: "async",
       id:   Ext.id(),
       loader: this,
-      text: ( attr.device ? attr.device.devname : '...' ),
+      text: ( attr.device ? attr.device.devname : '...' )
     });
     if( attr.device ){
       attr['uiProvider'] = Ext.oa.Ifconfig__NetDevice_TreeNodeUI;
@@ -63,7 +63,7 @@ Ext.extend(Ext.oa.Ifconfig__NetDevice_TreeLoader, Ext.tree.TreeLoader, {
         if( devlist[i].devname in self.rootdevs )
           continue;
         myresp.responseData.push({
-          device: devlist[i],
+          device: devlist[i]
         });
       }
     }
@@ -97,7 +97,7 @@ Ext.oa.Ifconfig__NetDevice_TreePanel = Ext.extend(Ext.tree.TreePanel, {
       for( var i = 0; i < response.result.length; i++ ){
         self.loader.rootdevs[response.result[i].devname] = true;
         rootdevs.push({
-          device: response.result[i],
+          device: response.result[i]
         });
       }
       self.setRootNode({
@@ -120,14 +120,66 @@ Ext.oa.Ifconfig__NetDevice_Panel = Ext.extend(Ext.Panel, {
       layout: "border",
       items: [ new Ext.oa.Ifconfig__NetDevice_TreePanel({
         region: "west",
-        width: 300
+        width:  300,
+        scope:  this,
+        listeners: {
+          click: this.nodeClicked
+        }
       }), {
         region: "center",
-        html: "now,asdi"
+        xtype: "form",
+        ref: "deviceform",
+        bodyStyle: 'padding:5px 5px;',
+        api: {
+          load:   ifconfig__NetDevice.get_ext,
+          submit: ifconfig__NetDevice.set_ext
+        },
+        paramOrder: ["id"],
+        defaults: {
+          xtype: "textfield",
+          anchor: '-20px',
+          defaults: {
+            anchor: "0px"
+          }
+        },
+        items: [{
+          fieldLabel: "Device",
+          name: "devname"
+        }, {
+          fieldLabel: "Speed",
+          name: "speed"
+        }],
+        buttons: [{
+          text: "{% trans 'Save' %}",
+          icon: MEDIA_URL + "/oxygen/16x16/actions/dialog-ok-apply.png",
+          handler: function(self){
+            self.ownerCt.ownerCt.getForm().submit({
+              params: { id: -1, init_master: true, ordering: 0 },
+              success: function(provider, response){
+                if( response.result ){
+                  drbdDevGrid.store.reload();
+                  addwin.hide();
+                }
+              }
+            });
+          }
+        }, {
+          text: "{% trans 'Cancel' %}",
+          icon: MEDIA_URL + "/icons2/16x16/actions/gtk-cancel.png",
+          handler: function(self){
+            addwin.hide();
+          }
+        }]
       }]
     }));
     Ext.oa.Ifconfig__NetDevice_Panel.superclass.initComponent.apply(this, arguments);
   },
+
+  nodeClicked: function(node, ev){
+    //   ↓lol↓
+    this.scope.deviceform.load({ params: { id: node.attributes.device.id } });
+  },
+
   onRender: function(){
     Ext.oa.Ifconfig__NetDevice_Panel.superclass.onRender.apply(this, arguments);
   }
