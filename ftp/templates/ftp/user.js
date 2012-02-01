@@ -5,6 +5,24 @@ Ext.namespace("Ext.oa");
 Ext.oa.Ftp__User_Panel = Ext.extend(Ext.grid.GridPanel, {
   initComponent: function(){
     var ftpGrid = this;
+    var deleteFunction = function(self){
+    var sm = ftpGrid.getSelectionModel();
+      if( sm.hasSelection() ){
+        var sel = sm.selections.items[0];
+          Ext.Msg.confirm(
+            "{% trans 'Delete Share' %}",
+            interpolate(
+              "{% trans 'Do you really want to delete %s?' %}",[sel.data.path]),
+              function(btn){
+                if(btn == 'yes'){
+                  ftp__User.remove( sel.data.id, function(provider, response){
+                  ftpGrid.store.reload();
+                  });
+                } 
+              }
+          );
+      }
+    };
     Ext.apply(this, Ext.apply(this.initialConfig, {
       id: "ftp__user_panel_inst",
       title: "ftp",
@@ -167,16 +185,9 @@ Ext.oa.Ftp__User_Panel = Ext.extend(Ext.grid.GridPanel, {
       },{
         text: "{% trans 'Delete User' %}",
         icon: MEDIA_URL + "/icons2/16x16/actions/remove.png",
-        handler: function(self){
-          var sm = ftpGrid.getSelectionModel();
-          if( sm.hasSelection() ){
-            var sel = sm.selections.items[0];
-            ftp__User.remove( sel.data.id, function(provider, response){
-              ftpGrid.store.reload();
-            } );
-          }
-        }
+        handler: deleteFunction
       }],
+      keys: [{ key: [Ext.EventObject.DELETE], handler: deleteFunction}],
       store: {
         xtype: 'directstore',
         fields: ['id', 'username', 'shell', 'homedir', 'volume', {

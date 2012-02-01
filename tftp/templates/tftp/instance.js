@@ -5,6 +5,23 @@ Ext.namespace("Ext.oa");
 Ext.oa.Tftp__Instance_Panel = Ext.extend(Ext.grid.GridPanel, {
   initComponent: function(){
     var tftpGrid = this;
+    var deleteFunction = function(self){
+    var sm = tftpGrid.getSelectionModel();
+    if( sm.hasSelection() ){
+      var sel = sm.selections.items[0];
+      Ext.Msg.confirm(
+        "{% trans 'Delete Instance' %}",
+        interpolate(
+          "{% trans 'Do you really want to delete %s?' %}",[sel.data.path]),
+          function(btn){
+            if(btn == 'yes'){
+              tftp__Instance.remove( sel.data.id, function(provider, response){
+              tftpGrid.store.reload();
+            } );
+          }
+        });
+      }
+    };   
     Ext.apply(this, Ext.apply(this.initialConfig, {
       id: 'tftp__instance_panel_inst',
       title: "{% trans 'TFTP' %}",
@@ -107,25 +124,10 @@ Ext.oa.Tftp__Instance_Panel = Ext.extend(Ext.grid.GridPanel, {
       },{
         text: "{% trans 'Delete Instance' %}",
         icon: MEDIA_URL + "/icons2/16x16/actions/remove.png",
-        handler: function(self){
-          var sm = tftpGrid.getSelectionModel();
-          if( sm.hasSelection() ){
-            var sel = sm.selections.items[0];
-            Ext.Msg.confirm(
-              "{% trans 'Delete Instance' %}",
-              interpolate(
-                "{% trans 'Do you really want to delete %s?' %}",[sel.data.path]),
-                function(btn){
-                  if(btn == 'yes'){
-                    tftp__Instance.remove( sel.data.id, function(provider, response){
-                    tftpGrid.store.reload();
-                  } );
-                }
-              });
-            }
-          }
+        handler: deleteFunction
         }
       ],
+      keys: [{ key: [Ext.EventObject.DELETE], handler: deleteFunction}],
       store: {
         xtype: 'directstore',
         fields: ['id', 'address', 'path', {
