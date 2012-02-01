@@ -2,6 +2,28 @@
 
 Ext.namespace("Ext.oa");
 
+
+Ext.oa.Ifconfig__NetDevice_TreeNodeUI = Ext.extend(Ext.tree.TreeNodeUI, {
+  renderElements : function(n, a, targetNode, bulkRender){
+    Ext.oa.Ifconfig__NetDevice_TreeNodeUI.superclass.renderElements.call( this, n, a, targetNode, bulkRender );
+    ifconfig__IPAddress.filter({"device__id": a.device.id}, function(provider, response){
+      if(response.result.length == 0)
+        return;
+      Ext.DomHelper.applyStyles( this.elNode, 'position: relative' );
+      var tpl = new Ext.DomHelper.createTemplate(
+        '<span style="position: absolute; top: 0px; right: {pos}px;">{text}</span>'
+        );
+      var pos = 8;
+      console.log(response.result);
+      tpl.append( this.elNode, {
+        'pos':  pos,
+        'text': response.result.map(function(el){return el.address}).join(', ')
+        } );
+    }, this);
+  }
+});
+
+
 Ext.oa.Ifconfig__NetDevice_TreeLoader = function(config){
   Ext.apply(this, config);
   Ext.applyIf(this, {
@@ -17,6 +39,20 @@ Ext.extend(Ext.oa.Ifconfig__NetDevice_TreeLoader, Ext.tree.TreeLoader, {
     return [{id: node.attributes.device.id}]
   },
 
+  createNode : function(attr){
+    console.log("Create!");
+    Ext.apply(attr, {
+      nodeType: "async",
+      id:   Ext.id(),
+      loader: this,
+      text: ( attr.device ? attr.device.devname : '...' ),
+    });
+    if( attr.device ){
+      attr['uiProvider'] = Ext.oa.Ifconfig__NetDevice_TreeNodeUI;
+    }
+    return new Ext.tree.TreePanel.nodeTypes[attr.nodeType](attr);
+  },
+
   handleResponse: function(response){
     var myresp = {
       responseData: [],
@@ -28,11 +64,9 @@ Ext.extend(Ext.oa.Ifconfig__NetDevice_TreeLoader, Ext.tree.TreeLoader, {
       for( var i = 0; i < devlist.length; i++ ){
         if( devlist[i].devname in self.rootdevs )
           continue;
+        console.log("push!");
         myresp.responseData.push({
-          nodeType: "async",
-          text: devlist[i].devname,
-          id:   Ext.id(),
-          device: devlist[i]
+          device: devlist[i],
         });
       }
     }
@@ -48,9 +82,6 @@ Ext.oa.Ifconfig__NetDevice_TreePanel = Ext.extend(Ext.tree.TreePanel, {
       rootVisible: false,
       loader: new Ext.oa.Ifconfig__NetDevice_TreeLoader(),
       root: {
-        nodeType: "async",
-        text: "...",
-        id: Ext.id(),
         device: null
       }
     }));
@@ -69,10 +100,7 @@ Ext.oa.Ifconfig__NetDevice_TreePanel = Ext.extend(Ext.tree.TreePanel, {
       for( var i = 0; i < response.result.length; i++ ){
         self.loader.rootdevs[response.result[i].devname] = true;
         rootdevs.push({
-          nodeType: "async",
-          text: response.result[i].devname,
-          id:   Ext.id(),
-          device: response.result[i]
+          device: response.result[i],
         });
       }
       self.setRootNode({
