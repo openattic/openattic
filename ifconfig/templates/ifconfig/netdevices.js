@@ -7,6 +7,7 @@ Ext.oa.Ifconfig__NetDevice_TreeLoader = function(config){
   Ext.applyIf(this, {
     directFn: ifconfig__NetDevice.filter,
     paramsAsHash: true,
+    rootdevs: {}
   });
   Ext.oa.Ifconfig__NetDevice_TreeLoader.superclass.constructor.apply(this, arguments);
 }
@@ -22,8 +23,12 @@ Ext.extend(Ext.oa.Ifconfig__NetDevice_TreeLoader, Ext.tree.TreeLoader, {
       responseText: "",
       argument: response.argument
     };
+    var self = this;
     var pushdevs = function(devlist){
+      console.log(self.rootdevs);
       for( var i = 0; i < devlist.length; i++ ){
+        if( devlist[i].devname in self.rootdevs )
+          continue;
         myresp.responseData.push({
           nodeType: "async",
           text: devlist[i].devname,
@@ -63,6 +68,7 @@ Ext.oa.Ifconfig__NetDevice_TreePanel = Ext.extend(Ext.tree.TreePanel, {
     ifconfig__NetDevice.get_root_devices(function(provider, response){
       var rootdevs = [];
       for( var i = 0; i < response.result.length; i++ ){
+        self.loader.rootdevs[response.result[i].devname] = true;
         rootdevs.push({
           nodeType: "async",
           text: response.result[i].devname,
