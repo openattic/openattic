@@ -75,22 +75,25 @@ class NetDevice(models.Model):
     def __unicode__(self):
         return self.devname
 
-    @classmethod
-    def get_dependency_tree(self):
-        depends = {}
-        for interface in NetDevice.objects.all():
-            depends[interface.devname] = []
+    @property
+    def basedevs(self):
+        """ Devices required for ``self`` to operate. """
+        if self.devtype == "native":
+            return []
+        elif self.devtype == "bonding":
+            return list(self.slaves.all())
+        elif self.devtype == "bridge":
+            return list(self.brports.all())
+        else:
+            return [self.vlanrawdev]
 
-            if interface.vlanrawdev:
-                depends[interface.devname].append(interface.vlanrawdev)
-
-            if interface.brports.all().count():
-                depends[interface.devname].extend(list(interface.brports.all()))
-
-            if interface.slaves.count():
-                depends[interface.devname].extend(list(interface.slaves.all()))
-
-        return depends
+    @property
+    def childdevs(self):
+        """ Devices that require ``self`` to operate. """
+        children = list(NetDevice.objects.filter(brports__devname=self.devname))
+        children.extend(list(NetDevice.objects.filter(slaves__devname=self.devname)))
+        children.extend(list(NetDevice.objects.filter(vlanrawdev__devname=self.devname)))
+        return children
 
     @property
     def devtype(self):

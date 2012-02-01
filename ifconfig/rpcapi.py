@@ -16,12 +16,8 @@ class NetDeviceHandler(ModelHandler):
     model = NetDevice
 
     def _override_get(self, obj, data):
-        #data['brports'] = [ self._idobj(member) for member in obj.brports.all() ]
-        #data['slaves']  = [ self._idobj(member) for member in obj.slaves.all()  ]
-        #if obj.vlanrawdev:
-            #data['vlanrawdev'] = self._idobj(obj.vlanrawdev)
-        #else:
-            #data['vlanrawdev'] = None
+        data["basedevs"]  = [ self._idobj(base) for base in obj.basedevs ]
+        data["childdevs"] = [ self._idobj(chld) for chld in obj.childdevs ]
         data["devtype"]   = obj.devtype
         data["operstate"] = obj.operstate
         data["speed"]     = obj.speed
