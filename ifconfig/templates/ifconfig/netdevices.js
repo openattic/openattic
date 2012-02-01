@@ -49,7 +49,7 @@ Ext.oa.Ifconfig__NetDevice_TreePanel = Ext.extend(Ext.tree.TreePanel, {
       loader: new Ext.oa.Ifconfig__NetDevice_TreeLoader(),
       root: {
         nodeType: "async",
-        text: "Loading...",
+        text: "...",
         id: Ext.id(),
         device: null
       }
@@ -77,7 +77,7 @@ Ext.oa.Ifconfig__NetDevice_TreePanel = Ext.extend(Ext.tree.TreePanel, {
       }
       self.setRootNode({
         nodeType: "async",
-        text: "VollDerRoot",
+        text: "...",
         id: Ext.id(),
         children: rootdevs
       });
@@ -116,7 +116,7 @@ Ext.oa.Ifconfig__NetDevice_Module = Ext.extend(Object, {
   panel: "ifconfig__netdevice_panel",
   prepareMenuTree: function(tree){
     tree.appendToRootNodeById("menu_system", {
-      text: 'Network',
+      text: "{% trans 'Network' %}",
       icon: MEDIA_URL + '/icons2/22x22/places/gnome-fs-network.png',
       panel: 'ifconfig__netdevice_panel_inst',
       children: [ {
