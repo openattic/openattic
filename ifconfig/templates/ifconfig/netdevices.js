@@ -14,7 +14,6 @@ Ext.oa.Ifconfig__NetDevice_TreeNodeUI = Ext.extend(Ext.tree.TreeNodeUI, {
         '<span style="position: absolute; top: 0px; right: {pos}px;">{text}</span>'
         );
       var pos = 8;
-      console.log(response.result);
       tpl.append( this.elNode, {
         'pos':  pos,
         'text': response.result.map(function(el){return el.address}).join(', ')
@@ -40,7 +39,6 @@ Ext.extend(Ext.oa.Ifconfig__NetDevice_TreeLoader, Ext.tree.TreeLoader, {
   },
 
   createNode : function(attr){
-    console.log("Create!");
     Ext.apply(attr, {
       nodeType: "async",
       id:   Ext.id(),
@@ -64,7 +62,6 @@ Ext.extend(Ext.oa.Ifconfig__NetDevice_TreeLoader, Ext.tree.TreeLoader, {
       for( var i = 0; i < devlist.length; i++ ){
         if( devlist[i].devname in self.rootdevs )
           continue;
-        console.log("push!");
         myresp.responseData.push({
           device: devlist[i],
         });
