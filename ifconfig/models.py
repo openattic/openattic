@@ -122,6 +122,8 @@ class NetDevice(models.Model):
 
     @property
     def carrier(self):
+        if self.operstate == False:
+            return None
         return open(join("/sys/class/net", self.devname, "carrier"), "rb").read().strip() == '1'
 
     @property
