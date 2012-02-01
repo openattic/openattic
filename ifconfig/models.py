@@ -116,16 +116,30 @@ class NetDevice(models.Model):
 
     @property
     def operstate(self):
-        return open(join("/sys/class/net", self.devname, "operstate"), "rb").read().strip()
+        if self.devname == "lo":
+            return None
+        return open(join("/sys/class/net", self.devname, "operstate"), "rb").read().strip() == 'up'
+
+    @property
+    def carrier(self):
+        return open(join("/sys/class/net", self.devname, "carrier"), "rb").read().strip() == '1'
+
+    @property
+    def macaddress(self):
+        return open(join("/sys/class/net", self.devname, "address"), "rb").read().strip()
+
+    @property
+    def mtu(self):
+        return int( open(join("/sys/class/net", self.devname, "mtu"), "rb").read().strip() )
 
     @property
     def speed(self):
         if self.devname == "lo":
             return None
         elif self.devtype == "native":
-            if self.operstate == "down":
+            if not self.operstate:
                 return None
-            return open(join("/sys/class/net", self.devname, "speed"), "rb").read().strip()
+            return int(open(join("/sys/class/net", self.devname, "speed"), "rb").read().strip())
         else:
             if self.vlanrawdev:
                 return self.vlanrawdev.speed

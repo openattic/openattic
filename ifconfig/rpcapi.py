@@ -21,11 +21,18 @@ class NetDeviceHandler(ModelHandler):
         data["devtype"]   = obj.devtype
         data["operstate"] = obj.operstate
         data["speed"]     = obj.speed
+        data["carrier"]   = obj.carrier
+        data["mtu"]       = obj.mtu
+        data["macaddress"]= obj.macaddress
         return data
 
     def _idobj(self, obj):
         """ Return an ID for the given object, including the app label and object name. """
         return {'id': obj.id, 'app': obj._meta.app_label, 'obj': obj._meta.object_name, 'devname': obj.devname}
+
+    def get_root_devices(self):
+        """ Get devices that are considered a root device. """
+        return [self._getobj(obj) for obj in NetDevice.get_root_devices()]
 
     def write_interfaces(self):
         """ Update /etc/network/interfaces. """
