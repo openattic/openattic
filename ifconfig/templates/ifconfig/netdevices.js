@@ -156,7 +156,7 @@ Ext.oa.Ifconfig__NetDevice_Panel = Ext.extend(Ext.Panel, {
           readOnly: true
         }, {
           xtype: "checkbox",
-          fieldLabel: "Carrier",
+          fieldLabel: "Connected",
           name: "carrier",
           readOnly: true
         }, {
