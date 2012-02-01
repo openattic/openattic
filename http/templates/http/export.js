@@ -5,6 +5,23 @@ Ext.namespace("Ext.oa");
 Ext.oa.Http__Export_Panel = Ext.extend(Ext.grid.GridPanel, {
   initComponent: function(){
     var httpGrid = this;
+    var deleteFunction = function(self){
+    var sm = httpGrid.getSelectionModel();
+      if( sm.hasSelection() ){
+        var sel = sm.selections.items[0];
+        Ext.Msg.confirm(
+            "{% trans 'Delete Export' %}",
+            interpolate(
+              "{% trans 'Do you really want to delete %s?' %}",[sel.data.path]),
+              function(btn){
+                if(btn == 'yes'){
+                  http__Export.remove( sel.data.id, function(provider, response){
+                  httpGrid.store.reload();
+                  });
+                }
+          });
+      }
+    };
     Ext.apply(this, Ext.apply(this.initialConfig, {
       id: "http__export_panel_inst",
       title: "http",
@@ -134,16 +151,9 @@ Ext.oa.Http__Export_Panel = Ext.extend(Ext.grid.GridPanel, {
       },{
         text: "{% trans 'Delete Export' %}",
         icon: MEDIA_URL + "/icons2/16x16/actions/remove.png",
-        handler: function(self){
-          var sm = httpGrid.getSelectionModel();
-          if( sm.hasSelection() ){
-            var sel = sm.selections.items[0];
-            http__Export.remove( sel.data.id, function(provider, response){
-              httpGrid.store.reload();
-            } );
-          }
-        }
+        handler: deleteFunction
       }],
+      keys: [{ key: [Ext.EventObject.DELETE], handler: deleteFunction}],
       store: {
         xtype: "directstore",
         fields: ['path', 'state', 'id', 'volume', {
