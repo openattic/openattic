@@ -6,6 +6,8 @@ import netifaces
 import netaddr
 import dbus
 
+from os.path import join
+
 from django.conf import settings
 from django.db import models
 
@@ -99,6 +101,29 @@ class NetDevice(models.Model):
         if self.slaves.count():
             return "bonding"
         return "native"
+
+    @property
+    def operstate(self):
+        return open(join("/sys/class/net", self.devname, "operstate"), "rb").read().strip()
+
+    @property
+    def speed(self):
+        if self.devname == "lo":
+            return None
+        elif self.devtype == "native":
+            if self.operstate == "down":
+                return None
+            return open(join("/sys/class/net", self.devname, "speed"), "rb").read().strip()
+        else:
+            if self.vlanrawdev:
+                return self.vlanrawdev.speed
+
+            if self.brports.all().count():
+                return min( [ port.speed for port in self.brports.all() ] )
+
+            if self.slaves.count():
+                return min( [ slave.speed for slave in self.slaves.all() ] )
+        raise ValueError("Speed could not be determined")
 
     def get_addresses(self, af=None):
         addrs = []
