@@ -154,11 +154,13 @@
         border-bottom-color: #332b33;
         border-right-color: #332b33;
         border-top-color: #332b00;
-        border-bottom-color: #228B22;
       }
-      .x-progress-wrap {
-        background-color:#232D38;
-      }
+      {% if THEME == "access" %}
+
+       .x-progress-wrap {
+         background-color:#232D38;
+}
+      {% endif %}
     </style>
   </head>
   <body style="padding: 20px 20px 0; ">
