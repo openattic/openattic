@@ -22,7 +22,9 @@ class NetDeviceHandler(ModelHandler):
             #data['vlanrawdev'] = self._idobj(obj.vlanrawdev)
         #else:
             #data['vlanrawdev'] = None
-        data["devtype"] = obj.devtype
+        data["devtype"]   = obj.devtype
+        data["operstate"] = obj.operstate
+        data["speed"]     = obj.speed
         return data
 
     def _idobj(self, obj):
