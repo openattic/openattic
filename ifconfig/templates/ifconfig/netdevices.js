@@ -129,7 +129,8 @@ Ext.oa.Ifconfig__NetDevice_Panel = Ext.extend(Ext.Panel, {
         region: "center",
         layout: "vbox",
         defaults: {
-          flex: 1
+          flex: 1,
+          border: false
         },
         layoutConfig: {
           align: "stretch"
