@@ -11,6 +11,8 @@ from django.contrib.auth.models import User
 
 from djextdirect.provider import Provider as BaseProvider, getname
 
+from rpcd.handlers import ModelHandler
+
 class MainHandler(object):
     def __init__(self, user, request=None):
         self.user = user
@@ -42,6 +44,31 @@ class MainHandler(object):
             if app not in res:
                 res.append(app)
         return res
+
+    def get_object(self, id, app, obj):
+        """ Return an object resolved from an ID dictionary.
+
+            Ext.Direct splits up the dict, that's why we need three distinct args here.
+        """
+        id = { "id": id, "app": app, "obj": obj }
+        obj = ModelHandler._get_object_by_id_dict(id)
+        handler = ModelHandler._get_handler_for_model(obj.__class__)(None)
+        return handler._getobj(obj)
+
+    def get_related(self, id, app, obj):
+        """ Return objects that reference the object given by the ID dictionary.
+
+            Ext.Direct splits up the dict, that's why we need three distinct args here.
+        """
+        id = { "id": id, "app": app, "obj": obj }
+        obj = ModelHandler._get_object_by_id_dict(id)
+        relids = []
+        for relobj in ( obj._meta.get_all_related_objects() + obj._meta.get_all_related_many_to_many_objects() ):
+            relids.extend([
+                ModelHandler._get_handler_for_model(relobj.model)(None)._idobj(relmdl)
+                for relmdl in relobj.model.objects.filter( **{ relobj.field.name: obj } )
+                ])
+        return relids
 
 
 class Provider(BaseProvider):

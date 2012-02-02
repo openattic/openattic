@@ -306,11 +306,34 @@ Ext.oa.Ifconfig__NetDevice_Panel = Ext.extend(Ext.Panel, {
             text: "{% trans 'Add Address'%}",
             icon: MEDIA_URL + "/icons2/16x16/actions/add.png",
             handler: function(){
+              if( !netDevPanel.active_device ){
+                Ext.Msg.alert("{% trans 'Add Address'%}", "{% trans 'Please select a device first.' %}");
+              }
+              var ds = netDevPanel.addressgrid.store;
+              console.log(ds);
+              var ds_model = Ext.data.Record.create( ds.fields.keys );
+              ds.insert(0, new ds_model({
+                device:    { "app": "ifconfig", "obj": "NetDevice", "id": netDevPanel.active_device.id },
+                configure: true
+              }))
+              netDevPanel.addressgrid.startEditing( 0, 0 );
             }
           }, {
             text: "{% trans 'Delete Address'%}",
             icon: MEDIA_URL + "/icons2/16x16/actions/remove.png",
             handler: function(){
+              var sm = netDevPanel.addressgrid.getSelectionModel();
+              if( sm.hasSelection() ){
+                var sel = sm.selection.record;
+                var ds = netDevPanel.addressgrid.store;
+                if( !sel.data.configure ){
+                  Ext.Msg.alert("{% trans 'Delete Address'%}",
+                    "{% trans 'This device has not been configured in this module, therefore it cannot be deleted here.' %}"
+                  );
+                  return;
+                }
+                ds.remove(sel);
+              }
             }
           }]
         }]
@@ -334,6 +357,7 @@ Ext.oa.Ifconfig__NetDevice_Panel = Ext.extend(Ext.Panel, {
     //   ↓lol↓
     this.scope.deviceform.load({ params: { id: node.attributes.device.id } });
     this.scope.addressgrid.store.load({ params: { device__id: node.attributes.device.id } });
+    this.scope.active_device = node.attributes.device;
   },
 
   onRender: function(){
