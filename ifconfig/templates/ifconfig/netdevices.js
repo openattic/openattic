@@ -83,18 +83,20 @@ Ext.extend(Ext.oa.Ifconfig__NetDevice_TreeLoader, Ext.tree.TreeLoader, {
       responseText: "",
       argument: response.argument
     };
-    var self = this;
-    var pushdevs = function(devlist){
-      for( var i = 0; i < devlist.length; i++ ){
-        if( devlist[i].devname in self.rootdevs )
-          continue;
-        myresp.responseData.push({
-          device: devlist[i]
-        });
+    if( response.responseData.length >= 1 ){
+      var self = this;
+      var pushdevs = function(devlist){
+        for( var i = 0; i < devlist.length; i++ ){
+          if( devlist[i].devname in self.rootdevs )
+            continue;
+          myresp.responseData.push({
+            device: devlist[i]
+          });
+        }
       }
+      pushdevs(response.responseData[0].childdevs);
+      pushdevs(response.responseData[0].basedevs);
     }
-    pushdevs(response.responseData[0].childdevs);
-    pushdevs(response.responseData[0].basedevs);
     return Ext.oa.Ifconfig__NetDevice_TreeLoader.superclass.handleResponse.apply(this, [myresp]);
   }
 });
@@ -340,7 +342,6 @@ Ext.oa.Ifconfig__NetDevice_Panel = Ext.extend(Ext.Panel, {
                   "obj": "IPAddress",
                   "id": sel.data.id
                 }, function(provider, response){
-                  console.log( "used by" + response.result.length );
                   if( response.result.length > 0 ){
                     Ext.Msg.alert("{% trans 'Delete Address'%}",
                       interpolate(
@@ -359,6 +360,45 @@ Ext.oa.Ifconfig__NetDevice_Panel = Ext.extend(Ext.Panel, {
         }]
       }],
       buttons: [{
+        text: "{% trans 'Create device...'%}",
+        icon: MEDIA_URL + "/oxygen/16x16/actions/preflight-verifier.png",
+        menu: new Ext.menu.Menu({
+          items: [{
+            text: "Bonding",
+            handler: function(){
+              netDevPanel.devicestree.getRootNode().appendChild( {
+                device: {
+                  id: -1,
+                  devname: "bondX",
+                  devtype: "bonding"
+                }
+              } );
+            }
+          }, {
+            text: "VLAN",
+            handler: function(){
+              netDevPanel.devicestree.getRootNode().appendChild( {
+                device: {
+                  id: -1,
+                  devname: "vlanX",
+                  devtype: "vlan"
+                }
+              } );
+            }
+          }, {
+            text: "Bridge",
+            handler: function(){
+              netDevPanel.devicestree.getRootNode().appendChild( {
+                device: {
+                  id: -1,
+                  devname: "brX",
+                  devtype: "bridge"
+                }
+              } );
+            }
+          }]
+        })
+      }, {
         text: "{% trans 'Validate configuration'%}",
         icon: MEDIA_URL + "/oxygen/16x16/actions/preflight-verifier.png",
         handler: function(){
