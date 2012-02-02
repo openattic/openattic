@@ -207,11 +207,11 @@ Ext.oa.Ftp__User_Panel = Ext.extend(Ext.grid.GridPanel, {
         Ext.Msg.confirm(
           "{% trans 'Delete Share' %}",
           interpolate(
-            "{% trans 'Do you really want to delete %s?' %}",[sel.data.path]),
+            "{% trans 'Do you really want to delete %s?' %}",[sel.data.homedir]),
             function(btn){
               if(btn == 'yes'){
                 ftp__User.remove( sel.data.id, function(provider, response){
-                this.store.reload();
+                sel.store.reload();
                 });
               } 
             }
