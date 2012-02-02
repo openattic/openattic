@@ -102,6 +102,7 @@ Ext.extend(Ext.oa.Ifconfig__NetDevice_TreeLoader, Ext.tree.TreeLoader, {
 Ext.oa.Ifconfig__NetDevice_TreePanel = Ext.extend(Ext.tree.TreePanel, {
   initComponent: function(){
     Ext.apply(this, Ext.apply(this.initialConfig, {
+      enableDD: true,
       rootVisible: false,
       loader: new Ext.oa.Ifconfig__NetDevice_TreeLoader(),
       root: {
@@ -147,9 +148,11 @@ Ext.oa.Ifconfig__NetDevice_Panel = Ext.extend(Ext.Panel, {
       items: [ new Ext.oa.Ifconfig__NetDevice_TreePanel({
         region: "west",
         width:  300,
+        ref:    'devicestree',
         scope:  this,
         listeners: {
-          click: this.nodeClicked
+          click: this.nodeClicked,
+          nodedragover: this.nodeDragOver
         }
       }), {
         region: "center",
@@ -375,6 +378,26 @@ Ext.oa.Ifconfig__NetDevice_Panel = Ext.extend(Ext.Panel, {
     this.scope.deviceform.load({ params: { id: node.attributes.device.id } });
     this.scope.addressgrid.store.load({ params: { device__id: node.attributes.device.id } });
     this.scope.active_device = node.attributes.device;
+  },
+
+  nodeDragOver: function(ev){
+    var srcdev = ev.data.node.attributes.device,
+        tgtdev = ev.target.attributes.device;
+
+    console.log(String.format("Can haz drop of {0}({1}) on {2}({3})",
+      srcdev.devname, srcdev.devtype, tgtdev.devname, tgtdev.devtype));
+
+    // Ordering devices by the following score, we can drop each device on
+    // every other device that has a lower score.
+    var devscore = { bonding: 0, native: 1, vlan: 2, bridge: 3 }
+    if( devscore[tgtdev.devtype] >= devscore[srcdev.devtype] )
+      return false;
+
+    // Forbid drop on a native device that is part of a bonding
+    if( tgtdev.devtype == "native" && ev.target.parentNode != this.scope.devicestree.getRootNode() )
+      return false;
+
+    return true;
   },
 
   onRender: function(){
