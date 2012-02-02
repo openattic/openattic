@@ -253,10 +253,18 @@ Ext.oa.Ifconfig__NetDevice_Panel = Ext.extend(Ext.Panel, {
             }, {
               header: "Nameservers",
               dataIndex: "nameservers"
+            }, {
+              header: "Editable",
+              dataIndex: "configure",
+              renderer: function( val, x, store ){
+                if( val )
+                  return '<img src="' + MEDIA_URL + '/oxygen/16x16/actions/dialog-ok-apply.png" title="yes" />';
+                return '<img src="' + MEDIA_URL + '/oxygen/16x16/actions/dialog-cancel.png" title="no" />';
+              }
             }]
           }),
           store: new Ext.data.DirectStore({
-            fields: ["domain", "nameservers", "gateway", "address", "device", "id"],
+            fields: ["domain", "nameservers", "gateway", "address", "device", "id", "configure"],
             directFn: ifconfig__IPAddress.filter
           })
         }]
