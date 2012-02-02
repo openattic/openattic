@@ -13,7 +13,7 @@ Ext.oa.Lvm__LogicalVolume_Panel = Ext.extend(Ext.Panel, {
     var currentChartId = null;
     var lvmPanel = this;
     var lvmGrid = this;
-    var addVolume = function(){
+    var addVolume = function(event){
     var addwin = new Ext.Window({
       title: "{% trans "Add Volume" %}",
       layout: "fit",
@@ -447,7 +447,7 @@ Ext.oa.Lvm__LogicalVolume_Panel = Ext.extend(Ext.Panel, {
         handler: this.deleteVolume,
         scope: lvmGrid
       }],
-      keys: [{ key: [Ext.EventObject.DELETE], handler: this.deleteVolume},{key: [Ext.EventObject.ALT && 65], handler: addVolume}],
+      keys: [{ scope: this, key: [Ext.EventObject.DELETE], handler: this.deleteVolume},{key: [65], handler: addVolume}],
       items: [{
         xtype: 'grid',
         region: "center",
