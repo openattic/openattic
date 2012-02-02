@@ -203,6 +203,7 @@ Ext.oa.Iscsi__Panel = Ext.extend(Ext.Panel, {
           ref: '../targets',
           border: true,
           xtype: 'grid',
+          autoScroll: true,
           title: 'Targets',
           viewConfig: { forceFit: true },
           store: targetStore,
@@ -249,6 +250,7 @@ Ext.oa.Iscsi__Panel = Ext.extend(Ext.Panel, {
                 width: 500,
                 items: [{
                   xtype: "form",
+                  autoScroll: true,
                   defaults: {
                     xtype: "textfield",
                     allowBlank: false,
@@ -318,6 +320,7 @@ Ext.oa.Iscsi__Panel = Ext.extend(Ext.Panel, {
           },
           items: [{
             xtype: 'grid',
+            autoScroll: true,
             ref: 'allow_grid',
             enableDragDrop: true,
             ddGroup: 'initiator',
@@ -417,6 +420,7 @@ Ext.oa.Iscsi__Panel = Ext.extend(Ext.Panel, {
                 items: [{
                   region: "center",
                   xtype: 'grid',
+                  autoScroll: true,
                   ref: 'initiator_all',
                   ddGroup: "initiator",
                   enableDrag: true,
@@ -455,18 +459,19 @@ Ext.oa.Iscsi__Panel = Ext.extend(Ext.Panel, {
                     "margin-right": "0"
                   },
                   title:'Details',
-                  autoScroll: true,
                   autoHeight: true,
+                  autoScroll: true,
                   border: true,
                   items: [{
                     fieldLabel: 'Name',
-                    anchor: '100%',
+                    anchor: '-20px',
                     ref: 'namefield',
                     allowBlank: false,
                     name: 'name'
                   },{
                     fieldLabel: 'IQN/IP',
-                    anchor: '100%',
+                    autoScroll: true,
+                    anchor: '-20px',
                     ref: 'addressfield',
                     allowBlank: false,
                     name: 'address'
@@ -560,6 +565,7 @@ Ext.oa.Iscsi__Panel = Ext.extend(Ext.Panel, {
           //BEGIN le lun
           ref: '../lun',
           xtype: 'grid',
+          autoScroll: true,
           viewConfig: { forceFit: true },
           title: 'LUNs',
           store: lunStore,
@@ -597,6 +603,7 @@ Ext.oa.Iscsi__Panel = Ext.extend(Ext.Panel, {
                 width: 500,
                 items: [{
                   xtype: "form",
+                  autoScroll: true,
                   defaults: {
                     xtype: "textfield",
                     anchor: '-20px'

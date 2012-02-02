@@ -59,6 +59,7 @@ Ext.oa.Zfs__Subvolume__Panel = Ext.extend(Ext.grid.GridPanel, {
                width: 500,
                items: [{
                  xtype: "form",
+                 autoScroll: true,
                  border: false,
                  defaults: {
                    xtype: "textfield",
