@@ -158,7 +158,10 @@ class NetDevice(models.Model):
         elif self.devtype == "native":
             if not self.operstate:
                 return None
-            return int(open(join("/sys/class/net", self.devname, "speed"), "rb").read().strip())
+            spd = statfile( self.devname, "speed" )
+            if speed is None:
+                return None
+            return int( speed )
         else:
             if self.vlanrawdev:
                 return self.vlanrawdev.speed
