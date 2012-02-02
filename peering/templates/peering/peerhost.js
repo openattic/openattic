@@ -11,6 +11,7 @@ Ext.oa.Peering__Peerhost_Panel = Ext.extend(Ext.grid.GridPanel, {
       width: 500,
       items: [{
         xtype: "form",
+        autoScroll: true,
         bodyStyle: 'padding:5px 5px;',
         api: {
           load:   peering__PeerHost.get_ext,
@@ -93,7 +94,7 @@ Ext.oa.Peering__Peerhost_Panel = Ext.extend(Ext.grid.GridPanel, {
             var sel = sm.selections.items[0];
             peerhostGrid.showEditWindow({
               title: "{% trans 'Edit Peer' %}",
-              submitButtonText: "{% trans 'Edit Peer' %}"
+              submitButtonText: "{% trans 'Edit Peer' %}",
             }, sel.data);
           }
         }
@@ -122,6 +123,7 @@ Ext.oa.Peering__Peerhost_Panel = Ext.extend(Ext.grid.GridPanel, {
       ],
       store: {
         xtype: 'directstore',
+        autoScroll: true,
         fields: ['id', 'base_url', 'name', 'hostname'],
         directFn: peering__PeerHost.all
       },
