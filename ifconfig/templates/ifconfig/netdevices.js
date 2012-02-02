@@ -266,8 +266,30 @@ Ext.oa.Ifconfig__NetDevice_Panel = Ext.extend(Ext.Panel, {
           store: new Ext.data.DirectStore({
             fields: ["domain", "nameservers", "gateway", "address", "device", "id", "configure"],
             directFn: ifconfig__IPAddress.filter
-          })
+          }),
+          buttons: [{
+            text: "{% trans 'Add Address'%}",
+            icon: MEDIA_URL + "/icons2/16x16/actions/add.png",
+            handler: function(){
+            }
+          }, {
+            text: "{% trans 'Delete Address'%}",
+            icon: MEDIA_URL + "/icons2/16x16/actions/remove.png",
+            handler: function(){
+            }
+          }]
         }]
+      }],
+      buttons: [{
+        text: "{% trans 'Validate configuration'%}",
+        icon: MEDIA_URL + "/oxygen/16x16/actions/preflight-verifier.png",
+        handler: function(){
+        }
+      }, {
+        text: "{% trans 'Activate configuration'%}",
+        icon: MEDIA_URL + "/oxygen/16x16/actions/run-build-install.png",
+        handler: function(){
+        }
       }]
     }));
     Ext.oa.Ifconfig__NetDevice_Panel.superclass.initComponent.apply(this, arguments);
