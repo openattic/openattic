@@ -127,98 +127,136 @@ Ext.oa.Ifconfig__NetDevice_Panel = Ext.extend(Ext.Panel, {
         }
       }), {
         region: "center",
-        xtype: "form",
-        ref: "deviceform",
-        bodyStyle: 'padding:5px 5px;',
-        api: {
-          load:   ifconfig__NetDevice.get_ext,
-          submit: ifconfig__NetDevice.set_ext
-        },
-        paramOrder: ["id"],
+        layout: "vbox",
         defaults: {
-          xtype: "textfield",
-          anchor: '-20px',
-          defaults: {
-            anchor: "0px"
-          }
+          flex: 1
+        },
+        layoutConfig: {
+          align: "stretch"
         },
         items: [{
-          fieldLabel: "Device",
-          name: "devname",
-          readOnly: true
-        }, {
-          fieldLabel: "Speed",
-          name: "speed",
-          readOnly: true
-        }, {
-          fieldLabel: "MAC Address",
-          name: "macaddress",
-          readOnly: true
-        }, {
-          xtype: "checkbox",
-          fieldLabel: "Connected",
-          name: "carrier",
-          readOnly: true
-        }, {
-          xtype: "checkbox",
-          fieldLabel: "Active",
-          name: "operstate",
-          readOnly: true
-        }, {
-          xtype: "checkbox",
-          fieldLabel: "Auto",
-          name: "auto"
-        }, {
-          xtype: "numberfield",
-          fieldLabel: "MTU",
-          name: "mtu"
-        }, {
-          xtype: "checkbox",
-          fieldLabel: "DHCP",
-          name: "dhcp"
-        }, {
-          xtype: 'fieldset',
-          title: 'Bonding options (if applicable)',
-          collapsible: true,
-          collapsed: true,
-          layout: 'form',
-          items: [ {
-            fieldLabel: "{% trans 'MII Monitoring interval' %}",
-            xtype: "numberfield",
-            name: "bond_miimon"
+          xtype: "form",
+          autoScroll: true,
+          ref: "../deviceform",
+          bodyStyle: 'padding:5px 5px;',
+          api: {
+            load:   ifconfig__NetDevice.get_ext,
+            submit: ifconfig__NetDevice.set_ext
+          },
+          paramOrder: ["id"],
+          defaults: {
+            xtype: "textfield",
+            anchor: '-20px',
+            defaults: {
+              anchor: "0px"
+            }
+          },
+          items: [{
+            fieldLabel: "Device",
+            name: "devname",
+            readOnly: true
           }, {
-            fieldLabel: "{% trans 'Down Delay' %}",
-            xtype: "numberfield",
-            name: "bond_downdelay"
+            fieldLabel: "Speed",
+            name: "speed",
+            readOnly: true
           }, {
-            fieldLabel: "{% trans 'Up Delay' %}",
-            xtype: "numberfield",
-            name: "bond_updelay"
+            fieldLabel: "MAC Address",
+            name: "macaddress",
+            readOnly: true
           }, {
-            fieldLabel: "{% trans 'Mode' %}",
-            name: "bond_mode"
-          } ]
-        }],
-        buttons: [{
-          text: "{% trans 'Save' %}",
-          icon: MEDIA_URL + "/oxygen/16x16/actions/dialog-ok-apply.png",
-          handler: function(self){
-            self.ownerCt.ownerCt.getForm().submit({
-              params: { id: -1, init_master: true, ordering: 0 },
-              success: function(provider, response){
-                if( response.result ){
-                  drbdDevGrid.store.reload();
-                  addwin.hide();
+            xtype: "checkbox",
+            fieldLabel: "Connected",
+            name: "carrier",
+            readOnly: true
+          }, {
+            xtype: "checkbox",
+            fieldLabel: "Active",
+            name: "operstate",
+            readOnly: true
+          }, {
+            xtype: "checkbox",
+            fieldLabel: "Auto",
+            name: "auto"
+          }, {
+            xtype: "numberfield",
+            fieldLabel: "MTU",
+            name: "mtu"
+          }, {
+            xtype: "checkbox",
+            fieldLabel: "DHCP",
+            name: "dhcp"
+          }, {
+            xtype: 'fieldset',
+            title: 'Bonding options (if applicable)',
+            collapsible: true,
+            collapsed: true,
+            layout: 'form',
+            items: [ {
+              fieldLabel: "{% trans 'MII Monitoring interval' %}",
+              xtype: "numberfield",
+              name: "bond_miimon"
+            }, {
+              fieldLabel: "{% trans 'Down Delay' %}",
+              xtype: "numberfield",
+              name: "bond_downdelay"
+            }, {
+              fieldLabel: "{% trans 'Up Delay' %}",
+              xtype: "numberfield",
+              name: "bond_updelay"
+            }, {
+              fieldLabel: "{% trans 'Mode' %}",
+              name: "bond_mode",
+              xtype: "textfield"
+            } ]
+          }],
+          buttons: [{
+            text: "{% trans 'Save' %}",
+            icon: MEDIA_URL + "/oxygen/16x16/actions/dialog-ok-apply.png",
+            handler: function(self){
+              self.ownerCt.ownerCt.getForm().submit({
+                params: { id: -1, init_master: true, ordering: 0 },
+                success: function(provider, response){
+                  if( response.result ){
+                    drbdDevGrid.store.reload();
+                    addwin.hide();
+                  }
                 }
-              }
-            });
-          }
+              });
+            }
+          }, {
+            text: "{% trans 'Cancel' %}",
+            icon: MEDIA_URL + "/icons2/16x16/actions/gtk-cancel.png",
+            handler: function(self){
+              addwin.hide();
+            }
+          }]
         }, {
-          text: "{% trans 'Cancel' %}",
-          icon: MEDIA_URL + "/icons2/16x16/actions/gtk-cancel.png",
-          handler: function(self){
-            addwin.hide();
-          }
+          xtype: "grid",
+          ref: "../addressgrid",
+          title: "IP Addresses",
+          viewConfig: { forceFit: true },
+          colModel: new Ext.grid.ColumnModel({
+            defaults: {
+              sortable: true
+            },
+            columns: [{
+              header: "IP",
+              dataIndex: "address"
+            }, {
+              header: "Gateway",
+              dataIndex: "gateway"
+            }, {
+              header: "Domain",
+              dataIndex: "domain"
+            }, {
+              header: "Nameservers",
+              dataIndex: "nameservers"
+            }]
+          }),
+          store: new Ext.data.DirectStore({
+            fields: ["domain", "nameservers", "gateway", "address", "device", "id"],
+            directFn: ifconfig__IPAddress.filter
+          })
         }]
       }]
     }));
@@ -228,6 +266,7 @@ Ext.oa.Ifconfig__NetDevice_Panel = Ext.extend(Ext.Panel, {
   nodeClicked: function(node, ev){
     //   ↓lol↓
     this.scope.deviceform.load({ params: { id: node.attributes.device.id } });
+    this.scope.addressgrid.store.load({ params: { device__id: node.attributes.device.id } });
   },
 
   onRender: function(){
