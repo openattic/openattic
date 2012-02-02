@@ -9,7 +9,7 @@ msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2012-01-31 16:57+0100\n"
-"PO-Revision-Date: 2012-01-31 16:59\n"
+"PO-Revision-Date: 2012-02-02 16:24\n"
 "Last-Translator: Laura Paduano <laura.paduano@it-novum.com>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
 "MIME-Version: 1.0\n"
@@ -326,7 +326,7 @@ msgid ""
 "Please enter the desired size in MB you wish to resize volume <b>%s</b> to."
 msgstr ""
 "Bitte geben Sie die gewünschte Größe in MB an, auf die das Volume <b>%s</b> "
-"vergrößert werden soll."
+"angepasst werden soll."
 
 #: templates/lvm/logicalvolume.js:405
 #, python-format
