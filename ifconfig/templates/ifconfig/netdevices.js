@@ -428,6 +428,7 @@ Ext.oa.Ifconfig__NetDevice_Panel = Ext.extend(Ext.Panel, {
     }
     else{
       // New device
+      this.scope.addressgrid.store.removeAll();
       var ds_model = Ext.data.Record.create( [
         "devname", "auto", "dhcp", "speed", "macaddress", "carrier", "operstate", "mtu"
       ] );
