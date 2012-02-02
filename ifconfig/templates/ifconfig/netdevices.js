@@ -245,15 +245,37 @@ Ext.oa.Ifconfig__NetDevice_Panel = Ext.extend(Ext.Panel, {
             text: "{% trans 'Save' %}",
             icon: MEDIA_URL + "/oxygen/16x16/actions/dialog-ok-apply.png",
             handler: function(self){
-              self.ownerCt.ownerCt.getForm().submit({
-                params: { id: -1, init_master: true, ordering: 0 },
-                success: function(provider, response){
-                  if( response.result ){
-                    drbdDevGrid.store.reload();
-                    addwin.hide();
-                  }
+              var params = {id: netDevPanel.active_device.id};
+
+              if( netDevPanel.active_device.devtype == "bonding" ){
+                params.slaves = [];
+                for( var i = 0; i < netDevPanel.active_node.childNodes.length; i++ ){
+                  if( netDevPanel.active_node.childNodes[i].attributes.device.devtype != "native" )
+                    continue;
+                  params.slaves.push({"app": "ifconfig", "obj": "NetDevice",
+                    "id": netDevPanel.active_node.childNodes[i].attributes.device.id
+                  });
                 }
-              });
+              }
+              if( netDevPanel.active_device.devtype == "vlan" ){
+                params.vlanrawdev = {"app": "ifconfig", "obj": "NetDevice",
+                  "id": netDevPanel.active_node.parentNode.attributes.device.id
+                };
+              }
+              if( netDevPanel.active_device.devtype == "bridge" ){
+                params.brports = [{"app": "ifconfig", "obj": "NetDevice",
+                  "id": netDevPanel.active_node.parentNode.attributes.device.id
+                }];
+              }
+              console.log(params);
+//               self.ownerCt.ownerCt.getForm().submit({
+//                 params: params,
+//                 success: function(provider, response){
+//                   if( response.result ){
+//                     netDevGrid.store.reload();
+//                   }
+//                 }
+//               });
             }
           }, {
             text: "{% trans 'Cancel' %}",
@@ -314,7 +336,6 @@ Ext.oa.Ifconfig__NetDevice_Panel = Ext.extend(Ext.Panel, {
                 Ext.Msg.alert("{% trans 'Add Address'%}", "{% trans 'Please select a device first.' %}");
               }
               var ds = netDevPanel.addressgrid.store;
-              console.log(ds);
               var ds_model = Ext.data.Record.create( ds.fields.keys );
               ds.insert(0, new ds_model({
                 device:    { "app": "ifconfig", "obj": "NetDevice", "id": netDevPanel.active_device.id },
@@ -415,6 +436,7 @@ Ext.oa.Ifconfig__NetDevice_Panel = Ext.extend(Ext.Panel, {
   nodeClicked: function(node, ev){
     //   ↓lol↓
     this.scope.active_device = node.attributes.device;
+    this.scope.active_node   = node;
 
     if( node.attributes.device.id !== -1 ){
       // Existing device
@@ -457,9 +479,6 @@ Ext.oa.Ifconfig__NetDevice_Panel = Ext.extend(Ext.Panel, {
   nodeDragOver: function(ev){
     var srcdev = ev.data.node.attributes.device,
         tgtdev = ev.target.attributes.device;
-
-    console.log(String.format("Can haz drop of {0}({1}) on {2}({3})",
-      srcdev.devname, srcdev.devtype, tgtdev.devname, tgtdev.devtype));
 
     // Ordering devices by the following score, we can drop each device on
     // every other device that has a lower score.
