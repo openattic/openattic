@@ -234,16 +234,15 @@ Ext.oa.Ftp__User_Panel = Ext.extend(Ext.grid.GridPanel, {
           }
         }
    });
-        this.on({
-          'contextmenu': function(event) {
-            if( this.getSelectionModel().hasSelection() ){
-             
-            event.stopEvent();
-            this.getSelectionModel
-            menu.showAt(event.xy);
-            }
-          }
-        });
+    this.on({
+      'contextmenu': function(event) {
+        if( this.getSelectionModel().hasSelection() ){
+          event.stopEvent();
+          this.getSelectionModel
+          menu.showAt(event.xy);
+        }
+      }
+    });
   }
 });
 
