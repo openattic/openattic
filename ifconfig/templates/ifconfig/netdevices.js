@@ -2,6 +2,32 @@
 
 Ext.namespace("Ext.oa");
 
+Ext.apply(Ext.form.VTypes, {
+    IPAddress:  function(v) {
+      return /^\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3}$/.test(v);
+    },
+    IPAddressText: "{% trans 'Must be a numeric IP address.' %}",
+    IPAddressMask: /[\d\.]/i,
+
+    IPAddressWithNetmask:  function(v) {
+      return /^\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3}(\/(\d{1,2}|\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3}))?$/.test(v);
+    },
+    IPAddressWithNetmaskText: "{% trans 'Must be a numeric IP address or 'IP/Netmask'.' %}",
+    IPAddressWithNetmaskMask: /[\d\.\/]/i,
+
+    IPAddressList:  function(v) {
+      // Match "123.(123.123.123 123.)*123.123.123", because that way spaces are not allowed at the end
+      return /^\d{1,3}\.(\d{1,3}\.\d{1,3}\.\d{1,3} \d{1,3}\.)*\d{1,3}\.\d{1,3}\.\d{1,3}$/.test(v);
+    },
+    IPAddressListText: "{% trans 'Must be a space-separated list of numeric IP addresses.' %}",
+    IPAddressListMask: /[\d\. ]/i,
+
+    DomainName:  function(v) {
+      return /^[\w\.\-]+$/.test(v);
+    },
+    DomainNameText: "{% trans 'Must only contain letters, numbers, '-' and '.'.' %}",
+    DomainNameMask: /[\w\.\-]/i
+});
 
 Ext.oa.Ifconfig__NetDevice_TreeNodeUI = Ext.extend(Ext.tree.TreeNodeUI, {
   renderElements : function(n, a, targetNode, bulkRender){
@@ -233,7 +259,7 @@ Ext.oa.Ifconfig__NetDevice_Panel = Ext.extend(Ext.Panel, {
             }
           }]
         }, {
-          xtype: "grid",
+          xtype: "editorgrid",
           ref: "../addressgrid",
           title: "IP Addresses",
           viewConfig: { forceFit: true },
@@ -243,16 +269,20 @@ Ext.oa.Ifconfig__NetDevice_Panel = Ext.extend(Ext.Panel, {
             },
             columns: [{
               header: "IP",
-              dataIndex: "address"
+              dataIndex: "address",
+              editor: new Ext.form.TextField({ vtype: 'IPAddressWithNetmask' })
             }, {
               header: "Gateway",
-              dataIndex: "gateway"
+              dataIndex: "gateway",
+              editor: new Ext.form.TextField({ vtype: 'IPAddress' })
             }, {
               header: "Domain",
-              dataIndex: "domain"
+              dataIndex: "domain",
+              editor: new Ext.form.TextField({ vtype: 'DomainName' })
             }, {
               header: "Nameservers",
-              dataIndex: "nameservers"
+              dataIndex: "nameservers",
+              editor: new Ext.form.TextField({ vtype: 'IPAddressList' })
             }, {
               header: "Editable",
               dataIndex: "configure",
@@ -267,6 +297,11 @@ Ext.oa.Ifconfig__NetDevice_Panel = Ext.extend(Ext.Panel, {
             fields: ["domain", "nameservers", "gateway", "address", "device", "id", "configure"],
             directFn: ifconfig__IPAddress.filter
           }),
+          listeners: {
+            beforeedit: function( event ){
+              return event.record.data.configure;
+            }
+          },
           buttons: [{
             text: "{% trans 'Add Address'%}",
             icon: MEDIA_URL + "/icons2/16x16/actions/add.png",
