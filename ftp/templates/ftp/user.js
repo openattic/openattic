@@ -225,7 +225,8 @@ Ext.oa.Ftp__User_Panel = Ext.extend(Ext.grid.GridPanel, {
     var menu = new Ext.menu.Menu({
     items: [{
             id: 'delete',
-            text: 'delete'
+            text: 'delete',
+            icon: MEDIA_URL + "/icons2/16x16/actions/remove.png",
         }],
         listeners: {
           itemclick: function(item) {
@@ -236,6 +237,7 @@ Ext.oa.Ftp__User_Panel = Ext.extend(Ext.grid.GridPanel, {
         this.on({
           'contextmenu': function(event) {
             if( this.getSelectionModel().hasSelection() ){
+             
             event.stopEvent();
             this.getSelectionModel
             menu.showAt(event.xy);
