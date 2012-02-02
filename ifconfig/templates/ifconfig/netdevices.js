@@ -332,7 +332,24 @@ Ext.oa.Ifconfig__NetDevice_Panel = Ext.extend(Ext.Panel, {
                   );
                   return;
                 }
-                ds.remove(sel);
+                __main__.get_related({
+                  "app": "ifconfig",
+                  "obj": "IPAddress",
+                  "id": sel.data.id
+                }, function(provider, response){
+                  console.log( "used by" + response.result.length );
+                  if( response.result.length > 0 ){
+                    Ext.Msg.alert("{% trans 'Delete Address'%}",
+                      interpolate(
+                        "{% trans 'There are %s objects using this IP Address, cannot delete it.' %}",
+                         [response.result.length]
+                      )
+                    );
+                  }
+                  else{
+                    ds.remove(sel);
+                  }
+                });
               }
             }
           }]
