@@ -46,6 +46,7 @@ Ext.oa.Nfs__Export_Panel = Ext.extend(Ext.grid.GridPanel, {
             width: 500,
             items: [{
               xtype: "form",
+              autoScroll: true,
               bodyStyle: 'padding:5px 5px;',
               defaults: {
                 xtype: "textfield",
@@ -71,6 +72,7 @@ Ext.oa.Nfs__Export_Panel = Ext.extend(Ext.grid.GridPanel, {
                 }, "{% trans 'If you wish to share only a subpath of the volume, enter the path here.' %}" ),
               {
                 fieldLabel: "{% trans 'Address' %}",
+                allowBlank: false,
                 name: "address",
                 ref: 'addrfield'
               }, tipify({
@@ -124,6 +126,7 @@ Ext.oa.Nfs__Export_Panel = Ext.extend(Ext.grid.GridPanel, {
               width: 500,
               items: [{
                 xtype: "form",
+                autoScroll: true,
                 bodyStyle: 'padding:5px 5px;',
                 defaults: {
                   xtype: "textfield",
@@ -145,6 +148,7 @@ Ext.oa.Nfs__Export_Panel = Ext.extend(Ext.grid.GridPanel, {
                 },{
                   fieldLabel: "Address",
                   name: "address",
+                  allowBlank: false,
                   ref: 'addressfield',
                   value: sel.data.address
                 },{
@@ -186,7 +190,7 @@ Ext.oa.Nfs__Export_Panel = Ext.extend(Ext.grid.GridPanel, {
        keys: [{ key: [Ext.EventObject.DELETE], handler: deleteFunction}],
       store: {
         xtype: 'directstore',
-        fields: ['id', 'address', 'path', 'options', 'state'],
+        fields: ['id', 'address', 'path', 'options'],
         directFn: nfs__Export.all
       },
       colModel: new Ext.grid.ColumnModel({
