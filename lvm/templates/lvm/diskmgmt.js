@@ -62,6 +62,7 @@ Ext.oa.volumeGroup_Panel = Ext.extend(Ext.grid.GridPanel, {
             width: 500,
             items: [{
               xtype: "form",
+              autoScroll: true,
               border: false,
               bodyStyle: 'padding:5px 5px;',
               defaults: {

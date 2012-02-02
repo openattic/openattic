@@ -21,6 +21,7 @@ Ext.oa.Lvm__LogicalVolume_Panel = Ext.extend(Ext.Panel, {
       width: 500,
       items: [{
         xtype: "form",
+        autoScroll: true,
         border: false,
         bodyStyle: 'padding:5px 5px;',
         defaults: {
@@ -238,6 +239,7 @@ Ext.oa.Lvm__LogicalVolume_Panel = Ext.extend(Ext.Panel, {
               items: [{
                 xtype: "form",
                 border: false,
+                autoScroll: true,
                 bodyStyle: 'padding:5px 5px;',
                 defaults: {
                   xtype: "textfield",
