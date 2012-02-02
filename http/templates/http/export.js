@@ -44,6 +44,7 @@ Ext.oa.Http__Export_Panel = Ext.extend(Ext.grid.GridPanel, {
             width: 500,
             items: [{
               xtype: "form",
+              autoScroll: true,
               bodyStyle: 'padding:5px 5px;',
               defaults: {
                 xtype: "textfield",
@@ -108,6 +109,7 @@ Ext.oa.Http__Export_Panel = Ext.extend(Ext.grid.GridPanel, {
               width: 500,
               items: [{
                 xtype: "form",
+                autoScroll: true,
                 bodyStyle: 'padding:5px 5px;',
                 defaults: {
                   xtype: "textfield",
@@ -156,7 +158,7 @@ Ext.oa.Http__Export_Panel = Ext.extend(Ext.grid.GridPanel, {
       keys: [{ key: [Ext.EventObject.DELETE], handler: deleteFunction}],
       store: {
         xtype: "directstore",
-        fields: ['path', 'state', 'id', 'volume', {
+        fields: ['path', 'id', 'volume', {
           name: 'volumename',
           mapping: 'volume',
           convert: function( val, row ){
