@@ -28,7 +28,11 @@ class NetDeviceHandler(ModelHandler):
 
     def _idobj(self, obj):
         """ Return an ID for the given object, including the app label and object name. """
-        return {'id': obj.id, 'app': obj._meta.app_label, 'obj': obj._meta.object_name, 'devname': obj.devname}
+        return {
+            'id': obj.id, 'app': obj._meta.app_label, 'obj': obj._meta.object_name,
+            'devname': obj.devname,
+            'devtype': obj.devtype
+            }
 
     def get_root_devices(self):
         """ Get devices that are considered a root device. """
