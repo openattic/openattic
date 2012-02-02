@@ -32,6 +32,7 @@ Ext.oa.Auth__User_Panel = Ext.extend(Ext.grid.GridPanel, {
             width: 500,
             items: [{
               xtype: "form",
+              autoScroll: true,
               bodyStyle: 'padding:5px 5px;',
               defaults: {
                 xtype: "textfield",
@@ -151,6 +152,7 @@ Ext.oa.Auth__User_Panel = Ext.extend(Ext.grid.GridPanel, {
               width: 500,
               items: [{
                 xtype: "form",
+                autoScroll: true,
                 bodyStyle: 'padding:5px 5px;',
                 defaults: {
                   xtype: "textfield",
@@ -241,6 +243,7 @@ Ext.oa.Auth__User_Panel = Ext.extend(Ext.grid.GridPanel, {
               width: 300,
               items: [{
                 xtype: "form",
+                autoScroll: true,
                 bodyStyle: 'padding:5px 5px;',
                   defaults: {
                   xtype: "textfield",
