@@ -49,6 +49,7 @@ Ext.oa.Samba__Share_Panel = Ext.extend(Ext.grid.GridPanel, {
             width: 500,
             items: [{
               xtype: "form",
+              autoScroll: true,
               bodyStyle: 'padding:5px 5px;',
               defaults: {
                 xtype: "textfield",
@@ -77,6 +78,7 @@ Ext.oa.Samba__Share_Panel = Ext.extend(Ext.grid.GridPanel, {
                 ref: 'dirfield'
               }, {
                 xtype:      'combo',
+                autoScroll: true,
                 allowBlank: true,
                 fieldLabel: "{% trans 'Owner' %}",
                 name:       'owner',
@@ -194,6 +196,7 @@ Ext.oa.Samba__Share_Panel = Ext.extend(Ext.grid.GridPanel, {
               width: 500,
               items: [{
                 xtype: "form",
+                autoScroll: true,
                 bodyStyle: 'padding:5px 5px;',
                 defaults: {
                   xtype: "textfield",
