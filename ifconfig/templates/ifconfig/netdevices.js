@@ -440,7 +440,11 @@ Ext.oa.Ifconfig__NetDevice_Panel = Ext.extend(Ext.Panel, {
         macaddress: null,
         carrier: null,
         operstate: null,
-        mtu: null
+        mtu: null,
+        bond_downdelay: 200,
+        bond_updelay: 200,
+        bond_miimon: 100,
+        bond_mode: "active-backup"
       }));
       var fld = this.scope.deviceform.getForm().findField("devname");
       if( fld ){
