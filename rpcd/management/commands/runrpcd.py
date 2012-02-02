@@ -243,6 +243,18 @@ class RPCd(object):
         handler = ModelHandler._get_handler_for_model(obj.__class__)(None)
         return handler._getobj(obj)
 
+    def get_related(self, id):
+        """ Return objects that reference the object given by the ID dictionary. """
+        obj = ModelHandler._get_object_by_id_dict(id)
+        relids = []
+        for relobj in ( obj._meta.get_all_related_objects() + obj._meta.get_all_related_many_to_many_objects() ):
+            relids.extend([
+                ModelHandler._get_handler_for_model(relobj.model)(None)._idobj(relmdl)
+                for relmdl in relobj.model.objects.filter( **{ relobj.field.name: obj } )
+                ])
+        return relids
+
+
 def getloglevel(levelstr):
     numeric_level = getattr(logging, levelstr.upper(), None)
     if not isinstance(numeric_level, int):
