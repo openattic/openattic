@@ -45,23 +45,21 @@ class MainHandler(object):
                 res.append(app)
         return res
 
-    def get_object(self, id, app, obj):
+    def get_object(self, idobj):
         """ Return an object resolved from an ID dictionary.
 
             Ext.Direct splits up the dict, that's why we need three distinct args here.
         """
-        id = { "id": id, "app": app, "obj": obj }
-        obj = ModelHandler._get_object_by_id_dict(id)
+        obj = ModelHandler._get_object_by_id_dict(idobj)
         handler = ModelHandler._get_handler_for_model(obj.__class__)(None)
         return handler._getobj(obj)
 
-    def get_related(self, id, app, obj):
+    def get_related(self, idobj):
         """ Return objects that reference the object given by the ID dictionary.
 
             Ext.Direct splits up the dict, that's why we need three distinct args here.
         """
-        id = { "id": id, "app": app, "obj": obj }
-        obj = ModelHandler._get_object_by_id_dict(id)
+        obj = ModelHandler._get_object_by_id_dict(idobj)
         relids = []
         for relobj in ( obj._meta.get_all_related_objects() + obj._meta.get_all_related_many_to_many_objects() ):
             relids.extend([

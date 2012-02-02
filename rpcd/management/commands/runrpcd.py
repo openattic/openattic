@@ -237,15 +237,15 @@ class RPCd(object):
         """ Get this host's fully qualified domain name (FQDN). """
         return socket.getfqdn()
 
-    def get_object(self, id):
+    def get_object(self, idobj):
         """ Return an object resolved from an ID dictionary. """
-        obj = ModelHandler._get_object_by_id_dict(id)
+        obj = ModelHandler._get_object_by_id_dict(idobj)
         handler = ModelHandler._get_handler_for_model(obj.__class__)(None)
         return handler._getobj(obj)
 
-    def get_related(self, id):
+    def get_related(self, idobj):
         """ Return objects that reference the object given by the ID dictionary. """
-        obj = ModelHandler._get_object_by_id_dict(id)
+        obj = ModelHandler._get_object_by_id_dict(idobj)
         relids = []
         for relobj in ( obj._meta.get_all_related_objects() + obj._meta.get_all_related_many_to_many_objects() ):
             relids.extend([
