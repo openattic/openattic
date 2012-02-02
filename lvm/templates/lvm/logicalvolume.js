@@ -21,7 +21,6 @@ Ext.oa.Lvm__LogicalVolume_Panel = Ext.extend(Ext.Panel, {
       width: 500,
       items: [{
         xtype: "form",
-        autoScroll: true,
         border: false,
         bodyStyle: 'padding:5px 5px;',
         defaults: {
@@ -192,26 +191,7 @@ Ext.oa.Lvm__LogicalVolume_Panel = Ext.extend(Ext.Panel, {
     });
     addwin.show();
   };
-    var deleteVolume = function(self){
-    var lvmGrid = lvmPanel.items.items[0];
-    var sm = lvmGrid.getSelectionModel();
-      if( sm.hasSelection() ){
-        var sel = sm.selections.items[0];
-        Ext.Msg.confirm(
-          "{% trans 'Confirm delete' %}",
-          interpolate(
-            "{% trans 'Really delete volume %s and all its shares?<br /><b>There is no undo and you will lose all data.</b>' %}",
-            [sel.data.name] ),
-          function(btn, text){
-            if( btn == 'yes' ){
-              lvm__LogicalVolume.remove( sel.data.id, function(provider, response){
-                lvmGrid.store.reload();
-              } );
-            }
-          }
-        );
-      }
-    };
+    
     Ext.apply(this, Ext.apply(this.initialConfig, {
       id: "lvm__logicalvolume_panel_inst",
       title: "{% trans 'LVM' %}",
@@ -239,7 +219,6 @@ Ext.oa.Lvm__LogicalVolume_Panel = Ext.extend(Ext.Panel, {
               items: [{
                 xtype: "form",
                 border: false,
-                autoScroll: true,
                 bodyStyle: 'padding:5px 5px;',
                 defaults: {
                   xtype: "textfield",
@@ -465,9 +444,10 @@ Ext.oa.Lvm__LogicalVolume_Panel = Ext.extend(Ext.Panel, {
       }, {
         text: "{% trans 'Delete Volume' %}",
         icon: MEDIA_URL + "/icons2/16x16/actions/remove.png",
-        handler: deleteVolume
+        handler: this.deleteVolume,
+        scope: lvmGrid
       }],
-      keys: [{ key: [Ext.EventObject.DELETE], handler: deleteVolume},{key: [Ext.EventObject.ALT && 65], handler: addVolume}],
+      keys: [{ key: [Ext.EventObject.DELETE], handler: this.deleteVolume},{key: [Ext.EventObject.ALT && 65], handler: addVolume}],
       items: [{
         xtype: 'grid',
         region: "center",
@@ -643,11 +623,57 @@ Ext.oa.Lvm__LogicalVolume_Panel = Ext.extend(Ext.Panel, {
     }));
     Ext.oa.Lvm__LogicalVolume_Panel.superclass.initComponent.apply(this, arguments);
   },
+  
+  deleteVolume: function(self){
+    var lvmGrid = this.items.items[0];
+    var sm = lvmGrid.getSelectionModel();
+      if( sm.hasSelection() ){
+        var sel = sm.selections.items[0];
+        Ext.Msg.confirm(
+          "{% trans 'Confirm delete' %}",
+          interpolate(
+            "{% trans 'Really delete volume %s and all its shares?<br /><b>There is no undo and you will lose all data.</b>' %}",
+            [sel.data.name] ),
+          function(btn, text){
+            if( btn == 'yes' ){
+              lvm__LogicalVolume.remove( sel.data.id, function(provider, response){
+                lvmGrid.store.reload();
+              } );
+            }
+          }
+        );
+      }
+    },
+  
   onRender: function(){
     Ext.oa.Lvm__LogicalVolume_Panel.superclass.onRender.apply(this, arguments);
     this.items.items[0].store.reload();
+    var self = this;
+    var menu = new Ext.menu.Menu({
+    items: [{
+            id: 'delete',
+            text: 'delete',
+            icon: MEDIA_URL + "/icons2/16x16/actions/remove.png",
+        }],
+        listeners: {
+          itemclick: function(item) {
+                    self.deleteVolume()
+          }
+        }
+    });
+    this.items.items[0].on({
+      'contextmenu': function(event) {
+        if( this.getSelectionModel().hasSelection() ){
+          event.stopEvent();
+          this.getSelectionModel
+          menu.showAt(event.xy);
+        }
+      }
+    });
   }
 });
+                    
+  
 
 Ext.reg("lvm__logicalvolume_panel", Ext.oa.Lvm__LogicalVolume_Panel);
 
