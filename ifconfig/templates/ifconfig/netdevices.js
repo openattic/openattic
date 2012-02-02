@@ -187,7 +187,6 @@ Ext.oa.Ifconfig__NetDevice_Panel = Ext.extend(Ext.Panel, {
           items: [{
             fieldLabel: "Device",
             name: "devname",
-            readOnly: true
           }, {
             fieldLabel: "Speed",
             name: "speed",
@@ -415,9 +414,39 @@ Ext.oa.Ifconfig__NetDevice_Panel = Ext.extend(Ext.Panel, {
 
   nodeClicked: function(node, ev){
     //   ↓lol↓
-    this.scope.deviceform.load({ params: { id: node.attributes.device.id } });
-    this.scope.addressgrid.store.load({ params: { device__id: node.attributes.device.id } });
     this.scope.active_device = node.attributes.device;
+
+    if( node.attributes.device.id !== -1 ){
+      // Existing device
+      this.scope.deviceform.load({ params: { id: node.attributes.device.id } });
+      this.scope.addressgrid.store.load({ params: { device__id: node.attributes.device.id } });
+      var fld = this.scope.deviceform.getForm().findField("devname");
+      if( fld ){
+        fld.el.dom.readOnly = true;
+        fld.readOnly = true;
+      }
+    }
+    else{
+      // New device
+      var ds_model = Ext.data.Record.create( [
+        "devname", "auto", "dhcp", "speed", "macaddress", "carrier", "operstate", "mtu"
+      ] );
+      this.scope.deviceform.getForm().loadRecord(new ds_model({
+        devname: node.attributes.device.devname,
+        auto: true,
+        dhcp: false,
+        speed: null,
+        macaddress: null,
+        carrier: null,
+        operstate: null,
+        mtu: null
+      }));
+      var fld = this.scope.deviceform.getForm().findField("devname");
+      if( fld ){
+        fld.el.dom.readOnly = false;
+        fld.readOnly = false;
+      }
+    }
   },
 
   nodeDragOver: function(ev){
