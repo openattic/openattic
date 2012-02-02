@@ -467,6 +467,10 @@ Ext.oa.Ifconfig__NetDevice_Panel = Ext.extend(Ext.Panel, {
     if( tgtdev.devtype == "native" && ev.target.parentNode != this.scope.devicestree.getRootNode() )
       return false;
 
+    // Forbid dropping native devices that have children on a bonding
+    if( tgtdev.devtype == "bonding" && srcdev.devtype == "native" && ev.data.node.hasChildNodes() )
+      return false;
+
     return true;
   },
 
