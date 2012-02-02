@@ -144,6 +144,7 @@ Ext.oa.Ifconfig__NetDevice_Panel = Ext.extend(Ext.Panel, {
             load:   ifconfig__NetDevice.get_ext,
             submit: ifconfig__NetDevice.set_ext
           },
+          trackResetOnLoad: true,
           paramOrder: ["id"],
           defaults: {
             xtype: "textfield",
@@ -228,7 +229,7 @@ Ext.oa.Ifconfig__NetDevice_Panel = Ext.extend(Ext.Panel, {
             text: "{% trans 'Cancel' %}",
             icon: MEDIA_URL + "/icons2/16x16/actions/gtk-cancel.png",
             handler: function(self){
-              addwin.hide();
+              self.ownerCt.ownerCt.getForm().reset();
             }
           }]
         }, {
