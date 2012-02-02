@@ -6,7 +6,7 @@ import netifaces
 import netaddr
 import dbus
 
-from os.path import join
+from os.path import join, exists
 
 from django.conf import settings
 from django.db import models
@@ -54,6 +54,20 @@ class IPAddress(models.Model):
     @property
     def host_part(self):
         return self.address.split("/")[0]
+
+
+def statfile(devname, fname):
+    fpath = join("/sys/class/net", devname, fname)
+    if exists(fpath):
+        try:
+            with open(fpath, "rb") as fd:
+                return fd.read().strip()
+        except IOError, err:
+            if err.errno == 22:
+                return None
+            raise
+    else:
+        return None
 
 class NetDevice(models.Model):
     devname     = models.CharField(max_length=10, unique=True)
@@ -118,21 +132,24 @@ class NetDevice(models.Model):
     def operstate(self):
         if self.devname == "lo":
             return None
-        return open(join("/sys/class/net", self.devname, "operstate"), "rb").read().strip() == 'up'
+        return statfile( self.devname, "operstate" ) == 'up'
 
     @property
     def carrier(self):
         if self.operstate == False:
             return None
-        return open(join("/sys/class/net", self.devname, "carrier"), "rb").read().strip() == '1'
+        return statfile( self.devname, "carrier" ) == '1'
 
     @property
     def macaddress(self):
-        return open(join("/sys/class/net", self.devname, "address"), "rb").read().strip()
+        return statfile( self.devname, "address" )
 
     @property
     def mtu(self):
-        return int( open(join("/sys/class/net", self.devname, "mtu"), "rb").read().strip() )
+        mtu = statfile( self.devname, "mtu" )
+        if mtu is None:
+            return None
+        return int( mtu )
 
     @property
     def speed(self):
