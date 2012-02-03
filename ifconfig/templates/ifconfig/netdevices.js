@@ -401,14 +401,14 @@ Ext.oa.Ifconfig__NetDevice_Panel = Ext.extend(Ext.Panel, {
                   var data = Ext.apply({}, record.data);
                   delete data["id"];
                   ifconfig__IPAddress.create(data, function(provider, response){
-                    if( response.result.type !== "exception" )
+                    if( response.type !== "exception" )
                       record.set("id", response.result.id);
                       record.commit();
                   });
                 }
                 else{
                   ifconfig__IPAddress.set(record.data.id, record.getChanges(), function(provider, response){
-                    if( response.result.type !== "exception" )
+                    if( response.type !== "exception" )
                       record.commit();
                   });
                 }
