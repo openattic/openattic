@@ -158,7 +158,7 @@ class NetDevice(models.Model):
         elif self.devtype == "native":
             if not self.operstate:
                 return None
-            spd = statfile( self.devname, "speed" )
+            speed = statfile( self.devname, "speed" )
             if speed is None:
                 return None
             return int( speed )
