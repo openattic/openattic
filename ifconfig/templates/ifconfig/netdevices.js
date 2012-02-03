@@ -153,7 +153,9 @@ Ext.oa.Ifconfig__NetDevice_Panel = Ext.extend(Ext.Panel, {
         ref:    'devicestree',
         scope:  this,
         listeners: {
-          click: this.nodeClicked,
+          afterrender: function(tree){
+            tree.getSelectionModel().on("selectionchange", netDevPanel.nodeSelected, netDevPanel);
+          },
           nodedragover: this.nodeDragOver
         }
       }), {
@@ -386,35 +388,38 @@ Ext.oa.Ifconfig__NetDevice_Panel = Ext.extend(Ext.Panel, {
           items: [{
             text: "Bonding",
             handler: function(){
-              netDevPanel.devicestree.getRootNode().appendChild( {
+              var node = netDevPanel.devicestree.getRootNode().appendChild( {
                 device: {
                   id: -1,
                   devname: "bondX",
                   devtype: "bonding"
                 }
               } );
+              netDevPanel.devicestree.getSelectionModel().select(node);
             }
           }, {
             text: "VLAN",
             handler: function(){
-              netDevPanel.devicestree.getRootNode().appendChild( {
+              var node = netDevPanel.devicestree.getRootNode().appendChild( {
                 device: {
                   id: -1,
                   devname: "vlanX",
                   devtype: "vlan"
                 }
               } );
+              netDevPanel.devicestree.getSelectionModel().select(node);
             }
           }, {
             text: "Bridge",
             handler: function(){
-              netDevPanel.devicestree.getRootNode().appendChild( {
+              var node = netDevPanel.devicestree.getRootNode().appendChild( {
                 device: {
                   id: -1,
                   devname: "brX",
                   devtype: "bridge"
                 }
               } );
+              netDevPanel.devicestree.getSelectionModel().select(node);
             }
           }]
         })
@@ -433,28 +438,27 @@ Ext.oa.Ifconfig__NetDevice_Panel = Ext.extend(Ext.Panel, {
     Ext.oa.Ifconfig__NetDevice_Panel.superclass.initComponent.apply(this, arguments);
   },
 
-  nodeClicked: function(node, ev){
-    //   ↓lol↓
-    this.scope.active_device = node.attributes.device;
-    this.scope.active_node   = node;
+  nodeSelected: function(selmodel, node, last){
+    this.active_device = node.attributes.device;
+    this.active_node   = node;
 
     if( node.attributes.device.id !== -1 ){
       // Existing device
-      this.scope.deviceform.load({ params: { id: node.attributes.device.id } });
-      this.scope.addressgrid.store.load({ params: { device__id: node.attributes.device.id } });
-      this.scope.deviceform.getForm().findField("devname").setReadOnly(true);
+      this.deviceform.load({ params: { id: node.attributes.device.id } });
+      this.addressgrid.store.load({ params: { device__id: node.attributes.device.id } });
+      this.deviceform.getForm().findField("devname").setReadOnly(true);
       if( node.attributes.device.devtype === "bonding" )
-        this.scope.bondingfields.expand();
+        this.bondingfields.expand();
       else
-        this.scope.bondingfields.collapse();
+        this.bondingfields.collapse();
     }
     else{
       // New device
-      this.scope.addressgrid.store.removeAll();
+      this.addressgrid.store.removeAll();
       var ds_model = Ext.data.Record.create( [
         "devname", "auto", "dhcp", "speed", "macaddress", "carrier", "operstate", "mtu"
       ] );
-      this.scope.deviceform.getForm().loadRecord(new ds_model({
+      this.deviceform.getForm().loadRecord(new ds_model({
         devname: node.attributes.device.devname,
         auto: true,
         dhcp: false,
@@ -468,7 +472,7 @@ Ext.oa.Ifconfig__NetDevice_Panel = Ext.extend(Ext.Panel, {
         bond_miimon: 100,
         bond_mode: "active-backup"
       }));
-      this.scope.deviceform.getForm().findField("devname").setReadOnly(false);
+      this.deviceform.getForm().findField("devname").setReadOnly(false);
     }
   },
 
@@ -483,7 +487,7 @@ Ext.oa.Ifconfig__NetDevice_Panel = Ext.extend(Ext.Panel, {
       return false;
 
     // Forbid drop on a native device that is part of a bonding
-    if( tgtdev.devtype == "native" && ev.target.parentNode != this.scope.devicestree.getRootNode() )
+    if( tgtdev.devtype == "native" && ev.target.parentNode != this.devicestree.getRootNode() )
       return false;
 
     // Forbid dropping native devices that have children on a bonding
