@@ -440,6 +440,8 @@ Ext.oa.Ifconfig__NetDevice_Panel = Ext.extend(Ext.Panel, {
   },
 
   nodeSelected: function(selmodel, node, last){
+    if( node === null ) // Dragging
+      return;
     this.active_device = node.attributes.device;
     this.active_node   = node;
 
