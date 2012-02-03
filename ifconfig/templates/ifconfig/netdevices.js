@@ -191,6 +191,11 @@ Ext.oa.Ifconfig__NetDevice_Panel = Ext.extend(Ext.Panel, {
           items: [{
             fieldLabel: "Device",
             name: "devname",
+            listeners: {
+              change: function(self, newValue, oldValue){
+                netDevPanel.active_node.setText(newValue);
+              }
+            }
           }, {
             fieldLabel: "Speed",
             name: "speed",
