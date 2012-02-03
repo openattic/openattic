@@ -265,8 +265,8 @@ class ModelHandler(BaseHandler):
             } )
         forminst = formclass(self.request.POST, instance=instance)
         if forminst.is_valid():
-            forminst.save()
-            return { "success": True }
+            instance = forminst.save()
+            return { "success": True, "id": instance.id }
         else:
             errdict = {}
             for errfld in forminst.errors:
