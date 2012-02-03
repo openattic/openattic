@@ -95,7 +95,8 @@ Ext.extend(Ext.oa.Ifconfig__NetDevice_TreeLoader, Ext.tree.TreeLoader, {
         }
       }
       pushdevs(response.responseData[0].childdevs);
-      pushdevs(response.responseData[0].basedevs);
+      if( response.responseData[0].devtype === "bonding" )
+        pushdevs(response.responseData[0].basedevs);
     }
     return Ext.oa.Ifconfig__NetDevice_TreeLoader.superclass.handleResponse.apply(this, [myresp]);
   }
