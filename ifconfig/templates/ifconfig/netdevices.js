@@ -506,6 +506,7 @@ Ext.oa.Ifconfig__NetDevice_Panel = Ext.extend(Ext.Panel, {
 
     if( node.attributes.device.id !== -1 ){
       // Existing device
+      node.expand();
       this.deviceform.load({ params: { id: node.attributes.device.id } });
       this.addressgrid.store.load({ params: { device__id: node.attributes.device.id } });
       this.deviceform.getForm().findField("devname").setReadOnly(true);
