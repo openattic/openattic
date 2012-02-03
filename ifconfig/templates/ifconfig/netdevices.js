@@ -272,33 +272,71 @@ Ext.oa.Ifconfig__NetDevice_Panel = Ext.extend(Ext.Panel, {
 
               if( netDevPanel.active_device.devtype == "bonding" ){
                 params.slaves = [];
+                var haveslaves = false;
                 for( var i = 0; i < netDevPanel.active_node.childNodes.length; i++ ){
-                  if( netDevPanel.active_node.childNodes[i].attributes.device.devtype != "native" )
+                  var slavedev = netDevPanel.active_node.childNodes[i].attributes.device;
+                  if( slavedev.devtype != "native" )
                     continue;
-                  params.slaves.push({"app": "ifconfig", "obj": "NetDevice",
-                    "id": netDevPanel.active_node.childNodes[i].attributes.device.id
-                  });
+                  if( slavedev.id === -1 ){
+                    Ext.Msg.alert("{% trans 'Save' %}", interpolate(
+                      "{% trans 'Slave device %s has not yet been saved, please save this device first.' %}",
+                      [slavedev.devname]
+                    ) );
+                    return;
+                  }
+                  params.slaves.push(slavedev.id);
+                  haveslaves = true;
+                }
+                if( !haveslaves ){
+                  Ext.Msg.alert("{% trans 'Save' %}",
+                    "{% trans 'Bonding devices require at least one native slave device.' %}"
+                  );
+                  return;
                 }
               }
               if( netDevPanel.active_device.devtype == "vlan" ){
-                params.vlanrawdev = {"app": "ifconfig", "obj": "NetDevice",
-                  "id": netDevPanel.active_node.parentNode.attributes.device.id
-                };
+                if( netDevPanel.active_node.parentNode == netDevPanel.devicestree.getRootNode() ){
+                  Ext.Msg.alert("{% trans 'Save' %}",
+                    "{% trans 'VLAN devices need to be dragged onto their base device first.' %}"
+                  );
+                  return;
+                }
+                if( netDevPanel.active_node.parentNode.attributes.device.id === -1 ){
+                  Ext.Msg.alert("{% trans 'Save' %}", interpolate(
+                    "{% trans 'VLAN base device %s has not yet been saved, please save this device first.' %}",
+                    [netDevPanel.active_node.parentNode.attributes.device.devname]
+                  ) );
+                  return;
+                }
+                params.vlanrawdev = netDevPanel.active_node.parentNode.attributes.device.id;
               }
               if( netDevPanel.active_device.devtype == "bridge" ){
-                params.brports = [{"app": "ifconfig", "obj": "NetDevice",
-                  "id": netDevPanel.active_node.parentNode.attributes.device.id
-                }];
+                if( netDevPanel.active_node.parentNode == netDevPanel.devicestree.getRootNode() ){
+                  Ext.Msg.alert("{% trans 'Save' %}",
+                    "{% trans 'Bridge devices need to be dragged onto their base device first.' %}"
+                  );
+                  return;
+                }
+                if( netDevPanel.active_node.parentNode.attributes.device.id === -1 ){
+                  Ext.Msg.alert("{% trans 'Save' %}", interpolate(
+                    "{% trans 'Bridge port device %s has not yet been saved, please save this device first.' %}",
+                    [netDevPanel.active_node.parentNode.attributes.device.devname]
+                  ) );
+                  return;
+                }
+                params.brports = [netDevPanel.active_node.parentNode.attributes.device.id];
               }
               console.log(params);
-//               self.ownerCt.ownerCt.getForm().submit({
-//                 params: params,
-//                 success: function(provider, response){
-//                   if( response.result ){
-//                     netDevGrid.store.reload();
-//                   }
-//                 }
-//               });
+              self.ownerCt.ownerCt.getForm().submit({
+                params: params,
+                success: function(provider, response){
+                  if( response.result.success && netDevPanel.active_device.id === -1 ){
+                    netDevPanel.deviceform.load({ params: { id: response.result.id } });
+                    netDevPanel.addressgrid.store.load({ params: { device__id: response.result.id } });
+                    netDevPanel.deviceform.getForm().findField("devname").setReadOnly(true);
+                  }
+                }
+              });
             }
           }, {
             text: "{% trans 'Cancel' %}",
