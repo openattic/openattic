@@ -459,7 +459,10 @@ Ext.oa.Ifconfig__NetDevice_Panel = Ext.extend(Ext.Panel, {
                     );
                   }
                   else{
-                    ds.remove(sel);
+                    ifconfig__IPAddress.remove(sel.data.id, function(provider, response){
+                      if( response.type !== "exception" )
+                        ds.remove(sel);
+                    });
                   }
                 });
               }
