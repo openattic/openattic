@@ -447,10 +447,6 @@ Ext.oa.Ifconfig__NetDevice_Panel = Ext.extend(Ext.Panel, {
       this.deviceform.load({ params: { id: node.attributes.device.id } });
       this.addressgrid.store.load({ params: { device__id: node.attributes.device.id } });
       this.deviceform.getForm().findField("devname").setReadOnly(true);
-      if( node.attributes.device.devtype === "bonding" )
-        this.bondingfields.expand();
-      else
-        this.bondingfields.collapse();
     }
     else{
       // New device
@@ -474,6 +470,10 @@ Ext.oa.Ifconfig__NetDevice_Panel = Ext.extend(Ext.Panel, {
       }));
       this.deviceform.getForm().findField("devname").setReadOnly(false);
     }
+    if( node.attributes.device.devtype === "bonding" )
+      this.bondingfields.expand();
+    else
+      this.bondingfields.collapse();
   },
 
   nodeDragOver: function(ev){
