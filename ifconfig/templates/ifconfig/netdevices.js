@@ -216,7 +216,7 @@ Ext.oa.Ifconfig__NetDevice_Panel = Ext.extend(Ext.Panel, {
             readOnly: true
           }, {
             xtype: "checkbox",
-            fieldLabel: "Auto",
+            fieldLabel: "Configure at boot",
             name: "auto"
           }, {
             xtype: "numberfield",
