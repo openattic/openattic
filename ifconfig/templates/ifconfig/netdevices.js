@@ -151,12 +151,13 @@ Ext.oa.Ifconfig__NetDevice_Panel = Ext.extend(Ext.Panel, {
         region: "west",
         width:  300,
         ref:    'devicestree',
-        scope:  this,
         listeners: {
           afterrender: function(tree){
             tree.getSelectionModel().on("selectionchange", netDevPanel.nodeSelected, netDevPanel);
           },
-          nodedragover: this.nodeDragOver
+          nodedragover: function(ev){
+            return netDevPanel.nodeDragOver(ev);
+          }
         }
       }), {
         region: "center",
