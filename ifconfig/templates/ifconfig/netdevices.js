@@ -391,6 +391,31 @@ Ext.oa.Ifconfig__NetDevice_Panel = Ext.extend(Ext.Panel, {
             }
           },
           buttons: [{
+            text: "{% trans 'Save' %}",
+            icon: MEDIA_URL + "/oxygen/16x16/actions/dialog-ok-apply.png",
+            handler: function(self){
+              var updateRec = function(record){
+                if( !record.dirty )
+                  return;
+                if( record.data.id === -1 ){
+                  var data = Ext.apply({}, record.data);
+                  delete data["id"];
+                  ifconfig__IPAddress.create(data, function(provider, response){
+                    if( response.result.type !== "exception" )
+                      record.set("id", response.result.id);
+                      record.commit();
+                  });
+                }
+                else{
+                  ifconfig__IPAddress.set(record.data.id, record.getChanges(), function(provider, response){
+                    if( response.result.type !== "exception" )
+                      record.commit();
+                  });
+                }
+              }
+              netDevPanel.addressgrid.store.each(updateRec);
+            }
+          }, {
             text: "{% trans 'Add Address'%}",
             icon: MEDIA_URL + "/icons2/16x16/actions/add.png",
             handler: function(){
@@ -400,6 +425,7 @@ Ext.oa.Ifconfig__NetDevice_Panel = Ext.extend(Ext.Panel, {
               var ds = netDevPanel.addressgrid.store;
               var ds_model = Ext.data.Record.create( ds.fields.keys );
               ds.insert(0, new ds_model({
+                id:        -1,
                 device:    { "app": "ifconfig", "obj": "NetDevice", "id": netDevPanel.active_device.id },
                 configure: true
               }))
