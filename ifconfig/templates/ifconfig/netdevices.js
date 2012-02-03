@@ -171,6 +171,7 @@ Ext.oa.Ifconfig__NetDevice_Panel = Ext.extend(Ext.Panel, {
         },
         items: [{
           xtype: "form",
+          title: "{% trans 'Device parameters' %}",
           autoScroll: true,
           ref: "../deviceform",
           bodyStyle: 'padding:5px 5px;',
