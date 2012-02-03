@@ -246,8 +246,22 @@ Ext.oa.Ifconfig__NetDevice_Panel = Ext.extend(Ext.Panel, {
               name: "bond_updelay"
             }, {
               fieldLabel: "{% trans 'Mode' %}",
-              name: "bond_mode",
-              xtype: "textfield"
+              name:       "bond_mode__",
+              hiddenName: 'bond_mode',
+              xtype:      'combo',
+              store: [
+                [ 'active-backup', "{% trans 'Active-Backup' %}"    ],
+                [ 'broadcast',     "{% trans 'Broadcast' %}" ],
+                [ '802.3ad',       "{% trans 'Dynamic Link Aggregation (IEEE 802.3ad)' %}" ],
+                [ 'balance-rr',    "{% trans 'Balance: RoundRobin' %}" ],
+                [ 'balance-xor',   "{% trans 'Balance: XOR' %}" ],
+                [ 'balance-tlb',   "{% trans 'Balance: Adaptive Transmit Load Balancing' %}" ],
+                [ 'balance-alb',   "{% trans 'Balance: Adaptive Load Balancing' %}" ]
+              ],
+              typeAhead:     true,
+              triggerAction: 'all',
+              emptyText:     'Select...',
+              selectOnFocus: true,
             } ]
           }],
           buttons: [{
