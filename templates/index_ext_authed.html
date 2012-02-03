@@ -27,6 +27,15 @@
       window.LOGOUT_URL  = '{% url logout %}';
       window.INDEX_URL   = '{% url index  %}';
       Ext.BLANK_IMAGE_URL = MEDIA_URL + "/extjs_themes/images/gray/s.gif";
+      // Hack to fix setReadOnly not being available before Ext 3.2.x
+      if( typeof Ext.form.TextField.prototype.setReadOnly === "undefined" ){
+        Ext.form.TextField.prototype.setReadOnly = function(readOnly){
+          if(this.rendered){
+            this.el.dom.readOnly = readOnly;
+          }
+          this.readOnly = readOnly;
+        }
+      }
     </script>
     <script type="text/javascript" src="{{ MEDIA_URL }}/portal/Portal.js"></script>
     <script type="text/javascript" src="{{ MEDIA_URL }}/portal/PortalColumn.js"></script>
