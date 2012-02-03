@@ -219,9 +219,9 @@ Ext.oa.Ifconfig__NetDevice_Panel = Ext.extend(Ext.Panel, {
             name: "dhcp"
           }, {
             xtype: 'fieldset',
+            ref: '../../bondingfields',
             title: 'Bonding options (if applicable)',
             collapsible: true,
-            collapsed: true,
             layout: 'form',
             items: [ {
               fieldLabel: "{% trans 'MII Monitoring interval' %}",
@@ -442,11 +442,11 @@ Ext.oa.Ifconfig__NetDevice_Panel = Ext.extend(Ext.Panel, {
       // Existing device
       this.scope.deviceform.load({ params: { id: node.attributes.device.id } });
       this.scope.addressgrid.store.load({ params: { device__id: node.attributes.device.id } });
-      var fld = this.scope.deviceform.getForm().findField("devname");
-      if( fld ){
-        fld.el.dom.readOnly = true;
-        fld.readOnly = true;
-      }
+      this.scope.deviceform.getForm().findField("devname").setReadOnly(true);
+      if( node.attributes.device.devtype === "bonding" )
+        this.scope.bondingfields.expand();
+      else
+        this.scope.bondingfields.collapse();
     }
     else{
       // New device
@@ -468,11 +468,7 @@ Ext.oa.Ifconfig__NetDevice_Panel = Ext.extend(Ext.Panel, {
         bond_miimon: 100,
         bond_mode: "active-backup"
       }));
-      var fld = this.scope.deviceform.getForm().findField("devname");
-      if( fld ){
-        fld.el.dom.readOnly = false;
-        fld.readOnly = false;
-      }
+      this.scope.deviceform.getForm().findField("devname").setReadOnly(false);
     }
   },
 
@@ -499,6 +495,10 @@ Ext.oa.Ifconfig__NetDevice_Panel = Ext.extend(Ext.Panel, {
 
   onRender: function(){
     Ext.oa.Ifconfig__NetDevice_Panel.superclass.onRender.apply(this, arguments);
+    var self = this;
+    (function(){
+      self.bondingfields.collapse();
+    }).defer(200);
   }
 });
 
