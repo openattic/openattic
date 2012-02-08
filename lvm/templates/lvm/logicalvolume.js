@@ -21,6 +21,7 @@ Ext.oa.Lvm__LogicalVolume_Panel = Ext.extend(Ext.Panel, {
       width: 500,
       items: [{
         xtype: "form",
+        autoScroll: true,
         border: false,
         bodyStyle: 'padding:5px 5px;',
         defaults: {
@@ -455,7 +456,7 @@ Ext.oa.Lvm__LogicalVolume_Panel = Ext.extend(Ext.Panel, {
         store: (function(){
           // Anon function that is called immediately to set up the store's DefaultSort
           var store = new Ext.data.DirectStore({
-            fields: ['name', 'megs', 'filesystem', 'formatted', 'id', 'state', 'fs', 'vg', 'fswarning', 'fscritical',
+            fields: ['name', 'megs', 'filesystem', 'formatted', 'id', 'fs', 'vg', 'fswarning', 'fscritical',
               {
                 name: 'fsfree',
                 mapping: 'fs',
