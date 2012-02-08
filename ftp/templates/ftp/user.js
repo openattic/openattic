@@ -135,17 +135,10 @@ Ext.oa.Ftp__User_Panel = Ext.extend(Ext.grid.GridPanel, {
     },{
         text: "{% trans 'Delete User' %}",
         icon: MEDIA_URL + "/icons2/16x16/actions/remove.png",
-        handler: function(self){
-          var sm = ftpGrid.getSelectionModel();
-          if (sm.hasSelection() ) {
-            var sel = sm.selections.items[0];
-            ftp__User.remove( sel.data.id, function(provider, response){
-              ftpGrid.store.reload();
-            } );
-          }
-        }
+        handler: this.deleteFunction,
+        scope: ftpGrid
       }],
-      //keys: [{scope: ftpGrid, key: [Ext.EventObject.DELETE], handler: this.deleteFunction}],
+      keys: [{scope: ftpGrid, key: [Ext.EventObject.DELETE], handler: this.deleteFunction}],
       store: new Ext.data.DirectStore ({
         fields: ['id', 'username', 'shell', 'homedir', 'volume', {
           name: 'volumename',mapping: 'volume',convert: function( val, row ){ return val.name }
@@ -168,10 +161,50 @@ Ext.oa.Ftp__User_Panel = Ext.extend(Ext.grid.GridPanel, {
     }));
     Ext.oa.Ftp__User_Panel.superclass.initComponent.apply(this, arguments);
   },
+   deleteFunction: function(self){
+  var sm = this.getSelectionModel();
+    if( sm.hasSelection() ){
+      var sel = sm.selections.items[0];
+        Ext.Msg.confirm(
+          "{% trans 'Delete Share' %}",
+          interpolate(
+            "{% trans 'Do you really want to delete %s?' %}",[sel.data.homedir]),
+            function(btn){
+              if(btn == 'yes'){
+                ftp__User.remove( sel.data.id, function(provider, response){
+                sel.store.reload();
+                });
+              } 
+            }
+        );
+    }
+  },
 
   onRender: function(){
     Ext.oa.Ftp__User_Panel.superclass.onRender.apply(this, arguments);
-    this.store.reload();
+    this.store.reload()
+        var self = this;
+    var menu = new Ext.menu.Menu({
+    items: [{
+            id: 'delete',
+            text: 'delete',
+            icon: MEDIA_URL + "/icons2/16x16/actions/remove.png",
+        }],
+        listeners: {
+          itemclick: function(item) {
+                    self.deleteFunction()
+          }
+        }
+   });
+    this.on({
+      'contextmenu': function(event) {
+        if( this.getSelectionModel().hasSelection() ){
+          event.stopEvent();
+          this.getSelectionModel
+          menu.showAt(event.xy);
+        }
+      }
+    });
   }
 });
 
