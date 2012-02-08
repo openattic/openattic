@@ -1,37 +1,58 @@
 {% load i18n %}
-
 Ext.namespace("Ext.oa");
 
 Ext.oa.Ftp__User_Panel = Ext.extend(Ext.grid.GridPanel, {
-  initComponent: function(){
+  showEditWindow: function(config, record){
     var ftpGrid = this;
-    var addFunction = function(){
-    var addwin = new Ext.Window({
-      title: "{% trans 'Add FTP User' %}",
+    var addwin = new Ext.Window(Ext.apply(config,{
       layout: "fit",
+      defaults: {autoScroll: true},
       height: 200,
       width: 500,
+      //title: "{% trans 'Add FTP User' %}",
       items: [{
         xtype: "form",
-        autoScroll: true,
         bodyStyle: 'padding:5px 5px;',
+        api: {
+          load: ftp__User.get_ext,
+          submit: ftp__User.set_ext
+        },
+        baseParams: {
+          id: (record ? record.id : -1)
+        },
+        paramOrder: ["id"],
+        listeners: {
+          afterrender: function(self){
+            self.getForm().load();
+          }
+        },
         defaults: {
           xtype: "textfield",
-          anchor: '-20px'
+          anchor: '-20px',
+          defaults: {
+            anchor: "0px"
+          }
         },
         items: [{
-          fieldLabel: "{% trans 'Name' %}",
-          name: "username",
-          ref: 'namefield'
+          xtype: 'fieldset',
+          title: 'User settings',
+          layout: 'form',
+          items:[{
+            xtype: 'textfield',
+            name: "username",
+            fieldLabel: "Username",
         }, {
+          xtype: 'textfield',
           fieldLabel: "{% trans 'Password' %}",
-          name: "passwd",
+//           name: "passwd",
           inputType: 'password',
-          ref: 'passwdfield'
         }, {
-          xtype:      'volumefield',
-          listeners: {
-            select: function(self, record, index){
+          xtype: 'volumefield',
+//           fieldLabel: "Volume",
+          name: "volume_",
+          hiddenName: "volume",
+          listeners:{  
+          select: function(self, record, index){
               lvm__LogicalVolume.get( record.data.id, function( provider, response ){
                 self.ownerCt.dirfield.setValue( response.result.fs.mountpoints[0] );
                 self.ownerCt.dirfield.enable();
@@ -39,28 +60,28 @@ Ext.oa.Ftp__User_Panel = Ext.extend(Ext.grid.GridPanel, {
             }
           }
         }, {
+         xtype: 'textfield',
           fieldLabel: "{% trans 'Directory' %}",
           name: "homedir",
-          disabled: true,
+          disabled: false,
           ref: 'dirfield'
+        },{
+            xtype: 'hidden',
+            name: "shell",
+            value: '/bin/true'
+        }]
         }],
         buttons: [{
-          text: "{% trans 'Create User' %}",
+          text: config.submitButtonText,
           icon: MEDIA_URL + "/oxygen/16x16/actions/dialog-ok-apply.png",
           handler: function(self){
-            ftp__User.create({
-              'username': self.ownerCt.ownerCt.namefield.getValue(),
-              'passwd':   self.ownerCt.ownerCt.passwdfield.getValue(),
-              'volume': {
-                'app': 'lvm',
-                'obj': 'LogicalVolume',
-                'id': self.ownerCt.ownerCt.volfield.getValue()
-              },
-              'homedir':  self.ownerCt.ownerCt.dirfield.getValue()
-            }, function(provider, response){
-              if( response.result ){
-                ftpGrid.store.reload();
-                addwin.hide();
+            self.ownerCt.ownerCt.getForm().submit({
+              params: {id: -1, init_master: true, ordering: 0},
+              success: function(provider,response){
+                if(response.result){
+                  ftpGrid.store.reload();
+                  addwin.hide();
+                }
               }
             });
           }
@@ -72,12 +93,16 @@ Ext.oa.Ftp__User_Panel = Ext.extend(Ext.grid.GridPanel, {
           }
         }]
       }]
-    });
+    }));
     addwin.show();
-  }
+  },
+
+  initComponent: function(){
+    var ftpGrid = this;
     Ext.apply(this, Ext.apply(this.initialConfig, {
       id: "ftp__user_panel_inst",
       title: "ftp",
+      viewConfig: {forceFit: true},
       buttons: [{
           text: "",
           icon: MEDIA_URL + "/icons2/16x16/actions/reload.png",
@@ -86,107 +111,48 @@ Ext.oa.Ftp__User_Panel = Ext.extend(Ext.grid.GridPanel, {
             ftpGrid.store.reload();
           }
       }, {
-        text: "{% trans 'Add User' %}",
+        text: "{% trans 'Add FTP User' %}",
         icon: MEDIA_URL + "/icons2/16x16/actions/add.png",
-        handler: addFunction
-      },{
-        text:  "{% trans 'Edit' %}",
+        handler: function(){
+          ftpGrid.showEditWindow({
+            title: "{% trans 'Add User' %}",
+            submitButtonText: "{% trans 'Create User' %}"
+          });
+        }
+      }, {
+        text: "{%trans 'Edit' %}",
         icon: MEDIA_URL + "/icons2/16x16/actions/edit-redo.png",
         handler: function(self){
           var sm = ftpGrid.getSelectionModel();
           if( sm.hasSelection() ){
             var sel = sm.selections.items[0];
-            var addwin = new Ext.Window({
-              title: "Edit",
-              layout: "fit",
-              height: 200,
-              width: 500,
-              items: [{
-                xtype: "form",
-                autoScroll: true,
-                bodyStyle: 'padding:5px 5px;',
-                defaults: {
-                  xtype: "textfield",
-                  anchor: '-20px'
-                },
-                items: [{
-                  fieldLabel: "Name",
-                  name: "name",
-                  readOnly: true,
-                  disabled: true,
-                  ref: 'namefield',
-                  value: sel.data.username
-                },{
-                  fieldLabel: "Password",
-                  name: "password",
-                  inputType: 'password',
-                  ref: 'passwdfield'
-                },{
-                xtype:      'volumefield',
-                value: sel.data.volumename,
-                listeners: {
-                  select: function(self, record, index){
-                    lvm__LogicalVolume.get( record.data.id, function( provider, response ){
-                      self.ownerCt.dirfield.setValue( response.result.fs.mountpoints[0] );
-                      self.ownerCt.dirfield.enable();
-                    } );
-                  }
-                }
-              }, {
-                fieldLabel: "{% trans 'Directory' %}",
-                name: "homedir",
-                ref: 'dirfield',
-                value: sel.data.homedir
-              }],
-                buttons: [{
-                  text: 'Save',
-                  handler: function(self){
-                    var sm = ftpGrid.getSelectionModel();
-                    if( sm.hasSelection() ){
-                      var sel = sm.selections.items[0];
-                      ftp__User.set(sel.data.id,{
-                        'username': sel.data.username,
-                        'passwd':   self.ownerCt.ownerCt.passwdfield.getValue(),
-                        'volume': {
-                          'app': 'lvm',
-                          'obj': 'LogicalVolume',
-                          'id': sel.data.id
-                        },
-                        'homedir':  sel.data.homedir
-                      }, function(provider, response){
-                        if( response.result ){
-                          ftpGrid.store.reload();
-                          addwin.hide();
-                        }
-                      });
-                    }
-                  }
-                }]
-              }]
-            });
-            addwin.show();
-          }
+            ftpGrid.showEditWindow({
+            title: "{% trans 'Edit FTP User'%}",
+            submitButtonText: "{% trans 'Edit User'%}"
+          }, sel.data);
         }
-      },{
+      }
+    },{
         text: "{% trans 'Delete User' %}",
         icon: MEDIA_URL + "/icons2/16x16/actions/remove.png",
-        handler: this.deleteFunction,
-        scope: ftpGrid
-      }],
-      keys: [{scope: ftpGrid, key: [Ext.EventObject.DELETE], handler: this.deleteFunction}],
-      store: {
-        xtype: 'directstore',
-        fields: ['id', 'username', 'shell', 'homedir', 'volume', {
-          name: 'volumename',
-          mapping: 'volume',
-          convert: function( val, row ){
-            return val.name;
+        handler: function(self){
+          var sm = ftpGrid.getSelectionModel();
+          if (sm.hasSelection() ) {
+            var sel = sm.selections.items[0];
+            ftp__User.remove( sel.data.id, function(provider, response){
+              ftpGrid.store.reload();
+            } );
           }
+        }
+      }],
+      //keys: [{scope: ftpGrid, key: [Ext.EventObject.DELETE], handler: this.deleteFunction}],
+      store: new Ext.data.DirectStore ({
+        fields: ['id', 'username', 'shell', 'homedir', 'volume', {
+          name: 'volumename',mapping: 'volume',convert: function( val, row ){ return val.name }
         }],
         directFn: ftp__User.all
-      },
-  
-      viewConfig: { forceFit: true },
+      }),
+  viewConfig: { forceFit: true },
       colModel: new Ext.grid.ColumnModel({
         defaults: {
           sortable: true
@@ -197,54 +163,15 @@ Ext.oa.Ftp__User_Panel = Ext.extend(Ext.grid.GridPanel, {
         }, {
           header: "{% trans 'User name' %}",
           dataIndex: "username"
-        } ]
+        }]
       })
     }));
     Ext.oa.Ftp__User_Panel.superclass.initComponent.apply(this, arguments);
   },
-  deleteFunction: function(self){
-  var sm = this.getSelectionModel();
-    if( sm.hasSelection() ){
-      var sel = sm.selections.items[0];
-        Ext.Msg.confirm(
-          "{% trans 'Delete Share' %}",
-          interpolate(
-            "{% trans 'Do you really want to delete %s?' %}",[sel.data.homedir]),
-            function(btn){
-              if(btn == 'yes'){
-                ftp__User.remove( sel.data.id, function(provider, response){
-                sel.store.reload();
-                });
-              } 
-            }
-        );
-    }
-  },
+
   onRender: function(){
     Ext.oa.Ftp__User_Panel.superclass.onRender.apply(this, arguments);
     this.store.reload();
-    var self = this;
-    var menu = new Ext.menu.Menu({
-    items: [{
-            id: 'delete',
-            text: 'delete',
-            icon: MEDIA_URL + "/icons2/16x16/actions/remove.png",
-        }],
-        listeners: {
-          itemclick: function(item) {
-                    self.deleteFunction()
-          }
-        }
-   });
-    this.on({
-      'contextmenu': function(event) {
-        if( this.getSelectionModel().hasSelection() ){
-          event.stopEvent();
-          this.getSelectionModel
-          menu.showAt(event.xy);
-        }
-      }
-    });
   }
 });
 
