@@ -7,7 +7,7 @@ Ext.oa.Ftp__User_Panel = Ext.extend(Ext.grid.GridPanel, {
     var addwin = new Ext.Window(Ext.apply(config,{
       layout: "fit",
       defaults: {autoScroll: true},
-      height: 200,
+      height: 230,
       width: 500,
       //title: "{% trans 'Add FTP User' %}",
       items: [{
