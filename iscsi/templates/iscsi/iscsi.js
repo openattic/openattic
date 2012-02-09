@@ -537,6 +537,12 @@ Ext.oa.Iscsi__Panel = Ext.extend(Ext.Panel, {
                       );
                     }
                   }
+                }, {
+                   text: "{% trans 'Cancel' %}",
+                   icon: MEDIA_URL + "/icons2/16x16/actions/gtk-cancel.png",
+                   handler: function(self){
+                     addwin.hide();
+                   }
                 }]
               });
               addwin.show();
