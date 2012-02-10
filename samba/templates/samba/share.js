@@ -3,80 +3,68 @@
 Ext.namespace("Ext.oa");
 
 Ext.oa.Samba__Share_Panel = Ext.extend(Ext.grid.GridPanel, {
-  initComponent: function(){
+  showEditWindow: function(config, record){
+  //initComponent: function(){
     var sambaShareGrid = this;
-    var renderBoolean = function (val, x, store){
-     if (val)
-       return '<img src="' + MEDIA_URL + '/oxygen/16x16/actions/dialog-ok-apply.png" title="yes" />';
-     return '<img src="' + MEDIA_URL + '/oxygen/16x16/actions/dialog-cancel.png" title="no" />';
-      };
-    var deleteFunction = function(self){
-        var sm = sambaShareGrid.getSelectionModel();
-        if( sm.hasSelection() ){
-          var sel = sm.selections.items[0];
-          Ext.Msg.confirm(
-            "{% trans 'Delete Share' %}",
-            interpolate(
-              "{% trans 'Do you really want to delete %s?' %}",[sel.data.path]),
-              function(btn){
-                if(btn == 'yes'){
-                  samba__Share.remove( sel.id, function(provider, response){
-                  sambaShareGrid.store.reload();
+    var addwin = new Ext.Window(Ext.apply(config,{
+      layout: "fit",
+      defaults: {autoScroll: true},
+      height: 430,
+      width: 500,
+      items: [{
+        xtype: "form",
+        bodyStyle: 'padding: 5px 5px;',
+        api:{
+          load: samba__Share.get_ext,
+          submit: samba__Share.set_ext
+        },
+        baseParams: {
+          id: (record ? record.id : -1)
+        },
+        paramOrder: ["id"],
+        listeners: {
+          afterrender: function(self){
+            self.getForm().load();
+          }
+        },
+        defaults: {
+          xtype: "textfield",
+          anchor: '-20px',
+          defaults: {
+            anchor: "0px"
+          }
+        },
+        items: [{
+          xtype: 'fieldset',
+          title: 'Add Share',
+          layout: 'form',
+          items: [{
+            xtype:'volumefield',
+            //fieldLabel: "{% trans 'Share name' %}",
+            allowBlank: false,
+            name: "volume_",
+            hiddenName: "volume",
+            //ref: 'namefield'
+            listeners: {
+              select: function(self, record, index){
+              lvm__LogicalVolume.get( record.data.id, function( provider, response ){
+                self.ownerCt.dirfield.setValue( response.result.fs.mountpoints[0] );
+                self.ownerCt.dirfield.enable();
               } );
-            }
-          });
-        }
-      };
-    Ext.apply(this, Ext.apply(this.initialConfig, {
-      id: "samba__share_panel_inst",
-      title: "{% trans 'Samba' %}",
-      viewConfig: { forceFit: true },
-      buttons: [{
-        text: "",
-        icon: MEDIA_URL + "/icons2/16x16/actions/reload.png",
-        tooltip: "{% trans 'Reload' %}",
-        handler: function(self){
-        sambaShareGrid.store.reload();
-        }
-      },{
-        text: "{% trans 'Add Share' %}",
-        icon: MEDIA_URL + "/icons2/16x16/actions/add.png",
-        handler: function(){
-          var addwin = new Ext.Window({
-            title: "{% trans 'Add Share' %}",
-            layout: "fit",
-            height: 430,
-            width: 500,
-            items: [{
-              xtype: "form",
-              autoScroll: true,
-              bodyStyle: 'padding:5px 5px;',
-              defaults: {
-                xtype: "textfield",
-                anchor: '-20px'
-              },
-              items: [{
-                xtype: 'volumefield',
-                listeners: {
-                  select: function(self, record, index){
-                    lvm__LogicalVolume.get( record.data.id, function( provider, response ){
-                      self.ownerCt.namefield.setValue( response.result.name );
-                      self.ownerCt.dirfield.setValue( response.result.fs.mountpoints[0] );
-                      self.ownerCt.dirfield.enable();
-                    } );
-                  }
-                }
-              }, {
+             }
+           }
+          },{   xtype: 'textfield',
                 fieldLabel: "{% trans 'Share name' %}",
                 allowBlank: false,
                 name: "name",
                 ref: 'namefield'
-              }, {
-                fieldLabel: "{% trans 'Path' %}",
+              },{
+              xtype: 'textfield',
+              fieldLabel: "{% trans 'Path' %}",
                 allowBlank: false,
                 name: "path",
                 ref: 'dirfield'
-              }, {
+              },{
                 xtype:      'combo',
                 autoScroll: true,
                 allowBlank: true,
@@ -86,7 +74,7 @@ Ext.oa.Samba__Share_Panel = Ext.extend(Ext.grid.GridPanel, {
                 store: new Ext.data.DirectStore({
                   fields: ["username", "id"],
                   baseParams: { fields: ["username", "id"] },
-                  directFn: auth__User.all_values
+                  //directFn: auth__User.all
                 }),
                 typeAhead:     true,
                 triggerAction: 'all',
@@ -95,12 +83,15 @@ Ext.oa.Samba__Share_Panel = Ext.extend(Ext.grid.GridPanel, {
                 displayField:  'username',
                 valueField:    'username',
                 ref:      'ownerfield'
-              },{
+              },
+              {
+                xtype: 'textfield',
                 fieldLabel: "{% trans 'Group' %}",
                 allowBlank: true,
                 name: "group",
                 ref: 'groupfield'
-              },{
+              },
+              {
                 xtype: 'checkbox',
                 fieldLabel: "{% trans 'Browseable' %}",
                 allowBlank: false,
@@ -122,205 +113,104 @@ Ext.oa.Samba__Share_Panel = Ext.extend(Ext.grid.GridPanel, {
                 xtype: 'checkbox',
                 fieldLabel: "{% trans 'Guest OK' %}",
                 allowBlank: false,
-                name: "guest ok",
+                name: "guest_ok",
                 ref: 'guestokfield'
               },tipify({
+                xtype: 'textfield',
                 fieldLabel: "{% trans 'Dir Mode' %}",
                 allowBlank: false,
-                name: "dir mode",
+                name: "dir_mode",
                 ref: 'dirmodefield',
                 value:     '0775'
               },"{% trans 'Set rights for the Directory' %}"),
               {
+                xtype: 'textfield',
                 fieldLabel: "{% trans 'Comment' %}",
                 allowBlank: true,
                 name: "comment",
                 ref: 'commentfield'
               },tipify({
+                xtype: 'textfield',
                 fieldLabel: "{% trans 'Create Mode' %}",
                 allowBlank: false,
-                name: "create mode",
+                name: "create_mode",
                 ref: 'createmodefield',
                 value:     '0664'
-              }, "{% trans 'Set rights for owner, group and others' %}" ) ],
-              buttons: [{
-                text: "{% trans 'Create Share' %}",
+              }, "{% trans 'Set rights for owner, group and others' %}" ),
+        ]
+        }],
+         buttons: [{
+                text: config.submitButtonText,
                 icon: MEDIA_URL + "/oxygen/16x16/actions/dialog-ok-apply.png",
                 handler: function(self){
-                  samba__Share.create({
-                    'volume': {
-                      'app': 'lvm',
-                      'obj': 'LogicalVolume',
-                      'id': self.ownerCt.ownerCt.volfield.getValue()
-                    },
-                    'name':             self.ownerCt.ownerCt.namefield.getValue(),
-                    'path':             self.ownerCt.ownerCt.dirfield.getValue(),
-                    'force_user':       self.ownerCt.ownerCt.ownerfield.getValue(),
-                    'browseable':       self.ownerCt.ownerCt.browseablefield.getValue(),
-                    'available':        self.ownerCt.ownerCt.availablefield.getValue(),
-                    'force_group':      self.ownerCt.ownerCt.groupfield.getValue(),
-                    'writeable':        self.ownerCt.ownerCt.writeablefield.getValue(),
-                    'comment':          self.ownerCt.ownerCt.commentfield.getValue(),
-                    'create_mode':      self.ownerCt.ownerCt.createmodefield.getValue(),
-                    'guest_ok':         self.ownerCt.ownerCt.guestokfield.getValue(),
-                    'dir_mode':         self.ownerCt.ownerCt.dirmodefield.getValue()
-                  }, function(provider, response){
-                    if( response.result ){
-                      sambaShareGrid.store.reload();
-                      addwin.hide();
-                    }
-                  });
-                }
-              }, {
+                  self.ownerCt.ownerCt.getForm().submit({
+                      params: {id: -1, init_master: true, ordering: 0},
+                      success: function(provider, response){
+                        if (response.result){
+                          sambaShareGrid.store.reload();
+                          addwin.hide();
+                        }
+                      }
+                    });
+                  }
+                },{
                 text: "{% trans 'Cancel' %}",
                 icon: MEDIA_URL + "/icons2/16x16/actions/gtk-cancel.png",
                 handler: function(self){
                   addwin.hide();
                 }
-              }]
-            }]
-          });
-          addwin.show();
+     }]
+      }]
+    }));
+    addwin.show();
+  },
+    initComponent: function(){
+        var sambaShareGrid = this;
+        Ext.apply(this, Ext.apply(this.initialConfig, {
+          id: "samba__share_panel_inst",
+          title: "samba",
+          viewConfig: {forceFit: true},
+          buttons: [{
+            text: "",
+            icon: MEDIA_URL + "/icons2/16x16/actions/reload.png",
+            tooltip: "{% trans 'Reload' %}",
+            handler: function(self){
+              sambaShareGrid.store.reload();
         }
-      }, {
+      },{
+        text: "{% trans 'Add Share' %}",
+        icon: MEDIA_URL + "/icons2/16x16/actions/add.png",
+        handler: function(){
+          sambaShareGrid.showEditWindow({
+            title: "{% trans 'Add Share' %}",
+            submitButtonText: "{%trans 'Create Share' %}"
+          });
+        }
+      },{
         text:  "{% trans 'Edit' %}",
         icon: MEDIA_URL + "/icons2/16x16/actions/edit-redo.png",
         handler: function(self){
           var sm = sambaShareGrid.getSelectionModel();
           if( sm.hasSelection() ){
             var sel = sm.selections.items[0];
-            var addwin = new Ext.Window({
+            sambaShareGrid.showEditWindow({
               title: "{% trans 'Edit' %}",
-              layout: "fit",
-              height: 420,
-              width: 500,
-              items: [{
-                xtype: "form",
-                autoScroll: true,
-                bodyStyle: 'padding:5px 5px;',
-                defaults: {
-                  xtype: "textfield",
-                  anchor: '-20px'
-                },
-                items: [{
-                  fieldLabel: "{% trans 'Volume' %}",
-                  name: "volume",
-                  ref: 'volumefield',
-                  readOnly: true,
-                  disabled: true,
-                  value: sel.json.volume.name
-                },{
-                  fieldLabel: "{% trans 'Path' %}",
-                  name: "path",
-                  ref: 'pathfield',
-                  value: sel.json.path
-                },{
-                  xtype:      'combo',
-                  allowBlank: true,
-                  fieldLabel: "{% trans 'Owner' %}",
-                  name:       'owner',
-                  hiddenName: 'owner_id',
-                  store: new Ext.data.DirectStore({
-                    fields: ["username", "id"],
-                    baseParams: { fields: ["username", "id"] },
-                    directFn: auth__User.all_values
-                  }),
-                  typeAhead:     true,
-                  triggerAction: 'all',
-                  emptyText:     "{% trans 'Select...' %}",
-                  selectOnFocus: true,
-                  displayField:  'username',
-                  valueField:    'username',
-                  ref:      'ownerfield',
-                  value: sel.json.force_user
-                },{
-                  fieldLabel: "{% trans 'Group' %}",
-                  name: "group",
-                  ref: 'groupfield',
-                  value: sel.json.force_group
-                },{
-                  xtype: 'checkbox',
-                  fieldLabel: "{% trans 'Browseable' %}",
-                  name: "browseable",
-                  ref: 'browseablefield',
-                  checked: sel.json.browseable
-                },{
-                  xtype: 'checkbox',
-                  fieldLabel: "{% trans 'Available' %}",
-                  name: "available",
-                  ref: 'availablefield',
-                  checked: sel.json.available
-                },{
-                  xtype: 'checkbox',
-                  fieldLabel: "{% trans 'Writeable' %}",
-                  name: "writeable",
-                  ref: 'writeablefield',
-                  checked: sel.json.writeable
-                },{
-                  xtype: 'checkbox',
-                  fieldLabel: "{% trans 'Guest OK' %}",
-                  name: "guest_ok",
-                  ref: 'guestokfield',
-                  checked: sel.json.guest_ok
-                },{
-                  fieldLabel: "{% trans 'Comment' %}",
-                  name: "comment",
-                  ref: 'commentfield',
-                  value: sel.json.comment
-                },{
-                  fieldLabel: "{% trans 'Create Mode' %}",
-                  name: "create_mode",
-                  ref: 'createmodefield',
-                  value: sel.json.create_mode
-                },{
-                  fieldLabel: "{% trans 'Dir Mode' %}",
-                  name: "dir_mode",
-                  ref: 'dirmodefield',
-                  value: sel.json.dir_mode
-                }],
-                buttons: [{
-                  text: "{% trans 'Save' %}",
-                  icon: MEDIA_URL + "/icons2/16x16/actions/edit-redo.png",
-                  handler: function(self){
-                    var sm = sambaShareGrid.getSelectionModel();
-                    if( sm.hasSelection() ){
-                      var sel = sm.selections.items[0];
-                      samba__Share.set(sel.id, {
-                        'path':    self.ownerCt.ownerCt.pathfield.getValue(),
-                        'force_user':    self.ownerCt.ownerCt.ownerfield.getValue(),
-                        'force_group':  self.ownerCt.ownerCt.groupfield.getValue(),
-                        'browseable':   self.ownerCt.ownerCt.browseablefield.getValue(),
-                        'available':   self.ownerCt.ownerCt.availablefield.getValue(),
-                        'writeable':   self.ownerCt.ownerCt.writeablefield.getValue(),
-                        'comment':   self.ownerCt.ownerCt.commentfield.getValue(),
-                        'create_mode':   self.ownerCt.ownerCt.createmodefield.getValue(),
-                        'guest_ok':   self.ownerCt.ownerCt.guestokfield.getValue(),
-                        'dir_mode':   self.ownerCt.ownerCt.dirmodefield.getValue()
-                      }, function(provider, response){
-                        if( response.result ){
-                          sambaShareGrid.store.reload();
-                          addwin.hide();
-                        }
-                      });
-                    }
-                  }
-                }]
-              }]
-            });
-            addwin.show();
-          }
-        }
-      },{
+              submitButtonText: "{% trans 'Edit' %}",
+            }, sel.data);
+         }
+       }
+     },{
         text: "{% trans 'Delete Share' %}",
         icon: MEDIA_URL + "/icons2/16x16/actions/remove.png",
-        handler: deleteFunction
-        } 
-      ],
-      keys: [{ key: [Ext.EventObject.DELETE], handler: deleteFunction}],
+        handler: this.deleteFunction,
+        scope: sambaShareGrid
+        }],
+      keys: [{ scope: sambaShareGrid, key: [Ext.EventObject.DELETE], handler: this.deleteFunction}],
       store: new Ext.data.DirectStore({
-        fields: ['name', 'path', 'available'],
-        directFn: samba__Share.all
-      }),
+      fields: ['id','name', 'path', 'available'],
+      directFn: samba__Share.all
+        }),
+      viewConfig: {forceFit: true},
       colModel: new Ext.grid.ColumnModel({
         defaults: {
           sortable: true
@@ -337,15 +227,59 @@ Ext.oa.Samba__Share_Panel = Ext.extend(Ext.grid.GridPanel, {
           header: "{% trans 'Available' %}",
           width: 50,
           dataIndex: "available",
-          renderer: renderBoolean
+          renderer: this.renderBoolean
         }]
       })
      }));
     Ext.oa.Samba__Share_Panel.superclass.initComponent.apply(this, arguments);
   },
+  renderBoolean: function (val, x, store){
+     if (val)
+       return '<img src="' + MEDIA_URL + '/oxygen/16x16/actions/dialog-ok-apply.png" title="yes" />';
+     return '<img src="' + MEDIA_URL + '/oxygen/16x16/actions/dialog-cancel.png" title="no" />';
+      },
+  deleteFunction: function(self){
+        var sm = this.getSelectionModel();
+        if( sm.hasSelection() ){
+          var sel = sm.selections.items[0];
+          Ext.Msg.confirm(
+            "{% trans 'Delete Share' %}",
+            interpolate(
+              "{% trans 'Do you really want to delete %s?' %}",[sel.data.path]),
+              function(btn){
+                if(btn == 'yes'){
+                  samba__Share.remove( sel.data.id, function(provider, response){
+                  sel.store.reload();
+              });
+            }
+          });
+        }
+     },
   onRender: function(){
     Ext.oa.Samba__Share_Panel.superclass.onRender.apply(this, arguments);
     this.store.reload();
+         var self = this;
+    var menu = new Ext.menu.Menu({
+    items: [{
+            id: 'delete',
+            text: 'delete',
+            icon: MEDIA_URL + "/icons2/16x16/actions/remove.png",
+        }],
+        listeners: {
+          itemclick: function(item) {
+                    self.deleteFunction()
+          }
+        }
+   });
+    this.on({
+      'contextmenu': function(event) {
+        if( this.getSelectionModel().hasSelection() ){
+          event.stopEvent();
+          this.getSelectionModel
+          menu.showAt(event.xy);
+        }
+      }
+    });
   }
 });
 

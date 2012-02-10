@@ -1,4 +1,4 @@
-{% load i18n %}
+{ load i18n %}
 Ext.namespace("Ext.oa");
 
 Ext.oa.Ftp__User_Panel = Ext.extend(Ext.grid.GridPanel, {
@@ -175,10 +175,9 @@ Ext.oa.Ftp__User_Panel = Ext.extend(Ext.grid.GridPanel, {
                 sel.store.reload();
                 });
               } 
-            }
-        );
+           });
     }
-  },
+ },
 
   onRender: function(){
     Ext.oa.Ftp__User_Panel.superclass.onRender.apply(this, arguments);
