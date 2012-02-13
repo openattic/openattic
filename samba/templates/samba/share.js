@@ -74,7 +74,7 @@ Ext.oa.Samba__Share_Panel = Ext.extend(Ext.grid.GridPanel, {
                 store: new Ext.data.DirectStore({
                   fields: ["username", "id"],
                   baseParams: { fields: ["username", "id"] },
-                  //directFn: auth__User.all
+                  directFn: auth__User.all
                 }),
                 typeAhead:     true,
                 triggerAction: 'all',
