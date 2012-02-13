@@ -9,11 +9,11 @@ Ext.oa.Http__Export_Panel = Ext.extend(Ext.grid.GridPanel, {
 // Ext.apply(this, Ext.apply(this.initialConfig, {
    layout: "fit",
    defaults: { autoScroll: true },
-     height: 240,
+     height: 200,
      width: 600,
      items: [{
        xtype: "form",
-       bodyStyle: 'padding 5px 5px;',
+       bodyStyle: 'padding:5px 5px;',
        api: {
          load: http__Export.get_ext,
          submit: http__Export.set_ext
