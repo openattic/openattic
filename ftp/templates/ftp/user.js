@@ -181,7 +181,7 @@ Ext.oa.Ftp__User_Panel = Ext.extend(Ext.grid.GridPanel, {
 
   onRender: function(){
     Ext.oa.Ftp__User_Panel.superclass.onRender.apply(this, arguments);
-    this.store.reload()
+    this.store.reload();
         var self = this;
     var menu = new Ext.menu.Menu({
     items: [{
