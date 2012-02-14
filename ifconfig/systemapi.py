@@ -129,3 +129,11 @@ class SystemD(LockingPlugin):
             fd.close()
             self.lock.release()
 
+    @method(in_signature="s", out_signature="i")
+    def get_speed(self, devname):
+        dev = NetDevice.objects.get(devname=devname)
+        try:
+            return dev.speed
+        except ValueError:
+            return -1
+
