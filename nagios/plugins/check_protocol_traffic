@@ -56,6 +56,9 @@ nagios = dbus.SystemBus().get_object(options.dbus, "/nagios")
 stats = nagios.iptables_get_stats()
 exit = 0
 
+ifspeed = dbus.SystemBus().get_object(options.dbus, "/ifconfig").get_speed(options.interface)
+
+
 def wrapdiff(curr, last):
     """ Calculate the difference between last and curr.
 
@@ -154,9 +157,21 @@ else:
     perfkeys = perfdata.keys()
     perfkeys.sort()
 
-    print "Traffic on %s|%s" % (
-        options.interface,
-        ' '.join([ "%s=%.2f" % (key, perfdata[key]) for key in perfkeys ])
+    out = "Traffic on %s" % options.interface
+
+    if ifspeed != -1:
+        # ifspeed = 1000 means 1000 MegaBit. Calc to bytes.
+        bytespeed = ifspeed * 1000000 / 8.
+        perc = float(perfdata["kernel_in_bytes"] + perfdata["kernel_out_bytes"]) / float(bytespeed) * 100
+        out += " is at %d%% (max %d MBit/s)" % (perc, ifspeed)
+
+        if perc > 50:
+            exit = 1
+        elif perc > 80:
+            exit = 2
+
+    print "%s|%s" % (
+        out, ' '.join([ "%s=%.2f" % (key, perfdata[key]) for key in perfkeys ])
         )
 
 savedstate.set("state", "timestamp", time())
