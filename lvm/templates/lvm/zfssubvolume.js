@@ -123,7 +123,7 @@ Ext.oa.Zfs__Subvolume__Panel = Ext.extend(Ext.grid.GridPanel, {
     keys: [{ scope: subvolumegrid, key: [Ext.EventObject.DELETE], handler: this.deleteFunction}],
         store: new Ext.data.DirectStore({
           //autoLoad: true,
-          fields: ['volname',{
+          fields: ['id','volname',{
             name: 'orivolume',mapping: 'volume',convert: function(val, row) {
             if( val === null )
               return null;
@@ -155,7 +155,7 @@ Ext.oa.Zfs__Subvolume__Panel = Ext.extend(Ext.grid.GridPanel, {
         Ext.Msg.confirm(
           "{% trans 'Confirm delete' %}",
           interpolate(
-            "{% trans 'Really delete subvolume %s ?<br /><b>There is no undo.</b>' %}"),
+            "{% trans 'Really delete subvolume %s ?<br /><b>There is no undo.</b>' %}", [sel.data.name]),
             function(btn){
               if(btn == 'yes'){
                 lvm__ZfsSubvolume.remove( sel.data.id, function(provider, response){
