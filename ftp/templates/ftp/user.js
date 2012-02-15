@@ -40,12 +40,12 @@ Ext.oa.Ftp__User_Panel = Ext.extend(Ext.grid.GridPanel, {
           items:[{
             xtype: 'textfield',
             name: "username",
-            fieldLabel: "Username",
+            fieldLabel: "Username"
         }, {
           xtype: 'textfield',
           fieldLabel: "{% trans 'Password' %}",
 //           name: "passwd",
-          inputType: 'password',
+          inputType: 'password'
         }, {
           xtype: 'volumefield',
 //           fieldLabel: "Volume",
@@ -187,7 +187,7 @@ Ext.oa.Ftp__User_Panel = Ext.extend(Ext.grid.GridPanel, {
     items: [{
             id: 'delete',
             text: 'delete',
-            icon: MEDIA_URL + "/icons2/16x16/actions/remove.png",
+            icon: MEDIA_URL + "/icons2/16x16/actions/remove.png"
         }],
         listeners: {
           itemclick: function(item) {
