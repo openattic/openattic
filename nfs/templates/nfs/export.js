@@ -128,7 +128,7 @@ Ext.oa.Nfs__Export_Panel = Ext.extend(Ext.grid.GridPanel, {
         handler: function(){
           nfsGrid.showEditWindow({
             title: "{% trans 'Add Export' %}",
-            submitButtonText: "{% trans 'Create Export' %}",
+            submitButtonText: "{% trans 'Create Export' %}"
           });
         }
        },{
@@ -203,7 +203,7 @@ Ext.oa.Nfs__Export_Panel = Ext.extend(Ext.grid.GridPanel, {
     items: [{
             id: 'delete',
             text: 'delete',
-            icon: MEDIA_URL + "/icons2/16x16/actions/remove.png",
+            icon: MEDIA_URL + "/icons2/16x16/actions/remove.png"
         }],
         listeners: {
           itemclick: function(item) {
