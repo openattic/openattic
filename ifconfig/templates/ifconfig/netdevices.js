@@ -441,7 +441,7 @@ Ext.oa.Ifconfig__NetDevice_Panel = Ext.extend(Ext.Panel, {
                 var ds = netDevPanel.addressgrid.store;
                 if( !sel.data.configure ){
                   Ext.Msg.alert("{% trans 'Delete Address'%}",
-                    "{% trans 'This device has not been configured in this module, therefore it cannot be deleted here.' %}"
+                    "{% trans 'This address has not been configured in this module, therefore it cannot be deleted here.' %}"
                   );
                   return;
                 }
