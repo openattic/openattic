@@ -94,7 +94,7 @@ Ext.oa.Peering__Peerhost_Panel = Ext.extend(Ext.grid.GridPanel, {
             var sel = sm.selections.items[0];
             peerhostGrid.showEditWindow({
               title: "{% trans 'Edit Peer' %}",
-              submitButtonText: "{% trans 'Edit Peer' %}",
+              submitButtonText: "{% trans 'Edit Peer' %}"
             }, sel.data);
           }
         }
