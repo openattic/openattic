@@ -8,11 +8,11 @@ Ext.oa.Tftp__Instance_Panel = Ext.extend(Ext.grid.GridPanel, {
     var addwin = new Ext.Window(Ext.apply(config,{
       layout: "fit",
       defaults: {autoScroll: true},
-        height: 200,
+        height: 205,
         width: 500,
           items:[{
           xtype: "form",
-          bodyStyle: 'padding 5px 5px;',
+          bodyStyle: 'padding: 5px 5px;',
           api: {
             load: tftp__Instance.get_ext,
             submit: tftp__Instance.set_ext
