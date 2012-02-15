@@ -76,7 +76,7 @@ Ext.oa.Tftp__Instance_Panel = Ext.extend(Ext.grid.GridPanel, {
                   selectOnFocus: true,
                   displayField:  'address',
                   valueField:    'id'
-                }],
+                }]
             }],
             buttons: [{
             text: config.submitButtonText,
@@ -184,7 +184,7 @@ Ext.oa.Tftp__Instance_Panel = Ext.extend(Ext.grid.GridPanel, {
     items: [{
             id: 'delete',
             text: 'delete',
-            icon: MEDIA_URL + "/icons2/16x16/actions/remove.png",
+            icon: MEDIA_URL + "/icons2/16x16/actions/remove.png"
         }],
         listeners: {
           itemclick: function(item) {
