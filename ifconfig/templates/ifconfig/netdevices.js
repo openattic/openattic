@@ -378,7 +378,7 @@ Ext.oa.Ifconfig__NetDevice_Panel = Ext.extend(Ext.Panel, {
               sortable: true
             },
             columns: [{
-              header: "IP",
+              header: "IP/Netmask",
               dataIndex: "address",
               editor: new Ext.form.TextField({ vtype: 'IPAddressWithNetmask' })
             }, {
