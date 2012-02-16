@@ -335,6 +335,7 @@ Ext.oa.Ifconfig__NetDevice_Panel = Ext.extend(Ext.Panel, {
                     netDevPanel.deviceform.load({ params: { id: response.result.id } });
                     netDevPanel.addressgrid.store.load({ params: { device__id: response.result.id } });
                     netDevPanel.deviceform.getForm().findField("devname").setReadOnly(true);
+                    netDevPanel.devicestree.refresh();
                   }
                 }
               });
