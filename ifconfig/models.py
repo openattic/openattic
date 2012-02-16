@@ -114,8 +114,16 @@ class NetDevice(models.Model):
         havedomain = False
 
         for interface in NetDevice.objects.all():
+            if interface.childdevs and interface.ipaddress_set.filter(configure=True).count() > 0:
+                    raise ValueError("Interface %s has children and has an address" % interface.devname)
+
             if interface.dhcp:
+                if interface.ipaddress_set.filter(configure=True).count() > 0:
+                    raise ValueError("Interface %s uses DHCP but has an address" % interface.devname)
                 haveaddr = True
+                havegw   = True
+                havedns  = True
+                havedomain = True
 
             elif interface.ipaddress_set.filter(configure=True).count() > 0:
                 for address in interface.ipaddress_set.filter(configure=True):
