@@ -46,4 +46,13 @@ class NetDeviceHandler(ModelHandler):
         """ Update /etc/network/interfaces. """
         return NetDevice.write_interfaces()
 
+    def in_use(self, id):
+        """ Determine whether or not the device with the given ID is configured with any services. """
+        dev = NetDevice.objects.get(id=id)
+        for ip in dev.ipaddress_set.all():
+            for relobj in ( ip._meta.get_all_related_objects() + ip._meta.get_all_related_many_to_many_objects() ):
+                if relobj.model.objects.filter( **{ relobj.field.name: ip } ).count() > 0:
+                    return True
+        return False
+
 RPCD_HANDLERS = [NetDeviceHandler, IPAddressHandler]
