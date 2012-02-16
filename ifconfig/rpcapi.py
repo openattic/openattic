@@ -3,6 +3,8 @@
 
 import dbus
 
+from django.conf import settings
+
 from rpcd.handlers import ModelHandler
 
 from ifconfig.models import IPAddress, NetDevice
