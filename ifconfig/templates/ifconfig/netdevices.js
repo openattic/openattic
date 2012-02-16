@@ -12,7 +12,7 @@ Ext.apply(Ext.form.VTypes, {
     IPAddressWithNetmask:  function(v) {
       return /^\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3}(\/(\d{1,2}|\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3}))?$/.test(v);
     },
-    IPAddressWithNetmaskText: "{% trans 'Must be a numeric IP address or 'IP/Netmask'.' %}",
+    IPAddressWithNetmaskText: '{% trans 'Must be a numeric IP address or "IP/Netmask".' %}',
     IPAddressWithNetmaskMask: /[\d\.\/]/i,
 
     IPAddressList:  function(v) {
@@ -25,7 +25,7 @@ Ext.apply(Ext.form.VTypes, {
     DomainName:  function(v) {
       return /^[\w\.\-]+$/.test(v);
     },
-    DomainNameText: "{% trans 'Must only contain letters, numbers, '-' and '.'.' %}",
+    DomainNameText: '{% trans 'Must only contain letters, numbers, "-" and ".".' %}',
     DomainNameMask: /[\w\.\-]/i
 });
 
@@ -190,7 +190,7 @@ Ext.oa.Ifconfig__NetDevice_Panel = Ext.extend(Ext.Panel, {
             }
           },
           items: [{
-            fieldLabel: "Device",
+            fieldLabel: "{% trans 'Device' %}",
             name: "devname",
             listeners: {
               change: function(self, newValue, oldValue){
@@ -198,39 +198,39 @@ Ext.oa.Ifconfig__NetDevice_Panel = Ext.extend(Ext.Panel, {
               }
             }
           }, {
-            fieldLabel: "Speed",
+            fieldLabel: "{% trans 'Speed' %}",
             name: "speed",
             readOnly: true
           }, {
-            fieldLabel: "MAC Address",
+            fieldLabel: "{% trans 'MAC Address' %}",
             name: "macaddress",
             readOnly: true
           }, {
             xtype: "checkbox",
-            fieldLabel: "Connected",
+            fieldLabel: "{% trans 'Connected' %}",
             name: "carrier",
             readOnly: true
           }, {
             xtype: "checkbox",
-            fieldLabel: "Active",
+            fieldLabel: "{% trans 'Active' %}",
             name: "operstate",
             readOnly: true
           }, {
             xtype: "checkbox",
-            fieldLabel: "Configure at boot",
+            fieldLabel: "{% trans 'Configure at boot' %}",
             name: "auto"
           }, {
             xtype: "numberfield",
-            fieldLabel: "MTU",
+            fieldLabel: "{% trans 'MTU' %}",
             name: "mtu"
           }, {
             xtype: "checkbox",
-            fieldLabel: "DHCP",
+            fieldLabel: "{% trans 'DHCP' %}",
             name: "dhcp"
           }, {
             xtype: 'fieldset',
             ref: '../../bondingfields',
-            title: 'Bonding options (if applicable)',
+            title: "{% trans 'Bonding options (if applicable)' %}",
             collapsible: true,
             layout: 'form',
             items: [ {
@@ -261,7 +261,7 @@ Ext.oa.Ifconfig__NetDevice_Panel = Ext.extend(Ext.Panel, {
               ],
               typeAhead:     true,
               triggerAction: 'all',
-              emptyText:     'Select...',
+              emptyText:     "{% trans 'Select...' %}",
               selectOnFocus: true
             } ]
           }],
@@ -378,23 +378,23 @@ Ext.oa.Ifconfig__NetDevice_Panel = Ext.extend(Ext.Panel, {
               sortable: true
             },
             columns: [{
-              header: "IP/Netmask",
+              header: "{% trans 'IP/Netmask' %}",
               dataIndex: "address",
               editor: new Ext.form.TextField({ vtype: 'IPAddressWithNetmask' })
             }, {
-              header: "Gateway",
+              header: "{% trans 'Gateway' %}",
               dataIndex: "gateway",
               editor: new Ext.form.TextField({ vtype: 'IPAddress' })
             }, {
-              header: "Domain",
+              header: "{% trans 'Domain' %}",
               dataIndex: "domain",
               editor: new Ext.form.TextField({ vtype: 'DomainName' })
             }, {
-              header: "Nameservers",
+              header: "{% trans 'Nameservers' %}",
               dataIndex: "nameservers",
               editor: new Ext.form.TextField({ vtype: 'IPAddressList' })
             }, {
-              header: "Editable",
+              header: "{% trans 'Editable' %}",
               dataIndex: "configure",
               renderer: function( val, x, store ){
                 if( val )

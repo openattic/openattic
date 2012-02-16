@@ -10,6 +10,8 @@ from os.path import join, exists
 
 from django.conf import settings
 from django.db import models
+from django.utils.translation import ugettext_lazy as _
+
 
 AF_CHOICES = (
     (socket.AF_INET,  "IPv4"),
@@ -25,13 +27,13 @@ AF_CHOICES = (
 # balance-alb or 6
 
 BOND_MODE_CHOICES = (
-    ("balance-rr",     "balance-rr: Balanced Round Robin"),
-    ("active-backup",  "active-backup: Failover"),
-    ("balance-xor",    "balance-xor"),
-    ("broadcast",      "broadcast"),
-    ("802.3ad",        "802.3ad"),
-    ("balance-tlb",    "balance-tlb"),
-    ("balance-alb",    "balance-alb"),
+    ("balance-rr",     _("balance-rr: Balanced Round Robin")),
+    ("active-backup",  _("active-backup: Failover")),
+    ("balance-xor",    _("balance-xor")),
+    ("broadcast",      _("broadcast")),
+    ("802.3ad",        _("802.3ad")),
+    ("balance-tlb",    _("balance-tlb")),
+    ("balance-alb",    _("balance-alb")),
     )
 
 
@@ -81,11 +83,11 @@ class NetDevice(models.Model):
     dhcp        = models.BooleanField(default=False, blank=True)
     auto        = models.BooleanField(default=True, blank=True)
     slaves      = models.ManyToManyField('self', blank=True, symmetrical=False, related_name="bond_dev_set",
-                    help_text="If this interface is a bonding device, add the slave devices here.")
+                    help_text=_("If this interface is a bonding device, add the slave devices here."))
     brports     = models.ManyToManyField('self', blank=True, symmetrical=False, related_name="bridge_dev_set",
-                    help_text="If this interface is a bridge, add the ports here.")
+                    help_text=_("If this interface is a bridge, add the ports here."))
     vlanrawdev  = models.ForeignKey('self', blank=True, null=True, related_name="vlan_dev_set",
-                    help_text="If this interface is VLAN device, name the raw device here.")
+                    help_text=_("If this interface is VLAN device, name the raw device here."))
 
     bond_mode      = models.CharField( max_length=50, default="active-backup", choices=BOND_MODE_CHOICES )
     bond_miimon    = models.IntegerField( default=100 )
@@ -115,13 +117,13 @@ class NetDevice(models.Model):
 
         for interface in NetDevice.objects.all():
             if interface.childdevs and interface.ipaddress_set.filter(configure=True).count() > 0:
-                    raise ValueError("Interface %s has children and has an address" % interface.devname)
+                    raise ValueError(_("Interface %s has children and has an address") % interface.devname)
 
             if interface.dhcp:
                 if interface.ipaddress_set.filter(configure=True).count() > 0:
-                    raise ValueError("Interface %s uses DHCP but has an address" % interface.devname)
+                    raise ValueError(_("Interface %s uses DHCP but has an address") % interface.devname)
                 if interface.childdevs:
-                    raise ValueError("Interface %s has children and uses DHCP" % interface.devname)
+                    raise ValueError(_("Interface %s has children and uses DHCP") % interface.devname)
                 haveaddr = True
                 havegw   = True
                 havedns  = True
@@ -133,7 +135,7 @@ class NetDevice(models.Model):
                         addr = address.address.split("/")
                         haveaddr = True
                         if len(addr) == 1:
-                            raise ValueError("Interface %s has an address without a netmask" % interface.devname)
+                            raise ValueError(_("Interface %s has an address without a netmask") % interface.devname)
                         if address.gateway:
                             havegw = True
                         if address.domain:
@@ -144,27 +146,27 @@ class NetDevice(models.Model):
             if interface.vlanrawdev:
                 base = interface.vlanrawdev
                 if base == interface:
-                    raise ValueError("Vlan %s has ITSELF as its base interface" % interface.devname)
+                    raise ValueError(_("Vlan %s has ITSELF as its base interface") % interface.devname)
 
             if interface.brports.all().count():
                 if interface.brports.filter(id=interface.id).count():
-                    raise ValueError("Bridge %s has ITSELF as one of its ports" % interface.devname)
+                    raise ValueError(_("Bridge %s has ITSELF as one of its ports") % interface.devname)
 
             if interface.slaves.count():
                 if interface.slaves.filter(id=interface.id).count():
-                    raise ValueError("Bonding %s has ITSELF as one of its slaves" % interface.devname)
+                    raise ValueError(_("Bonding %s has ITSELF as one of its slaves") % interface.devname)
 
         if not haveaddr:
-            raise ValueError("There is no interface that has an IP (none with dhcp and none with static address).")
+            raise ValueError(_("There is no interface that has an IP (none with dhcp and none with static address)."))
 
         if not havegw:
-            raise ValueError("There is no default gateway.")
+            raise ValueError(_("There is no default gateway."))
 
         if not havedns:
-            raise ValueError("There is are no name servers configured.")
+            raise ValueError(_("There is are no name servers configured."))
 
         if not havedomain:
-            raise ValueError("There is no domain configured.")
+            raise ValueError(_("There is no domain configured."))
 
         return True
 
