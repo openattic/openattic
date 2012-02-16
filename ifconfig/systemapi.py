@@ -54,6 +54,9 @@ class SystemD(LockingPlugin):
             autoifs = []
 
             haveaddr = False
+            havegw   = False
+            havedns  = False
+            havedomain = False
 
             for interface in NetDevice.objects.all():
                 depends[interface.devname] = []
@@ -86,9 +89,12 @@ class SystemD(LockingPlugin):
                                 raise ValueError("Interface %s has an address without a netmask" % virtname)
                             if address.gateway:
                                 out.write("\tgateway %s\n" % address.gateway)
+                                havegw = True
                             if address.domain:
+                                havedomain = True
                                 out.write("\tdns-search %s\n" % address.domain)
                             if address.nameservers:
+                                havedns = True
                                 out.write("\tdns-nameservers %s\n" % address.nameservers)
 
                         virtid += 1
@@ -127,6 +133,15 @@ class SystemD(LockingPlugin):
 
             if not haveaddr:
                 raise ValueError("There is no interface that has an IP (none with dhcp and none with static address).")
+
+            if not havegw:
+                raise ValueError("There is no default gateway.")
+
+            if not havedns:
+                raise ValueError("There is are no name servers configured.")
+
+            if not havedomain:
+                raise ValueError("There is no domain configured.")
 
             out.write( "# Interface Dependency Tree:\n" )
             out.write( "# " + str(depends) + "\n" )

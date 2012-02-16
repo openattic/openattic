@@ -109,6 +109,9 @@ class NetDevice(models.Model):
     def validate_config(cls):
         """ Validate the current configuration. """
         haveaddr = False
+        havegw   = False
+        havedns  = False
+        havedomain = False
 
         for interface in NetDevice.objects.all():
             if interface.dhcp:
@@ -121,6 +124,12 @@ class NetDevice(models.Model):
                         haveaddr = True
                         if len(addr) == 1:
                             raise ValueError("Interface %s has an address without a netmask" % virtname)
+                        if address.gateway:
+                            havegw = True
+                        if address.domain:
+                            havedomain = True
+                        if address.nameservers:
+                            havedns = True
 
             if interface.vlanrawdev:
                 base = interface.vlanrawdev
@@ -137,6 +146,15 @@ class NetDevice(models.Model):
 
         if not haveaddr:
             raise ValueError("There is no interface that has an IP (none with dhcp and none with static address).")
+
+        if not havegw:
+            raise ValueError("There is no default gateway.")
+
+        if not havedns:
+            raise ValueError("There is are no name servers configured.")
+
+        if not havedomain:
+            raise ValueError("There is no domain configured.")
 
         return True
 
