@@ -53,17 +53,11 @@ class SystemD(LockingPlugin):
             depends = {}
             autoifs = []
 
-            haveaddr = False
-            havegw   = False
-            havedns  = False
-            havedomain = False
-
             for interface in NetDevice.objects.all():
                 depends[interface.devname] = []
 
                 if interface.dhcp:
                     out.write("iface %s inet dhcp\n" % interface.devname)
-                    haveaddr = True
 
                 elif interface.ipaddress_set.filter(configure=True).count() > 0:
                     virtid = 0
@@ -79,22 +73,16 @@ class SystemD(LockingPlugin):
                             addr = address.address.split("/")
                             out.write("iface %s inet static\n" % virtname)
                             out.write("\taddress %s\n" % addr[0])
-                            haveaddr = True
                             if len(addr) > 1:
                                 try:
                                     out.write("\tnetmask %s\n" % cidr2mask(int(addr[1])))
                                 except ValueError:
                                     out.write("\tnetmask %s\n" % addr[1])
-                            else:
-                                raise ValueError("Interface %s has an address without a netmask" % virtname)
                             if address.gateway:
                                 out.write("\tgateway %s\n" % address.gateway)
-                                havegw = True
                             if address.domain:
-                                havedomain = True
                                 out.write("\tdns-search %s\n" % address.domain)
                             if address.nameservers:
-                                havedns = True
                                 out.write("\tdns-nameservers %s\n" % address.nameservers)
 
                         virtid += 1
@@ -105,21 +93,14 @@ class SystemD(LockingPlugin):
                 if interface.vlanrawdev:
                     base = interface.vlanrawdev
                     depends[interface.devname].append(base)
-                    if base == interface:
-                        raise ValueError("Vlan %s has ITSELF as its base interface" % interface.devname)
                     out.write("\tvlan-raw-device %s\n" % base.devname)
 
                 if interface.brports.all().count():
                     depends[interface.devname].extend(list(interface.brports.all()))
-                    if interface.brports.filter(id=interface.id).count():
-                        raise ValueError("Bridge %s has ITSELF as one of its ports" % interface.devname)
                     out.write("\tbridge-ports %s\n" % " ".join([p.devname for p in interface.brports.all()]))
 
                 if interface.slaves.count():
                     depends[interface.devname].extend(list(interface.slaves.all()))
-                    if interface.slaves.filter(id=interface.id).count():
-                        raise ValueError("Bonding %s has ITSELF as one of its slaves" % interface.devname)
-
                     out.write("\tslaves %s\n"  % ' '.join( [p.devname for p in interface.slaves.all()] ))
                     out.write("\tbond_mode %s\n"      % interface.bond_mode)
                     out.write("\tbond_miimon %s\n"    % interface.bond_miimon)
@@ -130,18 +111,6 @@ class SystemD(LockingPlugin):
                     autoifs.append(interface)
 
                 out.write("\n")
-
-            if not haveaddr:
-                raise ValueError("There is no interface that has an IP (none with dhcp and none with static address).")
-
-            if not havegw:
-                raise ValueError("There is no default gateway.")
-
-            if not havedns:
-                raise ValueError("There is are no name servers configured.")
-
-            if not havedomain:
-                raise ValueError("There is no domain configured.")
 
             out.write( "# Interface Dependency Tree:\n" )
             out.write( "# " + str(depends) + "\n" )
