@@ -44,6 +44,13 @@ class IPAddress(models.Model):
     configure   = models.BooleanField(blank=True, default=True)
 
     @property
+    def in_use(self):
+        for relobj in ( self._meta.get_all_related_objects() + self._meta.get_all_related_many_to_many_objects() ):
+            if relobj.model.objects.filter( **{ relobj.field.name: self } ).count() > 0:
+                return True
+        return False
+
+    @property
     def is_loopback(self):
         return self.host_part in ("loopback", "localhost", "127.0.0.1", "::1")
 
@@ -117,6 +124,16 @@ class NetDevice(models.Model):
         children.extend(list(NetDevice.objects.filter(slaves__devname=self.devname)))
         children.extend(list(NetDevice.objects.filter(vlanrawdev__devname=self.devname)))
         return children
+
+    @property
+    def in_use(self):
+        for dev in self.childdevs:
+            if dev.in_use:
+                return True
+        for addr in self.ipaddress_set.all():
+            if addr.in_use:
+                return True
+        return False
 
     @property
     def devtype(self):
