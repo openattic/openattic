@@ -35,7 +35,6 @@ Ext.oa.Tftp__Instance_Panel = Ext.extend(Ext.grid.GridPanel, {
           },
           items: [{
             xtype: 'fieldset',
-            title: 'Add new Instance',
             layout: 'form',
             items: [
                   tipify({
