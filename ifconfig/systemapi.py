@@ -31,6 +31,14 @@ class SystemD(LockingPlugin):
     dbus_path = "/ifconfig"
 
     @method(in_signature="", out_signature="")
+    def ifdown(self):
+        return invoke(["/sbin/ifdown", "-a"])
+
+    @method(in_signature="", out_signature="")
+    def ifup(self):
+        return invoke(["/sbin/ifup", "-a"])
+
+    @method(in_signature="", out_signature="")
     def write_interfaces(self):
         self.lock.acquire()
         out = StringIO()
