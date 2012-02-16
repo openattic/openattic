@@ -50,7 +50,6 @@ class SystemD(LockingPlugin):
             "# Last updated " + str(datetime.now()) + "\n",
             "\n"
             ])
-        fd = open( "/etc/network/interfaces", "wb" )
 
         try:
             depends = {}
@@ -125,6 +124,7 @@ class SystemD(LockingPlugin):
                                 depends[depiface].remove(interface)
 
             out.seek(0)
+            fd = open( "/etc/network/interfaces", "wb" )
             fd.write( out.read() )
 
         finally:
