@@ -140,7 +140,7 @@ Ext.oa.Ftp__User_Panel = Ext.extend(Ext.grid.GridPanel, {
       }],
       keys: [{scope: ftpGrid, key: [Ext.EventObject.DELETE], handler: this.deleteFunction}],
       store: new Ext.data.DirectStore ({
-        fields: ['id', 'username', 'shell', 'homedir', 'volume', {
+        fields: ['id', 'username', 'passwd','shell', 'homedir', 'volume', {
           name: 'volumename',mapping: 'volume',convert: function( val, row ){ return val.name }
         }],
         directFn: ftp__User.all
