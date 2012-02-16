@@ -136,7 +136,7 @@ Ext.oa.Samba__Share_Panel = Ext.extend(Ext.grid.GridPanel, {
                 name: "create_mode",
                 ref: 'createmodefield',
                 value:     '0664'
-              }, "{% trans 'Set rights for owner, group and others' %}" ),
+              }, "{% trans 'Set rights for owner, group and others' %}" )
         ]
         }],
          buttons: [{
@@ -195,7 +195,7 @@ Ext.oa.Samba__Share_Panel = Ext.extend(Ext.grid.GridPanel, {
             var sel = sm.selections.items[0];
             sambaShareGrid.showEditWindow({
               title: "{% trans 'Edit' %}",
-              submitButtonText: "{% trans 'Edit' %}",
+              submitButtonText: "{% trans 'Edit' %}"
             }, sel.data);
          }
        }
@@ -263,7 +263,7 @@ Ext.oa.Samba__Share_Panel = Ext.extend(Ext.grid.GridPanel, {
     items: [{
             id: 'delete',
             text: 'delete',
-            icon: MEDIA_URL + "/icons2/16x16/actions/remove.png",
+            icon: MEDIA_URL + "/icons2/16x16/actions/remove.png"
         }],
         listeners: {
           itemclick: function(item) {

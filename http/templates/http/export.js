@@ -10,10 +10,10 @@ Ext.oa.Http__Export_Panel = Ext.extend(Ext.grid.GridPanel, {
    layout: "fit",
    defaults: { autoScroll: true },
      height: 200,
-     width: 600,
+     width: 500,
      items: [{
        xtype: "form",
-       bodyStyle: 'padding:5px 5px;',
+       bodyStyle: 'padding:5px ;',
        api: {
          load: http__Export.get_ext,
          submit: http__Export.set_ext
@@ -103,7 +103,7 @@ Ext.oa.Http__Export_Panel = Ext.extend(Ext.grid.GridPanel, {
         handler: function(){
           httpGrid.showEditWindow({
             title: "{% trans 'Add Export' %}",
-            submitButtonText:  "{% trans 'Create Export' %}",
+            submitButtonText:  "{% trans 'Create Export' %}"
           });
         }
       },{
@@ -115,7 +115,7 @@ Ext.oa.Http__Export_Panel = Ext.extend(Ext.grid.GridPanel, {
             var sel = sm.selections.items[0];
             httpGrid.showEditWindow({
               title:  "{% trans 'Edit Export' %}",
-              submitButtonText:  "{% trans 'Edit Export' %}",
+              submitButtonText:  "{% trans 'Edit Export' %}"
             },sel.data);
           }
         }
@@ -183,7 +183,7 @@ Ext.oa.Http__Export_Panel = Ext.extend(Ext.grid.GridPanel, {
     items: [{
             id: 'delete',
             text: 'delete',
-            icon: MEDIA_URL + "/icons2/16x16/actions/remove.png",
+            icon: MEDIA_URL + "/icons2/16x16/actions/remove.png"
         }],
         listeners: {
           itemclick: function(item) {

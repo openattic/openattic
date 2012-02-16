@@ -262,7 +262,7 @@ Ext.oa.Ifconfig__NetDevice_Panel = Ext.extend(Ext.Panel, {
               typeAhead:     true,
               triggerAction: 'all',
               emptyText:     'Select...',
-              selectOnFocus: true,
+              selectOnFocus: true
             } ]
           }],
           buttons: [{

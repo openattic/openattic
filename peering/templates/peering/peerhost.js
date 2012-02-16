@@ -5,7 +5,7 @@ Ext.namespace("Ext.oa");
 Ext.oa.Peering__Peerhost_Panel = Ext.extend(Ext.grid.GridPanel, {
   showEditWindow: function(config, record){
     var peerhostGrid = this;
-    var addwin = new Ext.Window(Ext.applyIf(config, {
+    var addwin = new Ext.Window(Ext.apply(config, {
       layout: "fit",
       height: 140,
       width: 500,
@@ -31,9 +31,11 @@ Ext.oa.Peering__Peerhost_Panel = Ext.extend(Ext.grid.GridPanel, {
           }
         },
         items: [ {
+          xtype: 'textfield',
           fieldLabel: "{% trans 'Name' %}",
           name: "name"
         }, {
+          xtype: 'textfield',
           fieldLabel: "{% trans 'Base URL' %}",
           name: "base_url",
           value: "http://__:<<APIKEY>>@<<HOST>>:31234/"
@@ -43,6 +45,7 @@ Ext.oa.Peering__Peerhost_Panel = Ext.extend(Ext.grid.GridPanel, {
           icon: MEDIA_URL + "/oxygen/16x16/actions/dialog-ok-apply.png",
           handler: function(self){
             self.ownerCt.ownerCt.getForm().submit({
+              params: {id: -1, init_master: true, ordering: 0},
               success: function(provider, response){
                 if( response.result ){
                   peerhostGrid.store.reload();
@@ -94,39 +97,23 @@ Ext.oa.Peering__Peerhost_Panel = Ext.extend(Ext.grid.GridPanel, {
             var sel = sm.selections.items[0];
             peerhostGrid.showEditWindow({
               title: "{% trans 'Edit Peer' %}",
-              submitButtonText: "{% trans 'Edit Peer' %}",
+              submitButtonText: "{% trans 'Edit Peer' %}"
             }, sel.data);
           }
         }
       }, {
         text: "{% trans 'Delete Peer' %}",
         icon: MEDIA_URL + "/icons2/16x16/actions/remove.png",
-        handler: function(self){
-          var sm = peerhostGrid.getSelectionModel();
-          if( sm.hasSelection() ){
-            var sel = sm.selections.items[0];
-            Ext.Msg.confirm(
-              "{% trans 'Delete Peer' %}",
-              interpolate(
-                "{% trans 'Do you really want to delete %s?' %}",[sel.data.name]),
-                function(btn){
-                  if(btn == 'yes'){
-                    peering__PeerHost.remove( sel.data.id, function(provider, response){
-                      peerhostGrid.store.reload();
-                    } );
-                  }
-                }
-              );
-            }
-          }
-        }
-      ],
-      store: {
-        xtype: 'directstore',
+        handler: this.deleteFunction,
+        scope: peerhostGrid
+        }],
+        keys: [{scope: peerhostGrid, key:[Ext.EventObject.DELETE], handler: this.deleteFunction}],
+      store: new Ext.data.DirectStore({
         autoScroll: true,
         fields: ['id', 'base_url', 'name', 'hostname'],
         directFn: peering__PeerHost.all
-      },
+      }),
+      viewConfig: { forceFit: true },
       colModel: new Ext.grid.ColumnModel({
         defaults: {
           sortable: true
@@ -144,9 +131,49 @@ Ext.oa.Peering__Peerhost_Panel = Ext.extend(Ext.grid.GridPanel, {
     }));
     Ext.oa.Peering__Peerhost_Panel.superclass.initComponent.apply(this, arguments);
   },
+     deleteFunction: function(self){
+  var sm = this.getSelectionModel();
+    if( sm.hasSelection() ){
+      var sel = sm.selections.items[0];
+        Ext.Msg.confirm(
+          "{% trans 'Delete Peer' %}",
+          interpolate(
+            "{% trans 'Do you really want to delete %s?' %}",[sel.data.name]),
+            function(btn){
+              if(btn == 'yes'){
+                peering__PeerHost.remove( sel.data.id, function(provider, response){
+                sel.store.reload();
+                });
+              } 
+           });
+    }
+ },
+ 
   onRender: function(){
     Ext.oa.Peering__Peerhost_Panel.superclass.onRender.apply(this, arguments);
     this.store.reload();
+     var self = this;
+    var menu = new Ext.menu.Menu({
+    items: [{
+            id: 'delete',
+            text: 'delete',
+            icon: MEDIA_URL + "/icons2/16x16/actions/remove.png",
+        }],
+        listeners: {
+          itemclick: function(item) {
+                    self.deleteFunction()
+          }
+        }
+   });
+    this.on({
+      'contextmenu': function(event) {
+        if( this.getSelectionModel().hasSelection() ){
+          event.stopEvent();
+          this.getSelectionModel
+          menu.showAt(event.xy);
+        }
+      }
+    });
   }
 });
 
