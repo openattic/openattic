@@ -32,7 +32,7 @@ class SystemD(LockingPlugin):
 
     @method(in_signature="", out_signature="i")
     def ifdown(self):
-        return invoke(["/sbin/ifdown", "-a"])
+        return invoke(["/sbin/ifdown", "-a", "--exclude=lo"])
 
     @method(in_signature="", out_signature="i")
     def ifup(self):
