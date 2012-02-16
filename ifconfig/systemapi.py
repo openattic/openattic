@@ -30,11 +30,11 @@ def cidr2mask(len):
 class SystemD(LockingPlugin):
     dbus_path = "/ifconfig"
 
-    @method(in_signature="", out_signature="")
+    @method(in_signature="", out_signature="i")
     def ifdown(self):
         return invoke(["/sbin/ifdown", "-a"])
 
-    @method(in_signature="", out_signature="")
+    @method(in_signature="", out_signature="i")
     def ifup(self):
         return invoke(["/sbin/ifup", "-a"])
 
