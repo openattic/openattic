@@ -120,6 +120,8 @@ class NetDevice(models.Model):
             if interface.dhcp:
                 if interface.ipaddress_set.filter(configure=True).count() > 0:
                     raise ValueError("Interface %s uses DHCP but has an address" % interface.devname)
+                if interface.childdevs:
+                    raise ValueError("Interface %s has children and uses DHCP" % interface.devname)
                 haveaddr = True
                 havegw   = True
                 havedns  = True
