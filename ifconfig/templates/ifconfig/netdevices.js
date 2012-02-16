@@ -537,11 +537,44 @@ Ext.oa.Ifconfig__NetDevice_Panel = Ext.extend(Ext.Panel, {
         text: "{% trans 'Validate configuration'%}",
         icon: MEDIA_URL + "/oxygen/16x16/actions/preflight-verifier.png",
         handler: function(){
+          ifconfig__NetDevice.validate_config(function(provider, response){
+            if( response.type !== "exception" ){
+              Ext.Msg.alert("{% trans 'Configuration validated'%}",
+                "{% trans 'No problems have been detected with your current configuration.' %}"
+              );
+            }
+            else{
+              Ext.Msg.alert("{% trans 'Configuration invalid'%}",
+                "{% trans 'The following problem has been detected:' %}" + "<br /><br />" +
+                response.message
+              );
+            }
+          });
         }
       }, {
         text: "{% trans 'Activate configuration'%}",
         icon: MEDIA_URL + "/oxygen/16x16/actions/run-build-install.png",
         handler: function(){
+        Ext.Msg.confirm(
+          "{% trans 'Activate configuration' %}",
+          "{% trans 'In order to safely update the configuration, all network interfaces will be shut down and restarted, possibly causing data loss if the system is currently being used. Proceed?' %}",
+          function(btn){
+            if(btn == 'yes'){
+              ifconfig__NetDevice.activate_config(function(provider, response){
+                if( response.type !== "exception" ){
+                  Ext.Msg.alert("{% trans 'Configuration activated'%}",
+                    "{% trans 'The configuration has been updated.' %}"
+                  );
+                }
+                else{
+                  Ext.Msg.alert("{% trans 'Configuration invalid'%}",
+                    "{% trans 'The following problem has been detected:' %}" + "<br /><br />" +
+                    response.message
+                  );
+                }
+              });
+            }
+          });
         }
       }]
     }));
