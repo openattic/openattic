@@ -501,7 +501,7 @@ Ext.oa.Ifconfig__NetDevice_Panel = Ext.extend(Ext.Panel, {
         }
       }, {
         text: "{% trans 'Create device...'%}",
-        icon: MEDIA_URL + "/oxygen/16x16/actions/preflight-verifier.png",
+        icon: MEDIA_URL + "/icons2/16x16/actions/add.png",
         menu: new Ext.menu.Menu({
           items: [{
             text: "Bonding",
