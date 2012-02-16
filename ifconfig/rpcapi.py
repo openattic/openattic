@@ -1,6 +1,8 @@
 # -*- coding: utf-8 -*-
 # kate: space-indent on; indent-width 4; replace-tabs on;
 
+import dbus
+
 from rpcd.handlers import ModelHandler
 
 from ifconfig.models import IPAddress, NetDevice
@@ -42,9 +44,18 @@ class NetDeviceHandler(ModelHandler):
         """ Get devices that are considered a root device. """
         return [self._getobj(obj) for obj in NetDevice.get_root_devices()]
 
-    def write_interfaces(self):
-        """ Update /etc/network/interfaces. """
-        return NetDevice.write_interfaces()
+    def validate_config(self):
+        """ Check if the current configuration is valid. """
+        return NetDevice.validate_config()
+
+    def activate_config(self):
+        """ Stop networking, update /etc/network/interfaces and start up the new configuration. """
+        ifc = dbus.SystemBus().get_object(settings.DBUS_IFACE_SYSTEMD, "/ifconfig")
+        NetDevice.validate_config()
+        ifc.ifdown()
+        NetDevice.write_interfaces()
+        ifc.ifup()
+        return True
 
     def in_use(self, id):
         """ Determine whether or not the device with the given ID is configured with any services. """

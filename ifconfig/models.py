@@ -105,6 +105,41 @@ class NetDevice(models.Model):
             ))
         return rootdevs
 
+    @classmethod
+    def validate_config(cls):
+        """ Validate the current configuration. """
+        haveaddr = False
+
+        for interface in NetDevice.objects.all():
+            if interface.dhcp:
+                haveaddr = True
+
+            elif interface.ipaddress_set.filter(configure=True).count() > 0:
+                for address in interface.ipaddress_set.filter(configure=True):
+                    if not address.is_loopback:
+                        addr = address.address.split("/")
+                        haveaddr = True
+                        if len(addr) == 1:
+                            raise ValueError("Interface %s has an address without a netmask" % virtname)
+
+            if interface.vlanrawdev:
+                base = interface.vlanrawdev
+                if base == interface:
+                    raise ValueError("Vlan %s has ITSELF as its base interface" % interface.devname)
+
+            if interface.brports.all().count():
+                if interface.brports.filter(id=interface.id).count():
+                    raise ValueError("Bridge %s has ITSELF as one of its ports" % interface.devname)
+
+            if interface.slaves.count():
+                if interface.slaves.filter(id=interface.id).count():
+                    raise ValueError("Bonding %s has ITSELF as one of its slaves" % interface.devname)
+
+        if not haveaddr:
+            raise ValueError("There is no interface that has an IP (none with dhcp and none with static address).")
+
+        return True
+
     @property
     def basedevs(self):
         """ Devices required for ``self`` to operate. """
