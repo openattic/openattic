@@ -44,7 +44,7 @@ Ext.oa.Ftp__User_Panel = Ext.extend(Ext.grid.GridPanel, {
         }, {
           xtype: 'textfield',
           fieldLabel: "{% trans 'Password' %}",
-//           name: "passwd",
+           name: "passwd",
           inputType: 'password'
         }, {
           xtype: 'volumefield',
