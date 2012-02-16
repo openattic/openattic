@@ -492,6 +492,13 @@ Ext.oa.Ifconfig__NetDevice_Panel = Ext.extend(Ext.Panel, {
         }]
       }],
       buttons: [{
+        text: "",
+        icon: MEDIA_URL + "/icons2/16x16/actions/reload.png",
+        tooltip: "{% trans 'Reload' %}",
+        handler: function(self){
+          netDevPanel.devicestree.refresh();
+        }
+      }, {
         text: "{% trans 'Create device...'%}",
         icon: MEDIA_URL + "/oxygen/16x16/actions/preflight-verifier.png",
         menu: new Ext.menu.Menu({
