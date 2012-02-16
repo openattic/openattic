@@ -52,30 +52,44 @@ class SystemD(LockingPlugin):
 
                 if interface.dhcp:
                     out.write("iface %s inet dhcp\n" % interface.devname)
+                    out.write("\tmtu %d\n"   % interface.mtu)
                     haveaddr = True
-                elif interface.address:
-                    if interface.address.is_loopback:
-                        out.write("iface %s inet loopback\n" % interface.devname)
-                    else:
-                        addr = interface.address.address.split("/")
-                        out.write("iface %s inet static\n" % interface.devname)
-                        out.write("\taddress %s\n" % addr[0])
-                        haveaddr = True
-                        if len(addr) > 1:
-                            try:
-                                out.write("\tnetmask %s\n" % cidr2mask(int(addr[1])))
-                            except ValueError:
-                                out.write("\tnetmask %s\n" % addr[1])
+
+                elif interface.ipaddress_set.filter(configure=True).count() > 0:
+                    virtid = 0
+                    for address in interface.ipaddress_set.filter(configure=True):
+                        if not virtid:
+                            virtname = interface.devname
                         else:
-                            raise ValueError("Interface %s has an address without a netmask" % interface.devname)
-                        if interface.address.gateway:
-                            out.write("\tgateway %s\n" % interface.address.gateway)
-                        if interface.address.domain:
-                            out.write("\tdns-search %s\n" % interface.address.domain)
-                        if interface.address.nameservers:
-                            out.write("\tdns-nameservers %s\n" % interface.address.nameservers)
+                            virtname = "%s:%d" % (interface.devname, virtid)
+
+                        if address.is_loopback:
+                            out.write("iface %s inet loopback\n" % virtname)
+                        else:
+                            addr = address.address.split("/")
+                            out.write("iface %s inet static\n" % virtname)
+                            out.write("\tmtu %d\n"   % interface.mtu)
+                            out.write("\taddress %s\n" % addr[0])
+                            haveaddr = True
+                            if len(addr) > 1:
+                                try:
+                                    out.write("\tnetmask %s\n" % cidr2mask(int(addr[1])))
+                                except ValueError:
+                                    out.write("\tnetmask %s\n" % addr[1])
+                            else:
+                                raise ValueError("Interface %s has an address without a netmask" % virtname)
+                            if address.gateway:
+                                out.write("\tgateway %s\n" % address.gateway)
+                            if address.domain:
+                                out.write("\tdns-search %s\n" % address.domain)
+                            if address.nameservers:
+                                out.write("\tdns-nameservers %s\n" % address.nameservers)
+
+                        virtid += 1
+
                 else:
                     out.write("iface %s inet manual\n" % interface.devname)
+                    out.write("\tmtu %d\n"   % interface.mtu)
 
                 if interface.vlanrawdev:
                     base = interface.vlanrawdev
