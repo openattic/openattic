@@ -345,6 +345,27 @@ Ext.oa.Ifconfig__NetDevice_Panel = Ext.extend(Ext.Panel, {
             handler: function(self){
               self.ownerCt.ownerCt.getForm().reset();
             }
+          }, {
+            text: "{% trans 'Delete Device' %}",
+            icon: MEDIA_URL + "/icons2/16x16/actions/remove.png",
+            handler: function(self){
+              ifconfig__NetDevice.in_use(netDevPanel.active_device.id, function(provider, response){
+                if( response.result ){
+                  Ext.Msg.alert("{% trans 'Delete Device'%}",
+                    interpolate(
+                      "{% trans 'Device %s is in use, cannot delete it.' %}",
+                        [netDevPanel.active_device.devname]
+                    )
+                  );
+                }
+                else{
+                  ifconfig__NetDevice.remove(netDevPanel.active_device.id, function(provider, response){
+                    if( response.type !== "exception" )
+                      netDevPanel.devicestree.refresh();
+                  });
+                }
+              });
+            }
           }]
         }, {
           xtype: "editorgrid",
