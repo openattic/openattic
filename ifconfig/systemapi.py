@@ -52,7 +52,6 @@ class SystemD(LockingPlugin):
 
                 if interface.dhcp:
                     out.write("iface %s inet dhcp\n" % interface.devname)
-                    out.write("\tmtu %d\n"   % interface.mtu)
                     haveaddr = True
 
                 elif interface.ipaddress_set.filter(configure=True).count() > 0:
@@ -68,7 +67,6 @@ class SystemD(LockingPlugin):
                         else:
                             addr = address.address.split("/")
                             out.write("iface %s inet static\n" % virtname)
-                            out.write("\tmtu %d\n"   % interface.mtu)
                             out.write("\taddress %s\n" % addr[0])
                             haveaddr = True
                             if len(addr) > 1:
@@ -89,7 +87,6 @@ class SystemD(LockingPlugin):
 
                 else:
                     out.write("iface %s inet manual\n" % interface.devname)
-                    out.write("\tmtu %d\n"   % interface.mtu)
 
                 if interface.vlanrawdev:
                     base = interface.vlanrawdev
