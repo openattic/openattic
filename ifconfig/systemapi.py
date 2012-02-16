@@ -132,7 +132,12 @@ class SystemD(LockingPlugin):
     def get_speed(self, devname):
         dev = NetDevice.objects.get(devname=devname)
         try:
-            return dev.speed
+            spd = dev.speed
         except ValueError:
             return -1
+        else:
+            if spd is not None:
+                return spd
+            return -1
+
 
