@@ -9,7 +9,7 @@ msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2012-01-31 16:57+0100\n"
-"PO-Revision-Date: 2012-02-02 16:24\n"
+"PO-Revision-Date: 2012-02-16 14:23\n"
 "Last-Translator: Laura Paduano <laura.paduano@it-novum.com>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
 "MIME-Version: 1.0\n"
@@ -336,7 +336,7 @@ msgstr "Die aktuelle Größe entspricht %s MB"
 #: templates/lvm/logicalvolume.js:405
 #, python-format
 msgid "Max. +%s MB"
-msgstr ""
+msgstr "Max. +%s MB"
 
 #: templates/lvm/logicalvolume.js:410
 msgid "The size you entered exceeds the remaining space."
@@ -353,7 +353,7 @@ msgid ""
 " MB?"
 msgstr ""
 "Möchten Sie wirklich die Volume-Größe von <b>%(lv)s</b> auf <b>%(megs)s</b> "
-"ändern?"
+"MB ändern?"
 
 #: templates/lvm/logicalvolume.js:421
 msgid "Resizing Volume"

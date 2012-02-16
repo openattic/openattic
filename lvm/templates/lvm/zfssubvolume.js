@@ -9,7 +9,7 @@ Ext.oa.Zfs__Subvolume__Panel = Ext.extend(Ext.grid.GridPanel, {
     var addwin = new Ext.Window(Ext.apply(config, {
       layout: "fit",
       defaults: {autoScroll: true},
-      height: 150,
+      height: 180,
       width: 500,
       items: [{
         xtype: "form",
@@ -36,7 +36,6 @@ Ext.oa.Zfs__Subvolume__Panel = Ext.extend(Ext.grid.GridPanel, {
         },
         items: [{
           xtype: 'fieldset',
-          title: 'Zfssubvolume settings',
           layout: 'form',
           items: [{ fieldLabel: "Name",
                     name: "volname",

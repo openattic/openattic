@@ -35,7 +35,6 @@ Ext.oa.Ftp__User_Panel = Ext.extend(Ext.grid.GridPanel, {
         },
         items: [{
           xtype: 'fieldset',
-          title: 'User settings',
           layout: 'form',
           items:[{
             xtype: 'textfield',
