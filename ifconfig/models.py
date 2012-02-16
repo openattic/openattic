@@ -133,7 +133,7 @@ class NetDevice(models.Model):
                         addr = address.address.split("/")
                         haveaddr = True
                         if len(addr) == 1:
-                            raise ValueError("Interface %s has an address without a netmask" % virtname)
+                            raise ValueError("Interface %s has an address without a netmask" % interface.devname)
                         if address.gateway:
                             havegw = True
                         if address.domain:
