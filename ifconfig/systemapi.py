@@ -60,32 +60,28 @@ class SystemD(LockingPlugin):
                     out.write("iface %s inet dhcp\n" % interface.devname)
 
                 elif interface.ipaddress_set.filter(configure=True).count() > 0:
-                    virtid = 0
-                    for address in interface.ipaddress_set.filter(configure=True):
-                        if not virtid:
-                            virtname = interface.devname
-                        else:
-                            virtname = "%s:%d" % (interface.devname, virtid)
+                    addrs = list(interface.ipaddress_set.filter(configure=True))
 
-                        if address.is_loopback:
-                            out.write("iface %s inet loopback\n" % virtname)
-                        else:
-                            addr = address.address.split("/")
-                            out.write("iface %s inet static\n" % virtname)
-                            out.write("\taddress %s\n" % addr[0])
-                            if len(addr) > 1:
-                                try:
-                                    out.write("\tnetmask %s\n" % cidr2mask(int(addr[1])))
-                                except ValueError:
-                                    out.write("\tnetmask %s\n" % addr[1])
-                            if address.gateway:
-                                out.write("\tgateway %s\n" % address.gateway)
-                            if address.domain:
-                                out.write("\tdns-search %s\n" % address.domain)
-                            if address.nameservers:
-                                out.write("\tdns-nameservers %s\n" % address.nameservers)
+                    if addrs[0].is_loopback:
+                        out.write("iface %s inet loopback\n" % interface.devname)
+                    else:
+                        addr = addrs[0].address.split("/")
+                        out.write("iface %s inet static\n" % interface.devname)
+                        out.write("\taddress %s\n" % addr[0])
+                        if len(addr) > 1:
+                            try:
+                                out.write("\tnetmask %s\n" % cidr2mask(int(addr[1])))
+                            except ValueError:
+                                out.write("\tnetmask %s\n" % addr[1])
+                        if addrs[0].gateway:
+                            out.write("\tgateway %s\n" % addrs[0].gateway)
+                        if addrs[0].domain:
+                            out.write("\tdns-search %s\n" % addrs[0].domain)
+                        if addrs[0].nameservers:
+                            out.write("\tdns-nameservers %s\n" % addrs[0].nameservers)
 
-                        virtid += 1
+                    for address in addrs[1:]:
+                        out.write("\tpost-up ip addr add %s dev $IFACE\n" % address.address)
 
                 else:
                     out.write("iface %s inet manual\n" % interface.devname)
