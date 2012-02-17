@@ -36,7 +36,6 @@ Ext.oa.Samba__Share_Panel = Ext.extend(Ext.grid.GridPanel, {
         },
         items: [{
           xtype: 'fieldset',
-          title: 'Add Share',
           layout: 'form',
           items: [{
             xtype:'volumefield',
