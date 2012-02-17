@@ -222,7 +222,8 @@ Ext.oa.Ifconfig__NetDevice_Panel = Ext.extend(Ext.Panel, {
           }, {
             xtype: "numberfield",
             fieldLabel: "{% trans 'MTU' %}",
-            name: "mtu"
+            name: "mtu",
+            readOnly: true
           }, {
             xtype: "checkbox",
             fieldLabel: "{% trans 'DHCP' %}",
