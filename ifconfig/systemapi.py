@@ -105,6 +105,9 @@ class SystemD(LockingPlugin):
                     out.write("\tbond_downdelay %s\n" % interface.bond_downdelay)
                     out.write("\tbond_updelay %s\n"   % interface.bond_updelay)
 
+                if interface.jumbo:
+                    out.write("\tmtu 9000\n")
+
                 if interface.auto:
                     autoifs.append(interface)
 

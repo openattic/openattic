@@ -81,7 +81,8 @@ def statfile(devname, fname):
 class NetDevice(models.Model):
     devname     = models.CharField(max_length=10, unique=True)
     dhcp        = models.BooleanField(default=False, blank=True)
-    auto        = models.BooleanField(default=True, blank=True)
+    auto        = models.BooleanField(default=True,  blank=True)
+    jumbo       = models.BooleanField(default=False, blank=True)
     slaves      = models.ManyToManyField('self', blank=True, symmetrical=False, related_name="bond_dev_set",
                     help_text=_("If this interface is a bonding device, add the slave devices here."))
     brports     = models.ManyToManyField('self', blank=True, symmetrical=False, related_name="bridge_dev_set",
@@ -155,6 +156,8 @@ class NetDevice(models.Model):
             if interface.slaves.count():
                 if interface.slaves.filter(id=interface.id).count():
                     raise ValueError(_("Bonding %s has ITSELF as one of its slaves") % interface.devname)
+                if interface.slaves.filter(jumbo=(not interface.jumbo)).count():
+                    raise ValueError(_("Bonding %s has slaves with mismatching Jumbo Frames setting") % interface.devname)
 
         if not haveaddr:
             raise ValueError(_("There is no interface that has an IP (none with dhcp and none with static address)."))

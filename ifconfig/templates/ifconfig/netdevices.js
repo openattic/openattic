@@ -220,6 +220,10 @@ Ext.oa.Ifconfig__NetDevice_Panel = Ext.extend(Ext.Panel, {
             fieldLabel: "{% trans 'Configure at boot' %}",
             name: "auto"
           }, {
+            xtype: "checkbox",
+            fieldLabel: "{% trans 'Jumbo Frames' %}",
+            name: "jumbo"
+          }, {
             xtype: "numberfield",
             fieldLabel: "{% trans 'MTU' %}",
             name: "mtu",
@@ -372,7 +376,7 @@ Ext.oa.Ifconfig__NetDevice_Panel = Ext.extend(Ext.Panel, {
         }, {
           xtype: "editorgrid",
           ref: "../addressgrid",
-          title: "IP Addresses",
+          title: "{% trans 'IP Addresses' %}",
           viewConfig: { forceFit: true },
           colModel: new Ext.grid.ColumnModel({
             defaults: {
