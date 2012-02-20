@@ -42,6 +42,8 @@ Ext.oa.Samba__Share_Panel = Ext.extend(Ext.grid.GridPanel, {
             listeners: {
               select: function(self, record, index){
               lvm__LogicalVolume.get( record.data.id, function( provider, response ){
+                self.ownerCt.namefield.setValue( response.result.name );
+                self.ownerCt.namefield.enable();
                 self.ownerCt.dirfield.setValue( response.result.fs.mountpoints[0] );
                 self.ownerCt.dirfield.enable();
               } );
@@ -52,13 +54,15 @@ Ext.oa.Samba__Share_Panel = Ext.extend(Ext.grid.GridPanel, {
             fieldLabel: "{% trans 'Share name' %}",
             allowBlank: false,
             name: "name",
-            ref: 'namefield'
+            ref: 'namefield',
+            disabled: (!record),
           },{
           xtype: 'textfield',
           fieldLabel: "{% trans 'Path' %}",
             allowBlank: false,
             name: "path",
-            ref: 'dirfield'
+            ref: 'dirfield',
+            disabled: (!record),
           },{
             xtype:      'combo',
             autoScroll: true,

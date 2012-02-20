@@ -59,7 +59,7 @@ Ext.oa.Ftp__User_Panel = Ext.extend(Ext.grid.GridPanel, {
          xtype: 'textfield',
           fieldLabel: "{% trans 'Directory' %}",
           name: "homedir",
-          disabled: false,
+          disabled: (!record),
           ref: 'dirfield'
         },{
             xtype: 'hidden',

@@ -52,7 +52,7 @@ Ext.oa.Http__Export_Panel = Ext.extend(Ext.grid.GridPanel, {
           xtype: 'textfield',
           fieldLabel: "{% trans 'Directory' %}",
           name: "path",
-          disabled: true,
+          disabled: (!record),
           ref: 'dirfield'
         }]
       }],
