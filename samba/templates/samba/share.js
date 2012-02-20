@@ -64,29 +64,16 @@ Ext.oa.Samba__Share_Panel = Ext.extend(Ext.grid.GridPanel, {
             ref: 'dirfield',
             disabled: (!record),
           },{
-            xtype:      'combo',
-            autoScroll: true,
+            xtype: 'textfield',
+            fieldLabel: "{% trans 'System user' %}",
             allowBlank: true,
-            fieldLabel: "{% trans 'Owner' %}",
-            name:       'owner',
-            hiddenName: 'owner_id',
-            store: new Ext.data.DirectStore({
-              fields: ["username", "id"],
-              baseParams: { fields: ["username", "id"] },
-              directFn: auth__User.all
-            }),
-            typeAhead:     true,
-            triggerAction: 'all',
-            emptyText:     "{% trans 'Select...' %}",
-            selectOnFocus: true,
-            displayField:  'username',
-            valueField:    'username',
-            ref:      'ownerfield'
+            name: "force_user",
+            ref: 'userfield'
           }, {
             xtype: 'textfield',
-            fieldLabel: "{% trans 'Group' %}",
+            fieldLabel: "{% trans 'System Group' %}",
             allowBlank: true,
-            name: "group",
+            name: "force_group",
             ref: 'groupfield'
           }, {
             xtype: 'checkbox',
