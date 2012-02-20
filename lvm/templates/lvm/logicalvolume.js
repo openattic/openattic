@@ -112,11 +112,15 @@ Ext.oa.Lvm__LogicalVolume_Panel = Ext.extend(Ext.Panel, {
             fieldLabel: "{% trans 'Owner' %}",
             name:       'owner',
             hiddenName: 'owner_id',
-            store: new Ext.data.DirectStore({
-              fields: ["username", "id"],
-              baseParams: { fields: ["username", "id"] },
-              directFn: auth__User.all_values
-            }),
+            store: (function(){
+              var store = new Ext.data.DirectStore({
+                fields: ["username", "id"],
+                baseParams: { fields: ["username", "id"] },
+                directFn: auth__User.all_values
+              });
+              store.setDefaultSort("username");
+              return store;
+            }()),
             typeAhead:     true,
             triggerAction: 'all',
             emptyText:     "{% trans 'Select...' %}",
