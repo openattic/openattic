@@ -9,7 +9,7 @@ Ext.oa.Zfs__Subvolume__Panel = Ext.extend(Ext.grid.GridPanel, {
     var addwin = new Ext.Window(Ext.apply(config, {
       layout: "fit",
       defaults: {autoScroll: true},
-      height: 180,
+      height: 200,
       width: 500,
       items: [{
         xtype: "form",
@@ -68,7 +68,6 @@ Ext.oa.Zfs__Subvolume__Panel = Ext.extend(Ext.grid.GridPanel, {
                    icon: MEDIA_URL + "/oxygen/16x16/actions/dialog-ok-apply.png",
                    handler: function(self){
                      self.ownerCt.ownerCt.getForm().submit({
-                       params:  {id: -1, init_master: true, ordering: 0},
                        success: function(provider,response){
                         if(response.result){
                           subvolumegrid.store.reload();
