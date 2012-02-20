@@ -75,7 +75,6 @@ Ext.oa.Ftp__User_Panel = Ext.extend(Ext.grid.GridPanel, {
           icon: MEDIA_URL + "/oxygen/16x16/actions/dialog-ok-apply.png",
           handler: function(self){
             self.ownerCt.ownerCt.getForm().submit({
-              params: {id: -1, init_master: true, ordering: 0},
               success: function(provider,response){
                 if(response.result){
                   ftpGrid.store.reload();
