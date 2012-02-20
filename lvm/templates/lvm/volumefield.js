@@ -28,6 +28,7 @@ Ext.oa.VolumeField = Ext.extend(Ext.form.ComboBox, {
       typeAhead:     true,
       triggerAction: 'all',
       emptyText:     "{% trans 'Select...' %}",
+      allowBlank:    false,
       selectOnFocus: true,
       forceSelection: true,
       displayField:  'name',
