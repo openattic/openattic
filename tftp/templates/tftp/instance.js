@@ -37,51 +37,50 @@ Ext.oa.Tftp__Instance_Panel = Ext.extend(Ext.grid.GridPanel, {
             xtype: 'fieldset',
             layout: 'form',
             items: [
-                  tipify({
-                    xtype: 'volumefield',
-                    name: "volume_",
-                    hiddenName: "volume",
-                    listeners: {
-                      select: function(self, record, index){
-                        lvm__LogicalVolume.get( record.data.id, function( provider, response ){
-                          self.ownerCt.dirfield.setValue( response.result.fs.mountpoints[0] );
-                          self.ownerCt.dirfield.enable();
-                        } );
-                      }
-                    }
-                  }, "{% trans 'Please select the volume to share.' %}"),
-                tipify({
-                    xtype: 'textfield',
-                    fieldLabel: "{% trans 'Directory' %}",
-                    name: "path",
-                    disabled: true,
-                    ref: 'dirfield'
-                  }, "{% trans 'If you wish to share only a subpath of the volume, enter the path here.' %}" ),
-                {
-                  xtype:      'combo',
-                  fieldLabel: "{% trans 'Address' %}",
-                  name:       "address",
-                  ref:        'addrfield',
-                  allowBlank: false,
-                  hiddenName: 'address',
-                  store: new Ext.data.DirectStore({
-                    fields: ["app", "obj", "id", "address"],
-                    baseParams: {fields: ["app", "obj", "id", "address"] },
-                    directFn: ifconfig__IPAddress.ids
-                  }),
-                  typeAhead:     true,
-                  triggerAction: 'all',
-                  emptyText:     "{% trans 'Select...' %}",
-                  selectOnFocus: true,
-                  displayField:  'address',
-                  valueField:    'id'
-                }]
+              tipify({
+                xtype: 'volumefield',
+                listeners: {
+                  select: function(self, record, index){
+                    lvm__LogicalVolume.get( record.data.id, function( provider, response ){
+                      self.ownerCt.dirfield.setValue( response.result.fs.mountpoints[0] );
+                      self.ownerCt.dirfield.enable();
+                    } );
+                  }
+                }
+              }, "{% trans 'Please select the volume to share.' %}"),
+              tipify({
+                  xtype: 'textfield',
+                  fieldLabel: "{% trans 'Directory' %}",
+                  name: "path",
+                  disabled: true,
+                  ref: 'dirfield'
+                }, "{% trans 'If you wish to share only a subpath of the volume, enter the path here.' %}" ),
+              {
+                xtype:      'combo',
+                fieldLabel: "{% trans 'Address' %}",
+                name:       "address",
+                ref:        'addrfield',
+                allowBlank: false,
+                hiddenName: 'address',
+                store: new Ext.data.DirectStore({
+                  fields: ["app", "obj", "id", "address"],
+                  baseParams: {fields: ["app", "obj", "id", "address"] },
+                  directFn: ifconfig__IPAddress.ids
+                }),
+                typeAhead:     true,
+                triggerAction: 'all',
+                emptyText:     "{% trans 'Select...' %}",
+                selectOnFocus: true,
+                displayField:  'address',
+                valueField:    'id'
+              }]
             }],
             buttons: [{
             text: config.submitButtonText,
             icon: MEDIA_URL + "/oxygen/16x16/actions/dialog-ok-apply.png",
             handler: function(self){
               self.ownerCt.ownerCt.getForm().submit({
+                params: {id: -1, init_master: true, ordering: 0},
                 success: function(provider, response){
                   if(response.result){
                     tftpGrid.store.reload();
