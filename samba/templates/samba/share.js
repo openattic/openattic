@@ -39,11 +39,6 @@ Ext.oa.Samba__Share_Panel = Ext.extend(Ext.grid.GridPanel, {
           layout: 'form',
           items: [{
             xtype:'volumefield',
-            //fieldLabel: "{% trans 'Share name' %}",
-            allowBlank: false,
-            name: "volume_",
-            hiddenName: "volume",
-            //ref: 'namefield'
             listeners: {
               select: function(self, record, index){
               lvm__LogicalVolume.get( record.data.id, function( provider, response ){
@@ -52,128 +47,126 @@ Ext.oa.Samba__Share_Panel = Ext.extend(Ext.grid.GridPanel, {
               } );
              }
            }
-          },{   xtype: 'textfield',
-                fieldLabel: "{% trans 'Share name' %}",
-                allowBlank: false,
-                name: "name",
-                ref: 'namefield'
-              },{
-              xtype: 'textfield',
-              fieldLabel: "{% trans 'Path' %}",
-                allowBlank: false,
-                name: "path",
-                ref: 'dirfield'
-              },{
-                xtype:      'combo',
-                autoScroll: true,
-                allowBlank: true,
-                fieldLabel: "{% trans 'Owner' %}",
-                name:       'owner',
-                hiddenName: 'owner_id',
-                store: new Ext.data.DirectStore({
-                  fields: ["username", "id"],
-                  baseParams: { fields: ["username", "id"] },
-                  directFn: auth__User.all
-                }),
-                typeAhead:     true,
-                triggerAction: 'all',
-                emptyText:     "{% trans 'Select...' %}",
-                selectOnFocus: true,
-                displayField:  'username',
-                valueField:    'username',
-                ref:      'ownerfield'
-              },
-              {
-                xtype: 'textfield',
-                fieldLabel: "{% trans 'Group' %}",
-                allowBlank: true,
-                name: "group",
-                ref: 'groupfield'
-              },
-              {
-                xtype: 'checkbox',
-                fieldLabel: "{% trans 'Browseable' %}",
-                allowBlank: false,
-                name: "browseable",
-                ref: 'browseablefield'
-              },{
-                xtype: 'checkbox',
-                fieldLabel: "{% trans 'Available' %}",
-                allowBlank: false,
-                name: "available",
-                ref: 'availablefield'
-              },{
-                xtype: 'checkbox',
-                fieldLabel: "{% trans 'Writeable' %}",
-                allowBlank: false,
-                name: "writeable",
-                ref: 'writeablefield'
-              },{
-                xtype: 'checkbox',
-                fieldLabel: "{% trans 'Guest OK' %}",
-                allowBlank: false,
-                name: "guest_ok",
-                ref: 'guestokfield'
-              },tipify({
-                xtype: 'textfield',
-                fieldLabel: "{% trans 'Dir Mode' %}",
-                allowBlank: false,
-                name: "dir_mode",
-                ref: 'dirmodefield',
-                value:     '0775'
-              },"{% trans 'Set rights for the Directory' %}"),
-              {
-                xtype: 'textfield',
-                fieldLabel: "{% trans 'Comment' %}",
-                allowBlank: true,
-                name: "comment",
-                ref: 'commentfield'
-              },tipify({
-                xtype: 'textfield',
-                fieldLabel: "{% trans 'Create Mode' %}",
-                allowBlank: false,
-                name: "create_mode",
-                ref: 'createmodefield',
-                value:     '0664'
-              }, "{% trans 'Set rights for owner, group and others' %}" )
-        ]
+          },{
+            xtype: 'textfield',
+            fieldLabel: "{% trans 'Share name' %}",
+            allowBlank: false,
+            name: "name",
+            ref: 'namefield'
+          },{
+          xtype: 'textfield',
+          fieldLabel: "{% trans 'Path' %}",
+            allowBlank: false,
+            name: "path",
+            ref: 'dirfield'
+          },{
+            xtype:      'combo',
+            autoScroll: true,
+            allowBlank: true,
+            fieldLabel: "{% trans 'Owner' %}",
+            name:       'owner',
+            hiddenName: 'owner_id',
+            store: new Ext.data.DirectStore({
+              fields: ["username", "id"],
+              baseParams: { fields: ["username", "id"] },
+              directFn: auth__User.all
+            }),
+            typeAhead:     true,
+            triggerAction: 'all',
+            emptyText:     "{% trans 'Select...' %}",
+            selectOnFocus: true,
+            displayField:  'username',
+            valueField:    'username',
+            ref:      'ownerfield'
+          }, {
+            xtype: 'textfield',
+            fieldLabel: "{% trans 'Group' %}",
+            allowBlank: true,
+            name: "group",
+            ref: 'groupfield'
+          }, {
+            xtype: 'checkbox',
+            fieldLabel: "{% trans 'Browseable' %}",
+            allowBlank: false,
+            name: "browseable",
+            ref: 'browseablefield'
+          }, {
+            xtype: 'checkbox',
+            fieldLabel: "{% trans 'Available' %}",
+            allowBlank: false,
+            name: "available",
+            ref: 'availablefield'
+          }, {
+            xtype: 'checkbox',
+            fieldLabel: "{% trans 'Writeable' %}",
+            allowBlank: false,
+            name: "writeable",
+            ref: 'writeablefield'
+          }, {
+            xtype: 'checkbox',
+            fieldLabel: "{% trans 'Guest OK' %}",
+            allowBlank: false,
+            name: "guest_ok",
+            ref: 'guestokfield'
+          }, tipify({
+            xtype: 'textfield',
+            fieldLabel: "{% trans 'Dir Mode' %}",
+            allowBlank: false,
+            name: "dir_mode",
+            ref: 'dirmodefield',
+            value:     '0775'
+          },"{% trans 'Set rights for the Directory' %}"),
+          {
+            xtype: 'textfield',
+            fieldLabel: "{% trans 'Comment' %}",
+            allowBlank: true,
+            name: "comment",
+            ref: 'commentfield'
+          }, tipify({
+            xtype: 'textfield',
+            fieldLabel: "{% trans 'Create Mode' %}",
+            allowBlank: false,
+            name: "create_mode",
+            ref: 'createmodefield',
+            value:     '0664'
+          }, "{% trans 'Set rights for owner, group and others' %}" ) ]
         }],
-         buttons: [{
-                text: config.submitButtonText,
-                icon: MEDIA_URL + "/oxygen/16x16/actions/dialog-ok-apply.png",
-                handler: function(self){
-                  self.ownerCt.ownerCt.getForm().submit({
-                      success: function(provider, response){
-                        if (response.result){
-                          sambaShareGrid.store.reload();
-                          addwin.hide();
-                        }
-                      }
-                    });
-                  }
-                },{
-                text: "{% trans 'Cancel' %}",
-                icon: MEDIA_URL + "/icons2/16x16/actions/gtk-cancel.png",
-                handler: function(self){
+        buttons: [{
+          text: config.submitButtonText,
+          icon: MEDIA_URL + "/oxygen/16x16/actions/dialog-ok-apply.png",
+          handler: function(self){
+            self.ownerCt.ownerCt.getForm().submit({
+              success: function(provider, response){
+                if (response.result){
+                  sambaShareGrid.store.reload();
                   addwin.hide();
                 }
-     }]
+              }
+            });
+          }
+        }, {
+          text: "{% trans 'Cancel' %}",
+          icon: MEDIA_URL + "/icons2/16x16/actions/gtk-cancel.png",
+          handler: function(self){
+            addwin.hide();
+          }
+        }]
       }]
     }));
     addwin.show();
   },
-    initComponent: function(){
-        var sambaShareGrid = this;
-        Ext.apply(this, Ext.apply(this.initialConfig, {
-          id: "samba__share_panel_inst",
-          title: "samba",
-          viewConfig: {forceFit: true},
-          buttons: [{
-            text: "",
-            icon: MEDIA_URL + "/icons2/16x16/actions/reload.png",
-            tooltip: "{% trans 'Reload' %}",
-            handler: function(self){
-              sambaShareGrid.store.reload();
+  initComponent: function(){
+    var sambaShareGrid = this;
+    Ext.apply(this, Ext.apply(this.initialConfig, {
+      id: "samba__share_panel_inst",
+      title: "samba",
+      viewConfig: {forceFit: true},
+      buttons: [{
+        text: "",
+        icon: MEDIA_URL + "/icons2/16x16/actions/reload.png",
+        tooltip: "{% trans 'Reload' %}",
+        handler: function(self){
+          sambaShareGrid.store.reload();
         }
       },{
         text: "{% trans 'Add Share' %}",
@@ -237,38 +230,38 @@ Ext.oa.Samba__Share_Panel = Ext.extend(Ext.grid.GridPanel, {
      return '<img src="' + MEDIA_URL + '/oxygen/16x16/actions/dialog-cancel.png" title="no" />';
       },
   deleteFunction: function(self){
-        var sm = this.getSelectionModel();
-        if( sm.hasSelection() ){
-          var sel = sm.selections.items[0];
-          Ext.Msg.confirm(
-            "{% trans 'Delete Share' %}",
-            interpolate(
-              "{% trans 'Do you really want to delete %s?' %}",[sel.data.path]),
-              function(btn){
-                if(btn == 'yes'){
-                  samba__Share.remove( sel.data.id, function(provider, response){
-                  sel.store.reload();
-              });
-            }
+    var sm = this.getSelectionModel();
+    if( sm.hasSelection() ){
+      var sel = sm.selections.items[0];
+      Ext.Msg.confirm(
+        "{% trans 'Delete Share' %}",
+        interpolate(
+          "{% trans 'Do you really want to delete %s?' %}",[sel.data.path]),
+          function(btn){
+            if(btn == 'yes'){
+              samba__Share.remove( sel.data.id, function(provider, response){
+              sel.store.reload();
           });
         }
-     },
+      });
+    }
+  },
   onRender: function(){
     Ext.oa.Samba__Share_Panel.superclass.onRender.apply(this, arguments);
     this.store.reload();
-         var self = this;
+    var self = this;
     var menu = new Ext.menu.Menu({
-    items: [{
-            id: 'delete',
-            text: 'delete',
-            icon: MEDIA_URL + "/icons2/16x16/actions/remove.png"
-        }],
-        listeners: {
-          itemclick: function(item) {
-                    self.deleteFunction()
-          }
+      items: [{
+          id: 'delete',
+          text: 'delete',
+          icon: MEDIA_URL + "/icons2/16x16/actions/remove.png"
+      }],
+      listeners: {
+        itemclick: function(item) {
+                  self.deleteFunction()
         }
-   });
+      }
+    });
     this.on({
       'contextmenu': function(event) {
         if( this.getSelectionModel().hasSelection() ){
