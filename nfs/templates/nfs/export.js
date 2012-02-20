@@ -55,7 +55,7 @@ Ext.oa.Nfs__Export_Panel = Ext.extend(Ext.grid.GridPanel, {
                   xtype: 'textfield',
                   fieldLabel: "{% trans 'Directory' %}",
                   name: "path",
-                  disabled: true,
+                  disabled: (!record),
                   ref: 'dirfield'
                 }, "{% trans 'If you wish to share only a subpath of the volume, enter the path here.' %}" ),
               {
