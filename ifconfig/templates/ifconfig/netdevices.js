@@ -252,7 +252,6 @@ Ext.oa.Ifconfig__NetDevice_Panel = Ext.extend(Ext.Panel, {
               name: "bond_updelay"
             }, {
               fieldLabel: "{% trans 'Mode' %}",
-              name:       "bond_mode__",
               hiddenName: 'bond_mode',
               xtype:      'combo',
               store: [
