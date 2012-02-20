@@ -47,11 +47,8 @@ Ext.oa.Ftp__User_Panel = Ext.extend(Ext.grid.GridPanel, {
           inputType: 'password'
         }, {
           xtype: 'volumefield',
-//           fieldLabel: "Volume",
-          name: "volume_",
-          hiddenName: "volume",
-          listeners:{  
-          select: function(self, record, index){
+          listeners: {
+            select: function(self, record, index){
               lvm__LogicalVolume.get( record.data.id, function( provider, response ){
                 self.ownerCt.dirfield.setValue( response.result.fs.mountpoints[0] );
                 self.ownerCt.dirfield.enable();
