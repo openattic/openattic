@@ -72,24 +72,11 @@ Ext.oa.Nfs__Export_Panel = Ext.extend(Ext.grid.GridPanel, {
                 value: "rw,no_subtree_check,no_root_squash"
               },"{% trans 'this is default. rw: read/write rights are given,<br> no_subtree_check means that every file request is going to be checked to make sure that this file is in an exported subdirectory,<br> no_root_squash means share the folder (public), every IP-Adress has access, root can connect as root' %}")]
         }],
-         
-    /*Ext.apply(this, Ext.apply(this.initialConfig, {
-      id: 'nfs__export_panel_inst',
-      title: "{% trans 'NFS' %}",
-      viewConfig: { forceFit: true },
-    */  
-      
-      
-      
-          
-        
-              
               buttons: [{
                 text: config.submitButtonText,
                 icon: MEDIA_URL + "/oxygen/16x16/actions/dialog-ok-apply.png",
                 handler: function(self){
                   self.ownerCt.ownerCt.getForm().submit({
-                    params: {id: -1, init_master: true, ordering: 0},
                     success: function(provider, response){
                       if(response.result){
                         nfsGrid.store.reload();
