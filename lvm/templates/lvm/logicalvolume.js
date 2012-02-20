@@ -107,27 +107,9 @@ Ext.oa.Lvm__LogicalVolume_Panel = Ext.extend(Ext.Panel, {
             value: 85,
             xtype: "numberfield"
           }, {
-            xtype:      'combo',
-            allowBlank: false,
-            fieldLabel: "{% trans 'Owner' %}",
-            name:       'owner',
-            hiddenName: 'owner_id',
-            store: (function(){
-              var store = new Ext.data.DirectStore({
-                fields: ["username", "id"],
-                baseParams: { fields: ["username", "id"] },
-                directFn: auth__User.all_values
-              });
-              store.setDefaultSort("username");
-              return store;
-            }()),
-            typeAhead:     true,
-            triggerAction: 'all',
-            emptyText:     "{% trans 'Select...' %}",
-            selectOnFocus: true,
-            displayField:  'username',
-            valueField:    'id',
-            ref:      'ownerfield'
+            xtype: "authuserfield",
+            ref:   'ownerfield',
+            allowBlank: false
         }],
         buttons: [{
           text: "{% trans 'Create Volume' %}",
@@ -156,7 +138,6 @@ Ext.oa.Lvm__LogicalVolume_Panel = Ext.extend(Ext.Panel, {
               modal: true,
               html: "{% trans 'Please wait while your volume is being created...' %}"
             });
-            
             progresswin.show();
             lvm__LogicalVolume.create({
               'vg': {
@@ -181,7 +162,7 @@ Ext.oa.Lvm__LogicalVolume_Panel = Ext.extend(Ext.Panel, {
                 addwin.hide();
               }else{
                 progresswin.hide();
-                alert(response.message);                  
+                alert(response.message);
               }
             });
             }
@@ -196,7 +177,7 @@ Ext.oa.Lvm__LogicalVolume_Panel = Ext.extend(Ext.Panel, {
     });
     addwin.show();
   };
-    
+
     Ext.apply(this, Ext.apply(this.initialConfig, {
       id: "lvm__logicalvolume_panel_inst",
       title: "{% trans 'LVM' %}",
