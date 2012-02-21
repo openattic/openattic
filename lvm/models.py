@@ -297,8 +297,12 @@ class LogicalVolume(models.Model):
         sysd = dbus.SystemBus().get_object(settings.DBUS_IFACE_SYSTEMD, "/")
         jid  = sysd.build_job()
 
-        if self.filesystem:
+        if self.filesystem and self.fs.mounted and \
+           not self.fsonline_resize_available(self.megs > self.lvm_megs):
             sysd.job_add_command(jid, ["umount", self.fs.mountpoints[0].encode("ascii")])
+            need_mount = True
+        else:
+            need_mount = False
 
         if self.megs < self.lvm_megs:
             # Shrink FS, then Volume
@@ -327,7 +331,7 @@ class LogicalVolume(models.Model):
 
             lvm_signals.post_grow.send(sender=self, jid=jid)
 
-        if self.filesystem:
+        if need_mount:
             sysd.job_add_command(jid, ["mount", self.fs.mountpoints[0].encode("ascii")])
 
         sysd.enqueue_job(jid)
