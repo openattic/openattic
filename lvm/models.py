@@ -298,7 +298,7 @@ class LogicalVolume(models.Model):
         jid  = sysd.build_job()
 
         if self.filesystem and self.fs.mounted and \
-           not self.fsonline_resize_available(self.megs > self.lvm_megs):
+           not self.fs.online_resize_available(self.megs > self.lvm_megs):
             sysd.job_add_command(jid, ["umount", self.fs.mountpoints[0].encode("ascii")])
             need_mount = True
         else:
