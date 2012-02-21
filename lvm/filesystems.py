@@ -69,6 +69,13 @@ class FileSystem(object):
         """ Format the volume. """
         raise NotImplementedError("FileSystem::format needs to be overridden")
 
+    def online_resize_available(self, grow):
+        """ Tell whether or not this file system supports online resize.
+
+            As a fallback, assume it does not.
+        """
+        return False
+
     def resize(self, jid, grow):
         """ Add a command to the job with the given ``jid`` to resize the file system
             to the current volume size.
@@ -116,6 +123,13 @@ class Ext2(FileSystem):
     @property
     def info(self):
         return dbus_to_python( self.lv.lvm.e2fs_info( self.lv.path ) )
+
+    def online_resize_available(self, grow):
+        """ Tell whether or not this file system supports online resize.
+
+            Ext* file systems do support it for growing, but not for shrinking.
+        """
+        return grow
 
     def format(self):
         return self.lv.lvm.e2fs_format( self.lv.path, self.lv.name,
