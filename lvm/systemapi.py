@@ -203,13 +203,12 @@ class SystemD(BasePlugin):
             ["/bin/chown", "-R", ("%s:%s" % (chown, chgrp)), mountpoint]
             ], self.format_complete, (devpath, mountpoint, "ext2"))
 
-    @method(in_signature="s", out_signature="i")
-    def e2fs_check(self, devpath):
-        return invoke(["/sbin/e2fsck", "-y", "-f", devpath])
+    @method(in_signature="is", out_signature="")
+    def e2fs_check(self, jid, devpath):
+        self.job_add_command(jid, ["/sbin/e2fsck", "-y", "-f", devpath])
 
     @method(in_signature="isib", out_signature="")
     def e2fs_resize(self, jid, devpath, megs, grow):
-        self.job_add_command(jid, ["/sbin/e2fsck", "-f", "-y", devpath])
         self.job_add_command(jid, ["/sbin/resize2fs", devpath, ("%dM" % megs)])
 
     @method(in_signature="sssss", out_signature="")

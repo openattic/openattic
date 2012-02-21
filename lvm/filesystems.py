@@ -136,6 +136,8 @@ class Ext2(FileSystem):
             self.lv.owner.username, lvm_settings.CHOWN_GROUP, self.mountpoints[0] )
 
     def resize(self, jid, grow):
+        if not grow:
+            self.lv.lvm.e2fs_check( jid, self.lv.path )
         return self.lv.lvm.e2fs_resize( jid, self.lv.path, self.lv.megs, grow )
 
 class Ext3(Ext2):
