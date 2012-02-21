@@ -6,6 +6,7 @@ import logging
 import threading
 import subprocess
 
+from time import sleep
 from datetime import datetime
 
 from cmdlog.models import LogEntry
@@ -66,6 +67,7 @@ def invoke(args, close_fds=True, return_out_err=False, log=True, stdin=None, fai
 def run_queue(q, signal=None, sigargs=None):
     for cmd in q:
         invoke(cmd)
+        sleep(0.1)
     if signal is not None:
         signal(*sigargs)
 
