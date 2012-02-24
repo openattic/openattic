@@ -171,6 +171,7 @@ Ext.oa.MainViewManager = Ext.extend(Ext.Panel, {
         }) );
       }
     }
+    
 
     this.menutree.on( 'beforeclick', this.treenodeClicked, this );
     var tbupdate = function(evt){
@@ -193,6 +194,18 @@ Ext.oa.MainViewManager = Ext.extend(Ext.Panel, {
       this.switchComponent( node.attributes.panel );
   },
 
+  onRender: function (){
+    Ext.oa.MainViewManager.superclass.onRender.apply(this, arguments);
+    this.topToolbar.getEl().on({
+      'contextmenu': function(event) {
+        if (this.topToolbar.getEl().hover()) {
+          event.stopEvent();
+          Ext.Msg.alert();
+        }
+      }
+    });
+  },
+  
   switchComponent: function( toComponent ){
     if( typeof toComponent === "string" ){
       this.modcontainer.layout.setActiveItem( toComponent );

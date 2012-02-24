@@ -638,7 +638,7 @@ Ext.oa.Lvm__LogicalVolume_Panel = Ext.extend(Ext.Panel, {
     items: [{
         id: 'delete',
         text: 'delete',
-        icon: MEDIA_URL + "/icons2/16x16/actions/remove.png",
+        icon: MEDIA_URL + "/icons2/16x16/actions/remove.png"
       }],
       listeners: {
         itemclick: function(item){

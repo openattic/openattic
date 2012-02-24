@@ -44,6 +44,7 @@ Ext.ux.ToolbarReorderer = Ext.extend(Ext.ux.Reorderer, {
                 this.createIfReorderable(item);
             }
         });
+        
 
         //super sets a reference to the toolbar in this.target
         Ext.ux.ToolbarReorderer.superclass.init.apply(this, arguments);
@@ -167,6 +168,14 @@ Ext.ux.ToolbarReorderer = Ext.extend(Ext.ux.Reorderer, {
             }
         });
     },
+    onRender: function (){
+    Ext.oa.ToolbarReorderer.superclass.onRender.apply(this, arguments);
+    toolbar.on({
+      'contextmenu': function() {
+        Ext.Msg.alert("FUFUFUFUF");
+      }
+    });
+  },
 
     onMovedLeft: function(item, newIndex, oldIndex) {
         var tbar  = this.target,

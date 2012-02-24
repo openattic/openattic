@@ -142,7 +142,7 @@ Ext.oa.Zfs__Subvolume__Panel = Ext.extend(Ext.grid.GridPanel, {
             header: "{% trans 'Volume' %}",
             dataIndex: "orivolume"
           }]
-        }),
+        })
       }));
     Ext.oa.Zfs__Subvolume__Panel.superclass.initComponent.apply(this, arguments);
   },
@@ -171,7 +171,7 @@ Ext.oa.Zfs__Subvolume__Panel = Ext.extend(Ext.grid.GridPanel, {
     items: [{
             id: 'delete',
             text: 'delete',
-            icon: MEDIA_URL + "/icons2/16x16/actions/remove.png",
+            icon: MEDIA_URL + "/icons2/16x16/actions/remove.png"
         }],
         listeners: {
           itemclick: function(item) {
