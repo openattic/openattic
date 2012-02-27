@@ -28,8 +28,11 @@ if len(progargs) != 1:
   print("Usage: check_openattic_snapshot <lv name>")
   sys.exit(2)
 
-stats = dbus.SystemBus().get_object(options.dbus, "/lvm").lvs()
-
+try:
+    stats = dbus.SystemBus().get_object(options.dbus, "/lvm").lvs()
+except dbus.exceptions.DBusException:
+    print "Could not query Systemd"
+    sys.exit(3)
 
 
 def dbus_type_to_python(obj):

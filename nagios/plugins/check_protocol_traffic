@@ -52,8 +52,13 @@ kernelstats = {
         },
     }
 
-nagios = dbus.SystemBus().get_object(options.dbus, "/nagios")
-stats = nagios.iptables_get_stats()
+try:
+    nagios = dbus.SystemBus().get_object(options.dbus, "/nagios")
+    stats = nagios.iptables_get_stats()
+except dbus.exceptions.DBusException:
+    print "Could not query Systemd"
+    sys.exit(3)
+
 exit = 0
 
 ifspeed = dbus.SystemBus().get_object(options.dbus, "/ifconfig").get_speed(options.interface)
