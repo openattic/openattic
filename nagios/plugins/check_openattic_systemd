@@ -1,10 +1,9 @@
 #!/bin/bash
 
-set -e
 set -u
 
 BEFORE=`date +%s.%N`
-OUT=` dbus-send --system --dest=org.openattic.systemd --print-reply=literal / org.openattic.systemd.ping `
+OUT=` dbus-send --system --dest=org.openattic.systemd --print-reply=literal / org.openattic.systemd.ping 2>/dev/null`
 AFTER=`date +%s.%N`
 
 MILLIS=`bc <<< "$AFTER - $BEFORE"`
