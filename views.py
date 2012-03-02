@@ -1,6 +1,19 @@
 # -*- coding: utf-8 -*-
 # kate: space-indent on; indent-width 4; replace-tabs on;
 
+"""
+ *  Copyright (C) 2011-2012, it-novum GmbH <community@open-attic.org>
+ *
+ *  openATTIC is free software; you can redistribute it and/or modify it
+ *  under the terms of the GNU General Public License as published by
+ *  the Free Software Foundation; version 2.
+ *
+ *  This package is distributed in the hope that it will be useful,
+ *  but WITHOUT ANY WARRANTY; without even the implied warranty of
+ *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ *  GNU General Public License for more details.
+"""
+
 from django.shortcuts  import render_to_response, get_object_or_404, get_list_or_404
 from django.template   import RequestContext
 from django.http       import HttpResponse, HttpResponseRedirect, Http404
