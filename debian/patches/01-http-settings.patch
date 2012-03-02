@@ -4,9 +4,9 @@ Author: Michael Ziegler <diese-addy@funzt-halt.net>
 
 Index: openattic-0.1/http/conf/settings.py
 ===================================================================
---- openattic-0.1.orig/http/conf/settings.py	2011-10-11 11:07:31.000000000 +0200
-+++ openattic-0.1/http/conf/settings.py	2011-10-11 11:12:24.000000000 +0200
-@@ -5,4 +5,4 @@
+--- openattic-0.1.orig/http/conf/settings.py	2012-03-02 11:44:30.000000000 +0100
++++ openattic-0.1/http/conf/settings.py	2012-03-02 11:56:08.000000000 +0100
+@@ -18,4 +18,4 @@
  
  from django.conf import settings
  
