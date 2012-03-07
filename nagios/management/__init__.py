@@ -14,6 +14,9 @@
  *  GNU General Public License for more details.
 """
 
+import dbus
+
+from django.conf import settings
 from django.core.management import call_command
 
 from nagios.conf import settings as nagios_settings
@@ -26,6 +29,9 @@ from django.db.models import signals
 def create_nagios(app, created_models, verbosity, interactive, db, **kwargs):
     # First of all, make sure our fixtures have been loaded
     call_command('loaddata', 'nagios/fixtures/initial_data.json', verbosity=verbosity, database=db)
+
+    # Make sure the contacts config exists
+    dbus.SystemBus().get_object(settings.DBUS_IFACE_SYSTEMD, "/nagios").write_contacts()
 
     for servstate in Service.nagstate["servicestatus"]:
         cmdargs = servstate["check_command"].split('!')
