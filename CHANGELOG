@@ -1,7 +1,12 @@
 openATTIC Changelog
 ===================
 
-Version 0.0.1, XY Derpriary 2011:
+Version 0.7.4, 07 March 2012:
+---------------------------------
+
+* Fixed the Nagios syncdb hook which caused the initial syncdb to fail.
+
+Version 0.7.3, 05 March 2012:
 ---------------------------------
 
 * First release.
