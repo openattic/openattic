@@ -1,3 +1,9 @@
+openattic (0.7.4-1) stable; urgency=low
+
+  * New upstream release.
+
+ -- Michael Ziegler <diese-addy@funzt-halt.net>  Wed, 07 Mar 2012 17:02:16 +0100
+
 openattic (0.7.3-1) stable; urgency=low
 
   * Initial release (Closes: #nnnn)  <nnnn is the bug number of your ITP>
