@@ -31,7 +31,11 @@ def create_nagios(app, created_models, verbosity, interactive, db, **kwargs):
     call_command('loaddata', 'nagios/fixtures/initial_data.json', verbosity=verbosity, database=db)
 
     # Make sure the contacts config exists
-    dbus.SystemBus().get_object(settings.DBUS_IFACE_SYSTEMD, "/nagios").write_contacts()
+    try:
+        dbus.SystemBus().get_object(settings.DBUS_IFACE_SYSTEMD, "/nagios").write_contacts()
+    except dbus.DBusException:
+        # Fails during syncdb of initial installation, before daemons are running
+        pass
 
     for servstate in Service.nagstate["servicestatus"]:
         cmdargs = servstate["check_command"].split('!')
