@@ -194,7 +194,6 @@ Ext.oa.Ftp__User_Panel = Ext.extend(Ext.grid.GridPanel, {
         var self = this;
     var menu = new Ext.menu.Menu({
     items: [{
-            id: 'delete',
             text: 'delete',
             icon: MEDIA_URL + "/icons2/16x16/actions/remove.png"
         }],
