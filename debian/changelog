@@ -1,3 +1,11 @@
+openattic (0.7.4-2) stable; urgency=low
+
+  * Remove ssmtp module (removed upstream).
+  * Add new mailaliases module.
+  * Adapt nss-mysql.conf to match nss-pgsql config.
+
+ -- Michael Ziegler <diese-addy@funzt-halt.net>  Mon, 12 Mar 2012 13:33:12 +0100
+
 openattic (0.7.4-1) stable; urgency=low
 
   * New upstream release.
