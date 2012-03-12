@@ -60,4 +60,4 @@ class SystemD(LockingPlugin):
 
     @method(in_signature="", out_signature="i")
     def newaliases(self):
-        return invoke(["/usr/sbin/newaliases"])
+        return invoke(["newaliases"])
