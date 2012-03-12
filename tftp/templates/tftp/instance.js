@@ -137,6 +137,19 @@ Ext.oa.Tftp__Instance_Panel = Ext.extend(Ext.grid.GridPanel, {
           });
           }
      },{
+     text:  "{% trans 'Edit' %}",
+        icon: MEDIA_URL + "/icons2/16x16/actions/edit-redo.png",
+        handler: function(self){
+          var sm = tftpGrid.getSelectionModel();
+          if( sm.hasSelection() ){
+            var sel = sm.selections.items[0];
+            tftpGrid.showEditWindow({
+              title: "{% trans 'Edit' %}",
+              submitButtonText: "{% trans 'Edit' %}"
+            }, sel.data);
+          }
+        }
+       },{
         text: "{% trans 'Delete Instance' %}",
         icon: MEDIA_URL + "/icons2/16x16/actions/remove.png",
         handler: this.deleteFunction,
@@ -145,7 +158,6 @@ Ext.oa.Tftp__Instance_Panel = Ext.extend(Ext.grid.GridPanel, {
       ],
       keys: [{scope: tftpGrid, key: [Ext.EventObject.DELETE], handler: this.deleteFunction}],
       store: new Ext.data.DirectStore({
-        //xtype: 'directstore',
         fields: ['id', 'address', 'path', {
           name: "address_ip", mapping: "address", convert:  function( val, row ){ return val.address; }
         }],
@@ -206,7 +218,6 @@ Ext.oa.Tftp__Instance_Panel = Ext.extend(Ext.grid.GridPanel, {
       'contextmenu': function(event) {
         if( this.getSelectionModel().hasSelection() ){
           event.stopEvent();
-          this.getSelectionModel
           menu.showAt(event.xy);
         }
       }
