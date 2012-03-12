@@ -61,7 +61,7 @@ Depends: ${misc:Depends}, openattic-base,
  openattic-module-nagios,
  openattic-module-tftp,
  openattic-module-drbd,
- openattic-module-ssmtp,
+ openattic-module-mailaliases,
  openattic-module-ftp-mysql,
  libapache2-mod-wsgi, apache2,
  openattic-mysql
@@ -81,7 +81,7 @@ Description: Comprehensive storage management system using MySQL
  .
   * TFTP
   * DRBD
-  * SSMTP (EMail configuration)
+  * MailAliases (EMail configuration)
  .
  Upstream URL: http://www.openattic.org
 
@@ -97,7 +97,7 @@ Depends: ${misc:Depends}, openattic-base,
 # openattic-module-munin,
  openattic-module-nagios,
  openattic-module-tftp,
- openattic-module-ssmtp,
+ openattic-module-mailaliases,
  openattic-module-drbd,
  openattic-module-ftp-pgsql,
  libapache2-mod-wsgi, apache2,
@@ -118,7 +118,7 @@ Description: Comprehensive storage management system using PGSQL
  .
   * TFTP
   * DRBD
-  * SSMTP (EMail configuration)
+  * MailAliases (EMail configuration)
  .
  Upstream URL: http://www.openattic.org
 
@@ -373,18 +373,15 @@ Description: HTTP module for openATTIC
  This package installs a moduule which allows you to share volumes or
  subdirectories using Apache2.
 
-Package: openattic-module-ssmtp
+Package: openattic-module-mailaliases
 Architecture: all
-Depends: ${misc:Depends}, openattic-base,
- ssmtp
-Description: SSMTP module for openATTIC
+Depends: ${misc:Depends}, openattic-base, mail-transfer-agent
+Description: MailAliases module for openATTIC
  openATTIC is a storage management system based upon Open Source tools with
  a comprehensive user interface that allows you to create, share and backup
  storage space on demand.
  .
- SSMTP is an extremely simple sendmail replacement, which sends email using
- a remote host and redirects all mail for the root user to a preconfigured
- email address.
- .
- This package installs a module which allows you to configure these parameters
- over the openATTIC interface.
+ Mail Transfer Agents use a file named /etc/aliases in order to configure
+ mail redirection for certain users. This package contains an openATTIC module
+ which automatically alters this file to match the users configured in the
+ openATTIC database.
