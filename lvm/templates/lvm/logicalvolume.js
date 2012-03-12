@@ -648,8 +648,7 @@ Ext.oa.Lvm__LogicalVolume_Panel = Ext.extend(Ext.Panel, {
     this.items.items[0].store.reload();
     var self = this;
     var menu = new Ext.menu.Menu({
-    items: [{
-        id: 'delete',
+      items: [{
         text: 'delete',
         icon: MEDIA_URL + "/icons2/16x16/actions/remove.png"
       }],
