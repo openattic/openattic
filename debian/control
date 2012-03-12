@@ -375,7 +375,7 @@ Description: HTTP module for openATTIC
 
 Package: openattic-module-mailaliases
 Architecture: all
-Depends: ${misc:Depends}, openattic-base, mail-transfer-agent
+Depends: ${misc:Depends}, openattic-base, mail-transport-agent
 Description: MailAliases module for openATTIC
  openATTIC is a storage management system based upon Open Source tools with
  a comprehensive user interface that allows you to create, share and backup
