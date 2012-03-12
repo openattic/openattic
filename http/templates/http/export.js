@@ -205,7 +205,6 @@ Ext.oa.Http__Export_Panel = Ext.extend(Ext.grid.GridPanel, {
       'contextmenu': function(event) {
         if( this.getSelectionModel().hasSelection() ){
           event.stopEvent();
-          this.getSelectionModel
           menu.showAt(event.xy);
         }
       }
