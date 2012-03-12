@@ -663,7 +663,6 @@ Ext.oa.Lvm__LogicalVolume_Panel = Ext.extend(Ext.Panel, {
       'contextmenu': function(event) {
         if( this.getSelectionModel().hasSelection() ){
           event.stopEvent();
-          this.getSelectionModel
           menu.showAt(event.xy);
         }
       }
