@@ -40,12 +40,14 @@ class SystemD(LockingPlugin):
                 ])
 
             for user in User.objects.all():
-                if user.email and user.is_superuser:
+                if user.email and user.is_active and user.is_superuser:
                     aliases[user.username] = user.email
                 elif user.username in aliases:
                     del aliases[user.username]
 
-            aliases["root"] = ', '.join([ user.username for user in User.objects.filter(is_superuser=True).exclude(email="") ])
+            aliases["root"] = ', '.join([ user.username
+                for user in User.objects.filter(is_active=True, is_superuser=True).exclude(email="")
+                ])
 
             fd = open( "/etc/aliases", "wb" )
             try:
