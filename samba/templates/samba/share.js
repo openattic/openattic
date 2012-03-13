@@ -68,14 +68,14 @@ Ext.oa.Samba__Share_Panel = Ext.extend(Ext.grid.GridPanel, {
             allowBlank: false,
             name: "name",
             ref: 'namefield',
-            disabled: (!record),
+            disabled: (!record)
           },{
           xtype: 'textfield',
           fieldLabel: "{% trans 'Path' %}",
             allowBlank: false,
             name: "path",
             ref: 'dirfield',
-            disabled: (!record),
+            disabled: (!record)
           },{
             xtype: 'textfield',
             fieldLabel: "{% trans 'System user' %}",

@@ -168,7 +168,7 @@ Ext.oa.Peering__Peerhost_Panel = Ext.extend(Ext.grid.GridPanel, {
     var menu = new Ext.menu.Menu({
     items: [{
             text: 'delete',
-            icon: MEDIA_URL + "/icons2/16x16/actions/remove.png",
+            icon: MEDIA_URL + "/icons2/16x16/actions/remove.png"
         }],
         listeners: {
           itemclick: function(item) {
