@@ -203,11 +203,14 @@ Ext.oa.Http__Export_Panel = Ext.extend(Ext.grid.GridPanel, {
         }
    });
     this.on({
-      'contextmenu': function(event) {
-        if( this.getSelectionModel().hasSelection() ){
+      'rowcontextmenu': function(igrid, row, event) {
+        this.selectedNode = this.store.getAt(row);
+	if((row) !== false) {
+	  this.getSelectionModel().selectRow(row);
+	}
           event.stopEvent();
           menu.showAt(event.xy);
-        }
+        
       },
       'rowdblclick': function(eventGrid, rowIndex, e) {
         if( this.getSelectionModel().hasSelection() ){
