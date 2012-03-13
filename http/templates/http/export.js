@@ -119,16 +119,8 @@ Ext.oa.Http__Export_Panel = Ext.extend(Ext.grid.GridPanel, {
       },{
         text:  "{% trans 'Edit' %}",
         icon: MEDIA_URL + "/icons2/16x16/actions/edit-redo.png",
-        handler: function(self){
-          var sm = httpGrid.getSelectionModel();
-          if( sm.hasSelection() ){
-            var sel = sm.selections.items[0];
-            httpGrid.showEditWindow({
-              title:  "{% trans 'Edit Export' %}",
-              submitButtonText:  "{% trans 'Edit Export' %}"
-            },sel.data);
-          }
-        }
+        handler: this.editFunction,
+        scope: httpGrid
       },{
         text: "{% trans 'Delete Export' %}",
         icon: MEDIA_URL + "/icons2/16x16/actions/remove.png",
@@ -167,6 +159,16 @@ Ext.oa.Http__Export_Panel = Ext.extend(Ext.grid.GridPanel, {
     }));
     Ext.oa.Http__Export_Panel.superclass.initComponent.apply(this, arguments);
   },
+    editFunction: function(self){
+      var sm = this.getSelectionModel();
+      if( sm.hasSelection() ){
+        var sel = sm.selections.items[0];
+        this.showEditWindow({
+          title:  "{% trans 'Edit Export' %}",
+          submitButtonText:  "{% trans 'Edit Export' %}"
+        },sel.data);
+      }
+    },
     deleteFunction: function(self){
     var sm = this.getSelectionModel();
       if( sm.hasSelection() ){
@@ -205,6 +207,11 @@ Ext.oa.Http__Export_Panel = Ext.extend(Ext.grid.GridPanel, {
         if( this.getSelectionModel().hasSelection() ){
           event.stopEvent();
           menu.showAt(event.xy);
+        }
+      },
+      'rowdblclick': function(eventGrid, rowIndex, e) {
+        if( this.getSelectionModel().hasSelection() ){
+          self.editFunction()
         }
       }
     });
