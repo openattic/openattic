@@ -19,7 +19,6 @@ Ext.oa.Http__Export_Panel = Ext.extend(Ext.grid.GridPanel, {
   showEditWindow: function(config, record){
     var httpGrid = this;
     var addwin = new Ext.Window(Ext.apply(config,{
-// Ext.apply(this, Ext.apply(this.initialConfig, {
       layout: "fit",
       defaults: { autoScroll: true },
       height: 200,
@@ -94,20 +93,20 @@ Ext.oa.Http__Export_Panel = Ext.extend(Ext.grid.GridPanel, {
     }));
     addwin.show();
   },
-   initComponent: function(){
-     var httpGrid = this;
-     Ext.apply(this, Ext.apply(this.initialConfig, {
-       id: "http__export_panel_inst",
-       title: "http",
-       viewConfig: {forceFit: true},
-       buttons: [{
-          text: "",
-          icon: MEDIA_URL + "/icons2/16x16/actions/reload.png",
-          tooltip: "{% trans 'Reload' %}",
-          handler: function(self){
-            httpGrid.store.reload();
-          }
-       }, {
+  initComponent: function(){
+    var httpGrid = this;
+    Ext.apply(this, Ext.apply(this.initialConfig, {
+      id: "http__export_panel_inst",
+      title: "http",
+      viewConfig: {forceFit: true},
+      buttons: [{
+        text: "",
+        icon: MEDIA_URL + "/icons2/16x16/actions/reload.png",
+        tooltip: "{% trans 'Reload' %}",
+        handler: function(self){
+          httpGrid.store.reload();
+        }
+      },{
         text: "{% trans 'Add Export' %}",
         icon: MEDIA_URL + "/icons2/16x16/actions/add.png",
         handler: function(){
@@ -121,7 +120,7 @@ Ext.oa.Http__Export_Panel = Ext.extend(Ext.grid.GridPanel, {
         icon: MEDIA_URL + "/icons2/16x16/actions/edit-redo.png",
         handler: this.editFunction,
         scope: httpGrid
-    },{
+      },{
         text: "{% trans 'Delete Export' %}",
         icon: MEDIA_URL + "/icons2/16x16/actions/remove.png",
         handler: this.deleteFunction,
@@ -134,23 +133,23 @@ Ext.oa.Http__Export_Panel = Ext.extend(Ext.grid.GridPanel, {
         }],
         directFn: http__Export.all
       }),
-  viewConfig: {forceFit: true },
+      viewConfig: {forceFit: true },
       colModel: new Ext.grid.ColumnModel({
         defaults: {
           sortable: true
         },
-        columns: [ {
+        columns: [{
           header: "{% trans 'Path' %}",
           width: 350,
           dataIndex: "path"
-        }, {
+      },{
           header: "{% trans 'Browse' %}",
           width: 100,
           dataIndex: "volumename",
           renderer: function(val, x, store){
             return String.format(
               '<a href="/volumes/{0}" target="_blank" title="{% trans "Browse in new window" %}">' +
-                '<img alt="Browser" src="{{ MEDIA_URL }}/oxygen/16x16/places/folder-remote.png">' +
+              '<img alt="Browser" src="{{ MEDIA_URL }}/oxygen/16x16/places/folder-remote.png">' +
               '</a>',
               val );
           }
