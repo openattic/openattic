@@ -149,7 +149,7 @@ class SystemD(LockingPlugin):
 
     @method(in_signature="s", out_signature="i")
     def get_speed(self, devname):
-        dev = NetDevice.objects.get(devname=devname)
+        dev = NetDevice.objects.get(devname=unicode(devname))
         try:
             spd = dev.speed
         except ValueError:
