@@ -659,12 +659,14 @@ Ext.oa.Lvm__LogicalVolume_Panel = Ext.extend(Ext.Panel, {
       }
     });
     this.items.items[0].on({
-      'contextmenu': function(event) {
-        if( this.getSelectionModel().hasSelection() ){
-          event.stopEvent();
-          menu.showAt(event.xy);
+      'rowcontextmenu': function(igrid, row, event) {
+        this.selectedNode = this.store.getAt(row);
+        if((row) !== false) {
+          this.getSelectionModel().selectRow(row);
         }
-      }
+        event.stopEvent();
+        menu.showAt(event.xy);
+      },
     });
   }
 });
