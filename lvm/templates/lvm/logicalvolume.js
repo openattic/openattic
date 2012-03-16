@@ -410,6 +410,10 @@ Ext.oa.Lvm__LogicalVolume_Panel = Ext.extend(Ext.Panel, {
                     Ext.Msg.alert("{% trans 'Error' %}","{% trans 'The size you entered exceeds the remaining space.' %}");
                     return;
                   }
+                  if(text == ''){
+                    Ext.Msg.alert("{% trans 'Error' %}","{% trans 'You could not leave the size field empty' %}");
+                    return;
+                  }
                   Ext.Msg.confirm(
                     "{% trans 'Warning' %}",
                     interpolate(
