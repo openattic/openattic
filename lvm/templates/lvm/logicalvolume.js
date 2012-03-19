@@ -731,7 +731,7 @@ Ext.oa.Lvm__LogicalVolume_Panel = Ext.extend(Ext.Panel, {
         }
         event.stopEvent();
         menu.showAt(event.xy);
-      },
+      }
     });
   }
 });
