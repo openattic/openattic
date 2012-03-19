@@ -427,7 +427,9 @@ Ext.oa.Lvm__LogicalVolume_Panel = Ext.extend(Ext.Panel, {
                     maxValue: response.result,
                     listeners: {
                       change: function() {
-                        this.ownerCt.megabyte.setValue(this.ownerCt.slider.getValue())
+                        this.ownerCt.megabyte.setValue(this.ownerCt.slider.getValue());
+                        var num = response.result - this.ownerCt.megabyte.getValue();
+                        this.ownerCt.remaining_megabyte.setValue(num);
                       }
                     }
                   }, {
@@ -442,18 +444,31 @@ Ext.oa.Lvm__LogicalVolume_Panel = Ext.extend(Ext.Panel, {
                       change: function change(event) {
                           if(this.ownerCt.megabyte.getValue() > response.result){
                             this.ownerCt.megabyte.setValue(response.result);
+                            this.ownerCt.remaining_megabyte.setvalue(0);
                           }
-                          this.ownerCt.slider.setValue(this.ownerCt.megabyte.getValue(), false)
+                          this.ownerCt.slider.setValue(this.ownerCt.megabyte.getValue(), false);
+                          var num = response.result - this.ownerCt.megabyte.getValue();
+                          this.ownerCt.remaining_megabyte.setValue(num);
                       },  
                        specialkey: function(f,e){  
                            if(e.getKey()==e.ENTER){  
                               if(this.ownerCt.megabyte.getValue() > response.result){
                                 this.ownerCt.megabyte.setValue(response.result);
+                                this.ownerCt.remaining_megabyte.setValue(0);
                               }
-                              this.ownerCt.slider.setValue(this.ownerCt.megabyte.getValue(), false)
+                              this.ownerCt.slider.setValue(this.ownerCt.megabyte.getValue(), false);
+                              var num = response.result - this.ownerCt.megabyte.getValue();
+                              this.ownerCt.remaining_megabyte.setValue(num);
                               }  
                        } 
                     }
+                  },{
+                    xtype: 'textfield',
+                    readOnly: true,
+                    ref: 'remaining_megabyte',
+                    fieldLabel: "{% trans 'Remaining Space' %}",
+                    value: response.result,
+                    disabled: true
                   }],
                   buttons: [{
                     text:  "{% trans 'Edit' %}",
@@ -731,7 +746,7 @@ Ext.oa.Lvm__LogicalVolume_Panel = Ext.extend(Ext.Panel, {
         }
         event.stopEvent();
         menu.showAt(event.xy);
-      }
+      },
     });
   }
 });
