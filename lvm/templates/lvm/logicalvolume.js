@@ -434,14 +434,25 @@ Ext.oa.Lvm__LogicalVolume_Panel = Ext.extend(Ext.Panel, {
                     xtype: 'textfield',
                     fieldLabel: "{% trans 'Megabyte' %}",
                     ref: 'megabyte',
+                    allowBlank: false,
+                    enableKeyEvents: true,
                     value: sel.data.megs,
+                    maskRe: /[0-9]/,
                     listeners: {
                       change: function change(event) {
                           if(this.ownerCt.megabyte.getValue() > response.result){
                             this.ownerCt.megabyte.setValue(response.result);
                           }
                           this.ownerCt.slider.setValue(this.ownerCt.megabyte.getValue(), false)
-                      }
+                      },  
+                       specialkey: function(f,e){  
+                           if(e.getKey()==e.ENTER){  
+                              if(this.ownerCt.megabyte.getValue() > response.result){
+                                this.ownerCt.megabyte.setValue(response.result);
+                              }
+                              this.ownerCt.slider.setValue(this.ownerCt.megabyte.getValue(), false)
+                              }  
+                       } 
                     }
                   }],
                   buttons: [{
@@ -455,6 +466,13 @@ Ext.oa.Lvm__LogicalVolume_Panel = Ext.extend(Ext.Panel, {
                         { "lv": sel.data.name, "megs": self.ownerCt.ownerCt.megabyte.getValue() }, true ),
                       function(btn){
                         if( btn == 'yes' ){
+                          if( self.ownerCt.ownerCt.megabyte.getValue() == '0' ){
+                           Ext.Msg.alert('Warning',
+                              interpolate(
+                                "{% trans "Volume %s could not resized to 0 Megaybytes." %}",
+                                [sel.data.name] ));
+                            return;
+                          }
                           var progresswin = new Ext.Window({
                             title: "{% trans 'Resizing Volume' %}",
                             layout: "fit",
