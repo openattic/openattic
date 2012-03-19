@@ -41,10 +41,7 @@ Ext.oa.Cron__Job_Panel = Ext.extend(Ext.grid.GridPanel, {
         },
         defaults: {
           xtype: "textfield",
-          anchor: '-20px',
-          defaults : {
-            anchor: "0px"
-          }
+          anchor: '-20px'
         },
         items: [
           tipify({
@@ -103,7 +100,7 @@ Ext.oa.Cron__Job_Panel = Ext.extend(Ext.grid.GridPanel, {
     var cronGrid = this;
     Ext.apply(this, Ext.apply(this.initialConfig,{
       id: "cron__job_panel_inst",
-      title: "nfs",
+      title: "Cron Jobs",
       viewConfig: {forceFit: true},
       buttons: [{
         text: "",
@@ -209,7 +206,7 @@ Ext.oa.Cron__Job_Panel = Ext.extend(Ext.grid.GridPanel, {
       }],
       listeners: {
         itemclick: function(item) {
-                  self.deleteFunction()
+          self.deleteFunction();
         }
       }
     });
