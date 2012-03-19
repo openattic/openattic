@@ -49,27 +49,27 @@ Ext.oa.Cron__Job_Panel = Ext.extend(Ext.grid.GridPanel, {
           }, "{% trans 'Please select the volume to share.' %}"), {
             xtype: 'textfield',
             fieldLabel: "{% trans 'Minute' %}",
-            name: "minute",
+            name: "minute"
           }, {
             xtype: 'textfield',
             fieldLabel: "{% trans 'Hour' %}",
-            name: "hour",
+            name: "hour"
           }, {
             xtype: 'textfield',
             fieldLabel: "{% trans 'Day of Month' %}",
-            name: "dom",
+            name: "dom"
           }, {
             xtype: 'textfield',
             fieldLabel: "{% trans 'Month' %}",
-            name: "mon",
+            name: "mon"
           }, {
             xtype: 'textfield',
             fieldLabel: "{% trans 'Day of Week' %}",
-            name: "dow",
+            name: "dow"
           }, {
             xtype: 'textfield',
             fieldLabel: "{% trans 'Command' %}",
-            name: "command",
+            name: "command"
           }
         ],
         buttons: [{
