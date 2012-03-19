@@ -398,49 +398,92 @@ Ext.oa.Lvm__LogicalVolume_Panel = Ext.extend(Ext.Panel, {
           if( sm.hasSelection() ){
             var sel = sm.selections.items[0];
             lvm__VolumeGroup.get_free_megs( sel.json.vg.id, function( provider, response ){
-              Ext.Msg.prompt(
-              "{% trans 'Enter new size' %}",
-              interpolate(
-                "{% trans 'Please enter the desired size in MB you wish to resize volume <b>%s</b> to.' %}" + "<br/>" +
-                "{% trans 'The current size is %s MB' %}" + "<br/>" + "<br/>" + "{% trans 'Max. %s MB' %}",
-                [sel.data.name, sel.data.megs, response.result]),
-              function(btn, text){
-                if( btn == 'ok' ){
-                  if((text - sel.data.megs) > response.result){
-                    Ext.Msg.alert("{% trans 'Error' %}","{% trans 'The size you entered exceeds the remaining space.' %}");
-                    return;
-                  }
-                  if(text == ''){
-                    Ext.Msg.alert("{% trans 'Error' %}","{% trans 'You could not leave the size field empty' %}");
-                    return;
-                  }
-                  Ext.Msg.confirm(
-                    "{% trans 'Warning' %}",
-                    interpolate(
-                      "{% trans 'Do you really want to change Volume size of <b>%(lv)s</b> to <b>%(megs)s</b> MB?' %}",
-                      { "lv": sel.data.name, "megs": text }, true ),
-                    function(btn){
-                      if( btn == 'yes' ){
-                        var progresswin = new Ext.Window({
-                          title: "{% trans 'Resizing Volume' %}",
-                          layout: "fit",
-                          height: 250,
-                          width: 400,
-                          modal: true,
-                          html: "{% trans 'Please wait while your volume is being resized...' %}"
-                        });
-                        progresswin.show();
-                        lvm__LogicalVolume.set( sel.data.id, {"megs": parseFloat(text)}, function(provider, response){
-                          lvmGrid.store.reload();
-                          progresswin.hide();
-                        } );
+              var resizewin = new Ext.Window(Ext.apply({
+              layout: "fit",
+              title: "{% trans 'Resize Volume' %}",
+              defaults: { autoScroll: true },
+              height: 200,
+              width: 500,
+                items: [{
+                  xtype: "form",
+                  ref: "resize",
+                  id: "resize",
+                  title: "{% trans 'Please enter your desired size' %}",
+                  bodyStyle: 'padding:5px ;',
+                  defaults: {
+                    xtype: "textfield",
+                    anchor: '-20',
+                    defaults: {
+                      anchor: "0px"
+                    }
+                  },
+                  items: [{
+                    xtype: 'slider',
+                    ref: 'slider',
+                    layout: 'form',
+                    width: 220,
+                    value: sel.data.megs,
+                    minValue:0,
+                    maxValue: response.result,
+                    listeners: {
+                      change: function() {
+                        this.ownerCt.megabyte.setValue(this.ownerCt.slider.getValue())
                       }
                     }
-                  );
-                }
-              }
-            );
-            });
+                  }, {
+                    xtype: 'textfield',
+                    fieldLabel: "{% trans 'Megabyte' %}",
+                    ref: 'megabyte',
+                    value: sel.data.megs,
+                    listeners: {
+                      change: function change(event) {
+                          if(this.ownerCt.megabyte.getValue() > response.result){
+                            this.ownerCt.megabyte.setValue(response.result);
+                          }
+                          this.ownerCt.slider.setValue(this.ownerCt.megabyte.getValue(), false)
+                      }
+                    }
+                  }],
+                  buttons: [{
+                    text:  "{% trans 'Edit' %}",
+                    icon: MEDIA_URL + "/icons2/16x16/actions/edit-redo.png",
+                    handler: function(self) {
+                      Ext.Msg.confirm(
+                      "{% trans 'Warning' %}",
+                      interpolate(
+                        "{% trans 'Do you really want to change Volume size of <b>%(lv)s</b> to <b>%(megs)s</b> MB?' %}",
+                        { "lv": sel.data.name, "megs": self.ownerCt.ownerCt.megabyte.getValue() }, true ),
+                      function(btn){
+                        if( btn == 'yes' ){
+                          var progresswin = new Ext.Window({
+                            title: "{% trans 'Resizing Volume' %}",
+                            layout: "fit",
+                            height: 250,
+                            width: 400,
+                            modal: true,
+                            html: "{% trans 'Please wait while your volume is being resized...' %}"
+                          });
+                          resizewin.hide();
+                          progresswin.show();
+                          lvm__LogicalVolume.set( sel.data.id, {"megs": parseFloat(self.ownerCt.ownerCt.megabyte.getValue())}, function(provider, response){
+                            lvmGrid.store.reload();
+                            progresswin.hide();
+                          } );
+                        }
+                      }
+                    );
+                   }
+                  },{
+                    text: "{% trans 'Cancel' %}",
+                    icon: MEDIA_URL + "/icons2/16x16/actions/gtk-cancel.png",
+                    handler: function(){
+                    resizewin.hide();
+                    }
+                  }]
+                }]
+              }));
+              resizewin.show();
+            })
           }
         }
       }, {
@@ -448,7 +491,7 @@ Ext.oa.Lvm__LogicalVolume_Panel = Ext.extend(Ext.Panel, {
         icon: MEDIA_URL + "/icons2/16x16/actions/remove.png",
         handler: this.deleteVolume,
         scope: lvmGrid
-      }],
+      }],                                 
       keys: [{ scope: this, key: [Ext.EventObject.DELETE], handler: this.deleteVolume},{key: [65], handler: addVolume}],
       items: [{
         xtype: 'grid',
