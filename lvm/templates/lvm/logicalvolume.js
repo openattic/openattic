@@ -420,6 +420,8 @@ Ext.oa.Lvm__LogicalVolume_Panel = Ext.extend(Ext.Panel, {
                   items: [{
                     xtype: 'slider',
                     ref: 'slider',
+                    increment: 100,
+                    decimalPrecision: false,
                     layout: 'form',
                     width: 220,
                     value: sel.data.megs,
