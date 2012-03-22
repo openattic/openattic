@@ -225,7 +225,7 @@ Ext.oa.ShareGridPanel = Ext.extend(Ext.grid.GridPanel, {
   }
 });
 
-Ext.reg("volumefield", Ext.oa.ShareGridPanel);
+Ext.reg("sharegridpanel", Ext.oa.ShareGridPanel);
 
 // kate: space-indent on; indent-width 2; replace-tabs on;
 
