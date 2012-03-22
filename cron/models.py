@@ -25,9 +25,9 @@ class Cronjob(models.Model):
     volume      = models.ForeignKey(LogicalVolume)
     minute      = models.CharField(max_length=50)
     hour        = models.CharField(max_length=50)
-    dom         = models.CharField(max_length=50)
-    mon         = models.CharField(max_length=50)
-    dow         = models.CharField(max_length=50)
+    domonth     = models.CharField(max_length=50)
+    month       = models.CharField(max_length=50)
+    doweek      = models.CharField(max_length=50)
     command     = models.CharField(max_length=500)
 
     def save(self, *args, **kwargs):

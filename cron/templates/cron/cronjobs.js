@@ -30,15 +30,15 @@ Ext.oa.Cron__Job_Panel = Ext.extend(Ext.oa.ShareGridPanel, {
   }, {
     header: "{% trans 'Day of Month' %}",
     width: 30,
-    dataIndex: "dom"
+    dataIndex: "domonth"
   }, {
     header: "{% trans 'Month' %}",
     width: 30,
-    dataIndex: "mon"
+    dataIndex: "month"
   }, {
     header: "{% trans 'Day of Week' %}",
     width: 30,
-    dataIndex: "dow"
+    dataIndex: "doweek"
   }, {
     header: "{% trans 'Command' %}",
     width: 250,
@@ -56,13 +56,13 @@ Ext.oa.Cron__Job_Panel = Ext.extend(Ext.oa.ShareGridPanel, {
         name: "hour"
       }, {
         fieldLabel: "{% trans 'Day of Month' %}",
-        name: "dom"
+        name: "domonth"
       }, {
         fieldLabel: "{% trans 'Month' %}",
-        name: "mon"
+        name: "month"
       }, {
         fieldLabel: "{% trans 'Day of Week' %}",
-        name: "dow"
+        name: "doweek"
       }, {
         fieldLabel: "{% trans 'Command' %}",
         name: "command"
