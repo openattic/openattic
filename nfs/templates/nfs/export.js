@@ -19,18 +19,18 @@ Ext.oa.Nfs__Export_Panel = Ext.extend(Ext.oa.ShareGridPanel, {
   api: nfs__Export,
   id: "nfs__export_panel_inst",
   title: "NFS",
-  fields: [{
-    fieldLabel: "{% trans 'Address' %}",
+  columns: [{
+    header: "{% trans 'Address' %}",
     width: 100,
-    name: "address"
+    dataIndex: "address"
   }, {
-    fieldLabel: "{% trans 'Path' %}",
+    header: "{% trans 'Path' %}",
     width: 200,
-    name: "path"
+    dataIndex: "path"
   }, {
-    fieldLabel: "{% trans 'Options' %}",
+    header: "{% trans 'Options' %}",
     width: 200,
-    name: "options"
+    dataIndex: "options"
   }],
   form: {
     items: [{
