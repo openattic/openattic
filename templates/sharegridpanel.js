@@ -18,18 +18,19 @@ Ext.namespace("Ext.oa");
 Ext.oa.ShareGridPanel = Ext.extend(Ext.grid.GridPanel, {
   api: null,
   form: {},
-  texts: {
-    reload:  "{% trans 'Reload' %}",
-    add:     "{% trans 'Add Export' %}",
-    edit:    "{% trans 'Edit Export' %}",
-    remove:  "{% trans 'Delete Export' %}",
-    submit:  "{% trans 'Submit' %}",
-    cancel:  "{% trans 'Cancel' %}",
-    confirm: "{% trans 'Do you really want to delete export %s?' %}"
-  },
+  texts: {},
 
   initComponent: function(){
     var self = this;
+    Ext.apply(this.texts, {
+      reload:  "{% trans 'Reload' %}",
+      add:     "{% trans 'Add Export' %}",
+      edit:    "{% trans 'Edit Export' %}",
+      remove:  "{% trans 'Delete Export' %}",
+      submit:  "{% trans 'Submit' %}",
+      cancel:  "{% trans 'Cancel' %}",
+      confirm: "{% trans 'Do you really want to delete export %s?' %}"
+    });
     Ext.apply(this, Ext.applyIf(this.initialConfig, {
       buttons: [{
         text: "",
