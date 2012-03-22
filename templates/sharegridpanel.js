@@ -75,8 +75,8 @@ Ext.oa.ShareGridPanel = Ext.extend(Ext.grid.GridPanel, {
       store: new Ext.data.DirectStore({
         fields: (function(){
           var cols = ["id"];
-          for( var i = 0; i < self.fields.length; i++ ){
-            cols.push(self.fields[i].name);
+          for( var i = 0; i < self.columns.length; i++ ){
+            cols.push(self.columns[i].dataIndex);
           }
           return cols;
         }()),
@@ -84,23 +84,7 @@ Ext.oa.ShareGridPanel = Ext.extend(Ext.grid.GridPanel, {
       }),
       viewConfig: {
         forceFit: true
-      },
-      colModel: new Ext.grid.ColumnModel({
-        defaults: {
-          sortable: true
-        },
-        columns: (function(){
-          var cols = [];
-          for( var i = 0; i < self.fields.length; i++ ){
-            cols.push({
-              dataIndex: self.fields[i].name,
-              width:     self.fields[i].width,
-              header:    self.fields[i].fieldLabel
-            });
-          }
-          return cols;
-        }())
-      })
+      }
     }));
     Ext.oa.ShareGridPanel.superclass.initComponent.apply(this, arguments);
   },
