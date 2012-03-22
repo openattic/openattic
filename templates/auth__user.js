@@ -15,329 +15,149 @@
 
 Ext.namespace("Ext.oa");
 
-Ext.oa.Auth__User_Panel = Ext.extend(Ext.grid.GridPanel, {
-  initComponent: function(){
-    var authUserGrid = this;
-    Ext.apply(this, Ext.apply(this.initialConfig, {
-      id: "auth__user_panel_inst",
-      title: "{% trans 'Users' %}",
-      viewConfig: { forceFit: true },
-      buttons: [{
-        text: "",
-        icon: MEDIA_URL + "/icons2/16x16/actions/reload.png",
-        tooltip: "{% trans 'Reload' %}",
-        handler: function(self){
-          authUserGrid.store.reload();
-        }
-      }, {
-        text: "{% trans 'Add User' %}",
-        icon: MEDIA_URL + "/icons2/16x16/actions/add.png",
-        handler: function(){
-          var addwin = new Ext.Window({
-            title: "{% trans 'Add User' %}",
-            layout: "fit",
-            height: 320,
-            width: 500,
-            items: [{
-              xtype: "form",
-              autoScroll: true,
-              bodyStyle: 'padding:5px 5px;',
-              defaults: {
-                xtype: "textfield",
-                anchor: '-20px'
-              },
-              items: [{
-                fieldLabel: "{% trans 'User Name' %}",
-                name: "username",
-                ref: 'usernamefield'
-              }, {
-                fieldLabel: "{% trans 'Password' %}",
-                inputType: 'password',
-                name: "password",
-                ref: 'passwordfield'
-              }, {
-                fieldLabel: "{% trans 'First Name' %}",
-                name: "firstname",
-                ref: 'firstnamefield'
-              }, {
-                fieldLabel: "{% trans 'Last Name' %}",
-                name: "lastname",
-                ref: 'lastnamefield'
-              }, {
-                fieldLabel: "{% trans 'E-Mail' %}",
-                name: "email",
-                ref: 'emailfield'
-              }, {
-                xtype: 'checkbox',
-                fieldLabel: "{% trans 'Active' %}",
-                name: "active",
-                ref: 'activefield'
-              }, {
-                xtype: 'checkbox',
-                fieldLabel: "{% trans 'Staff' %}",
-                name: "staff",
-                ref: 'stafffield'
-              }, {
-                xtype: 'checkbox',
-                fieldLabel: "{% trans 'SuperUser' %}",
-                name: "su",
-                ref: 'sufield'
-              }],
-              buttons: [{
-                text: 'Create User',
-                icon: MEDIA_URL + "/oxygen/16x16/actions/dialog-ok-apply.png",
-                handler: function(self){
-                  auth__User.create({
-                    'username':    self.ownerCt.ownerCt.usernamefield.getValue(),
-                    'password':    self.ownerCt.ownerCt.passwordfield.getValue(),
-                    'first_name':  self.ownerCt.ownerCt.firstnamefield.getValue(),
-                    'last_name':   self.ownerCt.ownerCt.lastnamefield.getValue(),
-                    'email':       self.ownerCt.ownerCt.emailfield.getValue(),
-                    'is_active':   self.ownerCt.ownerCt.activefield.getValue(),
-                    'is_superuser':self.ownerCt.ownerCt.sufield.getValue(),
-                    'is_staff':    self.ownerCt.ownerCt.stafffield.getValue()
-                  }, function(provider, response){
-                    if( response.result ){
-                      authUserGrid.store.reload();
-                      addwin.hide();
-                    }
-                  });
-                }
-              },{
-                text: 'Cancel',
-                icon: MEDIA_URL + "/icons2/16x16/actions/gtk-cancel.png",
-                handler: function(self){
-                  addwin.hide();
-                }
-              }]
-            }]
-          });
-          addwin.show();
-        }
-      }, {
-        text: "{% trans 'Delete User' %}",
-        icon: MEDIA_URL + "/icons2/16x16/actions/remove.png",
-        handler: function(self){
-          var sm = authUserGrid.getSelectionModel();
-          if( sm.hasSelection() ){
-            var sel = sm.selections.items[0];
-            lvm__LogicalVolume.filter( { 'owner__id': sel.data.id }, function(provider, response){
-              if( response.result.length > 0 ){
-                Ext.Msg.alert( "{% trans 'Delete User' %}", interpolate(
-                  "{% trans 'User %(user)s is the owner of %(volcount)s volumes.' %}", {
-                    'user': sel.data.username, 'volcount': response.result.length
-                  }, true ));
-              }
-              else{
-                Ext.Msg.confirm(
-                  "{% trans 'Unmount' %}",
-                  interpolate(
-                    "{% trans 'Do you really want to delete user %s?' %}",
-                    [sel.data.username]),
-                  function(btn){
-                    if(btn == 'yes'){
-                      auth__User.remove( sel.data.id, function(provider, response){
-                        authUserGrid.store.reload();
-                      } );
-                    }
-                  }
-                );
-              }
-            } );
-          }
-        }
-      },{
-        text: "{% trans 'Edit' %}",
-        icon: MEDIA_URL + "/icons2/16x16/actions/edit-redo.png",
-        handler: function(self){
-          var sm = authUserGrid.getSelectionModel();
-          if( sm.hasSelection() ){
-            var sel = sm.selections.items[0];
-            var addwin = new Ext.Window({
-              title: "{% trans 'Edit User' %}",
-              layout: "fit",
-              height: 300,
-              width: 500,
-              items: [{
-                xtype: "form",
-                autoScroll: true,
-                bodyStyle: 'padding:5px 5px;',
-                defaults: {
-                  xtype: "textfield",
-                  anchor: '-20px'
-                },
-                items: [{
-                  fieldLabel: "{% trans 'User Name' %}",
-                  name: "username",
-                  ref: 'usernamefield',
-                  value: sel.data.username
-                },{
-                  fieldLabel: "{% trans 'First Name' %}",
-                  inputType: 'first_name',
-                  name: "first_name",
-                  ref: 'firstnamefield',
-                  value: sel.data.first_name
-                },{
-                  fieldLabel: "{% trans 'Last Name' %}",
-                  inputType: 'last_name',
-                  name: "last_name",
-                  ref: 'lastnamefield',
-                  value: sel.data.last_name
-                },{
-                  fieldLabel: "{% trans 'E-Mail' %}",
-                  inputType: 'email',
-                  name: "email",
-                  height: 22,
-                  ref: 'emailfield',
-                  value: sel.data.email
-                },{
-                  xtype: 'checkbox',
-                  fieldLabel: "{% trans 'Active' %}",
-                  name: "active",
-                  ref: 'activefield',
-                  checked: sel.data.is_active
-                },{
-                  xtype: 'checkbox',
-                  fieldLabel: "{% trans 'Staff' %}",
-                  name: "staff",
-                  ref: 'stafffield',
-                  checked: sel.data.is_staff
-                },{
-                  xtype: 'checkbox',
-                  fieldLabel: "{% trans 'SuperUser' %}",
-                  name: "su",
-                  ref: 'sufield',
-                  checked: sel.data.is_superuser
-                }],
-                buttons: [{
-                  text: "{% trans 'Save' %}",
-                  handler: function(self){
-                    var sm = authUserGrid.getSelectionModel();
-                    if( sm.hasSelection() ){
-                      var sel = sm.selections.items[0];
-                      auth__User.set(sel.data.id, {
-                        'username':    self.ownerCt.ownerCt.usernamefield.getValue(),
-                        'first_name':  self.ownerCt.ownerCt.firstnamefield.getValue(),
-                        'last_name':   self.ownerCt.ownerCt.lastnamefield.getValue(),
-                        'email':       self.ownerCt.ownerCt.emailfield.getValue(),
-                        'is_active':   self.ownerCt.ownerCt.activefield.getValue(),
-                        'is_superuser':self.ownerCt.ownerCt.sufield.getValue(),
-                        'is_staff':    self.ownerCt.ownerCt.stafffield.getValue()
-                      }, function(provider, response){
-                        if( response.result ){
-                          authUserGrid.store.reload();
-                          addwin.hide();
-                        }
-                      });
-                    }
-                  }
-                }]
-              }]
-            });
-            addwin.show();
-          }
-        }
-      },{
-        text: "{% trans 'Change Password' %}",
-        icon: MEDIA_URL + "/icons2/16x16/emblems/emblem-readonly.png",
-        handler: function(self){
-          var sm = authUserGrid.getSelectionModel();
-          if( sm.hasSelection() ){
-            var sel = sm.selections.items[0];
-            var addwin = new Ext.Window({
-              title: "{% trans 'Change Password' %}",
-              layout: "fit",
-              height: 140,
-              width: 300,
-              items: [{
-                xtype: "form",
-                autoScroll: true,
-                bodyStyle: 'padding:5px 5px;',
-                  defaults: {
-                  xtype: "textfield",
-                  anchor: '-20px'
-                },
-                items: [{
-                  fieldLabel: "{% trans 'User Name' %}",
-                  name: "username",
-                  disabled: true,
-                  ref: 'usernamefield',
-                  value: sel.data.username
-                },{
-                  fieldLabel: "{% trans 'Password' %}",
-                  inputType: 'password',
-                  name: "password",
-                  ref: 'passwordfield'
-                }],
-                buttons: [{
-                  text: 'Save',
-                  handler: function(self){
-                    auth__User.set_password(sel.data.id, self.ownerCt.ownerCt.passwordfield.getValue(),
-                      function(provider, response){
-                        addwin.hide();
-                      });
-                  }
-                }]
-              }]
-            });
-            addwin.show();
-          }
-        }
-      }],
-      store: {
-        xtype: "directstore",
-        fields: ['id', 'username', 'first_name', 'last_name', 'email', 'is_active', 'is_staff', 'is_superuser', 'last_login'],
-        directFn: auth__User.all
-      },
-      colModel: new Ext.grid.ColumnModel({
-        defaults: {
-          sortable: true
-        },
-        columns: [{
-          header: "{% trans 'User Name' %}",
-          width: 200,
-          dataIndex: "username"
-        }, {
-          header: "{% trans 'First Name' %}",
-          width: 200,
-          dataIndex: "first_name"
-        }, {
-          header: "{% trans 'Last Name' %}",
-          width: 200,
-          dataIndex: "last_name"
-        }, {
-          header: "{% trans 'E-Mail Address' %}",
-          width: 200,
-          dataIndex: "email"
-        }, {
-          header: "{% trans 'Active' %}",
-          width: 50,
-          dataIndex: "is_active",
-          renderer: Ext.oa.renderBoolean
-        }, {
-          header: "{% trans 'Staff' %}",
-          width: 50,
-          dataIndex: "is_staff",
-          renderer: Ext.oa.renderBoolean
-        }, {
-          header: "{% trans 'SU' %}",
-          width: 50,
-          dataIndex: "is_superuser",
-          renderer: Ext.oa.renderBoolean
-        }, {
-          header: "{%trans 'Last Login' %}",
-          width: 200,
-          dataIndex: "last_login"
-        }]
-      })
-    }));
-    Ext.oa.Auth__User_Panel.superclass.initComponent.apply(this, arguments);
+function wrap_auth_User_set(form, options, action){
+  // This is a somewhat questionable method to submit the form, but Django refuses
+  // to validate without last_login/date_joined being set, which is not quite what I want either.
+  var params = {
+    first_name:   form.first_name.value,
+    last_name:    form.last_name.value,
+    username:     form.username.value,
+    email:        form.email.value,
+    is_active:    form.is_active.checked,
+    is_staff:     form.is_staff.checked,
+    is_superuser: form.is_superuser.checked,
+  };
+  if( form.password.value !== "" ){
+    params.password = form.password.value;
+  }
+  if( options.params.id === -1 ){
+    auth__User.create(params, action.options.success);
+  }
+  else{
+    auth__User.set(options.params.id, params, action.options.success);
+  }
+}
+
+Ext.oa.Auth__User_Panel = Ext.extend(Ext.oa.ShareGridPanel, {
+  api: auth__User,
+  id: "auth__user_panel_inst",
+  title: "{% trans 'Users' %}",
+  texts: {
+    add:     "{% trans 'Add User' %}",
+    edit:    "{% trans 'Edit User' %}",
+    remove:  "{% trans 'Delete User' %}",
   },
-  onRender: function(){
-    Ext.oa.Auth__User_Panel.superclass.onRender.apply(this, arguments);
-    this.store.reload();
+  columns: [{
+    header: "{% trans 'User Name' %}",
+    width: 200,
+    dataIndex: "username"
+  }, {
+    header: "{% trans 'First Name' %}",
+    width: 200,
+    dataIndex: "first_name"
+  }, {
+    header: "{% trans 'Last Name' %}",
+    width: 200,
+    dataIndex: "last_name"
+  }, {
+    header: "{% trans 'E-Mail Address' %}",
+    width: 200,
+    dataIndex: "email"
+  }, {
+    header: "{% trans 'Active' %}",
+    width: 50,
+    dataIndex: "is_active",
+    renderer: Ext.oa.renderBoolean
+  }, {
+    header: "{% trans 'Staff' %}",
+    width: 50,
+    dataIndex: "is_staff",
+    renderer: Ext.oa.renderBoolean
+  }, {
+    header: "{% trans 'SU' %}",
+    width: 50,
+    dataIndex: "is_superuser",
+    renderer: Ext.oa.renderBoolean
+  }, {
+    header: "{%trans 'Last Login' %}",
+    width: 200,
+    dataIndex: "last_login"
+  }],
+  form: {
+    api: {
+      load: auth__User.get_ext,
+      submit: wrap_auth_User_set
+    },
+    items: [{
+      fieldLabel: "{% trans 'User Name' %}",
+      name: "username",
+      ref: 'usernamefield'
+    }, {
+      fieldLabel: "{% trans 'Password' %}",
+      inputType: 'password',
+      name: "password",
+      ref: 'passwordfield'
+    }, {
+      fieldLabel: "{% trans 'First Name' %}",
+      name: "first_name",
+      ref: 'firstnamefield'
+    }, {
+      fieldLabel: "{% trans 'Last Name' %}",
+      name: "last_name",
+      ref: 'lastnamefield'
+    }, {
+      fieldLabel: "{% trans 'E-Mail' %}",
+      name: "email",
+      ref: 'emailfield'
+    }, {
+      xtype: 'checkbox',
+      fieldLabel: "{% trans 'Active' %}",
+      name: "is_active",
+      ref: 'activefield'
+    }, {
+      xtype: 'checkbox',
+      fieldLabel: "{% trans 'Staff' %}",
+      name: "is_staff",
+      ref: 'stafffield'
+    }, {
+      xtype: 'checkbox',
+      fieldLabel: "{% trans 'SuperUser' %}",
+      name: "is_superuser",
+      ref: 'sufield'
+    }]
+  },
+  deleteFunction: function(){
+    var sm = this.getSelectionModel();
+    var self = this;
+    if( sm.hasSelection() ){
+      var sel = sm.selections.items[0];
+      lvm__LogicalVolume.filter( { 'owner__id': sel.data.id }, function(provider, response){
+        if( response.result.length > 0 ){
+          Ext.Msg.alert( "{% trans 'Delete User' %}", interpolate(
+            "{% trans 'User %(user)s is the owner of %(volcount)s volumes.' %}", {
+              'user': sel.data.username, 'volcount': response.result.length
+            }, true ));
+        }
+        else{
+          Ext.Msg.confirm(
+            "{% trans 'Unmount' %}",
+            interpolate(
+              "{% trans 'Do you really want to delete user %s?' %}",
+              [sel.data.username]),
+            function(btn){
+              if(btn == 'yes'){
+                self.api.remove( sel.data.id, function(provider, response){
+                  self.store.reload();
+                } );
+              }
+            }
+          );
+        }
+      } );
+    }
   }
 });
+
 
 Ext.reg("auth__user_panel", Ext.oa.Auth__User_Panel);
 
