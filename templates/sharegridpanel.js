@@ -31,45 +31,16 @@ Ext.oa.ShareGridPanel = Ext.extend(Ext.grid.GridPanel, {
       cancel:  "{% trans 'Cancel' %}",
       confirm: "{% trans 'Do you really want to delete export %s?' %}"
     });
+    if( typeof this.buttons === "undefined" ){
+      this.buttons = [];
+    }
+    else{
+      for( var i = 0; i < this.buttons.length; i++ ){
+        if( typeof this.buttons[i].scope === "undefined" )
+          this.buttons[i].scope = this;
+      }
+    }
     Ext.apply(this, Ext.applyIf(this.initialConfig, {
-      buttons: [{
-        text: "",
-        icon: MEDIA_URL + "/icons2/16x16/actions/reload.png",
-        tooltip: self.texts.reload,
-        scope: self,
-        handler: function(){
-          self.store.reload();
-        }
-      },{
-        text: self.texts.add,
-        icon: MEDIA_URL + "/icons2/16x16/actions/add.png",
-        scope: self,
-        handler: function(){
-          self.showEditWindow({
-            title: self.texts.add,
-            submitButtonText: self.texts.add
-          });
-        }
-      },{
-        text:  self.texts.edit,
-        icon: MEDIA_URL + "/icons2/16x16/actions/edit-redo.png",
-        scope: self,
-        handler: function(){
-          var sm = self.getSelectionModel();
-          if( sm.hasSelection() ){
-            var sel = sm.selections.items[0];
-            self.showEditWindow({
-              title: self.texts.edit,
-              submitButtonText: self.texts.edit
-            }, sel.data);
-          }
-        }
-      },{
-        text: self.texts.remove,
-        icon: MEDIA_URL + "/icons2/16x16/actions/remove.png",
-        handler: this.deleteFunction,
-        scope: self
-      }],
       keys: [{
         scope: self,
         key: [Ext.EventObject.DELETE],
@@ -94,6 +65,44 @@ Ext.oa.ShareGridPanel = Ext.extend(Ext.grid.GridPanel, {
         forceFit: true
       }
     }));
+    this.buttons.push.apply( this.buttons, [ {
+      text: "",
+      icon: MEDIA_URL + "/icons2/16x16/actions/reload.png",
+      tooltip: self.texts.reload,
+      scope: self,
+      handler: function(){
+        self.store.reload();
+      }
+    }, {
+      text: self.texts.add,
+      icon: MEDIA_URL + "/icons2/16x16/actions/add.png",
+      scope: self,
+      handler: function(){
+        self.showEditWindow({
+          title: self.texts.add,
+          submitButtonText: self.texts.add
+        });
+      }
+    }, {
+      text:  self.texts.edit,
+      icon: MEDIA_URL + "/icons2/16x16/actions/edit-redo.png",
+      scope: self,
+      handler: function(){
+        var sm = self.getSelectionModel();
+        if( sm.hasSelection() ){
+          var sel = sm.selections.items[0];
+          self.showEditWindow({
+            title: self.texts.edit,
+            submitButtonText: self.texts.edit
+          }, sel.data);
+        }
+      }
+    }, {
+      text: self.texts.remove,
+      icon: MEDIA_URL + "/icons2/16x16/actions/remove.png",
+      handler: this.deleteFunction,
+      scope: self
+    } ] );
     Ext.oa.ShareGridPanel.superclass.initComponent.apply(this, arguments);
   },
 
