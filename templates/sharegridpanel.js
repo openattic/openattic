@@ -1,6 +1,6 @@
 {% load i18n %}
 
-/*
+{% comment %}
  Copyright (C) 2011-2012, it-novum GmbH <community@open-attic.org>
 
  openATTIC is free software; you can redistribute it and/or modify it
@@ -11,7 +11,7 @@
  but WITHOUT ANY WARRANTY; without even the implied warranty of
  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  GNU General Public License for more details.
-*/
+{% endcomment %}
 
 Ext.namespace("Ext.oa");
 
@@ -77,6 +77,11 @@ Ext.oa.ShareGridPanel = Ext.extend(Ext.grid.GridPanel, {
           var cols = ["id"];
           for( var i = 0; i < self.columns.length; i++ ){
             cols.push(self.columns[i].dataIndex);
+          }
+          if( typeof self.storefields !== "undefined" ){
+            for( var i = 0; i < self.storefields.length; i++ ){
+              cols.push(self.storefields[i]);
+            }
           }
           return cols;
         }()),
