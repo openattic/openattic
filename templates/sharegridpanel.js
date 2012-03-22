@@ -22,7 +22,7 @@ Ext.oa.ShareGridPanel = Ext.extend(Ext.grid.GridPanel, {
 
   initComponent: function(){
     var self = this;
-    Ext.apply(this.texts, {
+    Ext.applyIf(this.texts, {
       reload:  "{% trans 'Reload' %}",
       add:     "{% trans 'Add Export' %}",
       edit:    "{% trans 'Edit Export' %}",
