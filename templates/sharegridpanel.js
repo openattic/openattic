@@ -220,8 +220,13 @@ Ext.oa.ShareGridPanel = Ext.extend(Ext.grid.GridPanel, {
         }
         event.stopEvent();
         menu.showAt(event.xy);
-      }
-    });
+      },
+      rowdblclick: function(grid, row, event){
+        if( this.getSelectionModel().hasSelection() ){
+          this.editFunction(this);
+        }
+      },
+    }, this);
   }
 });
 
