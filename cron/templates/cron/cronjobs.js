@@ -21,7 +21,7 @@ Ext.oa.Cron__Job_Panel = Ext.extend(Ext.grid.GridPanel, {
     var addwin = new Ext.Window(Ext.apply(config, {
       layout: "fit",
       defaults: {autoScroll: true},
-      height: 240,
+      height: 300,
       width: 500,
       items:[{
         xtype: "form",
@@ -47,27 +47,21 @@ Ext.oa.Cron__Job_Panel = Ext.extend(Ext.grid.GridPanel, {
           tipify({
             xtype: 'volumefield'
           }, "{% trans 'Please select the volume to share.' %}"), {
-            xtype: 'textfield',
             fieldLabel: "{% trans 'Minute' %}",
             name: "minute"
           }, {
-            xtype: 'textfield',
             fieldLabel: "{% trans 'Hour' %}",
             name: "hour"
           }, {
-            xtype: 'textfield',
             fieldLabel: "{% trans 'Day of Month' %}",
             name: "dom"
           }, {
-            xtype: 'textfield',
             fieldLabel: "{% trans 'Month' %}",
             name: "mon"
           }, {
-            xtype: 'textfield',
             fieldLabel: "{% trans 'Day of Week' %}",
             name: "dow"
           }, {
-            xtype: 'textfield',
             fieldLabel: "{% trans 'Command' %}",
             name: "command"
           }
