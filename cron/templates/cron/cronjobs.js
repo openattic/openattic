@@ -46,9 +46,9 @@ Ext.oa.Cron__Job_Panel = Ext.extend(Ext.oa.ShareGridPanel, {
   }],
   form: {
     items: [
-      tipify({
+      {
         xtype: 'volumefield'
-      }, "{% trans 'Please select the volume to share.' %}"), {
+      }, {
         fieldLabel: "{% trans 'Minute' %}",
         name: "minute"
       }, {

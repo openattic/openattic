@@ -209,11 +209,13 @@ Ext.oa.ShareGridPanel = Ext.extend(Ext.grid.GridPanel, {
       }
     });
     this.on({
-      'contextmenu': function(event) {
-        if( this.getSelectionModel().hasSelection() ){
-          event.stopEvent();
-          menu.showAt(event.xy);
+      rowcontextmenu: function(grid, row, event){
+        this.selectedNode = this.store.getAt(row);
+        if((row) !== false) {
+          this.getSelectionModel().selectRow(row);
         }
+        event.stopEvent();
+        menu.showAt(event.xy);
       }
     });
   }
