@@ -39,6 +39,12 @@
       window.LOGOUT_URL  = '{% url logout %}';
       window.INDEX_URL   = '{% url index  %}';
       Ext.BLANK_IMAGE_URL = MEDIA_URL + "/extjs_themes/images/gray/s.gif";
+      Ext.namespace("Ext.oa");
+      Ext.oa.renderBoolean = function (val, x, store){
+        if (val)
+          return '<img src="{{ MEDIA_URL }}/oxygen/16x16/actions/dialog-ok-apply.png" title="yes" />';
+        return '<img src="{{ MEDIA_URL }}/oxygen/16x16/actions/dialog-cancel.png" title="no" />';
+      };
       // Hack to fix setReadOnly not being available before Ext 3.2.x
       if( typeof Ext.form.TextField.prototype.setReadOnly === "undefined" ){
         Ext.form.TextField.prototype.setReadOnly = function(readOnly){

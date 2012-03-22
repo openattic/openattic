@@ -31,11 +31,7 @@ Ext.oa.Samba__Share_Panel = Ext.extend(Ext.oa.ShareGridPanel, {
     header: "{% trans 'Available' %}",
     width: 50,
     dataIndex: "available",
-    renderer: function (val, x, store){
-      if (val)
-        return '<img src="' + MEDIA_URL + '/oxygen/16x16/actions/dialog-ok-apply.png" title="yes" />';
-      return '<img src="' + MEDIA_URL + '/oxygen/16x16/actions/dialog-cancel.png" title="no" />';
-    }
+    renderer: Ext.oa.renderBoolean
   }],
   form: {
     items: [{

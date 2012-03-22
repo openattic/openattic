@@ -18,11 +18,6 @@ Ext.namespace("Ext.oa");
 Ext.oa.Auth__User_Panel = Ext.extend(Ext.grid.GridPanel, {
   initComponent: function(){
     var authUserGrid = this;
-    var renderBoolean = function( val, x, store ){
-      if( val )
-        return '<img src="' + MEDIA_URL + '/oxygen/16x16/actions/dialog-ok-apply.png" title="yes" />';
-      return '<img src="' + MEDIA_URL + '/oxygen/16x16/actions/dialog-cancel.png" title="no" />';
-    };
     Ext.apply(this, Ext.apply(this.initialConfig, {
       id: "auth__user_panel_inst",
       title: "{% trans 'Users' %}",
@@ -318,17 +313,17 @@ Ext.oa.Auth__User_Panel = Ext.extend(Ext.grid.GridPanel, {
           header: "{% trans 'Active' %}",
           width: 50,
           dataIndex: "is_active",
-          renderer: renderBoolean
+          renderer: Ext.oa.renderBoolean
         }, {
           header: "{% trans 'Staff' %}",
           width: 50,
           dataIndex: "is_staff",
-          renderer: renderBoolean
+          renderer: Ext.oa.renderBoolean
         }, {
           header: "{% trans 'SU' %}",
           width: 50,
           dataIndex: "is_superuser",
-          renderer: renderBoolean
+          renderer: Ext.oa.renderBoolean
         }, {
           header: "{%trans 'Last Login' %}",
           width: 200,
