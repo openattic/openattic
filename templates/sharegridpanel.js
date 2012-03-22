@@ -31,7 +31,6 @@ Ext.oa.ShareGridPanel = Ext.extend(Ext.grid.GridPanel, {
   initComponent: function(){
     var self = this;
     Ext.apply(this, Ext.applyIf(this.initialConfig, {
-      viewConfig: {forceFit: true},
       buttons: [{
         text: "",
         icon: MEDIA_URL + "/icons2/16x16/actions/reload.png",
@@ -132,7 +131,9 @@ Ext.oa.ShareGridPanel = Ext.extend(Ext.grid.GridPanel, {
     var self = this;
     var addwin = new Ext.Window(Ext.apply(config, {
       layout: "fit",
-      defaults: {autoScroll: true},
+      defaults: {
+        autoScroll: true
+      },
       height: 240,
       width: 500,
       items: (function(){
@@ -180,7 +181,12 @@ Ext.oa.ShareGridPanel = Ext.extend(Ext.grid.GridPanel, {
             }
           }]
         };
-        return Ext.apply(form, self.form);
+        Ext.apply(form, self.form);
+        for( var i = 0; i < form.items.length; i++ ){
+          if( form.items[i].disabled )
+            form.items[i].disabled = !record;
+        }
+        return form;
       }())
     }));
     addwin.show();
