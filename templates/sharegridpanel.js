@@ -36,12 +36,14 @@ Ext.oa.ShareGridPanel = Ext.extend(Ext.grid.GridPanel, {
         text: "",
         icon: MEDIA_URL + "/icons2/16x16/actions/reload.png",
         tooltip: self.texts.reload,
+        scope: self,
         handler: function(){
           self.store.reload();
         }
       },{
         text: self.texts.add,
         icon: MEDIA_URL + "/icons2/16x16/actions/add.png",
+        scope: self,
         handler: function(){
           self.showEditWindow({
             title: self.texts.add,
@@ -51,6 +53,7 @@ Ext.oa.ShareGridPanel = Ext.extend(Ext.grid.GridPanel, {
       },{
         text:  self.texts.edit,
         icon: MEDIA_URL + "/icons2/16x16/actions/edit-redo.png",
+        scope: self,
         handler: function(){
           var sm = self.getSelectionModel();
           if( sm.hasSelection() ){
@@ -197,16 +200,17 @@ Ext.oa.ShareGridPanel = Ext.extend(Ext.grid.GridPanel, {
     Ext.oa.ShareGridPanel.superclass.onRender.apply(this, arguments);
     this.store.reload();
     var self = this;
+    var menubuttons = [];
+    for( var i = 0; i < self.buttons.length; i++ ){
+      menubuttons.push({
+        text:    (self.buttons[i].initialConfig.text || self.buttons[i].initialConfig.tooltip),
+        icon:     self.buttons[i].initialConfig.icon,
+        handler:  self.buttons[i].initialConfig.handler,
+        scope:    self.buttons[i].initialConfig.scope
+      });
+    }
     var menu = new Ext.menu.Menu({
-      items: [{
-        text: 'delete',
-        icon: MEDIA_URL + "/icons2/16x16/actions/remove.png"
-      }],
-      listeners: {
-        itemclick: function(item) {
-          self.deleteFunction();
-        }
-      }
+      items: menubuttons
     });
     this.on({
       rowcontextmenu: function(grid, row, event){
