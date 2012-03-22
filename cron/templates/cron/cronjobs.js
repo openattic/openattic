@@ -15,203 +15,59 @@
 
 Ext.namespace("Ext.oa");
 
-Ext.oa.Cron__Job_Panel = Ext.extend(Ext.grid.GridPanel, {
-  showEditWindow: function(config, record){
-    var cronGrid = this;
-    var addwin = new Ext.Window(Ext.apply(config, {
-      layout: "fit",
-      defaults: {autoScroll: true},
-      height: 300,
-      width: 500,
-      items:[{
-        xtype: "form",
-        bodyStyle: 'padding: 5px 5px;',
-        api: {
-          load: cron__Cronjob.get_ext,
-          submit: cron__Cronjob.set_ext
-        },
-        baseParams: {
-          id: (record ? record.id: -1)
-        },
-        paramOrder: ["id"],
-        listeners: {
-          afterrender: function(self){
-            self.getForm().load();
-          }
-        },
-        defaults: {
-          xtype: "textfield",
-          anchor: '-20px'
-        },
-        items: [
-          tipify({
-            xtype: 'volumefield'
-          }, "{% trans 'Please select the volume to share.' %}"), {
-            fieldLabel: "{% trans 'Minute' %}",
-            name: "minute"
-          }, {
-            fieldLabel: "{% trans 'Hour' %}",
-            name: "hour"
-          }, {
-            fieldLabel: "{% trans 'Day of Month' %}",
-            name: "dom"
-          }, {
-            fieldLabel: "{% trans 'Month' %}",
-            name: "mon"
-          }, {
-            fieldLabel: "{% trans 'Day of Week' %}",
-            name: "dow"
-          }, {
-            fieldLabel: "{% trans 'Command' %}",
-            name: "command"
-          }
-        ],
-        buttons: [{
-          text: config.submitButtonText,
-          icon: MEDIA_URL + "/oxygen/16x16/actions/dialog-ok-apply.png",
-          handler: function(self){
-            self.ownerCt.ownerCt.getForm().submit({
-              success: function(provider, response){
-                if(response.result){
-                  cronGrid.store.reload();
-                  addwin.hide();
-                }
-              }
-            });
-          }
-        },{
-          text: "{% trans 'Cancel' %}",
-          icon: MEDIA_URL + "/icons2/16x16/actions/gtk-cancel.png",
-          handler: function(self){
-            addwin.hide();
-          }
-        }]
-      }]
-    }));
-    addwin.show();
-  },
-  initComponent: function(){
-    var cronGrid = this;
-    Ext.apply(this, Ext.apply(this.initialConfig,{
-      id: "cron__job_panel_inst",
-      title: "Cron Jobs",
-      viewConfig: {forceFit: true},
-      buttons: [{
-        text: "",
-        icon: MEDIA_URL + "/icons2/16x16/actions/reload.png",
-        tooltip: "{% trans 'Reload' %}",
-        handler: function(self){
-          cronGrid.store.reload();
-        }
-      },{
-        text: "{% trans 'Add Cronjob' %}",
-        icon: MEDIA_URL + "/icons2/16x16/actions/add.png",
-        handler: function(){
-          cronGrid.showEditWindow({
-            title: "{% trans 'Add Cronjob' %}",
-            submitButtonText: "{% trans 'Create Cronjob' %}"
-          });
-        }
-      },{
-        text:  "{% trans 'Edit' %}",
-        icon: MEDIA_URL + "/icons2/16x16/actions/edit-redo.png",
-        handler: function(self){
-          var sm = cronGrid.getSelectionModel();
-          if( sm.hasSelection() ){
-            var sel = sm.selections.items[0];
-            cronGrid.showEditWindow({
-              title: "{% trans 'Edit' %}",
-              submitButtonText: "{% trans 'Edit' %}"
-            }, sel.data);
-          }
-        }
-      },{
-        text: "{% trans 'Delete Cronjob' %}",
-        icon: MEDIA_URL + "/icons2/16x16/actions/remove.png",
-        handler: this.deleteFunction,
-        scope: cronGrid
-      }],
-      keys: [{ scope: cronGrid, key: [Ext.EventObject.DELETE], handler: this.deleteFunction}],
-      store: new Ext.data.DirectStore({
-        fields: ['id', 'minute', 'hour', 'dom', 'mon', 'dow', 'command'],
-        directFn: cron__Cronjob.all
-      }),
-      viewConfig: {forceFit: true},
-      colModel: new Ext.grid.ColumnModel({
-        defaults: {
-          sortable: true
-        },
-        columns: [{
-          header: "{% trans 'Minute' %}",
-          width: 30,
-          dataIndex: "minute"
-        }, {
-          header: "{% trans 'Hour' %}",
-          width: 30,
-          dataIndex: "hour"
-        }, {
-          header: "{% trans 'Day of Month' %}",
-          width: 30,
-          dataIndex: "dom"
-        }, {
-          header: "{% trans 'Month' %}",
-          width: 30,
-          dataIndex: "mon"
-        }, {
-          header: "{% trans 'Day of Week' %}",
-          width: 30,
-          dataIndex: "dow"
-        }, {
-          header: "{% trans 'Command' %}",
-          width: 250,
-          dataIndex: "command"
-        }]
-      })
-    }));
-    Ext.oa.Cron__Job_Panel.superclass.initComponent.apply(this, arguments);
-  },
-  deleteFunction: function(self){
-    var sm = this.getSelectionModel();
-    if( sm.hasSelection() ){
-      var sel = sm.selections.items[0];
-      Ext.Msg.confirm(
-        "{% trans 'Delete Cronjob' %}",
-        interpolate(
-          "{% trans 'Do you really want to delete %s?' %}",[sel.data.path]),
-        function(btn){
-          if(btn == 'yes'){
-            cron__Cronjob.remove( sel.data.id, function(provider, response){
-              sel.store.reload();
-            } );
-          }
-        }
-      );
-    }
-  },
-
-  onRender: function(){
-    Ext.oa.Cron__Job_Panel.superclass.onRender.apply(this, arguments);
-    this.store.reload();
-    var self = this;
-    var menu = new Ext.menu.Menu({
-      items: [{
-        text: 'delete',
-        icon: MEDIA_URL + "/icons2/16x16/actions/remove.png"
-      }],
-      listeners: {
-        itemclick: function(item) {
-          self.deleteFunction();
-        }
+Ext.oa.Cron__Job_Panel = Ext.extend(Ext.oa.ShareGridPanel, {
+  api: cron__Cronjob,
+  id: "cron__job_panel_inst",
+  title: "Cron Jobs",
+  columns: [{
+    header: "{% trans 'Minute' %}",
+    width: 30,
+    dataIndex: "minute"
+  }, {
+    header: "{% trans 'Hour' %}",
+    width: 30,
+    dataIndex: "hour"
+  }, {
+    header: "{% trans 'Day of Month' %}",
+    width: 30,
+    dataIndex: "dom"
+  }, {
+    header: "{% trans 'Month' %}",
+    width: 30,
+    dataIndex: "mon"
+  }, {
+    header: "{% trans 'Day of Week' %}",
+    width: 30,
+    dataIndex: "dow"
+  }, {
+    header: "{% trans 'Command' %}",
+    width: 250,
+    dataIndex: "command"
+  }],
+  form: {
+    items: [
+      tipify({
+        xtype: 'volumefield'
+      }, "{% trans 'Please select the volume to share.' %}"), {
+        fieldLabel: "{% trans 'Minute' %}",
+        name: "minute"
+      }, {
+        fieldLabel: "{% trans 'Hour' %}",
+        name: "hour"
+      }, {
+        fieldLabel: "{% trans 'Day of Month' %}",
+        name: "dom"
+      }, {
+        fieldLabel: "{% trans 'Month' %}",
+        name: "mon"
+      }, {
+        fieldLabel: "{% trans 'Day of Week' %}",
+        name: "dow"
+      }, {
+        fieldLabel: "{% trans 'Command' %}",
+        name: "command"
       }
-    });
-    this.on({
-      'contextmenu': function(event) {
-        if( this.getSelectionModel().hasSelection() ){
-          event.stopEvent();
-          menu.showAt(event.xy);
-        }
-      }
-    });
+    ]
   }
 });
 
