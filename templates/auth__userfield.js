@@ -35,6 +35,7 @@ Ext.oa.Auth__UserField = Ext.extend(Ext.form.ComboBox, {
         return store;
       }()),
       typeAhead:     true,
+      forceSelection: true,
       triggerAction: 'all',
       emptyText:     "{% trans 'Select...' %}",
       selectOnFocus: true,
