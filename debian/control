@@ -18,6 +18,7 @@ Depends: ${misc:Depends}, openattic-base,
  openattic-module-samba,
  openattic-module-apt,
  openattic-module-nagios,
+ openattic-module-cron,
  openattic-module-ftp-mysql,
  libapache2-mod-wsgi, apache2,
  openattic-mysql
@@ -42,6 +43,7 @@ Description: Comprehensive storage management system
   * Apt
   * Nagios
   * FTP
+  * Cron
  .
  You can install additional modules yourself or use the openattic-full-*
  packages.
@@ -60,8 +62,9 @@ Depends: ${misc:Depends}, openattic-base,
 # openattic-module-munin,
  openattic-module-nagios,
  openattic-module-tftp,
- openattic-module-drbd,
  openattic-module-mailaliases,
+ openattic-module-cron,
+ openattic-module-drbd,
  openattic-module-ftp-mysql,
  libapache2-mod-wsgi, apache2,
  openattic-mysql
@@ -98,6 +101,7 @@ Depends: ${misc:Depends}, openattic-base,
  openattic-module-nagios,
  openattic-module-tftp,
  openattic-module-mailaliases,
+ openattic-module-cron,
  openattic-module-drbd,
  openattic-module-ftp-pgsql,
  libapache2-mod-wsgi, apache2,
