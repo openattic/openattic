@@ -74,7 +74,7 @@ class VolumeGroup(models.Model):
         """ Get existing block devices. """
         devinfo = []
 
-        def getfile(basefir, fname):
+        def getfile(basedir, fname):
             fd = open( os.path.join( basedir, fname ), "rb")
             try:
                 return fd.read().strip()
