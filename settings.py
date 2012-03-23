@@ -33,23 +33,23 @@ ADMINS = (
     # ('Your Name', 'your_email@domain.com'),
 )
 
-LVM_CHOWN_GROUP="users"
+LVM_CHOWN_GROUP = "users"
 
 MANAGERS = ADMINS
 
 # Read database.ini
 DATABASES = {}
 
-conf = ConfigParser()
-conf.read("/etc/openattic/database.ini")
-for sec in conf.sections():
+__conf__ = ConfigParser()
+__conf__.read("/etc/openattic/database.ini")
+for sec in __conf__.sections():
     DATABASES[sec] = {
-        "ENGINE":   conf.get(sec, "engine"),
-        "NAME":     conf.get(sec, "name"),
-        "USER":     conf.get(sec, "user"),
-        "PASSWORD": conf.get(sec, "password"),
-        "HOST":     conf.get(sec, "host"),
-        "PORT":     conf.get(sec, "port"),
+        "ENGINE":   __conf__.get(sec, "engine"),
+        "NAME":     __conf__.get(sec, "name"),
+        "USER":     __conf__.get(sec, "user"),
+        "PASSWORD": __conf__.get(sec, "password"),
+        "HOST":     __conf__.get(sec, "host"),
+        "PORT":     __conf__.get(sec, "port"),
     }
 
 DBUS_IFACE_SYSTEMD = "org.openattic.systemd"
@@ -201,14 +201,14 @@ INSTALLED_APPS = [
     'ifconfig',
 ]
 
-def modprobe( name ):
+def modprobe( modname ):
     """ Try to import the named module, and if that works add it to INSTALLED_APPS. """
     try:
-        __import__( name )
+        __import__( modname )
     except ImportError:
         pass
     else:
-        INSTALLED_APPS.append( name )
+        INSTALLED_APPS.append( modname )
 
 import os
 INSTALLED_MODULES = os.listdir( join( PROJECT_ROOT, "installed_apps.d") )
