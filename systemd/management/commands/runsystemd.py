@@ -48,6 +48,7 @@ class SystemD(dbus.service.Object):
         self.job_id = 0
         self.jobs = {}
 
+        self.detected_modules = detected_modules
         self.modules = {}
         for module in detected_modules:
             try:
@@ -60,7 +61,7 @@ class SystemD(dbus.service.Object):
     @dbus.service.method(settings.DBUS_IFACE_SYSTEMD, in_signature="", out_signature="as")
     def get_detected_modules(self):
         """ Return a list of detected submodules, no matter if loaded or not. """
-        return [module.__name__ for module in INSTALLERS]
+        return [module.__name__ for module in self.detected_modules]
 
     @makeloggedfunc
     @dbus.service.method(settings.DBUS_IFACE_SYSTEMD, in_signature="", out_signature="as")
