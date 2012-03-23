@@ -20,7 +20,6 @@ import logging
 import inspect
 import SocketServer
 import socket
-import traceback
 
 from SimpleXMLRPCServer import list_public_methods, SimpleXMLRPCServer
 from SimpleXMLRPCServer import SimpleXMLRPCRequestHandler, SimpleXMLRPCDispatcher
