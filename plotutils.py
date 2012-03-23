@@ -18,6 +18,7 @@ from django.http       import HttpResponse
 from django.conf       import settings
 
 def piechart(fracs, heading=None, titles=None, legend=None, explode=None, colors=None):
+    """ Draw a pie chart using matplotlib. """
     import os
     if not os.path.exists(settings.MPLCONFIGDIR):
         os.makedirs(settings.MPLCONFIGDIR)
@@ -44,7 +45,7 @@ def piechart(fracs, heading=None, titles=None, legend=None, explode=None, colors
     patches = ax.pie(fracs, explode=explode, autopct='%1.1f%%', shadow=True, colors=colors)
 
     if titles:
-        ax.legend(patches[0], titles, loc=(0,-.05))
+        ax.legend(patches[0], titles, loc=(0, -.05))
 
     canvas.draw()
 
