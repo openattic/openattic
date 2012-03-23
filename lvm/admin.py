@@ -16,15 +16,13 @@
 
 from django.contrib import admin
 
+from lvm.models import VolumeGroup, LogicalVolume
+
 class VgAdmin(admin.ModelAdmin):
     list_display   = [ "name" ]
 
-
 class LvAdmin(admin.ModelAdmin):
     list_display   = [ 'name', 'vg', 'megs', 'filesystem', 'snapshot' ]
-
-
-from models import VolumeGroup, LogicalVolume
 
 admin.site.register( VolumeGroup,   VgAdmin )
 admin.site.register( LogicalVolume, LvAdmin )

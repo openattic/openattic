@@ -16,7 +16,7 @@
 
 from django.contrib import admin
 
-from models import PeerHost
+from peering.models import PeerHost
 
 class PeerHostAdmin(admin.ModelAdmin):
     list_display   = [ 'name', 'clusterpeer', 'address' ]

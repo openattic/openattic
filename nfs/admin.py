@@ -16,10 +16,9 @@
 
 from django.contrib import admin
 
+from nfs.models import Export
+
 class ExportAdmin(admin.ModelAdmin):
     list_display   = [ 'volume', 'address', 'options' ]
-
-
-from models import Export
 
 admin.site.register( Export, ExportAdmin )
