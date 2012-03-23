@@ -19,6 +19,7 @@ Ext.oa.ShareGridPanel = Ext.extend(Ext.grid.GridPanel, {
   api: null,
   form: {},
   texts: {},
+  window: {},
 
   initComponent: function(){
     var self = this;
@@ -30,6 +31,10 @@ Ext.oa.ShareGridPanel = Ext.extend(Ext.grid.GridPanel, {
       submit:  "{% trans 'Submit' %}",
       cancel:  "{% trans 'Cancel' %}",
       confirm: "{% trans 'Do you really want to delete export %s?' %}"
+    });
+    Ext.applyIf(this.window, {
+      height: 240,
+      width: 500,
     });
     if( typeof this.buttons === "undefined" ){
       this.buttons = [];
@@ -142,13 +147,12 @@ Ext.oa.ShareGridPanel = Ext.extend(Ext.grid.GridPanel, {
 
   showEditWindow: function(config, record){
     var self = this;
+    Ext.apply(config, this.window);
     var addwin = new Ext.Window(Ext.apply(config, {
       layout: "fit",
       defaults: {
         autoScroll: true
       },
-      height: 240,
-      width: 500,
       items: (function(){
         var form = {
           xtype: "form",
