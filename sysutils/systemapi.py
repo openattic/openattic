@@ -58,8 +58,8 @@ class SystemD(LockingPlugin):
         try:
             fd = open( "/etc/ntp.conf", "wb" )
             try:
-                    ntp = NTP.objects.all()[0]
-                    fd.write( "server %s\n" % ntp.server )
+                ntp = NTP.objects.all()[0]
+                fd.write( "server %s\n" % ntp.server )
             finally:
                 fd.close()
         finally:

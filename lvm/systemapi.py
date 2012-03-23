@@ -124,9 +124,9 @@ class SystemD(BasePlugin):
     @method(in_signature="ss", out_signature="i")
     def join_device_to_vg(self, device, vgname):
         devpath = os.path.join("/dev", device)
-        invoke(["/sbin/parted",devpath,"-s","mklabel", "gpt"])
-        invoke(["/sbin/parted",devpath,"--script","--","mkpart","primary","2048s","-1"])
-        devpath = devpath + "1"
+        invoke(["/sbin/parted", devpath, "-s", "mklabel", "gpt"])
+        invoke(["/sbin/parted", devpath, "--script", "--", "mkpart", "primary", "2048s", "-1"])
+        devpath += "1"
         invoke(["/sbin/pvcreate", devpath])
         self.pvs_time = 0
         self.lvs_time = 0
@@ -305,8 +305,6 @@ class SystemD(BasePlugin):
 
     @method(in_signature="s", out_signature="ia{ss}aa{ss}")
     def get_partitions(self, device):
-        from systemd.procutils import invoke
-
         ret, out, err = invoke(["parted", "-s", "-m", device, "unit", "MB", "print"], return_out_err=True, log=False)
 
         lines = out.split("\n")

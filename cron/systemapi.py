@@ -14,7 +14,7 @@
  *  GNU General Public License for more details.
 """
 
-from systemd       import invoke, logged, LockingPlugin, method
+from systemd       import logged, LockingPlugin, method
 from cron.models   import Cronjob
 
 @logged

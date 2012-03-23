@@ -14,11 +14,9 @@
  *  GNU General Public License for more details.
 """
 
-import re
-
 from systemd import invoke, logged, LockingPlugin, method
 
-from iscsi.models import Target, Lun
+from iscsi.models import Target
 from iscsi.conf   import settings as iscsi_settings
 
 @logged

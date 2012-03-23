@@ -14,13 +14,7 @@
  *  GNU General Public License for more details.
 """
 
-import os
-import socket
-
-from django.template.loader import render_to_string
-
 from systemd import invoke, logged, BasePlugin, method
-from clustering.models   import ServiceIP4
 
 @logged
 class SystemD(BasePlugin):

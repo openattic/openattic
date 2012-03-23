@@ -19,7 +19,6 @@ import socket
 from django.template.loader import render_to_string
 
 from systemd       import logged, invoke, LockingPlugin, method
-from pamauth       import PamBackend
 from samba.models  import Share
 from samba.conf    import settings as samba_settings
 

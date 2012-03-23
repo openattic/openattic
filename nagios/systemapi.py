@@ -100,8 +100,8 @@ class SystemD(LockingPlugin):
         # #comment
         # *<module>
         # :<chain> POLICY [<pkgs>:<bytes>]
-        # [24044474:51274509860] -A INPUT -i br0 -p tcp -m tcp --dport 3260 -m comment --comment "OPENATTIC:BR0:ISCSI:IN"
-        # [14523364:19639510396] -A OUTPUT -o br0 -p tcp -m tcp --sport 3260 -m comment --comment "OPENATTIC:BR0:ISCSI:OUT"
+        # [44474:274509860] -A INPUT -i br0 -p tcp -m tcp --dport 3260 -m comment --comment "OPENATTIC:BR0:ISCSI:IN"
+        # [23364:639510396] -A OUTPUT -o br0 -p tcp -m tcp --sport 3260 -m comment --comment "OPENATTIC:BR0:ISCSI:OUT"
         # COMMIT
 
         rgx = re.compile(

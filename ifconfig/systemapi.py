@@ -14,8 +14,6 @@
  *  GNU General Public License for more details.
 """
 
-import json
-
 from datetime import datetime
 from StringIO import StringIO
 from systemd         import invoke, logged, LockingPlugin, method
