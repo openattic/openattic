@@ -14,6 +14,8 @@
  *  GNU General Public License for more details.
 """
 
+from userprefs.models import UserProfile
+
 def project_url(request):
     from django.conf import settings
     return {'PROJECT_URL': settings.PROJECT_URL}
