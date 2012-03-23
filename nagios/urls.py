@@ -14,10 +14,7 @@
  *  GNU General Public License for more details.
 """
 
-from django.conf.urls.defaults import url, patterns, include
-from django.conf import settings
-
-from lvm import models
+from django.conf.urls.defaults import patterns
 
 urlpatterns = patterns('',
     ( r'(?P<service_id>\d+)/(?P<srcidx>\d+)\.png', 'nagios.views.graph' ),

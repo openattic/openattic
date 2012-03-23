@@ -14,7 +14,7 @@
  *  GNU General Public License for more details.
 """
 
-from django.conf.urls.defaults import url, patterns, include
+from django.conf.urls.defaults import patterns
 
 urlpatterns = patterns('',
     ( r'initprefs.js$',                 'userprefs.views.get_prefs' ),

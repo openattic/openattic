@@ -14,7 +14,7 @@
  *  GNU General Public License for more details.
 """
 
-from django.conf.urls.defaults import url, patterns, include
+from django.conf.urls.defaults import patterns
 
 urlpatterns = patterns('',
     ( r'mem/(?P<lv>\d+).png',        'lvm.views.lvmemchart' ),
