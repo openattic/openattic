@@ -14,6 +14,8 @@
  *  GNU General Public License for more details.
 """
 
+from django.contrib.humanize.templatetags.humanize import apnumber
+from django.template.defaultfilters import pluralize
 from django.utils.text import capfirst
 from django.db import models
 from django import forms
@@ -74,6 +76,6 @@ class MultiSelectField(models.Field):
     def contribute_to_class(self, cls, name):
         super(MultiSelectField, self).contribute_to_class(cls, name)
         if self.choices:
-            func = lambda self, fieldname = name, choicedict = dict(self.choices):",".join([choicedict.get(value,value) for value in getattr(self,fieldname)])
+            func = lambda self, fieldname = name, choicedict = dict(self.choices):",".join([choicedict.get(value, value) for value in getattr(self, fieldname)])
             setattr(cls, 'get_%s_display' % self.name, func)
 
