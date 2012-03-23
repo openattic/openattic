@@ -14,9 +14,9 @@
  *  GNU General Public License for more details.
 """
 
-from django.shortcuts  import render_to_response, get_object_or_404, get_list_or_404
+from django.shortcuts  import render_to_response
 from django.template   import RequestContext
-from django.http       import HttpResponse, HttpResponseRedirect, Http404
+from django.http       import HttpResponse
 from django.conf       import settings
 from django.contrib.auth            import authenticate, login, logout
 from django.contrib.auth.decorators import login_required
@@ -28,28 +28,28 @@ def do_login( request ):
     if "username" not in request.POST or "password" not in request.POST:
         # Request is invalid, but check if user is already authed, and if so: return success nevertheless
         if request.user.is_authenticated():
-            return HttpResponse( "{ success: true }", "application/json" );
-        return HttpResponse( "{ success: false, errormsg: 'invalid_request' }", "application/json" );
+            return HttpResponse( "{ success: true }", "application/json" )
+        return HttpResponse( "{ success: false, errormsg: 'invalid_request' }", "application/json" )
 
-    username = request.POST['username'];
-    password = request.POST['password'];
+    username = request.POST['username']
+    password = request.POST['password']
 
-    user = authenticate( username=username, password=password );
+    user = authenticate( username=username, password=password )
 
     if user is not None:
         if user.is_active:
-            login( request, user );
-            return HttpResponse( "{ success: true }", "application/json" );
+            login( request, user )
+            return HttpResponse( "{ success: true }", "application/json" )
         else:
-            return HttpResponse( "{ success: false, errormsg: 'disabled_account' }", "application/json" );
+            return HttpResponse( "{ success: false, errormsg: 'disabled_account' }", "application/json" )
     else:
-        return HttpResponse( "{ success: false, errormsg: 'invalid_credentials' }", "application/json" );
+        return HttpResponse( "{ success: false, errormsg: 'invalid_credentials' }", "application/json" )
 
 @login_required
 def do_logout( request ):
     """ Log out the user. """
-    logout( request );
-    return HttpResponse( "{ success: true }", "application/json" );
+    logout( request )
+    return HttpResponse( "{ success: true }", "application/json" )
 
 def index(request):
     request.META["CSRF_COOKIE_USED"] = True
