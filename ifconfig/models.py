@@ -131,7 +131,7 @@ class NetDevice(models.Model):
 
         for interface in NetDevice.objects.all():
             if interface.childdevs and interface.ipaddress_set.filter(configure=True).count() > 0:
-                    raise ValueError(_("Interface %s has children and has an address") % interface.devname)
+                raise ValueError(_("Interface %s has children and has an address") % interface.devname)
 
             if interface.dhcp:
                 if interface.ipaddress_set.filter(configure=True).count() > 0:
@@ -273,83 +273,22 @@ class NetDevice(models.Model):
 
     def get_addresses(self, af=None):
         addrs = []
-        ifaddrs = netifaces.ifaddresses(iface)
+        ifaddrs = netifaces.ifaddresses(self.devname)
         if af is None:
-            if self.family:
-                af = self.family
-            else:
-                af = (socket.AF_INET, socket.AF_INET6)
+            af = (socket.AF_INET, socket.AF_INET6)
         for ifaddrfam in ifaddrs:
             for addrinfo in ifaddrs[ifaddrfam]:
                 if ifaddrfam not in af or addrinfo["addr"] in addrs:
                     continue
                 curaddr = netaddr.IPNetwork( "%s/%s" % ( addrinfo["addr"].split('%')[0], addrinfo["netmask"] ) )
-                curaddr.iface  = iface
+                curaddr.iface  = self.devname
                 curaddr.family = ifaddrfam
 
                 addrs.append( curaddr )
         return addrs
 
     @classmethod
-    def write_interfaces(self):
+    def write_interfaces(cls):
         ifconfig = dbus.SystemBus().get_object(settings.DBUS_IFACE_SYSTEMD, "/ifconfig")
         ifconfig.write_interfaces()
 
-
-def get_addresses(af=None, loopback=False, linklocal=False, cluster=True):
-    addrs = []
-
-    if af is None:
-        af = (socket.AF_INET, socket.AF_INET6)
-    elif not isinstance(af, (tuple, list)):
-        af = (af,)
-
-    for iface in netifaces.interfaces():
-        ifaddrs = netifaces.ifaddresses(iface)
-        for ifaddrfam in ifaddrs:
-            for addrinfo in ifaddrs[ifaddrfam]:
-                if ifaddrfam not in af or addrinfo["addr"] in addrs:
-                    continue
-                curaddr = netaddr.IPNetwork( "%s/%s" % ( addrinfo["addr"].split('%')[0], addrinfo["netmask"] ) )
-                curaddr.iface  = iface
-                curaddr.family = ifaddrfam
-
-                if not loopback  and curaddr.ip.is_loopback():
-                    continue
-                if not linklocal and curaddr.ip.is_link_local():
-                    continue
-
-                addrs.append( curaddr )
-
-    if cluster:
-        for claddr in ClusterAddr.objects.all():
-            ipnet = netaddr.IPNetwork( "%s/%d" % ( claddr.address, claddr.prefixlen ) )
-            ipnet.iface = "unknown"
-            ipnet.family = claddr.family
-            if ipnet not in addrs:
-                addrs.append( ipnet )
-
-    return addrs
-
-def get_host_address(af=None, loopback=False, linklocal=False, cluster=True):
-    hostaddrs = set([ netaddr.IPAddress(info[4][0]) for info in socket.getaddrinfo( socket.gethostname(), af ) ])
-    for tryaddr in get_addresses(af, loopback, linklocal, cluster):
-        if tryaddr.ip in hostaddrs:
-            return tryaddr
-
-
-def get_address_choices(af=None, loopback=False, linklocal=False, cluster=True):
-    choices = []
-    protonames = dict(AF_CHOICES)
-    for addr in get_addresses(af, loopback, linklocal, cluster):
-        choices.append(( str(addr.ip), "%s (%s, %s)" % (str(addr), protonames[addr.family], addr.iface) ))
-    return choices
-
-def get_network_choices(af=None, loopback=False, linklocal=False, cluster=True):
-    choices = []
-    protonames = dict(AF_CHOICES)
-    for addr in get_addresses(af, loopback, linklocal, cluster):
-        choices.append(( str(addr.network), "%s/%d (%s, %s)" % (
-            str(addr.network), addr.prefixlen, protonames[addr.family], addr.iface
-            ) ))
-    return choices
