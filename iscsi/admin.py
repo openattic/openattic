@@ -23,7 +23,7 @@ class LunAdmin(admin.ModelAdmin):
     list_display   = [ 'number', 'target', 'volume', 'ltype' ]
 
 
-from models import Target, Lun, Initiator
+from iscsi.models import Target, Lun, Initiator
 
 admin.site.register( Target, TargetAdmin )
 admin.site.register( Lun,    LunAdmin    )
