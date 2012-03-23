@@ -208,7 +208,7 @@ class LogicalVolume(models.Model):
         """ Iterate all the shares configured for this LV. """
         for relobj in ( self._meta.get_all_related_objects() + self._meta.get_all_related_many_to_many_objects() ):
             if app_label  and relobj.model._meta.app_label != app_label:
-                continue;
+                continue
 
             if not hasattr( relobj.model, "share_type" ):
                 # not a share
@@ -225,7 +225,7 @@ class LogicalVolume(models.Model):
         mc = []
         for relobj in ( self._meta.get_all_related_objects() + self._meta.get_all_related_many_to_many_objects() ):
             if app_label  and relobj.model._meta.app_label != app_label:
-                continue;
+                continue
 
             if not issubclass( relobj.model, LVChainedModule ):
                 # not a mod
@@ -233,7 +233,7 @@ class LogicalVolume(models.Model):
 
             mc.extend( relobj.model.objects.filter( **{ relobj.field.name: self } ) )
 
-        mc.sort(lambda a,b: cmp(a.ordering, b.ordering))
+        mc.sort(lambda a, b: cmp(a.ordering, b.ordering))
         return mc
 
     @property
@@ -456,7 +456,7 @@ class LVChainedModule(models.Model):
         return
 
     class Meta:
-        unique_together=("volume", "ordering")
+        unique_together = ("volume", "ordering")
         abstract = True
 
     def save( self, *args, **kwargs ):

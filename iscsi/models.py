@@ -18,7 +18,7 @@ import dbus
 
 from django.db   import models
 from django.conf import settings
-from django.utils.translation   import ugettext_noop, ugettext_lazy as _
+from django.utils.translation import ugettext_lazy as _
 
 from lvm.models  import LogicalVolume
 from lvm.signals import post_shrink, post_grow
@@ -56,13 +56,12 @@ class Target(models.Model):
     def save(self, *args, **kwargs):
         if self.id is None:
             self._iscsi.target_new(0, self.iscsiname)
-        
+
         ret = models.Model.save(self, *args, **kwargs)
         self._iscsi.writeconf()
         return ret
 
     def delete( self ):
-        iscsi = dbus.SystemBus().get_object(settings.DBUS_IFACE_SYSTEMD, "/iscsi")
         ret = models.Model.delete(self)
         self._iscsi.target_delete(self.tid)
         self._iscsi.writeconf()
@@ -144,7 +143,6 @@ class ChapUser(models.Model):
         return ret
 
     def delete( self ):
-        iscsi = dbus.SystemBus().get_object(settings.DBUS_IFACE_SYSTEMD, "/iscsi")
         ret = models.Model.delete(self)
         self.target._iscsi.target_delete_user(self.target.tid, self.usertype, self.username)
         self.target._iscsi.writeconf()

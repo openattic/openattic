@@ -67,4 +67,4 @@ class UserPreference(models.Model):
     value   = models.TextField()
 
     class Meta:
-        unique_together=("profile", "setting")
+        unique_together = ("profile", "setting")
