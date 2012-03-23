@@ -250,6 +250,17 @@ Description: Samba module for openATTIC
  that run the Microsoft Windows family of operating systems. This package
  provides configuration facilities for Samba Shares.
 
+Package: openattic-module-cron
+Architecture: all
+Depends: ${misc:Depends}, openattic-module-lvm, cron
+Description: Samba module for openATTIC
+ openATTIC is a storage management system based upon Open Source tools with
+ a comprehensive user interface that allows you to create, share and backup
+ storage space on demand.
+ .
+ Cron is a service that provides scheduled task execution. This package
+ provides configuration facilities for scheduled tasks (a.k.a. Cron jobs).
+
 Package: openattic-module-ftp-mysql
 Architecture: all
 Depends: ${misc:Depends}, openattic-module-lvm,
