@@ -2,7 +2,11 @@
 max-line-length=120
 
 [TYPECHECK]
-generated-members=objects,id,_meta
+generated-members=objects,id,_meta,DoesNotExist
+
+[MESSAGES CONTROL]
+disable=E1101,E1102,W0142,C0111,C0103,R0201,W0613
 
 [REPORTS]
-reports=n
+reports=y
+include-ids=y
