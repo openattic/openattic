@@ -14,14 +14,12 @@
  *  GNU General Public License for more details.
 """
 
-import os, sys
+import os
 import traceback
 import logging
 
 from logging.handlers import SysLogHandler
-from functools import wraps
 from threading import Lock
-from os.path import dirname, abspath
 from optparse import make_option
 
 import gobject
