@@ -486,7 +486,7 @@ Ext.oa.Lvm__LogicalVolume_Panel = Ext.extend(Ext.Panel, {
                           if( self.ownerCt.ownerCt.megabyte.getValue() == '0' ){
                            Ext.Msg.alert('Warning',
                               interpolate(
-                                "{% trans "Volume %s could not resized to 0 Megaybytes." %}",
+                                "{% trans 'Volume %s could not resized to 0 Megabytes.' %}",
                                 [sel.data.name] ));
                             return;
                           }
