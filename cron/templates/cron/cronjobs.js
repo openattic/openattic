@@ -19,6 +19,9 @@ Ext.oa.Cron__Job_Panel = Ext.extend(Ext.oa.ShareGridPanel, {
   api: cron__Cronjob,
   id: "cron__job_panel_inst",
   title: "Cron Jobs",
+  window: {
+    height: 350
+  },
   columns: [{
     header: "{% trans 'Minute' %}",
     width: 30,

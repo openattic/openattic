@@ -42,6 +42,9 @@ Ext.oa.Auth__User_Panel = Ext.extend(Ext.oa.ShareGridPanel, {
   api: auth__User,
   id: "auth__user_panel_inst",
   title: "{% trans 'Users' %}",
+  window: {
+    height: 350
+  },
   texts: {
     add:     "{% trans 'Add User' %}",
     edit:    "{% trans 'Edit User' %}",

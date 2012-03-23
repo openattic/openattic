@@ -19,6 +19,9 @@ Ext.oa.Http__Export_Panel = Ext.extend(Ext.oa.ShareGridPanel, {
   api: http__Export,
   id: "http__export_panel_inst",
   title: "HTTP",
+  window: {
+    height: 150
+  },
   storefields: [{
     name: 'volumename', mapping: 'volume', convert: function( val, row ){ return val.name; }
   }],
