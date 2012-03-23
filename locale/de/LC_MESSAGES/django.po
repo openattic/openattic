@@ -8,8 +8,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2012-03-22 13:10+0100\n"
-"PO-Revision-Date: 2012-03-22 13:10\n"
+"POT-Creation-Date: 2012-03-23 13:10+0100\n"
+"PO-Revision-Date: 2012-03-23 13:10\n"
 "Last-Translator: Michael Ziegler <michael.ziegler@it-novum.com>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
 "MIME-Version: 1.0\n"
@@ -19,30 +19,38 @@ msgstr ""
 "Plural-Forms: nplurals=2; plural=(n != 1)\n"
 "X-Translated-Using: django-rosetta 0.6.0\n"
 
-#: apikey.js:28 apikey.js.py:190
+#: apikey.js:39 apikey.js.py:116
 msgid "API Keys"
 msgstr "API-Schlüssel"
 
-#: apikey.js:33 auth__user.js:33 sharegridpanel.js:22
-msgid "Reload"
-msgstr "Neu laden"
+#: apikey.js:41
+msgid "Add Key"
+msgstr "Schlüssel hinzufügen"
 
-#: apikey.js:38
+#: apikey.js:42
+msgid "Edit Key"
+msgstr "Schlüssel bearbeiten"
+
+#: apikey.js:43
+msgid "Delete Key"
+msgstr "Schlüssel löschen"
+
+#: apikey.js:55
 msgid "Show API URL"
 msgstr "API-URL anzeigen"
 
-#: apikey.js:45
+#: apikey.js:62
 msgid "API URL"
 msgstr "API-URL"
 
-#: apikey.js:46
+#: apikey.js:63
 msgid ""
 "Use this URL to connect to the openATTIC API using the API Key you selected."
 msgstr ""
 "Benutzen Sie diese URL, um die openATTIC-API mit dem gewählten Schlüssel zu "
 "nutzen."
 
-#: apikey.js:47
+#: apikey.js:64
 msgid ""
 "Note that the input field only allows for easier copy-paste, any value you "
 "enter here will be ignored."
@@ -50,119 +58,97 @@ msgstr ""
 "Das Eingabefeld dient nur dazu, das Herauskopieren der URL zu vereinfachen. "
 "Sämtliche Eingaben, die Sie hier machen, werden ignoriert."
 
-#: apikey.js:55 apikey.js.py:59
-msgid "Add Key"
-msgstr "Schlüssel hinzufügen"
-
-#: apikey.js:74 apikey.js.py:164 auth__userfield.js:27
-msgid "Owner"
-msgstr "Besitzer"
-
-#: apikey.js:84 auth__userfield.js:39
-msgid "Select..."
-msgstr "Bitte auswählen..."
-
-#: apikey.js:90 apikey.js.py:160
+#: apikey.js:73 apikey.js.py:95
 msgid "Description"
 msgstr "Beschreibung"
 
-#: apikey.js:95 apikey.js.py:168 auth__user.js:77 auth__user.js.py:200
-#: auth__user.js.py:318
+#: apikey.js:77 auth__userfield.js:27
+msgid "Owner"
+msgstr "Besitzer"
+
+#: apikey.js:81 apikey.js.py:100 auth__user.js:67 auth__user.js.py:114
 msgid "Active"
 msgstr "Aktiv"
 
-#: apikey.js:130
-msgid "Delete Key"
-msgstr "Schlüssel löschen"
-
-#: auth__user.js:28
+#: auth__user.js:44
 msgid "Users"
 msgstr "Benutzer"
 
-#: auth__user.js:38 auth__user.js.py:42
+#: auth__user.js:46
 msgid "Add User"
 msgstr "Benutzer hinzufügen"
 
-#: auth__user.js:55 auth__user.js.py:175 auth__user.js.py:266
-#: auth__user.js:302
-msgid "User Name"
-msgstr "Benutzername"
+#: auth__user.js:47
+msgid "Edit User"
+msgstr "Benutzer bearbeiten"
 
-#: auth__user.js:59 auth__user.js.py:272
-msgid "Password"
-msgstr "Passwort"
-
-#: auth__user.js:64 auth__user.js.py:180 auth__user.js.py:306
-msgid "First Name"
-msgstr "Vorname"
-
-#: auth__user.js:68 auth__user.js.py:186 auth__user.js.py:310
-msgid "Last Name"
-msgstr "Nachname"
-
-#: auth__user.js:72 auth__user.js.py:192
-msgid "E-Mail"
-msgstr "E-Mail"
-
-#: auth__user.js:82 auth__user.js.py:206 auth__user.js.py:323
-msgid "Staff"
-msgstr "Personal"
-
-#: auth__user.js:87 auth__user.js.py:212
-msgid "SuperUser"
-msgstr "Administrator"
-
-#: auth__user.js:123 auth__user.js.py:131
+#: auth__user.js:48 auth__user.js.py:136
 msgid "Delete User"
 msgstr "Benutzer löschen"
 
-#: auth__user.js:132
+#: auth__user.js:51 auth__user.js.py:92
+msgid "User Name"
+msgstr "Benutzername"
+
+#: auth__user.js:55 auth__user.js.py:101
+msgid "First Name"
+msgstr "Vorname"
+
+#: auth__user.js:59 auth__user.js.py:105
+msgid "Last Name"
+msgstr "Nachname"
+
+#: auth__user.js:63
+msgid "E-Mail Address"
+msgstr "E-Mail-Adresse"
+
+#: auth__user.js:72 auth__user.js.py:119
+msgid "Staff"
+msgstr "Personal"
+
+#: auth__user.js:77
+msgid "SU"
+msgstr "Admin"
+
+#: auth__user.js:82
+msgid "Last Login"
+msgstr "Letzter Login"
+
+#: auth__user.js:96
+msgid "Password"
+msgstr "Passwort"
+
+#: auth__user.js:109
+msgid "E-Mail"
+msgstr "E-Mail"
+
+#: auth__user.js:124
+msgid "SuperUser"
+msgstr "Administrator"
+
+#: auth__user.js:137
 #, python-format
 msgid "User %(user)s is the owner of %(volcount)s volumes."
 msgstr "Benutzer %(user)s besitzt noch %(volcount)s Volumes."
 
-#: auth__user.js:138
+#: auth__user.js:143
 msgid "Unmount"
 msgstr "Unmount"
 
-#: auth__user.js:140
+#: auth__user.js:145
 #, python-format
 msgid "Do you really want to delete user %s?"
 msgstr "Wollen Sie wirklich den Benutzer %s löschen?"
 
-#: auth__user.js:155
-msgid "Edit"
-msgstr "Bearbeiten"
-
-#: auth__user.js:162
-msgid "Edit User"
-msgstr "Benutzer bearbeiten"
-
-#: auth__user.js:218
-msgid "Save"
-msgstr "Speichern"
-
-#: auth__user.js:246 auth__user.js.py:253
-msgid "Change Password"
-msgstr "Passwort ändern"
-
-#: auth__user.js:314
-msgid "E-Mail Address"
-msgstr "E-Mail-Adresse"
-
-#: auth__user.js:328
-msgid "SU"
-msgstr "Admin"
-
-#: auth__user.js:333
-msgid "Last Login"
-msgstr "Letzter Login"
-
-#: auth__user.js:354
+#: auth__user.js:169
 msgid "User Management"
 msgstr "Benutzer-Verwaltung"
 
-#: index_ext_authed.html:101
+#: auth__userfield.js:40
+msgid "Select..."
+msgstr "Bitte auswählen..."
+
+#: index_ext_authed.html:107
 msgid "Do you really wish to remove this button from the toolbar?"
 msgstr "Wollen Sie diesen Button wirklich aus der toolbar-Leiste entfernen?"
 
@@ -263,30 +249,43 @@ msgstr "Zeige Monitoring Graph mit Farbverlauf"
 msgid "Show graph for storage utilization"
 msgstr "Blende Graph für Speicherausnutzung ein"
 
-#: sharegridpanel.js:23
+#: sharegridpanel.js:26
+msgid "Reload"
+msgstr "Neu laden"
+
+#: sharegridpanel.js:27
 msgid "Add Export"
 msgstr "Export hinzufügen"
 
-#: sharegridpanel.js:24
+#: sharegridpanel.js:28
 msgid "Edit Export"
 msgstr "Export bearbeiten"
 
-#: sharegridpanel.js:25
+#: sharegridpanel.js:29
 msgid "Delete Export"
 msgstr "Export löschen"
 
-#: sharegridpanel.js:26
+#: sharegridpanel.js:30
 msgid "Submit"
 msgstr "Speichern"
 
-#: sharegridpanel.js:27
+#: sharegridpanel.js:31
 msgid "Cancel"
 msgstr "Abbrechen"
 
-#: sharegridpanel.js:28
+#: sharegridpanel.js:32
 #, python-format
 msgid "Do you really want to delete export %s?"
 msgstr "Wollen Sie wirklich den Export %s löschen?"
+
+#~ msgid "Edit"
+#~ msgstr "Bearbeiten"
+
+#~ msgid "Save"
+#~ msgstr "Speichern"
+
+#~ msgid "Change Password"
+#~ msgstr "Passwort ändern"
 
 #~ msgid "last Name"
 #~ msgstr "Nachname"
