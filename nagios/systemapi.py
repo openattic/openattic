@@ -105,8 +105,9 @@ class SystemD(LockingPlugin):
         # COMMIT
 
         rgx = re.compile(
-            r'^\[(?P<pkgs>\d+):(?P<bytes>\d+)\] -A (?P<chain>INPUT|OUTPUT)(?: -[io] (?P<iface>\w+\d*))? -p (?P<proto>tcp|udp|all) '
-            r'-m (?:tcp|udp) --[ds]port (?P<portno>\d+) -m comment --comment "(?P<comment>[^"]+)"$' )
+            r'^\[(?P<pkgs>\d+):(?P<bytes>\d+)\] -A (?P<chain>INPUT|OUTPUT)(?: -[io] (?P<iface>\w+\d*))? '
+            r'-p (?P<proto>tcp|udp|all) -m (?:tcp|udp) --[ds]port (?P<portno>\d+) '
+            r'-m comment --comment "(?P<comment>[^"]+)"$' )
 
         ret, out, err = invoke(["iptables-save", "-c"], log=False, return_out_err=True)
 
