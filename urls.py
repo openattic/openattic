@@ -14,7 +14,7 @@
  *  GNU General Public License for more details.
 """
 
-from django.conf.urls.defaults import *
+from django.conf.urls.defaults   import include, patterns
 from django.views.generic.simple import direct_to_template
 
 from django.contrib import admin
