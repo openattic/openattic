@@ -17,6 +17,7 @@
 from SimpleXMLRPCServer import list_public_methods
 
 import unittest
+import logging
 from django.conf  import settings
 
 def makeTest():

@@ -14,9 +14,6 @@
  *  GNU General Public License for more details.
 """
 
-import socket
-
-from django.conf import settings
 from django.db import models
 
 
@@ -285,7 +282,7 @@ class ModelHandler(BaseHandler):
         else:
             errdict = {}
             for errfld in forminst.errors:
-               errdict[errfld] = "\n".join( forminst.errors[errfld] )
+                errdict[errfld] = "\n".join( forminst.errors[errfld] )
             return { "success": False, "errors": errdict }
 
     set_ext.EXT_flags = {"formHandler": True}

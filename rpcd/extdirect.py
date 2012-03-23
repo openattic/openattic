@@ -20,7 +20,6 @@ import logging
 from functools import wraps
 
 from django.conf import settings
-from django.contrib.auth.models import User
 
 from djextdirect.provider import Provider as BaseProvider, getname
 
