@@ -3,7 +3,9 @@
 set -e
 
 if [ "$1" = "install" ]; then
-    adduser --system --shell /bin/bash --quiet --home /var/lib/openattic --group openattic
+    if ! getent passwd openattic ; then
+        adduser --system --shell /bin/bash --quiet --home /var/lib/openattic --group openattic
+    fi
     adduser www-data openattic
     adduser openattic www-data
 fi
