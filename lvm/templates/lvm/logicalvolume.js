@@ -68,7 +68,7 @@ Ext.oa.Lvm__LogicalVolume_Panel = Ext.extend(Ext.Panel, {
             listeners: {
               select: function(self, record, index){
                 self.ownerCt.volume_free_megs = null;
-                self.ownerCt.sizelabel.setText( "{% trans "Querying data..." %}" );
+                self.ownerCt.sizelabel.setText( "{% trans 'Querying data...' %}" );
                 lvm__VolumeGroup.get_free_megs( record.data.id, function( provider, response ){
                   self.ownerCt.volume_free_megs = response.result;
                   self.ownerCt.sizelabel.setText( String.format( "Max. {0} MB", response.result ) );
@@ -132,18 +132,18 @@ Ext.oa.Lvm__LogicalVolume_Panel = Ext.extend(Ext.Panel, {
               }
               var free = self.ownerCt.ownerCt.volume_free_megs;
               if( free === null || typeof free == "undefined" ){
-                Ext.Msg.alert("{% trans "Error" %}",
-                  "{% trans "Please wait for the query for available space to complete." %}");
+                Ext.Msg.alert("{% trans 'Error' %}",
+                  "{% trans 'Please wait for the query for available space to complete.' %}");
                 return;
               }
               if( free < self.ownerCt.ownerCt.sizefield.getValue() ){
-                Ext.Msg.alert("{% trans "Error" %}",
-                  interpolate( "{% trans "Your volume exceeds the available capacity of %s MB." %}",
+                Ext.Msg.alert("{% trans 'Error' %}",
+                  interpolate( "{% trans 'Your volume exceeds the available capacity of %s MB.' %}",
                     [response.result]) );
                 return;
               }
               var progresswin = new Ext.Window({
-                title: "{% trans "Adding Volume" %}",
+                title: "{% trans 'Adding Volume' %}",
                 layout: "fit",
                 height: 250,
                 width: 400,
@@ -277,28 +277,28 @@ Ext.oa.Lvm__LogicalVolume_Panel = Ext.extend(Ext.Panel, {
             if( !sel.data.filesystem ){
               Ext.Msg.alert('Mounted',
                 interpolate(
-                  "{% trans "Volume %s does not have a file system and therefore cannot be mounted." %}",
+                  "{% trans 'Volume %s does not have a file system and therefore cannot be mounted.' %}",
                   [sel.data.name] ));
               return;
             }
             lvm__LogicalVolume.is_mounted( sel.data.id, function(provider, response){
               if( response.result ){
-                Ext.Msg.alert('Mounted', interpolate( "{% trans "Volume %s is already mounted." %}", [sel.data.name] ));
+                Ext.Msg.alert('Mounted', interpolate( "{% trans 'Volume %s is already mounted.' %}", [sel.data.name] ));
                 return;
               }
               lvm__LogicalVolume.is_in_standby( sel.data.id, function(provider, response){
                 if( response.result ){
                   Ext.Msg.alert('Mounted',
-                    interpolate( "{% trans "Volume %s cannot be mounted at the current time." %}", [sel.data.name] ));
+                    interpolate( "{% trans 'Volume %s cannot be mounted at the current time.' %}", [sel.data.name] ));
                   return;
                 }
                 lvm__LogicalVolume.mount( sel.data.id, function(provider, response){
                   if( response.type === "exception" )
                     Ext.Msg.alert('Mounted', interpolate(
-                      "{% trans "Volume %s could not be mounted, please check the logs." %}", [sel.data.name] ));
+                      "{% trans 'Volume %s could not be mounted, please check the logs.' %}", [sel.data.name] ));
                   else
                     Ext.Msg.alert('Mounted', interpolate(
-                      "{% trans "Volume %s has been mounted." %}", [sel.data.name] ));
+                      "{% trans 'Volume %s has been mounted.' %}", [sel.data.name] ));
                     lvmGrid.store.reload();
                 } );
               } );
@@ -353,7 +353,7 @@ Ext.oa.Lvm__LogicalVolume_Panel = Ext.extend(Ext.Panel, {
           if( sm.hasSelection() ){
             var sel = sm.selections.items[0];
             var shareswin = new Ext.Window({
-              title: "{% trans "Add Volume" %}",
+              title: "{% trans 'Add Volume' %}",
               layout: "fit",
               height: 300,
               width: 500,
@@ -444,25 +444,25 @@ Ext.oa.Lvm__LogicalVolume_Panel = Ext.extend(Ext.Panel, {
                     maskRe: /[0-9]/,
                     listeners: {
                       change: function change(event) {
+                        if(this.ownerCt.megabyte.getValue() > response.result){
+                          this.ownerCt.megabyte.setValue(response.result);
+                          this.ownerCt.remaining_megabyte.setValue(0);
+                        }
+                        this.ownerCt.slider.setValue(this.ownerCt.megabyte.getValue(), false);
+                        var num = response.result - this.ownerCt.megabyte.getValue();
+                        this.ownerCt.remaining_megabyte.setValue(num);
+                      },
+                      specialkey: function(f,e){
+                        if(e.getKey()==e.ENTER){
                           if(this.ownerCt.megabyte.getValue() > response.result){
                             this.ownerCt.megabyte.setValue(response.result);
-                            this.ownerCt.remaining_megabyte.setvalue(0);
+                            this.ownerCt.remaining_megabyte.setValue(0);
                           }
                           this.ownerCt.slider.setValue(this.ownerCt.megabyte.getValue(), false);
                           var num = response.result - this.ownerCt.megabyte.getValue();
                           this.ownerCt.remaining_megabyte.setValue(num);
-                      },  
-                       specialkey: function(f,e){  
-                           if(e.getKey()==e.ENTER){  
-                              if(this.ownerCt.megabyte.getValue() > response.result){
-                                this.ownerCt.megabyte.setValue(response.result);
-                                this.ownerCt.remaining_megabyte.setValue(0);
-                              }
-                              this.ownerCt.slider.setValue(this.ownerCt.megabyte.getValue(), false);
-                              var num = response.result - this.ownerCt.megabyte.getValue();
-                              this.ownerCt.remaining_megabyte.setValue(num);
-                              }  
-                       } 
+                        }
+                      }
                     }
                   },{
                     xtype: 'textfield',
@@ -500,7 +500,9 @@ Ext.oa.Lvm__LogicalVolume_Panel = Ext.extend(Ext.Panel, {
                           });
                           resizewin.hide();
                           progresswin.show();
-                          lvm__LogicalVolume.set( sel.data.id, {"megs": parseFloat(self.ownerCt.ownerCt.megabyte.getValue())}, function(provider, response){
+                          lvm__LogicalVolume.set( sel.data.id, {
+                            "megs": parseFloat(self.ownerCt.ownerCt.megabyte.getValue())
+                          }, function(provider, response){
                             lvmGrid.store.reload();
                             progresswin.hide();
                           } );
@@ -526,7 +528,7 @@ Ext.oa.Lvm__LogicalVolume_Panel = Ext.extend(Ext.Panel, {
         icon: MEDIA_URL + "/icons2/16x16/actions/remove.png",
         handler: this.deleteVolume,
         scope: lvmGrid
-      }],                                 
+      }],
       keys: [{ scope: this, key: [Ext.EventObject.DELETE], handler: this.deleteVolume},{key: [65], handler: addVolume}],
       items: [{
         xtype: 'grid',
