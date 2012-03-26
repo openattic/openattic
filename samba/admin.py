@@ -16,6 +16,6 @@
 
 from django.contrib import admin
 
-from models import Share
+from samba.models import Share
 
 admin.site.register( Share )
