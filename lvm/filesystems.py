@@ -223,7 +223,7 @@ class Ntfs(FileSystem):
         return self.lv.lvm.ntfs_format( self.lv.path,
             self.lv.owner.username, lvm_settings.CHOWN_GROUP, self.mountpoints[0] )
 
-    def resize(self, grow):
+    def resize(self, jid, grow):
         return self.lv.lvm.ntfs_resize( jid, self.lv.path, self.lv.megs, grow )
 
 

@@ -158,7 +158,7 @@ class LogicalVolume(models.Model):
     megs        = models.IntegerField(_("Size in MB"))
     vg          = models.ForeignKey(VolumeGroup, blank=True)
     snapshot    = models.ForeignKey("self", blank=True, null=True)
-    filesystem  = models.CharField(max_length=20, blank=True, choices=[(fs.name, fs.desc) for fs in FILESYSTEMS] )
+    filesystem  = models.CharField(max_length=20, blank=True, choices=[(__fs.name, __fs.desc) for __fs in FILESYSTEMS] )
     formatted   = models.BooleanField(default=False, editable=False)
     owner       = models.ForeignKey(User, blank=True)
     fswarning   = models.IntegerField(_("Warning Level (%)"),  default=75 )

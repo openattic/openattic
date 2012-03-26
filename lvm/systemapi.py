@@ -260,7 +260,8 @@ class SystemD(BasePlugin):
 
     @method(in_signature="isib", out_signature="")
     def ntfs_resize(self, jid, devpath, megs, grow):
-        self.job_add_command(jid, ["/sbin/ntfsresize", "--force", "--size", ("%dM" % megs), devpath], stdin="y\n")
+        # TODO: Sometimes ntfsresize asks for confirmation interactively, how do we handle that?
+        self.job_add_command(jid, ["/sbin/ntfsresize", "--force", "--size", ("%dM" % megs), devpath])
 
     @method(in_signature="", out_signature="a{ss}")
     def modprobe_dmsnapshot_version(self):
