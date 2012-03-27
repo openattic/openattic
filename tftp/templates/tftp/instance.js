@@ -29,7 +29,15 @@ Ext.oa.Tftp__Instance_Panel = Ext.extend(Ext.oa.ShareGridPanel, {
     dataIndex: "address_ip"
   }],
   storefields: [{
-    name: "address_ip", mapping: "address", convert: function(val){if(val) return val.address; else return ""}
+    name: "address_ip",
+    mapping: "address",
+    convert: function(val){
+      "use strict";
+      if(val){
+        return val.address;
+      }
+      return "";
+    }
   }],
   form: {
     items: [
@@ -37,6 +45,7 @@ Ext.oa.Tftp__Instance_Panel = Ext.extend(Ext.oa.ShareGridPanel, {
         xtype: 'volumefield',
         listeners: {
           select: function(self, record, index){
+            "use strict";
             lvm__LogicalVolume.get( record.data.id, function( provider, response ){
               self.ownerCt.dirfield.setValue( response.result.fs.mountpoints[0] );
               self.ownerCt.dirfield.enable();
@@ -80,6 +89,7 @@ Ext.reg("tftp__instance_panel", Ext.oa.Tftp__Instance_Panel);
 Ext.oa.Tftp__Instance_Module = Ext.extend(Object, {
   panel: "tftp__instance_panel",
   prepareMenuTree: function(tree){
+    "use strict";
     tree.appendToRootNodeById("menu_shares", {
       text: "{% trans 'Embedded (TFTP)' %}",
       leaf: true,

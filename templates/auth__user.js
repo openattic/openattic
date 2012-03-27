@@ -16,6 +16,7 @@
 Ext.namespace("Ext.oa");
 
 function wrap_auth_User_set(form, options, action){
+  "use strict";
   // This is a somewhat questionable method to submit the form, but Django refuses
   // to validate without last_login/date_joined being set, which is not quite what I want either.
   var params = {
@@ -25,7 +26,7 @@ function wrap_auth_User_set(form, options, action){
     email:        form.email.value,
     is_active:    form.is_active.checked,
     is_staff:     form.is_staff.checked,
-    is_superuser: form.is_superuser.checked,
+    is_superuser: form.is_superuser.checked
   };
   if( form.password.value !== "" ){
     params.password = form.password.value;
@@ -48,7 +49,7 @@ Ext.oa.Auth__User_Panel = Ext.extend(Ext.oa.ShareGridPanel, {
   texts: {
     add:     "{% trans 'Add User' %}",
     edit:    "{% trans 'Edit User' %}",
-    remove:  "{% trans 'Delete User' %}",
+    remove:  "{% trans 'Delete User' %}"
   },
   columns: [{
     header: "{% trans 'User Name' %}",
@@ -130,6 +131,7 @@ Ext.oa.Auth__User_Panel = Ext.extend(Ext.oa.ShareGridPanel, {
     }]
   },
   deleteFunction: function(){
+    "use strict";
     var sm = this.getSelectionModel();
     var self = this;
     if( sm.hasSelection() ){
@@ -148,7 +150,7 @@ Ext.oa.Auth__User_Panel = Ext.extend(Ext.oa.ShareGridPanel, {
               "{% trans 'Do you really want to delete user %s?' %}",
               [sel.data.username]),
             function(btn){
-              if(btn == 'yes'){
+              if(btn === 'yes'){
                 self.api.remove( sel.data.id, function(provider, response){
                   self.store.reload();
                 } );
@@ -168,6 +170,7 @@ Ext.oa.Auth__User_Module = Ext.extend(Object, {
   panel: "auth__user_panel",
 
   prepareMenuTree: function(tree){
+    "use strict";
     tree.appendToRootNodeById("menu_system", {
       text: "{% trans 'User Management' %}",
       icon: MEDIA_URL + '/icons2/22x22/apps/config-users.png',

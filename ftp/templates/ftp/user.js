@@ -22,7 +22,7 @@ Ext.oa.Ftp__User_Panel = Ext.extend(Ext.oa.ShareGridPanel, {
   texts: {
     add:     "{% trans 'Add User' %}",
     edit:    "{% trans 'Edit User' %}",
-    remove:  "{% trans 'Delete User' %}",
+    remove:  "{% trans 'Delete User' %}"
   },
   columns: [{
     header: "{% trans 'Path' %}",
@@ -32,7 +32,15 @@ Ext.oa.Ftp__User_Panel = Ext.extend(Ext.oa.ShareGridPanel, {
     dataIndex: "username"
   }],
   storefields: [{
-    name: 'volumename',mapping: 'volume',convert: function( val, row ){ return val.name }
+    name: 'volumename',
+    mapping: 'volume',
+    convert: function( val, row ){
+      "use strict";
+      if(val){
+        return val.name;
+      }
+      return "";
+    }
   }],
   form: {
     items:[{
@@ -48,6 +56,7 @@ Ext.oa.Ftp__User_Panel = Ext.extend(Ext.oa.ShareGridPanel, {
       xtype: 'volumefield',
       listeners: {
         select: function(self, record, index){
+          "use strict";
           lvm__LogicalVolume.get( record.data.id, function( provider, response ){
             self.ownerCt.dirfield.setValue( response.result.fs.mountpoints[0] );
             self.ownerCt.dirfield.enable();
@@ -67,6 +76,7 @@ Ext.oa.Ftp__User_Panel = Ext.extend(Ext.oa.ShareGridPanel, {
     }]
   },
   deleteConfirm: function(sel){
+    "use strict";
     return interpolate("{% trans 'Do you really want to delete user %s?' %}", [sel.data.username]);
   }
 });
@@ -77,6 +87,7 @@ Ext.reg("ftp__user_panel", Ext.oa.Ftp__User_Panel);
 Ext.oa.Ftp__User_Module = Ext.extend(Object, {
   panel: "ftp__user_panel",
   prepareMenuTree: function(tree){
+    "use strict";
     tree.appendToRootNodeById("menu_shares", {
       text: "{% trans 'Web (FTP)' %}",
       leaf: true,

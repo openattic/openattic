@@ -17,6 +17,8 @@ Ext.namespace("Ext.oa");
 
 Ext.oa.Munin__MuninNode_Panel = Ext.extend(Ext.Panel, {
   initComponent: function(){
+    "use strict";
+    var muninStore;
     Ext.apply(this, Ext.apply(this.initialConfig, {
       id: 'munin__muninnode_panel_inst',
       title: "{% trans 'Performance' %}",
@@ -57,7 +59,6 @@ Ext.oa.Munin__MuninNode_Panel = Ext.extend(Ext.Panel, {
         tabPosition: 'bottom',
         activeTab: 0,
         items: (function(){
-          // muninStore needs to be global so the listener can access it
           muninStore = new Ext.data.ArrayStore({
             fields: ['name'],
             data: [['apache_accesses']]
@@ -92,6 +93,7 @@ Ext.oa.Munin__MuninNode_Panel = Ext.extend(Ext.Panel, {
     Ext.oa.Munin__MuninNode_Panel.superclass.initComponent.apply(this, arguments);
   },
   onRender: function(){
+    "use strict";
     Ext.oa.Munin__MuninNode_Panel.superclass.onRender.apply(this, arguments);
     this.items.items[0].store.reload();
   }
@@ -103,6 +105,7 @@ Ext.oa.Munin__MuninNode_Module = Ext.extend(Object, {
   panel: "munin__muninnode_panel",
 
   prepareMenuTree: function(tree){
+    "use strict";
     tree.appendToRootNodeById("menu_status", {
       text: "{% trans 'Performance' %}",
       leaf: true,

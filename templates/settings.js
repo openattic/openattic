@@ -16,6 +16,7 @@
 Ext.namespace("Ext.oa");
 Ext.oa.Settings_Panel = Ext.extend(Ext.Panel,{
   initComponent: function(){
+    "use strict";
     Ext.apply(this, Ext.apply(this.initialConfig, {
       id: "settings_panel_inst",
       title: 'Personal Settings',
@@ -68,7 +69,7 @@ Ext.oa.Settings_Panel = Ext.extend(Ext.Panel,{
           checked: Ext.state.Manager.get("storage_utilization_graph", false),
           listeners: {
             check: function(self,checked){
-              Ext.state.Manager.set("storage_utilization_graph", checked)
+              Ext.state.Manager.set("storage_utilization_graph", checked);
             }
          }
       },
@@ -83,10 +84,10 @@ Ext.oa.Settings_Panel = Ext.extend(Ext.Panel,{
               Ext.state.Manager.clear("theme");
             }
             else{
-              Ext.state.Manager.set("theme", checked.inputValue)
+              Ext.state.Manager.set("theme", checked.inputValue);
             }
             // For some reason, window.location.reload.defer() does not work in chrome.
-            setTimeout( function(){window.location.reload()}, 200);
+            setTimeout( function(){ window.location.reload(); }, 200);
           }
         },
         items: [

@@ -13,9 +13,11 @@
 
 Ext.state.DirectStateProvider = Ext.extend(Ext.state.Provider, {
   constructor: function(name, defaultValue){
+    "use strict";
     Ext.state.DirectStateProvider.superclass.constructor.call(this);
-    if( window.InitDirectState )
+    if( window.InitDirectState ){
       this.state = window.InitDirectState;
+    }
     else{
       var self = this;
       userprefs__UserProfile.all_preferences(function(provider, response){
@@ -24,14 +26,18 @@ Ext.state.DirectStateProvider = Ext.extend(Ext.state.Provider, {
     }
   },
   clear: function(name){
+    "use strict";
     userprefs__UserProfile.clear_preference(name);
     Ext.state.DirectStateProvider.superclass.set.call(this, name);
   },
   set: function(name, value){
-    if( typeof value === "undefined" || value === null )
+    "use strict";
+    if( typeof value === "undefined" || value === null ){
       userprefs__UserProfile.clear_preference(name);
-    else
+    }
+    else{
       userprefs__UserProfile.set_preference(name, value);
+    }
     Ext.state.DirectStateProvider.superclass.set.call(this, name, value);
   }
 });

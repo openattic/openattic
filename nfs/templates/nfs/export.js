@@ -42,6 +42,7 @@ Ext.oa.Nfs__Export_Panel = Ext.extend(Ext.oa.ShareGridPanel, {
           xtype: 'volumefield',
           listeners: {
             select: function(self, record, index){
+              "use strict";
               lvm__LogicalVolume.get( record.data.id, function( provider, response ){
                 self.ownerCt.dirfield.setValue( response.result.fs.mountpoints[0] );
                 self.ownerCt.dirfield.enable();
@@ -71,7 +72,7 @@ Ext.oa.Nfs__Export_Panel = Ext.extend(Ext.oa.ShareGridPanel, {
           value: "rw,no_subtree_check,no_root_squash"
         },"{% trans 'this is default. rw: read/write rights are given,<br> no_subtree_check means that every file request is going to be checked to make sure that this file is in an exported subdirectory,<br> no_root_squash means share the folder (public), every IP-Adress has access, root can connect as root' %}")
       ]
-    }],
+    }]
   }
 });
 
@@ -81,6 +82,7 @@ Ext.reg("nfs__export_panel", Ext.oa.Nfs__Export_Panel);
 Ext.oa.Nfs__Export_Module = Ext.extend(Object, {
   panel: "nfs__export_panel",
   prepareMenuTree: function(tree){
+    "use strict";
     tree.appendToRootNodeById("menu_shares", {
       text: "{% trans 'Linux (NFS)' %}",
       leaf: true,

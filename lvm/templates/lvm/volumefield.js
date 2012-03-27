@@ -18,16 +18,19 @@ Ext.namespace("Ext.oa");
 Ext.oa.VolumeField = Ext.extend(Ext.form.ComboBox, {
   filesystem__isnull: false,
   initComponent: function(){
+    "use strict";
     var baseParams = {
       "field": "name",
       "query": ""
     };
 
-    if( this.filesystem__isnull === false )
-      baseParams["kwds"] = {"__exclude__": {"filesystem":""}};
+    if( this.filesystem__isnull === false ){
+      baseParams.kwds = {"__exclude__": {"filesystem":""}};
+    }
 
-    if( this.filesystem__isnull === true )
-      baseParams["kwds"] = {"filesystem":""};
+    if( this.filesystem__isnull === true ){
+      baseParams.kwds = {"filesystem":""};
+    }
 
     Ext.apply(this, Ext.applyIf(this.initialConfig, {
       fieldLabel: "{% trans 'Volume' %}",
@@ -52,6 +55,7 @@ Ext.oa.VolumeField = Ext.extend(Ext.form.ComboBox, {
   },
 
   setValue: function(value){
+    "use strict";
     // Make sure the store is loaded before trying to display stuff.
     if( !this.store.data.length ){
       var self = this;

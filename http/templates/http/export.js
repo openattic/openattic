@@ -23,7 +23,15 @@ Ext.oa.Http__Export_Panel = Ext.extend(Ext.oa.ShareGridPanel, {
     height: 150
   },
   storefields: [{
-    name: 'volumename', mapping: 'volume', convert: function( val, row ){ return val.name; }
+    name: 'volumename',
+    mapping: 'volume',
+    convert: function( val, row ){
+      "use strict";
+      if(val){
+        return val.name;
+      }
+      return "";
+    }
   }],
   columns: [{
     header: "{% trans 'Path' %}",
@@ -34,6 +42,7 @@ Ext.oa.Http__Export_Panel = Ext.extend(Ext.oa.ShareGridPanel, {
     width: 100,
     dataIndex: "volumename",
     renderer: function(val, x, store){
+      "use strict";
       return String.format(
         '<a href="/volumes/{0}" target="_blank" title="{% trans "Browse in new window" %}">' +
         '<img alt="Browser" src="{{ MEDIA_URL }}/oxygen/16x16/places/folder-remote.png">' +
@@ -46,6 +55,7 @@ Ext.oa.Http__Export_Panel = Ext.extend(Ext.oa.ShareGridPanel, {
       xtype: 'volumefield',
       listeners: {
         select: function(self, record, index){
+          "use strict";
           lvm__LogicalVolume.get( record.data.id, function( provider, response ){
             self.ownerCt.dirfield.setValue( response.result.fs.mountpoints[0] );
             self.ownerCt.dirfield.enable();
@@ -67,6 +77,7 @@ Ext.reg("http__export_panel", Ext.oa.Http__Export_Panel);
 Ext.oa.Http__Export_Module = Ext.extend(Object, {
   panel: "http__export_panel",
   prepareMenuTree: function(tree){
+    "use strict";
     tree.appendToRootNodeById("menu_shares", {
       text: "{% trans 'Web (HTTP)' %}",
       leaf: true,
