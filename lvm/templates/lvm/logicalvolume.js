@@ -408,11 +408,11 @@ Ext.oa.Lvm__LogicalVolume_Panel = Ext.extend(Ext.Panel, {
             var sel = sm.selections.items[0];
             lvm__VolumeGroup.get_free_megs( sel.json.vg.id, function( provider, response ){
               var resizewin = new Ext.Window(Ext.apply({
-              layout: "fit",
-              title: "{% trans 'Resize Volume' %}",
-              defaults: { autoScroll: true },
-              height: 200,
-              width: 500,
+                layout: "fit",
+                title: "{% trans 'Resize Volume' %}",
+                defaults: { autoScroll: true },
+                height: 200,
+                width: 500,
                 items: [{
                   xtype: "form",
                   ref: "resize",
@@ -486,44 +486,44 @@ Ext.oa.Lvm__LogicalVolume_Panel = Ext.extend(Ext.Panel, {
                     icon: MEDIA_URL + "/icons2/16x16/actions/edit-redo.png",
                     handler: function(self) {
                       Ext.Msg.confirm(
-                      "{% trans 'Warning' %}",
-                      interpolate(
-                        "{% trans 'Do you really want to change Volume size of <b>%(lv)s</b> to <b>%(megs)s</b> MB?' %}",
-                        { "lv": sel.data.name, "megs": self.ownerCt.ownerCt.megabyte.getValue() }, true ),
-                      function(btn){
-                        if( btn === 'yes' ){
-                          if( self.ownerCt.ownerCt.megabyte.getValue() === '0' ){
-                           Ext.Msg.alert('Warning',
-                              interpolate(
-                                "{% trans 'Volume %s could not resized to 0 Megabytes.' %}",
-                                [sel.data.name] ));
-                            return;
+                        "{% trans 'Warning' %}",
+                        interpolate(
+                          "{% trans 'Do you really want to change Volume size of <b>%(lv)s</b> to <b>%(megs)s</b> MB?' %}",
+                          { "lv": sel.data.name, "megs": self.ownerCt.ownerCt.megabyte.getValue() }, true ),
+                        function(btn){
+                          if( btn === 'yes' ){
+                            if( self.ownerCt.ownerCt.megabyte.getValue() === '0' ){
+                              Ext.Msg.alert('Warning',
+                                interpolate(
+                                  "{% trans 'Volume %s could not resized to 0 Megabytes.' %}",
+                                  [sel.data.name] ));
+                              return;
+                            }
+                            var progresswin = new Ext.Window({
+                              title: "{% trans 'Resizing Volume' %}",
+                              layout: "fit",
+                              height: 250,
+                              width: 400,
+                              modal: true,
+                              html: "{% trans 'Please wait while your volume is being resized...' %}"
+                            });
+                            resizewin.hide();
+                            progresswin.show();
+                            lvm__LogicalVolume.set( sel.data.id, {
+                              "megs": parseFloat(self.ownerCt.ownerCt.megabyte.getValue())
+                            }, function(provider, response){
+                              lvmGrid.store.reload();
+                              progresswin.hide();
+                            } );
                           }
-                          var progresswin = new Ext.Window({
-                            title: "{% trans 'Resizing Volume' %}",
-                            layout: "fit",
-                            height: 250,
-                            width: 400,
-                            modal: true,
-                            html: "{% trans 'Please wait while your volume is being resized...' %}"
-                          });
-                          resizewin.hide();
-                          progresswin.show();
-                          lvm__LogicalVolume.set( sel.data.id, {
-                            "megs": parseFloat(self.ownerCt.ownerCt.megabyte.getValue())
-                          }, function(provider, response){
-                            lvmGrid.store.reload();
-                            progresswin.hide();
-                          } );
                         }
-                      }
-                    );
-                   }
+                      );
+                    }
                   },{
                     text: "{% trans 'Cancel' %}",
                     icon: MEDIA_URL + "/icons2/16x16/actions/gtk-cancel.png",
                     handler: function(){
-                    resizewin.hide();
+                      resizewin.hide();
                     }
                   }]
                 }]
