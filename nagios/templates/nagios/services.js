@@ -16,6 +16,7 @@
 Ext.namespace("Ext.oa");
 
 Ext.oa.DragSelector = function(cfg){
+  "use strict";
   // Based upon Ext.DataView.DragSelector
   cfg = cfg || {};
   var view, proxy, tracker;
@@ -83,8 +84,8 @@ Ext.oa.DragSelector = function(cfg){
     var xy = tracker.getXY();
 
     var width = bodyRegion.right - bodyRegion.left;
-    var startFac = Math.min( Math.max( (startXY[0] - bodyRegion.left) / width, 0. ), 1. );
-    var endFac   = Math.min( Math.max( (xy[0] - bodyRegion.left)      / width, 0. ), 1. );
+    var startFac = Math.min( Math.max( (startXY[0] - bodyRegion.left) / width, 0.0 ), 1.0 );
+    var endFac   = Math.min( Math.max( (xy[0] - bodyRegion.left)      / width, 0.0 ), 1.0 );
 
     var currStart = view.currStart,
       currEnd   = view.currEnd || currStart + view.timespan,
@@ -114,22 +115,23 @@ Ext.oa.DragSelector = function(cfg){
 
 Ext.oa.Nagios__Graph_ImagePanel = Ext.extend(Ext.Panel, {
   graphcolors: {
-    {% if PROFILE.theme != "access" %}
+    /*{% if PROFILE.theme != "access" %}*/
     bgcol: 'FFFFFF',
     grcol: '',
     fgcol: '111111',
     sacol: 'FFFFFF',
-    sbcol: 'FFFFFF'
-    {% else %}
+    sbcol: 'FFFFFF',
+    /*{% else %}*/
     bgcol: '1F2730',
     grcol: '222222',
     fgcol: 'FFFFFF',
     sacol: '1F2730',
     sbcol: '1F2730'
-    {% endif %}
+    /*{% endif %}*/
   },
   reloadTimerId: 0,
   initComponent: function(){
+    "use strict";
     Ext.apply(this, Ext.applyIf(this.initialConfig, {
       reloadInterval: 0,
       graphheight: 150,
@@ -173,6 +175,7 @@ Ext.oa.Nagios__Graph_ImagePanel = Ext.extend(Ext.Panel, {
   },
 
   loadInterval: function(record, id, start, end){
+    "use strict";
     var params = {};
     Ext.apply(params, this.graphcolors);
 
@@ -183,13 +186,14 @@ Ext.oa.Nagios__Graph_ImagePanel = Ext.extend(Ext.Panel, {
       height: this.graphheight
     });
 
-    this.currStart = params["start"];
+    this.currStart = params.start;
     if( end ){
-      params["end"] = end;
-      this.currEnd  = end;
+      params.end   = end;
+      this.currEnd = end;
     }
-    else
+    else{
       this.currEnd  = 0;
+    }
 
     this.el.mask("{% trans 'Loading...' %}");
     var url = String.format( PROJECT_URL + "/nagios/{0}/{1}.png?{2}", record.data.id, id, Ext.urlEncode(params) );
@@ -197,13 +201,15 @@ Ext.oa.Nagios__Graph_ImagePanel = Ext.extend(Ext.Panel, {
   },
 
   loadRecord: function(record, id){
+    "use strict";
     this.currentRecord = record;
     this.currentId = id;
     if( this.el ){
       this.loadInterval(record, id);
       if( this.reloadInterval ){
-        if( this.reloadTimerId != 0 )
+        if( this.reloadTimerId !== 0 ){
           clearTimeout(this.reloadTimerId);
+        }
         this.reloadTimerId = this.loadRecord.defer(this.reloadInterval*1000, this, [this.currentRecord, this.currentId]);
       }
     }
@@ -215,6 +221,7 @@ Ext.reg("naggraphimage", Ext.oa.Nagios__Graph_ImagePanel);
 
 Ext.oa.Nagios__Graph_ImagePortlet = Ext.extend(Ext.ux.Portlet, {
   initComponent: function(){
+    "use strict";
     Ext.apply(this, Ext.applyIf(this.initialConfig, {
       bodyCssClass: "nagiosportlet",
       items: {
@@ -235,9 +242,11 @@ Ext.oa.Nagios__Graph_ImagePortlet = Ext.extend(Ext.ux.Portlet, {
   },
 
   onClose: function(){
+    "use strict";
     Ext.oa.Nagios__Graph_ImagePortlet.superclass.onClose.apply(this, arguments);
-    var portletstate = Ext.state.Manager.get( "nagios_portlets", [] );
-    for( var i = 0; i < portletstate.length; i++ ){
+    var portletstate = Ext.state.Manager.get( "nagios_portlets", [] ),
+        i;
+    for( i = 0; i < portletstate.length; i++ ){
       if( "portlet_nagios_" + portletstate[i].id === this.id ){
         portletstate.remove(portletstate[i]);
         break;
@@ -252,6 +261,7 @@ Ext.reg("naggraphportlet", Ext.oa.Nagios__Graph_ImagePortlet);
 
 Ext.oa.Nagios__Service_Panel = Ext.extend(Ext.Panel, {
   initComponent: function(){
+    "use strict";
     var nagiosGrid = this;
     var renderDate = function(val, x, store){
       return new Date(val * 1000).format("Y-m-d H:i:s");
@@ -325,15 +335,15 @@ Ext.oa.Nagios__Service_Panel = Ext.extend(Ext.Panel, {
         store: {
           xtype: 'directstore',
           fields: ['id', 'description', {
-            name: "volumename",    mapping: "volume", convert: function(val, row){ if(val) return val.name; }
+            name: "volumename",    mapping: "volume", convert: function(val, row){ if(val){ return val.name; }}
           }, {
-            name: "plugin_output", mapping: "state",  convert: function(val, row){ if(val) return val.plugin_output; }
+            name: "plugin_output", mapping: "state",  convert: function(val, row){ if(val){ return val.plugin_output; }}
           }, {
-            name: "current_state", mapping: "state",  convert: function(val, row){ if(val) return val.current_state; }
+            name: "current_state", mapping: "state",  convert: function(val, row){ if(val){ return val.current_state; }}
           }, {
-            name: "last_check",    mapping: "state",  convert: function(val, row){ if(val) return val.last_check; }
+            name: "last_check",    mapping: "state",  convert: function(val, row){ if(val){ return val.last_check; }}
           }, {
-            name: "next_check",    mapping: "state",  convert: function(val, row){ if(val) return val.next_check; }
+            name: "next_check",    mapping: "state",  convert: function(val, row){ if(val){ return val.next_check; }}
           }],
           directFn: nagios__Service.all
         },
@@ -468,6 +478,7 @@ Ext.oa.Nagios__Service_Panel = Ext.extend(Ext.Panel, {
     Ext.oa.Nagios__Service_Panel.superclass.initComponent.apply(this, arguments);
   },
   onRender: function(){
+    "use strict";
     Ext.oa.Nagios__Service_Panel.superclass.onRender.apply(this, arguments);
     this.items.items[0].store.reload();
     this.items.items[0].on("afterrender", function(){
@@ -486,6 +497,7 @@ Ext.oa.Nagios__Service_Module = Ext.extend(Object, {
   panel: "nagios__service_panel",
 
   prepareMenuTree: function(tree){
+    "use strict";
     tree.appendToRootNodeById("menu_status", {
       text: "{% trans 'Monitoring' %}",
       leaf: true,
@@ -496,9 +508,11 @@ Ext.oa.Nagios__Service_Module = Ext.extend(Object, {
   },
 
   getDashboardPortlets: function(tools){
-    var portletstate = Ext.state.Manager.get( "nagios_portlets", [] );
-    var portlets = [];
-    for( var i = 0; i < portletstate.length; i++ ){
+    "use strict";
+    var portletstate = Ext.state.Manager.get( "nagios_portlets", [] ),
+        portlets = [],
+        i;
+    for( i = 0; i < portletstate.length; i++ ){
       portlets.push( {
         xtype: "naggraphportlet",
         title: portletstate[i].title,
