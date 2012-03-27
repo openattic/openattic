@@ -16,18 +16,20 @@
 Ext.namespace("Ext.oa");
 
 var storeUpdate = function(store, parent_id, field){
-  var data = [];
-  for (var i = 0; i < store.data.items.length; i++){
+  "use strict";
+  var data = [],
+      i,
+      args = {};
+  for (i = 0; i < store.data.items.length; i++){
     data.push(store.data.items[i].data);
   }
-  var args = {};
   args[field] = data;
   iscsi__Target.set( parent_id, args, function(provider, response){
     if( response.typ === 'exception' ){
       alert('Error', 'Initiator delete has failed');
     }
   });
-}
+};
 
 var targetStore = new Ext.data.DirectStore({
   fields: ["iscsiname", "name", "id"],
@@ -39,8 +41,10 @@ var lunStore = new Ext.data.DirectStore({
     name: 'origvolid',
     mapping: 'volume',
     convert: function(val, row) {
-      if( val === null )
+      "use strict";
+      if( val === null ){
         return null;
+      }
       return val.name;
     }
   }],
@@ -59,11 +63,15 @@ var tgt_all = new Ext.data.DirectStore({
 
 Ext.oa.Iscsi__Panel = Ext.extend(Ext.Panel, {
   initComponent: function(){
-    var iscsiPanel = this;
+    "use strict";
+    var iscsiPanel = this,
+        init_allow,
+        init_deny,
+        tgt_allow;
     var deleteBindIPs = function(self){
-    var bindIP = iscsiPanel.target_grid.getSelectionModel();
-    var parent = iscsiPanel.targets.getSelectionModel();
-    var parentid = parent.selections.items[0];
+      var bindIP = iscsiPanel.target_grid.getSelectionModel();
+      var parent = iscsiPanel.targets.getSelectionModel();
+      var parentid = parent.selections.items[0];
       if( bindIP.hasSelection() ){
         var sel = bindIP.getSelected();
         Ext.Msg.confirm(
@@ -72,15 +80,15 @@ Ext.oa.Iscsi__Panel = Ext.extend(Ext.Panel, {
           "{% trans 'Really delete IP %s?' %}",
           [sel.data.address] ),
         function(btn, text){
-          if( btn == 'yes' ){
+          if( btn === 'yes' ){
             tgt_allow.remove(sel);
             storeUpdate(tgt_allow, parentid.data.id, "tgt_allow");
-            };
+          }
         });
       }
     };
     var deleteLun = function(self){
-    var sm = iscsiPanel.lun.getSelectionModel();
+      var sm = iscsiPanel.lun.getSelectionModel();
       if( sm.hasSelection() ){
         var sel = sm.selections.items[0];
         Ext.Msg.confirm(
@@ -89,9 +97,9 @@ Ext.oa.Iscsi__Panel = Ext.extend(Ext.Panel, {
             "{% trans 'Really delete Lun %s?' %}",
             [sel.data.alias] ),
           function(btn, text){
-            if( btn == 'yes' ){
+            if( btn === 'yes' ){
               iscsi__Lun.remove( sel.data.id, function(provider, response){
-              lunStore.reload();
+                lunStore.reload();
               } );
             }
           }
@@ -99,23 +107,21 @@ Ext.oa.Iscsi__Panel = Ext.extend(Ext.Panel, {
       }
     };
     var deleteInitiator = function(self){
-    var deny = iscsiPanel.initiator.deny_grid.getSelectionModel();
-    var allow = iscsiPanel.initiator.allow_grid.getSelectionModel();
-    var parent = iscsiPanel.targets.getSelectionModel();
-    var parentid = parent.selections.items[0];
+      var deny = iscsiPanel.initiator.deny_grid.getSelectionModel();
+      var allow = iscsiPanel.initiator.allow_grid.getSelectionModel();
+      var parent = iscsiPanel.targets.getSelectionModel();
+      var parentid = parent.selections.items[0];
       if( allow.hasSelection() ){
-        var selectedItem = allow.getSelected();
-        init_allow.remove(selectedItem);
+        init_allow.remove(allow.getSelected());
         storeUpdate(init_allow, parentid.data.id, "init_allow");
       }
       if( deny.hasSelection() ){
-        var selectedItem = deny.getSelected();
-        init_deny.remove(selectedItem);
+        init_deny.remove(deny.getSelected());
         storeUpdate(init_deny, parentid.data.id, "init_deny");
       }
     };
     var deleteTarget = function(self){
-    var sm = iscsiPanel.targets.getSelectionModel();
+      var sm = iscsiPanel.targets.getSelectionModel();
       if( sm.hasSelection() ){
         var sel = sm.selections.items[0];
         Ext.Msg.confirm(
@@ -124,7 +130,7 @@ Ext.oa.Iscsi__Panel = Ext.extend(Ext.Panel, {
             "{% trans 'Really delete Target %s?' %}",
             [sel.data.name] ),
           function(btn, text){
-            if( btn == 'yes' ){
+            if( btn === 'yes' ){
               iscsi__Target.remove( sel.data.id, function(provider, response){
                 targetStore.reload();
                 lunStore.removeAll();
@@ -137,8 +143,8 @@ Ext.oa.Iscsi__Panel = Ext.extend(Ext.Panel, {
           }
         );
       }
-    };       
-    var init_allow = new Ext.data.DirectStore({
+    };
+    init_allow = new Ext.data.DirectStore({
       id: "init_allow",
       fields: ["app","obj","id","name", "id"],
       directFn: iscsi__Target.filter,
@@ -155,7 +161,7 @@ Ext.oa.Iscsi__Panel = Ext.extend(Ext.Panel, {
         }
       }
     });
-    var init_deny = new Ext.data.DirectStore({
+    init_deny = new Ext.data.DirectStore({
       id: "init_deny",
       fields: ["app","obj","id","name", "id"],
       directFn: iscsi__Target.filter,
@@ -172,7 +178,7 @@ Ext.oa.Iscsi__Panel = Ext.extend(Ext.Panel, {
         }
       }
     });
-    var tgt_allow = new Ext.data.JsonStore({
+    tgt_allow = new Ext.data.JsonStore({
       id: "tgt_allow",
       fields: ["app","obj","id","address"],
       listeners: {
@@ -293,26 +299,26 @@ Ext.oa.Iscsi__Panel = Ext.extend(Ext.Panel, {
                     text: "{% trans 'Create' %}",
                     icon: MEDIA_URL + "/oxygen/16x16/actions/dialog-ok-apply.png",
                     handler: function(self){
-                       if( !self.ownerCt.ownerCt.getForm().isValid() ){
-                          return;
-                       }
-                        iscsi__Target.create({
-                          'name': self.ownerCt.ownerCt.namefield.getValue(),
-                          'iscsiname': self.ownerCt.ownerCt.iqn_ip_field.getValue()
-                        }, function(provider, response){
-                          if( response.result ) {
-                            targetStore.reload();
-                            addwin.hide();
-                          }
-                        })
+                      if( !self.ownerCt.ownerCt.getForm().isValid() ){
+                        return;
+                      }
+                      iscsi__Target.create({
+                        'name': self.ownerCt.ownerCt.namefield.getValue(),
+                        'iscsiname': self.ownerCt.ownerCt.iqn_ip_field.getValue()
+                      }, function(provider, response){
+                        if( response.result ) {
+                          targetStore.reload();
+                          addwin.hide();
+                        }
+                      });
                     }
                   }, {
-                     text: "{% trans 'Cancel' %}",
-                     icon: MEDIA_URL + "/icons2/16x16/actions/gtk-cancel.png",
-                     handler: function(self){
-                       addwin.hide();
-                     }
-                     }]
+                    text: "{% trans 'Cancel' %}",
+                    icon: MEDIA_URL + "/icons2/16x16/actions/gtk-cancel.png",
+                    handler: function(self){
+                      addwin.hide();
+                    }
+                  }]
                 }]
               });
               addwin.show();
@@ -322,7 +328,7 @@ Ext.oa.Iscsi__Panel = Ext.extend(Ext.Panel, {
             icon: MEDIA_URL + "/icons2/16x16/actions/remove.png",
             handler: deleteTarget
           }],
-          keys: [{ key: [Ext.EventObject.DELETE], handler: deleteTarget}],
+          keys: [{ key: [Ext.EventObject.DELETE], handler: deleteTarget}]
           //END le target
         },{
           //BEGIN le initiator
@@ -352,19 +358,21 @@ Ext.oa.Iscsi__Panel = Ext.extend(Ext.Panel, {
                 var firstGridDropTarget = new Ext.dd.DropTarget(firstGridDropTargetEl, {
                   ddGroup    : 'initiator',
                   notifyDrop : function(ddSource, e, data){
-                    var records =  ddSource.dragData.selections;
+                    var records =  ddSource.dragData.selections,
+                        i;
                     if( self.store.findExact("id",records[0].data.id) === -1 )
                     {
-                      if( ddSource.grid.store.storeId === init_deny.storeId )
+                      if( ddSource.grid.store.storeId === init_deny.storeId ){
                         Ext.each(records, ddSource.grid.store.remove, ddSource.grid.store);
-                      for( var i = 0; i < records.length; i++ ){
+                      }
+                      for( i = 0; i < records.length; i++ ){
                         Ext.applyIf( records[i].data, {
                           app: "iscsi",
                           obj: "Initiator"
                         });
                       }
                       self.store.add(records);
-                      return true
+                      return true;
                     }
                   }
                 });
@@ -393,21 +401,23 @@ Ext.oa.Iscsi__Panel = Ext.extend(Ext.Panel, {
               },
               afterrender: function (self){
                 var firstGridDropTargetEl =  self.getView().scroller.dom;
+                var i;
                 var firstGridDropTarget = new Ext.dd.DropTarget(firstGridDropTargetEl, {
                   ddGroup    : 'initiator',
                   notifyDrop : function(ddSource, e, data){
                     var records =  ddSource.dragData.selections;
                     if( self.store.findExact("id",records[0].data.id) === -1 ){
-                      if( ddSource.grid.store.storeId === init_allow.storeId )
+                      if( ddSource.grid.store.storeId === init_allow.storeId ){
                         Ext.each(records, ddSource.grid.store.remove, ddSource.grid.store);
-                      for( var i = 0; i < records.length; i++ ){
+                      }
+                      for( i = 0; i < records.length; i++ ){
                         Ext.applyIf( records[i].data, {
                           app: "iscsi",
                           obj: "Initiator"
                         });
                       }
                       self.store.add(records);
-                      return true
+                      return true;
                     }
                   }
                 });
@@ -547,10 +557,10 @@ Ext.oa.Iscsi__Panel = Ext.extend(Ext.Panel, {
                           "{% trans 'Really delete Initiator %s?' %}",
                           [sel.data.name] ),
                         function(btn, text){
-                          if( btn == 'yes' ){
+                          if( btn === 'yes' ){
                             iscsi__Initiator.remove( sel.data.id, function(provider, response){
                               init_all.reload();
-                              } );
+                            } );
                           }
                         }
                       );
@@ -571,8 +581,8 @@ Ext.oa.Iscsi__Panel = Ext.extend(Ext.Panel, {
             icon: MEDIA_URL + "/icons2/16x16/actions/remove.png",
             handler: deleteInitiator
         }],
-        keys: [{ key: [Ext.EventObject.DELETE], handler: deleteInitiator}],
-          //END le initiator
+        keys: [{ key: [Ext.EventObject.DELETE], handler: deleteInitiator}]
+        //END le initiator
         }]
         //END le left column
       }, {
@@ -678,32 +688,34 @@ Ext.oa.Iscsi__Panel = Ext.extend(Ext.Panel, {
                       }
                       var sel = iscsiPanel.targets.getSelectionModel();
                       var number = lunStore.find("number",self.ownerCt.ownerCt.numberfield.getValue());
-                      if(number != -1 || (self.ownerCt.ownerCt.numberfield.getValue() < 0 && self.ownerCt.ownerCt.numberfield.getValue() != -1)){
+                      if( number !== -1 || (
+                        self.ownerCt.ownerCt.numberfield.getValue() < 0 && self.ownerCt.ownerCt.numberfield.getValue() !== -1
+                        )){
                         Ext.Msg.alert("Warning","This LUN Number allready exists or is invalid. Please choose an other one");
                         return;
                       }
-                        iscsi__Lun.create({
-                          'ltype':     self.ownerCt.ownerCt.typefield.getValue() ,
-                          'number':    self.ownerCt.ownerCt.numberfield.getValue(),
-                          'alias':     self.ownerCt.ownerCt.aliasfield.getValue(),
-                          'volume':    {
-                            'app': 'lvm',
-                            'obj': 'LogicalVolume',
-                            'id': self.ownerCt.ownerCt.volfield.getValue()
-                          },
-                          'target':    {
-                            'app': 'iscsi',
-                            'obj': 'Target',
-                            'id': sel.selections.items[0].data.id
-                          }
-                        }, function(provider, response){
-                          if( response.result ){
-                            lunStore.reload();
-                            addwin.hide();
-                          }
-                        })
-                      }
-                    }, {
+                      iscsi__Lun.create({
+                        'ltype':     self.ownerCt.ownerCt.typefield.getValue() ,
+                        'number':    self.ownerCt.ownerCt.numberfield.getValue(),
+                        'alias':     self.ownerCt.ownerCt.aliasfield.getValue(),
+                        'volume':    {
+                          'app': 'lvm',
+                          'obj': 'LogicalVolume',
+                          'id': self.ownerCt.ownerCt.volfield.getValue()
+                        },
+                        'target':    {
+                          'app': 'iscsi',
+                          'obj': 'Target',
+                          'id': sel.selections.items[0].data.id
+                        }
+                      }, function(provider, response){
+                        if( response.result ){
+                          lunStore.reload();
+                          addwin.hide();
+                        }
+                      });
+                    }
+                  }, {
                     text: "{% trans 'Cancel' %}",
                     icon: MEDIA_URL + "/icons2/16x16/actions/gtk-cancel.png",
                     handler: function(self){
@@ -719,7 +731,7 @@ Ext.oa.Iscsi__Panel = Ext.extend(Ext.Panel, {
             icon: MEDIA_URL + "/icons2/16x16/actions/remove.png",
             handler: deleteLun
           }],
-          keys: [{ key: [Ext.EventObject.DELETE], handler: deleteLun}],
+          keys: [{ key: [Ext.EventObject.DELETE], handler: deleteLun}]
           //END le lun
         },{
           //BEGIN le bind IPs
@@ -790,7 +802,7 @@ Ext.oa.Iscsi__Panel = Ext.extend(Ext.Panel, {
                   var records =  ddSource.dragData.selections;
                   if( self.store.findExact("id",records[0].data.id) === -1 ){
                     self.store.add(records);
-                    return true
+                    return true;
                   }
                 }
               });
@@ -804,6 +816,7 @@ Ext.oa.Iscsi__Panel = Ext.extend(Ext.Panel, {
     Ext.oa.Iscsi__Panel.superclass.initComponent.apply(this, arguments);
   },
   onRender: function(){
+    "use strict";
     Ext.oa.Iscsi__Panel.superclass.onRender.apply(this, arguments);
     targetStore.reload();
     init_all.load();
@@ -816,6 +829,7 @@ Ext.reg("iscsi__panel", Ext.oa.Iscsi__Panel);
 Ext.oa.Iscsi__Module = Ext.extend(Object, {
   panel: "iscsi__panel",
   prepareMenuTree: function(tree){
+    "use strict";
     tree.appendToRootNodeById("menu_luns", {
       text: "{% trans 'iSCSI' %}",
       leaf: true,
