@@ -276,6 +276,9 @@ Ext.oa.volumeGroup_Panel = Ext.extend(Ext.grid.GridPanel, {
             }
             var id = Ext.id();
             (function(){
+              if( Ext.get(id) === null ){
+                return;
+              }
               new Ext.ProgressBar({
                 renderTo: id,
                 value: val/100.0,

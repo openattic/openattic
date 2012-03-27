@@ -650,6 +650,9 @@ Ext.oa.Lvm__LogicalVolume_Panel = Ext.extend(Ext.Panel, {
               }
               var id = Ext.id();
               (function(){
+                if( Ext.get(id) === null ){
+                  return;
+                }
                 new Ext.ProgressBar({
                   renderTo: id,
                   value: val/100.0,

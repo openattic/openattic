@@ -73,6 +73,9 @@ Ext.oa.getDefaultPortlets = function(tools){
             }
             var id = Ext.id();
             (function(){
+              if( Ext.get(id) === null ){
+                return;
+              }
               new Ext.ProgressBar({
                 renderTo: id,
                 value: val/100.0,
