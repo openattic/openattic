@@ -17,6 +17,7 @@ Ext.namespace("Ext.oa");
 
 Ext.oa.SysUtils__Service_Panel = Ext.extend(Ext.grid.GridPanel, {
   initComponent: function(){
+    "use strict";
     var sysUtilsGrid = this;
     Ext.apply(this, Ext.apply(this.initialConfig, {
       id: "sysutils__service_panel_inst",
@@ -43,14 +44,18 @@ Ext.oa.SysUtils__Service_Panel = Ext.extend(Ext.grid.GridPanel, {
           align: "center",
           dataIndex: "status",
           renderer: function( val, x, store ){
-            if( val === 0 )
+            if( val === 0 ){
               return '<img src="{{ MEDIA_URL }}/oxygen/16x16/status/security-high.png" title="running" />';
-            else if( val === 3 )
+            }
+            else if( val === 3 ){
               return '<img src="{{ MEDIA_URL }}/oxygen/16x16/status/security-low.png" title="stopped" />';
-            else if(val === null )
-                return  '<img src="{{ MEDIA_URL }}/oxygen/16x16/categories/system-help.png" title="not configured" />';
-            else
+            }
+            else if(val === null ){
+              return  '<img src="{{ MEDIA_URL }}/oxygen/16x16/categories/system-help.png" title="not configured" />';
+            }
+            else{
               return '<img src="{{ MEDIA_URL }}/oxygen/16x16/status/security-medium.png" title="failure" />';
+            }
           }
         }]
       }),
@@ -88,6 +93,7 @@ Ext.oa.SysUtils__Service_Panel = Ext.extend(Ext.grid.GridPanel, {
     Ext.oa.SysUtils__Service_Panel.superclass.initComponent.apply(this, arguments);
   },
   onRender: function(){
+    "use strict";
     Ext.oa.SysUtils__Service_Panel.superclass.onRender.apply(this, arguments);
     this.store.reload();
   }
@@ -98,6 +104,7 @@ Ext.reg("sysutils__service_panel", Ext.oa.SysUtils__Service_Panel);
 Ext.oa.SysUtils__Service_Module = Ext.extend(Object, {
   panel: "sysutils__service_panel",
   prepareMenuTree: function(tree){
+    "use strict";
     tree.appendToRootNodeById("menu_status", {
       text: "{% trans 'Service State'%}",
       leaf: true,
@@ -115,7 +122,7 @@ Ext.oa.SysUtils__Service_Module = Ext.extend(Object, {
             "Reboot",
             "{% trans 'Do you really want to reboot openATTIC?' %}",
             function(btn, text){
-              if( btn == 'yes' ){
+              if( btn === 'yes' ){
                 sysutils__System.reboot( function(provider, response){
                   Ext.oa.YellowDangerousMessage.alert("Rebooting", "The system is rebooting.");
                 } );
@@ -135,7 +142,7 @@ Ext.oa.SysUtils__Service_Module = Ext.extend(Object, {
             "Shutdown",
             "{% trans 'Do you really want to shutdown openATTIC?' %}",
             function(btn, text){
-              if( btn == 'yes' ){
+              if( btn === 'yes' ){
                 sysutils__System.shutdown( function(provider, response){
                   Ext.oa.RedDangerousMessage.alert("Shutting down", "The system is shutting down.");
                 } );

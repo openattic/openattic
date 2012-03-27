@@ -17,6 +17,7 @@ Ext.namespace("Ext.oa");
 
 Ext.oa.Lvm__Snapshot_Panel = Ext.extend(Ext.grid.GridPanel, {
   initComponent: function(){
+    "use strict";
     var lvmSnapPanel = this;
     Ext.apply(this, Ext.apply(this.initialConfig, {
       id: "lvm__snapshot_panel_inst",
@@ -54,13 +55,15 @@ Ext.oa.Lvm__Snapshot_Panel = Ext.extend(Ext.grid.GridPanel, {
                   return;
                 }
                 lvm__LogicalVolume.mount( sel.data.id, function(provider, response){
-                  if( response.type === "exception" )
+                  if( response.type === "exception" ){
                     Ext.Msg.alert('Mounted', interpolate(
                       "{% trans 'Volume %s could not be mounted, please check the logs.' %}", [sel.data.name] ));
-                  else
+                  }
+                  else{
                     Ext.Msg.alert('Mounted', interpolate(
                       "{% trans 'Volume %s has been mounted.' %}", [sel.data.name] ));
                     lvmSnapPanel.store.reload();
+                  }
                 } );
               } );
             } );
@@ -85,12 +88,13 @@ Ext.oa.Lvm__Snapshot_Panel = Ext.extend(Ext.grid.GridPanel, {
                     "{% trans 'Do you really want to umount %s?' %}",
                     [sel.data.name]),
                   function(btn){
-                    if(btn == 'yes'){
+                    if(btn === 'yes'){
                       lvm__LogicalVolume.unmount( sel.data.id, function(provider, response){
-                        if( response.type === "exception" )
+                        if( response.type === "exception" ){
                           Ext.Msg.alert('Unmount', interpolate(
                             "{% trans 'Volume %s could not be unmounted, please check the logs.' %}",
                             [sel.data.name] ));
+                        }
                         else{
                           Ext.Msg.alert('Unmount', interpolate(
                             "{% trans 'Volume %s has been unmounted.' %}",
@@ -193,15 +197,15 @@ Ext.oa.Lvm__Snapshot_Panel = Ext.extend(Ext.grid.GridPanel, {
                   ref:      'volfield',
                   listeners: {
                     select: function(self, record, index){
-                      if( self.ownerCt.volume_id === null || typeof self.ownerCt.volume_id == "undefined" ||
-                        self.ownerCt.volume_id != record.data.vg
+                      if( self.ownerCt.volume_id === null || typeof self.ownerCt.volume_id === "undefined" ||
+                        self.ownerCt.volume_id !== record.data.vg
                        ){
                         self.ownerCt.volume_free_megs = null;
                         self.ownerCt.volume_id = null;
                         self.ownerCt.sizelabel.setText( "{% trans 'Querying data...' %}" );
                         self.ownerCt.sizefield.disable();
                         lvm__VolumeGroup.get_free_megs( record.data.vg, function( provider, response ){
-                        self.ownerCt.volume_id = record.data.vg;
+                          self.ownerCt.volume_id = record.data.vg;
                           self.ownerCt.volume_free_megs = response.result;
                           self.ownerCt.sizelabel.setText( String.format( "Max. {0} MB", response.result ) );
                           if( record.data.megs <= self.ownerCt.volume_free_megs ){
@@ -237,7 +241,7 @@ Ext.oa.Lvm__Snapshot_Panel = Ext.extend(Ext.grid.GridPanel, {
                     return;
                   }
                   var free = self.ownerCt.ownerCt.volume_free_megs;
-                  if( free === null || typeof free == "undefined" ){
+                  if( free === null || typeof free === "undefined" ){
                     Ext.Msg.alert("{% trans 'Error' %}",
                       "{% trans 'Please wait for the query for available space to complete.' %}");
                     return;
@@ -286,13 +290,14 @@ Ext.oa.Lvm__Snapshot_Panel = Ext.extend(Ext.grid.GridPanel, {
                 "{% trans 'Really delete snapshot %s and all its shares?<br /><b>There is no undo and you will lose all data.</b>' %}",
                 [sel.data.name] ),
               function(btn, text){
-                if( btn == 'yes' ){
+                if( btn === 'yes' ){
                   lvm__LogicalVolume.remove( sel.data.id, function(provider, response){
                     lvmSnapPanel.store.reload();
                   } );
                 }
-                else
+                else{
                   alert("{% trans 'Aborted.' %}");
+                }
               }
             );
           }
@@ -306,28 +311,31 @@ Ext.oa.Lvm__Snapshot_Panel = Ext.extend(Ext.grid.GridPanel, {
               name: 'origvolid',
               mapping: 'snapshot',
               convert: function( val, row ){
-                if( val === null )
+                if( val === null ){
                   return null;
+                }
                 return val.id;
               }
             }, {
               name: 'origvolname',
               mapping: 'snapshot',
               convert: function( val, row ){
-                if( val === null )
+                if( val === null ){
                   return null;
+                }
                 return val.name;
               }
             }, 'LVM2_SNAP_PERCENT' ],
           listeners: {
             load: function(self){
-              for (var i = 0; i < self.data.length; i++){
-                lvm__LogicalVolume.lvm_info( self.data.items[i].id, function(idx){
+              var i;
+              for (i = 0; i < self.data.length; i++){
+                lvm__LogicalVolume.lvm_info( self.data.items[i].id, (function(idx){
                   return function(provider, response){
                     self.data.items[idx].set("LVM2_SNAP_PERCENT", response.result.LVM2_SNAP_PERCENT);
                     self.commitChanges();
                   };
-                }(i) );
+                }(i)) );
               }
             }
           },
@@ -350,8 +358,9 @@ Ext.oa.Lvm__Snapshot_Panel = Ext.extend(Ext.grid.GridPanel, {
           dataIndex: "megs",
           align: 'right',
           renderer: function( val, x, store ){
-            if( val >= 1000 )
+            if( val >= 1000 ){
               return String.format("{0} GB", (val / 1000).toFixed(2));
+            }
             return String.format("{0} MB", val);
           }
         }, {
@@ -359,13 +368,14 @@ Ext.oa.Lvm__Snapshot_Panel = Ext.extend(Ext.grid.GridPanel, {
           dataIndex: "LVM2_SNAP_PERCENT",
           align: "right",
           renderer: function( val, x, store ){
-            if( !val || val === -1 )
+            if( !val || val === -1 ){
               return '♻';
+            }
             var id = Ext.id();
             (function(){
               new Ext.ProgressBar({
                 renderTo: id,
-                value: val/100.,
+                value: val/100.0,
                 text:  String.format("{0}%", val),
                 cls:   ( val > store.data.fscritical ? "lv_used_crit" :
                         (val > store.data.fswarning  ? "lv_used_warn" : "lv_used_ok"))
@@ -383,6 +393,7 @@ Ext.oa.Lvm__Snapshot_Panel = Ext.extend(Ext.grid.GridPanel, {
     Ext.oa.Lvm__Snapshot_Panel.superclass.initComponent.apply(this, arguments);
   },
   onRender: function(){
+    "use strict";
     Ext.oa.Lvm__Snapshot_Panel.superclass.onRender.apply(this, arguments);
     this.store.reload();
   }
@@ -393,6 +404,7 @@ Ext.reg("lvm__snapshot_panel", Ext.oa.Lvm__Snapshot_Panel);
 Ext.oa.Lvm__Snapshot_Module = Ext.extend(Object, {
   panel: "lvm__snapshot_panel",
   prepareMenuTree: function(tree){
+    "use strict";
     tree.appendToRootNodeById("menu_storage", {
       text: "{% trans 'Volume Snapshots' %}",
       leaf: true,

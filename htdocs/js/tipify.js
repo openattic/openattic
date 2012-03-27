@@ -12,9 +12,11 @@
 */
 
 function mkFocusFunc(tiptext){
+  "use strict";
   return function( self ){
-    if( !Ext.state.Manager.get("form_tooltip_show", true) )
+    if( !Ext.state.Manager.get("form_tooltip_show", true) ){
       return;
+    }
     self.fieldtip = new Ext.ToolTip({
       target: ( self.trigger ? self.trigger.id : self.id ),
       anchor: 'left',
@@ -30,20 +32,23 @@ function mkFocusFunc(tiptext){
       }
     });
     self.fieldtip.show();
-  }
+  };
 }
 
 function mkBlurFunc(){
+  "use strict";
   return function( self ){
     if( self.fieldtip ){
       self.fieldtip.hide();
     }
-  }
+  };
 }
 
 function tipify(config, tiptext){
-  if( typeof config.listeners === "undefined" )
+  "use strict";
+  if( typeof config.listeners === "undefined" ){
     config.listeners = {};
+  }
   config.listeners.focus = mkFocusFunc(tiptext);
   config.listeners.blur = mkBlurFunc();
   return config;

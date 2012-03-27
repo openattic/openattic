@@ -16,6 +16,7 @@
 Ext.namespace("Ext.oa");
 
 function wrap_api_key_set(form, options, action){
+  "use strict";
   // This is a somewhat questionable method to submit the form, but Django refuses
   // to validate without last_login/date_joined being set, which is not quite what I want either.
   var params = {
@@ -40,14 +41,16 @@ Ext.oa.ApiKey_Panel = Ext.extend(Ext.oa.ShareGridPanel, {
   texts: {
     add:     "{% trans 'Add Key' %}",
     edit:    "{% trans 'Edit Key' %}",
-    remove:  "{% trans 'Delete Key' %}",
+    remove:  "{% trans 'Delete Key' %}"
   },
   storefields: [{
     name: 'ownername',
     mapping: 'owner',
     convert: function( val, row ){
-      if( val === null )
+      "use strict";
+      if( val === null ){
         return '';
+      }
       return val.username;
     }
   }, "apikey"],
@@ -55,6 +58,7 @@ Ext.oa.ApiKey_Panel = Ext.extend(Ext.oa.ShareGridPanel, {
     text: "{% trans 'Show API URL' %}",
     icon: MEDIA_URL + "/oxygen/16x16/actions/download.png",
     handler: function(btn){
+      "use strict";
       var sm = this.getSelectionModel();
       if( sm.hasSelection() ){
         var sel = sm.selections.items[0];
@@ -100,7 +104,7 @@ Ext.oa.ApiKey_Panel = Ext.extend(Ext.oa.ShareGridPanel, {
       fieldLabel: "{% trans 'Active' %}",
       name: "active",
       ref: 'activefield'
-    }],
+    }]
   }
 });
 
@@ -112,6 +116,7 @@ Ext.oa.ApiKey_Module = Ext.extend(Object, {
   panel: "apikey_panel",
 
   prepareMenuTree: function(tree){
+    "use strict";
     tree.appendToRootNodeById("menu_system", {
       text: "{% trans 'API Keys' %}",
       icon: MEDIA_URL + '/oxygen/22x22/status/dialog-password.png',

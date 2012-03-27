@@ -17,6 +17,7 @@ Ext.namespace("Ext.oa");
 
 Ext.oa.Peering__Peerhost_Panel = Ext.extend(Ext.grid.GridPanel, {
   showEditWindow: function(config, record){
+    "use strict";
     var peerhostGrid = this;
     var addwin = new Ext.Window(Ext.apply(config, {
       layout: "fit",
@@ -79,11 +80,11 @@ Ext.oa.Peering__Peerhost_Panel = Ext.extend(Ext.grid.GridPanel, {
   },
 
   initComponent: function(){
+    "use strict";
     var peerhostGrid = this;
     Ext.apply(this, Ext.apply(this.initialConfig, {
       id: 'peering__peerhost_panel_inst',
       title: "{% trans 'openATTIC Peers' %}",
-      viewConfig: { forceFit: true },
       buttons: [ {
         text: "",
         icon: MEDIA_URL + "/icons2/16x16/actions/reload.png",
@@ -125,7 +126,9 @@ Ext.oa.Peering__Peerhost_Panel = Ext.extend(Ext.grid.GridPanel, {
         fields: ['id', 'base_url', 'name', 'hostname'],
         directFn: peering__PeerHost.all
       }),
-      viewConfig: { forceFit: true },
+      viewConfig: {
+        forceFit: true
+      },
       colModel: new Ext.grid.ColumnModel({
         defaults: {
           sortable: true
@@ -143,39 +146,41 @@ Ext.oa.Peering__Peerhost_Panel = Ext.extend(Ext.grid.GridPanel, {
     }));
     Ext.oa.Peering__Peerhost_Panel.superclass.initComponent.apply(this, arguments);
   },
-     deleteFunction: function(self){
-  var sm = this.getSelectionModel();
+  deleteFunction: function(self){
+    "use strict";
+    var sm = this.getSelectionModel();
     if( sm.hasSelection() ){
       var sel = sm.selections.items[0];
-        Ext.Msg.confirm(
-          "{% trans 'Delete Peer' %}",
-          interpolate(
-            "{% trans 'Do you really want to delete %s?' %}",[sel.data.name]),
-            function(btn){
-              if(btn == 'yes'){
-                peering__PeerHost.remove( sel.data.id, function(provider, response){
-                sel.store.reload();
-                });
-              } 
-           });
-    }
- },
- 
-  onRender: function(){
-    Ext.oa.Peering__Peerhost_Panel.superclass.onRender.apply(this, arguments);
-    this.store.reload();
-     var self = this;
-    var menu = new Ext.menu.Menu({
-    items: [{
-            text: 'delete',
-            icon: MEDIA_URL + "/icons2/16x16/actions/remove.png"
-        }],
-        listeners: {
-          itemclick: function(item) {
-                    self.deleteFunction()
+      Ext.Msg.confirm(
+        "{% trans 'Delete Peer' %}",
+        interpolate(
+          "{% trans 'Do you really want to delete %s?' %}",[sel.data.name]),
+        function(btn){
+          if(btn === 'yes'){
+            peering__PeerHost.remove( sel.data.id, function(provider, response){
+              sel.store.reload();
+            });
           }
         }
-   });
+      );
+    }
+  },
+  onRender: function(){
+    "use strict";
+    Ext.oa.Peering__Peerhost_Panel.superclass.onRender.apply(this, arguments);
+    this.store.reload();
+    var self = this;
+    var menu = new Ext.menu.Menu({
+      items: [{
+        text: 'delete',
+        icon: MEDIA_URL + "/icons2/16x16/actions/remove.png"
+      }],
+      listeners: {
+        itemclick: function(item) {
+          self.deleteFunction();
+        }
+      }
+    });
     this.on({
       'contextmenu': function(event) {
         if( this.getSelectionModel().hasSelection() ){
@@ -192,6 +197,7 @@ Ext.reg("peering__peerhost_panel", Ext.oa.Peering__Peerhost_Panel);
 Ext.oa.Peering__Peerhost_Module = Ext.extend(Object, {
   panel: "peering__peerhost_panel",
   prepareMenuTree: function(tree){
+    "use strict";
     tree.appendToRootNodeById("menu_services", {
       text: "{% trans 'openATTIC Peers' %}",
       leaf: true,

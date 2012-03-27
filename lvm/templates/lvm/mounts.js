@@ -17,11 +17,12 @@ Ext.namespace("Ext.oa");
 
 Ext.oa.Lvm__Mounts_Panel = Ext.extend(Ext.grid.GridPanel, {
   initComponent: function(){
+    "use strict";
     var fields = ['dev', 'mountpoint', 'fstype', 'options', 'dump', 'pass'];
     var mountGrid = this;
     Ext.apply(this, Ext.apply(this.initialConfig, {
       id: "lvm__mounts_panel_inst",
-      title: "{% trans "Mount Points" %}",
+      title: "{% trans 'Mount Points' %}",
       viewConfig: { forceFit: true },
       buttons: [{
         text: "",
@@ -44,19 +45,19 @@ Ext.oa.Lvm__Mounts_Panel = Ext.extend(Ext.grid.GridPanel, {
           sortable: true
         },
         columns: [{
-          header: "{% trans "Device" %}",
+          header: "{% trans 'Device' %}",
           width: 300,
           dataIndex: "dev"
         }, {
-          header: "{% trans "Mount Point" %}",
+          header: "{% trans 'Mount Point' %}",
           width: 300,
           dataIndex: "mountpoint"
         }, {
-          header: "{% trans "FS Type" %}",
+          header: "{% trans 'FS Type' %}",
           width: 100,
           dataIndex: "fstype"
         }, {
-          header: "{% trans "Options" %}",
+          header: "{% trans 'Options' %}",
           width: 300,
           dataIndex: "options"
         } ]
@@ -65,6 +66,7 @@ Ext.oa.Lvm__Mounts_Panel = Ext.extend(Ext.grid.GridPanel, {
     Ext.oa.Lvm__Mounts_Panel.superclass.initComponent.apply(this, arguments);
   },
   onRender: function(){
+    "use strict";
     Ext.oa.Lvm__Mounts_Panel.superclass.onRender.apply(this, arguments);
     this.store.reload();
   }
@@ -76,6 +78,7 @@ Ext.oa.Lvm__Mounts_Module = Ext.extend(Object, {
   panel: "lvm__mounts_panel",
 
   prepareMenuTree: function(tree){
+    "use strict";
     tree.appendToRootNodeById("menu_status", {
       text: "{% trans 'Mount Points' %}",
       leaf: true,
