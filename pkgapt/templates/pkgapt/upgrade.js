@@ -17,6 +17,7 @@ Ext.namespace("Ext.oa");
 
 Ext.oa.Pkgapt__Upgrade_Panel = Ext.extend(Ext.grid.GridPanel, {
   initComponent: function(){
+    "use strict";
     var aptGrid = this;
     Ext.apply(this, Ext.apply(this.initialConfig, {
       id: 'pkgapt__upgrade_panel_inst',
@@ -95,12 +96,12 @@ Ext.oa.Pkgapt__Upgrade_Panel = Ext.extend(Ext.grid.GridPanel, {
         pkgapt__Apt.get_upgrade_changes(dist_upgrade, function(provider, response){
           aptGrid.setTitle(String.format(
             "APT: Upgrading {0}, newly installing {1}, deleting {2}, keeping {3} packages, downloading {4} MiB. ",
-            response.result[0]['upgrade_count'], response.result[0]['new_install_count'],
-            response.result[0]['delete_count'],  response.result[0]['keep_count'],
-            (response.result[0]['req_download'] / 1024. / 1024.).toFixed(2)
+            response.result[0].upgrade_count, response.result[0].new_install_count,
+            response.result[0].delete_count,  response.result[0].keep_count,
+            (response.result[0].req_download / 1024.0 / 1024.0).toFixed(2)
           ) + String.format(
-            (response.result[0]['req_space'] < 0 ? "{0} MiB will be freed." : "{0} MiB of additional disk space will be used."),
-            Math.abs(response.result[0]['req_space'] / 1024. / 1024.).toFixed(2)
+            (response.result[0].req_space < 0 ? "{0} MiB will be freed." : "{0} MiB of additional disk space will be used."),
+            Math.abs(response.result[0].req_space / 1024.0 / 1024.0).toFixed(2)
           ));
           aptGrid.store.loadData(response.result[1]);
         });
@@ -109,6 +110,7 @@ Ext.oa.Pkgapt__Upgrade_Panel = Ext.extend(Ext.grid.GridPanel, {
     Ext.oa.Pkgapt__Upgrade_Panel.superclass.initComponent.apply(this, arguments);
   },
   onRender: function(){
+    "use strict";
     Ext.oa.Pkgapt__Upgrade_Panel.superclass.onRender.apply(this, arguments);
     this.reload(Ext.state.Manager.get("pkgapt_distupgrade", true));
   }
@@ -119,6 +121,7 @@ Ext.reg("pkgapt__upgrade_panel", Ext.oa.Pkgapt__Upgrade_Panel);
 Ext.oa.Pkgapt__Upgrade_Module = Ext.extend(Object, {
   panel: "pkgapt__upgrade_panel",
   prepareMenuTree: function(tree){
+    "use strict";
     tree.appendToRootNodeById("menu_system", {
       text: "{% trans 'Online Update' %}",
       leaf: true,

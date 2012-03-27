@@ -14,6 +14,7 @@
 Ext.namespace("Ext.oa");
 
 Ext.oa.getDefaultPortlets = function(tools){
+  "use strict";
   return [{
     title: 'LVs',
     layout:'fit',
@@ -42,8 +43,9 @@ Ext.oa.getDefaultPortlets = function(tools){
             mapping: 'fs',
             sortType: 'asInt',
             convert: function( val, row ){
-              if( val === null || typeof val.stat === "undefined" )
+              if( val === null || typeof val.stat === "undefined" ){
                 return -1; // fake to sort unknown values always at the bottom
+              }
               return (val.stat.used / val.stat.size * 100 ).toFixed(2);
             }
           }],
@@ -66,18 +68,19 @@ Ext.oa.getDefaultPortlets = function(tools){
           dataIndex: "fsused",
           align: 'right',
           renderer: function( val, x, store ){
-            if( !val || val === -1 )
+            if( !val || val === -1 ){
               return '';
+            }
             var id = Ext.id();
             (function(){
               new Ext.ProgressBar({
                 renderTo: id,
-                value: val/100.,
+                value: val/100.0,
                 text:  String.format("{0}%", val),
                 cls:   ( val > store.data.fscritical ? "lv_used_crit" :
                         (val > store.data.fswarning  ? "lv_used_warn" : "lv_used_ok"))
               });
-            }).defer(25)
+            }).defer(25);
             return '<span id="' + id + '"></span>';
           }
         }]
@@ -114,10 +117,15 @@ Ext.oa.getDefaultPortlets = function(tools){
               smps: ['CPU'],
               vars: [],
               data: []
-            }
-            for( var key in result.result ){
-              if( key === "time_taken" ) continue;
-              if( result.result[key] < 0.5 ) continue;
+            };
+            var key;
+            for( key in result.result ){
+              if( key === "time_taken" ){
+                continue;
+              }
+              if( result.result[key] < 0.5 ){
+                continue;
+              }
               conf.vars.push(key);
               conf.data.push([result.result[key]]);
             }
@@ -125,7 +133,7 @@ Ext.oa.getDefaultPortlets = function(tools){
           }
         });
         updateChart.defer(30000);
-      }
+      };
       updateChart();
       return chart;
     }())
@@ -160,8 +168,9 @@ Ext.oa.getDefaultPortlets = function(tools){
               smps: ['RAM'],
               vars: [],
               data: []
-            }
-            for( var key in result.result ){
+            };
+            var key;
+            for( key in result.result ){
               conf.vars.push(key);
               conf.data.push([result.result[key]]);
             }
@@ -169,13 +178,13 @@ Ext.oa.getDefaultPortlets = function(tools){
           }
         });
         updateChart.defer(30000);
-      }
+      };
       updateChart();
       chart.on("leftclick", function(){});
       return chart;
     }())
   }];
-}
+};
 
 // kate: space-indent on; indent-width 2; replace-tabs on;
 
