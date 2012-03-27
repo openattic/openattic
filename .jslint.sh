@@ -28,5 +28,5 @@ ADDVARS=` grep -o -w -P '[a-z]+__[a-zA-Z]+' "$TEMPFILE" | sort | uniq | tr '\n' 
 
 # Now lint, and replace the filename in the output
 java -jar /usr/local/share/jslint4java-2.0.2.jar --indent 2 --maxlen 120  \
-	--predef Ext,MEDIA_URL,tipify,$ADDVARS --vars --browser --white \
+	--predef Ext,MEDIA_URL,tipify,$ADDVARS --vars --browser --white --plusplus \
 	--maxerr 500 "$TEMPFILE" "$@" | sed "s#$TEMPFILE#$INFILE#g"
