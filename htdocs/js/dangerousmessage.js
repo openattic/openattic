@@ -14,12 +14,13 @@
 Ext.namespace("Ext.oa");
 
 Ext.oa.DangerousMessage = function(color){
+  "use strict";
   // http://www.sencha.com/forum/showthread.php?7613-Ext.MessageBox-extend-class&p=46792&viewfull=1#post46792
-  var f = function(){};
-  f.prototype = Ext.MessageBox;
-  var o = Ext.extend(f, {
+  var F = function(){};
+  F.prototype = Ext.MessageBox;
+  var O = Ext.extend(F, {
     getDialog: function() {
-      var d = o.superclass.getDialog.apply(this, arguments);
+      var d = O.superclass.getDialog.apply(this, arguments);
       d.mask.addClass(color);
       d.on("hide", function(){
         d.mask.removeClass(color);
@@ -27,7 +28,7 @@ Ext.oa.DangerousMessage = function(color){
       return d;
     }
   });
-  return new o();
+  return new O();
 };
 Ext.oa.RedDangerousMessage = Ext.oa.DangerousMessage("redmask");
 
