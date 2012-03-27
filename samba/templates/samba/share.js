@@ -38,12 +38,13 @@ Ext.oa.Samba__Share_Panel = Ext.extend(Ext.oa.ShareGridPanel, {
       xtype:'volumefield',
       listeners: {
         select: function(self, record, index){
-        lvm__LogicalVolume.get( record.data.id, function( provider, response ){
-          self.ownerCt.namefield.setValue( response.result.name );
-          self.ownerCt.namefield.enable();
-          self.ownerCt.dirfield.setValue( response.result.fs.mountpoints[0] );
-          self.ownerCt.dirfield.enable();
-        } );
+          "use strict";
+          lvm__LogicalVolume.get( record.data.id, function( provider, response ){
+            self.ownerCt.namefield.setValue( response.result.name );
+            self.ownerCt.namefield.enable();
+            self.ownerCt.dirfield.setValue( response.result.fs.mountpoints[0] );
+            self.ownerCt.dirfield.enable();
+          } );
         }
       }
     },{
@@ -127,6 +128,7 @@ Ext.reg("samba__share_panel", Ext.oa.Samba__Share_Panel);
 Ext.oa.Samba__Share_Module = Ext.extend(Object, {
   panel: "samba__share_panel",
   prepareMenuTree: function(tree){
+    "use strict";
     tree.appendToRootNodeById("menu_shares", {
       text: "{% trans 'Windows (Samba)' %}",
       leaf: true,

@@ -22,7 +22,9 @@ Ext.oa.ShareGridPanel = Ext.extend(Ext.grid.GridPanel, {
   window: {},
 
   initComponent: function(){
+    "use strict";
     var self = this;
+    var i;
     Ext.applyIf(this.texts, {
       reload:  "{% trans 'Reload' %}",
       add:     "{% trans 'Add Export' %}",
@@ -34,15 +36,16 @@ Ext.oa.ShareGridPanel = Ext.extend(Ext.grid.GridPanel, {
     });
     Ext.applyIf(this.window, {
       height: 240,
-      width: 500,
+      width:  500
     });
     if( typeof this.buttons === "undefined" ){
       this.buttons = [];
     }
     else{
-      for( var i = 0; i < this.buttons.length; i++ ){
-        if( typeof this.buttons[i].scope === "undefined" )
+      for( i = 0; i < this.buttons.length; i++ ){
+        if( typeof this.buttons[i].scope === "undefined" ){
           this.buttons[i].scope = this;
+        }
       }
     }
     Ext.apply(this, Ext.applyIf(this.initialConfig, {
@@ -53,13 +56,14 @@ Ext.oa.ShareGridPanel = Ext.extend(Ext.grid.GridPanel, {
         }],
       store: new Ext.data.DirectStore({
         fields: (function(){
-          var cols = ["id"];
-          for( var i = 0; i < self.columns.length; i++ ){
-            cols.push(self.columns[i].dataIndex);
+          var cols = ["id"],
+              c;
+          for( c = 0; c < self.columns.length; c++ ){
+            cols.push(self.columns[c].dataIndex);
           }
           if( typeof self.storefields !== "undefined" ){
-            for( var i = 0; i < self.storefields.length; i++ ){
-              cols.push(self.storefields[i]);
+            for( c = 0; c < self.storefields.length; c++ ){
+              cols.push(self.storefields[c]);
             }
           }
           return cols;
@@ -112,6 +116,7 @@ Ext.oa.ShareGridPanel = Ext.extend(Ext.grid.GridPanel, {
   },
 
   editFunction: function(self){
+    "use strict";
     var sm = this.getSelectionModel();
     if( sm.hasSelection() ){
       var sel = sm.selections.items[0];
@@ -123,10 +128,12 @@ Ext.oa.ShareGridPanel = Ext.extend(Ext.grid.GridPanel, {
   },
 
   deleteConfirm: function(sel){
+    "use strict";
     return interpolate(this.texts.confirm, [sel.data.path]);
   },
 
   deleteFunction: function(){
+    "use strict";
     var sm = this.getSelectionModel();
     var self = this;
     if( sm.hasSelection() ){
@@ -135,7 +142,7 @@ Ext.oa.ShareGridPanel = Ext.extend(Ext.grid.GridPanel, {
         self.texts.remove,
         self.deleteConfirm(sel),
         function(btn){
-          if(btn == 'yes'){
+          if(btn === 'yes'){
             self.api.remove( sel.data.id, function(provider, response){
               sel.store.reload();
             } );
@@ -146,6 +153,7 @@ Ext.oa.ShareGridPanel = Ext.extend(Ext.grid.GridPanel, {
   },
 
   showEditWindow: function(config, record){
+    "use strict";
     var self = this;
     Ext.apply(config, this.window);
     var addwin = new Ext.Window(Ext.apply(config, {
@@ -154,6 +162,7 @@ Ext.oa.ShareGridPanel = Ext.extend(Ext.grid.GridPanel, {
         autoScroll: true
       },
       items: (function(){
+        var i;
         var form = {
           xtype: "form",
           bodyStyle: 'padding: 5px 5px;',
@@ -199,9 +208,10 @@ Ext.oa.ShareGridPanel = Ext.extend(Ext.grid.GridPanel, {
           }]
         };
         Ext.apply(form, self.form);
-        for( var i = 0; i < form.items.length; i++ ){
-          if( form.items[i].disabled )
+        for( i = 0; i < form.items.length; i++ ){
+          if( form.items[i].disabled ){
             form.items[i].disabled = !record;
+          }
         }
         return form;
       }())
@@ -210,11 +220,13 @@ Ext.oa.ShareGridPanel = Ext.extend(Ext.grid.GridPanel, {
   },
 
   onRender: function(){
+    "use strict";
     Ext.oa.ShareGridPanel.superclass.onRender.apply(this, arguments);
     this.store.reload();
     var self = this;
     var menubuttons = [];
-    for( var i = 0; i < self.buttons.length; i++ ){
+    var i;
+    for( i = 0; i < self.buttons.length; i++ ){
       menubuttons.push({
         text:    (self.buttons[i].initialConfig.text || self.buttons[i].initialConfig.tooltip),
         icon:     self.buttons[i].initialConfig.icon,
@@ -238,7 +250,7 @@ Ext.oa.ShareGridPanel = Ext.extend(Ext.grid.GridPanel, {
         if( this.getSelectionModel().hasSelection() ){
           this.editFunction(this);
         }
-      },
+      }
     }, this);
   }
 });

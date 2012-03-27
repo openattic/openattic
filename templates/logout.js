@@ -15,6 +15,7 @@
 
 window.MainViewModules.push({
   prepareMenuTree: function(tree){
+    "use strict";
     tree.appendToRootNodeById("menu_shutdown", {
       text: "{% trans 'Logout' %}",
       leaf: true,
@@ -25,7 +26,7 @@ window.MainViewModules.push({
             "{% trans 'Logout' %}",
             "{% trans 'Do you really want to logout?' %}",
             function(btn, text){
-              if(btn == 'yes'){
+              if(btn === 'yes'){
                 var conn = new Ext.data.Connection();
                 conn.request({
                   url: LOGOUT_URL,

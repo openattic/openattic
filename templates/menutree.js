@@ -80,23 +80,27 @@ Ext.oa.MenuTree = Ext.extend(Ext.tree.TreePanel, {
     ]
   },
   appendToRootNodeById: function(rootid, subnode){
+    "use strict";
+    var i;
     if( !this.root.loaded ){
-      for( var i = 0; i < this.root.attributes.children.length; i++ ){
+      for( i = 0; i < this.root.attributes.children.length; i++ ){
         if( this.root.attributes.children[i].id === rootid ){
           this.root.attributes.children[i].children.push(subnode);
         }
       }
     }
     else{
-      for( var i = 0; i < this.root.childNodes.length; i++ ){
+      for( i = 0; i < this.root.childNodes.length; i++ ){
         if( this.root.childNodes[i].id === rootid )
           this.root.childNodes[i].append(subnode);
       }
     }
   },
   markAsActive: function(panel, parent){
+    "use strict";
+    var i;
     if( parent ){
-      for( var i = 0; i < parent.childNodes.length; i++ ){
+      for( i = 0; i < parent.childNodes.length; i++ ){
         var nodepanel = parent.childNodes[i].attributes.panel;
         if( typeof nodepanel !== "undefined" && typeof nodepanel !== "string" )
           nodepanel = nodepanel.id;

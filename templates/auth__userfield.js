@@ -17,6 +17,7 @@ Ext.namespace("Ext.oa");
 
 Ext.oa.Auth__UserField = Ext.extend(Ext.form.ComboBox, {
   initComponent: function(){
+    "use strict";
     var baseParams = {
       "field": "username",
       "kwds": {},
@@ -46,6 +47,7 @@ Ext.oa.Auth__UserField = Ext.extend(Ext.form.ComboBox, {
   },
 
   setValue: function(value){
+    "use strict";
     // Make sure the store is loaded before trying to display stuff.
     if( !this.store.data.length ){
       var self = this;

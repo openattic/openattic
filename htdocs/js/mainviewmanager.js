@@ -15,7 +15,9 @@ Ext.namespace("Ext.oa");
 
 Ext.oa.MainViewManager = Ext.extend(Ext.Panel, {
   initComponent: function(){
+    "use strict";
     var mainviewmanager = this;
+    var i, currstate, tbupdate;
     Ext.apply(this, Ext.apply(this.initialConfig, {
       layout: 'border',
       tbar: new Ext.Toolbar({
@@ -68,8 +70,9 @@ Ext.oa.MainViewManager = Ext.extend(Ext.Panel, {
         },
         smartInsert: function(obj){
           var tbar = mainviewmanager.getTopToolbar();
-          for (var i = 0; i < tbar.items.length; i++) {
-            var c = tbar.items.items[i];
+          var i, c;
+          for (i = 0; i < tbar.items.length; i++) {
+            c = tbar.items.items[i];
             if (c.isFill) {
               tbar.insert(i, obj);
               return;
@@ -90,12 +93,15 @@ Ext.oa.MainViewManager = Ext.extend(Ext.Panel, {
         listeners: {
           'render': function(tree) {
             var findTreeNode = function(node, sourceEl){
-              if( node.text === sourceEl.textContent )
+              var i, cldnode;
+              if( node.text === sourceEl.textContent ){
                 return node;
-              for( var i = 0; i < node.childNodes.length; i++ ){
-                var cldnode = findTreeNode(node.childNodes[i], sourceEl);
-                if( cldnode )
+              }
+              for( i = 0; i < node.childNodes.length; i++ ){
+                cldnode = findTreeNode(node.childNodes[i], sourceEl);
+                if( cldnode ){
                   return cldnode;
+                }
               }
               return null;
             };
@@ -137,12 +143,15 @@ Ext.oa.MainViewManager = Ext.extend(Ext.Panel, {
         layout: "card",
         layoutConfig: { deferredRender: true },
         items: (function(){
-          var it = [];
-          for( var i = 0; i < window.MainViewModules.length; i++ ){
-            var mod = window.MainViewModules[i];
+          var it = [],
+              i, j,
+              mod;
+          for( i = 0; i < window.MainViewModules.length; i++ ){
+            mod = window.MainViewModules[i];
             if( Ext.isArray(mod.panel) ){
-              for( var j = 0; j < mod.panel.length; j++ )
+              for( j = 0; j < mod.panel.length; j++ ){
                 it.push({ xtype: mod.panel[j] });
+              }
             }
             else if( typeof mod.panel === "string" ){
 /*              console.log( "Pushing xtype "+mod.panel );*/
@@ -164,13 +173,13 @@ Ext.oa.MainViewManager = Ext.extend(Ext.Panel, {
     this.modcontainer = this.items.items[1];
     this.currentComponent = window.MainViewModules[0];
 
-    for( var i = 0; i < window.MainViewModules.length; i++ ){
+    for( i = 0; i < window.MainViewModules.length; i++ ){
       window.MainViewModules[i].prepareMenuTree(this.menutree);
     }
 
-    var currstate = Ext.state.Manager.get("toolbarbuttons");
+    currstate = Ext.state.Manager.get("toolbarbuttons");
     if( currstate ){
-      for( var i = 0; i < currstate.length; i++ ){
+      for( i = 0; i < currstate.length; i++ ){
         this.topToolbar.add( new Ext.Button({
           text:  currstate[i].text,
           icon:  currstate[i].icon,
@@ -186,13 +195,14 @@ Ext.oa.MainViewManager = Ext.extend(Ext.Panel, {
     }
 
     this.menutree.on( 'beforeclick', this.treenodeClicked, this );
-    var tbupdate = function(evt){
+    tbupdate = function(evt){
       var data = [];
-      for( var i = 1; i < this.topToolbar.items.items.length; i++ ){
+      var d;
+      for( d = 1; d < this.topToolbar.items.items.length; d++ ){
         data.push({
-          text:  this.topToolbar.items.items[i].initialConfig.text,
-          icon:  this.topToolbar.items.items[i].initialConfig.icon,
-          panel: this.topToolbar.items.items[i].initialConfig.panel
+          text:  this.topToolbar.items.items[d].initialConfig.text,
+          icon:  this.topToolbar.items.items[d].initialConfig.icon,
+          panel: this.topToolbar.items.items[d].initialConfig.panel
         });
       }
       Ext.state.Manager.set("toolbarbuttons", data);
@@ -202,11 +212,14 @@ Ext.oa.MainViewManager = Ext.extend(Ext.Panel, {
   },
 
   treenodeClicked: function( node, event ){
-    if( typeof node.attributes.panel != "undefined" )
+    "use strict";
+    if( typeof node.attributes.panel !== "undefined" ){
       this.switchComponent( node.attributes.panel );
+    }
   },
 
   switchComponent: function( toComponent ){
+    "use strict";
     if( typeof toComponent === "string" ){
       this.modcontainer.layout.setActiveItem( toComponent );
       this.menutree.markAsActive( toComponent );

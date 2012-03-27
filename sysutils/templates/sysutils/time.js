@@ -17,6 +17,7 @@ Ext.namespace("Ext.oa");
 
 Ext.oa.Time_Panel = Ext.extend(Ext.Panel, {
   initComponent: function(){
+    "use strict";
     var timeGrid = this;
     Ext.apply(this, Ext.apply(this.initialConfig, {
       title: "{% trans 'Date/Time' %}",
@@ -66,6 +67,7 @@ Ext.oa.Time_Panel = Ext.extend(Ext.Panel, {
   },
 
   prepareMenuTree: function(tree){
+    "use strict";
     tree.appendToRootNodeById("menu_system", {
       text: "{% trans 'Date/Time' %}",
       leaf: true,

@@ -15,6 +15,7 @@ Ext.namespace("Ext.oa");
 
 Ext.oa.Portal = Ext.extend(Ext.ux.Portal, {
   initComponent: function(){
+    "use strict";
     var tools = [{
       id: 'close',
       handler: function(e, target, panel){
@@ -31,8 +32,11 @@ Ext.oa.Portal = Ext.extend(Ext.ux.Portal, {
           [["portlet_lvs", "portlet_nfs"], ["portlet_cpu"], ["portlet_ram"]]);
 
         var all_portlets = Ext.oa.getDefaultPortlets(tools);
+        var i, c, p;
+        var items = [];
+        var colitems;
 
-        for( var i = 0; i < window.MainViewModules.length; i++ ){
+        for( i = 0; i < window.MainViewModules.length; i++ ){
           if( window.MainViewModules[i].getDashboardPortlets ){
             var mod_portlets = window.MainViewModules[i].getDashboardPortlets(tools);
             // Append mod_portlets to all_portlets
@@ -40,14 +44,13 @@ Ext.oa.Portal = Ext.extend(Ext.ux.Portal, {
           }
         }
 
-        var items = [];
         // For each column...
-        for( var c = 0; c < state.length; c++ ){
-          var colitems = [];
+        for( c = 0; c < state.length; c++ ){
+          colitems = [];
           // for each portlet in this column's state...
-          for( var p = 0; p < state[c].length; p++ ){
+          for( p = 0; p < state[c].length; p++ ){
             // find this portlet in the all_portlets list and add it to this column
-            for( var i = 0; i < all_portlets.length; i++ ){
+            for( i = 0; i < all_portlets.length; i++ ){
               if( all_portlets[i].id === state[c][p] ){
                 colitems.push(all_portlets[i]);
               }
@@ -55,8 +58,8 @@ Ext.oa.Portal = Ext.extend(Ext.ux.Portal, {
           }
           // now add a column wrapper for this column
           items.push({
-            columnWidth:.33,
-            style:'padding:10px 0 10px 10px',
+            columnWidth: 0.33,
+            style: 'padding:10px 0 10px 10px',
             items: colitems
           });
         }
@@ -68,12 +71,14 @@ Ext.oa.Portal = Ext.extend(Ext.ux.Portal, {
   },
 
   savePortlets: function(){
+    "use strict";
     var portal = this;
     var state = [];
-    for( var c = 0; c < portal.items.getCount(); c++ ){
-      var colIds = [];
-      var col = portal.items.get(c);
-      for( var p = 0; p < col.items.getCount(); p++ ){
+    var c, p, colIds, col;
+    for( c = 0; c < portal.items.getCount(); c++ ){
+      colIds = [];
+      col = portal.items.get(c);
+      for( p = 0; p < col.items.getCount(); p++ ){
         colIds.push(col.items.get(p).id);
       }
       state.push(colIds);
@@ -82,6 +87,7 @@ Ext.oa.Portal = Ext.extend(Ext.ux.Portal, {
   },
 
   makePortlet: function(config){
+    "use strict";
     var portlet = Ext.applyIf(config, {
       xtype: "portlet",
       tools: this.portletTools
@@ -93,6 +99,7 @@ Ext.oa.Portal = Ext.extend(Ext.ux.Portal, {
   },
 
   prepareMenuTree: function(tree){
+    "use strict";
     tree.appendToRootNodeById("menu_status", {
       text: 'Dashboard',
       leaf: true,
