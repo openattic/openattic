@@ -20,16 +20,16 @@ Ext.oa.Lvm__Snapshot_Panel = Ext.extend(Ext.grid.GridPanel, {
     var lvmSnapPanel = this;
     Ext.apply(this, Ext.apply(this.initialConfig, {
       id: "lvm__snapshot_panel_inst",
-      title: "{% trans "Volume Snapshots" %}",
+      title: "{% trans 'Volume Snapshots' %}",
       buttons: [{
         text: "",
         icon: MEDIA_URL + "/icons2/16x16/actions/reload.png",
-        tooltip: "{% trans "Reload" %}",
+        tooltip: "{% trans 'Reload' %}",
         handler: function(self){
           lvmSnapPanel.store.reload();
         }
       }, {
-        text: "{% trans "Mount" %}",
+        text: "{% trans 'Mount' %}",
         icon: MEDIA_URL + "/oxygen/16x16/emblems/emblem-mounted.png",
         handler: function(self){
           var sm = lvmSnapPanel.getSelectionModel();
@@ -38,28 +38,28 @@ Ext.oa.Lvm__Snapshot_Panel = Ext.extend(Ext.grid.GridPanel, {
             if( !sel.data.filesystem ){
               Ext.Msg.alert('Mounted',
                 interpolate(
-                  "{% trans "Volume %s does not have a file system and therefore cannot be mounted." %}",
+                  "{% trans 'Volume %s does not have a file system and therefore cannot be mounted.' %}",
                   [sel.data.name] ));
               return;
             }
             lvm__LogicalVolume.is_mounted( sel.data.id, function(provider, response){
               if( response.result ){
-                Ext.Msg.alert('Mounted', interpolate( "{% trans "Volume %s is already mounted." %}", [sel.data.name] ));
+                Ext.Msg.alert('Mounted', interpolate( "{% trans 'Volume %s is already mounted.' %}", [sel.data.name] ));
                 return;
               }
               lvm__LogicalVolume.is_in_standby( sel.data.id, function(provider, response){
                 if( response.result ){
                   Ext.Msg.alert('Mounted',
-                    interpolate( "{% trans "Volume %s cannot be mounted at the current time." %}", [sel.data.name] ));
+                    interpolate( "{% trans 'Volume %s cannot be mounted at the current time.' %}", [sel.data.name] ));
                   return;
                 }
                 lvm__LogicalVolume.mount( sel.data.id, function(provider, response){
                   if( response.type === "exception" )
                     Ext.Msg.alert('Mounted', interpolate(
-                      "{% trans "Volume %s could not be mounted, please check the logs." %}", [sel.data.name] ));
+                      "{% trans 'Volume %s could not be mounted, please check the logs.' %}", [sel.data.name] ));
                   else
                     Ext.Msg.alert('Mounted', interpolate(
-                      "{% trans "Volume %s has been mounted." %}", [sel.data.name] ));
+                      "{% trans 'Volume %s has been mounted.' %}", [sel.data.name] ));
                     lvmSnapPanel.store.reload();
                 } );
               } );
@@ -67,7 +67,7 @@ Ext.oa.Lvm__Snapshot_Panel = Ext.extend(Ext.grid.GridPanel, {
           }
         }
       }, {
-        text: "{% trans "Unmount" %}",
+        text: "{% trans 'Unmount' %}",
         icon: MEDIA_URL + "/oxygen/16x16/emblems/emblem-unmounted.png",
         handler: function(self){
           var sm = lvmSnapPanel.getSelectionModel();
@@ -112,7 +112,7 @@ Ext.oa.Lvm__Snapshot_Panel = Ext.extend(Ext.grid.GridPanel, {
           if( sm.hasSelection() ){
             var sel = sm.selections.items[0];
             var shareswin = new Ext.Window({
-              title: "{% trans "Add Volume" %}",
+              title: "{% trans 'Add Volume' %}",
               layout: "fit",
               height: 300,
               width: 500,
@@ -145,11 +145,11 @@ Ext.oa.Lvm__Snapshot_Panel = Ext.extend(Ext.grid.GridPanel, {
           }
         }
       }, {
-        text: "{% trans "Add Snapshot" %}",
+        text: "{% trans 'Add Snapshot' %}",
         icon: MEDIA_URL + "/icons2/16x16/actions/add.png",
         handler: function(){
           var addwin = new Ext.Window({
-            title: "{% trans "Add Snapshot" %}",
+            title: "{% trans 'Add Snapshot' %}",
             layout: "fit",
             height: 300,
             width: 500,
@@ -161,7 +161,7 @@ Ext.oa.Lvm__Snapshot_Panel = Ext.extend(Ext.grid.GridPanel, {
                 anchor: '-20px'
               },
               items: [{
-                  fieldLabel: "{% trans "Name" %}",
+                  fieldLabel: "{% trans 'Name' %}",
                   name: "name",
                   allowBlank: false,
                   ref: 'namefield'
@@ -198,7 +198,7 @@ Ext.oa.Lvm__Snapshot_Panel = Ext.extend(Ext.grid.GridPanel, {
                        ){
                         self.ownerCt.volume_free_megs = null;
                         self.ownerCt.volume_id = null;
-                        self.ownerCt.sizelabel.setText( "{% trans "Querying data..." %}" );
+                        self.ownerCt.sizelabel.setText( "{% trans 'Querying data...' %}" );
                         self.ownerCt.sizefield.disable();
                         lvm__VolumeGroup.get_free_megs( record.data.vg, function( provider, response ){
                         self.ownerCt.volume_id = record.data.vg;
@@ -226,7 +226,7 @@ Ext.oa.Lvm__Snapshot_Panel = Ext.extend(Ext.grid.GridPanel, {
                 },"{%trans 'Please consider, that the size of your snapshot depends on the kind and frequency of change.' %}"), {
                   xtype: "label",
                   ref:   "sizelabel",
-                  text:  "{% trans "Waiting for volume selection..." %}",
+                  text:  "{% trans 'Waiting for volume selection...' %}",
                   cls:   "form_hint_label"
               }],
               buttons: [{
@@ -238,8 +238,8 @@ Ext.oa.Lvm__Snapshot_Panel = Ext.extend(Ext.grid.GridPanel, {
                   }
                   var free = self.ownerCt.ownerCt.volume_free_megs;
                   if( free === null || typeof free == "undefined" ){
-                    Ext.Msg.alert("{% trans "Error" %}",
-                      "{% trans "Please wait for the query for available space to complete." %}");
+                    Ext.Msg.alert("{% trans 'Error' %}",
+                      "{% trans 'Please wait for the query for available space to complete.' %}");
                     return;
                   }
                   if( free < self.ownerCt.ownerCt.sizefield.getValue() ){
@@ -292,7 +292,7 @@ Ext.oa.Lvm__Snapshot_Panel = Ext.extend(Ext.grid.GridPanel, {
                   } );
                 }
                 else
-                  alert("{% trans "Aborted." %}");
+                  alert("{% trans 'Aborted.' %}");
               }
             );
           }
@@ -370,7 +370,7 @@ Ext.oa.Lvm__Snapshot_Panel = Ext.extend(Ext.grid.GridPanel, {
                 cls:   ( val > store.data.fscritical ? "lv_used_crit" :
                         (val > store.data.fswarning  ? "lv_used_warn" : "lv_used_ok"))
               });
-            }).defer(25)
+            }).defer(25);
             return '<span id="' + id + '"></span>';
           }
         }, {
