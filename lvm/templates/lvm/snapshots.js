@@ -301,7 +301,7 @@ Ext.oa.Lvm__Snapshot_Panel = Ext.extend(Ext.grid.GridPanel, {
       store: (function(){
         // Anon function that is called immediately to set up the store's DefaultSort
         var store = new Ext.data.DirectStore({
-          fields: ['name', 'megs', 'filesystem',  'snapshot', 'formatted', 'id', 'state', 'fs',
+          fields: ['name', 'megs', 'filesystem',  'snapshot', 'formatted', 'id', 'state', 'fs', 'fswarning', 'fscritical',
             {
               name: 'origvolid',
               mapping: 'snapshot',
