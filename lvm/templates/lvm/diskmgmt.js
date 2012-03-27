@@ -15,52 +15,18 @@
 
 Ext.namespace("Ext.oa");
 
-var volumeGroups = new Ext.data.DirectStore({
-  fields: ['id', 'name',"LVM_VG_FREE","LVM_VG_SIZE","LVM_VG_ATTR", "LVM_VG_PERCENT"],
-  directFn: lvm__VolumeGroup.all,
-  listeners: {
-    load: function(self){
-      var handleResponse = function(i){
-        return function(provider, response){
-          self.data.items[i].set( "LVM_VG_PERCENT",
-            ((response.result.LVM2_VG_SIZE - response.result.LVM2_VG_FREE) / response.result.LVM2_VG_SIZE * 100.).toFixed(2)
-          );
-          if( response.result.LVM2_VG_SIZE >= 1000 ){
-            self.data.items[i].set("LVM_VG_SIZE", String.format("{0} GB", (response.result.LVM2_VG_SIZE / 1000).toFixed(2)));
-          }
-          else
-          {
-            self.data.items[i].set("LVM_VG_SIZE", String.format("{0} MB", response.result.LVM2_VG_SIZE));
-          }
-          if( response.result.LVM2_VG_FREE >= 1000 ){
-            self.data.items[i].set("LVM_VG_FREE", String.format("{0} GB", (response.result.LVM2_VG_FREE / 1000).toFixed(2)));
-          }
-          else
-          {
-            self.data.items[i].set("LVM_VG_FREE", String.format("{0} MB", response.result.LVM2_VG_FREE));
-          }
-          self.data.items[i].set("LVM_VG_ATTR", response.result.LVM2_VG_ATTR);
-          self.commitChanges();
-        };
-      }
-      for (var i = 0; i < self.data.length; i++){
-        lvm__VolumeGroup.lvm_info(self.data.items[i].id, handleResponse(i));
-      }
-    }
-  }
-});
-
 Ext.oa.volumeGroup_Panel = Ext.extend(Ext.grid.GridPanel, {
   initComponent: function(){
+    "use strict";
     var volumeGroupPanel = this;
     Ext.apply(this, Ext.apply(this.initialConfig, {
       id: "volumeGroup_panel_inst",
-      title: "{% trans "Volume Groups" %}",
+      title: "{% trans 'Volume Groups' %}",
       layout: 'fit',
       buttons: [{
         text: "",
         icon: MEDIA_URL + "/icons2/16x16/actions/reload.png",
-        tooltip: "{% trans "Reload" %}",
+        tooltip: "{% trans 'Reload' %}",
         handler: function(self){
           volumeGroupPanel.store.reload();
         }
@@ -93,8 +59,9 @@ Ext.oa.volumeGroup_Panel = Ext.extend(Ext.grid.GridPanel, {
                     name: 'block_model',
                     mapping: 'block',
                     convert: function(val, row) {
-                      if( val === null )
+                      if( val === null ){
                         return null;
+                      }
                       return val + " - " + row.model;
                     }
                   } ],
@@ -172,7 +139,7 @@ Ext.oa.volumeGroup_Panel = Ext.extend(Ext.grid.GridPanel, {
                 disabled: true,
                 handler: function(self){
                   var progresswin = new Ext.Window({
-                    title: "{% trans "Initialize" %}",
+                    title: "{% trans 'Initialize' %}",
                     layout: "fit",
                     height: 250,
                     width: 400,
@@ -187,7 +154,7 @@ Ext.oa.volumeGroup_Panel = Ext.extend(Ext.grid.GridPanel, {
                     progresswin.hide();
                     Ext.Msg.alert("{% trans 'Success!' %}", "{% trans 'The Device has been successfully initialized.' %}");
                     volumeGroupPanel.store.reload();
-                  }
+                  };
                   if( typeof vg === "number" ){
                     lvm__VolumeGroup.join_device( vg, disk, done );
                   }
@@ -203,7 +170,7 @@ Ext.oa.volumeGroup_Panel = Ext.extend(Ext.grid.GridPanel, {
           initwin.show();
         }
       },{
-        text: "{% trans "Delete Group" %}",
+        text: "{% trans 'Delete Group' %}",
         icon: MEDIA_URL + "/icons2/16x16/actions/remove.png",
         handler: function(self){
           var sm = volumeGroupPanel.getSelectionModel();
@@ -217,21 +184,22 @@ Ext.oa.volumeGroup_Panel = Ext.extend(Ext.grid.GridPanel, {
                     "{% trans 'Really delete Group %s?' %}",
                     [sel.data.name] ),
                   function(btn, text){
-                    if( btn == 'yes' ){
+                    if( btn === 'yes' ){
                       lvm__VolumeGroup.remove( sel.data.id, function(provider, response){
                         volumeGroupPanel.store.reload();
                       } );
                     }
                   }
                 );
-              }
+              };
               if(response.result.length > 0){
                 Ext.Msg.confirm(
                   "Confirm delete",
                   interpolate("{% trans 'Volumes found in this group. Delete all remaining volumes?' %}"),
                   function(btn, text){
-                    if(btn == 'yes')
+                    if(btn === 'yes'){
                       vgremove();
+                    }
                   }
                 );
               }
@@ -241,9 +209,43 @@ Ext.oa.volumeGroup_Panel = Ext.extend(Ext.grid.GridPanel, {
             });
           }
         }
-    }],
+      }],
       viewConfig: { forceFit: true },
-      store: volumeGroups,
+      store: new Ext.data.DirectStore({
+        fields: ['id', 'name',"LVM_VG_FREE","LVM_VG_SIZE","LVM_VG_ATTR", "LVM_VG_PERCENT"],
+        directFn: lvm__VolumeGroup.all,
+        listeners: {
+          load: function(self){
+            var i;
+            var handleResponse = function(i){
+              return function(provider, response){
+                self.data.items[i].set( "LVM_VG_PERCENT",
+                  ((response.result.LVM2_VG_SIZE - response.result.LVM2_VG_FREE) / response.result.LVM2_VG_SIZE * 100.0).toFixed(2)
+                );
+                if( response.result.LVM2_VG_SIZE >= 1000 ){
+                  self.data.items[i].set("LVM_VG_SIZE", String.format("{0} GB", (response.result.LVM2_VG_SIZE / 1000).toFixed(2)));
+                }
+                else
+                {
+                  self.data.items[i].set("LVM_VG_SIZE", String.format("{0} MB", response.result.LVM2_VG_SIZE));
+                }
+                if( response.result.LVM2_VG_FREE >= 1000 ){
+                  self.data.items[i].set("LVM_VG_FREE", String.format("{0} GB", (response.result.LVM2_VG_FREE / 1000).toFixed(2)));
+                }
+                else
+                {
+                  self.data.items[i].set("LVM_VG_FREE", String.format("{0} MB", response.result.LVM2_VG_FREE));
+                }
+                self.data.items[i].set("LVM_VG_ATTR", response.result.LVM2_VG_ATTR);
+                self.commitChanges();
+              };
+            };
+            for( i = 0; i < self.data.length; i++ ){
+              lvm__VolumeGroup.lvm_info(self.data.items[i].id, handleResponse(i));
+            }
+          }
+        }
+      }),
       ref: 'volumegroupGrid',
       colModel: new Ext.grid.ColumnModel({
         defaults: {
@@ -255,41 +257,43 @@ Ext.oa.volumeGroup_Panel = Ext.extend(Ext.grid.GridPanel, {
         },{
           header: "{% trans 'Size' %}",
           dataIndex: "LVM_VG_SIZE",
-          renderer: function(val){ if( val ) return val; return '♻' }
+          renderer: function(val){ if( val ){ return val; } return '♻'; }
         },{
           header: "{% trans 'Free' %}",
           dataIndex: "LVM_VG_FREE",
-          renderer: function(val){ if( val ) return val; return '♻' }
+          renderer: function(val){ if( val ){ return val; } return '♻'; }
         },{
           header: "{% trans 'Used%' %}",
           dataIndex: "LVM_VG_PERCENT",
           renderer: function( val, x, store ){
-            if( !val || val === -1 )
+            if( !val || val === -1 ){
               return '♻';
+            }
             var id = Ext.id();
             (function(){
               new Ext.ProgressBar({
                 renderTo: id,
-                value: val/100.,
+                value: val/100.0,
                 text:  String.format("{0}%", val),
                 cls:   ( val > 85 ? "lv_used_crit" :
                         (val > 70 ? "lv_used_warn" : "lv_used_ok"))
               });
-            }).defer(25)
+            }).defer(25);
             return '<span id="' + id + '"></span>';
           }
         },{
           header: "{% trans 'Attributes' %}",
           dataIndex: "LVM_VG_ATTR",
-          renderer: function(val){ if( val ) return val; return '♻' }
+          renderer: function(val){ if( val ){ return val; } return '♻'; }
         }]
       })
     }));
     Ext.oa.volumeGroup_Panel.superclass.initComponent.apply(this, arguments);
   },
   onRender: function(){
+    "use strict";
     Ext.oa.volumeGroup_Panel.superclass.onRender.apply(this, arguments);
-    volumeGroups.load();
+    this.store.load();
   }
 });
 
@@ -298,6 +302,7 @@ Ext.reg("volumeGroup_Panel", Ext.oa.volumeGroup_Panel);
 Ext.oa.volumeGroup_Module = Ext.extend(Object, {
   panel: "volumeGroup_Panel",
   prepareMenuTree: function(tree){
+    "use strict";
     tree.appendToRootNodeById("menu_storage", {
       text: "{% trans 'Disk Management' %}",
       leaf: true,
