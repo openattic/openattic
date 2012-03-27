@@ -88,7 +88,8 @@ Ext.oa.volumeGroup_Panel = Ext.extend(Ext.grid.GridPanel, {
                       }
                       else if( response.result[1] === "pv" ){
                         self.ownerCt.usagelabel.setText(
-                          interpolate( "{% trans 'Disk %(disk)s is part of the Volume Group %(vg)s, refusing to touch it.' %}",
+                          interpolate(
+                            "{% trans 'Disk %(disk)s is part of the Volume Group %(vg)s, refusing to touch it.' %}",
                             { "disk": disk, "vg": response.result[2] }, true )
                         );
                         self.ownerCt.initbutton.disable();
@@ -152,7 +153,8 @@ Ext.oa.volumeGroup_Panel = Ext.extend(Ext.grid.GridPanel, {
                   var done = function( provider, response ){
                     initwin.hide();
                     progresswin.hide();
-                    Ext.Msg.alert("{% trans 'Success!' %}", "{% trans 'The Device has been successfully initialized.' %}");
+                    Ext.Msg.alert("{% trans 'Success!' %}",
+                      "{% trans 'The Device has been successfully initialized.' %}");
                     volumeGroupPanel.store.reload();
                   };
                   if( typeof vg === "number" ){
@@ -220,17 +222,20 @@ Ext.oa.volumeGroup_Panel = Ext.extend(Ext.grid.GridPanel, {
             var handleResponse = function(i){
               return function(provider, response){
                 self.data.items[i].set( "LVM_VG_PERCENT",
-                  ((response.result.LVM2_VG_SIZE - response.result.LVM2_VG_FREE) / response.result.LVM2_VG_SIZE * 100.0).toFixed(2)
+                  ((response.result.LVM2_VG_SIZE - response.result.LVM2_VG_FREE) /
+                    response.result.LVM2_VG_SIZE * 100.0).toFixed(2)
                 );
                 if( response.result.LVM2_VG_SIZE >= 1000 ){
-                  self.data.items[i].set("LVM_VG_SIZE", String.format("{0} GB", (response.result.LVM2_VG_SIZE / 1000).toFixed(2)));
+                  self.data.items[i].set("LVM_VG_SIZE", String.format("{0} GB",
+                    (response.result.LVM2_VG_SIZE / 1000).toFixed(2)));
                 }
                 else
                 {
                   self.data.items[i].set("LVM_VG_SIZE", String.format("{0} MB", response.result.LVM2_VG_SIZE));
                 }
                 if( response.result.LVM2_VG_FREE >= 1000 ){
-                  self.data.items[i].set("LVM_VG_FREE", String.format("{0} GB", (response.result.LVM2_VG_FREE / 1000).toFixed(2)));
+                  self.data.items[i].set("LVM_VG_FREE", String.format("{0} GB",
+                    (response.result.LVM2_VG_FREE / 1000).toFixed(2)));
                 }
                 else
                 {
