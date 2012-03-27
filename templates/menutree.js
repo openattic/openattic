@@ -91,8 +91,9 @@ Ext.oa.MenuTree = Ext.extend(Ext.tree.TreePanel, {
     }
     else{
       for( i = 0; i < this.root.childNodes.length; i++ ){
-        if( this.root.childNodes[i].id === rootid )
+        if( this.root.childNodes[i].id === rootid ){
           this.root.childNodes[i].append(subnode);
+        }
       }
     }
   },
@@ -102,14 +103,16 @@ Ext.oa.MenuTree = Ext.extend(Ext.tree.TreePanel, {
     if( parent ){
       for( i = 0; i < parent.childNodes.length; i++ ){
         var nodepanel = parent.childNodes[i].attributes.panel;
-        if( typeof nodepanel !== "undefined" && typeof nodepanel !== "string" )
+        if( typeof nodepanel !== "undefined" && typeof nodepanel !== "string" ){
           nodepanel = nodepanel.id;
+        }
         if( nodepanel === panel ){
           parent.childNodes[i].select();
           return true;
         }
-        else if( !parent.childNodes[i].leaf && this.markAsActive( panel, parent.childNodes[i] ) )
+        else if( !parent.childNodes[i].leaf && this.markAsActive( panel, parent.childNodes[i] ) ){
           return true;
+        }
       }
     }
     else{
