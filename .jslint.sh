@@ -17,8 +17,10 @@ TEMPFILE=`tempfile -s js`
 trap "rm -f -- '$TEMPFILE'" EXIT
 
 if [ ! -z "$LN" ]; then
+	# Add a bunch of empty lines at the beginning of the file so line numbers will match
+	yes "" | head -n $LN > "$TEMPFILE"
 	# Strip out the django {% comment %} stuff
-	tail -n+$((LN+1)) "$INFILE" > "$TEMPFILE"
+	tail -n+$((LN+1)) "$INFILE" >> "$TEMPFILE"
 else
 	cp "$INFILE" "$TEMPFILE"
 fi
