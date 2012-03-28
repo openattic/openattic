@@ -38,9 +38,9 @@ Ext.ux.ToolbarDroppable = Ext.extend(Object, {
      * @constructor
      */
     constructor: function(config) {
-      Ext.apply(this, config, {
-
-      });
+        "use strict";
+        Ext.apply(this, config, {
+        });
     },
 
     /**
@@ -48,23 +48,25 @@ Ext.ux.ToolbarDroppable = Ext.extend(Object, {
      * @param {Ext.Toolbar} toolbar The toolbar instance
      */
     init: function(toolbar) {
-      /**
-       * @property toolbar
-       * @type Ext.Toolbar
-       * The toolbar instance that this plugin is tied to
-       */
-      this.toolbar = toolbar;
+        "use strict";
+        /**
+        * @property toolbar
+        * @type Ext.Toolbar
+        * The toolbar instance that this plugin is tied to
+        */
+        this.toolbar = toolbar;
 
-      this.toolbar.on({
-          scope : this,
-          render: this.createDropTarget
-      });
+        this.toolbar.on({
+            scope : this,
+            render: this.createDropTarget
+        });
     },
 
     /**
      * Creates a drop target on the toolbar
      */
     createDropTarget: function() {
+        "use strict";
         /**
          * @property dropTarget
          * @type Ext.dd.DropTarget
@@ -81,7 +83,8 @@ Ext.ux.ToolbarDroppable = Ext.extend(Object, {
      * @param {String} ddGroup The DD Group
      */
     addDDGroup: function(ddGroup) {
-         this.dropTarget.addToGroup(ddGroup);
+        "use strict";
+        this.dropTarget.addToGroup(ddGroup);
     },
 
     /**
@@ -91,17 +94,19 @@ Ext.ux.ToolbarDroppable = Ext.extend(Object, {
      * @return {Number} The index at which to insert the new button
      */
     calculateEntryIndex: function(e) {
+        "use strict";
         var entryIndex = 0,
             toolbar    = this.toolbar,
             items      = toolbar.items.items,
             count      = items.length,
             xTotal     = toolbar.getEl().getXY()[0],
-            xHover     = e.getXY()[0] - xTotal;
+            xHover     = e.getXY()[0] - xTotal,
+            index, item, width, midpoint;
 
-        for (var index = 0; index < count; index++) {
-            var item     = items[index],
-                width    = item.getEl().getWidth(),
-                midpoint = xTotal + width / 2;
+        for (index = 0; index < count; index++) {
+            item     = items[index];
+            width    = item.getEl().getWidth();
+            midpoint = xTotal + width / 2;
 
             xTotal += width;
 
@@ -124,6 +129,7 @@ Ext.ux.ToolbarDroppable = Ext.extend(Object, {
      * @return {Boolean} True if the drop is allowed
      */
     canDrop: function(data) {
+        "use strict";
         return true;
     },
 
@@ -132,6 +138,7 @@ Ext.ux.ToolbarDroppable = Ext.extend(Object, {
      * @return {String} The CSS class to add
      */
     notifyOver: function(dragSource, event, data) {
+        "use strict";
         return this.canDrop.apply(this, arguments) ? this.dropTarget.dropAllowed : this.dropTarget.dropNotAllowed;
     },
 
@@ -140,11 +147,13 @@ Ext.ux.ToolbarDroppable = Ext.extend(Object, {
      * and calls the afterLayout callback.
      */
     notifyDrop: function(dragSource, event, data) {
+        "use strict";
         var canAdd = this.canDrop(dragSource, event, data),
-            tbar   = this.toolbar;
+            tbar   = this.toolbar,
+            entryIndex;
 
         if (canAdd) {
-            var entryIndex = this.calculateEntryIndex(event);
+            entryIndex = this.calculateEntryIndex(event);
 
             tbar.insert(entryIndex, this.createItem(data));
             tbar.doLayout();
@@ -161,6 +170,7 @@ Ext.ux.ToolbarDroppable = Ext.extend(Object, {
      * @return {Mixed} An item that can be added to a toolbar
      */
     createItem: function(data) {
+        "use strict";
         throw new Error("The createItem method must be implemented in the ToolbarDroppable plugin");
     },
 
