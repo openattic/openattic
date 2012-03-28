@@ -251,18 +251,26 @@ Ext.oa.Lvm__Snapshot_Panel = Ext.extend(Ext.grid.GridPanel, {
                       interpolate("{% trans 'Your volume exceeds the available capacity of %s MB.' %}", [free]));
                     return;
                   }
-                  lvm__LogicalVolume.create({
-                    'snapshot': {
-                      'app': 'lvm',
-                      'obj': 'LogicalVolume',
-                      'id': self.ownerCt.ownerCt.volfield.getValue()
-                    },
-                    'name':       self.ownerCt.ownerCt.namefield.getValue(),
-                    'megs':       self.ownerCt.ownerCt.sizefield.getValue()
-                  }, function(provider, response){
-                    if( response.result ){
-                      lvmSnapPanel.store.reload();
-                      addwin.hide();
+                  lvm__LogicalVolume.filter({"name":self.ownerCt.ownerCt.namefield.getValue()}, function(provider, response){
+                    if( response.result.length != 0 ){
+                       Ext.Msg.alert("{% trans 'Error' %}",
+                         "{% trans 'The name you entered already exists. Please enter another one.' %}");
+                       return;
+                    }else{
+                      lvm__LogicalVolume.create({
+                        'snapshot': {
+                          'app': 'lvm',
+                          'obj': 'LogicalVolume',
+                          'id': self.ownerCt.ownerCt.volfield.getValue()
+                        },
+                        'name':       self.ownerCt.ownerCt.namefield.getValue(),
+                        'megs':       self.ownerCt.ownerCt.sizefield.getValue()
+                      }, function(provider, response){
+                        if( response.result ){
+                          lvmSnapPanel.store.reload();
+                          addwin.hide();
+                        }
+                      });
                     }
                   });
                 }
@@ -304,6 +312,7 @@ Ext.oa.Lvm__Snapshot_Panel = Ext.extend(Ext.grid.GridPanel, {
         }
       }],
       store: (function(){
+        
         // Anon function that is called immediately to set up the store's DefaultSort
         var store = new Ext.data.DirectStore({
           fields: ['name', 'megs', 'filesystem',  'snapshot', 'formatted', 'id', 'state', 'fs', 'fswarning', 'fscritical',
