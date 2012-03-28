@@ -119,6 +119,9 @@ Ext.oa.MainViewManager = Ext.extend(Ext.Panel, {
                 if( sourceEl ){
                   var ddEl = sourceEl.cloneNode(true);
                   var treenode = findTreeNode(tree.getRootNode(), sourceEl);
+                  if( treenode === null ){
+                    return null;
+                  }
                   ddEl.id = Ext.id();
                   return {
                     ddel:     ddEl,
