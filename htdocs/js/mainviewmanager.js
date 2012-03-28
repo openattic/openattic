@@ -177,7 +177,9 @@ Ext.oa.MainViewManager = Ext.extend(Ext.Panel, {
     this.currentComponent = window.MainViewModules[0];
 
     for( i = 0; i < window.MainViewModules.length; i++ ){
-      window.MainViewModules[i].prepareMenuTree(this.menutree);
+      if( typeof window.MainViewModules[i].prepareMenuTree !== "undefined" ){
+        window.MainViewModules[i].prepareMenuTree(this.menutree);
+      }
     }
 
     currstate = Ext.state.Manager.get("toolbarbuttons");
