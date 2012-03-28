@@ -172,6 +172,10 @@ Ext.oa.MainViewManager = Ext.extend(Ext.Panel, {
     }));
     Ext.oa.MainViewManager.superclass.initComponent.apply(this, arguments);
 
+    this.addEvents({
+        'switchedComponent': true
+        });
+
     this.menutree = this.items.items[0];
     this.modcontainer = this.items.items[1];
     this.currentComponent = window.MainViewModules[0];
@@ -228,10 +232,12 @@ Ext.oa.MainViewManager = Ext.extend(Ext.Panel, {
     if( typeof toComponent === "string" ){
       this.modcontainer.layout.setActiveItem( toComponent );
       this.menutree.markAsActive( toComponent );
+      this.fireEvent( 'switchedComponent', Ext.get(toComponent) );
     }
     else{
       this.modcontainer.layout.setActiveItem( toComponent.id );
       this.menutree.markAsActive( toComponent.id );
+      this.fireEvent( 'switchedComponent', toComponent );
     }
   }
 });
