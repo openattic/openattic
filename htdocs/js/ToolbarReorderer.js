@@ -140,7 +140,6 @@ Ext.ux.ToolbarReorderer = Ext.extend(Ext.ux.Reorderer, {
                 var moveDatButton = function(){
                     el.moveTo(me.buttonXCache[button.id], el.getY(), {
                         duration: me.animationDuration,
-                        scope   : this,
                         callback: function() {
                             button.resumeEvents();
                             if (button.menu) {
@@ -150,8 +149,6 @@ Ext.ux.ToolbarReorderer = Ext.extend(Ext.ux.Reorderer, {
                             tbar.fireEvent('reordered', button, tbar);
                         }
                     });
-
-                    el.setStyle('zIndex', this.startZIndex);
                 };
 
                 if( el.getXY()[0] > tbar.getWidth() * 0.85 ){
