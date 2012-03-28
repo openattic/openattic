@@ -97,7 +97,7 @@ Ext.ux.Reorderer = Ext.extend(Object, {
      * @param {Object} mappings Object containing current item index as key and new index as property
      */
     reorder: function(mappings) {
-	"use strict";
+        "use strict";
         var target = this.target;
 
         if (target.fireEvent('before-reorder', mappings, target, this) !== false) {
@@ -112,7 +112,7 @@ Ext.ux.Reorderer = Ext.extend(Object, {
      * @param {Object} mappings Mappings of the old item indexes to new item indexes
      */
     doReorder: function(paramName) {
-	"use strict";
+        "use strict";
         throw new Error("doReorder must be implemented in the Ext.ux.Reorderer subclass");
     },
 
@@ -121,7 +121,7 @@ Ext.ux.Reorderer = Ext.extend(Object, {
      * @param {Mixed} button The item to make draggable (usually an Ext.Button instance)
      */
     createItemDD: function(button) {
-	"use strict";
+        "use strict";
         var el   = button.getEl(),
             id   = el.id,
             tbar = this.target,
@@ -203,10 +203,10 @@ Ext.ux.Reorderer = Ext.extend(Object, {
      * @param {Mixed} item The item
      */
     createIfReorderable: function(item) {
-	"use strict";
+        "use strict";
         if (this.defaultReorderable && typeof item.reorderable === "undefined"){
-	    item.reorderable = true;
-	}
+            item.reorderable = true;
+        }
 
         if (item.reorderable) {
             if (item.rendered) {
@@ -223,7 +223,7 @@ Ext.ux.Reorderer = Ext.extend(Object, {
      * @return {Array} The array of items which will be made draggable
      */
     getItems: function() {
-	"use strict";
+        "use strict";
         return this.target.items.items;
     },
 
@@ -231,7 +231,7 @@ Ext.ux.Reorderer = Ext.extend(Object, {
      * Adds before-reorder and reorder events to the target component
      */
     initEvents: function() {
-	"use strict";
+        "use strict";
         this.target.addEvents(
           /**
            * @event before-reorder
@@ -253,3 +253,5 @@ Ext.ux.Reorderer = Ext.extend(Object, {
         );
     }
 });
+
+// kate: space-indent on; indent-width 4; replace-tabs on;

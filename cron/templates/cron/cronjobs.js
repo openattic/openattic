@@ -79,6 +79,7 @@ Ext.reg("cron__job_panel", Ext.oa.Cron__Job_Panel);
 Ext.oa.Cron__Job_Module = Ext.extend(Object, {
   panel: "cron__job_panel",
   prepareMenuTree: function(tree){
+    "use strict";
     tree.appendToRootNodeById("menu_services", {
       text: "{% trans 'Cron Jobs' %}",
       leaf: true,

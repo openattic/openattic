@@ -43,6 +43,7 @@ Ext.ux.ToolbarReorderer = Ext.extend(Ext.ux.Reorderer, {
      * Initializes the plugin, decorates the toolbar with additional functionality
      */
     init: function(toolbar) {
+        "use strict";
         /**
          * This is used to store the correct x value of each button in the array. We need to use this
          * instead of the button's reported x co-ordinate because the buttons are animated when they move -
@@ -66,7 +67,10 @@ Ext.ux.ToolbarReorderer = Ext.extend(Ext.ux.Reorderer, {
      * @param {Mixed} button The item to make draggable (usually an Ext.Button instance)
      */
     createItemDD: function(button) {
-        if (button.dd != undefined) return;
+        "use strict";
+        if( typeof button.dd !== "undefined"){
+            return;
+        }
 
         var el   = button.getEl(),
             id   = el.id,
@@ -107,18 +111,19 @@ Ext.ux.ToolbarReorderer = Ext.extend(Ext.ux.Reorderer, {
                     deltaX   = buttonX - this.startPosition[0],
                     items    = tbar.items.items,
                     oldIndex = items.indexOf(button),
-                    newIndex;
+                    newIndex, index, item,
+                    box, midpoint, movedLeft, movedRight;
 
                 //find which item in the toolbar the midpoint is currently over
-                for (var index = 0; index < items.length; index++) {
-                    var item = items[index];
+                for (index = 0; index < items.length; index++) {
+                    item = items[index];
 
-                    if (item.reorderable && item.id != button.id) {
+                    if (item.reorderable && item.id !== button.id) {
                         //find the midpoint of the button
-                        var box        = item.getEl().getBox(),
-                            midpoint   = (me.buttonXCache[item.id] || box.x) + (box.width / 2),
-                            movedLeft  = oldIndex > index && deltaX < 0 && buttonX < midpoint,
-                            movedRight = oldIndex < index && deltaX > 0 && (buttonX + el.getWidth()) > midpoint;
+                        box        = item.getEl().getBox();
+                        midpoint   = (me.buttonXCache[item.id] || box.x) + (box.width / 2);
+                        movedLeft  = oldIndex > index && deltaX < 0 && buttonX < midpoint;
+                        movedRight = oldIndex < index && deltaX > 0 && (buttonX + el.getWidth()) > midpoint;
 
                         if (movedLeft || movedRight) {
                             me[movedLeft ? 'onMovedLeft' : 'onMovedRight'](button, index, oldIndex);
@@ -140,7 +145,6 @@ Ext.ux.ToolbarReorderer = Ext.extend(Ext.ux.Reorderer, {
                 var moveDatButton = function(){
                     el.moveTo(me.buttonXCache[button.id], el.getY(), {
                         duration: me.animationDuration,
-                        scope   : this,
                         callback: function() {
                             button.resumeEvents();
                             if (button.menu) {
@@ -150,56 +154,57 @@ Ext.ux.ToolbarReorderer = Ext.extend(Ext.ux.Reorderer, {
                             tbar.fireEvent('reordered', button, tbar);
                         }
                     });
-
-                    el.setStyle('zIndex', this.startZIndex);
                 };
 
                 if( el.getXY()[0] > tbar.getWidth() * 0.85 ){
                     Ext.Msg.confirm(
                         me.messages.title, me.messages.message,
                         function(btn){
-                            if( btn == "yes" ){
+                            var index, obj, newX, el;
+                            if( btn === "yes" ){
                                 tbar.remove(tbar.items.items[tbar.items.items.length - 1]);
                                 me.updateButtonXCache();
-                                for (var index = 0; index < tbar.items.items.length; index++) {
-                                    var obj  = tbar.items.items[index],
-                                        newX = me.buttonXCache[obj.id];
-                                    var el = obj.getEl();
+                                for (index = 0; index < tbar.items.items.length; index++) {
+                                    obj  = tbar.items.items[index];
+                                    newX = me.buttonXCache[obj.id];
+                                    el = obj.getEl();
                                     el.moveTo(newX, el.getY());
                                 }
                             }
-                            else
+                            else{
                                 moveDatButton();
+                            }
                         }
                     );
                 }
-                else
+                else{
                     moveDatButton();
-
+                }
             }
         });
     },
 
     onMovedLeft: function(item, newIndex, oldIndex) {
+        "use strict";
         var tbar  = this.target,
-            items = tbar.items.items;
+            items = tbar.items.items,
+            index, obj, newX, el;
 
-        if (newIndex != undefined && newIndex != oldIndex) {
+        if( typeof newIndex !== "undefined" && newIndex !== oldIndex) {
             //move the button currently under drag to its new location
             tbar.remove(item, false);
             tbar.insert(newIndex, item);
 
             //set the correct x location of each item in the toolbar
             this.updateButtonXCache();
-            for (var index = 0; index < items.length; index++) {
-                var obj  = items[index],
-                    newX = this.buttonXCache[obj.id];
+            for (index = 0; index < items.length; index++) {
+                obj  = items[index];
+                newX = this.buttonXCache[obj.id];
 
-                if (item == obj) {
+                if (item === obj) {
                     item.dd.startPosition[0] = newX;
                 } else {
-                    var el = obj.getEl();
-
+                    el = obj.getEl();
                     el.moveTo(newX, el.getY(), {duration: this.animationDuration});
                 }
             }
@@ -207,6 +212,7 @@ Ext.ux.ToolbarReorderer = Ext.extend(Ext.ux.Reorderer, {
     },
 
     onMovedRight: function(item, newIndex, oldIndex) {
+        "use strict";
         this.onMovedLeft.apply(this, arguments);
     },
 
@@ -215,6 +221,7 @@ Ext.ux.ToolbarReorderer = Ext.extend(Ext.ux.Reorderer, {
      * Updates the internal cache of button X locations.
      */
     updateButtonXCache: function() {
+        "use strict";
         var tbar   = this.target,
             items  = tbar.items,
             totalX = tbar.getEl().getBox(true).x;

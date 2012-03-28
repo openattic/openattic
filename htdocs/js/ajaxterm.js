@@ -18,6 +18,7 @@ Ext.namespace('Ext.oa');
 Ext.oa.WebSSHIframe = Ext.extend(Ext.BoxComponent, {
   // http://www.extjs.com/forum/showthread.php?p=54416#post54416
   onRender : function(ct, position){
+    "use strict";
     this.el = ct.createChild({
       tag: 'iframe',
       frameBorder: 0,
@@ -30,6 +31,7 @@ Ext.oa.WebSSHIframe = Ext.extend(Ext.BoxComponent, {
 
 Ext.oa.WebSSHPanel = Ext.extend(Ext.Panel, {
   initComponent: function(){
+    "use strict";
     var currentChartId = null;
     var nfsGrid = this;
 
@@ -55,6 +57,7 @@ Ext.reg("webssh_panel", Ext.oa.WebSSHPanel);
 Ext.oa.WebSSHModule = Ext.extend(Object, {
   panel: "webssh_panel",
   prepareMenuTree: function(tree){
+    "use strict";
     tree.appendToRootNodeById("menu_system", ({
       text: 'SSH/Telnet',
       leaf: true,

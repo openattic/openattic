@@ -105,9 +105,7 @@ Ext.oa.Settings_Panel = Ext.extend(Ext.Panel,{
 Ext.reg("settings_panel", Ext.oa.Settings_Panel);
 
 Ext.oa.Settings_Module = Ext.extend(Object, {
-  panel: "settings_panel",
-  prepareMenuTree: function(tree){
-  }
+  panel: "settings_panel"
 });
 
 window.MainViewModules.push(new Ext.oa.Settings_Module());
