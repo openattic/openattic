@@ -18,7 +18,7 @@ Ext.namespace("Ext.oa");
 Ext.oa.Cron__Job_Panel = Ext.extend(Ext.oa.ShareGridPanel, {
   api: cron__Cronjob,
   id: "cron__job_panel_inst",
-  title: "Cron Jobs",
+  title: "{% trans 'Cron Jobs' %}",
   texts: {
     add:     "{% trans 'Add Job' %}",
     edit:    "{% trans 'Edit Job' %}",
