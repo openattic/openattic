@@ -22,11 +22,6 @@ Ext.oa.DragSelector = function(cfg){
   var view, proxy, tracker;
   var bodyRegion, graphRegion, dragRegion = new Ext.lib.Region(0,0,0,0);
 
-  this.init = function(dataView){
-    view = dataView;
-    view.on('render', onRender);
-  };
-
   function cancelClick(){
     return false;
   }
@@ -98,7 +93,7 @@ Ext.oa.DragSelector = function(cfg){
       newEnd = newStart;
       newStart = tmp;
     }
-    view.loadInterval( view.currentRecord, view.currentId, parseInt(newStart), parseInt(newEnd) );
+    view.loadInterval( view.currentRecord, view.currentId, parseInt(newStart, 10), parseInt(newEnd, 10) );
   }
 
   function onRender(view){
@@ -110,6 +105,11 @@ Ext.oa.DragSelector = function(cfg){
     });
     tracker.initEl(view.el);
   }
+
+  this.init = function(dataView){
+    view = dataView;
+    view.on('render', onRender);
+  };
 };
 
 
@@ -190,7 +190,7 @@ Ext.oa.Nagios__Graph_ImagePanel = Ext.extend(Ext.Panel, {
     Ext.apply(params, this.graphcolors);
 
     Ext.apply(params, {
-      start: start || parseInt((new Date().getTime() / 1000) - this.timespan),
+      start: start || parseInt((new Date().getTime() / 1000) - this.timespan, 10),
       grad:  Ext.state.Manager.get("nagios_graph_grad", false).toString(),
       width: this.graphwidth,
       height: this.graphheight
@@ -220,7 +220,8 @@ Ext.oa.Nagios__Graph_ImagePanel = Ext.extend(Ext.Panel, {
         if( this.reloadTimerId !== 0 ){
           clearTimeout(this.reloadTimerId);
         }
-        this.reloadTimerId = this.loadRecord.defer(this.reloadInterval*1000, this, [this.currentRecord, this.currentId]);
+        this.reloadTimerId = this.loadRecord.defer(
+          this.reloadInterval*1000, this, [this.currentRecord, this.currentId]);
       }
     }
   }
@@ -284,7 +285,7 @@ Ext.oa.Nagios__Service_Panel = Ext.extend(Ext.Panel, {
       NaN: MEDIA_URL + '/oxygen/16x16/categories/system-help.png'
     };
     var renderDesc = function( val, x, store ){
-      return '<img src="' + stateicons[parseInt(store.data.current_state)] + '" /> ' + val;
+      return '<img src="' + stateicons[parseInt(store.data.current_state, 10)] + '" /> ' + val;
     };
 
     Ext.apply(this, Ext.apply(this.initialConfig, {
