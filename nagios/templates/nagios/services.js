@@ -165,12 +165,20 @@ Ext.oa.Nagios__Graph_ImagePanel = Ext.extend(Ext.Panel, {
     }));
     Ext.oa.Nagios__Graph_ImagePanel.superclass.initComponent.apply(this, arguments);
     this.on( "afterrender", function(){
+      var self = this;
       // Wait until the <img> element has actually been created, then reload the record
       this.items.items[0].on( "afterrender", function(){
         if( this.currentRecord ){
           this.loadRecord( this.currentRecord, this.currentId );
         }
       }, this );
+      (function(){
+        window.mainpanel.on("switchedComponent", function(cmp){
+          if(cmp.id === "dashboard_inst"){
+            self.doLayout();
+          }
+        });
+      }).defer(25);
     }, this );
   },
 
