@@ -172,13 +172,15 @@ Ext.oa.Nagios__Graph_ImagePanel = Ext.extend(Ext.Panel, {
           this.loadRecord( this.currentRecord, this.currentId );
         }
       }, this );
-      (function(){
-        window.mainpanel.on("switchedComponent", function(cmp){
-          if(cmp.id === "dashboard_inst"){
-            self.doLayout();
-          }
-        });
-      }).defer(25);
+      if( this.reloadInterval ){
+        (function(){
+          window.mainpanel.on("switchedComponent", function(cmp){
+            if(cmp.id === "dashboard_inst" || cmp.id === "nagios__service_panel_inst"){
+              self.doLayout();
+            }
+          });
+        }).defer(25);
+      }
     }, this );
   },
 
