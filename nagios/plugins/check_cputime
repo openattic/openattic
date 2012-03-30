@@ -104,15 +104,16 @@ if havestate:
     dt = time() - savedstate.getfloat("state", "timestamp")
 
     for field in stats:
-        dticks = wrapdiff( int(stats[field]), savedstate.getint("state", field) )
-        dsecs  = dticks / sys_hz
-        perfdata[field] = dsecs / dt * 100
+        if savedstate.has_option("state", field):
+            dticks = wrapdiff( int(stats[field]), savedstate.getint("state", field) )
+            dsecs  = dticks / sys_hz
+            perfdata[field] = dsecs / dt * 100
 
     busy  = 100 - perfdata["idle"]
 
     print "User %.2f%%, Sys %.2f%%, IOwait %.2f%%, Idle %.2f%%|%s" % (
         perfdata["user"], perfdata["system"], perfdata["iowait"], perfdata["idle"],
-        ' '.join([ "%s=%.2f" % ( field, perfdata[field] ) for field in fields[1:] ])
+        ' '.join([ "%s=%.2f" % ( field, perfdata[field] ) for field in fields[1:] if field in perfdata ])
         )
 
     if busy >= 50:
