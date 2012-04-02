@@ -24,7 +24,18 @@ from django.conf import settings
 
 from rpcd.extdirect import PROVIDER
 
-js_info_dict = { "packages": ("lvm",) }
+def _get_openattic_apps():
+    from os.path import commonprefix
+    from django.conf import settings
+    for name in settings.INSTALLED_APPS:
+        try:
+            module = __import__(name)
+            if commonprefix((settings.PROJECT_ROOT, getattr(module, '__file__'))) == settings.PROJECT_ROOT:
+                yield name
+        except ImportError, err:
+            pass
+
+js_info_dict = { "packages": list(_get_openattic_apps()) }
 
 urlpatterns = [
     (r'^admin/doc/', include('django.contrib.admindocs.urls')),
