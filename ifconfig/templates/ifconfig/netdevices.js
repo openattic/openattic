@@ -1,6 +1,4 @@
-{% load i18n %}
-
-{% comment %}
+/*
  Copyright (C) 2011-2012, it-novum GmbH <community@open-attic.org>
 
  openATTIC is free software; you can redistribute it and/or modify it
@@ -11,34 +9,34 @@
  but WITHOUT ANY WARRANTY; without even the implied warranty of
  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  GNU General Public License for more details.
-{% endcomment %}
+*/
 
 Ext.namespace("Ext.oa");
 
 Ext.apply(Ext.form.VTypes, {
     IPAddress:  function(v) {
-      return /^\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3}$/.test(v);
+      return (/^\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3}$/).test(v);
     },
-    IPAddressText: "{% trans 'Must be a numeric IP address.' %}",
+    IPAddressText: gettext('Must be a numeric IP address.'),
     IPAddressMask: /[\d\.]/i,
 
     IPAddressWithNetmask:  function(v) {
-      return /^\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3}(\/(\d{1,2}|\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3}))?$/.test(v);
+      return (/^\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3}(\/(\d{1,2}|\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3}))?$/).test(v);
     },
-    IPAddressWithNetmaskText: '{% trans 'Must be a numeric IP address or "IP/Netmask".' %}',
+    IPAddressWithNetmaskText: gettext('Must be a numeric IP address or "IP/Netmask".'),
     IPAddressWithNetmaskMask: /[\d\.\/]/i,
 
     IPAddressList:  function(v) {
       // Match "123.(123.123.123 123.)*123.123.123", because that way spaces are not allowed at the end
-      return /^\d{1,3}\.(\d{1,3}\.\d{1,3}\.\d{1,3} \d{1,3}\.)*\d{1,3}\.\d{1,3}\.\d{1,3}$/.test(v);
+      return (/^\d{1,3}\.(\d{1,3}\.\d{1,3}\.\d{1,3} \d{1,3}\.)*\d{1,3}\.\d{1,3}\.\d{1,3}$/).test(v);
     },
-    IPAddressListText: "{% trans 'Must be a space-separated list of numeric IP addresses.' %}",
+    IPAddressListText: gettext('Must be a space-separated list of numeric IP addresses.'),
     IPAddressListMask: /[\d\. ]/i,
 
     DomainName:  function(v) {
-      return /^[\w\.\-]+$/.test(v);
+      return (/^[\w\.\-]+$/).test(v);
     },
-    DomainNameText: '{% trans 'Must only contain letters, numbers, "-" and ".".' %}',
+    DomainNameText: gettext('Must only contain letters, numbers, "-" and ".".'),
     DomainNameMask: /[\w\.\-]/i
 });
 
@@ -159,7 +157,7 @@ Ext.oa.Ifconfig__NetDevice_Panel = Ext.extend(Ext.Panel, {
     var netDevPanel = this;
     Ext.apply(this, Ext.apply(this.initialConfig, {
       id: 'ifconfig__netdevice_panel_inst',
-      title: "{% trans 'Network interfaces' %}",
+      title: gettext('Network interfaces'),
       layout: "border",
       items: [ new Ext.oa.Ifconfig__NetDevice_TreePanel({
         region: "west",
@@ -185,7 +183,7 @@ Ext.oa.Ifconfig__NetDevice_Panel = Ext.extend(Ext.Panel, {
         },
         items: [{
           xtype: "form",
-          title: "{% trans 'Device parameters' %}",
+          title: gettext('Device parameters'),
           autoScroll: true,
           ref: "../deviceform",
           bodyStyle: 'padding:5px 5px;',
@@ -203,7 +201,7 @@ Ext.oa.Ifconfig__NetDevice_Panel = Ext.extend(Ext.Panel, {
             }
           },
           items: [{
-            fieldLabel: "{% trans 'Device' %}",
+            fieldLabel: gettext('Device'),
             name: "devname",
             listeners: {
               change: function(self, newValue, oldValue){
@@ -211,79 +209,79 @@ Ext.oa.Ifconfig__NetDevice_Panel = Ext.extend(Ext.Panel, {
               }
             }
           }, {
-            fieldLabel: "{% trans 'Speed' %}",
+            fieldLabel: gettext('Speed'),
             name: "speed",
             readOnly: true
           }, {
-            fieldLabel: "{% trans 'MAC Address' %}",
+            fieldLabel: gettext('MAC Address'),
             name: "macaddress",
             readOnly: true
           }, {
             xtype: "checkbox",
-            fieldLabel: "{% trans 'Connected' %}",
+            fieldLabel: gettext('Connected'),
             name: "carrier",
             readOnly: true
           }, {
             xtype: "checkbox",
-            fieldLabel: "{% trans 'Active' %}",
+            fieldLabel: gettext('Active'),
             name: "operstate",
             readOnly: true
           }, {
             xtype: "checkbox",
-            fieldLabel: "{% trans 'Configure at boot' %}",
+            fieldLabel: gettext('Configure at boot'),
             name: "auto"
           }, {
             xtype: "checkbox",
-            fieldLabel: "{% trans 'Jumbo Frames' %}",
+            fieldLabel: gettext('Jumbo Frames'),
             name: "jumbo"
           }, {
             xtype: "numberfield",
-            fieldLabel: "{% trans 'MTU' %}",
+            fieldLabel: gettext('MTU'),
             name: "mtu",
             readOnly: true
           }, {
             xtype: "checkbox",
-            fieldLabel: "{% trans 'DHCP' %}",
+            fieldLabel: gettext('DHCP'),
             name: "dhcp"
           }, {
             xtype: 'fieldset',
             ref: '../../bondingfields',
-            title: "{% trans 'Bonding options (if applicable)' %}",
+            title: gettext('Bonding options (if applicable)'),
             collapsible: true,
             layout: 'form',
             items: [ {
-              fieldLabel: "{% trans 'MII Monitoring interval' %}",
+              fieldLabel: gettext('MII Monitoring interval'),
               xtype: "numberfield",
               name: "bond_miimon"
             }, {
-              fieldLabel: "{% trans 'Down Delay' %}",
+              fieldLabel: gettext('Down Delay'),
               xtype: "numberfield",
               name: "bond_downdelay"
             }, {
-              fieldLabel: "{% trans 'Up Delay' %}",
+              fieldLabel: gettext('Up Delay'),
               xtype: "numberfield",
               name: "bond_updelay"
             }, {
-              fieldLabel: "{% trans 'Mode' %}",
+              fieldLabel: gettext('Mode'),
               hiddenName: 'bond_mode',
               xtype:      'combo',
               store: [
-                [ 'active-backup', "{% trans 'Active-Backup' %}"    ],
-                [ 'broadcast',     "{% trans 'Broadcast' %}" ],
-                [ '802.3ad',       "{% trans 'Dynamic Link Aggregation (IEEE 802.3ad)' %}" ],
-                [ 'balance-rr',    "{% trans 'Balance: RoundRobin' %}" ],
-                [ 'balance-xor',   "{% trans 'Balance: XOR' %}" ],
-                [ 'balance-tlb',   "{% trans 'Balance: Adaptive Transmit Load Balancing' %}" ],
-                [ 'balance-alb',   "{% trans 'Balance: Adaptive Load Balancing' %}" ]
+                [ 'active-backup', gettext('Active-Backup')    ],
+                [ 'broadcast',     gettext('Broadcast') ],
+                [ '802.3ad',       gettext('Dynamic Link Aggregation (IEEE 802.3ad)') ],
+                [ 'balance-rr',    gettext('Balance: RoundRobin') ],
+                [ 'balance-xor',   gettext('Balance: XOR') ],
+                [ 'balance-tlb',   gettext('Balance: Adaptive Transmit Load Balancing') ],
+                [ 'balance-alb',   gettext('Balance: Adaptive Load Balancing') ]
               ],
               typeAhead:     true,
               triggerAction: 'all',
-              emptyText:     "{% trans 'Select...' %}",
+              emptyText:     gettext('Select...'),
               selectOnFocus: true
             } ]
           }],
           buttons: [{
-            text: "{% trans 'Save' %}",
+            text: gettext('Save'),
             icon: MEDIA_URL + "/oxygen/16x16/actions/dialog-ok-apply.png",
             handler: function(self){
               var params = {id: netDevPanel.active_device.id};
@@ -296,8 +294,8 @@ Ext.oa.Ifconfig__NetDevice_Panel = Ext.extend(Ext.Panel, {
                   if( slavedev.devtype != "native" )
                     continue;
                   if( slavedev.id === -1 ){
-                    Ext.Msg.alert("{% trans 'Save' %}", interpolate(
-                      "{% trans 'Slave device %s has not yet been saved, please save this device first.' %}",
+                    Ext.Msg.alert(gettext('Save'), interpolate(
+                      gettext('Slave device %s has not yet been saved, please save this device first.'),
                       [slavedev.devname]
                     ) );
                     return;
@@ -306,22 +304,22 @@ Ext.oa.Ifconfig__NetDevice_Panel = Ext.extend(Ext.Panel, {
                   haveslaves = true;
                 }
                 if( !haveslaves ){
-                  Ext.Msg.alert("{% trans 'Save' %}",
-                    "{% trans 'Bonding devices require at least one native slave device.' %}"
+                  Ext.Msg.alert(gettext('Save'),
+                    gettext('Bonding devices require at least one native slave device.')
                   );
                   return;
                 }
               }
               if( netDevPanel.active_device.devtype == "vlan" ){
                 if( netDevPanel.active_node.parentNode == netDevPanel.devicestree.getRootNode() ){
-                  Ext.Msg.alert("{% trans 'Save' %}",
-                    "{% trans 'VLAN devices need to be dragged onto their base device first.' %}"
+                  Ext.Msg.alert(gettext('Save'),
+                    gettext('VLAN devices need to be dragged onto their base device first.')
                   );
                   return;
                 }
                 if( netDevPanel.active_node.parentNode.attributes.device.id === -1 ){
-                  Ext.Msg.alert("{% trans 'Save' %}", interpolate(
-                    "{% trans 'VLAN base device %s has not yet been saved, please save this device first.' %}",
+                  Ext.Msg.alert(gettext('Save'), interpolate(
+                    gettext('VLAN base device %s has not yet been saved, please save this device first.'),
                     [netDevPanel.active_node.parentNode.attributes.device.devname]
                   ) );
                   return;
@@ -330,14 +328,14 @@ Ext.oa.Ifconfig__NetDevice_Panel = Ext.extend(Ext.Panel, {
               }
               if( netDevPanel.active_device.devtype == "bridge" ){
                 if( netDevPanel.active_node.parentNode == netDevPanel.devicestree.getRootNode() ){
-                  Ext.Msg.alert("{% trans 'Save' %}",
-                    "{% trans 'Bridge devices need to be dragged onto their base device first.' %}"
+                  Ext.Msg.alert(gettext('Save'),
+                    gettext('Bridge devices need to be dragged onto their base device first.')
                   );
                   return;
                 }
                 if( netDevPanel.active_node.parentNode.attributes.device.id === -1 ){
-                  Ext.Msg.alert("{% trans 'Save' %}", interpolate(
-                    "{% trans 'Bridge port device %s has not yet been saved, please save this device first.' %}",
+                  Ext.Msg.alert(gettext('Save'), interpolate(
+                    gettext('Bridge port device %s has not yet been saved, please save this device first.'),
                     [netDevPanel.active_node.parentNode.attributes.device.devname]
                   ) );
                   return;
@@ -358,20 +356,20 @@ Ext.oa.Ifconfig__NetDevice_Panel = Ext.extend(Ext.Panel, {
               });
             }
           }, {
-            text: "{% trans 'Cancel' %}",
+            text: gettext('Cancel'),
             icon: MEDIA_URL + "/icons2/16x16/actions/gtk-cancel.png",
             handler: function(self){
               self.ownerCt.ownerCt.getForm().reset();
             }
           }, {
-            text: "{% trans 'Delete Device' %}",
+            text: gettext('Delete Device'),
             icon: MEDIA_URL + "/icons2/16x16/actions/remove.png",
             handler: function(self){
               ifconfig__NetDevice.in_use(netDevPanel.active_device.id, function(provider, response){
                 if( response.result ){
-                  Ext.Msg.alert("{% trans 'Delete Device'%}",
+                  Ext.Msg.alert(gettext('Delete Device'),
                     interpolate(
-                      "{% trans 'Device %s is in use, cannot delete it.' %}",
+                      gettext('Device %s is in use, cannot delete it.'),
                         [netDevPanel.active_device.devname]
                     )
                   );
@@ -388,30 +386,30 @@ Ext.oa.Ifconfig__NetDevice_Panel = Ext.extend(Ext.Panel, {
         }, {
           xtype: "editorgrid",
           ref: "../addressgrid",
-          title: "{% trans 'IP Addresses' %}",
+          title: gettext('IP Addresses'),
           viewConfig: { forceFit: true },
           colModel: new Ext.grid.ColumnModel({
             defaults: {
               sortable: true
             },
             columns: [{
-              header: "{% trans 'IP/Netmask' %}",
+              header: gettext('IP/Netmask'),
               dataIndex: "address",
               editor: new Ext.form.TextField({ vtype: 'IPAddressWithNetmask' })
             }, {
-              header: "{% trans 'Gateway' %}",
+              header: gettext('Gateway'),
               dataIndex: "gateway",
               editor: new Ext.form.TextField({ vtype: 'IPAddress' })
             }, {
-              header: "{% trans 'Domain' %}",
+              header: gettext('Domain'),
               dataIndex: "domain",
               editor: new Ext.form.TextField({ vtype: 'DomainName' })
             }, {
-              header: "{% trans 'Nameservers' %}",
+              header: gettext('Nameservers'),
               dataIndex: "nameservers",
               editor: new Ext.form.TextField({ vtype: 'IPAddressList' })
             }, {
-              header: "{% trans 'Editable' %}",
+              header: gettext('Editable'),
               dataIndex: "configure",
               renderer: function( val, x, store ){
                 if( val )
@@ -430,7 +428,7 @@ Ext.oa.Ifconfig__NetDevice_Panel = Ext.extend(Ext.Panel, {
             }
           },
           buttons: [{
-            text: "{% trans 'Save' %}",
+            text: gettext('Save'),
             icon: MEDIA_URL + "/oxygen/16x16/actions/dialog-ok-apply.png",
             handler: function(self){
               var updateRec = function(record){
@@ -455,11 +453,11 @@ Ext.oa.Ifconfig__NetDevice_Panel = Ext.extend(Ext.Panel, {
               netDevPanel.addressgrid.store.each(updateRec);
             }
           }, {
-            text: "{% trans 'Add Address'%}",
+            text: gettext('Add Address'),
             icon: MEDIA_URL + "/icons2/16x16/actions/add.png",
             handler: function(){
               if( !netDevPanel.active_device ){
-                Ext.Msg.alert("{% trans 'Add Address'%}", "{% trans 'Please select a device first.' %}");
+                Ext.Msg.alert(gettext('Add Address'), gettext('Please select a device first.'));
               }
               var ds = netDevPanel.addressgrid.store;
               var ds_model = Ext.data.Record.create( ds.fields.keys );
@@ -471,7 +469,7 @@ Ext.oa.Ifconfig__NetDevice_Panel = Ext.extend(Ext.Panel, {
               netDevPanel.addressgrid.startEditing( 0, 0 );
             }
           }, {
-            text: "{% trans 'Delete Address'%}",
+            text: gettext('Delete Address'),
             icon: MEDIA_URL + "/icons2/16x16/actions/remove.png",
             handler: function(){
               var sm = netDevPanel.addressgrid.getSelectionModel();
@@ -479,8 +477,8 @@ Ext.oa.Ifconfig__NetDevice_Panel = Ext.extend(Ext.Panel, {
                 var sel = sm.selection.record;
                 var ds = netDevPanel.addressgrid.store;
                 if( !sel.data.configure ){
-                  Ext.Msg.alert("{% trans 'Delete Address'%}",
-                    "{% trans 'This address has not been configured in this module, therefore it cannot be deleted here.' %}"
+                  Ext.Msg.alert(gettext('Delete Address'),
+                    gettext('This address has not been configured in this module, therefore it cannot be deleted here.')
                   );
                   return;
                 }
@@ -490,9 +488,9 @@ Ext.oa.Ifconfig__NetDevice_Panel = Ext.extend(Ext.Panel, {
                   "id": sel.data.id
                 }, function(provider, response){
                   if( response.result.length > 0 ){
-                    Ext.Msg.alert("{% trans 'Delete Address'%}",
+                    Ext.Msg.alert(gettext('Delete Address'),
                       interpolate(
-                        "{% trans 'There are %s objects using this IP Address, cannot delete it.' %}",
+                        gettext('There are %s objects using this IP Address, cannot delete it.'),
                          [response.result.length]
                       )
                     );
@@ -512,12 +510,12 @@ Ext.oa.Ifconfig__NetDevice_Panel = Ext.extend(Ext.Panel, {
       buttons: [{
         text: "",
         icon: MEDIA_URL + "/icons2/16x16/actions/reload.png",
-        tooltip: "{% trans 'Reload' %}",
+        tooltip: gettext('Reload'),
         handler: function(self){
           netDevPanel.devicestree.refresh();
         }
       }, {
-        text: "{% trans 'Create device...'%}",
+        text: gettext('Create device...'),
         icon: MEDIA_URL + "/icons2/16x16/actions/add.png",
         menu: new Ext.menu.Menu({
           items: [{
@@ -559,41 +557,41 @@ Ext.oa.Ifconfig__NetDevice_Panel = Ext.extend(Ext.Panel, {
           }]
         })
       }, {
-        text: "{% trans 'Validate configuration'%}",
+        text: gettext('Validate configuration'),
         icon: MEDIA_URL + "/oxygen/16x16/actions/preflight-verifier.png",
         handler: function(){
           ifconfig__NetDevice.validate_config(function(provider, response){
             if( response.type !== "exception" ){
-              Ext.Msg.alert("{% trans 'Configuration validated'%}",
-                "{% trans 'No problems have been detected with your current configuration.' %}"
+              Ext.Msg.alert(gettext('Configuration validated'),
+                gettext('No problems have been detected with your current configuration.')
               );
             }
             else{
-              Ext.Msg.alert("{% trans 'Configuration invalid'%}",
-                "{% trans 'The following problem has been detected:' %}" + "<br /><br />" +
+              Ext.Msg.alert(gettext('Configuration invalid'),
+                gettext('The following problem has been detected:') + "<br /><br />" +
                 response.message
               );
             }
           });
         }
       }, {
-        text: "{% trans 'Activate configuration'%}",
+        text: gettext('Activate configuration'),
         icon: MEDIA_URL + "/oxygen/16x16/actions/run-build-install.png",
         handler: function(){
         Ext.Msg.confirm(
-          "{% trans 'Activate configuration' %}",
-          "{% trans 'In order to safely update the configuration, all network interfaces will be shut down and restarted, possibly causing data loss if the system is currently being used. Proceed?' %}",
+          gettext('Activate configuration'),
+          gettext('In order to safely update the configuration, all network interfaces will be shut down and restarted, possibly causing data loss if the system is currently being used. Proceed?'),
           function(btn){
             if(btn == 'yes'){
               ifconfig__NetDevice.activate_config(function(provider, response){
                 if( response.type !== "exception" ){
-                  Ext.Msg.alert("{% trans 'Configuration activated'%}",
-                    "{% trans 'The configuration has been updated.' %}"
+                  Ext.Msg.alert(gettext('Configuration activated'),
+                    gettext('The configuration has been updated.')
                   );
                 }
                 else{
-                  Ext.Msg.alert("{% trans 'Configuration invalid'%}",
-                    "{% trans 'The following problem has been detected:' %}" + "<br /><br />" +
+                  Ext.Msg.alert(gettext('Configuration invalid'),
+                    gettext('The following problem has been detected:') + "<br /><br />" +
                     response.message
                   );
                 }
@@ -685,7 +683,7 @@ Ext.oa.Ifconfig__NetDevice_Module = Ext.extend(Object, {
   panel: "ifconfig__netdevice_panel",
   prepareMenuTree: function(tree){
     tree.appendToRootNodeById("menu_system", {
-      text: "{% trans 'Network' %}",
+      text: gettext('Network'),
       icon: MEDIA_URL + '/icons2/22x22/places/gnome-fs-network.png',
       panel: 'ifconfig__netdevice_panel_inst',
       children: [ {
