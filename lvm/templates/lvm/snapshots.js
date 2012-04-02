@@ -249,12 +249,15 @@ Ext.oa.Lvm__Snapshot_Panel = Ext.extend(Ext.grid.GridPanel, {
                       interpolate(gettext('Your volume exceeds the available capacity of %s MB.'), [free]));
                     return;
                   }
-                  lvm__LogicalVolume.filter({"name":self.ownerCt.ownerCt.namefield.getValue()}, function(provider, response){
-                    if( response.result.length != 0 ){
+                  lvm__LogicalVolume.filter({
+                    "name":self.ownerCt.ownerCt.namefield.getValue()
+                  }, function(provider, response){
+                    if( response.result.length !== 0 ){
                        Ext.Msg.alert(gettext('Error'),
                          gettext('The name you entered already exists. Please enter another one.'));
                        return;
-                    }else{
+                    }
+                    else{
                       lvm__LogicalVolume.create({
                         'snapshot': {
                           'app': 'lvm',
@@ -310,10 +313,10 @@ Ext.oa.Lvm__Snapshot_Panel = Ext.extend(Ext.grid.GridPanel, {
         }
       }],
       store: (function(){
-        
         // Anon function that is called immediately to set up the store's DefaultSort
         var store = new Ext.data.DirectStore({
-          fields: ['name', 'megs', 'filesystem',  'snapshot', 'formatted', 'id', 'state', 'fs', 'fswarning', 'fscritical',
+          fields: ['name', 'megs', 'filesystem',  'snapshot', 'formatted', 'id', 'state',
+            'fs', 'fswarning', 'fscritical',
             {
               name: 'origvolid',
               mapping: 'snapshot',
@@ -336,13 +339,14 @@ Ext.oa.Lvm__Snapshot_Panel = Ext.extend(Ext.grid.GridPanel, {
           listeners: {
             load: function(self){
               var i;
+              var mkUpdateHandler = function(idx){
+                return function(provider, response){
+                  self.data.items[idx].set("LVM2_SNAP_PERCENT", response.result.LVM2_SNAP_PERCENT);
+                  self.commitChanges();
+                };
+              };
               for (i = 0; i < self.data.length; i++){
-                lvm__LogicalVolume.lvm_info( self.data.items[i].id, (function(idx){
-                  return function(provider, response){
-                    self.data.items[idx].set("LVM2_SNAP_PERCENT", response.result.LVM2_SNAP_PERCENT);
-                    self.commitChanges();
-                  };
-                }(i)) );
+                lvm__LogicalVolume.lvm_info( self.data.items[i].id, mkUpdateHandler(i) );
               }
             }
           },
