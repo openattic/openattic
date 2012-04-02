@@ -21,21 +21,21 @@ Ext.oa.volumeGroup_Panel = Ext.extend(Ext.grid.GridPanel, {
     var volumeGroupPanel = this;
     Ext.apply(this, Ext.apply(this.initialConfig, {
       id: "volumeGroup_panel_inst",
-      title: "{% trans 'Volume Groups' %}",
+      title: gettext('Volume Groups'),
       layout: 'fit',
       buttons: [{
         text: "",
         icon: MEDIA_URL + "/icons2/16x16/actions/reload.png",
-        tooltip: "{% trans 'Reload' %}",
+        tooltip: gettext('Reload'),
         handler: function(self){
           volumeGroupPanel.store.reload();
         }
       },{
-        text: "{% trans 'Create VG or Add Disk' %}",
+        text: gettext('Create VG or Add Disk'),
         icon: MEDIA_URL + "/icons2/16x16/actions/add.png",
         handler: function(){
           var initwin = new Ext.Window({
-            title: "{% trans 'Initialize' %}",
+            title: gettext('Initialize'),
             layout: "fit",
             height: 150,
             width: 500,
@@ -51,7 +51,7 @@ Ext.oa.volumeGroup_Panel = Ext.extend(Ext.grid.GridPanel, {
               items: [tipify({ 
                 xtype:      'combo',
                 allowBlank: false,
-                fieldLabel: "{% trans 'Disk' %}",
+                fieldLabel: gettext('Disk'),
                 name:       'disk',
                 hiddenName: 'disk_id',
                 store: new Ext.data.DirectStore({
@@ -78,25 +78,25 @@ Ext.oa.volumeGroup_Panel = Ext.extend(Ext.grid.GridPanel, {
                 listeners: {
                   select: function(self, record, index){
                     var disk = self.getValue();
-                    self.ownerCt.usagelabel.setText( "{% trans 'Querying data...' %}" );
+                    self.ownerCt.usagelabel.setText( gettext('Querying data...') );
                     lvm__VolumeGroup.is_device_in_use( disk, function( provider, response ){
                       if( response.result === false ){
                         self.ownerCt.usagelabel.setText(
-                          interpolate("{% trans 'Disk %s is not currently used.' %}", [disk])
+                          interpolate(gettext('Disk %s is not currently used.'), [disk])
                           );
                         self.ownerCt.initbutton.enable();
                       }
                       else if( response.result[1] === "pv" ){
                         self.ownerCt.usagelabel.setText(
                           interpolate(
-                            "{% trans 'Disk %(disk)s is part of the Volume Group %(vg)s, refusing to touch it.' %}",
+                            gettext('Disk %(disk)s is part of the Volume Group %(vg)s, refusing to touch it.'),
                             { "disk": disk, "vg": response.result[2] }, true )
                         );
                         self.ownerCt.initbutton.disable();
                       }
                       else{
                         self.ownerCt.usagelabel.setText(
-                          interpolate( "{% trans 'Disk %(disk)s is mounted as %(mount)s, refusing to touch it.' %}",
+                          interpolate( gettext('Disk %(disk)s is mounted as %(mount)s, refusing to touch it.'),
                             { "disk": disk, "mount": response.result[2] }, true )
                         );
                         self.ownerCt.initbutton.disable();
@@ -104,17 +104,17 @@ Ext.oa.volumeGroup_Panel = Ext.extend(Ext.grid.GridPanel, {
                     } );
                   }
                 }
-              }, "{% trans 'Please select the disk you wish to add to the volume group.' %}"), {
+              }, gettext('Please select the disk you wish to add to the volume group.')), {
                 xtype: "label",
                 height: 100,
                 ref:   "usagelabel",
-                text:  "{% trans 'Waiting for disk selection...' %}"
+                text:  gettext('Waiting for disk selection...')
 //                 cls:   "form_hint_label"
               }, 
               tipify({
                 xtype:      'combo',
                 allowBlank: false,
-                fieldLabel: "{% trans 'Volume Group' %}",
+                fieldLabel: gettext('Volume Group'),
                 name:       'volume',
                 hiddenName: 'volume_id',
                 store: new Ext.data.DirectStore({
@@ -133,19 +133,19 @@ Ext.oa.volumeGroup_Panel = Ext.extend(Ext.grid.GridPanel, {
                   select: function(self, record, index){
                   }
                 }
-              }, "{% trans 'Please select the volume group. In order to create a new one, enter its name.' %}")],
+              }, gettext('Please select the volume group. In order to create a new one, enter its name.'))],
               buttons: [{
-                text: "{% trans 'Initialize' %}",
+                text: gettext('Initialize'),
                 ref: "../initbutton",
                 disabled: true,
                 handler: function(self){
                   var progresswin = new Ext.Window({
-                    title: "{% trans 'Initialize' %}",
+                    title: gettext('Initialize'),
                     layout: "fit",
                     height: 250,
                     width: 400,
                     modal: true,
-                    html: "{% trans 'Please wait...' %}"
+                    html: gettext('Please wait...')
                   });
                   progresswin.show();
                   var vg   = self.ownerCt.ownerCt.vgfield.getValue();
@@ -153,8 +153,8 @@ Ext.oa.volumeGroup_Panel = Ext.extend(Ext.grid.GridPanel, {
                   var done = function( provider, response ){
                     initwin.hide();
                     progresswin.hide();
-                    Ext.Msg.alert("{% trans 'Success!' %}",
-                      "{% trans 'The Device has been successfully initialized.' %}");
+                    Ext.Msg.alert(gettext('Success!'),
+                      gettext('The Device has been successfully initialized.'));
                     volumeGroupPanel.store.reload();
                   };
                   if( typeof vg === "number" ){
@@ -172,7 +172,7 @@ Ext.oa.volumeGroup_Panel = Ext.extend(Ext.grid.GridPanel, {
           initwin.show();
         }
       },{
-        text: "{% trans 'Delete Group' %}",
+        text: gettext('Delete Group'),
         icon: MEDIA_URL + "/icons2/16x16/actions/remove.png",
         handler: function(self){
           var sm = volumeGroupPanel.getSelectionModel();
@@ -181,9 +181,9 @@ Ext.oa.volumeGroup_Panel = Ext.extend(Ext.grid.GridPanel, {
             lvm__LogicalVolume.filter({"vg__name":sel.data.name},function(provider, response){
               var vgremove = function(){
                 Ext.Msg.confirm(
-                  "{% trans 'Confirm delete' %}",
+                  gettext('Confirm delete'),
                   interpolate(
-                    "{% trans 'Really delete Group %s?' %}",
+                    gettext('Really delete Group %s?'),
                     [sel.data.name] ),
                   function(btn, text){
                     if( btn === 'yes' ){
@@ -197,7 +197,7 @@ Ext.oa.volumeGroup_Panel = Ext.extend(Ext.grid.GridPanel, {
               if(response.result.length > 0){
                 Ext.Msg.confirm(
                   "Confirm delete",
-                  interpolate("{% trans 'Volumes found in this group. Delete all remaining volumes?' %}"),
+                  interpolate(gettext('Volumes found in this group. Delete all remaining volumes?')),
                   function(btn, text){
                     if(btn === 'yes'){
                       vgremove();
@@ -257,18 +257,18 @@ Ext.oa.volumeGroup_Panel = Ext.extend(Ext.grid.GridPanel, {
           sortable: true
         },
         columns: [{
-          header: "{% trans 'Name' %}",
+          header: gettext('Name'),
           dataIndex: "name"
         },{
-          header: "{% trans 'Size' %}",
+          header: gettext('Size'),
           dataIndex: "LVM_VG_SIZE",
           renderer: function(val){ if( val ){ return val; } return '♻'; }
         },{
-          header: "{% trans 'Free' %}",
+          header: gettext('Free'),
           dataIndex: "LVM_VG_FREE",
           renderer: function(val){ if( val ){ return val; } return '♻'; }
         },{
-          header: "{% trans 'Used%' %}",
+          header: gettext('Used%'),
           dataIndex: "LVM_VG_PERCENT",
           renderer: function( val, x, store ){
             if( !val || val === -1 ){
@@ -290,7 +290,7 @@ Ext.oa.volumeGroup_Panel = Ext.extend(Ext.grid.GridPanel, {
             return '<span id="' + id + '"></span>';
           }
         },{
-          header: "{% trans 'Attributes' %}",
+          header: gettext('Attributes'),
           dataIndex: "LVM_VG_ATTR",
           renderer: function(val){ if( val ){ return val; } return '♻'; }
         }]
@@ -312,7 +312,7 @@ Ext.oa.volumeGroup_Module = Ext.extend(Object, {
   prepareMenuTree: function(tree){
     "use strict";
     tree.appendToRootNodeById("menu_storage", {
-      text: "{% trans 'Disk Management' %}",
+      text: gettext('Disk Management'),
       leaf: true,
       icon: MEDIA_URL + '/icons2/22x22/apps/database.png',
       panel: "volumeGroup_panel_inst",

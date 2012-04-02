@@ -51,7 +51,7 @@ Ext.oa.Zfs__Subvolume__Panel = Ext.extend(Ext.grid.GridPanel, {
           xtype: 'fieldset',
           layout: 'form',
           items: [{
-            fieldLabel: "Name",
+            fieldLabel: gettext("Name"),
             name: "volname",
             xtype: 'textfield',
             allowBlank: false,
@@ -61,7 +61,7 @@ Ext.oa.Zfs__Subvolume__Panel = Ext.extend(Ext.grid.GridPanel, {
             name: "volume_",
             hiddenName: 'volume',
             allowBlank: false,
-            fieldLabel: "{% trans 'Volume' %}",
+            fieldLabel: gettext('Volume'),
             store: {
               xtype: "directstore",
               fields: ['name', 'id'],
@@ -91,7 +91,7 @@ Ext.oa.Zfs__Subvolume__Panel = Ext.extend(Ext.grid.GridPanel, {
             });
           }
         },{
-          text:"{% trans 'Cancel' %}",
+          text:gettext('Cancel'),
           icon: MEDIA_URL + "/icons2/16x16/actions/gtk-cancel.png",
           handler: function(self){
             addwin.hide();
@@ -110,21 +110,21 @@ Ext.oa.Zfs__Subvolume__Panel = Ext.extend(Ext.grid.GridPanel, {
       buttons: [{
         text: "",
         icon: MEDIA_URL + "/icons2/16x16/actions/reload.png",
-        tooltip: "{% trans 'Reload' %}",
+        tooltip: gettext('Reload'),
         handler: function(self){
           subvolumegrid.store.reload();
         }
       },{
-        text: "{% trans 'Create Subvolume' %}",
+        text: gettext('Create Subvolume'),
         icon: MEDIA_URL + "/icons2/16x16/actions/add.png",
         handler: function() {
           subvolumegrid.showEditWindow({
-            title: "{% trans 'Add Subvolume' %}",
-            submitButtonText:"{% trans 'Create Subvolume' %}"
+            title: gettext('Add Subvolume'),
+            submitButtonText:gettext('Create Subvolume')
           });
         }
       },{
-        text: "{% trans 'Delete Subvolume' %}",
+        text: gettext('Delete Subvolume'),
         icon: MEDIA_URL + "/icons2/16x16/actions/remove.png",
         handler: this.deleteFunction,
         scope: subvolumegrid
@@ -148,10 +148,10 @@ Ext.oa.Zfs__Subvolume__Panel = Ext.extend(Ext.grid.GridPanel, {
           sortable: true
         },
         columns: [{
-          header: "{% trans 'Subvolume' %}",
+          header: gettext('Subvolume'),
           dataIndex: "volname"
         },{
-          header: "{% trans 'Volume' %}",
+          header: gettext('Volume'),
           dataIndex: "orivolume"
         }]
       })
@@ -164,9 +164,9 @@ Ext.oa.Zfs__Subvolume__Panel = Ext.extend(Ext.grid.GridPanel, {
     if( sm.hasSelection() ){
       var sel = sm.selections.items[0];
       Ext.Msg.confirm(
-        "{% trans 'Confirm delete' %}",
+        gettext('Confirm delete'),
         interpolate(
-          "{% trans 'Really delete subvolume %s ?<br /><b>There is no undo.</b>' %}", [sel.data.name]),
+          gettext('Really delete subvolume %s ?<br /><b>There is no undo.</b>'), [sel.data.name]),
         function(btn){
           if(btn === 'yes'){
             lvm__ZfsSubvolume.remove( sel.data.id, function(provider, response){

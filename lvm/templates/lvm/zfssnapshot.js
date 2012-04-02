@@ -21,23 +21,23 @@ Ext.oa.Zfs__Snapshot_Panel = Ext.extend(Ext.Panel, {
     var zfsSnapPanel = this;
 
     Ext.apply(this, Ext.apply(this.initialConfig, {
-      title: "{% trans 'Zfs Snapshots' %}",
+      title: gettext('Zfs Snapshots'),
       id: "zfs__snapshot_panel_inst",
       layout: "border",
        buttons: [
         {
           text: "",
           icon: MEDIA_URL + "/icons2/16x16/actions/reload.png",
-          tooltip: "{% trans 'Reload' %}",
+          tooltip: gettext('Reload'),
           handler: function(self){
           zfsSnapPanel.snapGrid.store.reload();
           }
         },{
-          text: "{% trans 'Create Snapshot' %}",
+          text: gettext('Create Snapshot'),
           icon: MEDIA_URL + "/icons2/16x16/actions/add.png",
           handler: function(){
             var addwin = new Ext.Window({
-             title: "{% trans 'Add Snapshot' %}",
+             title: gettext('Add Snapshot'),
              layout: "fit",
              height: 110,
              width: 450,
@@ -55,7 +55,7 @@ Ext.oa.Zfs__Snapshot_Panel = Ext.extend(Ext.Panel, {
                  ref: 'snapshotnamefield'
                }],
                buttons: [{
-                 text: "{% trans 'Create Snapshot' %}",
+                 text: gettext('Create Snapshot'),
                  icon: MEDIA_URL + "/oxygen/16x16/actions/dialog-ok-apply.png",
                  handler: function(self){
                   var sm = zfsSnapPanel.tabpanel.getActiveTab().getSelectionModel();
@@ -103,16 +103,16 @@ Ext.oa.Zfs__Snapshot_Panel = Ext.extend(Ext.Panel, {
             addwin.show();
           }
         },{
-          text: "{% trans 'Rollback Snapshot' %}",
+          text: gettext('Rollback Snapshot'),
           icon: MEDIA_URL + "/icons2/16x16/actions/go-last.png",
           handler: function(self){
             var sm = zfsSnapPanel.snapGrid.getSelectionModel();
             if( sm.hasSelection() ){
               var sel = sm.selections.items[0];
               Ext.Msg.confirm(
-                "{% trans 'Confirm rollback' %}",
+                gettext('Confirm rollback'),
                   interpolate(
-                    "{% trans 'Really rollback snapshot %s ?<br /><b>There is no undo.</b>' %}",
+                    gettext('Really rollback snapshot %s ?<br /><b>There is no undo.</b>'),
                     [sel.data.snapname] ),
                 function(btn, text){
                   if( btn === 'yes' ) {
@@ -125,16 +125,16 @@ Ext.oa.Zfs__Snapshot_Panel = Ext.extend(Ext.Panel, {
             }
           }
         },{
-          text: "{% trans 'Delete Snapshot' %}",
+          text: gettext('Delete Snapshot'),
           icon: MEDIA_URL + "/icons2/16x16/actions/remove.png",
           handler: function(self){
             var sm = zfsSnapPanel.snapGrid.getSelectionModel();
             if( sm.hasSelection() ){
               var sel = sm.selections.items[0];
               Ext.Msg.confirm(
-                "{% trans 'Confirm delete' %}",
+                gettext('Confirm delete'),
                   interpolate(
-                    "{% trans 'Really delete snapshot %s ?<br /><b>There is no undo.</b>' %}",
+                    gettext('Really delete snapshot %s ?<br /><b>There is no undo.</b>'),
                     [sel.data.snapname] ),
                 function(btn, text){
                   if( btn === 'yes' ) {
@@ -170,7 +170,7 @@ Ext.oa.Zfs__Snapshot_Panel = Ext.extend(Ext.Panel, {
                 sortable: true
               },
               columns: [{
-                header: "{% trans 'Volume' %}",
+                header: gettext('Volume'),
                 dataIndex: "name"
               }]
             }),
@@ -205,10 +205,10 @@ Ext.oa.Zfs__Snapshot_Panel = Ext.extend(Ext.Panel, {
                 sortable: true
               },
               columns: [{
-                header: "{% trans 'Subvolume' %}",
+                header: gettext('Subvolume'),
                 dataIndex: "volname"
               },{
-                header: "{% trans 'Volume' %}",
+                header: gettext('Volume'),
                 dataIndex: "orivolume"
               }]
             }),
@@ -243,10 +243,10 @@ Ext.oa.Zfs__Snapshot_Panel = Ext.extend(Ext.Panel, {
             sortable: true
           },
           columns: [{
-            header: "{% trans 'Snapshots' %}",
+            header: gettext('Snapshots'),
             dataIndex: "snapname"
           },{
-            header: "{% trans 'Created' %}",
+            header: gettext('Created'),
             dataIndex: "created_at"
           }
           ]
@@ -277,13 +277,13 @@ Ext.oa.Zfs__Snapshot_Module = Ext.extend(Object, {
       panel: "zfs__snapshot_panel_inst",
       href: "#",
       children: [{
-        text: "{% trans 'Zfs Snapshots' %}",
+        text: gettext('Zfs Snapshots'),
         leaf: true,
         icon: MEDIA_URL + '/icons2/22x22/apps/snapshot.png',
         panel: "zfs__snapshot_panel_inst",
         href: '#'
       },{
-        text: "{% trans 'Zfs Subvolume' %}",
+        text: gettext('Zfs Subvolume'),
         leaf: true,
         icon: MEDIA_URL + '/icons2/22x22/apps/snapshot.png',
         panel: "zfs__subvolume_panel_inst",

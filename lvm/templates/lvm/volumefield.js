@@ -33,7 +33,7 @@ Ext.oa.VolumeField = Ext.extend(Ext.form.ComboBox, {
     }
 
     Ext.apply(this, Ext.applyIf(this.initialConfig, {
-      fieldLabel: "{% trans 'Volume' %}",
+      fieldLabel: gettext('Volume'),
       hiddenName: "volume",
       store: new Ext.data.DirectStore({
         fields: ["id", "name"],
@@ -43,7 +43,7 @@ Ext.oa.VolumeField = Ext.extend(Ext.form.ComboBox, {
       }),
       typeAhead:     true,
       triggerAction: 'all',
-      emptyText:     "{% trans 'Select...' %}",
+      emptyText:     gettext('Select...'),
       allowBlank:    false,
       selectOnFocus: true,
       forceSelection: true,

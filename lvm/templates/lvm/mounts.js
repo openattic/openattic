@@ -22,12 +22,12 @@ Ext.oa.Lvm__Mounts_Panel = Ext.extend(Ext.grid.GridPanel, {
     var mountGrid = this;
     Ext.apply(this, Ext.apply(this.initialConfig, {
       id: "lvm__mounts_panel_inst",
-      title: "{% trans 'Mount Points' %}",
+      title: gettext('Mount Points'),
       viewConfig: { forceFit: true },
       buttons: [{
         text: "",
         icon: MEDIA_URL + "/icons2/16x16/actions/reload.png",
-        tooltip: "{% trans 'Reload' %}",
+        tooltip: gettext('Reload'),
         handler: function(self){
           mountGrid.store.reload();
         }
@@ -45,19 +45,19 @@ Ext.oa.Lvm__Mounts_Panel = Ext.extend(Ext.grid.GridPanel, {
           sortable: true
         },
         columns: [{
-          header: "{% trans 'Device' %}",
+          header: gettext('Device'),
           width: 300,
           dataIndex: "dev"
         }, {
-          header: "{% trans 'Mount Point' %}",
+          header: gettext('Mount Point'),
           width: 300,
           dataIndex: "mountpoint"
         }, {
-          header: "{% trans 'FS Type' %}",
+          header: gettext('FS Type'),
           width: 100,
           dataIndex: "fstype"
         }, {
-          header: "{% trans 'Options' %}",
+          header: gettext('Options'),
           width: 300,
           dataIndex: "options"
         } ]
@@ -80,7 +80,7 @@ Ext.oa.Lvm__Mounts_Module = Ext.extend(Object, {
   prepareMenuTree: function(tree){
     "use strict";
     tree.appendToRootNodeById("menu_status", {
-      text: "{% trans 'Mount Points' %}",
+      text: gettext('Mount Points'),
       leaf: true,
       icon: MEDIA_URL + '/icons2/22x22/devices/hdd_unmount.png',
       panel: "lvm__mounts_panel_inst",

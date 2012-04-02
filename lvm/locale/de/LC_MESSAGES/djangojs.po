@@ -1,0 +1,524 @@
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) YEAR THE PACKAGE'S COPYRIGHT HOLDER
+# This file is distributed under the same license as the PACKAGE package.
+# FIRST AUTHOR <EMAIL@ADDRESS>, YEAR.
+# 
+#, fuzzy
+msgid ""
+msgstr ""
+"Project-Id-Version: PACKAGE VERSION\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2012-04-02 11:22+0200\n"
+"PO-Revision-Date: 2012-04-02 11:28\n"
+"Last-Translator: Michael Ziegler <michael.ziegler@it-novum.com>\n"
+"Language-Team: LANGUAGE <LL@li.org>\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Language: \n"
+"Plural-Forms: nplurals=2; plural=(n != 1)\n"
+"X-Translated-Using: django-rosetta 0.6.6\n"
+
+#: templates/lvm/diskmgmt.js:24
+msgid "Volume Groups"
+msgstr "Volume-Gruppen"
+
+#: templates/lvm/diskmgmt.js:29 templates/lvm/logicalvolume.js:190
+#: templates/lvm/mounts.js:30 templates/lvm/snapshots.js:28
+#: templates/lvm/zfssnapshot.js:31 templates/lvm/zfssubvolume.js:113
+msgid "Reload"
+msgstr "Neu laden"
+
+#: templates/lvm/diskmgmt.js:34
+msgid "Create VG or Add Disk"
+msgstr "VG erzeugen oder Disk hinzufügen"
+
+#: templates/lvm/diskmgmt.js:38 templates/lvm/diskmgmt.js.c:138
+#: templates/lvm/diskmgmt.js:143
+msgid "Initialize"
+msgstr "Initialisieren"
+
+#: templates/lvm/diskmgmt.js:54
+msgid "Disk"
+msgstr "Disk"
+
+#: templates/lvm/diskmgmt.js:81 templates/lvm/logicalvolume.js:60
+#: templates/lvm/snapshots.js:205
+msgid "Querying data..."
+msgstr "Warte auf Daten..."
+
+#: templates/lvm/diskmgmt.js:85
+#, c-format
+msgid "Disk %s is not currently used."
+msgstr "Disk %s ist nicht in Benutzung."
+
+#: templates/lvm/diskmgmt.js:92
+msgid ""
+"Disk %(disk)s is part of the Volume Group %(vg)s, refusing to touch it."
+msgstr ""
+"Disk %(disk)s ist Teil der Volume-Gruppe %(vg)s, werde sie nicht anrühren."
+
+#: templates/lvm/diskmgmt.js:99
+msgid "Disk %(disk)s is mounted as %(mount)s, refusing to touch it."
+msgstr "Disk %(disk)s ist als %(mount)s eingehängt, werde sie nicht anrühren."
+
+#: templates/lvm/diskmgmt.js:107
+msgid "Please select the disk you wish to add to the volume group."
+msgstr "Bitte die Disk wählen, die der Volume-Gruppe hinzugefügt werden soll."
+
+#: templates/lvm/diskmgmt.js:111
+msgid "Waiting for disk selection..."
+msgstr "Warte auf Disk-Auswahl..."
+
+#: templates/lvm/diskmgmt.js:117 templates/lvm/logicalvolume.js:42
+msgid "Volume Group"
+msgstr "Volume-Gruppe"
+
+#: templates/lvm/diskmgmt.js:136
+msgid ""
+"Please select the volume group. In order to create a new one, enter its "
+"name."
+msgstr ""
+"Bitte die Volume-Gruppe wählen. Um eine neue anzulegen, geben Sie den Namen "
+"ein."
+
+#: templates/lvm/diskmgmt.js:148
+msgid "Please wait..."
+msgstr "Bitte warten..."
+
+#: templates/lvm/diskmgmt.js:156
+msgid "Success!"
+msgstr "Erfolg!"
+
+#: templates/lvm/diskmgmt.js:157
+msgid "The Device has been successfully initialized."
+msgstr "Das Gerät wurde erfolgreich initialisiert."
+
+#: templates/lvm/diskmgmt.js:175
+msgid "Delete Group"
+msgstr "Volume-Gruppe löschen"
+
+#: templates/lvm/diskmgmt.js:184 templates/lvm/logicalvolume.js:723
+#: templates/lvm/snapshots.js:296 templates/lvm/zfssnapshot.js:135
+#: templates/lvm/zfssubvolume.js:167
+msgid "Confirm delete"
+msgstr "Löschen bestätigen"
+
+#: templates/lvm/diskmgmt.js:186
+#, c-format
+msgid "Really delete Group %s?"
+msgstr "Gruppe %s wirklich löschen?"
+
+#: templates/lvm/diskmgmt.js:200
+msgid "Volumes found in this group. Delete all remaining volumes?"
+msgstr ""
+"In dieser Gruppe wurden Volumes gefunden. Sollen diese gelöscht werden?"
+
+#: templates/lvm/diskmgmt.js:260 templates/lvm/snapshots.js:168
+#: templates/lvm/zfssubvolume.js:54
+msgid "Name"
+msgstr "Name"
+
+#: templates/lvm/diskmgmt.js:263 templates/lvm/logicalvolume.js:589
+#: templates/lvm/snapshots.js:366
+msgid "Size"
+msgstr "Größe"
+
+#: templates/lvm/diskmgmt.js:267 templates/lvm/logicalvolume.js:608
+msgid "Free"
+msgstr "Frei"
+
+#: templates/lvm/diskmgmt.js:271 templates/lvm/logicalvolume.js:628
+msgid "Used%"
+msgstr "Belegt%"
+
+#: templates/lvm/diskmgmt.js:293
+msgid "Attributes"
+msgstr "Attribute"
+
+#: templates/lvm/diskmgmt.js:315
+msgid "Disk Management"
+msgstr "Disk-Verwaltung"
+
+#: templates/lvm/logicalvolume.js:20 templates/lvm/logicalvolume.js.c:350
+#: templates/lvm/logicalvolume.js:383 templates/lvm/snapshots.js:119
+msgid "Add Volume"
+msgstr "Volume hinzufügen"
+
+#: templates/lvm/logicalvolume.js:52 templates/lvm/logicalvolume.js.c:79
+#: templates/lvm/snapshots.js:193 templates/lvm/volumefield.js:46
+msgid "Select..."
+msgstr "Bitte wählen..."
+
+#: templates/lvm/logicalvolume.js:67
+msgid "The volume group in which you want the Volume to be created."
+msgstr "Die Volume-Gruppe in der das Volume angelegt werden soll."
+
+#: templates/lvm/logicalvolume.js:70
+msgid "File System"
+msgstr "Dateisystem"
+
+#: templates/lvm/logicalvolume.js:84
+msgid ""
+"If you want to use DRBD with this device, do not yet create a file system on"
+" it, even if you want to share it using NAS services later on."
+msgstr ""
+"Wenn DRBD mit diesem Volume benutzt werden soll, darf noch kein Dateisystem "
+"angelegt werden, selbst wenn es später mit NAS-Diensten freigegeben werden "
+"soll."
+
+#: templates/lvm/logicalvolume.js:86 templates/lvm/snapshots.js:226
+msgid "Size in MB"
+msgstr "Größe in MB"
+
+#: templates/lvm/logicalvolume.js:94 templates/lvm/snapshots.js:233
+msgid "Waiting for volume selection..."
+msgstr "Warte auf Volume-Auswahl..."
+
+#: templates/lvm/logicalvolume.js:97 templates/lvm/logicalvolume.js.c:216
+msgid "Warning Level (%)"
+msgstr "Warnschwelle"
+
+#: templates/lvm/logicalvolume.js:104 templates/lvm/logicalvolume.js.c:223
+msgid "Critical Level (%)"
+msgstr "Kritische Schwelle"
+
+#: templates/lvm/logicalvolume.js:116
+msgid "Create Volume"
+msgstr "Volume anlegen"
+
+#: templates/lvm/logicalvolume.js:124 templates/lvm/logicalvolume.js.c:129
+#: templates/lvm/snapshots.js:245 templates/lvm/snapshots.js.c:250
+#: templates/lvm/snapshots.js:256
+msgid "Error"
+msgstr "Fehler"
+
+#: templates/lvm/logicalvolume.js:125 templates/lvm/snapshots.js:246
+msgid "Please wait for the query for available space to complete."
+msgstr "Bitte warten, bis der verfügbare Platz abgefragt wurde."
+
+#: templates/lvm/logicalvolume.js:130 templates/lvm/snapshots.js:251
+#, c-format
+msgid "Your volume exceeds the available capacity of %s MB."
+msgstr "Das Volume überschreitet den verfügbaren Platz von %s MB."
+
+#: templates/lvm/logicalvolume.js:135
+msgid "Adding Volume"
+msgstr "Füge Volume hinzu"
+
+#: templates/lvm/logicalvolume.js:140
+msgid "Please wait while your volume is being created..."
+msgstr "Bitte warten, während das Volume angelegt wird..."
+
+#: templates/lvm/logicalvolume.js:172 templates/lvm/logicalvolume.js.c:248
+#: templates/lvm/logicalvolume.js:507 templates/lvm/snapshots.js:278
+#: templates/lvm/zfssubvolume.js:94
+msgid "Cancel"
+msgstr "Abbrechen"
+
+#: templates/lvm/logicalvolume.js:185
+msgid "LVM"
+msgstr "LVM"
+
+#: templates/lvm/logicalvolume.js:195
+msgid "Set warning threshold"
+msgstr "Warnschwelle festlegen"
+
+#: templates/lvm/logicalvolume.js:203 templates/lvm/logicalvolume.js.c:231
+msgid "Update Levels"
+msgstr "Schwellen anpassen"
+
+#: templates/lvm/logicalvolume.js:260 templates/lvm/snapshots.js:33
+msgid "Mount"
+msgstr "Einhängen"
+
+#: templates/lvm/logicalvolume.js:270 templates/lvm/snapshots.js:42
+#, c-format
+msgid "Volume %s does not have a file system and therefore cannot be mounted."
+msgstr ""
+"Volume %s hat kein Dateisystem und kann daher nicht eingehängt werden."
+
+#: templates/lvm/logicalvolume.js:276 templates/lvm/snapshots.js:48
+#, c-format
+msgid "Volume %s is already mounted."
+msgstr "Volume %s ist bereits eingehängt."
+
+#: templates/lvm/logicalvolume.js:282 templates/lvm/snapshots.js:54
+#, c-format
+msgid "Volume %s cannot be mounted at the current time."
+msgstr "Volume %s kann momentan nicht eingehängt werden."
+
+#: templates/lvm/logicalvolume.js:288 templates/lvm/snapshots.js:60
+#, c-format
+msgid "Volume %s could not be mounted, please check the logs."
+msgstr ""
+"Volume %s konnte nicht eingehängt werden, bitte in den Logs nachsehen."
+
+#: templates/lvm/logicalvolume.js:292 templates/lvm/snapshots.js:64
+#, c-format
+msgid "Volume %s has been mounted."
+msgstr "Volume %s wurde eingehängt."
+
+#: templates/lvm/logicalvolume.js:301 templates/lvm/logicalvolume.js.c:315
+#: templates/lvm/snapshots.js:73 templates/lvm/snapshots.js.c:86
+msgid "Unmount"
+msgstr "Aushängen"
+
+#: templates/lvm/logicalvolume.js:310 templates/lvm/snapshots.js:81
+#, c-format
+msgid "Volume %s is not mounted."
+msgstr "Volume %s ist nicht eingehängt."
+
+#: templates/lvm/logicalvolume.js:317 templates/lvm/snapshots.js:88
+#, c-format
+msgid "Do you really want to umount %s?"
+msgstr "Möchten Sie Volume %s wirklich aushängen?"
+
+#: templates/lvm/logicalvolume.js:324 templates/lvm/snapshots.js:95
+#, c-format
+msgid "Volume %s could not be unmounted, please check the logs."
+msgstr ""
+"Volume %s konnte nicht ausgehängt werden, bitte in den Logs nachsehen."
+
+#: templates/lvm/logicalvolume.js:329 templates/lvm/snapshots.js:100
+#, c-format
+msgid "Volume %s has been unmounted."
+msgstr "Volume %s wurde ausgehängt."
+
+#: templates/lvm/logicalvolume.js:342 templates/lvm/snapshots.js:112
+msgid "Shares"
+msgstr "Freigaben"
+
+#: templates/lvm/logicalvolume.js:368 templates/lvm/snapshots.js:137
+msgid "App"
+msgstr ""
+
+#: templates/lvm/logicalvolume.js:372 templates/lvm/snapshots.js:141
+msgid "Object"
+msgstr ""
+
+#: templates/lvm/logicalvolume.js:387 templates/lvm/logicalvolume.js.c:397
+msgid "Resize Volume"
+msgstr "Volume-Größe ändern"
+
+#: templates/lvm/logicalvolume.js:405
+msgid "Please enter your desired size"
+msgstr "Bitte die gewünschte Größe eingeben"
+
+#: templates/lvm/logicalvolume.js:432
+msgid "Megabyte"
+msgstr "Megabyte"
+
+#: templates/lvm/logicalvolume.js:464
+msgid "Remaining Space"
+msgstr "Verbleibender Platz"
+
+#: templates/lvm/logicalvolume.js:469
+msgid "Edit"
+msgstr "Bearbeiten"
+
+#: templates/lvm/logicalvolume.js:473
+msgid "Warning"
+msgstr "Warnung"
+
+#: templates/lvm/logicalvolume.js:475
+msgid ""
+"Do you really want to change Volume size of <b>%(lv)s</b> to <b>%(megs)s</b>"
+" MB?"
+msgstr ""
+"Möchten Sie wirklich die Volume-Größe von <b>%(lv)s</b> auf <b>%(megs)s</b> "
+"MB ändern?"
+
+#: templates/lvm/logicalvolume.js:482
+#, c-format
+msgid "Volume %s could not resized to 0 Megabytes."
+msgstr "Volume %s kann nicht auf 0 Megabytes verkleinert werden."
+
+#: templates/lvm/logicalvolume.js:487
+msgid "Resizing Volume"
+msgstr "Passe Volume-Größe an"
+
+#: templates/lvm/logicalvolume.js:492
+msgid "Please wait while your volume is being resized..."
+msgstr "Bitte warten, während die Volume-Größe geändert wird..."
+
+#: templates/lvm/logicalvolume.js:520
+msgid "Delete Volume"
+msgstr "Volume löschen"
+
+#: templates/lvm/logicalvolume.js:586 templates/lvm/snapshots.js:363
+msgid "LV"
+msgstr "LV"
+
+#: templates/lvm/logicalvolume.js:599
+msgid "FS"
+msgstr "Dateisystem"
+
+#: templates/lvm/logicalvolume.js:618
+msgid "Used"
+msgstr "Belegt"
+
+#: templates/lvm/logicalvolume.js:651
+msgid "Group"
+msgstr "Gruppe"
+
+#: templates/lvm/logicalvolume.js:688
+msgid "Storage usage"
+msgstr "Speicherbelegung"
+
+#: templates/lvm/logicalvolume.js:705
+msgid "Loading..."
+msgstr "Lade..."
+
+#: templates/lvm/logicalvolume.js:725
+#, c-format
+msgid ""
+"Really delete volume %s and all its shares?<br /><b>There is no undo and you"
+" will lose all data.</b>"
+msgstr ""
+"Volume %s und alle Freigaben wirklich löschen?<br />\n"
+"<b>Diese Aktion kann nicht rückgängig gemacht werden und Sie werden alle Daten des Volumes verlieren.</b>"
+
+#: templates/lvm/logicalvolume.js:775
+msgid "Volume Management"
+msgstr "Volume-Verwaltung"
+
+#: templates/lvm/mounts.js:25 templates/lvm/mounts.js.c:83
+msgid "Mount Points"
+msgstr "Einhängepunkte"
+
+#: templates/lvm/mounts.js:48
+msgid "Device"
+msgstr "Gerät"
+
+#: templates/lvm/mounts.js:52
+msgid "Mount Point"
+msgstr "Einhängepunkt"
+
+#: templates/lvm/mounts.js:56
+msgid "FS Type"
+msgstr "Dateisystemtyp"
+
+#: templates/lvm/mounts.js:60
+msgid "Options"
+msgstr "Optionen"
+
+#: templates/lvm/snapshots.js:24 templates/lvm/snapshots.js.c:421
+msgid "Volume Snapshots"
+msgstr "Volume-Snapshots"
+
+#: templates/lvm/snapshots.js:152 templates/lvm/snapshots.js.c:156
+#: templates/lvm/zfssnapshot.js:40
+msgid "Add Snapshot"
+msgstr "Snapshot hinzufügen"
+
+#: templates/lvm/snapshots.js:175 templates/lvm/snapshots.js.c:399
+msgid "Original Volume"
+msgstr "Original-Volume"
+
+#: templates/lvm/snapshots.js:230
+msgid ""
+"Please consider, that the size of your snapshot depends on the kind and "
+"frequency of change."
+msgstr ""
+"Bitte beachten, dass die Größe des Snapshots von der Art und Häufigkeit von "
+"Änderungen abhängig ist."
+
+#: templates/lvm/snapshots.js:237 templates/lvm/zfssnapshot.js:36
+#: templates/lvm/zfssnapshot.js.c:58
+msgid "Create Snapshot"
+msgstr "Snapshot erzeugen"
+
+#: templates/lvm/snapshots.js:257
+msgid "The name you entered already exists. Please enter another one."
+msgstr ""
+"Der eingegebene Name ist bereits vergeben. Bitte geben Sie einen anderen "
+"ein."
+
+#: templates/lvm/snapshots.js:289 templates/lvm/zfssnapshot.js:128
+msgid "Delete Snapshot"
+msgstr "Snapshot löschen"
+
+#: templates/lvm/snapshots.js:298
+#, c-format
+msgid ""
+"Really delete snapshot %s and all its shares?<br /><b>There is no undo and "
+"you will lose all data.</b>"
+msgstr ""
+"Snapshot %s und alle Freigaben wirklich löschen?<br />\n"
+"<b>Diese Aktion kann nicht rückgängig gemacht werden und Sie werden alle Daten des Volumes verlieren.</b>"
+
+#: templates/lvm/snapshots.js:307
+msgid "Aborted."
+msgstr "Abgebrochen"
+
+#: templates/lvm/snapshots.js:376
+msgid "Usage (%)"
+msgstr "Belegt (%)"
+
+#: templates/lvm/volumefield.js:36 templates/lvm/zfssnapshot.js:173
+#: templates/lvm/zfssnapshot.js.c:211 templates/lvm/zfssubvolume.js:64
+#: templates/lvm/zfssubvolume.js.c:154
+msgid "Volume"
+msgstr "Volume"
+
+#: templates/lvm/zfssnapshot.js:24 templates/lvm/zfssnapshot.js.c:280
+msgid "Zfs Snapshots"
+msgstr "ZFS-Snapshots"
+
+#: templates/lvm/zfssnapshot.js:106
+msgid "Rollback Snapshot"
+msgstr "Snapshot zurückspielen"
+
+#: templates/lvm/zfssnapshot.js:113
+msgid "Confirm rollback"
+msgstr "Zurückspielen bestätigen"
+
+#: templates/lvm/zfssnapshot.js:115
+#, c-format
+msgid "Really rollback snapshot %s ?<br /><b>There is no undo.</b>"
+msgstr ""
+"Snapshot %s wirklich zurückspielen?<br />\n"
+"<b>Dies kann nicht rückgängig gemacht werden.</b>"
+
+#: templates/lvm/zfssnapshot.js:137
+#, c-format
+msgid "Really delete snapshot %s ?<br /><b>There is no undo.</b>"
+msgstr ""
+"Snapshot %s wirklich löschen?<br />\n"
+"<b>Diese Aktion kann nicht rückgängig gemacht werden.</b>"
+
+#: templates/lvm/zfssnapshot.js:208 templates/lvm/zfssubvolume.js:151
+msgid "Subvolume"
+msgstr "Subvolume"
+
+#: templates/lvm/zfssnapshot.js:246
+msgid "Snapshots"
+msgstr "Snapshots"
+
+#: templates/lvm/zfssnapshot.js:249
+msgid "Created"
+msgstr "Angelegt"
+
+#: templates/lvm/zfssnapshot.js:286
+msgid "Zfs Subvolume"
+msgstr "ZFS-Subvolume"
+
+#: templates/lvm/zfssubvolume.js:118 templates/lvm/zfssubvolume.js.c:123
+msgid "Create Subvolume"
+msgstr "Subvolume anlegen"
+
+#: templates/lvm/zfssubvolume.js:122
+msgid "Add Subvolume"
+msgstr "Subvolume hinzufügen"
+
+#: templates/lvm/zfssubvolume.js:127
+msgid "Delete Subvolume"
+msgstr "Subvolume löschen"
+
+#: templates/lvm/zfssubvolume.js:169
+#, c-format
+msgid "Really delete subvolume %s ?<br /><b>There is no undo.</b>"
+msgstr ""
+"Subvolume %s wirklich löschen?<br />\n"
+"<b>Diese Aktion kann nicht rückgängig gemacht werden.</b>"
