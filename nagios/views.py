@@ -29,10 +29,9 @@ from PIL      import Image
 
 from django.http       import HttpResponse, Http404
 from django.shortcuts  import get_object_or_404
+from django.utils      import formats
 
 from django.utils.translation import ugettext as _
-from django.utils.dateformat  import format as format_date
-from django.utils.translation import get_date_formats
 
 from systemd.procutils import invoke
 
@@ -408,7 +407,7 @@ def graph(request, service_id, srcidx):
     def mkdate(text, timestamp):
         return "COMMENT:%-15s %-30s\\j" % (
             text,
-            format_date( datetime.fromtimestamp(timestamp), get_date_formats()[1] ).replace(":", "\\:")
+            formats.localize( datetime.fromtimestamp(timestamp) ).replace(":", "\\:")
             )
 
     args.extend([
