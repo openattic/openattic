@@ -1,6 +1,4 @@
-{% load i18n %}
-
-{% comment %}
+/*
  Copyright (C) 2011-2012, it-novum GmbH <community@open-attic.org>
 
  openATTIC is free software; you can redistribute it and/or modify it
@@ -11,7 +9,7 @@
  but WITHOUT ANY WARRANTY; without even the implied warranty of
  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  GNU General Public License for more details.
-{% endcomment %}
+*/
 
 Ext.namespace("Ext.oa");
 
@@ -60,14 +58,14 @@ Ext.oa.Cmdlog__LogEntry_Panel = Ext.extend(Ext.Panel, {
       singleSelect: true,
       region: 'south',
       height: 200,
-      loadingText: "{% trans "Select a log entry to see the command's output here." %}",
+      loadingText: gettext("Select a log entry to see the command's output here."),
       itemSelector: 'div.logcommandtext',
-      loadingText: "{% trans 'Loading...' %}",
+      loadingText: gettext('Loading...'),
       store: textStore
     });
     Ext.apply(this, Ext.apply(this.initialConfig, {
       id: "cmdlog__logentry_panel_inst",
-      title: "{% trans 'Log Entries' %}",
+      title: gettext('Log Entries'),
       layout: "border",
       items: [{
         xtype: "grid",
@@ -79,13 +77,13 @@ Ext.oa.Cmdlog__LogEntry_Panel = Ext.extend(Ext.Panel, {
             sortable: true
           },
           columns: [{
-              header: "{% trans 'End time' %}",
+              header: gettext('End time'),
               dataIndex: 'endtime'
             }, {
-              header: "{% trans 'Command' %}",
+              header: gettext('Command'),
               dataIndex: 'command'
             }, {
-              header: "{% trans 'Exit Status' %}",
+              header: gettext('Exit Status'),
               dataIndex: 'exitcode'
           }]
         }),
@@ -97,12 +95,12 @@ Ext.oa.Cmdlog__LogEntry_Panel = Ext.extend(Ext.Panel, {
         },
         bbar: new Ext.PagingToolbar({
           pageSize: 100,
-          afterPageText:  "{% trans 'of {0}' %}",
-          beforePageText: "{% trans 'Page' %}",
+          afterPageText:  gettext('of {0}'),
+          beforePageText: gettext('Page'),
           store:    store,
           items: [ {
             xtype: "textfield",
-            emptyText: "{% trans 'Search...' %}",
+            emptyText: gettext('Search...'),
             listeners: {
               change: function( self, newVal, oldVal ){
                 if( newVal !== '' ){
@@ -116,10 +114,10 @@ Ext.oa.Cmdlog__LogEntry_Panel = Ext.extend(Ext.Panel, {
             }
           },'->', {
             xtype: 'button',
-            text:  "{% trans 'Delete old entries' %}",
+            text:  gettext('Delete old entries'),
             handler: function(){
               var win = new Ext.Window({
-                title: "{% trans 'Delete old entries' %}",
+                title: gettext('Delete old entries'),
                 layout: "fit",
                 height: 300,
                 width: 500,
@@ -132,7 +130,7 @@ Ext.oa.Cmdlog__LogEntry_Panel = Ext.extend(Ext.Panel, {
                   },
                   items: [
                     tipify({
-                      fieldLabel: "Date",
+                      fieldLabel: gettext("Date"),
                       allowBlank: false,
                       name:  "date",
                       xtype: 'datefield',
@@ -143,21 +141,21 @@ Ext.oa.Cmdlog__LogEntry_Panel = Ext.extend(Ext.Panel, {
                             parseInt(newValue.format("U")),
                             function(provider, response){
                               self.ownerCt.countlabel.setText(
-                                interpolate("{% trans '%s Entries matched' %}", [response.result])
+                                interpolate(gettext('%s Entries matched'), [response.result])
                               );
                             }
                           );
                         }
                       }
-                    }, "{% trans 'Log Entries newer than the date you enter here will be kept.' %}"
+                    }, gettext('Log Entries newer than the date you enter here will be kept.')
                   ), {
                     xtype: "label",
-                    text:  "{% trans 'Waiting for date selection...' %}",
+                    text:  gettext('Waiting for date selection...'),
                     cls:   "form_hint_label",
                     ref:   "countlabel"
                   }],
                   buttons: [{
-                    text: "{% trans 'Delete' %}",
+                    text: gettext('Delete'),
                     ref:   'shoopmit',
                     handler: function(self){
                       var date = self.ownerCt.ownerCt.datefield.getValue();
@@ -193,7 +191,7 @@ Ext.oa.Cmdlog__LogEntry_Module = Ext.extend(Object, {
 
   prepareMenuTree: function(tree){
     tree.appendToRootNodeById("menu_status", {
-      text: "{% trans 'Command Log' %}",
+      text: gettext('Command Log'),
       leaf: true,
       icon: MEDIA_URL + '/icons2/22x22/actions/bookmark-new.png',
       panel: "cmdlog__logentry_panel_inst",

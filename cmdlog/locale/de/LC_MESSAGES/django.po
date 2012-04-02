@@ -2,95 +2,39 @@
 # Copyright (C) YEAR THE PACKAGE'S COPYRIGHT HOLDER
 # This file is distributed under the same license as the PACKAGE package.
 # FIRST AUTHOR <EMAIL@ADDRESS>, YEAR.
-# 
+#
 #, fuzzy
 msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2011-12-15 13:29+0100\n"
-"PO-Revision-Date: 2011-12-15 13:29\n"
+"POT-Creation-Date: 2012-04-02 13:30+0200\n"
+"PO-Revision-Date: 2012-04-02 13:29\n"
 "Last-Translator: Michael Ziegler <michael.ziegler@it-novum.com>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
+"Language: \n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"Language: \n"
 "Plural-Forms: nplurals=2; plural=(n != 1)\n"
-"X-Translated-Using: django-rosetta 0.6.0\n"
+"X-Translated-Using: django-rosetta 0.6.6\n"
 
-#: models.py:8 templates/cmdlog/logentry.js:72
+#: models.py:21
 msgid "Command"
 msgstr "Befehl"
 
-#: models.py:9
+#: models.py:22
 msgid "Start time"
-msgstr "Start-Zeitpunkt"
+msgstr "Startzeitpunkt"
 
-#: models.py:10 templates/cmdlog/logentry.js:69
+#: models.py:23
 msgid "End time"
-msgstr "End-Zeitpunkt"
+msgstr "Endzeitpunkt"
 
-#: models.py:11
+#: models.py:24
 msgid "Exit code"
 msgstr "Rückgabewert"
 
-#: models.py:12
+#: models.py:25
 msgid "Output"
 msgstr "Ausgabe"
-
-#: templates/cmdlog/logentry.js:50
-msgid "Select a log entry to see the command's output here."
-msgstr ""
-"Bitte wählen Sie einen Log-Eintrag aus, um die Ausgabe des Befehls zu sehen."
-
-#: templates/cmdlog/logentry.js:52
-msgid "Loading..."
-msgstr "Lade..."
-
-#: templates/cmdlog/logentry.js:57
-msgid "Log Entries"
-msgstr "Log-Einträge"
-
-#: templates/cmdlog/logentry.js:75
-msgid "Exit Status"
-msgstr "Rückgabewert"
-
-#: templates/cmdlog/logentry.js:87
-msgid "of {0}"
-msgstr "von {0}"
-
-#: templates/cmdlog/logentry.js:88
-msgid "Page"
-msgstr "Seite"
-
-#: templates/cmdlog/logentry.js:92
-msgid "Search..."
-msgstr "Suchen..."
-
-#: templates/cmdlog/logentry.js:106 templates/cmdlog/logentry.js.py:109
-msgid "Delete old entries"
-msgstr "Alte Einträge löschen"
-
-#: templates/cmdlog/logentry.js:133
-#, python-format
-msgid "%s Entries matched"
-msgstr "%s Einträge gefunden"
-
-#: templates/cmdlog/logentry.js:139
-msgid "Log Entries newer than the date you enter here will be kept."
-msgstr ""
-"Log-Einträge die neuer sind als das Datum das Sie hier eingeben werden "
-"beibehalten."
-
-#: templates/cmdlog/logentry.js:142
-msgid "Waiting for date selection..."
-msgstr "Warte auf Wahl eines Datums..."
-
-#: templates/cmdlog/logentry.js:147
-msgid "Delete"
-msgstr "Löschen"
-
-#: templates/cmdlog/logentry.js:183
-msgid "Command Log"
-msgstr "Befehls-Log"
