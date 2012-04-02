@@ -1,18 +1,3 @@
-{% load i18n %}
-
-{% comment %}
- Copyright (C) 2011-2012, it-novum GmbH <community@open-attic.org>
-
- openATTIC is free software; you can redistribute it and/or modify it
- under the terms of the GNU General Public License as published by
- the Free Software Foundation; version 2.
-
- This package is distributed in the hope that it will be useful,
- but WITHOUT ANY WARRANTY; without even the implied warranty of
- MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- GNU General Public License for more details.
-{% endcomment %}
-
 Ext.namespace("Ext.oa");
 
 Ext.apply(Ext.form.VTypes, {
@@ -32,7 +17,7 @@ Ext.oa.Lvm__LogicalVolume_Panel = Ext.extend(Ext.Panel, {
     var lvmGrid = this;
     var addVolume = function(event){
       var addwin = new Ext.Window({
-        title: "{% trans 'Add Volume' %}",
+        title: gettext('Add Volume'),
         layout: "fit",
         height: 350,
         width: 500,
@@ -54,7 +39,7 @@ Ext.oa.Lvm__LogicalVolume_Panel = Ext.extend(Ext.Panel, {
           }, tipify({
             xtype:      'combo',
             allowBlank: false,
-            fieldLabel: "{% trans 'Volume Group' %}",
+            fieldLabel: gettext('Volume Group'),
             name:       'volume',
             hiddenName: 'volume_id',
             store: {
@@ -64,7 +49,7 @@ Ext.oa.Lvm__LogicalVolume_Panel = Ext.extend(Ext.Panel, {
             },
             typeAhead:     true,
             triggerAction: 'all',
-            emptyText:     "{% trans 'Select...' %}",
+            emptyText:     gettext('Select...'),
             selectOnFocus: true,
             displayField:  'name',
             valueField:    'id',
@@ -72,17 +57,17 @@ Ext.oa.Lvm__LogicalVolume_Panel = Ext.extend(Ext.Panel, {
             listeners: {
               select: function(self, record, index){
                 self.ownerCt.volume_free_megs = null;
-                self.ownerCt.sizelabel.setText( "{% trans 'Querying data...' %}" );
+                self.ownerCt.sizelabel.setText( gettext('Querying data...') );
                 lvm__VolumeGroup.get_free_megs( record.data.id, function( provider, response ){
                   self.ownerCt.volume_free_megs = response.result;
                   self.ownerCt.sizelabel.setText( String.format( "Max. {0} MB", response.result ) );
                 } );
               }
             }
-          }, "{% trans 'The volume group in which you want the Volume to be created.' %}"),
+          }, gettext('The volume group in which you want the Volume to be created.')),
           tipify({
             xtype:      'combo',
-            fieldLabel: "{% trans 'File System' %}",
+            fieldLabel: gettext('File System'),
             name:       'filesystem_desc',
             hiddenName: 'filesystem_name',
             store: new Ext.data.DirectStore({
@@ -91,14 +76,14 @@ Ext.oa.Lvm__LogicalVolume_Panel = Ext.extend(Ext.Panel, {
             }),
             typeAhead:     true,
             triggerAction: 'all',
-            emptyText:     "{% trans 'Select...' %}",
+            emptyText:     gettext('Select...'),
             selectOnFocus: true,
             displayField:  'desc',
             valueField:    'name',
             ref:      'fsfield'
-          }, "{% trans 'If you want to use DRBD with this device, do not yet create a file system on it, even if you want to share it using NAS services later on.' %}"),
+          }, gettext('If you want to use DRBD with this device, do not yet create a file system on it, even if you want to share it using NAS services later on.')),
           {
-            fieldLabel: "{% trans 'Size in MB' %}",
+            fieldLabel: gettext('Size in MB'),
             allowBlank: false,
             name: "megs",
             ref: 'sizefield',
@@ -106,17 +91,17 @@ Ext.oa.Lvm__LogicalVolume_Panel = Ext.extend(Ext.Panel, {
           }, {
             xtype: "label",
             ref:   "sizelabel",
-            text:  "{% trans 'Waiting for volume selection...' %}",
+            text:  gettext('Waiting for volume selection...'),
             cls:   "form_hint_label"
           }, {
-            fieldLabel: "{% trans 'Warning Level (%)' %}",
+            fieldLabel: gettext('Warning Level (%)'),
             allowBlank: false,
             name: "fswarning",
             ref: 'warnfield',
             value: 75,
             xtype: "numberfield"
           }, {
-            fieldLabel: "{% trans 'Critical Level (%)' %}",
+            fieldLabel: gettext('Critical Level (%)'),
             allowBlank: false,
             name: "fscritical",
             ref: 'critfield',
@@ -128,7 +113,7 @@ Ext.oa.Lvm__LogicalVolume_Panel = Ext.extend(Ext.Panel, {
             allowBlank: false
           }],
           buttons: [{
-            text: "{% trans 'Create Volume' %}",
+            text: gettext('Create Volume'),
             icon: MEDIA_URL + "/icons2/16x16/actions/gtk-save.png",
             handler: function(self){
               if( !self.ownerCt.ownerCt.getForm().isValid() ){
@@ -136,23 +121,23 @@ Ext.oa.Lvm__LogicalVolume_Panel = Ext.extend(Ext.Panel, {
               }
               var free = self.ownerCt.ownerCt.volume_free_megs;
               if( free === null || typeof free === "undefined" ){
-                Ext.Msg.alert("{% trans 'Error' %}",
-                  "{% trans 'Please wait for the query for available space to complete.' %}");
+                Ext.Msg.alert(gettext('Error'),
+                  gettext('Please wait for the query for available space to complete.'));
                 return;
               }
               if( free < self.ownerCt.ownerCt.sizefield.getValue() ){
-                Ext.Msg.alert("{% trans 'Error' %}",
-                  interpolate( "{% trans 'Your volume exceeds the available capacity of %s MB.' %}",
+                Ext.Msg.alert(gettext('Error'),
+                  interpolate( gettext('Your volume exceeds the available capacity of %s MB.'),
                     [free]) );
                 return;
               }
               var progresswin = new Ext.Window({
-                title: "{% trans 'Adding Volume' %}",
+                title: gettext('Adding Volume'),
                 layout: "fit",
                 height: 250,
                 width: 400,
                 modal: true,
-                html: "{% trans 'Please wait while your volume is being created...' %}"
+                html: gettext('Please wait while your volume is being created...')
               });
               progresswin.show();
               lvm__LogicalVolume.create({
@@ -184,7 +169,7 @@ Ext.oa.Lvm__LogicalVolume_Panel = Ext.extend(Ext.Panel, {
               });
             }
           },{
-            text: "{% trans 'Cancel' %}",
+            text: gettext('Cancel'),
             icon: MEDIA_URL + "/icons2/16x16/actions/gtk-cancel.png",
             handler: function(self){
               addwin.hide();
@@ -197,17 +182,17 @@ Ext.oa.Lvm__LogicalVolume_Panel = Ext.extend(Ext.Panel, {
 
     Ext.apply(this, Ext.apply(this.initialConfig, {
       id: "lvm__logicalvolume_panel_inst",
-      title: "{% trans 'LVM' %}",
+      title: gettext('LVM'),
       layout: 'border',
       buttons: [{
         text: "",
         icon: MEDIA_URL + "/icons2/16x16/actions/reload.png",
-        tooltip: "{% trans 'Reload' %}",
+        tooltip: gettext('Reload'),
         handler: function(self){
           lvmPanel.items.items[0].store.reload();
         }
       }, {
-        text: "{% trans 'Set warning threshold' %}",
+        text: gettext('Set warning threshold'),
         icon: MEDIA_URL + "/icons2/16x16/status/dialog-warning.png",
         handler: function(self){
           var lvmGrid = lvmPanel.items.items[0];
@@ -215,7 +200,7 @@ Ext.oa.Lvm__LogicalVolume_Panel = Ext.extend(Ext.Panel, {
           if( sm.hasSelection() ){
             var sel = sm.selections.items[0];
             var addwin = new Ext.Window({
-              title: "{% trans 'Update Levels' %}",
+              title: gettext('Update Levels'),
               layout: "fit",
               height: 180,
               width: 500,
@@ -228,14 +213,14 @@ Ext.oa.Lvm__LogicalVolume_Panel = Ext.extend(Ext.Panel, {
                   anchor: '-20px'
                 },
                 items: [ {
-                    fieldLabel: "{% trans 'Warning Level (%)' %}",
+                    fieldLabel: gettext('Warning Level (%)'),
                     allowBlank: false,
                     name: "fswarning",
                     ref: 'warnfield',
                     value: sel.data.fswarning,
                     xtype: "numberfield"
                   }, {
-                    fieldLabel: "{% trans 'Critical Level (%)' %}",
+                    fieldLabel: gettext('Critical Level (%)'),
                     allowBlank: false,
                     name: "fscritical",
                     ref: 'critfield',
@@ -243,7 +228,7 @@ Ext.oa.Lvm__LogicalVolume_Panel = Ext.extend(Ext.Panel, {
                     xtype: "numberfield"
                   } ],
                 buttons: [{
-                  text: "{% trans 'Update Levels' %}",
+                  text: gettext('Update Levels'),
                   icon: MEDIA_URL + "/icons2/16x16/actions/gtk-save.png",
                   handler: function(self){
                     if( !self.ownerCt.ownerCt.getForm().isValid() ){
@@ -260,7 +245,7 @@ Ext.oa.Lvm__LogicalVolume_Panel = Ext.extend(Ext.Panel, {
                     });
                   }
                 }, {
-                  text: "{% trans 'Cancel' %}",
+                  text: gettext('Cancel'),
                   icon: MEDIA_URL + "/icons2/16x16/actions/gtk-cancel.png",
                   handler: function(self){
                     addwin.hide();
@@ -272,7 +257,7 @@ Ext.oa.Lvm__LogicalVolume_Panel = Ext.extend(Ext.Panel, {
           }
         }
       }, {
-        text: "{% trans 'Mount' %}",
+        text: gettext('Mount'),
         icon: MEDIA_URL + "/oxygen/16x16/emblems/emblem-mounted.png",
         handler: function(self){
           var lvmGrid = lvmPanel.items.items[0];
@@ -282,29 +267,29 @@ Ext.oa.Lvm__LogicalVolume_Panel = Ext.extend(Ext.Panel, {
             if( !sel.data.filesystem ){
               Ext.Msg.alert('Mounted',
                 interpolate(
-                  "{% trans 'Volume %s does not have a file system and therefore cannot be mounted.' %}",
+                  gettext('Volume %s does not have a file system and therefore cannot be mounted.'),
                   [sel.data.name] ));
               return;
             }
             lvm__LogicalVolume.is_mounted( sel.data.id, function(provider, response){
               if( response.result ){
-                Ext.Msg.alert('Mounted', interpolate( "{% trans 'Volume %s is already mounted.' %}", [sel.data.name] ));
+                Ext.Msg.alert('Mounted', interpolate( gettext('Volume %s is already mounted.'), [sel.data.name] ));
                 return;
               }
               lvm__LogicalVolume.is_in_standby( sel.data.id, function(provider, response){
                 if( response.result ){
                   Ext.Msg.alert('Mounted',
-                    interpolate( "{% trans 'Volume %s cannot be mounted at the current time.' %}", [sel.data.name] ));
+                    interpolate( gettext('Volume %s cannot be mounted at the current time.'), [sel.data.name] ));
                   return;
                 }
                 lvm__LogicalVolume.mount( sel.data.id, function(provider, response){
                   if( response.type === "exception" ){
                     Ext.Msg.alert('Mounted', interpolate(
-                      "{% trans 'Volume %s could not be mounted, please check the logs.' %}", [sel.data.name] ));
+                      gettext('Volume %s could not be mounted, please check the logs.'), [sel.data.name] ));
                   }
                   else{
                     Ext.Msg.alert('Mounted', interpolate(
-                      "{% trans 'Volume %s has been mounted.' %}", [sel.data.name] ));
+                      gettext('Volume %s has been mounted.'), [sel.data.name] ));
                     lvmGrid.store.reload();
                   }
                 } );
@@ -313,7 +298,7 @@ Ext.oa.Lvm__LogicalVolume_Panel = Ext.extend(Ext.Panel, {
           }
         }
       }, {
-        text: "{% trans 'Unmount' %}",
+        text: gettext('Unmount'),
         icon: MEDIA_URL + "/oxygen/16x16/emblems/emblem-unmounted.png",
         handler: function(self){
           var lvmGrid = lvmPanel.items.items[0];
@@ -322,26 +307,26 @@ Ext.oa.Lvm__LogicalVolume_Panel = Ext.extend(Ext.Panel, {
             var sel = sm.selections.items[0];
             lvm__LogicalVolume.is_mounted( sel.data.id, function(provider, response){
               if( !response.result ){
-                Ext.Msg.alert('Unmount', interpolate( "{% trans 'Volume %s is not mounted.' %}",
+                Ext.Msg.alert('Unmount', interpolate( gettext('Volume %s is not mounted.'),
                                                           [sel.data.name] ));
               }
               else{
                 Ext.Msg.confirm(
-                  "{% trans 'Unmount' %}",
+                  gettext('Unmount'),
                   interpolate(
-                    "{% trans 'Do you really want to umount %s?' %}",
+                    gettext('Do you really want to umount %s?'),
                     [sel.data.name]),
                   function(btn){
                     if(btn === 'yes'){
                       lvm__LogicalVolume.unmount( sel.data.id, function(provider, response){
                         if( response.type === "exception" ){
                           Ext.Msg.alert('Unmount', interpolate(
-                            "{% trans 'Volume %s could not be unmounted, please check the logs.' %}",
+                            gettext('Volume %s could not be unmounted, please check the logs.'),
                             [sel.data.name] ));
                         }
                         else{
                           Ext.Msg.alert('Unmount', interpolate(
-                            "{% trans 'Volume %s has been unmounted.' %}",
+                            gettext('Volume %s has been unmounted.'),
                             [sel.data.name] ));
                           lvmGrid.store.reload();
                         }
@@ -354,7 +339,7 @@ Ext.oa.Lvm__LogicalVolume_Panel = Ext.extend(Ext.Panel, {
           }
         }
       }, {
-        text: "{% trans 'Shares' %}",
+        text: gettext('Shares'),
         icon: MEDIA_URL + "/oxygen/16x16/emblems/emblem-unmounted.png",
         handler: function(self){
           var lvmGrid = lvmPanel.items.items[0];
@@ -362,7 +347,7 @@ Ext.oa.Lvm__LogicalVolume_Panel = Ext.extend(Ext.Panel, {
           if( sm.hasSelection() ){
             var sel = sm.selections.items[0];
             var shareswin = new Ext.Window({
-              title: "{% trans 'Add Volume' %}",
+              title: gettext('Add Volume'),
               layout: "fit",
               height: 300,
               width: 500,
@@ -380,11 +365,11 @@ Ext.oa.Lvm__LogicalVolume_Panel = Ext.extend(Ext.Panel, {
                     sortable: true
                   },
                   columns: [ {
-                    header: "{% trans 'App' %}",
+                    header: gettext('App'),
                     width: 350,
                     dataIndex: "app"
                   }, {
-                    header: "{% trans 'Object' %}",
+                    header: gettext('Object'),
                     width: 100,
                     dataIndex: "obj"
                   } ]
@@ -395,11 +380,11 @@ Ext.oa.Lvm__LogicalVolume_Panel = Ext.extend(Ext.Panel, {
           }
         }
       }, {
-        text: "{% trans 'Add Volume' %}",
+        text: gettext('Add Volume'),
         icon: MEDIA_URL + "/icons2/16x16/actions/add.png",
         handler: addVolume
       }, {
-        text: "{% trans 'Resize Volume' %}",
+        text: gettext('Resize Volume'),
         icon: MEDIA_URL + "/icons2/16x16/actions/gtk-execute.png",
         handler: function(self){
           var lvmGrid = lvmPanel.items.items[0];
@@ -409,7 +394,7 @@ Ext.oa.Lvm__LogicalVolume_Panel = Ext.extend(Ext.Panel, {
             lvm__VolumeGroup.get_free_megs( sel.json.vg.id, function( provider, response ){
               var resizewin = new Ext.Window(Ext.apply({
                 layout: "fit",
-                title: "{% trans 'Resize Volume' %}",
+                title: gettext('Resize Volume'),
                 defaults: { autoScroll: true },
                 height: 200,
                 width: 500,
@@ -417,7 +402,7 @@ Ext.oa.Lvm__LogicalVolume_Panel = Ext.extend(Ext.Panel, {
                   xtype: "form",
                   ref: "resize",
                   id: "resize",
-                  title: "{% trans 'Please enter your desired size' %}",
+                  title: gettext('Please enter your desired size'),
                   bodyStyle: 'padding:5px ;',
                   defaults: {
                     xtype: "textfield",
@@ -444,7 +429,7 @@ Ext.oa.Lvm__LogicalVolume_Panel = Ext.extend(Ext.Panel, {
                     }
                   }, {
                     xtype: 'textfield',
-                    fieldLabel: "{% trans 'Megabyte' %}",
+                    fieldLabel: gettext('Megabyte'),
                     ref: 'megabyte',
                     allowBlank: false,
                     enableKeyEvents: true,
@@ -476,35 +461,35 @@ Ext.oa.Lvm__LogicalVolume_Panel = Ext.extend(Ext.Panel, {
                     xtype: 'textfield',
                     readOnly: true,
                     ref: 'remaining_megabyte',
-                    fieldLabel: "{% trans 'Remaining Space' %}",
+                    fieldLabel: gettext('Remaining Space'),
                     value: response.result,
                     disabled: true
                   }],
                   buttons: [{
-                    text:  "{% trans 'Edit' %}",
+                    text:  gettext('Edit'),
                     icon: MEDIA_URL + "/icons2/16x16/actions/edit-redo.png",
                     handler: function(self) {
                       Ext.Msg.confirm(
-                        "{% trans 'Warning' %}",
+                        gettext('Warning'),
                         interpolate(
-                          "{% trans 'Do you really want to change Volume size of <b>%(lv)s</b> to <b>%(megs)s</b> MB?' %}",
+                          gettext('Do you really want to change Volume size of <b>%(lv)s</b> to <b>%(megs)s</b> MB?'),
                           { "lv": sel.data.name, "megs": self.ownerCt.ownerCt.megabyte.getValue() }, true ),
                         function(btn){
                           if( btn === 'yes' ){
                             if( self.ownerCt.ownerCt.megabyte.getValue() === '0' ){
                               Ext.Msg.alert('Warning',
                                 interpolate(
-                                  "{% trans 'Volume %s could not resized to 0 Megabytes.' %}",
+                                  gettext('Volume %s could not resized to 0 Megabytes.'),
                                   [sel.data.name] ));
                               return;
                             }
                             var progresswin = new Ext.Window({
-                              title: "{% trans 'Resizing Volume' %}",
+                              title: gettext('Resizing Volume'),
                               layout: "fit",
                               height: 250,
                               width: 400,
                               modal: true,
-                              html: "{% trans 'Please wait while your volume is being resized...' %}"
+                              html: gettext('Please wait while your volume is being resized...')
                             });
                             resizewin.hide();
                             progresswin.show();
@@ -519,7 +504,7 @@ Ext.oa.Lvm__LogicalVolume_Panel = Ext.extend(Ext.Panel, {
                       );
                     }
                   },{
-                    text: "{% trans 'Cancel' %}",
+                    text: gettext('Cancel'),
                     icon: MEDIA_URL + "/icons2/16x16/actions/gtk-cancel.png",
                     handler: function(){
                       resizewin.hide();
@@ -532,7 +517,7 @@ Ext.oa.Lvm__LogicalVolume_Panel = Ext.extend(Ext.Panel, {
           }
         }
       }, {
-        text: "{% trans 'Delete Volume' %}",
+        text: gettext('Delete Volume'),
         icon: MEDIA_URL + "/icons2/16x16/actions/remove.png",
         handler: this.deleteVolume,
         scope: lvmGrid
@@ -598,10 +583,10 @@ Ext.oa.Lvm__LogicalVolume_Panel = Ext.extend(Ext.Panel, {
             sortable: true
           },
           columns: [{
-            header: "{% trans 'LV' %}",
+            header: gettext('LV'),
             dataIndex: "name"
           }, {
-            header: "{% trans 'Size' %}",
+            header: gettext('Size'),
             dataIndex: "megs",
             align: 'right',
             renderer: function( val, x, store ){
@@ -611,7 +596,7 @@ Ext.oa.Lvm__LogicalVolume_Panel = Ext.extend(Ext.Panel, {
               return String.format("{0} MB", val);
             }
           }, {
-            header: "{% trans 'FS' %}",
+            header: gettext('FS'),
             dataIndex: "filesystem",
             renderer: function( val, x, store ){
               if( val ){
@@ -620,7 +605,7 @@ Ext.oa.Lvm__LogicalVolume_Panel = Ext.extend(Ext.Panel, {
               return "&ndash;";
             }
           }, {
-            header: "{% trans 'Free' %}",
+            header: gettext('Free'),
             dataIndex: "fsfree",
             align: 'right',
             renderer: function( val, x, store ){
@@ -630,7 +615,7 @@ Ext.oa.Lvm__LogicalVolume_Panel = Ext.extend(Ext.Panel, {
               return String.format("{0} GB", val);
             }
           }, {
-            header: "{% trans 'Used' %}",
+            header: gettext('Used'),
             dataIndex: "fsused",
             align: 'right',
             renderer: function( val, x, store ){
@@ -640,7 +625,7 @@ Ext.oa.Lvm__LogicalVolume_Panel = Ext.extend(Ext.Panel, {
               return String.format("{0} GB", val);
             }
           }, {
-            header: "{% trans 'Used%' %}",
+            header: gettext('Used%'),
             dataIndex: "fspercent",
             align: 'right',
             renderer: function( val, x, store ){
@@ -663,7 +648,7 @@ Ext.oa.Lvm__LogicalVolume_Panel = Ext.extend(Ext.Panel, {
               return '<span id="' + id + '"></span>';
             }
           },{
-            header: "{% trans 'Group' %}",
+            header: gettext('Group'),
             dataIndex: "vgname",
             align: 'center'
           }]
@@ -700,7 +685,7 @@ Ext.oa.Lvm__LogicalVolume_Panel = Ext.extend(Ext.Panel, {
       {
         split: true,
         region: "east",
-        title: "{% trans 'Storage usage' %}",
+        title: gettext('Storage usage'),
         collapsible: true,
         width: 400,
         collapsed: true,
@@ -717,7 +702,7 @@ Ext.oa.Lvm__LogicalVolume_Panel = Ext.extend(Ext.Panel, {
           singleSelect: true,
           autoHeight: true,
           itemSelector: 'div.thumb_wrap',
-          loadingText: "{% trans 'Loading...' %}",
+          loadingText: gettext('Loading...'),
           store: new Ext.data.ArrayStore({
             fields: ['id', 'name', 'fsused', 'fsfree', 'total'],
             data: []
@@ -735,9 +720,9 @@ Ext.oa.Lvm__LogicalVolume_Panel = Ext.extend(Ext.Panel, {
     if( sm.hasSelection() ){
       var sel = sm.selections.items[0];
       Ext.Msg.confirm(
-        "{% trans 'Confirm delete' %}",
+        gettext('Confirm delete'),
         interpolate(
-          "{% trans 'Really delete volume %s and all its shares?<br /><b>There is no undo and you will lose all data.</b>' %}",
+          gettext('Really delete volume %s and all its shares?<br /><b>There is no undo and you will lose all data.</b>'),
           [sel.data.name] ),
         function(btn, text){
           if( btn === 'yes' ){
@@ -787,7 +772,7 @@ Ext.oa.Lvm__LogicalVolume_Module = Ext.extend(Object, {
   prepareMenuTree: function(tree){
     "use strict";
     tree.appendToRootNodeById("menu_storage", {
-      text: "{% trans 'Volume Management' %}",
+      text: gettext('Volume Management'),
       leaf: true,
       icon: MEDIA_URL + '/icons2/22x22/apps/volume.png',
       panel: "lvm__logicalvolume_panel_inst",
