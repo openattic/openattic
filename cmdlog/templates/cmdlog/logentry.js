@@ -15,6 +15,7 @@ Ext.namespace("Ext.oa");
 
 Ext.oa.Cmdlog__LogEntry_Panel = Ext.extend(Ext.Panel, {
   initComponent: function(){
+    "use strict";
     var fields = ['id', 'command', 'exitcode', 'endtime'];
     var store = new Ext.data.DirectStore({
       remoteSort: true,
@@ -37,8 +38,8 @@ Ext.oa.Cmdlog__LogEntry_Panel = Ext.extend(Ext.Panel, {
     var textStore = new Ext.data.DirectStore({
       fields: ['id', 'command', 'exitcode', 'endtime', 'starttime', 'text', {
         name: 'state', mapping: 'exitcode', convert: function( val, row ){
-          if( val === 0 ) return "Success";
-          if( val === 1 ) return "Failure";
+          if( val === 0 ){ return "Success"; }
+          if( val === 1 ){ return "Failure"; }
           return "Other";
         }
       }],
@@ -58,7 +59,7 @@ Ext.oa.Cmdlog__LogEntry_Panel = Ext.extend(Ext.Panel, {
       singleSelect: true,
       region: 'south',
       height: 200,
-      loadingText: gettext("Select a log entry to see the command's output here."),
+      emptyText: gettext("Select a log entry to see the command's output here."),
       itemSelector: 'div.logcommandtext',
       loadingText: gettext('Loading...'),
       store: textStore
@@ -70,7 +71,9 @@ Ext.oa.Cmdlog__LogEntry_Panel = Ext.extend(Ext.Panel, {
       items: [{
         xtype: "grid",
         region: "center",
-        viewConfig: { forceFit: true },
+        viewConfig: {
+          forceFit: true
+        },
         store: store,
         colModel: new Ext.grid.ColumnModel({
           defaults: {
@@ -104,10 +107,10 @@ Ext.oa.Cmdlog__LogEntry_Panel = Ext.extend(Ext.Panel, {
             listeners: {
               change: function( self, newVal, oldVal ){
                 if( newVal !== '' ){
-                  store.baseParams["kwds"]["text__icontains"] = newVal;
+                  store.baseParams.kwds.text__icontains = newVal;
                 }
                 else{
-                  delete store.baseParams["kwds"]["text__icontains"];
+                  delete store.baseParams.kwds.text__icontains;
                 }
                 store.reload();
               }
@@ -138,7 +141,7 @@ Ext.oa.Cmdlog__LogEntry_Panel = Ext.extend(Ext.Panel, {
                       listeners: {
                         select: function( self, newValue ){
                           cmdlog__LogEntry.count_older_than(
-                            parseInt(newValue.format("U")),
+                            parseInt(newValue.format("U"), 10),
                             function(provider, response){
                               self.ownerCt.countlabel.setText(
                                 interpolate(gettext('%s Entries matched'), [response.result])
@@ -160,7 +163,7 @@ Ext.oa.Cmdlog__LogEntry_Panel = Ext.extend(Ext.Panel, {
                     handler: function(self){
                       var date = self.ownerCt.ownerCt.datefield.getValue();
                       cmdlog__LogEntry.remove_older_than(
-                        parseInt(date.format("U")),
+                        parseInt(date.format("U"), 10),
                         function(provider, response){
                           win.hide();
                           store.reload();
@@ -179,6 +182,7 @@ Ext.oa.Cmdlog__LogEntry_Panel = Ext.extend(Ext.Panel, {
     Ext.oa.Cmdlog__LogEntry_Panel.superclass.initComponent.apply(this, arguments);
   },
   onRender: function(){
+    "use strict";
     Ext.oa.Cmdlog__LogEntry_Panel.superclass.onRender.apply(this, arguments);
     this.items.items[0].store.reload();
   }
@@ -190,6 +194,7 @@ Ext.oa.Cmdlog__LogEntry_Module = Ext.extend(Object, {
   panel: "cmdlog__logentry_panel",
 
   prepareMenuTree: function(tree){
+    "use strict";
     tree.appendToRootNodeById("menu_status", {
       text: gettext('Command Log'),
       leaf: true,
