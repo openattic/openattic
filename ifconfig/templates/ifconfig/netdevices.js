@@ -14,46 +14,53 @@
 Ext.namespace("Ext.oa");
 
 Ext.apply(Ext.form.VTypes, {
-    IPAddress:  function(v) {
-      return (/^\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3}$/).test(v);
-    },
-    IPAddressText: gettext('Must be a numeric IP address.'),
-    IPAddressMask: /[\d\.]/i,
+  IPAddress:  function(v) {
+    "use strict";
+    return (/^\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3}$/).test(v);
+  },
+  IPAddressText: gettext('Must be a numeric IP address.'),
+  IPAddressMask: /[\d\.]/i,
 
-    IPAddressWithNetmask:  function(v) {
-      return (/^\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3}(\/(\d{1,2}|\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3}))?$/).test(v);
-    },
-    IPAddressWithNetmaskText: gettext('Must be a numeric IP address or "IP/Netmask".'),
-    IPAddressWithNetmaskMask: /[\d\.\/]/i,
+  IPAddressWithNetmask:  function(v) {
+    "use strict";
+    return (/^\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3}(\/(\d{1,2}|\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3}))?$/).test(v);
+  },
+  IPAddressWithNetmaskText: gettext('Must be a numeric IP address or "IP/Netmask".'),
+  IPAddressWithNetmaskMask: /[\d\.\/]/i,
 
-    IPAddressList:  function(v) {
-      // Match "123.(123.123.123 123.)*123.123.123", because that way spaces are not allowed at the end
-      return (/^\d{1,3}\.(\d{1,3}\.\d{1,3}\.\d{1,3} \d{1,3}\.)*\d{1,3}\.\d{1,3}\.\d{1,3}$/).test(v);
-    },
-    IPAddressListText: gettext('Must be a space-separated list of numeric IP addresses.'),
-    IPAddressListMask: /[\d\. ]/i,
+  IPAddressList:  function(v) {
+    "use strict";
+    // Match "123.(123.123.123 123.)*123.123.123", because that way spaces are not allowed at the end
+    return (/^\d{1,3}\.(\d{1,3}\.\d{1,3}\.\d{1,3} \d{1,3}\.)*\d{1,3}\.\d{1,3}\.\d{1,3}$/).test(v);
+  },
+  IPAddressListText: gettext('Must be a space-separated list of numeric IP addresses.'),
+  IPAddressListMask: /[\d\. ]/i,
 
-    DomainName:  function(v) {
-      return (/^[\w\.\-]+$/).test(v);
-    },
-    DomainNameText: gettext('Must only contain letters, numbers, "-" and ".".'),
-    DomainNameMask: /[\w\.\-]/i
+  DomainName:  function(v) {
+    "use strict";
+    return (/^[\w\.\-]+$/).test(v);
+  },
+  DomainNameText: gettext('Must only contain letters, numbers, "-" and ".".'),
+  DomainNameMask: /[\w\.\-]/i
 });
 
 Ext.oa.Ifconfig__NetDevice_TreeNodeUI = Ext.extend(Ext.tree.TreeNodeUI, {
   renderElements : function(n, a, targetNode, bulkRender){
+    "use strict";
     Ext.oa.Ifconfig__NetDevice_TreeNodeUI.superclass.renderElements.call( this, n, a, targetNode, bulkRender );
     ifconfig__IPAddress.filter({"device__id": a.device.id}, function(provider, response){
-      if(response.result.length == 0)
+      var tpl, pos;
+      if(response.result.length === 0){
         return;
+      }
       Ext.DomHelper.applyStyles( this.elNode, 'position: relative' );
-      var tpl = new Ext.DomHelper.createTemplate(
+      tpl = new Ext.DomHelper.createTemplate(
         '<span style="position: absolute; top: 0px; right: {pos}px;">{text}</span>'
         );
-      var pos = 8;
+      pos = 8;
       tpl.append( this.elNode, {
         'pos':  pos,
-        'text': response.result.map(function(el){return el.address}).join(', ')
+        'text': response.result.map(function(el){return el.address;}).join(', ')
         } );
     }, this);
   }
@@ -61,6 +68,7 @@ Ext.oa.Ifconfig__NetDevice_TreeNodeUI = Ext.extend(Ext.tree.TreeNodeUI, {
 
 
 Ext.oa.Ifconfig__NetDevice_TreeLoader = function(config){
+  "use strict";
   Ext.apply(this, config);
   Ext.applyIf(this, {
     directFn: ifconfig__NetDevice.filter,
@@ -68,14 +76,16 @@ Ext.oa.Ifconfig__NetDevice_TreeLoader = function(config){
     rootdevs: {}
   });
   Ext.oa.Ifconfig__NetDevice_TreeLoader.superclass.constructor.apply(this, arguments);
-}
+};
 
 Ext.extend(Ext.oa.Ifconfig__NetDevice_TreeLoader, Ext.tree.TreeLoader, {
   getParams: function(node){
-    return [{id: node.attributes.device.id}]
+    "use strict";
+    return [{id: node.attributes.device.id}];
   },
 
   createNode : function(attr){
+    "use strict";
     Ext.apply(attr, {
       nodeType: "async",
       id:   Ext.id(),
@@ -83,31 +93,35 @@ Ext.extend(Ext.oa.Ifconfig__NetDevice_TreeLoader, Ext.tree.TreeLoader, {
       text: ( attr.device ? attr.device.devname : '...' )
     });
     if( attr.device ){
-      attr['uiProvider'] = Ext.oa.Ifconfig__NetDevice_TreeNodeUI;
+      attr.uiProvider = Ext.oa.Ifconfig__NetDevice_TreeNodeUI;
     }
     return new Ext.tree.TreePanel.nodeTypes[attr.nodeType](attr);
   },
 
   handleResponse: function(response){
+    "use strict";
     var myresp = {
       responseData: [],
       responseText: "",
       argument: response.argument
     };
     if( response.responseData.length >= 1 ){
-      var self = this;
-      var pushdevs = function(devlist){
-        for( var i = 0; i < devlist.length; i++ ){
-          if( devlist[i].devname in self.rootdevs )
+      var self = this,
+          i,
+          pushdevs = function(devlist){
+        for( i = 0; i < devlist.length; i++ ){
+          if( devlist[i].devname in self.rootdevs ){
             continue;
+          }
           myresp.responseData.push({
             device: devlist[i]
           });
         }
-      }
+      };
       pushdevs(response.responseData[0].childdevs);
-      if( response.responseData[0].devtype === "bonding" )
+      if( response.responseData[0].devtype === "bonding" ){
         pushdevs(response.responseData[0].basedevs);
+      }
     }
     return Ext.oa.Ifconfig__NetDevice_TreeLoader.superclass.handleResponse.apply(this, [myresp]);
   }
@@ -115,6 +129,7 @@ Ext.extend(Ext.oa.Ifconfig__NetDevice_TreeLoader, Ext.tree.TreeLoader, {
 
 Ext.oa.Ifconfig__NetDevice_TreePanel = Ext.extend(Ext.tree.TreePanel, {
   initComponent: function(){
+    "use strict";
     Ext.apply(this, Ext.apply(this.initialConfig, {
       enableDD: true,
       rootVisible: false,
@@ -128,14 +143,16 @@ Ext.oa.Ifconfig__NetDevice_TreePanel = Ext.extend(Ext.tree.TreePanel, {
   },
 
   onRender: function(){
+    "use strict";
     Ext.oa.Ifconfig__NetDevice_TreePanel.superclass.onRender.apply(this, arguments);
   },
 
   refresh: function(){
+    "use strict";
     var self = this;
     ifconfig__NetDevice.get_root_devices(function(provider, response){
-      var rootdevs = [];
-      for( var i = 0; i < response.result.length; i++ ){
+      var rootdevs = [], i;
+      for( i = 0; i < response.result.length; i++ ){
         self.loader.rootdevs[response.result[i].devname] = true;
         rootdevs.push({
           device: response.result[i]
@@ -154,6 +171,7 @@ Ext.oa.Ifconfig__NetDevice_TreePanel = Ext.extend(Ext.tree.TreePanel, {
 
 Ext.oa.Ifconfig__NetDevice_Panel = Ext.extend(Ext.Panel, {
   initComponent: function(){
+    "use strict";
     var netDevPanel = this;
     Ext.apply(this, Ext.apply(this.initialConfig, {
       id: 'ifconfig__netdevice_panel_inst',
@@ -284,15 +302,18 @@ Ext.oa.Ifconfig__NetDevice_Panel = Ext.extend(Ext.Panel, {
             text: gettext('Save'),
             icon: MEDIA_URL + "/oxygen/16x16/actions/dialog-ok-apply.png",
             handler: function(self){
-              var params = {id: netDevPanel.active_device.id};
+              var params = {id: netDevPanel.active_device.id},
+                  haveslaves,
+                  i, slavedev;
 
-              if( netDevPanel.active_device.devtype == "bonding" ){
+              if( netDevPanel.active_device.devtype === "bonding" ){
                 params.slaves = [];
-                var haveslaves = false;
-                for( var i = 0; i < netDevPanel.active_node.childNodes.length; i++ ){
-                  var slavedev = netDevPanel.active_node.childNodes[i].attributes.device;
-                  if( slavedev.devtype != "native" )
+                haveslaves = false;
+                for( i = 0; i < netDevPanel.active_node.childNodes.length; i++ ){
+                  slavedev = netDevPanel.active_node.childNodes[i].attributes.device;
+                  if( slavedev.devtype !== "native" ){
                     continue;
+                  }
                   if( slavedev.id === -1 ){
                     Ext.Msg.alert(gettext('Save'), interpolate(
                       gettext('Slave device %s has not yet been saved, please save this device first.'),
@@ -310,8 +331,8 @@ Ext.oa.Ifconfig__NetDevice_Panel = Ext.extend(Ext.Panel, {
                   return;
                 }
               }
-              if( netDevPanel.active_device.devtype == "vlan" ){
-                if( netDevPanel.active_node.parentNode == netDevPanel.devicestree.getRootNode() ){
+              if( netDevPanel.active_device.devtype === "vlan" ){
+                if( netDevPanel.active_node.parentNode === netDevPanel.devicestree.getRootNode() ){
                   Ext.Msg.alert(gettext('Save'),
                     gettext('VLAN devices need to be dragged onto their base device first.')
                   );
@@ -326,8 +347,8 @@ Ext.oa.Ifconfig__NetDevice_Panel = Ext.extend(Ext.Panel, {
                 }
                 params.vlanrawdev = netDevPanel.active_node.parentNode.attributes.device.id;
               }
-              if( netDevPanel.active_device.devtype == "bridge" ){
-                if( netDevPanel.active_node.parentNode == netDevPanel.devicestree.getRootNode() ){
+              if( netDevPanel.active_device.devtype === "bridge" ){
+                if( netDevPanel.active_node.parentNode === netDevPanel.devicestree.getRootNode() ){
                   Ext.Msg.alert(gettext('Save'),
                     gettext('Bridge devices need to be dragged onto their base device first.')
                   );
@@ -342,7 +363,6 @@ Ext.oa.Ifconfig__NetDevice_Panel = Ext.extend(Ext.Panel, {
                 }
                 params.brports = [netDevPanel.active_node.parentNode.attributes.device.id];
               }
-              console.log(params);
               self.ownerCt.ownerCt.getForm().submit({
                 params: params,
                 success: function(provider, response){
@@ -376,8 +396,9 @@ Ext.oa.Ifconfig__NetDevice_Panel = Ext.extend(Ext.Panel, {
                 }
                 else{
                   ifconfig__NetDevice.remove(netDevPanel.active_device.id, function(provider, response){
-                    if( response.type !== "exception" )
+                    if( response.type !== "exception" ){
                       netDevPanel.devicestree.refresh();
+                    }
                   });
                 }
               });
@@ -412,8 +433,9 @@ Ext.oa.Ifconfig__NetDevice_Panel = Ext.extend(Ext.Panel, {
               header: gettext('Editable'),
               dataIndex: "configure",
               renderer: function( val, x, store ){
-                if( val )
+                if( val ){
                   return '<img src="' + MEDIA_URL + '/oxygen/16x16/actions/dialog-ok-apply.png" title="yes" />';
+                }
                 return '<img src="' + MEDIA_URL + '/oxygen/16x16/actions/dialog-cancel.png" title="no" />';
               }
             }]
@@ -432,24 +454,27 @@ Ext.oa.Ifconfig__NetDevice_Panel = Ext.extend(Ext.Panel, {
             icon: MEDIA_URL + "/oxygen/16x16/actions/dialog-ok-apply.png",
             handler: function(self){
               var updateRec = function(record){
-                if( !record.dirty )
+                if( !record.dirty ){
                   return;
+                }
                 if( record.data.id === -1 ){
                   var data = Ext.apply({}, record.data);
-                  delete data["id"];
+                  delete data.id;
                   ifconfig__IPAddress.create(data, function(provider, response){
-                    if( response.type !== "exception" )
+                    if( response.type !== "exception" ){
                       record.set("id", response.result.id);
                       record.commit();
+                    }
                   });
                 }
                 else{
                   ifconfig__IPAddress.set(record.data.id, record.getChanges(), function(provider, response){
-                    if( response.type !== "exception" )
+                    if( response.type !== "exception" ){
                       record.commit();
+                    }
                   });
                 }
-              }
+              };
               netDevPanel.addressgrid.store.each(updateRec);
             }
           }, {
@@ -460,12 +485,12 @@ Ext.oa.Ifconfig__NetDevice_Panel = Ext.extend(Ext.Panel, {
                 Ext.Msg.alert(gettext('Add Address'), gettext('Please select a device first.'));
               }
               var ds = netDevPanel.addressgrid.store;
-              var ds_model = Ext.data.Record.create( ds.fields.keys );
-              ds.insert(0, new ds_model({
+              var DS_Model = Ext.data.Record.create( ds.fields.keys );
+              ds.insert(0, new DS_Model({
                 id:        -1,
                 device:    { "app": "ifconfig", "obj": "NetDevice", "id": netDevPanel.active_device.id },
                 configure: true
-              }))
+              }));
               netDevPanel.addressgrid.startEditing( 0, 0 );
             }
           }, {
@@ -497,8 +522,9 @@ Ext.oa.Ifconfig__NetDevice_Panel = Ext.extend(Ext.Panel, {
                   }
                   else{
                     ifconfig__IPAddress.remove(sel.data.id, function(provider, response){
-                      if( response.type !== "exception" )
+                      if( response.type !== "exception" ){
                         ds.remove(sel);
+                      }
                     });
                   }
                 });
@@ -582,7 +608,7 @@ Ext.oa.Ifconfig__NetDevice_Panel = Ext.extend(Ext.Panel, {
           gettext('Activate configuration'),
           gettext('In order to safely update the configuration, all network interfaces will be shut down and restarted, possibly causing data loss if the system is currently being used. Proceed?'),
           function(btn){
-            if(btn == 'yes'){
+            if(btn === 'yes'){
               ifconfig__NetDevice.activate_config(function(provider, response){
                 if( response.type !== "exception" ){
                   Ext.Msg.alert(gettext('Configuration activated'),
@@ -605,8 +631,10 @@ Ext.oa.Ifconfig__NetDevice_Panel = Ext.extend(Ext.Panel, {
   },
 
   nodeSelected: function(selmodel, node, last){
-    if( node === null ) // Dragging
+    "use strict";
+    if( node === null ){ // Dragging
       return;
+    }
     this.active_device = node.attributes.device;
     this.active_node   = node;
 
@@ -620,10 +648,10 @@ Ext.oa.Ifconfig__NetDevice_Panel = Ext.extend(Ext.Panel, {
     else{
       // New device
       this.addressgrid.store.removeAll();
-      var ds_model = Ext.data.Record.create( [
+      var DS_Model = Ext.data.Record.create( [
         "devname", "auto", "dhcp", "speed", "macaddress", "carrier", "operstate", "mtu"
       ] );
-      this.deviceform.getForm().loadRecord(new ds_model({
+      this.deviceform.getForm().loadRecord(new DS_Model({
         devname: node.attributes.device.devname,
         auto: true,
         dhcp: false,
@@ -639,34 +667,41 @@ Ext.oa.Ifconfig__NetDevice_Panel = Ext.extend(Ext.Panel, {
       }));
       this.deviceform.getForm().findField("devname").setReadOnly(false);
     }
-    if( node.attributes.device.devtype === "bonding" )
+    if( node.attributes.device.devtype === "bonding" ){
       this.bondingfields.expand();
-    else
+    }
+    else{
       this.bondingfields.collapse();
+    }
   },
 
   nodeDragOver: function(ev){
+    "use strict";
     var srcdev = ev.data.node.attributes.device,
         tgtdev = ev.target.attributes.device;
 
     // Ordering devices by the following score, we can drop each device on
     // every other device that has a lower score.
-    var devscore = { bonding: 0, native: 1, vlan: 2, bridge: 3 }
-    if( devscore[tgtdev.devtype] >= devscore[srcdev.devtype] )
+    var devscore = { bonding: 0, native: 1, vlan: 2, bridge: 3 };
+    if( devscore[tgtdev.devtype] >= devscore[srcdev.devtype] ){
       return false;
+    }
 
     // Forbid drop on a native device that is part of a bonding
-    if( tgtdev.devtype == "native" && ev.target.parentNode != this.devicestree.getRootNode() )
+    if( tgtdev.devtype === "native" && ev.target.parentNode !== this.devicestree.getRootNode() ){
       return false;
+    }
 
     // Forbid dropping native devices that have children on a bonding
-    if( tgtdev.devtype == "bonding" && srcdev.devtype == "native" && ev.data.node.hasChildNodes() )
+    if( tgtdev.devtype === "bonding" && srcdev.devtype === "native" && ev.data.node.hasChildNodes() ){
       return false;
+    }
 
     return true;
   },
 
   onRender: function(){
+    "use strict";
     Ext.oa.Ifconfig__NetDevice_Panel.superclass.onRender.apply(this, arguments);
     var self = this;
     (function(){
@@ -682,6 +717,7 @@ Ext.reg("ifconfig__netdevice_panel", Ext.oa.Ifconfig__NetDevice_Panel);
 Ext.oa.Ifconfig__NetDevice_Module = Ext.extend(Object, {
   panel: "ifconfig__netdevice_panel",
   prepareMenuTree: function(tree){
+    "use strict";
     tree.appendToRootNodeById("menu_system", {
       text: gettext('Network'),
       icon: MEDIA_URL + '/icons2/22x22/places/gnome-fs-network.png',
