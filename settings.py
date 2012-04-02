@@ -116,6 +116,9 @@ MEDIA_ROOT = join(PROJECT_ROOT, 'htdocs')
 # Examples: "http://media.lawrence.com", "http://example.com/media/"
 MEDIA_URL = PROJECT_URL + '/static'
 
+STATIC_URL  = MEDIA_URL
+STATIC_ROOT = MEDIA_ROOT
+
 # URL prefix for admin media -- CSS, JavaScript and images. Make sure to use a
 # trailing slash.
 # Examples: "http://foo.com/media/", "/media/".
@@ -162,14 +165,25 @@ MIDDLEWARE_CLASSES = (
     'django.contrib.messages.middleware.MessageMiddleware',
 )
 
-TEMPLATE_CONTEXT_PROCESSORS = [
-    "django.core.context_processors.auth",
+from django import VERSION as django_version
+
+if django_version[:2] == (1, 4):
+    TEMPLATE_CONTEXT_PROCESSORS = [
+        "django.contrib.auth.context_processors.auth"
+    ]
+else:
+    TEMPLATE_CONTEXT_PROCESSORS = [
+        "django.core.context_processors.auth"
+    ]
+
+
+TEMPLATE_CONTEXT_PROCESSORS.extend([
     "django.core.context_processors.debug",
     "django.core.context_processors.i18n",
     "django.core.context_processors.media",
     'processors.project_url',
     'processors.profile',
-]
+])
 
 ROOT_URLCONF = 'urls'
 
