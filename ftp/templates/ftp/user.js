@@ -1,6 +1,4 @@
-{% load i18n %}
-
-{% comment %}
+/*
  Copyright (C) 2011-2012, it-novum GmbH <community@open-attic.org>
 
  openATTIC is free software; you can redistribute it and/or modify it
@@ -11,24 +9,24 @@
  but WITHOUT ANY WARRANTY; without even the implied warranty of
  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  GNU General Public License for more details.
-{% endcomment %}
+*/
 
 Ext.namespace("Ext.oa");
 
 Ext.oa.Ftp__User_Panel = Ext.extend(Ext.oa.ShareGridPanel, {
   api: ftp__User,
   id: "ftp__user_panel_inst",
-  title: "FTP",
+  title: gettext("FTP"),
   texts: {
-    add:     "{% trans 'Add User' %}",
-    edit:    "{% trans 'Edit User' %}",
-    remove:  "{% trans 'Delete User' %}"
+    add:     gettext('Add User'),
+    edit:    gettext('Edit User'),
+    remove:  gettext('Delete User')
   },
   columns: [{
-    header: "{% trans 'Path' %}",
+    header: gettext('Path'),
     dataIndex: "homedir"
   }, {
-    header: "{% trans 'User name' %}",
+    header: gettext('User name'),
     dataIndex: "username"
   }],
   storefields: [{
@@ -49,7 +47,7 @@ Ext.oa.Ftp__User_Panel = Ext.extend(Ext.oa.ShareGridPanel, {
       fieldLabel: "Username"
     }, {
       xtype: 'textfield',
-      fieldLabel: "{% trans 'Password' %}",
+      fieldLabel: gettext('Password'),
       name: "passwd",
       inputType: 'password'
     }, {
@@ -65,7 +63,7 @@ Ext.oa.Ftp__User_Panel = Ext.extend(Ext.oa.ShareGridPanel, {
       }
     }, {
       xtype: 'textfield',
-      fieldLabel: "{% trans 'Directory' %}",
+      fieldLabel: gettext('Directory'),
       name: "homedir",
       disabled: true,
       ref: 'dirfield'
@@ -77,7 +75,7 @@ Ext.oa.Ftp__User_Panel = Ext.extend(Ext.oa.ShareGridPanel, {
   },
   deleteConfirm: function(sel){
     "use strict";
-    return interpolate("{% trans 'Do you really want to delete user %s?' %}", [sel.data.username]);
+    return interpolate(gettext('Do you really want to delete user %s?'), [sel.data.username]);
   }
 });
 
@@ -89,7 +87,7 @@ Ext.oa.Ftp__User_Module = Ext.extend(Object, {
   prepareMenuTree: function(tree){
     "use strict";
     tree.appendToRootNodeById("menu_shares", {
-      text: "{% trans 'Web (FTP)' %}",
+      text: gettext('Web (FTP)'),
       leaf: true,
       panel: "ftp__user_panel_inst",
       icon: MEDIA_URL + '/icons2/22x22/mimetypes/www.png',
