@@ -2,24 +2,24 @@
 # Copyright (C) YEAR THE PACKAGE'S COPYRIGHT HOLDER
 # This file is distributed under the same license as the PACKAGE package.
 # FIRST AUTHOR <EMAIL@ADDRESS>, YEAR.
-# 
+#
 #, fuzzy
 msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2012-01-18 12:25+0100\n"
+"POT-Creation-Date: 2012-04-03 10:54+0200\n"
 "PO-Revision-Date: 2012-01-18 12:26\n"
 "Last-Translator: Michael Ziegler <michael.ziegler@it-novum.com>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
+"Language: \n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"Language: \n"
 "Plural-Forms: nplurals=2; plural=(n != 1)\n"
 "X-Translated-Using: django-rosetta 0.6.0\n"
 
-#: models.py:19
+#: models.py:33
 msgid ""
 "Check this if openATTIC should not configure services with this command, "
 "only query those that exist."
@@ -28,82 +28,10 @@ msgstr ""
 "konfigurierte Services benutzen soll, sondern nur diejenigen Services "
 "abfragen, die bereits existieren."
 
-#: views.py:403
+#: views.py:415
 msgid "Start time"
 msgstr "Startzeit"
 
-#: views.py:404
+#: views.py:416
 msgid "End time"
 msgstr "Endzeit"
-
-#: templates/nagios/services.js:142
-msgid "Image not available yet"
-msgstr "Bild noch nicht verfügbar"
-
-#: templates/nagios/services.js:181
-msgid "Loading..."
-msgstr "Lade..."
-
-#: templates/nagios/services.js:259
-msgid "Nagios Services"
-msgstr "Nagios-Services"
-
-#: templates/nagios/services.js:264
-msgid "Reload"
-msgstr "Neu laden"
-
-#: templates/nagios/services.js:332
-msgid "Service Description"
-msgstr "Service-Beschreibung"
-
-#: templates/nagios/services.js:337
-msgid "Plugin Output"
-msgstr "Plugin-Ausgabe"
-
-#: templates/nagios/services.js:341
-msgid "Volume"
-msgstr "Volume"
-
-#: templates/nagios/services.js:345
-msgid "Last Check"
-msgstr "Letzter Check"
-
-#: templates/nagios/services.js:350
-msgid "Next Check"
-msgstr "Nächster Check"
-
-#: templates/nagios/services.js:361
-msgid "No performance data available for service"
-msgstr "Keine Performance-Daten verfügbar für"
-
-#: templates/nagios/services.js:390
-msgid "4 hours"
-msgstr "4 Stunden"
-
-#: templates/nagios/services.js:395
-msgid "1 day"
-msgstr "1 Tag"
-
-#: templates/nagios/services.js:399
-msgid "1 week"
-msgstr "1 Woche"
-
-#: templates/nagios/services.js:403
-msgid "1 month"
-msgstr "1 Monat"
-
-#: templates/nagios/services.js:407
-msgid "1 year"
-msgstr "1 Jahr"
-
-#: templates/nagios/services.js:419
-msgid "Graphs"
-msgstr "Graphen"
-
-#: templates/nagios/services.js:434
-msgid "Graph"
-msgstr "Graph"
-
-#: templates/nagios/services.js:470
-msgid "Monitoring"
-msgstr "Monitoring"

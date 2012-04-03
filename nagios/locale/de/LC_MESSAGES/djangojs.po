@@ -1,0 +1,91 @@
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) YEAR THE PACKAGE'S COPYRIGHT HOLDER
+# This file is distributed under the same license as the PACKAGE package.
+# FIRST AUTHOR <EMAIL@ADDRESS>, YEAR.
+#
+#, fuzzy
+msgid ""
+msgstr ""
+"Project-Id-Version: PACKAGE VERSION\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2012-04-03 10:54+0200\n"
+"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language-Team: LANGUAGE <LL@li.org>\n"
+"Language: \n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=2; plural=(n != 1)\n"
+
+#: templates/nagios/services.js:155
+msgid "Image not available yet"
+msgstr "Bild noch nicht verfügbar"
+
+#: templates/nagios/services.js:206
+msgid "Loading..."
+msgstr "Lade..."
+
+#: templates/nagios/services.js:291
+msgid "Nagios Services"
+msgstr "Nagios-Services"
+
+#: templates/nagios/services.js:296
+msgid "Reload"
+msgstr "Neu laden"
+
+#: templates/nagios/services.js:364
+msgid "Service Description"
+msgstr "Service-Beschreibung"
+
+#: templates/nagios/services.js:369
+msgid "Plugin Output"
+msgstr "Plugin-Ausgabe"
+
+#: templates/nagios/services.js:373
+msgid "Volume"
+msgstr "Volume"
+
+#: templates/nagios/services.js:377
+msgid "Last Check"
+msgstr "Letzter Check"
+
+#: templates/nagios/services.js:382
+msgid "Next Check"
+msgstr "Nächster Check"
+
+#: templates/nagios/services.js:393
+msgid "No performance data available for service"
+msgstr "Keine Performance-Daten verfügbar für"
+
+#: templates/nagios/services.js:423
+msgid "4 hours"
+msgstr "4 Stunden"
+
+#: templates/nagios/services.js:428
+msgid "1 day"
+msgstr "1 Tag"
+
+#: templates/nagios/services.js:432
+msgid "1 week"
+msgstr "1 Woche"
+
+#: templates/nagios/services.js:436
+msgid "1 month"
+msgstr "1 Monat"
+
+#: templates/nagios/services.js:440
+msgid "1 year"
+msgstr "1 Jahr"
+
+#: templates/nagios/services.js:452
+msgid "Graphs"
+msgstr "Graphen"
+
+#: templates/nagios/services.js:467
+msgid "Graph"
+msgstr "Graph"
+
+#: templates/nagios/services.js:512
+msgid "Monitoring"
+msgstr "Monitoring"

@@ -1,5 +1,3 @@
-{% load i18n %}
-
 {% comment %}
  Copyright (C) 2011-2012, it-novum GmbH <community@open-attic.org>
 
@@ -154,7 +152,7 @@ Ext.oa.Nagios__Graph_ImagePanel = Ext.extend(Ext.Panel, {
             }, self);
             self.el.on("error", function(ev, target, options){
               this.ownerCt.el.unmask();
-              this.ownerCt.el.mask("{% trans 'Image not available yet' %}");
+              this.ownerCt.el.mask(gettext('Image not available yet'));
             }, self);
             self.el.on("dblclick", function(ev, target, options){
               this.loadRecord(this.currentRecord, this.currentId);
@@ -205,7 +203,7 @@ Ext.oa.Nagios__Graph_ImagePanel = Ext.extend(Ext.Panel, {
       this.currEnd  = 0;
     }
 
-    this.el.mask("{% trans 'Loading...' %}");
+    this.el.mask(gettext('Loading...'));
     var url = String.format( PROJECT_URL + "/nagios/{0}/{1}.png?{2}", record.data.id, id, Ext.urlEncode(params) );
     this.items.items[0].el.dom.src = url;
   },
@@ -290,12 +288,12 @@ Ext.oa.Nagios__Service_Panel = Ext.extend(Ext.Panel, {
 
     Ext.apply(this, Ext.apply(this.initialConfig, {
       id: "nagios__service_panel_inst",
-      title: "{% trans 'Nagios Services' %}",
+      title: gettext('Nagios Services'),
       layout: "border",
       buttons: [ {
         text: "",
         icon: MEDIA_URL + "/icons2/16x16/actions/reload.png",
-        tooltip: "{% trans 'Reload' %}",
+        tooltip: gettext('Reload'),
         handler: function(self){
           nagiosGrid.items.items[0].store.reload();
         }
@@ -363,25 +361,25 @@ Ext.oa.Nagios__Service_Panel = Ext.extend(Ext.Panel, {
             sortable: true
           },
           columns: [{
-            header: "{% trans 'Service Description' %}",
+            header: gettext('Service Description'),
             width: 200,
             dataIndex: "description",
             renderer: renderDesc
           }, {
-            header: "{% trans 'Plugin Output' %}",
+            header: gettext('Plugin Output'),
             width: 200,
             dataIndex: "plugin_output"
           }, {
-            header: "{% trans 'Volume' %}",
+            header: gettext('Volume'),
             width: 100,
             dataIndex: "volumename"
           }, {
-            header: "{% trans 'Last Check' %}",
+            header: gettext('Last Check'),
             width: 120,
             dataIndex: "last_check",
             renderer: renderDate
           }, {
-            header: "{% trans 'Next Check' %}",
+            header: gettext('Next Check'),
             width: 120,
             dataIndex: "next_check",
             renderer: renderDate
@@ -392,8 +390,9 @@ Ext.oa.Nagios__Service_Panel = Ext.extend(Ext.Panel, {
             var record = self.getStore().getAt(rowIndex);
             if( !record.json.graphs || record.json.graphs.length === 0 ){
               self.ownerCt.items.items[1].getEl().mask(
-                "{% trans 'No performance data available for service' %}<br />"+
-                "<center>" + record.data.description + "</center>");
+                gettext('No performance data available for service') + "<br />" +
+                "<center>" + record.data.description + "</center>"
+              );
             }
             else{
               self.ownerCt.items.items[1].getEl().unmask();
@@ -421,24 +420,24 @@ Ext.oa.Nagios__Service_Panel = Ext.extend(Ext.Panel, {
           id: 'naggraphpanel',
           items: [{
             xtype: "naggraphimage",
-            title: "{% trans '4 hours' %}",
+            title: gettext('4 hours'),
             timespan: 4*60*60,
             reloadInterval: 300
           }, {
             xtype: "naggraphimage",
-            title: "{% trans '1 day' %}",
+            title: gettext('1 day'),
             timespan: 24*60*60
           }, {
             xtype: "naggraphimage",
-            title: "{% trans '1 week' %}",
+            title: gettext('1 week'),
             timespan: 7*24*60*60
           }, {
             xtype: "naggraphimage",
-            title: "{% trans '1 month' %}",
+            title: gettext('1 month'),
             timespan: 30*24*60*60
           }, {
             xtype: "naggraphimage",
-            title: "{% trans '1 year' %}",
+            title: gettext('1 year'),
             timespan: 365*24*60*60
           }],
           loadRecord: function( record, graph ){
@@ -450,7 +449,7 @@ Ext.oa.Nagios__Service_Panel = Ext.extend(Ext.Panel, {
           }
         }, {
           region: "west",
-          title: "{% trans 'Graphs' %}",
+          title: gettext('Graphs'),
           xtype:  'grid',
           sm: new Ext.grid.RowSelectionModel({singleSelect:true}),
           width: 160,
@@ -465,7 +464,7 @@ Ext.oa.Nagios__Service_Panel = Ext.extend(Ext.Panel, {
           }()),
           colModel: new Ext.grid.ColumnModel({
             columns: [{
-              header: "{% trans 'Graph' %}",
+              header: gettext('Graph'),
               dataIndex: "title"
             } ]
           }),
@@ -510,7 +509,7 @@ Ext.oa.Nagios__Service_Module = Ext.extend(Object, {
   prepareMenuTree: function(tree){
     "use strict";
     tree.appendToRootNodeById("menu_status", {
-      text: "{% trans 'Monitoring' %}",
+      text: gettext('Monitoring'),
       leaf: true,
       icon: MEDIA_URL + '/icons2/22x22/apps/nfs.png',
       panel: "nagios__service_panel_inst",
