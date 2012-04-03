@@ -1,6 +1,4 @@
-{% load i18n %}
-
-{% comment %}
+/*
  Copyright (C) 2011-2012, it-novum GmbH <community@open-attic.org>
 
  openATTIC is free software; you can redistribute it and/or modify it
@@ -11,7 +9,7 @@
  but WITHOUT ANY WARRANTY; without even the implied warranty of
  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  GNU General Public License for more details.
-{% endcomment %}
+*/
 
 Ext.namespace("Ext.oa");
 
@@ -75,9 +73,9 @@ Ext.oa.Iscsi__Panel = Ext.extend(Ext.Panel, {
       if( bindIP.hasSelection() ){
         var sel = bindIP.getSelected();
         Ext.Msg.confirm(
-        "{% trans 'Confirm delete' %}",
+        gettext('Confirm delete'),
         interpolate(
-          "{% trans 'Really delete IP %s?' %}",
+          gettext('Really delete IP %s?'),
           [sel.data.address] ),
         function(btn, text){
           if( btn === 'yes' ){
@@ -92,9 +90,9 @@ Ext.oa.Iscsi__Panel = Ext.extend(Ext.Panel, {
       if( sm.hasSelection() ){
         var sel = sm.selections.items[0];
         Ext.Msg.confirm(
-          "{% trans 'Confirm delete' %}",
+          gettext('Confirm delete'),
           interpolate(
-            "{% trans 'Really delete Lun %s?' %}",
+            gettext('Really delete Lun %s?'),
             [sel.data.alias] ),
           function(btn, text){
             if( btn === 'yes' ){
@@ -125,9 +123,9 @@ Ext.oa.Iscsi__Panel = Ext.extend(Ext.Panel, {
       if( sm.hasSelection() ){
         var sel = sm.selections.items[0];
         Ext.Msg.confirm(
-          "{% trans 'Confirm delete' %}",
+          gettext('Confirm delete'),
           interpolate(
-            "{% trans 'Really delete Target %s?' %}",
+            gettext('Really delete Target %s?'),
             [sel.data.name] ),
           function(btn, text){
             if( btn === 'yes' ){
@@ -197,7 +195,7 @@ Ext.oa.Iscsi__Panel = Ext.extend(Ext.Panel, {
 
     Ext.apply(this, Ext.apply(this.initialConfig, {
       id: 'iscsi__initiator_panel_inst',
-      title: "{% trans 'iSCSI' %}",
+      title: gettext('iSCSI'),
       layout: 'hbox',
       layoutConfig: {
         align: "stretch"
@@ -250,12 +248,12 @@ Ext.oa.Iscsi__Panel = Ext.extend(Ext.Panel, {
           buttons:[{  
             text: "",
             icon: MEDIA_URL + "/icons2/16x16/actions/reload.png",
-            tooltip: "{% trans 'Reload' %}",
+            tooltip: gettext('Reload'),
             handler: function(self){
               targetStore.reload();
             }
           },{
-            text: "{% trans 'Create Target'%}",
+            text: gettext('Create Target'),
             icon: MEDIA_URL + "/icons2/16x16/actions/add.png",
             handler: function(){
               var fqdn = "";
@@ -263,7 +261,7 @@ Ext.oa.Iscsi__Panel = Ext.extend(Ext.Panel, {
                 fqdn = response.result.split(".").join(".");
               });
               var addwin = new Ext.Window({
-                title: "{% trans 'Add Target' %}",
+                title: gettext('Add Target'),
                 layout: "fit",
                 height: 140,
                 width: 500,
@@ -277,7 +275,7 @@ Ext.oa.Iscsi__Panel = Ext.extend(Ext.Panel, {
                   },
                   bodyStyle: 'padding:5px 5px;',
                   items: [{
-                    fieldLabel: "{% trans 'Name' %}",
+                    fieldLabel: gettext('Name'),
                     ref: "namefield",
                     listeners: {
                       change: function( self, newValue, oldValue ){
@@ -292,11 +290,11 @@ Ext.oa.Iscsi__Panel = Ext.extend(Ext.Panel, {
                       }
                     }
                   },{
-                    fieldLabel: "{% trans 'IP/IQN' %}",
+                    fieldLabel: gettext('IP/IQN'),
                     ref: "iqn_ip_field"
                   }],
                   buttons: [{
-                    text: "{% trans 'Create' %}",
+                    text: gettext('Create'),
                     icon: MEDIA_URL + "/oxygen/16x16/actions/dialog-ok-apply.png",
                     handler: function(self){
                       if( !self.ownerCt.ownerCt.getForm().isValid() ){
@@ -313,7 +311,7 @@ Ext.oa.Iscsi__Panel = Ext.extend(Ext.Panel, {
                       });
                     }
                   }, {
-                    text: "{% trans 'Cancel' %}",
+                    text: gettext('Cancel'),
                     icon: MEDIA_URL + "/icons2/16x16/actions/gtk-cancel.png",
                     handler: function(self){
                       addwin.hide();
@@ -324,7 +322,7 @@ Ext.oa.Iscsi__Panel = Ext.extend(Ext.Panel, {
               addwin.show();
             }
           },{
-            text: "{% trans 'Delete Target'%}",
+            text: gettext('Delete Target'),
             icon: MEDIA_URL + "/icons2/16x16/actions/remove.png",
             handler: deleteTarget
           }],
@@ -437,7 +435,7 @@ Ext.oa.Iscsi__Panel = Ext.extend(Ext.Panel, {
             })
           }],
           buttons:[{
-            text: "{% trans 'Manage Initiators' %}",
+            text: gettext('Manage Initiators'),
             icon: MEDIA_URL + "/icons2/16x16/actions/gtk-execute.png",
             handler: function(){
               var addwin = new Ext.Window({
@@ -507,7 +505,7 @@ Ext.oa.Iscsi__Panel = Ext.extend(Ext.Panel, {
                   }]
                 }],
                 buttons: [{
-                  text: "{% trans 'Add' %}",
+                  text: gettext('Add'),
                   icon: MEDIA_URL + "/icons2/16x16/actions/add.png",
                   handler: function(self){
                       if( !self.ownerCt.ownerCt.items.items[1].getForm().isValid() ){
@@ -523,7 +521,7 @@ Ext.oa.Iscsi__Panel = Ext.extend(Ext.Panel, {
                       });
                   }
                 },{
-                  text: "{% trans 'Save' %}",
+                  text: gettext('Save'),
                   icon: MEDIA_URL + "/icons2/16x16/actions/edit-redo.png",
                   handler: function(self){
                     var sm = addwin.initiator_all.getSelectionModel();
@@ -545,16 +543,16 @@ Ext.oa.Iscsi__Panel = Ext.extend(Ext.Panel, {
                       });
                   }
                 },{
-                  text: "{% trans 'Delete' %}",
+                  text: gettext('Delete'),
                   icon: MEDIA_URL + "/icons2/16x16/actions/remove.png",
                   handler: function(self){
                     var sm = addwin.initiator_all.getSelectionModel();
                     if( sm.hasSelection() ){
                       var sel = sm.selections.items[0];
                       Ext.Msg.confirm(
-                        "{% trans 'Confirm delete' %}",
+                        gettext('Confirm delete'),
                         interpolate(
-                          "{% trans 'Really delete Initiator %s?' %}",
+                          gettext('Really delete Initiator %s?'),
                           [sel.data.name] ),
                         function(btn, text){
                           if( btn === 'yes' ){
@@ -567,7 +565,7 @@ Ext.oa.Iscsi__Panel = Ext.extend(Ext.Panel, {
                     }
                   }
                 }, {
-                   text: "{% trans 'Cancel' %}",
+                   text: gettext('Cancel'),
                    icon: MEDIA_URL + "/icons2/16x16/actions/gtk-cancel.png",
                    handler: function(self){
                      addwin.hide();
@@ -577,7 +575,7 @@ Ext.oa.Iscsi__Panel = Ext.extend(Ext.Panel, {
               addwin.show();
             }
         },{
-            text: "{% trans 'Delete Initiator'%}",
+            text: gettext('Delete Initiator'),
             icon: MEDIA_URL + "/icons2/16x16/actions/remove.png",
             handler: deleteInitiator
         }],
@@ -623,7 +621,7 @@ Ext.oa.Iscsi__Panel = Ext.extend(Ext.Panel, {
             }]
           }),
           buttons:[{
-            text: "{% trans 'Add Lun' %}",
+            text: gettext('Add Lun'),
             icon: MEDIA_URL + "/icons2/16x16/actions/add.png",
             handler: function(){
               var sel = iscsiPanel.targets.getSelectionModel();
@@ -632,7 +630,7 @@ Ext.oa.Iscsi__Panel = Ext.extend(Ext.Panel, {
                 return;
               }
               var addwin = new Ext.Window({
-                title: "{% trans 'Add Lun' %}",
+                title: gettext('Add Lun'),
                 layout: "fit",
                 height: 200,
                 width: 500,
@@ -655,7 +653,7 @@ Ext.oa.Iscsi__Panel = Ext.extend(Ext.Panel, {
                       }
                      }
                   }, {
-                    fieldLabel: "{% trans 'Number' %}",
+                    fieldLabel: gettext('Number'),
                     name: "number",
                     xtype: 'numberfield',
                     allowBlank: false,
@@ -663,24 +661,24 @@ Ext.oa.Iscsi__Panel = Ext.extend(Ext.Panel, {
                     value: -1,
                     ref: 'numberfield'
                   },{
-                    fieldLabel: "{% trans 'Type' %}",
+                    fieldLabel: gettext('Type'),
                     name: "ltype",
                     ref: 'typefield',
                     hiddenName: 'l_type',
                     xtype:      'combo',
-                    store: [ [ 'fileio',  "{% trans 'Buffered (File IO)' %}"  ], [ 'blockio', "{% trans 'Unbuffered (Block IO)' %}" ] ],
+                    store: [ [ 'fileio',  gettext('Buffered (File IO)')  ], [ 'blockio', gettext('Unbuffered (Block IO)') ] ],
                     typeAhead:     true,
                     triggerAction: 'all',
                     emptyText:     'Select...',
                     selectOnFocus: true,
                     value: "fileio"
                   }, {
-                    fieldLabel: "{% trans 'Alias' %}",
+                    fieldLabel: gettext('Alias'),
                     name: "alias",
                     ref: 'aliasfield'
                   } ],
                   buttons: [{
-                    text: "{% trans 'Create Lun' %}",
+                    text: gettext('Create Lun'),
                     icon: MEDIA_URL + "/oxygen/16x16/actions/dialog-ok-apply.png",
                     handler: function(self){
                       if( !self.ownerCt.ownerCt.getForm().isValid() ){
@@ -716,7 +714,7 @@ Ext.oa.Iscsi__Panel = Ext.extend(Ext.Panel, {
                       });
                     }
                   }, {
-                    text: "{% trans 'Cancel' %}",
+                    text: gettext('Cancel'),
                     icon: MEDIA_URL + "/icons2/16x16/actions/gtk-cancel.png",
                     handler: function(self){
                       addwin.hide();
@@ -727,7 +725,7 @@ Ext.oa.Iscsi__Panel = Ext.extend(Ext.Panel, {
               addwin.show();
             }
           },{
-            text: "{% trans 'Delete Lun' %}",
+            text: gettext('Delete Lun'),
             icon: MEDIA_URL + "/icons2/16x16/actions/remove.png",
             handler: deleteLun
           }],
@@ -753,7 +751,7 @@ Ext.oa.Iscsi__Panel = Ext.extend(Ext.Panel, {
             }]
           }),
           buttons:[{
-              text: "{% trans 'Bind IPs' %}",
+              text: gettext('Bind IPs'),
               icon: MEDIA_URL + "/icons2/16x16/actions/gtk-execute.png",
               layout: 'aboslute',
               handler: function(){
@@ -788,7 +786,7 @@ Ext.oa.Iscsi__Panel = Ext.extend(Ext.Panel, {
                 addwin.show();
               }
             },{
-              text: "{% trans 'Delete Bind IPs'%}",
+              text: gettext('Delete Bind IPs'),
               icon: MEDIA_URL + "/icons2/16x16/actions/remove.png",
               handler: deleteBindIPs
             }],
@@ -831,7 +829,7 @@ Ext.oa.Iscsi__Module = Ext.extend(Object, {
   prepareMenuTree: function(tree){
     "use strict";
     tree.appendToRootNodeById("menu_luns", {
-      text: "{% trans 'iSCSI' %}",
+      text: gettext('iSCSI'),
       leaf: true,
       panel: 'iscsi__initiator_panel_inst',
       icon: MEDIA_URL + "/oxygen/22x22/places/repository.png",
