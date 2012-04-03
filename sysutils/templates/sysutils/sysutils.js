@@ -1,6 +1,4 @@
-{% load i18n %}
-
-{% comment %}
+/*
  Copyright (C) 2011-2012, it-novum GmbH <community@open-attic.org>
 
  openATTIC is free software; you can redistribute it and/or modify it
@@ -11,7 +9,7 @@
  but WITHOUT ANY WARRANTY; without even the implied warranty of
  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  GNU General Public License for more details.
-{% endcomment %}
+*/
 
 Ext.namespace("Ext.oa");
 
@@ -21,7 +19,7 @@ Ext.oa.SysUtils__Service_Panel = Ext.extend(Ext.grid.GridPanel, {
     var sysUtilsGrid = this;
     Ext.apply(this, Ext.apply(this.initialConfig, {
       id: "sysutils__service_panel_inst",
-      title: "{% trans 'Service State' %}",
+      title: gettext('Service State'),
       store: (function(){
         var st = new Ext.data.DirectStore({
           fields: ['id', 'name', 'status'],
@@ -36,10 +34,10 @@ Ext.oa.SysUtils__Service_Panel = Ext.extend(Ext.grid.GridPanel, {
           sortable: true
         },
         columns: [{
-          header: "{% trans 'Service Name' %}",
+          header: gettext('Service Name'),
           dataIndex: "name"
         }, {
-          header: "{% trans 'Status' %}",
+          header: gettext('Status'),
           width: 50,
           align: "center",
           dataIndex: "status",
@@ -62,7 +60,7 @@ Ext.oa.SysUtils__Service_Panel = Ext.extend(Ext.grid.GridPanel, {
       buttons: [{
         text: "",
         icon: MEDIA_URL + "/icons2/16x16/actions/reload.png",
-        tooltip: "{% trans 'Reload' %}",
+        tooltip: gettext('Reload'),
         handler: function(self){
           sysUtilsGrid.store.reload();
         }
@@ -106,21 +104,21 @@ Ext.oa.SysUtils__Service_Module = Ext.extend(Object, {
   prepareMenuTree: function(tree){
     "use strict";
     tree.appendToRootNodeById("menu_status", {
-      text: "{% trans 'Service State'%}",
+      text: gettext('Service State'),
       leaf: true,
       icon: '{{ MEDIA_URL }}/icons2/22x22/status/network-receive.png',
       panel: "sysutils__service_panel_inst",
       href: '#'
     });
     tree.appendToRootNodeById("menu_shutdown", {
-      text: "{% trans 'Reboot' %}",
+      text: gettext('Reboot'),
       leaf: true,
       icon: '{{ MEDIA_URL }}/oxygen/22x22/actions/system-reboot.png',
       listeners: {
         click: function(self, ev){
           Ext.oa.YellowDangerousMessage.confirm(
             "Reboot",
-            "{% trans 'Do you really want to reboot openATTIC?' %}",
+            gettext('Do you really want to reboot openATTIC?'),
             function(btn, text){
               if( btn === 'yes' ){
                 sysutils__System.reboot( function(provider, response){
@@ -133,14 +131,14 @@ Ext.oa.SysUtils__Service_Module = Ext.extend(Object, {
       href: '#'
     });
     tree.appendToRootNodeById("menu_shutdown", {
-      text: "{% trans 'Shutdown' %}",
+      text: gettext('Shutdown'),
       leaf: true,
       icon: '{{ MEDIA_URL }}/oxygen/22x22/actions/system-shutdown.png',
       listeners: {
         click: function(self, ev){
           Ext.oa.RedDangerousMessage.confirm(
             "Shutdown",
-            "{% trans 'Do you really want to shutdown openATTIC?' %}",
+            gettext('Do you really want to shutdown openATTIC?'),
             function(btn, text){
               if( btn === 'yes' ){
                 sysutils__System.shutdown( function(provider, response){

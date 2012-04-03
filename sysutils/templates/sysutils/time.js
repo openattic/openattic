@@ -1,6 +1,4 @@
-{% load i18n %}
-
-{% comment %}
+/*
  Copyright (C) 2011-2012, it-novum GmbH <community@open-attic.org>
 
  openATTIC is free software; you can redistribute it and/or modify it
@@ -11,7 +9,7 @@
  but WITHOUT ANY WARRANTY; without even the implied warranty of
  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  GNU General Public License for more details.
-{% endcomment %}
+*/
 
 Ext.namespace("Ext.oa");
 
@@ -20,7 +18,7 @@ Ext.oa.Time_Panel = Ext.extend(Ext.Panel, {
     "use strict";
     var timeGrid = this;
     Ext.apply(this, Ext.apply(this.initialConfig, {
-      title: "{% trans 'Date/Time' %}",
+      title: gettext('Date/Time'),
       layout: 'absolute',
       items: [{
         xtype: 'form',
@@ -40,21 +38,21 @@ Ext.oa.Time_Panel = Ext.extend(Ext.Panel, {
         baseParams: {id:1},
         paramOrder: ["id"],
         items: [{
-          fieldLabel: "{% trans 'NTP Server' %}",
+          fieldLabel: gettext('NTP Server'),
           name: "server",
           width: 200,
           allowBlank: false,
           ref: 'serverfield'
         }],
         buttons: [{
-          text: "{% trans 'Save' %}",
+          text: gettext('Save'),
           handler: function(self){
             sysutils__NTP.set(1, {
               'server': self.ownerCt.ownerCt.serverfield.getValue()
             });
             Ext.Msg.show({
-              title:   "{% trans 'NTP' %}",
-              msg:     "{% trans 'Successfully Updated NTP Server' %}",
+              title:   gettext('NTP'),
+              msg:     gettext('Successfully Updated NTP Server'),
               buttons: Ext.MessageBox.OK
             });
           }
@@ -69,7 +67,7 @@ Ext.oa.Time_Panel = Ext.extend(Ext.Panel, {
   prepareMenuTree: function(tree){
     "use strict";
     tree.appendToRootNodeById("menu_system", {
-      text: "{% trans 'Date/Time' %}",
+      text: gettext('Date/Time'),
       leaf: true,
       panel: this,
       icon: MEDIA_URL + '/icons2/22x22/apps/date_time.png',

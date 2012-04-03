@@ -1,0 +1,71 @@
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) YEAR THE PACKAGE'S COPYRIGHT HOLDER
+# This file is distributed under the same license as the PACKAGE package.
+# FIRST AUTHOR <EMAIL@ADDRESS>, YEAR.
+#
+#, fuzzy
+msgid ""
+msgstr ""
+"Project-Id-Version: PACKAGE VERSION\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2012-04-03 11:05+0200\n"
+"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language-Team: LANGUAGE <LL@li.org>\n"
+"Language: \n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=2; plural=(n != 1)\n"
+
+#: templates/sysutils/sysutils.js:22 templates/sysutils/sysutils.js.c:107
+msgid "Service State"
+msgstr "Dienststatus"
+
+#: templates/sysutils/sysutils.js:37
+msgid "Service Name"
+msgstr "Dienstname"
+
+#: templates/sysutils/sysutils.js:40
+msgid "Status"
+msgstr "Status"
+
+#: templates/sysutils/sysutils.js:63
+msgid "Reload"
+msgstr "Neu laden"
+
+#: templates/sysutils/sysutils.js:114
+msgid "Reboot"
+msgstr "Neustarten"
+
+#: templates/sysutils/sysutils.js:121
+msgid "Do you really want to reboot openATTIC?"
+msgstr "Wollen Sie openATTIC wirklich neustarten?"
+
+#: templates/sysutils/sysutils.js:134
+msgid "Shutdown"
+msgstr "Herunterfahren"
+
+#: templates/sysutils/sysutils.js:141
+msgid "Do you really want to shutdown openATTIC?"
+msgstr "Wollen Sie openATTIC wirklich herunterfahren?"
+
+#: templates/sysutils/time.js:21 templates/sysutils/time.js.c:70
+msgid "Date/Time"
+msgstr "Datum/Zeit"
+
+#: templates/sysutils/time.js:41
+msgid "NTP Server"
+msgstr "NTP-Server"
+
+#: templates/sysutils/time.js:48
+msgid "Save"
+msgstr "Speichern"
+
+#: templates/sysutils/time.js:54
+msgid "NTP"
+msgstr "NTP"
+
+#: templates/sysutils/time.js:55
+msgid "Successfully Updated NTP Server"
+msgstr "Der NTP-Server wurde erfolgreich aktualisiert."
