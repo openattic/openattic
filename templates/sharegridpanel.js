@@ -1,6 +1,4 @@
-{% load i18n %}
-
-{% comment %}
+/*
  Copyright (C) 2011-2012, it-novum GmbH <community@open-attic.org>
 
  openATTIC is free software; you can redistribute it and/or modify it
@@ -11,7 +9,7 @@
  but WITHOUT ANY WARRANTY; without even the implied warranty of
  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  GNU General Public License for more details.
-{% endcomment %}
+*/
 
 Ext.namespace("Ext.oa");
 
@@ -26,13 +24,13 @@ Ext.oa.ShareGridPanel = Ext.extend(Ext.grid.GridPanel, {
     var self = this;
     var i;
     Ext.applyIf(this.texts, {
-      reload:  "{% trans 'Reload' %}",
-      add:     "{% trans 'Add Export' %}",
-      edit:    "{% trans 'Edit Export' %}",
-      remove:  "{% trans 'Delete Export' %}",
-      submit:  "{% trans 'Submit' %}",
-      cancel:  "{% trans 'Cancel' %}",
-      confirm: "{% trans 'Do you really want to delete export %s?' %}"
+      reload:  gettext('Reload'),
+      add:     gettext('Add Export'),
+      edit:    gettext('Edit Export'),
+      remove:  gettext('Delete Export'),
+      submit:  gettext('Submit'),
+      cancel:  gettext('Cancel'),
+      confirm: gettext('Do you really want to delete export %s?')
     });
     Ext.applyIf(this.window, {
       height: 240,

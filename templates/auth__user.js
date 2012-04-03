@@ -1,6 +1,4 @@
-{% load i18n %}
-
-{% comment %}
+/*
  Copyright (C) 2011-2012, it-novum GmbH <community@open-attic.org>
 
  openATTIC is free software; you can redistribute it and/or modify it
@@ -11,7 +9,7 @@
  but WITHOUT ANY WARRANTY; without even the implied warranty of
  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  GNU General Public License for more details.
-{% endcomment %}
+*/
 
 Ext.namespace("Ext.oa");
 
@@ -42,48 +40,48 @@ function wrap_auth_User_set(form, options, action){
 Ext.oa.Auth__User_Panel = Ext.extend(Ext.oa.ShareGridPanel, {
   api: auth__User,
   id: "auth__user_panel_inst",
-  title: "{% trans 'Users' %}",
+  title: gettext('Users'),
   window: {
     height: 350
   },
   texts: {
-    add:     "{% trans 'Add User' %}",
-    edit:    "{% trans 'Edit User' %}",
-    remove:  "{% trans 'Delete User' %}"
+    add:     gettext('Add User'),
+    edit:    gettext('Edit User'),
+    remove:  gettext('Delete User')
   },
   columns: [{
-    header: "{% trans 'User Name' %}",
+    header: gettext('User Name'),
     width: 200,
     dataIndex: "username"
   }, {
-    header: "{% trans 'First Name' %}",
+    header: gettext('First Name'),
     width: 200,
     dataIndex: "first_name"
   }, {
-    header: "{% trans 'Last Name' %}",
+    header: gettext('Last Name'),
     width: 200,
     dataIndex: "last_name"
   }, {
-    header: "{% trans 'E-Mail Address' %}",
+    header: gettext('E-Mail Address'),
     width: 200,
     dataIndex: "email"
   }, {
-    header: "{% trans 'Active' %}",
+    header: gettext('Active'),
     width: 50,
     dataIndex: "is_active",
     renderer: Ext.oa.renderBoolean
   }, {
-    header: "{% trans 'Staff' %}",
+    header: gettext('Staff'),
     width: 50,
     dataIndex: "is_staff",
     renderer: Ext.oa.renderBoolean
   }, {
-    header: "{% trans 'SU' %}",
+    header: gettext('SU'),
     width: 50,
     dataIndex: "is_superuser",
     renderer: Ext.oa.renderBoolean
   }, {
-    header: "{%trans 'Last Login' %}",
+    header: gettext('Last Login'),
     width: 200,
     dataIndex: "last_login"
   }],
@@ -93,39 +91,39 @@ Ext.oa.Auth__User_Panel = Ext.extend(Ext.oa.ShareGridPanel, {
       submit: wrap_auth_User_set
     },
     items: [{
-      fieldLabel: "{% trans 'User Name' %}",
+      fieldLabel: gettext('User Name'),
       name: "username",
       ref: 'usernamefield'
     }, {
-      fieldLabel: "{% trans 'Password' %}",
+      fieldLabel: gettext('Password'),
       inputType: 'password',
       name: "password",
       ref: 'passwordfield'
     }, {
-      fieldLabel: "{% trans 'First Name' %}",
+      fieldLabel: gettext('First Name'),
       name: "first_name",
       ref: 'firstnamefield'
     }, {
-      fieldLabel: "{% trans 'Last Name' %}",
+      fieldLabel: gettext('Last Name'),
       name: "last_name",
       ref: 'lastnamefield'
     }, {
-      fieldLabel: "{% trans 'E-Mail' %}",
+      fieldLabel: gettext('E-Mail'),
       name: "email",
       ref: 'emailfield'
     }, {
       xtype: 'checkbox',
-      fieldLabel: "{% trans 'Active' %}",
+      fieldLabel: gettext('Active'),
       name: "is_active",
       ref: 'activefield'
     }, {
       xtype: 'checkbox',
-      fieldLabel: "{% trans 'Staff' %}",
+      fieldLabel: gettext('Staff'),
       name: "is_staff",
       ref: 'stafffield'
     }, {
       xtype: 'checkbox',
-      fieldLabel: "{% trans 'SuperUser' %}",
+      fieldLabel: gettext('SuperUser'),
       name: "is_superuser",
       ref: 'sufield'
     }]
@@ -138,16 +136,16 @@ Ext.oa.Auth__User_Panel = Ext.extend(Ext.oa.ShareGridPanel, {
       var sel = sm.selections.items[0];
       lvm__LogicalVolume.filter( { 'owner__id': sel.data.id }, function(provider, response){
         if( response.result.length > 0 ){
-          Ext.Msg.alert( "{% trans 'Delete User' %}", interpolate(
-            "{% trans 'User %(user)s is the owner of %(volcount)s volumes.' %}", {
+          Ext.Msg.alert( gettext('Delete User'), interpolate(
+            gettext('User %(user)s is the owner of %(volcount)s volumes.'), {
               'user': sel.data.username, 'volcount': response.result.length
             }, true ));
         }
         else{
           Ext.Msg.confirm(
-            "{% trans 'Unmount' %}",
+            gettext('Unmount'),
             interpolate(
-              "{% trans 'Do you really want to delete user %s?' %}",
+              gettext('Do you really want to delete user %s?'),
               [sel.data.username]),
             function(btn){
               if(btn === 'yes'){
@@ -172,7 +170,7 @@ Ext.oa.Auth__User_Module = Ext.extend(Object, {
   prepareMenuTree: function(tree){
     "use strict";
     tree.appendToRootNodeById("menu_system", {
-      text: "{% trans 'User Management' %}",
+      text: gettext('User Management'),
       icon: MEDIA_URL + '/icons2/22x22/apps/config-users.png',
       leaf: true,
       panel: 'auth__user_panel_inst',

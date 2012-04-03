@@ -1,6 +1,4 @@
-{% load i18n %}
-
-{% comment %}
+/*
  Copyright (C) 2011-2012, it-novum GmbH <community@open-attic.org>
 
  openATTIC is free software; you can redistribute it and/or modify it
@@ -11,7 +9,7 @@
  but WITHOUT ANY WARRANTY; without even the implied warranty of
  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  GNU General Public License for more details.
-{% endcomment %}
+*/
 
 Ext.namespace("Ext.oa");
 Ext.oa.Settings_Panel = Ext.extend(Ext.Panel,{
@@ -19,7 +17,7 @@ Ext.oa.Settings_Panel = Ext.extend(Ext.Panel,{
     "use strict";
     Ext.apply(this, Ext.apply(this.initialConfig, {
       id: "settings_panel_inst",
-      title: 'Personal Settings',
+      title: gettext('Personal Settings'),
       width:700,
       height:300,
       labelWidth: 250,
@@ -28,7 +26,7 @@ Ext.oa.Settings_Panel = Ext.extend(Ext.Panel,{
       reader: new Ext.data.JsonReader({fields: ['LV_test', 'id']}),
       items: [ {
         xtype: "checkbox",
-        fieldLabel: "{% trans 'Auto-expand root nodes' %}",
+        fieldLabel: gettext('Auto-expand root nodes'),
         width: 80,
         checked: Ext.state.Manager.get("expand_root_nodes", true),
         listeners: {
@@ -38,7 +36,7 @@ Ext.oa.Settings_Panel = Ext.extend(Ext.Panel,{
         }
       },{
         xtype: "checkbox",
-        fieldLabel: "{% trans 'show hints' %}",
+        fieldLabel: gettext('show hints'),
         checked: Ext.state.Manager.get("form_tooltip_show", true),
         listeners: {
           check: function( self, checked){
@@ -47,7 +45,7 @@ Ext.oa.Settings_Panel = Ext.extend(Ext.Panel,{
         }
       },{
         xtype: "checkbox",
-        fieldLabel: "{% trans 'Allow installation/deletion' %}",
+        fieldLabel: gettext('Allow installation/deletion'),
         checked: Ext.state.Manager.get("pkgapt_distupgrade", true),
         listeners: {
           check: function(self, checked){
@@ -56,7 +54,7 @@ Ext.oa.Settings_Panel = Ext.extend(Ext.Panel,{
         }
       },{
         xtype: "checkbox",
-        fieldLabel: "{% trans 'Monitoring graph with radient' %}",
+        fieldLabel: gettext('Monitoring graph with radient'),
         checked: Ext.state.Manager.get("nagios_graph_grad", false),
         listeners:{
           check: function(self, checked){
@@ -65,7 +63,7 @@ Ext.oa.Settings_Panel = Ext.extend(Ext.Panel,{
         }
       },{
           xtype: "checkbox",
-          fieldLabel: "{% trans 'Show graph for storage utilization'%}",
+          fieldLabel: gettext('Show graph for storage utilization'),
           checked: Ext.state.Manager.get("storage_utilization_graph", false),
           listeners: {
             check: function(self,checked){

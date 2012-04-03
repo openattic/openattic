@@ -1,6 +1,4 @@
-{% load i18n %}
-
-{% comment %}
+/*
  Copyright (C) 2011-2012, it-novum GmbH <community@open-attic.org>
 
  openATTIC is free software; you can redistribute it and/or modify it
@@ -11,20 +9,20 @@
  but WITHOUT ANY WARRANTY; without even the implied warranty of
  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  GNU General Public License for more details.
-{% endcomment %}
+*/
 
 window.MainViewModules.push({
   prepareMenuTree: function(tree){
     "use strict";
     tree.appendToRootNodeById("menu_shutdown", {
-      text: "{% trans 'Logout' %}",
+      text: gettext('Logout'),
       leaf: true,
       icon: MEDIA_URL + '/oxygen/22x22/actions/system-log-out.png',
       listeners: {
         click: function(self, ev){
           Ext.Msg.confirm(
-            "{% trans 'Logout' %}",
-            "{% trans 'Do you really want to logout?' %}",
+            gettext('Logout'),
+            gettext('Do you really want to logout?'),
             function(btn, text){
               if(btn === 'yes'){
                 var conn = new Ext.data.Connection();
@@ -36,8 +34,8 @@ window.MainViewModules.push({
                     };
                     window.setTimeout( redirect, 20000 );
                     Ext.Msg.show({
-                      title:   "{% trans 'Logout' %}",
-                      msg:     "{% trans 'Successfully logged out' %}",
+                      title:   gettext('Logout'),
+                      msg:     gettext('Successfully logged out'),
                       buttons: Ext.MessageBox.OK,
                       fn:      redirect
                     });

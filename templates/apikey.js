@@ -1,6 +1,4 @@
-{% load i18n %}
-
-{% comment %}
+/*
  Copyright (C) 2011-2012, it-novum GmbH <community@open-attic.org>
 
  openATTIC is free software; you can redistribute it and/or modify it
@@ -11,7 +9,7 @@
  but WITHOUT ANY WARRANTY; without even the implied warranty of
  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  GNU General Public License for more details.
-{% endcomment %}
+*/
 
 Ext.namespace("Ext.oa");
 
@@ -37,11 +35,11 @@ function wrap_api_key_set(form, options, action){
 Ext.oa.ApiKey_Panel = Ext.extend(Ext.oa.ShareGridPanel, {
   api: rpcd__APIKey,
   id: "apikey_panel_inst",
-  title: "{% trans 'API Keys' %}",
+  title: gettext('API Keys'),
   texts: {
-    add:     "{% trans 'Add Key' %}",
-    edit:    "{% trans 'Edit Key' %}",
-    remove:  "{% trans 'Delete Key' %}"
+    add:     gettext('Add Key'),
+    edit:    gettext('Edit Key'),
+    remove:  gettext('Delete Key')
   },
   storefields: [{
     name: 'ownername',
@@ -55,7 +53,7 @@ Ext.oa.ApiKey_Panel = Ext.extend(Ext.oa.ShareGridPanel, {
     }
   }, "apikey"],
   buttons: [{
-    text: "{% trans 'Show API URL' %}",
+    text: gettext('Show API URL'),
     icon: MEDIA_URL + "/oxygen/16x16/actions/download.png",
     handler: function(btn){
       "use strict";
@@ -63,9 +61,9 @@ Ext.oa.ApiKey_Panel = Ext.extend(Ext.oa.ShareGridPanel, {
       if( sm.hasSelection() ){
         var sel = sm.selections.items[0];
         __main__.fqdn(function(provider, response){
-          Ext.Msg.prompt("{% trans 'API URL' %}",
-            "{% trans 'Use this URL to connect to the openATTIC API using the API Key you selected.' %}<br />"+
-            "{% trans 'Note that the input field only allows for easier copy-paste, any value you enter here will be ignored.' %}",
+          Ext.Msg.prompt(gettext('API URL'),
+            gettext('Use this URL to connect to the openATTIC API using the API Key you selected.') + "<br />" +
+            gettext('Note that the input field only allows for easier copy-paste, any value you enter here will be ignored.'),
             null, null, false,
             String.format("http://__:{0}@{1}:31234/", sel.data.apikey, response.result)
           );
@@ -74,15 +72,15 @@ Ext.oa.ApiKey_Panel = Ext.extend(Ext.oa.ShareGridPanel, {
     }
   }],
   columns: [{
-    header: "{% trans 'Description' %}",
+    header: gettext('Description'),
     width: 200,
     dataIndex: "description"
   }, {
-    header: "{% trans 'Owner' %}",
+    header: gettext('Owner'),
     width: 50,
     dataIndex: "ownername"
   }, {
-    header: "{% trans 'Active' %}",
+    header: gettext('Active'),
     width: 50,
     dataIndex: "active",
     renderer: Ext.oa.renderBoolean
@@ -96,12 +94,12 @@ Ext.oa.ApiKey_Panel = Ext.extend(Ext.oa.ShareGridPanel, {
       xtype: 'authuserfield',
       hiddenName: "owner"
     }, {
-      fieldLabel: "{% trans 'Description' %}",
+      fieldLabel: gettext('Description'),
       name: "description",
       ref: 'descriptionfield'
     }, {
       xtype: 'checkbox',
-      fieldLabel: "{% trans 'Active' %}",
+      fieldLabel: gettext('Active'),
       name: "active",
       ref: 'activefield'
     }]
@@ -118,7 +116,7 @@ Ext.oa.ApiKey_Module = Ext.extend(Object, {
   prepareMenuTree: function(tree){
     "use strict";
     tree.appendToRootNodeById("menu_system", {
-      text: "{% trans 'API Keys' %}",
+      text: gettext('API Keys'),
       icon: MEDIA_URL + '/oxygen/22x22/status/dialog-password.png',
       leaf: true,
       panel: 'apikey_panel_inst',

@@ -1,6 +1,4 @@
-{% load i18n %}
-
-{% comment %}
+/*
  Copyright (C) 2011-2012, it-novum GmbH <community@open-attic.org>
 
  openATTIC is free software; you can redistribute it and/or modify it
@@ -11,12 +9,12 @@
  but WITHOUT ANY WARRANTY; without even the implied warranty of
  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  GNU General Public License for more details.
-{% endcomment %}
+*/
 
 Ext.namespace("Ext.oa");
 
 Ext.oa.MenuTree = Ext.extend(Ext.tree.TreePanel, {
-  title: "{% trans 'Menu' %}",
+  title: gettext('Menu'),
   rootVisible: false,
   useArrows: true,
   autoScroll: true,
@@ -28,43 +26,43 @@ Ext.oa.MenuTree = Ext.extend(Ext.tree.TreePanel, {
     children: [
       {
         id: 'menu_status',
-        text: "{% trans 'Status' %}",
+        text: gettext('Status'),
         expanded: Ext.state.Manager.get("expand_root_nodes", true),
         icon: MEDIA_URL + '/icons2/22x22/emblems/emblem-web.png',
         children: []
       }, {
         id: 'menu_storage',
-        text: "{% trans 'Storage' %}",
+        text: gettext('Storage'),
         expanded: Ext.state.Manager.get("expand_root_nodes", true),
         icon: MEDIA_URL + '/icons2/22x22/devices/gnome-dev-harddisk.png',
         children: []
       }, {
         id: 'menu_luns',
-        text: "{% trans 'LUNs' %}",
+        text: gettext('LUNs'),
         expanded: Ext.state.Manager.get("expand_root_nodes", true),
         icon: MEDIA_URL + '/icons2/22x22/places/network-server.png',
         children: []
       }, {
         id: 'menu_shares',
-        text: "{% trans 'Shares' %}",
+        text: gettext('Shares'),
         expanded: Ext.state.Manager.get("expand_root_nodes", true),
         icon: MEDIA_URL + '/icons2/22x22/places/gnome-fs-share.png',
         children: []
       }, {
         id: 'menu_services',
-        text: "{% trans 'Services' %}",
+        text: gettext('Services'),
         expanded: Ext.state.Manager.get("expand_root_nodes", true),
         icon: MEDIA_URL + '/icons2/22x22/mimetypes/gnome-mime-application-x-killustrator.png',
         children: []
       }, {
         id: 'menu_system',
-        text: "{% trans 'System' %}",
+        text: gettext('System'),
         expanded: Ext.state.Manager.get("expand_root_nodes", true),
         icon: MEDIA_URL + '/icons2/22x22/mimetypes/application-x-executable.png',
         children: []
       }, {
         id: 'menu_usersettings',
-        text: "{% trans 'Personal Settings' %}",
+        text: gettext('Personal Settings'),
         expanded: Ext.state.Manager.get("expand_root_nodes", true),
         icon: MEDIA_URL + '/icons2/22x22/actions/stock_about.png',
         panel: "settings_panel_inst",
@@ -72,7 +70,7 @@ Ext.oa.MenuTree = Ext.extend(Ext.tree.TreePanel, {
         href: '#'
       }, {
         id: 'menu_shutdown',
-        text: "{% trans 'Shutdown' %}",
+        text: gettext('Shutdown'),
         expanded: Ext.state.Manager.get("expand_root_nodes", true),
         icon: MEDIA_URL + '/oxygen/22x22/actions/system-shutdown.png',
         children: []
