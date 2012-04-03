@@ -1,0 +1,80 @@
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) YEAR THE PACKAGE'S COPYRIGHT HOLDER
+# This file is distributed under the same license as the PACKAGE package.
+# FIRST AUTHOR <EMAIL@ADDRESS>, YEAR.
+#
+#, fuzzy
+msgid ""
+msgstr ""
+"Project-Id-Version: PACKAGE VERSION\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2012-04-03 11:03+0200\n"
+"PO-Revision-Date: 2012-04-03 11:03\n"
+"Last-Translator: Michael Ziegler <michael.ziegler@it-novum.com>\n"
+"Language-Team: LANGUAGE <LL@li.org>\n"
+"Language: \n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=2; plural=(n != 1)\n"
+"X-Translated-Using: django-rosetta 0.6.6\n"
+
+#: templates/samba/share.js:19
+msgid "Samba"
+msgstr "Samba"
+
+#: templates/samba/share.js:21 templates/samba/share.js.c:50
+msgid "Share name"
+msgstr "Freigabename"
+
+#: templates/samba/share.js:25 templates/samba/share.js.c:57
+msgid "Path"
+msgstr "Pfad"
+
+#: templates/samba/share.js:29 templates/samba/share.js.c:82
+msgid "Available"
+msgstr "Verfügbar"
+
+#: templates/samba/share.js:64
+msgid "System user"
+msgstr "Systembenutzer"
+
+#: templates/samba/share.js:70
+msgid "System Group"
+msgstr "Systemgruppe"
+
+#: templates/samba/share.js:76
+msgid "Browseable"
+msgstr "Sichtbar"
+
+#: templates/samba/share.js:88
+msgid "Writeable"
+msgstr "Schreibbar"
+
+#: templates/samba/share.js:94
+msgid "Guest OK"
+msgstr "Erlaube Gast"
+
+#: templates/samba/share.js:100
+msgid "Dir Mode"
+msgstr "Verzeichnis Berechtigungen"
+
+#: templates/samba/share.js:105
+msgid "Set rights for the Directory"
+msgstr "Setze Rechte für Verzeichnis"
+
+#: templates/samba/share.js:107
+msgid "Comment"
+msgstr "Kommentar"
+
+#: templates/samba/share.js:113
+msgid "Create Mode"
+msgstr "Berechtigungen"
+
+#: templates/samba/share.js:118
+msgid "Set rights for owner, group and others"
+msgstr "Rechte für Besitzer, Gruppe und andere Personen"
+
+#: templates/samba/share.js:131
+msgid "Windows (Samba)"
+msgstr "Windows (Samba)"

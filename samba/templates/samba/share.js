@@ -1,6 +1,4 @@
-{% load i18n %}
-
-{% comment %}
+/*
  Copyright (C) 2011-2012, it-novum GmbH <community@open-attic.org>
 
  openATTIC is free software; you can redistribute it and/or modify it
@@ -11,24 +9,24 @@
  but WITHOUT ANY WARRANTY; without even the implied warranty of
  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  GNU General Public License for more details.
-{% endcomment %}
+*/
 
 Ext.namespace("Ext.oa");
 
 Ext.oa.Samba__Share_Panel = Ext.extend(Ext.oa.ShareGridPanel, {
   api: samba__Share,
   id: "samba__share_panel_inst",
-  title: "Samba",
+  title: gettext("Samba"),
   columns: [{
-    header: "{% trans 'Share name' %}",
+    header: gettext('Share name'),
     width: 100,
     dataIndex: "name"
   }, {
-    header: "{% trans 'Path' %}",
+    header: gettext('Path'),
     width: 200,
     dataIndex: "path"
   }, {
-    header: "{% trans 'Available' %}",
+    header: gettext('Available'),
     width: 50,
     dataIndex: "available",
     renderer: Ext.oa.renderBoolean
@@ -49,75 +47,75 @@ Ext.oa.Samba__Share_Panel = Ext.extend(Ext.oa.ShareGridPanel, {
       }
     },{
       xtype: 'textfield',
-      fieldLabel: "{% trans 'Share name' %}",
+      fieldLabel: gettext('Share name'),
       allowBlank: false,
       name: "name",
       ref: 'namefield',
       disabled: true
     },{
       xtype: 'textfield',
-      fieldLabel: "{% trans 'Path' %}",
+      fieldLabel: gettext('Path'),
       allowBlank: false,
       name: "path",
       ref: 'dirfield',
       disabled: true
     },{
       xtype: 'textfield',
-      fieldLabel: "{% trans 'System user' %}",
+      fieldLabel: gettext('System user'),
       allowBlank: true,
       name: "force_user",
       ref: 'userfield'
     }, {
       xtype: 'textfield',
-      fieldLabel: "{% trans 'System Group' %}",
+      fieldLabel: gettext('System Group'),
       allowBlank: true,
       name: "force_group",
       ref: 'groupfield'
     }, {
       xtype: 'checkbox',
-      fieldLabel: "{% trans 'Browseable' %}",
+      fieldLabel: gettext('Browseable'),
       allowBlank: false,
       name: "browseable",
       ref: 'browseablefield'
     }, {
       xtype: 'checkbox',
-      fieldLabel: "{% trans 'Available' %}",
+      fieldLabel: gettext('Available'),
       allowBlank: false,
       name: "available",
       ref: 'availablefield'
     }, {
       xtype: 'checkbox',
-      fieldLabel: "{% trans 'Writeable' %}",
+      fieldLabel: gettext('Writeable'),
       allowBlank: false,
       name: "writeable",
       ref: 'writeablefield'
     }, {
       xtype: 'checkbox',
-      fieldLabel: "{% trans 'Guest OK' %}",
+      fieldLabel: gettext('Guest OK'),
       allowBlank: false,
       name: "guest_ok",
       ref: 'guestokfield'
     }, tipify({
       xtype: 'textfield',
-      fieldLabel: "{% trans 'Dir Mode' %}",
+      fieldLabel: gettext('Dir Mode'),
       allowBlank: false,
       name: "dir_mode",
       ref: 'dirmodefield',
       value:     '0775'
-    },"{% trans 'Set rights for the Directory' %}"), {
+    },gettext('Set rights for the Directory')), {
       xtype: 'textfield',
-      fieldLabel: "{% trans 'Comment' %}",
+      fieldLabel: gettext('Comment'),
       allowBlank: true,
       name: "comment",
       ref: 'commentfield'
     }, tipify({
       xtype: 'textfield',
-      fieldLabel: "{% trans 'Create Mode' %}",
+      fieldLabel: gettext('Create Mode'),
       allowBlank: false,
       name: "create_mode",
       ref: 'createmodefield',
       value:     '0664'
-    }, "{% trans 'Set rights for owner, group and others' %}" ) ]
+    }, gettext('Set rights for owner, group and others') ) ]
   }
 });
 
@@ -130,7 +128,7 @@ Ext.oa.Samba__Share_Module = Ext.extend(Object, {
   prepareMenuTree: function(tree){
     "use strict";
     tree.appendToRootNodeById("menu_shares", {
-      text: "{% trans 'Windows (Samba)' %}",
+      text: gettext('Windows (Samba)'),
       leaf: true,
       icon: MEDIA_URL + '/icons2/22x22/apps/samba.png',
       panel: "samba__share_panel_inst",
