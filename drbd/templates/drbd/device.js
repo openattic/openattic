@@ -26,18 +26,21 @@ Ext.oa.Drbd__Device_Panel = Ext.extend(Ext.oa.ShareGridPanel, {
     name: 'volumename',
     mapping: 'volume',
     convert: function(val, row){
+      "use strict";
       return val.name;
     }
   }, {
     name: 'dstate_self',
     mapping: 'dstate',
     convert: function(val, row){
+      "use strict";
       return val.self;
     }
   }, {
     name: 'role_self',
     mapping: 'role',
     convert: function(val, row){
+      "use strict";
       return val.self;
     }
   }],
