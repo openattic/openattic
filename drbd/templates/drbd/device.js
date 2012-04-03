@@ -1,6 +1,4 @@
-{% load i18n %}
-
-{% comment %}
+/*
  Copyright (C) 2011-2012, it-novum GmbH <community@open-attic.org>
 
  openATTIC is free software; you can redistribute it and/or modify it
@@ -11,16 +9,19 @@
  but WITHOUT ANY WARRANTY; without even the implied warranty of
  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  GNU General Public License for more details.
-{% endcomment %}
+*/
 
 Ext.namespace("Ext.oa");
 
 Ext.oa.Drbd__Device_Panel = Ext.extend(Ext.grid.GridPanel, {
   showEditWindow: function(config, record){
+    "use strict";
     var drbdDevGrid = this;
     var addwin = new Ext.Window(Ext.apply(config, {
       layout: "fit",
-      defaults: { autoScroll:true },
+      defaults: {
+        autoScroll:true
+      },
       height: 600,
       width: 700,
       items: [{
@@ -56,7 +57,7 @@ Ext.oa.Drbd__Device_Panel = Ext.extend(Ext.grid.GridPanel, {
             filesystem__isnull: true
           }, {
             xtype:      'combo',
-            fieldLabel: "{% trans 'Peer Host' %}",
+            fieldLabel: gettext('Peer Host'),
             name:       'peerhost',
             hiddenName: 'peerhost',
             store: new Ext.data.DirectStore({
@@ -67,17 +68,17 @@ Ext.oa.Drbd__Device_Panel = Ext.extend(Ext.grid.GridPanel, {
             }),
             typeAhead:     true,
             triggerAction: 'all',
-            emptyText:     "{% trans 'Select...' %}",
+            emptyText:     gettext('Select...'),
             selectOnFocus: true,
             displayField:  'name',
             valueField:    'id',
             ref: 'targetfield'
           }, {
-            fieldLabel: "{% trans 'Address (here)' %}",
+            fieldLabel: gettext('Address (here)'),
             name: "selfaddress",
             xtype: 'textfield'
           }, {
-            fieldLabel: "{% trans 'Address (Peer)' %}",
+            fieldLabel: gettext('Address (Peer)'),
             name: "peeraddress",
             xtype: 'textfield'
           }, {
@@ -85,31 +86,31 @@ Ext.oa.Drbd__Device_Panel = Ext.extend(Ext.grid.GridPanel, {
             fieldLabel: 'Protocol',
             columns: 1,
             items: [
-              {name: "protocol", boxLabel: "{% trans 'A: Asynchronous' %}", inputValue: "A"},
-              {name: "protocol", boxLabel: "{% trans 'B: Memory Synchronous (Semi-Synchronous)'%}", inputValue: "B"},
-              {name: "protocol", boxLabel: "{% trans 'C: Synchronous' %}", checked: true, inputValue: "C"}
+              {name: "protocol", boxLabel: gettext('A: Asynchronous'), inputValue: "A"},
+              {name: "protocol", boxLabel: gettext('B: Memory Synchronous (Semi-Synchronous)'), inputValue: "B"},
+              {name: "protocol", boxLabel: gettext('C: Synchronous'), checked: true, inputValue: "C"}
             ]
           }, {
-            fieldLabel: "{% trans 'Syncer Rate' %}",
+            fieldLabel: gettext('Syncer Rate'),
             name: "syncer_rate",
             xtype: 'textfield',
             value: "5M"
           }, {
-            fieldLabel: "{% trans 'Secret' %}",
+            fieldLabel: gettext('Secret'),
             name: "secret",
             xtype: 'textfield'
           }, {
-            fieldLabel: "{% trans 'Timeout' %}",
+            fieldLabel: gettext('Timeout'),
             name: "wfc_timeout",
             xtype: 'numberfield',
             value: 10
           }, {
-            fieldLabel: "{% trans 'Timeout when degraded' %}",
+            fieldLabel: gettext('Timeout when degraded'),
             name: "degr_wfc_timeout",
             xtype: 'numberfield',
             value: 120
           }, {
-            fieldLabel: "{% trans 'Timeout when outdated' %}",
+            fieldLabel: gettext('Timeout when outdated'),
             name: "outdated_wfc_timeout",
             xtype: 'numberfield',
             value: 15
@@ -130,32 +131,32 @@ Ext.oa.Drbd__Device_Panel = Ext.extend(Ext.grid.GridPanel, {
           collapsed: true,
           layout: 'form',
           items: [ {
-            fieldLabel: "{% trans 'On I/O Error' %}",
+            fieldLabel: gettext('On I/O Error'),
             xtype: 'radiogroup',
             columns: 1,
             items: [ {
               name: "on_io_error", inputValue: "pass_on", checked: true,
-              boxLabel: "{% trans 'Report the I/O error to the file system on the primary, ignore it on the secondary.' %}"
+              boxLabel: gettext('Report the I/O error to the file system on the primary, ignore it on the secondary.')
             }, {
               name: "on_io_error", inputValue: "call-local-io-error",
-              boxLabel: "{% trans 'Call the local-io-error handler script.' %}"
+              boxLabel: gettext('Call the local-io-error handler script.')
             }, {
               name: "on_io_error", inputValue: "detach",
-              boxLabel: "{% trans 'Detach and continue in diskless mode.' %}"
+              boxLabel: gettext('Detach and continue in diskless mode.')
             } ]
           }, {
-            fieldLabel: "{% trans 'Fencing' %}",
+            fieldLabel: gettext('Fencing'),
             xtype: 'radiogroup',
             columns: 1,
             items: [ {
               name: "fencing", inputValue: "dont-care", checked: true,
-              boxLabel: "{% trans 'No fencing actions are undertaken.' %}"
+              boxLabel: gettext('No fencing actions are undertaken.')
             }, {
               name: "fencing", inputValue: "resource-only",
-              boxLabel: "{% trans 'Call the fence-peer handler.' %}"
+              boxLabel: gettext('Call the fence-peer handler.')
             }, {
               name: "fencing", inputValue: "resource-and-stonith",
-              boxLabel: "{% trans 'Call the fence-peer handler, which outdates or STONITHes the peer.' %}"
+              boxLabel: gettext('Call the fence-peer handler, which outdates or STONITHes the peer.')
             } ]
           } ]
         }, {
@@ -165,58 +166,58 @@ Ext.oa.Drbd__Device_Panel = Ext.extend(Ext.grid.GridPanel, {
           collapsed: true,
           layout: 'form',
           items: [{
-            fieldLabel: "{% trans 'No Primaries' %}",
+            fieldLabel: gettext('No Primaries'),
             xtype: 'radiogroup',
             columns: 1,
             items: [ {
               name: "sb_0pri", inputValue: "disconnect",
-              boxLabel: "{% trans 'Simply disconnect without resynchronization.' %}"
+              boxLabel: gettext('Simply disconnect without resynchronization.')
             }, {
               name: "sb_0pri", inputValue: "discard-younger-primary", checked: true,
-              boxLabel: "{% trans 'Discard the younger Primary and sync from the host who was primary before.' %}"
+              boxLabel: gettext('Discard the younger Primary and sync from the host who was primary before.')
             }, {
               name: "sb_0pri", inputValue: "discard-older-primary",
-              boxLabel: "{% trans 'Discard the older Primary and sync from the host who last became primary.' %}"
+              boxLabel: gettext('Discard the older Primary and sync from the host who last became primary.')
             }, {
               name: "sb_0pri", inputValue: "discard-zero-changes",
-              boxLabel: "{% trans 'Discard the node who has not written any changes. If both have changes, disconnect.' %}"
+              boxLabel: gettext('Discard the node who has not written any changes. If both have changes, disconnect.')
             }, {
               name: "sb_0pri", inputValue: "discard-least-changes",
-              boxLabel: "{% trans 'Discard the node with the least changes and sync from the one with most.' %}"
+              boxLabel: gettext('Discard the node with the least changes and sync from the one with most.')
             } ]
           }, {
-            fieldLabel: "{% trans 'One Primary' %}",
+            fieldLabel: gettext('One Primary'),
             xtype: 'radiogroup',
             columns: 1,
             items: [ {
               name: "sb_1pri", inputValue: "disconnect",
-              boxLabel: "{% trans 'Simply disconnect without resynchronization.' %}"
+              boxLabel: gettext('Simply disconnect without resynchronization.')
             }, {
               name: "sb_1pri", inputValue: "consensus", checked: true,
-              boxLabel: "{% trans 'Discard secondary if it would have also been discarded without any primaries, else disconnect.' %}"
+              boxLabel: gettext('Discard secondary if it would have also been discarded without any primaries, else disconnect.')
             }, {
               name: "sb_1pri", inputValue: "violently-as0p",
-              boxLabel: "{% trans 'Do what we would do if there were no primaries, even if we risk corrupting data.' %}"
+              boxLabel: gettext('Do what we would do if there were no primaries, even if we risk corrupting data.')
             }, {
               name: "sb_1pri", inputValue: "discard-secondary", checked: true,
-              boxLabel: "{% trans 'Discard the secondarys data.' %}"
+              boxLabel: gettext('Discard the secondarys data.')
             }, {
               name: "sb_1pri", inputValue: "call-pri-lost-after-sb", checked: true,
-              boxLabel: "{% trans 'If the current secondary has the right data, call the pri-lost-after-sb handler on the primary.' %}"
+              boxLabel: gettext('If the current secondary has the right data, call the pri-lost-after-sb handler on the primary.')
             } ]
           }, {
-            fieldLabel: "{% trans 'Two Primaries' %}",
+            fieldLabel: gettext('Two Primaries'),
             xtype: 'radiogroup',
             columns: 1,
             items: [ {
               name: "sb_2pri", inputValue: "disconnect", checked: true,
-              boxLabel: "{% trans 'Simply disconnect without resynchronization.' %}"
+              boxLabel: gettext('Simply disconnect without resynchronization.')
             }, {
               name: "sb_2pri", inputValue: "violently-as0p",
-              boxLabel: "{% trans 'Do what we would do if there were no primaries, even if we risk corrupting data.' %}"
+              boxLabel: gettext('Do what we would do if there were no primaries, even if we risk corrupting data.')
             }, {
               name: "sb_2pri", inputValue: "call-pri-lost-after-sb", checked: true,
-              boxLabel: "{% trans 'If the current secondary has the right data, call the pri-lost-after-sb handler on the primary.' %}"
+              boxLabel: gettext('If the current secondary has the right data, call the pri-lost-after-sb handler on the primary.')
             } ]
           }]
         } ],
@@ -235,7 +236,7 @@ Ext.oa.Drbd__Device_Panel = Ext.extend(Ext.grid.GridPanel, {
             });
           }
         }, {
-          text: "{% trans 'Cancel' %}",
+          text: gettext('Cancel'),
           icon: MEDIA_URL + "/icons2/16x16/actions/gtk-cancel.png",
           handler: function(self){
             addwin.hide();
@@ -247,42 +248,43 @@ Ext.oa.Drbd__Device_Panel = Ext.extend(Ext.grid.GridPanel, {
   },
 
   initComponent: function(){
+    "use strict";
     var drbdDevGrid = this;
     Ext.apply(this, Ext.apply(this.initialConfig, {
       id: "drbd__device_panel_inst",
-      title: "{% trans 'DRBD' %}",
+      title: gettext('DRBD'),
       viewConfig:{ forceFit: true },
       buttons: [ {
         text: "",
         icon: MEDIA_URL + "/icons2/16x16/actions/reload.png",
-        tooltip: "{% trans 'Reload' %}",
+        tooltip: gettext('Reload'),
         handler: function(self){
           drbdDevGrid.store.reload();
         }
       }, {
-        text: "{% trans 'Add DRBD Device' %}",
+        text: gettext('Add DRBD Device'),
         icon: MEDIA_URL + "/icons2/16x16/actions/add.png",
         handler: function(){
           drbdDevGrid.showEditWindow({
-            title: "{% trans 'Add DRBD Device' %}",
-            submitButtonText: "{% trans 'Create DRBD Device' %}"
+            title: gettext('Add DRBD Device'),
+            submitButtonText: gettext('Create DRBD Device')
           });
         }
       }, {
-        text: "{% trans 'Edit DRBD Device' %}",
+        text: gettext('Edit DRBD Device'),
         icon: MEDIA_URL + "/icons2/16x16/actions/edit-redo.png",
         handler: function(self){
           var sm = drbdDevGrid.getSelectionModel();
           if( sm.hasSelection() ){
             var sel = sm.selections.items[0];
             drbdDevGrid.showEditWindow({
-              title: "{% trans 'Edit DRBD Device' %}",
-              submitButtonText: "{% trans 'Edit DRBD Device' %}"
+              title: gettext('Edit DRBD Device'),
+              submitButtonText: gettext('Edit DRBD Device')
             }, sel.data);
           }
         }
       }, {
-        text: "{% trans 'Delete DRBD Device' %}",
+        text: gettext('Delete DRBD Device'),
         icon: MEDIA_URL + "/icons2/16x16/actions/remove.png",
         handler: function(self){
           var sm = drbdDevGrid.getSelectionModel();
@@ -296,11 +298,23 @@ Ext.oa.Drbd__Device_Panel = Ext.extend(Ext.grid.GridPanel, {
       }],
       store: new Ext.data.DirectStore({
         fields: ['id', 'protocol', 'peeraddress', 'volume', 'cstate', 'role',{
-          name: 'volumename', mapping: 'volume', convert: function(val, row){ return val.name }
+          name: 'volumename',
+          mapping: 'volume',
+          convert: function(val, row){
+            return val.name;
+          }
         }, {
-          name: 'dstate_self', mapping: 'dstate', convert: function(val, row){ return val.self }
+          name: 'dstate_self',
+          mapping: 'dstate',
+          convert: function(val, row){
+            return val.self;
+          }
         }, {
-          name: 'role_self', mapping: 'role', convert: function (val, row) { return val.self }
+          name: 'role_self',
+          mapping: 'role',
+          convert: function(val, row){
+            return val.self;
+          }
         }],
         directFn: drbd__DrbdDevice.all
       }),
@@ -309,27 +323,27 @@ Ext.oa.Drbd__Device_Panel = Ext.extend(Ext.grid.GridPanel, {
           sortable: true
         },
         columns: [{
-          header: "{% trans 'Volume' %}",
+          header: gettext('Volume'),
           width: 200,
           dataIndex: "volumename"
         }, {
-          header: "{% trans 'Protocol' %}",
+          header: gettext('Protocol'),
           width:     80,
           dataIndex: "protocol"
         }, {
-          header: "{% trans 'Peer Address' %}",
+          header: gettext('Peer Address'),
           width: 200,
           dataIndex: "peeraddress"
         }, {
-          header: "{% trans 'Disk state (here)' %}",
+          header: gettext('Disk state (here)'),
           width: 200,
           dataIndex: "dstate_self"
         }, {
-          header: "{% trans 'Connection state' %}",
+          header: gettext('Connection state'),
           width: 200,
           dataIndex: "cstate"
         }, {
-          header: "{% trans 'Role' %}",
+          header: gettext('Role'),
           width: 200,
           dataIndex: "role_self"
         }]
@@ -338,6 +352,7 @@ Ext.oa.Drbd__Device_Panel = Ext.extend(Ext.grid.GridPanel, {
     Ext.oa.Drbd__Device_Panel.superclass.initComponent.apply(this, arguments);
   },
   onRender: function(){
+    "use strict";
     Ext.oa.Drbd__Device_Panel.superclass.onRender.apply(this, arguments);
     this.store.reload();
   }
@@ -348,8 +363,9 @@ Ext.reg("drbd__device_panel", Ext.oa.Drbd__Device_Panel);
 Ext.oa.Drbd__Device_Module = Ext.extend(Object, {
   panel: "drbd__device_panel",
   prepareMenuTree: function(tree){
+    "use strict";
     tree.appendToRootNodeById("menu_services", {
-      text: "{% trans 'DRBD' %}",
+      text: gettext('DRBD'),
       leaf: true,
       icon: MEDIA_URL + '/icons2/22x22/apps/nfs.png',
       panel: "drbd__device_panel_inst",
