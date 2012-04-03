@@ -1,6 +1,4 @@
-{% load i18n %}
-
-{% comment %}
+/*
  Copyright (C) 2011-2012, it-novum GmbH <community@open-attic.org>
 
  openATTIC is free software; you can redistribute it and/or modify it
@@ -11,7 +9,7 @@
  but WITHOUT ANY WARRANTY; without even the implied warranty of
  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  GNU General Public License for more details.
-{% endcomment %}
+*/
 
 Ext.namespace("Ext.oa");
 
@@ -46,11 +44,11 @@ Ext.oa.Peering__Peerhost_Panel = Ext.extend(Ext.grid.GridPanel, {
         },
         items: [ {
           xtype: 'textfield',
-          fieldLabel: "{% trans 'Name' %}",
+          fieldLabel: gettext('Name'),
           name: "name"
         }, {
           xtype: 'textfield',
-          fieldLabel: "{% trans 'Base URL' %}",
+          fieldLabel: gettext('Base URL'),
           name: "base_url",
           value: "http://__:<<APIKEY>>@<<HOST>>:31234/"
         } ],
@@ -68,7 +66,7 @@ Ext.oa.Peering__Peerhost_Panel = Ext.extend(Ext.grid.GridPanel, {
             });
           }
         }, {
-          text: "{% trans 'Cancel' %}",
+          text: gettext('Cancel'),
           icon: MEDIA_URL + "/icons2/16x16/actions/gtk-cancel.png",
           handler: function(self){
             addwin.hide();
@@ -84,38 +82,38 @@ Ext.oa.Peering__Peerhost_Panel = Ext.extend(Ext.grid.GridPanel, {
     var peerhostGrid = this;
     Ext.apply(this, Ext.apply(this.initialConfig, {
       id: 'peering__peerhost_panel_inst',
-      title: "{% trans 'openATTIC Peers' %}",
+      title: gettext('openATTIC Peers'),
       buttons: [ {
         text: "",
         icon: MEDIA_URL + "/icons2/16x16/actions/reload.png",
-        tooltip: "{% trans 'Reload' %}",
+        tooltip: gettext('Reload'),
         handler: function(self){
           peerhostGrid.store.reload();
         }
       }, {
-        text: "{% trans 'Add Peer' %}",
+        text: gettext('Add Peer'),
         icon: MEDIA_URL + "/icons2/16x16/actions/add.png",
         handler: function(){
           peerhostGrid.showEditWindow({
-            title: "{% trans 'Add Peer' %}",
-            submitButtonText: "{% trans 'Create Peer' %}"
+            title: gettext('Add Peer'),
+            submitButtonText: gettext('Create Peer')
           });
         }
       }, {
-        text: "{% trans 'Edit Peer' %}",
+        text: gettext('Edit Peer'),
         icon: MEDIA_URL + "/icons2/16x16/actions/edit-redo.png",
         handler: function(self){
           var sm = peerhostGrid.getSelectionModel();
           if( sm.hasSelection() ){
             var sel = sm.selections.items[0];
             peerhostGrid.showEditWindow({
-              title: "{% trans 'Edit Peer' %}",
-              submitButtonText: "{% trans 'Edit Peer' %}"
+              title: gettext('Edit Peer'),
+              submitButtonText: gettext('Edit Peer')
             }, sel.data);
           }
         }
       }, {
-        text: "{% trans 'Delete Peer' %}",
+        text: gettext('Delete Peer'),
         icon: MEDIA_URL + "/icons2/16x16/actions/remove.png",
         handler: this.deleteFunction,
         scope: peerhostGrid
@@ -134,11 +132,11 @@ Ext.oa.Peering__Peerhost_Panel = Ext.extend(Ext.grid.GridPanel, {
           sortable: true
         },
         columns: [{
-          header: "{% trans 'Name' %}",
+          header: gettext('Name'),
           width: 100,
           dataIndex: "name"
         }, {
-          header: "{% trans 'Hostname' %}",
+          header: gettext('Hostname'),
           width: 200,
           dataIndex: "hostname"
         }]
@@ -152,9 +150,9 @@ Ext.oa.Peering__Peerhost_Panel = Ext.extend(Ext.grid.GridPanel, {
     if( sm.hasSelection() ){
       var sel = sm.selections.items[0];
       Ext.Msg.confirm(
-        "{% trans 'Delete Peer' %}",
+        gettext('Delete Peer'),
         interpolate(
-          "{% trans 'Do you really want to delete %s?' %}",[sel.data.name]),
+          gettext('Do you really want to delete %s?'),[sel.data.name]),
         function(btn){
           if(btn === 'yes'){
             peering__PeerHost.remove( sel.data.id, function(provider, response){
@@ -199,7 +197,7 @@ Ext.oa.Peering__Peerhost_Module = Ext.extend(Object, {
   prepareMenuTree: function(tree){
     "use strict";
     tree.appendToRootNodeById("menu_services", {
-      text: "{% trans 'openATTIC Peers' %}",
+      text: gettext('openATTIC Peers'),
       leaf: true,
       icon: MEDIA_URL + '/icons2/22x22/apps/nfs.png',
       panel: 'peering__peerhost_panel_inst',
