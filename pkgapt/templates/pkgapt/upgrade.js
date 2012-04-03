@@ -1,6 +1,4 @@
-{% load i18n %}
-
-{% comment %}
+/*
  Copyright (C) 2011-2012, it-novum GmbH <community@open-attic.org>
 
  openATTIC is free software; you can redistribute it and/or modify it
@@ -11,7 +9,7 @@
  but WITHOUT ANY WARRANTY; without even the implied warranty of
  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  GNU General Public License for more details.
-{% endcomment %}
+*/
 
 Ext.namespace("Ext.oa");
 
@@ -21,17 +19,17 @@ Ext.oa.Pkgapt__Upgrade_Panel = Ext.extend(Ext.grid.GridPanel, {
     var aptGrid = this;
     Ext.apply(this, Ext.apply(this.initialConfig, {
       id: 'pkgapt__upgrade_panel_inst',
-      title: "{% trans 'APT' %}",
+      title: gettext('APT'),
       viewConfig: { forceFit: true },
       buttons: [ {
-        text: "{% trans 'Reload Changes list' %}",
+        text: gettext('Reload Changes list'),
         icon: MEDIA_URL + "/icons2/16x16/actions/reload.png",
         handler: function(self, state){
           aptGrid.reload(Ext.state.Manager.get("pkgapt_distupgrade", true));
         }
       }, {
         icon: MEDIA_URL + "/icons2/16x16/actions/reload.png",
-        text: "{% trans 'Update Package lists' %}",
+        text: gettext('Update Package lists'),
         handler: function(self){
           aptGrid.getEl().mask("Updating package lists...");
           pkgapt__Apt.update(function(provider, response){
@@ -40,7 +38,7 @@ Ext.oa.Pkgapt__Upgrade_Panel = Ext.extend(Ext.grid.GridPanel, {
           });
         }
       }, {
-        text: "{% trans 'Allow installation/deletion' %}",
+        text: gettext('Allow installation/deletion'),
         enableToggle: true,
         icon: MEDIA_URL + '/icons2/16x16/mimetypes/package.png',
         pressed: Ext.state.Manager.get("pkgapt_distupgrade", true),
@@ -49,7 +47,7 @@ Ext.oa.Pkgapt__Upgrade_Panel = Ext.extend(Ext.grid.GridPanel, {
           aptGrid.reload(self.pressed);
         }
       }, {
-        text: "{% trans 'Do Upgrade' %}",
+        text: gettext('Do Upgrade'),
         icon: MEDIA_URL + "/oxygen/16x16/actions/dialog-ok-apply.png",
         handler: function(self){
           aptGrid.getEl().mask("Upgrade is running...");
@@ -69,19 +67,19 @@ Ext.oa.Pkgapt__Upgrade_Panel = Ext.extend(Ext.grid.GridPanel, {
           sortable: true
         },
         columns: [{
-          header: "{% trans 'Name' %}",
+          header: gettext('Name'),
           width: 200,
           dataIndex: "name"
         }, {
-          header: "{% trans 'Installed Version' %}",
+          header: gettext('Installed Version'),
           width: 200,
           dataIndex: "installed_version"
         }, {
-          header: "{% trans 'Candidate Version' %}",
+          header: gettext('Candidate Version'),
           width: 200,
           dataIndex: "candidate_version"
         }, {
-          header: "{% trans 'Action' %}",
+          header: gettext('Action'),
           width: 200,
           dataIndex: "name",
           renderer: function( val, x, store ){
@@ -123,7 +121,7 @@ Ext.oa.Pkgapt__Upgrade_Module = Ext.extend(Object, {
   prepareMenuTree: function(tree){
     "use strict";
     tree.appendToRootNodeById("menu_system", {
-      text: "{% trans 'Online Update' %}",
+      text: gettext('Online Update'),
       leaf: true,
       icon: MEDIA_URL + '/icons2/22x22/apps/update.png',
       panel: 'pkgapt__upgrade_panel_inst',

@@ -1,0 +1,59 @@
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) YEAR THE PACKAGE'S COPYRIGHT HOLDER
+# This file is distributed under the same license as the PACKAGE package.
+# FIRST AUTHOR <EMAIL@ADDRESS>, YEAR.
+#
+#, fuzzy
+msgid ""
+msgstr ""
+"Project-Id-Version: PACKAGE VERSION\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2012-04-03 11:01+0200\n"
+"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language-Team: LANGUAGE <LL@li.org>\n"
+"Language: \n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=2; plural=(n != 1)\n"
+
+#: templates/pkgapt/upgrade.js:22
+msgid "APT"
+msgstr "APT"
+
+#: templates/pkgapt/upgrade.js:25
+msgid "Reload Changes list"
+msgstr "Änderungsliste aktualisieren"
+
+#: templates/pkgapt/upgrade.js:32
+msgid "Update Package lists"
+msgstr "Paketlisten aktualisieren"
+
+#: templates/pkgapt/upgrade.js:41
+msgid "Allow installation/deletion"
+msgstr "Erlaube Installation/Löschen"
+
+#: templates/pkgapt/upgrade.js:50
+msgid "Do Upgrade"
+msgstr "Upgrade vornehmen"
+
+#: templates/pkgapt/upgrade.js:70
+msgid "Name"
+msgstr "Name"
+
+#: templates/pkgapt/upgrade.js:74
+msgid "Installed Version"
+msgstr "Installierte Version"
+
+#: templates/pkgapt/upgrade.js:78
+msgid "Candidate Version"
+msgstr "Verfügbare Version"
+
+#: templates/pkgapt/upgrade.js:82
+msgid "Action"
+msgstr "Aktion"
+
+#: templates/pkgapt/upgrade.js:124
+msgid "Online Update"
+msgstr "Online-Update"
