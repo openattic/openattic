@@ -1,6 +1,4 @@
-{% load i18n %}
-
-{% comment %}
+/*
  Copyright (C) 2011-2012, it-novum GmbH <community@open-attic.org>
 
  openATTIC is free software; you can redistribute it and/or modify it
@@ -11,20 +9,20 @@
  but WITHOUT ANY WARRANTY; without even the implied warranty of
  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  GNU General Public License for more details.
-{% endcomment %}
+*/
 
 Ext.namespace("Ext.oa");
 
 Ext.oa.Tftp__Instance_Panel = Ext.extend(Ext.oa.ShareGridPanel, {
   api: tftp__Instance,
   id: "tftp__instance_panel_inst",
-  title: "TFTP",
+  title: gettext("TFTP"),
   columns: [{
-    header: "{% trans 'Path' %}",
+    header: gettext('Path'),
     width: 200,
     dataIndex: "path"
   }, {
-    header: "{% trans 'Address' %}",
+    header: gettext('Address'),
     width: 100,
     dataIndex: "address_ip"
   }],
@@ -52,17 +50,17 @@ Ext.oa.Tftp__Instance_Panel = Ext.extend(Ext.oa.ShareGridPanel, {
             } );
           }
         }
-      }, "{% trans 'Please select the volume to share.' %}"),
+      }, gettext('Please select the volume to share.')),
       tipify({
         xtype: 'textfield',
-        fieldLabel: "{% trans 'Directory' %}",
+        fieldLabel: gettext('Directory'),
         name: "path",
         disabled: true,
         ref: 'dirfield'
-      }, "{% trans 'If you wish to share only a subpath of the volume, enter the path here.' %}" ),
+      }, gettext('If you wish to share only a subpath of the volume, enter the path here.') ),
       {
         xtype:      'combo',
-        fieldLabel: "{% trans 'Address' %}",
+        fieldLabel: gettext('Address'),
         name:       "address",
         ref:        'addrfield',
         allowBlank: false,
@@ -74,7 +72,7 @@ Ext.oa.Tftp__Instance_Panel = Ext.extend(Ext.oa.ShareGridPanel, {
         }),
         typeAhead:     true,
         triggerAction: 'all',
-        emptyText:     "{% trans 'Select...' %}",
+        emptyText:     gettext('Select...'),
         selectOnFocus: true,
         displayField:  'address',
         valueField:    'id'
@@ -91,7 +89,7 @@ Ext.oa.Tftp__Instance_Module = Ext.extend(Object, {
   prepareMenuTree: function(tree){
     "use strict";
     tree.appendToRootNodeById("menu_shares", {
-      text: "{% trans 'Embedded (TFTP)' %}",
+      text: gettext('Embedded (TFTP)'),
       leaf: true,
       icon: MEDIA_URL + '/oxygen/22x22/categories/preferences-other.png',
       panel: 'tftp__instance_panel_inst',
