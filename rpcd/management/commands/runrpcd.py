@@ -51,7 +51,7 @@ class SecureXMLRPCServer(HTTPServer, SimpleXMLRPCDispatcher):
 
         SimpleXMLRPCDispatcher.__init__(self, allow_none, encoding)
 
-        SocketServer.BaseServer.__init__(self, server_address, requestHandler)
+        HTTPServer.__init__(self, server_address, requestHandler)
         ctx = SSL.Context('sslv3')
 
         ctx.load_cert_chain(certFile, keyFile)
