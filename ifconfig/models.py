@@ -114,11 +114,11 @@ class NetDevice(models.Model):
 
     @classmethod
     def get_root_devices(cls):
+        """ Return all devices that are either a bonding, or a native which is not a bonding slave. """
         rootdevs = list(NetDevice.objects.filter(slaves__isnull=False).distinct())
-        rootdevs.extend(filter(
-            lambda dev: dev.devtype == "native" and NetDevice.objects.filter(slaves__devname=dev.devname).count() == 0,
-            NetDevice.objects.all()
-            ))
+        rootdevs.extend([ dev for dev in NetDevice.objects.all()
+            if dev.devtype == "native" and NetDevice.objects.filter(slaves__devname=dev.devname).count() == 0
+            ])
         return rootdevs
 
     @classmethod
