@@ -5,7 +5,7 @@ max-line-length=120
 generated-members=objects,id,_meta,DoesNotExist
 
 [MESSAGES CONTROL]
-disable=E1101,E1102,E1103,W0142,C0111,C0103,R0201,W0613,W0212
+disable=E1101,E1102,E1103,W0142,C0111,C0103,R0201,W0613,W0212,W0232,R0903
 
 [REPORTS]
 reports=y
