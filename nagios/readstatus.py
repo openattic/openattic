@@ -24,9 +24,10 @@ class NagiosState(object):
         check if the file has been updated in the meantime before returning data.
     """
     def __init__(self, statfile="/var/cache/nagios3/status.dat"):
-        self.statfile  = statfile
-        self.timestamp = 0
-        self.nagstate  = None
+        self.statfile    = statfile
+        self.timestamp   = 0
+        self.nagstate    = None
+        self._servicemap = {}
 
     def __getitem__(self, name):
         self.update()
@@ -47,6 +48,11 @@ class NagiosState(object):
     def values(self):
         self.update()
         return self.nagstate.values()
+
+    @property
+    def servicemap(self):
+        self.update()
+        return self._servicemap
 
     def update(self):
         retried = 0
@@ -71,6 +77,7 @@ class NagiosState(object):
         state = ST_BEGINSECT
 
         result = {}
+        self._servicemap = {}
 
         currsect  = ''
         currname  = ''
@@ -112,6 +119,8 @@ class NagiosState(object):
                     elif char == '}':
                         state = ST_BEGINSECT
                         result[currsect].append(curresult)
+                        if currsect == "servicestatus":
+                            self._servicemap[curresult["service_description"]] = curresult
                         curresult = {}
                         currsect = ''
                     else:
