@@ -44,6 +44,44 @@ Ext.oa.Auth__User_Panel = Ext.extend(Ext.oa.ShareGridPanel, {
   window: {
     height: 350
   },
+  buttons: [{
+    text: gettext('Show Volumes of User'),
+    icon: MEDIA_URL + "/oxygen/16x16/emblems/emblem-unmounted.png",
+    handler: function(btn){
+      var sm = this.getSelectionModel();
+      var self = this;
+      if( sm.hasSelection() ){
+              var sel = sm.selections.items[0];
+              var volwin = new Ext.Window({
+                title: gettext('Volumes of User'),
+                layout: "fit",
+                height: 300,
+                width: 270,
+                items: {
+                  xtype: "grid",
+                  store: {
+                    xtype: 'directstore',
+                    autoLoad: true,
+                    fields: ['name'],
+                    directFn: lvm__LogicalVolume.filter,
+                    baseParams: {owner__id: sel.data.id}
+                  },
+                  colModel: new Ext.grid.ColumnModel({
+                    defaults: {
+                      sortable: true
+                    },
+                    columns: [{
+                      header: gettext('Volume Name'),
+                      width: 250,
+                      dataIndex: "name"
+                    }]
+                  })
+                }
+              } );
+              volwin.show();
+            }                                 
+    }
+  }],
   texts: {
     add:     gettext('Add User'),
     edit:    gettext('Edit User'),
