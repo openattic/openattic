@@ -360,7 +360,7 @@ Ext.oa.Lvm__LogicalVolume_Panel = Ext.extend(Ext.Panel, {
           if( sm.hasSelection() ){
             var sel = sm.selections.items[0];
             var shareswin = new Ext.Window({
-              title: gettext('Add Volume'),
+              title: gettext('Shares'),
               layout: "fit",
               height: 300,
               width: 500,
