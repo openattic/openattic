@@ -112,21 +112,19 @@ Ext.oa.DragSelector = function(cfg){
 
 
 Ext.oa.Nagios__Graph_ImagePanel = Ext.extend(Ext.Panel, {
-  graphcolors: {
-    /*{% if PROFILE.theme != "access" %}*/
+  graphcolors: ( "{{ PROFILE.theme }}" !== "access" ? {
     bgcol: 'FFFFFF',
     grcol: '',
     fgcol: '111111',
     sacol: 'FFFFFF',
-    sbcol: 'FFFFFF',
-    /*{% else %}*/
+    sbcol: 'FFFFFF'
+  } : {
     bgcol: '1F2730',
     grcol: '222222',
     fgcol: 'FFFFFF',
     sacol: '1F2730',
     sbcol: '1F2730'
-    /*{% endif %}*/
-  },
+  }),
   reloadTimerId: 0,
   initComponent: function(){
     "use strict";
@@ -280,7 +278,7 @@ Ext.oa.Nagios__Service_Panel = Ext.extend(Ext.Panel, {
       1: MEDIA_URL + '/oxygen/16x16/status/dialog-warning.png',
       2: MEDIA_URL + '/oxygen/16x16/status/dialog-error.png',
       3: MEDIA_URL + '/oxygen/16x16/categories/system-help.png',
-      NaN: MEDIA_URL + '/oxygen/16x16/categories/system-help.png'
+      "NaN": MEDIA_URL + '/oxygen/16x16/categories/system-help.png'
     };
     var renderDesc = function( val, x, store ){
       return '<img src="' + stateicons[parseInt(store.data.current_state, 10)] + '" /> ' + val;
