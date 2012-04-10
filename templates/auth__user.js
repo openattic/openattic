@@ -48,6 +48,7 @@ Ext.oa.Auth__User_Panel = Ext.extend(Ext.oa.ShareGridPanel, {
     text: gettext('Show Volumes of User'),
     icon: MEDIA_URL + "/oxygen/16x16/emblems/emblem-unmounted.png",
     handler: function(btn){
+      "use strict";
       var sm = this.getSelectionModel();
       var self = this;
       if( sm.hasSelection() ){
