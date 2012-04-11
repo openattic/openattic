@@ -502,47 +502,48 @@ Ext.oa.Iscsi__Panel = Ext.extend(Ext.Panel, {
                     ref: 'addressfield',
                     allowBlank: false,
                     name: 'address'
+                  }],
+                  buttons: [{
+                    text: gettext('Add'),
+                    icon: MEDIA_URL + "/icons2/16x16/actions/add.png",
+                    handler: function(self){
+                        if( !self.ownerCt.ownerCt.getForm().isValid() ){
+                          return;
+                        }
+                        iscsi__Initiator.create({
+                          'name':    self.ownerCt.ownerCt.namefield.getValue(),
+                          'address': self.ownerCt.ownerCt.addressfield.getValue()
+                        }, function(provider, response){
+                          if( response.result ){
+                            init_all.reload();
+                          }
+                        });
+                    }
+                  },{
+                    text: gettext('Save'),
+                    icon: MEDIA_URL + "/icons2/16x16/actions/edit-redo.png",
+                    handler: function(self){
+                      var sm = addwin.initiator_all.getSelectionModel();
+                      if (sm.selections.items.length === 0){
+                        Ext.Msg.alert ("Warning","Please select an Initiator you want to edit");
+                        return;
+                      }
+                      if( !self.ownerCt.ownerCt.getForm().isValid() ){
+                        return;
+                      }
+                        var sel = sm.selections.items[0];
+                        iscsi__Initiator.set(sel.data.id, {
+                          'name':    self.ownerCt.ownerCt.namefield.getValue(),
+                          'address': self.ownerCt.ownerCt.addressfield.getValue()
+                        }, function(provider, response){
+                          if( response.result ){
+                            init_all.reload();
+                          }
+                        });
+                    }
                   }]
                 }],
                 buttons: [{
-                  text: gettext('Add'),
-                  icon: MEDIA_URL + "/icons2/16x16/actions/add.png",
-                  handler: function(self){
-                      if( !self.ownerCt.ownerCt.items.items[1].getForm().isValid() ){
-                        return;
-                      }
-                      iscsi__Initiator.create({
-                        'name':    self.ownerCt.ownerCt.items.items[1].namefield.getValue(),
-                        'address': self.ownerCt.ownerCt.items.items[1].addressfield.getValue()
-                      }, function(provider, response){
-                        if( response.result ){
-                          init_all.reload();
-                        }
-                      });
-                  }
-                },{
-                  text: gettext('Save'),
-                  icon: MEDIA_URL + "/icons2/16x16/actions/edit-redo.png",
-                  handler: function(self){
-                    var sm = addwin.initiator_all.getSelectionModel();
-                    if (sm.selections.items.length === 0){
-                      Ext.Msg.alert ("Warning","Please select an Initiator you want to edit");
-                      return;
-                    }
-                    if( !self.ownerCt.ownerCt.items.items[1].getForm().isValid() ){
-                      return;
-                    }
-                      var sel = sm.selections.items[0];
-                      iscsi__Initiator.set(sel.data.id, {
-                        'name':    self.ownerCt.ownerCt.items.items[1].namefield.getValue(),
-                        'address': self.ownerCt.ownerCt.items.items[1].addressfield.getValue()
-                      }, function(provider, response){
-                        if( response.result ){
-                          init_all.reload();
-                        }
-                      });
-                  }
-                },{
                   text: gettext('Delete'),
                   icon: MEDIA_URL + "/icons2/16x16/actions/remove.png",
                   handler: function(self){
