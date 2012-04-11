@@ -17,6 +17,9 @@ Ext.oa.Samba__Share_Panel = Ext.extend(Ext.oa.ShareGridPanel, {
   api: samba__Share,
   id: "samba__share_panel_inst",
   title: gettext("Samba"),
+  window: {
+    height: 450,
+  },
   columns: [{
     header: gettext('Share name'),
     width: 100,
@@ -33,89 +36,94 @@ Ext.oa.Samba__Share_Panel = Ext.extend(Ext.oa.ShareGridPanel, {
   }],
   form: {
     items: [{
-      xtype:'volumefield',
-      listeners: {
-        select: function(self, record, index){
-          "use strict";
-          lvm__LogicalVolume.get( record.data.id, function( provider, response ){
-            self.ownerCt.namefield.setValue( response.result.name );
-            self.ownerCt.namefield.enable();
-            self.ownerCt.dirfield.setValue( response.result.fs.mountpoints[0] );
-            self.ownerCt.dirfield.enable();
-          } );
+      xtype: 'fieldset',
+      title: 'Samba',
+      layout: 'form',
+      items: [{
+        xtype:'volumefield',
+        listeners: {
+          select: function(self, record, index){
+            "use strict";
+            lvm__LogicalVolume.get( record.data.id, function( provider, response ){
+              self.ownerCt.namefield.setValue( response.result.name );
+              self.ownerCt.namefield.enable();
+              self.ownerCt.dirfield.setValue( response.result.fs.mountpoints[0] );
+              self.ownerCt.dirfield.enable();
+            } );
+          }
         }
-      }
-    },{
-      xtype: 'textfield',
-      fieldLabel: gettext('Share name'),
-      allowBlank: false,
-      name: "name",
-      ref: 'namefield',
-      disabled: true
-    },{
-      xtype: 'textfield',
-      fieldLabel: gettext('Path'),
-      allowBlank: false,
-      name: "path",
-      ref: 'dirfield',
-      disabled: true
-    },{
-      xtype: 'textfield',
-      fieldLabel: gettext('System user'),
-      allowBlank: true,
-      name: "force_user",
-      ref: 'userfield'
-    }, {
-      xtype: 'textfield',
-      fieldLabel: gettext('System Group'),
-      allowBlank: true,
-      name: "force_group",
-      ref: 'groupfield'
-    }, {
-      xtype: 'checkbox',
-      fieldLabel: gettext('Browseable'),
-      allowBlank: false,
-      name: "browseable",
-      ref: 'browseablefield'
-    }, {
-      xtype: 'checkbox',
-      fieldLabel: gettext('Available'),
-      allowBlank: false,
-      name: "available",
-      ref: 'availablefield'
-    }, {
-      xtype: 'checkbox',
-      fieldLabel: gettext('Writeable'),
-      allowBlank: false,
-      name: "writeable",
-      ref: 'writeablefield'
-    }, {
-      xtype: 'checkbox',
-      fieldLabel: gettext('Guest OK'),
-      allowBlank: false,
-      name: "guest_ok",
-      ref: 'guestokfield'
-    }, tipify({
-      xtype: 'textfield',
-      fieldLabel: gettext('Dir Mode'),
-      allowBlank: false,
-      name: "dir_mode",
-      ref: 'dirmodefield',
-      value:     '0775'
-    },gettext('Set rights for the Directory')), {
-      xtype: 'textfield',
-      fieldLabel: gettext('Comment'),
-      allowBlank: true,
-      name: "comment",
-      ref: 'commentfield'
-    }, tipify({
-      xtype: 'textfield',
-      fieldLabel: gettext('Create Mode'),
-      allowBlank: false,
-      name: "create_mode",
-      ref: 'createmodefield',
-      value:     '0664'
-    }, gettext('Set rights for owner, group and others') ) ]
+      },{
+        xtype: 'textfield',
+        fieldLabel: gettext('Share name'),
+        allowBlank: false,
+        name: "name",
+        ref: 'namefield',
+        disabled: true
+      },{
+        xtype: 'textfield',
+        fieldLabel: gettext('Path'),
+        allowBlank: false,
+        name: "path",
+        ref: 'dirfield',
+        disabled: true
+      },{
+        xtype: 'textfield',
+        fieldLabel: gettext('System user'),
+        allowBlank: true,
+        name: "force_user",
+        ref: 'userfield'
+      }, {
+        xtype: 'textfield',
+        fieldLabel: gettext('System Group'),
+        allowBlank: true,
+        name: "force_group",
+        ref: 'groupfield'
+      }, {
+        xtype: 'checkbox',
+        fieldLabel: gettext('Browseable'),
+        allowBlank: false,
+        name: "browseable",
+        ref: 'browseablefield'
+      }, {
+        xtype: 'checkbox',
+        fieldLabel: gettext('Available'),
+        allowBlank: false,
+        name: "available",
+        ref: 'availablefield'
+      }, {
+        xtype: 'checkbox',
+        fieldLabel: gettext('Writeable'),
+        allowBlank: false,
+        name: "writeable",
+        ref: 'writeablefield'
+      }, {
+        xtype: 'checkbox',
+        fieldLabel: gettext('Guest OK'),
+        allowBlank: false,
+        name: "guest_ok",
+        ref: 'guestokfield'
+      }, tipify({
+        xtype: 'textfield',
+        fieldLabel: gettext('Dir Mode'),
+        allowBlank: false,
+        name: "dir_mode",
+        ref: 'dirmodefield',
+        value:     '0775'
+      },gettext('Set rights for the Directory')), {
+        xtype: 'textfield',
+        fieldLabel: gettext('Comment'),
+        allowBlank: true,
+        name: "comment",
+        ref: 'commentfield'
+      }, tipify({
+        xtype: 'textfield',
+        fieldLabel: gettext('Create Mode'),
+        allowBlank: false,
+        name: "create_mode",
+        ref: 'createmodefield',
+        value:     '0664'
+      }, gettext('Set rights for owner, group and others') ) ]
+    }]
   }
 });
 
