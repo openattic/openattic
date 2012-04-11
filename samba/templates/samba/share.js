@@ -18,7 +18,7 @@ Ext.oa.Samba__Share_Panel = Ext.extend(Ext.oa.ShareGridPanel, {
   id: "samba__share_panel_inst",
   title: gettext("Samba"),
   window: {
-    height: 450,
+    height: 450
   },
   columns: [{
     header: gettext('Share name'),
