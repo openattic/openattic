@@ -1,8 +1,8 @@
 Alias                   /openattic/static/extjs_themes/images/default/ /usr/share/javascript/extjs/resources/images/default/
 Alias                   /openattic/static/extjs/  /usr/share/javascript/extjs/
 Alias                   /openattic/static/oxygen/ /usr/share/icons/oxygen/
+Alias                   /openattic/static/admin/  /usr/share/pyshared/django/contrib/admin/media/
 Alias                   /openattic/static/        /usr/share/openattic/htdocs/
-Alias                   /openattic/media/         /usr/share/pyshared/django/contrib/admin/media/
 
 WSGIScriptAlias         /openattic                /usr/share/openattic/openattic.wsgi
 WSGIDaemonProcess       openattic threads=25 user=openattic group=openattic
