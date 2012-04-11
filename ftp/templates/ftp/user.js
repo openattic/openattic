@@ -41,37 +41,42 @@ Ext.oa.Ftp__User_Panel = Ext.extend(Ext.oa.ShareGridPanel, {
     }
   }],
   form: {
-    items:[{
-      xtype: 'textfield',
-      name: "username",
-      fieldLabel: "Username"
-    }, {
-      xtype: 'textfield',
-      fieldLabel: gettext('Password'),
-      name: "passwd",
-      inputType: 'password'
-    }, {
-      xtype: 'volumefield',
-      listeners: {
-        select: function(self, record, index){
-          "use strict";
-          lvm__LogicalVolume.get( record.data.id, function( provider, response ){
-            self.ownerCt.dirfield.setValue( response.result.fs.mountpoints[0] );
-            self.ownerCt.dirfield.enable();
-          } );
-        }
-      }
-    }, {
-      xtype: 'textfield',
-      fieldLabel: gettext('Directory'),
-      name: "homedir",
-      disabled: true,
-      ref: 'dirfield'
-    },{
-      xtype: 'hidden',
-      name:  "shell",
-      value: '/bin/true'
-    }]
+     items: [{
+      xtype: 'fieldset',
+      title: 'FTP',
+      layout: 'form',
+      items: [{
+          xtype: 'textfield',
+          name: "username",
+          fieldLabel: "Username"
+        }, {
+          xtype: 'textfield',
+          fieldLabel: gettext('Password'),
+          name: "passwd",
+          inputType: 'password'
+        }, {
+          xtype: 'volumefield',
+          listeners: {
+            select: function(self, record, index){
+              "use strict";
+              lvm__LogicalVolume.get( record.data.id, function( provider, response ){
+                self.ownerCt.dirfield.setValue( response.result.fs.mountpoints[0] );
+                self.ownerCt.dirfield.enable();
+              } );
+            }
+          }
+        }, {
+          xtype: 'textfield',
+          fieldLabel: gettext('Directory'),
+          name: "homedir",
+          disabled: true,
+          ref: 'dirfield'
+        },{
+          xtype: 'hidden',
+          name:  "shell",
+          value: '/bin/true'
+        }]
+        }]
   },
   deleteConfirm: function(sel){
     "use strict";
