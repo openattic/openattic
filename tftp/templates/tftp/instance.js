@@ -38,46 +38,51 @@ Ext.oa.Tftp__Instance_Panel = Ext.extend(Ext.oa.ShareGridPanel, {
     }
   }],
   form: {
-    items: [
-      tipify({
-        xtype: 'volumefield',
-        listeners: {
-          select: function(self, record, index){
-            "use strict";
-            lvm__LogicalVolume.get( record.data.id, function( provider, response ){
-              self.ownerCt.dirfield.setValue( response.result.fs.mountpoints[0] );
-              self.ownerCt.dirfield.enable();
-            } );
+    items: [{
+      xtype: 'fieldset',
+      title: 'TFTP',
+      layout: 'form',
+      items: [
+        tipify({
+          xtype: 'volumefield',
+          listeners: {
+            select: function(self, record, index){
+              "use strict";
+              lvm__LogicalVolume.get( record.data.id, function( provider, response ){
+                self.ownerCt.dirfield.setValue( response.result.fs.mountpoints[0] );
+                self.ownerCt.dirfield.enable();
+              } );
+            }
           }
+        }, gettext('Please select the volume to share.')),
+        tipify({
+          xtype: 'textfield',
+          fieldLabel: gettext('Directory'),
+          name: "path",
+          disabled: true,
+          ref: 'dirfield'
+        }, gettext('If you wish to share only a subpath of the volume, enter the path here.') ),
+        {
+          xtype:      'combo',
+          fieldLabel: gettext('Address'),
+          name:       "address",
+          ref:        'addrfield',
+          allowBlank: false,
+          hiddenName: 'address',
+          store: new Ext.data.DirectStore({
+            fields: ["app", "obj", "id", "address"],
+            baseParams: {fields: ["app", "obj", "id", "address"] },
+            directFn: ifconfig__IPAddress.ids
+          }),
+          typeAhead:     true,
+          triggerAction: 'all',
+          emptyText:     gettext('Select...'),
+          selectOnFocus: true,
+          displayField:  'address',
+          valueField:    'id'
         }
-      }, gettext('Please select the volume to share.')),
-      tipify({
-        xtype: 'textfield',
-        fieldLabel: gettext('Directory'),
-        name: "path",
-        disabled: true,
-        ref: 'dirfield'
-      }, gettext('If you wish to share only a subpath of the volume, enter the path here.') ),
-      {
-        xtype:      'combo',
-        fieldLabel: gettext('Address'),
-        name:       "address",
-        ref:        'addrfield',
-        allowBlank: false,
-        hiddenName: 'address',
-        store: new Ext.data.DirectStore({
-          fields: ["app", "obj", "id", "address"],
-          baseParams: {fields: ["app", "obj", "id", "address"] },
-          directFn: ifconfig__IPAddress.ids
-        }),
-        typeAhead:     true,
-        triggerAction: 'all',
-        emptyText:     gettext('Select...'),
-        selectOnFocus: true,
-        displayField:  'address',
-        valueField:    'id'
-      }
-    ]
+      ]
+    }]
   }
 });
 
