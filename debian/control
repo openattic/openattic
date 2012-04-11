@@ -157,7 +157,8 @@ Architecture: all
 Pre-Depends: adduser
 Depends: ${misc:Depends}, python (>= 2.6),
  ${python:Depends},
- python-django,
+ python-django (>= 1.4),
+ python-django (<< 1.5),
  dbus,
  ntp,
  ajaxterm,
