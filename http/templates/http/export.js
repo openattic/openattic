@@ -18,7 +18,7 @@ Ext.oa.Http__Export_Panel = Ext.extend(Ext.oa.ShareGridPanel, {
   id: "http__export_panel_inst",
   title: gettext("HTTP"),
   window: {
-    height: 150
+    height: 200
   },
   storefields: [{
     name: 'volumename',
@@ -50,22 +50,27 @@ Ext.oa.Http__Export_Panel = Ext.extend(Ext.oa.ShareGridPanel, {
   }],
   form: {
     items: [{
-      xtype: 'volumefield',
-      listeners: {
-        select: function(self, record, index){
-          "use strict";
-          lvm__LogicalVolume.get( record.data.id, function( provider, response ){
-            self.ownerCt.dirfield.setValue( response.result.fs.mountpoints[0] );
-            self.ownerCt.dirfield.enable();
-          } );
+      xtype: 'fieldset',
+      title: 'HTTP',
+      layout: 'form',
+      items: [{
+        xtype: 'volumefield',
+        listeners: {
+          select: function(self, record, index){
+            "use strict";
+            lvm__LogicalVolume.get( record.data.id, function( provider, response ){
+              self.ownerCt.dirfield.setValue( response.result.fs.mountpoints[0] );
+              self.ownerCt.dirfield.enable();
+            } );
+          }
         }
-      }
-    }, {
-      xtype: 'textfield',
-      fieldLabel: gettext('Directory'),
-      name: "path",
-      disabled: true,
-      ref: 'dirfield'
+      }, {
+        xtype: 'textfield',
+        fieldLabel: gettext('Directory'),
+        name: "path",
+        disabled: true,
+        ref: 'dirfield'
+      }]
     }]
   }
 });
