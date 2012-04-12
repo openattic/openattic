@@ -14,7 +14,7 @@
 #  GNU General Public License for more details.
 #
 ### BEGIN INIT INFO
-# Provides: openattic_rpcd
+# Provides: openattic_mounts
 # Required-Start: $local_fs $network $remote_fs openattic_LogicalVolume
 # Required-Stop: $local_fs $network $remote_fs
 # Default-Start:  2 3 4 5
