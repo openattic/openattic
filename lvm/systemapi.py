@@ -81,7 +81,7 @@ def lvm_vgs():
     return info
 
 def lvm_lvs():
-    info = dict( [ (lv["LVM2_LV_NAME"], lv) for lv in lvm_command(["/sbin/lvs", '-o', '+seg_pe_ranges,lv_kernel_minor,lv_minor']) ] )
+    info = dict( [ (lv["LVM2_LV_NAME"], lv) for lv in lvm_command(["/sbin/lvs", '-o', '+seg_pe_ranges,lv_kernel_minor,lv_minor,lv_tags']) ] )
     for lv in info:
         info[lv]["LVM2_LV_SIZE"] = info[lv]["LVM2_LV_SIZE"][:-1] # cut off the m from 13.37m
     return info

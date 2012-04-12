@@ -64,6 +64,9 @@ def create_vgs(app, created_models, verbosity, **kwargs):
         try:
             lv = LogicalVolume.objects.get(vg=vg, name=lvname)
         except LogicalVolume.DoesNotExist:
+            if "sys" in lvs[lvname]["LVM2_LV_TAGS"].split(','):
+                continue
+
             if kwargs.get('interactive', True):
                 if currowner:
                     ownername = raw_input( "Who is the owner of Logical Volume %s? [%s] " % (lvname, currowner.username) )
