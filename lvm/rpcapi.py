@@ -114,14 +114,7 @@ class LvHandler(ModelHandler):
 
     def mount_all(self):
         """ Mount all volumes which are not currently mounted. """
-        ret = []
-        for lv in LogicalVolume.objects.all():
-            if lv.filesystem and not lv.fs.mounted:
-                succ = lv.fs.mount()
-                lvid = self._idobj(lv)
-                lvid["success"] = succ
-                ret.append(lvid)
-        return ret
+        return LogicalVolume.mount_all()
 
     def mount(self, id):
         """ Mount the given volume if it is not currently mounted. """
@@ -132,14 +125,11 @@ class LvHandler(ModelHandler):
 
     def unmount_all(self):
         """ Unmount all volumes which are currently mounted. """
-        ret = []
-        for lv in LogicalVolume.objects.all():
-            if lv.filesystem and lv.fs.mounted:
-                succ = lv.fs.unmount()
-                lvid = self._idobj(lv)
-                lvid["success"] = succ
-                ret.append(lvid)
-        return ret
+        return LogicalVolume.unmount_all()
+
+    def mounted_volumes(self):
+        """ Return IDs of currently mounted volumes. """
+        return [ self._idobj(lv) for lv in LogicalVolume.mounted_volumes() ]
 
     def unmount(self, id):
         """ Unmount the given volume if it is currently mounted. """

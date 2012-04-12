@@ -173,6 +173,27 @@ class LogicalVolume(models.Model):
     def __unicode__(self):
         return self.name
 
+
+    @classmethod
+    def mount_all(cls):
+        """ Mount all volumes which are not currently mounted. """
+        for lv in LogicalVolume.objects.exclude(filesystem=""):
+            if not lv.fs.mounted:
+                lv.fs.mount()
+
+    @classmethod
+    def unmount_all(cls):
+        """ Unmount all volumes which are currently mounted. """
+        for lv in LogicalVolume.objects.exclude(filesystem=""):
+            if lv.fs.mounted:
+                lv.fs.unmount()
+
+    @classmethod
+    def mounted_volumes(cls):
+        """ Return a list of volumes which are currently mounted. """
+        return [ lv for lv in LogicalVolume.objects.exclude(filesystem="") if lv.fs.mounted ]
+
+
     @property
     def lvm(self):
         if self._lvm is None:
