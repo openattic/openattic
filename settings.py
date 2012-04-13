@@ -16,9 +16,9 @@
 
 PROJECT_ROOT = None
 PROJECT_URL  = '/openattic'
-# das folgende wird gebraucht weil gunicorn SCRIPT_URL und PATH_INFO nicht setzt
-# fyi: SCRIPT_URL=/filer/lvm/ PATH_INFO=/lvm/ würde klären
-#FORCE_SCRIPT_NAME = "/filer"
+# the following is needed in gunicorn, because it doesn't set SCRIPT_URL and PATH_INFO
+# fyi: SCRIPT_URL=/filer/lvm/ PATH_INFO=/lvm/ would allow for Django to auto-detect the path
+#FORCE_SCRIPT_NAME = PROJECT_URL
 
 from os.path import join, dirname, abspath, exists
 if not PROJECT_ROOT or not exists( PROJECT_ROOT ):
