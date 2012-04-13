@@ -63,14 +63,19 @@ elif command == "restart":
     LogicalVolume.mount_all()
 
 elif command == "status":
-    mounted  = LogicalVolume.mounted_volumes()
-    volcount = LogicalVolume.objects.exclude(filesystem="").count()
-    if mounted:
-        print "There are currently %d mounted volumes (%d total)." % (len(mounted), volcount)
-        sys.exit(0)
-    else:
-        print "There are currently no mounted volumes (%d total)." % volcount
+    try:
+        mounted  = LogicalVolume.mounted_volumes()
+        volcount = LogicalVolume.objects.exclude(filesystem="").count()
+    except Exception, err:
+        print "Got exception '%s' when checking, assuming the database isn't running and nothing is mounted." % err.message
         sys.exit(3)
+    else:
+        if mounted:
+            print "There are currently %d mounted volumes (%d total)." % (len(mounted), volcount)
+            sys.exit(0)
+        else:
+            print "There are currently no mounted volumes (%d total)." % volcount
+            sys.exit(3)
 
 elif command == "probe":
     print "restart"
