@@ -14,6 +14,7 @@
  *  GNU General Public License for more details.
 """
 
+from django import template
 from django.shortcuts  import render_to_response
 from django.template   import RequestContext
 from django.http       import HttpResponse
@@ -68,7 +69,18 @@ def index(request):
         else:
             theme = None
 
+        found_templates = []
+        for app in settings.INSTALLED_APPS:
+            try:
+                tpl = "%s/mainhead.html" % app
+                template.loader.get_template( tpl )
+            except template.TemplateDoesNotExist:
+                pass
+            else:
+                found_templates.append(tpl)
+
         return render_to_response('index_ext_authed.html', {
             'THEME': theme,
-            'INSTALLED_APPS': settings.INSTALLED_APPS
+            'INSTALLED_APPS': settings.INSTALLED_APPS,
+            'INSTALLED_APP_TEMPLATES': found_templates
             }, context_instance = RequestContext(request))
