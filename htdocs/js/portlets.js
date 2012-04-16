@@ -114,27 +114,29 @@ Ext.oa.getDefaultPortlets = function(tools){
         events: { click: function(){} }
       });
       var updateChart = function(){
-        hoststats__HostStats.get_cpu(function(provider, result){
-          if(result.result){
-            var conf = {
-              smps: ['CPU'],
-              vars: [],
-              data: []
-            };
-            var key;
-            for( key in result.result ){
-              if( key === "time_taken" ){
-                continue;
+        if( typeof chart.canvas !== "undefined" ){
+          hoststats__HostStats.get_cpu(function(provider, result){
+            if(result.result){
+              var conf = {
+                smps: ['CPU'],
+                vars: [],
+                data: []
+              };
+              var key;
+              for( key in result.result ){
+                if( key === "time_taken" ){
+                  continue;
+                }
+                if( result.result[key] < 0.5 ){
+                  continue;
+                }
+                conf.vars.push(key);
+                conf.data.push([result.result[key]]);
               }
-              if( result.result[key] < 0.5 ){
-                continue;
-              }
-              conf.vars.push(key);
-              conf.data.push([result.result[key]]);
+              chart.canvas.updateData({ y: conf });
             }
-            chart.canvas.updateData({ y: conf });
-          }
-        });
+          });
+        }
         updateChart.defer(30000);
       };
       updateChart();
@@ -165,21 +167,23 @@ Ext.oa.getDefaultPortlets = function(tools){
         events: { click: function(){} }
       });
       var updateChart = function(){
-        hoststats__HostStats.get_mem(function(provider, result){
-          if(result.result){
-            var conf = {
-              smps: ['RAM'],
-              vars: [],
-              data: []
-            };
-            var key;
-            for( key in result.result ){
-              conf.vars.push(key);
-              conf.data.push([result.result[key]]);
+        if( typeof chart.canvas !== "undefined" ){
+          hoststats__HostStats.get_mem(function(provider, result){
+            if(result.result){
+              var conf = {
+                smps: ['RAM'],
+                vars: [],
+                data: []
+              };
+              var key;
+              for( key in result.result ){
+                conf.vars.push(key);
+                conf.data.push([result.result[key]]);
+              }
+              chart.canvas.updateData({ y: conf });
             }
-            chart.canvas.updateData({ y: conf });
-          }
-        });
+          });
+        }
         updateChart.defer(30000);
       };
       updateChart();
