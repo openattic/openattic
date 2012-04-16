@@ -29,8 +29,6 @@ from optparse import make_option
 from base64   import b64decode
 from M2Crypto import SSL
 
-import dbus
-
 from django.core.management.base import BaseCommand
 from django.contrib.auth import authenticate
 from django.conf import settings
@@ -179,7 +177,6 @@ class VerifyingRequestHandler(SecureXMLRPCRequestHandler):
 
 class RPCd(object):
     def __init__(self, rpcdplugins):
-        self.bus = dbus.SystemBus()
         self.handlers = {}
 
         for plugin in rpcdplugins:
