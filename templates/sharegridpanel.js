@@ -72,7 +72,7 @@ Ext.oa.ShareGridPanel = Ext.extend(Ext.grid.GridPanel, {
         forceFit: true
       }
     }));
-    this.buttons.push.apply( this.buttons, [ {
+    this.buttons.unshift({
       text: "",
       icon: MEDIA_URL + "/icons2/16x16/actions/reload.png",
       tooltip: self.texts.reload,
@@ -80,7 +80,8 @@ Ext.oa.ShareGridPanel = Ext.extend(Ext.grid.GridPanel, {
       handler: function(){
         self.store.reload();
       }
-    }, {
+    });
+    this.buttons.push.apply( this.buttons, [ {
       text: self.texts.add,
       icon: MEDIA_URL + "/icons2/16x16/actions/add.png",
       scope: self,
