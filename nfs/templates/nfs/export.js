@@ -61,14 +61,19 @@ Ext.oa.Nfs__Export_Panel = Ext.extend(Ext.oa.ShareGridPanel, {
           allowBlank: false,
           name: "address",
           ref: 'addrfield'
-        },
-        tipify({
+        }, {
           xtype: 'textfield',
           fieldLabel: gettext('Options'),
           name: "options",
           ref: 'optfield',
           value: "rw,no_subtree_check,no_root_squash"
-        },gettext('this is default. rw: read/write rights are given,<br> no_subtree_check means that every file request is going to be checked to make sure that this file is in an exported subdirectory,<br> no_root_squash means share the folder (public), every IP-Adress has access, root can connect as root'))
+        }, {
+          xtype: 'label',
+          html:  gettext(
+            'See <a href="http://man.cx/exports%285%29" target="_blank">the NFS manual</a> for details.'
+          ),
+          cls: "form_hint_label"
+        }
       ]
     }]
   }

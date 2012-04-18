@@ -166,7 +166,6 @@
         border-right-color: #2b3333;
         border-top-color: #2b3300;
       }
-      
       div.lv_used_warn .x-progress-bar {
         background-image: url("{{ MEDIA_URL }}/progress_warn.gif");
         border-bottom-color: #A66900;
@@ -179,11 +178,18 @@
         border-right-color: #332b33;
         border-top-color: #332b00;
       }
+      .form_hint_label {
+        font-family:    Lucida Grande,Verdana,Arial,sans-serif;
+        font-size:      10px;
+        font-weight:    400;
+        font-style:     normal;
+        color:          #999999;
+        margin-left:    110px;
+      }
       {% if THEME == "access" %}
-
-       .x-progress-wrap {
+      .x-progress-wrap {
          background-color:#232D38;
-}
+      }
       {% endif %}
     </style>
   </head>
