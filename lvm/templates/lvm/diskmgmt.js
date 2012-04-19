@@ -119,7 +119,7 @@ Ext.oa.volumeGroup_Panel = Ext.extend(Ext.grid.GridPanel, {
                   fields: ["app", "obj", "id", "name"],
                   directFn: lvm__VolumeGroup.ids
                 }),
-                typeAhead:     true,
+                typeAhead:     false,
                 triggerAction: 'all',
                 emptyText:     'Select...',
                 forceSelection: false,
