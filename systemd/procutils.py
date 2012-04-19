@@ -54,7 +54,7 @@ def invoke(args, close_fds=True, return_out_err=False, log=True, stdin=None, fai
 
     cmdline = ' '.join(['"' + arg + '"' for arg in args])
 
-    if log:
+    if log or proc.returncode != 0:
         out = [ "> " + cmdline ]
         out.extend([ "E " + line for line in procerr.split("\n") if line ])
         out.extend([ "O " + line for line in procout.split("\n") if line ])
