@@ -35,7 +35,6 @@ class GroupHandler(ModelHandler):
 
 class UserHandler(ModelHandler):
     model = User
-    exclude = ["password"]
 
     def _override_get(self, obj, data):
         h = GroupHandler(self.user)
