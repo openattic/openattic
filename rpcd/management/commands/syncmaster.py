@@ -80,9 +80,10 @@ class Command( BaseCommand ):
             keydesc = "Master Key for %s" % serv.hostname()
             if not APIKey.objects.filter(description=keydesc).count():
                 kk = APIKey(description=keydesc, owner=User.objects.get(username=options["owner"]))
+                kk.full_clean()
+                kk.save()
             else:
                 kk = APIKey.objects.get(description=keydesc)
-            kk.save()
 
             serv.peering.PeerHost.create({
                 "name": socket.gethostname(),
