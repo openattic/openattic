@@ -14,6 +14,8 @@
  *  GNU General Public License for more details.
 """
 
+import socket
+
 from optparse import make_option
 from datetime import datetime as PyDateTime
 
@@ -31,6 +33,10 @@ class Command( BaseCommand ):
     option_list = BaseCommand.option_list + (
         make_option( "-m", "--master",
             help="The Master's API URL.",
+            default=""
+            ),
+        make_option( "-o", "--owner",
+            help="The owner's username to use for the Master's API key.",
             default=""
             ),
         )
@@ -55,6 +61,7 @@ class Command( BaseCommand ):
             except APIKey.DoesNotExist:
                 data["owner"] = User.objects.get(id=data["owner"]["id"])
                 kk = APIKey(**data)
+                kk.full_clean()
                 kk.save()
         rpcd_signals.model_mastersync.send(sender=self, serv=serv, model=APIKey)
 
@@ -68,4 +75,17 @@ class Command( BaseCommand ):
         self.sync_users(serv)
         self.sync_keys(serv)
         rpcd_signals.post_mastersync.send(sender=self, serv=serv)
+
+        if not serv.peering.PeerHost.filter({"name": socket.gethostname()}):
+            keydesc = "Master Key for %s" % serv.hostname()
+            if not APIKey.objects.filter(description=keydesc).count():
+                kk = APIKey(description=keydesc, owner=User.objects.get(username=options["owner"]))
+            else:
+                kk = APIKey.objects.get(description=keydesc)
+            kk.save()
+
+            serv.peering.PeerHost.create({
+                "name": socket.gethostname(),
+                "base_url": "http://__:%s@%s:31234/" % (kk.apikey, socket.getfqdn())
+            })
 
