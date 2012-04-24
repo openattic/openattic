@@ -41,6 +41,13 @@ Ext.oa.ApiKey_Panel = Ext.extend(Ext.oa.ShareGridPanel, {
     edit:    gettext('Edit Key'),
     remove:  gettext('Delete Key')
   },
+  deleteConfirm: function(sel){
+    "use strict";
+    return interpolate(gettext("Do you really want to delete %(user)s's key '%(key)s'?"), {
+      user: sel.data.ownername,
+      key:  sel.data.description
+    }, true);
+  },
   storefields: [{
     name: 'ownername',
     mapping: 'owner',
