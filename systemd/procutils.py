@@ -37,8 +37,7 @@ def invoke(args, close_fds=True, return_out_err=False, log=True, stdin=None, fai
 
         Returns the exit code if return_out_err is False, and a tuple of (exit code, stdout, stderr) otherwise.
     """
-    if log:
-        logent = LogEntry( starttime=datetime.now(), command=args[0][:250] )
+    starttime=datetime.now()
 
     procenv = os.environ.copy()
     procenv["LANG"] = procenv["LANGUAGE"] = procenv["LC_ALL"] = "en_US.UTF-8"
@@ -59,6 +58,7 @@ def invoke(args, close_fds=True, return_out_err=False, log=True, stdin=None, fai
         out.extend([ "E " + line for line in procerr.split("\n") if line ])
         out.extend([ "O " + line for line in procout.split("\n") if line ])
 
+        logent = LogEntry( starttime=starttime, command=args[0][:250] )
         logent.endtime  = datetime.now()
         logent.exitcode = proc.returncode
         logent.text     = '\n'.join(out)
