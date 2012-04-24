@@ -175,6 +175,15 @@ def graph(request, service_id, srcidx):
         end   = int(end)
     except ValueError:
         raise Http404("Invalid start or end specified")
+
+    if lastcheck < start and "start" in request.GET and "end" not in request.GET:
+        # Apparently, something is wrong and Nagios hasn't been checking the service
+        # at all in the interval that has been requested. Since start has been explicitly
+        # specified, but "end" has not, this leads to the [start,end] interval being
+        # invalid. Set the end timestamp to "now", so that RRDtool will just display a
+        # grey graph (all values are undefined in the RRD).
+        end = int(time())
+
     if (bgcol and len(bgcol) < 6) or (fgcol and len(fgcol) < 6) or (grcol and len(grcol) < 6):
         raise Http404("Invalid color specified")
 
