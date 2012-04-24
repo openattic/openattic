@@ -15,14 +15,16 @@
 """
 
 import socket
+import sys
 
 from optparse import make_option
+from getpass  import getpass
 from datetime import datetime as PyDateTime
 
 from django.core.management.base import BaseCommand
 from django.contrib.auth.models import User
 
-from xmlrpclib import ServerProxy
+from xmlrpclib import ServerProxy, ProtocolError
 from xmlrpclib import DateTime as XmlDateTime
 
 from rpcd import signals as rpcd_signals
@@ -33,6 +35,11 @@ class Command( BaseCommand ):
     option_list = BaseCommand.option_list + (
         make_option( "-m", "--master",
             help="The Master's API URL.",
+            default=""
+            ),
+        make_option( "-i", "--masterip",
+            help=("The Master's host name/IP Address. Will use the user given in -o for authentication. If "
+                  "used together with --master, --master will take precedence and --masterip will be ignored."),
             default=""
             ),
         make_option( "-o", "--owner",
@@ -66,10 +73,31 @@ class Command( BaseCommand ):
         rpcd_signals.model_mastersync.send(sender=self, serv=serv, model=APIKey)
 
     def handle(self, **options):
-        if not options["master"]:
-            raise ValueError("Need master url")
-        serv = ServerProxy(options["master"])
-        serv.ping()
+        if not options["owner"]:
+            print >>sys.stderr, "The --owner option is needed."
+            return
+
+        masterurl = None
+        if options["master"]:
+            masterurl = options["master"]
+        elif options["masterip"]:
+            masterurl = "http://%s:%s@%s:31234/" % (
+                options["owner"],
+                getpass("Password for %s@%s: " % (options["owner"], options["masterip"])),
+                options["masterip"])
+        if masterurl is None:
+            print >>sys.stderr, "One of --master or --masterip are needed (--master takes precedence over --masterip)."
+            return
+
+        serv = ServerProxy(masterurl)
+        try:
+            serv.ping()
+        except ProtocolError, err:
+            if err.errcode == 401:
+                print >>sys.stderr, err.errmsg
+                return
+            else:
+                raise err
 
         rpcd_signals.pre_mastersync.send(sender=self, serv=serv)
         self.sync_users(serv)
