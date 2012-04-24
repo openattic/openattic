@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2012-04-03 11:14+0200\n"
+"POT-Creation-Date: 2012-04-24 11:51+0200\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -17,134 +17,6 @@ msgstr ""
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=(n != 1)\n"
-
-#: apikey.js:38 apikey.js.c:119
-msgid "API Keys"
-msgstr "API-Schlüssel"
-
-#: apikey.js:40
-msgid "Add Key"
-msgstr "Schlüssel hinzufügen"
-
-#: apikey.js:41
-msgid "Edit Key"
-msgstr "Schlüssel bearbeiten"
-
-#: apikey.js:42
-msgid "Delete Key"
-msgstr "Schlüssel löschen"
-
-#: apikey.js:56
-msgid "Show API URL"
-msgstr "API-URL anzeigen"
-
-#: apikey.js:64
-msgid "API URL"
-msgstr "API-URL"
-
-#: apikey.js:65
-msgid ""
-"Use this URL to connect to the openATTIC API using the API Key you selected."
-msgstr ""
-"Benutzen Sie diese URL, um die openATTIC-API mit dem gewählten Schlüssel zu "
-"nutzen."
-
-#: apikey.js:66
-msgid ""
-"Note that the input field only allows for easier copy-paste, any value you "
-"enter here will be ignored."
-msgstr ""
-"Das Eingabefeld dient nur dazu, das Herauskopieren der URL zu vereinfachen. "
-"Sämtliche Eingaben, die Sie hier machen, werden ignoriert."
-
-#: apikey.js:75 apikey.js.c:97
-msgid "Description"
-msgstr "Beschreibung"
-
-#: apikey.js:79 auth__userfield.js:26
-msgid "Owner"
-msgstr "Besitzer"
-
-#: apikey.js:83 apikey.js.c:102 auth__user.js:69 auth__user.js.c:116
-msgid "Active"
-msgstr "Aktiv"
-
-#: auth__user.js:43
-msgid "Users"
-msgstr "Benutzer"
-
-#: auth__user.js:48
-msgid "Add User"
-msgstr "Benutzer hinzufügen"
-
-#: auth__user.js:49
-msgid "Edit User"
-msgstr "Benutzer bearbeiten"
-
-#: auth__user.js:50 auth__user.js.c:139
-msgid "Delete User"
-msgstr "Benutzer löschen"
-
-#: auth__user.js:53 auth__user.js.c:94
-msgid "User Name"
-msgstr "Benutzername"
-
-#: auth__user.js:57 auth__user.js.c:103
-msgid "First Name"
-msgstr "Vorname"
-
-#: auth__user.js:61 auth__user.js.c:107
-msgid "Last Name"
-msgstr "Nachname"
-
-#: auth__user.js:65
-msgid "E-Mail Address"
-msgstr "E-Mail-Adresse"
-
-#: auth__user.js:74 auth__user.js.c:121
-msgid "Staff"
-msgstr "Personal"
-
-#: auth__user.js:79
-msgid "SU"
-msgstr "Admin"
-
-#: auth__user.js:84
-msgid "Last Login"
-msgstr "Letzter Login"
-
-#: auth__user.js:98
-msgid "Password"
-msgstr "Passwort"
-
-#: auth__user.js:111
-msgid "E-Mail"
-msgstr "E-Mail"
-
-#: auth__user.js:126
-msgid "SuperUser"
-msgstr "Administrator"
-
-#: auth__user.js:140
-msgid "User %(user)s is the owner of %(volcount)s volumes."
-msgstr "Benutzer %(user)s besitzt noch %(volcount)s Volumes."
-
-#: auth__user.js:146
-msgid "Unmount"
-msgstr "Unmount"
-
-#: auth__user.js:148
-#, c-format
-msgid "Do you really want to delete user %s?"
-msgstr "Wollen Sie wirklich den Benutzer %s löschen?"
-
-#: auth__user.js:173
-msgid "User Management"
-msgstr "Benutzer-Verwaltung"
-
-#: auth__userfield.js:39
-msgid "Select..."
-msgstr "Bitte auswählen..."
 
 #: logout.js:18 logout.js.c:24 logout.js.c:37
 msgid "Logout"

@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2012-04-03 11:14+0200\n"
+"POT-Creation-Date: 2012-04-24 11:51+0200\n"
 "PO-Revision-Date: 2012-03-23 13:10\n"
 "Last-Translator: Michael Ziegler <michael.ziegler@it-novum.com>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -19,7 +19,7 @@ msgstr ""
 "Plural-Forms: nplurals=2; plural=(n != 1)\n"
 "X-Translated-Using: django-rosetta 0.6.0\n"
 
-#: index_ext_authed.html:107
+#: index_ext_authed.html:99
 msgid "Do you really wish to remove this button from the toolbar?"
 msgstr "Wollen Sie diesen Button wirklich aus der toolbar-Leiste entfernen?"
 
