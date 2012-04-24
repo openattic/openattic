@@ -182,7 +182,7 @@ Ext.oa.Auth__User_Panel = Ext.extend(Ext.oa.ShareGridPanel, {
         }
         else{
           Ext.Msg.confirm(
-            gettext('Unmount'),
+            gettext('Delete User'),
             interpolate(
               gettext('Do you really want to delete user %s?'),
               [sel.data.username]),

@@ -2,20 +2,20 @@
 # Copyright (C) YEAR THE PACKAGE'S COPYRIGHT HOLDER
 # This file is distributed under the same license as the PACKAGE package.
 # FIRST AUTHOR <EMAIL@ADDRESS>, YEAR.
-# 
+#
 #, fuzzy
 msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2012-04-24 11:30+0200\n"
-"PO-Revision-Date: 2012-04-24 11:33\n"
+"POT-Creation-Date: 2012-04-24 11:49+0200\n"
+"PO-Revision-Date: 2012-04-24 11:48\n"
 "Last-Translator: Michael Ziegler <michael.ziegler@it-novum.com>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
+"Language: \n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"Language: \n"
 "Plural-Forms: nplurals=2; plural=(n != 1)\n"
 "X-Translated-Using: django-rosetta 0.6.6\n"
 
@@ -66,10 +66,97 @@ msgstr ""
 msgid "Description"
 msgstr "Beschreibung"
 
-#: templates/rpcd/apikey.js:86
+#: templates/rpcd/apikey.js:86 templates/rpcd/auth__userfield.js:26
 msgid "Owner"
 msgstr "Besitzer"
 
 #: templates/rpcd/apikey.js:90 templates/rpcd/apikey.js.c:109
+#: templates/rpcd/auth__user.js:108 templates/rpcd/auth__user.js.c:155
 msgid "Active"
 msgstr "Aktiv"
+
+#: templates/rpcd/auth__user.js:43
+msgid "Users"
+msgstr "Benutzer"
+
+#: templates/rpcd/auth__user.js:48
+msgid "Show Volumes of User"
+msgstr "Volumes des Benutzers anzeigen"
+
+#: templates/rpcd/auth__user.js:57
+msgid "Volumes of User"
+msgstr "Volumes des Benutzers"
+
+#: templates/rpcd/auth__user.js:75
+msgid "Volume Name"
+msgstr "Volume-Name"
+
+#: templates/rpcd/auth__user.js:87
+msgid "Add User"
+msgstr "Benutzer hinzufügen"
+
+#: templates/rpcd/auth__user.js:88
+msgid "Edit User"
+msgstr "Benutzer bearbeiten"
+
+#: templates/rpcd/auth__user.js:89 templates/rpcd/auth__user.js.c:178
+#: templates/rpcd/auth__user.js:185
+msgid "Delete User"
+msgstr "Benutzer löschen"
+
+#: templates/rpcd/auth__user.js:92 templates/rpcd/auth__user.js.c:133
+msgid "User Name"
+msgstr "Benutzername"
+
+#: templates/rpcd/auth__user.js:96 templates/rpcd/auth__user.js.c:142
+msgid "First Name"
+msgstr "Vorname"
+
+#: templates/rpcd/auth__user.js:100 templates/rpcd/auth__user.js.c:146
+msgid "Last Name"
+msgstr "Nachname"
+
+#: templates/rpcd/auth__user.js:104
+msgid "E-Mail Address"
+msgstr "E-Mail-Adresse"
+
+#: templates/rpcd/auth__user.js:113 templates/rpcd/auth__user.js.c:160
+msgid "Staff"
+msgstr "Personal"
+
+#: templates/rpcd/auth__user.js:118
+msgid "SU"
+msgstr "SuperUser"
+
+#: templates/rpcd/auth__user.js:123
+msgid "Last Login"
+msgstr "Letzter Login"
+
+#: templates/rpcd/auth__user.js:137
+msgid "Password"
+msgstr "Passwort"
+
+#: templates/rpcd/auth__user.js:150
+msgid "E-Mail"
+msgstr "E-Mail"
+
+#: templates/rpcd/auth__user.js:165
+msgid "SuperUser"
+msgstr "Administrator"
+
+#: templates/rpcd/auth__user.js:179
+msgid "User %(user)s is the owner of %(volcount)s volumes."
+msgstr "%(user)s ist der Besitzer von %(volcount)s Volumes."
+
+#: templates/rpcd/auth__user.js:187
+#, c-format
+msgid "Do you really want to delete user %s?"
+msgstr "Benutzer %s wirklich löschen?"
+
+#: templates/rpcd/auth__user.js:212
+msgid "User Management"
+msgstr "Benutzerverwaltung"
+
+#: templates/rpcd/auth__userfield.js:39
+msgid "Select..."
+msgstr "Bitte wählen..."
