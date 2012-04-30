@@ -180,11 +180,12 @@ Ext.oa.Lvm__Snapshot_Panel = Ext.extend(Ext.grid.GridPanel, {
                         "snapshot__isnull": true,
                         "__exclude__": {
                           "filesystem": "zfs"
-                        }
-                      },
-                      fields: ["name", "megs", "vg"] },
-                    paramOrder: ["kwds", "fields"],
-                    directFn: lvm__LogicalVolume.filter_values
+                        },
+                        "__fields__": ["name", "megs", "vg"]
+                      }
+                    },
+                    paramOrder: ["kwds"],
+                    directFn: lvm__LogicalVolume.filter
                   }),
                   typeAhead:     true,
                   triggerAction: 'all',
