@@ -752,45 +752,45 @@ Ext.oa.Iscsi__Panel = Ext.extend(Ext.Panel, {
             }]
           }),
           buttons:[{
-              text: gettext('Bind IPs'),
-              icon: MEDIA_URL + "/icons2/16x16/actions/gtk-execute.png",
-              layout: 'aboslute',
-              handler: function(){
-                var iscsiSize = iscsiPanel.getSize();
-                var addwin = new Ext.Window({
-                  x: iscsiSize.width / 4 * 3,
-                  y: iscsiSize.height / 5 * 3,
-                  height: 300,
-                  width: 200,
-                  frame: true,
-                  layout: 'fit',
-                  title: 'IPs',
-                  items: {
-                    xtype: 'grid',
-                    ref: 'targets_all',
-                    ddGroup: "target",
-                    enableDrag: true,
-                    height: 400,
-                    viewConfig: { forceFit: true },
-                    store: tgt_all,
-                    colModel: new Ext.grid.ColumnModel({
-                      defaults: {
-                        sortable: true
-                      },
-                      columns: [{
-                        header: "Address",
-                        dataIndex: "address"
-                      }]
-                    })
-                  }
-                });
-                addwin.show();
-              }
-            },{
-              text: gettext('Delete Bind IPs'),
-              icon: MEDIA_URL + "/icons2/16x16/actions/remove.png",
-              handler: deleteBindIPs
-            }],
+            text: gettext('Bind IPs'),
+            icon: MEDIA_URL + "/icons2/16x16/actions/gtk-execute.png",
+            layout: 'aboslute',
+            handler: function(){
+              var iscsiSize = iscsiPanel.getSize();
+              var addwin = new Ext.Window({
+                x: iscsiSize.width / 4 * 3,
+                y: iscsiSize.height / 5 * 3,
+                height: 300,
+                width: 200,
+                frame: true,
+                layout: 'fit',
+                title: 'IPs',
+                items: {
+                  xtype: 'grid',
+                  ref: 'targets_all',
+                  ddGroup: "target",
+                  enableDrag: true,
+                  height: 400,
+                  viewConfig: { forceFit: true },
+                  store: tgt_all,
+                  colModel: new Ext.grid.ColumnModel({
+                    defaults: {
+                      sortable: true
+                    },
+                    columns: [{
+                      header: "Address",
+                      dataIndex: "address"
+                    }]
+                  })
+                }
+              });
+              addwin.show();
+            }
+          },{
+            text: gettext('Delete Bind IPs'),
+            icon: MEDIA_URL + "/icons2/16x16/actions/remove.png",
+            handler: deleteBindIPs
+          }],
           keys: [{ key: [Ext.EventObject.DELETE], handler: deleteBindIPs}],
           listeners: {
             afterrender: function (self){

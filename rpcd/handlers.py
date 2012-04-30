@@ -188,14 +188,6 @@ class ModelHandler(BaseHandler):
             'total':   total
             }
 
-    def filter_values(self, kwds, fields):
-        """ Filter records using the specified keywords (see filter), but return only
-            the fields named in the `fields` list (plus ID).
-        """
-        if "id" not in fields:
-            fields.append("id")
-        return list(self._filter_queryset(kwds).order_by(*self.order).values(*fields))
-
     def filter_combo(self, field, query, kwds):
         """ Filter method that is meant to be used in conjunction with ExtJS
             ComboBoxes. Combos can be filtered by any text the user enters,
