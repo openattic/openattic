@@ -23,6 +23,7 @@ from django.utils.translation import ugettext_lazy as _
 from lvm.models  import LogicalVolume
 from lvm.signals import post_shrink, post_grow
 from ifconfig.models import IPAddress
+from systemd.helpers import dbus_to_python
 
 class Initiator(models.Model):
     name        = models.CharField(max_length=50,  unique=True)
@@ -49,6 +50,16 @@ class Target(models.Model):
             if vol[tid][0] == self.iscsiname:
                 return tid
         return None
+
+    @property
+    def sessions(self):
+        ses = self._iscsi.get_sessions()
+        if self.iscsiname in ses:
+            ret = dbus_to_python(ses[self.iscsiname][1])
+            for key in ret:
+                ret[key] = dict( zip( ("sid", "clients"), ret[key] ) )
+            return ret
+        return {}
 
     def __unicode__(self):
         return self.name
