@@ -96,6 +96,10 @@ class ModelHandler(BaseHandler):
         """ Get a list of all existing object IDs. """
         return [self._idobj(o) for o in self.model.objects.all().order_by(*self.order) ]
 
+    def ids_filter(self, kwds):
+        """ Get a list of existing object IDs, filtered according to kwds. """
+        return [ self._idobj(obj) for obj in self._filter_queryset(kwds).order_by(*self.order) ]
+
     def _idobj(self, obj):
         """ Return an ID for the given object, including the app label and object name. """
         return {'id': obj.id, 'app': obj._meta.app_label, 'obj': obj._meta.object_name}
