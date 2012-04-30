@@ -91,6 +91,28 @@ class SystemD(LockingPlugin):
 
         return targets
 
+    @method(in_signature="", out_signature="a{s(sa{s(sa{sa{ss}})})}")
+    def get_sessions(self):
+        targets = {}
+
+        with open("/proc/net/iet/session", "r") as ses:
+            for line in ses:
+                parts = [ part.split(':', 1) for part in line.strip().split(' ') ]
+                if parts[0][0] == "tid":
+                    # target
+                    tiqn = parts[1][1]
+                    targets[tiqn] = (parts[0][1], {})
+                elif parts[0][0] == "sid":
+                    # session
+                    siqn = parts[1][1]
+                    targets[tiqn][1][siqn] = (parts[0][1], {})
+                elif parts[0][0] == "cid":
+                    # client
+                    ciqn = parts[0][1]
+                    targets[tiqn][1][siqn][1][ciqn] = dict(parts[1:])
+
+        return targets
+
     @method(in_signature="is", out_signature="i")
     def target_new(self, tid, name):
         return invoke(["/usr/sbin/ietadm", "--op", "new", "--tid", str(tid), "--params", "Name="+name])
