@@ -239,7 +239,7 @@ Ext.oa.Iscsi__Panel = Ext.extend(Ext.Panel, {
           listeners: {
             cellclick: function (self, rowIndex, colIndex, evt ){
               var record = self.getStore().getAt(rowIndex);
-              lunStore.load({params: {"target__id":record.data.id}});
+              lunStore.load({params: {"target":record.data.id}});
               init_allow.loadData(record.json.init_allow);
               init_deny.loadData(record.json.init_deny);
               tgt_allow.loadData(record.json.tgt_allow);
