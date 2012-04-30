@@ -23,7 +23,7 @@ var storeUpdate = function(store, parent_id, field){
   }
   args[field] = data;
   iscsi__Target.set( parent_id, args, function(provider, response){
-    if( response.typ === 'exception' ){
+    if( response.type === 'exception' ){
       alert('Error', 'Initiator delete has failed');
     }
   });
