@@ -130,14 +130,14 @@ if havestate:
 
     if rd_ios:
         rd_avg_wait = rd_ticks / rd_ios
-        rd_avg_size = rd_sectors * bytes_per_sector / 1024. / rd_ios
+        rd_avg_size = rd_sectors * bytes_per_sector / rd_ios
     else:
         rd_avg_wait = 0
         rd_avg_size = 0
 
     if wr_ios:
         wr_avg_wait = wr_ticks / wr_ios
-        wr_avg_size = wr_sectors * bytes_per_sector / 1024. / wr_ios
+        wr_avg_size = wr_sectors * bytes_per_sector / wr_ios
     else:
         wr_avg_wait = 0
         wr_avg_size = 0
