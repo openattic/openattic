@@ -122,7 +122,7 @@ if havestate:
     utilization = tot_ticks / interval
 
     if tot_iops:
-        servicetime = utilization / tot_iops
+        servicetime = tot_ticks / tot_ios
     else:
         servicetime = 0
 
