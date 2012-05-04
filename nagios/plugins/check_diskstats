@@ -119,7 +119,7 @@ if havestate:
     tot_ios = rd_ios + wr_ios
     tot_iops = tot_ios / interval
 
-    utilization = tot_ticks / interval
+    utilization = tot_ticks / 1000. / interval
 
     if tot_iops:
         servicetime = tot_ticks / tot_ios
@@ -159,9 +159,9 @@ if havestate:
             "rd_iops=%(rd_iops).2f wr_iops=%(wr_iops).2f "
             "tot_iops=%(tot_iops).2f "
             "rd_bps=%(rd_bps).2fB/s wr_bps=%(wr_bps).2fB/s "
-            "servicetime=%(servicetime).2fs "
-            "tot_avg_wait=%(tot_avg_wait).2fs "
-            "rd_avg_wait=%(rd_avg_wait).2fs wr_avg_wait=%(wr_avg_wait).2fs "
+            "servicetime=%(servicetime)fs "
+            "tot_avg_wait=%(tot_avg_wait)fs "
+            "rd_avg_wait=%(rd_avg_wait)fs wr_avg_wait=%(wr_avg_wait)fs "
             "rd_avg_size=%(rd_avg_size).2fB wr_avg_size=%(wr_avg_size).2fB "
             "load_percent=%(util_percent).2f%%;75;85;0;100 ") % {
         "disk":         disk,
