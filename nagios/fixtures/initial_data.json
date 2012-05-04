@@ -155,7 +155,7 @@
         "pk": 4,
         "model": "nagios.graph",
         "fields": {
-            "verttitle": "ms",
+            "verttitle": "s",
             "fields": "5",
             "command": 9,
             "title": "Service Time"
@@ -165,7 +165,7 @@
         "pk": 5,
         "model": "nagios.graph",
         "fields": {
-            "verttitle": "ms",
+            "verttitle": "s",
             "fields": "6",
             "command": 9,
             "title": "Average Latency"
@@ -175,7 +175,7 @@
         "pk": 6,
         "model": "nagios.graph",
         "fields": {
-            "verttitle": "ms read (-) / write (+)",
+            "verttitle": "s read (-) / write (+)",
             "fields": "-7 8",
             "command": 9,
             "title": "Average Latency (r/w)"
