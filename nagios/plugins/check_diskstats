@@ -119,8 +119,6 @@ if havestate:
     tot_ios = rd_ios + wr_ios
     tot_iops = tot_ios / interval
 
-    utilization = tot_ticks / interval
-
     if tot_iops:
         servicetime = tot_ticks / tot_ios
     else:
@@ -145,7 +143,7 @@ if havestate:
         wr_avg_wait = 0
         wr_avg_size = 0
 
-    util_percent = utilization / 10.
+    util_percent = tot_ticks / (interval * 1000.) * 100.
 
     if util_percent > 75:
         exit = 1
