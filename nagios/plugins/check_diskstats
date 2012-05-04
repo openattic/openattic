@@ -39,6 +39,8 @@ with open("/sys/block/%s/stat" % disk, "rb") as fd:
     ]))
     currstate["timestamp"] = time()
 
+with open("/sys/block/%s/queue/logical_block_size" % disk, "rb") as fd:
+    bytes_per_sector = int(fd.read())
 
 # Sanity-Check the state file.
 
@@ -93,7 +95,6 @@ def wrapdiff(curr, last):
 
 
 if havestate:
-    bytes_per_sector = 512
     interval = float(currstate["timestamp"] - state.getfloat("state", "timestamp"))
 
     rd_ios = wrapdiff(currstate["rd_ios"], state.getfloat("state", "rd_ios"))
