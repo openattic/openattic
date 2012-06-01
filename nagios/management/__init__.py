@@ -35,7 +35,7 @@ def create_nagios(app, created_models, verbosity, interactive, db, **kwargs):
         dbus.SystemBus().get_object(settings.DBUS_IFACE_SYSTEMD, "/nagios").write_contacts()
     except dbus.DBusException:
         # Fails during syncdb of initial installation, before daemons are running
-        pass
+        return
 
     for servstate in Service.nagstate["servicestatus"]:
         cmdargs = servstate["check_command"].split('!')
