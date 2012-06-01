@@ -137,12 +137,16 @@ Ext.oa.getDefaultPortlets = function(tools){
                 conf.data.push([result.result[key]]);
               }
               chart.canvas.updateData({ y: conf });
+              chart.el.unmask();
             }
           });
         }
         updateChart.defer(30000);
       };
-      updateChart();
+      chart.on("afterrender", function(){
+        chart.el.mask(gettext("Loading..."));
+        updateChart();
+      });
       return chart;
     }())
   }, {
@@ -184,12 +188,16 @@ Ext.oa.getDefaultPortlets = function(tools){
                 conf.data.push([result.result[key]]);
               }
               chart.canvas.updateData({ y: conf });
+              chart.el.unmask();
             }
           });
         }
         updateChart.defer(30000);
       };
-      updateChart();
+      chart.on("afterrender", function(){
+        chart.el.mask(gettext("Loading..."));
+        updateChart();
+      });
       chart.on("leftclick", function(){});
       return chart;
     }())
