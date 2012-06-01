@@ -14,7 +14,8 @@
  *  GNU General Public License for more details.
 """
 
-from os.path import getmtime
+from threading import Lock
+from os.path import getmtime, exists
 from time import sleep
 
 class NagiosState(object):
@@ -28,6 +29,7 @@ class NagiosState(object):
         self.timestamp   = 0
         self.nagstate    = None
         self._servicemap = {}
+        self.lock        = Lock()
 
     def __getitem__(self, name):
         self.update()
@@ -56,21 +58,23 @@ class NagiosState(object):
 
     def update(self):
         retried = 0
-        while True:
-            try:
-                mtime = getmtime(self.statfile)
-            except OSError, err:
-                if err.errno != 2 or retried >= 5:
-                    raise
-                else:
+        try:
+            self.lock.acquire()
+            while True:
+                if exists(self.statfile):
+                    mtime = getmtime(self.statfile)
+                    break
+                elif retried < 5:
                     sleep(0.1)
                     retried += 1
-            else:
-                break
+                else:
+                    raise SystemError("'%s' does not exist" % self.statfile)
 
-        if mtime > self.timestamp:
-            self.nagstate  = self.parse_status()
-            self.timestamp = mtime
+            if mtime > self.timestamp:
+                self.nagstate  = self.parse_status()
+                self.timestamp = mtime
+        finally:
+            self.lock.release()
 
     def parse_status(self):
         ST_BEGINSECT, ST_SECTNAME, ST_BEGINVALUE, ST_VALUE, ST_COMMENT = range(5)

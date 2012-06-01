@@ -17,6 +17,7 @@
 # make "/" operator always use floats
 from __future__ import division
 
+import sys
 import re
 from os.path  import exists
 from time     import time
@@ -135,6 +136,7 @@ def graph(request, service_id, srcidx):
         If the image should be rendered upon a background image, the image's path needs to be
         configured in the Nagios module's settings.
     """
+    print >> sys.stderr, "srs nagios."
     serv  = get_object_or_404(Service, pk=int(service_id))
 
     srcidx = int(srcidx)
@@ -149,6 +151,8 @@ def graph(request, service_id, srcidx):
     perfdata = serv.perfdata
     if not perfdata:
         raise Http404("Performance data not available")
+
+    print >> sys.stderr, "srs nagios found perfdata."
 
     rrdpath = nagios_settings.RRD_PATH % serv.description.replace(' ', '_').encode("UTF-8")
     if not exists(rrdpath):
@@ -190,6 +194,8 @@ def graph(request, service_id, srcidx):
     graphtitle = serv.description
     if graph is not None and width >= 350:
         graphtitle += ' - ' + graph.title
+
+    print >> sys.stderr, "srs nagios initializing."
 
     args = [
         "rrdtool", "graph", "-", "--start", str(start), "--end", str(end), "--height", str(height),
@@ -251,6 +257,8 @@ def graph(request, service_id, srcidx):
 
     stacked = False
     lastinv = None
+
+    print >> sys.stderr, "srs nagios processing graphs."
 
     for srcidx in indexes:
         if srcidx in ('+s', '-s'):
@@ -413,6 +421,8 @@ def graph(request, service_id, srcidx):
 
         lastinv = invert
 
+    print >> sys.stderr, "srs nagios finalizing image."
+
     def mkdate(text, timestamp):
         return "COMMENT:%-15s %-30s\\j" % (
             text,
@@ -430,6 +440,8 @@ def graph(request, service_id, srcidx):
     ret, out, err = invoke(args, log=False, return_out_err=True)
 
     if bgcol:
+        print >> sys.stderr, "srs nagios transparency."
+
         # User wants a background color, so we made the image transparent
         # before. Now is the time to fix that.
         rgbbg    = rgbstr_to_rgb_int( bgcol )
@@ -449,6 +461,8 @@ def graph(request, service_id, srcidx):
             buf = StringIO()
             imgout.save( buf, "PNG" )
             out = buf.getvalue()
+
+    print >> sys.stderr, "srs nagios srsly done."
 
     return HttpResponse( out, mimetype="image/png" )
 
