@@ -49,7 +49,10 @@ Ext.oa.getDefaultPortlets = function(tools){
               return (val.stat.used / val.stat.size * 100 ).toFixed(2);
             }
           }],
-          directFn: lvm__LogicalVolume.all
+          directFn: lvm__LogicalVolume.filter,
+          baseParams: {
+            '__exclude__': { filesystem: '' }
+          }
         });
         store.setDefaultSort("fsused", "DESC");
         return store;
