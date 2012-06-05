@@ -181,7 +181,7 @@ Ext.oa.Lvm__Snapshot_Panel = Ext.extend(Ext.grid.GridPanel, {
                         "__exclude__": {
                           "filesystem": "zfs"
                         },
-                        "__fields__": ["name", "megs", "vg"]
+                        "__fields__": ["id", "name", "megs", "vg"]
                       }
                     },
                     paramOrder: ["kwds"],
@@ -263,7 +263,7 @@ Ext.oa.Lvm__Snapshot_Panel = Ext.extend(Ext.grid.GridPanel, {
                         'snapshot': {
                           'app': 'lvm',
                           'obj': 'LogicalVolume',
-                          'id': self.ownerCt.ownerCt.volfield.getValue()
+                          'id':  self.ownerCt.ownerCt.volfield.getValue()
                         },
                         'name':       self.ownerCt.ownerCt.namefield.getValue(),
                         'megs':       self.ownerCt.ownerCt.sizefield.getValue()
