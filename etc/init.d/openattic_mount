@@ -56,7 +56,7 @@ elif command == "stop":
     print "Unmounting all volumes..."
     LogicalVolume.unmount_all()
 
-elif command == "restart":
+elif command in ("restart", "force-reload"):
     print "Unmounting all volumes..."
     LogicalVolume.unmount_all()
     print "Mounting all volumes..."
