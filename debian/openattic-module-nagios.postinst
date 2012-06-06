@@ -1,0 +1,11 @@
+#!/bin/sh
+
+set -e
+
+if [ "$1" = "configure" ] ; then
+	if ! groups openattic | grep -q nagios; then
+		adduser openattic nagios
+	fi
+fi
+
+#DEBHELPER#
