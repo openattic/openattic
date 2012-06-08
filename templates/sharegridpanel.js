@@ -19,6 +19,7 @@ Ext.oa.ShareGridPanel = Ext.extend(Ext.grid.GridPanel, {
   texts: {},
   window: {},
   allowEdit: true,
+  filterParams: false,
 
   initComponent: function(){
     "use strict";
@@ -67,12 +68,15 @@ Ext.oa.ShareGridPanel = Ext.extend(Ext.grid.GridPanel, {
           }
           return cols;
         }()),
-        directFn: self.api.all
+        directFn: (this.filterParams === false ? self.api.all : self.api.filter)
       }),
       viewConfig: {
         forceFit: true
       }
     }));
+    if(this.filterParams !== false){
+      this.store.baseParams = this.filterParams;
+    }
     this.buttons.unshift({
       text: "",
       icon: MEDIA_URL + "/icons2/16x16/actions/reload.png",
