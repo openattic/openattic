@@ -100,7 +100,8 @@ Ext.oa.Lvm__LogicalVolume_Panel = Ext.extend(Ext.Panel, {
             allowBlank: false,
             name: "megs",
             ref: 'sizefield',
-            xtype: "numberfield"
+            xtype: "numberfield",
+            minValue: 100
           }, {
             xtype: "label",
             ref:   "sizelabel",
