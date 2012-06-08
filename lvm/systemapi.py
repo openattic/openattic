@@ -403,3 +403,6 @@ class SystemD(BasePlugin):
         ret, out, err = invoke(args, return_out_err=True, log=False)
         return [line.split("\t") for line in out.split("\n")[:-1]]
 
+    @method(in_signature="iss", out_signature="")
+    def zfs_expand(self, jid, name, device):
+        self.job_add_command(jid, ["zpool", "online", "-e", name, device])

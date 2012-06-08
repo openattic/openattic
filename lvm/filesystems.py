@@ -196,6 +196,15 @@ class Zfs(FileSystem):
     def destroy(self):
         return self.lv.lvm.zfs_destroy(self.lv.name)
 
+    def online_resize_available(self, grow):
+        return grow
+
+    def resize(self, jid, grow):
+        if not grow:
+            raise SystemError("ZFS-Fuse does not support shrinking.")
+        else:
+            self.lv.lvm.zfs_expand( jid, self.lv.name, self.lv.path )
+
     @property
     def mounted(self):
         try:
