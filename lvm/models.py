@@ -566,12 +566,14 @@ class ZfsSubvolume(models.Model):
 
     def save( self, *args, **kwargs ):
         ret = models.Model.save(self, *args, **kwargs)
-        self.volume.lvm.zfs_create_volume(self.volume.name, self.volname)
+        self.volume._build_job()
+        self.volume.fs.create_subvolume(self.volume._jid, self)
+        self.volume._enqueue_job()
         return ret
 
     def delete( self ):
         ret = models.Model.delete(self)
-        self.volume.lvm.zfs_destroy_volume(self.volume.name, self.volname)
+        self.volume.fs.destroy_subvolume(self)
         return ret
 
 
@@ -628,12 +630,14 @@ class ZfsSnapshot(models.Model):
         return self.volume.path
 
     def save( self, *args, **kwargs ):
-        self.volume.lvm.zfs_create_snapshot(self.origvolume.name, self.snapname)
+        self.volume._build_job()
+        self.volume.fs.create_snapshot(self.volume._jid, self)
+        self.volume._enqueue_job()
         return models.Model.save(self, *args, **kwargs)
 
     def delete( self, database_only=False ):
         if not database_only:
-            self.volume.lvm.zfs_destroy_snapshot(self.origvolume.name, self.snapname)
+            self.volume.fs.destroy_snapshot(self)
         return models.Model.delete(self)
 
     def rollback( self ):
@@ -646,7 +650,7 @@ class ZfsSnapshot(models.Model):
         print kwds
         for snap in ZfsSnapshot.objects.filter(**kwds):
             snap.delete(database_only=True) # -R will take care of them in the system
-        self.volume.lvm.zfs_rollback_snapshot(self.origvolume.name, self.snapname)
+        self.volume.fs.rollback_snapshot(self)
 
 class LVMetadata(models.Model):
     """ Stores arbitrary metadata for a volume. This can be anything you like,

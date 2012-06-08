@@ -203,6 +203,21 @@ class Zfs(FileSystem):
         else:
             self._lvm.zfs_expand( jid, self.lv.name, self.lv.path )
 
+    def create_subvolume(self, jid, subvolume):
+        self._lvm.zfs_create_volume(jid, self.lv.name, subvolume.volname)
+
+    def destroy_subvolume(self, subvolume):
+        self._lvm.zfs_destroy_volume(self.lv.name, subvolume.volname)
+
+    def create_snapshot(self, jid, snapshot):
+        self._lvm.zfs_create_snapshot(jid, snapshot.origvolume.name, snapshot.snapname)
+
+    def destroy_snapshot(self, snapshot):
+        self._lvm.zfs_destroy_snapshot(snapshot.origvolume.name, snapshot.snapname)
+
+    def rollback_snapshot(self, snapshot):
+        self._lvm.zfs_rollback_snapshot(snapshot.origvolume.name, snapshot.snapname)
+
     @property
     def mounted(self):
         try:
