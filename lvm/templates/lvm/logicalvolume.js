@@ -27,6 +27,9 @@ Ext.oa.Lvm__LogicalVolume_Panel = Ext.extend(Ext.oa.ShareGridPanel, {
   api: lvm__LogicalVolume,
   id: "lvm__logicalvolume_panel_inst",
   title: gettext("Logical Volumes"),
+  filterParams: {
+    "snapshot__isnull": true
+  },
   texts: {
     add:     gettext('Add Volume'),
     edit:    gettext('Edit Volume'),
