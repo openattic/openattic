@@ -63,13 +63,18 @@
     <script type="text/javascript">
       Ext.Ajax.on("requestcomplete", function( provider, response, opt ){
         var respdata  = Ext.decode( response.responseText );
-        if( respdata.type === "exception" && respdata.message === "Access Denied!" ){
-          Ext.oa.RedDangerousMessage.alert("Session expired",
-            "It seems your session has expired. The page will now be reloaded so you can login again.",
-            function(){
-              window.location.reload();
-            }
-          );
+        if( respdata.type === "exception" ){
+          if( respdata.message === "Access Denied!" ){
+            Ext.oa.RedDangerousMessage.alert("Session expired",
+              "It seems your session has expired. The page will now be reloaded so you can login again.",
+              function(){
+                window.location.reload();
+              }
+            );
+          }
+          else if( respdata.where ){
+            Ext.Msg.alert("Error: " + respdata.message, "<pre>" + respdata.where + "</pre>");
+          }
         }
       });
     </script>
