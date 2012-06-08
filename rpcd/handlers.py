@@ -118,6 +118,8 @@ class ModelHandler(BaseHandler):
         """ Return an object given by ID.
             Meant to be used in conjunction with ExtJS datastores.
         """
+        if id == -1:
+            return {}
         if not isinstance( id, dict ):
             id = {'id': int(id)}
         data = {}
