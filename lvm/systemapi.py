@@ -15,7 +15,7 @@
 """
 
 import os
-from time import time, sleep
+from time import time
 from systemd import invoke, create_job, logged, BasePlugin, method, signal
 
 from lvm.conf   import settings as lvm_settings
@@ -179,42 +179,41 @@ class SystemD(BasePlugin):
         return invoke(["/sbin/pvremove", '-f', device])
 
 
-    @method(in_signature="sss", out_signature="i")
-    def fs_mount(self, fstype, devpath, mountpoint):
+    @method(in_signature="isss", out_signature="")
+    def fs_mount(self, jid, fstype, devpath, mountpoint):
         if not os.path.exists(mountpoint):
             os.makedirs(mountpoint)
-        return invoke(["/bin/mount", "-t", fstype, devpath, mountpoint])
-
-    @method(in_signature="ss", out_signature="i")
-    def fs_unmount(self, devpath, mountpoint):
-        if not os.path.exists(mountpoint) or not os.path.ismount(mountpoint):
-            return -1
-        ret = invoke(["/bin/umount", mountpoint])
-        if ret == 0 and os.path.exists(mountpoint):
-            os.rmdir(mountpoint)
-        return ret
-
-    @method(in_signature="sss", out_signature="i")
-    def fs_chown(self, mountpoint, user, group):
-        if group:
-            return invoke(["/bin/chown", "-R", ("%s:%s" % (user, group)), mountpoint])
+        cmd = ["/bin/mount", "-t", fstype, devpath, mountpoint]
+        if jid != -1:
+            self.job_add_command(jid, cmd)
         else:
-            return invoke(["/bin/chown", "-R", user, mountpoint])
+            invoke(cmd)
+
+    @method(in_signature="iss", out_signature="")
+    def fs_unmount(self, jid, devpath, mountpoint):
+        if not os.path.exists(mountpoint) or not os.path.ismount(mountpoint):
+            return
+        cmd = ["/bin/umount", mountpoint]
+        if jid != -1:
+            self.job_add_command(jid, cmd)
+        else:
+            invoke(cmd)
+
+    @method(in_signature="isss", out_signature="")
+    def fs_chown(self, jid, mountpoint, user, group):
+        if group:
+            self.job_add_command(jid, ["/bin/chown", "-R", ("%s:%s" % (user, group)), mountpoint])
+        else:
+            self.job_add_command(jid, ["/bin/chown", "-R", user, mountpoint])
 
     @method(in_signature="s", out_signature="a{ss}")
     def e2fs_info(self, devpath):
         ret, out, err = invoke(["/sbin/tune2fs", "-l", devpath], return_out_err=True)
         return dict([ [part.strip() for part in line.split(":", 1)] for line in out.split("\n")[1:] if line ])
 
-    @method(in_signature="sssss", out_signature="")
-    def e2fs_format(self, devpath, label, chown, chgrp, mountpoint):
-        if not os.path.exists(mountpoint):
-            os.makedirs(mountpoint)
-        create_job([
-            ["/sbin/mke2fs", "-q", "-m0", "-L", label, devpath],
-            ["/bin/mount", "-t", "ext2", devpath, mountpoint],
-            ["/bin/chown", "-R", ("%s:%s" % (chown, chgrp)), mountpoint]
-            ], self.format_complete, (devpath, mountpoint, "ext2"))
+    @method(in_signature="iss", out_signature="")
+    def e2fs_format(self, jid, devpath, label):
+        self.job_add_command(jid, ["/sbin/mke2fs", "-q", "-m0", "-L", label, devpath])
 
     @method(in_signature="is", out_signature="")
     def e2fs_check(self, jid, devpath):
@@ -224,35 +223,17 @@ class SystemD(BasePlugin):
     def e2fs_resize(self, jid, devpath, megs, grow):
         self.job_add_command(jid, ["/sbin/resize2fs", devpath, ("%dM" % megs)])
 
-    @method(in_signature="sssss", out_signature="")
-    def e3fs_format(self, devpath, label, chown, chgrp, mountpoint):
-        if not os.path.exists(mountpoint):
-            os.makedirs(mountpoint)
-        create_job([
-            ["/sbin/mke2fs", "-q", "-j", "-m0", "-L", label, devpath],
-            ["/bin/mount", "-t", "ext3", devpath, mountpoint],
-            ["/bin/chown", "-R", ("%s:%s" % (chown, chgrp)), mountpoint]
-            ], self.format_complete, (devpath, mountpoint, "ext3"))
+    @method(in_signature="iss", out_signature="")
+    def e3fs_format(self, jid, devpath, label):
+        self.job_add_command(jid, ["/sbin/mke2fs", "-q", "-j", "-m0", "-L", label, devpath])
 
-    @method(in_signature="sssss", out_signature="")
-    def e4fs_format(self, devpath, label, chown, chgrp, mountpoint):
-        if not os.path.exists(mountpoint):
-            os.makedirs(mountpoint)
-        create_job([
-            ["/sbin/mkfs.ext4", "-q", "-m0", "-L", label, devpath],
-            ["/bin/mount", "-t", "ext4", devpath, mountpoint],
-            ["/bin/chown", "-R", ("%s:%s" % (chown, chgrp)), mountpoint]
-            ], self.format_complete, (devpath, mountpoint, "ext4"))
+    @method(in_signature="iss", out_signature="")
+    def e4fs_format(self, jid, devpath, label):
+        self.job_add_command(jid, ["/sbin/mkfs.ext4", "-q", "-m0", "-L", label, devpath])
 
-    @method(in_signature="ssss", out_signature="")
-    def ntfs_format(self, devpath, chown, chgrp, mountpoint):
-        if not os.path.exists(mountpoint):
-            os.makedirs(mountpoint)
-        create_job([
-            ["/sbin/mkntfs", "--fast", devpath],
-            ["/bin/mount", "-t", "ntfs-3g", devpath, mountpoint],
-            ["/bin/chown", "-R", ("%s:%s" % (chown, chgrp)), mountpoint]
-            ], self.format_complete, (devpath, mountpoint, "ntfs-3g"))
+    @method(in_signature="is", out_signature="")
+    def ntfs_format(self, jid, devpath):
+        self.job_add_command(jid, ["/sbin/mkntfs", "--fast", devpath])
 
     @signal(signature="sss")
     def format_complete(self, devpath, mountpoint, fstype):
@@ -349,40 +330,42 @@ class SystemD(BasePlugin):
     def zfs_set(self, device, field, value):
         return invoke(["zfs", "set", ("%s=%s" % (field, value)), device])
 
-    @method(in_signature="s", out_signature="i")
-    def zfs_mount(self, device):
-        return invoke(["zfs", "mount", device])
+    @method(in_signature="is", out_signature="")
+    def zfs_mount(self, jid, device):
+        cmd = ["zfs", "mount", device]
+        if jid != -1:
+            self.job_add_command(jid, cmd)
+        else:
+            invoke(cmd)
 
-    @method(in_signature="s", out_signature="i")
-    def zfs_unmount(self, device):
-        return invoke(["zfs", "unmount", device])
+    @method(in_signature="is", out_signature="")
+    def zfs_unmount(self, jid, device):
+        cmd = ["zfs", "unmount", device]
+        if jid != -1:
+            self.job_add_command(jid, cmd)
+        else:
+            invoke(cmd)
 
     @method(in_signature="s", out_signature="i")
     def zfs_destroy(self, device):
-        sleep (0.5)
         return invoke(["zpool", "destroy", device])
 
-    @method(in_signature="sssss", out_signature="")
-    def zfs_format(self, devpath, label, chown, chgrp, mountpoint):
-        if not os.path.exists(mountpoint):
-            os.makedirs(mountpoint)
-        create_job([
-            ["zpool", "create", "-m", mountpoint, label, devpath],
-            ["/bin/chown", "-R", ("%s:%s" % (chown, chgrp)), mountpoint]
-            ], self.format_complete, (devpath, mountpoint, "zfs"))
+    @method(in_signature="isss", out_signature="")
+    def zfs_format(self, jid, devpath, label, mountpoint):
+        self.job_add_command(jid, ["zpool", "create", "-m", mountpoint, label, devpath])
 
-    @method(in_signature="ss", out_signature="i")
-    def zfs_create_volume(self, pool, volume):
-        return invoke(["zfs", "create", "%s/%s" % (pool, volume)])
+    @method(in_signature="iss", out_signature="")
+    def zfs_create_volume(self, jid, pool, volume):
+        self.job_add_command(jid, ["zfs", "create", "%s/%s" % (pool, volume)])
 
     @method(in_signature="ss", out_signature="i")
     def zfs_destroy_volume(self, pool, volume):
         return invoke(["zfs", "destroy", "%s/%s" % (pool, volume)])
 
-    @method(in_signature="ss", out_signature="i")
-    def zfs_create_snapshot(self, orig, snapshot):
-        invoke(["zfs", "snapshot", "%s@%s" % (orig, snapshot)])
-        return invoke(["zfs", "clone",
+    @method(in_signature="iss", out_signature="")
+    def zfs_create_snapshot(self, jid, orig, snapshot):
+        self.job_add_command(jid, ["zfs", "snapshot", "%s@%s" % (orig, snapshot)])
+        self.job_add_command(jid, ["zfs", "clone",
             "%s@%s" % (orig, snapshot),
             "%s/.%s" % (orig, snapshot)
             ])

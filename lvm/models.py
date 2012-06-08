@@ -18,6 +18,7 @@ import dbus
 import re
 import os
 import os.path
+
 from django.contrib.auth.models import User
 from django.db import models
 from django.conf import settings
@@ -148,6 +149,8 @@ class VolumeGroup(models.Model):
     def lvm_free_megs(self):
         return float( self.lvm_info["LVM2_VG_FREE"] )
 
+
+
 class LogicalVolume(models.Model):
     """ Represents a LVM Logical Volume and offers management functions.
 
@@ -166,27 +169,41 @@ class LogicalVolume(models.Model):
 
     def __init__( self, *args, **kwargs ):
         models.Model.__init__( self, *args, **kwargs )
+        self._sysd = None
         self._lvm = None
         self._lvm_info = None
         self._fs = None
+        self._jid = None
 
     def __unicode__(self):
         return self.name
 
+    def _build_job(self):
+        if self._jid is not None:
+            raise SystemError("Already building a job...")
+        if self._sysd is None:
+            self._sysd = dbus.SystemBus().get_object(settings.DBUS_IFACE_SYSTEMD, "/")
+        self._jid = self._sysd.build_job()
+
+    def _enqueue_job(self):
+        if self._jid is None:
+            raise SystemError("Not building a job...")
+        self._sysd.enqueue_job(self._jid)
+        self._jid = None
 
     @classmethod
     def mount_all(cls):
         """ Mount all volumes which are not currently mounted. """
         for lv in LogicalVolume.objects.exclude(filesystem=""):
-            if not lv.fs.mounted:
-                lv.fs.mount()
+            if not lv.mounted:
+                lv.mount()
 
     @classmethod
     def unmount_all(cls):
         """ Unmount all volumes which are currently mounted. """
         for lv in LogicalVolume.objects.exclude(filesystem=""):
-            if lv.fs.mounted:
-                lv.fs.unmount()
+            if lv.mounted:
+                lv.unmount()
 
     @classmethod
     def mounted_volumes(cls):
@@ -224,6 +241,18 @@ class LogicalVolume(models.Model):
             if self._fs is None:
                 self._fs = get_fs_by_name(self.filesystem)(self)
             return self._fs
+
+    @property
+    def mounted(self):
+        if not self.filesystem:
+            raise SystemError("Volume '%s' does not have a filesystem, cannot mount." % self.name)
+        return self.fs.mounted
+
+    @property
+    def fs_info(self):
+        if not self.filesystem:
+            return None
+        return self.fs.info
 
     def get_shares( self, app_label=None ):
         """ Iterate all the shares configured for this LV. """
@@ -301,6 +330,22 @@ class LogicalVolume(models.Model):
     ### PROCESSING METHODS ###
     ##########################
 
+    def mount(self):
+        if not self.filesystem:
+            raise SystemError("Volume '%s' does not have a filesystem, cannot mount." % self.name)
+        if self.formatted and not self.fs.mounted:
+            lvm_signals.pre_mount.send(sender=self, mountpoint=self.mountpoints[0])
+            self.fs.mount(-1)
+            lvm_signals.post_mount.send(sender=self, mountpoint=self.mountpoints[0])
+
+    def unmount(self):
+        if not self.filesystem:
+            raise SystemError("Volume '%s' does not have a filesystem, cannot unmount." % self.name)
+        if self.fs.mounted:
+            lvm_signals.pre_unmount.send(sender=self, mountpoint=self.mountpoints[0])
+            self.fs.unmount(-1)
+            lvm_signals.post_unmount.send(sender=self, mountpoint=self.mountpoints[0])
+
     def install( self ):
         lvm_signals.pre_install.send(sender=self)
         if self.snapshot:
@@ -314,70 +359,58 @@ class LogicalVolume(models.Model):
 
     def uninstall( self ):
         lvm_signals.pre_uninstall.send(sender=self)
-        for share in self.get_shares():
-            share.delete()
-
-        mc = self.modchain[:]
-        mc.reverse()
-        for mod in mc:
-            mod.delete()
-
         if not self.snapshot:
             self.lvm.lvchange(self.device, False)
         self.lvm.lvremove(self.device)
         lvm_signals.post_uninstall.send(sender=self)
 
     def resize( self ):
-        sysd = dbus.SystemBus().get_object(settings.DBUS_IFACE_SYSTEMD, "/")
-        jid  = sysd.build_job()
-
         if self.filesystem and self.fs.mounted and \
            not self.fs.online_resize_available(self.megs > self.lvm_megs):
-            sysd.job_add_command(jid, ["umount", self.fs.mountpoints[0].encode("ascii")])
+            self.fs.unmount(self._jid)
             need_mount = True
         else:
             need_mount = False
 
         if self.megs < self.lvm_megs:
             # Shrink FS, then Volume
-            lvm_signals.pre_shrink.send(sender=self, jid=jid)
+            lvm_signals.pre_shrink.send(sender=self, jid=self._jid)
 
             if self.filesystem:
-                self.fs.resize(jid, grow=False)
+                self.fs.resize(self._jid, grow=False)
 
             for mod in self.modchain:
-                mod.resize(jid)
+                mod.resize(self._jid)
 
-            self.lvm.lvresize(jid, self.device, self.megs, False)
+            self.lvm.lvresize(self._jid, self.device, self.megs, False)
 
-            lvm_signals.post_shrink.send(sender=self, jid=jid)
+            lvm_signals.post_shrink.send(sender=self, jid=self._jid)
         else:
             # Grow Volume, then FS
-            lvm_signals.pre_grow.send(sender=self, jid=jid)
+            lvm_signals.pre_grow.send(sender=self, jid=self._jid)
 
-            self.lvm.lvresize(jid, self.device, self.megs, True)
+            self.lvm.lvresize(self._jid, self.device, self.megs, True)
 
             for mod in self.modchain:
-                mod.resize(jid)
+                mod.resize(self._jid)
 
             if self.filesystem:
-                self.fs.resize(jid, grow=True)
+                self.fs.resize(self._jid, grow=True)
 
-            lvm_signals.post_grow.send(sender=self, jid=jid)
+            lvm_signals.post_grow.send(sender=self, jid=self._jid)
 
         if need_mount:
-            sysd.job_add_command(jid, ["mount", self.fs.mountpoints[0].encode("ascii")])
+            self.fs.mount(self._jid)
 
-        sysd.enqueue_job(jid)
         self._lvm_info = None # outdate cached information
 
     def setupfs( self ):
         if not self.formatted:
-            self.fs.format()
+            self.fs.format(self._jid)
             self.formatted = True
             return True
         else:
-            self.fs.mount()
+            self.fs.mount(self._jid)
             return False
 
     def clean(self):
@@ -404,6 +437,8 @@ class LogicalVolume(models.Model):
 
         ret = models.Model.save(self, *args, **kwargs)
 
+        self._build_job()
+
         if install:
             self.install()
 
@@ -422,20 +457,28 @@ class LogicalVolume(models.Model):
         elif self.megs != self.lvm_megs:
             self.resize()
 
+        self._enqueue_job()
+
         return ret
 
     def delete(self):
-        """ If active, transition to delete; if new or done, actually call delete().
+        for share in self.get_shares():
+            share.delete()
 
-            Overrides models.Model.delete() in order to cascade to all shares and
-            block device modules.
-        """
+        mc = self.modchain[:]
+        mc.reverse()
+        for mod in mc:
+            mod.delete()
+
         if self.filesystem:
             if self.fs.mounted:
-                self.fs.unmount()
+                self.fs.unmount(-1)
             self.fs.destroy()
+
         self.uninstall()
+
         models.Model.delete(self)
+
         if self.filesystem:
             self.lvm.write_fstab()
 

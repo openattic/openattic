@@ -30,8 +30,8 @@ post_grow       = Signal(providing_args=["jid"])
 pre_format      = Signal()
 post_format     = Signal()
 
-pre_mount       = Signal(providing_args=["device", "mountpoint"])
-post_mount      = Signal(providing_args=["device", "mountpoint"])
+pre_mount       = Signal(providing_args=["mountpoint"])
+post_mount      = Signal(providing_args=["mountpoint"])
 pre_unmount     = Signal(providing_args=["mountpoint"])
 post_unmount    = Signal(providing_args=["mountpoint"])
 

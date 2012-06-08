@@ -72,9 +72,9 @@ class LvHandler(ModelHandler):
         if obj.filesystem:
             data['fs'] = {
                 'mountpoints': obj.fs.mountpoints,
-                'mounted':     obj.fs.mounted
+                'mounted':     obj.mounted
                 }
-            if obj.fs.mounted:
+            if obj.mounted:
                 data['fs']['stat'] = obj.fs.stat
         else:
             data['fs'] = None
@@ -99,7 +99,7 @@ class LvHandler(ModelHandler):
         """ Return detailed information about the given file system. """
         lv = LogicalVolume.objects.get(id=id)
         if lv.filesystem:
-            return lv.fs.info
+            return lv.fs_info
         return {}
 
     def lvm_info(self, id):
@@ -119,8 +119,8 @@ class LvHandler(ModelHandler):
     def mount(self, id):
         """ Mount the given volume if it is not currently mounted. """
         lv = LogicalVolume.objects.get(id=id)
-        if lv.filesystem and not lv.fs.mounted:
-            return lv.fs.mount()
+        if lv.filesystem and not lv.mounted:
+            return lv.mount()
         return False
 
     def unmount_all(self):
@@ -134,14 +134,14 @@ class LvHandler(ModelHandler):
     def unmount(self, id):
         """ Unmount the given volume if it is currently mounted. """
         lv = LogicalVolume.objects.get(id=id)
-        if lv.filesystem and lv.fs.mounted:
-            return lv.fs.unmount()
+        if lv.filesystem and lv.mounted:
+            return lv.unmount()
         return False
 
     def is_mounted(self, id):
         """ Check if the given volume is currently mounted. """
         lv = LogicalVolume.objects.get(id=id)
-        return lv.filesystem and lv.fs.mounted
+        return lv.filesystem and lv.mounted
 
     def is_in_standby(self, id):
         """ Check if the given volume is currently in standby. """
