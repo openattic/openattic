@@ -18,6 +18,7 @@ Ext.oa.ShareGridPanel = Ext.extend(Ext.grid.GridPanel, {
   form: {},
   texts: {},
   window: {},
+  allowEdit: true,
 
   initComponent: function(){
     "use strict";
@@ -81,7 +82,7 @@ Ext.oa.ShareGridPanel = Ext.extend(Ext.grid.GridPanel, {
         self.store.reload();
       }
     });
-    this.buttons.push.apply( this.buttons, [ {
+    this.buttons.push({
       text: self.texts.add,
       icon: MEDIA_URL + "/icons2/16x16/actions/add.png",
       scope: self,
@@ -91,26 +92,30 @@ Ext.oa.ShareGridPanel = Ext.extend(Ext.grid.GridPanel, {
           submitButtonText: self.texts.add
         });
       }
-    }, {
-      text:  self.texts.edit,
-      icon: MEDIA_URL + "/icons2/16x16/actions/edit-redo.png",
-      scope: self,
-      handler: function(){
-        var sm = self.getSelectionModel();
-        if( sm.hasSelection() ){
-          var sel = sm.selections.items[0];
-          self.showEditWindow({
-            title: self.texts.edit,
-            submitButtonText: self.texts.edit
-          }, sel.data);
+    });
+    if( this.allowEdit ){
+      this.buttons.push({
+        text:  self.texts.edit,
+        icon: MEDIA_URL + "/icons2/16x16/actions/edit-redo.png",
+        scope: self,
+        handler: function(){
+          var sm = self.getSelectionModel();
+          if( sm.hasSelection() ){
+            var sel = sm.selections.items[0];
+            self.showEditWindow({
+              title: self.texts.edit,
+              submitButtonText: self.texts.edit
+            }, sel.data);
+          }
         }
-      }
-    }, {
+      });
+    }
+    this.buttons.push({
       text: self.texts.remove,
       icon: MEDIA_URL + "/icons2/16x16/actions/remove.png",
       handler: this.deleteFunction,
       scope: self
-    } ] );
+    });
     Ext.oa.ShareGridPanel.superclass.initComponent.apply(this, arguments);
   },
 
