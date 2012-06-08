@@ -104,9 +104,12 @@ class SystemD(dbus.service.Object):
     @makeloggedfunc
     @dbus.service.method(settings.DBUS_IFACE_SYSTEMD, in_signature="i", out_signature="")
     def enqueue_job(self, jid):
-        """ Start execution of the job queue given by `jid`. """
+        """ Start execution of the job queue given by `jid`, if any commands have been added to it. """
         self.job_lock.acquire()
-        create_job( self.jobs[jid], self.job_finished, (jid,) )
+        if self.jobs[jid]:
+            create_job( self.jobs[jid], self.job_finished, (jid,) )
+        else:
+            del self.jobs[jid]
         self.job_lock.release()
 
     @makeloggedfunc
