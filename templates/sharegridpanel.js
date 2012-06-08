@@ -194,12 +194,16 @@ Ext.oa.ShareGridPanel = Ext.extend(Ext.grid.GridPanel, {
             text: config.submitButtonText,
             icon: MEDIA_URL + "/oxygen/16x16/actions/dialog-ok-apply.png",
             handler: function(btn){
+              addwin.getEl().mask(gettext("Loading..."));
               btn.ownerCt.ownerCt.getForm().submit({
                 success: function(provider, response){
                   if(response.result){
                     self.store.reload();
                     addwin.hide();
                   }
+                },
+                failure: function(){
+                  addwin.getEl().unmask();
                 }
               });
             }
