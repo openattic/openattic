@@ -42,7 +42,7 @@ Ext.oa.ShareGridPanel = Ext.extend(Ext.grid.GridPanel, {
       this.buttons = [];
     }
     else{
-      // Without the next line, further operations on this.buttons would alter
+      // Without the next lines, further operations on this.buttons would alter
       // the buttons of the *prototype* instead of the object, thereby breaking
       // class inheritance. Solution: Copy the prototype's buttons to the object.
       var mybuttons = [];

@@ -13,406 +13,194 @@
 
 Ext.namespace("Ext.oa");
 
-Ext.oa.Lvm__Snapshot_Panel = Ext.extend(Ext.grid.GridPanel, {
-  initComponent: function(){
-    "use strict";
-    var lvmSnapPanel = this;
-    Ext.apply(this, Ext.apply(this.initialConfig, {
-      id: "lvm__snapshot_panel_inst",
-      title: gettext('Volume Snapshots'),
-      buttons: [{
-        text: "",
-        icon: MEDIA_URL + "/icons2/16x16/actions/reload.png",
-        tooltip: gettext('Reload'),
-        handler: function(self){
-          lvmSnapPanel.store.reload();
-        }
-      }, {
-        text: gettext('Mount'),
-        icon: MEDIA_URL + "/oxygen/16x16/emblems/emblem-mounted.png",
-        handler: function(self){
-          var sm = lvmSnapPanel.getSelectionModel();
-          if( sm.hasSelection() ){
-            var sel = sm.selections.items[0];
-            if( !sel.data.filesystem ){
-              Ext.Msg.alert('Mounted',
-                interpolate(
-                  gettext('Volume %s does not have a file system and therefore cannot be mounted.'),
-                  [sel.data.name] ));
-              return;
-            }
-            lvm__LogicalVolume.is_mounted( sel.data.id, function(provider, response){
-              if( response.result ){
-                Ext.Msg.alert('Mounted', interpolate( gettext('Volume %s is already mounted.'), [sel.data.name] ));
-                return;
-              }
-              lvm__LogicalVolume.is_in_standby( sel.data.id, function(provider, response){
-                if( response.result ){
-                  Ext.Msg.alert('Mounted',
-                    interpolate( gettext('Volume %s cannot be mounted at the current time.'), [sel.data.name] ));
-                  return;
-                }
-                lvm__LogicalVolume.mount( sel.data.id, function(provider, response){
-                  if( response.type === "exception" ){
-                    Ext.Msg.alert('Mounted', interpolate(
-                      gettext('Volume %s could not be mounted, please check the logs.'), [sel.data.name] ));
-                  }
-                  else{
-                    Ext.Msg.alert('Mounted', interpolate(
-                      gettext('Volume %s has been mounted.'), [sel.data.name] ));
-                    lvmSnapPanel.store.reload();
-                  }
-                } );
-              } );
-            } );
-          }
-        }
-      }, {
-        text: gettext('Unmount'),
-        icon: MEDIA_URL + "/oxygen/16x16/emblems/emblem-unmounted.png",
-        handler: function(self){
-          var sm = lvmSnapPanel.getSelectionModel();
-          if( sm.hasSelection() ){
-            var sel = sm.selections.items[0];
-            lvm__LogicalVolume.is_mounted( sel.data.id, function(provider, response){
-              if( !response.result ){
-                Ext.Msg.alert('Unmount', interpolate( gettext('Volume %s is not mounted.'),
-                                                          [sel.data.name] ));
-              }
-              else{
-                Ext.Msg.confirm(
-                  gettext('Unmount'),
-                  interpolate(
-                    gettext('Do you really want to umount %s?'),
-                    [sel.data.name]),
-                  function(btn){
-                    if(btn === 'yes'){
-                      lvm__LogicalVolume.unmount( sel.data.id, function(provider, response){
-                        if( response.type === "exception" ){
-                          Ext.Msg.alert('Unmount', interpolate(
-                            gettext('Volume %s could not be unmounted, please check the logs.'),
-                            [sel.data.name] ));
-                        }
-                        else{
-                          Ext.Msg.alert('Unmount', interpolate(
-                            gettext('Volume %s has been unmounted.'),
-                            [sel.data.name] ));
-                          lvmSnapPanel.store.reload();
-                        }
-                      });
-                    }
-                } );
-              }
-            } );
-          }
-        }
-      }, {
-        text: gettext('Shares'),
-        icon: MEDIA_URL + "/oxygen/16x16/emblems/emblem-unmounted.png",
-        handler: function(self){
-          var sm = lvmSnapPanel.getSelectionModel();
-          if( sm.hasSelection() ){
-            var sel = sm.selections.items[0];
-            var shareswin = new Ext.Window({
-              title: gettext('Add Volume'),
-              layout: "fit",
-              height: 300,
-              width: 500,
-              items: {
-                xtype: "grid",
-                store: {
-                  xtype: 'directstore',
-                  autoLoad: true,
-                  fields: ['id', 'app', 'obj'],
-                  directFn: lvm__LogicalVolume.get_shares,
-                  baseParams: {id: sel.data.id}
-                },
-                colModel: new Ext.grid.ColumnModel({
-                  defaults: {
-                    sortable: true
-                  },
-                  columns: [ {
-                    header: gettext('App'),
-                    width: 350,
-                    dataIndex: "app"
-                  }, {
-                    header: gettext('Object'),
-                    width: 100,
-                    dataIndex: "obj"
-                  } ]
-                })
-              }
-            } );
-            shareswin.show();
-          }
-        }
-      }, {
-        text: gettext('Add Snapshot'),
-        icon: MEDIA_URL + "/icons2/16x16/actions/add.png",
-        handler: function(){
-          var addwin = new Ext.Window({
-            title: gettext('Add Snapshot'),
-            layout: "fit",
-            height: 300,
-            width: 500,
-            items: [{
-              xtype: "form",
-              bodyStyle: 'padding:5px 5px;',
-              defaults: {
-                xtype: "textfield",
-                anchor: '-20px'
-              },
-              items: [{
-                  fieldLabel: gettext('Name'),
-                  name: "name",
-                  allowBlank: false,
-                  ref: 'namefield'
-                }, {
-                  xtype:      'combo',
-                  allowBlank: false,
-                  fieldLabel: gettext('Original Volume'),
-                  name:       'volume',
-                  hiddenName: 'volume_id',
-                  store: new Ext.data.DirectStore({
-                    fields: ["id", "name", "megs", "vg"],
-                    baseParams: {
-                      kwds: {
-                        "snapshot__isnull": true,
-                        "__exclude__": {
-                          "filesystem": "zfs"
-                        },
-                        "__fields__": ["id", "name", "megs", "vg"]
-                      }
-                    },
-                    paramOrder: ["kwds"],
-                    directFn: lvm__LogicalVolume.filter
-                  }),
-                  typeAhead:     true,
-                  triggerAction: 'all',
-                  emptyText:     gettext('Select...'),
-                  selectOnFocus: true,
-                  displayField:  'name',
-                  valueField:    'id',
-                  ref:      'volfield',
-                  listeners: {
-                    select: function(self, record, index){
-                      if( self.ownerCt.volume_id === null || typeof self.ownerCt.volume_id === "undefined" ||
-                        self.ownerCt.volume_id !== record.data.vg
-                       ){
-                        self.ownerCt.volume_free_megs = null;
-                        self.ownerCt.volume_id = null;
-                        self.ownerCt.sizelabel.setText( gettext('Querying data...') );
-                        self.ownerCt.sizefield.disable();
-                        lvm__VolumeGroup.get_free_megs( record.data.vg, function( provider, response ){
-                          self.ownerCt.volume_id = record.data.vg;
-                          self.ownerCt.volume_free_megs = response.result;
-                          self.ownerCt.sizelabel.setText( String.format( "Max. {0} MB", response.result ) );
-                          if( record.data.megs <= self.ownerCt.volume_free_megs ){
-                            self.ownerCt.sizefield.setValue( record.data.megs );
-                            self.ownerCt.sizefield.enable();
-                          }
-                        } );
-                      }
-                      else{
-                        if( record.data.megs <= self.ownerCt.volume_free_megs ){
-                          self.ownerCt.sizefield.setValue( record.data.megs );
-                          self.ownerCt.sizefield.enable();
-                        }
-                      }
-                    }
-                  }
-                }, tipify({
-                  fieldLabel: gettext('Size in MB'),
-                  allowBlank: false,
-                  name: "megs",
-                  ref: 'sizefield'
-                },gettext('Please consider, that the size of your snapshot depends on the kind and frequency of change.')), {
-                  xtype: "label",
-                  ref:   "sizelabel",
-                  text:  gettext('Waiting for volume selection...'),
-                  cls:   "form_hint_label"
-              }],
-              buttons: [{
-                text: gettext('Create Snapshot'),
-                icon: MEDIA_URL + "/oxygen/16x16/actions/dialog-ok-apply.png",
-                handler: function(self){
-                  if( !self.ownerCt.ownerCt.getForm().isValid() ){
-                    return;
-                  }
-                  var free = self.ownerCt.ownerCt.volume_free_megs;
-                  if( free === null || typeof free === "undefined" ){
-                    Ext.Msg.alert(gettext('Error'),
-                      gettext('Please wait for the query for available space to complete.'));
-                    return;
-                  }
-                  if( free < self.ownerCt.ownerCt.sizefield.getValue() ){
-                    Ext.Msg.alert(gettext('Error'),
-                      interpolate(gettext('Your volume exceeds the available capacity of %s MB.'), [free]));
-                    return;
-                  }
-                  lvm__LogicalVolume.filter({
-                    "name":self.ownerCt.ownerCt.namefield.getValue()
-                  }, function(provider, response){
-                    if( response.result.length !== 0 ){
-                       Ext.Msg.alert(gettext('Error'),
-                         gettext('The name you entered already exists. Please enter another one.'));
-                       return;
-                    }
-                    else{
-                      lvm__LogicalVolume.create({
-                        'snapshot': {
-                          'app': 'lvm',
-                          'obj': 'LogicalVolume',
-                          'id':  self.ownerCt.ownerCt.volfield.getValue()
-                        },
-                        'name':       self.ownerCt.ownerCt.namefield.getValue(),
-                        'megs':       self.ownerCt.ownerCt.sizefield.getValue()
-                      }, function(provider, response){
-                        if( response.result ){
-                          lvmSnapPanel.store.reload();
-                          addwin.hide();
-                        }
-                      });
-                    }
-                  });
-                }
-              }, {
-                text: gettext('Cancel'),
-                icon: MEDIA_URL + "/icons2/16x16/actions/gtk-cancel.png",
-                handler: function(self){
-                  addwin.hide();
-                }
-              }]
-            }]
-          });
-          addwin.show();
-        }
-      }, {
-        text: gettext('Delete Snapshot'),
-        icon: MEDIA_URL + "/icons2/16x16/actions/remove.png",
-        handler: function(self){
-          var sm = lvmSnapPanel.getSelectionModel();
-          if( sm.hasSelection() ){
-            var sel = sm.selections.items[0];
-            Ext.Msg.confirm(
-              gettext('Confirm delete'),
-              interpolate(
-                gettext('Really delete snapshot %s and all its shares?<br /><b>There is no undo and you will lose all data.</b>'),
-                [sel.data.name] ),
-              function(btn, text){
-                if( btn === 'yes' ){
-                  lvm__LogicalVolume.remove( sel.data.id, function(provider, response){
-                    lvmSnapPanel.store.reload();
-                  } );
-                }
-                else{
-                  alert(gettext('Aborted.'));
-                }
-              }
-            );
-          }
-        }
-      }],
-      store: (function(){
-        // Anon function that is called immediately to set up the store's DefaultSort
-        var store = new Ext.data.DirectStore({
-          fields: ['name', 'megs', 'filesystem',  'snapshot', 'formatted', 'id', 'state',
-            'fs', 'fswarning', 'fscritical',
-            {
-              name: 'origvolid',
-              mapping: 'snapshot',
-              convert: function( val, row ){
-                if( val === null ){
-                  return null;
-                }
-                return val.id;
-              }
-            }, {
-              name: 'origvolname',
-              mapping: 'snapshot',
-              convert: function( val, row ){
-                if( val === null ){
-                  return null;
-                }
-                return val.name;
-              }
-            }, 'LVM2_SNAP_PERCENT' ],
-          listeners: {
-            load: function(self){
-              var i;
-              var mkUpdateHandler = function(idx){
-                return function(provider, response){
-                  self.data.items[idx].set("LVM2_SNAP_PERCENT",
-                    response.result.LVM2_DATA_PERCENT || response.result.LVM2_SNAP_PERCENT);
-                  self.commitChanges();
-                };
-              };
-              for (i = 0; i < self.data.length; i++){
-                lvm__LogicalVolume.lvm_info( self.data.items[i].id, mkUpdateHandler(i) );
-              }
-            }
-          },
-          baseParams: { 'snapshot__isnull': false },
-          directFn: lvm__LogicalVolume.filter
-        });
-        store.setDefaultSort("name");
-        return store;
-      }()),
-      viewConfig: { forceFit: true },
-      colModel:  new Ext.grid.ColumnModel({
-        defaults: {
-          sortable: true
-        },
-        columns: [{
-          header: gettext('LV'),
-          dataIndex: "name"
-        }, {
-          header: gettext('Size'),
-          dataIndex: "megs",
-          align: 'right',
-          renderer: function( val, x, store ){
-            if( val >= 1000 ){
-              return String.format("{0} GB", (val / 1000).toFixed(2));
-            }
-            return String.format("{0} MB", val);
-          }
-        }, {
-          header: gettext('Usage (%)'),
-          dataIndex: "LVM2_SNAP_PERCENT",
-          align: "right",
-          renderer: function( val, x, store ){
-            if( !val || val === -1 ){
-              return '♻';
-            }
-            var id = Ext.id();
-            (function(){
-              if( Ext.get(id) === null ){
-                return;
-              }
-              new Ext.ProgressBar({
-                renderTo: id,
-                value: val/100.0,
-                text:  String.format("{0}%", val),
-                cls:   ( val > store.data.fscritical ? "lv_used_crit" :
-                        (val > store.data.fswarning  ? "lv_used_warn" : "lv_used_ok"))
-              });
-            }).defer(25);
-            return '<span id="' + id + '"></span>';
-          }
-        }, {
-          header: gettext('Original Volume'),
-          width: 200,
-          dataIndex: "origvolname"
-        }]
-      })
-    }));
-    Ext.oa.Lvm__Snapshot_Panel.superclass.initComponent.apply(this, arguments);
+Ext.oa.Lvm__Snapshot_Panel = Ext.extend(Ext.oa.Lvm__LogicalVolume_Panel, {
+  id: "lvm__snapshot_panel_inst",
+  title: gettext("Logical Volume Snapshots"),
+  filterParams: {
+    "snapshot__isnull": false
   },
-  onRender: function(){
-    "use strict";
-    Ext.oa.Lvm__Snapshot_Panel.superclass.onRender.apply(this, arguments);
-    this.store.reload();
-  }
+  texts: {
+    add:     gettext('Add Snapshot'),
+    remove:  gettext('Delete Snapshot')
+  },
+  form: {
+    items: [{
+      xtype:      'combo',
+      allowBlank: false,
+      fieldLabel: gettext('Original Volume'),
+      hiddenName: 'snapshot',
+      store: new Ext.data.DirectStore({
+        fields: ["id", "name", "megs", "vg", "owner", "fswarning", "fscritical"],
+        baseParams: {
+          kwds: {
+            "snapshot__isnull": true,
+            "__exclude__": {
+              "filesystem": "zfs"
+            },
+            "__fields__": ["id", "name", "megs", "vg", "owner", "fswarning", "fscritical"]
+          }
+        },
+        paramOrder: ["kwds"],
+        directFn: lvm__LogicalVolume.filter
+      }),
+      typeAhead:     true,
+      triggerAction: 'all',
+      emptyText:     gettext('Select...'),
+      selectOnFocus: true,
+      displayField:  'name',
+      valueField:    'id',
+      ref:      'volfield',
+      listeners: {
+        select: function(self, record, index){
+          self.ownerCt.vgfield.setValue( record.data.vg );
+          self.ownerCt.fswarningfield.setValue( record.data.fswarning );
+          self.ownerCt.fscriticalfield.setValue( record.data.fscritical );
+          self.ownerCt.ownerfield.setValue( record.data.owner );
+          self.ownerCt.namefield.setValue( record.data.name + "_snapshot_" +
+            new Date().format("d-m-Y_H-i-s") );
+          self.ownerCt.sizelabel.setText( gettext('Querying data...') );
+          self.ownerCt.sizefield.disable();
+          lvm__VolumeGroup.get_free_megs( record.data.vg, function( provider, response ){
+            self.ownerCt.sizefield.maxValue = response.result;
+            self.ownerCt.sizelabel.setText( String.format( "Max. {0} MB", response.result ) );
+            if( record.data.megs <= response.result ){
+              self.ownerCt.sizefield.setValue( record.data.megs );
+            }
+            else{
+              self.ownerCt.sizefield.setValue( response.result );
+            }
+            self.ownerCt.sizefield.enable();
+          } );
+        }
+      }
+    }, {
+      xtype: "hidden",
+      ref: "vgfield",
+      name: "vg",
+      value: "0"
+    }, {
+      xtype: "hidden",
+      ref: "ownerfield",
+      name: "owner",
+      value: "0"
+    }, {
+      xtype: "hidden",
+      ref: "fswarningfield",
+      name: "fswarning",
+      value: "0"
+    }, {
+      xtype: "hidden",
+      ref: "fscriticalfield",
+      name: "fscritical",
+      value: "0"
+    }, {
+      fieldLabel: gettext('Name'),
+      name: "name",
+      allowBlank: false,
+      ref: 'namefield'
+    }, tipify({
+      xtype: "numberfield",
+      minValue: 100,
+      fieldLabel: gettext('Size in MB'),
+      allowBlank: false,
+      name: "megs",
+      ref: 'sizefield'
+    },gettext('Please consider, that the size of your snapshot depends on the kind and frequency of change.')), {
+      xtype: "label",
+      ref:   "sizelabel",
+      text:  gettext('Waiting for volume selection...'),
+      cls:   "form_hint_label"
+    }],
+  },
+  initComponent: function(){
+    // Add extra columns (deep-copied)
+    var oldcolumns = Ext.oa.Lvm__Snapshot_Panel.superclass.columns;
+    var mycolumns = [];
+    mycolumns.push(
+      Ext.apply({}, oldcolumns[0]),
+      Ext.apply({}, oldcolumns[1]));
+    mycolumns[0].header = gettext("Snapshot");
+    mycolumns.push({
+      header: gettext('Snapshot usage (%)'),
+      dataIndex: "LVM2_SNAP_PERCENT",
+//       width: 150,
+      align: "right",
+      renderer: function( val, x, store ){
+        if( !val || val === -1 ){
+          return '♻';
+        }
+        var id = Ext.id();
+        (function(){
+          if( Ext.get(id) === null ){
+            return;
+          }
+          new Ext.ProgressBar({
+            renderTo: id,
+            value: val/100.0,
+            text:  String.format("{0}%", val),
+            cls:   ( val > store.data.fscritical ? "lv_used_crit" :
+                    (val > store.data.fswarning  ? "lv_used_warn" : "lv_used_ok"))
+          });
+        }).defer(25);
+        return '<span id="' + id + '"></span>';
+      }
+    }, {
+      header: gettext('Original Volume'),
+//       width: 75,
+      dataIndex: "origvolname"
+    });
+    for( i = 2; i < oldcolumns.length; i++ ){
+      mycolumns.push(Ext.apply({}, oldcolumns[i]));
+    }
+    this.columns = mycolumns;
+    for( i = 0; i < this.columns.length; i++ ){
+      delete this.columns[i].id;
+      console.log(this.columns[i].dataIndex);
+    }
+    console.log(this.columns);
+    // Add extra store fields (deep-copied)
+    var myfields = [];
+    var oldfields = Ext.oa.Lvm__Snapshot_Panel.superclass.storefields.slice();
+    for( i = 0; i < oldfields.length; i++ ){
+      myfields.push(Ext.apply({}, oldfields[i]));
+    }
+    this.storefields = myfields;
+    this.storefields.push({
+      name: 'origvolid',
+      mapping: 'snapshot',
+      convert: function( val, row ){
+        if( val === null ){
+          return null;
+        }
+        return val.id;
+      }
+    }, {
+      name: 'origvolname',
+      mapping: 'snapshot',
+      convert: function( val, row ){
+        if( val === null ){
+          return null;
+        }
+        return val.name;
+      }
+    }, 'LVM2_SNAP_PERCENT');
+    // Render the Panel
+    Ext.oa.Lvm__Snapshot_Panel.superclass.initComponent.apply(this, arguments);
+    // Add a store listener to populate the SNAP_PERCENT column
+    this.store.on("load", function(self){
+      var i;
+      var mkUpdateHandler = function(idx){
+        return function(provider, response){
+          self.data.items[idx].set("LVM2_SNAP_PERCENT",
+            response.result.LVM2_DATA_PERCENT || response.result.LVM2_SNAP_PERCENT);
+          self.commitChanges();
+        };
+      };
+      for (i = 0; i < self.data.length; i++){
+        lvm__LogicalVolume.lvm_info( self.data.items[i].id, mkUpdateHandler(i) );
+      }
+    });
+  },
 });
 
 Ext.reg("lvm__snapshot_panel", Ext.oa.Lvm__Snapshot_Panel);
