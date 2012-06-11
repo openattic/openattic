@@ -123,7 +123,6 @@ Ext.oa.Lvm__Snapshot_Panel = Ext.extend(Ext.oa.Lvm__LogicalVolume_Panel, {
     mycolumns.push({
       header: gettext('Snapshot usage (%)'),
       dataIndex: "LVM2_SNAP_PERCENT",
-//       width: 150,
       align: "right",
       renderer: function( val, x, store ){
         if( !val || val === -1 ){
@@ -146,21 +145,15 @@ Ext.oa.Lvm__Snapshot_Panel = Ext.extend(Ext.oa.Lvm__LogicalVolume_Panel, {
       }
     }, {
       header: gettext('Original Volume'),
-//       width: 75,
       dataIndex: "origvolname"
     });
     for( i = 2; i < oldcolumns.length; i++ ){
       mycolumns.push(Ext.apply({}, oldcolumns[i]));
     }
     this.columns = mycolumns;
-    for( i = 0; i < this.columns.length; i++ ){
-      delete this.columns[i].id;
-      console.log(this.columns[i].dataIndex);
-    }
-    console.log(this.columns);
     // Add extra store fields (deep-copied)
     var myfields = [];
-    var oldfields = Ext.oa.Lvm__Snapshot_Panel.superclass.storefields.slice();
+    var oldfields = Ext.oa.Lvm__Snapshot_Panel.superclass.storefields;
     for( i = 0; i < oldfields.length; i++ ){
       myfields.push(Ext.apply({}, oldfields[i]));
     }

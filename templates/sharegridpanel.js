@@ -38,13 +38,19 @@ Ext.oa.ShareGridPanel = Ext.extend(Ext.grid.GridPanel, {
       height: 240,
       width:  500
     });
+    // Without the next lines, further operations on this.columns would alter
+    // the columns of the *prototype* instead of the object, thereby breaking
+    // class inheritance. Solution: Copy the prototype's columns to the object.
+    var mycolumns = [];
+    for( i = 0; i < this.columns.length; i++ ){
+      mycolumns.push(Ext.apply({}, this.columns[i]));
+    }
+    this.columns = mycolumns;
+    // Same goes for buttons, if any are defined in the prototype.
     if( typeof this.buttons === "undefined" ){
       this.buttons = [];
     }
     else{
-      // Without the next lines, further operations on this.buttons would alter
-      // the buttons of the *prototype* instead of the object, thereby breaking
-      // class inheritance. Solution: Copy the prototype's buttons to the object.
       var mybuttons = [];
       for( i = 0; i < this.buttons.length; i++ ){
         mybuttons[i] = Ext.apply({}, this.buttons[i]);
