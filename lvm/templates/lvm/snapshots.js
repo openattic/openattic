@@ -342,7 +342,8 @@ Ext.oa.Lvm__Snapshot_Panel = Ext.extend(Ext.grid.GridPanel, {
               var i;
               var mkUpdateHandler = function(idx){
                 return function(provider, response){
-                  self.data.items[idx].set("LVM2_SNAP_PERCENT", response.result.LVM2_SNAP_PERCENT);
+                  self.data.items[idx].set("LVM2_SNAP_PERCENT",
+                    response.result.LVM2_DATA_PERCENT || response.result.LVM2_SNAP_PERCENT);
                   self.commitChanges();
                 };
               };

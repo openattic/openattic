@@ -78,7 +78,10 @@ def dbus_to_python(obj):
     return py
 
 lvname = progargs[0]
-lv_percent = float(stats[lvname]["LVM2_SNAP_PERCENT"])
+if "LVM2_DATA_PERCENT" in stats[lvname]:
+  lv_percent = float(stats[lvname]["LVM2_DATA_PERCENT"])
+else:
+  lv_percent = float(stats[lvname]["LVM2_SNAP_PERCENT"])
 
 normal = ("snapshot %s is at %.2f%% "%(lvname,lv_percent)+"|"
 " util_percent=%.2f%%;%.f;%.f "%(lv_percent,options.warning,options.critical))
