@@ -52,6 +52,7 @@ Ext.oa.Lvm__Snapshot_Panel = Ext.extend(Ext.oa.Lvm__LogicalVolume_Panel, {
       ref:      'volfield',
       listeners: {
         select: function(self, record, index){
+          "use strict";
           self.ownerCt.vgfield.setValue( record.data.vg );
           self.ownerCt.fswarningfield.setValue( record.data.fswarning );
           self.ownerCt.fscriticalfield.setValue( record.data.fscritical );
@@ -110,9 +111,11 @@ Ext.oa.Lvm__Snapshot_Panel = Ext.extend(Ext.oa.Lvm__LogicalVolume_Panel, {
       ref:   "sizelabel",
       text:  gettext('Waiting for volume selection...'),
       cls:   "form_hint_label"
-    }],
+    }]
   },
   initComponent: function(){
+    "use strict";
+    var i;
     // Add extra columns (deep-copied)
     var oldcolumns = Ext.oa.Lvm__Snapshot_Panel.superclass.columns;
     var mycolumns = [];
@@ -181,7 +184,7 @@ Ext.oa.Lvm__Snapshot_Panel = Ext.extend(Ext.oa.Lvm__LogicalVolume_Panel, {
     Ext.oa.Lvm__Snapshot_Panel.superclass.initComponent.apply(this, arguments);
     // Add a store listener to populate the SNAP_PERCENT column
     this.store.on("load", function(self){
-      var i;
+      var j;
       var mkUpdateHandler = function(idx){
         return function(provider, response){
           self.data.items[idx].set("LVM2_SNAP_PERCENT",
@@ -189,11 +192,11 @@ Ext.oa.Lvm__Snapshot_Panel = Ext.extend(Ext.oa.Lvm__LogicalVolume_Panel, {
           self.commitChanges();
         };
       };
-      for (i = 0; i < self.data.length; i++){
-        lvm__LogicalVolume.lvm_info( self.data.items[i].id, mkUpdateHandler(i) );
+      for (j = 0; j < self.data.length; j++){
+        lvm__LogicalVolume.lvm_info( self.data.items[j].id, mkUpdateHandler(j) );
       }
     });
-  },
+  }
 });
 
 Ext.reg("lvm__snapshot_panel", Ext.oa.Lvm__Snapshot_Panel);

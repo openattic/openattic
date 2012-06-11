@@ -227,7 +227,7 @@ Ext.oa.Lvm__LogicalVolume_Panel = Ext.extend(Ext.oa.ShareGridPanel, {
   }, {
     text: gettext('Mount'),
     icon: MEDIA_URL + "/oxygen/16x16/emblems/emblem-mounted.png",
-    handler: function(self){
+    handler: function(){
       "use strict";
       var self = this;
       var sm = this.getSelectionModel();
@@ -269,7 +269,7 @@ Ext.oa.Lvm__LogicalVolume_Panel = Ext.extend(Ext.oa.ShareGridPanel, {
   }, {
     text: gettext('Unmount'),
     icon: MEDIA_URL + "/oxygen/16x16/emblems/emblem-unmounted.png",
-    handler: function(self){
+    handler: function(){
       "use strict";
       var self = this;
       var sm = this.getSelectionModel();
