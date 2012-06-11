@@ -20,12 +20,12 @@ if [ "$1" = "configure" ] ; then
     fi
 
     dbconfig-generate-include -f template \
-        -o template_infile=/etc/openattic/databases/nss_mysql_template.conf \
+        -o template_infile=/etc/openattic/databases/nss_mysql_template.cfg \
         /etc/dbconfig-common/openattic-mysql.conf \
-        /etc/nss-mysql.conf
+        /etc/libnss-mysql.cfg
 
-    ln -f /etc/nss-mysql.conf /etc/nss-mysql-root.conf
-    chmod go+r /etc/nss-mysql.conf
+    ln -f /etc/libnss-mysql.cfg /etc/libnss-mysql-root.cfg
+    chmod go+r /etc/libnss-mysql.cfg
 fi
 
 #DEBHELPER#
