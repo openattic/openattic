@@ -10,17 +10,22 @@ WSGIProcessGroup        openattic
 WSGIScriptReloading     Off
 WSGIPassAuthorization   On
 
+<Directory /usr/share/openattic/htdocs>
+	<IfModule mod_headers.c>
+		<FilesMatch "\.(ico|pdf|flv|jpg|jpeg|png|gif|js|css|swf)$">
+			Header set Cache-Control "max-age=86400, must-revalidate"
+		</FilesMatch>
+	</IfModule>
+</Directory>
+
 <Location /openattic>
-        FileETag None
-        <IfModule mod_deflate.c>
-                AddOutputFilterByType DEFLATE text/html text/plain text/css text/javascript image/png image/jpeg image/gif
-                <IfModule mod_headers.c>
-                        # properly handle requests coming from behind proxies
-                        Header unset ETag
-                        Header append Vary User-Agent
-                        <FilesMatch "\.(ico|pdf|flv|jpg|jpeg|png|gif|js|css|swf)$">
-                                Header set Cache-Control "max-age=86400, must-revalidate"
-                        </FilesMatch>
-                </IfModule>
-        </IfModule>
+	FileETag None
+	<IfModule mod_deflate.c>
+		AddOutputFilterByType DEFLATE text/html text/plain text/css text/javascript image/png image/jpeg image/gif
+		<IfModule mod_headers.c>
+			# properly handle requests coming from behind proxies
+			Header unset ETag
+			Header append Vary User-Agent
+		</IfModule>
+	</IfModule>
 </Location>
