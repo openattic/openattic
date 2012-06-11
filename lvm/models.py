@@ -249,6 +249,12 @@ class LogicalVolume(models.Model):
         return self.fs.mounted
 
     @property
+    def mountpoints(self):
+        if not self.filesystem:
+            raise SystemError("Volume '%s' does not have a filesystem, cannot mount." % self.name)
+        return self.fs.mountpoints
+
+    @property
     def fs_info(self):
         if not self.filesystem:
             return None
