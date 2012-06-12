@@ -268,7 +268,7 @@ Description: Samba module for openATTIC
 Package: openattic-module-ftp-mysql
 Architecture: all
 Depends: ${misc:Depends}, openattic-module-lvm,
- proftpd-basic (>= 1.3.3d-4),
+ proftpd-basic (>= 1.3.3),
  openattic-mysql,
  proftpd-mod-mysql
 Conflicts: openattic-module-ftp-pgsql
