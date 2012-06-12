@@ -1,3 +1,2 @@
 debian/database_install/pgsql_template.ini      /etc/openattic/databases
-debian/database_install/pam_pgsql_template.conf /etc/openattic/databases
 debian/database_install/nss_pgsql_template.conf /etc/openattic/databases
