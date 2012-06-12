@@ -65,6 +65,7 @@ def create_vgs(app, created_models, verbosity, **kwargs):
             lv = LogicalVolume.objects.get(vg=vg, name=lvname)
         except LogicalVolume.DoesNotExist:
             if "sys" in lvs[lvname]["LVM2_LV_TAGS"].split(','):
+                print "Logical Volume %s is tagged as @sys, ignored." % lvname
                 continue
 
             if kwargs.get('interactive', True):
