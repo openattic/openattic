@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2012-04-24 11:51+0200\n"
+"POT-Creation-Date: 2012-06-12 13:26+0200\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -86,31 +86,35 @@ msgstr "Zeige Monitoring Graph mit Farbverlauf"
 msgid "Show graph for storage utilization"
 msgstr "Blende Graph für Speicherausnutzung ein"
 
-#: sharegridpanel.js:27
+#: sharegridpanel.js:29
 msgid "Reload"
 msgstr "Neu laden"
 
-#: sharegridpanel.js:28
+#: sharegridpanel.js:30
 msgid "Add Export"
 msgstr "Export hinzufügen"
 
-#: sharegridpanel.js:29
+#: sharegridpanel.js:31
 msgid "Edit Export"
 msgstr "Export bearbeiten"
 
-#: sharegridpanel.js:30
+#: sharegridpanel.js:32
 msgid "Delete Export"
 msgstr "Export löschen"
 
-#: sharegridpanel.js:31
+#: sharegridpanel.js:33
 msgid "Submit"
 msgstr "Speichern"
 
-#: sharegridpanel.js:32
+#: sharegridpanel.js:34
 msgid "Cancel"
 msgstr "Abbrechen"
 
-#: sharegridpanel.js:33
+#: sharegridpanel.js:35
 #, c-format
 msgid "Do you really want to delete export %s?"
 msgstr "Wollen Sie wirklich den Export %s löschen?"
+
+#: sharegridpanel.js:211
+msgid "Loading..."
+msgstr ""

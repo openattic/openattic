@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2012-04-03 10:54+0200\n"
+"POT-Creation-Date: 2012-06-12 13:26+0200\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -18,74 +18,74 @@ msgstr ""
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=(n != 1)\n"
 
-#: templates/nagios/services.js:155
+#: templates/nagios/services.js:153
 msgid "Image not available yet"
 msgstr "Bild noch nicht verfügbar"
 
-#: templates/nagios/services.js:206
+#: templates/nagios/services.js:204
 msgid "Loading..."
 msgstr "Lade..."
 
-#: templates/nagios/services.js:291
+#: templates/nagios/services.js:289
 msgid "Nagios Services"
 msgstr "Nagios-Services"
 
-#: templates/nagios/services.js:296
+#: templates/nagios/services.js:294
 msgid "Reload"
 msgstr "Neu laden"
 
-#: templates/nagios/services.js:364
+#: templates/nagios/services.js:362
 msgid "Service Description"
 msgstr "Service-Beschreibung"
 
-#: templates/nagios/services.js:369
+#: templates/nagios/services.js:367
 msgid "Plugin Output"
 msgstr "Plugin-Ausgabe"
 
-#: templates/nagios/services.js:373
+#: templates/nagios/services.js:371
 msgid "Volume"
 msgstr "Volume"
 
-#: templates/nagios/services.js:377
+#: templates/nagios/services.js:375
 msgid "Last Check"
 msgstr "Letzter Check"
 
-#: templates/nagios/services.js:382
+#: templates/nagios/services.js:380
 msgid "Next Check"
 msgstr "Nächster Check"
 
-#: templates/nagios/services.js:393
+#: templates/nagios/services.js:391
 msgid "No performance data available for service"
 msgstr "Keine Performance-Daten verfügbar für"
 
-#: templates/nagios/services.js:423
+#: templates/nagios/services.js:421
 msgid "4 hours"
 msgstr "4 Stunden"
 
-#: templates/nagios/services.js:428
+#: templates/nagios/services.js:426
 msgid "1 day"
 msgstr "1 Tag"
 
-#: templates/nagios/services.js:432
+#: templates/nagios/services.js:430
 msgid "1 week"
 msgstr "1 Woche"
 
-#: templates/nagios/services.js:436
+#: templates/nagios/services.js:434
 msgid "1 month"
 msgstr "1 Monat"
 
-#: templates/nagios/services.js:440
+#: templates/nagios/services.js:438
 msgid "1 year"
 msgstr "1 Jahr"
 
-#: templates/nagios/services.js:452
+#: templates/nagios/services.js:450
 msgid "Graphs"
 msgstr "Graphen"
 
-#: templates/nagios/services.js:467
+#: templates/nagios/services.js:465
 msgid "Graph"
 msgstr "Graph"
 
-#: templates/nagios/services.js:512
+#: templates/nagios/services.js:510
 msgid "Monitoring"
 msgstr "Monitoring"

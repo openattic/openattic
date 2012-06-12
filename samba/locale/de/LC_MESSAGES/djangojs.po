@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2012-04-03 11:03+0200\n"
+"POT-Creation-Date: 2012-06-12 13:26+0200\n"
 "PO-Revision-Date: 2012-04-03 11:03\n"
 "Last-Translator: Michael Ziegler <michael.ziegler@it-novum.com>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -23,58 +23,58 @@ msgstr ""
 msgid "Samba"
 msgstr "Samba"
 
-#: templates/samba/share.js:21 templates/samba/share.js.c:50
+#: templates/samba/share.js:24 templates/samba/share.js.c:57
 msgid "Share name"
 msgstr "Freigabename"
 
-#: templates/samba/share.js:25 templates/samba/share.js.c:57
+#: templates/samba/share.js:28 templates/samba/share.js.c:64
 msgid "Path"
 msgstr "Pfad"
 
-#: templates/samba/share.js:29 templates/samba/share.js.c:82
+#: templates/samba/share.js:32 templates/samba/share.js.c:89
 msgid "Available"
 msgstr "Verfügbar"
 
-#: templates/samba/share.js:64
+#: templates/samba/share.js:71
 msgid "System user"
 msgstr "Systembenutzer"
 
-#: templates/samba/share.js:70
+#: templates/samba/share.js:77
 msgid "System Group"
 msgstr "Systemgruppe"
 
-#: templates/samba/share.js:76
+#: templates/samba/share.js:83
 msgid "Browseable"
 msgstr "Sichtbar"
 
-#: templates/samba/share.js:88
+#: templates/samba/share.js:95
 msgid "Writeable"
 msgstr "Schreibbar"
 
-#: templates/samba/share.js:94
+#: templates/samba/share.js:101
 msgid "Guest OK"
 msgstr "Erlaube Gast"
 
-#: templates/samba/share.js:100
+#: templates/samba/share.js:107
 msgid "Dir Mode"
 msgstr "Verzeichnis Berechtigungen"
 
-#: templates/samba/share.js:105
+#: templates/samba/share.js:112
 msgid "Set rights for the Directory"
 msgstr "Setze Rechte für Verzeichnis"
 
-#: templates/samba/share.js:107
+#: templates/samba/share.js:114
 msgid "Comment"
 msgstr "Kommentar"
 
-#: templates/samba/share.js:113
+#: templates/samba/share.js:120
 msgid "Create Mode"
 msgstr "Berechtigungen"
 
-#: templates/samba/share.js:118
+#: templates/samba/share.js:125
 msgid "Set rights for owner, group and others"
 msgstr "Rechte für Besitzer, Gruppe und andere Personen"
 
-#: templates/samba/share.js:131
+#: templates/samba/share.js:139
 msgid "Windows (Samba)"
 msgstr "Windows (Samba)"

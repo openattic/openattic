@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2012-04-03 10:45+0200\n"
+"POT-Creation-Date: 2012-06-12 13:26+0200\n"
 "PO-Revision-Date: 2012-04-03 10:45\n"
 "Last-Translator: Michael Ziegler <michael.ziegler@it-novum.com>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -43,19 +43,19 @@ msgstr "Pfad"
 msgid "User name"
 msgstr "Benutzername"
 
-#: templates/ftp/user.js:50
+#: templates/ftp/user.js:54
 msgid "Password"
 msgstr "Passwort"
 
-#: templates/ftp/user.js:66
+#: templates/ftp/user.js:70
 msgid "Directory"
 msgstr "Verzeichnis"
 
-#: templates/ftp/user.js:78
+#: templates/ftp/user.js:83
 #, c-format
 msgid "Do you really want to delete user %s?"
 msgstr "Benutzer %s wirklich löschen?"
 
-#: templates/ftp/user.js:90
+#: templates/ftp/user.js:95
 msgid "Web (FTP)"
 msgstr "Web (FTP)"

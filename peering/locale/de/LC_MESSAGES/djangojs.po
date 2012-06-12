@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2012-04-03 11:00+0200\n"
+"POT-Creation-Date: 2012-06-12 13:26+0200\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -18,48 +18,30 @@ msgstr ""
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=(n != 1)\n"
 
-#: templates/peering/peerhost.js:47 templates/peering/peerhost.js.c:135
-msgid "Name"
-msgstr "Name"
-
-#: templates/peering/peerhost.js:51
-msgid "Base URL"
-msgstr "Basis-URL"
-
-#: templates/peering/peerhost.js:69
-msgid "Cancel"
-msgstr "Abbrechen"
-
-#: templates/peering/peerhost.js:85 templates/peering/peerhost.js.c:200
+#: templates/peering/peerhost.js:19 templates/peering/peerhost.js.c:69
 msgid "openATTIC Peers"
 msgstr "openATTIC-Gegenstellen"
 
-#: templates/peering/peerhost.js:89
-msgid "Reload"
-msgstr "Neu laden"
-
-#: templates/peering/peerhost.js:94 templates/peering/peerhost.js.c:98
+#: templates/peering/peerhost.js:24
 msgid "Add Peer"
 msgstr "Eine Gegenstelle hinzufügen"
 
-#: templates/peering/peerhost.js:99
-msgid "Create Peer"
-msgstr "Erzeuge Gegenstelle"
-
-#: templates/peering/peerhost.js:103 templates/peering/peerhost.js.c:110
-#: templates/peering/peerhost.js:111
+#: templates/peering/peerhost.js:25
 msgid "Edit Peer"
 msgstr "Bearbeite Gegenstelle"
 
-#: templates/peering/peerhost.js:116 templates/peering/peerhost.js.c:153
+#: templates/peering/peerhost.js:26
 msgid "Delete Peer"
 msgstr "Lösche Gegenstelle"
 
-#: templates/peering/peerhost.js:139
+#: templates/peering/peerhost.js:40 templates/peering/peerhost.js.c:51
+msgid "Name"
+msgstr "Name"
+
+#: templates/peering/peerhost.js:44
 msgid "Hostname"
 msgstr "Hostname"
 
-#: templates/peering/peerhost.js:155
-#, c-format
-msgid "Do you really want to delete %s?"
-msgstr "Möchten Sie %s wirklich löschen?"
+#: templates/peering/peerhost.js:55
+msgid "Base URL"
+msgstr "Basis-URL"

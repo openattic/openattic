@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2012-04-02 11:22+0200\n"
+"POT-Creation-Date: 2012-06-12 13:26+0200\n"
 "PO-Revision-Date: 2012-03-28 12:52\n"
 "Last-Translator: Kai Wagner <kai.wagner@it-novum.com>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -19,27 +19,27 @@ msgstr ""
 "X-Translated-Using: django-rosetta 0.5.6\n"
 "Plural-Forms: nplurals=2; plural=(n != 1)\n"
 
-#: models.py:158
+#: models.py:161
 msgid "Size in MB"
 msgstr "Größe in MB"
 
-#: models.py:164
+#: models.py:167
 msgid "Warning Level (%)"
 msgstr "Warnwert (%)"
 
-#: models.py:165
+#: models.py:168
 msgid "Critical Level (%)"
 msgstr "Kritischer Wert (%)"
 
-#: models.py:366
+#: models.py:431
 msgid "The owner field is required unless you are creating a snapshot."
 msgstr ""
 "Das Besitzer-Feld wird benötigt, es sei denn Sie erstellen einen Snapshot."
 
-#: models.py:368
+#: models.py:433
 msgid "The vg field is required unless you are creating a snapshot."
 msgstr "Das VG-Feld wird benötigt, es sei denn Sie erstellen einen Snapshot."
 
-#: models.py:370
+#: models.py:435
 msgid "LVM does not support snapshotting snapshots."
 msgstr "LVM unterstützt nicht, Snapshots von Snapshots anzulegen."

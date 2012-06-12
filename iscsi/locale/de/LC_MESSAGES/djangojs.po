@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2012-04-03 10:51+0200\n"
+"POT-Creation-Date: 2012-06-12 13:26+0200\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -19,7 +19,7 @@ msgstr ""
 "Plural-Forms: nplurals=2; plural=(n != 1)\n"
 
 #: templates/iscsi/iscsi.js:76 templates/iscsi/iscsi.js.c:93
-#: templates/iscsi/iscsi.js:126 templates/iscsi/iscsi.js.c:553
+#: templates/iscsi/iscsi.js:126 templates/iscsi/iscsi.js.c:554
 msgid "Confirm delete"
 msgstr "Löschen bestätigen"
 
@@ -38,7 +38,7 @@ msgstr "Lun %s wirklich löschen?^"
 msgid "Really delete Target %s?"
 msgstr "Target %s wirklich löschen?"
 
-#: templates/iscsi/iscsi.js:198 templates/iscsi/iscsi.js.c:832
+#: templates/iscsi/iscsi.js:198 templates/iscsi/iscsi.js.c:833
 msgid "iSCSI"
 msgstr "iSCSI"
 
@@ -66,8 +66,8 @@ msgstr "IP/IQN"
 msgid "Create"
 msgstr "Erzeugen"
 
-#: templates/iscsi/iscsi.js:314 templates/iscsi/iscsi.js.c:568
-#: templates/iscsi/iscsi.js:717
+#: templates/iscsi/iscsi.js:314 templates/iscsi/iscsi.js.c:569
+#: templates/iscsi/iscsi.js:718
 msgid "Cancel"
 msgstr "Abbrechen"
 
@@ -79,63 +79,63 @@ msgstr "Target löschen"
 msgid "Manage Initiators"
 msgstr "Initiatoren verwalten"
 
-#: templates/iscsi/iscsi.js:508
+#: templates/iscsi/iscsi.js:507
 msgid "Add"
 msgstr "Hinzufügen"
 
-#: templates/iscsi/iscsi.js:524
+#: templates/iscsi/iscsi.js:523
 msgid "Save"
 msgstr "Speichern"
 
-#: templates/iscsi/iscsi.js:546
+#: templates/iscsi/iscsi.js:547
 msgid "Delete"
 msgstr "Löschen"
 
-#: templates/iscsi/iscsi.js:555
+#: templates/iscsi/iscsi.js:556
 #, c-format
 msgid "Really delete Initiator %s?"
 msgstr "Initiator %s wirklich löschen?"
 
-#: templates/iscsi/iscsi.js:578
+#: templates/iscsi/iscsi.js:579
 msgid "Delete Initiator"
 msgstr "Initiator löschen"
 
-#: templates/iscsi/iscsi.js:624 templates/iscsi/iscsi.js.c:633
+#: templates/iscsi/iscsi.js:625 templates/iscsi/iscsi.js.c:634
 msgid "Add Lun"
 msgstr "Lun hinzufügen"
 
-#: templates/iscsi/iscsi.js:656
+#: templates/iscsi/iscsi.js:657
 msgid "Number"
 msgstr "Nummer"
 
-#: templates/iscsi/iscsi.js:664
+#: templates/iscsi/iscsi.js:665
 msgid "Type"
 msgstr "Typ"
 
-#: templates/iscsi/iscsi.js:669
+#: templates/iscsi/iscsi.js:670
 msgid "Buffered (File IO)"
 msgstr "Gepuffert (File-IO)"
 
-#: templates/iscsi/iscsi.js:669
+#: templates/iscsi/iscsi.js:670
 msgid "Unbuffered (Block IO)"
 msgstr "Ungepuffert (Block-IO)"
 
-#: templates/iscsi/iscsi.js:676
+#: templates/iscsi/iscsi.js:677
 msgid "Alias"
 msgstr "Alias"
 
-#: templates/iscsi/iscsi.js:681
+#: templates/iscsi/iscsi.js:682
 msgid "Create Lun"
 msgstr "Lun erzeugen"
 
-#: templates/iscsi/iscsi.js:728
+#: templates/iscsi/iscsi.js:729
 msgid "Delete Lun"
 msgstr "Lun löschen"
 
-#: templates/iscsi/iscsi.js:754
+#: templates/iscsi/iscsi.js:755
 msgid "Bind IPs"
 msgstr "Bind-Adressen"
 
-#: templates/iscsi/iscsi.js:789
+#: templates/iscsi/iscsi.js:790
 msgid "Delete Bind IPs"
 msgstr "IPs löschen"

@@ -2,24 +2,24 @@
 # Copyright (C) YEAR THE PACKAGE'S COPYRIGHT HOLDER
 # This file is distributed under the same license as the PACKAGE package.
 # FIRST AUTHOR <EMAIL@ADDRESS>, YEAR.
-# 
+#
 #, fuzzy
 msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2012-04-02 11:48+0200\n"
+"POT-Creation-Date: 2012-06-12 13:26+0200\n"
 "PO-Revision-Date: 2012-04-02 11:55\n"
 "Last-Translator: Michael Ziegler <michael.ziegler@it-novum.com>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
+"Language: \n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"Language: \n"
 "Plural-Forms: nplurals=2; plural=(n != 1)\n"
 "X-Translated-Using: django-rosetta 0.6.6\n"
 
-#: templates/ifconfig/netdevices.js:22
+#: templates/ifconfig/netdevices.js:21
 msgid "Must be a numeric IP address."
 msgstr "Muss eine numerische IP-Adresse sein."
 
@@ -27,134 +27,134 @@ msgstr "Muss eine numerische IP-Adresse sein."
 msgid "Must be a numeric IP address or \"IP/Netmask\"."
 msgstr "Muss eine numerische IP-Adresse oder \"IP/Netmask\" sein."
 
-#: templates/ifconfig/netdevices.js:35
+#: templates/ifconfig/netdevices.js:36
 msgid "Must be a space-separated list of numeric IP addresses."
 msgstr ""
 "Muss eine durch Leerzeichen getrennte Liste numerischer IP-Adressen sein."
 
-#: templates/ifconfig/netdevices.js:41
+#: templates/ifconfig/netdevices.js:43
 msgid "Must only contain letters, numbers, \"-\" and \".\"."
 msgstr "Darf nur Buchstaben, Zahlen, \"-\" und \".\" enthalten."
 
-#: templates/ifconfig/netdevices.js:162
+#: templates/ifconfig/netdevices.js:178
 msgid "Network interfaces"
 msgstr "Netzwerkschnittstellen"
 
-#: templates/ifconfig/netdevices.js:188
+#: templates/ifconfig/netdevices.js:204
 msgid "Device parameters"
 msgstr "Geräteparameter"
 
-#: templates/ifconfig/netdevices.js:206
+#: templates/ifconfig/netdevices.js:222
 msgid "Device"
 msgstr "Gerät"
 
-#: templates/ifconfig/netdevices.js:214
+#: templates/ifconfig/netdevices.js:230
 msgid "Speed"
 msgstr "Geschwindigkeit"
 
-#: templates/ifconfig/netdevices.js:218
+#: templates/ifconfig/netdevices.js:234
 msgid "MAC Address"
 msgstr "MAC-Adresse"
 
-#: templates/ifconfig/netdevices.js:223
+#: templates/ifconfig/netdevices.js:239
 msgid "Connected"
 msgstr "Verbunden"
 
-#: templates/ifconfig/netdevices.js:228
+#: templates/ifconfig/netdevices.js:244
 msgid "Active"
 msgstr "Aktiv"
 
-#: templates/ifconfig/netdevices.js:233
+#: templates/ifconfig/netdevices.js:249
 msgid "Configure at boot"
 msgstr "Zur Boot-Zeit konfigurieren"
 
-#: templates/ifconfig/netdevices.js:237
+#: templates/ifconfig/netdevices.js:253
 msgid "Jumbo Frames"
 msgstr "Jumbo-Frames"
 
-#: templates/ifconfig/netdevices.js:241
+#: templates/ifconfig/netdevices.js:257
 msgid "MTU"
 msgstr "MTU"
 
-#: templates/ifconfig/netdevices.js:246
+#: templates/ifconfig/netdevices.js:262
 msgid "DHCP"
 msgstr "DHCP"
 
-#: templates/ifconfig/netdevices.js:251
+#: templates/ifconfig/netdevices.js:267
 msgid "Bonding options (if applicable)"
 msgstr "Bonding-Optionen (für Bonding-Geräte)"
 
-#: templates/ifconfig/netdevices.js:255
+#: templates/ifconfig/netdevices.js:271
 msgid "MII Monitoring interval"
 msgstr "MII-Überwachungsintervall"
 
-#: templates/ifconfig/netdevices.js:259
+#: templates/ifconfig/netdevices.js:275
 msgid "Down Delay"
 msgstr "Down-Verzögerung"
 
-#: templates/ifconfig/netdevices.js:263
+#: templates/ifconfig/netdevices.js:279
 msgid "Up Delay"
 msgstr "Up-Verzögerung"
 
-#: templates/ifconfig/netdevices.js:267
+#: templates/ifconfig/netdevices.js:283
 msgid "Mode"
 msgstr "Modus"
 
-#: templates/ifconfig/netdevices.js:271
+#: templates/ifconfig/netdevices.js:287
 msgid "Active-Backup"
 msgstr "Active-Backup"
 
-#: templates/ifconfig/netdevices.js:272
+#: templates/ifconfig/netdevices.js:288
 msgid "Broadcast"
 msgstr "Broadcast"
 
-#: templates/ifconfig/netdevices.js:273
+#: templates/ifconfig/netdevices.js:289
 msgid "Dynamic Link Aggregation (IEEE 802.3ad)"
 msgstr "Dynamische Link-Aggregation (IEEE 802.3ad)"
 
-#: templates/ifconfig/netdevices.js:274
+#: templates/ifconfig/netdevices.js:290
 msgid "Balance: RoundRobin"
 msgstr "Balanciert: Round-Robin"
 
-#: templates/ifconfig/netdevices.js:275
+#: templates/ifconfig/netdevices.js:291
 msgid "Balance: XOR"
 msgstr "Balanciert: XOR"
 
-#: templates/ifconfig/netdevices.js:276
+#: templates/ifconfig/netdevices.js:292
 msgid "Balance: Adaptive Transmit Load Balancing"
 msgstr "Balanciert: Adaptive Lastverteilung (Nur senden)"
 
-#: templates/ifconfig/netdevices.js:277
+#: templates/ifconfig/netdevices.js:293
 msgid "Balance: Adaptive Load Balancing"
 msgstr "Balanciert: Adaptive Lastverteilung"
 
-#: templates/ifconfig/netdevices.js:281
+#: templates/ifconfig/netdevices.js:297
 msgid "Select..."
 msgstr "Bitte wählen..."
 
-#: templates/ifconfig/netdevices.js:286 templates/ifconfig/netdevices.js:299
-#: templates/ifconfig/netdevices.js:309 templates/ifconfig/netdevices.js:317
-#: templates/ifconfig/netdevices.js:323 templates/ifconfig/netdevices.js:333
-#: templates/ifconfig/netdevices.js:339 templates/ifconfig/netdevices.js:433
+#: templates/ifconfig/netdevices.js:302 templates/ifconfig/netdevices.js:318
+#: templates/ifconfig/netdevices.js:328 templates/ifconfig/netdevices.js:336
+#: templates/ifconfig/netdevices.js:342 templates/ifconfig/netdevices.js:352
+#: templates/ifconfig/netdevices.js:358 templates/ifconfig/netdevices.js:453
 msgid "Save"
 msgstr "Speichern"
 
-#: templates/ifconfig/netdevices.js:300
+#: templates/ifconfig/netdevices.js:319
 #, c-format
 msgid "Slave device %s has not yet been saved, please save this device first."
 msgstr ""
 "Slave-Gerät %s wurde noch nicht gespeichert, bitte dieses Gerät zuerst "
 "speichern."
 
-#: templates/ifconfig/netdevices.js:310
+#: templates/ifconfig/netdevices.js:329
 msgid "Bonding devices require at least one native slave device."
 msgstr "Bonding-Geräte erfordern mindestens ein natives Slave-Gerät."
 
-#: templates/ifconfig/netdevices.js:318
+#: templates/ifconfig/netdevices.js:337
 msgid "VLAN devices need to be dragged onto their base device first."
 msgstr "VLAN-Geräte müssen zunächst auf ihr Basisgerät gezogen werden."
 
-#: templates/ifconfig/netdevices.js:324
+#: templates/ifconfig/netdevices.js:343
 #, c-format
 msgid ""
 "VLAN base device %s has not yet been saved, please save this device first."
@@ -162,11 +162,11 @@ msgstr ""
 "VLAN-Basisgerät %s wurde noch nicht gespeichert, bitte speichern Sie zuerst "
 "dieses Gerät."
 
-#: templates/ifconfig/netdevices.js:334
+#: templates/ifconfig/netdevices.js:353
 msgid "Bridge devices need to be dragged onto their base device first."
 msgstr "Bridge-Geräte müssen zunächst auf ihr Basisgerät gezogen werden."
 
-#: templates/ifconfig/netdevices.js:340
+#: templates/ifconfig/netdevices.js:359
 #, c-format
 msgid ""
 "Bridge port device %s has not yet been saved, please save this device first."
@@ -174,57 +174,57 @@ msgstr ""
 "Bridge-Port-Gerät %s wurde noch nicht gespeichert, bitte speichern Sie "
 "zuerst dieses Gerät."
 
-#: templates/ifconfig/netdevices.js:361
+#: templates/ifconfig/netdevices.js:379
 msgid "Cancel"
 msgstr "Abbrechen"
 
-#: templates/ifconfig/netdevices.js:367 templates/ifconfig/netdevices.js:372
+#: templates/ifconfig/netdevices.js:385 templates/ifconfig/netdevices.js:390
 msgid "Delete Device"
 msgstr "Gerät löschen"
 
-#: templates/ifconfig/netdevices.js:374
+#: templates/ifconfig/netdevices.js:392
 #, c-format
 msgid "Device %s is in use, cannot delete it."
 msgstr "Gerät %s wird benutzt und kann nicht gelöscht werden."
 
-#: templates/ifconfig/netdevices.js:391
+#: templates/ifconfig/netdevices.js:410
 msgid "IP Addresses"
 msgstr "IP-Adressen"
 
-#: templates/ifconfig/netdevices.js:398
+#: templates/ifconfig/netdevices.js:417
 msgid "IP/Netmask"
 msgstr "IP/Netzmaske"
 
-#: templates/ifconfig/netdevices.js:402
+#: templates/ifconfig/netdevices.js:421
 msgid "Gateway"
 msgstr "Gateway"
 
-#: templates/ifconfig/netdevices.js:406
+#: templates/ifconfig/netdevices.js:425
 msgid "Domain"
 msgstr "Domain"
 
-#: templates/ifconfig/netdevices.js:410
+#: templates/ifconfig/netdevices.js:429
 msgid "Nameservers"
 msgstr "Nameserver"
 
-#: templates/ifconfig/netdevices.js:414
+#: templates/ifconfig/netdevices.js:433
 msgid "Editable"
 msgstr "Editierbar"
 
-#: templates/ifconfig/netdevices.js:458 templates/ifconfig/netdevices.js:462
+#: templates/ifconfig/netdevices.js:481 templates/ifconfig/netdevices.js:485
 msgid "Add Address"
 msgstr "Adresse hinzufügen"
 
-#: templates/ifconfig/netdevices.js:462
+#: templates/ifconfig/netdevices.js:485
 msgid "Please select a device first."
 msgstr "Bitte zuerst ein Gerät auswählen."
 
-#: templates/ifconfig/netdevices.js:474 templates/ifconfig/netdevices.js:482
-#: templates/ifconfig/netdevices.js:493
+#: templates/ifconfig/netdevices.js:497 templates/ifconfig/netdevices.js:505
+#: templates/ifconfig/netdevices.js:516
 msgid "Delete Address"
 msgstr "Adresse löschen"
 
-#: templates/ifconfig/netdevices.js:483
+#: templates/ifconfig/netdevices.js:506
 msgid ""
 "This address has not been configured in this module, therefore it cannot be "
 "deleted here."
@@ -232,64 +232,64 @@ msgstr ""
 "Dieses Adresse wurde nicht in diesem Modul konfiguriert und kann daher hier "
 "nicht gelöscht werden."
 
-#: templates/ifconfig/netdevices.js:495
+#: templates/ifconfig/netdevices.js:518
 #, c-format
 msgid "There are %s objects using this IP Address, cannot delete it."
 msgstr ""
 "Diese Adresse wird von %s Objekten benutzt und kann daher nicht gelöscht "
 "werden."
 
-#: templates/ifconfig/netdevices.js:515
+#: templates/ifconfig/netdevices.js:539
 msgid "Reload"
 msgstr "Neu laden"
 
-#: templates/ifconfig/netdevices.js:520
+#: templates/ifconfig/netdevices.js:544
 msgid "Create device..."
 msgstr "Gerät erzeugen..."
 
-#: templates/ifconfig/netdevices.js:562
+#: templates/ifconfig/netdevices.js:586
 msgid "Validate configuration"
 msgstr "Konfiguration überprüfen"
 
-#: templates/ifconfig/netdevices.js:567
+#: templates/ifconfig/netdevices.js:591
 msgid "Configuration validated"
 msgstr "Konfiguration validiert"
 
-#: templates/ifconfig/netdevices.js:568
+#: templates/ifconfig/netdevices.js:592
 msgid "No problems have been detected with your current configuration."
 msgstr ""
 "Es wurden mit Ihrer momentanen Konfiguration keine Probleme festgestellt."
 
-#: templates/ifconfig/netdevices.js:572 templates/ifconfig/netdevices.js:595
+#: templates/ifconfig/netdevices.js:596 templates/ifconfig/netdevices.js:619
 msgid "Configuration invalid"
 msgstr "Konfiguration ungültig"
 
-#: templates/ifconfig/netdevices.js:573 templates/ifconfig/netdevices.js:596
+#: templates/ifconfig/netdevices.js:597 templates/ifconfig/netdevices.js:620
 msgid "The following problem has been detected:"
 msgstr "Das folgende Problem wurde festgestellt:"
 
-#: templates/ifconfig/netdevices.js:580 templates/ifconfig/netdevices.js:584
+#: templates/ifconfig/netdevices.js:604 templates/ifconfig/netdevices.js:608
 msgid "Activate configuration"
 msgstr "Konfiguration aktivieren"
 
-#: templates/ifconfig/netdevices.js:585
+#: templates/ifconfig/netdevices.js:609
 msgid ""
 "In order to safely update the configuration, all network interfaces will be "
 "shut down and restarted, possibly causing data loss if the system is "
 "currently being used. Proceed?"
 msgstr ""
-"Um die Konfiguration sicher aktivieren zu können, werden alle Netzwerkgeräte"
-" abgeschaltet und neu gestartet, was zu Datenverlust führt wenn das System "
+"Um die Konfiguration sicher aktivieren zu können, werden alle Netzwerkgeräte "
+"abgeschaltet und neu gestartet, was zu Datenverlust führt wenn das System "
 "gerade in Benutzung ist. Fortfahren?"
 
-#: templates/ifconfig/netdevices.js:590
+#: templates/ifconfig/netdevices.js:614
 msgid "Configuration activated"
 msgstr "Konfiguration aktiviert"
 
-#: templates/ifconfig/netdevices.js:591
+#: templates/ifconfig/netdevices.js:615
 msgid "The configuration has been updated."
 msgstr "Die Konfiguration wurde angepasst."
 
-#: templates/ifconfig/netdevices.js:688
+#: templates/ifconfig/netdevices.js:722
 msgid "Network"
 msgstr "Netzwerk"

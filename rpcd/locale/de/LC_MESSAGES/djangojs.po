@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2012-04-24 11:49+0200\n"
+"POT-Creation-Date: 2012-06-12 13:26+0200\n"
 "PO-Revision-Date: 2012-04-24 11:48\n"
 "Last-Translator: Michael Ziegler <michael.ziegler@it-novum.com>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -71,7 +71,7 @@ msgid "Owner"
 msgstr "Besitzer"
 
 #: templates/rpcd/apikey.js:90 templates/rpcd/apikey.js.c:109
-#: templates/rpcd/auth__user.js:108 templates/rpcd/auth__user.js.c:155
+#: templates/rpcd/auth__user.js:108 templates/rpcd/auth__user.js.c:154
 msgid "Active"
 msgstr "Aktiv"
 
@@ -99,8 +99,8 @@ msgstr "Benutzer hinzufügen"
 msgid "Edit User"
 msgstr "Benutzer bearbeiten"
 
-#: templates/rpcd/auth__user.js:89 templates/rpcd/auth__user.js.c:178
-#: templates/rpcd/auth__user.js:185
+#: templates/rpcd/auth__user.js:89 templates/rpcd/auth__user.js.c:177
+#: templates/rpcd/auth__user.js:184
 msgid "Delete User"
 msgstr "Benutzer löschen"
 
@@ -108,11 +108,11 @@ msgstr "Benutzer löschen"
 msgid "User Name"
 msgstr "Benutzername"
 
-#: templates/rpcd/auth__user.js:96 templates/rpcd/auth__user.js.c:142
+#: templates/rpcd/auth__user.js:96 templates/rpcd/auth__user.js.c:141
 msgid "First Name"
 msgstr "Vorname"
 
-#: templates/rpcd/auth__user.js:100 templates/rpcd/auth__user.js.c:146
+#: templates/rpcd/auth__user.js:100 templates/rpcd/auth__user.js.c:145
 msgid "Last Name"
 msgstr "Nachname"
 
@@ -120,7 +120,7 @@ msgstr "Nachname"
 msgid "E-Mail Address"
 msgstr "E-Mail-Adresse"
 
-#: templates/rpcd/auth__user.js:113 templates/rpcd/auth__user.js.c:160
+#: templates/rpcd/auth__user.js:113 templates/rpcd/auth__user.js.c:159
 msgid "Staff"
 msgstr "Personal"
 
@@ -136,24 +136,24 @@ msgstr "Letzter Login"
 msgid "Password"
 msgstr "Passwort"
 
-#: templates/rpcd/auth__user.js:150
+#: templates/rpcd/auth__user.js:149
 msgid "E-Mail"
 msgstr "E-Mail"
 
-#: templates/rpcd/auth__user.js:165
+#: templates/rpcd/auth__user.js:164
 msgid "SuperUser"
 msgstr "Administrator"
 
-#: templates/rpcd/auth__user.js:179
+#: templates/rpcd/auth__user.js:178
 msgid "User %(user)s is the owner of %(volcount)s volumes."
 msgstr "%(user)s ist der Besitzer von %(volcount)s Volumes."
 
-#: templates/rpcd/auth__user.js:187
+#: templates/rpcd/auth__user.js:186
 #, c-format
 msgid "Do you really want to delete user %s?"
 msgstr "Benutzer %s wirklich löschen?"
 
-#: templates/rpcd/auth__user.js:212
+#: templates/rpcd/auth__user.js:211
 msgid "User Management"
 msgstr "Benutzerverwaltung"
 
