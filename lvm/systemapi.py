@@ -245,7 +245,7 @@ class SystemD(BasePlugin):
         self.job_add_command(jid, ["/sbin/ntfsresize", "--force", "--size", ("%dM" % megs), devpath])
 
     @method(in_signature="", out_signature="a{ss}")
-    def modprobe_dmsnapshot_version(self):
+    def get_capabilities(self):
         invoke(["/sbin/modprobe", "dm-snapshot"])
         ret, out, err = invoke(["/sbin/dmsetup", "targets"], return_out_err=True)
         if ret != 0:

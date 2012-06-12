@@ -192,6 +192,11 @@ class LogicalVolume(models.Model):
         self._jid = None
 
     @classmethod
+    def get_capabilities(cls):
+        lvm  = dbus.SystemBus().get_object(settings.DBUS_IFACE_SYSTEMD, "/lvm")
+        return dbus_to_python(lvm.get_capabilities())
+
+    @classmethod
     def mount_all(cls):
         """ Mount all volumes which are not currently mounted. """
         for lv in LogicalVolume.objects.exclude(filesystem=""):
