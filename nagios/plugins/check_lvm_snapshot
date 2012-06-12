@@ -1,5 +1,6 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
+# kate: space-indent on; indent-width 4; replace-tabs on;
 
 """
  *  Copyright (C) 2011-2012, it-novum GmbH <community@open-attic.org>
@@ -33,7 +34,7 @@ parser.add_option( "-w", "--warning", type="float",
     help="snapshot is at 50 %.", default=50
     )
 parser.add_option("-c", "--critical", type="float",
-    help= "snapshot is at 70%", default=70
+    help="snapshot is at 70%", default=70
     )
 
 options, progargs = parser.parse_args()
@@ -78,6 +79,7 @@ def dbus_to_python(obj):
     return py
 
 lvname = progargs[0]
+
 if "LVM2_DATA_PERCENT" in stats[lvname]:
   lv_percent = float(stats[lvname]["LVM2_DATA_PERCENT"])
 else:
@@ -92,35 +94,34 @@ if stats[lvname]["LVM2_ORIGIN"] == "":
 
 
 lv_origin = stats[lvname]["LVM2_ORIGIN"]
-print(normal)
+#print(normal)
 
-# wenn original_lvsize kleiner als snapshot dann exitcode 2 
+# if original_lv is smaller than snapshot -> exitcode 2
 if float(stats[lvname]["LVM2_LV_SIZE"]) < float(stats[lv_origin]["LVM2_LV_SIZE"]):
-  # wenn lv_percent größer als 50%
+
+  #if lv_percent is over 50%
   if lv_percent > options.warning:
     exit = 1
     print(normal)
 
-# wenn lv_percent größer als options.critical, dann exitcode 0
+# if lv_percent is bigger as options.critical -> exitcode 2
   if lv_percent > options.critical:
-    exit = 0
+    exit = 2
     print(normal)
+
+# if snapshot size is as big as original_lv and lv_percent is smaller than options.warning -> exitcode 0
 if float(stats[lvname]["LVM2_LV_SIZE"]) == float(stats[lv_origin]["LVM2_LV_SIZE"]) and lv_percent < options.warning:
    exit = 0
    print(normal)
-# wenn snapshot genauso groß wie original_lv UND lv_percent größer ist als options.warning dann exitcode 1
+
+#if snapshot size is as big as original_lv AND lv_percent ist bigger as options.warning -> exitcode 1   
 elif float(stats[lvname]["LVM2_LV_SIZE"]) == float(stats[lv_origin]["LVM2_LV_SIZE"]) and lv_percent > options.warning:
     exit = 1
     print(normal)
 
-#wenn snapshot genauso groß wie original UND lv_percent größer ist als options.critical dann exitcode 2
+#if snapshot size is as big as original and lv_percent is biger as options.critical -> exitcode 2
 elif float(stats[lvname]["LVM2_LV_SIZE"]) == float(stats[lv_origin]["LVM2_LV_SIZE"]) and lv_percent > options.critical:
     exit = 2
     print(normal)
-
-
-#wenn snapshot genauso groß wie original, und lv_percent nicht größer als options.critical, dann exit code 0
-
-
 
 sys.exit(exit)
