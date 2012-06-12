@@ -40,7 +40,7 @@ class SystemD(LockingPlugin):
                 ])
 
             for user in User.objects.all():
-                if user.email and user.is_active and user.is_superuser:
+                if user.email:
                     aliases[user.username] = user.email
                 elif user.username in aliases:
                     del aliases[user.username]
