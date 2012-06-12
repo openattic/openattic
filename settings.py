@@ -146,7 +146,15 @@ except NameError:
             Exception('Please create a %s file with random characters to generate your secret key!' % SECRET_FILE)
 
 
-PAM_AUTH_SERVICE = "itn_activedirectory"
+# A PAM authentication service to query with our user data.
+# If this does not succeed, openATTIC will fall back to its
+# internal database.
+PAM_AUTH_SERVICE = "openattic"
+# Whether or not the service given in PAM_AUTH_SERVICE uses
+# Kerberos as its backend, therefore requiring user names
+# to be all UPPERCASE.
+PAM_AUTH_KERBEROS = False
+
 AUTHENTICATION_BACKENDS = ( 'pamauth.PamBackend', 'django.contrib.auth.backends.ModelBackend' )
 
 # List of callables that know how to import templates from various sources.

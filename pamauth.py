@@ -17,6 +17,7 @@
     GNU General Public License for more details.
 """
 
+import sys
 import PAM
 from django.contrib.auth.backends import ModelBackend
 from django.contrib.auth.models   import User
@@ -44,16 +45,20 @@ class PamBackend( ModelBackend ):
         auth.start( self.service )
 
         # For some reason or another, Kerberos requires the username to be all UPPERCASE.
-        auth.set_item( PAM.PAM_USER, username.upper() )
+        if settings.PAM_AUTH_KERBEROS:
+            auth.set_item( PAM.PAM_USER, username.upper() )
+        else:
+            auth.set_item( PAM.PAM_USER, username )
         self.userPassword = password
         auth.set_item( PAM.PAM_CONV, self.pam_conversation )
 
         try:    # This is a bit ugly, but authenticate() doesn't return a status code :(
             auth.authenticate()
             auth.acct_mgmt()
-        except PAM.error:
-            pass
+        except PAM.error, err:
+            print >> sys.stderr, "[openATTIC error] PAM Login failed for user '%s': %s" % (username, err)
         else:
+            print >> sys.stderr, "[openATTIC notice] PAM Login succeeded for user '%s'" % username
             try:
                 return User.objects.get( username=username )
             except User.DoesNotExist:
