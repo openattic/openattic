@@ -142,7 +142,7 @@ Description: Configures openATTIC with a MySQL database
 Package: openattic-pgsql
 Architecture: all
 Depends: ${misc:Depends}, python-psycopg2,
- dbconfig-common, postgresql, libpam-pgsql, libnss-pgsql2
+ dbconfig-common, postgresql, libnss-pgsql2
 Recommends: postgresql-client
 Conflicts: openattic-mysql
 Description: Configures openATTIC with a PGSQL database
