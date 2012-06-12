@@ -26,6 +26,7 @@ class SystemD(LockingPlugin):
         self.lock.acquire()
         try:
             fd = open( "/etc/cron.d/openattic", "wb" )
+            fd.write("SHELL=/bin/sh\n\n")
             try:
                 for job in Cronjob.objects.all():
                     fd.write( "%s %s %s %s %s %s %s\n" % ( job.minute, job.hour, job.domonth, job.month,
