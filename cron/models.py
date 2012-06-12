@@ -33,3 +33,8 @@ class Cronjob(models.Model):
     def save(self, *args, **kwargs):
         models.Model.save(self, *args, **kwargs)
         dbus.SystemBus().get_object(settings.DBUS_IFACE_SYSTEMD, "/cron").writeconf()
+
+    def delete( self ):
+        ret = models.Model.delete(self)
+        dbus.SystemBus().get_object(settings.DBUS_IFACE_SYSTEMD, "/cron").writeconf()
+        return ret
