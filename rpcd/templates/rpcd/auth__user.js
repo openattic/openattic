@@ -26,8 +26,8 @@ function wrap_auth_User_set(form, options, action){
     is_staff:     form.is_staff.checked,
     is_superuser: form.is_superuser.checked
   };
-  if( form.passwordfield.value !== "" ){
-    params.password = form.passwordfield.value;
+  if( form.password.value !== "" ){
+    params.password = form.password.value;
   }
   if( options.params.id === -1 ){
     auth__User.create(params, action.options.success);
@@ -136,7 +136,7 @@ Ext.oa.Auth__User_Panel = Ext.extend(Ext.oa.ShareGridPanel, {
     }, {
       fieldLabel: gettext('Password'),
       inputType: 'password',
-      ref: 'passwordfield'
+      name: 'password'
     }, {
       fieldLabel: gettext('First Name'),
       name: "first_name",
