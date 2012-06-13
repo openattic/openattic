@@ -17,11 +17,9 @@
 
 import dbus
 import sys
-from time import time
 from optparse import OptionParser
-from ConfigParser import ConfigParser
 
-exit = 0
+exitstatus = 0
 parser = OptionParser()
 
 
@@ -40,8 +38,8 @@ parser.add_option("-c", "--critical", type="float",
 options, progargs = parser.parse_args()
 
 if len(progargs) != 1:
-  print("Usage: check_openattic_snapshot <lv name>")
-  sys.exit(2)
+    print("Usage: check_openattic_snapshot <lv name>")
+    sys.exit(2)
 
 try:
     stats = dbus.SystemBus().get_object(options.dbus, "/lvm").lvs()
@@ -75,22 +73,23 @@ def dbus_to_python(obj):
     elif isinstance(py, tuple):
         return tuple([dbus_to_python(el) for el in py])
     elif isinstance(py, dict):
-        return dict([(dbus_type_to_python(key), dbus_to_python(obj[key])) for key in py])
+        return dict([(dbus_type_to_python(key),
+        dbus_to_python(obj[key])) for key in py])
     return py
 
 lvname = progargs[0]
 
 if "LVM2_DATA_PERCENT" in stats[lvname]:
-  lv_percent = float(stats[lvname]["LVM2_DATA_PERCENT"])
+    lv_percent = float(stats[lvname]["LVM2_DATA_PERCENT"])
 else:
-  lv_percent = float(stats[lvname]["LVM2_SNAP_PERCENT"])
+    lv_percent = float(stats[lvname]["LVM2_SNAP_PERCENT"])
 
-normal = ("snapshot %s is at %.2f%% "%(lvname,lv_percent)+"|"
-" util_percent=%.2f%%;%.f;%.f "%(lv_percent,options.warning,options.critical))
+normal = ("snapshot %s is at %.2f%% "%(lvname, lv_percent)+"|"
+" util_percent=%.2f%%;%.f;%.f "%(lv_percent, options.warning, options.critical))
 
 if stats[lvname]["LVM2_ORIGIN"] == "":
-  print("Sie haben ein Originalvolume ausgewählt!")
-  sys.exit(2)
+    print("Sie haben ein Originalvolume ausgewählt!")
+    sys.exit(2)
 
 
 lv_origin = stats[lvname]["LVM2_ORIGIN"]
@@ -100,28 +99,28 @@ lv_origin = stats[lvname]["LVM2_ORIGIN"]
 if float(stats[lvname]["LVM2_LV_SIZE"]) < float(stats[lv_origin]["LVM2_LV_SIZE"]):
 
   #if lv_percent is over 50%
-  if lv_percent > options.warning:
-    exit = 1
-    print(normal)
+    if lv_percent > options.warning:
+        exitstatus = 1
+        print(normal)
 
 # if lv_percent is bigger as options.critical -> exitcode 2
-  if lv_percent > options.critical:
-    exit = 2
+if lv_percent > options.critical:
+    exitstatus = 2
     print(normal)
 
-# if snapshot size is as big as original_lv and lv_percent is smaller than options.warning -> exitcode 0
-if float(stats[lvname]["LVM2_LV_SIZE"]) == float(stats[lv_origin]["LVM2_LV_SIZE"]) and lv_percent < options.warning:
-   exit = 0
-   print(normal)
+    # if snapshot size is as big as original_lv and lv_percent is smaller than options.warning -> exitcode 0
+    if float(stats[lvname]["LVM2_LV_SIZE"]) == float(stats[lv_origin]["LVM2_LV_SIZE"]) and lv_percent < options.warning:
+        exitstatus = 0
+        print(normal)
 
-#if snapshot size is as big as original_lv AND lv_percent ist bigger as options.warning -> exitcode 1   
+#if snapshot size is as big as original_lv AND lv_percent ist bigger as options.warning -> exitcode 1
 elif float(stats[lvname]["LVM2_LV_SIZE"]) == float(stats[lv_origin]["LVM2_LV_SIZE"]) and lv_percent > options.warning:
-    exit = 1
+    exitstatus = 1
     print(normal)
 
 #if snapshot size is as big as original and lv_percent is biger as options.critical -> exitcode 2
 elif float(stats[lvname]["LVM2_LV_SIZE"]) == float(stats[lv_origin]["LVM2_LV_SIZE"]) and lv_percent > options.critical:
-    exit = 2
+    exitstatus = 2
     print(normal)
 
-sys.exit(exit)
+sys.exit(exitstatus)
