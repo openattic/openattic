@@ -101,17 +101,18 @@ if float(stats[lvname]["LVM2_LV_SIZE"]) == float(stats[lv_origin]["LVM2_LV_SIZE"
     print(normal)
 
 # if original_lv is smaller than snapshot -> exitcode 1
-if float(stats[lvname]["LVM2_LV_SIZE"]) < float(stats[lv_origin]["LVM2_LV_SIZE"]):
-    if lv_percent > options.warning:
-        exitstatus = 1
-        print(normal)
+if float(stats[lvname]["LVM2_LV_SIZE"]) < float(stats[lv_origin]["LVM2_LV_SIZE"]) and lv_percent > options.warning:
+    exitstatus = 1
+    print(normal)
 
-# if lv_percent is bigger as options.critical -> exitcode 2
-if lv_percent > options.critical:
+if float(stats[lvname]["LVM2_LV_SIZE"]) < float(stats[lv_origin]["LVM2_LV_SIZE"]) and lv_percent > options.critical:
     exitstatus = 2
     print(normal)
 
-
+# if lv_percent is bigger as options.critical -> exitcode 2
+#if lv_percent > options.critical:
+#    exitstatus = 2
+#    print(normal)
 
 #if snapshot size is as big as original_lv AND lv_percent ist bigger as options.warning -> exitcode 1
 elif float(stats[lvname]["LVM2_LV_SIZE"]) == float(stats[lv_origin]["LVM2_LV_SIZE"]) and lv_percent > options.warning:
