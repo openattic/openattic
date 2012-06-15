@@ -20,7 +20,7 @@ Ext.oa.Ipmi__Sensors_Panel = Ext.extend(Ext.grid.GridPanel, {
     var sensorGrid = this;
     Ext.apply(this, Ext.apply(this.initialConfig, {
       id: "ipmi__sensors_panel_inst",
-      title: gettext('Mount Points'),
+      title: gettext('Sensors'),
       viewConfig: { forceFit: true },
       buttons: [{
         text: "",
@@ -76,7 +76,7 @@ Ext.oa.Lvm__Mounts_Module = Ext.extend(Object, {
     tree.appendToRootNodeById("menu_status", {
       text: gettext('Sensors'),
       leaf: true,
-      icon: MEDIA_URL + '/icons2/22x22/devices/hdd_unmount.png',
+      icon: MEDIA_URL + '/icons2/22x22/apps/gnome-monitor.png',
       panel: "ipmi__sensors_panel_inst",
       href: '#'
     });
