@@ -94,7 +94,7 @@ if stats[lvname]["LVM2_ORIGIN"] == "":
 
 lv_origin = stats[lvname]["LVM2_ORIGIN"]
 
-elif float(stats[lvname]["LVM2_LV_SIZE"]) >= float(stats[lv_origin]["LVM2_LV_SIZE"]):
+if float(stats[lvname]["LVM2_LV_SIZE"]) >= float(stats[lv_origin]["LVM2_LV_SIZE"]):
     exitstatus = 0
     print(normal)
 
