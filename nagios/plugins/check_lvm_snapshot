@@ -96,32 +96,14 @@ lv_origin = stats[lvname]["LVM2_ORIGIN"]
 
 
 if float(stats[lvname]["LVM2_LV_SIZE"]) == float(stats[lv_origin]["LVM2_LV_SIZE"]):
-    if lv_percent > options.critical:
-        exitstatus = 2
-        print(normal)
-
-    elif lv_percent > options.warning:
-        exitstatus = 1
-        print(normal)
-
-    elif lv_percent < options.critical and options.warning:
-        exitstatus = 0
-        print(normal)
+    exitstatus = 0
+    print(normal)
 
 
 
 elif float(stats[lvname]["LVM2_LV_SIZE"]) >= float(stats[lv_origin]["LVM2_LV_SIZE"]):
-    if lv_percent > options.critical:
-        exitstatus = 2
-        print(normal)
-
-    elif lv_percent > options.warning: #?elif?
-        exitstatus = 1
-        print(normal)
-
-    elif lv_percent < options.critical and options.warning:
-        exitstatus = 0
-        print(normal)
+    exitstatus = 0
+    print(normal)
 
 
 elif float(stats[lvname]["LVM2_LV_SIZE"]) <= float(stats[lv_origin]["LVM2_LV_SIZE"]):
