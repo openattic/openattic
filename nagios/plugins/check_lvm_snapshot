@@ -95,36 +95,47 @@ if stats[lvname]["LVM2_ORIGIN"] == "":
 lv_origin = stats[lvname]["LVM2_ORIGIN"]
 
 
-# if snapshot size is as big as original_lv and lv_percent is smaller than options.warning -> exitcode 0
-if float(stats[lvname]["LVM2_LV_SIZE"]) == float(stats[lv_origin]["LVM2_LV_SIZE"]) and lv_percent < options.critical and options.warning:
-    exitstatus = 0
-    print(normal)
+if float(stats[lvname]["LVM2_LV_SIZE"]) == float(stats[lv_origin]["LVM2_LV_SIZE"]):
+    if lv_percent > options.critical:
+        exitstatus = 2
+        print(normal)
 
-elif float(stats[lvname]["LVM2_LV_SIZE"]) >= float(stats[lv_origin]["LVM2_LV_SIZE"]) and lv_percent < options.critical and options.warning:
-    exitstatus = 0
-    print(normal)
+    elif lv_percent > options.warning:
+        exitstatus = 1
+        print(normal)
 
-# if original_lv is smaller than snapshot and lv_percent is bigger than options.warning -> exitcode 1
-elif float(stats[lvname]["LVM2_LV_SIZE"]) >= float(stats[lv_origin]["LVM2_LV_SIZE"]) and lv_percent > options.warning:
-    exitstatus = 1
-    print(normal)
-
-# if original_lv is smaller than snapshot and lv_percent is bigger than options.critical -> exitcode 2
-elif float(stats[lvname]["LVM2_LV_SIZE"]) >= float(stats[lv_origin]["LVM2_LV_SIZE"]) and lv_percent > options.critical:
-    exitstatus = 2
-    print(normal)
+    elif lv_percent < options.critical and options.warning:
+        exitstatus = 0
+        print(normal)
 
 
-elif float(stats[lvname]["LVM2_LV_SIZE"]) <= float(stats[lv_origin]["LVM2_LV_SIZE"]) and lv_percent < options.critical and options.warning:
-    exitstatus = 0
-    print(normal)
 
-elif float(stats[lvname]["LVM2_LV_SIZE"]) <= float(stats[lv_origin]["LVM2_LV_SIZE"]) and lv_percent > options.warning:
-    exitstatus = 1
-    print(normal)
+elif float(stats[lvname]["LVM2_LV_SIZE"]) >= float(stats[lv_origin]["LVM2_LV_SIZE"]):
+    if lv_percent > options.critical:
+        exitstatus = 2
+        print(normal)
 
-elif float(stats[lvname]["LVM2_LV_SIZE"]) <= float(stats[lv_origin]["LVM2_LV_SIZE"]) and lv_percent > options.critical:
-    exitstatus = 2
-    print(normal)
+    elif lv_percent > options.warning: #?elif?
+        exitstatus = 1
+        print(normal)
+
+    elif lv_percent < options.critical and options.warning:
+        exitstatus = 0
+        print(normal)
+
+
+elif float(stats[lvname]["LVM2_LV_SIZE"]) <= float(stats[lv_origin]["LVM2_LV_SIZE"]):
+    if lv_percent > options.critical:
+        exitstatus = 2
+        print(normal)
+
+    elif lv_percent > options.warning:
+        exitstatus = 1
+        print(normal)
+
+    elif lv_percent < options.critical and options.warning:
+        exitstatus = 0
+        print(normal)
+
 
 sys.exit(exitstatus)
