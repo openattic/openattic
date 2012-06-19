@@ -230,9 +230,15 @@ Ext.oa.ShareGridPanel = Ext.extend(Ext.grid.GridPanel, {
           }]
         };
         Ext.apply(form, self.form);
-        for( i = 0; i < form.items.length; i++ ){
-          if( form.items[i].disabled ){
-            form.items[i].disabled = !record;
+        if( form.items[0].xtype == "fieldset" ){
+          var items = form.items[0].items;
+        }
+        else{
+          var items = form.items;
+        }
+        for( i = 0; i < items.length; i++ ){
+          if( items[i].disabled ){
+            items[i].disabled = !record;
           }
         }
         return form;
