@@ -83,6 +83,14 @@ Ext.oa.Drbd__Device_Panel = Ext.extend(Ext.oa.ShareGridPanel, {
         hiddenName: "volume",
         filesystem__isnull: true
       }, {
+        xtype: "hidden",
+        name: "ordering",
+        value: 0
+      }, {
+        xtype: "hidden",
+        name: "init_master",
+        value: true
+      }, {
         xtype:      'combo',
         fieldLabel: gettext('Peer Host'),
         name:       'peerhost',
