@@ -162,8 +162,6 @@ Ext.oa.Drbd__Device_Panel = Ext.extend(Ext.oa.ShareGridPanel, {
     }, {
       xtype: 'fieldset',
       title: 'Error handling',
-      collapsible: true,
-      collapsed: true,
       layout: 'form',
       items: [ {
         fieldLabel: gettext('On I/O Error'),
@@ -197,8 +195,6 @@ Ext.oa.Drbd__Device_Panel = Ext.extend(Ext.oa.ShareGridPanel, {
     }, {
       xtype: 'fieldset',
       title: 'Split Brain recovery',
-      collapsible: true,
-      collapsed: true,
       layout: 'form',
       items: [{
         fieldLabel: gettext('No Primaries'),
