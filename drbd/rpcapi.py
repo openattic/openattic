@@ -24,9 +24,12 @@ class DrbdDeviceHandler(ModelHandler):
     def _override_get(self, obj, data):
         data['path']    = obj.path
         data['basedev'] = obj.basedev
-        data['cstate']  = obj.cstate
-        data['dstate']  = obj.dstate
-        data['role']    = obj.role
+        if obj.initialized:
+            data['cstate']  = obj.cstate
+            data['dstate']  = obj.dstate
+            data['role']    = obj.role
+        else:
+            data['cstate'] = data['dstate'] = data['role'] = "unconfigured"
         return data
 
     def primary(self, id):
