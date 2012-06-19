@@ -228,6 +228,7 @@ class DrbdDevice(LVChainedModule):
                 'selfaddress':      self.peeraddress,
                 'syncer_rate':      self.syncer_rate,
                 'wfc_timeout':      self.wfc_timeout,
+                'ordering':         0,
                 })
 
         self.drbd.conf_write(self.id)
