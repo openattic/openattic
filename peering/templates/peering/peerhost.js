@@ -43,13 +43,16 @@ Ext.oa.Peering__Peerhost_Panel = Ext.extend(Ext.oa.ShareGridPanel, {
   }, {
     header: gettext('Hostname'),
     width: 200,
-    dataIndex: "hostname"
+    dataIndex: "hostname",
   }],
   form: {
     items: [{
       xtype: 'textfield',
       fieldLabel: gettext('Name'),
-      name: "name"
+      name: "name",
+      maskRe: /[a-zA-Z0-9]/,
+      regex: /[a-zA-Z][a-zA-Z0-9]+/,
+      regexText: gettext("Must be a valid hostname.")
     }, {
       xtype: 'textfield',
       fieldLabel: gettext('Base URL'),
