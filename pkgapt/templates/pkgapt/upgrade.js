@@ -46,16 +46,6 @@ Ext.oa.Pkgapt__Upgrade_Panel = Ext.extend(Ext.grid.GridPanel, {
           Ext.state.Manager.set("pkgapt_distupgrade", self.pressed);
           aptGrid.reload(self.pressed);
         }
-      }, {
-        text: gettext('Do Upgrade'),
-        icon: MEDIA_URL + "/oxygen/16x16/actions/dialog-ok-apply.png",
-        handler: function(self){
-          aptGrid.getEl().mask("Upgrade is running...");
-          pkgapt__Apt.do_upgrade(Ext.state.Manager.get("pkgapt_distupgrade", true), function(provider, response){
-            aptGrid.getEl().unmask();
-            aptGrid.reload();
-          });
-        }
       } ],
       store: {
         xtype: 'jsonstore',
