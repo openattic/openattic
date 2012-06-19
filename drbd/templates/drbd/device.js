@@ -111,11 +111,17 @@ Ext.oa.Drbd__Device_Panel = Ext.extend(Ext.oa.ShareGridPanel, {
       }, {
         fieldLabel: gettext('Address (here)'),
         name: "selfaddress",
-        xtype: 'textfield'
+        xtype: 'textfield',
+        maskRe: /[0-9.:]/,
+        regex: /^[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}:[0-9]{1,5}$/,
+        regexText: gettext("Must be IP:Port.")
       }, {
         fieldLabel: gettext('Address (Peer)'),
         name: "peeraddress",
-        xtype: 'textfield'
+        xtype: 'textfield',
+        maskRe: /[0-9.:]/,
+        regex: /^[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}:[0-9]{1,5}$/,
+        regexText: gettext("Must be IP:Port.")
       }, {
         xtype: 'radiogroup',
         fieldLabel: 'Protocol',
