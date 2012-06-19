@@ -90,8 +90,8 @@ Ext.oa.Pkgapt__Upgrade_Panel = Ext.extend(Ext.grid.GridPanel, {
           }
         }]
       }),
-      reload: function( dist_upgrade ){
-        pkgapt__Apt.get_upgrade_changes(dist_upgrade, function(provider, response){
+      reload: function(){
+        pkgapt__Apt.get_upgrade_changes(Ext.state.Manager.get("pkgapt_distupgrade", true), function(provider, response){
           aptGrid.setTitle(String.format(
             "APT: Upgrading {0}, newly installing {1}, deleting {2}, keeping {3} packages, downloading {4} MiB. ",
             response.result[0].upgrade_count, response.result[0].new_install_count,
