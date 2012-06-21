@@ -82,6 +82,16 @@ Ext.oa.Lvm__LogicalVolume_Panel = Ext.extend(Ext.oa.ShareGridPanel, {
       }
       return val.name;
     }
+  },{
+    name: 'ownername',
+    mapping: 'owner',
+    convert: function(val, row){
+      "use strict";
+      if( val === null || typeof val === "undefined" ){
+        return '';
+      }
+      return val.username;
+    }
   }],
   columns: [{
     header: gettext('LV'),
@@ -153,6 +163,9 @@ Ext.oa.Lvm__LogicalVolume_Panel = Ext.extend(Ext.oa.ShareGridPanel, {
       }).defer(25);
       return '<span id="' + id + '"></span>';
     }
+  },{
+    header: gettext('Owner'),
+    dataIndex: "ownername",
   },{
     header: gettext('Group'),
     dataIndex: "vgname",
