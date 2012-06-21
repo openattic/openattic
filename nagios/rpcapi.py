@@ -46,7 +46,7 @@ class ServiceHandler(ModelHandler):
                 for i, graph in enumerate(perfd):
                     data["graphs"].append( { "id": i, "title": graph[0] } )
 
-        except KeyError:
+        except (KeyError, SystemError):
             data["state"]  = None
             data["graphs"] = None
 

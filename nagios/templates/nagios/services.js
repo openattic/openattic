@@ -271,6 +271,7 @@ Ext.oa.Nagios__Service_Panel = Ext.extend(Ext.Panel, {
     "use strict";
     var nagiosGrid = this;
     var renderDate = function(val, x, store){
+      if(!val) return "unknown";
       return new Date(val * 1000).format("Y-m-d H:i:s");
     };
     var stateicons = {
