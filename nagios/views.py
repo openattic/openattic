@@ -146,7 +146,11 @@ def graph(request, service_id, srcidx):
     else:
         indexes = graph.fields.split(' ')
 
-    perfdata = serv.perfdata
+    try:
+        perfdata = serv.perfdata
+    except SystemError, err:
+        return HttpResponse(unicode(err), status=503)
+
     if not perfdata:
         raise Http404("Performance data not available")
 
