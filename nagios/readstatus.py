@@ -57,18 +57,12 @@ class NagiosState(object):
         return self._servicemap
 
     def update(self):
-        retried = 0
         try:
             self.lock.acquire()
-            while True:
-                if exists(self.statfile):
-                    mtime = getmtime(self.statfile)
-                    break
-                elif retried < 5:
-                    sleep(0.1)
-                    retried += 1
-                else:
-                    raise SystemError("'%s' does not exist" % self.statfile)
+            if exists(self.statfile):
+                mtime = getmtime(self.statfile)
+            else:
+                raise SystemError("'%s' does not exist" % self.statfile)
 
             if mtime > self.timestamp:
                 self.nagstate  = self.parse_status()
