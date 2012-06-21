@@ -43,7 +43,7 @@ Ext.oa.ShareGridPanel = Ext.extend(Ext.grid.GridPanel, {
     // class inheritance. Solution: Copy the prototype's columns to the object.
     var mycolumns = [];
     for( i = 0; i < this.columns.length; i++ ){
-      mycolumns.push(Ext.apply({}, this.columns[i]));
+      mycolumns.push(Ext.apply({ sortable: true }, this.columns[i]));
     }
     this.columns = mycolumns;
     // Same goes for buttons, if any are defined in the prototype.
