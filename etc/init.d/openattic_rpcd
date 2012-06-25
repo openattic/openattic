@@ -47,7 +47,7 @@ case $1 in
 		if [ ! -z "$RPCD_CERTFILE" -a ! -z "$RPCD_KEYFILE" ]; then
 			RPCD_OPTIONS="$RPCD_OPTIONS -c $RPCD_CERTFILE -k $RPCD_KEYFILE"
 		fi
-		start-stop-daemon --pidfile=$RPCD_PIDFILE --make-pidfile --background --oknodo --start \
+		env start-stop-daemon --pidfile=$RPCD_PIDFILE --make-pidfile --background --oknodo --start \
 			--exec $PYTHON --chdir $OADIR --chuid $RPCD_CHUID -- \
 			$RPCD_OPTIONS -l $RPCD_LOGFILE -L $RPCD_LOGLEVEL -q
 		log_end_msg 0
@@ -55,7 +55,7 @@ case $1 in
 	
 	stop)
 		log_daemon_msg "Stopping" "openATTIC rpcd"
-		start-stop-daemon --pidfile=$RPCD_PIDFILE --stop --oknodo --exec $PYTHON
+		env start-stop-daemon --pidfile=$RPCD_PIDFILE --stop --oknodo --exec $PYTHON
 		log_end_msg 0
 		;;
 	

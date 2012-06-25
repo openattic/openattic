@@ -43,14 +43,14 @@ fi
 case $1 in
 	start)
 		log_daemon_msg "Starting" "openATTIC systemd"
-		start-stop-daemon --pidfile=$SYSD_PIDFILE --make-pidfile --background --oknodo --start \
+		env start-stop-daemon --pidfile=$SYSD_PIDFILE --make-pidfile --background --oknodo --start \
 			--exec $PYTHON --chdir $OADIR -- $SYSD_OPTIONS -l $SYSD_LOGFILE -L $SYSD_LOGLEVEL -q
 		log_end_msg 0
 		;;
 	
 	stop)
 		log_daemon_msg "Stopping" "openATTIC systemd"
-		start-stop-daemon --pidfile=$SYSD_PIDFILE --stop --oknodo --exec $PYTHON
+		env start-stop-daemon --pidfile=$SYSD_PIDFILE --stop --oknodo --exec $PYTHON
 		log_end_msg 0
 		;;
 	
