@@ -42,6 +42,9 @@ fi
 
 case $1 in
 	start)
+		if [ ! -f /proc/net/iet/volume ]; then
+			/etc/init.d/iscsitarget start
+		fi
 		log_daemon_msg "Activating" "openATTIC IET Targets"
 		oaconfig iscsi_resourceagent -a start
 		log_end_msg 0
