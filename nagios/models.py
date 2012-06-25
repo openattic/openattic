@@ -110,7 +110,7 @@ def create_service_for_lv(**kwargs):
                 )
             serv.save()
 
-    if "oaconfig" not in os.environ:
+    if "OACONFIG" not in os.environ:
         Service.write_conf()
 
 
@@ -147,7 +147,7 @@ def create_service_for_ip(**kwargs):
                     )
                 serv.save()
 
-    if "oaconfig" not in os.environ:
+    if "OACONFIG" not in os.environ:
         Service.write_conf()
 
 def delete_service_for_ip(**kwargs):
