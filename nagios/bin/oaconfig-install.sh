@@ -22,4 +22,9 @@ fi
 
 if [ $NAGIOS_RESTART_REQ = "true" ]; then
 	invoke-rc.d nagios3 restart
+	echo -n "Waiting for status.dat to appear... "
+	while [ ! -e /var/cache/nagios3/status.dat ]; do
+		sleep 0.1
+	done
+	echo "done."
 fi
