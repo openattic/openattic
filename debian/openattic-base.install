@@ -35,7 +35,7 @@ openattic.wsgi /usr/share/openattic
 # Init scripts
 etc/init.d/openattic_systemd        /etc/init.d
 etc/init.d/openattic_rpcd           /etc/init.d
-etc/init.d/openattic_mounts         /etc/init.d
+etc/init.d/openattic_mount          /etc/init.d
 etc/bash_completion.d/openattic_bash_completion /etc/bash_completion.d
 
 # System Configs
