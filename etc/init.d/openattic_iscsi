@@ -1,0 +1,82 @@
+#!/bin/bash
+#
+#  Copyright (C) 2011-2012, it-novum GmbH <community@open-attic.org>
+#
+#  openATTIC is free software; you can redistribute it and/or modify it
+#  under the terms of the GNU General Public License as published by
+#  the Free Software Foundation; version 2.
+#
+#  This package is distributed in the hope that it will be useful,
+#  but WITHOUT ANY WARRANTY; without even the implied warranty of
+#  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+#  GNU General Public License for more details.
+
+### BEGIN INIT INFO
+# Provides: openattic_systemd
+# Required-Start: $local_fs $network $remote_fs dbus
+# Required-Stop: $local_fs $network $remote_fs dbus
+# Default-Start:  2 3 4 5
+# Default-Stop: 0 1 6
+# Short-Description: openATTIC's system configuration daemon
+# Description: handles communication with the various system tools
+### END INIT INFO
+
+
+set -e
+set -u
+
+if [ -f /etc/default/openattic ]; then
+	. /etc/default/openattic
+else
+	echo "Missing required file /etc/default/openattic."
+	exit 1
+fi
+
+if [ $# -lt 1 ]
+then
+	echo "$0 <start|stop|restart|status>"
+	exit 1
+fi
+
+. /lib/lsb/init-functions
+
+case $1 in
+	start)
+		log_daemon_msg "Activating" "openATTIC IET Targets"
+		oaconfig iscsi_resourceagent -a start
+		log_end_msg 0
+		;;
+	
+	stop)
+		log_daemon_msg "Deactivating" "openATTIC IET Targets"
+		oaconfig iscsi_resourceagent -a stop
+		log_end_msg 0
+		;;
+	
+	restart|reload|force-reload)
+		$0 stop
+		$0 start
+		;;
+	
+	status)
+		if [ -f /proc/net/iet/volume ] && grep -q . /proc/net/iet/volume
+		then
+			echo "Targets are active."
+			exit 0
+		else
+			echo "Targets are not active."
+			exit 3
+		fi
+		;;
+	
+	probe)
+		echo restart
+		exit 0
+		;;
+	
+	*)
+		echo "Unknown command $1."
+		exit 1
+		;;
+esac
+
