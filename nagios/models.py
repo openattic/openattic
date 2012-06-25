@@ -14,6 +14,7 @@
  *  GNU General Public License for more details.
 """
 
+import os
 import dbus
 
 from django.conf      import settings
@@ -109,7 +110,8 @@ def create_service_for_lv(**kwargs):
                 )
             serv.save()
 
-    Service.write_conf()
+    if "oaconfig" not in os.environ:
+        Service.write_conf()
 
 
 def delete_service_for_lv(**kwargs):
@@ -145,11 +147,8 @@ def create_service_for_ip(**kwargs):
                     )
                 serv.save()
 
-    try:
+    if "oaconfig" not in os.environ:
         Service.write_conf()
-    except dbus.DBusException:
-        # Fails during loaddata of initial installation
-        pass
 
 def delete_service_for_ip(**kwargs):
     ip = kwargs["instance"]

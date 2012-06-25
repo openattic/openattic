@@ -85,4 +85,6 @@ def create_nagios(app, created_models, verbosity, interactive, db, **kwargs):
     for ip in IPAddress.objects.all():
         nagios.models.create_service_for_ip( instance=ip )
 
+    Service.write_conf()
+
 signals.post_syncdb.connect(create_nagios, sender=nagios.models)
