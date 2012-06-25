@@ -30,6 +30,18 @@ fi
 set -e
 set -u
 
+create_indexpage () {
+<<EOF cat >/var/www/index.html
+<html>
+  <head>
+    <meta http-equiv="refresh" content="1;url=/openattic" ></meta>
+  </head>
+  <body>
+    Redirecting...
+  </body>
+</html>
+EOF
+}
 
 usage () {
 	echo "Usage: $0 <command> [<args>]"
@@ -103,6 +115,10 @@ case $1 in
 		for hook in $OADIR/*/bin/oaconfig-install.sh; do
 			source $hook
 		done
+		
+		if [ `md5sum /var/www/index.html | cut -d' ' -f1` = '21dde95d9d269cbb2fa6560309dca40c' ]; then
+			create_indexpage
+		fi
 		
 		# Run database initializations that need to query the user for data
 		su "$OAUSER" -c 'python manage.py syncdb'
