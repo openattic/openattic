@@ -21,6 +21,7 @@ import subprocess
 
 from time import sleep
 from datetime import datetime
+from select import select
 
 from cmdlog.models import LogEntry
 
@@ -49,15 +50,40 @@ def invoke(args, close_fds=True, return_out_err=False, log=True, stdin=None, fai
         close_fds = close_fds,
         env = procenv
         )
-    procout, procerr = proc.communicate(stdin)
+
+    procout = ""
+    procerr = ""
 
     cmdline = ' '.join(['"' + arg + '"' for arg in args])
+    out = [ "> " + cmdline ]
+
+    if stdin is not None:
+        proc.stdin.write(stdin)
+        proc.stdin.close()
+
+    process_alive = True
+    last_data_has_been_read = False
+    while process_alive or not last_data_has_been_read:
+        rdy_read, rdy_write, rdy_other = select([proc.stdout, proc.stderr], [], [], 0.1)
+        if proc.stdout in rdy_read:
+            data = proc.stdout.read()
+            procout += data
+            out.extend([ "O " + line for line in data.split("\n") if line ])
+        if proc.stderr in rdy_read:
+            data = proc.stderr.read()
+            procerr += data
+            out.extend([ "E " + line for line in data.split("\n") if line ])
+        if proc.poll() is not None:
+            if process_alive:
+                proc.wait()
+                process_alive = False
+            else:
+                last_data_has_been_read = True
+
+    proc.stdout.close()
+    proc.stderr.close()
 
     if log or proc.returncode != 0:
-        out = [ "> " + cmdline ]
-        out.extend([ "E " + line for line in procerr.split("\n") if line ])
-        out.extend([ "O " + line for line in procout.split("\n") if line ])
-
         logent = LogEntry( starttime=starttime, command=args[0][:250] )
         logent.endtime  = datetime.now()
         logent.exitcode = proc.returncode
