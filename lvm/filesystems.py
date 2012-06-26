@@ -192,6 +192,10 @@ class Zfs(FileSystem):
         self._lvm.zfs_unmount(jid, self.lv.name)
 
     def destroy(self):
+        for snap in self.lv.zfssnapshot_set.all():
+            snap.delete()
+        for subv in self.lv.zfssubvolume_set.all():
+            subv.delete()
         self._lvm.zfs_destroy(self.lv.name)
 
     def online_resize_available(self, grow):
