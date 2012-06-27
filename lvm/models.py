@@ -583,6 +583,8 @@ class ZfsSubvolume(models.Model):
         return ret
 
     def delete( self ):
+        for snap in self.zfssnapshot_set.all():
+            snap.delete()
         ret = models.Model.delete(self)
         self.volume.fs.destroy_subvolume(self)
         return ret
