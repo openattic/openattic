@@ -12,7 +12,7 @@
 #  GNU General Public License for more details.
 
 ### BEGIN INIT INFO
-# Provides: openattic_systemd
+# Provides: openattic_iscsi
 # Required-Start: $local_fs $network $remote_fs dbus
 # Required-Stop: $local_fs $network $remote_fs dbus
 # Default-Start:  2 3 4 5
