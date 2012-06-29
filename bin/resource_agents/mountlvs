@@ -62,10 +62,10 @@ case "$1" in
 	
 	monitor)
 		if [ -z "$VOLGRP" ]; then
-			/usr/bin/oavgmanager status
+			/usr/sbin/oavgmanager status
 			RETVAL=$?
 		else
-			/usr/bin/oavgmanager status "$VOLGRP"
+			/usr/sbin/oavgmanager status "$VOLGRP"
 			RETVAL=$?
 		fi
 		if [ "$RETVAL" = 0 ]; then
@@ -77,10 +77,10 @@ case "$1" in
 	
 	*)
 		if [ -z "$VOLGRP" ]; then
-			/usr/bin/oavgmanager "$1"
+			/usr/sbin/oavgmanager "$1"
 			RETVAL=$?
 		else
-			/usr/bin/oavgmanager "$1" "$VOLGRP"
+			/usr/sbin/oavgmanager "$1" "$VOLGRP"
 			RETVAL=$?
 		fi
 		if [ "$RETVAL" = 0 ]; then
