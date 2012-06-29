@@ -382,7 +382,7 @@ Ext.oa.Ifconfig__NetDevice_Panel = Ext.extend(Ext.Panel, {
               self.ownerCt.ownerCt.getForm().reset();
             }
           }, {
-            text: gettext('Delete Device'),
+            text: gettext('Delete Interface'),
             icon: MEDIA_URL + "/icons2/16x16/actions/remove.png",
             handler: function(self){
               ifconfig__NetDevice.in_use(netDevPanel.active_device.id, function(provider, response){
