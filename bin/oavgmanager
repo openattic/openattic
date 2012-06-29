@@ -16,16 +16,7 @@
 import sys
 import os
 
-if len(sys.argv) not in (2, 3):
-    print ( "%s <command> [<vg>]\n"
-            "\n"
-            "Valid commands:\n"
-            " * start:   Mount all volumes\n"
-            " * stop:    Unmount all volumes\n"
-            " * status:  See if any volumes are currently mounted\n"
-            " * restart: Umount, then mount all volumes\n" ) % sys.argv[0]
-    sys.exit(1)
-
+from optparse import OptionParser
 
 basedir = dict([
     line.strip().split("=") for line in open("/etc/default/openattic", "rb") if line.strip()
@@ -34,66 +25,138 @@ basedir = dict([
 sys.path.append( basedir )
 os.environ['DJANGO_SETTINGS_MODULE'] = 'settings'
 
+
 from lvm.models import LogicalVolume
 
-if len(sys.argv) == 2:
-    command = sys.argv[1]
-    vg = None
-else:
-    command, vg = sys.argv[1:]
+class CmdLibrary(type):
+    """ Meta class that keeps a library of defined checks. """
+    handlers = {}
 
-def do_mount():
-    if vg is None:
-        print "Mounting all volumes..."
-        LogicalVolume.mount_all()
-    else:
-        print "Mounting volumes of volume group '%s'..." % vg
-        for lv in LogicalVolume.objects.filter(vg__name=vg).exclude(filesystem=""):
-            lv.mount()
+    def __init__( cls, name, bases, attrs ):
+        type.__init__( cls, name, bases, attrs )
+        if cls.command_name is not None:
+            CmdLibrary.handlers[cls.command_name.lower()] = cls
 
-def do_unmount():
-    if vg is None:
-        print "Unmounting all volumes..."
-        LogicalVolume.unmount_all()
-    else:
-        print "Unmounting volumes of volume group '%s'..." % vg
-        for lv in LogicalVolume.objects.filter(vg__name=vg).exclude(filesystem=""):
-            lv.unmount()
 
-if command == "start":
-    do_mount()
+class BaseCommand(object):
+    __metaclass__ = CmdLibrary
 
-elif command == "stop":
-    do_unmount()
+    command_name = None
 
-elif command in ("restart", "force-reload"):
-    do_mount()
-    do_unmount()
+    def populate_optparser(self, parser):
+        pass
 
-elif command == "status":
-    try:
-        vols = LogicalVolume.objects.exclude(filesystem="")
-        if vg is not None:
-            vols = vols.filter(vg__name=vg)
-        volcount = vols.count()
-        mountedcount = len([True for lv in vols if lv.mounted])
-    except Exception, err:
-        print "Got exception '%s' when checking, assuming the database isn't running and nothing is mounted." % unicode(err)
-        sys.exit(3)
-    else:
-        if mountedcount:
-            print "There are currently %d mounted volumes (%d total)." % (mountedcount, volcount)
-            sys.exit(0)
-        elif volcount:
-            print "There are currently no mounted volumes (%d total)." % volcount
-            sys.exit(3)
+    def __call__(self, options, *args):
+         raise NotImplemented()
+
+
+class VgStartCommand(BaseCommand):
+    """Mount all volumes. """
+
+    command_name = "start"
+
+    def __call__(self, options, vg=None):
+        if vg is None:
+            print "Mounting all volumes..."
+            LogicalVolume.mount_all()
         else:
-            print "There are currently no volumes at all."
-            sys.exit(0)
+            print "Mounting volumes of volume group '%s'..." % vg
+            for lv in LogicalVolume.objects.filter(vg__name=vg).exclude(filesystem=""):
+                lv.mount()
 
-elif command == "probe":
-    print "restart"
+class VgStopCommand(BaseCommand):
+    """Unmount all volumes. """
 
-else:
-    print "Unknown command %s." % command
-    sys.exit(1)
+    command_name = "stop"
+
+    def populate_optparser(self, parser):
+        parser.add_option("-i", "--ignore-fail", help="Ignore failures", default=False, action="store_true")
+
+    def __call__(self, options, vg=None):
+        vols = LogicalVolume.objects.exclude(filesystem="")
+        if vg is None:
+            print "Unmounting all volumes..."
+        else:
+            print "Unmounting volumes of volume group '%s'..." % vg
+            vols = vols.filter(vg__name=vg)
+        for lv in vols:
+            try:
+                lv.unmount()
+            except Exception:
+                if not options.ignore_fail:
+                    raise
+
+class VgRestartCommand(BaseCommand):
+    """Remount all volumes. """
+
+    command_name = "restart"
+
+    def __call__(self, options, vg=None):
+        ret = CmdLibrary.handlers["stop"]()(options, vg)
+        if ret != 0:
+            return ret
+        return CmdLibrary.handlers["start"]()(options, vg)
+
+class VgStatusCommand(BaseCommand):
+    """See if any volumes are currently mounted. """
+
+    command_name = "status"
+
+    def populate_optparser(self, parser):
+        parser.add_option("-v", "--verbose", help="Show mounted volumes", default=False, action="store_true")
+
+    def __call__(self, options, vg=None):
+        try:
+            vols = LogicalVolume.objects.exclude(filesystem="")
+            if vg is not None:
+                vols = vols.filter(vg__name=vg)
+            volcount = vols.count()
+            mountedcount = 0
+            for lv in vols:
+                if lv.mounted:
+                    mountedcount += 1
+                    if options.verbose:
+                        print "Volume '%s' is mounted." % lv.name
+                elif options.verbose:
+                    print "Volume '%s' is not mounted." % lv.name
+        except Exception, err:
+            print "Got exception '%s' when checking, assuming the database isn't running and nothing is mounted." % unicode(err)
+            return 3
+        else:
+            if mountedcount:
+                print "There are currently %d mounted volumes (%d total)." % (mountedcount, volcount)
+                return 0
+            elif volcount:
+                print "There are currently no mounted volumes (%d total)." % volcount
+                return 3
+            else:
+                print "There are currently no volumes at all."
+                return 0
+
+
+def main():
+    # Find the command argument
+    command = None
+    for arg in sys.argv[1:]:
+        if arg[0] != "-":
+            command = arg
+            break
+
+    usage = "%prog <command> [args]\n\nValid commands:\n"
+    for cmdname, cmdclass in CmdLibrary.handlers.iteritems():
+        usage += " * %-10s -- %s\n" % (cmdname, cmdclass.__doc__)
+
+    parser = OptionParser(usage=usage)
+
+    if command not in CmdLibrary.handlers:
+        parser.print_usage()
+        print "no such command:", command
+        return 1
+    cmdclass = CmdLibrary.handlers[command]()
+    cmdclass.populate_optparser(parser)
+    options, posargs = parser.parse_args()
+    return cmdclass(options, *posargs[1:])
+
+if __name__ == '__main__':
+    sys.exit(main())
+
