@@ -42,6 +42,10 @@ debian/apache2_conf.d/openattic     /etc/apache2/conf.d
 debian/default/openattic            /etc/default
 debian/dbus_system.d/openattic.conf /etc/dbus-1/system.d
 
+# Pacemaker resource agents
+bin/resource_agents/* /usr/lib/ocf/resource.d/openattic/
+
 bin/oaconfig /usr/sbin
 bin/oacli    /usr/bin
+bin/oavgmanager /usr/sbin
 bin/backuptime /usr/share/doc/openattic-base/examples/backuptime
