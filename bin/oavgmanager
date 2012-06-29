@@ -78,7 +78,7 @@ elif command == "status":
         volcount = vols.count()
         mountedcount = len([True for lv in vols if lv.mounted])
     except Exception, err:
-        print "Got exception '%s' when checking, assuming the database isn't running and nothing is mounted." % err.message
+        print "Got exception '%s' when checking, assuming the database isn't running and nothing is mounted." % unicode(err)
         sys.exit(3)
     else:
         if mountedcount:
