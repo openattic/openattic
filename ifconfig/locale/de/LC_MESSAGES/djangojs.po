@@ -2,20 +2,20 @@
 # Copyright (C) YEAR THE PACKAGE'S COPYRIGHT HOLDER
 # This file is distributed under the same license as the PACKAGE package.
 # FIRST AUTHOR <EMAIL@ADDRESS>, YEAR.
-#
+# 
 #, fuzzy
 msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2012-06-12 13:26+0200\n"
-"PO-Revision-Date: 2012-04-02 11:55\n"
-"Last-Translator: Michael Ziegler <michael.ziegler@it-novum.com>\n"
+"POT-Creation-Date: 2012-06-29 12:13+0200\n"
+"PO-Revision-Date: 2012-06-29 12:17\n"
+"Last-Translator: Kai Wagner <>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
-"Language: \n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
+"Language: \n"
 "Plural-Forms: nplurals=2; plural=(n != 1)\n"
 "X-Translated-Using: django-rosetta 0.6.6\n"
 
@@ -178,7 +178,11 @@ msgstr ""
 msgid "Cancel"
 msgstr "Abbrechen"
 
-#: templates/ifconfig/netdevices.js:385 templates/ifconfig/netdevices.js:390
+#: templates/ifconfig/netdevices.js:385
+msgid "Delete Interface"
+msgstr "Gerät löschen"
+
+#: templates/ifconfig/netdevices.js:390
 msgid "Delete Device"
 msgstr "Gerät löschen"
 
@@ -278,8 +282,8 @@ msgid ""
 "shut down and restarted, possibly causing data loss if the system is "
 "currently being used. Proceed?"
 msgstr ""
-"Um die Konfiguration sicher aktivieren zu können, werden alle Netzwerkgeräte "
-"abgeschaltet und neu gestartet, was zu Datenverlust führt wenn das System "
+"Um die Konfiguration sicher aktivieren zu können, werden alle Netzwerkgeräte"
+" abgeschaltet und neu gestartet, was zu Datenverlust führt wenn das System "
 "gerade in Benutzung ist. Fortfahren?"
 
 #: templates/ifconfig/netdevices.js:614
