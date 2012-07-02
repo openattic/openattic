@@ -29,10 +29,20 @@ from lvm.filesystems import Zfs, FILESYSTEMS, get_by_name as get_fs_by_name
 from lvm             import signals as lvm_signals
 
 
+
+class VolumeGroupManager(models.Manager):
+    def active(self):
+        lvm = dbus.SystemBus().get_object(settings.DBUS_IFACE_SYSTEMD, "/lvm")
+        lvm_info = dbus_to_python(lvm.vgs())
+        return self.filter( name__in=lvm_info.keys() )
+
+
 class VolumeGroup(models.Model):
     """ Represents a LVM Volume Group. """
 
     name        = models.CharField(max_length=130, unique=True)
+
+    objects = VolumeGroupManager()
 
     def __init__( self, *args, **kwargs ):
         models.Model.__init__( self, *args, **kwargs )
