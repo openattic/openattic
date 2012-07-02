@@ -219,6 +219,13 @@ Ext.oa.volumeGroup_Panel = Ext.extend(Ext.grid.GridPanel, {
             var i;
             var handleResponse = function(i){
               return function(provider, response){
+                if( response.type === "exception" ){
+                  self.data.items[i].set("LVM_VG_PERCENT", '?');
+                  self.data.items[i].set("LVM_VG_SIZE", '?');
+                  self.data.items[i].set("LVM_VG_FREE", '?');
+                  self.data.items[i].set("LVM_VG_ATTR", '?');
+                  return;
+                }
                 self.data.items[i].set( "LVM_VG_PERCENT",
                   ((response.result.LVM2_VG_SIZE - response.result.LVM2_VG_FREE) /
                     response.result.LVM2_VG_SIZE * 100.0).toFixed(2)
