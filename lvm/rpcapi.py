@@ -33,6 +33,10 @@ class VgHandler(ModelHandler):
         vg = VolumeGroup.objects.get(id=id)
         return vg.join_device(device)
 
+    def active(self):
+        """ Return all active objects. """
+        return [ self._getobj(obj) for obj in self.model.objects.active().order_by(*self.order) ]
+
     def get_free_megs(self, id):
         """ Get amount of free space in a Volume Group. """
         return VolumeGroup.objects.get(id=id).lvm_free_megs
