@@ -18,7 +18,7 @@ import os.path
 import ctypes
 
 from systemd import invoke, logged, LockingPlugin, method
-from sysutils.models import NTP
+from sysutils.models import NTP, Proxy
 
 
 @logged
@@ -65,3 +65,15 @@ class SystemD(LockingPlugin):
         finally:
             self.lock.release()
 
+    @method(in_signature="", out_signature="")
+    def write_proxy(self):
+        self.lock.acquire()
+        try:
+            fd = open( "/etc/environment", "wb" )
+            try:
+                proxy = Proxy.objects.all()[0]
+                fd.write( "http_proxy=\"%s\"\n" % proxy.server )
+            finally:
+                fd.close()
+        finally:
+            self.lock.release()
