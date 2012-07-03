@@ -25,7 +25,7 @@ from django.utils.translation   import ugettext_noop, ugettext_lazy as _
 from django.contrib.auth.models import User
 
 from lvm.models import LogicalVolume
-from ifconfig.models import Host, IPAddress
+from ifconfig.models import Host, IPAddress, HostDependentManager
 
 from nagios.conf import settings as nagios_settings
 from nagios.readstatus import NagiosState
@@ -45,12 +45,12 @@ class Graph(models.Model):
 
 
 
-class ServiceManager(models.Manager):
-    def get_active(self):
+class ServiceManager(HostDependentManager):
+    def _base_query(self):
         """ Return services that are either associated with this host directly,
             or with a volume in a group associated with this host.
         """
-        return self.filter(
+        return models.Manager.filter(self,
             Q(host=Host.objects.get_current(), volume=None) |
             Q(host=None, volume__in=LogicalVolume.objects.filter(vg__host=Host.objects.get_current())))
 
