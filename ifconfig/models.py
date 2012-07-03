@@ -73,9 +73,13 @@ class Host(models.Model):
     objects     = HostManager()
 
 
-class NetDeviceManager(models.Manager):
+class HostDependentManager(models.Manager):
+    def __init__(self, hostfilter="host", *args, **kwargs):
+        self._hostfilter = hostfilter
+        return models.Manager.__init__(self, *args, **kwargs)
+
     def _base_query(self):
-        return models.Manager.filter(self, host=Host.objects.get_current())
+        return models.Manager.filter(self, **{ self._hostfilter: Host.objects.get_current() })
 
     def all(self):
         return self._base_query()
@@ -102,7 +106,7 @@ class NetDevice(models.Model):
     bond_downdelay = models.IntegerField( default=200 )
     bond_updelay   = models.IntegerField( default=200 )
 
-    objects      = NetDeviceManager()
+    objects      = HostDependentManager()
 
     class Meta:
         unique_together = ("host", "devname")
