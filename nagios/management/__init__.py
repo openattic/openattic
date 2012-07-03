@@ -20,7 +20,7 @@ from django.conf import settings
 from django.core.management import call_command
 
 from nagios.conf import settings as nagios_settings
-from ifconfig.models import IPAddress
+from ifconfig.models import Host, IPAddress
 
 import nagios.models
 from nagios.models    import Service, Command
@@ -54,10 +54,20 @@ def create_nagios(app, created_models, verbosity, interactive, db, **kwargs):
             continue
 
         try:
-            serv = Service.objects.get( description=servstate["service_description"], command=cmd )
+            serv = Service.objects.get(
+                host=Host.objects.get_current(),
+                description=servstate["service_description"],
+                command=cmd
+                )
         except Service.DoesNotExist:
             print "Adding Service '%s'" % servstate["service_description"]
-            serv = Service( description=servstate["service_description"], command=cmd, arguments=('!'.join(cmdargs)) )
+            serv = Service(
+                host        = Host.objects.get_current(),
+                volume      = None,
+                description = servstate["service_description"],
+                command     = cmd,
+                arguments   = ('!'.join(cmdargs))
+                )
             serv.save()
 
     # read /proc/stat
@@ -76,6 +86,8 @@ def create_nagios(app, created_models, verbosity, interactive, db, **kwargs):
     for cpu in range(cpumax + 1):
         if Service.objects.filter(command=cmd, arguments=str(cpu)).count() == 0:
             serv = Service(
+                host        = Host.objects.get_current(),
+                volume      = None,
                 command     = cmd,
                 description = nagios_settings.CPUTIME_DESCRIPTION % cpu,
                 arguments   = str(cpu)

@@ -24,7 +24,7 @@ from django.utils.translation   import ugettext_noop, ugettext_lazy as _
 from django.contrib.auth.models import User
 
 from lvm.models import LogicalVolume
-from ifconfig.models import IPAddress
+from ifconfig.models import Host, IPAddress
 
 from nagios.conf import settings as nagios_settings
 from nagios.readstatus import NagiosState
@@ -43,6 +43,7 @@ class Graph(models.Model):
     fields      = models.CharField(max_length=250)
 
 class Service(models.Model):
+    host        = models.ForeignKey(Host, blank=True, null=True)
     volume      = models.ForeignKey(LogicalVolume, blank=True, null=True)
     description = models.CharField(max_length=250, unique=True)
     command     = models.ForeignKey(Command)
@@ -76,6 +77,7 @@ def create_service_for_lv(**kwargs):
         if Service.objects.filter(command=cmd, volume=lv).count() == 0:
             for mp in lv.fs.mountpoints:
                 serv = Service(
+                    host        = None,
                     volume      = lv,
                     command     = cmd,
                     description = nagios_settings.LV_UTIL_DESCRIPTION % lv.name,
@@ -92,6 +94,7 @@ def create_service_for_lv(**kwargs):
     cmd = Command.objects.get(name=nagios_settings.LV_PERF_CHECK_CMD)
     if Service.objects.filter(command=cmd, volume=lv).count() == 0:
         serv = Service(
+            host        = None,
             volume      = lv,
             command     = cmd,
             description = nagios_settings.LV_PERF_DESCRIPTION % lv.name,
@@ -103,6 +106,7 @@ def create_service_for_lv(**kwargs):
         cmd = Command.objects.get(name=nagios_settings.LV_SNAP_CHECK_CMD)
         if Service.objects.filter(command=cmd, volume=lv).count() == 0:
             serv = Service(
+                host        = None,
                 volume      = lv,
                 command     = cmd,
                 description = nagios_settings.LV_SNAP_DESCRIPTION % lv.name,
@@ -140,6 +144,7 @@ def create_service_for_ip(**kwargs):
         else:
             if Service.objects.filter(command=cmd, arguments=ip.device.devname).count() == 0:
                 serv = Service(
+                    host        = Host.objects.get_current(),
                     volume      = None,
                     command     = cmd,
                     description = nagios_settings.TRAFFIC_DESCRIPTION % ip.device.devname,
