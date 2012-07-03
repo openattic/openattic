@@ -506,7 +506,7 @@ Ext.oa.Lvm__LogicalVolume_Panel = Ext.extend(Ext.oa.ShareGridPanel, {
       store: {
         xtype: "directstore",
         fields: ["id", "name"],
-        directFn: lvm__VolumeGroup.active
+        directFn: lvm__VolumeGroup.all
       },
       typeAhead:     true,
       triggerAction: 'all',

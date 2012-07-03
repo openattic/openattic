@@ -213,7 +213,7 @@ Ext.oa.volumeGroup_Panel = Ext.extend(Ext.grid.GridPanel, {
       viewConfig: { forceFit: true },
       store: new Ext.data.DirectStore({
         fields: ['id', 'name',"LVM_VG_FREE","LVM_VG_SIZE","LVM_VG_ATTR", "LVM_VG_PERCENT"],
-        directFn: lvm__VolumeGroup.active,
+        directFn: lvm__VolumeGroup.all,
         listeners: {
           load: function(self){
             var i;

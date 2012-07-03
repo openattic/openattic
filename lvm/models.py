@@ -24,15 +24,10 @@ from django.db import models
 from django.conf import settings
 from django.utils.translation   import ugettext_noop, ugettext_lazy as _
 
-from ifconfig.models import Host
+from ifconfig.models import Host, HostDependentManager
 from systemd.helpers import dbus_to_python
 from lvm.filesystems import Zfs, FILESYSTEMS, get_by_name as get_fs_by_name
 from lvm             import signals as lvm_signals
-
-
-class VolumeGroupManager(models.Manager):
-    def active(self):
-        return self.filter( host=Host.objects.get_current() )
 
 
 class VolumeGroup(models.Model):
@@ -41,7 +36,7 @@ class VolumeGroup(models.Model):
     name        = models.CharField(max_length=130, unique=True)
     host        = models.ForeignKey(Host, null=True)
 
-    objects = VolumeGroupManager()
+    objects = HostDependentManager()
 
     def __init__( self, *args, **kwargs ):
         models.Model.__init__( self, *args, **kwargs )
@@ -160,11 +155,6 @@ class VolumeGroup(models.Model):
 
 
 
-class LogicalVolumeManager(models.Manager):
-    def active(self):
-        return self.filter( vg__host=Host.objects.get_current() )
-
-
 class LogicalVolume(models.Model):
     """ Represents a LVM Logical Volume and offers management functions.
 
@@ -181,7 +171,7 @@ class LogicalVolume(models.Model):
     fswarning   = models.IntegerField(_("Warning Level (%)"),  default=75 )
     fscritical  = models.IntegerField(_("Critical Level (%)"), default=85 )
 
-    objects = LogicalVolumeManager()
+    objects = HostDependentManager("vg__host")
 
     def __init__( self, *args, **kwargs ):
         models.Model.__init__( self, *args, **kwargs )
