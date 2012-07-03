@@ -20,7 +20,7 @@ from time import time
 from django.conf import settings
 
 from rpcd.handlers import BaseHandler, ModelHandler
-from sysutils.models import InitScript, NTP
+from sysutils.models import InitScript, NTP, Proxy
 
 class SysUtilsHandler(BaseHandler):
     @classmethod
@@ -70,4 +70,7 @@ class InitScriptHandler(ModelHandler):
 class NTPHandler(ModelHandler):
     model = NTP
 
-RPCD_HANDLERS = [SysUtilsHandler, InitScriptHandler, NTPHandler]
+class ProxyHandler(ModelHandler):
+    model = Proxy
+
+RPCD_HANDLERS = [SysUtilsHandler, InitScriptHandler, NTPHandler, ProxyHandler]
