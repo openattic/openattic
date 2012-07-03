@@ -20,7 +20,16 @@ from django.conf import settings
 
 from rpcd.handlers import ModelHandler
 
-from ifconfig.models import IPAddress, NetDevice
+from ifconfig.models import Host, IPAddress, NetDevice
+
+
+class HostHandler(ModelHandler):
+    model = Host
+
+    def _idobj(self, obj):
+        """ Return an ID for the given object, including the app label and object name. """
+        return {'id': obj.id, 'app': obj._meta.app_label, 'obj': obj._meta.object_name, 'name': obj.name}
+
 
 class IPAddressHandler(ModelHandler):
     model = IPAddress
@@ -76,4 +85,4 @@ class NetDeviceHandler(ModelHandler):
         """ Determine whether or not the device with the given ID is configured with any services. """
         return NetDevice.objects.get(id=id).in_use
 
-RPCD_HANDLERS = [NetDeviceHandler, IPAddressHandler]
+RPCD_HANDLERS = [HostHandler, NetDeviceHandler, IPAddressHandler]
