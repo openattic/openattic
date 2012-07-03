@@ -84,7 +84,7 @@ def create_nagios(app, created_models, verbosity, interactive, db, **kwargs):
 
     cmd = Command.objects.get(name=nagios_settings.CPUTIME_CHECK_CMD)
     for cpu in range(cpumax + 1):
-        if Service.objects.filter(command=cmd, arguments=str(cpu)).count() == 0:
+        if Service.objects.filter(host=Host.objects.get_current(), command=cmd, arguments=str(cpu)).count() == 0:
             serv = Service(
                 host        = Host.objects.get_current(),
                 volume      = None,
