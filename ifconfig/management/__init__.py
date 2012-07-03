@@ -115,7 +115,7 @@ def create_interfaces(app, created_models, verbosity, interactive, db, **kwargs)
                     # Don't record link-local addresses
                     continue
                 try:
-                    ip = IPAddress.objects.get( device__host=host, address__startswith=addr["addr"] )
+                    ip = IPAddress.objects.get( device__host=host, address__startswith=addr["addr"]+"/" )
                 except IPAddress.DoesNotExist:
                     print "Adding ", addr
                     ip = IPAddress(address=(addr["addr"] + "/" + addr["netmask"]), device=haveifaces[iface])
