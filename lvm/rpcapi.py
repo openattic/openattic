@@ -88,6 +88,10 @@ class LvHandler(ModelHandler):
         """ Return an ID for the given object, including the app label and object name. """
         return {'id': obj.id, 'app': obj._meta.app_label, 'obj': obj._meta.object_name, 'name': obj.name}
 
+    def active(self):
+        """ Return all active objects. """
+        return [ self._getobj(obj) for obj in self.model.objects.active().order_by(*self.order) ]
+
     def get_capabilities(self):
         return LogicalVolume.get_capabilities()
 
