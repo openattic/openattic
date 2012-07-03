@@ -73,6 +73,17 @@ class Host(models.Model):
     objects     = HostManager()
 
 
+class NetDeviceManager(models.Manager):
+    def _base_query(self):
+        return models.Manager.filter(self, host=Host.objects.get_current())
+
+    def all(self):
+        return self._base_query()
+
+    def filter(self, *args, **kwargs):
+        return self._base_query().filter(*args, **kwargs)
+
+
 class NetDevice(models.Model):
     host        = models.ForeignKey(Host)
     devname     = models.CharField(max_length=10)
@@ -90,6 +101,8 @@ class NetDevice(models.Model):
     bond_miimon    = models.IntegerField( default=100 )
     bond_downdelay = models.IntegerField( default=200 )
     bond_updelay   = models.IntegerField( default=200 )
+
+    objects      = NetDeviceManager()
 
     class Meta:
         unique_together = ("host", "devname")
