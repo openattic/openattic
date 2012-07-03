@@ -17,8 +17,12 @@
 from django.db import models
 from django.utils.translation   import ugettext_noop, ugettext_lazy as _
 
+from ifconfig.models import Host
+
 class LogEntry(models.Model):
+    host      = models.ForeignKey(Host)
     command   = models.CharField(max_length=250, verbose_name=_("Command"))
+    user      = models.CharField(max_length=50)
     starttime = models.DateTimeField(verbose_name=_("Start time"))
     endtime   = models.DateTimeField(verbose_name=_("End time"))
     exitcode  = models.IntegerField(verbose_name=_("Exit code"))

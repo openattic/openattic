@@ -15,6 +15,7 @@
 """
 
 import os
+import pwd
 import logging
 import threading
 import subprocess
@@ -24,6 +25,7 @@ from datetime import datetime
 from select import select
 
 from cmdlog.models import LogEntry
+from ifconfig.models import Host
 
 def invoke(args, close_fds=True, return_out_err=False, log=True, stdin=None, fail_on_err=True):
     """ Invoke a subprocess with the given args and log the output.
@@ -84,7 +86,8 @@ def invoke(args, close_fds=True, return_out_err=False, log=True, stdin=None, fai
     proc.stderr.close()
 
     if log or proc.returncode != 0:
-        logent = LogEntry( starttime=starttime, command=args[0][:250] )
+        logent = LogEntry( host=Host.objects.get_current(), user=pwd.getpwuid(os.getuid()).pw_name,
+            starttime=starttime, command=args[0][:250] )
         logent.endtime  = datetime.now()
         logent.exitcode = proc.returncode
         logent.text     = '\n'.join(out)
