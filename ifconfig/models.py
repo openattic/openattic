@@ -49,35 +49,6 @@ BOND_MODE_CHOICES = (
     ("balance-alb",    _("balance-alb")),
     )
 
-
-class IPAddress(models.Model):
-    address     = models.CharField(max_length=250, unique=True)
-    gateway     = models.CharField(max_length=50, blank=True)
-    nameservers = models.CharField(max_length=50, blank=True, null=True)
-    domain      = models.CharField(max_length=250, blank=True, null=True)
-    device      = models.ForeignKey("NetDevice", blank=True, null=True)
-    configure   = models.BooleanField(blank=True, default=True)
-
-    @property
-    def in_use(self):
-        for relobj in ( self._meta.get_all_related_objects() + self._meta.get_all_related_many_to_many_objects() ):
-            if relobj.model.objects.filter( **{ relobj.field.name: self } ).count() > 0:
-                return True
-        return False
-
-    @property
-    def is_loopback(self):
-        return self.host_part in ("loopback", "localhost", "127.0.0.1", "::1")
-
-    @property
-    def is_ipv6(self):
-        return ":" in self.address
-
-    @property
-    def host_part(self):
-        return self.address.split("/")[0]
-
-
 def statfile(devname, fname):
     fpath = join("/sys/class/net", devname, fname)
     if exists(fpath):
@@ -90,6 +61,7 @@ def statfile(devname, fname):
             raise
     else:
         return None
+
 
 class NetDevice(models.Model):
     devname     = models.CharField(max_length=10, unique=True)
@@ -292,3 +264,31 @@ class NetDevice(models.Model):
         ifconfig = dbus.SystemBus().get_object(settings.DBUS_IFACE_SYSTEMD, "/ifconfig")
         ifconfig.write_interfaces()
 
+
+
+class IPAddress(models.Model):
+    address     = models.CharField(max_length=250, unique=True)
+    gateway     = models.CharField(max_length=50, blank=True)
+    nameservers = models.CharField(max_length=50, blank=True, null=True)
+    domain      = models.CharField(max_length=250, blank=True, null=True)
+    device      = models.ForeignKey(NetDevice, blank=True, null=True)
+    configure   = models.BooleanField(blank=True, default=True)
+
+    @property
+    def in_use(self):
+        for relobj in ( self._meta.get_all_related_objects() + self._meta.get_all_related_many_to_many_objects() ):
+            if relobj.model.objects.filter( **{ relobj.field.name: self } ).count() > 0:
+                return True
+        return False
+
+    @property
+    def is_loopback(self):
+        return self.host_part in ("loopback", "localhost", "127.0.0.1", "::1")
+
+    @property
+    def is_ipv6(self):
+        return ":" in self.address
+
+    @property
+    def host_part(self):
+        return self.address.split("/")[0]
