@@ -63,7 +63,18 @@ def statfile(devname, fname):
         return None
 
 
+class HostManager(models.Manager):
+    def get_current(self):
+        return self.get(name=socket.gethostname())
+
+class Host(models.Model):
+    name        = models.CharField(max_length=63, unique=True)
+
+    objects = HostManager
+
+
 class NetDevice(models.Model):
+    host        = models.ForeignKey(Host)
     devname     = models.CharField(max_length=10, unique=True)
     dhcp        = models.BooleanField(default=False, blank=True)
     auto        = models.BooleanField(default=True,  blank=True)
