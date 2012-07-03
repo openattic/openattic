@@ -728,10 +728,6 @@ Ext.oa.Ifconfig__NetDevice_Module = Ext.extend(Object, {
         icon: MEDIA_URL + '/icons2/22x22/apps/network.png',
         panel: 'ifconfig__netdevice_panel_inst'
       }, {
-        text: 'Proxy',
-        leaf: true, href: '#',
-        icon: MEDIA_URL + '/icons2/22x22/apps/preferences-system-network-proxy.png'
-      }, {
         text: 'Domain',
         icon: MEDIA_URL + '/icons2/128x128/apps/domain.png',
         children: [
