@@ -20,6 +20,7 @@ import dbus
 from django.conf      import settings
 from django.db        import models
 from django.db.models import signals
+from django.db.models import Q
 from django.utils.translation   import ugettext_noop, ugettext_lazy as _
 from django.contrib.auth.models import User
 
@@ -42,6 +43,18 @@ class Graph(models.Model):
     verttitle   = models.CharField(max_length=250, blank=True)
     fields      = models.CharField(max_length=250)
 
+
+
+class ServiceManager(models.Manager):
+    def get_active(self):
+        """ Return services that are either associated with this host directly,
+            or with a volume in a group associated with this host.
+        """
+        return self.filter(
+            Q(host=Host.objects.get_current(), volume=None) |
+            Q(host=None, volume__in=LogicalVolume.objects.filter(vg__host=Host.objects.get_current())))
+
+
 class Service(models.Model):
     host        = models.ForeignKey(Host, blank=True, null=True)
     volume      = models.ForeignKey(LogicalVolume, blank=True, null=True)
@@ -50,6 +63,7 @@ class Service(models.Model):
     arguments   = models.CharField(max_length=500, blank=True)
 
     nagstate    = NagiosState()
+    objects     = ServiceManager()
 
     @classmethod
     def write_conf(cls):

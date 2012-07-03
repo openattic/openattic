@@ -15,10 +15,11 @@
 """
 
 import re
-from django.template.loader import render_to_string
 
+from django.template.loader import render_to_string
 from django.contrib.auth.models import User
 
+from ifconfig.models import Host
 from systemd       import invoke, logged, LockingPlugin, method, create_job
 from nagios.models import Command, Service
 
@@ -34,7 +35,7 @@ class SystemD(LockingPlugin):
             try:
                 fd.write( render_to_string( "nagios/services.cfg", {
                     "Commands": Command.objects.all(),
-                    "Services": Service.objects.filter(command__query_only=False),
+                    "Services": Service.objects.get_active().filter(command__query_only=False)
                     } ) )
             finally:
                 fd.close()
