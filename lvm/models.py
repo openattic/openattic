@@ -32,9 +32,7 @@ from lvm             import signals as lvm_signals
 
 class VolumeGroupManager(models.Manager):
     def active(self):
-        lvm = dbus.SystemBus().get_object(settings.DBUS_IFACE_SYSTEMD, "/lvm")
-        lvm_info = dbus_to_python(lvm.vgs())
-        return self.filter( name__in=lvm_info.keys() )
+        return self.filter( host=Host.objects.get_current() )
 
 
 class VolumeGroup(models.Model):
@@ -162,6 +160,11 @@ class VolumeGroup(models.Model):
 
 
 
+class LogicalVolumeManager(models.Manager):
+    def active(self):
+        return self.filter( vg__host=Host.objects.get_current() )
+
+
 class LogicalVolume(models.Model):
     """ Represents a LVM Logical Volume and offers management functions.
 
@@ -177,6 +180,8 @@ class LogicalVolume(models.Model):
     owner       = models.ForeignKey(User, blank=True)
     fswarning   = models.IntegerField(_("Warning Level (%)"),  default=75 )
     fscritical  = models.IntegerField(_("Critical Level (%)"), default=85 )
+
+    objects = LogicalVolumeManager()
 
     def __init__( self, *args, **kwargs ):
         models.Model.__init__( self, *args, **kwargs )
