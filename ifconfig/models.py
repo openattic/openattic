@@ -75,7 +75,7 @@ class Host(models.Model):
 
 class NetDevice(models.Model):
     host        = models.ForeignKey(Host)
-    devname     = models.CharField(max_length=10, unique=True)
+    devname     = models.CharField(max_length=10)
     dhcp        = models.BooleanField(default=False, blank=True)
     auto        = models.BooleanField(default=True,  blank=True)
     jumbo       = models.BooleanField(default=False, blank=True)
@@ -91,6 +91,8 @@ class NetDevice(models.Model):
     bond_downdelay = models.IntegerField( default=200 )
     bond_updelay   = models.IntegerField( default=200 )
 
+    class Meta:
+        unique_together = ("host", "devname")
 
     def __unicode__(self):
         return self.devname
