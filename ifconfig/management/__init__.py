@@ -22,11 +22,18 @@ from django.core.management import call_command
 from django.db.models import signals
 
 import ifconfig.models
-from ifconfig.models  import NetDevice, IPAddress
+from ifconfig.models  import Host, NetDevice, IPAddress
 
 def create_interfaces(app, created_models, verbosity, interactive, db, **kwargs):
     # First of all, make sure our fixtures have been loaded
     call_command('loaddata', 'ifconfig/fixtures/initial_data.json', verbosity=verbosity, database=db)
+
+    # Make sure we have *this* host in the database
+    try:
+        host = Host.objects.get_current()
+    except Host.DoesNotExist:
+        host = Host(name=socket.gethostname())
+        host.save()
 
     if os.path.exists("/proc/net/vlan/config"):
         with open("/proc/net/vlan/config") as vlanconf:
@@ -45,7 +52,7 @@ def create_interfaces(app, created_models, verbosity, interactive, db, **kwargs)
         elif iface[:3] == "tap":
             continue
 
-        args = {"devname": iface}
+        args = {"host": host, "devname": iface}
 
         if iface in vlans:
             depends = [vlans[iface][1]]
@@ -79,7 +86,7 @@ def create_interfaces(app, created_models, verbosity, interactive, db, **kwargs)
             continue
 
         try:
-            haveifaces[iface] = NetDevice.objects.get(devname=iface)
+            haveifaces[iface] = NetDevice.objects.get(host=host, devname=iface)
             print "Found", iface
 
         except NetDevice.DoesNotExist:
@@ -108,7 +115,7 @@ def create_interfaces(app, created_models, verbosity, interactive, db, **kwargs)
                     # Don't record link-local addresses
                     continue
                 try:
-                    ip = IPAddress.objects.get( address__startswith=addr["addr"] )
+                    ip = IPAddress.objects.get( device__host=host, address__startswith=addr["addr"] )
                 except IPAddress.DoesNotExist:
                     print "Adding ", addr
                     ip = IPAddress(address=(addr["addr"] + "/" + addr["netmask"]), device=haveifaces[iface])

@@ -70,7 +70,7 @@ class HostManager(models.Manager):
 class Host(models.Model):
     name        = models.CharField(max_length=63, unique=True)
 
-    objects = HostManager
+    objects     = HostManager()
 
 
 class NetDevice(models.Model):
