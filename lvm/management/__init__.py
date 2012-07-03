@@ -28,6 +28,7 @@ from django.conf      import settings
 from systemd.helpers import dbus_to_python
 
 import lvm.models
+from ifconfig.models  import Host
 from lvm.models       import VolumeGroup, LogicalVolume
 from lvm.filesystems  import get_by_name as get_fs_by_name
 
@@ -49,10 +50,13 @@ def create_vgs(app, created_models, verbosity, **kwargs):
             vg = VolumeGroup.objects.get(name=vgname)
         except VolumeGroup.DoesNotExist:
             print "Adding Volume Group", vgname
-            vg = VolumeGroup(name=vgname)
+            vg = VolumeGroup(host=Host.objects.get_current(), name=vgname)
             vg.save()
         else:
             print "Volume Group", vgname, "already exists in the database"
+            if vg.host != Host.objects.get_current():
+                vg.host = Host.objects.get_current()
+                vg.save()
 
     if User.objects.count() == 0:
         print "Can't add LVs, no users have been configured yet"
