@@ -58,12 +58,15 @@ class ServiceManager(models.Manager):
 class Service(models.Model):
     host        = models.ForeignKey(Host, blank=True, null=True)
     volume      = models.ForeignKey(LogicalVolume, blank=True, null=True)
-    description = models.CharField(max_length=250, unique=True)
+    description = models.CharField(max_length=250)
     command     = models.ForeignKey(Command)
     arguments   = models.CharField(max_length=500, blank=True)
 
     nagstate    = NagiosState()
     objects     = ServiceManager()
+
+    class Meta:
+        unique_together = ("host", "description")
 
     @classmethod
     def write_conf(cls):
