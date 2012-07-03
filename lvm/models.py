@@ -24,10 +24,10 @@ from django.db import models
 from django.conf import settings
 from django.utils.translation   import ugettext_noop, ugettext_lazy as _
 
+from ifconfig.models import Host
 from systemd.helpers import dbus_to_python
 from lvm.filesystems import Zfs, FILESYSTEMS, get_by_name as get_fs_by_name
 from lvm             import signals as lvm_signals
-
 
 
 class VolumeGroupManager(models.Manager):
@@ -41,6 +41,7 @@ class VolumeGroup(models.Model):
     """ Represents a LVM Volume Group. """
 
     name        = models.CharField(max_length=130, unique=True)
+    host        = models.ForeignKey(Host, null=True)
 
     objects = VolumeGroupManager()
 
