@@ -19,6 +19,7 @@ import dbus
 from django.db   import models
 from django.conf import settings
 
+from ifconfig.models import HostDependentManager
 from lvm.models import LogicalVolume
 
 class Export(models.Model):
@@ -27,6 +28,7 @@ class Export(models.Model):
     address     = models.CharField(max_length=250)
     options     = models.CharField(max_length=250, default="rw,no_subtree_check,no_root_squash")
 
+    objects     = HostDependentManager("volume__vg__host")
     share_type  = "nfs"
 
     def __unicode__(self):
