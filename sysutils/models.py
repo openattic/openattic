@@ -65,3 +65,20 @@ class NTP(models.Model):
         ntp = dbus.SystemBus().get_object(settings.DBUS_IFACE_SYSTEMD, "/sysutils")
         ntp.write_ntp()
         return ret
+
+class Proxy(models.Model):
+    server = models.CharField(max_length=50)
+
+    def save( self, *args, **kwargs ):
+        ret = models.Model.save(self, *args, **kwargs)
+        proxy = dbus.SystemBus().get_object(settings.DBUS_IFACE_SYSTEMD, "/sysutils")
+        proxy.write_proxy()
+        return ret
+
+    def delete( self ):
+        ret = models.Model.delete(self)
+        proxy = dbus.SystemBus().get_object(settings.DBUS_IFACE_SYSTEMD, "/sysutils")
+        proxy.write_proxy()
+        return ret
+
+
