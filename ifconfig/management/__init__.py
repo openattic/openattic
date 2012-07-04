@@ -47,9 +47,7 @@ def create_interfaces(app, created_models, verbosity, interactive, db, **kwargs)
 
     while ifstack:
         iface = ifstack.pop(0)
-        if iface == "lo":
-            continue
-        elif iface[:3] == "tap":
+        if iface[:3] == "tap":
             continue
 
         args = {"host": host, "devname": iface}
