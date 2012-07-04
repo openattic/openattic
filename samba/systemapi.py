@@ -49,7 +49,7 @@ class SystemD(LockingPlugin):
 
     @method(in_signature="ss", out_signature="i")
     def setpasswd(self, username, passwd):
-        #return invoke(["smbpasswd", "-a", "-e", "-s", username], log=False, stdin=("%s\n%s\n" % (passwd, passwd)))
-        return invoke(["pdbedit", "-a", "-t", "-u", username], log=False, stdin=("%s\n%s\n" % (passwd, passwd)))
+        return invoke(["smbpasswd", "-a", "-s", username], log=False, stdin=("%s\n%s\n" % (passwd, passwd)))
+        #return invoke(["pdbedit", "-a", "-t", "-u", username], log=False, stdin=("%s\n%s\n" % (passwd, passwd)))
 
     setpasswd._enable_logging = False
