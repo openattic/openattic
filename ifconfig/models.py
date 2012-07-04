@@ -304,6 +304,8 @@ class IPAddress(models.Model):
     device      = models.ForeignKey(NetDevice, blank=True, null=True)
     configure   = models.BooleanField(blank=True, default=True)
 
+    objects = HostDependentManager("device__host")
+
     @property
     def in_use(self):
         for relobj in ( self._meta.get_all_related_objects() + self._meta.get_all_related_many_to_many_objects() ):
@@ -322,3 +324,6 @@ class IPAddress(models.Model):
     @property
     def host_part(self):
         return self.address.split("/")[0]
+
+    def __unicode__(self):
+        return self.address
