@@ -297,7 +297,7 @@ class NetDevice(models.Model):
 
 
 class IPAddress(models.Model):
-    address     = models.CharField(max_length=250, unique=True)
+    address     = models.CharField(max_length=250)
     gateway     = models.CharField(max_length=50, blank=True)
     nameservers = models.CharField(max_length=50, blank=True, null=True)
     domain      = models.CharField(max_length=250, blank=True, null=True)
