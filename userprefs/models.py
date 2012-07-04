@@ -21,18 +21,11 @@ from django.contrib.auth.models import User
 
 from ifconfig.models import Host, HostDependentManager
 
-class UserProfileManager(HostDependentManager):
-    def using(self, dbname):
-        return self
-
-    def get(self, *args, **kwargs):
-        return self._base_query().get(*args, **kwargs)
-
 class UserProfile(models.Model):
     user = models.ForeignKey(User)
     host = models.ForeignKey(Host)
 
-    objects = UserProfileManager()
+    objects = HostDependentManager()
 
     class Meta:
         unique_together = ("user", "host")

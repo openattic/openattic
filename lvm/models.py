@@ -24,7 +24,7 @@ from django.db import models
 from django.conf import settings
 from django.utils.translation   import ugettext_noop, ugettext_lazy as _
 
-from ifconfig.models import Host, HostDependentManager
+from ifconfig.models import Host, HostDependentManager, getHostDependentManagerClass
 from systemd.helpers import dbus_to_python
 from lvm.filesystems import Zfs, FILESYSTEMS, get_by_name as get_fs_by_name
 from lvm             import signals as lvm_signals
@@ -171,7 +171,7 @@ class LogicalVolume(models.Model):
     fswarning   = models.IntegerField(_("Warning Level (%)"),  default=75 )
     fscritical  = models.IntegerField(_("Critical Level (%)"), default=85 )
 
-    objects = HostDependentManager("vg__host")
+    objects = getHostDependentManagerClass("vg__host")()
 
     def __init__( self, *args, **kwargs ):
         models.Model.__init__( self, *args, **kwargs )

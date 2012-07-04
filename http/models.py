@@ -20,14 +20,14 @@ from os import unlink, symlink
 from http.conf import settings as http_settings
 from django.db import models
 
-from ifconfig.models import HostDependentManager
+from ifconfig.models import getHostDependentManagerClass
 from lvm.models import LogicalVolume
 
 class Export(models.Model):
     volume      = models.ForeignKey(LogicalVolume, related_name="http_export_set")
     path        = models.CharField(max_length=255)
 
-    objects     = HostDependentManager("volume__vg__host")
+    objects     = getHostDependentManagerClass("volume__vg__host")()
 
     share_type  = "http"
 

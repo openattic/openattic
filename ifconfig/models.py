@@ -74,18 +74,14 @@ class Host(models.Model):
 
 
 class HostDependentManager(models.Manager):
-    def __init__(self, hostfilter="host", *args, **kwargs):
-        self._hostfilter = hostfilter
-        return models.Manager.__init__(self, *args, **kwargs)
+    hostfilter = "host"
 
-    def _base_query(self):
-        return models.Manager.filter(self, **{ self._hostfilter: Host.objects.get_current() })
+    def get_query_set(self):
+        return super(HostDependentManager, self).get_query_set().filter(**{ self.hostfilter: Host.objects.get_current() })
 
-    def all(self):
-        return self._base_query()
 
-    def filter(self, *args, **kwargs):
-        return self._base_query().filter(*args, **kwargs)
+def getHostDependentManagerClass(hostfilter="host"):
+    return type("FilteredHostDependentManager", (HostDependentManager,), {"hostfilter": hostfilter})
 
 
 class NetDevice(models.Model):
@@ -304,7 +300,7 @@ class IPAddress(models.Model):
     device      = models.ForeignKey(NetDevice, blank=True, null=True)
     configure   = models.BooleanField(blank=True, default=True)
 
-    objects = HostDependentManager("device__host")
+    objects = getHostDependentManagerClass("device__host")()
 
     @property
     def in_use(self):

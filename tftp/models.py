@@ -19,7 +19,7 @@ import dbus
 from django.db   import models
 from django.conf import settings
 
-from ifconfig.models import HostDependentManager, IPAddress
+from ifconfig.models import getHostDependentManagerClass, IPAddress
 from lvm.models import LogicalVolume
 
 class Instance(models.Model):
@@ -28,7 +28,7 @@ class Instance(models.Model):
     address     = models.ForeignKey(IPAddress, unique=True)
 
     share_type  = "tftp"
-    objects     = HostDependentManager("volume__vg__host")
+    objects     = getHostDependentManagerClass("volume__vg__host")()
 
     def clean(self):
         from django.core.exceptions import ValidationError
