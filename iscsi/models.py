@@ -122,7 +122,7 @@ class Lun(models.Model):
         self.target._iscsi.lun_delete(self.target.tid, self.number, jid)
 
     def save(self, *args, **kwargs):
-        if self.target.lun_set.count() == 0:
+        if self.target.lun_set.count() == 0 and self.target.tid is None:
             self.target.install()
 
         if self.number == -1:
@@ -143,7 +143,7 @@ class Lun(models.Model):
         if not self.volume.standby:
             self.iet_delete()
         self.target._iscsi.writeconf()
-        if self.target.lun_set.count() == 0:
+        if self.target.lun_set.count() == 0 and self.target.tid is not None:
             self.target.uninstall()
         return ret
 
