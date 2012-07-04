@@ -23,6 +23,7 @@ from django.contrib.auth            import authenticate, login, logout
 from django.contrib.auth.decorators import login_required
 
 from userprefs.models import UserProfile
+from ifconfig.models  import Host
 
 def do_login( request ):
     """ Check login credentials sent by ExtJS. """
@@ -61,7 +62,7 @@ def index(request):
         try:
             profile = request.user.get_profile()
         except UserProfile.DoesNotExist:
-            profile = UserProfile(user=request.user)
+            profile = UserProfile(user=request.user, host=Host.objects.get_current())
             profile.save()
 
         if "theme" in profile:
