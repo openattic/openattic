@@ -80,6 +80,11 @@ class Target(models.Model):
     def uninstall(self):
         self._iscsi.target_delete(self.tid)
 
+    def save(self, *args, **kwargs):
+        ret = models.Model.save(self, *args, **kwargs)
+        if self.lun_set.count() != 0:
+            self._iscsi.writeconf()
+        return ret
 
 
 class Lun(models.Model):
