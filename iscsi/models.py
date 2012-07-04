@@ -18,11 +18,12 @@ import dbus
 
 from django.db   import models
 from django.conf import settings
+from django.db.models import Q
 from django.utils.translation import ugettext_lazy as _
 
 from lvm.models  import LogicalVolume
 from lvm.signals import post_shrink, post_grow
-from ifconfig.models import IPAddress
+from ifconfig.models import IPAddress, getHostDependentManagerClass
 from systemd.helpers import dbus_to_python
 
 class Initiator(models.Model):
@@ -32,12 +33,20 @@ class Initiator(models.Model):
     def __unicode__(self):
         return self.name
 
+
+class TargetManager(models.Manager):
+    def get_query_set(self):
+        return super(TargetManager, self).get_query_set().filter(Q(lun__isnull=True) | Q(lun__in=Lun.objects.all()))
+
+
 class Target(models.Model):
     name        = models.CharField(max_length=250, help_text=_("Human readable name."))
     iscsiname   = models.CharField(max_length=250, help_text=_("ISCSI Target name (e.g. 'iqn.2011-01.storage:sto1')."))
     init_allow  = models.ManyToManyField(Initiator, related_name="allowed_targets", blank=True)
     init_deny   = models.ManyToManyField(Initiator, related_name="denied_targets",  blank=True)
     tgt_allow   = models.ManyToManyField(IPAddress, related_name="allowed_targets", blank=True)
+
+    objects     = TargetManager()
 
     def __init__(self, *args, **kwargs):
         models.Model.__init__(self, *args, **kwargs)
@@ -89,6 +98,7 @@ class Lun(models.Model):
                     choices=(("fileio", "fileio"), ("blockio", "blockio")))
 
     share_type  = "iscsi"
+    objects     = getHostDependentManagerClass("volume__vg__host")()
 
     class Meta:
         unique_together = [("target", "number")]
