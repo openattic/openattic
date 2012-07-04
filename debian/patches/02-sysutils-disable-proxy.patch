@@ -1,0 +1,11 @@
+Index: openattic/sysutils/templates/sysutils/mainhead.html
+===================================================================
+--- openattic.orig/sysutils/templates/sysutils/mainhead.html	2012-07-04 09:48:36.000000000 +0200
++++ openattic/sysutils/templates/sysutils/mainhead.html	2012-07-04 09:49:26.000000000 +0200
+@@ -11,6 +11,5 @@
+  GNU General Public License for more details.
+ {% endcomment %}
+ 
+-<script src="{% url javascript 'sysutils' 'proxy'      %}"></script>
+ <script src="{% url javascript 'sysutils' 'time'      %}"></script>
+ <script src="{% url javascript 'sysutils' 'sysutils'      %}"></script>
