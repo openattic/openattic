@@ -22,6 +22,9 @@ from django.contrib.auth.models import User
 from ifconfig.models import Host, HostDependentManager
 
 class UserProfileManager(HostDependentManager):
+    def using(self, dbname):
+        return self
+
     def get(self, *args, **kwargs):
         return self._base_query().get(*args, **kwargs)
 
