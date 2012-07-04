@@ -22,6 +22,7 @@ from django.contrib.auth.models import User
 from django.db.models import signals
 from django.db import models
 
+from ifconfig.models import HostDependentManager
 from lvm.models import LogicalVolume
 
 class Share(models.Model):
@@ -43,6 +44,7 @@ class Share(models.Model):
     write_list    = models.ManyToManyField(User, blank=True, related_name="write_user_share_set"  )
 
     share_type    = "samba"
+    objects       = HostDependentManager("volume__vg__host")
 
     def __unicode__(self):
         return unicode(self.volume)

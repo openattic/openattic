@@ -19,6 +19,7 @@ from grp import getgrnam
 
 from django.db import models
 
+from ifconfig.models import HostDependentManager
 from lvm.models import LogicalVolume
 
 class Group(models.Model):
@@ -34,6 +35,8 @@ class User(models.Model):
     gid         = models.IntegerField(editable=False)
     homedir     = models.CharField( max_length=500 )
     shell       = models.CharField( max_length=50, default="/bin/true" )
+
+    objects     = HostDependentManager("volume__vg__host")
 
     share_type  = "ftp"
 
