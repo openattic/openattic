@@ -30,6 +30,8 @@ class HostHandler(ModelHandler):
         """ Return an ID for the given object, including the app label and object name. """
         return {'id': obj.id, 'app': obj._meta.app_label, 'obj': obj._meta.object_name, 'name': obj.name}
 
+    def current(self):
+        return self._getobj(Host.objects.get_current())
 
 class IPAddressHandler(ModelHandler):
     model = IPAddress

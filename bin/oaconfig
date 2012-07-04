@@ -165,7 +165,8 @@ case $1 in
 			echo "This command requires oacli to be configured (run $0 install-cli)."
 			exit 1
 		fi
-		oacli lvm.VolumeGroup.create "json:{\"name\": \"$2\"}"
+		HOSTID=`oacli 'ifconfig.Host.current' | grep id | cut -d\' -f2`
+		oacli lvm.VolumeGroup.create 'json:{"name": "'$2'", "host": {"app":"ifconfig", "obj":"Host", "id":'$HOSTID'} }'
 		;;
 
 	add-disk)
