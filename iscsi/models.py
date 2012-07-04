@@ -36,6 +36,7 @@ class Initiator(models.Model):
 
 class TargetManager(models.Manager):
     def get_query_set(self):
+        # return empty targets and those with our LUNs
         return super(TargetManager, self).get_query_set().filter(Q(lun__isnull=True) | Q(lun__in=Lun.objects.all()))
 
 
@@ -73,19 +74,11 @@ class Target(models.Model):
     def __unicode__(self):
         return self.name
 
-    def save(self, *args, **kwargs):
-        if self.id is None:
-            self._iscsi.target_new(0, self.iscsiname)
+    def install(self):
+        return self._iscsi.target_new(0, self.iscsiname)
 
-        ret = models.Model.save(self, *args, **kwargs)
-        self._iscsi.writeconf()
-        return ret
-
-    def delete( self ):
-        ret = models.Model.delete(self)
+    def uninstall(self):
         self._iscsi.target_delete(self.tid)
-        self._iscsi.writeconf()
-        return ret
 
 
 
@@ -124,6 +117,9 @@ class Lun(models.Model):
         self.target._iscsi.lun_delete(self.target.tid, self.number, jid)
 
     def save(self, *args, **kwargs):
+        if self.target.lun_set.count() == 0:
+            self.target.install()
+
         if self.number == -1:
             try:
                 self.number = max( [ rec['number'] for rec in Lun.objects.values('number') ] ) + 1
@@ -138,11 +134,12 @@ class Lun(models.Model):
         return ret
 
     def delete( self ):
-        volume = self.volume
         ret = models.Model.delete(self)
-        if not volume.standby:
+        if not self.volume.standby:
             self.iet_delete()
         self.target._iscsi.writeconf()
+        if self.target.lun_set.count() == 0:
+            self.target.uninstall()
         return ret
 
 
