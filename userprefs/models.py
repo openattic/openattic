@@ -19,8 +19,20 @@ import json
 from django.db import models
 from django.contrib.auth.models import User
 
+from ifconfig.models import Host, HostDependentManager
+
+class UserProfileManager(HostDependentManager):
+    def get(self, *args, **kwargs):
+        return self._base_query().get(*args, **kwargs)
+
 class UserProfile(models.Model):
-    user = models.ForeignKey(User, unique=True)
+    user = models.ForeignKey(User)
+    host = models.ForeignKey(Host)
+
+    objects = UserProfileManager()
+
+    class Meta:
+        unique_together = ("user", "host")
 
     def __getitem__(self, item):
         try:
@@ -68,3 +80,6 @@ class UserPreference(models.Model):
 
     class Meta:
         unique_together = ("profile", "setting")
+
+    def __unicode__(self):
+        return "<UserPreference %s>" % self.setting
