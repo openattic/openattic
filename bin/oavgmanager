@@ -79,6 +79,7 @@ class VgStartCommand(BaseCommand):
             for lv in volgroup.logicalvolume_set.exclude(filesystem=""):
                 print lv.name,
                 lv.mount()
+            print "done."
 
 class VgStopCommand(BaseCommand):
     """Unmount all volumes. """
@@ -104,7 +105,11 @@ class VgStopCommand(BaseCommand):
         for volgroup in volgroups:
             print "Unmounting volumes of volume group '%s'..." % volgroup.name,
             have_errors = False
-            for lv in volgroup.logicalvolume_set.exclude(filesystem=""):
+            if not options.force:
+                vols = volgroup.logicalvolume_set.exclude(filesystem="")
+            else:
+                vols = LogicalVolume.all_objects.filter(vg=volgroup).exclude(filesystem="")
+            for lv in vols:
                 try:
                     print lv.name,
                     lv.unmount()
@@ -113,6 +118,7 @@ class VgStopCommand(BaseCommand):
                         raise
                     else:
                         have_errors = True
+            print "done."
             if not have_errors:
                 volgroup.host = None
                 volgroup.save()
