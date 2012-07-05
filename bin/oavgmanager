@@ -102,14 +102,18 @@ class VgStopCommand(BaseCommand):
                 return 1
         for volgroup in volgroups:
             print "Unmounting volumes of volume group '%s'..." % volgroup.name
-            volgroup.host = None
-            volgroup.save()
+            have_errors = False
             for lv in volgroup.logicalvolume_set.exclude(filesystem=""):
                 try:
                     lv.unmount()
                 except Exception:
                     if not options.ignore_fail:
                         raise
+                    else:
+                        have_errors = True
+            if not have_errors:
+                volgroup.host = None
+                volgroup.save()
 
 class VgRestartCommand(BaseCommand):
     """Remount all volumes. """
