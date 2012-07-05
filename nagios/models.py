@@ -43,6 +43,8 @@ class Graph(models.Model):
     verttitle   = models.CharField(max_length=250, blank=True)
     fields      = models.CharField(max_length=250)
 
+    def __unicode__(self):
+        return "%s: %s" % (self.command.name, self.title)
 
 
 class ServiceManager(HostDependentManager):
@@ -85,6 +87,8 @@ class Service(models.Model):
         """ Get current performance data. """
         return [ pv.split('=', 1) for pv in self.state["performance_data"].split() ]
 
+    def __unicode__(self):
+        return self.description
 
 def create_service_for_lv(**kwargs):
     lv = kwargs["instance"]
