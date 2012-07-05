@@ -65,7 +65,7 @@ class VgStartCommand(BaseCommand):
             volgroups = VolumeGroup.all_objects.filter(Q(host__isnull=True)|Q(host=thishost))
         else:
             volgroup  = VolumeGroup.all_objects.get(name=vg)
-            if volgroup.host is not None and volgroup.host.id != thishost.id:
+            if volgroup.host is not None and volgroup.host != thishost:
                 print >> sys.stderr, "Volume Group '%s' is active on host '%s', cannot activate it here." % (
                     volgroup.name, volgroup.host.name )
                 return 2
@@ -139,32 +139,51 @@ class VgStatusCommand(BaseCommand):
         parser.add_option("-v", "--verbose", help="Show mounted volumes", default=False, action="store_true")
 
     def __call__(self, options, vg=None):
+        self.options = options
+
         try:
-            vols = LogicalVolume.objects.exclude(filesystem="")
-            if vg is not None:
-                vols = vols.filter(vg__name=vg)
-            volcount = vols.count()
-            mountedcount = 0
-            for lv in vols:
-                if lv.mounted:
-                    mountedcount += 1
-                    if options.verbose:
-                        print "Volume '%s' is mounted." % lv.name
-                elif options.verbose:
-                    print "Volume '%s' is not mounted." % lv.name
+            self.thishost = Host.objects.get_current()
         except Exception, err:
             print "Got exception '%s' when checking, assuming the database isn't running and nothing is mounted." % unicode(err)
             return 3
+
+        if vg is None:
+            volgroups = VolumeGroup.all_objects.filter(Q(host__isnull=True)|Q(host=self.thishost))
         else:
-            if mountedcount:
-                print "There are currently %d mounted volumes (%d total)." % (mountedcount, volcount)
-                return 0
-            elif volcount:
-                print "There are currently no mounted volumes (%d total)." % volcount
-                return 3
-            else:
-                print "There are currently no volumes at all."
-                return 0
+            volgroups = VolumeGroup.all_objects.filter(name=vg)
+
+        return max([ self.vgstate(vg) for vg in volgroups ])
+
+    def vgstate(self, volgroup):
+        # Possible states for each volume group:
+        # * VG does not run here       => 3
+        # * VG running but empty       => 0
+        # * VG running but not mounted => 3
+        # * VG running and mounted     => 0
+        # Boils down to: VG running here and total == mounted => 0, else 3
+
+        if self.options.verbose:
+            print "Checking VolumeGroup '%s'." % volgroup.name
+
+        if volgroup.host != self.thishost:
+            return 3
+
+        vols = volgroup.logicalvolume_set.exclude(filesystem="")
+        volcount = vols.count()
+        mountedcount = 0
+        for lv in vols:
+            if lv.mounted:
+                mountedcount += 1
+                if self.options.verbose:
+                    print "Volume '%s' is mounted." % lv.name
+            elif self.options.verbose:
+                print "Volume '%s' is not mounted." % lv.name
+
+        print "There are currently %d mounted volumes (%d total)." % (mountedcount, volcount)
+        if mountedcount == volcount:
+            return 0
+        else:
+            return 3
 
 
 def main():
