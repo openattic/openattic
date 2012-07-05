@@ -25,8 +25,10 @@ basedir = dict([
 sys.path.append( basedir )
 os.environ['DJANGO_SETTINGS_MODULE'] = 'settings'
 
+from django.db.models import Q
 
-from lvm.models import LogicalVolume
+from ifconfig.models import Host
+from lvm.models import VolumeGroup, LogicalVolume
 
 class CmdLibrary(type):
     """ Meta class that keeps a library of defined checks. """
@@ -56,12 +58,23 @@ class VgStartCommand(BaseCommand):
     command_name = "start"
 
     def __call__(self, options, vg=None):
+        thishost = Host.objects.get_current()
         if vg is None:
-            print "Mounting all volumes..."
-            LogicalVolume.mount_all()
+            volgroups = VolumeGroup.all_objects.filter(Q(host__isnull=True)|Q(host=thishost))
         else:
-            print "Mounting volumes of volume group '%s'..." % vg
-            for lv in LogicalVolume.objects.filter(vg__name=vg).exclude(filesystem=""):
+            volgroup  = VolumeGroup.all_objects.get(name=vg)
+            if volgroup.host is not None and volgroup.host.id != thishost.id:
+                print >> sys.stderr, "Volume Group '%s' is active on host '%s', cannot activate it here." % (
+                    volgroup.name, volgroup.host.name )
+                return 2
+            volgroups = [volgroup]
+
+        for volgroup in volgroups:
+            print "Mounting volumes of volume group '%s'..." % volgroup.name
+            if volgroup.host is None:
+                volgroup.host = thishost
+                volgroup.save()
+            for lv in volgroup.logicalvolume_set.exclude(filesystem=""):
                 lv.mount()
 
 class VgStopCommand(BaseCommand):
