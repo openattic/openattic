@@ -16,6 +16,8 @@
 
 from django.db import models
 
+from ifconfig.models import Host
+from peering.models import PeerHost
 
 class BaseHandler(object):
     """ Base RPC handler class.
@@ -310,3 +312,147 @@ class ModelHandler(BaseHandler):
     def _override_set(self, obj, data):
         """ Stub method called right before _getobj calls obj.save(). """
         return
+
+
+class ProxyHandler(BaseHandler):
+    def __init__(self, user, request=None):
+        BaseHandler.__init__(self, user, request)
+        self._proxies = {}
+
+    def _convert_datetimes(self, obj):
+        from xmlrpclib import DateTime as XmlDateTime
+        from datetime import datetime as PyDateTime
+        if isinstance( obj, XmlDateTime ):
+            return PyDateTime( *obj.timetuple()[:7] )
+        if isinstance( obj, dict ):
+            for key in obj:
+                obj[key] = self._convert_datetimes(obj[key])
+            return obj
+        if isinstance( obj, list ):
+            return [ self._convert_datetimes(elem) for elem in obj ]
+        return obj
+
+    def _get_proxy_object(self, peer):
+        if peer is None:
+            raise PeerError("Cannot relay to localhost")
+        if peer.id not in self._proxies:
+            obj = peer
+            for name in self.handler_name.split("."):
+                obj = getattr(obj, name)
+            self._proxies[peer.id] = obj
+        return self._proxies[peer.id]
+
+    def _call_allpeers_method(self, method, *args):
+        ret = []
+        for peer in self._get_relevant_peers():
+            meth = getattr(self._get_proxy_object(peer), method)
+            res = meth(*args)
+            if isinstance(res, (tuple, list)):
+                ret.extend( self._convert_datetimes( list( res ) ) )
+            else:
+                ret.append( self._convert_datetimes( res ) )
+        return ret
+
+    def _call_singlepeer_method(self, method, id, *args):
+        peer  = self._find_target_host(id)
+        meth = getattr(self._get_proxy_object(peer), method)
+        return self._convert_datetimes( meth(id, *args) )
+
+    def _get_relevant_peers(self):
+        return PeerHost.objects.filter( name__in=[ host.name
+            for host in Host.objects.filter(volumegroup__isnull=False) ] )
+
+class ProxyModelHandler(ProxyHandler, ModelHandler):
+    def _find_target_host(self, id):
+        curr = self.model.all_objects.get(id=int(id))
+        for field in self.model.objects.hostfilter.split('__'):
+            curr = getattr( curr, field )
+            if isinstance( curr, Host ):
+                break
+        return PeerHost.objects.get(name=curr.name)
+
+    def idobj(self, numeric_id):
+        return self._idobj( self.model.all_objects.get(id=numeric_id) )
+
+    def ids(self):
+        return [self._idobj(o) for o in self.model.all_objects.all().order_by(*self.order) ]
+
+    def ids_filter(self, kwds):
+        return [ self._idobj(obj) for obj in self._filter_queryset(kwds, self.model.all_objects).order_by(*self.order) ]
+
+    def all(self):
+        return self._call_allpeers_method("all")
+
+    def filter(self, kwds):
+        return self._call_allpeers_method("filter", kwds)
+
+    def get(self, id):
+        return self._call_singlepeer_method("get", id)
+
+    def get_ext(self, id):
+        if id == -1:
+            return {}
+        peer = self._find_target_host(id)
+        return self._convert_datetimes( self._get_proxy_object(peer).get_ext(id) )
+
+    def filter_range(self, start, limit, sort, dir, kwds ):
+        return self._call_allpeers_method("filter_range", start, limit, sort, dir, kwds)
+
+    def filter_combo(self, field, query, kwds):
+        return self._call_allpeers_method("filter_combo", field, query, kwds)
+
+    def all_values(self, fields):
+        return self._call_allpeers_method("all_values", fields)
+
+    def remove(self, id):
+        return self._call_singlepeer_method("remove", id)
+
+    def set(self, id, data):
+        if "id" in data:
+            raise KeyError("Wai u ID")
+        return self._call_singlepeer_method("set", id, data)
+
+    def set_ext(self):
+        """ Reads POST data from the request to update a given object.
+            Meant to be used in conjunction with ExtJS forms.
+        """
+        if self.request is None:
+            raise ValueError("Cannot access request")
+
+        data = dict([ (key, self.request.POST[key])
+                      for key in self.request.POST
+                      if key not in ("extAction", "extMethod", "extTID", "extType", "extUpload")
+                    ])
+
+        for field in self.model._meta.fields:
+            if isinstance( field, models.ForeignKey ):
+                handler = self._get_handler_instance(field.related.parent_model)
+                data[field.name] = handler.idobj(int(data[field.name]))
+
+        objid = int(data["id"])
+        del data["id"]
+        if objid == -1:
+            idobj = self.create(data)
+        else:
+            idobj = self.set( objid, data )
+
+        return { "success": True, "id": idobj["id"] }
+
+    set_ext.EXT_flags = {"formHandler": True}
+
+    def create(self, data):
+        if "id" in data:
+            raise KeyError("Wai u ID")
+        # Find the peer by walking through the given data
+        fields = self.model.objects.hostfilter.split('__')
+        target_model = self.model._meta.get_field_by_name(fields[0])[0].related.parent_model
+        curr = target_model.all_objects.get(id=data[fields[0]]["id"])
+        for field in fields[1:]:
+            curr = getattr( curr, field )
+            if isinstance( curr, Host ):
+                break
+        peer = PeerHost.objects.get(name=curr.name)
+        print peer
+        print data
+        return self._convert_datetimes( self._get_proxy_object(peer).create(data) )
+
