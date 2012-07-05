@@ -86,18 +86,23 @@ class VgStopCommand(BaseCommand):
         parser.add_option("-i", "--ignore-fail", help="Ignore failures", default=False, action="store_true")
 
     def __call__(self, options, vg=None):
-        vols = LogicalVolume.objects.exclude(filesystem="")
-        if vg is None:
-            print "Unmounting all volumes..."
-        else:
-            print "Unmounting volumes of volume group '%s'..." % vg
-            vols = vols.filter(vg__name=vg)
-        for lv in vols:
-            try:
-                lv.unmount()
-            except Exception:
-                if not options.ignore_fail:
-                    raise
+        thishost = Host.objects.get_current()
+        volgroups = VolumeGroup.objects.all()
+        if vg is not None:
+            volgroups = volgroups.filter(name=vg)
+            if not volgroups:
+                print >> sys.stderr, "Volume Group '%s' not found on this host." % vg
+                return 1
+        for volgroup in volgroups:
+            print "Unmounting volumes of volume group '%s'..." % volgroup.name
+            volgroup.host = None
+            volgroup.save()
+            for lv in volgroup.logicalvolume_set.exclude(filesystem=""):
+                try:
+                    lv.unmount()
+                except Exception:
+                    if not options.ignore_fail:
+                        raise
 
 class VgRestartCommand(BaseCommand):
     """Remount all volumes. """
