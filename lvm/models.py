@@ -36,7 +36,8 @@ class VolumeGroup(models.Model):
     name        = models.CharField(max_length=130, unique=True)
     host        = models.ForeignKey(Host, null=True)
 
-    objects = HostDependentManager()
+    objects     = HostDependentManager()
+    all_objects = models.Manager()
 
     def __init__( self, *args, **kwargs ):
         models.Model.__init__( self, *args, **kwargs )
