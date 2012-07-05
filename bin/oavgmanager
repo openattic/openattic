@@ -44,6 +44,7 @@ class BaseCommand(object):
     __metaclass__ = CmdLibrary
 
     command_name = None
+    command_args = None
 
     def populate_optparser(self, parser):
         pass
@@ -56,6 +57,7 @@ class VgStartCommand(BaseCommand):
     """Mount all volumes. """
 
     command_name = "start"
+    command_args = "[<vg>]"
 
     def __call__(self, options, vg=None):
         thishost = Host.objects.get_current()
@@ -81,6 +83,7 @@ class VgStopCommand(BaseCommand):
     """Unmount all volumes. """
 
     command_name = "stop"
+    command_args = "[<vg>]"
 
     def populate_optparser(self, parser):
         parser.add_option("-i", "--ignore-fail", help="Ignore failures", default=False, action="store_true")
@@ -108,6 +111,7 @@ class VgRestartCommand(BaseCommand):
     """Remount all volumes. """
 
     command_name = "restart"
+    command_args = "[<vg>]"
 
     def __call__(self, options, vg=None):
         ret = CmdLibrary.handlers["stop"]()(options, vg)
@@ -119,6 +123,7 @@ class VgStatusCommand(BaseCommand):
     """See if any volumes are currently mounted. """
 
     command_name = "status"
+    command_args = "[<vg>]"
 
     def populate_optparser(self, parser):
         parser.add_option("-v", "--verbose", help="Show mounted volumes", default=False, action="store_true")
@@ -164,13 +169,25 @@ def main():
     for cmdname, cmdclass in CmdLibrary.handlers.iteritems():
         usage += " * %-10s -- %s\n" % (cmdname, cmdclass.__doc__)
 
+    if command in CmdLibrary.handlers:
+        cmdclass = CmdLibrary.handlers[command]()
+    else:
+        cmdclass = None
+
+    if cmdclass is not None:
+        if cmdclass.command_args is not None:
+            usage += "\nArguments for command '%s': %s" % ( command, cmdclass.command_args )
+        else:
+            usage += "\nCommand '%s' does not take any arguments." % command
+
     parser = OptionParser(usage=usage)
 
-    if command not in CmdLibrary.handlers:
+    if cmdclass is None:
         parser.print_usage()
-        print "no such command:", command
+        if command is not None:
+            print "no such command:", command
         return 1
-    cmdclass = CmdLibrary.handlers[command]()
+
     cmdclass.populate_optparser(parser)
     options, posargs = parser.parse_args()
     return cmdclass(options, *posargs[1:])
