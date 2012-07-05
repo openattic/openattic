@@ -555,6 +555,7 @@ class ZfsSubvolume(models.Model):
     volname     = models.CharField(max_length=50)
 
     lvm = LogicalVolume.lvm
+    objects = getHostDependentManagerClass("volume__vg__host")()
 
     def __init__( self, *args, **kwargs ):
         models.Model.__init__( self, *args, **kwargs )
@@ -603,6 +604,7 @@ class ZfsSnapshot(models.Model):
     created_at  = models.DateTimeField(auto_now_add=True)
 
     lvm = LogicalVolume.lvm
+    objects = getHostDependentManagerClass("volume__vg__host")()
 
     def __init__( self, *args, **kwargs ):
         if "volume" not in kwargs and "subvolume" in kwargs:
