@@ -72,11 +72,12 @@ class VgStartCommand(BaseCommand):
             volgroups = [volgroup]
 
         for volgroup in volgroups:
-            print "Mounting volumes of volume group '%s'..." % volgroup.name
+            print "Mounting volumes of volume group '%s'..." % volgroup.name,
             if volgroup.host is None:
                 volgroup.host = thishost
                 volgroup.save()
             for lv in volgroup.logicalvolume_set.exclude(filesystem=""):
+                print lv.name,
                 lv.mount()
 
 class VgStopCommand(BaseCommand):
@@ -101,10 +102,11 @@ class VgStopCommand(BaseCommand):
                 print >> sys.stderr, "Volume Group '%s' not found on this host." % vg
                 return 1
         for volgroup in volgroups:
-            print "Unmounting volumes of volume group '%s'..." % volgroup.name
+            print "Unmounting volumes of volume group '%s'..." % volgroup.name,
             have_errors = False
             for lv in volgroup.logicalvolume_set.exclude(filesystem=""):
                 try:
+                    print lv.name,
                     lv.unmount()
                 except Exception:
                     if not options.ignore_fail:
