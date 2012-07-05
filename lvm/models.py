@@ -173,6 +173,7 @@ class LogicalVolume(models.Model):
     fscritical  = models.IntegerField(_("Critical Level (%)"), default=85 )
 
     objects = getHostDependentManagerClass("vg__host")()
+    all_objects = models.Manager()
 
     def __init__( self, *args, **kwargs ):
         models.Model.__init__( self, *args, **kwargs )
