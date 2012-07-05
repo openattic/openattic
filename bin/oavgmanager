@@ -29,6 +29,7 @@ from django.db.models import Q
 
 from ifconfig.models import Host
 from lvm.models import VolumeGroup, LogicalVolume
+import lvm.signals as lvm_signals
 
 class CmdLibrary(type):
     """ Meta class that keeps a library of defined checks. """
@@ -72,14 +73,17 @@ class VgStartCommand(BaseCommand):
             volgroups = [volgroup]
 
         for volgroup in volgroups:
+            lvm_signals.pre_activate.send(sender=volgroup, host=thishost)
             print "Mounting volumes of volume group '%s'..." % volgroup.name,
             if volgroup.host is None:
                 volgroup.host = thishost
                 volgroup.save()
+            lvm_signals.activate.send(sender=volgroup)
             for lv in volgroup.logicalvolume_set.exclude(filesystem=""):
                 print lv.name,
                 lv.mount()
             print "done."
+            lvm_signals.post_activate.send(sender=volgroup)
 
 class VgStopCommand(BaseCommand):
     """Unmount all volumes. """
@@ -103,6 +107,7 @@ class VgStopCommand(BaseCommand):
                 print >> sys.stderr, "Volume Group '%s' not found on this host." % vg
                 return 1
         for volgroup in volgroups:
+            lvm_signals.pre_deactivate.send(sender=volgroup)
             print "Unmounting volumes of volume group '%s'..." % volgroup.name,
             have_errors = False
             if not options.force:
@@ -119,9 +124,11 @@ class VgStopCommand(BaseCommand):
                     else:
                         have_errors = True
             print "done."
+            lvm_signals.deactivate.send(sender=volgroup)
             if not have_errors:
                 volgroup.host = None
                 volgroup.save()
+            lvm_signals.post_deactivate.send(sender=volgroup)
 
 class VgRestartCommand(BaseCommand):
     """Remount all volumes. """
