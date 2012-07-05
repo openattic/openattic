@@ -46,11 +46,11 @@ class Graph(models.Model):
 
 
 class ServiceManager(HostDependentManager):
-    def _base_query(self):
+    def get_query_set(self):
         """ Return services that are either associated with this host directly,
             or with a volume in a group associated with this host.
         """
-        return models.Manager.filter(self,
+        return models.Manager.get_query_set(self).filter(
             Q(host=Host.objects.get_current(), volume=None) |
             Q(host=None, volume__in=LogicalVolume.objects.filter(vg__host=Host.objects.get_current())))
 
