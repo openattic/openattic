@@ -23,9 +23,7 @@ from rpcd.handlers import BaseHandler, ModelHandler
 from sysutils.models import InitScript, NTP, Proxy
 
 class SysUtilsHandler(BaseHandler):
-    @classmethod
-    def _get_handler_name(cls):
-        return "sysutils.System"
+    handler_name = "sysutils.System"
 
     def shutdown(self):
         """ Shut down the system. """

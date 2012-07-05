@@ -41,7 +41,7 @@ def makeTest():
 
     for app in rpcdplugins:
         for handler in app.rpcapi.RPCD_HANDLERS:
-            hname = handler._get_handler_name().replace(".", "__")
+            hname = handler.handler_name.replace(".", "__")
             for method in list_public_methods(handler):
                 fullname = "test_%s__%s" % ( hname, method )
                 meth = makeTestmethod(getattr(handler, method))

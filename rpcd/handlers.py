@@ -24,16 +24,13 @@ class BaseHandler(object):
         be automatically exported via RPC.
 
         The name of the section this handler will reside in is defined
-        by the _get_handler_name class method, which you will have to
-        override in order to set the name.
+        by the handler_name property.
     """
     def __init__(self, user, request=None):
         self.user = user
         self.request = request
 
-    @classmethod
-    def _get_handler_name(cls):
-        return "bogus.Handler"
+    handler_name = "bogus.Handler"
 
 
 class ModelHandlerMeta(type):
@@ -42,8 +39,10 @@ class ModelHandlerMeta(type):
 
     def __init__( cls, name, bases, attrs ):
         type.__init__( cls, name, bases, attrs )
-        if 'model' in attrs and attrs['model'] is not None:
-            ModelHandlerMeta.handlers[attrs['model']] = cls
+        if cls.model is not None:
+            ModelHandlerMeta.handlers[cls.model] = cls
+            if cls.handler_name == BaseHandler.handler_name:
+                cls.handler_name = cls.model._meta.app_label + '.' + cls.model._meta.object_name
 
 class ModelHandler(BaseHandler):
     """ Base Model aware RPC handler class. Inherits from BaseHandler and exports
@@ -67,10 +66,6 @@ class ModelHandler(BaseHandler):
     exclude = None
     fields  = None
     order   = tuple()
-
-    @classmethod
-    def _get_handler_name(cls):
-        return cls.model._meta.app_label + '.' + cls.model._meta.object_name
 
     @classmethod
     def _get_handler_for_model(cls, model):

@@ -18,9 +18,7 @@ import statgrab
 from rpcd.handlers import BaseHandler
 
 class HostStatsHandler(BaseHandler):
-    @classmethod
-    def _get_handler_name(cls):
-        return "hoststats.HostStats"
+    handler_name = "hoststats.HostStats"
 
     def get_host_info(self):
         """ Return some general information about this host. """

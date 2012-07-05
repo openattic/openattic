@@ -22,9 +22,7 @@ from django.conf import settings
 from systemd.helpers import dbus_to_python
 
 class PkgAptHandler(BaseHandler):
-    @classmethod
-    def _get_handler_name(cls):
-        return "pkgapt.Apt"
+    handler_name = "pkgapt.Apt"
 
     def update(self):
         """ Update the package lists. """

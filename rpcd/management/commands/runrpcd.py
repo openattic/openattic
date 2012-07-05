@@ -181,7 +181,7 @@ class RPCd(object):
 
         for plugin in rpcdplugins:
             for handler in getattr(getattr(plugin, "rpcapi"), "RPCD_HANDLERS", []):
-                self.handlers[ handler._get_handler_name() ] = handler
+                self.handlers[ handler.handler_name ] = handler
 
     def _resolve(self, method, user):
         if '.' in method:

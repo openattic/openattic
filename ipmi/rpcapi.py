@@ -23,9 +23,7 @@ from rpcd.handlers import BaseHandler
 from systemd.helpers import dbus_to_python
 
 class IpmiHandler(BaseHandler):
-    @classmethod
-    def _get_handler_name(cls):
-        return "ipmi.Sensor"
+    handler_name = "ipmi.Sensor"
 
     def get_all_sensors(self):
         return dbus_to_python(dbus.SystemBus().get_object(settings.DBUS_IFACE_SYSTEMD, "/ipmi").get_all_sensors())
