@@ -86,11 +86,15 @@ class VgStopCommand(BaseCommand):
     command_args = "[<vg>]"
 
     def populate_optparser(self, parser):
+        parser.add_option("-f", "--force",       help="Unmount even if the host does not seem right", default=False, action="store_true")
         parser.add_option("-i", "--ignore-fail", help="Ignore failures", default=False, action="store_true")
 
     def __call__(self, options, vg=None):
         thishost = Host.objects.get_current()
-        volgroups = VolumeGroup.objects.all()
+        if not options.force:
+            volgroups = VolumeGroup.objects.all()
+        else:
+            volgroups = VolumeGroup.all_objects.all()
         if vg is not None:
             volgroups = volgroups.filter(name=vg)
             if not volgroups:
