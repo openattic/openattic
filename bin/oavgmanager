@@ -172,6 +172,11 @@ class VgStatusCommand(BaseCommand):
             print "Checking VolumeGroup '%s'." % volgroup.name
 
         if volgroup.host != self.thishost:
+            if self.options.verbose:
+                if volgroup.host is not None:
+                    print "VolumeGroup '%s' is running on '%s'." % (volgroup.name, volgroup.host.name)
+                else:
+                    print "VolumeGroup '%s' is inactive." % (volgroup.name)
             return 3
 
         vols = volgroup.logicalvolume_set.exclude(filesystem="")
@@ -185,7 +190,7 @@ class VgStatusCommand(BaseCommand):
             elif self.options.verbose:
                 print "Volume '%s' is not mounted." % lv.name
 
-        print "There are currently %d mounted volumes (%d total)." % (mountedcount, volcount)
+        print "%s: %d mounted, %d total." % (volgroup.name, mountedcount, volcount)
         if mountedcount == volcount:
             return 0
         else:

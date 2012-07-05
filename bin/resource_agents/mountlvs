@@ -62,10 +62,10 @@ case "$1" in
 	
 	monitor)
 		if [ -z "$VOLGRP" ]; then
-			/usr/sbin/oavgmanager status
+			/usr/sbin/oavgmanager status | tee /var/log/openattic_vgmanager
 			RETVAL=$?
 		else
-			/usr/sbin/oavgmanager status "$VOLGRP"
+			/usr/sbin/oavgmanager status "$VOLGRP" | tee /var/log/openattic_vgmanager
 			RETVAL=$?
 		fi
 		if [ "$RETVAL" = 0 ]; then
@@ -77,10 +77,10 @@ case "$1" in
 	
 	*)
 		if [ -z "$VOLGRP" ]; then
-			/usr/sbin/oavgmanager "$1"
+			/usr/sbin/oavgmanager "$1" | tee /var/log/openattic_vgmanager
 			RETVAL=$?
 		else
-			/usr/sbin/oavgmanager "$1" "$VOLGRP"
+			/usr/sbin/oavgmanager "$1" "$VOLGRP" | tee /var/log/openattic_vgmanager
 			RETVAL=$?
 		fi
 		if [ "$RETVAL" = 0 ]; then
