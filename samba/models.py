@@ -45,6 +45,7 @@ class Share(models.Model):
 
     share_type    = "samba"
     objects       = getHostDependentManagerClass("volume__vg__host")()
+    all_objects   = models.Manager()
 
     def __unicode__(self):
         return unicode(self.volume)

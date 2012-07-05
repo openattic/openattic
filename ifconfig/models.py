@@ -102,7 +102,8 @@ class NetDevice(models.Model):
     bond_downdelay = models.IntegerField( default=200 )
     bond_updelay   = models.IntegerField( default=200 )
 
-    objects      = HostDependentManager()
+    objects     = HostDependentManager()
+    all_objects = models.Manager()
 
     class Meta:
         unique_together = ("host", "devname")
@@ -300,7 +301,8 @@ class IPAddress(models.Model):
     device      = models.ForeignKey(NetDevice, blank=True, null=True)
     configure   = models.BooleanField(blank=True, default=True)
 
-    objects = getHostDependentManagerClass("device__host")()
+    objects     = getHostDependentManagerClass("device__host")()
+    all_objects = models.Manager()
 
     @property
     def in_use(self):

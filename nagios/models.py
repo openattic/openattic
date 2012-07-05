@@ -66,6 +66,7 @@ class Service(models.Model):
 
     nagstate    = NagiosState()
     objects     = ServiceManager()
+    all_objects = models.Manager()
 
     class Meta:
         unique_together = ("host", "description")

@@ -37,6 +37,7 @@ class User(models.Model):
     shell       = models.CharField( max_length=50, default="/bin/true" )
 
     objects     = getHostDependentManagerClass("volume__vg__host")()
+    all_objects = models.Manager()
 
     share_type  = "ftp"
 

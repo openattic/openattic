@@ -32,6 +32,7 @@ class Cronjob(models.Model):
     command     = models.CharField(max_length=500)
 
     objects     = getHostDependentManagerClass("volume__vg__host")()
+    all_objects = models.Manager()
 
     def save(self, *args, **kwargs):
         models.Model.save(self, *args, **kwargs)

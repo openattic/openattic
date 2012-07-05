@@ -29,6 +29,7 @@ class Export(models.Model):
     options     = models.CharField(max_length=250, default="rw,no_subtree_check,no_root_squash")
 
     objects     = getHostDependentManagerClass("volume__vg__host")()
+    all_objects = models.Manager()
     share_type  = "nfs"
 
     def __unicode__(self):

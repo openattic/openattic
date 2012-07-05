@@ -558,6 +558,7 @@ class ZfsSubvolume(models.Model):
 
     lvm = LogicalVolume.lvm
     objects = getHostDependentManagerClass("volume__vg__host")()
+    all_objects = models.Manager()
 
     def __init__( self, *args, **kwargs ):
         models.Model.__init__( self, *args, **kwargs )
@@ -607,6 +608,7 @@ class ZfsSnapshot(models.Model):
 
     lvm = LogicalVolume.lvm
     objects = getHostDependentManagerClass("volume__vg__host")()
+    all_objects = models.Manager()
 
     def __init__( self, *args, **kwargs ):
         if "volume" not in kwargs and "subvolume" in kwargs:
@@ -684,3 +686,4 @@ class LVMetadata(models.Model):
     value   = models.CharField(max_length=255)
 
     objects = getHostDependentManagerClass("volume__vg__host")()
+    all_objects = models.Manager()

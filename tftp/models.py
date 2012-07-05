@@ -29,6 +29,7 @@ class Instance(models.Model):
 
     share_type  = "tftp"
     objects     = getHostDependentManagerClass("volume__vg__host")()
+    all_objects = models.Manager()
 
     def clean(self):
         from django.core.exceptions import ValidationError

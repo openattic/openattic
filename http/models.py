@@ -28,6 +28,7 @@ class Export(models.Model):
     path        = models.CharField(max_length=255)
 
     objects     = getHostDependentManagerClass("volume__vg__host")()
+    all_objects = models.Manager()
 
     share_type  = "http"
 

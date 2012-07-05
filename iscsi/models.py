@@ -48,6 +48,7 @@ class Target(models.Model):
     tgt_allow   = models.ManyToManyField(IPAddress, related_name="allowed_targets", blank=True)
 
     objects     = TargetManager()
+    all_objects = models.Manager()
 
     def __init__(self, *args, **kwargs):
         models.Model.__init__(self, *args, **kwargs)
@@ -97,6 +98,7 @@ class Lun(models.Model):
 
     share_type  = "iscsi"
     objects     = getHostDependentManagerClass("volume__vg__host")()
+    all_objects = models.Manager()
 
     class Meta:
         unique_together = [("target", "number")]
