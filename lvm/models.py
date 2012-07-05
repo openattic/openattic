@@ -677,6 +677,8 @@ class LVMetadata(models.Model):
     """ Stores arbitrary metadata for a volume. This can be anything you like,
         and it is indended to be used by third party programs.
     """
-    volume = models.ForeignKey(LogicalVolume)
-    key = models.CharField(max_length=255)
-    value = models.CharField(max_length=255)
+    volume  = models.ForeignKey(LogicalVolume)
+    key     = models.CharField(max_length=255)
+    value   = models.CharField(max_length=255)
+
+    objects = getHostDependentManagerClass("volume__vg__host")()
