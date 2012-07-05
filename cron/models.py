@@ -20,6 +20,7 @@ from django.db   import models
 from django.conf import settings
 
 from lvm.models import LogicalVolume
+from ifconfig.models import getHostDependentManagerClass
 
 class Cronjob(models.Model):
     volume      = models.ForeignKey(LogicalVolume)
@@ -29,6 +30,8 @@ class Cronjob(models.Model):
     month       = models.CharField(max_length=50)
     doweek      = models.CharField(max_length=50)
     command     = models.CharField(max_length=500)
+
+    objects     = getHostDependentManagerClass("volume__vg__host")()
 
     def save(self, *args, **kwargs):
         models.Model.save(self, *args, **kwargs)
