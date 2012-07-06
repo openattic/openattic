@@ -41,6 +41,9 @@ class IPAddressHandler(ModelHandler):
         """ Return an ID for the given object, including the app label and object name. """
         return {'id': obj.id, 'app': obj._meta.app_label, 'obj': obj._meta.object_name, 'address': obj.address}
 
+    def _get_model_manager(self):
+        return self.model.all_objects
+
     def _override_get(self, obj, data):
         data["editable"]  = obj.configure and not obj.is_loopback
         return data
