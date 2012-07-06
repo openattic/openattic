@@ -35,7 +35,6 @@ class IscsiTargetProxy(ProxyModelHandler):
         dbtarget = self.model.all_objects.get(id=id)
         volid = Lun.all_objects.filter(target=dbtarget).values("volume").distinct()[0]["volume"]
         host = LogicalVolume.all_objects.get(id=volid).vg.host
-        print "Found host", host
         return PeerHost.objects.get(name=host.name)
 
     def _get_model_manager(self):
@@ -43,13 +42,9 @@ class IscsiTargetProxy(ProxyModelHandler):
 
     def set(self, id, data):
         dbtarget = self.model.all_objects.get(id=id)
-        print "ISCSI SET", id
-        print data
         if Lun.all_objects.filter(target=dbtarget).count():
-            print "Found luns, using PMH"
             return ProxyModelHandler.set(self, id, data)
         else:
-            print "No luns, using MH"
             return ModelHandler.set(self, id, data)
 
     def create(self, data):
