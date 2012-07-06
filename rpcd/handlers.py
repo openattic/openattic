@@ -533,12 +533,12 @@ def proxy_for(other_handler):
 
         # Copy public members from other_handler to proxy_handler
         for membername, member in inspect.getmembers(other_handler):
-            if membername[0] == '_' or hasattr(proxy_handler, membername):
+            if membername[0] == '_':
                 continue
             if not inspect.ismethod(member):
                 # Non-Methods are simply copied
                 setattr(proxy_handler, membername, member)
-            else:
+            elif not hasattr(proxy_handler, membername):
                 # Methods need to be wrapped
                 argspec = inspect.getargspec(member)
                 if argspec.args[:2] == ['self', 'id']:
