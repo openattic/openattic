@@ -52,7 +52,13 @@ class Target(models.Model):
 
     def __init__(self, *args, **kwargs):
         models.Model.__init__(self, *args, **kwargs)
-        self._iscsi = dbus.SystemBus().get_object(settings.DBUS_IFACE_SYSTEMD, "/iscsi")
+        self._iscsi_obj = None
+
+    @property
+    def _iscsi(self):
+        if self._iscsi_obj is None:
+            self._iscsi_obj = dbus.SystemBus().get_object(settings.DBUS_IFACE_SYSTEMD, "/iscsi")
+        return self._iscsi_obj
 
     @property
     def tid(self):
