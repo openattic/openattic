@@ -19,6 +19,7 @@ import dbus
 from django.conf import settings
 
 from rpcd.handlers import BaseHandler
+from rpcd.handlers import ProxyHandler
 
 from systemd.helpers import dbus_to_python
 
@@ -37,4 +38,21 @@ class IpmiHandler(BaseHandler):
     def get_sensor_types(self):
         return dbus_to_python(dbus.SystemBus().get_object(settings.DBUS_IFACE_SYSTEMD, "/ipmi").get_sensor_types())
 
-RPCD_HANDLERS = [IpmiHandler]
+
+class IpmiProxy(ProxyHandler):
+    handler_name = IpmiHandler.handler_name
+
+    def get_all_sensors(self):
+        return self._call_allpeers_method("get_all_sensors")
+
+    def get_most_sensors(self):
+        return self._call_allpeers_method("get_most_sensors")
+
+    def get_sensors_by_type(self, stype):
+        return self._call_allpeers_method("get_sensors_by_type", stype)
+
+    def get_sensor_types(self):
+        return self._call_allpeers_method("get_sensor_types")
+
+
+RPCD_HANDLERS = [IpmiProxy]
