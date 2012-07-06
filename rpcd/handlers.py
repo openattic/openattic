@@ -383,6 +383,11 @@ class ProxyModelHandler(ProxyHandler, ModelHandler):
                 break
         return PeerHost.objects.get(name=curr.name)
 
+    def _order(self, objs):
+        if self.order:
+            return sorted( objs, key=lambda obj: self.order[0] in obj and obj[self.order[0]] or None )
+        return objs
+
     def idobj(self, numeric_id):
         return self._idobj( self.model.all_objects.get(id=numeric_id) )
 
@@ -393,10 +398,10 @@ class ProxyModelHandler(ProxyHandler, ModelHandler):
         return [ self._idobj(obj) for obj in self._filter_queryset(kwds, self.model.all_objects).order_by(*self.order) ]
 
     def all(self):
-        return self._call_allpeers_method("all")
+        return self._order( self._call_allpeers_method("all") )
 
     def filter(self, kwds):
-        return self._call_allpeers_method("filter", kwds)
+        return self._order( self._call_allpeers_method("filter", kwds) )
 
     def get(self, id):
         return self._call_singlepeer_method("get", id)
@@ -414,7 +419,7 @@ class ProxyModelHandler(ProxyHandler, ModelHandler):
         return self._call_allpeers_method("filter_combo", field, query, kwds)
 
     def all_values(self, fields):
-        return self._call_allpeers_method("all_values", fields)
+        return self._order( self._call_allpeers_method("all_values", fields) )
 
     def remove(self, id):
         return self._call_singlepeer_method("remove", id)
