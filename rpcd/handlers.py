@@ -473,6 +473,31 @@ __TEMPLATE_SINGLEPEER = """def %(name)s( self, %(args)s ):
 """
 
 def proxy_for(other_handler):
+    """ Create a class decorator that, when called, copies all class variables
+        and methods from other_handler to proxy_handler. Methods will be wrapped
+        and then called either on all peers, or if their first argument is "id",
+        then on one single peer.
+
+        Usage:
+
+            class SomeHandler(ModelHandler):
+                model = SomeModel
+
+                def yadda(self, id):
+                    # do something
+
+            @proxy_for(SomeHandler)
+            def SomeProxy(ProxyModelHandler):
+                model = SomeModel
+
+        In this example, @proxy_for would copy the ``yadda'' function from
+        SomeHandler to SomeProxy, wrapping it to be called on the one host
+        that currently owns the model instance.
+
+        Note that the ``model'' variable *needs* to be set when the class is
+        initially created, so proxy_for cannot be used for it.
+    """
+
     def _wrap_singlepeer_method(method):
         args = inspect.getargspec( method ).args[1:]
         code = compile( __TEMPLATE_SINGLEPEER % {
