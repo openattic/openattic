@@ -45,7 +45,8 @@ Ext.oa.Http__Export_Panel = Ext.extend(Ext.oa.ShareGridPanel, {
         '<a href="/volumes/{0}" target="_blank" title="{1}">' +
           '<img alt="Browser" src="{{ MEDIA_URL }}/oxygen/16x16/places/folder-remote.png">' +
         '</a>',
-        val, gettext("Browse in new window") );
+        val,
+        gettext("Browse in new window") );
     }
   }],
   form: {
