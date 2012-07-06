@@ -32,6 +32,6 @@ class ShareHandler(ModelHandler):
         samba.reload()
 
 class ShareProxy(ProxyModelHandler):
-    model = Export
+    model = Share
 
 RPCD_HANDLERS = [ShareProxy]
