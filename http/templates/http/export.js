@@ -42,10 +42,10 @@ Ext.oa.Http__Export_Panel = Ext.extend(Ext.oa.ShareGridPanel, {
     renderer: function(val, x, store){
       "use strict";
       return String.format(
-        '<a href="/volumes/{0}" target="_blank" title="{1}">' +
+        '<a href="{{ PROJECT_URL }}/http/volumes/{0}" target="_blank" title="{1}">' +
           '<img alt="Browser" src="{{ MEDIA_URL }}/oxygen/16x16/places/folder-remote.png">' +
         '</a>',
-        val, gettext("Browse in new window") );
+        store.data.id, gettext("Browse in new window") );
     }
   }],
   form: {
