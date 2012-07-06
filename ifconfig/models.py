@@ -72,6 +72,8 @@ class Host(models.Model):
 
     objects     = HostManager()
 
+    def __unicode__(self):
+        return self.name
 
 class HostDependentManager(models.Manager):
     hostfilter = "host"
