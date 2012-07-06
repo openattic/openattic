@@ -17,6 +17,7 @@
 import dbus
 
 from django.conf import settings
+from django.db   import models
 
 from rpcd.handlers import ModelHandler
 
@@ -43,6 +44,17 @@ class IPAddressHandler(ModelHandler):
     def _override_get(self, obj, data):
         data["editable"]  = obj.configure and not obj.is_loopback
         return data
+
+    def get_valid_ips(self, idobj):
+        model = models.get_model(idobj["app"], idobj["obj"])
+        handler = self._get_handler_instance(model)
+        targethost = handler._find_target_host(idobj["id"])
+        if targethost is None:
+            return []
+        return [ self._idobj(ip) for ip in
+            IPAddress.all_objects.filter(device__host__name=targethost.name)
+            if not ip.is_loopback ]
+
 
 class NetDeviceHandler(ModelHandler):
     model = NetDevice
