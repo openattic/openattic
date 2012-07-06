@@ -180,5 +180,12 @@ class VgProxy(ProxyModelHandler):
 class LvProxy(ProxyModelHandler):
     model = LogicalVolume
 
+class ZfsSubvolumeProxy(ProxyModelHandler):
+    model = ZfsSubvolume
 
-RPCD_HANDLERS = [VgProxy, LvProxy, ZfsSubvolumeHandler, ZfsSnapshotHandler, LVMetadataHandler]
+class ZfsSnapshotProxy(ProxyModelHandler):
+    model = ZfsSnapshot
+
+
+
+RPCD_HANDLERS = [VgProxy, LvProxy, ZfsSubvolumeProxy, ZfsSnapshotProxy, LVMetadataHandler]
