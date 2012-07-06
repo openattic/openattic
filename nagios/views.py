@@ -18,7 +18,7 @@
 from __future__ import division
 
 import re
-from os.path  import exists
+from os.path  import exists, getmtime
 from time     import time
 from datetime import datetime
 
@@ -159,7 +159,9 @@ def graph(request, service_id, srcidx):
         raise Http404("RRD file not found")
 
     try:
-        lastcheck = int(serv.state["last_check"])
+        # Stat the RRD file to prevent ugly grey bars on the right side
+        # that appear before npcd processed the perfdata
+        lastcheck = min(int(serv.state["last_check"]), getmtime(rrdpath))
     except:
         lastcheck = int(time())
 
