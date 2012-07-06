@@ -506,7 +506,7 @@ def proxy_for(other_handler):
             else:
                 # Methods need to be wrapped
                 argspec = inspect.getargspec(member)
-                if argspec[:2] == ['self', 'id']:
+                if argspec.args[:2] == ['self', 'id']:
                     wrapper = _wrap_singlepeer_method(member)
                 else:
                     wrapper = _wrap_allpeers_method(member)
