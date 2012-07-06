@@ -15,6 +15,7 @@
 """
 
 from rpcd.handlers import ModelHandler
+from rpcd.handlers import ProxyModelHandler
 
 from iscsi.models import Target, Lun, Initiator
 
@@ -28,6 +29,10 @@ class IscsiTargetHandler(ModelHandler):
 class IscsiLunHandler(ModelHandler):
     model = Lun
 
+class IscsiLunProxy(ProxyModelHandler):
+    model = Lun
+
+
 class IscsiInitiatorHandler(ModelHandler):
     model = Initiator
 
@@ -35,4 +40,4 @@ class IscsiInitiatorHandler(ModelHandler):
         """ Return an ID for the given object, including the app label and object name. """
         return {'id': obj.id, 'app': obj._meta.app_label, 'obj': obj._meta.object_name, 'name': obj.name}
 
-RPCD_HANDLERS = [IscsiTargetHandler, IscsiLunHandler, IscsiInitiatorHandler]
+RPCD_HANDLERS = [IscsiTargetHandler, IscsiLunProxy, IscsiInitiatorHandler]
