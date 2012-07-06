@@ -83,13 +83,17 @@ class ModelHandler(BaseHandler):
                 return model.objects.get(id=id_dict['id'])
         return None
 
+    def _get_model_manager(self):
+        """ Method that allows to override which Model manager is used. """
+        return self.model.objects
+
     def idobj(self, numeric_id):
         """ Get an ID object for the object given by `numeric_id`. """
-        return self._idobj( self.model.objects.get(id=numeric_id) )
+        return self._idobj( self._get_model_manager().get(id=numeric_id) )
 
     def ids(self):
         """ Get a list of all existing object IDs. """
-        return [self._idobj(o) for o in self.model.objects.all().order_by(*self.order) ]
+        return [self._idobj(o) for o in self._get_model_manager().all().order_by(*self.order) ]
 
     def ids_filter(self, kwds):
         """ Get a list of existing object IDs, filtered according to kwds. """
@@ -101,13 +105,13 @@ class ModelHandler(BaseHandler):
 
     def all(self):
         """ Return all objects. """
-        return [ self._getobj(obj) for obj in self.model.objects.all().order_by(*self.order) ]
+        return [ self._getobj(obj) for obj in self._get_model_manager().all().order_by(*self.order) ]
 
     def get(self, id):
         """ Return an object given by ID. """
         if not isinstance( id, dict ):
             id = {'id': int(id)}
-        return self._getobj( self.model.objects.get(**id) )
+        return self._getobj( self._get_model_manager().get(**id) )
 
     def get_ext(self, id):
         """ Return an object given by ID.
@@ -118,7 +122,7 @@ class ModelHandler(BaseHandler):
         if not isinstance( id, dict ):
             id = {'id': int(id)}
         data = {}
-        obj = self.model.objects.get(**id)
+        obj = self._get_model_manager().get(**id)
         for field in obj._meta.fields:
             if self.fields is not None and field.name not in self.fields:
                 continue
@@ -140,7 +144,7 @@ class ModelHandler(BaseHandler):
 
     def _filter_queryset(self, kwds, queryset=None):
         if queryset is None:
-            queryset = self.model.objects
+            queryset = self._get_model_manager()
 
         if '__exclude__' in kwds:
             exclude_kwds = kwds['__exclude__']
@@ -205,11 +209,11 @@ class ModelHandler(BaseHandler):
         """
         if "id" not in fields:
             fields.append("id")
-        return list(self.model.objects.all().order_by(*self.order).values(*fields))
+        return list(self._get_model_manager().all().order_by(*self.order).values(*fields))
 
     def remove(self, id):
         """ Delete an object given by ID. """
-        return self.model.objects.get(id=id).delete()
+        return self._get_model_manager().get(id=id).delete()
 
     def _getobj(self, obj):
         """ Return the data for one given object. """
@@ -249,7 +253,7 @@ class ModelHandler(BaseHandler):
 
     def set(self, id, data):
         """ Update the object given by ID with values from the `data` dict. """
-        return self._setobj( self.model.objects.get(id=id), data )
+        return self._setobj( self._get_model_manager().get(id=id), data )
 
     def set_ext(self):
         """ Reads POST data from the request to update a given object.
@@ -262,7 +266,7 @@ class ModelHandler(BaseHandler):
         if id == -1:
             instance = None
         else:
-            instance = self.model.objects.get(id=id)
+            instance = self._get_model_manager().get(id=id)
 
         from django.forms.models import ModelFormMetaclass, ModelForm
         formclass = ModelFormMetaclass( self.model._meta.object_name + "Form", (ModelForm,), {
