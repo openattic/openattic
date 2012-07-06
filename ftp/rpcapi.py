@@ -15,6 +15,7 @@
 """
 
 from rpcd.handlers import ModelHandler
+from rpcd.handlers import ProxyModelHandler
 
 from ftp.models import User, Group, FileLog
 
@@ -22,10 +23,13 @@ class FtpUserHandler(ModelHandler):
     model = User
     exclude = ["passwd", "uid", "gid"]
 
+class FtpUserProxy(ProxyModelHandler):
+    model = User
+
 class FtpGroupHandler(ModelHandler):
     model = Group
 
 class FtpFileLogHandler(ModelHandler):
     model = FileLog
 
-RPCD_HANDLERS = [FtpUserHandler, FtpGroupHandler, FtpFileLogHandler]
+RPCD_HANDLERS = [FtpUserProxy, FtpGroupHandler, FtpFileLogHandler]
