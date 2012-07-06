@@ -499,13 +499,18 @@ def proxy_for(other_handler):
     """
 
     def _wrap_singlepeer_method(method):
+        # Using functools.wraps would destroy the argspec, so we have to do it the hard way.
+        # Inspect the original method to get its arguments
         args = inspect.getargspec( method ).args[1:]
+        # format the template string accordingly and get a code object
         code = compile( __TEMPLATE_SINGLEPEER % {
             "args": ', '.join(args),
             "name": method.__name__
             }, "<string>", "single" )
+        # run the code using evaldict as its namespace
         evaldict = {}
         exec code in evaldict
+        # retrieve the defined method from the namespace and return it
         return evaldict[method.__name__]
 
     def _wrap_allpeers_method(method):
