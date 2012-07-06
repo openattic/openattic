@@ -52,9 +52,7 @@ Ext.oa.Tftp__Instance_Panel = Ext.extend(Ext.oa.ShareGridPanel, {
                 self.ownerCt.dirfield.setValue( response.result.fs.mountpoints[0] );
                 self.ownerCt.dirfield.enable();
               } );
-              self.ownerCt.addrfield.store.baseParams = {"idobj": {
-                "app": "lvm", "obj": "LogicalVolume", "id": record.data.id
-              }};
+              self.ownerCt.addrfield.store.baseParams.idobj.id = record.data.id;
               self.ownerCt.addrfield.store.reload();
               self.ownerCt.addrfield.enable();
             }
@@ -76,7 +74,12 @@ Ext.oa.Tftp__Instance_Panel = Ext.extend(Ext.oa.ShareGridPanel, {
           hiddenName: 'address',
           store: new Ext.data.DirectStore({
             fields: ["app", "obj", "id", "address"],
-            directFn: ifconfig__IPAddress.get_valid_ips
+            directFn: ifconfig__IPAddress.get_valid_ips,
+            baseParams: {
+              "idobj": {
+                "app": "lvm", "obj": "LogicalVolume", "id": -1
+              }
+            }
           }),
           disabled:      true,
           typeAhead:     true,
