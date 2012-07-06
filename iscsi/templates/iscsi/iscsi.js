@@ -56,7 +56,7 @@ var init_all = new Ext.data.DirectStore({
 var tgt_all = new Ext.data.DirectStore({
   id: "tgt_all",
   fields: ["app","obj","id","address"],
-  directFn: ifconfig__IPAddress.ids
+  directFn: iscsi__Target.get_valid_ips
 });
 
 Ext.oa.Iscsi__Panel = Ext.extend(Ext.Panel, {
@@ -98,6 +98,7 @@ Ext.oa.Iscsi__Panel = Ext.extend(Ext.Panel, {
             if( btn === 'yes' ){
               iscsi__Lun.remove( sel.data.id, function(provider, response){
                 lunStore.reload();
+                tgt_all.reload();
               } );
             }
           }
@@ -240,6 +241,7 @@ Ext.oa.Iscsi__Panel = Ext.extend(Ext.Panel, {
             cellclick: function (self, rowIndex, colIndex, evt ){
               var record = self.getStore().getAt(rowIndex);
               lunStore.load({params: {"target":record.data.id}});
+              tgt_all.load({params: {"id":record.data.id}});
               init_allow.loadData(record.json.init_allow);
               init_deny.loadData(record.json.init_deny);
               tgt_allow.loadData(record.json.tgt_allow);
@@ -710,6 +712,7 @@ Ext.oa.Iscsi__Panel = Ext.extend(Ext.Panel, {
                       }, function(provider, response){
                         if( response.result ){
                           lunStore.reload();
+                          tgt_all.reload();
                           addwin.hide();
                         }
                       });
