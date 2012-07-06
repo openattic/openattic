@@ -18,6 +18,8 @@ from rpcd.handlers import ModelHandler
 from rpcd.handlers import ProxyModelHandler
 
 from iscsi.models import Target, Lun, Initiator
+from lvm.models import LogicalVolume
+from peering.models import PeerHost
 
 class IscsiTargetHandler(ModelHandler):
     model = Target
@@ -25,6 +27,34 @@ class IscsiTargetHandler(ModelHandler):
     def _idobj(self, obj):
         """ Return an ID for the given object, including the app label and object name. """
         return {'id': obj.id, 'app': obj._meta.app_label, 'obj': obj._meta.object_name, 'name': obj.name}
+
+class IscsiTargetProxy(ProxyModelHandler):
+    model = Target
+
+    def _find_target_host(self, id):
+        dbtarget = self.model.all_objects.get(id=id)
+        volid = Lun.all_objects.filter(target=dbtarget).values("volume").distinct()[0]["volume"]
+        host = LogicalVolume.all_objects.get(id=volid).vg.host
+        print "Found host", host
+        return PeerHost.objects.get(name=host.name)
+
+    def _get_model_manager(self):
+        return self.model.all_objects
+
+    def set(self, id, data):
+        dbtarget = self.model.all_objects.get(id=id)
+        print "ISCSI SET", id
+        print data
+        if Lun.all_objects.filter(target=dbtarget).count():
+            print "Found luns, using PMH"
+            return ProxyModelHandler.set(self, id, data)
+        else:
+            print "No luns, using MH"
+            return ModelHandler.set(self, id, data)
+
+    def create(self, data):
+        return ModelHandler.create(self, data)
+
 
 class IscsiLunHandler(ModelHandler):
     model = Lun
@@ -40,4 +70,4 @@ class IscsiInitiatorHandler(ModelHandler):
         """ Return an ID for the given object, including the app label and object name. """
         return {'id': obj.id, 'app': obj._meta.app_label, 'obj': obj._meta.object_name, 'name': obj.name}
 
-RPCD_HANDLERS = [IscsiTargetHandler, IscsiLunProxy, IscsiInitiatorHandler]
+RPCD_HANDLERS = [IscsiTargetProxy, IscsiLunProxy, IscsiInitiatorHandler]
