@@ -14,7 +14,7 @@
  *  GNU General Public License for more details.
 """
 
-from rpcd.handlers import ModelHandler
+from rpcd.handlers import ModelHandler, ProxyModelHandler
 
 from nagios.models import Command, Service, Graph
 
@@ -52,5 +52,8 @@ class ServiceHandler(ModelHandler):
 
         return data
 
+class ServiceProxy(ProxyModelHandler):
+    model = Service
 
-RPCD_HANDLERS = [CommandHandler, ServiceHandler, GraphHandler]
+
+RPCD_HANDLERS = [CommandHandler, ServiceProxy, GraphHandler]
