@@ -15,10 +15,14 @@
 """
 
 from rpcd.handlers import ModelHandler
+from rpcd.handlers import ProxyModelHandler
 
 from http.models import Export
 
 class HttpExportHandler(ModelHandler):
     model = Export
 
-RPCD_HANDLERS = [HttpExportHandler]
+class HttpExportProxy(ProxyModelHandler):
+    model = Export
+
+RPCD_HANDLERS = [HttpExportProxy]
