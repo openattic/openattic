@@ -14,6 +14,9 @@
  *  GNU General Public License for more details.
 """
 
+import inspect
+import new
+
 from django.db import models
 
 from ifconfig.models import Host
@@ -456,7 +459,59 @@ class ProxyModelHandler(ProxyHandler, ModelHandler):
             if isinstance( curr, Host ):
                 break
         peer = PeerHost.objects.get(name=curr.name)
-        print peer
-        print data
         return self._convert_datetimes( self._get_proxy_object(peer).create(data) )
 
+
+
+
+__TEMPLATE_ALLPEERS = """def %(name)s( self, %(args)s ):
+    return self._call_allpeers_method("%(name)s", %(args)s)
+"""
+
+__TEMPLATE_SINGLEPEER = """def %(name)s( self, %(args)s ):
+    return self._call_singlepeer_method("%(name)s", %(args)s)
+"""
+
+def proxy_for(other_handler):
+    def _wrap_singlepeer_method(method):
+        args = inspect.getargspec( method ).args[1:]
+        code = compile( __TEMPLATE_SINGLEPEER % {
+            "args": ', '.join(args),
+            "name": method.__name__
+            }, "<string>", "single" )
+        evaldict = {}
+        exec code in evaldict
+        return evaldict[method.__name__]
+
+    def _wrap_allpeers_method(method):
+        args = inspect.getargspec( method ).args[1:]
+        code = compile( __TEMPLATE_ALLPEERS % {
+            "args": ', '.join(args),
+            "name": method.__name__
+            }, "<string>", "single" )
+        evaldict = {}
+        exec code in evaldict
+        return evaldict[method.__name__]
+
+    def class_decorator(proxy_handler):
+        proxy_handler.handler_name = other_handler.handler_name
+
+        # Copy public members from other_handler to proxy_handler
+        for membername, member in inspect.getmembers(other_handler):
+            if membername[0] == '_' or hasattr(proxy_handler, membername):
+                continue
+            if not inspect.ismethod(member):
+                # Non-Methods are simply copied
+                setattr(proxy_handler, membername, member)
+            else:
+                # Methods need to be wrapped
+                argspec = inspect.getargspec(member)
+                if argspec[:2] == ['self', 'id']:
+                    wrapper = _wrap_singlepeer_method(member)
+                else:
+                    wrapper = _wrap_allpeers_method(member)
+                setattr(proxy_handler, membername, new.instancemethod(wrapper, None, proxy_handler))
+
+        return proxy_handler
+
+    return class_decorator
