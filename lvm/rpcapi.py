@@ -14,7 +14,8 @@
  *  GNU General Public License for more details.
 """
 
-from rpcd.handlers import ModelHandler, ProxyModelHandler
+from rpcd.handlers import ModelHandler
+from rpcd.handlers import ProxyModelHandler, proxy_for
 
 from lvm.models import VolumeGroup, LogicalVolume, ZfsSubvolume, ZfsSnapshot, LVMetadata
 
@@ -165,24 +166,19 @@ class ZfsSnapshotHandler(ModelHandler):
         """ Rollback the volume to the snapshot given by `id`. """
         return ZfsSnapshot.objects.get(id=id).rollback()
 
-
+@proxy_for(VgHandler)
 class VgProxy(ProxyModelHandler):
     model = VolumeGroup
 
-    def get_free_megs(self, id):
-        """ Return information about the LV retrieved from LVM. """
-        return self._call_singlepeer_method("get_free_megs", id)
-
-    def lvm_info(self, id):
-        """ Return information about the LV retrieved from LVM. """
-        return self._call_singlepeer_method("lvm_info", id)
-
+@proxy_for(LvHandler)
 class LvProxy(ProxyModelHandler):
     model = LogicalVolume
 
+@proxy_for(ZfsSubvolumeHandler)
 class ZfsSubvolumeProxy(ProxyModelHandler):
     model = ZfsSubvolume
 
+@proxy_for(ZfsSnapshotHandler)
 class ZfsSnapshotProxy(ProxyModelHandler):
     model = ZfsSnapshot
 
