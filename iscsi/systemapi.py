@@ -33,7 +33,7 @@ class SystemD(LockingPlugin):
             tgt  = open( iscsi_settings.TARGETS_ALLOW, "w" )
 
             try:
-                for target in Target.objects.all():
+                for target in Target.objects.filter(lun__isnull=False):
                     ietd.write( "Target %s\n" % target.iscsiname )
                     ietd.write( "\tAlias %s\n" % target.name )
 
