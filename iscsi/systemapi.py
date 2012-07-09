@@ -91,7 +91,7 @@ class SystemD(LockingPlugin):
 
         return targets
 
-    @method(in_signature="", out_signature="a{s(sa{s(sa{sa{ss}})})}")
+    @method(in_signature="", out_signature="a{saa{ss}}")
     def get_sessions(self):
         targets = {}
 
@@ -101,15 +101,16 @@ class SystemD(LockingPlugin):
                 if parts[0][0] == "tid":
                     # target
                     tiqn = parts[1][1]
-                    targets[tiqn] = (parts[0][1], {})
+                    tgtparts = parts
+                    sesslist = []
+                    targets[tiqn] = sesslist
                 elif parts[0][0] == "sid":
                     # session
-                    siqn = parts[1][1]
-                    targets[tiqn][1][siqn] = (parts[0][1], {})
+                    session = dict(parts + tgtparts)
+                    sesslist.append(session)
                 elif parts[0][0] == "cid":
                     # client
-                    ciqn = parts[0][1]
-                    targets[tiqn][1][siqn][1][ciqn] = dict(parts[1:])
+                    session.update(dict(parts))
 
         return targets
 
