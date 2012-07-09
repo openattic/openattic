@@ -71,23 +71,23 @@ class SystemD(LockingPlugin):
         finally:
             self.lock.release()
 
-    @method(in_signature="", out_signature="a{i(saa{sv})}")
+    @method(in_signature="", out_signature="a{saa{ss}}")
     def get_volumes(self):
-        fd = open("/proc/net/iet/volume", "rb")
-
         targets = {}
-        current = None
-        for line in fd:
-            line = line.strip()
-            values = dict([ part.split(':', 1) for part in line.split(' ') ])
-            if "tid" in values:
-                targets[int(values["tid"])] = (
-                    values["name"],
-                    []
-                    )
-                current = int(values["tid"])
-            else:
-                targets[current][1].append(values)
+
+        with open("/proc/net/iet/volume", "r") as fd:
+            for line in fd:
+                parts = [ part.split(':', 1) for part in line.strip().split(' ') ]
+                if parts[0][0] == "tid":
+                    # target
+                    tiqn = parts[1][1]
+                    tgtparts = parts
+                    lunlist = []
+                    targets[tiqn] = lunlist
+                else:
+                    # lun
+                    lun = dict(parts + tgtparts)
+                    lunlist.append(lun)
 
         return targets
 
@@ -95,8 +95,8 @@ class SystemD(LockingPlugin):
     def get_sessions(self):
         targets = {}
 
-        with open("/proc/net/iet/session", "r") as ses:
-            for line in ses:
+        with open("/proc/net/iet/session", "r") as fd:
+            for line in fd:
                 parts = [ part.split(':', 1) for part in line.strip().split(' ') ]
                 if parts[0][0] == "tid":
                     # target
