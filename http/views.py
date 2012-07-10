@@ -25,7 +25,8 @@ def browse(request, id):
     if host is None:
         raise Http404("Export does not appear to be active on any host")
     peer = PeerHost.objects.get(name=host.name)
-    target = "http://%(hostname)s/volumes/%(volname)s" % {
+    target = "http://%(hostname)s/volumes/%(vgname)s/%(volname)s" % {
+        'vgname':   volume.vg.name,
         'volname':  volume.name,
         'hostname': peer.base_url.hostname
         }
