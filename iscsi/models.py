@@ -16,6 +16,7 @@
 
 import dbus
 
+from time import time, sleep
 from django.db   import models
 from django.conf import settings
 from django.db.models import Q
@@ -72,6 +73,13 @@ class Target(models.Model):
         ses = self._iscsi.get_sessions()
         if self.iscsiname in ses:
             return dbus_to_python(ses[self.iscsiname])
+        return {}
+
+    @property
+    def volumes(self):
+        vol = self._iscsi.get_volumes()
+        if self.iscsiname in vol:
+            return dbus_to_python(vol[self.iscsiname])
         return {}
 
     def __unicode__(self):
@@ -182,24 +190,58 @@ def lv_resized(sender, **kwargs):
         lun.install(int(kwargs["jid"]))
 
 def vg_activated(sender, **kwargs):
-    print "Activated", sender
+    for target in Target.objects.filter(lun__isnull=False):
+        print target.name
+        if target.tid is None:
+            target.install()
+        volpaths = [vol["path"] for vol in target.volumes]
+        for lun in target.lun_set.all():
+            if lun.volume.path not in volpaths:
+                lun.install()
+
+    print "Activated iSCSI targets for", sender
 
 def vg_deactivated(sender, **kwargs):
     for target in Target.objects.all():
         if target.tid is None:
             continue
-        while True:
+        print target.name
+        # Kill Sessions
+        start = time()
+        while time() - start < 10:
             sessions = target.sessions
             if not sessions:
                 break
             for session in sessions:
                 print "Killing connection %s:%s..." % (session["initiator"], session["cid"])
-                _iscsi.conn_delete(session["tid"], session["sid"], session["cid"])
+                target._iscsi.conn_delete(session["tid"], session["sid"], session["cid"])
+        # Remove LUNs
+        volpaths = [vol["path"] for vol in target.volumes]
         for lun in target.lun_set.all():
-            lun.uninstall()
-        target.uninstall()
+            if lun.volume.path in volpaths:
+                start = time()
+                while time() - start < 10:
+                    try:
+                        lun.uninstall()
+                    except dbus.exceptions.DBusException, err:
+                        if "Device or resource busy" not in err.args[0]:
+                            raise
+                        sleep(0.2)
+                    else:
+                        break
+        # Remote Target
+        start = time()
+        while time() - start < 10:
+            try:
+                target.uninstall()
+            except dbus.exceptions.DBusException, err:
+                if "Device or resource busy" not in err.args[0]:
+                    raise
+                sleep(0.2)
+            else:
+                break
 
-    print "Deactivated", sender
+    print "Deactivated iSCSI targets for", sender
 
 lvm_signals.post_shrink.connect(lv_resized)
 lvm_signals.post_grow.connect(lv_resized)
