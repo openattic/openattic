@@ -33,7 +33,7 @@ class SystemD(LockingPlugin):
             tgt  = open( iscsi_settings.TARGETS_ALLOW, "w" )
 
             try:
-                for target in Target.objects.all():
+                for target in Target.objects.filter(lun__isnull=False):
                     ietd.write( "Target %s\n" % target.iscsiname )
                     ietd.write( "\tAlias %s\n" % target.name )
 
@@ -71,45 +71,46 @@ class SystemD(LockingPlugin):
         finally:
             self.lock.release()
 
-    @method(in_signature="", out_signature="a{i(saa{sv})}")
+    @method(in_signature="", out_signature="a{saa{ss}}")
     def get_volumes(self):
-        fd = open("/proc/net/iet/volume", "rb")
-
-        targets = {}
-        current = None
-        for line in fd:
-            line = line.strip()
-            values = dict([ part.split(':', 1) for part in line.split(' ') ])
-            if "tid" in values:
-                targets[int(values["tid"])] = (
-                    values["name"],
-                    []
-                    )
-                current = int(values["tid"])
-            else:
-                targets[current][1].append(values)
-
-        return targets
-
-    @method(in_signature="", out_signature="a{s(sa{s(sa{sa{ss}})})}")
-    def get_sessions(self):
         targets = {}
 
-        with open("/proc/net/iet/session", "r") as ses:
-            for line in ses:
+        with open("/proc/net/iet/volume", "r") as fd:
+            for line in fd:
                 parts = [ part.split(':', 1) for part in line.strip().split(' ') ]
                 if parts[0][0] == "tid":
                     # target
                     tiqn = parts[1][1]
-                    targets[tiqn] = (parts[0][1], {})
+                    tgtparts = parts
+                    lunlist = []
+                    targets[tiqn] = lunlist
+                else:
+                    # lun
+                    lun = dict(parts + tgtparts)
+                    lunlist.append(lun)
+
+        return targets
+
+    @method(in_signature="", out_signature="a{saa{ss}}")
+    def get_sessions(self):
+        targets = {}
+
+        with open("/proc/net/iet/session", "r") as fd:
+            for line in fd:
+                parts = [ part.split(':', 1) for part in line.strip().split(' ') ]
+                if parts[0][0] == "tid":
+                    # target
+                    tiqn = parts[1][1]
+                    tgtparts = parts
+                    sesslist = []
+                    targets[tiqn] = sesslist
                 elif parts[0][0] == "sid":
                     # session
-                    siqn = parts[1][1]
-                    targets[tiqn][1][siqn] = (parts[0][1], {})
+                    session = dict(parts + tgtparts)
+                    sesslist.append(session)
                 elif parts[0][0] == "cid":
                     # client
-                    ciqn = parts[0][1]
-                    targets[tiqn][1][siqn][1][ciqn] = dict(parts[1:])
+                    session.update(dict(parts))
 
         return targets
 

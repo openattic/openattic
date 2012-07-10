@@ -54,13 +54,10 @@ class Command( BaseCommand ):
                 sessions = dbus_to_python(_iscsi.get_sessions())
                 foundsession = False
                 for iscsiname in sessions:
-                    tid = sessions[iscsiname][0]
-                    if sessions[iscsiname][1]:
+                    for sessdata in sessions[iscsiname]:
                         foundsession = True
-                        for sessdata in sessions[iscsiname][1].values():
-                            for cid in sessdata[1]:
-                                print "Killing connection %s:%s..." %(sessdata[0], cid)
-                                _iscsi.conn_delete(tid, sessdata[0], cid)
+                        print "Killing connection %s:%s..." %(sessdata["sid"], sessdata["cid"])
+                        _iscsi.conn_delete(sessdata["tid"], sessdata["sid"], sessdata["cid"])
                 if not foundsession:
                     print "No more sessions open, deactivating targets."
                     break
