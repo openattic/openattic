@@ -124,10 +124,10 @@ class Lun(models.Model):
         if self.volume.filesystem:
             raise ValidationError('This share type can not be used on volumes with a file system.')
 
-    def iet_add(self, jid=-1):
+    def install(self, jid=-1):
         self.target._iscsi.lun_new( self.target.tid, self.number, self.volume.path, self.ltype, jid )
 
-    def iet_delete(self, jid=-1):
+    def uninstall(self, jid=-1):
         self.target._iscsi.lun_delete(self.target.tid, self.number, jid)
 
     def save(self, *args, **kwargs):
@@ -141,7 +141,7 @@ class Lun(models.Model):
                 self.number = 0
 
         if self.id is None and not self.volume.standby:
-            self.iet_add()
+            self.install()
 
         ret = models.Model.save(self, *args, **kwargs)
         self.target._iscsi.writeconf()
@@ -150,7 +150,7 @@ class Lun(models.Model):
     def delete( self ):
         ret = models.Model.delete(self)
         if not self.volume.standby:
-            self.iet_delete()
+            self.uninstall()
         self.target._iscsi.writeconf()
         if self.target.lun_set.count() == 0 and self.target.tid is not None:
             self.target.uninstall()
@@ -183,8 +183,8 @@ class ChapUser(models.Model):
 
 def lv_resized(sender, **kwargs):
     for lun in Lun.objects.filter(volume=sender):
-        lun.iet_delete(int(kwargs["jid"]))
-        lun.iet_add(int(kwargs["jid"]))
+        lun.uninstall(int(kwargs["jid"]))
+        lun.install(int(kwargs["jid"]))
 
 post_shrink.connect(lv_resized)
 post_grow.connect(lv_resized)
