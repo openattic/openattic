@@ -204,6 +204,23 @@ class VgStatusCommand(BaseCommand):
             return 3
 
 
+class VgsCommand(BaseCommand):
+    """See if any volumes are currently mounted. """
+
+    command_name = "vgs"
+
+    def populate_optparser(self, parser):
+        parser.add_option("-q", "--quiet", help="No headline and no formatting", default=False, action="store_true")
+
+    def __call__(self, options, vg=None):
+        if not options.quiet:
+            print "%-20s %s" % ("Volume Group", "Host")
+            for vg in VolumeGroup.all_objects.all().order_by("name"):
+                print "%-20s %s" % (vg.name, vg.host and vg.host.name or "<inactive>")
+        else:
+            for vg in VolumeGroup.all_objects.all().order_by("name"):
+                print vg.name, vg.host and vg.host.name or ""
+
 def main():
     # Find the command argument
     command = None
