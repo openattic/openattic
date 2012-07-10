@@ -15,7 +15,7 @@
 """
 
 from os.path import join, exists, islink
-from os import unlink, symlink
+from os import unlink, symlink, mkdir
 
 from http.conf import settings as http_settings
 from django.db import models
@@ -42,14 +42,17 @@ class Export(models.Model):
 
     def save( self, *args, **kwargs ):
         ret = models.Model.save(self, *args, **kwargs)
-        linkname = join(http_settings.VOLUMESDIR, self.volume.name)
+        subdir = join(http_settings.VOLUMESDIR, self.volume.vg.name)
+        if not exists( subdir ):
+            mkdir( subdir )
+        linkname = join(subdir, self.volume.name)
         if not exists( linkname ):
             symlink( self.path, linkname )
         return ret
 
     def delete( self ):
         ret = models.Model.delete(self)
-        linkname = join(http_settings.VOLUMESDIR, self.volume.name)
+        linkname = join(http_settings.VOLUMESDIR, self.volume.vg.name, self.volume.name)
         if islink( linkname ):
             unlink( linkname )
         return ret
