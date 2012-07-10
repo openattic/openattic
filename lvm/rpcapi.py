@@ -174,6 +174,10 @@ class VgProxy(ProxyModelHandler):
 class LvProxy(ProxyModelHandler):
     model = LogicalVolume
 
+    def avail_fs(self):
+        h = LvHandler(self.user)
+        return h.avail_fs()
+
 @proxy_for(ZfsSubvolumeHandler)
 class ZfsSubvolumeProxy(ProxyModelHandler):
     model = ZfsSubvolume
