@@ -16,13 +16,14 @@
 
 import dbus
 
+from time import time, sleep
 from django.db   import models
 from django.conf import settings
 from django.db.models import Q
 from django.utils.translation import ugettext_lazy as _
 
 from lvm.models  import LogicalVolume
-from lvm.signals import post_shrink, post_grow
+import lvm.signals as lvm_signals
 from ifconfig.models import IPAddress, getHostDependentManagerClass
 from systemd.helpers import dbus_to_python
 
@@ -62,21 +63,23 @@ class Target(models.Model):
 
     @property
     def tid(self):
-        vol = self._iscsi.get_volumes()
-        if self.iscsiname in vol and len(vol[self.iscsiname][0]) > 0:
-            # since targets are created when the first lun is set and
-            # deleted when empty, this is guaranteed to work
-            return int(vol[self.iscsiname][0]["tid"])
+        tgt = self._iscsi.get_targets()
+        if self.iscsiname in tgt:
+            return int(tgt[self.iscsiname]["tid"])
         return None
 
     @property
     def sessions(self):
         ses = self._iscsi.get_sessions()
         if self.iscsiname in ses:
-            ret = dbus_to_python(ses[self.iscsiname][1])
-            for key in ret:
-                ret[key] = dict( zip( ("sid", "clients"), ret[key] ) )
-            return ret
+            return dbus_to_python(ses[self.iscsiname])
+        return {}
+
+    @property
+    def volumes(self):
+        vol = self._iscsi.get_volumes()
+        if self.iscsiname in vol:
+            return dbus_to_python(vol[self.iscsiname])
         return {}
 
     def __unicode__(self):
@@ -124,10 +127,10 @@ class Lun(models.Model):
         if self.volume.filesystem:
             raise ValidationError('This share type can not be used on volumes with a file system.')
 
-    def iet_add(self, jid=-1):
+    def install(self, jid=-1):
         self.target._iscsi.lun_new( self.target.tid, self.number, self.volume.path, self.ltype, jid )
 
-    def iet_delete(self, jid=-1):
+    def uninstall(self, jid=-1):
         self.target._iscsi.lun_delete(self.target.tid, self.number, jid)
 
     def save(self, *args, **kwargs):
@@ -141,7 +144,7 @@ class Lun(models.Model):
                 self.number = 0
 
         if self.id is None and not self.volume.standby:
-            self.iet_add()
+            self.install()
 
         ret = models.Model.save(self, *args, **kwargs)
         self.target._iscsi.writeconf()
@@ -150,7 +153,7 @@ class Lun(models.Model):
     def delete( self ):
         ret = models.Model.delete(self)
         if not self.volume.standby:
-            self.iet_delete()
+            self.uninstall()
         self.target._iscsi.writeconf()
         if self.target.lun_set.count() == 0 and self.target.tid is not None:
             self.target.uninstall()
@@ -183,8 +186,65 @@ class ChapUser(models.Model):
 
 def lv_resized(sender, **kwargs):
     for lun in Lun.objects.filter(volume=sender):
-        lun.iet_delete(int(kwargs["jid"]))
-        lun.iet_add(int(kwargs["jid"]))
+        lun.uninstall(int(kwargs["jid"]))
+        lun.install(int(kwargs["jid"]))
 
-post_shrink.connect(lv_resized)
-post_grow.connect(lv_resized)
+def vg_activated(sender, **kwargs):
+    for target in Target.objects.filter(lun__isnull=False):
+        print target.name
+        if target.tid is None:
+            target.install()
+        volpaths = [vol["path"] for vol in target.volumes]
+        for lun in target.lun_set.all():
+            if lun.volume.path not in volpaths:
+                lun.install()
+
+    print "Activated iSCSI targets for", sender
+
+def vg_deactivated(sender, **kwargs):
+    for target in Target.objects.all():
+        if target.tid is None:
+            continue
+        print target.name
+        # Kill Sessions
+        start = time()
+        while time() - start < 10:
+            sessions = target.sessions
+            if not sessions:
+                break
+            for session in sessions:
+                print "Killing connection %s:%s..." % (session["initiator"], session["cid"])
+                target._iscsi.conn_delete(session["tid"], session["sid"], session["cid"])
+        # Remove LUNs
+        volpaths = [vol["path"] for vol in target.volumes]
+        for lun in target.lun_set.all():
+            if lun.volume.path in volpaths:
+                start = time()
+                while time() - start < 10:
+                    try:
+                        lun.uninstall()
+                    except dbus.exceptions.DBusException, err:
+                        if "Device or resource busy" not in err.args[0]:
+                            raise
+                        sleep(0.2)
+                    else:
+                        break
+        # Remote Target
+        start = time()
+        while time() - start < 10:
+            try:
+                target.uninstall()
+            except dbus.exceptions.DBusException, err:
+                if "Device or resource busy" not in err.args[0]:
+                    raise
+                sleep(0.2)
+            else:
+                break
+
+    print "Deactivated iSCSI targets for", sender
+
+lvm_signals.post_shrink.connect(lv_resized)
+lvm_signals.post_grow.connect(lv_resized)
+
+lvm_signals.post_activate.connect(vg_activated)
+lvm_signals.pre_deactivate.connect(vg_deactivated)
