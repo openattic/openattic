@@ -162,7 +162,7 @@ class LogicalVolume(models.Model):
         This is the main class of openATTIC's design.
     """
 
-    name        = models.CharField(max_length=130, unique=True)
+    name        = models.CharField(max_length=130)
     megs        = models.IntegerField(_("Size in MB"))
     vg          = models.ForeignKey(VolumeGroup, blank=True)
     snapshot    = models.ForeignKey("self", blank=True, null=True)
@@ -174,6 +174,9 @@ class LogicalVolume(models.Model):
 
     objects = getHostDependentManagerClass("vg__host")()
     all_objects = models.Manager()
+
+    class Meta:
+        unique_together = ("vg", "name")
 
     def __init__( self, *args, **kwargs ):
         models.Model.__init__( self, *args, **kwargs )

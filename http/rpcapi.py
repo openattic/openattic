@@ -22,6 +22,10 @@ from http.models import Export
 class HttpExportHandler(ModelHandler):
     model = Export
 
+    def _override_get(self, obj, data):
+        data["url"] = "/volumes/%s/%s" % (obj.volume.vg.name, obj.volume.name)
+        return data
+
 class HttpExportProxy(ProxyModelHandler):
     model = Export
 
