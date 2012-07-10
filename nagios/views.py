@@ -18,6 +18,7 @@
 from __future__ import division
 
 import re
+import sys
 from os.path  import exists, getmtime
 from time     import time
 from datetime import datetime
@@ -179,7 +180,8 @@ def graph(request, service_id, srcidx):
     try:
         start = int(start)
         end   = int(end)
-    except ValueError:
+    except ValueError, err:
+        print >> sys.stderr, unicode(err)
         raise Http404("Invalid start or end specified")
 
     if lastcheck < start and "start" in request.GET and "end" not in request.GET:
