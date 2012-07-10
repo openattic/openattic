@@ -22,7 +22,7 @@ from django.db.models import Q
 from django.utils.translation import ugettext_lazy as _
 
 from lvm.models  import LogicalVolume
-from lvm.signals import post_shrink, post_grow
+import lvm.signals as lvm_signals
 from ifconfig.models import IPAddress, getHostDependentManagerClass
 from systemd.helpers import dbus_to_python
 
@@ -73,10 +73,7 @@ class Target(models.Model):
     def sessions(self):
         ses = self._iscsi.get_sessions()
         if self.iscsiname in ses:
-            ret = dbus_to_python(ses[self.iscsiname][1])
-            for key in ret:
-                ret[key] = dict( zip( ("sid", "clients"), ret[key] ) )
-            return ret
+            return dbus_to_python(ses[self.iscsiname])
         return {}
 
     def __unicode__(self):
@@ -186,5 +183,28 @@ def lv_resized(sender, **kwargs):
         lun.uninstall(int(kwargs["jid"]))
         lun.install(int(kwargs["jid"]))
 
-post_shrink.connect(lv_resized)
-post_grow.connect(lv_resized)
+def vg_activated(sender, **kwargs):
+    print "Activated", sender
+
+def vg_deactivated(sender, **kwargs):
+    for target in Target.objects.all():
+        if target.tid is None:
+            continue
+        while True:
+            sessions = target.sessions
+            if not sessions:
+                break
+            for session in sessions:
+                print "Killing connection %s:%s..." % (session["initiator"], session["cid"])
+                _iscsi.conn_delete(session["tid"], session["sid"], session["cid"])
+        for lun in target.lun_set.all():
+            lun.uninstall()
+        target.uninstall()
+
+    print "Deactivated", sender
+
+lvm_signals.post_shrink.connect(lv_resized)
+lvm_signals.post_grow.connect(lv_resized)
+
+lvm_signals.post_activate.connect(vg_activated)
+lvm_signals.pre_deactivate.connect(vg_deactivated)
