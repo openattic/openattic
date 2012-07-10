@@ -71,6 +71,20 @@ class SystemD(LockingPlugin):
         finally:
             self.lock.release()
 
+    @method(in_signature="", out_signature="a{sa{ss}}")
+    def get_targets(self):
+        targets = {}
+
+        with open("/proc/net/iet/volume", "r") as fd:
+            for line in fd:
+                parts = [ part.split(':', 1) for part in line.strip().split(' ') ]
+                if parts[0][0] == "tid":
+                    # target
+                    tiqn = parts[1][1]
+                    targets[tiqn] = dict(parts)
+
+        return targets
+
     @method(in_signature="", out_signature="a{saa{ss}}")
     def get_volumes(self):
         targets = {}
