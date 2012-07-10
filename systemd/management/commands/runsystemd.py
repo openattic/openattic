@@ -17,6 +17,7 @@
 import os
 import traceback
 import logging
+import socket
 
 from logging.handlers import SysLogHandler
 from threading import Lock
@@ -175,10 +176,14 @@ class Command( BaseCommand ):
             rootlogger.addHandler(logfh)
 
         if 'sysloglevel' in options and options['sysloglevel'].upper() != 'OFF':
-            logsh = SysLogHandler(address="/dev/log")
-            logsh.setLevel( getloglevel(options['sysloglevel']) )
-            logsh.setFormatter( logging.Formatter('%(name)s: %(levelname)s %(message)s') )
-            rootlogger.addHandler(logsh)
+            try:
+                logsh = SysLogHandler(address="/dev/log")
+            except socket.error, err:
+                logging.error("Failed to connect to syslog: " + unicode(err))
+            else:
+                logsh.setLevel( getloglevel(options['sysloglevel']) )
+                logsh.setFormatter( logging.Formatter('%(name)s: %(levelname)s %(message)s') )
+                rootlogger.addHandler(logsh)
 
         logging.info("Detecting modules...")
         sysdplugins = []
