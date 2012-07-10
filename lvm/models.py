@@ -44,7 +44,7 @@ class VolumeGroup(models.Model):
         self._lvm_info = None
 
     def __unicode__(self):
-        return "%s (%s MB free)" % (self.name, self.lvm_info['LVM2_VG_FREE'])
+        return self.name
 
     def join_device(self, device):
         """ Reformat a device as a Physical Volume and add it to this Volume Group. """
