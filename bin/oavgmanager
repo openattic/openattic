@@ -87,7 +87,7 @@ class VgStartCommand(BaseCommand):
                 for lv in volgroup.logicalvolume_set.exclude(filesystem=""):
                     print lv.name,
                     lv.mount()
-            print "done."
+                print "done."
             lvm_signals.post_activate.send(sender=volgroup)
 
 class VgStopCommand(BaseCommand):

@@ -62,11 +62,9 @@ class Target(models.Model):
 
     @property
     def tid(self):
-        vol = self._iscsi.get_volumes()
-        if self.iscsiname in vol and len(vol[self.iscsiname][0]) > 0:
-            # since targets are created when the first lun is set and
-            # deleted when empty, this is guaranteed to work
-            return int(vol[self.iscsiname][0]["tid"])
+        tgt = self._iscsi.get_targets()
+        if self.iscsiname in tgt:
+            return int(tgt[self.iscsiname]["tid"])
         return None
 
     @property
