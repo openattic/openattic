@@ -162,7 +162,7 @@ def graph(request, service_id, srcidx):
     try:
         # Stat the RRD file to prevent ugly grey bars on the right side
         # that appear before npcd processed the perfdata
-        lastcheck = min(int(serv.state["last_check"]), getmtime(rrdpath))
+        lastcheck = min(int(serv.state["last_check"]), int(getmtime(rrdpath)))
     except:
         lastcheck = int(time())
 
