@@ -438,16 +438,15 @@ class ProxyModelHandler(ProxyHandler, ModelHandler):
 
         data = dict([ (key, self.request.POST[key])
                       for key in self.request.POST
-                      if key not in ("extAction", "extMethod", "extTID", "extType", "extUpload")
+                      if key not in ("id", "extAction", "extMethod", "extTID", "extType", "extUpload")
                     ])
 
         for field in self.model._meta.fields:
-            if isinstance( field, models.ForeignKey ):
+            if isinstance( field, models.ForeignKey ) and field.name in data:
                 handler = self._get_handler_instance(field.related.parent_model)
                 data[field.name] = handler.idobj(int(data[field.name]))
 
-        objid = int(data["id"])
-        del data["id"]
+        objid = int(request.POST["id"])
         if objid == -1:
             idobj = self.create(data)
         else:
