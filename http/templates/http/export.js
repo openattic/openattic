@@ -20,17 +20,6 @@ Ext.oa.Http__Export_Panel = Ext.extend(Ext.oa.ShareGridPanel, {
   window: {
     height: 200
   },
-  storefields: [{
-    name: 'volumename',
-    mapping: 'volume',
-    convert: function( val, row ){
-      "use strict";
-      if(val){
-        return val.name;
-      }
-      return "";
-    }
-  }],
   columns: [{
     header: gettext('Path'),
     width: 350,
@@ -38,11 +27,11 @@ Ext.oa.Http__Export_Panel = Ext.extend(Ext.oa.ShareGridPanel, {
   },{
     header: gettext('Browse'),
     width: 100,
-    dataIndex: "volumename",
+    dataIndex: "url",
     renderer: function(val, x, store){
       "use strict";
       return String.format(
-        '<a href="/volumes/{0}" target="_blank" title="{1}">' +
+        '<a href="{0}" target="_blank" title="{1}">' +
           '<img alt="Browser" src="{{ MEDIA_URL }}/oxygen/16x16/places/folder-remote.png">' +
         '</a>',
         val,
