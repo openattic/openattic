@@ -1,3 +1,2 @@
 iscsi /usr/share/openattic
 installed_apps.d/iscsi /usr/share/openattic/installed_apps.d
-etc/init.d/openattic_iscsi /etc/init.d
