@@ -129,7 +129,7 @@ Description: Comprehensive storage management system using PGSQL
 Package: openattic-mysql
 Architecture: all
 Depends: ${misc:Depends}, python-mysqldb,
- dbconfig-common, mysql-server, libnss-mysql-bg
+ dbconfig-common, mysql-server, libnss-mysql-bg, libpam-mysql
 Recommends: mysql-client
 Conflicts: openattic-pgsql
 Description: Configures openATTIC with a MySQL database
@@ -142,7 +142,7 @@ Description: Configures openATTIC with a MySQL database
 Package: openattic-pgsql
 Architecture: all
 Depends: ${misc:Depends}, python-psycopg2,
- dbconfig-common, postgresql, libnss-pgsql2
+ dbconfig-common, postgresql, libnss-pgsql2, libpam-pgsql
 Recommends: postgresql-client
 Conflicts: openattic-mysql
 Description: Configures openATTIC with a PGSQL database
