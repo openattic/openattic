@@ -60,10 +60,12 @@ class FileSystem(object):
         self._lvm.fs_mount( jid, self.name, self.lv.path, mountpoint )
 
     @property
-    def mounted(self, mountpoint=None):
+    def mounted(self):
         """ True if the volume is currently mounted. """
-        if mountpoint is None and len(self.mountpoints) == 1:
-            mountpoint = self.mountpoints[0]
+        return os.path.ismount(self.mountpoints[0])
+
+    def mounted_at(self, mountpoint):
+        """ True if the volume is currently mounted. """
         return os.path.ismount(mountpoint)
 
     def unmount(self, jid, mountpoint=None):
