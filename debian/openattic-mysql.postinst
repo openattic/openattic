@@ -7,6 +7,9 @@ if [ "$1" = "configure" ] ; then
 
     . /usr/share/dbconfig-common/dpkg/postinst.mysql
 
+    dpkg-statoverride --list "/var/lib/openattic/ftp" >/dev/null || \
+        dpkg-statoverride --update --add openattic openattic "/var/lib/openattic/ftp" 0755
+
     INIFILE=/etc/openattic/databases/mysql.ini
 
     dbc_generate_include_args="-o template_infile=/etc/openattic/databases/mysql_template.ini"

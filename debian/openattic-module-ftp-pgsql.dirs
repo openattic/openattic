@@ -1,1 +1,2 @@
 /etc/proftpd/conf.d
+/var/lib/openattic/ftp
