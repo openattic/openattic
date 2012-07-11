@@ -26,6 +26,12 @@ if [ "$1" = "configure" ] ; then
 
     ln -f /etc/libnss-mysql.cfg /etc/libnss-mysql-root.cfg
     chmod go+r /etc/libnss-mysql.cfg
+
+    dbconfig-generate-include -f template \
+        -o template_infile=/etc/openattic/databases/pam_mysql_template.conf \
+        /etc/dbconfig-common/openattic-mysql.conf \
+        /etc/pam_mysql.conf
+
 fi
 
 #DEBHELPER#
