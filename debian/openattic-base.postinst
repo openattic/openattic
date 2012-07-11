@@ -13,7 +13,7 @@ if [ "$1" = "configure" ] ; then
     }
 
     setperm "/usr/share/openattic" 0750
-    setperm "/var/lib/openattic"   0750
+    setperm "/var/lib/openattic"   0755
 
     touch /var/log/openattic_systemd
     setperm /var/log/openattic_systemd 0640
