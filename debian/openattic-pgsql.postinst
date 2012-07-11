@@ -8,7 +8,7 @@ if [ "$1" = "configure" ] ; then
     . /usr/share/dbconfig-common/dpkg/postinst.pgsql
 
     dpkg-statoverride --list "/var/lib/openattic/ftp" >/dev/null || \
-        dpkg-statoverride --update --add openattic openattic "/var/lib/openattic/ftp" 0755
+        dpkg-statoverride --update --add openattic openattic 0755 "/var/lib/openattic/ftp"
 
     INIFILE=/etc/openattic/databases/pgsql.ini
 
