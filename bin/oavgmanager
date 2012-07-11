@@ -228,6 +228,28 @@ class VgsCommand(BaseCommand):
             for vg in VolumeGroup.all_objects.all().order_by("name"):
                 print vg.name, vg.host and vg.host.name or ""
 
+
+class MountCommand(BaseCommand):
+    """ Mount a single volume. """
+
+    command_name = "mount"
+    command_args = "<vg> <volume>"
+
+    def __call__(self, options, vg, volume):
+        LogicalVolume.objects.get(vg__name=vg, name=volume).mount()
+
+
+class UnmountCommand(BaseCommand):
+    """ Unmount a single volume. """
+
+    command_name = "unmount"
+    command_args = "<vg> <volume>"
+
+    def __call__(self, options, vg, volume):
+        LogicalVolume.objects.get(vg__name=vg, name=volume).unmount()
+
+
+
 def main():
     # Find the command argument
     command = None
