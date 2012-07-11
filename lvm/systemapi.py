@@ -202,9 +202,13 @@ class SystemD(BasePlugin):
     @method(in_signature="isss", out_signature="")
     def fs_chown(self, jid, mountpoint, user, group):
         if group:
-            self.job_add_command(jid, ["/bin/chown", "-R", ("%s:%s" % (user, group)), mountpoint])
+            cmd = ["/bin/chown", "-R", ("%s:%s" % (user, group)), mountpoint]
         else:
-            self.job_add_command(jid, ["/bin/chown", "-R", user, mountpoint])
+            cmd = ["/bin/chown", "-R", user, mountpoint]
+        if jid != -1:
+            self.job_add_command(jid, cmd)
+        else:
+            invoke(cmd)
 
     @method(in_signature="s", out_signature="a{ss}")
     def e2fs_info(self, devpath):
