@@ -446,7 +446,7 @@ class ProxyModelHandler(ProxyHandler, ModelHandler):
                 handler = self._get_handler_instance(field.related.parent_model)
                 data[field.name] = handler.idobj(int(data[field.name]))
 
-        objid = int(request.POST["id"])
+        objid = int(self.request.POST["id"])
         if objid == -1:
             idobj = self.create(data)
         else:
