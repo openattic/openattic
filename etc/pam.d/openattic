@@ -1,0 +1,4 @@
+# This service definition is used by openATTIC to authenticate against PAM. If
+# you want to change the way openATTIC authenticates its users, e.g. in order
+# to authenticate against Active Directory, you may do so here.
+# By default, this file is empty.

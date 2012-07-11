@@ -17,19 +17,15 @@
 from rpcd.handlers import ModelHandler
 from rpcd.handlers import ProxyModelHandler
 
-from ftp.models import User, Group, FileLog
+from ftp.models import Export, FileLog
 
-class FtpUserHandler(ModelHandler):
-    model = User
-    exclude = ["passwd", "uid", "gid"]
+class FtpExportHandler(ModelHandler):
+    model = Export
 
-class FtpUserProxy(ProxyModelHandler):
-    model = User
-
-class FtpGroupHandler(ModelHandler):
-    model = Group
+class FtpExportProxy(ProxyModelHandler):
+    model = Export
 
 class FtpFileLogHandler(ModelHandler):
     model = FileLog
 
-RPCD_HANDLERS = [FtpUserProxy, FtpGroupHandler, FtpFileLogHandler]
+RPCD_HANDLERS = [FtpExportProxy, FtpFileLogHandler]

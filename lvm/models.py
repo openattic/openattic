@@ -264,6 +264,11 @@ class LogicalVolume(models.Model):
             raise SystemError("Volume '%s' does not have a filesystem, cannot mount." % self.name)
         return self.fs.mounted
 
+    def mounted_at(self, mountpoint):
+        if not self.filesystem:
+            raise SystemError("Volume '%s' does not have a filesystem, cannot mount." % self.name)
+        return self.fs.mounted_at(mountpoint)
+
     @property
     def mountpoints(self):
         if not self.filesystem:
@@ -352,21 +357,25 @@ class LogicalVolume(models.Model):
     ### PROCESSING METHODS ###
     ##########################
 
-    def mount(self):
+    def mount(self, mountpoint=None):
         if not self.filesystem:
             raise SystemError("Volume '%s' does not have a filesystem, cannot mount." % self.name)
-        if self.formatted and not self.fs.mounted:
-            lvm_signals.pre_mount.send(sender=self, mountpoint=self.mountpoints[0])
-            self.fs.mount(-1)
-            lvm_signals.post_mount.send(sender=self, mountpoint=self.mountpoints[0])
+        if mountpoint is None:
+            mountpoint = self.mountpoints[0]
+        if self.formatted and not self.mounted_at(mountpoint):
+            lvm_signals.pre_mount.send(sender=self, mountpoint=mountpoint)
+            self.fs.mount(-1, mountpoint)
+            lvm_signals.post_mount.send(sender=self, mountpoint=mountpoint)
 
-    def unmount(self):
+    def unmount(self, mountpoint=None):
         if not self.filesystem:
             raise SystemError("Volume '%s' does not have a filesystem, cannot unmount." % self.name)
-        if self.fs.mounted:
-            lvm_signals.pre_unmount.send(sender=self, mountpoint=self.mountpoints[0])
-            self.fs.unmount(-1)
-            lvm_signals.post_unmount.send(sender=self, mountpoint=self.mountpoints[0])
+        if mountpoint is None:
+            mountpoint = self.mountpoints[0]
+        if self.mounted_at(mountpoint):
+            lvm_signals.pre_unmount.send(sender=self, mountpoint=mountpoint)
+            self.fs.unmount(-1, mountpoint)
+            lvm_signals.post_unmount.send(sender=self, mountpoint=mountpoint)
 
     def install( self ):
         lvm_signals.pre_install.send(sender=self)
