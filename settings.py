@@ -20,6 +20,8 @@ PROJECT_URL  = '/openattic'
 # fyi: SCRIPT_URL=/filer/lvm/ PATH_INFO=/lvm/ would allow for Django to auto-detect the path
 #FORCE_SCRIPT_NAME = PROJECT_URL
 
+DATA_ROOT = "/var/lib/openattic"
+
 from os.path import join, dirname, abspath, exists
 if not PROJECT_ROOT or not exists( PROJECT_ROOT ):
     PROJECT_ROOT = dirname(abspath(__file__))
