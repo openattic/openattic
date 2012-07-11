@@ -14,27 +14,22 @@
  *  GNU General Public License for more details.
 """
 
-from pwd import getpwnam
-from grp import getgrnam
+from os.path import join, exists, islink
+from os import unlink, symlink, mkdir
 
 from django.db import models
 
+from ftp.conf import settings as ftp_settings
 from ifconfig.models import getHostDependentManagerClass
+from django.contrib.auth.models import User
 from lvm.models import LogicalVolume
+import lvm.signals as lvm_signals
 
-class Group(models.Model):
-    groupname   = models.CharField( max_length=50, unique=True )
-    gid         = models.IntegerField( unique=True )
-    members     = models.CharField( max_length=50 )
 
-class User(models.Model):
+class Export(models.Model):
     volume      = models.ForeignKey(LogicalVolume, related_name="ftp_user_set")
-    username    = models.CharField( max_length=50, unique=True )
-    passwd      = models.CharField( max_length=50, blank=True, null=True )
-    uid         = models.IntegerField(editable=False)
-    gid         = models.IntegerField(editable=False)
-    homedir     = models.CharField( max_length=500 )
-    shell       = models.CharField( max_length=50, default="/bin/true" )
+    path        = models.CharField(max_length=255, blank=True) # TODO: not used yet
+    user        = models.ForeignKey(User)
 
     objects     = getHostDependentManagerClass("volume__vg__host")()
     all_objects = models.Manager()
@@ -45,24 +40,29 @@ class User(models.Model):
         from django.core.exceptions import ValidationError
         if not self.volume.filesystem:
             raise ValidationError('This share type can only be used on volumes with a file system.')
-        for mp in self.volume.fs.mountpoints:
-            if self.homedir.startswith(mp):
-                return
-        raise ValidationError('The homedir must be within the mount directory of the selected volume.')
+
+    def install(self):
+        vgdir = join(ftp_settings.HOMESDIR, self.user.username, self.volume.vg.name)
+        if not exists( vgdir ):
+            mkdir( vgdir )
+        voldir = join(vgdir, self.volume.name)
+        if not exists( voldir ):
+            mkdir( voldir )
+        self.volume.mount(voldir)
+
+    def uninstall(self):
+        voldir = join(ftp_settings.HOMESDIR, self.user.username, self.volume.vg.name, self.volume.name)
+        self.volume.unmount(voldir)
 
     def save(self, *args, **kwargs):
-        try:
-            sysuser = getpwnam(self.volume.owner.username)
-            self.uid = sysuser.pw_uid
-            self.gid = sysuser.pw_gid
-        except KeyError:
-            self.uid = self.volume.owner.id + 2000
-            try:
-                self.gid = getgrnam("users").gr_gid
-            except KeyError:
-                self.gid = 100
+        ret = models.Model.save(self, *args, **kwargs)
+        self.install()
+        return ret
 
-        return models.Model.save(self, *args, **kwargs)
+    def delete(self):
+        self.uninstall()
+        return models.Model.delete(self)
+
 
 class FileLog(models.Model):
     username    = models.ForeignKey( User, to_field="username" )
@@ -71,3 +71,17 @@ class FileLog(models.Model):
     dns         = models.CharField( max_length=500 )
     transtime   = models.CharField( max_length=500 )
     rectime     = models.DateTimeField()
+
+
+def post_mount(sender, **kwargs):
+    if kwargs["mountpoint"] == sender.mountpoints[0]:
+        for exp in Export.objects.filter(volume=sender):
+            exp.install()
+
+def pre_unmount(sender, **kwargs):
+    if kwargs["mountpoint"] == sender.mountpoints[0]:
+        for exp in Export.objects.filter(volume=sender):
+            exp.uninstall()
+
+lvm_signals.post_mount.connect(post_mount)
+lvm_signals.pre_unmount.connect(pre_unmount)
