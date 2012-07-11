@@ -14,10 +14,13 @@
  *  GNU General Public License for more details.
 """
 
+import dbus
+
 from os.path import join, exists, islink
-from os import unlink, symlink, mkdir
+from os import unlink, symlink, mkdir, makedirs
 
 from django.db import models
+from django.conf import settings
 
 from ftp.conf import settings as ftp_settings
 from ifconfig.models import getHostDependentManagerClass
@@ -42,12 +45,12 @@ class Export(models.Model):
             raise ValidationError('This share type can only be used on volumes with a file system.')
 
     def install(self):
-        vgdir = join(ftp_settings.HOMESDIR, self.user.username, self.volume.vg.name)
-        if not exists( vgdir ):
-            mkdir( vgdir )
-        voldir = join(vgdir, self.volume.name)
+        voldir = join(ftp_settings.HOMESDIR, self.user.username, self.volume.vg.name, self.volume.name)
         if not exists( voldir ):
-            mkdir( voldir )
+            makedirs( voldir )
+            lvm = dbus.SystemBus().get_object(settings.DBUS_IFACE_SYSTEMD, "/lvm")
+            lvm.fs_chown(-1, join(ftp_settings.HOMESDIR, self.user.username), self.user.username, "users")
+            lvm.fs_chown(-1, join(ftp_settings.HOMESDIR, self.user.username, self.volume.vg.name), self.user.username, "users")
         self.volume.mount(voldir)
 
     def uninstall(self):
