@@ -1,1 +1,2 @@
 /etc/openattic/databases/pgsql.ini /etc/openattic/database.ini
+/etc/openattic/databases/pam_openattic_service.pgsql /etc/pam.d/openattic_service
