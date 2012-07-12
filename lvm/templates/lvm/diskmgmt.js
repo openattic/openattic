@@ -212,7 +212,11 @@ Ext.oa.volumeGroup_Panel = Ext.extend(Ext.grid.GridPanel, {
       }],
       viewConfig: { forceFit: true },
       store: new Ext.data.DirectStore({
-        fields: ['id', 'name',"LVM_VG_FREE","LVM_VG_SIZE","LVM_VG_ATTR", "LVM_VG_PERCENT"],
+        fields: ['id', 'name',"LVM_VG_FREE","LVM_VG_SIZE","LVM_VG_ATTR", "LVM_VG_PERCENT", {
+          name: "hostname",
+          mapping: "host",
+          convert: function( val ){ if( val ){ return val.name; } return ''; }
+        }],
         directFn: lvm__VolumeGroup.all,
         listeners: {
           load: function(self){
@@ -264,6 +268,9 @@ Ext.oa.volumeGroup_Panel = Ext.extend(Ext.grid.GridPanel, {
         columns: [{
           header: gettext('Name'),
           dataIndex: "name"
+        },{
+          header: gettext('Host'),
+          dataIndex: "hostname"
         },{
           header: gettext('Size'),
           dataIndex: "LVM_VG_SIZE",
