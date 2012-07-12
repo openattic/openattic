@@ -15,7 +15,7 @@
 """
 
 from rpcd.handlers import ModelHandler
-from rpcd.handlers import ProxyModelHandler
+from rpcd.handlers import ProxyModelHandler, proxy_for
 
 from http.models import Export
 
@@ -26,6 +26,7 @@ class HttpExportHandler(ModelHandler):
         data["url"] = "/volumes/%s/%s" % (obj.volume.vg.name, obj.volume.name)
         return data
 
+@proxy_for(HttpExportHandler)
 class HttpExportProxy(ProxyModelHandler):
     model = Export
 

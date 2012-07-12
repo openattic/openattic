@@ -19,7 +19,7 @@ import dbus
 from django.conf import settings
 
 from rpcd.handlers import ModelHandler
-from rpcd.handlers import ProxyModelHandler
+from rpcd.handlers import ProxyModelHandler, proxy_for
 
 from samba.models import Share
 
@@ -31,6 +31,7 @@ class ShareHandler(ModelHandler):
         samba.writeconf()
         samba.reload()
 
+@proxy_for(ShareHandler)
 class ShareProxy(ProxyModelHandler):
     model = Share
 

@@ -15,13 +15,14 @@
 """
 
 from rpcd.handlers import ModelHandler
-from rpcd.handlers import ProxyModelHandler
+from rpcd.handlers import ProxyModelHandler, proxy_for
 
 from ftp.models import Export, FileLog
 
 class FtpExportHandler(ModelHandler):
     model = Export
 
+@proxy_for(FtpExportHandler)
 class FtpExportProxy(ProxyModelHandler):
     model = Export
 

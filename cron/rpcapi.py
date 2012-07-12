@@ -15,13 +15,14 @@
 """
 
 from rpcd.handlers import ModelHandler
-from rpcd.handlers import ProxyModelHandler
+from rpcd.handlers import ProxyModelHandler, proxy_for
 
 from cron.models import Cronjob
 
 class CronjobHandler(ModelHandler):
     model = Cronjob
 
+@proxy_for(CronjobHandler)
 class CronjobProxy(ProxyModelHandler):
     model = Cronjob
 

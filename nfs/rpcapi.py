@@ -15,13 +15,14 @@
 """
 
 from rpcd.handlers import ModelHandler
-from rpcd.handlers import ProxyModelHandler
+from rpcd.handlers import ProxyModelHandler, proxy_for
 
 from nfs.models import Export
 
 class NfsExportHandler(ModelHandler):
     model = Export
 
+@proxy_for(NfsExportHandler)
 class NfsExportProxy(ProxyModelHandler):
     model = Export
 

@@ -15,7 +15,7 @@
 """
 
 from rpcd.handlers import ModelHandler
-from rpcd.handlers import ProxyModelHandler
+from rpcd.handlers import ProxyModelHandler, proxy_for
 
 from iscsi.models import Target, Lun, Initiator
 from lvm.models import LogicalVolume
@@ -29,6 +29,7 @@ class IscsiTargetHandler(ModelHandler):
         """ Return an ID for the given object, including the app label and object name. """
         return {'id': obj.id, 'app': obj._meta.app_label, 'obj': obj._meta.object_name, 'name': obj.name}
 
+@proxy_for(IscsiTargetHandler)
 class IscsiTargetProxy(ProxyModelHandler):
     model = Target
 
@@ -66,6 +67,7 @@ class IscsiTargetProxy(ProxyModelHandler):
 class IscsiLunHandler(ModelHandler):
     model = Lun
 
+@proxy_for(IscsiLunHandler)
 class IscsiLunProxy(ProxyModelHandler):
     model = Lun
 
