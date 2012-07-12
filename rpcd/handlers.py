@@ -396,6 +396,8 @@ class ProxyModelHandler(ProxyHandler, ModelHandler):
                 break
         if curr == Host.objects.get_current():
             return None
+        if curr is None:
+            raise RuntimeError("Object is not active on any host")
         return PeerHost.objects.get(name=curr.name)
 
     def _order(self, objs):
