@@ -246,6 +246,8 @@ class ModelHandler(BaseHandler):
                         data[field.name] = unicode(value)
                     else:
                         data[field.name] = handler._idobj(value)
+                else:
+                    data[field.name] = None
             else:
                 data[field.name] = value
 
