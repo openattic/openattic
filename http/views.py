@@ -18,18 +18,26 @@ from django.http import HttpResponseRedirect, Http404
 
 from http.models import Export
 from peering.models import PeerHost
+from ifconfig.models import Host
 
 def browse(request, id):
     volume = Export.all_objects.get(id=id).volume
     host   = volume.vg.host
     if host is None:
         raise Http404("Export does not appear to be active on any host")
-    peer = PeerHost.objects.get(name=host.name)
-    target = "http://%(hostname)s/volumes/%(vgname)s/%(volname)s" % {
-        'vgname':   volume.vg.name,
-        'volname':  volume.name,
-        'hostname': peer.base_url.hostname
-        }
+    if host == Host.objects.get_current():
+        target = "http://%(hostname)s/volumes/%(vgname)s/%(volname)s" % {
+            'vgname':   volume.vg.name,
+            'volname':  volume.name,
+            'hostname': host.name
+            }
+    else:
+        peer = PeerHost.objects.get(name=host.name)
+        target = "http://%(hostname)s/volumes/%(vgname)s/%(volname)s" % {
+            'vgname':   volume.vg.name,
+            'volname':  volume.name,
+            'hostname': peer.base_url.hostname
+            }
     if request.META["QUERY_STRING"]:
         target += '?' + request.META["QUERY_STRING"]
     return HttpResponseRedirect(target)
