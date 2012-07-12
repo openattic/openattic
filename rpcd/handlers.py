@@ -322,6 +322,8 @@ class ModelHandler(BaseHandler):
 
 
 class ProxyHandler(BaseHandler):
+    backing_handler = None
+
     def __init__(self, user, request=None):
         BaseHandler.__init__(self, user, request)
         self._proxies = {}
@@ -351,6 +353,7 @@ class ProxyHandler(BaseHandler):
 
     def _call_allpeers_method(self, method, *args):
         ret = []
+        # Call every peer
         for peer in self._get_relevant_peers():
             meth = getattr(self._get_proxy_object(peer), method)
             res = meth(*args)
@@ -358,11 +361,21 @@ class ProxyHandler(BaseHandler):
                 ret.extend( self._convert_datetimes( list( res ) ) )
             else:
                 ret.append( self._convert_datetimes( res ) )
+        # Call the backing handler to get local info
+        meth = getattr(self.backing_handler(self.user, self.request), method)
+        res = meth(*args)
+        if isinstance(res, (tuple, list)):
+            ret.extend( self._convert_datetimes( list( res ) ) )
+        else:
+            ret.append( self._convert_datetimes( res ) )
         return ret
 
     def _call_singlepeer_method(self, method, id, *args):
         peer  = self._find_target_host(id)
-        meth = getattr(self._get_proxy_object(peer), method)
+        if peer is None:
+            meth = getattr(self.backing_handler(self.user, self.request), method)
+        else:
+            meth = getattr(self._get_proxy_object(peer), method)
         return self._convert_datetimes( meth(id, *args) )
 
     def _get_relevant_peers(self):
@@ -381,12 +394,17 @@ class ProxyModelHandler(ProxyHandler, ModelHandler):
             curr = getattr( curr, field )
             if isinstance( curr, Host ):
                 break
+        if curr == Host.objects.get_current():
+            return None
         return PeerHost.objects.get(name=curr.name)
 
     def _order(self, objs):
         if self.order:
             return sorted( objs, key=lambda obj: self.order[0] in obj and obj[self.order[0]] or None )
         return objs
+
+    def _idobj(self, obj):
+        return self.backing_handler(self.user, self.request)._idobj(obj)
 
     def idobj(self, numeric_id):
         return self._idobj( self.model.all_objects.get(id=numeric_id) )
@@ -462,13 +480,19 @@ class ProxyModelHandler(ProxyHandler, ModelHandler):
         # Find the peer by walking through the given data
         fields = self.model.objects.hostfilter.split('__')
         target_model = self.model._meta.get_field_by_name(fields[0])[0].related.parent_model
-        curr = target_model.all_objects.get(id=data[fields[0]]["id"])
-        for field in fields[1:]:
-            curr = getattr( curr, field )
-            if isinstance( curr, Host ):
-                break
-        peer = PeerHost.objects.get(name=curr.name)
-        return self._convert_datetimes( self._get_proxy_object(peer).create(data) )
+        if target_model == Host:
+            curr = Host.objects.get(id=data[fields[0]]["id"])
+        else:
+            curr = target_model.all_objects.get(id=data[fields[0]]["id"])
+            for field in fields[1:]:
+                curr = getattr( curr, field )
+                if isinstance( curr, Host ):
+                    break
+        if curr == Host.objects.get_current():
+            return self.backing_handler(self.user, self.request).create(data)
+        else:
+            peer = PeerHost.objects.get(name=curr.name)
+            return self._convert_datetimes( self._get_proxy_object(peer).create(data) )
 
 
 
@@ -534,6 +558,7 @@ def proxy_for(other_handler):
 
     def class_decorator(proxy_handler):
         proxy_handler.handler_name = other_handler.handler_name
+        proxy_handler.backing_handler = other_handler
 
         # Copy public members from other_handler to proxy_handler
         for membername, member in inspect.getmembers(other_handler):
