@@ -16,7 +16,7 @@ Ext.namespace("Ext.oa");
 Ext.oa.Cmdlog__LogEntry_Panel = Ext.extend(Ext.Panel, {
   initComponent: function(){
     "use strict";
-    var fields = ['id', 'command', 'exitcode', 'endtime'];
+    var fields = ['id', 'command', 'exitcode', 'endtime', 'user'];
     var store = new Ext.data.DirectStore({
       remoteSort: true,
       fields: fields,
@@ -85,6 +85,9 @@ Ext.oa.Cmdlog__LogEntry_Panel = Ext.extend(Ext.Panel, {
             }, {
               header: gettext('Command'),
               dataIndex: 'command'
+            }, {
+              header: gettext('User'),
+              dataIndex: 'user'
             }, {
               header: gettext('Exit Status'),
               dataIndex: 'exitcode'
