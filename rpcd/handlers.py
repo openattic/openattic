@@ -380,7 +380,7 @@ class ProxyHandler(BaseHandler):
 
     def _get_relevant_peers(self):
         return PeerHost.objects.filter( name__in=[ host.name
-            for host in Host.objects.filter(volumegroup__isnull=False) ] )
+            for host in Host.objects.filter(volumegroup__isnull=False).exclude(name=Host.objects.get_current().name).distinct() ] )
 
     def _find_target_host(self, id):
         raise NotImplemented("ProxyHandler::_find_target_host needs to be overridden!")
