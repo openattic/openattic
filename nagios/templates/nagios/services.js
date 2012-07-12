@@ -345,6 +345,8 @@ Ext.oa.Nagios__Service_Panel = Ext.extend(Ext.Panel, {
           fields: ['id', 'description', {
             name: "volumename",    mapping: "volume", convert: function(val, row){ if(val){ return val.name; }}
           }, {
+            name: "hostname",      mapping: "host",   convert: function(val, row){ if(val){ return val.name; }}
+          }, {
             name: "plugin_output", mapping: "state",  convert: function(val, row){ if(val){ return val.plugin_output; }}
           }, {
             name: "current_state", mapping: "state",  convert: function(val, row){ if(val){ return val.current_state; }}
@@ -372,6 +374,10 @@ Ext.oa.Nagios__Service_Panel = Ext.extend(Ext.Panel, {
             header: gettext('Volume'),
             width: 100,
             dataIndex: "volumename"
+          }, {
+            header: gettext('Host'),
+            width: 100,
+            dataIndex: "hostname"
           }, {
             header: gettext('Last Check'),
             width: 120,
