@@ -104,6 +104,7 @@ Ext.oa.Cmdlog__LogEntry_Panel = Ext.extend(Ext.Panel, {
           items: [ {
             xtype: "textfield",
             emptyText: gettext('Search...'),
+            enableKeyEvents: true,
             listeners: {
               change: function( self, newVal, oldVal ){
                 if( newVal !== '' ){
@@ -113,6 +114,17 @@ Ext.oa.Cmdlog__LogEntry_Panel = Ext.extend(Ext.Panel, {
                   delete store.baseParams.kwds.text__icontains;
                 }
                 store.reload();
+              },
+              keypress: function( self, evt ){
+                if( typeof window.Cmdlog__LogEntry_search !== "undefined" ){
+                  clearTimeout(window.Cmdlog__LogEntry_search);
+                }
+                if(evt.getKey() === evt.ENTER){
+                  self.initialConfig.listeners.change(self, self.getValue());
+                }
+                else{
+                  window.Cmdlog__LogEntry_search = self.initialConfig.listeners.change.defer(2000, self, [self, self.getValue()]);
+                }
               }
             }
           },'->', {
