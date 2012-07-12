@@ -26,18 +26,15 @@ def browse(request, id):
     if host is None:
         raise Http404("Export does not appear to be active on any host")
     if host == Host.objects.get_current():
-        target = "http://%(hostname)s/volumes/%(vgname)s/%(volname)s" % {
-            'vgname':   volume.vg.name,
-            'volname':  volume.name,
-            'hostname': host.name
-            }
+        hostname = host.name
     else:
         peer = PeerHost.objects.get(name=host.name)
-        target = "http://%(hostname)s/volumes/%(vgname)s/%(volname)s" % {
-            'vgname':   volume.vg.name,
-            'volname':  volume.name,
-            'hostname': peer.base_url.hostname
-            }
+        hostname = peer.base_url.hostname
+    target = "http://%(hostname)s/volumes/%(vgname)s/%(volname)s" % {
+        'vgname':   volume.vg.name,
+        'volname':  volume.name,
+        'hostname': hostname
+        }
     if request.META["QUERY_STRING"]:
         target += '?' + request.META["QUERY_STRING"]
     return HttpResponseRedirect(target)
