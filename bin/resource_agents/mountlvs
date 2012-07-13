@@ -14,8 +14,13 @@
 ACTION="$1"
 VOLGRP="$OCF_RESKEY_volgrpname"
 
+if lsb_release -c | grep -q squeeze; then
+: ${OCF_FUNCTIONS_DIR=${OCF_ROOT}/resource.d/heartbeat}
+. ${OCF_FUNCTIONS_DIR}/.ocf-shellfuncs
+else
 : ${OCF_FUNCTIONS_DIR=${OCF_ROOT}/lib/heartbeat}
 . ${OCF_FUNCTIONS_DIR}/ocf-shellfuncs
+fi
 
 meta_data() {
         cat <<END
