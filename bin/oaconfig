@@ -91,6 +91,8 @@ case $1 in
 			su "$OAUSER" -c 'python manage.py syncdb --noinput'
 		fi
 		
+		su "$OAUSER" -c 'python manage.py add-host'
+		
 		# Configure nsswitch.conf
 		OADBENGINE=$(grep engine /etc/openattic/database.ini | cut -d= -f2)
 		if [ $OADBENGINE = "django.db.backends.postgresql_psycopg2" ]; then
