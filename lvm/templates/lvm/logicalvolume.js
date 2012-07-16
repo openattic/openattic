@@ -42,7 +42,7 @@ Ext.oa.Lvm__LogicalVolume_Panel = Ext.extend(Ext.oa.ShareGridPanel, {
   storefields: [ "fswarning", "fscritical", {
     name: 'fsfree',
     mapping: 'fs',
-    sortType: 'asInt',
+    sortType: 'asFloat',
     convert: function( val, row ){
       "use strict";
       if( val === null || typeof val.stat === "undefined" ){
@@ -53,7 +53,7 @@ Ext.oa.Lvm__LogicalVolume_Panel = Ext.extend(Ext.oa.ShareGridPanel, {
   }, {
     name: 'fsused',
     mapping: 'fs',
-    sortType: 'asInt',
+    sortType: 'asFloat',
     convert: function( val, row ){
       "use strict";
       if( val === null || typeof val.stat === "undefined" ){
@@ -64,7 +64,7 @@ Ext.oa.Lvm__LogicalVolume_Panel = Ext.extend(Ext.oa.ShareGridPanel, {
   }, {
     name: 'fspercent',
     mapping: 'fs',
-    sortType: 'asInt',
+    sortType: 'asFloat',
     convert: function( val, row ){
       "use strict";
       if( val === null || typeof val.stat === "undefined" ){
