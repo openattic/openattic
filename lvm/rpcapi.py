@@ -18,6 +18,8 @@ from rpcd.handlers import ModelHandler
 from rpcd.handlers import ProxyModelHandler, proxy_for
 
 from lvm.models import VolumeGroup, LogicalVolume, ZfsSubvolume, ZfsSnapshot, LVMetadata
+from ifconfig.models import Host
+from peering.models import PeerHost
 
 class VgHandler(ModelHandler):
     model = VolumeGroup
@@ -177,6 +179,21 @@ class LvProxy(ProxyModelHandler):
     def avail_fs(self):
         h = LvHandler(self.user)
         return h.avail_fs()
+
+    def create(self, data):
+        if "id" in data:
+            raise KeyError("Wai u ID")
+        if "snapshot" in data and data["snapshot"] is not None:
+            orig = LogicalVolume.all_objects.get( id=data["snapshot"]["id"] )
+            curr = orig.vg.host
+        else:
+            vg   = VolumeGroup.all_objects.get( id=data["vg"]["id"] )
+            curr = vg.host
+        if curr == Host.objects.get_current():
+            return self.backing_handler(self.user, self.request).create(data)
+        else:
+            peer = PeerHost.objects.get(name=curr.name)
+            return self._convert_datetimes( self._get_proxy_object(peer).create(data) )
 
 @proxy_for(ZfsSubvolumeHandler)
 class ZfsSubvolumeProxy(ProxyModelHandler):
