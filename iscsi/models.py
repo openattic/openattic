@@ -190,7 +190,7 @@ def lv_resized(sender, **kwargs):
         lun.install(int(kwargs["jid"]))
 
 def vg_activated(sender, **kwargs):
-    for target in Target.objects.filter(lun__isnull=False):
+    for target in Target.objects.filter(lun__volume__vg=sender):
         print target.name
         if target.tid is None:
             target.install()
@@ -202,7 +202,7 @@ def vg_activated(sender, **kwargs):
     print "Activated iSCSI targets for", sender
 
 def vg_deactivated(sender, **kwargs):
-    for target in Target.objects.all():
+    for target in Target.objects.filter(lun__volume__vg=sender):
         if target.tid is None:
             continue
         print target.name
