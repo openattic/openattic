@@ -41,7 +41,7 @@ Ext.oa.getDefaultPortlets = function(tools){
           fields: ['name', 'megs', 'filesystem',  'formatted', 'id', 'state', 'fs', 'fswarning', 'fscritical', {
             name: 'fsused',
             mapping: 'fs',
-            sortType: 'asInt',
+            sortType: 'asFloat',
             convert: function( val, row ){
               if( val === null || typeof val.stat === "undefined" ){
                 return -1; // fake to sort unknown values always at the bottom
