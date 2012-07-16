@@ -30,10 +30,36 @@ from lvm.filesystems import Zfs, FILESYSTEMS, get_by_name as get_fs_by_name
 from lvm             import signals as lvm_signals
 
 
+def validate_vg_name(value):
+    from django.core.exceptions import ValidationError
+    if value in ('.', '..'):
+        raise ValidationError("VG names may not be '.' or '..'.")
+    if value[0] == '-':
+        raise ValidationError("VG names must not begin with a hyphen.")
+    if os.path.exists( os.path.join("/dev", value) ):
+        raise ValidationError("'%s' exists as a device file, cannot use it as VG name" % value)
+    if re.findall("[^a-zA-Z0-9+_.-]", value):
+        raise ValidationError("The following characters are valid for VG and LV names: a-z A-Z 0-9 + _ . -")
+
+def validate_lv_name(value):
+    # see http://linux.die.net/man/8/lvm -> "Valid Names"
+    from django.core.exceptions import ValidationError
+    if value in ('.', '..'):
+        raise ValidationError("LV names may not be '.' or '..'.")
+    if value[0] == '-':
+        raise ValidationError("LV names must not begin with a hyphen.")
+    if re.findall("[^a-zA-Z0-9+_.-]", value):
+        raise ValidationError("The following characters are valid for VG and LV names: a-z A-Z 0-9 + _ . -")
+    if value.startswith("snapshot") or value.startswith("pvmove"):
+        raise ValidationError("The volume name must not begin with 'snapshot' or 'pvmove'.")
+    if "_mlog" in value or "_mimage" in value:
+        raise ValidationError("The volume name must not contain '_mlog' or '_mimage'.")
+
+
 class VolumeGroup(models.Model):
     """ Represents a LVM Volume Group. """
 
-    name        = models.CharField(max_length=130, unique=True)
+    name        = models.CharField(max_length=130, unique=True, validators=[validate_vg_name])
     host        = models.ForeignKey(Host, null=True)
 
     objects     = HostDependentManager()
@@ -155,14 +181,13 @@ class VolumeGroup(models.Model):
         return float( self.lvm_info["LVM2_VG_FREE"] )
 
 
-
 class LogicalVolume(models.Model):
     """ Represents a LVM Logical Volume and offers management functions.
 
         This is the main class of openATTIC's design.
     """
 
-    name        = models.CharField(max_length=130)
+    name        = models.CharField(max_length=130, validators=[validate_lv_name])
     megs        = models.IntegerField(_("Size in MB"))
     vg          = models.ForeignKey(VolumeGroup, blank=True)
     snapshot    = models.ForeignKey("self", blank=True, null=True)
