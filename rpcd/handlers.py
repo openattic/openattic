@@ -484,8 +484,10 @@ class ProxyModelHandler(ProxyModelBaseHandler):
             return self.backing_handler(self.user, self.request).create(data)
         else:
             peer = PeerHost.objects.get(name=curr.name)
-            return self._convert_datetimes( self._get_proxy_object(peer).create(data) )
-
+            try:
+                return self._convert_datetimes( self._get_proxy_object(peer).create(data) )
+            except Fault, flt:
+                raise translate_exception(flt)
 
 
 
