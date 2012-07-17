@@ -266,10 +266,22 @@ class RPCd(object):
                 relmanager = relobj.model.all_objects
             else:
                 relmanager = relobj.model.objects
-            relids.extend([
-                ModelHandler._get_handler_for_model(relobj.model)(None)._idobj(relmdl)
-                for relmdl in relmanager.filter( **{ relobj.field.name: obj } )
-                ])
+            try:
+                relhandler = ModelHandler._get_handler_for_model(relobj.model)(None)
+            except KeyError:
+                # handler does not exist, return shadow ID
+                relids.extend([
+                    { "app": relmdl._meta.app_label,
+                      "obj": relmdl._meta.object_name,
+                      "id":  relmdl.id,
+                      "__shadow__": True }
+                    for relmdl in relobj.model.objects.filter( **{ relobj.field.name: obj } )
+                    ])
+            else:
+                relids.extend([
+                    relhandler._idobj(relmdl)
+                    for relmdl in relmanager.filter( **{ relobj.field.name: obj } )
+                    ])
         return relids
 
 
