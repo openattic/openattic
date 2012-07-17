@@ -262,25 +262,31 @@ class ModelHandler(BaseHandler):
         if self.request is None:
             raise ValueError("Cannot access request")
 
-        id = int(self.request.POST["id"])
-        if id == -1:
-            instance = None
-        else:
-            instance = self._get_model_manager().get(id=id)
+        data = dict([ (key, self.request.POST[key])
+                      for key in self.request.POST
+                      if key not in ("id", "extAction", "extMethod", "extTID", "extType", "extUpload")
+                    ])
 
-        from django.forms.models import ModelFormMetaclass, ModelForm
-        formclass = ModelFormMetaclass( self.model._meta.object_name + "Form", (ModelForm,), {
-            'Meta': type("Meta", (object,), {"model": self.model})
-            } )
-        forminst = formclass(self.request.POST, instance=instance)
-        if forminst.is_valid():
-            instance = forminst.save()
-            return { "success": True, "id": instance.id }
-        else:
+        for field in self.model._meta.fields:
+            if isinstance( field, models.ForeignKey ) and field.name in data:
+                handler = self._get_handler_instance(field.related.parent_model)
+                data[field.name] = handler.idobj(int(data[field.name]))
+
+        from django.core.exceptions import ValidationError
+
+        objid = int(self.request.POST["id"])
+        try:
+            if objid == -1:
+                idobj = self.create(data)
+            else:
+                idobj = self.set( objid, data )
+        except ValidationError, err:
             errdict = {}
-            for errfld in forminst.errors:
-                errdict[errfld] = "\n".join( forminst.errors[errfld] )
+            for errfld in err.message_dict:
+                errdict[errfld] = "\n".join( err.message_dict[errfld] )
             return { "success": False, "errors": errdict }
+        else:
+            return { "success": True, "id": idobj["id"] }
 
     set_ext.EXT_flags = {"formHandler": True}
 
