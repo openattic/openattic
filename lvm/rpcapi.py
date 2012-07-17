@@ -175,6 +175,22 @@ class ZfsSnapshotHandler(ModelHandler):
 class VgProxy(ProxyModelHandler):
     model = VolumeGroup
 
+    def get_mounts(self):
+        return self.backing_handler(self.user, self.request).get_mounts()
+
+    def get_devices(self):
+        return self.backing_handler(self.user, self.request).get_devices()
+
+    def is_device_in_use(self, device):
+        return self.backing_handler(self.user, self.request).is_device_in_use(device)
+
+    def get_partitions(self, device):
+        return self.backing_handler(self.user, self.request).get_partitions(device)
+
+    def get_disk_stats(self, device):
+        return self.backing_handler(self.user, self.request).get_disk_stats(device)
+
+
 @proxy_for(LvHandler)
 class LvProxy(ProxyModelHandler):
     model = LogicalVolume
