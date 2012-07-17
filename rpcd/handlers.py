@@ -445,8 +445,7 @@ class ProxyModelHandler(ProxyHandler, ModelHandler):
     def get_ext(self, id):
         if id == -1:
             return {}
-        peer = self._find_target_host(id)
-        return self._convert_datetimes( self._get_proxy_object(peer).get_ext(id) )
+        return self._call_singlepeer_method("get_ext", id)
 
     def filter_range(self, start, limit, sort, dir, kwds ):
         return self._call_allpeers_method("filter_range", start, limit, sort, dir, kwds)
