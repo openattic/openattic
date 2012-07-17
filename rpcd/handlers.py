@@ -22,6 +22,9 @@ from django.db import models
 from ifconfig.models import Host
 from peering.models import PeerHost
 
+from xmlrpclib import Fault
+from rpcd.exceptionhelper import translate_exception
+
 class BaseHandler(object):
     """ Base RPC handler class.
 
@@ -369,7 +372,10 @@ class ProxyHandler(BaseHandler):
                 ret.append( self._convert_datetimes( res ) )
         # Call the backing handler to get local info
         meth = getattr(self.backing_handler(self.user, self.request), method)
-        res = meth(*args)
+        try:
+            res = meth(*args)
+        except Fault, flt:
+            raise translate_exception(flt)
         if isinstance(res, (tuple, list)):
             ret.extend( self._convert_datetimes( list( res ) ) )
         else:
@@ -382,7 +388,11 @@ class ProxyHandler(BaseHandler):
             meth = getattr(self.backing_handler(self.user, self.request), method)
         else:
             meth = getattr(self._get_proxy_object(peer), method)
-        return self._convert_datetimes( meth(id, *args) )
+        try:
+            res = meth(id, *args)
+        except Fault, flt:
+            raise translate_exception(flt)
+        return self._convert_datetimes( res )
 
     def _get_relevant_peers(self):
         return PeerHost.objects.filter( name__in=[ host.name
