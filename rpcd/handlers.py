@@ -363,23 +363,19 @@ class ProxyHandler(BaseHandler):
     def _call_allpeers_method(self, method, *args):
         ret = []
         # Call every peer
-        for peer in self._get_relevant_peers():
-            meth = getattr(self._get_proxy_object(peer), method)
-            res = meth(*args)
+        methods = [getattr(self._get_proxy_object(peer), method) for peer in self._get_relevant_peers()]
+        # Call the backing handler to get local info
+        methods.append( getattr(self.backing_handler(self.user, self.request), method) )
+        for meth in methods:
+            meth = getattr(self.backing_handler(self.user, self.request), method)
+            try:
+                res = meth(*args)
+            except Fault, flt:
+                raise translate_exception(flt)
             if isinstance(res, (tuple, list)):
                 ret.extend( self._convert_datetimes( list( res ) ) )
             else:
                 ret.append( self._convert_datetimes( res ) )
-        # Call the backing handler to get local info
-        meth = getattr(self.backing_handler(self.user, self.request), method)
-        try:
-            res = meth(*args)
-        except Fault, flt:
-            raise translate_exception(flt)
-        if isinstance(res, (tuple, list)):
-            ret.extend( self._convert_datetimes( list( res ) ) )
-        else:
-            ret.append( self._convert_datetimes( res ) )
         return ret
 
     def _call_singlepeer_method(self, method, id, *args):
