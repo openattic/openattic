@@ -455,33 +455,6 @@ class ProxyModelHandler(ProxyHandler, ModelHandler):
             raise KeyError("Wai u ID")
         return self._call_singlepeer_method("set", id, data)
 
-    def set_ext(self):
-        """ Reads POST data from the request to update a given object.
-            Meant to be used in conjunction with ExtJS forms.
-        """
-        if self.request is None:
-            raise ValueError("Cannot access request")
-
-        data = dict([ (key, self.request.POST[key])
-                      for key in self.request.POST
-                      if key not in ("id", "extAction", "extMethod", "extTID", "extType", "extUpload")
-                    ])
-
-        for field in self.model._meta.fields:
-            if isinstance( field, models.ForeignKey ) and field.name in data:
-                handler = self._get_handler_instance(field.related.parent_model)
-                data[field.name] = handler.idobj(int(data[field.name]))
-
-        objid = int(self.request.POST["id"])
-        if objid == -1:
-            idobj = self.create(data)
-        else:
-            idobj = self.set( objid, data )
-
-        return { "success": True, "id": idobj["id"] }
-
-    set_ext.EXT_flags = {"formHandler": True}
-
     def create(self, data):
         if "id" in data:
             raise KeyError("Wai u ID")
