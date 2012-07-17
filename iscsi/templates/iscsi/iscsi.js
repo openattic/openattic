@@ -56,7 +56,14 @@ var init_all = new Ext.data.DirectStore({
 var tgt_all = new Ext.data.DirectStore({
   id: "tgt_all",
   fields: ["app","obj","id","address"],
-  directFn: iscsi__Target.get_valid_ips
+  directFn: ifconfig__IPAddress.get_valid_ips,
+  baseParams: {
+    idobj: {
+      app: "iscsi",
+      obj: "Target",
+      id:  null
+    }
+  }
 });
 
 Ext.oa.Iscsi__Panel = Ext.extend(Ext.Panel, {
@@ -241,7 +248,8 @@ Ext.oa.Iscsi__Panel = Ext.extend(Ext.Panel, {
             cellclick: function (self, rowIndex, colIndex, evt ){
               var record = self.getStore().getAt(rowIndex);
               lunStore.load({params: {"target":record.data.id}});
-              tgt_all.load({params: {"id":record.data.id}});
+              tgt_all.baseParams.idobj.id = record.data.id;
+              tgt_all.load();
               init_allow.loadData(record.json.init_allow);
               init_deny.loadData(record.json.init_deny);
               tgt_allow.loadData(record.json.tgt_allow);
