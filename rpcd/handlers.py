@@ -367,7 +367,6 @@ class ProxyHandler(BaseHandler):
         # Call the backing handler to get local info
         methods.append( getattr(self.backing_handler(self.user, self.request), method) )
         for meth in methods:
-            meth = getattr(self.backing_handler(self.user, self.request), method)
             try:
                 res = meth(*args)
             except Fault, flt:
