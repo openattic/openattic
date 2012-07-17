@@ -31,6 +31,7 @@ from M2Crypto import SSL
 
 from django.core.management.base import BaseCommand
 from django.contrib.auth import authenticate
+from django.db import models
 from django.conf import settings
 
 from rpcd.models   import APIKey
@@ -248,9 +249,9 @@ class RPCd(object):
 
     def get_object(self, idobj):
         """ Return an object resolved from an ID dictionary. """
-        obj = ModelHandler._get_object_by_id_dict(idobj)
-        handler = ModelHandler._get_handler_for_model(obj.__class__)(None)
-        return handler._getobj(obj)
+        model = models.get_model(idobj["app"], idobj["obj"])
+        handler = ModelHandler._get_handler_for_model(model)(None)
+        return handler.get(idobj["id"])
 
     def get_related(self, idobj):
         """ Return objects that reference the object given by the ID dictionary. """
