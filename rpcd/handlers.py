@@ -78,10 +78,8 @@ class ModelHandler(BaseHandler):
 
     @classmethod
     def _get_object_by_id_dict(cls, id_dict):
-        for model in cls.__metaclass__.handlers:
-            if model._meta.app_label == id_dict['app'] and model._meta.object_name == id_dict['obj']:
-                return model.objects.get(id=id_dict['id'])
-        return None
+        model = models.get_model(id_dict['app'], id_dict['obj'])
+        return model.objects.get(id=id_dict['id'])
 
     def _get_model_manager(self):
         """ Method that allows to override which Model manager is used. """
