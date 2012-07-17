@@ -21,6 +21,9 @@ from lvm.models import VolumeGroup, LogicalVolume, ZfsSubvolume, ZfsSnapshot, LV
 from ifconfig.models import Host
 from peering.models import PeerHost
 
+from rpcd.exceptionhelper import translate_exception
+from xmlrpclib import Fault
+
 class VgHandler(ModelHandler):
     model = VolumeGroup
     order = ("name",)
@@ -193,7 +196,10 @@ class LvProxy(ProxyModelHandler):
             return self.backing_handler(self.user, self.request).create(data)
         else:
             peer = PeerHost.objects.get(name=curr.name)
-            return self._convert_datetimes( self._get_proxy_object(peer).create(data) )
+            try:
+                return self._convert_datetimes( self._get_proxy_object(peer).create(data) )
+            except Fault, flt:
+                raise translate_exception(flt)
 
 @proxy_for(ZfsSubvolumeHandler)
 class ZfsSubvolumeProxy(ProxyModelHandler):
