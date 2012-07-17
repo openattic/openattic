@@ -403,7 +403,7 @@ class ProxyHandler(BaseHandler):
 
 
 
-class ProxyModelHandler(ProxyHandler, ModelHandler):
+class ProxyModelBaseHandler(ProxyHandler, ModelHandler):
     def _find_target_host(self, id):
         curr = self.model.all_objects.get(id=int(id))
         for field in self.model.objects.hostfilter.split('__'):
@@ -416,6 +416,8 @@ class ProxyModelHandler(ProxyHandler, ModelHandler):
             raise RuntimeError("Object is not active on any host")
         return PeerHost.objects.get(name=curr.name)
 
+
+class ProxyModelHandler(ProxyModelBaseHandler):
     def _order(self, objs):
         if self.order:
             return sorted( objs, key=lambda obj: self.order[0] in obj and obj[self.order[0]] or None )
