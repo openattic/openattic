@@ -51,6 +51,9 @@ case $1 in
 			start-stop-daemon --pidfile=$RPCD_PIDFILE --make-pidfile --background --oknodo --start \
 			--exec $PYTHON --chdir $OADIR --chuid $RPCD_CHUID -- \
 			$RPCD_OPTIONS -l $RPCD_LOGFILE -L $RPCD_LOGLEVEL -q
+		while ! start-stop-daemon --pidfile=$RPCD_PIDFILE --test --stop --exec $PYTHON --quiet; do
+			sleep .1
+		done
 		log_end_msg 0
 		;;
 	
@@ -58,6 +61,9 @@ case $1 in
 		log_daemon_msg "Stopping" "openATTIC rpcd"
 		env - PATH="/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin" \
 			start-stop-daemon --pidfile=$RPCD_PIDFILE --stop --oknodo --exec $PYTHON
+		while start-stop-daemon --pidfile=$RPCD_PIDFILE --test --stop --exec $PYTHON --quiet; do
+			sleep .1
+		done
 		log_end_msg 0
 		;;
 	

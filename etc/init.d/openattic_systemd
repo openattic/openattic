@@ -46,6 +46,9 @@ case $1 in
 		env - PATH="/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin" \
 			start-stop-daemon --pidfile=$SYSD_PIDFILE --make-pidfile --background --oknodo --start \
 			--exec $PYTHON --chdir $OADIR -- $SYSD_OPTIONS -l $SYSD_LOGFILE -L $SYSD_LOGLEVEL -q
+		while ! start-stop-daemon --pidfile=$SYSD_PIDFILE --test --stop --exec $PYTHON --quiet; do
+			sleep .1
+		done
 		log_end_msg 0
 		;;
 	
@@ -53,6 +56,9 @@ case $1 in
 		log_daemon_msg "Stopping" "openATTIC systemd"
 		env - PATH="/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin" \
 			start-stop-daemon --pidfile=$SYSD_PIDFILE --stop --oknodo --exec $PYTHON
+		while start-stop-daemon --pidfile=$SYSD_PIDFILE --test --stop --exec $PYTHON --quiet; do
+			sleep .1
+		done
 		log_end_msg 0
 		;;
 	
