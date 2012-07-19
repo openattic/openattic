@@ -26,6 +26,8 @@
 set -e
 set -u
 
+i=0
+
 if [ -f /etc/default/openattic ]; then
 	. /etc/default/openattic
 else
@@ -53,6 +55,13 @@ case $1 in
 			$RPCD_OPTIONS -l $RPCD_LOGFILE -L $RPCD_LOGLEVEL -q
 		while ! start-stop-daemon --pidfile=$RPCD_PIDFILE --test --stop --exec $PYTHON --quiet; do
 			sleep .1
+			if [ $i -ge 100 ]; then
+				log_failure_msg "openattic_rpcd start failed"
+				log_end_msg 1
+				exit 1
+			else
+				i=$(( i + 1 ))
+			fi
 		done
 		log_end_msg 0
 		;;
@@ -63,6 +72,13 @@ case $1 in
 			start-stop-daemon --pidfile=$RPCD_PIDFILE --stop --oknodo --exec $PYTHON
 		while start-stop-daemon --pidfile=$RPCD_PIDFILE --test --stop --exec $PYTHON --quiet; do
 			sleep .1
+			if [ $i -ge 100 ]; then
+				log_failure_msg "openattic_rpcd stop failed"
+				log_end_msg 1
+				exit 1
+			else
+				i=$(( i + 1 ))
+			fi
 		done
 		log_end_msg 0
 		;;
