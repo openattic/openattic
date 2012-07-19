@@ -260,7 +260,7 @@ def main():
 
     usage = "%prog <command> [args]\n\nValid commands:\n"
     for cmdname, cmdclass in CmdLibrary.handlers.iteritems():
-        usage += " * %-10s -- %s\n" % (cmdname, cmdclass.__doc__)
+        usage += " * %-10s -- %s\n" % (cmdname, cmdclass.__doc__.strip())
 
     if command in CmdLibrary.handlers:
         cmdclass = CmdLibrary.handlers[command]()
