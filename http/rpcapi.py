@@ -30,4 +30,15 @@ class HttpExportHandler(ModelHandler):
 class HttpExportProxy(ProxyModelHandler):
     model = Export
 
+    def get(self, id):
+        ret = ProxyModelHandler.get(self, id)
+        ret["url"] = "/openattic/http/" + str(ret["id"])
+        return ret
+
+    def all(self):
+        ret = ProxyModelHandler.all(self)
+        for obj in ret:
+            obj["url"] = "/openattic/http/" + str(obj["id"])
+        return ret
+
 RPCD_HANDLERS = [HttpExportProxy]
