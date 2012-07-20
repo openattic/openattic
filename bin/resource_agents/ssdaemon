@@ -1,0 +1,158 @@
+#!/bin/sh
+#
+#  Copyright (C) 2011-2012, it-novum GmbH <community@open-attic.org>
+#
+#  openATTIC is free software; you can redistribute it and/or modify it
+#  under the terms of the GNU General Public License as published by
+#  the Free Software Foundation; version 2.
+#
+#  This package is distributed in the hope that it will be useful,
+#  but WITHOUT ANY WARRANTY; without even the implied warranty of
+#  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+#  GNU General Public License for more details.
+
+DAEMON="$OCF_RESKEY_binary"
+PIDFILE="$OCF_RESKEY_pidfile"
+CHUID="$OCF_RESKEY_chuid"
+CMDLINE="$OCF_RESKEY_cmdline"
+DMNPATH="$OCF_RESKEY_path"
+KILLALL="$OCF_RESKEY_killall"
+
+if lsb_release -c | grep -q squeeze; then
+: ${OCF_FUNCTIONS_DIR=${OCF_ROOT}/resource.d/heartbeat}
+. ${OCF_FUNCTIONS_DIR}/.ocf-shellfuncs
+else
+: ${OCF_FUNCTIONS_DIR=${OCF_ROOT}/lib/heartbeat}
+. ${OCF_FUNCTIONS_DIR}/ocf-shellfuncs
+fi
+
+meta_data() {
+        cat <<END
+<?xml version="1.0"?>
+<!DOCTYPE resource-agent SYSTEM "ra-api-1.dtd">
+<resource-agent name="ssdaemon">
+<version>1.0</version>
+
+<longdesc lang="en">
+Generic resource agent to control arbitrary daemons using 'start-stop-daemon'.
+
+Please make sure the daemon does not fork itself to the background; s-s-d takes care of this.
+</longdesc>
+<shortdesc lang="en">start-stop-daemon</shortdesc>
+
+<parameters>
+<parameter name="binary" unique="0" required="1">
+<longdesc lang="en">
+The binary to run (passed to --exec).
+</longdesc>
+<shortdesc lang="en">binary (--exec)</shortdesc>
+<content type="string" default="" />
+</parameter>
+<parameter name="pidfile" unique="0" required="1">
+<longdesc lang="en">
+The pidfile to use.
+</longdesc>
+<shortdesc lang="en">pidfile (--pidfile)</shortdesc>
+<content type="string" default="" />
+</parameter>
+<parameter name="chuid" unique="0" required="1">
+<longdesc lang="en">
+The user under which the daemon runs (ID or name).
+</longdesc>
+<shortdesc lang="en">user ID or name (--chuid)</shortdesc>
+<content type="string" default="" />
+</parameter>
+<parameter name="cmdline" unique="0" required="0">
+<longdesc lang="en">
+Additional command line options for the daemon.
+</longdesc>
+<shortdesc lang="en">command line arguments for the daemon</shortdesc>
+<content type="string" default="" />
+</parameter>
+<parameter name="path" unique="0" required="0">
+<longdesc lang="en">
+Additional paths to be prefixed to the \$PATH variable the daemon sees.
+</longdesc>
+<shortdesc lang="en">\$PATH prefixes</shortdesc>
+<content type="string" default="" />
+</parameter>
+<parameter name="killall" unique="0" required="0">
+<longdesc lang="en">
+If set to "yes", will use killall to kill the daemon instead of start-stop-daemon.
+</longdesc>
+<shortdesc lang="en">Kill daemons using killall</shortdesc>
+<content type="string" default="" />
+</parameter>
+</parameters>
+
+<actions>
+<action name="start" timeout="30" />
+<action name="stop" timeout="30" />
+<action name="status" timeout="30" />
+<action name="monitor" depth="0" timeout="30" interval="10" />
+<action name="meta-data" timeout="5" />
+</actions>
+</resource-agent>
+END
+}
+
+case "$1" in
+	meta-data)
+		meta_data
+		exit 0
+		;;
+	
+	monitor|status)
+		if start-stop-daemon --pidfile=$PIDFILE --test --stop --exec $DAEMON --quiet
+		then
+			PID=`cat $PIDFILE`
+			echo "$DAEMON is running (pid $PID)."
+			exit $OCF_SUCCESS
+		else
+			echo "$DAEMON is not running"
+			exit $OCF_NOT_RUNNING
+		fi
+		;;
+	
+	start)
+		echo "Starting" "$DAEMON"
+		DAEMONPATH="/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin"
+		if [ -z "$DMNPATH" ]; then
+			DAEMONPATH="$DMNPATH:$DAEMONPATH"
+		fi
+		env - PATH="$DAEMONPATH" \
+			start-stop-daemon --pidfile=$PIDFILE --make-pidfile --background --oknodo --start \
+			--exec $DAEMON --chuid $CHUID -- $CMDLINE
+		i=0
+		while ! start-stop-daemon --pidfile=$PIDFILE --test --stop --exec $DAEMON --quiet; do
+			sleep .1
+			if [ $i -ge 100 ]; then
+				echo >2 "$DAEMON start failed"
+				exit $OCF_ERR_GENERIC
+			else
+				i=$(( i + 1 ))
+			fi
+		done
+		exit $OCF_SUCCESS
+		;;
+	
+	stop)
+		echo "Stopping" "$DAEMON"
+		if [ -z "$KILLALL" ]; then
+			start-stop-daemon --pidfile=$PIDFILE --stop --oknodo --exec $DAEMON
+		else
+			killall $DAEMON
+		fi
+		i=0
+		while start-stop-daemon --pidfile=$PIDFILE --test --stop --exec $DAEMON --quiet; do
+			sleep .1
+			if [ $i -ge 100 ]; then
+				echo >2 "$DAEMON stop failed"
+				exit $OCF_ERR_GENERIC
+			else
+				i=$(( i + 1 ))
+			fi
+		done
+		exit $OCF_SUCCESS
+		;;
+esac
