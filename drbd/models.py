@@ -126,6 +126,16 @@ class Connection(models.Model):
                                    "Bandwidth limit for background synchronization, measured in "
                                    "K/M/G<b><i>Bytes</i></b>."))
 
+    def __init__( self, *args, **kwargs ):
+        models.Model.__init__( self, *args, **kwargs )
+        self._drbd = None
+
+    @property
+    def stacked(self):
+        if self.stacked_on.count() > 0:
+            return max([ lowerconn.endpoints_running_here for lowerconn in self.stacked_on.all() ])
+        return False
+
     @property
     def endpoints_running_here(self):
         """ Check if any of my endpoints run here. """
@@ -136,29 +146,36 @@ class Connection(models.Model):
         """ Return the endpoint that runs here. """
         return self.endpoint_set.get(volume__vg__host=Host.objects.get_current())
 
+    @property
+    def drbd(self):
+        if self._drbd is None:
+            self._drbd = dbus.SystemBus().get_object(settings.DBUS_IFACE_SYSTEMD, "/drbd")
+        return self._drbd
+
+    @property
+    def cstate(self):
+        return dbus_to_python(self.drbd.get_cstate(self.res_name, self.stacked))
+
+    @property
+    def dstate(self):
+        return dbus_to_python(self.drbd.get_dstate(self.res_name, self.stacked))
+
+    @property
+    def role(self):
+        return dbus_to_python(self.drbd.get_role(self.res_name, self.stacked))
+
+    def primary(self):
+        return self.drbd.primary(self.res)
+
 
 
 class Endpoint(LVChainedModule):
     connection = models.ForeignKey(Connection)
     ipaddress  = models.ForeignKey(IPAddress)
 
-    def __init__( self, *args, **kwargs ):
-        LVChainedModule.__init__( self, *args, **kwargs )
-        self._drbd = None
-
-    @property
-    def stacked(self):
-        return (self.connection.stacked_below is not None)
-
     @property
     def running_here(self):
         return (self.volume.vg.host == Host.objects.get_current())
-
-    @property
-    def drbd(self):
-        if self._drbd is None:
-            self._drbd = dbus.SystemBus().get_object(settings.DBUS_IFACE_SYSTEMD, "/drbd")
-        return self._drbd
 
     @property
     def res(self):
@@ -169,26 +186,11 @@ class Endpoint(LVChainedModule):
         return "/dev/drbd%d" % self.id
 
     @property
-    def cstate(self):
-        return dbus_to_python(self.drbd.get_cstate(self.res, self.stacked))
-
-    @property
-    def dstate(self):
-        return dbus_to_python(self.drbd.get_dstate(self.res, self.stacked))
-
-    @property
-    def role(self):
-        return dbus_to_python(self.drbd.get_role(self.res, self.stacked))
-
-    def primary(self):
-        return self.drbd.primary(self.res)
-
-    @property
     def standby(self):
-        return self.role['self'] != "Primary"
+        return self.connection.role['self'] != "Primary"
 
     def setupfs(self):
-        if self.role['self'] == "Primary":
+        if self.connection.role['self'] == "Primary":
             self.volume.setupfs()
             return False
         else:
@@ -201,13 +203,13 @@ class Endpoint(LVChainedModule):
             raise ValidationError('This share type can not be used on volumes with a file system.')
 
     def install(self):
-        self.drbd.conf_write(self.id)
-        self.drbd.createmd(self.res)
-        self.drbd.up(self.res)
+        self.connection.drbd.conf_write(self.id)
+        self.connection.drbd.createmd(self.res)
+        self.connection.drbd.up(self.res)
 
         if self.init_master:
-            self.drbd.primary_overwrite(self.res)
+            self.connection.drbd.primary_overwrite(self.res)
 
     def uninstall(self):
-        self.drbd.down(self.res)
-        self.drbd.conf_delete(self.id)
+        self.connection.drbd.down(self.res)
+        self.connection.drbd.conf_delete(self.id)
