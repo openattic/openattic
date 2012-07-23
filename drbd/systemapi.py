@@ -82,19 +82,19 @@ class SystemD(BasePlugin):
     def resumesync(self, resource):
         return invoke(["/sbin/drbdadm", "resume-sync", resource])
 
-    @method( in_signature="s", out_signature="a{ss}")
-    def get_dstate(self, resource):
-        ret, out, err = invoke(["/sbin/drbdadm", "dstate", resource], return_out_err=True, log=False)
+    @method( in_signature="sb", out_signature="a{ss}")
+    def get_dstate(self, resource, stacked):
+        ret, out, err = invoke(["/sbin/drbdadm"] + (stacked and ["-S"] or []) + ["dstate", resource], return_out_err=True, log=False)
         return dict(zip(("self", "peer"), out.strip().split("/")))
 
-    @method( in_signature="s", out_signature="s")
-    def get_cstate(self, resource):
-        ret, out, err = invoke(["/sbin/drbdadm", "cstate", resource], return_out_err=True, log=False)
+    @method( in_signature="sb", out_signature="s")
+    def get_cstate(self, resource, stacked):
+        ret, out, err = invoke(["/sbin/drbdadm"] + (stacked and ["-S"] or []) + ["cstate", resource], return_out_err=True, log=False)
         return out.strip()
 
-    @method( in_signature="s", out_signature="a{ss}")
-    def get_role(self, resource):
-        ret, out, err = invoke(["/sbin/drbdadm", "role", resource], return_out_err=True, log=False)
+    @method( in_signature="sb", out_signature="a{ss}")
+    def get_role(self, resource, stacked):
+        ret, out, err = invoke(["/sbin/drbdadm"] + (stacked and ["-S"] or []) + ["role", resource], return_out_err=True, log=False)
         return dict(zip(("self", "peer"), out.strip().split("/")))
 
     @method( in_signature="i", out_signature="")

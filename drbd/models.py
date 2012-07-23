@@ -151,15 +151,15 @@ class DrbdDevice(LVChainedModule):
 
     @property
     def cstate(self):
-        return dbus_to_python(self.drbd.get_cstate(self.res))
+        return dbus_to_python(self.drbd.get_cstate(self.res, False))
 
     @property
     def dstate(self):
-        return dbus_to_python(self.drbd.get_dstate(self.res))
+        return dbus_to_python(self.drbd.get_dstate(self.res, False))
 
     @property
     def role(self):
-        return dbus_to_python(self.drbd.get_role(self.res))
+        return dbus_to_python(self.drbd.get_role(self.res, False))
 
     def primary(self):
         return self.drbd.primary(self.res)
