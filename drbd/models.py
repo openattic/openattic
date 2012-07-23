@@ -136,6 +136,10 @@ class Endpoint(LVChainedModule):
         self._drbd = None
 
     @property
+    def stacked(self):
+        return (self.connection.stacked_below is not None)
+
+    @property
     def drbd(self):
         if self._drbd is None:
             self._drbd = dbus.SystemBus().get_object(settings.DBUS_IFACE_SYSTEMD, "/drbd")
@@ -143,7 +147,7 @@ class Endpoint(LVChainedModule):
 
     @property
     def res(self):
-        return self.volume.name
+        return self.connection.res_name
 
     @property
     def path(self):
@@ -151,15 +155,15 @@ class Endpoint(LVChainedModule):
 
     @property
     def cstate(self):
-        return dbus_to_python(self.drbd.get_cstate(self.res, False))
+        return dbus_to_python(self.drbd.get_cstate(self.res, self.stacked))
 
     @property
     def dstate(self):
-        return dbus_to_python(self.drbd.get_dstate(self.res, False))
+        return dbus_to_python(self.drbd.get_dstate(self.res, self.stacked))
 
     @property
     def role(self):
-        return dbus_to_python(self.drbd.get_role(self.res, False))
+        return dbus_to_python(self.drbd.get_role(self.res, self.stacked))
 
     def primary(self):
         return self.drbd.primary(self.res)
@@ -192,5 +196,3 @@ class Endpoint(LVChainedModule):
     def uninstall(self):
         self.drbd.down(self.res)
         self.drbd.conf_delete(self.id)
-
-
