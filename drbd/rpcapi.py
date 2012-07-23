@@ -21,13 +21,21 @@ from drbd.models import Connection, Endpoint
 class DrbdConnectionHandler(ModelHandler):
     model = Connection
 
+    def _override_get(self, obj, data):
+        if obj.endpoints_running_here:
+            data['local_endpoint'] = self._get_handler_instance(Endpoint)._idobj(obj.local_endpoint)
+        else:
+            data['local_endpoint'] = None
+        return data
+
+
 class DrbdEndpointHandler(ModelHandler):
     model = Endpoint
 
     def _override_get(self, obj, data):
         data['path']    = obj.path
         data['basedev'] = obj.basedev
-        if True or obj.initialized:
+        if obj.running_here:
             data['cstate']  = obj.cstate
             data['dstate']  = obj.dstate
             data['role']    = obj.role
@@ -39,5 +47,6 @@ class DrbdEndpointHandler(ModelHandler):
         """ Switch the DRBD resource given by `id` to the Primary role on this host. """
         dev = Endpoint.objects.get(id=id)
         return dev.primary()
+
 
 RPCD_HANDLERS = [DrbdConnectionHandler, DrbdEndpointHandler]

@@ -128,8 +128,15 @@ class Connection(models.Model):
 
     @property
     def endpoints_running_here(self):
-        # Check if any of my endpoints run here.
+        """ Check if any of my endpoints run here. """
         return self.endpoint_set.filter(volume__vg__host=Host.objects.get_current()).count() > 0
+
+    @property
+    def local_endpoint(self):
+        """ Return the endpoint that runs here. """
+        return self.endpoint_set.get(volume__vg__host=Host.objects.get_current())
+
+
 
 class Endpoint(LVChainedModule):
     connection = models.ForeignKey(Connection)
@@ -142,6 +149,10 @@ class Endpoint(LVChainedModule):
     @property
     def stacked(self):
         return (self.connection.stacked_below is not None)
+
+    @property
+    def running_here(self):
+        return (self.volume.vg.host == Host.objects.get_current())
 
     @property
     def drbd(self):
