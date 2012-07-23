@@ -203,7 +203,7 @@ class Endpoint(LVChainedModule):
             return True
         if self.connection.stacked_below is None:
             return False
-        return self.connection.stacked_below.is_primary
+        return not self.connection.stacked_below.is_primary
 
     def setupfs(self):
         if self.connection.role['self'] == "Primary":
