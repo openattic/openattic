@@ -25,7 +25,7 @@ from django.db   import models
 from systemd.helpers import dbus_to_python
 
 from lvm.models import LogicalVolume, LVChainedModule
-from peering.models import PeerHost
+from ifconfig.models import IPAddress
 
 DRBD_PROTOCOL_CHOICES = (
     ('A', 'Protocol A: write IO is reported as completed, if it has reached local disk and local TCP send buffer.'),
@@ -81,13 +81,10 @@ DRBD_AFTER_SB_2PRI_CHOICES = (
     )
 
 
-
-class DrbdDevice(LVChainedModule):
-    peerhost    = models.ForeignKey(PeerHost, help_text='The host on which to mirror this device.')
-    selfaddress = models.CharField(max_length=250, help_text="The <b>local</b> address to bind this device to.")
-    peeraddress = models.CharField(max_length=250, help_text="The <b>remote</b> address to connect this device to.")
-    init_master = models.BooleanField(blank=True, help_text=(
-                                      "True if the <b>local</b> side is to be initialized as master."))
+class Connection(models.Model):
+    res_name    = models.CharField(max_length=50)
+    ipaddress   = models.ForeignKey(IPAddress, blank=True, null=True)
+    stacked_below = models.ForeignKey("self", blank=True, null=True, related_name="stacked_on")
     protocol    = models.CharField(max_length=1, default="C", choices=DRBD_PROTOCOL_CHOICES)
     wfc_timeout          = models.IntegerField(blank=True, null=True, default=10,
                            help_text=("Wait for connection timeout.  The init script drbd(8) blocks the boot "
@@ -128,12 +125,15 @@ class DrbdDevice(LVChainedModule):
     syncer_rate = models.CharField(max_length=25, blank=True, default="5M", help_text=(
                                    "Bandwidth limit for background synchronization, measured in "
                                    "K/M/G<b><i>Bytes</i></b>."))
-    initialized = models.BooleanField(default=False, editable=False)
+
+
+class Endpoint(LVChainedModule):
+    connection = models.ForeignKey(Connection)
+    ipaddress  = models.ForeignKey(IPAddress)
 
     def __init__( self, *args, **kwargs ):
         LVChainedModule.__init__( self, *args, **kwargs )
         self._drbd = None
-        self._peerdev = None
 
     @property
     def drbd(self):
@@ -165,20 +165,6 @@ class DrbdDevice(LVChainedModule):
         return self.drbd.primary(self.res)
 
     @property
-    def peerdevice(self):
-        """ The counterpart device on our peer, if any. """
-        if self._peerdev is None:
-            dev = self.peerhost.drbd.DrbdDevice.filter({
-                'peeraddress': self.selfaddress,
-                'selfaddress': self.peeraddress
-                })
-            if len(dev) == 1:
-                self._peerdev = dev[0]
-            else:
-                return None
-        return self._peerdev
-
-    @property
     def standby(self):
         return self.role['self'] != "Primary"
 
@@ -196,41 +182,6 @@ class DrbdDevice(LVChainedModule):
             raise ValidationError('This share type can not be used on volumes with a file system.')
 
     def install(self):
-        if self.initialized:
-            return
-
-        models.Model.save(self)
-        if self.init_master:
-            vgid = self.peerhost.lvm.VolumeGroup.ids()[0]
-            user = self.peerhost.auth.User.filter({'username': self.volume.owner.username})[0]
-            lv   = self.peerhost.lvm.LogicalVolume.create({
-                'name':  self.volume.name,
-                'megs':  self.volume.megs,
-                'vg':    vgid,
-                'owner': {'app': 'auth', 'id': user['id'], 'obj': 'User'},
-                })
-            thishost = {'app': 'peering', 'obj': 'PeerHost', 'id': self.peerhost.thishost['id']}
-            ddev = self.peerhost.drbd.DrbdDevice.create({
-                'peeraddress':      self.selfaddress,
-                'peerhost':         thishost,
-                'init_master':      False,
-                'volume':           lv,
-                'cram_hmac_alg':    self.cram_hmac_alg,
-                'degr_wfc_timeout': self.degr_wfc_timeout,
-                'fencing':          self.fencing,
-                'on_io_error':      self.on_io_error,
-                'outdated_wfc_timeout': self.outdated_wfc_timeout,
-                'protocol':         self.protocol,
-                'sb_0pri':          self.sb_0pri,
-                'sb_1pri':          self.sb_1pri,
-                'sb_2pri':          self.sb_2pri,
-                'secret':           self.secret,
-                'selfaddress':      self.peeraddress,
-                'syncer_rate':      self.syncer_rate,
-                'wfc_timeout':      self.wfc_timeout,
-                'ordering':         0,
-                })
-
         self.drbd.conf_write(self.id)
         self.drbd.createmd(self.res)
         self.drbd.up(self.res)
@@ -238,10 +189,8 @@ class DrbdDevice(LVChainedModule):
         if self.init_master:
             self.drbd.primary_overwrite(self.res)
 
-        self.initialized = True
-        models.Model.save(self)
-
     def uninstall(self):
         self.drbd.down(self.res)
         self.drbd.conf_delete(self.id)
+
 
