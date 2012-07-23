@@ -20,7 +20,7 @@ import socket
 from django.template.loader import render_to_string
 
 from systemd import invoke, logged, BasePlugin, method
-from drbd.models   import DrbdDevice
+from drbd.models   import Connection, Endpoint
 
 @logged
 class SystemD(BasePlugin):
@@ -97,19 +97,28 @@ class SystemD(BasePlugin):
         ret, out, err = invoke(["/sbin/drbdadm"] + (stacked and ["-S"] or []) + ["role", resource], return_out_err=True, log=False)
         return dict(zip(("self", "peer"), out.strip().split("/")))
 
-    @method( in_signature="i", out_signature="")
-    def conf_write(self, devid):
-        dev = DrbdDevice.objects.get(id=devid)
-        fd = open("/etc/drbd.d/%s_%s.res" % (dev.volume.vg.name, dev.volume.name), "w")
-        try:
-            fd.write( render_to_string( "drbd/device.res", {
-                'Hostname':  socket.gethostname(),
-                'Device':    dev
-                } ) )
-        finally:
-            fd.close()
+    @method( in_signature="", out_signature="")
+    def conf_write(self):
+        # Iterate over top-level connections
+        for conn in Connection.objects.filter(stacked_below__isnull=True):
+            fd = open("/etc/drbd.d/%s.res" % conn.res_name, "w")
+            try:
+                for lowerconn in conn.stacked_on.all():
+                    fd.write( render_to_string( "drbd/device.res", {
+                        'Hostname':   socket.gethostname(),
+                        'Connection': lowerconn,
+                        'UpperConn':  conn
+                        } ) )
+
+                fd.write( render_to_string( "drbd/device.res", {
+                    'Hostname':   socket.gethostname(),
+                    'Connection': conn,
+                    'UpperConn':  None
+                    } ) )
+            finally:
+                fd.close()
 
     @method( in_signature="i", out_signature="")
     def conf_delete(self, devid):
-        dev = DrbdDevice.objects.get(id=devid)
-        os.unlink("/etc/drbd.d/%s_%s.res" % (dev.volume.vg.name, dev.volume.name))
+        conn = Connection.objects.get(id=devid)
+        os.unlink("/etc/drbd.d/%s.res" % conn.res_name)
