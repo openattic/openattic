@@ -137,6 +137,15 @@ class Connection(models.Model):
         return False
 
     @property
+    def local_lower_connection(self):
+        """ Find the lower connection that is running on this host (if any). """
+        if not self.stacked:
+            return None
+        for lowerconn in self.stacked_on.all():
+            if lowerconn.endpoints_running_here:
+                return lowerconn
+
+    @property
     def endpoints_running_here(self):
         """ Check if any of my endpoints run here. """
         return self.endpoint_set.filter(volume__vg__host=Host.objects.get_current()).count() > 0
@@ -167,6 +176,9 @@ class Connection(models.Model):
     def primary(self):
         return self.drbd.primary(self.res)
 
+    @property
+    def is_primary(self):
+        return self.role["self"] == "Primary"
 
 
 class Endpoint(LVChainedModule):
