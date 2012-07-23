@@ -22,10 +22,15 @@ class DrbdConnectionHandler(ModelHandler):
     model = Connection
 
     def _override_get(self, obj, data):
+        hnd = self._get_handler_instance(Endpoint)
         if obj.endpoints_running_here:
-            data['local_endpoint'] = self._get_handler_instance(Endpoint)._idobj(obj.local_endpoint)
+            data['cstate'] = obj.cstate
+            data['dstate'] = obj.dstate
+            data['role']   = obj.role
+            data['local_endpoint'] = hnd._getobj(obj.local_endpoint)
         else:
             data['local_endpoint'] = None
+            data['cstate'] = data['dstate'] = data['role'] = "unconfigured"
         return data
 
 
@@ -35,12 +40,6 @@ class DrbdEndpointHandler(ModelHandler):
     def _override_get(self, obj, data):
         data['path']    = obj.path
         data['basedev'] = obj.basedev
-        if obj.running_here:
-            data['cstate']  = obj.cstate
-            data['dstate']  = obj.dstate
-            data['role']    = obj.role
-        else:
-            data['cstate'] = data['dstate'] = data['role'] = "unconfigured"
         return data
 
     def primary(self, id):
