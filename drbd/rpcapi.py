@@ -16,15 +16,18 @@
 
 from rpcd.handlers import ModelHandler
 
-from drbd.models import DrbdDevice
+from drbd.models import Connection, Endpoint
 
-class DrbdDeviceHandler(ModelHandler):
-    model = DrbdDevice
+class DrbdConnectionHandler(ModelHandler):
+    model = Connection
+
+class DrbdEndpointHandler(ModelHandler):
+    model = Endpoint
 
     def _override_get(self, obj, data):
         data['path']    = obj.path
         data['basedev'] = obj.basedev
-        if obj.initialized:
+        if True or obj.initialized:
             data['cstate']  = obj.cstate
             data['dstate']  = obj.dstate
             data['role']    = obj.role
@@ -34,7 +37,7 @@ class DrbdDeviceHandler(ModelHandler):
 
     def primary(self, id):
         """ Switch the DRBD resource given by `id` to the Primary role on this host. """
-        dev = DrbdDevice.objects.get(id=id)
+        dev = Endpoint.objects.get(id=id)
         return dev.primary()
 
-RPCD_HANDLERS = [DrbdDeviceHandler]
+RPCD_HANDLERS = [DrbdConnectionHandler, DrbdEndpointHandler]
