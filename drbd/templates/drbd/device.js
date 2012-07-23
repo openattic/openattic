@@ -55,31 +55,21 @@ Ext.oa.Drbd__Connection_Panel = Ext.extend(Ext.oa.ShareGridPanel, {
   }],
   columns: [{
     header: gettext('Resource Name'),
-    width: 200,
     dataIndex: "res_name"
   }, {
     header: gettext('Volume'),
-    width: 200,
     dataIndex: "volumename"
   }, {
     header: gettext('Protocol'),
-    width:     80,
     dataIndex: "protocol"
   }, {
-    header: gettext('Peer Address'),
-    width: 200,
-    dataIndex: "peeraddress"
-  }, {
     header: gettext('Disk state (here)'),
-    width: 200,
     dataIndex: "dstate_self"
   }, {
     header: gettext('Connection state'),
-    width: 200,
     dataIndex: "cstate"
   }, {
     header: gettext('Role'),
-    width: 200,
     dataIndex: "role_self"
   }],
   window: {
