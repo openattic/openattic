@@ -23,7 +23,7 @@ class DrbdConnectionHandler(ModelHandler):
 
     def _override_get(self, obj, data):
         hnd = self._get_handler_instance(Endpoint)
-        if obj.endpoints_running_here:
+        if obj.endpoints_running_here or obj.stacked:
             data['cstate'] = obj.cstate
             data['dstate'] = obj.dstate
             data['role']   = obj.role
