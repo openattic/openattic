@@ -25,7 +25,7 @@ from django.db   import models
 from systemd.helpers import dbus_to_python
 
 from lvm.models import LogicalVolume, LVChainedModule
-from ifconfig.models import IPAddress
+from ifconfig.models import IPAddress, Host
 
 DRBD_PROTOCOL_CHOICES = (
     ('A', 'Protocol A: write IO is reported as completed, if it has reached local disk and local TCP send buffer.'),
@@ -126,6 +126,10 @@ class Connection(models.Model):
                                    "Bandwidth limit for background synchronization, measured in "
                                    "K/M/G<b><i>Bytes</i></b>."))
 
+    @property
+    def endpoints_running_here(self):
+        # Check if any of my endpoints run here.
+        return self.endpoint_set.filter(volume__vg__host=Host.objects.get_current()).count() > 0
 
 class Endpoint(LVChainedModule):
     connection = models.ForeignKey(Connection)

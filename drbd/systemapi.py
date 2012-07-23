@@ -20,6 +20,7 @@ import socket
 from django.template.loader import render_to_string
 
 from systemd import invoke, logged, BasePlugin, method
+from ifconfig.models import Host
 from drbd.models   import Connection, Endpoint
 
 @logged
@@ -101,6 +102,12 @@ class SystemD(BasePlugin):
     def conf_write(self):
         # Iterate over top-level connections
         for conn in Connection.objects.filter(stacked_below__isnull=True):
+            # Check if this connection (tree) has anything to do with the current host.
+            # This is the case if any of my own endpoints run here, or one of my
+            # low level devices' endpoints do.
+            if not conn.endpoints_running_here and \
+               not max([ lowerconn.endpoints_running_here for lowerconn in conn.stacked_on.all() ]):
+                continue
             fd = open("/etc/drbd.d/%s.res" % conn.res_name, "w")
             try:
                 for lowerconn in conn.stacked_on.all():
