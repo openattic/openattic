@@ -338,6 +338,10 @@ Ext.oa.Drbd_Panel = Ext.extend(Ext.Panel, {
       }
       this.items.items[1].getStore().loadData(hoststuff);
     }, this);
+    this.items.items[0].getStore().on("load", function(){
+      this.items.items[0].getSelectionModel().clearSelections();
+      this.items.items[1].getStore().removeAll();
+    }, this);
   }
 });
 
