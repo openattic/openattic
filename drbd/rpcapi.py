@@ -33,10 +33,12 @@ class DrbdConnectionHandler(ModelHandler):
         for endpoint in obj.endpoint_set.all():
             peerhost = endpoint.volume.vg.host
             data["endpoint_set"][peerhost.name] = hnd._getobj(endpoint)
-        data["stack_child_set"] = {}
+        data["stack_child_set"] = []
         for lowerconn in obj.stack_child_set.all():
-            peerhost = lowerconn.ipaddress.device.host
-            data["stack_child_set"][peerhost.name] = self._idobj(lowerconn)
+            conn = self._idobj(lowerconn)
+            conn["endpoint_hosts"] = [ endpoint.volume.vg.host.name
+                for endpoint in lowerconn.endpoint_set.all()]
+            data["stack_child_set"].append(conn)
 
         if obj.endpoints_running_here or (obj.stacked and obj.local_lower_connection.is_primary):
             data['cstate'] = obj.cstate

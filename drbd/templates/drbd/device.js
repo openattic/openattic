@@ -315,7 +315,7 @@ Ext.oa.Drbd_Panel = Ext.extend(Ext.Panel, {
     Ext.oa.Drbd_Panel.superclass.onRender.apply(this, arguments);
     this.items.items[0].on("cellclick", function(self, rowIndex, colIndex, evt){
       var record = self.getStore().getAt(rowIndex),
-          hostname, hostinfo,
+          hostname, hostinfo, i,
           hoststuff = [];
       for( hostname in record.json.role ){
         if( record.json.role.hasOwnProperty(hostname) ){
@@ -327,8 +327,13 @@ Ext.oa.Drbd_Panel = Ext.extend(Ext.Panel, {
           if( record.json.endpoint_set[hostname] ){
             hostinfo.backingdev = gettext("Volume") + " " + record.json.endpoint_set[hostname].volume.name;
           }
-          else if( record.json.stack_child_set[hostname] ){
-            hostinfo.backingdev = gettext("Connection") + " " + record.json.stack_child_set[hostname].__unicode__;
+          else{
+            hostinfo.backingdev = "";
+            for( i = 0; i < record.json.stack_child_set.length; i++ ){
+              if( record.json.stack_child_set[i].endpoint_hosts.indexOf(hostname) !== -1 ){
+                hostinfo.backingdev = gettext("Connection") + " " + record.json.stack_child_set[i].__unicode__;
+              }
+            }
           }
           hoststuff.push(hostinfo);
         }
