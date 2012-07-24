@@ -79,11 +79,12 @@ Ext.oa.Drbd__Connection_Panel = Ext.extend(Ext.oa.ShareGridPanel, {
   form: {
     items: [{
       xtype: 'fieldset',
-      title: 'Connection settings',
+      title: gettext('Connection settings'),
       layout: 'form',
       items: [ {
         xtype: "textfield",
-        name:  "res_name"
+        name:  "res_name",
+        fieldLabel: gettext('Resource name')
       }, {
         xtype: 'radiogroup',
         fieldLabel: 'Protocol',
@@ -117,7 +118,8 @@ Ext.oa.Drbd__Connection_Panel = Ext.extend(Ext.oa.ShareGridPanel, {
         hiddenName: 'stack_parent',
         store: new Ext.data.DirectStore({
           fields: ["app", "obj", "id", "__unicode__"],
-          directFn: drbd__Connection.ids
+          directFn: drbd__Connection.ids_filter,
+          baseParams: {kwds: {stack_parent__isnull: true}}
         }),
         typeAhead:     true,
         triggerAction: 'all',
