@@ -224,7 +224,9 @@ class Endpoint(LVChainedModule):
 
     @property
     def path(self):
-        return "/dev/drbd%d" % self.id
+        if self.connection.stack_parent is not None:
+            return "/dev/drbd%d" % self.connection.stack_parent.id
+        return "/dev/drbd%d" % self.connection.id
 
     @property
     def standby(self):
@@ -235,7 +237,7 @@ class Endpoint(LVChainedModule):
         return not self.connection.stack_parent.is_primary
 
     def setupfs(self):
-        if self.connection.is_primary:
+        if not self.standby:
             self.volume.setupfs()
             return False
         else:
