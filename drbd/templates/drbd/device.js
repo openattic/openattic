@@ -262,15 +262,97 @@ Ext.oa.Drbd__Connection_Panel = Ext.extend(Ext.oa.ShareGridPanel, {
 
 Ext.reg("drbd__connection_panel", Ext.oa.Drbd__Connection_Panel);
 
+Ext.oa.Drbd_Panel = Ext.extend(Ext.Panel, {
+  initComponent: function(){
+    console.log("OHai init!");
+    Ext.apply(this, Ext.apply(this.initialConfig, {
+      id: "drbd_panel_inst",
+      layout: "border",
+      items: [{
+        xtype: "drbd__connection_panel",
+        region: "center",
+        ref: "connpanel"
+      }, {
+        xtype: "grid",
+        ref: "hostpanel",
+        split: true,
+        region: "south",
+        viewConfig: { forceFit: true },
+        store: new Ext.data.JsonStore({
+          id: "drbd_hoststate",
+          fields: ["hostname", "backingdev", "dstate", "role"],
+          listeners: {
+            add: function(store){
+              var parent = iscsiPanel.targets.getSelectionModel();
+              var parentid = parent.selections.items[0];
+              storeUpdate(tgt_allow, parentid.data.id, "tgt_allow");
+            },
+            remove: function(store){
+              var parent = iscsiPanel.targets.getSelectionModel();
+              var parentid = parent.selections.items[0];
+              storeUpdate(tgt_allow, parentid.data.id, "tgt_allow");
+            }
+          }
+        }),
+        columns: [{
+          header: "Host",
+          dataIndex: "hostname"
+        }, {
+          header: "Backing Device",
+          dataIndex: "backingdev"
+        }, {
+          header: "Disk State",
+          dataIndex: "dstate"
+        }, {
+          header: "Role",
+          dataIndex: "role"
+        }]
+      }],
+    }));
+    Ext.oa.Drbd_Panel.superclass.initComponent.apply(this, arguments);
+    console.log("kthxbai init!");
+  },
+  onRender: function(){
+    // Hijack the grid's buttons
+    this.buttons = this.items.items[0].buttons;
+    this.items.items[0].buttons = [];
+    Ext.oa.Drbd_Panel.superclass.onRender.apply(this, arguments);
+    this.items.items[0].on("cellclick", function(self, rowIndex, colIndex, evt){
+      var record = self.getStore().getAt(rowIndex),
+          hostname, hostinfo,
+          hoststuff = [];
+      for( hostname in record.json.role ){
+        if( record.json.role.hasOwnProperty(hostname) ){
+          hostinfo = {
+            hostname: hostname,
+            dstate: record.json.dstate[hostname],
+            role: record.json.role[hostname]
+          }
+          if( record.json.endpoint_set[hostname] ){
+            hostinfo.backingdev = gettext("Volume") + " " + record.json.endpoint_set[hostname].volume.name;
+          }
+          else if( record.json.stack_child_set[hostname] ){
+            hostinfo.backingdev = gettext("Connection") + " " + record.json.stack_child_set[hostname].__unicode__;
+          }
+          hoststuff.push(hostinfo);
+        }
+      }
+      this.items.items[1].getStore().loadData(hoststuff);
+    }, this);
+  }
+});
+
+Ext.reg("drbd_panel", Ext.oa.Drbd_Panel);
+
 Ext.oa.Drbd__Connection_Module = Ext.extend(Object, {
-  panel: "drbd__connection_panel",
+  panel: "drbd_panel",
   prepareMenuTree: function(tree){
     "use strict";
     tree.appendToRootNodeById("menu_services", {
       text: gettext('DRBD'),
       leaf: true,
       icon: MEDIA_URL + '/icons2/22x22/apps/nfs.png',
-      panel: "drbd__connection_panel_inst",
+      panel: "drbd_panel_inst",
       href: '#'
     });
   }
