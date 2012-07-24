@@ -214,7 +214,7 @@ class Endpoint(LVChainedModule):
         return not self.connection.stack_parent.is_primary
 
     def setupfs(self):
-        if self.connection.role['self'] == "Primary":
+        if self.connection.is_primary:
             self.volume.setupfs()
             return False
         else:
