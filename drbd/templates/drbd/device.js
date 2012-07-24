@@ -51,10 +51,7 @@ Ext.oa.Drbd__Connection_Panel = Ext.extend(Ext.oa.ShareGridPanel, {
             prims.push(hostname);
           }
         }
-        if( prims ){
-          return prims.join(', ');
-        }
-        return gettext("None");
+        return prims.join(', ');
       }
       return gettext('Unknown');
     }
