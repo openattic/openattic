@@ -15,6 +15,7 @@
 """
 
 from rpcd.handlers import ModelHandler
+from rpcd.handlers import ProxyModelHandler, proxy_for
 
 from drbd.models import Connection, Endpoint
 
@@ -59,5 +60,13 @@ class DrbdEndpointHandler(ModelHandler):
         dev = Endpoint.objects.get(id=id)
         return dev.primary()
 
+@proxy_for(DrbdConnectionHandler)
+class DrbdConnectionProxy(ProxyModelHandler):
+    model = Connection
 
-RPCD_HANDLERS = [DrbdConnectionHandler, DrbdEndpointHandler]
+@proxy_for(DrbdEndpointHandler)
+class DrbdEndpointProxy(ProxyModelHandler):
+    model = Endpoint
+
+
+RPCD_HANDLERS = [DrbdConnectionProxy, DrbdEndpointHandler]
