@@ -101,7 +101,7 @@ class SystemD(BasePlugin):
     @method( in_signature="", out_signature="")
     def conf_write(self):
         # Iterate over top-level connections
-        for conn in Connection.objects.filter(stacked_below__isnull=True):
+        for conn in Connection.objects.filter(stack_parent__isnull=True):
             # Check if this connection (tree) has anything to do with the current host.
             # This is the case if any of my own endpoints run here, or one of my
             # low level devices' endpoints do.
@@ -109,7 +109,7 @@ class SystemD(BasePlugin):
                 continue
             fd = open("/etc/drbd.d/%s.res" % conn.res_name, "w")
             try:
-                for lowerconn in conn.stacked_on.all():
+                for lowerconn in conn.stack_child_set.all():
                     fd.write( render_to_string( "drbd/device.res", {
                         'Hostname':   socket.gethostname(),
                         'Connection': lowerconn,

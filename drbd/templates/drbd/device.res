@@ -55,7 +55,7 @@ resource {{ Connection.res_name }} {
 	}
 	{% endfor %}
 	
-	{% for lowerconn in Connection.stacked_on.all %}
+	{% for lowerconn in Connection.stack_child_set.all %}
 	stacked-on-top-of {{ lowerconn.res_name }} {
 		address    {{ lowerconn.ipaddress.host_part }}:{{ Connection.id|add:"7700" }};
 	}

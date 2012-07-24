@@ -84,7 +84,7 @@ DRBD_AFTER_SB_2PRI_CHOICES = (
 class Connection(models.Model):
     res_name    = models.CharField(max_length=50)
     ipaddress   = models.ForeignKey(IPAddress, blank=True, null=True)
-    stacked_below = models.ForeignKey("self", blank=True, null=True, related_name="stacked_on")
+    stack_parent = models.ForeignKey("self", blank=True, null=True, related_name="stack_child_set")
     protocol    = models.CharField(max_length=1, default="C", choices=DRBD_PROTOCOL_CHOICES)
     wfc_timeout          = models.IntegerField(blank=True, null=True, default=10,
                            help_text=("Wait for connection timeout.  The init script drbd(8) blocks the boot "
@@ -132,8 +132,8 @@ class Connection(models.Model):
 
     @property
     def stacked(self):
-        if self.stacked_on.count() > 0:
-            return max([ lowerconn.endpoints_running_here for lowerconn in self.stacked_on.all() ])
+        if self.stack_child_set.count() > 0:
+            return max([ lowerconn.endpoints_running_here for lowerconn in self.stack_child_set.all() ])
         return False
 
     @property
@@ -141,7 +141,7 @@ class Connection(models.Model):
         """ Find the lower connection that is running on this host (if any). """
         if not self.stacked:
             return None
-        for lowerconn in self.stacked_on.all():
+        for lowerconn in self.stack_child_set.all():
             if lowerconn.endpoints_running_here:
                 return lowerconn
 
@@ -201,9 +201,9 @@ class Endpoint(LVChainedModule):
     def standby(self):
         if not self.connection.is_primary:
             return True
-        if self.connection.stacked_below is None:
+        if self.connection.stack_parent is None:
             return False
-        return not self.connection.stacked_below.is_primary
+        return not self.connection.stack_parent.is_primary
 
     def setupfs(self):
         if self.connection.role['self'] == "Primary":
