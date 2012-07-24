@@ -28,12 +28,19 @@ class DrbdConnectionHandler(ModelHandler):
 
     def _override_get(self, obj, data):
         hnd = self._get_handler_instance(Endpoint)
-        data['local_endpoint'] = None
+        data["endpoint_set"] = {}
+        for endpoint in obj.endpoint_set.all():
+            peerhost = endpoint.volume.vg.host
+            data["endpoint_set"][peerhost.name] = hnd._getobj(endpoint)
+        data["stack_child_set"] = {}
+        for lowerconn in obj.stack_child_set.all():
+            peerhost = lowerconn.ipaddress.device.host
+            data["stack_child_set"][peerhost.name] = self._idobj(lowerconn)
+
         if obj.endpoints_running_here or (obj.stacked and obj.local_lower_connection.is_primary):
             data['cstate'] = obj.cstate
             data['dstate'] = obj.dstate
             data['role']   = obj.role
-            data['local_endpoint'] = hnd._getobj(obj.local_endpoint)
         else:
             data['cstate'] = data['dstate'] = data['role'] = "unconfigured"
         return data
