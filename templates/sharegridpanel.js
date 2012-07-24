@@ -96,40 +96,42 @@ Ext.oa.ShareGridPanel = Ext.extend(Ext.grid.GridPanel, {
         self.store.reload();
       }
     });
-    this.buttons.push({
-      text: self.texts.add,
-      icon: MEDIA_URL + "/icons2/16x16/actions/add.png",
-      scope: self,
-      handler: function(){
-        self.showEditWindow({
-          title: self.texts.add,
-          submitButtonText: self.texts.add
-        });
-      }
-    });
-    if( this.allowEdit ){
+    if( this.form !== null ){
       this.buttons.push({
-        text:  self.texts.edit,
-        icon: MEDIA_URL + "/icons2/16x16/actions/edit-redo.png",
+        text: self.texts.add,
+        icon: MEDIA_URL + "/icons2/16x16/actions/add.png",
         scope: self,
         handler: function(){
-          var sm = self.getSelectionModel();
-          if( sm.hasSelection() ){
-            var sel = sm.selections.items[0];
-            self.showEditWindow({
-              title: self.texts.edit,
-              submitButtonText: self.texts.edit
-            }, sel.data);
-          }
+          self.showEditWindow({
+            title: self.texts.add,
+            submitButtonText: self.texts.add
+          });
         }
       });
+      if( this.allowEdit ){
+        this.buttons.push({
+          text:  self.texts.edit,
+          icon: MEDIA_URL + "/icons2/16x16/actions/edit-redo.png",
+          scope: self,
+          handler: function(){
+            var sm = self.getSelectionModel();
+            if( sm.hasSelection() ){
+              var sel = sm.selections.items[0];
+              self.showEditWindow({
+                title: self.texts.edit,
+                submitButtonText: self.texts.edit
+              }, sel.data);
+            }
+          }
+        });
+      }
+      this.buttons.push({
+        text: self.texts.remove,
+        icon: MEDIA_URL + "/icons2/16x16/actions/remove.png",
+        handler: this.deleteFunction,
+        scope: self
+      });
     }
-    this.buttons.push({
-      text: self.texts.remove,
-      icon: MEDIA_URL + "/icons2/16x16/actions/remove.png",
-      handler: this.deleteFunction,
-      scope: self
-    });
     Ext.oa.ShareGridPanel.superclass.initComponent.apply(this, arguments);
   },
 

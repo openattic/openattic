@@ -1,9 +1,3 @@
-# This file is generated automatically by openATTIC and will be overwritten
-# automatically when the configuration changes.
-#
-# To alter sections of this file, edit `<openATTIC>/drbd/templates/drbd/device.res`,
-# and run `<openATTIC>/installer.py -c -o drbd` to update DRBD.
-
 {% comment %}
  Copyright (C) 2011-2012, it-novum GmbH <community@open-attic.org>
 
@@ -17,18 +11,20 @@
  GNU General Public License for more details.
 {% endcomment %}
 
-resource {{ Device.res }} {
-	protocol {{ Device.protocol }};
+resource {{ Connection.res_name }} {
+	protocol {{ Connection.protocol }};
+	meta-disk  internal;
+	device /dev/drbd{{ Connection.id }};
 	
 	startup {
-		{% if Device.wfc_timeout          %}wfc-timeout          {{ Device.wfc_timeout          }};{% endif %}
-		{% if Device.degr_wfc_timeout     %}degr-wfc-timeout     {{ Device.degr_wfc_timeout     }};{% endif %}
-		{% if Device.outdated_wfc_timeout %}outdated-wfc-timeout {{ Device.outdated_wfc_timeout }};{% endif %}
+		{% if Connection.wfc_timeout          %}wfc-timeout          {{ Connection.wfc_timeout          }};{% endif %}
+		{% if Connection.degr_wfc_timeout     %}degr-wfc-timeout     {{ Connection.degr_wfc_timeout     }};{% endif %}
+		{% if Connection.outdated_wfc_timeout %}outdated-wfc-timeout {{ Connection.outdated_wfc_timeout }};{% endif %}
 	}
 	
 	disk {
-		on-io-error {{ Device.on_io_error }};
-		fencing     {{ Device.fencing     }};
+		on-io-error {{ Connection.on_io_error }};
+		fencing     {{ Connection.fencing     }};
 	}
 	
 	handlers {
@@ -37,32 +33,31 @@ resource {{ Device.res }} {
 	}
 	
 	net {
-		{% if Device.cram_hmac_alg and Device.secret %}
-		cram-hmac-alg {{ Device.cram_hmac_alg }};
-		shared-secret {{ Device.secret  }};
+		{% if Connection.cram_hmac_alg and Connection.secret %}
+		cram-hmac-alg {{ Connection.cram_hmac_alg }};
+		shared-secret {{ Connection.secret  }};
 		{% endif %}
-		after-sb-0pri {{ Device.sb_0pri }};
-		after-sb-1pri {{ Device.sb_1pri }};
-		after-sb-2pri {{ Device.sb_2pri }};
+		after-sb-0pri {{ Connection.sb_0pri }};
+		after-sb-1pri {{ Connection.sb_1pri }};
+		after-sb-2pri {{ Connection.sb_2pri }};
 	}
 	
-	{% if Device.syncer_rate %}
+	{% if Connection.syncer_rate %}
 	syncer {
-		rate {{ Device.syncer_rate }};
+		rate {{ Connection.syncer_rate }};
 	}
 	{% endif %}
 	
-	on {{ Hostname }} {
-		device     {{ Device.path }};
-		disk       {{ Device.basedev }};
-		address    {{ Device.selfaddress }};
-		meta-disk  internal;
+	{% for endpoint in Connection.endpoint_set.all %}
+	on {{ endpoint.volume.vg.host.name }} {
+		disk       {{ endpoint.volume.device }};
+		address    {{ endpoint.ipaddress.host_part }}:{{ Connection.id|add:"7700" }};
 	}
+	{% endfor %}
 	
-	on {{ Device.peerhost.name }} {
-		device     {{ Device.peerdevice.path }};
-		disk       {{ Device.peerdevice.basedev }};
-		address    {{ Device.peeraddress }};
-		meta-disk  internal;
+	{% for lowerconn in Connection.stack_child_set.all %}
+	stacked-on-top-of {{ lowerconn.res_name }} {
+		address    {{ lowerconn.ipaddress.host_part }}:{{ Connection.id|add:"7700" }};
 	}
+	{% endfor %}
 }

@@ -13,9 +13,9 @@
 
 Ext.namespace("Ext.oa");
 
-Ext.oa.Drbd__Device_Panel = Ext.extend(Ext.oa.ShareGridPanel, {
-  api: drbd__DrbdDevice,
-  id: "drbd__device_panel_inst",
+Ext.oa.Drbd__Connection_Panel = Ext.extend(Ext.oa.ShareGridPanel, {
+  api: drbd__Connection,
+  id: "drbd__connection_panel_inst",
   title: gettext("DRBD"),
   texts: {
     add:     gettext('Add Device'),
@@ -24,49 +24,52 @@ Ext.oa.Drbd__Device_Panel = Ext.extend(Ext.oa.ShareGridPanel, {
   },
   storefields: [{
     name: 'volumename',
-    mapping: 'volume',
+    mapping: 'local_endpoint',
     convert: function(val, row){
       "use strict";
-      return val.name;
+      if( val ){
+        return val.volume.name;
+      }
+      return '';
     }
   }, {
     name: 'dstate_self',
     mapping: 'dstate',
     convert: function(val, row){
       "use strict";
-      return val.self;
+      if( val ){
+        return val.self;
+      }
+      return '';
     }
   }, {
     name: 'role_self',
     mapping: 'role',
     convert: function(val, row){
       "use strict";
-      return val.self;
+      if( val ){
+        return val.self;
+      }
+      return '';
     }
   }],
   columns: [{
+    header: gettext('Resource Name'),
+    dataIndex: "res_name"
+  }, {
     header: gettext('Volume'),
-    width: 200,
     dataIndex: "volumename"
   }, {
     header: gettext('Protocol'),
-    width:     80,
     dataIndex: "protocol"
   }, {
-    header: gettext('Peer Address'),
-    width: 200,
-    dataIndex: "peeraddress"
-  }, {
     header: gettext('Disk state (here)'),
-    width: 200,
     dataIndex: "dstate_self"
   }, {
     header: gettext('Connection state'),
-    width: 200,
     dataIndex: "cstate"
   }, {
     header: gettext('Role'),
-    width: 200,
     dataIndex: "role_self"
   }],
   window: {
@@ -261,23 +264,23 @@ Ext.oa.Drbd__Device_Panel = Ext.extend(Ext.oa.ShareGridPanel, {
   }
 });
 
-Ext.reg("drbd__device_panel", Ext.oa.Drbd__Device_Panel);
+Ext.reg("drbd__connection_panel", Ext.oa.Drbd__Connection_Panel);
 
-Ext.oa.Drbd__Device_Module = Ext.extend(Object, {
-  panel: "drbd__device_panel",
+Ext.oa.Drbd__Connection_Module = Ext.extend(Object, {
+  panel: "drbd__connection_panel",
   prepareMenuTree: function(tree){
     "use strict";
     tree.appendToRootNodeById("menu_services", {
       text: gettext('DRBD'),
       leaf: true,
       icon: MEDIA_URL + '/icons2/22x22/apps/nfs.png',
-      panel: "drbd__device_panel_inst",
+      panel: "drbd__connection_panel_inst",
       href: '#'
     });
   }
 });
 
 
-window.MainViewModules.push( new Ext.oa.Drbd__Device_Module() );
+window.MainViewModules.push( new Ext.oa.Drbd__Connection_Module() );
 
 // kate: space-indent on; indent-width 2; replace-tabs on;
