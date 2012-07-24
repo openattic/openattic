@@ -130,6 +130,9 @@ class Connection(models.Model):
         models.Model.__init__( self, *args, **kwargs )
         self._drbd = None
 
+    def __unicode__(self):
+        return self.res_name
+
     @property
     def stacked(self):
         if self.stack_child_set.count() > 0:
@@ -186,6 +189,9 @@ class Connection(models.Model):
 class Endpoint(LVChainedModule):
     connection = models.ForeignKey(Connection)
     ipaddress  = models.ForeignKey(IPAddress)
+
+    def __unicode__(self):
+        return "%s -> %s/%s" % (self.connection.res_name, self.volume.vg.name, self.volume.name)
 
     @property
     def running_here(self):
