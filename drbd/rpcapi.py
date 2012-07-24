@@ -28,8 +28,7 @@ class DrbdConnectionHandler(ModelHandler):
             data['cstate'] = obj.cstate
             data['dstate'] = obj.dstate
             data['role']   = obj.role
-            if obj.endpoints_running_here:
-                data['local_endpoint'] = hnd._getobj(obj.local_endpoint)
+            data['local_endpoint'] = hnd._getobj(obj.local_endpoint)
         else:
             data['cstate'] = data['dstate'] = data['role'] = "unconfigured"
         return data

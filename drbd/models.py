@@ -153,6 +153,8 @@ class Connection(models.Model):
     @property
     def local_endpoint(self):
         """ Return the endpoint that runs here. """
+        if not self.endpoints_running_here and self.stacked:
+            return self.local_lower_connection.local_endpoint
         return self.endpoint_set.get(volume__vg__host=Host.objects.get_current())
 
     @property
