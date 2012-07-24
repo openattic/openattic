@@ -82,6 +82,7 @@ def index(request):
 
         return render_to_response('index_ext_authed.html', {
             'THEME': theme,
+            'LOCALHOST': Host.objects.get_current(),
             'INSTALLED_APPS': settings.INSTALLED_APPS,
             'INSTALLED_APP_TEMPLATES': found_templates
             }, context_instance = RequestContext(request))

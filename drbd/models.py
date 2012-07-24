@@ -149,6 +149,18 @@ class Connection(models.Model):
                 return lowerconn
 
     @property
+    def peerhost(self):
+        """ Find the host on which the other side is running at the moment. """
+        if not self.endpoints_running_here and not self.stacked:
+            raise ReferenceError("We're not one of the connection's endpoints, so there is no peer here.")
+        for lowerconn in self.stack_child_set.all():
+            if not lowerconn.endpoints_running_here:
+                return lowerconn.ipaddress.device.host
+        for endpoint in self.endpoint_set.all():
+            if not endpoint.running_here:
+                return endpoint.volume.vg.host
+
+    @property
     def endpoints_running_here(self):
         """ Check if any of my endpoints run here. """
         return self.endpoint_set.filter(volume__vg__host=Host.objects.get_current()).count() > 0
@@ -172,18 +184,27 @@ class Connection(models.Model):
 
     @property
     def dstate(self):
-        return dbus_to_python(self.drbd.get_dstate(self.res_name, self.stacked))
+        info = dbus_to_python(self.drbd.get_dstate(self.res_name, self.stacked))
+        return {
+            Host.objects.get_current().name : info["self"],
+            self.peerhost.name              : info["peer"]
+            }
 
     @property
     def role(self):
-        return dbus_to_python(self.drbd.get_role(self.res_name, self.stacked))
+        info = dbus_to_python(self.drbd.get_role(self.res_name, self.stacked))
+        return {
+            Host.objects.get_current().name : info["self"],
+            self.peerhost.name              : info["peer"]
+            }
 
     def primary(self):
         return self.drbd.primary(self.res)
 
     @property
     def is_primary(self):
-        return self.role["self"] == "Primary"
+        info = dbus_to_python(self.drbd.get_role(self.res_name, self.stacked))
+        return info["self"] == "Primary"
 
 
 class Endpoint(LVChainedModule):
@@ -214,7 +235,7 @@ class Endpoint(LVChainedModule):
         return not self.connection.stack_parent.is_primary
 
     def setupfs(self):
-        if self.connection.role['self'] == "Primary":
+        if self.connection.is_primary:
             self.volume.setupfs()
             return False
         else:
