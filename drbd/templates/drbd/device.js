@@ -27,10 +27,16 @@ Ext.oa.Drbd__Connection_Panel = Ext.extend(Ext.oa.ShareGridPanel, {
     mapping: 'dstate',
     convert: function(val, row){
       "use strict";
+      var hostname;
       if( val ){
-        return val[window.HOSTNAME];
+        for( hostname in val ){
+          if( val.hasOwnProperty(hostname) && val[hostname] !== "UpToDate" ){
+            return gettext("Bad");
+          }
+        }
+        return gettext("OK");
       }
-      return '';
+      return gettext('Unknown');
     }
   }, {
     name: 'role_self',
@@ -50,7 +56,7 @@ Ext.oa.Drbd__Connection_Panel = Ext.extend(Ext.oa.ShareGridPanel, {
     header: gettext('Protocol'),
     dataIndex: "protocol"
   }, {
-    header: gettext('Disk state (here)'),
+    header: gettext('Disk state (overall)'),
     dataIndex: "dstate_self"
   }, {
     header: gettext('Connection state'),
