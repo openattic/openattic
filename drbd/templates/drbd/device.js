@@ -263,7 +263,6 @@ Ext.reg("drbd__connection_panel", Ext.oa.Drbd__Connection_Panel);
 
 Ext.oa.Drbd_Panel = Ext.extend(Ext.Panel, {
   initComponent: function(){
-    console.log("OHai init!");
     Ext.apply(this, Ext.apply(this.initialConfig, {
       id: "drbd_panel_inst",
       layout: "border",
@@ -310,7 +309,6 @@ Ext.oa.Drbd_Panel = Ext.extend(Ext.Panel, {
       }],
     }));
     Ext.oa.Drbd_Panel.superclass.initComponent.apply(this, arguments);
-    console.log("kthxbai init!");
   },
   onRender: function(){
     // Hijack the grid's buttons
