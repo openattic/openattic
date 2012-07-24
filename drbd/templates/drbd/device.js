@@ -23,19 +23,6 @@ Ext.oa.Drbd__Connection_Panel = Ext.extend(Ext.oa.ShareGridPanel, {
     remove:  gettext('Delete Connection')
   },
   storefields: [{
-    name: 'backingdevice',
-    mapping: 'endpoint_set',
-    convert: function(val, row){
-      "use strict";
-      if( val[window.HOSTNAME] ){
-        return gettext("Volume") + " " + val[window.HOSTNAME].volume.name;
-      }
-      if( row.stack_child_set[window.HOSTNAME] ){
-        return gettext("Connection") + " " + row.stack_child_set[window.HOSTNAME].__unicode__
-      }
-      return '';
-    }
-  }, {
     name: 'dstate_self',
     mapping: 'dstate',
     convert: function(val, row){
@@ -59,9 +46,6 @@ Ext.oa.Drbd__Connection_Panel = Ext.extend(Ext.oa.ShareGridPanel, {
   columns: [{
     header: gettext('Resource Name'),
     dataIndex: "res_name"
-  }, {
-    header: gettext('Backing Device'),
-    dataIndex: "backingdevice"
   }, {
     header: gettext('Protocol'),
     dataIndex: "protocol"
