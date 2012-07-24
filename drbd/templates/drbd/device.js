@@ -82,49 +82,8 @@ Ext.oa.Drbd__Connection_Panel = Ext.extend(Ext.oa.ShareGridPanel, {
       title: 'Connection settings',
       layout: 'form',
       items: [ {
-        xtype: "volumefield",
-        hiddenName: "volume",
-        filesystem__isnull: true
-      }, {
-        xtype: "hidden",
-        name: "ordering",
-        value: 0
-      }, {
-        xtype: "hidden",
-        name: "init_master",
-        value: true
-      }, {
-        xtype:      'combo',
-        fieldLabel: gettext('Peer Host'),
-        name:       'peerhost',
-        hiddenName: 'peerhost',
-        store: new Ext.data.DirectStore({
-          fields: ["id", "name"],
-          baseParams: { field: "name", kwds: {} },
-          paramOrder: ["field", "query", "kwds"],
-          directFn: peering__PeerHost.filter_combo
-        }),
-        typeAhead:     true,
-        triggerAction: 'all',
-        emptyText:     gettext('Select...'),
-        selectOnFocus: true,
-        displayField:  'name',
-        valueField:    'id',
-        ref: 'targetfield'
-      }, {
-        fieldLabel: gettext('Address (here)'),
-        name: "selfaddress",
-        xtype: 'textfield',
-        maskRe: /[0-9.:]/,
-        regex: /^[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}:[0-9]{1,5}$/,
-        regexText: gettext("Must be IP:Port.")
-      }, {
-        fieldLabel: gettext('Address (Peer)'),
-        name: "peeraddress",
-        xtype: 'textfield',
-        maskRe: /[0-9.:]/,
-        regex: /^[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}:[0-9]{1,5}$/,
-        regexText: gettext("Must be IP:Port.")
+        xtype: "textfield",
+        name:  "res_name"
       }, {
         xtype: 'radiogroup',
         fieldLabel: 'Protocol',
@@ -134,6 +93,38 @@ Ext.oa.Drbd__Connection_Panel = Ext.extend(Ext.oa.ShareGridPanel, {
           {name: "protocol", boxLabel: gettext('B: Memory Synchronous (Semi-Synchronous)'), inputValue: "B"},
           {name: "protocol", boxLabel: gettext('C: Synchronous'), checked: true, inputValue: "C"}
         ]
+      }, {
+        xtype:      'combo',
+        fieldLabel: gettext('Address'),
+        ref:        'addrfield',
+        allowBlank: true,
+        hiddenName: 'ipaddress',
+        store: new Ext.data.DirectStore({
+          fields: ["app", "obj", "id", "address"],
+          directFn: ifconfig__IPAddress.ids
+        }),
+        typeAhead:     true,
+        triggerAction: 'all',
+        emptyText:     gettext('Select...'),
+        selectOnFocus: true,
+        displayField:  'address',
+        valueField:    'id'
+      }, {
+        xtype:      'combo',
+        fieldLabel: gettext('Parent connection'),
+        ref:        'parentfield',
+        allowBlank: true,
+        hiddenName: 'stack_parent',
+        store: new Ext.data.DirectStore({
+          fields: ["app", "obj", "id", "__unicode__"],
+          directFn: drbd__Connection.ids
+        }),
+        typeAhead:     true,
+        triggerAction: 'all',
+        emptyText:     gettext('Select...'),
+        selectOnFocus: true,
+        displayField:  '__unicode__',
+        valueField:    'id'
       }, {
         fieldLabel: gettext('Syncer Rate'),
         name: "syncer_rate",
@@ -239,10 +230,10 @@ Ext.oa.Drbd__Connection_Panel = Ext.extend(Ext.oa.ShareGridPanel, {
           name: "sb_1pri", inputValue: "violently-as0p",
           boxLabel: gettext('Do what we would do if there were no primaries, even if we risk corrupting data.')
         }, {
-          name: "sb_1pri", inputValue: "discard-secondary", checked: true,
+          name: "sb_1pri", inputValue: "discard-secondary",
           boxLabel: gettext('Discard the secondarys data.')
         }, {
-          name: "sb_1pri", inputValue: "call-pri-lost-after-sb", checked: true,
+          name: "sb_1pri", inputValue: "call-pri-lost-after-sb",
           boxLabel: gettext('If the current secondary has the right data, call the pri-lost-after-sb handler on the primary.')
         } ]
       }, {
@@ -256,7 +247,7 @@ Ext.oa.Drbd__Connection_Panel = Ext.extend(Ext.oa.ShareGridPanel, {
           name: "sb_2pri", inputValue: "violently-as0p",
           boxLabel: gettext('Do what we would do if there were no primaries, even if we risk corrupting data.')
         }, {
-          name: "sb_2pri", inputValue: "call-pri-lost-after-sb", checked: true,
+          name: "sb_2pri", inputValue: "call-pri-lost-after-sb",
           boxLabel: gettext('If the current secondary has the right data, call the pri-lost-after-sb handler on the primary.')
         } ]
       }]
