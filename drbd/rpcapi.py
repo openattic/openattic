@@ -22,7 +22,7 @@ class DrbdConnectionHandler(ModelHandler):
     model = Connection
 
     def _get_model_manager(self):
-        relevantids = [ conn.id for conn in Connection.objects.filter(stack_parent__isnull=True)
+        relevantids = [ conn.id for conn in Connection.objects.all()
                         if conn.endpoints_running_here or conn.stacked ]
         return self.model.objects.filter(id__in=relevantids)
 
