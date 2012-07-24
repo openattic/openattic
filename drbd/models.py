@@ -224,7 +224,9 @@ class Endpoint(LVChainedModule):
 
     @property
     def path(self):
-        return "/dev/drbd%d" % self.id
+        if self.connection.stack_parent is not None:
+            return "/dev/drbd%d" % self.connection.stack_parent.id
+        return "/dev/drbd%d" % self.connection.id
 
     @property
     def standby(self):
