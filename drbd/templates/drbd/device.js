@@ -273,6 +273,7 @@ Ext.oa.Drbd_Panel = Ext.extend(Ext.Panel, {
         ref: "connpanel"
       }, {
         xtype: "grid",
+        id: "drbd_host_panel_inst",
         ref: "hostpanel",
         split: true,
         region: "south",
