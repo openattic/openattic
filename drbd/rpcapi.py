@@ -64,6 +64,27 @@ class DrbdEndpointHandler(ModelHandler):
 class DrbdConnectionProxy(ProxyModelHandler):
     model = Connection
 
+    def _merge(self, objects):
+        ret = {}
+        for conn in objects:
+            if conn["id"] not in ret:
+                ret[conn["id"]] = conn
+            elif conn["cstate"] != "Connected":
+                # Let's see if we can learn anything new
+                for host in ret[conn["id"]]["role"]:
+                    if ret[conn["id"]]["role"][host] == "Unknown":
+                        ret[conn["id"]]["role"][host] = conn["role"][host]
+                for host in ret[conn["id"]]["dstate"]:
+                    if ret[conn["id"]]["dstate"][host] == "DUnknown":
+                        ret[conn["id"]]["dstate"][host] = conn["dstate"][host]
+        return ret.values()
+
+    def all(self):
+        return self._merge( ProxyModelHandler.all(self) )
+
+    def filter(self, kwds):
+        return self._merge( ProxyModelHandler.filter(self, kwds) )
+
 @proxy_for(DrbdEndpointHandler)
 class DrbdEndpointProxy(ProxyModelHandler):
     model = Endpoint
