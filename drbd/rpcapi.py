@@ -85,6 +85,11 @@ class DrbdConnectionProxy(ProxyModelHandler):
     def filter(self, kwds):
         return self._merge( ProxyModelHandler.filter(self, kwds) )
 
+    def get(self, id):
+        if not isinstance(id, dict):
+            id = {"id": id}
+        return self._merge( ProxyModelHandler.filter(self, id) )[0]
+
 @proxy_for(DrbdEndpointHandler)
 class DrbdEndpointProxy(ProxyModelHandler):
     model = Endpoint
