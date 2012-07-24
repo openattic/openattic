@@ -21,6 +21,11 @@ from drbd.models import Connection, Endpoint
 class DrbdConnectionHandler(ModelHandler):
     model = Connection
 
+    def _get_model_manager(self):
+        relevantids = [ conn.id for conn in Connection.objects.all()
+                        if conn.endpoints_running_here or conn.stacked ]
+        return self.model.objects.filter(id__in=relevantids)
+
     def _override_get(self, obj, data):
         hnd = self._get_handler_instance(Endpoint)
         data['local_endpoint'] = None
