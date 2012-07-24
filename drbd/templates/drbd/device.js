@@ -22,6 +22,7 @@ Ext.oa.Drbd__Connection_Panel = Ext.extend(Ext.oa.ShareGridPanel, {
     edit:    gettext('Edit Connection'),
     remove:  gettext('Delete Connection')
   },
+  allowEdit: false,
   storefields: [{
     name: 'dstate_self',
     mapping: 'dstate',
