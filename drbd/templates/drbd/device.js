@@ -18,9 +18,9 @@ Ext.oa.Drbd__Connection_Panel = Ext.extend(Ext.oa.ShareGridPanel, {
   id: "drbd__connection_panel_inst",
   title: gettext("DRBD"),
   texts: {
-    add:     gettext('Add Device'),
-    edit:    gettext('Edit Device'),
-    remove:  gettext('Delete Device')
+    add:     gettext('Add Connection'),
+    edit:    gettext('Edit Connection'),
+    remove:  gettext('Delete Connection')
   },
   storefields: [{
     name: 'volumename',
