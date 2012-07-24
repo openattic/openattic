@@ -43,10 +43,19 @@ Ext.oa.Drbd__Connection_Panel = Ext.extend(Ext.oa.ShareGridPanel, {
     mapping: 'role',
     convert: function(val, row){
       "use strict";
+      var hostname, prims = [];
       if( val ){
-        return val[window.HOSTNAME];
+        for( hostname in val ){
+          if( val.hasOwnProperty(hostname) && val[hostname] === "Primary" ){
+            prims.push(hostname);
+          }
+        }
+        if( prims ){
+          return prims.join(', ');
+        }
+        return gettext("None");
       }
-      return '';
+      return gettext('Unknown');
     }
   }],
   columns: [{
@@ -62,7 +71,7 @@ Ext.oa.Drbd__Connection_Panel = Ext.extend(Ext.oa.ShareGridPanel, {
     header: gettext('Connection state'),
     dataIndex: "cstate"
   }, {
-    header: gettext('Role'),
+    header: gettext('Primary'),
     dataIndex: "role_self"
   }],
   window: {
