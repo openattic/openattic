@@ -269,8 +269,11 @@ class ModelHandler(BaseHandler):
 
         for field in self.model._meta.fields:
             if isinstance( field, models.ForeignKey ) and field.name in data:
-                handler = self._get_handler_instance(field.related.parent_model)
-                data[field.name] = handler.idobj(int(data[field.name]))
+                if data[field.name]:
+                    handler = self._get_handler_instance(field.related.parent_model)
+                    data[field.name] = handler.idobj(int(data[field.name]))
+                else:
+                    data[field.name] = None
 
         from django.core.exceptions import ValidationError
 
