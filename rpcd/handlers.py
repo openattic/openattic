@@ -99,7 +99,7 @@ class ModelHandler(BaseHandler):
 
     def _idobj(self, obj):
         """ Return an ID for the given object, including the app label and object name. """
-        return {'id': obj.id, 'app': obj._meta.app_label, 'obj': obj._meta.object_name}
+        return {'id': obj.id, 'app': obj._meta.app_label, 'obj': obj._meta.object_name, '__unicode__': unicode(obj)}
 
     def all(self):
         """ Return all objects. """
