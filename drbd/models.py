@@ -221,7 +221,13 @@ class Endpoint(LVChainedModule):
             raise ValidationError('This share type can not be used on volumes with a file system.')
 
     def install(self):
-        pass
+        self.connection.drbd.conf_write(self.id)
+        self.connection.drbd.createmd(self.res)
+        self.connection.drbd.up(self.res)
+
+        if self.init_master:
+            self.connection.drbd.primary_overwrite(self.res)
 
     def uninstall(self):
-        pass
+        self.connection.drbd.down(self.res)
+        self.connection.drbd.conf_delete(self.id)
