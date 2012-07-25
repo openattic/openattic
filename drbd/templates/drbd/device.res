@@ -51,13 +51,13 @@ resource {{ Connection.res_name }} {
 	{% for endpoint in Connection.endpoint_set.all %}
 	on {{ endpoint.volume.vg.host.name }} {
 		disk       {{ endpoint.volume.device }};
-		address    {{ endpoint.ipaddress.host_part }}:{{ Connection.id|add:"7700" }};
+		address    {{ endpoint.ipaddress.host_part }}:{{ Connection.port }};
 	}
 	{% endfor %}
 	
 	{% for lowerconn in Connection.stack_child_set.all %}
 	stacked-on-top-of {{ lowerconn.res_name }} {
-		address    {{ lowerconn.ipaddress.host_part }}:{{ Connection.id|add:"7700" }};
+		address    {{ lowerconn.ipaddress.host_part }}:{{ Connection.port }};
 	}
 	{% endfor %}
 }
