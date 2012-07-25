@@ -203,10 +203,10 @@ class Connection(models.Model):
             }
 
     def primary(self):
-        return self.drbd.primary(self.res)
+        return self.drbd.primary(self.res_name)
 
     def secondary(self):
-        return self.drbd.secondary(self.res)
+        return self.drbd.secondary(self.res_name)
 
     @property
     def is_primary(self):
