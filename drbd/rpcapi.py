@@ -47,6 +47,16 @@ class DrbdConnectionHandler(ModelHandler):
             data['cstate'] = data['dstate'] = data['role'] = "unconfigured"
         return data
 
+    def primary(self, id):
+        """ Switch the DRBD connection given by `id` to the Primary role on this host. """
+        conn = Connection.objects.get(id=id)
+        return conn.primary()
+
+    def secondary(self, id):
+        """ Switch the DRBD connection given by `id` to the Secondary role on this host. """
+        conn = Connection.objects.get(id=id)
+        return conn.secondary()
+
 
 class DrbdEndpointHandler(ModelHandler):
     model = Endpoint
@@ -55,11 +65,6 @@ class DrbdEndpointHandler(ModelHandler):
         data['path']    = obj.path
         data['basedev'] = obj.basedev
         return data
-
-    def primary(self, id):
-        """ Switch the DRBD resource given by `id` to the Primary role on this host. """
-        dev = Endpoint.objects.get(id=id)
-        return dev.primary()
 
 
 RPCD_HANDLERS = [DrbdConnectionHandler, DrbdEndpointHandler]

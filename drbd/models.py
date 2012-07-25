@@ -205,6 +205,9 @@ class Connection(models.Model):
     def primary(self):
         return self.drbd.primary(self.res)
 
+    def secondary(self):
+        return self.drbd.secondary(self.res)
+
     @property
     def is_primary(self):
         info = dbus_to_python(self.drbd.get_role(self.res_name, self.stacked))
