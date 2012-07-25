@@ -164,7 +164,7 @@ def create_service_for_ip(**kwargs):
             # recognition before my fixtures have been loaded.
             pass
         else:
-            if Service.objects.filter(command=cmd, arguments=ip.device.devname).count() == 0:
+            if ip.device is not None and Service.objects.filter(command=cmd, arguments=ip.device.devname).count() == 0:
                 serv = Service(
                     host        = Host.objects.get_current(),
                     volume      = None,
