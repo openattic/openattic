@@ -134,6 +134,10 @@ class Connection(models.Model):
         return self.res_name
 
     @property
+    def port(self):
+        return 7700 + self.id
+
+    @property
     def stacked(self):
         if self.stack_child_set.count() > 0:
             return max([ lowerconn.endpoints_running_here for lowerconn in self.stack_child_set.all() ])
@@ -199,7 +203,10 @@ class Connection(models.Model):
             }
 
     def primary(self):
-        return self.drbd.primary(self.res)
+        return self.drbd.primary(self.res_name) == 0
+
+    def secondary(self):
+        return self.drbd.secondary(self.res_name) == 0
 
     @property
     def is_primary(self):
