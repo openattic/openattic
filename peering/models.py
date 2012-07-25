@@ -17,11 +17,13 @@
 import socket
 
 from urlparse  import urlparse, ParseResult
-from xmlrpclib import ServerProxy
+#from xmlrpclib import ServerProxy
 from django.db import models
 from django.core import exceptions
 
 from rpcd.signals import post_mastersync
+
+from peering.xmlrpctimeout import ServerProxy
 
 class PeerURL(unicode):
     def set_result(self, result):
@@ -41,7 +43,7 @@ class PeerUrlField(models.CharField):
     def validate(self, value, instance):
         if isinstance(value, (ParseResult, PeerURL)):
             value = value.geturl()
-        sp = ServerProxy(value)
+        sp = ServerProxy(value, timeout=0.5)
         try:
             sp.ping()
         except Exception, e:
@@ -99,7 +101,7 @@ class PeerHost(models.Model):
     @property
     def connection(self):
         if self._connection is None:
-            self._connection = ServerProxy(self.base_url, allow_none=True)
+            self._connection = ServerProxy(self.base_url, allow_none=True, timeout=0.5)
         return self._connection
 
     @property
