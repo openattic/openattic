@@ -277,7 +277,7 @@ Ext.oa.Drbd_Panel = Ext.extend(Ext.Panel, {
         viewConfig: { forceFit: true },
         store: new Ext.data.JsonStore({
           id: "drbd_hoststate",
-          fields: ["hostname", "backingdev", "dstate", "role"],
+          fields: ["hostname", "backingdev", "dstate", "role", "connection_id"],
           listeners: {
             add: function(store){
               var parent = iscsiPanel.targets.getSelectionModel();
@@ -310,16 +310,44 @@ Ext.oa.Drbd_Panel = Ext.extend(Ext.Panel, {
   },
   onRender: function(){
     // Hijack the grid's buttons
+    var self = this;
     this.buttons = this.items.items[0].buttons;
     this.items.items[0].buttons = [];
+    // Add our own
+    this.buttons.push({
+      text: "Promote",
+      icon: MEDIA_URL + '/oxygen/16x16/actions/arrow-up-double.png',
+      handler: function(){
+        var sm = self.items.items[1].getSelectionModel();
+        if( sm.hasSelection() ){
+          var sel = sm.selections.items[0];
+          drbd__Connection.promote(sel.data.connection_id, sel.data.hostname, function(prov, resp){
+            self.items.items[0].getStore().reload();
+          });
+        }
+      }
+    }, {
+      text: "Demote",
+      icon: MEDIA_URL + '/oxygen/16x16/actions/arrow-down-double.png',
+      handler: function(){
+        var sm = self.items.items[1].getSelectionModel();
+        if( sm.hasSelection() ){
+          var sel = sm.selections.items[0];
+          drbd__Connection.demote(sel.data.connection_id, sel.data.hostname, function(prov, resp){
+            self.items.items[0].getStore().reload();
+          });
+        }
+      }
+    });
     Ext.oa.Drbd_Panel.superclass.onRender.apply(this, arguments);
-    this.items.items[0].on("cellclick", function(self, rowIndex, colIndex, evt){
-      var record = self.getStore().getAt(rowIndex),
+    this.items.items[0].on("cellclick", function(grid, rowIndex, colIndex, evt){
+      var record = grid.getStore().getAt(rowIndex),
           hostname, hostinfo, i,
           hoststuff = [];
       for( hostname in record.json.role ){
         if( record.json.role.hasOwnProperty(hostname) ){
           hostinfo = {
+            connection_id: record.json.id,
             hostname: hostname,
             dstate: record.json.dstate[hostname],
             role: record.json.role[hostname]
