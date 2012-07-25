@@ -56,8 +56,8 @@ class SystemD(BasePlugin):
         return invoke(["/sbin/drbdadm", "--", "--force", "primary", resource])
 
     @method( in_signature="s", out_signature="i")
-    def secondary(self, path):
-        return invoke(["/sbin/drbdadm", "--", path, "secondary"])
+    def secondary(self, resource):
+        return invoke(["/sbin/drbdadm", "--", "secondary", resource])
 
     @method( in_signature="s", out_signature="i")
     def adjust(self, resource):
