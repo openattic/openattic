@@ -97,6 +97,14 @@ class DrbdConnectionProxy(ProxyModelHandler):
             id = {"id": id}
         return self._merge( ProxyModelHandler.filter(self, id) )[0]
 
+    def primary(self, id):
+        """ Switch the DRBD connection given by `id` to the Primary role on this host. """
+        self.backing_handler(self.user, self.request).primary(id)
+
+    def secondary(self, id):
+        """ Switch the DRBD connection given by `id` to the Secondary role on this host. """
+        self.backing_handler(self.user, self.request).secondary(id)
+
 @proxy_for(DrbdEndpointHandler)
 class DrbdEndpointProxy(ProxyModelHandler):
     model = Endpoint
