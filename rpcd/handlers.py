@@ -15,6 +15,7 @@
 """
 
 import inspect
+import socket
 import new
 
 from django.db import models
@@ -374,6 +375,8 @@ class ProxyHandler(BaseHandler):
                 res = meth(*args)
             except Fault, flt:
                 raise translate_exception(flt)
+            except (socket.timeout, socket.error):
+                continue
             if isinstance(res, (tuple, list)):
                 ret.extend( self._convert_datetimes( list( res ) ) )
             else:
