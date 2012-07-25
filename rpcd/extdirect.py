@@ -25,8 +25,6 @@ from djextdirect.provider import Provider as BaseProvider, getname
 
 from rpcd.handlers import ModelHandler
 
-socket.setdefaulttimeout(0.5)
-
 class MainHandler(object):
     def __init__(self, user, request=None):
         self.user = user

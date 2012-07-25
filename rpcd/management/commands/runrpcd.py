@@ -37,8 +37,6 @@ from django.conf import settings
 from rpcd.models   import APIKey
 from rpcd.handlers import ModelHandler
 
-socket.setdefaulttimeout(0.5)
-
 class SecureXMLRPCServer(HTTPServer, SimpleXMLRPCDispatcher):
     """ Secure XML-RPC server.
 
