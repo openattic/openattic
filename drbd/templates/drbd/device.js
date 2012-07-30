@@ -354,9 +354,8 @@ Ext.oa.Drbd_Panel = Ext.extend(Ext.Panel, {
       }
     });
     Ext.oa.Drbd_Panel.superclass.onRender.apply(this, arguments);
-    this.items.items[0].on("cellclick", function(grid, rowIndex, colIndex, evt){
-      var record = grid.getStore().getAt(rowIndex),
-          hostname, hostinfo, i,
+    var load_host_data = function(record){
+      var hostname, hostinfo, i,
           hoststuff = [];
       for( hostname in record.json.role ){
         if( record.json.role.hasOwnProperty(hostname) ){
@@ -380,11 +379,16 @@ Ext.oa.Drbd_Panel = Ext.extend(Ext.Panel, {
           hoststuff.push(hostinfo);
         }
       }
-      this.items.items[1].getStore().loadData(hoststuff);
+      self.items.items[1].getStore().loadData(hoststuff);
+    };
+    this.items.items[0].on("cellclick", function(grid, rowIndex, colIndex, evt){
+      load_host_data( grid.getStore().getAt(rowIndex) );
     }, this);
     this.items.items[0].getStore().on("load", function(){
-      this.items.items[0].getSelectionModel().clearSelections();
-      this.items.items[1].getStore().removeAll();
+      var sm = self.items.items[0].getSelectionModel();
+      if( sm.hasSelection() ){
+        load_host_data( sm.selections.items[0] );
+      }
     }, this);
   }
 });
