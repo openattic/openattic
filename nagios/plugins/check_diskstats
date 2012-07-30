@@ -20,7 +20,15 @@ import sys
 from time import time, mktime
 from datetime import datetime
 from ConfigParser import ConfigParser
-from pyudev import Context, Device
+
+try:
+    # Uncomment the following line to disable the device UUID check.
+    #raise ImportError
+    from pyudev import Context, Device
+except ImportError:
+    HAVE_UDEV = False
+else:
+    HAVE_UDEV = True
 
 disk = os.path.realpath(sys.argv[-1]).replace("/dev/", "")
 
@@ -41,12 +49,15 @@ with open("/sys/block/%s/stat" % disk, "rb") as fd:
 
 # Sanity-Check the state file.
 
-ctx = Context()
-dev = Device.from_name(ctx, "block", disk)
+if HAVE_UDEV:
+    ctx = Context()
+    dev = Device.from_name(ctx, "block", disk)
 
-try:
-    createstamp = int(mktime((datetime.now() - dev.time_since_initialized).timetuple()))
-except AttributeError:
+    try:
+        createstamp = int(mktime((datetime.now() - dev.time_since_initialized).timetuple()))
+    except AttributeError:
+        createstamp = None
+else:
     createstamp = None
 
 if havestate:
@@ -57,7 +68,7 @@ if havestate:
        not state.has_option("device", "initialized") or createstamp != state.getint("device", "initialized")):
         havestate = False
 
-    if "DM_UUID" in dev.keys() and (
+    if HAVE_UDEV and "DM_UUID" in dev.keys() and (
        not state.has_option("device", "uuid") or dev.get("DM_UUID") != state.get("device", "uuid") ):
         havestate = False
 
@@ -68,7 +79,7 @@ if not havestate:
     if createstamp is not None:
         state.set("device", "initialized", createstamp)
 
-    if "DM_UUID" in dev.keys():
+    if HAVE_UDEV and "DM_UUID" in dev.keys():
         state.set("device", "uuid", dev.get("DM_UUID"))
 
 
