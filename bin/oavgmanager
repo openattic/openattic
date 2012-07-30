@@ -62,6 +62,7 @@ class VgStartCommand(BaseCommand):
 
     def populate_optparser(self, parser):
         parser.add_option("-o", "--hooks-only",  help="Only run hooks, do not actually activate/mount VGs.", default=False, action="store_true")
+        parser.add_option("-f", "--force",       help="Mount even if the host does not seem right.", default=False, action="store_true")
 
     def __call__(self, options, vg=None):
         thishost = Host.objects.get_current()
@@ -69,7 +70,7 @@ class VgStartCommand(BaseCommand):
             volgroups = VolumeGroup.all_objects.filter(Q(host__isnull=True)|Q(host=thishost))
         else:
             volgroup  = VolumeGroup.all_objects.get(name=vg)
-            if volgroup.host is not None and volgroup.host != thishost:
+            if not options.force and volgroup.host is not None and volgroup.host != thishost:
                 print >> sys.stderr, "Volume Group '%s' is active on host '%s', cannot activate it here." % (
                     volgroup.name, volgroup.host.name )
                 return 2
