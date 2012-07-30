@@ -65,7 +65,7 @@ case "$1" in
 		exit 0
 		;;
 	
-	monitor)
+	monitor|status)
 		if [ -z "$VOLGRP" ]; then
 			/usr/sbin/oavgmanager status -v | tee /var/log/openattic_vgmanager
 			RETVAL=$?
