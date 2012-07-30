@@ -20,10 +20,21 @@ import sys
 from time import time, mktime
 from datetime import datetime
 from ConfigParser import ConfigParser
-from pyudev import Context, Device
 
+try:
+    # Uncomment the following line to disable the device UUID check.
+    #raise ImportError
+    from pyudev import Context, Device
+except ImportError:
+    HAVE_UDEV = False
+else:
+    HAVE_UDEV = True
+
+
+# Resolve the real device path, dereferencing symlinks as necessary.
 disk = os.path.realpath(sys.argv[-1]).replace("/dev/", "")
 
+# Read the state file (if possible).
 state = ConfigParser()
 havestate = bool( state.read("/var/lib/nagios3/diskstats.%s" % disk) ) and state.has_section("state")
 
@@ -39,14 +50,19 @@ with open("/sys/block/%s/stat" % disk, "rb") as fd:
     ]))
     currstate["timestamp"] = time()
 
-# Sanity-Check the state file.
 
-ctx = Context()
-dev = Device.from_name(ctx, "block", disk)
+# Sanity-Check the state file. We expect the Device UUID and creation timestamp to
+# match those from the statfile (if possible).
 
-try:
-    createstamp = int(mktime((datetime.now() - dev.time_since_initialized).timetuple()))
-except AttributeError:
+if HAVE_UDEV:
+    ctx = Context()
+    dev = Device.from_name(ctx, "block", disk)
+
+    try:
+        createstamp = int(mktime((datetime.now() - dev.time_since_initialized).timetuple()))
+    except AttributeError:
+        createstamp = None
+else:
     createstamp = None
 
 if havestate:
@@ -57,10 +73,13 @@ if havestate:
        not state.has_option("device", "initialized") or createstamp != state.getint("device", "initialized")):
         havestate = False
 
-    if "DM_UUID" in dev.keys() and (
+    if HAVE_UDEV and "DM_UUID" in dev.keys() and (
        not state.has_option("device", "uuid") or dev.get("DM_UUID") != state.get("device", "uuid") ):
         havestate = False
 
+
+# If something's off about the state file (non-existant, empty, doesn't match), populate it with basic data.
+# (Note this can't be an else: statement because we need to re-check.)
 if not havestate:
     if not state.has_section("device"):
         state.add_section("device")
@@ -68,7 +87,7 @@ if not havestate:
     if createstamp is not None:
         state.set("device", "initialized", createstamp)
 
-    if "DM_UUID" in dev.keys():
+    if HAVE_UDEV and "DM_UUID" in dev.keys():
         state.set("device", "uuid", dev.get("DM_UUID"))
 
 
@@ -182,14 +201,17 @@ if havestate:
         "wr_avg_size":  wr_avg_size,
         "tot_avg_wait": tot_avg_wait / 1000.,
         }
+
 else:
     print "Need state info, please wait until Nagios checks again."
     exit = 3
     if not state.has_section("state"):
         state.add_section("state")
 
+# Copy all values from currstate to the statfile and save it.
 for key in currstate:
     state.set("state", key, currstate[key])
+
 state.write( open( "/var/lib/nagios3/diskstats.%s" % disk, "wb" ) )
 
 sys.exit(exit)
