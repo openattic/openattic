@@ -321,6 +321,15 @@ Ext.oa.Drbd_Panel = Ext.extend(Ext.Panel, {
         var sm = self.items.items[1].getSelectionModel();
         if( sm.hasSelection() ){
           var sel = sm.selections.items[0];
+          var store = self.items.items[1].getStore();
+          for( var i = 0; i < store.getCount(); i++ ){
+            var record = store.getAt(i);
+            if( record.data.role === "Primary" ){
+              Ext.Msg.alert(gettext('Promote'), interpolate(
+                gettext('%s is primary already, cannot promote.'), [record.data.hostname] ));
+              return;
+            }
+          }
           drbd__Connection.promote(sel.data.connection_id, sel.data.hostname, function(prov, resp){
             self.items.items[0].getStore().reload();
           });
@@ -333,6 +342,11 @@ Ext.oa.Drbd_Panel = Ext.extend(Ext.Panel, {
         var sm = self.items.items[1].getSelectionModel();
         if( sm.hasSelection() ){
           var sel = sm.selections.items[0];
+          if( sel.data.role !== "Primary" ){
+            Ext.Msg.alert(gettext('Demote'), interpolate(
+              gettext('%s is not primary, cannot demote.'), [sel.data.hostname] ));
+            return;
+          }
           drbd__Connection.demote(sel.data.connection_id, sel.data.hostname, function(prov, resp){
             self.items.items[0].getStore().reload();
           });
