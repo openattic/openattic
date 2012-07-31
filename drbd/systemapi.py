@@ -56,11 +56,11 @@ class SystemD(BasePlugin):
 
     @method( in_signature="sb", out_signature="i")
     def primary_overwrite(self, resource, stacked):
-        return invoke(stackcmd(resource, stacked, "primary", ["--overwrite-data-of-peer"])
+        return invoke(stackcmd(resource, stacked, "primary", ["--overwrite-data-of-peer"]))
 
     @method( in_signature="sb", out_signature="i")
     def primary_force(self, resource, stacked):
-        return invoke(stackcmd(resource, stacked, "primary", ["--force"])
+        return invoke(stackcmd(resource, stacked, "primary", ["--force"]))
 
     @method( in_signature="sb", out_signature="i")
     def secondary(self, resource, stacked):
