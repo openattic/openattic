@@ -52,15 +52,15 @@ class SystemD(BasePlugin):
 
     @method( in_signature="sb", out_signature="i")
     def primary(self, resource, stacked):
-        return invoke(["/sbin/drbdadm", "--", "primary", resource])
+        return invoke(stackcmd(resource, stacked, "primary"))
 
     @method( in_signature="sb", out_signature="i")
     def primary_overwrite(self, resource, stacked):
-        return invoke(["/sbin/drbdadm", "--", "--overwrite-data-of-peer", "primary", resource])
+        return invoke(stackcmd(resource, stacked, "primary", ["--overwrite-data-of-peer"])
 
     @method( in_signature="sb", out_signature="i")
     def primary_force(self, resource, stacked):
-        return invoke(["/sbin/drbdadm", "--", "--force", "primary", resource])
+        return invoke(stackcmd(resource, stacked, "primary", ["--force"])
 
     @method( in_signature="sb", out_signature="i")
     def secondary(self, resource, stacked):
