@@ -23,6 +23,9 @@ from systemd import invoke, logged, BasePlugin, method
 from ifconfig.models import Host
 from drbd.models   import Connection, Endpoint
 
+def stackcmd(resource, stacked, command):
+    return ["/sbin/drbdadm"] + (stacked and ["-S"] or []) + [command, resource]
+
 @logged
 class SystemD(BasePlugin):
     dbus_path = "/drbd"
@@ -85,17 +88,17 @@ class SystemD(BasePlugin):
 
     @method( in_signature="sb", out_signature="a{ss}")
     def get_dstate(self, resource, stacked):
-        ret, out, err = invoke(["/sbin/drbdadm"] + (stacked and ["-S"] or []) + ["dstate", resource], return_out_err=True, log=False)
+        ret, out, err = invoke(stackcmd(resource, stacked, "dstate"), return_out_err=True, log=False)
         return dict(zip(("self", "peer"), out.strip().split("/")))
 
     @method( in_signature="sb", out_signature="s")
     def get_cstate(self, resource, stacked):
-        ret, out, err = invoke(["/sbin/drbdadm"] + (stacked and ["-S"] or []) + ["cstate", resource], return_out_err=True, log=False)
+        ret, out, err = invoke(stackcmd(resource, stacked, "cstate"), return_out_err=True, log=False)
         return out.strip()
 
     @method( in_signature="sb", out_signature="a{ss}")
     def get_role(self, resource, stacked):
-        ret, out, err = invoke(["/sbin/drbdadm"] + (stacked and ["-S"] or []) + ["role", resource], return_out_err=True, log=False)
+        ret, out, err = invoke(stackcmd(resource, stacked, "role"), return_out_err=True, log=False)
         return dict(zip(("self", "peer"), out.strip().split("/")))
 
     @method( in_signature="", out_signature="")
