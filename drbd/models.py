@@ -258,12 +258,12 @@ class Endpoint(LVChainedModule):
 
     def install(self):
         self.connection.drbd.conf_write(self.id)
-        self.connection.drbd.createmd(self.res)
-        self.connection.drbd.up(self.res)
+        self.connection.drbd.createmd(self.res, self.stacked)
+        self.connection.drbd.up(self.res, self.stacked)
 
         if self.init_master:
-            self.connection.drbd.primary_overwrite(self.res)
+            self.connection.drbd.primary_overwrite(self.res, self.stacked)
 
     def uninstall(self):
-        self.connection.drbd.down(self.res)
+        self.connection.drbd.down(self.res, self.stacked)
         self.connection.drbd.conf_delete(self.id)
