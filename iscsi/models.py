@@ -97,6 +97,10 @@ class Target(models.Model):
             self._iscsi.writeconf()
         return ret
 
+    def delete(self, *args, **kwargs):
+        for lun in self.lun_set.all():
+            lun.delete()
+        return models.Model.delete(self, *args, **kwargs)
 
 class Lun(models.Model):
     target      = models.ForeignKey(Target)

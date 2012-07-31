@@ -65,7 +65,7 @@ case "$1" in
 		exit 0
 		;;
 	
-	monitor)
+	monitor|status)
 		if [ -z "$VOLGRP" ]; then
 			/usr/sbin/oavgmanager status -v | tee /var/log/openattic_vgmanager
 			RETVAL=$?
@@ -80,12 +80,16 @@ case "$1" in
 		fi
 		;;
 	
-	*)
+	start|stop)
+		OPTS=""
+		if [ "$1" = "start" ]; then
+			OPTS="-f"
+		fi
 		if [ -z "$VOLGRP" ]; then
-			/usr/sbin/oavgmanager "$1" | tee /var/log/openattic_vgmanager
+			/usr/sbin/oavgmanager $OPTS "$1" | tee /var/log/openattic_vgmanager
 			RETVAL=$?
 		else
-			/usr/sbin/oavgmanager "$1" "$VOLGRP" | tee /var/log/openattic_vgmanager
+			/usr/sbin/oavgmanager $OPTS "$1" "$VOLGRP" | tee /var/log/openattic_vgmanager
 			RETVAL=$?
 		fi
 		if [ "$RETVAL" = 0 ]; then

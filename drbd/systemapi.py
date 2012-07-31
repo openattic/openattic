@@ -23,79 +23,86 @@ from systemd import invoke, logged, BasePlugin, method
 from ifconfig.models import Host
 from drbd.models   import Connection, Endpoint
 
+def stackcmd(resource, stacked, command, options=None):
+    cmd = ["/sbin/drbdadm"]
+    if stacked: cmd.append("-S")
+    if options: cmd.extend(["--"] + options)
+    cmd.extend([command, resource])
+    return cmd
+
 @logged
 class SystemD(BasePlugin):
     dbus_path = "/drbd"
 
-    @method( in_signature="s", out_signature="i")
-    def createmd(self, resource):
-        return invoke(["/sbin/drbdadm", "create-md", resource], stdin="yes\n")
+    @method( in_signature="sb", out_signature="i")
+    def createmd(self, resource, stacked):
+        return invoke(stackcmd(resource, stacked, "create-md"), stdin="yes\n")
 
-    @method( in_signature="s", out_signature="i")
-    def attach(self, resource):
-        return invoke(["/sbin/drbdadm", "attach", resource])
+    @method( in_signature="sb", out_signature="i")
+    def attach(self, resource, stacked):
+        return invoke(stackcmd(resource, stacked, "attach"))
 
-    @method( in_signature="s", out_signature="i")
-    def connect(self, resource):
-        return invoke(["/sbin/drbdadm", "connect", resource])
+    @method( in_signature="sb", out_signature="i")
+    def connect(self, resource, stacked):
+        return invoke(stackcmd(resource, stacked, "connect"))
 
-    @method( in_signature="s", out_signature="i")
-    def up(self, resource):
-        return invoke(["/sbin/drbdadm", "up", resource])
+    @method( in_signature="sb", out_signature="i")
+    def up(self, resource, stacked):
+        return invoke(stackcmd(resource, stacked, "up"))
 
-    @method( in_signature="s", out_signature="i")
-    def primary(self, resource):
-        return invoke(["/sbin/drbdadm", "--", "primary", resource])
+    @method( in_signature="sb", out_signature="i")
+    def primary(self, resource, stacked):
+        return invoke(stackcmd(resource, stacked, "primary"))
 
-    @method( in_signature="s", out_signature="i")
-    def primary_overwrite(self, resource):
-        return invoke(["/sbin/drbdadm", "--", "--overwrite-data-of-peer", "primary", resource])
+    @method( in_signature="sb", out_signature="i")
+    def primary_overwrite(self, resource, stacked):
+        return invoke(stackcmd(resource, stacked, "primary", ["--overwrite-data-of-peer"]))
 
-    @method( in_signature="s", out_signature="i")
-    def primary_force(self, resource):
-        return invoke(["/sbin/drbdadm", "--", "--force", "primary", resource])
+    @method( in_signature="sb", out_signature="i")
+    def primary_force(self, resource, stacked):
+        return invoke(stackcmd(resource, stacked, "primary", ["--force"]))
 
-    @method( in_signature="s", out_signature="i")
-    def secondary(self, resource):
-        return invoke(["/sbin/drbdadm", "--", "secondary", resource])
+    @method( in_signature="sb", out_signature="i")
+    def secondary(self, resource, stacked):
+        return invoke(stackcmd(resource, stacked, "secondary"))
 
-    @method( in_signature="s", out_signature="i")
-    def adjust(self, resource):
-        return invoke(["/sbin/drbdadm", "adjust", resource])
+    @method( in_signature="sb", out_signature="i")
+    def adjust(self, resource, stacked):
+        return invoke(stackcmd(resource, stacked, "adjust"))
 
-    @method( in_signature="s", out_signature="i")
-    def disconnect(self, resource):
-        return invoke(["/sbin/drbdadm", "disconnect", resource])
+    @method( in_signature="sb", out_signature="i")
+    def disconnect(self, resource, stacked):
+        return invoke(stackcmd(resource, stacked, "disconnect"))
 
-    @method( in_signature="s", out_signature="i")
-    def detach(self, resource):
-        return invoke(["/sbin/drbdadm", "detach", resource])
+    @method( in_signature="sb", out_signature="i")
+    def detach(self, resource, stacked):
+        return invoke(stackcmd(resource, stacked, "detach"))
 
-    @method( in_signature="s", out_signature="i")
-    def down(self, resource):
-        return invoke(["/sbin/drbdadm", "down", resource])
+    @method( in_signature="sb", out_signature="i")
+    def down(self, resource, stacked):
+        return invoke(stackcmd(resource, stacked, "down"))
 
-    @method( in_signature="s", out_signature="i")
-    def pausesync(self, resource):
-        return invoke(["/sbin/drbdadm", "pause-sync", resource])
+    @method( in_signature="sb", out_signature="i")
+    def pausesync(self, resource, stacked):
+        return invoke(stackcmd(resource, stacked, "pause-sync"))
 
-    @method( in_signature="s", out_signature="i")
-    def resumesync(self, resource):
-        return invoke(["/sbin/drbdadm", "resume-sync", resource])
+    @method( in_signature="sb", out_signature="i")
+    def resumesync(self, resource, stacked):
+        return invoke(stackcmd(resource, stacked, "resume-sync"))
 
     @method( in_signature="sb", out_signature="a{ss}")
     def get_dstate(self, resource, stacked):
-        ret, out, err = invoke(["/sbin/drbdadm"] + (stacked and ["-S"] or []) + ["dstate", resource], return_out_err=True, log=False)
+        ret, out, err = invoke(stackcmd(resource, stacked, "dstate"), return_out_err=True, log=False)
         return dict(zip(("self", "peer"), out.strip().split("/")))
 
     @method( in_signature="sb", out_signature="s")
     def get_cstate(self, resource, stacked):
-        ret, out, err = invoke(["/sbin/drbdadm"] + (stacked and ["-S"] or []) + ["cstate", resource], return_out_err=True, log=False)
+        ret, out, err = invoke(stackcmd(resource, stacked, "cstate"), return_out_err=True, log=False)
         return out.strip()
 
     @method( in_signature="sb", out_signature="a{ss}")
     def get_role(self, resource, stacked):
-        ret, out, err = invoke(["/sbin/drbdadm"] + (stacked and ["-S"] or []) + ["role", resource], return_out_err=True, log=False)
+        ret, out, err = invoke(stackcmd(resource, stacked, "role"), return_out_err=True, log=False)
         return dict(zip(("self", "peer"), out.strip().split("/")))
 
     @method( in_signature="", out_signature="")
