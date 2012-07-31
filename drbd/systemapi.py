@@ -26,7 +26,7 @@ from drbd.models   import Connection, Endpoint
 def stackcmd(resource, stacked, command, options=None):
     cmd = ["/sbin/drbdadm"]
     if stacked: cmd.append("-S")
-    if options: cmd.extend(["--" + options)
+    if options: cmd.extend(["--"] + options)
     cmd.extend([command, resource])
     return cmd
 
