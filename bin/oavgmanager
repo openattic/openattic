@@ -170,8 +170,15 @@ class VgStatusCommand(BaseCommand):
 
         if vg is None:
             volgroups = VolumeGroup.all_objects.filter(Q(host__isnull=True)|Q(host=self.thishost))
+            if not volgroups:
+                print "No volume groups are running here."
+                return 3
+
         else:
             volgroups = VolumeGroup.all_objects.filter(name=vg)
+            if not volgroups:
+                print "No such volume group exists."
+                return 1
 
         return max([ self.vgstate(vg) for vg in volgroups ])
 

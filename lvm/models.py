@@ -510,8 +510,10 @@ class LogicalVolume(models.Model):
                 if modified:
                     ret = models.Model.save(self, *args, **kwargs)
 
-        elif self.megs != self.lvm_megs:
-            self.resize()
+        else:
+            old_self = LogicalVolume.objects.get(id=self.id)
+            if old_self.megs != self.megs:
+                self.resize()
 
         self._enqueue_job()
 
