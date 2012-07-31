@@ -23,8 +23,12 @@ from systemd import invoke, logged, BasePlugin, method
 from ifconfig.models import Host
 from drbd.models   import Connection, Endpoint
 
-def stackcmd(resource, stacked, command):
-    return ["/sbin/drbdadm"] + (stacked and ["-S"] or []) + [command, resource]
+def stackcmd(resource, stacked, command, options=None):
+    cmd = ["/sbin/drbdadm"]
+    if stacked: cmd.append("-S")
+    if options: cmd.extend(["--" + options)
+    cmd.extend([command, resource])
+    return cmd
 
 @logged
 class SystemD(BasePlugin):
