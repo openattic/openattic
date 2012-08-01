@@ -84,59 +84,60 @@ class NagiosState(object):
 
         with open( self.statfile, "rb" ) as nag:
             while True:
-                char = nag.read(1)
-                if not char:
+                buf = nag.read(4096)
+                if not buf:
                     break
 
-                if state == ST_BEGINSECT:
-                    if char == '{':
-                        raise ValueError("{ but no section name?")
-                    elif char in (' ', '\t', '\r', '\n'):
-                        pass
-                    elif char == '#':
-                        state = ST_COMMENT
-                    else:
-                        currsect += char
-                        state = ST_SECTNAME
+                for char in buf:
+                    if state == ST_BEGINSECT:
+                        if char == '{':
+                            raise ValueError("{ but no section name?")
+                        elif char in (' ', '\t', '\r', '\n'):
+                            pass
+                        elif char == '#':
+                            state = ST_COMMENT
+                        else:
+                            currsect += char
+                            state = ST_SECTNAME
 
-                elif state == ST_SECTNAME:
-                    if char == '{':
-                        state = ST_BEGINVALUE
-                        if currsect not in result:
-                            result[currsect] = []
-                    elif char == ' ':
-                        pass
-                    else:
-                        currsect += char
+                    elif state == ST_SECTNAME:
+                        if char == '{':
+                            state = ST_BEGINVALUE
+                            if currsect not in result:
+                                result[currsect] = []
+                        elif char == ' ':
+                            pass
+                        else:
+                            currsect += char
 
-                elif state == ST_BEGINVALUE:
-                    if char in (' ', '\t', '\r', '\n'):
-                        pass
-                    elif char == '=':
-                        state = ST_VALUE
-                    elif char == '}':
-                        state = ST_BEGINSECT
-                        result[currsect].append(curresult)
-                        if currsect == "servicestatus":
-                            self._servicemap[curresult["service_description"]] = curresult
-                        curresult = {}
-                        currsect = ''
-                    else:
-                        currname += char
+                    elif state == ST_BEGINVALUE:
+                        if char in (' ', '\t', '\r', '\n'):
+                            pass
+                        elif char == '=':
+                            state = ST_VALUE
+                        elif char == '}':
+                            state = ST_BEGINSECT
+                            result[currsect].append(curresult)
+                            if currsect == "servicestatus":
+                                self._servicemap[curresult["service_description"]] = curresult
+                            curresult = {}
+                            currsect = ''
+                        else:
+                            currname += char
 
-                elif state == ST_VALUE:
-                    if char == '\r':
-                        pass
-                    elif char == '\n':
-                        state = ST_BEGINVALUE
-                        curresult[currname] = currvalue
-                        currname  = ''
-                        currvalue = ''
-                    else:
-                        currvalue += char
+                    elif state == ST_VALUE:
+                        if char == '\r':
+                            pass
+                        elif char == '\n':
+                            state = ST_BEGINVALUE
+                            curresult[currname] = currvalue
+                            currname  = ''
+                            currvalue = ''
+                        else:
+                            currvalue += char
 
-                elif state == ST_COMMENT:
-                    if char == '\n':
-                        state = ST_BEGINSECT
+                    elif state == ST_COMMENT:
+                        if char == '\n':
+                            state = ST_BEGINSECT
 
         return result
