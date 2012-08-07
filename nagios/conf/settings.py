@@ -31,6 +31,7 @@ CPUTIME_DESCRIPTION      = getattr( settings, "NAGIOS_CPUTIME_DESCRIPTION",    "
 CPUTIME_CHECK_CMD        = getattr( settings, "NAGIOS_CPUTIME_CHECK_CMD",      "check_cputime" )
 
 RRD_PATH                 = getattr( settings, "NAGIOS_RRD_PATH",          "/var/lib/pnp4nagios/perfdata/%(host)s/%(serv)s.rrd" )
+CMD_PATH                 = getattr( settings, "NAGIOS_CMD_PATH",          "/var/lib/nagios3/rw/nagios.cmd" )
 
 GRAPH_GRCOLOR            = "222222"
 GRAPH_BGCOLOR            = "1F2730"

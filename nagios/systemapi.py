@@ -16,12 +16,15 @@
 
 import re
 
+from time import time
+
 from django.template.loader import render_to_string
 from django.contrib.auth.models import User
 
 from ifconfig.models import Host
 from systemd       import invoke, logged, LockingPlugin, method, create_job
 from nagios.models import Command, Service
+from nagios.conf   import settings as nagios_settings
 
 @logged
 class SystemD(LockingPlugin):
@@ -67,6 +70,21 @@ class SystemD(LockingPlugin):
     @method(in_signature="", out_signature="i")
     def check_conf(self):
         return invoke(["nagios3", "--verify-config", "/etc/nagios3/nagios.cfg"])
+
+    @method(in_signature="s", out_signature="")
+    def schedule_host(self, hostname):
+        with open(nagios_settings.CMD_PATH, "wb") as cmd:
+            cmd.write("[%lu] SCHEDULE_FORCED_HOST_CHECK;%s;%d\n" % (time(), hostname, time()))
+
+    @method(in_signature="s", out_signature="")
+    def schedule_host_services(self, hostname):
+        with open(nagios_settings.CMD_PATH, "wb") as cmd:
+            cmd.write("[%lu] SCHEDULE_FORCED_HOST_SVC_CHECKS;%s;%d\n" % (time(), hostname, time()))
+
+    @method(in_signature="ss", out_signature="")
+    def schedule_service(self, hostname, servicedesc):
+        with open(nagios_settings.CMD_PATH, "wb") as cmd:
+            cmd.write("[%lu] SCHEDULE_FORCED_SVC_CHECK;%s;%s;%d\n" % (time(), hostname, servicedesc, time()))
 
     @method(in_signature="ssis", out_signature="ii")
     def iptables_install_rules(self, device, socketproto, portno, protocolname):
