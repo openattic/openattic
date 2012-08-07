@@ -34,6 +34,7 @@ class SystemD(LockingPlugin):
             fd = open( "/etc/nagios3/conf.d/openattic.cfg", "wb" )
             try:
                 fd.write( render_to_string( "nagios/services.cfg", {
+                    "Host":     Host.objects.get_current(),
                     "Commands": Command.objects.all(),
                     "Services": Service.objects.filter(command__query_only=False)
                     } ) )
