@@ -17,5 +17,5 @@
 from django.conf.urls.defaults import patterns
 
 urlpatterns = patterns('',
-    ( r'(?P<service_id>\d+)/(?P<srcidx>\d+)\.png', 'nagios.views.graph' ),
+    ( r'(?P<service_id>\d+)/(?P<srcidx>\d+)\.png', 'nagios.views.proxy_graph' ),
     )

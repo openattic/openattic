@@ -475,7 +475,7 @@ def proxy_graph(request, service_id, srcidx):
         host = serv.host
     if host is None:
         raise Http404("Service does not appear to be active on any host")
-    if host == Host.objects.get_current():
+    if serv.active or serv.hostname != "localhost":
         # Call local view
         return graph(request, service_id, srcidx)
     peer = PeerHost.objects.get(name=host.name)
