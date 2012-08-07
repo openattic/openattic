@@ -122,7 +122,9 @@ class NagiosState(object):
                                 # Fix for braindead check plugins that format the perfdata with their locale.
                                 # this is ugly as hell, but PNP does it the same way.
                                 curresult["performance_data"] = curresult["performance_data"].replace(",", ".")
-                                self._servicemap[curresult["service_description"]] = curresult
+                                if curresult["host_name"] not in self._servicemap:
+                                    self._servicemap[curresult["host_name"]] = {}
+                                self._servicemap[curresult["host_name"]][curresult["service_description"]] = curresult
                             curresult = {}
                             currsect = ''
                         else:

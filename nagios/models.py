@@ -85,8 +85,8 @@ class Service(models.Model):
 
     @property
     def state(self):
-        if self.description in Service.nagstate.servicemap:
-            return Service.nagstate.servicemap[self.description]
+        if self.hostname in Service.nagstate.servicemap and self.description in Service.nagstate.servicemap[self.hostname]:
+            return Service.nagstate.servicemap[self.hostname][self.description]
         raise KeyError("The status for this service could not be found in Nagios's status cache.")
 
     @property
