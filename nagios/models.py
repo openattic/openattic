@@ -54,9 +54,13 @@ class ServiceManager(HostDependentManager):
         """ Return services that are either associated with this host directly,
             or with a volume in a group associated with this host.
         """
+        return self.services_for_host(Host.objects.get_current())
+
+    def services_for_host(self, host):
+        """ Return services configured on a specific host. """
         return models.Manager.get_query_set(self).filter(
-            Q(host=Host.objects.get_current(), volume=None) |
-            Q(host=None, volume__in=LogicalVolume.objects.filter(vg__host=Host.objects.get_current())))
+            Q(host=host, volume=None) |
+            Q(host=None, volume__in=LogicalVolume.all_objects.filter(vg__host=host)))
 
 
 class Service(models.Model):
@@ -81,8 +85,8 @@ class Service(models.Model):
 
     @property
     def state(self):
-        if self.description in Service.nagstate.servicemap:
-            return Service.nagstate.servicemap[self.description]
+        if self.hostname in Service.nagstate.servicemap and self.description in Service.nagstate.servicemap[self.hostname]:
+            return Service.nagstate.servicemap[self.hostname][self.description]
         raise KeyError("The status for this service could not be found in Nagios's status cache.")
 
     @property
@@ -92,6 +96,18 @@ class Service(models.Model):
 
     def __unicode__(self):
         return self.description
+
+    @property
+    def active(self):
+        """ Return True if the service is active on this host. """
+        return (self.host or self.volume.vg.host) == Host.objects.get_current()
+
+    @property
+    def hostname(self):
+        """ Return the host name under which this service is configured in the Nagios config. """
+        if self.command.query_only:
+            return "localhost"
+        return (self.host or self.volume.vg.host).name
 
 
 def create_service_for_lv(**kwargs):
