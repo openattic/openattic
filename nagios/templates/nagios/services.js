@@ -345,7 +345,17 @@ Ext.oa.Nagios__Service_Panel = Ext.extend(Ext.Panel, {
           fields: ['id', 'description', {
             name: "volumename",    mapping: "volume", convert: function(val, row){ if(val){ return val.name; }}
           }, {
-            name: "hostname",      mapping: "state",  convert: function(val, row){ if(val){ return val.host_name; }}
+            name: "hostname",
+            mapping: "state",
+            convert: function(val, row){
+              if(val && val.host_name !== "localhost"){
+                return val.host_name;
+              }
+              else if(row.host){
+                return row.host.name;
+              }
+              return "";
+            }
           }, {
             name: "plugin_output", mapping: "state",  convert: function(val, row){ if(val){ return val.plugin_output; }}
           }, {
