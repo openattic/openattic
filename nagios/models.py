@@ -30,12 +30,14 @@ from ifconfig.models import Host, IPAddress, HostDependentManager
 from nagios.conf import settings as nagios_settings
 from nagios.readstatus import NagiosState
 
+
 class Command(models.Model):
     name        = models.CharField(max_length=250, unique=True)
     query_only  = models.BooleanField(default=False, help_text=_("Check this if openATTIC should not configure services with this command, only query those that exist."))
 
     def __unicode__(self):
         return self.name
+
 
 class Graph(models.Model):
     command     = models.ForeignKey(Command)
@@ -90,6 +92,7 @@ class Service(models.Model):
 
     def __unicode__(self):
         return self.description
+
 
 def create_service_for_lv(**kwargs):
     lv = kwargs["instance"]
@@ -176,6 +179,7 @@ def create_service_for_ip(**kwargs):
 
     if "OACONFIG" not in os.environ:
         Service.write_conf()
+
 
 def delete_service_for_ip(**kwargs):
     ip = kwargs["instance"]
