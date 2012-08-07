@@ -70,7 +70,7 @@ class ServiceManager(HostDependentManager):
         return models.Manager.get_query_set(self).filter(
             Q(host=Host.objects.get_current(), volume=None) |
             Q(host=None, volume__in=LogicalVolume.objects.filter(vg__host=Host.objects.get_current())) |
-            Q(command__query_only=False)))
+            Q(command__query_only=False))
 
 
 class Service(models.Model):
