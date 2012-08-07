@@ -62,16 +62,6 @@ class ServiceManager(HostDependentManager):
             Q(host=host, volume=None) |
             Q(host=None, volume__in=LogicalVolume.all_objects.filter(vg__host=host)))
 
-    def services_with_foreign(self):
-        """ Return all my services, and those from other hosts that are configured by us.
-
-            The latter are mirrored here, so we have a replica of their data/RRDs.
-        """
-        return models.Manager.get_query_set(self).filter(
-            Q(host=Host.objects.get_current(), volume=None) |
-            Q(host=None, volume__in=LogicalVolume.objects.filter(vg__host=Host.objects.get_current())) |
-            Q(command__query_only=False))
-
 
 class Service(models.Model):
     host        = models.ForeignKey(Host, blank=True, null=True)
