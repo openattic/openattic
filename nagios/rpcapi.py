@@ -31,6 +31,9 @@ class ServiceHandler(ModelHandler):
     model = Service
     order = ("description",)
 
+    def _get_model_manager(self):
+        return self.model.all_objects
+
     def write_conf(self):
         """ Update the Nagios configuration and restart Nagios. """
         Service.write_conf()
@@ -55,6 +58,10 @@ class ServiceHandler(ModelHandler):
 
         return data
 
+    def all(self):
+        return [self._getobj(obj) for obj in self.model.objects.services_with_foreign()]
+
+
 @proxy_for(ServiceHandler)
 class ServiceProxy(ProxyModelHandler):
     model = Service
@@ -72,4 +79,4 @@ class ServiceProxy(ProxyModelHandler):
         return PeerHost.objects.get(name=host.name)
 
 
-RPCD_HANDLERS = [CommandHandler, ServiceProxy, GraphHandler]
+RPCD_HANDLERS = [CommandHandler, ServiceHandler, GraphHandler]
