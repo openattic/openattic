@@ -139,7 +139,7 @@ def graph(request, service_id, srcidx):
         If the image should be rendered upon a background image, the image's path needs to be
         configured in the Nagios module's settings.
     """
-    serv  = get_object_or_404(Service, pk=int(service_id))
+    serv  = Service.all_objects.get(id=service_id)
 
     srcidx = int(srcidx)
     try:
