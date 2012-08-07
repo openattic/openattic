@@ -54,9 +54,13 @@ class ServiceManager(HostDependentManager):
         """ Return services that are either associated with this host directly,
             or with a volume in a group associated with this host.
         """
+        return self.services_for_host(Host.objects.get_current())
+
+    def services_for_host(self, host):
+        """ Return services configured on a specific host. """
         return models.Manager.get_query_set(self).filter(
-            Q(host=Host.objects.get_current(), volume=None) |
-            Q(host=None, volume__in=LogicalVolume.objects.filter(vg__host=Host.objects.get_current())))
+            Q(host=host, volume=None) |
+            Q(host=None, volume__in=LogicalVolume.all_objects.filter(vg__host=host)))
 
 
 class Service(models.Model):
