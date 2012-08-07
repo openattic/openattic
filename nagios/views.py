@@ -155,7 +155,10 @@ def graph(request, service_id, srcidx):
     if not perfdata:
         raise Http404("Performance data not available")
 
-    rrdpath = nagios_settings.RRD_PATH % serv.description.replace(' ', '_').encode("UTF-8")
+    rrdpath = nagios_settings.RRD_PATH % {
+        'host': (serv.host or serv.volume.vg.host).name,
+        'serv': serv.description.replace(' ', '_').encode("UTF-8")
+        }
     if not exists(rrdpath):
         raise Http404("RRD file not found")
 

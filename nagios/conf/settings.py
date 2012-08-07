@@ -30,7 +30,7 @@ TRAFFIC_CHECK_CMD        = getattr( settings, "NAGIOS_TRAFFIC_CHECK_CMD",      "
 CPUTIME_DESCRIPTION      = getattr( settings, "NAGIOS_CPUTIME_DESCRIPTION",    "CPU Time for CPU %d" )
 CPUTIME_CHECK_CMD        = getattr( settings, "NAGIOS_CPUTIME_CHECK_CMD",      "check_cputime" )
 
-RRD_PATH                 = getattr( settings, "NAGIOS_RRD_PATH",          "/var/lib/pnp4nagios/perfdata/localhost/%s.rrd" )
+RRD_PATH                 = getattr( settings, "NAGIOS_RRD_PATH",          "/var/lib/pnp4nagios/perfdata/%(host)s/%(serv)s.rrd" )
 
 GRAPH_GRCOLOR            = "222222"
 GRAPH_BGCOLOR            = "1F2730"
