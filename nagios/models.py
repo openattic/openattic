@@ -93,6 +93,18 @@ class Service(models.Model):
     def __unicode__(self):
         return self.description
 
+    @property
+    def active(self):
+        """ Return True if the service is active on this host. """
+        return (self.host or self.volume.vg.host) == Host.objects.get_current()
+
+    @property
+    def hostname(self):
+        """ Return the host name under which this service is configured in the Nagios config. """
+        if self.command.query_only:
+            return "localhost"
+        return (self.host or self.volume.vg.host).name
+
 
 def create_service_for_lv(**kwargs):
     lv = kwargs["instance"]
