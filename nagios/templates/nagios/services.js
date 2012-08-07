@@ -351,9 +351,23 @@ Ext.oa.Nagios__Service_Panel = Ext.extend(Ext.Panel, {
           }, {
             name: "current_state", mapping: "state",  convert: function(val, row){ if(val){ return val.current_state; }}
           }, {
-            name: "last_check",    mapping: "state",  convert: function(val, row){ if(val){ return val.last_check; }}
+            name: "last_check",
+            mapping: "state",
+            convert: function(val, row){
+              if(val && val.last_check){
+                return val.last_check;
+              }
+              return "unknown";
+            }
           }, {
-            name: "next_check",    mapping: "state",  convert: function(val, row){ if(val){ return val.next_check; }}
+            name: "next_check",
+            mapping: "state",
+            convert: function(val, row){
+              if(val && val.next_check){
+                return val.next_check;
+              }
+              return "unknown";
+            }
           }],
           directFn: nagios__Service.all
         },
