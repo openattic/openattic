@@ -185,12 +185,12 @@ class Source(object):
 
             if self.warn and self.crit:
                 if not invert:
-                    self.area(self.varlimit(varname, "ok",         0, self.warn), "00AA00", gradient_base),
-                    self.area(self.varlimit(varname, "w",  self.warn, self.crit), "AAAA00", gradient_base),
+                    self.area(self.varlimit(varname, "ok",         0, self.warn), "00AA00", gradient_base)
+                    self.area(self.varlimit(varname, "w",  self.warn, self.crit), "AAAA00", gradient_base)
                     self.area(self.varlimit(varname, "c",  self.crit,     "INF"), "AA0000", gradient_base)
                 else:
-                    self.area(self.varlimit(varname, "ok", self.warn,         0), "00AA00", gradient_base),
-                    self.area(self.varlimit(varname, "w",  self.crit, self.warn), "AAAA00", gradient_base),
+                    self.area(self.varlimit(varname, "ok", self.warn,         0), "00AA00", gradient_base)
+                    self.area(self.varlimit(varname, "w",  self.crit, self.warn), "AAAA00", gradient_base)
                     self.area(self.varlimit(varname, "c",      "INF", self.crit), "AA0000", gradient_base)
                 self.args.append( "HRULE:%.1f#F0F700" % self.warn )
                 self.args.append( "HRULE:%.1f#FF0000" % self.crit )
@@ -204,7 +204,7 @@ class Source(object):
                 "AREA:%sun#88888850:"        % (varname),
                 ])
         else:
-            self.args.append("AREA:%s#%sAA:%s:STACK" % (varname, colorstr, self.title))
+            self.args.append("AREA:%s#%sAA:%s:STACK" % (varname, get_hls_for_srcidx(id), self.title))
 
         # Now print the graph description table.
         if fulldesc:
@@ -251,7 +251,7 @@ class RRD(object):
             # Stat the RRD file to prevent ugly grey bars on the right side
             # that appear before npcd processed the perfdata
             xmltime = int(self.xml.getElementsByTagName("NAGIOS_TIMET")[0].childNodes[0].nodeValue)
-            return min(xmltime, int(getmtime(rrdpath)))
+            return min(xmltime, int(getmtime(self.rrdpath)))
         except:
             return int(time())
 
@@ -343,6 +343,8 @@ class Graph(object):
 
         if self.grad:
             hlsbg = get_hls_complementary( rgbstr_to_hls( self.grcol ) )
+        else:
+            hlsbg = None
 
         stacked = False
         lastinv = None
@@ -362,7 +364,11 @@ class Graph(object):
             src = self.sources[srcname]
 
             self.args.extend(
-                src.define(srcidx, invert, stacked, self.grad, (self.width >= 350))
+                src.define(srcidx,
+                    invert,
+                    stacked and (lastinv == invert),
+                    hlsbg,
+                    (self.width >= 350))
                 )
 
             lastinv = invert
