@@ -67,6 +67,8 @@ window.MainViewModules.push({
             });
             win.show();
             tree.getNodeById('api-record-node').getUI().getIconEl().src = MEDIA_URL + '/oxygen/22x22/actions/media-record.png'
+            window.RECORDING = false;
+            window.RECORDED_COMMANDS = [];
           }
           else{
             window.RECORDING = true;
