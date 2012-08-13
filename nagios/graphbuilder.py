@@ -18,16 +18,12 @@
 from __future__ import division
 
 import re
-import sys
-from os.path  import exists, getmtime
+from os.path  import getmtime
 from time     import time
-from datetime import datetime
 from xml.dom  import minidom
 
 from numpy    import array
 from colorsys import rgb_to_hls, hls_to_rgb
-from StringIO import StringIO
-from PIL      import Image
 
 
 def rgbstr_to_rgb_int(string, default="FFFFFF"):
@@ -204,7 +200,7 @@ class Source(object):
                 "AREA:%sun#88888850:"        % (varname),
                 ])
         else:
-            self.args.append("AREA:%s#%sAA:%s:STACK" % (varname, get_hls_for_srcidx(id), self.title))
+            self.args.append("AREA:%s#%sAA:%s:STACK" % (varname, get_hls_for_srcidx(rgbstr_to_hls("0000AA"), id), self.title))
 
         # Now print the graph description table.
         if fulldesc:
