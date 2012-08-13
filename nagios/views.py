@@ -162,6 +162,13 @@ def graph(request, service_id, srcidx):
     if not exists(rrdpath):
         raise Http404("RRD file not found")
 
+    xmlpath = nagios_settings.XML_PATH % {
+        'host': serv.hostname,
+        'serv': serv.description.replace(' ', '_').encode("UTF-8")
+        }
+    if not exists(xmlpath):
+        raise Http404("XML file not found")
+
     try:
         # Stat the RRD file to prevent ugly grey bars on the right side
         # that appear before npcd processed the perfdata
