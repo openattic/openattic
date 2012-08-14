@@ -1,0 +1,107 @@
+#!/usr/bin/env python
+# -*- coding: utf-8 -*-
+# kate: space-indent on; indent-width 4; replace-tabs on;
+
+"""
+ *  Copyright (C) 2011-2012, it-novum GmbH <community@open-attic.org>
+ *
+ *  openATTIC is free software; you can redistribute it and/or modify it
+ *  under the terms of the GNU General Public License as published by
+ *  the Free Software Foundation; version 2.
+ *
+ *  This package is distributed in the hope that it will be useful,
+ *  but WITHOUT ANY WARRANTY; without even the implied warranty of
+ *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ *  GNU General Public License for more details.
+"""
+
+import os
+import sys
+
+from optparse import OptionParser
+
+basedir = dict([
+    line.strip().split("=") for line in open("/etc/default/openattic", "rb") if line.strip()
+    ])["OADIR"].replace('"', '')
+
+sys.path.append( basedir )
+os.environ['DJANGO_SETTINGS_MODULE'] = 'settings'
+
+from drbd.rpcapi import DrbdConnectionProxy
+
+
+def main():
+    parser = OptionParser()
+    options, posargs = parser.parse_args()
+
+    prx = DrbdConnectionProxy(None, None)
+    conn = prx.get({"res_name": posargs[0]})
+
+    roles = {}
+    dstates = {}
+    uptodate = True
+    connected = True
+
+    for lowerobj in conn['stack_child_set']:
+        lowerconn = prx.get(lowerobj["id"])
+        roles.update(lowerconn["role"])
+        dstates.update(lowerconn["dstate"])
+        for dstate in lowerconn["dstate"].values():
+            if dstate != "UpToDate":
+                uptodate = False
+        if lowerconn["cstate"] != "Connected":
+            connected = False
+
+    roles.update(conn["role"])
+    dstates.update(conn["dstate"])
+    for dstate in conn["dstate"].values():
+        if dstate != "UpToDate":
+            uptodate = False
+    if conn["cstate"] != "Connected":
+        connected = False
+
+    hosts = roles.keys()
+    hosts.sort()
+
+    status = 0
+    for host in hosts:
+        if roles[host] == "Primary":
+            retstr = "%s is Primary, " % host
+            break
+    else:
+        retstr = "No primary, "
+        status = 1
+
+    if uptodate:
+        retstr += "all disks up-to-date, "
+    else:
+        retstr += "disks are bad, "
+        status = 2
+
+    if connected:
+        retstr += "connected"
+    else:
+        retstr += "not connected"
+        status = 2
+
+    perfdata = [
+        "status=%d" % status,
+        "uptodate=%d" % int(uptodate),
+        "connected=%d" % int(connected)
+        ]
+
+    for host in hosts:
+        perfdata.append( "%s=%s" % ("%s_primary"  % host, int( roles[host]   == "Primary"  ) ) )
+        perfdata.append( "%s=%s" % ("%s_uptodate" % host, int( dstates[host] == "UpToDate" ) ) )
+
+    print "%s - %s|%s" % ({
+        0: "OK",
+        1: "WARNING",
+        2: "CRITICAL"
+        }[status], retstr, ' '.join(perfdata))
+
+    return status
+
+
+if __name__ == '__main__':
+    sys.exit(main())
