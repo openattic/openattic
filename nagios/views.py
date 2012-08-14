@@ -193,7 +193,7 @@ def proxy_graph(request, service_id, srcidx):
     peer = PeerHost.objects.get(name=host.name)
     target = "http://%(hostname)s/openattic/nagios/%(id)d/%(srcidx)s.png" % {
         'id': int(service_id),
-        'srcidx': int(srcidx),
+        'srcidx': srcidx,
         'hostname': peer.base_url.hostname
         }
     if request.META["QUERY_STRING"]:
