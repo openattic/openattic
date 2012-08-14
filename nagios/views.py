@@ -17,14 +17,12 @@
 # make "/" operator always use floats
 from __future__ import division
 
-import re
 import sys
-from os.path  import exists, getmtime
+from os.path  import exists
 from time     import time
 from datetime import datetime
 
 from numpy    import array
-from colorsys import rgb_to_hls, hls_to_rgb
 from StringIO import StringIO
 from PIL      import Image
 
@@ -38,67 +36,8 @@ from systemd.procutils import invoke
 
 from nagios.conf   import settings as nagios_settings
 from nagios.models import Service, Graph
-from nagios.graphbuilder import RRD, Graph as GraphBuilder
+from nagios.graphbuilder import RRD, Graph as GraphBuilder, rgbstr_to_rgb_int
 
-def rgbstr_to_rgb_int(string, default="FFFFFF"):
-    """ Turn the given RGB string into a tuple that contains its integer values. """
-    if not string or len(string) < 6:
-        string = default
-    return ( int(string[0:2], 16), int(string[2:4], 16), int(string[4:6], 16) )
-
-# All color values from here are either RGB strings or in [0..1].
-
-def rgbstr_to_rgb(string, default="FFFFFF"):
-    """ Turn the given RGB string into a tuple that contains
-        its values as floats in [0..1].
-    """
-    xff = rgbstr_to_rgb_int( string, default )
-    return ( xff[0] / 0xFF, xff[1] / 0xFF, xff[2] / 0xFF )
-
-def rgbstr_to_hls(string, default="FFFFFF"):
-    """ Turn the given RGB string into an HLS tuple. """
-    return rgb_to_hls( *rgbstr_to_rgb( string, default ) )
-
-def get_hls_complementary(hlsfrom):
-    """ Get the complementary color to the given color. """
-    h = 0.5 + hlsfrom[0]
-    if h > 1.0:
-        h -= 1.0
-    return (h, 1 - hlsfrom[1], hlsfrom[2])
-
-def get_hls_for_srcidx(hlsfrom, srcidx):
-    """ Get a unique color for the given srcidx. """
-    h = srcidx * 0.3 + hlsfrom[0]
-    if h > 1.0:
-        h -= 1.0
-    return (h, 1 - hlsfrom[1], hlsfrom[2])
-
-def hls_to_rgbstr(hlsfrom):
-    """ Turn the given hls tuple into an RGB string. """
-    rgbgrad = map( lambda x: x * 0xFF, hls_to_rgb( *hlsfrom ) )
-    return "%02X%02X%02X" % tuple(rgbgrad)
-
-def get_gradient_args(varname, hlsfrom, hlsto, steps=20):
-    """ Return a list of RRDTool arguments that draw a color gradient for the
-        given graph variable. The gradient goes from hlsfrom at the top to
-        hlsto at the X axis and uses a resolution specified in `steps'.
-    """
-    # We do not allow hue to change because that looks stupid
-    allowed = array((False, True, True))
-
-    args = []
-
-    for grad in range(steps, 0, -1):
-        graphmult = grad/steps
-        colormult = (1 - graphmult) ** 2 # exponential gradient looks better than linear
-
-        hlsgrad = array(hlsfrom) + ( ( array(hlsto) - array(hlsfrom) ) * allowed * colormult )
-
-        tempvar = "%sgrd%d" % (varname, grad)
-        args.append("CDEF:%s=%s,%.2f,*" % ( tempvar, varname, graphmult ))
-        args.append("AREA:%s#%sFF"      % ( tempvar, hls_to_rgbstr(hlsgrad) ))
-
-    return args
 
 
 
@@ -143,10 +82,10 @@ def graph(request, service_id, srcidx):
     except ValueError:
         # string, apparently
         srcline = srcidx
-        graph = None
+        dbgraph = None
     else:
-        graph = Graph.objects.get(pk=srcidx, command=serv.command)
-        srcline = graph.fields
+        dbgraph = Graph.objects.get(pk=srcidx, command=serv.command)
+        srcline = dbgraph.fields
 
     rrdpath = nagios_settings.RRD_PATH % {
         'host': serv.hostname,
@@ -189,11 +128,11 @@ def graph(request, service_id, srcidx):
         # grey graph (all values are undefined in the RRD).
         builder.end = int(time())
 
-    if len(bgcol) < 6 or len(builder.fgcol) < 6 or len(builder.grcol) < 6:
+    if (bgcol and len(bgcol) < 6) or (builder.fgcol and len(builder.fgcol) < 6) or (builder.grcol and len(builder.grcol) < 6):
         raise Http404("Invalid color specified")
 
-    if graph is not None and builder.width >= 350:
-        builder.title += ' - ' + graph.title
+    if dbgraph is not None and builder.width >= 350:
+        builder.title += ' - ' + dbgraph.title
 
     args = builder.get_args()
 
