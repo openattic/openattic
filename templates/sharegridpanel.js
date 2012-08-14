@@ -20,6 +20,7 @@ Ext.oa.ShareGridPanel = Ext.extend(Ext.grid.GridPanel, {
   window: {},
   allowEdit: true,
   filterParams: false,
+  filterSearchParam: null,
 
   initComponent: function(){
     "use strict";
@@ -82,6 +83,56 @@ Ext.oa.ShareGridPanel = Ext.extend(Ext.grid.GridPanel, {
       }),
       viewConfig: {
         forceFit: true
+      },
+      bbar: {
+        xtype: 'toolbar',
+        hidden: true,
+        items: ["Search:", {
+          xtype: 'textfield',
+          emptyText: gettext('Search...'),
+          enableKeyEvents: true,
+          listeners: {
+            change: function( fld, newVal, oldVal ){
+              if( typeof self.searchTimeout !== "undefined" ){
+                clearTimeout(self.searchTimeout);
+              }
+              if( newVal !== '' ){
+                self.store.baseParams[self.filterSearchParam] = newVal;
+                self.store.directFn = self.api.filter;
+              }
+              else{
+                delete self.store.baseParams[self.filterSearchParam];
+                self.store.directFn = (self.filterParams === false ? self.api.all : self.api.filter);
+              }
+              self.store.reload();
+            },
+            keypress: function( fld, evt ){
+              if( typeof self.searchTimeout !== "undefined" ){
+                clearTimeout(self.searchTimeout);
+              }
+              if(evt.getKey() === evt.ENTER){
+                fld.initialConfig.listeners.change.apply(self, [fld, fld.getValue()]);
+              }
+              else if(evt.getKey() === evt.ESC){
+                fld.initialConfig.listeners.change.apply(self, [fld, '']);
+                self.bottomToolbar.hide();
+                self.doLayout();
+              }
+              else{
+                self.searchTimeout = fld.initialConfig.listeners.change.defer(2000, self, [fld, fld.getValue()]);
+              }
+            }
+          }
+        }, {
+          xtype: 'button',
+          icon: MEDIA_URL + "/icons2/16x16/actions/gtk-cancel.png",
+          handler: function(){
+            var fld = self.bottomToolbar.items.items[1];
+            fld.initialConfig.listeners.change.apply(self, [fld, '']);
+            self.bottomToolbar.hide();
+            self.doLayout();
+          }
+        }]
       }
     }));
     if(this.filterParams !== false){
@@ -170,6 +221,15 @@ Ext.oa.ShareGridPanel = Ext.extend(Ext.grid.GridPanel, {
         }
       );
     }
+  },
+
+  initSearch: function(){
+    if( this.filterSearchParam === null || typeof this.api.filter === "undefined" ){
+      Ext.Msg.alert("Search", "This panel cannot be searched.");
+      return;
+    }
+    this.bottomToolbar.show();
+    this.bottomToolbar.items.items[1].focus();
   },
 
   showEditWindow: function(config, record){
