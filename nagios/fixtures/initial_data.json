@@ -112,6 +112,14 @@
         }
     },
     {
+        "pk": 15,
+        "model": "nagios.command",
+        "fields": {
+            "query_only": false,
+            "name": "check_drbd"
+        }
+    },
+    {
         "pk": 1,
         "model": "nagios.graph",
         "fields": {
