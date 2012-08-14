@@ -41,10 +41,7 @@ class ServiceHandler(ModelHandler):
             if qryset.count():
                 data["graphs"] = [ { "id": gr.id, "title": gr.title } for gr in qryset ]
             else:
-                perfd = obj.perfdata
-                data["graphs"] = []
-                for i, graph in enumerate(perfd):
-                    data["graphs"].append( { "id": i, "title": graph[0] } )
+                data["graphs"] = [ { "id": k, "title": v } for (k, v) in obj.rrd.source_labels.items() ]
 
         except (KeyError, SystemError):
             data["state"]  = None
