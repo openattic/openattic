@@ -12,7 +12,7 @@ from __future__ import division
 
 from django.test import TestCase
 
-from nagios.views import (rgbstr_to_rgb_int, rgbstr_to_rgb, rgbstr_to_hls, get_hls_complementary,
+from nagios.graphbuilder import (rgbstr_to_rgb_int, rgbstr_to_rgb, get_hls_complementary,
                           hls_to_rgbstr, get_gradient_args)
 
 class SimpleTest(TestCase):

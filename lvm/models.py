@@ -22,7 +22,7 @@ import os.path
 from django.contrib.auth.models import User
 from django.db import models
 from django.conf import settings
-from django.utils.translation   import ugettext_noop, ugettext_lazy as _
+from django.utils.translation   import ugettext_lazy as _
 
 from ifconfig.models import Host, HostDependentManager, getHostDependentManagerClass
 from systemd.helpers import dbus_to_python

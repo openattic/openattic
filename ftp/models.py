@@ -16,8 +16,8 @@
 
 import dbus
 
-from os.path import join, exists, islink
-from os import unlink, symlink, mkdir, makedirs
+from os.path import join, exists
+from os import makedirs
 
 from django.db import models
 from django.conf import settings

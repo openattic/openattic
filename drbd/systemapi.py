@@ -20,8 +20,7 @@ import socket
 from django.template.loader import render_to_string
 
 from systemd import invoke, logged, BasePlugin, method
-from ifconfig.models import Host
-from drbd.models   import Connection, Endpoint
+from drbd.models import Connection
 
 def stackcmd(resource, stacked, command, options=None):
     cmd = ["/sbin/drbdadm"]

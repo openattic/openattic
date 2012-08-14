@@ -15,7 +15,7 @@
 """
 
 from django.db import models
-from django.utils.translation   import ugettext_noop, ugettext_lazy as _
+from django.utils.translation   import ugettext_lazy as _
 
 from ifconfig.models import Host, HostDependentManager
 

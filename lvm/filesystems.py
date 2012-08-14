@@ -19,7 +19,6 @@ import dbus
 
 from systemd  import dbus_to_python
 from lvm.conf import settings as lvm_settings
-from lvm      import signals  as lvm_signals
 
 
 class FileSystem(object):
