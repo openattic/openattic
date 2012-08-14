@@ -24,7 +24,7 @@ from django.db   import models
 
 from systemd.helpers import dbus_to_python
 
-from lvm.models import LogicalVolume, LVChainedModule
+from lvm.models import LVChainedModule
 from ifconfig.models import IPAddress, Host
 
 DRBD_PROTOCOL_CHOICES = (

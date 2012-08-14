@@ -16,7 +16,6 @@
 
 from threading import Lock
 from os.path import getmtime, exists
-from time import sleep
 
 class NagiosState(object):
     """ Dict-like class to access Nagios's status information.

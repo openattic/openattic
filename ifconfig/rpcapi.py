@@ -55,7 +55,7 @@ class NetDeviceHandler(ModelHandler):
         data["speed"]     = obj.speed
         data["carrier"]   = obj.carrier
         data["mtu"]       = obj.mtu
-        data["macaddress"]= obj.macaddress
+        data["macaddress"] = obj.macaddress
         return data
 
     def _idobj(self, obj):

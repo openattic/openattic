@@ -14,8 +14,6 @@
  *  GNU General Public License for more details.
 """
 
-import sys
-
 from django.core.management.base import BaseCommand
 
 from systemd.procutils import invoke

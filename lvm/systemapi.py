@@ -16,7 +16,7 @@
 
 import os
 from time import time
-from systemd import invoke, create_job, logged, BasePlugin, method, signal
+from systemd import invoke, logged, BasePlugin, method, signal
 
 from lvm.conf   import settings as lvm_settings
 from lvm.models import LogicalVolume

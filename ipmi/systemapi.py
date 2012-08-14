@@ -15,12 +15,8 @@
 """
 
 import re
-from django.template.loader import render_to_string
-
-from django.contrib.auth.models import User
 
 from systemd       import invoke, logged, BasePlugin, method
-from nagios.models import Command, Service
 
 @logged
 class SystemD(BasePlugin):

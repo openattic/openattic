@@ -14,9 +14,7 @@
  *  GNU General Public License for more details.
 """
 
-import os
-
-from optparse import make_option
+import socket
 
 from django.core.management.base import BaseCommand
 

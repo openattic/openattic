@@ -18,7 +18,6 @@
 from __future__ import division
 
 import sys
-from os.path  import exists
 from time     import time
 from datetime import datetime
 
@@ -36,7 +35,7 @@ from systemd.procutils import invoke
 
 from nagios.conf   import settings as nagios_settings
 from nagios.models import Service, Graph
-from nagios.graphbuilder import RRD, Graph as GraphBuilder, rgbstr_to_rgb_int
+from nagios.graphbuilder import Graph as GraphBuilder, rgbstr_to_rgb_int
 
 
 
