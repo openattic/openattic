@@ -218,6 +218,22 @@ Ext.oa.MainViewManager = Ext.extend(Ext.Panel, {
     };
     this.topToolbar.on( 'add', tbupdate, this );
     this.topToolbar.on( 'remove', tbupdate, this );
+
+    var map = new Ext.KeyMap(document, {
+      key: 'f',
+      ctrl: true,
+      fn: function(){
+        var act = this.modcontainer.layout.activeItem;
+        if( typeof act.initSearch === "undefined" ){
+          Ext.Msg.alert("Search", "This panel cannot be searched.");
+        }
+        else{
+          act.initSearch();
+        }
+      },
+      scope: this,
+      stopEvent: true
+    });
   },
 
   treenodeClicked: function( node, event ){

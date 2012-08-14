@@ -30,6 +30,7 @@ Ext.oa.Lvm__LogicalVolume_Panel = Ext.extend(Ext.oa.ShareGridPanel, {
   filterParams: {
     "snapshot__isnull": true
   },
+  filterSearchParam: "name__icontains",
   texts: {
     add:     gettext('Add Volume'),
     edit:    gettext('Edit Volume'),
