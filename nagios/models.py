@@ -16,6 +16,7 @@
 
 import os
 import dbus
+import re
 
 from os.path import exists
 
@@ -114,16 +115,17 @@ class Service(models.Model):
 
     @property
     def rrd(self):
+        servname = re.sub('[^\w\d_-]', '_', self.description).encode("UTF-8")
         rrdpath = nagios_settings.RRD_PATH % {
             'host': self.hostname,
-            'serv': self.description.replace(' ', '_').encode("UTF-8")
+            'serv': servname
             }
         if not exists(rrdpath):
             raise SystemError("RRD file not found")
 
         xmlpath = nagios_settings.XML_PATH % {
             'host': self.hostname,
-            'serv': self.description.replace(' ', '_').encode("UTF-8")
+            'serv': servname
             }
         if not exists(xmlpath):
             raise SystemError("XML file not found")
