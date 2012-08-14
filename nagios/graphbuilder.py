@@ -367,6 +367,7 @@ class Graph(object):
                 srcname = srcname[1:]
 
             src = self.sources[srcname]
+            src.title = "%-*s" % (maxlen, self.rrd.source_labels[srcname])
 
             self.args.extend(
                 src.define(srcidx,
