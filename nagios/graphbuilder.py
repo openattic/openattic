@@ -200,7 +200,8 @@ class Source(object):
                 "AREA:%sun#88888850:"        % (varname),
                 ])
         else:
-            self.args.append("AREA:%s#%sAA:%s:STACK" % (varname, get_hls_for_srcidx(rgbstr_to_hls("0000AA"), id), self.title))
+            color = hls_to_rgbstr(get_hls_for_srcidx(rgbstr_to_hls("0000AA"), id)) + 'AA'
+            self.args.append("AREA:%s#%s:%s:STACK" % (varname, color, self.title))
 
         # Now print the graph description table.
         if fulldesc:
