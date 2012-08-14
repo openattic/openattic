@@ -17,6 +17,8 @@
 import os
 import dbus
 
+from os.path import exists
+
 from django.conf      import settings
 from django.db        import models
 from django.db.models import signals
@@ -29,6 +31,7 @@ from ifconfig.models import Host, IPAddress, HostDependentManager
 
 from nagios.conf import settings as nagios_settings
 from nagios.readstatus import NagiosState
+from nagios.graphbuilder import RRD
 
 
 class Command(models.Model):
@@ -108,6 +111,24 @@ class Service(models.Model):
         if self.command.query_only:
             return "localhost"
         return (self.host or self.volume.vg.host).name
+
+    @property
+    def rrd(self):
+        rrdpath = nagios_settings.RRD_PATH % {
+            'host': self.hostname,
+            'serv': self.description.replace(' ', '_').encode("UTF-8")
+            }
+        if not exists(rrdpath):
+            raise SystemError("RRD file not found")
+
+        xmlpath = nagios_settings.XML_PATH % {
+            'host': self.hostname,
+            'serv': self.description.replace(' ', '_').encode("UTF-8")
+            }
+        if not exists(xmlpath):
+            raise SystemError("XML file not found")
+
+        return RRD(rrdpath, xmlpath)
 
 
 def create_service_for_lv(**kwargs):
