@@ -234,13 +234,19 @@ class RRD(object):
             for ds in self.xml.getElementsByTagName("DATASOURCE")
             ] )
 
+        self.source_labels = dict( [
+            (ds.getElementsByTagName("NAME")[0].childNodes[0].nodeValue,
+             ds.getElementsByTagName("LABEL")[0].childNodes[0].nodeValue)
+            for ds in self.xml.getElementsByTagName("DATASOURCE")
+            ] )
+
         self.perfdata = dict( [
             pd.split('=', 1) for pd in
             self.xml.getElementsByTagName("NAGIOS_SERVICEPERFDATA")[0].childNodes[0].nodeValue.split(' ')
             ] )
 
     def get_source(self, srcname):
-        return Source( self.sources[srcname], srcname, self.perfdata[srcname], self.rrdpath )
+        return Source( self.sources[srcname], srcname, self.perfdata[self.source_labels[srcname]], self.rrdpath )
 
     @property
     def last_check(self):

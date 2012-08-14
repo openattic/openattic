@@ -90,21 +90,11 @@ def graph(request, service_id, srcidx):
         dbgraph = Graph.objects.get(pk=srcidx, command=serv.command)
         srcline = dbgraph.fields
 
-    rrdpath = nagios_settings.RRD_PATH % {
-        'host': serv.hostname,
-        'serv': serv.description.replace(' ', '_').encode("UTF-8")
-        }
-    if not exists(rrdpath):
-        raise Http404("RRD file not found")
+    try:
+        rrd = serv.rrd
+    except SystemError, err:
+        raise Http404(unicode(err))
 
-    xmlpath = nagios_settings.XML_PATH % {
-        'host': serv.hostname,
-        'serv': serv.description.replace(' ', '_').encode("UTF-8")
-        }
-    if not exists(xmlpath):
-        raise Http404("XML file not found")
-
-    rrd = RRD(rrdpath, xmlpath)
     builder = GraphBuilder(rrd, srcline)
 
     try:
