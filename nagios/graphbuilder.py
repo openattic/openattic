@@ -283,6 +283,8 @@ class Graph(object):
 
         self.sources = {}
         for srcname in self.srcline.split():
+            if srcname in ('+s', '-s'):
+                continue
             if srcname[0] == '-':
                 srcname = srcname[1:]
             self.sources[srcname] = self.rrd.get_source(srcname)
