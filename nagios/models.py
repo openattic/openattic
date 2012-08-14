@@ -43,7 +43,7 @@ class Graph(models.Model):
     command     = models.ForeignKey(Command)
     title       = models.CharField(max_length=250, unique=True)
     verttitle   = models.CharField(max_length=250, blank=True)
-    fields      = models.CharField(max_length=250)
+    fields      = models.CharField(max_length=500)
 
     def __unicode__(self):
         return "%s: %s" % (self.command.name, self.title)
