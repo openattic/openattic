@@ -17,6 +17,13 @@
 from threading import Lock
 from os.path import getmtime, exists
 
+try:
+    from nagios import _readstatus
+except ImportError:
+    HAVE_C_PARSER = False
+else:
+    HAVE_C_PARSER = True
+
 class NagiosState(object):
     """ Dict-like class to access Nagios's status information.
 
@@ -64,7 +71,10 @@ class NagiosState(object):
                 raise SystemError("'%s' does not exist" % self.statfile)
 
             if mtime > self.timestamp:
-                self.nagstate  = self.parse_status()
+                if not HAVE_C_PARSER:
+                    self.nagstate = self.parse_status()
+                else:
+                    self.nagstate, self._servicemap = _readstatus.parse(self.statfile)
                 self.timestamp = mtime
         finally:
             self.lock.release()
