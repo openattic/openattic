@@ -75,11 +75,13 @@ Ext.oa.Cron__Job_Panel = Ext.extend(Ext.oa.ShareGridPanel, {
       }
     ]
   },
-  deleteConfirm: function(sel){
+  deleteConfirm: function(sel, handler, scope){
     "use strict";
-    return interpolate(
-      gettext('Really delete this job?') + "<br />%s",
-      [sel.data.command] );
+    Ext.Msg.confirm(
+      this.texts.remove,
+      interpolate( gettext('Really delete this job?') + "<br />%s", [sel.data.command] ),
+      handler, scope
+    );
   }
 });
 

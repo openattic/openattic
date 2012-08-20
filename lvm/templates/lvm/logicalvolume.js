@@ -576,11 +576,15 @@ Ext.oa.Lvm__LogicalVolume_Panel = Ext.extend(Ext.oa.ShareGridPanel, {
       allowBlank: false
     }]
   },
-  deleteConfirm: function(sel){
+  deleteConfirm: function(sel, handler, scope){
     "use strict";
-    return interpolate(
-      gettext('Really delete volume %s and all its shares?<br /><b>There is no undo and you will lose all data.</b>'),
-      [sel.data.name] );
+    Ext.Msg.confirm(
+      this.texts.remove,
+      interpolate(
+        gettext('Really delete volume %s and all its shares?<br /><b>There is no undo and you will lose all data.</b>'),
+        [sel.data.name] ),
+      handler, scope
+    );
   }
 });
 
