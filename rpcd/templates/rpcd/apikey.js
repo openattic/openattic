@@ -41,12 +41,16 @@ Ext.oa.ApiKey_Panel = Ext.extend(Ext.oa.ShareGridPanel, {
     edit:    gettext('Edit Key'),
     remove:  gettext('Delete Key')
   },
-  deleteConfirm: function(sel){
+  deleteConfirm: function(sel, handler, scope){
     "use strict";
-    return interpolate(gettext("Do you really want to delete %(user)s's key '%(key)s'?"), {
-      user: sel.data.ownername,
-      key:  sel.data.description
-    }, true);
+    Ext.Msg.confirm(
+      this.texts.remove,
+      interpolate(gettext("Do you really want to delete %(user)s's key '%(key)s'?"), {
+        user: sel.data.ownername,
+        key:  sel.data.description
+      }, true),
+      handler, scope
+    );
   },
   storefields: [{
     name: 'ownername',

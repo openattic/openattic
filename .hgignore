@@ -22,3 +22,5 @@ django_jenkins
 installed_apps.d/coverage
 installed_apps.d/django_jenkins
 reports/
+
+nagios/_readstatus.so

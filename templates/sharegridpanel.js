@@ -198,9 +198,13 @@ Ext.oa.ShareGridPanel = Ext.extend(Ext.grid.GridPanel, {
     }
   },
 
-  deleteConfirm: function(sel){
+  deleteConfirm: function(sel, handler, scope){
     "use strict";
-    return interpolate(this.texts.confirm, [sel.data.path]);
+    Ext.Msg.confirm(
+      this.texts.remove,
+      interpolate(this.texts.confirm, [sel.data.path]),
+      handler, scope
+    );
   },
 
   deleteFunction: function(){
@@ -209,17 +213,13 @@ Ext.oa.ShareGridPanel = Ext.extend(Ext.grid.GridPanel, {
     var self = this;
     if( sm.hasSelection() ){
       var sel = sm.selections.items[0];
-      Ext.Msg.confirm(
-        self.texts.remove,
-        self.deleteConfirm(sel),
-        function(btn){
-          if(btn === 'yes'){
-            self.api.remove( sel.data.id, function(provider, response){
-              sel.store.reload();
-            } );
-          }
+      self.deleteConfirm( sel, function(btn){
+        if(btn === 'yes'){
+          self.api.remove( sel.data.id, function(provider, response){
+            sel.store.reload();
+          } );
         }
-      );
+      }, self );
     }
   },
 
