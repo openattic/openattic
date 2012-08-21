@@ -367,10 +367,11 @@ class ProxyHandler(BaseHandler):
     def _call_allpeers_method(self, method, *args):
         ret = []
         # Call every peer
-        methods = [getattr(self._get_proxy_object(peer), method) for peer in self._get_relevant_peers()]
+        methods = [(getattr(self._get_proxy_object(peer), method), peer) for peer in self._get_relevant_peers()]
         # Call the backing handler to get local info
-        methods.append( getattr(self.backing_handler(self.user, self.request), method) )
-        for meth in methods:
+        methods.append( (getattr(self.backing_handler(self.user, self.request), method), None) )
+        for meth, peer in methods:
+            #print "Trying", peer
             try:
                 res = meth(*args)
             except Fault, flt:
