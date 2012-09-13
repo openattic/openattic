@@ -143,8 +143,8 @@ class Source(object):
 
     def varlimit(self, varname, statename, vmin=0, vmax=0):
         newvar = varname + statename
-        if vmin != "INF": vmin = "%.1f" % vmin
-        if vmax != "INF": vmax = "%.1f" % vmax
+        if vmin not in ("-INF", "INF"): vmin = "%.1f" % vmin
+        if vmax not in ("-INF", "INF"): vmax = "%.1f" % vmax
         self.args.append("CDEF:%s=%s,%s,%s,LIMIT" % (newvar, varname, vmin, vmax))
         return newvar
 
