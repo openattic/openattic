@@ -181,13 +181,13 @@ class Source(object):
 
             if self.warn and self.crit:
                 if not invert:
-                    self.area(self.varlimit(varname, "ok",         0, self.warn), "00AA00", gradient_base)
-                    self.area(self.varlimit(varname, "w",  self.warn, self.crit), "AAAA00", gradient_base)
-                    self.area(self.varlimit(varname, "c",  self.crit,     "INF"), "AA0000", gradient_base)
+                    self.area(self.varlimit(varname, "ok",          0,  self.warn), "00AA00", gradient_base)
+                    self.area(self.varlimit(varname, "w",   self.warn,  self.crit), "AAAA00", gradient_base)
+                    self.area(self.varlimit(varname, "c",   self.crit,      "INF"), "AA0000", gradient_base)
                 else:
-                    self.area(self.varlimit(varname, "ok", self.warn,         0), "00AA00", gradient_base)
-                    self.area(self.varlimit(varname, "w",  self.crit, self.warn), "AAAA00", gradient_base)
-                    self.area(self.varlimit(varname, "c",      "INF", self.crit), "AA0000", gradient_base)
+                    self.area(self.varlimit(varname, "ok", -self.warn,          0), "00AA00", gradient_base)
+                    self.area(self.varlimit(varname, "w",  -self.crit, -self.warn), "AAAA00", gradient_base)
+                    self.area(self.varlimit(varname, "c",      "-INF", -self.crit), "AA0000", gradient_base)
                 self.args.append( "HRULE:%.1f#F0F700" % self.warn )
                 self.args.append( "HRULE:%.1f#FF0000" % self.crit )
             else:
