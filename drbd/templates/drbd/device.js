@@ -366,13 +366,13 @@ Ext.oa.Drbd_Panel = Ext.extend(Ext.Panel, {
             role: record.json.role[hostname]
           }
           if( record.json.endpoint_set[hostname] ){
-            hostinfo.backingdev = gettext("Volume") + " " + record.json.endpoint_set[hostname].volume.name;
+            hostinfo.backingdev = gettext("Volume") + " " + toUnicode(record.json.endpoint_set[hostname].volume);
           }
           else{
             hostinfo.backingdev = "";
             for( i = 0; i < record.json.stack_child_set.length; i++ ){
               if( record.json.stack_child_set[i].endpoint_hosts.indexOf(hostname) !== -1 ){
-                hostinfo.backingdev = gettext("Connection") + " " + record.json.stack_child_set[i].__unicode__;
+                hostinfo.backingdev = gettext("Connection") + " " + toUnicode(record.json.stack_child_set[i]);
               }
             }
           }

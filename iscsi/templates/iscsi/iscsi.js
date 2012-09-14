@@ -55,7 +55,7 @@ var init_all = new Ext.data.DirectStore({
 });
 var tgt_all = new Ext.data.DirectStore({
   id: "tgt_all",
-  fields: ["app", "obj", "id", "address", "__unicode__"],
+  fields: ["app", "obj", "id", "__unicode__"],
   directFn: ifconfig__IPAddress.get_valid_ips,
   baseParams: {
     idobj: {
@@ -83,7 +83,7 @@ Ext.oa.Iscsi__Panel = Ext.extend(Ext.Panel, {
         gettext('Confirm delete'),
         interpolate(
           gettext('Really delete IP %s?'),
-          [sel.data.address] ),
+          [toUnicode(sel.data)] ),
         function(btn, text){
           if( btn === 'yes' ){
             tgt_allow.remove(sel);
@@ -186,7 +186,7 @@ Ext.oa.Iscsi__Panel = Ext.extend(Ext.Panel, {
     });
     tgt_allow = new Ext.data.JsonStore({
       id: "tgt_allow",
-      fields: ["app","obj","id","address"],
+      fields: ["app","obj","id","__unicode__"],
       listeners: {
         add: function(store){
           var parent = iscsiPanel.targets.getSelectionModel();
@@ -759,7 +759,7 @@ Ext.oa.Iscsi__Panel = Ext.extend(Ext.Panel, {
             },
             columns: [{
               header: "Allow",
-              dataIndex: "address"
+              dataIndex: "__unicode__"
             }]
           }),
           buttons:[{
@@ -790,7 +790,7 @@ Ext.oa.Iscsi__Panel = Ext.extend(Ext.Panel, {
                     },
                     columns: [{
                       header: "Address",
-                      dataIndex: "address"
+                      dataIndex: "__unicode__"
                     }]
                   })
                 }
