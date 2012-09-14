@@ -168,7 +168,7 @@ class Source(object):
         self.args.append( "LINE1:%s#%sCC:%s" % (varname, lineclr, self.title) )
         return varname
 
-    def define(self, id, invert=False, stacked=None, gradient_base=None, fulldesc=True):
+    def define(self, id, invert=False, stacked=None, first_in_stack=False, gradient_base=None, fulldesc=True):
         """ Create a variable definition for this source and return the name. """
         varname = "var%d" % id
         self.args.append( "DEF:%s=%s:%d:AVERAGE" % (varname, self.rrdpath, self.id) )
@@ -201,7 +201,10 @@ class Source(object):
                 ])
         else:
             color = hls_to_rgbstr(get_hls_for_srcidx(rgbstr_to_hls("0000AA"), id)) + 'AA'
-            self.args.append("AREA:%s#%s:%s:STACK" % (varname, color, self.title))
+            stackarg = "AREA:%s#%s:%s" % (varname, color, self.title)
+            if not first_in_stack:
+                stackarg += ":STACK"
+            self.args.append(stackarg)
 
         # Now print the graph description table.
         if fulldesc:
@@ -372,7 +375,7 @@ class Graph(object):
             self.args.extend(
                 src.define(srcidx,
                     invert,
-                    stacked and (lastinv == invert),
+                    stacked, lastinv != invert,
                     hlsbg,
                     (self.width >= 350))
                 )
