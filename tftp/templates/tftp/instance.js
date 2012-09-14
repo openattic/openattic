@@ -29,13 +29,7 @@ Ext.oa.Tftp__Instance_Panel = Ext.extend(Ext.oa.ShareGridPanel, {
   storefields: [{
     name: "address_ip",
     mapping: "address",
-    convert: function(val){
-      "use strict";
-      if(val){
-        return val.address;
-      }
-      return "";
-    }
+    convert: toUnicode
   }],
   form: {
     items: [{
@@ -65,20 +59,18 @@ Ext.oa.Tftp__Instance_Panel = Ext.extend(Ext.oa.ShareGridPanel, {
         {
           xtype:      'combo',
           fieldLabel: gettext('Address'),
-          name:       "address",
           ref:        'addrfield',
           allowBlank: false,
           hiddenName: 'address',
           store: new Ext.data.DirectStore({
-            fields: ["app", "obj", "id", "address"],
-            baseParams: {fields: ["app", "obj", "id", "address"] },
+            fields: ["app", "obj", "id", "__unicode__"],
             directFn: ifconfig__IPAddress.ids
           }),
           typeAhead:     true,
           triggerAction: 'all',
           emptyText:     gettext('Select...'),
           selectOnFocus: true,
-          displayField:  'address',
+          displayField:  '__unicode__',
           valueField:    'id'
         }
       ]
