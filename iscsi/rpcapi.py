@@ -25,10 +25,6 @@ from ifconfig.models import IPAddress
 class IscsiTargetHandler(ModelHandler):
     model = Target
 
-    def _idobj(self, obj):
-        """ Return an ID for the given object, including the app label and object name. """
-        return {'id': obj.id, 'app': obj._meta.app_label, 'obj': obj._meta.object_name, 'name': obj.name}
-
 @proxy_for(IscsiTargetHandler)
 class IscsiTargetProxy(ProxyModelBaseHandler):
     model = Target
@@ -62,9 +58,5 @@ class IscsiLunProxy(ProxyModelHandler):
 
 class IscsiInitiatorHandler(ModelHandler):
     model = Initiator
-
-    def _idobj(self, obj):
-        """ Return an ID for the given object, including the app label and object name. """
-        return {'id': obj.id, 'app': obj._meta.app_label, 'obj': obj._meta.object_name, 'name': obj.name}
 
 RPCD_HANDLERS = [IscsiTargetProxy, IscsiLunProxy, IscsiInitiatorHandler]
