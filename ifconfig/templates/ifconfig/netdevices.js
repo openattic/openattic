@@ -16,17 +16,19 @@ Ext.namespace("Ext.oa");
 Ext.apply(Ext.form.VTypes, {
   IPAddress:  function(v) {
     "use strict";
-    return (/^\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3}$/).test(v);
+    return (/^\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3}$/).test(v) ||
+           (/^[\da-f]{0,4}(:[\da-f]{0,4})+$/).test(v);
   },
   IPAddressText: gettext('Must be a numeric IP address.'),
-  IPAddressMask: /[\d\.]/i,
+  IPAddressMask: /[\da-f\.:]/i,
 
   IPAddressWithNetmask:  function(v) {
     "use strict";
-    return (/^\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3}(\/(\d{1,2}|\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3}))?$/).test(v);
+    return (/^\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3}(\/(\d{1,2}|\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3}))?$/).test(v) ||
+           (/^[\da-f]{0,4}(:[\da-f]{0,4})+(\/\d{1,3})?$/).test(v);
   },
   IPAddressWithNetmaskText: gettext('Must be a numeric IP address or "IP/Netmask".'),
-  IPAddressWithNetmaskMask: /[\d\.\/]/i,
+  IPAddressWithNetmaskMask: /[\da-f\.\/:]/i,
 
   IPAddressList:  function(v) {
     "use strict";
