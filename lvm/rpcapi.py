@@ -15,6 +15,7 @@
 """
 
 from rpcd.handlers import ModelHandler
+from ifconfig.rpcapi import HostHandler
 
 from lvm.models import VolumeGroup, LogicalVolume, ZfsSubvolume, ZfsSnapshot, LVMetadata
 
@@ -28,6 +29,11 @@ class VgHandler(ModelHandler):
             raise ValueError("device must be given without leading /dev")
         vg = VolumeGroup.objects.get(id=id)
         return vg.join_device(device)
+
+    def create(self, data):
+        if "host" not in data:
+            data["host"] = HostHandler(None, None).current_id()
+        return ModelHandler.create(self, data)
 
     def get_free_megs(self, id):
         """ Get amount of free space in a Volume Group. """
