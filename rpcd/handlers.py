@@ -218,7 +218,7 @@ class ModelHandler(BaseHandler):
         if isinstance(obj, dict):
             return obj
 
-        data = {}
+        data = {'__unicode__': unicode(obj)}
         for field in obj._meta.fields + obj._meta.many_to_many:
             if self.fields is not None and field.name not in self.fields:
                 continue
