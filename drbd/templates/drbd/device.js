@@ -29,11 +29,11 @@ Ext.oa.Drbd__Connection_Panel = Ext.extend(Ext.oa.ShareGridPanel, {
       "use strict";
       var i;
       if( val[window.HOSTNAME] ){
-        return gettext("Volume") + " " + val[window.HOSTNAME].volume.name;
+        return gettext("Volume") + " " + toUnicode(val[window.HOSTNAME].volume);
       }
       for( i = 0; i < row.stack_child_set.length; i++ ){
         if( row.stack_child_set[i].endpoint_hosts.indexOf(window.HOSTNAME) !== -1 ){
-          return gettext("Connection") + " " + row.stack_child_set[i].__unicode__;
+          return gettext("Connection") + " " + toUnicode(row.stack_child_set[i]);
         }
       }
       return '';
