@@ -116,7 +116,7 @@ Ext.oa.volumeGroup_Panel = Ext.extend(Ext.grid.GridPanel, {
                 name:       'volume',
                 hiddenName: 'volume_id',
                 store: new Ext.data.DirectStore({
-                  fields: ["app", "obj", "id", "name"],
+                  fields: ["app", "obj", "id", "__unicode__"],
                   directFn: lvm__VolumeGroup.ids
                 }),
                 typeAhead:     false,
@@ -124,7 +124,7 @@ Ext.oa.volumeGroup_Panel = Ext.extend(Ext.grid.GridPanel, {
                 emptyText:     'Select...',
                 forceSelection: false,
                 selectOnFocus: true,
-                displayField:  'name',
+                displayField:  '__unicode__',
                 valueField:    'id',
                 ref:           'vgfield',
                 listeners: {
