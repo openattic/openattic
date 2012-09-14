@@ -758,8 +758,8 @@ Ext.oa.Iscsi__Panel = Ext.extend(Ext.Panel, {
             handler: function(){
               var iscsiSize = iscsiPanel.getSize();
               var addwin = new Ext.Window({
-                x: iscsiSize.width / 4 * 3,
-                y: iscsiSize.height / 5 * 3,
+                x: Ext.lib.Dom.getViewWidth() - 250,
+                y: Ext.lib.Dom.getViewHeight() - 350,
                 height: 300,
                 width: 200,
                 frame: true,
