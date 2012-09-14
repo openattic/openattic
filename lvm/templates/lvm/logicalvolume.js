@@ -81,7 +81,7 @@ Ext.oa.Lvm__LogicalVolume_Panel = Ext.extend(Ext.oa.ShareGridPanel, {
       if( val === null || typeof val === "undefined" ){
         return '';
       }
-      return val.name;
+      return val.__unicode__;
     }
   },{
     name: 'ownername',
