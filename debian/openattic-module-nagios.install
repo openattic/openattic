@@ -11,8 +11,6 @@ installed_apps.d/nagios /usr/share/openattic/installed_apps.d
 debian/nagios_conf.d/openattic_static.cfg  /etc/nagios3/conf.d
 debian/nagios_plugins_conf.d/openattic.cfg /etc/nagios-plugins/config
 
-etc/cron.daily/oa-cleanuprrd            /etc/cron.daily
-
 nagios/plugins/check_diskstats          /usr/lib/nagios/plugins
 nagios/plugins/check_iface_traffic      /usr/lib/nagios/plugins
 nagios/plugins/check_openattic_rpcd     /usr/lib/nagios/plugins
