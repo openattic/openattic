@@ -340,7 +340,7 @@ Ext.oa.Lvm__LogicalVolume_Panel = Ext.extend(Ext.oa.ShareGridPanel, {
             store: {
               xtype: 'directstore',
               autoLoad: true,
-              fields: ['id', 'app', 'obj'],
+              fields: ['id', 'app', 'obj', '__unicode__'],
               directFn: lvm__LogicalVolume.get_shares,
               baseParams: {id: sel.data.id}
             },
@@ -350,12 +350,16 @@ Ext.oa.Lvm__LogicalVolume_Panel = Ext.extend(Ext.oa.ShareGridPanel, {
               },
               columns: [ {
                 header: gettext('App'),
-                width: 350,
+                width: 100,
                 dataIndex: "app"
               }, {
                 header: gettext('Object'),
                 width: 100,
                 dataIndex: "obj"
+              }, {
+                header: gettext('Description'),
+                width: 350,
+                dataIndex: "__unicode__"
               } ]
             })
           }

@@ -30,7 +30,7 @@ var storeUpdate = function(store, parent_id, field){
 };
 
 var targetStore = new Ext.data.DirectStore({
-  fields: ["iscsiname", "name", "id"],
+  fields: ["iscsiname", "name", "id", "__unicode__"],
   directFn: iscsi__Target.filter
 });
 
@@ -50,12 +50,12 @@ var lunStore = new Ext.data.DirectStore({
 });
 var init_all = new Ext.data.DirectStore({
   id: "init_all",
-  fields: ["id","name","address"],
+  fields: ["id", "name", "address", "__unicode__"],
   directFn: iscsi__Initiator.all
 });
 var tgt_all = new Ext.data.DirectStore({
   id: "tgt_all",
-  fields: ["app","obj","id","address"],
+  fields: ["app", "obj", "id", "address", "__unicode__"],
   directFn: ifconfig__IPAddress.get_valid_ips,
   baseParams: {
     idobj: {
@@ -152,7 +152,7 @@ Ext.oa.Iscsi__Panel = Ext.extend(Ext.Panel, {
     };
     init_allow = new Ext.data.DirectStore({
       id: "init_allow",
-      fields: ["app","obj","id","name", "id"],
+      fields: ["app","obj","id","__unicode__"],
       directFn: iscsi__Target.filter,
       listeners: {
         add: function(store){
@@ -169,7 +169,7 @@ Ext.oa.Iscsi__Panel = Ext.extend(Ext.Panel, {
     });
     init_deny = new Ext.data.DirectStore({
       id: "init_deny",
-      fields: ["app","obj","id","name", "id"],
+      fields: ["app","obj","id","__unicode__"],
       directFn: iscsi__Target.filter,
       listeners: {
         add: function(store){
@@ -394,7 +394,7 @@ Ext.oa.Iscsi__Panel = Ext.extend(Ext.Panel, {
               },
               columns: [{
                 header: "Allow",
-                dataIndex: "name"
+                dataIndex: "__unicode__"
               }]
             })
           },{
@@ -440,7 +440,7 @@ Ext.oa.Iscsi__Panel = Ext.extend(Ext.Panel, {
               },
               columns: [{
                 header: "Deny",
-                dataIndex: "name"
+                dataIndex: "__unicode__"
               }]
             })
           }],
@@ -769,8 +769,8 @@ Ext.oa.Iscsi__Panel = Ext.extend(Ext.Panel, {
             handler: function(){
               var iscsiSize = iscsiPanel.getSize();
               var addwin = new Ext.Window({
-                x: iscsiSize.width / 4 * 3,
-                y: iscsiSize.height / 5 * 3,
+                x: Ext.lib.Dom.getViewWidth() - 250,
+                y: Ext.lib.Dom.getViewHeight() - 350,
                 height: 300,
                 width: 200,
                 frame: true,
