@@ -54,6 +54,13 @@
           this.readOnly = readOnly;
         }
       }
+      function toUnicode(val){
+        "use strict";
+        if(val){
+          return val.__unicode__;
+        }
+        return '';
+      }
     </script>
     <script type="text/javascript" src="{{ MEDIA_URL }}/portal/Portal.js"></script>
     <script type="text/javascript" src="{{ MEDIA_URL }}/portal/PortalColumn.js"></script>

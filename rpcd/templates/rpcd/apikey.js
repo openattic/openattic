@@ -55,13 +55,7 @@ Ext.oa.ApiKey_Panel = Ext.extend(Ext.oa.ShareGridPanel, {
   storefields: [{
     name: 'ownername',
     mapping: 'owner',
-    convert: function( val, row ){
-      "use strict";
-      if( val === null ){
-        return '';
-      }
-      return val.__unicode__;
-    }
+    convert: toUnicode
   }, "apikey"],
   buttons: [{
     text: gettext('Show API URL'),

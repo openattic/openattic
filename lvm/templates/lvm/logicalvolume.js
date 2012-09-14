@@ -76,23 +76,11 @@ Ext.oa.Lvm__LogicalVolume_Panel = Ext.extend(Ext.oa.ShareGridPanel, {
   },{
     name: 'vgname',
     mapping: 'vg',
-    convert: function(val, row){
-      "use strict";
-      if( val === null || typeof val === "undefined" ){
-        return '';
-      }
-      return val.__unicode__;
-    }
+    convert: toUnicode
   },{
     name: 'ownername',
     mapping: 'owner',
-    convert: function(val, row){
-      "use strict";
-      if( val === null || typeof val === "undefined" ){
-        return '';
-      }
-      return val.__unicode__;
-    }
+    convert: toUnicode
   }],
   columns: [{
     header: gettext('LV'),
