@@ -33,6 +33,9 @@ class HostHandler(ModelHandler):
     def current(self):
         return self._getobj(Host.objects.get_current())
 
+    def current_id(self):
+        return self._idobj(Host.objects.get_current())
+
 class IPAddressHandler(ModelHandler):
     model = IPAddress
 
