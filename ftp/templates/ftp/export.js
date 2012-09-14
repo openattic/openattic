@@ -24,23 +24,11 @@ Ext.oa.Ftp__Export_Panel = Ext.extend(Ext.oa.ShareGridPanel, {
   storefields: [{
     name: 'volumename',
     mapping: 'volume',
-    convert: function( val, row ){
-      "use strict";
-      if(val){
-        return val.name; // fake to sort unknown values always at the bottom
-      }
-      return '';
-    }
+    convert: toUnicode
   }, {
     name: 'username',
     mapping: 'user',
-    convert: function( val, row ){
-      "use strict";
-      if(val){
-        return val.username; // fake to sort unknown values always at the bottom
-      }
-      return '';
-    }
+    convert: toUnicode
   }],
   columns: [{
     header: gettext('Volume'),
