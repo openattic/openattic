@@ -206,15 +206,15 @@ class Source(object):
         # Now print the graph description table.
         if fulldesc:
             self.args.extend([
-                "GPRINT:%s:LAST:%%8.2lf%%s"     % varname,
-                "GPRINT:%s:MIN:%%8.2lf%%s"      % varname,
-                "GPRINT:%s:AVERAGE:%%8.2lf%%s"  % varname,
-                "GPRINT:%s:MAX:%%8.2lf%%s\\j"   % varname,
+                "GPRINT:%s:LAST:%%8.2lf%%s"     % ("var%d" % id),
+                "GPRINT:%s:MIN:%%8.2lf%%s"      % ("var%d" % id),
+                "GPRINT:%s:AVERAGE:%%8.2lf%%s"  % ("var%d" % id),
+                "GPRINT:%s:MAX:%%8.2lf%%s\\j"   % ("var%d" % id),
                 ])
         else:
             self.args.extend([
-                "GPRINT:%s:LAST:%%8.2lf%%s"        % varname,
-                "GPRINT:%s:AVERAGE:%%8.2lf%%s\\j"  % varname,
+                "GPRINT:%s:LAST:%%8.2lf%%s"        % ("var%d" % id),
+                "GPRINT:%s:AVERAGE:%%8.2lf%%s\\j"  % ("var%d" % id),
                 ])
 
         return self.args
