@@ -343,7 +343,7 @@ Ext.oa.Nagios__Service_Panel = Ext.extend(Ext.Panel, {
         store: {
           xtype: 'directstore',
           fields: ['id', 'description', {
-            name: "volumename",    mapping: "volume", convert: function(val, row){ if(val){ return val.name; }}
+            name: "volumename",    mapping: "volume", convert: function(val, row){ if(val){ return val.__unicode__; }}
           }, {
             name: "plugin_output", mapping: "state",  convert: function(val, row){ if(val){ return val.plugin_output; }}
           }, {
