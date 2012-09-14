@@ -60,7 +60,7 @@ Ext.oa.ApiKey_Panel = Ext.extend(Ext.oa.ShareGridPanel, {
       if( val === null ){
         return '';
       }
-      return val.username;
+      return val.__unicode__;
     }
   }, "apikey"],
   buttons: [{
