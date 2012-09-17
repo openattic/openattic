@@ -148,7 +148,6 @@ class SystemD(LockingPlugin):
                     if lineinfo["iface"] is None:
                         lineinfo["iface"] = ''
                     res.append( lineinfo )
-                    print lineinfo
             elif line == "COMMIT":
                 continue
 
