@@ -274,6 +274,8 @@ class ModelHandler(BaseHandler):
                     data[field.name] = handler.idobj(int(data[field.name]))
                 else:
                     data[field.name] = None
+            elif isinstance( field, models.BooleanField ):
+                data[field.name] = field.name in data and data[field.name] == "on"
 
         from django.core.exceptions import ValidationError
 
