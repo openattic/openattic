@@ -27,6 +27,8 @@ if [ "$1" = "configure" ] ; then
     update-rc.d openattic_systemd defaults >/dev/null
     update-rc.d openattic_rpcd    defaults >/dev/null
 
+    a2enmod wsgi
+
     if [ -x /etc/init.d/apache2 ]; then
         invoke-rc.d --quiet apache2 reload
     fi
