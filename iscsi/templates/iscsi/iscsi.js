@@ -566,7 +566,7 @@ Ext.oa.Iscsi__Panel = Ext.extend(Ext.Panel, {
                     }
                   }
                 }, {
-                   text: gettext('Cancel'),
+                   text: gettext('Close'),
                    icon: MEDIA_URL + "/icons2/16x16/actions/gtk-cancel.png",
                    handler: function(self){
                      addwin.hide();
