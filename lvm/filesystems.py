@@ -189,7 +189,7 @@ class Zfs(FileSystem):
     def mount(self, jid, mountpoint=None):
         self._lvm.zfs_mount(jid, self.lv.name)
 
-    def unmount(self, jid):
+    def unmount(self, jid, mountpoint=None):
         self._lvm.zfs_unmount(jid, self.lv.name)
 
     def destroy(self):
