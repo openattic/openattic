@@ -42,9 +42,16 @@ fi
 
 . /lib/lsb/init-functions
 
+function mklogfile() {
+	if [ ! -z "$1" -a ! -e "$1" ]; then
+		touch "$1"
+	fi
+}
+
 case $1 in
 	start)
 		log_daemon_msg "Starting" "openATTIC systemd"
+		mklogfile "$SYSD_LOGFILE"
 		env - PATH="/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin" \
 			start-stop-daemon --pidfile=$SYSD_PIDFILE --make-pidfile --background --oknodo --start \
 			--exec $PYTHON --chdir $OADIR -- $SYSD_OPTIONS -l $SYSD_LOGFILE -L $SYSD_LOGLEVEL -q

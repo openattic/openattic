@@ -43,12 +43,20 @@ fi
 
 . /lib/lsb/init-functions
 
+function mklogfile() {
+	if [ ! -z "$1" -a ! -e "$1" ]; then
+		touch "$1"
+		chown "$RPCD_CHUID" "$1"
+	fi
+}
+
 case $1 in
 	start)
 		log_daemon_msg "Starting" "openATTIC rpcd"
 		if [ ! -z "$RPCD_CERTFILE" -a ! -z "$RPCD_KEYFILE" ]; then
 			RPCD_OPTIONS="$RPCD_OPTIONS -c $RPCD_CERTFILE -k $RPCD_KEYFILE"
 		fi
+		mklogfile "$RPCD_LOGFILE"
 		env - PATH="/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin" \
 			start-stop-daemon --pidfile=$RPCD_PIDFILE --make-pidfile --background --oknodo --start \
 			--exec $PYTHON --chdir $OADIR --chuid $RPCD_CHUID -- \

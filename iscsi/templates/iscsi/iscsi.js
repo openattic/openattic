@@ -366,6 +366,11 @@ Ext.oa.Iscsi__Panel = Ext.extend(Ext.Panel, {
                 var firstGridDropTarget = new Ext.dd.DropTarget(firstGridDropTargetEl, {
                   ddGroup    : 'initiator',
                   notifyDrop : function(ddSource, e, data){
+                    var sel = iscsiPanel.targets.getSelectionModel();
+                    if (sel.selections.items.length === 0){
+                      Ext.Msg.alert("Warning","Please select a Target first");
+                      return;
+                    }     
                     var records =  ddSource.dragData.selections,
                         i;
                     if( self.store.findExact("id",records[0].data.id) === -1 )
@@ -413,6 +418,11 @@ Ext.oa.Iscsi__Panel = Ext.extend(Ext.Panel, {
                 var firstGridDropTarget = new Ext.dd.DropTarget(firstGridDropTargetEl, {
                   ddGroup    : 'initiator',
                   notifyDrop : function(ddSource, e, data){
+                    var sel = iscsiPanel.targets.getSelectionModel();
+                    if (sel.selections.items.length === 0){
+                      Ext.Msg.alert("Warning","Please select a Target first");
+                      return;
+                    }
                     var records =  ddSource.dragData.selections;
                     if( self.store.findExact("id",records[0].data.id) === -1 ){
                       if( ddSource.grid.store.storeId === init_allow.storeId ){
@@ -450,7 +460,7 @@ Ext.oa.Iscsi__Panel = Ext.extend(Ext.Panel, {
             handler: function(){
               var addwin = new Ext.Window({
                 height: 350,
-                width: 600,
+                width: 650,
                 frame: true,
                 title: 'Overview',
                 layout: 'border',
@@ -483,11 +493,13 @@ Ext.oa.Iscsi__Panel = Ext.extend(Ext.Panel, {
                     cellclick: function (self, rowIndex, colIndex, evt ){
                     var record = self.getStore().getAt(rowIndex);
                       self.ownerCt.items.items[1].getForm().loadRecord(record);
+                      self.ownerCt.items.items[1].namefield.disable();
+                      self.ownerCt.items.items[1].addressfield.disable();
                     }
                   }
                 },{
                   region: "east",
-                  width: 250,
+                  width: 300,
                   xtype: 'form',
                   defaultType: 'textfield',
                   bodyStyle: 'padding:5px 5px;',
@@ -504,38 +516,36 @@ Ext.oa.Iscsi__Panel = Ext.extend(Ext.Panel, {
                     anchor: '-20px',
                     ref: 'namefield',
                     allowBlank: false,
-                    name: 'name'
+                    disabled: true,
+		    name: 'name'
                   },{
-                    fieldLabel: 'IQN/IP',
+                    fieldLabel: 'IP/IQN',
                     autoScroll: true,
                     anchor: '-20px',
                     ref: 'addressfield',
                     allowBlank: false,
+                    disabled: true,
                     name: 'address'
                   }],
                   buttons: [{
-                    text: gettext('Add'),
-                    icon: MEDIA_URL + "/icons2/16x16/actions/add.png",
-                    handler: function(self){
-                        if( !self.ownerCt.ownerCt.getForm().isValid() ){
+		    text: gettext('Edit'),
+        	    icon: MEDIA_URL + "/icons2/16x16/actions/edit-redo.png",
+		    handler: function(self){
+			var sm = addwin.initiator_all.getSelectionModel();
+                        if (sm.selections.items.length === 0){
+                          Ext.Msg.alert ("Warning","Please select an Initiator you want to edit");
                           return;
                         }
-                        iscsi__Initiator.create({
-                          'name':    self.ownerCt.ownerCt.namefield.getValue(),
-                          'address': self.ownerCt.ownerCt.addressfield.getValue()
-                        }, function(provider, response){
-                          if( response.result ){
-                            init_all.reload();
-                          }
-                        });
-                    }
-                  },{
+			self.ownerCt.ownerCt.namefield.enable();
+			self.ownerCt.ownerCt.addressfield.enable();
+		    } 
+		  },{
                     text: gettext('Save'),
-                    icon: MEDIA_URL + "/icons2/16x16/actions/edit-redo.png",
+		    icon: MEDIA_URL + "/oxygen/16x16/actions/dialog-ok-apply.png",
                     handler: function(self){
                       var sm = addwin.initiator_all.getSelectionModel();
                       if (sm.selections.items.length === 0){
-                        Ext.Msg.alert ("Warning","Please select an Initiator you want to edit");
+                        Ext.Msg.alert ("Warning","Please select an Initiator you want to save changes");
                         return;
                       }
                       if( !self.ownerCt.ownerCt.getForm().isValid() ){
@@ -548,13 +558,68 @@ Ext.oa.Iscsi__Panel = Ext.extend(Ext.Panel, {
                         }, function(provider, response){
                           if( response.result ){
                             init_all.reload();
+                            self.ownerCt.ownerCt.namefield.disable();
+                            self.ownerCt.ownerCt.addressfield.disable();
                           }
                         });
                     }
                   }]
                 }],
                 buttons: [{
-                  text: gettext('Delete'),
+                  text: gettext('New Initiator'),
+                  icon: MEDIA_URL + "/icons2/16x16/actions/add.png",
+                  handler: function(){
+                    var addwin = new Ext.Window({
+                      title: gettext('Add Initiator'),
+                      layout: "fit",
+                      height: 140,
+                      width: 500,
+                      items: [{
+                        xtype: "form",
+                        autoScroll: true,
+                        defaults: {
+                          xtype: "textfield",
+                          allowBlank: false,
+                          anchor: "-20px"
+                        },
+                        bodyStyle: 'padding:5px 5px;',
+                        items: [{
+                          fieldLabel: gettext('Name'),
+                          ref: "namefield",
+                        },{
+                          fieldLabel: gettext('IP/IQN'),
+                          ref: "addressfield"
+                        }],
+                        buttons: [{
+                          text: gettext('Create'),
+                          icon: MEDIA_URL + "/oxygen/16x16/actions/dialog-ok-apply.png",
+                          handler: function(self){
+                              if( !self.ownerCt.ownerCt.getForm().isValid() ){
+                                return;
+                              }
+                              iscsi__Initiator.create({
+                                'name':    self.ownerCt.ownerCt.namefield.getValue(),
+                                'address': self.ownerCt.ownerCt.addressfield.getValue()
+                              }, function(provider, response){
+                                if( response.result ){
+                                  init_all.reload();
+                                  addwin.hide();
+                                }
+                              });
+                          }
+                       }, {
+                          text: gettext('Cancel'),
+                          icon: MEDIA_URL + "/icons2/16x16/actions/gtk-cancel.png",
+                          handler: function(self){
+                            addwin.hide();
+                          }
+                        }]
+                      }]
+                    });
+                    addwin.show();
+                  }
+                },{
+                  text: gettext('Delete Initiator'),
                   icon: MEDIA_URL + "/icons2/16x16/actions/remove.png",
                   handler: function(self){
                     var sm = addwin.initiator_all.getSelectionModel();
@@ -576,7 +641,7 @@ Ext.oa.Iscsi__Panel = Ext.extend(Ext.Panel, {
                     }
                   }
                 }, {
-                   text: gettext('Cancel'),
+                   text: gettext('Close'),
                    icon: MEDIA_URL + "/icons2/16x16/actions/gtk-cancel.png",
                    handler: function(self){
                      addwin.hide();
@@ -586,7 +651,7 @@ Ext.oa.Iscsi__Panel = Ext.extend(Ext.Panel, {
               addwin.show();
             }
         },{
-            text: gettext('Delete Initiator'),
+            text: gettext('Remove Initiator Binding'),
             icon: MEDIA_URL + "/icons2/16x16/actions/remove.png",
             handler: deleteInitiator
         }],
@@ -809,6 +874,11 @@ Ext.oa.Iscsi__Panel = Ext.extend(Ext.Panel, {
               var firstGridDropTarget = new Ext.dd.DropTarget(firstGridDropTargetEl, {
                 ddGroup    : 'target',
                 notifyDrop : function(ddSource, e, data){
+                  var sel = iscsiPanel.targets.getSelectionModel();
+                  if (sel.selections.items.length === 0){
+                    Ext.Msg.alert("Warning","Please select a Target first");
+                    return;
+                  }
                   var records =  ddSource.dragData.selections;
                   if( self.store.findExact("id",records[0].data.id) === -1 ){
                     self.store.add(records);

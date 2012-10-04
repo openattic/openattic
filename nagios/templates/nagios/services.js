@@ -379,7 +379,7 @@ Ext.oa.Nagios__Service_Panel = Ext.extend(Ext.Panel, {
               return "unknown";
             }
           }],
-          directFn: nagios__Service.all
+          directFn: nagios__Service.filter
         },
         colModel: new Ext.grid.ColumnModel({
           defaults: {
@@ -512,7 +512,55 @@ Ext.oa.Nagios__Service_Panel = Ext.extend(Ext.Panel, {
         loadRecord: function( record ){
           this.items.items[1].loadRecord( record );
         }
-      }]
+      }],
+      bbar: {
+        xtype: 'toolbar',
+        hidden: true,
+        items: ["Search:", {
+          xtype: 'textfield',
+          emptyText: gettext('Search...'),
+          enableKeyEvents: true,
+          listeners: {
+            change: function( fld, newVal, oldVal ){
+              if( typeof nagiosGrid.searchTimeout !== "undefined" ){
+                clearTimeout(nagiosGrid.searchTimeout);
+              }
+              if( newVal !== '' ){
+                nagiosGrid.items.items[0].store.baseParams["description__icontains"] = newVal;
+              }
+              else{
+                delete nagiosGrid.items.items[0].store.baseParams["description__icontains"];
+              }
+              nagiosGrid.items.items[0].store.reload();
+            },
+            keypress: function( fld, evt ){
+              if( typeof nagiosGrid.searchTimeout !== "undefined" ){
+                clearTimeout(nagiosGrid.searchTimeout);
+              }
+              if(evt.getKey() === evt.ENTER){
+                fld.initialConfig.listeners.change.apply(nagiosGrid, [fld, fld.getValue()]);
+              }
+              else if(evt.getKey() === evt.ESC){
+                fld.initialConfig.listeners.change.apply(nagiosGrid, [fld, '']);
+                nagiosGrid.bottomToolbar.hide();
+                nagiosGrid.doLayout();
+              }
+              else{
+                nagiosGrid.searchTimeout = fld.initialConfig.listeners.change.defer(2000, nagiosGrid, [fld, fld.getValue()]);
+              }
+            }
+          }
+        }, {
+          xtype: 'button',
+          icon: MEDIA_URL + "/icons2/16x16/actions/gtk-cancel.png",
+          handler: function(){
+            var fld = nagiosGrid.bottomToolbar.items.items[1];
+            fld.initialConfig.listeners.change.apply(nagiosGrid, [fld, '']);
+            nagiosGrid.bottomToolbar.hide();
+            nagiosGrid.doLayout();
+          }
+        }]
+      }
     }));
     Ext.oa.Nagios__Service_Panel.superclass.initComponent.apply(this, arguments);
   },
@@ -527,6 +575,10 @@ Ext.oa.Nagios__Service_Panel = Ext.extend(Ext.Panel, {
     this.items.items[0].store.on("load", function(){
       this.getEl().unmask();
     }, this.items.items[0], {single: true} );
+  },
+  initSearch: function(){
+    this.bottomToolbar.show();
+    this.bottomToolbar.items.items[1].focus();
   }
 });
 
