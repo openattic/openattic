@@ -1,3 +1,5 @@
+<IfModule mod_wsgi.c>
+
 Alias                   /openattic/static/extjs_themes/images/default/ /usr/share/javascript/extjs/resources/images/default/
 Alias                   /openattic/static/extjs/  /usr/share/javascript/extjs/
 Alias                   /openattic/static/oxygen/ /usr/share/icons/oxygen/
@@ -29,3 +31,5 @@ WSGIPassAuthorization   On
 		</IfModule>
 	</IfModule>
 </Location>
+
+</IfModule>
