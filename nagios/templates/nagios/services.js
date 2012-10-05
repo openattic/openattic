@@ -355,7 +355,7 @@ Ext.oa.Nagios__Service_Panel = Ext.extend(Ext.Panel, {
               if(val && val.last_check){
                 return val.last_check;
               }
-              return "unknown";
+              return null;
             }
           }, {
             name: "next_check",
@@ -364,7 +364,7 @@ Ext.oa.Nagios__Service_Panel = Ext.extend(Ext.Panel, {
               if(val && val.next_check){
                 return val.next_check;
               }
-              return "unknown";
+              return null;
             }
           }],
           directFn: nagios__Service.filter
