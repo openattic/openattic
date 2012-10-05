@@ -30,7 +30,7 @@ if [ "$1" = "configure" ] ; then
     a2enmod wsgi
 
     if [ -x /etc/init.d/apache2 ]; then
-        invoke-rc.d --quiet apache2 reload
+        invoke-rc.d --quiet apache2 restart
     fi
 
     if [ -x /etc/init.d/dbus ]; then
