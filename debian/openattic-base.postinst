@@ -39,6 +39,7 @@ if [ "$1" = "configure" ] ; then
 
     db_input high openattic-base/run-oaconfig-install || true
     db_go
+    db_stop
 fi
 
 #DEBHELPER#
