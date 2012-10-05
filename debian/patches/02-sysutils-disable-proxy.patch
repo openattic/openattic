@@ -6,6 +6,6 @@ Index: openattic/sysutils/templates/sysutils/mainhead.html
   GNU General Public License for more details.
  {% endcomment %}
  
--<script src="{% url javascript 'sysutils' 'proxy'      %}"></script>
+-<script src="{% url javascript 'sysutils' 'proxy'     %}"></script>
  <script src="{% url javascript 'sysutils' 'time'      %}"></script>
- <script src="{% url javascript 'sysutils' 'sysutils'      %}"></script>
+ <script src="{% url javascript 'sysutils' 'sysutils'  %}"></script>
