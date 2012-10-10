@@ -15,6 +15,7 @@
  *  GNU General Public License for more details.
 """
 
+from __future__ import division
 
 import os
 import sys
@@ -22,6 +23,7 @@ import re
 import json
 import subprocess
 
+from time import time
 from optparse import OptionParser
 
 def get_sh_status():
@@ -85,8 +87,28 @@ def status_merge(sh, proc):
     return resources
 
 
+def wrapdiff(curr, last):
+    """ Calculate the difference between last and curr.
+
+        If last > curr, try to guess the boundary at which the value must have wrapped
+        by trying the maximum values of 64, 32 and 16 bit signed and unsigned ints.
+    """
+    if last <= curr:
+        return curr - last
+
+    boundary = None
+    for chkbound in (64,63,32,31,16,15):
+        if last > 2**chkbound:
+            break
+        boundary = chkbound
+    if boundary is None:
+        raise ArithmeticError("Couldn't determine boundary")
+    return 2**boundary - last + curr
+
+
 def do_check(resource, prevstate, options):
     status = 0
+    dt = resource["__timestamp__"] - prevstate["__timestamp__"]
     if resource["_cstate"] != "Connected" and not options.ignore_connstate:
         status = 2
     if resource["_disk"] != "UpToDate":
@@ -104,10 +126,10 @@ def do_check(resource, prevstate, options):
         if options.secondary_crit:
             status = 2
     print ("%(nagstate)s - %(role)s, %(cstate)s, Disk is %(dstate)s|"
-           "net_sent=%(net_sent)dB "
-           "net_rvcd=%(net_rcvd)dB "
-           "disk_written=%(disk_written)dB "
-           "disk_read=%(disk_read)dB "
+           "net_sent=%(net_sent)dB/s "
+           "net_rvcd=%(net_rcvd)dB/s "
+           "disk_written=%(disk_written)dB/s "
+           "disk_read=%(disk_read)dB/s "
            "activity_log=%(activity_log)d "
            "bit_map=%(bit_map)d "
            "local_pending_ios=%(local_pending_ios)d "
@@ -121,10 +143,10 @@ def do_check(resource, prevstate, options):
         "cstate":               resource["_cstate"],
         "dstate":               resource["_disk"],
         "role":                 resource["_role"],
-        "net_sent":             int(resource.get("ns", "0")) * 1024,
-        "net_rcvd":             int(resource.get("nr", "0")) * 1024,
-        "disk_written":         int(resource.get("dw", "0")) * 1024,
-        "disk_read":            int(resource.get("dr", "0")) * 1024,
+        "net_sent":             wrapdiff( int(resource.get("ns", "0")) * 1024, int(prevstate.get("ns", "0")) * 1024) / dt,
+        "net_rcvd":             wrapdiff( int(resource.get("nr", "0")) * 1024, int(prevstate.get("nr", "0")) * 1024) / dt,
+        "disk_written":         wrapdiff( int(resource.get("dw", "0")) * 1024, int(prevstate.get("dw", "0")) * 1024) / dt,
+        "disk_read":            wrapdiff( int(resource.get("dr", "0")) * 1024, int(prevstate.get("dr", "0")) * 1024) / dt,
         "activity_log":         int(resource.get("al", "0")),
         "bit_map":              int(resource.get("bm", "0")),
         "local_pending_ios":    int(resource.get("lo", "0")),
@@ -164,6 +186,7 @@ def main():
     resname = posargs[0]
     for minor, info in status.items():
         if info["_res_name"] == resname:
+            info["__timestamp__"] = time()
             statfile = "/var/lib/nagios3/drbdstats.%s.json" % resname
             try:
                 if not os.path.exists(statfile):
