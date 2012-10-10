@@ -19,6 +19,7 @@
 import os
 import sys
 import re
+import json
 import subprocess
 
 from optparse import OptionParser
@@ -84,7 +85,7 @@ def status_merge(sh, proc):
     return resources
 
 
-def do_check(resource, options):
+def do_check(resource, prevstate, options):
     status = 0
     if resource["_cstate"] != "Connected" and not options.ignore_connstate:
         status = 2
@@ -163,7 +164,33 @@ def main():
     resname = posargs[0]
     for minor, info in status.items():
         if info["_res_name"] == resname:
-            return do_check(info, options)
+            statfile = "/var/lib/nagios3/drbdstats.%s.json" % resname
+            try:
+                if not os.path.exists(statfile):
+                    print "Need state info, please wait until Nagios checks again."
+                    return 3
+                else:
+                    fd = open(statfile, "rb")
+                    prevstate = json.load(fd)
+                    fd.close()
+                    return do_check(info, prevstate, options)
+            finally:
+                if os.path.exists(statfile):
+                    stat = os.stat(statfile)
+                else:
+                    stat = None
+                fd = open(statfile + ".new", "wb", False)
+                try:
+                    json.dump(info, fd)
+                    if stat is not None:
+                        # keep permissions
+                        os.fchmod(fd.fileno(), stat.st_mode)
+                        if os.geteuid() == 0:
+                            os.fchown(fd.fileno(), stat.st_uid, stat.st_gid)
+                finally:
+                    fd.close()
+                # atomic commit
+                os.rename(statfile + ".new", statfile)
 
     print >> sys.stderr, "Resource '%s' does not exist!" % resname
     return 2
