@@ -1,0 +1,174 @@
+#!/usr/bin/env python
+# -*- coding: utf-8 -*-
+# kate: space-indent on; indent-width 4; replace-tabs on;
+
+"""
+ *  Copyright (C) 2011-2012, it-novum GmbH <community@open-attic.org>
+ *
+ *  openATTIC is free software; you can redistribute it and/or modify it
+ *  under the terms of the GNU General Public License as published by
+ *  the Free Software Foundation; version 2.
+ *
+ *  This package is distributed in the hope that it will be useful,
+ *  but WITHOUT ANY WARRANTY; without even the implied warranty of
+ *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ *  GNU General Public License for more details.
+"""
+
+
+import os
+import sys
+import re
+import subprocess
+
+from optparse import OptionParser
+
+def get_sh_status():
+    proc = subprocess.Popen(["drbdadm", "sh-status"], stdout=subprocess.PIPE)
+    sh_status, _ = proc.communicate()
+    # first three lines are drbd version and conf file
+    currstatus = {}
+    resources  = {}
+    for line in sh_status.split("\n")[3:]:
+        line = line.strip()
+        if not line:
+            continue
+
+        if line == "_sh_status_process":
+            resources[currstatus["_minor"]] = currstatus
+            currstatus = {}
+
+        else:
+            kw, value = line.split("=", 1)
+            currstatus[kw] = value
+
+    return resources
+
+
+def get_proc_status():
+    resources = {}
+    curr_res = None
+    with open("/proc/drbd", "rb") as fd:
+        for line in fd:
+            line = line.strip()
+            if not line:
+                continue
+            if line.startswith("version:") or line.startswith("srcversion:"):
+                continue
+
+            # try to match a line that introduces a new resource. examples:
+            # 13: cs:Connected ro:Secondary/Secondary ds:UpToDate/UpToDate C r-----
+            # 0: cs:StandAlone ro:Primary/Unknown ds:UpToDate/DUnknown   r----
+            m = re.match(r'^(?P<minor>\d+):\s+cs:(?P<cs>\w+)\s+ro:(?P<ro>\w+/\w+)\s+'
+                          'ds:(?P<ds>\w+/\w+)\s+(?P<proto>[ABC]?)\s+(?P<flags>[r\-]+)$', line)
+            if m:
+                if curr_res is not None:
+                    resources[curr_res["minor"]] = curr_res
+                curr_res = m.groupdict()
+            else:
+                # if that failed, we have a line that contains stats for the last matched resource:
+                # ns:0 nr:0 dw:0 dr:0 al:0 bm:0 lo:0 pe:0 ua:0 ap:0 ep:1 wo:f oos:0
+                curr_res.update( dict( [
+                    stanza.split(":", 1) for stanza in line.split(" ")
+                    ] ) )
+        if curr_res is not None:
+            resources[curr_res["minor"]] = curr_res
+    return resources
+
+
+def status_merge(sh, proc):
+    resources = {}
+    for minor in sh:
+        resources[minor] = sh[minor].copy()
+        resources[minor].update(proc[minor])
+    return resources
+
+
+def do_check(resource, options):
+    status = 0
+    if resource["_cstate"] != "Connected" and not options.ignore_connstate:
+        status = 2
+    if resource["_disk"] != "UpToDate":
+        # in case we're secondary, this might be because we lost connection.
+        if resource["_role"] == "Secondary":
+            if not options.ignore_connstate:
+                status = 2
+        else:
+            # we're a diskless primary, which may or may not suck.
+            if not options.ignore_diskstate:
+                status = 2
+    if resource["_role"] != "Primary":
+        if options.secondary_warn:
+            status = 1
+        if options.secondary_crit:
+            status = 2
+    print ("%(nagstate)s - %(role)s, %(cstate)s, Disk is %(dstate)s|"
+           "net_sent=%(net_sent)dB "
+           "net_rvcd=%(net_rcvd)dB "
+           "disk_written=%(disk_written)dB "
+           "disk_read=%(disk_read)dB "
+           "activity_log=%(activity_log)d "
+           "bit_map=%(bit_map)d "
+           "local_pending_ios=%(local_pending_ios)d "
+           "peer_pending_ios=%(peer_pending_ios)d "
+           "peer_unacked_ios=%(peer_unacked_ios)d "
+           "drbd_pending_ios=%(drbd_pending_ios)d "
+           "epochs=%(epochs)d "
+           "out_of_sync=%(out_of_sync)dB "
+          ) % {
+        "nagstate":             {0: "OK", 1: "WARNING", 2: "CRITICAL"}[status],
+        "cstate":               resource["_cstate"],
+        "dstate":               resource["_disk"],
+        "role":                 resource["_role"],
+        "net_sent":             int(resource.get("ns", "0")) * 1024,
+        "net_rcvd":             int(resource.get("nr", "0")) * 1024,
+        "disk_written":         int(resource.get("dw", "0")) * 1024,
+        "disk_read":            int(resource.get("dr", "0")) * 1024,
+        "activity_log":         int(resource.get("al", "0")),
+        "bit_map":              int(resource.get("bm", "0")),
+        "local_pending_ios":    int(resource.get("lo", "0")),
+        "peer_pending_ios":     int(resource.get("pe", "0")),
+        "peer_unacked_ios":     int(resource.get("ua", "0")),
+        "drbd_pending_ios":     int(resource.get("ap", "0")),
+        "epochs":               int(resource.get("ep", "0")),
+        "out_of_sync":          int(resource.get("oos", "0")) * 1024
+        }
+
+
+def main():
+    status = status_merge(get_sh_status(), get_proc_status())
+
+    parser = OptionParser(usage="%prog [options] <resource name>")
+    parser.add_option("-l", "--list",             help="list existing resources and exit",
+        action="store_true", default=False)
+    parser.add_option("-c", "--ignore-connstate", help="don't treat disconnected state as an error",
+        action="store_true", default=False)
+    parser.add_option("-d", "--ignore-diskstate", help="don't treat outdated/inconsistent state as an error",
+        action="store_true", default=False)
+    parser.add_option("-s", "--secondary-warn",   help="warn if secondary",
+        action="store_true", default=False)
+    parser.add_option("-S", "--secondary-crit",   help="critical if secondary (supersedes -s)",
+        action="store_true", default=False)
+    options, posargs = parser.parse_args()
+
+    if options.list:
+        for minor, info in status.items():
+            print "%3d: %s" % (int(minor), info["_res_name"])
+        return 0
+
+    if not posargs:
+        print >> sys.stderr, "No resource name given. See -h for usage"
+        return 2
+
+    resname = posargs[0]
+    for minor, info in status.items():
+        if info["_res_name"] == resname:
+            return do_check(info, options)
+
+    print >> sys.stderr, "Resource '%s' does not exist!" % resname
+    return 2
+
+
+if __name__ == '__main__':
+    sys.exit(main())
+
