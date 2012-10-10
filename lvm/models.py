@@ -491,6 +491,9 @@ class LogicalVolume(models.Model):
             self.filesystem = self.snapshot.filesystem
             self.formatted  = self.snapshot.formatted
 
+        if self.id is not None:
+            old_self = LogicalVolume.objects.get(id=self.id)
+
         ret = models.Model.save(self, *args, **kwargs)
 
         self._build_job()
@@ -511,7 +514,6 @@ class LogicalVolume(models.Model):
                     ret = models.Model.save(self, *args, **kwargs)
 
         else:
-            old_self = LogicalVolume.objects.get(id=self.id)
             if old_self.megs != self.megs:
                 self.resize()
 

@@ -272,7 +272,7 @@ Ext.oa.Nagios__Service_Panel = Ext.extend(Ext.Panel, {
     var nagiosGrid = this;
     var renderDate = function(val, x, store){
       if(!val) return "unknown";
-      return new Date(val * 1000).format("Y-m-d H:i:s");
+      return new Date(val * 1000).format(get_format("SHORT_DATETIME_FORMAT"));
     };
     var stateicons = {
       0: MEDIA_URL + '/oxygen/16x16/actions/dialog-ok-apply.png',
@@ -367,7 +367,7 @@ Ext.oa.Nagios__Service_Panel = Ext.extend(Ext.Panel, {
               if(val && val.last_check){
                 return val.last_check;
               }
-              return "unknown";
+              return null;
             }
           }, {
             name: "next_check",
@@ -376,7 +376,7 @@ Ext.oa.Nagios__Service_Panel = Ext.extend(Ext.Panel, {
               if(val && val.next_check){
                 return val.next_check;
               }
-              return "unknown";
+              return null;
             }
           }],
           directFn: nagios__Service.filter

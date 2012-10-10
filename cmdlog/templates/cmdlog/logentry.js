@@ -81,7 +81,11 @@ Ext.oa.Cmdlog__LogEntry_Panel = Ext.extend(Ext.Panel, {
           },
           columns: [{
               header: gettext('End time'),
-              dataIndex: 'endtime'
+              dataIndex: 'endtime',
+              renderer: function(val){
+                if(!val) return "unknown";
+                return new Date( Date.parse(val) ).format(get_format("SHORT_DATETIME_FORMAT"))
+              }
             }, {
               header: gettext('Command'),
               dataIndex: 'command'
@@ -106,6 +110,7 @@ Ext.oa.Cmdlog__LogEntry_Panel = Ext.extend(Ext.Panel, {
           store:    store,
           items: [ {
             xtype: "textfield",
+            id: "cmdlog_search_field",
             emptyText: gettext('Search...'),
             enableKeyEvents: true,
             listeners: {
@@ -200,6 +205,9 @@ Ext.oa.Cmdlog__LogEntry_Panel = Ext.extend(Ext.Panel, {
     "use strict";
     Ext.oa.Cmdlog__LogEntry_Panel.superclass.onRender.apply(this, arguments);
     this.items.items[0].store.reload();
+  },
+  initSearch: function(){
+    Ext.get("cmdlog_search_field").focus();
   }
 });
 
