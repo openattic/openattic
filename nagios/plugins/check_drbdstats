@@ -27,7 +27,7 @@ from time import time
 from optparse import OptionParser
 
 def get_sh_status():
-    proc = subprocess.Popen(["drbdadm", "sh-status"], stdout=subprocess.PIPE)
+    proc = subprocess.Popen(["drbdadm", "sh-status"], stdout=subprocess.PIPE, stderr=SUBPROCESS.PIPE)
     sh_status, _ = proc.communicate()
     # first three lines are drbd version and conf file
     currstatus = {}
