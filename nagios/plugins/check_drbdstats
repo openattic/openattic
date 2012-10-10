@@ -69,11 +69,12 @@ def get_proc_status():
                     resources[curr_res["minor"]] = curr_res
                 curr_res = m.groupdict()
             else:
-                # if that failed, we have a line that contains stats for the last matched resource:
+                # if that failed, check if we have a line that contains stats for the last matched resource:
                 # ns:0 nr:0 dw:0 dr:0 al:0 bm:0 lo:0 pe:0 ua:0 ap:0 ep:1 wo:f oos:0
-                curr_res.update( dict( [
-                    stanza.split(":", 1) for stanza in line.split(" ")
-                    ] ) )
+                if re.match(r'^\w+:\w+(\s\w+:\w+)+$', line):
+                    curr_res.update( dict( [
+                        stanza.split(":", 1) for stanza in line.split(" ")
+                        ] ) )
         if curr_res is not None:
             resources[curr_res["minor"]] = curr_res
     return resources
