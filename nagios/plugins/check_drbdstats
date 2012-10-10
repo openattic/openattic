@@ -156,6 +156,7 @@ def do_check(resource, prevstate, options):
         "epochs":               int(resource.get("ep", "0")),
         "out_of_sync":          int(resource.get("oos", "0")) * 1024
         }
+    return status
 
 
 def main():
