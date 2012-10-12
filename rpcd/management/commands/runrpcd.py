@@ -153,7 +153,9 @@ class VerifyingRequestHandler(SecureXMLRPCRequestHandler):
                         try:
                             key = APIKey.objects.get(apikey=password, active=True)
                         except APIKey.DoesNotExist:
-                            self.send_error(401, 'Authentication failed')
+                            self.send_response(401, 'Authentication failed')
+                            self.send_header("WWW-Authenticate", 'Basic realm="openATTIC XMLRPC"')
+                            self.end_headers()
                             return False
                         else:
                             self.current_user = key.owner
@@ -164,7 +166,9 @@ class VerifyingRequestHandler(SecureXMLRPCRequestHandler):
                             self.current_user = user
                             return True
             # if authentication fails, tell the client
-            self.send_error(401, 'Authentication failed')
+            self.send_response(401, 'Authentication failed')
+            self.send_header("WWW-Authenticate", 'Basic realm="openATTIC XMLRPC"')
+            self.end_headers()
         return False
 
     def _dispatch(self, method, params):
