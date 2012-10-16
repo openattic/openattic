@@ -24,6 +24,7 @@ from ifconfig.models import Host
 from peering.models import PeerHost
 
 from xmlrpclib import Fault
+from httplib import BadStatusLine
 from rpcd.exceptionhelper import translate_exception
 
 class BaseHandler(object):
@@ -378,7 +379,7 @@ class ProxyHandler(BaseHandler):
                 res = meth(*args)
             except Fault, flt:
                 raise translate_exception(flt)
-            except (socket.timeout, socket.error):
+            except (socket.timeout, socket.error, BadStatusLine):
                 continue
             if isinstance(res, (tuple, list)):
                 ret.extend( self._convert_datetimes( list( res ) ) )
