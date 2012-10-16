@@ -410,7 +410,9 @@ class ProxyHandler(BaseHandler):
 
 class ProxyModelBaseHandler(ProxyHandler, ModelHandler):
     def _find_target_host(self, id):
-        curr = self.model.all_objects.get(id=int(id))
+        if not isinstance( id, dict ):
+            id = {'id': int(id)}
+        curr = self.model.all_objects.get(**id)
         for field in self.model.objects.hostfilter.split('__'):
             curr = getattr( curr, field )
             if isinstance( curr, Host ):
