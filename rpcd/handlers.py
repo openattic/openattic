@@ -463,7 +463,7 @@ class ProxyModelHandler(ProxyModelBaseHandler):
         return self._call_allpeers_method("filter_combo", field, query, kwds)
 
     def all_values(self, fields):
-        return self._order( self._call_allpeers_method("all_values", fields) )
+        return self.backing_handler(self.user, self.request).all_values(fields)
 
     def remove(self, id):
         return self._call_singlepeer_method("remove", id)
