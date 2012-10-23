@@ -429,7 +429,7 @@ class ProxyModelBaseHandler(ProxyHandler, ModelHandler):
 
 class ProxyModelHandler(ProxyModelBaseHandler):
     def _filter(self, kwds, order):
-        db_objects = self._filter_queryset(kwds, self.model.all_objects)
+        db_objects = self._filter_queryset(kwds, self.model.all_objects.all())
         result = []
         for instance in db_objects:
             try:
