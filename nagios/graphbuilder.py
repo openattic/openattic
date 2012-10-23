@@ -18,12 +18,20 @@
 from __future__ import division
 
 import re
+import subprocess
+
 from os.path  import getmtime
 from time     import time
 from xml.dom  import minidom
+from datetime import datetime
+from StringIO import StringIO
 
+from PIL      import Image
 from numpy    import array
 from colorsys import rgb_to_hls, hls_to_rgb
+
+from django.utils import formats
+from django.utils.translation import ugettext as _
 
 
 def rgbstr_to_rgb_int(string, default="FFFFFF"):
@@ -289,6 +297,7 @@ class Graph(object):
         self.title  = self.rrd.service_description
         self.args   = None
         self.verttitle = None
+        self.bgimage = None
 
         self.sources = {}
         for srcname in self.srcline.split():
@@ -298,7 +307,7 @@ class Graph(object):
                 srcname = srcname[1:]
             self.sources[srcname] = self.rrd.get_source(srcname)
 
-    def get_args(self):
+    def get_image(self):
         self.args = [
             "rrdtool", "graph", "-", "--start", str(self.start), "--end", str(self.end),
             "--height", str(self.height), "--width", str(self.width),
@@ -383,4 +392,40 @@ class Graph(object):
             lastinv = invert
             srcidx += 1
 
-        return self.args
+        def mkdate(text, timestamp):
+            return "COMMENT:%-15s %-30s\\j" % (
+                text,
+                formats.localize( datetime.fromtimestamp(timestamp) ).replace(":", "\\:")
+                )
+
+        self.args.extend([
+            "COMMENT: \\j",
+            mkdate( _("Start time"), self.start ),
+            mkdate( _("End time"),   self.end   ),
+            ])
+
+        rrdtool = subprocess.Popen(self.args, stdout=subprocess.PIPE)
+        out, err = rrdtool.communicate()
+
+        if self.bgcol:
+            # User wants a background color, so we made the image transparent
+            # before. Now is the time to fix that.
+            rgbbg    = rgbstr_to_rgb_int( self.bgcol )
+            imggraph = Image.open(StringIO(out))
+            if imggraph.mode == "RGBA":
+                # Create a new image that has our desired background color
+                imgout   = Image.new( imggraph.mode, imggraph.size, rgbbg )
+                # Maybe paste the background image into it
+                if self.bgimage:
+                    imgbg = Image.open(self.bgimage)
+                    # position the background image at the bottom right
+                    posbg = array(imgout.size) - array(imgbg.size) - array((15, 15))
+                    imgout.paste( imgbg, (posbg[0], posbg[1], imgout.size[0] - 15, imgout.size[1] - 15), imgbg )
+                # now paste the graph
+                imgout.paste( imggraph, None, imggraph )
+                # save into our "out" variable
+                buf = StringIO()
+                imgout.save( buf, "PNG" )
+                out = buf.getvalue()
+
+        return out

@@ -19,24 +19,13 @@ from __future__ import division
 
 import sys
 from time     import time
-from datetime import datetime
-
-from numpy    import array
-from StringIO import StringIO
-from PIL      import Image
 
 from django.http       import HttpResponse, Http404
 from django.shortcuts  import get_object_or_404
-from django.utils      import formats
-
-from django.utils.translation import ugettext as _
-
-from systemd.procutils import invoke
 
 from nagios.conf   import settings as nagios_settings
 from nagios.models import Service, Graph
-from nagios.graphbuilder import Graph as GraphBuilder, rgbstr_to_rgb_int
-
+from nagios.graphbuilder import Graph as GraphBuilder
 
 
 
@@ -103,11 +92,13 @@ def graph(request, service_id, srcidx):
     builder.height = int(request.GET.get("height", 150))
     builder.width  = int(request.GET.get("width",  700))
     bgcol  = request.GET.get("bgcol", nagios_settings.GRAPH_BGCOLOR)
+    builder.bgcol  = bgcol
     builder.fgcol  = request.GET.get("fgcol", nagios_settings.GRAPH_FGCOLOR)
     builder.grcol  = request.GET.get("grcol", nagios_settings.GRAPH_GRCOLOR)
     builder.sacol  = request.GET.get("sacol", "")
     builder.sbcol  = request.GET.get("sbcol", "")
     builder.grad   = request.GET.get("grad", "false") == "true"
+    builder.bgimage = nagios_settings.GRAPH_BGIMAGE
 
     if rrd.last_check < builder.start and "start" in request.GET and "end" not in request.GET:
         # Apparently, something is wrong and Nagios hasn't been checking the service
@@ -123,44 +114,5 @@ def graph(request, service_id, srcidx):
     if dbgraph is not None and builder.width >= 350:
         builder.title += ' - ' + dbgraph.title
 
-    args = builder.get_args()
-
-    def mkdate(text, timestamp):
-        return "COMMENT:%-15s %-30s\\j" % (
-            text,
-            formats.localize( datetime.fromtimestamp(timestamp) ).replace(":", "\\:")
-            )
-
-    args.extend([
-        "COMMENT: \\j",
-        mkdate( _("Start time"), builder.start ),
-        mkdate( _("End time"),   builder.end   ),
-        ])
-
-    #print args
-
-    ret, out, err = invoke(args, log=False, return_out_err=True)
-
-    if bgcol:
-        # User wants a background color, so we made the image transparent
-        # before. Now is the time to fix that.
-        rgbbg    = rgbstr_to_rgb_int( bgcol )
-        imggraph = Image.open(StringIO(out))
-        if imggraph.mode == "RGBA":
-            # Create a new image that has our desired background color
-            imgout   = Image.new( imggraph.mode, imggraph.size, rgbbg )
-            # Maybe paste the background image into it
-            if nagios_settings.GRAPH_BGIMAGE:
-                imgbg = Image.open(nagios_settings.GRAPH_BGIMAGE)
-                # position the background image at the bottom right
-                posbg = array(imgout.size) - array(imgbg.size) - array((15, 15))
-                imgout.paste( imgbg, (posbg[0], posbg[1], imgout.size[0] - 15, imgout.size[1] - 15), imgbg )
-            # now paste the graph
-            imgout.paste( imggraph, None, imggraph )
-            # save into our "out" variable
-            buf = StringIO()
-            imgout.save( buf, "PNG" )
-            out = buf.getvalue()
-
-    return HttpResponse( out, mimetype="image/png" )
+    return HttpResponse( builder.get_image(), mimetype="image/png" )
 
