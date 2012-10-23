@@ -338,7 +338,7 @@ class ModelHandler(BaseHandler):
 
 
 class ProxyHandler(BaseHandler):
-    backing_handler = None
+    backing_handler = property( lambda self: super(ProxyHandler, self) )
 
     def __init__(self, user, request=None):
         BaseHandler.__init__(self, user, request)
@@ -372,7 +372,7 @@ class ProxyHandler(BaseHandler):
         # Call every peer
         methods = [(getattr(self._get_proxy_object(peer), method), peer) for peer in self._get_relevant_peers()]
         # Call the backing handler to get local info
-        methods.append( (getattr(self.backing_handler(self.user, self.request), method), None) )
+        methods.append( (getattr(self.backing_handler, method), None) )
         for meth, peer in methods:
             #print "Trying", peer
             try:
@@ -390,7 +390,7 @@ class ProxyHandler(BaseHandler):
     def _call_singlepeer_method(self, method, id, *args):
         peer  = self._find_target_host(id)
         if peer is None:
-            meth = getattr(self.backing_handler(self.user, self.request), method)
+            meth = getattr(self.backing_handler, method)
         else:
             meth = getattr(self._get_proxy_object(peer), method)
         try:
@@ -434,7 +434,7 @@ class ProxyModelHandler(ProxyModelBaseHandler):
         return objs
 
     def _idobj(self, obj):
-        return self.backing_handler(self.user, self.request)._idobj(obj)
+        return self.backing_handler._idobj(obj)
 
     def idobj(self, numeric_id):
         return self._idobj( self.model.all_objects.get(id=numeric_id) )
@@ -477,7 +477,7 @@ class ProxyModelHandler(ProxyModelBaseHandler):
         return self._call_allpeers_method("filter_combo", field, query, kwds)
 
     def all_values(self, fields):
-        return self.backing_handler(self.user, self.request).all_values(fields)
+        return self.backing_handler.all_values(fields)
 
     def remove(self, id):
         return self._call_singlepeer_method("remove", id)
@@ -502,7 +502,7 @@ class ProxyModelHandler(ProxyModelBaseHandler):
                 if isinstance( curr, Host ):
                     break
         if curr == Host.objects.get_current():
-            return self.backing_handler(self.user, self.request).create(data)
+            return self.backing_handler.create(data)
         else:
             peer = PeerHost.objects.get(name=curr.name)
             try:
