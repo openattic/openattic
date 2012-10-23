@@ -14,9 +14,7 @@
  *  GNU General Public License for more details.
 """
 
-import inspect
 import socket
-import new
 
 from django.db import models
 
@@ -404,7 +402,7 @@ class ProxyHandler(BaseHandler):
             for host in Host.objects.filter(volumegroup__isnull=False).exclude(name=Host.objects.get_current().name).distinct() ] )
 
     def _find_target_host(self, id):
-        raise NotImplemented("ProxyHandler::_find_target_host needs to be overridden!")
+        raise NotImplementedError("ProxyHandler::_find_target_host needs to be overridden!")
 
 
 
