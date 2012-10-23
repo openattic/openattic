@@ -484,7 +484,9 @@ class ProxyModelHandler(ProxyModelBaseHandler):
             }
 
     def filter_combo(self, field, query, kwds):
-        return self._call_allpeers_method("filter_combo", field, query, kwds)
+        if query:
+            kwds[field + '__icontains'] = query
+        return self._filter(kwds, field)
 
     def all_values(self, fields):
         return self.backing_handler.all_values(fields)
