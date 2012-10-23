@@ -473,7 +473,15 @@ class ProxyModelHandler(ProxyModelBaseHandler):
         return self._call_singlepeer_method("get_ext", id)
 
     def filter_range(self, start, limit, sort, dir, kwds ):
-        return self._call_allpeers_method("filter_range", start, limit, sort, dir, kwds)
+        start = int(start)
+        limit = int(limit)
+        if dir == "DESC":
+            sort = "-" + sort
+        objects = self._filter(kwds, sort)
+        return {
+            "objects": objects[start:(start + limit)],
+            "total":   len(objects)
+            }
 
     def filter_combo(self, field, query, kwds):
         return self._call_allpeers_method("filter_combo", field, query, kwds)
