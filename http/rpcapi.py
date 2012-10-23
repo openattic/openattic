@@ -15,7 +15,7 @@
 """
 
 from rpcd.handlers import ModelHandler
-from rpcd.handlers import ProxyModelHandler, proxy_for
+from rpcd.handlers import ProxyModelHandler
 
 from http.models import Export
 
@@ -26,10 +26,7 @@ class HttpExportHandler(ModelHandler):
         data["url"] = "/volumes/%s/%s" % (obj.volume.vg.name, obj.volume.name)
         return data
 
-@proxy_for(HttpExportHandler)
-class HttpExportProxy(ProxyModelHandler):
-    model = Export
-
+class HttpExportProxy(ProxyModelHandler, HttpExportHandler):
     def get(self, id):
         ret = ProxyModelHandler.get(self, id)
         ret["url"] = "/openattic/http/" + str(ret["id"])

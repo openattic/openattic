@@ -15,7 +15,7 @@
 """
 
 from rpcd.handlers import ModelHandler
-from rpcd.handlers import ProxyModelHandler, proxy_for
+from rpcd.handlers import ProxyModelHandler
 
 from drbd.models import Connection, Endpoint
 
@@ -67,9 +67,7 @@ class DrbdEndpointHandler(ModelHandler):
         data['basedev'] = obj.basedev
         return data
 
-@proxy_for(DrbdConnectionHandler)
-class DrbdConnectionProxy(ProxyModelHandler):
-    model = Connection
+class DrbdConnectionProxy(ProxyModelHandler, DrbdConnectionHandler):
 
     def _merge(self, objects):
         ret = {}
@@ -126,9 +124,8 @@ class DrbdConnectionProxy(ProxyModelHandler):
             return peerhost.drbd.Connection.secondary(id)
 
 
-@proxy_for(DrbdEndpointHandler)
-class DrbdEndpointProxy(ProxyModelHandler):
-    model = Endpoint
+class DrbdEndpointProxy(ProxyModelHandler, DrbdEndpointHandler):
+    pass
 
 
 RPCD_HANDLERS = [DrbdConnectionProxy, DrbdEndpointHandler]

@@ -15,7 +15,7 @@
 """
 
 from rpcd.handlers import ModelHandler
-from rpcd.handlers import ProxyModelBaseHandler, ProxyModelHandler, proxy_for
+from rpcd.handlers import ProxyModelBaseHandler, ProxyModelHandler
 
 from peering.models import PeerHost
 from ifconfig.models import Host
@@ -54,10 +54,7 @@ class ServiceHandler(ModelHandler):
         return data
 
 
-@proxy_for(ServiceHandler)
-class ServiceProxy(ProxyModelHandler):
-    model = Service
-
+class ServiceProxy(ProxyModelHandler, ServiceHandler):
     def _find_target_host(self, id):
         dbservice = Service.all_objects.get(id=int(id))
         if dbservice.volume is not None:

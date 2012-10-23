@@ -15,7 +15,7 @@
 """
 
 from rpcd.handlers import ModelHandler
-from rpcd.handlers import ProxyModelHandler, proxy_for
+from rpcd.handlers import ProxyModelHandler
 from ifconfig.rpcapi import HostHandler
 
 from lvm.models import VolumeGroup, LogicalVolume, ZfsSubvolume, ZfsSnapshot, LVMetadata
@@ -169,8 +169,7 @@ class ZfsSnapshotHandler(ModelHandler):
         """ Rollback the volume to the snapshot given by `id`. """
         return ZfsSnapshot.objects.get(id=id).rollback()
 
-@proxy_for(VgHandler)
-class VgProxy(ProxyModelHandler):
+class VgProxy(ProxyModelHandler, VgHandler):
     model = VolumeGroup
 
     def get_mounts(self):
@@ -189,8 +188,7 @@ class VgProxy(ProxyModelHandler):
         return self.backing_handler(self.user, self.request).get_disk_stats(device)
 
 
-@proxy_for(LvHandler)
-class LvProxy(ProxyModelHandler):
+class LvProxy(ProxyModelHandler, LvHandler):
     model = LogicalVolume
 
     def avail_fs(self):
@@ -215,12 +213,10 @@ class LvProxy(ProxyModelHandler):
             except Fault, flt:
                 raise translate_exception(flt)
 
-@proxy_for(ZfsSubvolumeHandler)
-class ZfsSubvolumeProxy(ProxyModelHandler):
+class ZfsSubvolumeProxy(ProxyModelHandler, ZfsSubvolumeHandler):
     model = ZfsSubvolume
 
-@proxy_for(ZfsSnapshotHandler)
-class ZfsSnapshotProxy(ProxyModelHandler):
+class ZfsSnapshotProxy(ProxyModelHandler, ZfsSnapshotHandler):
     model = ZfsSnapshot
 
 

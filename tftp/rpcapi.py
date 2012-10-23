@@ -15,16 +15,15 @@
 """
 
 from rpcd.handlers import ModelHandler
-from rpcd.handlers import ProxyModelHandler, proxy_for
+from rpcd.handlers import ProxyModelHandler
 
 from tftp.models import Instance
 
 class TftpInstanceHandler(ModelHandler):
     model = Instance
 
-@proxy_for(TftpInstanceHandler)
-class TftpInstanceProxy(ProxyModelHandler):
-    model = Instance
+class TftpInstanceProxy(ProxyModelHandler, TftpInstanceHandler):
+    pass
 
 
 RPCD_HANDLERS = [TftpInstanceProxy]

@@ -15,7 +15,7 @@
 """
 
 from rpcd.handlers import ModelHandler
-from rpcd.handlers import ProxyModelBaseHandler, ProxyModelHandler, proxy_for
+from rpcd.handlers import ProxyModelBaseHandler, ProxyModelHandler
 
 from iscsi.models import Target, Lun, Initiator
 from lvm.models import LogicalVolume
@@ -25,10 +25,7 @@ from ifconfig.models import IPAddress
 class IscsiTargetHandler(ModelHandler):
     model = Target
 
-@proxy_for(IscsiTargetHandler)
-class IscsiTargetProxy(ProxyModelBaseHandler):
-    model = Target
-
+class IscsiTargetProxy(ProxyModelBaseHandler, IscsiTargetHandler):
     def _find_target_host(self, id):
         dbtarget = self.model.all_objects.get(id=id)
         volumes = Lun.all_objects.filter(target=dbtarget).values("volume").distinct()
@@ -51,9 +48,8 @@ class IscsiTargetProxy(ProxyModelBaseHandler):
 class IscsiLunHandler(ModelHandler):
     model = Lun
 
-@proxy_for(IscsiLunHandler)
-class IscsiLunProxy(ProxyModelHandler):
-    model = Lun
+class IscsiLunProxy(ProxyModelHandler, IscsiLunHandler):
+    pass
 
 
 class IscsiInitiatorHandler(ModelHandler):
