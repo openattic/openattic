@@ -498,10 +498,6 @@ class ProxyModelHandler(ProxyModelBaseHandler):
 
 
 
-__TEMPLATE_ALLPEERS = """def %(name)s( self, %(args)s ):
-    return self._call_allpeers_method("%(name)s", %(args)s)
-"""
-
 __TEMPLATE_SINGLEPEER = """def %(name)s( self, %(args)s ):
     return self._call_singlepeer_method("%(name)s", %(args)s)
 """
@@ -547,16 +543,6 @@ def proxy_for(other_handler):
         # retrieve the defined method from the namespace and return it
         return evaldict[method.__name__]
 
-    def _wrap_allpeers_method(method):
-        args = inspect.getargspec( method ).args[1:]
-        code = compile( __TEMPLATE_ALLPEERS % {
-            "args": ', '.join(args),
-            "name": method.__name__
-            }, "<string>", "single" )
-        evaldict = {}
-        exec code in evaldict
-        return evaldict[method.__name__]
-
     def class_decorator(proxy_handler):
         proxy_handler.handler_name = other_handler.handler_name
         proxy_handler.backing_handler = other_handler
@@ -574,7 +560,7 @@ def proxy_for(other_handler):
                 if argspec.args[:2] == ['self', 'id']:
                     wrapper = _wrap_singlepeer_method(member)
                 else:
-                    wrapper = _wrap_allpeers_method(member)
+                    wrapper = member
                 setattr(proxy_handler, membername, new.instancemethod(wrapper, None, proxy_handler))
 
         return proxy_handler
