@@ -449,7 +449,18 @@ class ProxyModelHandler(ProxyModelBaseHandler):
         return self._order( self._call_allpeers_method("all") )
 
     def filter(self, kwds):
-        return self._order( self._call_allpeers_method("filter", kwds) )
+        db_objects = self.model.all_objects.filter(**kwds)
+        result = []
+        for instance in db_objects:
+            try:
+                host = self._find_target_host_from_model_instance(instance)
+            except RuntimeError:
+                continue
+            if host is None:
+                result.append( self._getobj(instance) )
+            else:
+                result.append( self._get_proxy_object(peer).get(instance.id) )
+        return result
 
     def get(self, id):
         return self._call_singlepeer_method("get", id)
