@@ -453,10 +453,10 @@ class ProxyModelHandler(ProxyModelBaseHandler):
         result = []
         for instance in db_objects:
             try:
-                host = self._find_target_host_from_model_instance(instance)
+                peer = self._find_target_host_from_model_instance(instance)
             except RuntimeError:
                 continue
-            if host is None:
+            if peer is None:
                 result.append( self._getobj(instance) )
             else:
                 result.append( self._get_proxy_object(peer).get(instance.id) )
