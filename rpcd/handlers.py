@@ -428,10 +428,23 @@ class ProxyModelBaseHandler(ProxyHandler, ModelHandler):
 
 
 class ProxyModelHandler(ProxyModelBaseHandler):
-    def _order(self, objs):
-        if self.order:
-            return sorted( objs, key=lambda obj: self.order[0] in obj and obj[self.order[0]] or None )
-        return objs
+    def _filter(self, kwds, order):
+        db_objects = self.model.all_objects.filter(**kwds)
+        result = []
+        for instance in db_objects:
+            try:
+                peer = self._find_target_host_from_model_instance(instance)
+            except RuntimeError:
+                continue
+            if peer is None:
+                result.append( self._getobj(instance) )
+            else:
+                result.append( self._get_proxy_object(peer).get(instance.id) )
+
+        if order:
+            return sorted( result, key=lambda obj: order[0] in obj and obj[order[0]] or None )
+
+        return result
 
     def _idobj(self, obj):
         return self.backing_handler._idobj(obj)
@@ -449,18 +462,7 @@ class ProxyModelHandler(ProxyModelBaseHandler):
         return self.filter({})
 
     def filter(self, kwds):
-        db_objects = self.model.all_objects.filter(**kwds)
-        result = []
-        for instance in db_objects:
-            try:
-                peer = self._find_target_host_from_model_instance(instance)
-            except RuntimeError:
-                continue
-            if peer is None:
-                result.append( self._getobj(instance) )
-            else:
-                result.append( self._get_proxy_object(peer).get(instance.id) )
-        return self._order(result)
+        return self._filter(kwds, self.order)
 
     def get(self, id):
         return self._call_singlepeer_method("get", id)
