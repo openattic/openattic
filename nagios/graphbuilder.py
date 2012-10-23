@@ -97,13 +97,12 @@ def get_gradient_args(varname, hlsfrom, hlsto, steps=20):
 
 
 class Source(object):
-    def __init__(self, id, name, perfdata, rrdpath):
-        self.id = id
+    def __init__(self, rrd, name):
         self.name = name
-        self.rrdpath  = rrdpath
-        self.title = name
+        self.rrd  = rrd
+        self.label = self.rrd.get_source_label(name)
 
-        self.perfdata = perfdata.split(';')
+        self.perfdata = self.rrd.get_source_perfdata(name).split(';')
         self.args = []
 
     @property
@@ -173,13 +172,13 @@ class Source(object):
         else:
             lineclr = "0000AA"
         # line above everything that holds the description
-        self.args.append( "LINE1:%s#%sCC:%s" % (varname, lineclr, self.title) )
+        self.args.append( "LINE1:%s#%sCC:%s" % (varname, lineclr, self.label) )
         return varname
 
-    def define(self, id, invert=False, stacked=None, first_in_stack=False, gradient_base=None, fulldesc=True):
+    def define(self, invert=False, stacked=None, first_in_stack=False, gradient_base=None, fulldesc=True):
         """ Create a variable definition for this source and return the name. """
-        varname = "var%d" % id
-        self.args.append( "DEF:%s=%s:%d:AVERAGE" % (varname, self.rrdpath, self.id) )
+        varname = self.name
+        self.args.append( "DEF:%s=%s:%d:AVERAGE" % (varname, self.rrd.rrdpath, self.rrd.get_source_varname(self.name)) )
 
         if invert:
             varname = self.varnegate(varname)
@@ -209,7 +208,7 @@ class Source(object):
                 ])
         else:
             color = hls_to_rgbstr(get_hls_for_srcidx(rgbstr_to_hls("0000AA"), id)) + 'AA'
-            stackarg = "AREA:%s#%s:%s" % (varname, color, self.title)
+            stackarg = "AREA:%s#%s:%s" % (varname, color, self.label)
             if not first_in_stack:
                 stackarg += ":STACK"
             self.args.append(stackarg)
@@ -217,15 +216,15 @@ class Source(object):
         # Now print the graph description table.
         if fulldesc:
             self.args.extend([
-                "GPRINT:%s:LAST:%%8.2lf%%s"     % ("var%d" % id),
-                "GPRINT:%s:MIN:%%8.2lf%%s"      % ("var%d" % id),
-                "GPRINT:%s:AVERAGE:%%8.2lf%%s"  % ("var%d" % id),
-                "GPRINT:%s:MAX:%%8.2lf%%s\\j"   % ("var%d" % id),
+                "GPRINT:%s:LAST:%%8.2lf%%s"     % self.name,
+                "GPRINT:%s:MIN:%%8.2lf%%s"      % self.name,
+                "GPRINT:%s:AVERAGE:%%8.2lf%%s"  % self.name,
+                "GPRINT:%s:MAX:%%8.2lf%%s\\j"   % self.name,
                 ])
         else:
             self.args.extend([
-                "GPRINT:%s:LAST:%%8.2lf%%s"        % ("var%d" % id),
-                "GPRINT:%s:AVERAGE:%%8.2lf%%s\\j"  % ("var%d" % id),
+                "GPRINT:%s:LAST:%%8.2lf%%s"        % self.name,
+                "GPRINT:%s:AVERAGE:%%8.2lf%%s\\j"  % self.name,
                 ])
 
         return self.args
@@ -257,7 +256,16 @@ class RRD(object):
             ] )
 
     def get_source(self, srcname):
-        return Source( self.sources[srcname], srcname, self.perfdata[self.source_labels[srcname]], self.rrdpath )
+        return Source( self, srcname )
+
+    def get_source_varname(self, srcname):
+        return self.sources[srcname]
+
+    def get_source_label(self, srcname):
+        return self.source_labels[srcname]
+
+    def get_source_perfdata(self, srcname):
+        return self.perfdata[self.source_labels[srcname]]
 
     @property
     def last_check(self):
@@ -279,13 +287,10 @@ class RRD(object):
 
 
 class Graph(object):
-    def __init__(self, rrd, srcline):
-        self.rrd    = rrd
-        self.srcline = srcline
-
+    def __init__(self):
         # Defaults, set those to what you want before calling get_args
-        self.start  = self.rrd.last_check - 24*60*60
-        self.end    = self.rrd.last_check
+        self.end    = time()
+        self.start  = self.end - 24*60*60
         self.height = 150
         self.width  = 700
         self.bgcol  = "1F2730"
@@ -294,18 +299,16 @@ class Graph(object):
         self.sacol  = None
         self.sbcol  = None
         self.grad   = False
-        self.title  = self.rrd.service_description
+        self.title  = "Untitled Service"
         self.args   = None
         self.verttitle = None
         self.bgimage = None
 
-        self.sources = {}
-        for srcname in self.srcline.split():
-            if srcname in ('+s', '-s'):
-                continue
-            if srcname[0] == '-':
-                srcname = srcname[1:]
-            self.sources[srcname] = self.rrd.get_source(srcname)
+        self.sources = []
+
+    def add_source(self, source):
+        self.sources.append(source)
+        return self
 
     def get_image(self):
         self.args = [
@@ -314,7 +317,7 @@ class Graph(object):
             "--imgformat", "PNG", "--title", self.title
             ]
         if self.verttitle is None:
-            for src in self.sources.values():
+            for src in self.sources:
                 if src.unit:
                     self.verttitle = src.unit
                     break
@@ -334,8 +337,8 @@ class Graph(object):
         if self.sbcol:
             self.args.extend([ "--color", "SHADEB#"+self.sbcol ])
 
-        # calc the maximum variable name length
-        maxlen = max( [ len(src.name) for src in self.sources.values() ] )
+        # calc the maximum variable label length
+        maxlen = max( [ len(src.label) for src in self.sources ] )
 
         # rrdtool uses \\j for newline.
         self.args.append("COMMENT:  \\j")
@@ -367,23 +370,13 @@ class Graph(object):
         lastinv = None
         srcidx = 0
 
-        for srcname in self.srcline.split():
+        for src in self.sources:
             invert = False
 
-            if srcname in ('+s', '-s'):
-                stacked = (srcname == '+s')
-                continue
-
-            if srcname[0] == '-':
-                invert = True
-                srcname = srcname[1:]
-
-            src = self.sources[srcname]
-            src.title = "%-*s" % (maxlen, self.rrd.source_labels[src.name])
+            src.label = "%-*s" % (maxlen, src.label)
 
             self.args.extend(
-                src.define(srcidx,
-                    invert,
+                src.define(invert,
                     stacked, lastinv != invert,
                     hlsbg,
                     (self.width >= 350))

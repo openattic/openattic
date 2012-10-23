@@ -80,7 +80,15 @@ def graph(request, service_id, srcidx):
     except SystemError, err:
         raise Http404(unicode(err))
 
-    builder = GraphBuilder(rrd, srcline)
+    builder = GraphBuilder()
+    for srcname in srcline.split():
+        if srcname in ('+s', '-s'):
+            continue
+        if srcname[0] == '-':
+            srcname = srcname[1:]
+        builder.add_source(rrd.get_source(srcname))
+
+    builder.title = rrd.service_description
 
     try:
         builder.start  = int(request.GET.get("start",  rrd.last_check - 24*60*60))
