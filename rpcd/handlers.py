@@ -460,7 +460,7 @@ class ProxyModelHandler(ProxyModelBaseHandler):
                 result.append( self._getobj(instance) )
             else:
                 result.append( self._get_proxy_object(peer).get(instance.id) )
-        return result
+        return self._order(result)
 
     def get(self, id):
         return self._call_singlepeer_method("get", id)
