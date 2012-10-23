@@ -190,7 +190,7 @@ class LvProxy(ProxyModelHandler, LvHandler):
             vg   = VolumeGroup.all_objects.get( id=data["vg"]["id"] )
             curr = vg.host
         if curr == Host.objects.get_current():
-            return self.backing_handler(self.user, self.request).create(data)
+            return self.backing_handler.create(data)
         else:
             peer = PeerHost.objects.get(name=curr.name)
             try:
