@@ -446,7 +446,7 @@ class ProxyModelHandler(ProxyModelBaseHandler):
         return [ self._idobj(obj) for obj in self._filter_queryset(kwds, self.model.all_objects).order_by(*self.order) ]
 
     def all(self):
-        return self._order( self._call_allpeers_method("all") )
+        return self.filter({})
 
     def filter(self, kwds):
         db_objects = self.model.all_objects.filter(**kwds)
