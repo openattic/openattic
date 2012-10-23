@@ -62,6 +62,9 @@ class PeerUrlField(models.CharField):
         return value.geturl()
 
 
+class PeerError(Exception):
+    pass
+
 class PeerHost(models.Model):
     name         = models.CharField(max_length=250)
     base_url     = PeerUrlField()

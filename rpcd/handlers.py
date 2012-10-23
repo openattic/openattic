@@ -19,7 +19,7 @@ import socket
 from django.db import models
 
 from ifconfig.models import Host
-from peering.models import PeerHost
+from peering.models import PeerHost, PeerError
 
 from xmlrpclib import Fault
 from httplib import BadStatusLine
