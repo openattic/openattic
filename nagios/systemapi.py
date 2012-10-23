@@ -34,16 +34,15 @@ class SystemD(LockingPlugin):
     def write_services(self):
         self.lock.acquire()
         try:
-            for host in Host.objects.all():
-                fd = open( "/etc/nagios3/conf.d/openattic_%s.cfg" % host.name, "wb" )
-                try:
-                    fd.write( render_to_string( "nagios/services.cfg", {
-                        "Host":     host,
-                        "Commands": Command.objects.all(),
-                        "Services": Service.objects.services_for_host(host).filter( command__query_only=False )
-                        } ) )
-                finally:
-                    fd.close()
+            fd = open( "/etc/nagios3/conf.d/openattic.cfg", "wb" )
+            try:
+                fd.write( render_to_string( "nagios/services.cfg", {
+                    "Host":     Host.objects.get_current(),
+                    "Commands": Command.objects.all(),
+                    "Services": Service.objects.filter(command__query_only=False)
+                    } ) )
+            finally:
+                fd.close()
         finally:
             self.lock.release()
 

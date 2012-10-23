@@ -15,10 +15,7 @@
 """
 
 from rpcd.handlers import ModelHandler
-from rpcd.handlers import ProxyModelBaseHandler, ProxyModelHandler
 
-from peering.models import PeerHost
-from ifconfig.models import Host
 from nagios.models import Command, Service, Graph
 
 class CommandHandler(ModelHandler):
@@ -54,18 +51,4 @@ class ServiceHandler(ModelHandler):
         return data
 
 
-class ServiceProxy(ProxyModelHandler, ServiceHandler):
-    def _find_target_host(self, id):
-        dbservice = Service.all_objects.get(id=int(id))
-        if dbservice.volume is not None:
-            host = dbservice.volume.vg.host
-        else:
-            host = dbservice.host
-        if host == Host.objects.get_current():
-            return None
-        if host is None:
-            raise RuntimeError("Object is not active on any host")
-        return PeerHost.objects.get(name=host.name)
-
-
-RPCD_HANDLERS = [CommandHandler, ServiceProxy, GraphHandler]
+RPCD_HANDLERS = [CommandHandler, ServiceHandler, GraphHandler]

@@ -26,14 +26,11 @@ from StringIO import StringIO
 from PIL      import Image
 
 from django.http       import HttpResponse, Http404
-from django.http       import HttpResponseRedirect
 from django.shortcuts  import get_object_or_404
 from django.utils      import formats
 
 from django.utils.translation import ugettext as _
 
-from peering.models import PeerHost
-from ifconfig.models import Host
 from systemd.procutils import invoke
 
 from nagios.conf   import settings as nagios_settings
@@ -77,7 +74,7 @@ def graph(request, service_id, srcidx):
         If the image should be rendered upon a background image, the image's path needs to be
         configured in the Nagios module's settings.
     """
-    serv  = Service.all_objects.get(id=service_id)
+    serv  = get_object_or_404(Service, pk=int(service_id))
 
     try:
         srcidx = int(srcidx)
@@ -167,24 +164,3 @@ def graph(request, service_id, srcidx):
 
     return HttpResponse( out, mimetype="image/png" )
 
-
-def proxy_graph(request, service_id, srcidx):
-    serv = Service.all_objects.get(id=service_id)
-    if serv.volume is not None:
-        host = serv.volume.vg.host
-    else:
-        host = serv.host
-    if host is None:
-        raise Http404("Service does not appear to be active on any host")
-    if serv.active or serv.hostname != "localhost":
-        # Call local view
-        return graph(request, service_id, srcidx)
-    peer = PeerHost.objects.get(name=host.name)
-    target = "http://%(hostname)s/openattic/nagios/%(id)d/%(srcidx)s.png" % {
-        'id': int(service_id),
-        'srcidx': srcidx,
-        'hostname': peer.base_url.hostname
-        }
-    if request.META["QUERY_STRING"]:
-        target += '?' + request.META["QUERY_STRING"]
-    return HttpResponseRedirect(target)
