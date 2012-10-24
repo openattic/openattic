@@ -17,6 +17,8 @@
 import re
 import exceptions
 
+from ast import literal_eval
+
 from django.core.exceptions import ValidationError
 from xmlrpclib import Fault
 
@@ -39,8 +41,7 @@ def translate_exception(rpcfault):
     if m.group('exctype') == "django.core.exceptions.ValidationError":
         err = ValidationError("")
         # Reason is a repr() of a dict containing lists of messages.
-        # That is, it should be, which is why we harden eval() a bit.
-        err.message_dict = eval( m.group("reason"), {"__builtins__": None}, {} )
+        err.message_dict = literal_eval( m.group("reason") )
         return err
 
     module, classname = m.group('exctype').rsplit(".", 1)
