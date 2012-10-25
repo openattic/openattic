@@ -261,7 +261,8 @@ def parse(source):
     src = StringIO(source).readline
     src = tokenize.generate_tokens(src)
     parser = Parser(src)
-    return parser.expression()
+    while True:
+        yield parser.expression()
 
 
 
