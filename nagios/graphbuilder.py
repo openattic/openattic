@@ -339,7 +339,7 @@ class Node(object):
             self.line(self.varname)
 
             if self.warn and self.crit:
-                if not invert:
+                if not self.invert:
                     self.area(self.varlimit(self.varname, "ok",          0,  self.warn), "00AA00", self.gradient_base)
                     self.area(self.varlimit(self.varname, "w",   self.warn,  self.crit), "AAAA00", self.gradient_base)
                     self.area(self.varlimit(self.varname, "c",   self.crit,      "INF"), "AA0000", self.gradient_base)
