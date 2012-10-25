@@ -129,9 +129,6 @@ class EndMarker(Symbol):
     pass
 
 class Literal(Symbol):
-    def nud(self):
-        return self
-
     def get_value(self, rrd):
         return self.value
 
