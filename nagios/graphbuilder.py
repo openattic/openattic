@@ -182,7 +182,8 @@ class OpStack(Infix):
         return self.first.get_value(rrd) ** self.second.get_value(rrd)
 
 class OpNegate(Prefix):
-    pass
+    def get_value(self, rrd):
+        return -self.first.get_value(rrd)
 
 class LeftParen(Prefix):
     def nud(self):
@@ -204,12 +205,12 @@ class Parser(object):
             '(literal)': Literal,
             '(name)':    Name,
             '(end)':     EndMarker,
+            '(neg)':     OpNegate,
             '+':         OpPlus,
             '-':         OpMinus,
             '*':         OpMult,
             '/':         OpDiv,
             '**':        OpStack,
-            '!':         OpNegate,
             '(':         LeftParen,
             ')':         RightParen,
             }
@@ -226,6 +227,10 @@ class Parser(object):
             if tokenvalue not in self.symbol_table:
                 raise ValueError("Operator '%s' is not defined." % tokenvalue)
             symbol = tokenvalue
+            if tokenvalue == '-':
+                # Decide whether this is OpNegate or OpMinus
+                if self.token is None or not isinstance(self.token, (Name, Literal)):
+                    symbol = '(neg)'
         elif tokentype == tokenize.NUMBER:
             try:
                 tokenvalue = int(tokenvalue, 0)
