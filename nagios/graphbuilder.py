@@ -157,7 +157,14 @@ class OpMinus(Infix):
     lbp = 50
     rbp = 50
 
+    def nud(self):
+        self.first = self.parser.expression(Prefix.rbp)
+        self.second = None
+        return self
+
     def get_value(self, rrd):
+        if self.second is None:
+            return -self.first.get_value(rrd)
         return self.first.get_value(rrd) - self.second.get_value(rrd)
 
 class OpMult(Infix):
@@ -181,10 +188,6 @@ class OpStack(Infix):
     def get_value(self, rrd):
         return self.first.get_value(rrd) ** self.second.get_value(rrd)
 
-class OpNegate(Prefix):
-    def get_value(self, rrd):
-        return -self.first.get_value(rrd)
-
 class LeftParen(Prefix):
     def nud(self):
         exp = self.parser.expression(0)
@@ -207,7 +210,6 @@ class Parser(object):
             '(literal)': Literal,
             '(name)':    Name,
             '(end)':     EndMarker,
-            '(neg)':     OpNegate,
             '+':         OpPlus,
             '-':         OpMinus,
             '*':         OpMult,
@@ -229,10 +231,6 @@ class Parser(object):
             if tokenvalue not in self.symbol_table:
                 raise ValueError("Operator '%s' is not defined." % tokenvalue)
             symbol = tokenvalue
-            if tokenvalue == '-':
-                # Decide whether this is OpNegate or OpMinus
-                if self.token is None or not isinstance(self.token, (Name, Literal)):
-                    symbol = '(neg)'
         elif tokentype == tokenize.NUMBER:
             try:
                 tokenvalue = int(tokenvalue, 0)
