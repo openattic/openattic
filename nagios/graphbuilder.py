@@ -368,15 +368,15 @@ class Node(object):
         # Now print the graph description table.
         if self.fulldesc:
             self.args.extend([
-                "GPRINT:%s:LAST:%%8.2lf%%s"     % self.varname,
-                "GPRINT:%s:MIN:%%8.2lf%%s"      % self.varname,
-                "GPRINT:%s:AVERAGE:%%8.2lf%%s"  % self.varname,
-                "GPRINT:%s:MAX:%%8.2lf%%s\\j"   % self.varname,
+                "GPRINT:%s:LAST:%%8.2lf%%s"     % self.name,
+                "GPRINT:%s:MIN:%%8.2lf%%s"      % self.name,
+                "GPRINT:%s:AVERAGE:%%8.2lf%%s"  % self.name,
+                "GPRINT:%s:MAX:%%8.2lf%%s\\j"   % self.name,
                 ])
         else:
             self.args.extend([
-                "GPRINT:%s:LAST:%%8.2lf%%s"        % self.varname,
-                "GPRINT:%s:AVERAGE:%%8.2lf%%s\\j"  % self.varname,
+                "GPRINT:%s:LAST:%%8.2lf%%s"        % self.name,
+                "GPRINT:%s:AVERAGE:%%8.2lf%%s\\j"  % self.name,
                 ])
 
 
