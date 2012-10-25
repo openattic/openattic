@@ -110,15 +110,17 @@ class Symbol(object):
     def nud(self):
         """ Null Denotation """
         return self
-        raise NotImplementedError("nud")
 
     def led(self, left):
         """ Left Denotation """
         return self
-        raise NotImplementedError("led")
+
+    def get_value(self, rrd):
+        raise NotImplementedError("get_value")
 
 class Name(Symbol):
-    pass
+    def get_value(self, rrd):
+        return rrd.get_source(self.value)
 
 class EndMarker(Symbol):
     pass
@@ -126,6 +128,9 @@ class EndMarker(Symbol):
 class Literal(Symbol):
     def nud(self):
         return self
+
+    def get_value(self, rrd):
+        return self.value
 
 class Infix(Symbol):
     def led(self, left):
@@ -145,21 +150,36 @@ class OpPlus(Infix):
     lbp = 50
     rbp = 50
 
+    def get_value(self, rrd):
+        return self.first.get_value(rrd) + self.second.get_value(rrd)
+
 class OpMinus(Infix):
     lbp = 50
     rbp = 50
+
+    def get_value(self, rrd):
+        return self.first.get_value(rrd) - self.second.get_value(rrd)
 
 class OpMult(Infix):
     lbp = 60
     rbp = 60
 
+    def get_value(self, rrd):
+        return self.first.get_value(rrd) * self.second.get_value(rrd)
+
 class OpDiv(Infix):
     lbp = 60
     rbp = 60
 
+    def get_value(self, rrd):
+        return self.first.get_value(rrd) / self.second.get_value(rrd)
+
 class OpStack(Infix):
     lbp = 20
     rbp = 20
+
+    def get_value(self, rrd):
+        return self.first.get_value(rrd) ** self.second.get_value(rrd)
 
 class OpNegate(Prefix):
     pass
