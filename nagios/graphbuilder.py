@@ -62,7 +62,8 @@ def get_hls_complementary(hlsfrom):
 
 def get_hls_for_srcidx(hlsfrom, srcidx):
     """ Get a unique color for the given srcidx. """
-    h = srcidx * 0.3 + hlsfrom[0]
+    #h = srcidx * 0.3 + hlsfrom[0]
+    h = 0.5
     if h > 1.0:
         h -= 1.0
     return (h, 1 - hlsfrom[1], hlsfrom[2])
@@ -96,9 +97,174 @@ def get_gradient_args(varname, hlsfrom, hlsto, steps=20):
 
 
 
-class Source(object):
+class Node(object):
+    def __init__(self):
+        self.args = []
+        self.invert = False
+        self.stacked = False
+        self.first_in_stack = False
+        self.gradient_base = None
+        self.fulldesc = True
+
+    def copy_graphvars(self, other):
+        other.invert   = self.invert
+        other.fulldesc = self.fulldesc
+        other.stacked  = self.stacked
+        other.first_in_stack = self.first_in_stack
+        other.gradient_base  = self.gradient_base
+
+    def __add__(self, other):
+        raise NotImplementedError("TODO")
+
+    def __sub__(self, other):
+        raise NotImplementedError("TODO")
+
+    def __neg__(self):
+        return UpsideDownNode(self)
+
+    def __mul__(self, other):
+        return MultiplyNode(self, other)
+
+    def __div__(self, other):
+        raise NotImplementedError("TODO")
+
+    def __pow__(self, other):
+        return StackNode(self, other)
+
+    warn = None
+    crit = None
+
+    def varnegate(self, var):
+        # define the negative graph
+        self.args.append( "CDEF:%sneg=%s,-1,*" % (var, var) )
+        return "%sneg" % var
+
+    def varlimit(self, varname, statename, vmin=0, vmax=0):
+        newvar = varname + statename
+        if vmin not in ("-INF", "INF"): vmin = "%.1f" % vmin
+        if vmax not in ("-INF", "INF"): vmax = "%.1f" % vmax
+        self.args.append("CDEF:%s=%s,%s,%s,LIMIT" % (newvar, varname, vmin, vmax))
+        return newvar
+
+    def area(self, varname, color, gradient_base=None):
+        if gradient_base is not None:
+            self.args.extend( get_gradient_args(varname, rgbstr_to_hls(color), gradient_base) )
+        else:
+            self.args.append("AREA:%s#%s70:" % (varname, color))
+        return varname
+
+    def line(self, varname):
+        if self.warn and self.crit:
+            lineclr = "00AA00"
+            if self.curr >= self.warn:
+                lineclr = "AAAA00"
+            if self.curr >= self.crit:
+                lineclr = "AA0000"
+        else:
+            lineclr = "0000AA"
+        # line above everything that holds the description
+        self.args.append( "LINE1:%s#%sCC:%s" % (varname, lineclr, self.label) )
+
+    def graph(self):
+        if not self.stacked:
+            self.line(self.varname)
+
+            if self.warn and self.crit:
+                if not invert:
+                    self.area(self.varlimit(self.varname, "ok",          0,  self.warn), "00AA00", self.gradient_base)
+                    self.area(self.varlimit(self.varname, "w",   self.warn,  self.crit), "AAAA00", self.gradient_base)
+                    self.area(self.varlimit(self.varname, "c",   self.crit,      "INF"), "AA0000", self.gradient_base)
+                else:
+                    self.area(self.varlimit(self.varname, "ok", -self.warn,          0), "00AA00", self.gradient_base)
+                    self.area(self.varlimit(self.varname, "w",  -self.crit, -self.warn), "AAAA00", self.gradient_base)
+                    self.area(self.varlimit(self.varname, "c",      "-INF", -self.crit), "AA0000", self.gradient_base)
+                self.args.append( "HRULE:%.1f#F0F700" % self.warn )
+                self.args.append( "HRULE:%.1f#FF0000" % self.crit )
+            else:
+                self.area(self.varname, "0000AA", self.gradient_base)
+
+            # In cases where the values are unknown, draw everything grey.
+            # Define a graph that is ±INF if the graph is unknown, else 0; and draw it using a grey AREA.
+            self.args.extend([
+                "CDEF:%sun=%s,UN,%sINF,0,IF" % (self.varname, self.varname, ('-' if self.invert else '')),
+                "AREA:%sun#88888850:"        % (self.varname),
+                ])
+        else:
+            color = hls_to_rgbstr(get_hls_for_srcidx(rgbstr_to_hls("0000AA"), self.varname)) + 'AA'
+            stackarg = "AREA:%s#%s:%s" % (self.varname, color, self.label)
+            if not self.first_in_stack:
+                stackarg += ":STACK"
+            self.args.append(stackarg)
+
+        # Now print the graph description table.
+        if self.fulldesc:
+            self.args.extend([
+                "GPRINT:%s:LAST:%%8.2lf%%s"     % self.varname,
+                "GPRINT:%s:MIN:%%8.2lf%%s"      % self.varname,
+                "GPRINT:%s:AVERAGE:%%8.2lf%%s"  % self.varname,
+                "GPRINT:%s:MAX:%%8.2lf%%s\\j"   % self.varname,
+                ])
+        else:
+            self.args.extend([
+                "GPRINT:%s:LAST:%%8.2lf%%s"        % self.varname,
+                "GPRINT:%s:AVERAGE:%%8.2lf%%s\\j"  % self.varname,
+                ])
+
+
+class MathNode(Node):
+    def __init__(self, lft, rgt):
+        Node.__init__(self)
+        self.lft = lft
+        self.rgt = rgt
+        self.varlft = None
+        self.varrgt = None
+
+
+class StackNode(MathNode):
+    def define(self):
+        self.lft.args = self.args
+        self.varlft = self.lft.define()
+        self.rgt.args = self.args
+        self.varrgt = self.rgt.define()
+
+    def graph(self):
+        self.copy_graphvars(self.rgt)
+        self.rgt.stacked = True
+        self.rgt.first_in_stack = not isinstance(self.rgt, StackNode)
+        self.rgt.graph()
+
+        self.copy_graphvars(self.lft)
+        self.lft.stacked = True
+        self.lft.first_in_stack = False
+        self.lft.graph()
+
+
+class UpsideDownNode(MathNode):
+    def __init__(self, lft):
+        MathNode.__init__(self, lft, None)
+
+    def define(self):
+        self.lft.args = self.args
+        self.varlft = self.lft.define()
+        self.varname = self.lft.varnegate(self.varlft)
+
+    def graph(self):
+        self.copy_graphvars(self.lft)
+        self.lft.invert = True
+        self.lft.varname = self.varname
+        self.lft.graph()
+
+
+class MultiplyNode(MathNode):
+    pass
+
+
+
+class Source(Node):
     def __init__(self, rrd, name):
+        Node.__init__(self)
         self.name = name
+        self.varname = name
         self.rrd  = rrd
         self.label = self.rrd.get_source_label(name)
 
@@ -143,91 +309,11 @@ class Source(object):
             return None
         return self.perfdata[4] and float(self.perfdata[4]) or None
 
-    def varnegate(self, var):
-        # define the negative graph
-        self.args.append( "CDEF:%sneg=%s,-1,*" % (var, var) )
-        return "%sneg" % var
-
-    def varlimit(self, varname, statename, vmin=0, vmax=0):
-        newvar = varname + statename
-        if vmin not in ("-INF", "INF"): vmin = "%.1f" % vmin
-        if vmax not in ("-INF", "INF"): vmax = "%.1f" % vmax
-        self.args.append("CDEF:%s=%s,%s,%s,LIMIT" % (newvar, varname, vmin, vmax))
-        return newvar
-
-    def area(self, varname, color, gradient_base=None):
-        if gradient_base is not None:
-            self.args.extend( get_gradient_args(varname, rgbstr_to_hls(color), gradient_base) )
-        else:
-            self.args.append("AREA:%s#%s70:" % (varname, color))
-        return varname
-
-    def line(self, varname):
-        if self.warn and self.crit:
-            lineclr = "00AA00"
-            if self.curr >= self.warn:
-                lineclr = "AAAA00"
-            if self.curr >= self.crit:
-                lineclr = "AA0000"
-        else:
-            lineclr = "0000AA"
-        # line above everything that holds the description
-        self.args.append( "LINE1:%s#%sCC:%s" % (varname, lineclr, self.label) )
-        return varname
-
-    def define(self, invert=False, stacked=None, first_in_stack=False, gradient_base=None, fulldesc=True):
+    def define(self):
         """ Create a variable definition for this source and return the name. """
         varname = self.name
         self.args.append( "DEF:%s=%s:%d:AVERAGE" % (varname, self.rrd.rrdpath, self.rrd.get_source_varname(self.name)) )
-
-        if invert:
-            varname = self.varnegate(varname)
-
-        if not stacked:
-            self.line(varname)
-
-            if self.warn and self.crit:
-                if not invert:
-                    self.area(self.varlimit(varname, "ok",          0,  self.warn), "00AA00", gradient_base)
-                    self.area(self.varlimit(varname, "w",   self.warn,  self.crit), "AAAA00", gradient_base)
-                    self.area(self.varlimit(varname, "c",   self.crit,      "INF"), "AA0000", gradient_base)
-                else:
-                    self.area(self.varlimit(varname, "ok", -self.warn,          0), "00AA00", gradient_base)
-                    self.area(self.varlimit(varname, "w",  -self.crit, -self.warn), "AAAA00", gradient_base)
-                    self.area(self.varlimit(varname, "c",      "-INF", -self.crit), "AA0000", gradient_base)
-                self.args.append( "HRULE:%.1f#F0F700" % self.warn )
-                self.args.append( "HRULE:%.1f#FF0000" % self.crit )
-            else:
-                self.area(varname, "0000AA", gradient_base)
-
-            # In cases where the values are unknown, draw everything grey.
-            # Define a graph that is ±INF if the graph is unknown, else 0; and draw it using a grey AREA.
-            self.args.extend([
-                "CDEF:%sun=%s,UN,%sINF,0,IF" % (varname, varname, ('-' if invert else '')),
-                "AREA:%sun#88888850:"        % (varname),
-                ])
-        else:
-            color = hls_to_rgbstr(get_hls_for_srcidx(rgbstr_to_hls("0000AA"), id)) + 'AA'
-            stackarg = "AREA:%s#%s:%s" % (varname, color, self.label)
-            if not first_in_stack:
-                stackarg += ":STACK"
-            self.args.append(stackarg)
-
-        # Now print the graph description table.
-        if fulldesc:
-            self.args.extend([
-                "GPRINT:%s:LAST:%%8.2lf%%s"     % self.name,
-                "GPRINT:%s:MIN:%%8.2lf%%s"      % self.name,
-                "GPRINT:%s:AVERAGE:%%8.2lf%%s"  % self.name,
-                "GPRINT:%s:MAX:%%8.2lf%%s\\j"   % self.name,
-                ])
-        else:
-            self.args.extend([
-                "GPRINT:%s:LAST:%%8.2lf%%s"        % self.name,
-                "GPRINT:%s:AVERAGE:%%8.2lf%%s\\j"  % self.name,
-                ])
-
-        return self.args
+        return varname
 
 
 
