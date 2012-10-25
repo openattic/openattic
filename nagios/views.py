@@ -25,7 +25,7 @@ from django.shortcuts  import get_object_or_404
 
 from nagios.conf   import settings as nagios_settings
 from nagios.models import Service, Graph
-from nagios.graphbuilder import Graph as GraphBuilder
+from nagios.graphbuilder import Graph as GraphBuilder, parse
 
 
 
@@ -81,14 +81,14 @@ def graph(request, service_id, srcidx):
         raise Http404(unicode(err))
 
     builder = GraphBuilder()
-    for srcname in srcline.split():
-        if srcname in ('+s', '-s'):
-            continue
-        if srcname[0] == '-':
-            srcname = srcname[1:]
-        builder.add_source(rrd.get_source(srcname))
+    for src in parse(srcline):
+        builder.add_source( src.get_value(rrd) )
 
-    builder.title = rrd.service_description
+    if dbgraph is not None:
+        builder.title     = dbgraph.title
+        builder.verttitle = dbgraph.verttitle
+    else:
+        builder.title  = serv.description
 
     try:
         builder.start  = int(request.GET.get("start",  rrd.last_check - 24*60*60))
