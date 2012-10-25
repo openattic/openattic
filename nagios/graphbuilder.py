@@ -20,6 +20,7 @@ from __future__ import division
 import re
 import subprocess
 import tokenize
+import hashlib
 
 from os.path  import getmtime
 from time     import time
@@ -63,10 +64,12 @@ def get_hls_complementary(hlsfrom):
 
 def get_hls_for_srcidx(hlsfrom, srcidx):
     """ Get a unique color for the given srcidx. """
-    #h = srcidx * 0.3 + hlsfrom[0]
-    h = 0.5
+    # Take the first byte from the source name's md5 hash * 0.3 and add it to the color.
+    # I must admit this sucks to some degree, but I totally lack better ideas right now.
+    md5 = hashlib.md5(srcidx).hexdigest()
+    h = int( md5[:2], 16 ) * 0.3 + hlsfrom[0]
     if h > 1.0:
-        h -= 1.0
+        h -= int(h)
     return (h, 1 - hlsfrom[1], hlsfrom[2])
 
 def hls_to_rgbstr(hlsfrom):
