@@ -387,7 +387,25 @@ class MathNode(Node):
         self.rgt = rgt
         self.varlft = None
         self.varrgt = None
+        self._label = None
 
+    curr = property( lambda self: self.lft.curr )
+    unit = property( lambda self: self.lft.unit )
+    warn = property( lambda self: self.lft.warn )
+    crit = property( lambda self: self.lft.crit )
+    vmin = property( lambda self: self.lft.vmin )
+    vmax = property( lambda self: self.lft.vmax )
+
+    @property
+    def label(self):
+        if self._label is None:
+            return self.lft.label
+        else:
+            return self._label
+
+    @label.setter
+    def label(self, value):
+        self._label = value
 
 class StackNode(MathNode):
     def define(self):
