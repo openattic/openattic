@@ -19,6 +19,7 @@ from __future__ import division
 
 import re
 import subprocess
+import tokenize
 
 from os.path  import getmtime
 from time     import time
@@ -94,6 +95,148 @@ def get_gradient_args(varname, hlsfrom, hlsto, steps=20):
         args.append("AREA:%s#%sFF"      % ( tempvar, hls_to_rgbstr(hlsgrad) ))
 
     return args
+
+
+class Symbol(object):
+    lbp = 0
+    rbp = 0
+
+    def __init__(self, parser, id_, value):
+        # Set defaults for left/right binding power
+        self.parser = parser
+        self.id = id_
+        self.value = value
+
+    def nud(self):
+        """ Null Denotation """
+        return self
+        raise NotImplementedError("nud")
+
+    def led(self, left):
+        """ Left Denotation """
+        return self
+        raise NotImplementedError("led")
+
+class Name(Symbol):
+    pass
+
+class EndMarker(Symbol):
+    pass
+
+class Literal(Symbol):
+    def nud(self):
+        return self
+
+class Infix(Symbol):
+    def led(self, left):
+        self.first = left
+        self.second = self.parser.expression(self.rbp)
+        return self
+
+class Prefix(Symbol):
+    lbp =  0
+    rbp = 70
+
+    def nud(self):
+        self.first = self.parser.expression(self.rbp)
+        return self
+
+class OpPlus(Infix):
+    lbp = 50
+    rbp = 50
+
+class OpMinus(Infix):
+    lbp = 50
+    rbp = 50
+
+class OpMult(Infix):
+    lbp = 60
+    rbp = 60
+
+class OpDiv(Infix):
+    lbp = 60
+    rbp = 60
+
+class OpStack(Infix):
+    lbp = 20
+    rbp = 20
+
+class OpNegate(Prefix):
+    pass
+
+class LeftParen(Prefix):
+    def nud(self):
+        exp = self.parser.expression(0)
+        if self.parser.token.id != ')':
+            raise ValueError("Missing )")
+        self.parser.advance() # skip the )
+        return exp
+
+class RightParen(Symbol):
+    pass
+
+
+class Parser(object):
+    # http://javascript.crockford.com/tdop/tdop.html
+
+    def __init__(self, token_gen):
+        self.symbol_table = {
+            '(literal)': Literal,
+            '(name)':    Name,
+            '(end)':     EndMarker,
+            '+':         OpPlus,
+            '-':         OpMinus,
+            '*':         OpMult,
+            '/':         OpDiv,
+            '**':        OpStack,
+            '!':         OpNegate,
+            '(':         LeftParen,
+            ')':         RightParen,
+            }
+        self.token = None
+        self.token_gen = token_gen
+        self.advance()
+
+    def advance(self):
+        tokentype, tokenvalue, _, _, _ = self.token_gen.next()
+        if tokentype == tokenize.NAME:
+            # get variable or something
+            symbol = '(name)'
+        elif tokentype == tokenize.OP:
+            if tokenvalue not in self.symbol_table:
+                raise ValueError("Operator '%s' is not defined." % tokenvalue)
+            symbol = tokenvalue
+        elif tokentype == tokenize.NUMBER:
+            try:
+                tokenvalue = int(tokenvalue, 0)
+            except ValueError:
+                tokenvalue = float(tokenvalue)
+            symbol = '(literal)'
+        elif tokentype == tokenize.ENDMARKER:
+            symbol = '(end)'
+        else:
+            raise ValueError("Unexpected token.")
+        SymClass = self.symbol_table[symbol]
+        print "Making a %s(%s, %s)." % (SymClass.__name__, symbol, tokenvalue)
+        self.token = SymClass(self, symbol, tokenvalue)
+        return self.token
+
+    def expression(self, rbp=0):
+        t = self.token
+        self.advance()
+        left = t.nud()
+        while rbp < self.token.lbp:
+            t = self.token
+            self.advance()
+            left = t.led(left)
+        return left
+
+
+def parse(source):
+    src = StringIO(source).readline
+    src = tokenize.generate_tokens(src)
+    parser = Parser(src)
+    return parser.expression()
 
 
 
