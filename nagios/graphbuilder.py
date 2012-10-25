@@ -198,7 +198,9 @@ class RightParen(Symbol):
 
 
 class Parser(object):
+    # http://effbot.org/zone/simple-iterator-parser.htm
     # http://javascript.crockford.com/tdop/tdop.html
+    # http://effbot.org/zone/simple-top-down-parsing.htm
 
     def __init__(self, token_gen):
         self.symbol_table = {
