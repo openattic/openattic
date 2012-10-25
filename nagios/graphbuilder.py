@@ -620,24 +620,13 @@ class Graph(object):
         else:
             hlsbg = None
 
-        stacked = False
-        lastinv = None
-        srcidx = 0
+        for src in self.sources:
+            src.args = self.args
+            src.define()
 
         for src in self.sources:
-            invert = False
-
             src.label = "%-*s" % (maxlen, src.label)
-
-            self.args.extend(
-                src.define(invert,
-                    stacked, lastinv != invert,
-                    hlsbg,
-                    (self.width >= 350))
-                )
-
-            lastinv = invert
-            srcidx += 1
+            src.graph()
 
         def mkdate(text, timestamp):
             return "COMMENT:%-15s %-30s\\j" % (
