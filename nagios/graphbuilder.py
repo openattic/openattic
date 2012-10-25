@@ -391,15 +391,15 @@ class StackNode(MathNode):
         self.varrgt = self.rgt.define()
 
     def graph(self):
-        self.copy_graphvars(self.rgt)
-        self.rgt.stacked = True
-        self.rgt.first_in_stack = not isinstance(self.rgt, StackNode)
-        self.rgt.graph()
-
         self.copy_graphvars(self.lft)
         self.lft.stacked = True
-        self.lft.first_in_stack = False
+        self.lft.first_in_stack = not isinstance(self.lft, StackNode)
         self.lft.graph()
+
+        self.copy_graphvars(self.rgt)
+        self.rgt.stacked = True
+        self.rgt.first_in_stack = False
+        self.rgt.graph()
 
 
 class UpsideDownNode(MathNode):
