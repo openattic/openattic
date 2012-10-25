@@ -204,7 +204,7 @@
         "model": "nagios.graph",
         "fields": {
             "verttitle": "%",
-            "fields": "+s user nice system idle iowait irq softirq",
+            "fields": "user ** nice ** system ** idle ** iowait ** irq ** softirq",
             "command": 14,
             "title": "CPU Time"
         }
@@ -224,7 +224,7 @@
         "model": "nagios.graph",
         "fields": {
             "verttitle": "bytes/s rx (-) / tx (+)",
-            "fields": "+s -ftpctrl_in_bytes -ftpdata_in_bytes -http_in_bytes -https_in_bytes -iscsi_in_bytes -nfstcp_in_bytes -nfsudp_in_bytes -smb_in_bytes -ssh_in_bytes -other_in_bytes ftpctrl_out_bytes ftpdata_out_bytes http_out_bytes https_out_bytes iscsi_out_bytes nfstcp_out_bytes nfsudp_out_bytes smb_out_bytes ssh_out_bytes other_out_bytes",
+            "fields": "-ftpctrl_in_bytes ** -ftpdata_in_bytes ** -http_in_bytes ** -https_in_bytes ** -iscsi_in_bytes ** -nfstcp_in_bytes ** -nfsudp_in_bytes ** -smb_in_bytes ** -ssh_in_bytes ** -other_in_bytes ftpctrl_out_bytes ** ftpdata_out_bytes ** http_out_bytes ** https_out_bytes ** iscsi_out_bytes ** nfstcp_out_bytes ** nfsudp_out_bytes ** smb_out_bytes ** ssh_out_bytes ** other_out_bytes",
             "command": 10,
             "title": "All protocols [bytes/s]"
         }
@@ -234,7 +234,7 @@
         "model": "nagios.graph",
         "fields": {
             "verttitle": "packets/s rx (-) / tx (+)",
-            "fields": "+s -ftpctrl_in_pkgs -ftpdata_in_pkgs -http_in_pkgs -https_in_pkgs -iscsi_in_pkgs -nfstcp_in_pkgs -nfsudp_in_pkgs -smb_in_pkgs -ssh_in_pkgs -other_in_pkgs ftpctrl_out_pkgs ftpdata_out_pkgs http_out_pkgs https_out_pkgs iscsi_out_pkgs nfstcp_out_pkgs nfsudp_out_pkgs smb_out_pkgs ssh_out_pkgs other_out_pkgs",
+            "fields": "-ftpctrl_in_pkgs ** -ftpdata_in_pkgs ** -http_in_pkgs ** -https_in_pkgs ** -iscsi_in_pkgs ** -nfstcp_in_pkgs ** -nfsudp_in_pkgs ** -smb_in_pkgs ** -ssh_in_pkgs ** -other_in_pkgs ftpctrl_out_pkgs ** ftpdata_out_pkgs ** http_out_pkgs ** https_out_pkgs ** iscsi_out_pkgs ** nfstcp_out_pkgs ** nfsudp_out_pkgs ** smb_out_pkgs ** ssh_out_pkgs ** other_out_pkgs",
             "command": 10,
             "title": "All protocols [packets/s]"
         }
