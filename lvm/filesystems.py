@@ -255,8 +255,31 @@ class Ntfs(FileSystem):
         self._lvm.ntfs_resize( jid, self.lv.path, self.lv.megs, grow )
 
 
+class Xfs(FileSystem):
+    """ Handler for NTFS-3g. """
+    name = "xfs"
+    desc = "XFS (Journalling, optimized for parallel IO)"
 
-FILESYSTEMS = (Ext2, Ext3, Ext4, Ntfs, Zfs)
+    @property
+    def info(self):
+        return {}
+
+    def format(self, jid):
+        self._lvm.xfs_format( jid, self.lv.path )
+        self.mount(jid)
+        self.chown(jid)
+
+    def online_resize_available(self, grow):
+        return grow
+
+    def resize(self, jid, grow):
+        if not grow:
+            raise SystemError("XFS does not support shrinking.")
+        self._lvm.xfs_resize( jid, self.mountpoints[0], self.lv.megs )
+
+
+
+FILESYSTEMS = (Ext2, Ext3, Ext4, Ntfs, Zfs, Xfs)
 
 def get_by_name(name):
     """ Return the file system class with the given ``name``. """

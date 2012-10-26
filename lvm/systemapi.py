@@ -248,6 +248,15 @@ class SystemD(BasePlugin):
         # TODO: Sometimes ntfsresize asks for confirmation interactively, how do we handle that?
         self.job_add_command(jid, ["/sbin/ntfsresize", "--force", "--size", ("%dM" % megs), devpath])
 
+    @method(in_signature="is", out_signature="")
+    def xfs_format(self, jid, devpath):
+        self.job_add_command(jid, ["mkfs.xfs", devpath])
+
+    @method(in_signature="isi", out_signature="")
+    def xfs_resize(self, jid, mountpoint, megs):
+        # TODO: Sometimes ntfsresize asks for confirmation interactively, how do we handle that?
+        self.job_add_command(jid, ["xfs_growfs", mountpoint])
+
     @method(in_signature="", out_signature="a{ss}")
     def get_capabilities(self):
         invoke(["/sbin/modprobe", "dm-snapshot"])
