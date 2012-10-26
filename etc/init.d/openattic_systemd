@@ -68,6 +68,19 @@ case $1 in
 		log_end_msg 0
 		;;
 	
+	foreground)
+		if start-stop-daemon --pidfile=$SYSD_PIDFILE --test --stop --exec $PYTHON --quiet
+		then
+			PID=`cat $SYSD_PIDFILE`
+			echo "systemd is already running (pid $PID), please stop it first."
+			exit 0
+		else
+			cd $OADIR
+			shift
+			$PYTHON $SYSD_OPTIONS -l $SYSD_LOGFILE -L $SYSD_LOGLEVEL
+		fi
+		;;
+	
 	stop)
 		log_daemon_msg "Stopping" "openATTIC systemd"
 		env - PATH="/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin" \

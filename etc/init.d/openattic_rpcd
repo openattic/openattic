@@ -74,6 +74,19 @@ case $1 in
 		log_end_msg 0
 		;;
 	
+	foreground)
+		if start-stop-daemon --pidfile=$RPCD_PIDFILE --test --stop --exec $PYTHON --quiet
+		then
+			PID=`cat $RPCD_PIDFILE`
+			echo "rpcd is already running (pid $PID), please stop it first."
+			exit 0
+		else
+			cd $OADIR
+			shift
+			su ${RPCD_CHUID%%:*} -- -c "$PYTHON $RPCD_OPTIONS -l $RPCD_LOGFILE -L $RPCD_LOGLEVEL"
+		fi
+		;;
+	
 	stop)
 		log_daemon_msg "Stopping" "openATTIC rpcd"
 		env - PATH="/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin" \
