@@ -283,10 +283,10 @@ class Node(object):
         other.gradient_base  = self.gradient_base
 
     def __add__(self, other):
-        raise NotImplementedError("TODO")
+        return AddNode(self, other)
 
     def __sub__(self, other):
-        raise NotImplementedError("TODO")
+        return SubstractNode(self, other)
 
     def __neg__(self):
         return UpsideDownNode(self)
@@ -295,7 +295,7 @@ class Node(object):
         return MultiplyNode(self, other)
 
     def __div__(self, other):
-        raise NotImplementedError("TODO")
+        return DivideNode(self, other)
 
     def __pow__(self, other):
         return StackNode(self, other)
@@ -381,6 +381,9 @@ class Node(object):
 
 
 class MathNode(Node):
+    op = '_'
+    opstr = 'overrideme'
+
     def __init__(self, lft, rgt):
         Node.__init__(self)
         self.lft = lft
@@ -407,6 +410,17 @@ class MathNode(Node):
             self.lft.labelwidth = value
         if self.rgt is not None:
             self.rgt.labelwidth = value
+
+    @property
+    def varname(self):
+        return "%s_%s_%s" % (self.lft.varname, self.opstr, self.rgt.varname)
+
+    def define(self):
+        self.lft.args = self.args
+        self.lft.define()
+        self.rgt.args = self.args
+        self.rgt.define()
+        self.args.append( "CDEF:%s=%s,%s,%s" % (self.varname, self.lft.varname, self.rgt.varname, self.op) )
 
 
 class StackNode(MathNode):
@@ -444,8 +458,21 @@ class UpsideDownNode(MathNode):
         self.lft.graph()
 
 
+class AddNode(MathNode):
+    op = '+'
+    opstr = 'plus'
+
+class SubstractNode(MathNode):
+    op = '-'
+    opstr = 'minus'
+
 class MultiplyNode(MathNode):
-    pass
+    op = '*'
+    opstr = 'times'
+
+class DivideNode(MathNode):
+    op = '/'
+    opstr = 'div'
 
 
 
