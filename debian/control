@@ -187,7 +187,7 @@ Description: Basic requirements for openATTIC
 Package: openattic-module-lvm
 Architecture: all
 Depends: ${misc:Depends}, openattic-base, lvm2, parted
-Recommends: zfs-fuse, ntfs-3g
+Recommends: zfs-fuse, ntfs-3g, xfsprogs
 Description: LVM module for openATTIC
  openATTIC is a storage management system based upon Open Source tools with
  a comprehensive user interface that allows you to create, share and backup
