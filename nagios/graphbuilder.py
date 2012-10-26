@@ -303,11 +303,6 @@ class Node(object):
     warn = None
     crit = None
 
-    def varnegate(self, var):
-        # define the negative graph
-        self.args.append( "CDEF:%sneg=%s,-1,*" % (var, var) )
-        return "%sneg" % var
-
     def varlimit(self, varname, statename, vmin=0, vmax=0):
         newvar = varname + statename
         if vmin not in ("-INF", "INF"): vmin = "%.1f" % vmin
@@ -368,15 +363,15 @@ class Node(object):
         # Now print the graph description table.
         if self.fulldesc:
             self.args.extend([
-                "GPRINT:%s:LAST:%%8.2lf%%s"     % self.name,
-                "GPRINT:%s:MIN:%%8.2lf%%s"      % self.name,
-                "GPRINT:%s:AVERAGE:%%8.2lf%%s"  % self.name,
-                "GPRINT:%s:MAX:%%8.2lf%%s\\j"   % self.name,
+                "GPRINT:%s:LAST:%%8.2lf%%s"     % self.varname,
+                "GPRINT:%s:MIN:%%8.2lf%%s"      % self.varname,
+                "GPRINT:%s:AVERAGE:%%8.2lf%%s"  % self.varname,
+                "GPRINT:%s:MAX:%%8.2lf%%s\\j"   % self.varname,
                 ])
         else:
             self.args.extend([
-                "GPRINT:%s:LAST:%%8.2lf%%s"        % self.name,
-                "GPRINT:%s:AVERAGE:%%8.2lf%%s\\j"  % self.name,
+                "GPRINT:%s:LAST:%%8.2lf%%s"        % self.varname,
+                "GPRINT:%s:AVERAGE:%%8.2lf%%s\\j"  % self.varname,
                 ])
 
 
@@ -399,6 +394,32 @@ class MathNode(Node):
     vmax = property( lambda self: self.lft.vmax )
 
     @property
+    def varname(self):
+        return "%s_%s_%s" % (self.lft.varname, self.opstr, self.rgt.varname)
+
+    @property
+    def label(self):
+        return "%s %s %s" % (self.lft.label, self.op, self.rgt.label)
+
+    @property
+    def labelwidth(self):
+        return self.lft.labelwidth + len(self.op) + self.rgt.labelwidth + 2
+
+    @labelwidth.setter
+    def labelwidth(self, value):
+        self.rgt.labelwidth = value - self.lft.labelwidth - len(self.op) - 2
+
+    def define(self):
+        self.lft.args = self.args
+        self.lft.define()
+        self.rgt.args = self.args
+        self.rgt.define()
+        self.args.append( "CDEF:%s=%s,%s,%s" % (self.varname, self.lft.varname, self.rgt.varname, self.op) )
+
+
+class StackNode(MathNode):
+
+    @property
     def labelwidth(self):
         return max(
             self.lft.labelwidth if self.lft is not None else 0,
@@ -411,19 +432,6 @@ class MathNode(Node):
         if self.rgt is not None:
             self.rgt.labelwidth = value
 
-    @property
-    def varname(self):
-        return "%s_%s_%s" % (self.lft.varname, self.opstr, self.rgt.varname)
-
-    def define(self):
-        self.lft.args = self.args
-        self.lft.define()
-        self.rgt.args = self.args
-        self.rgt.define()
-        self.args.append( "CDEF:%s=%s,%s,%s" % (self.varname, self.lft.varname, self.rgt.varname, self.op) )
-
-
-class StackNode(MathNode):
     def define(self):
         self.lft.args = self.args
         self.varlft = self.lft.define()
@@ -446,10 +454,30 @@ class UpsideDownNode(MathNode):
     def __init__(self, lft):
         MathNode.__init__(self, lft, None)
 
+    labelwidth = property( lambda self: self.lft.labelwidth )
+
+    @labelwidth.setter
+    def labelwidth(self, value):
+        self.lft.labelwidth = value
+
+    varname = property( lambda self: self.lft.varname + "neg" )
+
+    @property
+    def label(self):
+        return self.lft.label
+
+    @property
+    def labelwidth(self):
+        return self.lft.labelwidth
+
+    @labelwidth.setter
+    def labelwidth(self, value):
+        self.lft.labelwidth = value
+
     def define(self):
         self.lft.args = self.args
-        self.varlft = self.lft.define()
-        self.varname = self.lft.varnegate(self.varlft)
+        self.lft.define()
+        self.args.append( "CDEF:%s=%s,-1,*" % (self.varname, self.lft.varname) )
 
     def graph(self):
         self.copy_graphvars(self.lft)
