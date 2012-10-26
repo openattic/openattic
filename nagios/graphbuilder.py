@@ -584,8 +584,10 @@ class Graph(object):
         return self
 
     def get_image(self):
+        # the following str(int(self.start)) construct is necessary because RRDtool needs those
+        # timestamps to be parseable into ints, and subprocess.Popen needs the args to be strings.
         self.args = [
-            "rrdtool", "graph", "-", "--start", str(self.start), "--end", str(self.end),
+            "rrdtool", "graph", "-", "--start", str(int(self.start)), "--end", str(int(self.end)),
             "--height", str(self.height), "--width", str(self.width),
             "--imgformat", "PNG", "--title", self.title
             ]
