@@ -387,7 +387,6 @@ class MathNode(Node):
         self.rgt = rgt
         self.varlft = None
         self.varrgt = None
-        self._label = None
 
     curr = property( lambda self: self.lft.curr )
     unit = property( lambda self: self.lft.unit )
@@ -397,15 +396,18 @@ class MathNode(Node):
     vmax = property( lambda self: self.lft.vmax )
 
     @property
-    def label(self):
-        if self._label is None:
-            return self.lft.label
-        else:
-            return self._label
+    def labelwidth(self):
+        return max(
+            self.lft.labelwidth if self.lft is not None else 0,
+            self.rgt.labelwidth if self.rgt is not None else 0)
 
-    @label.setter
-    def label(self, value):
-        self._label = value
+    @labelwidth.setter
+    def labelwidth(self, value):
+        if self.lft is not None:
+            self.lft.labelwidth = value
+        if self.rgt is not None:
+            self.rgt.labelwidth = value
+
 
 class StackNode(MathNode):
     def define(self):
@@ -457,6 +459,14 @@ class Source(Node):
 
         self.perfdata = self.rrd.get_source_perfdata(name).split(';')
         self.args = []
+
+    @property
+    def labelwidth(self):
+        return len(self.label.strip())
+
+    @labelwidth.setter
+    def labelwidth(self, value):
+        self.label = "%-*s" % (value, self.label.strip())
 
     @property
     def curr(self):
@@ -613,7 +623,7 @@ class Graph(object):
             self.args.extend([ "--color", "SHADEB#"+self.sbcol ])
 
         # calc the maximum variable label length
-        maxlen = max( [ len(src.label) for src in self.sources ] )
+        maxlen = max( [ src.labelwidth for src in self.sources ] )
 
         # rrdtool uses \\j for newline.
         self.args.append("COMMENT:  \\j")
@@ -646,7 +656,7 @@ class Graph(object):
             src.define()
 
         for src in self.sources:
-            src.label = "%-*s" % (maxlen, src.label)
+            src.labelwidth = maxlen
             src.graph()
 
         def mkdate(text, timestamp):
