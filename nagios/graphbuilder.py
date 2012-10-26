@@ -499,7 +499,7 @@ class Source(Node):
     def define(self):
         """ Create a variable definition for this source and return the name. """
         varname = self.name
-        self.args.append( "DEF:%s=%s:%d:AVERAGE" % (varname, self.rrd.rrdpath, self.rrd.get_source_varname(self.name)) )
+        self.args.append( "DEF:%s=%s:%s:AVERAGE" % (varname, self.rrd.rrdpath, self.rrd.get_source_varname(self.name)) )
         return varname
 
 
