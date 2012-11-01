@@ -128,6 +128,7 @@ except Exception, e:
 # Retrieve hostname from the server
 hostname = server.hostname()
 
+HAVE_GET_FUNCTION_ARGS = "get_function_args" in server.system.listMethods()
 
 if options.uidcheck and os.geteuid() != 0:
     user = server.auth.User.filter({"username": getuser()})
@@ -326,23 +327,25 @@ def call(sectname, cmd, args):
         fullname = cmd
     func = getattr( handler, cmd )
 
-    argspec = server.get_function_args( fullname )
     args = clean_args(args)
 
-    if( len(args) != len(argspec) ):
-        print "Usage: %s %s" % ( fullname, ' '.join([('<%s>' % a) for a in argspec]) )
-    else:
-        try:
-            result = func(*args)
-            if options.outfield:
-                for field in options.outfield.split('.'):
-                    result = result[field]
-            formatted = formatters[options.outformat](result)
-            print formatted.encode(options.encoding)
-        except Exception, e:
-            print >> sys.stderr, "Error processing the command:", unicode(type(e)), unicode(e)
-            if options.verbose:
-                traceback.print_exc()
+    if HAVE_GET_FUNCTION_ARGS:
+        argspec = server.get_function_args( fullname )
+        if( len(args) != len(argspec) ):
+            print "Usage: %s %s" % ( fullname, ' '.join([('<%s>' % a) for a in argspec]) )
+            return None
+
+    try:
+        result = func(*args)
+        if options.outfield:
+            for field in options.outfield.split('.'):
+                result = result[field]
+        formatted = formatters[options.outformat](result)
+        print formatted.encode(options.encoding)
+    except Exception, e:
+        print >> sys.stderr, "Error processing the command:", unicode(type(e)), unicode(e)
+        if options.verbose:
+            traceback.print_exc()
 
 
 def call_argstr(sectname, cmd, argstr):
