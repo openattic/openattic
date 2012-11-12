@@ -121,10 +121,12 @@ MEDIA_URL = PROJECT_URL + '/static/'
 STATIC_URL  = MEDIA_URL
 STATIC_ROOT = MEDIA_ROOT
 
-# URL prefix for admin media -- CSS, JavaScript and images. Make sure to use a
-# trailing slash.
-# Examples: "http://foo.com/media/", "/media/".
-ADMIN_MEDIA_PREFIX = PROJECT_URL + '/static/admin/'
+import django
+if django.VERSION[:2] == (1, 2):
+    # URL prefix for admin media -- CSS, JavaScript and images. Make sure to use a
+    # trailing slash.
+    # Examples: "http://foo.com/media/", "/media/".
+    ADMIN_MEDIA_PREFIX = PROJECT_URL + '/static/admin/'
 
 LOGIN_URL = PROJECT_URL + '/accounts/login/'
 LOGIN_REDIRECT_URL = PROJECT_URL + "/"
