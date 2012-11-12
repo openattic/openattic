@@ -289,7 +289,7 @@ Ext.oa.Iscsi__Panel = Ext.extend(Ext.Panel, {
                     ref: "namefield",
                     listeners: {
                       change: function( self, newValue, oldValue ){
-                        var d = new Date();
+			var d = new Date();
                         var m = d.getMonth() + 1;
                         self.ownerCt.iqn_ip_field.setValue(
                           String.format("iqn.{0}-{1}.{2}:{3}",
@@ -310,6 +310,14 @@ Ext.oa.Iscsi__Panel = Ext.extend(Ext.Panel, {
                       if( !self.ownerCt.ownerCt.getForm().isValid() ){
                         return;
                       }
+		      
+		      var re = new RegExp("[^A-Za-z0-9\-]");
+                      if (re.test(self.ownerCt.ownerCt.namefield.getValue()))
+                      {
+        	           Ext.Msg.alert("Warning","Illegal character in name");
+                           return;
+                      }
+
                       iscsi__Target.create({
                         'name': self.ownerCt.ownerCt.namefield.getValue(),
                         'iscsiname': self.ownerCt.ownerCt.iqn_ip_field.getValue()
