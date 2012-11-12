@@ -59,6 +59,10 @@ The name of volume group.
 END
 }
 
+# We used to tee the output into the logfile, but it turns out that this will
+# cause $? to contain the exit code of tee instead of oavgmanager, which is
+# not at all what we want.
+
 case "$1" in
 	meta-data)
 		meta_data
@@ -67,10 +71,10 @@ case "$1" in
 	
 	monitor|status)
 		if [ -z "$VOLGRP" ]; then
-			/usr/sbin/oavgmanager status -v | tee /var/log/openattic_vgmanager
+			/usr/sbin/oavgmanager status -v >> /var/log/openattic_vgmanager
 			RETVAL=$?
 		else
-			/usr/sbin/oavgmanager status -v "$VOLGRP" | tee /var/log/openattic_vgmanager
+			/usr/sbin/oavgmanager status -v "$VOLGRP" >> /var/log/openattic_vgmanager
 			RETVAL=$?
 		fi
 		if [ "$RETVAL" = 0 ]; then
@@ -86,10 +90,10 @@ case "$1" in
 			OPTS="-f"
 		fi
 		if [ -z "$VOLGRP" ]; then
-			/usr/sbin/oavgmanager $OPTS "$1" | tee /var/log/openattic_vgmanager
+			/usr/sbin/oavgmanager $OPTS "$1" >> /var/log/openattic_vgmanager
 			RETVAL=$?
 		else
-			/usr/sbin/oavgmanager $OPTS "$1" "$VOLGRP" | tee /var/log/openattic_vgmanager
+			/usr/sbin/oavgmanager $OPTS "$1" "$VOLGRP" >> /var/log/openattic_vgmanager
 			RETVAL=$?
 		fi
 		if [ "$RETVAL" = 0 ]; then
