@@ -213,6 +213,12 @@ TEMPLATE_DIRS = (
     join(PROJECT_ROOT, 'templates'),
 )
 
+LOCALE_PATHS = (
+    '/etc/openattic/locale',
+    '/usr/local/share/openattic/locale',
+    join(PROJECT_ROOT, 'locale'),
+)
+
 MPLCONFIGDIR = "/tmp/.matplotlib"
 
 INSTALLED_APPS = [
