@@ -564,6 +564,9 @@ Ext.oa.Nagios__Service_Panel = Ext.extend(Ext.Panel, {
     }));
     Ext.oa.Nagios__Service_Panel.superclass.initComponent.apply(this, arguments);
   },
+  refresh: function(){
+    this.items.items[0].store.reload();
+  },
   onRender: function(){
     "use strict";
     Ext.oa.Nagios__Service_Panel.superclass.onRender.apply(this, arguments);

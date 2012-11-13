@@ -234,6 +234,26 @@ Ext.oa.MainViewManager = Ext.extend(Ext.Panel, {
       scope: this,
       stopEvent: true
     });
+    var f5again = false;
+    var resetf5 = function(){
+      f5again = false;
+    };
+    var othermap = new Ext.KeyMap(document, {
+      key: Ext.EventObject.F5,
+      fn: function(key, evt){
+        if( !f5again ){
+          f5again = true;
+          resetf5.defer(1000);
+          evt.stopEvent();
+
+          var act = this.modcontainer.layout.activeItem;
+          if( typeof act.refresh !== "undefined" ){
+            act.refresh();
+          }
+        }
+      },
+      scope: this
+    });
   },
 
   treenodeClicked: function( node, event ){

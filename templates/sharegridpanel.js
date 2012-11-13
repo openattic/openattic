@@ -232,6 +232,10 @@ Ext.oa.ShareGridPanel = Ext.extend(Ext.grid.GridPanel, {
     this.bottomToolbar.items.items[1].focus();
   },
 
+  refresh: function(){
+    this.store.reload();
+  },
+
   showEditWindow: function(config, record){
     "use strict";
     var self = this;
