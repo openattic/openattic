@@ -23,39 +23,41 @@ Ext.oa.Drbd__Connection_Panel = Ext.extend(Ext.oa.ShareGridPanel, {
     remove:  gettext('Delete Connection')
   },
   allowEdit: false,
-  storefields: [{
-    name: 'dstate_self',
-    mapping: 'dstate',
-    convert: function(val, row){
-      "use strict";
-      var hostname;
-      if( val ){
-        for( hostname in val ){
-          if( val.hasOwnProperty(hostname) && val[hostname] !== "UpToDate" ){
-            return gettext("Bad");
+  store: {
+    fields: [{
+      name: 'dstate_self',
+      mapping: 'dstate',
+      convert: function(val, row){
+        "use strict";
+        var hostname;
+        if( val ){
+          for( hostname in val ){
+            if( val.hasOwnProperty(hostname) && val[hostname] !== "UpToDate" ){
+              return gettext("Bad");
+            }
           }
+          return gettext("OK");
         }
-        return gettext("OK");
+        return gettext('Unknown');
       }
-      return gettext('Unknown');
-    }
-  }, {
-    name: 'role_self',
-    mapping: 'role',
-    convert: function(val, row){
-      "use strict";
-      var hostname, prims = [];
-      if( val ){
-        for( hostname in val ){
-          if( val.hasOwnProperty(hostname) && val[hostname] === "Primary" ){
-            prims.push(hostname);
+    }, {
+      name: 'role_self',
+      mapping: 'role',
+      convert: function(val, row){
+        "use strict";
+        var hostname, prims = [];
+        if( val ){
+          for( hostname in val ){
+            if( val.hasOwnProperty(hostname) && val[hostname] === "Primary" ){
+              prims.push(hostname);
+            }
           }
+          return prims.join(', ');
         }
-        return prims.join(', ');
+        return gettext('Unknown');
       }
-      return gettext('Unknown');
-    }
-  }],
+    }],
+  },
   columns: [{
     header: gettext('Resource Name'),
     dataIndex: "res_name"

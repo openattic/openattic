@@ -21,15 +21,17 @@ Ext.oa.Ftp__Export_Panel = Ext.extend(Ext.oa.ShareGridPanel, {
     height: 200
   },
   allowEdit: false,
-  storefields: [{
-    name: 'volumename',
-    mapping: 'volume',
-    convert: toUnicode
-  }, {
-    name: 'username',
-    mapping: 'user',
-    convert: toUnicode
-  }],
+  store: {
+    fields: [{
+      name: 'volumename',
+      mapping: 'volume',
+      convert: toUnicode
+    }, {
+      name: 'username',
+      mapping: 'user',
+      convert: toUnicode
+    }],
+  },
   columns: [{
     header: gettext('Volume'),
     width: 350,

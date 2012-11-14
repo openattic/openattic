@@ -26,11 +26,13 @@ Ext.oa.Tftp__Instance_Panel = Ext.extend(Ext.oa.ShareGridPanel, {
     width: 100,
     dataIndex: "address_ip"
   }],
-  storefields: [{
-    name: "address_ip",
-    mapping: "address",
-    convert: toUnicode
-  }],
+  store: {
+    fields: [{
+      name: "address_ip",
+      mapping: "address",
+      convert: toUnicode
+    }],
+  },
   form: {
     items: [{
       xtype: 'fieldset',
