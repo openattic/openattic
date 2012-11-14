@@ -313,6 +313,10 @@ class ModelHandler(BaseHandler):
                         setattr(obj, field.name, ModelHandler._get_object_by_id_dict(data[field.name]))
                     else:
                         setattr(obj, field.name, None)
+                elif isinstance( field, models.DateTimeField ):
+                    if data[field.name] == '':
+                        data[field.name] = None
+                    setattr(obj, field.name, data[field.name])
                 else:
                     setattr(obj, field.name, data[field.name])
         for field in obj._meta.many_to_many:
