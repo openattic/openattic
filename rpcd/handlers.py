@@ -295,9 +295,10 @@ class ModelHandler(BaseHandler):
                 idobj = self.set( objid, data )
         except ValidationError, err:
             errdict = {}
-            for errfld in err.message_dict:
-                errdict[errfld] = "\n".join( err.message_dict[errfld] )
-            return { "success": False, "errors": errdict }
+            if hasattr(err, "message_dict"):
+                for errfld in err.message_dict:
+                    errdict[errfld] = "\n".join( err.message_dict[errfld] )
+            return { "success": False, "errors": errdict, "err": unicode(err) }
         else:
             return { "success": True, "id": idobj["id"] }
 
@@ -312,6 +313,10 @@ class ModelHandler(BaseHandler):
                         setattr(obj, field.name, ModelHandler._get_object_by_id_dict(data[field.name]))
                     else:
                         setattr(obj, field.name, None)
+                elif isinstance( field, models.DateTimeField ):
+                    if data[field.name] == '':
+                        data[field.name] = None
+                    setattr(obj, field.name, data[field.name])
                 else:
                     setattr(obj, field.name, data[field.name])
         for field in obj._meta.many_to_many:
