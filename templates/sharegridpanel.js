@@ -25,6 +25,8 @@ Ext.oa.ShareGridPanel = Ext.extend(Ext.grid.GridPanel, {
   initComponent: function(){
     "use strict";
     var self = this;
+    var filters = {};
+    var filterCount = 0;
     var i;
     Ext.applyIf(this.texts, {
       reload:  gettext('Reload'),
@@ -59,6 +61,26 @@ Ext.oa.ShareGridPanel = Ext.extend(Ext.grid.GridPanel, {
       }
       this.buttons = mybuttons;
     }
+    Ext.apply(this, {
+      setFilter: function(field, value){
+        if( filterCount === 0 ){
+          //self.store.directFn = self.api.filter;
+        }
+        if( typeof filters[field] === "undefined" ){
+          filterCount++;
+        }
+        filters[field] = value;
+      },
+      delFilter: function(field){
+        if( typeof filters[field] !== "undefined" ){
+          delete filters[field];
+          filterCount--;
+        }
+        if( filterCount === 0 ){
+          //self.store.directFn = self.api.all;
+        }
+      }
+    });
     Ext.apply(this, Ext.applyIf(this.initialConfig, {
       keys: [{
         scope: self,
@@ -66,6 +88,7 @@ Ext.oa.ShareGridPanel = Ext.extend(Ext.grid.GridPanel, {
         handler: this.deleteFunction
         }],
       store: new Ext.data.DirectStore({
+        id: this.id + "_store",
         fields: (function(){
           var cols = ["id"],
               c;
@@ -79,7 +102,7 @@ Ext.oa.ShareGridPanel = Ext.extend(Ext.grid.GridPanel, {
           }
           return cols;
         }()),
-        directFn: (this.filterParams === false ? self.api.all : self.api.filter)
+        directFn: self.api.filter //all
       }),
       viewConfig: {
         forceFit: true
@@ -97,12 +120,10 @@ Ext.oa.ShareGridPanel = Ext.extend(Ext.grid.GridPanel, {
                 clearTimeout(self.searchTimeout);
               }
               if( newVal !== '' ){
-                self.store.baseParams[self.filterSearchParam] = newVal;
-                self.store.directFn = self.api.filter;
+                self.setFilter(self.filterSearchParam, newVal);
               }
               else{
-                delete self.store.baseParams[self.filterSearchParam];
-                self.store.directFn = (self.filterParams === false ? self.api.all : self.api.filter);
+                self.delFilter(self.filterSearchParam);
               }
               self.store.reload();
             },
@@ -135,8 +156,13 @@ Ext.oa.ShareGridPanel = Ext.extend(Ext.grid.GridPanel, {
         }]
       }
     }));
-    if(this.filterParams !== false){
-      this.store.baseParams = this.filterParams;
+    this.store.baseParams = filters;
+    if( this.filterParams !== false ){
+      for( i in this.filterParams ){
+        if( this.filterParams.hasOwnProperty(i) ){
+          this.setFilter(i, this.filterParams[i] );
+        }
+      }
     }
     this.buttons.unshift({
       text: "",
