@@ -295,9 +295,10 @@ class ModelHandler(BaseHandler):
                 idobj = self.set( objid, data )
         except ValidationError, err:
             errdict = {}
-            for errfld in err.message_dict:
-                errdict[errfld] = "\n".join( err.message_dict[errfld] )
-            return { "success": False, "errors": errdict }
+            if hasattr(err, "message_dict"):
+                for errfld in err.message_dict:
+                    errdict[errfld] = "\n".join( err.message_dict[errfld] )
+            return { "success": False, "errors": errdict, "err": unicode(err) }
         else:
             return { "success": True, "id": idobj["id"] }
 
