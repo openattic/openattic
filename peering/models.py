@@ -21,8 +21,6 @@ from django.db import models
 from django.core import exceptions
 from django.conf import settings
 
-from rpcd.signals import post_mastersync
-
 from peering.xmlrpctimeout import ServerProxy
 
 class PeerURL(unicode):
@@ -116,16 +114,3 @@ class PeerHost(models.Model):
 
     def __getattr__(self, attr):
         return getattr( self.connection, attr)
-
-
-def sync_peers(**kwargs):
-    for data in kwargs["serv"].peering.PeerHost.all():
-        try:
-            PeerHost.objects.get(id=int(data["id"]))
-        except PeerHost.DoesNotExist:
-            kk = PeerHost(name=data["name"], base_url=data["base_url"])
-            kk.save()
-
-
-post_mastersync.connect(sync_peers)
-
