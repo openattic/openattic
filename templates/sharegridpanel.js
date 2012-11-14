@@ -81,6 +81,8 @@ Ext.oa.ShareGridPanel = Ext.extend(Ext.grid.GridPanel, {
         }
       }
     });
+    this.store = this.store || {};
+    delete this.initialConfig["store"];
     Ext.apply(this, Ext.applyIf(this.initialConfig, {
       keys: [{
         scope: self,
@@ -88,16 +90,16 @@ Ext.oa.ShareGridPanel = Ext.extend(Ext.grid.GridPanel, {
         handler: this.deleteFunction
         }],
       store: new Ext.data.DirectStore({
-        id: this.id + "_store",
+        id: self.store.id || self.id + "_store",
         fields: (function(){
           var cols = ["id"],
               c;
           for( c = 0; c < self.columns.length; c++ ){
             cols.push(self.columns[c].dataIndex);
           }
-          if( typeof self.storefields !== "undefined" ){
-            for( c = 0; c < self.storefields.length; c++ ){
-              cols.push(self.storefields[c]);
+          if( typeof self.store.fields !== "undefined" ){
+            for( c = 0; c < self.store.fields.length; c++ ){
+              cols.push(self.store.fields[c]);
             }
           }
           return cols;
