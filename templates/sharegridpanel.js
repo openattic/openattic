@@ -282,6 +282,7 @@ Ext.oa.ShareGridPanel = Ext.extend(Ext.grid.GridPanel, {
             load:   self.api.get_ext,
             submit: self.api.set_ext
           },
+          ownerPanel: self,
           baseParams: {
             id: (record ? record.id: -1)
           },
@@ -298,12 +299,16 @@ Ext.oa.ShareGridPanel = Ext.extend(Ext.grid.GridPanel, {
               anchor: "0px"
             }
           },
+          aboutToSubmit: function(btn, conf){
+            // Default: do nothing
+            return true;
+          },
           buttons: [{
             text: config.submitButtonText,
             icon: MEDIA_URL + "/oxygen/16x16/actions/dialog-ok-apply.png",
             handler: function(btn){
               addwin.getEl().mask(gettext("Loading..."));
-              btn.ownerCt.ownerCt.getForm().submit({
+              var conf = {
                 success: function(provider, response){
                   if(response.result){
                     self.store.reload();
@@ -313,7 +318,14 @@ Ext.oa.ShareGridPanel = Ext.extend(Ext.grid.GridPanel, {
                 failure: function(){
                   addwin.getEl().unmask();
                 }
-              });
+              };
+              var datform = btn.ownerCt.ownerCt.getForm();
+              if( datform.aboutToSubmit(btn, conf) === true ){
+                datform.submit(conf);
+              }
+              else{
+                addwin.getEl().unmask()
+              }
             }
           },{
             text: self.texts.cancel,
