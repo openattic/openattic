@@ -25,17 +25,19 @@ Ext.oa.Peering__Peerhost_Panel = Ext.extend(Ext.oa.ShareGridPanel, {
     edit: gettext("Edit Peer"),
     remove: gettext("Delete Peer"),
   },
-  storefields: [{
-    name: 'volumename',
-    mapping: 'volume',
-    convert: function( val, row ){
-      "use strict";
-      if(val){
-        return val.name;
+  store: {
+    fields: [{
+      name: 'volumename',
+      mapping: 'volume',
+      convert: function( val, row ){
+        "use strict";
+        if(val){
+          return val.name;
+        }
+        return "";
       }
-      return "";
-    }
-  }],
+    }],
+  },
   columns: [{
     header: gettext('Name'),
     width: 100,
