@@ -40,48 +40,50 @@ Ext.oa.Lvm__LogicalVolume_Panel = Ext.extend(Ext.oa.ShareGridPanel, {
     height: 350
   },
   allowEdit: false,
-  storefields: [ "fswarning", "fscritical", {
-    name: 'fsfree',
-    mapping: 'fs',
-    sortType: 'asFloat',
-    convert: function( val, row ){
-      "use strict";
-      if( val === null || typeof val.stat === "undefined" ){
-        return -1; // fake to sort unknown values always at the bottom
+  store: {
+    fields: [ "fswarning", "fscritical", {
+      name: 'fsfree',
+      mapping: 'fs',
+      sortType: 'asFloat',
+      convert: function( val, row ){
+        "use strict";
+        if( val === null || typeof val.stat === "undefined" ){
+          return -1; // fake to sort unknown values always at the bottom
+        }
+        return val.stat.freeG.toFixed(2);
       }
-      return val.stat.freeG.toFixed(2);
-    }
-  }, {
-    name: 'fsused',
-    mapping: 'fs',
-    sortType: 'asFloat',
-    convert: function( val, row ){
-      "use strict";
-      if( val === null || typeof val.stat === "undefined" ){
-        return -1;
+    }, {
+      name: 'fsused',
+      mapping: 'fs',
+      sortType: 'asFloat',
+      convert: function( val, row ){
+        "use strict";
+        if( val === null || typeof val.stat === "undefined" ){
+          return -1;
+        }
+        return val.stat.usedG.toFixed(2);
       }
-      return val.stat.usedG.toFixed(2);
-    }
-  }, {
-    name: 'fspercent',
-    mapping: 'fs',
-    sortType: 'asFloat',
-    convert: function( val, row ){
-      "use strict";
-      if( val === null || typeof val.stat === "undefined" ){
-        return -1;
+    }, {
+      name: 'fspercent',
+      mapping: 'fs',
+      sortType: 'asFloat',
+      convert: function( val, row ){
+        "use strict";
+        if( val === null || typeof val.stat === "undefined" ){
+          return -1;
+        }
+        return (val.stat.used / val.stat.size * 100 ).toFixed(2);
       }
-      return (val.stat.used / val.stat.size * 100 ).toFixed(2);
-    }
-  },{
-    name: 'vgname',
-    mapping: 'vg',
-    convert: toUnicode
-  },{
-    name: 'ownername',
-    mapping: 'owner',
-    convert: toUnicode
-  }],
+    },{
+      name: 'vgname',
+      mapping: 'vg',
+      convert: toUnicode
+    },{
+      name: 'ownername',
+      mapping: 'owner',
+      convert: toUnicode
+    }],
+  },
   columns: [{
     header: gettext('LV'),
     dataIndex: "name"
