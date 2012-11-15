@@ -156,12 +156,13 @@ Ext.oa.Lvm__Snapshot_Panel = Ext.extend(Ext.oa.Lvm__LogicalVolume_Panel, {
     this.columns = mycolumns;
     // Add extra store fields (deep-copied)
     var myfields = [];
-    var oldfields = Ext.oa.Lvm__Snapshot_Panel.superclass.storefields;
+    this.store = Ext.oa.Lvm__Snapshot_Panel.superclass.store;
+    var oldfields = this.store.fields;
     for( i = 0; i < oldfields.length; i++ ){
       myfields.push(Ext.apply({}, oldfields[i]));
     }
-    this.storefields = myfields;
-    this.storefields.push({
+    this.store.fields = myfields;
+    this.store.fields.push({
       name: 'origvolid',
       mapping: 'snapshot',
       convert: function( val, row ){
