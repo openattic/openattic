@@ -412,10 +412,14 @@ class ProxyHandler(BaseHandler):
 
 
 class ProxyModelBaseHandler(ProxyHandler, ModelHandler):
+
+    def _get_model_all_manager(self):
+        return self.model.all_objects
+
     def _find_target_host(self, id):
         if not isinstance( id, dict ):
             id = {'id': int(id)}
-        return self._find_target_host_from_model_instance( self.model.all_objects.get(**id) )
+        return self._find_target_host_from_model_instance( self._get_model_all_manager().get(**id) )
 
     def _find_target_host_from_model_instance(self, instance):
         curr = instance
@@ -432,7 +436,7 @@ class ProxyModelBaseHandler(ProxyHandler, ModelHandler):
 
 class ProxyModelHandler(ProxyModelBaseHandler):
     def _filter(self, kwds, order):
-        db_objects = self._filter_queryset(kwds, self.model.all_objects.all())
+        db_objects = self._filter_queryset(kwds, self._get_model_all_manager().all())
         result = []
         for instance in db_objects:
             try:
@@ -453,13 +457,13 @@ class ProxyModelHandler(ProxyModelBaseHandler):
         return self.backing_handler._idobj(obj)
 
     def idobj(self, numeric_id):
-        return self._idobj( self.model.all_objects.get(id=numeric_id) )
+        return self._idobj( self._get_model_all_manager().get(id=numeric_id) )
 
     def ids(self):
-        return [self._idobj(o) for o in self.model.all_objects.all().order_by(*self.order) ]
+        return [self._idobj(o) for o in self._get_model_all_manager().all().order_by(*self.order) ]
 
     def ids_filter(self, kwds):
-        return [ self._idobj(obj) for obj in self._filter_queryset(kwds, self.model.all_objects).order_by(*self.order) ]
+        return [ self._idobj(obj) for obj in self._filter_queryset(kwds, self._get_model_all_manager()).order_by(*self.order) ]
 
     def all(self):
         return self.filter({})
