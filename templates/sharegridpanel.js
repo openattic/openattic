@@ -49,18 +49,6 @@ Ext.oa.ShareGridPanel = Ext.extend(Ext.grid.GridPanel, {
       mycolumns.push(Ext.apply({ sortable: true }, this.columns[i]));
     }
     this.columns = mycolumns;
-    // Same goes for buttons, if any are defined in the prototype.
-    if( typeof this.buttons === "undefined" ){
-      this.buttons = [];
-    }
-    else{
-      var mybuttons = [];
-      for( i = 0; i < this.buttons.length; i++ ){
-        mybuttons[i] = Ext.apply({}, this.buttons[i]);
-        Ext.applyIf(mybuttons[i], { scope: this });
-      }
-      this.buttons = mybuttons;
-    }
     Ext.apply(this, {
       setFilter: function(field, value){
         if( filterCount === 0 ){
@@ -158,6 +146,20 @@ Ext.oa.ShareGridPanel = Ext.extend(Ext.grid.GridPanel, {
         }]
       }
     }));
+    // Same goes for buttons, if any are defined in the prototype.
+    if( typeof this.buttons === "undefined" ){
+      this.buttons = [];
+    }
+    else{
+      var mybuttons = [];
+      for( i = 0; i < this.buttons.length; i++ ){
+        mybuttons[i] = Ext.apply({}, this.buttons[i]);
+        console.log(["Apply scope to", mybuttons[i]]);
+        Ext.applyIf(mybuttons[i], { scope: self });
+      }
+      this.buttons = mybuttons;
+      console.log(this);
+    }
     this.store.baseParams = filters;
     if( this.filterParams !== false ){
       for( i in this.filterParams ){
