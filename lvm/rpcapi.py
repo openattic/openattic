@@ -170,7 +170,12 @@ class ZfsSnapshotHandler(ModelHandler):
         return ZfsSnapshot.objects.get(id=id).rollback()
 
 class VgProxy(ProxyModelHandler, VgHandler):
-    pass
+    def get_free_megs(self, id):
+        """ Get amount of free space in a Volume Group. """
+        return self._call_singlepeer_method("get_free_megs", id)
+
+    def lvm_info(self, id):
+        return self._call_singlepeer_method("lvm_info", id)
 
 
 class LvProxy(ProxyModelHandler, LvHandler):
