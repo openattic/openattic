@@ -82,7 +82,7 @@ Ext.oa.Lvm__LogicalVolume_Panel = Ext.extend(Ext.oa.ShareGridPanel, {
       name: 'ownername',
       mapping: 'owner',
       convert: toUnicode
-    }],
+    }]
   },
   columns: [{
     header: gettext('LV'),
@@ -156,7 +156,7 @@ Ext.oa.Lvm__LogicalVolume_Panel = Ext.extend(Ext.oa.ShareGridPanel, {
     }
   },{
     header: gettext('Owner'),
-    dataIndex: "ownername",
+    dataIndex: "ownername"
   },{
     header: gettext('Group'),
     dataIndex: "vgname",

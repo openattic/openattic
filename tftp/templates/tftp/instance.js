@@ -31,7 +31,7 @@ Ext.oa.Tftp__Instance_Panel = Ext.extend(Ext.oa.ShareGridPanel, {
       name: "address_ip",
       mapping: "address",
       convert: toUnicode
-    }],
+    }]
   },
   form: {
     items: [{

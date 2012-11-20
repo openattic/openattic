@@ -56,7 +56,7 @@ Ext.oa.Drbd__Connection_Panel = Ext.extend(Ext.oa.ShareGridPanel, {
         }
         return gettext('Unknown');
       }
-    }],
+    }]
   },
   columns: [{
     header: gettext('Resource Name'),
@@ -306,7 +306,7 @@ Ext.oa.Drbd_Panel = Ext.extend(Ext.Panel, {
           header: "Role",
           dataIndex: "role"
         }]
-      }],
+      }]
     }));
     Ext.oa.Drbd_Panel.superclass.initComponent.apply(this, arguments);
   },

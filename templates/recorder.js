@@ -59,7 +59,7 @@ window.MainViewModules.push({
               title: "API",
               items: {
                 xtype: "textarea",
-                value: (window.RECORDED_COMMANDS.join(';\n') + ';\n'),
+                value: (window.RECORDED_COMMANDS.join(';\n') + ';\n')
               },
               layout: "fit",
               height: 180,

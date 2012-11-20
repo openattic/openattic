@@ -30,7 +30,7 @@ Ext.oa.Ftp__Export_Panel = Ext.extend(Ext.oa.ShareGridPanel, {
       name: 'username',
       mapping: 'user',
       convert: toUnicode
-    }],
+    }]
   },
   columns: [{
     header: gettext('Volume'),
@@ -39,7 +39,7 @@ Ext.oa.Ftp__Export_Panel = Ext.extend(Ext.oa.ShareGridPanel, {
   },{
     header: gettext('User'),
     width: 100,
-    dataIndex: "username",
+    dataIndex: "username"
   }],
   form: {
     items: [{

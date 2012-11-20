@@ -23,7 +23,7 @@ Ext.oa.Peering__Peerhost_Panel = Ext.extend(Ext.oa.ShareGridPanel, {
   texts: {
     add:  gettext("Add Peer"),
     edit: gettext("Edit Peer"),
-    remove: gettext("Delete Peer"),
+    remove: gettext("Delete Peer")
   },
   store: {
     fields: [{
@@ -36,7 +36,7 @@ Ext.oa.Peering__Peerhost_Panel = Ext.extend(Ext.oa.ShareGridPanel, {
         }
         return "";
       }
-    }],
+    }]
   },
   columns: [{
     header: gettext('Name'),
@@ -45,7 +45,7 @@ Ext.oa.Peering__Peerhost_Panel = Ext.extend(Ext.oa.ShareGridPanel, {
   }, {
     header: gettext('Hostname'),
     width: 200,
-    dataIndex: "hostname",
+    dataIndex: "hostname"
   }],
   form: {
     items: [{

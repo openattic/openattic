@@ -593,7 +593,7 @@ Ext.oa.Iscsi__Panel = Ext.extend(Ext.Panel, {
                         bodyStyle: 'padding:5px 5px;',
                         items: [{
                           fieldLabel: gettext('Name'),
-                          ref: "namefield",
+                          ref: "namefield"
                         },{
                           fieldLabel: gettext('IP/IQN'),
                           ref: "addressfield"
