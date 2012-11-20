@@ -154,11 +154,9 @@ Ext.oa.ShareGridPanel = Ext.extend(Ext.grid.GridPanel, {
       var mybuttons = [];
       for( i = 0; i < this.buttons.length; i++ ){
         mybuttons[i] = Ext.apply({}, this.buttons[i]);
-        console.log(["Apply scope to", mybuttons[i]]);
         Ext.applyIf(mybuttons[i], { scope: self });
       }
       this.buttons = mybuttons;
-      console.log(this);
     }
     this.store.baseParams = filters;
     if( this.filterParams !== false ){
