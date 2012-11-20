@@ -215,7 +215,7 @@ Ext.oa.volumeGroup_Panel = Ext.extend(Ext.grid.GridPanel, {
         fields: ['id', 'name',"LVM_VG_FREE","LVM_VG_SIZE","LVM_VG_ATTR", "LVM_VG_PERCENT", {
           name: "hostname",
           mapping: "host",
-          convert: function( val ){ if( val ){ return val.name; } return ''; }
+          convert: toUnicode
         }],
         directFn: lvm__VolumeGroup.all,
         listeners: {
