@@ -185,6 +185,41 @@ class LvProxy(ProxyModelHandler, LvHandler):
         h = LvHandler(self.user)
         return h.avail_fs()
 
+    def get_shares(self, id):
+        return self._call_singlepeer_method("get_shares", id)
+
+    def fs_info(self, id):
+        """ Return detailed information about the given file system. """
+        return self._call_singlepeer_method("fs_info", id)
+
+    def lvm_info(self, id):
+        """ Return information about the LV retrieved from LVM. """
+        return self._call_singlepeer_method("lvm_info", id)
+
+    def disk_stats(self, id):
+        """ Return disk stats from the LV retrieved from the kernel. """
+        return self._call_singlepeer_method("disk_stats", id)
+
+    def mount(self, id):
+        """ Mount the given volume if it is not currently mounted. """
+        return self._call_singlepeer_method("mount", id)
+
+    def unmount(self, id):
+        """ Unmount the given volume if it is currently mounted. """
+        return self._call_singlepeer_method("unmount", id)
+
+    def is_mounted(self, id):
+        """ Check if the given volume is currently mounted. """
+        return self._call_singlepeer_method("is_mounted", id)
+
+    def is_in_standby(self, id):
+        """ Check if the given volume is currently in standby. """
+        return self._call_singlepeer_method("is_in_standby", id)
+
+
+
+
+
     def create(self, data):
         if "id" in data:
             raise KeyError("Wai u ID")
