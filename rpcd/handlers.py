@@ -436,6 +436,12 @@ class ProxyModelBaseHandler(ProxyHandler, ModelHandler):
 
 class ProxyModelHandler(ProxyModelBaseHandler):
     def _filter(self, kwds, order):
+        if "__fields__" in kwds:
+            fields = kwds["__fields__"]
+            del kwds["__fields__"]
+        else:
+            fields = None
+
         db_objects = self._filter_queryset(kwds, self._get_model_all_manager().all())
         result = []
         for instance in db_objects:
@@ -444,9 +450,13 @@ class ProxyModelHandler(ProxyModelBaseHandler):
             except RuntimeError:
                 continue
             if peer is None:
-                result.append( self._getobj(instance) )
+                data = self._getobj(instance)
             else:
-                result.append( self._get_proxy_object(peer).get(instance.id) )
+                data = self._get_proxy_object(peer).get(instance.id)
+            if fields is not None:
+                result.append( dict([(key, data[key]) for key in fields]) )
+            else:
+                result.append( data )
 
         if order:
             return sorted( result, key=lambda obj: order[0] in obj and obj[order[0]] or None )
