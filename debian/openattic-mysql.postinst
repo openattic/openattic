@@ -35,6 +35,7 @@ if [ "$1" = "configure" ] ; then
         /etc/dbconfig-common/openattic-mysql.conf \
         /etc/pam_mysql.conf
 
+    db_stop
 fi
 
 #DEBHELPER#
