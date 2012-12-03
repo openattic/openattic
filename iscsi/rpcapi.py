@@ -20,7 +20,7 @@ from rpcd.handlers import ProxyModelBaseHandler, ProxyModelHandler
 from iscsi.models import Target, Lun, Initiator
 from lvm.models import LogicalVolume
 from peering.models import PeerHost
-from ifconfig.models import IPAddress
+from ifconfig.models import Host, IPAddress
 
 class IscsiTargetHandler(ModelHandler):
     model = Target
@@ -33,6 +33,8 @@ class IscsiTargetProxy(ProxyModelBaseHandler, IscsiTargetHandler):
             return None
         volid = volumes[0]["volume"]
         host = LogicalVolume.all_objects.get(id=volid).vg.host
+        if host.id == Host.objects.get_current().id:
+            return None
         return PeerHost.objects.get(name=host.name)
 
     def _get_model_manager(self):
