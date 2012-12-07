@@ -20,7 +20,8 @@ class TimeoutTransport(xmlrpclib.Transport):
         # Since we only want the timeout to apply for *connect*, but not for the
         # actual reply, unset it here to prevent the recv() from failing.
         xmlrpclib.Transport.send_content(self, connection, request_body)
-        connection.sock.settimeout(None)
+        if hasattr(connection, "sock"):
+            connection.sock.settimeout(None)
 
 def ServerProxy(url, *args, **kwargs):
     t = TimeoutTransport()
