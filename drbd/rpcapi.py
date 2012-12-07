@@ -72,6 +72,9 @@ class DrbdConnectionProxy(ProxyModelHandler, DrbdConnectionHandler):
     def _get_model_all_manager(self):
         return self.model.objects
 
+    def _find_target_host_from_model_instance(self, model):
+        return None
+
     def _merge(self, objects):
         ret = {}
         for conn in objects:
