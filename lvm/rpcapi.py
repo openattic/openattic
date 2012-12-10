@@ -83,7 +83,7 @@ class LvHandler(ModelHandler):
                 'mounted':     obj.mounted
                 }
             if obj.mounted:
-                data['fs']['stat'] = obj.fs.stat
+                data['fs']['stat'] = obj.stat
         else:
             data['fs'] = None
         return data
