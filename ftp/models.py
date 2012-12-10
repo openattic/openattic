@@ -77,12 +77,12 @@ class FileLog(models.Model):
 
 
 def post_mount(sender, **kwargs):
-    if kwargs["mountpoint"] == sender.mountpoints[0]:
+    if kwargs["mountpoint"] == sender.mountpoint:
         for exp in Export.objects.filter(volume=sender):
             exp.install()
 
 def pre_unmount(sender, **kwargs):
-    if kwargs["mountpoint"] == sender.mountpoints[0]:
+    if kwargs["mountpoint"] == sender.mountpoint:
         for exp in Export.objects.filter(volume=sender):
             exp.uninstall()
 

@@ -139,21 +139,19 @@ def create_service_for_lv(**kwargs):
     cmd = Command.objects.get(name=nagios_settings.LV_UTIL_CHECK_CMD)
     if lv.filesystem:
         if Service.objects.filter(command=cmd, volume=lv).count() == 0:
-            for mp in lv.fs.mountpoints:
-                serv = Service(
-                    host        = None,
-                    volume      = lv,
-                    command     = cmd,
-                    description = nagios_settings.LV_UTIL_DESCRIPTION % lv.name,
-                    arguments   = "%d%%!%d%%!%s" % (100 - lv.fswarning, 100 - lv.fscritical, mp)
-                    )
-                serv.save()
+            serv = Service(
+                host        = None,
+                volume      = lv,
+                command     = cmd,
+                description = nagios_settings.LV_UTIL_DESCRIPTION % lv.name,
+                arguments   = "%d%%!%d%%!%s" % (100 - lv.fswarning, 100 - lv.fscritical, lv.mountpoint)
+                )
+            serv.save()
         else:
             # update the arguments because warn/crit may have changed
-            for mp in lv.fs.mountpoints:
-                serv = Service.objects.get(command=cmd, volume=lv, arguments__endswith=mp)
-                serv.arguments = "%d%%!%d%%!%s" % (100 - lv.fswarning, 100 - lv.fscritical, mp)
-                serv.save()
+            serv = Service.objects.get(command=cmd, volume=lv, arguments__endswith=lv.mountpoint)
+            serv.arguments = "%d%%!%d%%!%s" % (100 - lv.fswarning, 100 - lv.fscritical, lv.mountpoint)
+            serv.save()
 
     cmd = Command.objects.get(name=nagios_settings.LV_PERF_CHECK_CMD)
     if Service.objects.filter(command=cmd, volume=lv).count() == 0:
