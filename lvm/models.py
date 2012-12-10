@@ -28,6 +28,7 @@ from ifconfig.models import Host, HostDependentManager, getHostDependentManagerC
 from systemd.helpers import dbus_to_python
 from lvm.filesystems import Zfs, FILESYSTEMS, get_by_name as get_fs_by_name
 from lvm             import signals as lvm_signals
+from lvm.conf        import settings as lvm_settings
 
 
 def validate_vg_name(value):
@@ -232,26 +233,6 @@ class LogicalVolume(models.Model):
         lvm  = dbus.SystemBus().get_object(settings.DBUS_IFACE_SYSTEMD, "/lvm")
         return dbus_to_python(lvm.get_capabilities())
 
-    @classmethod
-    def mount_all(cls):
-        """ Mount all volumes which are not currently mounted. """
-        for lv in LogicalVolume.objects.exclude(filesystem=""):
-            if not lv.mounted:
-                lv.mount()
-
-    @classmethod
-    def unmount_all(cls):
-        """ Unmount all volumes which are currently mounted. """
-        for lv in LogicalVolume.objects.exclude(filesystem=""):
-            if lv.mounted:
-                lv.unmount()
-
-    @classmethod
-    def mounted_volumes(cls):
-        """ Return a list of volumes which are currently mounted. """
-        return [ lv for lv in LogicalVolume.objects.exclude(filesystem="") if lv.fs.mounted ]
-
-
     @property
     def lvm(self):
         if self._lvm is None:
@@ -282,23 +263,6 @@ class LogicalVolume(models.Model):
             if self._fs is None:
                 self._fs = get_fs_by_name(self.filesystem)(self)
             return self._fs
-
-    @property
-    def mounted(self):
-        if not self.filesystem:
-            raise SystemError("Volume '%s' does not have a filesystem, cannot mount." % self.name)
-        return self.fs.mounted
-
-    def mounted_at(self, mountpoint):
-        if not self.filesystem:
-            raise SystemError("Volume '%s' does not have a filesystem, cannot mount." % self.name)
-        return self.fs.mounted_at(mountpoint)
-
-    @property
-    def mountpoints(self):
-        if not self.filesystem:
-            raise SystemError("Volume '%s' does not have a filesystem, cannot mount." % self.name)
-        return self.fs.mountpoints
 
     @property
     def fs_info(self):
@@ -382,27 +346,33 @@ class LogicalVolume(models.Model):
     ### PROCESSING METHODS ###
     ##########################
 
-    def mount(self, mountpoint=None):
+    @property
+    def mountpoint(self):
         if not self.filesystem:
             raise SystemError("Volume '%s' does not have a filesystem, cannot mount." % self.name)
-        if mountpoint is None:
-            mountpoint = self.mountpoints[0]
-        if self.formatted and not self.mounted_at(mountpoint):
-            lvm_signals.pre_mount.send(sender=self, mountpoint=mountpoint)
-            self.fs.mount(-1, mountpoint)
-            lvm_signals.post_mount.send(sender=self, mountpoint=mountpoint)
+        return os.path.join(lvm_settings.MOUNT_PREFIX, self.vg.name, self.name)
 
-    def unmount(self, mountpoint=None):
-        if not self.filesystem:
-            raise SystemError("Volume '%s' does not have a filesystem, cannot unmount." % self.name)
-        if mountpoint is None:
-            mountpoint = self.mountpoints[0]
-        if self.mounted_at(mountpoint):
-            lvm_signals.pre_unmount.send(sender=self, mountpoint=mountpoint)
-            self.fs.unmount(-1, mountpoint)
-            lvm_signals.post_unmount.send(sender=self, mountpoint=mountpoint)
+    @property
+    def mounted(self):
+        return self.fs.mounted_at(self.mountpoint)
 
-    def install( self ):
+    @property
+    def stat(self):
+        return self.fs.stat(self.mountpoint)
+
+    def mount(self):
+        if self.formatted and not self.mounted_at(self.mountpoint):
+            lvm_signals.pre_mount.send(sender=self, mountpoint=self.mountpoint)
+            self.fs.mount(-1, self.mountpoint)
+            lvm_signals.post_mount.send(sender=self, mountpoint=self.mountpoint)
+
+    def unmount(self):
+        if self.mounted_at(self.mountpoint):
+            lvm_signals.pre_unmount.send(sender=self, mountpoint=self.mountpoint)
+            self.fs.unmount(-1, self.mountpoint)
+            lvm_signals.post_unmount.send(sender=self, mountpoint=self.mountpoint)
+
+    def install(self):
         lvm_signals.pre_install.send(sender=self)
         if self.snapshot:
             snap = self.snapshot.device
@@ -413,7 +383,7 @@ class LogicalVolume(models.Model):
             self.lvm.lvchange( self.device, True )
         lvm_signals.post_install.send(sender=self)
 
-    def uninstall( self ):
+    def uninstall(self):
         lvm_signals.pre_uninstall.send(sender=self)
         if not self.snapshot:
             self.lvm.lvchange(self.device, False)

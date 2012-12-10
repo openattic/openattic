@@ -288,7 +288,7 @@ class SystemD(BasePlugin):
         for lv in LogicalVolume.objects.filter(filesystem__isnull=False).exclude(filesystem=""):
             if lv.fs.mount_in_fstab:
                 newlines.append( "%-50s %-50s %-8s %s %d %d" % (
-                    lv.path, lv.fs.mountpoints[0], lv.fs.name, "defaults", 0, 0
+                    lv.path, lv.fs.mountpoint, lv.fs.name, "defaults", 0, 0
                     ) )
 
         fstab = open("/etc/fstab", "wb")

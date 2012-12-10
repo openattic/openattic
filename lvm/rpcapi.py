@@ -79,7 +79,7 @@ class LvHandler(ModelHandler):
     def _override_get(self, obj, data):
         if obj.filesystem:
             data['fs'] = {
-                'mountpoints': obj.fs.mountpoints,
+                'mountpoint':  obj.mountpoint,
                 'mounted':     obj.mounted
                 }
             if obj.mounted:
@@ -119,24 +119,12 @@ class LvHandler(ModelHandler):
         lv = LogicalVolume.objects.get(id=id)
         return lv.disk_stats
 
-    def mount_all(self):
-        """ Mount all volumes which are not currently mounted. """
-        return LogicalVolume.mount_all()
-
     def mount(self, id):
         """ Mount the given volume if it is not currently mounted. """
         lv = LogicalVolume.objects.get(id=id)
         if lv.filesystem and not lv.mounted:
             return lv.mount()
         return False
-
-    def unmount_all(self):
-        """ Unmount all volumes which are currently mounted. """
-        return LogicalVolume.unmount_all()
-
-    def mounted_volumes(self):
-        """ Return IDs of currently mounted volumes. """
-        return [ self._idobj(lv) for lv in LogicalVolume.mounted_volumes() ]
 
     def unmount(self, id):
         """ Unmount the given volume if it is currently mounted. """

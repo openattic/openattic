@@ -45,32 +45,18 @@ class FileSystem(object):
         self.lv = logical_volume
         self._lvm = self.lv.lvm
 
-    @property
-    def mountpoints(self):
-        """ Return a list of mount points. Currently, only the first one is used. """
-        return [os.path.join(lvm_settings.MOUNT_PREFIX, self.lv.vg.name, self.lv.name)]
-
-    def mount(self, jid, mountpoint=None):
+    def mount(self, jid, mountpoint):
         """ Mount the file system at the given mountpoint, or the first one if
             mountpoint is omitted.
         """
-        if mountpoint is None and len(self.mountpoints) == 1:
-            mountpoint = self.mountpoints[0]
         self._lvm.fs_mount( jid, self.name, self.lv.path, mountpoint )
-
-    @property
-    def mounted(self):
-        """ True if the volume is currently mounted. """
-        return os.path.ismount(self.mountpoints[0])
 
     def mounted_at(self, mountpoint):
         """ True if the volume is currently mounted. """
         return os.path.ismount(mountpoint)
 
-    def unmount(self, jid, mountpoint=None):
+    def unmount(self, jid, mountpoint):
         """ Unmount the volume. """
-        if mountpoint is None and len(self.mountpoints) == 1:
-            mountpoint = self.mountpoints[0]
         self._lvm.fs_unmount( jid, self.lv.path, mountpoint )
 
     def format(self, jid):
@@ -97,21 +83,14 @@ class FileSystem(object):
 
     def chown(self, jid):
         """ Change ownership of the filesystem to be the LV's owner. """
-        for mp in self.mountpoints:
-            ret = self._lvm.fs_chown( jid, mp, self.lv.owner.username, lvm_settings.CHOWN_GROUP )
-            if ret != 0:
-                return ret
-        return 0
+        return self._lvm.fs_chown( jid, self.mountpoint, self.lv.owner.username, lvm_settings.CHOWN_GROUP )
 
     def destroy(self):
         """ Destroy the file system. """
         pass
 
-    @property
-    def stat(self, mountpoint=None):
+    def stat(self, mountpoint):
         """ stat() the file system and return usage statistics. """
-        if mountpoint is None and len(self.mountpoints) == 1:
-            mountpoint = self.mountpoints[0]
         s = os.statvfs(mountpoint)
         stats = {
             'size': (s.f_blocks * s.f_frsize) / 1024 / 1000.,
@@ -186,10 +165,10 @@ class Zfs(FileSystem):
             os.path.join(lvm_settings.MOUNT_PREFIX, self.lv.vg.name, self.lv.name))
         self.chown(jid)
 
-    def mount(self, jid, mountpoint=None):
+    def mount(self, jid, mountpoint):
         self._lvm.zfs_mount(jid, self.lv.name)
 
-    def unmount(self, jid, mountpoint=None):
+    def unmount(self, jid, mountpoint):
         self._lvm.zfs_unmount(jid, self.lv.name)
 
     def destroy(self):
@@ -275,7 +254,7 @@ class Xfs(FileSystem):
     def resize(self, jid, grow):
         if not grow:
             raise SystemError("XFS does not support shrinking.")
-        self._lvm.xfs_resize( jid, self.mountpoints[0], self.lv.megs )
+        self._lvm.xfs_resize( jid, self.mountpoint, self.lv.megs )
 
 
 
