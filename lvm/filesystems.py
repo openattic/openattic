@@ -45,19 +45,19 @@ class FileSystem(object):
         self.lv = logical_volume
         self._lvm = self.lv.lvm
 
-    def mount(self, jid, mountpoint):
-        """ Mount the file system at the given mountpoint, or the first one if
-            mountpoint is omitted.
+    def mount(self, jid):
+        """ Mount the file system.
         """
-        self._lvm.fs_mount( jid, self.name, self.lv.path, mountpoint )
+        self._lvm.fs_mount( jid, self.name, self.lv.path, self.lv.mountpoint )
 
-    def mounted_at(self, mountpoint):
+    @property
+    def mounted(self):
         """ True if the volume is currently mounted. """
-        return os.path.ismount(mountpoint)
+        return os.path.ismount(self.lv.mountpoint)
 
-    def unmount(self, jid, mountpoint):
+    def unmount(self, jid):
         """ Unmount the volume. """
-        self._lvm.fs_unmount( jid, self.lv.path, mountpoint )
+        self._lvm.fs_unmount( jid, self.lv.path, self.lv.mountpoint )
 
     def format(self, jid):
         """ Format the volume. """
@@ -89,9 +89,9 @@ class FileSystem(object):
         """ Destroy the file system. """
         pass
 
-    def stat(self, mountpoint):
+    def stat(self):
         """ stat() the file system and return usage statistics. """
-        s = os.statvfs(mountpoint)
+        s = os.statvfs(self.lv.mountpoint)
         stats = {
             'size': (s.f_blocks * s.f_frsize) / 1024 / 1000.,
             'free': (s.f_bavail * s.f_frsize) / 1024 / 1000.,
@@ -165,10 +165,10 @@ class Zfs(FileSystem):
             os.path.join(lvm_settings.MOUNT_PREFIX, self.lv.vg.name, self.lv.name))
         self.chown(jid)
 
-    def mount(self, jid, mountpoint):
+    def mount(self, jid):
         self._lvm.zfs_mount(jid, self.lv.name)
 
-    def unmount(self, jid, mountpoint):
+    def unmount(self, jid):
         self._lvm.zfs_unmount(jid, self.lv.name)
 
     def destroy(self):
@@ -202,7 +202,8 @@ class Zfs(FileSystem):
     def rollback_snapshot(self, snapshot):
         self._lvm.zfs_rollback_snapshot(snapshot.origvolume.name, snapshot.snapname)
 
-    def mounted_at(self, mountpoint):
+    @property
+    def mounted(self):
         try:
             return self["mounted"] == "yes"
         except dbus.DBusException:

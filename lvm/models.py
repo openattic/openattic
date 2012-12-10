@@ -354,22 +354,22 @@ class LogicalVolume(models.Model):
 
     @property
     def mounted(self):
-        return self.fs.mounted_at(self.mountpoint)
+        return self.fs.mounted
 
     @property
     def stat(self):
-        return self.fs.stat(self.mountpoint)
+        return self.fs.stat()
 
     def mount(self):
-        if self.formatted and not self.mounted_at(self.mountpoint):
+        if self.formatted and not self.mounted:
             lvm_signals.pre_mount.send(sender=self, mountpoint=self.mountpoint)
-            self.fs.mount(-1, self.mountpoint)
+            self.fs.mount(-1)
             lvm_signals.post_mount.send(sender=self, mountpoint=self.mountpoint)
 
     def unmount(self):
-        if self.mounted_at(self.mountpoint):
+        if self.mounted:
             lvm_signals.pre_unmount.send(sender=self, mountpoint=self.mountpoint)
-            self.fs.unmount(-1, self.mountpoint)
+            self.fs.unmount(-1)
             lvm_signals.post_unmount.send(sender=self, mountpoint=self.mountpoint)
 
     def install(self):
@@ -393,7 +393,7 @@ class LogicalVolume(models.Model):
     def resize( self ):
         if self.filesystem and self.mounted and \
            not self.fs.online_resize_available(self.megs > self.lvm_megs):
-            self.fs.unmount(self._jid, self.mountpoint)
+            self.fs.unmount(self._jid)
             need_mount = True
         else:
             need_mount = False
@@ -426,7 +426,7 @@ class LogicalVolume(models.Model):
             lvm_signals.post_grow.send(sender=self, jid=self._jid)
 
         if need_mount:
-            self.fs.mount(self._jid, self.mountpoint)
+            self.fs.mount(self._jid)
 
         self._lvm_info = None # outdate cached information
 
@@ -436,7 +436,7 @@ class LogicalVolume(models.Model):
             self.formatted = True
             return True
         else:
-            self.fs.mount(self._jid, self.mountpoint)
+            self.fs.mount(self._jid)
             return False
 
     def clean(self):
@@ -502,7 +502,7 @@ class LogicalVolume(models.Model):
 
         if self.filesystem:
             if self.mounted:
-                self.fs.unmount(-1, self.mountpoint)
+                self.fs.unmount(-1)
             self.fs.destroy()
 
         self.uninstall()
