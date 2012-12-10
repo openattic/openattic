@@ -55,11 +55,12 @@ window.MainViewModules.push({
       listeners: {
         click: function(self, ev){
           if( window.RECORDING ){
+            window.RECORDED_COMMANDS.push('');
             var win = new Ext.Window({
               title: "API",
               items: {
                 xtype: "textarea",
-                value: (window.RECORDED_COMMANDS.join(';\n') + ';\n')
+                value: (window.RECORDED_COMMANDS.join(';\n'))
               },
               layout: "fit",
               height: 180,
