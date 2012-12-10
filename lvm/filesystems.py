@@ -83,7 +83,7 @@ class FileSystem(object):
 
     def chown(self, jid):
         """ Change ownership of the filesystem to be the LV's owner. """
-        return self._lvm.fs_chown( jid, self.mountpoint, self.lv.owner.username, lvm_settings.CHOWN_GROUP )
+        return self._lvm.fs_chown( jid, self.lv.mountpoint, self.lv.owner.username, lvm_settings.CHOWN_GROUP )
 
     def destroy(self):
         """ Destroy the file system. """
@@ -120,7 +120,7 @@ class Ext2(FileSystem):
 
     def format(self, jid):
         self._lvm.e2fs_format( jid, self.lv.path, self.lv.name )
-        self.mount(jid)
+        self.mount(jid, self.lv.mountpoint)
         self.chown(jid)
 
     def resize(self, jid, grow):
@@ -135,7 +135,7 @@ class Ext3(Ext2):
 
     def format(self, jid):
         self._lvm.e3fs_format( jid, self.lv.path, self.lv.name )
-        self.mount(jid)
+        self.mount(jid, self.lv.mountpoint)
         self.chown(jid)
 
 
@@ -146,7 +146,7 @@ class Ext4(Ext2):
 
     def format(self, jid):
         self._lvm.e4fs_format( jid, self.lv.path, self.lv.name )
-        self.mount(jid)
+        self.mount(jid, self.lv.mountpoint)
         self.chown(jid)
 
 
@@ -226,7 +226,7 @@ class Ntfs(FileSystem):
 
     def format(self, jid):
         self._lvm.ntfs_format( jid, self.lv.path )
-        self.mount(jid)
+        self.mount(jid, self.lv.mountpoint)
         self.chown(jid)
 
     def resize(self, jid, grow):
@@ -244,7 +244,7 @@ class Xfs(FileSystem):
 
     def format(self, jid):
         self._lvm.xfs_format( jid, self.lv.path )
-        self.mount(jid)
+        self.mount(jid, self.lv.mountpoint)
         self.chown(jid)
 
     def online_resize_available(self, grow):
@@ -253,7 +253,7 @@ class Xfs(FileSystem):
     def resize(self, jid, grow):
         if not grow:
             raise SystemError("XFS does not support shrinking.")
-        self._lvm.xfs_resize( jid, self.mountpoint, self.lv.megs )
+        self._lvm.xfs_resize( jid, self.lv.mountpoint, self.lv.megs )
 
 
 
