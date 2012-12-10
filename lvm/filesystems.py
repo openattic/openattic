@@ -202,8 +202,7 @@ class Zfs(FileSystem):
     def rollback_snapshot(self, snapshot):
         self._lvm.zfs_rollback_snapshot(snapshot.origvolume.name, snapshot.snapname)
 
-    @property
-    def mounted(self):
+    def mounted_at(self, mountpoint):
         try:
             return self["mounted"] == "yes"
         except dbus.DBusException:

@@ -391,9 +391,9 @@ class LogicalVolume(models.Model):
         lvm_signals.post_uninstall.send(sender=self)
 
     def resize( self ):
-        if self.filesystem and self.fs.mounted and \
+        if self.filesystem and self.mounted and \
            not self.fs.online_resize_available(self.megs > self.lvm_megs):
-            self.fs.unmount(self._jid)
+            self.fs.unmount(self._jid, self.mountpoint)
             need_mount = True
         else:
             need_mount = False
@@ -426,7 +426,7 @@ class LogicalVolume(models.Model):
             lvm_signals.post_grow.send(sender=self, jid=self._jid)
 
         if need_mount:
-            self.fs.mount(self._jid)
+            self.fs.mount(self._jid, self.mountpoint)
 
         self._lvm_info = None # outdate cached information
 
@@ -436,7 +436,7 @@ class LogicalVolume(models.Model):
             self.formatted = True
             return True
         else:
-            self.fs.mount(self._jid)
+            self.fs.mount(self._jid, self.mountpoint)
             return False
 
     def clean(self):
@@ -501,8 +501,8 @@ class LogicalVolume(models.Model):
             mod.delete()
 
         if self.filesystem:
-            if self.fs.mounted:
-                self.fs.unmount(-1)
+            if self.mounted:
+                self.fs.unmount(-1, self.mountpoint)
             self.fs.destroy()
 
         self.uninstall()
