@@ -120,7 +120,7 @@ class Ext2(FileSystem):
 
     def format(self, jid):
         self._lvm.e2fs_format( jid, self.lv.path, self.lv.name )
-        self.mount(jid, self.lv.mountpoint)
+        self.mount(jid)
         self.chown(jid)
 
     def resize(self, jid, grow):
@@ -135,7 +135,7 @@ class Ext3(Ext2):
 
     def format(self, jid):
         self._lvm.e3fs_format( jid, self.lv.path, self.lv.name )
-        self.mount(jid, self.lv.mountpoint)
+        self.mount(jid)
         self.chown(jid)
 
 
@@ -146,7 +146,7 @@ class Ext4(Ext2):
 
     def format(self, jid):
         self._lvm.e4fs_format( jid, self.lv.path, self.lv.name )
-        self.mount(jid, self.lv.mountpoint)
+        self.mount(jid)
         self.chown(jid)
 
 
@@ -227,7 +227,7 @@ class Ntfs(FileSystem):
 
     def format(self, jid):
         self._lvm.ntfs_format( jid, self.lv.path )
-        self.mount(jid, self.lv.mountpoint)
+        self.mount(jid)
         self.chown(jid)
 
     def resize(self, jid, grow):
@@ -245,7 +245,7 @@ class Xfs(FileSystem):
 
     def format(self, jid):
         self._lvm.xfs_format( jid, self.lv.path )
-        self.mount(jid, self.lv.mountpoint)
+        self.mount(jid)
         self.chown(jid)
 
     def online_resize_available(self, grow):
