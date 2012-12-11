@@ -42,17 +42,14 @@ class Export(models.Model):
 
     def save( self, *args, **kwargs ):
         ret = models.Model.save(self, *args, **kwargs)
-        subdir = join(http_settings.VOLUMESDIR, self.volume.vg.name)
-        if not exists( subdir ):
-            mkdir( subdir )
-        linkname = join(subdir, self.volume.name)
+        linkname = join(http_settings.VOLUMESDIR, self.volume.name)
         if not exists( linkname ):
             symlink( self.path, linkname )
         return ret
 
     def delete( self ):
         ret = models.Model.delete(self)
-        linkname = join(http_settings.VOLUMESDIR, self.volume.vg.name, self.volume.name)
+        linkname = join(http_settings.VOLUMESDIR, self.volume.name)
         if islink( linkname ):
             unlink( linkname )
         return ret
