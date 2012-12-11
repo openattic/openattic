@@ -56,6 +56,11 @@ def validate_lv_name(value):
     if "_mlog" in value or "_mimage" in value:
         raise ValidationError("The volume name must not contain '_mlog' or '_mimage'.")
 
+def validate_lv_unique(value):
+    from django.core.exceptions import ValidationError
+    if LogicalVolume.objects.filter(name=value).count() > 0:
+        raise ValidationError("A Volume named '%s' already exists on this host." % value)
+
 
 class VolumeGroup(models.Model):
     """ Represents a LVM Volume Group. """
@@ -188,7 +193,7 @@ class LogicalVolume(models.Model):
         This is the main class of openATTIC's design.
     """
 
-    name        = models.CharField(max_length=130, validators=[validate_lv_name])
+    name        = models.CharField(max_length=130, validators=[validate_lv_name, validate_lv_unique])
     megs        = models.IntegerField(_("Size in MB"))
     vg          = models.ForeignKey(VolumeGroup, blank=True)
     snapshot    = models.ForeignKey("self", blank=True, null=True)
