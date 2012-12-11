@@ -82,6 +82,12 @@ class Service(models.Model):
         unique_together = ("host", "description")
 
     @classmethod
+    def write_contacts(cls):
+        nag = dbus.SystemBus().get_object(settings.DBUS_IFACE_SYSTEMD, "/nagios")
+        nag.write_contacts()
+        nag.restart()
+
+    @classmethod
     def write_conf(cls):
         nag = dbus.SystemBus().get_object(settings.DBUS_IFACE_SYSTEMD, "/nagios")
         nag.write_services()
