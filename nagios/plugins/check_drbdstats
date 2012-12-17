@@ -112,15 +112,8 @@ def do_check(resource, prevstate, options):
     dt = resource["__timestamp__"] - prevstate["__timestamp__"]
     if resource["_cstate"] != "Connected" and not options.ignore_connstate:
         status = 2
-    if resource["_disk"] != "UpToDate":
-        # in case we're secondary, this might be because we lost connection.
-        if resource["_role"] == "Secondary":
-            if not options.ignore_connstate:
-                status = 2
-        else:
-            # we're a diskless primary, which may or may not suck.
-            if not options.ignore_diskstate:
-                status = 2
+    if resource["_disk"] != "UpToDate" and not options.ignore_diskstate:
+        status = 2
     if resource["_role"] != "Primary":
         if options.secondary_warn:
             status = 1
