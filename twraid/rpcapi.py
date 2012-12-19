@@ -31,7 +31,14 @@ class UnitHandler(ModelHandler):
 class DiskHandler(ModelHandler):
     model = Disk
 
-#class NfsExportProxy(ProxyModelHandler, NfsExportHandler):
-    #pass
+    def set_identify(self, id, state):
+        """ Turn the identification LED on or off. """
+        disk = Disk.objects.get(id=id)
+        return disk.set_identify(state)
 
-RPCD_HANDLERS = [ControllerHandler, EnclosureHandler, UnitHandler, DiskHandler]
+class DiskProxy(ProxyModelHandler, DiskHandler):
+    def set_identify(self, id, state):
+        """ Turn the identification LED on or off. """
+        return self._call_singlepeer_method("set_identify", id, state)
+
+RPCD_HANDLERS = [ControllerHandler, EnclosureHandler, UnitHandler, DiskProxy]
