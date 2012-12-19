@@ -21,7 +21,7 @@ Ext.oa.volumeGroup_Panel = Ext.extend(Ext.grid.GridPanel, {
       tpl: '<div style="margin: 10px"></div>',
       listeners: {
         expand: function(self, record, bodyEl, rowIndex){
-          bodyEl.grid = new Ext.grid.GridPanel({
+          Ext.get(this.grid.getView().getRow(rowIndex)).grid = new Ext.grid.GridPanel({
             id: Ext.id(),
             renderTo: bodyEl.childNodes[0],
             height: 225,
@@ -71,7 +71,7 @@ Ext.oa.volumeGroup_Panel = Ext.extend(Ext.grid.GridPanel, {
           });
         },
         collapse: function(self, record, bodyEl, rowIndex){
-          bodyEl.grid.destroy();
+          Ext.get(this.grid.getView().getRow(rowIndex)).grid.destroy();
         }
       }
     });
@@ -79,7 +79,7 @@ Ext.oa.volumeGroup_Panel = Ext.extend(Ext.grid.GridPanel, {
       tpl: '<div style="margin: 10px"></div>',
       listeners: {
         expand: function(self, record, bodyEl, rowIndex){
-          bodyEl.grid = new Ext.grid.GridPanel({
+          Ext.get(this.grid.getView().getRow(rowIndex)).grid = new Ext.grid.GridPanel({
             id: Ext.id(),
             renderTo: bodyEl.childNodes[0],
             height: 500,
@@ -116,7 +116,7 @@ Ext.oa.volumeGroup_Panel = Ext.extend(Ext.grid.GridPanel, {
           });
         },
         collapse: function(self, record, bodyEl, rowIndex){
-          bodyEl.grid.destroy();
+          Ext.get( this.grid.getView().getRow(rowIndex)).grid.destroy();
         }
       }
     });
