@@ -19,6 +19,7 @@ import re
 
 from systemd.procutils import invoke
 
+from twraid import models
 
 class TwRegex:
     ctl         = (r'^(?P<ctl>c\d+)\s+(?P<model>[\w\-]+)\s+(?P<ports>\d+)\s+(?P<drives>\d+)\s+(?P<units>\d+)\s+'
@@ -47,6 +48,13 @@ class Bunch(object):
         self.__dict__.update(data)
 
 class Controller(Bunch):
+    def __init__(self, data):
+        Bunch.__init__(self, data)
+        self.enclosures = {}
+        self.params = {}
+        self.units  = {}
+        self.ports  = {}
+
     @property
     def id(self):
         return int(self.ctl[1:])
@@ -56,20 +64,53 @@ class Enclosure(Bunch):
     def ctl_id(self):
         return int(re.match("/c(\d+)/e\d+", self.encl).group(1))
 
+    @property
+    def id(self):
+        return int(re.match("/c\d+/e(\d+)", self.encl).group(1))
+
 class Unit(Bunch):
+    def __init__(self, data):
+        Bunch.__init__(self, data)
+        self.params = {}
+        self.disks  = {}
+
     @property
     def id(self):
         return int(self.unit[1:])
-
-class Port(Bunch):
-    @property
-    def id(self):
-        return int(self.port[1:])
 
 class Disk(Bunch):
     @property
     def id(self):
         return int(self.unit.split('-')[1])
+
+    @property
+    def port_id(self):
+        return int(self.port[1:])
+
+    @property
+    def unit_id(self):
+        if not hasattr(self, "unit"):
+            return None
+        return int(self.unit.split('-')[0][1:])
+
+    @property
+    def unit_disk(self):
+        if not hasattr(self, "unit"):
+            return None
+        return int(self.unit.split('-')[1])
+
+    @property
+    def ctl_id(self):
+        return int(re.match("/c(\d+)/e\d+/slt\d+", self.slot).group(1))
+
+    @property
+    def encl_id(self):
+        return int(re.match("/c\d+/e(\d+)/slt\d+", self.slot).group(1))
+
+    @property
+    def slot_id(self):
+        return int(re.match("/c\d+/e\d+/slt(\d+)", self.slot).group(1))
+
 
 
 def query_ctls():
@@ -108,17 +149,13 @@ def query_ctls():
         if m:
             print "Found enclosure!", m.groupdict()
             encl = Enclosure(m.groupdict())
-            ctls[encl.ctl_id].enclosure = encl
+            ctls[encl.ctl_id].enclosures[encl.id] = encl
             continue
 
     if not ctls:
         return ctls
 
     for ctl_id, ctl in ctls.items():
-        ctl.params = {}
-        ctl.units  = {}
-        ctl.ports  = {}
-
         ret, out, err = invoke([twcli, "/" + ctl.ctl, "show", "all"], return_out_err=True, log=False)
         for line in out.split("\n"):
             line = line.strip()
@@ -128,7 +165,7 @@ def query_ctls():
             m = re.match(TwRegex.ctlparam, line)
             if m:
                 print "Found controller property!", m.groupdict()
-                ctl.params[ m.group("key").strip() ] = m.group("value").strip()
+                ctl.params[ m.group("key").strip().lower() ] = m.group("value").strip()
                 continue
 
             m = re.match(TwRegex.ctlunit, line)
@@ -141,18 +178,15 @@ def query_ctls():
 
             m = re.match(TwRegex.ctlport, line)
             if m:
-                print "Found Port!", m.groupdict()
-                port = Port(m.groupdict())
-                ctl.ports[port.id] = port
+                print "Found Disk (Port)!", m.groupdict()
+                disk = Disk(m.groupdict())
+                ctl.ports[disk.port_id] = disk
                 continue
 
         if not ctl.units:
             continue
 
         for unit_id, unit in ctl.units.items():
-            unit.params = {}
-            unit.disks  = {}
-
             ret, out, err = invoke([twcli, "/%s/%s" % (ctl.ctl, unit.unit), "show", "all"], return_out_err=True, log=False)
             for line in out.split("\n"):
                 line = line.strip()
@@ -162,15 +196,94 @@ def query_ctls():
                 m = re.match(TwRegex.unitparam, line)
                 if m:
                     print "Found unit property!", m.groupdict()
-                    unit.params[ m.group("key").strip() ] = m.group("value").strip()
+                    unit.params[ m.group("key").strip().lower() ] = m.group("value").strip()
                     continue
 
                 m = re.match(TwRegex.unitdisk, line)
                 if m:
-                    print "Found Disk!", m.groupdict()
-                    disk = Disk(m.groupdict())
+                    print "Found Disk (unit)!", m.groupdict()
+                    disk = ctl.ports[ int(m.group("port")[1:]) ]
+                    disk.__dict__.update(m.groupdict())
                     unit.disks[disk.id] = disk
                     continue
 
     return ctls
 
+
+def update_database(ctls):
+    host = models.Host.objects.get_current()
+
+    for ctl_id, ctl in ctls.items():
+        try:
+            dbctl = models.Controller.objects.get(host=host, index=ctl_id)
+        except models.Controller.DoesNotExist:
+            dbctl = models.Controller(host=host, index=ctl_id)
+
+        if ctl.bbu != '-':
+            dbctl.bbustate = ctl.bbu
+        else:
+            dbctl.bbustate = ''
+
+        dbctl.model     = ctl.params["model"]
+        dbctl.serial    = ctl.params["serial number"]
+        dbctl.actdrives = int(ctl.params["active drives"].split(" of ")[0])
+        dbctl.curdrives = int(ctl.params["drives"].split(" of ")[0])
+        dbctl.maxdrives = int(ctl.params["active drives"].split(" of ")[1])
+        dbctl.actunits  = int(ctl.params["active units"].split(" of ")[0])
+        dbctl.curunits  = int(ctl.params["units"].split(" of ")[0])
+        dbctl.maxunits  = int(ctl.params["active units"].split(" of ")[1])
+        dbctl.autorebuild = (ctl.params["auto-rebuild policy"].lower() == 'on')
+        dbctl.save()
+
+        for encl_id, encl in ctl.enclosures.items():
+            try:
+                dbencl = models.Enclosure.objects.get(controller=dbctl, index=encl_id)
+            except models.Enclosure.DoesNotExist:
+                dbencl = models.Enclosure(controller=dbctl, index=encl_id)
+
+            dbencl.alarms  = encl.alarms
+            dbencl.slots   = encl.slots
+            dbencl.fans    = encl.fans
+            dbencl.tsunits = encl.tsunits
+            dbencl.psunits = encl.psunits
+            dbencl.save()
+
+        for unit_id, unit in ctl.units.items():
+            try:
+                dbunit = models.Unit.objects.get(controller=dbctl, index=unit_id)
+            except models.Unit.DoesNotExist:
+                dbunit = models.Unit(controller=dbctl, index=unit_id)
+
+            dbunit.unittype   = unit.unittype
+            dbunit.status     = unit.status
+            dbunit.rebuild    = unit.rcmpl if unit.rcmpl != '-' else None
+            dbunit.verify     = unit.vim if unit.vim != '-' else None
+            dbunit.chunksize  = int(unit.chunksize[:-1]) * 1024
+            dbunit.size       = int(float(unit.totalsize) * 1024)
+            dbunit.autoverify = (unit.avrfy.lower() == 'on')
+
+            dbunit.rdcache    = unit.params["read cache"]
+            dbunit.wrcache    = unit.params["write cache"]
+            dbunit.name       = unit.params["name"]
+            dbunit.serial     = unit.params["serial number"]
+            dbunit.save()
+
+        for port_id, disk in ctl.ports.items():
+            try:
+                dbdisk = models.Disk.objects.get(controller=dbctl, port=port_id)
+            except models.Disk.DoesNotExist:
+                dbdisk = models.Disk(controller=dbctl, port=port_id)
+
+            dbdisk.disktype   = disk.type
+            dbdisk.encl       = models.Enclosure.objects.get(controller=dbctl, index=disk.encl_id)
+            dbdisk.enclslot   = disk.slot_id
+            dbdisk.size       = int(float(disk.size[:-3]) * 1024)
+            dbdisk.model      = disk.model
+            if disk.unit != '-':
+                dbdisk.unit   = models.Unit.objects.get(controller=dbctl, index=disk.unit_id)
+                dbdisk.unitindex = disk.unit_disk
+            else:
+                dbdisk.unit   = None
+                dbdisk.unitindex = None
+
+            dbdisk.save()
