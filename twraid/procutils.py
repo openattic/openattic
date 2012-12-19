@@ -41,6 +41,8 @@ class TwRegex:
     unitdisk    = (r'^(?P<unit>u\d+-\d+)\s+DISK\s+(?P<status>[\w\-]+)\s+(?P<rcmpl>[\w\-]+)\s+(?P<vim>[\w\-]+)\s+'
                      '(?P<port>p\d+|-)\s+-\s+\s+(?P<size>[\w\.\-]+)$')
 
+    diskparam   = (r'^/(?P<port>c\d+/p\d+)\s(?P<key>[^=]+)=(?P<value>.*)$')
+
 
 
 class Bunch(object):
@@ -79,6 +81,10 @@ class Unit(Bunch):
         return int(self.unit[1:])
 
 class Disk(Bunch):
+    def __init__(self, data):
+        Bunch.__init__(self, data)
+        self.params = {}
+
     @property
     def id(self):
         return int(self.unit.split('-')[1])
@@ -183,6 +189,19 @@ def query_ctls():
                 ctl.ports[disk.port_id] = disk
                 continue
 
+        for port_id, disk in ctl.ports.items():
+            ret, out, err = invoke([twcli, "/c%d/p%d" % (disk.ctl_id, disk.port_id), "show", "all"], return_out_err=True, log=False)
+            for line in out.split("\n"):
+                line = line.strip()
+                if not line:
+                    continue
+
+                m = re.match(TwRegex.diskparam, line)
+                if m:
+                    print "Found disk property!", m.groupdict()
+                    disk.params[ m.group("key").strip().lower() ] = m.group("value").strip()
+                    continue
+
         if not ctl.units:
             continue
 
@@ -285,5 +304,11 @@ def update_database(ctls):
             else:
                 dbdisk.unit   = None
                 dbdisk.unitindex = None
+            dbdisk.serial     = disk.params["serial"]
+            dbdisk.rpm        = int( re.match("^(\d+)", disk.params["spindle speed"]).group(1) )
+            dbdisk.status     = disk.params["status"]
+            dbdisk.temp_c     = int( re.match("^(\d+)", disk.params["temperature"]).group(1) )
+            dbdisk.linkspeed  = float( re.match("^(\d+\.\d+)", disk.params["link speed"]).group(1) )
+            dbdisk.power_on_h = int( disk.params["power on hours"] )
 
             dbdisk.save()

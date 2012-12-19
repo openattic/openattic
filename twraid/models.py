@@ -78,6 +78,12 @@ class Disk(models.Model):
     model       = models.CharField(max_length=150)
     unit        = models.ForeignKey(Unit, blank=True, null=True)
     unitindex   = models.IntegerField(blank=True, null=True)
+    serial      = models.CharField(max_length=150, blank=True)
+    rpm         = models.IntegerField()
+    status      = models.CharField(max_length=150, blank=True)
+    temp_c      = models.IntegerField()
+    linkspeed   = models.CharField(max_length=150, blank=True)
+    power_on_h  = models.IntegerField()
 
     objects     = getHostDependentManagerClass("controller__host")()
     all_objects = models.Manager()
