@@ -16,7 +16,7 @@
 
 from django.db import models
 
-from ifconfig.models import Host
+from ifconfig.models import Host, HostDependentManager, getHostDependentManagerClass
 
 class Controller(models.Model):
     host        = models.ForeignKey(Host)
@@ -32,6 +32,10 @@ class Controller(models.Model):
     maxunits    = models.IntegerField()
     autorebuild = models.BooleanField()
 
+    objects     = HostDependentManager()
+    all_objects = models.Manager()
+
+
 class Enclosure(models.Model):
     index       = models.IntegerField()
     controller  = models.ForeignKey(Controller)
@@ -40,6 +44,10 @@ class Enclosure(models.Model):
     fans        = models.IntegerField(default=0)
     tsunits     = models.IntegerField(default=0)
     psunits     = models.IntegerField(default=0)
+
+    objects     = getHostDependentManagerClass("controller__host")()
+    all_objects = models.Manager()
+
 
 class Unit(models.Model):
     index       = models.IntegerField()
@@ -56,6 +64,10 @@ class Unit(models.Model):
     rdcache     = models.CharField(max_length=150, blank=True)
     wrcache     = models.CharField(max_length=150, blank=True)
 
+    objects     = getHostDependentManagerClass("controller__host")()
+    all_objects = models.Manager()
+
+
 class Disk(models.Model):
     controller  = models.ForeignKey(Controller)
     port        = models.IntegerField()
@@ -66,4 +78,8 @@ class Disk(models.Model):
     model       = models.CharField(max_length=150)
     unit        = models.ForeignKey(Unit, blank=True, null=True)
     unitindex   = models.IntegerField(blank=True, null=True)
+
+    objects     = getHostDependentManagerClass("controller__host")()
+    all_objects = models.Manager()
+
 
