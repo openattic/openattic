@@ -14,7 +14,10 @@
  *  GNU General Public License for more details.
 """
 
+import dbus
+
 from django.db import models
+from django.conf import settings
 
 from ifconfig.models import Host, HostDependentManager, getHostDependentManagerClass
 
@@ -88,4 +91,7 @@ class Disk(models.Model):
     objects     = getHostDependentManagerClass("controller__host")()
     all_objects = models.Manager()
 
+    def set_identify(self, state):
+        twraid = dbus.SystemBus().get_object(settings.DBUS_IFACE_SYSTEMD, "/twraid")
+        twraid.set_identify("/c%d/p%d" % (self.controller.index, self.port), state)
 
