@@ -14,6 +14,7 @@
  *  GNU General Public License for more details.
 """
 
+import pyudev
 import dbus
 import re
 import os
@@ -84,6 +85,27 @@ class VolumeGroup(models.Model):
             raise ValueError( "Device '%s' is in use, won't touch it." % device )
         lvm = dbus.SystemBus().get_object(settings.DBUS_IFACE_SYSTEMD, "/lvm")
         return lvm.join_device_to_vg(device, self.name)
+
+    def get_base_device_info(self):
+        lvm = dbus.SystemBus().get_object(settings.DBUS_IFACE_SYSTEMD, "/lvm")
+        devs = {}
+        ctx = pyudev.Context()
+
+        def checkmd(devnode):
+            dev = pyudev.Device.from_name(ctx, "block", devnode)
+            if "MD_LEVEL" in dev.keys():
+                for subdev in os.listdir(os.path.join("/sys/class/block", devnode, "slaves")):
+                    checkmd(subdev)
+            else:
+                devs[devnode] = dict( dev.items() )
+
+        for pvpath, pvinfo in lvm.pvs().items():
+            if pvinfo["LVM2_VG_NAME"] == self.name:
+                devnode = os.path.split(pvpath)[-1]
+                checkmd(devnode)
+
+        return devs
+
 
     def delete(self):
         lvm = dbus.SystemBus().get_object(settings.DBUS_IFACE_SYSTEMD, "/lvm")
