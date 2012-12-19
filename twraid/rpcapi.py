@@ -31,7 +31,7 @@ class UnitHandler(ModelHandler):
 
     def find_by_vg(self, id):
         vg = VolumeGroup.objects.get(id=id)
-        return Unit.objects.find_by_vg(vg)
+        return [self._getobj(unit) for unit in Unit.objects.find_by_vg(vg)]
 
 class UnitProxy(ProxyModelHandler, UnitHandler):
     def find_by_vg(self, id):
