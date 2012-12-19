@@ -52,6 +52,21 @@ class Enclosure(models.Model):
     all_objects = models.Manager()
 
 
+
+class UnitManager(models.Manager):
+    def find_by_vg(self, vg):
+        units = []
+        for devname, devinfo in vg.get_base_device_info().items():
+            if "ID_SCSI_SERIAL" in devinfo:
+                try:
+                    units.append(self.get(serial=devinfo["ID_SCSI_SERIAL"]))
+                except Unit.DoesNotExist:
+                    pass
+        return units
+
+class HostDependentUnitManager(UnitManager):
+    hostfilter  = "controller__host"
+
 class Unit(models.Model):
     index       = models.IntegerField()
     name        = models.CharField(max_length=150, blank=True)
@@ -67,8 +82,8 @@ class Unit(models.Model):
     rdcache     = models.CharField(max_length=150, blank=True)
     wrcache     = models.CharField(max_length=150, blank=True)
 
-    objects     = getHostDependentManagerClass("controller__host")()
-    all_objects = models.Manager()
+    objects     = HostDependentUnitManager()
+    all_objects = UnitManager()
 
 
 class Disk(models.Model):
