@@ -17,6 +17,7 @@
 from rpcd.handlers import ModelHandler
 from rpcd.handlers import ProxyModelHandler
 
+from lvm.models    import VolumeGroup
 from twraid.models import Controller, Enclosure, Unit, Disk
 
 class ControllerHandler(ModelHandler):
@@ -27,6 +28,19 @@ class EnclosureHandler(ModelHandler):
 
 class UnitHandler(ModelHandler):
     model = Unit
+
+    def find_by_vg(self, id):
+        vg = VolumeGroup.objects.get(id=id)
+        return Unit.objects.find_by_vg(vg)
+
+class UnitProxy(ProxyModelHandler, UnitHandler):
+    def find_by_vg(self, id):
+        handler = self._get_handler_instance(VolumeGroup)
+        targethost = handler._find_target_host(id)
+        if targethost is None:
+            return self.backing_handler.find_by_vg(id)
+        else:
+            return self._get_proxy_object(targethost).find_by_vg(id)
 
 class DiskHandler(ModelHandler):
     model = Disk
@@ -41,4 +55,7 @@ class DiskProxy(ProxyModelHandler, DiskHandler):
         """ Turn the identification LED on or off. """
         return self._call_singlepeer_method("set_identify", id, state)
 
-RPCD_HANDLERS = [ControllerHandler, EnclosureHandler, UnitHandler, DiskProxy]
+
+
+
+RPCD_HANDLERS = [ControllerHandler, EnclosureHandler, UnitProxy, DiskProxy]
