@@ -234,17 +234,17 @@ def update_database(ctls):
 
     for ctl_id, ctl in ctls.items():
         try:
-            dbctl = models.Controller.objects.get(host=host, index=ctl_id)
+            dbctl = models.Controller.objects.get(host=host, serial=ctl.params["serial number"])
         except models.Controller.DoesNotExist:
-            dbctl = models.Controller(host=host, index=ctl_id)
+            dbctl = models.Controller(host=host, serial=ctl.params["serial number"])
 
         if ctl.bbu != '-':
             dbctl.bbustate = ctl.bbu
         else:
             dbctl.bbustate = ''
 
+        dbctl.index     = ctl_id
         dbctl.model     = ctl.params["model"]
-        dbctl.serial    = ctl.params["serial number"]
         dbctl.actdrives = int(ctl.params["active drives"].split(" of ")[0])
         dbctl.curdrives = int(ctl.params["drives"].split(" of ")[0])
         dbctl.maxdrives = int(ctl.params["active drives"].split(" of ")[1])
@@ -269,30 +269,31 @@ def update_database(ctls):
 
         for unit_id, unit in ctl.units.items():
             try:
-                dbunit = models.Unit.objects.get(controller=dbctl, index=unit_id)
+                dbunit = models.Unit.objects.get(controller=dbctl, serial=unit.params["serial number"])
             except models.Unit.DoesNotExist:
-                dbunit = models.Unit(controller=dbctl, index=unit_id)
+                dbunit = models.Unit(controller=dbctl, serial=unit.params["serial number"])
 
+            dbunit.index      = unit_id
             dbunit.unittype   = unit.unittype
             dbunit.status     = unit.status
             dbunit.rebuild    = unit.rcmpl if unit.rcmpl != '-' else None
             dbunit.verify     = unit.vim if unit.vim != '-' else None
-            dbunit.chunksize  = int(unit.chunksize[:-1]) * 1024
+            dbunit.chunksize  = int(unit.chunksize[:-1]) * 1024 if unit.chunksize != '-' else None
             dbunit.size       = int(float(unit.totalsize) * 1024)
             dbunit.autoverify = (unit.avrfy.lower() == 'on')
 
             dbunit.rdcache    = unit.params["read cache"]
             dbunit.wrcache    = unit.params["write cache"]
             dbunit.name       = unit.params["name"]
-            dbunit.serial     = unit.params["serial number"]
             dbunit.save()
 
         for port_id, disk in ctl.ports.items():
             try:
-                dbdisk = models.Disk.objects.get(controller=dbctl, port=port_id)
+                dbdisk = models.Disk.objects.get(controller=dbctl, serial=disk.params["serial"])
             except models.Disk.DoesNotExist:
-                dbdisk = models.Disk(controller=dbctl, port=port_id)
+                dbdisk = models.Disk(controller=dbctl, serial=disk.params["serial"])
 
+            dbdisk.port       = port_id
             dbdisk.disktype   = disk.type
             dbdisk.encl       = models.Enclosure.objects.get(controller=dbctl, index=disk.encl_id)
             dbdisk.enclslot   = disk.slot_id
@@ -304,7 +305,6 @@ def update_database(ctls):
             else:
                 dbdisk.unit   = None
                 dbdisk.unitindex = None
-            dbdisk.serial     = disk.params["serial"]
             dbdisk.rpm        = int( re.match("^(\d+)", disk.params["spindle speed"]).group(1) )
             dbdisk.status     = disk.params["status"]
             dbdisk.temp_c     = int( re.match("^(\d+)", disk.params["temperature"]).group(1) )
