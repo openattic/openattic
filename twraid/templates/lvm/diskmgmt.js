@@ -24,7 +24,7 @@ Ext.oa.volumeGroup_Panel = Ext.extend(Ext.grid.GridPanel, {
           Ext.get(this.grid.getView().getRow(rowIndex)).grid = new Ext.grid.GridPanel({
             id: Ext.id(),
             renderTo: bodyEl.childNodes[0],
-            height: 225,
+            height: 150,
             viewConfig:{ forceFit: true },
             colModel: new Ext.grid.ColumnModel({
               defaults: {
