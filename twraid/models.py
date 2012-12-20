@@ -76,7 +76,7 @@ class Unit(models.Model):
     status      = models.CharField(max_length=150, blank=True)
     rebuild     = models.IntegerField(blank=True, null=True)
     verify      = models.IntegerField(blank=True, null=True)
-    chunksize   = models.IntegerField()
+    chunksize   = models.IntegerField(blank=True, null=True)
     size        = models.IntegerField()
     autoverify  = models.BooleanField()
     rdcache     = models.CharField(max_length=150, blank=True)
