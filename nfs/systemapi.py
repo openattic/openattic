@@ -35,6 +35,12 @@ class SystemD(LockingPlugin):
         finally:
             self.lock.release()
 
-    @method(in_signature="", out_signature="i")
-    def exportfs(self):
-        return invoke(["/usr/sbin/exportfs", "-ar"])
+    @method(in_signature="bsss", out_signature="i")
+    def exportfs(self, export, path, host, options):
+        cmd = ["/usr/sbin/exportfs"]
+        if not export:
+            cmd.append("-u")
+        if options:
+            cmd.extend(["-o", options])
+        cmd.append("%s:%s" % (host, path))
+        return invoke(cmd)

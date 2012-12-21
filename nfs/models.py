@@ -45,7 +45,7 @@ class Export(models.Model):
         nfs = dbus.SystemBus().get_object(settings.DBUS_IFACE_SYSTEMD, "/nfs")
         nfs.writeconf()
         if not self.volume.standby:
-            nfs.exportfs()
+            nfs.exportfs(True, self.path, self.address, self.options)
         return ret
 
     def delete( self ):
@@ -53,5 +53,5 @@ class Export(models.Model):
         nfs = dbus.SystemBus().get_object(settings.DBUS_IFACE_SYSTEMD, "/nfs")
         nfs.writeconf()
         if not self.volume.standby:
-            nfs.exportfs()
+            nfs.exportfs(False, self.path, self.address, self.options)
         return ret
