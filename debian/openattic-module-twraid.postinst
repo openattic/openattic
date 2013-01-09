@@ -1,0 +1,9 @@
+#!/bin/sh
+
+set -e
+
+if [ "$1" = "configure" ] ; then
+    touch /usr/share/openattic/installed_apps.d/twraid
+fi
+
+#DEBHELPER#

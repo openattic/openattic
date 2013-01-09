@@ -400,3 +400,14 @@ Description: MailAliases module for openATTIC
  mail redirection for certain users. This package contains an openATTIC module
  which automatically alters this file to match the users configured in the
  openATTIC database.
+
+Package: openattic-module-twraid
+Architecture: all
+Depends: ${misc:Depends}, openattic-module-lvm, tw-cli
+Description: 3ware RAID module for openATTIC
+ openATTIC is a storage management system based upon Open Source tools with
+ a comprehensive user interface that allows you to create, share and backup
+ storage space on demand.
+ .
+ This package installs a module that allows administration of 3ware RAID
+ controllers through openATTIC.
