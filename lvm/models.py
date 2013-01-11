@@ -86,6 +86,43 @@ class VolumeGroup(models.Model):
         lvm = dbus.SystemBus().get_object(settings.DBUS_IFACE_SYSTEMD, "/lvm")
         return lvm.join_device_to_vg(device, self.name)
 
+    def get_pvs(self):
+        lvm = dbus.SystemBus().get_object(settings.DBUS_IFACE_SYSTEMD, "/lvm")
+        devs = []
+        for pvpath, pvinfo in lvm.pvs().items():
+            if pvinfo["LVM2_VG_NAME"] == self.name:
+                devs.append(pvinfo)
+        return devs
+
+    @classmethod
+    def get_raid_params(cls, pvpath):
+        if not pvpath.startswith("/dev/md"):
+            raise NotImplementedError("currently only MD raid is supported")
+        mddev = pvpath[5:]
+        chunksize = int(open("/sys/class/block/%s/md/chunk_size" % mddev, "r").read().strip())
+        raiddisks = int(open("/sys/class/block/%s/md/raid_disks" % mddev, "r").read().strip())
+        raidlevel = int(open("/sys/class/block/%s/md/level" % mddev, "r").read().strip()[4:])
+        if raidlevel == 0:
+            datadisks = raiddisks
+        elif raidlevel == 1:
+            datadisks = 1
+        elif raidlevel == 5:
+            datadisks = raiddisks - 1
+        elif raidlevel == 6:
+            datadisks = raiddisks - 2
+        elif raidlevel == 10:
+            datadisks = raiddisks / 2
+        else:
+            raise ValueError( "Unknown RAID Level '%s'" % raidlevel )
+        stripewidth = chunksize * datadisks
+        return {
+            "chunksize": chunksize,
+            "raiddisks": raiddisks,
+            "raidlevel": raidlevel,
+            "datadisks": datadisks,
+            "stripewidth": stripewidth,
+            }
+
     def get_base_device_info(self):
         lvm = dbus.SystemBus().get_object(settings.DBUS_IFACE_SYSTEMD, "/lvm")
         devs = {}
