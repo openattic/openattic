@@ -240,6 +240,7 @@ INSTALLED_APPS = [
     'ifconfig',
 ]
 
+INSTALLED_MODULES = []
 def modprobe( modname ):
     """ Try to import the named module, and if that works add it to INSTALLED_APPS. """
     try:
@@ -247,12 +248,39 @@ def modprobe( modname ):
     except ImportError:
         pass
     else:
+        INSTALLED_MODULES.append( modname )
         INSTALLED_APPS.append( modname )
 
+import re
+__rgx__ = re.compile("^(?P<idx>\d\d)_(?P<name>\w+)$")
+
+def modnamecmp(a, b):
+    amatch = __rgx__.match(a)
+    bmatch = __rgx__.match(b)
+    if amatch:
+        if bmatch:
+            res = cmp(int(amatch.group("idx")), int(bmatch.group("idx")))
+            if res != 0:
+                return res
+            else:
+                return cmp(amatch.group("name"), bmatch.group("name"))
+        else:
+            return -1
+    else:
+        if bmatch:
+            return 1
+        else:
+            return cmp(a, b)
+
 import os
-INSTALLED_MODULES = os.listdir( join( PROJECT_ROOT, "installed_apps.d") )
-for name in INSTALLED_MODULES:
-    modprobe(name)
+__mods__ = os.listdir( join( PROJECT_ROOT, "installed_apps.d") )
+__mods__.sort(cmp=modnamecmp)
+for name in __mods__:
+    m = __rgx__.match(name)
+    if m:
+        modprobe(m.group("name"))
+    else:
+        modprobe(name)
 
 modprobe('django_extensions')
 modprobe('rosetta')
