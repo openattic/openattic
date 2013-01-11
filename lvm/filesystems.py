@@ -244,7 +244,27 @@ class Xfs(FileSystem):
         return {}
 
     def format(self, jid):
-        self._lvm.xfs_format( jid, self.lv.path )
+        usablesize   = self.lv.megs * 1024 * 1024
+        usableblocks = int( usablesize / 4096 )
+
+        # see xfs_mkfs.c, calc_default_ag_geometry()
+        if   usablesize >  512 * 1024**3:
+            shift = 5
+        elif usablesize >    8 * 1024**3:
+            shift = 4
+        elif usablesize >= 128 * 1024**2:
+            shift = 3
+        elif usablesize >=  64 * 1024**2:
+            shift = 2
+        elif usablesize >=  32 * 1024**2:
+            shift = 1
+        else:
+            shift = 0
+
+        agsize  = usableblocks >> shift
+        agcount = usableblocks / agsize
+
+        self._lvm.xfs_format( jid, self.lv.path, agcount )
         self.mount(jid)
         self.chown(jid)
 
