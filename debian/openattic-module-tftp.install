@@ -1,2 +1,2 @@
 tftp     /usr/share/openattic
-installed_apps.d/tftp /usr/share/openattic/installed_apps.d
+installed_apps.d/60_tftp /usr/share/openattic/installed_apps.d
