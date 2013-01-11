@@ -48,7 +48,9 @@ class IPAddressHandler(ModelHandler):
         handler = self._get_handler_instance(model)
         targethost = handler._find_target_host(idobj["id"])
         if targethost is None:
-            return []
+            return [ self._idobj(ip) for ip in
+                IPAddress.objects.all()
+                if not ip.is_loopback ]
         return [ self._idobj(ip) for ip in
             IPAddress.all_objects.filter(device__host__name=targethost.name)
             if not ip.is_loopback ]
