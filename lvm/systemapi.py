@@ -248,9 +248,12 @@ class SystemD(BasePlugin):
         # TODO: Sometimes ntfsresize asks for confirmation interactively, how do we handle that?
         self.job_add_command(jid, ["/sbin/ntfsresize", "--force", "--size", ("%dM" % megs), devpath])
 
-    @method(in_signature="isi", out_signature="")
-    def xfs_format(self, jid, devpath, agcount):
-        self.job_add_command(jid, ["mkfs.xfs", "-d", "agcount=%d" % agcount, devpath])
+    @method(in_signature="isiii", out_signature="")
+    def xfs_format(self, jid, devpath, chunksize, datadisks, agcount):
+        self.job_add_command(jid, ["mkfs.xfs",
+            "-d", "su=%dk" % (chunksize / 1024),
+            "-d", "sw=%d" % datadisks,
+            "-d", "agcount=%d" % agcount, devpath])
 
     @method(in_signature="isi", out_signature="")
     def xfs_resize(self, jid, mountpoint, megs):

@@ -244,6 +244,8 @@ class Xfs(FileSystem):
         return {}
 
     def format(self, jid):
+        from lvm.models import VolumeGroup
+        raidparams = VolumeGroup.get_raid_params(self.lv.vg.get_pvs()[0]["LVM2_PV_NAME"])
         usablesize   = self.lv.megs * 1024 * 1024
         usableblocks = int( usablesize / 4096 )
 
@@ -264,7 +266,7 @@ class Xfs(FileSystem):
         agsize  = usableblocks >> shift
         agcount = usableblocks / agsize
 
-        self._lvm.xfs_format( jid, self.lv.path, agcount )
+        self._lvm.xfs_format( jid, self.lv.path, raidparams["chunksize"], raidparams["datadisks"], agcount )
         self.mount(jid)
         self.chown(jid)
 
