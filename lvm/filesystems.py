@@ -119,7 +119,9 @@ class Ext2(FileSystem):
         return grow
 
     def format(self, jid):
-        self._lvm.e2fs_format( jid, self.lv.path, self.lv.name )
+        from lvm.models import VolumeGroup
+        raidparams = VolumeGroup.get_raid_params(self.lv.vg.get_pvs()[0]["LVM2_PV_NAME"])
+        self._lvm.e2fs_format( jid, self.lv.path, self.lv.name, raidparams["chunksize"], raidparams["datadisks"] )
         self.mount(jid)
         self.chown(jid)
 
@@ -134,7 +136,9 @@ class Ext3(Ext2):
     desc = "Ext3 (Linux Journalling)"
 
     def format(self, jid):
-        self._lvm.e3fs_format( jid, self.lv.path, self.lv.name )
+        from lvm.models import VolumeGroup
+        raidparams = VolumeGroup.get_raid_params(self.lv.vg.get_pvs()[0]["LVM2_PV_NAME"])
+        self._lvm.e3fs_format( jid, self.lv.path, self.lv.name, raidparams["chunksize"], raidparams["datadisks"] )
         self.mount(jid)
         self.chown(jid)
 
@@ -145,7 +149,9 @@ class Ext4(Ext2):
     desc = "Ext4 (Linux Journalling)"
 
     def format(self, jid):
-        self._lvm.e4fs_format( jid, self.lv.path, self.lv.name )
+        from lvm.models import VolumeGroup
+        raidparams = VolumeGroup.get_raid_params(self.lv.vg.get_pvs()[0]["LVM2_PV_NAME"])
+        self._lvm.e4fs_format( jid, self.lv.path, self.lv.name, raidparams["chunksize"], raidparams["datadisks"] )
         self.mount(jid)
         self.chown(jid)
 
