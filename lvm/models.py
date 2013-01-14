@@ -63,6 +63,16 @@ def validate_lv_unique(value):
         raise ValidationError("A Volume named '%s' already exists on this host." % value)
 
 
+class UnsupportedRAID(Exception):
+    pass
+
+class UnsupportedRAIDVendor(UnsupportedRAID):
+    pass
+
+class UnsupportedRAIDLevel(UnsupportedRAID):
+    pass
+
+
 class VolumeGroup(models.Model):
     """ Represents a LVM Volume Group. """
 
@@ -97,7 +107,7 @@ class VolumeGroup(models.Model):
     @classmethod
     def get_raid_params(cls, pvpath):
         if not pvpath.startswith("/dev/md"):
-            raise NotImplementedError("currently only MD raid is supported")
+            raise UnsupportedRAIDVendor()
         mddev = pvpath[5:]
         chunksize = int(open("/sys/class/block/%s/md/chunk_size" % mddev, "r").read().strip())
         raiddisks = int(open("/sys/class/block/%s/md/raid_disks" % mddev, "r").read().strip())
@@ -113,7 +123,7 @@ class VolumeGroup(models.Model):
         elif raidlevel == 10:
             datadisks = raiddisks / 2
         else:
-            raise ValueError( "Unknown RAID Level '%s'" % raidlevel )
+            raise UnsupportedRAIDLevel(raidlevel)
         stripewidth = chunksize * datadisks
         return {
             "chunksize": chunksize,
