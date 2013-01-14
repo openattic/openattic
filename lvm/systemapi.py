@@ -217,11 +217,13 @@ class SystemD(BasePlugin):
 
     @method(in_signature="issii", out_signature="")
     def e2fs_format(self, jid, devpath, label, chunksize, datadisks):
-        stride = chunksize / 4096
-        stripe_width = stride * datadisks
-        self.job_add_command(jid, ["/sbin/mke2fs",
-            "-E", "stride=%d,stripe_width=%d" % (stride, stripe_width),
-            "-q", "-m0", "-L", label, devpath])
+        cmd = ["/sbin/mke2fs"]
+        if chunksize != -1 and datadisks != -1:
+            stride = chunksize / 4096
+            stripe_width = stride * datadisks
+            cmd.extend([ "-E", "stride=%d,stripe_width=%d" % (stride, stripe_width) ])
+        cmd.extend([ "-q", "-m0", "-L", label, devpath ])
+        self.job_add_command(jid, cmd)
 
     @method(in_signature="is", out_signature="")
     def e2fs_check(self, jid, devpath):
@@ -233,19 +235,23 @@ class SystemD(BasePlugin):
 
     @method(in_signature="issii", out_signature="")
     def e3fs_format(self, jid, devpath, label, chunksize, datadisks):
-        stride = chunksize / 4096
-        stripe_width = stride * datadisks
-        self.job_add_command(jid, ["/sbin/mke2fs",
-            "-E", "stride=%d,stripe_width=%d" % (stride, stripe_width),
-            "-q", "-j", "-m0", "-L", label, devpath])
+        cmd = ["/sbin/mke2fs"]
+        if chunksize != -1 and datadisks != -1:
+            stride = chunksize / 4096
+            stripe_width = stride * datadisks
+            cmd.extend([ "-E", "stride=%d,stripe_width=%d" % (stride, stripe_width) ])
+        cmd.extend([ "-q", "-j", "-m0", "-L", label, devpath ])
+        self.job_add_command(jid, cmd)
 
     @method(in_signature="issii", out_signature="")
     def e4fs_format(self, jid, devpath, label, chunksize, datadisks):
-        stride = chunksize / 4096
-        stripe_width = stride * datadisks
-        self.job_add_command(jid, ["/sbin/mkfs.ext4",
-            "-E", "stride=%d,stripe_width=%d" % (stride, stripe_width),
-            "-q", "-m0", "-L", label, devpath])
+        cmd = ["/sbin/mkfs.ext4"]
+        if chunksize != -1 and datadisks != -1:
+            stride = chunksize / 4096
+            stripe_width = stride * datadisks
+            cmd.extend([ "-E", "stride=%d,stripe_width=%d" % (stride, stripe_width) ])
+        cmd.extend([ "-q", "-m0", "-L", label, devpath ])
+        self.job_add_command(jid, cmd)
 
     @method(in_signature="is", out_signature="")
     def ntfs_format(self, jid, devpath):
@@ -262,10 +268,14 @@ class SystemD(BasePlugin):
 
     @method(in_signature="isiii", out_signature="")
     def xfs_format(self, jid, devpath, chunksize, datadisks, agcount):
-        self.job_add_command(jid, ["mkfs.xfs",
-            "-d", "su=%dk" % (chunksize / 1024),
-            "-d", "sw=%d" % datadisks,
-            "-d", "agcount=%d" % agcount, devpath])
+        cmd = ["mkfs.xfs"]
+        if chunksize != -1 and datadisks != -1:
+            cmd.extend([
+                "-d", "su=%dk" % (chunksize / 1024),
+                "-d", "sw=%d" % datadisks,
+                ])
+        cmd.extend([ "-d", "agcount=%d" % agcount, devpath ])
+        self.job_add_command(jid, cmd)
 
     @method(in_signature="isi", out_signature="")
     def xfs_resize(self, jid, mountpoint, megs):
