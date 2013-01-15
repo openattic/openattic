@@ -1,6 +1,14 @@
 # -*- coding: utf-8 -*-
 # kate: space-indent on; indent-width 4; replace-tabs on;
 
+import os
+import re
+import dbus
+
+from django.conf import settings
+
+from systemd.helpers import dbus_to_python
+
 class UnsupportedRAID(Exception):
     pass
 
@@ -80,7 +88,7 @@ def is_device_in_use(device):
     for pvdev in pvs:
         if device in pvdev:
             return True, "pv", unicode(pvs[pvdev]["LVM2_VG_NAME"])
-    for mount in VolumeGroup.get_mounts():
+    for mount in get_mounts():
         if device in os.path.realpath(mount[0]):
             return True, "mount", mount[1]
     return False
