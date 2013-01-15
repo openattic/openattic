@@ -195,6 +195,14 @@ Ext.oa.volumeGroup_Panel = Ext.extend(Ext.grid.GridPanel, {
                         );
                         self.ownerCt.initbutton.disable();
                       }
+                      else if( response.result[1] === "mdraid" ){
+                        self.ownerCt.usagelabel.setText(
+                          interpolate(
+                            gettext('Disk %(disk)s is part of the Software RAID Array %(md)s, refusing to touch it.'),
+                            { "disk": disk, "md": response.result[2] }, true )
+                        );
+                        self.ownerCt.initbutton.disable();
+                      }
                       else{
                         self.ownerCt.usagelabel.setText(
                           interpolate( gettext('Disk %(disk)s is mounted as %(mount)s, refusing to touch it.'),
