@@ -63,16 +63,6 @@ def validate_lv_unique(value):
         raise ValidationError("A Volume named '%s' already exists on this host." % value)
 
 
-class UnsupportedRAID(Exception):
-    pass
-
-class UnsupportedRAIDVendor(UnsupportedRAID):
-    pass
-
-class UnsupportedRAIDLevel(UnsupportedRAID):
-    pass
-
-
 class VolumeGroup(models.Model):
     """ Represents a LVM Volume Group. """
 
@@ -104,35 +94,6 @@ class VolumeGroup(models.Model):
                 devs.append(pvinfo)
         return devs
 
-    @classmethod
-    def get_raid_params(cls, pvpath):
-        if not pvpath.startswith("/dev/md"):
-            raise UnsupportedRAIDVendor()
-        mddev = pvpath[5:]
-        chunksize = int(open("/sys/class/block/%s/md/chunk_size" % mddev, "r").read().strip())
-        raiddisks = int(open("/sys/class/block/%s/md/raid_disks" % mddev, "r").read().strip())
-        raidlevel = int(open("/sys/class/block/%s/md/level" % mddev, "r").read().strip()[4:])
-        if raidlevel == 0:
-            datadisks = raiddisks
-        elif raidlevel == 1:
-            datadisks = 1
-        elif raidlevel == 5:
-            datadisks = raiddisks - 1
-        elif raidlevel == 6:
-            datadisks = raiddisks - 2
-        elif raidlevel == 10:
-            datadisks = raiddisks / 2
-        else:
-            raise UnsupportedRAIDLevel(raidlevel)
-        stripewidth = chunksize * datadisks
-        return {
-            "chunksize": chunksize,
-            "raiddisks": raiddisks,
-            "raidlevel": raidlevel,
-            "datadisks": datadisks,
-            "stripewidth": stripewidth,
-            }
-
     def get_base_device_info(self):
         lvm = dbus.SystemBus().get_object(settings.DBUS_IFACE_SYSTEMD, "/lvm")
         devs = {}
@@ -153,7 +114,6 @@ class VolumeGroup(models.Model):
 
         return devs
 
-
     def delete(self):
         lvm = dbus.SystemBus().get_object(settings.DBUS_IFACE_SYSTEMD, "/lvm")
         for lv in LogicalVolume.objects.filter(vg=self):
@@ -165,83 +125,6 @@ class VolumeGroup(models.Model):
                 if pvs[device]["LVM2_VG_NAME"] == self.name:
                     lvm.pvremove(device)
         models.Model.delete(self)
-
-    @classmethod
-    def get_mounts(cls):
-        """ Get currently mounted devices. """
-        fd = open("/proc/mounts", "rb")
-        try:
-            mounts = fd.read()
-        finally:
-            fd.close()
-        return [ line.split(" ") for line in mounts.split("\n") if line ]
-
-    @classmethod
-    def get_devices(cls):
-        """ Get existing block devices. """
-        devinfo = []
-
-        def getfile(basedir, fname):
-            fd = open( os.path.join( basedir, fname ), "rb")
-            try:
-                return fd.read().strip()
-            finally:
-                fd.close()
-
-        for dirname in os.listdir("/sys/bus/scsi/devices"):
-            if re.match( "^\d+:\d+:\d+:\d+$", dirname ):
-                basedir = os.path.join( "/sys/bus/scsi/devices", dirname )
-                if not os.path.exists(os.path.join( basedir, "block" )):
-                    continue
-                devinfo.append({
-                    "type":   getfile(basedir, "type"),
-                    "vendor": getfile(basedir, "vendor"),
-                    "model":  getfile(basedir, "model"),
-                    "rev":    getfile(basedir, "rev"),
-                    "block":  os.listdir( os.path.join( basedir, "block" ) )[0]
-                    })
-
-        return devinfo
-
-    @classmethod
-    def is_device_in_use(cls, device):
-        """ Check if this device is mounted somewhere or used as a physical volume. """
-        lvm = dbus.SystemBus().get_object(settings.DBUS_IFACE_SYSTEMD, "/lvm")
-        pvs = lvm.pvs()
-        for pvdev in pvs:
-            if device in pvdev:
-                return True, "pv", unicode(pvs[pvdev]["LVM2_VG_NAME"])
-        for mount in VolumeGroup.get_mounts():
-            if device in os.path.realpath(mount[0]):
-                return True, "mount", mount[1]
-        return False
-
-    @classmethod
-    def get_partitions(cls, device):
-        """ Get partitions from the given device. """
-        lvm = dbus.SystemBus().get_object(settings.DBUS_IFACE_SYSTEMD, "/lvm")
-        ret, disk, part = lvm.get_partitions(device)
-        if ret:
-            raise SystemError("parted failed, check the log")
-        return dbus_to_python(disk), dbus_to_python(part)
-
-    @classmethod
-    def get_disk_stats(cls, device):
-        """ Get disk stats from `/sys/block/X/stat'. """
-        if not os.path.exists( "/sys/block/%s/stat" % device ):
-            raise SystemError( "No such device: '%s'" % device )
-
-        fd = open("/sys/block/%s/stat" % device, "rb")
-        try:
-            stats = fd.read().split()
-        finally:
-            fd.close()
-
-        return dict( zip( [
-            "reads_completed",  "reads_merged",  "sectors_read",    "millisecs_reading",
-            "writes_completed", "writes_merged", "sectors_written", "millisecs_writing",
-            "ios_in_progress",  "millisecs_in_io", "weighted_millisecs_in_io"
-            ], [ int(num) for num in stats ] ) )
 
     @property
     def lvm_info(self):
@@ -301,11 +184,6 @@ class LogicalVolume(models.Model):
             raise SystemError("Not building a job...")
         self._sysd.enqueue_job(self._jid)
         self._jid = None
-
-    @classmethod
-    def get_capabilities(cls):
-        lvm  = dbus.SystemBus().get_object(settings.DBUS_IFACE_SYSTEMD, "/lvm")
-        return dbus_to_python(lvm.get_capabilities())
 
     @property
     def lvm(self):
