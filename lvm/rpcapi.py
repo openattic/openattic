@@ -52,8 +52,8 @@ class BlockDevicesHandler(BaseHandler):
         """ Get Kernel disk stats for a given device. """
         return blockdevices.get_disk_stats(device)
 
-    def get_capabilities(self):
-        return blockdevices.get_capabilities()
+    def get_lvm_capabilities(self):
+        return blockdevices.get_lvm_capabilities()
 
 class VgHandler(ModelHandler):
     model = VolumeGroup

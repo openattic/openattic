@@ -118,6 +118,6 @@ def get_disk_stats(device):
         "ios_in_progress",  "millisecs_in_io", "weighted_millisecs_in_io"
         ], [ int(num) for num in stats ] ) )
 
-def get_capabilities():
+def get_lvm_capabilities():
     lvm  = dbus.SystemBus().get_object(settings.DBUS_IFACE_SYSTEMD, "/lvm")
-    return dbus_to_python(lvm.get_capabilities())
+    return dbus_to_python(lvm.get_lvm_capabilities())

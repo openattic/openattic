@@ -283,7 +283,7 @@ class SystemD(BasePlugin):
         self.job_add_command(jid, ["xfs_growfs", mountpoint])
 
     @method(in_signature="", out_signature="a{ss}")
-    def get_capabilities(self):
+    def get_lvm_capabilities(self):
         invoke(["/sbin/modprobe", "dm-snapshot"])
         ret, out, err = invoke(["/sbin/dmsetup", "targets"], return_out_err=True)
         if ret != 0:
