@@ -358,6 +358,66 @@ Ext.oa.Lvm__LogicalVolume_Panel = Ext.extend(Ext.oa.ShareGridPanel, {
       }
     }
   }, {
+    text: gettext('Initialize'),
+    icon: MEDIA_URL + "/oxygen/16x16/emblems/emblem-new.png",
+    handler: function(){
+      var self = this;
+      var sm = this.getSelectionModel();
+      if( sm.hasSelection() ){
+        var sel = sm.selections.items[0];
+        var scriptswin = new Ext.Window({
+          title: gettext('Initialize'),
+          layout: "fit",
+          height: 300,
+          width: 500,
+          items: {
+            xtype: "grid",
+            viewConfig: { forceFit: true },
+            store: {
+              xtype: 'directstore',
+              autoLoad: true,
+              fields: [{
+                name: 'script',
+                convert: function (val, row){
+                  return row;
+                }
+              }],
+              directFn: lvm__LogicalVolume.get_initscripts
+            },
+            colModel: new Ext.grid.ColumnModel({
+              defaults: {
+                sortable: true
+              },
+              columns: [ {
+                header: gettext('Script'),
+                dataIndex: "script"
+              } ]
+            }),
+            buttons: [{
+              text: gettext('Initialize'),
+              handler: function(btn){
+                var gridsm = scriptswin.items.items[0].getSelectionModel();
+                if( gridsm.hasSelection() ){
+                  var gridsel = gridsm.selections.items[0];
+                  lvm__LogicalVolume.run_initscript(sel.data.id, gridsel.data.script, function(provider, response){
+                    Ext.Msg.alert(
+                      gettext('Initialization complete'),
+                      interpolate(
+                        gettext("Initialization script %(script)s has been executed successfully on %(lv)s."),
+                        { "script": gridsel.data.script, "lv": sel.data.name}, true),
+                      function(){
+                        scriptswin.close();
+                      });
+                  });
+                }
+              }
+            }]
+          }
+        } );
+        scriptswin.show();
+      }
+    }
+  }, {
     text: gettext('Resize Volume'),
     icon: MEDIA_URL + "/icons2/16x16/actions/gtk-execute.png",
     handler: function(){
