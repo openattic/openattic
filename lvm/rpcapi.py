@@ -20,6 +20,7 @@ from ifconfig.rpcapi import HostHandler
 
 from lvm.models import VolumeGroup, LogicalVolume, ZfsSubvolume, ZfsSnapshot, LVMetadata
 from lvm import blockdevices
+from lvm import initscripts
 from ifconfig.models import Host
 from peering.models import PeerHost
 
@@ -147,6 +148,16 @@ class LvHandler(ModelHandler):
         """ Check if the given volume is currently in standby. """
         lv = LogicalVolume.objects.get(id=id)
         return lv.standby
+
+    def get_initscripts(self):
+        return initscripts.get_initscripts()
+
+    def get_initscript_info(self, script):
+        return initscripts.get_initscript_info(script)
+
+    def run_initscript(self, id, script):
+        lv = LogicalVolume.objects.get(id=id)
+        return initscripts.run_initscript(lv, script)
 
 
 class LVMetadataHandler(ModelHandler):

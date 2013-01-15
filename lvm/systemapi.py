@@ -178,6 +178,15 @@ class SystemD(BasePlugin):
         self.pvs_time = 0
         return invoke(["/sbin/pvremove", '-f', device])
 
+    @method(in_signature="sss", out_signature="i")
+    def run_initscript(self, script, device, mountpoint):
+        if script.startswith("/"):
+            script = script[1:]
+        scpath = os.path.join(lvm_settings.VOLUME_INITD, script)
+        cmd = [scpath, "initialize", device]
+        if mountpoint:
+            cmd.append(mountpoint)
+        return invoke(cmd)
 
     @method(in_signature="isss", out_signature="")
     def fs_mount(self, jid, fstype, devpath, mountpoint):
