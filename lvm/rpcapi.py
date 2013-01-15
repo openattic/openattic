@@ -14,16 +14,46 @@
  *  GNU General Public License for more details.
 """
 
-from rpcd.handlers import ModelHandler
+from rpcd.handlers import BaseHandler, ModelHandler
 from rpcd.handlers import ProxyModelHandler
 from ifconfig.rpcapi import HostHandler
 
 from lvm.models import VolumeGroup, LogicalVolume, ZfsSubvolume, ZfsSnapshot, LVMetadata
+from lvm import blockdevices
 from ifconfig.models import Host
 from peering.models import PeerHost
 
 from rpcd.exceptionhelper import translate_exception
 from xmlrpclib import Fault
+
+
+class BlockDevicesHandler(BaseHandler):
+    handler_name = "lvm.BlockDevices"
+
+    def get_mounts(self):
+        """ Get currently mounted devices. """
+        return blockdevices.get_mounts()
+
+    def get_devices(self):
+        """ Get all existing devices. """
+        return blockdevices.get_devices()
+
+    def is_device_in_use(self, device):
+        """ Check if the given device is in use either as a PV, or by being mounted. """
+        if device.startswith("/dev"):
+            raise ValueError("device must be given without leading /dev")
+        return blockdevices.is_device_in_use(device)
+
+    def get_partitions(self, device):
+        """ Get all partitions from a given device. """
+        return blockdevices.get_partitions(device)
+
+    def get_disk_stats(self, device):
+        """ Get Kernel disk stats for a given device. """
+        return blockdevices.get_disk_stats(device)
+
+    def get_capabilities(self):
+        return blockdevices.get_capabilities()
 
 class VgHandler(ModelHandler):
     model = VolumeGroup
@@ -45,28 +75,6 @@ class VgHandler(ModelHandler):
         """ Get amount of free space in a Volume Group. """
         return VolumeGroup.objects.get(id=id).lvm_free_megs
 
-    def get_mounts(self):
-        """ Get currently mounted devices. """
-        return VolumeGroup.get_mounts()
-
-    def get_devices(self):
-        """ Get all existing devices. """
-        return VolumeGroup.get_devices()
-
-    def is_device_in_use(self, device):
-        """ Check if the given device is in use either as a PV, or by being mounted. """
-        if device.startswith("/dev"):
-            raise ValueError("device must be given without leading /dev")
-        return VolumeGroup.is_device_in_use(device)
-
-    def get_partitions(self, device):
-        """ Get all partitions from a given device. """
-        return VolumeGroup.get_partitions(device)
-
-    def get_disk_stats(self, device):
-        """ Get Kernel disk stats for a given device. """
-        return VolumeGroup.get_disk_stats(device)
-
     def lvm_info(self, id):
         """ Return information about the LV retrieved from LVM. """
         vg = VolumeGroup.objects.get(id=id)
@@ -87,9 +95,6 @@ class LvHandler(ModelHandler):
         else:
             data['fs'] = None
         return data
-
-    def get_capabilities(self):
-        return LogicalVolume.get_capabilities()
 
     def avail_fs(self):
         """ Return a list of available file systems. """
@@ -230,4 +235,4 @@ class ZfsSnapshotProxy(ProxyModelHandler, ZfsSnapshotHandler):
 
 
 
-RPCD_HANDLERS = [VgProxy, LvProxy, ZfsSubvolumeProxy, ZfsSnapshotProxy, LVMetadataHandler]
+RPCD_HANDLERS = [BlockDevicesHandler, VgProxy, LvProxy, ZfsSubvolumeProxy, ZfsSnapshotProxy, LVMetadataHandler]
