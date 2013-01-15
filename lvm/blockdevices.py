@@ -91,6 +91,21 @@ def is_device_in_use(device):
     for mount in get_mounts():
         if device in os.path.realpath(mount[0]):
             return True, "mount", mount[1]
+    holders = os.listdir('/sys/class/block/%s/holders' % device)
+    if holders:
+        return True, "mdraid", ','.join(holders)
+    # if device is not already a partition or md device, recurse to check partitions
+    if re.match( "^[a-zA-Z]+$", device ):
+        try:
+            partitions = get_partitions("/dev/" + device)
+        except SystemError:
+            # no partitions
+            pass
+        else:
+            for part in partitions:
+                in_use, usetype, info = is_device_in_use(device + part["number"])
+                if in_use:
+                    return in_use, usetype, info
     return False
 
 def get_partitions(device):
