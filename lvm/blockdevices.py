@@ -98,9 +98,12 @@ def is_device_in_use(device):
     if re.match( "^[a-zA-Z]+$", device ):
         try:
             partitions = get_partitions("/dev/" + device)
-        except SystemError:
-            # no partitions
-            pass
+        except dbus.DBusException, err:
+            if err.get_dbus_name() == 'org.freedesktop.DBus.Python.SystemError':
+                # no partitions
+                pass
+            else:
+                raise
         else:
             for part in partitions:
                 in_use, usetype, info = is_device_in_use(device + part["number"])
