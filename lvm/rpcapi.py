@@ -238,6 +238,9 @@ class LvProxy(ProxyModelHandler, LvHandler):
             except Fault, flt:
                 raise translate_exception(flt)
 
+    def run_initscript(self, id, script):
+        return self._call_singlepeer_method("run_initscript", id, script)
+
 class ZfsSubvolumeProxy(ProxyModelHandler, ZfsSubvolumeHandler):
     model = ZfsSubvolume
 
