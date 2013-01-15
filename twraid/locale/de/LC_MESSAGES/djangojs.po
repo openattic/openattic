@@ -1,0 +1,176 @@
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) YEAR THE PACKAGE'S COPYRIGHT HOLDER
+# This file is distributed under the same license as the PACKAGE package.
+# FIRST AUTHOR <EMAIL@ADDRESS>, YEAR.
+#
+#, fuzzy
+msgid ""
+msgstr ""
+"Project-Id-Version: PACKAGE VERSION\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2013-01-15 12:25+0100\n"
+"PO-Revision-Date: 2012-06-12 13:24\n"
+"Last-Translator: Michael Ziegler <michael.ziegler@it-novum.com>\n"
+"Language-Team: LANGUAGE <LL@li.org>\n"
+"Language: \n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=2; plural=(n != 1)\n"
+"X-Translated-Using: django-rosetta 0.6.6\n"
+
+#: templates/lvm/diskmgmt.js:34
+msgid "Slot"
+msgstr "Einschub"
+
+#: templates/lvm/diskmgmt.js:37 templates/lvm/diskmgmt.js.c:95
+msgid "Status"
+msgstr ""
+
+#: templates/lvm/diskmgmt.js:40 templates/lvm/diskmgmt.js.c:386
+msgid "Size"
+msgstr "Größe"
+
+#: templates/lvm/diskmgmt.js:43
+msgid "Model"
+msgstr "Modell"
+
+#: templates/lvm/diskmgmt.js:46 templates/lvm/diskmgmt.js.c:101
+msgid "Serial"
+msgstr "Seriennummer"
+
+#: templates/lvm/diskmgmt.js:49
+msgid "Uptime (h)"
+msgstr "Laufzeit (h)"
+
+#: templates/lvm/diskmgmt.js:52 templates/lvm/diskmgmt.js.c:98
+msgid "Type"
+msgstr "Typ"
+
+#: templates/lvm/diskmgmt.js:55
+msgid "Temp. (°C)"
+msgstr ""
+
+#: templates/lvm/diskmgmt.js:58
+msgid "RPM"
+msgstr ""
+
+#: templates/lvm/diskmgmt.js:92 templates/lvm/diskmgmt.js.c:380
+msgid "Name"
+msgstr "Name"
+
+#: templates/lvm/diskmgmt.js:125
+msgid "Volume Groups"
+msgstr "Volume-Gruppen"
+
+#: templates/lvm/diskmgmt.js:130
+msgid "Reload"
+msgstr "Neu laden"
+
+#: templates/lvm/diskmgmt.js:135
+msgid "Create VG or Add Disk"
+msgstr "VG erzeugen oder Disk hinzufügen"
+
+#: templates/lvm/diskmgmt.js:139 templates/lvm/diskmgmt.js.c:247
+#: templates/lvm/diskmgmt.js:252
+msgid "Initialize"
+msgstr "Initialisieren"
+
+#: templates/lvm/diskmgmt.js:155
+msgid "Disk"
+msgstr "Disk"
+
+#: templates/lvm/diskmgmt.js:182
+msgid "Querying data..."
+msgstr "Warte auf Daten..."
+
+#: templates/lvm/diskmgmt.js:186
+#, c-format
+msgid "Disk %s is not currently used."
+msgstr "Disk %s ist nicht in Benutzung."
+
+#: templates/lvm/diskmgmt.js:193
+msgid "Disk %(disk)s is part of the Volume Group %(vg)s, refusing to touch it."
+msgstr ""
+"Disk %(disk)s ist Teil der Volume-Gruppe %(vg)s, werde sie nicht anrühren."
+
+#: templates/lvm/diskmgmt.js:201
+msgid ""
+"Disk %(disk)s is part of the Software RAID Array %(md)s, refusing to touch "
+"it."
+msgstr ""
+"Disk %(disk)s ist Teil des Software-RAID-Verbundes %(md)s, werde sie nicht "
+"anrühren."
+
+#: templates/lvm/diskmgmt.js:208
+msgid "Disk %(disk)s is mounted as %(mount)s, refusing to touch it."
+msgstr "Disk %(disk)s ist als %(mount)s eingehängt, werde sie nicht anrühren."
+
+#: templates/lvm/diskmgmt.js:216
+msgid "Please select the disk you wish to add to the volume group."
+msgstr "Bitte die Disk wählen, die der Volume-Gruppe hinzugefügt werden soll."
+
+#: templates/lvm/diskmgmt.js:220
+msgid "Waiting for disk selection..."
+msgstr "Warte auf Disk-Auswahl..."
+
+#: templates/lvm/diskmgmt.js:226
+msgid "Volume Group"
+msgstr "Volume-Gruppe"
+
+#: templates/lvm/diskmgmt.js:245
+msgid ""
+"Please select the volume group. In order to create a new one, enter its name."
+msgstr ""
+"Bitte die Volume-Gruppe wählen. Um eine neue anzulegen, geben Sie den Namen "
+"ein."
+
+#: templates/lvm/diskmgmt.js:257
+msgid "Please wait..."
+msgstr "Bitte warten..."
+
+#: templates/lvm/diskmgmt.js:265
+msgid "Success!"
+msgstr "Erfolg!"
+
+#: templates/lvm/diskmgmt.js:266
+msgid "The Device has been successfully initialized."
+msgstr "Das Gerät wurde erfolgreich initialisiert."
+
+#: templates/lvm/diskmgmt.js:284
+msgid "Delete Group"
+msgstr "Volume-Gruppe löschen"
+
+#: templates/lvm/diskmgmt.js:293
+msgid "Confirm delete"
+msgstr "Löschen bestätigen"
+
+#: templates/lvm/diskmgmt.js:295
+#, c-format
+msgid "Really delete Group %s?"
+msgstr "Gruppe %s wirklich löschen?"
+
+#: templates/lvm/diskmgmt.js:309
+msgid "Volumes found in this group. Delete all remaining volumes?"
+msgstr ""
+"In dieser Gruppe wurden Volumes gefunden. Sollen diese gelöscht werden?"
+
+#: templates/lvm/diskmgmt.js:383
+msgid "Host"
+msgstr ""
+
+#: templates/lvm/diskmgmt.js:390
+msgid "Free"
+msgstr "Frei"
+
+#: templates/lvm/diskmgmt.js:394
+msgid "Used%"
+msgstr "Belegt%"
+
+#: templates/lvm/diskmgmt.js:416
+msgid "Attributes"
+msgstr "Attribute"
+
+#: templates/lvm/diskmgmt.js:439
+msgid "Disk Management"
+msgstr "Disk-Verwaltung"
