@@ -166,7 +166,7 @@ Ext.oa.volumeGroup_Panel = Ext.extend(Ext.grid.GridPanel, {
                       return val + " - " + row.model;
                     }
                   } ],
-                  directFn: lvm__VolumeGroup.get_devices
+                  directFn: lvm__BlockDevices.get_devices
                 }),
                 typeAhead:     true,
                 triggerAction: 'all',
@@ -180,7 +180,7 @@ Ext.oa.volumeGroup_Panel = Ext.extend(Ext.grid.GridPanel, {
                   select: function(self, record, index){
                     var disk = self.getValue();
                     self.ownerCt.usagelabel.setText( gettext('Querying data...') );
-                    lvm__VolumeGroup.is_device_in_use( disk, function( provider, response ){
+                    lvm__BlockDevices.is_device_in_use( disk, function( provider, response ){
                       if( response.result === false ){
                         self.ownerCt.usagelabel.setText(
                           interpolate(gettext('Disk %s is not currently used.'), [disk])

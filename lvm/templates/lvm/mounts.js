@@ -33,7 +33,7 @@ Ext.oa.Lvm__Mounts_Panel = Ext.extend(Ext.grid.GridPanel, {
       store: {
         xtype: "directstore",
         fields: fields,
-        directFn: lvm__VolumeGroup.get_mounts,
+        directFn: lvm__BlockDevices.get_mounts,
         reader: new Ext.data.ArrayReader({
           fields: fields
         })
