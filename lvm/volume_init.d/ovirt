@@ -1,0 +1,44 @@
+#!/bin/bash
+
+# Copyright (C) 2013, it-novum GmbH <community@open-attic.org>
+#
+# openATTIC is free software; you can redistribute it and/or modify it
+# under the terms of the GNU General Public License as published by
+# the Free Software Foundation; version 2.
+#
+# This package is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU General Public License for more details.
+
+set -e
+set -u
+
+if [ "$#" = "0" ]; then
+	echo "Usage: " >&2
+	echo "    $0 metadata" >&2
+	echo "    $0 initialize <device> <mountpoint>" >&2
+	exit 1
+fi
+
+COMMAND="$1"
+
+case "$COMMAND" in
+	metadata)
+		echo "DESCRIPTION=Initializes a Volume to be used with oVirt."
+		echo "REQUIRES_FS=true"
+		;;
+	
+	initialize)
+		VOLUME="$2"
+		MOUNT="$3"
+		chown -R 36:36 "$MOUNT"
+		;;
+	
+	*)
+		echo "Unknown command $COMMAND." >& 2
+		exit 2
+		;;
+esac
+
+
