@@ -407,7 +407,8 @@ Ext.oa.Lvm__LogicalVolume_Panel = Ext.extend(Ext.oa.ShareGridPanel, {
                         { "script": gridsel.data.script, "lv": sel.data.name}, true),
                       function(){
                         scriptswin.close();
-                      });
+                      }
+                    );
                   });
                 }
               }
