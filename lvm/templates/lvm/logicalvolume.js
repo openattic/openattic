@@ -359,7 +359,7 @@ Ext.oa.Lvm__LogicalVolume_Panel = Ext.extend(Ext.oa.ShareGridPanel, {
     }
   }, {
     text: gettext('Initialize'),
-    icon: MEDIA_URL + "/oxygen/16x16/emblems/emblem-new.png",
+    icon: MEDIA_URL + "/oxygen/16x16/actions/project-development-new-template.png",
     handler: function(){
       var self = this;
       var sm = this.getSelectionModel();
