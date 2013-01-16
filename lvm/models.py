@@ -205,7 +205,7 @@ class LogicalVolume(models.Model):
     @property
     def disk_stats( self ):
         """ Return disk stats from the LV retrieved from the kernel. """
-        return VolumeGroup.get_disk_stats( self.dmdevice[5:] )
+        return blockdevices.get_disk_stats( self.dmdevice[5:] )
 
     @property
     def fs(self):
