@@ -29,6 +29,7 @@ from systemd.helpers import dbus_to_python
 
 import lvm.models
 from ifconfig.models  import Host
+from lvm              import blockdevices
 from lvm.models       import VolumeGroup, LogicalVolume
 from lvm.filesystems  import get_by_name as get_fs_by_name
 
@@ -42,7 +43,7 @@ def create_vgs(app, created_models, verbosity, **kwargs):
 
     vgs = dbus_to_python(lvm.vgs())
     lvs = dbus_to_python(lvm.lvs())
-    mounts = VolumeGroup.get_mounts()
+    mounts = blockdevices.get_mounts()
     zfs = dbus_to_python(lvm.zfs_getspace(""))
 
     for vgname in vgs:
