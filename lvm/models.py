@@ -29,6 +29,7 @@ from ifconfig.models import Host, HostDependentManager, getHostDependentManagerC
 from systemd.helpers import dbus_to_python
 from lvm.filesystems import Zfs, FILESYSTEMS, get_by_name as get_fs_by_name
 from lvm             import signals as lvm_signals
+from lvm             import blockdevices
 from lvm.conf        import settings as lvm_settings
 
 
@@ -81,7 +82,7 @@ class VolumeGroup(models.Model):
 
     def join_device(self, device):
         """ Reformat a device as a Physical Volume and add it to this Volume Group. """
-        if VolumeGroup.is_device_in_use(device):
+        if blockdevices.is_device_in_use(device):
             raise ValueError( "Device '%s' is in use, won't touch it." % device )
         lvm = dbus.SystemBus().get_object(settings.DBUS_IFACE_SYSTEMD, "/lvm")
         return lvm.join_device_to_vg(device, self.name)
