@@ -388,6 +388,17 @@ Description: HTTP module for openATTIC
  This package installs a moduule which allows you to share volumes or
  subdirectories using Apache2.
 
+Package: openattic-module-ipmi
+Architecture: all
+Depends: ${misc:Depends}, ipmitool
+Description: IPMI module for openATTIC
+ openATTIC is a storage management system based upon Open Source tools with
+ a comprehensive user interface that allows you to create, share and backup
+ storage space on demand.
+ .
+ IPMI can be used to query a set of sensors installed in the system. This
+ module displays the current state of these sensors in the openATTIC GUI.
+
 Package: openattic-module-mailaliases
 Architecture: all
 Depends: ${misc:Depends}, openattic-base, mail-transport-agent
