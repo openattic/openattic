@@ -55,7 +55,7 @@ class PeerUrlField(models.CharField):
         return pu
 
     def get_db_prep_value( self, value, connection=None, prepared=False ):
-        if prepared or not isinstance(value, (ParseResult, PeerURL)):
+        if not isinstance(value, (ParseResult, PeerURL)):
             return value
         return value.geturl()
 
