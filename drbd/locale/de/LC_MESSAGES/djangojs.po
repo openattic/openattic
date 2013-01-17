@@ -2,24 +2,24 @@
 # Copyright (C) YEAR THE PACKAGE'S COPYRIGHT HOLDER
 # This file is distributed under the same license as the PACKAGE package.
 # FIRST AUTHOR <EMAIL@ADDRESS>, YEAR.
-# 
+#
 #, fuzzy
 msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2012-07-24 09:36+0200\n"
+"POT-Creation-Date: 2013-01-17 11:58+0100\n"
 "PO-Revision-Date: 2012-07-24 09:38\n"
 "Last-Translator: Michael Ziegler <michael.ziegler@it-novum.com>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
+"Language: \n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"Language: \n"
 "Plural-Forms: nplurals=2; plural=(n != 1)\n"
 "X-Translated-Using: django-rosetta 0.6.6\n"
 
-#: templates/drbd/device.js:19 templates/drbd/device.js.c:267
+#: templates/drbd/device.js:19 templates/drbd/device.js.c:405
 msgid "DRBD"
 msgstr "DRBD"
 
@@ -35,87 +35,95 @@ msgstr "Verbindung bearbeiten"
 msgid "Delete Connection"
 msgstr "Verbindung löschen"
 
-#: templates/drbd/device.js:57
+#: templates/drbd/device.js:36
+msgid "Bad"
+msgstr "Fehlerhaft"
+
+#: templates/drbd/device.js:39
+msgid "OK"
+msgstr ""
+
+#: templates/drbd/device.js:41 templates/drbd/device.js.c:57
+msgid "Unknown"
+msgstr "Unbekannt"
+
+#: templates/drbd/device.js:62
 msgid "Resource Name"
 msgstr "Ressourcen-Name"
 
-#: templates/drbd/device.js:60
-msgid "Volume"
-msgstr "Volume"
-
-#: templates/drbd/device.js:63
+#: templates/drbd/device.js:65
 msgid "Protocol"
 msgstr "Protokoll"
 
-#: templates/drbd/device.js:66
-msgid "Disk state (here)"
-msgstr "Disk-Status "
+#: templates/drbd/device.js:68
+msgid "Disk state (overall)"
+msgstr "Disk-Status (allgemein)"
 
-#: templates/drbd/device.js:69
+#: templates/drbd/device.js:71
 msgid "Connection state"
 msgstr "Verbindungsstatus"
 
-#: templates/drbd/device.js:72
-msgid "Role"
-msgstr "Rolle"
+#: templates/drbd/device.js:74
+msgid "Primary"
+msgstr "Primär"
 
-#: templates/drbd/device.js:82
+#: templates/drbd/device.js:84
 msgid "Connection settings"
 msgstr "Verbindungseinstellungen"
 
-#: templates/drbd/device.js:87
+#: templates/drbd/device.js:89
 msgid "Resource name"
 msgstr "Ressourcen-Name"
 
-#: templates/drbd/device.js:93
+#: templates/drbd/device.js:95
 msgid "A: Asynchronous"
 msgstr "A: Asynchron"
 
-#: templates/drbd/device.js:94
+#: templates/drbd/device.js:96
 msgid "B: Memory Synchronous (Semi-Synchronous)"
 msgstr "B: Speichersynchron (Halbsynchron)"
 
-#: templates/drbd/device.js:95
+#: templates/drbd/device.js:97
 msgid "C: Synchronous"
 msgstr "C: Synchron"
 
-#: templates/drbd/device.js:99
+#: templates/drbd/device.js:101
 msgid "Address"
 msgstr "Adresse"
 
-#: templates/drbd/device.js:109 templates/drbd/device.js.c:126
+#: templates/drbd/device.js:111 templates/drbd/device.js.c:128
 msgid "Select..."
 msgstr "Auswahl..."
 
-#: templates/drbd/device.js:115
+#: templates/drbd/device.js:117
 msgid "Parent connection"
 msgstr "Übergeordnete Verbindung"
 
-#: templates/drbd/device.js:131
+#: templates/drbd/device.js:133
 msgid "Syncer Rate"
 msgstr "Sync-Rate"
 
-#: templates/drbd/device.js:136
+#: templates/drbd/device.js:138
 msgid "Secret"
 msgstr "Passwort"
 
-#: templates/drbd/device.js:140
+#: templates/drbd/device.js:142
 msgid "Timeout"
 msgstr "Zeitlimit"
 
-#: templates/drbd/device.js:145
+#: templates/drbd/device.js:147
 msgid "Timeout when degraded"
 msgstr "Zeitlimit wenn inkonsistent"
 
-#: templates/drbd/device.js:150
+#: templates/drbd/device.js:152
 msgid "Timeout when outdated"
 msgstr "Zeitlimit wenn veraltet"
 
-#: templates/drbd/device.js:169
+#: templates/drbd/device.js:171
 msgid "On I/O Error"
 msgstr "Bei E/A-Fehler"
 
-#: templates/drbd/device.js:174
+#: templates/drbd/device.js:176
 msgid ""
 "Report the I/O error to the file system on the primary, ignore it on the "
 "secondary."
@@ -123,55 +131,55 @@ msgstr ""
 "Melde den E/A-Fehler dem Dateisystem des Primary, ignoriere den Fehler auf "
 "dem Secondary"
 
-#: templates/drbd/device.js:177
+#: templates/drbd/device.js:179
 msgid "Call the local-io-error handler script."
 msgstr "Rufe das local-io-error Handler-Script auf"
 
-#: templates/drbd/device.js:180
+#: templates/drbd/device.js:182
 msgid "Detach and continue in diskless mode."
 msgstr "Trennen und im diskless-Modus fortfahren"
 
-#: templates/drbd/device.js:183
+#: templates/drbd/device.js:185
 msgid "Fencing"
 msgstr "Fencing"
 
-#: templates/drbd/device.js:188
+#: templates/drbd/device.js:190
 msgid "No fencing actions are undertaken."
 msgstr "Es wurden keine Fencing-Aktionen unternommen "
 
-#: templates/drbd/device.js:191
+#: templates/drbd/device.js:193
 msgid "Call the fence-peer handler."
 msgstr "Rufe den Fence-Peer-Handler auf."
 
-#: templates/drbd/device.js:194
+#: templates/drbd/device.js:196
 msgid "Call the fence-peer handler, which outdates or STONITHes the peer."
 msgstr ""
 "Friere E/A ein bis der Fence-Peer-Handler die Gegenstelle entweder auf "
 "veraltet gesetzt, oder per STONITH offline genommen hat."
 
-#: templates/drbd/device.js:202
+#: templates/drbd/device.js:204
 msgid "No Primaries"
 msgstr "Keine Primaries"
 
-#: templates/drbd/device.js:207 templates/drbd/device.js.c:227
-#: templates/drbd/device.js:247
+#: templates/drbd/device.js:209 templates/drbd/device.js.c:229
+#: templates/drbd/device.js:249
 msgid "Simply disconnect without resynchronization."
 msgstr "Verbindung trennen ohne Resynchronisation"
 
-#: templates/drbd/device.js:210
+#: templates/drbd/device.js:212
 msgid ""
 "Discard the younger Primary and sync from the host who was primary before."
 msgstr ""
 "Verwerfe den jüngeren Primary und synchronisiere vom vorherigen Primary"
 
-#: templates/drbd/device.js:213
+#: templates/drbd/device.js:215
 msgid ""
 "Discard the older Primary and sync from the host who last became primary."
 msgstr ""
-"Verwerfe den alten Primary und synchronisieren von dem Host, der als letztes"
-" Primary war"
+"Verwerfe den alten Primary und synchronisieren von dem Host, der als letztes "
+"Primary war"
 
-#: templates/drbd/device.js:216
+#: templates/drbd/device.js:218
 msgid ""
 "Discard the node who has not written any changes. If both have changes, "
 "disconnect."
@@ -179,26 +187,26 @@ msgstr ""
 "Lösche den Node, der keine Änderungen geschrieben hat. Wenn beide Nodes "
 "Veränderungen aufzeigen, trenne die Verbindung."
 
-#: templates/drbd/device.js:219
+#: templates/drbd/device.js:221
 msgid ""
 "Discard the node with the least changes and sync from the one with most."
 msgstr ""
 "Verwerfe den Node mit den wenigsten Änderungen und synchronisiere von dem, "
 "der die meisten Änderungen hat."
 
-#: templates/drbd/device.js:222
+#: templates/drbd/device.js:224
 msgid "One Primary"
 msgstr "Ein Primary"
 
-#: templates/drbd/device.js:230
+#: templates/drbd/device.js:232
 msgid ""
 "Discard secondary if it would have also been discarded without any "
 "primaries, else disconnect."
 msgstr ""
-"Verwerfe die Daten des Secondary wenn dies auch passiert wäre wenn kein Node"
-" Primary wäre, ansonsten trenne die Verbindung."
+"Verwerfe die Daten des Secondary wenn dies auch passiert wäre wenn kein Node "
+"Primary wäre, ansonsten trenne die Verbindung."
 
-#: templates/drbd/device.js:233 templates/drbd/device.js.c:250
+#: templates/drbd/device.js:235 templates/drbd/device.js.c:252
 msgid ""
 "Do what we would do if there were no primaries, even if we risk corrupting "
 "data."
@@ -206,11 +214,11 @@ msgstr ""
 "Führe dieselbe Aktion aus wie wenn kein Node Primary wäre, auch wenn wir "
 "dabei riskieren, sämtliche Daten zu zerstören."
 
-#: templates/drbd/device.js:236
+#: templates/drbd/device.js:238
 msgid "Discard the secondarys data."
 msgstr "Verwerfe den Secondary."
 
-#: templates/drbd/device.js:239 templates/drbd/device.js.c:253
+#: templates/drbd/device.js:241 templates/drbd/device.js.c:255
 msgid ""
 "If the current secondary has the right data, call the pri-lost-after-sb "
 "handler on the primary."
@@ -218,24 +226,32 @@ msgstr ""
 "Wenn der aktuelle Secondary die richtigen Daten hat, rufe den pri-lost-sb-"
 "Handler auf dem Primary auf."
 
-#: templates/drbd/device.js:242
+#: templates/drbd/device.js:244
 msgid "Two Primaries"
 msgstr "Zwei Primaries"
 
-#~ msgid "Add Device"
-#~ msgstr "Füge DRBD-Laufwerk hinzu"
+#: templates/drbd/device.js:330
+msgid "Promote"
+msgstr "Primär setzen"
 
-#~ msgid "Edit Device"
-#~ msgstr "Bearbeite DRBD-Laufwerk"
+#: templates/drbd/device.js:331
+#, c-format
+msgid "%s is primary already, cannot promote."
+msgstr "%s ist bereits primär."
 
-#~ msgid "Delete Device"
-#~ msgstr "Lösche DRBD-Laufwerk"
+#: templates/drbd/device.js:348
+msgid "Demote"
+msgstr "Sekundär setzen"
 
-#~ msgid "Peer Host"
-#~ msgstr "Gegenstelle"
+#: templates/drbd/device.js:349
+#, c-format
+msgid "%s is not primary, cannot demote."
+msgstr "%s ist nicht primär."
 
-#~ msgid "Address (here)"
-#~ msgstr "eigene Adresse"
+#: templates/drbd/device.js:371
+msgid "Volume"
+msgstr "Volume"
 
-#~ msgid "Address (Peer)"
-#~ msgstr "Adresse der Gegenstelle"
+#: templates/drbd/device.js:377
+msgid "Connection"
+msgstr "Verbindung"
