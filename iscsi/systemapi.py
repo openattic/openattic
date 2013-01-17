@@ -16,6 +16,7 @@
 
 from systemd import invoke, logged, LockingPlugin, method
 
+from lvm.systemapi import lvm_lvs
 from iscsi.models import Target
 from iscsi.conf   import settings as iscsi_settings
 
@@ -31,6 +32,7 @@ class SystemD(LockingPlugin):
             allw = open( iscsi_settings.INITR_ALLOW,   "w" )
             deny = open( iscsi_settings.INITR_DENY,    "w" )
             tgt  = open( iscsi_settings.TARGETS_ALLOW, "w" )
+            lvs = lvm_lvs()
 
             try:
                 for target in Target.objects.filter(lun__isnull=False):
@@ -38,7 +40,8 @@ class SystemD(LockingPlugin):
                     ietd.write( "\tAlias %s\n" % target.name )
 
                     for lun in target.lun_set.all():
-                        ietd.write( "\tLun %d Path=%s,Type=%s\n" % (lun.number, lun.volume.path, lun.ltype) )
+                        sn = lvs[lun.volume.name]["LVM2_LV_UUID"][:16]
+                        ietd.write( "\tLun %d Path=%s,Type=%s,ScsiId=%s,ScsiSN=%s\n" % (lun.number, lun.volume.path, lun.ltype, sn, sn) )
 
                     if target.init_allow.all().count():
                         allw.write( "%s %s\n" % ( target.iscsiname,
@@ -157,10 +160,10 @@ class SystemD(LockingPlugin):
     def session_show(self, tid, sid):
         return invoke(["/usr/sbin/ietadm", "--op", "show", "--tid", str(tid), "--sid", str(sid)])
 
-    @method(in_signature="iissi", out_signature="i")
-    def lun_new(self, tid, lun, path, ltype, jid):
+    @method(in_signature="iisssi", out_signature="i")
+    def lun_new(self, tid, lun, path, ltype, serial, jid):
         cmd = ["/usr/sbin/ietadm", "--op", "new", "--tid", str(tid), "--lun", str(lun),
-               "--params", "Path=%s,Type=%s" % (path, ltype)]
+               "--params", "Path=%s,Type=%s,ScsiId=%s,ScsiSN=%s" % (path, ltype, serial, serial)]
         if jid == -1:
             return invoke(cmd)
         else:

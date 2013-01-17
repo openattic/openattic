@@ -132,7 +132,8 @@ class Lun(models.Model):
             raise ValidationError('This share type can not be used on volumes with a file system.')
 
     def install(self, jid=-1):
-        self.target._iscsi.lun_new( self.target.tid, self.number, self.volume.path, self.ltype, jid )
+        sn = self.volume.lvm_info["LVM2_LV_UUID"][:16]
+        self.target._iscsi.lun_new( self.target.tid, self.number, self.volume.path, self.ltype, sn, jid )
 
     def uninstall(self, jid=-1):
         self.target._iscsi.lun_delete(self.target.tid, self.number, jid)
