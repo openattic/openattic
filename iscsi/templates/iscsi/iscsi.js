@@ -640,8 +640,10 @@ Ext.oa.Iscsi__Panel = Ext.extend(Ext.Panel, {
                           [sel.data.name] ),
                         function(btn, text){
                           if( btn === 'yes' ){
-                            iscsi__Initiator.remove( sel.data.id, function(provider, response){
+			    iscsi__Initiator.remove( sel.data.id, function(provider, response){
                               init_all.reload();
+			      addwin.items.items[1].namefield.setValue("");
+			      addwin.items.items[1].addressfield.setValue("");
                             } );
                           }
                         }
