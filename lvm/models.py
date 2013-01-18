@@ -150,6 +150,7 @@ class LogicalVolume(models.Model):
     owner       = models.ForeignKey(User, blank=True)
     fswarning   = models.IntegerField(_("Warning Level (%)"),  default=75 )
     fscritical  = models.IntegerField(_("Critical Level (%)"), default=85 )
+    uuid        = models.CharField(max_length=38, blank=True, editable=False)
 
     objects = getHostDependentManagerClass("vg__host")()
     all_objects = models.Manager()
@@ -427,6 +428,7 @@ class LogicalVolume(models.Model):
 
         if install:
             self.install()
+            self.uuid = self.lvm_info["LVM2_LV_UUID"]
 
             if self.filesystem:
                 mc = self.modchain
@@ -437,8 +439,7 @@ class LogicalVolume(models.Model):
                     modified = self.setupfs()
                 self.lvm.write_fstab()
 
-                if modified:
-                    ret = models.Model.save(self, *args, **kwargs)
+            ret = models.Model.save(self, *args, **kwargs)
 
         else:
             if old_self.megs != self.megs:
