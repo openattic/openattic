@@ -82,7 +82,7 @@ def create_vgs(app, created_models, verbosity, **kwargs):
                 if not currowner or ( ownername and ownername != currowner.username ):
                     currowner = User.objects.get(username=ownername)
 
-                lv = LogicalVolume(name=lvname, megs=float(lvs[lvname]["LVM2_LV_SIZE"]), vg=vg, owner=currowner)
+                lv = LogicalVolume(name=lvname, megs=float(lvs[lvname]["LVM2_LV_SIZE"]), vg=vg, owner=currowner, uuid=lvs[lvname]["LVM2_LV_UUID"])
 
                 for mnt in mounts:
                     if mnt[0] in ( "/dev/%s/%s" % ( vg.name, lvname ), "/dev/mapper/%s-%s" % ( vg.name, lvname ) ):
@@ -104,6 +104,9 @@ def create_vgs(app, created_models, verbosity, **kwargs):
                 print "Can't add Logical Volume", lvname, "in non-interactive mode"
         else:
             print "Logical Volume", lvname, "already exists in the database"
+            if not lv.uuid:
+                lv.uuid = lvs[lvname]["LVM2_LV_UUID"]
+                lv.save()
 
 
 signals.post_syncdb.connect(create_vgs, sender=lvm.models)
