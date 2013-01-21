@@ -255,7 +255,7 @@ Ext.oa.Iscsi__Panel = Ext.extend(Ext.Panel, {
               tgt_allow.loadData(record.json.tgt_allow);
             }
           },
-          buttons:[{  
+          buttons:[{
             text: "",
             icon: MEDIA_URL + "/icons2/16x16/actions/reload.png",
             tooltip: gettext('Reload'),
@@ -289,7 +289,7 @@ Ext.oa.Iscsi__Panel = Ext.extend(Ext.Panel, {
                     ref: "namefield",
                     listeners: {
                       change: function( self, newValue, oldValue ){
-			var d = new Date();
+                        var d = new Date();
                         var m = d.getMonth() + 1;
                         self.ownerCt.iqn_ip_field.setValue(
                           String.format("iqn.{0}-{1}.{2}:{3}",
@@ -310,14 +310,12 @@ Ext.oa.Iscsi__Panel = Ext.extend(Ext.Panel, {
                       if( !self.ownerCt.ownerCt.getForm().isValid() ){
                         return;
                       }
-		      
-		      var re = new RegExp("[^A-Za-z0-9\-]");
+                      var re = new RegExp("[^A-Za-z0-9\-]");
                       if (re.test(self.ownerCt.ownerCt.namefield.getValue()))
                       {
-        	           Ext.Msg.alert("Warning","Illegal character in name");
-                           return;
+                        Ext.Msg.alert("Warning","Illegal character in name");
+                        return;
                       }
-
                       iscsi__Target.create({
                         'name': self.ownerCt.ownerCt.namefield.getValue(),
                         'iscsiname': self.ownerCt.ownerCt.iqn_ip_field.getValue()
@@ -378,7 +376,7 @@ Ext.oa.Iscsi__Panel = Ext.extend(Ext.Panel, {
                     if (sel.selections.items.length === 0){
                       Ext.Msg.alert("Warning","Please select a Target first");
                       return;
-                    }     
+                    }
                     var records =  ddSource.dragData.selections,
                         i;
                     if( self.store.findExact("id",records[0].data.id) === -1 )
@@ -525,7 +523,7 @@ Ext.oa.Iscsi__Panel = Ext.extend(Ext.Panel, {
                     ref: 'namefield',
                     allowBlank: false,
                     disabled: true,
-		    name: 'name'
+                    name: 'name'
                   },{
                     fieldLabel: 'IP/IQN',
                     autoScroll: true,
@@ -536,20 +534,20 @@ Ext.oa.Iscsi__Panel = Ext.extend(Ext.Panel, {
                     name: 'address'
                   }],
                   buttons: [{
-		    text: gettext('Edit'),
-        	    icon: MEDIA_URL + "/icons2/16x16/actions/edit-redo.png",
-		    handler: function(self){
-			var sm = addwin.initiator_all.getSelectionModel();
-                        if (sm.selections.items.length === 0){
-                          Ext.Msg.alert ("Warning","Please select an Initiator you want to edit");
-                          return;
-                        }
-			self.ownerCt.ownerCt.namefield.enable();
-			self.ownerCt.ownerCt.addressfield.enable();
-		    } 
-		  },{
+                    text: gettext('Edit'),
+                    icon: MEDIA_URL + "/icons2/16x16/actions/edit-redo.png",
+                    handler: function(self){
+                      var sm = addwin.initiator_all.getSelectionModel();
+                      if (sm.selections.items.length === 0){
+                        Ext.Msg.alert ("Warning","Please select an Initiator you want to edit");
+                        return;
+                      }
+                      self.ownerCt.ownerCt.namefield.enable();
+                      self.ownerCt.ownerCt.addressfield.enable();
+                    }
+                  },{
                     text: gettext('Save'),
-		    icon: MEDIA_URL + "/oxygen/16x16/actions/dialog-ok-apply.png",
+                    icon: MEDIA_URL + "/oxygen/16x16/actions/dialog-ok-apply.png",
                     handler: function(self){
                       var sm = addwin.initiator_all.getSelectionModel();
                       if (sm.selections.items.length === 0){
@@ -602,20 +600,20 @@ Ext.oa.Iscsi__Panel = Ext.extend(Ext.Panel, {
                           text: gettext('Create'),
                           icon: MEDIA_URL + "/oxygen/16x16/actions/dialog-ok-apply.png",
                           handler: function(self){
-                              if( !self.ownerCt.ownerCt.getForm().isValid() ){
-                                return;
+                            if( !self.ownerCt.ownerCt.getForm().isValid() ){
+                              return;
+                            }
+                            iscsi__Initiator.create({
+                              'name':    self.ownerCt.ownerCt.namefield.getValue(),
+                              'address': self.ownerCt.ownerCt.addressfield.getValue()
+                            }, function(provider, response){
+                              if( response.result ){
+                                init_all.reload();
+                                addwin.hide();
                               }
-                              iscsi__Initiator.create({
-                                'name':    self.ownerCt.ownerCt.namefield.getValue(),
-                                'address': self.ownerCt.ownerCt.addressfield.getValue()
-                              }, function(provider, response){
-                                if( response.result ){
-                                  init_all.reload();
-                                  addwin.hide();
-                                }
-                              });
+                            });
                           }
-                       }, {
+                        }, {
                           text: gettext('Cancel'),
                           icon: MEDIA_URL + "/icons2/16x16/actions/gtk-cancel.png",
                           handler: function(self){
@@ -640,10 +638,10 @@ Ext.oa.Iscsi__Panel = Ext.extend(Ext.Panel, {
                           [sel.data.name] ),
                         function(btn, text){
                           if( btn === 'yes' ){
-			    iscsi__Initiator.remove( sel.data.id, function(provider, response){
+                            iscsi__Initiator.remove( sel.data.id, function(provider, response){
                               init_all.reload();
-			      addwin.items.items[1].namefield.setValue("");
-			      addwin.items.items[1].addressfield.setValue("");
+                              addwin.items.items[1].namefield.setValue("");
+                              addwin.items.items[1].addressfield.setValue("");
                             } );
                           }
                         }
@@ -661,9 +659,9 @@ Ext.oa.Iscsi__Panel = Ext.extend(Ext.Panel, {
               addwin.show();
             }
         },{
-            text: gettext('Remove Initiator Binding'),
-            icon: MEDIA_URL + "/icons2/16x16/actions/remove.png",
-            handler: deleteInitiator
+          text: gettext('Remove Initiator Binding'),
+          icon: MEDIA_URL + "/icons2/16x16/actions/remove.png",
+          handler: deleteInitiator
         }],
         keys: [{ key: [Ext.EventObject.DELETE], handler: deleteInitiator}]
         //END le initiator
@@ -734,8 +732,8 @@ Ext.oa.Iscsi__Panel = Ext.extend(Ext.Panel, {
                     filesystem__isnull: true,
                     listeners: {
                       select: function(self, record){
-                          self.ownerCt.aliasfield.setValue( record.data.name );
-                          self.ownerCt.aliasfield.enable();
+                        self.ownerCt.aliasfield.setValue( record.data.name );
+                        self.ownerCt.aliasfield.enable();
                       }
                      }
                   }, {
