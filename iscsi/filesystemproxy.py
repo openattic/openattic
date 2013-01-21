@@ -52,6 +52,9 @@ class FileSystemProxy(FileSystem):
         btfree = sum([ int(part["FreeSpace"]) for part in self.disk["__partitions__"] ])
         btused = btsize - btfree
         data['fs'] = {
+            "mountpoint": self.disk["__partitions__"][0]["Name"],
+            "host": self.disk["SystemName"],
+            "mounted": True,
             "stat": {
                 "used":  btused / 1024**2,
                 "free":  btfree / 1024**2,
@@ -62,5 +65,5 @@ class FileSystemProxy(FileSystem):
                 }
             }
         data["filesystem"] = self.disk["__partitions__"][0]["FileSystem"]
-        data["name"] = "%s (\\\\%s\%s)" % (data["name"], self.disk["SystemName"], self.disk["__partitions__"][0]["Name"])
+        data["formatted"]  = True
         return data
