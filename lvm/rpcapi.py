@@ -91,7 +91,8 @@ class LvHandler(ModelHandler):
         if obj.filesystem:
             data['fs'] = {
                 'mountpoint':  obj.mountpoint,
-                'mounted':     obj.mounted
+                'mounted':     obj.mounted,
+                'host':        obj.vg.host.name
                 }
             if obj.mounted:
                 data['fs']['stat'] = obj.stat
