@@ -216,6 +216,9 @@ class LogicalVolume(models.Model):
     def fs(self):
         """ An instance of the filesystem handler class for this LV (if any). """
         if not self.filesystem:
+            if self.lun_set.count() > 0:
+                from iscsi.filesystemproxy import FileSystemProxy
+                return FileSystemProxy(self)
             return None
         else:
             if self._fs is None:

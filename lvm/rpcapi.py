@@ -14,6 +14,8 @@
  *  GNU General Public License for more details.
 """
 
+from __future__ import division
+
 from rpcd.handlers import BaseHandler, ModelHandler
 from rpcd.handlers import ProxyModelHandler
 from ifconfig.rpcapi import HostHandler
@@ -94,7 +96,11 @@ class LvHandler(ModelHandler):
             if obj.mounted:
                 data['fs']['stat'] = obj.stat
         else:
-            data['fs'] = None
+            fs = obj.fs
+            if fs is None:
+                data['fs'] = None
+            else:
+                fs.update(data)
         return data
 
     def avail_fs(self):
