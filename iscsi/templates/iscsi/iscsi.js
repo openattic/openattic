@@ -600,23 +600,23 @@ Ext.oa.Iscsi__Panel = Ext.extend(Ext.Panel, {
                       if( !self.ownerCt.ownerCt.getForm().isValid() ){
                         return;
                       }
-                        var sel = sm.selections.items[0];
-                        iscsi__Initiator.set(sel.data.id, {
-                          'name':    self.ownerCt.ownerCt.namefield.getValue(),
-                          'address': self.ownerCt.ownerCt.addressfield.getValue(),
-                          'peer':    {
-                            'app': 'peering',
-                            'obj': 'PeerHost',
-                            'id': self.ownerCt.ownerCt.peerfield.getValue()
-                          }
-                        }, function(provider, response){
-                          if( response.result ){
-                            init_all.reload();
-                            self.ownerCt.ownerCt.namefield.disable();
-                            self.ownerCt.ownerCt.addressfield.disable();
-                            self.ownerCt.ownerCt.peerfield.disable();
-                          }
-                        });
+                      var sel = sm.selections.items[0];
+                      iscsi__Initiator.set(sel.data.id, {
+                        'name':    self.ownerCt.ownerCt.namefield.getValue(),
+                        'address': self.ownerCt.ownerCt.addressfield.getValue(),
+                        'peer':    {
+                          'app': 'peering',
+                          'obj': 'PeerHost',
+                          'id': self.ownerCt.ownerCt.peerfield.getValue()
+                        }
+                      }, function(provider, response){
+                        if( response.result ){
+                          init_all.reload();
+                          self.ownerCt.ownerCt.namefield.disable();
+                          self.ownerCt.ownerCt.addressfield.disable();
+                          self.ownerCt.ownerCt.peerfield.disable();
+                        }
+                      });
                     }
                   }]
                 }],
