@@ -181,7 +181,7 @@ Ext.oa.Lvm__LogicalVolume_Panel = Ext.extend(Ext.oa.ShareGridPanel, {
     header: gettext('Mounted at host'),
     dataIndex: "fshost"
   },{
-    header: gettext('Mount point'),
+    header: gettext('Mount Point'),
     dataIndex: "fsmountpoint"
   },{
     header: gettext('Group'),
