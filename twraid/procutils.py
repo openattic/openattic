@@ -276,8 +276,8 @@ def update_database(ctls):
             dbunit.index      = unit_id
             dbunit.unittype   = unit.unittype
             dbunit.status     = unit.status
-            dbunit.rebuild    = unit.rcmpl if unit.rcmpl != '-' else None
-            dbunit.verify     = unit.vim if unit.vim != '-' else None
+            dbunit.rebuild    = unit.rcmpl[:-1] if unit.rcmpl != '-' else None
+            dbunit.verify     = unit.vim[:-1] if unit.vim != '-' else None
             dbunit.chunksize  = int(unit.chunksize[:-1]) * 1024 if unit.chunksize != '-' else None
             dbunit.size       = int(float(unit.totalsize) * 1024)
             dbunit.autoverify = (unit.avrfy.lower() == 'on')
