@@ -22,6 +22,7 @@ from django.conf import settings
 from django.db.models import Q
 from django.utils.translation import ugettext_lazy as _
 
+from peering.models import PeerHost
 from lvm.models  import LogicalVolume
 import lvm.signals as lvm_signals
 from ifconfig.models import IPAddress, getHostDependentManagerClass
@@ -30,6 +31,7 @@ from systemd.helpers import dbus_to_python
 class Initiator(models.Model):
     name        = models.CharField(max_length=50,  unique=True)
     address     = models.CharField(max_length=250, unique=True)
+    peer        = models.ForeignKey(PeerHost, null=True, blank=True)
 
     def __unicode__(self):
         return self.name
