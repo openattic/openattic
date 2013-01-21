@@ -50,7 +50,21 @@ var lunStore = new Ext.data.DirectStore({
 });
 var init_all = new Ext.data.DirectStore({
   id: "init_all",
-  fields: ["id", "name", "address", "__unicode__"],
+  fields: ["id", "name", "address", "__unicode__", {
+    name: 'peername',
+    mapping: 'peer',
+    convert: toUnicode
+  }, {
+    name: 'peer',
+    mapping: 'peer',
+    convert: function(val){
+      "use strict";
+      if(val == null){
+        return null;
+      }
+      return val.id;
+    }
+  }],
   directFn: iscsi__Initiator.all
 });
 var tgt_all = new Ext.data.DirectStore({
@@ -491,6 +505,9 @@ Ext.oa.Iscsi__Panel = Ext.extend(Ext.Panel, {
                       },{
                         header: "IQN",
                         dataIndex: "address"
+                      },{
+                        header: gettext("Peer"),
+                        dataIndex: "peername"
                       }]
                     });
                     return cm;
@@ -501,6 +518,7 @@ Ext.oa.Iscsi__Panel = Ext.extend(Ext.Panel, {
                       self.ownerCt.items.items[1].getForm().loadRecord(record);
                       self.ownerCt.items.items[1].namefield.disable();
                       self.ownerCt.items.items[1].addressfield.disable();
+                      self.ownerCt.items.items[1].peerfield.disable();
                     }
                   }
                 },{
@@ -532,6 +550,30 @@ Ext.oa.Iscsi__Panel = Ext.extend(Ext.Panel, {
                     allowBlank: false,
                     disabled: true,
                     name: 'address'
+                  },{
+                    xtype:      'combo',
+                    allowBlank: true,
+                    anchor: '-20px',
+                    fieldLabel: gettext('Peer'),
+                    hiddenName: 'peer',
+                    store: {
+                      xtype: "directstore",
+                      fields: ["id", "name"],
+                      directFn: peering__PeerHost.all
+                    },
+                    typeAhead:     true,
+                    disabled:      true,
+                    triggerAction: 'all',
+                    emptyText:     gettext('Select...'),
+                    selectOnFocus: true,
+                    displayField:  'name',
+                    valueField:    'id',
+                    ref:           'peerfield',
+                    listeners: {
+                      afterrender: function(self){
+                        self.store.load();
+                      }
+                    }
                   }],
                   buttons: [{
                     text: gettext('Edit'),
@@ -544,6 +586,7 @@ Ext.oa.Iscsi__Panel = Ext.extend(Ext.Panel, {
                       }
                       self.ownerCt.ownerCt.namefield.enable();
                       self.ownerCt.ownerCt.addressfield.enable();
+                      self.ownerCt.ownerCt.peerfield.enable();
                     }
                   },{
                     text: gettext('Save'),
@@ -560,12 +603,18 @@ Ext.oa.Iscsi__Panel = Ext.extend(Ext.Panel, {
                         var sel = sm.selections.items[0];
                         iscsi__Initiator.set(sel.data.id, {
                           'name':    self.ownerCt.ownerCt.namefield.getValue(),
-                          'address': self.ownerCt.ownerCt.addressfield.getValue()
+                          'address': self.ownerCt.ownerCt.addressfield.getValue(),
+                          'peer':    {
+                            'app': 'peering',
+                            'obj': 'PeerHost',
+                            'id': self.ownerCt.ownerCt.peerfield.getValue()
+                          }
                         }, function(provider, response){
                           if( response.result ){
                             init_all.reload();
                             self.ownerCt.ownerCt.namefield.disable();
                             self.ownerCt.ownerCt.addressfield.disable();
+                            self.ownerCt.ownerCt.peerfield.disable();
                           }
                         });
                     }
@@ -578,7 +627,7 @@ Ext.oa.Iscsi__Panel = Ext.extend(Ext.Panel, {
                     var addwin = new Ext.Window({
                       title: gettext('Add Initiator'),
                       layout: "fit",
-                      height: 140,
+                      height: 160,
                       width: 500,
                       items: [{
                         xtype: "form",
@@ -595,6 +644,24 @@ Ext.oa.Iscsi__Panel = Ext.extend(Ext.Panel, {
                         },{
                           fieldLabel: gettext('IP/IQN'),
                           ref: "addressfield"
+                        },{
+                          xtype:      'combo',
+                          allowBlank: true,
+                          anchor: '-20px',
+                          fieldLabel: gettext('Peer'),
+                          hiddenName: 'peer',
+                          store: {
+                            xtype: "directstore",
+                            fields: ["id", "name"],
+                            directFn: peering__PeerHost.all
+                          },
+                          typeAhead:     true,
+                          triggerAction: 'all',
+                          emptyText:     gettext('Select...'),
+                          selectOnFocus: true,
+                          displayField:  'name',
+                          valueField:    'id',
+                          ref:           'peerfield'
                         }],
                         buttons: [{
                           text: gettext('Create'),
@@ -605,7 +672,12 @@ Ext.oa.Iscsi__Panel = Ext.extend(Ext.Panel, {
                             }
                             iscsi__Initiator.create({
                               'name':    self.ownerCt.ownerCt.namefield.getValue(),
-                              'address': self.ownerCt.ownerCt.addressfield.getValue()
+                              'address': self.ownerCt.ownerCt.addressfield.getValue(),
+                              'peer':    {
+                                'app': 'peering',
+                                'obj': 'PeerHost',
+                                'id': self.ownerCt.ownerCt.peerfield.getValue()
+                              }
                             }, function(provider, response){
                               if( response.result ){
                                 init_all.reload();
