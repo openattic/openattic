@@ -30,15 +30,15 @@ class TwRegex:
 
     ctlparam    = (r'^/(?P<ctl>c\d+)\s(?P<key>[^=]+)=(?P<value>.*)$')
 
-    ctlunit     = (r'^(?P<unit>u\d+)\s+(?P<unittype>[\w\-]+)\s+(?P<status>[\w\-]+)\s+(?P<rcmpl>[\w\-]+)\s+'
-                     '(?P<vim>[\w\-]+)\s+(?P<chunksize>[\w\-]+)\s+(?P<totalsize>[\w\.\-]+)\s+(?P<cache>[\w\-]+)\s+(?P<avrfy>[\w\-]+)$')
+    ctlunit     = (r'^(?P<unit>u\d+)\s+(?P<unittype>[\w\-]+)\s+(?P<status>[\w\-]+)\s+(?P<rcmpl>\d+%|-)\s+'
+                     '(?P<vim>\d+%|-)\s+(?P<chunksize>[\w\-]+)\s+(?P<totalsize>[\w\.\-]+)\s+(?P<cache>[\w\-]+)\s+(?P<avrfy>[\w\-]+)$')
 
     ctlport     = (r'^(?P<port>p\d+)\s+(?P<status>[\w\-]+)\s+(?P<unit>(u\d+|-)+)\s+(?P<size>[\w\.\-]+ \w+B)\s+(?P<type>[\w\-]+)\s+'
                      '(?P<phy>[\w\-]+)\s+(?P<slot>/c\d+/e\d+/slt\d+)\s+(?P<model>[\w\s\-]+)$')
 
     unitparam   = (r'^/(?P<unit>c\d+/u\d+)\s(?P<key>[^=]+)=(?P<value>.*)$')
 
-    unitdisk    = (r'^(?P<unit>u\d+-\d+)\s+DISK\s+(?P<status>[\w\-]+)\s+(?P<rcmpl>[\w\-]+)\s+(?P<vim>[\w\-]+)\s+'
+    unitdisk    = (r'^(?P<unit>u\d+-\d+)\s+DISK\s+(?P<status>[\w\-]+)\s+(?P<rcmpl>\d+%|-)\s+(?P<vim>\d+%|-)\s+'
                      '(?P<port>p\d+|-)\s+-\s+\s+(?P<size>[\w\.\-]+)$')
 
     diskparam   = (r'^/(?P<port>c\d+/p\d+)\s(?P<key>[^=]+)=(?P<value>.*)$')
