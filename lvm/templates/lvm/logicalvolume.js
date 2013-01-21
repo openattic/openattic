@@ -74,6 +74,26 @@ Ext.oa.Lvm__LogicalVolume_Panel = Ext.extend(Ext.oa.ShareGridPanel, {
         }
         return (val.stat.used / val.stat.size * 100 ).toFixed(2);
       }
+    }, {
+      name: 'fshost',
+      mapping: 'fs',
+      convert: function( val, row ){
+        "use strict";
+        if( val === null ){
+          return '';
+        }
+        return val.host;
+      }
+    }, {
+      name: 'fsmountpoint',
+      mapping: 'fs',
+      convert: function( val, row ){
+        "use strict";
+        if( val === null ){
+          return '';
+        }
+        return val.mountpoint;
+      }
     },{
       name: 'vgname',
       mapping: 'vg',
@@ -157,6 +177,12 @@ Ext.oa.Lvm__LogicalVolume_Panel = Ext.extend(Ext.oa.ShareGridPanel, {
   },{
     header: gettext('Owner'),
     dataIndex: "ownername"
+  },{
+    header: gettext('Mounted at host'),
+    dataIndex: "fshost"
+  },{
+    header: gettext('Mount point'),
+    dataIndex: "fsmountpoint"
   },{
     header: gettext('Group'),
     dataIndex: "vgname",
