@@ -20,6 +20,8 @@ import sys
 import socket
 import errno
 
+from xmlrpclib import Fault
+
 from lvm.filesystems import FileSystem
 
 class FileSystemProxy(FileSystem):
@@ -43,6 +45,8 @@ class FileSystemProxy(FileSystem):
                         continue
                     else:
                         raise
+                except Fault, flt:
+                    continue
 
     def update(self, data):
         if self.disk is None:

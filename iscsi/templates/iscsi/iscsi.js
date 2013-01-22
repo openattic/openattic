@@ -601,14 +601,15 @@ Ext.oa.Iscsi__Panel = Ext.extend(Ext.Panel, {
                         return;
                       }
                       var sel = sm.selections.items[0];
+                      var peer = self.ownerCt.ownerCt.peerfield.getValue();
                       iscsi__Initiator.set(sel.data.id, {
                         'name':    self.ownerCt.ownerCt.namefield.getValue(),
                         'address': self.ownerCt.ownerCt.addressfield.getValue(),
-                        'peer':    {
+                        'peer':    (peer ? {
                           'app': 'peering',
                           'obj': 'PeerHost',
-                          'id': self.ownerCt.ownerCt.peerfield.getValue()
-                        }
+                          'id':   peer
+                        } : null)
                       }, function(provider, response){
                         if( response.result ){
                           init_all.reload();
@@ -695,14 +696,15 @@ Ext.oa.Iscsi__Panel = Ext.extend(Ext.Panel, {
                             if( !self.ownerCt.ownerCt.getForm().isValid() ){
                               return;
                             }
+                            var peer = self.ownerCt.ownerCt.peerfield.getValue();
                             iscsi__Initiator.create({
                               'name':    self.ownerCt.ownerCt.namefield.getValue(),
                               'address': self.ownerCt.ownerCt.addressfield.getValue(),
-                              'peer':    {
+                              'peer':    (peer ? {
                                 'app': 'peering',
                                 'obj': 'PeerHost',
-                                'id': self.ownerCt.ownerCt.peerfield.getValue()
-                              }
+                                'id':   peer
+                              } : null)
                             }, function(provider, response){
                               if( response.result ){
                                 init_all.reload();
