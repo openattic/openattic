@@ -627,11 +627,12 @@ Ext.oa.Iscsi__Panel = Ext.extend(Ext.Panel, {
                     var addwin = new Ext.Window({
                       title: gettext('Add Initiator'),
                       layout: "fit",
-                      height: 160,
+                      autoHeight: true,
                       width: 500,
                       items: [{
                         xtype: "form",
                         autoScroll: true,
+                        autoHeight: true,
                         defaults: {
                           xtype: "textfield",
                           allowBlank: false,
@@ -644,6 +645,23 @@ Ext.oa.Iscsi__Panel = Ext.extend(Ext.Panel, {
                         },{
                           fieldLabel: gettext('IP/IQN'),
                           ref: "addressfield"
+			},{
+                          xtype: 'checkbox',
+                          fieldLabel: gettext('Expert'),
+                          allowBlank: false,
+                          name: "expert",
+                          ref: 'expert',
+                          listeners: {
+                            'check': function(){
+                              if(this.getValue()){
+                                addwin.items.items[0].peerfield.show();
+                                addwin.items.items[0].peerfield.getEl().up('.x-form-item').setDisplayed(true);
+                              }else{
+                                addwin.items.items[0].peerfield.hide();
+                                addwin.items.items[0].peerfield.getEl().up('.x-form-item').setDisplayed(false);
+                              }
+                            }
+                          }
                         },{
                           xtype:      'combo',
                           allowBlank: true,
@@ -661,7 +679,14 @@ Ext.oa.Iscsi__Panel = Ext.extend(Ext.Panel, {
                           selectOnFocus: true,
                           displayField:  'name',
                           valueField:    'id',
-                          ref:           'peerfield'
+			  id: 		 'peerfield',
+                          ref:           'peerfield',
+			  listeners: {
+				  'render': function(){
+			 	    this.hide();
+				    this.getEl().up('.x-form-item').setDisplayed(false);
+				  }
+			  }
                         }],
                         buttons: [{
                           text: gettext('Create'),
@@ -689,7 +714,7 @@ Ext.oa.Iscsi__Panel = Ext.extend(Ext.Panel, {
                           text: gettext('Cancel'),
                           icon: MEDIA_URL + "/icons2/16x16/actions/gtk-cancel.png",
                           handler: function(self){
-                            addwin.hide();
+                            addwin.close();
                           }
                         }]
                       }]
