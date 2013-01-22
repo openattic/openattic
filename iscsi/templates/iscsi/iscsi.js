@@ -680,14 +680,14 @@ Ext.oa.Iscsi__Panel = Ext.extend(Ext.Panel, {
                           selectOnFocus: true,
                           displayField:  'name',
                           valueField:    'id',
-			  id: 		 'peerfield',
+                          id:            'peerfield',
                           ref:           'peerfield',
-			  listeners: {
-				  'render': function(){
-			 	    this.hide();
-				    this.getEl().up('.x-form-item').setDisplayed(false);
-				  }
-			  }
+                          listeners: {
+                            'render': function(){
+                              this.hide();
+                              this.getEl().up('.x-form-item').setDisplayed(false);
+                            }
+                          }
                         }],
                         buttons: [{
                           text: gettext('Create'),
