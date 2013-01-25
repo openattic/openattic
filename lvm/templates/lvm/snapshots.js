@@ -53,10 +53,10 @@ Ext.oa.Lvm__Snapshot_Panel = Ext.extend(Ext.oa.Lvm__LogicalVolume_Panel, {
       listeners: {
         select: function(self, record, index){
           "use strict";
-          self.ownerCt.vgfield.setValue( record.data.vg );
+          self.ownerCt.vgfield.setValue( record.data.vg.id );
           self.ownerCt.fswarningfield.setValue( record.data.fswarning );
           self.ownerCt.fscriticalfield.setValue( record.data.fscritical );
-          self.ownerCt.ownerfield.setValue( record.data.owner );
+          self.ownerCt.ownerfield.setValue( record.data.owner.id );
           self.ownerCt.namefield.setValue( record.data.name + "_snapshot_" +
             new Date().format("d-m-Y_H-i-s") );
           self.ownerCt.sizelabel.setText( gettext('Querying data...') );
