@@ -174,12 +174,7 @@ Ext.oa.Lvm__Snapshot_Panel = Ext.extend(Ext.oa.Lvm__LogicalVolume_Panel, {
     }, {
       name: 'origvolname',
       mapping: 'snapshot',
-      convert: function( val, row ){
-        if( val === null ){
-          return null;
-        }
-        return val.name;
-      }
+      convert: toUnicode
     }, 'LVM2_SNAP_PERCENT');
     // Render the Panel
     Ext.oa.Lvm__Snapshot_Panel.superclass.initComponent.apply(this, arguments);
