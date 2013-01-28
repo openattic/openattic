@@ -158,6 +158,9 @@ class LogicalVolume(models.Model):
     class Meta:
         unique_together = ("vg", "name")
 
+    class NotASnapshot(Exception):
+        pass
+
     def __init__( self, *args, **kwargs ):
         models.Model.__init__( self, *args, **kwargs )
         self._sysd = None
@@ -472,6 +475,19 @@ class LogicalVolume(models.Model):
 
         if self.filesystem:
             self.lvm.write_fstab()
+
+    def merge(self):
+        if self.snapshot is None:
+            raise LogicalVolume.NotASnapshot(self.name)
+        orig = self.snapshot
+        orig.unmount()
+        for snapshot in orig.snapshot_set.all():
+            snapshot.unmount()
+        self.lvm.lvmerge(  self.device )
+        models.Model.delete(self)
+        for snapshot in orig.snapshot_set.all():
+            snapshot.mount()
+        orig.mount()
 
 
 class LVChainedModule(models.Model):
