@@ -176,6 +176,42 @@ Ext.oa.Lvm__Snapshot_Panel = Ext.extend(Ext.oa.Lvm__LogicalVolume_Panel, {
       mapping: 'snapshot',
       convert: toUnicode
     }, 'LVM2_SNAP_PERCENT');
+    // Add extra buttons (deep-copied)
+    var oldbuttons = Ext.oa.Lvm__Snapshot_Panel.superclass.buttons;
+    var mybuttons = [];
+    for( i = 0; i < oldbuttons.length; i++ ){
+      mybuttons.push(Ext.apply({}, oldbuttons[i]));
+    }
+    mybuttons.push({
+      text: gettext("Rollback"),
+      handler: function(btn){
+        var self = this;
+        var sm = this.getSelectionModel();
+        if( sm.hasSelection() ){
+          var sel = sm.selections.items[0];
+          Ext.Msg.prompt(
+            self.texts.remove,
+            gettext('What was the name of the volume you wish to rollback again?<br /><b>This will delete the snapshot.</b>'),
+            function(btn, text){
+              if( btn === 'ok' ){
+                if( text == sel.data.name || text == sel.data.origvolname ){
+                  lvm__LogicalVolume.merge(sel.data.id, function(provider, response){
+                    self.store.reload();
+                  });
+                }
+                else{
+                  Ext.Msg.alert(self.texts.remove, gettext("Hm, that doesn't seem right..."));
+                }
+              }
+              else{
+                Ext.Msg.alert(self.texts.remove, gettext("As you wish."));
+              }
+            }
+          );
+        }
+      }
+    });
+    this.buttons = mybuttons;
     // Render the Panel
     Ext.oa.Lvm__Snapshot_Panel.superclass.initComponent.apply(this, arguments);
     // Add a store listener to populate the SNAP_PERCENT column
