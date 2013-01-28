@@ -31,6 +31,9 @@ Ext.oa.VolumeField = Ext.extend(Ext.form.ComboBox, {
       baseParams.kwds = {"filesystem":""};
     }
 
+    Ext.applyIf(baseParams.kwds, this.baseParams.kwds);
+    Ext.applyIf(baseParams, this.baseParams);
+
     Ext.apply(this, Ext.applyIf(this.initialConfig, {
       fieldLabel: gettext('Volume'),
       hiddenName: "volume",
