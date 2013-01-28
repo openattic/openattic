@@ -144,7 +144,7 @@ class LogicalVolume(models.Model):
     name        = models.CharField(max_length=130, validators=[validate_lv_name])
     megs        = models.IntegerField(_("Size in MB"))
     vg          = models.ForeignKey(VolumeGroup, blank=True)
-    snapshot    = models.ForeignKey("self", blank=True, null=True)
+    snapshot    = models.ForeignKey("self", blank=True, null=True, related_name="snapshot_set")
     filesystem  = models.CharField(max_length=20, blank=True, choices=[(__fs.name, __fs.desc) for __fs in FILESYSTEMS] )
     formatted   = models.BooleanField(default=False, editable=False)
     owner       = models.ForeignKey(User, blank=True)
