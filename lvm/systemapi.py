@@ -164,6 +164,11 @@ class SystemD(BasePlugin):
             self.job_add_command(jid, ["/sbin/lvchange", '-ay', device])
 
     @method(in_signature="s", out_signature="i")
+    def lvmerge(self, device):
+        self.lvs_time = 0
+        return invoke(["/sbin/lvconvert", "--merge", device])
+
+    @method(in_signature="s", out_signature="i")
     def lvremove(self, device):
         self.lvs_time = 0
         return invoke(["/sbin/lvremove", '-f', device])
