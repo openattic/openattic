@@ -166,6 +166,10 @@ class LvHandler(ModelHandler):
         lv = LogicalVolume.objects.get(id=id)
         return initscripts.run_initscript(lv, script)
 
+    def merge(self, id):
+        """ Merge the snapshot given by `id` back into the original volume. """
+        LogicalVolume.objects.get(id=id).merge()
+
 
 class LVMetadataHandler(ModelHandler):
     model = LVMetadata
