@@ -19,7 +19,8 @@ Ext.oa.VolumeField = Ext.extend(Ext.form.ComboBox, {
     "use strict";
     var baseParams = {
       "field": "name",
-      "query": ""
+      "query": "",
+      "kwds":  {}
     };
 
     if( this.filesystem__isnull === false ){
