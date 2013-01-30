@@ -174,7 +174,7 @@ class Zfs(FileSystem):
 
     def format(self, jid):
         self._lvm.zfs_format(jid, self.lv.path, self.lv.name,
-            os.path.join(lvm_settings.MOUNT_PREFIX, self.lv.vg.name, self.lv.name))
+            os.path.join(lvm_settings.MOUNT_PREFIX, self.lv.name))
         self.chown(jid)
 
     def mount(self, jid):
