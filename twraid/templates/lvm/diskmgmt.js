@@ -426,6 +426,9 @@ Ext.oa.volumeGroup_Panel = Ext.extend(Ext.grid.GridPanel, {
     "use strict";
     Ext.oa.volumeGroup_Panel.superclass.onRender.apply(this, arguments);
     this.store.load();
+  },
+  refresh: function(){
+    this.store.reload();
   }
 });
 
