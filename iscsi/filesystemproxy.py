@@ -40,7 +40,7 @@ class FileSystemProxy(FileSystem):
                     self.disk = initiator.peer.disk.finddisk(initiator.name, self.lv.uuid)
                 except socket.error, err:
                     if err.errno in (errno.ECONNREFUSED, errno.ECONNABORTED, errno.ECONNRESET,
-                            errno.EHOSTUNREACH, errno.ENETUNREACH, errno.ETIMEDOUT):
+                            errno.EHOSTUNREACH, errno.ENETUNREACH, errno.ETIMEDOUT) or isinstance(err, socket.timeout):
                         print >> sys.stderr, "Connection to %s (peer %s) failed: %s" % (initiator.name, initiator.peer.name, err)
                         continue
                     else:
