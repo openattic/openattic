@@ -326,18 +326,18 @@ class LogicalVolume(models.Model):
 
     def mount(self):
         if self.formatted and not self.mounted:
-            lvm_signals.pre_mount.send(sender=self, mountpoint=self.mountpoint)
+            lvm_signals.pre_mount.send(sender=LogicalVolume, instance=self, mountpoint=self.mountpoint)
             self.fs.mount(-1)
-            lvm_signals.post_mount.send(sender=self, mountpoint=self.mountpoint)
+            lvm_signals.post_mount.send(sender=LogicalVolume, instance=self, mountpoint=self.mountpoint)
 
     def unmount(self):
         if self.mounted:
-            lvm_signals.pre_unmount.send(sender=self, mountpoint=self.mountpoint)
+            lvm_signals.pre_unmount.send(sender=LogicalVolume, instance=self, mountpoint=self.mountpoint)
             self.fs.unmount(-1)
-            lvm_signals.post_unmount.send(sender=self, mountpoint=self.mountpoint)
+            lvm_signals.post_unmount.send(sender=LogicalVolume, instance=self, mountpoint=self.mountpoint)
 
     def install(self):
-        lvm_signals.pre_install.send(sender=self)
+        lvm_signals.pre_install.send(sender=LogicalVolume, instance=self)
         if self.snapshot:
             snap = self.snapshot.device
         else:
@@ -345,14 +345,14 @@ class LogicalVolume(models.Model):
         self.lvm.lvcreate( self.vg.name, self.name, self.megs, snap )
         if not self.snapshot:
             self.lvm.lvchange( self.device, True )
-        lvm_signals.post_install.send(sender=self)
+        lvm_signals.post_install.send(sender=LogicalVolume, instance=self)
 
     def uninstall(self):
-        lvm_signals.pre_uninstall.send(sender=self)
+        lvm_signals.pre_uninstall.send(sender=LogicalVolume, instance=self)
         if not self.snapshot:
             self.lvm.lvchange(self.device, False)
         self.lvm.lvremove(self.device)
-        lvm_signals.post_uninstall.send(sender=self)
+        lvm_signals.post_uninstall.send(sender=LogicalVolume, instance=self)
 
     def resize( self ):
         if self.filesystem and self.mounted and \
@@ -364,7 +364,7 @@ class LogicalVolume(models.Model):
 
         if self.megs < self.lvm_megs:
             # Shrink FS, then Volume
-            lvm_signals.pre_shrink.send(sender=self, jid=self._jid)
+            lvm_signals.pre_shrink.send(sender=LogicalVolume, instance=self, jid=self._jid)
 
             if self.filesystem:
                 self.fs.resize(self._jid, grow=False)
@@ -374,10 +374,10 @@ class LogicalVolume(models.Model):
 
             self.lvm.lvresize(self._jid, self.device, self.megs, False)
 
-            lvm_signals.post_shrink.send(sender=self, jid=self._jid)
+            lvm_signals.post_shrink.send(sender=LogicalVolume, instance=self, jid=self._jid)
         else:
             # Grow Volume, then FS
-            lvm_signals.pre_grow.send(sender=self, jid=self._jid)
+            lvm_signals.pre_grow.send(sender=LogicalVolume, instance=self, jid=self._jid)
 
             self.lvm.lvresize(self._jid, self.device, self.megs, True)
 
@@ -387,7 +387,7 @@ class LogicalVolume(models.Model):
             if self.filesystem:
                 self.fs.resize(self._jid, grow=True)
 
-            lvm_signals.post_grow.send(sender=self, jid=self._jid)
+            lvm_signals.post_grow.send(sender=LogicalVolume, instance=self, jid=self._jid)
 
         if need_mount:
             self.fs.mount(self._jid)
