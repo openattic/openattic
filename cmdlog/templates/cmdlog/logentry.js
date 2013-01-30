@@ -206,6 +206,9 @@ Ext.oa.Cmdlog__LogEntry_Panel = Ext.extend(Ext.Panel, {
     Ext.oa.Cmdlog__LogEntry_Panel.superclass.onRender.apply(this, arguments);
     this.items.items[0].store.reload();
   },
+  refresh: function(){
+    this.items.items[0].store.reload();
+  },
   initSearch: function(){
     Ext.get("cmdlog_search_field").focus();
   }
