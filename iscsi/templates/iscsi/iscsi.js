@@ -1008,6 +1008,11 @@ Ext.oa.Iscsi__Panel = Ext.extend(Ext.Panel, {
     targetStore.reload();
     init_all.load();
     tgt_all.load();
+  },
+  refresh: function(){
+    targetStore.reload();
+    init_all.reload();
+    tgt_all.reload();
   }
 });
 
