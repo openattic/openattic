@@ -709,6 +709,10 @@ Ext.oa.Ifconfig__NetDevice_Panel = Ext.extend(Ext.Panel, {
     (function(){
       self.bondingfields.collapse();
     }).defer(200);
+  },
+
+  refresh: function(){
+    this.devicestree.refresh();
   }
 });
 
