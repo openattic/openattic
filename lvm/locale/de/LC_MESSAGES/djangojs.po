@@ -182,7 +182,7 @@ msgstr "Besitzer"
 
 #: templates/lvm/logicalvolume.js:181
 msgid "Mounted at host"
-msgstr "Verfügbar auf Host"
+msgstr "Eingehängt auf Host"
 
 #: templates/lvm/logicalvolume.js:184 templates/lvm/mounts.js:50
 msgid "Mount Point"
