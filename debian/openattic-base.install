@@ -14,10 +14,9 @@ htdocs/extjs_themes     /usr/share/openattic/htdocs
 htdocs/extjs_languages  /usr/share/openattic/htdocs
 htdocs/portal           /usr/share/openattic/htdocs
 htdocs/icons2           /usr/share/openattic/htdocs
-htdocs/openattic*.png   /usr/share/openattic/htdocs
+htdocs/*.png            /usr/share/openattic/htdocs
 htdocs/canvasxpress     /usr/share/openattic/htdocs
-htdocs/progress_*.gif   /usr/share/openattic/htdocs
-htdocs/windows_icon.png /usr/share/openattic/htdocs
+htdocs/*.gif            /usr/share/openattic/htdocs
 
 templates /usr/share/openattic
 locale    /usr/share/openattic
