@@ -13,6 +13,10 @@
 
 Ext.namespace("Ext.oa");
 
+Ext.Ajax.on("beforerequest", function(conn, options){
+    conn.timeout = 10 * 60 * 1000;
+});
+
 Ext.oa.Lvm__Snapshot_Panel = Ext.extend(Ext.oa.Lvm__LogicalVolume_Panel, {
   id: "lvm__snapshot_panel_inst",
   title: gettext("Logical Volume Snapshots"),
