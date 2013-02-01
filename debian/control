@@ -417,7 +417,7 @@ Description: MailAliases module for openATTIC
 
 Package: openattic-module-twraid
 Architecture: all
-Depends: ${misc:Depends}, openattic-module-lvm, tw-cli
+Depends: ${misc:Depends}, openattic-module-lvm, tw-cli, cron
 Description: 3ware RAID module for openATTIC
  openATTIC is a storage management system based upon Open Source tools with
  a comprehensive user interface that allows you to create, share and backup
