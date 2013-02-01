@@ -119,14 +119,15 @@ class Disk(Bunch):
 
 
 
-def query_ctls():
+def query_ctls(verbosity=0):
     ctls = {}
 
     twcli = "tw-cli"
     try:
         ret, out, err = invoke([twcli, "show"], return_out_err=True, log=False)
     except OSError, err:
-        print "tw-cli not found"
+        if verbosity:
+            print "tw-cli not found"
         if err.errno != errno.ENOENT:
             raise
         # tw-cli was not found. retry using tw_cli, which may or may not work.
@@ -146,14 +147,16 @@ def query_ctls():
 
         m = re.match(TwRegex.ctl, line)
         if m:
-            print "Found controller!", m.groupdict()
+            if verbosity:
+                print "Found controller!", m.groupdict()
             ctl = Controller(m.groupdict())
             ctls[ctl.id] = ctl
             continue
 
         m = re.match(TwRegex.enclosure, line)
         if m:
-            print "Found enclosure!", m.groupdict()
+            if verbosity:
+                print "Found enclosure!", m.groupdict()
             encl = Enclosure(m.groupdict())
             ctls[encl.ctl_id].enclosures[encl.id] = encl
             continue
@@ -170,13 +173,15 @@ def query_ctls():
 
             m = re.match(TwRegex.ctlparam, line)
             if m:
-                print "Found controller property!", m.groupdict()
+                if verbosity:
+                    print "Found controller property!", m.groupdict()
                 ctl.params[ m.group("key").strip().lower() ] = m.group("value").strip()
                 continue
 
             m = re.match(TwRegex.ctlunit, line)
             if m:
-                print "Found Unit!", m.groupdict()
+                if verbosity:
+                    print "Found Unit!", m.groupdict()
                 have_units = True
                 unit = Unit(m.groupdict())
                 ctl.units[unit.id] = unit
@@ -184,7 +189,8 @@ def query_ctls():
 
             m = re.match(TwRegex.ctlport, line)
             if m:
-                print "Found Disk (Port)!", m.groupdict()
+                if verbosity:
+                    print "Found Disk (Port)!", m.groupdict()
                 disk = Disk(m.groupdict())
                 ctl.ports[disk.port_id] = disk
                 continue
@@ -198,7 +204,8 @@ def query_ctls():
 
                 m = re.match(TwRegex.diskparam, line)
                 if m:
-                    print "Found disk property!", m.groupdict()
+                    if verbosity:
+                        print "Found disk property!", m.groupdict()
                     disk.params[ m.group("key").strip().lower() ] = m.group("value").strip()
                     continue
 
@@ -214,13 +221,15 @@ def query_ctls():
 
                 m = re.match(TwRegex.unitparam, line)
                 if m:
-                    print "Found unit property!", m.groupdict()
+                    if verbosity:
+                        print "Found unit property!", m.groupdict()
                     unit.params[ m.group("key").strip().lower() ] = m.group("value").strip()
                     continue
 
                 m = re.match(TwRegex.unitdisk, line)
                 if m:
-                    print "Found Disk (unit)!", m.groupdict()
+                    if verbosity:
+                        print "Found Disk (unit)!", m.groupdict()
                     disk = ctl.ports[ int(m.group("port")[1:]) ]
                     disk.__dict__.update(m.groupdict())
                     unit.disks[disk.id] = disk

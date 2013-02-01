@@ -14,19 +14,12 @@
  *  GNU General Public License for more details.
 """
 
-from time import time, sleep
-
 from django.core.management.base import BaseCommand
 
 from twraid.procutils import query_ctls, update_database
 
 class Command(BaseCommand):
-    help = "Periodically updates the TWRAID status database."
+    help = "Updates the TWRAID status database."
 
     def handle(self, **options):
-        while True:
-            nexttime = time() + 300
-            update_database(query_ctls())
-            inter = nexttime - time()
-            print "Sleeping %d seconds..." % inter
-            sleep(inter)
+        update_database(query_ctls(int(options["verbosity"])))
