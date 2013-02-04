@@ -485,8 +485,10 @@ Ext.oa.Lvm__LogicalVolume_Panel = Ext.extend(Ext.oa.ShareGridPanel, {
                 maxValue: freemegs,
                 listeners: {
                   change: function(sld) {
-                    sld.ownerCt.megabyte.setValue(sld.getValue());
-                    sld.ownerCt.remaining_megabyte.setValue(freemegs - sld.getValue());
+                    if( typeof sld.ownerCt.megabyte !== "undefined" )
+                      sld.ownerCt.megabyte.setValue(sld.getValue());
+                    if( typeof sld.ownerCt.remaining_megabyte !== "undefined" )
+                      sld.ownerCt.remaining_megabyte.setValue(freemegs - sld.getValue());
                   }
                 }
               }, {
