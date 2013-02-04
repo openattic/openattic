@@ -181,7 +181,7 @@ Ext.oa.Lvm__Snapshot_Panel = Ext.extend(Ext.oa.Lvm__LogicalVolume_Panel, {
       convert: toUnicode
     }, 'LVM2_SNAP_PERCENT');
     // Add extra buttons (deep-copied)
-    var oldbuttons = Ext.oa.Lvm__Snapshot_Panel.superclass.buttons;
+    /*var oldbuttons = Ext.oa.Lvm__Snapshot_Panel.superclass.buttons;
     var mybuttons = [];
     for( i = 0; i < oldbuttons.length; i++ ){
       mybuttons.push(Ext.apply({}, oldbuttons[i]));
@@ -215,7 +215,7 @@ Ext.oa.Lvm__Snapshot_Panel = Ext.extend(Ext.oa.Lvm__LogicalVolume_Panel, {
         }
       }
     });
-    this.buttons = mybuttons;
+    this.buttons = mybuttons;*/
     // Render the Panel
     Ext.oa.Lvm__Snapshot_Panel.superclass.initComponent.apply(this, arguments);
     // Add a store listener to populate the SNAP_PERCENT column
