@@ -267,18 +267,9 @@ class SystemD(BasePlugin):
         cmd.extend([ "-q", "-m0", "-L", label, devpath ])
         self.job_add_command(jid, cmd)
 
-    @method(in_signature="is", out_signature="")
-    def ntfs_format(self, jid, devpath):
-        self.job_add_command(jid, ["/sbin/mkntfs", "--fast", devpath])
-
     @signal(signature="sss")
     def format_complete(self, devpath, mountpoint, fstype):
         pass
-
-    @method(in_signature="isib", out_signature="")
-    def ntfs_resize(self, jid, devpath, megs, grow):
-        # TODO: Sometimes ntfsresize asks for confirmation interactively, how do we handle that?
-        self.job_add_command(jid, ["/sbin/ntfsresize", "--force", "--size", ("%dM" % megs), devpath])
 
     @method(in_signature="isiii", out_signature="")
     def xfs_format(self, jid, devpath, chunksize, datadisks, agcount):
@@ -293,7 +284,6 @@ class SystemD(BasePlugin):
 
     @method(in_signature="isi", out_signature="")
     def xfs_resize(self, jid, mountpoint, megs):
-        # TODO: Sometimes ntfsresize asks for confirmation interactively, how do we handle that?
         self.job_add_command(jid, ["xfs_growfs", mountpoint])
 
     @method(in_signature="", out_signature="a{ss}")

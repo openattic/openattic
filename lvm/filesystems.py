@@ -228,24 +228,6 @@ class Zfs(FileSystem):
         dbus_to_python(self.lv.lvm.zfs_set(self.lv.name, item, str(value)))
 
 
-class Ntfs(FileSystem):
-    """ Handler for NTFS-3g. """
-    name = "ntfs-3g"
-    desc = "NTFS (Windows)"
-
-    @property
-    def info(self):
-        return {}
-
-    def format(self, jid):
-        self._lvm.ntfs_format( jid, self.lv.path )
-        self.mount(jid)
-        self.chown(jid)
-
-    def resize(self, jid, grow):
-        self._lvm.ntfs_resize( jid, self.lv.path, self.lv.megs, grow )
-
-
 class Xfs(FileSystem):
     """ Handler for NTFS-3g. """
     name = "xfs"
@@ -294,7 +276,7 @@ class Xfs(FileSystem):
 
 
 
-FILESYSTEMS = (Ext2, Ext3, Ext4, Ntfs, Zfs, Xfs)
+FILESYSTEMS = (Ext2, Ext3, Ext4, Zfs, Xfs)
 
 def get_by_name(name):
     """ Return the file system class with the given ``name``. """
