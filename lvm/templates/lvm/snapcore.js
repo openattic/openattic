@@ -6,10 +6,10 @@ Ext.namespace('Ext.oa');
 Ext.oa.TreeLoader = Ext.extend(Ext.tree.TreeLoader, {
   directFn: lvm__LogicalVolume.all,
   requestData: function(node, callback, scope){
-    debugger
+    this.tree.objtypes[ node.attributes.objtype ].requestTreeData(this.tree, this, node, callback, scope);
   },
   createNode: function(data){
-    debugger
+    return this.tree.objtypes[ data.objtype ].createTreeNode(this.tree, data);
   }
 });
 
