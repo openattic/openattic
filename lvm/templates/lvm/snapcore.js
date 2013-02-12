@@ -20,7 +20,6 @@ Ext.oa.LVM__Snapcore_Panel = Ext.extend(Ext.Panel, {
   initComponent: function(){
     'use strict';
     //var tree = this;
-    console.log("ohai");
 
     this.objtypes = {};
 
@@ -46,7 +45,7 @@ Ext.oa.LVM__Snapcore_Panel = Ext.extend(Ext.Panel, {
         containerScroll: true,
         rootVisible: false,
         frame: true,
-        id: 'treepanel',
+        id: 'lvm__snapcore_treepanel',
         loader: new Ext.oa.TreeLoader({
           clearOnLoad: true,
           tree: this
@@ -60,10 +59,9 @@ Ext.oa.LVM__Snapcore_Panel = Ext.extend(Ext.Panel, {
       var pluginroot = window.SnapAppPlugins[i].initTree(this);
       rootnode.appendChild( pluginroot.createTreeNode(this, {}) );
     }
-    console.log("thxbai");
   },
   refresh: function(){
-    var tree = Ext.getCmp('treepanel');
+    var tree = Ext.getCmp('lvm__snapcore_treepanel');
     tree.getLoader().load(tree.root);
   }
 });
