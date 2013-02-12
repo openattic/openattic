@@ -51,6 +51,13 @@ Ext.oa.LVM__Snapcore_Panel = Ext.extend(Ext.Panel, {
           tree: this
         }),
         root: rootnode,
+        buttons: [{
+          text: gettext('Collapse all'),
+          handler: function(){
+            var tree = Ext.getCmp('lvm__snapcore_treepanel');
+            tree.collapseAll();
+          }
+        }]
       }]
     }));
     Ext.oa.LVM__Snapcore_Panel.superclass.initComponent.apply(this, arguments);
