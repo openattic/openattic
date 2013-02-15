@@ -57,31 +57,38 @@ Ext.oa.LVM__Snapcore_Panel = Ext.extend(Ext.Panel, {
             var add_host_win = new Ext.Window({
               id: 'add_host_win',
               title: gettext('Add Host'),
-              defaults: {
-                xtype: 'button',
-                width: 300,
-                height: 50,
-              },
+              layout: 'fit',
+            });
+
+            var add_host_panel = new Ext.Panel({
+              id: 'add_host_panel',
               layout: {
                 type: 'vbox',
                 padding: '10',
                 align: 'center',
+                anchor: '-20px',
+              },
+              defaults: {
+                xtype: 'button',
+                width: 300,
+                height: 50,
               }
             });
 
             for(var i=0; i<window.SnapAppPlugins.length; i++){
-              add_host_win.add({
+              add_host_panel.add({
                 text: window.SnapAppPlugins[i].plugin_name,
                 handler: window.SnapAppPlugins[i].add.createDelegate(window.SnapAppPlugins[i], [add_host_win]),
               });
             }
 
-            add_host_win.add({
+            add_host_panel.add({
               text: gettext('Cancel'),
               icon: MEDIA_URL + "/icons2/16x16/actions/gtk-cancel.png",
               handler: add_host_win.close.createDelegate(add_host_win),
             });
 
+            add_host_win.add(add_host_panel);
             add_host_win.show();
           }
         },{
