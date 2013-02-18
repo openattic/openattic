@@ -262,6 +262,9 @@ class LvProxy(ProxyModelHandler, LvHandler):
     def run_initscript(self, id, script):
         return self._call_singlepeer_method("run_initscript", id, script)
 
+    def iostat(self, id):
+        return self._call_singlepeer_method("iostat", id)
+
 class ZfsSubvolumeProxy(ProxyModelHandler, ZfsSubvolumeHandler):
     model = ZfsSubvolume
 
