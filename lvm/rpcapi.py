@@ -20,7 +20,7 @@ from rpcd.handlers import BaseHandler, ModelHandler
 from rpcd.handlers import ProxyModelHandler
 from ifconfig.rpcapi import HostHandler
 
-from lvm.models import VolumeGroup, LogicalVolume, ZfsSubvolume, ZfsSnapshot, LVMetadata
+from lvm.models import VolumeGroup, LogicalVolume, ZfsSubvolume, ZfsSnapshot, LVMetadata, LVSnapshotJob, SnapshotConf
 from lvm import blockdevices
 from lvm import initscripts
 from ifconfig.models import Host
@@ -184,6 +184,9 @@ class LvHandler(ModelHandler):
 class LVMetadataHandler(ModelHandler):
     model = LVMetadata
 
+class LVSnapshotJobHandler(ModelHandler):
+    model = LVSnapshotJob
+
 class ZfsSubvolumeHandler(ModelHandler):
     model = ZfsSubvolume
 
@@ -271,6 +274,7 @@ class ZfsSubvolumeProxy(ProxyModelHandler, ZfsSubvolumeHandler):
 class ZfsSnapshotProxy(ProxyModelHandler, ZfsSnapshotHandler):
     model = ZfsSnapshot
 
+class SnapshotConfHandler(ModelHandler):
+    model = SnapshotConf
 
-
-RPCD_HANDLERS = [BlockDevicesHandler, VgProxy, LvProxy, ZfsSubvolumeProxy, ZfsSnapshotProxy, LVMetadataHandler]
+RPCD_HANDLERS = [BlockDevicesHandler, VgProxy, LvProxy, ZfsSubvolumeProxy, ZfsSnapshotProxy, LVMetadataHandler, LVSnapshotJobHandler, SnapshotConfHandler]
