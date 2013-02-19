@@ -19,11 +19,10 @@ import dbus
 from django.db   import models
 from django.conf import settings
 
-from lvm.models import LogicalVolume
 from ifconfig.models import getHostDependentManagerClass
 
 class Cronjob(models.Model):
-    volume      = models.ForeignKey(LogicalVolume)
+    volume      = models.ForeignKey("lvm.LogicalVolume")
     minute      = models.CharField(max_length=50)
     hour        = models.CharField(max_length=50)
     domonth     = models.CharField(max_length=50)
