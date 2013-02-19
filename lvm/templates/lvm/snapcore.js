@@ -62,6 +62,7 @@ Ext.oa.LVM__Snapcore_Panel = Ext.extend(Ext.Panel, {
 
             var add_host_panel = new Ext.Panel({
               id: 'add_host_panel',
+              border: false,
               layout: {
                 type: 'vbox',
                 padding: '10',
@@ -78,7 +79,8 @@ Ext.oa.LVM__Snapcore_Panel = Ext.extend(Ext.Panel, {
             for(var i=0; i<window.SnapAppPlugins.length; i++){
               add_host_panel.add({
                 text: window.SnapAppPlugins[i].plugin_name,
-                handler: window.SnapAppPlugins[i].add.createDelegate(window.SnapAppPlugins[i], [add_host_win]),
+                handler: window.SnapAppPlugins[i].add.createDelegate(window.SnapAppPlugins[i],
+                  [add_host_win, Ext.getCmp('lvm__snapcore_treepanel')]),
               });
             }
 
@@ -91,6 +93,8 @@ Ext.oa.LVM__Snapcore_Panel = Ext.extend(Ext.Panel, {
             add_host_win.add(add_host_panel);
             add_host_win.show();
           }
+        },{
+          text: gettext('New configuration'),
         },{
           text: gettext('Collapse all'),
           handler: function(){
