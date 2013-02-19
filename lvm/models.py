@@ -31,6 +31,7 @@ from lvm.filesystems import Zfs, FILESYSTEMS, get_by_name as get_fs_by_name
 from lvm             import signals as lvm_signals
 from lvm             import blockdevices
 from lvm.conf        import settings as lvm_settings
+from cron.models     import Cronjob
 
 
 def validate_vg_name(value):
@@ -675,3 +676,29 @@ class LVMetadata(models.Model):
 
     objects = getHostDependentManagerClass("volume__vg__host")()
     all_objects = models.Manager()
+
+
+class LVSnapshotJob(Cronjob):
+    """ Scheduled snapshots. """
+    start_time  = models.DateTimeField(null=True, blank=True)
+    end_time    = models.DateTimeField(null=True, blank=True)
+    is_active   = models.BooleanField()
+
+    objects     = getHostDependentManagerClass("volume__vg__host")()
+    all_objects = models.Manager()
+
+    def full_clean(self):
+        return #lol
+    
+    def save(self, *args, **kwargs):
+        self.command = "echo Doing snapshot of %s" % self.volume.name
+        return Cronjob.save(self, *args, **kwargs)
+
+class SnapshotConf(models.Model):
+    snapshot_conf   = models.CharField(max_length=255)
+    prescript       = models.CharField(max_length=255)
+    postscript      = models.CharField(max_length=225)
+    expiry_date     = models.DateTimeField(null=True, blank=True)
+
+    def __unicode__(self):
+        return "%s" % (self.snapshot_conf)
