@@ -38,7 +38,7 @@ Ext.oa.LVM__Snapcore_Panel = Ext.extend(Ext.Panel, {
       layout: 'border',
       items: [{
         region: 'west',
-        width: 200,
+        width: 280,
         height: 990,
         xtype: 'treepanel',
         useArrows:true,
@@ -104,41 +104,41 @@ Ext.oa.LVM__Snapcore_Panel = Ext.extend(Ext.Panel, {
             tree.collapseAll();
           }
         }]
-      }, {
+      },{
         region: 'center',
         xtype: 'panel',
         id: 'snapcore_center_panel',
         layout: 'border',
         viewConfig: {forceFit: true},
         items: [{
-        region: 'east',
-        xtype: 'grid',
-        width: 160,
-        id: "snapcore_east_panel",
-        viewConfig: {forceFit: true},
-        colModel: new Ext.grid.ColumnModel({
-          columns: [{
-            header: gettext("Job name")
-          },{
-            header: gettext("Details")
-          }],
-        }),
-      }, {
-        region: 'south',
-        id: 'snapcore_south_panel',
-        split: true,
-        height: 160,
-        width: 160,
-        xtype: 'grid',
-        viewConfig: {forceFit: true},
-        colModel: new Ext.grid.ColumnModel({
-          columns: [{
-            header: gettext("Snapshots"),
-            //dataIndex: VolSnapshots
-          }],
-        }),
+          region: 'center',
+          xtype: 'grid',
+          width: 160,
+          id: "snapcore_east_panel",
+          viewConfig: {forceFit: true},
+          colModel: new Ext.grid.ColumnModel({
+            columns: [{
+              header: gettext("Job name")
+            },{
+              header: gettext("Details")
+            }],
+          }),
+        },{
+          region: 'south',
+          id: 'snapcore_south_panel',
+          split: true,
+          height: 160,
+          width: 160,
+          xtype: 'grid',
+          viewConfig: {forceFit: true},
+          colModel: new Ext.grid.ColumnModel({
+            columns: [{
+              header: gettext("Snapshots"),
+              //dataIndex: VolSnapshots
+            }],
+          }),
+        }]
       }]
-    }]
     }));
     Ext.oa.LVM__Snapcore_Panel.superclass.initComponent.apply(this, arguments);
 
