@@ -118,7 +118,7 @@ Ext.oa.LVM__Snapcore_Panel = Ext.extend(Ext.Panel, {
           viewConfig: {forceFit: true},
           colModel: new Ext.grid.ColumnModel({
             columns: [{
-              header: gettext("Job name")
+              header: gettext("Configuration name")
             },{
               header: gettext("Details")
             }],
@@ -133,7 +133,7 @@ Ext.oa.LVM__Snapcore_Panel = Ext.extend(Ext.Panel, {
           viewConfig: {forceFit: true},
           colModel: new Ext.grid.ColumnModel({
             columns: [{
-              header: gettext("Snapshots"),
+              header: gettext("VolumeVolume Snapshots"),
               //dataIndex: VolSnapshots
             }],
           }),
