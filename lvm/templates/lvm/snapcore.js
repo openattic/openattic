@@ -62,7 +62,6 @@ Ext.oa.LVM__Snapcore_TreePanel = Ext.extend(Ext.tree.TreePanel, {
 
     Ext.oa.LVM__Snapcore_TreePanel.superclass.initComponent.apply(this, arguments);
 
-    console.log("plugin init");
     for( var i = 0; i < window.SnapAppPlugins.length; i++ ){
       var pluginroot = window.SnapAppPlugins[i].initTree(this);
       rootnode.appendChild( pluginroot.createTreeNode(this, {}) );
@@ -148,6 +147,7 @@ Ext.oa.LVM__Snapcore_Panel = Ext.extend(Ext.Panel, {
                 id: 'wiz_snapitems',
                 layout: "fit",
                 items: [{
+                  id: 'lvm__snapcore_wizard_treepanel',
                   xtype: "snaptreepanel",
                   checkable: true
                 }],
