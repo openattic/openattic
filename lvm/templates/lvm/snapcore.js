@@ -223,7 +223,12 @@ Ext.oa.LVM__Snapcore_Panel = Ext.extend(Ext.Panel, {
                 },{
                   text: gettext('Next'),
                   handler: function(){
-                id: 'wiz_clos',
+                    wizform.layout.setActiveItem('wiz_close');
+                  },
+                }],
+              },{
+                title: gettext('Finish'),
+                id: 'wiz_close',
                 buttons: [{
                   text: gettext('Previous'),
                   handler: function(){
