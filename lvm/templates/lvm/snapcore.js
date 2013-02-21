@@ -28,13 +28,12 @@ Ext.oa.WizPanel = Ext.extend(Ext.form.FormPanel, {
   },
 });
 
-Ext.oa.LVM__Snapcore_Panel = Ext.extend(Ext.Panel, {
+Ext.oa.LVM__Snapcore_TreePanel = Ext.extend(Ext.tree.TreePanel, {
   registerObjType: function(objtype){
     this.objtypes[ objtype.objtype ] = objtype;
   },
   initComponent: function(){
     'use strict';
-    //var tree = this;
 
     this.objtypes = {};
 
@@ -48,26 +47,46 @@ Ext.oa.LVM__Snapcore_Panel = Ext.extend(Ext.Panel, {
     });
 
     Ext.apply(this, Ext.apply(this.initialConfig, {
+      useArrows:true,
+      autoScroll:true,
+      animate:true,
+      containerScroll: true,
+      rootVisible: false,
+      frame: true,
+      loader: new Ext.oa.TreeLoader({
+        clearOnLoad: true,
+        tree: this
+      }),
+      root: rootnode,
+    }));
+
+    Ext.oa.LVM__Snapcore_TreePanel.superclass.initComponent.apply(this, arguments);
+
+    console.log("plugin init");
+    for( var i = 0; i < window.SnapAppPlugins.length; i++ ){
+      var pluginroot = window.SnapAppPlugins[i].initTree(this);
+      rootnode.appendChild( pluginroot.createTreeNode(this, {}) );
+    }
+  }
+});
+
+Ext.reg("snaptreepanel", Ext.oa.LVM__Snapcore_TreePanel);
+
+
+Ext.oa.LVM__Snapcore_Panel = Ext.extend(Ext.Panel, {
+  initComponent: function(){
+    'use strict';
+    //var tree = this;
+    Ext.apply(this, Ext.apply(this.initialConfig, {
       id: 'lvm__snapcore_panel_inst',
       title: gettext('SnapApps'),
       layout: 'border',
       items: [{
+        id: 'lvm__snapcore_treepanel',
         region: 'west',
         width: 280,
         height: 990,
-        xtype: 'treepanel',
-        useArrows:true,
-        autoScroll:true,
-        animate:true,
-        containerScroll: true,
-        rootVisible: false,
-        frame: true,
-        id: 'lvm__snapcore_treepanel',
-        loader: new Ext.oa.TreeLoader({
-          clearOnLoad: true,
-          tree: this
-        }),
-        root: rootnode,
+        xtype: 'snaptreepanel',
         buttons: [{
           text: gettext('Add Host'),
           handler: function(){
@@ -293,11 +312,6 @@ Ext.oa.LVM__Snapcore_Panel = Ext.extend(Ext.Panel, {
       }]
     }));
     Ext.oa.LVM__Snapcore_Panel.superclass.initComponent.apply(this, arguments);
-
-    for( var i = 0; i < window.SnapAppPlugins.length; i++ ){
-      var pluginroot = window.SnapAppPlugins[i].initTree(this);
-      rootnode.appendChild( pluginroot.createTreeNode(this, {}) );
-    }
   },
   refresh: function(){
     var tree = Ext.getCmp('lvm__snapcore_treepanel');
