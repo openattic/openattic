@@ -146,6 +146,11 @@ Ext.oa.LVM__Snapcore_Panel = Ext.extend(Ext.Panel, {
               },{
                 title: gettext('Choose Snapshot Items'),
                 id: 'wiz_snapitems',
+                layout: "fit",
+                items: [{
+                  xtype: "snaptreepanel",
+                  checkable: true
+                }],
                 buttons: [{
                   text: gettext('Previous'),
                   handler: function(){
