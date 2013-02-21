@@ -294,6 +294,8 @@ Ext.oa.LVM__Snapcore_Panel = Ext.extend(Ext.Panel, {
               header: gettext("Details")
             }],
           }),
+          store: new Ext.data.Store({
+          }),
         },{
           region: 'south',
           id: 'snapcore_south_panel',
@@ -307,6 +309,8 @@ Ext.oa.LVM__Snapcore_Panel = Ext.extend(Ext.Panel, {
               header: gettext("VolumeVolume Snapshots"),
               //dataIndex: VolSnapshots
             }],
+          }),
+          store: new Ext.data.Store({
           }),
         }]
       }]
