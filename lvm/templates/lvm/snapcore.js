@@ -26,12 +26,16 @@ Ext.oa.WizPanel = Ext.extend(Ext.form.FormPanel, {
       anchor: '-20px',
     }
   },
+  pnl_hist: ['wiz_welc'],
   initComponent: function(){
     var nextpanel = function(nextid){
+      this.pnl_hist.push(nextid);
       this.layout.setActiveItem(nextid);
     }
-    var prevpanel = function(previd){
-      this.layout.setActiveItem(previd);
+    var prevpanel = function(crrid){
+      var prev_pnl = this.pnl_hist[this.pnl_hist.length - 2];
+      this.pnl_hist.pop();
+      this.layout.setActiveItem(prev_pnl);
     }
 
     for(var i = this.items.length - 1; i >= 0; i--){
@@ -48,7 +52,7 @@ Ext.oa.WizPanel = Ext.extend(Ext.form.FormPanel, {
       if(typeof item.noAutoPrev === "undefined"){
         item.buttons.unshift({
           text: gettext('Previous'),
-          handler: prevpanel.createDelegate(this, [this.items[i-1].id]),
+          handler: prevpanel.createDelegate(this, [this.items[i].id]),
         });
       }
     }
@@ -182,6 +186,7 @@ Ext.oa.LVM__Snapcore_Panel = Ext.extend(Ext.Panel, {
                     for( var i = 0; i < window.SnapAppPlugins.length; i++ ){
                       nextpanel = window.SnapAppPlugins[i].initWizard(wizform, nextpanel);
                     }
+                    wizform.pnl_hist.push(nextpanel);
                     wizform.layout.setActiveItem(nextpanel);
                   }
                 }],
