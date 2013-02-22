@@ -26,6 +26,34 @@ Ext.oa.WizPanel = Ext.extend(Ext.form.FormPanel, {
       anchor: '-20px',
     }
   },
+  initComponent: function(){
+    var nextpanel = function(nextid){
+      this.layout.setActiveItem(nextid);
+    }
+    var prevpanel = function(previd){
+      this.layout.setActiveItem(previd);
+    }
+
+    for(var i = this.items.length - 1; i >= 0; i--){
+      var item = this.items[i];
+      if(typeof item.buttons === "undefined"){
+        item.buttons = [];
+      }
+      if(typeof item.noAutoNext === "undefined"){
+        item.buttons.unshift({
+          text: gettext('Next'),
+          handler: nextpanel.createDelegate(this, [this.items[i+1].id]),
+        });
+      }
+      if(typeof item.noAutoPrev === "undefined"){
+        item.buttons.unshift({
+          text: gettext('Previous'),
+          handler: prevpanel.createDelegate(this, [this.items[i-1].id]),
+        });
+      }
+    }
+    Ext.oa.WizPanel.superclass.initComponent.apply(this, arguments);
+  }
 });
 
 Ext.oa.LVM__Snapcore_TreePanel = Ext.extend(Ext.tree.TreePanel, {
@@ -136,27 +164,18 @@ Ext.oa.LVM__Snapcore_Panel = Ext.extend(Ext.Panel, {
               items: [{
                 title: gettext('Welcome'),
                 id: 'wiz_welc',
-                buttons: [{
-                  text: gettext('Next'),
-                  handler: function(){
-                    wizform.layout.setActiveItem('wiz_snapitems');
-                  }
-                }],
+                noAutoPrev: true,
               },{
                 title: gettext('Choose Snapshot Items'),
                 id: 'wiz_snapitems',
                 layout: "fit",
+                noAutoNext: true,
                 items: [{
                   id: 'lvm__snapcore_wizard_treepanel',
                   xtype: "snaptreepanel",
                   checkable: true
                 }],
                 buttons: [{
-                  text: gettext('Previous'),
-                  handler: function(){
-                    wizform.layout.setActiveItem('wiz_welc');
-                  }
-                },{
                   text: gettext('Next'),
                   handler: function(){
                     var nextpanel = 'wiz_addvol';
@@ -169,98 +188,25 @@ Ext.oa.LVM__Snapcore_Panel = Ext.extend(Ext.Panel, {
               },{
                 title: gettext('Additional Volumes'),
                 id: 'wiz_addvol',
-                buttons: [{
-                  text: gettext('Previous'),
-                  handler: function(){
-                    wizform.layout.setActiveItem('wiz_snapitems');
-                  }
-                },{
-                  text: gettext('Next'),
-                  handler: function(){
-                    wizform.layout.setActiveItem('wiz_prepost');
-                  }
-                }],
               },{
                 title: gettext('Pre-/Post-Script - Conditions'),
                 id: 'wiz_prepost',
-                buttons: [{
-                  text: gettext('Previous'),
-                  handler: function(){
-                    wizform.layout.setActiveItem('wiz_addvol');
-                  }
-                },{
-                  text: gettext('Next'),
-                  handler: function(){
-                    wizform.layout.setActiveItem('wiz_sched1');
-                  },
-                }],
               },{
                 title: gettext('Scheduling Part 1 / Expiry Date'),
                 id: 'wiz_sched1',
-                buttons: [{
-                  text: gettext('Previous'),
-                  handler: function(){
-                    wizform.layout.setActiveItem('wiz_prepost');
-                  }
-                },{
-                  text: gettext('Next'),
-                  handler: function(){
-                    wizform.layout.setActiveItem('wiz_sched2');
-                  },
-                }],
               },{
                 title: gettext('Scheduling Part 2 / Options'),
                 id: 'wiz_sched2',
-                buttons: [{
-                  text: gettext('Previous'),
-                  handler: function(){
-                    wizform.layout.stActiveItem('wiz_sched1');
-                  }
-                },{
-                  text: gettext('Next'),
-                  handler: function(){
-                    wizform.layout.setActiveItem('wiz_sched31');
-                  },
-                }],
               },{
                 title: gettext('Scheduling Part 3 / Timemanagement Part 1'),
                 id: 'wiz_sched31',
-                buttons: [{
-                  text: gettext('Previous'),
-                  handler: function(){
-                    wizform.layout.setActiveItem('wiz_sched2');
-                  },
-                },{
-                  text: gettext('Next'),
-                  handler: function(){
-                    wizform.layout.setActiveItem('wiz_sched32');
-                  },
-                }],
               },{
                 title: gettext('Scheduling Part 3 / Timemanagement Part 2'),
                 id: 'wiz_sched32',
-                buttons: [{
-                  text: gettext('Previous'),
-                  handler: function(){
-                    wizform.layout.setActiveItem('wiz_sched31');
-                  },
-                },{
-                  text: gettext('Next'),
-                  handler: function(){
-                    wizform.layout.setActiveItem('wiz_close');
-                  },
-                }],
               },{
                 title: gettext('Finish'),
                 id: 'wiz_close',
-                buttons: [{
-                  text: gettext('Previous'),
-                  handler: function(){
-                    wizform.layout.setActiveItem('wiz_sched33');
-                  }
-                },{
-                  text: gettext('Finish'),
-                }]
+                noAutoNext: true,
               }],
             });
             var wiz = new Ext.Window({
