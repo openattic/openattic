@@ -298,7 +298,7 @@ class Ocfs2(FileSystem):
 
 
 
-FILESYSTEMS = (Ext2, Ext3, Ext4, Zfs, Xfs)
+FILESYSTEMS = (Ext2, Ext3, Ext4, Zfs, Xfs, Ocfs2)
 
 def get_by_name(name):
     """ Return the file system class with the given ``name``. """
