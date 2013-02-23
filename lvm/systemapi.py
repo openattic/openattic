@@ -286,6 +286,13 @@ class SystemD(BasePlugin):
     def xfs_resize(self, jid, mountpoint, megs):
         self.job_add_command(jid, ["xfs_growfs", mountpoint])
 
+    @method(in_signature="isi", out_signature="")
+    def ocfs2_format(self, jid, devpath, chunksize):
+        cmd = ["mkfs.ocfs2", '-b', '4096', '-T', 'vmstore']
+        if chunksize != -1:
+            cmd.extend(["-C", "%dK" % (chunksize / 1024)])
+        self.job_add_command(jid, cmd)
+
     @method(in_signature="", out_signature="a{ss}")
     def get_lvm_capabilities(self):
         invoke(["/sbin/modprobe", "dm-snapshot"])

@@ -275,6 +275,28 @@ class Xfs(FileSystem):
         self._lvm.xfs_resize( jid, self.lv.mountpoint, self.lv.megs )
 
 
+class Ocfs2(FileSystem):
+    """ Handler for OCFS2. """
+    name = "ocfs2"
+    desc = "OCFS2 (Cluster File System)"
+
+    @property
+    def info(self):
+        return {}
+
+    def format(self, jid):
+        try:
+            raidparams = get_raid_params(self.lv.vg.get_pvs()[0]["LVM2_PV_NAME"])
+        except UnsupportedRAID:
+            raidparams = {"chunksize": -1}
+        self._lvm.ocfs2_format( jid, self.lv.path, raidparams["chunksize"] )
+        self.mount(jid)
+        self.chown(jid)
+
+    def online_resize_available(self, grow):
+        return False
+
+
 
 FILESYSTEMS = (Ext2, Ext3, Ext4, Zfs, Xfs)
 
