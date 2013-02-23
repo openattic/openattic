@@ -291,6 +291,7 @@ class SystemD(BasePlugin):
         cmd = ["mkfs.ocfs2", '-b', '4096', '-T', 'vmstore']
         if chunksize != -1:
             cmd.extend(["-C", "%dK" % (chunksize / 1024)])
+        cmd.append(devpath)
         self.job_add_command(jid, cmd)
 
     @method(in_signature="", out_signature="a{ss}")
