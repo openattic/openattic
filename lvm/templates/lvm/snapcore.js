@@ -286,7 +286,7 @@ Ext.oa.VMSnapApp__Snap_Module = Ext.extend(Object, {
   prepareMenuTree: function(tree){
     'use strict';
     tree.appendToRootNodeById('menu_system', {
-      text: gettext('Neue mächtige SnapApps'),
+      text: gettext('SnapApps'),
       leaf: true,
       icon: MEDIA_URL + '/icons2/22x22/apps/network.png',
       panel: "lvm__snapcore_panel_inst",
