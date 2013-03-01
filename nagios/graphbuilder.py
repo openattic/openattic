@@ -727,7 +727,7 @@ class Graph(object):
             mkdate( _("End time"),   self.end   ),
             ])
 
-        rrdtool = subprocess.Popen(self.args, stdout=subprocess.PIPE)
+        rrdtool = subprocess.Popen([arg.encode("utf-8") for arg in self.args], stdout=subprocess.PIPE)
         out, err = rrdtool.communicate()
 
         if self.bgcol:
