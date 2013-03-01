@@ -163,6 +163,115 @@ Ext.oa.LVM__Snapcore_Panel = Ext.extend(Ext.Panel, {
         },{
           text: gettext('New configuration'),
           handler: function(){
+            var myData = {
+                records : [
+                        { name : "Drives", column1 : "Drive information", column2 : "0" },
+                       // { name : "Rec 1", column1 : "1", column2 : "1" },
+                ]
+        };
+        // Generic fields array to use in both store defs.
+//         var fields = [
+//                 {name: 'name', mapping : 'name'},
+//                 {name: 'column1', mapping : 'column1'},
+//                 //{name: 'column2', mapping : 'column2'}
+//         ];
+
+    // create the data store
+    var firstGridStore = new Ext.data.JsonStore({
+      id: "fgs",
+      fields : ["drive", "drive info", "id", "__unicode__"],
+      listeners: {
+        add: function(store){
+          var par = Ext.getCmp('sG').getSelectionModel();
+          var parid = par.selections.items[0];
+          storeUpdate(firstGridStore, parid.data.id, "firstGridStore");
+        },
+        remove: function(store){
+          var par = Ext.getCmp('sG').getSelectionModel();
+          var parid = par.selections.items[0];
+          storeUpdate(firstGridStore, parid.data.id, "firstGridStore");
+        }
+      }
+    });
+
+
+        // Column Model shortcut array
+        var cols = [
+                { id : 'name', header: "Drive", width: 160, sortable: true, dataIndex: 'name'},
+                {header: "Details", width: 50, sortable: true, dataIndex: 'column1'}
+
+        ];
+      var secondGridStore = new Ext.data.DirectStore({
+      id: "sgs",
+      fields : ["drive", "drive info", "id", "__unicode__"],
+      listeners: {
+        add: function(store){
+          var par = Ext.getCmp('fG').getSelectionModel();
+          var parid = par.selections.items[0];
+          storeUpdate(secondGridStore, parid.data.id, "secondGridStore");
+        },
+        remove: function(store){
+          var par = Ext.getCmp('fG').getSelectionModel();
+          var parid = par.selections.items[0];
+          storeUpdate(secondGridStore, parid.data.id, "secondGridStore");
+        }
+      }
+    });
+
+        // declare the source Grid
+    var firstGrid = new Ext.grid.GridPanel({
+        ddGroup          : 'secondGridDDGroup',
+        store            : firstGridStore,
+        id: 'fG',
+        columns: cols,
+        ref: 'first_grid',
+        enableDragDrop   : true,
+        stripeRows       : true,
+        autoExpandColumn : 'name',
+        title            : 'Drives',
+        afterrender: function (self){
+          var secondGridDropTargetEl = secondGrid.getView().scroller.dom;
+          var secondGridDropTarget = new Ext.dd.DropTarget(secondGridDropTargetEl, {
+            ddGroup    : 'secondGridDDGroup',
+            notifyDrop : function(ddSource, e, data){
+              var records =  ddSource.dragData.selections;
+              Ext.each(records, ddSource.grid.store.remove, ddSource.grid.store);
+              secondGrid.store.add(records);
+              secondGrid.store.sort('name', 'ASC');
+             return true
+            }
+        });
+        }
+    });
+
+
+
+    // create the destination Grid
+    var secondGrid = new Ext.grid.GridPanel({
+        ddGroup          : 'firstGridDDGroup',
+        id: "sG",
+        store            : secondGridStore,
+        columns          : cols,
+        enableDragDrop   : true,
+        stripeRows       : true,
+        autoExpandColumn : 'name',
+        title            : 'Drag Drives which should be snapshottet here:',
+        afterrender: function(self){
+            var firstGridDropTargetEl =  firstGrid.getView().scroller.dom;
+            var firstGridDropTarget = new Ext.dd.DropTarget(firstGridDropTargetEl, {
+                ddGroup    : 'firstGridDDGroup',
+                notifyDrop : function(ddSource, e, data){
+                        var records =  ddSource.dragData.selections;
+                        Ext.each(records, ddSource.grid.store.remove, ddSource.grid.store);
+                        firstGrid.store.add(records);
+                        firstGrid.store.sort('name', 'ASC');
+                        return true
+                }
+        });
+
+          }
+        });
+
             var wizform = new Ext.oa.WizPanel({
               activeItem: 'wiz_welc',
               items: [{
@@ -191,8 +300,27 @@ Ext.oa.LVM__Snapcore_Panel = Ext.extend(Ext.Panel, {
                   }
                 }],
               },{
-                title: gettext('Additional Volumes'),
+                title: gettext('Additional Drives'),
                 id: 'wiz_addvol',
+                items:[firstGrid, secondGrid],
+                buttons:[{
+                    text: gettext('Add')
+                    },{
+                    text: gettext('Remove')
+                    }],
+                    bbar    : [
+                        '->', // Fill
+                        {
+                                text    : 'Reset both grids',
+                                handler : function() {
+                                        //refresh source grid
+                                        firstGridStore.loadData(myData);
+
+                                        //purge destination grid
+                                        secondGridStore.removeAll();
+                                }
+                        }
+                ]
               },{
                 title: gettext('Pre-/Post-Script - Conditions'),
                 id: 'wiz_prepost',
