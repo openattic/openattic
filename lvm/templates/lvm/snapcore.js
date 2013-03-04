@@ -98,11 +98,30 @@ Ext.oa.LVM__Snapcore_TreePanel = Ext.extend(Ext.tree.TreePanel, {
       var pluginroot = window.SnapAppPlugins[i].initTree(this);
       rootnode.appendChild( pluginroot.createTreeNode(this, {}) );
     }
+  },
+  listeners: {
+    checkchange: function(node, checked){
+      if(node.hasChildNodes)
+      {
+        console.log(node);
+        if(node.attributes.objtype === 'vmware_datastore' || node.attributes.objtype === 'mssql_drive')
+        {
+          node.eachChild(function(childNode){
+            childNode.ui.checkbox.disabled = checked;
+            childNode.ui.checkbox.checked = checked;
+          });
+        }
+        else if(node.attributes.objtype === 'vmware_vm' || node.attributes.objtype === 'mssql_database')
+        {
+          node.parentNode.ui.checkbox.disabled = checked;
+          node.parentNode.ui.checkbox.checked = checked;
+        }
+      }
+    }
   }
 });
 
 Ext.reg("snaptreepanel", Ext.oa.LVM__Snapcore_TreePanel);
-
 
 Ext.oa.LVM__Snapcore_Panel = Ext.extend(Ext.Panel, {
   initComponent: function(){
