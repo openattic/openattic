@@ -103,7 +103,6 @@ Ext.oa.LVM__Snapcore_TreePanel = Ext.extend(Ext.tree.TreePanel, {
     checkchange: function(node, checked){
       if(node.hasChildNodes)
       {
-        console.log(node);
         if(node.attributes.objtype === 'vmware_datastore' || node.attributes.objtype === 'mssql_drive')
         {
           node.eachChild(function(childNode){
@@ -115,6 +114,18 @@ Ext.oa.LVM__Snapcore_TreePanel = Ext.extend(Ext.tree.TreePanel, {
         {
           node.parentNode.ui.checkbox.disabled = checked;
           node.parentNode.ui.checkbox.checked = checked;
+        }
+      }
+    },
+    expandnode: function(node){
+      if(node.attributes.objtype === 'vmware_datastore' || node.attributes.objtype === 'mssql_drive')
+      {
+        if(node.hasChildNodes)
+        {
+          node.eachChild(function(childNode){
+            childNode.ui.checkbox.disabled = node.ui.checkbox.checked;
+            childNode.ui.checkbox.checked = node.ui.checkbox.checked;
+          });
         }
       }
     }
