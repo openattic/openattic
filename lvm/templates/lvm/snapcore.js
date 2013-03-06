@@ -355,6 +355,90 @@ Ext.oa.LVM__Snapcore_Panel = Ext.extend(Ext.Panel, {
               },{
                 title: gettext('Scheduling Part 2 / Options'),
                 id: 'wiz_sched2',
+                layout: {
+                  type: 'hbox',
+                  align: 'stretch',
+                },
+                noAutoNext: true,
+                xtype: 'form',
+                items: [{
+                  xtype: 'radiogroup',
+                  id: 'scheduling_options',
+                  columns: 1,
+                  listeners: {
+                    change: function(group, checked){
+                      if(checked.getId() === 'execute_later')
+                      {
+                        Ext.getCmp('date_select').enable();
+                        Ext.getCmp('time_select').enable();
+                      }
+                      else
+                      {
+                        Ext.getCmp('date_select').disable();
+                        Ext.getCmp('time_select').disable();
+                      }
+                    }
+                  },
+                  items: [{
+                    boxLabel: gettext('Execute now'),
+                    id: 'execute_now',
+                    name: 'scheduling_2',
+                    inputValue: 'execute_now',
+                  },{
+                    boxLabel: gettext('Execute later'),
+                    id: 'execute_later',
+                    name: 'scheduling_2',
+                    inputValue: 'execute_later',
+                  },{
+                    boxLabel: gettext('Create scheduling'),
+                    id: 'scheduling',
+                    name: 'scheduling_2',
+                    inputValue: 'scheduling',
+                  }],
+                },{
+                  xtype: 'datefield',
+                  id: 'date_select',
+                  disabled: true,
+                },{
+                  xtype: 'timefield',
+                  id: 'time_select',
+                  disabled: true,
+                }],
+                buttons: [{
+                  text: gettext('Next'),
+                  handler: function(){
+                    var checked = Ext.getCmp('wiz_sched2').getForm().getValues()['scheduling_2'];
+                    var nextpnl = '';
+                    switch(checked){
+                      case 'execute_now':
+                          nextpnl = 'wiz_close';
+                        break;
+                      case 'execute_later':
+                          var date = Ext.getCmp('date_select').getValue();
+                          var time = (Ext.getCmp('time_select').getValue()).split(':');
+                          if(date && time)
+                          {
+                            date = date.add(Date.HOUR, time[0]);
+                            date = date.add(Date.MINUTE, time[1]);
+                            var now = new Date();
+                            if(now < date)
+                            {
+                              nextpnl = 'wiz_close';
+                            }
+                          }
+                        break;
+                      case 'scheduling':
+                          nextpnl = 'wiz_sched31';
+                        break;
+                    }
+
+                    if(nextpnl)
+                    {
+                      wizform.pnl_hist.push(nextpnl);
+                      wizform.layout.setActiveItem(nextpnl);
+                    }
+                  }
+                }]
               },{
                 title: gettext('Scheduling Part 3 / Timemanagement Part 1'),
                 id: 'wiz_sched31',
