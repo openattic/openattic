@@ -418,8 +418,7 @@ Ext.oa.LVM__Snapcore_Panel = Ext.extend(Ext.Panel, {
                           var time = (Ext.getCmp('time_select').getValue()).split(':');
                           if(date && time)
                           {
-                            date = date.add(Date.HOUR, time[0]);
-                            date = date.add(Date.MINUTE, time[1]);
+                            date = date.add(Date.HOUR, time[0]).add(Date.MINUTE, time[1]).add(Date.MINUTE, +1);
                             var now = new Date();
                             if(now < date)
                             {
