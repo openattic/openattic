@@ -441,6 +441,20 @@ Ext.oa.LVM__Snapcore_Panel = Ext.extend(Ext.Panel, {
               },{
                 title: gettext('Scheduling Part 3 / Timemanagement Part 1'),
                 id: 'wiz_sched31',
+                xtype: 'form',
+                items: [{
+                  xtype: 'textfield',
+                  name: 'task_subject',
+                  fieldLabel: gettext('Task subject'),
+                },{
+                  xtype: 'textfield',
+                  name: 'target_path',
+                  fieldLabel: gettext('Target path'),
+                },{
+                  xtype: 'checkbox',
+                  name: 'is_active',
+                  fieldLabel: gettext('Is active'),
+                }]
               },{
                 title: gettext('Scheduling Part 3 / Timemanagement Part 2'),
                 id: 'wiz_sched32',
