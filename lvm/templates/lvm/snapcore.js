@@ -352,6 +352,46 @@ Ext.oa.LVM__Snapcore_Panel = Ext.extend(Ext.Panel, {
               },{
                 title: gettext('Scheduling Part 1 / Expiry Date'),
                 id: 'wiz_sched1',
+                layout: {
+                  type: 'vbox',
+                  align: 'stretch',
+                },
+                xtype: 'form',
+                items: [{
+                  boxLabel: gettext('No expiry date'),
+                  id: 'no_expiry',
+                  name: 'scheduling_1',
+                  inputValue: 'no_expiry',
+                  xtype: 'radio',
+                },{
+                  boxLabel: gettext('Expiry date'),
+                  id: 'expiry_date',
+                  name: 'scheduling_1',
+                  inputValue: 'expiry_date',
+                  xtype: 'radio',
+                  listeners: {
+                    check: function(checkbox, checkvalue){
+                      if(checkvalue)
+                      {
+                        Ext.getCmp('sched1_date_select').enable();
+                        Ext.getCmp('sched1_time_select').enable();
+                      }
+                      else
+                      {
+                        Ext.getCmp('sched1_date_select').disable();
+                        Ext.getCmp('sched1_time_select').disable();
+                      }
+                    }
+                  }
+                },{
+                  xtype: 'datefield',
+                  id: 'sched1_date_select',
+                  disabled: true,
+                },{
+                  xtype: 'timefield',
+                  id: 'sched1_time_select',
+                  disabled: true,
+                }]
               },{
                 title: gettext('Scheduling Part 2 / Options'),
                 id: 'wiz_sched2',
