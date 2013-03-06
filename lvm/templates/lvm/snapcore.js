@@ -458,6 +458,150 @@ Ext.oa.LVM__Snapcore_Panel = Ext.extend(Ext.Panel, {
               },{
                 title: gettext('Scheduling Part 3 / Timemanagement Part 2'),
                 id: 'wiz_sched32',
+                xtype: 'form',
+                items: [{
+                  xtype: 'combo',
+                  name: 'minute',
+                  fieldLabel: gettext('Minute'),
+                  store: (function(){
+                    var derp = ['*'];
+                    for(var i = 0; i < 60; i += 5)
+                      derp.push(i);
+                    return derp;
+                  }()),
+                  value: '0',
+                  typeAhead: true,
+                  triggerAction: 'all',
+                  emptyText: gettext('Select...'),
+                  selectOnFocus: true,
+                },{
+                  xtype: 'fieldset',
+                  title: gettext('Hour'),
+                  ref: '../h_fieldset',
+                  border: true,
+                  defaults: {
+                    border: false,
+                    columnWidth: .5,
+                    layout: 'form',
+                    defaults: {
+                      xtype: 'checkbox',
+                    }
+                  },
+                  layout: 'column',
+                  items: [{
+                    items: (function(){
+                      var it = [];
+                      for(var i = 0; i < 12; i++)
+                        it.push({id: 'h_' + i, fieldLabel: i, checked: (i%3 == 0) });
+                      return it;
+                    }()),
+                  },{
+                    items: (function(){
+                      var it = [];
+                      for(var i = 12; i < 24; i++)
+                        it.push({id: 'h_' + i, fieldLabel: i, checked: (i%3 == 0) });
+                      return it;
+                    }()),
+                  }]
+                }],
+              },{
+                title: gettext('Scheduling Part 3 / Timemanagement Part 3'),
+                id: 'wiz_sched33',
+                xtype: 'form',
+                items: [{
+                  xtype: 'combo',
+                  name: 'day_of_month',
+                  fieldLabel: gettext('Day'),
+                  store: (function(){
+                    var derp = ['*'];
+                    for(var i = 1; i <= 31; i++)
+                      derp.push(i);
+                    return derp;
+                  }()),
+                  value: '*',
+                  typeAhead: true,
+                  triggerAction: 'all',
+                  emptyText: gettext('Select...'),
+                  selectOnFocus: true,
+                },{
+                  xtype: 'fieldset',
+                  title: gettext('Day of week'),
+                  ref: '../dow_fieldset',
+                  border: true,
+                  defaults: {
+                    border: false,
+                    columnWidth: .5,
+                    layout: 'form',
+                    defaults: {
+                      xtype: 'checkbox',
+                      checked: true,
+                    }
+                  },
+                  layout: 'column',
+                  items: [{
+                    items: [{
+                      id: 'dow_1', fieldLabel: gettext('Monday')
+                    },{
+                      id: 'dow_2', fieldLabel: gettext('Tuesday')
+                    },{
+                      id: 'dow_3', fieldLabel: gettext('Wednesday')
+                    },{
+                      id: 'dow_4', fieldLabel: gettext('Thursday')
+                    },{
+                      id: 'dow_5', fieldLabel: gettext('Friday')
+                    }],
+                  },{
+                    items: [{
+                      id: 'dow_6', fieldLabel: gettext('Saturday')
+                    },{
+                      id: 'dow_7', fieldLabel: gettext('Sunday')
+                    }]
+                  }],
+                },{
+                  xtype: 'fieldset',
+                  ref: '../moy_fieldset',
+                  border: true,
+                  defaults: {
+                    border: false,
+                    columnWidth: .5,
+                    layout: 'form',
+                    defaults: {
+                      xtype: 'checkbox',
+                      checked: true,
+                    }
+                  },
+                  title: gettext('Month'),
+                  layout: 'column',
+                  items: [{
+                    items: [{
+                      id: 'moy_1', fieldLabel: gettext('January')
+                    },{
+                      id: 'moy_2', fieldLabel: gettext('Feburary')
+                    },{
+                      id: 'moy_3', fieldLabel: gettext('March')
+                    },{
+                      id: 'moy_4', fieldLabel: gettext('April')
+                    },{
+                      id: 'moy_5', fieldLabel: gettext('May')
+                    },{
+                      id: 'moy_6', fieldLabel: gettext('June')
+                    }]
+                  },{
+                    items: [{
+                      id: 'moy_7', fieldLabel: gettext('July')
+                    },{
+                      id: 'moy_8', fieldLabel: gettext('August')
+                    },{
+                      id: 'moy_9', fieldLabel: gettext('September')
+                    },{
+                      id: 'moy_10', fieldLabel: gettext('October')
+                    },{
+                      id: 'moy_11', fieldLabel: gettext('November')
+                    },{
+                      id: 'moy_12', fieldLabel: gettext('December')
+                    }]
+                  }],
+                }],
               },{
                 title: gettext('Finish'),
                 id: 'wiz_close',
