@@ -14,14 +14,14 @@ Ext.oa.TreeLoader = Ext.extend(Ext.tree.TreeLoader, {
 });
 
 Ext.oa.WizPanel = Ext.extend(Ext.form.FormPanel, {
-  layout: 'card',
-  border: false,
-  defaults: {
-    bodyStyle: 'padding:5px;',
-    border: false,
+  layout    : 'card',
+  border    : false,
+  defaults  : {
+    bodyStyle : 'padding:5px;',
+    border    : false,
     autoScroll: true,
-    anchor: '-20px',
-    defaults: {
+    anchor    : '-20px',
+    defaults  : {
       border: false,
       anchor: '-20px',
     }
@@ -70,24 +70,24 @@ Ext.oa.LVM__Snapcore_TreePanel = Ext.extend(Ext.tree.TreePanel, {
     this.objtypes = {};
 
     var rootnode = new Ext.tree.TreeNode({
-      nodeType: 'async',
-      objtype: "root",
-      text: 'root',
-      leaf: false,
-      expanded: true,
+      nodeType  : 'async',
+      objtype   : "root",
+      text      : 'root',
+      leaf      : false,
+      expanded  : true,
       expandable: true,
     });
 
     Ext.apply(this, Ext.apply(this.initialConfig, {
-      useArrows:true,
-      autoScroll:true,
-      animate:true,
-      containerScroll: true,
-      rootVisible: false,
-      frame: true,
+      useArrows       : true,
+      autoScroll      : true,
+      animate         : true,
+      containerScroll : true,
+      rootVisible     : false,
+      frame           : true,
       loader: new Ext.oa.TreeLoader({
-        clearOnLoad: true,
-        tree: this
+        clearOnLoad   : true,
+        tree          : this
       }),
       root: rootnode,
     }));
@@ -139,36 +139,36 @@ Ext.oa.LVM__Snapcore_Panel = Ext.extend(Ext.Panel, {
     'use strict';
     //var tree = this;
     Ext.apply(this, Ext.apply(this.initialConfig, {
-      id: 'lvm__snapcore_panel_inst',
-      title: gettext('SnapApps'),
+      id    : 'lvm__snapcore_panel_inst',
+      title : gettext('SnapApps'),
       layout: 'border',
       items: [{
-        id: 'lvm__snapcore_treepanel',
-        region: 'west',
-        width: 280,
-        height: 990,
-        xtype: 'snaptreepanel',
-        buttons: [{
-          text: gettext('Add Host'),
-          handler: function(){
+        id      : 'lvm__snapcore_treepanel',
+        region  : 'west',
+        width   : 280,
+        height  : 990,
+        xtype   : 'snaptreepanel',
+        buttons : [{
+          text    : gettext('Add Host'),
+          handler : function(){
             var add_host_win = new Ext.Window({
-              id: 'add_host_win',
-              title: gettext('Add Host'),
+              id    : 'add_host_win',
+              title : gettext('Add Host'),
               layout: 'fit',
             });
 
             var add_host_panel = new Ext.Panel({
-              id: 'add_host_panel',
+              id    : 'add_host_panel',
               border: false,
               layout: {
-                type: 'vbox',
-                padding: '10',
-                align: 'center',
-                anchor: '-20px',
+                type    : 'vbox',
+                padding : '10',
+                align   : 'center',
+                anchor  : '-20px',
               },
               defaults: {
-                xtype: 'button',
-                width: 300,
+                xtype : 'button',
+                width : 300,
                 height: 50,
               }
             });
@@ -301,23 +301,23 @@ Ext.oa.LVM__Snapcore_Panel = Ext.extend(Ext.Panel, {
 
             var wizform = new Ext.oa.WizPanel({
               activeItem: 'wiz_welc',
-              items: [{
-                title: gettext('Welcome'),
-                id: 'wiz_welc',
+              items     : [{
+                title     : gettext('Welcome'),
+                id        : 'wiz_welc',
                 noAutoPrev: true,
               },{
-                title: gettext('Choose Snapshot Items'),
-                id: 'wiz_snapitems',
-                layout: "fit",
+                title     : gettext('Choose Snapshot Items'),
+                id        : 'wiz_snapitems',
+                layout    : "fit",
                 noAutoNext: true,
-                items: [{
-                  id: 'lvm__snapcore_wizard_treepanel',
-                  xtype: "snaptreepanel",
-                  checkable: true
+                items     : [{
+                  id        : 'lvm__snapcore_wizard_treepanel',
+                  xtype     : "snaptreepanel",
+                  checkable : true
                 }],
-                buttons: [{
-                  text: gettext('Next'),
-                  handler: function(){
+                buttons   : [{
+                  text    : gettext('Next'),
+                  handler : function(){
                     var nextpanel = 'wiz_addvol';
                     for( var i = 0; i < window.SnapAppPlugins.length; i++ ){
                       nextpanel = window.SnapAppPlugins[i].initWizard(wizform, nextpanel);
@@ -327,10 +327,10 @@ Ext.oa.LVM__Snapcore_Panel = Ext.extend(Ext.Panel, {
                   }
                 }],
               },{
-                title: gettext('Additional Drives'),
-                id: 'wiz_addvol',
-                items:[firstGrid, secondGrid],
-                buttons:[{
+                title   : gettext('Additional Drives'),
+                id      : 'wiz_addvol',
+                items   :[firstGrid, secondGrid],
+                buttons :[{
                   text: gettext('Add')
                 },{
                   text: gettext('Remove')
@@ -348,30 +348,30 @@ Ext.oa.LVM__Snapcore_Panel = Ext.extend(Ext.Panel, {
                   }
                 ]
               },{
-                title: gettext('Pre-/Post-Script - Conditions'),
-                id: 'wiz_prepost',
+                title : gettext('Pre-/Post-Script - Conditions'),
+                id    : 'wiz_prepost',
               },{
-                title: gettext('Scheduling Part 1 / Expiry Date'),
-                id: 'wiz_sched1',
+                title : gettext('Scheduling Part 1 / Expiry Date'),
+                id    : 'wiz_sched1',
                 layout: {
-                  type: 'vbox',
-                  align: 'stretch',
+                  type  : 'vbox',
+                  align : 'stretch',
                 },
-                xtype: 'form',
-                items: [{
-                  boxLabel: gettext('No expiry date'),
-                  id: 'no_expiry',
-                  name: 'scheduling_1',
+                xtype : 'form',
+                items : [{
+                  boxLabel  : gettext('No expiry date'),
+                  id        : 'no_expiry',
+                  name      : 'scheduling_1',
                   inputValue: 'no_expiry',
-                  xtype: 'radio',
-                  checked: true,
+                  xtype     : 'radio',
+                  checked   : true,
                 },{
-                  boxLabel: gettext('Expiry date'),
-                  id: 'expiry_date',
-                  name: 'scheduling_1',
+                  boxLabel  : gettext('Expiry date'),
+                  id        : 'expiry_date',
+                  name      : 'scheduling_1',
                   inputValue: 'expiry_date',
-                  xtype: 'radio',
-                  listeners: {
+                  xtype     : 'radio',
+                  listeners : {
                     check: function(radio, checkvalue){
                       if(checkvalue)
                       {
@@ -386,37 +386,37 @@ Ext.oa.LVM__Snapcore_Panel = Ext.extend(Ext.Panel, {
                     }
                   }
                 },{
-                  xtype: 'datefield',
-                  id: 'sched1_date_select',
-                  disabled: true,
+                  xtype     : 'datefield',
+                  id        : 'sched1_date_select',
+                  disabled  : true,
                 },{
-                  xtype: 'timefield',
-                  id: 'sched1_time_select',
-                  disabled: true,
+                  xtype     : 'timefield',
+                  id        : 'sched1_time_select',
+                  disabled  : true,
                 }]
               },{
-                title: gettext('Scheduling Part 2 / Options'),
-                id: 'wiz_sched2',
+                title : gettext('Scheduling Part 2 / Options'),
+                id    : 'wiz_sched2',
                 layout: {
-                  type: 'vbox',
-                  align: 'stretch',
+                  type  : 'vbox',
+                  align : 'stretch',
                 },
                 noAutoNext: true,
-                xtype: 'form',
-                items: [{
-                  boxLabel: gettext('Execute now'),
-                  id: 'execute_now',
-                  name: 'scheduling_2',
+                xtype     : 'form',
+                items     : [{
+                  boxLabel  : gettext('Execute now'),
+                  id        : 'execute_now',
+                  name      : 'scheduling_2',
                   inputValue: 'execute_now',
-                  xtype: 'radio',
-                  checked: true,
+                  xtype     : 'radio',
+                  checked   : true,
                 },{
-                  boxLabel: gettext('Execute later'),
-                  id: 'execute_later',
-                  name: 'scheduling_2',
+                  boxLabel  : gettext('Execute later'),
+                  id        : 'execute_later',
+                  name      : 'scheduling_2',
                   inputValue: 'execute_later',
-                  xtype: 'radio',
-                  listeners: {
+                  xtype     : 'radio',
+                  listeners : {
                     check: function(radio, checkvalue){
                       if(checkvalue)
                       {
@@ -431,23 +431,23 @@ Ext.oa.LVM__Snapcore_Panel = Ext.extend(Ext.Panel, {
                     }
                   }
                 },{
-                  xtype: 'datefield',
-                  id: 'date_select',
+                  xtype   : 'datefield',
+                  id      : 'date_select',
                   disabled: true,
                 },{
-                  xtype: 'timefield',
-                  id: 'time_select',
+                  xtype   : 'timefield',
+                  id      : 'time_select',
                   disabled: true,
                 },{
-                  boxLabel: gettext('Create scheduling'),
-                  id: 'scheduling',
-                  name: 'scheduling_2',
+                  boxLabel  : gettext('Create scheduling'),
+                  id        : 'scheduling',
+                  name      : 'scheduling_2',
                   inputValue: 'scheduling',
-                  xtype: 'radio'
+                  xtype     : 'radio'
                 }],
                 buttons: [{
-                  text: gettext('Next'),
-                  handler: function(){
+                  text    : gettext('Next'),
+                  handler : function(){
                     var checked = Ext.getCmp('wiz_sched2').getForm().getValues()['scheduling_2'];
                     var nextpnl = '';
                     switch(checked){
@@ -480,56 +480,56 @@ Ext.oa.LVM__Snapcore_Panel = Ext.extend(Ext.Panel, {
                   }
                 }]
               },{
-                title: gettext('Scheduling Part 3 / Timemanagement Part 1'),
-                id: 'wiz_sched31',
-                xtype: 'form',
-                items: [{
-                  xtype: 'textfield',
-                  name: 'task_subject',
+                title : gettext('Scheduling Part 3 / Timemanagement Part 1'),
+                id    : 'wiz_sched31',
+                xtype : 'form',
+                items : [{
+                  xtype     : 'textfield',
+                  name      : 'task_subject',
                   fieldLabel: gettext('Task subject'),
                 },{
-                  xtype: 'textfield',
-                  name: 'target_path',
+                  xtype     : 'textfield',
+                  name      : 'target_path',
                   fieldLabel: gettext('Target path'),
                 },{
-                  xtype: 'checkbox',
-                  name: 'is_active',
+                  xtype     : 'checkbox',
+                  name      : 'is_active',
                   fieldLabel: gettext('Is active'),
                 }]
               },{
-                title: gettext('Scheduling Part 3 / Timemanagement Part 2'),
-                id: 'wiz_sched32',
-                xtype: 'form',
-                items: [{
-                  xtype: 'combo',
-                  name: 'minute',
-                  fieldLabel: gettext('Minute'),
-                  store: (function(){
+                title : gettext('Scheduling Part 3 / Timemanagement Part 2'),
+                id    : 'wiz_sched32',
+                xtype : 'form',
+                items : [{
+                  xtype         : 'combo',
+                  name          : 'minute',
+                  fieldLabel    : gettext('Minute'),
+                  store         : (function(){
                     var derp = ['*'];
                     for(var i = 0; i < 60; i += 5)
                       derp.push(i);
                     return derp;
                   }()),
-                  value: '0',
-                  typeAhead: true,
-                  triggerAction: 'all',
-                  emptyText: gettext('Select...'),
-                  selectOnFocus: true,
+                  value         : '0',
+                  typeAhead     : true,
+                  triggerAction : 'all',
+                  emptyText     : gettext('Select...'),
+                  selectOnFocus : true,
                 },{
-                  xtype: 'fieldset',
-                  title: gettext('Hour'),
-                  ref: '../h_fieldset',
-                  border: true,
+                  xtype   : 'fieldset',
+                  title   : gettext('Hour'),
+                  ref     : '../h_fieldset',
+                  border  : true,
                   defaults: {
-                    border: false,
-                    columnWidth: .5,
-                    layout: 'form',
-                    defaults: {
+                    border      : false,
+                    columnWidth : .5,
+                    layout      : 'form',
+                    defaults    : {
                       xtype: 'checkbox',
                     }
                   },
                   layout: 'column',
-                  items: [{
+                  items : [{
                     items: (function(){
                       var it = [];
                       for(var i = 0; i < 12; i++)
@@ -546,40 +546,40 @@ Ext.oa.LVM__Snapcore_Panel = Ext.extend(Ext.Panel, {
                   }]
                 }],
               },{
-                title: gettext('Scheduling Part 3 / Timemanagement Part 3'),
-                id: 'wiz_sched33',
-                xtype: 'form',
-                items: [{
-                  xtype: 'combo',
-                  name: 'day_of_month',
+                title : gettext('Scheduling Part 3 / Timemanagement Part 3'),
+                id    : 'wiz_sched33',
+                xtype : 'form',
+                items : [{
+                  xtype     : 'combo',
+                  name      : 'day_of_month',
                   fieldLabel: gettext('Day'),
-                  store: (function(){
+                  store     : (function(){
                     var derp = ['*'];
                     for(var i = 1; i <= 31; i++)
                       derp.push(i);
                     return derp;
                   }()),
-                  value: '*',
-                  typeAhead: true,
-                  triggerAction: 'all',
-                  emptyText: gettext('Select...'),
-                  selectOnFocus: true,
+                  value         : '*',
+                  typeAhead     : true,
+                  triggerAction : 'all',
+                  emptyText     : gettext('Select...'),
+                  selectOnFocus : true,
                 },{
-                  xtype: 'fieldset',
-                  title: gettext('Day of week'),
-                  ref: '../dow_fieldset',
-                  border: true,
+                  xtype   : 'fieldset',
+                  title   : gettext('Day of week'),
+                  ref     : '../dow_fieldset',
+                  border  : true,
                   defaults: {
-                    border: false,
-                    columnWidth: .5,
-                    layout: 'form',
-                    defaults: {
-                      xtype: 'checkbox',
-                      checked: true,
+                    border      : false,
+                    columnWidth : .5,
+                    layout      : 'form',
+                    defaults    : {
+                      xtype   : 'checkbox',
+                      checked : true,
                     }
                   },
-                  layout: 'column',
-                  items: [{
+                  layout  : 'column',
+                  items   : [{
                     items: [{
                       id: 'dow_1', fieldLabel: gettext('Monday')
                     },{
@@ -599,21 +599,21 @@ Ext.oa.LVM__Snapcore_Panel = Ext.extend(Ext.Panel, {
                     }]
                   }],
                 },{
-                  xtype: 'fieldset',
-                  ref: '../moy_fieldset',
-                  border: true,
+                  xtype   : 'fieldset',
+                  ref     : '../moy_fieldset',
+                  border  : true,
                   defaults: {
-                    border: false,
-                    columnWidth: .5,
-                    layout: 'form',
-                    defaults: {
-                      xtype: 'checkbox',
-                      checked: true,
+                    border      : false,
+                    columnWidth : .5,
+                    layout      : 'form',
+                    defaults    : {
+                      xtype   : 'checkbox',
+                      checked : true,
                     }
                   },
-                  title: gettext('Month'),
+                  title : gettext('Month'),
                   layout: 'column',
-                  items: [{
+                  items : [{
                     items: [{
                       id: 'moy_1', fieldLabel: gettext('January')
                     },{
@@ -644,41 +644,41 @@ Ext.oa.LVM__Snapcore_Panel = Ext.extend(Ext.Panel, {
                   }],
                 }],
               },{
-                title: gettext('Finish'),
-                id: 'wiz_close',
-                noAutoNext: true,
+                title       : gettext('Finish'),
+                id          : 'wiz_close',
+                noAutoNext  : true,
               }],
             });
             var wiz = new Ext.Window({
-              title: gettext('Configuration Assistant'),
+              title : gettext('Configuration Assistant'),
               layout: 'fit',
-              items: wizform,
-              width: 800,
+              items : wizform,
+              width : 800,
               height: 500,
               anchor: '-20px',
             });
             wiz.show();
           },
         },{
-          text: gettext('Collapse all'),
-          handler: function(){
+          text    : gettext('Collapse all'),
+          handler : function(){
             var tree = Ext.getCmp('lvm__snapcore_treepanel');
             tree.collapseAll();
           }
         }]
       },{
-        region: 'center',
-        xtype: 'panel',
-        id: 'snapcore_center_panel',
-        layout: 'border',
+        region    : 'center',
+        xtype     : 'panel',
+        id        : 'snapcore_center_panel',
+        layout    : 'border',
         viewConfig: {forceFit: true},
-        items: [{
-          region: 'center',
-          xtype: 'grid',
-          width: 160,
-          id: "snapcore_east_panel",
+        items     : [{
+          region    : 'center',
+          xtype     : 'grid',
+          width     : 160,
+          id        : "snapcore_east_panel",
           viewConfig: {forceFit: true},
-          colModel: new Ext.grid.ColumnModel({
+          colModel  : new Ext.grid.ColumnModel({
             columns: [{
               header: gettext("Configuration name")
             },{
@@ -688,14 +688,14 @@ Ext.oa.LVM__Snapcore_Panel = Ext.extend(Ext.Panel, {
           store: new Ext.data.Store({
           }),
         },{
-          region: 'south',
-          id: 'snapcore_south_panel',
-          split: true,
-          height: 160,
-          width: 160,
-          xtype: 'grid',
+          region    : 'south',
+          id        : 'snapcore_south_panel',
+          split     : true,
+          height    : 160,
+          width     : 160,
+          xtype     : 'grid',
           viewConfig: {forceFit: true},
-          colModel: new Ext.grid.ColumnModel({
+          colModel  : new Ext.grid.ColumnModel({
             columns: [{
               header: gettext("VolumeVolume Snapshots"),
               //dataIndex: VolSnapshots
