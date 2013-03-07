@@ -364,6 +364,7 @@ Ext.oa.LVM__Snapcore_Panel = Ext.extend(Ext.Panel, {
                   name: 'scheduling_1',
                   inputValue: 'no_expiry',
                   xtype: 'radio',
+                  checked: true,
                 },{
                   boxLabel: gettext('Expiry date'),
                   id: 'expiry_date',
@@ -371,7 +372,7 @@ Ext.oa.LVM__Snapcore_Panel = Ext.extend(Ext.Panel, {
                   inputValue: 'expiry_date',
                   xtype: 'radio',
                   listeners: {
-                    check: function(checkbox, checkvalue){
+                    check: function(radio, checkvalue){
                       if(checkvalue)
                       {
                         Ext.getCmp('sched1_date_select').enable();
@@ -397,18 +398,27 @@ Ext.oa.LVM__Snapcore_Panel = Ext.extend(Ext.Panel, {
                 title: gettext('Scheduling Part 2 / Options'),
                 id: 'wiz_sched2',
                 layout: {
-                  type: 'hbox',
+                  type: 'vbox',
                   align: 'stretch',
                 },
                 noAutoNext: true,
                 xtype: 'form',
                 items: [{
-                  xtype: 'radiogroup',
-                  id: 'scheduling_options',
-                  columns: 1,
+                  boxLabel: gettext('Execute now'),
+                  id: 'execute_now',
+                  name: 'scheduling_2',
+                  inputValue: 'execute_now',
+                  xtype: 'radio',
+                  checked: true,
+                },{
+                  boxLabel: gettext('Execute later'),
+                  id: 'execute_later',
+                  name: 'scheduling_2',
+                  inputValue: 'execute_later',
+                  xtype: 'radio',
                   listeners: {
-                    change: function(group, checked){
-                      if(checked.getId() === 'execute_later')
+                    check: function(radio, checkvalue){
+                      if(checkvalue)
                       {
                         Ext.getCmp('date_select').enable();
                         Ext.getCmp('time_select').enable();
@@ -419,23 +429,7 @@ Ext.oa.LVM__Snapcore_Panel = Ext.extend(Ext.Panel, {
                         Ext.getCmp('time_select').disable();
                       }
                     }
-                  },
-                  items: [{
-                    boxLabel: gettext('Execute now'),
-                    id: 'execute_now',
-                    name: 'scheduling_2',
-                    inputValue: 'execute_now',
-                  },{
-                    boxLabel: gettext('Execute later'),
-                    id: 'execute_later',
-                    name: 'scheduling_2',
-                    inputValue: 'execute_later',
-                  },{
-                    boxLabel: gettext('Create scheduling'),
-                    id: 'scheduling',
-                    name: 'scheduling_2',
-                    inputValue: 'scheduling',
-                  }],
+                  }
                 },{
                   xtype: 'datefield',
                   id: 'date_select',
@@ -444,6 +438,12 @@ Ext.oa.LVM__Snapcore_Panel = Ext.extend(Ext.Panel, {
                   xtype: 'timefield',
                   id: 'time_select',
                   disabled: true,
+                },{
+                  boxLabel: gettext('Create scheduling'),
+                  id: 'scheduling',
+                  name: 'scheduling_2',
+                  inputValue: 'scheduling',
+                  xtype: 'radio'
                 }],
                 buttons: [{
                   text: gettext('Next'),
