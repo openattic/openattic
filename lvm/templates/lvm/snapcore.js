@@ -443,7 +443,41 @@ Ext.oa.LVM__Snapcore_Panel = Ext.extend(Ext.Panel, {
                   id        : 'scheduling',
                   name      : 'scheduling_2',
                   inputValue: 'scheduling',
-                  xtype     : 'radio'
+                  xtype     : 'radio',
+                  listeners : {
+                    check:  function(radio, checkvalue){
+                      if(checkvalue)
+                      {
+                        Ext.getCmp('startdate_select').enable();
+                        Ext.getCmp('starttime_select').enable();
+                        Ext.getCmp('enddate_select').enable();
+                        Ext.getCmp('endtime_select').enable();
+                      }
+                      else
+                      {
+                        Ext.getCmp('startdate_select').disable();
+                        Ext.getCmp('starttime_select').disable();
+                        Ext.getCmp('enddate_select').disable();
+                        Ext.getCmp('endtime_select').disable();
+                      }
+                    }
+                  }
+                },{
+                  xtype   : 'datefield',
+                  id      : 'startdate_select',
+                  disabled: true,
+                },{
+                  xtype   : 'timefield',
+                  id      : 'starttime_select',
+                  disabled: true,
+                },{
+                  xtype   : 'datefield',
+                  id      : 'enddate_select',
+                  disabled: true,
+                },{
+                  xtype   : 'timefield',
+                  id      : 'endtime_select',
+                  disabled: true,
                 }],
                 buttons: [{
                   text    : gettext('Next'),
@@ -452,23 +486,36 @@ Ext.oa.LVM__Snapcore_Panel = Ext.extend(Ext.Panel, {
                     var nextpnl = '';
                     switch(checked){
                       case 'execute_now':
-                          nextpnl = 'wiz_close';
+                        nextpnl = 'wiz_close';
                         break;
                       case 'execute_later':
-                          var date = Ext.getCmp('date_select').getValue();
-                          var time = (Ext.getCmp('time_select').getValue()).split(':');
-                          if(date && time)
+                        var date = Ext.getCmp('date_select').getValue();
+                        var time = (Ext.getCmp('time_select').getValue()).split(':');
+                        if(date && time)
+                        {
+                          date = date.add(Date.HOUR, time[0]).add(Date.MINUTE, time[1]).add(Date.MINUTE, +1);
+                          var now = new Date();
+                          if(now < date)
                           {
-                            date = date.add(Date.HOUR, time[0]).add(Date.MINUTE, time[1]).add(Date.MINUTE, +1);
-                            var now = new Date();
-                            if(now < date)
-                            {
-                              nextpnl = 'wiz_close';
-                            }
+                            nextpnl = 'wiz_close';
                           }
+                        }
                         break;
                       case 'scheduling':
-                          nextpnl = 'wiz_sched31';
+                        var startdate = Ext.getCmp('startdate_select').getValue();
+                        var starttime = (Ext.getCmp('starttime_select').getValue()).split(':');
+                        var enddate = Ext.getCmp('enddate_select').getValue();
+                        var endtime = (Ext.getCmp('endtime_select').getValue()).split(':');
+                        if (startdate && starttime && enddate && endtime)
+                        {
+                          startdate = startdate.add(Date.HOUR, starttime[0]).add(Date.MINUTE, starttime[1]).add(Date.MINUTE, +1);
+                          enddate = enddate.add(Date.HOUR, endtime[0]).add(Date.MINUTE, endtime[1]);
+                          var now = new Date();
+                          if(now < startdate && startdate < enddate)
+                          {
+                            nextpnl = 'wiz_sched31';
+                          }
+                        }
                         break;
                     }
 
