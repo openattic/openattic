@@ -194,113 +194,110 @@ Ext.oa.LVM__Snapcore_Panel = Ext.extend(Ext.Panel, {
           text: gettext('New configuration'),
           handler: function(){
 
-                var myData = {
-                records : [
-                        { name : "Rec 0", column1 : "0", column2 : "0" },
-                        { name : "Rec 1", column1 : "1", column2 : "1" },
-                        { name : "Rec 2", column1 : "2", column2 : "2" },
-                        { name : "Rec 3", column1 : "3", column2 : "3" },
-                        { name : "Rec 4", column1 : "4", column2 : "4" },
-                        { name : "Rec 5", column1 : "5", column2 : "5" },
-                        { name : "Rec 6", column1 : "6", column2 : "6" },
-                        { name : "Rec 7", column1 : "7", column2 : "7" },
-                        { name : "Rec 8", column1 : "8", column2 : "8" },
-                        { name : "Rec 9", column1 : "9", column2 : "9" }
-                ]
-        };
+            var myData = {
+              records : [
+                { name : "Rec 0", column1 : "0", column2 : "0" },
+                { name : "Rec 1", column1 : "1", column2 : "1" },
+                { name : "Rec 2", column1 : "2", column2 : "2" },
+                { name : "Rec 3", column1 : "3", column2 : "3" },
+                { name : "Rec 4", column1 : "4", column2 : "4" },
+                { name : "Rec 5", column1 : "5", column2 : "5" },
+                { name : "Rec 6", column1 : "6", column2 : "6" },
+                { name : "Rec 7", column1 : "7", column2 : "7" },
+                { name : "Rec 8", column1 : "8", column2 : "8" },
+                { name : "Rec 9", column1 : "9", column2 : "9" }
+              ]
+            };
 
+            // Generic fields array to use in both store defs.
+            var fields = [
+              {name: 'name', mapping : 'name'},
+              {name: 'column1', mapping : 'column1'},
+              {name: 'column2', mapping : 'column2'}
+            ];
 
-        // Generic fields array to use in both store defs.
-        var fields = [
-                {name: 'name', mapping : 'name'},
-                {name: 'column1', mapping : 'column1'},
-                {name: 'column2', mapping : 'column2'}
-        ];
+            // create the data store
+            var firstGridStore = new Ext.data.JsonStore({
+              fields : fields,
+              data   : myData,
+              root   : 'records'
+            });
 
-    // create the data store
-    var firstGridStore = new Ext.data.JsonStore({
-                fields : fields,
-                data   : myData,
-                root   : 'records'
-    });
+            // Column Model shortcut array
+            var cols = [
+              { id : 'name', header: "Record Name", width: 160, sortable: true, draggable: true, dataIndex: 'name'},
+              {header: "column1", width: 160, sortable: true, draggable: true, dataIndex: 'column1'},
+              {header: "column2", width: 160, sortable: true, draggable: true, dataIndex: 'column2'}
+            ];
 
-
-        // Column Model shortcut array
-        var cols = [
-                { id : 'name', header: "Record Name", width: 160, sortable: true, draggable: true, dataIndex: 'name'},
-                {header: "column1", width: 160, sortable: true, draggable: true, dataIndex: 'column1'},
-                {header: "column2", width: 160, sortable: true, draggable: true, dataIndex: 'column2'}
-        ];
-
-        // declare the source Grid
-    var firstGrid = new Ext.grid.GridPanel({
-        ddGroup          : 'secondGridDDGroup',
-        id               : "firstGridId",
-        store            : firstGridStore,
-        columns          : cols,
-        height           : 250,
-        enableDragDrop   : true,
-        stripeRows       : true,
-        autoExpandColumn : 'name',
-        title            : 'First Grid',
-        listeners:{
-            cellclick: function (self, rowIndex, colIndex, evt){
-              Ext.getCmp('firstGridId').getSelectionModel().clearSelections();
-            },
-
-        afterrender: function(self){
-          var firstGridDropTargetEl =  firstGrid.getView().scroller.dom;
-          var firstGridDropTarget = new Ext.dd.DropTarget(firstGridDropTargetEl, {
-                ddGroup    : 'firstGridDDGroup',
-                notifyDrop : function(ddSource, e, data){
-                        var records =  ddSource.dragData.selections;
-                        Ext.each(records, ddSource.grid.store.remove, ddSource.grid.store);
-                        firstGrid.store.add(records);
-                        firstGrid.store.sort('name', 'ASC');
-                        return true
+            // declare the source Grid
+            var firstGrid = new Ext.grid.GridPanel({
+              ddGroup          : 'secondGridDDGroup',
+              id               : "firstGridId",
+              store            : firstGridStore,
+              columns          : cols,
+              height           : 250,
+              enableDragDrop   : true,
+              stripeRows       : true,
+              autoExpandColumn : 'name',
+              title            : 'First Grid',
+              listeners:{
+                cellclick: function (self, rowIndex, colIndex, evt){
+                  Ext.getCmp('firstGridId').getSelectionModel().clearSelections();
+                },
+                afterrender: function(self){
+                  var firstGridDropTargetEl =  firstGrid.getView().scroller.dom;
+                  var firstGridDropTarget = new Ext.dd.DropTarget(firstGridDropTargetEl, {
+                    ddGroup    : 'firstGridDDGroup',
+                    notifyDrop : function(ddSource, e, data){
+                      var records =  ddSource.dragData.selections;
+                      Ext.each(records, ddSource.grid.store.remove, ddSource.grid.store);
+                      firstGrid.store.add(records);
+                      firstGrid.store.sort('name', 'ASC');
+                      return true
+                    }
+                  });
                 }
-        });
-        }
-        }
-    });
+              }
+            });
 
-    var secondGridStore = new Ext.data.JsonStore({
-        fields : fields,
-                root   : 'records'
-    });
+            var secondGridStore = new Ext.data.JsonStore({
+              fields : fields,
+              root   : 'records'
+            });
 
-    // create the destination Grid
-    var secondGrid = new Ext.grid.GridPanel({
-        ddGroup          : 'firstGridDDGroup',
-        id               : "secondGridId",
-        store            : secondGridStore,
-        columns          : cols,
-        height           : 250,
-        enableDragDrop   : true,
-        stripeRows       : true,
-        autoExpandColumn : 'name',
-        title            : 'Second Grid',
-        listeners: {
-          cellclick: function (self, rowIndex, colIndex, evt){
-            Ext.getCmp('secondGridId').getSelectionModel().clearSelections();
-          },
-        afterrender: function(self){
-          var secondGridDropTargetEl = secondGrid.getView().scroller.dom;
-        var secondGridDropTarget = new Ext.dd.DropTarget(secondGridDropTargetEl, {
-                ddGroup    : 'secondGridDDGroup',
-                notifyDrop : function(ddSource, e, data){
-                        var records =  ddSource.dragData.selections;
-                        Ext.each(records, ddSource.grid.store.remove, ddSource.grid.store);
-                        secondGrid.store.add(records);
-                        secondGrid.store.sort('name', 'ASC');
-                        return true
+            // create the destination Grid
+            var secondGrid = new Ext.grid.GridPanel({
+              ddGroup          : 'firstGridDDGroup',
+              id               : "secondGridId",
+              store            : secondGridStore,
+              columns          : cols,
+              height           : 250,
+              enableDragDrop   : true,
+              stripeRows       : true,
+              autoExpandColumn : 'name',
+              title            : 'Second Grid',
+              listeners: {
+                cellclick: function (self, rowIndex, colIndex, evt){
+                  Ext.getCmp('secondGridId').getSelectionModel().clearSelections();
+                },
+                afterrender: function(self){
+                  var secondGridDropTargetEl = secondGrid.getView().scroller.dom;
+                  var secondGridDropTarget = new Ext.dd.DropTarget(secondGridDropTargetEl, {
+                    ddGroup    : 'secondGridDDGroup',
+                    notifyDrop : function(ddSource, e, data){
+                      var records =  ddSource.dragData.selections;
+                      Ext.each(records, ddSource.grid.store.remove, ddSource.grid.store);
+                      secondGrid.store.add(records);
+                      secondGrid.store.sort('name', 'ASC');
+                      return true
+                    }
+                  });
                 }
-        });
-        }
-        }
-    });
-        // used to add records to the destination stores
-        var blankRecord =  Ext.data.Record.create(fields);
+              }
+            });
+            // used to add records to the destination stores
+            var blankRecord =  Ext.data.Record.create(fields);
 
             var wizform = new Ext.oa.WizPanel({
               activeItem: 'wiz_welc',
