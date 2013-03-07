@@ -350,6 +350,17 @@ Ext.oa.LVM__Snapcore_Panel = Ext.extend(Ext.Panel, {
               },{
                 title : gettext('Pre-/Post-Script - Conditions'),
                 id    : 'wiz_prepost',
+                labelWidth: 150,
+                xtype : 'form',
+                items : [{
+                  xtype     : 'textfield',
+                  name      : 'prescript',
+                  fieldLabel: gettext('Prescript conditions'),
+                },{
+                  xtype     : 'textfield',
+                  name      : 'postscript',
+                  fieldLabel: gettext('Postscript conditions'),
+                }]
               },{
                 title : gettext('Scheduling Part 1 / Expiry Date'),
                 id    : 'wiz_sched1',
