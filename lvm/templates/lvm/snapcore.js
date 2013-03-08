@@ -194,53 +194,32 @@ Ext.oa.LVM__Snapcore_Panel = Ext.extend(Ext.Panel, {
           text: gettext('New configuration'),
           handler: function(){
 
-            var myData = {
-              records : [
-                { name : "Rec 0", column1 : "0", column2 : "0" },
-                { name : "Rec 1", column1 : "1", column2 : "1" },
-                { name : "Rec 2", column1 : "2", column2 : "2" },
-                { name : "Rec 3", column1 : "3", column2 : "3" },
-                { name : "Rec 4", column1 : "4", column2 : "4" },
-                { name : "Rec 5", column1 : "5", column2 : "5" },
-                { name : "Rec 6", column1 : "6", column2 : "6" },
-                { name : "Rec 7", column1 : "7", column2 : "7" },
-                { name : "Rec 8", column1 : "8", column2 : "8" },
-                { name : "Rec 9", column1 : "9", column2 : "9" }
-              ]
-            };
-
-            // Generic fields array to use in both store defs.
-            var fields = [
-              {name: 'name', mapping : 'name'},
-              {name: 'column1', mapping : 'column1'},
-              {name: 'column2', mapping : 'column2'}
-            ];
-
-            // create the data store
-            var firstGridStore = new Ext.data.JsonStore({
-              fields : fields,
-              data   : myData,
-              root   : 'records'
+            var VolumeStore = new Ext.data.DirectStore({
+              id: "VolumeStore",
+              fields :["id", "name"],
+              autoLoad: true,
+              directFn: lvm__LogicalVolume.all
             });
-
-            // Column Model shortcut array
-            var cols = [
-              { id : 'name', header: "Record Name", width: 160, sortable: true, draggable: true, dataIndex: 'name'},
-              {header: "column1", width: 160, sortable: true, draggable: true, dataIndex: 'column1'},
-              {header: "column2", width: 160, sortable: true, draggable: true, dataIndex: 'column2'}
-            ];
 
             // declare the source Grid
             var firstGrid = new Ext.grid.GridPanel({
               ddGroup          : 'secondGridDDGroup',
               id               : "firstGridId",
-              store            : firstGridStore,
-              columns          : cols,
+              store            : VolumeStore,
+              colModel         : new Ext.grid.ColumnModel({
+                defaults       : {sortable: true, draggable: true},
+                columns: [
+                   {
+                    header: "Volumes",
+                    dataIndex: "name"
+                  }
+                ],
+              }),
+              viewConfig       : { forceFit: true },
               height           : 250,
               enableDragDrop   : true,
               stripeRows       : true,
-              autoExpandColumn : 'name',
-              title            : 'First Grid',
+              title            : 'Volumes',
               listeners:{
                 cellclick: function (self, rowIndex, colIndex, evt){
                   Ext.getCmp('firstGridId').getSelectionModel().clearSelections();
@@ -262,8 +241,8 @@ Ext.oa.LVM__Snapcore_Panel = Ext.extend(Ext.Panel, {
             });
 
             var secondGridStore = new Ext.data.JsonStore({
-              fields : fields,
-              root   : 'records'
+              fields : ["id", "name"],
+              root   : 'data'
             });
 
             // create the destination Grid
@@ -271,12 +250,20 @@ Ext.oa.LVM__Snapcore_Panel = Ext.extend(Ext.Panel, {
               ddGroup          : 'firstGridDDGroup',
               id               : "secondGridId",
               store            : secondGridStore,
-              columns          : cols,
+              colModel         : new Ext.grid.ColumnModel({
+                defaults       : {sortable: true, draggable: true},
+                columns: [
+                   {
+                    header: "Volumes",
+                    dataIndex: "name"
+                  }
+                ],
+              }),
+              viewConfig       : { forceFit: true },
               height           : 250,
               enableDragDrop   : true,
               stripeRows       : true,
-              autoExpandColumn : 'name',
-              title            : 'Second Grid',
+              title            : 'Drag volumes which should be snapshotted here:',
               listeners: {
                 cellclick: function (self, rowIndex, colIndex, evt){
                   Ext.getCmp('secondGridId').getSelectionModel().clearSelections();
@@ -297,7 +284,7 @@ Ext.oa.LVM__Snapcore_Panel = Ext.extend(Ext.Panel, {
               }
             });
             // used to add records to the destination stores
-            var blankRecord =  Ext.data.Record.create(fields);
+            //var blankRecord =  Ext.data.Record.create(VolumeStore);
 
             var wizform = new Ext.oa.WizPanel({
               activeItem: 'wiz_welc',
@@ -329,11 +316,13 @@ Ext.oa.LVM__Snapcore_Panel = Ext.extend(Ext.Panel, {
               },{
                 title   : gettext('Additional Drives'),
                 id      : 'wiz_addvol',
-                items   :[firstGrid, secondGrid],
-                buttons :[{
-                  text: gettext('Add')
+                defaults: { flex : 1 }, // auto stretch
+                layout  : "hbox",
+                items   : [firstGrid, secondGrid],
+                buttons : [{
+                  text  : gettext('Add')
                 },{
-                  text: gettext('Remove')
+                  text  : gettext('Remove')
                 }],
                 bbar    : [
                   '->', // Fill
@@ -341,7 +330,7 @@ Ext.oa.LVM__Snapcore_Panel = Ext.extend(Ext.Panel, {
                     text    : 'Reset both grids',
                     handler : function() {
                       //refresh source grid
-                      firstGridStore.loadData(myData);
+                      VolumeStore.loadData(VolumeStore);
                       //purge destination grid
                       secondGridStore.removeAll();
                     }
