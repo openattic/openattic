@@ -330,7 +330,7 @@ Ext.oa.LVM__Snapcore_Panel = Ext.extend(Ext.Panel, {
                     text    : 'Reset both grids',
                     handler : function() {
                       //refresh source grid
-                      VolumeStore.loadData(VolumeStore);
+                      VolumeStore.reload();
                       //purge destination grid
                       secondGridStore.removeAll();
                     }
