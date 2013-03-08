@@ -283,8 +283,6 @@ Ext.oa.LVM__Snapcore_Panel = Ext.extend(Ext.Panel, {
                 }
               }
             });
-            // used to add records to the destination stores
-            //var blankRecord =  Ext.data.Record.create(VolumeStore);
 
             var wizform = new Ext.oa.WizPanel({
               activeItem: 'wiz_welc',
@@ -319,11 +317,6 @@ Ext.oa.LVM__Snapcore_Panel = Ext.extend(Ext.Panel, {
                 defaults: { flex : 1 }, // auto stretch
                 layout  : "hbox",
                 items   : [firstGrid, secondGrid],
-                buttons : [{
-                  text  : gettext('Add')
-                },{
-                  text  : gettext('Remove')
-                }],
                 bbar    : [
                   '->', // Fill
                   {
