@@ -314,11 +314,11 @@ Ext.oa.LVM__Snapcore_Panel = Ext.extend(Ext.Panel, {
               },{
                 title   : gettext('Additional Drives'),
                 id      : 'wiz_addvol',
-                defaults: { flex : 1 }, // auto stretch
+                defaults: { flex : 1 },
                 layout  : "hbox",
                 items   : [firstGrid, secondGrid],
                 bbar    : [
-                  '->', // Fill
+                  '->',
                   {
                     text    : 'Reset both grids',
                     handler : function() {
