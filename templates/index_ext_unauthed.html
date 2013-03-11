@@ -24,6 +24,7 @@
     {% if LANGUAGE_CODE %}
       <script src="{{ MEDIA_URL }}/extjs_languages/ext-lang-{{ LANGUAGE_CODE }}.js"></script>
     {% endif %}
+    <script src="{% url django.views.i18n.javascript_catalog %}"></script>
     <script>
       Ext.onReady( function(){
         Ext.QuickTips.init();
@@ -92,6 +93,26 @@
             }
           }],
           buttons: [ {
+            text:    gettext("Use Windows Authentication"),
+            handler: function(){
+              login_form.getEl().mask("{% trans 'Checking...' %}");
+              Ext.Ajax.request(
+                // create a copy of serverResponseHandlers which we can modify without modifying the original
+                Ext.apply(Ext.apply({}, login_form.serverResponseHandlers), {
+                  url: '{% url kerblogin %}',
+                  success: function(response, opts){
+                    response.result = Ext.decode(response.responseText);
+                    if(response.result.success){
+                      login_form.serverResponseHandlers.success.apply(window, []);
+                    }
+                    else{
+                      login_form.serverResponseHandlers.failure.apply(window, [null, response]);
+                    }
+                  }
+                })
+              );
+            }
+          }, {
             text:    Ext.MessageBox.buttonText['ok'],
             handler: function(){
               login_form.getForm().submit( login_form.serverResponseHandlers );
