@@ -514,7 +514,7 @@ Ext.oa.Iscsi__Panel = Ext.extend(Ext.Panel, {
                   }()),
                   listeners: {
                     cellclick: function (self, rowIndex, colIndex, evt ){
-                    var record = self.getStore().getAt(rowIndex);
+                      var record = self.getStore().getAt(rowIndex);
                       self.ownerCt.items.items[1].getForm().loadRecord(record);
                       self.ownerCt.items.items[1].namefield.disable();
                       self.ownerCt.items.items[1].addressfield.disable();
