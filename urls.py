@@ -47,8 +47,13 @@ urlpatterns = [
     (r'^direct/', include(PROVIDER.urls)),
     (r'^userprefs/',   include("userprefs.urls")),
 
-    (r'^accounts/logout.js$',  'views.do_logout', {}, 'logout' ),
-    (r'^accounts/login.js$',  'views.do_login', {}, 'login' ),
+    (r'^accounts/logout.js$',    'views.do_logout', {}, 'logout' ),
+    (r'^accounts/login.js$',     'views.do_login',  {}, 'login'  ),
+
+    # we need a second URL for the do_login view which can be configured using an Apache
+    # <Location> directive to authenticate using Kerberos
+    (r'^accounts/kerblogin.js$', 'views.do_login',  {}, 'kerblogin' ),
+
     (r'^index.html$', 'views.index', {}, 'index'),
 
     (r'^js/(?P<app>\w+)/(?P<file>\w+)\.js$',
