@@ -54,6 +54,8 @@ def do_logout( request ):
     return HttpResponse( "{ success: true }", "application/json" )
 
 def index(request):
+    # make sure CsrfResponseMiddleware sends a CSRF token cookie, so we can properly
+    # authenticate our login form when it is submitted.
     request.META["CSRF_COOKIE_USED"] = True
     if not request.user.is_authenticated():
         return render_to_response('index_ext_unauthed.html', {
