@@ -92,33 +92,38 @@
               }
             }
           }],
-          buttons: [ {
-            text:    gettext("Use Windows Authentication"),
-            handler: function(){
-              login_form.getEl().mask("{% trans 'Checking...' %}");
-              Ext.Ajax.request(
-                // create a copy of serverResponseHandlers which we can modify without modifying the original
-                Ext.apply(Ext.apply({}, login_form.serverResponseHandlers), {
-                  url: '{% url kerblogin %}',
-                  success: function(response, opts){
-                    response.result = Ext.decode(response.responseText);
-                    if(response.result.success){
-                      login_form.serverResponseHandlers.success.apply(window, []);
+          buttons: [
+            {% if HAVE_KERBEROS %}
+            {
+              text:    gettext("Use Windows Authentication"),
+              handler: function(){
+                login_form.getEl().mask("{% trans 'Checking...' %}");
+                Ext.Ajax.request(
+                  // create a copy of serverResponseHandlers which we can modify without modifying the original
+                  Ext.apply(Ext.apply({}, login_form.serverResponseHandlers), {
+                    url: '{% url kerblogin %}',
+                    success: function(response, opts){
+                      response.result = Ext.decode(response.responseText);
+                      if(response.result.success){
+                        login_form.serverResponseHandlers.success.apply(window, []);
+                      }
+                      else{
+                        login_form.serverResponseHandlers.failure.apply(window, [null, response]);
+                      }
                     }
-                    else{
-                      login_form.serverResponseHandlers.failure.apply(window, [null, response]);
-                    }
-                  }
-                })
-              );
+                  })
+                );
+              }
+            },
+            {% endif %}
+            {
+              text:    Ext.MessageBox.buttonText['ok'],
+              handler: function(){
+                login_form.getForm().submit( login_form.serverResponseHandlers );
+                login_form.getEl().mask("{% trans 'Checking...' %}");
+              }
             }
-          }, {
-            text:    Ext.MessageBox.buttonText['ok'],
-            handler: function(){
-              login_form.getForm().submit( login_form.serverResponseHandlers );
-              login_form.getEl().mask("{% trans 'Checking...' %}");
-            }
-          }]
+          ]
         });
         login_form.show();
       });
