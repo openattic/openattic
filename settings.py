@@ -159,7 +159,11 @@ PAM_AUTH_SERVICE = "openattic"
 # to be all UPPERCASE.
 PAM_AUTH_KERBEROS = False
 
-AUTHENTICATION_BACKENDS = ( 'pamauth.PamBackend', 'django.contrib.auth.backends.ModelBackend' )
+AUTHENTICATION_BACKENDS = (
+    'pamauth.PamBackend',
+    'django.contrib.auth.backends.RemoteUserBackend',
+    'django.contrib.auth.backends.ModelBackend',
+    )
 
 # Timeout to use when connecting to peers via XMLRPC. This timeout only applies for
 # the connect() and send() operations, but not for recv(); hence it can be set to an
@@ -179,6 +183,7 @@ MIDDLEWARE_CLASSES = (
     'django.middleware.csrf.CsrfViewMiddleware',
     'django.middleware.locale.LocaleMiddleware',
     'django.contrib.auth.middleware.AuthenticationMiddleware',
+    'django.contrib.auth.middleware.RemoteUserMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
 )
 
