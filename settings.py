@@ -159,11 +159,11 @@ PAM_AUTH_SERVICE = "openattic"
 # to be all UPPERCASE.
 PAM_AUTH_KERBEROS = False
 
-AUTHENTICATION_BACKENDS = (
+AUTHENTICATION_BACKENDS = [
     'pamauth.PamBackend',
     'django.contrib.auth.backends.RemoteUserBackend',
     'django.contrib.auth.backends.ModelBackend',
-    )
+    ]
 
 if exists( "/etc/openattic/auth.ini" ):
     __authconf__ = ConfigParser()
