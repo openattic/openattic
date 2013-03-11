@@ -165,6 +165,23 @@ AUTHENTICATION_BACKENDS = (
     'django.contrib.auth.backends.ModelBackend',
     )
 
+if exists( "/etc/openattic/auth.ini" ):
+    __authconf__ = ConfigParser()
+    __authconf__.read("/etc/openattic/auth.ini")
+
+    if not __authconf__.getboolean("pam", "enabled"):
+        AUTHENTICATION_BACKENDS.remove('pamauth.PamBackend')
+    PAM_AUTH_SERVICE  = __authconf__.get("pam", "service")
+    PAM_AUTH_KERBEROS = __authconf__.getboolean("pam", "iskerberos")
+
+    if not __authconf__.getboolean("kerberos", "enabled"):
+        AUTHENTICATION_BACKENDS.remove('django.contrib.auth.backends.RemoteUserBackend')
+
+    if not __authconf__.getboolean("database", "enabled"):
+        AUTHENTICATION_BACKENDS.remove('django.contrib.auth.backends.ModelBackend')
+
+
+
 # Timeout to use when connecting to peers via XMLRPC. This timeout only applies for
 # the connect() and send() operations, but not for recv(); hence it can be set to an
 # aggressively low value in order to either be sure we will get an answer or move on.
