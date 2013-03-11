@@ -65,31 +65,31 @@
             }
           },
           items: [{
-              xtype:      'textfield',
-              fieldLabel: 'Benutzername',
-              name:       'username',
-              allowBlank: false,
-              listeners: {
-                specialkey: function( f, e ){
-                  if( e.getKey() == e.ENTER )
-                    login_form.items.items[1].focus();
-                  }
-                }
-            }, {
-              xtype:      'textfield',
-              inputType:  'password',
-              fieldLabel: 'Passwort',
-              name:       'password',
-              ref:        'lepassword',
-              allowBlank: false,
-              listeners: {
-                specialkey: function( f, e ){
-                  if( e.getKey() == e.ENTER ){
-                    login_form.getForm().submit( login_form.serverResponseHandlers );
-                    login_form.getEl().mask("{% trans 'Checking...' %}");
-                  }
+            xtype:      'textfield',
+            fieldLabel: 'Benutzername',
+            name:       'username',
+            allowBlank: false,
+            listeners: {
+              specialkey: function( f, e ){
+                if( e.getKey() == e.ENTER )
+                  login_form.items.items[1].focus();
                 }
               }
+          }, {
+            xtype:      'textfield',
+            inputType:  'password',
+            fieldLabel: 'Passwort',
+            name:       'password',
+            ref:        'lepassword',
+            allowBlank: false,
+            listeners: {
+              specialkey: function( f, e ){
+                if( e.getKey() == e.ENTER ){
+                  login_form.getForm().submit( login_form.serverResponseHandlers );
+                  login_form.getEl().mask("{% trans 'Checking...' %}");
+                }
+              }
+            }
           }],
           buttons: [ {
             text:    Ext.MessageBox.buttonText['ok'],
