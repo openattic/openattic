@@ -180,6 +180,7 @@ if exists( "/etc/openattic/auth.ini" ):
     if not __authconf__.getboolean("database", "enabled"):
         AUTHENTICATION_BACKENDS.remove('django.contrib.auth.backends.ModelBackend')
 
+HAVE_KERBEROS = ('django.contrib.auth.backends.RemoteUserBackend' in AUTHENTICATION_BACKENDS)
 
 
 # Timeout to use when connecting to peers via XMLRPC. This timeout only applies for
