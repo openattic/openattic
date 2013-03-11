@@ -52,7 +52,17 @@
               login_form.getEl().mask("{% trans 'Loading...' %}");
             },
             failure: function( f, a ){
-              if( a.result ){
+              if( "{{ HAVE_KERBEROS }}" === "True" && f.status === 401 ){
+                Ext.Msg.alert( "Error",
+                  "{% trans 'Your browser does not support Kerberos. Please log in using your username and password.' %}",
+                  function(){
+                    (function(){
+                      login_form.leusername.focus();
+                    }).defer(250);
+                  }
+                );
+              }
+              else if( a.result ){
                 Ext.Msg.alert( "Error", this.errmsg[a.result.errormsg], function(){
                   (function(){
                     login_form.lepassword.focus();
@@ -69,6 +79,7 @@
             xtype:      'textfield',
             fieldLabel: 'Benutzername',
             name:       'username',
+            ref:        'leusername',
             allowBlank: false,
             listeners: {
               specialkey: function( f, e ){
