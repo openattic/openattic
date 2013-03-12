@@ -327,6 +327,7 @@ Ext.oa.LVM__Snapcore_Panel = Ext.extend(Ext.Panel, {
                     title     : gettext('Item settings'),
                     id        : 'wiz_snapitem_settings',
                     region    : 'east',
+                    split     : true,
                     xtype     : 'form',
                     width     : 300,
                     bodyStyle : 'padding:5px 5px;',
