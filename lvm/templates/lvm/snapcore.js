@@ -297,8 +297,8 @@ Ext.oa.LVM__Snapcore_Panel = Ext.extend(Ext.Panel, {
                 domonth     : null,
                 doweek      : null,
               },
-              volumes     : null/*[1, 2, 6, 9]*/,
-              plugin_data : null /*{
+              volumes     : []/*[1, 2, 6, 9]*/,
+              plugin_data : {} /*{
                 VMware: {
                   openattic01: {
                     data: {
