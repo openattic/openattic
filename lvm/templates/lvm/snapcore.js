@@ -291,7 +291,6 @@ Ext.oa.LVM__Snapcore_Panel = Ext.extend(Ext.Panel, {
                 id        : 'wiz_welc',
                 noAutoPrev: true,
               },{
-                title     : gettext('Choose Snapshot Items'),
                 id        : 'wiz_snapitems',
                 layout    : "fit",
                 noAutoNext: true,
