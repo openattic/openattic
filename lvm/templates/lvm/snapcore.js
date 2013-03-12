@@ -303,7 +303,7 @@ Ext.oa.LVM__Snapcore_Panel = Ext.extend(Ext.Panel, {
                   checkable : true,
                   listeners : {
                     click   : function(node, e){
-                      var plugin = node.attributes.plugin_func;
+                      var plugin = node.attributes.plugin;
                       var config = plugin.getConfig(node);
                       if( config !== null ){
                         var layout = Ext.getCmp('wiz_snapitem_settings').layout;
