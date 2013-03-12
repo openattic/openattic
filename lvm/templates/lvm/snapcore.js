@@ -284,6 +284,56 @@ Ext.oa.LVM__Snapcore_Panel = Ext.extend(Ext.Panel, {
               }
             });
 
+            var config = {
+              data: {
+                prescript   : null,
+                postscript  : null,
+                expiry_date : null,
+                start_date  : null,
+                end_date    : null,
+                active      : true,
+                h           : null,
+                min         : null,
+                domonth     : null,
+                doweek      : null,
+              },
+              volumes     : null/*[1, 2, 6, 9]*/,
+              plugin_data : null /*{
+                VMware: {
+                  openattic01: {
+                    data: {
+                      consistency: "mit ram",
+                    },
+                    vms: {
+                      vm01: {
+                        consistency: "mit ram",
+                      },
+                      vm02: {
+                        consistency: "ohne ram",
+                      },
+                      vm03: {
+                        consistency: "keine konsistenz (aka kein snap)",
+                      },
+                    }
+                  },
+                  openattic02: {
+                    data: null,
+                    vms: {
+                      vm02: {
+                        consistency: "ohne ram",
+                      },
+                      vm05: {
+                        consistency: "mit ram",
+                      },
+                    }
+                  }
+                },
+                MSSql: {
+                  yadda
+                }
+              }*/
+            };
+
             var wizform = new Ext.oa.WizPanel({
               activeItem: 'wiz_welc',
               items     : [{
@@ -315,6 +365,7 @@ Ext.oa.LVM__Snapcore_Panel = Ext.extend(Ext.Panel, {
                 }, (function(){
                   var items = [];
                   for( var i = 0; i < window.SnapAppPlugins.length; i++ ){
+                    window.SnapAppPlugins[i].config = config;
                     if( typeof window.SnapAppPlugins[i].objtypes !== "undefined" ){
                       for( var o = 0; o < window.SnapAppPlugins[i].objtypes.length; o++ ){
                         if( typeof window.SnapAppPlugins[i].objtypes[o].configForm !== "undefined" ){
