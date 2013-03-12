@@ -292,13 +292,54 @@ Ext.oa.LVM__Snapcore_Panel = Ext.extend(Ext.Panel, {
                 noAutoPrev: true,
               },{
                 id        : 'wiz_snapitems',
-                layout    : "fit",
-                noAutoNext: true,
+                layout    : 'border',
+                xtype     : 'form',
+                frame     : true,
                 items     : [{
+                  title     : gettext('Available items'),
+                  region    : 'center',
                   id        : 'lvm__snapcore_wizard_treepanel',
                   xtype     : "snaptreepanel",
-                  checkable : true
-                }],
+                  checkable : true,
+                  listeners : {
+                    click   : function(node, e){
+                      var plugin = node.attributes.plugin_func;
+                      var config = plugin.getConfig(node);
+                      if( config !== null ){
+                        var layout = Ext.getCmp('wiz_snapitem_settings').layout;
+                        layout.setActiveItem(plugin.getForm(node));
+                        layout.activeItem.getForm().loadRecord(config);
+                      }
+                    },
+                  }
+                }, (function(){
+                  var items = [];
+                  for( var i = 0; i < window.SnapAppPlugins.length; i++ ){
+                    if( typeof window.SnapAppPlugins[i].objtypes !== "undefined" ){
+                      for( var o = 0; o < window.SnapAppPlugins[i].objtypes.length; o++ ){
+                        if( typeof window.SnapAppPlugins[i].objtypes[o].configForm !== "undefined" ){
+                          items.push(window.SnapAppPlugins[i].objtypes[o].configForm);
+                        }
+                      }
+                    }
+                  }
+                  return {
+                    title     : gettext('Item settings'),
+                    id        : 'wiz_snapitem_settings',
+                    region    : 'east',
+                    xtype     : 'form',
+                    width     : 300,
+                    bodyStyle : 'padding:5px 5px;',
+                    border    : true,
+                    layout    : 'card',
+                    items     : items,
+                    activeItem: 0,
+                    buttons   : [{
+                      text  : gettext('Save'),
+                      icon  : MEDIA_URL + '/oxygen/16x16/actions/dialog-ok-apply.png',
+                    }]
+                  };
+                }())],
               },{
                 title   : gettext('Additional Drives'),
                 id      : 'wiz_addvol',
