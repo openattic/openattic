@@ -386,10 +386,6 @@ Ext.oa.LVM__Snapcore_Panel = Ext.extend(Ext.Panel, {
                     layout    : 'card',
                     items     : items,
                     activeItem: 0,
-                    buttons   : [{
-                      text  : gettext('Save'),
-                      icon  : MEDIA_URL + '/oxygen/16x16/actions/dialog-ok-apply.png',
-                    }]
                   };
                 }())],
               },{
