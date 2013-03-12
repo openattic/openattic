@@ -300,17 +300,6 @@ Ext.oa.LVM__Snapcore_Panel = Ext.extend(Ext.Panel, {
                   xtype     : "snaptreepanel",
                   checkable : true
                 }],
-                buttons   : [{
-                  text    : gettext('Next'),
-                  handler : function(){
-                    var nextpanel = 'wiz_addvol';
-                    for( var i = 0; i < window.SnapAppPlugins.length; i++ ){
-                      nextpanel = window.SnapAppPlugins[i].initWizard(wizform, nextpanel);
-                    }
-                    wizform.pnl_hist.push(nextpanel);
-                    wizform.layout.setActiveItem(nextpanel);
-                  }
-                }],
               },{
                 title   : gettext('Additional Drives'),
                 id      : 'wiz_addvol',
