@@ -708,7 +708,7 @@ Ext.oa.Iscsi__Panel = Ext.extend(Ext.Panel, {
                             }, function(provider, response){
                               if( response.result ){
                                 init_all.reload();
-                                addwin.hide();
+                                addwin.close();
                               }
                             });
                           }
