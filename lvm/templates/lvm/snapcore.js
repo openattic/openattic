@@ -31,15 +31,13 @@ Ext.oa.WizPanel = Ext.extend(Ext.form.FormPanel, {
     var nextpanel = function(nextid){
       if( typeof this.layout.activeItem.getForm === "function" )
         Ext.apply(this.config.data, this.layout.activeItem.getForm().getValues());
-      this.pnl_hist.push(nextid);
+      this.pnl_hist.push(this.layout.activeItem.id);
       this.layout.setActiveItem(nextid);
       if( typeof this.layout.activeItem.getForm === "function" )
         this.layout.activeItem.getForm().loadRecord(this.config.data);
     }
     var prevpanel = function(crrid){
-      var prev_pnl = this.pnl_hist[this.pnl_hist.length - 2];
-      this.pnl_hist.pop();
-      this.layout.setActiveItem(prev_pnl);
+      this.layout.setActiveItem(this.pnl_hist.pop());
     }
 
     for(var i = this.items.length - 1; i >= 0; i--){
