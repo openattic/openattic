@@ -13,6 +13,31 @@ Ext.oa.TreeLoader = Ext.extend(Ext.tree.TreeLoader, {
   }
 });
 
+
+Ext.oa.WizardTreeNodeUI = Ext.extend(Ext.tree.TreeNodeUI, {
+  renderElements : function(n, a, targetNode, bulkRender){
+    Ext.oa.WizardTreeNodeUI.superclass.renderElements.call( this, n, a, targetNode, bulkRender );
+    Ext.DomHelper.applyStyles( this.elNode, 'position: relative' );
+    var node = this;
+    var img = new Ext.BoxComponent({
+      autoEl: {
+        tag: "img",
+        src: MEDIA_URL + "/oxygen/8x8/emblems/vcs-locally-modified.png",
+        style: "position: absolute;"
+      },
+      listeners: {
+        afterrender: function(self){
+          self.el.on("load", function(ev, target, opt){
+            img.el.alignTo(node.iconNode, "bl-bl");
+          });
+        }
+      }
+    });
+    img.render(this.elNode, 3);
+  }
+});
+
+
 Ext.oa.WizPanel = Ext.extend(Ext.form.FormPanel, {
   layout    : 'card',
   border    : false,
