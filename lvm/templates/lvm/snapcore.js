@@ -355,13 +355,13 @@ Ext.oa.LVM__Snapcore_Panel = Ext.extend(Ext.Panel, {
                     click   : function(node, e){
                       var plugin = node.attributes.plugin;
                       var config = plugin.getConfig(node);
-                      if( config !== null ){
-                        var layout = Ext.getCmp('wiz_snapitem_settings').layout;
-                        var form = plugin.getForm(node);
-                        layout.setActiveItem(form);
-                        form.treeNode = node;
-                        layout.activeItem.getForm().loadRecord(config);
-                      }
+                      if( config === null )
+                        config = new Ext.data.Record({});
+                      var layout = Ext.getCmp('wiz_snapitem_settings').layout;
+                      var form = plugin.getForm(node);
+                      layout.setActiveItem(form);
+                      form.treeNode = node;
+                      layout.activeItem.getForm().loadRecord(config);
                     },
                   }
                 }, (function(){
