@@ -357,7 +357,9 @@ Ext.oa.LVM__Snapcore_Panel = Ext.extend(Ext.Panel, {
                       var config = plugin.getConfig(node);
                       if( config !== null ){
                         var layout = Ext.getCmp('wiz_snapitem_settings').layout;
-                        layout.setActiveItem(plugin.getForm(node));
+                        var form = plugin.getForm(node);
+                        layout.setActiveItem(form);
+                        form.treeNode = node;
                         layout.activeItem.getForm().loadRecord(config);
                       }
                     },
