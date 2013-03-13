@@ -29,8 +29,12 @@ Ext.oa.WizPanel = Ext.extend(Ext.form.FormPanel, {
   pnl_hist: ['wiz_welc'],
   initComponent: function(){
     var nextpanel = function(nextid){
+      if( typeof this.layout.activeItem.getForm === "function" )
+        Ext.apply(this.config.data, this.layout.activeItem.getForm().getValues());
       this.pnl_hist.push(nextid);
       this.layout.setActiveItem(nextid);
+      if( typeof this.layout.activeItem.getForm === "function" )
+        this.layout.activeItem.getForm().loadRecord(this.config.data);
     }
     var prevpanel = function(crrid){
       var prev_pnl = this.pnl_hist[this.pnl_hist.length - 2];
@@ -335,6 +339,7 @@ Ext.oa.LVM__Snapcore_Panel = Ext.extend(Ext.Panel, {
             };
 
             var wizform = new Ext.oa.WizPanel({
+              config: config,
               activeItem: 'wiz_welc',
               items     : [{
                 title     : gettext('Welcome'),
