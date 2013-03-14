@@ -331,15 +331,24 @@ Ext.oa.LVM__Snapcore_Panel = Ext.extend(Ext.Panel, {
                     data: {
                       consistency: "mit ram",
                     },
-                    vms: {
+                    children: {
                       vm01: {
-                        consistency: "mit ram",
+                        data: {
+                          consistency: "mit ram",
+                        },
+                        children: {}
                       },
                       vm02: {
-                        consistency: "ohne ram",
+                        data: {
+                          consistency: "ohne ram",
+                        },
+                        children: {}
                       },
                       vm03: {
-                        consistency: "keine konsistenz (aka kein snap)",
+                        data: {
+                          consistency: "keine konsistenz (aka kein snap)",
+                        },
+                        children: {}
                       },
                     }
                   },
@@ -347,10 +356,16 @@ Ext.oa.LVM__Snapcore_Panel = Ext.extend(Ext.Panel, {
                     data: null,
                     vms: {
                       vm02: {
-                        consistency: "ohne ram",
+                        data: {
+                          consistency: "mit ram",
+                        },
+                        children: {}
                       },
                       vm05: {
-                        consistency: "mit ram",
+                        data: {
+                          consistency: "ohne ram",
+                        },
+                        children: {}
                       },
                     }
                   }
