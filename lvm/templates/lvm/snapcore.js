@@ -22,7 +22,7 @@ Ext.oa.WizardTreeNodeUI = Ext.extend(Ext.tree.TreeNodeUI, {
     var img_children = new Ext.BoxComponent({
       autoEl: {
         tag: "img",
-        src: MEDIA_URL + "/oxygen/8x8/emblems/vcs-update-required.png",
+        src: MEDIA_URL + "/oxygen/16x16/actions/dialog-ok-apply-gray.png",
         style: "position: absolute;"
       },
       listeners: {
@@ -47,7 +47,7 @@ Ext.oa.WizardTreeNodeUI = Ext.extend(Ext.tree.TreeNodeUI, {
     var img_self = new Ext.BoxComponent({
       autoEl: {
         tag: "img",
-        src: MEDIA_URL + "/oxygen/8x8/emblems/vcs-locally-modified.png",
+        src: MEDIA_URL + "/oxygen/16x16/actions/dialog-ok-apply.png",
         style: "position: absolute;"
       },
       listeners: {
