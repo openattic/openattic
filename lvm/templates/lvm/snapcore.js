@@ -19,7 +19,32 @@ Ext.oa.WizardTreeNodeUI = Ext.extend(Ext.tree.TreeNodeUI, {
     Ext.oa.WizardTreeNodeUI.superclass.renderElements.call( this, n, a, targetNode, bulkRender );
     Ext.DomHelper.applyStyles( this.elNode, 'position: relative' );
     var node = this;
-    var img = new Ext.BoxComponent({
+    var img_children = new Ext.BoxComponent({
+      autoEl: {
+        tag: "img",
+        src: MEDIA_URL + "/oxygen/8x8/emblems/vcs-update-required.png",
+        style: "position: absolute;"
+      },
+      listeners: {
+        afterrender: function(self){
+          self.el.on("load", function(ev, target, opt){
+            img_children.el.alignTo(node.iconNode, "bl-bl");
+            if( node.node.attributes.plugin.getConfig(node.node) === null )
+              Ext.DomHelper.applyStyles( img_children.el, 'display: none' );
+            node.node.attributes.plugin.on("setConfigData", function(plugin, confobj, key, value){
+              for( var i = 0; i < node.node.childNodes.length; i++ ){
+                if( node.node.childNodes[i].attributes.objid === key ){
+                  Ext.DomHelper.applyStyles( img_children.el,
+                    ( value !== null ? "display: block" : "display: none" ) );
+                  break;
+                }
+              }
+            });
+          });
+        },
+      }
+    });
+    var img_self = new Ext.BoxComponent({
       autoEl: {
         tag: "img",
         src: MEDIA_URL + "/oxygen/8x8/emblems/vcs-locally-modified.png",
@@ -28,12 +53,23 @@ Ext.oa.WizardTreeNodeUI = Ext.extend(Ext.tree.TreeNodeUI, {
       listeners: {
         afterrender: function(self){
           self.el.on("load", function(ev, target, opt){
-            img.el.alignTo(node.iconNode, "bl-bl");
+            img_self.el.alignTo(node.iconNode, "bl-bl");
+            if( node.node.attributes.plugin.getConfig(node.node) === null )
+              Ext.DomHelper.applyStyles( img_self.el, 'display: none' );
+            node.node.attributes.plugin.on("setConfigData", function(plugin, confobj, key, value){
+              if( node.node.attributes.objid === key ){
+                console.log(String.format("yaaay setconf! Node: {0} Key: {1}",
+                  node.node.attributes.objid, key));
+                Ext.DomHelper.applyStyles( img_self.el,
+                  ( value !== null ? "display: block" : "display: none" ) );
+              }
+            });
           });
         }
       }
     });
-    img.render(this.elNode, 3);
+    img_children.render(this.elNode, 6);
+    img_self.render(this.elNode, 3);
   }
 });
 
