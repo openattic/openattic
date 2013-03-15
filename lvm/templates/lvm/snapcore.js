@@ -393,7 +393,7 @@ Ext.oa.LVM__Snapcore_Panel = Ext.extend(Ext.Panel, {
                   region    : 'center',
                   id        : 'lvm__snapcore_wizard_treepanel',
                   xtype     : "snaptreepanel",
-                  checkable : true,
+                  checkable : false,
                   listeners : {
                     click   : function(node, e){
                       var plugin = node.attributes.plugin;
