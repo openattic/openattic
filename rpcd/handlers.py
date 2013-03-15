@@ -15,6 +15,8 @@
 """
 
 import socket
+import errno
+import sys
 
 from django.db import models
 
@@ -452,7 +454,17 @@ class ProxyModelHandler(ProxyModelBaseHandler):
             if peer is None:
                 data = self._getobj(instance)
             else:
-                data = self._get_proxy_object(peer).get(instance.id)
+                try:
+                    data = self._get_proxy_object(peer).get(instance.id)
+                except socket.error, err:
+                    if err.errno in (errno.ECONNREFUSED, errno.ECONNABORTED, errno.ECONNRESET,
+                            errno.EHOSTUNREACH, errno.ENETUNREACH, errno.ETIMEDOUT) or isinstance(err, socket.timeout):
+                        print >> sys.stderr, "Connection to peer %s failed: %s" % (peer.name, err)
+                        continue
+                    else:
+                        raise
+                except Fault, flt:
+                    continue
             if fields is not None:
                 result.append( dict([(key, data[key]) for key in fields]) )
             else:
