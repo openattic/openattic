@@ -433,20 +433,23 @@ Ext.oa.LVM__Snapcore_Panel = Ext.extend(Ext.Panel, {
                   listeners : {
                     click   : function(node, e){
                       var plugin = node.attributes.plugin;
-                      var config = plugin.getConfig(node);
-                      var layout = Ext.getCmp('wiz_snapitem_settings').layout;
-                      var form = plugin.getForm(node);
-                      layout.setActiveItem(form);
-                      form.treeNode = node;
-                      if( config === null ){
-                        // No config, so create a Record that explicitly sets every field to null.
-                        var data = {};
-                        form.items.each(function(item){
-                          data[item.name] = null;
-                        });
-                        config = new Ext.data.Record(data);
+                      if(plugin)
+                      {
+                        var config = plugin.getConfig(node);
+                        var layout = Ext.getCmp('wiz_snapitem_settings').layout;
+                        var form = plugin.getForm(node);
+                        layout.setActiveItem(form);
+                        form.treeNode = node;
+                        if( config === null ){
+                          // No config, so create a Record that explicitly sets every field to null.
+                          var data = {};
+                          form.items.each(function(item){
+                            data[item.name] = null;
+                          });
+                          config = new Ext.data.Record(data);
+                        }
+                        form.getForm().loadRecord(config);
                       }
-                      form.getForm().loadRecord(config);
                     },
                   }
                 }, (function(){
