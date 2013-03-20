@@ -13,7 +13,6 @@ Ext.oa.TreeLoader = Ext.extend(Ext.tree.TreeLoader, {
   }
 });
 
-
 Ext.oa.WizardTreeNodeUI = Ext.extend(Ext.tree.TreeNodeUI, {
   renderElements : function(n, a, targetNode, bulkRender){
     Ext.oa.WizardTreeNodeUI.superclass.renderElements.call( this, n, a, targetNode, bulkRender );
@@ -92,13 +91,14 @@ Ext.oa.WizPanel = Ext.extend(Ext.form.FormPanel, {
     var nextpanel = function(nextid){
       if( typeof this.layout.activeItem.getForm === "function" )
         Ext.apply(this.config.data, this.layout.activeItem.getForm().getValues());
-      this.pnl_hist.push(this.layout.activeItem.id);
+      this.pnl_hist.push(nextid);
       this.layout.setActiveItem(nextid);
       if( typeof this.layout.activeItem.getForm === "function" )
         this.layout.activeItem.getForm().loadRecord(this.config.data);
     }
-    var prevpanel = function(crrid){
-      this.layout.setActiveItem(this.pnl_hist.pop());
+    var prevpanel = function(){
+      this.pnl_hist.pop();
+      this.layout.setActiveItem(this.pnl_hist[this.pnl_hist.length - 1]);
     }
 
     for(var i = this.items.length - 1; i >= 0; i--){
