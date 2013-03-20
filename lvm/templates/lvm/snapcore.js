@@ -662,18 +662,44 @@ Ext.oa.LVM__Snapcore_Panel = Ext.extend(Ext.Panel, {
                         }
                         break;
                       case 'scheduling':
+                        nextpnl = 'wiz_sched31';
+
                         var startdate = Ext.getCmp('startdate_select').getValue();
                         var starttime = (Ext.getCmp('starttime_select').getValue()).split(':');
                         var enddate = Ext.getCmp('enddate_select').getValue();
                         var endtime = (Ext.getCmp('endtime_select').getValue()).split(':');
-                        if (startdate && starttime && enddate && endtime)
+                        
+                        if(startdate)
                         {
-                          startdate = startdate.add(Date.HOUR, starttime[0]).add(Date.MINUTE, starttime[1]).add(Date.MINUTE, +1);
-                          enddate = enddate.add(Date.HOUR, endtime[0]).add(Date.MINUTE, endtime[1]);
-                          var now = new Date();
-                          if(now < startdate && startdate < enddate)
+                          if(starttime.length > 1)
                           {
-                            nextpnl = 'wiz_sched31';
+                            startdate = startdate.add(Date.HOUR, starttime[0]).add(Date.MINUTE, starttime[1]).add(Date.MINUTE, +1);
+                            var now = new Date();
+                            if(now >= startdate)
+                            {
+                              nextpnl = '';
+                            }
+                          }
+                          else
+                          {
+                            nextpnl = '';
+                          }
+                        } 
+                        
+                        if(enddate)
+                        {
+                          if(endtime.length > 1)
+                          {
+                            enddate = enddate.add(Date.HOUR, endtime[0]).add(Date.MINUTE, endtime[1]);
+                            var now = new Date();
+                            if(enddate <= now || (startdate && startdate >= enddate))
+                            {
+                              nextpnl = '';
+                            }
+                          }
+                          else
+                          {
+                            nextpnl = ''
                           }
                         }
                         break;
