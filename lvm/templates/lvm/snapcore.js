@@ -880,6 +880,27 @@ Ext.oa.LVM__Snapcore_Panel = Ext.extend(Ext.Panel, {
                 title       : gettext('Finish'),
                 id          : 'wiz_close',
                 noAutoNext  : true,
+                buttons     : [{
+                  text      : gettext('Finish'),
+                  listeners : {
+                    click: function(){
+                      console.log(config);
+                      var createSnapshotConf = function(prescript, postscript, expiry_date){
+                        lvm__SnapshotConf.create({
+                          "prescript": prescript,
+                          "postscript": postscript,
+                          "expiry_date": expiry_date,
+                        }, function(result, response){
+                         if(response.type !== 'exception'){
+                            console.log(response);
+                         }
+                        });
+                      }
+                      createSnapshotConf(config.data.prescript, config.data.postscript, new Date());
+                      wiz.close();
+                    },
+                  }
+                }],
               }],
             });
             var wiz = new Ext.Window({
