@@ -695,10 +695,6 @@ class LVSnapshotJob(Cronjob):
         return Cronjob.save(self, *args, **kwargs)
 
 class SnapshotConf(models.Model):
-    snapshot_conf   = models.CharField(max_length=255)
     prescript       = models.CharField(max_length=255)
     postscript      = models.CharField(max_length=225)
     expiry_date     = models.DateTimeField(null=True, blank=True)
-
-    def __unicode__(self):
-        return "%s" % (self.snapshot_conf)
