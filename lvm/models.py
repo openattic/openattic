@@ -695,6 +695,6 @@ class LVSnapshotJob(Cronjob):
         return Cronjob.save(self, *args, **kwargs)
 
 class SnapshotConf(models.Model):
-    prescript       = models.CharField(max_length=255)
-    postscript      = models.CharField(max_length=225)
+    prescript       = models.CharField(null=True, max_length=255)
+    postscript      = models.CharField(null=True, max_length=225)
     expiry_date     = models.DateTimeField(null=True, blank=True)
