@@ -351,9 +351,9 @@ Ext.oa.LVM__Snapcore_Panel = Ext.extend(Ext.Panel, {
               data: {
                 prescript   : null,
                 postscript  : null,
-                expiry_date : null,
-                start_date  : null,
-                end_date    : null,
+                expirydate  : null,
+                startdate   : null,
+                enddate     : null,
                 active      : true,
                 h           : null,
                 min         : null,
@@ -522,37 +522,39 @@ Ext.oa.LVM__Snapcore_Panel = Ext.extend(Ext.Panel, {
                   boxLabel  : gettext('No expiry date'),
                   id        : 'no_expiry',
                   name      : 'scheduling_1',
-                  inputValue: 'no_expiry',
+                  inputValue: 'expirydate_sched1_noexpiry',
                   xtype     : 'radio',
                   checked   : true,
                 },{
                   boxLabel  : gettext('Expiry date'),
                   id        : 'expiry_date',
                   name      : 'scheduling_1',
-                  inputValue: 'expiry_date',
+                  inputValue: 'expirydate_sched1_datetime',
                   xtype     : 'radio',
                   listeners : {
                     check: function(radio, checkvalue){
                       if(checkvalue)
                       {
-                        Ext.getCmp('sched1_date_select').enable();
-                        Ext.getCmp('sched1_time_select').enable();
+                        Ext.getCmp('sched1_date').enable();
+                        Ext.getCmp('sched1_time').enable();
                       }
                       else
                       {
-                        Ext.getCmp('sched1_date_select').disable();
-                        Ext.getCmp('sched1_time_select').disable();
+                        Ext.getCmp('sched1_date').disable();
+                        Ext.getCmp('sched1_time').disable();
                       }
                     }
                   }
                 },{
                   xtype     : 'datefield',
-                  id        : 'sched1_date_select',
+                  id        : 'sched1_date',
                   disabled  : true,
+                  value     : new Date(),
                 },{
                   xtype     : 'timefield',
-                  id        : 'sched1_time_select',
+                  id        : 'sched1_time',
                   disabled  : true,
+                  value     : new Date().add(Date.HOUR, +1).getHours() + ':' + new Date().getMinutes(),
                 }]
               },{
                 title : gettext('Scheduling Part 2 / Options'),
