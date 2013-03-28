@@ -923,7 +923,6 @@ Ext.oa.LVM__Snapcore_Panel = Ext.extend(Ext.Panel, {
                   text      : gettext('Finish'),
                   listeners : {
                     click: function(){
-                      console.log(config);
                       var createSnapshotConf = function(prescript, postscript, expiry_date){
                         lvm__SnapshotConf.create({
                           "prescript": prescript,
@@ -935,7 +934,7 @@ Ext.oa.LVM__Snapcore_Panel = Ext.extend(Ext.Panel, {
                          }
                         });
                       }
-                      createSnapshotConf(config.data.prescript, config.data.postscript, new Date());
+                      //createSnapshotConf(config.data.prescript, config.data.postscript, config.data.expirydate);
                       wiz.close();
                     },
                   }
