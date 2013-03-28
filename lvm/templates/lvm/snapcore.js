@@ -352,6 +352,7 @@ Ext.oa.LVM__Snapcore_Panel = Ext.extend(Ext.Panel, {
                 prescript   : null,
                 postscript  : null,
                 expirydate  : null,
+                executdate  : null,
                 startdate   : null,
                 enddate     : null,
                 active      : true,
