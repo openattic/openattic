@@ -90,7 +90,34 @@ Ext.oa.WizPanel = Ext.extend(Ext.form.FormPanel, {
   initComponent: function(){
     var nextpanel = function(nextid){
       if( typeof this.layout.activeItem.getForm === "function" )
-        Ext.apply(this.config.data, this.layout.activeItem.getForm().getValues());
+      {
+        var formValues = this.layout.activeItem.getForm().getValues();
+        var dateTimeValues = [];
+
+        for(var key in formValues)
+        {
+          var splittedVal = formValues[key].split('_');
+
+          if(splittedVal[2] === 'datetime')
+            dateTimeValues.push(splittedVal);
+        }
+
+        if(dateTimeValues.length > 0)
+        {
+          for(var i = 0; i < dateTimeValues.length; i++)
+          {
+            var time = formValues[dateTimeValues[i][1] + '_time'].split(':');
+            var date = formValues[dateTimeValues[i][1] + '_date'].split('.');
+            date = new Date(date[2], date[1] - 1, date[0]);
+            date = date.add(Date.HOUR, time[0]).add(Date.MINUTE, time[1]);
+            this.config.data[dateTimeValues[i][0]] = date;
+          }
+        }
+        else
+        {
+          Ext.apply(this.config.data, formValues);
+        }
+      }
       this.pnl_hist.push(nextid);
       this.layout.setActiveItem(nextid);
       if( typeof this.layout.activeItem.getForm === "function" )
