@@ -522,14 +522,14 @@ Ext.oa.LVM__Snapcore_Panel = Ext.extend(Ext.Panel, {
                 items : [{
                   boxLabel  : gettext('No expiry date'),
                   id        : 'no_expiry',
-                  name      : 'scheduling_1',
+                  name      : 'expirydate',
                   inputValue: 'expirydate_sched1_noexpiry',
                   xtype     : 'radio',
                   checked   : true,
                 },{
                   boxLabel  : gettext('Expiry date'),
                   id        : 'expiry_date',
-                  name      : 'scheduling_1',
+                  name      : 'expirydate',
                   inputValue: 'expirydate_sched1_datetime',
                   xtype     : 'radio',
                   listeners : {
