@@ -687,6 +687,7 @@ Ext.oa.LVM__Snapcore_Panel = Ext.extend(Ext.Panel, {
                           var now = new Date();
                           if(now < date)
                           {
+                            config.data['executedate'] = date;
                             nextpnl = 'wiz_close';
                           }
                         }
@@ -709,6 +710,10 @@ Ext.oa.LVM__Snapcore_Panel = Ext.extend(Ext.Panel, {
                             {
                               nextpnl = '';
                             }
+                            else
+                            {
+                              config.data['startdate'] = startdate;
+                            }
                           }
                           else
                           {
@@ -725,6 +730,10 @@ Ext.oa.LVM__Snapcore_Panel = Ext.extend(Ext.Panel, {
                             if(enddate <= now || (startdate && startdate >= enddate))
                             {
                               nextpnl = '';
+                            }
+                            else
+                            {
+                              config.data['enddate'] = enddate;
                             }
                           }
                           else
