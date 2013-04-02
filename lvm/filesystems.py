@@ -165,7 +165,7 @@ class Ext4(Ext2):
 class Zfs(FileSystem):
     """ Handler for ZFS on Fuse. """
     name = "zfs"
-    desc = "ZFS on FUSE"
+    desc = "ZFS"
     mount_in_fstab = False
 
     @property
