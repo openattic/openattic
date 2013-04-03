@@ -564,14 +564,13 @@ class Source(Node):
     def define(self):
         """ Create a variable definition for this source and return the name. """
         varname = self.name
-        self.args.append( "DEF:%s=%s:%s:AVERAGE" % (varname, self.rrd.rrdpath, self.rrd.get_source_varname(self.name)) )
+        self.args.append( "DEF:%s=%s:%s:AVERAGE" % (varname, self.rrd.get_source_rrdpath(self.name), self.rrd.get_source_varname(self.name)) )
         return varname
 
 
 
 class RRD(object):
-    def __init__(self, rrdpath, xmlpath):
-        self.rrdpath = rrdpath
+    def __init__(self, xmlpath):
         self.xmlpath = xmlpath
 
         self.xml = minidom.parse(xmlpath)
@@ -579,6 +578,12 @@ class RRD(object):
         self.sources = dict( [
             (ds.getElementsByTagName("NAME")[0].childNodes[0].nodeValue,
             int(ds.getElementsByTagName("DS")[0].childNodes[0].nodeValue))
+            for ds in self.xml.getElementsByTagName("DATASOURCE")
+            ] )
+
+        self.rrdpaths = dict( [
+            (ds.getElementsByTagName("NAME")[0].childNodes[0].nodeValue,
+            ds.getElementsByTagName("RRDFILE")[0].childNodes[0].nodeValue)
             for ds in self.xml.getElementsByTagName("DATASOURCE")
             ] )
 
@@ -599,6 +604,9 @@ class RRD(object):
     def get_source_varname(self, srcname):
         return self.sources[srcname]
 
+    def get_source_rrdpath(self, srcname):
+        return self.rrdpaths[srcname]
+
     def get_source_label(self, srcname):
         return self.source_labels[srcname]
 
@@ -610,8 +618,7 @@ class RRD(object):
         try:
             # Stat the RRD file to prevent ugly grey bars on the right side
             # that appear before npcd processed the perfdata
-            xmltime = int(self.xml.getElementsByTagName("NAGIOS_TIMET")[0].childNodes[0].nodeValue)
-            return min(xmltime, int(getmtime(self.rrdpath)))
+            return int(self.xml.getElementsByTagName("NAGIOS_TIMET")[0].childNodes[0].nodeValue)
         except:
             return int(time())
 
