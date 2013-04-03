@@ -120,6 +120,46 @@
         }
     },
     {
+        "pk": 4,
+        "model": "nagios.graph",
+        "fields": {
+            "verttitle": "read (-) / write (+)",
+            "fields": "-rd_normiops wr_normiops",
+            "command": 9,
+            "title": "IOs per Second (Normalized)"
+        }
+    },
+    {
+        "pk": 35,
+        "model": "nagios.graph",
+        "fields": {
+            "verttitle": "read (-) / write (+)",
+            "fields": "-rd_normratio wr_normratio",
+            "command": 9,
+            "title": "Normalization Ratio"
+        }
+    },
+    {
+        "pk": 36,
+        "model": "nagios.graph",
+        "fields": {
+            "verttitle": "",
+            "fields": "ioindex",
+            "command": 9,
+            "title": "IO Index"
+        }
+    },
+    {
+        "pk": 37,
+        "model": "nagios.graph",
+        "fields": {
+            "verttitle": "",
+            "fields": "normindex",
+            "command": 9,
+            "title": "IO Index (Normalized)"
+        }
+    },
+    {
         "pk": 1,
         "model": "nagios.graph",
         "fields": {
@@ -147,16 +187,6 @@
             "fields": "-rd_bps wr_bps",
             "command": 9,
             "title": "Throughput"
-        }
-    },
-    {
-        "pk": 4,
-        "model": "nagios.graph",
-        "fields": {
-            "verttitle": "s",
-            "fields": "servicetime",
-            "command": 9,
-            "title": "Service Time"
         }
     },
     {
