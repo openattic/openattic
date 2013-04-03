@@ -209,7 +209,7 @@ if havestate:
         "tot_avg_wait": tot_avg_wait / 1000.,
         }
 
-    if tot_ios:
+    if tot_ios and tot_normiops and util_percent:
         ioindex   = int(tot_iops / util_percent)
         normindex = int(tot_normiops / util_percent)
         out += "ioindex=%d normindex=%d " % (ioindex, normindex)
