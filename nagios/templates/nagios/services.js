@@ -328,7 +328,17 @@ Ext.oa.Nagios__Service_Panel = Ext.extend(Ext.Panel, {
                     title: text,
                     id: "portlet_nagios_" + portletid,
                     recordId: record.data.id,
-                    graphId:  graph.id
+                    graphId:  graph.id,
+                    tools: (function(){
+                      var mytools = dashboard.portletTools.slice();
+                      mytools.unshift({
+                        id: 'refresh',
+                        handler: function(ev, btn, portlet, self){
+                          portlet.items.items[0].reload();
+                        }
+                      });
+                      return mytools;
+                    }()),
                   });
                 }
               },
