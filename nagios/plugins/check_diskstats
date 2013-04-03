@@ -173,7 +173,6 @@ if havestate:
             "rd_iops=%(rd_iops).2f wr_iops=%(wr_iops).2f "
             "tot_iops=%(tot_iops).2f "
             "rd_bps=%(rd_bps).2fB/s wr_bps=%(wr_bps).2fB/s "
-            "servicetime=%(servicetime)fs "
             "tot_avg_wait=%(tot_avg_wait)fs "
             "rd_avg_wait=%(rd_avg_wait)fs wr_avg_wait=%(wr_avg_wait)fs "
             "rd_avg_size=%(rd_avg_size).2fB wr_avg_size=%(wr_avg_size).2fB "
@@ -191,7 +190,6 @@ if havestate:
         "tot_iops":     tot_iops,
         "rd_bps":       rd_bps,
         "wr_bps":       wr_bps,
-        "servicetime":  servicetime / 1000.,
         "rd_avg_wait":  rd_avg_wait / 1000.,
         "wr_avg_wait":  wr_avg_wait / 1000.,
         "rd_avg_size":  rd_avg_size,
