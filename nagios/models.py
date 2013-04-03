@@ -122,13 +122,6 @@ class Service(models.Model):
     @property
     def rrd(self):
         servname = re.sub('[^\w\d_-]', '_', self.description).encode("UTF-8")
-        rrdpath = nagios_settings.RRD_PATH % {
-            'host': self.hostname,
-            'serv': servname
-            }
-        if not exists(rrdpath):
-            raise SystemError("RRD file not found")
-
         xmlpath = nagios_settings.XML_PATH % {
             'host': self.hostname,
             'serv': servname
@@ -136,7 +129,7 @@ class Service(models.Model):
         if not exists(xmlpath):
             raise SystemError("XML file not found")
 
-        return RRD(rrdpath, xmlpath)
+        return RRD(xmlpath)
 
 
 def create_service_for_lv(**kwargs):
