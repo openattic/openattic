@@ -151,18 +151,28 @@ if havestate:
     if rd_ios:
         rd_avg_wait = rd_ticks / rd_ios
         rd_avg_size = rd_sectors * bytes_per_sector / rd_ios
+        # Normalized IOPS are calculated by taking the request size into account,
+        # and basically say how many requests of size 4096 it would have taken
+        # to accomplish what one bigger request has read/written.
+        rd_normiops = rd_avg_size * rd_iops / 4096.
     else:
         rd_avg_wait = 0
         rd_avg_size = 0
+        rd_normiops = 0
 
     if wr_ios:
         wr_avg_wait = wr_ticks / wr_ios
         wr_avg_size = wr_sectors * bytes_per_sector / wr_ios
+        wr_normiops = wr_avg_size * wr_iops / 4096.
     else:
         wr_avg_wait = 0
         wr_avg_size = 0
+        wr_normiops = 0
+
+    tot_normiops = rd_normiops + wr_normiops
 
     util_percent = tot_ticks / (interval * 1000.) * 100.
+
 
     if util_percent > 75:
         exit = 1
@@ -172,6 +182,8 @@ if havestate:
     print  ("Disk load for %(disk)s is at %(util_percent).2f%%.|"
             "rd_iops=%(rd_iops).2f wr_iops=%(wr_iops).2f "
             "tot_iops=%(tot_iops).2f "
+            "rd_normiops=%(rd_normiops).2f wr_normiops=%(wr_normiops).2f "
+            "tot_normiops=%(tot_normiops).2f "
             "rd_bps=%(rd_bps).2fB/s wr_bps=%(wr_bps).2fB/s "
             "tot_avg_wait=%(tot_avg_wait)fs "
             "rd_avg_wait=%(rd_avg_wait)fs wr_avg_wait=%(wr_avg_wait)fs "
@@ -182,6 +194,9 @@ if havestate:
         "rd_iops":      rd_iops,
         "wr_iops":      wr_iops,
         "tot_iops":     tot_iops,
+        "rd_normiops":  rd_normiops,
+        "wr_normiops":  wr_normiops,
+        "tot_normiops": tot_normiops,
         "rd_bps":       rd_bps,
         "wr_bps":       wr_bps,
         "rd_avg_wait":  rd_avg_wait / 1000.,
