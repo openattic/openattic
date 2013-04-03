@@ -173,11 +173,16 @@ if havestate:
 
     util_percent = tot_ticks / (interval * 1000.) * 100.
 
-
     if util_percent > 75:
         exit = 1
     if util_percent > 85:
         exit = 2
+
+    if tot_ios:
+        ioindex   = str(int(tot_iops / util_percent))
+        normindex = str(int(tot_normiops / util_percent))
+    else:
+        ioindex   = normindex = "U"
 
     print  ("Disk load for %(disk)s is at %(util_percent).2f%%.|"
             "rd_iops=%(rd_iops).2f wr_iops=%(wr_iops).2f "
@@ -188,7 +193,8 @@ if havestate:
             "tot_avg_wait=%(tot_avg_wait)fs "
             "rd_avg_wait=%(rd_avg_wait)fs wr_avg_wait=%(wr_avg_wait)fs "
             "rd_avg_size=%(rd_avg_size).2fB wr_avg_size=%(wr_avg_size).2fB "
-            "load_percent=%(util_percent).2f%%;75;85;0;100 ") % {
+            "load_percent=%(util_percent).2f%%;75;85;0;100 "
+            "ioindex=%(ioindex)s normindex=%(normindex)s ") % {
         "disk":         disk,
         "util_percent": util_percent,
         "rd_iops":      rd_iops,
@@ -204,6 +210,8 @@ if havestate:
         "rd_avg_size":  rd_avg_size,
         "wr_avg_size":  wr_avg_size,
         "tot_avg_wait": tot_avg_wait / 1000.,
+        "ioindex":      ioindex,
+        "normindex":    normindex,
         }
 
 else:
