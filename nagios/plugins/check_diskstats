@@ -170,9 +170,6 @@ if havestate:
         exit = 2
 
     print  ("Disk load for %(disk)s is at %(util_percent).2f%%.|"
-            #"rd_ios=%(rd_ios)d wr_ios=%(wr_ios)d "
-            #"rd_ticks=%(rd_ticks)d wr_ticks=%(wr_ticks)d "
-            #"rd_sectors=%(rd_sectors)d wr_sectors=%(wr_sectors)d "
             "rd_iops=%(rd_iops).2f wr_iops=%(wr_iops).2f "
             "tot_iops=%(tot_iops).2f "
             "rd_bps=%(rd_bps).2fB/s wr_bps=%(wr_bps).2fB/s "
