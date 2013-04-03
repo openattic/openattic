@@ -179,12 +179,6 @@ if havestate:
             "load_percent=%(util_percent).2f%%;75;85;0;100 ") % {
         "disk":         disk,
         "util_percent": util_percent,
-        "rd_ios":       rd_ios,
-        "wr_ios":       wr_ios,
-        "rd_ticks":     rd_ticks,
-        "wr_ticks":     wr_ticks,
-        "rd_sectors":   rd_sectors,
-        "wr_sectors":   wr_sectors,
         "rd_iops":      rd_iops,
         "wr_iops":      wr_iops,
         "tot_iops":     tot_iops,
