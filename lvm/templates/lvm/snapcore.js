@@ -624,10 +624,12 @@ Ext.oa.LVM__Snapcore_Panel = Ext.extend(Ext.Panel, {
                   xtype   : 'datefield',
                   id      : 'date_select',
                   disabled: true,
+                  value   : new Date(),
                 },{
                   xtype   : 'timefield',
                   id      : 'time_select',
                   disabled: true,
+                  value   : new Date().add(Date.HOUR, +1).getHours() + ':' + new Date().getMinutes(),
                 },{
                   boxLabel  : gettext('Create scheduling'),
                   id        : 'scheduling',
@@ -656,18 +658,22 @@ Ext.oa.LVM__Snapcore_Panel = Ext.extend(Ext.Panel, {
                   xtype   : 'datefield',
                   id      : 'startdate_select',
                   disabled: true,
+                  value   : new Date(),
                 },{
                   xtype   : 'timefield',
                   id      : 'starttime_select',
                   disabled: true,
+                  value   : new Date().getHours() + ':' + new Date().getMinutes(),
                 },{
                   xtype   : 'datefield',
                   id      : 'enddate_select',
                   disabled: true,
+                  value   : new Date().add(Date.DAY, +7),
                 },{
                   xtype   : 'timefield',
                   id      : 'endtime_select',
                   disabled: true,
+                  value   : new Date().getHours() + ':' + new Date().getMinutes(),
                 }],
                 buttons: [{
                   text    : gettext('Next'),
