@@ -276,6 +276,8 @@ def update_database(ctls):
             dbencl.psunits = encl.psunits
             dbencl.save()
 
+        unseen_units = [ u["serial"] for u in dbctl.unit_set.values("serial") ]
+
         for unit_id, unit in ctl.units.items():
             try:
                 dbunit = models.Unit.objects.get(controller=dbctl, serial=unit.params["serial number"])
@@ -295,6 +297,15 @@ def update_database(ctls):
             dbunit.wrcache    = unit.params["write cache"]
             dbunit.name       = unit.params["name"]
             dbunit.save()
+
+            if dbunit.serial in unseen_units:
+                unseen_units.remove(dbunit.serial)
+
+        for serial in unseen_units:
+            dbunit = models.Unit.objects.get(controller=dbctl, serial=serial)
+            dbunit.delete()
+
+        unseen_disks = [ d["serial"] for d in dbctl.disk_set.values("serial") ]
 
         for port_id, disk in ctl.ports.items():
             try:
@@ -321,3 +332,11 @@ def update_database(ctls):
             dbdisk.power_on_h = int( disk.params["power on hours"] )
 
             dbdisk.save()
+
+            if dbdisk.serial in unseen_disks:
+                unseen_disks.remove(dbdisk.serial)
+
+        for serial in unseen_disks:
+            dbdisk = models.Disk.objects.get(controller=dbctl, serial=serial)
+            dbdisk.delete()
+
