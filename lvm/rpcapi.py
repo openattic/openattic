@@ -277,4 +277,7 @@ class ZfsSnapshotProxy(ProxyModelHandler, ZfsSnapshotHandler):
 class SnapshotConfHandler(ModelHandler):
     model = SnapshotConf
 
+    def saveConfig(self, config):
+      return self._getobj(SnapshotConf.objects.add_config(config))
+
 RPCD_HANDLERS = [BlockDevicesHandler, VgProxy, LvProxy, ZfsSubvolumeProxy, ZfsSnapshotProxy, LVMetadataHandler, LVSnapshotJobHandler, SnapshotConfHandler]
