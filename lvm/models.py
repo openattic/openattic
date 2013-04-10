@@ -694,7 +694,16 @@ class LVSnapshotJob(Cronjob):
         self.command = "echo Doing snapshot of %s" % self.volume.name
         return Cronjob.save(self, *args, **kwargs)
 
+class ConfManager(models.Manager):
+    def add_config(self, conf_obj):
+        data = conf_obj['data']
+        snapconf = SnapshotConf(prescript=data['prescript'], postscript=data['postscript'], expiry_date=data['expirydate'])
+        snapconf.save()
+        return snapconf
+
 class SnapshotConf(models.Model):
     prescript       = models.CharField(null=True, max_length=255)
     postscript      = models.CharField(null=True, max_length=225)
     expiry_date     = models.DateTimeField(null=True, blank=True)
+
+    objects = ConfManager()
