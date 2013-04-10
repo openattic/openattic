@@ -106,7 +106,7 @@
           buttons: [
             {% if HAVE_KERBEROS %}
             {
-              text:    gettext("Use Windows Authentication"),
+              text:    gettext("Use system credentials"),
               handler: function(){
                 login_form.getEl().mask("{% trans 'Checking...' %}");
                 Ext.Ajax.request(

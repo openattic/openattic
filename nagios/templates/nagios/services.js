@@ -220,6 +220,10 @@ Ext.oa.Nagios__Graph_ImagePanel = Ext.extend(Ext.Panel, {
           this.reloadInterval*1000, this, [this.currentRecord, this.currentId]);
       }
     }
+  },
+
+  reload: function(){
+    this.loadRecord(this.currentRecord, this.currentId);
   }
 });
 
@@ -324,7 +328,17 @@ Ext.oa.Nagios__Service_Panel = Ext.extend(Ext.Panel, {
                     title: text,
                     id: "portlet_nagios_" + portletid,
                     recordId: record.data.id,
-                    graphId:  graph.id
+                    graphId:  graph.id,
+                    tools: (function(){
+                      var mytools = dashboard.portletTools.slice();
+                      mytools.unshift({
+                        id: 'refresh',
+                        handler: function(ev, btn, portlet, self){
+                          portlet.items.items[0].reload();
+                        }
+                      });
+                      return mytools;
+                    }()),
                   });
                 }
               },
@@ -611,7 +625,16 @@ Ext.oa.Nagios__Service_Module = Ext.extend(Object, {
         xtype: "naggraphportlet",
         title: portletstate[i].title,
         id: 'portlet_nagios_' + portletstate[i].id,
-        tools: tools,
+        tools: (function(){
+          var mytools = tools.slice();
+          mytools.unshift({
+            id: 'refresh',
+            handler: function(ev, btn, portlet, self){
+              portlet.items.items[0].reload();
+            }
+          });
+          return mytools;
+        }()),
         recordId: portletstate[i].recordid,
         graphId:  portletstate[i].graphid
       } );
