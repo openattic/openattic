@@ -929,18 +929,10 @@ Ext.oa.LVM__Snapcore_Panel = Ext.extend(Ext.Panel, {
                   text      : gettext('Finish'),
                   listeners : {
                     click: function(){
-                      var createSnapshotConf = function(prescript, postscript, expiry_date){
-                        lvm__SnapshotConf.create({
-                          "prescript": prescript,
-                          "postscript": postscript,
-                          "expiry_date": expiry_date,
-                        }, function(result, response){
-                         if(response.type !== 'exception'){
-                            console.log(response);
-                         }
-                        });
-                      }
-                      //createSnapshotConf(config.data.prescript, config.data.postscript, config.data.expirydate);
+                      console.log(config);
+                      lvm__SnapshotConf.saveConfig(config, function(result){
+                        console.log(result);
+                      });
                       wiz.close();
                     },
                   }
