@@ -15,6 +15,7 @@
 """
 
 import os
+import re
 import dbus
 
 from systemd  import dbus_to_python
@@ -170,6 +171,19 @@ class Zfs(FileSystem):
     name = "zfs"
     desc = "ZFS"
     mount_in_fstab = False
+
+    def clean_volume(self, volume):
+        from django.core.exceptions import ValidationError
+        if volume.name == "log":
+            raise ValidationError({"name": ["ZFS volumes cannot be named 'log'."]})
+        if volume.name.startswith( "mirror" ):
+            raise ValidationError({"name": ["ZFS volume names cannot start with 'mirror'."]})
+        if volume.name.startswith( "raidz" ):
+            raise ValidationError({"name": ["ZFS volume names cannot start with 'raidz'."]})
+        if volume.name.startswith( "spare" ):
+            raise ValidationError({"name": ["ZFS volume names cannot start with 'spare'."]})
+        if re.match("^c[0-9]", volume.name):
+            raise ValidationError({"name": ["ZFS volume names cannot start with 'c[0-9]'."]})
 
     @property
     def info(self):
