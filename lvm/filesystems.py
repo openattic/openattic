@@ -45,6 +45,9 @@ class FileSystem(object):
         self.lv = logical_volume
         self._lvm = self.lv.lvm
 
+    def clean_volume(self, volume):
+        pass
+
     def mount(self, jid):
         """ Mount the file system.
         """
