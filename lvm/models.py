@@ -413,6 +413,8 @@ class LogicalVolume(models.Model):
                 raise ValidationError(_('The vg field is required unless you are creating a snapshot.'))
         elif self.snapshot.snapshot:
             raise ValidationError(_('LVM does not support snapshotting snapshots.'))
+        if self.filesystem:
+            self.fs.clean_volume(self)
 
     def save( self, database_only=False, *args, **kwargs ):
         if database_only:
