@@ -150,37 +150,55 @@ except NameError:
             Exception('Please create a %s file with random characters to generate your secret key!' % SECRET_FILE)
 
 
+# Read domain.ini.
+__domconf__ = ConfigParser()
+
+#   set defaults...
+__domconf__.add_section("domain")
+__domconf__.set("domain", "realm", "")
+__domconf__.set("domain", "workgroup", "")
+
+__domconf__.add_section("pam")
+__domconf__.set("pam", "service", "openattic")
+__domconf__.set("pam", "enabled", "no")
+__domconf__.set("pam", "is_kerberos", "yes")
+
+__domconf__.add_section("kerberos")
+__domconf__.set("kerberos", "enabled", "no")
+
+__domconf__.add_section("database")
+__domconf__.set("database", "enabled", "yes")
+
+#   now read the actual config, if it exists. If it doesn't, the defaults are fine,
+#   so we don't need to care about whether or not this works.
+__domconf__.read("/etc/openattic/domain.ini")
+
+
 # A PAM authentication service to query with our user data.
 # If this does not succeed, openATTIC will fall back to its
 # internal database.
-PAM_AUTH_SERVICE = "openattic"
+PAM_AUTH_SERVICE = __domconf__.get("pam", "service")
 # Whether or not the service given in PAM_AUTH_SERVICE uses
 # Kerberos as its backend, therefore requiring user names
 # to be all UPPERCASE.
-PAM_AUTH_KERBEROS = False
+PAM_AUTH_KERBEROS = __domconf__.getboolean("pam", "is_kerberos")
 
-AUTHENTICATION_BACKENDS = [
-    'pamauth.PamBackend',
-    'django.contrib.auth.backends.RemoteUserBackend',
-    'django.contrib.auth.backends.ModelBackend',
-    ]
+AUTHENTICATION_BACKENDS = []
+if __domconf__.getboolean("pam", "enabled"):
+    AUTHENTICATION_BACKENDS.append("pamauth.PamBackend")
+if __domconf__.getboolean("kerberos", "enabled"):
+    AUTHENTICATION_BACKENDS.append('django.contrib.auth.backends.RemoteUserBackend')
+if __domconf__.getboolean("database", "enabled"):
+    AUTHENTICATION_BACKENDS.append('django.contrib.auth.backends.ModelBackend')
 
-if exists( "/etc/openattic/auth.ini" ):
-    __authconf__ = ConfigParser()
-    __authconf__.read("/etc/openattic/auth.ini")
+HAVE_KERBEROS = __domconf__.getboolean("kerberos", "enabled")
 
-    if not __authconf__.getboolean("pam", "enabled"):
-        AUTHENTICATION_BACKENDS.remove('pamauth.PamBackend')
-    PAM_AUTH_SERVICE  = __authconf__.get("pam", "service")
-    PAM_AUTH_KERBEROS = __authconf__.getboolean("pam", "iskerberos")
+if __domconf__.get("domain", "realm"):
+    SAMBA_DOMAIN = __domconf__.get("domain", "realm")
+if __domconf__.get("domain", "workgroup"):
+    SAMBA_WORKGROUP = __domconf__.get("domain", "workgroup")
 
-    if not __authconf__.getboolean("kerberos", "enabled"):
-        AUTHENTICATION_BACKENDS.remove('django.contrib.auth.backends.RemoteUserBackend')
 
-    if not __authconf__.getboolean("database", "enabled"):
-        AUTHENTICATION_BACKENDS.remove('django.contrib.auth.backends.ModelBackend')
-
-HAVE_KERBEROS = ('django.contrib.auth.backends.RemoteUserBackend' in AUTHENTICATION_BACKENDS)
 
 
 # Timeout to use when connecting to peers via XMLRPC. This timeout only applies for
