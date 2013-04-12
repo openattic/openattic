@@ -66,18 +66,6 @@ Ext.oa.Samba__Share_Panel = Ext.extend(Ext.oa.ShareGridPanel, {
         name: "path",
         ref: 'dirfield',
         disabled: true
-      },{
-        xtype: 'textfield',
-        fieldLabel: gettext('System user'),
-        allowBlank: true,
-        name: "force_user",
-        ref: 'userfield'
-      }, {
-        xtype: 'textfield',
-        fieldLabel: gettext('System Group'),
-        allowBlank: true,
-        name: "force_group",
-        ref: 'groupfield'
       }, {
         xtype: 'checkbox',
         fieldLabel: gettext('Browseable'),

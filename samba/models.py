@@ -33,8 +33,6 @@ class Share(models.Model):
     browseable    = models.BooleanField(default=True,  blank=True)
     guest_ok      = models.BooleanField(default=False, blank=True)
     writeable     = models.BooleanField(default=True,  blank=True)
-    force_user    = models.CharField(max_length=50, blank=True)
-    force_group   = models.CharField(max_length=50, blank=True)
     create_mode   = models.CharField(max_length=5,  default="0664")
     dir_mode      = models.CharField(max_length=5,  default="0775")
     comment       = models.CharField(max_length=250, blank=True)
