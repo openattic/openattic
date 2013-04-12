@@ -87,21 +87,3 @@ class Share(models.Model):
         if not volume.standby:
             samba.reload()
         return ret
-
-
-def replace_set_password(instance=None, **kwargs):
-    """ Replace the standard *_password functions in the auth model. """
-    oldfunc = instance.set_password
-
-    def set_password_samba(self, raw_password):
-        ret = oldfunc(raw_password)
-        if self.id is None:
-            self.save() # need to save() first, because smbpasswd will fail if the user doesn't exist
-        # Yaay! Let's send the password to systemd! Why, in plain text, of course!
-        # Who needs encryption and shit! Security lolomgz
-        dbus.SystemBus().get_object(settings.DBUS_IFACE_SYSTEMD, "/samba").setpasswd(self.username, raw_password)
-        return ret
-
-    instance.set_password = new.instancemethod(set_password_samba, instance, instance.__class__)
-
-signals.post_init.connect(replace_set_password, sender=User)
