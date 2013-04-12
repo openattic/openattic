@@ -695,10 +695,32 @@ class LVSnapshotJob(Cronjob):
         return Cronjob.save(self, *args, **kwargs)
 
 class ConfManager(models.Manager):
+    def save_vmware_items(self, snapconf, host_id, plugin_data, conf_models):
+        # datastore
+        for key in plugin_data.keys():
+            if 'data' in plugin_data[key] and len(plugin_data[key]['data']) > 0:
+                # datastore configs
+                (conf_models['vmwaredatastoreconf']).objects.save_config(snapconf, host_id, key, plugin_data[key]['data'])
+           # if 'children' in plugin_data[key] and len(plugin_data[key]['children']) > 0:
+                # vm / database
+
     def add_config(self, conf_obj):
+        conf_models = {}
+        for model in SnapshotConf._meta.get_all_related_objects():
+            conf_models[(model.name.split(':'))[1]] = model.model
+
         data = conf_obj['data']
         snapconf = SnapshotConf(prescript=data['prescript'], postscript=data['postscript'], expiry_date=data['expirydate'])
         snapconf.save()
+
+        if 'VMware' in conf_obj['plugin_data']:
+            # snapapp type
+            vmware_conf = conf_obj['plugin_data']['VMware']
+
+            for key in vmware_conf.keys():
+                # configs without snapapp type and host
+                self.save_vmware_items(snapconf, key, vmware_conf[key]['children'], conf_models)
+
         return snapconf
 
 class SnapshotConf(models.Model):
