@@ -19,7 +19,7 @@ Depends: ${misc:Depends}, openattic-base,
  openattic-module-apt,
  openattic-module-nagios,
  openattic-module-cron,
- openattic-module-ftp-mysql,
+ openattic-module-ftp,
  libapache2-mod-wsgi, apache2,
  openattic-mysql
 Suggests: python-django-rosetta, lsscsi, openattic-module-twraid,
@@ -66,7 +66,7 @@ Depends: ${misc:Depends}, openattic-base,
  openattic-module-mailaliases,
  openattic-module-cron,
  openattic-module-drbd,
- openattic-module-ftp-mysql,
+ openattic-module-ftp,
  libapache2-mod-wsgi, apache2,
  openattic-mysql
 Suggests: python-django-rosetta, lsscsi, openattic-module-twraid,
@@ -105,7 +105,7 @@ Depends: ${misc:Depends}, openattic-base,
  openattic-module-mailaliases,
  openattic-module-cron,
  openattic-module-drbd,
- openattic-module-ftp-pgsql,
+ openattic-module-ftp,
  libapache2-mod-wsgi, apache2,
  openattic-pgsql
 Suggests: python-django-rosetta, lsscsi, openattic-module-twraid,
@@ -268,14 +268,14 @@ Description: Samba module for openATTIC
  Cron is a service that provides scheduled task execution. This package
  provides configuration facilities for scheduled tasks (a.k.a. Cron jobs).
 
-Package: openattic-module-ftp-mysql
+Package: openattic-module-ftp
 Architecture: all
-Depends: ${misc:Depends}, openattic-module-lvm,
+Depends: ${misc:Depends}, openattic-module-lvm, openattic-module-samba,
  proftpd-basic (>= 1.3.3),
- openattic-mysql,
- proftpd-mod-mysql
-Conflicts: openattic-module-ftp-pgsql
-Description: FTP module for openATTIC using MySQL
+ proftpd-mod-winbind
+Conflicts: openattic-module-ftp-pgsql, openattic-module-ftp-mysql
+Replaces: openattic-module-ftp-pgsql, openattic-module-ftp-mysql
+Description: FTP module for openATTIC
  openATTIC is a storage management system based upon Open Source tools with
  a comprehensive user interface that allows you to create, share and backup
  storage space on demand.
@@ -284,27 +284,6 @@ Description: FTP module for openATTIC using MySQL
  transferring files on the internet. This package provides a configuration
  interface along with a ProFTPd server configuration that uses the openATTIC
  database as configuration backend.
- .
- Use this package if you installed openATTIC using the MySQL backend.
-
-Package: openattic-module-ftp-pgsql
-Architecture: all
-Depends: ${misc:Depends}, openattic-module-lvm,
- proftpd-basic (>= 1.3.3d-4),
- openattic-pgsql,
- proftpd-mod-pgsql
-Conflicts: openattic-module-ftp-mysql
-Description: FTP module for openATTIC using PGSQL
- openATTIC is a storage management system based upon Open Source tools with
- a comprehensive user interface that allows you to create, share and backup
- storage space on demand.
- .
- The File Transfer Protocol is one of the most widely supported protocols for
- transferring files on the internet. This package provides a configuration
- interface along with a ProFTPd server configuration that uses the openATTIC
- database as configuration backend.
- .
- Use this package if you installed openATTIC using the PostgreSQL backend.
 
 #Package: openattic-module-munin
 #Architecture: all
