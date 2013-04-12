@@ -46,10 +46,3 @@ class SystemD(LockingPlugin):
     @method(in_signature="", out_signature="i")
     def reload(self):
         return invoke([samba_settings.INITSCRIPT, "reload"])
-
-    @method(in_signature="ss", out_signature="i")
-    def setpasswd(self, username, passwd):
-        return invoke(["smbpasswd", "-a", "-s", username], log=False, stdin=("%s\n%s\n" % (passwd, passwd)))
-        #return invoke(["pdbedit", "-a", "-t", "-u", username], log=False, stdin=("%s\n%s\n" % (passwd, passwd)))
-
-    setpasswd._enable_logging = False
