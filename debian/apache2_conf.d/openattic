@@ -32,4 +32,29 @@ WSGIPassAuthorization   On
 	</IfModule>
 </Location>
 
+# Enable this after you joined openAttic into the domain.
+#<Location /openattic/accounts/kerblogin.js>
+#	# AUTHENTICATION: Kerberos
+#	AuthType Kerberos
+#	KrbAuthRealms DOMAIN.TLD
+#	# Normally, KrbServiceName is not needed. Only uncomment this if the defaults don't work.
+#	# KrbServiceName HTTP/openattic.domain.tld@DOMAIN.TLD
+#	Krb5Keytab /etc/krb5.keytab
+#	KrbMethodNegotiate on
+#	KrbMethodK5Passwd off
+#	Require valid-user
+#
+#	# AUTHORIZATION: LDAP user group membership
+#	AuthzLDAPAuthoritative on
+#	KrbLocalUserMapping On
+#	# Bind credentials for Apache
+#	AuthLDAPBindDN "cn=someuser,cn=Users,dc=DOMAIN,dc=TLD"
+#	AuthLDAPBindPassword somepassword
+#	# Where to search for your users
+#	AuthLDAPURL "ldap://dc.domain.tld/OU=Users,DC=domain,DC=tld?sAMAccountName?sub?"
+#	AuthLDAPRemoteUserAttribute "sAMAccountName"
+#	# Require users to be in the following group in order to be granted access.
+#	Require ldap-filter memberof:1.2.840.113556.1.4.1941:=CN=openAttic-Administratoren,OU=Users,DC=domain,DC=tld
+#</Location>
+
 </IfModule>
