@@ -697,13 +697,15 @@ class LVSnapshotJob(Cronjob):
 
 class ConfManager(models.Manager):
     def save_vmware_items(self, snapconf, host_id, plugin_data, conf_models):
-        # datastore
-        for key in plugin_data.keys():
-            if 'data' in plugin_data[key] and len(plugin_data[key]['data']) > 0:
-                # datastore configs
-                (conf_models['vmwaredatastoreconf']).objects.save_config(snapconf, host_id, key, plugin_data[key]['data'])
-           # if 'children' in plugin_data[key] and len(plugin_data[key]['children']) > 0:
-                # vm / database
+        for key_ds in plugin_data.keys():
+            # save datastore configs
+            if 'data' in plugin_data[key_ds] and len(plugin_data[key_ds]['data']) > 0:
+                (conf_models['vmwaredatastoreconf']).objects.save_config(snapconf, host_id, key_ds, plugin_data[key_ds]['data'])
+            # save vm configs
+            if 'children' in plugin_data[key_ds] and len(plugin_data[key_ds]['children']) > 0:
+                for key_vm in plugin_data[key_ds]['children'].keys():
+                    if 'data' in plugin_data[key_ds]['children'][key_vm] and len(plugin_data[key_ds]['children'][key_vm]['data']) > 0:
+                        (conf_models['vmwarevmconf']).objects.save_config(snapconf, host_id, key_ds, key_vm, plugin_data[key_ds]['children'][key_vm]['data'])
 
     def add_config(self, conf_obj):
         conf_models = {}
