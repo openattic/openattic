@@ -376,6 +376,7 @@ Ext.oa.LVM__Snapcore_Panel = Ext.extend(Ext.Panel, {
 
             var config = {
               data: {
+                configname  : null,
                 prescript   : null,
                 postscript  : null,
                 expirydate  : null,
@@ -447,6 +448,12 @@ Ext.oa.LVM__Snapcore_Panel = Ext.extend(Ext.Panel, {
                 title     : gettext('Welcome'),
                 id        : 'wiz_welc',
                 noAutoPrev: true,
+                xtype     : 'form',
+                items     : [{
+                  xtype       : 'textfield',
+                  name        : 'configname',
+                  fieldLabel  : gettext('Configuration name'),
+                }]
               },{
                 id        : 'wiz_snapitems',
                 layout    : 'border',

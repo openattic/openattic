@@ -724,7 +724,7 @@ class ConfManager(models.Manager):
             conf_models[(model.name.split(':'))[1]] = model.model
 
         data = conf_obj['data']
-        snapconf = SnapshotConf(prescript=data['prescript'], postscript=data['postscript'], expiry_date=data['expirydate'])
+        snapconf = SnapshotConf(confname=data['configname'], prescript=data['prescript'], postscript=data['postscript'], expiry_date=data['expirydate'])
         snapconf.save()
 
         if 'VMware' in conf_obj['plugin_data']:
@@ -746,6 +746,7 @@ class ConfManager(models.Manager):
         return snapconf
 
 class SnapshotConf(models.Model):
+    confname        = models.CharField(null=True, max_length=255)
     prescript       = models.CharField(null=True, max_length=255)
     postscript      = models.CharField(null=True, max_length=225)
     expiry_date     = models.DateTimeField(null=True, blank=True)
