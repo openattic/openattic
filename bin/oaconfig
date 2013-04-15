@@ -302,6 +302,9 @@ EOF
 		net ads keytab create
 		net ads keytab add HTTP
 		
+		chmod g+r /etc/krb5.keytab
+		chgrp openattic /etc/krb5.keytab
+		
 		kdestroy
 		
 		echo "Logging in as $machacc (this may fail a couple of times)..."
