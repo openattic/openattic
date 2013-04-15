@@ -299,7 +299,6 @@ class LogicalVolume(models.Model):
         """ LV information from LVM. """
         if self._lvm_info is None:
             self._lvm_info = dbus_to_python(self.lvm.lvs())[self.name]
-            self._lvm_info['LVM2_SEG_PE_RANGES'] = self._lvm_info['LVM2_SEG_PE_RANGES'].split(' ')
         return self._lvm_info
 
     @property
@@ -413,6 +412,8 @@ class LogicalVolume(models.Model):
                 raise ValidationError(_('The vg field is required unless you are creating a snapshot.'))
         elif self.snapshot.snapshot:
             raise ValidationError(_('LVM does not support snapshotting snapshots.'))
+        if self.filesystem:
+            self.fs.clean_volume(self)
 
     def save( self, database_only=False, *args, **kwargs ):
         if database_only:

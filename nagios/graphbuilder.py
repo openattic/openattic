@@ -242,7 +242,7 @@ class Parser(object):
         else:
             raise ValueError("Unexpected token.")
         SymClass = self.symbol_table[symbol]
-        print "Making a %s(%s, %s)." % (SymClass.__name__, symbol, tokenvalue)
+        #print "Making a %s(%s, %s)." % (SymClass.__name__, symbol, tokenvalue)
         self.token = SymClass(self, symbol, tokenvalue)
         return self.token
 
