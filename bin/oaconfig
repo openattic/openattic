@@ -214,6 +214,110 @@ case $1 in
 		python manage.py shell
 		;;
 
+	domainjoin)
+		if grep -qP '^\d+$' <<<$HOSTNAME ; then
+			echo "Your hostname is invalid because it consists of numbers only."
+			exit 2
+		fi
+		
+		if [ ! -e "$OADIR"/installed_apps.d/*samba ]; then
+			echo "The Samba module must be enabled for this to work."
+			exit 2
+		fi
+		
+		function lower () {
+			sed 's/./\l&/g' <<<$1
+		}
+		function upper () {
+			sed 's/./\u&/g' <<<$1
+		}
+		
+		hostname="`lower $HOSTNAME`"
+		netbios="`upper $HOSTNAME`"
+		machacc="$netbios\$"
+		
+		if [ "$#" -lt 3 ]; then
+			echo "Usage: $0 domainjoin <user> <domain> [<workgroup>]"
+			exit 2
+		fi
+		
+		user="$2"
+		domain="`lower $3`"
+		realm="`upper $3`"
+		
+		if [ "$#" = 4 ]; then
+			workgroup="`upper $4`"
+		else
+			workgroup="`upper $domain`"
+		fi
+		
+		echo "User:            $user"
+		echo "Domain:          $domain"
+		echo "Realm:           $realm"
+		echo "Workgroup:       $workgroup"
+		echo "Machine Account: $machacc"
+		
+		if [ "`hostname --fqdn`" != "$hostname.$domain" ]; then
+			echo "Your FQDN seems wrong. Make sure /etc/hosts and /etc/hostname are correct."
+			echo "The command 'hostname --fqdn' must return '$hostname.$domain' to pass this test."
+			exit 1
+		fi
+		
+		echo "Updating krb5.conf..."
+		<<EOF cat > /etc/krb5.conf
+[libdefaults]
+	default_realm = $realm
+	default_keytab_name = /etc/krb5.keytab
+
+[domain_realm]
+	.%(domain)s = $realm
+	%(domain)s = $realm
+EOF
+		
+		echo "Probing Kerberos..."
+		kinit "$user"
+		
+		echo "Configuring Samba..."
+		sed -i -e 's/\s*workgroup\s*=.*$/   workgroup = '$workgroup'/' /etc/samba/smb.conf
+		sed -i -e 's/\s*realm\s*=.*$/   realm = '$realm'/' /etc/samba/smb.conf
+		sed -i -e 's/\s*netbios\s*name\s*=.*$/   netbios name = '$netbios'/' /etc/samba/smb.conf
+		
+		echo "Joining Domain..."
+		net ads join -U "$user"
+		net ads keytab create
+		net ads keytab add HTTP
+		
+		kdestroy
+		
+		echo "Logging in as $machacc (this may fail a couple of times)..."
+		while ! kinit -k "$machacc"; do
+			sleep 1
+		done
+		
+		<<EOF cat > /etc/pam.d/openattic
+account [default=bad success=ok user_unknown=ignore service_err=ignore system_err=ignore] pam_krb5.so ignore_root
+
+auth            sufficient      pam_krb5.so ccache=/tmp/krb5cc_%u use_first_pass
+auth            required        pam_deny.so
+
+session         optional        pam_krb5.so ignore_root
+EOF
+		
+		echo "Configuring openATTIC..."
+		<<EOF cat > /etc/openattic/domain.ini
+[domain]
+realm = $realm
+workgroup = $workgroup
+
+[kerberos]
+enabled = True
+
+[pam]
+enabled = True
+EOF
+		$0 reload
+		;;
+
 	*)
 		# Big thanks to DireFog and pcgod for the following line
 		# First pass my "$@" in a whitespace-preserving way to su's subshell,
