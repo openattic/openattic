@@ -707,6 +707,17 @@ class ConfManager(models.Manager):
                     if 'data' in plugin_data[key_ds]['children'][key_vm] and len(plugin_data[key_ds]['children'][key_vm]['data']) > 0:
                         (conf_models['vmwarevmconf']).objects.save_config(snapconf, host_id, key_ds, key_vm, plugin_data[key_ds]['children'][key_vm]['data'])
 
+    def save_mssql_items(self, snapconf, host_id, plugin_data, conf_models):
+        for key_drive in plugin_data.keys():
+            # save drive configs
+            if 'data' in plugin_data[key_drive] and len(plugin_data[key_drive]['data']) > 0:
+                (conf_models['mssqldriveconf']).objects.save_config(snapconf, host_id, key_drive, plugin_data[key_drive]['data'])
+            # save database configs
+            if 'children' in plugin_data[key_drive] and len(plugin_data[key_drive]['children']) > 0:
+                for key_db in plugin_data[key_drive]['children'].keys():
+                    if 'data' in plugin_data[key_drive]['children'][key_db] and len(plugin_data[key_drive]['children'][key_db]['data']) > 0:
+                        (conf_models['mssqldatabaseconf']).objects.save_config(snapconf, host_id, key_drive, key_db, plugin_data[key_drive]['children'][key_db]['data'])
+
     def add_config(self, conf_obj):
         conf_models = {}
         for model in SnapshotConf._meta.get_all_related_objects():
@@ -717,12 +728,20 @@ class ConfManager(models.Manager):
         snapconf.save()
 
         if 'VMware' in conf_obj['plugin_data']:
-            # snapapp type
+            # type VMware
             vmware_conf = conf_obj['plugin_data']['VMware']
 
             for key in vmware_conf.keys():
                 # configs without snapapp type and host
                 self.save_vmware_items(snapconf, key, vmware_conf[key]['children'], conf_models)
+
+        if 'MSSQL' in conf_obj['plugin_data']:
+            # type MSSQL
+            mssql_conf = conf_obj['plugin_data']['MSSQL']
+
+            for key in mssql_conf.keys():
+                # configs without snapapp type and host
+                self.save_mssql_items(snapconf, key, mssql_conf[key]['children'], conf_models)
 
         return snapconf
 
