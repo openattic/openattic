@@ -225,6 +225,21 @@ case $1 in
 			exit 2
 		fi
 		
+		if [ ! -f "/etc/openattic/cli.conf" ]; then
+			echo "This command requires oacli to be configured (run $0 install-cli)."
+			exit 2
+		fi
+		
+		if [ ! -e "/etc/init.d/winbind" ]; then
+			echo "Winbind is not installed."
+			exit 2
+		fi
+		
+		if [ ! -e "/etc/init.d/samba" ]; then
+			echo "The 'samba' init script could not be found."
+			exit 2
+		fi
+		
 		function lower () {
 			sed 's/./\l&/g' <<<$1
 		}
@@ -316,6 +331,20 @@ enabled = True
 enabled = True
 EOF
 		$0 reload
+		
+		echo "Configuring libnss..."
+		sed -i -e 's/passwd:.*$/passwd:         compat winbind/' /etc/nsswitch.conf
+		sed -i -e 's/group:.*$/group:          compat winbind/' /etc/nsswitch.conf
+		
+		echo "Restarting Samba and Winbind..."
+		while ! oacli ping ; do
+			sleep 1
+		done
+		oacli samba.Share.writeconf
+		/etc/init.d/samba restart
+		/etc/init.d/winbind restart
+		
+		echo "To see if it worked, try 'getent passwd \"$user\"'".
 		;;
 
 	*)
