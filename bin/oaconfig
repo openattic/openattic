@@ -270,8 +270,8 @@ case $1 in
 	default_keytab_name = /etc/krb5.keytab
 
 [domain_realm]
-	.%(domain)s = $realm
-	%(domain)s = $realm
+	.$domain = $realm
+	$domain = $realm
 EOF
 		
 		echo "Probing Kerberos..."
