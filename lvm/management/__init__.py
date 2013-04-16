@@ -97,6 +97,14 @@ def create_vgs(app, created_models, verbosity, **kwargs):
                     if lvname == zfsvol[0]:
                         lv.filesystem = "zfs"
 
+                if not lv.filesystem:
+                    fs = lv.detect_fs()
+                    if fs is not None:
+                        lv.filesystem = fs.name
+
+                if lv.filesystem:
+                    lv.formatted = True
+
                 print lv.name, lv.megs, lv.vg.name, lv.owner.username, lv.filesystem
                 lv.save(database_only=True)
 
