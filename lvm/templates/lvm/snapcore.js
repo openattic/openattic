@@ -977,13 +977,18 @@ Ext.oa.LVM__Snapcore_Panel = Ext.extend(Ext.Panel, {
           viewConfig: {forceFit: true},
           colModel  : new Ext.grid.ColumnModel({
             columns: [{
-              header: gettext("Configuration name")
+              header    : gettext("Configuration name"),
+              dataIndex : 'confname'
             },{
               header: gettext("Details")
             }],
           }),
-          store: new Ext.data.Store({
-          }),
+          store: {
+            xtype   : 'directstore',
+            fields  : ['confname', 'id', '__unicode__'],
+            autoLoad: 'true',
+            directFn: lvm__SnapshotConf.all,
+          },
         },{
           region    : 'south',
           id        : 'snapcore_south_panel',
