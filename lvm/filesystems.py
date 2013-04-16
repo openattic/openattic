@@ -106,6 +106,10 @@ class FileSystem(object):
         stats['usedG'] = stats['used'] / 1024.
         return stats
 
+    @classmethod
+    def check_type(cls, typestring):
+        return False
+
 class Ext2(FileSystem):
     """ Handler for Ext2 (without journal). """
     name = "ext2"
@@ -136,6 +140,10 @@ class Ext2(FileSystem):
             self._lvm.e2fs_check( jid, self.lv.path )
         self._lvm.e2fs_resize( jid, self.lv.path, self.lv.megs, grow )
 
+    @classmethod
+    def check_type(cls, typestring):
+        return "ext2 filesystem data" in typestring
+
 class Ext3(Ext2):
     """ Handler for Ext3 (Ext2 + Journal). """
     name = "ext3"
@@ -149,6 +157,10 @@ class Ext3(Ext2):
         self._lvm.e3fs_format( jid, self.lv.path, self.lv.name, raidparams["chunksize"], raidparams["datadisks"] )
         self.mount(jid)
         self.chown(jid)
+
+    @classmethod
+    def check_type(cls, typestring):
+        return "ext3 filesystem data" in typestring
 
 
 class Ext4(Ext2):
@@ -164,6 +176,10 @@ class Ext4(Ext2):
         self._lvm.e4fs_format( jid, self.lv.path, self.lv.name, raidparams["chunksize"], raidparams["datadisks"] )
         self.mount(jid)
         self.chown(jid)
+
+    @classmethod
+    def check_type(cls, typestring):
+        return "ext4 filesystem data" in typestring
 
 
 class Zfs(FileSystem):
@@ -291,6 +307,11 @@ class Xfs(FileSystem):
             raise SystemError("XFS does not support shrinking.")
         self._lvm.xfs_resize( jid, self.lv.mountpoint, self.lv.megs )
 
+    @classmethod
+    def check_type(cls, typestring):
+        return "SGI XFS filesystem data" in typestring
+
+
 
 class Ocfs2(FileSystem):
     """ Handler for OCFS2. """
@@ -311,6 +332,10 @@ class Ocfs2(FileSystem):
         self.chown(jid)
 
     def online_resize_available(self, grow):
+        return False
+
+    @classmethod
+    def check_type(cls, typestring):
         return False
 
 

@@ -183,6 +183,12 @@ class SystemD(BasePlugin):
         self.pvs_time = 0
         return invoke(["/sbin/pvremove", '-f', device])
 
+    @method(in_signature="s", out_signature="s")
+    def get_type(self, device):
+        ret, out, err = invoke(["file", "-sL", device], return_out_err=True)
+        dev, info = out.split(":", 1)
+        return info.strip()
+
     @method(in_signature="sss", out_signature="i")
     def run_initscript(self, script, device, mountpoint):
         if script.startswith("/"):

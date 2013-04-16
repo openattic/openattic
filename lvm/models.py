@@ -235,6 +235,14 @@ class LogicalVolume(models.Model):
             return None
         return self.fs.info
 
+    def detect_fs(self):
+        """ Try to detect the file system using `file'. """
+        typestring = self.lvm.get_type(self.device)
+        for fs in FILESYSTEMS:
+            if fs.check_type(typestring):
+                return fs
+        return None
+
     def get_shares( self, app_label=None ):
         """ Iterate all the shares configured for this LV. """
         for relobj in ( self._meta.get_all_related_objects() + self._meta.get_all_related_many_to_many_objects() ):
