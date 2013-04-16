@@ -941,6 +941,7 @@ Ext.oa.LVM__Snapcore_Panel = Ext.extend(Ext.Panel, {
                         console.log(result);
                       });
                       wiz.close();
+                      config_store.reload();
                     },
                   }
                 }],
@@ -983,12 +984,7 @@ Ext.oa.LVM__Snapcore_Panel = Ext.extend(Ext.Panel, {
               header: gettext("Details")
             }],
           }),
-          store: {
-            xtype   : 'directstore',
-            fields  : ['confname', 'id', '__unicode__'],
-            autoLoad: 'true',
-            directFn: lvm__SnapshotConf.all,
-          },
+          store: config_store,
         },{
           region    : 'south',
           id        : 'snapcore_south_panel',
@@ -1014,6 +1010,12 @@ Ext.oa.LVM__Snapcore_Panel = Ext.extend(Ext.Panel, {
     var tree = Ext.getCmp('lvm__snapcore_treepanel');
     tree.getLoader().load(tree.root);
   }
+});
+
+var config_store = new Ext.data.DirectStore({
+  fields  : ['confname', 'id', '__unicode__'],
+  autoLoad: 'true',
+  directFn: lvm__SnapshotConf.all,
 });
 
 Ext.reg('lvm__snapcore_panel', Ext.oa.LVM__Snapcore_Panel);
