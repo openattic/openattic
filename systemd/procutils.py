@@ -68,11 +68,11 @@ def invoke(args, close_fds=True, return_out_err=False, log=True, stdin=None, fai
     while process_alive or not last_data_has_been_read:
         rdy_read, rdy_write, rdy_other = select([proc.stdout, proc.stderr], [], [], 0.1)
         if proc.stdout in rdy_read:
-            data = proc.stdout.read()
+            data = proc.stdout.read().decode("UTF-8")
             procout += data
             out.extend([ "O " + line for line in data.split("\n") if line ])
         if proc.stderr in rdy_read:
-            data = proc.stderr.read()
+            data = proc.stderr.read().decode("UTF-8")
             procerr += data
             out.extend([ "E " + line for line in data.split("\n") if line ])
         if proc.poll() is not None:
