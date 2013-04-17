@@ -197,7 +197,7 @@ Description: IET iSCSI module for openATTIC
 
 Package: openattic-module-samba
 Architecture: all
-Depends: ${misc:Depends}, openattic-module-lvm, samba, winbind
+Depends: ${misc:Depends}, openattic-module-lvm, samba, winbind, krb5-user
 Description: Samba module for openATTIC
  openATTIC is a storage management system based upon Open Source tools with
  a comprehensive user interface that allows you to create, share and backup
