@@ -1,2 +1,0 @@
-/etc/openattic/databases/mysql.ini /etc/openattic/database.ini
-/etc/openattic/databases/pam_openattic_service.mysql /etc/pam.d/openattic_service

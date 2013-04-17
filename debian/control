@@ -21,7 +21,7 @@ Depends: ${misc:Depends}, openattic-base,
  openattic-module-cron,
  openattic-module-ftp,
  libapache2-mod-wsgi, apache2,
- openattic-mysql
+ openattic-pgsql
 Suggests: python-django-rosetta, lsscsi, openattic-module-twraid,
  openattic-module-ipmi
 Description: Comprehensive storage management system
@@ -51,46 +51,9 @@ Description: Comprehensive storage management system
  .
  Upstream URL: http://www.openattic.org
 
-Package: openattic-full-mysql
-Architecture: all
-Depends: ${misc:Depends}, openattic-base,
- openattic-module-lvm,
- openattic-module-nfs,
- openattic-module-http,
- openattic-module-iet-iscsi,
- openattic-module-samba,
- openattic-module-apt,
-# openattic-module-munin,
- openattic-module-nagios,
- openattic-module-tftp,
- openattic-module-mailaliases,
- openattic-module-cron,
- openattic-module-drbd,
- openattic-module-ftp,
- libapache2-mod-wsgi, apache2,
- openattic-mysql
-Suggests: python-django-rosetta, lsscsi, openattic-module-twraid,
- openattic-module-ipmi
-Description: Comprehensive storage management system using MySQL
- openATTIC is a storage management system based upon Open Source tools with
- a comprehensive user interface that allows you to create, share and backup
- storage space on demand.
- .
- It comes with an extensible API focused on modularity, so you can tailor
- your installation exactly to your needs and embed openATTIC in your existing
- data center infrastructure.
- .
- This metapackage installs the full set of openATTIC modules along
- with the basic requirements using a MySQL database. Modules which are not
- included in the openATTIC package are:
- .
-  * TFTP
-  * DRBD
-  * MailAliases (EMail configuration)
- .
- Upstream URL: http://www.openattic.org
-
-Package: openattic-full-pgsql
+Package: openattic-full
+Conflicts: openattic-full-pgsql
+Replaces: openattic-full-pgsql
 Architecture: all
 Depends: ${misc:Depends}, openattic-base,
  openattic-module-lvm,
@@ -129,19 +92,6 @@ Description: Comprehensive storage management system using PGSQL
  .
  Upstream URL: http://www.openattic.org
 
-Package: openattic-mysql
-Architecture: all
-Depends: ${misc:Depends}, python-mysqldb,
- dbconfig-common, mysql-server, libnss-mysql-bg, libpam-mysql
-Recommends: mysql-client
-Conflicts: openattic-pgsql
-Description: Configures openATTIC with a MySQL database
- openATTIC is a storage management system based upon Open Source tools with
- a comprehensive user interface that allows you to create, share and backup
- storage space on demand.
- .
- This package configures the MySQL database for openATTIC.
-
 Package: openattic-pgsql
 Architecture: all
 Depends: ${misc:Depends}, python-psycopg2,
@@ -176,7 +126,7 @@ Depends: ${misc:Depends}, python (>= 2.6),
  oxygen-icon-theme,
  lsb-release,
  libjs-extjs (>= 3.0.0), libjs-extjs (<< 4.0),
- openattic-mysql | openattic-pgsql
+ openattic-pgsql
 Description: Basic requirements for openATTIC
  openATTIC is a storage management system based upon Open Source tools with
  a comprehensive user interface that allows you to create, share and backup

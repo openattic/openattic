@@ -1,4 +1,0 @@
-debian/database_install/mysql_template.ini          /etc/openattic/databases
-debian/database_install/nss_mysql_template.cfg      /etc/openattic/databases
-debian/database_install/pam_openattic_service.mysql /etc/openattic/databases
-debian/database_install/pam_mysql_template.conf     /etc/openattic/databases
