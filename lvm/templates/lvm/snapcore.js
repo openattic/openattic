@@ -208,7 +208,8 @@ Ext.oa.LVM__Snapcore_TreePanel = Ext.extend(Ext.tree.TreePanel, {
       }
     },
     expandnode: function(node){
-      if(node.attributes.objtype === 'vmware_datastore' || node.attributes.objtype === 'mssql_drive')
+      if((typeof node.ui.checkbox !== 'undefined') &&
+        (node.attributes.objtype === 'vmware_datastore' || node.attributes.objtype === 'mssql_drive'))
       {
         if(node.hasChildNodes)
         {
