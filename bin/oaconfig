@@ -102,12 +102,6 @@ case $1 in
 				sed -i.bak -e 's/^\(passwd:.*\)$/\0 pgsql/' /etc/nsswitch.conf
 			fi
 		fi
-		if [ $OADBENGINE = "django.db.backends.mysql" ]; then
-			if grep passwd: /etc/nsswitch.conf | grep -qv mysql; then
-				echo "Configuring nsswitch.conf to include mysql. The current version will be backuped as nsswitch.conf.bak."
-				sed -i.bak -e 's/^\(passwd:.*\)$/\0 mysql/' /etc/nsswitch.conf
-			fi
-		fi
 		
 		# (re)start the daemons
 		$0 reload
