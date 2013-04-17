@@ -1,3 +1,0 @@
-munin /usr/share/openattic
-debian/apache2_conf.d/openattic-munin /etc/apache2/conf.d
-installed_apps.d/50_munin /usr/share/openattic/installed_apps.d

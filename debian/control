@@ -62,7 +62,6 @@ Depends: ${misc:Depends}, openattic-base,
  openattic-module-iet-iscsi,
  openattic-module-samba,
  openattic-module-apt,
-# openattic-module-munin,
  openattic-module-nagios,
  openattic-module-tftp,
  openattic-module-mailaliases,
@@ -234,18 +233,6 @@ Description: FTP module for openATTIC
  transferring files on the internet. This package provides a configuration
  interface along with a ProFTPd server configuration that uses the openATTIC
  database as configuration backend.
-
-#Package: openattic-module-munin
-#Architecture: all
-#Depends: ${misc:Depends}, openattic-base,
-# munin-node, munin
-#Description: Munin module for openATTIC
-# openATTIC is a storage management system based upon Open Source tools with
-# a comprehensive user interface that allows you to create, share and backup
-# storage space on demand.
-# .
-# Munin is a performance graphing tool. This package makes its graphs available
-# in the openATTIC interface.
 
 Package: openattic-module-nagios
 Architecture: all
