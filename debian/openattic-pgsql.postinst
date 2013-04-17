@@ -26,12 +26,6 @@ if [ "$1" = "configure" ] ; then
         -o template_infile=/etc/openattic/databases/nss_pgsql_template.conf \
         /etc/dbconfig-common/openattic-pgsql.conf \
         /etc/nss-pgsql.conf
-
-    dbconfig-generate-include -f template \
-        -o template_infile=/etc/openattic/databases/pam_pgsql_template.conf \
-        /etc/dbconfig-common/openattic-pgsql.conf \
-        /etc/pam_pgsql.conf
-
 fi
 
 #DEBHELPER#
