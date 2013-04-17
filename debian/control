@@ -34,7 +34,7 @@ Description: Comprehensive storage management system
  data center infrastructure.
  .
  This metapackage installs the most common set of openATTIC modules along
- with the basic requirements using a MySQL database. Those modules are:
+ with the basic requirements. Those modules are:
  .
   * LVM
   * NFS
@@ -46,8 +46,7 @@ Description: Comprehensive storage management system
   * FTP
   * Cron
  .
- You can install additional modules yourself or use the openattic-full-*
- packages.
+ You can install additional modules yourself or use the openattic-full package.
  .
  Upstream URL: http://www.openattic.org
 
@@ -72,7 +71,7 @@ Depends: ${misc:Depends}, openattic-base,
  openattic-pgsql
 Suggests: python-django-rosetta, lsscsi, openattic-module-twraid,
  openattic-module-ipmi
-Description: Comprehensive storage management system using PGSQL
+Description: Comprehensive storage management system
  openATTIC is a storage management system based upon Open Source tools with
  a comprehensive user interface that allows you to create, share and backup
  storage space on demand.
@@ -82,8 +81,8 @@ Description: Comprehensive storage management system using PGSQL
  data center infrastructure.
  .
  This metapackage installs the full set of openATTIC modules along
- with the basic requirements using a PostgreSQL database. Modules which are not
- included in the openATTIC package are:
+ with the basic requirements. Modules which are not included in the openATTIC
+ package are:
  .
   * TFTP
   * DRBD
@@ -97,7 +96,7 @@ Depends: ${misc:Depends}, python-psycopg2,
  dbconfig-common, postgresql, libnss-pgsql2
 Recommends: postgresql-client
 Conflicts: openattic-mysql
-Description: Configures openATTIC with a PGSQL database
+Description: PGSQL database for openATTIC
  openATTIC is a storage management system based upon Open Source tools with
  a comprehensive user interface that allows you to create, share and backup
  storage space on demand.
