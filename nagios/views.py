@@ -84,12 +84,6 @@ def graph(request, service_id, srcidx):
     for src in parse(srcline):
         builder.add_source( src.get_value(rrd) )
 
-    if dbgraph is not None:
-        builder.title     = dbgraph.title
-        builder.verttitle = dbgraph.verttitle
-    else:
-        builder.title  = serv.description
-
     try:
         builder.start  = int(request.GET.get("start",  rrd.last_check - 24*60*60))
         builder.end    = int(request.GET.get("end",    rrd.last_check))
@@ -119,8 +113,12 @@ def graph(request, service_id, srcidx):
     if (bgcol and len(bgcol) < 6) or (builder.fgcol and len(builder.fgcol) < 6) or (builder.grcol and len(builder.grcol) < 6):
         raise Http404("Invalid color specified")
 
-    if dbgraph is not None and builder.width >= 350:
-        builder.title += ' - ' + dbgraph.title
+    builder.title = serv.description
+    if dbgraph is not None:
+        builder.verttitle = dbgraph.verttitle
+        if builder.width >= 350:
+            builder.title += ' - ' + dbgraph.title
+
 
     return HttpResponse( builder.get_image(), mimetype="image/png" )
 
