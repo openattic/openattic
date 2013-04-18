@@ -230,8 +230,10 @@ case $1 in
 		fi
 		
 		if [ ! -e "/etc/init.d/samba" ]; then
-			echo "The 'samba' init script could not be found."
-			exit 2
+			if [ ! -e /etc/init.d/smbd -o ! -e /etc/init.d/nmbd ]; then
+				echo "Samba is not installed."
+				exit 2
+			fi
 		fi
 		
 		function lower () {
@@ -287,6 +289,7 @@ EOF
 		kinit "$user"
 		
 		echo "Configuring Samba..."
+		oacli samba.Share.writeconf
 		sed -i -e 's/\s*workgroup\s*=.*$/   workgroup = '$workgroup'/' /etc/samba/smb.conf
 		sed -i -e 's/\s*realm\s*=.*$/   realm = '$realm'/' /etc/samba/smb.conf
 		sed -i -e 's/\s*netbios\s*name\s*=.*$/   netbios name = '$netbios'/' /etc/samba/smb.conf
@@ -338,7 +341,12 @@ EOF
 			sleep 1
 		done
 		oacli samba.Share.writeconf
-		/etc/init.d/samba restart
+		if [ -e "/etc/init.d/samba" ]; then
+			/etc/init.d/samba restart
+		else
+			/etc/init.d/smbd restart
+			/etc/init.d/nmbd restart
+		fi
 		/etc/init.d/winbind restart
 		
 		echo "To see if it worked, try 'getent passwd \"$user\"'".
