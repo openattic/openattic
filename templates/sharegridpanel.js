@@ -312,7 +312,7 @@ Ext.oa.ShareGridPanel = Ext.extend(Ext.grid.GridPanel, {
                 success: function(provider, response){
                   if(response.result){
                     self.store.reload();
-                    addwin.hide();
+                    addwin.close();
                   }
                 },
                 failure: function(){
