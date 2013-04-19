@@ -331,7 +331,7 @@ Ext.oa.ShareGridPanel = Ext.extend(Ext.grid.GridPanel, {
             text: self.texts.cancel,
             icon: MEDIA_URL + "/icons2/16x16/actions/gtk-cancel.png",
             handler: function(){
-              addwin.hide();
+              addwin.close();
             }
           }]
         };
