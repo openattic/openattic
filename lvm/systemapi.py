@@ -300,6 +300,12 @@ class SystemD(BasePlugin):
         cmd.append(devpath)
         self.job_add_command(jid, cmd)
 
+    @method(in_signature="is", out_signature="")
+    def btrfs_format(self, jid, devpath):
+        cmd = ["mkfs.btrfs"]
+        cmd.append(devpath)
+        self.job_add_command(jid, cmd)
+
     @method(in_signature="", out_signature="a{ss}")
     def get_lvm_capabilities(self):
         invoke(["/sbin/modprobe", "dm-snapshot"])

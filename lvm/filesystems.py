@@ -312,6 +312,25 @@ class Xfs(FileSystem):
         return "SGI XFS filesystem data" in typestring
 
 
+class Btrfs(FileSystem):
+    name = "btrfs"
+    desc = "BTRFS (Experimental)"
+
+    @property
+    def info(self):
+        return {}
+
+    def format(self, jid):
+        self._lvm.btrfs_format( jid, self.lv.path )
+        self.mount(jid)
+        self.chown(jid)
+
+    def online_resize_available(self, grow):
+        return False
+
+    @classmethod
+    def check_type(cls, typestring):
+        return False
 
 class Ocfs2(FileSystem):
     """ Handler for OCFS2. """
@@ -340,7 +359,7 @@ class Ocfs2(FileSystem):
 
 
 
-FILESYSTEMS = (Ext2, Ext3, Ext4, Zfs, Xfs, Ocfs2)
+FILESYSTEMS = (Ext2, Ext3, Ext4, Zfs, Xfs, Ocfs2, Btrfs)
 
 def get_by_name(name):
     """ Return the file system class with the given ``name``. """
