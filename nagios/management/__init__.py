@@ -70,29 +70,16 @@ def create_nagios(app, created_models, verbosity, interactive, db, **kwargs):
                 )
             serv.save()
 
-    # read /proc/stat
-    fd = open("/proc/stat", "r")
-    try:
-        sys_stats = [ line.split() for line in fd ]
-    except:
-        return
-
-    cpumax = 0
-    for rec in sys_stats:
-        if rec[0] != "cpu" and rec[0].startswith("cpu"):
-            cpumax = int(rec[0][3:])
-
     cmd = Command.objects.get(name=nagios_settings.CPUTIME_CHECK_CMD)
-    for cpu in range(cpumax + 1):
-        if Service.objects.filter(host=Host.objects.get_current(), command=cmd, arguments=str(cpu)).count() == 0:
-            serv = Service(
-                host        = Host.objects.get_current(),
-                volume      = None,
-                command     = cmd,
-                description = nagios_settings.CPUTIME_DESCRIPTION % cpu,
-                arguments   = str(cpu)
-                )
-            serv.save()
+    if Service.objects.filter(host=Host.objects.get_current(), command=cmd).count() == 0:
+        serv = Service(
+            host        = Host.objects.get_current(),
+            volume      = None,
+            command     = cmd,
+            description = nagios_settings.CPUTIME_DESCRIPTION,
+            arguments   = ""
+            )
+        serv.save()
 
     for ip in IPAddress.objects.all():
         nagios.models.create_service_for_ip( instance=ip )

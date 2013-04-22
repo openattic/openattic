@@ -36,21 +36,7 @@ except:
     sys.exit(2)
 
 
-parser = OptionParser()
-
-parser.add_option( "-c", "--cpu", help="The CPU id to check.", type="int" )
-
-options, progargs = parser.parse_args()
-
-
-if options.cpu is not None:
-    for record in sys_stats:
-        if record[0] == ("cpu%d" % options.cpu):
-            cpu_stats = record
-            break
-else:
-    cpu_stats = sys_stats[0]
-
+cpu_stats = sys_stats[0]
 
 fields = ["cpu", "user", "nice", "system", "idle"]
 
@@ -74,7 +60,7 @@ del stats["cpu"]
 
 # load savedstate
 savedstate = ConfigParser()
-havestate  = bool( savedstate.read("/var/lib/nagios3/cputime.%s" % options.cpu) ) and savedstate.has_section("state")
+havestate  = bool( savedstate.read("/var/lib/nagios3/cputime") ) and savedstate.has_section("state")
 
 
 def wrapdiff(curr, last):
@@ -135,6 +121,6 @@ for field in stats:
 
 savedstate.set("state", "timestamp", time())
 
-savedstate.write( open( "/var/lib/nagios3/cputime.%s" % options.cpu, "wb" ) )
+savedstate.write( open( "/var/lib/nagios3/cputime", "wb" ) )
 
 sys.exit(exit)
