@@ -289,7 +289,7 @@ Ext.oa.LVM__Snapcore_Panel = Ext.extend(Ext.Panel, {
               id: "VolumeStore",
               fields :["id", "name"],
               autoLoad: true,
-              directFn: lvm__LogicalVolume.all
+              directFn: lvm__LogicalVolume.all,
             });
 
             // declare the source Grid
@@ -515,11 +515,68 @@ Ext.oa.LVM__Snapcore_Panel = Ext.extend(Ext.Panel, {
                   };
                 }())],
               },{
-                title   : gettext('Additional Drives'),
-                id      : 'wiz_addvol',
-                defaults: { flex : 1 },
-                layout  : "hbox",
-                items   : [firstGrid, secondGrid],
+                title     : gettext('Additional Drives'),
+                id        : 'wiz_addvol',
+                defaults  : { flex : 1 },
+                layout    : "hbox",
+                items     : [firstGrid, secondGrid],
+                xtype     : 'form',
+                listeners : {
+                  show  : function(self){
+                    var volumes = [];
+                    var requests = 0;
+                    var moveItem = function(record, recordId, volumeId)
+                    {
+                      if(volumeId === record.get('id'))
+                      {
+                        secondGridStore.add(record);
+                        VolumeStore.remove(record);
+                      }
+                    }
+
+                    for(var plugin in config['plugin_data'])
+                    {
+                      // only for testing
+                      if(plugin === 'VMware')
+                      {
+                        var plugin_func = [];
+                        for(var i=0; i < window.SnapAppPlugins.length; i++)
+                        {
+                          if(window.SnapAppPlugins[i].plugin_name === plugin)
+                          {
+                            plugin_func = window.SnapAppPlugins[i];
+                            break;
+                          }
+                        }
+
+                        for(var host_id in config['plugin_data'][plugin])
+                        {
+                          if(typeof config['plugin_data'][plugin][host_id]['children'] !== 'undefined')
+                          {
+                            for(var ds in config['plugin_data'][plugin][host_id]['children'])
+                            {
+                              plugin_func.getVolume(host_id, ds, function(result, response){
+                                if(response.type !== 'exception'){
+                                  volumes.push(result.volume);
+                                }
+                                else{
+                                  requests--;
+                                }
+
+                                if( volumes.length === requests ){
+                                  for(var i=0; i<volumes.length; i++){
+                                    VolumeStore.each(moveItem, this, volumes[i]);
+                                  }
+                                }
+                              });
+                              requests++;
+                            }
+                          }
+                        }
+                      }
+                    }
+                  }
+                },
                 bbar    : [
                   '->',
                   {
