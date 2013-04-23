@@ -124,6 +124,7 @@ Depends: ${misc:Depends}, python (>= 2.6),
  lsb-release,
  libjs-extjs (>= 3.0.0), libjs-extjs (<< 4.0),
  openattic-pgsql
+Recommends: sudo
 Description: Basic requirements for openATTIC
  openATTIC is a storage management system based upon Open Source tools with
  a comprehensive user interface that allows you to create, share and backup
