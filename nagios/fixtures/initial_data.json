@@ -120,6 +120,16 @@
         }
     },
     {
+        "pk": 34,
+        "model": "nagios.graph",
+        "fields": {
+            "verttitle": "%",
+            "fields": "user ** nice ** system ** iowait ** irq ** softirq",
+            "command": 14,
+            "title": "CPU Time"
+        }
+    },
+    {
         "pk": 4,
         "model": "nagios.graph",
         "fields": {
@@ -227,16 +237,6 @@
             "fields": "load_percent",
             "command": 9,
             "title": "Disk Load"
-        }
-    },
-    {
-        "pk": 34,
-        "model": "nagios.graph",
-        "fields": {
-            "verttitle": "%",
-            "fields": "user ** nice ** system ** idle ** iowait ** irq ** softirq",
-            "command": 14,
-            "title": "CPU Time"
         }
     },
     {
