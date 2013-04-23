@@ -525,6 +525,15 @@ Ext.oa.LVM__Snapcore_Panel = Ext.extend(Ext.Panel, {
                   show  : function(self){
                     var volumes = [];
                     var requests = 0;
+                    var moveItem = function(record, recordId, volumeId)
+                    {
+                      if(volumeId === record.get('id'))
+                      {
+                        secondGridStore.add(record);
+                        VolumeStore.remove(record);
+                      }
+                    }
+
                     for(var plugin in config['plugin_data'])
                     {
                       // only for testing
@@ -548,7 +557,6 @@ Ext.oa.LVM__Snapcore_Panel = Ext.extend(Ext.Panel, {
                             {
                               plugin_func.getVolume(host_id, ds, function(result, response){
                                 if(response.type !== 'exception'){
-                                  console.log(result.volume);
                                   volumes.push(result.volume);
                                 }
                                 else{
@@ -556,7 +564,8 @@ Ext.oa.LVM__Snapcore_Panel = Ext.extend(Ext.Panel, {
                                 }
 
                                 if( volumes.length === requests ){
-                                  for(var volume in volumes){
+                                  for(var i=0; i<volumes.length; i++){
+                                    VolumeStore.each(moveItem, this, volumes[i]);
                                   }
                                 }
                               });
