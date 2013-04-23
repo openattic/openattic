@@ -595,6 +595,7 @@ Ext.oa.Lvm__LogicalVolume_Panel = Ext.extend(Ext.oa.ShareGridPanel, {
       typeAhead:     true,
       triggerAction: 'all',
       emptyText:     gettext('Select...'),
+      id: "volumegroup_all_add",
       selectOnFocus: true,
       displayField:  'name',
       valueField:    'id',
@@ -614,6 +615,7 @@ Ext.oa.Lvm__LogicalVolume_Panel = Ext.extend(Ext.oa.ShareGridPanel, {
     tipify({
       xtype:      'combo',
       fieldLabel: gettext('File System'),
+      id: "volume_filesystem_add",
       hiddenName: 'filesystem',
       store: new Ext.data.DirectStore({
         fields: ["name", "desc"],
@@ -629,7 +631,6 @@ Ext.oa.Lvm__LogicalVolume_Panel = Ext.extend(Ext.oa.ShareGridPanel, {
     }, gettext('If you want to use DRBD with this device, do not yet create a file system on it, even if you want to share it using NAS services later on.')),
     {
       fieldLabel: gettext('Size in MB'),
-      allowBlank: false,
       name: "megs",
       ref: 'sizefield',
       xtype: "numberfield",
