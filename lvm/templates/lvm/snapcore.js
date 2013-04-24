@@ -371,9 +371,22 @@ Ext.oa.LVM__Snapcore_Panel = Ext.extend(Ext.Panel, {
                       return true
                     }
                   });
-                }
+                },
               }
             });
+
+            var get_plugin = function(plugin_name){
+              var plugin_func;
+              for(var i=0; i < window.SnapAppPlugins.length; i++)
+              {
+                if(window.SnapAppPlugins[i].plugin_name === plugin_name)
+                {
+                  plugin_func = window.SnapAppPlugins[i];
+                  break;
+                }
+              }
+              return plugin_func;
+            }
 
             var config = {
               data: {
@@ -539,15 +552,7 @@ Ext.oa.LVM__Snapcore_Panel = Ext.extend(Ext.Panel, {
                       // only for testing
                       if(plugin === 'VMware')
                       {
-                        var plugin_func = [];
-                        for(var i=0; i < window.SnapAppPlugins.length; i++)
-                        {
-                          if(window.SnapAppPlugins[i].plugin_name === plugin)
-                          {
-                            plugin_func = window.SnapAppPlugins[i];
-                            break;
-                          }
-                        }
+                        var plugin_func = get_plugin(plugin);
 
                         for(var host_id in config['plugin_data'][plugin])
                         {
