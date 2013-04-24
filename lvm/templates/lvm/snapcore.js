@@ -289,7 +289,12 @@ Ext.oa.LVM__Snapcore_Panel = Ext.extend(Ext.Panel, {
               id: "VolumeStore",
               fields :["id", "name"],
               autoLoad: true,
-              directFn: lvm__LogicalVolume.all,
+              baseParams: {
+                kwds: {
+                  'snapshot': null
+                }
+              },
+              directFn: lvm__LogicalVolume.filter,
             });
 
             // declare the source Grid
