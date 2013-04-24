@@ -580,6 +580,17 @@ Ext.oa.LVM__Snapcore_Panel = Ext.extend(Ext.Panel, {
                         }
                       }
                     }
+
+                    secondGrid.getView().dragZone.onBeforeDrag = function(data, e){
+                      var volumeId = data.selections[0].data.id;
+                      for(var i=0; i<volumes.length; i++){
+                        if(volumes[i].id === volumeId)
+                        {
+                          return false;
+                        }
+                      }
+                      return true;
+                    }
                   }
                 },
                 bbar    : [
