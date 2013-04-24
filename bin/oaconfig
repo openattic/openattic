@@ -352,6 +352,15 @@ EOF
 		echo "To see if it worked, try 'getent passwd \"$user\"'".
 		;;
 
+	dbshell)
+		if which sudo > /dev/null; then
+			DBNAME="`grep name /etc/openattic/database.ini  | cut -d= -f2`"
+			sudo -u postgres -s `which psql` $DBNAME
+		else
+			echo "Please install sudo for this command to work."
+		fi
+		;;
+
 	*)
 		# Big thanks to DireFog and pcgod for the following line
 		# First pass my "$@" in a whitespace-preserving way to su's subshell,
