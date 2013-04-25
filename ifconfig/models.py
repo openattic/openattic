@@ -65,7 +65,13 @@ def statfile(devname, fname):
 
 class HostManager(models.Manager):
     def get_current(self):
-        return self.get(name=socket.gethostname())
+        fqdn = socket.getfqdn()
+        try:
+            return self.get(name=fqdn)
+        except Host.DoesNotExist:
+            if '.' not in fqdn:
+                # getfqdn() only returned the hostname. search for <hostname>.<something>
+                return self.get(name__startswith=("%s." % fqdn))
 
 class Host(models.Model):
     name        = models.CharField(max_length=63, unique=True)
@@ -74,6 +80,10 @@ class Host(models.Model):
 
     def __unicode__(self):
         return self.name
+
+    @property
+    def hostname(self):
+        return self.name.split('.')[0]
 
 class HostDependentManager(models.Manager):
     hostfilter = "host"
