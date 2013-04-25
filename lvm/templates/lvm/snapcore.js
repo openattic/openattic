@@ -332,7 +332,7 @@ Ext.oa.LVM__Snapcore_Panel = Ext.extend(Ext.Panel, {
                       return true
                     }
                   });
-                }
+                },
               }
             });
 
@@ -373,6 +373,12 @@ Ext.oa.LVM__Snapcore_Panel = Ext.extend(Ext.Panel, {
                       Ext.each(records, ddSource.grid.store.remove, ddSource.grid.store);
                       secondGrid.store.add(records);
                       secondGrid.store.sort('name', 'ASC');
+
+                      var volumeId = records[0].data.id;
+                      if(config.volumes.indexOf(volumeId, 0) === -1)
+                      {
+                        config.volumes.push(volumeId);
+                      }
                       return true
                     }
                   });
@@ -548,6 +554,12 @@ Ext.oa.LVM__Snapcore_Panel = Ext.extend(Ext.Panel, {
                       if(volumeId === record.get('id'))
                       {
                         secondGridStore.add(record);
+
+                        if(config.volumes.indexOf(volumeId, 0) === -1)
+                        {
+                          config.volumes.push(volumeId);
+                        }
+
                         VolumeStore.remove(record);
                       }
                     }
@@ -1015,7 +1027,6 @@ Ext.oa.LVM__Snapcore_Panel = Ext.extend(Ext.Panel, {
                   text      : gettext('Finish'),
                   listeners : {
                     click: function(){
-                      console.log(config);
                       lvm__SnapshotConf.saveConfig(config, function(result){
                         console.log(result);
                       });
