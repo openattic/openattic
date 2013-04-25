@@ -35,7 +35,7 @@ class IscsiTargetProxy(ProxyModelBaseHandler, IscsiTargetHandler):
         host = LogicalVolume.all_objects.get(id=volid).vg.host
         if host.id == Host.objects.get_current().id:
             return None
-        return PeerHost.objects.get(name=host.name)
+        return PeerHost.objects.get(host=host)
 
     def _get_model_manager(self):
         return self.model.all_objects

@@ -256,7 +256,7 @@ class LvProxy(ProxyModelHandler, LvHandler):
         if curr == Host.objects.get_current():
             return self.backing_handler.create(data)
         else:
-            peer = PeerHost.objects.get(name=curr.name)
+            peer = PeerHost.objects.get(host=curr)
             try:
                 return self._convert_datetimes( self._get_proxy_object(peer).create(data) )
             except Fault, flt:
