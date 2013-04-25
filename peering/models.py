@@ -21,6 +21,7 @@ from django.db import models
 from django.core import exceptions
 from django.conf import settings
 
+from ifconfig.models import Host
 from peering.xmlrpctimeout import ServerProxy
 
 class PeerURL(unicode):
@@ -64,7 +65,7 @@ class PeerError(Exception):
     pass
 
 class PeerHost(models.Model):
-    name         = models.CharField(max_length=250)
+    host         = models.ForeignKey(Host)
     base_url     = PeerUrlField()
     clusterpeer  = models.BooleanField(default=False,
                        help_text="Set to true if I am in a Pacemaker cluster with this peer.")
