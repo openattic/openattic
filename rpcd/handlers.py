@@ -459,7 +459,7 @@ class ProxyModelHandler(ProxyModelBaseHandler):
                 except socket.error, err:
                     if err.errno in (errno.ECONNREFUSED, errno.ECONNABORTED, errno.ECONNRESET,
                             errno.EHOSTUNREACH, errno.ENETUNREACH, errno.ETIMEDOUT) or isinstance(err, socket.timeout):
-                        print >> sys.stderr, "Connection to peer %s failed: %s" % (peer.name, err)
+                        print >> sys.stderr, "Connection to peer %s failed: %s" % (peer.host, err)
                         continue
                     else:
                         raise
