@@ -543,7 +543,7 @@ Ext.oa.LVM__Snapcore_Panel = Ext.extend(Ext.Panel, {
                   show  : function(self){
                     var volumes = [];
                     var requests = 0;
-                    var moveItem = function(record, recordId, volumeId)
+                    var moveItem = function(record, recordId, length, volumeId)
                     {
                       if(volumeId === record.get('id'))
                       {
@@ -575,7 +575,7 @@ Ext.oa.LVM__Snapcore_Panel = Ext.extend(Ext.Panel, {
 
                                 if( volumes.length === requests ){
                                   for(var i=0; i<volumes.length; i++){
-                                    VolumeStore.each(moveItem, this, volumes[i]);
+                                    VolumeStore.each(moveItem.createDelegate(this, [volumes[i].id], true));
                                   }
                                 }
                               });
