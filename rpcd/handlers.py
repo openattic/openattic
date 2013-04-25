@@ -405,8 +405,8 @@ class ProxyHandler(BaseHandler):
         return self._convert_datetimes( res )
 
     def _get_relevant_peers(self):
-        return PeerHost.objects.filter( name__in=[ host.name
-            for host in Host.objects.filter(volumegroup__isnull=False).exclude(name=Host.objects.get_current().name).distinct() ] )
+        return PeerHost.objects.filter( host__in=[ host
+            for host in Host.objects.filter(volumegroup__isnull=False).exclude(id=Host.objects.get_current().id).distinct() ] )
 
     def _find_target_host(self, id):
         raise NotImplementedError("ProxyHandler::_find_target_host needs to be overridden!")
@@ -433,7 +433,7 @@ class ProxyModelBaseHandler(ProxyHandler, ModelHandler):
             return None
         if curr is None:
             raise RuntimeError("Object is not active on any host")
-        return PeerHost.objects.get(name=curr.name)
+        return PeerHost.objects.get(host=curr)
 
 
 class ProxyModelHandler(ProxyModelBaseHandler):
@@ -545,7 +545,7 @@ class ProxyModelHandler(ProxyModelBaseHandler):
         if curr == Host.objects.get_current():
             return self.backing_handler.create(data)
         else:
-            peer = PeerHost.objects.get(name=curr.name)
+            peer = PeerHost.objects.get(host=curr)
             try:
                 return self._convert_datetimes( self._get_proxy_object(peer).create(data) )
             except Fault, flt:
