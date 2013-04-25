@@ -75,7 +75,7 @@ class PeerHost(models.Model):
         self._connection = None
 
     def __unicode__(self):
-        return self.name
+        return unicode(self.host)
 
     def clean(self):
         from django.core.exceptions import ValidationError
@@ -93,4 +93,6 @@ class PeerHost(models.Model):
         return self._connection
 
     def __getattr__(self, attr):
+        if attr == "_host_cache":
+            raise AttributeError(attr)
         return getattr( self.connection, attr)
