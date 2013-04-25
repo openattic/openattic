@@ -69,9 +69,7 @@ class HostManager(models.Manager):
         try:
             return self.get(name=fqdn)
         except Host.DoesNotExist:
-            if '.' not in fqdn:
-                # getfqdn() only returned the hostname. search for <hostname>.<something>
-                return self.get(name__startswith=("%s." % fqdn))
+            return self.get(name=socket.gethostname())
 
 class Host(models.Model):
     name        = models.CharField(max_length=63, unique=True)
