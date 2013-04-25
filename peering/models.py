@@ -93,4 +93,6 @@ class PeerHost(models.Model):
         return self._connection
 
     def __getattr__(self, attr):
+        if attr == "_host_cache":
+            raise AttributeError(attr)
         return getattr( self.connection, attr)
