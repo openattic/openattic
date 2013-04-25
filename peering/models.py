@@ -75,7 +75,7 @@ class PeerHost(models.Model):
         self._connection = None
 
     def __unicode__(self):
-        return self.name
+        return unicode(self.host)
 
     def clean(self):
         from django.core.exceptions import ValidationError
