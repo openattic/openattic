@@ -101,25 +101,6 @@ class DrbdConnectionProxy(ProxyModelHandler, DrbdConnectionHandler):
             id = {"id": id}
         return self._merge( ProxyModelHandler.filter(self, id) )[0]
 
-    def promote(self, id, hostname):
-        """ Promote the host given by `hostname` to primary. """
-        from ifconfig.models import Host
-        from peering.models import PeerHost
-        if hostname == Host.objects.get_current().name:
-            return self.primary(id)
-        else:
-            peerhost = PeerHost.objects.get(name=hostname)
-            return peerhost.drbd.Connection.primary(id)
-
-    def demote(self, id, hostname):
-        """ Demote the host given by `hostname` to secondary. """
-        from ifconfig.models import Host
-        from peering.models import PeerHost
-        if hostname == Host.objects.get_current().name:
-            return self.secondary(id)
-        else:
-            peerhost = PeerHost.objects.get(name=hostname)
-            return peerhost.drbd.Connection.secondary(id)
 
 
 class DrbdEndpointProxy(ProxyModelHandler, DrbdEndpointHandler):
