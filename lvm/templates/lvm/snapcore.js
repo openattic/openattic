@@ -719,15 +719,23 @@ Ext.oa.LVM__Snapcore_Panel = Ext.extend(Ext.Panel, {
                     }
                   }
                 },{
-                  xtype   : 'datefield',
-                  id      : 'date_select',
-                  disabled: true,
-                  value   : new Date(),
-                },{
-                  xtype   : 'timefield',
-                  id      : 'time_select',
-                  disabled: true,
-                  value   : new Date().add(Date.HOUR, +1).getHours() + ':' + new Date().getMinutes(),
+                  xtype   : 'panel',
+                  layout  : {
+                    type  : 'form'
+                  },
+                  items   : [{
+                    xtype       : 'datefield',
+                    id          : 'date_select',
+                    disabled    : true,
+                    value       : new Date(),
+                    fieldLabel  : gettext('Execution date'),
+                  },{
+                    xtype       : 'timefield',
+                    id          : 'time_select',
+                    disabled    : true,
+                    value       : new Date().add(Date.HOUR, +1).getHours() + ':' + new Date().getMinutes(),
+                    fieldLabel  : gettext('Execution time'),
+                  }]
                 },{
                   boxLabel  : gettext('Create scheduling'),
                   id        : 'scheduling',
@@ -755,31 +763,41 @@ Ext.oa.LVM__Snapcore_Panel = Ext.extend(Ext.Panel, {
                     }
                   }
                 },{
-                  xtype   : 'datefield',
-                  id      : 'startdate_select',
-                  disabled: true,
-                  value   : new Date(),
-                },{
-                  xtype   : 'timefield',
-                  id      : 'starttime_select',
-                  disabled: true,
-                  value   : new Date().getHours() + ':' + new Date().getMinutes(),
-                },{
-                  xtype   : 'datefield',
-                  id      : 'enddate_select',
-                  disabled: true,
-                  value   : new Date().add(Date.DAY, +7),
-                },{
-                  xtype   : 'timefield',
-                  id      : 'endtime_select',
-                  disabled: true,
-                  value   : new Date().getHours() + ':' + new Date().getMinutes(),
-                },{
-                  xtype       : 'checkbox',
-                  id          : 'is_active',
-                  name        : 'is_active',
-                  disabled    : true,
-                  fieldLabel  : gettext('Is active'),
+                  xtype : 'panel',
+                  layout: {
+                    type  : 'form',
+                  },
+                  items : [{
+                    xtype       : 'datefield',
+                    id          : 'startdate_select',
+                    disabled    : true,
+                    value       : new Date(),
+                    fieldLabel  : gettext('Startdate'),
+                  },{
+                    xtype       : 'timefield',
+                    id          : 'starttime_select',
+                    disabled    : true,
+                    value       : new Date().getHours() + ':' + new Date().getMinutes(),
+                    fieldLabel  : gettext('Starttime'),
+                  },{
+                    xtype       : 'datefield',
+                    id          : 'enddate_select',
+                    disabled    : true,
+                    value       : new Date().add(Date.DAY, +7),
+                    fieldLabel  : gettext('Enddate'),
+                  },{
+                    xtype       : 'timefield',
+                    id          : 'endtime_select',
+                    disabled    : true,
+                    value       : new Date().getHours() + ':' + new Date().getMinutes(),
+                    fieldLabel  : gettext('Enddtime'),
+                  },{
+                    xtype       : 'checkbox',
+                    id          : 'is_active',
+                    name        : 'is_active',
+                    disabled    : true,
+                    fieldLabel  : gettext('Is active'),
+                  }],
                 }],
                 buttons: [{
                   text    : gettext('Next'),
