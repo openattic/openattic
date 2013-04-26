@@ -626,6 +626,10 @@ Ext.oa.Lvm__LogicalVolume_Panel = Ext.extend(Ext.oa.ShareGridPanel, {
           "use strict";
           self.ownerCt.dedupfield.setDisabled(!record.data.supports_dedup);
           self.ownerCt.compressionfield.setDisabled(!record.data.supports_compression);
+          if(!record.data.supports_dedup){
+            self.ownerCt.dedupfield.setValue(false);
+            self.ownerCt.compressionfield.setValue(false);
+          }
         }
       },
       typeAhead:     true,
