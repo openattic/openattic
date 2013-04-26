@@ -13,8 +13,8 @@
 
 ### BEGIN INIT INFO
 # Provides: openattic_systemd
-# Required-Start: $local_fs $network $remote_fs dbus
-# Required-Stop: $local_fs $network $remote_fs dbus
+# Required-Start: $local_fs $network $remote_fs dbus postgresql
+# Required-Stop: $local_fs $network $remote_fs dbus postgresql
 # Default-Start:  2 3 4 5
 # Default-Stop: 0 1 6
 # Short-Description: openATTIC's system configuration daemon
