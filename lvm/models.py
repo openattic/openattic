@@ -185,7 +185,7 @@ class LogicalVolume(models.Model):
         models.Model.validate_unique(self, exclude=exclude)
 
     def full_clean(self):
-        if float(self.vg.lvm_info["LVM2_VG_FREE"]) < self.megs:
+        if float(self.vg.lvm_info["LVM2_VG_FREE"]) < int(self.megs):
             from django.core.exceptions import ValidationError
             raise ValidationError({"megs": ["Volume Group %s has insufficient free space." % self.vg.name]})
         return models.Model.full_clean(self)
