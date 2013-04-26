@@ -110,6 +110,11 @@ class FileSystem(object):
     def check_type(cls, typestring):
         return False
 
+    @classmethod
+    def check_installed(cls):
+        return os.path.exists("/sbin/mkfs.%s" % cls.name)
+
+
 class Ext2(FileSystem):
     """ Handler for Ext2 (without journal). """
     name = "ext2"
@@ -187,6 +192,10 @@ class Zfs(FileSystem):
     name = "zfs"
     desc = "ZFS"
     mount_in_fstab = False
+
+    @classmethod
+    def check_installed(cls):
+        return os.path.exists("/sbin/zfs")
 
     def clean_volume(self, volume):
         from django.core.exceptions import ValidationError
@@ -362,7 +371,10 @@ class Ocfs2(FileSystem):
 
 
 
-FILESYSTEMS = (Ext2, Ext3, Ext4, Zfs, Xfs, Ocfs2, Btrfs)
+FILESYSTEMS = [
+    fsclass for fsclass in [Ext2, Ext3, Ext4, Xfs, Zfs, Btrfs, Ocfs2]
+    if fsclass.check_installed() ]
+
 
 def get_by_name(name):
     """ Return the file system class with the given ``name``. """
