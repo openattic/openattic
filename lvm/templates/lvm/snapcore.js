@@ -742,6 +742,7 @@ Ext.oa.LVM__Snapcore_Panel = Ext.extend(Ext.Panel, {
                         Ext.getCmp('starttime_select').enable();
                         Ext.getCmp('enddate_select').enable();
                         Ext.getCmp('endtime_select').enable();
+                        Ext.getCmp('is_active').enable();
                       }
                       else
                       {
@@ -749,6 +750,7 @@ Ext.oa.LVM__Snapcore_Panel = Ext.extend(Ext.Panel, {
                         Ext.getCmp('starttime_select').disable();
                         Ext.getCmp('enddate_select').disable();
                         Ext.getCmp('endtime_select').disable();
+                        Ext.getCmp('is_active').disable();
                       }
                     }
                   }
@@ -772,6 +774,12 @@ Ext.oa.LVM__Snapcore_Panel = Ext.extend(Ext.Panel, {
                   id      : 'endtime_select',
                   disabled: true,
                   value   : new Date().getHours() + ':' + new Date().getMinutes(),
+                },{
+                  xtype       : 'checkbox',
+                  id          : 'is_active',
+                  name        : 'is_active',
+                  disabled    : true,
+                  fieldLabel  : gettext('Is active'),
                 }],
                 buttons: [{
                   text    : gettext('Next'),
