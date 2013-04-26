@@ -119,7 +119,7 @@ class FileSystem(object):
 class Ext2(FileSystem):
     """ Handler for Ext2 (without journal). """
     name = "ext2"
-    desc = "Ext2 (Linux)"
+    desc = "Ext2 (deprecated)"
 
     @property
     def info(self):
@@ -153,7 +153,7 @@ class Ext2(FileSystem):
 class Ext3(Ext2):
     """ Handler for Ext3 (Ext2 + Journal). """
     name = "ext3"
-    desc = "Ext3 (Linux Journalling)"
+    desc = "Ext3 (max. 32TiB)"
 
     def format(self, jid):
         try:
@@ -172,7 +172,7 @@ class Ext3(Ext2):
 class Ext4(Ext2):
     """ Handler for ext4. """
     name = "ext4"
-    desc = "Ext4 (Linux Journalling)"
+    desc = "Ext4 (recommended for file servers)"
 
     def format(self, jid):
         try:
@@ -191,7 +191,7 @@ class Ext4(Ext2):
 class Zfs(FileSystem):
     """ Handler for ZFS on Fuse. """
     name = "zfs"
-    desc = "ZFS"
+    desc = "ZFS (supports snapshots, deduplication and compression)"
     mount_in_fstab = False
     supports_dedup = True
     supports_compression = True
@@ -313,7 +313,7 @@ class Zfs(FileSystem):
 class Xfs(FileSystem):
     """ Handler for NTFS-3g. """
     name = "xfs"
-    desc = "XFS (Journalling, optimized for parallel IO)"
+    desc = "XFS (optimized for parallel IO)"
 
     @property
     def info(self):
