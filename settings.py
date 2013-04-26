@@ -85,6 +85,14 @@ else:
         ISCSI_INITR_ALLOW   = "/etc/initiators.allow"
         ISCSI_INITR_DENY    = "/etc/initiators.deny"
         SAMBA_INITSCRIPT    = "/etc/init.d/smbd"
+    elif distro['ID'] == 'Univention':
+        ISCSI_IETD_CONF     = "/etc/ietd.conf"
+        ISCSI_TARGETS_ALLOW = "/etc/targets.allow"
+        ISCSI_TARGETS_DENY  = "/etc/targets.deny"
+        ISCSI_INITR_ALLOW   = "/etc/initiators.allow"
+        ISCSI_INITR_DENY    = "/etc/initiators.deny"
+        SAMBA_INITSCRIPT    = "/etc/init.d/samba"
+        SAMBA_SMB_CONF      = "/etc/samba/openattic.conf"
 
 # Local time zone for this installation. Choices can be found here:
 # http://en.wikipedia.org/wiki/List_of_tz_zones_by_name
