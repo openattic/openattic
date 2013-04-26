@@ -477,7 +477,7 @@ Ext.oa.LVM__Snapcore_Panel = Ext.extend(Ext.Panel, {
                 items     : [{
                   xtype       : 'textfield',
                   name        : 'configname',
-                  fieldLabel  : gettext('Configuration name'),
+                  fieldLabel  : gettext('Description'),
                 }]
               },{
                 id        : 'wiz_snapitems',
@@ -719,15 +719,23 @@ Ext.oa.LVM__Snapcore_Panel = Ext.extend(Ext.Panel, {
                     }
                   }
                 },{
-                  xtype   : 'datefield',
-                  id      : 'date_select',
-                  disabled: true,
-                  value   : new Date(),
-                },{
-                  xtype   : 'timefield',
-                  id      : 'time_select',
-                  disabled: true,
-                  value   : new Date().add(Date.HOUR, +1).getHours() + ':' + new Date().getMinutes(),
+                  xtype   : 'panel',
+                  layout  : {
+                    type  : 'form'
+                  },
+                  items   : [{
+                    xtype       : 'datefield',
+                    id          : 'date_select',
+                    disabled    : true,
+                    value       : new Date(),
+                    fieldLabel  : gettext('Execution date'),
+                  },{
+                    xtype       : 'timefield',
+                    id          : 'time_select',
+                    disabled    : true,
+                    value       : new Date().add(Date.HOUR, +1).getHours() + ':' + new Date().getMinutes(),
+                    fieldLabel  : gettext('Execution time'),
+                  }]
                 },{
                   boxLabel  : gettext('Create scheduling'),
                   id        : 'scheduling',
@@ -742,6 +750,7 @@ Ext.oa.LVM__Snapcore_Panel = Ext.extend(Ext.Panel, {
                         Ext.getCmp('starttime_select').enable();
                         Ext.getCmp('enddate_select').enable();
                         Ext.getCmp('endtime_select').enable();
+                        Ext.getCmp('is_active').enable();
                       }
                       else
                       {
@@ -749,29 +758,46 @@ Ext.oa.LVM__Snapcore_Panel = Ext.extend(Ext.Panel, {
                         Ext.getCmp('starttime_select').disable();
                         Ext.getCmp('enddate_select').disable();
                         Ext.getCmp('endtime_select').disable();
+                        Ext.getCmp('is_active').disable();
                       }
                     }
                   }
                 },{
-                  xtype   : 'datefield',
-                  id      : 'startdate_select',
-                  disabled: true,
-                  value   : new Date(),
-                },{
-                  xtype   : 'timefield',
-                  id      : 'starttime_select',
-                  disabled: true,
-                  value   : new Date().getHours() + ':' + new Date().getMinutes(),
-                },{
-                  xtype   : 'datefield',
-                  id      : 'enddate_select',
-                  disabled: true,
-                  value   : new Date().add(Date.DAY, +7),
-                },{
-                  xtype   : 'timefield',
-                  id      : 'endtime_select',
-                  disabled: true,
-                  value   : new Date().getHours() + ':' + new Date().getMinutes(),
+                  xtype : 'panel',
+                  layout: {
+                    type  : 'form',
+                  },
+                  items : [{
+                    xtype       : 'datefield',
+                    id          : 'startdate_select',
+                    disabled    : true,
+                    value       : new Date(),
+                    fieldLabel  : gettext('Startdate'),
+                  },{
+                    xtype       : 'timefield',
+                    id          : 'starttime_select',
+                    disabled    : true,
+                    value       : new Date().getHours() + ':' + new Date().getMinutes(),
+                    fieldLabel  : gettext('Starttime'),
+                  },{
+                    xtype       : 'datefield',
+                    id          : 'enddate_select',
+                    disabled    : true,
+                    value       : new Date().add(Date.DAY, +7),
+                    fieldLabel  : gettext('Enddate'),
+                  },{
+                    xtype       : 'timefield',
+                    id          : 'endtime_select',
+                    disabled    : true,
+                    value       : new Date().getHours() + ':' + new Date().getMinutes(),
+                    fieldLabel  : gettext('Enddtime'),
+                  },{
+                    xtype       : 'checkbox',
+                    id          : 'is_active',
+                    name        : 'is_active',
+                    disabled    : true,
+                    fieldLabel  : gettext('Is active'),
+                  }],
                 }],
                 buttons: [{
                   text    : gettext('Next'),
@@ -803,7 +829,7 @@ Ext.oa.LVM__Snapcore_Panel = Ext.extend(Ext.Panel, {
                         var starttime = (Ext.getCmp('starttime_select').getValue()).split(':');
                         var enddate = Ext.getCmp('enddate_select').getValue();
                         var endtime = (Ext.getCmp('endtime_select').getValue()).split(':');
-                        
+
                         if(startdate)
                         {
                           if(starttime.length > 1)
@@ -823,8 +849,8 @@ Ext.oa.LVM__Snapcore_Panel = Ext.extend(Ext.Panel, {
                           {
                             nextpnl = '';
                           }
-                        } 
-                        
+                        }
+
                         if(enddate)
                         {
                           if(endtime.length > 1)
@@ -854,23 +880,6 @@ Ext.oa.LVM__Snapcore_Panel = Ext.extend(Ext.Panel, {
                       wizform.layout.setActiveItem(nextpnl);
                     }
                   }
-                }]
-              },{
-                title : gettext('Scheduling Part 3 / Timemanagement Part 1'),
-                id    : 'wiz_sched31',
-                xtype : 'form',
-                items : [{
-                  xtype     : 'textfield',
-                  name      : 'task_subject',
-                  fieldLabel: gettext('Task subject'),
-                },{
-                  xtype     : 'textfield',
-                  name      : 'target_path',
-                  fieldLabel: gettext('Target path'),
-                },{
-                  xtype     : 'checkbox',
-                  name      : 'is_active',
-                  fieldLabel: gettext('Is active'),
                 }]
               },{
                 title : gettext('Scheduling Part 3 / Timemanagement Part 2'),
