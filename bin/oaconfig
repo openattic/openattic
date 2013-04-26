@@ -210,7 +210,7 @@ case $1 in
 
 	domainjoin)
 		if grep -qP '^\d+$' <<<$HOSTNAME ; then
-			echo "Your hostname is invalid because it consists of numbers only."
+			echo "Your hostname is invalid because it consists of numbers only. (Consider adding a - somewhere.)"
 			exit 2
 		fi
 		
