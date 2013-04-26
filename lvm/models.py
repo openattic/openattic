@@ -111,6 +111,10 @@ class VolumeGroup(models.Model):
 
         return devs
 
+    def save( self, *args, **kwargs ):
+        models.Model.save(self, *args, **kwargs)
+        dbus.SystemBus().get_object(settings.DBUS_IFACE_SYSTEMD, "/lvm").invalidate()
+
     def delete(self):
         lvm = dbus.SystemBus().get_object(settings.DBUS_IFACE_SYSTEMD, "/lvm")
         for lv in LogicalVolume.objects.filter(vg=self):

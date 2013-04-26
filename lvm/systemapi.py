@@ -100,6 +100,12 @@ class SystemD(BasePlugin):
         self.vgs_time  = 0
         self.lvs_time  = 0
 
+    @method(in_signature="", out_signature="")
+    def invalidate(self):
+        self.pvs_time  = 0
+        self.vgs_time  = 0
+        self.lvs_time  = 0
+
     @method(in_signature="", out_signature="a{sa{ss}}")
     def pvs(self):
         if( time() - self.pvs_time > lvm_settings.SYSD_INFO_TTL ):
