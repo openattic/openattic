@@ -180,18 +180,6 @@ class LvHandler(ModelHandler):
         ), fd.read().split()))
         return currstate
 
-    def fs_options(self, id):
-        lv = LogicalVolume.objects.get(id=id)
-        return lv.fs.options()
-
-    def fs_get_option(self, id, option):
-        lv = LogicalVolume.objects.get(id=id)
-        return lv.fs[option]
-
-    def fs_set_option(self, id, option, value):
-        lv = LogicalVolume.objects.get(id=id)
-        lv.fs[option] = value
-        return lv.fs[option]
 
 class LVMetadataHandler(ModelHandler):
     model = LVMetadata

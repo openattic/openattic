@@ -41,6 +41,8 @@ class FileSystem(object):
     name = "failfs"
     desc = "failing file system"
     mount_in_fstab = True
+    supports_dedup = False
+    supports_compression = False
 
     def __init__(self, logical_volume):
         self.lv = logical_volume
@@ -113,7 +115,6 @@ class FileSystem(object):
     @classmethod
     def check_installed(cls):
         return os.path.exists("/sbin/mkfs.%s" % cls.name)
-
 
 class Ext2(FileSystem):
     """ Handler for Ext2 (without journal). """
@@ -192,6 +193,35 @@ class Zfs(FileSystem):
     name = "zfs"
     desc = "ZFS"
     mount_in_fstab = False
+    supports_dedup = True
+    supports_compression = True
+
+    class ZfsOptions(dict):
+        def __init__(self, fs, data):
+            self.fs = fs
+            dict.__init__(self, data)
+
+        def __getitem__(self, item):
+            return dbus_to_python(self.fs.lv.lvm.zfs_get(self.fs.lv.name, item))[0][2]
+
+        def __setitem__(self, item, value):
+            dbus_to_python(self.fs.lv.lvm.zfs_set(self.fs.lv.name, item, str(value)))
+
+    class ZpoolOptions(dict):
+        def __init__(self, fs, data):
+            self.fs = fs
+            dict.__init__(self, data)
+
+        def __getitem__(self, item):
+            return dbus_to_python(self.fs.lv.lvm.zpool_get(self.fs.lv.name, item))[0][2]
+
+        def __setitem__(self, item, value):
+            dbus_to_python(self.fs.lv.lvm.zpool_set(self.fs.lv.name, item, str(value)))
+
+    def __init__(self, logical_volume):
+        FileSystem.__init__(self, logical_volume)
+        self._options = None
+        self._pooloptions = None
 
     @classmethod
     def check_installed(cls):
@@ -218,6 +248,10 @@ class Zfs(FileSystem):
         self._lvm.zfs_format(jid, self.lv.path, self.lv.name,
             os.path.join(lvm_settings.MOUNT_PREFIX, self.lv.name))
         self.chown(jid)
+        if self.lv.dedup:
+            self.options["dedup"] = "on"
+        if self.lv.compression:
+            self.options["compression"] = "on"
 
     def mount(self, jid):
         self._lvm.zfs_mount(jid, self.lv.name)
@@ -263,14 +297,17 @@ class Zfs(FileSystem):
         except dbus.DBusException:
             return None
 
+    @property
     def options(self):
-        return dict([data[1:3] for data in dbus_to_python(self.lv.lvm.zfs_get(self.lv.name, "all"))])
+        if self._options is None:
+            self._options = Zfs.ZfsOptions(self, [data[1:3] for data in dbus_to_python(self.lv.lvm.zfs_get(self.lv.name, "all"))])
+        return self._options
 
-    def __getitem__(self, item):
-        return dbus_to_python(self.lv.lvm.zfs_get(self.lv.name, item))[0][2]
-
-    def __setitem__(self, item, value):
-        dbus_to_python(self.lv.lvm.zfs_set(self.lv.name, item, str(value)))
+    @property
+    def pool_options(self):
+        if self._pooloptions is None:
+            self._pooloptions = Zfs.ZpoolOptions(self, [data[1:3] for data in dbus_to_python(self.lv.lvm.zpool_get(self.lv.name, "all"))])
+        return self._pooloptions
 
 
 class Xfs(FileSystem):
