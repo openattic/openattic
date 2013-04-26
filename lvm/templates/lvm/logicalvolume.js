@@ -647,6 +647,11 @@ Ext.oa.Lvm__LogicalVolume_Panel = Ext.extend(Ext.oa.ShareGridPanel, {
       xtype: "numberfield",
       minValue: 100
     }, {
+      xtype: "label",
+      ref:   "sizelabel",
+      text:  gettext('Waiting for volume group selection...'),
+      cls:   "form_hint_label"
+    }, {
       fieldLabel: gettext('Deduplication'),
       name: "dedup",
       ref: 'dedupfield',
@@ -658,11 +663,6 @@ Ext.oa.Lvm__LogicalVolume_Panel = Ext.extend(Ext.oa.ShareGridPanel, {
       ref: 'compressionfield',
       xtype: "checkbox",
       disabled: true
-    }, {
-      xtype: "label",
-      ref:   "sizelabel",
-      text:  gettext('Waiting for volume selection...'),
-      cls:   "form_hint_label"
     }, {
       fieldLabel: gettext('Warning Level (%)'),
       allowBlank: false,
