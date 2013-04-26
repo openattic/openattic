@@ -21,6 +21,8 @@ try:
 except ImportError:
     pass
 
+from os.path import exists
+
 from django.contrib.auth.models import User
 from django.db.models import signals
 from django.conf      import settings
@@ -44,7 +46,10 @@ def create_vgs(app, created_models, verbosity, **kwargs):
     vgs = dbus_to_python(lvm.vgs())
     lvs = dbus_to_python(lvm.lvs())
     mounts = blockdevices.get_mounts()
-    zfs = dbus_to_python(lvm.zfs_getspace(""))
+    if exists("/sbin/zfs"):
+        zfs = dbus_to_python(lvm.zfs_getspace(""))
+    else:
+        zfs = []
 
     for vgname in vgs:
         try:
