@@ -618,9 +618,16 @@ Ext.oa.Lvm__LogicalVolume_Panel = Ext.extend(Ext.oa.ShareGridPanel, {
       id: "volume_filesystem_add",
       hiddenName: 'filesystem',
       store: new Ext.data.DirectStore({
-        fields: ["name", "desc"],
+        fields: ["name", "desc", "supports_dedup", "supports_compression"],
         directFn: lvm__LogicalVolume.avail_fs
       }),
+      listeners: {
+        select: function(self, record, index){
+          "use strict";
+          self.ownerCt.dedupfield.setDisabled(!record.data.supports_dedup);
+          self.ownerCt.compressionfield.setDisabled(!record.data.supports_compression);
+        }
+      },
       typeAhead:     true,
       triggerAction: 'all',
       emptyText:     gettext('Select...'),
@@ -635,6 +642,18 @@ Ext.oa.Lvm__LogicalVolume_Panel = Ext.extend(Ext.oa.ShareGridPanel, {
       ref: 'sizefield',
       xtype: "numberfield",
       minValue: 100
+    }, {
+      fieldLabel: gettext('Deduplication'),
+      name: "dedup",
+      ref: 'dedupfield',
+      xtype: "checkbox",
+      disabled: true
+    }, {
+      fieldLabel: gettext('Compression'),
+      name: "compression",
+      ref: 'compressionfield',
+      xtype: "checkbox",
+      disabled: true
     }, {
       xtype: "label",
       ref:   "sizelabel",

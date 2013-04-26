@@ -107,7 +107,10 @@ class LvHandler(ModelHandler):
     def avail_fs(self):
         """ Return a list of available file systems. """
         from lvm.filesystems import FILESYSTEMS
-        return [ {'name': fs.name, 'desc': fs.desc } for fs in FILESYSTEMS ]
+        return [ {'name': fs.name, 'desc': fs.desc,
+            'supports_dedup': fs.supports_dedup,
+            'supports_compression': fs.supports_compression,
+            } for fs in FILESYSTEMS ]
 
     def get_shares(self, id):
         """ Return ID objects for shares that are configured for the given volume. """
@@ -180,18 +183,6 @@ class LvHandler(ModelHandler):
         ), fd.read().split()))
         return currstate
 
-    def fs_options(self, id):
-        lv = LogicalVolume.objects.get(id=id)
-        return lv.fs.options()
-
-    def fs_get_option(self, id, option):
-        lv = LogicalVolume.objects.get(id=id)
-        return lv.fs[option]
-
-    def fs_set_option(self, id, option, value):
-        lv = LogicalVolume.objects.get(id=id)
-        lv.fs[option] = value
-        return lv.fs[option]
 
 class LVMetadataHandler(ModelHandler):
     model = LVMetadata

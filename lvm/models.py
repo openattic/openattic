@@ -152,6 +152,8 @@ class LogicalVolume(models.Model):
     fswarning   = models.IntegerField(_("Warning Level (%)"),  default=75 )
     fscritical  = models.IntegerField(_("Critical Level (%)"), default=85 )
     uuid        = models.CharField(max_length=38, blank=True, editable=False)
+    dedup       = models.BooleanField(_("Deduplication"), blank=True, default=False)
+    compression = models.BooleanField(_("Compression"), blank=True, default=False)
 
     objects = getHostDependentManagerClass("vg__host")()
     all_objects = models.Manager()

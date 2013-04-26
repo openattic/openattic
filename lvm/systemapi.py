@@ -388,9 +388,29 @@ class SystemD(BasePlugin):
         ret, out, err = invoke(args, return_out_err=True, log=False)
         return [line.split("\t") for line in out.split("\n")[:-1]]
 
-    @method(in_signature="sss", out_signature="i")
-    def zfs_set(self, device, field, value):
-        return invoke(["zfs", "set", ("%s=%s" % (field, value)), device])
+    @method(in_signature="isss", out_signature="")
+    def zfs_set(self, jid, device, field, value):
+        cmd = ["zfs", "set", ("%s=%s" % (field, value)), device]
+        if jid != -1:
+            self.job_add_command(jid, cmd)
+        else:
+            invoke(cmd)
+
+    @method(in_signature="ss", out_signature="a(ssss)")
+    def zpool_get(self, device, field):
+        args = ["zpool", "get", field]
+        if device:
+            args.append(device)
+        ret, out, err = invoke(args, return_out_err=True, log=False)
+        return [line.split() for line in out.split("\n")[1:-1]]
+
+    @method(in_signature="isss", out_signature="")
+    def zpool_set(self, jid, device, field, value):
+        cmd = ["zpool", "set", ("%s=%s" % (field, value)), device]
+        if jid != -1:
+            self.job_add_command(jid, cmd)
+        else:
+            invoke(cmd)
 
     @method(in_signature="is", out_signature="")
     def zfs_mount(self, jid, device):
