@@ -63,6 +63,17 @@ Ext.oa.Ipmi__Sensors_Panel = Ext.extend(Ext.grid.GridPanel, {
     "use strict";
     Ext.oa.Ipmi__Sensors_Panel.superclass.onRender.apply(this, arguments);
     this.store.reload();
+    this.on("afterrender", function(){
+      var myMask = new Ext.LoadMask(this.getEl());
+      myMask.show.defer(50, myMask);
+    }, this, {single: true} );
+    this.store.on("beforeload", function(){
+      var myMask = new Ext.LoadMask(this.getEl());
+      myMask.show();
+    }, this );
+    this.store.on("load", function(){
+      this.getEl().unmask();
+    }, this );
   }
 });
 
