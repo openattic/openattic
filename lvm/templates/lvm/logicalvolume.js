@@ -314,7 +314,7 @@ Ext.oa.Lvm__LogicalVolume_Panel = Ext.extend(Ext.oa.ShareGridPanel, {
             Ext.Msg.confirm(
               gettext('Unmount'),
               interpolate(
-                gettext('Do you really want to umount %s?'),
+                gettext('Do you really want to unmount %s?'),
                 [sel.data.name]),
               function(btn){
                 if(btn === 'yes'){
