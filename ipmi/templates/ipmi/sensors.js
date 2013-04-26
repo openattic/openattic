@@ -59,6 +59,9 @@ Ext.oa.Ipmi__Sensors_Panel = Ext.extend(Ext.grid.GridPanel, {
     }));
     Ext.oa.Ipmi__Sensors_Panel.superclass.initComponent.apply(this, arguments);
   },
+  reload: function(){
+    this.store.reload();
+  },
   onRender: function(){
     "use strict";
     Ext.oa.Ipmi__Sensors_Panel.superclass.onRender.apply(this, arguments);
