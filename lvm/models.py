@@ -735,6 +735,12 @@ class ConfManager(models.Manager):
         snapconf = SnapshotConf(confname=data['configname'], prescript=data['prescript'], postscript=data['postscript'], expiry_date=data['expirydate'])
         snapconf.save()
 
+        volumes = conf_obj['volumes']
+        for volume in volumes:
+          logical_volume = LogicalVolume.all_objects.get(id=volume)
+          volume_conf = LogicalVolumeConf(snapshot_conf=snapconf, volume=logical_volume)
+          volume_conf.save()
+
         if 'VMware' in conf_obj['plugin_data']:
             # type VMware
             vmware_conf = conf_obj['plugin_data']['VMware']
@@ -760,3 +766,7 @@ class SnapshotConf(models.Model):
     expiry_date     = models.DateTimeField(null=True, blank=True)
 
     objects = ConfManager()
+
+class LogicalVolumeConf(models.Model):
+    snapshot_conf   = models.ForeignKey(SnapshotConf)
+    volume          = models.ForeignKey(LogicalVolume)
