@@ -587,7 +587,7 @@ Ext.oa.Nagios__Service_Panel = Ext.extend(Ext.Panel, {
     this.items.items[0].store.reload();
     this.items.items[0].on("afterrender", function(){
       var myMask = new Ext.LoadMask(this.getEl());
-      myMask.show();
+      myMask.show.defer(50, myMask);
     }, this.items.items[0], {single: true} );
     this.items.items[0].store.on("load", function(){
       this.getEl().unmask();
