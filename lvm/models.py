@@ -181,13 +181,13 @@ class LogicalVolume(models.Model):
             qry = qry.exclude(id=self.id)
         if qry.count() > 0:
             from django.core.exceptions import ValidationError
-            raise ValidationError({"name": "A Volume named '%s' already exists on this host." % self.name})
+            raise ValidationError({"name": ["A Volume named '%s' already exists on this host." % self.name]})
         models.Model.validate_unique(self, exclude=exclude)
 
     def full_clean(self):
         if float(self.vg.lvm_info["LVM2_VG_FREE"]) < self.megs:
             from django.core.exceptions import ValidationError
-            raise ValidationError({"megs": "Volume Group %s has insufficient free space." % self.vg.name})
+            raise ValidationError({"megs": ["Volume Group %s has insufficient free space." % self.vg.name]})
         return models.Model.full_clean(self)
 
     def _build_job(self):
