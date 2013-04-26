@@ -477,7 +477,7 @@ Ext.oa.LVM__Snapcore_Panel = Ext.extend(Ext.Panel, {
                 items     : [{
                   xtype       : 'textfield',
                   name        : 'configname',
-                  fieldLabel  : gettext('Configuration name'),
+                  fieldLabel  : gettext('Description'),
                 }]
               },{
                 id        : 'wiz_snapitems',
@@ -803,7 +803,7 @@ Ext.oa.LVM__Snapcore_Panel = Ext.extend(Ext.Panel, {
                         var starttime = (Ext.getCmp('starttime_select').getValue()).split(':');
                         var enddate = Ext.getCmp('enddate_select').getValue();
                         var endtime = (Ext.getCmp('endtime_select').getValue()).split(':');
-                        
+
                         if(startdate)
                         {
                           if(starttime.length > 1)
@@ -823,8 +823,8 @@ Ext.oa.LVM__Snapcore_Panel = Ext.extend(Ext.Panel, {
                           {
                             nextpnl = '';
                           }
-                        } 
-                        
+                        }
+
                         if(enddate)
                         {
                           if(endtime.length > 1)
