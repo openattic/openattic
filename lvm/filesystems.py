@@ -205,7 +205,7 @@ class Zfs(FileSystem):
             return dbus_to_python(self.fs.lv.lvm.zfs_get(self.fs.lv.name, item))[0][2]
 
         def __setitem__(self, item, value):
-            dbus_to_python(self.fs.lv.lvm.zfs_set(self.fs.lv.name, item, str(value)))
+            self.fs.lv.lvm.zfs_set(-1, self.fs.lv.name, item, str(value))
 
     class ZpoolOptions(dict):
         def __init__(self, fs, data):
@@ -216,7 +216,7 @@ class Zfs(FileSystem):
             return dbus_to_python(self.fs.lv.lvm.zpool_get(self.fs.lv.name, item))[0][2]
 
         def __setitem__(self, item, value):
-            dbus_to_python(self.fs.lv.lvm.zpool_set(self.fs.lv.name, item, str(value)))
+            self.fs.lv.lvm.zpool_set(-1, self.fs.lv.name, item, str(value))
 
     def __init__(self, logical_volume):
         FileSystem.__init__(self, logical_volume)
@@ -247,11 +247,11 @@ class Zfs(FileSystem):
     def format(self, jid):
         self._lvm.zfs_format(jid, self.lv.path, self.lv.name,
             os.path.join(lvm_settings.MOUNT_PREFIX, self.lv.name))
-        self.chown(jid)
         if self.lv.dedup:
-            self.options["dedup"] = "on"
+            self._lvm.zfs_set(jid, self.lv.name, "dedup", "on")
         if self.lv.compression:
-            self.options["compression"] = "on"
+            self._lvm.zfs_set(jid, self.lv.name, "compression", "on")
+        self.chown(jid)
 
     def mount(self, jid):
         self._lvm.zfs_mount(jid, self.lv.name)
@@ -293,7 +293,7 @@ class Zfs(FileSystem):
     @property
     def mounted(self):
         try:
-            return self["mounted"] == "yes"
+            return self.options["mounted"] == "yes"
         except dbus.DBusException:
             return None
 
