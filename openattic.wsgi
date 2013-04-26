@@ -12,7 +12,7 @@ if not PROJECT_ROOT or not exists( PROJECT_ROOT ):
     PROJECT_ROOT = dirname(abspath(__file__))
 
 # environment variables
-sys.path.append( PROJECT_ROOT )
+sys.path.insert( 0, PROJECT_ROOT )
 os.environ['DJANGO_SETTINGS_MODULE'] = 'settings'
 
 
