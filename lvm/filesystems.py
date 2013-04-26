@@ -254,6 +254,9 @@ class Zfs(FileSystem):
         except dbus.DBusException:
             return None
 
+    def options(self):
+        return dict([data[1:3] for data in dbus_to_python(self.lv.lvm.zfs_get(self.lv.name, "all"))])
+
     def __getitem__(self, item):
         return dbus_to_python(self.lv.lvm.zfs_get(self.lv.name, item))[0][2]
 
