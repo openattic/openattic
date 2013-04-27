@@ -333,7 +333,7 @@ EOF
 		$0 reload
 		
 		echo "Configuring libnss..."
-		sed -i -e 's/^passwd:.*$/passwd:         compat winbind/' /etc/nsswitch.conf
+		sed -i -e 's/^passwd:.*$/passwd:         compat winbind pgsql/' /etc/nsswitch.conf
 		sed -i -e 's/^group:.*$/group:          compat winbind/' /etc/nsswitch.conf
 		
 		echo "Restarting Samba and Winbind..."
