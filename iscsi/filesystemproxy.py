@@ -22,16 +22,18 @@ import errno
 
 from xmlrpclib import Fault
 
-from lvm.filesystems import FileSystem
+from lvm.filesystems import FileSystem, FILESYSTEMS
 
 class FileSystemProxy(FileSystem):
     name = "iSCSI Remote Filesystem"
     description = "Proxy for a filesystem on an iSCSI Initiator"
     mount_in_fstab = False
+    virtual = True
 
     def __init__(self, logical_volume):
         FileSystem.__init__(self, logical_volume)
         self.disk = None
+
         for lun in self.lv.lun_set.all():
             for initiator in lun.target.init_allow.all():
                 if initiator.peer is None:
@@ -48,26 +50,52 @@ class FileSystemProxy(FileSystem):
                 except Fault, flt:
                     continue
 
-    def update(self, data):
         if self.disk is None:
-            return data
+            raise FileSystem.WrongFS(self.name)
 
+    @property
+    def fsname(self):
+        return self.disk["__partitions__"][0]["FileSystem"]
+
+    @property
+    def mountpoint(self):
+        return self.disk["__partitions__"][0]["Name"]
+
+    @property
+    def mounthost(self):
+        return self.disk["SystemName"]
+
+    def mount(self, jid):
+        """ Mount the file system.
+        """
+        raise NotImplementedError("Remote mount is not (yet?) implemented")
+
+    @property
+    def mounted(self):
+        """ True if the volume is currently mounted. """
+        return True
+
+    def unmount(self, jid):
+        """ Unmount the volume. """
+        raise NotImplementedError("Remote unmount is not (yet?) implemented")
+
+    @property
+    def info(self):
+        """ Return all file system metadata. """
+        raise self.disk
+
+    def stat(self):
+        """ stat() the file system and return usage statistics. """
         btsize = int(self.disk["Size"])
         btfree = sum([ int(part["FreeSpace"]) for part in self.disk["__partitions__"] ])
         btused = btsize - btfree
-        data['fs'] = {
-            "mountpoint": self.disk["__partitions__"][0]["Name"],
-            "host": self.disk["SystemName"],
-            "mounted": True,
-            "stat": {
-                "used":  btused / 1024**2,
-                "free":  btfree / 1024**2,
-                "size":  btsize / 1024**2,
-                "usedG": btused / 1024**3,
-                "freeG": btfree / 1024**3,
-                "sizeG": btsize / 1024**3,
-                }
+        return {
+            "used":  btused / 1024**2,
+            "free":  btfree / 1024**2,
+            "size":  btsize / 1024**2,
+            "usedG": btused / 1024**3,
+            "freeG": btfree / 1024**3,
+            "sizeG": btsize / 1024**3,
             }
-        data["filesystem"] = self.disk["__partitions__"][0]["FileSystem"]
-        data["formatted"]  = True
-        return data
+
+FILESYSTEMS.append(FileSystemProxy)

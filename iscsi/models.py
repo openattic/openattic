@@ -28,6 +28,10 @@ import lvm.signals as lvm_signals
 from ifconfig.models import IPAddress, getHostDependentManagerClass
 from systemd.helpers import dbus_to_python
 
+# This import is not actually needed for the name, but since Django only imports
+# the models, we need to make sure the filesystemproxy module has been loaded by Python.
+import filesystemproxy
+
 class Initiator(models.Model):
     name        = models.CharField(max_length=50,  unique=True)
     address     = models.CharField(max_length=250, unique=True)
