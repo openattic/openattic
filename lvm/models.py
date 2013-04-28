@@ -249,7 +249,7 @@ class LogicalVolume(models.Model):
 
     @property
     def fs_info(self):
-        if not self.filesystem:
+        if not self.fs:
             return None
         return self.fs.info
 
