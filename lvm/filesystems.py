@@ -43,27 +43,62 @@ class FileSystem(object):
     mount_in_fstab = True
     supports_dedup = False
     supports_compression = False
+    virtual = False
+
+    class WrongFS(Exception):
+        """ Raised when a filesystem handler detects that the volume is formatted with a different fs. """
+        pass
 
     def __init__(self, logical_volume):
         self.lv = logical_volume
         self._lvm = self.lv.lvm
+        # Make sure virtual FS handlers are only employed on volumes that don't have a native
+        # FS configured and vice-versa.
+        if not self.virtual:
+            if self.lv.filesystem != self.name:
+                raise FileSystem.WrongFS(self.name)
+        else:
+            if self.lv.filesystem:
+                raise FileSystem.WrongFS(self.name)
 
     def clean_volume(self, volume):
         pass
 
+    @property
+    def fsname(self):
+        return self.name
+
+    @property
+    def mountpoint(self):
+        if self.virtual:
+            raise NotImplementedError("FileSystem::mountpoint needs to be overridden for virtual FS handlers")
+        return os.path.join(lvm_settings.MOUNT_PREFIX, self.lv.name)
+
+    @property
+    def mounthost(self):
+        if self.virtual:
+            raise NotImplementedError("FileSystem::mounthost needs to be overridden for virtual FS handlers")
+        return self.lv.vg.host.name
+
     def mount(self, jid):
         """ Mount the file system.
         """
-        self._lvm.fs_mount( jid, self.name, self.lv.path, self.lv.mountpoint )
+        if self.virtual:
+            raise NotImplementedError("FileSystem::mount needs to be overridden for virtual FS handlers")
+        self._lvm.fs_mount( jid, self.name, self.lv.path, self.mountpoint )
 
     @property
     def mounted(self):
         """ True if the volume is currently mounted. """
-        return os.path.ismount(self.lv.mountpoint)
+        if self.virtual:
+            raise NotImplementedError("FileSystem::mounted needs to be overridden for virtual FS handlers")
+        return os.path.ismount(self.mountpoint)
 
     def unmount(self, jid):
         """ Unmount the volume. """
-        self._lvm.fs_unmount( jid, self.lv.path, self.lv.mountpoint )
+        if self.virtual:
+            raise NotImplementedError("FileSystem::unmount needs to be overridden for virtual FS handlers")
+        self._lvm.fs_unmount( jid, self.lv.path, self.mountpoint )
 
     def format(self, jid):
         """ Format the volume. """
@@ -89,7 +124,9 @@ class FileSystem(object):
 
     def chown(self, jid):
         """ Change ownership of the filesystem to be the LV's owner. """
-        return self._lvm.fs_chown( jid, self.lv.mountpoint, self.lv.owner.username, lvm_settings.CHOWN_GROUP )
+        if self.virtual:
+            raise NotImplementedError("FileSystem::chown needs to be overridden for virtual FS handlers")
+        return self._lvm.fs_chown( jid, self.mountpoint, self.lv.owner.username, lvm_settings.CHOWN_GROUP )
 
     def destroy(self):
         """ Destroy the file system. """
@@ -97,7 +134,9 @@ class FileSystem(object):
 
     def stat(self):
         """ stat() the file system and return usage statistics. """
-        s = os.statvfs(self.lv.mountpoint)
+        if self.virtual:
+            raise NotImplementedError("FileSystem::stat needs to be overridden for virtual FS handlers")
+        s = os.statvfs(self.mountpoint)
         stats = {
             'size': (s.f_blocks * s.f_frsize) / 1024 / 1000.,
             'free': (s.f_bavail * s.f_frsize) / 1024 / 1000.,
@@ -354,7 +393,7 @@ class Xfs(FileSystem):
     def resize(self, jid, grow):
         if not grow:
             raise SystemError("XFS does not support shrinking.")
-        self._lvm.xfs_resize( jid, self.lv.mountpoint, self.lv.megs )
+        self._lvm.xfs_resize( jid, self.mountpoint, self.lv.megs )
 
     @classmethod
     def check_type(cls, typestring):
