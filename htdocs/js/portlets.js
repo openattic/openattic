@@ -49,12 +49,14 @@ Ext.oa.getDefaultPortlets = function(tools){
               return (val.stat.used / val.stat.size * 100 ).toFixed(2);
             }
           }],
-          directFn: lvm__LogicalVolume.filter,
-          baseParams: {
-            '__exclude__': { filesystem: '' }
-          }
+          directFn: lvm__LogicalVolume.all
         });
         store.setDefaultSort("fsused", "DESC");
+        store.on("load", function(self){
+          self.filterBy(function(record){
+            return record.data.fs !== null && record.data.fs.mounted;
+          });
+        });
         return store;
       }()),
       colModel:  new Ext.grid.ColumnModel({
