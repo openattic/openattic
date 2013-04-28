@@ -36,6 +36,9 @@ class FileSystem(object):
          * name: File system type that can be passed to mount -t.
          * desc: Human-readable description.
          * mount_in_fstab: If True, a mount line for this volume will be included in /etc/fstab.
+         * virtual: If True, denotes that the file system cannot be dealt with using the
+           standard mount/stat/umount stuff, but needs some kind of more advanced treatment.
+           E. g., it might reside on a volume that is mapped using iSCSI or FC.
     """
 
     name = "failfs"
