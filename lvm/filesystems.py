@@ -284,7 +284,9 @@ class Zfs(FileSystem):
 
     @property
     def info(self):
-        return dbus_to_python(self.lv.lvm.zfs_get(self.lv.name, "all"))
+        opts = self.pool_options.copy()
+        opts.update(self.options)
+        return opts
 
     def format(self, jid):
         self._lvm.zfs_format(jid, self.lv.path, self.lv.name,
