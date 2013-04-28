@@ -36,7 +36,7 @@ Ext.oa.Settings_Panel = Ext.extend(Ext.Panel,{
         }
       },{
         xtype: "checkbox",
-        fieldLabel: gettext('show hints'),
+        fieldLabel: gettext('Show hints'),
         checked: Ext.state.Manager.get("form_tooltip_show", true),
         listeners: {
           check: function( self, checked){
@@ -54,7 +54,7 @@ Ext.oa.Settings_Panel = Ext.extend(Ext.Panel,{
         }
       },{
         xtype: "checkbox",
-        fieldLabel: gettext('Monitoring graph with radient'),
+        fieldLabel: gettext('Enable gradients in graphs'),
         checked: Ext.state.Manager.get("nagios_graph_grad", false),
         listeners:{
           check: function(self, checked){
@@ -62,16 +62,6 @@ Ext.oa.Settings_Panel = Ext.extend(Ext.Panel,{
           }
         }
       },{
-          xtype: "checkbox",
-          fieldLabel: gettext('Show graph for storage utilization'),
-          checked: Ext.state.Manager.get("storage_utilization_graph", false),
-          listeners: {
-            check: function(self,checked){
-              Ext.state.Manager.set("storage_utilization_graph", checked);
-            }
-         }
-      },
-      {
         xtype: 'radiogroup',
         value: Ext.state.Manager.get("theme", "default"),
         fieldLabel: 'Theme',
