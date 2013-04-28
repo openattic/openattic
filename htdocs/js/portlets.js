@@ -38,7 +38,7 @@ Ext.oa.getDefaultPortlets = function(tools){
         var store = new Ext.data.DirectStore({
           storeId: "portlet_lvs_store",
           autoLoad: true,
-          fields: ['name', 'megs', 'filesystem',  'formatted', 'id', 'state', 'fs', 'fswarning', 'fscritical', {
+          fields: ['name', 'megs', 'filesystem',  'formatted', 'id', 'state', 'fs', 'fswarning', 'fscritical', 'snapshot', {
             name: 'fsused',
             mapping: 'fs',
             sortType: 'asFloat',
@@ -54,7 +54,7 @@ Ext.oa.getDefaultPortlets = function(tools){
         store.setDefaultSort("fsused", "DESC");
         store.on("load", function(self){
           self.filterBy(function(record){
-            return record.data.fs !== null && record.data.fs.mounted;
+            return !record.data.snapshot && record.data.fs !== null && record.data.fs.mounted;
           });
         });
         return store;
