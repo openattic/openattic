@@ -27,7 +27,7 @@ from django.utils.translation   import ugettext_lazy as _
 
 from ifconfig.models import Host, HostDependentManager, getHostDependentManagerClass
 from systemd.helpers import dbus_to_python
-from lvm.filesystems import Zfs, FileSystem, FILESYSTEMS, get_by_name as get_fs_by_name
+from lvm.filesystems import Zfs, FileSystem, FILESYSTEMS
 from lvm             import signals as lvm_signals
 from lvm             import blockdevices
 from lvm.conf        import settings as lvm_settings
@@ -587,7 +587,7 @@ class ZfsSubvolume(models.Model):
     def fs(self):
         """ An instance of the filesystem handler class for this Subvolume. """
         if self._fs is None:
-            self._fs = get_fs_by_name(self.volume.filesystem)(self)
+            self._fs = Zfs(self)
         return self._fs
 
     @property
@@ -656,7 +656,7 @@ class ZfsSnapshot(models.Model):
     def fs(self):
         """ An instance of the filesystem handler class for this Subvolume. """
         if self._fs is None:
-            self._fs = get_fs_by_name(self.volume.filesystem)(self)
+            self._fs = Zfs(self)
         return self._fs
 
     @property
