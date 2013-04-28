@@ -82,7 +82,7 @@ class FileSystemProxy(FileSystem):
     @property
     def info(self):
         """ Return all file system metadata. """
-        raise self.disk
+        return self.disk
 
     def stat(self):
         """ stat() the file system and return usage statistics. """
