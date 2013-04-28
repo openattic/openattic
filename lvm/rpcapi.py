@@ -88,20 +88,17 @@ class LvHandler(ModelHandler):
     order = ("name",)
 
     def _override_get(self, obj, data):
-        if obj.filesystem:
+        if obj.fs:
+            data['filesystem'] = obj.fsname
             data['fs'] = {
                 'mountpoint':  obj.mountpoint,
                 'mounted':     obj.mounted,
-                'host':        obj.vg.host.name
+                'host':        obj.mounthost
                 }
             if obj.mounted:
                 data['fs']['stat'] = obj.stat
         else:
-            fs = obj.fs
-            if fs is None:
-                data['fs'] = None
-            else:
-                fs.update(data)
+            data['fs'] = None
         return data
 
     def avail_fs(self):
