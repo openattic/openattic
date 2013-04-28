@@ -110,7 +110,7 @@ class LvHandler(ModelHandler):
         return [ {'name': fs.name, 'desc': fs.desc,
             'supports_dedup': fs.supports_dedup,
             'supports_compression': fs.supports_compression,
-            } for fs in FILESYSTEMS ]
+            } for fs in FILESYSTEMS if not fs.virtual ]
 
     def get_shares(self, id):
         """ Return ID objects for shares that are configured for the given volume. """
