@@ -27,7 +27,7 @@ from django.utils.translation   import ugettext_lazy as _
 
 from ifconfig.models import Host, HostDependentManager, getHostDependentManagerClass
 from systemd.helpers import dbus_to_python
-from lvm.filesystems import Zfs, FILESYSTEMS, get_by_name as get_fs_by_name
+from lvm.filesystems import Zfs, FileSystem, FILESYSTEMS, get_by_name as get_fs_by_name
 from lvm             import signals as lvm_signals
 from lvm             import blockdevices
 from lvm.conf        import settings as lvm_settings
@@ -231,15 +231,14 @@ class LogicalVolume(models.Model):
     @property
     def fs(self):
         """ An instance of the filesystem handler class for this LV (if any). """
-        if not self.filesystem:
-            if hasattr(self, "lun_set") and self.lun_set.count() > 0:
-                from iscsi.filesystemproxy import FileSystemProxy
-                return FileSystemProxy(self)
-            return None
-        else:
-            if self._fs is None:
-                self._fs = get_fs_by_name(self.filesystem)(self)
-            return self._fs
+        if self._fs is None:
+            for fsclass in FILESYSTEMS:
+                try:
+                    self._fs = fsclass(self)
+                    break
+                except FileSystem.WrongFS:
+                    pass
+        return self._fs
 
     @property
     def fs_info(self):
