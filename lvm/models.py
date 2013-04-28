@@ -241,6 +241,13 @@ class LogicalVolume(models.Model):
         return self._fs
 
     @property
+    def fsname(self):
+        """ The name of the file system on this volume. """
+        if not self.fs:
+            return None
+        return self.fs.fsname
+
+    @property
     def fs_info(self):
         if not self.filesystem:
             return None
