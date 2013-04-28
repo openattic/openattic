@@ -37,7 +37,8 @@ Ext.oa.Lvm__LogicalVolume_Panel = Ext.extend(Ext.oa.ShareGridPanel, {
     remove:  gettext('Delete Volume')
   },
   window: {
-    height: 350
+    height: 350,
+    width:  550
   },
   allowEdit: false,
   store: {

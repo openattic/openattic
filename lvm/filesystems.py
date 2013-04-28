@@ -214,7 +214,7 @@ class Ext3(Ext2):
 class Ext4(Ext2):
     """ Handler for ext4. """
     name = "ext4"
-    desc = "Ext4 (recommended for file servers)"
+    desc = "Ext4 (recommended for file servers, supports Windows ACLs)"
 
     def format(self, jid):
         try:
@@ -357,7 +357,7 @@ class Zfs(FileSystem):
 class Xfs(FileSystem):
     """ Handler for NTFS-3g. """
     name = "xfs"
-    desc = "XFS (optimized for parallel IO)"
+    desc = "XFS (recommended for virtualization, optimized for parallel IO)"
 
     @property
     def info(self):
