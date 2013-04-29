@@ -42,7 +42,7 @@ Ext.oa.Nfs__Export_Panel = Ext.extend(Ext.oa.ShareGridPanel, {
             select: function(self, record, index){
               "use strict";
               lvm__LogicalVolume.get( record.data.id, function( provider, response ){
-                self.ownerCt.dirfield.setValue( response.result.fs.mountpoint );
+                self.ownerCt.dirfield.setValue( response.result.fs.topleveldir );
                 self.ownerCt.dirfield.enable();
               } );
             }

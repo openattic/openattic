@@ -47,7 +47,7 @@ Ext.oa.Samba__Share_Panel = Ext.extend(Ext.oa.ShareGridPanel, {
             lvm__LogicalVolume.get( record.data.id, function( provider, response ){
               self.ownerCt.namefield.setValue( response.result.name );
               self.ownerCt.namefield.enable();
-              self.ownerCt.dirfield.setValue( response.result.fs.mountpoint );
+              self.ownerCt.dirfield.setValue( response.result.fs.topleveldir );
               self.ownerCt.dirfield.enable();
             } );
           }
