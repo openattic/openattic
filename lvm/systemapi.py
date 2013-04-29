@@ -478,9 +478,13 @@ class SystemD(BasePlugin):
     def zfs_expand(self, jid, name, device):
         self.job_add_command(jid, ["zpool", "online", "-e", name, device])
 
-    @method(in_signature="s", out_signature="")
-    def btrfs_create_subvolume(self, subpath):
-        invoke(["btrfs", "subvolume", "create", subpath])
+    @method(in_signature="is", out_signature="")
+    def btrfs_create_subvolume(self, jid, subpath):
+        cmd = ["btrfs", "subvolume", "create", subpath]
+        if jid != -1:
+            self.job_add_command(jid, cmd)
+        else:
+            invoke(cmd)
 
     @method(in_signature="ssb", out_signature="")
     def btrfs_create_snapshot(self, origpath, snappath, readonly):

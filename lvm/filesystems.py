@@ -417,6 +417,10 @@ class Btrfs(FileSystem):
         self._lvm.btrfs_format( jid, self.lv.path )
         self.mount(jid)
         self.chown(jid)
+        self._lvm.btrfs_create_subvolume(jid, os.path.join(self.mountpoint, "default"))
+        from lvm.models import BtrfsSubvolume
+        default = BtrfsSubvolume(volume=self.lv, name="default")
+        default.save(database_only=True)
 
     def online_resize_available(self, grow):
         return False
@@ -429,7 +433,7 @@ class Btrfs(FileSystem):
         if subvolume.snapshot is not None:
             self._lvm.btrfs_create_snapshot(subvolume.snapshot.path, subvolume.path, subvolume.readonly)
         else:
-            self._lvm.btrfs_create_subvolume(subvolume.path)
+            self._lvm.btrfs_create_subvolume(-1, subvolume.path)
 
     def delete_subvolume(self, subvolume):
         self._lvm.btrfs_delete_subvolume(subvolume.path)

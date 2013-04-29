@@ -712,9 +712,10 @@ class BtrfsSubvolume(models.Model):
             return os.path.join(self.volume.mountpoint, ".snapshots", self.snapshot.name, self.name)
         return os.path.join(self.volume.mountpoint, self.name)
 
-    def save( self, *args, **kwargs ):
+    def save( self, database_only=False, *args, **kwargs ):
         ret = models.Model.save(self, *args, **kwargs)
-        self.volume.fs.create_subvolume(self)
+        if not database_only:
+            self.volume.fs.create_subvolume(self)
         return ret
 
     def delete( self ):
