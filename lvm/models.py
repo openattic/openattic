@@ -718,6 +718,12 @@ class BtrfsSubvolume(models.Model):
     class Meta:
         unique_together=("volume", "name")
 
+    def __unicode__(self):
+        if self.snapshot is None:
+            return "Subvolume %s/%s" % (self.volume.name, self.name)
+        else:
+            return "Snapshot %s/%s/%s" % (self.volume.name, self.snapshot.name, self.name)
+
     @property
     def path(self):
         if self.snapshot is not None:
