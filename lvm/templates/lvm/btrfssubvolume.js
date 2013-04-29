@@ -38,7 +38,10 @@ Ext.oa.Lvm__BtrfsSubvolume_Panel = Ext.extend(Ext.oa.ShareGridPanel, {
     header: gettext('Read only'),
     width: 200,
     dataIndex: "readonly",
-    renderer: Ext.oa.renderBoolean
+    renderer: function(val, x, record){
+      if( record.json.snapshot === null ) return '';
+      return Ext.oa.renderBoolean(val, x, record);
+    }
   }],
   store:{
     fields: [{
@@ -89,6 +92,7 @@ Ext.oa.Lvm__BtrfsSubvolume_Panel = Ext.extend(Ext.oa.ShareGridPanel, {
             paramOrder: ["field", "query", "kwds"],
             baseParams: {
               field: "name",
+              query: "",
               kwds: {
                 snapshot__isnull: true
               }
