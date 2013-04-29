@@ -355,8 +355,17 @@ Ext.oa.LVM__Snapcore_Panel = Ext.extend(Ext.Panel, {
                   }
                 ],
               }),
-              viewConfig       : { forceFit: true },
+              viewConfig       : {
+                forceFit: true,
+                getRowClass: function(record, rowIndex, rp, ds) {
+                  if(typeof record.data.draggable !== 'undefined')
+                    return 'x-grid3-row-over';
+                  else
+                    return '';
+                }
+              },
               height           : 340,
+              trackMouseOver   : false,
               enableDragDrop   : true,
               stripeRows       : true,
               title            : 'Drag volumes which should be snapshotted here:',
@@ -373,7 +382,6 @@ Ext.oa.LVM__Snapcore_Panel = Ext.extend(Ext.Panel, {
                       Ext.each(records, ddSource.grid.store.remove, ddSource.grid.store);
                       secondGrid.store.add(records);
                       secondGrid.store.sort('name', 'ASC');
-
                       var volumeId = records[0].data.id;
                       if(config.volumes.indexOf(volumeId, 0) === -1)
                       {
@@ -554,6 +562,9 @@ Ext.oa.LVM__Snapcore_Panel = Ext.extend(Ext.Panel, {
                       if(volumeId === record.get('id'))
                       {
                         secondGridStore.add(record);
+                        var idx = secondGridStore.indexOf(record);
+                        var row = secondGrid.getView().getRow(idx);
+                        var element = Ext.get(row);
 
                         if(config.volumes.indexOf(volumeId, 0) === -1)
                         {
@@ -561,6 +572,9 @@ Ext.oa.LVM__Snapcore_Panel = Ext.extend(Ext.Panel, {
                         }
 
                         VolumeStore.remove(record);
+
+                        element.addClass('x-grid3-row-over');
+                        record.set('draggable', false);
                       }
                     }
 
