@@ -76,16 +76,15 @@
             esc = true;
           }
           else{
-            res += (
-              fmt[i] == 'b' ? 'M'     :
-              fmt[i] == 'e' ? 'T'     :
-              fmt[i] == 'E' ? 'F'     :
-              fmt[i] == 'f' ? 'g:i'   :
-              fmt[i] == 'N' ? 'M'     :
-              fmt[i] == 'P' ? 'g:i a' :
-              fmt[i] == 'r' ? 'D, m M Y H:i:s O' :
-              fmt[i]
-            );
+            res += ({
+              b: 'M',
+              e: 'T',
+              E: 'F',
+              f: 'g:i',
+              N: 'M',
+              P: 'g:i a',
+              r: 'D, m M Y H:i:s O'
+            }[fmt[i]] || fmt[i]);
           }
         }
         return res;
