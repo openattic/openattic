@@ -37,6 +37,7 @@ class SystemD(LockingPlugin):
             fd = open( nagios_settings.SERVICES_CFG_PATH, "wb" )
             try:
                 fd.write( render_to_string( "nagios/services.cfg", {
+                    "IncludeHost": nagios_settings.INCLUDE_HOST_IN_CFG,
                     "Host":     Host.objects.get_current(),
                     "Commands": Command.objects.all(),
                     "Services": Service.objects.filter(command__query_only=False)

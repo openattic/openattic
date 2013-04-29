@@ -37,6 +37,7 @@ CMD_PATH                 = getattr( settings, "NAGIOS_CMD_PATH",          "/var/
 NAGIOS_CFG_PATH          = getattr( settings, "NAGIOS_CONTACTS_CFG_PATH",   "/etc/nagios3/nagios.cfg" )
 CONTACTS_CFG_PATH        = getattr( settings, "NAGIOS_CONTACTS_CFG_PATH",   "/etc/nagios3/conf.d/openattic_contacts.cfg" )
 SERVICES_CFG_PATH        = getattr( settings, "NAGIOS_SERVICES_CFG_PATH",   "/etc/nagios3/conf.d/openattic.cfg" )
+INCLUDE_HOST_IN_CFG      = getattr( settings, "NAGIOS_INCLUDE_HOST_IN_CFG", True )
 
 GRAPH_GRCOLOR            = "222222"
 GRAPH_BGCOLOR            = "1F2730"
