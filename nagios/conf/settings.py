@@ -34,6 +34,10 @@ RRD_PATH                 = getattr( settings, "NAGIOS_RRD_PATH",          "/var/
 XML_PATH                 = getattr( settings, "NAGIOS_RRD_PATH",          "/var/lib/pnp4nagios/perfdata/%(host)s/%(serv)s.xml" )
 CMD_PATH                 = getattr( settings, "NAGIOS_CMD_PATH",          "/var/lib/nagios3/rw/nagios.cmd" )
 
+NAGIOS_CFG_PATH          = getattr( settings, "NAGIOS_CONTACTS_CFG_PATH",   "/etc/nagios3/nagios.cfg" )
+CONTACTS_CFG_PATH        = getattr( settings, "NAGIOS_CONTACTS_CFG_PATH",   "/etc/nagios3/conf.d/openattic_contacts.cfg" )
+SERVICES_CFG_PATH        = getattr( settings, "NAGIOS_SERVICES_CFG_PATH",   "/etc/nagios3/conf.d/openattic.cfg" )
+
 GRAPH_GRCOLOR            = "222222"
 GRAPH_BGCOLOR            = "1F2730"
 GRAPH_FGCOLOR            = "FFFFFF"

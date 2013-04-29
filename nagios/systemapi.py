@@ -34,7 +34,7 @@ class SystemD(LockingPlugin):
     def write_services(self):
         self.lock.acquire()
         try:
-            fd = open( "/etc/nagios3/conf.d/openattic.cfg", "wb" )
+            fd = open( nagios_settings.SERVICES_CFG_PATH, "wb" )
             try:
                 fd.write( render_to_string( "nagios/services.cfg", {
                     "Host":     Host.objects.get_current(),
@@ -50,7 +50,7 @@ class SystemD(LockingPlugin):
     def write_contacts(self):
         self.lock.acquire()
         try:
-            fd = open( "/etc/nagios3/conf.d/openattic_contacts.cfg", "wb" )
+            fd = open( nagios_settings.CONTACTS_CFG_PATH, "wb" )
             try:
                 fd.write( render_to_string( "nagios/contacts.cfg", {
                     "Admins": User.objects.filter(is_active=True, is_superuser=True).exclude(email=""),
@@ -63,13 +63,13 @@ class SystemD(LockingPlugin):
     @method(in_signature="", out_signature="")
     def restart(self):
         create_job([
-            ["nagios3", "--verify-config", "/etc/nagios3/nagios.cfg"],
+            ["nagios3", "--verify-config", nagios_settings.NAGIOS_CFG_PATH],
             ["/etc/init.d/nagios3", "restart"]
             ])
 
     @method(in_signature="", out_signature="i")
     def check_conf(self):
-        return invoke(["nagios3", "--verify-config", "/etc/nagios3/nagios.cfg"])
+        return invoke(["nagios3", "--verify-config", nagios_settings.NAGIOS_CFG_PATH])
 
     @method(in_signature="s", out_signature="")
     def schedule_host(self, hostname):
