@@ -425,6 +425,16 @@ class Btrfs(FileSystem):
     def check_type(cls, typestring):
         return False
 
+    def create_subvolume(self, subvolume):
+        if subvolume.snapshot is not None:
+            self._lvm.btrfs_create_snapshot(subvolume.snapshot.path, subvolume.path, subvolume.readonly)
+        else:
+            self._lvm.btrfs_create_subvolume(subvolume.path)
+
+    def delete_subvolume(self, subvolume):
+        self._lvm.btrfs_delete_subvolume(subvolume.path)
+
+
 class Ocfs2(FileSystem):
     """ Handler for OCFS2. """
     name = "ocfs2"

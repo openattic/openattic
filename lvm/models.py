@@ -699,6 +699,34 @@ class ZfsSnapshot(models.Model):
             snap.delete(database_only=True) # -R will take care of them in the system
         self.volume.fs.rollback_snapshot(self)
 
+
+class BtrfsSubvolume(models.Model):
+    volume   = models.ForeignKey(LogicalVolume)
+    name     = models.CharField(max_length=255)
+    snapshot = models.ForeignKey("self", blank=True, null=True, related_name="snapshot_set")
+    readonly = models.BooleanField(default=False)
+
+    @property
+    def path(self):
+        if self.snapshot is not None:
+            return os.path.join(self.volume.mountpoint, ".snapshots", self.snapshot.name, self.name)
+        return os.path.join(self.volume.mountpoint, self.name)
+
+    def save( self, *args, **kwargs ):
+        ret = models.Model.save(self, *args, **kwargs)
+        self.volume.fs.create_subvolume(self)
+        return ret
+
+    def delete( self ):
+        for snap in self.snapshot_set.all():
+            snap.delete()
+        ret = models.Model.delete(self)
+        self.volume.fs.delete_subvolume(self)
+        return ret
+
+
+
+
 class LVMetadata(models.Model):
     """ Stores arbitrary metadata for a volume. This can be anything you like,
         and it is indended to be used by third party programs.
