@@ -20,7 +20,11 @@ from rpcd.handlers import BaseHandler, ModelHandler
 from rpcd.handlers import ProxyModelHandler
 from ifconfig.rpcapi import HostHandler
 
-from lvm.models import VolumeGroup, LogicalVolume, ZfsSubvolume, ZfsSnapshot, BtrfsSubvolume, LVMetadata, LVSnapshotJob, SnapshotConf
+from lvm.models import VolumeGroup, LogicalVolume, \
+                       ZfsSubvolume, ZfsSnapshot, \
+                       BtrfsSubvolume, \
+                       LVMetadata, \
+                       LVSnapshotJob, SnapshotConf
 from lvm import blockdevices
 from lvm import initscripts
 from ifconfig.models import Host
@@ -287,4 +291,12 @@ class SnapshotConfHandler(ModelHandler):
     def saveConfig(self, config):
       return self._getobj(SnapshotConf.objects.add_config(config))
 
-RPCD_HANDLERS = [BlockDevicesHandler, VgProxy, LvProxy, ZfsSubvolumeProxy, ZfsSnapshotProxy, BtrfsSubvolumeProxy, LVMetadataHandler, LVSnapshotJobHandler, SnapshotConfHandler]
+RPCD_HANDLERS = [
+    BlockDevicesHandler,
+    VgProxy, LvProxy,
+    ZfsSubvolumeProxy, ZfsSnapshotProxy,
+    BtrfsSubvolumeProxy,
+    LVMetadataHandler,
+    LVSnapshotJobHandler,
+    SnapshotConfHandler
+    ]
