@@ -83,8 +83,8 @@ Ext.oa.Cmdlog__LogEntry_Panel = Ext.extend(Ext.Panel, {
               header: gettext('End time'),
               dataIndex: 'endtime',
               renderer: function(val){
-                if(!val) return "unknown";
-                return new Date( Date.parse(val) ).format(get_format("SHORT_DATETIME_FORMAT"))
+                if(!val) return gettext("unknown");
+                return new Date( Date.parse(val) ).format(get_format_ext("SHORT_DATETIME_FORMAT"))
               }
             }, {
               header: gettext('Command'),

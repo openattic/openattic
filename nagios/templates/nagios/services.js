@@ -275,8 +275,8 @@ Ext.oa.Nagios__Service_Panel = Ext.extend(Ext.Panel, {
     "use strict";
     var nagiosGrid = this;
     var renderDate = function(val, x, store){
-      if(!val) return "unknown";
-      return new Date(val * 1000).format(get_format("SHORT_DATETIME_FORMAT"));
+      if(!val) return gettext("unknown");
+      return new Date(val * 1000).format(get_format_ext("SHORT_DATETIME_FORMAT"));
     };
     var stateicons = {
       0: MEDIA_URL + '/oxygen/16x16/actions/dialog-ok-apply.png',

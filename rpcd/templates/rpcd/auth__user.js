@@ -124,8 +124,8 @@ Ext.oa.Auth__User_Panel = Ext.extend(Ext.oa.ShareGridPanel, {
     width: 200,
     dataIndex: "last_login",
     renderer: function(val){
-      if(!val) return "unknown";
-      return new Date( Date.parse(val) ).format(get_format("SHORT_DATETIME_FORMAT"))
+      if(!val) return gettext("unknown");
+      return new Date( Date.parse(val) ).format(get_format_ext("SHORT_DATETIME_FORMAT"))
     }
   }],
   form: {
