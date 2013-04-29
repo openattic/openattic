@@ -13,51 +13,11 @@
 
 Ext.namespace("Ext.oa");
 
-Ext.oa.Ftp__Export_Panel = Ext.extend(Ext.oa.ShareGridPanel, {
-  api: ftp__Export,
+Ext.oa.Ftp__Export_Panel = Ext.extend(Ext.Panel, {
   id: "ftp__export_panel_inst",
   title: gettext("FTP"),
-  window: {
-    height: 200
-  },
-  allowEdit: false,
-  store: {
-    fields: [{
-      name: 'volumename',
-      mapping: 'volume',
-      convert: toUnicode
-    }, {
-      name: 'username',
-      mapping: 'user',
-      convert: toUnicode
-    }]
-  },
-  columns: [{
-    header: gettext('Volume'),
-    width: 350,
-    dataIndex: "volumename"
-  },{
-    header: gettext('User'),
-    width: 100,
-    dataIndex: "username"
-  }],
-  form: {
-    items: [{
-      xtype: 'fieldset',
-      title: 'FTP',
-      layout: 'form',
-      items: [{
-        xtype: 'volumefield'
-      }, {
-        xtype: 'authuserfield',
-        hiddenName: "user"
-      }, {
-        xtype: "hidden",
-        name:  "path",
-        value: ""
-      }]
-    }]
-  }
+  layout: "border",
+  html:   gettext("The FTP module does not require any configuration.")
 });
 
 Ext.reg("ftp__export_panel", Ext.oa.Ftp__Export_Panel);
