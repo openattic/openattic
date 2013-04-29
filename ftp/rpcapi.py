@@ -17,15 +17,9 @@
 from rpcd.handlers import ModelHandler
 from rpcd.handlers import ProxyModelHandler
 
-from ftp.models import Export, FileLog
-
-class FtpExportHandler(ModelHandler):
-    model = Export
-
-class FtpExportProxy(ProxyModelHandler, FtpExportHandler):
-    pass
+from ftp.models import FileLog
 
 class FtpFileLogHandler(ModelHandler):
     model = FileLog
 
-RPCD_HANDLERS = [FtpExportProxy, FtpFileLogHandler]
+RPCD_HANDLERS = [FtpFileLogHandler]
