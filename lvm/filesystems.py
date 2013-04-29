@@ -83,6 +83,10 @@ class FileSystem(object):
             raise NotImplementedError("FileSystem::mounthost needs to be overridden for virtual FS handlers")
         return self.lv.vg.host.name
 
+    @property
+    def topleveldir(self):
+        return self.mountpoint
+
     def mount(self, jid):
         """ Mount the file system.
         """
@@ -421,6 +425,19 @@ class Btrfs(FileSystem):
         from lvm.models import BtrfsSubvolume
         default = BtrfsSubvolume(volume=self.lv, name="default")
         default.save(database_only=True)
+
+    @property
+    def topleveldir(self):
+        # check if the default subvolume exists. if it doesn't, use any
+        # other. if there is no other subvolume, fall back to the mountpoint.
+        from lvm.models import BtrfsSubvolume
+        try:
+            return self.lv.btrfssubvolume_set.get(name="default").path
+        except BtrfsSubvolume.DoesNotExist:
+            try:
+                return self.lv.btrfssubvolume_set.filter(snapshot__isnull=True)[0].path
+            except IndexError:
+                return self.mountpoint
 
     def online_resize_available(self, grow):
         return False
