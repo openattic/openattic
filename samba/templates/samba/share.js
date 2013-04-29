@@ -71,19 +71,22 @@ Ext.oa.Samba__Share_Panel = Ext.extend(Ext.oa.ShareGridPanel, {
         fieldLabel: gettext('Browseable'),
         allowBlank: false,
         name: "browseable",
-        ref: 'browseablefield'
+        ref: 'browseablefield',
+        checked: true
       }, {
         xtype: 'checkbox',
         fieldLabel: gettext('Available'),
         allowBlank: false,
         name: "available",
-        ref: 'availablefield'
+        ref: 'availablefield',
+        checked: true
       }, {
         xtype: 'checkbox',
         fieldLabel: gettext('Writeable'),
         allowBlank: false,
         name: "writeable",
-        ref: 'writeablefield'
+        ref: 'writeablefield',
+        checked: true
       }, {
         xtype: 'checkbox',
         fieldLabel: gettext('Guest OK'),
