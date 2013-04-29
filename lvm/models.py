@@ -712,6 +712,12 @@ class BtrfsSubvolume(models.Model):
     snapshot = models.ForeignKey("self", blank=True, null=True, related_name="snapshot_set")
     readonly = models.BooleanField(default=False)
 
+    objects = getHostDependentManagerClass("volume__vg__host")()
+    all_objects = models.Manager()
+
+    class Meta:
+        unique_together=("volume", "name")
+
     @property
     def path(self):
         if self.snapshot is not None:
