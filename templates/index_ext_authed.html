@@ -62,6 +62,34 @@
         }
         return '';
       }
+      function get_format_ext(format_type){
+        // Translate the Django datetime format extensions into stuff that ExtJS actually understands.
+        var fmt = get_format(format_type),
+            res = "",
+            esc = false;
+        for( var i = 0; i < fmt.length; i++ ){
+          if(esc){
+            res += fmt[i];
+            esc = false;
+          }
+          else if(fmt[i] === '\\'){
+            esc = true;
+          }
+          else{
+            res += (
+              fmt[i] == 'b' ? 'M'     :
+              fmt[i] == 'e' ? 'T'     :
+              fmt[i] == 'E' ? 'F'     :
+              fmt[i] == 'f' ? 'g:i'   :
+              fmt[i] == 'N' ? 'M'     :
+              fmt[i] == 'P' ? 'g:i a' :
+              fmt[i] == 'r' ? 'D, m M Y H:i:s O' :
+              fmt[i]
+            );
+          }
+        }
+        return res;
+      }
     </script>
     <script type="text/javascript" src="{{ MEDIA_URL }}/portal/Portal.js"></script>
     <script type="text/javascript" src="{{ MEDIA_URL }}/portal/PortalColumn.js"></script>
