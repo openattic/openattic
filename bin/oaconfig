@@ -294,6 +294,10 @@ EOF
 		sed -i -e 's/\s*realm\s*=.*$/   realm = '$realm'/' /etc/samba/smb.conf
 		sed -i -e 's/\s*netbios\s*name\s*=.*$/   netbios name = '$netbios'/' /etc/samba/smb.conf
 		
+		if [ -e /etc/krb5.keytab ]; then
+			echo "Removing old keytab..."
+			rm /etc/krb5.keytab
+		fi
 		echo "Joining Domain..."
 		net ads join -U "$user"
 		net ads keytab create
