@@ -48,7 +48,7 @@ protocols = {
     }
 
 savedstate = ConfigParser()
-havestate  = bool( savedstate.read("/var/lib/nagios3/protocol_traffic.%s" % options.interface.lower()) )
+havestate  = bool( savedstate.read("/var/lib/nagios3/protocol_traffic.%s" % options.interface.lower()) and savedstate.has_section("state") )
 
 if not exists( join( "/sys/class/net", options.interface, "statistics" ) ):
     print "Interface %s does not exist!" % options.interface
