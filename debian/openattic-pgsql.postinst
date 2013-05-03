@@ -31,6 +31,8 @@ if [ "$1" = "configure" ] ; then
         -o template_infile=/etc/openattic/databases/nss_pgsql_template.conf \
         /etc/dbconfig-common/openattic-pgsql.conf \
         /etc/nss-pgsql.conf
+
+    rm -f /var/lib/openattic/database-unconfigured
 fi
 
 #DEBHELPER#
