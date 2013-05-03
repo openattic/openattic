@@ -52,6 +52,10 @@ function mklogfile() {
 
 case $1 in
 	start)
+		if [ -e /var/lib/openattic/database-unconfigured ]; then
+			echo "not starting openATTIC rpcd: the database has not been configured. run oaconfig install."
+			exit 0
+		fi
 		log_daemon_msg "Starting" "openATTIC rpcd"
 		if [ ! -z "$RPCD_CERTFILE" -a ! -z "$RPCD_KEYFILE" ]; then
 			RPCD_OPTIONS="$RPCD_OPTIONS -c $RPCD_CERTFILE -k $RPCD_KEYFILE"

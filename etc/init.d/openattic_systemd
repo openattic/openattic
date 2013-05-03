@@ -50,6 +50,10 @@ function mklogfile() {
 
 case $1 in
 	start)
+		if [ -e /var/lib/openattic/database-unconfigured ]; then
+			echo "not starting openATTIC systemd: the database has not been configured. run oaconfig install."
+			exit 0
+		fi
 		log_daemon_msg "Starting" "openATTIC systemd"
 		mklogfile "$SYSD_LOGFILE"
 		env - PATH="/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin" \
