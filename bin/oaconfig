@@ -86,10 +86,8 @@ case $1 in
 			apt-get install $@
 		fi
 		
-		if ! /etc/init.d/openattic_systemd status > /dev/null ; then
-			# Initialize the schema so our daemons can start
-			su "$OAUSER" -c 'python manage.py syncdb --noinput'
-		fi
+		# Initialize the schema so our daemons can start
+		su "$OAUSER" -c 'python manage.py syncdb --noinput'
 		
 		su "$OAUSER" -c 'python manage.py add-host'
 		
@@ -115,9 +113,6 @@ case $1 in
 		if [ `md5sum /var/www/index.html | cut -d' ' -f1` = '21dde95d9d269cbb2fa6560309dca40c' ]; then
 			create_indexpage
 		fi
-		
-		# Run database initializations that need to query the user for data
-		su "$OAUSER" -c 'python manage.py syncdb'
 		;;
 
 	install-cli)
