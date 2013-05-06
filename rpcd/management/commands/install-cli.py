@@ -27,7 +27,7 @@ class Command( BaseCommand ):
     help = "Create a default oacli config file if none exists."
 
     def handle(self, **options):
-        if os.path.exists("/etc/oopenattic/cli.conf"):
+        if os.path.exists("/etc/openattic/cli.conf"):
             print "/etc/openattic/cli.conf already exists, quitting"
             return
 
