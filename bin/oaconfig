@@ -118,12 +118,6 @@ case $1 in
 		
 		# Run database initializations that need to query the user for data
 		su "$OAUSER" -c 'python manage.py syncdb'
-		
-		# If necessary, create an admin user (--noinput suppressed that before)
-		if [ $(python manage.py haveadmin) = no ]; then
-			echo "You need to create an Administrator user in order to login to openATTIC now."
-			su "$OAUSER" -c 'python manage.py createsuperuser'
-		fi
 		;;
 
 	install-cli)
