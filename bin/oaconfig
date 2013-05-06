@@ -114,9 +114,7 @@ case $1 in
 		if [ `md5sum /var/www/index.html | cut -d' ' -f1` = '21dde95d9d269cbb2fa6560309dca40c' ]; then
 			create_indexpage
 		fi
-		;;
-
-	install-cli)
+		
 		python manage.py install-cli
 		;;
 	
