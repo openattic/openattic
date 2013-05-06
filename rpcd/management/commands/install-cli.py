@@ -21,6 +21,8 @@ from ConfigParser import ConfigParser
 from django.core.management.base import BaseCommand
 from django.contrib.auth.models  import User
 
+from rpcd.models   import APIKey
+
 class Command( BaseCommand ):
     help = "Create a default oacli config file if none exists."
 
@@ -41,6 +43,6 @@ class Command( BaseCommand ):
         conf = ConfigParser()
         conf.add_section("options")
         conf.set("options", "connect", "http://__:%s@localhost:31234/" % key.apikey)
-        conf.set("uidcheck", True)
-        conf.write( open( "/etc/oopenattic/cli.conf", "wb" ) )
+        conf.set("options", "uidcheck", True)
+        conf.write( open( "/etc/openattic/cli.conf", "wb" ) )
 
