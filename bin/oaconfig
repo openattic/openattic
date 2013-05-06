@@ -116,6 +116,10 @@ case $1 in
 		fi
 		;;
 
+	install-cli)
+		python manage.py install-cli
+		;;
+	
 	scan-vg|scan-vgs)
 		vgscan --mknodes
 		vgchange -ay
