@@ -20,7 +20,7 @@ from time import time
 from django.conf import settings
 
 from rpcd.handlers import BaseHandler, ModelHandler
-from sysutils.models import InitScript, NTP, Proxy
+from sysutils.models import InitScript
 
 class SysUtilsHandler(BaseHandler):
     handler_name = "sysutils.System"
@@ -65,10 +65,4 @@ class InitScriptHandler(ModelHandler):
         """ Stop the service. """
         return InitScript.objects.get(id=id).stop()
 
-class NTPHandler(ModelHandler):
-    model = NTP
-
-class ProxyHandler(ModelHandler):
-    model = Proxy
-
-RPCD_HANDLERS = [SysUtilsHandler, InitScriptHandler, NTPHandler, ProxyHandler]
+RPCD_HANDLERS = [SysUtilsHandler, InitScriptHandler]
