@@ -20,7 +20,7 @@ cd $OADIR
 OAUSER=` cut -d: -f1 <<< "$RPCD_CHUID"`
 
 if [ "$DJANGO_AUTO_COMPLETE" = "1" ]; then
-	MYCOMMANDS="install install-cli scan-vgs add-vg add-disk restart reload status rootshell"
+	MYCOMMANDS="install scan-vgs add-vg add-disk restart reload status rootshell"
 	ARRAY_WORDS=( $COMP_WORDS )
 	compgen -W "$MYCOMMANDS" "${ARRAY_WORDS[COMP_CWORD]}"
 	su "$OAUSER" -c 'python manage.py'
@@ -52,7 +52,6 @@ usage () {
 	echo
 	echo "    install      Run this command after you installed new openATTIC modules."
 	echo "                 Any arguments to this command will be passed to apt-get install."
-	echo "    install-cli  Generate an API Key and a corresponding oacli configuration."
 	echo "    scan-vgs     Instruct LVM to search for existing VGs."
 	echo "    add-vg       Make an already existing LVM Volume Group known to openATTIC."
 	echo "    add-disk     Create a PV on the given disk/partition and add it to openATTIC."
@@ -115,27 +114,6 @@ case $1 in
 		if [ `md5sum /var/www/index.html | cut -d' ' -f1` = '21dde95d9d269cbb2fa6560309dca40c' ]; then
 			create_indexpage
 		fi
-		;;
-
-	install-cli)
-		if [ -f "/etc/openattic/cli.conf" ]; then
-			echo "/etc/openattic/cli.conf already exists, quitting" >&2
-			exit 1
-		fi
-		echo "Please enter the username of the system admin you created using $0 install."
-		read USERNAME
-		KEY=$( $0 mkapikey -u $USERNAME -d "oacli access")
-		
-		if [ ! -z "$RPCD_CERTFILE" -a ! -z "$RPCD_KEYFILE" ]; then
-			PROTO="https"
-		else
-			PROTO="http"
-		fi
-		
-		echo "[options]"                                    > /etc/openattic/cli.conf
-		echo "connect = $PROTO://__:$KEY@localhost:31234/" >> /etc/openattic/cli.conf
-		echo "uidcheck = True"                             >> /etc/openattic/cli.conf
-		echo "Successfully created /etc/openattic/cli.conf, oacli should now be ready to go."
 		;;
 
 	scan-vg|scan-vgs)
