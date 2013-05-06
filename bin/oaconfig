@@ -90,7 +90,6 @@ case $1 in
 		su "$OAUSER" -c 'python manage.py syncdb --noinput'
 		
 		su "$OAUSER" -c 'python manage.py add-host'
-		su "$OAUSER" -c 'python manage.py makedefaultadmin'
 		
 		# Configure nsswitch.conf
 		OADBENGINE=$(grep engine /etc/openattic/database.ini | cut -d= -f2)
@@ -104,6 +103,8 @@ case $1 in
 		
 		# (re)start the daemons
 		$0 reload
+		
+		su "$OAUSER" -c 'python manage.py makedefaultadmin'
 		
 		# Run the hook scripts to initialize modules
 		shopt -s nullglob
