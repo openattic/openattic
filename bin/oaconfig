@@ -85,6 +85,11 @@ case $1 in
 			apt-get install $@
 		fi
 		
+		if ! /etc/init.d/openattic_systemd status ; then
+			SYNCAGAIN=yes
+		else
+			SYNCAGAIN=no
+		fi
 		# Initialize the schema so our daemons can start
 		su "$OAUSER" -c 'python manage.py syncdb --noinput'
 		
@@ -115,8 +120,10 @@ case $1 in
 			create_indexpage
 		fi
 		
-		# Run syncdb *again* because the first time, systemd may or may not have been available
-		su "$OAUSER" -c 'python manage.py syncdb --noinput'
+		if [ "$SYNCAGAIN" = "yes" ]; then
+			# Run syncdb *again* because the first time, systemd was unavailable
+			su "$OAUSER" -c 'python manage.py syncdb --noinput'
+		fi
 		
 		python manage.py install-cli
 		echo "Completed successfully."
