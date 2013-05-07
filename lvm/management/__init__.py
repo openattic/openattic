@@ -68,7 +68,11 @@ def create_vgs(app, created_models, verbosity, **kwargs):
         print "Can't add LVs, no users have been configured yet"
         return
 
-    currowner = None
+    try:
+        admin = User.objects.get(username="openattic", is_superuser=True)
+    except User.DoesNotExist:
+        admin = User.objects.filter( is_superuser=True )[0]
+
     for lvname in lvs:
         vg = VolumeGroup.objects.get(name=lvs[lvname]["LVM2_VG_NAME"])
         try:
@@ -78,43 +82,32 @@ def create_vgs(app, created_models, verbosity, **kwargs):
                 print "Logical Volume %s is tagged as @sys, ignored." % lvname
                 continue
 
-            if kwargs.get('interactive', True):
-                if currowner:
-                    ownername = raw_input( "Who is the owner of Logical Volume %s? [%s] " % (lvname, currowner.username) )
-                else:
-                    ownername = raw_input( "Who is the owner of Logical Volume %s? " % lvname )
+            lv = LogicalVolume(name=lvname, megs=float(lvs[lvname]["LVM2_LV_SIZE"]), vg=vg, owner=admin, uuid=lvs[lvname]["LVM2_LV_UUID"])
 
-                if not currowner or ( ownername and ownername != currowner.username ):
-                    currowner = User.objects.get(username=ownername)
+            for mnt in mounts:
+                if mnt[0] in ( "/dev/%s/%s" % ( vg.name, lvname ), "/dev/mapper/%s-%s" % ( vg.name, lvname ) ):
+                    try:
+                        get_fs_by_name( mnt[2] )
+                    except AttributeError:
+                        pass
+                    else:
+                        lv.filesystem = mnt[2]
 
-                lv = LogicalVolume(name=lvname, megs=float(lvs[lvname]["LVM2_LV_SIZE"]), vg=vg, owner=currowner, uuid=lvs[lvname]["LVM2_LV_UUID"])
+            for zfsvol in zfs:
+                if lvname == zfsvol[0]:
+                    lv.filesystem = "zfs"
 
-                for mnt in mounts:
-                    if mnt[0] in ( "/dev/%s/%s" % ( vg.name, lvname ), "/dev/mapper/%s-%s" % ( vg.name, lvname ) ):
-                        try:
-                            get_fs_by_name( mnt[2] )
-                        except AttributeError:
-                            pass
-                        else:
-                            lv.filesystem = mnt[2]
+            if not lv.filesystem:
+                fs = lv.detect_fs()
+                if fs is not None:
+                    lv.filesystem = fs.name
 
-                for zfsvol in zfs:
-                    if lvname == zfsvol[0]:
-                        lv.filesystem = "zfs"
+            if lv.filesystem:
+                lv.formatted = True
 
-                if not lv.filesystem:
-                    fs = lv.detect_fs()
-                    if fs is not None:
-                        lv.filesystem = fs.name
+            print lv.name, lv.megs, lv.vg.name, lv.owner.username, lv.filesystem
+            lv.save(database_only=True)
 
-                if lv.filesystem:
-                    lv.formatted = True
-
-                print lv.name, lv.megs, lv.vg.name, lv.owner.username, lv.filesystem
-                lv.save(database_only=True)
-
-            else:
-                print "Can't add Logical Volume", lvname, "in non-interactive mode"
         else:
             print "Logical Volume", lvname, "already exists in the database"
             if not lv.uuid:
