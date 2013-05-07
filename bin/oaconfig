@@ -119,6 +119,7 @@ case $1 in
 		su "$OAUSER" -c 'python manage.py syncdb --noinput'
 		
 		python manage.py install-cli
+		echo "Completed successfully."
 		;;
 	
 	scan-vg|scan-vgs)
