@@ -158,6 +158,7 @@ class LogicalVolume(models.Model):
     uuid        = models.CharField(max_length=38, blank=True, editable=False)
     dedup       = models.BooleanField(_("Deduplication"), blank=True, default=False)
     compression = models.BooleanField(_("Compression"), blank=True, default=False)
+    createdate  = models.DateTimeField(auto_now_add=True, blank=True, null=True)
 
     objects = getHostDependentManagerClass("vg__host")()
     all_objects = models.Manager()
