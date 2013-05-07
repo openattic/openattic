@@ -39,7 +39,7 @@ class InitScript(models.Model):
     def status(self):
         try:
             return self.run_initscript("status")
-        except dbus.DBusException: 
+        except dbus.DBusException:
             return None
 
     @property
