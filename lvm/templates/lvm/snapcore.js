@@ -93,24 +93,60 @@ Ext.oa.WizPanel = Ext.extend(Ext.form.FormPanel, {
       {
         var formValues = this.layout.activeItem.getForm().getValues();
         var dateTimeValues = [];
+        var comboValues = [];
 
         for(var key in formValues)
         {
           var splittedVal = formValues[key].split('_');
-
           if(splittedVal[2] === 'datetime')
             dateTimeValues.push(splittedVal);
+          else if(splittedVal[2] === 'combo')
+            comboValues.push(splittedVal);
         }
 
-        if(dateTimeValues.length > 0)
+        if(dateTimeValues.length > 0 || comboValues.length > 0)
         {
-          for(var i = 0; i < dateTimeValues.length; i++)
+          if(dateTimeValues.length > 0)
           {
-            var time = formValues[dateTimeValues[i][1] + '_time'].split(':');
-            var date = formValues[dateTimeValues[i][1] + '_date'].split('.');
-            date = new Date(date[2], date[1] - 1, date[0]);
-            date = date.add(Date.HOUR, time[0]).add(Date.MINUTE, time[1]);
-            this.config.data[dateTimeValues[i][0]] = date;
+            for(var i = 0; i < dateTimeValues.length; i++)
+            {
+              var time = formValues[dateTimeValues[i][1] + '_time'].split(':');
+              var date = formValues[dateTimeValues[i][1] + '_date'].split('.');
+              date = new Date(date[2], date[1] - 1, date[0]);
+              date = date.add(Date.HOUR, time[0]).add(Date.MINUTE, time[1]);
+              this.config.data[dateTimeValues[i][0]] = date;
+            }
+          }
+
+          if(comboValues.length > 0)
+          {
+            for(var i = 0; i < comboValues.length; i++)
+            {
+              var combo_index = Ext.getCmp(comboValues[i][0] + '_' + comboValues[i][1] + '_' + comboValues[i][2]).selectedIndex;
+              var fieldName = comboValues[i][0] + '_' + comboValues[i][1];
+              var value = Ext.getCmp(fieldName).value;
+              switch(combo_index){
+                case 0:
+                  // Second(s)
+                  break;
+                case 1:
+                  // Minute(s)
+                  this.config.data[fieldName] = value * 60;
+                  break;
+                case 2:
+                  // Hour(s)
+                  this.config.data[fieldName] = value * 60 * 60;
+                  break;
+                case 3:
+                  // Day(s)
+                  this.config.data[fieldName] = value * 24 * 60 * 60;
+                  break;
+                case 4:
+                  // Week(s)
+                  this.config.data[fieldName] = value * 7 * 24 * 60 * 60;
+                  break;
+              }
+            }
           }
         }
         else
@@ -409,18 +445,18 @@ Ext.oa.LVM__Snapcore_Panel = Ext.extend(Ext.Panel, {
 
             var config = {
               data: {
-                configname  : null,
-                prescript   : null,
-                postscript  : null,
-                expirydate  : null,
-                executdate  : null,
-                startdate   : null,
-                enddate     : null,
-                active      : true,
-                h           : null,
-                min         : null,
-                domonth     : null,
-                doweek      : null,
+                configname            : null,
+                prescript             : null,
+                postscript            : null,
+                retention_time        : 0,
+                executdate            : null,
+                startdate             : null,
+                enddate               : null,
+                active                : true,
+                h                     : null,
+                min                   : null,
+                domonth               : null,
+                doweek                : null,
               },
               volumes     : []/*[1, 2, 6, 9]*/,
               plugin_data : {} /*{
@@ -659,42 +695,57 @@ Ext.oa.LVM__Snapcore_Panel = Ext.extend(Ext.Panel, {
                 },
                 xtype : 'form',
                 items : [{
-                  boxLabel  : gettext('No expiry date'),
-                  id        : 'no_expiry',
-                  name      : 'expirydate',
-                  inputValue: 'expirydate_sched1_noexpiry',
+                  boxLabel  : gettext('Snapshots without retention time'),
+                  name      : 'retentiontime',
+                  inputValue: 'retention_time_noretention',
                   xtype     : 'radio',
                   checked   : true,
                 },{
-                  boxLabel  : gettext('Expiry date'),
-                  id        : 'expiry_date',
-                  name      : 'expirydate',
-                  inputValue: 'expirydate_sched1_datetime',
+                  boxLabel  : gettext('Set retention time'),
+                  name      : 'retentiontime',
+                  inputValue: 'retention_time_combo',
                   xtype     : 'radio',
                   listeners : {
                     check: function(radio, checkvalue){
                       if(checkvalue)
                       {
-                        Ext.getCmp('sched1_date').enable();
-                        Ext.getCmp('sched1_time').enable();
+                        Ext.getCmp('retention_time').enable();
+                        Ext.getCmp('retention_time_combo').enable();
                       }
                       else
                       {
-                        Ext.getCmp('sched1_date').disable();
-                        Ext.getCmp('sched1_time').disable();
+                        Ext.getCmp('retention_time').disable();
+                        Ext.getCmp('retention_time_combo').disable();
                       }
                     }
                   }
                 },{
-                  xtype     : 'datefield',
-                  id        : 'sched1_date',
-                  disabled  : true,
-                  value     : new Date(),
-                },{
-                  xtype     : 'timefield',
-                  id        : 'sched1_time',
-                  disabled  : true,
-                  value     : new Date().add(Date.HOUR, +1).getHours() + ':' + new Date().getMinutes(),
+                  xtype : 'panel',
+                  layout: {
+                    type  : 'form',
+                  },
+                  items : [{
+                    xtype       : 'numberfield',
+                    id          : 'retention_time',
+                    disabled    : true,
+                    fieldLabel  : gettext('Retention time'),
+                  },{
+                    name            : 'retention_time_combo',
+                    xtype           : 'combo',
+                    id              : 'retention_time_combo',
+                    disabled        : true,
+                    forceSelection  : true,
+                    store           : [
+                        ['1', gettext('Second(s)')],
+                        ['2', gettext('Minute(s)')],
+                        ['3', gettext('Hour(s)')],
+                        ['4', gettext('Day(s)')],
+                        ['5', gettext('Week(s)')],
+                    ],
+                    typeAhead:  true,
+                    triggerAction: 'all',
+                    emptyText : gettext('Select...'),
+                  }],
                 }]
               },{
                 title : gettext('Scheduling Part 2 / Options'),
