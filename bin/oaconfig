@@ -115,6 +115,9 @@ case $1 in
 			create_indexpage
 		fi
 		
+		# Run syncdb *again* because the first time, systemd may or may not have been available
+		su "$OAUSER" -c 'python manage.py syncdb --noinput'
+		
 		python manage.py install-cli
 		;;
 	
