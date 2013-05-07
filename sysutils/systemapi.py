@@ -18,7 +18,6 @@ import os.path
 import ctypes
 
 from systemd import invoke, logged, LockingPlugin, method
-from sysutils.models import NTP, Proxy
 
 
 @logged
