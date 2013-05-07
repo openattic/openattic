@@ -835,7 +835,7 @@ class SnapshotConf(models.Model):
     confname        = models.CharField(null=True, max_length=255)
     prescript       = models.CharField(null=True, max_length=255)
     postscript      = models.CharField(null=True, max_length=225)
-    expiry_date     = models.DateTimeField(null=True, blank=True)
+    retention_time  = models.IntegerField(null=True, blank=True)
 
     objects = ConfManager()
 
