@@ -455,7 +455,7 @@ class ProxyModelHandler(ProxyModelBaseHandler):
                 data = self._getobj(instance)
             else:
                 try:
-                    data = self._get_proxy_object(peer).get(instance.id)
+                    data = self._convert_datetimes(self._get_proxy_object(peer).get(instance.id))
                 except socket.error, err:
                     if err.errno in (errno.ECONNREFUSED, errno.ECONNABORTED, errno.ECONNRESET,
                             errno.EHOSTUNREACH, errno.ENETUNREACH, errno.ETIMEDOUT) or isinstance(err, socket.timeout):
