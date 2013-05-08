@@ -362,7 +362,7 @@ Ext.oa.Drbd__Connection_Module = Ext.extend(Object, {
   prepareMenuTree: function(tree){
     "use strict";
     tree.appendToRootNodeById("menu_services", {
-      text: gettext('DRBD'),
+      text: gettext('Data Mirroring'),
       leaf: true,
       icon: MEDIA_URL + '/icons2/22x22/apps/nfs.png',
       panel: "drbd_panel_inst",
