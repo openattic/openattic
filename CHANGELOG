@@ -1,6 +1,45 @@
 openATTIC Changelog
 ===================
 
+Version 1.0.7, ?? May 2013:
+---------------------------------
+
+* Replaced SSMTP module with mailaliases module.
+* Added double-click edit feature to most grid panels.
+* Added Cron module.
+* Added LV resize feature.
+* Improved internationalization support.
+* Added check_diskstats Nagios plugin that measures disk performance.
+* Improved File System abstraction API.
+* Added IPMI sensors module.
+* Added oavgmanager CLI tool.
+* Added Cluster support.
+* Dropped support for Samba in a non-Domain context.
+* Added ^f search feature to the GUI.
+* Fixed a bug in RPCd which would require authentication, but fail to
+  ask for it.
+* Added F5 refresh feature to the GUI.
+* Added API Recorder to the GUI.
+* Added TWRaid module.
+* Added LV UUIDs to the database.
+* Added file system layout optimization feature.
+* Added support for volume initialization scripts.
+* Added support for Kerberos authentication.
+* Replaced ZFS-FUSE with zfsonlinux.
+* Added SnapApp basics.
+* Added support for Deduplication and Compression for file systems that
+  support them (currently, only zfsonlinux does).
+* Added support for Univention Corporate Server (UCS) 3.1.
+* Added support for Virtual File System Modules.
+* Modified hosts table to store FQDNs instead of plain hostnames.
+* Refactored Nagios hosts/services templates to not rely on generics.
+* Added basic BTRFS support.
+* Fix dates not being displayed correctly for some locales.
+* Added LV creation date to the database.
+* Removed NTP and Proxy modules.
+* Refactor "oaconfig install" to be completely non-interactive.
+
+
 Version 0.7.4, 07 March 2012:
 ---------------------------------
 
