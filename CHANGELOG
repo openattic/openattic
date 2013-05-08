@@ -37,7 +37,7 @@ Version 1.0.7, ?? May 2013:
 * Fix dates not being displayed correctly for some locales.
 * Added LV creation date to the database.
 * Removed NTP and Proxy modules.
-* Refactor "oaconfig install" to be completely non-interactive.
+* Changed "oaconfig install" to be completely non-interactive.
 
 
 Version 0.7.4, 07 March 2012:
