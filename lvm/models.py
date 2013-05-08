@@ -804,7 +804,7 @@ class ConfManager(models.Manager):
             conf_models[(model.name.split(':'))[1]] = model.model
 
         data = conf_obj['data']
-        snapconf = SnapshotConf(confname=data['configname'], prescript=data['prescript'], postscript=data['postscript'], expiry_date=data['expirydate'])
+        snapconf = SnapshotConf(confname=data['configname'], prescript=data['prescript'], postscript=data['postscript'], retention_time=data['retention_time'])
         snapconf.save()
 
         volumes = conf_obj['volumes']
