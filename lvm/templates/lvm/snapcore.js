@@ -519,6 +519,14 @@ Ext.oa.LVM__Snapcore_Panel = Ext.extend(Ext.Panel, {
                 noAutoPrev: true,
                 xtype     : 'form',
                 items     : [{
+                  xtype       : 'label',
+                  text        : gettext('Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed ' +
+                    'diam nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam erat, sed ' +
+                    'diam voluptua. At vero eos et accusam et'),
+                },{
+                  xtype       : 'spacer',
+                  height      : 10,
+                },{
                   xtype       : 'textfield',
                   name        : 'configname',
                   fieldLabel  : gettext('Description'),
@@ -585,99 +593,107 @@ Ext.oa.LVM__Snapcore_Panel = Ext.extend(Ext.Panel, {
               },{
                 title     : gettext('Additional Drives'),
                 id        : 'wiz_addvol',
-                defaults  : { flex : 1 },
-                layout    : "hbox",
-                items     : [firstGrid, secondGrid],
-                xtype     : 'form',
-                listeners : {
-                  show  : function(self){
-                    var volumes = [];
-                    var requests = 0;
-                    var moveItem = function(record, recordId, length, volumeId)
-                    {
-                      if(volumeId === record.get('id'))
+                layout    : {
+                  type  : "vbox",
+                  align : 'stretch',
+                },
+                xtype     :'form',
+                items     : [{
+                  xtype : 'label',
+                  text  : gettext('Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed ' +
+                    'diam nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam erat, sed ' +
+                    'diam voluptua. At vero eos et accusam et'),
+                },{
+                  xtype   : 'spacer',
+                  height  : 10,
+                },{
+                  layout  : 'hbox',
+                  items   : [firstGrid, secondGrid],
+                  listeners : {
+                    show  : function(self){
+                      var volumes = [];
+                      var requests = 0;
+                      var moveItem = function(record, recordId, length, volumeId)
                       {
-                        secondGridStore.add(record);
-                        var idx = secondGridStore.indexOf(record);
-                        var row = secondGrid.getView().getRow(idx);
-                        var element = Ext.get(row);
-
-                        if(config.volumes.indexOf(volumeId, 0) === -1)
+                        if(volumeId === record.get('id'))
                         {
-                          config.volumes.push(volumeId);
-                        }
+                          secondGridStore.add(record);
+                          var idx = secondGridStore.indexOf(record);
+                          var row = secondGrid.getView().getRow(idx);
+                          var element = Ext.get(row);
 
-                        VolumeStore.remove(record);
-
-                        element.addClass('x-grid3-row-over');
-                        record.set('draggable', false);
-                      }
-                    }
-
-                    for(var plugin in config['plugin_data'])
-                    {
-                      // only for testing
-                      if(plugin === 'VMware')
-                      {
-                        var plugin_func = get_plugin(plugin);
-
-                        for(var host_id in config['plugin_data'][plugin])
-                        {
-                          if(typeof config['plugin_data'][plugin][host_id]['children'] !== 'undefined')
+                          if(config.volumes.indexOf(volumeId, 0) === -1)
                           {
-                            for(var ds in config['plugin_data'][plugin][host_id]['children'])
-                            {
-                              plugin_func.getVolume(host_id, ds, function(result, response){
-                                if(response.type !== 'exception'){
-                                  volumes.push(result.volume);
-                                }
-                                else{
-                                  requests--;
-                                }
+                            config.volumes.push(volumeId);
+                          }
 
-                                if( volumes.length === requests ){
-                                  for(var i=0; i<volumes.length; i++){
-                                    VolumeStore.each(moveItem.createDelegate(this, [volumes[i].id], true));
+                          VolumeStore.remove(record);
+
+                          element.addClass('x-grid3-row-over');
+                          record.set('draggable', false);
+                        }
+                      }
+
+                      for(var plugin in config['plugin_data'])
+                      {
+                        if(plugin === 'VMware')
+                        {
+                          var plugin_func = get_plugin(plugin);
+
+                          for(var host_id in config['plugin_data'][plugin])
+                          {
+                            if(typeof config['plugin_data'][plugin][host_id]['children'] !== 'undefined')
+                            {
+                              for(var ds in config['plugin_data'][plugin][host_id]['children'])
+                              {
+                                plugin_func.getVolume(host_id, ds, function(result, response){
+                                  if(response.type !== 'exception'){
+                                    volumes.push(result.volume);
                                   }
-                                }
-                              });
-                              requests++;
+                                  else{
+                                    requests--;
+                                  }
+
+                                  if( volumes.length === requests ){
+                                    for(var i=0; i<volumes.length; i++){
+                                      VolumeStore.each(moveItem.createDelegate(this, [volumes[i].id], true));
+                                    }
+                                  }
+                                });
+                                requests++;
+                              }
                             }
                           }
                         }
                       }
-                    }
 
-                    secondGrid.getView().dragZone.onBeforeDrag = function(data, e){
-                      var volumeId = data.selections[0].data.id;
-                      for(var i=0; i<volumes.length; i++){
-                        if(volumes[i].id === volumeId)
-                        {
-                          return false;
+                      secondGrid.getView().dragZone.onBeforeDrag = function(data, e){
+                        var volumeId = data.selections[0].data.id;
+                        for(var i=0; i<volumes.length; i++){
+                          if(volumes[i].id === volumeId)
+                          {
+                            return false;
+                          }
                         }
+                        return true;
                       }
-                      return true;
                     }
-                  }
-                },
-                bbar    : [
-                  '->',
-                  {
-                    text    : 'Reset both grids',
-                    handler : function() {
-                      //refresh source grid
-                      VolumeStore.reload();
-                      //purge destination grid
-                      secondGridStore.removeAll();
-                    }
-                  }
-                ]
+                  },
+                }],
               },{
                 title : gettext('Pre-/Post-Script - Conditions'),
                 id    : 'wiz_prepost',
                 labelWidth: 150,
                 xtype : 'form',
                 items : [{
+                  xtype     : 'label',
+                  text      : gettext('Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed ' +
+                    'diam nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam erat, sed ' +
+                    'diam voluptua. At vero eos et accusam et'),
+                },{
+                  xtype     : 'spacer',
+                  height    : 10,
+                },{
                   xtype     : 'textfield',
                   name      : 'prescript',
                   fieldLabel: gettext('Prescript conditions'),
@@ -695,6 +711,14 @@ Ext.oa.LVM__Snapcore_Panel = Ext.extend(Ext.Panel, {
                 },
                 xtype : 'form',
                 items : [{
+                  xtype     : 'label',
+                  text      :  gettext('Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed ' +
+                    'diam nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam erat, sed ' +
+                    'diam voluptua. At vero eos et accusam et'),
+                },{
+                  xtype     : 'spacer',
+                  height    : 10,
+                },{
                   boxLabel  : gettext('Snapshots without retention time'),
                   name      : 'retentiontime',
                   inputValue: 'retention_time_noretention',
@@ -888,7 +912,7 @@ Ext.oa.LVM__Snapcore_Panel = Ext.extend(Ext.Panel, {
                         }
                         break;
                       case 'scheduling':
-                        nextpnl = 'wiz_sched31';
+                        nextpnl = 'wiz_sched32';
 
                         var startdate = Ext.getCmp('startdate_select').getValue();
                         var starttime = (Ext.getCmp('starttime_select').getValue()).split(':');
@@ -951,6 +975,14 @@ Ext.oa.LVM__Snapcore_Panel = Ext.extend(Ext.Panel, {
                 id    : 'wiz_sched32',
                 xtype : 'form',
                 items : [{
+                  xtype : 'label',
+                  text  : gettext('Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed ' +
+                            'diam nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam erat, sed ' +
+                            'diam voluptua. At vero eos et accusam et'),
+                },{
+                  xtype : 'spacer',
+                  height: 10,
+                },{
                   xtype         : 'combo',
                   name          : 'minute',
                   fieldLabel    : gettext('Minute'),
@@ -1000,6 +1032,14 @@ Ext.oa.LVM__Snapcore_Panel = Ext.extend(Ext.Panel, {
                 id    : 'wiz_sched33',
                 xtype : 'form',
                 items : [{
+                  xtype       : 'label',
+                  text        : gettext('Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed ' +
+                    'diam nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam erat, sed ' +
+                    'diam voluptua. At vero eos et accusam et'),
+                },{
+                  xtype : 'spacer',
+                  height: 10,
+                },{
                   xtype     : 'combo',
                   name      : 'day_of_month',
                   fieldLabel: gettext('Day'),
