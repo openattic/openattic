@@ -52,9 +52,9 @@ Ext.oa.Cron__Job_Panel = Ext.extend(Ext.oa.ShareGridPanel, {
   }],
   form: {
     items: [
-      {
+      tipify({
         xtype: 'volumefield'
-      }, {
+      }, gettext("When this volume is deleted, this cron job will be deleted as well.")), {
         fieldLabel: gettext('Minute'),
         name: "minute"
       }, {
