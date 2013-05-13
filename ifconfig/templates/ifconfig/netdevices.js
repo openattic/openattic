@@ -726,21 +726,8 @@ Ext.oa.Ifconfig__NetDevice_Module = Ext.extend(Object, {
     "use strict";
     tree.appendToRootNodeById("menu_system", {
       text: gettext('Network'),
-      icon: MEDIA_URL + '/icons2/22x22/places/gnome-fs-network.png',
-      panel: 'ifconfig__netdevice_panel_inst',
-      children: [ {
-        text: 'General',
-        leaf: true, href: '#',
-        icon: MEDIA_URL + '/icons2/22x22/apps/network.png',
-        panel: 'ifconfig__netdevice_panel_inst'
-      }, {
-        text: 'Domain',
-        icon: MEDIA_URL + '/icons2/128x128/apps/domain.png',
-        children: [
-          {text: 'Active Directory',  leaf: true, href: '#'},
-          {text: 'LDAP',              leaf: true, href: '#'}
-        ]
-      } ]
+      icon: MEDIA_URL + '/icons2/22x22/apps/network.png',
+      panel: 'ifconfig__netdevice_panel_inst'
     });
   }
 });
