@@ -1,7 +1,7 @@
 openATTIC Changelog
 ===================
 
-Version 1.0.7, ?? May 2013:
+Version 1.0.7, 22 May 2013:
 ---------------------------------
 
 * Replaced SSMTP module with mailaliases module.
