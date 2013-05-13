@@ -19,6 +19,7 @@ Depends: ${misc:Depends}, openattic-base,
  openattic-module-nagios,
  openattic-module-cron,
  openattic-module-ftp,
+ openattic-module-mailaliases,
  libapache2-mod-wsgi, apache2,
  openattic-pgsql
 Suggests: python-django-rosetta, lsscsi, openattic-module-twraid,
@@ -44,6 +45,7 @@ Description: Comprehensive storage management system
   * Nagios
   * FTP
   * Cron
+  * MailAliases (EMail configuration)
  .
  You can install additional modules yourself or use the openattic-full package.
  .
