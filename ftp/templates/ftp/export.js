@@ -17,7 +17,7 @@ Ext.oa.Ftp__Export_Panel = Ext.extend(Ext.Panel, {
   id: "ftp__export_panel_inst",
   title: gettext("FTP"),
   layout: "border",
-  html:   gettext("The FTP module does not require any configuration.")
+  html:   gettext("The FTP module does not require any configuration. Authentication and permissions are handled via the Windows domain this machine is joined to.")
 });
 
 Ext.reg("ftp__export_panel", Ext.oa.Ftp__Export_Panel);
