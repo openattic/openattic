@@ -2,20 +2,20 @@
 # Copyright (C) YEAR THE PACKAGE'S COPYRIGHT HOLDER
 # This file is distributed under the same license as the PACKAGE package.
 # FIRST AUTHOR <EMAIL@ADDRESS>, YEAR.
-#
+# 
 #, fuzzy
 msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2013-05-14 09:49+0200\n"
-"PO-Revision-Date: 2012-06-12 13:24\n"
-"Last-Translator: Michael Ziegler <michael.ziegler@it-novum.com>\n"
+"PO-Revision-Date: 2013-05-14 12:06\n"
+"Last-Translator:   <>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
-"Language: \n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
+"Language: \n"
 "Plural-Forms: nplurals=2; plural=(n != 1)\n"
 "X-Translated-Using: django-rosetta 0.6.6\n"
 
@@ -112,7 +112,8 @@ msgid "Disk %s is not currently used."
 msgstr "Disk %s ist nicht in Benutzung."
 
 #: templates/lvm/diskmgmt.js:90
-msgid "Disk %(disk)s is part of the Volume Group %(vg)s, refusing to touch it."
+msgid ""
+"Disk %(disk)s is part of the Volume Group %(vg)s, refusing to touch it."
 msgstr ""
 "Disk %(disk)s ist Teil der Volume-Gruppe %(vg)s, werde sie nicht anrühren."
 
@@ -142,7 +143,8 @@ msgstr "Volume-Gruppe"
 
 #: templates/lvm/diskmgmt.js:142
 msgid ""
-"Please select the volume group. In order to create a new one, enter its name."
+"Please select the volume group. In order to create a new one, enter its "
+"name."
 msgstr ""
 "Bitte die Volume-Gruppe wählen. Um eine neue anzulegen, geben Sie den Namen "
 "ein."
@@ -274,7 +276,8 @@ msgstr "Einhängen"
 #: templates/lvm/logicalvolume.js:270
 #, c-format
 msgid "Volume %s does not have a file system and therefore cannot be mounted."
-msgstr "Volume %s hat kein Dateisystem und kann daher nicht eingehängt werden."
+msgstr ""
+"Volume %s hat kein Dateisystem und kann daher nicht eingehängt werden."
 
 #: templates/lvm/logicalvolume.js:276
 #, c-format
@@ -289,7 +292,8 @@ msgstr "Volume %s kann momentan nicht eingehängt werden."
 #: templates/lvm/logicalvolume.js:288
 #, c-format
 msgid "Volume %s could not be mounted, please check the logs."
-msgstr "Volume %s konnte nicht eingehängt werden, bitte in den Logs nachsehen."
+msgstr ""
+"Volume %s konnte nicht eingehängt werden, bitte in den Logs nachsehen."
 
 #: templates/lvm/logicalvolume.js:292
 #, c-format
@@ -313,7 +317,8 @@ msgstr "Möchten Sie Volume %s wirklich aushängen?"
 #: templates/lvm/logicalvolume.js:325
 #, c-format
 msgid "Volume %s could not be unmounted, please check the logs."
-msgstr "Volume %s konnte nicht ausgehängt werden, bitte in den Logs nachsehen."
+msgstr ""
+"Volume %s konnte nicht ausgehängt werden, bitte in den Logs nachsehen."
 
 #: templates/lvm/logicalvolume.js:330
 #, c-format
@@ -338,7 +343,7 @@ msgstr "Beschreibung"
 
 #: templates/lvm/logicalvolume.js:419
 msgid "Script"
-msgstr ""
+msgstr "Skript"
 
 #: templates/lvm/logicalvolume.js:431
 msgid "Initialization complete"
@@ -377,8 +382,8 @@ msgstr "Warnung"
 
 #: templates/lvm/logicalvolume.js:541
 msgid ""
-"Do you really want to change Volume size of <b>%(lv)s</b> to <b>%(megs)s</b> "
-"MB?"
+"Do you really want to change Volume size of <b>%(lv)s</b> to <b>%(megs)s</b>"
+" MB?"
 msgstr ""
 "Möchten Sie wirklich die Volume-Größe von <b>%(lv)s</b> auf <b>%(megs)s</b> "
 "MB ändern?"
@@ -401,8 +406,8 @@ msgstr "Dateisystem"
 
 #: templates/lvm/logicalvolume.js:643
 msgid ""
-"If you want to use DRBD with this device, do not yet create a file system on "
-"it, even if you want to share it using NAS services later on."
+"If you want to use DRBD with this device, do not yet create a file system on"
+" it, even if you want to share it using NAS services later on."
 msgstr ""
 "Wenn DRBD mit diesem Volume benutzt werden soll, darf noch kein Dateisystem "
 "angelegt werden, selbst wenn es später mit NAS-Diensten freigegeben werden "
@@ -419,11 +424,11 @@ msgstr "Warte auf Volume-Auswahl..."
 
 #: templates/lvm/logicalvolume.js:656
 msgid "Deduplication"
-msgstr ""
+msgstr "Deduplizierung"
 
 #: templates/lvm/logicalvolume.js:662
 msgid "Compression"
-msgstr ""
+msgstr "Kompression"
 
 #: templates/lvm/logicalvolume.js:691 templates/lvm/snapshots.js:240
 msgid ""
@@ -464,7 +469,7 @@ msgstr "Optionen"
 
 #: templates/lvm/snapcore.js:138 templates/lvm/snapcore.js.c:817
 msgid "Next"
-msgstr ""
+msgstr "Weiter"
 
 #: templates/lvm/snapcore.js:144
 msgid "Previous"
