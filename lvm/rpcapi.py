@@ -75,7 +75,7 @@ class VgHandler(ModelHandler):
 
     def create(self, data):
         if "host" not in data:
-            data["host"] = HostHandler(None, None).current_id()
+            data["host"] = self._get_handler_instance(Host).current_id()
         return ModelHandler.create(self, data)
 
     def get_free_megs(self, id):
@@ -212,6 +212,11 @@ class VgProxy(ProxyModelHandler, VgHandler):
 
     def lvm_info(self, id):
         return self._call_singlepeer_method("lvm_info", id)
+
+    def create(self, data):
+        if "host" not in data:
+            data["host"] = self._get_handler_instance(Host).current_id()
+        return ModelHandler.create(self, data)
 
 
 class LvProxy(ProxyModelHandler, LvHandler):
