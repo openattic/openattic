@@ -17,6 +17,7 @@ Ext.oa.Lvm__BtrfsSubvolume_Panel = Ext.extend(Ext.oa.ShareGridPanel, {
   api: lvm__BtrfsSubvolume,
   id: "lvm_btrfssubvolume_panel_inst",
   title: "BTRFS",
+  allowEdit: false,
   texts: {
     add:     gettext('Add Subvolume'),
     edit:    gettext('Edit Subvolume'),
