@@ -746,13 +746,18 @@ Ext.oa.LVM__Snapcore_Panel = Ext.extend(Ext.Panel, {
                 },{
                   xtype : 'panel',
                   layout: {
-                    type  : 'form',
+                    type  : 'hbox',
+                  },
+                  defaults: {
+                    style: 'margin-left: 17px;'
                   },
                   items : [{
                     xtype       : 'numberfield',
                     id          : 'retention_time',
                     disabled    : true,
-                    fieldLabel  : gettext('Retention time'),
+                  },{
+                    xtype: 'spacer',
+                    width: 3
                   },{
                     name            : 'retention_time_combo',
                     xtype           : 'combo',
@@ -810,20 +815,24 @@ Ext.oa.LVM__Snapcore_Panel = Ext.extend(Ext.Panel, {
                 },{
                   xtype   : 'panel',
                   layout  : {
-                    type  : 'form'
+                    type  : 'hbox'
+                  },
+                  defaults: {
+                    style : 'margin-left: 17px;',
                   },
                   items   : [{
                     xtype       : 'datefield',
                     id          : 'date_select',
                     disabled    : true,
                     value       : new Date(),
-                    fieldLabel  : gettext('Execution date'),
+                  },{
+                    xtype       : 'spacer',
+                    width       : 103,
                   },{
                     xtype       : 'timefield',
                     id          : 'time_select',
                     disabled    : true,
                     value       : new Date().add(Date.HOUR, +1).getHours() + ':' + new Date().getMinutes(),
-                    fieldLabel  : gettext('Execution time'),
                   }]
                 },{
                   boxLabel  : gettext('Create scheduling'),
@@ -857,29 +866,73 @@ Ext.oa.LVM__Snapcore_Panel = Ext.extend(Ext.Panel, {
                     type  : 'form',
                   },
                   items : [{
-                    xtype       : 'datefield',
-                    id          : 'startdate_select',
-                    disabled    : true,
-                    value       : new Date(),
-                    fieldLabel  : gettext('Startdate'),
+                    xtype : 'panel',
+                    layout: {
+                      type  : 'hbox',
+                    },
+                    defaults: {
+                      style: 'margin-left: 17px;',
+                    },
+                    border   : false,
+                    items   : [{
+                      xtype       : 'label',
+                      text        : gettext('Start date and time:'),
+                      width       : 100,
+                    },{
+                      xtype       : 'spacer',
+                      width       : 3,
+                    },{
+                      xtype       : 'datefield',
+                      id          : 'startdate_select',
+                      disabled    : true,
+                      value       : new Date(),
+                    },{
+                      xtype       : 'spacer',
+                      width       : 103,
+                    },{
+                      xtype       : 'timefield',
+                      id          : 'starttime_select',
+                      disabled    : true,
+                      value       : new Date().getHours() + ':' + new Date().getMinutes(),
+                    }],
                   },{
-                    xtype       : 'timefield',
-                    id          : 'starttime_select',
-                    disabled    : true,
-                    value       : new Date().getHours() + ':' + new Date().getMinutes(),
-                    fieldLabel  : gettext('Starttime'),
+                    xtype : 'spacer',
+                    height: 2,
                   },{
-                    xtype       : 'datefield',
-                    id          : 'enddate_select',
-                    disabled    : true,
-                    value       : new Date().add(Date.DAY, +7),
-                    fieldLabel  : gettext('Enddate'),
+                    xtype : 'panel',
+                    layout: {
+                      type  : 'hbox',
+                    },
+                    defaults: {
+                      style:  'margin-left: 17px;',
+                    },
+                    border  : false,
+                    items   : [{
+                      xtype       : 'label',
+                      text        : gettext('End date and time:'),
+                      width       : 100,
+                    },{
+                      xtype       : 'spacer',
+                      width       : 3,
+                    },{
+                      xtype       : 'datefield',
+                      id          : 'enddate_select',
+                      disabled    : true,
+                      value       : new Date().add(Date.DAY, +7),
+                      fieldLabel  : gettext('Enddate'),
+                    },{
+                      xtype       : 'spacer',
+                      width       : 103,
+                    },{
+                      xtype       : 'timefield',
+                      id          : 'endtime_select',
+                      disabled    : true,
+                      value       : new Date().getHours() + ':' + new Date().getMinutes(),
+                      fieldLabel  : gettext('Enddtime'),
+                    }],
                   },{
-                    xtype       : 'timefield',
-                    id          : 'endtime_select',
-                    disabled    : true,
-                    value       : new Date().getHours() + ':' + new Date().getMinutes(),
-                    fieldLabel  : gettext('Enddtime'),
+                    xtype       : 'spacer',
+                    height      : 10,
                   },{
                     xtype       : 'checkbox',
                     id          : 'is_active',
