@@ -2,24 +2,24 @@
 # Copyright (C) YEAR THE PACKAGE'S COPYRIGHT HOLDER
 # This file is distributed under the same license as the PACKAGE package.
 # FIRST AUTHOR <EMAIL@ADDRESS>, YEAR.
-#
+# 
 #, fuzzy
 msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2012-06-12 13:26+0200\n"
-"PO-Revision-Date: 2012-04-10 13:25\n"
-"Last-Translator: Michael Ziegler <michael.ziegler@it-novum.com>\n"
+"POT-Creation-Date: 2013-05-14 12:45+0200\n"
+"PO-Revision-Date: 2013-05-14 12:46\n"
+"Last-Translator:   <>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
-"Language: \n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
+"Language: \n"
 "Plural-Forms: nplurals=2; plural=(n != 1)\n"
 "X-Translated-Using: django-rosetta 0.6.6\n"
 
-#: templates/cron/cronjobs.js:19 templates/cron/cronjobs.js.c:93
+#: templates/cron/cronjobs.js:19 templates/cron/cronjobs.js.c:95
 msgid "Cron Jobs"
 msgstr "Geplante Tasks"
 
@@ -59,6 +59,11 @@ msgstr "Wochentag"
 msgid "Command"
 msgstr "Befehl"
 
-#: templates/cron/cronjobs.js:81
-msgid "Really delete this job?"
+#: templates/cron/cronjobs.js:57
+msgid "When this volume is deleted, this cron job will be deleted as well."
 msgstr ""
+"Wird dieses Volume gelöscht, wird auch der dazugehörige Cron Job gelöscht."
+
+#: templates/cron/cronjobs.js:82
+msgid "Really delete this job?"
+msgstr "Wollen Sie diesen Job wirklich löschen?"
