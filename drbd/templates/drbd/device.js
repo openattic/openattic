@@ -364,7 +364,7 @@ Ext.oa.Drbd__Connection_Module = Ext.extend(Object, {
     tree.appendToRootNodeById("menu_services", {
       text: gettext('Datenspiegelung'),
       leaf: true,
-      icon: MEDIA_URL + '/icons2/22x22/apps/nfs.png',
+      icon: MEDIA_URL + '/icons2/22x22/apps/gnome-session.png',
       panel: "drbd_panel_inst",
       href: '#'
     });
