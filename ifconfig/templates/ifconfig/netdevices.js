@@ -726,6 +726,8 @@ Ext.oa.Ifconfig__NetDevice_Module = Ext.extend(Object, {
     "use strict";
     tree.appendToRootNodeById("menu_system", {
       text: gettext('Network'),
+      leaf: true,
+      href: '#',
       icon: MEDIA_URL + '/icons2/22x22/apps/network.png',
       panel: 'ifconfig__netdevice_panel_inst'
     });
