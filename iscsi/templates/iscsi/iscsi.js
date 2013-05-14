@@ -1026,7 +1026,7 @@ Ext.oa.Iscsi__Module = Ext.extend(Object, {
       text: gettext('iSCSI'),
       leaf: true,
       panel: 'iscsi__initiator_panel_inst',
-      icon: MEDIA_URL + "/oxygen/22x22/places/repository.png",
+      icon: MEDIA_URL + "/icons2/22x22/devices/drive-harddisk.png",
       href: '#'
     });
   }
