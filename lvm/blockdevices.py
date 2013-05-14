@@ -106,6 +106,9 @@ def is_device_in_use(device):
                 raise
         else:
             for part in partitions:
+                if "number" not in part:
+                    # This is the device itself, not one of its partitions
+                    continue
                 in_use, usetype, info = is_device_in_use(device + part["number"])
                 if in_use:
                     return in_use, usetype, info
