@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2012-06-29 12:13+0200\n"
+"POT-Creation-Date: 2013-05-14 13:12+0200\n"
 "PO-Revision-Date: 2012-04-02 12:05\n"
 "Last-Translator: Michael Ziegler <michael.ziegler@it-novum.com>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -47,63 +47,63 @@ msgstr ""
 msgid "balance-alb"
 msgstr ""
 
-#: models.py:100
+#: models.py:104
 msgid "If this interface is a bonding device, add the slave devices here."
 msgstr ""
 "Wenn dieses Gerät ein Bonding-Gerät ist, fügen Sie hier die Basisgeräte "
 "hinzu."
 
-#: models.py:102
+#: models.py:106
 msgid "If this interface is a bridge, add the ports here."
 msgstr "Wenn dieses Gerät eine Bridge ist, fügen Sie hier die Ports hinzu."
 
-#: models.py:104
+#: models.py:108
 msgid "If this interface is VLAN device, name the raw device here."
 msgstr ""
 "Wenn dieses Gerät ein VLAN-Gerät ist, geben Sie hier das Basisgerät an."
 
-#: models.py:134
+#: models.py:143
 #, python-format
 msgid "Interface %s has children and has an address"
 msgstr "Interface %s hat abhängige Geräte und eine IP-Adresse"
 
-#: models.py:138
+#: models.py:147
 #, python-format
 msgid "Interface %s uses DHCP but has an address"
 msgstr "Gerät %s nutzt DHCP und hat eine statische IP-Adresse"
 
-#: models.py:140
+#: models.py:149
 #, python-format
 msgid "Interface %s has children and uses DHCP"
 msgstr "Gerät %s hat abhängige Geräte und nutzt DHCP"
 
-#: models.py:152
+#: models.py:161
 #, python-format
 msgid "Interface %s has an address without a netmask"
 msgstr "Gerät %s hat eine Adresse ohne angegebene Netzmaske"
 
-#: models.py:163
+#: models.py:172
 #, python-format
 msgid "Vlan %s has ITSELF as its base interface"
 msgstr "VLAN-Gerät %s nutzt sich selbst als Basisgerät"
 
-#: models.py:167
+#: models.py:176
 #, python-format
 msgid "Bridge %s has ITSELF as one of its ports"
 msgstr "Bridge %s nutzt sich selbst als einen ihrer Ports"
 
-#: models.py:171
+#: models.py:180
 #, python-format
 msgid "Bonding %s has ITSELF as one of its slaves"
 msgstr "Bonding %s nutzt sich selbst als einen seiner Slaves"
 
-#: models.py:173
+#: models.py:182
 #, python-format
 msgid "Bonding %s has slaves with mismatching Jumbo Frames setting"
 msgstr ""
 "Bonding %s benutzt andere Jumbo-Frames-Einstellungen als seine Basisgeräte."
 
-#: models.py:176
+#: models.py:185
 msgid ""
 "There is no interface that has an IP (none with dhcp and none with static "
 "address)."
@@ -111,14 +111,14 @@ msgstr ""
 "Kein Gerät hat eine IP-Adresse (keines nutzt DHCP und keines ist statisch "
 "konfiguriert)."
 
-#: models.py:179
+#: models.py:188
 msgid "There is no default gateway."
 msgstr "Es gibt keinen Standard-Gateway."
 
-#: models.py:182
+#: models.py:191
 msgid "There is are no name servers configured."
 msgstr "Es sind keine Nameserver konfiguriert."
 
-#: models.py:185
+#: models.py:194
 msgid "There is no domain configured."
 msgstr "Es ist kein Domain-Name konfiguriert."
