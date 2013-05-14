@@ -272,19 +272,19 @@ Ext.oa.Zfs__Snapshot_Module = Ext.extend(Object, {
     "use strict";
     tree.appendToRootNodeById("menu_storage", {
       text: "ZFS",
-      icon: MEDIA_URL + '/icons2/22x22/apps/snapshot.png',
+      icon: MEDIA_URL + '/icons2/22x22/mimetypes/ascii.png',
       panel: "zfs__snapshot_panel_inst",
       href: "#",
       children: [{
         text: gettext('Zfs Snapshots'),
         leaf: true,
-        icon: MEDIA_URL + '/icons2/22x22/apps/snapshot.png',
+        icon: MEDIA_URL + '/icons2/22x22/actions/document-save-as.png',
         panel: "zfs__snapshot_panel_inst",
         href: '#'
       },{
         text: gettext('Zfs Subvolume'),
         leaf: true,
-        icon: MEDIA_URL + '/icons2/22x22/apps/snapshot.png',
+        icon: MEDIA_URL + '/icons2/22x22/places/network.png',
         panel: "zfs__subvolume_panel_inst",
         href: '#'
       }]

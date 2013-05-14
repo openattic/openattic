@@ -265,7 +265,7 @@ Ext.oa.Lvm__Snapshot_Module = Ext.extend(Object, {
     tree.appendToRootNodeById("menu_storage", {
       text: gettext('Volume Snapshots'),
       leaf: true,
-      icon: MEDIA_URL + '/icons2/22x22/apps/snapshot.png',
+      icon: MEDIA_URL + '/icons2/22x22/actions/document-save-as.png',
       panel: "lvm__snapshot_panel_inst",
       href: '#'
     });
