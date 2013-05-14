@@ -16,7 +16,7 @@ Ext.namespace("Ext.oa");
 Ext.oa.Drbd__Connection_Panel = Ext.extend(Ext.oa.ShareGridPanel, {
   api: drbd__Connection,
   id: "drbd__connection_panel_inst",
-  title: gettext("DRBD"),
+  title: gettext("Datenspiegelung"),
   texts: {
     add:     gettext('Add Connection'),
     edit:    gettext('Edit Connection'),
@@ -362,7 +362,7 @@ Ext.oa.Drbd__Connection_Module = Ext.extend(Object, {
   prepareMenuTree: function(tree){
     "use strict";
     tree.appendToRootNodeById("menu_services", {
-      text: gettext('Data Mirroring'),
+      text: gettext('Datenspiegelung'),
       leaf: true,
       icon: MEDIA_URL + '/icons2/22x22/apps/nfs.png',
       panel: "drbd_panel_inst",

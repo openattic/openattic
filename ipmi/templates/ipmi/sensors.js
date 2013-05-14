@@ -20,7 +20,7 @@ Ext.oa.Ipmi__Sensors_Panel = Ext.extend(Ext.grid.GridPanel, {
     var sensorGrid = this;
     Ext.apply(this, Ext.apply(this.initialConfig, {
       id: "ipmi__sensors_panel_inst",
-      title: gettext('Sensors'),
+      title: gettext('Sensoren'),
       viewConfig: { forceFit: true },
       buttons: [{
         text: "",
@@ -88,7 +88,7 @@ Ext.oa.Lvm__Mounts_Module = Ext.extend(Object, {
   prepareMenuTree: function(tree){
     "use strict";
     tree.appendToRootNodeById("menu_status", {
-      text: gettext('Sensors'),
+      text: gettext('Sensoren'),
       leaf: true,
       icon: MEDIA_URL + '/icons2/22x22/apps/gnome-monitor.png',
       panel: "ipmi__sensors_panel_inst",
