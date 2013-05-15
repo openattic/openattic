@@ -2,21 +2,22 @@
 # Copyright (C) YEAR THE PACKAGE'S COPYRIGHT HOLDER
 # This file is distributed under the same license as the PACKAGE package.
 # FIRST AUTHOR <EMAIL@ADDRESS>, YEAR.
-#
+# 
 #, fuzzy
 msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2012-06-12 13:26+0200\n"
-"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
-"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"POT-Creation-Date: 2013-05-15 17:23+0200\n"
+"PO-Revision-Date: 2013-05-15 17:32\n"
+"Last-Translator:   <>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
-"Language: \n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
+"Language: \n"
 "Plural-Forms: nplurals=2; plural=(n != 1)\n"
+"X-Translated-Using: django-rosetta 0.6.6\n"
 
 #: logout.js:18 logout.js.c:24 logout.js.c:37
 msgid "Logout"
@@ -66,12 +67,17 @@ msgstr "Persönliche Einstellungen"
 msgid "Shutdown"
 msgstr "Herunterfahren"
 
+#: recorder.js:52
+msgid "API Record"
+msgstr ""
+
 #: settings.js:29
 msgid "Auto-expand root nodes"
 msgstr "Blende Menüunterpunkte ein"
 
 #: settings.js:39
-msgid "show hints"
+#, fuzzy
+msgid "Show hints"
 msgstr "Blende Hinweise ein"
 
 #: settings.js:48
@@ -79,42 +85,48 @@ msgid "Allow installation/deletion"
 msgstr "Erlaube Installation/Löschen von Paketen"
 
 #: settings.js:57
-msgid "Monitoring graph with radient"
-msgstr "Zeige Monitoring Graph mit Farbverlauf"
+msgid "Enable gradients in graphs"
+msgstr "Aktiviere Farbverlauf in Graphen"
 
-#: settings.js:66
-msgid "Show graph for storage utilization"
-msgstr "Blende Graph für Speicherausnutzung ein"
-
-#: sharegridpanel.js:29
+#: sharegridpanel.js:32
 msgid "Reload"
 msgstr "Neu laden"
 
-#: sharegridpanel.js:30
+#: sharegridpanel.js:33
 msgid "Add Export"
 msgstr "Export hinzufügen"
 
-#: sharegridpanel.js:31
+#: sharegridpanel.js:34
 msgid "Edit Export"
 msgstr "Export bearbeiten"
 
-#: sharegridpanel.js:32
+#: sharegridpanel.js:35
 msgid "Delete Export"
 msgstr "Export löschen"
 
-#: sharegridpanel.js:33
+#: sharegridpanel.js:36
 msgid "Submit"
 msgstr "Speichern"
 
-#: sharegridpanel.js:34
+#: sharegridpanel.js:37
 msgid "Cancel"
 msgstr "Abbrechen"
 
-#: sharegridpanel.js:35
+#: sharegridpanel.js:38
 #, c-format
 msgid "Do you really want to delete export %s?"
 msgstr "Wollen Sie wirklich den Export %s löschen?"
 
-#: sharegridpanel.js:211
+#: sharegridpanel.js:105
+msgid "Search..."
+msgstr "Suche..."
+
+#: sharegridpanel.js:310
 msgid "Loading..."
-msgstr ""
+msgstr "Lade..."
+
+#~ msgid "Monitoring graph with radient"
+#~ msgstr "Zeige Monitoring Graph mit Farbverlauf"
+
+#~ msgid "Show graph for storage utilization"
+#~ msgstr "Blende Graph für Speicherausnutzung ein"
