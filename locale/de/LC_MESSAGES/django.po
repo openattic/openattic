@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2012-06-12 13:26+0200\n"
+"POT-Creation-Date: 2013-05-15 17:23+0200\n"
 "PO-Revision-Date: 2012-03-23 13:10\n"
 "Last-Translator: Michael Ziegler <michael.ziegler@it-novum.com>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -19,15 +19,15 @@ msgstr ""
 "Plural-Forms: nplurals=2; plural=(n != 1)\n"
 "X-Translated-Using: django-rosetta 0.6.0\n"
 
-#: index_ext_authed.html:104
+#: index_ext_authed.html:140
 msgid "Do you really wish to remove this button from the toolbar?"
 msgstr "Wollen Sie diesen Button wirklich aus der toolbar-Leiste entfernen?"
 
-#: index_ext_unauthed.html:32
+#: index_ext_unauthed.html:33
 msgid "The credentials you entered are invalid."
 msgstr "Die eingegebenen Anmeldedaten sind ungültig."
 
-#: index_ext_unauthed.html:33
+#: index_ext_unauthed.html:34
 msgid ""
 "The request that has been sent to the server has been invalid - this is not "
 "supposed to happen..."
@@ -35,19 +35,26 @@ msgstr ""
 "Die Anfrage die an den Server gesendet wurde war ungültig - das sollte "
 "eigentlich nicht passieren..."
 
-#: index_ext_unauthed.html:34
+#: index_ext_unauthed.html:35
 msgid "Your account has been deactivated. Please consult an administrator."
 msgstr ""
 "Ihr Account wurde deaktiviert. Bitte wenden Sie sich an einen Administrator."
 
-#: index_ext_unauthed.html:35
+#: index_ext_unauthed.html:36
 msgid "Did you fill in all the fields?"
 msgstr "Haben Sie alle Felder ausgefüllt?"
 
-#: index_ext_unauthed.html:51
+#: index_ext_unauthed.html:52
 msgid "Loading..."
 msgstr "Lade..."
 
-#: index_ext_unauthed.html:89 index_ext_unauthed.html.py:98
+#: index_ext_unauthed.html:57
+msgid ""
+"Your browser does not support Kerberos. Please log in using your username "
+"and password."
+msgstr ""
+
+#: index_ext_unauthed.html:101 index_ext_unauthed.html.py:111
+#: index_ext_unauthed.html:134
 msgid "Checking..."
 msgstr "Prüfe..."
