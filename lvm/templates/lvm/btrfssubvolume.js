@@ -128,7 +128,7 @@ Ext.oa.Lvm__BtrfsSubvolume_Module = Ext.extend(Object, {
     tree.appendToRootNodeById("menu_storage", {
       text: gettext('BTRFS'),
       leaf: true,
-      icon: MEDIA_URL + '/icons2/22x22/apps/nfs.png',
+      icon: MEDIA_URL + '/icons2/22x22/mimetypes/ascii.png',
       panel: 'lvm_btrfssubvolume_panel_inst',
       href: '#'
     });

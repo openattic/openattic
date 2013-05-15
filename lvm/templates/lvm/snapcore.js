@@ -1282,7 +1282,7 @@ Ext.oa.VMSnapApp__Snap_Module = Ext.extend(Object, {
     tree.appendToRootNodeById('menu_storage', {
       text: gettext('SnapApps'),
       leaf: true,
-      icon: MEDIA_URL + '/icons2/22x22/apps/snapshot.png',
+      icon: MEDIA_URL + '/icons2/22x22/places/network_local.png',
       panel: "lvm__snapcore_panel_inst",
       href: '#'
     });

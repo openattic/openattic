@@ -94,7 +94,7 @@ Ext.oa.Cron__Job_Module = Ext.extend(Object, {
     tree.appendToRootNodeById("menu_services", {
       text: gettext('Cron Jobs'),
       leaf: true,
-      icon: MEDIA_URL + '/icons2/22x22/apps/nfs.png',
+      icon: MEDIA_URL + '/icons2/22x22/actions/appointment.png',
       panel: 'cron__job_panel_inst',
       href: '#'
     });
