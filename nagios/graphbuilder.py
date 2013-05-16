@@ -720,6 +720,7 @@ class Graph(object):
         for src in self.sources:
             src.labelwidth = maxlen
             src.fulldesc = (self.width >= 350)
+            src.gradient_base = hlsbg
             src.graph()
 
         def mkdate(text, timestamp):
