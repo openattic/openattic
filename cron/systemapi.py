@@ -30,7 +30,7 @@ class SystemD(LockingPlugin):
             try:
                 for job in Cronjob.objects.all():
                     fd.write( "%s %s %s %s %s %s %s\n" % ( job.minute, job.hour, job.domonth, job.month,
-                        job.doweek, job.volume.owner.username, job.command) )
+                        job.doweek, job.user, job.command) )
             finally:
                 fd.close()
         finally:

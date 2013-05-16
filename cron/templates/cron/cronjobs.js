@@ -25,7 +25,18 @@ Ext.oa.Cron__Job_Panel = Ext.extend(Ext.oa.ShareGridPanel, {
   window: {
     height: 350
   },
+  store: {
+    fields: [{
+      name: 'hostname',
+      mapping: 'host',
+      convert: toUnicode
+    }]
+  },
   columns: [{
+    header: gettext('Host'),
+    width: 30,
+    dataIndex: "hostname"
+  }, {
     header: gettext('Minute'),
     width: 30,
     dataIndex: "minute"
@@ -46,15 +57,39 @@ Ext.oa.Cron__Job_Panel = Ext.extend(Ext.oa.ShareGridPanel, {
     width: 30,
     dataIndex: "doweek"
   }, {
+    header: gettext('User'),
+    width: 30,
+    dataIndex: "user"
+  }, {
     header: gettext('Command'),
     width: 250,
     dataIndex: "command"
   }],
   form: {
-    items: [
-      tipify({
-        xtype: 'volumefield'
-      }, gettext("When this volume is deleted, this cron job will be deleted as well.")), {
+    items: [{
+        xtype: 'combo',
+        allowBlank: false,
+        fieldLabel: gettext('Host'),
+        hiddenName: 'host',
+        store: {
+          xtype: "directstore",
+          fields: ["id", "name"],
+          directFn: ifconfig__Host.all
+        },
+        triggerAction: 'all',
+        emptyText:     gettext('Select...'),
+        selectOnFocus: true,
+        displayField:  'name',
+        valueField:    'id',
+        listeners: {
+          afterrender: function(self){
+            self.store.load();
+          }
+        }
+      }, {
+        fieldLabel: gettext('User'),
+        name: "user"
+      }, {
         fieldLabel: gettext('Minute'),
         name: "minute"
       }, {

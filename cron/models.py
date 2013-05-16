@@ -19,10 +19,11 @@ import dbus
 from django.db   import models
 from django.conf import settings
 
-from ifconfig.models import getHostDependentManagerClass
+from ifconfig.models import Host, HostDependentManager
 
 class Cronjob(models.Model):
-    volume      = models.ForeignKey("lvm.LogicalVolume")
+    host        = models.ForeignKey(Host)
+    user        = models.CharField(max_length=50)
     minute      = models.CharField(max_length=50)
     hour        = models.CharField(max_length=50)
     domonth     = models.CharField(max_length=50)
@@ -30,7 +31,7 @@ class Cronjob(models.Model):
     doweek      = models.CharField(max_length=50)
     command     = models.CharField(max_length=500)
 
-    objects     = getHostDependentManagerClass("volume__vg__host")()
+    objects     = HostDependentManager()
     all_objects = models.Manager()
 
     def save(self, *args, **kwargs):
