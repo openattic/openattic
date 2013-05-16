@@ -8,6 +8,9 @@ ifconfig  /usr/share/openattic
 sysutils  /usr/share/openattic
 userprefs /usr/share/openattic
 
+cron /usr/share/openattic
+installed_apps.d/50_cron /usr/share/openattic/installed_apps.d
+
 # Static files, Templates
 htdocs/js               /usr/share/openattic/htdocs
 htdocs/extjs_themes     /usr/share/openattic/htdocs

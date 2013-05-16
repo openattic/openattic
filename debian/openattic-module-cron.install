@@ -1,2 +1,0 @@
-cron /usr/share/openattic
-installed_apps.d/50_cron /usr/share/openattic/installed_apps.d

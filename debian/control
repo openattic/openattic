@@ -17,7 +17,6 @@ Depends: ${misc:Depends}, openattic-base,
  openattic-module-samba,
  openattic-module-apt,
  openattic-module-nagios,
- openattic-module-cron,
  openattic-module-ftp,
  openattic-module-mailaliases,
  libapache2-mod-wsgi, apache2,
@@ -100,7 +99,7 @@ Description: Basic requirements for openATTIC
 Package: openattic-module-lvm
 Architecture: all
 Depends: ${misc:Depends}, openattic-base, lvm2, parted, python-pyudev,
- openattic-module-cron
+ cron
 Recommends: zfsonlinux, xfsprogs, btrfs-tools
 Suggests: ocfs2-tools
 Enhances: lvm2
@@ -170,17 +169,6 @@ Description: Samba module for openATTIC
  Samba implements the SMB/CIFS protocol and enables file sharing with hosts
  that run the Microsoft Windows family of operating systems. This package
  provides configuration facilities for Samba Shares.
-
-Package: openattic-module-cron
-Architecture: all
-Depends: ${misc:Depends}, openattic-module-lvm, cron
-Description: Samba module for openATTIC
- openATTIC is a storage management system based upon Open Source tools with
- a comprehensive user interface that allows you to create, share and backup
- storage space on demand.
- .
- Cron is a service that provides scheduled task execution. This package
- provides configuration facilities for scheduled tasks (a.k.a. Cron jobs).
 
 Package: openattic-module-ftp
 Architecture: all
