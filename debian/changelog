@@ -1,3 +1,37 @@
+openattic (1.0.7-1) unstable; urgency=low
+
+  * New upstream release.
+  * Add dependency to rrdtool.
+  * Add openattic-module-cron package.
+  * Add openattic user to nagios group.
+  * Drop dependency to libpam-pgsql.
+  * Drop dependency to zfs-fuse and ntfs-3g.
+  * Add xfsprogs to recommends:.
+  * Add openattic-module-twraid package.
+  * Add openattic-module-ipmi package.
+  * Install updatetwraid cron job.
+  * Add a preinstall script that converts RRDs for STORAGE_TYPE=MULTIPLE.
+  * Remove openattic-module-ftp-{my,pg}sql packages which have been replaced by
+    a single openattic-module-ftp package.
+  * Add dependency to proftpd-mod-winbind for oa-m-ftp.
+  * Remove openattic-full-mysql and openattic-mysql packages.
+  * Rename openattic-full-pgsql to openattic-full.
+  * Add dependency to winbind, krb5-user, samba-common-bin and libnss-winbind
+    for oa-m-samba.
+  * Remove outdated oa-m-munin package.
+  * Remove ajaxterm dependency.
+  * Replace ifenslave dependency with ifenslave-2.6.
+  * Add zfsonlinux to recommends:.
+  * Depend on Django 1.4.
+  * Add ocfs2-tools to suggests:.
+  * Add vcs-hg: tag.
+  * Remove dependency to python-matplotlib.
+  * Add dependency to python-gobject.
+  * Add sudo to recommends:.
+  * Add dummy export to ensure nfs-kernel-server starts.
+
+ -- Michael Ziegler <diese-addy@funzt-halt.net>  Wed, 08 May 2013 11:46:09 +0200
+
 openattic (0.7.4-2) stable; urgency=low
 
   * Remove ssmtp module (removed upstream).
