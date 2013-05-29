@@ -367,12 +367,10 @@ class Xfs(FileSystem):
     def info(self):
         return {}
 
-    def format(self, jid):
-        try:
-            raidparams = get_raid_params(self.lv.vg.get_pvs()[0]["LVM2_PV_NAME"])
-        except UnsupportedRAID:
-            raidparams = {"chunksize": -1, "datadisks": -1}
-        usablesize   = self.lv.megs * 1024 * 1024
+    def get_agcount(self, megs=None):
+        if megs is None:
+            megs = self.lv.megs
+        usablesize   = megs * 1024 * 1024
         usableblocks = int( usablesize / 4096 )
 
         # see xfs_mkfs.c, calc_default_ag_geometry()
@@ -391,8 +389,31 @@ class Xfs(FileSystem):
 
         agsize  = usableblocks >> shift
         agcount = usableblocks / agsize
+        return agcount
 
-        self._lvm.xfs_format( jid, self.lv.path, raidparams["chunksize"], raidparams["datadisks"], agcount )
+    agcount = property(get_agcount)
+
+    def clean_volume(self, volume):
+        from django.core.exceptions import ValidationError
+        try:
+            raidparams = get_raid_params(self.lv.vg.get_pvs()[0]["LVM2_PV_NAME"])
+        except UnsupportedRAID:
+            # can't check AG alignment
+            return
+        agcount = self.get_agcount(int(volume.megs))
+        if volume.megs % (agcount * raidparams["datadisks"]) != agcount:
+            alloc = agcount
+            if alloc % 4 != 0:
+                alloc *= 4
+            raise ValidationError({"megs": ["An XFS volume will perform very badly with this size. Try adding (a multiple of) %d MB." % alloc]})
+
+    def format(self, jid):
+        try:
+            raidparams = get_raid_params(self.lv.vg.get_pvs()[0]["LVM2_PV_NAME"])
+        except UnsupportedRAID:
+            raidparams = {"chunksize": -1, "datadisks": -1}
+
+        self._lvm.xfs_format( jid, self.lv.path, raidparams["chunksize"], raidparams["datadisks"], self.agcount )
         self.mount(jid)
         self.chown(jid)
 
