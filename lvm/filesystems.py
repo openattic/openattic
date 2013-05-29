@@ -235,7 +235,7 @@ class Ext4(Ext2):
 
 
 class Zfs(FileSystem):
-    """ Handler for ZFS on Fuse. """
+    """ Handler for ZFS. """
     name = "zfs"
     desc = "ZFS (supports snapshots, deduplication and compression)"
     mount_in_fstab = False
@@ -319,7 +319,7 @@ class Zfs(FileSystem):
 
     def resize(self, jid, grow):
         if not grow:
-            raise SystemError("ZFS-Fuse does not support shrinking.")
+            raise SystemError("ZFS does not support shrinking.")
         else:
             self._lvm.zfs_expand( jid, self.lv.name, self.lv.path )
 
