@@ -134,7 +134,7 @@
         "model": "nagios.graph",
         "fields": {
             "verttitle": "%",
-            "fields": "tot_iops * tot_avg_wait * 100",
+            "fields": "tot_iops * tot_avg_wait",
             "command": 9,
             "title": "Disk Load (Normalized)"
         }
