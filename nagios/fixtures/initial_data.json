@@ -498,5 +498,15 @@
             "command": 10,
             "title": "FTP (Data) [packets/s]"
         }
+    },
+    {
+        "pk": 39,
+        "model": "nagios.graph",
+        "fields": {
+            "verttitle": "read (-) / write (+)",
+            "fields": "-(rd_iops * rd_avg_wait) wr_iops * wr_avg_wait",
+            "command": 9,
+            "title": "Disk Load (Normalized r/w)"
+        }
     }
 ]
