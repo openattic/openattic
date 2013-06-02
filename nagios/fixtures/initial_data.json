@@ -130,6 +130,16 @@
         }
     },
     {
+        "pk": 38,
+        "model": "nagios.graph",
+        "fields": {
+            "verttitle": "%",
+            "fields": "tot_iops * tot_avg_wait * 100",
+            "command": 9,
+            "title": "Disk Load (Normalized)"
+        }
+    },
+    {
         "pk": 4,
         "model": "nagios.graph",
         "fields": {
