@@ -330,48 +330,53 @@ class Node(object):
         self.args.append( "LINE1:%s#%sCC:%s" % (varname, lineclr, self.label) )
 
     def graph(self):
+        self._draw_graph(self.varname)
+        self._draw_table(self.varname)
+
+    def _draw_graph(self, varname):
         if not self.stacked:
-            self.line(self.varname)
+            self.line(varname)
 
             if self.warn and self.crit:
                 if not self.invert:
-                    self.area(self.varlimit(self.varname, "ok",          0,  self.warn), "00AA00", self.gradient_base)
-                    self.area(self.varlimit(self.varname, "w",   self.warn,  self.crit), "AAAA00", self.gradient_base)
-                    self.area(self.varlimit(self.varname, "c",   self.crit,      "INF"), "AA0000", self.gradient_base)
+                    self.area(self.varlimit(varname, "ok",          0,  self.warn), "00AA00", self.gradient_base)
+                    self.area(self.varlimit(varname, "w",   self.warn,  self.crit), "AAAA00", self.gradient_base)
+                    self.area(self.varlimit(varname, "c",   self.crit,      "INF"), "AA0000", self.gradient_base)
                 else:
-                    self.area(self.varlimit(self.varname, "ok", -self.warn,          0), "00AA00", self.gradient_base)
-                    self.area(self.varlimit(self.varname, "w",  -self.crit, -self.warn), "AAAA00", self.gradient_base)
-                    self.area(self.varlimit(self.varname, "c",      "-INF", -self.crit), "AA0000", self.gradient_base)
+                    self.area(self.varlimit(varname, "ok", -self.warn,          0), "00AA00", self.gradient_base)
+                    self.area(self.varlimit(varname, "w",  -self.crit, -self.warn), "AAAA00", self.gradient_base)
+                    self.area(self.varlimit(varname, "c",      "-INF", -self.crit), "AA0000", self.gradient_base)
                 self.args.append( "HRULE:%.1f#F0F700" % self.warn )
                 self.args.append( "HRULE:%.1f#FF0000" % self.crit )
             else:
-                self.area(self.varname, "0000AA", self.gradient_base)
+                self.area(varname, "0000AA", self.gradient_base)
 
             # In cases where the values are unknown, draw everything grey.
             # Define a graph that is ±INF if the graph is unknown, else 0; and draw it using a grey AREA.
             self.args.extend([
-                "CDEF:%sun=%s,UN,%sINF,0,IF" % (self.varname, self.varname, ('-' if self.invert else '')),
-                "AREA:%sun#88888850:"        % (self.varname),
+                "CDEF:%sun=%s,UN,%sINF,0,IF" % (varname, varname, ('-' if self.invert else '')),
+                "AREA:%sun#88888850:"        % (varname),
                 ])
         else:
-            color = hls_to_rgbstr(get_hls_for_srcidx(rgbstr_to_hls("0000AA"), self.varname)) + 'AA'
-            stackarg = "AREA:%s#%s:%s" % (self.varname, color, self.label)
+            color = hls_to_rgbstr(get_hls_for_srcidx(rgbstr_to_hls("0000AA"), varname)) + 'AA'
+            stackarg = "AREA:%s#%s:%s" % (varname, color, self.label)
             if not self.first_in_stack:
                 stackarg += ":STACK"
             self.args.append(stackarg)
 
+    def _draw_table(self, varname):
         # Now print the graph description table.
         if self.fulldesc:
             self.args.extend([
-                "GPRINT:%s:LAST:%%8.2lf%%s"     % self.varname,
-                "GPRINT:%s:MIN:%%8.2lf%%s"      % self.varname,
-                "GPRINT:%s:AVERAGE:%%8.2lf%%s"  % self.varname,
-                "GPRINT:%s:MAX:%%8.2lf%%s\\j"   % self.varname,
+                "GPRINT:%s:LAST:%%8.2lf%%s"     % varname,
+                "GPRINT:%s:MIN:%%8.2lf%%s"      % varname,
+                "GPRINT:%s:AVERAGE:%%8.2lf%%s"  % varname,
+                "GPRINT:%s:MAX:%%8.2lf%%s\\j"   % varname,
                 ])
         else:
             self.args.extend([
-                "GPRINT:%s:LAST:%%8.2lf%%s"        % self.varname,
-                "GPRINT:%s:AVERAGE:%%8.2lf%%s\\j"  % self.varname,
+                "GPRINT:%s:LAST:%%8.2lf%%s"        % varname,
+                "GPRINT:%s:AVERAGE:%%8.2lf%%s\\j"  % varname,
                 ])
 
 
