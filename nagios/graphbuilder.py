@@ -486,9 +486,8 @@ class UpsideDownNode(MathNode):
 
     def graph(self):
         self.copy_graphvars(self.lft)
-        self.lft.invert = True
-        self.lft.varname = self.varname
-        self.lft.graph()
+        self._draw_graph(self.varname)
+        self._draw_table(self.lft.varname)
 
 
 class AddNode(MathNode):
@@ -741,6 +740,7 @@ class Graph(object):
             mkdate( _("End time"),   self.end   ),
             ])
 
+        #print '"' + '" "'.join(self.args) + '"'
         rrdtool = subprocess.Popen([arg.encode("utf-8") for arg in self.args], stdout=subprocess.PIPE)
         out, err = rrdtool.communicate()
 
