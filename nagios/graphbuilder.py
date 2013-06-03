@@ -423,7 +423,6 @@ class MathNode(Node):
 
 
 class StackNode(MathNode):
-
     @property
     def labelwidth(self):
         return max(
@@ -470,14 +469,6 @@ class UpsideDownNode(MathNode):
     @property
     def label(self):
         return self.lft.label
-
-    @property
-    def labelwidth(self):
-        return self.lft.labelwidth
-
-    @labelwidth.setter
-    def labelwidth(self, value):
-        self.lft.labelwidth = value
 
     def define(self):
         self.lft.args = self.args
