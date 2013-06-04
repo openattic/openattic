@@ -130,7 +130,7 @@ class EndMarker(Symbol):
 
 class Literal(Symbol):
     def get_value(self, rrd):
-        return self.value
+        return LiteralNode(self.value)
 
 class Infix(Symbol):
     def led(self, left):
@@ -497,6 +497,22 @@ class DivideNode(MathNode):
     op = '/'
     opstr = 'div'
 
+
+class LiteralNode(Node):
+    def __init__(self, value):
+        Node.__init__(self)
+        self._value = value
+
+    labelwidth = property( lambda self: len(unicode(self._value)) )
+    varname    = property( lambda self: unicode(self._value)      )
+    label      = property( lambda self: unicode(self._value)      )
+
+    @labelwidth.setter
+    def labelwidth(self, value):
+        pass
+
+    def define(self):
+        pass
 
 
 class Source(Node):
