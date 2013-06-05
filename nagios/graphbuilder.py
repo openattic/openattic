@@ -274,6 +274,30 @@ class Node(object):
         self.first_in_stack = False
         self.gradient_base = None
         self.fulldesc = True
+        self._label = ""
+        self._labelwidth = -1
+
+    @property
+    def labelwidth(self):
+        if self._labelwidth == -1:
+            return len(self._label)
+        else:
+            return self._labelwidth
+
+    @labelwidth.setter
+    def labelwidth(self, value):
+        self._labelwidth = value
+
+    @property
+    def label(self):
+        text = self._label.strip()
+        if self._labelwidth != -1 and len(self._label) > self._labelwidth:
+            text = text[:self._labelwidth - 1] + u'…'
+        return "%-*s" % (self._labelwidth, text)
+
+    @label.setter
+    def label(self, value):
+        self._label = value
 
     def copy_graphvars(self, other):
         other.invert   = self.invert
@@ -390,6 +414,10 @@ class MathNode(Node):
         self.rgt = rgt
         self.varlft = None
         self.varrgt = None
+        if lft and rgt:
+            self._label = "%s %s %s" % (self.lft.label, self.op, self.rgt.label)
+        else:
+            self._label = "override me"
 
     curr = property( lambda self: self.lft.curr )
     unit = property( lambda self: self.lft.unit )
@@ -398,21 +426,19 @@ class MathNode(Node):
     vmin = property( lambda self: self.lft.vmin )
     vmax = property( lambda self: self.lft.vmax )
 
-    @property
-    def varname(self):
-        return "%s_%s_%s" % (self.lft.varname, self.opstr, self.rgt.varname)
-
-    @property
-    def label(self):
-        return "%s %s %s" % (self.lft.label, self.op, self.rgt.label)
-
-    @property
-    def labelwidth(self):
-        return self.lft.labelwidth + len(self.op) + self.rgt.labelwidth + 2
+    labelwidth = Node.labelwidth
 
     @labelwidth.setter
     def labelwidth(self, value):
-        self.rgt.labelwidth = value - self.lft.labelwidth - len(self.op) - 2
+        self._labelwidth = value
+        if self.lft is not None:
+            self.lft.labelwidth = value
+        if self.rgt is not None:
+            self.rgt.labelwidth = value
+
+    @property
+    def varname(self):
+        return "%s_%s_%s" % (self.lft.varname, self.opstr, self.rgt.varname)
 
     def define(self):
         self.lft.args = self.args
@@ -457,18 +483,9 @@ class StackNode(MathNode):
 class UpsideDownNode(MathNode):
     def __init__(self, lft):
         MathNode.__init__(self, lft, None)
-
-    labelwidth = property( lambda self: self.lft.labelwidth )
-
-    @labelwidth.setter
-    def labelwidth(self, value):
-        self.lft.labelwidth = value
+        self._label = self.lft.label
 
     varname = property( lambda self: self.lft.varname + "neg" )
-
-    @property
-    def label(self):
-        return self.lft.label
 
     def define(self):
         self.lft.args = self.args
@@ -502,14 +519,9 @@ class LiteralNode(Node):
     def __init__(self, value):
         Node.__init__(self)
         self._value = value
+        self._label = unicode(value)
 
-    labelwidth = property( lambda self: len(unicode(self._value)) )
     varname    = property( lambda self: unicode(self._value)      )
-    label      = property( lambda self: unicode(self._value)      )
-
-    @labelwidth.setter
-    def labelwidth(self, value):
-        pass
 
     def define(self):
         pass
@@ -521,18 +533,10 @@ class Source(Node):
         self.name = name
         self.varname = name
         self.rrd  = rrd
-        self.label = self.rrd.get_source_label(name)
+        self._label = self.rrd.get_source_label(name).strip()
 
         self.perfdata = self.rrd.get_source_perfdata(name).split(';')
         self.args = []
-
-    @property
-    def labelwidth(self):
-        return len(self.label.strip())
-
-    @labelwidth.setter
-    def labelwidth(self, value):
-        self.label = "%-*s" % (value, self.label.strip())
 
     @property
     def curr(self):
@@ -697,6 +701,11 @@ class Graph(object):
 
         # calc the maximum variable label length
         maxlen = max( [ src.labelwidth for src in self.sources ] )
+        if self.width < 350:
+            # we need about 70px for labels and colored dots and margins and stuff, so
+            # that leaves (self.width - 70)px for drawing letters. each of those is about
+            # 10px wide, so we get to draw a total of...
+            maxlen = (self.width - 70) // 10
 
         # rrdtool uses \\j for newline.
         self.args.append("COMMENT:  \\j")
@@ -747,7 +756,7 @@ class Graph(object):
             mkdate( _("End time"),   self.end   ),
             ])
 
-        #print '"' + '" "'.join(self.args) + '"'
+        #print '"' + '" "'.join(self.args).encode("utf-8") + '"'
         rrdtool = subprocess.Popen([arg.encode("utf-8") for arg in self.args], stdout=subprocess.PIPE)
         out, err = rrdtool.communicate()
 
