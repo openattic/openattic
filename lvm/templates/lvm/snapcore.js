@@ -459,46 +459,48 @@ Ext.oa.LVM__Snapcore_Panel = Ext.extend(Ext.Panel, {
               volumes     : []/*[1, 2, 6, 9]*/,
               plugin_data : {} /*{
                 VMware: {
-                  openattic01: {
-                    data: {
-                      consistency: "mit ram",
+                  host: {
+                    openattic01: {
+                      data: {
+                        consistency: "mit ram",
+                      },
+                      children: {
+                        vm01: {
+                          data: {
+                            consistency: "mit ram",
+                          },
+                          children: {}
+                        },
+                        vm02: {
+                          data: {
+                            consistency: "ohne ram",
+                          },
+                          children: {}
+                        },
+                        vm03: {
+                          data: {
+                            consistency: "keine konsistenz (aka kein snap)",
+                          },
+                          children: {}
+                        },
+                      }
                     },
-                    children: {
-                      vm01: {
-                        data: {
-                          consistency: "mit ram",
+                    openattic02: {
+                      data: null,
+                      vms: {
+                        vm02: {
+                          data: {
+                            consistency: "mit ram",
+                          },
+                          children: {}
                         },
-                        children: {}
-                      },
-                      vm02: {
-                        data: {
-                          consistency: "ohne ram",
+                        vm05: {
+                          data: {
+                            consistency: "ohne ram",
+                          },
+                          children: {}
                         },
-                        children: {}
-                      },
-                      vm03: {
-                        data: {
-                          consistency: "keine konsistenz (aka kein snap)",
-                        },
-                        children: {}
-                      },
-                    }
-                  },
-                  openattic02: {
-                    data: null,
-                    vms: {
-                      vm02: {
-                        data: {
-                          consistency: "mit ram",
-                        },
-                        children: {}
-                      },
-                      vm05: {
-                        data: {
-                          consistency: "ohne ram",
-                        },
-                        children: {}
-                      },
+                      }
                     }
                   }
                 },
