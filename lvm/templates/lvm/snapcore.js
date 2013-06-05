@@ -57,8 +57,6 @@ Ext.oa.WizardTreeNodeUI = Ext.extend(Ext.tree.TreeNodeUI, {
               Ext.DomHelper.applyStyles( img_self.el, 'display: none' );
             node.node.attributes.plugin.on("setConfigData", function(plugin, confobj, key, value){
               if( node.node.attributes.objid === key ){
-                console.log(String.format("yaaay setconf! Node: {0} Key: {1}",
-                  node.node.attributes.objid, key));
                 Ext.DomHelper.applyStyles( img_self.el,
                   ( value !== null ? "display: block" : "display: none" ) );
               }
@@ -609,7 +607,8 @@ Ext.oa.LVM__Snapcore_Panel = Ext.extend(Ext.Panel, {
                 },{
                   layout  : 'hbox',
                   items   : [firstGrid, secondGrid],
-                  listeners : {
+                }],
+                listeners : {
                     show  : function(self){
                       var volumes = [];
                       var requests = 0;
@@ -679,7 +678,6 @@ Ext.oa.LVM__Snapcore_Panel = Ext.extend(Ext.Panel, {
                       }
                     }
                   },
-                }],
               },{
                 title : gettext('Pre-/Post-Script - Conditions'),
                 id    : 'wiz_prepost',
