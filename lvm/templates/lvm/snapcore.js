@@ -461,7 +461,6 @@ Ext.oa.LVM__Snapcore_Panel = Ext.extend(Ext.Panel, {
                 VMware: {
                   host: {
                     data: {
-                      consistency: "ohne ram",
                     },
                     children: {
                       openattic01: {
