@@ -776,58 +776,32 @@ class LVSnapshotJob(Cronjob):
         return Cronjob.save(self, *args, **kwargs)
 
 class ConfManager(models.Manager):
-    def save_vmware_items(self, snapconf, host_id, plugin_data, conf_models):
-        for key_ds in plugin_data.keys():
-            # save datastore configs
-            if 'data' in plugin_data[key_ds] and len(plugin_data[key_ds]['data']) > 0:
-                (conf_models['vmwaredatastoreconf']).objects.save_config(snapconf, host_id, key_ds, plugin_data[key_ds]['data'])
-            # save vm configs
-            if 'children' in plugin_data[key_ds] and len(plugin_data[key_ds]['children']) > 0:
-                for key_vm in plugin_data[key_ds]['children'].keys():
-                    if 'data' in plugin_data[key_ds]['children'][key_vm] and len(plugin_data[key_ds]['children'][key_vm]['data']) > 0:
-                        (conf_models['vmwarevmconf']).objects.save_config(snapconf, host_id, key_ds, key_vm, plugin_data[key_ds]['children'][key_vm]['data'])
-
-    def save_mssql_items(self, snapconf, host_id, plugin_data, conf_models):
-        for key_drive in plugin_data.keys():
-            # save drive configs
-            if 'data' in plugin_data[key_drive] and len(plugin_data[key_drive]['data']) > 0:
-                (conf_models['mssqldriveconf']).objects.save_config(snapconf, host_id, key_drive, plugin_data[key_drive]['data'])
-            # save database configs
-            if 'children' in plugin_data[key_drive] and len(plugin_data[key_drive]['children']) > 0:
-                for key_db in plugin_data[key_drive]['children'].keys():
-                    if 'data' in plugin_data[key_drive]['children'][key_db] and len(plugin_data[key_drive]['children'][key_db]['data']) > 0:
-                        (conf_models['mssqldatabaseconf']).objects.save_config(snapconf, host_id, key_drive, key_db, plugin_data[key_drive]['children'][key_db]['data'])
-
     def add_config(self, conf_obj):
-        conf_models = {}
-        for model in SnapshotConf._meta.get_all_related_objects():
-            conf_models[(model.name.split(':'))[1]] = model.model
+        models = {}
 
-        data = conf_obj['data']
-        snapconf = SnapshotConf(confname=data['configname'], prescript=data['prescript'], postscript=data['postscript'], retention_time=data['retention_time'])
+        for related in SnapshotConf._meta.get_all_related_objects():
+            if hasattr(related.model.objects, "get_available_objects"):
+                related.model.objects.get_available_objects(models)
+
+        data = conf_obj["data"]
+        snapconf = SnapshotConf(confname=data["configname"], prescript=data["prescript"], postscript=data["postscript"], retention_time=data["retention_time"])
         snapconf.save()
 
-        volumes = conf_obj['volumes']
+        volumes = conf_obj["volumes"]
         for volume in volumes:
-          logical_volume = LogicalVolume.all_objects.get(id=volume)
-          volume_conf = LogicalVolumeConf(snapshot_conf=snapconf, volume=logical_volume)
-          volume_conf.save()
+            logical_volume = LogicalVolume.all_objects.get(id=volume)
+            volume_conf = LogicalVolumeConf(snapshot_conf=snapconf, volume=logical_volume)
+            volume_conf.save()
 
-        if 'VMware' in conf_obj['plugin_data']:
-            # type VMware
-            vmware_conf = conf_obj['plugin_data']['VMware']
+        def save_config(modelstack, itemdata, parent_ids):
+            for obj_id, obj_data in itemdata.items():
+                obj = modelstack[0].objects.save_config(snapconf, parent_ids + [obj_id], obj_data['data'])
+                save_config(modelstack[1:], obj_data["children"], parent_ids + [obj_id])
 
-            for key in vmware_conf.keys():
-                # configs without snapapp type and host
-                self.save_vmware_items(snapconf, key, vmware_conf[key]['children'], conf_models)
-
-        if 'MSSQL' in conf_obj['plugin_data']:
-            # type MSSQL
-            mssql_conf = conf_obj['plugin_data']['MSSQL']
-
-            for key in mssql_conf.keys():
-                # configs without snapapp type and host
-                self.save_mssql_items(snapconf, key, mssql_conf[key]['children'], conf_models)
+        for module in conf_obj['plugin_data']:
+            for host_id, host_data, in conf_obj['plugin_data'][module].items():
+                host = models[module][0].objects.get(id=host_id)
+                save_config(models[module][1:], host_data["children"], [host_id])
 
         return snapconf
 
