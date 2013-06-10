@@ -770,7 +770,16 @@ class LVSnapshotJob(Cronjob):
 
     def full_clean(self):
         return #lol
-    
+
+    def dosnapshot(self, volumeIds):
+        createDate = models.DateTimeField(auto_now_add=True, blank=False, null=False)
+        for volId in volumeIds:
+            lv = LogicalVolume.objects.get(id=volId)
+            snap = LogicalVolume(snapshot=lv)
+            snap.name = lv.name + '_snapshot_' + createDate
+            snap.megs = lv.megs
+            snap.save()
+
     def save(self, *args, **kwargs):
         self.command = "echo Doing snapshot of %s" % self.volume.name
         return Cronjob.save(self, *args, **kwargs)
