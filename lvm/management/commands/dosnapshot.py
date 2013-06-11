@@ -31,6 +31,6 @@ class Command( BaseCommand ):
     )
 
     def handle(self, **options):
-        #job = LVSnapshotJob.objects.get(id=options["jobid"])
+        job = LVSnapshotJob.objects.get(id=options["jobid"])
         print "doing stuff now"
-        #job.dosnapshot()
+        job.dosnapshot()
