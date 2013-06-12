@@ -1142,7 +1142,7 @@ Ext.oa.LVM__Snapcore_Panel = Ext.extend(Ext.Panel, {
                     items: [{
                       id: 'dow_6', fieldLabel: gettext('Saturday')
                     },{
-                      id: 'dow_7', fieldLabel: gettext('Sunday')
+                      id: 'dow_0', fieldLabel: gettext('Sunday')
                     }]
                   }],
                 },{
