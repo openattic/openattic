@@ -19,6 +19,7 @@ import dbus
 import re
 import os
 import os.path
+import datetime
 
 from django.contrib.auth.models import User
 from django.db import models
@@ -764,24 +765,33 @@ class LVSnapshotJob(Cronjob):
     start_time  = models.DateTimeField(null=True, blank=True)
     end_time    = models.DateTimeField(null=True, blank=True)
     is_active   = models.BooleanField()
+    conf        = models.ForeignKey('SnapshotConf')
+    last_execution = models.DateTimeField(null=True, blank=True)
 
-    objects     = getHostDependentManagerClass("volume__vg__host")()
+    objects     = HostDependentManager()
     all_objects = models.Manager()
 
     def full_clean(self):
         return #lol
 
-    def dosnapshot(self, volumeIds):
-        createDate = models.DateTimeField(auto_now_add=True, blank=False, null=False)
-        for volId in volumeIds:
-            lv = LogicalVolume.objects.get(id=volId)
-            snap = LogicalVolume(snapshot=lv)
-            snap.name = lv.name + '_snapshot_' + createDate
-            snap.megs = lv.megs
-            snap.save()
+    def dosnapshot(self):
+        vol_confs = LogicalVolumeConf.objects.filter(snapshot_conf_id=self.conf)
+        for vol_conf in vol_confs:
+          lv = LogicalVolume.objects.get(id=vol_conf.volume.id)
+
+          name = lv.name + '_snapshot_' + str(datetime.datetime.now())
+          name = re.sub(' ', '_', name)
+          name = re.sub(':', '-', name)
+
+          snap = LogicalVolume(snapshot=lv)
+          snap.name = name
+          snap.megs = lv.megs * 20 / 100
+          snap.save()
 
     def save(self, *args, **kwargs):
-        self.command = "echo Doing snapshot of %s" % self.volume.name
+        self.command = "echo Doing snapshot!"
+        Cronjob.save(self, *args, **kwargs)
+        self.command = "oaconfig dosnapshot -j " + str(self.id)
         return Cronjob.save(self, *args, **kwargs)
 
 class ConfManager(models.Manager):
@@ -795,6 +805,33 @@ class ConfManager(models.Manager):
         data = conf_obj["data"]
         snapconf = SnapshotConf(confname=data["configname"], prescript=data["prescript"], postscript=data["postscript"], retention_time=data["retention_time"])
         snapconf.save()
+
+        time_configs = {'h': [], 'moy': [], 'dow': []}
+        for key, value in data.items():
+          if (key.startswith('h_') or key.startswith('moy_') or key.startswith('dow_')) and value == 'on':
+              time, number = key.split('_')
+              time_configs[time].append(number)
+
+        # sort values
+        for time, numbers in time_configs.items():
+          if len(numbers) > 0:
+            numbers.sort(key=int)
+
+        if True: #später or jobmäßigundso:
+            jobconf = LVSnapshotJob(
+                start_time=data["startdate"],
+                end_time=data["enddate"],
+                is_active=["active"],
+                conf=snapconf,
+                last_execution=None,
+                host=Host.objects.get_current(),
+                user="root",
+                minute=data['minute'],
+                hour=','.join(time_configs["h"]),
+                domonth=data['day_of_month'],
+                month=','.join(time_configs["moy"]),
+                doweek=','.join(time_configs["dow"]))
+            jobconf.save()
 
         volumes = conf_obj["volumes"]
         for volume in volumes:
