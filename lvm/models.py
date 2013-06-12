@@ -806,6 +806,17 @@ class ConfManager(models.Manager):
         snapconf = SnapshotConf(confname=data["configname"], prescript=data["prescript"], postscript=data["postscript"], retention_time=data["retention_time"])
         snapconf.save()
 
+        time_configs = {'h': [], 'moy': [], 'dow': []}
+        for key, value in data.items():
+          if (key.startswith('h_') or key.startswith('moy_') or key.startswith('dow_')) and value == 'on':
+              time, number = key.split('_')
+              time_configs[time].append(number)
+
+        # sort values
+        for time, numbers in time_configs.items():
+          if len(numbers) > 0:
+            numbers.sort(key=int)
+
         if True: #später or jobmäßigundso:
             jobconf = LVSnapshotJob(
                 start_time=data["startdate"],
@@ -815,11 +826,11 @@ class ConfManager(models.Manager):
                 last_execution=None,
                 host=Host.objects.get_current(),
                 user="root",
-                minute="*",
-                hour="*",
-                domonth="*",
-                month="*",
-                doweek="*")
+                minute=data['minute'],
+                hour=','.join(time_configs["h"]),
+                domonth=data['day_of_month'],
+                month=','.join(time_configs["moy"]),
+                doweek=','.join(time_configs["dow"]))
             jobconf.save()
 
         volumes = conf_obj["volumes"]
