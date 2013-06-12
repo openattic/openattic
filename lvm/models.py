@@ -781,6 +781,7 @@ class LVSnapshotJob(Cronjob):
 
           name = lv.name + '_snapshot_' + str(datetime.datetime.now())
           name = re.sub(' ', '_', name)
+          name = re.sub(':', '-', name)
 
           snap = LogicalVolume(snapshot=lv)
           snap.name = name
