@@ -227,7 +227,7 @@ def query_ctls(verbosity=0):
                     continue
 
                 m = re.match(TwRegex.unitdisk, line)
-                if m:
+                if m and m.group("port") != '-':
                     if verbosity:
                         print "Found Disk (unit)!", m.groupdict()
                     disk = ctl.ports[ int(m.group("port")[1:]) ]
