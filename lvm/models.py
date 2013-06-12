@@ -98,7 +98,7 @@ class VolumeGroup(models.Model):
 
         def checkmd(devnode):
             dev = pyudev.Device.from_name(ctx, "block", devnode)
-            if "MD_LEVEL" in dev.keys():
+            if "MD_LEVEL" in dev.keys() and "ID_TYPE" not in dev.keys():
                 for subdev in os.listdir(os.path.join("/sys/class/block", devnode, "slaves")):
                     checkmd(subdev)
             else:
