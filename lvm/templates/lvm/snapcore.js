@@ -21,7 +21,7 @@ Ext.oa.WizardTreeNodeUI = Ext.extend(Ext.tree.TreeNodeUI, {
     var img_children = new Ext.BoxComponent({
       autoEl: {
         tag: "img",
-        src: MEDIA_URL + "/oxygen/16x16/actions/dialog-ok-apply-gray.png",
+        src: MEDIA_URL + "/dialog-ok-apply-gray.png",
         style: "position: absolute;"
       },
       listeners: {
