@@ -830,9 +830,9 @@ class ConfManager(models.Manager):
                 last_execution=None,
                 host=Host.objects.get_current(),
                 user="root",
-                minute=data['minute'],
+                minute=data['minute'] if 'minute' in data else '',
                 hour=','.join(time_configs["h"]),
-                domonth=data['day_of_month'],
+                domonth=data['day_of_month'] if 'day_of_month' in data else '',
                 month=','.join(time_configs["moy"]),
                 doweek=','.join(time_configs["dow"]))
             jobconf.save()
