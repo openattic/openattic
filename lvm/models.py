@@ -778,8 +778,9 @@ class LVSnapshotJob(Cronjob):
         vol_confs = LogicalVolumeConf.objects.filter(snapshot_conf_id=self.conf)
         for vol_conf in vol_confs:
           lv = LogicalVolume.objects.get(id=vol_conf.volume.id)
+          now = datetime.datetime.now()
 
-          name = lv.name + '_snapshot_' + str(datetime.datetime.now())
+          name = lv.name + '_snapshot_' + str(now)
           name = re.sub(' ', '_', name)
           name = re.sub(':', '-', name)
 
@@ -787,6 +788,9 @@ class LVSnapshotJob(Cronjob):
           snap.name = name
           snap.megs = lv.megs * vol_conf.snapshot_space / 100
           snap.save()
+
+          self.last_execution = now
+          self.save()
 
     def save(self, *args, **kwargs):
         self.command = "echo Doing snapshot!"
