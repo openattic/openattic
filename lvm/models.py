@@ -785,7 +785,7 @@ class LVSnapshotJob(Cronjob):
 
           snap = LogicalVolume(snapshot=lv)
           snap.name = name
-          snap.megs = lv.megs * 20 / 100
+          snap.megs = lv.megs * vol_conf.snapshot_space / 100
           snap.save()
 
     def save(self, *args, **kwargs):
@@ -836,7 +836,7 @@ class ConfManager(models.Manager):
         volumes = conf_obj["volumes"]
         for volume in volumes:
             logical_volume = LogicalVolume.all_objects.get(id=volume)
-            volume_conf = LogicalVolumeConf(snapshot_conf=snapconf, volume=logical_volume)
+            volume_conf = LogicalVolumeConf(snapshot_conf=snapconf, volume=logical_volume, snapshot_space=20)
             volume_conf.save()
 
         def save_config(modelstack, itemdata, parent_ids):
@@ -862,3 +862,4 @@ class SnapshotConf(models.Model):
 class LogicalVolumeConf(models.Model):
     snapshot_conf   = models.ForeignKey(SnapshotConf)
     volume          = models.ForeignKey(LogicalVolume)
+    snapshot_space  = models.IntegerField(null=True, blank=True)
