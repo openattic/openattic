@@ -789,8 +789,13 @@ class LVSnapshotJob(Cronjob):
           snap.megs = lv.megs * vol_conf.snapshot_space / 100
           snap.save()
 
-          self.last_execution = now
-          self.save()
+        # plugin snapshots
+        for related in SnapshotConf._meta.get_all_related_objects():
+          if hasattr(related.model.objects, "do_config_snapshots"):
+            related.model.objects.do_config_snapshots(self.conf)
+
+        self.last_execution = datetime.datetime.now()
+        self.save()
 
     def save(self, *args, **kwargs):
         self.command = "echo Doing snapshot!"
@@ -820,7 +825,6 @@ class ConfManager(models.Manager):
         for time, numbers in time_configs.items():
           if len(numbers) > 0:
             numbers.sort(key=int)
-
         if True: #später or jobmäßigundso:
             jobconf = LVSnapshotJob(
                 start_time=data["startdate"],
