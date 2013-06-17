@@ -777,7 +777,7 @@ class LVSnapshotJob(Cronjob):
     def dosnapshot(self):
         vol_confs = LogicalVolumeConf.objects.filter(snapshot_conf_id=self.conf)
         for vol_conf in vol_confs:
-          lv = LogicalVolume.objects.get(id=vol_conf.volume.id)
+          lv = LogicalVolume.all_objects.get(id=vol_conf.volume.id)
           now = datetime.datetime.now()
 
           name = lv.name + '_snapshot_' + str(now)
