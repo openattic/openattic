@@ -34,7 +34,6 @@ from lvm             import blockdevices
 from lvm.conf        import settings as lvm_settings
 from cron.models     import Cronjob
 
-
 def validate_vg_name(value):
     from django.core.exceptions import ValidationError
     if value in ('.', '..'):
@@ -775,6 +774,11 @@ class LVSnapshotJob(Cronjob):
         return #lol
 
     def dosnapshot(self):
+        # plugin snapshots
+        for related in SnapshotConf._meta.get_all_related_objects():
+          if hasattr(related.model.objects, "do_config_snapshots"):
+            related.model.objects.do_config_snapshots(self.conf)
+
         vol_confs = LogicalVolumeConf.objects.filter(snapshot_conf_id=self.conf)
         for vol_conf in vol_confs:
           lv = LogicalVolume.all_objects.get(id=vol_conf.volume.id)
@@ -788,11 +792,6 @@ class LVSnapshotJob(Cronjob):
           snap.name = name
           snap.megs = lv.megs * vol_conf.snapshot_space / 100
           snap.save()
-
-        # plugin snapshots
-        for related in SnapshotConf._meta.get_all_related_objects():
-          if hasattr(related.model.objects, "do_config_snapshots"):
-            related.model.objects.do_config_snapshots(self.conf)
 
         self.last_execution = datetime.datetime.now()
         self.save()
