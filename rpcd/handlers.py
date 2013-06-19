@@ -550,3 +550,8 @@ class ProxyModelHandler(ProxyModelBaseHandler):
                 return self._convert_datetimes( self._get_proxy_object(peer).create(data) )
             except Fault, flt:
                 raise translate_exception(flt)
+
+
+def mkProxyModelHandler(model):
+    handler = type(model._meta.object_name + "Handler", (ModelHandler,), {"model": model})
+    return type(model._meta.object_name + "Proxy", (ProxyModelHandler, handler), {})
