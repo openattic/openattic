@@ -100,7 +100,7 @@ Description: Basic requirements for openATTIC
 Package: openattic-module-lvm
 Architecture: all
 Depends: ${misc:Depends}, openattic-base, lvm2, parted, python-pyudev,
- openattic-module-cron
+ openattic-module-cron, file
 Recommends: zfsonlinux, xfsprogs, btrfs-tools
 Suggests: ocfs2-tools
 Enhances: lvm2
