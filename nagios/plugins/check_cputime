@@ -35,6 +35,13 @@ except:
     print "Failed reading system statistics."
     sys.exit(2)
 
+# Count CPUs
+cpumax = 0
+for stats in sys_stats[1:]:
+    if stats[0].startswith("cpu"):
+        cpuidx = int(stats[0][3:])
+        cpumax = max(cpumax, cpuidx)
+cpucount = cpumax + 1
 
 cpu_stats = sys_stats[0]
 
@@ -93,7 +100,7 @@ if havestate:
         if savedstate.has_option("state", field):
             dticks = wrapdiff( int(stats[field]), savedstate.getint("state", field) )
             dsecs  = dticks / sys_hz
-            perfdata[field] = dsecs / dt * 100
+            perfdata[field] = dsecs / dt / cpucount * 100
 
     busy  = 100 - perfdata["idle"]
 
