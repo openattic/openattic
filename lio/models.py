@@ -80,7 +80,7 @@ class Portal(models.Model):
 class TPG(models.Model):
     tag         = models.IntegerField()
     target      = models.ForeignKey(Target)
-    portal      = models.ForeignKey(Portal, blank=True, null=True)
+    portals     = models.ManyToManyField(Portal, blank=True, null=True)
     chapauth    = models.BooleanField(default=False)
 
     @property
