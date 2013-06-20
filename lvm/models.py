@@ -774,10 +774,12 @@ class LVSnapshotJob(Cronjob):
         return #lol
 
     def dosnapshot(self):
-        # plugin snapshots
+        snaps_data = []
+
+        # do plugin snapshots
         for related in SnapshotConf._meta.get_all_related_objects():
           if hasattr(related.model.objects, "do_config_snapshots"):
-            related.model.objects.do_config_snapshots(self.conf)
+            snaps_data.append((related, related.model.objects.do_config_snapshots(self.conf)))
 
         vol_confs = LogicalVolumeConf.objects.filter(snapshot_conf_id=self.conf)
         for vol_conf in vol_confs:
