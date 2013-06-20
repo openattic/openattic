@@ -4,6 +4,7 @@
 from os.path   import realpath
 from rtslib.root   import RTSRoot
 from rtslib.target import FabricModule
+from rtslib.utils  import generate_wwn
 
 from django.db import models
 
@@ -40,6 +41,10 @@ class StorageObject(models.Model):
                 return lio_so
         raise KeyError("Storage Object not found")
 
+    def save(self, *args, **kwargs):
+        if self.id is not None:
+            self.wwn = generate_wwn("unit_serial")
+        models.Model.save(self, *args, **kwargs)
 
 class Target(models.Model):
     wwn         = models.CharField(max_length=250)

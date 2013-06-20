@@ -34,15 +34,13 @@ class SystemD(LockingPlugin):
             lio_bs = target.IBlockBackstore(0)
         else:
             lio_bs = target.FileIOBackstore(0)
-        storage = None
-        for sobj in lio_bs.storage_objects:
-            if sobj.name == mdl_bs.volume.name:
-                storage = sobj
-                break
-        if storage is None:
-            storage = lio_bs.storage_object(mdl_bs.volume.name, mdl_bs.volume.path)
-        mdl_bs.wwn = storage.wwn
-        mdl_bs.save()
+
+    @method(in_signature="i", out_signature="")
+    def storage_object_create(self, id):
+        mdl_so = models.StorageObject.objects.get(id=id)
+        lio_bs = mdl_so.backstore.lio_object
+        storage = lio_bs.storage_object(mdl_bs.volume.name, mdl_bs.volume.path, gen_wwn=False)
+        storage.wwn = mdl_so.wwn
 
     @method(in_signature="i", out_signature="")
     def target_create(self, id):
