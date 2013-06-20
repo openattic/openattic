@@ -795,6 +795,11 @@ class LVSnapshotJob(Cronjob):
           snap.megs = lv.megs * vol_conf.snapshot_space / 100
           snap.save()
 
+        # delete plugin snapshots
+        for (related, snap_data) in snaps_data:
+          if hasattr(related.model.objects, "delete_config_snapshots"):
+            related.model.objects.delete_config_snapshots(snap_data)
+
         self.last_execution = datetime.datetime.now()
         self.save()
 
