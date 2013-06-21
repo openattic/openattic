@@ -296,6 +296,15 @@ class SnapshotConfHandler(ModelHandler):
     def saveConfig(self, config):
       return self._getobj(SnapshotConf.objects.add_config(config))
 
+    def get_assoc_snapshots(self, id):
+      snaps_list = []
+
+      for snap_vol in SnapshotConf.objects.get(id=id).get_assoc_snapshots():
+          data = {'id': snap_vol.id, 'name': snap_vol.name, 'snapshot_id': id, 'createdate': snap_vol.createdate}
+          snaps_list.append(data)
+
+      return snaps_list
+
 RPCD_HANDLERS = [
     BlockDevicesHandler,
     VgProxy, LvProxy,
