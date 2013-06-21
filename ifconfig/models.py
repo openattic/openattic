@@ -94,6 +94,11 @@ def getHostDependentManagerClass(hostfilter="host"):
     return type("FilteredHostDependentManager", (HostDependentManager,), {"hostfilter": hostfilter})
 
 
+class HostGroup(models.Model):
+    name        = models.CharField(max_length=250)
+    hosts       = models.ManyToManyField(Host)
+
+
 class NetDevice(models.Model):
     host        = models.ForeignKey(Host)
     devname     = models.CharField(max_length=10)
