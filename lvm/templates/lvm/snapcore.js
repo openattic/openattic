@@ -1240,7 +1240,8 @@ Ext.oa.LVM__Snapcore_Panel = Ext.extend(Ext.Panel, {
               header    : gettext("Schedules"),
               dataIndex : 'confname'
             },{
-              header: gettext("Details")
+              header: gettext("Last execution"),
+              dataIndex : 'last_execution'
             }],
           }),
           store: config_store,
@@ -1272,7 +1273,7 @@ Ext.oa.LVM__Snapcore_Panel = Ext.extend(Ext.Panel, {
 });
 
 var config_store = new Ext.data.DirectStore({
-  fields  : ['confname', 'id', '__unicode__'],
+  fields  : ['confname', 'last_execution', 'id', '__unicode__'],
   autoLoad: 'true',
   directFn: lvm__SnapshotConf.all,
 });

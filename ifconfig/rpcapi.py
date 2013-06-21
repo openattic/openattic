@@ -21,8 +21,11 @@ from django.db   import models
 
 from rpcd.handlers import ModelHandler
 
-from ifconfig.models import Host, IPAddress, NetDevice
+from ifconfig.models import HostGroup, Host, IPAddress, NetDevice
 
+
+class HostGroupHandler(ModelHandler):
+    model = HostGroup
 
 class HostHandler(ModelHandler):
     model = Host
@@ -99,4 +102,4 @@ class NetDeviceHandler(ModelHandler):
         """ Determine whether or not the device with the given ID is configured with any services. """
         return NetDevice.objects.get(id=id).in_use
 
-RPCD_HANDLERS = [HostHandler, NetDeviceHandler, IPAddressHandler]
+RPCD_HANDLERS = [HostGroupHandler, HostHandler, NetDeviceHandler, IPAddressHandler]

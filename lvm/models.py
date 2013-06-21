@@ -765,7 +765,6 @@ class LVSnapshotJob(Cronjob):
     end_time    = models.DateTimeField(null=True, blank=True)
     is_active   = models.BooleanField()
     conf        = models.ForeignKey('SnapshotConf')
-    last_execution = models.DateTimeField(null=True, blank=True)
 
     objects     = HostDependentManager()
     all_objects = models.Manager()
@@ -774,10 +773,12 @@ class LVSnapshotJob(Cronjob):
         return #lol
 
     def dosnapshot(self):
-        # plugin snapshots
+        snaps_data = []
+
+        # do plugin snapshots
         for related in SnapshotConf._meta.get_all_related_objects():
           if hasattr(related.model.objects, "do_config_snapshots"):
-            related.model.objects.do_config_snapshots(self.conf)
+            snaps_data.append((related, related.model.objects.do_config_snapshots(self.conf)))
 
         vol_confs = LogicalVolumeConf.objects.filter(snapshot_conf_id=self.conf)
         for vol_conf in vol_confs:
@@ -793,8 +794,13 @@ class LVSnapshotJob(Cronjob):
           snap.megs = lv.megs * vol_conf.snapshot_space / 100
           snap.save()
 
-        self.last_execution = datetime.datetime.now()
-        self.save()
+        # delete plugin snapshots
+        for (related, snap_data) in snaps_data:
+          if hasattr(related.model.objects, "delete_config_snapshots"):
+            related.model.objects.delete_config_snapshots(snap_data)
+
+        self.conf.last_execution = datetime.datetime.now()
+        self.conf.save()
 
     def save(self, *args, **kwargs):
         self.command = "echo Doing snapshot!"
@@ -863,6 +869,7 @@ class SnapshotConf(models.Model):
     prescript       = models.CharField(null=True, max_length=255)
     postscript      = models.CharField(null=True, max_length=225)
     retention_time  = models.IntegerField(null=True, blank=True)
+    last_execution  = models.DateTimeField(null=True, blank=True)
 
     objects = ConfManager()
 
