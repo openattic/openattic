@@ -8,7 +8,7 @@ from rtslib.utils  import generate_wwn
 
 from django.db import models
 
-from ifconfig.models import Host, IPAddress
+from ifconfig.models import HostGroup, Host, IPAddress
 from lvm.models import LogicalVolume
 
 
@@ -45,6 +45,7 @@ class StorageObject(models.Model):
         if self.id is not None:
             self.wwn = generate_wwn("unit_serial")
         models.Model.save(self, *args, **kwargs)
+
 
 class Target(models.Model):
     wwn         = models.CharField(max_length=250)
@@ -85,7 +86,7 @@ class Portal(models.Model):
 class TPG(models.Model):
     tag         = models.IntegerField()
     target      = models.ForeignKey(Target)
-    portals     = models.ManyToManyField(Portal, blank=True, null=True)
+    portals     = models.ManyToManyField(Portal)
     chapauth    = models.BooleanField(default=False)
 
     @property
@@ -114,6 +115,7 @@ class LUN(models.Model):
     tpg         = models.ForeignKey(TPG)
     storageobj  = models.ForeignKey(StorageObject)
     lun_id      = models.IntegerField()
+    logicallun  = models.ForeignKey("LogicalLUN", blank=True, null=True)
 
     @property
     def lio_object(self):
@@ -123,4 +125,12 @@ class LUN(models.Model):
                 return lio_lun
         raise KeyError("LUN not found")
 
+
+class LogicalLUN(models.Model):
+    """ Mainmächtiges masterchief ultramodel of doom """
+    volume      = models.ForeignKey(LogicalVolume)
+    lun_id      = models.IntegerField(unique=True)
+    hostgroups  = models.ManyToManyField(HostGroup)
+    hosts       = models.ManyToManyField(Host)
+    targets     = models.ManyToManyField(Target)
 
