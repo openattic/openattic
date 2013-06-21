@@ -1245,6 +1245,17 @@ Ext.oa.LVM__Snapcore_Panel = Ext.extend(Ext.Panel, {
             }],
           }),
           store: config_store,
+          listeners : {
+            cellclick:  function(self, rowIndex, colIndex, e){
+              snap_store.removeAll();
+              var record = self.getStore().getAt(rowIndex);
+              snap_store.load({
+                params: {
+                  id: record.data.id,
+                }
+              })
+            }
+          },
         },{
           region    : 'south',
           id        : 'snapcore_south_panel',
