@@ -14,7 +14,6 @@
  *  GNU General Public License for more details.
 """
 
-from rtslib.root   import RTSRoot
 from rtslib        import target, tcm
 
 from systemd       import invoke, logged, LockingPlugin, method
@@ -29,11 +28,8 @@ class SystemD(LockingPlugin):
     @method(in_signature="i", out_signature="")
     def storage_object_create(self, id):
         mdl_so = models.StorageObject.objects.get(id=id)
-        if mdl_so.backstore.type == "iblock":
-            lio_bs = tcm.IBlockBackstore(0)
-        else:
-            lio_bs = tcm.FileIOBackstore(0)
-        storage = lio_bs.storage_object(mdl_bs.volume.name, mdl_bs.volume.path, gen_wwn=False)
+        lio_bs = mdl_so.backstore.lio_object
+        storage = lio_bs.storage_object(mdl_so.volume.name, mdl_so.volume.path, gen_wwn=False)
         storage.wwn = mdl_so.wwn
 
     @method(in_signature="i", out_signature="")
@@ -61,7 +57,7 @@ class SystemD(LockingPlugin):
     def lun_create(self, id):
         mdl_lun = models.LUN.objects.get(id=id)
         lio_tpg = mdl_lun.tpg.lio_object
-        lio_tpg.lun(mdl_lun.lun_id, mdl_lun.storageobj.lio_object, "%s at %s" % (self.storageobj.volume.name, Host.objects.get_current().name))
+        lio_tpg.lun(mdl_lun.lun_id, mdl_lun.storageobj.lio_object, "%s at %s" % (mdl_lun.storageobj.volume.name, Host.objects.get_current().name))
 
     @method(in_signature="ii", out_signature="")
     def portal_create(self, id, tpg_id):
