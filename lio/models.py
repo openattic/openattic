@@ -66,7 +66,7 @@ class Target(models.Model):
 
     @property
     def lio_object(self):
-        fabric = FabricModule(self.type)
+        fabric = target.FabricModule(self.type)
         if not fabric.exists:
             raise SystemError("fabric not loaded")
         for lio_tgt in fabric.targets:
