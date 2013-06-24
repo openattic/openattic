@@ -20,12 +20,14 @@ import re
 import os
 import os.path
 import datetime
+import shlex
 
 from django.contrib.auth.models import User
 from django.db import models
 from django.conf import settings
 from django.utils.translation   import ugettext_lazy as _
 
+from systemd         import invoke
 from ifconfig.models import Host, HostDependentManager, getHostDependentManagerClass
 from systemd.helpers import dbus_to_python
 from lvm.filesystems import Zfs, FileSystem, FILESYSTEMS
@@ -773,6 +775,8 @@ class LVSnapshotJob(Cronjob):
         return #lol
 
     def dosnapshot(self):
+        invoke(shlex.split(self.conf.prescript)) if len(self.conf.prescript) > 0 else None
+
         snaps_data = []
 
         # do plugin snapshots
@@ -801,6 +805,8 @@ class LVSnapshotJob(Cronjob):
 
         self.conf.last_execution = datetime.datetime.now()
         self.conf.save()
+
+        invoke(shlex.split(self.conf.postscript)) if len(self.conf.postscript) > 0 else None
 
     def save(self, *args, **kwargs):
         self.command = "echo Doing snapshot!"
