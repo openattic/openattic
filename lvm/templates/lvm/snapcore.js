@@ -955,6 +955,9 @@ Ext.oa.LVM__Snapcore_Panel = Ext.extend(Ext.Panel, {
                         nextpnl = 'wiz_close';
                         break;
                       case 'execute_later':
+                        config.data['startdate'] = null;
+                        config.data['enddate'] = null;
+
                         var date = Ext.getCmp('date_select').getValue();
                         var time = (Ext.getCmp('time_select').getValue()).split(':');
                         if(date && time)
@@ -969,6 +972,8 @@ Ext.oa.LVM__Snapcore_Panel = Ext.extend(Ext.Panel, {
                         }
                         break;
                       case 'scheduling':
+                        config.data['executedate'] = null;
+
                         nextpnl = 'wiz_sched32';
 
                         var startdate = Ext.getCmp('startdate_select').getValue();

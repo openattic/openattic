@@ -795,7 +795,8 @@ class LVSnapshotJob(Cronjob):
 
           snap = LogicalVolume(snapshot=lv)
           snap.name = name
-          snap.megs = lv.megs * vol_conf.snapshot_space / 100
+          snap.megs = lv.megs
+          #snap.megs = lv.megs * vol_conf.snapshot_space / 100
           snap.save()
 
         # delete plugin snapshots
