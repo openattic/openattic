@@ -65,12 +65,14 @@ class StorageObject(models.Model):
             dbus.SystemBus().get_object(settings.DBUS_IFACE_SYSTEMD, "/lio").storage_object_create(self.id)
 
 
+TARGET_TYPE_CHOICES = (
+    ("iscsi",   "iscsi"),
+    ("qla2xxx", "qla2xxx"),
+)
+
 class Target(models.Model):
     wwn         = models.CharField(max_length=250)
-    type        = models.CharField(max_length=10, choices=(
-                    ("iscsi",   "iscsi"),
-                    ("qla2xxx", "qla2xxx"),
-                  ))
+    type        = models.CharField(max_length=10, choices=TARGET_TYPE_CHOICES)
     host        = models.ForeignKey(Host)
 
     objects     = HostDependentManager()
@@ -104,10 +106,7 @@ class Target(models.Model):
 class Initiator(models.Model):
     host        = models.ForeignKey(Host)
     wwn         = models.CharField(max_length=250, unique=True)
-    type        = models.CharField(max_length=10, choices=(
-                    ("iscsi",   "iscsi"),
-                    ("qla2xxx", "qla2xxx"),
-                  ))
+    type        = models.CharField(max_length=10, choices=TARGET_TYPE_CHOICES)
 
 
 class Portal(models.Model):
@@ -220,9 +219,12 @@ class LUN(models.Model):
             dbus.SystemBus().get_object(settings.DBUS_IFACE_SYSTEMD, "/lio").lun_create(self.id)
 
 
+
+
 class LogicalLUN(models.Model):
     """ Mainmächtiges masterchief ultramodel of doom """
     volume      = models.ForeignKey(LogicalVolume, unique=True)
+    type        = models.CharField(max_length=10, choices=TARGET_TYPE_CHOICES)
     lun_id      = models.IntegerField(unique=True)
     hostgroups  = models.ManyToManyField(HostGroup)
     hosts       = models.ManyToManyField(Host)
