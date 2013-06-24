@@ -64,9 +64,9 @@ class SystemD(LockingPlugin):
         lio_tpg = mdl_lun.tpg.lio_object
         lio_tpg.lun(mdl_lun.lun_id, mdl_lun.storageobj.lio_object, "%s at %s" % (self.storageobj.volume.name, Host.objects.get_current().name))
 
-    @method(in_signature="i", out_signature="")
+    @method(in_signature="ii", out_signature="")
     def portal_create(self, id, tpg_id):
         mdl_ptl = models.Portal.objects.get(id=id)
         mdl_tpg = models.TPG.objects.get(id=tpg_id)
         lio_tpg = mdl_tpg.lio_object
-        lio_tpg.portal(mdl_ptl.ipaddress.host_part, mdl_ptl.port)
+        lio_tpg.network_portal(mdl_ptl.ipaddress.host_part, mdl_ptl.port)
