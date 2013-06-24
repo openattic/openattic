@@ -14,15 +14,24 @@
  *  GNU General Public License for more details.
 """
 
-from rpcd.handlers import mkProxyModelHandler
+from rpcd.handlers import ModelHandler, mkProxyModelHandler
 
-from lio.models import Backstore, Target, Portal, TPG, LUN, ACL
+from lio import models
+
+class LogicalLunHandler(ModelHandler):
+    model = models.LogicalLUN
+
+class InitiatorHandler(ModelHandler):
+    model = models.Initiator
 
 RPCD_HANDLERS = [
-    mkProxyModelHandler(Backstore),
-    mkProxyModelHandler(Target),
-    mkProxyModelHandler(Portal),
-    mkProxyModelHandler(TPG),
-    mkProxyModelHandler(LUN),
-    mkProxyModelHandler(ACL),
+    mkProxyModelHandler(models.Backstore),
+    mkProxyModelHandler(models.StorageObject),
+    mkProxyModelHandler(models.Target),
+    mkProxyModelHandler(models.Portal),
+    mkProxyModelHandler(models.TPG),
+    mkProxyModelHandler(models.LUN),
+    mkProxyModelHandler(models.ACL),
+    InitiatorHandler,
+    LogicalLunHandler,
     ]
