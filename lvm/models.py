@@ -20,12 +20,14 @@ import re
 import os
 import os.path
 import datetime
+import shlex
 
 from django.contrib.auth.models import User
 from django.db import models
 from django.conf import settings
 from django.utils.translation   import ugettext_lazy as _
 
+from systemd         import invoke
 from ifconfig.models import Host, HostDependentManager, getHostDependentManagerClass
 from systemd.helpers import dbus_to_python
 from lvm.filesystems import Zfs, FileSystem, FILESYSTEMS
@@ -773,6 +775,8 @@ class LVSnapshotJob(Cronjob):
         return #lol
 
     def dosnapshot(self):
+        invoke(shlex.split(self.conf.prescript)) if len(self.conf.prescript) > 0 else None
+
         snaps_data = []
 
         # do plugin snapshots
@@ -802,6 +806,8 @@ class LVSnapshotJob(Cronjob):
         self.conf.last_execution = datetime.datetime.now()
         self.conf.save()
 
+        invoke(shlex.split(self.conf.postscript)) if len(self.conf.postscript) > 0 else None
+
     def save(self, *args, **kwargs):
         self.command = "echo Doing snapshot!"
         Cronjob.save(self, *args, **kwargs)
@@ -817,7 +823,7 @@ class ConfManager(models.Manager):
                 related.model.objects.get_available_objects(models)
 
         data = conf_obj["data"]
-        snapconf = SnapshotConf(confname=data["configname"], prescript=data["prescript"], postscript=data["postscript"], retention_time=data["retention_time"])
+        snapconf = SnapshotConf(confname=data["configname"], prescript=data["prescript"], postscript=data["postscript"], retention_time=data["retention_time"], last_execution=None)
         snapconf.save()
 
         time_configs = {'h': [], 'moy': [], 'dow': []}
@@ -836,7 +842,6 @@ class ConfManager(models.Manager):
                 end_time=data["enddate"],
                 is_active=["active"],
                 conf=snapconf,
-                last_execution=None,
                 host=Host.objects.get_current(),
                 user="root",
                 minute=data['minute'] if 'minute' in data else '',
