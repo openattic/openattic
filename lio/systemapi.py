@@ -15,6 +15,7 @@
 """
 
 from rtslib          import target, tcm
+from tcm_dump        import tcm_full_backup
 
 from ifconfig.models import Host
 from systemd         import invoke, logged, LockingPlugin, method
@@ -72,3 +73,9 @@ class SystemD(LockingPlugin):
         mdl_acl = models.ACL.objects.get(id=id)
         lio_tpg = mdl_acl.tpg.lio_object
         lio_tpg.node_acl(mdl_acl.initiator.wwn)
+
+    @method(in_signature="", out_signature="")
+    def saveconfig(self):
+        # ripped from /usr/share/pyshared/targetcli/ui_root.py (ui_command_saveconfig function)
+        tcm_full_backup(None, None, '1', None)
+
