@@ -8,7 +8,7 @@ from rtslib.utils  import generate_wwn
 
 from django.db import models
 
-from ifconfig.models import HostGroup, Host, IPAddress
+from ifconfig.models import HostGroup, Host, IPAddress, HostDependentManager, getHostDependentManagerClass
 from lvm.models import LogicalVolume
 
 
@@ -19,6 +19,9 @@ class Backstore(models.Model):
                     ("iblock", "iblock"),
                   ))
     host        = models.ForeignKey(Host)
+
+    objects     = HostDependentManager()
+    all_objects = models.Manager()
 
     @property
     def lio_object(self):
@@ -33,6 +36,9 @@ class StorageObject(models.Model):
     backstore   = models.ForeignKey(Backstore)
     volume      = models.ForeignKey(LogicalVolume)
     wwn         = models.CharField(max_length=250, blank=True)
+
+    objects     = getHostDependentManagerClass("backstore__host")()
+    all_objects = models.Manager()
 
     @property
     def lio_object(self):
@@ -55,6 +61,9 @@ class Target(models.Model):
                     ("qla2xxx", "qla2xxx"),
                   ))
     host        = models.ForeignKey(Host)
+
+    objects     = HostDependentManager()
+    all_objects = models.Manager()
 
     @property
     def lio_object(self):
@@ -80,6 +89,9 @@ class Portal(models.Model):
     ipaddress   = models.ForeignKey(IPAddress)
     port        = models.IntegerField(default=3260)
 
+    objects     = getHostDependentManagerClass("ipaddress__netdevice__host")()
+    all_objects = models.Manager()
+
     @property
     def lio_object(self):
         r = RTSRoot()
@@ -95,6 +107,9 @@ class TPG(models.Model):
     portals     = models.ManyToManyField(Portal)
     chapauth    = models.BooleanField(default=False)
 
+    objects     = getHostDependentManagerClass("target__host")()
+    all_objects = models.Manager()
+
     @property
     def lio_object(self):
         lio_tgt = self.target.lio_object
@@ -107,6 +122,9 @@ class TPG(models.Model):
 class ACL(models.Model):
     tpg         = models.ForeignKey(TPG)
     initiator   = models.ForeignKey(Initiator)
+
+    objects     = getHostDependentManagerClass("tpg__target__host")()
+    all_objects = models.Manager()
 
     @property
     def lio_object(self):
@@ -122,6 +140,9 @@ class LUN(models.Model):
     storageobj  = models.ForeignKey(StorageObject)
     lun_id      = models.IntegerField()
     logicallun  = models.ForeignKey("LogicalLUN", blank=True, null=True)
+
+    objects     = getHostDependentManagerClass("storageobj__backstore__host")()
+    all_objects = models.Manager()
 
     @property
     def lio_object(self):
