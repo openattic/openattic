@@ -18,6 +18,7 @@ class Backstore(models.Model):
                     ("fileio", "fileio"),
                     ("iblock", "iblock"),
                   ))
+    host        = models.ForeignKey(Host)
 
     @property
     def lio_object(self):
@@ -53,6 +54,7 @@ class Target(models.Model):
                     ("iscsi",   "iscsi"),
                     ("qla2xxx", "qla2xxx"),
                   ))
+    host        = models.ForeignKey(Host)
 
     @property
     def lio_object(self):
