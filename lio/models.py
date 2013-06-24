@@ -15,6 +15,45 @@ from ifconfig.models import HostGroup, Host, IPAddress, HostDependentManager, ge
 from lvm.models      import LogicalVolume
 
 
+
+#                          +----------------------------+
+#                          |+--------------------------+|
+#                          ||         SRS MODELS       ||
+#                          |+--------------------------+|
+#                          +----------------------------+
+#
+#
+#
+#
+#             .----------------------  LogicalLUN ======##==========##
+#             |                        ^  ||            ||          ||
+#             |                        |  ||            ||          vv
+#             |                        |  ||            ||         HostGroup
+#             |                  .-----'  ||            ||          ||
+#             |                  |        ||            ||          ||
+#             v                  |        vv            ||          vv
+#      VG <-- LV                 |       Target --------##======>> Host <--+-------.
+#      |      ^                  |         ^                         ^     |       |
+#      |      |                  |         |                         |     |       |
+#      |      |                  |         |                         |     |       |
+#      |    StorageObject <---- LUN ----> TPG <---- ACL ----> Initiator    |       |
+#      v      |                            ^                               |       |
+#      |      v                            |                               |       |
+#      |    Backstore                     Portal ----> IPAddress ----> NetDevice   |
+#      |      |                                                                    |
+#      '------+------>-------------------------------------------------------------'
+#
+#
+#
+#  +----------------------------+
+#  |+--------------------------+|
+#  || -----> ForeignKey        ||
+#  || =====> ManyToManyField   ||
+#  |+--------------------------+|
+#  +----------------------------+
+
+
+
 class Backstore(models.Model):
     store_id    = models.IntegerField()
     type        = models.CharField(max_length=10, choices=(
