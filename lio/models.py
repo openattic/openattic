@@ -67,6 +67,14 @@ from lvm.models      import LogicalVolume
 
 
 
+pre_install     = Signal()
+post_install    = Signal()
+
+pre_uninstall   = Signal()
+post_uninstall  = Signal()
+
+
+
 class Backstore(models.Model):
     store_id    = models.IntegerField()
     type        = models.CharField(max_length=10, choices=(
@@ -114,7 +122,9 @@ class StorageObject(models.Model):
             self.wwn = self.volume.uuid
         models.Model.save(self, *args, **kwargs)
         if install:
+            pre_install.send(sender=StorageObject, instance=self)
             dbus.SystemBus().get_object(settings.DBUS_IFACE_SYSTEMD, "/lio").storage_object_create(self.id)
+            post_install.send(sender=StorageObject, instance=self)
 
 
 TARGET_TYPE_CHOICES = (
@@ -152,7 +162,9 @@ class Target(models.Model):
                 }[self.type])
         models.Model.save(self, *args, **kwargs)
         if install:
+            pre_install.send(sender=Target, instance=self)
             dbus.SystemBus().get_object(settings.DBUS_IFACE_SYSTEMD, "/lio").target_create(self.id)
+            post_install.send(sender=Target, instance=self)
 
 
 class Initiator(models.Model):
@@ -204,8 +216,9 @@ class TPG(models.Model):
         install = (self.id is None)
         models.Model.save(self, *args, **kwargs)
         if install:
-            iface = dbus.SystemBus().get_object(settings.DBUS_IFACE_SYSTEMD, "/lio")
-            iface.tpg_create(self.id)
+            pre_install.send(sender=TPG, instance=self)
+            dbus.SystemBus().get_object(settings.DBUS_IFACE_SYSTEMD, "/lio").tpg_create(self.id)
+            post_install.send(sender=TPG, instance=self)
 
 
 def __tpg_portals_changed(**kwargs):
@@ -355,5 +368,5 @@ def __tpg_added(**kwargs):
     for llun in tpg.target.logicallun_set.all():
         __logicallun_targets_changed(reverse=False, action="post_add", instance=llun, pk_set=[tpg.target.id])
 
-models.signals.post_save.connect(__tpg_added, sender=TPG)
+post_install.connect(__tpg_added, sender=TPG)
 
