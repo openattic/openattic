@@ -15,8 +15,7 @@
 """
 
 from rtslib.root   import RTSRoot
-from rtslib        import target
-from rtslib.tcm    import IBlockBackstore, FileIOBackstore
+from rtslib        import target, tcm
 
 from systemd       import invoke, logged, LockingPlugin, method
 
@@ -31,9 +30,9 @@ class SystemD(LockingPlugin):
     def storage_object_create(self, id):
         mdl_so = models.StorageObject.objects.get(id=id)
         if mdl_so.backstore.type == "iblock":
-            lio_bs = target.IBlockBackstore(0)
+            lio_bs = tcm.IBlockBackstore(0)
         else:
-            lio_bs = target.FileIOBackstore(0)
+            lio_bs = tcm.FileIOBackstore(0)
         storage = lio_bs.storage_object(mdl_bs.volume.name, mdl_bs.volume.path, gen_wwn=False)
         storage.wwn = mdl_so.wwn
 
