@@ -89,7 +89,7 @@ class Portal(models.Model):
     ipaddress   = models.ForeignKey(IPAddress)
     port        = models.IntegerField(default=3260)
 
-    objects     = getHostDependentManagerClass("ipaddress__netdevice__host")()
+    objects     = getHostDependentManagerClass("ipaddress__device__host")()
     all_objects = models.Manager()
 
     @property
