@@ -67,11 +67,11 @@ from lvm.models      import LogicalVolume
 
 
 
-pre_install     = Signal()
-post_install    = Signal()
+pre_install     = models.signals.Signal()
+post_install    = models.signals.Signal()
 
-pre_uninstall   = Signal()
-post_uninstall  = Signal()
+pre_uninstall   = models.signals.Signal()
+post_uninstall  = models.signals.Signal()
 
 
 
