@@ -155,9 +155,17 @@ class TPG(models.Model):
         if install:
             iface = dbus.SystemBus().get_object(settings.DBUS_IFACE_SYSTEMD, "/lio")
             iface.tpg_create(self.id)
-            # TODO: dis ain't gon' work, but it's basically what we need to do
-            for portal in self.portals.all():
-                iface.portal_create(portal.id, self.id)
+
+
+def __tpg_portals_changed(**kwargs):
+    if kwargs["reverse"] or kwargs["action"] != "post_add":
+        return
+    tpg   = kwargs["instance"]
+    iface = dbus.SystemBus().get_object(settings.DBUS_IFACE_SYSTEMD, "/lio")
+    for portal_id in kwargs["pk_set"]:
+        iface.portal_create(portal_id, tpg.id)
+
+models.signals.m2m_changed.connect(__tpg_portals_changed, sender=TPG.portals.through)
 
 
 class ACL(models.Model):
