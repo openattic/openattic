@@ -22,6 +22,8 @@ for fabric in r.fabric_modules:
             print "       -> TPG %s" % tpg.tag
             for acl in tpg.node_acls:
                 print "          -> ACL %s" % acl.node_wwn
+                for mlun in acl.mapped_luns:
+                    print "              -> Mapped LUN %d: %s" % (mlun.mapped_lun, mlun.tpg_lun.storage_object.udev_path)
             for lun in tpg.luns:
                 print "          -> LUN %s" % lun.storage_object.udev_path
             for portal in tpg.network_portals:
