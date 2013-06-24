@@ -352,6 +352,16 @@ def __logicallun_hosts_changed(**kwargs):
 models.signals.m2m_changed.connect(__logicallun_hosts_changed, sender=LogicalLUN.hosts.through)
 
 
+def __hostgroup_hosts_changed(**kwargs):
+    if kwargs["reverse"] or kwargs["action"] != "post_add":
+        return
+    hostgrp = kwargs["instance"]
+    for llun in hostgrp.logicallun_set.all():
+        __logicallun_hosts_changed(reverse=False, action="post_add", instance=llun, pk_set=kwargs["pk_set"])
+
+models.signals.m2m_changed.connect(__hostgroup_hosts_changed, sender=HostGroup.hosts.through)
+
+
 def __logicallun_targets_changed(**kwargs):
     if kwargs["reverse"] or kwargs["action"] != "post_add":
         return
