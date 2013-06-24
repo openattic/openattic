@@ -32,7 +32,7 @@ from lvm.models      import LogicalVolume
 #             │                  ┌─────┘   ║             ║           ║
 #             │                  │         ║             ║           ║
 #             v                  │         v             ║           v
-#      VG <── LV                 │       Target ─────────╩══════>> Host <──┬───────┐
+#      VG <── LV                 │       Target ─────────╩═══════> Host <──┬───────┐
 #      │      ^                  │         ^                         ^     │       │
 #      │      │                  │         │                         │     │       │
 #      │      │                  │         │                         │     │       │
