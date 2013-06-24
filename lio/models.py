@@ -348,3 +348,12 @@ def __logicallun_targets_changed(**kwargs):
                 lun.save()
 
 models.signals.m2m_changed.connect(__logicallun_targets_changed, sender=LogicalLUN.targets.through)
+
+
+def __tpg_added(**kwargs):
+    tpg = kwargs["instance"]
+    for llun in tpg.target.logicallun_set.all():
+        __logicallun_targets_changed(reverse=False, action="post_add", instance=llun, pk_set=[tpg.target.id])
+
+models.signals.post_save.connect(__tpg_added, sender=TPG)
+
