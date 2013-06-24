@@ -70,3 +70,9 @@ class SystemD(LockingPlugin):
         mdl_tpg = models.TPG.objects.get(id=tpg_id)
         lio_tpg = mdl_tpg.lio_object
         lio_tpg.network_portal(mdl_ptl.ipaddress.host_part, mdl_ptl.port)
+
+    @method(in_signature="i", out_signature="")
+    def acl_create(self, id):
+        mdl_acl = models.ACL.objects.get(id=id)
+        lio_tpg = mdl_acl.tpg.lio_object
+        lio_tpg.node_acl(initator.wwn)
