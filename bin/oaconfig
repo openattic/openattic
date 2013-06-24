@@ -89,6 +89,8 @@ case $1 in
 			SYNCAGAIN=yes
 		else
 			SYNCAGAIN=no
+			# restart the daemons so they don't keep any locks open
+			$0 reload
 		fi
 		# Initialize the schema so our daemons can start
 		su "$OAUSER" -c 'python manage.py syncdb --noinput'
