@@ -23,6 +23,9 @@ class Backstore(models.Model):
     objects     = HostDependentManager()
     all_objects = models.Manager()
 
+    class Meta:
+        unique_together = [('store_id', 'host')]
+
     @property
     def lio_object(self):
         if self.type == "iblock":
@@ -38,6 +41,9 @@ class StorageObject(models.Model):
 
     objects     = getHostDependentManagerClass("backstore__host")()
     all_objects = models.Manager()
+
+    class Meta:
+        unique_together = [('backstore', 'volume')]
 
     @property
     def lio_object(self):
@@ -64,6 +70,9 @@ class Target(models.Model):
     objects     = HostDependentManager()
     all_objects = models.Manager()
 
+    class Meta:
+        unique_together = [('wwn', 'host')]
+
     @property
     def lio_object(self):
         fabric = target.FabricModule(self.type)
@@ -77,7 +86,7 @@ class Target(models.Model):
 
 class Initiator(models.Model):
     host        = models.ForeignKey(Host)
-    wwn         = models.CharField(max_length=250)
+    wwn         = models.CharField(max_length=250, unique=True)
     type        = models.CharField(max_length=10, choices=(
                     ("iscsi",   "iscsi"),
                     ("qla2xxx", "qla2xxx"),
@@ -90,6 +99,9 @@ class Portal(models.Model):
 
     objects     = getHostDependentManagerClass("ipaddress__device__host")()
     all_objects = models.Manager()
+
+    class Meta:
+        unique_together = [('ipaddress', 'port')]
 
     @property
     def lio_object(self):
@@ -109,6 +121,9 @@ class TPG(models.Model):
     objects     = getHostDependentManagerClass("target__host")()
     all_objects = models.Manager()
 
+    class Meta:
+        unique_together = [('tag', 'target')]
+
     @property
     def lio_object(self):
         lio_tgt = self.target.lio_object
@@ -124,6 +139,9 @@ class ACL(models.Model):
 
     objects     = getHostDependentManagerClass("tpg__target__host")()
     all_objects = models.Manager()
+
+    class Meta:
+        unique_together = [('tpg', 'initiator')]
 
     @property
     def lio_object(self):
@@ -142,6 +160,9 @@ class LUN(models.Model):
 
     objects     = getHostDependentManagerClass("storageobj__backstore__host")()
     all_objects = models.Manager()
+
+    class Meta:
+        unique_together = [('tpg', 'storageobj'), ('logicallun', 'storageobj'), ('logicallun', 'tpg')]
 
     @property
     def lio_object(self):
