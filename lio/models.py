@@ -407,3 +407,17 @@ def __tpg_added(**kwargs):
 
 post_install.connect(__tpg_added, sender=TPG)
 
+
+def __initiator_added(**kwargs):
+    initiator = kwargs["instance"]
+    llun_ids = set()
+    for hostgrp in initiator.host.hostgroup_set.all():
+        for llun in hostgrp.logicallun_set.values("id"):
+            llun_ids.add(llun["id"])
+    for llun in initiator.host.logicallun_set.values("id"):
+        llun_ids.add(llun["id"])
+    for llun_id in llun_ids:
+        llun = LogicalLUN.objects.get(id=llun_id)
+        __logicallun_hosts_changed(reverse=False, action="post_add", instance=llun, pk_set=[initiator.host.id])
+
+models.signals.post_save.connect()
