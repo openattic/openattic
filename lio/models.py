@@ -297,7 +297,7 @@ class LogicalLUN(models.Model):
 
 
 def __logicallun_hostgroups_changed(**kwargs):
-    if kwargs["reverse"]:
+    if kwargs["reverse"] or kwargs["action"] != "post_add":
         return
     host_ids = set()
     for hostgrp_id in kwargs["pk_set"]:
@@ -321,6 +321,7 @@ def __logicallun_hosts_changed(**kwargs):
                 host = Host.objects.get(id=host_id)
                 for initiator in host.initiator_set.filter(type=llun.type):
                     ACL.objects.get_or_create(tpg=tpg, initiator=initiator)
+
 
 models.signals.m2m_changed.connect(__logicallun_hosts_changed, sender=LogicalLUN.hosts.through)
 
