@@ -3,7 +3,7 @@
 
 from os.path   import realpath
 from rtslib.root   import RTSRoot
-from rtslib.target import FabricModule
+from rtslib        import target, tcm
 from rtslib.utils  import generate_wwn
 
 from django.db import models
@@ -13,7 +13,7 @@ from lvm.models import LogicalVolume
 
 
 class Backstore(models.Model):
-    name        = models.CharField(max_length=250)
+    store_id    = models.IntegerField()
     type        = models.CharField(max_length=10, choices=(
                     ("fileio", "fileio"),
                     ("iblock", "iblock"),
@@ -25,11 +25,10 @@ class Backstore(models.Model):
 
     @property
     def lio_object(self):
-        r = RTSRoot()
-        for lio_bs in r.backstores:
-            if lio_bs.name == self.name:
-                return lio_bs
-        raise KeyError("Backstore not found")
+        if self.type == "iblock":
+            return tcm.IBlockBackstore(self.store_id)
+        else:
+            return tcm.FileIOBackstore(self.store_id)
 
 
 class StorageObject(models.Model):
