@@ -68,6 +68,10 @@ class Target(models.Model):
 class Initiator(models.Model):
     host        = models.ForeignKey(Host)
     wwn         = models.CharField(max_length=250)
+    type        = models.CharField(max_length=10, choices=(
+                    ("iscsi",   "iscsi"),
+                    ("qla2xxx", "qla2xxx"),
+                  ))
 
 
 class Portal(models.Model):
