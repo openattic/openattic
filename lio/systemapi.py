@@ -59,7 +59,10 @@ class SystemD(LockingPlugin):
     def lun_create(self, id):
         mdl_lun = models.LUN.objects.get(id=id)
         lio_tpg = mdl_lun.tpg.lio_object
-        lio_tpg.lun(mdl_lun.lun_id, mdl_lun.storageobj.lio_object, "%s at %s" % (mdl_lun.storageobj.volume.name, Host.objects.get_current().name))
+        lio_lun = lio_tpg.lun(mdl_lun.lun_id, mdl_lun.storageobj.lio_object,
+                        "%s at %s" % (mdl_lun.storageobj.volume.name, Host.objects.get_current().name))
+        for mdl_acl in mdl_lun.tpg.acl_set.all():
+            mdl_acl.lio_object.mapped_lun(mdl_lun.lun_id, lio_lun)
 
     @method(in_signature="ii", out_signature="")
     def portal_create(self, id, tpg_id):
