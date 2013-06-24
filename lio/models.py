@@ -1,15 +1,18 @@
 # -*- coding: utf-8 -*-
 # kate: space-indent on; indent-width 4; replace-tabs on;
 
+import dbus
+
 from os.path   import realpath
 from rtslib.root   import RTSRoot
 from rtslib        import target, tcm
 from rtslib.utils  import generate_wwn
 
-from django.db import models
+from django.db   import models
+from django.conf import settings
 
 from ifconfig.models import HostGroup, Host, IPAddress, HostDependentManager, getHostDependentManagerClass
-from lvm.models import LogicalVolume
+from lvm.models      import LogicalVolume
 
 
 class Backstore(models.Model):
@@ -54,9 +57,12 @@ class StorageObject(models.Model):
         raise KeyError("Storage Object not found")
 
     def save(self, *args, **kwargs):
+        install = (self.id is None)
         if not self.wwn:
             self.wwn = self.volume.uuid
         models.Model.save(self, *args, **kwargs)
+        if install:
+            dbus.SystemBus().get_object(settings.DBUS_IFACE_SYSTEMD, "/lio").storage_object_create(self.id)
 
 
 class Target(models.Model):
@@ -84,12 +90,15 @@ class Target(models.Model):
         raise KeyError("Target not found")
 
     def save(self, *args, **kwargs):
+        install = (self.id is None)
         if not self.wwn:
             self.wwn = generate_wwn({
                 'qla2xxx': 'free',
                 'iscsi':   'iqn'
                 }[self.type])
         models.Model.save(self, *args, **kwargs)
+        if install:
+            dbus.SystemBus().get_object(settings.DBUS_IFACE_SYSTEMD, "/lio").target_create(self.id)
 
 
 class Initiator(models.Model):
@@ -140,6 +149,16 @@ class TPG(models.Model):
                 return lio_tpg
         raise KeyError("Target Portal Group not found")
 
+    def save(self, *args, **kwargs):
+        install = (self.id is None)
+        models.Model.save(self, *args, **kwargs)
+        if install:
+            iface = dbus.SystemBus().get_object(settings.DBUS_IFACE_SYSTEMD, "/lio")
+            iface.tpg_create(self.id)
+            # TODO: dis ain't gon' work, but it's basically what we need to do
+            for portal in self.portals.all():
+                iface.portal_create(portal.id, self.id)
+
 
 class ACL(models.Model):
     tpg         = models.ForeignKey(TPG)
@@ -158,6 +177,12 @@ class ACL(models.Model):
             if lio_acl.node_wwn == self.initiator.wwn:
                 return lio_acl
         raise KeyError("ACL not found")
+
+    def save(self, *args, **kwargs):
+        install = (self.id is None)
+        models.Model.save(self, *args, **kwargs)
+        if install:
+            dbus.SystemBus().get_object(settings.DBUS_IFACE_SYSTEMD, "/lio").acl_create(self.id)
 
 
 class LUN(models.Model):
@@ -179,6 +204,12 @@ class LUN(models.Model):
             if realpath(lio_lun.storage_object.udev_path) == self.storageobj.volume.dmdevice:
                 return lio_lun
         raise KeyError("LUN not found")
+
+    def save(self, *args, **kwargs):
+        install = (self.id is None)
+        models.Model.save(self, *args, **kwargs)
+        if install:
+            dbus.SystemBus().get_object(settings.DBUS_IFACE_SYSTEMD, "/lio").lun_create(self.id)
 
 
 class LogicalLUN(models.Model):
