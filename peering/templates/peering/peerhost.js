@@ -27,39 +27,58 @@ Ext.oa.Peering__Peerhost_Panel = Ext.extend(Ext.oa.ShareGridPanel, {
   },
   store: {
     fields: [{
-      name: 'volumename',
-      mapping: 'volume',
-      convert: function( val, row ){
-        "use strict";
-        if(val){
-          return val.name;
-        }
-        return "";
-      }
+      name: 'hostname',
+      mapping: 'host',
+      convert: toUnicode
     }]
   },
   columns: [{
-    header: gettext('Name'),
-    width: 100,
-    dataIndex: "name"
-  }, {
     header: gettext('Hostname'),
     width: 200,
     dataIndex: "hostname"
   }],
   form: {
     items: [{
-      xtype: 'textfield',
-      fieldLabel: gettext('Name'),
-      name: "name",
-      maskRe: /[a-zA-Z0-9\-]/,
-      regex: /^[a-zA-Z][a-zA-Z0-9\-]+$/,
-      regexText: gettext("Must be a valid hostname.")
+      xtype:      'combo',
+      fieldLabel: gettext('Host'),
+      allowBlank: true,
+      anchor:     '-20px',
+      hiddenName: 'host',
+      store: {
+        xtype: "directstore",
+        fields: ["id", "name"],
+        directFn: ifconfig__Host.all
+      },
+      typeAhead:     true,
+      triggerAction: 'all',
+      emptyText:     gettext('Select...'),
+      selectOnFocus: true,
+      displayField:  'name',
+      valueField:    'id',
+      ref:           'hostfield',
+      listeners: {
+        afterrender: function(self){
+          self.store.load();
+        },
+        select: function(self, record, index){
+          "use strict";
+          if( self.ownerCt.urlfield.getValue() === self.ownerCt.urlfield.last_auto ){
+            self.ownerCt.urlfield.last_auto = String.format("http://__:<<APIKEY>>@{0}:31234/", record.data.name);
+            self.ownerCt.urlfield.setValue(self.ownerCt.urlfield.last_auto);
+          }
+        }
+      }
     }, {
       xtype: 'textfield',
       fieldLabel: gettext('Base URL'),
       name: "base_url",
-      value: "http://__:<<APIKEY>>@<<HOST>>:31234/"
+      ref:  "urlfield",
+      value: "http://__:<<APIKEY>>@<<HOST>>:31234/",
+      listeners: {
+        afterrender: function(self){
+          self.last_auto = "http://__:<<APIKEY>>@<<HOST>>:31234/";
+        },
+      }
     } ]
   }
 });

@@ -20,13 +20,10 @@ from peering.models import PeerHost
 
 class PeerHostHandler(ModelHandler):
     model  = PeerHost
-    fields = ["id", "name"]
 
     def _override_get(self, obj, data):
         if obj.base_url:
             data['base_url'] = unicode(obj.base_url)
-            data['hostname'] = obj.base_url.hostname
-            data['port']     = obj.base_url.port
         return data
 
     def ping(self, id):
