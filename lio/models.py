@@ -83,6 +83,14 @@ class Target(models.Model):
                 return lio_tgt
         raise KeyError("Target not found")
 
+    def save(self, *args, **kwargs):
+        if not self.wwn:
+            self.wwn = generate_wwn({
+                'qla2xxx': 'free',
+                'iscsi':   'iqn'
+                }[self.type])
+        models.Model.save(self, *args, **kwargs)
+
 
 class Initiator(models.Model):
     host        = models.ForeignKey(Host)
