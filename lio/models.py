@@ -317,7 +317,15 @@ def __logicallun_targets_changed(**kwargs):
         return
     llun  = kwargs["instance"]
     localhost = Host.objects.get_current()
-    storobj   = StorageObject.objects.get(volume=llun.volume)
+
+    try:
+        storobj = StorageObject.objects.get(volume=llun.volume)
+    except StorageObject.DoesNotExist:
+        bstore  = Backstore(type="iblock", store_id=llun.lun_id, host=localhost)
+        bstore.save()
+        storobj = StorageObject(backstore=bstore, volume=llun.volume, wwn=llun.volume.uuid)
+        storobj.save()
+
     for target_id in kwargs["pk_set"]:
         try:
             target = Target.objects.get(id=target_id)
