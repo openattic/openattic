@@ -420,4 +420,4 @@ def __initiator_added(**kwargs):
         llun = LogicalLUN.objects.get(id=llun_id)
         __logicallun_hosts_changed(reverse=False, action="post_add", instance=llun, pk_set=[initiator.host.id])
 
-models.signals.post_save.connect()
+models.signals.post_save.connect(__initiator_added, sender=Initiator)
