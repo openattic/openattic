@@ -52,17 +52,17 @@ class SystemD(LockingPlugin):
         mdl_tpg = models.TPG.objects.get(id=id)
         lio_tgt = mdl_tpg.target.lio_object
         lio_tpg = target.TPG(lio_tgt, mdl_tpg.tag)
-        tpg.set_attribute("authentication",             str(int(mdl_tpg.chapauth)))
-        tpg.set_attribute("generate_node_acls",         "0")
-        tpg.set_attribute("demo_mode_write_protect",    "0")
-        tpg.set_parameter("InitialR2T",                 "No")
-        tpg.enable = True
+        lio_tpg.set_attribute("authentication",             str(int(mdl_tpg.chapauth)))
+        lio_tpg.set_attribute("generate_node_acls",         "0")
+        lio_tpg.set_attribute("demo_mode_write_protect",    "0")
+        #lio_tpg.set_parameter("InitialR2T",                 "No") # → Invalid Argument <_<
+        lio_tpg.enable = True
 
     @method(in_signature="i", out_signature="")
     def lun_create(self, id):
         mdl_lun = models.LUN.objects.get(id=id)
         lio_tpg = mdl_lun.tpg.lio_object
-        tpg.lun(mdl_lun.lun_id, mdl_lun.storageobj.lio_object, "%s at %s" % (self.storageobj.volume.name, Host.objects.get_current().name))
+        lio_tpg.lun(mdl_lun.lun_id, mdl_lun.storageobj.lio_object, "%s at %s" % (self.storageobj.volume.name, Host.objects.get_current().name))
 
     @method(in_signature="i", out_signature="")
     def portal_create(self, id, tpg_id):
