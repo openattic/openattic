@@ -44,7 +44,7 @@ class FileSystemProxy(FileSystem):
                         except socket.error, err:
                             if err.errno in (errno.ECONNREFUSED, errno.ECONNABORTED, errno.ECONNRESET,
                                     errno.EHOSTUNREACH, errno.ENETUNREACH, errno.ETIMEDOUT) or isinstance(err, socket.timeout):
-                                print >> sys.stderr, "Connection to %s (peer %s) failed: %s" % (initiator.name, initiator.peer.host, err)
+                                print >> sys.stderr, "Connection to %s failed: %s" % (peer.host.name, err)
                                 continue
                             else:
                                 raise
