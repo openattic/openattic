@@ -1245,6 +1245,17 @@ Ext.oa.LVM__Snapcore_Panel = Ext.extend(Ext.Panel, {
             }],
           }),
           store: config_store,
+          listeners : {
+            cellclick:  function(self, rowIndex, colIndex, e){
+              snap_store.removeAll();
+              var record = self.getStore().getAt(rowIndex);
+              snap_store.load({
+                params: {
+                  id: record.data.id,
+                }
+              })
+            }
+          },
         },{
           region    : 'south',
           id        : 'snapcore_south_panel',
@@ -1255,12 +1266,14 @@ Ext.oa.LVM__Snapcore_Panel = Ext.extend(Ext.Panel, {
           viewConfig: {forceFit: true},
           colModel  : new Ext.grid.ColumnModel({
             columns: [{
-              header: gettext("Snapshot History"),
-              //dataIndex: VolSnapshots
+              header: gettext("Snapshot"),
+              dataIndex: 'name',
+            },{
+              header: gettext("Created"),
+              dataIndex: 'createdate',
             }],
           }),
-          store: new Ext.data.Store({
-          }),
+          store: snap_store,
         }]
       }]
     }));
@@ -1276,6 +1289,11 @@ var config_store = new Ext.data.DirectStore({
   fields  : ['confname', 'last_execution', 'id', '__unicode__'],
   autoLoad: 'true',
   directFn: lvm__SnapshotConf.all,
+});
+
+var snap_store = new Ext.data.DirectStore({
+  fields  : ['id', 'name', 'snapshot_id', 'createdate'],
+  directFn: lvm__SnapshotConf.get_assoc_snapshots
 });
 
 Ext.reg('lvm__snapcore_panel', Ext.oa.LVM__Snapcore_Panel);
