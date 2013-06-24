@@ -96,6 +96,8 @@ class Backstore(models.Model):
         else:
             return tcm.FileIOBackstore(self.store_id)
 
+    def __unicode__(self):
+        return "%d (%s)" % (self.store_id, self.type)
 
 class StorageObject(models.Model):
     backstore   = models.ForeignKey(Backstore)
@@ -115,6 +117,9 @@ class StorageObject(models.Model):
             if lio_so.wwn == self.wwn:
                 return lio_so
         raise KeyError("Storage Object not found")
+
+    def __unicode__(self):
+        return "/backstores/%s/%s" % (self.backstore.type, self.volume.name)
 
     def save(self, *args, **kwargs):
         install = (self.id is None)
@@ -153,6 +158,9 @@ class Target(models.Model):
                 return lio_tgt
         raise KeyError("Target not found")
 
+    def __unicode__(self):
+        return "/%s/%s" % (self.type, self.wwn)
+
     def save(self, *args, **kwargs):
         install = (self.id is None)
         if not self.wwn:
@@ -172,6 +180,9 @@ class Initiator(models.Model):
     wwn         = models.CharField(max_length=250, unique=True)
     type        = models.CharField(max_length=10, choices=TARGET_TYPE_CHOICES)
 
+    def __unicode__(self):
+        return "%s (%s: %s)" % (self.host.name, self.type, self.wwn)
+
 
 class Portal(models.Model):
     ipaddress   = models.ForeignKey(IPAddress)
@@ -190,6 +201,9 @@ class Portal(models.Model):
             if lio_npt.ip_address == self.ipaddress.host_part and lio_npt.port == self.port:
                 return lio_npt
         raise KeyError("Network Portal not found")
+
+    def __unicode__(self):
+        return "%s:%d" % (self.ipaddress.host_part, self.port)
 
 
 class TPG(models.Model):
@@ -211,6 +225,9 @@ class TPG(models.Model):
             if lio_tpg.tag == self.tag:
                 return lio_tpg
         raise KeyError("Target Portal Group not found")
+
+    def __unicode__(self):
+        return "%s/tpgt%d" % (self.target, self.tag)
 
     def save(self, *args, **kwargs):
         install = (self.id is None)
@@ -250,6 +267,9 @@ class ACL(models.Model):
                 return lio_acl
         raise KeyError("ACL not found")
 
+    def __unicode__(self):
+        return "%s/acls/%s" % (self.tpg, self.initiator.wwn)
+
     def save(self, *args, **kwargs):
         install = (self.id is None)
         models.Model.save(self, *args, **kwargs)
@@ -277,6 +297,9 @@ class LUN(models.Model):
                 return lio_lun
         raise KeyError("LUN not found")
 
+    def __unicode__(self):
+        return "%s/luns/lun%d (%s)" % (self.tpg, self.lun_id, self.storageobj.volume.name)
+
     def save(self, *args, **kwargs):
         install = (self.id is None)
         models.Model.save(self, *args, **kwargs)
@@ -294,6 +317,9 @@ class LogicalLUN(models.Model):
     hostgroups  = models.ManyToManyField(HostGroup)
     hosts       = models.ManyToManyField(Host)
     targets     = models.ManyToManyField(Target)
+
+    def __unicode__(self):
+        return "%s (%s)" % (self.volume.name, self.type)
 
 
 def __logicallun_hostgroups_changed(**kwargs):
