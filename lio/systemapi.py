@@ -72,7 +72,9 @@ class SystemD(LockingPlugin):
     def acl_create(self, id):
         mdl_acl = models.ACL.objects.get(id=id)
         lio_tpg = mdl_acl.tpg.lio_object
-        lio_tpg.node_acl(mdl_acl.initiator.wwn)
+        acl = lio_tpg.node_acl(mdl_acl.initiator.wwn)
+        for mdl_lun in mdl_acl.tpg.lun_set.all():
+            acl.lio_object.mapped_lun(mdl_lun.lun_id, mdl_lun.lio_object)
 
     @method(in_signature="", out_signature="")
     def saveconfig(self):
