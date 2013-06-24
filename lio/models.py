@@ -175,7 +175,7 @@ class LUN(models.Model):
 
 class LogicalLUN(models.Model):
     """ Mainmächtiges masterchief ultramodel of doom """
-    volume      = models.ForeignKey(LogicalVolume)
+    volume      = models.ForeignKey(LogicalVolume, unique=True)
     lun_id      = models.IntegerField(unique=True)
     hostgroups  = models.ManyToManyField(HostGroup)
     hosts       = models.ManyToManyField(Host)
