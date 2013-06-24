@@ -27,6 +27,10 @@ from django.conf import settings
 from ifconfig.models import HostGroup, Host, IPAddress, HostDependentManager, getHostDependentManagerClass
 from lvm.models      import LogicalVolume
 
+# This import is not actually needed for the name, but since Django only imports
+# the models, we need to make sure the filesystemproxy module has been loaded by Python.
+import filesystemproxy
+
 
 
 #                          ┌┬──────────────────────────┬┐
