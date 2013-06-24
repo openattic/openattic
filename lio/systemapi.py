@@ -28,17 +28,12 @@ class SystemD(LockingPlugin):
     dbus_path = "/lio"
 
     @method(in_signature="i", out_signature="")
-    def backstore_create(self, id):
-        mdl_bs = models.Backstore.objects.get(id=id)
-        if bdl_bs.type == "iblock":
+    def storage_object_create(self, id):
+        mdl_so = models.StorageObject.objects.get(id=id)
+        if mdl_so.backstore.type == "iblock":
             lio_bs = target.IBlockBackstore(0)
         else:
             lio_bs = target.FileIOBackstore(0)
-
-    @method(in_signature="i", out_signature="")
-    def storage_object_create(self, id):
-        mdl_so = models.StorageObject.objects.get(id=id)
-        lio_bs = mdl_so.backstore.lio_object
         storage = lio_bs.storage_object(mdl_bs.volume.name, mdl_bs.volume.path, gen_wwn=False)
         storage.wwn = mdl_so.wwn
 
