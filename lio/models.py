@@ -54,8 +54,8 @@ class StorageObject(models.Model):
         raise KeyError("Storage Object not found")
 
     def save(self, *args, **kwargs):
-        if self.id is not None:
-            self.wwn = generate_wwn("unit_serial")
+        if not self.wwn:
+            self.wwn = self.volume.uuid
         models.Model.save(self, *args, **kwargs)
 
 
