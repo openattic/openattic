@@ -230,3 +230,61 @@ class LogicalLUN(models.Model):
     hosts       = models.ManyToManyField(Host)
     targets     = models.ManyToManyField(Target)
 
+
+def __logicallun_hostgroups_changed(**kwargs):
+    if kwargs["reverse"]:
+        return
+    host_ids = set()
+    for hostgrp_id in kwargs["pk_set"]:
+        hostgrp = HostGroup.objects.get(id=hostgrp_id)
+        for host in hostgrp.hosts.all():
+            host_ids.add(host.id)
+    kwargs["pk_set"] = list(host_ids)
+    __logicallun_hosts_changed(**kwargs)
+
+models.signals.m2m_changed.connect(__logicallun_hostgroups_changed, sender=LogicalLUN.hostgroups.through)
+
+
+def __logicallun_hosts_changed(**kwargs):
+    if kwargs["reverse"] or kwargs["action"] != "post_add":
+        return
+    llun  = kwargs["instance"]
+    localhost = Host.objects.get_current()
+    for target in llun.targets.filter(host=localhost):
+        for tpg in target.tpgs.all():
+            for host_id in kwargs["pk_set"]:
+                host = Host.objects.get(id=host_id)
+                for initator in host.initiator_set.filter(type=llun.type):
+                    ACL.objects.get_or_create(tpg=tpg, initiator=initiator)
+
+models.signals.m2m_changed.connect(__logicallun_hosts_changed, sender=LogicalLUN.hosts.through)
+
+
+def __logicallun_targets_changed(**kwargs):
+    if kwargs["reverse"] or kwargs["action"] != "post_add":
+        return
+    llun  = kwargs["instance"]
+    localhost = Host.objects.get_current()
+    storobj   = StorageObject.objects.get(volume=llun.volume)
+    for target_id in kwargs["pk_set"]:
+        try:
+            target = Target.objects.get(id=target_id)
+        except Target.DoesNotExist:
+            continue # target is on a different host, no idea what we're doing in that case
+
+        for tpg in target.tpgs.all():
+            for hostgrp in llun.hostgroups.all():
+                for host in hostgrp.hosts.all():
+                    for initator in host.initiator_set.filter(type=llun.type):
+                        ACL.objects.get_or_create(tpg=tpg, initiator=initiator)
+            for host in llun.hosts.all():
+                for initator in host.initiator_set.filter(type=llun.type):
+                    ACL.objects.get_or_create(tpg=tpg, initiator=initiator)
+
+            try:
+                lun = LUN.objects.get( tpg=tpg, storageobj=storobj, logicallun=llun )
+            except LUN.DoesNotExist:
+                lun = LUN( tpg=tpg, storageobj=storobj, logicallun=llun, lun_id=llun.lun_id )
+                lun.save()
+
+models.signals.m2m_changed.connect(__logicallun_targets_changed, sender=LogicalLUN.targets.through)
