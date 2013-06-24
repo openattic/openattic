@@ -303,10 +303,10 @@ def __logicallun_hosts_changed(**kwargs):
     llun  = kwargs["instance"]
     localhost = Host.objects.get_current()
     for target in llun.targets.filter(host=localhost):
-        for tpg in target.tpgs.all():
+        for tpg in target.tpg_set.all():
             for host_id in kwargs["pk_set"]:
                 host = Host.objects.get(id=host_id)
-                for initator in host.initiator_set.filter(type=llun.type):
+                for initiator in host.initiator_set.filter(type=llun.type):
                     ACL.objects.get_or_create(tpg=tpg, initiator=initiator)
 
 models.signals.m2m_changed.connect(__logicallun_hosts_changed, sender=LogicalLUN.hosts.through)
@@ -332,13 +332,13 @@ def __logicallun_targets_changed(**kwargs):
         except Target.DoesNotExist:
             continue # target is on a different host, no idea what we're doing in that case
 
-        for tpg in target.tpgs.all():
+        for tpg in target.tpg_set.all():
             for hostgrp in llun.hostgroups.all():
                 for host in hostgrp.hosts.all():
-                    for initator in host.initiator_set.filter(type=llun.type):
+                    for initiator in host.initiator_set.filter(type=llun.type):
                         ACL.objects.get_or_create(tpg=tpg, initiator=initiator)
             for host in llun.hosts.all():
-                for initator in host.initiator_set.filter(type=llun.type):
+                for initiator in host.initiator_set.filter(type=llun.type):
                     ACL.objects.get_or_create(tpg=tpg, initiator=initiator)
 
             try:
