@@ -14,11 +14,12 @@
  *  GNU General Public License for more details.
 """
 
-from rtslib        import target, tcm
+from rtslib          import target, tcm
 
-from systemd       import invoke, logged, LockingPlugin, method
+from ifconfig.models import Host
+from systemd         import invoke, logged, LockingPlugin, method
 
-from lio           import models
+from lio             import models
 
 
 @logged
@@ -70,4 +71,4 @@ class SystemD(LockingPlugin):
     def acl_create(self, id):
         mdl_acl = models.ACL.objects.get(id=id)
         lio_tpg = mdl_acl.tpg.lio_object
-        lio_tpg.node_acl(initator.wwn)
+        lio_tpg.node_acl(mdl_acl.initiator.wwn)
