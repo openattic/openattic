@@ -823,7 +823,7 @@ class ConfManager(models.Manager):
                 related.model.objects.get_available_objects(models)
 
         data = conf_obj["data"]
-        snapconf = SnapshotConf(confname=data["configname"], prescript=data["prescript"], postscript=data["postscript"], retention_time=data["retention_time"])
+        snapconf = SnapshotConf(confname=data["configname"], prescript=data["prescript"], postscript=data["postscript"], retention_time=data["retention_time"], last_execution=None)
         snapconf.save()
 
         time_configs = {'h': [], 'moy': [], 'dow': []}
@@ -842,7 +842,6 @@ class ConfManager(models.Manager):
                 end_time=data["enddate"],
                 is_active=["active"],
                 conf=snapconf,
-                last_execution=None,
                 host=Host.objects.get_current(),
                 user="root",
                 minute=data['minute'] if 'minute' in data else '',
