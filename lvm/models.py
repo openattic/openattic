@@ -907,3 +907,11 @@ class LogicalVolumeConf(models.Model):
     snapshot_conf   = models.ForeignKey(SnapshotConf)
     volume          = models.ForeignKey(LogicalVolume)
     snapshot_space  = models.IntegerField(null=True, blank=True)
+
+class LVSnapshotToConf(models.Model):
+    snapshot_conf    = models.ForeignKey(SnapshotConf)
+    lv_snapshot     = models.ForeignKey(LogicalVolume)
+
+    class Meta:
+        unique_together = ("snapshot_conf", "lv_snapshot")
+
