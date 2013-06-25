@@ -318,7 +318,6 @@ class LUN(models.Model):
 class LogicalLUN(models.Model):
     """ Mainmächtiges masterchief ultramodel of doom """
     volume      = models.ForeignKey(LogicalVolume, unique=True)
-    type        = models.CharField(max_length=10, choices=TARGET_TYPE_CHOICES)
     lun_id      = models.IntegerField(unique=True)
     hostgroups  = models.ManyToManyField(HostGroup)
     hosts       = models.ManyToManyField(Host)
@@ -351,7 +350,7 @@ def __logicallun_hosts_changed(**kwargs):
         for tpg in target.tpg_set.all():
             for host_id in kwargs["pk_set"]:
                 host = Host.objects.get(id=host_id)
-                for initiator in host.initiator_set.filter(type=llun.type):
+                for initiator in host.initiator_set.filter(type=target.type):
                     ACL.objects.get_or_create(tpg=tpg, initiator=initiator)
 
 
@@ -391,10 +390,10 @@ def __logicallun_targets_changed(**kwargs):
         for tpg in target.tpg_set.all():
             for hostgrp in llun.hostgroups.all():
                 for host in hostgrp.hosts.all():
-                    for initiator in host.initiator_set.filter(type=llun.type):
+                    for initiator in host.initiator_set.filter(type=target.type):
                         ACL.objects.get_or_create(tpg=tpg, initiator=initiator)
             for host in llun.hosts.all():
-                for initiator in host.initiator_set.filter(type=llun.type):
+                for initiator in host.initiator_set.filter(type=target.type):
                     ACL.objects.get_or_create(tpg=tpg, initiator=initiator)
 
             try:
