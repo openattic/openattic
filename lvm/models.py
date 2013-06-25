@@ -775,39 +775,42 @@ class LVSnapshotJob(Cronjob):
         return #lol
 
     def dosnapshot(self):
-        invoke(shlex.split(self.conf.prescript)) if len(self.conf.prescript) > 0 else None
+        if self.start_time <= datetime.datetime.now() <= self.end_time:
+            invoke(shlex.split(self.conf.prescript)) if len(self.conf.prescript) > 0 else None
 
-        snaps_data = []
+            snaps_data = []
 
-        # do plugin snapshots
-        for related in SnapshotConf._meta.get_all_related_objects():
-          if hasattr(related.model.objects, "do_config_snapshots"):
-            snaps_data.append((related, related.model.objects.do_config_snapshots(self.conf)))
+            # do plugin snapshots
+            for related in SnapshotConf._meta.get_all_related_objects():
+                if hasattr(related.model.objects, "do_config_snapshots"):
+                    snaps_data.append((related, related.model.objects.do_config_snapshots(self.conf)))
 
-        vol_confs = LogicalVolumeConf.objects.filter(snapshot_conf_id=self.conf)
-        for vol_conf in vol_confs:
-          lv = LogicalVolume.all_objects.get(id=vol_conf.volume.id)
-          now = datetime.datetime.now()
+            vol_confs = LogicalVolumeConf.objects.filter(snapshot_conf_id=self.conf)
+            for vol_conf in vol_confs:
+                lv = LogicalVolume.all_objects.get(id=vol_conf.volume.id)
+                now = datetime.datetime.now()
 
-          name = lv.name + '_snapshot_' + str(now)
-          name = re.sub(' ', '_', name)
-          name = re.sub(':', '-', name)
+                name = lv.name + '_snapshot_' + str(now)
+                name = re.sub(' ', '_', name)
+                name = re.sub(':', '-', name)
 
-          snap = LogicalVolume(snapshot=lv)
-          snap.name = name
-          snap.megs = lv.megs
-          #snap.megs = lv.megs * vol_conf.snapshot_space / 100
-          snap.save()
+                snap = LogicalVolume(snapshot=lv)
+                snap.name = name
+                snap.megs = lv.megs * vol_conf.snapshot_space / 100
+                snap.save()
 
-        # delete plugin snapshots
-        for (related, snap_data) in snaps_data:
-          if hasattr(related.model.objects, "delete_config_snapshots"):
-            related.model.objects.delete_config_snapshots(snap_data)
+                snap_to_conf = LVSnapshotToConf(snapshot_conf=self.conf, lv_snapshot=snap)
+                snap_to_conf.save()
 
-        self.conf.last_execution = datetime.datetime.now()
-        self.conf.save()
+                # delete plugin snapshots
+                for (related, snap_data) in snaps_data:
+                    if hasattr(related.model.objects, "delete_config_snapshots"):
+                        related.model.objects.delete_config_snapshots(snap_data)
 
-        invoke(shlex.split(self.conf.postscript)) if len(self.conf.postscript) > 0 else None
+                self.conf.last_execution = datetime.datetime.now()
+                self.conf.save()
+
+                invoke(shlex.split(self.conf.postscript)) if len(self.conf.postscript) > 0 else None
 
     def save(self, *args, **kwargs):
         self.command = "echo Doing snapshot!"
@@ -828,26 +831,46 @@ class ConfManager(models.Manager):
         snapconf.save()
 
         time_configs = {'h': [], 'moy': [], 'dow': []}
-        for key, value in data.items():
-          if (key.startswith('h_') or key.startswith('moy_') or key.startswith('dow_')) and value == 'on':
-              time, number = key.split('_')
-              time_configs[time].append(number)
+        startdate = enddate = minute = day_of_month = '';
 
-        # sort values
-        for time, numbers in time_configs.items():
-          if len(numbers) > 0:
-            numbers.sort(key=int)
+        # if the job should only run once
+        if data['executedate'] is not None:
+            startdate = enddate = datetime.datetime.strptime(data['executedate'], '%Y-%m-%dT%H:%M:%S')
+            enddate = enddate + datetime.timedelta(minutes=1)
+
+            time_configs['h'] = [str(startdate.hour)]
+            time_configs['dow'] = [str(startdate.isoweekday() % 7)]
+            time_configs['moy'] = [str(startdate.month)]
+            minute = startdate.minute
+            day_of_month = startdate.day
+        # if it's a 'real' job
+        else:
+            startdate = data["startdate"]
+            enddate = data["enddate"]
+
+            for key, value in data.items():
+                if (key.startswith('h_') or key.startswith('moy_') or key.startswith('dow_')) and value == 'on':
+                    time, number = key.split('_')
+                    time_configs[time].append(number)
+            # sort values
+            for time, numbers in time_configs.items():
+                if len(numbers) > 0:
+                    numbers.sort(key=int)
+
+            minute = data['minute'] if 'minute' in data else ''
+            day_of_month = data['day_of_month'] if 'day_of_month' in data else ''
+
         if True: #später or jobmäßigundso:
             jobconf = LVSnapshotJob(
-                start_time=data["startdate"],
-                end_time=data["enddate"],
-                is_active=["active"],
+                start_time=startdate,
+                end_time=enddate,
+                is_active=data["active"],
                 conf=snapconf,
                 host=Host.objects.get_current(),
                 user="root",
-                minute=data['minute'] if 'minute' in data else '',
+                minute=minute,
                 hour=','.join(time_configs["h"]),
-                domonth=data['day_of_month'] if 'day_of_month' in data else '',
+                domonth=day_of_month,
                 month=','.join(time_configs["moy"]),
                 doweek=','.join(time_configs["dow"]))
             jobconf.save()
@@ -887,3 +910,11 @@ class LogicalVolumeConf(models.Model):
     snapshot_conf   = models.ForeignKey(SnapshotConf)
     volume          = models.ForeignKey(LogicalVolume)
     snapshot_space  = models.IntegerField(null=True, blank=True)
+
+class LVSnapshotToConf(models.Model):
+    snapshot_conf    = models.ForeignKey(SnapshotConf)
+    lv_snapshot     = models.ForeignKey(LogicalVolume)
+
+    class Meta:
+        unique_together = ("snapshot_conf", "lv_snapshot")
+
