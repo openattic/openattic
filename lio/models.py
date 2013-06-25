@@ -165,7 +165,7 @@ class Target(models.Model):
         raise KeyError("Target not found")
 
     def __unicode__(self):
-        return "/%s/%s" % (self.type, self.wwn)
+        return self.name
 
     def save(self, *args, **kwargs):
         install = (self.id is None)
