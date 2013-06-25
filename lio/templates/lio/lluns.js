@@ -58,22 +58,22 @@ Ext.reg("lio__logicallun_panel", Ext.oa.Lio__LogicalLun_Panel);
 Ext.oa.Lio__Panel = Ext.extend(Ext.Panel, {
   initComponent: function(){
     "use strict";
-    
+
     var targetstore = new Ext.data.JsonStore({
       id: "targetstore",
       fields: ["app", "obj", "id", "__unicode__"]
     });
-    
+
     var hostgroupstore = new Ext.data.JsonStore({
       id: "hostgroupstore",
       fields: ["app", "obj", "id", "__unicode__"]
     });
-    
+
     var hoststore = new Ext.data.JsonStore({
       id: "hoststore",
       fields: ["app", "obj", "id", "__unicode__"]
     });
-    
+
     Ext.apply(this, Ext.apply(this.initialConfig, {
       id: "lio__panel_inst",
       title: gettext('LUNs'),
@@ -112,6 +112,102 @@ Ext.oa.Lio__Panel = Ext.extend(Ext.Panel, {
               dataIndex: "__unicode__"
             }]
           }),
+          enableDragDrop: true,
+          ddGroup: "llun_target",
+          buttons: [{
+            text: gettext('Targets'),
+            icon: MEDIA_URL + "/icons2/16x16/actions/gtk-execute.png",
+            handler: function(){
+              var addwin = new Ext.Window({
+                x: Ext.lib.Dom.getViewWidth() - 650,
+                y: Ext.lib.Dom.getViewHeight() - 350,
+                height: 300,
+                width: 600,
+                frame: true,
+                layout: 'fit',
+                title: 'Targets',
+                items: {
+                  xtype: 'sharegridpanel',
+                  api: lio__Target,
+                  ddGroup: "llun_target",
+                  enableDrag: true,
+                  store: {
+                    fields: ["name", {
+                      name: "hostname",
+                      mapping: "host",
+                      convert: toUnicode
+                    }, "wwn"]
+                  },
+                  texts: {
+                    add:     gettext('Add Target'),
+                    edit:    gettext('Edit Target'),
+                    remove:  gettext('Delete Target')
+                  },
+                  columns: [{
+                    header: "Name",
+                    dataIndex: "name"
+                  }, {
+                    header: "Host",
+                    dataIndex: "hostname"
+                  }, {
+                    header: "WWN",
+                    dataIndex: "wwn"
+                  }],
+                  form: {
+                    items: [{
+                      xtype: 'fieldset',
+                      title: 'Target',
+                      layout: 'form',
+                      items: [{
+                        xtype: 'textfield',
+                        fieldLabel: gettext('Name'),
+                        allowBlank: false,
+                        name: "name"
+                      }, {
+                        xtype:      'combo',
+                        fieldLabel: gettext('Host'),
+                        allowBlank: true,
+                        hiddenName: 'host',
+                        store: {
+                          xtype: "directstore",
+                          fields: ["id", "name"],
+                          directFn: ifconfig__Host.all
+                        },
+                        typeAhead:     true,
+                        triggerAction: 'all',
+                        emptyText:     gettext('Select...'),
+                        selectOnFocus: true,
+                        displayField:  'name',
+                        valueField:    'id',
+                        ref:           'hostfield',
+                        listeners: {
+                          afterrender: function(self){
+                            self.store.load();
+                          }
+                        }
+                      }, {
+                        fieldLabel: gettext('Type'),
+                        hiddenName: 'type',
+                        xtype:      'combo',
+                        store: [ [ 'iscsi',  gettext('iSCSI')  ], [ 'qla2xxx', gettext('FC') ] ],
+                        typeAhead:     true,
+                        triggerAction: 'all',
+                        emptyText:     'Select...',
+                        selectOnFocus: true,
+                        value: "iscsi"
+                      }, {
+                        xtype: 'textfield',
+                        fieldLabel: gettext('WWN or IQN'),
+                        allowBlank: false,
+                        name: "wwn"
+                      }]
+                    }]
+                  }
+                }
+              });
+              addwin.show();
+            }
+          }]
         }, {
           region: "center",
           title: "Host Groups",
