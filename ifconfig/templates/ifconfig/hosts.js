@@ -135,7 +135,22 @@ Ext.oa.Ifconfig__Host_Groups_Panel = Ext.extend(Ext.Panel, {
               });
               addwin.show();
             }
-          }]
+          }],
+          listeners: {
+            afterrender: function(self){
+              var droptarget_el =  self.getView().scroller.dom;
+              var droptarget = new Ext.dd.DropTarget(droptarget_el, {
+                ddGroup    : 'ifconfig__host_hostgroup',
+                notifyDrop : function(ddSource, e, data){
+                  var records =  ddSource.dragData.selections;
+                  if( self.store.findExact("id",records[0].data.id) === -1 ){
+                    self.store.add(records);
+                    return true;
+                  }
+                }
+              });
+            }
+          }
         }]
       }]
     }));
