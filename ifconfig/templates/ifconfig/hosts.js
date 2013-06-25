@@ -44,7 +44,16 @@ Ext.oa.Ifconfig__Host_Groups_Panel = Ext.extend(Ext.Panel, {
 
     var hostgroupstore = new Ext.data.JsonStore({
       id: "hostgroupstore",
-      fields: ["app", "obj", "id", "__unicode__"]
+      fields: ["app", "obj", "id", "__unicode__"],
+      submit: function(callback){
+        var data = [], i;
+        for( i = 0; i < this.data.items.length; i++ ){
+          data.push(this.data.items[i].data);
+        }
+        ifconfig__Host.set(this.host_id, {
+          hostgroup_set: data
+        }, callback);
+      }
     });
 
     Ext.apply(this, Ext.apply(this.initialConfig, {
@@ -58,6 +67,7 @@ Ext.oa.Ifconfig__Host_Groups_Panel = Ext.extend(Ext.Panel, {
         listeners: {
           cellclick: function( self, rowIndex, colIndex, evt ){
             var record = self.getStore().getAt(rowIndex);
+            hostgroupstore.host_id = record.data.id;
             hostgroupstore.loadData(record.json.hostgroup_set);
           }
         },
@@ -143,10 +153,22 @@ Ext.oa.Ifconfig__Host_Groups_Panel = Ext.extend(Ext.Panel, {
                 ddGroup    : 'ifconfig__host_hostgroup',
                 notifyDrop : function(ddSource, e, data){
                   var records =  ddSource.dragData.selections;
-                  if( self.store.findExact("id",records[0].data.id) === -1 ){
-                    self.store.add(records);
-                    return true;
+                  for( var i = 0; i < records.length; i++ ){
+                    if( self.store.findExact("id", records[i].data.id) === -1 ){
+                      self.store.add([new Ext.data.Record({
+                        'app': 'ifconfig',
+                        'obj': 'HostGroup',
+                        'id':  records[i].data.id,
+                        '__unicode__': records[i].data.__unicode__
+                        })]);
+                    }
                   }
+                  self.store.submit(function(provider, response){
+                    if( response.type === 'exception' ){
+                      Ext.Msg.alert("Error", "Could not update host groups");
+                    }
+                  });
+                  return true;
                 }
               });
             }
