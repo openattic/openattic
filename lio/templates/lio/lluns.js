@@ -231,13 +231,13 @@ Ext.oa.Lio__Panel = Ext.extend(Ext.Panel, {
             icon: MEDIA_URL + "/icons2/16x16/actions/gtk-execute.png",
             handler: function(){
               var addwin = new Ext.Window({
-                x: Ext.lib.Dom.getViewWidth() - 650,
+                x: Ext.lib.Dom.getViewWidth() - 350,
                 y: Ext.lib.Dom.getViewHeight() - 350,
                 height: 300,
-                width: 600,
+                width: 300,
                 frame: true,
                 layout: 'fit',
-                title: 'Targets',
+                title: 'Host Groups',
                 items: {
                   xtype: 'grid',
                   ddGroup: "llun_hostgroup",
