@@ -58,7 +58,7 @@ Ext.oa.Ifconfig__Host_Groups_Panel = Ext.extend(Ext.Panel, {
         listeners: {
           cellclick: function( self, rowIndex, colIndex, evt ){
             var record = self.getStore().getAt(rowIndex);
-            hostgroupstore.loadData(record.json.hostgroups);
+            hostgroupstore.loadData(record.json.hostgroup_set);
           }
         },
       }, {
