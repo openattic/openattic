@@ -61,17 +61,44 @@ Ext.oa.Lio__Panel = Ext.extend(Ext.Panel, {
 
     var targetstore = new Ext.data.JsonStore({
       id: "targetstore",
-      fields: ["app", "obj", "id", "__unicode__"]
+      fields: ["app", "obj", "id", "__unicode__"],
+      submit: function(callback){
+        var data = [], i;
+        for( i = 0; i < this.data.items.length; i++ ){
+          data.push(this.data.items[i].data);
+        }
+        lio__LogicalLUN.set(this.llun_id, {
+          targets: data
+        }, callback);
+      }
     });
 
     var hostgroupstore = new Ext.data.JsonStore({
       id: "hostgroupstore",
-      fields: ["app", "obj", "id", "__unicode__"]
+      fields: ["app", "obj", "id", "__unicode__"],
+      submit: function(callback){
+        var data = [], i;
+        for( i = 0; i < this.data.items.length; i++ ){
+          data.push(this.data.items[i].data);
+        }
+        lio__LogicalLUN.set(this.llun_id, {
+          hostgroups: data
+        }, callback);
+      }
     });
 
     var hoststore = new Ext.data.JsonStore({
       id: "hoststore",
-      fields: ["app", "obj", "id", "__unicode__"]
+      fields: ["app", "obj", "id", "__unicode__"],
+      submit: function(callback){
+        var data = [], i;
+        for( i = 0; i < this.data.items.length; i++ ){
+          data.push(this.data.items[i].data);
+        }
+        lio__LogicalLUN.set(this.llun_id, {
+          hosts: data
+        }, callback);
+      }
     });
 
     Ext.apply(this, Ext.apply(this.initialConfig, {
@@ -85,8 +112,11 @@ Ext.oa.Lio__Panel = Ext.extend(Ext.Panel, {
         listeners: {
           cellclick: function (self, rowIndex, colIndex, evt ){
             var record = self.getStore().getAt(rowIndex);
+            targetstore.llun_id = record.data.id;
             targetstore.loadData(record.json.targets);
+            hostgroupstore.llun_id = record.data.id;
             hostgroupstore.loadData(record.json.hostgroups);
+            hoststore.llun_id = record.data.id;
             hoststore.loadData(record.json.hosts);
           }
         },
@@ -136,7 +166,7 @@ Ext.oa.Lio__Panel = Ext.extend(Ext.Panel, {
                       name: "hostname",
                       mapping: "host",
                       convert: toUnicode
-                    }, "wwn"]
+                    }, "wwn", "__unicode__", "id"]
                   },
                   texts: {
                     add:     gettext('Add Target'),
@@ -207,7 +237,34 @@ Ext.oa.Lio__Panel = Ext.extend(Ext.Panel, {
               });
               addwin.show();
             }
-          }]
+          }],
+          listeners: {
+            afterrender: function(self){
+              var droptarget_el =  self.getView().scroller.dom;
+              var droptarget = new Ext.dd.DropTarget(droptarget_el, {
+                ddGroup    : 'llun_target',
+                notifyDrop : function(ddSource, e, data){
+                  var records =  ddSource.dragData.selections;
+                  for( var i = 0; i < records.length; i++ ){
+                    if( self.store.findExact("id", records[i].data.id) === -1 ){
+                      self.store.add([new Ext.data.Record({
+                        'app': 'lio',
+                        'obj': 'Target',
+                        'id':  records[i].data.id,
+                        '__unicode__': records[i].data.__unicode__
+                      })]);
+                    }
+                  }
+                  self.store.submit(function(provider, response){
+                    if( response.type === 'exception' ){
+                      Ext.Msg.alert("Error", "Could not update targets");
+                    }
+                  });
+                  return true;
+                }
+              });
+            }
+          }
         }, {
           region: "center",
           title: "Host Groups",
@@ -261,7 +318,34 @@ Ext.oa.Lio__Panel = Ext.extend(Ext.Panel, {
               });
               addwin.show();
             }
-          }]
+          }],
+          listeners: {
+            afterrender: function(self){
+              var droptarget_el =  self.getView().scroller.dom;
+              var droptarget = new Ext.dd.DropTarget(droptarget_el, {
+                ddGroup    : 'llun_hostgroup',
+                notifyDrop : function(ddSource, e, data){
+                  var records =  ddSource.dragData.selections;
+                  for( var i = 0; i < records.length; i++ ){
+                    if( self.store.findExact("id", records[i].data.id) === -1 ){
+                      self.store.add([new Ext.data.Record({
+                        'app': 'ifconfig',
+                        'obj': 'HostGroup',
+                        'id':  records[i].data.id,
+                        '__unicode__': records[i].data.__unicode__
+                      })]);
+                    }
+                  }
+                  self.store.submit(function(provider, response){
+                    if( response.type === 'exception' ){
+                      Ext.Msg.alert("Error", "Could not update host groups");
+                    }
+                  });
+                  return true;
+                }
+              });
+            }
+          }
         }, {
           region: "east",
           title: "Hosts",
@@ -316,7 +400,34 @@ Ext.oa.Lio__Panel = Ext.extend(Ext.Panel, {
               });
               addwin.show();
             }
-          }]
+          }],
+          listeners: {
+            afterrender: function(self){
+              var droptarget_el =  self.getView().scroller.dom;
+              var droptarget = new Ext.dd.DropTarget(droptarget_el, {
+                ddGroup    : 'llun_host',
+                notifyDrop : function(ddSource, e, data){
+                  var records =  ddSource.dragData.selections;
+                  for( var i = 0; i < records.length; i++ ){
+                    if( self.store.findExact("id", records[i].data.id) === -1 ){
+                      self.store.add([new Ext.data.Record({
+                        'app': 'ifconfig',
+                        'obj': 'Host',
+                        'id':  records[i].data.id,
+                        '__unicode__': records[i].data.__unicode__
+                      })]);
+                    }
+                  }
+                  self.store.submit(function(provider, response){
+                    if( response.type === 'exception' ){
+                      Ext.Msg.alert("Error", "Could not update hosts");
+                    }
+                  });
+                  return true;
+                }
+              });
+            }
+          }
         }]
       }]
     }));
