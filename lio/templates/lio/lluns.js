@@ -1,0 +1,181 @@
+/*
+ Copyright (C) 2011-2012, it-novum GmbH <community@open-attic.org>
+
+ openATTIC is free software; you can redistribute it and/or modify it
+ under the terms of the GNU General Public License as published by
+ the Free Software Foundation; version 2.
+
+ This package is distributed in the hope that it will be useful,
+ but WITHOUT ANY WARRANTY; without even the implied warranty of
+ MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ GNU General Public License for more details.
+*/
+
+Ext.namespace("Ext.oa");
+
+Ext.oa.Lio__LogicalLun_Panel = Ext.extend(Ext.oa.ShareGridPanel, {
+  api: lio__LogicalLUN,
+  store: {
+    fields: [{
+      name: "volumename",
+      mapping:  "volume",
+      convert: toUnicode
+    }]
+  },
+  columns: [{
+    header: gettext('Volume'),
+    width: 200,
+    dataIndex: "volumename"
+  }, {
+    header: gettext('LUN ID'),
+    width:  50,
+    dataIndex: "lun_id"
+  }],
+  form: {
+    items: [{
+      xtype: 'fieldset',
+      title: 'LUN',
+      layout: 'form',
+      items: [{
+        xtype: 'volumefield',
+        fieldLabel: gettext('Volume'),
+        allowBlank: false,
+        filesystem__isnull: true
+      }, {
+        xtype: 'numberfield',
+        fieldLabel: gettext('LUN ID'),
+        allowBlank: false,
+        name: "lun_id",
+      }]
+    }]
+  }
+});
+
+
+Ext.reg("lio__logicallun_panel", Ext.oa.Lio__LogicalLun_Panel);
+
+
+Ext.oa.Lio__Panel = Ext.extend(Ext.Panel, {
+  initComponent: function(){
+    "use strict";
+    
+    var targetstore = new Ext.data.JsonStore({
+      id: "targetstore",
+      fields: ["app", "obj", "id", "__unicode__"]
+    });
+    
+    var hostgroupstore = new Ext.data.JsonStore({
+      id: "hostgroupstore",
+      fields: ["app", "obj", "id", "__unicode__"]
+    });
+    
+    var hoststore = new Ext.data.JsonStore({
+      id: "hoststore",
+      fields: ["app", "obj", "id", "__unicode__"]
+    });
+    
+    Ext.apply(this, Ext.apply(this.initialConfig, {
+      id: "lio__panel_inst",
+      title: gettext('LUNs'),
+      layout: 'border',
+      items: [{
+        xtype: "lio__logicallun_panel",
+        id:    "lio__logicallun_panel_inst",
+        region: "center",
+        listeners: {
+          cellclick: function (self, rowIndex, colIndex, evt ){
+            var record = self.getStore().getAt(rowIndex);
+            targetstore.loadData(record.json.targets);
+            hostgroupstore.loadData(record.json.hostgroups);
+            hoststore.loadData(record.json.hosts);
+          }
+        },
+      }, {
+        layout: "border",
+        region: "south",
+        id:    "lio__logicallun_south_panel_inst",
+        split: true,
+        items: [{
+          region: "west",
+          title: "Targets",
+          id:    "lio__logicallun_targets_panel_inst",
+          split: true,
+          xtype: 'grid',
+          viewConfig: { forceFit: true },
+          store: targetstore,
+          colModel: new Ext.grid.ColumnModel({
+            defaults: {
+              sortable: true
+            },
+            columns: [{
+              header: "Target",
+              dataIndex: "__unicode__"
+            }]
+          }),
+        }, {
+          region: "center",
+          title: "Host Groups",
+          id:    "lio__logicallun_hostgroups_panel_inst",
+          xtype: 'grid',
+          viewConfig: { forceFit: true },
+          store: hostgroupstore,
+          colModel: new Ext.grid.ColumnModel({
+            defaults: {
+              sortable: true
+            },
+            columns: [{
+              header: "Host Group",
+              dataIndex: "__unicode__"
+            }]
+          }),
+        }, {
+          region: "east",
+          title: "Hosts",
+          id:    "lio__logicallun_hosts_panel_inst",
+          split: true,
+          xtype: 'grid',
+          viewConfig: { forceFit: true },
+          store: hoststore,
+          colModel: new Ext.grid.ColumnModel({
+            defaults: {
+              sortable: true
+            },
+            columns: [{
+              header: "Host",
+              dataIndex: "__unicode__"
+            }]
+          }),
+        }]
+      }]
+    }));
+    Ext.oa.Lio__Panel.superclass.initComponent.apply(this, arguments);
+  },
+  refresh: function(){
+    Ext.getCmp("lio__logicallun_panel_inst").refresh();
+    Ext.StoreMgr.get("targetstore").removeAll();
+    Ext.StoreMgr.get("hostgroupstore").removeAll();
+    Ext.StoreMgr.get("hoststore").removeAll();
+  }
+});
+
+Ext.reg("lio__panel", Ext.oa.Lio__Panel);
+
+
+Ext.oa.Lio__LogicalLun_Module = Ext.extend(Object, {
+  panel: "lio__panel",
+  prepareMenuTree: function(tree){
+    "use strict";
+    tree.appendToRootNodeById("menu_luns", {
+      text: gettext('LUNs'),
+      leaf: true,
+      icon: MEDIA_URL + '/icons2/22x22/apps/nfs.png',
+      panel: 'lio__panel_inst',
+      href: '#'
+    });
+  }
+});
+
+
+window.MainViewModules.push( new Ext.oa.Lio__LogicalLun_Module() );
+
+// kate: space-indent on; indent-width 2; replace-tabs on;
