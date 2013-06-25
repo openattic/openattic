@@ -903,8 +903,8 @@ class SnapshotConf(models.Model):
     objects = ConfManager()
 
     def get_assoc_snapshots(self):
-        conf_lvs = LogicalVolumeConf.objects.filter(snapshot_conf=self.id).values_list('volume', flat=True)
-        return LogicalVolume.objects.filter(snapshot_id__in=conf_lvs)
+        conf_lvs = LVSnapshotToConf.objects.filter(snapshot_conf=self.id).values_list('lv_snapshot', flat=True)
+        return LogicalVolume.objects.filter(id__in=conf_lvs)
 
 class LogicalVolumeConf(models.Model):
     snapshot_conf   = models.ForeignKey(SnapshotConf)
