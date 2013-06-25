@@ -23,6 +23,7 @@ from rtslib.utils  import generate_wwn
 
 from django.db   import models
 from django.conf import settings
+from django.utils.translation import ugettext_lazy as _
 
 from ifconfig.models import HostGroup, Host, IPAddress, HostDependentManager, getHostDependentManagerClass
 from lvm.models      import LogicalVolume
@@ -142,6 +143,7 @@ TARGET_TYPE_CHOICES = (
 )
 
 class Target(models.Model):
+    name        = models.CharField(max_length=250, help_text=_("Human readable name."))
     wwn         = models.CharField(max_length=250)
     type        = models.CharField(max_length=10, choices=TARGET_TYPE_CHOICES)
     host        = models.ForeignKey(Host)
