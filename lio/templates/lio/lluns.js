@@ -224,6 +224,44 @@ Ext.oa.Lio__Panel = Ext.extend(Ext.Panel, {
               dataIndex: "__unicode__"
             }]
           }),
+          enableDragDrop: true,
+          ddGroup: "llun_hostgroup",
+          buttons: [{
+            text: gettext('Host Groups'),
+            icon: MEDIA_URL + "/icons2/16x16/actions/gtk-execute.png",
+            handler: function(){
+              var addwin = new Ext.Window({
+                x: Ext.lib.Dom.getViewWidth() - 650,
+                y: Ext.lib.Dom.getViewHeight() - 350,
+                height: 300,
+                width: 600,
+                frame: true,
+                layout: 'fit',
+                title: 'Targets',
+                items: {
+                  xtype: 'grid',
+                  ddGroup: "llun_hostgroup",
+                  enableDrag: true,
+                  viewConfig: { forceFit: true },
+                  store: new Ext.data.DirectStore({
+                    fields: ["id", "__unicode__"],
+                    directFn: ifconfig__HostGroup.ids,
+                    autoLoad: true
+                  }),
+                  colModel: new Ext.grid.ColumnModel({
+                    defaults: {
+                      sortable: true
+                    },
+                    columns: [{
+                      header: "Name",
+                      dataIndex: "__unicode__"
+                    }]
+                  })
+                }
+              });
+              addwin.show();
+            }
+          }]
         }, {
           region: "east",
           title: "Hosts",
