@@ -324,7 +324,7 @@ class LogicalLUN(models.Model):
     targets     = models.ManyToManyField(Target)
 
     def __unicode__(self):
-        return "%s (%s)" % (self.volume.name, self.type)
+        return "%s" % (self.volume.name)
 
 
 def __logicallun_hostgroups_changed(**kwargs):
