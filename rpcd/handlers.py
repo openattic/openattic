@@ -321,14 +321,14 @@ class ModelHandler(BaseHandler):
                     setattr(obj, field.name, data[field.name])
                 else:
                     setattr(obj, field.name, data[field.name])
+        self._override_set(obj, data)
+        obj.full_clean()
+        obj.save()
         for field in obj._meta.many_to_many:
             if field.name in data:
                 setattr(obj, field.name, [
                     ModelHandler._get_object_by_id_dict(idobj) for idobj in data[field.name]
                 ])
-        self._override_set(obj, data)
-        obj.full_clean()
-        obj.save()
         return self._idobj(obj)
 
     def _override_get(self, obj, data):
