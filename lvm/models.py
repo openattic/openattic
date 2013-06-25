@@ -828,26 +828,46 @@ class ConfManager(models.Manager):
         snapconf.save()
 
         time_configs = {'h': [], 'moy': [], 'dow': []}
-        for key, value in data.items():
-          if (key.startswith('h_') or key.startswith('moy_') or key.startswith('dow_')) and value == 'on':
-              time, number = key.split('_')
-              time_configs[time].append(number)
+        startdate = enddate = minute = day_of_month = '';
 
-        # sort values
-        for time, numbers in time_configs.items():
-          if len(numbers) > 0:
-            numbers.sort(key=int)
+        # if the job should only run once
+        if data['executedate'] is not None:
+            startdate = enddate = datetime.datetime.strptime(data['executedate'], '%Y-%m-%dT%H:%M:%S')
+            enddate = enddate + datetime.timedelta(minutes=1)
+
+            time_configs['h'] = [str(startdate.hour)]
+            time_configs['dow'] = [str(startdate.isoweekday() % 7)]
+            time_configs['moy'] = [str(startdate.month)]
+            minute = startdate.minute
+            day_of_month = startdate.day
+        # if it's a 'real' job
+        else:
+            startdate = data["startdate"]
+            enddate = data["enddate"]
+
+            for key, value in data.items():
+                if (key.startswith('h_') or key.startswith('moy_') or key.startswith('dow_')) and value == 'on':
+                    time, number = key.split('_')
+                    time_configs[time].append(number)
+            # sort values
+            for time, numbers in time_configs.items():
+                if len(numbers) > 0:
+                    numbers.sort(key=int)
+
+            minute = data['minute'] if 'minute' in data else ''
+            day_of_month = data['day_of_month'] if 'day_of_month' in data else ''
+
         if True: #später or jobmäßigundso:
             jobconf = LVSnapshotJob(
-                start_time=data["startdate"],
-                end_time=data["enddate"],
-                is_active=["active"],
+                start_time=startdate,
+                end_time=enddate,
+                is_active=data["active"],
                 conf=snapconf,
                 host=Host.objects.get_current(),
                 user="root",
-                minute=data['minute'] if 'minute' in data else '',
+                minute=minute,
                 hour=','.join(time_configs["h"]),
-                domonth=data['day_of_month'] if 'day_of_month' in data else '',
+                domonth=day_of_month,
                 month=','.join(time_configs["moy"]),
                 doweek=','.join(time_configs["dow"]))
             jobconf.save()
