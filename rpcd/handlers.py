@@ -254,6 +254,13 @@ class ModelHandler(BaseHandler):
             else:
                 data[field.name] = value
 
+        for rel_m2m in obj._meta.get_all_related_many_to_many_objects():
+            fname = rel_m2m.get_accessor_name()
+            data[fname] = [
+                self._get_handler_instance(val.__class__)._idobj(val)
+                for val in getattr(obj, fname).all()
+                ]
+
         return self._override_get(obj, data)
 
 
@@ -321,14 +328,20 @@ class ModelHandler(BaseHandler):
                     setattr(obj, field.name, data[field.name])
                 else:
                     setattr(obj, field.name, data[field.name])
+        self._override_set(obj, data)
+        obj.full_clean()
+        obj.save()
         for field in obj._meta.many_to_many:
             if field.name in data:
                 setattr(obj, field.name, [
                     ModelHandler._get_object_by_id_dict(idobj) for idobj in data[field.name]
                 ])
-        self._override_set(obj, data)
-        obj.full_clean()
-        obj.save()
+        for rel_m2m in obj._meta.get_all_related_many_to_many_objects():
+            fname = rel_m2m.get_accessor_name()
+            if fname in data:
+                setattr(obj, fname, [
+                    ModelHandler._get_object_by_id_dict(idobj) for idobj in data[fname]
+                ])
         return self._idobj(obj)
 
     def _override_get(self, obj, data):

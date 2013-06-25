@@ -799,6 +799,9 @@ class LVSnapshotJob(Cronjob):
                 snap.megs = lv.megs * vol_conf.snapshot_space / 100
                 snap.save()
 
+                snap_to_conf = LVSnapshotToConf(snapshot_conf=self.conf, lv_snapshot=snap)
+                snap_to_conf.save()
+
                 # delete plugin snapshots
                 for (related, snap_data) in snaps_data:
                     if hasattr(related.model.objects, "delete_config_snapshots"):
@@ -907,3 +910,11 @@ class LogicalVolumeConf(models.Model):
     snapshot_conf   = models.ForeignKey(SnapshotConf)
     volume          = models.ForeignKey(LogicalVolume)
     snapshot_space  = models.IntegerField(null=True, blank=True)
+
+class LVSnapshotToConf(models.Model):
+    snapshot_conf    = models.ForeignKey(SnapshotConf)
+    lv_snapshot     = models.ForeignKey(LogicalVolume)
+
+    class Meta:
+        unique_together = ("snapshot_conf", "lv_snapshot")
+
