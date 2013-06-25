@@ -775,39 +775,39 @@ class LVSnapshotJob(Cronjob):
         return #lol
 
     def dosnapshot(self):
-        invoke(shlex.split(self.conf.prescript)) if len(self.conf.prescript) > 0 else None
+        if self.start_time <= datetime.datetime.now() <= self.end_time:
+            invoke(shlex.split(self.conf.prescript)) if len(self.conf.prescript) > 0 else None
 
-        snaps_data = []
+            snaps_data = []
 
-        # do plugin snapshots
-        for related in SnapshotConf._meta.get_all_related_objects():
-          if hasattr(related.model.objects, "do_config_snapshots"):
-            snaps_data.append((related, related.model.objects.do_config_snapshots(self.conf)))
+            # do plugin snapshots
+            for related in SnapshotConf._meta.get_all_related_objects():
+                if hasattr(related.model.objects, "do_config_snapshots"):
+                    snaps_data.append((related, related.model.objects.do_config_snapshots(self.conf)))
 
-        vol_confs = LogicalVolumeConf.objects.filter(snapshot_conf_id=self.conf)
-        for vol_conf in vol_confs:
-          lv = LogicalVolume.all_objects.get(id=vol_conf.volume.id)
-          now = datetime.datetime.now()
+            vol_confs = LogicalVolumeConf.objects.filter(snapshot_conf_id=self.conf)
+            for vol_conf in vol_confs:
+                lv = LogicalVolume.all_objects.get(id=vol_conf.volume.id)
+                now = datetime.datetime.now()
 
-          name = lv.name + '_snapshot_' + str(now)
-          name = re.sub(' ', '_', name)
-          name = re.sub(':', '-', name)
+                name = lv.name + '_snapshot_' + str(now)
+                name = re.sub(' ', '_', name)
+                name = re.sub(':', '-', name)
 
-          snap = LogicalVolume(snapshot=lv)
-          snap.name = name
-          snap.megs = lv.megs
-          #snap.megs = lv.megs * vol_conf.snapshot_space / 100
-          snap.save()
+                snap = LogicalVolume(snapshot=lv)
+                snap.name = name
+                snap.megs = lv.megs * vol_conf.snapshot_space / 100
+                snap.save()
 
-        # delete plugin snapshots
-        for (related, snap_data) in snaps_data:
-          if hasattr(related.model.objects, "delete_config_snapshots"):
-            related.model.objects.delete_config_snapshots(snap_data)
+                # delete plugin snapshots
+                for (related, snap_data) in snaps_data:
+                    if hasattr(related.model.objects, "delete_config_snapshots"):
+                        related.model.objects.delete_config_snapshots(snap_data)
 
-        self.conf.last_execution = datetime.datetime.now()
-        self.conf.save()
+                self.conf.last_execution = datetime.datetime.now()
+                self.conf.save()
 
-        invoke(shlex.split(self.conf.postscript)) if len(self.conf.postscript) > 0 else None
+                invoke(shlex.split(self.conf.postscript)) if len(self.conf.postscript) > 0 else None
 
     def save(self, *args, **kwargs):
         self.command = "echo Doing snapshot!"
