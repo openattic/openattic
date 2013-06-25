@@ -98,6 +98,9 @@ class HostGroup(models.Model):
     name        = models.CharField(max_length=250)
     hosts       = models.ManyToManyField(Host)
 
+    def __unicode__(self):
+        return "%s (%d hosts)" % (self.name, self.hosts.count())
+
 
 class NetDevice(models.Model):
     host        = models.ForeignKey(Host)
