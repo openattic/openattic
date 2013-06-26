@@ -266,16 +266,23 @@ def __tpg_pre_delete(**kwargs):
 models.signals.pre_delete.connect(__tpg_pre_delete, sender=TPG)
 
 def __tpg_portals_changed(**kwargs):
-    if kwargs["reverse"]:
-        return
-    tpg   = kwargs["instance"]
     iface = dbus.SystemBus().get_object(settings.DBUS_IFACE_SYSTEMD, "/lio")
-    if kwargs["action"] == "post_add":
-        for portal_id in kwargs["pk_set"]:
-            iface.portal_create(portal_id, tpg.id)
-    elif kwargs["action"] == "pre_remove":
-        for portal_id in kwargs["pk_set"]:
-            iface.portal_delete(portal_id, tpg.id)
+    if not kwargs["reverse"]:
+        tpg   = kwargs["instance"]
+        if kwargs["action"] == "post_add":
+            for portal_id in kwargs["pk_set"]:
+                iface.portal_create(portal_id, tpg.id)
+        elif kwargs["action"] == "pre_remove":
+            for portal_id in kwargs["pk_set"]:
+                iface.portal_delete(portal_id, tpg.id)
+    else:
+        portal = kwargs["instance"]
+        if kwargs["action"] == "post_add":
+            for tpg_id in kwargs["pk_set"]:
+                iface.portal_create(portal.id, tpg_id)
+        elif kwargs["action"] == "pre_remove":
+            for tpg_id in kwargs["pk_set"]:
+                iface.portal_delete(portal.id, tpg_id)
 
 models.signals.m2m_changed.connect(__tpg_portals_changed, sender=TPG.portals.through)
 
