@@ -312,7 +312,9 @@ class ACL(models.Model):
         install = (self.id is None)
         models.Model.save(self, *args, **kwargs)
         if install:
+            pre_install.send(sender=ACL, instance=self)
             dbus.SystemBus().get_object(settings.DBUS_IFACE_SYSTEMD, "/lio").acl_create(self.id)
+            post_install.send(sender=ACL, instance=self)
 
 def __acl_pre_delete(**kwargs):
     pre_uninstall.send(sender=ACL, instance=kwargs["instance"])
@@ -349,7 +351,9 @@ class LUN(models.Model):
         install = (self.id is None)
         models.Model.save(self, *args, **kwargs)
         if install:
+            pre_install.send(sender=LUN, instance=self)
             dbus.SystemBus().get_object(settings.DBUS_IFACE_SYSTEMD, "/lio").lun_create(self.id)
+            post_install.send(sender=LUN, instance=self)
 
 def __lun_pre_delete(**kwargs):
     pre_uninstall.send(sender=LUN, instance=kwargs["instance"])
