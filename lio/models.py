@@ -54,8 +54,8 @@ import filesystemproxy
 #      │      │                  │         │                         │     │       │
 #      │      │                  │         │                         │     │       │
 #      │    StorageObject <──── LUN ────> TPG <──── ACL ────> Initiator    │       │
-#      ↓      │                            ↑                               │       │
-#      │      ↓                            │                               │       │
+#      ↓      │                            ║                               │       │
+#      │      ↓                            ⇓                               │       │
 #      │    Backstore                     Portal ────> IPAddress ────> NetDevice   │
 #      │      │                                                                    │
 #      └──────┴────────────────>───────────────────────────────────────────────────┘
