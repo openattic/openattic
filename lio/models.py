@@ -103,10 +103,10 @@ class Backstore(models.Model):
     def __unicode__(self):
         return "%d (%s)" % (self.store_id, self.type)
 
-def __backstore_pre_delete(**kwargs):
-    pre_uninstall.send(sender=Backstore, instance=kwargs["instance"])
-    dbus.SystemBus().get_object(settings.DBUS_IFACE_SYSTEMD, "/lio").backstore_delete(kwargs["instance"].id)
-    post_uninstall.send(sender=Backstore, instance=kwargs["instance"])
+def __backstore_pre_delete(instance, **kwargs):
+    pre_uninstall.send(sender=Backstore, instance=instance)
+    dbus.SystemBus().get_object(settings.DBUS_IFACE_SYSTEMD, "/lio").backstore_delete(instance.id)
+    post_uninstall.send(sender=Backstore, instance=instance)
 
 models.signals.pre_delete.connect(__backstore_pre_delete, sender=Backstore)
 
@@ -144,10 +144,10 @@ class StorageObject(models.Model):
             dbus.SystemBus().get_object(settings.DBUS_IFACE_SYSTEMD, "/lio").storage_object_create(self.id)
             post_install.send(sender=StorageObject, instance=self)
 
-def __storage_object_pre_delete(**kwargs):
-    pre_uninstall.send(sender=StorageObject, instance=kwargs["instance"])
-    dbus.SystemBus().get_object(settings.DBUS_IFACE_SYSTEMD, "/lio").storage_object_delete(kwargs["instance"].id)
-    post_uninstall.send(sender=StorageObject, instance=kwargs["instance"])
+def __storage_object_pre_delete(instance, **kwargs):
+    pre_uninstall.send(sender=StorageObject, instance=instance)
+    dbus.SystemBus().get_object(settings.DBUS_IFACE_SYSTEMD, "/lio").storage_object_delete(instance.id)
+    post_uninstall.send(sender=StorageObject, instance=instance)
 
 models.signals.pre_delete.connect(__storage_object_pre_delete, sender=StorageObject)
 
@@ -196,10 +196,10 @@ class Target(models.Model):
             dbus.SystemBus().get_object(settings.DBUS_IFACE_SYSTEMD, "/lio").target_create(self.id)
             post_install.send(sender=Target, instance=self)
 
-def __target_pre_delete(**kwargs):
-    pre_uninstall.send(sender=Target, instance=kwargs["instance"])
-    dbus.SystemBus().get_object(settings.DBUS_IFACE_SYSTEMD, "/lio").target_delete(kwargs["instance"].id)
-    post_uninstall.send(sender=Target, instance=kwargs["instance"])
+def __target_pre_delete(instance, **kwargs):
+    pre_uninstall.send(sender=Target, instance=instance)
+    dbus.SystemBus().get_object(settings.DBUS_IFACE_SYSTEMD, "/lio").target_delete(instance.id)
+    post_uninstall.send(sender=Target, instance=instance)
 
 models.signals.pre_delete.connect(__target_pre_delete, sender=Target)
 
@@ -258,26 +258,26 @@ class TPG(models.Model):
             dbus.SystemBus().get_object(settings.DBUS_IFACE_SYSTEMD, "/lio").tpg_create(self.id)
             post_install.send(sender=TPG, instance=self)
 
-def __tpg_pre_delete(**kwargs):
-    pre_uninstall.send(sender=TPG, instance=kwargs["instance"])
-    dbus.SystemBus().get_object(settings.DBUS_IFACE_SYSTEMD, "/lio").tpg_delete(kwargs["instance"].id)
-    post_uninstall.send(sender=TPG, instance=kwargs["instance"])
+def __tpg_pre_delete(instance, **kwargs):
+    pre_uninstall.send(sender=TPG, instance=instance)
+    dbus.SystemBus().get_object(settings.DBUS_IFACE_SYSTEMD, "/lio").tpg_delete(instance.id)
+    post_uninstall.send(sender=TPG, instance=instance)
 
 models.signals.pre_delete.connect(__tpg_pre_delete, sender=TPG)
 
-def __tpg_portals_changed(**kwargs):
+def __tpg_portals_changed(instance, reverse, action, pk_set, **kwargs):
     iface = dbus.SystemBus().get_object(settings.DBUS_IFACE_SYSTEMD, "/lio")
-    if not kwargs["reverse"]:
-        tpgs = [kwargs["instance"]]
-        portals = [ Portal.objects.get(id=id) for id in kwargs["pk_set"] ]
+    if not reverse:
+        tpgs = [instance]
+        portals = [ Portal.objects.get(id=id) for id in pk_set ]
     else:
-        tpgs = [ TPG.objects.get(id=id) for id in kwargs["pk_set"] ]
-        portals = [kwargs["instance"]]
+        tpgs = [ TPG.objects.get(id=id) for id in pk_set ]
+        portals = [instance]
     for tpg in tpgs:
         for portal in portals:
-            if kwargs["action"] == "post_add":
+            if action == "post_add":
                 iface.portal_create(portal.id, tpg.id)
-            elif kwargs["action"] == "pre_remove":
+            elif action == "pre_remove":
                 iface.portal_delete(portal.id, tpg.id)
 
 models.signals.m2m_changed.connect(__tpg_portals_changed, sender=TPG.portals.through)
@@ -314,10 +314,10 @@ class LUN(models.Model):
             dbus.SystemBus().get_object(settings.DBUS_IFACE_SYSTEMD, "/lio").lun_create(self.id)
             post_install.send(sender=LUN, instance=self)
 
-def __lun_pre_delete(**kwargs):
-    pre_uninstall.send(sender=LUN, instance=kwargs["instance"])
-    dbus.SystemBus().get_object(settings.DBUS_IFACE_SYSTEMD, "/lio").lun_delete(kwargs["instance"].id)
-    post_uninstall.send(sender=LUN, instance=kwargs["instance"])
+def __lun_pre_delete(instance, **kwargs):
+    pre_uninstall.send(sender=LUN, instance=instance)
+    dbus.SystemBus().get_object(settings.DBUS_IFACE_SYSTEMD, "/lio").lun_delete(instance.id)
+    post_uninstall.send(sender=LUN, instance=instance)
 
 models.signals.pre_delete.connect(__lun_pre_delete, sender=LUN)
 
@@ -352,26 +352,26 @@ class ACL(models.Model):
             dbus.SystemBus().get_object(settings.DBUS_IFACE_SYSTEMD, "/lio").acl_create(self.id)
             post_install.send(sender=ACL, instance=self)
 
-def __acl_pre_delete(**kwargs):
-    pre_uninstall.send(sender=ACL, instance=kwargs["instance"])
-    dbus.SystemBus().get_object(settings.DBUS_IFACE_SYSTEMD, "/lio").acl_delete(kwargs["instance"].id)
-    post_uninstall.send(sender=ACL, instance=kwargs["instance"])
+def __acl_pre_delete(instance, **kwargs):
+    pre_uninstall.send(sender=ACL, instance=instance)
+    dbus.SystemBus().get_object(settings.DBUS_IFACE_SYSTEMD, "/lio").acl_delete(instance.id)
+    post_uninstall.send(sender=ACL, instance=instance)
 
 models.signals.pre_delete.connect(__acl_pre_delete, sender=ACL)
 
-def __acl_mappedluns_changed(**kwargs):
+def __acl_mappedluns_changed(instance, reverse, action, pk_set, **kwargs):
     iface = dbus.SystemBus().get_object(settings.DBUS_IFACE_SYSTEMD, "/lio")
-    if not kwargs["reverse"]:
-        acls = [kwargs["instance"]]
-        luns = [ LUN.objects.get(id=id) for id in kwargs["pk_set"] ]
+    if not reverse:
+        acls = [instance]
+        luns = [ LUN.objects.get(id=id) for id in pk_set ]
     else:
-        acls = [ ACL.objects.get(id=id) for id in kwargs["pk_set"] ]
-        luns = [kwargs["instance"]]
+        acls = [ ACL.objects.get(id=id) for id in pk_set ]
+        luns = [instance]
     for acl in acls:
         for lun in luns:
-            if kwargs["action"] == "post_add":
+            if action == "post_add":
                 iface.lun_map(lun.id, acl.id)
-            elif kwargs["action"] == "pre_remove":
+            elif action == "pre_remove":
                 iface.lun_unmap(lun.id, acl.id)
 
 models.signals.m2m_changed.connect(__acl_mappedluns_changed, sender=ACL.mapped_luns.through)
@@ -421,43 +421,42 @@ def __acl_add_or_delete(tpg, initiator, action):
         if action == "pre_remove":
             acl.delete()
 
-def __logicallun_hosts_changed(**kwargs):
+def __logicallun_hosts_changed(instance, reverse, action, pk_set, **kwargs):
     """ A Host has been added to or removed from a LLUN. """
-    if kwargs["reverse"] or kwargs["action"] not in ("post_add", "pre_remove"):
+    if reverse or action not in ("post_add", "pre_remove"):
         return
-    llun  = kwargs["instance"]
+    llun  = instance
     localhost = Host.objects.get_current()
     for target in llun.targets.filter(host=localhost):
         for tpg in target.tpg_set.all():
-            for host_id in kwargs["pk_set"]:
+            for host_id in pk_set:
                 host = Host.objects.get(id=host_id)
                 for initiator in host.initiator_set.filter(type=target.type):
-                    __acl_add_or_delete(tpg, initiator, kwargs["action"])
+                    __acl_add_or_delete(tpg, initiator, action)
 
 
 models.signals.m2m_changed.connect(__logicallun_hosts_changed, sender=LogicalLUN.hosts.through)
 
 
-def __hostgroup_hosts_changed(**kwargs):
+def __hostgroup_hosts_changed(instance, reverse, action, pk_set, **kwargs):
     """ A host has been added to or removed from a HostGroup.
 
         See if any LLUNs are using the HostGroup. For those, this is
         equivalent to the host being added or removed individually.
     """
-    if kwargs["reverse"] or kwargs["action"] not in ("post_add", "pre_remove"):
+    if reverse or action not in ("post_add", "pre_remove"):
         return
-    hostgrp = kwargs["instance"]
-    for llun in hostgrp.logicallun_set.all():
-        __logicallun_hosts_changed(reverse=False, action=kwargs["action"], instance=llun, pk_set=kwargs["pk_set"])
+    for llun in instance.logicallun_set.all():
+        __logicallun_hosts_changed(reverse=False, action=action, instance=llun, pk_set=pk_set)
 
 models.signals.m2m_changed.connect(__hostgroup_hosts_changed, sender=HostGroup.hosts.through)
 
 
-def __logicallun_targets_changed(**kwargs):
+def __logicallun_targets_changed(instance, reverse, action, pk_set, **kwargs):
     """ A Target has been added to or removed from a LLUN. """
-    if kwargs["reverse"] or kwargs["action"] not in ("post_add", "pre_remove"):
+    if reverse or action not in ("post_add", "pre_remove"):
         return
-    llun  = kwargs["instance"]
+    llun  = instance
     localhost = Host.objects.get_current()
 
     try:
@@ -468,7 +467,7 @@ def __logicallun_targets_changed(**kwargs):
         storobj = StorageObject(backstore=bstore, volume=llun.volume, wwn=llun.volume.uuid)
         storobj.save()
 
-    for target_id in kwargs["pk_set"]:
+    for target_id in pk_set:
         try:
             target = Target.objects.get(id=target_id)
         except Target.DoesNotExist:
@@ -478,50 +477,48 @@ def __logicallun_targets_changed(**kwargs):
             for hostgrp in llun.hostgroups.all():
                 for host in hostgrp.hosts.all():
                     for initiator in host.initiator_set.filter(type=target.type):
-                        __acl_add_or_delete(tpg, initiator, kwargs["action"])
+                        __acl_add_or_delete(tpg, initiator, action)
             for host in llun.hosts.all():
                 for initiator in host.initiator_set.filter(type=target.type):
-                    __acl_add_or_delete(tpg, initiator, kwargs["action"])
+                    __acl_add_or_delete(tpg, initiator, action)
 
             try:
                 lun = LUN.objects.get( tpg=tpg, storageobj=storobj, logicallun=llun )
             except LUN.DoesNotExist:
-                if kwargs["action"] == "post_add":
+                if action == "post_add":
                     lun = LUN( tpg=tpg, storageobj=storobj, logicallun=llun, lun_id=llun.lun_id )
                     lun.save()
             else:
-                if kwargs["action"] == "pre_remove":
+                if action == "pre_remove":
                     lun.delete()
 
 models.signals.m2m_changed.connect(__logicallun_targets_changed, sender=LogicalLUN.targets.through)
 
 
-def __tpg_added(**kwargs):
+def __tpg_added(instance, **kwargs):
     """ A TPG has been added to a target.
 
         This case is equivalent to a Target being added to a LLUN.
     """
-    tpg = kwargs["instance"]
-    for llun in tpg.target.logicallun_set.all():
-        __logicallun_targets_changed(reverse=False, action="post_add", instance=llun, pk_set=[tpg.target.id])
+    for llun in instance.target.logicallun_set.all():
+        __logicallun_targets_changed(reverse=False, action="post_add", instance=llun, pk_set=[instance.target.id])
 
 post_install.connect(__tpg_added, sender=TPG)
 
 
-def __initiator_added(**kwargs):
+def __initiator_added(instance, **kwargs):
     """ An Initiator has been added to a Host.
 
         This case is equivalent to the host being added to a LLUN.
     """
-    initiator = kwargs["instance"]
     llun_ids = set()
-    for hostgrp in initiator.host.hostgroup_set.all():
+    for hostgrp in instance.host.hostgroup_set.all():
         for llun in hostgrp.logicallun_set.values("id"):
             llun_ids.add(llun["id"])
-    for llun in initiator.host.logicallun_set.values("id"):
+    for llun in instance.host.logicallun_set.values("id"):
         llun_ids.add(llun["id"])
     for llun_id in llun_ids:
         llun = LogicalLUN.objects.get(id=llun_id)
-        __logicallun_hosts_changed(reverse=False, action="post_add", instance=llun, pk_set=[initiator.host.id])
+        __logicallun_hosts_changed(reverse=False, action="post_add", instance=llun, pk_set=[instance.host.id])
 
 models.signals.post_save.connect(__initiator_added, sender=Initiator)
