@@ -192,14 +192,14 @@ class Target(models.Model):
                 }[self.type])
         models.Model.save(self, *args, **kwargs)
         if install:
-            pre_install.send(sender=Target, instance=kwargs["instance"])
-            dbus.SystemBus().get_object(settings.DBUS_IFACE_SYSTEMD, "/lio").target_create(kwargs["instance"].id)
-            post_install.send(sender=Target, instance=kwargs["instance"])
+            pre_install.send(sender=Target, instance=self)
+            dbus.SystemBus().get_object(settings.DBUS_IFACE_SYSTEMD, "/lio").target_create(self.id)
+            post_install.send(sender=Target, instance=self)
 
 def __target_pre_delete(**kwargs):
-    pre_uninstall.send(sender=Target, instance=self)
-    dbus.SystemBus().get_object(settings.DBUS_IFACE_SYSTEMD, "/lio").target_delete(self.id)
-    post_uninstall.send(sender=Target, instance=self)
+    pre_uninstall.send(sender=Target, instance=kwargs["instance"])
+    dbus.SystemBus().get_object(settings.DBUS_IFACE_SYSTEMD, "/lio").target_delete(kwargs["instance"].id)
+    post_uninstall.send(sender=Target, instance=kwargs["instance"])
 
 models.signals.pre_delete.connect(__target_pre_delete, sender=Target)
 
@@ -468,11 +468,11 @@ def __logicallun_targets_changed(**kwargs):
             try:
                 lun = LUN.objects.get( tpg=tpg, storageobj=storobj, logicallun=llun )
             except LUN.DoesNotExist:
-                if action == "post_add":
+                if kwargs["action"] == "post_add":
                     lun = LUN( tpg=tpg, storageobj=storobj, logicallun=llun, lun_id=llun.lun_id )
                     lun.save()
             else:
-                if action == "pre_remove":
+                if kwargs["action"] == "pre_remove":
                     lun.delete()
 
 models.signals.m2m_changed.connect(__logicallun_targets_changed, sender=LogicalLUN.targets.through)
