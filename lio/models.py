@@ -287,43 +287,6 @@ def __tpg_portals_changed(**kwargs):
 models.signals.m2m_changed.connect(__tpg_portals_changed, sender=TPG.portals.through)
 
 
-class ACL(models.Model):
-    tpg         = models.ForeignKey(TPG)
-    initiator   = models.ForeignKey(Initiator)
-
-    objects     = getHostDependentManagerClass("tpg__target__host")()
-    all_objects = models.Manager()
-
-    class Meta:
-        unique_together = [('tpg', 'initiator')]
-
-    @property
-    def lio_object(self):
-        lio_tpg = self.tpg.lio_object
-        for lio_acl in lio_tpg.node_acls:
-            if lio_acl.node_wwn == self.initiator.wwn:
-                return lio_acl
-        raise KeyError("ACL not found")
-
-    def __unicode__(self):
-        return "%s/acls/%s" % (self.tpg, self.initiator.wwn)
-
-    def save(self, *args, **kwargs):
-        install = (self.id is None)
-        models.Model.save(self, *args, **kwargs)
-        if install:
-            pre_install.send(sender=ACL, instance=self)
-            dbus.SystemBus().get_object(settings.DBUS_IFACE_SYSTEMD, "/lio").acl_create(self.id)
-            post_install.send(sender=ACL, instance=self)
-
-def __acl_pre_delete(**kwargs):
-    pre_uninstall.send(sender=ACL, instance=kwargs["instance"])
-    dbus.SystemBus().get_object(settings.DBUS_IFACE_SYSTEMD, "/lio").acl_delete(kwargs["instance"].id)
-    post_uninstall.send(sender=ACL, instance=kwargs["instance"])
-
-models.signals.pre_delete.connect(__acl_pre_delete, sender=ACL)
-
-
 class LUN(models.Model):
     tpg         = models.ForeignKey(TPG)
     storageobj  = models.ForeignKey(StorageObject)
@@ -361,6 +324,44 @@ def __lun_pre_delete(**kwargs):
     post_uninstall.send(sender=LUN, instance=kwargs["instance"])
 
 models.signals.pre_delete.connect(__lun_pre_delete, sender=LUN)
+
+
+class ACL(models.Model):
+    tpg         = models.ForeignKey(TPG)
+    initiator   = models.ForeignKey(Initiator)
+    mapped_luns = models.ManyToManyField(LUN)
+
+    objects     = getHostDependentManagerClass("tpg__target__host")()
+    all_objects = models.Manager()
+
+    class Meta:
+        unique_together = [('tpg', 'initiator')]
+
+    @property
+    def lio_object(self):
+        lio_tpg = self.tpg.lio_object
+        for lio_acl in lio_tpg.node_acls:
+            if lio_acl.node_wwn == self.initiator.wwn:
+                return lio_acl
+        raise KeyError("ACL not found")
+
+    def __unicode__(self):
+        return "%s/acls/%s" % (self.tpg, self.initiator.wwn)
+
+    def save(self, *args, **kwargs):
+        install = (self.id is None)
+        models.Model.save(self, *args, **kwargs)
+        if install:
+            pre_install.send(sender=ACL, instance=self)
+            dbus.SystemBus().get_object(settings.DBUS_IFACE_SYSTEMD, "/lio").acl_create(self.id)
+            post_install.send(sender=ACL, instance=self)
+
+def __acl_pre_delete(**kwargs):
+    pre_uninstall.send(sender=ACL, instance=kwargs["instance"])
+    dbus.SystemBus().get_object(settings.DBUS_IFACE_SYSTEMD, "/lio").acl_delete(kwargs["instance"].id)
+    post_uninstall.send(sender=ACL, instance=kwargs["instance"])
+
+models.signals.pre_delete.connect(__acl_pre_delete, sender=ACL)
 
 
 class LogicalLUN(models.Model):
