@@ -77,8 +77,20 @@ class SystemD(LockingPlugin):
         lio_tpg = mdl_lun.tpg.lio_object
         lio_lun = lio_tpg.lun(mdl_lun.lun_id, mdl_lun.storageobj.lio_object,
                         "%s at %s" % (mdl_lun.storageobj.volume.name, Host.objects.get_current().name))
-        for mdl_acl in mdl_lun.tpg.acl_set.all():
-            mdl_acl.lio_object.mapped_lun(mdl_lun.lun_id, lio_lun)
+
+    @method(in_signature="ii", out_signature="")
+    def lun_map(self, id, acl_id):
+        mdl_lun = models.LUN.objects.get(id=id)
+        mdl_acl = mdl_lun.tpg.acl_set.get(id=acl_id)
+        mdl_acl.lio_object.mapped_lun(mdl_lun.lun_id, mdl_lun.lio_object)
+
+    @method(in_signature="ii", out_signature="")
+    def lun_unmap(self, id, acl_id):
+        mdl_lun = models.LUN.objects.get(id=id)
+        mdl_acl = mdl_lun.tpg.acl_set.get(id=acl_id)
+        for lio_mlun in mdl_acl.lio_object.mapped_luns:
+            if lio_mlun.tpg_lun.storage_object.wwn == mdl_lun.storageobj.wwn:
+                lio_mlun.delete()
 
     @method(in_signature="i", out_signature="")
     def lun_delete(self, id):
@@ -105,8 +117,6 @@ class SystemD(LockingPlugin):
         mdl_acl = models.ACL.objects.get(id=id)
         lio_tpg = mdl_acl.tpg.lio_object
         lio_acl = lio_tpg.node_acl(mdl_acl.initiator.wwn)
-        for mdl_lun in mdl_acl.tpg.lun_set.all():
-            lio_acl.mapped_lun(mdl_lun.lun_id, mdl_lun.lio_object)
 
     @method(in_signature="i", out_signature="")
     def acl_delete(self, id):

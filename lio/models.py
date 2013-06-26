@@ -359,6 +359,23 @@ def __acl_pre_delete(**kwargs):
 
 models.signals.pre_delete.connect(__acl_pre_delete, sender=ACL)
 
+def __acl_mappedluns_changed(**kwargs):
+    iface = dbus.SystemBus().get_object(settings.DBUS_IFACE_SYSTEMD, "/lio")
+    if not kwargs["reverse"]:
+        acls = [kwargs["instance"]]
+        luns = [ LUN.objects.get(id=id) for id in kwargs["pk_set"] ]
+    else:
+        luns = [ LUN.objects.get(id=id) for id in kwargs["pk_set"] ]
+        acls = [kwargs["instance"]]
+    for acl in acls:
+        for lun in luns:
+            if kwargs["action"] == "post_add":
+                iface.lun_map(lun.id, acl.id)
+            elif kwargs["action"] == "pre_remove":
+                iface.lun_unmap(lun.id, acl.id)
+
+models.signals.m2m_changed.connect(__acl_mappedluns_changed, sender=ACL.mapped_luns.through)
+
 
 class LogicalLUN(models.Model):
     """ Mainmächtiges masterchief ultramodel of doom """
