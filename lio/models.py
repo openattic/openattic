@@ -268,10 +268,10 @@ models.signals.pre_delete.connect(__tpg_pre_delete, sender=TPG)
 def __tpg_portals_changed(instance, reverse, action, pk_set, **kwargs):
     iface = dbus.SystemBus().get_object(settings.DBUS_IFACE_SYSTEMD, "/lio")
     if not reverse:
-        tpgs = [instance]
-        portals = [ Portal.objects.get(id=id) for id in pk_set ]
+        tpgs    = [instance]
+        portals = Portal.objects.filter(id__in=pk_set)
     else:
-        tpgs = [ TPG.objects.get(id=id) for id in pk_set ]
+        tpgs    = TPG.objects.filter(id__in=pk_set)
         portals = [instance]
     for tpg in tpgs:
         for portal in portals:
@@ -363,9 +363,9 @@ def __acl_mappedluns_changed(instance, reverse, action, pk_set, **kwargs):
     iface = dbus.SystemBus().get_object(settings.DBUS_IFACE_SYSTEMD, "/lio")
     if not reverse:
         acls = [instance]
-        luns = [ LUN.objects.get(id=id) for id in pk_set ]
+        luns = LUN.objects.filter(id__in=pk_set)
     else:
-        acls = [ ACL.objects.get(id=id) for id in pk_set ]
+        acls = ACL.objects.filter(id__in=pk_set)
         luns = [instance]
     for acl in acls:
         for lun in luns:
@@ -397,10 +397,10 @@ def __logicallun_hostgroups_changed(instance, reverse, action, pk_set, **kwargs)
     if action not in ("post_add", "pre_remove"):
         return
     if not reverse:
-        lluns = [instance]
-        hostgroups = [ HostGroup.objects.get(id=id) for id in pk_set ]
+        lluns      = [instance]
+        hostgroups = HostGroup.objects.filter(id__in=pk_set)
     else:
-        lluns = [ LogicalLUN.objects.get(id=id) for id in pk_set ]
+        lluns      = LogicalLUN.objects.filter(id__in=pk_set)
         hostgroups = [instance]
     for llun in lluns:
         host_ids = set()
@@ -430,13 +430,16 @@ def __logicallun_hosts_changed(instance, reverse, action, pk_set, **kwargs):
     """ A Host has been added to or removed from a LLUN. """
     if action not in ("post_add", "pre_remove"):
         return
+
     if not reverse:
         lluns = [instance]
-        hosts = [ Host.objects.get(id=id) for id in pk_set ]
+        hosts = Host.objects.filter(id__in=pk_set)
     else:
-        lluns = [ LogicalLUN.objects.get(id=id) for id in pk_set ]
+        lluns = LogicalLUN.objects.filter(id__in=pk_set)
         hosts = [instance]
+
     localhost = Host.objects.get_current()
+
     for llun in lluns:
         for tgt in llun.targets.filter(host=localhost):
             for tpg in tgt.tpg_set.all():
@@ -456,12 +459,14 @@ def __hostgroup_hosts_changed(instance, reverse, action, pk_set, **kwargs):
     """
     if reverse or action not in ("post_add", "pre_remove"):
         return
+
     if not reverse:
         hostgroups = [instance]
-        host_pks = pk_set
+        host_pks   = pk_set
     else:
-        hostgroups = [ HostGroup.objects.get(id=id) for id in pk_set ]
-        host_pks = set([instance.id])
+        hostgroups = HostGroup.objects.filter(id__in=pk_set)
+        host_pks   = set([instance.id])
+
     for hostgrp in hostgroups:
         for llun in hostgrp.logicallun_set.all():
             __logicallun_hosts_changed(instance=llun, reverse=False, action=action, pk_set=host_pks)
@@ -476,9 +481,9 @@ def __logicallun_targets_changed(instance, reverse, action, pk_set, **kwargs):
 
     if not reverse:
         lluns   = [instance]
-        targets = [ Target.objects.get(id=id) for id in pk_set ]
+        targets = Target.objects.filter(id__in=pk_set)
     else:
-        lluns   = [ LogicalLUN.objects.get(id=id) for id in pk_set ]
+        lluns   = LogicalLUN.objects.filter(id__in=pk_set)
         targets = [instance]
 
     localhost = Host.objects.get_current()
