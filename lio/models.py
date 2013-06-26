@@ -103,6 +103,15 @@ class Backstore(models.Model):
     def __unicode__(self):
         return "%d (%s)" % (self.store_id, self.type)
 
+def __backstore_pre_delete(**kwargs):
+    pre_uninstall.send(sender=Backstore, instance=self)
+    dbus.SystemBus().get_object(settings.DBUS_IFACE_SYSTEMD, "/lio").backstore_delete(self.id)
+    post_uninstall.send(sender=Backstore, instance=self)
+
+models.signals.pre_delete.connect(__backstore_pre_delete, sender=Backstore)
+
+
+
 class StorageObject(models.Model):
     backstore   = models.ForeignKey(Backstore)
     volume      = models.ForeignKey(LogicalVolume)
@@ -134,6 +143,14 @@ class StorageObject(models.Model):
             pre_install.send(sender=StorageObject, instance=self)
             dbus.SystemBus().get_object(settings.DBUS_IFACE_SYSTEMD, "/lio").storage_object_create(self.id)
             post_install.send(sender=StorageObject, instance=self)
+
+def __storage_object_pre_delete(**kwargs):
+    pre_uninstall.send(sender=StorageObject, instance=self)
+    dbus.SystemBus().get_object(settings.DBUS_IFACE_SYSTEMD, "/lio").storage_object_delete(self.id)
+    post_uninstall.send(sender=StorageObject, instance=self)
+
+models.signals.pre_delete.connect(__storage_object_pre_delete, sender=StorageObject)
+
 
 
 TARGET_TYPE_CHOICES = (
@@ -178,6 +195,13 @@ class Target(models.Model):
             pre_install.send(sender=Target, instance=self)
             dbus.SystemBus().get_object(settings.DBUS_IFACE_SYSTEMD, "/lio").target_create(self.id)
             post_install.send(sender=Target, instance=self)
+
+def __target_pre_delete(**kwargs):
+    pre_uninstall.send(sender=Target, instance=self)
+    dbus.SystemBus().get_object(settings.DBUS_IFACE_SYSTEMD, "/lio").target_delete(self.id)
+    post_uninstall.send(sender=Target, instance=self)
+
+models.signals.pre_delete.connect(__target_pre_delete, sender=Target)
 
 
 class Initiator(models.Model):
@@ -234,14 +258,24 @@ class TPG(models.Model):
             dbus.SystemBus().get_object(settings.DBUS_IFACE_SYSTEMD, "/lio").tpg_create(self.id)
             post_install.send(sender=TPG, instance=self)
 
+def __tpg_pre_delete(**kwargs):
+    pre_uninstall.send(sender=TPG, instance=self)
+    dbus.SystemBus().get_object(settings.DBUS_IFACE_SYSTEMD, "/lio").tpg_delete(self.id)
+    post_uninstall.send(sender=TPG, instance=self)
+
+models.signals.pre_delete.connect(__tpg_pre_delete, sender=TPG)
 
 def __tpg_portals_changed(**kwargs):
-    if kwargs["reverse"] or kwargs["action"] != "post_add":
+    if kwargs["reverse"]:
         return
     tpg   = kwargs["instance"]
     iface = dbus.SystemBus().get_object(settings.DBUS_IFACE_SYSTEMD, "/lio")
-    for portal_id in kwargs["pk_set"]:
-        iface.portal_create(portal_id, tpg.id)
+    if kwargs["action"] == "post_add":
+        for portal_id in kwargs["pk_set"]:
+            iface.portal_create(portal_id, tpg.id)
+    elif kwargs["action"] == "pre_remove":
+        for portal_id in kwargs["pk_set"]:
+            iface.portal_delete(portal_id, tpg.id)
 
 models.signals.m2m_changed.connect(__tpg_portals_changed, sender=TPG.portals.through)
 
@@ -273,6 +307,13 @@ class ACL(models.Model):
         if install:
             dbus.SystemBus().get_object(settings.DBUS_IFACE_SYSTEMD, "/lio").acl_create(self.id)
 
+def __acl_pre_delete(**kwargs):
+    pre_uninstall.send(sender=ACL, instance=self)
+    dbus.SystemBus().get_object(settings.DBUS_IFACE_SYSTEMD, "/lio").acl_delete(self.id)
+    post_uninstall.send(sender=ACL, instance=self)
+
+models.signals.pre_delete.connect(__acl_pre_delete, sender=ACL)
+
 
 class LUN(models.Model):
     tpg         = models.ForeignKey(TPG)
@@ -303,7 +344,12 @@ class LUN(models.Model):
         if install:
             dbus.SystemBus().get_object(settings.DBUS_IFACE_SYSTEMD, "/lio").lun_create(self.id)
 
+def __lun_pre_delete(**kwargs):
+    pre_uninstall.send(sender=LUN, instance=self)
+    dbus.SystemBus().get_object(settings.DBUS_IFACE_SYSTEMD, "/lio").lun_delete(self.id)
+    post_uninstall.send(sender=LUN, instance=self)
 
+models.signals.pre_delete.connect(__lun_pre_delete, sender=LUN)
 
 
 class LogicalLUN(models.Model):

@@ -28,11 +28,19 @@ class SystemD(LockingPlugin):
     dbus_path = "/lio"
 
     @method(in_signature="i", out_signature="")
+    def backstore_delete(self, id):
+        models.Backstore.objects.get(id=id).lio_object.delete()
+
+    @method(in_signature="i", out_signature="")
     def storage_object_create(self, id):
         mdl_so = models.StorageObject.objects.get(id=id)
         lio_bs = mdl_so.backstore.lio_object
         storage = lio_bs.storage_object(mdl_so.volume.name, mdl_so.volume.path, gen_wwn=False)
         storage.wwn = mdl_so.wwn
+
+    @method(in_signature="i", out_signature="")
+    def storage_object_delete(self, id):
+        models.StorageObject.objects.get(id=id).lio_object.delete()
 
     @method(in_signature="i", out_signature="")
     def target_create(self, id):
@@ -43,6 +51,10 @@ class SystemD(LockingPlugin):
         if not fabric.exists:
             raise SystemError("failed to load fabric module for '%s'" % mdl_tgt.type)
         lio_tgt = target.Target(fabric, mdl_tgt.wwn)
+
+    @method(in_signature="i", out_signature="")
+    def target_delete(self, id):
+        models.Target.objects.get(id=id).lio_object.delete()
 
     @method(in_signature="i", out_signature="")
     def tpg_create(self, id):
@@ -56,6 +68,10 @@ class SystemD(LockingPlugin):
         lio_tpg.enable = True
 
     @method(in_signature="i", out_signature="")
+    def tpg_delete(self, id):
+        models.TPG.objects.get(id=id).lio_object.delete()
+
+    @method(in_signature="i", out_signature="")
     def lun_create(self, id):
         mdl_lun = models.LUN.objects.get(id=id)
         lio_tpg = mdl_lun.tpg.lio_object
@@ -63,6 +79,10 @@ class SystemD(LockingPlugin):
                         "%s at %s" % (mdl_lun.storageobj.volume.name, Host.objects.get_current().name))
         for mdl_acl in mdl_lun.tpg.acl_set.all():
             mdl_acl.lio_object.mapped_lun(mdl_lun.lun_id, lio_lun)
+
+    @method(in_signature="i", out_signature="")
+    def lun_delete(self, id):
+        models.LUN.objects.get(id=id).lio_object.delete()
 
     @method(in_signature="ii", out_signature="")
     def portal_create(self, id, tpg_id):
@@ -72,12 +92,25 @@ class SystemD(LockingPlugin):
         lio_tpg.network_portal(mdl_ptl.ipaddress.host_part, mdl_ptl.port)
 
     @method(in_signature="i", out_signature="")
+    def portal_delete(self, id, tpg_id):
+        mdl_ptl = models.Portal.objects.get(id=id)
+        mdl_tpg = models.TPG.objects.get(id=tpg_id)
+        lio_tpg = mdl_tpg.lio_object
+        for lio_ptl in lio_tpg.network_portals:
+            if lio_ptl.ip_address == mdl_ptl.ipaddress.host_part and lio_ptl.port == mdl_ptl.port:
+                lio_ptl.delete()
+
+    @method(in_signature="i", out_signature="")
     def acl_create(self, id):
         mdl_acl = models.ACL.objects.get(id=id)
         lio_tpg = mdl_acl.tpg.lio_object
         lio_acl = lio_tpg.node_acl(mdl_acl.initiator.wwn)
         for mdl_lun in mdl_acl.tpg.lun_set.all():
             lio_acl.mapped_lun(mdl_lun.lun_id, mdl_lun.lio_object)
+
+    @method(in_signature="i", out_signature="")
+    def acl_delete(self, id):
+        models.ACL.objects.get(id=id).lio_object.delete()
 
     @method(in_signature="", out_signature="")
     def saveconfig(self):
