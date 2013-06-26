@@ -104,9 +104,9 @@ class Backstore(models.Model):
         return "%d (%s)" % (self.store_id, self.type)
 
 def __backstore_pre_delete(**kwargs):
-    pre_uninstall.send(sender=Backstore, instance=self)
-    dbus.SystemBus().get_object(settings.DBUS_IFACE_SYSTEMD, "/lio").backstore_delete(self.id)
-    post_uninstall.send(sender=Backstore, instance=self)
+    pre_uninstall.send(sender=Backstore, instance=kwargs["instance"])
+    dbus.SystemBus().get_object(settings.DBUS_IFACE_SYSTEMD, "/lio").backstore_delete(kwargs["instance"].id)
+    post_uninstall.send(sender=Backstore, instance=kwargs["instance"])
 
 models.signals.pre_delete.connect(__backstore_pre_delete, sender=Backstore)
 
@@ -145,9 +145,9 @@ class StorageObject(models.Model):
             post_install.send(sender=StorageObject, instance=self)
 
 def __storage_object_pre_delete(**kwargs):
-    pre_uninstall.send(sender=StorageObject, instance=self)
-    dbus.SystemBus().get_object(settings.DBUS_IFACE_SYSTEMD, "/lio").storage_object_delete(self.id)
-    post_uninstall.send(sender=StorageObject, instance=self)
+    pre_uninstall.send(sender=StorageObject, instance=kwargs["instance"])
+    dbus.SystemBus().get_object(settings.DBUS_IFACE_SYSTEMD, "/lio").storage_object_delete(kwargs["instance"].id)
+    post_uninstall.send(sender=StorageObject, instance=kwargs["instance"])
 
 models.signals.pre_delete.connect(__storage_object_pre_delete, sender=StorageObject)
 
@@ -192,9 +192,9 @@ class Target(models.Model):
                 }[self.type])
         models.Model.save(self, *args, **kwargs)
         if install:
-            pre_install.send(sender=Target, instance=self)
-            dbus.SystemBus().get_object(settings.DBUS_IFACE_SYSTEMD, "/lio").target_create(self.id)
-            post_install.send(sender=Target, instance=self)
+            pre_install.send(sender=Target, instance=kwargs["instance"])
+            dbus.SystemBus().get_object(settings.DBUS_IFACE_SYSTEMD, "/lio").target_create(kwargs["instance"].id)
+            post_install.send(sender=Target, instance=kwargs["instance"])
 
 def __target_pre_delete(**kwargs):
     pre_uninstall.send(sender=Target, instance=self)
@@ -259,9 +259,9 @@ class TPG(models.Model):
             post_install.send(sender=TPG, instance=self)
 
 def __tpg_pre_delete(**kwargs):
-    pre_uninstall.send(sender=TPG, instance=self)
-    dbus.SystemBus().get_object(settings.DBUS_IFACE_SYSTEMD, "/lio").tpg_delete(self.id)
-    post_uninstall.send(sender=TPG, instance=self)
+    pre_uninstall.send(sender=TPG, instance=kwargs["instance"])
+    dbus.SystemBus().get_object(settings.DBUS_IFACE_SYSTEMD, "/lio").tpg_delete(kwargs["instance"].id)
+    post_uninstall.send(sender=TPG, instance=kwargs["instance"])
 
 models.signals.pre_delete.connect(__tpg_pre_delete, sender=TPG)
 
@@ -315,9 +315,9 @@ class ACL(models.Model):
             dbus.SystemBus().get_object(settings.DBUS_IFACE_SYSTEMD, "/lio").acl_create(self.id)
 
 def __acl_pre_delete(**kwargs):
-    pre_uninstall.send(sender=ACL, instance=self)
-    dbus.SystemBus().get_object(settings.DBUS_IFACE_SYSTEMD, "/lio").acl_delete(self.id)
-    post_uninstall.send(sender=ACL, instance=self)
+    pre_uninstall.send(sender=ACL, instance=kwargs["instance"])
+    dbus.SystemBus().get_object(settings.DBUS_IFACE_SYSTEMD, "/lio").acl_delete(kwargs["instance"].id)
+    post_uninstall.send(sender=ACL, instance=kwargs["instance"])
 
 models.signals.pre_delete.connect(__acl_pre_delete, sender=ACL)
 
@@ -352,9 +352,9 @@ class LUN(models.Model):
             dbus.SystemBus().get_object(settings.DBUS_IFACE_SYSTEMD, "/lio").lun_create(self.id)
 
 def __lun_pre_delete(**kwargs):
-    pre_uninstall.send(sender=LUN, instance=self)
-    dbus.SystemBus().get_object(settings.DBUS_IFACE_SYSTEMD, "/lio").lun_delete(self.id)
-    post_uninstall.send(sender=LUN, instance=self)
+    pre_uninstall.send(sender=LUN, instance=kwargs["instance"])
+    dbus.SystemBus().get_object(settings.DBUS_IFACE_SYSTEMD, "/lio").lun_delete(kwargs["instance"].id)
+    post_uninstall.send(sender=LUN, instance=kwargs["instance"])
 
 models.signals.pre_delete.connect(__lun_pre_delete, sender=LUN)
 
