@@ -372,6 +372,10 @@ class LogicalLUN(models.Model):
 
 
 def __logicallun_hostgroups_changed(**kwargs):
+    """ A HostGroup has been added to or removed from a LLUN.
+
+        This case is equivalent to each host being added or removed individually.
+    """
     if kwargs["reverse"] or kwargs["action"] != "post_add":
         return
     host_ids = set()
@@ -386,6 +390,7 @@ models.signals.m2m_changed.connect(__logicallun_hostgroups_changed, sender=Logic
 
 
 def __logicallun_hosts_changed(**kwargs):
+    """ A Host has been added to or removed from a LLUN. """
     if kwargs["reverse"] or kwargs["action"] != "post_add":
         return
     llun  = kwargs["instance"]
@@ -402,6 +407,11 @@ models.signals.m2m_changed.connect(__logicallun_hosts_changed, sender=LogicalLUN
 
 
 def __hostgroup_hosts_changed(**kwargs):
+    """ A host has been added to or removed from a HostGroup.
+
+        See if any LLUNs are using the HostGroup. For those, this is
+        equivalent to the host being added or removed individually.
+    """
     if kwargs["reverse"] or kwargs["action"] != "post_add":
         return
     hostgrp = kwargs["instance"]
@@ -412,6 +422,7 @@ models.signals.m2m_changed.connect(__hostgroup_hosts_changed, sender=HostGroup.h
 
 
 def __logicallun_targets_changed(**kwargs):
+    """ A Target has been added to or removed from a LLUN. """
     if kwargs["reverse"] or kwargs["action"] != "post_add":
         return
     llun  = kwargs["instance"]
@@ -450,6 +461,10 @@ models.signals.m2m_changed.connect(__logicallun_targets_changed, sender=LogicalL
 
 
 def __tpg_added(**kwargs):
+    """ A TPG has been added to a target.
+
+        This case is equivalent to a Target being added to a LLUN.
+    """
     tpg = kwargs["instance"]
     for llun in tpg.target.logicallun_set.all():
         __logicallun_targets_changed(reverse=False, action="post_add", instance=llun, pk_set=[tpg.target.id])
@@ -458,6 +473,10 @@ post_install.connect(__tpg_added, sender=TPG)
 
 
 def __initiator_added(**kwargs):
+    """ An Initiator has been added to a Host.
+
+        This case is equivalent to the host being added to a LLUN.
+    """
     initiator = kwargs["instance"]
     llun_ids = set()
     for hostgrp in initiator.host.hostgroup_set.all():
