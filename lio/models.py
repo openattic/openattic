@@ -427,11 +427,11 @@ def __logicallun_hosts_changed(instance, reverse, action, pk_set, **kwargs):
         return
     llun  = instance
     localhost = Host.objects.get_current()
-    for target in llun.targets.filter(host=localhost):
-        for tpg in target.tpg_set.all():
+    for tgt in llun.targets.filter(host=localhost):
+        for tpg in tgt.tpg_set.all():
             for host_id in pk_set:
                 host = Host.objects.get(id=host_id)
-                for initiator in host.initiator_set.filter(type=target.type):
+                for initiator in host.initiator_set.filter(type=tgt.type):
                     __acl_add_or_delete(tpg, initiator, action)
 
 
@@ -469,17 +469,17 @@ def __logicallun_targets_changed(instance, reverse, action, pk_set, **kwargs):
 
     for target_id in pk_set:
         try:
-            target = Target.objects.get(id=target_id)
+            tgt = Target.objects.get(id=target_id)
         except Target.DoesNotExist:
             continue # target is on a different host, no idea what we're doing in that case
 
-        for tpg in target.tpg_set.all():
+        for tpg in tgt.tpg_set.all():
             for hostgrp in llun.hostgroups.all():
                 for host in hostgrp.hosts.all():
-                    for initiator in host.initiator_set.filter(type=target.type):
+                    for initiator in host.initiator_set.filter(type=tgt.type):
                         __acl_add_or_delete(tpg, initiator, action)
             for host in llun.hosts.all():
-                for initiator in host.initiator_set.filter(type=target.type):
+                for initiator in host.initiator_set.filter(type=tgt.type):
                     __acl_add_or_delete(tpg, initiator, action)
 
             try:
