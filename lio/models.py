@@ -17,7 +17,6 @@
 import dbus
 
 from os.path   import realpath
-from rtslib.root   import RTSRoot
 from rtslib        import target, tcm
 from rtslib.utils  import generate_wwn
 
@@ -199,14 +198,6 @@ class Portal(models.Model):
 
     class Meta:
         unique_together = [('ipaddress', 'port')]
-
-    @property
-    def lio_object(self):
-        r = RTSRoot()
-        for lio_npt in r.network_portals:
-            if lio_npt.ip_address == self.ipaddress.host_part and lio_npt.port == self.port:
-                return lio_npt
-        raise KeyError("Network Portal not found")
 
     def __unicode__(self):
         return "%s:%d" % (self.ipaddress.host_part, self.port)
