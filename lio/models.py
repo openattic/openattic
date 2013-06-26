@@ -376,7 +376,7 @@ def __logicallun_hostgroups_changed(**kwargs):
 
         This case is equivalent to each host being added or removed individually.
     """
-    if kwargs["reverse"] or kwargs["action"] != "post_add":
+    if kwargs["reverse"] or kwargs["action"] not in ("post_add", "pre_remove"):
         return
     host_ids = set()
     for hostgrp_id in kwargs["pk_set"]:
@@ -389,9 +389,23 @@ def __logicallun_hostgroups_changed(**kwargs):
 models.signals.m2m_changed.connect(__logicallun_hostgroups_changed, sender=LogicalLUN.hostgroups.through)
 
 
+def __acl_add_or_delete(tpg, initiator, action):
+    """ See if an ACL exists for a given TPG and Initiator, see if it should,
+        and add/delete it accordingly.
+    """
+    try:
+        acl = ACL.objects.get(tpg=tpg, initiator=initiator)
+    except ACL.DoesNotExist:
+        if action == "post_add":
+            acl = ACL(tpg=tpg, initiator=initiator)
+            acl.save()
+    else:
+        if action == "pre_remove":
+            acl.delete()
+
 def __logicallun_hosts_changed(**kwargs):
     """ A Host has been added to or removed from a LLUN. """
-    if kwargs["reverse"] or kwargs["action"] != "post_add":
+    if kwargs["reverse"] or kwargs["action"] not in ("post_add", "pre_remove"):
         return
     llun  = kwargs["instance"]
     localhost = Host.objects.get_current()
@@ -400,7 +414,7 @@ def __logicallun_hosts_changed(**kwargs):
             for host_id in kwargs["pk_set"]:
                 host = Host.objects.get(id=host_id)
                 for initiator in host.initiator_set.filter(type=target.type):
-                    ACL.objects.get_or_create(tpg=tpg, initiator=initiator)
+                    __acl_add_or_delete(tpg, initiator, kwargs["action"])
 
 
 models.signals.m2m_changed.connect(__logicallun_hosts_changed, sender=LogicalLUN.hosts.through)
@@ -412,18 +426,18 @@ def __hostgroup_hosts_changed(**kwargs):
         See if any LLUNs are using the HostGroup. For those, this is
         equivalent to the host being added or removed individually.
     """
-    if kwargs["reverse"] or kwargs["action"] != "post_add":
+    if kwargs["reverse"] or kwargs["action"] not in ("post_add", "pre_remove"):
         return
     hostgrp = kwargs["instance"]
     for llun in hostgrp.logicallun_set.all():
-        __logicallun_hosts_changed(reverse=False, action="post_add", instance=llun, pk_set=kwargs["pk_set"])
+        __logicallun_hosts_changed(reverse=False, action=kwargs["action"], instance=llun, pk_set=kwargs["pk_set"])
 
 models.signals.m2m_changed.connect(__hostgroup_hosts_changed, sender=HostGroup.hosts.through)
 
 
 def __logicallun_targets_changed(**kwargs):
     """ A Target has been added to or removed from a LLUN. """
-    if kwargs["reverse"] or kwargs["action"] != "post_add":
+    if kwargs["reverse"] or kwargs["action"] not in ("post_add", "pre_remove"):
         return
     llun  = kwargs["instance"]
     localhost = Host.objects.get_current()
@@ -446,16 +460,20 @@ def __logicallun_targets_changed(**kwargs):
             for hostgrp in llun.hostgroups.all():
                 for host in hostgrp.hosts.all():
                     for initiator in host.initiator_set.filter(type=target.type):
-                        ACL.objects.get_or_create(tpg=tpg, initiator=initiator)
+                        __acl_add_or_delete(tpg, initiator, kwargs["action"])
             for host in llun.hosts.all():
                 for initiator in host.initiator_set.filter(type=target.type):
-                    ACL.objects.get_or_create(tpg=tpg, initiator=initiator)
+                    __acl_add_or_delete(tpg, initiator, kwargs["action"])
 
             try:
                 lun = LUN.objects.get( tpg=tpg, storageobj=storobj, logicallun=llun )
             except LUN.DoesNotExist:
-                lun = LUN( tpg=tpg, storageobj=storobj, logicallun=llun, lun_id=llun.lun_id )
-                lun.save()
+                if action == "post_add":
+                    lun = LUN( tpg=tpg, storageobj=storobj, logicallun=llun, lun_id=llun.lun_id )
+                    lun.save()
+            else:
+                if action == "pre_remove":
+                    lun.delete()
 
 models.signals.m2m_changed.connect(__logicallun_targets_changed, sender=LogicalLUN.targets.through)
 
