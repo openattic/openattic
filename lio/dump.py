@@ -2,10 +2,6 @@
 # kate: space-indent on; indent-width 4; replace-tabs on;
 
 from rtslib.root   import RTSRoot
-from rtslib.target import FabricModule, Target, TPG
-from rtslib.tcm    import IBlockBackstore, FileIOBackstore
-
-import sys
 
 r = RTSRoot()
 
