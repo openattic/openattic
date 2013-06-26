@@ -365,8 +365,8 @@ def __acl_mappedluns_changed(**kwargs):
         acls = [kwargs["instance"]]
         luns = [ LUN.objects.get(id=id) for id in kwargs["pk_set"] ]
     else:
-        luns = [ LUN.objects.get(id=id) for id in kwargs["pk_set"] ]
-        acls = [kwargs["instance"]]
+        acls = [ ACL.objects.get(id=id) for id in kwargs["pk_set"] ]
+        luns = [kwargs["instance"]]
     for acl in acls:
         for lun in luns:
             if kwargs["action"] == "post_add":
