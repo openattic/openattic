@@ -61,44 +61,17 @@ Ext.oa.Lio__Panel = Ext.extend(Ext.Panel, {
 
     var targetstore = new Ext.data.JsonStore({
       id: "targetstore",
-      fields: ["app", "obj", "id", "__unicode__"],
-      submit: function(callback){
-        var data = [], i;
-        for( i = 0; i < this.data.items.length; i++ ){
-          data.push(this.data.items[i].data);
-        }
-        lio__LogicalLUN.set(this.llun_id, {
-          targets: data
-        }, callback);
-      }
+      fields: ["app", "obj", "id", "__unicode__"]
     });
 
     var hostgroupstore = new Ext.data.JsonStore({
       id: "hostgroupstore",
-      fields: ["app", "obj", "id", "__unicode__"],
-      submit: function(callback){
-        var data = [], i;
-        for( i = 0; i < this.data.items.length; i++ ){
-          data.push(this.data.items[i].data);
-        }
-        lio__LogicalLUN.set(this.llun_id, {
-          hostgroups: data
-        }, callback);
-      }
+      fields: ["app", "obj", "id", "__unicode__"]
     });
 
     var hoststore = new Ext.data.JsonStore({
       id: "hoststore",
-      fields: ["app", "obj", "id", "__unicode__"],
-      submit: function(callback){
-        var data = [], i;
-        for( i = 0; i < this.data.items.length; i++ ){
-          data.push(this.data.items[i].data);
-        }
-        lio__LogicalLUN.set(this.llun_id, {
-          hosts: data
-        }, callback);
-      }
+      fields: ["app", "obj", "id", "__unicode__"]
     });
 
     Ext.apply(this, Ext.apply(this.initialConfig, {
@@ -245,21 +218,25 @@ Ext.oa.Lio__Panel = Ext.extend(Ext.Panel, {
                 ddGroup    : 'llun_target',
                 notifyDrop : function(ddSource, e, data){
                   var records =  ddSource.dragData.selections;
-                  for( var i = 0; i < records.length; i++ ){
+                  var i;
+                  var addrecords = [];
+                  for( i = 0; i < records.length; i++ ){
                     if( self.store.findExact("id", records[i].data.id) === -1 ){
-                      self.store.add([new Ext.data.Record({
+                      addrecords.push({
                         'app': 'lio',
                         'obj': 'Target',
                         'id':  records[i].data.id,
                         '__unicode__': records[i].data.__unicode__
-                      })]);
+                      });
                     }
                   }
-                  self.store.submit(function(provider, response){
-                    if( response.type === 'exception' ){
-                      Ext.Msg.alert("Error", "Could not update targets");
-                    }
-                  });
+                  if(addrecords.length > 0){
+                    lio__LogicalLUN.set(self.store.llun_id, {"targets__add": addrecords}, function(provider, response){
+                      for( i = 0; i < addrecords.length; i++ ){
+                        self.store.add([new Ext.data.Record(addrecords[i])]);
+                      }
+                    });
+                  }
                   return true;
                 }
               });
@@ -326,21 +303,25 @@ Ext.oa.Lio__Panel = Ext.extend(Ext.Panel, {
                 ddGroup    : 'llun_hostgroup',
                 notifyDrop : function(ddSource, e, data){
                   var records =  ddSource.dragData.selections;
-                  for( var i = 0; i < records.length; i++ ){
+                  var i;
+                  var addrecords = [];
+                  for( i = 0; i < records.length; i++ ){
                     if( self.store.findExact("id", records[i].data.id) === -1 ){
-                      self.store.add([new Ext.data.Record({
-                        'app': 'ifconfig',
+                      addrecords.push({
+                        'app': 'lio',
                         'obj': 'HostGroup',
                         'id':  records[i].data.id,
                         '__unicode__': records[i].data.__unicode__
-                      })]);
+                      });
                     }
                   }
-                  self.store.submit(function(provider, response){
-                    if( response.type === 'exception' ){
-                      Ext.Msg.alert("Error", "Could not update host groups");
-                    }
-                  });
+                  if(addrecords.length > 0){
+                    lio__LogicalLUN.set(self.store.llun_id, {"hostgroups__add": addrecords}, function(provider, response){
+                      for( i = 0; i < addrecords.length; i++ ){
+                        self.store.add([new Ext.data.Record(addrecords[i])]);
+                      }
+                    });
+                  }
                   return true;
                 }
               });
@@ -408,21 +389,25 @@ Ext.oa.Lio__Panel = Ext.extend(Ext.Panel, {
                 ddGroup    : 'llun_host',
                 notifyDrop : function(ddSource, e, data){
                   var records =  ddSource.dragData.selections;
-                  for( var i = 0; i < records.length; i++ ){
+                  var i;
+                  var addrecords = [];
+                  for( i = 0; i < records.length; i++ ){
                     if( self.store.findExact("id", records[i].data.id) === -1 ){
-                      self.store.add([new Ext.data.Record({
-                        'app': 'ifconfig',
+                      addrecords.push({
+                        'app': 'lio',
                         'obj': 'Host',
                         'id':  records[i].data.id,
                         '__unicode__': records[i].data.__unicode__
-                      })]);
+                      });
                     }
                   }
-                  self.store.submit(function(provider, response){
-                    if( response.type === 'exception' ){
-                      Ext.Msg.alert("Error", "Could not update hosts");
-                    }
-                  });
+                  if(addrecords.length > 0){
+                    lio__LogicalLUN.set(self.store.llun_id, {"hosts__add": addrecords}, function(provider, response){
+                      for( i = 0; i < addrecords.length; i++ ){
+                        self.store.add([new Ext.data.Record(addrecords[i])]);
+                      }
+                    });
+                  }
                   return true;
                 }
               });
