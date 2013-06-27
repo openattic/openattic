@@ -136,7 +136,29 @@ Ext.oa.Ifconfig__Host_Groups_Panel = Ext.extend(Ext.Panel, {
               });
               addwin.show();
             }
+          }, {
+            text: gettext("Remove Host group"),
+            handler: function(){
+              Ext.getCmp("ifconfig__host_hostgroups_panel_inst").removeSelected();
+            }
           }],
+          keys: [{
+            key: [Ext.EventObject.DELETE],
+            handler: function(self){
+              Ext.getCmp("ifconfig__host_hostgroups_panel_inst").removeSelected();
+            }
+          }],
+          removeSelected: function(){
+            var self = this;
+            var sm = self.getSelectionModel();
+            var sel;
+            if( sm.hasSelection() ){
+              sel = sm.getSelected();
+              ifconfig__Host.set(self.store.host_id, {"hostgroup_set__remove": [sel.data]}, function(provider, response){
+                self.store.remove(sel);
+              });
+            }
+          },
           listeners: {
             afterrender: function(self){
               var droptarget_el =  self.getView().scroller.dom;
