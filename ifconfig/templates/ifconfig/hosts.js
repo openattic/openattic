@@ -160,7 +160,7 @@ Ext.oa.Ifconfig__Host_Groups_Panel = Ext.extend(Ext.Panel, {
                         'obj': 'HostGroup',
                         'id':  records[i].data.id,
                         '__unicode__': records[i].data.__unicode__
-                        })]);
+                      })]);
                     }
                   }
                   self.store.submit(function(provider, response){
