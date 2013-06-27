@@ -44,16 +44,7 @@ Ext.oa.Ifconfig__Host_Groups_Panel = Ext.extend(Ext.Panel, {
 
     var hostgroupstore = new Ext.data.JsonStore({
       id: "hostgroupstore",
-      fields: ["app", "obj", "id", "__unicode__"],
-      submit: function(callback){
-        var data = [], i;
-        for( i = 0; i < this.data.items.length; i++ ){
-          data.push(this.data.items[i].data);
-        }
-        ifconfig__Host.set(this.host_id, {
-          hostgroup_set: data
-        }, callback);
-      }
+      fields: ["app", "obj", "id", "__unicode__"]
     });
 
     Ext.apply(this, Ext.apply(this.initialConfig, {
@@ -145,7 +136,29 @@ Ext.oa.Ifconfig__Host_Groups_Panel = Ext.extend(Ext.Panel, {
               });
               addwin.show();
             }
+          }, {
+            text: gettext("Remove Host group"),
+            handler: function(){
+              Ext.getCmp("ifconfig__host_hostgroups_panel_inst").removeSelected();
+            }
           }],
+          keys: [{
+            key: [Ext.EventObject.DELETE],
+            handler: function(self){
+              Ext.getCmp("ifconfig__host_hostgroups_panel_inst").removeSelected();
+            }
+          }],
+          removeSelected: function(){
+            var self = this;
+            var sm = self.getSelectionModel();
+            var sel;
+            if( sm.hasSelection() ){
+              sel = sm.getSelected();
+              ifconfig__Host.set(self.store.host_id, {"hostgroup_set__remove": [sel.data]}, function(provider, response){
+                self.store.remove(sel);
+              });
+            }
+          },
           listeners: {
             afterrender: function(self){
               var droptarget_el =  self.getView().scroller.dom;
@@ -153,21 +166,24 @@ Ext.oa.Ifconfig__Host_Groups_Panel = Ext.extend(Ext.Panel, {
                 ddGroup    : 'ifconfig__host_hostgroup',
                 notifyDrop : function(ddSource, e, data){
                   var records =  ddSource.dragData.selections;
+                  var addrecords = [];
                   for( var i = 0; i < records.length; i++ ){
                     if( self.store.findExact("id", records[i].data.id) === -1 ){
-                      self.store.add([new Ext.data.Record({
+                      addrecords.push({
                         'app': 'ifconfig',
                         'obj': 'HostGroup',
                         'id':  records[i].data.id,
                         '__unicode__': records[i].data.__unicode__
-                      })]);
+                      });
                     }
                   }
-                  self.store.submit(function(provider, response){
-                    if( response.type === 'exception' ){
-                      Ext.Msg.alert("Error", "Could not update host groups");
-                    }
-                  });
+                  if(addrecords.length > 0){
+                    ifconfig__Host.set(self.store.host_id, {"hostgroup_set__add": addrecords}, function(provider, response){
+                      for( var i = 0; i < addrecords.length; i++ ){
+                        self.store.add([new Ext.data.Record(addrecords[i])]);
+                      }
+                    });
+                  }
                   return true;
                 }
               });
