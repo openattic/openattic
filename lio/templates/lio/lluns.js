@@ -210,7 +210,29 @@ Ext.oa.Lio__Panel = Ext.extend(Ext.Panel, {
               });
               addwin.show();
             }
+          }, {
+            text: gettext("Remove Target"),
+            handler: function(){
+              Ext.getCmp("lio__logicallun_targets_panel_inst").removeSelected();
+            }
           }],
+          keys: [{
+            key: [Ext.EventObject.DELETE],
+            handler: function(self){
+              Ext.getCmp("lio__logicallun_targets_panel_inst").removeSelected();
+            }
+          }],
+          removeSelected: function(){
+            var self = this;
+            var sm = self.getSelectionModel();
+            var sel;
+            if( sm.hasSelection() ){
+              sel = sm.getSelected();
+              lio__LogicalLUN.set(self.store.llun_id, {"targets__remove": [sel.data]}, function(provider, response){
+                self.store.remove(sel);
+              });
+            }
+          },
           listeners: {
             afterrender: function(self){
               var droptarget_el =  self.getView().scroller.dom;
@@ -295,7 +317,29 @@ Ext.oa.Lio__Panel = Ext.extend(Ext.Panel, {
               });
               addwin.show();
             }
+          }, {
+            text: gettext("Remove Host group"),
+            handler: function(){
+              Ext.getCmp("lio__logicallun_hostgroups_panel_inst").removeSelected();
+            }
           }],
+          keys: [{
+            key: [Ext.EventObject.DELETE],
+            handler: function(self){
+              Ext.getCmp("lio__logicallun_hostgroups_panel_inst").removeSelected();
+            }
+          }],
+          removeSelected: function(){
+            var self = this;
+            var sm = self.getSelectionModel();
+            var sel;
+            if( sm.hasSelection() ){
+              sel = sm.getSelected();
+              lio__LogicalLUN.set(self.store.llun_id, {"hostgroups__remove": [sel.data]}, function(provider, response){
+                self.store.remove(sel);
+              });
+            }
+          },
           listeners: {
             afterrender: function(self){
               var droptarget_el =  self.getView().scroller.dom;
@@ -381,7 +425,29 @@ Ext.oa.Lio__Panel = Ext.extend(Ext.Panel, {
               });
               addwin.show();
             }
+          }, {
+            text: gettext("Remove Host"),
+            handler: function(){
+              Ext.getCmp("lio__logicallun_hosts_panel_inst").removeSelected();
+            }
           }],
+          keys: [{
+            key: [Ext.EventObject.DELETE],
+            handler: function(self){
+              Ext.getCmp("lio__logicallun_hosts_panel_inst").removeSelected();
+            }
+          }],
+          removeSelected: function(){
+            var self = this;
+            var sm = self.getSelectionModel();
+            var sel;
+            if( sm.hasSelection() ){
+              sel = sm.getSelected();
+              lio__LogicalLUN.set(self.store.llun_id, {"hosts__remove": [sel.data]}, function(provider, response){
+                self.store.remove(sel);
+              });
+            }
+          },
           listeners: {
             afterrender: function(self){
               var droptarget_el =  self.getView().scroller.dom;
