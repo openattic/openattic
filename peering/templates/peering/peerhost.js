@@ -107,9 +107,11 @@ window.MainViewModules.push( new Ext.oa.Peering__Peerhost_Module() );
 Ext.oa.Peering__HostAttrRootType = {
   objtype: "peering_root",
   requestTreeData: function(tree, treeloader, node, callback, scope){
-    peering__PeerHost.ids(
-      treeloader.processDirectResponse.createDelegate(treeloader, [{callback: callback, node: node, scope: scope}], true)
-    );
+    if( node.attributes.host !== null ){
+      peering__PeerHost.ids_filter({"host__id": node.attributes.host.id},
+        treeloader.processDirectResponse.createDelegate(treeloader, [{callback: callback, node: node, scope: scope}], true)
+      );
+    }
   },
   createTreeNode: function(tree, data){
     return new Ext.tree.AsyncTreeNode({
@@ -117,6 +119,7 @@ Ext.oa.Peering__HostAttrRootType = {
       nodeType: 'async',
       id: 'peering_root',
       text: gettext("Peers"),
+      host: data,
       leaf: false
     });
   }
@@ -147,7 +150,7 @@ Ext.oa.Peering__HostAttrPlugin = Ext.extend(Ext.util.Observable, {
     }
 
     return Ext.oa.Peering__HostAttrRootType;
-  },
+  }
 });
 
 window.HostAttrPlugins.push( new Ext.oa.Peering__HostAttrPlugin() );

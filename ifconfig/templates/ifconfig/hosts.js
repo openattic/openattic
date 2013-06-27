@@ -56,6 +56,7 @@ Ext.oa.Ifconfig__Host_Attributes_TreePanel = Ext.extend(Ext.tree.TreePanel, {
     "use strict";
 
     this.objtypes = {};
+    this.pluginroots = [];
 
     var rootnode = new Ext.tree.TreeNode({
       nodeType  : 'async',
@@ -83,10 +84,17 @@ Ext.oa.Ifconfig__Host_Attributes_TreePanel = Ext.extend(Ext.tree.TreePanel, {
     Ext.oa.LVM__Snapcore_TreePanel.superclass.initComponent.apply(this, arguments);
 
     for( var i = 0; i < window.HostAttrPlugins.length; i++ ){
-      var pluginroot = window.HostAttrPlugins[i].initTree(this);
-      rootnode.appendChild( pluginroot.createTreeNode(this, {}) );
+      this.pluginroots.push(window.HostAttrPlugins[i].initTree(this));
     }
   },
+  setHost: function(host){
+    while(this.root.childNodes.length){
+      this.root.childNodes[0].remove(true);
+    }
+    for( var i = 0; i < this.pluginroots.length; i++ ){
+      this.root.appendChild( this.pluginroots[i].createTreeNode(this, host) );
+    }
+  }
 });
 
 Ext.reg("ifconfig__host_attributes_panel", Ext.oa.Ifconfig__Host_Attributes_TreePanel);
@@ -114,6 +122,7 @@ Ext.oa.Ifconfig__Host_Groups_Panel = Ext.extend(Ext.Panel, {
             var record = self.getStore().getAt(rowIndex);
             hostgroupstore.host_id = record.data.id;
             hostgroupstore.loadData(record.json.hostgroup_set);
+            Ext.getCmp("ifconfig__host_attributes_panel_inst").setHost(record.data);
           }
         },
       }, {
