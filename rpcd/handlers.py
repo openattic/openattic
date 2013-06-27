@@ -313,6 +313,22 @@ class ModelHandler(BaseHandler):
 
     set_ext.EXT_flags = {"formHandler": True}
 
+    def _set_m2m(self, obj, field, data):
+        if field in data:
+            setattr(obj, field, [
+                ModelHandler._get_object_by_id_dict(idobj) for idobj in data[field]
+            ])
+        for action in ("remove", "add"):
+            actfield = "%s__%s" % (field, action)
+            if actfield in data:
+                m2m = getattr(obj, field)
+                for idobj in data[actfield]:
+                    obj = ModelHandler._get_object_by_id_dict(idobj)
+                    if action == "add":
+                        m2m.add(obj)
+                    else:
+                        m2m.remove(obj)
+
     def _setobj(self, obj, data):
         """ Update the given object with values from the `data` dict. """
         for field in obj._meta.fields:
@@ -331,17 +347,12 @@ class ModelHandler(BaseHandler):
         self._override_set(obj, data)
         obj.full_clean()
         obj.save()
+        # Forward m2m
         for field in obj._meta.many_to_many:
-            if field.name in data:
-                setattr(obj, field.name, [
-                    ModelHandler._get_object_by_id_dict(idobj) for idobj in data[field.name]
-                ])
+            self._set_m2m(obj, field.name, data)
+        # Reverse m2m
         for rel_m2m in obj._meta.get_all_related_many_to_many_objects():
-            fname = rel_m2m.get_accessor_name()
-            if fname in data:
-                setattr(obj, fname, [
-                    ModelHandler._get_object_by_id_dict(idobj) for idobj in data[fname]
-                ])
+            self._set_m2m(obj, rel_m2m.get_accessor_name(), data)
         return self._idobj(obj)
 
     def _override_get(self, obj, data):
