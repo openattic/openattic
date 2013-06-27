@@ -34,14 +34,14 @@ class Command( BaseCommand ):
         for fabricname, fabricdesc in TARGET_TYPE_CHOICES:
             print "Fabric:", fabricname
             for target in Target.objects.filter(type=fabricname):
-                print "    -> Target %s = %s" % (target.name, target.wwn)
+                print "    -> Target %d: %s = %s" % (target.id, target.name, target.wwn)
                 for tpg in target.tpg_set.all():
-                    print "       -> TPG %s" % tpg.tag
+                    print "       -> TPG %d: %s" % (tpg.id, tpg.tag)
                     for acl in tpg.acl_set.all():
-                        print "          -> ACL %s" % acl.initiator.wwn
+                        print "          -> ACL %d: %s" % (acl.id, acl.initiator.wwn)
                         for mlun in acl.mapped_luns.all():
                             print "              -> Mapped LUN %d: %s" % (mlun.lun_id, mlun.storageobj.volume.path)
                     for lun in tpg.lun_set.all():
-                        print "          -> LUN %s" % lun.storageobj.volume.path
+                        print "          -> LUN %d: %s" % (lun.id, lun.storageobj.volume.path)
                     for portal in tpg.portals.all():
-                        print "          -> Portal %s" % portal
+                        print "          -> Portal %d: %s" % (portal.id, portal)
