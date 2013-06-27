@@ -87,10 +87,13 @@ Ext.oa.Ifconfig__Host_Attributes_TreePanel = Ext.extend(Ext.tree.TreePanel, {
       this.pluginroots.push(window.HostAttrPlugins[i].initTree(this));
     }
   },
-  setHost: function(host){
+  clear: function(){
     while(this.root.childNodes.length){
       this.root.childNodes[0].remove(true);
     }
+  },
+  setHost: function(host){
+    this.clear();
     for( var i = 0; i < this.pluginroots.length; i++ ){
       var node = this.pluginroots[i].createTreeNode(this, host);
       this.root.appendChild( node );
@@ -260,6 +263,7 @@ Ext.oa.Ifconfig__Host_Groups_Panel = Ext.extend(Ext.Panel, {
   },
   refresh: function(){
     Ext.getCmp("ifconfig__host_panel_inst").refresh();
+    Ext.getCmp("ifconfig__host_attributes_panel_inst").clear();
     Ext.StoreMgr.get("hostgroupstore").removeAll();
   }
 });
