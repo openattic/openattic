@@ -102,4 +102,56 @@ Ext.oa.Peering__Peerhost_Module = Ext.extend(Object, {
 
 window.MainViewModules.push( new Ext.oa.Peering__Peerhost_Module() );
 
+
+
+Ext.oa.Peering__HostAttrRootType = {
+  objtype: "peering_root",
+  requestTreeData: function(tree, treeloader, node, callback, scope){
+    peering__PeerHost.ids(
+      treeloader.processDirectResponse.createDelegate(treeloader, [{callback: callback, node: node, scope: scope}], true)
+    );
+  },
+  createTreeNode: function(tree, data){
+    return new Ext.tree.AsyncTreeNode({
+      objtype: 'peering_root',
+      nodeType: 'async',
+      id: 'peering_root',
+      text: gettext("Peers"),
+      leaf: false
+    });
+  }
+};
+
+Ext.oa.Peering__PeerHostType = {
+  objtype: "peering__PeerHost",
+  requestTreeData: null,
+  createTreeNode: function(tree, data){
+    return new Ext.tree.TreeNode({
+      objtype: "peering__PeerHost",
+      objid: data.id,
+      text: data.__unicode__,
+      leaf: true,
+    });
+  },
+};
+
+Ext.oa.Peering__HostAttrPlugin = Ext.extend(Ext.util.Observable, {
+  plugin_name: 'peering',
+  objtypes: [
+    Ext.oa.Peering__HostAttrRootType,
+    Ext.oa.Peering__PeerHostType
+  ],
+  initTree: function(tree){
+    for( var i = 0; i < this.objtypes.length; i++ ){
+      tree.registerObjType(this.objtypes[i]);
+    }
+
+    return Ext.oa.Peering__HostAttrRootType;
+  },
+});
+
+window.HostAttrPlugins.push( new Ext.oa.Peering__HostAttrPlugin() );
+
+
+
 // kate: space-indent on; indent-width 2; replace-tabs on;
