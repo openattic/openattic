@@ -459,7 +459,7 @@ def __hostgroup_hosts_changed(instance, reverse, action, pk_set, **kwargs):
         See if any LLUNs are using the HostGroup. For those, this is
         equivalent to the host being added or removed individually.
     """
-    if reverse or action not in ("post_add", "pre_remove"):
+    if action not in ("post_add", "pre_remove"):
         return
 
     if not reverse:
