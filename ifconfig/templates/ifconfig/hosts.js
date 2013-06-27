@@ -92,7 +92,9 @@ Ext.oa.Ifconfig__Host_Attributes_TreePanel = Ext.extend(Ext.tree.TreePanel, {
       this.root.childNodes[0].remove(true);
     }
     for( var i = 0; i < this.pluginroots.length; i++ ){
-      this.root.appendChild( this.pluginroots[i].createTreeNode(this, host) );
+      var node = this.pluginroots[i].createTreeNode(this, host);
+      this.root.appendChild( node );
+      node.expand();
     }
   }
 });
