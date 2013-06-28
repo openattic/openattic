@@ -157,7 +157,7 @@ Ext.oa.Peering__HostAttrRootType = {
                 fieldLabel: gettext('Base URL'),
                 name: "base_url",
                 ref:  "urlfield",
-                value: "http://__:<<APIKEY>>@<<HOST>>:31234/"
+                value: String.format("http://__:<<APIKEY>>@{0}:31234/", self.attributes.host.name)
               }],
               buttons: [{
                 text: gettext('Create'),
