@@ -117,10 +117,72 @@ Ext.oa.Peering__HostAttrRootType = {
     return new Ext.tree.AsyncTreeNode({
       objtype: 'peering_root',
       nodeType: 'async',
+      uiProvider: Ext.oa.HostAttrTreeNodeUI,
       id: 'peering_root',
       text: gettext("Peers"),
       host: data,
-      leaf: false
+      leaf: false,
+      actions: [{
+        name: "add",
+        icon: "add",
+        handler: function(self){
+          var addwin = new Ext.Window({
+            title: gettext('Add Peer Host'),
+            layout: "fit",
+            height: 140,
+            width: 500,
+            items: [{
+              xtype: "form",
+              autoScroll: true,
+              defaults: {
+                xtype: "textfield",
+                allowBlank: false,
+                anchor: "-20px"
+              },
+              api: {
+                load:   peering__PeerHost.get_ext,
+                submit: peering__PeerHost.set_ext
+              },
+              baseParams: {
+                id: -1
+              },
+              paramOrder: ["id"],
+              bodyStyle: 'padding:5px 5px;',
+              items: [{
+                xtype: "hidden",
+                name:  "host",
+                value: self.attributes.host.id
+              }, {
+                xtype: 'textfield',
+                fieldLabel: gettext('Base URL'),
+                name: "base_url",
+                ref:  "urlfield",
+                value: "http://__:<<APIKEY>>@<<HOST>>:31234/"
+              }],
+              buttons: [{
+                text: gettext('Create'),
+                icon: MEDIA_URL + "/oxygen/16x16/actions/dialog-ok-apply.png",
+                handler: function(self){
+                  if( self.ownerCt.ownerCt.getForm().isValid() ){
+                    self.ownerCt.ownerCt.getForm().submit({
+                      success: function(){
+                        addwin.close();
+                      }
+                    });
+                  }
+                }
+              }, {
+                text: gettext('Cancel'),
+                icon: MEDIA_URL + "/icons2/16x16/actions/gtk-cancel.png",
+                handler: function(self){
+                  addwin.close();
+                }
+              }]
+            }]
+          });
+          addwin.show();
+        }
+      }]
     });
   }
 };
@@ -132,8 +194,26 @@ Ext.oa.Peering__PeerHostType = {
     return new Ext.tree.TreeNode({
       objtype: "peering__PeerHost",
       objid: data.id,
+      uiProvider: Ext.oa.HostAttrTreeNodeUI,
       text: data.__unicode__,
       leaf: true,
+      actions: [{
+        name: "edit",
+        icon: "edit-redo",
+        handler: function(){
+          console.log("ohai edit");
+        }
+      }, {
+        name: "remove",
+        icon: "remove",
+        handler: function(self){
+          peering__PeerHost.remove(self.attributes.objid, function(provider, response){
+            if( response.type !== 'exception' ){
+              self.remove(true);
+            }
+          });
+        }
+      }]
     });
   },
 };
