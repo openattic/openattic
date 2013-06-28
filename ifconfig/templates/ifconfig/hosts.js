@@ -119,11 +119,16 @@ Ext.oa.Ifconfig__Host_Attributes_TreePanel = Ext.extend(Ext.tree.TreePanel, {
   },
   setHost: function(host){
     this.clear();
+    this.host = host;
     for( var i = 0; i < this.pluginroots.length; i++ ){
       var node = this.pluginroots[i].createTreeNode(this, host);
       this.root.appendChild( node );
       node.expand();
     }
+  },
+  refresh: function(){
+    this.clear();
+    this.setHost(this.host);
   }
 });
 
