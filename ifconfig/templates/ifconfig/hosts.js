@@ -29,6 +29,7 @@ Ext.oa.Ifconfig__Host_Panel = Ext.extend(Ext.oa.ShareGridPanel, {
         xtype: 'textfield',
         fieldLabel: gettext('Name'),
         allowBlank: false,
+        name: "name"
       }]
     }]
   }
@@ -36,6 +37,102 @@ Ext.oa.Ifconfig__Host_Panel = Ext.extend(Ext.oa.ShareGridPanel, {
 
 
 Ext.reg("ifconfig__host_panel", Ext.oa.Ifconfig__Host_Panel);
+
+
+Ext.oa.HostAttrTreeNodeUI = Ext.extend(Ext.tree.TreeNodeUI, {
+  renderElements : function(n, a, targetNode, bulkRender){
+    Ext.oa.HostAttrTreeNodeUI.superclass.renderElements.call( this, n, a, targetNode, bulkRender );
+    Ext.DomHelper.applyStyles( this.elNode, 'position: relative' );
+    var tpl = new Ext.DomHelper.createTemplate(
+      '<div style="position: absolute; top: 1px; right: {pos}px;" />'
+      );
+    var pos = 8;
+    for( var i = a.actions.length - 1; i >= 0; i-- ){
+      var divEl = tpl.append( this.elNode, {'pos': pos} );
+      var btn = new Ext.Button({
+        text: "",
+        icon: String.format("{0}/icons2/16x16/actions/{1}.png", MEDIA_URL, a.actions[i].icon),
+        action:  a.actions[i],
+        tooltip: a.actions[i].name,
+        handler: a.actions[i].handler.createCallback(n)
+      });
+      btn.render(divEl);
+      pos += 24;
+    }
+  }
+});
+
+
+Ext.oa.Ifconfig__Host_Attributes_TreeLoader = Ext.extend(Ext.tree.TreeLoader, {
+  directFn: lvm__LogicalVolume.all,
+  requestData: function(node, callback, scope){
+    this.tree.objtypes[ node.attributes.objtype ].requestTreeData(this.tree, this, node, callback, scope);
+  },
+  createNode: function(data){
+    return this.tree.objtypes[ data.app + '__' + data.obj ].createTreeNode(this.tree, data);
+  }
+});
+
+Ext.oa.Ifconfig__Host_Attributes_TreePanel = Ext.extend(Ext.tree.TreePanel, {
+  registerObjType: function(objtype){
+    this.objtypes[ objtype.objtype ] = objtype;
+  },
+  initComponent: function(){
+    "use strict";
+
+    this.objtypes = {};
+    this.pluginroots = [];
+
+    var rootnode = new Ext.tree.TreeNode({
+      nodeType  : 'async',
+      objtype   : "root",
+      text      : 'root',
+      leaf      : false,
+      expanded  : true,
+      expandable: true,
+    });
+
+    Ext.apply(this, Ext.apply(this.initialConfig, {
+      useArrows       : true,
+      autoScroll      : true,
+      animate         : true,
+      containerScroll : true,
+      rootVisible     : false,
+      frame           : true,
+      loader: new Ext.oa.Ifconfig__Host_Attributes_TreeLoader({
+        clearOnLoad   : true,
+        tree          : this
+      }),
+      root: rootnode,
+    }));
+
+    Ext.oa.LVM__Snapcore_TreePanel.superclass.initComponent.apply(this, arguments);
+
+    for( var i = 0; i < window.HostAttrPlugins.length; i++ ){
+      this.pluginroots.push(window.HostAttrPlugins[i].initTree(this));
+    }
+  },
+  clear: function(){
+    while(this.root.childNodes.length){
+      this.root.childNodes[0].remove(true);
+    }
+  },
+  setHost: function(host){
+    this.clear();
+    this.host = host;
+    for( var i = 0; i < this.pluginroots.length; i++ ){
+      var node = this.pluginroots[i].createTreeNode(this, host);
+      this.root.appendChild( node );
+      node.expand();
+    }
+  },
+  refresh: function(){
+    this.clear();
+    this.setHost(this.host);
+  }
+});
+
+Ext.reg("ifconfig__host_attributes_panel", Ext.oa.Ifconfig__Host_Attributes_TreePanel);
 
 
 Ext.oa.Ifconfig__Host_Groups_Panel = Ext.extend(Ext.Panel, {
@@ -60,6 +157,7 @@ Ext.oa.Ifconfig__Host_Groups_Panel = Ext.extend(Ext.Panel, {
             var record = self.getStore().getAt(rowIndex);
             hostgroupstore.host_id = record.data.id;
             hostgroupstore.loadData(record.json.hostgroup_set);
+            Ext.getCmp("ifconfig__host_attributes_panel_inst").setHost(record.data);
           }
         },
       }, {
@@ -71,8 +169,7 @@ Ext.oa.Ifconfig__Host_Groups_Panel = Ext.extend(Ext.Panel, {
           region: "center",
           title: "Host Attributes",
           id:    "ifconfig__host_attributes_panel_inst",
-          xtype: 'panel',
-          html:  "gonna display peers and initiators and stuff here"
+          xtype: 'ifconfig__host_attributes_panel'
         }, {
           region: "east",
           title: "Host Groups",
@@ -196,6 +293,7 @@ Ext.oa.Ifconfig__Host_Groups_Panel = Ext.extend(Ext.Panel, {
   },
   refresh: function(){
     Ext.getCmp("ifconfig__host_panel_inst").refresh();
+    Ext.getCmp("ifconfig__host_attributes_panel_inst").clear();
     Ext.StoreMgr.get("hostgroupstore").removeAll();
   }
 });
