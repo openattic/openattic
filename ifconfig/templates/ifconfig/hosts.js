@@ -15,6 +15,12 @@ Ext.namespace("Ext.oa");
 
 Ext.oa.Ifconfig__Host_Panel = Ext.extend(Ext.oa.ShareGridPanel, {
   api: ifconfig__Host,
+  texts: {
+    add:     gettext("Add Host"),
+    edit:    gettext("Edit Host"),
+    remove:  gettext("Delete Host"),
+    confirm: gettext('Do you really want to delete host %s?')
+  },
   columns: [{
     header: gettext('Name'),
     width: 200,
@@ -212,9 +218,10 @@ Ext.oa.Ifconfig__Host_Groups_Panel = Ext.extend(Ext.Panel, {
                     dataIndex: "__unicode__"
                   }],
                   texts: {
-                    add:    gettext("Add Host Group"),
-                    edit:   gettext("Edit Host Group"),
-                    remove: gettext("Delete Host Group")
+                    add:     gettext("Add Host Group"),
+                    edit:    gettext("Edit Host Group"),
+                    remove:  gettext("Delete Host Group"),
+                    confirm: gettext('Do you really want to delete host group %s?')
                   },
                   form: {
                     items: [{
