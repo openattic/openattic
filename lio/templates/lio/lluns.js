@@ -17,7 +17,8 @@ Ext.oa.Lio__LogicalLun_Panel = Ext.extend(Ext.oa.ShareGridPanel, {
   api: lio__LogicalLUN,
   texts: {
     add:     gettext('Add LUN'),
-    remove:  gettext('Delete LUN')
+    remove:  gettext('Delete LUN'),
+    confirm: gettext('Do you really want to delete LUN %s?')
   },
   allowEdit: false,
   store: {
@@ -139,6 +140,7 @@ Ext.oa.Lio__Panel = Ext.extend(Ext.Panel, {
                   api: lio__Target,
                   ddGroup: "llun_target",
                   enableDrag: true,
+                  allowEdit: false,
                   store: {
                     fields: ["name", {
                       name: "hostname",
@@ -149,7 +151,8 @@ Ext.oa.Lio__Panel = Ext.extend(Ext.Panel, {
                   texts: {
                     add:     gettext('Add Target'),
                     edit:    gettext('Edit Target'),
-                    remove:  gettext('Delete Target')
+                    remove:  gettext('Delete Target'),
+                    confirm: gettext('Do you really want to delete Target %s?')
                   },
                   columns: [{
                     header: "Name",

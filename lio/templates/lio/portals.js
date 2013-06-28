@@ -19,7 +19,8 @@ Ext.oa.Lio__Portal_Panel = Ext.extend(Ext.oa.ShareGridPanel, {
   title: "LIO: Network Portals",
   texts: {
     add:     gettext('Add Portal'),
-    remove:  gettext('Delete Portal')
+    remove:  gettext('Delete Portal'),
+    confirm: gettext('Do you really want to delete Portal %s?')
   },
   allowEdit: false,
   columns: [{
