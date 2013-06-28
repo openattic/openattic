@@ -177,7 +177,7 @@ Ext.oa.ShareGridPanel = Ext.extend(Ext.grid.GridPanel, {
       store: new Ext.data.DirectStore({
         id: self.store.id || self.id + "_store",
         fields: (function(){
-          var cols = ["id"],
+          var cols = ["id", "__unicode__"],
               c;
           for( c = 0; c < self.columns.length; c++ ){
             cols.push(self.columns[c].dataIndex);
@@ -324,7 +324,7 @@ Ext.oa.ShareGridPanel = Ext.extend(Ext.grid.GridPanel, {
     "use strict";
     Ext.Msg.confirm(
       this.texts.remove,
-      interpolate(this.texts.confirm, [sel.data.path]),
+      interpolate(this.texts.confirm, [sel.data.__unicode__]),
       handler, scope
     );
   },
