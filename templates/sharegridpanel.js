@@ -23,6 +23,8 @@ Ext.oa.getShareEditWindow = function(config, record){
   });
   var addwin = new Ext.Window(Ext.apply(config, {
     layout: "fit",
+    height: 200,
+    width: 500,
     defaults: {
       autoScroll: true
     },
@@ -31,8 +33,6 @@ Ext.oa.getShareEditWindow = function(config, record){
       var form = {
         xtype: "form",
         bodyStyle: 'padding: 5px 5px;',
-        height: 200,
-        width: 500,
         api: {
           load:   config.api.get_ext,
           submit: config.api.set_ext
