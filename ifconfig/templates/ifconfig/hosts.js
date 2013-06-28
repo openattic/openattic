@@ -39,6 +39,30 @@ Ext.oa.Ifconfig__Host_Panel = Ext.extend(Ext.oa.ShareGridPanel, {
 Ext.reg("ifconfig__host_panel", Ext.oa.Ifconfig__Host_Panel);
 
 
+Ext.oa.HostAttrTreeNodeUI = Ext.extend(Ext.tree.TreeNodeUI, {
+  renderElements : function(n, a, targetNode, bulkRender){
+    Ext.oa.HostAttrTreeNodeUI.superclass.renderElements.call( this, n, a, targetNode, bulkRender );
+    Ext.DomHelper.applyStyles( this.elNode, 'position: relative' );
+    var tpl = new Ext.DomHelper.createTemplate(
+      '<div style="position: absolute; top: 1px; right: {pos}px;" />'
+      );
+    var pos = 8;
+    for( var i = a.actions.length - 1; i >= 0; i-- ){
+      var divEl = tpl.append( this.elNode, {'pos': pos} );
+      var btn = new Ext.Button({
+        text: "",
+        icon: String.format("{0}/icons2/16x16/actions/{1}.png", MEDIA_URL, a.actions[i].icon),
+        action:  a.actions[i],
+        tooltip: a.actions[i].name,
+        handler: a.actions[i].handler.createCallback(n)
+      });
+      btn.render(divEl);
+      pos += 24;
+    }
+  }
+});
+
+
 Ext.oa.Ifconfig__Host_Attributes_TreeLoader = Ext.extend(Ext.tree.TreeLoader, {
   directFn: lvm__LogicalVolume.all,
   requestData: function(node, callback, scope){
