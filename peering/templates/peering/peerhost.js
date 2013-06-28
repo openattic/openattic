@@ -140,6 +140,9 @@ Ext.oa.Peering__HostAttrRootType = {
                 name: "base_url",
                 value: String.format("http://__:<<APIKEY>>@{0}:31234/", self.attributes.host.name)
               }]
+            },
+            success: function(){
+              Ext.getCmp("ifconfig__host_attributes_panel_inst").refresh();
             }
           });
           addwin.show();
@@ -160,20 +163,22 @@ Ext.oa.Peering__PeerHostType = {
       text: data.__unicode__,
       leaf: true,
       actions: [{
-        name: "edit",
-        icon: "edit-redo",
-        handler: function(){
-          console.log("ohai edit");
-        }
-      }, {
         name: "remove",
         icon: "remove",
         handler: function(self){
-          peering__PeerHost.remove(self.attributes.objid, function(provider, response){
-            if( response.type !== 'exception' ){
-              self.remove(true);
+          Ext.Msg.confirm(
+            gettext('Confirm delete'),
+            interpolate(gettext('Really delete Peer %s?'), [self.attributes.text]),
+            function(btn, text){
+              if( btn === 'yes' ){
+                peering__PeerHost.remove(self.attributes.objid, function(provider, response){
+                  if( response.type !== 'exception' ){
+                    self.remove(true);
+                  }
+                });
+              }
             }
-          });
+          );
         }
       }]
     });
