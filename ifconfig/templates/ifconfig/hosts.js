@@ -29,6 +29,7 @@ Ext.oa.Ifconfig__Host_Panel = Ext.extend(Ext.oa.ShareGridPanel, {
         xtype: 'textfield',
         fieldLabel: gettext('Name'),
         allowBlank: false,
+        name: "name"
       }]
     }]
   }
