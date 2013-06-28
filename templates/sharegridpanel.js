@@ -13,6 +13,103 @@
 
 Ext.namespace("Ext.oa");
 
+
+Ext.oa.getShareEditWindow = function(config, record){
+  "use strict";
+  Ext.applyIf(config, {texts: {}});
+  Ext.applyIf(config.texts, {
+    submit: gettext("Submit"),
+    cancel: gettext("Cancel")
+  });
+  var addwin = new Ext.Window(Ext.apply(config, {
+    layout: "fit",
+    defaults: {
+      autoScroll: true
+    },
+    items: (function(){
+      var i;
+      var form = {
+        xtype: "form",
+        bodyStyle: 'padding: 5px 5px;',
+        height: 200,
+        width: 500,
+        api: {
+          load:   config.api.get_ext,
+          submit: config.api.set_ext
+        },
+        baseParams: {
+          id: (record ? record.id: -1)
+        },
+        paramOrder: ["id"],
+        listeners: {
+          afterrender: function(form){
+            form.getForm().load();
+          }
+        },
+        defaults: {
+          xtype: "textfield",
+          anchor: '-20px',
+          defaults : {
+            anchor: "0px"
+          }
+        },
+        aboutToSubmit: function(btn, conf){
+          // Default: do nothing
+          return true;
+        },
+        buttons: [{
+          text: config.texts.submit,
+          icon: MEDIA_URL + "/oxygen/16x16/actions/dialog-ok-apply.png",
+          handler: function(btn){
+            addwin.getEl().mask(gettext("Loading..."));
+            var conf = {
+              success: function(provider, response){
+                if(response.result){
+                  if( typeof config.success === "function"){
+                    config.success();
+                  }
+                  addwin.close();
+                }
+              },
+              failure: function(){
+                addwin.getEl().unmask();
+              }
+            };
+            var datform = btn.ownerCt.ownerCt.getForm();
+            if( datform.aboutToSubmit(btn, conf) === true ){
+              datform.submit(conf);
+            }
+            else{
+              addwin.getEl().unmask()
+            }
+          }
+        },{
+          text: config.texts.cancel,
+          icon: MEDIA_URL + "/icons2/16x16/actions/gtk-cancel.png",
+          handler: function(){
+            addwin.close();
+          }
+        }]
+      };
+      Ext.apply(form, config.form);
+      if( form.items[0].xtype == "fieldset" ){
+        var items = form.items[0].items;
+      }
+      else{
+        var items = form.items;
+      }
+      for( i = 0; i < items.length; i++ ){
+        if( items[i].disabled ){
+          items[i].disabled = !record;
+        }
+      }
+      return form;
+    }())
+  }));
+  return addwin;
+}
+
+
 Ext.oa.ShareGridPanel = Ext.extend(Ext.grid.GridPanel, {
   api: null,
   form: {},
@@ -183,7 +280,10 @@ Ext.oa.ShareGridPanel = Ext.extend(Ext.grid.GridPanel, {
         handler: function(){
           self.showEditWindow({
             title: self.texts.add,
-            submitButtonText: self.texts.add
+            texts: {
+              cancel: self.texts.cancel,
+              submit: self.texts.add
+            }
           });
         }
       });
@@ -192,16 +292,7 @@ Ext.oa.ShareGridPanel = Ext.extend(Ext.grid.GridPanel, {
           text:  self.texts.edit,
           icon: MEDIA_URL + "/icons2/16x16/actions/edit-redo.png",
           scope: self,
-          handler: function(){
-            var sm = self.getSelectionModel();
-            if( sm.hasSelection() ){
-              var sel = sm.selections.items[0];
-              self.showEditWindow({
-                title: self.texts.edit,
-                submitButtonText: self.texts.edit
-              }, sel.data);
-            }
-          }
+          handler: self.editFunction.createDelegate(self, [self])
         });
       }
       this.buttons.push({
@@ -221,7 +312,10 @@ Ext.oa.ShareGridPanel = Ext.extend(Ext.grid.GridPanel, {
       var sel = sm.selections.items[0];
       this.showEditWindow({
         title: self.texts.edit,
-        submitButtonText: self.texts.edit
+        texts: {
+          cancel: self.texts.cancel,
+          submit: self.texts.edit
+        }
       },sel.data);
     }
   },
@@ -268,88 +362,11 @@ Ext.oa.ShareGridPanel = Ext.extend(Ext.grid.GridPanel, {
     "use strict";
     var self = this;
     Ext.apply(config, this.window);
-    var addwin = new Ext.Window(Ext.apply(config, {
-      layout: "fit",
-      defaults: {
-        autoScroll: true
-      },
-      items: (function(){
-        var i;
-        var form = {
-          xtype: "form",
-          bodyStyle: 'padding: 5px 5px;',
-          api: {
-            load:   self.api.get_ext,
-            submit: self.api.set_ext
-          },
-          ownerPanel: self,
-          baseParams: {
-            id: (record ? record.id: -1)
-          },
-          paramOrder: ["id"],
-          listeners: {
-            afterrender: function(form){
-              form.getForm().load();
-            }
-          },
-          defaults: {
-            xtype: "textfield",
-            anchor: '-20px',
-            defaults : {
-              anchor: "0px"
-            }
-          },
-          aboutToSubmit: function(btn, conf){
-            // Default: do nothing
-            return true;
-          },
-          buttons: [{
-            text: config.submitButtonText,
-            icon: MEDIA_URL + "/oxygen/16x16/actions/dialog-ok-apply.png",
-            handler: function(btn){
-              addwin.getEl().mask(gettext("Loading..."));
-              var conf = {
-                success: function(provider, response){
-                  if(response.result){
-                    self.store.reload();
-                    addwin.close();
-                  }
-                },
-                failure: function(){
-                  addwin.getEl().unmask();
-                }
-              };
-              var datform = btn.ownerCt.ownerCt.getForm();
-              if( datform.aboutToSubmit(btn, conf) === true ){
-                datform.submit(conf);
-              }
-              else{
-                addwin.getEl().unmask()
-              }
-            }
-          },{
-            text: self.texts.cancel,
-            icon: MEDIA_URL + "/icons2/16x16/actions/gtk-cancel.png",
-            handler: function(){
-              addwin.close();
-            }
-          }]
-        };
-        Ext.apply(form, self.form);
-        if( form.items[0].xtype == "fieldset" ){
-          var items = form.items[0].items;
-        }
-        else{
-          var items = form.items;
-        }
-        for( i = 0; i < items.length; i++ ){
-          if( items[i].disabled ){
-            items[i].disabled = !record;
-          }
-        }
-        return form;
-      }())
-    }));
+    var addwin = Ext.oa.getShareEditWindow(Ext.apply(config, {
+      api:     self.api,
+      success: function(){ self.store.reload(); },
+      form:    self.form
+    }), record);
     addwin.show();
   },
 
