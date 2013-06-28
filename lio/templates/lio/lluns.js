@@ -15,6 +15,11 @@ Ext.namespace("Ext.oa");
 
 Ext.oa.Lio__LogicalLun_Panel = Ext.extend(Ext.oa.ShareGridPanel, {
   api: lio__LogicalLUN,
+  texts: {
+    add:     gettext('Add LUN'),
+    remove:  gettext('Delete LUN')
+  },
+  allowEdit: false,
   store: {
     fields: [{
       name: "volumename",

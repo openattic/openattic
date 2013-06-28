@@ -17,6 +17,11 @@ Ext.oa.Lio__Portal_Panel = Ext.extend(Ext.oa.ShareGridPanel, {
   api: lio__Portal,
   id: "lio__portal_panel_inst",
   title: "LIO: Network Portals",
+  texts: {
+    add:     gettext('Add Portal'),
+    remove:  gettext('Delete Portal')
+  },
+  allowEdit: false,
   columns: [{
     header: gettext('Address'),
     width: 100,
@@ -54,6 +59,7 @@ Ext.oa.Lio__Portal_Panel = Ext.extend(Ext.oa.ShareGridPanel, {
       fieldLabel: gettext('Port'),
       allowBlank: false,
       name: "port",
+      value: 3260
     }]
   }
 });
