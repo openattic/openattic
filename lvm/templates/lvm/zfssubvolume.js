@@ -17,34 +17,10 @@ Ext.oa.Zfs__Subvolume__Panel = Ext.extend(Ext.grid.GridPanel, {
   showEditWindow: function(config, record){
     "use strict";
     var subvolumegrid = this;
-    var addwin = new Ext.Window(Ext.apply(config, {
-      layout: "fit",
-      defaults: {autoScroll: true},
-      height: 200,
-      width: 500,
-      items: [{
-        xtype: "form",
-        bodyStyle: 'padding: 5px 5px;',
-        api: {
-          load: lvm__ZfsSubvolume.get_ext,
-          submit: lvm__ZfsSubvolume.set_ext
-        },
-        baseParams: {
-          id: (record ? record.id : -1)
-        },
-        paramOrder: ["id"],
-        listeners: {
-          afterrender: function(self){
-            self.getForm().load();
-          }
-        },
-        defaults: {
-          xtype: "textfield",
-          anchor: '-20px',
-          defaults: {
-            anchor: "0px"
-          }
-        },
+    var addwin = Ext.oa.getShareEditWindow(Ext.apply(config, {
+      api: lvm__ZfsSubvolume,
+      success: function(){ subvolumegrid.store.reload(); },
+      form: {
         items: [{
           xtype: 'fieldset',
           layout: 'form',
@@ -74,28 +50,8 @@ Ext.oa.Zfs__Subvolume__Panel = Ext.extend(Ext.grid.GridPanel, {
             valueField: "id",
             ref: "volfield"
           }]
-        }],
-        buttons: [{
-          text: config.submitButtonText,
-          icon: MEDIA_URL + "/oxygen/16x16/actions/dialog-ok-apply.png",
-          handler: function(self){
-            self.ownerCt.ownerCt.getForm().submit({
-              success: function(provider,response){
-                if(response.result){
-                  subvolumegrid.store.reload();
-                  addwin.hide();
-                }
-              }
-            });
-          }
-        },{
-          text:gettext('Cancel'),
-          icon: MEDIA_URL + "/icons2/16x16/actions/gtk-cancel.png",
-          handler: function(self){
-            addwin.hide();
-          }
         }]
-      }]
+      }
     }));
     addwin.show();
   },
@@ -118,7 +74,9 @@ Ext.oa.Zfs__Subvolume__Panel = Ext.extend(Ext.grid.GridPanel, {
         handler: function() {
           subvolumegrid.showEditWindow({
             title: gettext('Add Subvolume'),
-            submitButtonText:gettext('Create Subvolume')
+            texts: {
+              submit: gettext('Create Subvolume')
+            }
           });
         }
       },{
