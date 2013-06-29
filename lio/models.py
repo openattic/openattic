@@ -387,6 +387,9 @@ class LogicalLUN(models.Model):
     hosts       = models.ManyToManyField(Host)
     targets     = models.ManyToManyField(Target)
 
+    objects     = getHostDependentManagerClass("volume__vg__host")()
+    all_objects = models.Manager()
+
     def __unicode__(self):
         return "%s" % (self.volume.name)
 

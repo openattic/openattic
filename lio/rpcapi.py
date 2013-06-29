@@ -18,9 +18,6 @@ from rpcd.handlers import ModelHandler, mkProxyModelHandler
 
 from lio import models
 
-class LogicalLunHandler(ModelHandler):
-    model = models.LogicalLUN
-
 class InitiatorHandler(ModelHandler):
     model = models.Initiator
 
@@ -32,6 +29,6 @@ RPCD_HANDLERS = [
     mkProxyModelHandler(models.TPG),
     mkProxyModelHandler(models.LUN),
     mkProxyModelHandler(models.ACL),
+    mkProxyModelHandler(models.LogicalLUN),
     InitiatorHandler,
-    LogicalLunHandler,
     ]
