@@ -67,6 +67,12 @@ class SystemD(LockingPlugin):
         #lio_tpg.set_parameter("InitialR2T",                 "No") # → Invalid Argument <_<
         lio_tpg.enable = True
 
+    @method(in_signature="i", out_signature="s")
+    def tpg_getpath(self, id):
+        """ Used for debugging purposes only, may be safely removed after #OA-51 has been fixed """
+        mdl_tpg = models.TPG.objects.get(id=id)
+        return mdl_tpg.lio_object.path
+
     @method(in_signature="i", out_signature="")
     def tpg_delete(self, id):
         models.TPG.objects.get(id=id).lio_object.delete()
