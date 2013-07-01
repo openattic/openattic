@@ -813,10 +813,12 @@ class LVSnapshotJob(Cronjob):
                 invoke(shlex.split(self.conf.postscript)) if len(self.conf.postscript) > 0 else None
 
     def save(self, *args, **kwargs):
-        self.command = "echo Doing snapshot!"
-        Cronjob.save(self, *args, **kwargs)
-        self.command = "oaconfig dosnapshot -j " + str(self.id)
-        return Cronjob.save(self, *args, **kwargs)
+        for path in os.environ.get("PATH", "").split(os.pathsep):
+            if os.path.exists(os.path.join(path, "oaconfig")):
+                self.command = "echo Doing snapshot!"
+                Cronjob.save(self, *args, **kwargs)
+                self.command = str(path) + "/oaconfig dosnapshot -j " + str(self.id)
+                return Cronjob.save(self, *args, **kwargs)
 
 class ConfManager(models.Manager):
     def add_config(self, conf_obj):
