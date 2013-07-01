@@ -819,6 +819,7 @@ class LVSnapshotJob(Cronjob):
                 Cronjob.save(self, *args, **kwargs)
                 self.command = str(path) + "/oaconfig dosnapshot -j " + str(self.id)
                 return Cronjob.save(self, *args, **kwargs)
+        raise SystemError("oaconfig not found")
 
 class ConfManager(models.Manager):
     def add_config(self, conf_obj):
