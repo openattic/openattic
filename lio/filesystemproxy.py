@@ -34,9 +34,10 @@ class FileSystemProxy(FileSystem):
         FileSystem.__init__(self, logical_volume)
         self.disk = None
 
-        for storageobj in self.lv.storageobject_set.all():
-            for lun in storageobj.lun_set.all():
-                for acl in lun.tpg.acl_set.all():
+        from lio.models import StorageObject, LUN, ACL
+        for storageobj in StorageObject.all_objects.filter(volume=self.lv):
+            for lun in LUN.all_objects.filter(storageobj=storageobj):
+                for acl in ACL.all_objects.filter(tpg=lun.tpg):
                     for peer in acl.initiator.host.peerhost_set.all():
                         try:
                             self.disk = peer.disk.finddisk('.', self.lv.uuid)
