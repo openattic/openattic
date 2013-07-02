@@ -40,7 +40,7 @@ class FileSystemProxy(FileSystem):
                 for acl in ACL.all_objects.filter(tpg=lun.tpg):
                     for peer in acl.initiator.host.peerhost_set.all():
                         try:
-                            self.disk = peer.disk.finddisk('.', self.lv.uuid)
+                            self.disk = peer.disk.finddisk(peer.host.name, self.lv.uuid)
                             self.disk["__peer__host__name__"] = peer.host.name
                         except socket.error, err:
                             if err.errno in (errno.ECONNREFUSED, errno.ECONNABORTED, errno.ECONNRESET,
