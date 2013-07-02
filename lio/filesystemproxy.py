@@ -65,7 +65,7 @@ class FileSystemProxy(FileSystem):
 
     @property
     def mounthost(self):
-        return self.disk["SystemName"]
+        return self.disk["__peer__host__name__"]
 
     def mount(self, jid):
         """ Mount the file system.
