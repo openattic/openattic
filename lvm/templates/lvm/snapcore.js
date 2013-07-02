@@ -18,55 +18,58 @@ Ext.oa.WizardTreeNodeUI = Ext.extend(Ext.tree.TreeNodeUI, {
     Ext.oa.WizardTreeNodeUI.superclass.renderElements.call( this, n, a, targetNode, bulkRender );
     Ext.DomHelper.applyStyles( this.elNode, 'position: relative' );
     var node = this;
-    var img_children = new Ext.BoxComponent({
-      autoEl: {
-        tag: "img",
-        src: MEDIA_URL + "/dialog-ok-apply-gray.png",
-        style: "position: absolute;"
-      },
-      listeners: {
-        afterrender: function(self){
-          self.el.on("load", function(ev, target, opt){
-            img_children.el.alignTo(node.iconNode, "bl-bl");
-            if( node.node.attributes.plugin.getConfig(node.node) === null )
-              Ext.DomHelper.applyStyles( img_children.el, 'display: none' );
-            node.node.attributes.plugin.on("setConfigData", function(plugin, confobj, key, value){
-              for( var i = 0; i < node.node.childNodes.length; i++ ){
-                if( node.node.childNodes[i].attributes.objid === key ){
-                  Ext.DomHelper.applyStyles( img_children.el,
-                    ( value !== null ? "display: block" : "display: none" ) );
-                  break;
-                }
-              }
-            });
-          });
+    if(node.node.ownerTree.showIcons === true)
+    {
+      var img_children = new Ext.BoxComponent({
+        autoEl: {
+          tag: "img",
+          src: MEDIA_URL + "/dialog-ok-apply-gray.png",
+          style: "position: absolute;"
         },
-      }
-    });
-    var img_self = new Ext.BoxComponent({
-      autoEl: {
-        tag: "img",
-        src: MEDIA_URL + "/oxygen/16x16/actions/dialog-ok-apply.png",
-        style: "position: absolute;"
-      },
-      listeners: {
-        afterrender: function(self){
-          self.el.on("load", function(ev, target, opt){
-            img_self.el.alignTo(node.iconNode, "bl-bl");
-            if( node.node.attributes.plugin.getConfig(node.node) === null )
-              Ext.DomHelper.applyStyles( img_self.el, 'display: none' );
-            node.node.attributes.plugin.on("setConfigData", function(plugin, confobj, key, value){
-              if( node.node.attributes.objid === key ){
-                Ext.DomHelper.applyStyles( img_self.el,
-                  ( value !== null ? "display: block" : "display: none" ) );
-              }
+        listeners: {
+          afterrender: function(self){
+            self.el.on("load", function(ev, target, opt){
+              img_children.el.alignTo(node.iconNode, "bl-bl");
+              if( node.node.attributes.plugin.getConfig(node.node) === null )
+                Ext.DomHelper.applyStyles( img_children.el, 'display: none' );
+              node.node.attributes.plugin.on("setConfigData", function(plugin, confobj, key, value){
+                for( var i = 0; i < node.node.childNodes.length; i++ ){
+                  if( node.node.childNodes[i].attributes.objid === key ){
+                    Ext.DomHelper.applyStyles( img_children.el,
+                      ( value !== null ? "display: block" : "display: none" ) );
+                    break;
+                  }
+                }
+              });
             });
-          });
+          },
         }
-      }
-    });
-    img_children.render(this.elNode, 6);
-    img_self.render(this.elNode, 3);
+      });
+      var img_self = new Ext.BoxComponent({
+        autoEl: {
+          tag: "img",
+          src: MEDIA_URL + "/oxygen/16x16/actions/dialog-ok-apply.png",
+          style: "position: absolute;"
+        },
+        listeners: {
+          afterrender: function(self){
+            self.el.on("load", function(ev, target, opt){
+              img_self.el.alignTo(node.iconNode, "bl-bl");
+              if( node.node.attributes.plugin.getConfig(node.node) === null )
+                Ext.DomHelper.applyStyles( img_self.el, 'display: none' );
+              node.node.attributes.plugin.on("setConfigData", function(plugin, confobj, key, value){
+                if( node.node.attributes.objid === key ){
+                  Ext.DomHelper.applyStyles( img_self.el,
+                    ( value !== null ? "display: block" : "display: none" ) );
+                }
+              });
+            });
+          }
+        }
+      });
+      img_children.render(this.elNode, 6);
+      img_self.render(this.elNode, 3);
+    }
   }
 });
 
@@ -273,6 +276,7 @@ Ext.oa.LVM__Snapcore_Panel = Ext.extend(Ext.Panel, {
         width   : 280,
         height  : 990,
         xtype   : 'snaptreepanel',
+        showIcons: false,
         buttons : [{
           text    : gettext('Add Host'),
           handler : function(){
@@ -545,6 +549,7 @@ Ext.oa.LVM__Snapcore_Panel = Ext.extend(Ext.Panel, {
                   region    : 'center',
                   id        : 'lvm__snapcore_wizard_treepanel',
                   xtype     : "snaptreepanel",
+                  showIcons : true,
                   checkable : false,
                   listeners : {
                     click   : function(node, e){
