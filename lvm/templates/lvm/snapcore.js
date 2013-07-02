@@ -45,6 +45,10 @@ Ext.oa.WizardTreeNodeUI = Ext.extend(Ext.tree.TreeNodeUI, {
                     break;
                   }
                 }
+                if(node.node.parentNode.attributes.objid === key){
+                  Ext.DomHelper.applyStyles(img_children.el,
+                    (value !== null ? "display: block" : "display: none"));
+                }
               });
             });
           },
