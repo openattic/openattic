@@ -813,7 +813,7 @@ class LVSnapshotJob(Cronjob):
                 invoke(shlex.split(self.conf.postscript)) if len(self.conf.postscript) > 0 else None
 
     def save(self, *args, **kwargs):
-        for path in os.environ.get("PATH", "").split(os.pathsep):
+        for path in ["/usr/local/sbin", "/usr/local/bin", "/usr/sbin", "/usr/bin"]:
             if os.path.exists(os.path.join(path, "oaconfig")):
                 self.command = "echo Doing snapshot!"
                 Cronjob.save(self, *args, **kwargs)
