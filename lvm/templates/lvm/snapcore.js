@@ -33,11 +33,11 @@ Ext.oa.WizardTreeNodeUI = Ext.extend(Ext.tree.TreeNodeUI, {
               if( node.node.attributes.plugin.getConfig(node.node) === null )
                 Ext.DomHelper.applyStyles( img_children.el, 'display: none' );
               node.node.attributes.plugin.on("setConfigData", function(plugin, confobj, key, value){
-              var storedconf = node.node.attributes.plugin.getConfig(node.node);
-              if( node.node.attributes.objid === key || storedconf !== null ){
-                Ext.DomHelper.applyStyles( img_children.el, 'display: none' );
-                return;
-              }
+                var storedconf = node.node.attributes.plugin.getConfig(node.node);
+                if( node.node.attributes.objid === key || storedconf !== null ){
+                  Ext.DomHelper.applyStyles( img_children.el, 'display: none' );
+                  return;
+                }
                 for( var i = 0; i < node.node.childNodes.length; i++ ){
                   if( node.node.childNodes[i].attributes.objid === key ){
                     Ext.DomHelper.applyStyles( img_children.el,
