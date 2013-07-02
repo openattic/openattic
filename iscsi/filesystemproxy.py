@@ -34,12 +34,13 @@ class FileSystemProxy(FileSystem):
         FileSystem.__init__(self, logical_volume)
         self.disk = None
 
-        for lun in self.lv.lun_set.all():
+        from iscsi.models import Lun
+        for lun in Lun.all_objects.filter(volume=self.lv):
             for initiator in lun.target.init_allow.all():
                 if initiator.peer is None:
                     continue
                 try:
-                    self.disk = initiator.peer.disk.finddisk(initiator.name, self.lv.uuid)
+                    self.disk = initiator.peer.disk.finddisk(initiator.peer.host.name, self.lv.uuid)
                     self.disk["__peer__host__name__"] = initiator.peer.host.name
                 except socket.error, err:
                     if err.errno in (errno.ECONNREFUSED, errno.ECONNABORTED, errno.ECONNRESET,

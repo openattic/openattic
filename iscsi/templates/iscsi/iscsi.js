@@ -558,15 +558,15 @@ Ext.oa.Iscsi__Panel = Ext.extend(Ext.Panel, {
                     hiddenName: 'peer',
                     store: {
                       xtype: "directstore",
-                      fields: ["id", "name"],
-                      directFn: peering__PeerHost.all
+                      fields: ["id", "__unicode__"],
+                      directFn: peering__PeerHost.ids
                     },
                     typeAhead:     true,
                     disabled:      true,
                     triggerAction: 'all',
                     emptyText:     gettext('Select...'),
                     selectOnFocus: true,
-                    displayField:  'name',
+                    displayField:  '__unicode__',
                     valueField:    'id',
                     ref:           'peerfield',
                     listeners: {
@@ -671,14 +671,14 @@ Ext.oa.Iscsi__Panel = Ext.extend(Ext.Panel, {
                           hiddenName: 'peer',
                           store: {
                             xtype: "directstore",
-                            fields: ["id", "name"],
-                            directFn: peering__PeerHost.all
+                            fields: ["id", "__unicode__"],
+                            directFn: peering__PeerHost.ids
                           },
                           typeAhead:     true,
                           triggerAction: 'all',
                           emptyText:     gettext('Select...'),
                           selectOnFocus: true,
-                          displayField:  'name',
+                          displayField:  '__unicode__',
                           valueField:    'id',
                           id:            'peerfield',
                           ref:           'peerfield',
