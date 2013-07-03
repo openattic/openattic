@@ -362,7 +362,7 @@ Ext.oa.Lio__Panel = Ext.extend(Ext.Panel, {
                   for( i = 0; i < records.length; i++ ){
                     if( self.store.findExact("id", records[i].data.id) === -1 ){
                       addrecords.push({
-                        'app': 'lio',
+                        'app': 'ifconfig',
                         'obj': 'HostGroup',
                         'id':  records[i].data.id,
                         '__unicode__': records[i].data.__unicode__
@@ -471,7 +471,7 @@ Ext.oa.Lio__Panel = Ext.extend(Ext.Panel, {
                   for( i = 0; i < records.length; i++ ){
                     if( self.store.findExact("id", records[i].data.id) === -1 ){
                       addrecords.push({
-                        'app': 'lio',
+                        'app': 'ifconfig',
                         'obj': 'Host',
                         'id':  records[i].data.id,
                         '__unicode__': records[i].data.__unicode__
