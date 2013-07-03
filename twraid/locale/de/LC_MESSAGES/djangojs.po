@@ -2,20 +2,20 @@
 # Copyright (C) YEAR THE PACKAGE'S COPYRIGHT HOLDER
 # This file is distributed under the same license as the PACKAGE package.
 # FIRST AUTHOR <EMAIL@ADDRESS>, YEAR.
-#
+# 
 #, fuzzy
 msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2013-01-15 12:25+0100\n"
-"PO-Revision-Date: 2012-06-12 13:24\n"
+"PO-Revision-Date: 2013-07-03 14:11\n"
 "Last-Translator: Michael Ziegler <michael.ziegler@it-novum.com>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
-"Language: \n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
+"Language: \n"
 "Plural-Forms: nplurals=2; plural=(n != 1)\n"
 "X-Translated-Using: django-rosetta 0.6.6\n"
 
@@ -25,7 +25,7 @@ msgstr "Einschub"
 
 #: templates/lvm/diskmgmt.js:37 templates/lvm/diskmgmt.js.c:95
 msgid "Status"
-msgstr ""
+msgstr "Status"
 
 #: templates/lvm/diskmgmt.js:40 templates/lvm/diskmgmt.js.c:386
 msgid "Size"
@@ -49,11 +49,11 @@ msgstr "Typ"
 
 #: templates/lvm/diskmgmt.js:55
 msgid "Temp. (°C)"
-msgstr ""
+msgstr "Temp. (°C)"
 
 #: templates/lvm/diskmgmt.js:58
 msgid "RPM"
-msgstr ""
+msgstr "RPM"
 
 #: templates/lvm/diskmgmt.js:92 templates/lvm/diskmgmt.js.c:380
 msgid "Name"
@@ -90,7 +90,8 @@ msgid "Disk %s is not currently used."
 msgstr "Disk %s ist nicht in Benutzung."
 
 #: templates/lvm/diskmgmt.js:193
-msgid "Disk %(disk)s is part of the Volume Group %(vg)s, refusing to touch it."
+msgid ""
+"Disk %(disk)s is part of the Volume Group %(vg)s, refusing to touch it."
 msgstr ""
 "Disk %(disk)s ist Teil der Volume-Gruppe %(vg)s, werde sie nicht anrühren."
 
@@ -120,7 +121,8 @@ msgstr "Volume-Gruppe"
 
 #: templates/lvm/diskmgmt.js:245
 msgid ""
-"Please select the volume group. In order to create a new one, enter its name."
+"Please select the volume group. In order to create a new one, enter its "
+"name."
 msgstr ""
 "Bitte die Volume-Gruppe wählen. Um eine neue anzulegen, geben Sie den Namen "
 "ein."
@@ -157,7 +159,7 @@ msgstr ""
 
 #: templates/lvm/diskmgmt.js:383
 msgid "Host"
-msgstr ""
+msgstr "Host"
 
 #: templates/lvm/diskmgmt.js:390
 msgid "Free"

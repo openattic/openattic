@@ -9,7 +9,7 @@ msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2013-07-03 13:58+0200\n"
-"PO-Revision-Date: 2013-07-03 14:01\n"
+"PO-Revision-Date: 2013-07-03 14:10\n"
 "Last-Translator: Michael Ziegler <michael.ziegler@it-novum.com>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
 "MIME-Version: 1.0\n"
@@ -33,15 +33,15 @@ msgstr "Typ"
 
 #: templates/lio/initiators.js:50 templates/lio/lluns.js:205
 msgid "iSCSI"
-msgstr ""
+msgstr "iSCSI"
 
 #: templates/lio/initiators.js:50
 msgid "Fibre Channel"
-msgstr ""
+msgstr "Fibre Channel"
 
 #: templates/lio/initiators.js:58
 msgid "WWN/IQN"
-msgstr ""
+msgstr "WWN/IQN"
 
 #: templates/lio/initiators.js:88
 msgid "Confirm delete"
@@ -67,7 +67,7 @@ msgstr "LUN %s wirklich löschen?"
 
 #: templates/lio/lluns.js:32 templates/lio/lluns.js.c:47
 msgid "Volume"
-msgstr ""
+msgstr "Volume"
 
 #: templates/lio/lluns.js:36 templates/lio/lluns.js.c:52
 msgid "LUN ID"
@@ -75,11 +75,11 @@ msgstr "LUN-ID"
 
 #: templates/lio/lluns.js:85 templates/lio/lluns.js.c:514
 msgid "LUNs"
-msgstr ""
+msgstr "LUNs"
 
 #: templates/lio/lluns.js:129
 msgid "Targets"
-msgstr ""
+msgstr "Targets"
 
 #: templates/lio/lluns.js:154
 msgid "Add Target"
@@ -100,11 +100,11 @@ msgstr "Target %s wirklich löschen?"
 
 #: templates/lio/lluns.js:176
 msgid "Name"
-msgstr ""
+msgstr "Name"
 
 #: templates/lio/lluns.js:181
 msgid "Host"
-msgstr ""
+msgstr "Host"
 
 #: templates/lio/lluns.js:191 templates/lio/portals.js:54
 msgid "Select..."
@@ -112,11 +112,11 @@ msgstr "Bitte wählen..."
 
 #: templates/lio/lluns.js:205
 msgid "FC"
-msgstr ""
+msgstr "FC"
 
 #: templates/lio/lluns.js:213
 msgid "WWN or IQN"
-msgstr ""
+msgstr "WWN oder IQN"
 
 #: templates/lio/lluns.js:224
 msgid "Remove Target"
@@ -132,7 +132,7 @@ msgstr "Hostgruppe entfernen"
 
 #: templates/lio/lluns.js:405
 msgid "Hosts"
-msgstr ""
+msgstr "Hosts"
 
 #: templates/lio/lluns.js:440
 msgid "Remove Host"
@@ -157,7 +157,7 @@ msgstr "Adresse"
 
 #: templates/lio/portals.js:31 templates/lio/portals.js.c:60
 msgid "Port"
-msgstr ""
+msgstr "Port"
 
 #: templates/lio/portals.js:76
 msgid "Network Portals"
