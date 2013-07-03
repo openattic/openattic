@@ -93,12 +93,13 @@ class LvHandler(ModelHandler):
 
     def _override_get(self, obj, data):
         if obj.fs:
+            hosthandler = self._get_handler_instance(Host)
             data['filesystem'] = obj.fsname
             data['fs'] = {
                 'mountpoint':  obj.mountpoint,
                 'topleveldir': obj.topleveldir,
                 'mounted':     obj.mounted,
-                'host':        obj.mounthost
+                'host':        hosthandler._idobj(obj.mounthost)
                 }
             if obj.mounted:
                 data['fs']['stat'] = obj.stat
