@@ -306,3 +306,17 @@ Description: 3ware RAID module for openATTIC
  .
  This package installs a module that allows administration of 3ware RAID
  controllers through openATTIC.
+
+Package: openattic-module-lio
+Architecture: all
+Depends: ${misc:Depends}, openattic-module-lvm,
+ python-rtslib (>> 2.1-2), lio-utils
+Description: HTTP module for openATTIC
+ openATTIC is a storage management system based upon Open Source tools with
+ a comprehensive user interface that allows you to create, share and backup
+ storage space on demand.
+ .
+ This package includes support for the LIO Linux SCSI Target, which allows
+ users to configure FibreChannel, FCoE and iSCSI targets over the openATTIC
+ user interface.
+
