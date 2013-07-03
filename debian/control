@@ -9,7 +9,7 @@ Vcs-Hg: https://bitbucket.org/openattic/openattic-debian
 
 Package: openattic
 Architecture: all
-Depends: ${misc:Depends}, openattic-base,
+Depends: ${misc:Depends},
  openattic-module-lvm,
  openattic-module-nfs,
  openattic-module-http,
@@ -20,8 +20,7 @@ Depends: ${misc:Depends}, openattic-base,
  openattic-module-cron,
  openattic-module-ftp,
  openattic-module-mailaliases,
- libapache2-mod-wsgi, apache2,
- openattic-pgsql
+ libapache2-mod-wsgi, apache2
 Suggests: python-django-rosetta, lsscsi, openattic-module-twraid,
  openattic-module-ipmi
 Description: Comprehensive storage management system
