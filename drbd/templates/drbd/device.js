@@ -276,6 +276,7 @@ Ext.oa.Drbd_Panel = Ext.extend(Ext.Panel, {
         ref: "hostpanel",
         split: true,
         region: "south",
+        height: (Ext.lib.Dom.getViewHeight() - 100) / 2,
         viewConfig: { forceFit: true },
         store: new Ext.data.JsonStore({
           id: "drbd_hoststate",

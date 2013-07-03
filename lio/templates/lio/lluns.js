@@ -102,10 +102,12 @@ Ext.oa.Lio__Panel = Ext.extend(Ext.Panel, {
       }, {
         layout: "border",
         region: "south",
+        height: (Ext.lib.Dom.getViewHeight() - 100) / 2,
         id:    "lio__logicallun_south_panel_inst",
         split: true,
         items: [{
           region: "west",
+          width: 200,
           title: "Targets",
           id:    "lio__logicallun_targets_panel_inst",
           split: true,
@@ -383,6 +385,7 @@ Ext.oa.Lio__Panel = Ext.extend(Ext.Panel, {
           region: "east",
           title: "Hosts",
           id:    "lio__logicallun_hosts_panel_inst",
+          width: 200,
           split: true,
           xtype: 'grid',
           viewConfig: { forceFit: true },

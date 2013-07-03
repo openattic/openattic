@@ -169,6 +169,7 @@ Ext.oa.Ifconfig__Host_Groups_Panel = Ext.extend(Ext.Panel, {
       }, {
         layout: "border",
         region: "south",
+        height: (Ext.lib.Dom.getViewHeight() - 100) / 2,
         id:    "ifconfig__host_south_panel_inst",
         split: true,
         items: [{
@@ -178,6 +179,7 @@ Ext.oa.Ifconfig__Host_Groups_Panel = Ext.extend(Ext.Panel, {
           xtype: 'ifconfig__host_attributes_panel'
         }, {
           region: "east",
+          width: (Ext.lib.Dom.getViewWidth() - 200) / 2,
           title: "Host Groups",
           id:    "ifconfig__host_hostgroups_panel_inst",
           xtype: 'grid',
