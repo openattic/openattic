@@ -19,8 +19,7 @@ Depends: ${misc:Depends},
  openattic-module-nagios,
  openattic-module-cron,
  openattic-module-ftp,
- openattic-module-mailaliases,
- libapache2-mod-wsgi, apache2
+ openattic-module-mailaliases
 Suggests: python-django-rosetta, lsscsi, openattic-module-twraid,
  openattic-module-ipmi
 Description: Comprehensive storage management system
@@ -84,7 +83,8 @@ Depends: ${misc:Depends}, python (>= 2.6),
  oxygen-icon-theme,
  lsb-release,
  libjs-extjs (>= 3.0.0), libjs-extjs (<< 4.0),
- openattic-pgsql
+ openattic-pgsql,
+ libapache2-mod-wsgi, apache2
 Recommends: sudo
 Description: Basic requirements for openATTIC
  openATTIC is a storage management system based upon Open Source tools with
