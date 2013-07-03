@@ -269,7 +269,7 @@ Description: HTTP module for openATTIC
  can also be used for serving other files in a read-only fashion. This is
  commonly used for disk images or software repositories.
  .
- This package installs a moduule which allows you to share volumes or
+ This package installs a module which allows you to share volumes or
  subdirectories using Apache2.
 
 Package: openattic-module-ipmi
