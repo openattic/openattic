@@ -9,8 +9,8 @@ msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2013-05-14 09:49+0200\n"
-"PO-Revision-Date: 2013-05-14 12:06\n"
-"Last-Translator:   <>\n"
+"PO-Revision-Date: 2013-07-03 14:08\n"
+"Last-Translator: Michael Ziegler <michael.ziegler@it-novum.com>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
@@ -24,9 +24,8 @@ msgid "Add Subvolume"
 msgstr "Subvolume hinzufügen"
 
 #: templates/lvm/btrfssubvolume.js:22
-#, fuzzy
 msgid "Edit Subvolume"
-msgstr "Subvolume hinzufügen"
+msgstr "Subvolume bearbeiten"
 
 #: templates/lvm/btrfssubvolume.js:23 templates/lvm/zfssubvolume.js:125
 msgid "Delete Subvolume"
@@ -45,23 +44,20 @@ msgid "Volume"
 msgstr "Volume"
 
 #: templates/lvm/btrfssubvolume.js:34
-#, fuzzy
 msgid "Snapshot of volume"
-msgstr "Snapshot"
+msgstr "Snapshot von Volume"
 
 #: templates/lvm/btrfssubvolume.js:38
 msgid "Read only"
-msgstr ""
+msgstr "Nur lesbar"
 
 #: templates/lvm/btrfssubvolume.js:82
-#, fuzzy
 msgid "Please select the base volume."
-msgstr "Bitte die Disk wählen, die der Volume-Gruppe hinzugefügt werden soll."
+msgstr "Bitte wählen Sie das Basisvolume."
 
 #: templates/lvm/btrfssubvolume.js:86
-#, fuzzy
 msgid "Snapshot of..."
-msgstr "Snapshot"
+msgstr "Snapshot von..."
 
 #: templates/lvm/btrfssubvolume.js:104 templates/lvm/logicalvolume.js:598
 #: templates/lvm/logicalvolume.js.c:638 templates/lvm/snapcore.js:915
@@ -72,11 +68,11 @@ msgstr "Bitte wählen..."
 
 #: templates/lvm/btrfssubvolume.js:112
 msgid "Read Only"
-msgstr ""
+msgstr "Nur lesbar"
 
 #: templates/lvm/btrfssubvolume.js:128
 msgid "BTRFS"
-msgstr ""
+msgstr "BTRFS"
 
 #: templates/lvm/diskmgmt.js:22
 msgid "Volume Groups"
@@ -182,7 +178,7 @@ msgstr ""
 
 #: templates/lvm/diskmgmt.js:280
 msgid "Host"
-msgstr ""
+msgstr "Host"
 
 #: templates/lvm/diskmgmt.js:283 templates/lvm/logicalvolume.js:112
 msgid "Size"
@@ -310,9 +306,9 @@ msgid "Volume %s is not mounted."
 msgstr "Volume %s ist nicht eingehängt."
 
 #: templates/lvm/logicalvolume.js:318
-#, fuzzy, c-format
+#, c-format
 msgid "Do you really want to unmount %s?"
-msgstr "Möchten Sie Volume %s wirklich aushängen?"
+msgstr "Möchten Sie %s wirklich aushängen?"
 
 #: templates/lvm/logicalvolume.js:325
 #, c-format
@@ -418,9 +414,8 @@ msgid "Size in MB"
 msgstr "Größe in MB"
 
 #: templates/lvm/logicalvolume.js:653
-#, fuzzy
 msgid "Waiting for volume group selection..."
-msgstr "Warte auf Volume-Auswahl..."
+msgstr "Warte auf Auswahl der Volume-Gruppe..."
 
 #: templates/lvm/logicalvolume.js:656
 msgid "Deduplication"
@@ -473,106 +468,103 @@ msgstr "Weiter"
 
 #: templates/lvm/snapcore.js:144
 msgid "Previous"
-msgstr ""
+msgstr "Vorherige"
 
 #: templates/lvm/snapcore.js:234 templates/lvm/snapcore.js.c:1139
-#, fuzzy
 msgid "SnapApps"
-msgstr "Snapshot"
+msgstr "SnapApps"
 
 #: templates/lvm/snapcore.js:243 templates/lvm/snapcore.js.c:247
-#, fuzzy
 msgid "Add Host"
-msgstr "Snapshot hinzufügen"
+msgstr "Host hinzufügen"
 
 #: templates/lvm/snapcore.js:285
 msgid "New configuration"
-msgstr ""
+msgstr "Neue Konfiguration"
 
 #: templates/lvm/snapcore.js:481
 msgid "Welcome"
-msgstr ""
+msgstr "Willkommen"
 
 #: templates/lvm/snapcore.js:496
 msgid "Available items"
-msgstr ""
+msgstr "Verfügbare Objekte"
 
 #: templates/lvm/snapcore.js:536
 msgid "Item settings"
-msgstr ""
+msgstr "Objekteinstellungen"
 
 #: templates/lvm/snapcore.js:550
 msgid "Additional Drives"
-msgstr ""
+msgstr "Zusätzliche Laufwerke"
 
 #: templates/lvm/snapcore.js:640
 msgid "Pre-/Post-Script - Conditions"
-msgstr ""
+msgstr "Pre-/Post-Skripte"
 
 #: templates/lvm/snapcore.js:647
-#, fuzzy
 msgid "Prescript conditions"
-msgstr "Beschreibung"
+msgstr "Preskript"
 
 #: templates/lvm/snapcore.js:651
 msgid "Postscript conditions"
-msgstr ""
+msgstr "Postskript"
 
 #: templates/lvm/snapcore.js:654
 msgid "Scheduling Part 1 / Expiry Date"
-msgstr ""
+msgstr "Zeitplan Teil 1 / Ablaufdatum"
 
 #: templates/lvm/snapcore.js:662
 msgid "No expiry date"
-msgstr ""
+msgstr "Kein Ablaufdatum"
 
 #: templates/lvm/snapcore.js:669
 msgid "Expiry date"
-msgstr ""
+msgstr "Ablaufdatum"
 
 #: templates/lvm/snapcore.js:700
 msgid "Scheduling Part 2 / Options"
-msgstr ""
+msgstr "Zeitplan Teil 2 / Optionen"
 
 #: templates/lvm/snapcore.js:709
 msgid "Execute now"
-msgstr ""
+msgstr "Sofort ausführen"
 
 #: templates/lvm/snapcore.js:716
 msgid "Execute later"
-msgstr ""
+msgstr "Später ausführen"
 
 #: templates/lvm/snapcore.js:745
 msgid "Execution date"
-msgstr ""
+msgstr "Ausführungsdatum"
 
 #: templates/lvm/snapcore.js:751
 msgid "Execution time"
-msgstr ""
+msgstr "Ausführungszeit"
 
 #: templates/lvm/snapcore.js:754
 msgid "Create scheduling"
-msgstr ""
+msgstr "Zeitplan anlegen"
 
 #: templates/lvm/snapcore.js:789
 msgid "Startdate"
-msgstr ""
+msgstr "Anfangsdatum"
 
 #: templates/lvm/snapcore.js:795
 msgid "Starttime"
-msgstr ""
+msgstr "Anfangszeit"
 
 #: templates/lvm/snapcore.js:801
 msgid "Enddate"
-msgstr ""
+msgstr "Enddatum"
 
 #: templates/lvm/snapcore.js:807
 msgid "Enddtime"
-msgstr ""
+msgstr "Endzeit"
 
 #: templates/lvm/snapcore.js:813
 msgid "Is active"
-msgstr ""
+msgstr "Ist aktiv"
 
 #: templates/lvm/snapcore.js:899
 msgid "Scheduling Part 3 / Timemanagement Part 2"
@@ -580,11 +572,11 @@ msgstr ""
 
 #: templates/lvm/snapcore.js:905
 msgid "Minute"
-msgstr ""
+msgstr "Minute"
 
 #: templates/lvm/snapcore.js:919
 msgid "Hour"
-msgstr ""
+msgstr "Stunde"
 
 #: templates/lvm/snapcore.js:948
 msgid "Scheduling Part 3 / Timemanagement Part 3"
@@ -592,116 +584,115 @@ msgstr ""
 
 #: templates/lvm/snapcore.js:954
 msgid "Day"
-msgstr ""
+msgstr "Tag"
 
 #: templates/lvm/snapcore.js:968
 msgid "Day of week"
-msgstr ""
+msgstr "Wochentag"
 
 #: templates/lvm/snapcore.js:983
 msgid "Monday"
-msgstr ""
+msgstr "Montag"
 
 #: templates/lvm/snapcore.js:985
 msgid "Tuesday"
-msgstr ""
+msgstr "Dienstag"
 
 #: templates/lvm/snapcore.js:987
 msgid "Wednesday"
-msgstr ""
+msgstr "Mittwoch"
 
 #: templates/lvm/snapcore.js:989
 msgid "Thursday"
-msgstr ""
+msgstr "Donnerstag"
 
 #: templates/lvm/snapcore.js:991
 msgid "Friday"
-msgstr ""
+msgstr "Freitag"
 
 #: templates/lvm/snapcore.js:995
 msgid "Saturday"
-msgstr ""
+msgstr "Samstag"
 
 #: templates/lvm/snapcore.js:997
 msgid "Sunday"
-msgstr ""
+msgstr "Sonntag"
 
 #: templates/lvm/snapcore.js:1013
 msgid "Month"
-msgstr ""
+msgstr "Monat"
 
 #: templates/lvm/snapcore.js:1017
 msgid "January"
-msgstr ""
+msgstr "Januar"
 
 #: templates/lvm/snapcore.js:1019
 msgid "Feburary"
-msgstr ""
+msgstr "Februar"
 
 #: templates/lvm/snapcore.js:1021
 msgid "March"
-msgstr ""
+msgstr "März"
 
 #: templates/lvm/snapcore.js:1023
 msgid "April"
-msgstr ""
+msgstr "April"
 
 #: templates/lvm/snapcore.js:1025
 msgid "May"
-msgstr ""
+msgstr "Mai"
 
 #: templates/lvm/snapcore.js:1027
 msgid "June"
-msgstr ""
+msgstr "Juni"
 
 #: templates/lvm/snapcore.js:1031
 msgid "July"
-msgstr ""
+msgstr "Juli"
 
 #: templates/lvm/snapcore.js:1033
 msgid "August"
-msgstr ""
+msgstr "August"
 
 #: templates/lvm/snapcore.js:1035
 msgid "September"
-msgstr ""
+msgstr "September"
 
 #: templates/lvm/snapcore.js:1037
 msgid "October"
-msgstr ""
+msgstr "Oktober"
 
 #: templates/lvm/snapcore.js:1039
 msgid "November"
-msgstr ""
+msgstr "November"
 
 #: templates/lvm/snapcore.js:1041
 msgid "December"
-msgstr ""
+msgstr "Dezember"
 
 #: templates/lvm/snapcore.js:1046 templates/lvm/snapcore.js.c:1050
 msgid "Finish"
-msgstr ""
+msgstr "Fertig stellen"
 
 #: templates/lvm/snapcore.js:1062
 msgid "Configuration Assistant"
-msgstr ""
+msgstr "Konfigurationsassistent"
 
 #: templates/lvm/snapcore.js:1072
 msgid "Collapse all"
-msgstr ""
+msgstr "Alle einklappen"
 
 #: templates/lvm/snapcore.js:1092
 msgid "Schedules"
-msgstr ""
+msgstr "Zeitpläne"
 
 #: templates/lvm/snapcore.js:1095
 msgid "Details"
-msgstr ""
+msgstr "Details"
 
 #: templates/lvm/snapcore.js:1109
-#, fuzzy
 msgid "Snapshot History"
-msgstr "Snapshots"
+msgstr "Snapshot-Verlauf"
 
 #: templates/lvm/snapshots.js:22
 msgid "Logical Volume Snapshots"
