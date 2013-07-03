@@ -81,7 +81,7 @@ class FileSystem(object):
     def mounthost(self):
         if self.virtual:
             raise NotImplementedError("FileSystem::mounthost needs to be overridden for virtual FS handlers")
-        return self.lv.vg.host.name
+        return self.lv.vg.host
 
     @property
     def topleveldir(self):

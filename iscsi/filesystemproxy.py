@@ -40,8 +40,8 @@ class FileSystemProxy(FileSystem):
                 if initiator.peer is None:
                     continue
                 try:
-                    self.disk = initiator.peer.disk.finddisk(initiator.peer.host.name, self.lv.uuid)
-                    self.disk["__peer__host__name__"] = initiator.peer.host.name
+                    self.disk = initiator.peer.disk.finddisk(initiator.peer.host, self.lv.uuid)
+                    self.disk["__peer__host__"] = initiator.peer.host
                 except socket.error, err:
                     if err.errno in (errno.ECONNREFUSED, errno.ECONNABORTED, errno.ECONNRESET,
                             errno.EHOSTUNREACH, errno.ENETUNREACH, errno.ETIMEDOUT) or isinstance(err, socket.timeout):
@@ -65,7 +65,7 @@ class FileSystemProxy(FileSystem):
 
     @property
     def mounthost(self):
-        return self.disk["__peer__host__name__"]
+        return self.disk["__peer__host__"]
 
     def mount(self, jid):
         """ Mount the file system.
