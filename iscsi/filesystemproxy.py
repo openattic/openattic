@@ -57,11 +57,17 @@ class FileSystemProxy(FileSystem):
 
     @property
     def fsname(self):
-        return self.disk["__partitions__"][0]["FileSystem"]
+        if self.disk["__partitions__"]:
+            return self.disk["__partitions__"][0]["FileSystem"]
+        return ""
 
     @property
     def mountpoint(self):
-        return self.disk["__partitions__"][0]["Name"]
+        if self.disk["__partitions__"]:
+            return self.disk["__partitions__"][0]["Name"]
+        if "DEVNAME" in self.disk:
+            return self.disk["DEVNAME"]
+        return ""
 
     @property
     def mounthost(self):
