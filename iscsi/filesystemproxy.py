@@ -40,7 +40,7 @@ class FileSystemProxy(FileSystem):
                 if initiator.peer is None:
                     continue
                 try:
-                    self.disk = initiator.peer.disk.finddisk(initiator.peer.host, self.lv.uuid)
+                    self.disk = initiator.peer.disk.finddisk('.', self.lv.uuid)
                     self.disk["__peer__host__"] = initiator.peer.host
                 except socket.error, err:
                     if err.errno in (errno.ECONNREFUSED, errno.ECONNABORTED, errno.ECONNRESET,
