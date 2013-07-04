@@ -16,15 +16,17 @@ Ext.namespace("Ext.oa");
 
 Ext.oa.getShareEditWindow = function(config, record){
   "use strict";
-  Ext.applyIf(config, {texts: {}});
+  Ext.applyIf(config, {
+    height: 200,
+    width: 500,
+    texts: {}
+  });
   Ext.applyIf(config.texts, {
     submit: gettext("Submit"),
     cancel: gettext("Cancel")
   });
   var addwin = new Ext.Window(Ext.apply(config, {
     layout: "fit",
-    height: 200,
-    width: 500,
     defaults: {
       autoScroll: true
     },
