@@ -60,6 +60,7 @@ def get_device_info(device):
             for mntdev, mntpoint, mnttype, _, _, _ in get_mounts():
                 if os.path.realpath(mntdev) == device.device_node and mnttype == device["ID_FS_TYPE"]:
                     s = os.statvfs(mntpoint)
+                    partinfo["Name"]      = mntpoint
                     partinfo["FreeSpace"] = str(s.f_bfree * s.f_frsize)
 
         data["__partitions__"].append(partinfo)
