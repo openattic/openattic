@@ -83,7 +83,7 @@ Ext.oa.Lvm__LogicalVolume_Panel = Ext.extend(Ext.oa.ShareGridPanel, {
         if( val === null ){
           return '';
         }
-        return val.host;
+        return toUnicode(val.host);
       }
     }, {
       name: 'fsmountpoint',
