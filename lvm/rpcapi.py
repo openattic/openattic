@@ -42,7 +42,7 @@ class DiskHandler(BaseHandler):
         return udevquery.get_blockdevices()
 
     def finddisk(self, hostname, diskuuid):
-        return udevquery.find_blockdevice(diskuuid)
+        return udevquery.get_blockdevices(diskuuid)[0]
 
 class BlockDevicesHandler(BaseHandler):
     handler_name = "lvm.BlockDevices"
