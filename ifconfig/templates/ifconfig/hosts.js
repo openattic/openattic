@@ -112,7 +112,7 @@ Ext.oa.Ifconfig__Host_Attributes_TreePanel = Ext.extend(Ext.tree.TreePanel, {
       root: rootnode,
     }));
 
-    Ext.oa.LVM__Snapcore_TreePanel.superclass.initComponent.apply(this, arguments);
+    Ext.oa.Ifconfig__Host_Attributes_TreePanel.superclass.initComponent.apply(this, arguments);
 
     for( var i = 0; i < window.HostAttrPlugins.length; i++ ){
       this.pluginroots.push(window.HostAttrPlugins[i].initTree(this));
