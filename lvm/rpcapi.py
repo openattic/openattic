@@ -27,12 +27,22 @@ from lvm.models import VolumeGroup, LogicalVolume, \
                        LVSnapshotJob, SnapshotConf
 from lvm import blockdevices
 from lvm import initscripts
+from lvm import udevquery
 from ifconfig.models import Host
 from peering.models import PeerHost
 
 from rpcd.exceptionhelper import translate_exception
 from xmlrpclib import Fault
 
+
+class DiskHandler(BaseHandler):
+    handler_name = "disk"
+
+    def getdisks(self, hostname):
+        return udevquery.get_blockdevices()
+
+    def finddisk(self, hostname, diskuuid):
+        return udevquery.find_blockdevice(diskuuid)
 
 class BlockDevicesHandler(BaseHandler):
     handler_name = "lvm.BlockDevices"
@@ -307,6 +317,7 @@ class SnapshotConfHandler(ModelHandler):
       return snaps_list
 
 RPCD_HANDLERS = [
+    DiskHandler,
     BlockDevicesHandler,
     VgProxy, LvProxy,
     ZfsSubvolumeProxy, ZfsSnapshotProxy,
