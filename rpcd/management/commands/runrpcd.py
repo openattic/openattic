@@ -24,6 +24,7 @@ import socket
 from SimpleXMLRPCServer import list_public_methods, SimpleXMLRPCServer
 from SimpleXMLRPCServer import SimpleXMLRPCRequestHandler, SimpleXMLRPCDispatcher
 from BaseHTTPServer import HTTPServer
+from SocketServer import ThreadingMixIn
 from logging.handlers import SysLogHandler
 from optparse import make_option
 from base64   import b64decode
@@ -37,7 +38,14 @@ from django.conf import settings
 from rpcd.models   import APIKey
 from rpcd.handlers import ModelHandler
 
-class SecureXMLRPCServer(HTTPServer, SimpleXMLRPCDispatcher):
+
+class ThreadingHTTPServer(ThreadingMixIn, HTTPServer):
+    pass
+
+class ThreadingXMLRPCServer(ThreadingMixIn, SimpleXMLRPCServer):
+    pass
+
+class SecureXMLRPCServer(ThreadingHTTPServer, SimpleXMLRPCDispatcher):
     """ Secure XML-RPC server.
 
         It it very similar to SimpleXMLRPCServer but it uses HTTPS for transporting XML data.
@@ -50,7 +58,7 @@ class SecureXMLRPCServer(HTTPServer, SimpleXMLRPCDispatcher):
 
         SimpleXMLRPCDispatcher.__init__(self, allow_none, encoding)
 
-        HTTPServer.__init__(self, server_address, requestHandler)
+        ThreadingHTTPServer.__init__(self, server_address, requestHandler)
         ctx = SSL.Context('sslv3')
 
         ctx.load_cert_chain(certFile, keyFile)
@@ -61,7 +69,7 @@ class SecureXMLRPCServer(HTTPServer, SimpleXMLRPCDispatcher):
 
     def get_request(self):
         try:
-            return HTTPServer.get_request(self)
+            return ThreadingHTTPServer.get_request(self)
         except SSL.SSLError, e:
             logging.error( "Error accepting connection: " + unicode(e) )
             raise socket.error(unicode(e))
@@ -381,7 +389,7 @@ class Command( BaseCommand ):
                 allow_none=True, requestHandler=VerifyingRequestHandler)
         else:
             logging.info( "Initializing SimpleXMLRPCServer (not using SSL)" )
-            serv = SimpleXMLRPCServer((options['bindaddr'], options['bindport']),
+            serv = ThreadingXMLRPCServer((options['bindaddr'], options['bindport']),
                 allow_none=True, requestHandler=VerifyingRequestHandler)
         serv.register_introspection_functions()
         serv.register_instance(RPCd(rpcdplugins), allow_dotted_names=True)
