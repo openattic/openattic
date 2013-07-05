@@ -116,7 +116,7 @@ class FileSystemProxy(FileSystem):
                     # no way to determine megs_free if we have a partition for which it's unknown
                     break
                 megs_free += part["megs_free"]
-            else:
+            else: # if we didn't hit any breaks, megs_free is valid
                 stat["free"]  = megs_free
                 stat["freeG"] = megs_free / 1024
 
