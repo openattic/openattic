@@ -40,9 +40,11 @@ def get_device_info(device):
         "device":     device.device_node,
         "megs":       int(device.attributes["size"]) * 512 / 1024**2,
         "fs_type":    "unknown",
-        "raw_params": dict(device.items()),
-        "raw_attrs":  dict(device.attributes),
+        "raw": {
+            "params": dict(device.items()),
+            "attrs":  dict(device.attributes),
         }
+    }
 
     if "ID_PART_TABLE_TYPE" in device and device["DEVTYPE"] != "partition":
         data["fs_type"] = "partition_table"
