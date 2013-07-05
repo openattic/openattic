@@ -42,7 +42,12 @@ class DiskHandler(BaseHandler):
         return udevquery.get_blockdevices()
 
     def finddisk(self, hostname, diskuuid):
-        return udevquery.get_blockdevices(diskuuid)[0]
+        disks = udevquery.get_blockdevices(diskuuid)
+        if not disks:
+            raise SystemError("disk not found")
+        if len(disks) > 1:
+            raise SystemError("more than one disk found")
+        return disks[0]
 
 class BlockDevicesHandler(BaseHandler):
     handler_name = "lvm.BlockDevices"
