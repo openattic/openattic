@@ -33,6 +33,7 @@ class FileSystemProxy(FileSystem):
     def __init__(self, logical_volume):
         FileSystem.__init__(self, logical_volume)
         self.disk = None
+        self.host = None
 
         from iscsi.models import Lun
         for lun in Lun.all_objects.filter(volume=self.lv):
@@ -41,7 +42,7 @@ class FileSystemProxy(FileSystem):
                     continue
                 try:
                     self.disk = initiator.peer.disk.finddisk('.', self.lv.uuid)
-                    self.disk["__peer__host__"] = initiator.peer.host
+                    self.host = initiator.peer.host
                 except socket.error, err:
                     if err.errno in (errno.ECONNREFUSED, errno.ECONNABORTED, errno.ECONNRESET,
                             errno.EHOSTUNREACH, errno.ENETUNREACH, errno.ETIMEDOUT) or isinstance(err, socket.timeout):
@@ -57,21 +58,27 @@ class FileSystemProxy(FileSystem):
 
     @property
     def fsname(self):
-        if self.disk["__partitions__"]:
-            return self.disk["__partitions__"][0]["FileSystem"]
-        return ""
+        if "fs_type" not in self.disk:
+            return ""
+        if self.disk["fs_type"] == "unknown":
+            return ""
+        if self.disk["fs_type"] == "partition_table":
+            return self.disk["partitions"][0]["fs_type"]
+        return self.disk["fs_type"]
 
     @property
     def mountpoint(self):
-        if self.disk["__partitions__"]:
-            return self.disk["__partitions__"][0]["Name"]
-        if "DEVNAME" in self.disk:
-            return self.disk["DEVNAME"]
-        return ""
+        if "fs_type" not in self.disk:
+            return ""
+        if self.disk["fs_type"] == "unknown":
+            return ""
+        if self.disk["fs_type"] == "partition_table" and "mountpoint" in self.disk["partitions"][0]:
+            return self.disk["partitions"][0]["mountpoint"]
+        return self.disk["fs_type"]
 
     @property
     def mounthost(self):
-        return self.disk["__peer__host__"]
+        return self.host
 
     def mount(self, jid):
         """ Mount the file system.
@@ -81,7 +88,7 @@ class FileSystemProxy(FileSystem):
     @property
     def mounted(self):
         """ True if the volume is currently mounted. """
-        return True
+        return self.fsname != ""
 
     def unmount(self, jid):
         """ Unmount the volume. """
@@ -94,16 +101,33 @@ class FileSystemProxy(FileSystem):
 
     def stat(self):
         """ stat() the file system and return usage statistics. """
-        btsize = int(self.disk["Size"])
-        btfree = sum([ int(part["FreeSpace"]) for part in self.disk["__partitions__"] ])
-        btused = btsize - btfree
-        return {
-            "used":  btused / 1024**2,
-            "free":  btfree / 1024**2,
-            "size":  btsize / 1024**2,
-            "usedG": btused / 1024**3,
-            "freeG": btfree / 1024**3,
-            "sizeG": btsize / 1024**3,
-            }
+        if "fs_type" not in self.disk:
+            return None
+
+        stat = {
+            "size":  self.disk["megs"],
+            "sizeG": self.disk["megs"] / 1024
+        }
+
+        if self.disk["fs_type"] == "partition_table":
+            megs_free = 0
+            for part in self.disk["partitions"]:
+                if "megs_free" not in part:
+                    # no way to determine megs_free if we have a partition for which it's unknown
+                    break
+                megs_free += part["megs_free"]
+            else:
+                stat["free"]  = megs_free
+                stat["freeG"] = megs_free / 1024
+
+        elif "megs_free" in self.disk:
+            stat["free"]  = self.disk["megs_free"]
+            stat["freeG"] = self.disk["megs_free"] / 1024
+
+        if "free" in stat:
+            stat["used"]  = stat["size"]  - stat["free"]
+            stat["usedG"] = stat["sizeG"] - stat["freeG"]
+
+        return stat
 
 FILESYSTEMS.append(FileSystemProxy)
