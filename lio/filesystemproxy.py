@@ -110,13 +110,17 @@ class FileSystemProxy(FileSystem):
         }
 
         if self.disk["fs_type"] == "partition_table":
+            megs = 0
             megs_free = 0
             for part in self.disk["partitions"]:
                 if "megs_free" not in part:
                     # no way to determine megs_free if we have a partition for which it's unknown
                     break
                 megs_free += part["megs_free"]
+                megs      += part["megs"]
             else: # if we didn't hit any breaks, megs_free is valid
+                stat["size"]  = megs
+                stat["sizeG"] = megs / 1024
                 stat["free"]  = megs_free
                 stat["freeG"] = megs_free / 1024
 
