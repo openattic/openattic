@@ -55,8 +55,12 @@ def get_device_info(device):
     elif "ID_FS_TYPE" in device:
         data["fs_type"] = device["ID_FS_TYPE"]
         if device["ID_FS_TYPE"] == "LVM2_member":
-            data["mountpoint"] = device["UDISKS_LVM2_PV_VG_NAME"]
-            data["megs_free"]  = int(device["UDISKS_LVM2_PV_VG_FREE_SIZE"]) / 1024**2
+            if "UDISKS_LVM2_PV_VG_NAME" not in device:
+                # happens with old-ass udevs
+                data["fs_type"] = "unknown"
+            else:
+                data["mountpoint"] = device["UDISKS_LVM2_PV_VG_NAME"]
+                data["megs_free"]  = int(device["UDISKS_LVM2_PV_VG_FREE_SIZE"]) / 1024**2
         elif device["ID_FS_TYPE"] != "linux_raid_member" and device["ID_FS_USAGE"] == "filesystem":
             for mntdev, mntpoint, mnttype, _, _, _ in get_mounts():
                 if os.path.realpath(mntdev) == device.device_node and mnttype == device["ID_FS_TYPE"]:
