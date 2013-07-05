@@ -74,7 +74,7 @@ class FileSystemProxy(FileSystem):
             return ""
         if self.disk["fs_type"] == "partition_table" and "mountpoint" in self.disk["partitions"][0]:
             return self.disk["partitions"][0]["mountpoint"]
-        return self.disk["fs_type"]
+        return self.disk["mountpoint"]
 
     @property
     def mounthost(self):
