@@ -39,7 +39,7 @@ def get_device_info(device):
     data = {
         "device":     device.device_node,
         "megs":       int(device.attributes["size"]) * 512 / 1024**2,
-        "mountpoint": device["DEVNAME"],
+        "fs_type":    "unknown",
         "raw_params": dict(device.items()),
         "raw_attrs":  dict(device.attributes),
         }
