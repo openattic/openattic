@@ -415,7 +415,7 @@ Ext.oa.LVM__Snapcore_Panel = Ext.extend(Ext.Panel, {
               trackMouseOver   : false,
               enableDragDrop   : true,
               stripeRows       : true,
-              title            : 'Drag volumes which should be snapshotted here:',
+              title            : gettext('Drag volumes which should be snapshotted here:'),
               listeners: {
                 cellclick: function (self, rowIndex, colIndex, evt){
                   Ext.getCmp('secondGridId').getSelectionModel().clearSelections();
