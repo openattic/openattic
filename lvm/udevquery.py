@@ -14,6 +14,8 @@
  *  GNU General Public License for more details.
 """
 
+from __future__ import division
+
 import os
 
 from pyudev import Context, Device
@@ -34,36 +36,31 @@ def get_blockdevices(uuid=None):
 
 
 def get_device_info(device):
-    data = dict(device.items())
-    data["Size"] = str(int(device.attributes["size"]) * 512)
-    data["__partitions__"] = []
+    data = {
+        "device":     device.device_node,
+        "megs":       int(device.attributes["size"]) * 512 / 1024**2,
+        "mountpoint": device["DEVNAME"],
+        "raw_params": dict(device.items()),
+        "raw_attrs":  dict(device.attributes),
+        }
 
-    if "ID_PART_TABLE_TYPE" in device:
-        partitions = device.children
-    else:
-        partitions = [device]
+    if "ID_PART_TABLE_TYPE" in device and device["DEVTYPE"] != "partition":
+        data["fs_type"] = "partition_table"
+        data["partitions"] = []
+        for partdev in device.children:
+            data["partitions"].append(get_device_info(partdev))
 
-    for device in partitions:
-        if "ID_FS_TYPE" not in device or device["ID_FS_TYPE"] == "linux_raid_member":
-            continue
-
-        partinfo = {
-            "Name":       device["DEVNAME"],
-            "FileSystem": device["ID_FS_TYPE"]
-            }
-
-        partinfo.update(device)
-
+    elif "ID_FS_TYPE" in device:
+        data["fs_type"] = device["ID_FS_TYPE"]
         if device["ID_FS_TYPE"] == "LVM2_member":
-            partinfo["FreeSpace"] = device["UDISKS_LVM2_PV_VG_FREE_SIZE"]
-        elif device["ID_FS_USAGE"] == "filesystem":
+            data["mountpoint"] = device["UDISKS_LVM2_PV_VG_NAME"]
+            data["megs_free"]  = int(device["UDISKS_LVM2_PV_VG_FREE_SIZE"]) / 1024**2
+        elif device["ID_FS_TYPE"] != "linux_raid_member" and device["ID_FS_USAGE"] == "filesystem":
             for mntdev, mntpoint, mnttype, _, _, _ in get_mounts():
                 if os.path.realpath(mntdev) == device.device_node and mnttype == device["ID_FS_TYPE"]:
                     s = os.statvfs(mntpoint)
-                    partinfo["Name"]      = mntpoint
-                    partinfo["FreeSpace"] = str(s.f_bfree * s.f_frsize)
-
-        data["__partitions__"].append(partinfo)
+                    data["mountpoint"] = mntpoint
+                    data["megs_free"]  = s.f_bfree * s.f_frsize / 1024**2
 
     return data
 
