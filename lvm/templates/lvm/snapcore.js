@@ -1270,7 +1270,7 @@ Ext.oa.LVM__Snapcore_Panel = Ext.extend(Ext.Panel, {
               var record = self.getStore().getAt(rowIndex);
               snap_store.load({
                 params: {
-                  id: record.data.id,
+                  snapshotconf: record.data.id,
                 }
               })
             }
@@ -1312,7 +1312,7 @@ var config_store = new Ext.data.DirectStore({
 
 var snap_store = new Ext.data.DirectStore({
   fields  : ['id', 'name', 'snapshot_id', 'createdate'],
-  directFn: lvm__SnapshotConf.get_assoc_snapshots
+  directFn: lvm__LogicalVolume.filter
 });
 
 Ext.reg('lvm__snapcore_panel', Ext.oa.LVM__Snapcore_Panel);

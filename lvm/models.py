@@ -161,6 +161,7 @@ class LogicalVolume(models.Model):
     dedup       = models.BooleanField(_("Deduplication"), blank=True, default=False)
     compression = models.BooleanField(_("Compression"), blank=True, default=False)
     createdate  = models.DateTimeField(auto_now_add=True, blank=True, null=True)
+    snapshotconf= models.ForeignKey("SnapshotConf", blank=True, null=True, related_name="snapshot_set")
 
     objects = getHostDependentManagerClass("vg__host")()
     all_objects = models.Manager()
@@ -797,10 +798,8 @@ class LVSnapshotJob(Cronjob):
                 snap = LogicalVolume(snapshot=lv)
                 snap.name = name
                 snap.megs = lv.megs * vol_conf.snapshot_space / 100
+                snap.snapshotconf = self.conf
                 snap.save()
-
-                snap_to_conf = LVSnapshotToConf(snapshot_conf=self.conf, lv_snapshot=snap)
-                snap_to_conf.save()
 
                 # delete plugin snapshots
                 for (related, snap_data) in snaps_data:
@@ -905,19 +904,7 @@ class SnapshotConf(models.Model):
 
     objects = ConfManager()
 
-    def get_assoc_snapshots(self):
-        conf_lvs = LVSnapshotToConf.objects.filter(snapshot_conf=self.id).values_list('lv_snapshot', flat=True)
-        return LogicalVolume.objects.filter(id__in=conf_lvs)
-
 class LogicalVolumeConf(models.Model):
     snapshot_conf   = models.ForeignKey(SnapshotConf)
     volume          = models.ForeignKey(LogicalVolume)
     snapshot_space  = models.IntegerField(null=True, blank=True)
-
-class LVSnapshotToConf(models.Model):
-    snapshot_conf    = models.ForeignKey(SnapshotConf)
-    lv_snapshot     = models.ForeignKey(LogicalVolume)
-
-    class Meta:
-        unique_together = ("snapshot_conf", "lv_snapshot")
-
