@@ -417,7 +417,7 @@ def __logicallun_hostgroups_changed(instance, reverse, action, pk_set, **kwargs)
 models.signals.m2m_changed.connect(__logicallun_hostgroups_changed, sender=LogicalLUN.hostgroups.through)
 
 
-def __acl_add_or_delete(tpg, initiator, action):
+def __acl_add_or_delete(llun, tpg, initiator, action):
     """ See if an ACL exists for a given TPG and Initiator, see if it should,
         and add/delete it accordingly.
     """
@@ -430,6 +430,9 @@ def __acl_add_or_delete(tpg, initiator, action):
     else:
         if action == "pre_remove":
             acl.delete()
+    for lun in llun.lun_set.all():
+        if lun not in acl.mapped_luns.all():
+            acl.mapped_luns.add(lun)
 
 def __logicallun_hosts_changed(instance, reverse, action, pk_set, **kwargs):
     """ A Host has been added to or removed from a LLUN. """
@@ -450,7 +453,7 @@ def __logicallun_hosts_changed(instance, reverse, action, pk_set, **kwargs):
             for tpg in tgt.tpg_set.all():
                 for host in hosts:
                     for initiator in host.initiator_set.filter(type=tgt.type):
-                        __acl_add_or_delete(tpg, initiator, action)
+                        __acl_add_or_delete(llun, tpg, initiator, action)
 
 
 models.signals.m2m_changed.connect(__logicallun_hosts_changed, sender=LogicalLUN.hosts.through)
@@ -507,10 +510,10 @@ def __logicallun_targets_changed(instance, reverse, action, pk_set, **kwargs):
                 for hostgrp in llun.hostgroups.all():
                     for host in hostgrp.hosts.all():
                         for initiator in host.initiator_set.filter(type=tgt.type):
-                            __acl_add_or_delete(tpg, initiator, action)
+                            __acl_add_or_delete(llun, tpg, initiator, action)
                 for host in llun.hosts.all():
                     for initiator in host.initiator_set.filter(type=tgt.type):
-                        __acl_add_or_delete(tpg, initiator, action)
+                        __acl_add_or_delete(llun, tpg, initiator, action)
 
                 try:
                     lun = LUN.objects.get( tpg=tpg, storageobj=storobj, logicallun=llun )
