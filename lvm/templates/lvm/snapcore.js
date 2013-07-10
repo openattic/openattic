@@ -684,6 +684,34 @@ Ext.oa.LVM__Snapcore_Panel = Ext.extend(Ext.Panel, {
                             }
                           }
                         }
+                        if(plugin === 'MSSQL'){
+                          var plugin_func = get_plugin(plugin);
+
+                          for(var host_id in config['plugin_data'][plugin])
+                          {
+                            if(typeof config['plugin_data'][plugin][host_id]['children'] !== 'undefined')
+                            {
+                              for(var dr in config['plugin_data'][plugin][host_id]['children'])
+                              {
+                                plugin_func.getVolume(host_id, dr, function(result, response){
+                                  if(response.type !== 'exception'){
+                                    volumes.push(result.volume);
+                                  }
+                                  else{
+                                    requests--;
+                                  }
+
+                                  if( volumes.length === requests ){
+                                    for(var i=0; i<volumes.length; i++){
+                                      VolumeStore.each(moveItem.createDelegate(this, [volumes[i].id], true));
+                                    }
+                                  }
+                                });
+                                requests++;
+                              }
+                            }
+                          }
+                        }
                       }
 
                       secondGrid.getView().dragZone.onBeforeDrag = function(data, e){
