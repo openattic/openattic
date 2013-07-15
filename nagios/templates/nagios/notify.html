@@ -1,0 +1,15 @@
+<b>{{ SERVICEDESC }} is {{ SERVICESTATE }}</b><br />
+<br />
+<pre>{{ SERVICEOUTPUT }}</pre>
+<br />
+{% for graph in graphs %}
+{% if graph.avail %}
+{{ graph.title }}<br />
+<img src="cid:{{ graph.id }}" ><br />
+{% if not forloop.last %}<hr />{% endif %}
+{% endif %}
+{% endfor %}
+<br />
+--&nbsp;<br />
+<br />
+AutoSignatur

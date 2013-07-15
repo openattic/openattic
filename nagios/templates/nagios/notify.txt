@@ -1,0 +1,9 @@
+*{{ SERVICEDESC }} is {{ SERVICESTATE }}*
+
+{{ SERVICEOUTPUT }}
+
+{% for graph in graphs %}{% if graph.avail %}[cid:{{ graph.id }}]
+{% endif %}{% endfor %}
+
+-- 
+AutoSignatur

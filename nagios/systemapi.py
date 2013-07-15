@@ -15,8 +15,12 @@
 """
 
 import re
+import email
+import smtplib
+import socket
 
 from time import time
+from hashlib import md5
 
 from django.template.loader import render_to_string
 from django.contrib.auth.models import User
@@ -25,6 +29,7 @@ from ifconfig.models import Host
 from systemd       import invoke, logged, LockingPlugin, method, create_job
 from nagios.models import Command, Service
 from nagios.conf   import settings as nagios_settings
+from nagios.graphbuilder import Graph as GraphBuilder, parse
 
 @logged
 class SystemD(LockingPlugin):
@@ -153,3 +158,55 @@ class SystemD(LockingPlugin):
                 continue
 
         return res
+
+    @method(in_signature="a{ss}", out_signature="")
+    def notify(self, checkdata):
+        user  = User.objects.get(username=checkdata["CONTACTNAME"])
+        serv  = Service.objects.get(description=checkdata["SERVICEDESC"])
+
+        alt  = email.mime.Multipart.MIMEMultipart("alternative")
+
+        mp = email.mime.Multipart.MIMEMultipart("related")
+        mp["From"] = "openattic@" + socket.getfqdn()
+        mp["To"]   = user.email
+        mp["Subject"] = "%s changed state to %s" % (serv.description, checkdata["SERVICESTATE"].lower())
+        mp.attach(alt)
+
+        graphs = [{"srcline": dbgraph.fields, "title": dbgraph.title, "verttitle": dbgraph.verttitle} for dbgraph in serv.command.graph_set.all()]
+        if not graphs:
+            graphs = [ { "srcline": k, "title": v, "verttitle": None } for (k, v) in serv.rrd.source_labels.items() ]
+
+        for graph in graphs:
+            builder = GraphBuilder()
+            builder.bgcol  = "FFFFFF"
+            builder.fgcol  = "111111"
+            builder.grcol  = ""
+            builder.sacol  = "FFFFFF"
+            builder.sbcol  = "FFFFFF"
+            builder.bgimage = nagios_settings.GRAPH_BGIMAGE
+            builder.title  = serv.description
+            builder.verttitle = graph["verttitle"]
+
+            graph["id"]    = md5(graph["srcline"]).hexdigest()
+            graph["avail"] = True
+
+            for src in parse(graph["srcline"]):
+                try:
+                    builder.add_source( src.get_value(serv.rrd) )
+                except KeyError:
+                    graph["avail"] = False
+
+            if graph["avail"]:
+                img  = email.mime.Image.MIMEImage(builder.get_image())
+                img.add_header("Content-ID", "<%s>" % graph["id"])
+                mp.attach(img)
+
+        checkdata["graphs"] = graphs
+
+        alt.attach(email.mime.Text.MIMEText(render_to_string( "nagios/notify.txt",  checkdata )))
+        alt.attach(email.mime.Text.MIMEText(render_to_string( "nagios/notify.html", checkdata ), "html"))
+
+        conn = smtplib.SMTP("srvcom02.master.dns")
+        conn.sendmail(mp["From"], [mp["To"]], mp.as_string())
+        conn.quit()
+
