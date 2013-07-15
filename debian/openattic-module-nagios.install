@@ -19,4 +19,6 @@ nagios/plugins/check_lvm_snapshot       /usr/lib/nagios/plugins
 nagios/plugins/check_cputime            /usr/lib/nagios/plugins
 nagios/plugins/check_protocol_traffic   /usr/lib/nagios/plugins
 
+nagios/plugins/notify_openattic         /usr/lib/nagios/plugins
+
 etc/pnp4nagios/check_commands/*.cfg     /etc/pnp4nagios/check_commands
