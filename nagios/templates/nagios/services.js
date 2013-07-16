@@ -352,6 +352,7 @@ Ext.oa.Nagios__Service_Panel = Ext.extend(Ext.Panel, {
         xtype: 'grid',
         region: "center",
         sm: new Ext.grid.RowSelectionModel({singleSelect:true}),
+        border: false,
         loadMask: true,
         viewConfig: { forceFit: true },
         store: {
