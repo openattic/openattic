@@ -312,14 +312,8 @@ class SnapshotConfHandler(ModelHandler):
     def saveConfig(self, config):
       return self._getobj(SnapshotConf.objects.add_config(config))
 
-    def get_assoc_snapshots(self, id):
-      snaps_list = []
-
-      for snap_vol in SnapshotConf.objects.get(id=id).get_assoc_snapshots():
-          data = {'id': snap_vol.id, 'name': snap_vol.name, 'snapshot_id': id, 'createdate': snap_vol.createdate}
-          snaps_list.append(data)
-
-      return snaps_list
+    def restore_config(self, conf_id):
+      return SnapshotConf.objects.get(id=conf_id).restore_config()
 
 RPCD_HANDLERS = [
     DiskHandler,

@@ -904,6 +904,54 @@ class SnapshotConf(models.Model):
 
     objects = ConfManager()
 
+    def restore_config(self):
+        conf_obj                    = {}
+        conf_obj['configname']      = self.confname
+        conf_obj['prescript']       = self.prescript
+        conf_obj['postscript']      = self.postscript
+        conf_obj['retention_time']  = self.retention_time
+        conf_obj['volumes']         = list(LogicalVolumeConf.objects.filter(snapshot_conf_id=self.id).values_list('volume_id', flat=True))
+
+        job = LVSnapshotJob.objects.get(conf_id=self.id)
+        if job:
+            conf_obj['active']        = job.is_active
+            conf_obj['day_of_month']  = str(job.domonth)
+            conf_obj['minute']        = str(job.minute)
+            conf_obj['startdate']     = job.start_time
+            conf_obj['enddate']       = job.end_time
+
+            dow = job.doweek.split(',')
+            for i in dow:
+              conf_obj['dow_' + i.strip()] = 'on'
+
+            hour = job.hour.split(',')
+            for i in hour:
+              conf_obj['h_' + i.strip()] = 'on'
+
+            moy = job.month.split(',')
+            for i in moy:
+              conf_obj['moy_' + i.strip()] = 'on'
+
+        # restore plugin data
+        plugins = {}
+        for related in self._meta.get_all_related_objects():
+            if hasattr(related.model.objects, "get_available_objects"):
+                related.model.objects.get_available_objects(plugins)
+
+        def restore_plugin_config(models, plugin_confs):
+            if len(models) > 0:
+                if hasattr(models[0].objects, "restore_config"):
+                    models[0].objects.restore_config(plugin_confs, self.id)
+                restore_plugin_config(models[1:], plugin_confs)
+
+        plugin_confs = {}
+        for plugin in plugins:
+            plugin_confs[plugin] = {}
+            restore_plugin_config(plugins[plugin], plugin_confs[plugin])
+
+        conf_obj['plugin_data'] = plugin_confs
+        return conf_obj
+
 class LogicalVolumeConf(models.Model):
     snapshot_conf   = models.ForeignKey(SnapshotConf)
     volume          = models.ForeignKey(LogicalVolume)
