@@ -665,7 +665,8 @@ Ext.oa.LVM__Snapcore_Panel = Ext.extend(Ext.Panel, {
                             {
                               for(var ds in config['plugin_data'][plugin][host_id]['children'])
                               {
-                                plugin_func.getVolume(host_id, ds, function(result, response){
+                                var dc = config['plugin_data'][plugin][host_id]['children'][ds]['dc_id'];
+                                plugin_func.getVolume(host_id, dc, ds, function(result, response){
                                   if(response.type !== 'exception'){
                                     volumes.push(result.volume);
                                   }
