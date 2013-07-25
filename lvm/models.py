@@ -801,15 +801,15 @@ class LVSnapshotJob(Cronjob):
                 snap.snapshotconf = self.conf
                 snap.save()
 
-                # delete plugin snapshots
-                for (related, snap_data) in snaps_data:
-                    if hasattr(related.model.objects, "delete_config_snapshots"):
-                        related.model.objects.delete_config_snapshots(snap_data)
+            # delete plugin snapshots
+            for (related, snap_data) in snaps_data:
+                if hasattr(related.model.objects, "delete_config_snapshots"):
+                    related.model.objects.delete_config_snapshots(snap_data)
 
-                self.conf.last_execution = datetime.datetime.now()
-                self.conf.save()
+            self.conf.last_execution = datetime.datetime.now()
+            self.conf.save()
 
-                invoke(shlex.split(self.conf.postscript)) if len(self.conf.postscript) > 0 else None
+            invoke(shlex.split(self.conf.postscript)) if len(self.conf.postscript) > 0 else None
 
     def save(self, *args, **kwargs):
         for path in ["/usr/local/sbin", "/usr/local/bin", "/usr/sbin", "/usr/bin"]:
