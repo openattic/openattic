@@ -1297,6 +1297,9 @@ Ext.oa.LVM__Snapcore_Panel = Ext.extend(Ext.Panel, {
               dataIndex : 'last_execution'
             }],
           }),
+          selModel  : new Ext.grid.RowSelectionModel({
+            singleSelect  : true,
+          }),
           store: config_store,
           listeners : {
             cellclick:  function(self, rowIndex, colIndex, e){
