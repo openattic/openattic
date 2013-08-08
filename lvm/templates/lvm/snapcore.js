@@ -663,23 +663,29 @@ Ext.oa.LVM__Snapcore_Panel = Ext.extend(Ext.Panel, {
                           {
                             if(typeof config['plugin_data'][plugin][host_id]['children'] !== 'undefined')
                             {
-                              for(var ds in config['plugin_data'][plugin][host_id]['children'])
+                              for(var dc in config['plugin_data'][plugin][host_id]['children'][dc])
                               {
-                                plugin_func.getVolume(host_id, ds, function(result, response){
-                                  if(response.type !== 'exception'){
-                                    volumes.push(result.volume);
-                                  }
-                                  else{
-                                    requests--;
-                                  }
+                                if(typeof config['plugin_data'][plugin][host_id]['children'][dc]['children'] !== 'undefined')
+                                {
+                                  for(var ds in config['plugin_data'][plugin][host_id]['children'][dc]['children'])
+                                  {
+                                    plugin_func.getVolume(host_id, dc, ds, function(result, response){
+                                      if(response.type !== 'exception'){
+                                        volumes.push(result.volume);
+                                      }
+                                      else{
+                                        requests--;
+                                      }
 
-                                  if( volumes.length === requests ){
-                                    for(var i=0; i<volumes.length; i++){
-                                      VolumeStore.each(moveItem.createDelegate(this, [volumes[i].id], true));
-                                    }
+                                      if( volumes.length === requests ){
+                                        for(var i=0; i<volumes.length; i++){
+                                          VolumeStore.each(moveItem.createDelegate(this, [volumes[i].id], true));
+                                        }
+                                      }
+                                    });
+                                    requests++;
                                   }
-                                });
-                                requests++;
+                                }
                               }
                             }
                           }

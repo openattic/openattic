@@ -885,7 +885,8 @@ class ConfManager(models.Manager):
 
         def save_config(modelstack, itemdata, parent_ids):
             for obj_id, obj_data in itemdata.items():
-                obj = modelstack[0].objects.save_config(snapconf, parent_ids + [obj_id], obj_data['data'])
+                if hasattr(modelstack[0].objects, "save_config"):
+                  obj = modelstack[0].objects.save_config(snapconf, parent_ids + [obj_id], obj_data['data'])
                 save_config(modelstack[1:], obj_data["children"], parent_ids + [obj_id])
 
         for module in conf_obj['plugin_data']:
