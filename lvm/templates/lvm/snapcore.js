@@ -1260,12 +1260,13 @@ Ext.oa.LVM__Snapcore_Panel = Ext.extend(Ext.Panel, {
               }],
             });
             var wiz = new Ext.Window({
-              title : gettext('Configuration Assistant'),
-              layout: 'fit',
-              items : wizform,
-              width : 800,
-              height: 500,
-              anchor: '-20px',
+              title       : gettext('Configuration Assistant'),
+              layout      : 'fit',
+              items       : wizform,
+              width       : 800,
+              height      : 500,
+              anchor      : '-20px',
+              closeAction : 'hide',
             });
             wiz.show();
           },
