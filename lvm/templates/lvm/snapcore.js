@@ -1252,7 +1252,7 @@ Ext.oa.LVM__Snapcore_Panel = Ext.extend(Ext.Panel, {
                   listeners : {
                     click: function(){
                       lvm__SnapshotConf.saveConfig(config);
-                      wiz.close();
+                      wiz.hide();
                       config_store.reload();
                     },
                   }
