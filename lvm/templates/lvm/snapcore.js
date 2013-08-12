@@ -1313,6 +1313,22 @@ Ext.oa.LVM__Snapcore_Panel = Ext.extend(Ext.Panel, {
               })
             }
           },
+          buttons   : [{
+            text      : gettext("Edit config"),
+            listeners : {
+              click: function(btn, e){
+                if(typeof btn.ownerCt.ownerCt.getSelectionModel().getSelected() !== "undefined")
+                {
+                  var config_id = btn.ownerCt.ownerCt.getSelectionModel().getSelected().id;
+                  lvm__SnapshotConf.restore_config(config_id, function(result, response){
+                    if(response.type !== 'exception'){
+                      console.log(result);
+                    }
+                  });
+                }
+              }
+            }
+          }]
         },{
           region    : 'south',
           id        : 'snapcore_south_panel',
