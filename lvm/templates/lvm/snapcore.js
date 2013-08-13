@@ -271,6 +271,951 @@ Ext.oa.LVM__Snapcore_TreePanel = Ext.extend(Ext.tree.TreePanel, {
 
 Ext.reg("snaptreepanel", Ext.oa.LVM__Snapcore_TreePanel);
 
+var VolumeStore = new Ext.data.DirectStore({
+  id: "VolumeStore",
+  fields :["id", "name"],
+  autoLoad: true,
+  baseParams: {
+    kwds: {
+      'snapshot': null
+    }
+  },
+  directFn: lvm__LogicalVolume.filter,
+});
+
+// declare the source Grid
+var firstGrid = new Ext.grid.GridPanel({
+  ddGroup          : 'secondGridDDGroup',
+  id               : "firstGridId",
+  store            : VolumeStore,
+  colModel         : new Ext.grid.ColumnModel({
+    defaults       : {sortable: true, draggable: true},
+    columns: [
+       {
+        header: "Volumes",
+        dataIndex: "name"
+      }
+    ],
+  }),
+  viewConfig       : { forceFit: true },
+  height           : 340,
+  enableDragDrop   : true,
+  stripeRows       : true,
+  title            : 'Volumes',
+  listeners:{
+    cellclick: function (self, rowIndex, colIndex, evt){
+      Ext.getCmp('firstGridId').getSelectionModel().clearSelections();
+    },
+    afterrender: function(self){
+      var firstGridDropTargetEl =  firstGrid.getView().scroller.dom;
+      var firstGridDropTarget = new Ext.dd.DropTarget(firstGridDropTargetEl, {
+        ddGroup    : 'firstGridDDGroup',
+        notifyDrop : function(ddSource, e, data){
+          var records =  ddSource.dragData.selections;
+          Ext.each(records, ddSource.grid.store.remove, ddSource.grid.store);
+          firstGrid.store.add(records);
+          firstGrid.store.sort('name', 'ASC');
+          return true
+        }
+      });
+    },
+  }
+});
+
+var secondGridStore = new Ext.data.JsonStore({
+  fields : ["id", "name"],
+  root   : 'data'
+});
+
+// create the destination Grid
+var secondGrid = new Ext.grid.GridPanel({
+  ddGroup          : 'firstGridDDGroup',
+  id               : "secondGridId",
+  store            : secondGridStore,
+  colModel         : new Ext.grid.ColumnModel({
+    defaults       : {sortable: true, draggable: true},
+    columns: [
+       {
+        header: "Volumes",
+        dataIndex: "name"
+      }
+    ],
+  }),
+  viewConfig       : {
+    forceFit: true,
+    getRowClass: function(record, rowIndex, rp, ds) {
+      if(typeof record.data.draggable !== 'undefined')
+        return 'x-grid3-row-over';
+      else
+        return '';
+    }
+  },
+  height           : 340,
+  trackMouseOver   : false,
+  enableDragDrop   : true,
+  stripeRows       : true,
+  title            : gettext('Drag volumes which should be snapshotted here:'),
+  listeners: {
+    cellclick: function (self, rowIndex, colIndex, evt){
+      Ext.getCmp('secondGridId').getSelectionModel().clearSelections();
+    },
+    afterrender: function(self){
+      var secondGridDropTargetEl = secondGrid.getView().scroller.dom;
+      var secondGridDropTarget = new Ext.dd.DropTarget(secondGridDropTargetEl, {
+        ddGroup    : 'secondGridDDGroup',
+        notifyDrop : function(ddSource, e, data){
+          var records =  ddSource.dragData.selections;
+          Ext.each(records, ddSource.grid.store.remove, ddSource.grid.store);
+          secondGrid.store.add(records);
+          secondGrid.store.sort('name', 'ASC');
+          var volumeId = records[0].data.id;
+          if(config.volumes.indexOf(volumeId, 0) === -1)
+          {
+            config.volumes.push(volumeId);
+          }
+          return true
+        }
+      });
+    },
+  }
+});
+
+var get_plugin = function(plugin_name){
+  var plugin_func;
+  for(var i=0; i < window.SnapAppPlugins.length; i++)
+  {
+    if(window.SnapAppPlugins[i].plugin_name === plugin_name)
+    {
+      plugin_func = window.SnapAppPlugins[i];
+      break;
+    }
+  }
+  return plugin_func;
+}
+
+var config = {
+  data: {
+    configname            : null,
+    prescript             : null,
+    postscript            : null,
+    retention_time        : 0,
+    executdate            : null,
+    startdate             : null,
+    enddate               : null,
+    active                : true,
+    h                     : null,
+    min                   : null,
+    domonth               : null,
+    doweek                : null,
+  },
+  volumes     : []/*[1, 2, 6, 9]*/,
+  plugin_data : {} /*{
+    VMware: {
+      host: {
+        data: {
+        },
+        children: {
+          openattic01: {
+            data: {
+              consistency: "mit ram",
+            },
+            children: {
+              vm01: {
+                data: {
+                  consistency: "mit ram",
+                },
+                children: {}
+              },
+              vm02: {
+                data: {
+                  consistency: "ohne ram",
+                },
+                children: {}
+              },
+              vm03: {
+                data: {
+                  consistency: "keine konsistenz (aka kein snap)",
+                },
+                children: {}
+              },
+            }
+          },
+          openattic02: {
+            data: null,
+            vms: {
+              vm02: {
+                data: {
+                  consistency: "mit ram",
+                },
+                children: {}
+              },
+              vm05: {
+                data: {
+                  consistency: "ohne ram",
+                },
+                children: {}
+              },
+            }
+          }
+        }
+      }
+    },
+    MSSql: {
+      yadda
+    }
+  }*/
+};
+
+var wizform = new Ext.oa.WizPanel({
+  config: config,
+  activeItem: 'wiz_welc',
+  items     : [{
+    title     : gettext('Welcome'),
+    id        : 'wiz_welc',
+    noAutoPrev: true,
+    xtype     : 'form',
+    items     : [{
+      xtype       : 'label',
+      text        : gettext('Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed ' +
+        'diam nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam erat, sed ' +
+        'diam voluptua. At vero eos et accusam et'),
+    },{
+      xtype       : 'spacer',
+      height      : 10,
+    },{
+      xtype       : 'textfield',
+      name        : 'configname',
+      fieldLabel  : gettext('Description'),
+    }]
+  },{
+    id        : 'wiz_snapitems',
+    layout    : 'border',
+    xtype     : 'form',
+    frame     : true,
+    items     : [{
+      title     : gettext('Available items'),
+      region    : 'center',
+      id        : 'lvm__snapcore_wizard_treepanel',
+      xtype     : "snaptreepanel",
+      showIcons : true,
+      checkable : false,
+      listeners : {
+        click   : function(node, e){
+          var plugin = node.attributes.plugin;
+          if(plugin)
+          {
+            var config = plugin.getConfig(node);
+            var layout = Ext.getCmp('wiz_snapitem_settings').layout;
+            var form = plugin.getForm(node);
+            layout.setActiveItem(form);
+            form.treeNode = node;
+            if( config === null ){
+              // No config, so create a Record that explicitly sets every field to null.
+              var data = {};
+              form.items.each(function(item){
+                data[item.name] = null;
+              });
+              config = new Ext.data.Record(data);
+            }
+            form.getForm().loadRecord(config);
+          }
+        },
+      }
+    }, (function(){
+      var items = [];
+      for( var i = 0; i < window.SnapAppPlugins.length; i++ ){
+        window.SnapAppPlugins[i].config = config;
+        if( typeof window.SnapAppPlugins[i].objtypes !== "undefined" ){
+          for( var o = 0; o < window.SnapAppPlugins[i].objtypes.length; o++ ){
+            if( typeof window.SnapAppPlugins[i].objtypes[o].configForm !== "undefined" ){
+              items.push(window.SnapAppPlugins[i].objtypes[o].configForm);
+            }
+          }
+        }
+      }
+      return {
+        title     : gettext('Item settings'),
+        id        : 'wiz_snapitem_settings',
+        region    : 'east',
+        split     : true,
+        xtype     : 'form',
+        width     : 300,
+        bodyStyle : 'padding:5px 5px;',
+        border    : true,
+        layout    : 'card',
+        items     : items,
+        activeItem: 0,
+      };
+    }())],
+  },{
+    title     : gettext('Additional Drives'),
+    id        : 'wiz_addvol',
+    layout    : {
+      type  : "vbox",
+      align : 'stretch',
+    },
+    xtype     :'form',
+    items     : [{
+      xtype : 'label',
+      text  : gettext('Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed ' +
+        'diam nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam erat, sed ' +
+        'diam voluptua. At vero eos et accusam et'),
+    },{
+      xtype   : 'spacer',
+      height  : 10,
+    },{
+      layout  : 'hbox',
+      items   : [firstGrid, secondGrid],
+    }],
+    listeners : {
+        show  : function(self){
+          var volumes = [];
+          var requests = 0;
+          var moveItem = function(record, recordId, length, volumeId)
+          {
+            if(volumeId === record.get('id'))
+            {
+              secondGridStore.add(record);
+              var idx = secondGridStore.indexOf(record);
+              var row = secondGrid.getView().getRow(idx);
+              var element = Ext.get(row);
+
+              if(config.volumes.indexOf(volumeId, 0) === -1)
+              {
+                config.volumes.push(volumeId);
+              }
+
+              VolumeStore.remove(record);
+
+              element.addClass('x-grid3-row-over');
+              record.set('draggable', false);
+            }
+          }
+
+          for(var plugin in config['plugin_data'])
+          {
+            if(plugin === 'VMware')
+            {
+              var plugin_func = get_plugin(plugin);
+
+              for(var host_id in config['plugin_data'][plugin])
+              {
+                if(typeof config['plugin_data'][plugin][host_id]['children'] !== 'undefined')
+                {
+                  for(var dc in config['plugin_data'][plugin][host_id]['children'][dc])
+                  {
+                    if(typeof config['plugin_data'][plugin][host_id]['children'][dc]['children'] !== 'undefined')
+                    {
+                      for(var ds in config['plugin_data'][plugin][host_id]['children'][dc]['children'])
+                      {
+                        plugin_func.getVolume(host_id, dc, ds, function(result, response){
+                          if(response.type !== 'exception'){
+                            volumes.push(result.volume);
+                          }
+                          else{
+                            requests--;
+                          }
+
+                          if( volumes.length === requests ){
+                            for(var i=0; i<volumes.length; i++){
+                              VolumeStore.each(moveItem.createDelegate(this, [volumes[i].id], true));
+                            }
+                          }
+                        });
+                        requests++;
+                      }
+                    }
+                  }
+                }
+              }
+            }
+            if(plugin === 'MSSQL'){
+              var plugin_func = get_plugin(plugin);
+
+              for(var host_id in config['plugin_data'][plugin])
+              {
+                if(typeof config['plugin_data'][plugin][host_id]['children'] !== 'undefined')
+                {
+                  for(var dr in config['plugin_data'][plugin][host_id]['children'])
+                  {
+                    plugin_func.getVolume(host_id, dr, function(result, response){
+                      if(response.type !== 'exception'){
+                        volumes.push(result.volume);
+                      }
+                      else{
+                        requests--;
+                      }
+
+                      if( volumes.length === requests ){
+                        for(var i=0; i<volumes.length; i++){
+                          VolumeStore.each(moveItem.createDelegate(this, [volumes[i].id], true));
+                        }
+                      }
+                    });
+                    requests++;
+                  }
+                }
+              }
+            }
+          }
+
+          secondGrid.getView().dragZone.onBeforeDrag = function(data, e){
+            var volumeId = data.selections[0].data.id;
+            for(var i=0; i<volumes.length; i++){
+              if(volumes[i].id === volumeId)
+              {
+                return false;
+              }
+            }
+            return true;
+          }
+        }
+      },
+  },{
+    title : gettext('Pre-/Post-Script - Conditions'),
+    id    : 'wiz_prepost',
+    labelWidth: 150,
+    xtype : 'form',
+    items : [{
+      xtype     : 'label',
+      text      : gettext('Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed ' +
+        'diam nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam erat, sed ' +
+        'diam voluptua. At vero eos et accusam et'),
+    },{
+      xtype     : 'spacer',
+      height    : 10,
+    },{
+      xtype     : 'textfield',
+      name      : 'prescript',
+      fieldLabel: gettext('Prescript conditions'),
+    },{
+      xtype     : 'textfield',
+      name      : 'postscript',
+      fieldLabel: gettext('Postscript conditions'),
+    }]
+  },{
+    title : gettext('Scheduling Part 1 / Expiry Date'),
+    id    : 'wiz_sched1',
+    layout: {
+      type  : 'vbox',
+      align : 'stretch',
+    },
+    xtype : 'form',
+    items : [{
+      xtype     : 'label',
+      text      :  gettext('Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed ' +
+        'diam nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam erat, sed ' +
+        'diam voluptua. At vero eos et accusam et'),
+    },{
+      xtype     : 'spacer',
+      height    : 10,
+    },{
+      boxLabel  : gettext('Snapshots without retention time'),
+      name      : 'retentiontime',
+      inputValue: 'retention_time_noretention',
+      xtype     : 'radio',
+      checked   : true,
+    },{
+      boxLabel  : gettext('Set retention time'),
+      name      : 'retentiontime',
+      inputValue: 'retention_time_combo',
+      xtype     : 'radio',
+      listeners : {
+        check: function(radio, checkvalue){
+          if(checkvalue)
+          {
+            Ext.getCmp('retention_time').enable();
+            Ext.getCmp('retention_time_combo').enable();
+          }
+          else
+          {
+            Ext.getCmp('retention_time').disable();
+            Ext.getCmp('retention_time_combo').disable();
+          }
+        }
+      }
+    },{
+      xtype : 'panel',
+      layout: {
+        type  : 'hbox',
+      },
+      defaults: {
+        style: 'margin-left: 17px;'
+      },
+      items : [{
+        xtype       : 'numberfield',
+        id          : 'retention_time',
+        disabled    : true,
+      },{
+        xtype: 'spacer',
+        width: 3
+      },{
+        name            : 'retention_time_combo',
+        xtype           : 'combo',
+        id              : 'retention_time_combo',
+        disabled        : true,
+        forceSelection  : true,
+        store           : [
+            ['1', gettext('Second(s)')],
+            ['2', gettext('Minute(s)')],
+            ['3', gettext('Hour(s)')],
+            ['4', gettext('Day(s)')],
+            ['5', gettext('Week(s)')],
+        ],
+        typeAhead:  true,
+        triggerAction: 'all',
+        emptyText : gettext('Select...'),
+      }],
+    }]
+  },{
+    title : gettext('Scheduling Part 2 / Options'),
+    id    : 'wiz_sched2',
+    layout: {
+      type  : 'vbox',
+      align : 'stretch',
+    },
+    noAutoNext: true,
+    xtype     : 'form',
+    items     : [{
+      boxLabel  : gettext('Execute now'),
+      id        : 'execute_now',
+      name      : 'scheduling_2',
+      inputValue: 'execute_now',
+      xtype     : 'radio',
+      checked   : true,
+    },{
+      boxLabel  : gettext('Execute later'),
+      id        : 'execute_later',
+      name      : 'scheduling_2',
+      inputValue: 'execute_later',
+      xtype     : 'radio',
+      listeners : {
+        check: function(radio, checkvalue){
+          if(checkvalue)
+          {
+            Ext.getCmp('date_select').enable();
+            Ext.getCmp('time_select').enable();
+          }
+          else
+          {
+            Ext.getCmp('date_select').disable();
+            Ext.getCmp('time_select').disable();
+          }
+        }
+      }
+    },{
+      xtype   : 'panel',
+      layout  : {
+        type  : 'hbox'
+      },
+      defaults: {
+        style : 'margin-left: 17px;',
+      },
+      items   : [{
+        xtype       : 'datefield',
+        id          : 'date_select',
+        disabled    : true,
+        value       : new Date(),
+      },{
+        xtype       : 'spacer',
+        width       : 103,
+      },{
+        xtype       : 'timefield',
+        id          : 'time_select',
+        disabled    : true,
+        value       : new Date().add(Date.HOUR, +1).getHours() + ':' + new Date().getMinutes(),
+      }]
+    },{
+      boxLabel  : gettext('Create scheduling'),
+      id        : 'scheduling',
+      name      : 'scheduling_2',
+      inputValue: 'scheduling',
+      xtype     : 'radio',
+      listeners : {
+        check:  function(radio, checkvalue){
+          if(checkvalue)
+          {
+            Ext.getCmp('startdate_select').enable();
+            Ext.getCmp('starttime_select').enable();
+            Ext.getCmp('enddate_select').enable();
+            Ext.getCmp('endtime_select').enable();
+            Ext.getCmp('is_active').enable();
+          }
+          else
+          {
+            Ext.getCmp('startdate_select').disable();
+            Ext.getCmp('starttime_select').disable();
+            Ext.getCmp('enddate_select').disable();
+            Ext.getCmp('endtime_select').disable();
+            Ext.getCmp('is_active').disable();
+          }
+        }
+      }
+    },{
+      xtype : 'panel',
+      layout: {
+        type  : 'form',
+      },
+      items : [{
+        xtype : 'panel',
+        layout: {
+          type  : 'hbox',
+        },
+        defaults: {
+          style: 'margin-left: 17px;',
+        },
+        border   : false,
+        items   : [{
+          xtype       : 'label',
+          text        : gettext('Start date and time:'),
+          width       : 100,
+        },{
+          xtype       : 'spacer',
+          width       : 3,
+        },{
+          xtype       : 'datefield',
+          id          : 'startdate_select',
+          disabled    : true,
+          value       : new Date(),
+        },{
+          xtype       : 'spacer',
+          width       : 103,
+        },{
+          xtype       : 'timefield',
+          id          : 'starttime_select',
+          disabled    : true,
+          value       : new Date().getHours() + ':' + new Date().getMinutes(),
+        }],
+      },{
+        xtype : 'spacer',
+        height: 2,
+      },{
+        xtype : 'panel',
+        layout: {
+          type  : 'hbox',
+        },
+        defaults: {
+          style:  'margin-left: 17px;',
+        },
+        border  : false,
+        items   : [{
+          xtype       : 'label',
+          text        : gettext('End date and time:'),
+          width       : 100,
+        },{
+          xtype       : 'spacer',
+          width       : 3,
+        },{
+          xtype       : 'datefield',
+          id          : 'enddate_select',
+          disabled    : true,
+          value       : new Date().add(Date.DAY, +7),
+          fieldLabel  : gettext('Enddate'),
+        },{
+          xtype       : 'spacer',
+          width       : 103,
+        },{
+          xtype       : 'timefield',
+          id          : 'endtime_select',
+          disabled    : true,
+          value       : new Date().getHours() + ':' + new Date().getMinutes(),
+          fieldLabel  : gettext('Enddtime'),
+        }],
+      },{
+        xtype       : 'spacer',
+        height      : 10,
+      },{
+        xtype       : 'checkbox',
+        id          : 'is_active',
+        name        : 'is_active',
+        disabled    : true,
+        fieldLabel  : gettext('Is active'),
+      }],
+    }],
+    buttons: [{
+      text    : gettext('Next'),
+      handler : function(){
+        var checked = Ext.getCmp('wiz_sched2').getForm().getValues()['scheduling_2'];
+        var nextpnl = '';
+        switch(checked){
+          case 'execute_now':
+            nextpnl = 'wiz_close';
+            break;
+          case 'execute_later':
+            config.data['startdate'] = null;
+            config.data['enddate'] = null;
+
+            var date = Ext.getCmp('date_select').getValue();
+            var time = (Ext.getCmp('time_select').getValue()).split(':');
+            if(date && time)
+            {
+              date = date.add(Date.HOUR, time[0]).add(Date.MINUTE, time[1]).add(Date.MINUTE, +1);
+              var now = new Date();
+              if(now < date)
+              {
+                config.data['executedate'] = date;
+                nextpnl = 'wiz_close';
+              }
+            }
+            break;
+          case 'scheduling':
+            config.data['executedate'] = null;
+
+            nextpnl = 'wiz_sched32';
+
+            var startdate = Ext.getCmp('startdate_select').getValue();
+            var starttime = (Ext.getCmp('starttime_select').getValue()).split(':');
+            var enddate = Ext.getCmp('enddate_select').getValue();
+            var endtime = (Ext.getCmp('endtime_select').getValue()).split(':');
+
+            if(startdate)
+            {
+              if(starttime.length > 1)
+              {
+                startdate = startdate.add(Date.HOUR, starttime[0]).add(Date.MINUTE, starttime[1]).add(Date.MINUTE, +1);
+                var now = new Date();
+                if(now >= startdate)
+                {
+                  nextpnl = '';
+                }
+                else
+                {
+                  config.data['startdate'] = startdate;
+                }
+              }
+              else
+              {
+                nextpnl = '';
+              }
+            }
+
+            if(enddate)
+            {
+              if(endtime.length > 1)
+              {
+                enddate = enddate.add(Date.HOUR, endtime[0]).add(Date.MINUTE, endtime[1]);
+                var now = new Date();
+                if(enddate <= now || (startdate && startdate >= enddate))
+                {
+                  nextpnl = '';
+                }
+                else
+                {
+                  config.data['enddate'] = enddate;
+                }
+              }
+              else
+              {
+                nextpnl = ''
+              }
+            }
+            break;
+        }
+
+        if(nextpnl)
+        {
+          wizform.pnl_hist.push(nextpnl);
+          wizform.layout.setActiveItem(nextpnl);
+        }
+      }
+    }]
+  },{
+    title : gettext('Scheduling Part 3 / Timemanagement Part 2'),
+    id    : 'wiz_sched32',
+    xtype : 'form',
+    items : [{
+      xtype : 'label',
+      text  : gettext('Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed ' +
+                'diam nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam erat, sed ' +
+                'diam voluptua. At vero eos et accusam et'),
+    },{
+      xtype : 'spacer',
+      height: 10,
+    },{
+      xtype         : 'combo',
+      name          : 'minute',
+      fieldLabel    : gettext('Minute'),
+      store         : (function(){
+        var derp = ['*'];
+        for(var i = 0; i < 60; i += 5)
+          derp.push(i);
+        return derp;
+      }()),
+      value         : '0',
+      typeAhead     : true,
+      triggerAction : 'all',
+      emptyText     : gettext('Select...'),
+      selectOnFocus : true,
+    },{
+      xtype   : 'fieldset',
+      title   : gettext('Hour'),
+      ref     : '../h_fieldset',
+      border  : true,
+      defaults: {
+        border      : false,
+        columnWidth : .5,
+        layout      : 'form',
+        defaults    : {
+          xtype: 'checkbox',
+        }
+      },
+      layout: 'column',
+      items : [{
+        items: (function(){
+          var it = [];
+          for(var i = 0; i < 12; i++)
+            it.push({id: 'h_' + i, fieldLabel: i, checked: (i%3 == 0) });
+          return it;
+        }()),
+      },{
+        items: (function(){
+          var it = [];
+          for(var i = 12; i < 24; i++)
+            it.push({id: 'h_' + i, fieldLabel: i, checked: (i%3 == 0) });
+          return it;
+        }()),
+      }]
+    }],
+  },{
+    title : gettext('Scheduling Part 3 / Timemanagement Part 3'),
+    id    : 'wiz_sched33',
+    xtype : 'form',
+    items : [{
+      xtype       : 'label',
+      text        : gettext('Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed ' +
+        'diam nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam erat, sed ' +
+        'diam voluptua. At vero eos et accusam et'),
+    },{
+      xtype : 'spacer',
+      height: 10,
+    },{
+      xtype     : 'combo',
+      name      : 'day_of_month',
+      fieldLabel: gettext('Day'),
+      store     : (function(){
+        var derp = ['*'];
+        for(var i = 1; i <= 31; i++)
+          derp.push(i);
+        return derp;
+      }()),
+      value         : '*',
+      typeAhead     : true,
+      triggerAction : 'all',
+      emptyText     : gettext('Select...'),
+      selectOnFocus : true,
+    },{
+      xtype   : 'fieldset',
+      title   : gettext('Day of week'),
+      ref     : '../dow_fieldset',
+      border  : true,
+      defaults: {
+        border      : false,
+        columnWidth : .5,
+        layout      : 'form',
+        defaults    : {
+          xtype   : 'checkbox',
+          checked : true,
+        }
+      },
+      layout  : 'column',
+      items   : [{
+        items: [{
+          id: 'dow_1', fieldLabel: gettext('Monday')
+        },{
+          id: 'dow_2', fieldLabel: gettext('Tuesday')
+        },{
+          id: 'dow_3', fieldLabel: gettext('Wednesday')
+        },{
+          id: 'dow_4', fieldLabel: gettext('Thursday')
+        },{
+          id: 'dow_5', fieldLabel: gettext('Friday')
+        }],
+      },{
+        items: [{
+          id: 'dow_6', fieldLabel: gettext('Saturday')
+        },{
+          id: 'dow_0', fieldLabel: gettext('Sunday')
+        }]
+      }],
+    },{
+      xtype   : 'fieldset',
+      ref     : '../moy_fieldset',
+      border  : true,
+      defaults: {
+        border      : false,
+        columnWidth : .5,
+        layout      : 'form',
+        defaults    : {
+          xtype   : 'checkbox',
+          checked : true,
+        }
+      },
+      title : gettext('Month'),
+      layout: 'column',
+      items : [{
+        items: [{
+          id: 'moy_1', fieldLabel: gettext('January')
+        },{
+          id: 'moy_2', fieldLabel: gettext('Feburary')
+        },{
+          id: 'moy_3', fieldLabel: gettext('March')
+        },{
+          id: 'moy_4', fieldLabel: gettext('April')
+        },{
+          id: 'moy_5', fieldLabel: gettext('May')
+        },{
+          id: 'moy_6', fieldLabel: gettext('June')
+        }]
+      },{
+        items: [{
+          id: 'moy_7', fieldLabel: gettext('July')
+        },{
+          id: 'moy_8', fieldLabel: gettext('August')
+        },{
+          id: 'moy_9', fieldLabel: gettext('September')
+        },{
+          id: 'moy_10', fieldLabel: gettext('October')
+        },{
+          id: 'moy_11', fieldLabel: gettext('November')
+        },{
+          id: 'moy_12', fieldLabel: gettext('December')
+        }]
+      }],
+    }],
+  },{
+    title       : gettext('Finish'),
+    id          : 'wiz_close',
+    noAutoNext  : true,
+    buttons     : [{
+      text      : gettext('Finish'),
+      listeners : {
+        click: function(){
+          if((config.data['startdate'] === null || typeof config.data['startdate'] === 'undefined') &&
+              (config.data['endddate'] === null || typeof config.data['enddate']  === 'undefined') &&
+              (config.data['executedate'] === null || typeof config.data['executedate'] === 'undefined')){
+            // execute dosnapshot by config object
+          }
+          else{
+            // save configs
+            lvm__SnapshotConf.saveConfig(config);
+            config_store.reload();
+          }
+          wiz.hide();
+        },
+      }
+    }],
+  }],
+});
+var wiz = new Ext.Window({
+  title       : gettext('Configuration Assistant'),
+  layout      : 'fit',
+  items       : wizform,
+  width       : 800,
+  height      : 500,
+  anchor      : '-20px',
+  closeAction : 'hide',
+});
+
 Ext.oa.LVM__Snapcore_Panel = Ext.extend(Ext.Panel, {
   initComponent: function(){
     'use strict';
@@ -331,951 +1276,6 @@ Ext.oa.LVM__Snapcore_Panel = Ext.extend(Ext.Panel, {
         },{
           text: gettext('New configuration'),
           handler: function(){
-
-            var VolumeStore = new Ext.data.DirectStore({
-              id: "VolumeStore",
-              fields :["id", "name"],
-              autoLoad: true,
-              baseParams: {
-                kwds: {
-                  'snapshot': null
-                }
-              },
-              directFn: lvm__LogicalVolume.filter,
-            });
-
-            // declare the source Grid
-            var firstGrid = new Ext.grid.GridPanel({
-              ddGroup          : 'secondGridDDGroup',
-              id               : "firstGridId",
-              store            : VolumeStore,
-              colModel         : new Ext.grid.ColumnModel({
-                defaults       : {sortable: true, draggable: true},
-                columns: [
-                   {
-                    header: "Volumes",
-                    dataIndex: "name"
-                  }
-                ],
-              }),
-              viewConfig       : { forceFit: true },
-              height           : 340,
-              enableDragDrop   : true,
-              stripeRows       : true,
-              title            : 'Volumes',
-              listeners:{
-                cellclick: function (self, rowIndex, colIndex, evt){
-                  Ext.getCmp('firstGridId').getSelectionModel().clearSelections();
-                },
-                afterrender: function(self){
-                  var firstGridDropTargetEl =  firstGrid.getView().scroller.dom;
-                  var firstGridDropTarget = new Ext.dd.DropTarget(firstGridDropTargetEl, {
-                    ddGroup    : 'firstGridDDGroup',
-                    notifyDrop : function(ddSource, e, data){
-                      var records =  ddSource.dragData.selections;
-                      Ext.each(records, ddSource.grid.store.remove, ddSource.grid.store);
-                      firstGrid.store.add(records);
-                      firstGrid.store.sort('name', 'ASC');
-                      return true
-                    }
-                  });
-                },
-              }
-            });
-
-            var secondGridStore = new Ext.data.JsonStore({
-              fields : ["id", "name"],
-              root   : 'data'
-            });
-
-            // create the destination Grid
-            var secondGrid = new Ext.grid.GridPanel({
-              ddGroup          : 'firstGridDDGroup',
-              id               : "secondGridId",
-              store            : secondGridStore,
-              colModel         : new Ext.grid.ColumnModel({
-                defaults       : {sortable: true, draggable: true},
-                columns: [
-                   {
-                    header: "Volumes",
-                    dataIndex: "name"
-                  }
-                ],
-              }),
-              viewConfig       : {
-                forceFit: true,
-                getRowClass: function(record, rowIndex, rp, ds) {
-                  if(typeof record.data.draggable !== 'undefined')
-                    return 'x-grid3-row-over';
-                  else
-                    return '';
-                }
-              },
-              height           : 340,
-              trackMouseOver   : false,
-              enableDragDrop   : true,
-              stripeRows       : true,
-              title            : gettext('Drag volumes which should be snapshotted here:'),
-              listeners: {
-                cellclick: function (self, rowIndex, colIndex, evt){
-                  Ext.getCmp('secondGridId').getSelectionModel().clearSelections();
-                },
-                afterrender: function(self){
-                  var secondGridDropTargetEl = secondGrid.getView().scroller.dom;
-                  var secondGridDropTarget = new Ext.dd.DropTarget(secondGridDropTargetEl, {
-                    ddGroup    : 'secondGridDDGroup',
-                    notifyDrop : function(ddSource, e, data){
-                      var records =  ddSource.dragData.selections;
-                      Ext.each(records, ddSource.grid.store.remove, ddSource.grid.store);
-                      secondGrid.store.add(records);
-                      secondGrid.store.sort('name', 'ASC');
-                      var volumeId = records[0].data.id;
-                      if(config.volumes.indexOf(volumeId, 0) === -1)
-                      {
-                        config.volumes.push(volumeId);
-                      }
-                      return true
-                    }
-                  });
-                },
-              }
-            });
-
-            var get_plugin = function(plugin_name){
-              var plugin_func;
-              for(var i=0; i < window.SnapAppPlugins.length; i++)
-              {
-                if(window.SnapAppPlugins[i].plugin_name === plugin_name)
-                {
-                  plugin_func = window.SnapAppPlugins[i];
-                  break;
-                }
-              }
-              return plugin_func;
-            }
-
-            var config = {
-              data: {
-                configname            : null,
-                prescript             : null,
-                postscript            : null,
-                retention_time        : 0,
-                executdate            : null,
-                startdate             : null,
-                enddate               : null,
-                active                : true,
-                h                     : null,
-                min                   : null,
-                domonth               : null,
-                doweek                : null,
-              },
-              volumes     : []/*[1, 2, 6, 9]*/,
-              plugin_data : {} /*{
-                VMware: {
-                  host: {
-                    data: {
-                    },
-                    children: {
-                      openattic01: {
-                        data: {
-                          consistency: "mit ram",
-                        },
-                        children: {
-                          vm01: {
-                            data: {
-                              consistency: "mit ram",
-                            },
-                            children: {}
-                          },
-                          vm02: {
-                            data: {
-                              consistency: "ohne ram",
-                            },
-                            children: {}
-                          },
-                          vm03: {
-                            data: {
-                              consistency: "keine konsistenz (aka kein snap)",
-                            },
-                            children: {}
-                          },
-                        }
-                      },
-                      openattic02: {
-                        data: null,
-                        vms: {
-                          vm02: {
-                            data: {
-                              consistency: "mit ram",
-                            },
-                            children: {}
-                          },
-                          vm05: {
-                            data: {
-                              consistency: "ohne ram",
-                            },
-                            children: {}
-                          },
-                        }
-                      }
-                    }
-                  }
-                },
-                MSSql: {
-                  yadda
-                }
-              }*/
-            };
-
-            var wizform = new Ext.oa.WizPanel({
-              config: config,
-              activeItem: 'wiz_welc',
-              items     : [{
-                title     : gettext('Welcome'),
-                id        : 'wiz_welc',
-                noAutoPrev: true,
-                xtype     : 'form',
-                items     : [{
-                  xtype       : 'label',
-                  text        : gettext('Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed ' +
-                    'diam nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam erat, sed ' +
-                    'diam voluptua. At vero eos et accusam et'),
-                },{
-                  xtype       : 'spacer',
-                  height      : 10,
-                },{
-                  xtype       : 'textfield',
-                  name        : 'configname',
-                  fieldLabel  : gettext('Description'),
-                }]
-              },{
-                id        : 'wiz_snapitems',
-                layout    : 'border',
-                xtype     : 'form',
-                frame     : true,
-                items     : [{
-                  title     : gettext('Available items'),
-                  region    : 'center',
-                  id        : 'lvm__snapcore_wizard_treepanel',
-                  xtype     : "snaptreepanel",
-                  showIcons : true,
-                  checkable : false,
-                  listeners : {
-                    click   : function(node, e){
-                      var plugin = node.attributes.plugin;
-                      if(plugin)
-                      {
-                        var config = plugin.getConfig(node);
-                        var layout = Ext.getCmp('wiz_snapitem_settings').layout;
-                        var form = plugin.getForm(node);
-                        layout.setActiveItem(form);
-                        form.treeNode = node;
-                        if( config === null ){
-                          // No config, so create a Record that explicitly sets every field to null.
-                          var data = {};
-                          form.items.each(function(item){
-                            data[item.name] = null;
-                          });
-                          config = new Ext.data.Record(data);
-                        }
-                        form.getForm().loadRecord(config);
-                      }
-                    },
-                  }
-                }, (function(){
-                  var items = [];
-                  for( var i = 0; i < window.SnapAppPlugins.length; i++ ){
-                    window.SnapAppPlugins[i].config = config;
-                    if( typeof window.SnapAppPlugins[i].objtypes !== "undefined" ){
-                      for( var o = 0; o < window.SnapAppPlugins[i].objtypes.length; o++ ){
-                        if( typeof window.SnapAppPlugins[i].objtypes[o].configForm !== "undefined" ){
-                          items.push(window.SnapAppPlugins[i].objtypes[o].configForm);
-                        }
-                      }
-                    }
-                  }
-                  return {
-                    title     : gettext('Item settings'),
-                    id        : 'wiz_snapitem_settings',
-                    region    : 'east',
-                    split     : true,
-                    xtype     : 'form',
-                    width     : 300,
-                    bodyStyle : 'padding:5px 5px;',
-                    border    : true,
-                    layout    : 'card',
-                    items     : items,
-                    activeItem: 0,
-                  };
-                }())],
-              },{
-                title     : gettext('Additional Drives'),
-                id        : 'wiz_addvol',
-                layout    : {
-                  type  : "vbox",
-                  align : 'stretch',
-                },
-                xtype     :'form',
-                items     : [{
-                  xtype : 'label',
-                  text  : gettext('Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed ' +
-                    'diam nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam erat, sed ' +
-                    'diam voluptua. At vero eos et accusam et'),
-                },{
-                  xtype   : 'spacer',
-                  height  : 10,
-                },{
-                  layout  : 'hbox',
-                  items   : [firstGrid, secondGrid],
-                }],
-                listeners : {
-                    show  : function(self){
-                      var volumes = [];
-                      var requests = 0;
-                      var moveItem = function(record, recordId, length, volumeId)
-                      {
-                        if(volumeId === record.get('id'))
-                        {
-                          secondGridStore.add(record);
-                          var idx = secondGridStore.indexOf(record);
-                          var row = secondGrid.getView().getRow(idx);
-                          var element = Ext.get(row);
-
-                          if(config.volumes.indexOf(volumeId, 0) === -1)
-                          {
-                            config.volumes.push(volumeId);
-                          }
-
-                          VolumeStore.remove(record);
-
-                          element.addClass('x-grid3-row-over');
-                          record.set('draggable', false);
-                        }
-                      }
-
-                      for(var plugin in config['plugin_data'])
-                      {
-                        if(plugin === 'VMware')
-                        {
-                          var plugin_func = get_plugin(plugin);
-
-                          for(var host_id in config['plugin_data'][plugin])
-                          {
-                            if(typeof config['plugin_data'][plugin][host_id]['children'] !== 'undefined')
-                            {
-                              for(var dc in config['plugin_data'][plugin][host_id]['children'][dc])
-                              {
-                                if(typeof config['plugin_data'][plugin][host_id]['children'][dc]['children'] !== 'undefined')
-                                {
-                                  for(var ds in config['plugin_data'][plugin][host_id]['children'][dc]['children'])
-                                  {
-                                    plugin_func.getVolume(host_id, dc, ds, function(result, response){
-                                      if(response.type !== 'exception'){
-                                        volumes.push(result.volume);
-                                      }
-                                      else{
-                                        requests--;
-                                      }
-
-                                      if( volumes.length === requests ){
-                                        for(var i=0; i<volumes.length; i++){
-                                          VolumeStore.each(moveItem.createDelegate(this, [volumes[i].id], true));
-                                        }
-                                      }
-                                    });
-                                    requests++;
-                                  }
-                                }
-                              }
-                            }
-                          }
-                        }
-                        if(plugin === 'MSSQL'){
-                          var plugin_func = get_plugin(plugin);
-
-                          for(var host_id in config['plugin_data'][plugin])
-                          {
-                            if(typeof config['plugin_data'][plugin][host_id]['children'] !== 'undefined')
-                            {
-                              for(var dr in config['plugin_data'][plugin][host_id]['children'])
-                              {
-                                plugin_func.getVolume(host_id, dr, function(result, response){
-                                  if(response.type !== 'exception'){
-                                    volumes.push(result.volume);
-                                  }
-                                  else{
-                                    requests--;
-                                  }
-
-                                  if( volumes.length === requests ){
-                                    for(var i=0; i<volumes.length; i++){
-                                      VolumeStore.each(moveItem.createDelegate(this, [volumes[i].id], true));
-                                    }
-                                  }
-                                });
-                                requests++;
-                              }
-                            }
-                          }
-                        }
-                      }
-
-                      secondGrid.getView().dragZone.onBeforeDrag = function(data, e){
-                        var volumeId = data.selections[0].data.id;
-                        for(var i=0; i<volumes.length; i++){
-                          if(volumes[i].id === volumeId)
-                          {
-                            return false;
-                          }
-                        }
-                        return true;
-                      }
-                    }
-                  },
-              },{
-                title : gettext('Pre-/Post-Script - Conditions'),
-                id    : 'wiz_prepost',
-                labelWidth: 150,
-                xtype : 'form',
-                items : [{
-                  xtype     : 'label',
-                  text      : gettext('Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed ' +
-                    'diam nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam erat, sed ' +
-                    'diam voluptua. At vero eos et accusam et'),
-                },{
-                  xtype     : 'spacer',
-                  height    : 10,
-                },{
-                  xtype     : 'textfield',
-                  name      : 'prescript',
-                  fieldLabel: gettext('Prescript conditions'),
-                },{
-                  xtype     : 'textfield',
-                  name      : 'postscript',
-                  fieldLabel: gettext('Postscript conditions'),
-                }]
-              },{
-                title : gettext('Scheduling Part 1 / Expiry Date'),
-                id    : 'wiz_sched1',
-                layout: {
-                  type  : 'vbox',
-                  align : 'stretch',
-                },
-                xtype : 'form',
-                items : [{
-                  xtype     : 'label',
-                  text      :  gettext('Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed ' +
-                    'diam nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam erat, sed ' +
-                    'diam voluptua. At vero eos et accusam et'),
-                },{
-                  xtype     : 'spacer',
-                  height    : 10,
-                },{
-                  boxLabel  : gettext('Snapshots without retention time'),
-                  name      : 'retentiontime',
-                  inputValue: 'retention_time_noretention',
-                  xtype     : 'radio',
-                  checked   : true,
-                },{
-                  boxLabel  : gettext('Set retention time'),
-                  name      : 'retentiontime',
-                  inputValue: 'retention_time_combo',
-                  xtype     : 'radio',
-                  listeners : {
-                    check: function(radio, checkvalue){
-                      if(checkvalue)
-                      {
-                        Ext.getCmp('retention_time').enable();
-                        Ext.getCmp('retention_time_combo').enable();
-                      }
-                      else
-                      {
-                        Ext.getCmp('retention_time').disable();
-                        Ext.getCmp('retention_time_combo').disable();
-                      }
-                    }
-                  }
-                },{
-                  xtype : 'panel',
-                  layout: {
-                    type  : 'hbox',
-                  },
-                  defaults: {
-                    style: 'margin-left: 17px;'
-                  },
-                  items : [{
-                    xtype       : 'numberfield',
-                    id          : 'retention_time',
-                    disabled    : true,
-                  },{
-                    xtype: 'spacer',
-                    width: 3
-                  },{
-                    name            : 'retention_time_combo',
-                    xtype           : 'combo',
-                    id              : 'retention_time_combo',
-                    disabled        : true,
-                    forceSelection  : true,
-                    store           : [
-                        ['1', gettext('Second(s)')],
-                        ['2', gettext('Minute(s)')],
-                        ['3', gettext('Hour(s)')],
-                        ['4', gettext('Day(s)')],
-                        ['5', gettext('Week(s)')],
-                    ],
-                    typeAhead:  true,
-                    triggerAction: 'all',
-                    emptyText : gettext('Select...'),
-                  }],
-                }]
-              },{
-                title : gettext('Scheduling Part 2 / Options'),
-                id    : 'wiz_sched2',
-                layout: {
-                  type  : 'vbox',
-                  align : 'stretch',
-                },
-                noAutoNext: true,
-                xtype     : 'form',
-                items     : [{
-                  boxLabel  : gettext('Execute now'),
-                  id        : 'execute_now',
-                  name      : 'scheduling_2',
-                  inputValue: 'execute_now',
-                  xtype     : 'radio',
-                  checked   : true,
-                },{
-                  boxLabel  : gettext('Execute later'),
-                  id        : 'execute_later',
-                  name      : 'scheduling_2',
-                  inputValue: 'execute_later',
-                  xtype     : 'radio',
-                  listeners : {
-                    check: function(radio, checkvalue){
-                      if(checkvalue)
-                      {
-                        Ext.getCmp('date_select').enable();
-                        Ext.getCmp('time_select').enable();
-                      }
-                      else
-                      {
-                        Ext.getCmp('date_select').disable();
-                        Ext.getCmp('time_select').disable();
-                      }
-                    }
-                  }
-                },{
-                  xtype   : 'panel',
-                  layout  : {
-                    type  : 'hbox'
-                  },
-                  defaults: {
-                    style : 'margin-left: 17px;',
-                  },
-                  items   : [{
-                    xtype       : 'datefield',
-                    id          : 'date_select',
-                    disabled    : true,
-                    value       : new Date(),
-                  },{
-                    xtype       : 'spacer',
-                    width       : 103,
-                  },{
-                    xtype       : 'timefield',
-                    id          : 'time_select',
-                    disabled    : true,
-                    value       : new Date().add(Date.HOUR, +1).getHours() + ':' + new Date().getMinutes(),
-                  }]
-                },{
-                  boxLabel  : gettext('Create scheduling'),
-                  id        : 'scheduling',
-                  name      : 'scheduling_2',
-                  inputValue: 'scheduling',
-                  xtype     : 'radio',
-                  listeners : {
-                    check:  function(radio, checkvalue){
-                      if(checkvalue)
-                      {
-                        Ext.getCmp('startdate_select').enable();
-                        Ext.getCmp('starttime_select').enable();
-                        Ext.getCmp('enddate_select').enable();
-                        Ext.getCmp('endtime_select').enable();
-                        Ext.getCmp('is_active').enable();
-                      }
-                      else
-                      {
-                        Ext.getCmp('startdate_select').disable();
-                        Ext.getCmp('starttime_select').disable();
-                        Ext.getCmp('enddate_select').disable();
-                        Ext.getCmp('endtime_select').disable();
-                        Ext.getCmp('is_active').disable();
-                      }
-                    }
-                  }
-                },{
-                  xtype : 'panel',
-                  layout: {
-                    type  : 'form',
-                  },
-                  items : [{
-                    xtype : 'panel',
-                    layout: {
-                      type  : 'hbox',
-                    },
-                    defaults: {
-                      style: 'margin-left: 17px;',
-                    },
-                    border   : false,
-                    items   : [{
-                      xtype       : 'label',
-                      text        : gettext('Start date and time:'),
-                      width       : 100,
-                    },{
-                      xtype       : 'spacer',
-                      width       : 3,
-                    },{
-                      xtype       : 'datefield',
-                      id          : 'startdate_select',
-                      disabled    : true,
-                      value       : new Date(),
-                    },{
-                      xtype       : 'spacer',
-                      width       : 103,
-                    },{
-                      xtype       : 'timefield',
-                      id          : 'starttime_select',
-                      disabled    : true,
-                      value       : new Date().getHours() + ':' + new Date().getMinutes(),
-                    }],
-                  },{
-                    xtype : 'spacer',
-                    height: 2,
-                  },{
-                    xtype : 'panel',
-                    layout: {
-                      type  : 'hbox',
-                    },
-                    defaults: {
-                      style:  'margin-left: 17px;',
-                    },
-                    border  : false,
-                    items   : [{
-                      xtype       : 'label',
-                      text        : gettext('End date and time:'),
-                      width       : 100,
-                    },{
-                      xtype       : 'spacer',
-                      width       : 3,
-                    },{
-                      xtype       : 'datefield',
-                      id          : 'enddate_select',
-                      disabled    : true,
-                      value       : new Date().add(Date.DAY, +7),
-                      fieldLabel  : gettext('Enddate'),
-                    },{
-                      xtype       : 'spacer',
-                      width       : 103,
-                    },{
-                      xtype       : 'timefield',
-                      id          : 'endtime_select',
-                      disabled    : true,
-                      value       : new Date().getHours() + ':' + new Date().getMinutes(),
-                      fieldLabel  : gettext('Enddtime'),
-                    }],
-                  },{
-                    xtype       : 'spacer',
-                    height      : 10,
-                  },{
-                    xtype       : 'checkbox',
-                    id          : 'is_active',
-                    name        : 'is_active',
-                    disabled    : true,
-                    fieldLabel  : gettext('Is active'),
-                  }],
-                }],
-                buttons: [{
-                  text    : gettext('Next'),
-                  handler : function(){
-                    var checked = Ext.getCmp('wiz_sched2').getForm().getValues()['scheduling_2'];
-                    var nextpnl = '';
-                    switch(checked){
-                      case 'execute_now':
-                        nextpnl = 'wiz_close';
-                        break;
-                      case 'execute_later':
-                        config.data['startdate'] = null;
-                        config.data['enddate'] = null;
-
-                        var date = Ext.getCmp('date_select').getValue();
-                        var time = (Ext.getCmp('time_select').getValue()).split(':');
-                        if(date && time)
-                        {
-                          date = date.add(Date.HOUR, time[0]).add(Date.MINUTE, time[1]).add(Date.MINUTE, +1);
-                          var now = new Date();
-                          if(now < date)
-                          {
-                            config.data['executedate'] = date;
-                            nextpnl = 'wiz_close';
-                          }
-                        }
-                        break;
-                      case 'scheduling':
-                        config.data['executedate'] = null;
-
-                        nextpnl = 'wiz_sched32';
-
-                        var startdate = Ext.getCmp('startdate_select').getValue();
-                        var starttime = (Ext.getCmp('starttime_select').getValue()).split(':');
-                        var enddate = Ext.getCmp('enddate_select').getValue();
-                        var endtime = (Ext.getCmp('endtime_select').getValue()).split(':');
-
-                        if(startdate)
-                        {
-                          if(starttime.length > 1)
-                          {
-                            startdate = startdate.add(Date.HOUR, starttime[0]).add(Date.MINUTE, starttime[1]).add(Date.MINUTE, +1);
-                            var now = new Date();
-                            if(now >= startdate)
-                            {
-                              nextpnl = '';
-                            }
-                            else
-                            {
-                              config.data['startdate'] = startdate;
-                            }
-                          }
-                          else
-                          {
-                            nextpnl = '';
-                          }
-                        }
-
-                        if(enddate)
-                        {
-                          if(endtime.length > 1)
-                          {
-                            enddate = enddate.add(Date.HOUR, endtime[0]).add(Date.MINUTE, endtime[1]);
-                            var now = new Date();
-                            if(enddate <= now || (startdate && startdate >= enddate))
-                            {
-                              nextpnl = '';
-                            }
-                            else
-                            {
-                              config.data['enddate'] = enddate;
-                            }
-                          }
-                          else
-                          {
-                            nextpnl = ''
-                          }
-                        }
-                        break;
-                    }
-
-                    if(nextpnl)
-                    {
-                      wizform.pnl_hist.push(nextpnl);
-                      wizform.layout.setActiveItem(nextpnl);
-                    }
-                  }
-                }]
-              },{
-                title : gettext('Scheduling Part 3 / Timemanagement Part 2'),
-                id    : 'wiz_sched32',
-                xtype : 'form',
-                items : [{
-                  xtype : 'label',
-                  text  : gettext('Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed ' +
-                            'diam nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam erat, sed ' +
-                            'diam voluptua. At vero eos et accusam et'),
-                },{
-                  xtype : 'spacer',
-                  height: 10,
-                },{
-                  xtype         : 'combo',
-                  name          : 'minute',
-                  fieldLabel    : gettext('Minute'),
-                  store         : (function(){
-                    var derp = ['*'];
-                    for(var i = 0; i < 60; i += 5)
-                      derp.push(i);
-                    return derp;
-                  }()),
-                  value         : '0',
-                  typeAhead     : true,
-                  triggerAction : 'all',
-                  emptyText     : gettext('Select...'),
-                  selectOnFocus : true,
-                },{
-                  xtype   : 'fieldset',
-                  title   : gettext('Hour'),
-                  ref     : '../h_fieldset',
-                  border  : true,
-                  defaults: {
-                    border      : false,
-                    columnWidth : .5,
-                    layout      : 'form',
-                    defaults    : {
-                      xtype: 'checkbox',
-                    }
-                  },
-                  layout: 'column',
-                  items : [{
-                    items: (function(){
-                      var it = [];
-                      for(var i = 0; i < 12; i++)
-                        it.push({id: 'h_' + i, fieldLabel: i, checked: (i%3 == 0) });
-                      return it;
-                    }()),
-                  },{
-                    items: (function(){
-                      var it = [];
-                      for(var i = 12; i < 24; i++)
-                        it.push({id: 'h_' + i, fieldLabel: i, checked: (i%3 == 0) });
-                      return it;
-                    }()),
-                  }]
-                }],
-              },{
-                title : gettext('Scheduling Part 3 / Timemanagement Part 3'),
-                id    : 'wiz_sched33',
-                xtype : 'form',
-                items : [{
-                  xtype       : 'label',
-                  text        : gettext('Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed ' +
-                    'diam nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam erat, sed ' +
-                    'diam voluptua. At vero eos et accusam et'),
-                },{
-                  xtype : 'spacer',
-                  height: 10,
-                },{
-                  xtype     : 'combo',
-                  name      : 'day_of_month',
-                  fieldLabel: gettext('Day'),
-                  store     : (function(){
-                    var derp = ['*'];
-                    for(var i = 1; i <= 31; i++)
-                      derp.push(i);
-                    return derp;
-                  }()),
-                  value         : '*',
-                  typeAhead     : true,
-                  triggerAction : 'all',
-                  emptyText     : gettext('Select...'),
-                  selectOnFocus : true,
-                },{
-                  xtype   : 'fieldset',
-                  title   : gettext('Day of week'),
-                  ref     : '../dow_fieldset',
-                  border  : true,
-                  defaults: {
-                    border      : false,
-                    columnWidth : .5,
-                    layout      : 'form',
-                    defaults    : {
-                      xtype   : 'checkbox',
-                      checked : true,
-                    }
-                  },
-                  layout  : 'column',
-                  items   : [{
-                    items: [{
-                      id: 'dow_1', fieldLabel: gettext('Monday')
-                    },{
-                      id: 'dow_2', fieldLabel: gettext('Tuesday')
-                    },{
-                      id: 'dow_3', fieldLabel: gettext('Wednesday')
-                    },{
-                      id: 'dow_4', fieldLabel: gettext('Thursday')
-                    },{
-                      id: 'dow_5', fieldLabel: gettext('Friday')
-                    }],
-                  },{
-                    items: [{
-                      id: 'dow_6', fieldLabel: gettext('Saturday')
-                    },{
-                      id: 'dow_0', fieldLabel: gettext('Sunday')
-                    }]
-                  }],
-                },{
-                  xtype   : 'fieldset',
-                  ref     : '../moy_fieldset',
-                  border  : true,
-                  defaults: {
-                    border      : false,
-                    columnWidth : .5,
-                    layout      : 'form',
-                    defaults    : {
-                      xtype   : 'checkbox',
-                      checked : true,
-                    }
-                  },
-                  title : gettext('Month'),
-                  layout: 'column',
-                  items : [{
-                    items: [{
-                      id: 'moy_1', fieldLabel: gettext('January')
-                    },{
-                      id: 'moy_2', fieldLabel: gettext('Feburary')
-                    },{
-                      id: 'moy_3', fieldLabel: gettext('March')
-                    },{
-                      id: 'moy_4', fieldLabel: gettext('April')
-                    },{
-                      id: 'moy_5', fieldLabel: gettext('May')
-                    },{
-                      id: 'moy_6', fieldLabel: gettext('June')
-                    }]
-                  },{
-                    items: [{
-                      id: 'moy_7', fieldLabel: gettext('July')
-                    },{
-                      id: 'moy_8', fieldLabel: gettext('August')
-                    },{
-                      id: 'moy_9', fieldLabel: gettext('September')
-                    },{
-                      id: 'moy_10', fieldLabel: gettext('October')
-                    },{
-                      id: 'moy_11', fieldLabel: gettext('November')
-                    },{
-                      id: 'moy_12', fieldLabel: gettext('December')
-                    }]
-                  }],
-                }],
-              },{
-                title       : gettext('Finish'),
-                id          : 'wiz_close',
-                noAutoNext  : true,
-                buttons     : [{
-                  text      : gettext('Finish'),
-                  listeners : {
-                    click: function(){
-                      if((config.data['startdate'] === null || typeof config.data['startdate'] === 'undefined') &&
-                          (config.data['endddate'] === null || typeof config.data['enddate']  === 'undefined') &&
-                          (config.data['executedate'] === null || typeof config.data['executedate'] === 'undefined')){
-                        // execute dosnapshot by config object
-                      }
-                      else{
-                        // save configs
-                        lvm__SnapshotConf.saveConfig(config);
-                        config_store.reload();
-                      }
-                      wiz.hide();
-                    },
-                  }
-                }],
-              }],
-            });
-            var wiz = new Ext.Window({
-              title       : gettext('Configuration Assistant'),
-              layout      : 'fit',
-              items       : wizform,
-              width       : 800,
-              height      : 500,
-              anchor      : '-20px',
-              closeAction : 'hide',
-            });
             wiz.show();
           },
         },{
