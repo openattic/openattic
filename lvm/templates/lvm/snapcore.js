@@ -1328,9 +1328,35 @@ Ext.oa.LVM__Snapcore_Panel = Ext.extend(Ext.Panel, {
                 if(typeof btn.ownerCt.ownerCt.getSelectionModel().getSelected() !== "undefined")
                 {
                   var config_id = btn.ownerCt.ownerCt.getSelectionModel().getSelected().id;
+                  // restore config object from database
                   lvm__SnapshotConf.restore_config(config_id, function(result, response){
                     if(response.type !== 'exception'){
-                      console.log(result);
+                      // iterate assistant cards
+                      var wiz_cards = wiz.items.items[0].items.items;
+                      for(var i=0; i < wiz_cards.length; i++)
+                      {
+                        if(typeof wiz_cards[i].items !== 'undefined')
+                        {
+                          // iterate form items within assistant cards
+                          var form_items = wiz_cards[i].items.items;
+                          for(var j=0; j < form_items.length; j++)
+                          {
+                            // assign stored values to assistant fields
+                            if(typeof result[form_items[j].name] !== 'undefined')
+                            {
+                              switch(form_items[j].xtype)
+                              {
+                                case "textfield":
+                                  console.log(form_items[j].name);
+                                  form_items[j].setValue(result[form_items[j].name]);
+                                  console.log(form_items[j].getValue());
+                                  break;
+                              }
+                            }
+                          }
+                        }
+                      }
+                      wiz.show();
                     }
                   });
                 }
