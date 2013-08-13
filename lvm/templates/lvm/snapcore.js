@@ -1251,9 +1251,17 @@ Ext.oa.LVM__Snapcore_Panel = Ext.extend(Ext.Panel, {
                   text      : gettext('Finish'),
                   listeners : {
                     click: function(){
-                      lvm__SnapshotConf.saveConfig(config);
+                      if((config.data['startdate'] === null || typeof config.data['startdate'] === 'undefined') &&
+                          (config.data['endddate'] === null || typeof config.data['enddate']  === 'undefined') &&
+                          (config.data['executedate'] === null || typeof config.data['executedate'] === 'undefined')){
+                        // execute dosnapshot by config object
+                      }
+                      else{
+                        // save configs
+                        lvm__SnapshotConf.saveConfig(config);
+                        config_store.reload();
+                      }
                       wiz.hide();
-                      config_store.reload();
                     },
                   }
                 }],
