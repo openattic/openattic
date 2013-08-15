@@ -1342,16 +1342,13 @@ Ext.oa.LVM__Snapcore_Panel = Ext.extend(Ext.Panel, {
                           for(var j=0; j < form_items.length; j++)
                           {
                             // assign stored values to assistant fields
-                            if(typeof result[form_items[j].name] !== 'undefined')
+                            switch(form_items[j].xtype)
                             {
-                              switch(form_items[j].xtype)
-                              {
-                                case "textfield":
-                                  console.log(form_items[j].name);
+                              case "textfield":
+                              case "combo":
+                                if(typeof result[form_items[j].name] !== 'undefined')
                                   form_items[j].setValue(result[form_items[j].name]);
-                                  console.log(form_items[j].getValue());
-                                  break;
-                              }
+                                break;
                             }
                           }
                         }
