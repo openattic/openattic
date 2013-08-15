@@ -287,6 +287,7 @@ INSTALLED_APPS = [
     'systemd',
     'sysutils',
     'ifconfig',
+    'south',
 ]
 
 INSTALLED_MODULES = []
