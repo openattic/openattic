@@ -902,6 +902,7 @@ class SnapshotConf(models.Model):
     postscript      = models.CharField(null=True, max_length=225)
     retention_time  = models.IntegerField(null=True, blank=True)
     last_execution  = models.DateTimeField(null=True, blank=True)
+    test_field      = models.BooleanField()
 
     objects = ConfManager()
 
