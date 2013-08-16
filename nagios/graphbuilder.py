@@ -321,6 +321,9 @@ class Node(object):
     def __div__(self, other):
         return DivideNode(self, other)
 
+    def __truediv__(self, other):
+        return DivideNode(self, other)
+
     def __pow__(self, other):
         return StackNode(self, other)
 
