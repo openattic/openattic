@@ -379,7 +379,7 @@ Ext.oa.Nagios__Service_Panel = Ext.extend(Ext.Panel, {
             name: "last_check",
             mapping: "state",
             convert: function(val, row){
-              if(val && val.last_check){
+              if(val && val.last_check && val.last_check !== "0"){
                 return val.last_check;
               }
               return null;
