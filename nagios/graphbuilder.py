@@ -441,7 +441,7 @@ class MathNode(Node):
 
     @property
     def varname(self):
-        return "%s_%s_%s" % (self.lft.varname, self.opstr, self.rgt.varname)
+        return "%s_%s_%s" % (self.lft.varname.replace('.', '_'), self.opstr, self.rgt.varname.replace('.', '_'))
 
     def define(self):
         self.lft.args = self.args
@@ -524,7 +524,7 @@ class LiteralNode(Node):
         self._value = value
         self._label = unicode(value)
 
-    varname    = property( lambda self: unicode(self._value)      )
+    varname    = property( lambda self: unicode(self._value) )
 
     def define(self):
         pass
