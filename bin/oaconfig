@@ -78,6 +78,8 @@ case $1 in
 		;;
 
 	install)
+		su "$OAUSER" -c 'python manage.py pre_install'
+		
 		chown $RPCD_CHUID /etc/openattic/databases/*sql.ini
 		
 		if [ "$#" -gt 1 ]; then
@@ -86,12 +88,10 @@ case $1 in
 		fi
 		
 		if ! /etc/init.d/openattic_systemd status ; then
-			SYNCAGAIN=yes
-		else
-			SYNCAGAIN=no
 			# restart the daemons so they don't keep any locks open
 			$0 reload
 		fi
+		
 		# Initialize the schema so our daemons can start
 		su "$OAUSER" -c 'python manage.py syncdb --noinput'
 		su "$OAUSER" -c 'python manage.py migrate --noinput'
@@ -123,11 +123,7 @@ case $1 in
 			create_indexpage
 		fi
 		
-		if [ "$SYNCAGAIN" = "yes" ]; then
-			# Run syncdb *again* because the first time, systemd was unavailable
-			su "$OAUSER" -c 'python manage.py syncdb --noinput'
-			su "$OAUSER" -c 'python manage.py migrate --noinput'
-		fi
+		su "$OAUSER" -c 'python manage.py post_install'
 		
 		python manage.py install-cli
 		echo "Completed successfully."

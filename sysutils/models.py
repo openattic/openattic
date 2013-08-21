@@ -18,8 +18,12 @@ import dbus
 
 from django.db import models
 from django.conf import settings
+from django.dispatch import Signal
 
 from systemd.helpers import dbus_to_python
+
+pre_install  = Signal()
+post_install = Signal()
 
 class InitScript(models.Model):
     name        = models.CharField(max_length=50)
