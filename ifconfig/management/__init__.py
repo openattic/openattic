@@ -22,12 +22,10 @@ from django.core.management import call_command
 from django.db.models import signals
 
 import ifconfig.models
+import sysutils.models
 from ifconfig.models  import Host, NetDevice, IPAddress
 
-def create_interfaces(app, created_models, verbosity, interactive, db, **kwargs):
-    # First of all, make sure our fixtures have been loaded
-    call_command('loaddata', 'ifconfig/fixtures/initial_data.json', verbosity=verbosity, database=db)
-
+def create_interfaces(**kwargs):
     # Make sure we have *this* host in the database
     try:
         host = Host.objects.get_current()
@@ -120,4 +118,4 @@ def create_interfaces(app, created_models, verbosity, interactive, db, **kwargs)
                     ip.save()
 
 
-signals.post_syncdb.connect(create_interfaces, sender=ifconfig.models)
+sysutils.models.post_install.connect(create_interfaces, sender=sysutils.models)

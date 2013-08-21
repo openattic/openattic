@@ -30,18 +30,14 @@ from django.conf      import settings
 from systemd.helpers import dbus_to_python
 
 import lvm.models
+import sysutils.models
 from ifconfig.models  import Host
 from lvm              import blockdevices
 from lvm.models       import VolumeGroup, LogicalVolume
 from lvm.filesystems  import get_by_name as get_fs_by_name
 
-def create_vgs(app, created_models, verbosity, **kwargs):
-    try:
-        lvm = dbus.SystemBus().get_object(settings.DBUS_IFACE_SYSTEMD, "/lvm")
-    except dbus.exceptions.DBusException:
-        # apparently systemd is not yet running. oaconfig install will run syncdb a second time, warn and ignore.
-        print "WARNING: Could not connect to systemd, skipping initialization of the LVM module."
-        return
+def create_vgs(**kwargs):
+    lvm = dbus.SystemBus().get_object(settings.DBUS_IFACE_SYSTEMD, "/lvm")
 
     vgs = dbus_to_python(lvm.vgs())
     lvs = dbus_to_python(lvm.lvs())
@@ -115,4 +111,4 @@ def create_vgs(app, created_models, verbosity, **kwargs):
                 lv.save()
 
 
-signals.post_syncdb.connect(create_vgs, sender=lvm.models)
+sysutils.models.post_install.connect(create_vgs, sender=sysutils.models)

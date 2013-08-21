@@ -23,13 +23,10 @@ from nagios.conf import settings as nagios_settings
 from ifconfig.models import Host, IPAddress
 
 import nagios.models
+import sysutils.models
 from nagios.models    import Service, Command
-from django.db.models import signals
 
-def create_nagios(app, created_models, verbosity, interactive, db, **kwargs):
-    # First of all, make sure our fixtures have been loaded
-    call_command('loaddata', 'nagios/fixtures/initial_data.json', verbosity=verbosity, database=db)
-
+def create_nagios(**kwargs):
     # Make sure the contacts config exists
     try:
         dbus.SystemBus().get_object(settings.DBUS_IFACE_SYSTEMD, "/nagios").write_contacts()
@@ -86,4 +83,4 @@ def create_nagios(app, created_models, verbosity, interactive, db, **kwargs):
 
     Service.write_conf()
 
-signals.post_syncdb.connect(create_nagios, sender=nagios.models)
+sysutils.models.post_install.connect(create_nagios)

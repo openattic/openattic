@@ -20,14 +20,11 @@ from django.conf import settings
 from django.db.models import signals
 
 import samba.models
+import sysutils.models
 from samba.models import Share
 
-def writeconf(app, created_models, verbosity, **kwargs):
-    try:
-        samba = dbus.SystemBus().get_object(settings.DBUS_IFACE_SYSTEMD, "/samba")
-    except dbus.DBusException:
-        pass
-    else:
-        samba.writeconf()
+def writeconf(**kwargs):
+    samba = dbus.SystemBus().get_object(settings.DBUS_IFACE_SYSTEMD, "/samba")
+    samba.writeconf()
 
-signals.post_syncdb.connect(writeconf, sender=samba.models)
+sysutils.models.post_install.connect(writeconf, sender=sysutils.models)
