@@ -94,6 +94,7 @@ case $1 in
 		fi
 		# Initialize the schema so our daemons can start
 		su "$OAUSER" -c 'python manage.py syncdb --noinput'
+		su "$OAUSER" -c 'python manage.py migrate --noinput'
 		
 		su "$OAUSER" -c 'python manage.py add-host'
 		
@@ -125,6 +126,7 @@ case $1 in
 		if [ "$SYNCAGAIN" = "yes" ]; then
 			# Run syncdb *again* because the first time, systemd was unavailable
 			su "$OAUSER" -c 'python manage.py syncdb --noinput'
+			su "$OAUSER" -c 'python manage.py migrate --noinput'
 		fi
 		
 		python manage.py install-cli
