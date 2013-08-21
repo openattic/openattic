@@ -279,6 +279,7 @@ INSTALLED_APPS = [
     'django.contrib.admin',
     'django.contrib.admindocs',
     'django.contrib.markup',
+    'ifconfig',
     'userprefs',
     'cmdlog',
     'hoststats',
@@ -286,7 +287,7 @@ INSTALLED_APPS = [
     'rpcd',
     'systemd',
     'sysutils',
-    'ifconfig',
+    'south',
 ]
 
 INSTALLED_MODULES = []

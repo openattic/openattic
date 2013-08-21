@@ -24,6 +24,8 @@ from django.conf import settings
 from ifconfig.models import Host
 from peering.xmlrpctimeout import ServerProxy
 
+from south.modelsinspector import add_introspection_rules
+
 class PeerURL(unicode):
     def set_result(self, result):
         self._result = result
@@ -59,7 +61,7 @@ class PeerUrlField(models.CharField):
         if not isinstance(value, (ParseResult, PeerURL)):
             return value
         return value.geturl()
-
+add_introspection_rules([], ["^peering\.models\.PeerUrlField"])
 
 class PeerError(Exception):
     pass

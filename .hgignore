@@ -4,6 +4,8 @@ syntax: glob
 *.swp
 *.kate-swp
 *.pyc
+*.swo
+*.png
 *~
 
 .secret.txt
