@@ -68,3 +68,9 @@ class Plugin(object):
         for hostconf in conf_dict[self.plugin_name].values():
             _create_subitem(hostconf, plugindata)
         return plugindata
+
+    def find_relation(obj, rel_model, rel_obj_name):
+        for related in obj._meta.get_all_related_objects():
+            if related.model == rel_model:
+                rel_obj = getattr(obj, related.get_accessor_name())
+                return rel_obj.get_or_create(name=rel_obj_name)
