@@ -95,12 +95,14 @@ class Plugin(object):
 
         return plugindata
 
-    def find_relation(self, obj, rel_model, rel_obj_name=None):
-        print obj
+    def find_relation(self, obj, rel_model, rel_obj_name=None, snapconf=None):
         for related in obj._meta.get_all_related_objects():
             if related.model == rel_model:
                 rel_obj = getattr(obj, related.get_accessor_name())
                 if rel_obj_name is not None:
                     return rel_obj.get_or_create(name=rel_obj_name)[0]
                 else:
-                    return rel_obj.all()[0]
+                    if snapconf is not None:
+                        return rel_obj.get_or_create(snapshot_conf=snapconf)[0]
+                    else:
+                        return rel_obj.all()[0]
