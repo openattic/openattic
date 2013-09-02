@@ -1,6 +1,8 @@
 # -*- coding: utf-8 -*-
 # kate: space-indent on; indent-width 4; replace-tabs on;
 
+from django.db import models
+
 from ifconfig.models import Host
 
 """ 
@@ -98,6 +100,11 @@ class Plugin(object):
             _create_subitem(host_conf, None, host_model, plugindata, self.models)
 
         return plugindata
+
+    def find_foreign_object(self, obj, rel_model):
+        for field in obj._meta.fields:
+            if isinstance(field, models.ForeignKey) and field.related.parent_model == rel_model:
+                return getattr(obj, field.name)
 
     def find_relation(self, obj, rel_model):
         for related in obj._meta.get_all_related_objects():
