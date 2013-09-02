@@ -533,7 +533,7 @@ def __target_added(instance, **kwargs):
     if instance.type == "iscsi" and not instance.tpg_set:
         instance.tpg_set.create(tag=1)
 
-post_install.connect(__tpg_added, sender=TPG)
+post_install.connect(__target_added, sender=Target)
 
 
 def __tpg_added(instance, **kwargs):
