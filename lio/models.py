@@ -528,6 +528,14 @@ def __logicallun_targets_changed(instance, reverse, action, pk_set, **kwargs):
 models.signals.m2m_changed.connect(__logicallun_targets_changed, sender=LogicalLUN.targets.through)
 
 
+def __target_added(instance, **kwargs):
+    """ A Target has been added. See if we need to create a TPG for it. """
+    if instance.type == "iscsi" and not instance.tpg_set:
+        instance.tpg_set.create(tag=1)
+
+post_install.connect(__tpg_added, sender=TPG)
+
+
 def __tpg_added(instance, **kwargs):
     """ A TPG has been added to a target.
 
