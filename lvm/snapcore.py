@@ -56,17 +56,14 @@ class Plugin(object):
 
     def create_items(self, conf_dict):
         def _create_subitem(confobj, obj_id, parent_model_inst, parent, modelstack):
-            print "_create_subitem"
             merged_data = parent.data.copy()
             merged_data.update(confobj["data"])
 
-            print "model_instance = self.find_relation(%r, %r, %r)" % (parent_model_inst, modelstack[0], obj_id)
             if isinstance(modelstack[0], tuple):
                 childmodel, childconfmodel = modelstack[0]
             else:
                 childmodel = modelstack[0]
             model_instance = self.find_relation(parent_model_inst, childmodel, obj_id)
-            print "model", model_instance
 
             if "children" in confobj and confobj["children"]:
                 obj = Container(merged_data, model_instance)
