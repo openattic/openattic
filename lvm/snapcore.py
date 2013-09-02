@@ -47,15 +47,18 @@ class Plugin(object):
         def _save_items(confobj, obj_id, parent_model_inst, modelstack):
             if isinstance(modelstack[0], tuple):
                 child_model, child_conf_model = modelstack[0]
-                model_instance = self.find_relation(parent_model_inst, child_model, obj_id)
+                rel_obj = self.find_relation(parent_model_inst, child_model)
+                model_instance = rel_obj.get_or_create(name=obj_id)[0] if obj_id is not None else rel_obj.all()[0]
 
                 if "consistency" in confobj["data"] and confobj["data"]["consistency"]:
-                    conf_instance = self.find_relation(model_instance, child_conf_model, snapconf=snapconf)
+                    conf_rel_obj = self.find_relation(model_instance, child_conf_model)
+                    conf_instance = conf_rel_obj.get_or_create(snapshot_conf=snapconf)[0]
                     conf_instance.consistency = confobj["data"]["consistency"]
                     conf_instance.save()
             else:
                 child_model = modelstack[0]
-                model_instance = self.find_relation(parent_model_inst, child_model, obj_id)
+                rel_obj = self.find_relation(parent_model_inst, child_model)
+                model_instance = rel_obj.get_or_create(name=obj_id)[0] if obj_id is not None else rel_obj.all()[0]
 
             if "children" in confobj and confobj["children"]:
                 for child_id, child_conf in confobj["children"].items():
@@ -76,7 +79,8 @@ class Plugin(object):
                 childmodel, childconfmodel = modelstack[0]
             else:
                 childmodel = modelstack[0]
-            model_instance = self.find_relation(parent_model_inst, childmodel, obj_id)
+            rel_obj = self.find_relation(parent_model_inst, childmodel)
+            model_instance = rel_obj.get_or_create(name=obj_id)[0] if obj_id is not None else rel_obj.all()[0]
 
             if "children" in confobj and confobj["children"]:
                 obj = Container(merged_data, model_instance)
@@ -95,14 +99,7 @@ class Plugin(object):
 
         return plugindata
 
-    def find_relation(self, obj, rel_model, rel_obj_name=None, snapconf=None):
+    def find_relation(self, obj, rel_model):
         for related in obj._meta.get_all_related_objects():
             if related.model == rel_model:
-                rel_obj = getattr(obj, related.get_accessor_name())
-                if rel_obj_name is not None:
-                    return rel_obj.get_or_create(name=rel_obj_name)[0]
-                else:
-                    if snapconf is not None:
-                        return rel_obj.get_or_create(snapshot_conf=snapconf)[0]
-                    else:
-                        return rel_obj.all()[0]
+                return getattr(obj, related.get_accessor_name())
