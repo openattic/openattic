@@ -141,8 +141,10 @@ class Plugin(object):
         for field in obj._meta.fields:
             if isinstance(field, models.ForeignKey) and field.related.parent_model == rel_model:
                 return getattr(obj, field.name)
+        raise KeyError("No foreignkey from '%r' to '%r' found!" % (obj, rel_model))
 
     def find_relation(self, obj, rel_model):
         for related in obj._meta.get_all_related_objects():
             if related.model == rel_model:
                 return getattr(obj, related.get_accessor_name())
+        raise KeyError("No relation from '%r' to '%r' found!" % (obj, rel_model))
