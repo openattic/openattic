@@ -42,8 +42,44 @@ class Plugin(object):
     plugin_name = "INITIALIZE ME"
     models      = "models"
 
-    def restore_config(self):
-      pass
+    def restore_config(self, snapconf):
+        conf_dict = {}
+        def _get_conf_obj(target_obj, modelstack):
+            # modelstack enhaelt alle objektklassen UEBER target_obj, NICHT die von target_obj selbst
+            if not modelstack:
+                # target_obj isn Host, also conf_dict[host] anlegen und return
+                if target_obj.host.name not in conf_dict:
+                    conf_dict[target_obj.host.name] = {
+                        "data": {},
+                        "children": {}
+                    }
+                return conf_dict[target_obj.host.name]
+            else:
+                if isinstance(modelstack[-1], tuple):
+                    containermodel, containerconfmodel = modelstack[-1]
+                else:
+                    containermodel = modelstack[-1]
+                cnt = _get_conf_obj(self.find_foreign_object(target_obj, containermodel), modelstack[:-1])
+                if target_obj.name not in cnt["children"]:
+                    cnt["children"][target_obj.name] = {
+                        "data": {},
+                        "children": {}
+                    }
+                return cnt["children"][target_obj.name]
+
+        def _populate_conf(modelstack):
+            if not modelstack:
+                return
+            if isinstance(modelstack[-1], tuple):
+                objmodel, confmodel = modelstack[-1]
+                for target_conf in self.find_relation(snapconf, confmodel).all():
+                    target_obj = self.find_foreign_object(target_conf, objmodel)
+                    cnt = _get_conf_obj(target_obj, modelstack[:-1])
+                    cnt["data"].update({"consistency": target_conf.consistency})
+            _populate_conf(modelstack[:-1])
+
+        _populate_conf(self.models)
+        return {self.plugin_name: conf_dict}
 
     def save_config(self, conf_dict, snapconf):
         def _save_items(confobj, obj_id, parent_model_inst, modelstack):
