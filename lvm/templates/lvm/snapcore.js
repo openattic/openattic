@@ -395,18 +395,18 @@ var get_plugin = function(plugin_name){
 
 var config = {
   data: {
-    configname            : null,
-    prescript             : null,
-    postscript            : null,
-    retention_time        : 0,
-    executdate            : null,
-    startdate             : null,
-    enddate               : null,
-    active                : true,
-    h                     : null,
-    min                   : null,
-    domonth               : null,
-    doweek                : null,
+    is_active           : true,
+    configname          : null,
+    day_of_month        : null,
+    prescript           : null,
+    postscript          : null,
+    retentiontime       : null,
+    retention_time_combo: null,
+    retention_time      : null,
+    startdate           : null,
+    enddate             : null,
+    doweek              : null,
+    scheduling_select   : null,
   },
   volumes     : []/*[1, 2, 6, 9]*/,
   plugin_data : {} /*{
@@ -718,7 +718,7 @@ var wizform = new Ext.oa.WizPanel({
     },{
       boxLabel  : gettext('Set retention time'),
       name      : 'retentiontime',
-      inputValue: 'retention_time_combo',
+      inputValue: 'retention_time_retention',
       xtype     : 'radio',
       listeners : {
         check: function(radio, checkvalue){
@@ -779,14 +779,14 @@ var wizform = new Ext.oa.WizPanel({
     items     : [{
       boxLabel  : gettext('Execute now'),
       id        : 'execute_now',
-      name      : 'scheduling_2',
+      name      : 'scheduling_select',
       inputValue: 'execute_now',
       xtype     : 'radio',
       checked   : true,
     },{
       boxLabel  : gettext('Execute later'),
       id        : 'execute_later',
-      name      : 'scheduling_2',
+      name      : 'scheduling_select',
       inputValue: 'execute_later',
       xtype     : 'radio',
       listeners : {
@@ -828,7 +828,7 @@ var wizform = new Ext.oa.WizPanel({
     },{
       boxLabel  : gettext('Create scheduling'),
       id        : 'scheduling',
-      name      : 'scheduling_2',
+      name      : 'scheduling_select',
       inputValue: 'scheduling',
       xtype     : 'radio',
       listeners : {
@@ -935,7 +935,7 @@ var wizform = new Ext.oa.WizPanel({
     buttons: [{
       text    : gettext('Next'),
       handler : function(){
-        var checked = Ext.getCmp('wiz_sched2').getForm().getValues()['scheduling_2'];
+        var checked = Ext.getCmp('wiz_sched2').getForm().getValues()['scheduling_select'];
         var nextpnl = '';
         switch(checked){
           case 'execute_now':
