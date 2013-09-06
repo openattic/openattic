@@ -97,83 +97,83 @@ Ext.oa.WizPanel = Ext.extend(Ext.form.FormPanel, {
     }
   },
   pnl_hist: ['wiz_welc'],
-  initComponent: function(){
-    var nextpanel = function(nextid){
-      if( typeof this.layout.activeItem.getForm === "function" )
+  nextpanel: function(nextid){
+    if( typeof this.layout.activeItem.getForm === "function" )
+    {
+      var formValues = this.layout.activeItem.getForm().getValues();
+      var dateTimeValues = [];
+      var comboValues = [];
+
+      for(var key in formValues)
       {
-        var formValues = this.layout.activeItem.getForm().getValues();
-        var dateTimeValues = [];
-        var comboValues = [];
+        var splittedVal = formValues[key].split('_');
+        if(splittedVal[2] === 'datetime')
+          dateTimeValues.push(splittedVal);
+        else if(splittedVal[2] === 'combo')
+          comboValues.push(splittedVal);
+      }
 
-        for(var key in formValues)
+      if(dateTimeValues.length > 0 || comboValues.length > 0)
+      {
+        if(dateTimeValues.length > 0)
         {
-          var splittedVal = formValues[key].split('_');
-          if(splittedVal[2] === 'datetime')
-            dateTimeValues.push(splittedVal);
-          else if(splittedVal[2] === 'combo')
-            comboValues.push(splittedVal);
-        }
-
-        if(dateTimeValues.length > 0 || comboValues.length > 0)
-        {
-          if(dateTimeValues.length > 0)
+          for(var i = 0; i < dateTimeValues.length; i++)
           {
-            for(var i = 0; i < dateTimeValues.length; i++)
-            {
-              var time = formValues[dateTimeValues[i][1] + '_time'].split(':');
-              var date = formValues[dateTimeValues[i][1] + '_date'].split('.');
-              date = new Date(date[2], date[1] - 1, date[0]);
-              date = date.add(Date.HOUR, time[0]).add(Date.MINUTE, time[1]);
-              this.config.data[dateTimeValues[i][0]] = date;
-            }
-          }
-
-          if(comboValues.length > 0)
-          {
-            for(var i = 0; i < comboValues.length; i++)
-            {
-              var combo_index = Ext.getCmp(comboValues[i][0] + '_' + comboValues[i][1] + '_' + comboValues[i][2]).selectedIndex;
-              var fieldName = comboValues[i][0] + '_' + comboValues[i][1];
-              var value = Ext.getCmp(fieldName).value;
-              switch(combo_index){
-                case 0:
-                  // Second(s)
-                  break;
-                case 1:
-                  // Minute(s)
-                  this.config.data[fieldName] = value * 60;
-                  break;
-                case 2:
-                  // Hour(s)
-                  this.config.data[fieldName] = value * 60 * 60;
-                  break;
-                case 3:
-                  // Day(s)
-                  this.config.data[fieldName] = value * 24 * 60 * 60;
-                  break;
-                case 4:
-                  // Week(s)
-                  this.config.data[fieldName] = value * 7 * 24 * 60 * 60;
-                  break;
-              }
-            }
+            var time = formValues[dateTimeValues[i][1] + '_time'].split(':');
+            var date = formValues[dateTimeValues[i][1] + '_date'].split('.');
+            date = new Date(date[2], date[1] - 1, date[0]);
+            date = date.add(Date.HOUR, time[0]).add(Date.MINUTE, time[1]);
+            this.config.data[dateTimeValues[i][0]] = date;
           }
         }
-        else
+
+        if(comboValues.length > 0)
         {
-          Ext.apply(this.config.data, formValues);
+          for(var i = 0; i < comboValues.length; i++)
+          {
+            var combo_index = Ext.getCmp(comboValues[i][0] + '_' + comboValues[i][1] + '_' + comboValues[i][2]).selectedIndex;
+            var fieldName = comboValues[i][0] + '_' + comboValues[i][1];
+            var value = Ext.getCmp(fieldName).value;
+            switch(combo_index){
+              case 0:
+                // Second(s)
+                break;
+              case 1:
+                // Minute(s)
+                this.config.data[fieldName] = value * 60;
+                break;
+              case 2:
+                // Hour(s)
+                this.config.data[fieldName] = value * 60 * 60;
+                break;
+              case 3:
+                // Day(s)
+                this.config.data[fieldName] = value * 24 * 60 * 60;
+                break;
+              case 4:
+                // Week(s)
+                this.config.data[fieldName] = value * 7 * 24 * 60 * 60;
+                break;
+            }
+          }
         }
       }
-      this.pnl_hist.push(nextid);
-      this.layout.setActiveItem(nextid);
-      if( typeof this.layout.activeItem.getForm === "function" )
-        this.layout.activeItem.getForm().loadRecord(this.config.data);
+      else
+      {
+        Ext.apply(this.config.data, formValues);
+      }
     }
-    var prevpanel = function(){
-      this.pnl_hist.pop();
-      this.layout.setActiveItem(this.pnl_hist[this.pnl_hist.length - 1]);
-    }
+    this.pnl_hist.push(nextid);
+    this.layout.setActiveItem(nextid);
+    if( typeof this.layout.activeItem.getForm === "function" )
+      this.layout.activeItem.getForm().loadRecord(this.config.data);
+  },
+  prevpanel: function(){
+    this.pnl_hist.pop();
+    this.layout.setActiveItem(this.pnl_hist[this.pnl_hist.length - 1]);
+  },
 
+  initComponent: function(){
     for(var i = this.items.length - 1; i >= 0; i--){
       var item = this.items[i];
       if(typeof item.buttons === "undefined"){
@@ -182,13 +182,13 @@ Ext.oa.WizPanel = Ext.extend(Ext.form.FormPanel, {
       if(typeof item.noAutoNext === "undefined"){
         item.buttons.unshift({
           text: gettext('Next'),
-          handler: nextpanel.createDelegate(this, [this.items[i+1].id]),
+          handler: this.nextpanel.createDelegate(this, [this.items[i+1].id]),
         });
       }
       if(typeof item.noAutoPrev === "undefined"){
         item.buttons.unshift({
           text: gettext('Previous'),
-          handler: prevpanel.createDelegate(this, [this.items[i].id]),
+          handler: this.prevpanel.createDelegate(this, [this.items[i].id]),
         });
       }
     }
@@ -1014,8 +1014,7 @@ var wizform = new Ext.oa.WizPanel({
 
         if(nextpnl)
         {
-          wizform.pnl_hist.push(nextpnl);
-          wizform.layout.setActiveItem(nextpnl);
+          wizform.nextpanel(nextpnl);
         }
       }
     }]
