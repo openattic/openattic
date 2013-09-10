@@ -1,5 +1,6 @@
 # -*- coding: utf-8 -*-
 # kate: space-indent on; indent-width 4; replace-tabs on;
+# vim: tabstop=4 expandtab shiftwidth=4 softtabstop=4
 
 """
  *  Copyright (C) 2011-2012, it-novum GmbH <community@open-attic.org>
