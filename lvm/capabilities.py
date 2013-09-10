@@ -24,15 +24,14 @@ class AbstractCapabilityNode(object):
         self.rgt = rgt
 
     def __add__(self, other):
-        print "__add__(%r, %r)" % (self, other)
         return CapabilityAddNode(self, other)
 
     def __mul__(self, other):
-        print "__mul__(%r, %r)" % (self, other)
         return CapabilityMulNode(self, other)
 
     def _get(self, something, devicecaps):
         """ Something might be True, a Capability*Node, or a Capability.
+            Devicecaps is a list of capabilities that some device provides.
 
             Translate it to a number, in the context of devicecaps.
         """
@@ -48,9 +47,9 @@ class AbstractCapabilityNode(object):
             # "something" explicitly.
             for devcap in devicecaps:
                 if issubclass(devcap, something):
-                    print "%s dependency satisfied by %s" % (something, devcap)
+                    #print "%s dependency satisfied by %s" % (something, devcap)
                     return True
-            print "%s dependency unsatisfied" % something
+            #print "%s dependency unsatisfied" % something
             return False
         else:
             return TypeError("Unexpected type '%r'" % something)
@@ -68,19 +67,15 @@ class CapabilityMulNode(AbstractCapabilityNode):
 
 class CapabilityMeta(type):
     def __add__(self, other):
-        print "__add__(%r, %r)" % (self, other)
         return CapabilityAddNode(self, other)
 
     def __radd__(self, other):
-        print "__radd__(%r, %r)" % (self, other)
         return CapabilityAddNode(other, self)
 
     def __mul__(self, other):
-        print "__mul__(%r, %r)" % (self, other)
         return CapabilityMulNode(self, other)
 
     def __rmul__(self, other):
-        print "__rmul__(%r, %r)" % (self, other)
         return CapabilityMulNode(other, self)
 
 class Capability(object):
