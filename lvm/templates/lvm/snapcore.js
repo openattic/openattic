@@ -1,5 +1,5 @@
-// vim: noai:ts=2:sw=2
 // kate: space-indent on; indent-width 2; replace-tabs on;
+// vim: tabstop=2 expandtab shiftwidth=2 softtabstop=2
 
 Ext.namespace('Ext.oa');
 
