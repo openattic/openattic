@@ -25,6 +25,7 @@ from django.db   import models
 from systemd.helpers import dbus_to_python
 
 from lvm.models import LVChainedModule
+from lvm        import blockdevices
 from ifconfig.models import IPAddress, Host
 
 DRBD_PROTOCOL_CHOICES = (
@@ -132,6 +133,22 @@ class Connection(models.Model):
 
     def __unicode__(self):
         return self.res_name
+
+    @property
+    def name(self):
+        return self.res_name
+
+    @property
+    def megs(self):
+        return blockdevices.get_disk_size( "drbd%d" % self.id )
+
+    @property
+    def disk_stats(self):
+        return blockdevices.get_disk_stats( "drbd%d" % self.id )
+
+    @property
+    def device(self):
+        return "/dev/drbd%d" % self.id
 
     @property
     def port(self):
