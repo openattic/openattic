@@ -20,13 +20,20 @@ from django.contrib.contenttypes import generic
 from django.utils.translation    import ugettext_lazy as _
 from django.contrib.auth.models  import User
 
+from volumes import capabilities
+
 class AbstractVolume(models.Model):
     content_type= models.ForeignKey(ContentType)
     object_id   = models.PositiveIntegerField()
     volume      = generic.GenericForeignKey()
+    capflags    = models.BigIntegerField()
 
     class Meta:
         abstract = True
+
+    @property
+    def capabilities(self):
+        return capabilities.from_flags(self.capflags)
 
     @property
     def name(self):
@@ -50,7 +57,6 @@ class FileSystemVolume(AbstractVolume):
     owner       = models.ForeignKey(User, blank=True)
     fswarning   = models.IntegerField(_("Warning Level (%)"),  default=75 )
     fscritical  = models.IntegerField(_("Critical Level (%)"), default=85 )
-    capabilities= models.BigIntegerField()
 
     def fs(self):
         return self.volume.fs

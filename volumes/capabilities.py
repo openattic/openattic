@@ -70,6 +70,13 @@ class CapabilityMulNode(AbstractCapabilityNode):
 
 
 class CapabilityMeta(type):
+    capabilities = []
+
+    def __init__( cls, name, bases, attrs ):
+        type.__init__( cls, name, bases, attrs )
+        if name != "Capability":
+            CapabilityMeta.capabilities.append(cls)
+
     def __add__(self, other):
         return CapabilityAddNode(self, other)
 
@@ -84,111 +91,119 @@ class CapabilityMeta(type):
 
 class Capability(object):
     __metaclass__ = CapabilityMeta
-
+    # The ``flag'' class variable carries a bit flag used to represent a capability in an int.
+    # It should be hardcoded explicitly instead of being implicitly derived from somewhere,
+    # because if this flag should change for some reason, all hell will break loose.
+    flag = None
 
 class SlowSATASpeedCapability(Capability):
     """ 3.5" 7200RPM SATA disks """
-    pass
+    flag = (1<<0)
 
 class FastSATASpeedCapability(SlowSATASpeedCapability):
     """ 2.5" 10kRPM SATA disks """
-    pass
+    flag = (1<<1)
 
 class SlowSASSpeedCapability(FastSATASpeedCapability):
     """ 2.5" 10kRPM SAS Disks """
-    pass
+    flag = (1<<2)
 
 class FastSASSpeedCapability(SlowSASSpeedCapability):
     """ 2.5" 15kRPM SAS Disks """
-    pass
+    flag = (1<<3)
 
 class SSDSpeedCapability(FastSASSpeedCapability):
     """ SSDs """
-    pass
+    flag = (1<<4)
 
 class UnlimitedWritesCapability(Capability):
     """ Does not age when written to (i.e., unlike SSDs). """
-    pass
+    flag = (1<<5)
 
 
 class BlockbasedCapability(Capability):
     """ Block-based access e.g. over iSCSI or FC """
-    pass
+    flag = (1<<6)
 
 class FailureTolerantBlockDeviceCapability(BlockbasedCapability):
-    pass
+    flag = (1<<7)
 
 class MirroredBlockDeviceCapability(BlockbasedCapability):
     """ Mirrored block device like DRBD or RBD """
-    pass
+    flag = (1<<8)
 
 class MultiPrimaryBlockDeviceCapability(BlockbasedCapability):
     """ Dual-Primary DRBD, RBD """
-    pass
+    flag = (1<<9)
 
 class FileIOCapability(BlockbasedCapability):
-    pass
+    flag = (1<<10)
 
 class BlockIOCapability(BlockbasedCapability):
-    pass
+    flag = (1<<11)
 
 
 class FilesystemCapability(Capability):
     """ File-based access e.g. over NFS or Samba """
-    pass
+    flag = (1<<12)
 
 class MirroredFilesystemCapability(FilesystemCapability):
     """ Mirrored file-systems like Ceph """
-    pass
+    flag = (1<<13)
 
 class MultiPrimaryFilesystemCapability(FilesystemCapability):
     """ Mirrored file-systems like Ceph, that are writable on more than one host """
-    pass
+    flag = (1<<14)
 
 class VolumeSnapshotCapability(Capability):
     """ Supports snapshots for the entire volume """
-    pass
+    flag = (1<<15)
 
 class SubvolumesCapability(FilesystemCapability):
     """ Supports shrinking """
-    pass
+    flag = (1<<16)
 
 class SubvolumeSnapshotCapability(SubvolumesCapability):
     """ Supports snapshots for subvolumes """
-    pass
+    flag = (1<<17)
 
 class FileSnapshotCapability(FilesystemCapability):
     """ Supports snapshots which can be mounted to restore individual files """
-    pass
+    flag = (1<<18)
 
 class PosixACLCapability(FilesystemCapability):
     """ Supports snapshots which can be mounted to restore individual files """
-    pass
+    flag = (1<<19)
 
 class DeduplicationCapability(FilesystemCapability):
     """ Supports deduplication """
-    pass
+    flag = (1<<19)
 
 class CompressionCapability(FilesystemCapability):
     """ Supports compression """
-    pass
+    flag = (1<<20)
 
 class GrowCapability(Capability):
     """ Supports growing """
-    pass
+    flag = (1<<21)
 
 class ShrinkCapability(Capability):
     """ Supports shrinking """
-    pass
+    flag = (1<<22)
 
 class ParallelIOCapability(FilesystemCapability):
     """ Filesystem is optimized for efficiently handling massively parallel IO. """
-    pass
+    flag = (1<<23)
 
 class SectorBlocksCapability(FilesystemCapability):
     """ File system blocksize == sector size (512 Bytes). """
-    pass
+    flag = (1<<24)
 
+def to_flags(capabilities):
+    return reduce(operator.or_, [cap.flag for cap in capabilities])
+
+def from_flags(flags):
+    return [ cap for cap in CapabilityMeta.capabilities if cap.flag & flags == cap.flag ]
 
 
 class Profile(object):
