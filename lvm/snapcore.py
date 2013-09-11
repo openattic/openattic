@@ -111,31 +111,33 @@ class Plugin(object):
         return True
 
     def create_items(self, conf_dict):
-        def _create_subitem(confobj, obj_id, parent_model_inst, parent, modelstack):
+        def _create_subitem(confobj, model_instance, parent, modelstack):
             merged_data = parent.data.copy()
             merged_data.update(confobj["data"])
-
-            if isinstance(modelstack[0], tuple):
-                childmodel, childconfmodel = modelstack[0]
-            else:
-                childmodel = modelstack[0]
-            rel_obj = self.find_relation(parent_model_inst, childmodel)
-            model_instance = rel_obj.get_or_create(name=obj_id)[0] if obj_id is not None else rel_obj.all()[0]
 
             if "children" in confobj and confobj["children"]:
                 obj = Container(merged_data, model_instance)
                 parent.children.append(obj)
+
+                if isinstance(modelstack[0], tuple):
+                    child_model, _ = modelstack[0]
+                else:
+                    child_model = modelstack[0]
+
+                rel_obj = self.find_relation(model_instance, child_model)
+
                 for child_id, child_conf in confobj["children"].items():
-                  _create_subitem(child_conf, child_id, model_instance, obj, modelstack[1:])
+                    child_instance, _ = rel_obj.get_or_create(name=child_id)
+                    _create_subitem(child_conf, child_instance, obj, modelstack[1:])
             else:
                 obj = Target(merged_data, model_instance)
                 parent.children.append(obj)
 
         plugindata = Container({}, None)
 
-        for host_id, host_conf in conf_dict[self.plugin_name].items():
-            host_model = Host.objects.get(name=host_id)
-            _create_subitem(host_conf, None, host_model, plugindata, self.models)
+        for host_id, host_conf in conf_dict.items():
+            host_model = self.models[0].objects.get(id=host_id)
+            _create_subitem(host_conf, host_model, plugindata, self.models[1:])
 
         return plugindata
 
