@@ -59,6 +59,9 @@ class AbstractVolume(models.Model):
     def disk_stats(self):
         return self.volume.disk_stats
 
+    def __unicode__(self):
+        return unicode(self.volume)
+
 
 class BlockVolume(AbstractVolume):
     @property
@@ -74,6 +77,10 @@ class FileSystemVolume(AbstractVolume):
     @property
     def fs(self):
         return self.volume.fs
+
+    @property
+    def fsname(self):
+        return self.fs.fsname
 
     @property
     def mountpoint(self):
