@@ -18,12 +18,26 @@ from rpcd.handlers import BaseHandler, ModelHandler
 from rpcd.handlers import ProxyModelHandler
 
 from volumes.models import BlockVolume, FileSystemVolume
+from ifconfig.models import Host
 
 class BlockVolumeHandler(ModelHandler):
     model = BlockVolume
 
 class FileSystemVolumeHandler(ModelHandler):
     model = FileSystemVolume
+
+    def _override_get(self, obj, data):
+        hosthandler = self._get_handler_instance(Host)
+        data['filesystem'] = obj.fsname
+        data['fs'] = {
+            'mountpoint':  obj.mountpoint,
+            'mounted':     obj.mounted,
+            'host':        hosthandler._idobj(obj.mounthost)
+            }
+        if obj.mounted:
+            data['fs']['stat'] = obj.stat
+        return data
+
 
 RPCD_HANDLERS = [
     BlockVolumeHandler,
