@@ -61,6 +61,7 @@ class AbstractVolume(models.Model):
 
 
 class BlockVolume(AbstractVolume):
+    @property
     def device(self):
         return self.volume.device
 
@@ -70,14 +71,21 @@ class FileSystemVolume(AbstractVolume):
     fswarning   = models.IntegerField(_("Warning Level (%)"),  default=75 )
     fscritical  = models.IntegerField(_("Critical Level (%)"), default=85 )
 
+    @property
     def fs(self):
         return self.volume.fs
 
+    @property
     def mountpoint(self):
         return self.fs.mountpoint
 
+    @property
     def mounthost(self):
         return self.fs.mounthost
+
+    @property
+    def mounted(self):
+        return self.fs.mounted
 
     def stat(self):
         return self.fs.stat()
