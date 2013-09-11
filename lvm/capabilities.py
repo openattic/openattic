@@ -121,6 +121,12 @@ class FailureTolerantBlockDeviceCapability(BlockbasedCapability):
 class MirroredBlockDeviceCapability(BlockbasedCapability):
     pass
 
+class FileIOCapability(BlockbasedCapability):
+    pass
+
+class BlockIOCapability(BlockbasedCapability):
+    pass
+
 
 class FilesystemCapability(Capability):
     """ File-based access e.g. over NFS or Samba """
@@ -196,6 +202,7 @@ class Disk(Device):
     requires = []
     provides = [
         BlockbasedCapability,
+        BlockIOCapability,
         ]
 
 class Raid5(Device):
@@ -204,6 +211,7 @@ class Raid5(Device):
         ]
     provides = [
         FailureTolerantBlockDeviceCapability,
+        BlockIOCapability,
         ]
 
 class LogicalVolume(Device):
@@ -215,6 +223,7 @@ class LogicalVolume(Device):
         FailureTolerantBlockDeviceCapability,
         GrowCapability,
         ShrinkCapability,
+        BlockIOCapability,
         ]
 
 class ExtFS(Device):
@@ -314,4 +323,5 @@ class ImageFile(Device):
         ]
     provides = [
         FailureTolerantBlockDeviceCapability,
+        FileIOCapability,
         ]
