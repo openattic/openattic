@@ -183,7 +183,7 @@ class Profile(object):
 
 class FileserverProfile(Profile):
     """ Optimized for a file server """
-    capabilities = SlowSATASpeedCapability * (VolumeSnapshotCapability + PosixACLCapability) * (True + GrowCapability + ShrinkCapability + DeduplicationCapability + CompressionCapability)
+    capabilities = FilesystemCapability * (VolumeSnapshotCapability + PosixACLCapability) * (True + GrowCapability + ShrinkCapability + DeduplicationCapability + CompressionCapability)
 
 class VMProfile(Profile):
     """ Optimized for running VMs that support proper disk alignment """
