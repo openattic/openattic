@@ -142,3 +142,15 @@ def get_disk_stats(device):
 def get_lvm_capabilities():
     lvm  = dbus.SystemBus().get_object(settings.DBUS_IFACE_SYSTEMD, "/lvm")
     return dbus_to_python(lvm.get_lvm_capabilities())
+
+def get_disk_size(device):
+    """ Get disk size from `/sys/block/X/size'. """
+    if not os.path.exists( "/sys/block/%s/size" % device ):
+        raise SystemError( "No such device: '%s'" % device )
+
+    fd = open("/sys/block/%s/size" % device, "rb")
+    try:
+        return int(fd.read()) * 512 / 1024**2
+    finally:
+        fd.close()
+
