@@ -310,11 +310,11 @@ class BtrfsSubvolumeProxy(ProxyModelHandler, BtrfsSubvolumeHandler):
 class SnapshotConfHandler(ModelHandler):
     model = SnapshotConf
 
-    def saveConfig(self, config):
-      return self._getobj(SnapshotConf.objects.add_config(config))
-
     def restore_config(self, conf_id):
       return SnapshotConf.objects.get(id=conf_id).restore_config()
+
+    def process_config(self, config):
+      return SnapshotConf.objects.process_config(config)
 
 RPCD_HANDLERS = [
     DiskHandler,

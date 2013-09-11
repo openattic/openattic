@@ -407,6 +407,7 @@ var config = {
     enddate             : null,
     doweek              : null,
     scheduling_select   : null,
+    executedate         : null,
   },
   volumes     : []/*[1, 2, 6, 9]*/,
   plugin_data : {} /*{
@@ -1189,16 +1190,8 @@ var wizform = new Ext.oa.WizPanel({
       text      : gettext('Finish'),
       listeners : {
         click: function(){
-          if((config.data['startdate'] === null || typeof config.data['startdate'] === 'undefined') &&
-              (config.data['endddate'] === null || typeof config.data['enddate']  === 'undefined') &&
-              (config.data['executedate'] === null || typeof config.data['executedate'] === 'undefined')){
-            // execute dosnapshot by config object
-          }
-          else{
-            // save configs
-            lvm__SnapshotConf.saveConfig(config);
-            config_store.reload();
-          }
+          lvm__SnapshotConf.process_config(config)
+          config_store.reload();
           wiz.hide();
         },
       }

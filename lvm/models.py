@@ -36,6 +36,7 @@ from lvm             import signals as lvm_signals
 from lvm             import blockdevices
 from lvm.conf        import settings as lvm_settings
 from cron.models     import Cronjob
+from lvm             import snapcore
 
 def validate_vg_name(value):
     from django.core.exceptions import ValidationError
@@ -822,13 +823,26 @@ class LVSnapshotJob(Cronjob):
         raise SystemError("oaconfig not found")
 
 class ConfManager(models.Manager):
+    def process_config(self, conf_obj):
+        if conf_obj["data"]["scheduling_select"] is not None:
+            if conf_obj["data"]["scheduling_select"] == "execute_now":
+                print "Execute Config"
+            else:
+                snapconf = self.add_config(conf_obj)
+
+                if snapconf:
+                    for plugin_name, plugin in snapcore.PluginLibrary.plugins.items():
+                        if plugin_name in conf_obj["plugin_data"]:
+                            # call save config function
+                            plugin_inst = plugin()
+                            plugin_inst.save_config(conf_obj["plugin_data"][plugin_name], snapconf)
+                        else:
+                            raise KeyError("plugin data of plugin " + plugin_name + " not found in config dictionary")
+                    return True
+        else:
+            raise KeyError("scheduling informations not found in config dictionary")
+
     def add_config(self, conf_obj):
-        models = {}
-
-        for related in SnapshotConf._meta.get_all_related_objects():
-            if hasattr(related.model.objects, "get_available_objects"):
-                related.model.objects.get_available_objects(models)
-
         data = conf_obj["data"]
         snapconf = SnapshotConf(confname=data["configname"], prescript=data["prescript"], postscript=data["postscript"], retention_time=data["retention_time"], last_execution=None)
         snapconf.save()
@@ -867,7 +881,7 @@ class ConfManager(models.Manager):
             jobconf = LVSnapshotJob(
                 start_time=startdate,
                 end_time=enddate,
-                is_active=data["active"],
+                is_active=data["is_active"],
                 conf=snapconf,
                 host=Host.objects.get_current(),
                 user="root",
@@ -883,17 +897,6 @@ class ConfManager(models.Manager):
             logical_volume = LogicalVolume.all_objects.get(id=volume)
             volume_conf = LogicalVolumeConf(snapshot_conf=snapconf, volume=logical_volume, snapshot_space=20)
             volume_conf.save()
-
-        def save_config(modelstack, itemdata, parent_ids):
-            for obj_id, obj_data in itemdata.items():
-                if hasattr(modelstack[0].objects, "save_config"):
-                  obj = modelstack[0].objects.save_config(snapconf, parent_ids + [obj_id], obj_data['data'])
-                save_config(modelstack[1:], obj_data["children"], parent_ids + [obj_id])
-
-        for module in conf_obj['plugin_data']:
-            for host_id, host_data, in conf_obj['plugin_data'][module].items():
-                host = models[module][0].objects.get(id=host_id)
-                save_config(models[module][1:], host_data["children"], [host_id])
 
         return snapconf
 
