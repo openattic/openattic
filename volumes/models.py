@@ -35,6 +35,10 @@ class AbstractVolume(models.Model):
     def capabilities(self):
         return capabilities.from_flags(self.capflags)
 
+    @capabilities.setter
+    def capabilities(self, value):
+        self.capflags = capabilities.to_flags(value)
+
     @property
     def name(self):
         return self.volume.name
