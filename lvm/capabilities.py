@@ -179,7 +179,7 @@ class SectorBlocksCapability(FilesystemCapability):
 
 
 class Profile(object):
-    capabilities = []
+    capabilities = None
 
 class FileserverProfile(Profile):
     """ Optimized for a file server """
