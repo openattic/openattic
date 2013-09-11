@@ -49,12 +49,12 @@ class Plugin(object):
             # modelstack enhaelt alle objektklassen UEBER target_obj, NICHT die von target_obj selbst
             if not modelstack:
                 # target_obj isn Host, also conf_dict[host] anlegen und return
-                if target_obj.host.name not in conf_dict:
-                    conf_dict[target_obj.host.name] = {
+                if target_obj.id not in conf_dict:
+                    conf_dict[target_obj.id] = {
                         "data": {},
                         "children": {}
                     }
-                return conf_dict[target_obj.host.name]
+                return conf_dict[target_obj.id]
             else:
                 if isinstance(modelstack[-1], tuple):
                     containermodel, containerconfmodel = modelstack[-1]
