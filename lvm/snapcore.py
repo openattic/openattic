@@ -83,29 +83,30 @@ class Plugin(object):
         return {self.plugin_name: conf_dict}
 
     def save_config(self, conf_dict, snapconf):
-        def _save_items(confobj, obj_id, parent_model_inst, modelstack):
-            if isinstance(modelstack[0], tuple):
-                child_model, child_conf_model = modelstack[0]
-                rel_obj = self.find_relation(parent_model_inst, child_model)
-                model_instance = rel_obj.get_or_create(name=obj_id)[0] if obj_id is not None else rel_obj.all()[0]
-
-                if "consistency" in confobj["data"] and confobj["data"]["consistency"]:
-                    conf_rel_obj = self.find_relation(model_instance, child_conf_model)
+        def _save_items(confobj, model_instance, confmodel, modelstack):
+            if confmodel is not None:
+                if confobj["data"] is not None and "consistency" in confobj["data"] and confobj["data"]["consistency"]:
+                    conf_rel_obj = self.find_relation(model_instance, confmodel)
                     conf_instance = conf_rel_obj.get_or_create(snapshot_conf=snapconf)[0]
                     conf_instance.consistency = confobj["data"]["consistency"]
                     conf_instance.save()
-            else:
-                child_model = modelstack[0]
-                rel_obj = self.find_relation(parent_model_inst, child_model)
-                model_instance = rel_obj.get_or_create(name=obj_id)[0] if obj_id is not None else rel_obj.all()[0]
 
             if "children" in confobj and confobj["children"]:
-                for child_id, child_conf in confobj["children"].items():
-                    _save_items(child_conf, child_id, model_instance, modelstack[1:])
+                if isinstance(modelstack[0], tuple):
+                    child_model, child_conf_model = modelstack[0]
+                else:
+                    child_model = modelstack[0]
+                    child_conf_model = None
 
-        for host_id, host_conf in conf_dict[self.plugin_name].items():
-            host_model = Host.objects.get(name=host_id)
-            _save_items(host_conf, None, host_model, self.models)
+                rel_obj = self.find_relation(model_instance, child_model)
+
+                for child_id, child_conf in confobj["children"].items():
+                    child_instance, _ = rel_obj.get_or_create(name=child_id)
+                    _save_items(child_conf, child_instance, child_conf_model, modelstack[1:])
+
+        for host_id, host_conf in conf_dict.items():
+            host_model = self.models[0].objects.get(id=host_id)
+            _save_items(host_conf, host_model, None, self.models[1:])
 
         return True
 
