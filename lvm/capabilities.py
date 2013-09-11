@@ -29,33 +29,37 @@ class AbstractCapabilityNode(object):
     def __mul__(self, other):
         return CapabilityMulNode(self, other)
 
-    def _get(self, something, devicecaps):
-        """ Something might be True, a Capability*Node, or a Capability.
-            Devicecaps is a list of capabilities that some device provides.
-
-            Translate it to a number, in the context of devicecaps.
-        """
-        if something is True:
-            return True
-        elif isinstance(something, AbstractCapabilityNode):
-            return something.eval_(devicecaps)
-        elif issubclass(something, Capability):
-            # check if we have a devicecap that satisfies our dependency on "something".
-            # that is the case if we either have "something" directly, or a subclass
-            # of it, because subclasses satisfy dependencies to their base classes.
-            # btw: subclass(something, something) is True, so no need to check for
-            # "something" explicitly.
-            for devcap in devicecaps:
-                if issubclass(devcap, something):
-                    #print "%s dependency satisfied by %s" % (something, devcap)
-                    return True
-            #print "%s dependency unsatisfied" % something
-            return False
-        else:
-            return TypeError("Unexpected type '%r'" % something)
-
     def eval_(self, devicecaps):
-        return self.op( self._get(self.lft, devicecaps), self._get(self.rgt, devicecaps) )
+        satisfied = {}
+
+        def _get(something):
+            """ Something might be True, a Capability*Node, or a Capability.
+                Devicecaps is a list of capabilities that some device provides.
+
+                Translate it to a number, in the context of devicecaps.
+            """
+            if something is True:
+                return True
+            elif isinstance(something, AbstractCapabilityNode):
+                points, child_satisfied = something.eval_(devicecaps)
+                satisfied.update(child_satisfied)
+                return points
+            elif issubclass(something, Capability):
+                # check if we have a devicecap that satisfies our dependency on "something".
+                # that is the case if we either have "something" directly, or a subclass
+                # of it, because subclasses satisfy dependencies to their base classes.
+                # btw: subclass(something, something) is True, so no need to check for
+                # "something" explicitly.
+                for devcap in devicecaps:
+                    if issubclass(devcap, something):
+                        satisfied[something] = True
+                        return True
+                satisfied[something] = False
+                return False
+            else:
+                return TypeError("Unexpected type '%r'" % something)
+
+        return self.op( _get(self.lft), _get(self.rgt) ), satisfied
 
 
 class CapabilityAddNode(AbstractCapabilityNode):
