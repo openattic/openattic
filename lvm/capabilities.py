@@ -119,6 +119,11 @@ class FailureTolerantBlockDeviceCapability(BlockbasedCapability):
     pass
 
 class MirroredBlockDeviceCapability(BlockbasedCapability):
+    """ Mirrored block device like DRBD or RBD """
+    pass
+
+class MultiPrimaryBlockDeviceCapability(BlockbasedCapability):
+    """ Dual-Primary DRBD, RBD """
     pass
 
 class FileIOCapability(BlockbasedCapability):
@@ -130,6 +135,14 @@ class BlockIOCapability(BlockbasedCapability):
 
 class FilesystemCapability(Capability):
     """ File-based access e.g. over NFS or Samba """
+    pass
+
+class MirroredFilesystemCapability(FilesystemCapability):
+    """ Mirrored file-systems like Ceph """
+    pass
+
+class MultiPrimaryFilesystemCapability(FilesystemCapability):
+    """ Mirrored file-systems like Ceph, that are writable on more than one host """
     pass
 
 class VolumeSnapshotCapability(Capability):
