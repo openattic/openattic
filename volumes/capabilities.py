@@ -125,7 +125,7 @@ class BlockbasedCapability(Capability):
     """ Block-based access e.g. over iSCSI or FC """
     flag = (1<<6)
 
-class FailureTolerantBlockDeviceCapability(BlockbasedCapability):
+class FailureToleranceCapability(Capability):
     flag = (1<<7)
 
 class MirroredBlockDeviceCapability(BlockbasedCapability):
@@ -159,8 +159,8 @@ class VolumeSnapshotCapability(Capability):
     """ Supports snapshots for the entire volume """
     flag = (1<<15)
 
-class SubvolumesCapability(FilesystemCapability):
-    """ Supports shrinking """
+class SubvolumesCapability(Capability):
+    """ Supports subvolumes """
     flag = (1<<16)
 
 class SubvolumeSnapshotCapability(SubvolumesCapability):
@@ -254,7 +254,6 @@ class Device(object):
             self.removes  = [cap for cap in self.__class__.removes ]
 
 class Disk(Device):
-    requires = []
     provides = [
         BlockbasedCapability,
         BlockIOCapability,
@@ -265,53 +264,75 @@ class Raid5(Device):
         BlockbasedCapability,
         ]
     provides = [
-        FailureTolerantBlockDeviceCapability,
-        BlockIOCapability,
+        FailureToleranceCapability,
+        ]
+
+class VolumeGroup(Device):
+    requires = [
+        BlockbasedCapability,
+        FailureToleranceCapability,
+        ]
+    provides = [
+        SubvolumesCapability,
+        SubvolumeSnapshotCapability,
         ]
 
 class LogicalVolume(Device):
-    requires = [
-        FailureTolerantBlockDeviceCapability,
-        ]
+    requires = VolumeGroup
     provides = [
-        VolumeSnapshotCapability,
-        FailureTolerantBlockDeviceCapability,
         GrowCapability,
         ShrinkCapability,
-        BlockIOCapability,
+        ]
+    removes  = [
+        SubvolumesCapability,
+        SubvolumeSnapshotCapability,
         ]
 
 class ExtFS(Device):
     requires = [
-        FailureTolerantBlockDeviceCapability,
+        BlockbasedCapability,
+        FailureToleranceCapability,
         ]
     provides = [
         FilesystemCapability,
         PosixACLCapability,
         GrowCapability,
         ShrinkCapability,
+        FileIOCapability,
+        ]
+    removes  = [
+        BlockbasedCapability,
+        BlockIOCapability,
         ]
 
 class XfsDefaultBlocks(Device):
     requires = [
-        FailureTolerantBlockDeviceCapability,
+        BlockbasedCapability,
+        FailureToleranceCapability,
         ]
     provides = [
         FilesystemCapability,
         PosixACLCapability,
         GrowCapability,
         ParallelIOCapability,
+        FileIOCapability,
+        ]
+    removes  = [
+        BlockbasedCapability,
+        BlockIOCapability,
         ]
 
 class XfsSectorBlocks(Device):
     requires = XfsDefaultBlocks.requires
     provides = XfsDefaultBlocks.provides + [SectorBlocksCapability]
+    removes  = XfsDefaultBlocks.removes
 
 class Zpool(Device):
     requires = [
-        FailureTolerantBlockDeviceCapability,
+        BlockbasedCapability,
         ]
     provides = [
+        FailureToleranceCapability,
         FilesystemCapability,
         VolumeSnapshotCapability,
         SubvolumesCapability,
@@ -321,22 +342,20 @@ class Zpool(Device):
         ShrinkCapability,
         DeduplicationCapability,
         CompressionCapability,
+        FileIOCapability,
+        ]
+    removes  = [
+        BlockbasedCapability,
+        BlockIOCapability,
         ]
 
 class Zfs(Device):
-    requires = [
-        Zpool,
-        ]
-    provides = [
-        FilesystemCapability,
-        DeduplicationCapability,
-        CompressionCapability,
-        VolumeSnapshotCapability,
-        ]
+    requires = Zpool
 
 class Btrfs(Device):
     requires = [
-        FailureTolerantBlockDeviceCapability,
+        BlockbasedCapability,
+        FailureToleranceCapability,
         ]
     provides = [
         FilesystemCapability,
@@ -349,26 +368,21 @@ class Btrfs(Device):
         DeduplicationCapability,
         CompressionCapability,
         PosixACLCapability,
+        FileIOCapability,
+        ]
+    removes  = [
+        BlockbasedCapability,
+        BlockIOCapability,
         ]
 
 class BtrfsSubvolume(Device):
-    requires = [
-        Btrfs,
-        ]
-    provides = [
-        FilesystemCapability,
-        VolumeSnapshotCapability,
-        DeduplicationCapability,
-        CompressionCapability,
-        PosixACLCapability,
-        ]
+    requires = Btrfs
 
 class DrbdConnection(Device):
     requires = [
-        FailureTolerantBlockDeviceCapability,
+        FailureToleranceCapability,
         ]
     provides = [
-        FailureTolerantBlockDeviceCapability,
         MirroredBlockDeviceCapability,
         ]
 
@@ -377,6 +391,9 @@ class ImageFile(Device):
         FilesystemCapability,
         ]
     provides = [
-        FailureTolerantBlockDeviceCapability,
-        FileIOCapability,
+        BlockbasedCapability,
         ]
+    removes  = [
+        FilesystemCapability,
+        ]
+
