@@ -461,6 +461,7 @@ def device_stack_capabilities(devs):
     return _process_stack([ dev() for dev in devs ]).provides
 
 def testdis():
-    return device_stack_capabilities([
-        Disk, Raid5, VolumeGroup, LogicalVolume, XfsDefaultBlocks
-        ])
+    return FileserverProfile.capabilities.eval_(
+        device_stack_capabilities([
+            Disk, Raid5, VolumeGroup, LogicalVolume, XfsSectorBlocks
+            ]))
