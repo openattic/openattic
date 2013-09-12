@@ -115,7 +115,7 @@ class Plugin(object):
             merged_data = parent.data.copy()
             merged_data.update(confobj["data"])
 
-            if "children" in confobj and confobj["children"]:
+            if modelstack:
                 obj = Container(merged_data, model_instance)
                 parent.children.append(obj)
 
