@@ -420,7 +420,7 @@ def device_stack_capabilities(devs, topdev=None):
     # this will fail if:
     # a) nextdev requires topdev to be a certain device, and topdev is the wrong one;
     # b) nextdev requires some capability that topdev does not provide.
-    if not isinstance(nextdev.requires, list) and issubclass(nextdev.requires, Device):
+    if not isinstance(nextdev.requires, list):
         if nextdev.requires != type(topdev):
             raise RequirementNotSatisfied("'%r' requires '%r', got '%r' instead" % (nextdev, nextdev.requires, topdev))
     else:
