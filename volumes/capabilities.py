@@ -404,9 +404,11 @@ class RequirementNotSatisfied(Exception):
 
 
 def device_stack_capabilities(devs):
-    """ When given a stack of devices, returns a single device that expresses
-        the requirements and capabilities of the whole stack.
+    """ When given a stack of devices, returns the capabilities provided by the stack.
     """
+    if not devs:
+        return []
+
     def _process_stack(devs, topdev=None):
         if not devs:
             # the stack is complete.
@@ -456,7 +458,7 @@ def device_stack_capabilities(devs):
         # now see what happens when we put another device on top of our stack.
         return _process_stack(devs[1:], nextdev)
 
-    return _process_stack([ dev() for dev in devs ])
+    return _process_stack([ dev() for dev in devs ]).provides
 
 def testdis():
     return device_stack_capabilities([
