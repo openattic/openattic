@@ -442,9 +442,7 @@ def device_stack_capabilities(devs):
         # ...except for a couple of capabilities that are removed by the next component.
         removecaps = []
         for capability in nextdev.removes:
-            print "checking", capability
             if capability in nextdev.provides:
-                print "removing", capability
                 nextdev.provides.remove(capability)
             # the stack can only remove stuff that it actually requires, so if that is
             # NOT the case, remove it from removes as well.
