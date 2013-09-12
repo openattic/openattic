@@ -401,63 +401,65 @@ class ImageFile(Device):
 class RequirementNotSatisfied(Exception):
     pass
 
-def device_stack_capabilities(devs, topdev=None):
+
+def device_stack_capabilities(devs):
     """ When given a stack of devices, returns a single device that expresses
         the requirements and capabilities of the whole stack.
     """
-    if not devs:
-        # the stack is complete.
-        return topdev
+    def _process_stack(devs, topdev=None):
+        if not devs:
+            # the stack is complete.
+            return topdev
 
-    if topdev is None:
-        return device_stack_capabilities(devs[1:], devs[0])
+        if topdev is None:
+            return _process_stack(devs[1:], devs[0])
 
-    nextdev = devs[0]
-    if not isinstance(nextdev, Device):
-        raise TypeError("need device *instances*, not classes")
+        nextdev = devs[0]
 
-    # check if we can actually build this stack.
-    # this will fail if:
-    # a) nextdev requires topdev to be a certain device, and topdev is the wrong one;
-    # b) nextdev requires some capability that topdev does not provide.
-    if not isinstance(nextdev.requires, list):
-        if nextdev.requires != type(topdev):
-            raise RequirementNotSatisfied("'%r' requires '%r', got '%r' instead" % (nextdev, nextdev.requires, topdev))
-    else:
-        for dependency in nextdev.requires:
-            if dependency not in topdev.provides:
-                raise RequirementNotSatisfied("'%r' requires '%r'" % (nextdev, dependency))
+        # check if we can actually build this stack.
+        # this will fail if:
+        # a) nextdev requires topdev to be a certain device, and topdev is the wrong one;
+        # b) nextdev requires some capability that topdev does not provide.
+        if not isinstance(nextdev.requires, list):
+            if nextdev.requires != type(topdev):
+                raise RequirementNotSatisfied("'%r' requires '%r', got '%r' instead" % (nextdev, nextdev.requires, topdev))
+        else:
+            for dependency in nextdev.requires:
+                if dependency not in topdev.provides:
+                    raise RequirementNotSatisfied("'%r' requires '%r'" % (nextdev, dependency))
 
-    # the dependencies of the complete stack are equal to the depends of the lowest
-    # device, so carry them on
-    nextdev.requires = [cap for cap in topdev.requires]
+        # the dependencies of the complete stack are equal to the depends of the lowest
+        # device, so carry them on
+        nextdev.requires = [cap for cap in topdev.requires]
 
-    # merge provides: the top of the stack will provide everything that the current
-    # top device has to offer + everything it adheres itself...
-    for capability in topdev.provides:
-        if capability not in nextdev.provides:
-            nextdev.provides.append(capability)
+        # merge provides: the top of the stack will provide everything that the current
+        # top device has to offer + everything it adheres itself...
+        for capability in topdev.provides:
+            if capability not in nextdev.provides:
+                nextdev.provides.append(capability)
 
-    # ...except for a couple of capabilities that are removed by the next component.
-    removecaps = []
-    for capability in nextdev.removes:
-        print "checking", capability
-        if capability in nextdev.provides:
-            print "removing", capability
-            nextdev.provides.remove(capability)
-        # the stack can only remove stuff that it actually requires, so if that is
-        # NOT the case, remove it from removes as well.
-        # sadly we can't do that *right* now, because that borks the iteration.
-        if capability not in topdev.requires:
-            removecaps.append(capability)
+        # ...except for a couple of capabilities that are removed by the next component.
+        removecaps = []
+        for capability in nextdev.removes:
+            print "checking", capability
+            if capability in nextdev.provides:
+                print "removing", capability
+                nextdev.provides.remove(capability)
+            # the stack can only remove stuff that it actually requires, so if that is
+            # NOT the case, remove it from removes as well.
+            # sadly we can't do that *right* now, because that borks the iteration.
+            if capability not in topdev.requires:
+                removecaps.append(capability)
 
-    for capability in removecaps:
-        nextdev.removes.remove(capability)
+        for capability in removecaps:
+            nextdev.removes.remove(capability)
 
-    # now see what happens when we put another device on top of our stack.
-    return device_stack_capabilities(devs[1:], nextdev)
+        # now see what happens when we put another device on top of our stack.
+        return _process_stack(devs[1:], nextdev)
+
+    return _process_stack([ dev() for dev in devs ])
 
 def testdis():
     return device_stack_capabilities([
-        Disk(), Raid5(), VolumeGroup(), LogicalVolume(), XfsDefaultBlocks()
+        Disk, Raid5, VolumeGroup, LogicalVolume, XfsDefaultBlocks
         ])
