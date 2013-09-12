@@ -802,19 +802,9 @@ class ConfManager(models.Manager):
     def process_config(self, conf_obj):
         if conf_obj["data"]["scheduling_select"] is not None:
             if conf_obj["data"]["scheduling_select"] == "execute_now":
-                print "Execute Config"
+                snapcore.process_config(conf_obj)
             else:
-                snapconf = self.add_config(conf_obj)
-
-                if snapconf:
-                    for plugin_name, plugin in snapcore.PluginLibrary.plugins.items():
-                        if plugin_name in conf_obj["plugin_data"]:
-                            # call save config function
-                            plugin_inst = plugin()
-                            plugin_inst.save_config(conf_obj["plugin_data"][plugin_name], snapconf)
-                        else:
-                            raise KeyError("plugin data of plugin " + plugin_name + " not found in config dictionary")
-                    return True
+                self.add_config(conf_obj)
         else:
             raise KeyError("scheduling informations not found in config dictionary")
 
