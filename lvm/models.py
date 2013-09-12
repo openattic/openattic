@@ -911,23 +911,11 @@ class SnapshotConf(models.Model):
               conf_obj['moy_' + i.strip()] = 'on'
 
         # restore plugin data
-        plugins = {}
-        for related in self._meta.get_all_related_objects():
-            if hasattr(related.model.objects, "get_available_objects"):
-                related.model.objects.get_available_objects(plugins)
+        conf_obj["plugin_data"] = {}
+        for plugin_name, plugin in snapcore.PluginLibrary.plugins.items():
+            plugin_inst = plugin()
+            conf_obj["plugin_data"].update(plugin_inst.restore_config(self))
 
-        def restore_plugin_config(models, plugin_confs):
-            if len(models) > 0:
-                if hasattr(models[0].objects, "restore_config"):
-                    models[0].objects.restore_config(plugin_confs, self.id)
-                restore_plugin_config(models[1:], plugin_confs)
-
-        plugin_confs = {}
-        for plugin in plugins:
-            plugin_confs[plugin] = {}
-            restore_plugin_config(plugins[plugin], plugin_confs[plugin])
-
-        conf_obj['plugin_data'] = plugin_confs
         return conf_obj
 
 class LogicalVolumeConf(models.Model):
