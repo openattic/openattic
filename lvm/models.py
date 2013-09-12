@@ -342,6 +342,14 @@ class LogicalVolume(models.Model):
     ### PROCESSING METHODS ###
     ##########################
 
+    def do_snapshot(self, name, megs=None, snapshotconf=None):
+        snap = LogicalVolume(snapshot=self)
+        snap.name = name
+        snap.megs = megs if megs is not None else lv.megs * 0.2
+        snap.snapshotconf = snapshotconf
+        snap.save()
+        return snap
+
     @property
     def mountpoint(self):
         if not self.fs:
