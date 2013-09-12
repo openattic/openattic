@@ -49,7 +49,8 @@ Ext.oa.Lio__LogicalLun_Panel = Ext.extend(Ext.oa.ShareGridPanel, {
                 xtype: "label",
                 name:  "lun_name_edit",
                 id: "lun_name_edit",
-                fieldLabel: gettext('Name')
+                fieldLabel: gettext('Name'),
+                text: sm.selections.items[0].data.volumename
               }]
             }]
           }, {
@@ -57,7 +58,33 @@ Ext.oa.Lio__LogicalLun_Panel = Ext.extend(Ext.oa.ShareGridPanel, {
             ref: "lun_edit_tabpanel_host_and_groups",
             title: gettext("Host and Groups"),
             id: "lun_edit_host_and_groups_tab",
-            bodyStyle: 'padding:5px 5px;'
+            items: [{
+              xtype: 'grid',
+              autoScroll: true,
+              ref: 'lio_host_and_groups_tab_form',
+              title: 'Host and Groups',
+              border: false,
+              viewConfig: { forceFit: true },
+              colModel: (function(){
+                var cm = new Ext.grid.ColumnModel({
+                  defaults: {
+                    sortable: true,
+                    viewConfig: { forceFit: true }
+                  },
+                  columns: [{
+                    header: gettext("Map"),
+                    dataIndex: "lio_edit_map"
+                  },{
+                    header: gettext("Name (Host/Group)"),
+                    dataIndex: "lio_edit_name_host_group_"
+                  },{
+                    header: gettext("LUN ID"),
+                    dataIndex: "lio_edit_lun_id"
+                  }]
+                });
+                return cm;
+              }()),
+            }]
           }]
         }]
       });
