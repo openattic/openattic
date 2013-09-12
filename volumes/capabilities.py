@@ -223,8 +223,35 @@ class LegacyVMProfile(VMProfile):
 
 
 class Device(object):
-    requires = []
-    provides = []
+    """ Describes some kind of device, regarding its capabilities.
+
+        ``requires'': Either another device class, or a list of capabilities
+                      required for this device to be set up properly.
+        ``provides'': List of capabilities provided by **this** device (be
+                      careful not to name capabilities of the parents here).
+        ``removes'':  List of capabilities that parent devices have, but the
+                      resulting device does not.
+                      E.g.: File systems are installed on a block device, but
+                      do not provide block devices themselves.
+    """
+    requires = None
+    provides = None
+    removes  = None
+
+    def __init__(self):
+        # Make sure each instance gets its own lists.
+        if self.requires is None:
+            self.requires = []
+        elif isinstance(self.__class__.requires, list):
+            self.requires = [cap for cap in self.__class__.requires]
+        if self.provides is None:
+            self.provides = []
+        else:
+            self.provides = [cap for cap in self.__class__.provides]
+        if self.removes  is None:
+            self.removes  = []
+        else:
+            self.removes  = [cap for cap in self.__class__.removes ]
 
 class Disk(Device):
     requires = []
