@@ -2,12 +2,38 @@
 # kate: space-indent on; indent-width 4; replace-tabs on;
 # vim: tabstop=4 expandtab shiftwidth=4 softtabstop=4
 
+from datetime import datetime
 from django.db import models
 
 from ifconfig.models import Host
 
 """ 
 """
+
+
+def process_config(conf_dict):
+    if len(conf_dict["prescript"]) > 0:
+        invoke(shlex.split(conf_dict["prescript"]))
+
+    targets = []
+    for plugin_name, plugin in PluginLibrary.plugins.items():
+        plugin_inst = plugin()
+        container = plugin_inst.create_items(conf_dict["plugin_data"][plugin_name])
+        for target in container.get_targets():
+            print target
+            targets.append(target)
+            target.do_snapshot()
+
+    from lvm.models import LogicalVolume
+    now = datetime.now().strftime("%Y%m%d-%H%M%S")
+    for volume in LogicalVolume.objects.filter(id__in=conf_dict["volumes"]):
+        volume.do_snapshot("%s_snapshot_%s" % (volume.name, now))
+
+    for target in targets:
+        target.delete_snapshot()
+
+    if len(conf_dict["postscript"]) > 0:
+        invoke(shlex.split(conf_dict["postscript"]))
 
 class Container(object):
     def __init__(self, data, model_instance):
