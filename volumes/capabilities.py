@@ -320,6 +320,7 @@ class XfsDefaultBlocks(Device):
     removes  = [
         BlockbasedCapability,
         BlockIOCapability,
+        ShrinkCapability,
         ]
 
 class XfsSectorBlocks(Device):
