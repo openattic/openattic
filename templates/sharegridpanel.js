@@ -118,6 +118,8 @@ Ext.oa.ShareGridPanel = Ext.extend(Ext.grid.GridPanel, {
   texts: {},
   window: {},
   allowEdit: true,
+  allowAdd: true,
+  allowDelete: true,
   filterParams: false,
   filterSearchParam: null,
 
@@ -274,21 +276,23 @@ Ext.oa.ShareGridPanel = Ext.extend(Ext.grid.GridPanel, {
         self.store.reload();
       }
     });
-    if( this.form !== null ){
-      this.buttons.push({
-        text: self.texts.add,
-        icon: MEDIA_URL + "/icons2/16x16/actions/add.png",
-        scope: self,
-        handler: function(){
-          self.showEditWindow({
-            title: self.texts.add,
-            texts: {
-              cancel: self.texts.cancel,
-              submit: self.texts.add
-            }
-          });
-        }
-      });
+    if( this.allowAdd ){
+      if( this.form !== null ){
+        this.buttons.push({
+          text: self.texts.add,
+          icon: MEDIA_URL + "/icons2/16x16/actions/add.png",
+          scope: self,
+          handler: function(){
+            self.showEditWindow({
+              title: self.texts.add,
+              texts: {
+                cancel: self.texts.cancel,
+                submit: self.texts.add
+              }
+            });
+          }
+        });
+      }
       if( this.allowEdit ){
         this.buttons.push({
           text:  self.texts.edit,
@@ -297,12 +301,14 @@ Ext.oa.ShareGridPanel = Ext.extend(Ext.grid.GridPanel, {
           handler: self.editFunction.createDelegate(self, [self])
         });
       }
-      this.buttons.push({
-        text: self.texts.remove,
-        icon: MEDIA_URL + "/icons2/16x16/actions/remove.png",
-        handler: this.deleteFunction,
-        scope: self
-      });
+      if( this.allowDelete ){
+        this.buttons.push({
+          text: self.texts.remove,
+          icon: MEDIA_URL + "/icons2/16x16/actions/remove.png",
+          handler: this.deleteFunction,
+          scope: self
+        });
+      }
     }
     Ext.oa.ShareGridPanel.superclass.initComponent.apply(this, arguments);
   },
