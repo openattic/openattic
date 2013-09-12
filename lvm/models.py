@@ -38,6 +38,9 @@ from lvm.conf        import settings as lvm_settings
 from cron.models     import Cronjob
 from lvm             import snapcore
 
+from volumes.decorators import BlockVolume
+from volumes            import capabilities
+
 def validate_vg_name(value):
     from django.core.exceptions import ValidationError
     if value in ('.', '..'):
@@ -144,6 +147,7 @@ class VolumeGroup(models.Model):
         return float( self.lvm_info["LVM2_VG_FREE"] )
 
 
+@BlockVolume
 class LogicalVolume(models.Model):
     """ Represents a LVM Logical Volume and offers management functions.
 
@@ -542,6 +546,33 @@ class LogicalVolume(models.Model):
         for snapshot in orig.snapshot_set.all():
             snapshot.mount()
         orig.mount()
+
+
+class VolumeGroupDevice(capabilities.Device):
+    model = VolumeGroup
+    requires = [
+        capabilities.BlockbasedCapability,
+        capabilities.FailureToleranceCapability,
+        ]
+    provides = [
+        capabilities.SubvolumesCapability,
+        capabilities.SubvolumeSnapshotCapability,
+        ]
+
+class LogicalVolumeDevice(capabilities.Device):
+    model = LogicalVolume
+    requires = VolumeGroupDevice
+    provides = [
+        capabilities.GrowCapability,
+        capabilities.ShrinkCapability,
+        ]
+    removes  = [
+        capabilities.SubvolumesCapability,
+        capabilities.SubvolumeSnapshotCapability,
+        ]
+
+
+
 
 
 class LVChainedModule(models.Model):

@@ -222,6 +222,17 @@ class LegacyVMProfile(VMProfile):
     capabilities = VMProfile.capabilities * SectorBlocksCapability
 
 
+class DeviceMeta(type):
+    devices = []
+    modeldevices = {}
+
+    def __init__( cls, name, bases, attrs ):
+        type.__init__( cls, name, bases, attrs )
+        if name != "Device":
+            DeviceMeta.devices.append(cls)
+        if cls.model is not None:
+            DeviceMeta.modeldevices[cls.model] = cls
+
 class Device(object):
     """ Describes some kind of device, regarding its capabilities.
 
@@ -234,9 +245,12 @@ class Device(object):
                       E.g.: File systems are installed on a block device, but
                       do not provide block devices themselves.
     """
+    __metaclass__ = DeviceMeta
+
     requires = None
     provides = None
     removes  = None
+    model    = None
 
     def __init__(self):
         # Make sure each instance gets its own lists.
@@ -266,118 +280,6 @@ class Raid5(Device):
     provides = [
         FailureToleranceCapability,
         ]
-
-class VolumeGroup(Device):
-    requires = [
-        BlockbasedCapability,
-        FailureToleranceCapability,
-        ]
-    provides = [
-        SubvolumesCapability,
-        SubvolumeSnapshotCapability,
-        ]
-
-class LogicalVolume(Device):
-    requires = VolumeGroup
-    provides = [
-        GrowCapability,
-        ShrinkCapability,
-        ]
-    removes  = [
-        SubvolumesCapability,
-        SubvolumeSnapshotCapability,
-        ]
-
-class ExtFS(Device):
-    requires = [
-        BlockbasedCapability,
-        FailureToleranceCapability,
-        ]
-    provides = [
-        FilesystemCapability,
-        PosixACLCapability,
-        GrowCapability,
-        ShrinkCapability,
-        FileIOCapability,
-        ]
-    removes  = [
-        BlockbasedCapability,
-        BlockIOCapability,
-        ]
-
-class XfsDefaultBlocks(Device):
-    requires = [
-        BlockbasedCapability,
-        FailureToleranceCapability,
-        ]
-    provides = [
-        FilesystemCapability,
-        PosixACLCapability,
-        GrowCapability,
-        ParallelIOCapability,
-        FileIOCapability,
-        ]
-    removes  = [
-        BlockbasedCapability,
-        BlockIOCapability,
-        ShrinkCapability,
-        ]
-
-class XfsSectorBlocks(Device):
-    requires = XfsDefaultBlocks.requires
-    provides = XfsDefaultBlocks.provides + [SectorBlocksCapability]
-    removes  = XfsDefaultBlocks.removes
-
-class Zpool(Device):
-    requires = [
-        BlockbasedCapability,
-        ]
-    provides = [
-        FailureToleranceCapability,
-        FilesystemCapability,
-        VolumeSnapshotCapability,
-        SubvolumesCapability,
-        SubvolumeSnapshotCapability,
-        FileSnapshotCapability,
-        GrowCapability,
-        ShrinkCapability,
-        DeduplicationCapability,
-        CompressionCapability,
-        FileIOCapability,
-        ]
-    removes  = [
-        BlockbasedCapability,
-        BlockIOCapability,
-        ]
-
-class Zfs(Device):
-    requires = Zpool
-
-class Btrfs(Device):
-    requires = [
-        BlockbasedCapability,
-        FailureToleranceCapability,
-        ]
-    provides = [
-        FilesystemCapability,
-        VolumeSnapshotCapability,
-        SubvolumesCapability,
-        SubvolumeSnapshotCapability,
-        FileSnapshotCapability,
-        GrowCapability,
-        ShrinkCapability,
-        DeduplicationCapability,
-        CompressionCapability,
-        PosixACLCapability,
-        FileIOCapability,
-        ]
-    removes  = [
-        BlockbasedCapability,
-        BlockIOCapability,
-        ]
-
-class BtrfsSubvolume(Device):
-    requires = Btrfs
 
 class DrbdConnection(Device):
     requires = [
@@ -461,6 +363,9 @@ def device_stack_capabilities(devs):
     return _process_stack([ dev() for dev in devs ]).provides
 
 def testdis():
-    return device_stack_capabilities([
-        Disk, Raid5, VolumeGroup, LogicalVolume, XfsDefaultBlocks
-        ])
+    from lvm.models import VolumeGroupDevice, LogicalVolumeDevice
+    from lvm.filesystems import XfsSectorBlocksDevice
+    return FileserverProfile.capabilities.eval_(
+        device_stack_capabilities([
+            Disk, Raid5, VolumeGroupDevice, LogicalVolumeDevice, XfsSectorBlocksDevice
+            ]))

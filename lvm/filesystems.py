@@ -22,6 +22,8 @@ from systemd  import dbus_to_python
 from lvm.conf import settings as lvm_settings
 from lvm.blockdevices import UnsupportedRAID, get_raid_params
 
+from volumes import capabilities
+
 class FileSystem(object):
     """ Base class from which filesystem objects should be derived.
 
@@ -234,6 +236,27 @@ class Ext4(Ext2):
         return "ext4 filesystem data" in typestring
 
 
+class ExtFSDevice(capabilities.Device):
+    model = Ext4
+    requires = [
+        capabilities.BlockbasedCapability,
+        capabilities.FailureToleranceCapability,
+        ]
+    provides = [
+        capabilities.FilesystemCapability,
+        capabilities.PosixACLCapability,
+        capabilities.GrowCapability,
+        capabilities.ShrinkCapability,
+        capabilities.FileIOCapability,
+        ]
+    removes  = [
+        capabilities.BlockbasedCapability,
+        capabilities.BlockIOCapability,
+        ]
+
+
+
+
 class Zfs(FileSystem):
     """ Handler for ZFS. """
     name = "zfs"
@@ -358,6 +381,35 @@ class Zfs(FileSystem):
         return self._pooloptions
 
 
+class ZpoolDevice(capabilities.Device):
+    model = Zfs
+    requires = [
+        capabilities.BlockbasedCapability,
+        ]
+    provides = [
+        capabilities.FailureToleranceCapability,
+        capabilities.FilesystemCapability,
+        capabilities.VolumeSnapshotCapability,
+        capabilities.SubvolumesCapability,
+        capabilities.SubvolumeSnapshotCapability,
+        capabilities.FileSnapshotCapability,
+        capabilities.GrowCapability,
+        capabilities.ShrinkCapability,
+        capabilities.DeduplicationCapability,
+        capabilities.CompressionCapability,
+        capabilities.FileIOCapability,
+        ]
+    removes  = [
+        capabilities.BlockbasedCapability,
+        capabilities.BlockIOCapability,
+        ]
+
+class ZfsDevice(capabilities.Device):
+    requires = ZpoolDevice
+
+
+
+
 class Xfs(FileSystem):
     """ Handler for NTFS-3g. """
     name = "xfs"
@@ -429,6 +481,30 @@ class Xfs(FileSystem):
     def check_type(cls, typestring):
         return "SGI XFS filesystem data" in typestring
 
+class XfsDefaultBlocksDevice(capabilities.Device):
+    requires = [
+        capabilities.BlockbasedCapability,
+        capabilities.FailureToleranceCapability,
+        ]
+    provides = [
+        capabilities.FilesystemCapability,
+        capabilities.PosixACLCapability,
+        capabilities.GrowCapability,
+        capabilities.ParallelIOCapability,
+        capabilities.FileIOCapability,
+        ]
+    removes  = [
+        capabilities.BlockbasedCapability,
+        capabilities.BlockIOCapability,
+        capabilities.ShrinkCapability,
+        ]
+
+class XfsSectorBlocksDevice(capabilities.Device):
+    requires = XfsDefaultBlocksDevice.requires
+    provides = XfsDefaultBlocksDevice.provides + [capabilities.SectorBlocksCapability]
+    removes  = XfsDefaultBlocksDevice.removes
+
+
 
 class Btrfs(FileSystem):
     name = "btrfs"
@@ -475,6 +551,34 @@ class Btrfs(FileSystem):
 
     def delete_subvolume(self, subvolume):
         self._lvm.btrfs_delete_subvolume(subvolume.path)
+
+class BtrfsDevice(capabilities.Device):
+    requires = [
+        capabilities.BlockbasedCapability,
+        capabilities.FailureToleranceCapability,
+        ]
+    provides = [
+        capabilities.FilesystemCapability,
+        capabilities.VolumeSnapshotCapability,
+        capabilities.SubvolumesCapability,
+        capabilities.SubvolumeSnapshotCapability,
+        capabilities.FileSnapshotCapability,
+        capabilities.GrowCapability,
+        capabilities.ShrinkCapability,
+        capabilities.DeduplicationCapability,
+        capabilities.CompressionCapability,
+        capabilities.PosixACLCapability,
+        capabilities.FileIOCapability,
+        ]
+    removes  = [
+        capabilities.BlockbasedCapability,
+        capabilities.BlockIOCapability,
+        ]
+
+class BtrfsSubvolume(capabilities.Device):
+    requires = BtrfsDevice
+
+
 
 
 class Ocfs2(FileSystem):
