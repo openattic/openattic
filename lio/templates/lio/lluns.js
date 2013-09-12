@@ -15,12 +15,59 @@ Ext.namespace("Ext.oa");
 
 Ext.oa.Lio__LogicalLun_Panel = Ext.extend(Ext.oa.ShareGridPanel, {
   api: lio__LogicalLUN,
-  texts: {
-    add:     gettext('Add LUN'),
-    remove:  gettext('Delete LUN'),
-    confirm: gettext('Do you really want to delete LUN %s?')
-  },
+  buttons: [{
+    text: 'Edit LUN',
+    icon: MEDIA_URL + "/icons2/16x16/actions/edit-redo.png",
+    handler: function(self){
+      var sm = self.scope.getSelectionModel();
+      if (sm.selections.items.length === 0){
+        Ext.Msg.alert ("Warning","Please select a LUN you want to edit");
+        return;
+      };
+      var addwin = new Ext.Window({
+        title: gettext('Edit LUN'),
+        layout: "fit",
+        height: 140,
+        width: 500,
+        items: [{
+          xtype: "tabpanel",
+          activeTab: 0,
+          border: false,
+          id:    "lio_logicallun_edit_tabpanel_inst",
+          items: [{
+            layout: "fit",
+            ref: "lun_edit_tabpanel_overview",
+            title: gettext("Overview"),
+            id: "lun_edit_overview_tab",
+            bodyStyle: 'padding:5px 5px;',
+            items: [{
+              xtype: 'fieldset',
+              title: gettext('LUN Details'),
+              layout: 'form',
+              viewConfig: { forceFit: true },
+              items: [{
+                xtype: "label",
+                name:  "lun_name_edit",
+                id: "lun_name_edit",
+                fieldLabel: gettext('Name')
+              }]
+            }]
+          }, {
+            layout: "fit",
+            ref: "lun_edit_tabpanel_host_and_groups",
+            title: gettext("Host and Groups"),
+            id: "lun_edit_host_and_groups_tab",
+            bodyStyle: 'padding:5px 5px;'
+          }]
+        }]
+      });
+      addwin.show();
+    }
+  }],
   allowEdit: false,
+  allowDelete: false,
+  allowAdd: false,
+
   store: {
     fields: [{
       name: "volumename",
@@ -33,6 +80,22 @@ Ext.oa.Lio__LogicalLun_Panel = Ext.extend(Ext.oa.ShareGridPanel, {
     width: 200,
     dataIndex: "volumename"
   }, {
+    header: gettext('Group'),
+    width:  50,
+    dataIndex: "lun_group"
+  }, {
+    header: gettext('Status'),
+    width:  50,
+    dataIndex: "lun_status"
+  }, {
+    header: gettext('Size'),
+    width:  50,
+    dataIndex: "lun_size"
+  }, {
+    header: gettext('Protokoll'),
+    width:  50,
+    dataIndex: "lun_protokoll"
+  }, {
     header: gettext('LUN ID'),
     width:  50,
     dataIndex: "lun_id"
@@ -42,6 +105,7 @@ Ext.oa.Lio__LogicalLun_Panel = Ext.extend(Ext.oa.ShareGridPanel, {
       xtype: 'fieldset',
       title: 'LUN',
       layout: 'form',
+      ref: 'lio_lun_column_form',
       items: [{
         xtype: 'volumefield',
         fieldLabel: gettext('Volume'),
@@ -65,21 +129,6 @@ Ext.oa.Lio__Panel = Ext.extend(Ext.Panel, {
   initComponent: function(){
     "use strict";
 
-    var targetstore = new Ext.data.JsonStore({
-      id: "targetstore",
-      fields: ["app", "obj", "id", "__unicode__"]
-    });
-
-    var hostgroupstore = new Ext.data.JsonStore({
-      id: "hostgroupstore",
-      fields: ["app", "obj", "id", "__unicode__"]
-    });
-
-    var hoststore = new Ext.data.JsonStore({
-      id: "hoststore",
-      fields: ["app", "obj", "id", "__unicode__"]
-    });
-
     Ext.apply(this, Ext.apply(this.initialConfig, {
       id: "lio__panel_inst",
       title: gettext('LUNs'),
@@ -89,417 +138,67 @@ Ext.oa.Lio__Panel = Ext.extend(Ext.Panel, {
         id:    "lio__logicallun_panel_inst",
         region: "center",
         listeners: {
-          cellclick: function (self, rowIndex, colIndex, evt ){
-            var record = self.getStore().getAt(rowIndex);
-            targetstore.llun_id = record.data.id;
-            targetstore.loadData(record.json.targets);
-            hostgroupstore.llun_id = record.data.id;
-            hostgroupstore.loadData(record.json.hostgroups);
-            hoststore.llun_id = record.data.id;
-            hoststore.loadData(record.json.hosts);
+          cellclick: function( self, rowIndex, colIndex, evt ){
+            Ext.getCmp("lun_name").setText(self.store.getAt(rowIndex).data["volumename"])
           }
-        },
-      }, {
-        layout: "border",
+        }
+      },{
+        xtype: "tabpanel",
         region: "south",
-        height: (Ext.lib.Dom.getViewHeight() - 100) / 2,
-        id:    "lio__logicallun_south_panel_inst",
-        split: true,
+        activeTab: 0,
+        border: false,
+        height: (Ext.lib.Dom.getViewHeight() - 100) / 3,
+        id:    "lio_logicallun_south_tabpanel_inst",
         items: [{
-          region: "west",
-          width: 200,
-          title: "Targets",
-          id:    "lio__logicallun_targets_panel_inst",
-          split: true,
-          xtype: 'grid',
-          viewConfig: { forceFit: true },
-          store: targetstore,
-          colModel: new Ext.grid.ColumnModel({
-            defaults: {
-              sortable: true
-            },
-            columns: [{
-              header: "Target",
-              dataIndex: "__unicode__"
+          layout: "fit",
+          ref: "lun_tabpanel_description",
+          title: gettext("Details"),
+          id: "lun_details_tab",
+          bodyStyle: 'padding:5px 5px;',
+          items: [{
+            xtype: 'fieldset',
+            title: gettext('Infos'),
+            layout: 'form',
+            viewConfig: { forceFit: true },
+            items: [{
+              xtype: "label",
+              name:  "lun_name",
+              id: "lun_name",
+              fieldLabel: gettext('Name'),
+            }, {
+              xtype: "label",
+              name:  "lun_path",
+              fieldLabel: gettext('Path'),
+            }, {
+              xtype: "label",
+              name:  "lun_size",
+              fieldLabel: gettext('Size'),
+            }, {
+              xtype: "label",
+              name:  "lun_status",
+              fieldLabel: gettext('Status'),
+            }, {
+              xtype: "label",
+              name:  "lun_descpription",
+              fieldLabel: gettext('Description')
             }]
-          }),
-          enableDragDrop: true,
-          ddGroup: "llun_target",
-          buttons: [{
-            text: gettext('Targets'),
-            icon: MEDIA_URL + "/icons2/16x16/actions/gtk-execute.png",
-            handler: function(){
-              var addwin = new Ext.Window({
-                x: Ext.lib.Dom.getViewWidth() - 650,
-                y: Ext.lib.Dom.getViewHeight() - 350,
-                height: 300,
-                width: 600,
-                frame: true,
-                layout: 'fit',
-                title: 'Targets',
-                items: {
-                  xtype: 'sharegridpanel',
-                  api: lio__Target,
-                  ddGroup: "llun_target",
-                  enableDrag: true,
-                  allowEdit: false,
-                  store: {
-                    fields: ["name", {
-                      name: "hostname",
-                      mapping: "host",
-                      convert: toUnicode
-                    }, "wwn", "__unicode__", "id"]
-                  },
-                  texts: {
-                    add:     gettext('Add Target'),
-                    edit:    gettext('Edit Target'),
-                    remove:  gettext('Delete Target'),
-                    confirm: gettext('Do you really want to delete Target %s?')
-                  },
-                  columns: [{
-                    header: "Name",
-                    dataIndex: "name"
-                  }, {
-                    header: "Host",
-                    dataIndex: "hostname"
-                  }, {
-                    header: "WWN",
-                    dataIndex: "wwn"
-                  }],
-                  form: {
-                    items: [{
-                      xtype: 'fieldset',
-                      title: 'Target',
-                      layout: 'form',
-                      items: [{
-                        xtype: 'textfield',
-                        fieldLabel: gettext('Name'),
-                        allowBlank: false,
-                        name: "name"
-                      }, {
-                        xtype:      'combo',
-                        fieldLabel: gettext('Host'),
-                        allowBlank: true,
-                        hiddenName: 'host',
-                        store: {
-                          xtype: "directstore",
-                          fields: ["id", "name"],
-                          directFn: ifconfig__Host.all
-                        },
-                        typeAhead:     true,
-                        triggerAction: 'all',
-                        emptyText:     gettext('Select...'),
-                        selectOnFocus: true,
-                        displayField:  'name',
-                        valueField:    'id',
-                        ref:           'hostfield',
-                        listeners: {
-                          afterrender: function(self){
-                            self.store.load();
-                          }
-                        }
-                      }, {
-                        fieldLabel: gettext('Type'),
-                        hiddenName: 'type',
-                        xtype:      'combo',
-                        store: [ [ 'iscsi',  gettext('iSCSI')  ], [ 'qla2xxx', gettext('FC') ] ],
-                        typeAhead:     true,
-                        triggerAction: 'all',
-                        emptyText:     'Select...',
-                        selectOnFocus: true,
-                        value: "iscsi"
-                      }, {
-                        xtype: 'textfield',
-                        fieldLabel: gettext('WWN or IQN'),
-                        allowBlank: false,
-                        name: "wwn"
-                      }]
-                    }]
-                  }
-                }
-              });
-              addwin.show();
-            }
-          }, {
-            text: gettext("Remove Target"),
-            handler: function(){
-              Ext.getCmp("lio__logicallun_targets_panel_inst").removeSelected();
-            }
-          }],
-          keys: [{
-            key: [Ext.EventObject.DELETE],
-            handler: function(self){
-              Ext.getCmp("lio__logicallun_targets_panel_inst").removeSelected();
-            }
-          }],
-          removeSelected: function(){
-            var self = this;
-            var sm = self.getSelectionModel();
-            var sel;
-            if( sm.hasSelection() ){
-              sel = sm.getSelected();
-              lio__LogicalLUN.set(self.store.llun_id, {"targets__remove": [sel.data]}, function(provider, response){
-                self.store.remove(sel);
-              });
-            }
-          },
-          listeners: {
-            afterrender: function(self){
-              var droptarget_el =  self.getView().scroller.dom;
-              var droptarget = new Ext.dd.DropTarget(droptarget_el, {
-                ddGroup    : 'llun_target',
-                notifyDrop : function(ddSource, e, data){
-                  var records =  ddSource.dragData.selections;
-                  var i;
-                  var addrecords = [];
-                  for( i = 0; i < records.length; i++ ){
-                    if( self.store.findExact("id", records[i].data.id) === -1 ){
-                      addrecords.push({
-                        'app': 'lio',
-                        'obj': 'Target',
-                        'id':  records[i].data.id,
-                        '__unicode__': records[i].data.__unicode__
-                      });
-                    }
-                  }
-                  if(addrecords.length > 0){
-                    lio__LogicalLUN.set(self.store.llun_id, {"targets__add": addrecords}, function(provider, response){
-                      for( i = 0; i < addrecords.length; i++ ){
-                        self.store.add([new Ext.data.Record(addrecords[i])]);
-                      }
-                    });
-                  }
-                  return true;
-                }
-              });
-            }
-          }
+          }] 
         }, {
-          region: "center",
-          title: "Host Groups",
-          id:    "lio__logicallun_hostgroups_panel_inst",
-          xtype: 'grid',
+          ref: "lun_tabpanel_permissions",
+          title: gettext("Mapped to Host/Group"),
+          id: "lun_permissions_tab",
           viewConfig: { forceFit: true },
-          store: hostgroupstore,
-          colModel: new Ext.grid.ColumnModel({
-            defaults: {
-              sortable: true
-            },
-            columns: [{
-              header: "Host Group",
-              dataIndex: "__unicode__"
-            }]
-          }),
-          enableDragDrop: true,
-          ddGroup: "llun_hostgroup",
-          buttons: [{
-            text: gettext('Host Groups'),
-            icon: MEDIA_URL + "/icons2/16x16/actions/gtk-execute.png",
-            handler: function(){
-              var addwin = new Ext.Window({
-                x: Ext.lib.Dom.getViewWidth() - 350,
-                y: Ext.lib.Dom.getViewHeight() - 350,
-                height: 300,
-                width: 300,
-                frame: true,
-                layout: 'fit',
-                title: 'Host Groups',
-                items: {
-                  xtype: 'grid',
-                  ddGroup: "llun_hostgroup",
-                  enableDrag: true,
-                  viewConfig: { forceFit: true },
-                  store: new Ext.data.DirectStore({
-                    fields: ["id", "__unicode__"],
-                    directFn: ifconfig__HostGroup.ids,
-                    autoLoad: true
-                  }),
-                  colModel: new Ext.grid.ColumnModel({
-                    defaults: {
-                      sortable: true
-                    },
-                    columns: [{
-                      header: "Name",
-                      dataIndex: "__unicode__"
-                    }]
-                  })
-                }
-              });
-              addwin.show();
-            }
-          }, {
-            text: gettext("Remove Host group"),
-            handler: function(){
-              Ext.getCmp("lio__logicallun_hostgroups_panel_inst").removeSelected();
-            }
-          }],
-          keys: [{
-            key: [Ext.EventObject.DELETE],
-            handler: function(self){
-              Ext.getCmp("lio__logicallun_hostgroups_panel_inst").removeSelected();
-            }
-          }],
-          removeSelected: function(){
-            var self = this;
-            var sm = self.getSelectionModel();
-            var sel;
-            if( sm.hasSelection() ){
-              sel = sm.getSelected();
-              lio__LogicalLUN.set(self.store.llun_id, {"hostgroups__remove": [sel.data]}, function(provider, response){
-                self.store.remove(sel);
-              });
-            }
-          },
-          listeners: {
-            afterrender: function(self){
-              var droptarget_el =  self.getView().scroller.dom;
-              var droptarget = new Ext.dd.DropTarget(droptarget_el, {
-                ddGroup    : 'llun_hostgroup',
-                notifyDrop : function(ddSource, e, data){
-                  var records =  ddSource.dragData.selections;
-                  var i;
-                  var addrecords = [];
-                  for( i = 0; i < records.length; i++ ){
-                    if( self.store.findExact("id", records[i].data.id) === -1 ){
-                      addrecords.push({
-                        'app': 'ifconfig',
-                        'obj': 'HostGroup',
-                        'id':  records[i].data.id,
-                        '__unicode__': records[i].data.__unicode__
-                      });
-                    }
-                  }
-                  if(addrecords.length > 0){
-                    lio__LogicalLUN.set(self.store.llun_id, {"hostgroups__add": addrecords}, function(provider, response){
-                      for( i = 0; i < addrecords.length; i++ ){
-                        self.store.add([new Ext.data.Record(addrecords[i])]);
-                      }
-                    });
-                  }
-                  return true;
-                }
-              });
-            }
-          }
+          html: "test"
         }, {
-          region: "east",
-          title: "Hosts",
-          id:    "lio__logicallun_hosts_panel_inst",
-          width: 200,
-          split: true,
-          xtype: 'grid',
+          ref: "lun_tabpanel_shared_hosts",
+          title: gettext("Interfaces"),
+          id: "lun_shared_hosts_tab",
           viewConfig: { forceFit: true },
-          store: hoststore,
-          colModel: new Ext.grid.ColumnModel({
-            defaults: {
-              sortable: true
-            },
-            columns: [{
-              header: "Host",
-              dataIndex: "__unicode__"
-            }]
-          }),
-          enableDragDrop: true,
-          ddGroup: "llun_host",
-          buttons: [{
-            text: gettext('Hosts'),
-            icon: MEDIA_URL + "/icons2/16x16/actions/gtk-execute.png",
-            handler: function(){
-              var addwin = new Ext.Window({
-                x: Ext.lib.Dom.getViewWidth() - 650,
-                y: Ext.lib.Dom.getViewHeight() - 350,
-                height: 300,
-                width: 300,
-                frame: true,
-                layout: 'fit',
-                title: 'Hosts',
-                items: {
-                  xtype: 'grid',
-                  ddGroup: "llun_host",
-                  enableDrag: true,
-                  viewConfig: { forceFit: true },
-                  store: new Ext.data.DirectStore({
-                    fields: ["id", "__unicode__"],
-                    directFn: ifconfig__Host.ids,
-                    autoLoad: true
-                  }),
-                  colModel: new Ext.grid.ColumnModel({
-                    defaults: {
-                      sortable: true
-                    },
-                    columns: [{
-                      header: "Name",
-                      dataIndex: "__unicode__"
-                    }]
-                  })
-                }
-              });
-              addwin.show();
-            }
-          }, {
-            text: gettext("Remove Host"),
-            handler: function(){
-              Ext.getCmp("lio__logicallun_hosts_panel_inst").removeSelected();
-            }
-          }],
-          keys: [{
-            key: [Ext.EventObject.DELETE],
-            handler: function(self){
-              Ext.getCmp("lio__logicallun_hosts_panel_inst").removeSelected();
-            }
-          }],
-          removeSelected: function(){
-            var self = this;
-            var sm = self.getSelectionModel();
-            var sel;
-            if( sm.hasSelection() ){
-              sel = sm.getSelected();
-              lio__LogicalLUN.set(self.store.llun_id, {"hosts__remove": [sel.data]}, function(provider, response){
-                self.store.remove(sel);
-              });
-            }
-          },
-          listeners: {
-            afterrender: function(self){
-              var droptarget_el =  self.getView().scroller.dom;
-              var droptarget = new Ext.dd.DropTarget(droptarget_el, {
-                ddGroup    : 'llun_host',
-                notifyDrop : function(ddSource, e, data){
-                  var records =  ddSource.dragData.selections;
-                  var i;
-                  var addrecords = [];
-                  for( i = 0; i < records.length; i++ ){
-                    if( self.store.findExact("id", records[i].data.id) === -1 ){
-                      addrecords.push({
-                        'app': 'ifconfig',
-                        'obj': 'Host',
-                        'id':  records[i].data.id,
-                        '__unicode__': records[i].data.__unicode__
-                      });
-                    }
-                  }
-                  if(addrecords.length > 0){
-                    lio__LogicalLUN.set(self.store.llun_id, {"hosts__add": addrecords}, function(provider, response){
-                      for( i = 0; i < addrecords.length; i++ ){
-                        self.store.add([new Ext.data.Record(addrecords[i])]);
-                      }
-                    });
-                  }
-                  return true;
-                }
-              });
-            }
-          }
-        }]
+          html: "test"
+        }]        
       }]
     }));
     Ext.oa.Lio__Panel.superclass.initComponent.apply(this, arguments);
-  },
-  refresh: function(){
-    Ext.getCmp("lio__logicallun_panel_inst").refresh();
-    Ext.StoreMgr.get("targetstore").removeAll();
-    Ext.StoreMgr.get("hostgroupstore").removeAll();
-    Ext.StoreMgr.get("hoststore").removeAll();
   }
 });
 
@@ -513,7 +212,7 @@ Ext.oa.Lio__LogicalLun_Module = Ext.extend(Object, {
     tree.appendToRootNodeById("menu_luns", {
       text: gettext('LUNs'),
       leaf: true,
-      icon: MEDIA_URL + '/icons2/22x22/apps/nfs.png',
+      icon: MEDIA_URL + '/icons2/22x22/apps/disk_use.png',
       panel: 'lio__panel_inst',
       href: '#'
     });
