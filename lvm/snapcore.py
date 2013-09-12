@@ -11,8 +11,8 @@ from ifconfig.models import Host
 
 class Container(object):
     def __init__(self, data, model_instance):
-        self.data     = data
-        self.children = []
+        self.data           = data
+        self.children       = []
         self.model_instance = model_instance
 
     def get_targets(self):
@@ -26,8 +26,17 @@ class Container(object):
 
 class Target(object):
     def __init__(self, data, model_instance):
-        self.data     = data
+        self.data           = data
         self.model_instance = model_instance
+        self.snapshot_state = None
+
+    def do_snapshot(self):
+        self.snapshot_state = self.model_instance.do_snapshot(self.data)
+
+    def delete_snapshot(self):
+        print self.snapshot_state
+        if self.snapshot_state is not None:
+            self.model_instance.delete_snapshot(self.snapshot_state)
 
 class PluginLibrary(type):
     """ Meta class that keeps a library of defined plugins. """
