@@ -843,20 +843,27 @@ class ConfManager(models.Manager):
             minute = data['minute'] if 'minute' in data else ''
             day_of_month = data['day_of_month'] if 'day_of_month' in data else ''
 
-        if True: #später or jobmäßigundso:
-            jobconf = LVSnapshotJob(
-                start_time=startdate,
-                end_time=enddate,
-                is_active=data["is_active"],
-                conf=snapconf,
-                host=Host.objects.get_current(),
-                user="root",
-                minute=minute,
-                hour=','.join(time_configs["h"]),
-                domonth=day_of_month,
-                month=','.join(time_configs["moy"]),
-                doweek=','.join(time_configs["dow"]))
-            jobconf.save()
+        jobconf = LVSnapshotJob(
+            start_time=startdate,
+            end_time=enddate,
+            is_active=data["is_active"],
+            conf=snapconf,
+            host=Host.objects.get_current(),
+            user="root",
+            minute=minute,
+            hour=','.join(time_configs["h"]),
+            domonth=day_of_month,
+            month=','.join(time_configs["moy"]),
+            doweek=','.join(time_configs["dow"]))
+        jobconf.save()
+
+        for plugin_name, plugin in snapcore.PluginLibrary.plugins.items():
+            if plugin_name in conf_obj["plugin_data"]:
+                # call save config function
+                plugin_inst = plugin()
+                plugin_inst.save_config(conf_obj["plugin_data"][plugin_name], snapconf)
+            else:
+                raise KeyError("plugin data of plugin " + plugin_name + " not found in config dictionary")
 
         volumes = conf_obj["volumes"]
         for volume in volumes:
