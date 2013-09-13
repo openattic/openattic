@@ -38,7 +38,7 @@ from lvm.conf        import settings as lvm_settings
 from cron.models     import Cronjob
 from lvm             import snapcore
 
-from volumes.decorators import BlockVolume
+from volumes.decorators import BlockVolume, FileSystemVolume
 from volumes            import capabilities
 
 def validate_vg_name(value):
@@ -625,6 +625,7 @@ class LVChainedModule(models.Model):
         models.Model.delete(self)
 
 
+@FileSystemVolume
 class ZfsSubvolume(models.Model):
     volume      = models.ForeignKey(LogicalVolume)
     volname     = models.CharField(max_length=50)
@@ -751,6 +752,7 @@ class ZfsSnapshot(models.Model):
         self.volume.fs.rollback_snapshot(self)
 
 
+@FileSystemVolume
 class BtrfsSubvolume(models.Model):
     volume   = models.ForeignKey(LogicalVolume)
     name     = models.CharField(max_length=255)
