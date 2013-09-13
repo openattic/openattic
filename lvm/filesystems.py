@@ -243,7 +243,7 @@ class ExtFSDevice(capabilities.Device):
         capabilities.FailureToleranceCapability,
         ]
     provides = [
-        capabilities.FilesystemCapability,
+        capabilities.FileSystemCapability,
         capabilities.PosixACLCapability,
         capabilities.GrowCapability,
         capabilities.ShrinkCapability,
@@ -388,7 +388,7 @@ class ZpoolDevice(capabilities.Device):
         ]
     provides = [
         capabilities.FailureToleranceCapability,
-        capabilities.FilesystemCapability,
+        capabilities.FileSystemCapability,
         capabilities.VolumeSnapshotCapability,
         capabilities.SubvolumesCapability,
         capabilities.SubvolumeSnapshotCapability,
@@ -487,7 +487,7 @@ class XfsDefaultBlocksDevice(capabilities.Device):
         capabilities.FailureToleranceCapability,
         ]
     provides = [
-        capabilities.FilesystemCapability,
+        capabilities.FileSystemCapability,
         capabilities.PosixACLCapability,
         capabilities.GrowCapability,
         capabilities.ParallelIOCapability,
@@ -558,7 +558,7 @@ class BtrfsDevice(capabilities.Device):
         capabilities.FailureToleranceCapability,
         ]
     provides = [
-        capabilities.FilesystemCapability,
+        capabilities.FileSystemCapability,
         capabilities.VolumeSnapshotCapability,
         capabilities.SubvolumesCapability,
         capabilities.SubvolumeSnapshotCapability,

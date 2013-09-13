@@ -143,15 +143,15 @@ class BlockIOCapability(BlockbasedCapability):
     flag = (1<<11)
 
 
-class FilesystemCapability(Capability):
+class FileSystemCapability(Capability):
     """ File-based access e.g. over NFS or Samba """
     flag = (1<<12)
 
-class MirroredFilesystemCapability(FilesystemCapability):
+class MirroredFileSystemCapability(FileSystemCapability):
     """ Mirrored file-systems like Ceph """
     flag = (1<<13)
 
-class MultiPrimaryFilesystemCapability(FilesystemCapability):
+class MultiPrimaryFileSystemCapability(FileSystemCapability):
     """ Mirrored file-systems like Ceph, that are writable on more than one host """
     flag = (1<<14)
 
@@ -167,19 +167,19 @@ class SubvolumeSnapshotCapability(SubvolumesCapability):
     """ Supports snapshots for subvolumes """
     flag = (1<<17)
 
-class FileSnapshotCapability(FilesystemCapability):
+class FileSnapshotCapability(FileSystemCapability):
     """ Supports snapshots which can be mounted to restore individual files """
     flag = (1<<18)
 
-class PosixACLCapability(FilesystemCapability):
+class PosixACLCapability(FileSystemCapability):
     """ Supports snapshots which can be mounted to restore individual files """
     flag = (1<<19)
 
-class DeduplicationCapability(FilesystemCapability):
+class DeduplicationCapability(FileSystemCapability):
     """ Supports deduplication """
     flag = (1<<19)
 
-class CompressionCapability(FilesystemCapability):
+class CompressionCapability(FileSystemCapability):
     """ Supports compression """
     flag = (1<<20)
 
@@ -191,11 +191,11 @@ class ShrinkCapability(Capability):
     """ Supports shrinking """
     flag = (1<<22)
 
-class ParallelIOCapability(FilesystemCapability):
-    """ Filesystem is optimized for efficiently handling massively parallel IO. """
+class ParallelIOCapability(FileSystemCapability):
+    """ FileSystem is optimized for efficiently handling massively parallel IO. """
     flag = (1<<23)
 
-class SectorBlocksCapability(FilesystemCapability):
+class SectorBlocksCapability(FileSystemCapability):
     """ File system blocksize == sector size (512 Bytes). """
     flag = (1<<24)
 
@@ -220,7 +220,7 @@ class Profile(object):
 
 class FileserverProfile(Profile):
     """ Optimized for a file server """
-    capabilities = FilesystemCapability * (VolumeSnapshotCapability + PosixACLCapability) * (True + GrowCapability + ShrinkCapability + DeduplicationCapability + CompressionCapability)
+    capabilities = FileSystemCapability * (VolumeSnapshotCapability + PosixACLCapability) * (True + GrowCapability + ShrinkCapability + DeduplicationCapability + CompressionCapability)
 
 class VMProfile(Profile):
     """ Optimized for running VMs that support proper disk alignment """
@@ -300,13 +300,13 @@ class DrbdConnection(Device):
 
 class ImageFile(Device):
     requires = [
-        FilesystemCapability,
+        FileSystemCapability,
         ]
     provides = [
         BlockbasedCapability,
         ]
     removes  = [
-        FilesystemCapability,
+        FileSystemCapability,
         ]
 
 

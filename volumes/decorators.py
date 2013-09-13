@@ -47,8 +47,8 @@ def _create_fsvolume(instance, **kwargs):
     fsvolumetype = ContentType.objects.get_for_model(instance.__class__)
     try:
         fsvolume = models.BlockVolume.objects.get(content_type=fsvolumetype, object_id=instance.id)
-    except models.FilesystemVolume.DoesNotExist:
-        fsvolume = models.FilesystemVolume()
+    except models.FileSystemVolume.DoesNotExist:
+        fsvolume = models.FileSystemVolume()
         fsvolume.volume = instance
         fsvolume.capflags = 0
         fsvolume.save()
@@ -57,12 +57,12 @@ def _delete_fsvolume(instance, **kwargs):
     fsvolumetype = ContentType.objects.get_for_model(instance.__class__)
     try:
         fsvolume = models.BlockVolume.objects.get(content_type=fsvolumetype, object_id=instance.id)
-    except models.FilesystemVolume.DoesNotExist:
+    except models.FileSystemVolume.DoesNotExist:
         pass
     else:
         fsvolume.delete()
 
-def FilesystemVolume(model):
+def FileSystemVolume(model):
     signals.post_save.connect(  _create_fsvolume, sender=model )
     signals.pre_delete.connect( _delete_fsvolume, sender=model )
     return model
