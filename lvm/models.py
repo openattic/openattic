@@ -634,6 +634,8 @@ class ZfsSubvolume(models.Model):
     objects = getHostDependentManagerClass("volume__vg__host")()
     all_objects = models.Manager()
 
+    filesystem  = "zfs"
+
     def __init__( self, *args, **kwargs ):
         models.Model.__init__( self, *args, **kwargs )
         self._lvm = None
@@ -673,6 +675,17 @@ class ZfsSubvolume(models.Model):
         self.volume.fs.destroy_subvolume(self)
         return ret
 
+    @property
+    def owner(self):
+        return self.volume.owner
+
+    @property
+    def fswarning(self):
+        return self.volume.fswarning
+
+    @property
+    def fscritical(self):
+        return self.volume.fscritical
 
 class ZfsSnapshot(models.Model):
     volume      = models.ForeignKey(LogicalVolume)
@@ -762,6 +775,8 @@ class BtrfsSubvolume(models.Model):
     objects = getHostDependentManagerClass("volume__vg__host")()
     all_objects = models.Manager()
 
+    filesystem = "btrfs"
+
     class Meta:
         unique_together=("volume", "name")
 
@@ -789,6 +804,18 @@ class BtrfsSubvolume(models.Model):
         ret = models.Model.delete(self)
         self.volume.fs.delete_subvolume(self)
         return ret
+
+    @property
+    def owner(self):
+        return self.volume.owner
+
+    @property
+    def fswarning(self):
+        return self.volume.fswarning
+
+    @property
+    def fscritical(self):
+        return self.volume.fscritical
 
 
 

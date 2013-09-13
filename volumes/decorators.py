@@ -49,8 +49,12 @@ def _create_fsvolume(instance, **kwargs):
         fsvolume = models.FileSystemVolume.objects.get(content_type=volumetype, object_id=instance.id)
     except models.FileSystemVolume.DoesNotExist:
         fsvolume = models.FileSystemVolume()
-        fsvolume.volume = instance
-        fsvolume.capflags = 0
+        fsvolume.volume     = instance
+        fsvolume.capflags   = 0
+        fsvolume.filesystem = instance.filesystem
+        fsvolume.owner      = instance.owner
+        fsvolume.fswarning  = instance.fswarning
+        fsvolume.fscritical = instance.fscritical
         fsvolume.save()
 
 def _delete_fsvolume(instance, **kwargs):
