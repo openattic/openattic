@@ -817,6 +817,9 @@ class BtrfsSubvolume(models.Model):
     def fscritical(self):
         return self.volume.fscritical
 
+    @property
+    def fs(self):
+        return self.volume.fs
 
 
 
