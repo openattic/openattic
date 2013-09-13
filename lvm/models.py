@@ -349,7 +349,7 @@ class LogicalVolume(models.Model):
     def do_snapshot(self, name, megs=None, snapshotconf=None):
         snap = LogicalVolume(snapshot=self)
         snap.name = name
-        snap.megs = megs if megs is not None else lv.megs * 0.2
+        snap.megs = (megs or self.megs * 0.2)
         snap.snapshotconf = snapshotconf
         snap.save()
         return snap
