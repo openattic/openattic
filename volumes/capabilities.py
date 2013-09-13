@@ -199,6 +199,15 @@ class SectorBlocksCapability(FilesystemCapability):
     """ File system blocksize == sector size (512 Bytes). """
     flag = (1<<24)
 
+class OnlineGrowCapability(Capability):
+    """ Can be grown while accessed. """
+    flag = (1<<25)
+
+class OnlineShrinkCapability(Capability):
+    """ Can be shrunk while accessed. """
+    flag = (1<<26)
+
+
 def to_flags(capabilities):
     return reduce(operator.or_, [cap.flag for cap in capabilities])
 
