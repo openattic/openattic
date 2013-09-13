@@ -7,6 +7,9 @@ peering   /usr/share/openattic
 ifconfig  /usr/share/openattic
 sysutils  /usr/share/openattic
 userprefs /usr/share/openattic
+volumes   /usr/share/openattic
+
+installed_apps.d/20_volumes /usr/share/openattic/installed_apps.d
 
 # Static files, Templates
 htdocs/js               /usr/share/openattic/htdocs
