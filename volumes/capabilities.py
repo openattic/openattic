@@ -199,11 +199,11 @@ class SectorBlocksCapability(FilesystemCapability):
     """ File system blocksize == sector size (512 Bytes). """
     flag = (1<<24)
 
-class OnlineGrowCapability(Capability):
+class OnlineGrowCapability(GrowCapability):
     """ Can be grown while accessed. """
     flag = (1<<25)
 
-class OnlineShrinkCapability(Capability):
+class OnlineShrinkCapability(ShrinkCapability):
     """ Can be shrunk while accessed. """
     flag = (1<<26)
 
