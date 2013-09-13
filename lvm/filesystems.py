@@ -445,20 +445,6 @@ class Xfs(FileSystem):
 
     agcount = property(get_agcount)
 
-    def clean_volume(self, volume):
-        from django.core.exceptions import ValidationError
-        try:
-            raidparams = get_raid_params(self.lv.vg.get_pvs()[0]["LVM2_PV_NAME"])
-        except UnsupportedRAID:
-            # can't check AG alignment
-            return
-        agcount = self.get_agcount(int(volume.megs))
-        if volume.megs % (agcount * raidparams["datadisks"]) != agcount:
-            alloc = agcount
-            if alloc % 4 != 0:
-                alloc *= 4
-            raise ValidationError({"megs": ["An XFS volume will perform very badly with this size. Try adding (a multiple of) %d MB." % alloc]})
-
     def format(self, jid):
         try:
             raidparams = get_raid_params(self.lv.vg.get_pvs()[0]["LVM2_PV_NAME"])
