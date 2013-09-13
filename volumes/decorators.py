@@ -20,9 +20,9 @@ from django.contrib.contenttypes.models import ContentType
 from volumes import models
 
 def _create_blkvolume(instance, **kwargs):
-    blkvolumetype = ContentType.objects.get_for_model(instance.__class__)
+    volumetype = ContentType.objects.get_for_model(instance.__class__)
     try:
-        blkvolume = models.BlockVolume.objects.get(content_type=blkvolumetype, object_id=instance.id)
+        blkvolume = models.BlockVolume.objects.get(content_type=volumetype, object_id=instance.id)
     except models.BlockVolume.DoesNotExist:
         blkvolume = models.BlockVolume()
         blkvolume.volume = instance
@@ -30,9 +30,9 @@ def _create_blkvolume(instance, **kwargs):
         blkvolume.save()
 
 def _delete_blkvolume(instance, **kwargs):
-    blkvolumetype = ContentType.objects.get_for_model(instance.__class__)
+    volumetype = ContentType.objects.get_for_model(instance.__class__)
     try:
-        blkvolume = models.BlockVolume.objects.get(content_type=blkvolumetype, object_id=instance.id)
+        blkvolume = models.BlockVolume.objects.get(content_type=volumetype, object_id=instance.id)
     except models.BlockVolume.DoesNotExist:
         pass
     else:
@@ -44,9 +44,9 @@ def BlockVolume(model):
     return model
 
 def _create_fsvolume(instance, **kwargs):
-    fsvolumetype = ContentType.objects.get_for_model(instance.__class__)
+    volumetype = ContentType.objects.get_for_model(instance.__class__)
     try:
-        fsvolume = models.BlockVolume.objects.get(content_type=fsvolumetype, object_id=instance.id)
+        fsvolume = models.FileSystemVolume.objects.get(content_type=volumetype, object_id=instance.id)
     except models.FileSystemVolume.DoesNotExist:
         fsvolume = models.FileSystemVolume()
         fsvolume.volume = instance
@@ -54,9 +54,9 @@ def _create_fsvolume(instance, **kwargs):
         fsvolume.save()
 
 def _delete_fsvolume(instance, **kwargs):
-    fsvolumetype = ContentType.objects.get_for_model(instance.__class__)
+    volumetype = ContentType.objects.get_for_model(instance.__class__)
     try:
-        fsvolume = models.BlockVolume.objects.get(content_type=fsvolumetype, object_id=instance.id)
+        fsvolume = models.FileSystemVolume.objects.get(content_type=volumetype, object_id=instance.id)
     except models.FileSystemVolume.DoesNotExist:
         pass
     else:
