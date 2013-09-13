@@ -159,7 +159,12 @@ class Plugin(object):
 
                 rel_obj = self.find_relation(model_instance, child_model)
 
-                for child_id, child_conf in confobj["children"].items():
+                if len(modelstack) == 1:
+                    child_conf = model_instance.get_complete_childlist(confobj["children"], merged_data)
+                else:
+                    child_conf = confobj["children"]
+
+                for child_id, child_conf in child_conf.items():
                     child_instance, _ = rel_obj.get_or_create(name=child_id)
                     _create_subitem(child_conf, child_instance, obj, modelstack[1:])
             else:
