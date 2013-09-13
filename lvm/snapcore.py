@@ -20,7 +20,6 @@ def process_config(conf_dict):
         plugin_inst = plugin()
         container = plugin_inst.create_items(conf_dict["plugin_data"][plugin_name])
         for target in container.get_targets():
-            print target
             targets.append(target)
             target.do_snapshot()
 
@@ -60,7 +59,6 @@ class Target(object):
         self.snapshot_state = self.model_instance.do_snapshot(self.data)
 
     def delete_snapshot(self):
-        print self.snapshot_state
         if self.snapshot_state is not None:
             self.model_instance.delete_snapshot(self.snapshot_state)
 
