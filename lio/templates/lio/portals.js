@@ -68,21 +68,21 @@ Ext.oa.Lio__Portal_Panel = Ext.extend(Ext.oa.ShareGridPanel, {
 
 Ext.reg("lio__portal_panel", Ext.oa.Lio__Portal_Panel);
 
-Ext.oa.Lio__Portal_Module = Ext.extend(Object, {
-  panel: "lio__portal_panel",
-  prepareMenuTree: function(tree){
-    "use strict";
-    tree.appendToRootNodeById("menu_luns", {
-      text: gettext('Network Portals'),
-      leaf: true,
-      icon: MEDIA_URL + '/icons2/22x22/apps/nfs.png',
-      panel: 'lio__portal_panel_inst',
-      href: '#'
-    });
-  }
-});
+// Ext.oa.Lio__Portal_Module = Ext.extend(Object, {
+//   panel: "lio__portal_panel",
+//   prepareMenuTree: function(tree){
+//     "use strict";
+//     tree.appendToRootNodeById("menu_luns", {
+//       text: gettext('Network Portals'),
+//       leaf: true,
+//       icon: MEDIA_URL + '/icons2/22x22/apps/nfs.png',
+//       panel: 'lio__portal_panel_inst',
+//       href: '#'
+//     });
+//   }
+// });
 
 
-window.MainViewModules.push( new Ext.oa.Lio__Portal_Module() );
+// window.MainViewModules.push( new Ext.oa.Lio__Portal_Module() );
 
 // kate: space-indent on; indent-width 2; replace-tabs on;
