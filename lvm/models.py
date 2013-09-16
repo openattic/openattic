@@ -925,8 +925,6 @@ class ConfManager(models.Manager):
                 # call save config function
                 plugin_inst = plugin()
                 plugin_inst.save_config(conf_obj["plugin_data"][plugin_name], snapconf)
-            else:
-                raise KeyError("plugin data of plugin " + plugin_name + " not found in config dictionary")
 
         volumes = conf_obj["volumes"]
         for volume in volumes:
