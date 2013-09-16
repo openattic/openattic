@@ -24,26 +24,29 @@ Ext.oa.Lio__LogicalLun_Panel = Ext.extend(Ext.oa.ShareGridPanel, {
         Ext.Msg.alert ("Warning","Please select a LUN you want to edit");
         return;
       };
-      var addwin = new Ext.Window({
+      var editwin = new Ext.Window({
         title: gettext('Edit LUN'),
-        layout: "fit",
-        height: 140,
-        width: 500,
+        height: 600,
+        width: 400,
+        maximizable: true,
+        layout: 'fit',
         items: [{
           xtype: "tabpanel",
           activeTab: 0,
           border: false,
           id:    "lio_logicallun_edit_tabpanel_inst",
+          ref: "lio_logicallun_edit_tabpanel_inst",
           items: [{
-            layout: "fit",
             ref: "lun_edit_tabpanel_overview",
             title: gettext("Overview"),
             id: "lun_edit_overview_tab",
             bodyStyle: 'padding:5px 5px;',
+            layout: 'border',
             items: [{
+              region: 'center',
               xtype: 'fieldset',
               title: gettext('LUN Details'),
-              layout: 'form',
+              split: true,
               viewConfig: { forceFit: true },
               items: [{
                 xtype: "label",
@@ -51,6 +54,69 @@ Ext.oa.Lio__LogicalLun_Panel = Ext.extend(Ext.oa.ShareGridPanel, {
                 id: "lun_name_edit",
                 fieldLabel: gettext('Name'),
                 text: sm.selections.items[0].data.volumename
+              },{
+                fieldLabel: gettext('Status'),
+                name: "lun_status",
+                ref: 'lun_status',
+                hiddenName: 'lun_status',
+                xtype:      'combo',
+                store: [ [ 'online' ,gettext('Online')  ], [ 'offline', gettext('Offline') ] ],
+                typeAhead:     true,
+                triggerAction: 'all',
+                emptyText:     'Select...',
+                selectOnFocus: true,
+              },{
+                fieldLabel: gettext('Protokoll'),
+                name: "lun_protokoll",
+                ref: 'lun_protokoll',
+                hiddenName: 'lun_protokoll',
+                xtype:      'combo',
+                store: [ [ 'iscsi', gettext('iSCSI')  ], [ 'fc', gettext('FibreChannel') ] ],
+                typeAhead:     true,
+                triggerAction: 'all',
+                emptyText:     'Select...',
+                selectOnFocus: true,
+                listeners: {
+                  select: function(combo, record, index) {
+                    if(combo.getValue() == "fc")
+                    {
+                      Ext.getCmp("lun_edit_bindip_tab").setDisabled(true);
+                      Ext.getCmp("lio_lun_edit_new_iscsi_target").setDisabled(true);
+                    }
+                    else
+                    {
+                      Ext.getCmp("lun_edit_bindip_tab").setDisabled(false);
+                      Ext.getCmp("lio_lun_edit_new_iscsi_target").setDisabled(false);
+                    }
+                  }
+                },
+              },{
+                xtype: 'grid',
+                title: 'Adapters',
+                region: 'south',
+                id: 'lio_edit_adapters',
+                border: false,
+                viewConfig: { forceFit: true },
+                autoScroll: true, 
+                store: [["namer"]],
+                colModel: (function(){
+                  var cm = new Ext.grid.ColumnModel({
+                    defaults: {
+                      sortable: true
+                    },
+                    columns: [{
+                      header: "Name",
+                      dataIndex: "name"
+                    }]
+                  });
+                  return cm;
+                }()),
+                buttons: [{
+                  text: 'New iSCSI Target',
+                  icon: MEDIA_URL + "/icons2/16x16/actions/add.png",
+                  ref: 'lio_lun_edit_new_iscsi_target',
+                  id: 'lio_lun_edit_new_iscsi_target',
+                }]
               }]
             }]
           }, {
@@ -85,10 +151,54 @@ Ext.oa.Lio__LogicalLun_Panel = Ext.extend(Ext.oa.ShareGridPanel, {
                 return cm;
               }()),
             }]
+          }, {
+            layout: "fit",
+            ref: "lun_edit_bindip_tap",
+            title: gettext("BindIP"),
+            id: "lun_edit_bindip_tab",
+            items: [{
+              xtype: 'grid',
+              autoScroll: true,
+              id: 'lio_bindip_tab_form',
+              ref: 'lio_bindip_tab_form',
+              title: 'BindIP',
+              border: false,
+              viewConfig: { forceFit: true },
+              colModel: (function(){
+                var cm = new Ext.grid.ColumnModel({
+                  defaults: {
+                    sortable: true,
+                    viewConfig: { forceFit: true }
+                  },
+                  columns: [{
+                    header: gettext("Map"),
+                    dataIndex: "lio_edit_bindip_map"
+                  },{
+                    header: gettext("IP Adress"),
+                    dataIndex: "lio_edit_bind_ipaddr"
+                  }]
+                });
+                return cm;
+              }()),
+            }]
+          }],
+          buttons: [{
+            text: 'Save',
+            icon: MEDIA_URL + "/oxygen/16x16/actions/dialog-ok-apply.png",
+            ref: 'lio_lun_edit_save',
+            id: 'lio_lun_edit_save',
+          },{
+            text: 'Cancel',
+            icon: MEDIA_URL + "/icons2/16x16/actions/gtk-cancel.png",
+            ref: 'lio_lun_edit_cancel',
+            id: 'lio_lun_edit_cancel',
+            handler: function(self){
+              editwin.close();
+            }
           }]
         }]
       });
-      addwin.show();
+      editwin.show();
     }
   }],
   allowEdit: false,
@@ -166,7 +276,7 @@ Ext.oa.Lio__Panel = Ext.extend(Ext.Panel, {
         region: "center",
         listeners: {
           cellclick: function( self, rowIndex, colIndex, evt ){
-            Ext.getCmp("lun_name").setText(self.store.getAt(rowIndex).data["volumename"])
+            Ext.getCmp("lun_name").setText(self.store.getAt(rowIndex).data["volumename"]);
           }
         }
       },{
