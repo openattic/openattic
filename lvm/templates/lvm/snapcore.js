@@ -598,15 +598,14 @@ var wizform = new Ext.oa.WizPanel({
 
           for(var plugin in config['plugin_data'])
           {
-            if(plugin === 'VMware')
+            if(plugin === 'vmware')
             {
               var plugin_func = get_plugin(plugin);
-
               for(var host_id in config['plugin_data'][plugin])
               {
                 if(typeof config['plugin_data'][plugin][host_id]['children'] !== 'undefined')
                 {
-                  for(var dc in config['plugin_data'][plugin][host_id]['children'][dc])
+                  for(var dc in config['plugin_data'][plugin][host_id]['children'])
                   {
                     if(typeof config['plugin_data'][plugin][host_id]['children'][dc]['children'] !== 'undefined')
                     {
