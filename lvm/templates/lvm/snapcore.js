@@ -288,6 +288,8 @@ var firstGrid = new Ext.grid.GridPanel({
   ddGroup          : 'secondGridDDGroup',
   id               : "firstGridId",
   store            : VolumeStore,
+  region           : "center",
+  border           : false,
   colModel         : new Ext.grid.ColumnModel({
     defaults       : {sortable: true, draggable: true},
     columns: [
@@ -332,6 +334,9 @@ var secondGrid = new Ext.grid.GridPanel({
   ddGroup          : 'firstGridDDGroup',
   id               : "secondGridId",
   store            : secondGridStore,
+  region           : "east",
+  border           : false,
+  splittedVal      : true,
   colModel         : new Ext.grid.ColumnModel({
     defaults       : {sortable: true, draggable: true},
     columns: [
@@ -551,21 +556,19 @@ var wizform = new Ext.oa.WizPanel({
   },{
     title     : gettext('Additional Drives'),
     id        : 'wiz_addvol',
-    layout    : {
-      type  : "vbox",
-      align : 'stretch',
-    },
-    xtype     :'form',
+    layout    : "border",
+    xtype     :'panel',
+    border    : false,
     items     : [{
-      xtype : 'label',
-      text  : gettext('Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed ' +
+      xtype    : 'panel',
+      region   : "north",
+      html     : gettext('Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed ' +
         'diam nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam erat, sed ' +
         'diam voluptua. At vero eos et accusam et'),
+      bodyStyle: "padding: 10px"
     },{
-      xtype   : 'spacer',
-      height  : 10,
-    },{
-      layout  : 'hbox',
+      region  : "center",
+      layout  : 'border',
       items   : [firstGrid, secondGrid],
     }],
     listeners : {
