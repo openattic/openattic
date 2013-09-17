@@ -150,7 +150,9 @@ class Plugin(object):
     def create_items(self, conf_dict):
         def _create_subitem(confobj, model_instance, parent, modelstack):
             merged_data = parent.data.copy()
-            merged_data.update(confobj["data"])
+
+            if confobj["data"]:
+                merged_data.update(confobj["data"])
 
             if modelstack:
                 obj = Container(merged_data, model_instance)
