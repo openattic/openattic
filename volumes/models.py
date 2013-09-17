@@ -64,7 +64,7 @@ class AbstractVolume(models.Model):
 
 
 class BlockVolume(AbstractVolume):
-    basedev_of  = models.ForeignKey("FileSystemVolume", blank=True, null=True)
+    fsvolume    = models.ForeignKey("FileSystemVolume", blank=True, null=True)
 
     @property
     def device(self):
@@ -79,7 +79,7 @@ class FileSystemVolume(AbstractVolume):
     def save(self, *args, **kwargs):
         AbstractVolume.save(self, *args, **kwargs)
         if isinstance(self.volume, BlockVolume):
-            self.volume.basedev_of = self
+            self.volume.fsvolume = self
             self.volume.save()
 
     @property

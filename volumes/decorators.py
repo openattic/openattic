@@ -102,10 +102,7 @@ def _delete_hybridvolume(instance, **kwargs):
     except models.BlockVolume.DoesNotExist:
         pass
     else:
-        if blkvolume.basedev_of is not None:
-            fsvolume = blkvolume.basedev_of
-        else:
-            fsvolume = None
+        fsvolume = blkvolume.fsvolume
 
         blkvolume.delete()
 
