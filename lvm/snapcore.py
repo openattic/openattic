@@ -18,13 +18,17 @@ def process_config(conf_dict):
     targets = []
     for plugin_name, plugin in PluginLibrary.plugins.items():
         plugin_inst = plugin()
-        container = plugin_inst.create_items(conf_dict["plugin_data"][plugin_name])
-        for target in container.get_targets():
-            targets.append(target)
-            target.do_snapshot()
+
+        if plugin_name in conf_dict["plugin_data"]:
+            container = plugin_inst.create_items(conf_dict["plugin_data"][plugin_name])
+
+            for target in container.get_targets():
+                targets.append(target)
+                target.do_snapshot()
 
     from lvm.models import LogicalVolume
     now = datetime.now().strftime("%Y%m%d-%H%M%S")
+
     for volume in LogicalVolume.objects.filter(id__in=conf_dict["volumes"]):
         volume.do_snapshot("%s_snapshot_%s" % (volume.name, now))
 
