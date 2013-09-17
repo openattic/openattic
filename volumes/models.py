@@ -22,7 +22,6 @@ from django.contrib.auth.models  import User
 
 from volumes import capabilities
 
-
 class CapabilitiesAwareManager(models.Manager):
     def filter_by_capability(self, capability):
         return self.extra(where=[self.model._meta.db_table + '.capflags & %s = %s'], params=[capability.flag, capability.flag])
@@ -65,6 +64,8 @@ class AbstractVolume(models.Model):
 
 
 class BlockVolume(AbstractVolume):
+    basedev_of  = models.ForeignKey("FileSystemVolume", blank=True, null=True)
+
     @property
     def device(self):
         return self.volume.device
@@ -75,8 +76,16 @@ class FileSystemVolume(AbstractVolume):
     fswarning   = models.IntegerField(_("Warning Level (%)"),  default=75 )
     fscritical  = models.IntegerField(_("Critical Level (%)"), default=85 )
 
+    def save(self, *args, **kwargs):
+        AbstractVolume.save(self, *args, **kwargs)
+        if isinstance(self.volume, BlockVolume):
+            self.volume.basedev_of = self
+            self.volume.save()
+
     @property
     def fs(self):
+        if isinstance(self.volume, BlockVolume):
+            return self.volume.volume.fs
         return self.volume.fs
 
     @property

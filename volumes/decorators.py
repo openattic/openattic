@@ -70,3 +70,49 @@ def FileSystemVolume(model):
     signals.post_save.connect(  _create_fsvolume, sender=model )
     signals.pre_delete.connect( _delete_fsvolume, sender=model )
     return model
+
+def _create_hybridvolume(instance, **kwargs):
+    volumetype = ContentType.objects.get_for_model(instance.__class__)
+    try:
+        blkvolume = models.BlockVolume.objects.get(content_type=volumetype, object_id=instance.id)
+    except models.BlockVolume.DoesNotExist:
+        blkvolume = models.BlockVolume()
+        blkvolume.volume = instance
+        blkvolume.capflags = 0
+        blkvolume.save()
+
+    if instance.filesystem:
+        blkvolumetype = ContentType.objects.get_for_model(models.BlockVolume)
+        try:
+            fsvolume = models.FileSystemVolume.objects.get(content_type=blkvolumetype, object_id=blkvolume.id)
+        except models.FileSystemVolume.DoesNotExist:
+            fsvolume = models.FileSystemVolume()
+            fsvolume.volume     = blkvolume
+            fsvolume.capflags   = 0
+            fsvolume.filesystem = instance.filesystem
+            fsvolume.owner      = instance.owner
+            fsvolume.fswarning  = instance.fswarning
+            fsvolume.fscritical = instance.fscritical
+            fsvolume.save()
+
+def _delete_hybridvolume(instance, **kwargs):
+    volumetype = ContentType.objects.get_for_model(instance.__class__)
+    try:
+        blkvolume = models.BlockVolume.objects.get(content_type=volumetype, object_id=instance.id)
+    except models.BlockVolume.DoesNotExist:
+        pass
+    else:
+        if blkvolume.basedev_of is not None:
+            fsvolume = blkvolume.basedev_of
+        else:
+            fsvolume = None
+
+        blkvolume.delete()
+
+        if fsvolume is not None:
+            fsvolume.delete()
+
+def HybridVolume(model):
+    signals.post_save.connect(  _create_hybridvolume, sender=model )
+    signals.pre_delete.connect( _delete_hybridvolume, sender=model )
+    return model

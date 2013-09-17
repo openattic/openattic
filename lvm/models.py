@@ -38,7 +38,7 @@ from lvm.conf        import settings as lvm_settings
 from cron.models     import Cronjob
 from lvm             import snapcore
 
-from volumes.decorators import BlockVolume, FileSystemVolume
+from volumes.decorators import BlockVolume, FileSystemVolume, HybridVolume
 from volumes            import capabilities
 
 def validate_vg_name(value):
@@ -147,7 +147,7 @@ class VolumeGroup(models.Model):
         return float( self.lvm_info["LVM2_VG_FREE"] )
 
 
-@BlockVolume
+@HybridVolume
 class LogicalVolume(models.Model):
     """ Represents a LVM Logical Volume and offers management functions.
 
