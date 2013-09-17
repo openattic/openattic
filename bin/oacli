@@ -346,6 +346,8 @@ def call(sectname, cmd, args):
         print >> sys.stderr, "Error processing the command:", unicode(type(e)), unicode(e)
         if options.verbose:
             traceback.print_exc()
+        elif sys.stdout.isatty():
+            print "If you want to see a traceback here, enable verbose mode (oacli -v or in the shell section)."
 
 
 def call_argstr(sectname, cmd, argstr):
