@@ -22,7 +22,6 @@ from django.contrib.auth.models  import User
 
 from volumes import capabilities
 
-
 class CapabilitiesAwareManager(models.Manager):
     def filter_by_capability(self, capability):
         return self.extra(where=[self.model._meta.db_table + '.capflags & %s = %s'], params=[capability.flag, capability.flag])
@@ -85,6 +84,8 @@ class FileSystemVolume(AbstractVolume):
 
     @property
     def fs(self):
+        if isinstance(self.volume, BlockVolume):
+            return self.volume.volume.fs
         return self.volume.fs
 
     @property
