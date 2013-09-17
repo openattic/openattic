@@ -319,23 +319,23 @@ def clean_args(args):
 
 def call(sectname, cmd, args):
     """ Handle a command which needs to be mapped to an XMLRPC function call. """
-    if sectname:
-        handler = getattr( server, sectname )
-        fullname = '%s.%s' % (sectname, cmd)
-    else:
-        handler  = server
-        fullname = cmd
-    func = getattr( handler, cmd )
-
-    args = clean_args(args)
-
-    if HAVE_GET_FUNCTION_ARGS:
-        argspec = server.get_function_args( fullname )
-        if( len(args) != len(argspec) ):
-            print "Usage: %s %s" % ( fullname, ' '.join([('<%s>' % a) for a in argspec]) )
-            return None
-
     try:
+        if sectname:
+            handler = getattr( server, sectname )
+            fullname = '%s.%s' % (sectname, cmd)
+        else:
+            handler  = server
+            fullname = cmd
+        func = getattr( handler, cmd )
+
+        args = clean_args(args)
+
+        if HAVE_GET_FUNCTION_ARGS:
+            argspec = server.get_function_args( fullname )
+            if( len(args) != len(argspec) ):
+                print "Usage: %s %s" % ( fullname, ' '.join([('<%s>' % a) for a in argspec]) )
+                return None
+
         result = func(*args)
         if options.outfield:
             for field in options.outfield.split('.'):
