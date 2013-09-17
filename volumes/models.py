@@ -65,6 +65,8 @@ class AbstractVolume(models.Model):
 
 
 class BlockVolume(AbstractVolume):
+    basedev_of  = models.ForeignKey("FileSystemVolume", blank=True, null=True)
+
     @property
     def device(self):
         return self.volume.device
@@ -74,6 +76,12 @@ class FileSystemVolume(AbstractVolume):
     owner       = models.ForeignKey(User, blank=True)
     fswarning   = models.IntegerField(_("Warning Level (%)"),  default=75 )
     fscritical  = models.IntegerField(_("Critical Level (%)"), default=85 )
+
+    def save(self, *args, **kwargs):
+        AbstractVolume.save(self, *args, **kwargs)
+        if isinstance(self.volume, BlockVolume):
+            self.volume.basedev_of = self
+            self.volume.save()
 
     @property
     def fs(self):
