@@ -944,32 +944,33 @@ class SnapshotConf(models.Model):
     objects = ConfManager()
 
     def restore_config(self):
-        conf_obj                    = {}
-        conf_obj['configname']      = self.confname
-        conf_obj['prescript']       = self.prescript
-        conf_obj['postscript']      = self.postscript
-        conf_obj['retention_time']  = self.retention_time
-        conf_obj['volumes']         = list(LogicalVolumeConf.objects.filter(snapshot_conf_id=self.id).values_list('volume_id', flat=True))
+        conf_obj                            = {}
+        conf_obj['data']                    = {}
+        conf_obj['data']['configname']      = self.confname
+        conf_obj['data']['prescript']       = self.prescript
+        conf_obj['data']['postscript']      = self.postscript
+        conf_obj['data']['retention_time']  = self.retention_time
+        conf_obj['volumes']                 = list(LogicalVolumeConf.objects.filter(snapshot_conf_id=self.id).values_list('volume_id', flat=True))
 
         job = LVSnapshotJob.objects.get(conf_id=self.id)
         if job:
-            conf_obj['active']        = job.is_active
-            conf_obj['day_of_month']  = str(job.domonth)
-            conf_obj['minute']        = str(job.minute)
-            conf_obj['startdate']     = job.start_time
-            conf_obj['enddate']       = job.end_time
+            conf_obj['data']['is_active']     = job.is_active
+            conf_obj['data']['day_of_month']  = str(job.domonth)
+            conf_obj['data']['minute']        = str(job.minute)
+            conf_obj['data']['startdate']     = job.start_time
+            conf_obj['data']['enddate']       = job.end_time
 
             dow = job.doweek.split(',')
             for i in dow:
-              conf_obj['dow_' + i.strip()] = 'on'
+              conf_obj['data']['dow_' + i.strip()] = 'on'
 
             hour = job.hour.split(',')
             for i in hour:
-              conf_obj['h_' + i.strip()] = 'on'
+              conf_obj['data']['h_' + i.strip()] = 'on'
 
             moy = job.month.split(',')
             for i in moy:
-              conf_obj['moy_' + i.strip()] = 'on'
+              conf_obj['data']['moy_' + i.strip()] = 'on'
 
         # restore plugin data
         conf_obj["plugin_data"] = {}
