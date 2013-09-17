@@ -23,10 +23,17 @@ from ifconfig.models import Host
 class BlockVolumeHandler(ModelHandler):
     model = BlockVolume
 
+    def _override_get(self, obj, data):
+        volumehandler = self._get_handler_instance(obj.volume.__class__)
+        data["volume"] = volumehandler._idobj(obj.volume)
+        return data
+
 class FileSystemVolumeHandler(ModelHandler):
     model = FileSystemVolume
 
     def _override_get(self, obj, data):
+        volumehandler = self._get_handler_instance(obj.volume.__class__)
+        data["volume"] = volumehandler._idobj(obj.volume)
         hosthandler = self._get_handler_instance(Host)
         data['filesystem'] = obj.fsname
         data['fs'] = {
