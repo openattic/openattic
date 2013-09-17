@@ -12,8 +12,8 @@ from ifconfig.models import Host
 
 
 def process_config(conf_dict):
-    if len(conf_dict["prescript"]) > 0:
-        invoke(shlex.split(conf_dict["prescript"]))
+    if len(conf_dict["data"]["prescript"]) > 0:
+        invoke(shlex.split(conf_dict["data"]["prescript"]))
 
     targets = []
     for plugin_name, plugin in PluginLibrary.plugins.items():
