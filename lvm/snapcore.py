@@ -31,8 +31,8 @@ def process_config(conf_dict):
     for target in targets:
         target.delete_snapshot()
 
-    if len(conf_dict["postscript"]) > 0:
-        invoke(shlex.split(conf_dict["postscript"]))
+    if len(conf_dict["data"]["postscript"]) > 0:
+        invoke(shlex.split(conf_dict["data"]["postscript"]))
 
 class Container(object):
     def __init__(self, data, model_instance):
