@@ -851,6 +851,8 @@ class LVSnapshotJob(Cronjob):
     def dosnapshot(self):
         if self.start_time <= datetime.datetime.now() <= self.end_time:
             snapcore.process_config(self.conf.restore_config())
+            self.conf.last_execution = datetime.datetime.now()
+            self.conf.save()
 
     def save(self, *args, **kwargs):
         for path in ["/usr/local/sbin", "/usr/local/bin", "/usr/sbin", "/usr/bin"]:
