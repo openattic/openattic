@@ -11,7 +11,7 @@ from ifconfig.models import Host
 """
 
 
-def process_config(conf_dict):
+def process_config(conf_dict, snapconf):
     if len(conf_dict["data"]["prescript"]) > 0:
         invoke(shlex.split(conf_dict["data"]["prescript"]))
 
@@ -30,7 +30,7 @@ def process_config(conf_dict):
     now = datetime.now().strftime("%Y%m%d-%H%M%S")
 
     for volume in LogicalVolume.objects.filter(id__in=conf_dict["volumes"]):
-        volume.do_snapshot("%s_snapshot_%s" % (volume.name, now))
+        volume.do_snapshot("%s_snapshot_%s" % (volume.name, now), snapshotconf=snapconf)
 
     for target in targets:
         target.delete_snapshot()
