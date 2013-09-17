@@ -632,7 +632,7 @@ var wizform = new Ext.oa.WizPanel({
                 }
               }
             }
-            if(plugin === 'MSSQL'){
+            if(plugin === 'mssql'){
               var plugin_func = get_plugin(plugin);
 
               for(var host_id in config['plugin_data'][plugin])
