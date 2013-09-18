@@ -160,7 +160,6 @@ Ext.oa.Ifconfig__Host_Groups_Panel = Ext.extend(Ext.Panel, {
           }
         },
       }, {
-        layout: "border",
         region: "east",
         width: (Ext.lib.Dom.getViewWidth() - 200) / 2,
         split: true,
