@@ -1311,6 +1311,21 @@ Ext.oa.LVM__Snapcore_Panel = Ext.extend(Ext.Panel, {
                 }
               }
             }
+          },{
+            text      : gettext("Delete config"),
+            listeners : {
+              click: function(btn, e){
+                if(typeof btn.ownerCt.ownerCt.getSelectionModel().getSelected() !== "undefined")
+                {
+                  var config_id = btn.ownerCt.ownerCt.getSelectionModel().getSelected().id;
+                  lvm__SnapshotConf.remove(config_id, function(result, response){
+                    if(response.type !== 'exception'){
+                      config_store.reload();
+                    }
+                  })
+                }
+              }
+            }
           }]
         },{
           region    : 'south',
