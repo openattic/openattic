@@ -182,6 +182,7 @@ Ext.oa.WizPanel = Ext.extend(Ext.form.FormPanel, {
       if(typeof item.noAutoNext === "undefined"){
         item.buttons.unshift({
           text: gettext('Next'),
+          id  : "nextBtn",
           handler: this.nextpanel.createDelegate(this, [this.items[i+1].id]),
         });
       }
@@ -472,6 +473,20 @@ var config = {
   }*/
 };
 
+var nextCard = function(item, e){
+  if (e.getCharCode() == Ext.EventObject.ENTER) {
+    for(var i=0; i < item.ownerCt.buttons.length; i++){
+      var btn = item.ownerCt.buttons[i];
+
+      if(btn.id === "nextBtn")
+      {
+        btn.handler.call(btn.scope);
+        break;
+      }
+    }
+  }
+}
+
 var wizform = new Ext.oa.WizPanel({
   config: config,
   activeItem: 'wiz_welc',
@@ -489,9 +504,13 @@ var wizform = new Ext.oa.WizPanel({
       xtype       : 'spacer',
       height      : 10,
     },{
-      xtype       : 'textfield',
-      name        : 'configname',
-      fieldLabel  : gettext('Description'),
+      xtype           : 'textfield',
+      name            : 'configname',
+      fieldLabel      : gettext('Description'),
+      enableKeyEvents : true,
+      listeners       : {
+        keypress : nextCard,
+      }
     }]
   },{
     id        : 'wiz_snapitems',
@@ -692,9 +711,13 @@ var wizform = new Ext.oa.WizPanel({
       name      : 'prescript',
       fieldLabel: gettext('Prescript conditions'),
     },{
-      xtype     : 'textfield',
-      name      : 'postscript',
-      fieldLabel: gettext('Postscript conditions'),
+      xtype           : 'textfield',
+      name            : 'postscript',
+      fieldLabel      : gettext('Postscript conditions'),
+      enableKeyEvents : true,
+      listeners       : {
+        keypress : nextCard,
+      }
     }]
   },{
     title : gettext('Scheduling Part 1 / Expiry Date'),
