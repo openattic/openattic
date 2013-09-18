@@ -70,7 +70,7 @@ Ext.oa.HostAttrTreeNodeUI = Ext.extend(Ext.tree.TreeNodeUI, {
 
 
 Ext.oa.Ifconfig__Host_Attributes_TreeLoader = Ext.extend(Ext.tree.TreeLoader, {
-  directFn: lvm__LogicalVolume.all,
+  directFn: true,
   requestData: function(node, callback, scope){
     this.tree.objtypes[ node.attributes.objtype ].requestTreeData(this.tree, this, node, callback, scope);
   },
