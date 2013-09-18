@@ -487,6 +487,12 @@ var nextCard = function(item, e){
   }
 }
 
+var nextElement = function(item, e){
+  if (e.getCharCode() == Ext.EventObject.ENTER) {
+    item.nextSibling().focus();
+  }
+}
+
 var wizform = new Ext.oa.WizPanel({
   config: config,
   activeItem: 'wiz_welc',
@@ -707,9 +713,13 @@ var wizform = new Ext.oa.WizPanel({
       xtype     : 'spacer',
       height    : 10,
     },{
-      xtype     : 'textfield',
-      name      : 'prescript',
-      fieldLabel: gettext('Prescript conditions'),
+      xtype           : 'textfield',
+      name            : 'prescript',
+      fieldLabel      : gettext('Prescript conditions'),
+      enableKeyEvents : true,
+      listeners : {
+        keypress : nextElement,
+      }
     },{
       xtype           : 'textfield',
       name            : 'postscript',
