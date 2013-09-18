@@ -869,13 +869,21 @@ var wizform = new Ext.oa.WizPanel({
       xtype     : 'radio',
       listeners : {
         check:  function(radio, checkvalue){
+          var no_enddatetime_value = Ext.getCmp('no_enddatetime').checked;
+
           if(checkvalue)
           {
             Ext.getCmp('startdate_select').enable();
             Ext.getCmp('starttime_select').enable();
-            Ext.getCmp('enddate_select').enable();
-            Ext.getCmp('endtime_select').enable();
+
+            if(!no_enddatetime_value)
+            {
+              Ext.getCmp('enddate_select').enable();
+              Ext.getCmp('endtime_select').enable();
+            }
+
             Ext.getCmp('is_active').enable();
+            Ext.getCmp('no_enddatetime').enable();
           }
           else
           {
@@ -884,6 +892,7 @@ var wizform = new Ext.oa.WizPanel({
             Ext.getCmp('enddate_select').disable();
             Ext.getCmp('endtime_select').disable();
             Ext.getCmp('is_active').disable();
+            Ext.getCmp('no_enddatetime').disable();
           }
         }
       }
@@ -962,6 +971,29 @@ var wizform = new Ext.oa.WizPanel({
         height      : 10,
       },{
         xtype       : 'checkbox',
+        id          : 'no_enddatetime',
+        name        : 'no_enddatetime',
+        disabled    : true,
+        fieldLabel  : gettext('No Enddatetime'),
+        listeners : {
+          check:  function(checkbox, checkvalue){
+            if(checkvalue)
+            {
+              Ext.getCmp('enddate_select').disable();
+              Ext.getCmp('endtime_select').disable();
+            }
+            else
+            {
+              Ext.getCmp('enddate_select').enable();
+              Ext.getCmp('endtime_select').enable();
+            }
+          }
+        }
+      },{
+        xtype       : 'spacer',
+        height      : 10,
+      },{
+        xtype       : 'checkbox',
         id          : 'is_active',
         name        : 'is_active',
         disabled    : true,
@@ -1003,6 +1035,7 @@ var wizform = new Ext.oa.WizPanel({
             var starttime = (Ext.getCmp('starttime_select').getValue()).split(':');
             var enddate = Ext.getCmp('enddate_select').getValue();
             var endtime = (Ext.getCmp('endtime_select').getValue()).split(':');
+            var no_enddatetime_value = Ext.getCmp('no_enddatetime').checked;
 
             if(startdate)
             {
@@ -1016,24 +1049,27 @@ var wizform = new Ext.oa.WizPanel({
               }
             }
 
-            if(enddate)
+            if(!no_enddatetime_value)
             {
-              if(endtime.length > 1)
+              if(enddate)
               {
-                enddate = enddate.add(Date.HOUR, endtime[0]).add(Date.MINUTE, endtime[1]);
-                var now = new Date();
-                if(enddate <= now || (startdate && startdate >= enddate))
+                if(endtime.length > 1)
                 {
-                  nextpnl = '';
+                  enddate = enddate.add(Date.HOUR, endtime[0]).add(Date.MINUTE, endtime[1]);
+                  var now = new Date();
+                  if(enddate <= now || (startdate && startdate >= enddate))
+                  {
+                    nextpnl = '';
+                  }
+                  else
+                  {
+                    config.data['enddate'] = enddate;
+                  }
                 }
                 else
                 {
-                  config.data['enddate'] = enddate;
+                  nextpnl = ''
                 }
-              }
-              else
-              {
-                nextpnl = ''
               }
             }
             break;

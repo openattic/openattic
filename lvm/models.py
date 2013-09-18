@@ -849,9 +849,20 @@ class LVSnapshotJob(Cronjob):
         return #lol
 
     def dosnapshot(self):
-        if self.start_time <= datetime.datetime.now() <= self.end_time:
+        now = datetime.datetime.now()
+
+        execute_now = True
+
+        if self.start_time > now:
+            execute_now = False
+
+        if self.end_time:
+            if self.end_time < now:
+                execute_now = False
+
+        if execute_now:
             snapcore.process_config(self.conf.restore_config(), self.conf)
-            self.conf.last_execution = datetime.datetime.now()
+            self.conf.last_execution = now
             self.conf.save()
 
     def save(self, *args, **kwargs):
