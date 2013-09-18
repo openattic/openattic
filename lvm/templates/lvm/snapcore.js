@@ -1008,16 +1008,7 @@ var wizform = new Ext.oa.WizPanel({
             {
               if(starttime.length > 1)
               {
-                startdate = startdate.add(Date.HOUR, starttime[0]).add(Date.MINUTE, starttime[1]).add(Date.MINUTE, +1);
-                var now = new Date();
-                if(now >= startdate)
-                {
-                  nextpnl = '';
-                }
-                else
-                {
-                  config.data['startdate'] = startdate;
-                }
+                config.data['startdate'] = startdate.add(Date.HOUR, starttime[0]).add(Date.MINUTE, starttime[1]).add(Date.MINUTE, +1);
               }
               else
               {
