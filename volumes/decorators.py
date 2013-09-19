@@ -18,6 +18,7 @@ from django.db.models import signals
 from django.contrib.contenttypes.models import ContentType
 
 from volumes import models
+from volumes import signals
 
 def _create_blkvolume(instance, **kwargs):
     volumetype = ContentType.objects.get_for_model(instance.__class__)
@@ -27,7 +28,9 @@ def _create_blkvolume(instance, **kwargs):
         blkvolume = models.BlockVolume()
         blkvolume.volume = instance
         blkvolume.capflags = 0
+        signals.pre_install.send(sender=models.BlockVolume, instance=blkvolume, volume=instance)
         blkvolume.save()
+        signals.post_install.send(sender=models.BlockVolume, instance=blkvolume, volume=instance)
 
 def _delete_blkvolume(instance, **kwargs):
     volumetype = ContentType.objects.get_for_model(instance.__class__)
@@ -36,7 +39,9 @@ def _delete_blkvolume(instance, **kwargs):
     except models.BlockVolume.DoesNotExist:
         pass
     else:
+        signals.pre_uninstall.send(sender=models.BlockVolume, instance=blkvolume, volume=instance)
         blkvolume.delete()
+        signals.post_uninstall.send(sender=models.BlockVolume, instance=blkvolume, volume=instance)
 
 def BlockVolume(model):
     signals.post_save.connect(  _create_blkvolume, sender=model )
@@ -55,7 +60,9 @@ def _create_fsvolume(instance, **kwargs):
         fsvolume.owner      = instance.owner
         fsvolume.fswarning  = instance.fswarning
         fsvolume.fscritical = instance.fscritical
+        signals.pre_install.send(sender=models.FileSystemVolume, instance=fsvolume, volume=instance)
         fsvolume.save()
+        signals.post_install.send(sender=models.FileSystemVolume, instance=fsvolume, volume=instance)
 
 def _delete_fsvolume(instance, **kwargs):
     volumetype = ContentType.objects.get_for_model(instance.__class__)
@@ -64,7 +71,9 @@ def _delete_fsvolume(instance, **kwargs):
     except models.FileSystemVolume.DoesNotExist:
         pass
     else:
+        signals.pre_uninstall.send(sender=models.FileSystemVolume, instance=fsvolume, volume=instance)
         fsvolume.delete()
+        signals.post_uninstall.send(sender=models.FileSystemVolume, instance=fsvolume, volume=instance)
 
 def FileSystemVolume(model):
     signals.post_save.connect(  _create_fsvolume, sender=model )
@@ -79,7 +88,11 @@ def _create_hybridvolume(instance, **kwargs):
         blkvolume = models.BlockVolume()
         blkvolume.volume = instance
         blkvolume.capflags = 0
+        if not instance.filesystem:
+            signals.pre_install.send(sender=models.BlockVolume, instance=blkvolume, volume=instance)
         blkvolume.save()
+        if not instance.filesystem:
+            signals.post_install.send(sender=models.BlockVolume, instance=blkvolume, volume=instance)
 
     if instance.filesystem:
         blkvolumetype = ContentType.objects.get_for_model(models.BlockVolume)
@@ -93,7 +106,9 @@ def _create_hybridvolume(instance, **kwargs):
             fsvolume.owner      = instance.owner
             fsvolume.fswarning  = instance.fswarning
             fsvolume.fscritical = instance.fscritical
+            signals.pre_install.send(sender=models.FileSystemVolume, instance=fsvolume, volume=instance)
             fsvolume.save()
+            signals.post_install.send(sender=models.FileSystemVolume, instance=fsvolume, volume=instance)
 
 def _delete_hybridvolume(instance, **kwargs):
     volumetype = ContentType.objects.get_for_model(instance.__class__)
@@ -103,11 +118,18 @@ def _delete_hybridvolume(instance, **kwargs):
         pass
     else:
         fsvolume = blkvolume.fsvolume
+        if fsvolume is not None:
+            signals.pre_uninstall.send(sender=models.FileSystemVolume, instance=fsvolume, volume=instance)
+        else:
+            signals.pre_uninstall.send(sender=models.BlockVolume, instance=blkvolume, volume=instance)
 
         blkvolume.delete()
 
         if fsvolume is not None:
             fsvolume.delete()
+            signals.post_uninstall.send(sender=models.FileSystemVolume, instance=fsvolume, volume=instance)
+        else:
+            signals.post_uninstall.send(sender=models.BlockVolume, instance=blkvolume, volume=instance)
 
 def HybridVolume(model):
     signals.post_save.connect(  _create_hybridvolume, sender=model )
