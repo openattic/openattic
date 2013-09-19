@@ -87,7 +87,7 @@ Ext.oa.WizPanel = Ext.extend(Ext.form.FormPanel, {
   layout    : 'card',
   border    : false,
   defaults  : {
-    bodyStyle : 'padding:5px;',
+    bodyStyle : 'padding:5px 5px;',
     border    : false,
     autoScroll: true,
     anchor    : '-20px',
@@ -221,7 +221,6 @@ Ext.oa.LVM__Snapcore_TreePanel = Ext.extend(Ext.tree.TreePanel, {
       animate         : true,
       containerScroll : true,
       rootVisible     : false,
-      frame           : true,
       loader: new Ext.oa.TreeLoader({
         clearOnLoad   : true,
         tree          : this
@@ -521,8 +520,6 @@ var wizform = new Ext.oa.WizPanel({
   },{
     id        : 'wiz_snapitems',
     layout    : 'border',
-    xtype     : 'form',
-    frame     : true,
     items     : [{
       title     : gettext('Available items'),
       region    : 'center',
@@ -568,12 +565,12 @@ var wizform = new Ext.oa.WizPanel({
         title     : gettext('Item settings'),
         id        : 'wiz_snapitem_settings',
         region    : 'east',
+        border    : false,
         split     : true,
-        xtype     : 'form',
-        width     : 300,
-        bodyStyle : 'padding:5px 5px;',
-        border    : true,
+        defaults  : {border: false},
+        width     : 250,
         layout    : 'card',
+        bodyStyle : 'padding; 5px 5px',
         items     : items,
         activeItem: 0,
       };
