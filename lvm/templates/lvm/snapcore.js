@@ -547,10 +547,22 @@ var wizform = new Ext.oa.WizPanel({
             }
             form.getForm().loadRecord(config);
           }
+          else{
+            Ext.getCmp('wiz_snapitem_settings').layout.setActiveItem('emptyConfigForm');
+          }
         },
       }
     }, (function(){
       var items = [];
+
+      items.push(new Ext.form.FormPanel({
+        id    : "emptyConfigForm",
+        items : [{
+          xtype: "label",
+          text : gettext("No config options available!"),
+        }]
+      }));
+
       for( var i = 0; i < window.SnapAppPlugins.length; i++ ){
         window.SnapAppPlugins[i].config = config;
         if( typeof window.SnapAppPlugins[i].objtypes !== "undefined" ){
