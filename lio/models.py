@@ -382,7 +382,6 @@ models.signals.m2m_changed.connect(__acl_mappedluns_changed, sender=ACL.mapped_l
 class LogicalLUN(models.Model):
     """ Mainmächtiges masterchief ultramodel of doom """
     volume      = models.ForeignKey(LogicalVolume, unique=True)
-    lun_id      = models.IntegerField(unique=True)
     hostgroups  = models.ManyToManyField(HostGroup)
     hosts       = models.ManyToManyField(Host)
     targets     = models.ManyToManyField(Target)
