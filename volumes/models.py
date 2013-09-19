@@ -20,7 +20,7 @@ from django.contrib.contenttypes import generic
 from django.utils.translation    import ugettext_lazy as _
 from django.contrib.auth.models  import User
 
-from volumes import capabilities
+from volumes import capabilities, filesystems
 
 class CapabilitiesAwareManager(models.Manager):
     def filter_by_capability(self, capability):
@@ -84,9 +84,7 @@ class FileSystemVolume(AbstractVolume):
 
     @property
     def fs(self):
-        if isinstance(self.volume, BlockVolume):
-            return self.volume.volume.fs
-        return self.volume.fs
+        return filesystems.get_by_name(self.filesystem)(self.volume)
 
     @property
     def fsname(self):
