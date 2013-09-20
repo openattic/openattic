@@ -632,68 +632,13 @@ var wizform = new Ext.oa.WizPanel({
 
           for(var plugin in config['plugin_data'])
           {
-            if(plugin === 'vmware')
-            {
-              var plugin_func = get_plugin(plugin);
-              for(var host_id in config['plugin_data'][plugin])
-              {
-                if(typeof config['plugin_data'][plugin][host_id]['children'] !== 'undefined')
-                {
-                  for(var dc in config['plugin_data'][plugin][host_id]['children'])
-                  {
-                    if(typeof config['plugin_data'][plugin][host_id]['children'][dc]['children'] !== 'undefined')
-                    {
-                      for(var ds in config['plugin_data'][plugin][host_id]['children'][dc]['children'])
-                      {
-                        plugin_func.getVolume(host_id, dc, ds, function(result, response){
-                          if(response.type !== 'exception'){
-                            volumes.push(result.volume);
-                          }
-                          else{
-                            requests--;
-                          }
+            var plugin_func = get_plugin(plugin);
 
-                          if( volumes.length === requests ){
-                            for(var i=0; i<volumes.length; i++){
-                              VolumeStore.each(moveItem.createDelegate(this, [volumes[i].id], true));
-                            }
-                          }
-                        });
-                        requests++;
-                      }
-                    }
-                  }
-                }
+            plugin_func.getVolume(function(result, response){
+              if(response.type !== 'exception'){
+                VolumeStore.each(moveItem.createDelegate(this, [result.volume.id], true));
               }
-            }
-            if(plugin === 'mssql'){
-              var plugin_func = get_plugin(plugin);
-
-              for(var host_id in config['plugin_data'][plugin])
-              {
-                if(typeof config['plugin_data'][plugin][host_id]['children'] !== 'undefined')
-                {
-                  for(var dr in config['plugin_data'][plugin][host_id]['children'])
-                  {
-                    plugin_func.getVolume(host_id, dr, function(result, response){
-                      if(response.type !== 'exception'){
-                        volumes.push(result.volume);
-                      }
-                      else{
-                        requests--;
-                      }
-
-                      if( volumes.length === requests ){
-                        for(var i=0; i<volumes.length; i++){
-                          VolumeStore.each(moveItem.createDelegate(this, [volumes[i].id], true));
-                        }
-                      }
-                    });
-                    requests++;
-                  }
-                }
-              }
-            }
+            });
           }
 
           secondGrid.getView().dragZone.onBeforeDrag = function(data, e){
