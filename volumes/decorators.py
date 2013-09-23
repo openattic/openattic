@@ -20,6 +20,35 @@ from django.contrib.contenttypes.models import ContentType
 from volumes import models
 from volumes import signals as volumes_signals
 
+def _create_vpool(instance, **kwargs):
+    vpooltype = ContentType.objects.get_for_model(instance.__class__)
+    try:
+        vpool = models.VolumePool.objects.get(content_type=vpooltype, object_id=instance.id)
+    except models.VolumePool.DoesNotExist:
+        vpool = models.VolumePool()
+        vpool.volumepool = instance
+        vpool.capflags = 0
+        volumes_signals.pre_install.send(sender=models.VolumePool, instance=vpool, volumepool=instance)
+        vpool.save()
+        volumes_signals.post_install.send(sender=models.VolumePool, instance=vpool, volumepool=instance)
+
+def _delete_vpool(instance, **kwargs):
+    vpooltype = ContentType.objects.get_for_model(instance.__class__)
+    try:
+        vpool = models.VolumePool.objects.get(content_type=vpooltype, object_id=instance.id)
+    except models.VolumePool.DoesNotExist:
+        pass
+    else:
+        volumes_signals.pre_uninstall.send(sender=models.VolumePool, instance=vpool, volumepool=instance)
+        vpool.delete()
+        volumes_signals.post_uninstall.send(sender=models.VolumePool, instance=vpool, volumepool=instance)
+
+def VolumePool(model):
+    models_signals.post_save.connect(  _create_vpool, sender=model )
+    models_signals.pre_delete.connect( _delete_vpool, sender=model )
+    return model
+
+
 def _create_blkvolume(instance, **kwargs):
     volumetype = ContentType.objects.get_for_model(instance.__class__)
     try:
