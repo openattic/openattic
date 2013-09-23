@@ -27,6 +27,18 @@ class CapabilitiesAwareManager(models.Manager):
         return self.extra(where=[self.model._meta.db_table + '.capflags & %s = %s'], params=[capability.flag, capability.flag])
 
 
+class VolumePool(models.Model):
+    content_type= models.ForeignKey(ContentType)
+    object_id   = models.PositiveIntegerField()
+    volumepool  = generic.GenericForeignKey()
+    capflags    = models.BigIntegerField()
+
+    objects     = CapabilitiesAwareManager()
+
+    class Meta:
+        unique_together = (('content_type', 'object_id'),)
+
+
 class AbstractVolume(models.Model):
     content_type= models.ForeignKey(ContentType)
     object_id   = models.PositiveIntegerField()
