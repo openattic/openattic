@@ -46,6 +46,7 @@ class AbstractVolume(models.Model):
     object_id   = models.PositiveIntegerField()
     volume      = generic.GenericForeignKey()
     capflags    = models.BigIntegerField()
+    pool        = models.ForeignKey(VolumePool, blank=True, null=True)
 
     objects     = CapabilitiesAwareManager()
 
