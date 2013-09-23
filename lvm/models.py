@@ -38,7 +38,7 @@ from lvm.conf        import settings as lvm_settings
 from cron.models     import Cronjob
 from lvm             import snapcore
 
-from volumes.decorators import BlockVolume, FileSystemVolume, HybridVolume
+from volumes.decorators import VolumePool, BlockVolume, FileSystemVolume, HybridVolume
 from volumes            import capabilities
 
 def validate_vg_name(value):
@@ -67,6 +67,7 @@ def validate_lv_name(value):
         raise ValidationError("The volume name must not contain '_mlog' or '_mimage'.")
 
 
+@VolumePool
 class VolumeGroup(models.Model):
     """ Represents a LVM Volume Group. """
 
