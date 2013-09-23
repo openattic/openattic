@@ -38,6 +38,8 @@ class VolumePool(models.Model):
     class Meta:
         unique_together = (('content_type', 'object_id'),)
 
+    def __unicode__(self):
+        return unicode(self.volumepool)
 
 class AbstractVolume(models.Model):
     content_type= models.ForeignKey(ContentType)
