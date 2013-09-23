@@ -58,7 +58,6 @@ usage () {
 	echo "    restart      Restart all services that are needed to run openATTIC."
 	echo "    reload       Reload all services that are needed to run openATTIC."
 	echo "    status       Show the status of all services that are needed to run openATTIC."
-	echo "    rootshell    Start a python shell as root."
 	echo
 	echo "Any other command will be passed as-is to the openATTIC management system,"
 	echo "which supports the commands and options listed below."
@@ -186,7 +185,7 @@ case $1 in
 		/etc/init.d/apache2 status           || /bin/true
 		;;
 
-	rootshell)
+	rootshell|shell)
 		python manage.py shell
 		;;
 
