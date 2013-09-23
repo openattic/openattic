@@ -30,25 +30,37 @@ Ext.oa.WizardTreeNodeUI = Ext.extend(Ext.tree.TreeNodeUI, {
           afterrender: function(self){
             self.el.on("load", function(ev, target, opt){
               img_children.el.alignTo(node.iconNode, "bl-bl");
+
               if( node.node.attributes.plugin.getConfig(node.node) === null )
                 Ext.DomHelper.applyStyles( img_children.el, 'display: none' );
+
               node.node.attributes.plugin.on("setConfigData", function(plugin, confobj, key, value){
-                var storedconf = node.node.attributes.plugin.getConfig(node.node);
-                if( node.node.attributes.objid === key || storedconf !== null ){
+                // Decide whether or not we need to display a grey icon on the current node.
+
+                // If we have a config for this node, it does NOT have a grey icon.
+                if( node.node.attributes.plugin.getConfig(node.node) !== null ){
                   Ext.DomHelper.applyStyles( img_children.el, 'display: none' );
                   return;
                 }
+
+                // We MAY have a grey icon now.
+
+                // Check if any of our children has a config. If so, we DO have a grey icon.
                 for( var i = 0; i < node.node.childNodes.length; i++ ){
-                  if( node.node.childNodes[i].attributes.objid === key ){
-                    Ext.DomHelper.applyStyles( img_children.el,
-                      ( value !== null ? "display: block" : "display: none" ) );
-                    break;
+                  if( node.node.attributes.plugin.getConfig(node.node.childNodes[i]) !== null ){
+                    Ext.DomHelper.applyStyles( img_children.el, "display: block" );
+                    return;
                   }
                 }
-                if(node.node.parentNode.attributes.objid === key){
-                  Ext.DomHelper.applyStyles(img_children.el,
-                    (value !== null ? "display: block" : "display: none"));
+
+                // Check if the parent has a config. If so, we DO have a grey icon.
+                if(node.node.attributes.plugin.getConfig(node.node.parentNode) !== null ){
+                  Ext.DomHelper.applyStyles(img_children.el, "display: block");
+                  return;
                 }
+
+                // Neither happened -> no icon.
+                Ext.DomHelper.applyStyles( img_children.el, "display: none" );
               });
             });
           },
@@ -64,8 +76,10 @@ Ext.oa.WizardTreeNodeUI = Ext.extend(Ext.tree.TreeNodeUI, {
           afterrender: function(self){
             self.el.on("load", function(ev, target, opt){
               img_self.el.alignTo(node.iconNode, "bl-bl");
+
               if( node.node.attributes.plugin.getConfig(node.node) === null )
                 Ext.DomHelper.applyStyles( img_self.el, 'display: none' );
+
               node.node.attributes.plugin.on("setConfigData", function(plugin, confobj, key, value){
                 if( node.node.attributes.objid === key ){
                   Ext.DomHelper.applyStyles( img_self.el,
