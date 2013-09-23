@@ -28,9 +28,9 @@ def _create_vpool(instance, **kwargs):
         vpool = models.VolumePool()
         vpool.volumepool = instance
         vpool.capflags = 0
-        volumes_volumes_signals.pre_install.send(sender=models.VolumePool, instance=vpool, volumepool=instance)
+        volumes_signals.pre_install.send(sender=models.VolumePool, instance=vpool, volumepool=instance)
         vpool.save()
-        volumes_volumes_signals.post_install.send(sender=models.VolumePool, instance=vpool, volumepool=instance)
+        volumes_signals.post_install.send(sender=models.VolumePool, instance=vpool, volumepool=instance)
 
 def _delete_vpool(instance, **kwargs):
     vpooltype = ContentType.objects.get_for_model(instance.__class__)
