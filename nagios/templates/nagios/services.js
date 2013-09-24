@@ -14,11 +14,10 @@
 Ext.namespace("Ext.oa");
 
 Ext.oa.DragSelector = function(cfg){
-  "use strict";
   // Based upon Ext.DataView.DragSelector
   cfg = cfg || {};
   var view, proxy, tracker;
-  var bodyRegion, graphRegion, dragRegion = new Ext.lib.Region(0,0,0,0);
+  var bodyRegion, graphRegion, dragRegion = new Ext.util.Region(0,0,0,0);
 
   function cancelClick(){
     return false;
@@ -26,14 +25,14 @@ Ext.oa.DragSelector = function(cfg){
 
   function onBeforeStart(e){
     graphRegion = view.items.items[0].el.getRegion();
-    bodyRegion = new Ext.lib.Region(
+    bodyRegion = new Ext.util.Region(
       graphRegion.top   + 30, // top
       graphRegion.right - 30, // right
       graphRegion.top   + 30 + view.graphheight, // bottom
       graphRegion.right - 30 - view.graphwidth   // left
     );
     var x = e.xy[0], y = e.xy[1];
-    return bodyRegion.contains(new Ext.lib.Region(y,x,y,x));
+    return bodyRegion.contains(new Ext.util.Region(y,x,y,x));
   }
 
   function onStart(e){
@@ -111,7 +110,9 @@ Ext.oa.DragSelector = function(cfg){
 };
 
 
-Ext.oa.Nagios__Graph_ImagePanel = Ext.extend(Ext.Panel, {
+Ext.define('Ext.oa.Nagios__Graph_ImagePanel', {
+  alias: 'widget.nagios__graph_imagepanel',
+  extend: 'Ext.Panel',
   graphcolors: ( "{{ PROFILE.theme }}" !== "access" ? {
     bgcol: 'FFFFFF',
     grcol: '',
@@ -127,7 +128,6 @@ Ext.oa.Nagios__Graph_ImagePanel = Ext.extend(Ext.Panel, {
   }),
   reloadTimerId: 0,
   initComponent: function(){
-    "use strict";
     Ext.apply(this, Ext.applyIf(this.initialConfig, {
       reloadInterval: 0,
       graphheight: 150,
@@ -137,10 +137,10 @@ Ext.oa.Nagios__Graph_ImagePanel = Ext.extend(Ext.Panel, {
       layout: "vbox",
       layoutConfig: { "align": "center" },
       plugins: [ new Ext.oa.DragSelector() ],
-      items: new Ext.BoxComponent({
+      items: Ext.create("Ext.Component", {
         autoEl: {
           tag: "img",
-          src: MEDIA_URL + "/extjs/resources/images/default/s.gif"
+          src: MEDIA_URL + "/extjs/resources/themes/images/default/tree/s.gif"
         },
         listeners: {
           render: function(self){
@@ -155,19 +155,19 @@ Ext.oa.Nagios__Graph_ImagePanel = Ext.extend(Ext.Panel, {
             self.el.on("dblclick", function(ev, target, options){
               this.loadRecord(this.currentRecord, this.currentId);
             }, self.ownerCt);
+          },
+          afterrender: function(){
+            // Wait until the <img> element has actually been created, then reload the record
+            if( this.ownerCt.currentRecord ){
+              this.ownerCt.reload();
+            }
           }
         }
       })
     }));
-    Ext.oa.Nagios__Graph_ImagePanel.superclass.initComponent.apply(this, arguments);
+    this.callParent(arguments);
     this.on( "afterrender", function(){
       var self = this;
-      // Wait until the <img> element has actually been created, then reload the record
-      this.items.items[0].on( "afterrender", function(){
-        if( this.currentRecord ){
-          this.loadRecord( this.currentRecord, this.currentId );
-        }
-      }, this );
       if( this.reloadInterval ){
         (function(){
           window.mainpanel.on("switchedComponent", function(cmp){
@@ -181,7 +181,6 @@ Ext.oa.Nagios__Graph_ImagePanel = Ext.extend(Ext.Panel, {
   },
 
   loadInterval: function(record, id, start, end){
-    "use strict";
     var params = {};
     Ext.apply(params, this.graphcolors);
 
@@ -207,7 +206,6 @@ Ext.oa.Nagios__Graph_ImagePanel = Ext.extend(Ext.Panel, {
   },
 
   loadRecord: function(record, id){
-    "use strict";
     this.currentRecord = record;
     this.currentId = id;
     if( this.el ){
@@ -227,16 +225,15 @@ Ext.oa.Nagios__Graph_ImagePanel = Ext.extend(Ext.Panel, {
   }
 });
 
-Ext.reg("naggraphimage", Ext.oa.Nagios__Graph_ImagePanel);
 
-
-Ext.oa.Nagios__Graph_ImagePortlet = Ext.extend(Ext.ux.Portlet, {
+Ext.define('Ext.oa.Nagios__Graph_ImagePortlet', {
+  alias: 'widget.nagios__graph_imageportlet',
+  extend: 'Ext.app.Portlet',
   initComponent: function(){
-    "use strict";
     Ext.apply(this, Ext.applyIf(this.initialConfig, {
       bodyCssClass: "nagiosportlet",
       items: {
-        xtype: "naggraphimage",
+        xtype: 'widget.nagios__graph_imagepanel',
         reloadInterval: 300,
         timespan: 4*60*60,
         height: 265,
@@ -249,12 +246,11 @@ Ext.oa.Nagios__Graph_ImagePortlet = Ext.extend(Ext.ux.Portlet, {
         currentId: this.graphId
       });
     }
-    Ext.oa.Nagios__Graph_ImagePortlet.superclass.initComponent.apply(this, arguments);
+    this.callParent(arguments);
   },
 
   onClose: function(){
-    "use strict";
-    Ext.oa.Nagios__Graph_ImagePortlet.superclass.onClose.apply(this, arguments);
+    this.callParent(arguments);
     var portletstate = Ext.state.Manager.get( "nagios_portlets", [] ),
         i;
     for( i = 0; i < portletstate.length; i++ ){
@@ -267,12 +263,11 @@ Ext.oa.Nagios__Graph_ImagePortlet = Ext.extend(Ext.ux.Portlet, {
   }
 });
 
-Ext.reg("naggraphportlet", Ext.oa.Nagios__Graph_ImagePortlet);
 
-
-Ext.oa.Nagios__Service_Panel = Ext.extend(Ext.Panel, {
+Ext.define('Ext.oa.Nagios__Service_Panel', {
+  alias: 'widget.nagios__service_panel',
+  extend: 'Ext.Panel',
   initComponent: function(){
-    "use strict";
     var nagiosGrid = this;
     var renderDate = function(val, x, store){
       if(!val) return gettext("unknown");
@@ -293,12 +288,13 @@ Ext.oa.Nagios__Service_Panel = Ext.extend(Ext.Panel, {
       id: "nagios__service_panel_inst",
       title: gettext('Nagios Services'),
       layout: "border",
+      border: false,
       buttons: [ {
         text: "",
         icon: MEDIA_URL + "/icons2/16x16/actions/reload.png",
         tooltip: gettext('Reload'),
         handler: function(self){
-          nagiosGrid.items.items[0].store.reload();
+          nagiosGrid.items.items[0].store.load();
         }
       }, {
         text: "Dashboard",
@@ -324,7 +320,7 @@ Ext.oa.Nagios__Service_Panel = Ext.extend(Ext.Panel, {
                   });
                   Ext.state.Manager.set( "nagios_portlets", portletstate );
                   dashboard.makePortlet({
-                    xtype: "naggraphportlet",
+                    xtype: 'widget.nagios__graph_imageportlet',
                     title: text,
                     id: "portlet_nagios_" + portletid,
                     recordId: record.data.id,
@@ -351,14 +347,20 @@ Ext.oa.Nagios__Service_Panel = Ext.extend(Ext.Panel, {
       items: [ {
         xtype: 'grid',
         region: "center",
-        sm: new Ext.grid.RowSelectionModel({singleSelect:true}),
+        selModel: { mode: "SINGLE" },
         border: false,
         loadMask: true,
-        viewConfig: { forceFit: true },
+        forceFit: true,
         store: {
-          xtype: 'directstore',
+          proxy: {
+            type: "direct",
+            directFn: nagios__Service.filter,
+            startParam: undefined,
+            limitParam: undefined,
+            pageParam:  undefined
+          },
           fields: ['id', 'description', {
-            name: "volumename",    mapping: "volume", convert: function(val, row){ if(val){ return val.__unicode__; }}
+            name: "volumename",    mapping: "volume", convert: toUnicode
           }, {
             name: "hostname",
             mapping: "state",
@@ -393,55 +395,51 @@ Ext.oa.Nagios__Service_Panel = Ext.extend(Ext.Panel, {
               }
               return null;
             }
-          }],
-          directFn: nagios__Service.filter
-        },
-        colModel: new Ext.grid.ColumnModel({
-          defaults: {
-            sortable: true
-          },
-          columns: [{
-            header: gettext('Service Description'),
-            width: 200,
-            dataIndex: "description",
-            renderer: renderDesc
-          }, {
-            header: gettext('Plugin Output'),
-            width: 200,
-            dataIndex: "plugin_output"
-          }, {
-            header: gettext('Volume'),
-            width: 100,
-            dataIndex: "volumename"
-          }, {
-            header: gettext('Host'),
-            width: 100,
-            dataIndex: "hostname"
-          }, {
-            header: gettext('Last Check'),
-            width: 120,
-            dataIndex: "last_check",
-            renderer: renderDate
-          }, {
-            header: gettext('Next Check'),
-            width: 120,
-            dataIndex: "next_check",
-            renderer: renderDate
           }]
-        }),
+        },
+        defaults: {
+          sortable: true
+        },
+        columns: [{
+          header: gettext('Service Description'),
+          width: 200,
+          dataIndex: "description",
+          renderer: renderDesc
+        }, {
+          header: gettext('Plugin Output'),
+          width: 200,
+          dataIndex: "plugin_output"
+        }, {
+          header: gettext('Volume'),
+          width: 100,
+          dataIndex: "volumename"
+        }, {
+          header: gettext('Host'),
+          width: 100,
+          dataIndex: "hostname"
+        }, {
+          header: gettext('Last Check'),
+          width: 120,
+          dataIndex: "last_check",
+          renderer: renderDate
+        }, {
+          header: gettext('Next Check'),
+          width: 120,
+          dataIndex: "next_check",
+          renderer: renderDate
+        }],
         listeners: {
-          cellmousedown: function( self, rowIndex, colIndex, evt ){
-            var record = self.getStore().getAt(rowIndex);
-            if( !record.json.graphs || record.json.graphs.length === 0 ){
+          itemmousedown: function( self, record ){
+            if( !record.raw.graphs || record.raw.graphs.length === 0 ){
               self.ownerCt.items.items[1].getEl().mask(
                 gettext('No performance data available for service') + "<br />" +
                 "<center>" + record.data.description + "</center>"
               );
             }
             else{
-              self.ownerCt.items.items[1].getEl().unmask();
-              self.ownerCt.items.items[1].items.items[1].getSelectionModel().clearSelections();
-              self.ownerCt.items.items[1].loadRecord(record);
+              self.ownerCt.ownerCt.items.items[2].getEl().unmask();
+              self.ownerCt.ownerCt.items.items[2].items.items[1].getSelectionModel().clearSelections();
+              self.ownerCt.ownerCt.items.items[2].loadRecord(record);
             }
           }
         }
@@ -463,24 +461,24 @@ Ext.oa.Nagios__Service_Panel = Ext.extend(Ext.Panel, {
           border: false,
           id: 'naggraphpanel',
           items: [{
-            xtype: "naggraphimage",
+            xtype: "widget.nagios__graph_imagepanel",
             title: gettext('4 hours'),
             timespan: 4*60*60,
             reloadInterval: 300
           }, {
-            xtype: "naggraphimage",
+            xtype: "widget.nagios__graph_imagepanel",
             title: gettext('1 day'),
             timespan: 24*60*60
           }, {
-            xtype: "naggraphimage",
+            xtype: "widget.nagios__graph_imagepanel",
             title: gettext('1 week'),
             timespan: 7*24*60*60
           }, {
-            xtype: "naggraphimage",
+            xtype: "widget.nagios__graph_imagepanel",
             title: gettext('1 month'),
             timespan: 30*24*60*60
           }, {
-            xtype: "naggraphimage",
+            xtype: "widget.nagios__graph_imagepanel",
             title: gettext('1 year'),
             timespan: 365*24*60*60
           }],
@@ -495,12 +493,11 @@ Ext.oa.Nagios__Service_Panel = Ext.extend(Ext.Panel, {
           region: "west",
           title: gettext('Graphs'),
           xtype:  'grid',
-          sm: new Ext.grid.RowSelectionModel({singleSelect:true}),
+          selModel: { mode: "SINGLE" },
           width: 160,
-          viewConfig: { forceFit: true },
+          forceFit: true,
           store: (function(){
-            // Anon function that is called immediately to set up the store's DefaultSort
-            var store = new Ext.data.JsonStore({
+            var store = new Ext.data.ArrayStore({
               fields: ["id", "title"]
             });
             store.setDefaultSort("title", "ASC");
@@ -513,15 +510,14 @@ Ext.oa.Nagios__Service_Panel = Ext.extend(Ext.Panel, {
             } ]
           }),
           listeners: {
-            cellclick: function( self, rowIndex, colIndex, evt ){
-              var record = self.getStore().getAt(rowIndex);
-              self.ownerCt.items.items[0].loadRecord(self.currentRecord, record.data);
+            itemmousedown: function( self, record ){
+              self.ownerCt.ownerCt.items.items[0].loadRecord(self.ownerCt.currentRecord, record.data);
             }
           },
           loadRecord: function( record ){
             this.currentRecord = record;
-            this.store.loadData( record.json.graphs );
-            this.ownerCt.items.items[0].loadRecord(record, record.json.graphs[0]);
+            this.store.loadData( record.raw.graphs );
+            this.ownerCt.items.items[0].loadRecord(record, record.raw.graphs[0]);
           }
         }],
         loadRecord: function( record ){
@@ -541,12 +537,12 @@ Ext.oa.Nagios__Service_Panel = Ext.extend(Ext.Panel, {
                 clearTimeout(nagiosGrid.searchTimeout);
               }
               if( newVal !== '' ){
-                nagiosGrid.items.items[0].store.baseParams["description__icontains"] = newVal;
+                nagiosGrid.items.items[0].store.proxy.extraParams["description__icontains"] = newVal;
               }
               else{
-                delete nagiosGrid.items.items[0].store.baseParams["description__icontains"];
+                delete nagiosGrid.items.items[0].store.proxy.extraParams["description__icontains"];
               }
-              nagiosGrid.items.items[0].store.reload();
+              nagiosGrid.items.items[0].store.load();
             },
             keypress: function( fld, evt ){
               if( typeof nagiosGrid.searchTimeout !== "undefined" ){
@@ -577,22 +573,14 @@ Ext.oa.Nagios__Service_Panel = Ext.extend(Ext.Panel, {
         }]
       }
     }));
-    Ext.oa.Nagios__Service_Panel.superclass.initComponent.apply(this, arguments);
+    this.callParent(arguments);
   },
   refresh: function(){
-    this.items.items[0].store.reload();
+    this.items.items[0].store.load();
   },
   onRender: function(){
-    "use strict";
-    Ext.oa.Nagios__Service_Panel.superclass.onRender.apply(this, arguments);
-    this.items.items[0].store.reload();
-    this.items.items[0].on("afterrender", function(){
-      var myMask = new Ext.LoadMask(this.getEl());
-      myMask.show.defer(50, myMask);
-    }, this.items.items[0], {single: true} );
-    this.items.items[0].store.on("load", function(){
-      this.getEl().unmask();
-    }, this.items.items[0], {single: true} );
+    this.callParent(arguments);
+    this.items.items[0].store.load();
   },
   initSearch: function(){
     this.bottomToolbar.show();
@@ -600,13 +588,11 @@ Ext.oa.Nagios__Service_Panel = Ext.extend(Ext.Panel, {
   }
 });
 
-Ext.reg("nagios__service_panel", Ext.oa.Nagios__Service_Panel);
 
-Ext.oa.Nagios__Service_Module = Ext.extend(Object, {
-  panel: "nagios__service_panel",
+Ext.oa.Nagios__Service_Module = {
+  panel: "widget.nagios__service_panel",
 
   prepareMenuTree: function(tree){
-    "use strict";
     tree.appendToRootNodeById("menu_status", {
       text: gettext('Monitoring'),
       leaf: true,
@@ -617,13 +603,12 @@ Ext.oa.Nagios__Service_Module = Ext.extend(Object, {
   },
 
   getDashboardPortlets: function(tools){
-    "use strict";
     var portletstate = Ext.state.Manager.get( "nagios_portlets", [] ),
         portlets = [],
         i;
     for( i = 0; i < portletstate.length; i++ ){
       portlets.push( {
-        xtype: "naggraphportlet",
+        xtype: 'widget.nagios__graph_imageportlet',
         title: portletstate[i].title,
         id: 'portlet_nagios_' + portletstate[i].id,
         tools: (function(){
@@ -642,9 +627,9 @@ Ext.oa.Nagios__Service_Module = Ext.extend(Object, {
     }
     return portlets;
   }
-});
+};
 
 
-window.MainViewModules.push( new Ext.oa.Nagios__Service_Module() );
+window.MainViewModules.push( Ext.oa.Nagios__Service_Module );
 
 // kate: space-indent on; indent-width 2; replace-tabs on;
