@@ -19,14 +19,12 @@
     {% if THEME %}
       <link rel="stylesheet" type="text/css" href="{{ MEDIA_URL }}/extjs_themes/css/xtheme-{{ THEME }}.css" />
     {% endif %}
-    <!--[if IE]><script type="text/javascript" src="{{ MEDIA_URL }}/canvasxpress/excanvas.js"></script><![endif]-->
-    <script type="text/javascript" src="{{ MEDIA_URL }}/canvasxpress/canvasXpress.min.js"></script>
-    <script src="{{ MEDIA_URL }}/extjs/adapter/ext/ext-base.js"></script>
     <script src="{{ MEDIA_URL }}/extjs/ext-all-debug.js"></script>
+    <script src="{{ MEDIA_URL }}/extjs/compatibility/ext3-core-compat.js"></script>
+    <script src="{{ MEDIA_URL }}/extjs/compatibility/ext3-compat.js"></script>
     {% if LANGUAGE_CODE %}
       <script src="{{ MEDIA_URL }}/extjs_languages/ext-lang-{{ LANGUAGE_CODE }}.js"></script>
     {% endif %}
-    <script type="text/javascript" src="{{ MEDIA_URL }}/canvasxpress/ext-canvasXpress.js"></script>
     <script src="{% url django.views.i18n.javascript_catalog %}"></script>
     <script src="{{ PROJECT_URL }}/userprefs/initprefs.js"></script>
     <script src="{{ PROJECT_URL }}/direct/api.js"></script>
@@ -142,8 +140,8 @@
         }});
         function updateLayout(){
           viewsize = {
-            width:  Ext.lib.Dom.getViewWidth(),
-            height: Ext.lib.Dom.getViewHeight()
+            width:  Ext.core.Element.getViewWidth(),
+            height: Ext.core.Element.getViewHeight()
           };
           mainpanel.setHeight( viewsize.height - 20 );
           mainpanel.setWidth(  viewsize.width  - 40 );
@@ -235,6 +233,6 @@
   <body style="padding: 20px 20px 0; ">
     <noscript>Please enable JavaScript to view openATTIC.</noscript>
   </body>
-  <!-- kate: space-indent on; indent-width 2; replace-tabs on; -->
+  <!-- kate: space-indent on; indent-width 2; replace-tabs on; hl Django HTML Template; -->
   <!-- vim:set shiftwidth=2 softtabstop=2 expandtab: -->
 </html>
