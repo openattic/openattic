@@ -13,8 +13,7 @@
 
 Ext.namespace("Ext.oa");
 
- Ext.define('Ext.oa.Ipmi__Sensors_Panel', {
-
+Ext.define('Ext.oa.Ipmi__Sensors_Panel', {
   alias: 'widget.ipmi__sensors_panel',
   extend: 'Ext.grid.GridPanel',
   initComponent: function(){
