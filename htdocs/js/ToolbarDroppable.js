@@ -33,7 +33,7 @@
  * created and inserted into the Toolbar. Use this for any logic that needs to be run after
  * the item has been created.
  */
-Ext.ux.ToolbarDroppable = Ext.extend(Object, {
+Ext.define('Ext.ux.ToolbarDroppable', {
     /**
      * @constructor
      */
