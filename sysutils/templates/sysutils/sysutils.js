@@ -13,65 +13,70 @@
 
 Ext.namespace("Ext.oa");
 
-Ext.oa.SysUtils__Service_Panel = Ext.extend(Ext.grid.GridPanel, {
+Ext.define('Ext.oa.SysUtils__Service_Panel', {
+
+  extend: 'Ext.grid.GridPanel',
+  alias: "widget.sysutils__service_panel",
   initComponent: function(){
-    "use strict";
     var sysUtilsGrid = this;
     Ext.apply(this, Ext.apply(this.initialConfig, {
       id: "sysutils__service_panel_inst",
       title: gettext('Service State'),
+
       store: (function(){
-        var st = new Ext.data.DirectStore({
-          fields: ['id', 'name', 'status'],
-          directFn: sysutils__InitScript.all_with_status
+        Ext.define('sysutils_initscript_all_model', {
+          extend: 'Ext.data.Model',
+          fields: ['id', 'name', 'status']
         });
-        st.setDefaultSort("name");
-        return st;
+        return Ext.create('Ext.data.Store', {
+          model: "sysutils_initscript_all_model",
+          proxy: {
+            type: 'direct',
+            directFn: sysutils__InitScript.all_with_status
+          },
+          autoLoad: true
+        });
+        store.setDefaultSort("name");
       }()),
-      viewConfig: { forceFit: true },
-      colModel: new Ext.grid.ColumnModel({
-        defaults: {
-          sortable: true
-        },
-        columns: [{
-          header: gettext('Service Name'),
-          dataIndex: "name"
-        }, {
-          header: gettext('Status'),
-          width: 50,
-          align: "center",
-          dataIndex: "status",
-          renderer: function( val, x, store ){
-            if( val === 0 ){
-              return '<img src="{{ MEDIA_URL }}/oxygen/16x16/status/security-high.png" title="running" />';
-            }
-            else if( val === 3 ){
-              return '<img src="{{ MEDIA_URL }}/oxygen/16x16/status/security-low.png" title="stopped" />';
-            }
-            else if(val === null ){
-              return  '<img src="{{ MEDIA_URL }}/oxygen/16x16/categories/system-help.png" title="not configured" />';
-            }
-            else{
-              return '<img src="{{ MEDIA_URL }}/oxygen/16x16/status/security-medium.png" title="failure" />';
-            }
+      forceFit: true,
+      columns: [{
+        header: gettext('Service Name'),
+        dataIndex: "name"
+      }, {
+        header: gettext('Status'),
+        width: 50,
+        align: "center",
+        dataIndex: "status",
+        renderer: function( val, x, store ){
+          if( val === 0 ){
+            return '<img src="{{ MEDIA_URL }}/oxygen/16x16/status/security-high.png" title="running" />';
           }
-        }]
-      }),
+          else if( val === 3 ){
+            return '<img src="{{ MEDIA_URL }}/oxygen/16x16/status/security-low.png" title="stopped" />';
+          }
+          else if(val === null ){
+            return  '<img src="{{ MEDIA_URL }}/oxygen/16x16/categories/system-help.png" title="not configured" />';
+          }
+          else{
+            return '<img src="{{ MEDIA_URL }}/oxygen/16x16/status/security-medium.png" title="failure" />';
+          }
+        }
+      }],
       buttons: [{
         text: "",
         icon: MEDIA_URL + "/icons2/16x16/actions/reload.png",
         tooltip: gettext('Reload'),
         handler: function(self){
-          sysUtilsGrid.store.reload();
+          sysUtilsGrid.store.load();
         }
       }, {
         text: 'Start',
         handler: function(self){
         var sm = sysUtilsGrid.getSelectionModel();
         if( sm.hasSelection() ){
-          var sel = sm.selections.items[0];
+          var sel = sm.selected.items[0];
           sysutils__InitScript.start(sel.data.id, function(provider, response){
-            sysUtilsGrid.store.reload();
+            sysUtilsGrid.store.load();
           });
         }
         }
@@ -80,29 +85,26 @@ Ext.oa.SysUtils__Service_Panel = Ext.extend(Ext.grid.GridPanel, {
         handler: function(self){
         var sm = sysUtilsGrid.getSelectionModel();
         if( sm.hasSelection() ){
-          var sel = sm.selections.items[0];
+          var sel = sm.selected.items[0];
           sysutils__InitScript.stop(sel.data.id, function(provider, response){
-            sysUtilsGrid.store.reload();
+            sysUtilsGrid.store.load();
           });
         }
         }
       }]
     }));
-    Ext.oa.SysUtils__Service_Panel.superclass.initComponent.apply(this, arguments);
+    this.callParent(arguments);
   },
   onRender: function(){
-    "use strict";
-    Ext.oa.SysUtils__Service_Panel.superclass.onRender.apply(this, arguments);
-    this.store.reload();
+    this.callParent(arguments);
+    this.store.load();
   }
 });
 
-Ext.reg("sysutils__service_panel", Ext.oa.SysUtils__Service_Panel);
 
-Ext.oa.SysUtils__Service_Module = Ext.extend(Object, {
+Ext.oa.SysUtils__Service_Module = {
   panel: "sysutils__service_panel",
   prepareMenuTree: function(tree){
-    "use strict";
     tree.appendToRootNodeById("menu_status", {
       text: gettext('Service State'),
       leaf: true,
@@ -112,6 +114,7 @@ Ext.oa.SysUtils__Service_Module = Ext.extend(Object, {
     });
     tree.appendToRootNodeById("menu_shutdown", {
       text: gettext('Reboot'),
+      id: 'menu_reboot',
       leaf: true,
       icon: '{{ MEDIA_URL }}/oxygen/22x22/actions/system-reboot.png',
       listeners: {
@@ -132,6 +135,7 @@ Ext.oa.SysUtils__Service_Module = Ext.extend(Object, {
     });
     tree.appendToRootNodeById("menu_shutdown", {
       text: gettext('Shutdown'),
+      id: 'menu_shutdown',
       leaf: true,
       icon: '{{ MEDIA_URL }}/oxygen/22x22/actions/system-shutdown.png',
       listeners: {
@@ -151,9 +155,9 @@ Ext.oa.SysUtils__Service_Module = Ext.extend(Object, {
       href: '#'
     });
   }
-});
+};
 
 
-window.MainViewModules.push( new Ext.oa.SysUtils__Service_Module() );
+window.MainViewModules.push( Ext.oa.SysUtils__Service_Module );
 
 // kate: space-indent on; indent-width 2; replace-tabs on;
