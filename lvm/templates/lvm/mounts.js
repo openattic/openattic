@@ -13,10 +13,16 @@
 
 Ext.namespace("Ext.oa");
 
-Ext.oa.Lvm__Mounts_Panel = Ext.extend(Ext.grid.GridPanel, {
+Ext.define('Ext.oa.MountModel', {
+    extend: 'Ext.data.Model',
+    fields: ['dev', 'mountpoint', 'fstype', 'options', 'dump', 'pass']
+});
+
+Ext.define('Ext.oa.Lvm__Mounts_Panel', {
+
+  extend: 'Ext.grid.GridPanel',
+  alias: 'widget.lvm__mounts_panel',
   initComponent: function(){
-    "use strict";
-    var fields = ['dev', 'mountpoint', 'fstype', 'options', 'dump', 'pass'];
     var mountGrid = this;
     Ext.apply(this, Ext.apply(this.initialConfig, {
       id: "lvm__mounts_panel_inst",
@@ -27,56 +33,53 @@ Ext.oa.Lvm__Mounts_Panel = Ext.extend(Ext.grid.GridPanel, {
         icon: MEDIA_URL + "/icons2/16x16/actions/reload.png",
         tooltip: gettext('Reload'),
         handler: function(self){
-          mountGrid.store.reload();
+          mountGrid.store.load();
         }
       } ],
       store: {
-        xtype: "directstore",
-        fields: fields,
-        directFn: lvm__BlockDevices.get_mounts,
-        reader: new Ext.data.ArrayReader({
-          fields: fields
-        })
-      },
-      colModel: new Ext.grid.ColumnModel({
-        defaults: {
-          sortable: true
+        model: "Ext.oa.MountModel",
+        proxy: {
+          type: "direct",
+          directFn: lvm__BlockDevices.get_mounts,
+          reader: {
+            type:  "array",
+          }
         },
-        columns: [{
-          header: gettext('Device'),
-          width: 300,
-          dataIndex: "dev"
-        }, {
-          header: gettext('Mount Point'),
-          width: 300,
-          dataIndex: "mountpoint"
-        }, {
-          header: gettext('FS Type'),
-          width: 100,
-          dataIndex: "fstype"
-        }, {
-          header: gettext('Options'),
-          width: 300,
-          dataIndex: "options"
-        } ]
-      })
+      },
+      defaults: {
+        sortable: true
+      },
+      columns: [{
+        header: gettext('Device'),
+        width: 300,
+        dataIndex: "dev"
+      }, {
+        header: gettext('Mount Point'),
+        width: 300,
+        dataIndex: "mountpoint"
+      }, {
+        header: gettext('FS Type'),
+        width: 100,
+        dataIndex: "fstype"
+      }, {
+        header: gettext('Options'),
+        width: 300,
+        dataIndex: "options"
+      } ]
     }));
-    Ext.oa.Lvm__Mounts_Panel.superclass.initComponent.apply(this, arguments);
+    this.callParent(arguments);
   },
   onRender: function(){
-    "use strict";
     Ext.oa.Lvm__Mounts_Panel.superclass.onRender.apply(this, arguments);
-    this.store.reload();
+    this.store.load();
   }
 });
 
-Ext.reg("lvm__mounts_panel", Ext.oa.Lvm__Mounts_Panel);
 
-Ext.oa.Lvm__Mounts_Module = Ext.extend(Object, {
+Ext.oa.Lvm__Mounts_Module =  {
   panel: "lvm__mounts_panel",
 
   prepareMenuTree: function(tree){
-    "use strict";
     tree.appendToRootNodeById("menu_status", {
       text: gettext('Mount Points'),
       leaf: true,
@@ -85,9 +88,9 @@ Ext.oa.Lvm__Mounts_Module = Ext.extend(Object, {
       href: '#'
     });
   }
-});
+};
 
 
-window.MainViewModules.push( new Ext.oa.Lvm__Mounts_Module() );
+window.MainViewModules.push( Ext.oa.Lvm__Mounts_Module );
 
 // kate: space-indent on; indent-width 2; replace-tabs on;
