@@ -13,80 +13,75 @@
 
 Ext.namespace("Ext.oa");
 
-Ext.oa.Ipmi__Sensors_Panel = Ext.extend(Ext.grid.GridPanel, {
+ Ext.define('Ext.oa.Ipmi__Sensors_Panel', {
+
+  alias: 'widget.ipmi__sensors_panel',
+  extend: 'Ext.grid.GridPanel',
   initComponent: function(){
-    "use strict";
     var fields = ['sensor', 'value', 'status'];
     var sensorGrid = this;
     Ext.apply(this, Ext.apply(this.initialConfig, {
       id: "ipmi__sensors_panel_inst",
       title: gettext('Sensoren'),
-      viewConfig: { forceFit: true },
+      forceFit: true,
       buttons: [{
         text: "",
-        icon: MEDIA_URL + "/icons2/16x16/actions/reload.png",
-        tooltip: gettext('Reload'),
+        icon: MEDIA_URL + "/icons2/16x16/actions/load.png",
+        tooltip: gettext('load'),
         handler: function(self){
-          sensorGrid.store.reload();
+          sensorGrid.store.load();
         }
-      } ],
-      store: {
-        xtype: "directstore",
-        fields: fields,
-        directFn: ipmi__Sensor.get_most_sensors,
-        reader: new Ext.data.ArrayReader({
+      }],
+      store: (function(){
+        Ext.define('ipmi_model', {
+          extend: 'Ext.data.Model',
           fields: fields
-        })
+        });
+        return Ext.create('Ext.data.Store', {
+          model: "ipmi_model",
+          proxy: {
+            type: 'direct',
+            directFn: ipmi__Sensor.get_most_sensors,
+            reader: new Ext.data.ArrayReader({
+              fields: fields
+            })
+          },
+          autoLoad: true
+        });
+      }()),
+      defaults: {
+        sortable: true
       },
-      colModel: new Ext.grid.ColumnModel({
-        defaults: {
-          sortable: true
-        },
-        columns: [{
-          header: gettext('Sensor'),
-          width: 300,
-          dataIndex: "sensor"
-        }, {
-          header: gettext('Current value'),
-          width: 300,
-          dataIndex: "value"
-        }, {
-          header: gettext('Status'),
-          width: 100,
-          dataIndex: "status"
-        } ]
-      })
+      columns: [{
+        header: gettext('Sensor'),
+        width: 300,
+        dataIndex: "sensor"
+      }, {
+        header: gettext('Current value'),
+        width: 300,
+        dataIndex: "value"
+      }, {
+        header: gettext('Status'),
+        width: 100,
+        dataIndex: "status"
+      }]
     }));
-    Ext.oa.Ipmi__Sensors_Panel.superclass.initComponent.apply(this, arguments);
+    this.callParent(arguments);
   },
   reload: function(){
-    this.store.reload();
+    this.store.load();
   },
   onRender: function(){
-    "use strict";
-    Ext.oa.Ipmi__Sensors_Panel.superclass.onRender.apply(this, arguments);
-    this.store.reload();
-    this.on("afterrender", function(){
-      var myMask = new Ext.LoadMask(this.getEl());
-      myMask.show.defer(50, myMask);
-    }, this, {single: true} );
-    this.store.on("beforeload", function(){
-      var myMask = new Ext.LoadMask(this.getEl());
-      myMask.show();
-    }, this );
-    this.store.on("load", function(){
-      this.getEl().unmask();
-    }, this );
+    this.callParent(arguments);
+    this.store.load();
   }
 });
 
-Ext.reg("ipmi__sensors_panel", Ext.oa.Ipmi__Sensors_Panel);
 
-Ext.oa.Lvm__Mounts_Module = Ext.extend(Object, {
+Ext.oa.Lvm__Mounts_Module = {
   panel: "ipmi__sensors_panel",
 
   prepareMenuTree: function(tree){
-    "use strict";
     tree.appendToRootNodeById("menu_status", {
       text: gettext('Sensoren'),
       leaf: true,
@@ -95,9 +90,9 @@ Ext.oa.Lvm__Mounts_Module = Ext.extend(Object, {
       href: '#'
     });
   }
-});
+};
 
 
-window.MainViewModules.push( new Ext.oa.Lvm__Mounts_Module() );
+window.MainViewModules.push( Ext.oa.Lvm__Mounts_Module );
 
 // kate: space-indent on; indent-width 2; replace-tabs on;
