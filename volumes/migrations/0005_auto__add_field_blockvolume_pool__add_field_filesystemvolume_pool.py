@@ -1,4 +1,6 @@
 # -*- coding: utf-8 -*-
+# kate: space-indent on; indent-width 4; replace-tabs on;
+
 import datetime
 from south.db import db
 from south.v2 import SchemaMigration
@@ -21,21 +23,23 @@ class Migration(SchemaMigration):
                       keep_default=False)
 
         # iterate over created fields and replace the defaults with the correct values
-        from django.contrib.contenttypes.models import ContentType
-        from lvm.models import VolumeGroup, LogicalVolume
-        from volumes.models import VolumePool, BlockVolume
+        from ifconfig.models import Host
+        if Host.objects.all():
+            from django.contrib.contenttypes.models import ContentType
+            from lvm.models import VolumeGroup, LogicalVolume
+            from volumes.models import VolumePool, BlockVolume
 
-        for vg in VolumeGroup.objects.all():
-            vg.save()
+            for vg in VolumeGroup.objects.all():
+                vg.save()
 
-        vgtype = ContentType.objects.get_for_model(VolumeGroup)
-        for bv in BlockVolume.objects.all():
-            if type(bv.volume) == LogicalVolume:
-                bv.pool = VolumePool.objects.get(content_type=vgtype, object_id=bv.volume.vg.id)
-                bv.save()
-                if bv.fsvolume is not None:
-                    bv.fsvolume.pool = bv.pool
-                    bv.fsvolume.save()
+            vgtype = ContentType.objects.get_for_model(VolumeGroup)
+            for bv in BlockVolume.objects.all():
+                if type(bv.volume) == LogicalVolume:
+                    bv.pool = VolumePool.objects.get(content_type=vgtype, object_id=bv.volume.vg.id)
+                    bv.save()
+                    if bv.fsvolume is not None:
+                        bv.fsvolume.pool = bv.pool
+                        bv.fsvolume.save()
 
         db.commit_transaction()
 
