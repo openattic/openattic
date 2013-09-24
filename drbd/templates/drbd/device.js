@@ -13,7 +13,9 @@
 
 Ext.namespace("Ext.oa");
 
-Ext.oa.Drbd__Connection_Panel = Ext.extend(Ext.oa.ShareGridPanel, {
+Ext.define('Ext.oa.Drbd__Connection_Panel', {
+  alias: 'widget.drbd__connection_panel',
+  extend: 'Ext.oa.ShareGridPanel',
   api: drbd__Connection,
   id: "drbd__connection_panel_inst",
   title: gettext("Datenspiegelung"),
@@ -28,7 +30,6 @@ Ext.oa.Drbd__Connection_Panel = Ext.extend(Ext.oa.ShareGridPanel, {
       name: 'dstate_self',
       mapping: 'dstate',
       convert: function(val, row){
-        "use strict";
         var hostname;
         if( val ){
           for( hostname in val ){
@@ -44,7 +45,6 @@ Ext.oa.Drbd__Connection_Panel = Ext.extend(Ext.oa.ShareGridPanel, {
       name: 'role_self',
       mapping: 'role',
       convert: function(val, row){
-        "use strict";
         var hostname, prims = [];
         if( val ){
           for( hostname in val ){
@@ -101,11 +101,21 @@ Ext.oa.Drbd__Connection_Panel = Ext.extend(Ext.oa.ShareGridPanel, {
         fieldLabel: gettext('Address'),
         ref:        'addrfield',
         allowBlank: true,
-        hiddenName: 'ipaddress',
-        store: new Ext.data.DirectStore({
-          fields: ["app", "obj", "id", "address"],
-          directFn: ifconfig__IPAddress.ids
-        }),
+        name: 'ipaddress',
+        store: (function(){
+          Ext.define('drbd_addrfield_model', {
+            extend: 'Ext.data.Model',
+            fields: ["app", "obj", "id", "address"]
+          });
+          return Ext.create('Ext.data.Store', {
+            model: "drbd_addrfield_model",
+            proxy: {
+              type: 'direct',
+              directFn: ifconfig__IPAddress.ids
+            },
+            autoLoad: true
+          });
+        }()),
         typeAhead:     true,
         triggerAction: 'all',
         emptyText:     gettext('Select...'),
@@ -117,12 +127,22 @@ Ext.oa.Drbd__Connection_Panel = Ext.extend(Ext.oa.ShareGridPanel, {
         fieldLabel: gettext('Parent connection'),
         ref:        'parentfield',
         allowBlank: true,
-        hiddenName: 'stack_parent',
-        store: new Ext.data.DirectStore({
-          fields: ["app", "obj", "id", "__unicode__"],
-          directFn: drbd__Connection.ids_filter,
-          baseParams: {kwds: {stack_parent__isnull: true}}
-        }),
+        name: 'stack_parent',
+        store: (function(){
+          Ext.define('drbd_parentfield_model', {
+            extend: 'Ext.data.Model',
+            fields: ["app", "obj", "id", "__unicode__"]
+          });
+          return Ext.create('Ext.data.Store', {
+            model: "drbd_parentfield_model",
+            proxy: {
+              type: 'direct',
+              directFn: drbd__Connection.ids_filter,
+              extraParams: {kwds: {stack_parent__isnull: true}}
+            },
+            autoLoad: true
+          });
+        }()),
         typeAhead:     true,
         triggerAction: 'all',
         emptyText:     gettext('Select...'),
@@ -259,9 +279,10 @@ Ext.oa.Drbd__Connection_Panel = Ext.extend(Ext.oa.ShareGridPanel, {
   }
 });
 
-Ext.reg("drbd__connection_panel", Ext.oa.Drbd__Connection_Panel);
 
-Ext.oa.Drbd_Panel = Ext.extend(Ext.Panel, {
+Ext.define('Ext.oa.Drbd_Panel', {
+  extend: 'Ext.Panel',
+  alias: 'widget.drbd_panel',
   initComponent: function(){
     Ext.apply(this, Ext.apply(this.initialConfig, {
       id: "drbd_panel_inst",
@@ -276,20 +297,20 @@ Ext.oa.Drbd_Panel = Ext.extend(Ext.Panel, {
         ref: "hostpanel",
         split: true,
         region: "south",
-        height: (Ext.lib.Dom.getViewHeight() - 100) / 2,
-        viewConfig: { forceFit: true },
+        height: (Ext.core.Element.getViewHeight() - 100) / 2,
+        forceFit: true,
         store: new Ext.data.JsonStore({
           id: "drbd_hoststate",
           fields: ["hostname", "backingdev", "dstate", "role", "connection_id"],
           listeners: {
             add: function(store){
               var parent = iscsiPanel.targets.getSelectionModel();
-              var parentid = parent.selections.items[0];
+              var parentid = parent.selected.items[0];
               storeUpdate(tgt_allow, parentid.data.id, "tgt_allow");
             },
             remove: function(store){
               var parent = iscsiPanel.targets.getSelectionModel();
-              var parentid = parent.selections.items[0];
+              var parentid = parent.selected.items[0];
               storeUpdate(tgt_allow, parentid.data.id, "tgt_allow");
             }
           }
@@ -309,7 +330,7 @@ Ext.oa.Drbd_Panel = Ext.extend(Ext.Panel, {
         }]
       }]
     }));
-    Ext.oa.Drbd_Panel.superclass.initComponent.apply(this, arguments);
+    this.callParent(arguments);
   },
   onRender: function(){
     // Hijack the grid's buttons
@@ -350,18 +371,16 @@ Ext.oa.Drbd_Panel = Ext.extend(Ext.Panel, {
     this.items.items[0].getStore().on("load", function(){
       var sm = self.items.items[0].getSelectionModel();
       if( sm.hasSelection() ){
-        load_host_data( sm.selections.items[0] );
+        load_host_data( sm.selected.items[0] );
       }
     }, this);
   }
 });
 
-Ext.reg("drbd_panel", Ext.oa.Drbd_Panel);
 
-Ext.oa.Drbd__Connection_Module = Ext.extend(Object, {
+Ext.oa.Drbd__Connection_Module = {
   panel: "drbd_panel",
-  prepareMenuTree: function(tree){
-    "use strict";
+  prepareMenuTree: function(tree){;
     tree.appendToRootNodeById("menu_services", {
       text: gettext('Datenspiegelung'),
       leaf: true,
@@ -370,9 +389,9 @@ Ext.oa.Drbd__Connection_Module = Ext.extend(Object, {
       href: '#'
     });
   }
-});
+};
 
 
-window.MainViewModules.push( new Ext.oa.Drbd__Connection_Module() );
+window.MainViewModules.push( Ext.oa.Drbd__Connection_Module );
 
 // kate: space-indent on; indent-width 2; replace-tabs on;
