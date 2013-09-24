@@ -13,7 +13,6 @@
 
 window.MainViewModules.push({
   prepareMenuTree: function(tree){
-    "use strict";
     tree.appendToRootNodeById("menu_shutdown", {
       text: gettext('Logout'),
       leaf: true,
