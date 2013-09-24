@@ -13,9 +13,10 @@
 
 Ext.namespace("Ext.oa");
 
-Ext.oa.volumeGroup_Panel = Ext.extend(Ext.grid.GridPanel, {
+Ext.define('Ext.oa.VolumeGroup_Panel', {
+  extend: 'Ext.grid.GridPanel',
+  alias: 'widget.volumegroup_panel',
   initComponent: function(){
-    "use strict";
     var volumeGroupPanel = this;
     Ext.apply(this, Ext.apply(this.initialConfig, {
       id: "volumeGroup_panel_inst",
@@ -26,7 +27,7 @@ Ext.oa.volumeGroup_Panel = Ext.extend(Ext.grid.GridPanel, {
         icon: MEDIA_URL + "/icons2/16x16/actions/reload.png",
         tooltip: gettext('Reload'),
         handler: function(self){
-          volumeGroupPanel.store.reload();
+          volumeGroupPanel.store.load();
         }
       },{
         text: gettext('Create VG or Add Disk'),
@@ -46,7 +47,7 @@ Ext.oa.volumeGroup_Panel = Ext.extend(Ext.grid.GridPanel, {
                 xtype: "textfield",
                 anchor: '-20px'
               },
-              items: [tipify({ 
+              items: [tipify({
                 xtype:      'combo',
                 allowBlank: false,
                 fieldLabel: gettext('Disk'),
@@ -72,28 +73,29 @@ Ext.oa.volumeGroup_Panel = Ext.extend(Ext.grid.GridPanel, {
                 forceSelection: true,
                 displayField:  'block_model',
                 valueField:    'block',
-                ref:           'diskfield',
                 listeners: {
                   select: function(self, record, index){
                     var disk = self.getValue();
-                    self.ownerCt.usagelabel.setText( gettext('Querying data...') );
+                    var usagelabel = Ext.ComponentQuery.query("label", self.ownerCt)[0];
+                    var initbutton = Ext.ComponentQuery.query("button", self.ownerCt)[0];
+                    usagelabel.setText( gettext('Querying data...') );
                     lvm__BlockDevices.is_device_in_use( disk, function( provider, response ){
                       if( response.result === false ){
-                        self.ownerCt.usagelabel.setText(
+                        usagelabel.setText(
                           interpolate(gettext('Disk %s is not currently used.'), [disk])
                           );
                         self.ownerCt.initbutton.enable();
                       }
                       else if( response.result[1] === "pv" ){
-                        self.ownerCt.usagelabel.setText(
+                        usagelabel.setText(
                           interpolate(
                             gettext('Disk %(disk)s is part of the Volume Group %(vg)s, refusing to touch it.'),
                             { "disk": disk, "vg": response.result[2] }, true )
                         );
-                        self.ownerCt.initbutton.disable();
+                        initbutton.disable();
                       }
                       else if( response.result[1] === "mdraid" ){
-                        self.ownerCt.usagelabel.setText(
+                        usagelabel.setText(
                           interpolate(
                             gettext('Disk %(disk)s is part of the Software RAID Array %(md)s, refusing to touch it.'),
                             { "disk": disk, "md": response.result[2] }, true )
@@ -101,7 +103,7 @@ Ext.oa.volumeGroup_Panel = Ext.extend(Ext.grid.GridPanel, {
                         self.ownerCt.initbutton.disable();
                       }
                       else{
-                        self.ownerCt.usagelabel.setText(
+                        usagelabel.setText(
                           interpolate( gettext('Disk %(disk)s is mounted as %(mount)s, refusing to touch it.'),
                             { "disk": disk, "mount": response.result[2] }, true )
                         );
@@ -113,10 +115,8 @@ Ext.oa.volumeGroup_Panel = Ext.extend(Ext.grid.GridPanel, {
               }, gettext('Please select the disk you wish to add to the volume group.')), {
                 xtype: "label",
                 height: 100,
-                ref:   "usagelabel",
                 text:  gettext('Waiting for disk selection...')
-//                 cls:   "form_hint_label"
-              }, 
+              },
               tipify({
                 xtype:      'combo',
                 allowBlank: false,
@@ -134,7 +134,6 @@ Ext.oa.volumeGroup_Panel = Ext.extend(Ext.grid.GridPanel, {
                 selectOnFocus: true,
                 displayField:  '__unicode__',
                 valueField:    'id',
-                ref:           'vgfield',
                 listeners: {
                   select: function(self, record, index){
                   }
@@ -142,7 +141,7 @@ Ext.oa.volumeGroup_Panel = Ext.extend(Ext.grid.GridPanel, {
               }, gettext('Please select the volume group. In order to create a new one, enter its name.'))],
               buttons: [{
                 text: gettext('Initialize'),
-                ref: "../initbutton",
+                id: 'initbutton',
                 disabled: true,
                 handler: function(self){
                   var progresswin = new Ext.Window({
@@ -161,7 +160,7 @@ Ext.oa.volumeGroup_Panel = Ext.extend(Ext.grid.GridPanel, {
                     progresswin.hide();
                     Ext.Msg.alert(gettext('Success!'),
                       gettext('The Device has been successfully initialized.'));
-                    volumeGroupPanel.store.reload();
+                    volumeGroupPanel.store.load();
                   };
                   if( typeof vg === "number" ){
                     lvm__VolumeGroup.join_device( vg, disk, done );
@@ -194,7 +193,7 @@ Ext.oa.volumeGroup_Panel = Ext.extend(Ext.grid.GridPanel, {
                   function(btn, text){
                     if( btn === 'yes' ){
                       lvm__VolumeGroup.remove( sel.data.id, function(provider, response){
-                        volumeGroupPanel.store.reload();
+                        volumeGroupPanel.store.load();
                       } );
                     }
                   }
@@ -218,122 +217,129 @@ Ext.oa.volumeGroup_Panel = Ext.extend(Ext.grid.GridPanel, {
           }
         }
       }],
-      viewConfig: { forceFit: true },
-      store: new Ext.data.DirectStore({
-        fields: ['id', 'name',"LVM_VG_FREE","LVM_VG_SIZE","LVM_VG_ATTR", "LVM_VG_PERCENT", {
-          name: "hostname",
-          mapping: "host",
-          convert: toUnicode
-        }],
-        directFn: lvm__VolumeGroup.all,
-        listeners: {
-          load: function(self){
-            var i;
-            var handleResponse = function(i){
-              return function(provider, response){
-                if( response.type === "exception" ){
-                  self.data.items[i].set("LVM_VG_PERCENT", '?');
-                  self.data.items[i].set("LVM_VG_SIZE", '?');
-                  self.data.items[i].set("LVM_VG_FREE", '?');
-                  self.data.items[i].set("LVM_VG_ATTR", '?');
-                  return;
-                }
-                self.data.items[i].set( "LVM_VG_PERCENT",
-                  ((response.result.LVM2_VG_SIZE - response.result.LVM2_VG_FREE) /
-                    response.result.LVM2_VG_SIZE * 100.0).toFixed(2)
-                );
-                if( response.result.LVM2_VG_SIZE >= 1000 ){
-                  self.data.items[i].set("LVM_VG_SIZE", String.format("{0} GB",
-                    (response.result.LVM2_VG_SIZE / 1000).toFixed(2)));
-                }
-                else
-                {
-                  self.data.items[i].set("LVM_VG_SIZE", String.format("{0} MB", response.result.LVM2_VG_SIZE));
-                }
-                if( response.result.LVM2_VG_FREE >= 1000 ){
-                  self.data.items[i].set("LVM_VG_FREE", String.format("{0} GB",
-                    (response.result.LVM2_VG_FREE / 1000).toFixed(2)));
-                }
-                else
-                {
-                  self.data.items[i].set("LVM_VG_FREE", String.format("{0} MB", response.result.LVM2_VG_FREE));
-                }
-                self.data.items[i].set("LVM_VG_ATTR", response.result.LVM2_VG_ATTR);
-                self.commitChanges();
+      forceFit: true,
+      store: (function(){
+        Ext.define('volume_details', {
+          extend: 'Ext.data.Model',
+          fields: [
+            {name: 'id'},
+            {name: 'name'},
+            {name: 'LVM_VG_FREE'},
+            {name: 'LVM_VG_SIZE'},
+            {name: 'LVM_VG_ATTR'},
+            {name: 'LVM_VG_PERCENT'},
+            {name: 'hostname', mapping: 'host', convert: toUnicode}
+          ],
+        });
+        return Ext.create('Ext.data.Store', {
+          model: "volume_details",
+          proxy: {
+            type: 'direct',
+            directFn: lvm__VolumeGroup.all
+          },
+          listeners: {
+            load: (function(self){
+              var i;
+              var handleResponse = function(i){
+                return function(provider, response){
+                  if( response.type === "exception" ){
+                    self.data.items[i].set("LVM_VG_PERCENT", '?');
+                    self.data.items[i].set("LVM_VG_SIZE", '?');
+                    self.data.items[i].set("LVM_VG_FREE", '?');
+                    self.data.items[i].set("LVM_VG_ATTR", '?');
+                    return;
+                  }
+                  self.data.items[i].set( "LVM_VG_PERCENT",
+                    ((response.result.LVM2_VG_SIZE - response.result.LVM2_VG_FREE) /
+                      response.result.LVM2_VG_SIZE * 100.0).toFixed(2)
+                  );
+                  if( response.result.LVM2_VG_SIZE >= 1000 ){
+                    self.data.items[i].set("LVM_VG_SIZE", String.format("{0} GB",
+                      (response.result.LVM2_VG_SIZE / 1000).toFixed(2)));
+                  }
+                  else
+                  {
+                    self.data.items[i].set("LVM_VG_SIZE", String.format("{0} MB", response.result.LVM2_VG_SIZE));
+                  }
+                  if( response.result.LVM2_VG_FREE >= 1000 ){
+                    self.data.items[i].set("LVM_VG_FREE", String.format("{0} GB",
+                      (response.result.LVM2_VG_FREE / 1000).toFixed(2)));
+                  }
+                  else
+                  {
+                    self.data.items[i].set("LVM_VG_FREE", String.format("{0} MB", response.result.LVM2_VG_FREE));
+                  }
+                  self.data.items[i].set("LVM_VG_ATTR", response.result.LVM2_VG_ATTR);
+                  self.commitChanges();
+                };
               };
-            };
-            for( i = 0; i < self.data.length; i++ ){
-              lvm__VolumeGroup.lvm_info(self.data.items[i].id, handleResponse(i));
-            }
-          }
-        }
-      }),
-      ref: 'volumegroupGrid',
-      colModel: new Ext.grid.ColumnModel({
-        defaults: {
-          sortable: true
-        },
-        columns: [{
-          header: gettext('Name'),
-          dataIndex: "name"
-        },{
-          header: gettext('Host'),
-          dataIndex: "hostname"
-        },{
-          header: gettext('Size'),
-          dataIndex: "LVM_VG_SIZE",
-          renderer: function(val){ if( val ){ return val; } return '♻'; }
-        },{
-          header: gettext('Free'),
-          dataIndex: "LVM_VG_FREE",
-          renderer: function(val){ if( val ){ return val; } return '♻'; }
-        },{
-          header: gettext('Used%'),
-          dataIndex: "LVM_VG_PERCENT",
-          renderer: function( val, x, store ){
-            if( !val || val === -1 ){
-              return '♻';
-            }
-            var id = Ext.id();
-            (function(){
-              if( Ext.get(id) === null ){
-                return;
+              for( i = 0; i < self.data.length; i++ ){
+                lvm__VolumeGroup.lvm_info(self.data.items[i].internalId, handleResponse(i));
               }
-              new Ext.ProgressBar({
-                renderTo: id,
-                value: val/100.0,
-                text:  String.format("{0}%", val),
-                cls:   ( val > 85 ? "lv_used_crit" :
-                        (val > 70 ? "lv_used_warn" : "lv_used_ok"))
-              });
-            }).defer(25);
-            return '<span id="' + id + '"></span>';
+            })
           }
-        },{
-          header: gettext('Attributes'),
-          dataIndex: "LVM_VG_ATTR",
-          renderer: function(val){ if( val ){ return val; } return '♻'; }
-        }]
-      })
+        });
+      }()),
+      defaults: {
+        sortable: true
+      },
+      columns: [{
+        header: gettext('Name'),
+        dataIndex: "name"
+      },{
+        header: gettext('Host'),
+        dataIndex: "hostname"
+      },{
+        header: gettext('Size'),
+        dataIndex: "LVM_VG_SIZE",
+        renderer: function(val){ if( val ){ return val; } return '♻'; }
+      },{
+        header: gettext('Free'),
+        dataIndex: "LVM_VG_FREE",
+        renderer: function(val){ if( val ){ return val; } return '♻'; }
+      },{
+        header: gettext('Used%'),
+        dataIndex: "LVM_VG_PERCENT",
+        renderer: function( val, x, store ){
+          if( !val || val === -1 ){
+            return '♻';
+          }
+          var id = Ext.id();
+          (function(){
+            if( Ext.get(id) === null ){
+              return;
+            }
+            new Ext.ProgressBar({
+              renderTo: id,
+              value: val/100.0,
+              text:  String.format("{0}%", val),
+              cls:   ( val > 85 ? "lv_used_crit" :
+                      (val > 70 ? "lv_used_warn" : "lv_used_ok"))
+            });
+          }).defer(25);
+          return '<span id="' + id + '"></span>';
+        }
+      },{
+        header: gettext('Attributes'),
+        dataIndex: "LVM_VG_ATTR",
+        renderer: function(val){ if( val ){ return val; } return '♻'; }
+      }]
     }));
-    Ext.oa.volumeGroup_Panel.superclass.initComponent.apply(this, arguments);
+    this.callParent(arguments);
   },
   onRender: function(){
-    "use strict";
-    Ext.oa.volumeGroup_Panel.superclass.onRender.apply(this, arguments);
+    this.callParent(arguments);
     this.store.load();
   },
   refresh: function(){
-    this.store.reload();
+    this.store.load();
   }
 });
 
-Ext.reg("volumeGroup_Panel", Ext.oa.volumeGroup_Panel);
 
-Ext.oa.volumeGroup_Module = Ext.extend(Object, {
-  panel: "volumeGroup_Panel",
+Ext.oa.volumeGroup_Module = {
+  panel: "volumegroup_panel",
   prepareMenuTree: function(tree){
-    "use strict";
     tree.appendToRootNodeById("menu_storage", {
       text: gettext('Disk Management'),
       leaf: true,
@@ -342,9 +348,9 @@ Ext.oa.volumeGroup_Module = Ext.extend(Object, {
       href: '#'
     });
   }
-});
+};
 
 
-window.MainViewModules.push( new Ext.oa.volumeGroup_Module() );
+window.MainViewModules.push( Ext.oa.volumeGroup_Module );
 
 // kate: space-indent on; indent-width 2; replace-tabs on;
