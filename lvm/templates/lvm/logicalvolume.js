@@ -15,7 +15,6 @@ Ext.namespace("Ext.oa");
 
 Ext.apply(Ext.form.VTypes, {
   LVName:     function(v){
-    "use strict";
     return (/^[A-Za-z0-9_\-]+$/).test(v);
   },
   LVNameText: "Must only contain alphanumeric characters or _ and -.",
@@ -23,9 +22,13 @@ Ext.apply(Ext.form.VTypes, {
 });
 
 
-Ext.oa.Lvm__LogicalVolume_Panel = Ext.extend(Ext.oa.ShareGridPanel, {
+Ext.define('Ext.oa.Lvm__LogicalVolume_Panel', {
+
+  alias: 'widget.lvm__logicalvolume_panel',
+  extend: 'Ext.oa.ShareGridPanel',
   api: lvm__LogicalVolume,
   id: "lvm__logicalvolume_panel_inst",
+
   title: gettext("Logical Volumes"),
   filterParams: {
     "snapshot__isnull": true
@@ -47,7 +50,6 @@ Ext.oa.Lvm__LogicalVolume_Panel = Ext.extend(Ext.oa.ShareGridPanel, {
       mapping: 'fs',
       sortType: 'asFloat',
       convert: function( val, row ){
-        "use strict";
         if( val === null || typeof val.stat === "undefined" ){
           return -1; // fake to sort unknown values always at the bottom
         }
@@ -58,7 +60,6 @@ Ext.oa.Lvm__LogicalVolume_Panel = Ext.extend(Ext.oa.ShareGridPanel, {
       mapping: 'fs',
       sortType: 'asFloat',
       convert: function( val, row ){
-        "use strict";
         if( val === null || typeof val.stat === "undefined" ){
           return -1;
         }
@@ -69,7 +70,6 @@ Ext.oa.Lvm__LogicalVolume_Panel = Ext.extend(Ext.oa.ShareGridPanel, {
       mapping: 'fs',
       sortType: 'asFloat',
       convert: function( val, row ){
-        "use strict";
         if( val === null || typeof val.stat === "undefined" ){
           return -1;
         }
@@ -79,7 +79,6 @@ Ext.oa.Lvm__LogicalVolume_Panel = Ext.extend(Ext.oa.ShareGridPanel, {
       name: 'fshost',
       mapping: 'fs',
       convert: function( val, row ){
-        "use strict";
         if( val === null ){
           return '';
         }
@@ -89,7 +88,6 @@ Ext.oa.Lvm__LogicalVolume_Panel = Ext.extend(Ext.oa.ShareGridPanel, {
       name: 'fsmountpoint',
       mapping: 'fs',
       convert: function( val, row ){
-        "use strict";
         if( val === null ){
           return '';
         }
@@ -113,7 +111,6 @@ Ext.oa.Lvm__LogicalVolume_Panel = Ext.extend(Ext.oa.ShareGridPanel, {
     dataIndex: "megs",
     align: 'right',
     renderer: function( val, x, store ){
-      "use strict";
       if( val >= 1000 ){
         return String.format("{0} GB", (val / 1000).toFixed(2));
       }
@@ -123,7 +120,6 @@ Ext.oa.Lvm__LogicalVolume_Panel = Ext.extend(Ext.oa.ShareGridPanel, {
     header: gettext('FS'),
     dataIndex: "filesystem",
     renderer: function( val, x, store ){
-      "use strict";
       if( val ){
         return val;
       }
@@ -134,7 +130,6 @@ Ext.oa.Lvm__LogicalVolume_Panel = Ext.extend(Ext.oa.ShareGridPanel, {
     dataIndex: "fsfree",
     align: 'right',
     renderer: function( val, x, store ){
-      "use strict";
       if( !val || val === -1 ){
         return '';
       }
@@ -145,7 +140,6 @@ Ext.oa.Lvm__LogicalVolume_Panel = Ext.extend(Ext.oa.ShareGridPanel, {
     dataIndex: "fsused",
     align: 'right',
     renderer: function( val, x, store ){
-      "use strict";
       if( !val || val === -1 ){
         return '';
       }
@@ -156,7 +150,6 @@ Ext.oa.Lvm__LogicalVolume_Panel = Ext.extend(Ext.oa.ShareGridPanel, {
     dataIndex: "fspercent",
     align: 'right',
     renderer: function( val, x, store ){
-      "use strict";
       if( !val || val === -1 ){
         return '';
       }
@@ -193,11 +186,10 @@ Ext.oa.Lvm__LogicalVolume_Panel = Ext.extend(Ext.oa.ShareGridPanel, {
     text: gettext('Set warning threshold'),
     icon: MEDIA_URL + "/icons2/16x16/status/dialog-warning.png",
     handler: function(){
-      "use strict";
       var self = this;
       var sm = this.getSelectionModel();
       if( sm.hasSelection() ){
-        var sel = sm.selections.items[0];
+        var sel = sm.selected.items[0];
         var addwin = new Ext.Window({
           title: gettext('Update Levels'),
           layout: "fit",
@@ -216,6 +208,7 @@ Ext.oa.Lvm__LogicalVolume_Panel = Ext.extend(Ext.oa.ShareGridPanel, {
                 allowBlank: false,
                 name: "fswarning",
                 ref: 'warnfield',
+                id: 'lvm__logicalvolume__warnfield',
                 value: sel.data.fswarning,
                 xtype: "numberfield"
               }, {
@@ -223,6 +216,7 @@ Ext.oa.Lvm__LogicalVolume_Panel = Ext.extend(Ext.oa.ShareGridPanel, {
                 allowBlank: false,
                 name: "fscritical",
                 ref: 'critfield',
+                id: 'lvm__logicalvolume__critfield',
                 value: sel.data.fscritical,
                 xtype: "numberfield"
               } ],
@@ -234,11 +228,11 @@ Ext.oa.Lvm__LogicalVolume_Panel = Ext.extend(Ext.oa.ShareGridPanel, {
                   return;
                 }
                 lvm__LogicalVolume.set(sel.data.id, {
-                  'fswarning':  btn.ownerCt.ownerCt.warnfield.getValue(),
-                  'fscritical': btn.ownerCt.ownerCt.critfield.getValue()
+                  'fswarning':  Ext.getCmp('lvm__logicalvolume__warnfield').getValue(),
+                  'fscritical': Ext.getCmp('lvm__logicalvolume__critfield').getValue()
                 }, function(provider, response){
                   if( response.result ){
-                    self.store.reload();
+                    self.store.load();
                     addwin.hide();
                   }
                 });
@@ -259,11 +253,10 @@ Ext.oa.Lvm__LogicalVolume_Panel = Ext.extend(Ext.oa.ShareGridPanel, {
     text: gettext('Mount'),
     icon: MEDIA_URL + "/oxygen/16x16/emblems/emblem-mounted.png",
     handler: function(){
-      "use strict";
       var self = this;
       var sm = this.getSelectionModel();
       if( sm.hasSelection() ){
-        var sel = sm.selections.items[0];
+        var sel = sm.selected.items[0];
         if( !sel.data.filesystem ){
           Ext.Msg.alert('Mounted',
             interpolate(
@@ -290,7 +283,7 @@ Ext.oa.Lvm__LogicalVolume_Panel = Ext.extend(Ext.oa.ShareGridPanel, {
               else{
                 Ext.Msg.alert('Mounted', interpolate(
                   gettext('Volume %s has been mounted.'), [sel.data.name] ));
-                self.store.reload();
+                self.store.load();
               }
             } );
           } );
@@ -301,11 +294,10 @@ Ext.oa.Lvm__LogicalVolume_Panel = Ext.extend(Ext.oa.ShareGridPanel, {
     text: gettext('Unmount'),
     icon: MEDIA_URL + "/oxygen/16x16/emblems/emblem-unmounted.png",
     handler: function(){
-      "use strict";
       var self = this;
       var sm = this.getSelectionModel();
       if( sm.hasSelection() ){
-        var sel = sm.selections.items[0];
+        var sel = sm.selected.items[0];
         lvm__LogicalVolume.is_mounted( sel.data.id, function(provider, response){
           if( !response.result ){
             Ext.Msg.alert('Unmount', interpolate( gettext('Volume %s is not mounted.'),
@@ -329,7 +321,7 @@ Ext.oa.Lvm__LogicalVolume_Panel = Ext.extend(Ext.oa.ShareGridPanel, {
                       Ext.Msg.alert('Unmount', interpolate(
                         gettext('Volume %s has been unmounted.'),
                         [sel.data.name] ));
-                      self.store.reload();
+                      self.store.load();
                     }
                   });
                 }
@@ -343,10 +335,9 @@ Ext.oa.Lvm__LogicalVolume_Panel = Ext.extend(Ext.oa.ShareGridPanel, {
     text: gettext('Shares'),
     icon: MEDIA_URL + "/oxygen/16x16/emblems/emblem-unmounted.png",
     handler: function(self){
-      "use strict";
       var sm = this.getSelectionModel();
       if( sm.hasSelection() ){
-        var sel = sm.selections.items[0];
+        var sel = sm.selected.items[0];
         var shareswin = new Ext.Window({
           title: gettext('Shares'),
           layout: "fit",
@@ -354,31 +345,42 @@ Ext.oa.Lvm__LogicalVolume_Panel = Ext.extend(Ext.oa.ShareGridPanel, {
           width: 500,
           items: {
             xtype: "grid",
-            store: {
-              xtype: 'directstore',
-              autoLoad: true,
-              fields: ['id', 'app', 'obj', '__unicode__'],
-              directFn: lvm__LogicalVolume.get_shares,
-              baseParams: {id: sel.data.id}
+            store: (function(){
+              Ext.define('lvm_logicalvolume_shares_store', {
+                extend: 'Ext.data.Model',
+                fields: [
+                  {name: 'id'},
+                  {name: 'app'},
+                  {name: 'obj'},
+                  {name: '__unicode__'}
+                ]
+              });
+              return Ext.create('Ext.data.Store', {
+                model: "lvm_logicalvolume_shares_store",
+                proxy: {
+                  type: 'direct',
+                  directFn: lvm__LogicalVolume.get_shares,
+                  extraParams: {id: sel.data.id}
+                },
+                autoLoad: true
+              });
+            }()),
+            defaults: {
+              sortable: true
             },
-            colModel: new Ext.grid.ColumnModel({
-              defaults: {
-                sortable: true
-              },
-              columns: [ {
-                header: gettext('App'),
-                width: 100,
-                dataIndex: "app"
-              }, {
-                header: gettext('Object'),
-                width: 100,
-                dataIndex: "obj"
-              }, {
-                header: gettext('Description'),
-                width: 350,
-                dataIndex: "__unicode__"
-              } ]
-            })
+            columns: [ {
+              header: gettext('App'),
+              width: 100,
+              dataIndex: "app"
+            }, {
+              header: gettext('Object'),
+              width: 100,
+              dataIndex: "obj"
+            }, {
+              header: gettext('Description'),
+              width: 350,
+              dataIndex: "__unicode__"
+            } ]
           }
         } );
         shareswin.show();
@@ -391,7 +393,7 @@ Ext.oa.Lvm__LogicalVolume_Panel = Ext.extend(Ext.oa.ShareGridPanel, {
       var self = this;
       var sm = this.getSelectionModel();
       if( sm.hasSelection() ){
-        var sel = sm.selections.items[0];
+        var sel = sm.selected.items[0];
         var scriptswin = new Ext.Window({
           title: gettext('Initialize'),
           layout: "fit",
@@ -400,32 +402,40 @@ Ext.oa.Lvm__LogicalVolume_Panel = Ext.extend(Ext.oa.ShareGridPanel, {
           items: {
             xtype: "grid",
             viewConfig: { forceFit: true },
-            store: {
-              xtype: 'directstore',
-              autoLoad: true,
-              fields: [{
-                name: 'script',
-                convert: function (val, row){
-                  return row;
-                }
-              }],
-              directFn: lvm__LogicalVolume.get_initscripts
+            store: (function(){
+              Ext.define('lvm_logicalvolume_initialize_store', {
+                extend: 'Ext.data.Model',
+                fields: [
+                  {
+                    name: 'script',
+                    convert: function (val, row){
+                    return row;
+                    }
+                  },
+                ]
+              });
+              return Ext.create('Ext.data.Store', {
+                model: "lvm_logicalvolume_initialize_store",
+                proxy: {
+                  type: 'direct',
+                  directFn: lvm__LogicalVolume.get_initscripts
+                },
+                autoLoad: true
+              });
+            }()),
+            defaults: {
+              sortable: true
             },
-            colModel: new Ext.grid.ColumnModel({
-              defaults: {
-                sortable: true
-              },
-              columns: [ {
-                header: gettext('Script'),
-                dataIndex: "script"
-              } ]
-            }),
+            columns: [{
+              header: gettext('Script'),
+              dataIndex: "script"
+            }],
             buttons: [{
               text: gettext('Initialize'),
               handler: function(btn){
                 var gridsm = scriptswin.items.items[0].getSelectionModel();
                 if( gridsm.hasSelection() ){
-                  var gridsel = gridsm.selections.items[0];
+                  var gridsel = gridsm.selected.items[0];
                   lvm__LogicalVolume.run_initscript(sel.data.id, gridsel.data.script, function(provider, response){
                     Ext.Msg.alert(
                       gettext('Initialization complete'),
@@ -449,12 +459,11 @@ Ext.oa.Lvm__LogicalVolume_Panel = Ext.extend(Ext.oa.ShareGridPanel, {
     text: gettext('Resize Volume'),
     icon: MEDIA_URL + "/icons2/16x16/actions/gtk-execute.png",
     handler: function(){
-      "use strict";
       var self = this;
       var sm = this.getSelectionModel();
       if( sm.hasSelection() ){
-        var sel = sm.selections.items[0];
-        lvm__VolumeGroup.get_free_megs( sel.json.vg.id, function( provider, response ){
+        var sel = sm.selected.items[0];
+        lvm__VolumeGroup.get_free_megs( sel.raw.vg.id, function( provider, response ){
           var freemegs = response.result;
           var resizewin = new Ext.Window(Ext.apply({
             layout: "fit",
@@ -478,6 +487,7 @@ Ext.oa.Lvm__LogicalVolume_Panel = Ext.extend(Ext.oa.ShareGridPanel, {
               items: [{
                 xtype: 'slider',
                 ref: 'slider',
+                id: 'slider',
                 increment: 100,
                 layout: 'form',
                 width: 220,
@@ -496,6 +506,7 @@ Ext.oa.Lvm__LogicalVolume_Panel = Ext.extend(Ext.oa.ShareGridPanel, {
                 xtype: 'numberfield',
                 fieldLabel: gettext('Megabyte'),
                 ref: 'megabyte',
+                id: 'megabyte',
                 allowBlank: false,
                 minValue: 100,
                 maxValue: freemegs,
@@ -506,16 +517,16 @@ Ext.oa.Lvm__LogicalVolume_Panel = Ext.extend(Ext.oa.ShareGridPanel, {
                     if(this.getValue() > freemegs){
                       this.setValue(freemegs);
                     }
-                    this.ownerCt.slider.setValue(this.getValue(), false);
-                    this.ownerCt.remaining_megabyte.setValue(freemegs - this.getValue());
+                    Ext.getCmp('slider').setValue(this.getValue(), false);
+                    Ext.getCmp('remaining_megabyte').setValue(freemegs - this.getValue());
                   },
                   specialkey: function(f,e){
                     if(e.getKey() === e.ENTER){
                       if(this.getValue() > freemegs){
                         this.setValue(freemegs);
                       }
-                      this.ownerCt.slider.setValue(this.getValue(), false);
-                      this.ownerCt.remaining_megabyte.setValue(freemegs - this.getValue());
+                      Ext.getCmp('slider').setValue(this.getValue(), false);
+                      Ext.getCmp('remaining_megabyte').setValue(freemegs - this.getValue());
                     }
                   }
                 }
@@ -523,6 +534,7 @@ Ext.oa.Lvm__LogicalVolume_Panel = Ext.extend(Ext.oa.ShareGridPanel, {
                 xtype: 'textfield',
                 readOnly: true,
                 ref: 'remaining_megabyte',
+                id: 'remaining_megabyte',
                 fieldLabel: gettext('Remaining Space'),
                 value: response.result,
                 disabled: true
@@ -539,7 +551,7 @@ Ext.oa.Lvm__LogicalVolume_Panel = Ext.extend(Ext.oa.ShareGridPanel, {
                     gettext('Warning'),
                     interpolate(
                       gettext('Do you really want to change Volume size of <b>%(lv)s</b> to <b>%(megs)s</b> MB?'),
-                      { "lv": sel.data.name, "megs": frm.megabyte.getValue() }, true ),
+                      { "lv": sel.data.name, "megs": frm.items.items[1].getValue() }, true ),
                     function(btn){
                       if( btn === 'yes' ){
                         var progresswin = new Ext.Window({
@@ -553,9 +565,9 @@ Ext.oa.Lvm__LogicalVolume_Panel = Ext.extend(Ext.oa.ShareGridPanel, {
                         resizewin.hide();
                         progresswin.show();
                         lvm__LogicalVolume.set( sel.data.id, {
-                          "megs": parseFloat(frm.megabyte.getValue())
+                          "megs": parseFloat(frm.items.items[1].getValue())
                         }, function(provider, response){
-                          self.store.reload();
+                          self.store.load();
                           progresswin.hide();
                         } );
                       }
@@ -582,17 +594,30 @@ Ext.oa.Lvm__LogicalVolume_Panel = Ext.extend(Ext.oa.ShareGridPanel, {
       allowBlank: false,
       name: "name",
       ref: 'namefield',
+      id: 'namefield',
       vtype: "LVName"
     }, tipify({
       xtype:      'combo',
       allowBlank: false,
       fieldLabel: gettext('Volume Group'),
-      hiddenName: 'vg',
-      store: {
-        xtype: "directstore",
-        fields: ["id", "name"],
-        directFn: lvm__VolumeGroup.all
-      },
+      name: 'vg',
+      store: (function(){
+        Ext.define('lvm_logicalvolume_volumegroup_store', {
+          extend: 'Ext.data.Model',
+          fields: [
+            {name: 'id'},
+            {name: 'name'}
+          ]
+        });
+        return Ext.create('Ext.data.Store', {
+          model: "lvm_logicalvolume_volumegroup_store",
+          proxy: {
+            type: 'direct',
+            directFn: lvm__VolumeGroup.all
+          },
+          autoLoad: true
+        });
+      }()),
       typeAhead:     true,
       triggerAction: 'all',
       emptyText:     gettext('Select...'),
@@ -603,12 +628,11 @@ Ext.oa.Lvm__LogicalVolume_Panel = Ext.extend(Ext.oa.ShareGridPanel, {
       ref:           'volfield',
       listeners: {
         select: function(self, record, index){
-          "use strict";
           self.ownerCt.volume_free_megs = null;
-          self.ownerCt.sizelabel.setText( gettext('Querying data...') );
-          lvm__VolumeGroup.get_free_megs( record.data.id, function( provider, response ){
+          Ext.getCmp('sizelabel').setText( gettext('Querying data...') );
+          lvm__VolumeGroup.get_free_megs( record[0].data.id, function( provider, response ){
             self.ownerCt.volume_free_megs = response.result;
-            self.ownerCt.sizelabel.setText( String.format( "Max. {0} MB", response.result ) );
+            Ext.getCmp('sizelabel').setText( String.format( "Max. {0} MB", response.result ) );
           } );
         }
       }
@@ -617,19 +641,33 @@ Ext.oa.Lvm__LogicalVolume_Panel = Ext.extend(Ext.oa.ShareGridPanel, {
       xtype:      'combo',
       fieldLabel: gettext('File System'),
       id: "volume_filesystem_add",
-      hiddenName: 'filesystem',
-      store: new Ext.data.DirectStore({
-        fields: ["name", "desc", "supports_dedup", "supports_compression"],
-        directFn: lvm__LogicalVolume.avail_fs
-      }),
+      name: 'filesystem',
+      store: (function(){
+        Ext.define('lvm_logicalvolume_filesystem_store', {
+          extend: 'Ext.data.Model',
+          fields: [
+            {name: 'name'},
+            {name: 'desc'},
+            {name: 'supports_dedup'},
+            {name: 'supports_compression'}
+          ]
+        });
+        return Ext.create('Ext.data.Store', {
+          model: "lvm_logicalvolume_filesystem_store",
+          proxy: {
+            type: 'direct',
+            directFn: lvm__LogicalVolume.avail_fs
+          },
+          autoLoad: true
+        });
+      }()),
       listeners: {
         select: function(self, record, index){
-          "use strict";
-          self.ownerCt.dedupfield.setDisabled(!record.data.supports_dedup);
-          self.ownerCt.compressionfield.setDisabled(!record.data.supports_compression);
-          if(!record.data.supports_dedup){
-            self.ownerCt.dedupfield.setValue(false);
-            self.ownerCt.compressionfield.setValue(false);
+          Ext.getCmp('dedupfield').setDisabled(!record[0].data.supports_dedup);
+          Ext.getCmp('compressionfield').setDisabled(!record[0].data.supports_compression);
+          if(!record[0].data.supports_dedup){
+            Ext.getCmp('dedupfield').setValue(false);
+            Ext.getCmp('compressionfield').setValue(false);
           }
         }
       },
@@ -646,16 +684,19 @@ Ext.oa.Lvm__LogicalVolume_Panel = Ext.extend(Ext.oa.ShareGridPanel, {
       allowBlank: false,
       name: "megs",
       ref: 'sizefield',
+      id: 'sizefield',
       xtype: "numberfield",
       minValue: 100
     }, {
       xtype: "label",
       ref:   "sizelabel",
+      id: 'sizelabel',
       text:  gettext('Waiting for volume group selection...'),
       cls:   "form_hint_label"
     }, {
       fieldLabel: gettext('Deduplication'),
       name: "dedup",
+      id: 'dedupfield',
       ref: 'dedupfield',
       xtype: "checkbox",
       disabled: true
@@ -663,6 +704,7 @@ Ext.oa.Lvm__LogicalVolume_Panel = Ext.extend(Ext.oa.ShareGridPanel, {
       fieldLabel: gettext('Compression'),
       name: "compression",
       ref: 'compressionfield',
+      id: 'compressionfield',
       xtype: "checkbox",
       disabled: true
     }, {
@@ -680,13 +722,12 @@ Ext.oa.Lvm__LogicalVolume_Panel = Ext.extend(Ext.oa.ShareGridPanel, {
       value: 85,
       xtype: "numberfield"
     }, {
-      xtype: "authuserfield",
-      hiddenName: "owner",
+      xtype: "auth__userfield",
+      name: "owner",
       allowBlank: false
     }]
   },
   deleteConfirm: function(sel, handler, scope){
-    "use strict";
     Ext.Msg.prompt(
       this.texts.remove,
       gettext('What was the name of the volume you wish to delete again?<br /><b>There is no undo and you will lose all data.</b>'),
@@ -708,13 +749,10 @@ Ext.oa.Lvm__LogicalVolume_Panel = Ext.extend(Ext.oa.ShareGridPanel, {
   }
 });
 
-Ext.reg("lvm__logicalvolume_panel", Ext.oa.Lvm__LogicalVolume_Panel);
 
-
-Ext.oa.Lvm__LogicalVolume_Module = Ext.extend(Object, {
+Ext.oa.Lvm__LogicalVolume_Module = {
   panel: "lvm__logicalvolume_panel",
   prepareMenuTree: function(tree){
-    "use strict";
     tree.appendToRootNodeById("menu_storage", {
       text: gettext('Volume Management'),
       leaf: true,
@@ -723,9 +761,9 @@ Ext.oa.Lvm__LogicalVolume_Module = Ext.extend(Object, {
       href: '#'
     });
   }
-});
+};
 
 
-window.MainViewModules.push( new Ext.oa.Lvm__LogicalVolume_Module() );
+window.MainViewModules.push( Ext.oa.Lvm__LogicalVolume_Module );
 
 // kate: space-indent on; indent-width 2; replace-tabs on;
