@@ -14,9 +14,9 @@
 window.RECORDING = false;
 window.RECORDED_COMMANDS = [];
 
-for( var id in Ext.Direct.providers ){
-  if( Ext.Direct.providers.hasOwnProperty(id) ){
-    Ext.Direct.providers[id].on("beforecall", function( provider, opt ){
+for( var id in Ext.Direct.provider ){
+  if( Ext.Direct.provider.hasOwnProperty(id) ){
+    Ext.Direct.provider[id].on("beforecall", function( provider, opt ){
       if( !window.RECORDING || ["create", "set", "set_ext", "remove"].indexOf(opt.method) == -1 )
         return;
       var methstr = opt.method;
@@ -24,7 +24,7 @@ for( var id in Ext.Direct.providers ){
       if( opt.isForm ){
         console.log(opt);
         var methstr = "set";
-        var argstr = opt.args[2].form.baseParams.id + ", " + Ext.encode(opt.args[2].form.getFieldValues());
+        var argstr = opt.args[2].form.extraParams.id + ", " + Ext.encode(opt.args[2].form.getFieldValues());
       }
       else if( opt.data === null ){
         var argstr = '';
@@ -46,7 +46,6 @@ for( var id in Ext.Direct.providers ){
 
 window.MainViewModules.push({
   prepareMenuTree: function(tree){
-    "use strict";
     tree.appendToRootNodeById("menu_system", {
       id:   'api-record-node',
       text: gettext('API Record'),
