@@ -43,10 +43,10 @@ Ext.define('Ext.oa.Nfs__Export_Panel', {
           xtype: 'volumefield',
           listeners: {
             select: function(self, record, index){
-              "use strict";
+              var dirfield = Ext.ComponentQuery.query("[name=path]", self.ownerCt)[0];
               lvm__LogicalVolume.get( record[0].data.id, function( provider, response ){
-                Ext.getCmp('dirfield').setValue( response.result.fs.topleveldir );
-                Ext.getCmp('dirfield').enable();
+                dirfield.setValue( response.result.fs.topleveldir );
+                dirfield.enable();
               } );
             }
           }
@@ -55,8 +55,6 @@ Ext.define('Ext.oa.Nfs__Export_Panel', {
           xtype: 'textfield',
           fieldLabel: gettext('Directory'),
           name: "path",
-          id: 'dirfield',
-          ref: 'dirfield',
           disabled: true
         }, gettext('If you wish to share only a subpath of the volume, enter the path here.') ),
         {
