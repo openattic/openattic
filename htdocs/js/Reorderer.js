@@ -24,7 +24,7 @@
  * It will fire events and set defaults, deferring the actual reordering to a doReorder implementation.
  * See Ext.ux.TabReorderer for an example.
  */
-Ext.ux.Reorderer = Ext.extend(Object, {
+Ext.define('Ext.ux.Reorderer', {
     /**
      * @property defaults
      * @type Object
