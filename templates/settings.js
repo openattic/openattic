@@ -12,9 +12,11 @@
 */
 
 Ext.namespace("Ext.oa");
-Ext.oa.Settings_Panel = Ext.extend(Ext.Panel,{
+Ext.define('Ext.oa.Settings_Panel',{
+
+  alias: 'widget.settings_panel',
+  extend: 'Ext.Panel',
   initComponent: function(){
-    "use strict";
     Ext.apply(this, Ext.apply(this.initialConfig, {
       id: "settings_panel_inst",
       title: gettext('Personal Settings'),
@@ -62,9 +64,18 @@ Ext.oa.Settings_Panel = Ext.extend(Ext.Panel,{
           }
         }
       },{
+        xtype: "checkbox",
+        fieldLabel: gettext('Catch F5 and reload the current panel only'),
+        checked: Ext.state.Manager.get("catch_f5", false),
+        listeners:{
+          check: function(self, checked){
+            Ext.state.Manager.set("catch_f5", checked);
+          }
+        }
+      },{
         xtype: 'radiogroup',
-        value: Ext.state.Manager.get("theme", "default"),
         fieldLabel: 'Theme',
+        id: 'theme',
         columns: 1,
         listeners:{
           change: function(self, checked){
@@ -72,30 +83,28 @@ Ext.oa.Settings_Panel = Ext.extend(Ext.Panel,{
               Ext.state.Manager.clear("theme");
             }
             else{
-              Ext.state.Manager.set("theme", checked.inputValue);
+              Ext.state.Manager.set("theme", checked.theme);
             }
             // For some reason, window.location.reload.defer() does not work in chrome.
             setTimeout( function(){ window.location.reload(); }, 200);
           }
         },
         items: [
-          { name: 'theme', boxLabel: 'Access',  inputValue: "access"  },
-          { name: 'theme', boxLabel: 'Gray',    inputValue: "gray"    },
-          { name: 'theme', boxLabel: 'Default', inputValue: "default" }
+          { name: 'theme', boxLabel: 'Access',  inputValue: "access",  checked: (Ext.state.Manager.get("theme", "default") == "access" ) },
+          { name: 'theme', boxLabel: 'Gray',    inputValue: "gray",    checked: (Ext.state.Manager.get("theme", "default") == "gray"   ) },
+          { name: 'theme', boxLabel: 'Default', inputValue: "default", checked: (Ext.state.Manager.get("theme", "default") == "default") }
         ]
       } ]
     }));
-    Ext.oa.Settings_Panel.superclass.initComponent.apply(this, arguments);
+    this.callParent(arguments);
   }
 });
 
 
-Ext.reg("settings_panel", Ext.oa.Settings_Panel);
-
-Ext.oa.Settings_Module = Ext.extend(Object, {
+Ext.oa.Settings_Module = {
   panel: "settings_panel"
-});
+};
 
-window.MainViewModules.push(new Ext.oa.Settings_Module());
+window.MainViewModules.push( Ext.oa.Settings_Module );
 
 // kate: space-indent on; indent-width 2; replace-tabs on;
