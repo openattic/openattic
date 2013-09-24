@@ -15,7 +15,9 @@ Ext.ns('Ext.ux.grid');
  *
  * @ptype rowexpander
  */
-Ext.ux.grid.RowExpander = Ext.extend(Ext.util.Observable, {
+Ext.define('Ext.ux.grid.RowExpander', {
+
+    extend: 'Ext.util.Observable',
     /**
      * @cfg {Boolean} expandOnEnter
      * <tt>true</tt> to toggle selected row(s) between expanded/collapsed when the enter
@@ -132,7 +134,7 @@ Ext.ux.grid.RowExpander = Ext.extend(Ext.util.Observable, {
             });
         }
         if (this.expandOnDblClick) {
-            grid.on('rowdblclick', this.onRowDblClick, this);
+            grid.on('itemdblclick', this.onitemdblclick, this);
         }
     },
     
@@ -153,7 +155,7 @@ Ext.ux.grid.RowExpander = Ext.extend(Ext.util.Observable, {
         }
     },
     // @private
-    onRowDblClick: function(grid, rowIdx, e) {
+    onitemdblclickk: function(grid, rowIdx, e) {
         this.toggleRow(rowIdx);
     },
 
@@ -235,7 +237,6 @@ Ext.ux.grid.RowExpander = Ext.extend(Ext.util.Observable, {
     }
 });
 
-Ext.preg('rowexpander', Ext.ux.grid.RowExpander);
 
 //backwards compat
 Ext.grid.RowExpander = Ext.ux.grid.RowExpander;
