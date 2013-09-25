@@ -38,7 +38,7 @@ Ext.oa.getShareEditWindow = function(config, record){
           load:   config.api.get_ext,
           submit: config.api.set_ext
         },
-        extraParams: {
+        baseParams: {
           id: (record ? record.id: -1)
         },
         paramOrder: ["id"],
