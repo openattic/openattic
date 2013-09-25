@@ -17,7 +17,9 @@ Ext.Ajax.on("beforerequest", function(conn, options){
     conn.timeout = 10 * 60 * 1000;
 });
 
-Ext.oa.Lvm__Snapshot_Panel = Ext.extend(Ext.oa.Lvm__LogicalVolume_Panel, {
+Ext.define('Ext.oa.Lvm__Snapshot_Panel', {
+  alias: 'widget.lvm__snapshot_panel',
+  extend: 'Ext.oa.Lvm__LogicalVolume_BasePanel',
   id: "lvm__snapshot_panel_inst",
   title: gettext("Logical Volume Snapshots"),
   filterParams: {
@@ -32,21 +34,33 @@ Ext.oa.Lvm__Snapshot_Panel = Ext.extend(Ext.oa.Lvm__LogicalVolume_Panel, {
       xtype:      'combo',
       allowBlank: false,
       fieldLabel: gettext('Original Volume'),
-      hiddenName: 'snapshot',
-      store: new Ext.data.DirectStore({
-        fields: ["id", "name", "megs", "vg", "owner", "fswarning", "fscritical"],
-        baseParams: {
-          kwds: {
-            "snapshot__isnull": true,
-            "__exclude__": {
-              "filesystem": "zfs"
-            },
-            "__fields__": ["id", "name", "megs", "vg", "owner", "fswarning", "fscritical"]
-          }
-        },
-        paramOrder: ["kwds"],
-        directFn: lvm__LogicalVolume.filter
-      }),
+      name: 'snapshot',
+      store: (function(){
+        Ext.define('lvm_snapshot_model', {
+          extend: 'Ext.data.Model',
+          fields: ["id", "name", "megs", "vg", "owner", "fswarning", "fscritical"]
+        });
+        return Ext.create('Ext.data.Store', {
+          model: "lvm_snapshot_model",
+          proxy: {
+            type: 'direct',
+            directFn: lvm__LogicalVolume.filter,
+            startParam: undefined,
+            limitParam: undefined,
+            pageParam:  undefined,
+            extraParams: {
+              kwds: {
+                "snapshot__isnull": true,
+                "__exclude__": {
+                  "filesystem": "zfs"
+                },
+                "__fields__": ["id", "name", "megs", "vg", "owner", "fswarning", "fscritical"]
+              }
+            }
+          },
+          autoLoad: true
+        });
+      }()),
       typeAhead:     true,
       triggerAction: 'all',
       emptyText:     gettext('Select...'),
@@ -56,7 +70,6 @@ Ext.oa.Lvm__Snapshot_Panel = Ext.extend(Ext.oa.Lvm__LogicalVolume_Panel, {
       ref:      'volfield',
       listeners: {
         select: function(self, record, index){
-          "use strict";
           self.ownerCt.vgfield.setValue( record.data.vg.id );
           self.ownerCt.fswarningfield.setValue( record.data.fswarning );
           self.ownerCt.fscriticalfield.setValue( record.data.fscritical );
@@ -118,16 +131,10 @@ Ext.oa.Lvm__Snapshot_Panel = Ext.extend(Ext.oa.Lvm__LogicalVolume_Panel, {
     }]
   },
   initComponent: function(){
-    "use strict";
-    var i;
-    // Add extra columns (deep-copied)
-    var oldcolumns = Ext.oa.Lvm__Snapshot_Panel.superclass.columns;
-    var mycolumns = [];
-    mycolumns.push(
-      Ext.apply({}, oldcolumns[0]),
-      Ext.apply({}, oldcolumns[1]));
+    // Add extra columns
+    var mycolumns = this.getColumns();
     mycolumns[0].header = gettext("Snapshot");
-    mycolumns.push({
+    mycolumns.splice(2, 0, {
       header: gettext('Snapshot usage (%)'),
       dataIndex: "LVM2_SNAP_PERCENT",
       align: "right",
@@ -154,19 +161,10 @@ Ext.oa.Lvm__Snapshot_Panel = Ext.extend(Ext.oa.Lvm__LogicalVolume_Panel, {
       header: gettext('Original Volume'),
       dataIndex: "origvolname"
     });
-    for( i = 2; i < oldcolumns.length; i++ ){
-      mycolumns.push(Ext.apply({}, oldcolumns[i]));
-    }
     this.columns = mycolumns;
-    // Add extra store fields (deep-copied)
-    var myfields = [];
-    this.store = Ext.oa.Lvm__Snapshot_Panel.superclass.store;
-    var oldfields = this.store.fields;
-    for( i = 0; i < oldfields.length; i++ ){
-      myfields.push(Ext.apply({}, oldfields[i]));
-    }
-    this.store.fields = myfields;
-    this.store.fields.push({
+    // Add extra store fields
+    var mystore = this.getStore();
+    mystore.fields.push({
       name: 'origvolid',
       mapping: 'snapshot',
       convert: function( val, row ){
@@ -180,44 +178,41 @@ Ext.oa.Lvm__Snapshot_Panel = Ext.extend(Ext.oa.Lvm__LogicalVolume_Panel, {
       mapping: 'snapshot',
       convert: toUnicode
     }, 'LVM2_SNAP_PERCENT');
-    // Add extra buttons (deep-copied)
-    /*var oldbuttons = Ext.oa.Lvm__Snapshot_Panel.superclass.buttons;
-    var mybuttons = [];
-    for( i = 0; i < oldbuttons.length; i++ ){
-      mybuttons.push(Ext.apply({}, oldbuttons[i]));
-    }
-    mybuttons.push({
-      text: gettext("Rollback"),
-      handler: function(btn){
-        var self = this;
-        var sm = this.getSelectionModel();
-        if( sm.hasSelection() ){
-          var sel = sm.selections.items[0];
-          Ext.Msg.prompt(
-            self.texts.remove,
-            gettext('What was the name of the volume you wish to rollback again?<br /><b>This will delete the snapshot.</b>'),
-            function(btn, text){
-              if( btn === 'ok' ){
-                if( text == sel.data.name || text == sel.data.origvolname ){
-                  lvm__LogicalVolume.merge(sel.data.id, function(provider, response){
-                    self.store.reload();
-                  });
-                }
-                else{
-                  Ext.Msg.alert(self.texts.remove, gettext("Hm, that doesn't seem right..."));
-                }
-              }
-              else{
-                Ext.Msg.alert(self.texts.remove, gettext("As you wish."));
-              }
-            }
-          );
-        }
-      }
-    });
-    this.buttons = mybuttons;*/
+    this.store = mystore;
+    // Add extra buttons
+    var mybuttons = this.getButtons();
+//     mybuttons.splice(2, 0, {
+//       text: gettext("Rollback"),
+//       handler: function(btn){
+//         var self = this;
+//         var sm = this.getSelectionModel();
+//         if( sm.hasSelection() ){
+//           var sel = sm.selections.items[0];
+//           Ext.Msg.prompt(
+//             self.texts.remove,
+//             gettext('What was the name of the volume you wish to rollback again?<br /><b>This will delete the snapshot.</b>'),
+//             function(btn, text){
+//               if( btn === 'ok' ){
+//                 if( text == sel.data.name || text == sel.data.origvolname ){
+//                   lvm__LogicalVolume.merge(sel.data.id, function(provider, response){
+//                     self.store.load();
+//                   });
+//                 }
+//                 else{
+//                   Ext.Msg.alert(self.texts.remove, gettext("Hm, that doesn't seem right..."));
+//                 }
+//               }
+//               else{
+//                 Ext.Msg.alert(self.texts.remove, gettext("As you wish."));
+//               }
+//             }
+//           );
+//         }
+//       }
+//     });
+    this.buttons = mybuttons;
     // Render the Panel
-    Ext.oa.Lvm__Snapshot_Panel.superclass.initComponent.apply(this, arguments);
+    this.callParent(arguments);
     // Add a store listener to populate the SNAP_PERCENT column
     this.store.on("load", function(self){
       var j;
@@ -229,12 +224,11 @@ Ext.oa.Lvm__Snapshot_Panel = Ext.extend(Ext.oa.Lvm__LogicalVolume_Panel, {
         };
       };
       for (j = 0; j < self.data.length; j++){
-        lvm__LogicalVolume.lvm_info( self.data.items[j].id, mkUpdateHandler(j) );
+        lvm__LogicalVolume.lvm_info( self.data.items[j].data.id, mkUpdateHandler(j) );
       }
     });
   },
   deleteConfirm: function(sel, handler, scope){
-    "use strict";
     Ext.Msg.prompt(
       this.texts.remove,
       gettext('What was the name of the volume you wish to delete again?<br /><b>There is no undo and you will lose all data.</b>'),
@@ -256,12 +250,10 @@ Ext.oa.Lvm__Snapshot_Panel = Ext.extend(Ext.oa.Lvm__LogicalVolume_Panel, {
   }
 });
 
-Ext.reg("lvm__snapshot_panel", Ext.oa.Lvm__Snapshot_Panel);
 
-Ext.oa.Lvm__Snapshot_Module = Ext.extend(Object, {
+Ext.oa.Lvm__Snapshot_Module = {
   panel: "lvm__snapshot_panel",
   prepareMenuTree: function(tree){
-    "use strict";
     tree.appendToRootNodeById("menu_storage", {
       text: gettext('Volume Snapshots'),
       leaf: true,
@@ -270,9 +262,9 @@ Ext.oa.Lvm__Snapshot_Module = Ext.extend(Object, {
       href: '#'
     });
   }
-});
+};
 
 
-window.MainViewModules.push( new Ext.oa.Lvm__Snapshot_Module() );
+window.MainViewModules.push( Ext.oa.Lvm__Snapshot_Module );
 
 // kate: space-indent on; indent-width 2; replace-tabs on;
