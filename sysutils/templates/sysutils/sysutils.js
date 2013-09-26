@@ -110,22 +110,18 @@ Ext.oa.SysUtils__Service_Module = {
       leaf: true,
       icon: '{{ MEDIA_URL }}/icons2/22x22/status/network-receive.png',
       panel: "sysutils__service_panel_inst",
-      href: '#'
     });
     tree.appendToRootNodeById("menu_shutdown", {
       text: gettext('Reboot'),
       id: 'menu_reboot',
       leaf: true,
-      icon: '{{ MEDIA_URL }}/oxygen/22x22/actions/system-reboot.png',
-      href: '#'
+      icon: '{{ MEDIA_URL }}/oxygen/22x22/actions/system-reboot.png'
     });
     tree.appendToRootNodeById("menu_shutdown", {
       text: gettext('Shutdown'),
-      id: 'menu_shutdown',
+      id: 'menu_doshutdown',
       leaf: true,
-      icon: '{{ MEDIA_URL }}/oxygen/22x22/actions/system-shutdown.png',
-      handler: function(){ alert("hai!"); },
-      href: '#'
+      icon: '{{ MEDIA_URL }}/oxygen/22x22/actions/system-shutdown.png'
     });
   },
   handleMenuTreeClick: function(record){
@@ -142,7 +138,7 @@ Ext.oa.SysUtils__Service_Module = {
         }
       );
     }
-    else if( record.data.id === "menu_shutdown" ){
+    else if( record.data.id === "menu_doshutdown" ){
       Ext.oa.RedDangerousMessage.confirm(
         "Shutdown",
         gettext('Do you really want to shutdown openATTIC?'),
