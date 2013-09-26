@@ -208,6 +208,7 @@ Ext.define('Ext.oa.ShareGridPanel', {
         hidden: true,
         items: ["Search:", {
           xtype: 'textfield',
+          deferEmptyText: false,
           emptyText: gettext('Search...'),
           enableKeyEvents: true,
           listeners: {
