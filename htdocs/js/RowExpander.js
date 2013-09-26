@@ -113,7 +113,7 @@ Ext.define('Ext.ux.grid.RowExpander', {
         this.grid = grid;
 
         var view = grid.getView();
-        view.getRowClass = this.getRowClass.createDelegate(this);
+        view.getRowClass = Ext.bind(this.getRowClass, this);
 
         view.enableRowBody = true;
 

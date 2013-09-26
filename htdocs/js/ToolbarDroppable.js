@@ -73,8 +73,8 @@ Ext.define('Ext.ux.ToolbarDroppable', {
          * The drop target attached to the toolbar instance
          */
         this.dropTarget = new Ext.dd.DropTarget(this.toolbar.getEl(), {
-            notifyOver: this.notifyOver.createDelegate(this),
-            notifyDrop: this.notifyDrop.createDelegate(this)
+            notifyOver: Ext.bind(this.notifyOver, this),
+            notifyDrop: Ext.bind(this.notifyDrop, this)
         });
     },
 

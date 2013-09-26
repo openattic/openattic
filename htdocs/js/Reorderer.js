@@ -212,7 +212,7 @@ Ext.define('Ext.ux.Reorderer', {
             if (item.rendered) {
                 this.createItemDD(item);
             } else {
-                item.on('render', this.createItemDD.createDelegate(this, [item]), this, {single: true});
+                item.on('render', Ext.bind(this.createItemDD, this, [item]), this, {single: true});
             }
         }
     },
