@@ -33,11 +33,13 @@ Ext.oa.getDefaultPortlets = function(tools){
       height: 265,
       forceFit: true,
       split: true,
+      sortableColumns: true,
       store: (function(){
         // Anon function that is called immediately to set up the store's DefaultSort
         var store = new Ext.data.DirectStore({
           storeId: "portlet_lvs_store",
           autoLoad: true,
+          sorters: [{property: "fsused", direction: "DESC"}],
           fields: ['name', 'megs', 'filesystem',  'formatted', 'id', 'state', 'fs', 'fswarning', 'fscritical', 'snapshot', {
             name: 'fsused',
             mapping: 'fs',
@@ -51,7 +53,6 @@ Ext.oa.getDefaultPortlets = function(tools){
           }],
           directFn: lvm__LogicalVolume.all
         });
-        store.setDefaultSort("fsused", "DESC");
         store.on("load", function(self){
           self.filterBy(function(record){
             return !record.data.snapshot && record.data.fs !== null && record.data.fs.mounted;
@@ -59,40 +60,37 @@ Ext.oa.getDefaultPortlets = function(tools){
         });
         return store;
       }()),
-      colModel:  new Ext.grid.ColumnModel({
-        defaults: {
-          sortable: true
-        },
-        columns: [{
-          header: "LV",
-          width: 200,
-          dataIndex: "name"
-        }, {
-          header: "Used",
-          width: 150,
-          dataIndex: "fsused",
-          align: 'right',
-          renderer: function( val, x, store ){
-            if( !val || val === -1 ){
-              return '';
-            }
-            var id = Ext.id();
-            (function(){
-              if( Ext.get(id) === null ){
-                return;
-              }
-              new Ext.ProgressBar({
-                renderTo: id,
-                value: val/100.0,
-                text:  String.format("{0}%", val),
-                cls:   ( val > store.data.fscritical ? "lv_used_crit" :
-                        (val > store.data.fswarning  ? "lv_used_warn" : "lv_used_ok"))
-              });
-            }).defer(25);
-            return '<span id="' + id + '"></span>';
+      columns: [{
+        header: "LV",
+        width: 200,
+        dataIndex: "name"
+      }, {
+        header: "Used",
+        width: 150,
+        dataIndex: "fsused",
+        align: 'right',
+        renderer: function( val, x, store ){
+          if( !val || val === -1 ){
+            return '';
           }
-        }]
-      })
+          var id = Ext.id();
+
+          Ext.defer(function(){
+            if( Ext.get(id) === null ){
+              return;
+            }
+            new Ext.ProgressBar({
+              renderTo: id,
+              value: val/100.0,
+              text:  Ext.String.format("{0}%", val),
+              cls:   ( val > store.data.fscritical ? "lv_used_crit" :
+                      (val > store.data.fswarning  ? "lv_used_warn" : "lv_used_ok"))
+            });
+            }, 25);
+
+          return '<span id="' + id + '"></span>';
+        }
+      }]
     })
   }];
 };
