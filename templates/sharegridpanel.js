@@ -112,8 +112,7 @@ Ext.oa.getShareEditWindow = function(config, record){
 
 
 Ext.define('Ext.oa.ShareGridPanel', {
-
-  extend: 'Ext.grid.GridPanel',
+  extend: 'Ext.grid.Panel',
   alias: 'sharegridpanel',
   api: null,
   form: {},
