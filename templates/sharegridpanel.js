@@ -254,14 +254,11 @@ Ext.define('Ext.oa.ShareGridPanel', {
     }
     else{
       var mybuttons = [];
-      if(typeof buttons !== 'undefined')
-      {
-        for( i = 0; i < this.buttons.length; i++ ){
-          mybuttons[i] = Ext.apply({}, this.buttons[i]);
-          Ext.applyIf(mybuttons[i], { scope: self });
-        }
-        this.buttons = mybuttons;
+      for( i = 0; i < this.buttons.length; i++ ){
+        mybuttons[i] = Ext.apply({}, this.buttons[i]);
+        Ext.applyIf(mybuttons[i], { scope: self });
       }
+      this.buttons = mybuttons;
     }
     this.store.proxy.extraParams = filters;
     if( this.filterParams !== false ){
