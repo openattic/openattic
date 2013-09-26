@@ -15,11 +15,14 @@ window.MainViewModules.push({
   prepareMenuTree: function(tree){
     tree.appendToRootNodeById("menu_shutdown", {
       text: gettext('Logout'),
+      id: "menu_logout",
       leaf: true,
       icon: MEDIA_URL + '/oxygen/22x22/actions/system-log-out.png'
     });
   },
   handleMenuTreeClick: function(record){
+    if( record.data.id !== "menu_logout" )
+      return;
     Ext.Msg.confirm(
       gettext('Logout'),
       gettext('Do you really want to logout?'),
