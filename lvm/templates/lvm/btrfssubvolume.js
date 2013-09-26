@@ -116,6 +116,7 @@ Ext.define('Ext.oa.Lvm__BtrfsSubvolume_Panel', {
           typeAhead:     true,
           disabled:      true,
           triggerAction: 'all',
+          deferEmptyText: false,
           emptyText:     gettext('Select...'),
           selectOnFocus: true,
           displayField:  'name',
@@ -139,8 +140,7 @@ Ext.oa.Lvm__BtrfsSubvolume_Module =  {
       text: gettext('BTRFS'),
       leaf: true,
       icon: MEDIA_URL + '/icons2/22x22/mimetypes/ascii.png',
-      panel: 'lvm_btrfssubvolume_panel_inst',
-      href: '#'
+      panel: 'lvm_btrfssubvolume_panel_inst'
     });
   }
 };

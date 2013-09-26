@@ -91,8 +91,7 @@ Ext.oa.Nfs__Export_Module = {
       text: gettext('Linux (NFS)'),
       leaf: true,
       icon: MEDIA_URL + '/icons2/22x22/apps/nfs.png',
-      panel: 'nfs__export_panel_inst',
-      href: '#'
+      panel: 'nfs__export_panel_inst'
     });
   }
 };

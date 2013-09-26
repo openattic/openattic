@@ -31,7 +31,7 @@ Ext.define('Ext.oa.Http__Export_Panel', {
     width: 100,
     dataIndex: "url",
     renderer: function(val, x, store){
-      return String.format(
+      return Ext.String.format(
         '<a href="{0}" target="_blank" title="{1}">' +
           '<img alt="Browser" src="{{ MEDIA_URL }}/oxygen/16x16/places/folder-remote.png">' +
         '</a>',
@@ -72,8 +72,7 @@ Ext.oa.Http__Export_Module = {
       text: gettext('Web (HTTP)'),
       leaf: true,
       panel: "http__export_panel_inst",
-      icon: MEDIA_URL + '/icons2/22x22/mimetypes/www.png',
-      href: '#'
+      icon: MEDIA_URL + '/icons2/22x22/mimetypes/www.png'
     });
   }
 };

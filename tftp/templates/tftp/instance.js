@@ -95,6 +95,7 @@ Ext.define('Ext.oa.Tftp__Instance_Panel', {
           disabled:      true,
           typeAhead:     true,
           triggerAction: 'all',
+          deferEmptyText: false,
           emptyText:     gettext('Select...'),
           selectOnFocus: true,
           displayField:  '__unicode__',
@@ -113,8 +114,7 @@ Ext.oa.Tftp__Instance_Module = {
       text: gettext('Embedded (TFTP)'),
       leaf: true,
       icon: MEDIA_URL + '/oxygen/22x22/categories/preferences-other.png',
-      panel: 'tftp__instance_panel_inst',
-      href: '#'
+      panel: 'tftp__instance_panel_inst'
     });
   }
 };

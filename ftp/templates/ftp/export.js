@@ -30,8 +30,7 @@ Ext.oa.Ftp__Export_Module =  {
       text: gettext('Web (FTP)'),
       leaf: true,
       panel: "ftp__export_panel_inst",
-      icon: MEDIA_URL + '/icons2/22x22/mimetypes/www.png',
-      href: '#'
+      icon: MEDIA_URL + '/icons2/22x22/mimetypes/www.png'
     });
   }
 };

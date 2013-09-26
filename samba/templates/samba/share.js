@@ -121,8 +121,7 @@ Ext.oa.Samba__Share_Module = {
       text: gettext('Windows (CIFS)'),
       leaf: true,
       icon: MEDIA_URL + '/icons2/22x22/apps/samba.png',
-      panel: "samba__share_panel_inst",
-      href: '#'
+      panel: "samba__share_panel_inst"
     });
   }
 };

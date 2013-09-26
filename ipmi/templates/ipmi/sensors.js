@@ -85,8 +85,7 @@ Ext.oa.Lvm__Mounts_Module = {
       text: gettext('Sensoren'),
       leaf: true,
       icon: MEDIA_URL + '/icons2/22x22/apps/gnome-monitor.png',
-      panel: "ipmi__sensors_panel_inst",
-      href: '#'
+      panel: "ipmi__sensors_panel_inst"
     });
   }
 };

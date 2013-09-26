@@ -105,8 +105,7 @@ Ext.define('Ext.oa.Portal', {
       text: 'Dashboard',
       leaf: true,
       icon: MEDIA_URL + '/icons2/22x22/apps/gnome-session.png',
-      panel: this,
-      href: '#'
+      panel: this
     });
   }
 });

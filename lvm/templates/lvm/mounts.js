@@ -84,8 +84,7 @@ Ext.oa.Lvm__Mounts_Module =  {
       text: gettext('Mount Points'),
       leaf: true,
       icon: MEDIA_URL + '/icons2/22x22/devices/hdd_unmount.png',
-      panel: "lvm__mounts_panel_inst",
-      href: '#'
+      panel: "lvm__mounts_panel_inst"
     });
   }
 };

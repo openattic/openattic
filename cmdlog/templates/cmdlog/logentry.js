@@ -236,8 +236,7 @@ Ext.oa.Cmdlog__LogEntry_Module = {
       text: gettext('Command Log'),
       leaf: true,
       icon: MEDIA_URL + '/icons2/22x22/actions/bookmark-new.png',
-      panel: "cmdlog__logentry_panel_inst",
-      href: '#'
+      panel: "cmdlog__logentry_panel_inst"
     });
   }
 };

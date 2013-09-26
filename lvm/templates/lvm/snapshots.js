@@ -63,6 +63,7 @@ Ext.define('Ext.oa.Lvm__Snapshot_Panel', {
       }()),
       typeAhead:     true,
       triggerAction: 'all',
+      deferEmptyText: false,
       emptyText:     gettext('Select...'),
       selectOnFocus: true,
       displayField:  'name',
@@ -80,7 +81,7 @@ Ext.define('Ext.oa.Lvm__Snapshot_Panel', {
           self.ownerCt.sizefield.disable();
           lvm__VolumeGroup.get_free_megs( record.data.vg, function( provider, response ){
             self.ownerCt.sizefield.maxValue = response.result;
-            self.ownerCt.sizelabel.setText( String.format( "Max. {0} MB", response.result ) );
+            self.ownerCt.sizelabel.setText( Ext.String.format( "Max. {0} MB", response.result ) );
             if( record.data.megs <= response.result ){
               self.ownerCt.sizefield.setValue( record.data.megs );
             }
@@ -143,18 +144,18 @@ Ext.define('Ext.oa.Lvm__Snapshot_Panel', {
           return '♻';
         }
         var id = Ext.id();
-        (function(){
+        Ext.defer(function(){
           if( Ext.get(id) === null ){
             return;
           }
           new Ext.ProgressBar({
             renderTo: id,
             value: val/100.0,
-            text:  String.format("{0}%", val),
+            text:  Ext.String.format("{0}%", val),
             cls:   ( val > store.data.fscritical ? "lv_used_crit" :
                     (val > store.data.fswarning  ? "lv_used_warn" : "lv_used_ok"))
           });
-        }).defer(25);
+        }, 25);
         return '<span id="' + id + '"></span>';
       }
     }, {
@@ -220,7 +221,11 @@ Ext.define('Ext.oa.Lvm__Snapshot_Panel', {
         return function(provider, response){
           self.data.items[idx].set("LVM2_SNAP_PERCENT",
             response.result.LVM2_DATA_PERCENT || response.result.LVM2_SNAP_PERCENT);
-          self.commitChanges();
+          self.data.each(
+            function(record, index, data){
+              record.commit();
+            }
+          );
         };
       };
       for (j = 0; j < self.data.length; j++){
@@ -258,8 +263,7 @@ Ext.oa.Lvm__Snapshot_Module = {
       text: gettext('Volume Snapshots'),
       leaf: true,
       icon: MEDIA_URL + '/icons2/22x22/actions/document-save-as.png',
-      panel: "lvm__snapshot_panel_inst",
-      href: '#'
+      panel: "lvm__snapshot_panel_inst"
     });
   }
 };

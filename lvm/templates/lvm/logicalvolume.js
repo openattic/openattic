@@ -752,8 +752,7 @@ Ext.oa.Lvm__LogicalVolume_Module = {
       text: gettext('Volume Management'),
       leaf: true,
       icon: MEDIA_URL + '/icons2/22x22/apps/volume.png',
-      panel: "lvm__logicalvolume_panel_inst",
-      href: '#'
+      panel: "lvm__logicalvolume_panel_inst"
     });
   }
 };
