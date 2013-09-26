@@ -119,6 +119,7 @@ Ext.define('Ext.oa.Drbd__Connection_Panel', {
         typeAhead:     true,
         triggerAction: 'all',
         emptyText:     gettext('Select...'),
+        deferEmptyText: false,
         selectOnFocus: true,
         displayField:  'address',
         valueField:    'id'
@@ -146,6 +147,7 @@ Ext.define('Ext.oa.Drbd__Connection_Panel', {
         typeAhead:     true,
         triggerAction: 'all',
         emptyText:     gettext('Select...'),
+        deferEmptyText: false,
         selectOnFocus: true,
         displayField:  '__unicode__',
         valueField:    'id'
