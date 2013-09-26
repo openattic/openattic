@@ -101,9 +101,9 @@ Ext.define('Ext.oa.Lvm__LogicalVolume_BasePanel', {
       align: 'right',
       renderer: function( val, x, store ){
         if( val >= 1000 ){
-          return String.format("{0} GB", (val / 1000).toFixed(2));
+          return Ext.String.format("{0} GB", (val / 1000).toFixed(2));
         }
-        return String.format("{0} MB", val);
+        return Ext.String.format("{0} MB", val);
       }
     }, {
       header: gettext('FS'),
@@ -122,7 +122,7 @@ Ext.define('Ext.oa.Lvm__LogicalVolume_BasePanel', {
         if( !val || val === -1 ){
           return '';
         }
-        return String.format("{0} GB", val);
+        return Ext.String.format("{0} GB", val);
       }
     }, {
       header: gettext('Used'),
@@ -132,7 +132,7 @@ Ext.define('Ext.oa.Lvm__LogicalVolume_BasePanel', {
         if( !val || val === -1 ){
           return '';
         }
-        return String.format("{0} GB", val);
+        return Ext.String.format("{0} GB", val);
       }
     }, {
       header: gettext('Used%'),
@@ -143,19 +143,19 @@ Ext.define('Ext.oa.Lvm__LogicalVolume_BasePanel', {
           return '';
         }
         var id = Ext.id();
-        (function(){
+        Ext.defer(function(){
           if( Ext.get(id) === null ){
             return;
           }
           new Ext.ProgressBar({
             renderTo: id,
             value: val/100.0,
-            text:  String.format("{0}%", val),
+            text:  Ext.String.format("{0}%", val),
             cls:   ( val > store.data.fscritical ? "lv_used_crit" :
                     (val > store.data.fswarning  ? "lv_used_warn" : "lv_used_ok"))
           });
-        }).defer(25);
-        return '<span id="' + id + '"></span>';
+        },25);
+        return Ext.String.format('<span id="{0}"></span>', id);
       }
     },{
       header: gettext('Owner'),
@@ -173,12 +173,12 @@ Ext.define('Ext.oa.Lvm__LogicalVolume_BasePanel', {
     }];
   },
   getButtons: function(){
+    var self = this;
     return [{
       text: gettext('Set warning threshold'),
       icon: MEDIA_URL + "/icons2/16x16/status/dialog-warning.png",
       handler: function(){
-        var self = this;
-        var sm = this.getSelectionModel();
+        var sm = self.getSelectionModel();
         if( sm.hasSelection() ){
           var sel = sm.selected.items[0];
           var addwin = new Ext.Window({
@@ -198,16 +198,12 @@ Ext.define('Ext.oa.Lvm__LogicalVolume_BasePanel', {
                   fieldLabel: gettext('Warning Level (%)'),
                   allowBlank: false,
                   name: "fswarning",
-                  ref: 'warnfield',
-                  id: 'lvm__logicalvolume__warnfield',
                   value: sel.data.fswarning,
                   xtype: "numberfield"
                 }, {
                   fieldLabel: gettext('Critical Level (%)'),
                   allowBlank: false,
                   name: "fscritical",
-                  ref: 'critfield',
-                  id: 'lvm__logicalvolume__critfield',
                   value: sel.data.fscritical,
                   xtype: "numberfield"
                 } ],
@@ -219,8 +215,8 @@ Ext.define('Ext.oa.Lvm__LogicalVolume_BasePanel', {
                     return;
                   }
                   lvm__LogicalVolume.set(sel.data.id, {
-                    'fswarning':  Ext.getCmp('lvm__logicalvolume__warnfield').getValue(),
-                    'fscritical': Ext.getCmp('lvm__logicalvolume__critfield').getValue()
+                    'fswarning':  Ext.ComponentQuery.query("[name=fswarning]",  this.form)[0].getValue(),
+                    'fscritical': Ext.ComponentQuery.query("[name=fscritical]", this.form)[0].getValue()
                   }, function(provider, response){
                     if( response.result ){
                       self.store.load();
@@ -244,8 +240,7 @@ Ext.define('Ext.oa.Lvm__LogicalVolume_BasePanel', {
       text: gettext('Mount'),
       icon: MEDIA_URL + "/oxygen/16x16/emblems/emblem-mounted.png",
       handler: function(){
-        var self = this;
-        var sm = this.getSelectionModel();
+        var sm = self.getSelectionModel();
         if( sm.hasSelection() ){
           var sel = sm.selected.items[0];
           if( !sel.data.filesystem ){
@@ -285,8 +280,7 @@ Ext.define('Ext.oa.Lvm__LogicalVolume_BasePanel', {
       text: gettext('Unmount'),
       icon: MEDIA_URL + "/oxygen/16x16/emblems/emblem-unmounted.png",
       handler: function(){
-        var self = this;
-        var sm = this.getSelectionModel();
+        var sm = self.getSelectionModel();
         if( sm.hasSelection() ){
           var sel = sm.selected.items[0];
           lvm__LogicalVolume.is_mounted( sel.data.id, function(provider, response){
@@ -326,7 +320,7 @@ Ext.define('Ext.oa.Lvm__LogicalVolume_BasePanel', {
       text: gettext('Shares'),
       icon: MEDIA_URL + "/oxygen/16x16/emblems/emblem-unmounted.png",
       handler: function(self){
-        var sm = this.getSelectionModel();
+        var sm = self.getSelectionModel();
         if( sm.hasSelection() ){
           var sel = sm.selected.items[0];
           var shareswin = new Ext.Window({
@@ -381,8 +375,7 @@ Ext.define('Ext.oa.Lvm__LogicalVolume_BasePanel', {
       text: gettext('Initialize'),
       icon: MEDIA_URL + "/oxygen/16x16/actions/project-development-new-template.png",
       handler: function(){
-        var self = this;
-        var sm = this.getSelectionModel();
+        var sm = self.getSelectionModel();
         if( sm.hasSelection() ){
           var sel = sm.selected.items[0];
           var scriptswin = new Ext.Window({
@@ -450,8 +443,7 @@ Ext.define('Ext.oa.Lvm__LogicalVolume_BasePanel', {
       text: gettext('Resize Volume'),
       icon: MEDIA_URL + "/icons2/16x16/actions/gtk-execute.png",
       handler: function(){
-        var self = this;
-        var sm = this.getSelectionModel();
+        var sm = self.getSelectionModel();
         if( sm.hasSelection() ){
           var sel = sm.selected.items[0];
           lvm__VolumeGroup.get_free_megs( sel.raw.vg.id, function( provider, response ){
@@ -464,8 +456,6 @@ Ext.define('Ext.oa.Lvm__LogicalVolume_BasePanel', {
               width: 500,
               items: [{
                 xtype: "form",
-                ref: "resize",
-                id: "resize",
                 title: gettext('Please enter your desired size'),
                 bodyStyle: 'padding:5px ;',
                 defaults: {
@@ -477,8 +467,6 @@ Ext.define('Ext.oa.Lvm__LogicalVolume_BasePanel', {
                 },
                 items: [{
                   xtype: 'slider',
-                  ref: 'slider',
-                  id: 'slider',
                   increment: 100,
                   layout: 'form',
                   width: 220,
@@ -487,18 +475,15 @@ Ext.define('Ext.oa.Lvm__LogicalVolume_BasePanel', {
                   maxValue: freemegs,
                   listeners: {
                     change: function(sld) {
-                      if( typeof sld.ownerCt.megabyte !== "undefined" )
-                        sld.ownerCt.megabyte.setValue(sld.getValue());
-                      if( typeof sld.ownerCt.remaining_megabyte !== "undefined" )
-                        sld.ownerCt.remaining_megabyte.setValue(freemegs - sld.getValue());
+                      Ext.ComponentQuery.query("[name=megabyte]", this.ownerCt)[0].setValue(sld.getValue());
+                      Ext.ComponentQuery.query("[name=remaining_megabyte]", this.ownerCt)[0].setValue(freemegs - sld.getValue());
                     }
                   }
                 }, {
                   xtype: 'numberfield',
                   fieldLabel: gettext('Megabyte'),
-                  ref: 'megabyte',
-                  id: 'megabyte',
                   allowBlank: false,
+                  name: "megabyte",
                   minValue: 100,
                   maxValue: freemegs,
                   enableKeyEvents: true,
@@ -508,24 +493,23 @@ Ext.define('Ext.oa.Lvm__LogicalVolume_BasePanel', {
                       if(this.getValue() > freemegs){
                         this.setValue(freemegs);
                       }
-                      Ext.getCmp('slider').setValue(this.getValue(), false);
-                      Ext.getCmp('remaining_megabyte').setValue(freemegs - this.getValue());
+                      Ext.ComponentQuery.query("slider", this.ownerCt)[0].setValue(this.getValue(), false);
+                      Ext.ComponentQuery.query("[name=remaining_megabyte]", this.ownerCt)[0].setValue(freemegs - this.getValue());
                     },
                     specialkey: function(f,e){
                       if(e.getKey() === e.ENTER){
                         if(this.getValue() > freemegs){
                           this.setValue(freemegs);
                         }
-                        Ext.getCmp('slider').setValue(this.getValue(), false);
-                        Ext.getCmp('remaining_megabyte').setValue(freemegs - this.getValue());
+                        Ext.ComponentQuery.query("slider", this.ownerCt)[0].setValue(this.getValue(), false);
+                        Ext.ComponentQuery.query("[name=remaining_megabyte]", this.ownerCt)[0].setValue(freemegs - this.getValue());
                       }
                     }
                   }
                 },{
                   xtype: 'textfield',
+                  name: "remaining_megabyte",
                   readOnly: true,
-                  ref: 'remaining_megabyte',
-                  id: 'remaining_megabyte',
                   fieldLabel: gettext('Remaining Space'),
                   value: response.result,
                   disabled: true
@@ -637,6 +621,7 @@ Ext.define('Ext.oa.Lvm__LogicalVolume_Panel', {
       }()),
       typeAhead:     true,
       triggerAction: 'all',
+      deferEmptyText: false,
       emptyText:     gettext('Select...'),
       id: "volumegroup_all_add",
       selectOnFocus: true,
@@ -646,10 +631,11 @@ Ext.define('Ext.oa.Lvm__LogicalVolume_Panel', {
       listeners: {
         select: function(self, record, index){
           self.ownerCt.volume_free_megs = null;
-          Ext.getCmp('sizelabel').setText( gettext('Querying data...') );
+          var sizelabel = Ext.ComponentQuery.query("label", self.ownerCt)[0];
+          sizelabel.setText( gettext('Querying data...') );
           lvm__VolumeGroup.get_free_megs( record[0].data.id, function( provider, response ){
             self.ownerCt.volume_free_megs = response.result;
-            Ext.getCmp('sizelabel').setText( String.format( "Max. {0} MB", response.result ) );
+            sizelabel.setText(Ext.String.format( "Max. {0} MB", response.result ) );
           } );
         }
       }
@@ -680,62 +666,54 @@ Ext.define('Ext.oa.Lvm__LogicalVolume_Panel', {
       }()),
       listeners: {
         select: function(self, record, index){
-          Ext.getCmp('dedupfield').setDisabled(!record[0].data.supports_dedup);
-          Ext.getCmp('compressionfield').setDisabled(!record[0].data.supports_compression);
+          var dedupfield = Ext.ComponentQuery.query("[name=dedup]", self.ownerCt)[0];
+          var compressionfield = Ext.ComponentQuery.query("[name=compression]", self.ownerCt)[0];
+          dedupfield.setDisabled(!record[0].data.supports_dedup);
+          compressionfield.setDisabled(!record[0].data.supports_compression);
           if(!record[0].data.supports_dedup){
-            Ext.getCmp('dedupfield').setValue(false);
-            Ext.getCmp('compressionfield').setValue(false);
+            dedupfield.setValue(false);
+            compressionfield.setValue(false);
           }
         }
       },
       typeAhead:     true,
       triggerAction: 'all',
+      deferEmptyText: false,
       emptyText:     gettext('Select...'),
       selectOnFocus: true,
       displayField:  'desc',
       valueField:    'name',
-      ref:      'fsfield'
     }, gettext('If you want to use DRBD with this device, do not yet create a file system on it, even if you want to share it using NAS services later on.')),
     {
       fieldLabel: gettext('Size in MB'),
       allowBlank: false,
       name: "megs",
-      ref: 'sizefield',
-      id: 'sizefield',
       xtype: "numberfield",
       minValue: 100
     }, {
       xtype: "label",
-      ref:   "sizelabel",
-      id: 'sizelabel',
       text:  gettext('Waiting for volume group selection...'),
       cls:   "form_hint_label"
     }, {
       fieldLabel: gettext('Deduplication'),
       name: "dedup",
-      id: 'dedupfield',
-      ref: 'dedupfield',
       xtype: "checkbox",
       disabled: true
     }, {
       fieldLabel: gettext('Compression'),
       name: "compression",
-      ref: 'compressionfield',
-      id: 'compressionfield',
       xtype: "checkbox",
       disabled: true
     }, {
       fieldLabel: gettext('Warning Level (%)'),
       allowBlank: false,
       name: "fswarning",
-      ref: 'warnfield',
       value: 75,
       xtype: "numberfield"
     }, {
       fieldLabel: gettext('Critical Level (%)'),
       allowBlank: false,
       name: "fscritical",
-      ref: 'critfield',
       value: 85,
       xtype: "numberfield"
     }, {
