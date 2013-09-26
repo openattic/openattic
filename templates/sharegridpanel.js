@@ -236,7 +236,7 @@ Ext.define('Ext.oa.ShareGridPanel', {
                 self.doLayout();
               }
               else{
-                self.searchTimeout = fld.initialConfig.listeners.change.defer(2000, self, [fld, fld.getValue()]);
+                self.searchTimeout = Ext.defer(fld.initialConfig.listeners.change,2000, self, [fld, fld.getValue()]);
               }
             }
           }
