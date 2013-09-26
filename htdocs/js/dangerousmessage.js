@@ -13,25 +13,23 @@
 
 Ext.namespace("Ext.oa");
 
-Ext.oa.DangerousMessage = function(color){
-  "use strict";
-  // http://www.sencha.com/forum/showthread.php?7613-Ext.MessageBox-extend-class&p=46792&viewfull=1#post46792
-  var F = function(){};
-  F.prototype = Ext.MessageBox;
-  var O = Ext.extend(F, {
-    getDialog: function() {
-      var d = O.superclass.getDialog.apply(this, arguments);
-      d.mask.addClass(color);
-      d.on("hide", function(){
-        d.mask.removeClass(color);
-      });
-      return d;
-    }
-  });
-  return new O();
-};
-Ext.oa.RedDangerousMessage = Ext.oa.DangerousMessage("redmask");
 
-Ext.oa.YellowDangerousMessage = Ext.oa.DangerousMessage("yellowmask");
+Ext.define("Ext.oa.DangerousMessage", {
+  extend: "Ext.window.MessageBox",
+  maskCssClass: "",
+  onShow: function(){
+    this.callParent(arguments);
+    this.getMaskTarget().unmask();
+    var mask = Ext.getBody().mask();
+    mask.addClass(this.maskCssClass);
+    this.on("hide", function(){
+      Ext.getBody().unmask();
+    });
+  }
+});
+
+Ext.oa.RedDangerousMessage = new Ext.oa.DangerousMessage({ maskCssClass: "redmask" });
+
+Ext.oa.YellowDangerousMessage = new Ext.oa.DangerousMessage({ maskCssClass: "yellowmask" });
 
 // kate: space-indent on; indent-width 2; replace-tabs on;
