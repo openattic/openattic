@@ -251,7 +251,7 @@ Ext.define('Ext.oa.MainViewManager', {
       fn: function(key, evt){
         if( !f5again && Ext.state.Manager.get("catch_f5", false) ){
           f5again = true;
-          resetf5.defer(1000);
+          Ext.defer(resetf5,1000);
           evt.stopEvent();
 
           var act = this.modcontainer.layout.activeItem;
