@@ -71,8 +71,7 @@ Ext.define('Ext.oa.MenuTree', {
           expanded: Ext.state.Manager.get("expand_root_nodes", true),
           icon: MEDIA_URL + '/icons2/22x22/actions/stock_about.png',
           panel: "settings_panel_inst",
-          leaf: true,
-          href: '#'
+          leaf: true
         }, {
           id: 'menu_shutdown',
           text: gettext('Shutdown'),
