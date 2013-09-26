@@ -387,8 +387,7 @@ Ext.oa.Drbd__Connection_Module = {
       text: gettext('Datenspiegelung'),
       leaf: true,
       icon: MEDIA_URL + '/icons2/22x22/apps/gnome-session.png',
-      panel: "drbd_panel_inst",
-      href: '#'
+      panel: "drbd_panel_inst"
     });
   }
 };
