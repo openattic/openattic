@@ -16,36 +16,34 @@ window.MainViewModules.push({
     tree.appendToRootNodeById("menu_shutdown", {
       text: gettext('Logout'),
       leaf: true,
-      icon: MEDIA_URL + '/oxygen/22x22/actions/system-log-out.png',
-      listeners: {
-        click: function(self, ev){
-          Ext.Msg.confirm(
-            gettext('Logout'),
-            gettext('Do you really want to logout?'),
-            function(btn, text){
-              if(btn === 'yes'){
-                var conn = new Ext.data.Connection();
-                conn.request({
-                  url: LOGOUT_URL,
-                  success: function( response, options ){
-                    var redirect = function(){
-                      location.href = INDEX_URL;
-                    };
-                    window.setTimeout( redirect, 20000 );
-                    Ext.Msg.show({
-                      title:   gettext('Logout'),
-                      msg:     gettext('Successfully logged out'),
-                      buttons: Ext.MessageBox.OK,
-                      fn:      redirect
-                    });
-                  }
-                });
-              }
+      icon: MEDIA_URL + '/oxygen/22x22/actions/system-log-out.png'
+    });
+  },
+  handleMenuTreeClick: function(record){
+    Ext.Msg.confirm(
+      gettext('Logout'),
+      gettext('Do you really want to logout?'),
+      function(btn, text){
+        if(btn === 'yes'){
+          var conn = new Ext.data.Connection();
+          conn.request({
+            url: LOGOUT_URL,
+            success: function( response, options ){
+              var redirect = function(){
+                location.href = INDEX_URL;
+              };
+              window.setTimeout( redirect, 20000 );
+              Ext.Msg.show({
+                title:   gettext('Logout'),
+                msg:     gettext('Successfully logged out'),
+                buttons: Ext.MessageBox.OK,
+                fn:      redirect
+              });
             }
-          );
+          });
         }
       }
-    });
+    );
   }
 });
 
