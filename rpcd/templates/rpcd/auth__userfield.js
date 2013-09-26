@@ -41,14 +41,15 @@ Ext.define('Ext.oa.Auth__UserField', {
             paramOrder: ["fields"],
             extraParams: { fields: ["username", "id"] },
           },
-          autoLoad: true
+          autoLoad: true,
+          sorters: [{property: "username"}]
         });
-        store.setDefaultSort("username");
         return store;
       }()),
       typeAhead:     true,
       forceSelection: true,
       triggerAction: 'all',
+      deferEmptyText: false,
       emptyText:     gettext('Select...'),
       selectOnFocus: true,
       displayField:  'username',
