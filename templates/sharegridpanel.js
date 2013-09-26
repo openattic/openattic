@@ -174,11 +174,6 @@ Ext.define('Ext.oa.ShareGridPanel', {
     this.store = this.store || {};
     delete this.initialConfig["store"];
     Ext.apply(this, Ext.applyIf(this.initialConfig, {
-      keys: [{
-        scope: self,
-        key: [Ext.EventObject.DELETE],
-        handler: this.deleteFunction
-        }],
       store: new Ext.data.DirectStore({
         id: self.store.id || self.id + "_store",
         proxy: {
@@ -411,6 +406,12 @@ Ext.define('Ext.oa.ShareGridPanel', {
         }
       }
     }, this);
+    this.keyMap = new Ext.util.KeyMap({
+      target: self.getEl(),
+      scope: self,
+      key: [Ext.EventObject.DELETE],
+      fn: this.deleteFunction
+    });
   }
 });
 
