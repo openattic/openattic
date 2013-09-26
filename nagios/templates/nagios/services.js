@@ -169,13 +169,14 @@ Ext.define('Ext.oa.Nagios__Graph_ImagePanel', {
     this.on( "afterrender", function(){
       var self = this;
       if( this.reloadInterval ){
-        (function(){
-          window.mainpanel.on("switchedComponent", function(cmp){
-            if(cmp.id === "dashboard_inst" || cmp.id === "nagios__service_panel_inst"){
-              self.doLayout();
-            }
-          });
-        }).defer(25);
+        Ext.defer(
+          function(){
+            window.mainpanel.on("switchedComponent", function(cmp){
+              if(cmp.id === "dashboard_inst" || cmp.id === "nagios__service_panel_inst"){
+                self.doLayout();
+              }
+            });
+          }, 25);
       }
     }, this );
   },
@@ -201,7 +202,7 @@ Ext.define('Ext.oa.Nagios__Graph_ImagePanel', {
     }
 
     this.el.mask(gettext('Loading...'));
-    var url = String.format( PROJECT_URL + "/nagios/{0}/{1}.png?{2}", record.data.id, id, Ext.urlEncode(params) );
+    var url = Ext.String.format( PROJECT_URL + "/nagios/{0}/{1}.png?{2}", record.data.id, id, Ext.urlEncode(params) );
     this.items.items[0].el.dom.src = url;
   },
 
@@ -214,7 +215,7 @@ Ext.define('Ext.oa.Nagios__Graph_ImagePanel', {
         if( this.reloadTimerId !== 0 ){
           clearTimeout(this.reloadTimerId);
         }
-        this.reloadTimerId = this.loadRecord.defer(
+        this.reloadTimerId = Ext.defer(this.loadRecord,
           this.reloadInterval*1000, this, [this.currentRecord, this.currentId]);
       }
     }
@@ -231,9 +232,9 @@ Ext.define('Ext.oa.Nagios__Graph_ImagePortlet', {
   extend: 'Ext.app.Portlet',
   initComponent: function(){
     Ext.apply(this, Ext.applyIf(this.initialConfig, {
-      bodyCssClass: "nagiosportlet",
+      bodyCls: "nagiosportlet",
       items: {
-        xtype: 'widget.nagios__graph_imagepanel',
+        xtype: 'nagios__graph_imagepanel',
         reloadInterval: 300,
         timespan: 4*60*60,
         height: 265,
@@ -271,7 +272,8 @@ Ext.define('Ext.oa.Nagios__Service_Panel', {
     var nagiosGrid = this;
     var renderDate = function(val, x, store){
       if(!val) return gettext("unknown");
-      return new Date(val * 1000).format(get_format_ext("SHORT_DATETIME_FORMAT"));
+      var date = new Date(val * 10000);
+      return Ext.Date.format(date, get_format_ext("SHORT_DATETIME_FORMAT"));
     };
     var stateicons = {
       0: MEDIA_URL + '/oxygen/16x16/actions/dialog-ok-apply.png',
@@ -320,7 +322,7 @@ Ext.define('Ext.oa.Nagios__Service_Panel', {
                   });
                   Ext.state.Manager.set( "nagios_portlets", portletstate );
                   dashboard.makePortlet({
-                    xtype: 'widget.nagios__graph_imageportlet',
+                    xtype: 'nagios__graph_imageportlet',
                     title: text,
                     id: "portlet_nagios_" + portletid,
                     recordId: record.data.id,
@@ -461,24 +463,24 @@ Ext.define('Ext.oa.Nagios__Service_Panel', {
           border: false,
           id: 'naggraphpanel',
           items: [{
-            xtype: "widget.nagios__graph_imagepanel",
+            xtype: "nagios__graph_imagepanel",
             title: gettext('4 hours'),
             timespan: 4*60*60,
             reloadInterval: 300
           }, {
-            xtype: "widget.nagios__graph_imagepanel",
+            xtype: "nagios__graph_imagepanel",
             title: gettext('1 day'),
             timespan: 24*60*60
           }, {
-            xtype: "widget.nagios__graph_imagepanel",
+            xtype: "nagios__graph_imagepanel",
             title: gettext('1 week'),
             timespan: 7*24*60*60
           }, {
-            xtype: "widget.nagios__graph_imagepanel",
+            xtype: "nagios__graph_imagepanel",
             title: gettext('1 month'),
             timespan: 30*24*60*60
           }, {
-            xtype: "widget.nagios__graph_imagepanel",
+            xtype: "nagios__graph_imagepanel",
             title: gettext('1 year'),
             timespan: 365*24*60*60
           }],
@@ -498,17 +500,15 @@ Ext.define('Ext.oa.Nagios__Service_Panel', {
           forceFit: true,
           store: (function(){
             var store = new Ext.data.ArrayStore({
-              fields: ["id", "title"]
+              fields: ["id", "title"],
+              sorters: [{property: "title", direction: "ASC"}]
             });
-            store.setDefaultSort("title", "ASC");
             return store;
           }()),
-          colModel: new Ext.grid.ColumnModel({
-            columns: [{
-              header: gettext('Graph'),
-              dataIndex: "title"
-            } ]
-          }),
+          columns: [{
+            header: gettext('Graph'),
+            dataIndex: "title"
+          }],
           listeners: {
             itemmousedown: function( self, record ){
               self.ownerCt.ownerCt.items.items[0].loadRecord(self.ownerCt.currentRecord, record.data);
@@ -529,6 +529,7 @@ Ext.define('Ext.oa.Nagios__Service_Panel', {
         hidden: true,
         items: ["Search:", {
           xtype: 'textfield',
+          deferEmptyText: false,
           emptyText: gettext('Search...'),
           enableKeyEvents: true,
           listeners: {
@@ -557,7 +558,7 @@ Ext.define('Ext.oa.Nagios__Service_Panel', {
                 nagiosGrid.doLayout();
               }
               else{
-                nagiosGrid.searchTimeout = fld.initialConfig.listeners.change.defer(2000, nagiosGrid, [fld, fld.getValue()]);
+                nagiosGrid.searchTimeout = Ext.defer(fld.initialConfig.listeners.change, 2000, nagiosGrid, [fld, fld.getValue()]);
               }
             }
           }
@@ -590,15 +591,14 @@ Ext.define('Ext.oa.Nagios__Service_Panel', {
 
 
 Ext.oa.Nagios__Service_Module = {
-  panel: "widget.nagios__service_panel",
+  panel: "nagios__service_panel",
 
   prepareMenuTree: function(tree){
     tree.appendToRootNodeById("menu_status", {
       text: gettext('Monitoring'),
       leaf: true,
       icon: MEDIA_URL + '/icons2/22x22/apps/nfs.png',
-      panel: "nagios__service_panel_inst",
-      href: '#'
+      panel: "nagios__service_panel_inst"
     });
   },
 
@@ -608,7 +608,7 @@ Ext.oa.Nagios__Service_Module = {
         i;
     for( i = 0; i < portletstate.length; i++ ){
       portlets.push( {
-        xtype: 'widget.nagios__graph_imageportlet',
+        xtype: 'nagios__graph_imageportlet',
         title: portletstate[i].title,
         id: 'portlet_nagios_' + portletstate[i].id,
         tools: (function(){
