@@ -76,6 +76,7 @@ Ext.define('Ext.oa.Cmdlog__LogEntry_Panel', {
       singleSelect: true,
       region: 'south',
       height: 200,
+      deferEmptyText: false,
       emptyText: gettext("Select a log entry to see the command's output here."),
       itemSelector: 'div.logcommandtext',
       loadingText: gettext('Loading...'),
@@ -123,6 +124,7 @@ Ext.define('Ext.oa.Cmdlog__LogEntry_Panel', {
           items: [ {
             xtype: "textfield",
             id: "cmdlog_search_field",
+            deferEmptyText: false,
             emptyText: gettext('Search...'),
             enableKeyEvents: true,
             listeners: {
@@ -143,7 +145,7 @@ Ext.define('Ext.oa.Cmdlog__LogEntry_Panel', {
                   self.initialConfig.listeners.change(self, self.getValue());
                 }
                 else{
-                  window.Cmdlog__LogEntry_search = self.initialConfig.listeners.change.defer(2000, self, [self, self.getValue()]);
+                  window.Cmdlog__LogEntry_search = Ext.defer(self.initialConfig.listeners.change,2000, self, [self, self.getValue()]);
                 }
               }
             }
