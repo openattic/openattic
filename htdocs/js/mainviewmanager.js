@@ -266,8 +266,16 @@ Ext.define('Ext.oa.MainViewManager', {
 
   treenodeClicked: function( view, record, itemel, itemidx, event, evopts ){
     "use strict";
+    var i;
     if( record.data.panel !== "" ){
       this.switchComponent( record.data.panel );
+    }
+    else{
+      for( i = 0; i < window.MainViewModules.length; i++ ){
+        if( typeof window.MainViewModules[i].handleMenuTreeClick !== "undefined" ){
+          window.MainViewModules[i].handleMenuTreeClick(record);
+        }
+      }
     }
   },
 
