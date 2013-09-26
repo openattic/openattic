@@ -174,6 +174,7 @@ Ext.define('Ext.oa.ShareGridPanel', {
     this.store = this.store || {};
     delete this.initialConfig["store"];
     Ext.apply(this, Ext.applyIf(this.initialConfig, {
+      border: false,
       store: new Ext.data.DirectStore({
         id: self.store.id || self.id + "_store",
         proxy: {
