@@ -34,9 +34,9 @@ Ext.define('Ext.oa.SysUtils__Service_Panel', {
             type: 'direct',
             directFn: sysutils__InitScript.all_with_status
           },
-          autoLoad: true
+          autoLoad: true,
+          sorters: [{property: "name"}]
         });
-        store.setDefaultSort("name");
       }()),
       forceFit: true,
       columns: [{
@@ -117,20 +117,6 @@ Ext.oa.SysUtils__Service_Module = {
       id: 'menu_reboot',
       leaf: true,
       icon: '{{ MEDIA_URL }}/oxygen/22x22/actions/system-reboot.png',
-      listeners: {
-        click: function(self, ev){
-          Ext.oa.YellowDangerousMessage.confirm(
-            "Reboot",
-            gettext('Do you really want to reboot openATTIC?'),
-            function(btn, text){
-              if( btn === 'yes' ){
-                sysutils__System.reboot( function(provider, response){
-                  Ext.oa.YellowDangerousMessage.alert("Rebooting", "The system is rebooting.");
-                } );
-              }
-            } );
-        }
-      },
       href: '#'
     });
     tree.appendToRootNodeById("menu_shutdown", {
@@ -138,22 +124,37 @@ Ext.oa.SysUtils__Service_Module = {
       id: 'menu_shutdown',
       leaf: true,
       icon: '{{ MEDIA_URL }}/oxygen/22x22/actions/system-shutdown.png',
-      listeners: {
-        click: function(self, ev){
-          Ext.oa.RedDangerousMessage.confirm(
-            "Shutdown",
-            gettext('Do you really want to shutdown openATTIC?'),
-            function(btn, text){
-              if( btn === 'yes' ){
-                sysutils__System.shutdown( function(provider, response){
-                  Ext.oa.RedDangerousMessage.alert("Shutting down", "The system is shutting down.");
-                } );
-              }
-            });
-        }
-      },
+      handler: function(){ alert("hai!"); },
       href: '#'
     });
+  },
+  handleMenuTreeClick: function(record){
+    if( record.data.id === "menu_reboot" ){
+      Ext.oa.YellowDangerousMessage.confirm(
+        "Reboot",
+        gettext('Do you really want to reboot openATTIC?'),
+        function(btn, text){
+          if( btn === 'yes' ){
+            sysutils__System.reboot( function(provider, response){
+              Ext.oa.YellowDangerousMessage.alert("Rebooting", "The system is rebooting.");
+            } );
+          }
+        }
+      );
+    }
+    else if( record.data.id === "menu_shutdown" ){
+      Ext.oa.RedDangerousMessage.confirm(
+        "Shutdown",
+        gettext('Do you really want to shutdown openATTIC?'),
+        function(btn, text){
+          if( btn === 'yes' ){
+            sysutils__System.shutdown( function(provider, response){
+              Ext.oa.RedDangerousMessage.alert("Shutting down", "The system is shutting down.");
+            } );
+          }
+        }
+      );
+    }
   }
 };
 
