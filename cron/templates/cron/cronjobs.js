@@ -91,6 +91,7 @@ Ext.define('Ext.oa.Cron__Job_Panel', {
           });
         }()),
         triggerAction: 'all',
+        deferEmptyText: false,
         emptyText:     gettext('Select...'),
         selectOnFocus: true,
         displayField:  'name',
