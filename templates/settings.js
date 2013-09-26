@@ -22,9 +22,11 @@ Ext.define('Ext.oa.Settings_Panel',{
       title: gettext('Personal Settings'),
       width:700,
       height:300,
-      labelWidth: 250,
       bodyStyle: 'padding:10px;',     // lazy inline style
-      layout: 'form',
+      layout: 'anchor',
+      defaults: {
+        labelWidth: 300
+      },
       reader: new Ext.data.JsonReader({fields: ['LV_test', 'id']}),
       items: [ {
         xtype: "checkbox",
