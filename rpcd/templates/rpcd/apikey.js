@@ -53,7 +53,7 @@ Ext.define('Ext.oa.ApiKey_Panel', {
             gettext('Use this URL to connect to the openATTIC API using the API Key you selected.') + "<br />" +
             gettext('Note that the input field only allows for easier copy-paste, any value you enter here will be ignored.'),
             null, null, false,
-            String.format("http://__:{0}@{1}:31234/", sel.data.apikey, response.result)
+            Ext.String.format("http://__:{0}@{1}:31234/", sel.data.apikey, response.result)
           );
         });
       }
