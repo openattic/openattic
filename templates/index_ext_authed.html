@@ -45,15 +45,6 @@
           return '<img src="{{ MEDIA_URL }}/oxygen/16x16/actions/dialog-ok-apply.png" title="yes" />';
         return '<img src="{{ MEDIA_URL }}/oxygen/16x16/actions/dialog-cancel.png" title="no" />';
       };
-      // Hack to fix setReadOnly not being available before Ext 3.2.x
-      if( typeof Ext.form.TextField.prototype.setReadOnly === "undefined" ){
-        Ext.form.TextField.prototype.setReadOnly = function(readOnly){
-          if(this.rendered){
-            this.el.dom.readOnly = readOnly;
-          }
-          this.readOnly = readOnly;
-        }
-      }
       function toUnicode(val){
         "use strict";
         if(val){
@@ -125,20 +116,21 @@
       {% include apptemplate %}
     {% endfor %}
     <script src="{{ MEDIA_URL }}/js/portlets.js"></script>
-    <script type="text/javascript">
-    window.MainViewModules.unshift( Ext.create("Ext.oa.Portal") );
-    </script>
     <script src="{{ MEDIA_URL }}/js/mainviewmanager.js"></script>
     <script>
       Ext.onReady( function(){
         Ext.QuickTips.init();
 
+        window.MainViewModules.unshift( Ext.create("Ext.oa.Portal") );
+
         mainpanel = new Ext.oa.MainViewManager({
           renderTo: document.body,
           toolbarMessages: {
-            title: "Delete Button?",
+            title:   "{% trans 'Delete Button?' %}",
             message: "{% trans 'Do you really wish to remove this button from the toolbar?' %}"
-        }});
+          }
+        });
+
         function updateLayout(){
           viewsize = {
             width:  Ext.core.Element.getViewWidth(),
@@ -153,16 +145,6 @@
     </script>
     <style>
       {% if THEME == "access" %}
-        .x-tab-panel-body {
-          /* For some reason, the author of xtheme-access set this to white which looks stupid */
-          background-color: #1F2730;
-          border-color: #18181A;
-          color: #FFFFF6;
-        }
-        .x-grid3-row-over .x-grid3-row-table {
-          text-decoration: none;
-          background-color:#454657 !important;
-        }
         div.nagiosportlet div.x-box-inner {
           background-color: #1F2730;
         }
@@ -171,11 +153,6 @@
           background-color: #FFFFFF;
         }
       {% endif %}
-      div.munin-graphs { /* Siehe imagespanel.cls */
-        padding-top: 10px;
-        text-align: center;
-        background-color: transparent;
-      }
       div.thumb-wrap {
         text-align: center;
         font-size: 14px;
@@ -224,11 +201,6 @@
         color:          #999999;
         margin-left:    110px;
       }
-      {% if THEME == "access" %}
-      .x-progress-wrap {
-         background-color:#232D38;
-      }
-      {% endif %}
     </style>
   </head>
   <body style="padding: 20px 20px 0; ">
