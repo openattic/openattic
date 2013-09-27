@@ -25,7 +25,7 @@ Ext.define('Ext.oa.Ipmi__Sensors_Panel', {
       forceFit: true,
       buttons: [{
         text: "",
-        icon: MEDIA_URL + "/icons2/16x16/actions/load.png",
+        icon: MEDIA_URL + "/icons2/16x16/actions/reload.png",
         tooltip: gettext('load'),
         handler: function(self){
           sensorGrid.store.load();
