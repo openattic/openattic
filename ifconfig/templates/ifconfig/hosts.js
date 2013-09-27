@@ -73,19 +73,37 @@ Ext.define('Ext.oa.Ifconfig__Host_Attributes_TreePanel', {
       frame           : true,
       store           : treestore,
       buttons         : [{
-        text: "Add",
+        text: gettext("Add Attribute"),
         icon: MEDIA_URL + "/icons2/16x16/actions/add.png",
         scope: this,
         handler: function(){
-          
+          var sel = this.getSelectionModel().getSelection();
+          if(sel.length !== 1){
+            Ext.MessageBox.alert(gettext("Add Attribute"),
+              gettext("Please choose the type of attribute to add by selecting the respective tree node."));
+          }
+          else{
+            for( var i = 0; i < window.HostAttrPlugins.length; i++ ){
+              window.HostAttrPlugins[i].addClicked(this, sel[0], {id: 1, __unicode__: "13-19.master.dns"});
+            }
+          }
         }
       }, {
-        text: "Remove",
+        text: gettext("Remove Attribute"),
         icon: MEDIA_URL + "/icons2/16x16/actions/remove.png",
+        scope: this,
         handler: function(){
-          
-        },
-        scope: self
+          var sel = this.getSelectionModel().getSelection();
+          if(sel.length !== 1){
+            Ext.MessageBox.alert(gettext("Remove Attribute"),
+              gettext("Please choose the attribute to remove by selecting the respective tree node."));
+          }
+          else{
+            for( var i = 0; i < window.HostAttrPlugins.length; i++ ){
+              window.HostAttrPlugins[i].removeClicked(this, sel[0]);
+            }
+          }
+        }
       }]
     }));
 

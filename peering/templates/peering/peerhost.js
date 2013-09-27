@@ -13,91 +13,7 @@
 
 Ext.namespace("Ext.oa");
 
-Ext.oa.Peering__HostAttrRootType = {
-  objtype: "peering_root",
-  requestTreeData: function(tree, treeloader, node, callback, scope){
-    if( node.attributes.host !== null ){
-      peering__PeerHost.ids_filter({"host__id": node.attributes.host.id},
-        treeloader.processDirectResponse.createDelegate(treeloader, [{callback: callback, node: node, scope: scope}], true)
-      );
-    }
-  },
-  createTreeNode: function(tree, data){
-    return new Ext.tree.AsyncTreeNode({
-      objtype: 'peering_root',
-      nodeType: 'async',
-      id: 'peering_root',
-      text: gettext("Peers"),
-      host: data,
-      leaf: false,
-      actions: [{
-        name: "add",
-        icon: "add",
-        handler: function(self){
-          var addwin = Ext.oa.getShareEditWindow({
-            title: gettext("Add Peer Host"),
-            api: peering__PeerHost,
-            form: {
-              items: [{
-                xtype: "hidden",
-                name:  "host",
-                value: self.attributes.host.id
-              }, {
-                xtype: 'textfield',
-                fieldLabel: gettext('Base URL'),
-                name: "base_url",
-                value: Ext.String.format("http://__:<<APIKEY>>@{0}:31234/", self.attributes.host.name)
-              }]
-            },
-            success: function(){
-              Ext.getCmp("ifconfig__host_attributes_panel_inst").refresh();
-            }
-          });
-          addwin.show();
-        }
-      }]
-    });
-  }
-};
-
-Ext.oa.Peering__PeerHostType = {
-  objtype: "peering__PeerHost",
-  requestTreeData: null,
-  createTreeNode: function(tree, data){
-    return new Ext.tree.TreeNode({
-      objtype: "peering__PeerHost",
-      objid: data.id,
-      text: data.__unicode__,
-      leaf: true,
-      actions: [{
-        name: "remove",
-        icon: "remove",
-        handler: function(self){
-          Ext.Msg.confirm(
-            gettext('Confirm delete'),
-            interpolate(gettext('Really delete Peer %s?'), [self.attributes.text]),
-            function(btn, text){
-              if( btn === 'yes' ){
-                peering__PeerHost.remove(self.attributes.objid, function(provider, response){
-                  if( response.type !== 'exception' ){
-                    self.remove(true);
-                  }
-                });
-              }
-            }
-          );
-        }
-      }]
-    });
-  },
-};
-
 Ext.oa.Peering__HostAttrPlugin = {
-  plugin_name: 'peering',
-  objtypes: [
-    Ext.oa.Peering__HostAttrRootType,
-    Ext.oa.Peering__PeerHostType
-  ],
   getStore: function(tree){
     Ext.define('peering_peers_model', {
       extend: 'Ext.data.Model',
@@ -110,7 +26,7 @@ Ext.oa.Peering__HostAttrPlugin = {
       model: "peering_peers_model",
       root: {
         text: gettext("Peers"),
-        id: "peers_root",
+        id: "peering_root",
         leaf: false,
         expanded: false,
       },
@@ -133,6 +49,48 @@ Ext.oa.Peering__HostAttrPlugin = {
       }
     });
     return store;
+  },
+  addClicked: function(tree, selectedRecord, currentHost){
+    if( selectedRecord.data.id !== "peering_root" && selectedRecord.data.parentId !== "peering_root" )
+      return;
+    var addwin = Ext.oa.getShareEditWindow({
+      title: gettext("Add Peer Host"),
+      api: peering__PeerHost,
+      form: {
+        items: [{
+          xtype: "hidden",
+          name:  "host",
+          value: currentHost.id
+        }, {
+          xtype: 'textfield',
+          fieldLabel: gettext('Base URL'),
+          name: "base_url",
+          value: Ext.String.format("http://__:<<APIKEY>>@{0}:31234/", currentHost.hostname)
+        }]
+      },
+      success: function(){
+        Ext.getCmp("ifconfig__host_attributes_panel_inst").refresh();
+      }
+    });
+    addwin.show();
+  },
+  removeClicked: function(tree, selectedRecord){
+    if( selectedRecord.data.parentId !== "peering_root" )
+      return;
+    var recid = parseInt(selectedRecord.data.id.split(".")[1]);
+    Ext.Msg.confirm(
+      gettext('Confirm delete'),
+      interpolate(gettext('Really delete Peer %s?'), [selectedRecord.data.text]),
+      function(btn, text){
+        if( btn === 'yes' ){
+          peering__PeerHost.remove(recid, function(provider, response){
+            if( response.type !== 'exception' ){
+              self.remove(true);
+            }
+          });
+        }
+      }
+    );
   }
 };
 
