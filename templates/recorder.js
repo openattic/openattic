@@ -36,7 +36,7 @@ for( var id in Ext.Direct.provider ){
         } );
         var argstr = argstrings.join(', ');
       }
-      window.RECORDED_COMMANDS.push(String.format("{0}.{1}.{2}({3})",
+      window.RECORDED_COMMANDS.push(Ext.String.format("{0}.{1}.{2}({3})",
         obj[0], obj[1], methstr, argstr ));
     });
   }
