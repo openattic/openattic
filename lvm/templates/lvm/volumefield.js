@@ -63,6 +63,7 @@ Ext.define('Ext.oa.VolumeField', {
       }()),
       typeAhead:     true,
       triggerAction: 'all',
+      deferEmptyText: false,
       emptyText:     gettext('Select...'),
       allowBlank:    false,
       selectOnFocus: true,
