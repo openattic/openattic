@@ -13,7 +13,9 @@
 
 Ext.namespace("Ext.oa");
 
-Ext.oa.Ifconfig__Host_Panel = Ext.extend(Ext.oa.ShareGridPanel, {
+Ext.define('Ext.oa.Ifconfig__Host_Panel', {
+  extend: 'Ext.oa.ShareGridPanel',
+  alias: "widget.ifconfig__host_panel",
   api: ifconfig__Host,
   texts: {
     add:     gettext("Add Host"),
@@ -42,60 +44,24 @@ Ext.oa.Ifconfig__Host_Panel = Ext.extend(Ext.oa.ShareGridPanel, {
 });
 
 
-Ext.reg("ifconfig__host_panel", Ext.oa.Ifconfig__Host_Panel);
-
-
-Ext.oa.HostAttrTreeNodeUI = Ext.extend(Ext.tree.TreeNodeUI, {
-  renderElements : function(n, a, targetNode, bulkRender){
-    Ext.oa.HostAttrTreeNodeUI.superclass.renderElements.call( this, n, a, targetNode, bulkRender );
-    Ext.DomHelper.applyStyles( this.elNode, 'position: relative' );
-    var tpl = new Ext.DomHelper.createTemplate(
-      '<div style="position: absolute; top: 1px; right: {pos}px;" />'
-      );
-    var pos = 8;
-    for( var i = a.actions.length - 1; i >= 0; i-- ){
-      var divEl = tpl.append( this.elNode, {'pos': pos} );
-      var btn = new Ext.Button({
-        text: "",
-        icon: String.format("{0}/icons2/16x16/actions/{1}.png", MEDIA_URL, a.actions[i].icon),
-        action:  a.actions[i],
-        tooltip: a.actions[i].name,
-        handler: a.actions[i].handler.createCallback(n)
-      });
-      btn.render(divEl);
-      pos += 24;
-    }
-  }
-});
-
-
-Ext.oa.Ifconfig__Host_Attributes_TreeLoader = Ext.extend(Ext.tree.TreeLoader, {
-  directFn: true,
-  requestData: function(node, callback, scope){
-    this.tree.objtypes[ node.attributes.objtype ].requestTreeData(this.tree, this, node, callback, scope);
-  },
-  createNode: function(data){
-    return this.tree.objtypes[ data.app + '__' + data.obj ].createTreeNode(this.tree, data);
-  }
-});
-
-Ext.oa.Ifconfig__Host_Attributes_TreePanel = Ext.extend(Ext.tree.TreePanel, {
+Ext.define('Ext.oa.Ifconfig__Host_Attributes_TreePanel', {
+  extend: 'Ext.tree.TreePanel',
+  alias: "widget.ifconfig__host_attributes_panel",
   registerObjType: function(objtype){
     this.objtypes[ objtype.objtype ] = objtype;
   },
   initComponent: function(){
-    "use strict";
-
     this.objtypes = {};
     this.pluginroots = [];
 
-    var rootnode = new Ext.tree.TreeNode({
-      nodeType  : 'async',
-      objtype   : "root",
-      text      : 'root',
-      leaf      : false,
-      expanded  : true,
-      expandable: true,
+    var treestore = Ext.create("Ext.data.TreeStore", {
+      fields: ['text'],
+      proxy: { type: "memory" },
+      root: {
+        text:     'root',
+        expanded: true,
+        id: "host_attr_root_node"
+      }
     });
 
     Ext.apply(this, Ext.apply(this.initialConfig, {
@@ -105,17 +71,31 @@ Ext.oa.Ifconfig__Host_Attributes_TreePanel = Ext.extend(Ext.tree.TreePanel, {
       containerScroll : true,
       rootVisible     : false,
       frame           : true,
-      loader: new Ext.oa.Ifconfig__Host_Attributes_TreeLoader({
-        clearOnLoad   : true,
-        tree          : this
-      }),
-      root: rootnode,
+      store           : treestore,
+      buttons         : [{
+        text: "Add",
+        icon: MEDIA_URL + "/icons2/16x16/actions/add.png",
+        scope: this,
+        handler: function(){
+          
+        }
+      }, {
+        text: self.texts.remove,
+        icon: MEDIA_URL + "/icons2/16x16/actions/remove.png",
+        handler: function(){
+          
+        },
+        scope: self
+      }]
     }));
 
-    Ext.oa.Ifconfig__Host_Attributes_TreePanel.superclass.initComponent.apply(this, arguments);
+    this.callParent(arguments);
 
+    var childstore;
     for( var i = 0; i < window.HostAttrPlugins.length; i++ ){
-      this.pluginroots.push(window.HostAttrPlugins[i].initTree(this));
+      childstore = window.HostAttrPlugins[i].getStore(this);
+      childstore.load();
+      treestore.getRootNode().appendChild(childstore.getRootNode());
     }
   },
   clear: function(){
@@ -138,13 +118,11 @@ Ext.oa.Ifconfig__Host_Attributes_TreePanel = Ext.extend(Ext.tree.TreePanel, {
   }
 });
 
-Ext.reg("ifconfig__host_attributes_panel", Ext.oa.Ifconfig__Host_Attributes_TreePanel);
 
-
-Ext.oa.Ifconfig__Host_Groups_Panel = Ext.extend(Ext.Panel, {
+Ext.define('Ext.oa.Ifconfig__Host_Groups_Panel', {
+  extend: 'Ext.Panel',
+  alias: "widget.ifconfig__host_group_panel",
   initComponent: function(){
-    "use strict";
-
     Ext.apply(this, Ext.apply(this.initialConfig, {
       id: "ifconfig__host_group_panel_inst",
       title: gettext('Hosts and Groups'),
@@ -161,14 +139,14 @@ Ext.oa.Ifconfig__Host_Groups_Panel = Ext.extend(Ext.Panel, {
         },
       }, {
         region: "east",
-        width: (Ext.lib.Dom.getViewWidth() - 200) / 2,
+        width: (Ext.core.Element.getViewWidth() - 200) / 2,
         split: true,
         title: gettext("Host Attributes"),
         id:    "ifconfig__host_attributes_panel_inst",
         xtype: 'ifconfig__host_attributes_panel'
       }]
     }));
-    Ext.oa.Ifconfig__Host_Groups_Panel.superclass.initComponent.apply(this, arguments);
+    this.callParent(arguments);
   },
   refresh: function(){
     Ext.getCmp("ifconfig__host_panel_inst").refresh();
@@ -177,24 +155,20 @@ Ext.oa.Ifconfig__Host_Groups_Panel = Ext.extend(Ext.Panel, {
   }
 });
 
-Ext.reg("ifconfig__host_group_panel", Ext.oa.Ifconfig__Host_Groups_Panel);
 
-
-Ext.oa.Ifconfig__Host_Module = Ext.extend(Object, {
+Ext.oa.Ifconfig__Host_Module =  {
   panel: "ifconfig__host_group_panel",
   prepareMenuTree: function(tree){
-    "use strict";
     tree.appendToRootNodeById("menu_system", {
       text: gettext('Hosts'),
       leaf: true,
       icon: MEDIA_URL + '/icons2/22x22/apps/nfs.png',
-      panel: 'ifconfig__host_group_panel_inst',
-      href: '#'
+      panel: 'ifconfig__host_group_panel_inst'
     });
   }
-});
+};
 
 
-window.MainViewModules.push( new Ext.oa.Ifconfig__Host_Module() );
+window.MainViewModules.push( Ext.oa.Ifconfig__Host_Module );
 
 // kate: space-indent on; indent-width 2; replace-tabs on;
