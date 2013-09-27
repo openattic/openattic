@@ -320,7 +320,7 @@ Ext.define('Ext.oa.Lvm__LogicalVolume_BasePanel', {
       text: gettext('Shares'),
       icon: MEDIA_URL + "/oxygen/16x16/emblems/emblem-unmounted.png",
       handler: function(self){
-        var sm = self.getSelectionModel();
+        var sm = self.ownerCt.ownerCt.getSelectionModel();
         if( sm.hasSelection() ){
           var sel = sm.selected.items[0];
           var shareswin = new Ext.Window({
