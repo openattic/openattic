@@ -355,19 +355,16 @@ Ext.oa.Zfs__Snapshot_Module = {
       text: "ZFS",
       icon: MEDIA_URL + '/icons2/22x22/mimetypes/ascii.png',
       panel: "zfs__snapshot_panel_inst",
-      href: "#",
       children: [{
         text: gettext('Zfs Snapshots'),
         leaf: true,
         icon: MEDIA_URL + '/icons2/22x22/actions/document-save-as.png',
-        panel: "zfs__snapshot_panel_inst",
-        href: '#'
+        panel: "zfs__snapshot_panel_inst"
       },{
         text: gettext('Zfs Subvolume'),
         leaf: true,
         icon: MEDIA_URL + '/icons2/22x22/places/network.png',
-        panel: "zfs__subvolume_panel_inst",
-        href: '#'
+        panel: "zfs__subvolume_panel_inst"
       }]
     });
   }
