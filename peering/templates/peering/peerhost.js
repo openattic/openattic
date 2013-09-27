@@ -66,7 +66,7 @@ Ext.oa.Peering__HostAttrPlugin = {
           xtype: 'textfield',
           fieldLabel: gettext('Base URL'),
           name: "base_url",
-          value: Ext.String.format("http://__:<<APIKEY>>@{0}:31234/", currentHost.hostname)
+          value: Ext.String.format("http://__:<<APIKEY>>@{0}:31234/", currentHost.name)
         }]
       },
       success: function(){
@@ -86,7 +86,7 @@ Ext.oa.Peering__HostAttrPlugin = {
         if( btn === 'yes' ){
           peering__PeerHost.remove(recid, function(provider, response){
             if( response.type !== 'exception' ){
-              self.remove(true);
+              Ext.getCmp("ifconfig__host_attributes_panel_inst").refresh();
             }
           });
         }

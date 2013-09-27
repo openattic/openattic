@@ -96,7 +96,7 @@ Ext.oa.Lio__HostAttrPlugin = {
         if( btn === 'yes' ){
           lio__Initiator.remove(recid, function(provider, response){
             if( response.type !== 'exception' ){
-              self.remove(true);
+              Ext.getCmp("ifconfig__host_attributes_panel_inst").refresh();
             }
           });
         }

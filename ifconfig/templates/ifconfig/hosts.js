@@ -77,15 +77,19 @@ Ext.define('Ext.oa.Ifconfig__Host_Attributes_TreePanel', {
         icon: MEDIA_URL + "/icons2/16x16/actions/add.png",
         scope: this,
         handler: function(){
+          if( typeof this.host === "undefined" ){
+            Ext.MessageBox.alert(gettext("Add Attribute"),
+              gettext("Please choose the host to add attributes to."));
+            return;
+          }
           var sel = this.getSelectionModel().getSelection();
           if(sel.length !== 1){
             Ext.MessageBox.alert(gettext("Add Attribute"),
               gettext("Please choose the type of attribute to add by selecting the respective tree node."));
+            return;
           }
-          else{
-            for( var i = 0; i < window.HostAttrPlugins.length; i++ ){
-              window.HostAttrPlugins[i].addClicked(this, sel[0], {id: 1, __unicode__: "13-19.master.dns"});
-            }
+          for( var i = 0; i < window.HostAttrPlugins.length; i++ ){
+            window.HostAttrPlugins[i].addClicked(this, sel[0], this.host);
           }
         }
       }, {
@@ -125,7 +129,6 @@ Ext.define('Ext.oa.Ifconfig__Host_Attributes_TreePanel', {
     }
   },
   refresh: function(){
-    this.clear();
     this.setHost(this.host);
   }
 });
@@ -161,8 +164,7 @@ Ext.define('Ext.oa.Ifconfig__Host_Groups_Panel', {
   },
   refresh: function(){
     Ext.getCmp("ifconfig__host_panel_inst").refresh();
-    Ext.getCmp("ifconfig__host_attributes_panel_inst").clear();
-    Ext.StoreMgr.get("hostgroupstore").removeAll();
+    Ext.getCmp("ifconfig__host_attributes_panel_inst").refresh();
   }
 });
 
