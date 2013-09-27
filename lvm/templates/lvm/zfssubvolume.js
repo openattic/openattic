@@ -52,8 +52,7 @@ Ext.define('Ext.oa.Zfs__Subvolume__Panel', {
                   directFn: lvm__LogicalVolume.filter_combo,
                   paramOrder: ["field", "query", "kwds"],
                   extraParams: { "field": "name", kwds: {"filesystem":"zfs" }},
-                },
-                autoLoad: true
+                }
               });
             }()),
             deferEmptyText: false,
@@ -119,8 +118,7 @@ Ext.define('Ext.oa.Zfs__Subvolume__Panel', {
           proxy: {
             type: 'direct',
             directFn: lvm__ZfsSubvolume.all
-          },
-          autoLoad: true
+          }
         });
       }()),
       forceFit: true,

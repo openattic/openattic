@@ -222,8 +222,7 @@ Ext.define('Ext.oa.Zfs__Snapshot_Panel', {
                 limitParam: undefined,
                 pageParam:  undefined,
                 directFn: lvm__LogicalVolume.filter
-              },
-              autoLoad: true
+              }
             });
           }(),
           defaults: {
@@ -270,8 +269,7 @@ Ext.define('Ext.oa.Zfs__Snapshot_Panel', {
                 limitParam: undefined,
                 pageParam:  undefined,
                 directFn: lvm__ZfsSubvolume.all,
-              },
-              autoLoad: true
+              }
             });
           }(),
           defaults: {

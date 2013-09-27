@@ -109,8 +109,7 @@ Ext.define('Ext.oa.Lvm__BtrfsSubvolume_Panel', {
                   snapshot__isnull: true
                   }
                 }
-              },
-              autoLoad: true
+              }
             });
           }()),
           typeAhead:     true,

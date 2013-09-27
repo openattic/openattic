@@ -346,8 +346,7 @@ Ext.define('Ext.oa.Lvm__LogicalVolume_BasePanel', {
                     type: 'direct',
                     directFn: lvm__LogicalVolume.get_shares,
                     extraParams: {id: sel.data.id}
-                  },
-                  autoLoad: true
+                  }
                 });
               }()),
               defaults: {
@@ -403,8 +402,7 @@ Ext.define('Ext.oa.Lvm__LogicalVolume_BasePanel', {
                   proxy: {
                     type: 'direct',
                     directFn: lvm__LogicalVolume.get_initscripts
-                  },
-                  autoLoad: true
+                  }
                 });
               }()),
               defaults: {
@@ -489,7 +487,7 @@ Ext.define('Ext.oa.Lvm__LogicalVolume_BasePanel', {
                   enableKeyEvents: true,
                   value: sel.data.megs,
                   listeners: {
-                    change: function change(event) {
+                    change: function(event) {
                       if(this.getValue() > freemegs){
                         this.setValue(freemegs);
                       }
@@ -615,8 +613,7 @@ Ext.define('Ext.oa.Lvm__LogicalVolume_Panel', {
           proxy: {
             type: 'direct',
             directFn: lvm__VolumeGroup.all
-          },
-          autoLoad: true
+          }
         });
       }()),
       typeAhead:     true,
@@ -660,8 +657,7 @@ Ext.define('Ext.oa.Lvm__LogicalVolume_Panel', {
           proxy: {
             type: 'direct',
             directFn: lvm__LogicalVolume.avail_fs
-          },
-          autoLoad: true
+          }
         });
       }()),
       listeners: {

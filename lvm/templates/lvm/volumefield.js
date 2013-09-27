@@ -57,8 +57,7 @@ Ext.define('Ext.oa.VolumeField', {
             directFn: lvm__LogicalVolume.filter_combo,
             paramOrder: ["field", "query", "kwds"],
             extraParams: extraParams
-          },
-          autoLoad: true
+          }
         });
       }()),
       typeAhead:     true,

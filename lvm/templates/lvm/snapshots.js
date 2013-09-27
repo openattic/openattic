@@ -57,8 +57,7 @@ Ext.define('Ext.oa.Lvm__Snapshot_Panel', {
                 "__fields__": ["id", "name", "megs", "vg", "owner", "fswarning", "fscritical"]
               }
             }
-          },
-          autoLoad: true
+          }
         });
       }()),
       typeAhead:     true,
