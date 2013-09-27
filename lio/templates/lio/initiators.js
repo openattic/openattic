@@ -26,7 +26,6 @@ Ext.oa.Lio__HostAttrRootType = {
     return new Ext.tree.AsyncTreeNode({
       objtype: 'lio_root',
       nodeType: 'async',
-      uiProvider: Ext.oa.HostAttrTreeNodeUI,
       id: 'lio_root',
       text: gettext("Initiators"),
       host: data,
@@ -50,6 +49,7 @@ Ext.oa.Lio__HostAttrRootType = {
                 store: [ [ 'iscsi',  gettext('iSCSI')  ], [ 'qla2xxx', gettext('Fibre Channel') ] ],
                 typeAhead:     true,
                 triggerAction: 'all',
+                deferEmptyText: false,
                 emptyText:     'Select...',
                 selectOnFocus: true,
                 value: "iscsi"
@@ -77,7 +77,6 @@ Ext.oa.Lio__InitiatorType = {
     return new Ext.tree.TreeNode({
       objtype: "lio__Initiator",
       objid: data.id,
-      uiProvider: Ext.oa.HostAttrTreeNodeUI,
       text: data.__unicode__,
       leaf: true,
       actions: [{
@@ -103,21 +102,50 @@ Ext.oa.Lio__InitiatorType = {
   },
 };
 
-Ext.oa.Lio__HostAttrPlugin = Ext.extend(Ext.util.Observable, {
+Ext.oa.Lio__HostAttrPlugin = {
   plugin_name: 'lio',
   objtypes: [
     Ext.oa.Lio__HostAttrRootType,
     Ext.oa.Lio__InitiatorType
   ],
-  initTree: function(tree){
-    for( var i = 0; i < this.objtypes.length; i++ ){
-      tree.registerObjType(this.objtypes[i]);
-    }
-
-    return Ext.oa.Lio__HostAttrRootType;
+  getStore: function(tree){
+    Ext.define('lio_initiators_model', {
+      extend: 'Ext.data.Model',
+      fields: [
+        'id', '__unicode__', 'text',
+        {name: "hostname", mapping: "host", convert: toUnicode}
+      ]
+    });
+    var store = Ext.create('Ext.data.TreeStore', {
+      model: "lio_initiators_model",
+      root: {
+        text: gettext("Initiators"),
+        id: "initiators_root",
+        leaf: false,
+        expanded: false,
+      },
+      proxy: {
+        type:       'direct',
+        directFn:   lio__Initiator.all,
+        pageParam:  undefined,
+        startParam: undefined,
+        limitParam: undefined
+      },
+      listeners: {
+        load: function(self, node, records, success, ovOpts){
+          for( var i = 0; i < records.length; i++ ){
+            records[i].set("id",   "lio__Initiator." + records[i].get("id"));
+            records[i].set("leaf", true);
+            records[i].set("text", records[i].get("__unicode__"));
+            records[i].commit();
+          }
+        }
+      }
+    });
+    return store;
   }
-});
+};
 
-window.HostAttrPlugins.push( new Ext.oa.Lio__HostAttrPlugin() );
+window.HostAttrPlugins.push( Ext.oa.Lio__HostAttrPlugin );
 
 // kate: space-indent on; indent-width 2; replace-tabs on;
