@@ -32,7 +32,8 @@ Ext.oa.Lio__HostAttrPlugin = {
       },
       proxy: {
         type:       'direct',
-        directFn:   lio__Initiator.all,
+        directFn:   lio__Initiator.filter,
+        paramOrder: ["hostkwds"],
         pageParam:  undefined,
         startParam: undefined,
         limitParam: undefined

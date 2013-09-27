@@ -52,7 +52,7 @@ Ext.define('Ext.oa.Ifconfig__Host_Attributes_TreePanel', {
   },
   initComponent: function(){
     this.objtypes = {};
-    this.pluginroots = [];
+    this.pluginstores = [];
 
     var treestore = Ext.create("Ext.data.TreeStore", {
       fields: ['text'],
@@ -112,22 +112,16 @@ Ext.define('Ext.oa.Ifconfig__Host_Attributes_TreePanel', {
     var childstore;
     for( var i = 0; i < window.HostAttrPlugins.length; i++ ){
       childstore = window.HostAttrPlugins[i].getStore(this);
-      childstore.load();
+      this.pluginstores.push(childstore);
       treestore.getRootNode().appendChild(childstore.getRootNode());
     }
   },
-  clear: function(){
-    while(this.root.childNodes.length){
-      this.root.childNodes[0].remove(true);
-    }
-  },
   setHost: function(host){
-    this.clear();
     this.host = host;
-    for( var i = 0; i < this.pluginroots.length; i++ ){
-      var node = this.pluginroots[i].createTreeNode(this, host);
-      this.root.appendChild( node );
-      node.expand();
+    for( var i = 0; i < this.pluginstores.length; i++ ){
+      this.pluginstores[i].getRootNode().collapse();
+      this.pluginstores[i].proxy.extraParams.hostkwds = { host__id: host.id };
+      this.pluginstores[i].load();
     }
   },
   refresh: function(){
@@ -150,8 +144,7 @@ Ext.define('Ext.oa.Ifconfig__Host_Groups_Panel', {
         id:    "ifconfig__host_panel_inst",
         region: "center",
         listeners: {
-          cellclick: function( self, rowIndex, colIndex, evt ){
-            var record = self.getStore().getAt(rowIndex);
+          itemclick: function( self, record, item, index, evt, evtOpts ){
             Ext.getCmp("ifconfig__host_attributes_panel_inst").setHost(record.data);
           }
         },

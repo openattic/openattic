@@ -32,7 +32,8 @@ Ext.oa.Peering__HostAttrPlugin = {
       },
       proxy: {
         type:       'direct',
-        directFn:   peering__PeerHost.all,
+        directFn:   peering__PeerHost.filter,
+        paramOrder: ["hostkwds"],
         pageParam:  undefined,
         startParam: undefined,
         limitParam: undefined
