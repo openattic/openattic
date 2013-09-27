@@ -80,7 +80,7 @@ Ext.define('Ext.oa.Ifconfig__Host_Attributes_TreePanel', {
           
         }
       }, {
-        text: self.texts.remove,
+        text: "Remove",
         icon: MEDIA_URL + "/icons2/16x16/actions/remove.png",
         handler: function(){
           
