@@ -26,7 +26,6 @@ Ext.oa.Peering__HostAttrRootType = {
     return new Ext.tree.AsyncTreeNode({
       objtype: 'peering_root',
       nodeType: 'async',
-      uiProvider: Ext.oa.HostAttrTreeNodeUI,
       id: 'peering_root',
       text: gettext("Peers"),
       host: data,
@@ -47,7 +46,7 @@ Ext.oa.Peering__HostAttrRootType = {
                 xtype: 'textfield',
                 fieldLabel: gettext('Base URL'),
                 name: "base_url",
-                value: String.format("http://__:<<APIKEY>>@{0}:31234/", self.attributes.host.name)
+                value: Ext.String.format("http://__:<<APIKEY>>@{0}:31234/", self.attributes.host.name)
               }]
             },
             success: function(){
@@ -68,7 +67,6 @@ Ext.oa.Peering__PeerHostType = {
     return new Ext.tree.TreeNode({
       objtype: "peering__PeerHost",
       objid: data.id,
-      uiProvider: Ext.oa.HostAttrTreeNodeUI,
       text: data.__unicode__,
       leaf: true,
       actions: [{
@@ -94,22 +92,51 @@ Ext.oa.Peering__PeerHostType = {
   },
 };
 
-Ext.oa.Peering__HostAttrPlugin = Ext.extend(Ext.util.Observable, {
+Ext.oa.Peering__HostAttrPlugin = {
   plugin_name: 'peering',
   objtypes: [
     Ext.oa.Peering__HostAttrRootType,
     Ext.oa.Peering__PeerHostType
   ],
-  initTree: function(tree){
-    for( var i = 0; i < this.objtypes.length; i++ ){
-      tree.registerObjType(this.objtypes[i]);
-    }
-
-    return Ext.oa.Peering__HostAttrRootType;
+  getStore: function(tree){
+    Ext.define('peering_peers_model', {
+      extend: 'Ext.data.Model',
+      fields: [
+        'id', '__unicode__', 'text',
+        {name: "hostname", mapping: "host", convert: toUnicode}
+      ]
+    });
+    var store = Ext.create('Ext.data.TreeStore', {
+      model: "peering_peers_model",
+      root: {
+        text: gettext("Peers"),
+        id: "peers_root",
+        leaf: false,
+        expanded: false,
+      },
+      proxy: {
+        type:       'direct',
+        directFn:   peering__PeerHost.all,
+        pageParam:  undefined,
+        startParam: undefined,
+        limitParam: undefined
+      },
+      listeners: {
+        load: function(self, node, records, success, ovOpts){
+          for( var i = 0; i < records.length; i++ ){
+            records[i].set("id",   "peering__PeerHost." + records[i].get("id"));
+            records[i].set("leaf", true);
+            records[i].set("text", records[i].get("__unicode__"));
+            records[i].commit();
+          }
+        }
+      }
+    });
+    return store;
   }
-});
+};
 
-window.HostAttrPlugins.push( new Ext.oa.Peering__HostAttrPlugin() );
+window.HostAttrPlugins.push( Ext.oa.Peering__HostAttrPlugin );
 
 
 
