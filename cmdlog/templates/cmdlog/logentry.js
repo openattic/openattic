@@ -28,6 +28,9 @@ Ext.define('Ext.oa.Cmdlog__LogEntry_Panel', {
       proxy: {
         type: 'direct',
         directFn: cmdlog__LogEntry.filter_range,
+        startParam: undefined,
+        limitParam: undefined,
+        pageParam:  undefined,
         paramOrder: ['start', 'limit', 'sort', 'dir', 'kwds'],
         extraParams: {
           kwds: {
@@ -58,6 +61,9 @@ Ext.define('Ext.oa.Cmdlog__LogEntry_Panel', {
       model: "cmdlog_model",
       proxy: {
         type: 'direct',
+        startParam: undefined,
+        limitParam: undefined,
+        pageParam:  undefined,
         directFn: cmdlog__LogEntry.get
       },
       autoLoad: true
