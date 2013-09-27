@@ -89,8 +89,8 @@
         return res;
       }
       Ext.Loader.setPath('Ext.app', '{{ MEDIA_URL }}/portal/classes');
+      Ext.Loader.setPath('Ext.oa', '{{ MEDIA_URL }}/js');
     </script>
-    <script type="text/javascript" src="{{ MEDIA_URL }}/portal/classes/PortalPanel.js"></script>
     <script src="{{ MEDIA_URL }}/js/directstateprovider.js"></script>
     <script src="{{ MEDIA_URL }}/js/tipify.js"></script>
     <script src="{{ MEDIA_URL }}/js/dangerousmessage.js"></script>
@@ -125,7 +125,9 @@
       {% include apptemplate %}
     {% endfor %}
     <script src="{{ MEDIA_URL }}/js/portlets.js"></script>
-    <script src="{{ MEDIA_URL }}/js/portal.js"></script>
+    <script type="text/javascript">
+    window.MainViewModules.unshift( Ext.create("Ext.oa.Portal") );
+    </script>
     <script src="{{ MEDIA_URL }}/js/mainviewmanager.js"></script>
     <script>
       Ext.onReady( function(){

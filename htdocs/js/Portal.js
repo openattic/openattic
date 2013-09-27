@@ -110,7 +110,4 @@ Ext.define('Ext.oa.Portal', {
   }
 });
 
-
-window.MainViewModules.unshift( Ext.create("Ext.oa.Portal") );
-
 // kate: space-indent on; indent-width 2; replace-tabs on;
