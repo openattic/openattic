@@ -44,8 +44,7 @@ Ext.define('Ext.oa.Cmdlog__LogEntry_Panel', {
           totalProperty:  'total',
           fields:         fields
         }),
-      },
-      autoLoad: true
+      }
     });
     Ext.define('cmdlog_model', {
       extend: 'Ext.data.Model',
@@ -65,8 +64,7 @@ Ext.define('Ext.oa.Cmdlog__LogEntry_Panel', {
         limitParam: undefined,
         pageParam:  undefined,
         directFn: cmdlog__LogEntry.get
-      },
-      autoLoad: true
+      }
     });
     var textView = new Ext.DataView({
       tpl: new Ext.XTemplate(

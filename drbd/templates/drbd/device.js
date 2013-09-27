@@ -112,8 +112,7 @@ Ext.define('Ext.oa.Drbd__Connection_Panel', {
             proxy: {
               type: 'direct',
               directFn: ifconfig__IPAddress.ids
-            },
-            autoLoad: true
+            }
           });
         }()),
         typeAhead:     true,
@@ -140,8 +139,7 @@ Ext.define('Ext.oa.Drbd__Connection_Panel', {
               type: 'direct',
               directFn: drbd__Connection.ids_filter,
               extraParams: {kwds: {stack_parent__isnull: true}}
-            },
-            autoLoad: true
+            }
           });
         }()),
         typeAhead:     true,

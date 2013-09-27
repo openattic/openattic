@@ -86,8 +86,7 @@ Ext.define('Ext.oa.Cron__Job_Panel', {
             proxy: {
               type: 'direct',
               directFn: ifconfig__Host.all
-            },
-            autoLoad: true
+            }
           });
         }()),
         triggerAction: 'all',

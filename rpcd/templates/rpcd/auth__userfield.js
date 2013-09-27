@@ -41,7 +41,6 @@ Ext.define('Ext.oa.Auth__UserField', {
             paramOrder: ["fields"],
             extraParams: { fields: ["username", "id"] },
           },
-          autoLoad: true,
           sorters: [{property: "username"}]
         });
         return store;

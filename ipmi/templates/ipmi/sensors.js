@@ -44,8 +44,7 @@ Ext.define('Ext.oa.Ipmi__Sensors_Panel', {
             reader: new Ext.data.ArrayReader({
               fields: fields
             })
-          },
-          autoLoad: true
+          }
         });
       }()),
       defaults: {

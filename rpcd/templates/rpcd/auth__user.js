@@ -55,7 +55,6 @@ Ext.define('Ext.oa.Auth__User_Panel', {
                   limitParam: undefined,
                   pageParam:  undefined
                 },
-                autoLoad: true,
                 sorters: [{property: "username"}]
               });
             }(),

@@ -34,7 +34,6 @@ Ext.define('Ext.oa.SysUtils__Service_Panel', {
             type: 'direct',
             directFn: sysutils__InitScript.all_with_status
           },
-          autoLoad: true,
           sorters: [{property: "name"}]
         });
       }()),

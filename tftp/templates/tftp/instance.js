@@ -88,8 +88,7 @@ Ext.define('Ext.oa.Tftp__Instance_Panel', {
                     "app": "lvm", "obj": "LogicalVolume", "id": -1
                   }
                 }
-              },
-              autoLoad: true
+              }
             });
           }(),
           disabled:      true,
