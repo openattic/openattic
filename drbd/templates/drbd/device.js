@@ -382,7 +382,7 @@ Ext.define('Ext.oa.Drbd_Panel', {
 
 Ext.oa.Drbd__Connection_Module = {
   panel: "drbd_panel",
-  prepareMenuTree: function(tree){;
+  prepareMenuTree: function(tree){
     tree.appendToRootNodeById("menu_services", {
       text: gettext('Datenspiegelung'),
       leaf: true,
