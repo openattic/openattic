@@ -294,22 +294,22 @@ Ext.define('Ext.oa.ShareGridPanel', {
           }
         });
       }
-      if( this.allowEdit ){
-        this.buttons.push({
-          text:  self.texts.edit,
-          icon: MEDIA_URL + "/icons2/16x16/actions/edit-redo.png",
-          scope: self,
-          handler: Ext.bind(self.editFunction, self, [self]),
-        });
-      }
-      if( this.allowDelete ){
-        this.buttons.push({
-          text: self.texts.remove,
-          icon: MEDIA_URL + "/icons2/16x16/actions/remove.png",
-          handler: this.deleteFunction,
-          scope: self
-        });
-      }
+    }
+    if( this.allowEdit ){
+      this.buttons.push({
+        text:  self.texts.edit,
+        icon: MEDIA_URL + "/icons2/16x16/actions/edit-redo.png",
+        scope: self,
+        handler: Ext.bind(self.editFunction, self, [self]),
+      });
+    }
+    if( this.allowDelete ){
+      this.buttons.push({
+        text: self.texts.remove,
+        icon: MEDIA_URL + "/icons2/16x16/actions/remove.png",
+        handler: this.deleteFunction,
+        scope: self
+      });
     }
     this.callParent(arguments);
   },
