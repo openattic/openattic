@@ -146,8 +146,10 @@ Ext.define('Ext.oa.MainViewManager', {
         activeItem: 0,
         border: false,
         hideBorders: true,
-        layout: "card",
-        layoutConfig: { deferredRender: true },
+        layout: {
+          type: "card",
+          deferredRender: true
+        },
         items: (function(){
           var it = [],
               i, j,
