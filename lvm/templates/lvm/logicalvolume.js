@@ -346,7 +346,8 @@ Ext.define('Ext.oa.Lvm__LogicalVolume_BasePanel', {
                     type: 'direct',
                     directFn: lvm__LogicalVolume.get_shares,
                     extraParams: {id: sel.data.id}
-                  }
+                  },
+                  autoLoad: true
                 });
               }()),
               defaults: {
@@ -402,7 +403,8 @@ Ext.define('Ext.oa.Lvm__LogicalVolume_BasePanel', {
                   proxy: {
                     type: 'direct',
                     directFn: lvm__LogicalVolume.get_initscripts
-                  }
+                  },
+                  autoLoad: true
                 });
               }()),
               defaults: {
