@@ -393,7 +393,7 @@ Ext.define('Ext.oa.Lvm__LogicalVolume_BasePanel', {
                     {
                       name: 'script',
                       convert: function (val, row){
-                      return row;
+                      return row.raw;
                       }
                     },
                   ]
