@@ -111,11 +111,19 @@ Ext.define('Ext.oa.VolumeGroup_Panel', {
               listeners: {
                 load: function(self, node, records, success, evOpts){
                   console.log("twdisk store loaded!");
+                  var krpm;
                   for( var i = 0; i < records.length; i++ ){
+                    if(records[i].get("rpm") / 1000 == parseInt(records[i].get("rpm") / 1000)){
+                      krpm = parseInt(records[i].get("rpm") / 1000);
+                    }
+                    else{
+                      krpm = (records[i].get("rpm") / 1000).toFixed(1);
+                    }
                     records[i].set("id",   "twraid__disk." + records[i].get("id"));
                     records[i].set("leaf", true);
                     records[i].set("percent", null);
-                    records[i].set("type", records[i].get("disktype"));
+                    records[i].set("type", Ext.String.format("{0} {1}k", records[i].get("disktype"), krpm));
+                    records[i].set("name", records[i].get("model"));
                     records[i].commit();
                   }
                 }
