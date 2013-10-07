@@ -16,16 +16,17 @@ Ext.namespace("Ext.oa");
 Ext.define("Ext.oa.SwitchingTreeStore", {
   extend: "Ext.data.TreeStore",
   onBeforeNodeExpand: function(node, callback, scope, args){
-    // When expanding a Node, the TreeView simply calls its store to expand the node unconditionally.
-    // This works as long as the Tree is not supposed to use different stores for different tree
-    // "depths". Otherwise it fails, because the TreeView's store is *not* the one that is supposed
-    // to do the actual loading. So first of all, let's see if we are actually supposed to load that node...
+    // When expanding a Node, the TreeView unconditionally calls its store to do
+    // the heavy lifting. This works as long as the Tree is not supposed to use
+    // different stores for different tree "layers". Otherwise it fails, because
+    // the TreeView's store is *not* the one that is supposed to do the actual
+    // loading. So first of all, let's see if that's really one of our nodes...
     if( node.store === this ){
-      // ... if we are, do so...
+      // ... if it is, we can expand it ourselves...
       return this.callParent(arguments);
     }
     else{
-      // ... otherwise get the correct store and use it to load the next layer in the tree.
+      // ... otherwise get the correct store and tell it to expand the node.
       return node.store.onBeforeNodeExpand(node, callback, scope, args);
     }
   }
