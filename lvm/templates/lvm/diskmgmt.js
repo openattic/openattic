@@ -21,14 +21,15 @@ function renderLoading(val){
 }
 
 Ext.define('Ext.oa.VolumeGroup_Panel', {
-  extend: 'Ext.grid.GridPanel',
+  extend: 'Ext.tree.TreePanel',
   alias: 'widget.volumegroup_panel',
   initComponent: function(){
     var volumeGroupPanel = this;
     Ext.apply(this, Ext.apply(this.initialConfig, {
       id: "volumeGroup_panel_inst",
       title: gettext('Volume Groups'),
-      layout: 'fit',
+      border: false,
+      rootVisible: false,
       buttons: [{
         text: "",
         icon: MEDIA_URL + '/icons2/16x16/actions/reload.png',
@@ -41,6 +42,9 @@ Ext.define('Ext.oa.VolumeGroup_Panel', {
       store: (function(){
         Ext.define('volumepool_list_model', {
           extend: 'Ext.data.TreeModel',
+          requires: [
+            'Ext.data.NodeInterface'
+          ],
           fields: [
             {name: 'id'},
             {name: 'name'},
@@ -48,58 +52,102 @@ Ext.define('Ext.oa.VolumeGroup_Panel', {
             {name: 'size'},
             {name: 'percent'},
             {name: 'status'}
+          ],
+          createNode: function(record){
+            console.log("CreateNode!");
+            console.log(record);
+            var store = Ext.create("Ext.oa.SwitchingTreeStore", {
+              model: "twraid__raid_model",
+              root: record,
+              proxy: {
+                type: "direct",
+                directFn: twraid__Unit.find_by_vg,
+                extraParams: {
+                  id: record.get("id")
+                },
+                paramOrder: ["id"]
+              },
+              listeners: {
+                load: function(self, node, records, success, evOpts){
+                  console.log("twraid store loaded!");
+                  for( var i = 0; i < records.length; i++ ){
+                    records[i].set("id",   "twraid__raid." + records[i].get("id"));
+                    records[i].set("leaf", true);
+                    records[i].commit();
+                  }
+                }
+              }
+            });
+            window.teststore = store;
+            return store.getRootNode();
+          }
+        });
+        Ext.define('twraid__raid_model', {
+          extend: 'Ext.data.TreeModel',
+          requires: [
+            'Ext.data.NodeInterface'
+          ],
+          fields: [
+            "status", "index", "name", "verify", "rebuild", "rdcache", "wrcache",
+            "unittype", "autoverify", "serial", "size", "chunksize", "id"
           ]
         });
-        return Ext.create('Ext.data.Store', {
+        return Ext.create('Ext.oa.SwitchingTreeStore', {
           model: 'volumepool_list_model',
           proxy: {
             type:     'direct',
             directFn: lvm__VolumeGroup.all
           },
+          root: {
+            name: "stuff",
+            id:   "lvm__diskmgmt_root_node",
+            expanded: true,
+          },
           listeners: {
-            load: (function(self){
-              var i;
+            load: function(self, node, records, success, evOpts){
+              console.log("LVM store loaded!");
+              var i, vgid;
               var handleResponse = function(i){
                 return function(provider, response){
                   if( response.type === "exception" ){
-                    self.data.items[i].set("percent", '?');
-                    self.data.items[i].set("size", '?');
-                    self.data.items[i].set("free", '?');
-                    self.data.items[i].set("attr", '?');
+                    records[i].set("percent", '?');
+                    records[i].set("size", '?');
+                    records[i].set("free", '?');
+                    records[i].set("attr", '?');
                     return;
                   }
-                  self.data.items[i].set( "percent",
+                  records[i].set( "percent",
                     ((response.result.LVM2_VG_SIZE - response.result.LVM2_VG_FREE) /
                       response.result.LVM2_VG_SIZE * 100.0).toFixed(2)
                   );
                   if( response.result.LVM2_VG_SIZE >= 1000 ){
-                    self.data.items[i].set("size", Ext.String.format("{0} GB",
+                    records[i].set("size", Ext.String.format("{0} GB",
                       (response.result.LVM2_VG_SIZE / 1000).toFixed(2)));
                   }
                   else
                   {
-                    self.data.items[i].set("size", Ext.String.format("{0} MB", response.result.LVM2_VG_SIZE));
+                    records[i].set("size", Ext.String.format("{0} MB", response.result.LVM2_VG_SIZE));
                   }
                   if( response.result.LVM2_VG_FREE >= 1000 ){
-                    self.data.items[i].set("free", Ext.String.format("{0} GB",
+                    records[i].set("free", Ext.String.format("{0} GB",
                       (response.result.LVM2_VG_FREE / 1000).toFixed(2)));
                   }
                   else
                   {
-                    self.data.items[i].set("free", Ext.String.format("{0} MB", response.result.LVM2_VG_FREE));
+                    records[i].set("free", Ext.String.format("{0} MB", response.result.LVM2_VG_FREE));
                   }
-                  self.data.items[i].set("type", "LVM VG");
-                  self.data.each(
-                    function(record, index, data){
-                      record.commit();
-                    }
-                  );
+                  records[i].set("type", "LVM VG");
+                  records[i].set("status", "Wird scho");
+                  records[i].commit();
                 };
               };
-              for( i = 0; i < self.data.length; i++ ){
-                lvm__VolumeGroup.lvm_info(self.data.items[i].internalId, handleResponse(i));
+              for( i = 0; i < records.length; i++ ){
+                vgid = records[i].get("id");
+                records[i].set("id", "lvm__VolumeGroup." + records[i].get("id"));
+                records[i].commit();
+                lvm__VolumeGroup.lvm_info(vgid, handleResponse(i));
               }
-            })
+            }
           }
         });
       }()),
@@ -107,6 +155,7 @@ Ext.define('Ext.oa.VolumeGroup_Panel', {
         sortable: true
       },
       columns: [{
+        xtype: 'treecolumn',
         header: gettext('Name'),
         dataIndex: "name"
       },{
@@ -142,6 +191,10 @@ Ext.define('Ext.oa.VolumeGroup_Panel', {
           }, 25);
           return Ext.String.format('<span id="{0}"></span>', id);
         }
+      },{
+        header: gettext('Status'),
+        dataIndex: "status",
+        renderer: renderLoading
       }]
     }));
     this.callParent(arguments);
