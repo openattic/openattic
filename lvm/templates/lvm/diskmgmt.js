@@ -137,7 +137,7 @@ Ext.define('Ext.oa.VolumeGroup_Panel', {
                     records[i].set("free", Ext.String.format("{0} MB", response.result.LVM2_VG_FREE));
                   }
                   records[i].set("type", "LVM VG");
-                  records[i].set("status", "Wird scho");
+                  records[i].set("status", " ");
                   records[i].commit();
                 };
               };
