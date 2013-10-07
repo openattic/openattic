@@ -170,22 +170,7 @@ Ext.define('Ext.oa.VolumeGroup_Panel', {
                     ((response.result.LVM2_VG_SIZE - response.result.LVM2_VG_FREE) /
                       response.result.LVM2_VG_SIZE * 100.0).toFixed(2)
                   );
-                  if( response.result.LVM2_VG_SIZE >= 1000 ){
-                    records[i].set("size", Ext.String.format("{0} GB",
-                      (response.result.LVM2_VG_SIZE / 1000).toFixed(2)));
-                  }
-                  else
-                  {
-                    records[i].set("size", Ext.String.format("{0} MB", response.result.LVM2_VG_SIZE));
-                  }
-                  if( response.result.LVM2_VG_FREE >= 1000 ){
-                    records[i].set("free", Ext.String.format("{0} GB",
-                      (response.result.LVM2_VG_FREE / 1000).toFixed(2)));
-                  }
-                  else
-                  {
-                    records[i].set("free", Ext.String.format("{0} MB", response.result.LVM2_VG_FREE));
-                  }
+                  records[i].set("size", response.result.LVM2_VG_SIZE);
                   records[i].set("type", "LVM VG");
                   records[i].set("status", " ");
                   records[i].commit();
@@ -215,7 +200,20 @@ Ext.define('Ext.oa.VolumeGroup_Panel', {
       },{
         header: gettext('Size'),
         dataIndex: "size",
-        renderer: renderLoading
+        renderer: function(val){
+          if( val === null ){
+            return '';
+          }
+          if( !val || val === -1 ){
+            return '♻';
+          }
+          if( val >= 1000 ){
+            return Ext.String.format("{0} GB", (val / 1000).toFixed(2));
+          }
+          else{
+            return Ext.String.format("{0} MB", val);
+          }
+        }
       },{
         header: gettext('Used%'),
         dataIndex: "percent",
