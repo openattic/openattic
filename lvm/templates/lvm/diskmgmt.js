@@ -73,6 +73,8 @@ Ext.define('Ext.oa.VolumeGroup_Panel', {
                   for( var i = 0; i < records.length; i++ ){
                     records[i].set("id",   "twraid__raid." + records[i].get("id"));
                     records[i].set("leaf", true);
+                    records[i].set("percent", null);
+                    records[i].set("type", records[i].get("unittype"));
                     records[i].commit();
                   }
                 }
@@ -170,11 +172,11 @@ Ext.define('Ext.oa.VolumeGroup_Panel', {
         header: gettext('Used%'),
         dataIndex: "percent",
         renderer: function( val, x, store ){
-          if( !val || val === -1 ){
-            return '♻';
-          }
           if( val === null ){
             return '';
+          }
+          if( !val || val === -1 ){
+            return '♻';
           }
           var id = Ext.id();
           Ext.defer(function(){
