@@ -54,7 +54,7 @@ Ext.define('Ext.oa.VolumeGroup_Panel', {
             {name: 'status'}
           ],
           createNode: function(record){
-            console.log("CreateNode!");
+            console.log("volumepool_list_model.createNode!");
             console.log(record);
             var store = Ext.create("Ext.oa.SwitchingTreeStore", {
               model: "twraid__raid_model",
@@ -72,7 +72,7 @@ Ext.define('Ext.oa.VolumeGroup_Panel', {
                   console.log("twraid store loaded!");
                   for( var i = 0; i < records.length; i++ ){
                     records[i].set("id",   "twraid__raid." + records[i].get("id"));
-                    records[i].set("leaf", true);
+                    records[i].set("leaf", false);
                     records[i].set("percent", null);
                     records[i].set("type", records[i].get("unittype"));
                     records[i].commit();
@@ -80,7 +80,6 @@ Ext.define('Ext.oa.VolumeGroup_Panel', {
                 }
               }
             });
-            window.teststore = store;
             return store.getRootNode();
           }
         });
@@ -92,6 +91,47 @@ Ext.define('Ext.oa.VolumeGroup_Panel', {
           fields: [
             "status", "index", "name", "verify", "rebuild", "rdcache", "wrcache",
             "unittype", "autoverify", "serial", "size", "chunksize", "id"
+          ],
+          createNode: function(record){
+            console.log("twraid__raid_model.createNode!");
+            console.log(record);
+            var store = Ext.create("Ext.oa.SwitchingTreeStore", {
+              model: "twraid__disk_model",
+              root: record,
+              proxy: {
+                type: "direct",
+                directFn: twraid__Disk.filter,
+                extraParams: {
+                  kwds: {
+                    unit__id: record.get("id")
+                  }
+                },
+                paramOrder: ["kwds"]
+              },
+              listeners: {
+                load: function(self, node, records, success, evOpts){
+                  console.log("twdisk store loaded!");
+                  for( var i = 0; i < records.length; i++ ){
+                    records[i].set("id",   "twraid__disk." + records[i].get("id"));
+                    records[i].set("leaf", true);
+                    records[i].set("percent", null);
+                    records[i].set("type", records[i].get("disktype"));
+                    records[i].commit();
+                  }
+                }
+              }
+            });
+            return store.getRootNode();
+          }
+        });
+        Ext.define('twraid__disk_model', {
+          extend: 'Ext.data.TreeModel',
+          requires: [
+            'Ext.data.NodeInterface'
+          ],
+          fields: [
+            "enclslot", "status", "unitindex", "serial", "linkspeed", "power_on_h", "disktype",
+            "port", "temp_c", "model", "rpm", "size"
           ]
         });
         return Ext.create('Ext.oa.SwitchingTreeStore', {
