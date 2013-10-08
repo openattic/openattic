@@ -55,10 +55,11 @@ Ext.define('Ext.oa.VolumeGroup_Panel', {
           ],
           createNode: function(record){
             console.log("volumepool_list_model.createNode!");
-            console.log(record);
+            //console.log(record);
+            var vgid = parseInt(record.get("id"));
             var store = Ext.create("Ext.oa.SwitchingTreeStore", {
               model: "twraid__raid_model",
-              root: record,
+              root:  record.data,
               proxy: {
                 type: "direct",
                 directFn: twraid__Unit.find_by_vg,
@@ -71,7 +72,7 @@ Ext.define('Ext.oa.VolumeGroup_Panel', {
                 load: function(self, node, records, success, evOpts){
                   console.log("twraid store loaded!");
                   for( var i = 0; i < records.length; i++ ){
-                    records[i].set("id",   "twraid__raid." + records[i].get("id"));
+                    records[i].set("id",   ["twraid__raid", records[i].get("id"), Ext.id()].join('.'));
                     records[i].set("leaf", false);
                     records[i].set("percent", null);
                     records[i].set("type", records[i].get("unittype"));
@@ -80,7 +81,25 @@ Ext.define('Ext.oa.VolumeGroup_Panel', {
                 }
               }
             });
-            return store.getRootNode();
+            var rootNode = store.getRootNode();
+            lvm__VolumeGroup.lvm_info(vgid, function(provider, response){
+              if( response.type === "exception" ){
+                rootNode.set("percent", '?');
+                rootNode.set("size", '?');
+                rootNode.set("free", '?');
+                rootNode.set("attr", '?');
+                return;
+              }
+              rootNode.set( "percent",
+                ((response.result.LVM2_VG_SIZE - response.result.LVM2_VG_FREE) /
+                  response.result.LVM2_VG_SIZE * 100.0).toFixed(2)
+              );
+              rootNode.set("size", response.result.LVM2_VG_SIZE);
+              rootNode.set("type", "LVM VG");
+              rootNode.set("status", " ");
+              rootNode.commit();
+            });
+            return rootNode;
           }
         });
         Ext.define('twraid__raid_model', {
@@ -94,7 +113,7 @@ Ext.define('Ext.oa.VolumeGroup_Panel', {
           ],
           createNode: function(record){
             console.log("twraid__raid_model.createNode!");
-            console.log(record);
+            //console.log(record);
             var store = Ext.create("Ext.oa.SwitchingTreeStore", {
               model: "twraid__disk_model",
               root: record,
@@ -119,7 +138,7 @@ Ext.define('Ext.oa.VolumeGroup_Panel', {
                     else{
                       krpm = (records[i].get("rpm") / 1000).toFixed(1);
                     }
-                    records[i].set("id",   "twraid__disk." + records[i].get("id"));
+                    records[i].set("id",   ["twraid__disk", records[i].get("id"), Ext.id()].join('.'));
                     records[i].set("leaf", true);
                     records[i].set("percent", null);
                     records[i].set("type", Ext.String.format("{0} {1}k", records[i].get("disktype"), krpm));
@@ -151,38 +170,6 @@ Ext.define('Ext.oa.VolumeGroup_Panel', {
           root: {
             name: "stuff",
             id:   "lvm__diskmgmt_root_node",
-            expanded: true,
-          },
-          listeners: {
-            load: function(self, node, records, success, evOpts){
-              console.log("LVM store loaded!");
-              var i, vgid;
-              var handleResponse = function(i){
-                return function(provider, response){
-                  if( response.type === "exception" ){
-                    records[i].set("percent", '?');
-                    records[i].set("size", '?');
-                    records[i].set("free", '?');
-                    records[i].set("attr", '?');
-                    return;
-                  }
-                  records[i].set( "percent",
-                    ((response.result.LVM2_VG_SIZE - response.result.LVM2_VG_FREE) /
-                      response.result.LVM2_VG_SIZE * 100.0).toFixed(2)
-                  );
-                  records[i].set("size", response.result.LVM2_VG_SIZE);
-                  records[i].set("type", "LVM VG");
-                  records[i].set("status", " ");
-                  records[i].commit();
-                };
-              };
-              for( i = 0; i < records.length; i++ ){
-                vgid = records[i].get("id");
-                records[i].set("id", "lvm__VolumeGroup." + records[i].get("id"));
-                records[i].commit();
-                lvm__VolumeGroup.lvm_info(vgid, handleResponse(i));
-              }
-            }
           }
         });
       }()),
@@ -249,7 +236,6 @@ Ext.define('Ext.oa.VolumeGroup_Panel', {
   },
   onRender: function(){
     this.callParent(arguments);
-    this.store.load();
   },
   refresh: function(){
     this.store.load();
