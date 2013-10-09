@@ -27,32 +27,14 @@ class CapabilitiesAwareManager(models.Manager):
         return self.extra(where=[self.model._meta.db_table + '.capflags & %s = %s'], params=[capability.flag, capability.flag])
 
 
-class VolumePool(models.Model):
-    content_type= models.ForeignKey(ContentType)
-    object_id   = models.PositiveIntegerField()
-    volumepool  = generic.GenericForeignKey()
+class CapabilitiesAwareModel(models.Model):
+    # TODO: This should probably be wrapped in a CapabilitiesField or something
     capflags    = models.BigIntegerField()
-
-    objects     = CapabilitiesAwareManager()
-
-    class Meta:
-        unique_together = (('content_type', 'object_id'),)
-
-    def __unicode__(self):
-        return unicode(self.volumepool)
-
-class AbstractVolume(models.Model):
-    content_type= models.ForeignKey(ContentType)
-    object_id   = models.PositiveIntegerField()
-    volume      = generic.GenericForeignKey()
-    capflags    = models.BigIntegerField()
-    pool        = models.ForeignKey(VolumePool, blank=True, null=True)
 
     objects     = CapabilitiesAwareManager()
 
     class Meta:
         abstract = True
-        unique_together = (('content_type', 'object_id'),)
 
     @property
     def capabilities(self):
@@ -62,40 +44,53 @@ class AbstractVolume(models.Model):
     def capabilities(self, value):
         self.capflags = capabilities.to_flags(value)
 
-    @property
-    def name(self):
-        return self.volume.name
 
-    @property
-    def megs(self):
-        return self.volume.megs
+class VolumePool(CapabilitiesAwareModel):
+    """ Something that joins a couple of BlockVolumes together. """
+    pass
 
-    @property
-    def disk_stats(self):
-        return self.volume.disk_stats
 
-    def __unicode__(self):
-        return unicode(self.volume)
+class AbstractVolume(CapabilitiesAwareModel):
+    pool        = models.ForeignKey(VolumePool, blank=True, null=True)
+
+    class Meta:
+        abstract = True
+
+    # Interface:
+    # name -> CharField or property
+    # megs -> IntegerField or property
+    # disk_stats -> property
 
 
 class BlockVolume(AbstractVolume):
-    fsvolume    = models.ForeignKey("FileSystemVolume", blank=True, null=True)
+    """ Everything that is a /dev/something. """
+    upper_type  = models.ForeignKey(ContentType, blank=True, null=True)
+    upper_id    = models.PositiveIntegerField(blank=True, null=True)
+    upper       = generic.GenericForeignKey("upper_type", "upper_id")
 
-    @property
-    def device(self):
-        return self.volume.device
+    # Interface:
+    # device -> CharField or property that returns /dev/path
+
 
 class FileSystemVolume(AbstractVolume):
+    """ Everything that can be mounted as a /media/something and is supposed to be able to be shared. """
     filesystem  = models.CharField(max_length=50)
     owner       = models.ForeignKey(User, blank=True)
     fswarning   = models.IntegerField(_("Warning Level (%)"),  default=75 )
     fscritical  = models.IntegerField(_("Critical Level (%)"), default=85 )
 
+    # Interface:
+    # see FileSystemProvider
+
+
+class FileSystemProvider(FileSystemVolume):
+    """ A FileSystem that resides on top of a BlockVolume. """
+    base        = models.ForeignKey(BlockVolume)
+
     def save(self, *args, **kwargs):
-        AbstractVolume.save(self, *args, **kwargs)
-        if isinstance(self.volume, BlockVolume):
-            self.volume.fsvolume = self
-            self.volume.save()
+        FileSystemVolume.save(self, *args, **kwargs)
+        self.base.upper = self
+        self.base.save()
 
     @property
     def fs(self):
@@ -117,5 +112,8 @@ class FileSystemVolume(AbstractVolume):
     def mounted(self):
         return self.fs.mounted
 
+    @property
     def stat(self):
         return self.fs.stat()
+
+
