@@ -38,8 +38,8 @@ from lvm.conf        import settings as lvm_settings
 from cron.models     import Cronjob
 from lvm             import snapcore
 
-from volumes.decorators import VolumePool, BlockVolume, FileSystemVolume, HybridVolume
-from volumes            import capabilities
+from volumes.models  import VolumePool, BlockVolume, FileSystemVolume
+from volumes         import capabilities
 
 def validate_vg_name(value):
     from django.core.exceptions import ValidationError
@@ -67,8 +67,8 @@ def validate_lv_name(value):
         raise ValidationError("The volume name must not contain '_mlog' or '_mimage'.")
 
 
-@VolumePool
-class VolumeGroup(models.Model):
+
+class VolumeGroup(VolumePool):
     """ Represents a LVM Volume Group. """
 
     name        = models.CharField(max_length=130, unique=True, validators=[validate_vg_name])
@@ -78,7 +78,7 @@ class VolumeGroup(models.Model):
     all_objects = models.Manager()
 
     def __init__( self, *args, **kwargs ):
-        models.Model.__init__( self, *args, **kwargs )
+        VolumePool.__init__( self, *args, **kwargs )
         self._lvm_info = None
 
     def __unicode__(self):
@@ -120,7 +120,7 @@ class VolumeGroup(models.Model):
         return devs
 
     def save( self, *args, **kwargs ):
-        models.Model.save(self, *args, **kwargs)
+        VolumePool.save(self, *args, **kwargs)
         dbus.SystemBus().get_object(settings.DBUS_IFACE_SYSTEMD, "/lvm").invalidate()
 
     def delete(self):
@@ -133,7 +133,7 @@ class VolumeGroup(models.Model):
             for device in pvs:
                 if pvs[device]["LVM2_VG_NAME"] == self.name:
                     lvm.pvremove(device)
-        models.Model.delete(self)
+        VolumePool.delete(self)
 
     @property
     def lvm_info(self):
@@ -148,8 +148,8 @@ class VolumeGroup(models.Model):
         return float( self.lvm_info["LVM2_VG_FREE"] )
 
 
-@HybridVolume
-class LogicalVolume(models.Model):
+
+class LogicalVolume(BlockVolume):
     """ Represents a LVM Logical Volume and offers management functions.
 
         This is the main class of openATTIC's design.
@@ -180,7 +180,7 @@ class LogicalVolume(models.Model):
         pass
 
     def __init__( self, *args, **kwargs ):
-        models.Model.__init__( self, *args, **kwargs )
+        BlockVolume.__init__( self, *args, **kwargs )
         self._sysd = None
         self._lvm = None
         self._lvm_info = None
@@ -197,13 +197,13 @@ class LogicalVolume(models.Model):
         if qry.count() > 0:
             from django.core.exceptions import ValidationError
             raise ValidationError({"name": ["A Volume named '%s' already exists on this host." % self.name]})
-        models.Model.validate_unique(self, exclude=exclude)
+        BlockVolume.validate_unique(self, exclude=exclude)
 
     def full_clean(self):
         if float(self.vg.lvm_info["LVM2_VG_FREE"]) < int(self.megs):
             from django.core.exceptions import ValidationError
             raise ValidationError({"megs": ["Volume Group %s has insufficient free space." % self.vg.name]})
-        return models.Model.full_clean(self)
+        return BlockVolume.full_clean(self)
 
     def _build_job(self):
         if self._jid is not None:
@@ -224,10 +224,10 @@ class LogicalVolume(models.Model):
             self._lvm = dbus.SystemBus().get_object(settings.DBUS_IFACE_SYSTEMD, "/lvm")
         return self._lvm
 
-    @property
-    def device(self):
-        """ The actual device under which this LV operates. """
-        return os.path.join( "/dev", self.vg.name, self.name )
+    #@property
+    #def device(self):
+        #""" The actual device under which this LV operates. """
+        #return os.path.join( "/dev", self.vg.name, self.name )
 
     @property
     def dmdevice( self ):
@@ -474,7 +474,7 @@ class LogicalVolume(models.Model):
 
     def save( self, database_only=False, *args, **kwargs ):
         if database_only:
-            return models.Model.save(self, *args, **kwargs)
+            return BlockVolume.save(self, *args, **kwargs)
 
         install = (self.id is None)
 
@@ -487,7 +487,7 @@ class LogicalVolume(models.Model):
         if self.id is not None:
             old_self = LogicalVolume.objects.get(id=self.id)
 
-        ret = models.Model.save(self, *args, **kwargs)
+        ret = BlockVolume.save(self, *args, **kwargs)
 
         self._build_job()
 
@@ -504,7 +504,7 @@ class LogicalVolume(models.Model):
                     modified = self.setupfs()
                 self.lvm.write_fstab()
 
-            ret = models.Model.save(self, *args, **kwargs)
+            ret = BlockVolume.save(self, *args, **kwargs)
 
         else:
             if old_self.megs != self.megs:
@@ -530,7 +530,7 @@ class LogicalVolume(models.Model):
 
         self.uninstall()
 
-        models.Model.delete(self)
+        BlockVolume.delete(self)
 
         if self.filesystem:
             self.lvm.write_fstab()
@@ -543,7 +543,7 @@ class LogicalVolume(models.Model):
         for snapshot in orig.snapshot_set.all():
             snapshot.unmount()
         self.lvm.lvmerge(  self.device )
-        models.Model.delete(self)
+        BlockVolume.delete(self)
         for snapshot in orig.snapshot_set.all():
             snapshot.mount()
         orig.mount()
@@ -626,7 +626,7 @@ class LVChainedModule(models.Model):
         models.Model.delete(self)
 
 
-@FileSystemVolume
+
 class ZfsSubvolume(models.Model):
     volume      = models.ForeignKey(LogicalVolume)
     volname     = models.CharField(max_length=50)
@@ -766,7 +766,7 @@ class ZfsSnapshot(models.Model):
         self.volume.fs.rollback_snapshot(self)
 
 
-@FileSystemVolume
+
 class BtrfsSubvolume(models.Model):
     volume   = models.ForeignKey(LogicalVolume)
     name     = models.CharField(max_length=255)
