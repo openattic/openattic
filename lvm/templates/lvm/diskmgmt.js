@@ -71,11 +71,19 @@ Ext.define('Ext.oa.VolumeGroup_Panel', {
               listeners: {
                 load: function(self, node, records, success, evOpts){
                   console.log("twraid store loaded!");
+                  var status;
                   for( var i = 0; i < records.length; i++ ){
                     records[i].set("id",   ["twraid__raid", records[i].get("id"), Ext.id()].join('.'));
                     records[i].set("leaf", false);
                     records[i].set("percent", null);
                     records[i].set("type", records[i].get("unittype"));
+                    status = records[i].get("status");
+                    if( status === "VERIFYING" ){
+                      records[i].set("status", "VERIFYING:" + records[i].get("verify"))
+                    }
+                    else if( status === "REBUILD" ){
+                      records[i].set("status", "REBUILDING:" + records[i].get("rebuild"))
+                    }
                     records[i].commit();
                   }
                 }
@@ -229,7 +237,31 @@ Ext.define('Ext.oa.VolumeGroup_Panel', {
       },{
         header: gettext('Status'),
         dataIndex: "status",
-        renderer: renderLoading
+        renderer: function( val, x, store ){
+          if( val === null ){
+            return '';
+          }
+          if( !val || val === -1 ){
+            return '♻';
+          }
+          if( !val.contains(":") ){
+            return val;
+          }
+          var id = Ext.id();
+          var desc = val.split(":")[0];
+          var perc = parseInt(val.split(":")[1]);
+          Ext.defer(function(){
+            if( Ext.get(id) === null ){
+              return;
+            }
+            new Ext.ProgressBar({
+              renderTo: id,
+              value: perc/100.0,
+              text:  Ext.String.format("{0} ({1}%)", desc, perc)
+            });
+          }, 25);
+          return Ext.String.format('<span id="{0}"></span>', id);
+        }
       }]
     }));
     this.callParent(arguments);
