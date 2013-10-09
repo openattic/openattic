@@ -17,31 +17,22 @@
 from rpcd.handlers import BaseHandler, ModelHandler
 from rpcd.handlers import ProxyModelHandler
 
-from volumes.models import VolumePool, BlockVolume, FileSystemVolume
+from volumes.models import VolumePool, BlockVolume, FileSystemVolume, FileSystemProvider
 from ifconfig.models import Host
 
 class VolumePoolHandler(ModelHandler):
     model = VolumePool
 
-    def _override_get(self, obj, data):
-        vpoolhandler = self._get_handler_instance(obj.volumepool.__class__)
-        data["volumepool"] = vpoolhandler._idobj(obj.volumepool)
-        return data
-
 class BlockVolumeHandler(ModelHandler):
     model = BlockVolume
-
-    def _override_get(self, obj, data):
-        volumehandler = self._get_handler_instance(obj.volume.__class__)
-        data["volume"] = volumehandler._idobj(obj.volume)
-        return data
 
 class FileSystemVolumeHandler(ModelHandler):
     model = FileSystemVolume
 
+class FileSystemProviderHandler(ModelHandler):
+    model = FileSystemProvider
+
     def _override_get(self, obj, data):
-        volumehandler = self._get_handler_instance(obj.volume.__class__)
-        data["volume"] = volumehandler._idobj(obj.volume)
         hosthandler = self._get_handler_instance(Host)
         data['filesystem'] = obj.fsname
         data['fs'] = {
@@ -58,4 +49,5 @@ RPCD_HANDLERS = [
     VolumePoolHandler,
     BlockVolumeHandler,
     FileSystemVolumeHandler,
+    FileSystemProviderHandler,
     ]
