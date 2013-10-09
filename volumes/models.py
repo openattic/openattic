@@ -94,7 +94,7 @@ class FileSystemProvider(FileSystemVolume):
 
     @property
     def fs(self):
-        return filesystems.get_by_name(self.filesystem)(self.volume)
+        return filesystems.get_by_name(self.filesystem)(self.base)
 
     @property
     def fsname(self):
