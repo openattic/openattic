@@ -51,7 +51,9 @@ class VolumePool(CapabilitiesAwareModel):
 
 
 class AbstractVolume(CapabilitiesAwareModel):
-    pool        = models.ForeignKey(VolumePool, blank=True, null=True)
+    pool        = models.ForeignKey(VolumePool,  blank=True, null=True)
+    volume_type = models.ForeignKey(ContentType, blank=True, null=True, related_name="%(class)s_volume_type_set")
+    volume      = generic.GenericForeignKey("volume_type", "id")
 
     class Meta:
         abstract = True
@@ -64,7 +66,7 @@ class AbstractVolume(CapabilitiesAwareModel):
 
 class BlockVolume(AbstractVolume):
     """ Everything that is a /dev/something. """
-    upper_type  = models.ForeignKey(ContentType, blank=True, null=True)
+    upper_type  = models.ForeignKey(ContentType, blank=True, null=True, related_name="%(class)s_upper_type_set")
     upper_id    = models.PositiveIntegerField(blank=True, null=True)
     upper       = generic.GenericForeignKey("upper_type", "upper_id")
 
