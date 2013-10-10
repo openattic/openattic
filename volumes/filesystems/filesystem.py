@@ -63,10 +63,13 @@ class FileSystem(object):
         # FS configured and vice-versa.
         if not self.virtual:
             from volumes.models import BlockVolume
-            if isinstance(self.volume, BlockVolume) and (self.volume.fsvolume is None or self.volume.fsvolume.filesystem != self.name):
+            if (isinstance(self.volume, BlockVolume)
+                and ( self.volume.upper is None
+                      or not hasattr(self.volume.upper, "filesystem")
+                      or self.volume.upper.filesystem != self.name )):
                 raise FileSystem.WrongFS(self.name)
         else:
-            if self.volume.fsvolume is not None:
+            if self.volume.upper is not None:
                 raise FileSystem.WrongFS(self.name)
 
     def clean_volume(self, volume):
@@ -80,13 +83,13 @@ class FileSystem(object):
     def mountpoint(self):
         if self.virtual:
             raise NotImplementedError("FileSystem::mountpoint needs to be overridden for virtual FS handlers")
-        return os.path.join(volumes_settings.MOUNT_PREFIX, self.volume.fsvolume.name)
+        return os.path.join(volumes_settings.MOUNT_PREFIX, self.volume.volume.name)
 
     @property
     def mounthost(self):
         if self.virtual:
             raise NotImplementedError("FileSystem::mounthost needs to be overridden for virtual FS handlers")
-        return self.volume.volume.mounthost
+        return self.volume.volume.host
 
     def mount(self, jid):
         """ Mount the file system.
@@ -122,7 +125,7 @@ class FileSystem(object):
         """ Change ownership of the filesystem to be the LV's owner. """
         if self.virtual:
             raise NotImplementedError("FileSystem::chown needs to be overridden for virtual FS handlers")
-        return self._lvm.fs_chown( jid, self.mountpoint, self.volume.fsvolume.username, volumes_settings.CHOWN_GROUP )
+        return self._lvm.fs_chown( jid, self.mountpoint, self.volume.upper.owner.username, volumes_settings.CHOWN_GROUP )
 
     def destroy(self):
         """ Destroy the file system. """
