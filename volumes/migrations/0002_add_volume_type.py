@@ -1,4 +1,7 @@
 # -*- coding: utf-8 -*-
+# kate: space-indent on; indent-width 4; replace-tabs on;
+# vim: tabstop=4 expandtab shiftwidth=4 softtabstop=4
+
 import datetime
 from south.db import db
 from south.v2 import SchemaMigration
