@@ -15,6 +15,7 @@
 """
 
 from django.contrib.auth.models import User, Group, Permission
+from django.contrib.contenttypes.models import ContentType
 
 from rpcd.handlers import ModelHandler
 from rpcd.models   import APIKey
@@ -56,5 +57,14 @@ class UserHandler(ModelHandler):
         user.set_password(password)
         user.save()
 
+class ContentTypeHandler(ModelHandler):
+    model = ContentType
 
-RPCD_HANDLERS = [GroupHandler, UserHandler, APIKeyHandler, PermissionHandler]
+    def _idobj(self, obj):
+        return {
+            "app": obj.app_label,
+            "obj": obj.model,
+            "__unicode__": unicode(obj)
+        }
+
+RPCD_HANDLERS = [GroupHandler, UserHandler, APIKeyHandler, PermissionHandler, ContentTypeHandler]
