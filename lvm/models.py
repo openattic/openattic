@@ -224,10 +224,14 @@ class LogicalVolume(BlockVolume):
             self._lvm = dbus.SystemBus().get_object(settings.DBUS_IFACE_SYSTEMD, "/lvm")
         return self._lvm
 
-    #@property
-    #def device(self):
-        #""" The actual device under which this LV operates. """
-        #return os.path.join( "/dev", self.vg.name, self.name )
+    @property
+    def device(self):
+        """ The actual device under which this LV operates. """
+        return os.path.join( "/dev", self.vg.name, self.name )
+
+    @property
+    def host(self):
+        return self.vg.host
 
     @property
     def dmdevice( self ):
