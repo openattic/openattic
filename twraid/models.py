@@ -20,6 +20,11 @@ from django.db import models
 from django.conf import settings
 
 from ifconfig.models import Host, HostDependentManager, getHostDependentManagerClass
+from volumes import blockdevices
+
+class DeviceNotFound(Exception):
+    pass
+
 
 class Controller(models.Model):
     host        = models.ForeignKey(Host)
@@ -85,6 +90,31 @@ class Unit(models.Model):
     objects     = HostDependentUnitManager()
     all_objects = UnitManager()
 
+    @property
+    def host(self):
+        return self.controller.host
+
+    @property
+    def megs(self):
+        return self.size
+
+    @property
+    def device(self):
+        import pyudev
+        ctx = pyudev.Context()
+
+        for dev in ctx.list_devices():
+            if dev.subsystem != "block":
+                continue
+            if "ID_SCSI_SERIAL" in dev and dev["ID_SCSI_SERIAL"] == self.serial:
+                return dev.device_node
+
+        raise DeviceNotFound(self.serial)
+
+    @property
+    def disk_stats( self ):
+        """ Return disk stats from the LV retrieved from the kernel. """
+        return blockdevices.get_disk_stats( self.device[5:] )
 
 class Disk(models.Model):
     controller  = models.ForeignKey(Controller)
