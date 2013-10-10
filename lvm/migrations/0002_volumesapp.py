@@ -33,6 +33,9 @@ class Migration(SchemaMigration):
                      "upper_type_id = (SELECT id FROM django_content_type WHERE app_label='volumes' AND model='filesystemprovider'), "
                      "upper_id = id "
                    "WHERE id IN (SELECT id FROM volumes_filesystemprovider)")
+        db.execute("SELECT setval( 'volumes_blockvolume_id_seq', ( select max(id) from volumes_blockvolume ) )")
+        db.execute("SELECT setval( 'volumes_filesystemvolume_id_seq', ( select max(id) from volumes_filesystemvolume ) )")
+        db.execute("SELECT setval( 'volumes_filesystemprovider_id_seq', ( select max(id) from volumes_filesystemprovider ) )")
         db.rename_column('lvm_volumegroup',    'id', 'volumepool_ptr_id' )
         db.rename_column('lvm_logicalvolume',  'id', 'blockvolume_ptr_id')
         db.commit_transaction()
