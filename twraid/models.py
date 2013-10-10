@@ -21,7 +21,7 @@ from django.conf import settings
 
 from ifconfig.models import Host, HostDependentManager, getHostDependentManagerClass
 from volumes import blockdevices
-from volumes.models import DeviceNotFound
+from volumes.models import DeviceNotFound, BlockVolume
 
 
 class Controller(models.Model):
@@ -70,7 +70,7 @@ class UnitManager(models.Manager):
 class HostDependentUnitManager(UnitManager):
     hostfilter  = "controller__host"
 
-class Unit(models.Model):
+class Unit(BlockVolume):
     index       = models.IntegerField()
     name        = models.CharField(max_length=150, blank=True)
     serial      = models.CharField(max_length=150, blank=True)
