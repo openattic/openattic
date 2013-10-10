@@ -116,6 +116,6 @@ class FileSystemProvider(FileSystemVolume):
 
     @property
     def stat(self):
-        return self.fs.stat()
+        return self.fs.stat
 
 
