@@ -90,7 +90,10 @@ class GenericDisk(CapabilitiesAwareModel):
 
 class VolumePool(CapabilitiesAwareModel):
     """ Something that joins a couple of BlockVolumes together. """
-    pass
+
+    @property
+    def member_set(self):
+        return BlockVolume.objects.filter(upper_type=ContentType.objects.get_for_model(self.__class__), upper_id=self.id)
 
 
 class AbstractVolume(CapabilitiesAwareModel):
@@ -117,6 +120,14 @@ class BlockVolume(AbstractVolume):
     # Interface:
     # device -> CharField or property that returns /dev/path
 
+    def save(self, *args, **kwargs):
+        if self.__class__ is not BlockVolume:
+            self.volume_type = ContentType.objects.get_for_model(self.__class__)
+        return AbstractVolume.save(self, *args, **kwargs)
+
+    def __unicode__(self):
+        return self.volume.name
+
 
 class FileSystemVolume(AbstractVolume):
     """ Everything that can be mounted as a /media/something and is supposed to be able to be shared. """
@@ -127,6 +138,11 @@ class FileSystemVolume(AbstractVolume):
 
     # Interface:
     # see FileSystemProvider
+
+    def save(self, *args, **kwargs):
+        if self.__class__ is not FileSystemVolume:
+            self.volume_type = ContentType.objects.get_for_model(self.__class__)
+        return AbstractVolume.save(self, *args, **kwargs)
 
 
 class FileSystemProvider(FileSystemVolume):
