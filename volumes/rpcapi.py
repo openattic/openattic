@@ -17,8 +17,11 @@
 from rpcd.handlers import BaseHandler, ModelHandler
 from rpcd.handlers import ProxyModelHandler
 
-from volumes.models import VolumePool, BlockVolume, FileSystemVolume, FileSystemProvider
+from volumes.models import GenericDisk, VolumePool, BlockVolume, FileSystemVolume, FileSystemProvider
 from ifconfig.models import Host
+
+class GenericDiskHandler(ModelHandler):
+    model = GenericDisk
 
 class VolumePoolHandler(ModelHandler):
     model = VolumePool
@@ -49,6 +52,7 @@ class FileSystemProviderHandler(ModelHandler):
 
 
 RPCD_HANDLERS = [
+    GenericDiskHandler,
     VolumePoolHandler,
     BlockVolumeHandler,
     FileSystemVolumeHandler,
