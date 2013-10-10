@@ -21,9 +21,7 @@ from django.conf import settings
 
 from ifconfig.models import Host, HostDependentManager, getHostDependentManagerClass
 from volumes import blockdevices
-
-class DeviceNotFound(Exception):
-    pass
+from volumes.models import DeviceNotFound
 
 
 class Controller(models.Model):
