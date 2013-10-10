@@ -19,6 +19,7 @@ import errno
 import sys
 
 from django.db import models
+from django.contrib.contenttypes import generic
 
 from ifconfig.models import Host
 from peering.models import PeerHost, PeerError
@@ -131,14 +132,14 @@ class ModelHandler(BaseHandler):
             id = {'id': int(id)}
         data = {}
         obj = self._get_model_manager().get(**id)
-        for field in obj._meta.fields:
+        for field in obj._meta.fields + obj._meta.virtual_fields:
             if self.fields is not None and field.name not in self.fields:
                 continue
             if self.exclude is not None and field.name in self.exclude:
                 continue
 
             value = getattr(obj, field.name)
-            if isinstance( field, models.ForeignKey ):
+            if isinstance( field, (models.ForeignKey, generic.GenericForeignKey) ):
                 data[field.name + "__str"] = unicode(value)
                 if value is not None:
                     data[field.name] = value.id
@@ -229,7 +230,7 @@ class ModelHandler(BaseHandler):
             return obj
 
         data = {'__unicode__': unicode(obj)}
-        for field in obj._meta.fields + obj._meta.many_to_many:
+        for field in obj._meta.fields + obj._meta.many_to_many + obj._meta.virtual_fields:
             if self.fields is not None and field.name not in self.fields:
                 continue
             if self.exclude is not None and field.name in self.exclude:
@@ -241,7 +242,7 @@ class ModelHandler(BaseHandler):
                     self._get_handler_instance(val.__class__)._idobj(val)
                     for val in value.all()
                     ]
-            elif isinstance( field, models.ForeignKey ):
+            elif isinstance( field, (models.ForeignKey, generic.GenericForeignKey) ):
                 if value is not None:
                     try:
                         handler = self._get_handler_instance(value.__class__)
@@ -284,8 +285,8 @@ class ModelHandler(BaseHandler):
                       if key not in ("id", "extAction", "extMethod", "extTID", "extType", "extUpload")
                     ])
 
-        for field in self.model._meta.fields:
-            if isinstance( field, models.ForeignKey ) and field.name in data:
+        for field in self.model._meta.fields + self.model._meta.virtual_fields:
+            if isinstance( field, (models.ForeignKey, generic.GenericForeignKey) ) and field.name in data:
                 if data[field.name]:
                     handler = self._get_handler_instance(field.related.parent_model)
                     data[field.name] = handler.idobj(int(data[field.name]))
@@ -331,9 +332,9 @@ class ModelHandler(BaseHandler):
 
     def _setobj(self, obj, data):
         """ Update the given object with values from the `data` dict. """
-        for field in obj._meta.fields:
+        for field in obj._meta.fields + obj._meta.virtual_fields:
             if field.name in data:
-                if isinstance( field, models.ForeignKey ):
+                if isinstance( field, (models.ForeignKey, generic.GenericForeignKey) ):
                     if data[field.name] is not None:
                         setattr(obj, field.name, ModelHandler._get_object_by_id_dict(data[field.name]))
                     else:
