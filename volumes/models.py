@@ -59,9 +59,10 @@ class AbstractVolume(CapabilitiesAwareModel):
         abstract = True
 
     # Interface:
-    # name -> CharField or property
-    # megs -> IntegerField or property
-    # disk_stats -> property
+    # name       -> CharField or property
+    # megs       -> IntegerField or property
+    # disk_stats -> property that returns the current Kernel disk stats from /sys/block/sdX/stat as a dict
+    # host       -> ForeignKey or property that returns the node this device resides on (or the primary for DRBD)
 
 
 class BlockVolume(AbstractVolume):
