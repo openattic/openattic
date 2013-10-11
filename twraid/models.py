@@ -21,7 +21,7 @@ from django.conf import settings
 
 from ifconfig.models import Host, HostDependentManager, getHostDependentManagerClass
 from volumes import blockdevices
-from volumes.models import DeviceNotFound, BlockVolume
+from volumes.models import DeviceNotFound, BlockVolume, CapabilitiesAwareManager
 
 
 class Controller(models.Model):
@@ -56,7 +56,7 @@ class Enclosure(models.Model):
 
 
 
-class UnitManager(models.Manager):
+class UnitManager(CapabilitiesAwareManager):
     def find_by_vg(self, vg):
         units = []
         for devname, devinfo in vg.get_base_device_info().items():
