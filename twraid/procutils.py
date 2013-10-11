@@ -38,7 +38,7 @@ class TwRegex:
 
     unitparam   = (r'^/(?P<unit>c\d+/u\d+)\s(?P<key>[^=]+)=(?P<value>.*)$')
 
-    unitdisk    = (r'^(?P<unit>u\d+-\d+)\s+DISK\s+(?P<status>[\w\-]+)\s+(?P<rcmpl>\d+%|-)\s+(?P<vim>\d+%|-)\s+'
+    unitdisk    = (r'^(?P<unit>u\d+(-\d+)?)\s+(DISK|SINGLE)\s+(?P<status>[\w\-]+)\s+(?P<rcmpl>\d+%|-)\s+(?P<vim>\d+%|-)\s+'
                      '(?P<port>p\d+|-)\s+-\s+\s+(?P<size>[\w\.\-]+)$')
 
     diskparam   = (r'^/(?P<port>c\d+/p\d+)\s(?P<key>[^=]+)=(?P<value>.*)$')
@@ -87,6 +87,8 @@ class Disk(Bunch):
 
     @property
     def id(self):
+        if '-' not in self.unit:
+            return 0 # SINGLE unit
         return int(self.unit.split('-')[1])
 
     @property
@@ -101,7 +103,7 @@ class Disk(Bunch):
 
     @property
     def unit_disk(self):
-        if not hasattr(self, "unit"):
+        if not hasattr(self, "unit") or "-" not in self.unit:
             return None
         return int(self.unit.split('-')[1])
 
