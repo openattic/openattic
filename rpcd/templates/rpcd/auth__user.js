@@ -38,7 +38,7 @@ Ext.define('Ext.oa.Auth__User_Panel', {
           width: 350,
           items: {
             xtype: "grid",
-            store: function(){
+            store: (function(){
               Ext.define('rpcd_volumes_of_user_store', {
                 extend: 'Ext.data.Model',
                 fields: [
@@ -57,7 +57,7 @@ Ext.define('Ext.oa.Auth__User_Panel', {
                 },
                 sorters: [{property: "username"}]
               });
-            }(),
+            }()),
             defaults: {
               sortable: true
             },

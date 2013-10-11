@@ -205,7 +205,7 @@ Ext.define('Ext.oa.Zfs__Snapshot_Panel', {
           id: "volumepanel",
           autoScroll: true,
           forceFit: true,
-          store: function(){
+          store: (function(){
             Ext.define('zfs_volumestore', {
               extend: 'Ext.data.Model',
               fields: [
@@ -224,7 +224,7 @@ Ext.define('Ext.oa.Zfs__Snapshot_Panel', {
                 directFn: lvm__LogicalVolume.filter
               }
             });
-          }(),
+          }()),
           defaults: {
             sortable: true
           },
@@ -247,7 +247,7 @@ Ext.define('Ext.oa.Zfs__Snapshot_Panel', {
           id: "subvolumepanel",
           autoScroll: true,
           forceFit: true,
-          store: function(){
+          store: (function(){
             Ext.define('zfs_subvolumestore_model', {
               extend: 'Ext.data.Model',
               fields: [
@@ -271,7 +271,7 @@ Ext.define('Ext.oa.Zfs__Snapshot_Panel', {
                 directFn: lvm__ZfsSubvolume.all,
               }
             });
-          }(),
+          }()),
           defaults: {
             sortable: true
           },
@@ -313,7 +313,7 @@ Ext.define('Ext.oa.Zfs__Snapshot_Panel', {
           header: gettext('Created'),
           dataIndex: "created_at"
         }],
-        store: function(){
+        store: (function(){
           Ext.define('zfs_snapshot_store', {
             extend: 'Ext.data.Model',
             fields: [
@@ -332,7 +332,7 @@ Ext.define('Ext.oa.Zfs__Snapshot_Panel', {
               directFn: lvm__ZfsSnapshot.filter
             }
           });
-        }()
+        }())
       }]
     }));
     this.callParent(arguments);

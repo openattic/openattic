@@ -70,7 +70,7 @@ Ext.define('Ext.oa.Tftp__Instance_Panel', {
           fieldLabel: gettext('Address'),
           allowBlank: false,
           name: 'address',
-          store: function(){
+          store: (function(){
             Ext.define('tftp_model', {
               extend: 'Ext.data.Model',
               fields: ["app", "obj", "id", "__unicode__"]
@@ -90,7 +90,7 @@ Ext.define('Ext.oa.Tftp__Instance_Panel', {
                 }
               }
             });
-          }(),
+          }()),
           disabled:      true,
           typeAhead:     true,
           triggerAction: 'all',
