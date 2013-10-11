@@ -55,17 +55,18 @@ Ext.define('volumes__volumes_VolumePool_model', {
       if( response.type === "exception" ){
         rootNode.set("percent", '?');
         rootNode.set("size", '?');
-        rootNode.set("free", '?');
-        rootNode.set("attr", '?');
-        return;
+        rootNode.set("type", '?');
+        rootNode.set("status", '?');
       }
-      rootNode.set( "percent",
-        ((response.result.LVM2_VG_SIZE - response.result.LVM2_VG_FREE) /
-          response.result.LVM2_VG_SIZE * 100.0).toFixed(2)
-      );
-      rootNode.set("size", response.result.LVM2_VG_SIZE);
-      rootNode.set("type", "LVM VG");
-      rootNode.set("status", " ");
+      else{
+        rootNode.set( "percent",
+          ((response.result.LVM2_VG_SIZE - response.result.LVM2_VG_FREE) /
+            response.result.LVM2_VG_SIZE * 100.0).toFixed(2)
+        );
+        rootNode.set("size", response.result.LVM2_VG_SIZE);
+        rootNode.set("type", "LVM VG");
+        rootNode.set("status", " ");
+      }
       rootNode.commit();
     });
     return rootNode;
@@ -79,7 +80,8 @@ Ext.define('volumes__volumes_GenericDisk_model', {
     'Ext.data.NodeInterface'
   ],
   fields: [
-    'id', 'name', 'type', 'size', 'percent', 'status', 'rpm'
+    'id', 'name', 'type', 'size', 'percent', 'status',
+    'rpm', 'megs'
   ],
   createNode: function(record){
     record.set("leaf", true);
