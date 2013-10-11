@@ -46,6 +46,7 @@ Ext.define('volumes__twraid_Unit_model', {
       record.set("leaf", true);
       rootNode = this.callParent(arguments);
     }
+    rootNode.set("icon",    MEDIA_URL + '/oxygen/16x16/actions/distribute-horizontal-center.png');
     rootNode.set("percent", null);
     rootNode.set("type", rootNode.raw.unittype);
     if( rootNode.get("status") === "VERIFYING" ){
@@ -77,7 +78,8 @@ Ext.define('volumes__twraid_Disk_model', {
     else{
       krpm = (rootNode.get("rpm") / 1000).toFixed(1);
     }
-    rootNode.set("id",   ["twraid__disk", rootNode.get("id"), Ext.id()].join('.'));
+//     rootNode.set("id",   ["twraid__disk", rootNode.get("id"), Ext.id()].join('.'));
+    rootNode.set("icon",    MEDIA_URL + '/oxygen/16x16/devices/drive-harddisk.png');
     rootNode.set("leaf", true);
     rootNode.set("percent", null);
     rootNode.set("type", Ext.String.format("{0} {1}k", rootNode.get("disktype"), krpm));

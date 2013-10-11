@@ -83,11 +83,12 @@ Ext.define('volumes__volumes_VolumePool_model', {
             response.result.LVM2_VG_SIZE * 100.0).toFixed(2)
         );
         rootNode.set("megs", response.result.LVM2_VG_SIZE);
-        rootNode.set("type", "LVM VG");
+        rootNode.set("type", gettext("Volume Group"));
         rootNode.set("status", " ");
       }
       rootNode.commit();
     });
+    rootNode.set("icon",    MEDIA_URL + '/icons2/16x16/apps/database.png');
     return rootNode;
   }
 });
@@ -115,6 +116,7 @@ Ext.define('volumes__volumes_GenericDisk_model', {
     else{
       krpm = (rootNode.get("rpm") / 1000).toFixed(1);
     }
+    rootNode.set("icon",    MEDIA_URL + '/oxygen/16x16/devices/drive-harddisk.png');
     rootNode.set("percent", null);
     rootNode.set("status", "OK");
     rootNode.set("type", Ext.String.format("{0} {1}k", rootNode.get("type").toUpperCase(), krpm));
@@ -140,7 +142,7 @@ Ext.define('Ext.oa.volumes__VolumePool_Panel', {
     var volumeGroupPanel = this;
     Ext.apply(this, Ext.apply(this.initialConfig, {
       id: "volumes__volumepool_panel",
-      title: gettext('Volume Groups'),
+      title: gettext('Disk Management'),
       border: false,
       rootVisible: false,
       buttons: [{
