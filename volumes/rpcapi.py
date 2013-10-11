@@ -23,6 +23,11 @@ from ifconfig.models import Host
 class GenericDiskHandler(ModelHandler):
     model = GenericDisk
 
+    def _override_get(self, obj, data):
+        data["name"] = obj.name
+        data["megs"] = obj.megs
+        return data
+
 class VolumePoolHandler(ModelHandler):
     model = VolumePool
 

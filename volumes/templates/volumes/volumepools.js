@@ -73,6 +73,34 @@ Ext.define('volumes__volumes_VolumePool_model', {
 });
 
 
+Ext.define('volumes__volumes_GenericDisk_model', {
+  extend: 'Ext.data.TreeModel',
+  requires: [
+    'Ext.data.NodeInterface'
+  ],
+  fields: [
+    'id', 'name', 'type', 'size', 'percent', 'status', 'rpm'
+  ],
+  createNode: function(record){
+    record.set("leaf", true);
+    var rootNode = this.callParent(arguments);
+    if(rootNode.get("rpm") / 1000 == parseInt(rootNode.get("rpm") / 1000)){
+      krpm = parseInt(rootNode.get("rpm") / 1000);
+    }
+    else{
+      krpm = (rootNode.get("rpm") / 1000).toFixed(1);
+    }
+    rootNode.set("percent", null);
+    rootNode.set("size", rootNode.get("megs"));
+    rootNode.set("status", "OK");
+    rootNode.set("type", Ext.String.format("{0} {1}k", rootNode.get("type").toUpperCase(), krpm));
+    rootNode.commit();
+    return rootNode;
+  }
+});
+
+
+
 
 Ext.define('Ext.oa.volumes__VolumePool_Panel', {
   extend: 'Ext.tree.TreePanel',

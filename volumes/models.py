@@ -50,44 +50,6 @@ class CapabilitiesAwareModel(models.Model):
         self.capflags = capabilities.to_flags(value)
 
 
-class GenericDisk(CapabilitiesAwareModel):
-    """ A standard disk that is NOT anything fancy (like a hardware raid). """
-    host        = models.ForeignKey(Host)
-    serial      = models.CharField(max_length=150, blank=True)
-
-    @property
-    def udev_device(self):
-        import pyudev
-        ctx = pyudev.Context()
-
-        for dev in ctx.list_devices():
-            if dev.subsystem != "block":
-                continue
-            if "ID_SCSI_SERIAL" in dev and dev["ID_SCSI_SERIAL"] == self.serial:
-                return dev
-
-        raise DeviceNotFound(self.serial)
-
-    @property
-    def device(self):
-        return self.udev_device.device_node
-
-    @property
-    def name(self):
-        return self.udev_device.sys_name
-
-    @property
-    def megs(self):
-        return int(self.udev_device.attributes["size"]) * 512. / 1024. / 1024.
-
-    @property
-    def disk_stats( self ):
-        """ Return disk stats from the LV retrieved from the kernel. """
-        return blockdevices.get_disk_stats( self.name )
-
-    def __unicode__(self):
-        return "%s (%dMiB)" % (self.device, self.megs)
-
 class VolumePool(CapabilitiesAwareModel):
     """ Something that joins a couple of BlockVolumes together. """
     volumepool_type = models.ForeignKey(ContentType, blank=True, null=True, related_name="%(class)s_volumepool_type_set")
@@ -140,6 +102,47 @@ class BlockVolume(AbstractVolume):
 
     def __unicode__(self):
         return self.volume.name
+
+
+class GenericDisk(BlockVolume):
+    """ A standard disk that is NOT anything fancy (like a hardware raid). """
+    host        = models.ForeignKey(Host)
+    serial      = models.CharField(max_length=150, blank=True)
+    type        = models.CharField(max_length=50, choices=(("sata", "SATA"), ("sas", "SAS"), ("ssd", "SSD")), default="sas")
+    rpm         = models.IntegerField(blank=True, null=True)
+
+    @property
+    def udev_device(self):
+        import pyudev
+        ctx = pyudev.Context()
+
+        for dev in ctx.list_devices():
+            if dev.subsystem != "block":
+                continue
+            if "ID_SCSI_SERIAL" in dev and dev["ID_SCSI_SERIAL"] == self.serial:
+                return dev
+
+        raise DeviceNotFound(self.serial)
+
+    @property
+    def device(self):
+        return self.udev_device.device_node
+
+    @property
+    def name(self):
+        return self.udev_device.sys_name
+
+    @property
+    def megs(self):
+        return int(self.udev_device.attributes["size"]) * 512. / 1024. / 1024.
+
+    @property
+    def disk_stats( self ):
+        """ Return disk stats from the LV retrieved from the kernel. """
+        return blockdevices.get_disk_stats( self.name )
+
+    def __unicode__(self):
+        return "%s (%dMiB)" % (self.device, self.megs)
 
 
 class FileSystemVolume(AbstractVolume):
