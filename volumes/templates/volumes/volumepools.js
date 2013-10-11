@@ -13,13 +13,9 @@
 
 Ext.namespace("Ext.oa");
 
-function renderLoading(val){
-  if( val ){
-    return val;
-  }
-  return '♻';
-}
-
+/**
+ *  Model for volumes.VolumePool objects.
+ */
 Ext.define('volumes__volumes_VolumePool_model', {
   extend: 'Ext.data.TreeModel',
   requires: [
@@ -31,6 +27,26 @@ Ext.define('volumes__volumes_VolumePool_model', {
   createNode: function(record){
     var rootNode;
     if( record.raw.member_set.length > 0 ){
+      /**
+       *  A VolumePool can contain any kind and number of members (none if unknown).
+       *  Check if it does, and if so, create a store that can load them and return
+       *  its rootNode to be appended to the tree.
+       *
+       *  Thing is: We don't know the members' type, so how can we choose the correct
+       *  model for them?
+       *
+       *  First of all: If it does contain members, they are always of the same type,
+       *  so we never have to load a multitude of different types. One Model fits all.
+       *
+       *  So we only need to choose the correct model. In the members_set array, We
+       *  get a couple of ID objects like this:
+       *
+       *    { "app": "mdraid", "obj": "Array", "id": 1 }
+       *
+       *  We can get the app and model name from there, and just hope that someone
+       *  defines a volumes__<app>_<object>_model class somewhere that knows how to
+       *  handle them.
+       */
       var store = Ext.create("Ext.oa.SwitchingTreeStore", {
         model: Ext.String.format('volumes__{0}_{1}_model', record.raw.member_set[0].app, record.raw.member_set[0].obj),
         root:  record.data,
@@ -48,10 +64,13 @@ Ext.define('volumes__volumes_VolumePool_model', {
       rootNode = store.getRootNode();
     }
     else{
+      // Record does not contain any children, so just get a leaf node.
       record.set("leaf", true);
       rootNode = this.callParent(arguments);
     }
     lvm__VolumeGroup.lvm_info(record.raw.id, function(provider, response){
+      // Now that we have the node, we need to put some actual information into it
+      // because the LVM API doesn't contain those (would take too long to load).
       if( response.type === "exception" ){
         rootNode.set("percent", '?');
         rootNode.set("megs", '?');
@@ -74,6 +93,9 @@ Ext.define('volumes__volumes_VolumePool_model', {
 });
 
 
+/**
+ *  Model for volumes.GenericDisk objects.
+ */
 Ext.define('volumes__volumes_GenericDisk_model', {
   extend: 'Ext.data.TreeModel',
   requires: [
@@ -84,6 +106,7 @@ Ext.define('volumes__volumes_GenericDisk_model', {
     'rpm'
   ],
   createNode: function(record){
+    // GenericDisks can't contain any members.
     record.set("leaf", true);
     var rootNode = this.callParent(arguments);
     if(rootNode.get("rpm") / 1000 == parseInt(rootNode.get("rpm") / 1000)){
@@ -103,6 +126,13 @@ Ext.define('volumes__volumes_GenericDisk_model', {
 
 
 
+/**
+ *  Disk Management panel.
+ *
+ *  The store *always* loads volumes.VolumePool objects and uses
+ *  volumes__volumes_VolumePool_model to process them, which will then
+ *  load the children accordingly.
+ */
 Ext.define('Ext.oa.volumes__VolumePool_Panel', {
   extend: 'Ext.tree.TreePanel',
   alias: 'widget.volumes__volumepool_panel',
@@ -145,7 +175,7 @@ Ext.define('Ext.oa.volumes__VolumePool_Panel', {
       },{
         header: gettext('Type'),
         dataIndex: "type",
-        renderer: renderLoading
+        renderer: function(val){ return (val ? val : '♻'); }
       },{
         header: gettext('Size'),
         dataIndex: "megs",

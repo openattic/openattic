@@ -27,6 +27,7 @@ Ext.define('volumes__mdraid_Array_model', {
     var rootNode;
     if( record.raw.member_set.length > 0 ){
       var store = Ext.create("Ext.oa.SwitchingTreeStore", {
+        // See volumes/volumepools.js: volumes__volumes_VolumePool_model.createNode about this
         model: Ext.String.format('volumes__{0}_{1}_model', record.raw.member_set[0].app, record.raw.member_set[0].obj),
         root: record.data,
         proxy: {
