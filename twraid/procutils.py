@@ -18,6 +18,7 @@ import errno
 import re
 
 from systemd.procutils import invoke
+from volumes import capabilities
 
 from twraid import models
 
@@ -284,7 +285,29 @@ def update_database(ctls):
             try:
                 dbunit = models.Unit.objects.get(controller=dbctl, serial=unit.params["serial number"])
             except models.Unit.DoesNotExist:
-                dbunit = models.Unit(controller=dbctl, serial=unit.params["serial number"])
+                devcaps = [
+                    capabilities.UnlimitedWritesCapability,
+                    capabilities.BlockbasedCapability,
+                    capabilities.BlockIOCapability,
+                    ]
+
+                if unit.unittype in ("RAID-1", "RAID-5", "RAID-6", "RAID-10", "RAID-50", "RAID-60"):
+                    devcaps.append(capabilities.FailureToleranceCapability)
+
+                rpm = min([ int(disk.params["spindle speed"].split(' ')[0]) for disk in unit.disks.values() ])
+                sas = min([ disk.type == "SAS" for disk in unit.disks.values() ])
+                if sas:
+                    if rpm >= 15000:
+                        devcaps.append(capabilities.FastSASSpeedCapability)
+                    else:
+                        devcaps.append(capabilities.SlowSASSpeedCapability)
+                else:
+                    if rpm >= 10000:
+                        devcaps.append(capabilities.FastSATASpeedCapability)
+                    else:
+                        devcaps.append(capabilities.SlowSATASpeedCapability)
+
+                dbunit = models.Unit(controller=dbctl, serial=unit.params["serial number"], capflags=capabilities.to_flags(devcaps))
 
             dbunit.index      = unit_id
             dbunit.unittype   = unit.unittype
