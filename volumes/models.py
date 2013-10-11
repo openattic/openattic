@@ -90,10 +90,23 @@ class GenericDisk(CapabilitiesAwareModel):
 
 class VolumePool(CapabilitiesAwareModel):
     """ Something that joins a couple of BlockVolumes together. """
+    volumepool_type = models.ForeignKey(ContentType, blank=True, null=True, related_name="%(class)s_volumepool_type_set")
+    volumepool      = generic.GenericForeignKey("volumepool_type", "id")
+
+    # Interface:
+    # name       -> CharField or property
 
     @property
     def member_set(self):
-        return BlockVolume.objects.filter(upper_type=ContentType.objects.get_for_model(self.__class__), upper_id=self.id)
+        return BlockVolume.objects.filter(upper_type=ContentType.objects.get_for_model(self.volumepool.__class__), upper_id=self.id)
+
+    def save(self, *args, **kwargs):
+        if self.__class__ is not VolumePool:
+            self.volumepool_type = ContentType.objects.get_for_model(self.__class__)
+        return CapabilitiesAwareModel.save(self, *args, **kwargs)
+
+    def __unicode__(self):
+        return self.volumepool.name
 
 
 class AbstractVolume(CapabilitiesAwareModel):
