@@ -26,7 +26,7 @@ Ext.define('volumes__volumes_VolumePool_model', {
     'Ext.data.NodeInterface'
   ],
   fields: [
-    'id', 'name', 'type', 'size', 'percent', 'status'
+    'id', 'name', 'type', 'megs', 'percent', 'status'
   ],
   createNode: function(record){
     var rootNode;
@@ -54,7 +54,7 @@ Ext.define('volumes__volumes_VolumePool_model', {
     lvm__VolumeGroup.lvm_info(record.raw.id, function(provider, response){
       if( response.type === "exception" ){
         rootNode.set("percent", '?');
-        rootNode.set("size", '?');
+        rootNode.set("megs", '?');
         rootNode.set("type", '?');
         rootNode.set("status", '?');
       }
@@ -63,7 +63,7 @@ Ext.define('volumes__volumes_VolumePool_model', {
           ((response.result.LVM2_VG_SIZE - response.result.LVM2_VG_FREE) /
             response.result.LVM2_VG_SIZE * 100.0).toFixed(2)
         );
-        rootNode.set("size", response.result.LVM2_VG_SIZE);
+        rootNode.set("megs", response.result.LVM2_VG_SIZE);
         rootNode.set("type", "LVM VG");
         rootNode.set("status", " ");
       }
@@ -80,8 +80,8 @@ Ext.define('volumes__volumes_GenericDisk_model', {
     'Ext.data.NodeInterface'
   ],
   fields: [
-    'id', 'name', 'type', 'size', 'percent', 'status',
-    'rpm', 'megs'
+    'id', 'name', 'type', 'megs', 'percent', 'status',
+    'rpm'
   ],
   createNode: function(record){
     record.set("leaf", true);
@@ -93,7 +93,6 @@ Ext.define('volumes__volumes_GenericDisk_model', {
       krpm = (rootNode.get("rpm") / 1000).toFixed(1);
     }
     rootNode.set("percent", null);
-    rootNode.set("size", rootNode.get("megs"));
     rootNode.set("status", "OK");
     rootNode.set("type", Ext.String.format("{0} {1}k", rootNode.get("type").toUpperCase(), krpm));
     rootNode.commit();
@@ -149,7 +148,7 @@ Ext.define('Ext.oa.volumes__VolumePool_Panel', {
         renderer: renderLoading
       },{
         header: gettext('Size'),
-        dataIndex: "size",
+        dataIndex: "megs",
         renderer: function(val){
           if( val === null ){
             return '';

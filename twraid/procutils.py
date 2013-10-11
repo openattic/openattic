@@ -315,7 +315,7 @@ def update_database(ctls):
             dbunit.rebuild    = unit.rcmpl[:-1] if unit.rcmpl != '-' else None
             dbunit.verify     = unit.vim[:-1] if unit.vim != '-' else None
             dbunit.chunksize  = int(unit.chunksize[:-1]) * 1024 if unit.chunksize != '-' else None
-            dbunit.size       = int(float(unit.totalsize) * 1024)
+            dbunit.megs       = int(float(unit.totalsize) * 1024)
             dbunit.autoverify = (unit.avrfy.lower() == 'on')
 
             dbunit.rdcache    = unit.params["read cache"]
@@ -342,7 +342,7 @@ def update_database(ctls):
             dbdisk.disktype   = disk.type
             dbdisk.encl       = models.Enclosure.objects.get(controller=dbctl, index=disk.encl_id)
             dbdisk.enclslot   = disk.slot_id
-            dbdisk.size       = int(float(disk.size[:-3]) * 1024)
+            dbdisk.megs       = int(float(disk.size[:-3]) * 1024)
             dbdisk.model      = disk.model
             if disk.unit != '-':
                 dbdisk.unit   = models.Unit.objects.get(controller=dbctl, index=disk.unit_id)

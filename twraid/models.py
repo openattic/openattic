@@ -80,7 +80,7 @@ class Unit(BlockVolume):
     rebuild     = models.IntegerField(blank=True, null=True)
     verify      = models.IntegerField(blank=True, null=True)
     chunksize   = models.IntegerField(blank=True, null=True)
-    size        = models.IntegerField()
+    megs        = models.IntegerField()
     autoverify  = models.BooleanField()
     rdcache     = models.CharField(max_length=150, blank=True)
     wrcache     = models.CharField(max_length=150, blank=True)
@@ -91,10 +91,6 @@ class Unit(BlockVolume):
     @property
     def host(self):
         return self.controller.host
-
-    @property
-    def megs(self):
-        return self.size
 
     @property
     def device(self):
@@ -120,7 +116,7 @@ class Disk(models.Model):
     disktype    = models.CharField(max_length=150)
     encl        = models.ForeignKey(Enclosure)
     enclslot    = models.IntegerField()
-    size        = models.IntegerField()
+    megs        = models.IntegerField()
     model       = models.CharField(max_length=150)
     unit        = models.ForeignKey(Unit, blank=True, null=True)
     unitindex   = models.IntegerField(blank=True, null=True)

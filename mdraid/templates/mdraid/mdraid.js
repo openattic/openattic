@@ -20,8 +20,7 @@ Ext.define('volumes__mdraid_Array_model', {
     'Ext.data.NodeInterface'
   ],
   fields: [
-    'id', 'name', 'type', 'size', 'percent', 'status',
-    "megs"
+    'id', 'name', 'type', 'megs', 'percent', 'status'
   ],
   createNode: function(record){
     console.log("volumes__mdraid_Array_model.createNode!");
@@ -48,7 +47,6 @@ Ext.define('volumes__mdraid_Array_model', {
       rootNode = this.callParent(arguments);
     }
     rootNode.set("percent", null);
-    rootNode.set("size", record.get("megs"));
     rootNode.set("status", "OK");
     rootNode.commit();
     return rootNode;
