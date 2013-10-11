@@ -28,6 +28,7 @@ class Array(BlockVolume):
     name        = models.CharField(max_length=50)
     megs        = models.IntegerField()
     host        = models.ForeignKey(Host)
+    type        = models.CharField(max_length=50)
 
     @property
     def device(self):
