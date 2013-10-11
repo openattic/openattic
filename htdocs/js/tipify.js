@@ -12,7 +12,6 @@
 */
 
 function mkFocusFunc(tiptext){
-  "use strict";
   return function( self ){
     if( !Ext.state.Manager.get("form_tooltip_show", true) ){
       return;
@@ -36,7 +35,6 @@ function mkFocusFunc(tiptext){
 }
 
 function mkBlurFunc(){
-  "use strict";
   return function( self ){
     if( self.fieldtip ){
       self.fieldtip.hide();
@@ -45,7 +43,6 @@ function mkBlurFunc(){
 }
 
 function tipify(config, tiptext){
-  "use strict";
   if( typeof config.listeners === "undefined" ){
     config.listeners = {};
   }

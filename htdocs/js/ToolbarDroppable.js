@@ -38,7 +38,6 @@ Ext.define('Ext.ux.ToolbarDroppable', {
      * @constructor
      */
     constructor: function(config) {
-        "use strict";
         Ext.apply(this, config, {
         });
     },
@@ -48,7 +47,6 @@ Ext.define('Ext.ux.ToolbarDroppable', {
      * @param {Ext.Toolbar} toolbar The toolbar instance
      */
     init: function(toolbar) {
-        "use strict";
         /**
         * @property toolbar
         * @type Ext.Toolbar
@@ -66,7 +64,6 @@ Ext.define('Ext.ux.ToolbarDroppable', {
      * Creates a drop target on the toolbar
      */
     createDropTarget: function() {
-        "use strict";
         /**
          * @property dropTarget
          * @type Ext.dd.DropTarget
@@ -83,7 +80,6 @@ Ext.define('Ext.ux.ToolbarDroppable', {
      * @param {String} ddGroup The DD Group
      */
     addDDGroup: function(ddGroup) {
-        "use strict";
         this.dropTarget.addToGroup(ddGroup);
     },
 
@@ -94,7 +90,6 @@ Ext.define('Ext.ux.ToolbarDroppable', {
      * @return {Number} The index at which to insert the new button
      */
     calculateEntryIndex: function(e) {
-        "use strict";
         var entryIndex = 0,
             toolbar    = this.toolbar,
             items      = toolbar.items.items,
@@ -129,7 +124,6 @@ Ext.define('Ext.ux.ToolbarDroppable', {
      * @return {Boolean} True if the drop is allowed
      */
     canDrop: function(data) {
-        "use strict";
         return true;
     },
 
@@ -138,7 +132,6 @@ Ext.define('Ext.ux.ToolbarDroppable', {
      * @return {String} The CSS class to add
      */
     notifyOver: function(dragSource, event, data) {
-        "use strict";
         return this.canDrop.apply(this, arguments) ? this.dropTarget.dropAllowed : this.dropTarget.dropNotAllowed;
     },
 
@@ -147,7 +140,6 @@ Ext.define('Ext.ux.ToolbarDroppable', {
      * and calls the afterLayout callback.
      */
     notifyDrop: function(dragSource, event, data) {
-        "use strict";
         var canAdd = this.canDrop(dragSource, event, data),
             tbar   = this.toolbar,
             entryIndex;
@@ -170,7 +162,6 @@ Ext.define('Ext.ux.ToolbarDroppable', {
      * @return {Mixed} An item that can be added to a toolbar
      */
     createItem: function(data) {
-        "use strict";
         throw new Error("The createItem method must be implemented in the ToolbarDroppable plugin");
     },
 

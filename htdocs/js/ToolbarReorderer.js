@@ -45,7 +45,6 @@ Ext.define('Ext.ux.ToolbarReorderer', {
      * Initializes the plugin, decorates the toolbar with additional functionality
      */
     init: function(toolbar) {
-        "use strict";
         /**
          * This is used to store the correct x value of each button in the array. We need to use this
          * instead of the button's reported x co-ordinate because the buttons are animated when they move -
@@ -69,7 +68,6 @@ Ext.define('Ext.ux.ToolbarReorderer', {
      * @param {Mixed} button The item to make draggable (usually an Ext.Button instance)
      */
     createItemDD: function(button) {
-        "use strict";
         if( typeof button.dd !== "undefined"){
             return;
         }
@@ -187,7 +185,6 @@ Ext.define('Ext.ux.ToolbarReorderer', {
     },
 
     onMovedLeft: function(item, newIndex, oldIndex) {
-        "use strict";
         var tbar  = this.target,
             items = tbar.items.items,
             index, obj, newX, el;
@@ -214,7 +211,6 @@ Ext.define('Ext.ux.ToolbarReorderer', {
     },
 
     onMovedRight: function(item, newIndex, oldIndex) {
-        "use strict";
         this.onMovedLeft.apply(this, arguments);
     },
 
@@ -223,7 +219,6 @@ Ext.define('Ext.ux.ToolbarReorderer', {
      * Updates the internal cache of button X locations.
      */
     updateButtonXCache: function() {
-        "use strict";
         var tbar   = this.target,
             items  = tbar.items,
             totalX = tbar.getEl().getBox(true).x;

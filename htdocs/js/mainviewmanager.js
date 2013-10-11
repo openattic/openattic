@@ -267,7 +267,6 @@ Ext.define('Ext.oa.MainViewManager', {
   },
 
   treenodeClicked: function( view, record, itemel, itemidx, event, evopts ){
-    "use strict";
     var i;
     if( record.data.panel !== "" ){
       this.switchComponent( record.data.panel );
