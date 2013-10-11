@@ -83,7 +83,6 @@ Ext.define('Ext.oa.MenuTree', {
     }
   }),
   appendToRootNodeById: function(rootid, subnode){
-    "use strict";
     var i, root = this.store.getRootNode();
     for( i = 0; i < root.childNodes.length; i++ ){
       if( root.childNodes[i].data.id === rootid ){
@@ -92,7 +91,6 @@ Ext.define('Ext.oa.MenuTree', {
     }
   },
   markAsActive: function(panel, parent){
-    "use strict";
     var i;
     if( parent ){
       for( i = 0; i < parent.childNodes.length; i++ ){

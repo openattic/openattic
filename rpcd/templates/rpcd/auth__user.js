@@ -26,7 +26,6 @@ Ext.define('Ext.oa.Auth__User_Panel', {
     text: gettext('Show Volumes of User'),
     icon: MEDIA_URL + "/oxygen/16x16/emblems/emblem-unmounted.png",
     handler: function(btn){
-      "use strict";
       var sm = this.getSelectionModel();
       var self = this;
       if( sm.hasSelection() ){
@@ -150,7 +149,6 @@ Ext.define('Ext.oa.Auth__User_Panel', {
     }]
   },
   deleteFunction: function(){
-    "use strict";
     var sm = this.getSelectionModel();
     var self = this;
     if( sm.hasSelection() ){
@@ -187,7 +185,6 @@ Ext.oa.Auth__User_Module = {
   panel: "auth__user_panel",
 
   prepareMenuTree: function(tree){
-    "use strict";
     tree.appendToRootNodeById("menu_system", {
       text: gettext('User Management'),
       icon: MEDIA_URL + '/icons2/22x22/apps/config-users.png',

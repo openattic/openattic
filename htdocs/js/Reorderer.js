@@ -61,7 +61,6 @@ Ext.define('Ext.ux.Reorderer', {
      * @param {Object} config Optional config object
      */
     constructor: function(config) {
-        "use strict";
         Ext.apply(this, config || {}, this.defaults);
     },
 
@@ -75,7 +74,6 @@ Ext.define('Ext.ux.Reorderer', {
          * @type Ext.Component
          * Reference to the target component which contains the reorderable items
          */
-        "use strict";
         var i;
         this.target = target;
 
@@ -97,7 +95,6 @@ Ext.define('Ext.ux.Reorderer', {
      * @param {Object} mappings Object containing current item index as key and new index as property
      */
     reorder: function(mappings) {
-        "use strict";
         var target = this.target;
 
         if (target.fireEvent('before-reorder', mappings, target, this) !== false) {
@@ -112,7 +109,6 @@ Ext.define('Ext.ux.Reorderer', {
      * @param {Object} mappings Mappings of the old item indexes to new item indexes
      */
     doReorder: function(paramName) {
-        "use strict";
         throw new Error("doReorder must be implemented in the Ext.ux.Reorderer subclass");
     },
 
@@ -121,7 +117,6 @@ Ext.define('Ext.ux.Reorderer', {
      * @param {Mixed} button The item to make draggable (usually an Ext.Button instance)
      */
     createItemDD: function(button) {
-        "use strict";
         var el   = button.getEl(),
             id   = el.id,
             tbar = this.target,
@@ -203,7 +198,6 @@ Ext.define('Ext.ux.Reorderer', {
      * @param {Mixed} item The item
      */
     createIfReorderable: function(item) {
-        "use strict";
         if (this.defaultReorderable && typeof item.reorderable === "undefined"){
             item.reorderable = true;
         }
@@ -223,7 +217,6 @@ Ext.define('Ext.ux.Reorderer', {
      * @return {Array} The array of items which will be made draggable
      */
     getItems: function() {
-        "use strict";
         return this.target.items.items;
     },
 
@@ -231,7 +224,6 @@ Ext.define('Ext.ux.Reorderer', {
      * Adds before-reorder and reorder events to the target component
      */
     initEvents: function() {
-        "use strict";
         this.target.addEvents(
           /**
            * @event before-reorder

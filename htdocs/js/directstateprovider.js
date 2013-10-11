@@ -14,7 +14,6 @@
 Ext.define('Ext.state.DirectStateProvider', {
   extend: 'Ext.state.Provider',
   constructor: function(name, defaultValue){
-    "use strict";
     Ext.state.DirectStateProvider.superclass.constructor.call(this);
     if( window.InitDirectState ){
       this.state = window.InitDirectState;
@@ -27,12 +26,10 @@ Ext.define('Ext.state.DirectStateProvider', {
     }
   },
   clear: function(name){
-    "use strict";
     userprefs__UserProfile.clear_preference(name);
     Ext.state.DirectStateProvider.superclass.set.call(this, name);
   },
   set: function(name, value){
-    "use strict";
     if( typeof value === "undefined" || value === null ){
       userprefs__UserProfile.clear_preference(name);
     }

@@ -72,7 +72,6 @@ Ext.define('Ext.oa.Portal', {
   },
 
   savePortlets: function(){
-    "use strict";
     var portal = this;
     var state = [];
     var c, p, colIds, col;
@@ -88,7 +87,6 @@ Ext.define('Ext.oa.Portal', {
   },
 
   makePortlet: function(config){
-    "use strict";
     var portlet = Ext.applyIf(config, {
       xtype: "portlet",
       tools: this.portletTools
@@ -100,7 +98,6 @@ Ext.define('Ext.oa.Portal', {
   },
 
   prepareMenuTree: function(tree){
-    "use strict";
     tree.appendToRootNodeById("menu_status", {
       text: 'Dashboard',
       leaf: true,

@@ -14,7 +14,6 @@
 Ext.namespace("Ext.oa");
 
 Ext.oa.getDefaultPortlets = function(tools){
-  "use strict";
   return [{
     title: 'LVs',
     layout:'fit',

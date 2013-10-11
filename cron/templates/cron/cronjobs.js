@@ -125,7 +125,6 @@ Ext.define('Ext.oa.Cron__Job_Panel', {
     ]
   },
   deleteConfirm: function(sel, handler, scope){
-    "use strict";
     Ext.Msg.confirm(
       this.texts.remove,
       interpolate( gettext('Really delete this job?') + "<br />%s", [sel.data.command] ),
@@ -138,7 +137,6 @@ Ext.define('Ext.oa.Cron__Job_Panel', {
 Ext.oa.Cron__Job_Module = {
   panel: "cron__job_panel",
   prepareMenuTree: function(tree){
-    "use strict";
     tree.appendToRootNodeById("menu_services", {
       text: gettext('Cron Jobs'),
       leaf: true,
