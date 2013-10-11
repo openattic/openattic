@@ -29,6 +29,13 @@ class EnclosureHandler(ModelHandler):
 class UnitHandler(ModelHandler):
     model = Unit
 
+    def _override_get(self, obj, data):
+        data["disk_set"] = []
+        handler = self._get_handler_instance(Disk)
+        for disk in obj.disk_set.all():
+            data["disk_set"].append( handler._idobj(disk) )
+        return data
+
     def find_by_vg(self, id):
         vg = VolumeGroup.objects.get(id=id)
         return [self._getobj(unit) for unit in Unit.objects.find_by_vg(vg)]
