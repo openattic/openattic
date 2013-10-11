@@ -82,7 +82,6 @@ Ext.define('Ext.oa.Lio__Portal_Panel', {
 Ext.oa.Lio__Portal_Module = {
   panel: "lio__portal_panel",
   prepareMenuTree: function(tree){
-    "use strict";
     tree.appendToRootNodeById("menu_luns", {
       text: gettext('Network Portals'),
       leaf: true,
