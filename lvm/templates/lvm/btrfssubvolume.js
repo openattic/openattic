@@ -134,7 +134,6 @@ Ext.define('Ext.oa.Lvm__BtrfsSubvolume_Panel', {
 Ext.oa.Lvm__BtrfsSubvolume_Module =  {
   panel: "lvm__btrfssubvolume_panel",
   prepareMenuTree: function(tree){
-    "use strict";
     tree.appendToRootNodeById("menu_storage", {
       text: gettext('BTRFS'),
       leaf: true,
