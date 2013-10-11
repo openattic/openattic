@@ -33,7 +33,7 @@
  * created and inserted into the Toolbar. Use this for any logic that needs to be run after
  * the item has been created.
  */
-Ext.ux.ToolbarDroppable = Ext.extend(Object, {
+Ext.define('Ext.ux.ToolbarDroppable', {
     /**
      * @constructor
      */
@@ -73,8 +73,8 @@ Ext.ux.ToolbarDroppable = Ext.extend(Object, {
          * The drop target attached to the toolbar instance
          */
         this.dropTarget = new Ext.dd.DropTarget(this.toolbar.getEl(), {
-            notifyOver: this.notifyOver.createDelegate(this),
-            notifyDrop: this.notifyDrop.createDelegate(this)
+            notifyOver: Ext.bind(this.notifyOver, this),
+            notifyDrop: Ext.bind(this.notifyDrop, this)
         });
     },
 

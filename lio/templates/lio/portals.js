@@ -13,7 +13,9 @@
 
 Ext.namespace("Ext.oa");
 
-Ext.oa.Lio__Portal_Panel = Ext.extend(Ext.oa.ShareGridPanel, {
+Ext.define('Ext.oa.Lio__Portal_Panel', {
+  alias:  "widget.lio__portal_panel",
+  extend: 'Ext.oa.ShareGridPanel',
   api: lio__Portal,
   id: "lio__portal_panel_inst",
   title: "LIO: Network Portals",
@@ -44,13 +46,23 @@ Ext.oa.Lio__Portal_Panel = Ext.extend(Ext.oa.ShareGridPanel, {
       xtype:      'combo',
       fieldLabel: gettext('Address'),
       allowBlank: false,
-      hiddenName: 'ipaddress',
-      store: new Ext.data.DirectStore({
-        fields: ["app", "obj", "id", "__unicode__"],
-        directFn: ifconfig__IPAddress.ids,
-      }),
+      name: 'ipaddress',
+      store: (function(){
+        Ext.define('Ext.oa.Lio__Portal_IP_Model', {
+            extend: 'Ext.data.Model',
+            fields: ["app", "obj", "id", "__unicode__"]
+        });
+        return {
+          model: "Ext.oa.Lio__Portal_IP_Model",
+          proxy: {
+            type: "direct",
+            directFn: ifconfig__IPAddress.ids
+          },
+        };
+      }()),
       typeAhead:     true,
       triggerAction: 'all',
+      deferEmptyText: false,
       emptyText:     gettext('Select...'),
       selectOnFocus: true,
       displayField:  '__unicode__',
@@ -66,23 +78,21 @@ Ext.oa.Lio__Portal_Panel = Ext.extend(Ext.oa.ShareGridPanel, {
 });
 
 
-Ext.reg("lio__portal_panel", Ext.oa.Lio__Portal_Panel);
 
-// Ext.oa.Lio__Portal_Module = Ext.extend(Object, {
-//   panel: "lio__portal_panel",
-//   prepareMenuTree: function(tree){
-//     "use strict";
-//     tree.appendToRootNodeById("menu_luns", {
-//       text: gettext('Network Portals'),
-//       leaf: true,
-//       icon: MEDIA_URL + '/icons2/22x22/apps/nfs.png',
-//       panel: 'lio__portal_panel_inst',
-//       href: '#'
-//     });
-//   }
-// });
+Ext.oa.Lio__Portal_Module = {
+  panel: "lio__portal_panel",
+  prepareMenuTree: function(tree){
+    "use strict";
+    tree.appendToRootNodeById("menu_luns", {
+      text: gettext('Network Portals'),
+      leaf: true,
+      icon: MEDIA_URL + '/icons2/22x22/apps/nfs.png',
+      panel: 'lio__portal_panel_inst'
+    });
+  }
+};
 
 
-// window.MainViewModules.push( new Ext.oa.Lio__Portal_Module() );
+window.MainViewModules.push( Ext.oa.Lio__Portal_Module );
 
 // kate: space-indent on; indent-width 2; replace-tabs on;

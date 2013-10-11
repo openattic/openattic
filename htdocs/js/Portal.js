@@ -13,9 +13,9 @@
 
 Ext.namespace("Ext.oa");
 
-Ext.oa.Portal = Ext.extend(Ext.ux.Portal, {
+Ext.define('Ext.oa.Portal', {
+  extend: 'Ext.app.PortalPanel',
   initComponent: function(){
-    "use strict";
     var tools = [{
       id: 'close',
       handler: function(e, target, panel){
@@ -24,8 +24,9 @@ Ext.oa.Portal = Ext.extend(Ext.ux.Portal, {
     }];
     Ext.apply(this, Ext.apply(this.initialConfig, {
       id: "dashboard_inst",
-      region:'center',
-      margins:'35 5 5 0',
+      title: gettext("Dashboard"),
+      region: 'center',
+      border: false,
       portletTools: tools,
       items: (function(){
         var state = Ext.state.Manager.get("portalstate",
@@ -66,7 +67,7 @@ Ext.oa.Portal = Ext.extend(Ext.ux.Portal, {
         return items;
       }())
     }));
-    Ext.oa.Portal.superclass.initComponent.apply(this, arguments);
+    this.callParent(arguments);
     this.on("drop", this.savePortlets, this);
   },
 
@@ -104,13 +105,9 @@ Ext.oa.Portal = Ext.extend(Ext.ux.Portal, {
       text: 'Dashboard',
       leaf: true,
       icon: MEDIA_URL + '/icons2/22x22/apps/gnome-session.png',
-      panel: this,
-      href: '#'
+      panel: this
     });
   }
 });
-
-
-window.MainViewModules.unshift( new Ext.oa.Portal() );
 
 // kate: space-indent on; indent-width 2; replace-tabs on;

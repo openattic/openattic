@@ -13,13 +13,14 @@
 
 Ext.namespace("Ext.oa");
 
-Ext.oa.Zfs__Subvolume__Panel = Ext.extend(Ext.grid.GridPanel, {
+Ext.define('Ext.oa.Zfs__Subvolume__Panel', {
+  alias: 'widget.zfs__subvolume__panel',
+  extend: 'Ext.grid.GridPanel',
   showEditWindow: function(config, record){
-    "use strict";
     var subvolumegrid = this;
     var addwin = Ext.oa.getShareEditWindow(Ext.apply(config, {
       api: lvm__ZfsSubvolume,
-      success: function(){ subvolumegrid.store.reload(); },
+      success: function(){ subvolumegrid.store.load(); },
       form: {
         items: [{
           xtype: 'fieldset',
@@ -33,16 +34,28 @@ Ext.oa.Zfs__Subvolume__Panel = Ext.extend(Ext.grid.GridPanel, {
           },{
             xtype: 'combo',
             name: "volume_",
-            hiddenName: 'volume',
+            name: 'volume',
             allowBlank: false,
             fieldLabel: gettext('Volume'),
-            store: {
-              xtype: "directstore",
-              fields: ['name', 'id'],
-              baseParams: { "field": "name", kwds: {"filesystem":"zfs" }},
-              paramOrder: ["field", "query", "kwds"],
-              directFn: lvm__LogicalVolume.filter_combo
-            },
+            store: (function(){
+              Ext.define('zfssubvolume_volumes_filter_store', {
+                extend: 'Ext.data.Model',
+                fields: [
+                  {name: 'name'},
+                  {name: 'id'}
+                ]
+              });
+              return Ext.create('Ext.data.Store', {
+                model: "zfssubvolume_volumes_filter_store",
+                proxy: {
+                  type: 'direct',
+                  directFn: lvm__LogicalVolume.filter_combo,
+                  paramOrder: ["field", "query", "kwds"],
+                  extraParams: { "field": "name", kwds: {"filesystem":"zfs" }},
+                }
+              });
+            }()),
+            deferEmptyText: false,
             emptyText: "Select...",
             triggerAction: "all",
             selectOnFocus: true,
@@ -56,7 +69,6 @@ Ext.oa.Zfs__Subvolume__Panel = Ext.extend(Ext.grid.GridPanel, {
     addwin.show();
   },
   initComponent: function(){
-    "use strict";
     var subvolumegrid = this;
     Ext.apply(this, Ext.apply(this.initialConfig, {
       id: "zfs__subvolume_panel_inst",
@@ -66,7 +78,7 @@ Ext.oa.Zfs__Subvolume__Panel = Ext.extend(Ext.grid.GridPanel, {
         icon: MEDIA_URL + "/icons2/16x16/actions/reload.png",
         tooltip: gettext('Reload'),
         handler: function(self){
-          subvolumegrid.store.reload();
+          subvolumegrid.store.load();
         }
       },{
         text: gettext('Create Subvolume'),
@@ -86,39 +98,47 @@ Ext.oa.Zfs__Subvolume__Panel = Ext.extend(Ext.grid.GridPanel, {
         scope: subvolumegrid
       }],
       keys: [{ scope: subvolumegrid, key: [Ext.EventObject.DELETE], handler: this.deleteFunction}],
-      store: new Ext.data.DirectStore({
-        //autoLoad: true,
-        fields: ['id','volname',{
-          name: 'orivolume',mapping: 'volume',convert: function(val, row) {
-            if( val === null ){
-              return null;
-            }
-            return val.name;
+
+      store: (function(){
+        Ext.define('zfssubvolume_volumes_store', {
+          extend: 'Ext.data.Model',
+          fields: [
+            {name: 'id'},
+            {name: 'volname'},
+            {name: 'orivolume',mapping: 'volume',convert: function(val, row) {
+              if( val === null ){
+                return null;
+              }
+              return val.name;
+            }}
+          ]
+        });
+        return Ext.create('Ext.data.Store', {
+          model: "zfssubvolume_volumes_store",
+          proxy: {
+            type: 'direct',
+            directFn: lvm__ZfsSubvolume.all
           }
-        }],
-        directFn: lvm__ZfsSubvolume.all
-      }),
-      viewConfig: { forceFit: true },
-      colModel: new Ext.grid.ColumnModel({
-        defaults: {
-          sortable: true
-        },
-        columns: [{
-          header: gettext('Subvolume'),
-          dataIndex: "volname"
-        },{
-          header: gettext('Volume'),
-          dataIndex: "orivolume"
-        }]
-      })
+        });
+      }()),
+      forceFit: true,
+      defaults: {
+        sortable: true
+      },
+      columns: [{
+        header: gettext('Subvolume'),
+        dataIndex: "volname"
+      },{
+        header: gettext('Volume'),
+        dataIndex: "orivolume"
+      }]
     }));
-    Ext.oa.Zfs__Subvolume__Panel.superclass.initComponent.apply(this, arguments);
+    this.callParent(arguments);
   },
   deleteFunction: function(self){
-    "use strict";
     var sm = this.getSelectionModel();
     if( sm.hasSelection() ){
-      var sel = sm.selections.items[0];
+      var sel = sm.selected.items[0];
       Ext.Msg.confirm(
         gettext('Confirm delete'),
         interpolate(
@@ -126,7 +146,7 @@ Ext.oa.Zfs__Subvolume__Panel = Ext.extend(Ext.grid.GridPanel, {
         function(btn){
           if(btn === 'yes'){
             lvm__ZfsSubvolume.remove( sel.data.id, function(provider, response){
-            sel.store.reload();
+            sel.store.load();
             });
           }
         }
@@ -134,9 +154,8 @@ Ext.oa.Zfs__Subvolume__Panel = Ext.extend(Ext.grid.GridPanel, {
     }
   },
   onRender: function(){
-    "use strict";
-    Ext.oa.Zfs__Subvolume__Panel.superclass.onRender.apply(this, arguments);
-    this.store.reload();
+    this.callParent(arguments);
+    this.store.load();
     var self = this;
     var menu = new Ext.menu.Menu({
       items: [{
@@ -160,7 +179,6 @@ Ext.oa.Zfs__Subvolume__Panel = Ext.extend(Ext.grid.GridPanel, {
   }
 });
 
-Ext.reg("zfs__subvolume_panel", Ext.oa.Zfs__Subvolume__Panel);
 
 
 // kate: space-indent on; indent-width 2; replace-tabs on;

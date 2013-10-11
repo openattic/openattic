@@ -13,7 +13,9 @@
 
 Ext.namespace("Ext.oa");
 
-Ext.oa.Samba__Share_Panel = Ext.extend(Ext.oa.ShareGridPanel, {
+Ext.define('Ext.oa.Samba__Share_Panel', {
+  alias: 'widget.samba__share_panel',
+  extend: 'Ext.oa.ShareGridPanel',
   api: samba__Share,
   id: "samba__share_panel_inst",
   title: gettext("Samba"),
@@ -43,12 +45,13 @@ Ext.oa.Samba__Share_Panel = Ext.extend(Ext.oa.ShareGridPanel, {
         xtype:'volumefield',
         listeners: {
           select: function(self, record, index){
-            "use strict";
-            lvm__LogicalVolume.get( record.data.id, function( provider, response ){
-              self.ownerCt.namefield.setValue( response.result.name );
-              self.ownerCt.namefield.enable();
-              self.ownerCt.dirfield.setValue( response.result.fs.topleveldir );
-              self.ownerCt.dirfield.enable();
+            var namefield = Ext.ComponentQuery.query("[name=name]", self.ownerCt)[0];
+            var dirfield  = Ext.ComponentQuery.query("[name=path]", self.ownerCt)[0];
+            lvm__LogicalVolume.get( record[0].data.id, function( provider, response ){
+              namefield.setValue( response.result.name );
+              namefield.enable();
+              dirfield.setValue( response.result.fs.topleveldir );
+              dirfield.enable();
             } );
           }
         }
@@ -57,61 +60,52 @@ Ext.oa.Samba__Share_Panel = Ext.extend(Ext.oa.ShareGridPanel, {
         fieldLabel: gettext('Share name'),
         allowBlank: false,
         name: "name",
-        ref: 'namefield',
         disabled: true
       },{
         xtype: 'textfield',
         fieldLabel: gettext('Path'),
         allowBlank: false,
         name: "path",
-        ref: 'dirfield',
         disabled: true
       }, {
         xtype: 'checkbox',
         fieldLabel: gettext('Browseable'),
         allowBlank: false,
         name: "browseable",
-        ref: 'browseablefield',
         checked: true
       }, {
         xtype: 'checkbox',
         fieldLabel: gettext('Available'),
         allowBlank: false,
         name: "available",
-        ref: 'availablefield',
         checked: true
       }, {
         xtype: 'checkbox',
         fieldLabel: gettext('Writeable'),
         allowBlank: false,
         name: "writeable",
-        ref: 'writeablefield',
         checked: true
       }, {
         xtype: 'checkbox',
         fieldLabel: gettext('Guest OK'),
         allowBlank: false,
         name: "guest_ok",
-        ref: 'guestokfield'
       }, tipify({
         xtype: 'textfield',
         fieldLabel: gettext('Dir Mode'),
         allowBlank: false,
         name: "dir_mode",
-        ref: 'dirmodefield',
         value:     '0775'
       },gettext('Set rights for the Directory')), {
         xtype: 'textfield',
         fieldLabel: gettext('Comment'),
         allowBlank: true,
         name: "comment",
-        ref: 'commentfield'
       }, tipify({
         xtype: 'textfield',
         fieldLabel: gettext('Create Mode'),
         allowBlank: false,
         name: "create_mode",
-        ref: 'createmodefield',
         value:     '0664'
       }, gettext('Set rights for owner, group and others') ) ]
     }]
@@ -120,23 +114,19 @@ Ext.oa.Samba__Share_Panel = Ext.extend(Ext.oa.ShareGridPanel, {
 
 
 
-Ext.reg("samba__share_panel", Ext.oa.Samba__Share_Panel);
-
-Ext.oa.Samba__Share_Module = Ext.extend(Object, {
+Ext.oa.Samba__Share_Module = {
   panel: "samba__share_panel",
   prepareMenuTree: function(tree){
-    "use strict";
     tree.appendToRootNodeById("menu_shares", {
       text: gettext('Windows (CIFS)'),
       leaf: true,
       icon: MEDIA_URL + '/icons2/22x22/apps/samba.png',
-      panel: "samba__share_panel_inst",
-      href: '#'
+      panel: "samba__share_panel_inst"
     });
   }
-});
+};
 
 
-window.MainViewModules.push( new Ext.oa.Samba__Share_Module() );
+window.MainViewModules.push( Ext.oa.Samba__Share_Module );
 
 // kate: space-indent on; indent-width 2; replace-tabs on;

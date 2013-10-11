@@ -13,7 +13,9 @@
 
 Ext.namespace("Ext.oa");
 
-Ext.oa.Lvm__BtrfsSubvolume_Panel = Ext.extend(Ext.oa.ShareGridPanel, {
+Ext.define('Ext.oa.Lvm__BtrfsSubvolume_Panel', {
+  alias: 'widget.lvm__btrfssubvolume_panel',
+  extend: 'Ext.oa.ShareGridPanel',
   api: lvm__BtrfsSubvolume,
   id: "lvm_btrfssubvolume_panel_inst",
   title: "BTRFS",
@@ -40,7 +42,7 @@ Ext.oa.Lvm__BtrfsSubvolume_Panel = Ext.extend(Ext.oa.ShareGridPanel, {
     width: 200,
     dataIndex: "readonly",
     renderer: function(val, x, record){
-      if( record.json.snapshot === null ) return '';
+      if( record.raw.snapshot === null ) return '';
       return Ext.oa.renderBoolean(val, x, record);
     }
   }],
@@ -67,17 +69,17 @@ Ext.oa.Lvm__BtrfsSubvolume_Panel = Ext.extend(Ext.oa.ShareGridPanel, {
         },
         tipify({
           xtype: 'volumefield',
-          baseParams: {
+          extraParams: {
             kwds: {
               filesystem: "btrfs"
             }
           },
           listeners: {
             select: function(self, record, index){
-              "use strict";
-              self.ownerCt.origfield.store.baseParams.volume__id = record.data.id;
-              self.ownerCt.origfield.store.reload();
-              self.ownerCt.origfield.enable();
+              var origfield = Ext.ComponentQuery.query("[name=snapshot]", self.ownerCt)[0];
+              origfield.store.proxy.extraParams.volume__id = record[0].data.id;
+              origfield.store.load();
+              origfield.enable();
             }
           }
         }, gettext('Please select the base volume.')),
@@ -85,30 +87,40 @@ Ext.oa.Lvm__BtrfsSubvolume_Panel = Ext.extend(Ext.oa.ShareGridPanel, {
           xtype:      'combo',
           allowBlank: true,
           fieldLabel: gettext('Snapshot of...'),
-          hiddenName: 'snapshot',
-          store: {
-            xtype: "directstore",
-            fields: ["id", "name"],
-            directFn: lvm__BtrfsSubvolume.filter_combo,
-            paramOrder: ["field", "query", "kwds"],
-            baseParams: {
-              field: "name",
-              query: "",
-              kwds: {
-                snapshot__isnull: true
+          name: 'snapshot',
+          store: (function(){
+            Ext.define('btrfssubvolume_filter_store_model', {
+              extend: 'Ext.data.Model',
+              fields: [
+                {name: 'id'},
+                {name: 'name'}
+              ]
+            });
+            return Ext.create('Ext.data.Store', {
+              model: "btrfssubvolume_filter_store_model",
+              proxy: {
+                type: 'direct',
+                directFn: lvm__BtrfsSubvolume.filter_combo,
+                paramOrder: ["field", "query", "kwds"],
+                extraParams: {
+                  field: "name",
+                  query: "",
+                  kwds: {
+                  snapshot__isnull: true
+                  }
+                }
               }
-            }
-          },
+            });
+          }()),
           typeAhead:     true,
           disabled:      true,
           triggerAction: 'all',
+          deferEmptyText: false,
           emptyText:     gettext('Select...'),
           selectOnFocus: true,
           displayField:  'name',
-          valueField:    'id',
-          ref:           'origfield'
-        },
-        {
+          valueField:    'id'
+        }, {
           xtype: 'checkbox',
           fieldLabel: gettext('Read Only'),
           name: "readonly"
@@ -119,23 +131,20 @@ Ext.oa.Lvm__BtrfsSubvolume_Panel = Ext.extend(Ext.oa.ShareGridPanel, {
 });
 
 
-Ext.reg("lvm_btrfssubvolume_panel", Ext.oa.Lvm__BtrfsSubvolume_Panel);
-
-Ext.oa.Lvm__BtrfsSubvolume_Module = Ext.extend(Object, {
-  panel: "lvm_btrfssubvolume_panel",
+Ext.oa.Lvm__BtrfsSubvolume_Module =  {
+  panel: "lvm__btrfssubvolume_panel",
   prepareMenuTree: function(tree){
     "use strict";
     tree.appendToRootNodeById("menu_storage", {
       text: gettext('BTRFS'),
       leaf: true,
       icon: MEDIA_URL + '/icons2/22x22/mimetypes/ascii.png',
-      panel: 'lvm_btrfssubvolume_panel_inst',
-      href: '#'
+      panel: 'lvm_btrfssubvolume_panel_inst'
     });
   }
-});
+};
 
 
-window.MainViewModules.push( new Ext.oa.Lvm__BtrfsSubvolume_Module() );
+window.MainViewModules.push( Ext.oa.Lvm__BtrfsSubvolume_Module );
 
 // kate: space-indent on; indent-width 2; replace-tabs on;

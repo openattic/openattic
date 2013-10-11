@@ -13,10 +13,11 @@
 
 Ext.namespace("Ext.oa");
 
-Ext.oa.Auth__UserField = Ext.extend(Ext.form.ComboBox, {
+Ext.define('Ext.oa.Auth__UserField', {
+  alias: 'widget.auth__userfield',
+  extend :'Ext.form.ComboBox',
   initComponent: function(){
-    "use strict";
-    var baseParams = {
+    var extraParams = {
       "field": "username",
       "kwds": {},
       "query": ""
@@ -25,43 +26,37 @@ Ext.oa.Auth__UserField = Ext.extend(Ext.form.ComboBox, {
     Ext.apply(this, Ext.applyIf(this.initialConfig, {
       fieldLabel: gettext('Owner'),
       store: (function(){
-        var store = new Ext.data.DirectStore({
-          fields: ["username", "id"],
-          baseParams: { fields: ["username", "id"] },
-          directFn: auth__User.all_values
+        Ext.define('rpcd_owner_store', {
+          extend: 'Ext.data.Model',
+          fields: [
+            {name: 'username'},
+            {name: 'id'}
+          ]
         });
-        store.setDefaultSort("username");
+        var store = Ext.create('Ext.data.Store', {
+          model: "rpcd_owner_store",
+          proxy: {
+            type: 'direct',
+            directFn: auth__User.all_values,
+            paramOrder: ["fields"],
+            extraParams: { fields: ["username", "id"] },
+          },
+          sorters: [{property: "username"}]
+        });
         return store;
       }()),
       typeAhead:     true,
       forceSelection: true,
       triggerAction: 'all',
+      deferEmptyText: false,
       emptyText:     gettext('Select...'),
       selectOnFocus: true,
       displayField:  'username',
       valueField:    'id'
     }));
-    Ext.oa.Auth__UserField.superclass.initComponent.apply(this, arguments);
-  },
-
-  setValue: function(value){
-    "use strict";
-    // Make sure the store is loaded before trying to display stuff.
-    if( !this.store.data.length ){
-      var self = this;
-      this.store.load({
-        callback: function(){
-          Ext.oa.Auth__UserField.superclass.setValue.apply(self, [value]);
-        }
-      });
-    }
-    else{
-      Ext.oa.Auth__UserField.superclass.setValue.apply(this, arguments);
-    }
+    this.callParent(arguments);
   }
 });
-
-Ext.reg("authuserfield", Ext.oa.Auth__UserField);
 
 // kate: space-indent on; indent-width 2; replace-tabs on;
 

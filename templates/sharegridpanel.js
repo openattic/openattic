@@ -15,7 +15,6 @@ Ext.namespace("Ext.oa");
 
 
 Ext.oa.getShareEditWindow = function(config, record){
-  "use strict";
   Ext.applyIf(config, {
     height: 200,
     width: 500,
@@ -77,7 +76,7 @@ Ext.oa.getShareEditWindow = function(config, record){
                 addwin.getEl().unmask();
               }
             };
-            var datform = btn.ownerCt.ownerCt.getForm();
+            var datform = btn.ownerCt.ownerCt;
             if( datform.aboutToSubmit(btn, conf) === true ){
               datform.submit(conf);
             }
@@ -112,7 +111,9 @@ Ext.oa.getShareEditWindow = function(config, record){
 }
 
 
-Ext.oa.ShareGridPanel = Ext.extend(Ext.grid.GridPanel, {
+Ext.define('Ext.oa.ShareGridPanel', {
+  extend: 'Ext.grid.Panel',
+  alias: 'sharegridpanel',
   api: null,
   form: {},
   texts: {},
@@ -124,7 +125,6 @@ Ext.oa.ShareGridPanel = Ext.extend(Ext.grid.GridPanel, {
   filterSearchParam: null,
 
   initComponent: function(){
-    "use strict";
     var self = this;
     var filters = {};
     var filterCount = 0;
@@ -173,13 +173,16 @@ Ext.oa.ShareGridPanel = Ext.extend(Ext.grid.GridPanel, {
     this.store = this.store || {};
     delete this.initialConfig["store"];
     Ext.apply(this, Ext.applyIf(this.initialConfig, {
-      keys: [{
-        scope: self,
-        key: [Ext.EventObject.DELETE],
-        handler: this.deleteFunction
-        }],
+      border: false,
       store: new Ext.data.DirectStore({
         id: self.store.id || self.id + "_store",
+        proxy: {
+          type: "direct",
+          directFn: self.api.filter,
+          startParam: undefined,
+          limitParam: undefined,
+          pageParam:  undefined
+        },
         fields: (function(){
           var cols = ["id", "__unicode__"],
               c;
@@ -193,16 +196,14 @@ Ext.oa.ShareGridPanel = Ext.extend(Ext.grid.GridPanel, {
           }
           return cols;
         }()),
-        directFn: self.api.filter //all
       }),
-      viewConfig: {
-        forceFit: true
-      },
+      forceFit: true,
       bbar: {
         xtype: 'toolbar',
         hidden: true,
         items: ["Search:", {
           xtype: 'textfield',
+          deferEmptyText: false,
           emptyText: gettext('Search...'),
           enableKeyEvents: true,
           listeners: {
@@ -216,7 +217,7 @@ Ext.oa.ShareGridPanel = Ext.extend(Ext.grid.GridPanel, {
               else{
                 self.delFilter(self.filterSearchParam);
               }
-              self.store.reload();
+              self.store.load();
             },
             keypress: function( fld, evt ){
               if( typeof self.searchTimeout !== "undefined" ){
@@ -231,7 +232,7 @@ Ext.oa.ShareGridPanel = Ext.extend(Ext.grid.GridPanel, {
                 self.doLayout();
               }
               else{
-                self.searchTimeout = fld.initialConfig.listeners.change.defer(2000, self, [fld, fld.getValue()]);
+                self.searchTimeout = Ext.defer(fld.initialConfig.listeners.change,2000, self, [fld, fld.getValue()]);
               }
             }
           }
@@ -259,7 +260,7 @@ Ext.oa.ShareGridPanel = Ext.extend(Ext.grid.GridPanel, {
       }
       this.buttons = mybuttons;
     }
-    this.store.baseParams = filters;
+    this.store.proxy.extraParams = filters;
     if( this.filterParams !== false ){
       for( i in this.filterParams ){
         if( this.filterParams.hasOwnProperty(i) ){
@@ -273,7 +274,7 @@ Ext.oa.ShareGridPanel = Ext.extend(Ext.grid.GridPanel, {
       tooltip: self.texts.reload,
       scope: self,
       handler: function(){
-        self.store.reload();
+        self.store.load();
       }
     });
     if( this.allowAdd ){
@@ -293,31 +294,30 @@ Ext.oa.ShareGridPanel = Ext.extend(Ext.grid.GridPanel, {
           }
         });
       }
-      if( this.allowEdit ){
-        this.buttons.push({
-          text:  self.texts.edit,
-          icon: MEDIA_URL + "/icons2/16x16/actions/edit-redo.png",
-          scope: self,
-          handler: self.editFunction.createDelegate(self, [self])
-        });
-      }
-      if( this.allowDelete ){
-        this.buttons.push({
-          text: self.texts.remove,
-          icon: MEDIA_URL + "/icons2/16x16/actions/remove.png",
-          handler: this.deleteFunction,
-          scope: self
-        });
-      }
     }
-    Ext.oa.ShareGridPanel.superclass.initComponent.apply(this, arguments);
+    if( this.allowEdit ){
+      this.buttons.push({
+        text:  self.texts.edit,
+        icon: MEDIA_URL + "/icons2/16x16/actions/edit-redo.png",
+        scope: self,
+        handler: Ext.bind(self.editFunction, self, [self]),
+      });
+    }
+    if( this.allowDelete ){
+      this.buttons.push({
+        text: self.texts.remove,
+        icon: MEDIA_URL + "/icons2/16x16/actions/remove.png",
+        handler: this.deleteFunction,
+        scope: self
+      });
+    }
+    this.callParent(arguments);
   },
 
   editFunction: function(self){
-    "use strict";
     var sm = this.getSelectionModel();
     if( sm.hasSelection() ){
-      var sel = sm.selections.items[0];
+      var sel = sm.selected.items[0];
       this.showEditWindow({
         title: self.texts.edit,
         texts: {
@@ -329,7 +329,6 @@ Ext.oa.ShareGridPanel = Ext.extend(Ext.grid.GridPanel, {
   },
 
   deleteConfirm: function(sel, handler, scope){
-    "use strict";
     Ext.Msg.confirm(
       this.texts.remove,
       interpolate(this.texts.confirm, [sel.data.__unicode__]),
@@ -338,15 +337,14 @@ Ext.oa.ShareGridPanel = Ext.extend(Ext.grid.GridPanel, {
   },
 
   deleteFunction: function(){
-    "use strict";
     var sm = this.getSelectionModel();
     var self = this;
     if( sm.hasSelection() ){
-      var sel = sm.selections.items[0];
+      var sel = sm.selected.items[0];
       self.deleteConfirm( sel, function(btn){
         if(btn === 'yes'){
           self.api.remove( sel.data.id, function(provider, response){
-            sel.store.reload();
+            sel.store.load();
           } );
         }
       }, self );
@@ -363,69 +361,57 @@ Ext.oa.ShareGridPanel = Ext.extend(Ext.grid.GridPanel, {
   },
 
   refresh: function(){
-    this.store.reload();
+    this.store.load();
   },
 
   showEditWindow: function(config, record){
-    "use strict";
     var self = this;
     Ext.apply(config, this.window);
     var addwin = Ext.oa.getShareEditWindow(Ext.apply(config, {
       api:     self.api,
-      success: function(){ self.store.reload(); },
+      success: function(){ self.store.load(); },
       form:    self.form
     }), record);
     addwin.show();
   },
 
   onRender: function(){
-    "use strict";
-    Ext.oa.ShareGridPanel.superclass.onRender.apply(this, arguments);
-    this.store.reload();
-    this.on("afterrender", function(){
-      var myMask = new Ext.LoadMask(this.getEl());
-      myMask.show.defer(50, myMask);
-    }, this, {single: true} );
-    this.store.on("beforeload", function(){
-      var myMask = new Ext.LoadMask(this.getEl());
-      myMask.show();
-    }, this );
-    this.store.on("load", function(){
-      this.getEl().unmask();
-    }, this );
+    this.callParent(arguments);
+    this.store.load();
     var self = this;
-    var menubuttons = [];
+    var menubuttons = [], gridbuttons = this.getDockedItems(".toolbar")[1].items.getRange();
     var i;
-    for( i = 0; i < self.buttons.length; i++ ){
+    for( i = 0; i < gridbuttons.length; i++ ){
       menubuttons.push({
-        text:    (self.buttons[i].initialConfig.text || self.buttons[i].initialConfig.tooltip),
-        icon:     self.buttons[i].initialConfig.icon,
-        handler:  self.buttons[i].initialConfig.handler,
-        scope:    self.buttons[i].initialConfig.scope
+        text:    (gridbuttons[i].initialConfig.text || gridbuttons[i].initialConfig.tooltip),
+        icon:     gridbuttons[i].initialConfig.icon,
+        handler:  gridbuttons[i].initialConfig.handler,
+        scope:    gridbuttons[i].initialConfig.scope
       });
     }
     var menu = new Ext.menu.Menu({
       items: menubuttons
     });
     this.on({
-      rowcontextmenu: function(grid, row, event){
-        this.selectedNode = this.store.getAt(row);
-        if((row) !== false) {
-          this.getSelectionModel().selectRow(row);
-        }
+      itemcontextmenu: function(grid, record, item, itemidx, event, evopts){
         event.stopEvent();
         menu.showAt(event.xy);
       },
-      rowdblclick: function(grid, row, event){
+      itemdblclick: function(grid, row, event){
         if( this.allowEdit && this.getSelectionModel().hasSelection() ){
           this.editFunction(this);
         }
       }
     }, this);
+    this.keyMap = new Ext.util.KeyMap({
+      target: self.getEl(),
+      scope: self,
+      key: [Ext.EventObject.DELETE],
+      fn: this.deleteFunction
+    });
   }
 });
 
-Ext.reg("sharegridpanel", Ext.oa.ShareGridPanel);
 
 // kate: space-indent on; indent-width 2; replace-tabs on;
 

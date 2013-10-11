@@ -24,6 +24,7 @@ from hashlib import md5
 
 from django.template.loader import render_to_string
 from django.contrib.auth.models import User
+from django.conf   import settings
 
 from ifconfig.models import Host
 from systemd       import invoke, logged, LockingPlugin, method, create_job
@@ -203,10 +204,10 @@ class SystemD(LockingPlugin):
 
         checkdata["graphs"] = graphs
 
-        alt.attach(email.mime.Text.MIMEText(render_to_string( "nagios/notify.txt",  checkdata )))
-        alt.attach(email.mime.Text.MIMEText(render_to_string( "nagios/notify.html", checkdata ), "html"))
+        alt.attach(email.mime.Text.MIMEText(render_to_string( "nagios/notify.txt",  checkdata ), "plain", "utf-8"))
+        alt.attach(email.mime.Text.MIMEText(render_to_string( "nagios/notify.html", checkdata ), "html",  "utf-8"))
 
-        conn = smtplib.SMTP("srvcom02.master.dns")
+        conn = smtplib.SMTP(settings.EMAIL_HOST)
         conn.sendmail(mp["From"], [mp["To"]], mp.as_string())
         conn.quit()
 

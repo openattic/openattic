@@ -15,7 +15,6 @@ Ext.namespace("Ext.oa");
 
 Ext.apply(Ext.form.VTypes, {
   IPAddress:  function(v) {
-    "use strict";
     return (/^\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3}$/).test(v) ||
            (/^[\da-f]{0,4}(:[\da-f]{0,4})+$/).test(v);
   },
@@ -23,7 +22,6 @@ Ext.apply(Ext.form.VTypes, {
   IPAddressMask: /[\da-f\.:]/i,
 
   IPAddressWithNetmask:  function(v) {
-    "use strict";
     return (/^\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3}(\/(\d{1,2}|\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3}))?$/).test(v) ||
            (/^[\da-f]{0,4}(:[\da-f]{0,4})+(\/\d{1,3})?$/).test(v);
   },
@@ -31,7 +29,6 @@ Ext.apply(Ext.form.VTypes, {
   IPAddressWithNetmaskMask: /[\da-f\.\/:]/i,
 
   IPAddressList:  function(v) {
-    "use strict";
     // Match "123.(123.123.123 123.)*123.123.123", because that way spaces are not allowed at the end
     return (/^\d{1,3}\.(\d{1,3}\.\d{1,3}\.\d{1,3} \d{1,3}\.)*\d{1,3}\.\d{1,3}\.\d{1,3}$/).test(v);
   },
@@ -39,129 +36,48 @@ Ext.apply(Ext.form.VTypes, {
   IPAddressListMask: /[\d\. ]/i,
 
   DomainName:  function(v) {
-    "use strict";
     return (/^[\w\.\-]+$/).test(v);
   },
   DomainNameText: gettext('Must only contain letters, numbers, "-" and ".".'),
   DomainNameMask: /[\w\.\-]/i
 });
 
-Ext.oa.Ifconfig__NetDevice_TreeNodeUI = Ext.extend(Ext.tree.TreeNodeUI, {
-  renderElements : function(n, a, targetNode, bulkRender){
-    "use strict";
-    Ext.oa.Ifconfig__NetDevice_TreeNodeUI.superclass.renderElements.call( this, n, a, targetNode, bulkRender );
-    ifconfig__IPAddress.filter({"device__id": a.device.id}, function(provider, response){
-      var tpl, pos;
-      if(response.result.length === 0){
-        return;
-      }
-      Ext.DomHelper.applyStyles( this.elNode, 'position: relative' );
-      tpl = new Ext.DomHelper.createTemplate(
-        '<span style="position: absolute; top: 0px; right: {pos}px;">{text}</span>'
-        );
-      pos = 8;
-      tpl.append( this.elNode, {
-        'pos':  pos,
-        'text': response.result.map(function(el){return el.address;}).join(', ')
-        } );
-    }, this);
-  }
-});
-
-
-Ext.oa.Ifconfig__NetDevice_TreeLoader = function(config){
-  "use strict";
-  Ext.apply(this, config);
-  Ext.applyIf(this, {
-    directFn: ifconfig__NetDevice.filter,
-    paramsAsHash: true,
-    rootdevs: {}
-  });
-  Ext.oa.Ifconfig__NetDevice_TreeLoader.superclass.constructor.apply(this, arguments);
-};
-
-Ext.extend(Ext.oa.Ifconfig__NetDevice_TreeLoader, Ext.tree.TreeLoader, {
-  getParams: function(node){
-    "use strict";
-    return [{id: node.attributes.device.id}];
-  },
-
-  createNode : function(attr){
-    "use strict";
-    Ext.apply(attr, {
-      nodeType: "async",
-      id:   Ext.id(),
-      loader: this,
-      text: ( attr.device ? attr.device.devname : '...' )
-    });
-    if( attr.device ){
-      attr.uiProvider = Ext.oa.Ifconfig__NetDevice_TreeNodeUI;
-    }
-    return new Ext.tree.TreePanel.nodeTypes[attr.nodeType](attr);
-  },
-
-  handleResponse: function(response){
-    "use strict";
-    var myresp = {
-      responseData: [],
-      responseText: "",
-      argument: response.argument
-    };
-    if( response.responseData.length >= 1 ){
-      var self = this,
-          i,
-          pushdevs = function(devlist){
-        for( i = 0; i < devlist.length; i++ ){
-          if( devlist[i].devname in self.rootdevs ){
-            continue;
-          }
-          myresp.responseData.push({
-            device: devlist[i]
-          });
-        }
-      };
-      pushdevs(response.responseData[0].childdevs);
-      if( response.responseData[0].devtype === "bonding" ){
-        pushdevs(response.responseData[0].basedevs);
-      }
-    }
-    return Ext.oa.Ifconfig__NetDevice_TreeLoader.superclass.handleResponse.apply(this, [myresp]);
-  }
-});
-
-Ext.oa.Ifconfig__NetDevice_TreePanel = Ext.extend(Ext.tree.TreePanel, {
+Ext.define('Ext.oa.Ifconfig__NetDevice_TreePanel', {
+  alias: 'widget.ifconfig__netdevice_treepanel',
+  extend: 'Ext.tree.TreePanel',
   initComponent: function(){
-    "use strict";
     Ext.apply(this, Ext.apply(this.initialConfig, {
       enableDD: true,
       rootVisible: false,
-      loader: new Ext.oa.Ifconfig__NetDevice_TreeLoader(),
-      root: {
-        device: null
-      }
+      store: Ext.create("Ext.data.TreeStore", {
+        fields: ['text'],
+        proxy: { type: "memory" },
+        root: {
+          text:     'root',
+          expanded: true,
+          children: [],
+          id: "network_root_node",
+        }
+      })
     }));
-    Ext.oa.Ifconfig__NetDevice_TreePanel.superclass.initComponent.apply(this, arguments);
+    this.callParent(arguments);
     this.refresh();
   },
 
   onRender: function(){
-    "use strict";
-    Ext.oa.Ifconfig__NetDevice_TreePanel.superclass.onRender.apply(this, arguments);
+    this.callParent(arguments);
   },
 
   refresh: function(){
-    "use strict";
     var self = this;
     ifconfig__NetDevice.get_root_devices(function(provider, response){
       var rootdevs = [], i;
       for( i = 0; i < response.result.length; i++ ){
-        self.loader.rootdevs[response.result[i].devname] = true;
         rootdevs.push({
           device: response.result[i]
         });
       }
-      self.setRootNode({
-        nodeType: "async",
+      self.store.setRootNode({
         text: "...",
         id: Ext.id(),
         children: rootdevs
@@ -171,9 +87,10 @@ Ext.oa.Ifconfig__NetDevice_TreePanel = Ext.extend(Ext.tree.TreePanel, {
 });
 
 
-Ext.oa.Ifconfig__NetDevice_Panel = Ext.extend(Ext.Panel, {
+Ext.define('Ext.oa.Ifconfig__NetDevice_Panel', {
+  extend: 'Ext.Panel',
+  alias: "widget.ifconfig__netdevice_panel",
   initComponent: function(){
-    "use strict";
     var netDevPanel = this;
     Ext.apply(this, Ext.apply(this.initialConfig, {
       id: 'ifconfig__netdevice_panel_inst',
@@ -265,7 +182,7 @@ Ext.oa.Ifconfig__NetDevice_Panel = Ext.extend(Ext.Panel, {
             name: "dhcp"
           }, {
             xtype: 'fieldset',
-            ref: '../../bondingfields',
+            id: 'ifconfig__netdevice_bondingfields',
             title: gettext('Bonding options (if applicable)'),
             collapsible: true,
             layout: 'form',
@@ -297,7 +214,8 @@ Ext.oa.Ifconfig__NetDevice_Panel = Ext.extend(Ext.Panel, {
               typeAhead:     true,
               triggerAction: 'all',
               emptyText:     gettext('Select...'),
-              selectOnFocus: true
+              selectOnFocus: true,
+              deferEmptyText: false
             } ]
           }],
           buttons: [{
@@ -407,41 +325,37 @@ Ext.oa.Ifconfig__NetDevice_Panel = Ext.extend(Ext.Panel, {
             }
           }]
         }, {
-          xtype: "editorgrid",
+          xtype: "grid",
           ref: "../addressgrid",
           title: gettext('IP Addresses'),
           viewConfig: { forceFit: true },
-          colModel: new Ext.grid.ColumnModel({
-            defaults: {
-              sortable: true
-            },
-            columns: [{
-              header: gettext('IP/Netmask'),
-              dataIndex: "address",
-              editor: new Ext.form.TextField({ vtype: 'IPAddressWithNetmask' })
-            }, {
-              header: gettext('Gateway'),
-              dataIndex: "gateway",
-              editor: new Ext.form.TextField({ vtype: 'IPAddress' })
-            }, {
-              header: gettext('Domain'),
-              dataIndex: "domain",
-              editor: new Ext.form.TextField({ vtype: 'DomainName' })
-            }, {
-              header: gettext('Nameservers'),
-              dataIndex: "nameservers",
-              editor: new Ext.form.TextField({ vtype: 'IPAddressList' })
-            }, {
-              header: gettext('Editable'),
-              dataIndex: "configure",
-              renderer: function( val, x, store ){
-                if( val ){
-                  return '<img src="' + MEDIA_URL + '/oxygen/16x16/actions/dialog-ok-apply.png" title="yes" />';
-                }
-                return '<img src="' + MEDIA_URL + '/oxygen/16x16/actions/dialog-cancel.png" title="no" />';
+          sortableColumns: true,
+          columns: [{
+            header: gettext('IP/Netmask'),
+            dataIndex: "address",
+            editor: new Ext.form.TextField({ vtype: 'IPAddressWithNetmask' })
+          }, {
+            header: gettext('Gateway'),
+            dataIndex: "gateway",
+            editor: new Ext.form.TextField({ vtype: 'IPAddress' })
+          }, {
+            header: gettext('Domain'),
+            dataIndex: "domain",
+            editor: new Ext.form.TextField({ vtype: 'DomainName' })
+          }, {
+            header: gettext('Nameservers'),
+            dataIndex: "nameservers",
+            editor: new Ext.form.TextField({ vtype: 'IPAddressList' })
+          }, {
+            header: gettext('Editable'),
+            dataIndex: "configure",
+            renderer: function( val, x, store ){
+              if( val ){
+                return '<img src="' + MEDIA_URL + '/oxygen/16x16/actions/dialog-ok-apply.png" title="yes" />';
               }
-            }]
-          }),
+              return '<img src="' + MEDIA_URL + '/oxygen/16x16/actions/dialog-cancel.png" title="no" />';
+            }
+          }],
           store: new Ext.data.DirectStore({
             fields: ["domain", "nameservers", "gateway", "address", "device", "id", "configure"],
             directFn: ifconfig__IPAddress.filter
@@ -629,11 +543,10 @@ Ext.oa.Ifconfig__NetDevice_Panel = Ext.extend(Ext.Panel, {
         }
       }]
     }));
-    Ext.oa.Ifconfig__NetDevice_Panel.superclass.initComponent.apply(this, arguments);
+    this.callParent(arguments);
   },
 
   nodeSelected: function(selmodel, node, last){
-    "use strict";
     if( node === null ){ // Dragging
       return;
     }
@@ -670,15 +583,14 @@ Ext.oa.Ifconfig__NetDevice_Panel = Ext.extend(Ext.Panel, {
       this.deviceform.getForm().findField("devname").setReadOnly(false);
     }
     if( node.attributes.device.devtype === "bonding" ){
-      this.bondingfields.expand();
+      Ext.getCmp("ifconfig__netdevice_bondingfields").expand();
     }
     else{
-      this.bondingfields.collapse();
+      Ext.getCmp("ifconfig__netdevice_bondingfields").collapse();
     }
   },
 
   nodeDragOver: function(ev){
-    "use strict";
     var srcdev = ev.data.node.attributes.device,
         tgtdev = ev.target.attributes.device;
 
@@ -703,12 +615,10 @@ Ext.oa.Ifconfig__NetDevice_Panel = Ext.extend(Ext.Panel, {
   },
 
   onRender: function(){
-    "use strict";
-    Ext.oa.Ifconfig__NetDevice_Panel.superclass.onRender.apply(this, arguments);
-    var self = this;
-    (function(){
-      self.bondingfields.collapse();
-    }).defer(200);
+    this.callParent(arguments);
+    Ext.defer(function(){
+      Ext.getCmp("ifconfig__netdevice_bondingfields").collapse();
+    }, 200);
   },
 
   refresh: function(){
@@ -718,23 +628,19 @@ Ext.oa.Ifconfig__NetDevice_Panel = Ext.extend(Ext.Panel, {
 
 
 
-Ext.reg("ifconfig__netdevice_panel", Ext.oa.Ifconfig__NetDevice_Panel);
-
-Ext.oa.Ifconfig__NetDevice_Module = Ext.extend(Object, {
+Ext.oa.Ifconfig__NetDevice_Module = {
   panel: "ifconfig__netdevice_panel",
   prepareMenuTree: function(tree){
-    "use strict";
     tree.appendToRootNodeById("menu_system", {
       text: gettext('Network'),
       leaf: true,
-      href: '#',
       icon: MEDIA_URL + '/icons2/22x22/apps/network.png',
       panel: 'ifconfig__netdevice_panel_inst'
     });
   }
-});
+};
 
 
-window.MainViewModules.push( new Ext.oa.Ifconfig__NetDevice_Module() );
+window.MainViewModules.push( Ext.oa.Ifconfig__NetDevice_Module );
 
 // kate: space-indent on; indent-width 2; replace-tabs on;

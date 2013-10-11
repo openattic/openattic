@@ -13,7 +13,10 @@
 
 Ext.namespace("Ext.oa");
 
-Ext.oa.Ifconfig__HostGroup_Panel = Ext.extend(Ext.oa.ShareGridPanel, {
+Ext.define('Ext.oa.Ifconfig__HostGroup_Panel', {
+
+  extend: 'Ext.oa.ShareGridPanel',
+  alias: "widget.ifconfig__hostgroup_panel",
   api: ifconfig__HostGroup,
   id: "ifconfig__hostgroup_panel_inst",
   title: gettext("Host Groups"),
@@ -39,22 +42,18 @@ Ext.oa.Ifconfig__HostGroup_Panel = Ext.extend(Ext.oa.ShareGridPanel, {
   }
 });
 
-Ext.reg("ifconfig__hostgroup_panel", Ext.oa.Ifconfig__HostGroup_Panel);
-
-Ext.oa.Ifconfig__HostGroup_Module = Ext.extend(Object, {
+Ext.oa.Ifconfig__HostGroup_Module = {
   panel: "ifconfig__hostgroup_panel",
   prepareMenuTree: function(tree){
-    "use strict";
     tree.appendToRootNodeById("menu_system", {
       text: gettext('Host Groups'),
       leaf: true,
       panel: "ifconfig__hostgroup_panel_inst",
-      icon: MEDIA_URL + '/icons2/22x22/mimetypes/www.png',
-      href: '#'
+      icon: MEDIA_URL + '/icons2/22x22/mimetypes/www.png'
     });
   }
-});
+};
 
-window.MainViewModules.push( new Ext.oa.Ifconfig__HostGroup_Module() );
+window.MainViewModules.push( Ext.oa.Ifconfig__HostGroup_Module );
 
 // kate: space-indent on; indent-width 2; replace-tabs on;

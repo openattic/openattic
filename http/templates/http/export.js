@@ -13,7 +13,9 @@
 
 Ext.namespace("Ext.oa");
 
-Ext.oa.Http__Export_Panel = Ext.extend(Ext.oa.ShareGridPanel, {
+Ext.define('Ext.oa.Http__Export_Panel', {
+  alias: 'widget.http__export_panel',
+  extend: 'Ext.oa.ShareGridPanel',
   api: http__Export,
   id: "http__export_panel_inst",
   title: gettext("HTTP"),
@@ -29,8 +31,7 @@ Ext.oa.Http__Export_Panel = Ext.extend(Ext.oa.ShareGridPanel, {
     width: 100,
     dataIndex: "url",
     renderer: function(val, x, store){
-      "use strict";
-      return String.format(
+      return Ext.String.format(
         '<a href="{0}" target="_blank" title="{1}">' +
           '<img alt="Browser" src="{{ MEDIA_URL }}/oxygen/16x16/places/folder-remote.png">' +
         '</a>',
@@ -47,10 +48,10 @@ Ext.oa.Http__Export_Panel = Ext.extend(Ext.oa.ShareGridPanel, {
         xtype: 'volumefield',
         listeners: {
           select: function(self, record, index){
-            "use strict";
-            lvm__LogicalVolume.get( record.data.id, function( provider, response ){
-              self.ownerCt.dirfield.setValue( response.result.fs.topleveldir );
-              self.ownerCt.dirfield.enable();
+            var dirfield = Ext.ComponentQuery.query("[name=path]", self.ownerCt)[0];
+            lvm__LogicalVolume.get( record[0].data.id, function( provider, response ){
+              dirfield.setValue( response.result.fs.topleveldir );
+              dirfield.enable();
             } );
           }
         }
@@ -59,28 +60,23 @@ Ext.oa.Http__Export_Panel = Ext.extend(Ext.oa.ShareGridPanel, {
         fieldLabel: gettext('Directory'),
         name: "path",
         disabled: true,
-        ref: 'dirfield'
       }]
     }]
   }
 });
 
-Ext.reg("http__export_panel", Ext.oa.Http__Export_Panel);
-
-Ext.oa.Http__Export_Module = Ext.extend(Object, {
+Ext.oa.Http__Export_Module = {
   panel: "http__export_panel",
   prepareMenuTree: function(tree){
-    "use strict";
     tree.appendToRootNodeById("menu_shares", {
       text: gettext('Web (HTTP)'),
       leaf: true,
       panel: "http__export_panel_inst",
-      icon: MEDIA_URL + '/icons2/22x22/mimetypes/www.png',
-      href: '#'
+      icon: MEDIA_URL + '/icons2/22x22/mimetypes/www.png'
     });
   }
-});
+};
 
-window.MainViewModules.push( new Ext.oa.Http__Export_Module() );
+window.MainViewModules.push( Ext.oa.Http__Export_Module );
 
 // kate: space-indent on; indent-width 2; replace-tabs on;

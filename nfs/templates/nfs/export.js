@@ -13,7 +13,10 @@
 
 Ext.namespace("Ext.oa");
 
-Ext.oa.Nfs__Export_Panel = Ext.extend(Ext.oa.ShareGridPanel, {
+Ext.define('Ext.oa.Nfs__Export_Panel', {
+
+  alias: 'widget.nfs__export_panel',
+  extend: 'Ext.oa.ShareGridPanel',
   api: nfs__Export,
   id: "nfs__export_panel_inst",
   title: "NFS",
@@ -40,10 +43,10 @@ Ext.oa.Nfs__Export_Panel = Ext.extend(Ext.oa.ShareGridPanel, {
           xtype: 'volumefield',
           listeners: {
             select: function(self, record, index){
-              "use strict";
-              lvm__LogicalVolume.get( record.data.id, function( provider, response ){
-                self.ownerCt.dirfield.setValue( response.result.fs.topleveldir );
-                self.ownerCt.dirfield.enable();
+              var dirfield = Ext.ComponentQuery.query("[name=path]", self.ownerCt)[0];
+              lvm__LogicalVolume.get( record[0].data.id, function( provider, response ){
+                dirfield.setValue( response.result.fs.topleveldir );
+                dirfield.enable();
               } );
             }
           }
@@ -52,7 +55,6 @@ Ext.oa.Nfs__Export_Panel = Ext.extend(Ext.oa.ShareGridPanel, {
           xtype: 'textfield',
           fieldLabel: gettext('Directory'),
           name: "path",
-          ref: 'dirfield',
           disabled: true
         }, gettext('If you wish to share only a subpath of the volume, enter the path here.') ),
         {
@@ -60,12 +62,14 @@ Ext.oa.Nfs__Export_Panel = Ext.extend(Ext.oa.ShareGridPanel, {
           fieldLabel: gettext('Address'),
           allowBlank: false,
           name: "address",
-          ref: 'addrfield'
+          ref: 'addrfield',
+          id: 'addrfield',
         }, {
           xtype: 'textfield',
           fieldLabel: gettext('Options'),
           name: "options",
           ref: 'optfield',
+          id: 'optfield',
           value: "rw,no_subtree_check,no_root_squash"
         }, {
           xtype: 'label',
@@ -80,23 +84,19 @@ Ext.oa.Nfs__Export_Panel = Ext.extend(Ext.oa.ShareGridPanel, {
 });
 
 
-Ext.reg("nfs__export_panel", Ext.oa.Nfs__Export_Panel);
-
-Ext.oa.Nfs__Export_Module = Ext.extend(Object, {
+Ext.oa.Nfs__Export_Module = {
   panel: "nfs__export_panel",
   prepareMenuTree: function(tree){
-    "use strict";
     tree.appendToRootNodeById("menu_shares", {
       text: gettext('Linux (NFS)'),
       leaf: true,
       icon: MEDIA_URL + '/icons2/22x22/apps/nfs.png',
-      panel: 'nfs__export_panel_inst',
-      href: '#'
+      panel: 'nfs__export_panel_inst'
     });
   }
-});
+};
 
 
-window.MainViewModules.push( new Ext.oa.Nfs__Export_Module() );
+window.MainViewModules.push( Ext.oa.Nfs__Export_Module );
 
 // kate: space-indent on; indent-width 2; replace-tabs on;

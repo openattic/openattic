@@ -13,37 +13,58 @@
 
 Ext.namespace("Ext.oa");
 
-Ext.oa.Cmdlog__LogEntry_Panel = Ext.extend(Ext.Panel, {
+Ext.define('Ext.oa.Cmdlog__LogEntry_Panel', {
+  alias: 'widget.cmdlog__logentry_panel',
+  extend: 'Ext.Panel',
   initComponent: function(){
-    "use strict";
     var fields = ['id', 'command', 'exitcode', 'endtime', 'user'];
-    var store = new Ext.data.DirectStore({
-      remoteSort: true,
+    Ext.define('cmdlog_logentry_store_model', {
+      extend: 'Ext.data.Model',
       fields: fields,
-      directFn: cmdlog__LogEntry.filter_range,
-      baseParams: {
-        kwds: {
-          '__fields__': fields
-        },
-        'start': 0, 'limit': 100,
-        'sort': 'endtime', 'dir': 'DESC'
-      },
-      reader: new Ext.data.JsonReader({
-        root:           'objects',
-        totalProperty:  'total',
-        fields:         fields
-      }),
-      paramOrder: ['start', 'limit', 'sort', 'dir', 'kwds']
     });
-    var textStore = new Ext.data.DirectStore({
+    var store = Ext.create('Ext.data.Store', {
+      model: "cmdlog_logentry_store_model",
+      pageSize: 100,
+      proxy: {
+        type: 'direct',
+        directFn: cmdlog__LogEntry.filter_range,
+        startParam: undefined,
+        limitParam: undefined,
+        pageParam:  undefined,
+        paramOrder: ['start', 'limit', 'sort', 'dir', 'kwds'],
+        extraParams: {
+          kwds: {
+            '__fields__': fields
+          },
+          'start': 0, 'limit': 100,
+          'sort': 'endtime', 'dir': 'DESC'
+        },
+        reader: new Ext.data.JsonReader({
+          root:           'objects',
+          totalProperty:  'total',
+          fields:         fields
+        }),
+      }
+    });
+    Ext.define('cmdlog_model', {
+      extend: 'Ext.data.Model',
       fields: ['id', 'command', 'exitcode', 'endtime', 'starttime', 'text', {
         name: 'state', mapping: 'exitcode', convert: function( val, row ){
           if( val === 0 ){ return "Success"; }
           if( val === 1 ){ return "Failure"; }
           return "Other";
         }
-      }],
-      directFn: cmdlog__LogEntry.get
+      }]
+    });
+    var textStore = Ext.create('Ext.data.Store', {
+      model: "cmdlog_model",
+      proxy: {
+        type: 'direct',
+        startParam: undefined,
+        limitParam: undefined,
+        pageParam:  undefined,
+        directFn: cmdlog__LogEntry.get
+      }
     });
     var textView = new Ext.DataView({
       tpl: new Ext.XTemplate(
@@ -59,6 +80,7 @@ Ext.oa.Cmdlog__LogEntry_Panel = Ext.extend(Ext.Panel, {
       singleSelect: true,
       region: 'south',
       height: 200,
+      deferEmptyText: false,
       emptyText: gettext("Select a log entry to see the command's output here."),
       itemSelector: 'div.logcommandtext',
       loadingText: gettext('Loading...'),
@@ -71,57 +93,53 @@ Ext.oa.Cmdlog__LogEntry_Panel = Ext.extend(Ext.Panel, {
       items: [{
         xtype: "grid",
         region: "center",
-        viewConfig: {
-          forceFit: true
-        },
+        forceFit: true,
         store: store,
-        colModel: new Ext.grid.ColumnModel({
-          defaults: {
-            sortable: true
-          },
-          columns: [{
-              header: gettext('End time'),
-              dataIndex: 'endtime',
-              renderer: function(val){
-                if(!val) return gettext("unknown");
-                return new Date( Date.parse(val) ).format(get_format_ext("SHORT_DATETIME_FORMAT"))
-              }
-            }, {
-              header: gettext('Command'),
-              dataIndex: 'command'
-            }, {
-              header: gettext('User'),
-              dataIndex: 'user'
-            }, {
-              header: gettext('Exit Status'),
-              dataIndex: 'exitcode'
-          }]
-        }),
+        defaults: {
+          sortable: true
+        },
+        columns: [{
+          header: gettext('End time'),
+          dataIndex: 'endtime',
+          renderer: function(val){
+            if(!val) return gettext("unknown");
+            return Ext.Date.format(new Date(Date.parse(val)), get_format_ext("SHORT_DATETIME_FORMAT"));
+          }
+        }, {
+          header: gettext('Command'),
+          dataIndex: 'command'
+        }, {
+          header: gettext('User'),
+          dataIndex: 'user'
+        }, {
+          header: gettext('Exit Status'),
+          dataIndex: 'exitcode'
+        }],
         listeners: {
-          cellclick: function( self, rowIndex, colIndex, evt ){
+          cellclick: function( self, td, cellIndex, record, tr, rowIndex, e, eOpts ){
             var record = self.getStore().getAt(rowIndex);
             textStore.load({ params: { id: record.data.id } });
           }
         },
         bbar: new Ext.PagingToolbar({
-          pageSize: 100,
           afterPageText:  gettext('of {0}'),
           beforePageText: gettext('Page'),
           store:    store,
           items: [ {
             xtype: "textfield",
             id: "cmdlog_search_field",
+            deferEmptyText: false,
             emptyText: gettext('Search...'),
             enableKeyEvents: true,
             listeners: {
               change: function( self, newVal, oldVal ){
                 if( newVal !== '' ){
-                  store.baseParams.kwds.text__icontains = newVal;
+                  store.proxy.extraParams.kwds.text__icontains = newVal;
                 }
                 else{
-                  delete store.baseParams.kwds.text__icontains;
+                  delete store.proxy.extraParams.kwds.text__icontains;
                 }
-                store.reload();
+                store.load();
               },
               keypress: function( self, evt ){
                 if( typeof window.Cmdlog__LogEntry_search !== "undefined" ){
@@ -131,7 +149,7 @@ Ext.oa.Cmdlog__LogEntry_Panel = Ext.extend(Ext.Panel, {
                   self.initialConfig.listeners.change(self, self.getValue());
                 }
                 else{
-                  window.Cmdlog__LogEntry_search = self.initialConfig.listeners.change.defer(2000, self, [self, self.getValue()]);
+                  window.Cmdlog__LogEntry_search = Ext.defer(self.initialConfig.listeners.change,2000, self, [self, self.getValue()]);
                 }
               }
             }
@@ -186,7 +204,7 @@ Ext.oa.Cmdlog__LogEntry_Panel = Ext.extend(Ext.Panel, {
                         parseInt(date.format("U"), 10),
                         function(provider, response){
                           win.hide();
-                          store.reload();
+                          store.load();
                         }
                       );
                     }
@@ -199,38 +217,34 @@ Ext.oa.Cmdlog__LogEntry_Panel = Ext.extend(Ext.Panel, {
         })
       }, textView ]
     }));
-    Ext.oa.Cmdlog__LogEntry_Panel.superclass.initComponent.apply(this, arguments);
+    this.callParent(arguments);
   },
   onRender: function(){
-    "use strict";
-    Ext.oa.Cmdlog__LogEntry_Panel.superclass.onRender.apply(this, arguments);
-    this.items.items[0].store.reload();
+    this.callParent(arguments)
+    this.items.items[0].store.load();
   },
   refresh: function(){
-    this.items.items[0].store.reload();
+    this.items.items[0].store.load();
   },
   initSearch: function(){
     Ext.get("cmdlog_search_field").focus();
   }
 });
 
-Ext.reg("cmdlog__logentry_panel", Ext.oa.Cmdlog__LogEntry_Panel);
 
-Ext.oa.Cmdlog__LogEntry_Module = Ext.extend(Object, {
+Ext.oa.Cmdlog__LogEntry_Module = {
   panel: "cmdlog__logentry_panel",
 
   prepareMenuTree: function(tree){
-    "use strict";
     tree.appendToRootNodeById("menu_status", {
       text: gettext('Command Log'),
       leaf: true,
       icon: MEDIA_URL + '/icons2/22x22/actions/bookmark-new.png',
-      panel: "cmdlog__logentry_panel_inst",
-      href: '#'
+      panel: "cmdlog__logentry_panel_inst"
     });
   }
-});
+};
 
-window.MainViewModules.push( new Ext.oa.Cmdlog__LogEntry_Module() );
+window.MainViewModules.push( Ext.oa.Cmdlog__LogEntry_Module );
 
 // kate: space-indent on; indent-width 2; replace-tabs on;

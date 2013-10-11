@@ -13,7 +13,10 @@
 
 Ext.namespace("Ext.oa");
 
-Ext.oa.Tftp__Instance_Panel = Ext.extend(Ext.oa.ShareGridPanel, {
+Ext.define('Ext.oa.Tftp__Instance_Panel', {
+
+  alias: 'widget.tftp__instance_panel',
+  extend: 'Ext.oa.ShareGridPanel',
   api: tftp__Instance,
   id: "tftp__instance_panel_inst",
   title: gettext("TFTP"),
@@ -43,15 +46,16 @@ Ext.oa.Tftp__Instance_Panel = Ext.extend(Ext.oa.ShareGridPanel, {
           xtype: 'volumefield',
           listeners: {
             select: function(self, record, index){
-              "use strict";
-              lvm__LogicalVolume.get( record.data.id, function( provider, response ){
-                self.ownerCt.dirfield.setValue( response.result.fs.topleveldir );
-                self.ownerCt.dirfield.enable();
+              var addrfield = Ext.ComponentQuery.query("[name=address]", self.ownerCt)[0];
+              var dirfield  = Ext.ComponentQuery.query("[name=path]", self.ownerCt)[0];
+              lvm__LogicalVolume.get( record[0].data.id, function( provider, response ){
+                dirfield.setValue( response.result.fs.topleveldir );
+                dirfield.enable();
               } );
-              self.ownerCt.addrfield.clearValue();
-              self.ownerCt.addrfield.store.baseParams.idobj.id = record.data.id;
-              self.ownerCt.addrfield.store.reload();
-              self.ownerCt.addrfield.enable();
+              addrfield.clearValue();
+              addrfield.store.proxy.extraParams.idobj.id = record[0].data.id;
+              addrfield.store.load();
+              addrfield.enable();
             }
           }
         }, gettext('Please select the volume to share.')),
@@ -60,26 +64,37 @@ Ext.oa.Tftp__Instance_Panel = Ext.extend(Ext.oa.ShareGridPanel, {
           fieldLabel: gettext('Directory'),
           name: "path",
           disabled: true,
-          ref: 'dirfield'
         }, gettext('If you wish to share only a subpath of the volume, enter the path here.') ),
         {
           xtype:      'combo',
           fieldLabel: gettext('Address'),
-          ref:        'addrfield',
           allowBlank: false,
-          hiddenName: 'address',
-          store: new Ext.data.DirectStore({
-            fields: ["app", "obj", "id", "__unicode__"],
-            directFn: ifconfig__IPAddress.get_valid_ips,
-            baseParams: {
-              "idobj": {
-                "app": "lvm", "obj": "LogicalVolume", "id": -1
+          name: 'address',
+          store: function(){
+            Ext.define('tftp_model', {
+              extend: 'Ext.data.Model',
+              fields: ["app", "obj", "id", "__unicode__"]
+            });
+            return Ext.create('Ext.data.Store', {
+              model: "tftp_model",
+              proxy: {
+                type: 'direct',
+                startParam: undefined,
+                limitParam: undefined,
+                pageParam:  undefined,
+                directFn: ifconfig__IPAddress.get_valid_ips,
+                extraParams: {
+                  "idobj": {
+                    "app": "lvm", "obj": "LogicalVolume", "id": -1
+                  }
+                }
               }
-            }
-          }),
+            });
+          }(),
           disabled:      true,
           typeAhead:     true,
           triggerAction: 'all',
+          deferEmptyText: false,
           emptyText:     gettext('Select...'),
           selectOnFocus: true,
           displayField:  '__unicode__',
@@ -91,23 +106,19 @@ Ext.oa.Tftp__Instance_Panel = Ext.extend(Ext.oa.ShareGridPanel, {
 });
 
 
-Ext.reg("tftp__instance_panel", Ext.oa.Tftp__Instance_Panel);
-
-Ext.oa.Tftp__Instance_Module = Ext.extend(Object, {
+Ext.oa.Tftp__Instance_Module = {
   panel: "tftp__instance_panel",
   prepareMenuTree: function(tree){
-    "use strict";
     tree.appendToRootNodeById("menu_shares", {
       text: gettext('Embedded (TFTP)'),
       leaf: true,
       icon: MEDIA_URL + '/oxygen/22x22/categories/preferences-other.png',
-      panel: 'tftp__instance_panel_inst',
-      href: '#'
+      panel: 'tftp__instance_panel_inst'
     });
   }
-});
+};
 
 
-window.MainViewModules.push( new Ext.oa.Tftp__Instance_Module() );
+window.MainViewModules.push( Ext.oa.Tftp__Instance_Module );
 
 // kate: space-indent on; indent-width 2; replace-tabs on;

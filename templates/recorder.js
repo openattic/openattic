@@ -14,17 +14,22 @@
 window.RECORDING = false;
 window.RECORDED_COMMANDS = [];
 
-for( var id in Ext.Direct.providers ){
-  if( Ext.Direct.providers.hasOwnProperty(id) ){
-    Ext.Direct.providers[id].on("beforecall", function( provider, opt ){
+Ext.onReady(function(){
+  for( var id = 0; id < Ext.Direct.providers.items.length; id++ ){
+    Ext.Direct.providers.items[id].on("beforecall", function( provider, opt ){
       if( !window.RECORDING || ["create", "set", "set_ext", "remove"].indexOf(opt.method) == -1 )
         return;
       var methstr = opt.method;
       var obj = opt.action.split("__");
       if( opt.isForm ){
-        console.log(opt);
-        var methstr = "set";
-        var argstr = opt.args[2].form.baseParams.id + ", " + Ext.encode(opt.args[2].form.getFieldValues());
+        if( opt.args[2].form.baseParams.id === -1 ){
+          var methstr = "create";
+          var argstr = Ext.encode(opt.args[2].form.getFieldValues());
+        }
+        else{
+          var methstr = "set";
+          var argstr = opt.args[2].form.baseParams.id + ", " + Ext.encode(opt.args[2].form.getFieldValues());
+        }
       }
       else if( opt.data === null ){
         var argstr = '';
@@ -36,48 +41,46 @@ for( var id in Ext.Direct.providers ){
         } );
         var argstr = argstrings.join(', ');
       }
-      window.RECORDED_COMMANDS.push(String.format("{0}.{1}.{2}({3})",
+      window.RECORDED_COMMANDS.push(Ext.String.format("{0}.{1}.{2}({3})",
         obj[0], obj[1], methstr, argstr ));
     });
   }
-}
-
+});
 
 
 window.MainViewModules.push({
   prepareMenuTree: function(tree){
-    "use strict";
     tree.appendToRootNodeById("menu_system", {
-      id:   'api-record-node',
+      id:   'menu_apirecord',
       text: gettext('API Record'),
       leaf: true,
-      icon: MEDIA_URL + '/oxygen/22x22/actions/media-record.png',
-      listeners: {
-        click: function(self, ev){
-          if( window.RECORDING ){
-            window.RECORDED_COMMANDS.push('');
-            var win = new Ext.Window({
-              title: "API",
-              items: {
-                xtype: "textarea",
-                value: (window.RECORDED_COMMANDS.join(';\n'))
-              },
-              layout: "fit",
-              height: 180,
-              width:  300
-            });
-            win.show();
-            tree.getNodeById('api-record-node').getUI().getIconEl().src = MEDIA_URL + '/oxygen/22x22/actions/media-record.png'
-            window.RECORDING = false;
-            window.RECORDED_COMMANDS = [];
-          }
-          else{
-            window.RECORDING = true;
-            tree.getNodeById('api-record-node').getUI().getIconEl().src = MEDIA_URL + '/oxygen/22x22/actions/media-playback-stop.png'
-          }
-        }
-      }
+      icon: MEDIA_URL + '/oxygen/22x22/actions/media-record.png'
     });
+  },
+  handleMenuTreeClick: function(record){
+    if( record.data.id !== "menu_apirecord" )
+      return;
+    if( window.RECORDING ){
+      window.RECORDED_COMMANDS.push('');
+      var win = new Ext.Window({
+        title: "API",
+        items: {
+          xtype: "textarea",
+          value: (window.RECORDED_COMMANDS.join(';\n'))
+        },
+        layout: "fit",
+        height: 180,
+        width:  300
+      });
+      win.show();
+      record.set("icon", MEDIA_URL + '/oxygen/22x22/actions/media-record.png');
+      window.RECORDING = false;
+      window.RECORDED_COMMANDS = [];
+    }
+    else{
+      window.RECORDING = true;
+      record.set("icon", MEDIA_URL + '/oxygen/22x22/actions/media-playback-stop.png');
+    }
   }
 });
 

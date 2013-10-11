@@ -13,85 +13,81 @@
 
 Ext.namespace("Ext.oa");
 
-Ext.oa.MenuTree = Ext.extend(Ext.tree.TreePanel, {
+Ext.define('Ext.oa.MenuTree', {
+
+  extend: 'Ext.tree.TreePanel',
   title: gettext('Menu'),
   rootVisible: false,
   useArrows: true,
   autoScroll: true,
   animate: true,
-  enableDD: false,
+  ddConfig: { enableDD: false },
   containerScroll: true,
-  root: {
-    text: 'root',
-    children: [
-      {
-        id: 'menu_status',
-        text: gettext('Status'),
-        expanded: Ext.state.Manager.get("expand_root_nodes", true),
-        icon: MEDIA_URL + '/icons2/22x22/emblems/emblem-web.png',
-        children: []
-      }, {
-        id: 'menu_storage',
-        text: gettext('Storage'),
-        expanded: Ext.state.Manager.get("expand_root_nodes", true),
-        icon: MEDIA_URL + '/icons2/22x22/devices/gnome-dev-harddisk.png',
-        children: []
-      }, {
-        id: 'menu_luns',
-        text: gettext('LUNs'),
-        expanded: Ext.state.Manager.get("expand_root_nodes", true),
-        icon: MEDIA_URL + '/icons2/22x22/places/network-server.png',
-        children: []
-      }, {
-        id: 'menu_shares',
-        text: gettext('Shares'),
-        expanded: Ext.state.Manager.get("expand_root_nodes", true),
-        icon: MEDIA_URL + '/icons2/22x22/places/gnome-fs-share.png',
-        children: []
-      }, {
-        id: 'menu_services',
-        text: gettext('Services'),
-        expanded: Ext.state.Manager.get("expand_root_nodes", true),
-        icon: MEDIA_URL + '/icons2/22x22/mimetypes/gnome-mime-application-x-killustrator.png',
-        children: []
-      }, {
-        id: 'menu_system',
-        text: gettext('System'),
-        expanded: Ext.state.Manager.get("expand_root_nodes", true),
-        icon: MEDIA_URL + '/icons2/22x22/mimetypes/application-x-executable.png',
-        children: []
-      }, {
-        id: 'menu_usersettings',
-        text: gettext('Personal Settings'),
-        expanded: Ext.state.Manager.get("expand_root_nodes", true),
-        icon: MEDIA_URL + '/icons2/22x22/actions/stock_about.png',
-        panel: "settings_panel_inst",
-        leaf: true,
-        href: '#'
-      }, {
-        id: 'menu_shutdown',
-        text: gettext('Shutdown'),
-        expanded: Ext.state.Manager.get("expand_root_nodes", true),
-        icon: MEDIA_URL + '/oxygen/22x22/actions/system-shutdown.png',
-        children: []
-      }
-    ]
-  },
+  store: Ext.create("Ext.data.TreeStore", {
+    fields: ['text', 'panel'],
+    root: {
+      text: 'root',
+      expanded: true,
+      children: [
+        {
+          id: 'menu_status',
+          text: gettext('Status'),
+          expanded: Ext.state.Manager.get("expand_root_nodes", true),
+          icon: MEDIA_URL + '/icons2/22x22/emblems/emblem-web.png',
+          children: []
+        }, {
+          id: 'menu_storage',
+          text: gettext('Storage'),
+          expanded: Ext.state.Manager.get("expand_root_nodes", true),
+          icon: MEDIA_URL + '/icons2/22x22/devices/gnome-dev-harddisk.png',
+          children: []
+        }, {
+          id: 'menu_luns',
+          text: gettext('LUNs'),
+          expanded: Ext.state.Manager.get("expand_root_nodes", true),
+          icon: MEDIA_URL + '/icons2/22x22/places/network-server.png',
+          children: []
+        }, {
+          id: 'menu_shares',
+          text: gettext('Shares'),
+          expanded: Ext.state.Manager.get("expand_root_nodes", true),
+          icon: MEDIA_URL + '/icons2/22x22/places/gnome-fs-share.png',
+          children: []
+        }, {
+          id: 'menu_services',
+          text: gettext('Services'),
+          expanded: Ext.state.Manager.get("expand_root_nodes", true),
+          icon: MEDIA_URL + '/icons2/22x22/mimetypes/gnome-mime-application-x-killustrator.png',
+          children: []
+        }, {
+          id: 'menu_system',
+          text: gettext('System'),
+          expanded: Ext.state.Manager.get("expand_root_nodes", true),
+          icon: MEDIA_URL + '/icons2/22x22/mimetypes/application-x-executable.png',
+          children: []
+        }, {
+          id: 'menu_usersettings',
+          text: gettext('Personal Settings'),
+          expanded: Ext.state.Manager.get("expand_root_nodes", true),
+          icon: MEDIA_URL + '/icons2/22x22/actions/stock_about.png',
+          panel: "settings_panel_inst",
+          leaf: true
+        }, {
+          id: 'menu_shutdown',
+          text: gettext('Shutdown'),
+          expanded: Ext.state.Manager.get("expand_root_nodes", true),
+          icon: MEDIA_URL + '/oxygen/22x22/actions/system-shutdown.png',
+          children: []
+        }
+      ]
+    }
+  }),
   appendToRootNodeById: function(rootid, subnode){
     "use strict";
-    var i;
-    if( !this.root.loaded ){
-      for( i = 0; i < this.root.attributes.children.length; i++ ){
-        if( this.root.attributes.children[i].id === rootid ){
-          this.root.attributes.children[i].children.push(subnode);
-        }
-      }
-    }
-    else{
-      for( i = 0; i < this.root.childNodes.length; i++ ){
-        if( this.root.childNodes[i].id === rootid ){
-          this.root.childNodes[i].append(subnode);
-        }
+    var i, root = this.store.getRootNode();
+    for( i = 0; i < root.childNodes.length; i++ ){
+      if( root.childNodes[i].data.id === rootid ){
+        root.childNodes[i].appendChild(subnode);
       }
     }
   },
@@ -100,12 +96,12 @@ Ext.oa.MenuTree = Ext.extend(Ext.tree.TreePanel, {
     var i;
     if( parent ){
       for( i = 0; i < parent.childNodes.length; i++ ){
-        var nodepanel = parent.childNodes[i].attributes.panel;
+        var nodepanel = parent.childNodes[i].data.panel;
         if( typeof nodepanel !== "undefined" && typeof nodepanel !== "string" ){
           nodepanel = nodepanel.id;
         }
         if( nodepanel === panel ){
-          parent.childNodes[i].select();
+          this.items.items[0].selModel.select(parent.childNodes[i]);
           return true;
         }
         else if( !parent.childNodes[i].leaf && this.markAsActive( panel, parent.childNodes[i] ) ){
@@ -114,7 +110,7 @@ Ext.oa.MenuTree = Ext.extend(Ext.tree.TreePanel, {
       }
     }
     else{
-      return this.markAsActive(panel, this.root);
+      return this.markAsActive(panel, this.store.tree.root);
     }
   }
 });

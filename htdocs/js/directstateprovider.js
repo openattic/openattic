@@ -11,7 +11,8 @@
  GNU General Public License for more details.
 */
 
-Ext.state.DirectStateProvider = Ext.extend(Ext.state.Provider, {
+Ext.define('Ext.state.DirectStateProvider', {
+  extend: 'Ext.state.Provider',
   constructor: function(name, defaultValue){
     "use strict";
     Ext.state.DirectStateProvider.superclass.constructor.call(this);

@@ -24,7 +24,7 @@
  * It will fire events and set defaults, deferring the actual reordering to a doReorder implementation.
  * See Ext.ux.TabReorderer for an example.
  */
-Ext.ux.Reorderer = Ext.extend(Object, {
+Ext.define('Ext.ux.Reorderer', {
     /**
      * @property defaults
      * @type Object
@@ -212,7 +212,7 @@ Ext.ux.Reorderer = Ext.extend(Object, {
             if (item.rendered) {
                 this.createItemDD(item);
             } else {
-                item.on('render', this.createItemDD.createDelegate(this, [item]), this, {single: true});
+                item.on('render', Ext.bind(this.createItemDD, this, [item]), this, {single: true});
             }
         }
     },

@@ -38,7 +38,9 @@
  * In the example above, buttons 2 and 3 will be reorderable via drag and drop. An event named 'reordered'
  * is added to the Toolbar, and is fired whenever a reorder has been completed.
  */
-Ext.ux.ToolbarReorderer = Ext.extend(Ext.ux.Reorderer, {
+Ext.define('Ext.ux.ToolbarReorderer', {
+
+    extend: 'Ext.ux.Reorderer',
     /**
      * Initializes the plugin, decorates the toolbar with additional functionality
      */

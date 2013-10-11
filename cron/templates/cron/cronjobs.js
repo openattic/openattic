@@ -13,7 +13,9 @@
 
 Ext.namespace("Ext.oa");
 
-Ext.oa.Cron__Job_Panel = Ext.extend(Ext.oa.ShareGridPanel, {
+Ext.define('Ext.oa.Cron__Job_Panel', {
+  alias: 'widget.cron__job_panel',
+  extend: 'Ext.oa.ShareGridPanel',
   api: cron__Cronjob,
   id: "cron__job_panel_inst",
   title: gettext('Cron Jobs'),
@@ -70,13 +72,25 @@ Ext.oa.Cron__Job_Panel = Ext.extend(Ext.oa.ShareGridPanel, {
         xtype: 'combo',
         allowBlank: false,
         fieldLabel: gettext('Host'),
-        hiddenName: 'host',
-        store: {
-          xtype: "directstore",
-          fields: ["id", "name"],
-          directFn: ifconfig__Host.all
-        },
+        name: 'host',
+        store: (function(){
+          Ext.define('cronjob_ifconfig_all_store_model', {
+            extend: 'Ext.data.Model',
+            fields: [
+              {name: 'id'},
+              {name: 'name'}
+            ]
+          });
+          return Ext.create('Ext.data.Store', {
+            model: "cronjob_ifconfig_all_store_model",
+            proxy: {
+              type: 'direct',
+              directFn: ifconfig__Host.all
+            }
+          });
+        }()),
         triggerAction: 'all',
+        deferEmptyText: false,
         emptyText:     gettext('Select...'),
         selectOnFocus: true,
         displayField:  'name',
@@ -120,9 +134,8 @@ Ext.oa.Cron__Job_Panel = Ext.extend(Ext.oa.ShareGridPanel, {
   }
 });
 
-Ext.reg("cron__job_panel", Ext.oa.Cron__Job_Panel);
 
-Ext.oa.Cron__Job_Module = Ext.extend(Object, {
+Ext.oa.Cron__Job_Module = {
   panel: "cron__job_panel",
   prepareMenuTree: function(tree){
     "use strict";
@@ -130,13 +143,12 @@ Ext.oa.Cron__Job_Module = Ext.extend(Object, {
       text: gettext('Cron Jobs'),
       leaf: true,
       icon: MEDIA_URL + '/icons2/22x22/actions/appointment.png',
-      panel: 'cron__job_panel_inst',
-      href: '#'
+      panel: 'cron__job_panel_inst'
     });
   }
-});
+};
 
 
-window.MainViewModules.push( new Ext.oa.Cron__Job_Module() );
+window.MainViewModules.push( Ext.oa.Cron__Job_Module );
 
 // kate: space-indent on; indent-width 2; replace-tabs on;

@@ -31,13 +31,15 @@ Ext.oa.getDefaultPortlets = function(tools){
     }()),
     items: new Ext.grid.GridPanel({
       height: 265,
-      viewConfig: { forceFit: true },
+      forceFit: true,
       split: true,
+      sortableColumns: true,
       store: (function(){
         // Anon function that is called immediately to set up the store's DefaultSort
         var store = new Ext.data.DirectStore({
           storeId: "portlet_lvs_store",
           autoLoad: true,
+          sorters: [{property: "fsused", direction: "DESC"}],
           fields: ['name', 'megs', 'filesystem',  'formatted', 'id', 'state', 'fs', 'fswarning', 'fscritical', 'snapshot', {
             name: 'fsused',
             mapping: 'fs',
@@ -51,7 +53,6 @@ Ext.oa.getDefaultPortlets = function(tools){
           }],
           directFn: lvm__LogicalVolume.all
         });
-        store.setDefaultSort("fsused", "DESC");
         store.on("load", function(self){
           self.filterBy(function(record){
             return !record.data.snapshot && record.data.fs !== null && record.data.fs.mounted;
@@ -59,150 +60,38 @@ Ext.oa.getDefaultPortlets = function(tools){
         });
         return store;
       }()),
-      colModel:  new Ext.grid.ColumnModel({
-        defaults: {
-          sortable: true
-        },
-        columns: [{
-          header: "LV",
-          width: 200,
-          dataIndex: "name"
-        }, {
-          header: "Used",
-          width: 150,
-          dataIndex: "fsused",
-          align: 'right',
-          renderer: function( val, x, store ){
-            if( !val || val === -1 ){
-              return '';
-            }
-            var id = Ext.id();
-            (function(){
-              if( Ext.get(id) === null ){
-                return;
-              }
-              new Ext.ProgressBar({
-                renderTo: id,
-                value: val/100.0,
-                text:  String.format("{0}%", val),
-                cls:   ( val > store.data.fscritical ? "lv_used_crit" :
-                        (val > store.data.fswarning  ? "lv_used_warn" : "lv_used_ok"))
-              });
-            }).defer(25);
-            return '<span id="' + id + '"></span>';
+      columns: [{
+        header: "LV",
+        width: 200,
+        dataIndex: "name"
+      }, {
+        header: "Used",
+        width: 150,
+        dataIndex: "fsused",
+        align: 'right',
+        renderer: function( val, x, store ){
+          if( !val || val === -1 ){
+            return '';
           }
-        }]
-      })
+          var id = Ext.id();
+
+          Ext.defer(function(){
+            if( Ext.get(id) === null ){
+              return;
+            }
+            new Ext.ProgressBar({
+              renderTo: id,
+              value: val/100.0,
+              text:  Ext.String.format("{0}%", val),
+              cls:   ( val > store.data.fscritical ? "lv_used_crit" :
+                      (val > store.data.fswarning  ? "lv_used_warn" : "lv_used_ok"))
+            });
+            }, 25);
+
+          return '<span id="' + id + '"></span>';
+        }
+      }]
     })
-  }, {
-    title: 'CPU Stats',
-    id: 'portlet_cpu',
-    tools: tools,
-    height: 300,
-    items: (function(){
-      var chart = new Ext.canvasXpress({
-        options: {
-          graphType: 'Pie',
-          imageDir: MEDIA_URL+'/canvasxpress/images/',
-          background: 'rgb(244,244,244)',
-          colorScheme: 'pastel',
-          pieSegmentPrecision:  0,
-          pieSegmentSeparation: 0,
-          pieSegmentLabels: 'inside',
-          pieType: 'solid'
-        },
-        data: {y: {
-          vars:  ['a', 'b'],
-          smps:  ['CPU'],
-          data:  [[1], [2]]
-        }},
-        events: { click: function(){} }
-      });
-      var updateChart = function(){
-        if( typeof chart.canvas !== "undefined" ){
-          hoststats__HostStats.get_cpu(function(provider, result){
-            if(result.result){
-              var conf = {
-                smps: ['CPU'],
-                vars: [],
-                data: []
-              };
-              var key;
-              for( key in result.result ){
-                if( key === "time_taken" ){
-                  continue;
-                }
-                if( result.result[key] < 0.5 ){
-                  continue;
-                }
-                conf.vars.push(key);
-                conf.data.push([result.result[key]]);
-              }
-              chart.canvas.updateData({ y: conf });
-              chart.el.unmask();
-            }
-          });
-        }
-        updateChart.defer(30000);
-      };
-      chart.on("afterrender", function(){
-        chart.el.mask(gettext("Loading..."));
-        updateChart();
-      });
-      return chart;
-    }())
-  }, {
-    title: 'RAM Stats',
-    id: 'portlet_ram',
-    tools: tools,
-    height: 300,
-    items: (function(){
-      var chart = new Ext.canvasXpress({
-        options: {
-          graphType: 'Pie',
-          imageDir: MEDIA_URL+'/canvasxpress/images/',
-          background: 'rgb(244,244,244)',
-          colorScheme: 'pastel',
-          pieSegmentPrecision:  0,
-          pieSegmentSeparation: 0,
-          pieSegmentLabels: 'inside',
-          pieType: 'solid'
-        },
-        data: {y: {
-          vars:  ['a', 'b'],
-          smps:  ['RAM'],
-          data:  [[1], [2]]
-        }},
-        events: { click: function(){} }
-      });
-      var updateChart = function(){
-        if( typeof chart.canvas !== "undefined" ){
-          hoststats__HostStats.get_mem(function(provider, result){
-            if(result.result){
-              var conf = {
-                smps: ['RAM'],
-                vars: [],
-                data: []
-              };
-              var key;
-              for( key in result.result ){
-                conf.vars.push(key);
-                conf.data.push([result.result[key]]);
-              }
-              chart.canvas.updateData({ y: conf });
-              chart.el.unmask();
-            }
-          });
-        }
-        updateChart.defer(30000);
-      };
-      chart.on("afterrender", function(){
-        chart.el.mask(gettext("Loading..."));
-        updateChart();
-      });
-      chart.on("leftclick", function(){});
-      return chart;
-    }())
   }];
 };
 

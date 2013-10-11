@@ -13,26 +13,9 @@
 
 Ext.namespace("Ext.oa");
 
-function wrap_api_key_set(form, options, action){
-  "use strict";
-  // This is a somewhat questionable method to submit the form, but Django refuses
-  // to validate without last_login/date_joined being set, which is not quite what I want either.
-  var params = {
-    owner:        {app: "auth", obj: "User", id: form.owner.value},
-    description:  form.description.value,
-    active:       form.active.checked
-  };
-  if( options.params.id === -1 ){
-    rpcd__APIKey.create(params, action.options.success);
-  }
-  else{
-    rpcd__APIKey.set(options.params.id, params, action.options.success);
-  }
-}
-
-
-
-Ext.oa.ApiKey_Panel = Ext.extend(Ext.oa.ShareGridPanel, {
+Ext.define('Ext.oa.ApiKey_Panel', {
+  extend: 'Ext.oa.ShareGridPanel',
+  alias: "widget.apikey_panel",
   api: rpcd__APIKey,
   id: "apikey_panel_inst",
   title: gettext('API Keys'),
@@ -42,7 +25,6 @@ Ext.oa.ApiKey_Panel = Ext.extend(Ext.oa.ShareGridPanel, {
     remove:  gettext('Delete Key')
   },
   deleteConfirm: function(sel, handler, scope){
-    "use strict";
     Ext.Msg.confirm(
       this.texts.remove,
       interpolate(gettext("Do you really want to delete %(user)s's key '%(key)s'?"), {
@@ -63,16 +45,15 @@ Ext.oa.ApiKey_Panel = Ext.extend(Ext.oa.ShareGridPanel, {
     text: gettext('Show API URL'),
     icon: MEDIA_URL + "/oxygen/16x16/actions/download.png",
     handler: function(btn){
-      "use strict";
       var sm = this.getSelectionModel();
       if( sm.hasSelection() ){
-        var sel = sm.selections.items[0];
+        var sel = sm.selected.items[0];
         __main__.fqdn(function(provider, response){
           Ext.Msg.prompt(gettext('API URL'),
             gettext('Use this URL to connect to the openATTIC API using the API Key you selected.') + "<br />" +
             gettext('Note that the input field only allows for easier copy-paste, any value you enter here will be ignored.'),
             null, null, false,
-            String.format("http://__:{0}@{1}:31234/", sel.data.apikey, response.result)
+            Ext.String.format("http://__:{0}@{1}:31234/", sel.data.apikey, response.result)
           );
         });
       }
@@ -93,13 +74,9 @@ Ext.oa.ApiKey_Panel = Ext.extend(Ext.oa.ShareGridPanel, {
     renderer: Ext.oa.renderBoolean
   }],
   form: {
-    api: {
-      load: rpcd__APIKey.get_ext,
-      submit: wrap_api_key_set
-    },
     items: [{
-      xtype: 'authuserfield',
-      hiddenName: "owner"
+      xtype: 'auth__userfield',
+      name: "owner"
     }, {
       fieldLabel: gettext('Description'),
       name: "description",
@@ -115,23 +92,19 @@ Ext.oa.ApiKey_Panel = Ext.extend(Ext.oa.ShareGridPanel, {
 
 
 
-Ext.reg("apikey_panel", Ext.oa.ApiKey_Panel);
-
-Ext.oa.ApiKey_Module = Ext.extend(Object, {
+Ext.oa.ApiKey_Module = {
   panel: "apikey_panel",
 
   prepareMenuTree: function(tree){
-    "use strict";
     tree.appendToRootNodeById("menu_system", {
       text: gettext('API Keys'),
       icon: MEDIA_URL + '/oxygen/22x22/status/dialog-password.png',
       leaf: true,
-      panel: 'apikey_panel_inst',
-      href: '#'
+      panel: 'apikey_panel_inst'
     });
   }
-});
+};
 
-window.MainViewModules.push( new Ext.oa.ApiKey_Module() );
+window.MainViewModules.push( Ext.oa.ApiKey_Module );
 
 // kate: space-indent on; indent-width 2; replace-tabs on;

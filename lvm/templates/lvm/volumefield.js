@@ -13,71 +13,67 @@
 
 Ext.namespace("Ext.oa");
 
-Ext.oa.VolumeField = Ext.extend(Ext.form.ComboBox, {
+Ext.define('Ext.oa.VolumeField', {
+  alias: 'widget.volumefield',
+  extend: 'Ext.form.ComboBox',
   filesystem__isnull: false,
   initComponent: function(){
-    "use strict";
-    var baseParams = {
+    var extraParams = {
       "field": "name",
       "query": "",
       "kwds":  {}
     };
 
     if( this.filesystem__isnull === false ){
-      baseParams.kwds = {"__exclude__": {"filesystem":""}};
+      extraParams.kwds = {"__exclude__": {"filesystem":""}};
     }
 
     if( this.filesystem__isnull === true ){
-      baseParams.kwds = {"filesystem":""};
+      extraParams.kwds = {"filesystem":""};
     }
 
-    if( typeof this.baseParams !== "undefined" ){
-        if( typeof this.baseParams.kwds !== "undefined" ){
-            Ext.applyIf(baseParams.kwds, this.baseParams.kwds);
+    if( typeof this.extraParams !== "undefined" ){
+        if( typeof this.extraParams.kwds !== "undefined" ){
+            Ext.applyIf(extraParams.kwds, this.extraParams.kwds);
         }
-        Ext.applyIf(baseParams, this.baseParams);
+        Ext.applyIf(extraParams, this.extraParams);
     }
 
     Ext.apply(this, Ext.applyIf(this.initialConfig, {
       fieldLabel: gettext('Volume'),
-      hiddenName: "volume",
-      store: new Ext.data.DirectStore({
-        fields: ["id", "name"],
-        directFn: lvm__LogicalVolume.filter_combo,
-        paramOrder: ["field", "query", "kwds"],
-        baseParams: baseParams
-      }),
+      name: "volume",
+      store: (function(){
+        Ext.define('volumefield_store_model', {
+          extend: 'Ext.data.Model',
+          fields: [
+            {name: 'id'},
+            {name: 'name'}
+          ]
+        });
+        return Ext.create('Ext.data.Store', {
+          model: "volumefield_store_model",
+          proxy: {
+            type: 'direct',
+            directFn: lvm__LogicalVolume.filter_combo,
+            paramOrder: ["field", "query", "kwds"],
+            extraParams: extraParams
+          }
+        });
+      }()),
       typeAhead:     true,
       triggerAction: 'all',
+      deferEmptyText: false,
       emptyText:     gettext('Select...'),
       allowBlank:    false,
       selectOnFocus: true,
       forceSelection: true,
       displayField:  'name',
       valueField:    'id',
-      ref:           'volfield'
     }));
-    Ext.oa.VolumeField.superclass.initComponent.apply(this, arguments);
+    this.callParent(arguments);
   },
-
-  setValue: function(value){
-    "use strict";
-    // Make sure the store is loaded before trying to display stuff.
-    if( !this.store.data.length ){
-      var self = this;
-      this.store.load({
-        callback: function(){
-          Ext.oa.VolumeField.superclass.setValue.apply(self, [value]);
-        }
-      });
-    }
-    else{
-      Ext.oa.VolumeField.superclass.setValue.apply(this, arguments);
-    }
-  }
 });
 
-Ext.reg("volumefield", Ext.oa.VolumeField);
 
 // kate: space-indent on; indent-width 2; replace-tabs on;
 

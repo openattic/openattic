@@ -13,9 +13,11 @@
 
 Ext.namespace("Ext.oa");
 
-Ext.oa.Zfs__Snapshot_Panel = Ext.extend(Ext.Panel, {
+Ext.define('Ext.oa.Zfs__Snapshot_Panel', {
+
+  alias: 'widget.zfs__snapshot__panel',
+  extend: 'Ext.Panel',
   initComponent: function(){
-    "use strict";
     var zfsSnapPanel = this;
 
     Ext.apply(this, Ext.apply(this.initialConfig, {
@@ -27,9 +29,9 @@ Ext.oa.Zfs__Snapshot_Panel = Ext.extend(Ext.Panel, {
         icon: MEDIA_URL + "/icons2/16x16/actions/reload.png",
         tooltip: gettext('Reload'),
         handler: function(self){
-          zfsSnapPanel.snapGrid.store.reload();
-          Ext.StoreMgr.get('zfs_volumestore').reload();
-          Ext.StoreMgr.get('zfs_subvolumestore').reload();
+          Ext.ComponentQuery.query("[region=south]", zfsSnapPanel)[0];
+          Ext.StoreMgr.get('zfs_volumestore').load();
+          Ext.StoreMgr.get('zfs_subvolumestore').load();
         }
       }, {
         text: gettext('Create Snapshot'),
@@ -51,45 +53,53 @@ Ext.oa.Zfs__Snapshot_Panel = Ext.extend(Ext.Panel, {
               items: [{
                 fieldLabel: "Snapshotname",
                 width: 300,
-                ref: 'snapshotnamefield'
+                id: 'snapshotnamefield',
+                name: 'snapshotnamefield'
               }],
               buttons: [{
                 text: gettext('Create Snapshot'),
                 icon: MEDIA_URL + "/oxygen/16x16/actions/dialog-ok-apply.png",
                 handler: function(self){
-                  var sm = zfsSnapPanel.tabpanel.getActiveTab().getSelectionModel();
+                  var sm = Ext.ComponentQuery.query("[name=tabpanel]", zfsSnapPanel)[0].getActiveTab().getSelectionModel();
                   if( sm.hasSelection() ){
-                    var sel = sm.selections.items[0];
-                    var tab = zfsSnapPanel.tabpanel.getActiveTab();
+                    var sel = sm.selected.items[0];
+                    var tab = Ext.ComponentQuery.query("[name=tabpanel]", zfsSnapPanel)[0].getActiveTab();
                     if (tab.id === "volumepanel"){
                       lvm__ZfsSnapshot.create({
                         "volume": {
                           "app": "lvm",
                           "obj": "LogicalVolume",
-                          "id": sel.id
+                          "id": sel.data.id
                         },
-                        "snapname":  self.ownerCt.ownerCt.snapshotnamefield.getValue()
+                        "snapname":  Ext.ComponentQuery.query("[name=snapshotnamefield]", self.ownerCt.ownerCt)[0].getValue()
                       }, function (provider, response){
-                        addwin.hide();
-                        zfsSnapPanel.snapGrid.store.reload();
+                        addwin.close();
+                        Ext.ComponentQuery.query("[region=south]", zfsSnapPanel)[0].store.load({ params: {
+                          "volume_id"        : sel.data.id,
+                          "subvolume__isnull": true
+                        }});
                       });
                     }
                     else {
                       lvm__ZfsSnapshot.create({
-                        "snapname": self.ownerCt.ownerCt.snapshotnamefield.getValue(),
+                        "volume": sel.raw.volume,
+                        "snapname": Ext.ComponentQuery.query("[name=snapshotnamefield]", self.ownerCt.ownerCt)[0].getValue(),
                         "subvolume": {
                           "app": "lvm",
                           "obj": "ZfsSubvolume",
-                          "id": sel.id
+                          "id": sel.data.id
                         }
                       }, function (provider, response){
-                        addwin.hide();
-                        zfsSnapPanel.snapGrid.store.reload();
+                        addwin.close();
+                        Ext.ComponentQuery.query("[region=south]", zfsSnapPanel)[0].store.load({ params: {
+                          "subvolume__isnull": false,
+                          "subvolume__id"    : sel.data.id
+                        }});
                       });
                     }
                   }
                   else {
-                    addwin.hide();
+                    addwin.close();
                     Ext.Msg.alert("Missing Volume","Please select a volume first");
                   }
                 }
@@ -97,7 +107,7 @@ Ext.oa.Zfs__Snapshot_Panel = Ext.extend(Ext.Panel, {
             }]
           });
           sysutils__System.get_time(function(provider, response){
-            addwin.items.items[0].snapshotnamefield.setValue(new Date(response.result * 1000).format("d-m-Y_H-i-s"));
+            Ext.ComponentQuery.query("[name=snapshotnamefield]", self.ownerCt)[0].setValue(new Date(response.result * 1000).format("d-m-Y_H-i-s"));
           });
           addwin.show();
         }
@@ -105,9 +115,9 @@ Ext.oa.Zfs__Snapshot_Panel = Ext.extend(Ext.Panel, {
         text: gettext('Rollback Snapshot'),
         icon: MEDIA_URL + "/icons2/16x16/actions/go-last.png",
         handler: function(self){
-          var sm = zfsSnapPanel.snapGrid.getSelectionModel();
+          var sm = Ext.ComponentQuery.query("[region=south]", zfsSnapPanel)[0].getSelectionModel();
           if( sm.hasSelection() ){
-            var sel = sm.selections.items[0];
+            var sel = sm.selected.items[0];
             Ext.Msg.confirm(
               gettext('Confirm rollback'),
               interpolate(
@@ -116,7 +126,25 @@ Ext.oa.Zfs__Snapshot_Panel = Ext.extend(Ext.Panel, {
               function(btn, text){
                 if( btn === 'yes' ){
                   lvm__ZfsSnapshot.rollback( sel.data.id, function (provider, response){
-                    zfsSnapPanel.snapGrid.store.reload();
+                    var sm = Ext.ComponentQuery.query("[name=tabpanel]", zfsSnapPanel)[0].getActiveTab().getSelectionModel();
+                    var sel = sm.selected.items[0];
+                    var tab = Ext.ComponentQuery.query("[name=tabpanel]", zfsSnapPanel)[0].getActiveTab();
+                    var params_dict = {};
+
+                    if (tab.id === "volumepanel"){
+                      params_dict["subvolume__isnull"] = true;
+                      if( sm.hasSelection() ){
+                        params_dict["volume_id"] = sel.data.id;
+                      }
+                    }
+                    else
+                    {
+                      params_dict["subvolume__isnull"] = false;
+                      if( sm.hasSelection() ){
+                        params_dict["subvolume__id"] = sel.data.id;
+                      }
+                    }
+                    Ext.ComponentQuery.query("[region=south]", zfsSnapPanel)[0].store.load({ params: params_dict});
                   });
                 }
               }
@@ -127,9 +155,9 @@ Ext.oa.Zfs__Snapshot_Panel = Ext.extend(Ext.Panel, {
         text: gettext('Delete Snapshot'),
         icon: MEDIA_URL + "/icons2/16x16/actions/remove.png",
         handler: function(self){
-          var sm = zfsSnapPanel.snapGrid.getSelectionModel();
+          var sm = Ext.ComponentQuery.query("[region=south]", zfsSnapPanel)[0].getSelectionModel();
           if( sm.hasSelection() ){
-            var sel = sm.selections.items[0];
+            var sel = sm.selected.items[0];
             Ext.Msg.confirm(
               gettext('Confirm delete'),
               interpolate(
@@ -138,7 +166,25 @@ Ext.oa.Zfs__Snapshot_Panel = Ext.extend(Ext.Panel, {
               function(btn, text){
                 if( btn === 'yes' ) {
                   lvm__ZfsSnapshot.remove( sel.data.id, function (provider, response){
-                    zfsSnapPanel.snapGrid.store.reload();
+                    var sm = Ext.ComponentQuery.query("[name=tabpanel]", zfsSnapPanel)[0].getActiveTab().getSelectionModel();
+                    var sel = sm.selected.items[0];
+                    var tab = Ext.ComponentQuery.query("[name=tabpanel]", zfsSnapPanel)[0].getActiveTab();
+                    var params_dict = {};
+
+                    if (tab.id === "volumepanel"){
+                      params_dict["subvolume__isnull"] = true;
+                      if( sm.hasSelection() ){
+                        params_dict["volume_id"] = sel.data.id;
+                      }
+                    }
+                    else
+                    {
+                      params_dict["subvolume__isnull"] = false;
+                      if( sm.hasSelection() ){
+                        params_dict["subvolume__id"] = sel.data.id;
+                      }
+                    }
+                    Ext.ComponentQuery.query("[region=south]", zfsSnapPanel)[0].store.load({ params: params_dict});
                   });
                 }
               }
@@ -149,7 +195,8 @@ Ext.oa.Zfs__Snapshot_Panel = Ext.extend(Ext.Panel, {
       items: [{
         xtype: "tabpanel",
         region: "center",
-        ref: "tabpanel",
+        id: 'tabpanel',
+        name: "tabpanel",
         activeTab: 0,
         border: false,
         items: [{
@@ -157,26 +204,38 @@ Ext.oa.Zfs__Snapshot_Panel = Ext.extend(Ext.Panel, {
           title: gettext("Volumes"),
           id: "volumepanel",
           autoScroll: true,
-          viewConfig: { forceFit: true },
-          store: new Ext.data.DirectStore({
-            fields: ['name'],
-            baseParams: { "filesystem": "zfs" },
-            directFn: lvm__LogicalVolume.filter,
-            storeId:  'zfs_volumestore'
-          }),
-          colModel: new Ext.grid.ColumnModel({
-            defaults: {
-              sortable: true
-            },
-            columns: [{
-              header: gettext('Volume'),
-              dataIndex: "name"
-            }]
-          }),
+          forceFit: true,
+          store: function(){
+            Ext.define('zfs_volumestore', {
+              extend: 'Ext.data.Model',
+              fields: [
+                {name: 'name'}
+              ]
+            });
+            return Ext.create('Ext.data.Store', {
+              id: "zfs_volumestore",
+              model: "zfs_volumestore",
+              proxy: {
+                type: 'direct',
+                extraParams: { "filesystem": "zfs" },
+                startParam: undefined,
+                limitParam: undefined,
+                pageParam:  undefined,
+                directFn: lvm__LogicalVolume.filter
+              }
+            });
+          }(),
+          defaults: {
+            sortable: true
+          },
+          columns: [{
+            header: gettext('Volume'),
+            dataIndex: "name"
+          }],
           listeners: {
-            cellclick: function( self, rowIndex, colIndex, evt ){
+            cellclick: function( self, td, cellIndex, record, tr, rowIndex, e, eOpts ){
               var record = self.getStore().getAt(rowIndex);
-              zfsSnapPanel.snapGrid.store.load({ params: {
+              Ext.ComponentQuery.query("[region=south]", zfsSnapPanel)[0].store.load({ params: {
                 "volume__name": record.data.name,
                 "subvolume__isnull": true
               }});
@@ -187,112 +246,129 @@ Ext.oa.Zfs__Snapshot_Panel = Ext.extend(Ext.Panel, {
           title: gettext("Subvolumes"),
           id: "subvolumepanel",
           autoScroll: true,
-          viewConfig: { forceFit: true },
-          store: new Ext.data.DirectStore({
-            fields: ['volname', {
-              name: 'orivolume',
-              mapping: 'volume',
-              convert: function(val, row){
-                if( val === null ){
-                  return null;
-                }
-                return val.name;
+          forceFit: true,
+          store: function(){
+            Ext.define('zfs_subvolumestore_model', {
+              extend: 'Ext.data.Model',
+              fields: [
+                {name: 'volname'},
+                {name: 'orivolume', mapping: 'volume', convert: function(val, row){
+                  if( val === null ){
+                    return null;
+                  }
+                  return val.__unicode__;
+                }}
+              ]
+            });
+            return Ext.create('Ext.data.Store', {
+              id: 'zfs_subvolumestore',
+              model: "zfs_subvolumestore_model",
+              proxy: {
+                type: 'direct',
+                startParam: undefined,
+                limitParam: undefined,
+                pageParam:  undefined,
+                directFn: lvm__ZfsSubvolume.all,
               }
-            }],
-            directFn: lvm__ZfsSubvolume.all,
-            storeId:  'zfs_subvolumestore'
-          }),
-          colModel: new Ext.grid.ColumnModel({
-            defaults: {
-              sortable: true
-            },
-            columns: [{
-              header: gettext('Subvolume'),
-              dataIndex: "volname"
-            },{
-              header: gettext('Volume'),
-              dataIndex: "orivolume"
-            }]
-          }),
+            });
+          }(),
+          defaults: {
+            sortable: true
+          },
+          columns: [{
+            header: gettext('Subvolume'),
+            dataIndex: "volname"
+          },{
+            header: gettext('Volume'),
+            dataIndex: "orivolume"
+          }],
           listeners: {
             activate: function(self){
-              zfsSnapPanel.snapGrid.store.removeAll();
+              Ext.ComponentQuery.query("[region=south]", zfsSnapPanel)[0].store.removeAll();
             },
             deactivate : function(self){
-              zfsSnapPanel.snapGrid.store.removeAll();
+              Ext.ComponentQuery.query("[region=south]", zfsSnapPanel)[0].store.removeAll();
             },
-            cellclick: function( self, rowIndex, colIndex, evt ){
+            cellclick: function( self, td, cellIndex, record, tr, rowIndex, e, eOpts){
               var record = self.getStore().getAt(rowIndex);
-              zfsSnapPanel.snapGrid.store.load({ params: {"subvolume__id": record.id}});
+              Ext.ComponentQuery.query("[region=south]", zfsSnapPanel)[0].store.load({ params: {"subvolume__id": record.data.id}});
             }
           }
-        }]
+        }],
       }, {
         xtype: "grid",
         region: "south",
         autoScroll: true,
         height: 300,
-        viewConfig: { forceFit: true },
+        forceFit: true,
         id: "snapgrid",
-        ref: "snapGrid",
-        store: new Ext.data.DirectStore({
-          fields: ['snapname', 'created_at','id'],
-          directFn: lvm__ZfsSnapshot.filter
-        }),
-        colModel: new Ext.grid.ColumnModel({
-          defaults: {
-            sortable: true
-          },
-          columns: [{
-            header: gettext('Snapshots'),
-            dataIndex: "snapname"
-          },{
-            header: gettext('Created'),
-            dataIndex: "created_at"
-          }]
-        })
+        name: "snapgrid",
+        defaults: {
+          sortable: true
+        },
+        columns: [{
+          header: gettext('Snapshots'),
+          dataIndex: "snapname"
+        },{
+          header: gettext('Created'),
+          dataIndex: "created_at"
+        }],
+        store: function(){
+          Ext.define('zfs_snapshot_store', {
+            extend: 'Ext.data.Model',
+            fields: [
+              {name: 'snapname'},
+              {name: 'created_at'},
+              {name: 'id'}
+            ]
+          });
+          return Ext.create('Ext.data.Store', {
+            model: "zfs_snapshot_store",
+            proxy: {
+              type: 'direct',
+              startParam: undefined,
+              limitParam: undefined,
+              pageParam:  undefined,
+              directFn: lvm__ZfsSnapshot.filter
+            }
+          });
+        }()
       }]
     }));
-    Ext.oa.Zfs__Snapshot_Panel.superclass.initComponent.apply(this, arguments);
+    this.callParent(arguments);
   },
   onRender: function(){
-    "use strict";
-    Ext.oa.Zfs__Snapshot_Panel.superclass.onRender.apply(this, arguments);
-    Ext.StoreMgr.get('zfs_volumestore').reload();
-    Ext.StoreMgr.get('zfs_subvolumestore').reload();
+    this.callParent(arguments);
+    Ext.StoreMgr.get('zfs_volumestore').load();
+    Ext.StoreMgr.get('zfs_subvolumestore').load();
   }
 });
 
-Ext.reg("zfs__snapshot_panel", Ext.oa.Zfs__Snapshot_Panel);
 
-Ext.oa.Zfs__Snapshot_Module = Ext.extend(Object, {
-  panel: ["zfs__snapshot_panel","zfs__subvolume_panel"],
+Ext.oa.Zfs__Snapshot_Module = {
+  panel: ["zfs__snapshot__panel","zfs__subvolume__panel"],
 
   prepareMenuTree: function(tree){
-    "use strict";
     tree.appendToRootNodeById("menu_storage", {
       text: "ZFS",
       icon: MEDIA_URL + '/icons2/22x22/mimetypes/ascii.png',
       panel: "zfs__snapshot_panel_inst",
-      href: "#",
       children: [{
         text: gettext('Zfs Snapshots'),
         leaf: true,
         icon: MEDIA_URL + '/icons2/22x22/actions/document-save-as.png',
-        panel: "zfs__snapshot_panel_inst",
-        href: '#'
+        panel: "zfs__snapshot_panel_inst"
       },{
         text: gettext('Zfs Subvolume'),
         leaf: true,
         icon: MEDIA_URL + '/icons2/22x22/places/network.png',
-        panel: "zfs__subvolume_panel_inst",
-        href: '#'
+        panel: "zfs__subvolume_panel_inst"
       }]
     });
   }
-});
+};
 
 
-window.MainViewModules.push( new Ext.oa.Zfs__Snapshot_Module() );
+window.MainViewModules.push( Ext.oa.Zfs__Snapshot_Module );
 
 // kate: space-indent on; indent-width 2; replace-tabs on;

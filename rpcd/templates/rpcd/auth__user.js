@@ -13,31 +13,9 @@
 
 Ext.namespace("Ext.oa");
 
-function wrap_auth_User_set(form, options, action){
-  "use strict";
-  // This is a somewhat questionable method to submit the form, but Django refuses
-  // to validate without last_login/date_joined being set, which is not quite what I want either.
-  var params = {
-    first_name:   form.first_name.value,
-    last_name:    form.last_name.value,
-    username:     form.username.value,
-    email:        form.email.value,
-    is_active:    form.is_active.checked,
-    is_staff:     form.is_staff.checked,
-    is_superuser: form.is_superuser.checked
-  };
-  if( form.__passwordfield.value !== "" ){
-    params.password = form.__passwordfield.value;
-  }
-  if( options.params.id === -1 ){
-    auth__User.create(params, action.options.success);
-  }
-  else{
-    auth__User.set(options.params.id, params, action.options.success);
-  }
-}
-
-Ext.oa.Auth__User_Panel = Ext.extend(Ext.oa.ShareGridPanel, {
+Ext.define('Ext.oa.Auth__User_Panel', {
+  extend: 'Ext.oa.ShareGridPanel',
+  alias: "widget.auth__user_panel",
   api: auth__User,
   id: "auth__user_panel_inst",
   title: gettext('Users'),
@@ -52,31 +30,42 @@ Ext.oa.Auth__User_Panel = Ext.extend(Ext.oa.ShareGridPanel, {
       var sm = this.getSelectionModel();
       var self = this;
       if( sm.hasSelection() ){
-        var sel = sm.selections.items[0];
+        var sel = sm.selected.items[0];
         var volwin = new Ext.Window({
           title: gettext('Volumes of User'),
           layout: "fit",
           height: 300,
-          width: 270,
+          width: 350,
           items: {
             xtype: "grid",
-            store: {
-              xtype: 'directstore',
-              autoLoad: true,
-              fields: ['name'],
-              directFn: lvm__LogicalVolume.filter,
-              baseParams: {owner__id: sel.data.id}
+            store: function(){
+              Ext.define('rpcd_volumes_of_user_store', {
+                extend: 'Ext.data.Model',
+                fields: [
+                  {name: 'name'}
+                ],
+                extraParams: { owner__id: sel.data.id },
+              });
+              return Ext.create('Ext.data.Store', {
+                model: "rpcd_volumes_of_user_store",
+                proxy: {
+                  type: 'direct',
+                  directFn: lvm__LogicalVolume.filter,
+                  startParam: undefined,
+                  limitParam: undefined,
+                  pageParam:  undefined
+                },
+                sorters: [{property: "username"}]
+              });
+            }(),
+            defaults: {
+              sortable: true
             },
-            colModel: new Ext.grid.ColumnModel({
-              defaults: {
-                sortable: true
-              },
-              columns: [{
-                header: gettext('Volume Name'),
-                width: 250,
-                dataIndex: "name"
-              }]
-            })
+            columns: [{
+              header: gettext('Volume Name'),
+              width: 250,
+              dataIndex: "name"
+            }]
           }
         } );
         volwin.show();
@@ -125,49 +114,39 @@ Ext.oa.Auth__User_Panel = Ext.extend(Ext.oa.ShareGridPanel, {
     dataIndex: "last_login",
     renderer: function(val){
       if(!val) return gettext("unknown");
-      return new Date( Date.parse(val) ).format(get_format_ext("SHORT_DATETIME_FORMAT"))
+      var date = new Date(Date.parse(val));
+      return Ext.Date.format(date, get_format_ext("SHORT_DATETIME_FORMAT"));
     }
   }],
   form: {
-    api: {
-      load: auth__User.get_ext,
-      submit: wrap_auth_User_set
-    },
     items: [{
       fieldLabel: gettext('User Name'),
-      name: "username",
-      ref: 'usernamefield'
+      name: "username"
     }, {
       fieldLabel: gettext('Password'),
       inputType: 'password',
-      name: '__passwordfield'
+      name: 'password'
     }, {
       fieldLabel: gettext('First Name'),
-      name: "first_name",
-      ref: 'firstnamefield'
+      name: "first_name"
     }, {
       fieldLabel: gettext('Last Name'),
-      name: "last_name",
-      ref: 'lastnamefield'
+      name: "last_name"
     }, {
       fieldLabel: gettext('E-Mail'),
-      name: "email",
-      ref: 'emailfield'
+      name: "email"
     }, {
       xtype: 'checkbox',
       fieldLabel: gettext('Active'),
-      name: "is_active",
-      ref: 'activefield'
+      name: "is_active"
     }, {
       xtype: 'checkbox',
       fieldLabel: gettext('Staff'),
-      name: "is_staff",
-      ref: 'stafffield'
+      name: "is_staff"
     }, {
       xtype: 'checkbox',
       fieldLabel: gettext('SuperUser'),
-      name: "is_superuser",
-      ref: 'sufield'
+      name: "is_superuser"
     }]
   },
   deleteFunction: function(){
@@ -175,7 +154,7 @@ Ext.oa.Auth__User_Panel = Ext.extend(Ext.oa.ShareGridPanel, {
     var sm = this.getSelectionModel();
     var self = this;
     if( sm.hasSelection() ){
-      var sel = sm.selections.items[0];
+      var sel = sm.selected.items[0];
       lvm__LogicalVolume.filter( { 'owner__id': sel.data.id }, function(provider, response){
         if( response.result.length > 0 ){
           Ext.Msg.alert( gettext('Delete User'), interpolate(
@@ -192,7 +171,7 @@ Ext.oa.Auth__User_Panel = Ext.extend(Ext.oa.ShareGridPanel, {
             function(btn){
               if(btn === 'yes'){
                 self.api.remove( sel.data.id, function(provider, response){
-                  self.store.reload();
+                  self.store.load();
                 } );
               }
             }
@@ -204,9 +183,7 @@ Ext.oa.Auth__User_Panel = Ext.extend(Ext.oa.ShareGridPanel, {
 });
 
 
-Ext.reg("auth__user_panel", Ext.oa.Auth__User_Panel);
-
-Ext.oa.Auth__User_Module = Ext.extend(Object, {
+Ext.oa.Auth__User_Module = {
   panel: "auth__user_panel",
 
   prepareMenuTree: function(tree){
@@ -215,12 +192,11 @@ Ext.oa.Auth__User_Module = Ext.extend(Object, {
       text: gettext('User Management'),
       icon: MEDIA_URL + '/icons2/22x22/apps/config-users.png',
       leaf: true,
-      panel: 'auth__user_panel_inst',
-      href: '#'
+      panel: 'auth__user_panel_inst'
     });
   }
-});
+};
 
-window.MainViewModules.push( new Ext.oa.Auth__User_Module() );
+window.MainViewModules.push( Ext.oa.Auth__User_Module );
 
 // kate: space-indent on; indent-width 2; replace-tabs on;

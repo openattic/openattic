@@ -13,17 +13,20 @@
 
 Ext.namespace("Ext.oa");
 
-Ext.oa.MainViewManager = Ext.extend(Ext.Panel, {
+Ext.define('Ext.oa.MainViewManager', {
+
+  alias: 'mainviewmanager',
+  extend: 'Ext.Panel',
   initComponent: function(){
-    "use strict";
     var mainviewmanager = this;
     var i, currstate, tbupdate;
     Ext.apply(this, Ext.apply(this.initialConfig, {
       layout: 'border',
-      tbar: new Ext.Toolbar({
+      tbar: Ext.create('Ext.toolbar.Toolbar', {
         cls: "mainviewtoolbar",
+        id:  "mainviewtoolbar",
         items: [
-          new Ext.BoxComponent({
+          Ext.create('Ext.Component', {
             autoEl: {
               tag: "img",
               src: MEDIA_URL + '/openattic.png'
@@ -41,7 +44,7 @@ Ext.oa.MainViewManager = Ext.extend(Ext.Panel, {
           })
         ],
         plugins : [
-          new Ext.ux.ToolbarDroppable({
+          Ext.create('Ext.ux.ToolbarDroppable', {
             createItem: function(data) {
               var record = data.draggedRecord;
               return new Ext.Button({
@@ -57,7 +60,7 @@ Ext.oa.MainViewManager = Ext.extend(Ext.Panel, {
               });
             }
           }),
-          new Ext.ux.ToolbarReorderer({
+          Ext.create('Ext.ux.ToolbarReorderer', {
             defaultReorderable: false,
             messages: this.toolbarMessages
           })
@@ -69,7 +72,7 @@ Ext.oa.MainViewManager = Ext.extend(Ext.Panel, {
           }
         },
         smartInsert: function(obj){
-          var tbar = mainviewmanager.getTopToolbar();
+          var tbar = mainviewmanager.getDockedComponent('mainviewtoolbar');
           var i, c;
           for (i = 0; i < tbar.items.length; i++) {
             c = tbar.items.items[i];
@@ -89,7 +92,7 @@ Ext.oa.MainViewManager = Ext.extend(Ext.Panel, {
         maxSize: 400,
         collapsible: true,
         border: false,
-        enableDD: true,
+        ddConfig: { enableDD: true },
         listeners: {
           'render': function(tree) {
             var findTreeNode = function(node, sourceEl){
@@ -110,7 +113,7 @@ Ext.oa.MainViewManager = Ext.extend(Ext.Panel, {
                 var sourceEl = evt.sourceEl;
                 if( sourceEl ){
                   var treenode = findTreeNode(tree.getRootNode(), sourceEl);
-                  return typeof treenode.attributes.panel !== "undefined";
+                  return typeof treenode.data.panel !== "undefined";
                 }
                 return false;
               },
@@ -128,7 +131,7 @@ Ext.oa.MainViewManager = Ext.extend(Ext.Panel, {
                     sourceEl: sourceEl,
                     repairXY: Ext.fly(sourceEl).getXY(),
                     sourceStore: tree.store,
-                    draggedRecord: treenode.attributes
+                    draggedRecord: treenode.data
                   };
                 }
               },
@@ -143,8 +146,10 @@ Ext.oa.MainViewManager = Ext.extend(Ext.Panel, {
         activeItem: 0,
         border: false,
         hideBorders: true,
-        layout: "card",
-        layoutConfig: { deferredRender: true },
+        layout: {
+          type: "card",
+          deferredRender: true
+        },
         items: (function(){
           var it = [],
               i, j,
@@ -170,14 +175,14 @@ Ext.oa.MainViewManager = Ext.extend(Ext.Panel, {
       }],
       modules: window.MainViewModules
     }));
-    Ext.oa.MainViewManager.superclass.initComponent.apply(this, arguments);
+    this.callParent(arguments);
 
     this.addEvents({
         'switchedComponent': true
         });
 
     this.menutree = this.items.items[0];
-    this.modcontainer = this.items.items[1];
+    this.modcontainer = this.items.items[2];
     this.currentComponent = window.MainViewModules[0];
 
     for( i = 0; i < window.MainViewModules.length; i++ ){
@@ -186,40 +191,44 @@ Ext.oa.MainViewManager = Ext.extend(Ext.Panel, {
       }
     }
 
-    currstate = Ext.state.Manager.get("toolbarbuttons");
-    if( currstate ){
-      for( i = 0; i < currstate.length; i++ ){
-        this.topToolbar.add( new Ext.Button({
-          text:  currstate[i].text,
-          icon:  currstate[i].icon,
-          panel: currstate[i].panel,
-          iconAlign: "top",
-          height: 70,
-          reorderable: true,
-          handler: function(self){
-            mainviewmanager.switchComponent(self.initialConfig.panel);
-          }
-        }) );
-      }
-    }
+    this.menutree.on( 'beforeitemclick', this.treenodeClicked, this );
 
-    this.menutree.on( 'beforeclick', this.treenodeClicked, this );
-    tbupdate = function(evt){
-      var data = [];
-      var d;
-      for( d = 1; d < this.topToolbar.items.items.length; d++ ){
-        data.push({
-          text:  this.topToolbar.items.items[d].initialConfig.text,
-          icon:  this.topToolbar.items.items[d].initialConfig.icon,
-          panel: this.topToolbar.items.items[d].initialConfig.panel
-        });
+    this.on("afterrender", function(){
+      currstate = Ext.state.Manager.get("toolbarbuttons");
+      if( currstate ){
+        for( i = 0; i < currstate.length; i++ ){
+          this.getDockedComponent('mainviewtoolbar').add( new Ext.Button({
+            text:  currstate[i].text,
+            icon:  currstate[i].icon,
+            panel: currstate[i].panel,
+            iconAlign: "top",
+            height: 70,
+            reorderable: true,
+            handler: function(self){
+              mainviewmanager.switchComponent(self.initialConfig.panel);
+            }
+          }) );
+        }
       }
-      Ext.state.Manager.set("toolbarbuttons", data);
-    };
-    this.topToolbar.on( 'add', tbupdate, this );
-    this.topToolbar.on( 'remove', tbupdate, this );
 
-    var map = new Ext.KeyMap(document, {
+      var tbupdate = function(evt){
+        var data = [];
+        var d;
+        for( d = 1; d < this.getDockedComponent('mainviewtoolbar').items.items.length; d++ ){
+          data.push({
+            text:  this.getDockedComponent('mainviewtoolbar').items.items[d].initialConfig.text,
+            icon:  this.getDockedComponent('mainviewtoolbar').items.items[d].initialConfig.icon,
+            panel: this.getDockedComponent('mainviewtoolbar').items.items[d].initialConfig.panel
+          });
+        }
+        Ext.state.Manager.set("toolbarbuttons", data);
+      };
+      this.getDockedComponent('mainviewtoolbar').on( 'add', tbupdate, this );
+      this.getDockedComponent('mainviewtoolbar').on( 'remove', tbupdate, this );
+    }, this);
+
+    var map = new Ext.util.KeyMap({
+      target: document,
       key: 'f',
       ctrl: true,
       fn: function(){
@@ -238,12 +247,13 @@ Ext.oa.MainViewManager = Ext.extend(Ext.Panel, {
     var resetf5 = function(){
       f5again = false;
     };
-    var othermap = new Ext.KeyMap(document, {
+    var othermap = new Ext.util.KeyMap({
+      target: document,
       key: Ext.EventObject.F5,
       fn: function(key, evt){
-        if( !f5again ){
+        if( !f5again && Ext.state.Manager.get("catch_f5", false) ){
           f5again = true;
-          resetf5.defer(1000);
+          Ext.defer(resetf5,1000);
           evt.stopEvent();
 
           var act = this.modcontainer.layout.activeItem;
@@ -256,22 +266,29 @@ Ext.oa.MainViewManager = Ext.extend(Ext.Panel, {
     });
   },
 
-  treenodeClicked: function( node, event ){
+  treenodeClicked: function( view, record, itemel, itemidx, event, evopts ){
     "use strict";
-    if( typeof node.attributes.panel !== "undefined" ){
-      this.switchComponent( node.attributes.panel );
+    var i;
+    if( record.data.panel !== "" ){
+      this.switchComponent( record.data.panel );
+    }
+    else{
+      for( i = 0; i < window.MainViewModules.length; i++ ){
+        if( typeof window.MainViewModules[i].handleMenuTreeClick !== "undefined" ){
+          window.MainViewModules[i].handleMenuTreeClick(record);
+        }
+      }
     }
   },
 
   switchComponent: function( toComponent ){
-    "use strict";
     if( typeof toComponent === "string" ){
-      this.modcontainer.layout.setActiveItem( toComponent );
+      this.modcontainer.getLayout().setActiveItem( toComponent );
       this.menutree.markAsActive( toComponent );
       this.fireEvent( 'switchedComponent', Ext.get(toComponent) );
     }
     else{
-      this.modcontainer.layout.setActiveItem( toComponent.id );
+      this.modcontainer.getLayout().setActiveItem( toComponent.id );
       this.menutree.markAsActive( toComponent.id );
       this.fireEvent( 'switchedComponent', toComponent );
     }
