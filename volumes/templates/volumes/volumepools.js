@@ -263,7 +263,7 @@ Ext.oa.volumeGroup_Module = {
   panel: "volumes__volumepool_panel",
   prepareMenuTree: function(tree){
     tree.appendToRootNodeById("menu_storage", {
-      text: gettext('Disk Management (new)'),
+      text: gettext('Disk Management'),
       leaf: true,
       icon: MEDIA_URL + '/icons2/22x22/apps/database.png',
       panel: "volumes__volumepool_panel"
