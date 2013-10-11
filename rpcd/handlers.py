@@ -20,6 +20,7 @@ import sys
 
 from django.db import models
 from django.contrib.contenttypes import generic
+from django.contrib.contenttypes.models import ContentType
 
 from ifconfig.models import Host
 from peering.models import PeerHost, PeerError
@@ -151,6 +152,23 @@ class ModelHandler(BaseHandler):
         data = self._override_get(obj, data)
         return { "success": True, "data": data }
 
+    def _filter_virtual(self, kwds):
+        for field in self.model._meta.virtual_fields:
+            if field.name in kwds:
+                if isinstance( field, generic.GenericForeignKey ):
+                    if not isinstance( kwds[field.name], dict ) \
+                       or "app" not in kwds[field.name] \
+                       or "obj" not in kwds[field.name] \
+                       or "id" not in kwds[field.name]:
+                        raise KeyError("The argument for '%s' needs to be an ID object" % field.name)
+                    target_obj = ModelHandler._get_object_by_id_dict(kwds[field.name])
+                    del kwds[field.name]
+                    kwds[field.ct_field] = ContentType.objects.get_for_model(target_obj.__class__)
+                    kwds[field.fk_field] = target_obj.id
+                else:
+                    raise TypeError("Don't know how to handle virtual field of type '%s'" % type(field))
+        return kwds
+
     def _filter_queryset(self, kwds, queryset=None):
         if queryset is None:
             queryset = self._get_model_manager()
@@ -168,8 +186,10 @@ class ModelHandler(BaseHandler):
             fields = None
 
         if kwds:
+            self._filter_virtual(kwds)
             queryset = queryset.filter(**kwds)
         if exclude_kwds:
+            self._filter_virtual(exclude_kwds)
             queryset = queryset.exclude(**exclude_kwds)
         if fields:
             queryset = queryset.values(*fields)

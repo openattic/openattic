@@ -26,8 +26,24 @@ class GenericDiskHandler(ModelHandler):
 class VolumePoolHandler(ModelHandler):
     model = VolumePool
 
+    def _override_get(self, obj, data):
+        if obj.volumepool is not None:
+            handler = self._get_handler_instance(obj.volumepool.__class__)
+            data = handler._getobj(obj.volumepool)
+        data["member_set"] = []
+        for member in obj.member_set.all():
+            handler = self._get_handler_instance(member.__class__)
+            data["member_set"].append( handler._idobj(member) )
+        return data
+
 class BlockVolumeHandler(ModelHandler):
     model = BlockVolume
+
+    def _override_get(self, obj, data):
+        if obj.volume is None:
+            return data
+        handler = self._get_handler_instance(obj.volume.__class__)
+        return handler._getobj(obj.volume)
 
 class FileSystemVolumeHandler(ModelHandler):
     model = FileSystemVolume
