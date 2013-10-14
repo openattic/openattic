@@ -52,7 +52,6 @@ Ext.define('volumes__mdraid_Array_model', {
     }
     rootNode.set("icon",    MEDIA_URL + '/oxygen/16x16/actions/distribute-horizontal-center.png');
     rootNode.set("percent", null);
-    rootNode.set("status", "OK");
     rootNode.commit();
     return rootNode;
   }

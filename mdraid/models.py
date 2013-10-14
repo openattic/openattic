@@ -41,3 +41,12 @@ class Array(BlockVolume):
     @property
     def member_set(self):
         return BlockVolume.objects.filter(upper_type=ContentType.objects.get_for_model(self.__class__), upper_id=self.id)
+
+    @property
+    def status(self):
+        with open("/proc/mdstat") as fd:
+            for line in fd:
+                if line.startswith(self.name):
+                    if "(F)" in line:
+                        return "degraded"
+                    return "active"

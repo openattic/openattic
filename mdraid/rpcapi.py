@@ -23,6 +23,7 @@ class ArrayHandler(ModelHandler):
     model = Array
 
     def _override_get(self, obj, data):
+        data["status"] = obj.status
         data["member_set"] = []
         for member in obj.member_set.all():
             handler = self._get_handler_instance(member.__class__)
