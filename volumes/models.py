@@ -167,6 +167,9 @@ class FileSystemVolume(AbstractVolume):
             self.volume_type = ContentType.objects.get_for_model(self.__class__)
         return AbstractVolume.save(self, *args, **kwargs)
 
+    def __unicode__(self):
+        return unicode(self.volume)
+
 
 class FileSystemProvider(FileSystemVolume):
     """ A FileSystem that resides on top of a BlockVolume. """
@@ -200,5 +203,8 @@ class FileSystemProvider(FileSystemVolume):
     @property
     def stat(self):
         return self.fs.stat
+
+    def __unicode__(self):
+        return unicode(self.base)
 
 
