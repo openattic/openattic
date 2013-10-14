@@ -68,7 +68,7 @@ Ext.define('volumes__volumes_VolumePool_model', {
       record.set("leaf", true);
       rootNode = this.callParent(arguments);
     }
-    lvm__VolumeGroup.lvm_info(record.raw.id, function(provider, response){
+    volumes__VolumePool.get_status(record.raw.id, function(provider, response){
       // Now that we have the node, we need to put some actual information into it
       // because the LVM API doesn't contain those (would take too long to load).
       if( response.type === "exception" ){
@@ -76,17 +76,15 @@ Ext.define('volumes__volumes_VolumePool_model', {
         rootNode.set("megs", '?');
       }
       else{
-        rootNode.set( "percent",
-          ((response.result.LVM2_VG_SIZE - response.result.LVM2_VG_FREE) /
-            response.result.LVM2_VG_SIZE * 100.0).toFixed(2)
-        );
-        rootNode.set("megs", response.result.LVM2_VG_SIZE);
+        rootNode.set("percent", (response.result.usedmegs / response.result.megs * 100).toFixed(2));
+        rootNode.set("megs",    response.result.megs);
+        rootNode.set("status",  response.result.status);
+        rootNode.set("type",    response.result.type);
       }
       rootNode.commit();
     });
     rootNode.set("type",   gettext(Ext.String.capitalize(toUnicode(record.raw.volumepool_type))));
     rootNode.set("icon",   MEDIA_URL + '/icons2/16x16/apps/database.png');
-    rootNode.set("status", " ");
     return rootNode;
   }
 });
