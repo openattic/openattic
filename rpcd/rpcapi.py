@@ -61,10 +61,11 @@ class ContentTypeHandler(ModelHandler):
     model = ContentType
 
     def _idobj(self, obj):
+        model = obj.model_class()
         return {
-            "app": obj.app_label,
-            "obj": obj.model,
-            "__unicode__": unicode(obj)
+            "app": model._meta.app_label,
+            "obj": model._meta.object_name,
+            "__unicode__": model._meta.verbose_name
         }
 
 RPCD_HANDLERS = [GroupHandler, UserHandler, APIKeyHandler, PermissionHandler, ContentTypeHandler]
