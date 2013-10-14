@@ -110,6 +110,11 @@ class Unit(BlockVolume):
         """ Return disk stats from the LV retrieved from the kernel. """
         return blockdevices.get_disk_stats( self.device[5:] )
 
+    def __unicode__(self):
+        if self.name:
+            return self.name
+        return "Unnamed Unit (%d)" % self.index
+
 class Disk(models.Model):
     controller  = models.ForeignKey(Controller)
     port        = models.IntegerField()

@@ -55,6 +55,7 @@ Ext.define('volumes__twraid_Unit_model', {
     else if( rootNode.get("status") === "REBUILD" ){
       rootNode.set("status", "REBUILDING:" + rootNode.raw.rebuild)
     }
+    rootNode.set("name", toUnicode(record.raw))
     rootNode.commit();
     return rootNode;
   }
