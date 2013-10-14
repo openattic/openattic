@@ -113,7 +113,7 @@ class Unit(BlockVolume):
     def __unicode__(self):
         if self.name:
             return self.name
-        return "Unnamed Unit (%d)" % self.index
+        return "Unnamed Unit (/c%d/u%d)" % (self.controller.index, self.index)
 
 class Disk(models.Model):
     controller  = models.ForeignKey(Controller)
