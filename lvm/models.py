@@ -147,6 +147,21 @@ class VolumeGroup(VolumePool):
     def lvm_free_megs(self):
         return float( self.lvm_info["LVM2_VG_FREE"] )
 
+    @property
+    def status(self):
+        return " "
+
+    @property
+    def megs(self):
+        return float(self.lvm_info["LVM2_VG_SIZE"])
+
+    @property
+    def usedmegs(self):
+        return float(self.lvm_info["LVM2_VG_SIZE"]) - float(self.lvm_info["LVM2_VG_FREE"])
+
+    @property
+    def type(self):
+        return "Volume Group"
 
 
 class LogicalVolume(BlockVolume):
