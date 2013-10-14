@@ -207,6 +207,14 @@ class OnlineShrinkCapability(ShrinkCapability):
     """ Can be shrunk while accessed. """
     flag = (1<<26)
 
+class DefaultBlocksCapability(FileSystemCapability):
+    """ File system blocksize == 4096 Bytes. """
+    flag = (1<<27)
+
+class LargeBlocksCapability(FileSystemCapability):
+    """ File system blocksize == 128*1024 Bytes. """
+    flag = (1<<28)
+
 
 def to_flags(capabilities):
     return reduce(operator.or_, [cap.flag for cap in capabilities])
