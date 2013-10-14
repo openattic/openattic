@@ -74,8 +74,6 @@ Ext.define('volumes__volumes_VolumePool_model', {
       if( response.type === "exception" ){
         rootNode.set("percent", '?');
         rootNode.set("megs", '?');
-        rootNode.set("type", '?');
-        rootNode.set("status", '?');
       }
       else{
         rootNode.set( "percent",
@@ -83,12 +81,12 @@ Ext.define('volumes__volumes_VolumePool_model', {
             response.result.LVM2_VG_SIZE * 100.0).toFixed(2)
         );
         rootNode.set("megs", response.result.LVM2_VG_SIZE);
-        rootNode.set("type", gettext("Volume Group"));
-        rootNode.set("status", " ");
       }
       rootNode.commit();
     });
-    rootNode.set("icon",    MEDIA_URL + '/icons2/16x16/apps/database.png');
+    rootNode.set("type",   gettext(Ext.String.capitalize(toUnicode(record.raw.volumepool_type))));
+    rootNode.set("icon",   MEDIA_URL + '/icons2/16x16/apps/database.png');
+    rootNode.set("status", " ");
     return rootNode;
   }
 });
@@ -164,7 +162,8 @@ Ext.define('Ext.oa.volumes__VolumePool_Panel', {
           root: {
             name: "stuff",
             id:   "lvm__diskmgmt_root_node",
-          }
+          },
+          sorters: [{property: "name"}]
         });
       }()),
       defaults: {
@@ -181,6 +180,7 @@ Ext.define('Ext.oa.volumes__VolumePool_Panel', {
       },{
         header: gettext('Size'),
         dataIndex: "megs",
+        align: "right",
         renderer: function(val){
           if( val === null ){
             return '';
