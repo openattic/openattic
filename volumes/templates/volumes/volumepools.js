@@ -229,7 +229,7 @@ Ext.define('Ext.oa.volumes__VolumePool_Panel', {
             return '♻';
           }
           if( !val.contains(":") ){
-            return val;
+            return Ext.String.capitalize(val.toLowerCase());
           }
           var id = Ext.id();
           var desc = val.split(":")[0];
