@@ -34,7 +34,7 @@ class CapabilitiesAwareManager(models.Manager):
 
 class CapabilitiesAwareModel(models.Model):
     # TODO: This should probably be wrapped in a CapabilitiesField or something
-    capflags    = models.BigIntegerField()
+    capflags    = models.BigIntegerField(default=0)
 
     objects     = CapabilitiesAwareManager()
 
