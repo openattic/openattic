@@ -139,7 +139,7 @@ Ext.define('Ext.oa.volumes__VolumePool_Panel', {
   initComponent: function(){
     var volumeGroupPanel = this;
     Ext.apply(this, Ext.apply(this.initialConfig, {
-      id: "volumes__volumepool_panel",
+      id: "volumes__volumepool_panel_inst",
       title: gettext('Disk Management'),
       border: false,
       rootVisible: false,
@@ -268,7 +268,7 @@ Ext.oa.volumeGroup_Module = {
       text: gettext('Disk Management'),
       leaf: true,
       icon: MEDIA_URL + '/icons2/22x22/apps/database.png',
-      panel: "volumes__volumepool_panel"
+      panel: "volumes__volumepool_panel_inst"
     });
   }
 };
