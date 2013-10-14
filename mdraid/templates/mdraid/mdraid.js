@@ -47,6 +47,9 @@ Ext.define('volumes__mdraid_Array_model', {
       record.set("leaf", true);
       rootNode = this.callParent(arguments);
     }
+    if( rootNode.get("type").startsWith("raid") ){
+      rootNode.set("type", "RAID-" + record.get("type").substr(4));
+    }
     rootNode.set("icon",    MEDIA_URL + '/oxygen/16x16/actions/distribute-horizontal-center.png');
     rootNode.set("percent", null);
     rootNode.set("status", "OK");
