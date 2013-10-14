@@ -49,4 +49,4 @@ class Array(BlockVolume):
                 if line.startswith(self.name):
                     if "(F)" in line:
                         return "degraded"
-                    return "active"
+                    return "ok"
