@@ -47,6 +47,23 @@ class VolumePoolHandler(ModelHandler):
             data["member_set"].append( handler._idobj(member) )
         return data
 
+    def get_status(self, id):
+        obj = VolumePool.objects.get(id=id)
+        return {
+            "status":    obj.volumepool.status,
+            "megs":      obj.volumepool.megs,
+            "usedmegs":  obj.volumepool.usedmegs,
+            "type":      obj.volumepool.type,
+        }
+
+
+class VolumePoolProxy(ProxyModelHandler, VolumePoolHandler):
+    def _find_target_host_from_model_instance(self, model):
+        if model.volumepool.host == Host.objects.get_current():
+            return None
+        return model.volumepool.host.peerhost_set.all()[0]
+
+
 
 class BlockVolumeHandler(ModelHandler):
     model = BlockVolume
@@ -89,7 +106,7 @@ class FileSystemProviderHandler(ModelHandler):
 
 RPCD_HANDLERS = [
     GenericDiskHandler,
-    VolumePoolHandler,
+    VolumePoolProxy,
     BlockVolumeHandler,
     FileSystemVolumeHandler,
     FileSystemProviderHandler,

@@ -20,7 +20,7 @@ from django.contrib.contenttypes import generic
 from django.utils.translation    import ugettext_lazy as _
 from django.contrib.auth.models  import User
 
-from ifconfig.models import Host
+from ifconfig.models import Host, HostDependentManager, getHostDependentManagerClass
 from volumes import blockdevices, capabilities, filesystems
 
 class DeviceNotFound(Exception):
@@ -54,6 +54,8 @@ class VolumePool(CapabilitiesAwareModel):
     """ Something that joins a couple of BlockVolumes together. """
     volumepool_type = models.ForeignKey(ContentType, blank=True, null=True, related_name="%(class)s_volumepool_type_set")
     volumepool      = generic.GenericForeignKey("volumepool_type", "id")
+
+    all_objects = models.Manager()
 
     # Interface:
     # name       -> CharField or property
