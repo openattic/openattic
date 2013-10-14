@@ -232,7 +232,7 @@ Ext.define('Ext.oa.volumes__VolumePool_Panel', {
             return Ext.String.capitalize(val.toLowerCase());
           }
           var id = Ext.id();
-          var desc = val.split(":")[0];
+          var desc = Ext.String.capitalize(val.split(":")[0].toLowerCase());
           var perc = parseInt(val.split(":")[1]);
           Ext.defer(function(){
             if( Ext.get(id) === null ){
