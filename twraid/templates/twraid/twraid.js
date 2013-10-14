@@ -48,12 +48,12 @@ Ext.define('volumes__twraid_Unit_model', {
     }
     rootNode.set("icon",    MEDIA_URL + '/oxygen/16x16/actions/distribute-horizontal-center.png');
     rootNode.set("percent", null);
-    rootNode.set("type", rootNode.raw.unittype);
+    rootNode.set("type", record.raw.unittype);
     if( rootNode.get("status") === "VERIFYING" || rootNode.get("status") === "INITIALIZING" ){
-      rootNode.set("status", rootNode.get("status") + ":" + rootNode.raw.verify)
+      rootNode.set("status", rootNode.get("status") + ":" + record.raw.verify)
     }
     else if( rootNode.get("status") === "REBUILD" ){
-      rootNode.set("status", "REBUILDING:" + rootNode.raw.rebuild)
+      rootNode.set("status", "REBUILDING:" + record.raw.rebuild)
     }
     rootNode.set("name", toUnicode(record.raw))
     rootNode.commit();
