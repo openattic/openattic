@@ -57,6 +57,11 @@ class VolumePool(CapabilitiesAwareModel):
 
     # Interface:
     # name       -> CharField or property
+    # type       -> CharField or property
+    # megs       -> IntegerField or property
+    # usedmegs   -> IntegerField or property
+    # status     -> CharField or property
+    # host       -> ForeignKey or property that returns the node this device resides on (or the primary for DRBD)
 
     @property
     def member_set(self):
