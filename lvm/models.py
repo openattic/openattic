@@ -149,7 +149,28 @@ class VolumeGroup(VolumePool):
 
     @property
     def status(self):
-        return " "
+        attr = self.lvm_info["LVM2_VG_ATTR"].lower()
+        # vg_attr bits according to ``man vgs'':
+        # 0  Permissions: (w)riteable, (r)ead-only
+        # 1  Resi(z)eable
+        # 2  E(x)ported
+        # 3  (p)artial: one or more physical volumes belonging to the volume group are missing from the system
+        # 4  Allocation policy: (c)ontiguous, c(l)ing, (n)ormal, (a)nywhere, (i)nherited
+        # 5  (c)lustered
+        # flags are returned in a way that in most normal cases, the status string is as short as possible.
+        flags = [
+            {"w": None, "r": "read-only"}[        attr[0] ],
+            {"z": None, "-": "non-resizable"}[    attr[1] ],
+            {"x": "exported", "-": None}[         attr[2] ],
+            {"p": "partial", "-": "online"}[      attr[3] ],
+            {"c": "continuous allocation",
+             "l": "cling allocation",
+             "n": None,
+             "a": "anywhere allocation",
+             "i": "inherited allocation"}[        attr[4] ],
+            {"c": "clustered", "-": None}[        attr[5] ],
+        ]
+        return ", ".join([flag for flag in flags if flag is not None])
 
     @property
     def megs(self):
