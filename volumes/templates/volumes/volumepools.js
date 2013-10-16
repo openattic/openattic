@@ -250,9 +250,6 @@ Ext.define('Ext.oa.volumes__VolumePool_Panel', {
     }));
     this.callParent(arguments);
   },
-  onRender: function(){
-    this.callParent(arguments);
-  },
   refresh: function(){
     this.store.load();
   }
