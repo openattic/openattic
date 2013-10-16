@@ -34,7 +34,7 @@ Ext.define('Ext.oa.Settings_Panel',{
         width: 80,
         checked: Ext.state.Manager.get("expand_root_nodes", true),
         listeners: {
-          check: function( self, checked ){
+          change: function( self, checked ){
             Ext.state.Manager.set("expand_root_nodes", checked);
           }
         }
@@ -43,7 +43,7 @@ Ext.define('Ext.oa.Settings_Panel',{
         fieldLabel: gettext('Show hints'),
         checked: Ext.state.Manager.get("form_tooltip_show", true),
         listeners: {
-          check: function( self, checked){
+          change: function( self, checked){
             Ext.state.Manager.set("form_tooltip_show", checked);
           }
         }
@@ -52,7 +52,7 @@ Ext.define('Ext.oa.Settings_Panel',{
         fieldLabel: gettext('Allow installation/deletion'),
         checked: Ext.state.Manager.get("pkgapt_distupgrade", true),
         listeners: {
-          check: function(self, checked){
+          change: function(self, checked){
             Ext.state.Manager.set("pkgapt_distupgrade", checked);
           }
         }
@@ -61,7 +61,7 @@ Ext.define('Ext.oa.Settings_Panel',{
         fieldLabel: gettext('Enable gradients in graphs'),
         checked: Ext.state.Manager.get("nagios_graph_grad", false),
         listeners:{
-          check: function(self, checked){
+          change: function(self, checked){
             Ext.state.Manager.set("nagios_graph_grad", checked);
           }
         }
@@ -70,7 +70,7 @@ Ext.define('Ext.oa.Settings_Panel',{
         fieldLabel: gettext('Catch F5 and reload the current panel only'),
         checked: Ext.state.Manager.get("catch_f5", false),
         listeners:{
-          check: function(self, checked){
+          change: function(self, checked){
             Ext.state.Manager.set("catch_f5", checked);
           }
         }
