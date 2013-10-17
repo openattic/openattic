@@ -19,7 +19,7 @@ Ext.define('volumes__twraid_Unit_model', {
     'Ext.data.NodeInterface'
   ],
   fields: [
-    'id', 'name', 'type', 'megs', 'percent', 'status',
+    'id', 'name', 'type', 'megs', 'percent', 'status', 'fshost',
     "index", "verify", "rebuild", "rdcache", "wrcache", "unittype", "autoverify", "serial", "chunksize",
   ],
   createNode: function(record){
@@ -55,7 +55,8 @@ Ext.define('volumes__twraid_Unit_model', {
     else if( rootNode.get("status") === "REBUILD" ){
       rootNode.set("status", "REBUILDING:" + record.raw.rebuild)
     }
-    rootNode.set("name", toUnicode(record.raw))
+    rootNode.set("name", toUnicode(record.raw));
+    rootNode.set("fshost", toUnicode(record.raw.host));
     rootNode.commit();
     return rootNode;
   }
