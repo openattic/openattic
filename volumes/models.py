@@ -181,6 +181,22 @@ class FileSystemProvider(FileSystemVolume):
         self.base.save()
 
     @property
+    def name(self):
+        return self.base.volume.name
+
+    @property
+    def megs(self):
+        return self.base.volume.megs
+
+    @property
+    def host(self):
+        return self.base.volume.host
+
+    @property
+    def disk_stats(self):
+        return self.base.volume.disk_stats
+
+    @property
     def fs(self):
         return filesystems.get_by_name(self.filesystem)(self.base)
 
