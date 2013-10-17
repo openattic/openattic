@@ -14,6 +14,8 @@
  *  GNU General Public License for more details.
 """
 
+from django.contrib.contenttypes.models import ContentType
+
 from rpcd.handlers import BaseHandler, ModelHandler
 from rpcd.handlers import ProxyModelHandler
 
@@ -116,6 +118,7 @@ class FileSystemProviderHandler(ModelHandler):
         # this looks fishy
         del data["volume_type"]
         del data["volume"]
+        data["volume_type"] = self._get_handler_instance(ContentType)._idobj(obj.volume_type)
         data["volume"] = data["base"]
         return data
 
