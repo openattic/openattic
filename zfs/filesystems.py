@@ -40,10 +40,10 @@ class Zfs(FileSystem):
             dict.__init__(self, data)
 
         def __getitem__(self, item):
-            return dbus_to_python(self.fs.volume.lvm.zfs_get(self.fs.volume.name, item))[0][2]
+            return dbus_to_python(self.fs.dbus_object.zfs_get(self.fs.volume.name, item))[0][2]
 
         def __setitem__(self, item, value):
-            self.fs.volume.lvm.zfs_set(-1, self.fs.volume.name, item, str(value))
+            self.fs.dbus_object.zfs_set(-1, self.fs.volume.name, item, str(value))
 
     class ZpoolOptions(dict):
         def __init__(self, fs, data):
@@ -51,10 +51,10 @@ class Zfs(FileSystem):
             dict.__init__(self, data)
 
         def __getitem__(self, item):
-            return dbus_to_python(self.fs.volume.lvm.zpool_get(self.fs.volume.name, item))[0][2]
+            return dbus_to_python(self.fs.dbus_object.zpool_get(self.fs.volume.name, item))[0][2]
 
         def __setitem__(self, item, value):
-            self.fs.volume.lvm.zpool_set(-1, self.fs.volume.name, item, str(value))
+            self.fsdbus_object.zpool_set(-1, self.fs.volume.name, item, str(value))
 
     def __init__(self, volume):
         FileSystem.__init__(self, volume)
@@ -79,32 +79,36 @@ class Zfs(FileSystem):
             raise ValidationError({"name": ["ZFS volume names cannot start with 'c[0-9]'."]})
 
     @property
+    def dbus_object(self):
+        return self.volume.zpool.dbus_object
+
+    @property
     def info(self):
         opts = self.pool_options.copy()
         opts.update(self.options)
         return opts
 
     def format(self, jid):
-        self._lvm.zfs_format(jid, self.volume.path, self.volume.name,
+        self.dbus_object.zfs_format(jid, self.volume.path, self.volume.name,
             os.path.join(lvm_settings.MOUNT_PREFIX, self.volume.name))
         if self.volume.dedup:
-            self._lvm.zfs_set(jid, self.volume.name, "dedup", "on")
+            self.dbus_object.zfs_set(jid, self.volume.name, "dedup", "on")
         if self.volume.compression:
-            self._lvm.zfs_set(jid, self.volume.name, "compression", "on")
+            self.dbus_object.zfs_set(jid, self.volume.name, "compression", "on")
         self.chown(jid)
 
     def mount(self, jid):
-        self._lvm.zfs_mount(jid, self.volume.name)
+        self.dbus_object.zfs_mount(jid, self.volume.name)
 
     def unmount(self, jid):
-        self._lvm.zfs_unmount(jid, self.volume.name)
+        self.dbus_object.zfs_unmount(jid, self.volume.name)
 
     def destroy(self):
         for snap in self.volume.zfssnapshot_set.all():
             snap.delete()
         for subv in self.volume.zfssubvolume_set.all():
             subv.delete()
-        self._lvm.zfs_destroy(self.volume.name)
+        self.dbus_object.zfs_destroy(self.volume.name)
 
     def online_resize_available(self, grow):
         return grow
@@ -113,22 +117,22 @@ class Zfs(FileSystem):
         if not grow:
             raise SystemError("ZFS does not support shrinking.")
         else:
-            self._lvm.zfs_expand( jid, self.volume.name, self.volume.path )
+            self.dbus_object.zfs_expand( jid, self.volume.name, self.volume.path )
 
     def create_subvolume(self, jid, subvolume):
-        self._lvm.zfs_create_volume(jid, self.volume.name, subvolume.volname)
+        self.dbus_object.zfs_create_volume(jid, self.volume.name, subvolume.volname)
 
     def destroy_subvolume(self, subvolume):
-        self._lvm.zfs_destroy_volume(self.volume.name, subvolume.volname)
+        self.dbus_object.zfs_destroy_volume(self.volume.name, subvolume.volname)
 
     def create_snapshot(self, jid, snapshot):
-        self._lvm.zfs_create_snapshot(jid, snapshot.origvolume.name, snapshot.snapname)
+        self.dbus_object.zfs_create_snapshot(jid, snapshot.origvolume.name, snapshot.snapname)
 
     def destroy_snapshot(self, snapshot):
-        self._lvm.zfs_destroy_snapshot(snapshot.origvolume.name, snapshot.snapname)
+        self.dbus_object.zfs_destroy_snapshot(snapshot.origvolume.name, snapshot.snapname)
 
     def rollback_snapshot(self, snapshot):
-        self._lvm.zfs_rollback_snapshot(snapshot.origvolume.name, snapshot.snapname)
+        self.dbus_object.zfs_rollback_snapshot(snapshot.origvolume.name, snapshot.snapname)
 
     @property
     def mounted(self):
@@ -140,13 +144,13 @@ class Zfs(FileSystem):
     @property
     def options(self):
         if self._options is None:
-            self._options = Zfs.ZfsOptions(self, [data[1:3] for data in dbus_to_python(self.volume.lvm.zfs_get(self.volume.name, "all"))])
+            self._options = Zfs.ZfsOptions(self, [data[1:3] for data in dbus_to_python(self.dbus_object.zfs_get(self.volume.name, "all"))])
         return self._options
 
     @property
     def pool_options(self):
         if self._pooloptions is None:
-            self._pooloptions = Zfs.ZpoolOptions(self, [data[1:3] for data in dbus_to_python(self.volume.lvm.zpool_get(self.volume.name, "all"))])
+            self._pooloptions = Zfs.ZpoolOptions(self, [data[1:3] for data in dbus_to_python(self.dbus_object.zpool_get(self.volume.name, "all"))])
         return self._pooloptions
 
 
