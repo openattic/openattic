@@ -185,6 +185,10 @@ class FileSystemProvider(FileSystemVolume):
         return self.base.volume.name
 
     @property
+    def status(self):
+        return self.base.volume.status
+
+    @property
     def megs(self):
         return self.base.volume.megs
 

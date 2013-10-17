@@ -120,6 +120,7 @@ class FileSystemProviderHandler(ModelHandler):
         del data["volume"]
         data["volume_type"] = self._get_handler_instance(ContentType)._idobj(obj.volume_type)
         data["volume"] = data["base"]
+        data["status"] = obj.status
         return data
 
 
