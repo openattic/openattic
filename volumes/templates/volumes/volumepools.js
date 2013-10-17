@@ -150,20 +150,18 @@ Ext.define('Ext.oa.volumes__VolumePool_Panel', {
         }
       }],
       forceFit: true,
-      store: (function(){
-        return Ext.create('Ext.oa.SwitchingTreeStore', {
-          model: 'volumes__volumes_VolumePool_model',
-          proxy: {
-            type:     'direct',
-            directFn: volumes__VolumePool.all
-          },
-          root: {
-            name: "stuff",
-            id:   "lvm__diskmgmt_root_node",
-          },
-          sorters: [{property: "name"}]
-        });
-      }()),
+      store: Ext.create('Ext.oa.SwitchingTreeStore', {
+        model: 'volumes__volumes_VolumePool_model',
+        proxy: {
+          type:     'direct',
+          directFn: volumes__VolumePool.all
+        },
+        root: {
+          name: "stuff",
+          id:   "lvm__diskmgmt_root_node"
+        },
+        sorters: [{property: "name"}]
+      }),
       defaults: {
         sortable: true
       },
