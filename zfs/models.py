@@ -119,9 +119,13 @@ class Zfs(FileSystemVolume):
     def host(self):
         return self.zpool.host
 
-    def __unicode__(self):
+    @property
+    def fullname(self):
         if self.parent_zfs is not None:
-            parent = self.parent_zfs
+            parentname = self.parent_zfs.fullname
         else:
-            parent = self.zpool
-        return "%s/%s" % (unicode(parent), self.name)
+            parentname = self.zpool.name
+        return "%s/%s" % (parentname, self.name)
+
+    def __unicode__(self):
+        return self.fullname
