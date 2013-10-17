@@ -456,10 +456,6 @@ var wizform = Ext.create("Ext.oa.WizPanel", {
       xtype           : 'textfield',
       name            : 'configname',
       fieldLabel      : gettext('Description'),
-     /* enableKeyEvents : true,
-      listeners       : {
-        keypress : nextCard,
-      }*/
     }]
   },{
     id        : 'wiz_snapitems',
@@ -469,8 +465,47 @@ var wizform = Ext.create("Ext.oa.WizPanel", {
       region    : 'center',
       id        : 'lvm__snapcore_wizard_treepanel',
       xtype     : 'lvm__snapcore_treepanel',
-      checkable : true
-    }]
+      checkable : false,
+      listeners : {
+        itemclick: function(self, record, item, index, e, eOpts){
+          var settings = Ext.getCmp('lvm__snapcore_wiz_snapitem_settings').layout;
+          if(typeof record.data.configForm !== 'undefined' && record.data.configForm.length > 0){
+            settings.setActiveItem(record.data.configForm);
+          }
+          else
+          {
+            settings.setActiveItem('emptyConfigForm');
+          }
+        }
+      }
+    }, (function(){
+      var items = [];
+
+      items.push(new Ext.form.FormPanel({
+        itemId: "emptyConfigForm",
+        items : [{
+          xtype: "label",
+          text : gettext("No config options available!"),
+        }]
+      }));
+
+      for(var i=0; i < window.SnapAppPlugins.length; i++){
+        items = items.concat(window.SnapAppPlugins[i].configForms);
+      }
+      return{
+        title     : gettext('Item settings'),
+        id        : 'lvm__snapcore_wiz_snapitem_settings',
+        region    : 'east',
+        border    : false,
+        split     : true,
+        defaults  : {border: false},
+        width     : 250,
+        layout    : 'card',
+        bodyStyle : 'padding; 5px 5px',
+        items     : items,
+        activeItem: 0,
+      };
+    }())]
   },{
     title     : gettext('Additional Drives'),
     id        : 'wiz_addvol',
@@ -611,10 +646,6 @@ var wizform = Ext.create("Ext.oa.WizPanel", {
       xtype           : 'textfield',
       name            : 'postscript',
       fieldLabel      : gettext('Postscript conditions'),
-      /*enableKeyEvents : true,
-      listeners       : {
-        keypress : nextCard,
-      }*/
     }]
   },{
     title : gettext('Scheduling Part 1 / Expiry Date'),
