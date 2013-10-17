@@ -274,7 +274,12 @@ Ext.define('Ext.oa.ShareGridPanel', {
       tooltip: self.texts.reload,
       scope: self,
       handler: function(){
-        self.store.load();
+        if( typeof self.refresh !== "undefined" ){
+          self.refresh();
+        }
+        else{
+          self.store.load();
+        }
       }
     });
     if( this.allowAdd ){
