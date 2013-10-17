@@ -17,6 +17,7 @@
 from rpcd.handlers import ModelHandler
 from rpcd.handlers import ProxyModelHandler
 
+from ifconfig.models import Host
 from zfs.models import Zpool, Zfs
 
 class ZpoolHandler(ModelHandler):
@@ -28,6 +29,19 @@ class ZpoolProxy(ProxyModelHandler, ZpoolHandler):
 
 class ZfsHandler(ModelHandler):
     model = Zfs
+
+    def _override_get(self, obj, data):
+        hosthandler = self._get_handler_instance(Host)
+        data['filesystem'] = obj.fsname
+        data['fs'] = {
+            'mountpoint':  obj.mountpoint,
+            'mounted':     obj.mounted,
+            'host':        hosthandler._idobj(obj.mounthost)
+            }
+        if obj.mounted:
+            data['fs']['stat'] = obj.stat
+        return data
+
 
 class ZfsProxy(ProxyModelHandler, ZfsHandler):
     pass
