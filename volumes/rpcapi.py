@@ -84,6 +84,21 @@ class BlockVolumeHandler(ModelHandler):
 class FileSystemVolumeHandler(ModelHandler):
     model = FileSystemVolume
 
+    def _idobj(self, obj):
+        if obj.volume is None:
+            return ModelHandler._idobj(self, obj)
+        handler = self._get_handler_instance(obj.volume.__class__)
+        return handler._idobj(obj.volume)
+
+    def _override_get(self, obj, data):
+        if obj.volume is not None:
+            handler = self._get_handler_instance(obj.volume.__class__)
+            data = handler._getobj(obj.volume)
+        data["name"] = obj.volume.name
+        data["megs"] = obj.volume.megs
+        data["host"] = self._get_handler_instance(Host)._idobj(obj.volume.host)
+        return data
+
 
 class FileSystemProviderHandler(ModelHandler):
     model = FileSystemProvider
