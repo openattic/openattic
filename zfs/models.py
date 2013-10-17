@@ -110,3 +110,18 @@ class Zfs(FileSystemVolume):
     @property
     def stat(self):
         return self.fs.stat
+
+    @property
+    def megs(self):
+        return self.zpool.megs
+
+    @property
+    def host(self):
+        return self.zpool.host
+
+    def __unicode__(self):
+        if self.parent_zfs is not None:
+            parent = self.parent_zfs
+        else:
+            parent = self.zpool
+        return "%s/%s" % (unicode(parent), self.name)
