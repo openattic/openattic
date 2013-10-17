@@ -67,10 +67,6 @@ class Zpool(VolumePool):
     def usedmegs(self):
         return scale_to_megs(dbus_to_python(self.dbus_object.zpool_get(self.name, "allocated")[0][2]))
 
-    @property
-    def status(self):
-        return dbus_to_python(self.dbus_object.zpool_get(self.name, "health")[0][2])
-
 
 class RaidZ(models.Model):
     name        = models.CharField(max_length=150)
