@@ -17,6 +17,7 @@
 from rpcd.handlers import ModelHandler
 from rpcd.handlers import ProxyModelHandler
 
+from ifconfig.models import Host
 from lvm.models    import VolumeGroup
 from twraid.models import Controller, Enclosure, Unit, Disk
 
@@ -30,6 +31,7 @@ class UnitHandler(ModelHandler):
     model = Unit
 
     def _override_get(self, obj, data):
+        data["host"] = self._get_handler_instance(Host)._idobj(obj.controller.host)
         data["disk_set"] = []
         handler = self._get_handler_instance(Disk)
         for disk in obj.disk_set.all():

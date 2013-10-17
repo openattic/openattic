@@ -23,24 +23,10 @@ from systemd.helpers import dbus_to_python
 from ifconfig.models import Host, HostDependentManager, getHostDependentManagerClass
 from volumes.models import VolumePool, FileSystemVolume, CapabilitiesAwareManager
 
-from zfs import filesystems
-
-SIZE_MULTIPLIERS = {
-    'T': 1024**2,
-    'G': 1024**1,
-    'M': 1024**0,
-    'K': 1024**-1,
-}
-
-def scale_to_megs(size):
-    if size[-1] in SIZE_MULTIPLIERS:
-        # size is something like "672.42G", scale to MBytes
-        return float(size[:-1]) * SIZE_MULTIPLIERS[size[-1]]
-    # size seems to be in bytes
-    return float(size) * 1024**-2
+from btrfs import filesystems
 
 
-class Zpool(VolumePool):
+class Btrfs(VolumePool):
     name        = models.CharField(max_length=150)
     host        = models.ForeignKey(Host)
 
@@ -52,48 +38,50 @@ class Zpool(VolumePool):
         return dbus.SystemBus().get_object(settings.DBUS_IFACE_SYSTEMD, "/zfs")
 
     @property
+    def fullname(self):
+        return self.name
+
+    @property
+    def fs(self):
+        return filesystems.Btrfs(self)
+
+    @property
     def type(self):
-        return "Zpool"
+        return "Btrfs"
 
     @property
     def status(self):
-        return dbus_to_python(self.dbus_object.zpool_get(self.name, "health")[0][2])
+        return "ok"
 
     @property
     def megs(self):
-        return scale_to_megs(dbus_to_python(self.dbus_object.zpool_get(self.name, "size")[0][2]))
+        return self.fs.stat["size"]
 
     @property
     def usedmegs(self):
-        return scale_to_megs(dbus_to_python(self.dbus_object.zpool_get(self.name, "allocated")[0][2]))
+        return self.fs.stat["used"]
 
 
-class RaidZ(models.Model):
+class BtrfsSubvolume(FileSystemVolume):
     name        = models.CharField(max_length=150)
-    zpool       = models.ForeignKey(Zpool)
-    type        = models.CharField(max_length=150)
+    btrfs       = models.ForeignKey(Btrfs)
+    parent      = models.ForeignKey('self', blank=True, null=True)
+    filesystem  = "btrfs"
 
-
-class Zfs(FileSystemVolume):
-    name        = models.CharField(max_length=150)
-    zpool       = models.ForeignKey(Zpool)
-    parent_zfs  = models.ForeignKey('self', blank=True, null=True)
-    filesystem  = "zfs"
-
-    objects     = getHostDependentManagerClass("zpool__host")()
+    objects     = getHostDependentManagerClass("btrfs__host")()
     all_objects = models.Manager()
 
     @property
     def fs(self):
-        return filesystems.Zfs(self)
+        return filesystems.Btrfs(self)
 
     @property
     def fsname(self):
-        return "zfs"
+        return "btrfs"
 
     @property
     def status(self):
-        return self.zpool.status
+        return self.btrfs.status
 
     @property
     def mountpoint(self):
@@ -113,18 +101,18 @@ class Zfs(FileSystemVolume):
 
     @property
     def megs(self):
-        return self.zpool.megs
+        return self.btrfs.megs
 
     @property
     def host(self):
-        return self.zpool.host
+        return self.btrfs.host
 
     @property
     def fullname(self):
-        if self.parent_zfs is not None:
-            parentname = self.parent_zfs.fullname
+        if self.parent is not None:
+            parentname = self.parent.fullname
         else:
-            parentname = self.zpool.name
+            parentname = self.btrfs.name
         return "%s/%s" % (parentname, self.name)
 
     def __unicode__(self):

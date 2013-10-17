@@ -33,9 +33,11 @@ Ext.define('volumes__volumes_BlockVolume_model', {
     var rootNode;
     record.set("leaf", true);
     rootNode = this.callParent(arguments);
-    rootNode.set("type",   gettext(Ext.String.capitalize(toUnicode(record.raw.volumepool_type))));
+    rootNode.set("type",   gettext(Ext.String.capitalize(toUnicode(record.raw.volume_type))));
     rootNode.set("icon",   MEDIA_URL + '/icons2/16x16/apps/database.png');
     rootNode.set("fshost", toUnicode(record.raw.host));
+    rootNode.set("poolname", toUnicode(record.raw.pool));
+    rootNode.set("percent", null);
     return rootNode;
   }
 });
@@ -60,7 +62,7 @@ Ext.define('volumes__volumes_FileSystemVolume_model', {
     var rootNode;
     record.set("leaf", true);
     rootNode = this.callParent(arguments);
-    rootNode.set("type",         gettext(Ext.String.capitalize(record.raw.volume.obj ? record.raw.volume.obj : '')));
+    rootNode.set("type",         record.raw.filesystem);
     rootNode.set("fshost",       toUnicode(record.raw.fs.host));
     rootNode.set("fsmountpoint", record.raw.fs.mountpoint);
     rootNode.set("poolname",     toUnicode(record.raw.pool));
@@ -119,7 +121,7 @@ Ext.define('Ext.oa.volumes__Volume_Panel', {
             paramOrder: ["kwds"]
           },
           root: {
-            name: gettext("LUNs"),
+            name: gettext("Block-based"),
             id:   "volumes__volumes_blockvolumes_rootnode",
             type: ' ',
             megs: null,
@@ -135,7 +137,7 @@ Ext.define('Ext.oa.volumes__Volume_Panel', {
             directFn: volumes__FileSystemVolume.all
           },
           root: {
-            name: gettext("Volumes"),
+            name: gettext("File-based"),
             id:   "volumes__volumes_fsvolumes_rootnode",
             type: ' ',
             megs: null,

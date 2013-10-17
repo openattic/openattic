@@ -121,6 +121,7 @@ class LvHandler(ModelHandler):
                 data['fs']['stat'] = obj.stat
         else:
             data['fs'] = None
+        data["host"] = self._get_handler_instance(Host)._idobj(obj.vg.host)
         data["status"] = obj.status
         return data
 
