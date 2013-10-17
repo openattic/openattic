@@ -23,34 +23,21 @@ Ext.define('volumes__volumes_BlockVolume_model', {
     'fswarning', 'fscritical', 'fshost', 'fsmountpoint', 'poolname', 'ownername'
   ],
   createNode: function(record){
-    var model = Ext.create(Ext.String.format('volumes__{0}_{1}_model', record.raw.volume_type.app, record.raw.volume_type.obj));
-    return model.createNode(record);
+    // See if there is a specific model for this object type, and if so, use it
+    var modelname = Ext.String.format('volumes__{0}_{1}_model', record.raw.volume_type.app, record.raw.volume_type.obj);
+    if( Ext.ClassManager.get(modelname) !== null ){
+      var model = Ext.create(modelname);
+      return model.createNode(record);
+    }
+    // There is none, rely on the object having everything we need
     var rootNode;
-//     if( record.raw.member_set.length > 0 ){
-//       var store = Ext.create("Ext.oa.SwitchingTreeStore", {
-//         model: Ext.String.format('volumes__{0}_{1}_model', record.raw.member_set[0].app, record.raw.member_set[0].obj),
-//         root:  record.data,
-//         proxy: {
-//           type: "direct",
-//           directFn: volumes__BlockVolume.filter,
-//           extraParams: {
-//             kwds: {
-//               upper: record.raw.volumepool
-//             }
-//           },
-//           paramOrder: ["kwds"]
-//         }
-//       });
-//       rootNode = store.getRootNode();
-//     }
-//     else{
-      record.set("leaf", true);
-      rootNode = this.callParent(arguments);
-//     }
+    record.set("leaf", true);
+    rootNode = this.callParent(arguments);
     rootNode.set("name",   toUnicode(record.raw));
     rootNode.set("type",   gettext(Ext.String.capitalize(toUnicode(record.raw.volumepool_type))));
     rootNode.set("icon",   MEDIA_URL + '/icons2/16x16/apps/database.png');
     rootNode.set("status", " ");
+    rootNode.set("fshost", toUnicode(record.raw.host));
     return rootNode;
   }
 });
@@ -65,32 +52,30 @@ Ext.define('volumes__volumes_FileSystemVolume_model', {
     'fswarning', 'fscritical', 'fshost', 'fsmountpoint', 'poolname', 'ownername'
   ],
   createNode: function(record){
+    // See if there is a specific model for this object type, and if so, use it
+    var modelname = Ext.String.format('volumes__{0}_{1}_model', record.raw.volume_type.app, record.raw.volume_type.obj);
+    if( Ext.ClassManager.get(modelname) !== null ){
+      var model = Ext.create(modelname);
+      return model.createNode(record);
+    }
+    // There is none, rely on the object having everything we need
     var rootNode;
-//     if( record.raw.member_set.length > 0 ){
-//       var store = Ext.create("Ext.oa.SwitchingTreeStore", {
-//         model: Ext.String.format('volumes__{0}_{1}_model', record.raw.member_set[0].app, record.raw.member_set[0].obj),
-//         root:  record.data,
-//         proxy: {
-//           type: "direct",
-//           directFn: volumes__BlockVolume.filter,
-//           extraParams: {
-//             kwds: {
-//               upper: record.raw.volumepool
-//             }
-//           },
-//           paramOrder: ["kwds"]
-//         }
-//       });
-//       rootNode = store.getRootNode();
-//     }
-//     else{
-      record.set("leaf", true);
-      rootNode = this.callParent(arguments);
-//     }
-    rootNode.set("name",   toUnicode(record.raw));
-    rootNode.set("type",   gettext(Ext.String.capitalize(toUnicode(record.raw.volumepool_type))));
-    rootNode.set("icon",   MEDIA_URL + '/icons2/16x16/apps/database.png');
-    rootNode.set("status", " ");
+    record.set("leaf", true);
+    rootNode = this.callParent(arguments);
+    rootNode.set("name",         toUnicode(record.raw));
+    rootNode.set("type",         gettext(Ext.String.capitalize(record.raw.volume.obj ? record.raw.volume.obj : '')));
+    rootNode.set("fshost",       toUnicode(record.raw.fs.host));
+    rootNode.set("fsmountpoint", record.raw.fs.mountpoint);
+    rootNode.set("poolname",     toUnicode(record.raw.pool));
+    rootNode.set("ownername",    toUnicode(record.raw.owner));
+    rootNode.set("icon",         MEDIA_URL + '/icons2/16x16/apps/database.png');
+    rootNode.set("status",       " ");
+    if( typeof record.raw.fs.stat !== "undefined" ){
+      rootNode.set("percent",    (record.raw.fs.stat.used / record.raw.fs.stat.size * 100).toFixed(2));
+    }
+    else{
+      rootNode.set("percent",    null);
+    }
     return rootNode;
   }
 });
@@ -111,7 +96,7 @@ Ext.define('Ext.oa.volumes__Volume_Panel', {
         icon: MEDIA_URL + '/icons2/16x16/actions/reload.png',
         tooltip: gettext('Reload'),
         handler: function(self){
-          volumePanel.store.load();
+          volumePanel.refresh();
         }
       }],
       forceFit: true,
@@ -271,9 +256,16 @@ Ext.define('Ext.oa.volumes__Volume_Panel', {
   },
   onRender: function(){
     this.callParent(arguments);
+    var i, nodes = this.getRootNode().childNodes;
+    for(var i = 0; i < nodes.length; i++){
+      nodes[i].expand();
+    }
   },
   refresh: function(){
-    this.store.load();
+    var i, nodes = this.getRootNode().childNodes;
+    for(var i = 0; i < nodes.length; i++){
+      nodes[i].store.load();
+    }
   }
 });
 
