@@ -34,27 +34,31 @@ class Zfs(FileSystem):
     supports_dedup = True
     supports_compression = True
 
-    class ZfsOptions(dict):
-        def __init__(self, fs, data):
+    class ZfsOptions(object):
+        def __init__(self, fs):
             self.fs = fs
-            dict.__init__(self, data)
 
         def __getitem__(self, item):
-            return dbus_to_python(self.fs.dbus_object.zfs_get(self.fs.volume.name, item))[0][2]
+            return dbus_to_python(self.fs.dbus_object.zfs_get(self.fs.volume.fullname, item))[0][2]
 
         def __setitem__(self, item, value):
-            self.fs.dbus_object.zfs_set(-1, self.fs.volume.name, item, str(value))
+            self.fs.dbus_object.zfs_set(-1, self.fs.volume.fullname, item, str(value))
 
-    class ZpoolOptions(dict):
-        def __init__(self, fs, data):
+        def __iter__(self):
+            return (data[1:3] for data in dbus_to_python(self.fs.dbus_object.zfs_get(self.fs.volume.fullname, "all")))
+
+    class ZpoolOptions(object):
+        def __init__(self, fs):
             self.fs = fs
-            dict.__init__(self, data)
 
         def __getitem__(self, item):
             return dbus_to_python(self.fs.dbus_object.zpool_get(self.fs.volume.name, item))[0][2]
 
         def __setitem__(self, item, value):
             self.fsdbus_object.zpool_set(-1, self.fs.volume.name, item, str(value))
+
+        def __iter__(self):
+            return (data[1:3] for data in dbus_to_python(self.fs.dbus_object.zpool_get(self.fs.volume.name, "all")))
 
     def __init__(self, volume):
         FileSystem.__init__(self, volume)
@@ -142,15 +146,22 @@ class Zfs(FileSystem):
             return None
 
     @property
+    def mountpoint(self):
+        try:
+            return self.options["mountpoint"]
+        except dbus.DBusException:
+            return None
+
+    @property
     def options(self):
         if self._options is None:
-            self._options = Zfs.ZfsOptions(self, [data[1:3] for data in dbus_to_python(self.dbus_object.zfs_get(self.volume.name, "all"))])
+            self._options = Zfs.ZfsOptions(self)
         return self._options
 
     @property
     def pool_options(self):
         if self._pooloptions is None:
-            self._pooloptions = Zfs.ZpoolOptions(self, [data[1:3] for data in dbus_to_python(self.dbus_object.zpool_get(self.volume.name, "all"))])
+            self._pooloptions = Zfs.ZpoolOptions(self)
         return self._pooloptions
 
 
