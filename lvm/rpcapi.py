@@ -121,6 +121,7 @@ class LvHandler(ModelHandler):
                 data['fs']['stat'] = obj.stat
         else:
             data['fs'] = None
+        data["status"] = obj.status
         return data
 
     def avail_fs(self):

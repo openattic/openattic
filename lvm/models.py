@@ -163,7 +163,7 @@ class VolumeGroup(VolumePool):
             {"z": None, "-": "non-resizable"}[    attr[1] ],
             {"x": "exported", "-": None}[         attr[2] ],
             {"p": "partial", "-": "online"}[      attr[3] ],
-            {"c": "continuous allocation",
+            {"c": "contiguous allocation",
              "l": "cling allocation",
              "n": None,
              "a": "anywhere allocation",
@@ -259,6 +259,51 @@ class LogicalVolume(BlockVolume):
         if self._lvm is None:
             self._lvm = dbus.SystemBus().get_object(settings.DBUS_IFACE_SYSTEMD, "/lvm")
         return self._lvm
+
+    @property
+    def status(self):
+        attr = self.lvm_info["LVM2_LV_ATTR"].lower()
+        # lv_attr bits: see ``man lvs''
+        # flags are returned in a way that in most normal cases, the status string is as short as possible.
+        flags = [
+            {
+                "m": "mirrored",       "M": "mirrored without initial sync",
+                "o": "origin",         "O": "merging origin",
+                "r": "RAID",           "R": "RAID without initial sync",
+                "s": "snapshot",       "S": "merging snapshot",
+                "p": "pvmove",         "v": "virtual",
+                "i": "image",          "I": "out-of-sync image",
+                "l": "mirror log",     "c": "conversion",
+                "V": "thin volume",    "t": "thin pool",
+                "T": "thin pool data", "e": "RAID/thin pool metadata",
+                '-': None
+            }[ attr[0] ],
+            {"w": None, "r": "read-only", "R": "temporarily read-only"}[ attr[1] ],
+            {
+                "a": "anywhere",       "c": "contiguous allocation",
+                "i": None,             "l": "cling allocation",
+                "n": "normal allocation"
+            }[ attr[2].lower() ],
+            {"m": "fixed minor", "-": None}[ attr[3] ],
+            {
+                "a": "active",         "s": "suspended",
+                "I": "invalid snapshot", "S": "invalid suspended snapshot",
+                "m": "snapshot merge failed", "M": "suspended snapshot merge failed",
+                "d": "mapped device present without tables", "i": "mapped device present with inactive table"
+            }[ attr[4] ],
+            {"o": "open", "-": None}[ attr[5] ],
+            {
+                "m": "mirror",    "r": "raid",
+                "s": "snapshot",  "t": "thin",
+                "u": "unknown",   "v": "virtual",
+                "-": None
+            }[ attr[6] ],
+            {"z": "zeroed",  "-": None}[ attr[7] ],
+            #{"p": "partial", "-": None}[ attr[8] ],
+        ]
+        if attr[2] in ("A", "C", "I", "L", "N"):
+            flags.append("pvmove in progress")
+        return ", ".join([flag for flag in flags if flag is not None])
 
     @property
     def device(self):
