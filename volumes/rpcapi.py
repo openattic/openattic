@@ -113,9 +113,10 @@ class FileSystemProviderHandler(ModelHandler):
             }
         if obj.mounted:
             data['fs']['stat'] = obj.stat
-        # FileSystemProvider.volume always points to self
+        # this looks fishy
         del data["volume_type"]
         del data["volume"]
+        data["volume"] = data["base"]
         return data
 
 
