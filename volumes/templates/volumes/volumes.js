@@ -33,10 +33,8 @@ Ext.define('volumes__volumes_BlockVolume_model', {
     var rootNode;
     record.set("leaf", true);
     rootNode = this.callParent(arguments);
-    rootNode.set("name",   toUnicode(record.raw));
     rootNode.set("type",   gettext(Ext.String.capitalize(toUnicode(record.raw.volumepool_type))));
     rootNode.set("icon",   MEDIA_URL + '/icons2/16x16/apps/database.png');
-    rootNode.set("status", " ");
     rootNode.set("fshost", toUnicode(record.raw.host));
     return rootNode;
   }
@@ -62,14 +60,12 @@ Ext.define('volumes__volumes_FileSystemVolume_model', {
     var rootNode;
     record.set("leaf", true);
     rootNode = this.callParent(arguments);
-    rootNode.set("name",         toUnicode(record.raw));
     rootNode.set("type",         gettext(Ext.String.capitalize(record.raw.volume.obj ? record.raw.volume.obj : '')));
     rootNode.set("fshost",       toUnicode(record.raw.fs.host));
     rootNode.set("fsmountpoint", record.raw.fs.mountpoint);
     rootNode.set("poolname",     toUnicode(record.raw.pool));
     rootNode.set("ownername",    toUnicode(record.raw.owner));
     rootNode.set("icon",         MEDIA_URL + '/icons2/16x16/apps/database.png');
-    rootNode.set("status",       " ");
     if( typeof record.raw.fs.stat !== "undefined" ){
       rootNode.set("percent",    (record.raw.fs.stat.used / record.raw.fs.stat.size * 100).toFixed(2));
     }
@@ -159,11 +155,12 @@ Ext.define('Ext.oa.volumes__Volume_Panel', {
       columns: [{
         xtype: 'treecolumn',
         header: gettext('Name'),
-        dataIndex: "name"
+        dataIndex: "name",
+        flex: 3
       },{
         header: gettext('Type'),
         dataIndex: "type",
-        renderer: function(val){ return (val ? val : '♻'); }
+        flex: 1
       },{
         header: gettext('Size'),
         dataIndex: "megs",
@@ -172,25 +169,20 @@ Ext.define('Ext.oa.volumes__Volume_Panel', {
           if( val === null ){
             return '';
           }
-          if( !val || val === -1 ){
-            return '♻';
-          }
           if( val >= 1000 ){
             return Ext.String.format("{0} GB", (val / 1000).toFixed(2));
           }
           else{
             return Ext.String.format("{0} MB", val);
           }
-        }
+        },
+        flex: 1
       },{
         header: gettext('Used%'),
         dataIndex: "percent",
         renderer: function( val, x, store ){
           if( val === null ){
             return '';
-          }
-          if( !val || val === -1 ){
-            return '♻';
           }
           var id = Ext.id();
           Ext.defer(function(){
@@ -206,16 +198,14 @@ Ext.define('Ext.oa.volumes__Volume_Panel', {
             });
           }, 25);
           return Ext.String.format('<span id="{0}"></span>', id);
-        }
+        },
+        flex: 2
       },{
         header: gettext('Status'),
         dataIndex: "status",
         renderer: function( val, x, store ){
           if( val === null ){
             return '';
-          }
-          if( !val || val === -1 ){
-            return '♻';
           }
           if( !val.contains(":") ){
             return val;
@@ -234,22 +224,28 @@ Ext.define('Ext.oa.volumes__Volume_Panel', {
             });
           }, 25);
           return Ext.String.format('<span id="{0}"></span>', id);
-        }
+        },
+        flex: 1
       },{
         header: gettext('Warning Level'),
         dataIndex: "fswarning",
+        flex: 1
       },{
         header: gettext('Critical Level'),
         dataIndex: "fscritical",
+        flex: 1
       },{
         header: gettext('Mounted on Host'),
         dataIndex: "fshost",
+        flex: 1
       },{
         header: gettext('Volume Pool'),
         dataIndex: "poolname",
+        flex: 1
       },{
         header: gettext('Owner'),
         dataIndex: "ownername",
+        flex: 1
       }]
     }));
     this.callParent(arguments);
