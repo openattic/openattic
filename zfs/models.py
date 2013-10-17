@@ -96,6 +96,10 @@ class Zfs(FileSystemVolume):
         return "zfs"
 
     @property
+    def status(self):
+        return self.zpool.status
+
+    @property
     def mountpoint(self):
         return self.fs.mountpoint
 

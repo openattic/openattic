@@ -40,6 +40,7 @@ class ZfsHandler(ModelHandler):
             }
         if obj.mounted:
             data['fs']['stat'] = obj.stat
+        data["status"] = obj.status
         return data
 
 
