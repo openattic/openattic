@@ -306,7 +306,7 @@ class LogicalVolume(BlockVolume):
         return ", ".join([flag for flag in flags if flag is not None])
 
     @property
-    def device(self):
+    def path(self):
         """ The actual device under which this LV operates. """
         return os.path.join( "/dev", self.vg.name, self.name )
 
@@ -317,7 +317,7 @@ class LogicalVolume(BlockVolume):
     @property
     def dmdevice( self ):
         """ Returns the dm-X device that represents this LV. """
-        return os.path.realpath( self.device )
+        return os.path.realpath( self.path )
 
     @property
     def disk_stats( self ):
@@ -351,7 +351,7 @@ class LogicalVolume(BlockVolume):
 
     def detect_fs(self):
         """ Try to detect the file system using `file'. """
-        typestring = self.lvm.get_type(self.device)
+        typestring = self.lvm.get_type(self.path)
         for fs in FILESYSTEMS:
             if fs.check_type(typestring):
                 return fs
@@ -440,14 +440,14 @@ class LogicalVolume(BlockVolume):
             snap = ""
         self.lvm.lvcreate( self.vg.name, self.name, self.megs, snap )
         if not self.snapshot:
-            self.lvm.lvchange( self.device, True )
+            self.lvm.lvchange( self.path, True )
         lvm_signals.post_install.send(sender=LogicalVolume, instance=self)
 
     def uninstall(self):
         lvm_signals.pre_uninstall.send(sender=LogicalVolume, instance=self)
         if not self.snapshot:
-            self.lvm.lvchange(self.device, False)
-        self.lvm.lvremove(self.device)
+            self.lvm.lvchange(self.path, False)
+        self.lvm.lvremove(self.path)
         lvm_signals.post_uninstall.send(sender=LogicalVolume, instance=self)
 
     def resize( self ):
@@ -468,14 +468,14 @@ class LogicalVolume(BlockVolume):
             for mod in self.modchain:
                 mod.resize(self._jid)
 
-            self.lvm.lvresize(self._jid, self.device, self.megs, False)
+            self.lvm.lvresize(self._jid, self.path, self.megs, False)
 
             lvm_signals.post_shrink.send(sender=LogicalVolume, instance=self, jid=self._jid)
         else:
             # Grow Volume, then FS
             lvm_signals.pre_grow.send(sender=LogicalVolume, instance=self, jid=self._jid)
 
-            self.lvm.lvresize(self._jid, self.device, self.megs, True)
+            self.lvm.lvresize(self._jid, self.path, self.megs, True)
 
             for mod in self.modchain:
                 mod.resize(self._jid)
@@ -571,7 +571,7 @@ class LogicalVolume(BlockVolume):
         orig.unmount()
         for snapshot in orig.snapshot_set.all():
             snapshot.unmount()
-        self.lvm.lvmerge(  self.device )
+        self.lvm.lvmerge(  self.path )
         BlockVolume.delete(self)
         for snapshot in orig.snapshot_set.all():
             snapshot.mount()
