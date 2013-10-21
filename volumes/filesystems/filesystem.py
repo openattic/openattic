@@ -80,9 +80,9 @@ class FileSystem(object):
         return self.name
 
     @property
-    def mountpoint(self):
+    def path(self):
         if self.virtual:
-            raise NotImplementedError("FileSystem::mountpoint needs to be overridden for virtual FS handlers")
+            raise NotImplementedError("FileSystem::path needs to be overridden for virtual FS handlers")
         return os.path.join(volumes_settings.MOUNT_PREFIX, self.volume.volume.name)
 
     @property
@@ -96,20 +96,20 @@ class FileSystem(object):
         """
         if self.virtual:
             raise NotImplementedError("FileSystem::mount needs to be overridden for virtual FS handlers")
-        self._lvm.fs_mount( jid, self.name, self.volume.device, self.mountpoint )
+        self._lvm.fs_mount( jid, self.name, self.volume.device, self.path )
 
     @property
     def mounted(self):
         """ True if the volume is currently mounted. """
         if self.virtual:
             raise NotImplementedError("FileSystem::mounted needs to be overridden for virtual FS handlers")
-        return os.path.ismount(self.mountpoint)
+        return os.path.ismount(self.path)
 
     def unmount(self, jid):
         """ Unmount the volume. """
         if self.virtual:
             raise NotImplementedError("FileSystem::unmount needs to be overridden for virtual FS handlers")
-        self._lvm.fs_unmount( jid, self.volume.device, self.mountpoint )
+        self._lvm.fs_unmount( jid, self.volume.device, self.path )
 
     def format(self, jid):
         """ Format the volume. """
@@ -125,7 +125,7 @@ class FileSystem(object):
         """ Change ownership of the filesystem to be the LV's owner. """
         if self.virtual:
             raise NotImplementedError("FileSystem::chown needs to be overridden for virtual FS handlers")
-        return self._lvm.fs_chown( jid, self.mountpoint, self.volume.upper.owner.username, volumes_settings.CHOWN_GROUP )
+        return self._lvm.fs_chown( jid, self.path, self.volume.upper.owner.username, volumes_settings.CHOWN_GROUP )
 
     def destroy(self):
         """ Destroy the file system. """
@@ -141,7 +141,7 @@ class FileSystem(object):
         """ stat() the file system and return usage statistics. """
         if self.virtual:
             raise NotImplementedError("FileSystem::stat needs to be overridden for virtual FS handlers")
-        s = os.statvfs(self.mountpoint)
+        s = os.statvfs(self.path)
         stats = {
             'size': (s.f_blocks * s.f_frsize) / 1024 / 1000.,
             'free': (s.f_bavail * s.f_frsize) / 1024 / 1000.,

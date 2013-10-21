@@ -72,7 +72,7 @@ class Xfs(FileSystem):
     def resize(self, jid, grow):
         if not grow:
             raise SystemError("XFS does not support shrinking.")
-        self._lvm.xfs_resize( jid, self.mountpoint, self.lv.megs )
+        self._lvm.xfs_resize( jid, self.path, self.lv.megs )
 
     @classmethod
     def check_type(cls, typestring):
