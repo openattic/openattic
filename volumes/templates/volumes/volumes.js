@@ -20,7 +20,7 @@ Ext.define('volumes__volumes_BlockVolume_model', {
   ],
   fields: [
     'id', 'name', 'type', 'megs', 'filesystem', 'status', 'usedmegs', 'percent',
-    'fswarning', 'fscritical', 'fshost', 'path', 'poolname', 'ownername'
+    'fswarning', 'fscritical', 'host', 'path', 'poolname', 'ownername'
   ],
   createNode: function(record){
     // See if there is a specific model for this object type, and if so, use it
@@ -35,7 +35,7 @@ Ext.define('volumes__volumes_BlockVolume_model', {
     rootNode = this.callParent(arguments);
     rootNode.set("type",   gettext(Ext.String.capitalize(toUnicode(record.raw.volume_type))));
     rootNode.set("icon",   MEDIA_URL + '/icons2/16x16/apps/database.png');
-    rootNode.set("fshost", toUnicode(record.raw.host));
+    rootNode.set("host", toUnicode(record.raw.host));
     rootNode.set("poolname", toUnicode(record.raw.pool));
     rootNode.set("percent", null);
     return rootNode;
@@ -49,7 +49,7 @@ Ext.define('volumes__volumes_FileSystemVolume_model', {
   ],
   fields: [
     'id', 'name', 'type', 'megs', 'filesystem', 'status', 'usedmegs', 'percent',
-    'fswarning', 'fscritical', 'fshost', 'path', 'poolname', 'ownername'
+    'fswarning', 'fscritical', 'host', 'path', 'poolname', 'ownername'
   ],
   createNode: function(record){
     // See if there is a specific model for this object type, and if so, use it
@@ -63,7 +63,7 @@ Ext.define('volumes__volumes_FileSystemVolume_model', {
     record.set("leaf", true);
     rootNode = this.callParent(arguments);
     rootNode.set("type",         record.raw.filesystem);
-    rootNode.set("fshost",       toUnicode(record.raw.fs.host));
+    rootNode.set("host",         toUnicode(record.raw.host));
     rootNode.set("poolname",     toUnicode(record.raw.pool));
     rootNode.set("ownername",    toUnicode(record.raw.owner));
     rootNode.set("icon",         MEDIA_URL + '/icons2/16x16/apps/database.png');
@@ -241,7 +241,7 @@ Ext.define('Ext.oa.volumes__Volume_Panel', {
         flex: 1
       },{
         header: gettext('Mounted on Host'),
-        dataIndex: "fshost",
+        dataIndex: "host",
         flex: 1
       },{
         header: gettext('Volume Pool'),
