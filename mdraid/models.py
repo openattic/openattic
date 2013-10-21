@@ -31,7 +31,7 @@ class Array(BlockVolume):
     type        = models.CharField(max_length=50)
 
     @property
-    def device(self):
+    def path(self):
         return "/dev/" + self.name
 
     @property

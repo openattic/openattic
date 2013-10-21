@@ -24,6 +24,7 @@ class ArrayHandler(ModelHandler):
 
     def _override_get(self, obj, data):
         data["status"] = obj.status
+        data["path"] = obj.path
         data["member_set"] = []
         for member in obj.member_set.all():
             handler = self._get_handler_instance(member.__class__)
