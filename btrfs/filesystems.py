@@ -35,11 +35,15 @@ class Btrfs(FileSystem):
     def info(self):
         return {}
 
+    @property
+    def dbus_object(self):
+        return dbus.SystemBus().get_object(settings.DBUS_IFACE_SYSTEMD, "/btrfs")
+
     def format(self, jid):
-        self._lvm.btrfs_format( jid, self.lv.path )
+        self.dbus_object.format( jid, self.lv.path )
         self.mount(jid)
         self.chown(jid)
-        self._lvm.btrfs_create_subvolume(jid, os.path.join(self.path, "default"))
+        self.dbus_object.create_subvolume(jid, os.path.join(self.path, "default"))
         from lvm.models import BtrfsSubvolume
         default = BtrfsSubvolume(volume=self.lv, name="default")
         default.save(database_only=True)
@@ -58,12 +62,12 @@ class Btrfs(FileSystem):
 
     def create_subvolume(self, subvolume):
         if subvolume.snapshot is not None:
-            self._lvm.btrfs_create_snapshot(subvolume.snapshot.path, subvolume.path, subvolume.readonly)
+            self.dbus_object.create_snapshot(subvolume.snapshot.path, subvolume.path, subvolume.readonly)
         else:
-            self._lvm.btrfs_create_subvolume(-1, subvolume.path)
+            self.dbus_object.create_subvolume(-1, subvolume.path)
 
     def delete_subvolume(self, subvolume):
-        self._lvm.btrfs_delete_subvolume(subvolume.path)
+        self.dbus_object.delete_subvolume(subvolume.path)
 
 class BtrfsDevice(capabilities.Device):
     requires = [

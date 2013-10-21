@@ -34,10 +34,6 @@ class Btrfs(VolumePool):
     all_objects = models.Manager()
 
     @property
-    def dbus_object(self):
-        return dbus.SystemBus().get_object(settings.DBUS_IFACE_SYSTEMD, "/zfs")
-
-    @property
     def fullname(self):
         return self.name
 
