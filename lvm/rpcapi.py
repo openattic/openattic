@@ -22,8 +22,6 @@ from rpcd.handlers import ProxyModelHandler
 from ifconfig.rpcapi import HostHandler
 
 from lvm.models import VolumeGroup, LogicalVolume, \
-                       ZfsSubvolume, ZfsSnapshot, \
-                       BtrfsSubvolume, \
                        LVMetadata, \
                        LVSnapshotJob, SnapshotConf
 from lvm import blockdevices
@@ -203,19 +201,6 @@ class LVMetadataHandler(ModelHandler):
 class LVSnapshotJobHandler(ModelHandler):
     model = LVSnapshotJob
 
-class ZfsSubvolumeHandler(ModelHandler):
-    model = ZfsSubvolume
-
-class ZfsSnapshotHandler(ModelHandler):
-    model = ZfsSnapshot
-
-    def rollback(self, id):
-        """ Rollback the volume to the snapshot given by `id`. """
-        return ZfsSnapshot.objects.get(id=id).rollback()
-
-class BtrfsSubvolumeHandler(ModelHandler):
-    model = BtrfsSubvolume
-
 class VgProxy(ProxyModelHandler, VgHandler):
     def get_free_megs(self, id):
         """ Get amount of free space in a Volume Group. """
@@ -288,15 +273,6 @@ class LvProxy(ProxyModelHandler, LvHandler):
     def iostat(self, id):
         return self._call_singlepeer_method("iostat", id)
 
-class ZfsSubvolumeProxy(ProxyModelHandler, ZfsSubvolumeHandler):
-    model = ZfsSubvolume
-
-class ZfsSnapshotProxy(ProxyModelHandler, ZfsSnapshotHandler):
-    model = ZfsSnapshot
-
-class BtrfsSubvolumeProxy(ProxyModelHandler, BtrfsSubvolumeHandler):
-    model = BtrfsSubvolume
-
 class SnapshotConfHandler(ModelHandler):
     model = SnapshotConf
 
@@ -310,8 +286,6 @@ RPCD_HANDLERS = [
     DiskHandler,
     BlockDevicesHandler,
     VgProxy, LvProxy,
-    ZfsSubvolumeProxy, ZfsSnapshotProxy,
-    BtrfsSubvolumeProxy,
     LVMetadataHandler,
     LVSnapshotJobHandler,
     SnapshotConfHandler
