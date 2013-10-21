@@ -395,24 +395,6 @@ class LogicalVolume(BlockVolume):
         return snap
 
     @property
-    def mountpoint(self):
-        if not self.fs:
-            raise SystemError("Volume '%s' does not have a filesystem, cannot mount." % self.name)
-        return self.fs.mountpoint
-
-    @property
-    def mounthost(self):
-        if not self.fs:
-            raise SystemError("Volume '%s' does not have a filesystem, cannot mount." % self.name)
-        return self.fs.mounthost
-
-    @property
-    def topleveldir(self):
-        if not self.fs:
-            raise SystemError("Volume '%s' does not have a filesystem, cannot mount." % self.name)
-        return self.fs.topleveldir
-
-    @property
     def mounted(self):
         return self.fs.mounted
 

@@ -108,11 +108,9 @@ class FileSystemProviderHandler(ModelHandler):
     model = FileSystemProvider
 
     def _override_get(self, obj, data):
-        hosthandler = self._get_handler_instance(Host)
         data['filesystem'] = obj.fsname
         data['fs'] = {
             'mounted':     obj.mounted,
-            'host':        hosthandler._idobj(obj.mounthost)
             }
         if obj.mounted:
             data['fs']['stat'] = obj.stat

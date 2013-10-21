@@ -213,10 +213,6 @@ class FileSystemProvider(FileSystemVolume):
         return self.fs.fsname
 
     @property
-    def mounthost(self):
-        return self.fs.mounthost
-
-    @property
     def mounted(self):
         return self.fs.mounted
 

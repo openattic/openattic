@@ -100,10 +100,6 @@ class Zfs(FileSystemVolume):
         return self.fs.path
 
     @property
-    def mounthost(self):
-        return self.fs.mounthost
-
-    @property
     def mounted(self):
         return self.fs.mounted
 
