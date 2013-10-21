@@ -146,7 +146,7 @@ class Zfs(FileSystem):
             return None
 
     @property
-    def mountpoint(self):
+    def path(self):
         try:
             return self.options["mountpoint"]
         except dbus.DBusException:

@@ -75,8 +75,8 @@ class SystemD(BasePlugin):
         return invoke(["zpool", "destroy", device])
 
     @method(in_signature="isss", out_signature="")
-    def zfs_format(self, jid, devpath, label, mountpoint):
-        self.job_add_command(jid, ["zpool", "create", "-m", mountpoint, label, devpath])
+    def zfs_format(self, jid, devpath, label, path):
+        self.job_add_command(jid, ["zpool", "create", "-m", path, label, devpath])
 
     @method(in_signature="iss", out_signature="")
     def zfs_create_volume(self, jid, pool, volume):

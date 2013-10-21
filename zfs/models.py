@@ -96,8 +96,8 @@ class Zfs(FileSystemVolume):
         return self.zpool.status
 
     @property
-    def mountpoint(self):
-        return self.fs.mountpoint
+    def path(self):
+        return self.fs.path
 
     @property
     def mounthost(self):
