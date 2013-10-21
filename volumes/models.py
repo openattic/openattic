@@ -100,7 +100,7 @@ class BlockVolume(AbstractVolume):
     upper       = generic.GenericForeignKey("upper_type", "upper_id")
 
     # Interface:
-    # device -> CharField or property that returns /dev/path
+    # path -> CharField or property that returns /dev/path
 
     def save(self, *args, **kwargs):
         if self.__class__ is not BlockVolume:
@@ -132,7 +132,7 @@ class GenericDisk(BlockVolume):
         raise DeviceNotFound(self.serial)
 
     @property
-    def device(self):
+    def path(self):
         return self.udev_device.device_node
 
     @property
@@ -149,7 +149,7 @@ class GenericDisk(BlockVolume):
         return blockdevices.get_disk_stats( self.name )
 
     def __unicode__(self):
-        return "%s (%dMiB)" % (self.device, self.megs)
+        return "%s (%dMiB)" % (self.path, self.megs)
 
 
 class FileSystemVolume(AbstractVolume):
@@ -169,6 +169,10 @@ class FileSystemVolume(AbstractVolume):
 
     def __unicode__(self):
         return unicode(self.volume)
+
+    @property
+    def path(self):
+        return self.volume.fs.path
 
 
 class FileSystemProvider(FileSystemVolume):
@@ -207,10 +211,6 @@ class FileSystemProvider(FileSystemVolume):
     @property
     def fsname(self):
         return self.fs.fsname
-
-    @property
-    def mountpoint(self):
-        return self.fs.mountpoint
 
     @property
     def mounthost(self):
