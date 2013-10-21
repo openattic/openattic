@@ -400,7 +400,7 @@ class LogicalVolume(BlockVolume):
 
     @property
     def stat(self):
-        return self.fs.stat()
+        return self.fs.stat
 
     def mount(self):
         if self.formatted and not self.mounted:
