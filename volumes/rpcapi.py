@@ -47,7 +47,6 @@ class VolumePoolHandler(ModelHandler):
         for member in obj.member_set.all():
             handler = self._get_handler_instance(member.__class__)
             data["member_set"].append( handler._idobj(member) )
-        data["path"] = obj.path
         return data
 
     def get_status(self, id):
