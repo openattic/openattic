@@ -35,7 +35,6 @@ class BtrfsSubvolumeHandler(ModelHandler):
         hosthandler = self._get_handler_instance(Host)
         data['filesystem'] = obj.fsname
         data['fs'] = {
-            'mountpoint':  obj.mountpoint,
             'mounted':     obj.mounted,
             'host':        hosthandler._idobj(obj.mounthost)
             }

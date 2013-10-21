@@ -39,13 +39,13 @@ class Btrfs(FileSystem):
         self._lvm.btrfs_format( jid, self.lv.path )
         self.mount(jid)
         self.chown(jid)
-        self._lvm.btrfs_create_subvolume(jid, os.path.join(self.mountpoint, "default"))
+        self._lvm.btrfs_create_subvolume(jid, os.path.join(self.path, "default"))
         from lvm.models import BtrfsSubvolume
         default = BtrfsSubvolume(volume=self.lv, name="default")
         default.save(database_only=True)
 
     @property
-    def mountpoint(self):
+    def path(self):
         return os.path.join(volumes_settings.MOUNT_PREFIX, self.volume.fullname)
 
     @property

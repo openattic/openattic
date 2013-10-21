@@ -84,8 +84,8 @@ class BtrfsSubvolume(FileSystemVolume):
         return self.btrfs.status
 
     @property
-    def mountpoint(self):
-        return self.fs.mountpoint
+    def path(self):
+        return self.fs.path
 
     @property
     def mounthost(self):
