@@ -13,12 +13,9 @@ installed_apps.d/20_volumes /usr/share/openattic/installed_apps.d
 
 # Static files, Templates
 htdocs/js               /usr/share/openattic/htdocs
-htdocs/extjs_themes     /usr/share/openattic/htdocs
-htdocs/extjs_languages  /usr/share/openattic/htdocs
 htdocs/portal           /usr/share/openattic/htdocs
 htdocs/icons2           /usr/share/openattic/htdocs
 htdocs/*.png            /usr/share/openattic/htdocs
-htdocs/canvasxpress     /usr/share/openattic/htdocs
 htdocs/*.gif            /usr/share/openattic/htdocs
 
 templates /usr/share/openattic
