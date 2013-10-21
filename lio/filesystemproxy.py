@@ -22,7 +22,7 @@ import errno
 
 from xmlrpclib import Fault
 
-from lvm.filesystems import FileSystem, FILESYSTEMS
+from volumes.filesystems import FileSystem, FILESYSTEMS
 
 class FileSystemProxy(FileSystem):
     name = "LIO Remote Filesystem"
@@ -134,4 +134,3 @@ class FileSystemProxy(FileSystem):
 
         return stat
 
-FILESYSTEMS.append(FileSystemProxy)
