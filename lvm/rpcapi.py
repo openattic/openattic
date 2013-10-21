@@ -267,10 +267,6 @@ class LvProxy(ProxyModelHandler, LvHandler):
         """ Check if the given volume is currently mounted. """
         return self._call_singlepeer_method("is_mounted", id)
 
-    def is_in_standby(self, id):
-        """ Check if the given volume is currently in standby. """
-        return self._call_singlepeer_method("is_in_standby", id)
-
     def create(self, data):
         if "id" in data:
             raise KeyError("Wai u ID")
