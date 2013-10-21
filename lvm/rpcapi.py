@@ -175,11 +175,6 @@ class LvHandler(ModelHandler):
         lv = LogicalVolume.objects.get(id=id)
         return lv.fs and lv.mounted
 
-    def is_in_standby(self, id):
-        """ Check if the given volume is currently in standby. """
-        lv = LogicalVolume.objects.get(id=id)
-        return lv.standby
-
     def get_initscripts(self):
         return initscripts.get_initscripts()
 

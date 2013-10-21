@@ -371,52 +371,6 @@ class LogicalVolume(BlockVolume):
                 yield relmdl
 
     @property
-    def modchain( self, app_label=None ):
-        """ A list of block device modules operating on this LV, in the order
-            in which they are chained.
-        """
-        mc = []
-        for relobj in ( self._meta.get_all_related_objects() + self._meta.get_all_related_many_to_many_objects() ):
-            if app_label  and relobj.model._meta.app_label != app_label:
-                continue
-
-            if not issubclass( relobj.model, LVChainedModule ):
-                # not a mod
-                continue
-
-            mc.extend( relobj.model.objects.filter( **{ relobj.field.name: self } ) )
-
-        mc.sort(lambda a, b: cmp(a.ordering, b.ordering))
-        return mc
-
-    @property
-    def path(self):
-        """ Returns the block device on which the file system resides,
-            taking block device modules into account.
-        """
-        mc = self.modchain
-        if not mc:
-            return self.device
-        return mc[-1].path
-
-    @property
-    def standby(self):
-        """ Returns true if mods are configured and at least one reports
-            itself as in standby.
-        """
-        for mod in self.modchain:
-            if mod.standby:
-                return True
-        return False
-
-    @property
-    def mods_active(self):
-        """ True if no mods are in use or all mods are active. """
-        for mod in self.modchain:
-            return False
-        return True
-
-    @property
     def lvm_info(self):
         """ LV information from LVM. """
         if self._lvm_info is None:
@@ -581,12 +535,7 @@ class LogicalVolume(BlockVolume):
             self.uuid = self.lvm_info["LVM2_LV_UUID"]
 
             if self.filesystem:
-                mc = self.modchain
-                modified = False
-                if mc:
-                    modified = mc[-1].setupfs()
-                else:
-                    modified = self.setupfs()
+                modified = self.setupfs()
                 self.lvm.write_fstab()
 
             ret = BlockVolume.save(self, *args, **kwargs)
@@ -602,11 +551,6 @@ class LogicalVolume(BlockVolume):
     def delete(self):
         for share in self.get_shares():
             share.delete()
-
-        mc = self.modchain[:]
-        mc.reverse()
-        for mod in mc:
-            mod.delete()
 
         if self.filesystem:
             if self.mounted:
@@ -658,57 +602,6 @@ class LogicalVolumeDevice(capabilities.Device):
         ]
 
 
-
-
-
-class LVChainedModule(models.Model):
-    """ Represents block device oriented modules that create a block device
-        themselves, like DRBD or openDedup. This class only manages the
-        ordering and the link to the LV.
-    """
-
-    volume      = models.ForeignKey(LogicalVolume)
-    ordering    = models.IntegerField(default=0)
-
-    standby     = False
-
-    @property
-    def basedev(self):
-        """ Return the device on which this mod is operating. """
-        mc = self.volume.modchain
-        if mc[0] == self:
-            return self.volume.device
-        else:
-            last = self.volume
-            for curr in mc:
-                if curr == self:
-                    return last.path
-                last = curr
-
-    def setupfs(self):
-        return self.volume.setupfs()
-
-    def install(self):
-        return
-
-    def resize(self, jid):
-        return
-
-    def uninstall(self):
-        return
-
-    class Meta:
-        unique_together = ("volume", "ordering")
-        abstract = True
-
-    def save( self, *args, **kwargs ):
-        if not self.id:
-            self.install()
-        return models.Model.save(self, *args, **kwargs)
-
-    def delete(self):
-        self.uninstall()
-        models.Model.delete(self)
 
 
 
