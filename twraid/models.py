@@ -106,6 +106,10 @@ class Unit(BlockVolume):
         raise DeviceNotFound(self.serial)
 
     @property
+    def type(self):
+        return self.unittype
+
+    @property
     def disk_stats( self ):
         """ Return disk stats from the LV retrieved from the kernel. """
         return blockdevices.get_disk_stats( self.path[5:] )

@@ -83,7 +83,7 @@ class FileSystemProxy(FileSystem):
     @property
     def mounted(self):
         """ True if the volume is currently mounted. """
-        return self.fsname != "LIO Remote File System"
+        return self.name != "LIO Remote File System"
 
     def unmount(self, jid):
         """ Unmount the volume. """

@@ -206,6 +206,8 @@ class LogicalVolume(BlockVolume):
     createdate  = models.DateTimeField(auto_now_add=True, blank=True, null=True)
     snapshotconf= models.ForeignKey("SnapshotConf", blank=True, null=True, related_name="snapshot_set")
 
+    type        = "lv"
+
     objects = getHostDependentManagerClass("vg__host")()
     all_objects = models.Manager()
 
@@ -335,19 +337,6 @@ class LogicalVolume(BlockVolume):
                 except FileSystem.WrongFS:
                     pass
         return self._fs
-
-    @property
-    def fsname(self):
-        """ The name of the file system on this volume. """
-        if not self.fs:
-            return None
-        return self.fs.fsname
-
-    @property
-    def fs_info(self):
-        if not self.fs:
-            return None
-        return self.fs.info
 
     def detect_fs(self):
         """ Try to detect the file system using `file'. """

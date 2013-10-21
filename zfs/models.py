@@ -88,10 +88,6 @@ class Zfs(FileSystemVolume):
         return filesystems.Zfs(self)
 
     @property
-    def fsname(self):
-        return "zfs"
-
-    @property
     def status(self):
         return self.zpool.status
 

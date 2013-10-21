@@ -80,7 +80,13 @@ class BlockVolumeHandler(ModelHandler):
         if obj.volume is None:
             return data
         handler = self._get_handler_instance(obj.volume.__class__)
-        return handler._getobj(obj.volume)
+        data = handler._getobj(obj.volume)
+        data["name"] = obj.volume.name
+        data["megs"] = obj.volume.megs
+        data["host"] = self._get_handler_instance(Host)._idobj(obj.volume.host)
+        data["path"] = obj.volume.path
+        data["type"] = obj.volume.type
+        return data
 
 
 class FileSystemVolumeHandler(ModelHandler):
@@ -99,7 +105,8 @@ class FileSystemVolumeHandler(ModelHandler):
         data["name"] = obj.volume.name
         data["megs"] = obj.volume.megs
         data["host"] = self._get_handler_instance(Host)._idobj(obj.volume.host)
-        data["path"] = obj.path
+        data["path"] = obj.volume.path
+        data["type"] = obj.volume.type
         return data
 
 
@@ -107,7 +114,6 @@ class FileSystemProviderHandler(ModelHandler):
     model = FileSystemProvider
 
     def _override_get(self, obj, data):
-        data['filesystem'] = obj.fsname
         data['fs'] = {
             'mounted':     obj.mounted,
             }

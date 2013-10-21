@@ -110,7 +110,6 @@ class BlockVolume(AbstractVolume):
     def __unicode__(self):
         return self.volume.name
 
-
 class GenericDisk(BlockVolume):
     """ A standard disk that is NOT anything fancy (like a hardware raid). """
     host        = models.ForeignKey(Host)
@@ -174,6 +173,10 @@ class FileSystemVolume(AbstractVolume):
     def path(self):
         return self.volume.fs.path
 
+    @property
+    def type(self):
+        return self.volume.fs.name
+
 
 class FileSystemProvider(FileSystemVolume):
     """ A FileSystem that resides on top of a BlockVolume. """
@@ -207,10 +210,6 @@ class FileSystemProvider(FileSystemVolume):
     @property
     def fs(self):
         return filesystems.get_by_name(self.filesystem)(self.base)
-
-    @property
-    def fsname(self):
-        return self.fs.fsname
 
     @property
     def mounted(self):

@@ -72,10 +72,6 @@ class BtrfsSubvolume(FileSystemVolume):
         return filesystems.Btrfs(self)
 
     @property
-    def fsname(self):
-        return "btrfs"
-
-    @property
     def status(self):
         return self.btrfs.status
 

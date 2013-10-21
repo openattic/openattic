@@ -32,7 +32,6 @@ class BtrfsSubvolumeHandler(ModelHandler):
     model = BtrfsSubvolume
 
     def _override_get(self, obj, data):
-        data['filesystem'] = obj.fsname
         data['fs'] = {
             'mounted':     obj.mounted,
             }

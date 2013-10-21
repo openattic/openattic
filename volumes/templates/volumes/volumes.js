@@ -19,7 +19,7 @@ Ext.define('volumes__volumes_BlockVolume_model', {
     'Ext.data.NodeInterface'
   ],
   fields: [
-    'id', 'name', 'type', 'megs', 'filesystem', 'status', 'usedmegs', 'percent',
+    'id', 'name', 'type', 'megs', 'status', 'usedmegs', 'percent',
     'fswarning', 'fscritical', 'host', 'path', 'poolname', 'ownername'
   ],
   createNode: function(record){
@@ -33,7 +33,6 @@ Ext.define('volumes__volumes_BlockVolume_model', {
     var rootNode;
     record.set("leaf", true);
     rootNode = this.callParent(arguments);
-    rootNode.set("type",   gettext(Ext.String.capitalize(toUnicode(record.raw.volume_type))));
     rootNode.set("icon",   MEDIA_URL + '/icons2/16x16/apps/database.png');
     rootNode.set("host", toUnicode(record.raw.host));
     rootNode.set("poolname", toUnicode(record.raw.pool));
@@ -48,7 +47,7 @@ Ext.define('volumes__volumes_FileSystemVolume_model', {
     'Ext.data.NodeInterface'
   ],
   fields: [
-    'id', 'name', 'type', 'megs', 'filesystem', 'status', 'usedmegs', 'percent',
+    'id', 'name', 'type', 'megs', 'status', 'usedmegs', 'percent',
     'fswarning', 'fscritical', 'host', 'path', 'poolname', 'ownername'
   ],
   createNode: function(record){
@@ -62,7 +61,6 @@ Ext.define('volumes__volumes_FileSystemVolume_model', {
     var rootNode;
     record.set("leaf", true);
     rootNode = this.callParent(arguments);
-    rootNode.set("type",         record.raw.filesystem);
     rootNode.set("host",         toUnicode(record.raw.host));
     rootNode.set("poolname",     toUnicode(record.raw.pool));
     rootNode.set("ownername",    toUnicode(record.raw.owner));
