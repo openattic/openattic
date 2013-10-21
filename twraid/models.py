@@ -93,7 +93,7 @@ class Unit(BlockVolume):
         return self.controller.host
 
     @property
-    def device(self):
+    def path(self):
         import pyudev
         ctx = pyudev.Context()
 

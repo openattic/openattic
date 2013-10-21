@@ -32,6 +32,7 @@ class UnitHandler(ModelHandler):
 
     def _override_get(self, obj, data):
         data["host"] = self._get_handler_instance(Host)._idobj(obj.controller.host)
+        data["path"] = obj.path
         data["disk_set"] = []
         handler = self._get_handler_instance(Disk)
         for disk in obj.disk_set.all():
