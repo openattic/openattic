@@ -108,7 +108,7 @@ class Unit(BlockVolume):
     @property
     def disk_stats( self ):
         """ Return disk stats from the LV retrieved from the kernel. """
-        return blockdevices.get_disk_stats( self.device[5:] )
+        return blockdevices.get_disk_stats( self.path[5:] )
 
     def __unicode__(self):
         if self.name:
