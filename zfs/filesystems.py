@@ -19,12 +19,28 @@ import os.path
 import re
 import dbus
 
+from django.conf import settings
+
 from systemd  import dbus_to_python
 from lvm.conf import settings as lvm_settings
 from lvm.blockdevices import UnsupportedRAID, get_raid_params
 
 from volumes.filesystems.filesystem import FileSystem
 from volumes import capabilities
+
+SIZE_MULTIPLIERS = {
+    'T': 1024**2,
+    'G': 1024**1,
+    'M': 1024**0,
+    'K': 1024**-1,
+}
+
+def scale_to_megs(size):
+    if size[-1] in SIZE_MULTIPLIERS:
+        # size is something like "672.42G", scale to MBytes
+        return float(size[:-1]) * SIZE_MULTIPLIERS[size[-1]]
+    # size seems to be in bytes
+    return float(size) * 1024**-2
 
 class Zfs(FileSystem):
     """ Handler for ZFS. """
@@ -60,10 +76,15 @@ class Zfs(FileSystem):
         def __iter__(self):
             return (data[1:3] for data in dbus_to_python(self.fs.dbus_object.zpool_get(self.fs.volume.name, "all")))
 
-    def __init__(self, volume):
+    def __init__(self, volume, pool=None):
         FileSystem.__init__(self, volume)
+        self.pool = pool or volume
         self._options = None
         self._pooloptions = None
+
+    @property
+    def dbus_object(self):
+        return dbus.SystemBus().get_object(settings.DBUS_IFACE_SYSTEMD, "/zfs")
 
     @classmethod
     def check_installed(cls):
@@ -83,8 +104,16 @@ class Zfs(FileSystem):
             raise ValidationError({"name": ["ZFS volume names cannot start with 'c[0-9]'."]})
 
     @property
-    def dbus_object(self):
-        return self.volume.zpool.dbus_object
+    def status(self):
+        return self.pool_options["health"]
+
+    @property
+    def megs(self):
+        return scale_to_megs(self.pool_options["size"])
+
+    @property
+    def usedmegs(self):
+        return scale_to_megs(self.pool_options["allocated"])
 
     @property
     def info(self):

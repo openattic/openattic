@@ -14,8 +14,6 @@
  *  GNU General Public License for more details.
 """
 
-import dbus
-
 from django.db import models
 from django.conf import settings
 
@@ -25,21 +23,6 @@ from volumes.models import VolumePool, FileSystemVolume, CapabilitiesAwareManage
 
 from zfs import filesystems
 
-SIZE_MULTIPLIERS = {
-    'T': 1024**2,
-    'G': 1024**1,
-    'M': 1024**0,
-    'K': 1024**-1,
-}
-
-def scale_to_megs(size):
-    if size[-1] in SIZE_MULTIPLIERS:
-        # size is something like "672.42G", scale to MBytes
-        return float(size[:-1]) * SIZE_MULTIPLIERS[size[-1]]
-    # size seems to be in bytes
-    return float(size) * 1024**-2
-
-
 class Zpool(VolumePool):
     name        = models.CharField(max_length=150)
     host        = models.ForeignKey(Host)
@@ -48,24 +31,24 @@ class Zpool(VolumePool):
     all_objects = models.Manager()
 
     @property
-    def dbus_object(self):
-        return dbus.SystemBus().get_object(settings.DBUS_IFACE_SYSTEMD, "/zfs")
-
-    @property
     def type(self):
         return "Zpool"
 
     @property
+    def fs(self):
+        return filesystems.Zfs(self, self)
+
+    @property
     def status(self):
-        return dbus_to_python(self.dbus_object.zpool_get(self.name, "health")[0][2])
+        return self.fs.status
 
     @property
     def megs(self):
-        return scale_to_megs(dbus_to_python(self.dbus_object.zpool_get(self.name, "size")[0][2]))
+        return self.fs.megs
 
     @property
     def usedmegs(self):
-        return scale_to_megs(dbus_to_python(self.dbus_object.zpool_get(self.name, "allocated")[0][2]))
+        return self.fs.usedmegs
 
 
 class RaidZ(models.Model):
@@ -85,7 +68,7 @@ class Zfs(FileSystemVolume):
 
     @property
     def fs(self):
-        return filesystems.Zfs(self)
+        return filesystems.Zfs(self, self.zpool)
 
     @property
     def status(self):
