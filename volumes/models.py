@@ -99,6 +99,8 @@ class BlockVolume(AbstractVolume):
     upper_id    = models.PositiveIntegerField(blank=True, null=True)
     upper       = generic.GenericForeignKey("upper_type", "upper_id")
 
+    all_objects = models.Manager()
+
     # Interface:
     # path -> CharField or property that returns /dev/path
 
@@ -161,6 +163,8 @@ class FileSystemVolume(AbstractVolume):
     owner       = models.ForeignKey(User, blank=True)
     fswarning   = models.IntegerField(_("Warning Level (%)"),  default=75 )
     fscritical  = models.IntegerField(_("Critical Level (%)"), default=85 )
+
+    all_objects = models.Manager()
 
     # Interface:
     # see FileSystemProvider

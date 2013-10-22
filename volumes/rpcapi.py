@@ -117,6 +117,12 @@ class BlockVolumeHandler(ModelHandler):
         handler = self._get_handler_instance(obj.volume.__class__)
         return handler._getobj(obj.volume)
 
+class BlockVolumeProxy(ProxyModelHandler, BlockVolumeHandler):
+    def _find_target_host_from_model_instance(self, model):
+        if model.volume.host == Host.objects.get_current():
+            return None
+        return model.volume.host.peerhost_set.all()[0]
+
 
 class AbstractFileSystemVolumeHandler(ModelHandler):
     def _getobj(self, obj):
@@ -146,6 +152,12 @@ class FileSystemVolumeHandler(ModelHandler):
         handler = self._get_handler_instance(obj.volume.__class__)
         return handler._getobj(obj.volume)
 
+class FileSystemVolumeProxy(ProxyModelHandler, FileSystemVolumeHandler):
+    def _find_target_host_from_model_instance(self, model):
+        if model.volume.host == Host.objects.get_current():
+            return None
+        return model.volume.host.peerhost_set.all()[0]
+
 
 class GenericDiskHandler(AbstractBlockVolumeHandler):
     model = GenericDisk
@@ -163,11 +175,17 @@ class FileSystemProviderHandler(AbstractFileSystemVolumeHandler):
         data["volume"] = data["base"]
         return data
 
+class FileSystemProviderProxy(ProxyModelHandler, FileSystemProviderHandler):
+    def _find_target_host_from_model_instance(self, model):
+        if model.base.volume.host == Host.objects.get_current():
+            return None
+        return model.base.volume.host.peerhost_set.all()[0]
+
 
 RPCD_HANDLERS = [
     GenericDiskHandler,
     VolumePoolProxy,
-    BlockVolumeHandler,
-    FileSystemVolumeHandler,
-    FileSystemProviderHandler,
+    BlockVolumeProxy,
+    FileSystemVolumeProxy,
+    FileSystemProviderProxy,
     ]
