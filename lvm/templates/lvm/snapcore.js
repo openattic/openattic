@@ -397,6 +397,21 @@ var config = {
   }
 }*/
 
+var getConfigForNode = function(node){
+  var container = (node.parentNode.isRoot() ? config.plugin_data : getConfigForNode(node.parentNode).children);
+  if( typeof container[node.data.name] === "undefined" ){
+    container[node.data.name] = {
+      data: null,
+      children: {}
+    }
+  }
+  return container[node.data.name];
+}
+
+var setConfigForNode = function(node, data){
+  return getConfigForNode(node).data = data;
+}
+
 var nextElement = function(item, e){
   if (e.getCharCode() == Ext.EventObject.ENTER) {
     item.nextSibling().focus();
@@ -438,6 +453,7 @@ var group1 = this.id + 'group1',
 
 var wizform = Ext.create("Ext.oa.WizPanel", {
   config    : config,
+  activeNode: null,
   activeItem: 'lvm__snapcore_wiz_welc',
   items     : [{
     title     : gettext('Welcome'),
@@ -470,10 +486,12 @@ var wizform = Ext.create("Ext.oa.WizPanel", {
         itemclick: function(self, record, item, index, e, eOpts){
           var settings = Ext.getCmp('lvm__snapcore_wiz_snapitem_settings').layout;
           if(typeof record.data.configForm !== 'undefined' && record.data.configForm.length > 0){
+            wizform.activeNode = record;
             settings.setActiveItem(record.data.configForm);
           }
           else
           {
+            wizform.activeNode = null;
             settings.setActiveItem('emptyConfigForm');
           }
         }
@@ -490,7 +508,43 @@ var wizform = Ext.create("Ext.oa.WizPanel", {
       }));
 
       for(var i=0; i < window.SnapAppPlugins.length; i++){
-        items = items.concat(window.SnapAppPlugins[i].configForms);
+        var configForms = window.SnapAppPlugins[i].configForms;
+
+        for(var j=0; j < configForms.length; j++){
+          var btn_save = Ext.create("Ext.button.Button", {
+            constructor: function(){
+              this.addEvents({
+                "setConfigData": true
+              });
+              return this;
+            },
+            text: gettext('Save'),
+            icon  : MEDIA_URL + '/oxygen/16x16/actions/dialog-ok-apply.png',
+            listeners : {
+              click : function(btn, e){
+                setConfigForNode(wizform.activeNode, this.ownerCt.ownerCt.getValues());
+                this.fireEvent("setConfigData", this, config);
+                console.log(config);
+              }
+            }
+          });
+
+          var btn_clear = Ext.create("Ext.button.Button", {
+            text: gettext('Clear'),
+            icon  : MEDIA_URL + '/oxygen/16x16/actions/dialog-cancel.png',
+            listeners : {
+              click : function(btn, e){
+                setConfigForNode(wizform.activeNode, null);
+              }
+            }
+          });
+
+          configForms[j].buttons = [];
+          configForms[j].buttons.push(btn_save);
+          configForms[j].buttons.push(btn_clear);
+
+          items.push(configForms[j]);
+        }
       }
       return{
         title     : gettext('Item settings'),
