@@ -47,8 +47,13 @@ Ext.define('volumes__volumes_VolumePool_model', {
        *  defines a volumes__<app>_<object>_model class somewhere that knows how to
        *  handle them.
        */
+      var modelname = Ext.String.format('volumes__{0}_{1}_model', record.raw.member_set[0].app, record.raw.member_set[0].obj);
+      if( Ext.ClassManager.get(modelname) === null ){
+        modelname = 'volumes__volumes_BlockVolume_model';
+      }
+      console.log(modelname);
       var store = Ext.create("Ext.oa.SwitchingTreeStore", {
-        model: Ext.String.format('volumes__{0}_{1}_model', record.raw.member_set[0].app, record.raw.member_set[0].obj),
+        model: modelname,
         root:  record.data,
         proxy: {
           type: "direct",
