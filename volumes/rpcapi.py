@@ -71,6 +71,14 @@ class VolumePoolHandler(ModelHandler):
         handler = self._get_handler_instance(obj.volumepool.__class__)
         return handler._getobj(obj.volumepool)
 
+    def get_status(self, id):
+        obj = VolumePool.objects.get(id=id)
+        return {
+            "status":    obj.volumepool.status,
+            "megs":      obj.volumepool.megs,
+            "usedmegs":  obj.volumepool.usedmegs,
+            "type":      obj.volumepool.type,
+        }
 
 class VolumePoolProxy(ProxyModelHandler, VolumePoolHandler):
     def _find_target_host_from_model_instance(self, model):
