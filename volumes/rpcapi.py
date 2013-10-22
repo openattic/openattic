@@ -65,7 +65,7 @@ class VolumePoolHandler(ModelHandler):
         handler = self._get_handler_instance(obj.volumepool.__class__)
         return handler._idobj(obj.volumepool)
 
-    def _getobj(self, obj, data):
+    def _getobj(self, obj):
         if obj.volumepool is None:
             return ModelHandler._getobj(self, obj)
         handler = self._get_handler_instance(obj.volumepool.__class__)
