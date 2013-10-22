@@ -131,6 +131,10 @@ class GenericDisk(BlockVolume):
         raise DeviceNotFound(self.serial)
 
     @property
+    def status(self):
+        return ""
+
+    @property
     def path(self):
         return self.udev_device.device_node
 
