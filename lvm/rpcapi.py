@@ -29,6 +29,7 @@ from lvm import initscripts
 from lvm import udevquery
 from ifconfig.models import Host
 from peering.models import PeerHost
+from volumes.rpcapi import AbstractVolumePoolHandler, AbstractBlockVolumeHandler
 
 from rpcd.exceptionhelper import translate_exception
 from xmlrpclib import Fault
@@ -76,7 +77,7 @@ class BlockDevicesHandler(BaseHandler):
     def get_lvm_capabilities(self):
         return blockdevices.get_lvm_capabilities()
 
-class VgHandler(ModelHandler):
+class VgHandler(AbstractVolumePoolHandler):
     model = VolumeGroup
     order = ("name",)
 
@@ -101,23 +102,9 @@ class VgHandler(ModelHandler):
         vg = VolumeGroup.objects.get(id=id)
         return vg.lvm_info
 
-class LvHandler(ModelHandler):
+class LvHandler(AbstractBlockVolumeHandler):
     model = LogicalVolume
     order = ("name",)
-
-    def _override_get(self, obj, data):
-        if obj.fs:
-            data['fs'] = {
-                'mounted':     obj.mounted,
-                }
-            if obj.mounted:
-                data['fs']['stat'] = obj.stat
-        else:
-            data['fs'] = None
-        data["host"] = self._get_handler_instance(Host)._idobj(obj.vg.host)
-        data["path"] = obj.path
-        data["status"] = obj.status
-        return data
 
     def avail_fs(self):
         """ Return a list of available file systems. """

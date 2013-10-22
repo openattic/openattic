@@ -18,17 +18,9 @@ from rpcd.handlers import ModelHandler
 from rpcd.handlers import ProxyModelHandler
 
 from mdraid.models import Array
+from volumes.rpcapi import AbstractBlockVolumeHandler
 
-class ArrayHandler(ModelHandler):
+class ArrayHandler(AbstractBlockVolumeHandler):
     model = Array
-
-    def _override_get(self, obj, data):
-        data["status"] = obj.status
-        data["path"] = obj.path
-        data["member_set"] = []
-        for member in obj.member_set.all():
-            handler = self._get_handler_instance(member.__class__)
-            data["member_set"].append( handler._idobj(member) )
-        return data
 
 RPCD_HANDLERS = [ArrayHandler]

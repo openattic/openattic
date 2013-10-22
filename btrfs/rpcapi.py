@@ -18,27 +18,18 @@ from rpcd.handlers import ModelHandler
 from rpcd.handlers import ProxyModelHandler
 
 from ifconfig.models import Host
-from btrfs.models import Btrfs, BtrfsSubvolume
+from btrfs.models    import Btrfs, BtrfsSubvolume
+from volumes.rpcapi  import AbstractVolumePoolHandler, AbstractFileSystemVolumeHandler
 
-
-class BtrfsHandler(ModelHandler):
+class BtrfsHandler(AbstractVolumePoolHandler):
     model = Btrfs
 
 class BtrfsProxy(ProxyModelHandler, BtrfsHandler):
     pass
 
 
-class BtrfsSubvolumeHandler(ModelHandler):
+class BtrfsSubvolumeHandler(AbstractFileSystemVolumeHandler):
     model = BtrfsSubvolume
-
-    def _override_get(self, obj, data):
-        data['fs'] = {
-            'mounted':     obj.mounted,
-            }
-        if obj.mounted:
-            data['fs']['stat'] = obj.stat
-        data["status"] = obj.status
-        return data
 
 class BtrfsSubvolumeProxy(ProxyModelHandler, BtrfsSubvolumeHandler):
     pass

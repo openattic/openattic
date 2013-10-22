@@ -33,10 +33,10 @@ Ext.define('volumes__volumes_BlockVolume_model', {
     var rootNode;
     record.set("leaf", true);
     rootNode = this.callParent(arguments);
-    rootNode.set("icon",   MEDIA_URL + '/icons2/16x16/apps/database.png');
-    rootNode.set("host", toUnicode(record.raw.host));
+    rootNode.set("icon",     MEDIA_URL + '/icons2/16x16/apps/database.png');
+    rootNode.set("host",     toUnicode(record.raw.host));
     rootNode.set("poolname", toUnicode(record.raw.pool));
-    rootNode.set("percent", null);
+    rootNode.set("percent",  null);
     return rootNode;
   }
 });
@@ -65,12 +65,7 @@ Ext.define('volumes__volumes_FileSystemVolume_model', {
     rootNode.set("poolname",     toUnicode(record.raw.pool));
     rootNode.set("ownername",    toUnicode(record.raw.owner));
     rootNode.set("icon",         MEDIA_URL + '/icons2/16x16/apps/database.png');
-    if( typeof record.raw.fs.stat !== "undefined" ){
-      rootNode.set("percent",    (record.raw.fs.stat.used / record.raw.fs.stat.size * 100).toFixed(2));
-    }
-    else{
-      rootNode.set("percent",    null);
-    }
+    rootNode.set("percent",      (record.data.usedmegs / record.data.megs * 100).toFixed(2));
     return rootNode;
   }
 });
@@ -238,7 +233,7 @@ Ext.define('Ext.oa.volumes__Volume_Panel', {
         dataIndex: "path",
         flex: 1
       },{
-        header: gettext('Mounted on Host'),
+        header: gettext('Host'),
         dataIndex: "host",
         flex: 1
       },{

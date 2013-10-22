@@ -19,26 +19,16 @@ from rpcd.handlers import ProxyModelHandler
 
 from ifconfig.models import Host
 from zfs.models import Zpool, Zfs
+from volumes.rpcapi import AbstractVolumePoolHandler, AbstractFileSystemVolumeHandler
 
-class ZpoolHandler(ModelHandler):
+class ZpoolHandler(AbstractVolumePoolHandler):
     model = Zpool
 
 class ZpoolProxy(ProxyModelHandler, ZpoolHandler):
     pass
 
-
-class ZfsHandler(ModelHandler):
+class ZfsHandler(AbstractFileSystemVolumeHandler):
     model = Zfs
-
-    def _override_get(self, obj, data):
-        data['fs'] = {
-            'mounted':     obj.mounted,
-            }
-        if obj.mounted:
-            data['fs']['stat'] = obj.stat
-        data["status"] = obj.status
-        return data
-
 
 class ZfsProxy(ProxyModelHandler, ZfsHandler):
     pass

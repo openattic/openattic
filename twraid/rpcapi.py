@@ -20,6 +20,7 @@ from rpcd.handlers import ProxyModelHandler
 from ifconfig.models import Host
 from lvm.models    import VolumeGroup
 from twraid.models import Controller, Enclosure, Unit, Disk
+from volumes.rpcapi import AbstractBlockVolumeHandler
 
 class ControllerHandler(ModelHandler):
     model = Controller
@@ -27,16 +28,14 @@ class ControllerHandler(ModelHandler):
 class EnclosureHandler(ModelHandler):
     model = Enclosure
 
-class UnitHandler(ModelHandler):
+class UnitHandler(AbstractBlockVolumeHandler):
     model = Unit
 
     def _override_get(self, obj, data):
-        data["host"] = self._get_handler_instance(Host)._idobj(obj.controller.host)
-        data["path"] = obj.path
-        data["disk_set"] = []
         handler = self._get_handler_instance(Disk)
-        for disk in obj.disk_set.all():
-            data["disk_set"].append( handler._idobj(disk) )
+        data["disk_set"] = [
+            handler._idobj(disk) for disk in obj.disk_set.all()
+            ]
         return data
 
     def find_by_vg(self, id):
