@@ -190,6 +190,8 @@ class FileSystemProvider(FileSystemVolume):
     """ A FileSystem that resides on top of a BlockVolume. """
     base        = models.ForeignKey(BlockVolume)
 
+    all_objects = models.Manager()
+
     def save(self, *args, **kwargs):
         FileSystemVolume.save(self, *args, **kwargs)
         self.base.upper = self
