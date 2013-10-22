@@ -23,4 +23,11 @@ from volumes.rpcapi import AbstractBlockVolumeHandler
 class ArrayHandler(AbstractBlockVolumeHandler):
     model = Array
 
+    def _override_get(self, obj, data):
+        data["member_set"] = [
+            self._get_handler_instance(member.__class__)._idobj(member)
+            for member in obj.member_set.all()
+            ]
+        return data
+
 RPCD_HANDLERS = [ArrayHandler]
