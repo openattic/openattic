@@ -203,7 +203,7 @@ class FileSystemProvider(FileSystemVolume):
 
     @property
     def status(self):
-        return self.base.volume.status
+        return {True: "online", False: "offline"}[self.mounted]
 
     @property
     def megs(self):
