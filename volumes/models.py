@@ -54,19 +54,21 @@ class CapabilitiesAwareModel(models.Model):
 
 
 class VolumePool(CapabilitiesAwareModel):
-    """ Something that joins a couple of BlockVolumes together. """
+    """ Something that joins a couple of BlockVolumes together and provides
+        BlockVolumes or FileSystemVolumes itself.
+
+        Classes that inherit from this one are required to implement the following properties:
+        * name       -> CharField or property
+        * type       -> CharField or property (to be displayed to the user)
+        * megs       -> IntegerField or property
+        * usedmegs   -> IntegerField or property
+        * status     -> CharField or property
+        * host       -> ForeignKey or property of a node that can modify the volumepool
+    """
     volumepool_type = models.ForeignKey(ContentType, blank=True, null=True, related_name="%(class)s_volumepool_type_set")
     volumepool      = generic.GenericForeignKey("volumepool_type", "id")
 
     all_objects = models.Manager()
-
-    # Interface:
-    # name       -> CharField or property
-    # type       -> CharField or property
-    # megs       -> IntegerField or property
-    # usedmegs   -> IntegerField or property
-    # status     -> CharField or property
-    # host       -> ForeignKey or property that returns the node this device resides on (or the primary for DRBD)
 
     @property
     def member_set(self):
@@ -82,6 +84,7 @@ class VolumePool(CapabilitiesAwareModel):
 
 
 class AbstractVolume(CapabilitiesAwareModel):
+    """ Abstract base class for BlockVolume and FileSystemVolume. """
     pool        = models.ForeignKey(VolumePool,  blank=True, null=True)
     volume_type = models.ForeignKey(ContentType, blank=True, null=True, related_name="%(class)s_volume_type_set")
     volume      = generic.GenericForeignKey("volume_type", "id")
@@ -89,23 +92,27 @@ class AbstractVolume(CapabilitiesAwareModel):
     class Meta:
         abstract = True
 
-    # Interface:
-    # name       -> CharField or property
-    # megs       -> IntegerField or property
-    # disk_stats -> property that returns the current Kernel disk stats from /sys/block/sdX/stat as a dict
-    # host       -> ForeignKey or property that returns the node this device resides on (or the primary for DRBD)
-
 
 class BlockVolume(AbstractVolume):
-    """ Everything that is a /dev/something. """
+    """ Everything that is a /dev/something.
+
+        Classes that inherit from this one are required to implement the following properties:
+        * name       -> CharField or property
+        * type       -> CharField or property (to be displayed to the user)
+        * megs       -> IntegerField or property
+        * disk_stats -> property that returns the current Kernel disk stats from /sys/block/sdX/stat as a dict
+        * host       -> ForeignKey or property of a node that can modify the volume
+        * status     -> CharField or property
+        * path       -> CharField or property that returns /dev/path
+
+        The ``upper'' field defined by this class is set to an object that is using this
+        device as part of a mirror, array or volume pool (i.e., NOT a share).
+    """
     upper_type  = models.ForeignKey(ContentType, blank=True, null=True, related_name="%(class)s_upper_type_set")
     upper_id    = models.PositiveIntegerField(blank=True, null=True)
     upper       = generic.GenericForeignKey("upper_type", "upper_id")
 
     all_objects = models.Manager()
-
-    # Interface:
-    # path -> CharField or property that returns /dev/path
 
     def save(self, *args, **kwargs):
         if self.__class__ is not BlockVolume:
@@ -114,6 +121,7 @@ class BlockVolume(AbstractVolume):
 
     def __unicode__(self):
         return self.volume.name
+
 
 class GenericDisk(BlockVolume):
     """ A standard disk that is NOT anything fancy (like a hardware raid). """
@@ -161,16 +169,24 @@ class GenericDisk(BlockVolume):
 
 
 class FileSystemVolume(AbstractVolume):
-    """ Everything that can be mounted as a /media/something and is supposed to be able to be shared. """
+    """ Everything that can be mounted as a /media/something and is supposed to be shared.
+
+        Classes that inherit from this one are required to implement the following properties:
+        * name       -> CharField or property
+        * type       -> CharField or property (to be displayed to the user)
+        * megs       -> IntegerField or property
+        * host       -> ForeignKey or property of a node that can modify the volume
+        * path       -> CharField or property that returns the mount point
+        * disk_stats -> property that returns the current Kernel disk stats from /sys/block/sdX/stat as a dict
+        * status     -> CharField or property
+        * stat       -> property that returns { size:, free:, used: } in MiB
+    """
     filesystem  = models.CharField(max_length=50)
     owner       = models.ForeignKey(User, blank=True)
     fswarning   = models.IntegerField(_("Warning Level (%)"),  default=75 )
     fscritical  = models.IntegerField(_("Critical Level (%)"), default=85 )
 
     all_objects = models.Manager()
-
-    # Interface:
-    # see FileSystemProvider
 
     def save(self, *args, **kwargs):
         if self.__class__ is not FileSystemVolume:
