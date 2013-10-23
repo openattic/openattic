@@ -97,7 +97,8 @@ class FileSystem(object):
         """
         if self.virtual:
             raise NotImplementedError("FileSystem::mount needs to be overridden for virtual FS handlers")
-        self.dbus_object.fs_mount( jid, self.name, self.volume.base.volume.path, self.path )
+        dbus_object = dbus.SystemBus().get_object(settings.DBUS_IFACE_SYSTEMD, "/volumes")
+        dbus_object.fs_mount( jid, self.name, self.volume.base.volume.path, self.path )
 
     @property
     def mounted(self):
@@ -110,7 +111,8 @@ class FileSystem(object):
         """ Unmount the volume. """
         if self.virtual:
             raise NotImplementedError("FileSystem::unmount needs to be overridden for virtual FS handlers")
-        self.dbus_object.fs_unmount( jid, self.volume.base.volume.path, self.path )
+        dbus_object = dbus.SystemBus().get_object(settings.DBUS_IFACE_SYSTEMD, "/volumes")
+        dbus_object.fs_unmount( jid, self.volume.base.volume.path, self.path )
 
     def format(self, jid):
         """ Format the volume. """
@@ -126,7 +128,8 @@ class FileSystem(object):
         """ Change ownership of the filesystem to be the LV's owner. """
         if self.virtual:
             raise NotImplementedError("FileSystem::chown needs to be overridden for virtual FS handlers")
-        return self.dbus_object.fs_chown( jid, self.path, self.volume.owner.username, volumes_settings.CHOWN_GROUP )
+        dbus_object = dbus.SystemBus().get_object(settings.DBUS_IFACE_SYSTEMD, "/volumes")
+        return dbus_object.fs_chown( jid, self.path, self.volume.owner.username, volumes_settings.CHOWN_GROUP )
 
     def destroy(self):
         """ Destroy the file system. """
