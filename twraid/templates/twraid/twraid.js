@@ -23,7 +23,6 @@ Ext.define('volumes__twraid_Unit_model', {
     "index", "verify", "rebuild", "rdcache", "wrcache", "unittype", "autoverify", "serial", "chunksize",
   ],
   createNode: function(record){
-    console.log("volumes__twraid_Unit_model.createNode!");
     var rootNode;
     if( record.raw.disk_set.length > 0 ){
       var store = Ext.create("Ext.oa.SwitchingTreeStore", {
