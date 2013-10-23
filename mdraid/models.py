@@ -50,3 +50,31 @@ class Array(BlockVolume):
                     if "(F)" in line:
                         return "degraded"
                     return "ok"
+
+    @property
+    def raid_params(self):
+        chunksize = int(open("/sys/class/block/%s/md/chunk_size" % self.name, "r").read().strip())
+        raiddisks = int(open("/sys/class/block/%s/md/raid_disks" % self.name, "r").read().strip())
+        raidlevel = int(open("/sys/class/block/%s/md/level" % self.name, "r").read().strip()[4:])
+        if raidlevel == 0:
+            datadisks = raiddisks
+        elif raidlevel == 1:
+            datadisks = 1
+        elif raidlevel == 5:
+            datadisks = raiddisks - 1
+        elif raidlevel == 6:
+            datadisks = raiddisks - 2
+        elif raidlevel == 10:
+            datadisks = raiddisks / 2
+        #else:
+            #raise UnsupportedRAIDLevel(raidlevel)
+        stripewidth = chunksize * datadisks
+        return {
+            "chunksize": chunksize,
+            "raiddisks": raiddisks,
+            "raidlevel": raidlevel,
+            "datadisks": datadisks,
+            "stripewidth": stripewidth,
+            }
+
+

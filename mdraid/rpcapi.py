@@ -30,4 +30,7 @@ class ArrayHandler(AbstractBlockVolumeHandler):
             ]
         return data
 
+    def get_raid_params(self, id):
+        return Array.objects.get(id=id).raid_params
+
 RPCD_HANDLERS = [ArrayHandler]
