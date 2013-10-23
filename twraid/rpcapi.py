@@ -38,21 +38,12 @@ class UnitHandler(AbstractBlockVolumeHandler):
             ]
         return data
 
-    def find_by_vg(self, id):
-        vg = VolumeGroup.objects.get(id=id)
-        return [self._getobj(unit) for unit in Unit.objects.find_by_vg(vg)]
-
     def get_raid_params(self, id):
         return Unit.objects.get(id=id).raid_params
 
 class UnitProxy(ProxyModelHandler, UnitHandler):
-    def find_by_vg(self, id):
-        handler = self._get_handler_instance(VolumeGroup)
-        targethost = handler._find_target_host(id)
-        if targethost is None:
-            return self.backing_handler.find_by_vg(id)
-        else:
-            return self._get_proxy_object(targethost).find_by_vg(id)
+    def get_raid_params(self, id):
+        return self._call_singlepeer_method("get_raid_params", id)
 
 class DiskHandler(ModelHandler):
     model = Disk

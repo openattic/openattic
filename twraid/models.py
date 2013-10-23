@@ -56,17 +56,6 @@ class Enclosure(models.Model):
 
 
 
-class UnitManager(CapabilitiesAwareManager):
-    def find_by_vg(self, vg):
-        units = []
-        for devname, devinfo in vg.get_base_device_info().items():
-            if "ID_SCSI_SERIAL" in devinfo:
-                try:
-                    units.append(self.get(serial=devinfo["ID_SCSI_SERIAL"]))
-                except Unit.DoesNotExist:
-                    pass
-        return units
-
 class HostDependentUnitManager(UnitManager):
     hostfilter  = "controller__host"
 
@@ -86,7 +75,7 @@ class Unit(BlockVolume):
     wrcache     = models.CharField(max_length=150, blank=True)
 
     objects     = HostDependentUnitManager()
-    all_objects = UnitManager()
+    all_objects = CapabilitiesAwareManager()
 
     @property
     def host(self):
