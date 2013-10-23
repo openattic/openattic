@@ -95,27 +95,6 @@ class LvHandler(AbstractBlockVolumeHandler):
     model = LogicalVolume
     order = ("name",)
 
-    def avail_fs(self):
-        """ Return a list of available file systems. """
-        from lvm.filesystems import FILESYSTEMS
-        return [ {'name': fs.name, 'desc': fs.desc,
-            'supports_dedup': fs.supports_dedup,
-            'supports_compression': fs.supports_compression,
-            } for fs in FILESYSTEMS if not fs.virtual ]
-
-    def get_shares(self, id):
-        """ Return ID objects for shares that are configured for the given volume. """
-        lv = LogicalVolume.objects.get(id=id)
-        return [ ModelHandler._get_handler_for_model(sh.__class__)(self.user)._idobj(sh)
-            for sh in lv.get_shares() ]
-
-    def fs_info(self, id):
-        """ Return detailed information about the given file system. """
-        lv = LogicalVolume.objects.get(id=id)
-        if lv.fs:
-            return lv.fs_info
-        return {}
-
     def lvm_info(self, id):
         """ Return information about the LV retrieved from LVM. """
         lv = LogicalVolume.objects.get(id=id)
@@ -125,25 +104,6 @@ class LvHandler(AbstractBlockVolumeHandler):
         """ Return disk stats from the LV retrieved from the kernel. """
         lv = LogicalVolume.objects.get(id=id)
         return lv.disk_stats
-
-    def mount(self, id):
-        """ Mount the given volume if it is not currently mounted. """
-        lv = LogicalVolume.objects.get(id=id)
-        if lv.fs and not lv.mounted:
-            return lv.mount()
-        return False
-
-    def unmount(self, id):
-        """ Unmount the given volume if it is currently mounted. """
-        lv = LogicalVolume.objects.get(id=id)
-        if lv.fs and lv.mounted:
-            return lv.unmount()
-        return False
-
-    def is_mounted(self, id):
-        """ Check if the given volume is currently mounted. """
-        lv = LogicalVolume.objects.get(id=id)
-        return lv.fs and lv.mounted
 
     def get_initscripts(self):
         return initscripts.get_initscripts()
@@ -193,17 +153,6 @@ class VgProxy(ProxyModelHandler, VgHandler):
 class LvProxy(ProxyModelHandler, LvHandler):
     model = LogicalVolume
 
-    def avail_fs(self):
-        h = LvHandler(self.user)
-        return h.avail_fs()
-
-    def get_shares(self, id):
-        return self._call_singlepeer_method("get_shares", id)
-
-    def fs_info(self, id):
-        """ Return detailed information about the given file system. """
-        return self._call_singlepeer_method("fs_info", id)
-
     def lvm_info(self, id):
         """ Return information about the LV retrieved from LVM. """
         return self._call_singlepeer_method("lvm_info", id)
@@ -211,18 +160,6 @@ class LvProxy(ProxyModelHandler, LvHandler):
     def disk_stats(self, id):
         """ Return disk stats from the LV retrieved from the kernel. """
         return self._call_singlepeer_method("disk_stats", id)
-
-    def mount(self, id):
-        """ Mount the given volume if it is not currently mounted. """
-        return self._call_singlepeer_method("mount", id)
-
-    def unmount(self, id):
-        """ Unmount the given volume if it is currently mounted. """
-        return self._call_singlepeer_method("unmount", id)
-
-    def is_mounted(self, id):
-        """ Check if the given volume is currently mounted. """
-        return self._call_singlepeer_method("is_mounted", id)
 
     def create(self, data):
         if "id" in data:

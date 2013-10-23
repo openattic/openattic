@@ -317,19 +317,6 @@ class LogicalVolume(BlockVolume):
                 return fs
         return None
 
-    def get_shares( self, app_label=None ):
-        """ Iterate all the shares configured for this LV. """
-        for relobj in ( self._meta.get_all_related_objects() + self._meta.get_all_related_many_to_many_objects() ):
-            if app_label  and relobj.model._meta.app_label != app_label:
-                continue
-
-            if not hasattr( relobj.model, "share_type" ):
-                # not a share
-                continue
-
-            for relmdl in relobj.model.objects.filter( **{ relobj.field.name: self } ):
-                yield relmdl
-
     @property
     def lvm_info(self):
         """ LV information from LVM. """
@@ -354,26 +341,6 @@ class LogicalVolume(BlockVolume):
         snap.save()
         return snap
 
-    @property
-    def mounted(self):
-        return self.fs.mounted
-
-    @property
-    def stat(self):
-        return self.fs.stat
-
-    def mount(self):
-        if self.formatted and not self.mounted:
-            lvm_signals.pre_mount.send(sender=LogicalVolume, instance=self, mountpoint=self.mountpoint)
-            self.fs.mount(-1)
-            lvm_signals.post_mount.send(sender=LogicalVolume, instance=self, mountpoint=self.mountpoint)
-
-    def unmount(self):
-        if self.mounted:
-            lvm_signals.pre_unmount.send(sender=LogicalVolume, instance=self, mountpoint=self.mountpoint)
-            self.fs.unmount(-1)
-            lvm_signals.post_unmount.send(sender=LogicalVolume, instance=self, mountpoint=self.mountpoint)
-
     def install(self):
         lvm_signals.pre_install.send(sender=LogicalVolume, instance=self)
         if self.snapshot:
@@ -393,53 +360,15 @@ class LogicalVolume(BlockVolume):
         lvm_signals.post_uninstall.send(sender=LogicalVolume, instance=self)
 
     def resize( self ):
-        if self.filesystem and self.mounted and \
-           not self.fs.online_resize_available(self.megs > self.lvm_megs):
-            self.fs.unmount(self._jid)
-            need_mount = True
-        else:
-            need_mount = False
-
         if self.megs < self.lvm_megs:
-            # Shrink FS, then Volume
             lvm_signals.pre_shrink.send(sender=LogicalVolume, instance=self, jid=self._jid)
-
-            if self.filesystem:
-                self.fs.resize(self._jid, grow=False)
-
-            for mod in self.modchain:
-                mod.resize(self._jid)
-
             self.lvm.lvresize(self._jid, self.path, self.megs, False)
-
             lvm_signals.post_shrink.send(sender=LogicalVolume, instance=self, jid=self._jid)
         else:
-            # Grow Volume, then FS
             lvm_signals.pre_grow.send(sender=LogicalVolume, instance=self, jid=self._jid)
-
             self.lvm.lvresize(self._jid, self.path, self.megs, True)
-
-            for mod in self.modchain:
-                mod.resize(self._jid)
-
-            if self.filesystem:
-                self.fs.resize(self._jid, grow=True)
-
             lvm_signals.post_grow.send(sender=LogicalVolume, instance=self, jid=self._jid)
-
-        if need_mount:
-            self.fs.mount(self._jid)
-
         self._lvm_info = None # outdate cached information
-
-    def setupfs( self ):
-        if not self.formatted:
-            self.fs.format(self._jid)
-            self.formatted = True
-            return True
-        else:
-            self.fs.mount(self._jid)
-            return False
 
     def clean(self):
         if not self.snapshot:
@@ -478,10 +407,6 @@ class LogicalVolume(BlockVolume):
         if install:
             self.install()
             self.uuid = self.lvm_info["LVM2_LV_UUID"]
-
-            if self.filesystem:
-                modified = self.setupfs()
-                self.lvm.write_fstab()
 
             ret = BlockVolume.save(self, *args, **kwargs)
 
