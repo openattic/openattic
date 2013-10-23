@@ -327,6 +327,13 @@ class LogicalVolume(BlockVolume):
         return blockdevices.get_disk_stats( self.dmdevice[5:] )
 
     @property
+    def raid_params(self):
+        pvvol = self.vg.member_set.all()[0].volume
+        if hasattr(pvvol, "raid_params"):
+            return pvvol.raid_params
+        return None
+
+    @property
     def fs(self):
         """ An instance of the filesystem handler class for this LV (if any). """
         if self._fs is None:
