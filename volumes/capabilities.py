@@ -215,6 +215,10 @@ class LargeBlocksCapability(FileSystemCapability):
     """ File system blocksize == 128*1024 Bytes. """
     flag = (1<<28)
 
+class HandlesMountCapability(FileSystemCapability):
+    """ Handles mounting itself, so no fstab entry is required (e.g. btrfs subvolumes, ZFS). """
+    flag = (1<<29)
+
 
 def to_flags(capabilities):
     return reduce(operator.or_, [cap.flag for cap in capabilities])
