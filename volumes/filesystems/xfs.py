@@ -55,10 +55,9 @@ class Xfs(FileSystem):
     agcount = property(get_agcount)
 
     def format(self, jid):
-        try:
-            raise UnsupportedRAID # needs to be implemented properly
-            raidparams = get_raid_params(self.lv.vg.get_pvs()[0]["LVM2_PV_NAME"])
-        except UnsupportedRAID:
+        if hasattr(self.volume.base.volume, "raid_params"):
+            raidparams = self.volume.base.volume.raid_params
+        else:
             raidparams = {"chunksize": -1, "datadisks": -1}
 
         self.dbus_object.xfs_format( jid, self.volume.base.volume.path, raidparams["chunksize"], raidparams["datadisks"], self.agcount )

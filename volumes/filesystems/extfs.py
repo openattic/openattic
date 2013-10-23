@@ -30,10 +30,9 @@ class Ext2(FileSystem):
         return dbus_to_python( self.dbus_object.e2fs_info( self.volume.base.volume.path ) )
 
     def format(self, jid):
-        try:
-            raise UnsupportedRAID # needs to be implemented properly
-            raidparams = get_raid_params(self.volume.base.volume.vg.get_pvs()[0]["LVM2_PV_NAME"])
-        except UnsupportedRAID:
+        if hasattr(self.volume.base.volume, "raid_params"):
+            raidparams = self.volume.base.volume.raid_params
+        else:
             raidparams = {"chunksize": -1, "datadisks": -1}
         self.dbus_object.e2fs_format( jid, self.volume.base.volume.path, self.volume.name, raidparams["chunksize"], raidparams["datadisks"] )
         self.mount(jid)
@@ -54,10 +53,9 @@ class Ext3(Ext2):
     desc = "Ext3 (max. 32TiB)"
 
     def format(self, jid):
-        try:
-            raise UnsupportedRAID # needs to be implemented properly
-            raidparams = get_raid_params(self.volume.base.volume.vg.get_pvs()[0]["LVM2_PV_NAME"])
-        except UnsupportedRAID:
+        if hasattr(self.volume.base.volume, "raid_params"):
+            raidparams = self.volume.base.volume.raid_params
+        else:
             raidparams = {"chunksize": -1, "datadisks": -1}
         self.dbus_object.e3fs_format( jid, self.volume.base.volume.path, self.volume.name, raidparams["chunksize"], raidparams["datadisks"] )
         self.mount(jid)
@@ -74,10 +72,9 @@ class Ext4(Ext2):
     desc = "Ext4 (recommended for file servers, supports Windows ACLs)"
 
     def format(self, jid):
-        try:
-            raise UnsupportedRAID # needs to be implemented properly
-            raidparams = get_raid_params(self.volume.base.volume.vg.get_pvs()[0]["LVM2_PV_NAME"])
-        except UnsupportedRAID:
+        if hasattr(self.volume.base.volume, "raid_params"):
+            raidparams = self.volume.base.volume.raid_params
+        else:
             raidparams = {"chunksize": -1, "datadisks": -1}
         self.dbus_object.e4fs_format( jid, self.volume.base.volume.path, self.volume.name, raidparams["chunksize"], raidparams["datadisks"] )
         self.mount(jid)
