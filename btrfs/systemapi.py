@@ -15,8 +15,7 @@
 """
 
 import os
-from time import time
-from systemd import invoke, logged, BasePlugin, method, signal
+from systemd import invoke, logged, BasePlugin, method
 
 @logged
 class SystemD(BasePlugin):
@@ -28,13 +27,9 @@ class SystemD(BasePlugin):
         cmd.append(devpath)
         self.job_add_command(jid, cmd)
 
-    @method(in_signature="is", out_signature="")
-    def create_subvolume(self, jid, subpath):
-        cmd = ["btrfs", "subvolume", "create", subpath]
-        if jid != -1:
-            self.job_add_command(jid, cmd)
-        else:
-            invoke(cmd)
+    @method(in_signature="s", out_signature="")
+    def create_subvolume(self, path):
+        invoke(["btrfs", "subvolume", "create", path])
 
     @method(in_signature="ssb", out_signature="")
     def create_snapshot(self, origpath, snappath, readonly):
@@ -47,6 +42,6 @@ class SystemD(BasePlugin):
         invoke(cmd)
 
     @method(in_signature="s", out_signature="")
-    def delete_subvolume(self, subpath):
-        invoke(["btrfs", "subvolume", "delete", subpath])
+    def delete_subvolume(self, path):
+        invoke(["btrfs", "subvolume", "delete", path])
 

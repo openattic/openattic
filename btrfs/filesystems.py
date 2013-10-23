@@ -16,12 +16,10 @@
 
 import os
 import os.path
-import re
 import dbus
 
-from systemd  import dbus_to_python
-from lvm.conf import settings as lvm_settings
-from lvm.blockdevices import UnsupportedRAID, get_raid_params
+from systemd  import wrap_as_job
+from django.conf import settings
 
 from volumes.conf import settings as volumes_settings
 from volumes.filesystems.filesystem import FileSystem
@@ -39,14 +37,12 @@ class Btrfs(FileSystem):
     def dbus_object(self):
         return dbus.SystemBus().get_object(settings.DBUS_IFACE_SYSTEMD, "/btrfs")
 
+    @wrap_as_job
     def format(self, jid):
         self.dbus_object.format( jid, self.lv.path )
         self.mount(jid)
         self.chown(jid)
         self.dbus_object.create_subvolume(jid, os.path.join(self.path, "default"))
-        from lvm.models import BtrfsSubvolume
-        default = BtrfsSubvolume(volume=self.lv, name="default")
-        default.save(database_only=True)
 
     @property
     def path(self):
@@ -60,14 +56,14 @@ class Btrfs(FileSystem):
     def check_type(cls, typestring):
         return False
 
-    def create_subvolume(self, subvolume):
-        if subvolume.snapshot is not None:
-            self.dbus_object.create_snapshot(subvolume.snapshot.path, subvolume.path, subvolume.readonly)
-        else:
-            self.dbus_object.create_subvolume(-1, subvolume.path)
+    def create_subvolume(self, path):
+        self.dbus_object.create_subvolume(path)
 
-    def delete_subvolume(self, subvolume):
-        self.dbus_object.delete_subvolume(subvolume.path)
+    def create_snapshot(self, origpath, snappath, readonly):
+        self.dbus_object.create_snapshot(origpath, snappath, readonly)
+
+    def delete_subvolume(self, path):
+        self.dbus_object.delete_subvolume(path)
 
 class BtrfsDevice(capabilities.Device):
     requires = [
@@ -92,7 +88,7 @@ class BtrfsDevice(capabilities.Device):
         capabilities.BlockIOCapability,
         ]
 
-class BtrfsSubvolume(capabilities.Device):
+class BtrfsSubvolumeDevice(capabilities.Device):
     requires = BtrfsDevice
 
 

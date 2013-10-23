@@ -14,12 +14,9 @@
  *  GNU General Public License for more details.
 """
 
-import dbus
 
 from django.db import models
-from django.conf import settings
 
-from systemd.helpers import dbus_to_python
 from ifconfig.models import Host, HostDependentManager, getHostDependentManagerClass
 from volumes.models import InvalidVolumeType, VolumePool, FileSystemVolume, CapabilitiesAwareManager
 
@@ -32,6 +29,12 @@ class Btrfs(VolumePool):
 
     objects     = HostDependentManager()
     all_objects = models.Manager()
+
+    def save(self, *args, **kwargs):
+        install = (self.id is None)
+        VolumePool.save(self, *args, **kwargs)
+        if install:
+            self.fs.format()
 
     @property
     def fullname(self):
@@ -72,9 +75,12 @@ class BtrfsSubvolume(FileSystemVolume):
     all_objects = models.Manager()
 
     def save(self, *args, **kwargs):
+        install = (self.id is None)
         if self.btrfs_id is None and self.pool is not None:
             self.btrfs = self.pool.volumepool
         FileSystemVolume.save(self, *args, **kwargs)
+        if install:
+            self.fs.create_subvolume(self.path)
 
     @property
     def fs(self):

@@ -14,10 +14,8 @@
  *  GNU General Public License for more details.
 """
 
-from rpcd.handlers import ModelHandler
 from rpcd.handlers import ProxyModelHandler
 
-from ifconfig.models import Host
 from btrfs.models    import Btrfs, BtrfsSubvolume
 from volumes.rpcapi  import AbstractVolumePoolHandler, AbstractFileSystemVolumeHandler
 
