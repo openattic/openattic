@@ -14,8 +14,6 @@
  *  GNU General Public License for more details.
 """
 
-import os.path
-
 from systemd  import dbus_to_python
 from lvm.blockdevices import UnsupportedRAID, get_raid_params
 
@@ -29,21 +27,22 @@ class Ext2(FileSystem):
 
     @property
     def info(self):
-        return dbus_to_python( self.lv.lvm.e2fs_info( self.lv.path ) )
+        return dbus_to_python( self.dbus_object.e2fs_info( self.volume.base.volume.path ) )
 
     def format(self, jid):
         try:
-            raidparams = get_raid_params(self.lv.vg.get_pvs()[0]["LVM2_PV_NAME"])
+            raise UnsupportedRAID # needs to be implemented properly
+            raidparams = get_raid_params(self.volume.base.volume.vg.get_pvs()[0]["LVM2_PV_NAME"])
         except UnsupportedRAID:
             raidparams = {"chunksize": -1, "datadisks": -1}
-        self._lvm.e2fs_format( jid, self.lv.path, self.lv.name, raidparams["chunksize"], raidparams["datadisks"] )
+        self.dbus_object.e2fs_format( jid, self.volume.base.volume.path, self.volume.name, raidparams["chunksize"], raidparams["datadisks"] )
         self.mount(jid)
         self.chown(jid)
 
     def resize(self, jid, grow):
         if not grow:
-            self._lvm.e2fs_check( jid, self.lv.path )
-        self._lvm.e2fs_resize( jid, self.lv.path, self.lv.megs, grow )
+            self.dbus_object.e2fs_check( jid, self.volume.base.volume.path )
+        self.dbus_object.e2fs_resize( jid, self.volume.base.volume.path, self.volume.megs, grow )
 
     @classmethod
     def check_type(cls, typestring):
@@ -56,10 +55,11 @@ class Ext3(Ext2):
 
     def format(self, jid):
         try:
-            raidparams = get_raid_params(self.lv.vg.get_pvs()[0]["LVM2_PV_NAME"])
+            raise UnsupportedRAID # needs to be implemented properly
+            raidparams = get_raid_params(self.volume.base.volume.vg.get_pvs()[0]["LVM2_PV_NAME"])
         except UnsupportedRAID:
             raidparams = {"chunksize": -1, "datadisks": -1}
-        self._lvm.e3fs_format( jid, self.lv.path, self.lv.name, raidparams["chunksize"], raidparams["datadisks"] )
+        self.dbus_object.e3fs_format( jid, self.volume.base.volume.path, self.volume.name, raidparams["chunksize"], raidparams["datadisks"] )
         self.mount(jid)
         self.chown(jid)
 
@@ -75,10 +75,11 @@ class Ext4(Ext2):
 
     def format(self, jid):
         try:
-            raidparams = get_raid_params(self.lv.vg.get_pvs()[0]["LVM2_PV_NAME"])
+            raise UnsupportedRAID # needs to be implemented properly
+            raidparams = get_raid_params(self.volume.base.volume.vg.get_pvs()[0]["LVM2_PV_NAME"])
         except UnsupportedRAID:
             raidparams = {"chunksize": -1, "datadisks": -1}
-        self._lvm.e4fs_format( jid, self.lv.path, self.lv.name, raidparams["chunksize"], raidparams["datadisks"] )
+        self.dbus_object.e4fs_format( jid, self.volume.base.volume.path, self.volume.name, raidparams["chunksize"], raidparams["datadisks"] )
         self.mount(jid)
         self.chown(jid)
 

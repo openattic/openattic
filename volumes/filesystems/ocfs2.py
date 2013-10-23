@@ -14,8 +14,6 @@
  *  GNU General Public License for more details.
 """
 
-import os.path
-
 from lvm.blockdevices import UnsupportedRAID, get_raid_params
 
 from volumes.filesystems.filesystem import FileSystem
@@ -32,10 +30,11 @@ class Ocfs2(FileSystem):
 
     def format(self, jid):
         try:
+            raise UnsupportedRAID # needs to be implemented properly
             raidparams = get_raid_params(self.lv.vg.get_pvs()[0]["LVM2_PV_NAME"])
         except UnsupportedRAID:
             raidparams = {"chunksize": -1}
-        self._lvm.ocfs2_format( jid, self.lv.path, raidparams["chunksize"] )
+        self.dbus_object.ocfs2_format( jid, self.volume.base.volume.path, raidparams["chunksize"] )
         self.mount(jid)
         self.chown(jid)
 
