@@ -16,7 +16,10 @@
 
 import logging
 import dbus
+
 from functools import wraps
+
+from django.conf import settings
 
 def dbus_type_to_python(obj):
     """ Convert a single dbus something to its python equivalent. """
@@ -74,3 +77,12 @@ def logged(cls):
             setattr( cls, attr, makeloggedfunc(func, "Emitting") )
     return cls
 
+def wrap_as_job(meth):
+    @wraps(meth)
+    def wrappedmeth(self, *args, **kwargs):
+        sysd = dbus.SystemBus().get_object(settings.DBUS_IFACE_SYSTEMD, "/")
+        jid = sysd.build_job()
+        ret = meth(self, jid, *args, **kwargs)
+        sysd.enqueue_job(jid)
+        return ret
+    return wrappedmeth
