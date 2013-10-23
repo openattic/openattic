@@ -80,9 +80,10 @@ class VolumePoolHandler(ModelHandler):
             "type":      obj.volumepool.type,
         }
 
-    def create_volume(id, name, megs, owner, filesystem, fswarning, fscritical):
+    def create_volume(self, id, name, megs, owner, filesystem, fswarning, fscritical):
         obj = VolumePool.objects.get(id=id)
-        vol = obj.create_volume(name, megs, owner, filesystem, fswarning, fscritical)
+        owner = ModelHandler._get_object_by_id_dict(owner)
+        vol = obj.volumepool.create_volume(name, megs, owner, filesystem, fswarning, fscritical)
         handler = self._get_handler_instance(vol.__class__)
         return handler._idobj(vol)
 
