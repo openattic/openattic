@@ -127,20 +127,6 @@ class SystemD(BasePlugin):
             self.lvs_cache = lvm_lvs()
         return self.lvs_cache
 
-    @method(in_signature="ss", out_signature="i")
-    def join_device_to_vg(self, device, vgname):
-        devpath = os.path.join("/dev", device)
-        invoke(["/sbin/parted", devpath, "-s", "mklabel", "gpt"])
-        invoke(["/sbin/parted", devpath, "--script", "--", "mkpart", "primary", "2048s", "-1"])
-        devpath += "1"
-        invoke(["/sbin/pvcreate", devpath])
-        self.pvs_time = 0
-        self.lvs_time = 0
-        if vgname in lvm_vgs():
-            return invoke(["/sbin/vgextend", vgname, devpath])
-        else:
-            return invoke(["/sbin/vgcreate", vgname, devpath])
-
     @method(in_signature="ssis", out_signature="i")
     def lvcreate(self, vgname, lvname, megs, snapshot):
         cmd = ["/sbin/lvcreate"]

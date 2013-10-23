@@ -84,41 +84,6 @@ class VolumeGroup(VolumePool):
     def __unicode__(self):
         return self.name
 
-    def join_device(self, device):
-        """ Reformat a device as a Physical Volume and add it to this Volume Group. """
-        if blockdevices.is_device_in_use(device):
-            raise ValueError( "Device '%s' is in use, won't touch it." % device )
-        lvm = dbus.SystemBus().get_object(settings.DBUS_IFACE_SYSTEMD, "/lvm")
-        return lvm.join_device_to_vg(device, self.name)
-
-    def get_pvs(self):
-        lvm = dbus.SystemBus().get_object(settings.DBUS_IFACE_SYSTEMD, "/lvm")
-        devs = []
-        for pvpath, pvinfo in lvm.pvs().items():
-            if pvinfo["LVM2_VG_NAME"] == self.name:
-                devs.append(pvinfo)
-        return devs
-
-    def get_base_device_info(self):
-        lvm = dbus.SystemBus().get_object(settings.DBUS_IFACE_SYSTEMD, "/lvm")
-        devs = {}
-        ctx = pyudev.Context()
-
-        def checkmd(devnode):
-            dev = pyudev.Device.from_name(ctx, "block", devnode)
-            if "MD_LEVEL" in dev.keys() and "ID_TYPE" not in dev.keys():
-                for subdev in os.listdir(os.path.join("/sys/class/block", devnode, "slaves")):
-                    checkmd(subdev)
-            else:
-                devs[devnode] = dict( dev.items() )
-
-        for pvpath, pvinfo in lvm.pvs().items():
-            if pvinfo["LVM2_VG_NAME"] == self.name:
-                devnode = os.path.split(pvpath)[-1]
-                checkmd(devnode)
-
-        return devs
-
     def save( self, *args, **kwargs ):
         VolumePool.save(self, *args, **kwargs)
         dbus.SystemBus().get_object(settings.DBUS_IFACE_SYSTEMD, "/lvm").invalidate()
@@ -142,10 +107,6 @@ class VolumeGroup(VolumePool):
             lvm = dbus.SystemBus().get_object(settings.DBUS_IFACE_SYSTEMD, "/lvm")
             self._lvm_info = dbus_to_python(lvm.vgs())[self.name]
         return self._lvm_info
-
-    @property
-    def lvm_free_megs(self):
-        return float( self.lvm_info["LVM2_VG_FREE"] )
 
     @property
     def status(self):

@@ -81,21 +81,10 @@ class VgHandler(AbstractVolumePoolHandler):
     model = VolumeGroup
     order = ("name",)
 
-    def join_device(self, id, device):
-        """ Join the given device into this Volume Group. """
-        if device.startswith("/dev"):
-            raise ValueError("device must be given without leading /dev")
-        vg = VolumeGroup.objects.get(id=id)
-        return vg.join_device(device)
-
     def create(self, data):
         if "host" not in data:
             data["host"] = self._get_handler_instance(Host).current_id()
         return ModelHandler.create(self, data)
-
-    def get_free_megs(self, id):
-        """ Get amount of free space in a Volume Group. """
-        return VolumeGroup.objects.get(id=id).lvm_free_megs
 
     def lvm_info(self, id):
         """ Return information about the LV retrieved from LVM. """
