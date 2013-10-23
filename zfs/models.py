@@ -15,9 +15,7 @@
 """
 
 from django.db import models
-from django.conf import settings
 
-from systemd.helpers import dbus_to_python
 from ifconfig.models import Host, HostDependentManager, getHostDependentManagerClass
 from volumes.models import InvalidVolumeType, VolumePool, FileSystemVolume, CapabilitiesAwareManager
 
@@ -72,9 +70,12 @@ class Zfs(FileSystemVolume):
     all_objects = models.Manager()
 
     def save(self, *args, **kwargs):
+        install = (self.id is None)
         if self.zpool_id is None and self.pool is not None:
             self.zpool = self.pool.volumepool
         FileSystemVolume.save(self, *args, **kwargs)
+        if install:
+            self.fs.create_subvolume(self.name)
 
     @property
     def fs(self):

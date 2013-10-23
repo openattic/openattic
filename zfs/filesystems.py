@@ -21,10 +21,9 @@ import dbus
 
 from django.conf import settings
 
-from systemd  import dbus_to_python
-from lvm.conf import settings as lvm_settings
-from lvm.blockdevices import UnsupportedRAID, get_raid_params
+from systemd  import dbus_to_python, wrap_as_job
 
+from volumes.conf import settings as volumes_settings
 from volumes.filesystems.filesystem import FileSystem
 from volumes import capabilities
 
@@ -121,13 +120,10 @@ class Zfs(FileSystem):
         opts.update(self.options)
         return opts
 
+    @wrap_as_job
     def format(self, jid):
         self.dbus_object.zfs_format(jid, self.volume.path, self.volume.name,
-            os.path.join(lvm_settings.MOUNT_PREFIX, self.volume.name))
-        if self.volume.dedup:
-            self.dbus_object.zfs_set(jid, self.volume.name, "dedup", "on")
-        if self.volume.compression:
-            self.dbus_object.zfs_set(jid, self.volume.name, "compression", "on")
+            os.path.join(volumes_settings.MOUNT_PREFIX, self.volume.name))
         self.chown(jid)
 
     def mount(self, jid):
@@ -152,20 +148,20 @@ class Zfs(FileSystem):
         else:
             self.dbus_object.zfs_expand( jid, self.volume.name, self.volume.path )
 
-    def create_subvolume(self, jid, subvolume):
-        self.dbus_object.zfs_create_volume(jid, self.volume.name, subvolume.volname)
+    def create_subvolume(self, path):
+        self.dbus_object.zfs_create_volume(self.pool.name, path)
 
-    def destroy_subvolume(self, subvolume):
-        self.dbus_object.zfs_destroy_volume(self.volume.name, subvolume.volname)
+    def destroy_subvolume(self, path):
+        self.dbus_object.zfs_destroy_volume(self.pool.name, path)
 
-    def create_snapshot(self, jid, snapshot):
-        self.dbus_object.zfs_create_snapshot(jid, snapshot.origvolume.name, snapshot.snapname)
+    def create_snapshot(self, path):
+        self.dbus_object.zfs_create_snapshot(self.volume.name, path)
 
-    def destroy_snapshot(self, snapshot):
-        self.dbus_object.zfs_destroy_snapshot(snapshot.origvolume.name, snapshot.snapname)
+    def destroy_snapshot(self, path):
+        self.dbus_object.zfs_destroy_snapshot(self.volume.name, path)
 
-    def rollback_snapshot(self, snapshot):
-        self.dbus_object.zfs_rollback_snapshot(snapshot.origvolume.name, snapshot.snapname)
+    def rollback_snapshot(self, path):
+        self.dbus_object.zfs_rollback_snapshot(self.volume.name, path)
 
     @property
     def mounted(self):
