@@ -51,7 +51,6 @@ Ext.define('volumes__volumes_VolumePool_model', {
       if( Ext.ClassManager.get(modelname) === null ){
         modelname = 'volumes__volumes_BlockVolume_model';
       }
-      console.log(modelname);
       var store = Ext.create("Ext.oa.SwitchingTreeStore", {
         model: modelname,
         root:  record.data,
