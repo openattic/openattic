@@ -80,12 +80,23 @@ class VolumePoolHandler(ModelHandler):
             "type":      obj.volumepool.type,
         }
 
+    def create_volume(id, name, megs, owner, filesystem, fswarning, fscritical):
+        obj = VolumePool.objects.get(id=id)
+        vol = obj.create_volume(name, megs, owner, filesystem, fswarning, fscritical)
+        handler = self._get_handler_instance(vol.__class__)
+        return handler._idobj(vol)
+
 class VolumePoolProxy(ProxyModelHandler, VolumePoolHandler):
     def _find_target_host_from_model_instance(self, model):
         if model.volumepool.host == Host.objects.get_current():
             return None
         return model.volumepool.host.peerhost_set.all()[0]
 
+    def get_status(self, id):
+        return self._call_singlepeer_method("get_status", id)
+
+    def create_volume(self, id, name, megs, owner, filesystem, fswarning, fscritical):
+        return self._call_singlepeer_method("create_volume", id, name, megs, owner, filesystem, fswarning, fscritical)
 
 
 class AbstractBlockVolumeHandler(ModelHandler):
