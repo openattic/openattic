@@ -29,6 +29,8 @@ from volumes import blockdevices, capabilities, filesystems
 class DeviceNotFound(Exception):
     pass
 
+class InvalidVolumeType(Exception):
+    pass
 
 class CapabilitiesAwareManager(models.Manager):
     def filter_by_capability(self, capability):
@@ -64,6 +66,9 @@ class VolumePool(CapabilitiesAwareModel):
         * usedmegs   -> IntegerField or property
         * status     -> CharField or property
         * host       -> ForeignKey or property of a node that can modify the volumepool
+
+        ...and the following methods:
+        * get_volume_class(type) -> return the volume class to use for volumes of the given type
     """
     volumepool_type = models.ForeignKey(ContentType, blank=True, null=True, related_name="%(class)s_volumepool_type_set")
     volumepool      = generic.GenericForeignKey("volumepool_type", "id")
@@ -74,6 +79,9 @@ class VolumePool(CapabilitiesAwareModel):
     def member_set(self):
         return BlockVolume.objects.filter(upper_type=ContentType.objects.get_for_model(self.volumepool.__class__), upper_id=self.id)
 
+    def get_volume_class(self, type):
+        raise NotImplementedError("VolumePool::get_volume_class needs to be overridden")
+
     def save(self, *args, **kwargs):
         if self.__class__ is not VolumePool:
             self.volumepool_type = ContentType.objects.get_for_model(self.__class__)
@@ -81,6 +89,26 @@ class VolumePool(CapabilitiesAwareModel):
 
     def __unicode__(self):
         return self.volumepool.name
+
+    def create_volume(self, name, megs, owner, filesystem, fswarning, fscritical):
+        """ Create a volume in this pool. """
+        VolumeClass = self.get_volume_class(filesystem)
+        vol_options = {"name": name, "megs": megs, "owner": owner, "pool": self}
+        if issubclass(VolumeClass, FileSystemVolume):
+            vol_options.update({"filesystem": filesystem, "fswarning": fswarning, "fscritical": fscritical})
+        vol = VolumeClass(**vol_options)
+        vol.save()
+
+        if issubclass(VolumeClass, FileSystemVolume) and not bool(filesystem):
+            # vol = imagedatei in dem ding
+            pass
+        elif issubclass(VolumeClass, BlockVolume) and bool(filesystem):
+            vol = FileSystemProvider(base=vol, owner=owner, filesystem=filesystem,
+                                     fswarning=fswarning, fscritical=fscritical)
+            vol.save()
+
+        return vol
+
 
 
 class AbstractVolume(CapabilitiesAwareModel):

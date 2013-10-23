@@ -19,7 +19,7 @@ from django.conf import settings
 
 from systemd.helpers import dbus_to_python
 from ifconfig.models import Host, HostDependentManager, getHostDependentManagerClass
-from volumes.models import VolumePool, FileSystemVolume, CapabilitiesAwareManager
+from volumes.models import InvalidVolumeType, VolumePool, FileSystemVolume, CapabilitiesAwareManager
 
 from zfs import filesystems
 
@@ -50,6 +50,11 @@ class Zpool(VolumePool):
     def usedmegs(self):
         return self.fs.usedmegs
 
+    def get_volume_class(self, type):
+        if type not in ("zfs", None):
+            raise InvalidVolumeType(type)
+        return Zfs
+
 
 class RaidZ(models.Model):
     name        = models.CharField(max_length=150)
@@ -65,6 +70,11 @@ class Zfs(FileSystemVolume):
 
     objects     = getHostDependentManagerClass("zpool__host")()
     all_objects = models.Manager()
+
+    def save(self, *args, **kwargs):
+        if self.zpool_id is None and self.pool is not None:
+            self.zpool = self.pool.volumepool
+        FileSystemVolume.save(self, *args, **kwargs)
 
     @property
     def fs(self):

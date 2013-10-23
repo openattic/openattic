@@ -184,6 +184,9 @@ class VolumeGroup(VolumePool):
     def type(self):
         return "Volume Group"
 
+    def get_volume_class(self, type):
+        return LogicalVolume
+
 
 class LogicalVolume(BlockVolume):
     """ Represents a LVM Logical Volume and offers management functions.
@@ -503,6 +506,9 @@ class LogicalVolume(BlockVolume):
 
         if self.id is not None:
             old_self = LogicalVolume.objects.get(id=self.id)
+
+        if self.vg_id is None and self.pool is not None:
+            self.vg = self.pool.volumepool
 
         ret = BlockVolume.save(self, *args, **kwargs)
 

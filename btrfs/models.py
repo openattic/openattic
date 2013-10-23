@@ -21,7 +21,7 @@ from django.conf import settings
 
 from systemd.helpers import dbus_to_python
 from ifconfig.models import Host, HostDependentManager, getHostDependentManagerClass
-from volumes.models import VolumePool, FileSystemVolume, CapabilitiesAwareManager
+from volumes.models import InvalidVolumeType, VolumePool, FileSystemVolume, CapabilitiesAwareManager
 
 from btrfs import filesystems
 
@@ -57,6 +57,10 @@ class Btrfs(VolumePool):
     def usedmegs(self):
         return self.fs.stat["used"]
 
+    def get_volume_class(self, type):
+        if type not in ("btrfs", None):
+            raise InvalidVolumeType(type)
+        return BtrfsSubvolume
 
 class BtrfsSubvolume(FileSystemVolume):
     name        = models.CharField(max_length=150)
@@ -66,6 +70,11 @@ class BtrfsSubvolume(FileSystemVolume):
 
     objects     = getHostDependentManagerClass("btrfs__host")()
     all_objects = models.Manager()
+
+    def save(self, *args, **kwargs):
+        if self.btrfs_id is None and self.pool is not None:
+            self.btrfs = self.pool.volumepool
+        FileSystemVolume.save(self, *args, **kwargs)
 
     @property
     def fs(self):
