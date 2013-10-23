@@ -153,6 +153,16 @@ Ext.define('Ext.oa.volumes__VolumePool_Panel', {
         handler: function(self){
           volumeGroupPanel.store.load();
         }
+      }, {
+        text: gettext("Expand all"),
+        handler: function(self){
+          volumeGroupPanel.store.getRootNode().expand(true);
+        }
+      }, {
+        text: gettext("Collapse all"),
+        handler: function(self){
+          volumeGroupPanel.store.getRootNode().collapseChildren(true);
+        }
       }],
       forceFit: true,
       store: Ext.create('Ext.oa.SwitchingTreeStore', {

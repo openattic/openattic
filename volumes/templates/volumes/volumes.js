@@ -88,6 +88,20 @@ Ext.define('Ext.oa.volumes__Volume_Panel', {
         handler: function(self){
           volumePanel.refresh();
         }
+      }, {
+        text: gettext("Expand all"),
+        handler: function(self){
+          volumePanel.store.getRootNode().expand(true);
+        }
+      }, {
+        text: gettext("Collapse all"),
+        handler: function(self){
+          var i,
+              childNodes = store.getRootNode().childNodes;
+          for( i = 0; i < childNodes.length; i++ ){
+            childNodes[i].collapseChildren(true);
+          }
+        }
       }],
       forceFit: true,
       store: (function(){
