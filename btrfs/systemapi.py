@@ -23,6 +23,12 @@ class SystemD(BasePlugin):
     dbus_path = "/btrfs"
 
     @method(in_signature="is", out_signature="")
+    def format(self, jid, devpath):
+        cmd = ["mkfs.btrfs"]
+        cmd.append(devpath)
+        self.job_add_command(jid, cmd)
+
+    @method(in_signature="is", out_signature="")
     def create_subvolume(self, jid, subpath):
         cmd = ["btrfs", "subvolume", "create", subpath]
         if jid != -1:
