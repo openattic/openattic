@@ -42,6 +42,9 @@ class UnitHandler(AbstractBlockVolumeHandler):
         vg = VolumeGroup.objects.get(id=id)
         return [self._getobj(unit) for unit in Unit.objects.find_by_vg(vg)]
 
+    def get_raid_params(self, id):
+        return Unit.objects.get(id=id).raid_params
+
 class UnitProxy(ProxyModelHandler, UnitHandler):
     def find_by_vg(self, id):
         handler = self._get_handler_instance(VolumeGroup)

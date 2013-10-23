@@ -114,6 +114,29 @@ class Unit(BlockVolume):
         """ Return disk stats from the LV retrieved from the kernel. """
         return blockdevices.get_disk_stats( self.path[5:] )
 
+    @property
+    def raid_params(self):
+        raiddisks = self.disk_set.count()
+        if self.unittype == "RAID-0":
+            datadisks = raiddisks
+        elif self.unittype in ("RAID-1", "SINGLE"):
+            datadisks = 1
+        elif self.unittype == "RAID-5":
+            datadisks = raiddisks - 1
+        elif self.unittype == "RAID-6":
+            datadisks = raiddisks - 2
+        elif self.unittype == "RAID-10":
+            datadisks = raiddisks / 2
+        #else:
+            #raise UnsupportedRAIDLevel(raidlevel)
+        return {
+            "chunksize": self.chunksize,
+            "raiddisks": raiddisks,
+            "raidlevel": int(self.unittype[5:]) if self.unittype != "SINGLE" else 0,
+            "datadisks": datadisks,
+            "stripewidth": self.chunksize * datadisks
+            }
+
     def __unicode__(self):
         if self.name:
             return self.name
