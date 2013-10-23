@@ -22,7 +22,7 @@ Ext.define("Ext.oa.SwitchingTreeStore", {
     // the TreeView's store is *not* the one that is supposed to do the actual
     // loading. So first of all, let's see if that's really one of our nodes...
     var store = node.store;
-    console.log("onBeforeNodeExpand(" + toUnicode(node.data) + ") - this = " + this.model.modelName + "; node = " + store.model.modelName);
+    console.log("onBeforeNodeExpand(" + (toUnicode(node.data) || node.data.name || node.data.text) + ") - this = " + this.model.modelName + "; node = " + store.model.modelName);
     if( store === this ){
       // ... if it is, we can expand it ourselves...
       return this.callParent(arguments);
