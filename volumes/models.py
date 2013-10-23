@@ -14,7 +14,10 @@
  *  GNU General Public License for more details.
 """
 
+import dbus
+
 from django.db import models
+from django.conf import settings
 from django.contrib.contenttypes.models import ContentType
 from django.contrib.contenttypes import generic
 from django.utils.translation    import ugettext_lazy as _
@@ -192,10 +195,19 @@ class FileSystemProvider(FileSystemVolume):
 
     all_objects = models.Manager()
 
+    def setupfs( self ):
+        sysd = dbus.SystemBus().get_object(settings.DBUS_IFACE_SYSTEMD, "/")
+        jid = sysd.build_job()
+        self.fs.format(jid)
+        sysd.enqueue_job(jid)
+
     def save(self, *args, **kwargs):
+        install = (self.id is None)
         FileSystemVolume.save(self, *args, **kwargs)
         self.base.upper = self
         self.base.save()
+        if install:
+            self.setupfs()
 
     @property
     def name(self):
@@ -219,7 +231,7 @@ class FileSystemProvider(FileSystemVolume):
 
     @property
     def fs(self):
-        return filesystems.get_by_name(self.filesystem)(self.base)
+        return filesystems.get_by_name(self.filesystem)(self)
 
     @property
     def mounted(self):
