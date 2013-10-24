@@ -135,6 +135,9 @@ class BlockVolumeProxy(ProxyModelHandler, BlockVolumeHandler):
             return None
         return model.volume.host.peerhost_set.all()[0]
 
+    def create(self, data):
+        raise NotImplementedError("BlockVolume.create is disabled, call volumes.VolumePool.create_volume instead.")
+
 
 class AbstractFileSystemVolumeHandler(ModelHandler):
     def _getobj(self, obj):
@@ -170,6 +173,9 @@ class FileSystemVolumeProxy(ProxyModelHandler, FileSystemVolumeHandler):
             return None
         return model.volume.host.peerhost_set.all()[0]
 
+    def create(self, data):
+        raise NotImplementedError("FileSystemVolume.create is disabled, call volumes.VolumePool.create_volume instead.")
+
 
 class GenericDiskHandler(AbstractBlockVolumeHandler):
     model = GenericDisk
@@ -193,6 +199,8 @@ class FileSystemProviderProxy(ProxyModelHandler, FileSystemProviderHandler):
             return None
         return model.base.volume.host.peerhost_set.all()[0]
 
+    def create(self, data):
+        raise NotImplementedError("FileSystemProvider.create is disabled, call volumes.VolumePool.create_volume instead.")
 
 RPCD_HANDLERS = [
     GenericDiskHandler,
