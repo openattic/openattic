@@ -133,6 +133,9 @@ class BlockVolume(AbstractVolume):
         * status     -> CharField or property
         * path       -> CharField or property that returns /dev/path
 
+        Optionally, the following properties may be implemented:
+        * raid_params > RAID layout information (chunk/stripe size etc)
+
         The ``upper'' field defined by this class is set to an object that is using this
         device as part of a mirror, array or volume pool (i.e., NOT a share).
     """
@@ -141,6 +144,10 @@ class BlockVolume(AbstractVolume):
     upper       = generic.GenericForeignKey("upper_type", "upper_id")
 
     all_objects = models.Manager()
+
+    @property
+    def raid_params(self):
+        raise blockdevices.UnsupportedRAID()
 
     def save(self, *args, **kwargs):
         if self.__class__ is not BlockVolume:
