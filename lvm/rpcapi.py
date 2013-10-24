@@ -119,16 +119,6 @@ class LvHandler(AbstractBlockVolumeHandler):
         """ Merge the snapshot given by `id` back into the original volume. """
         LogicalVolume.objects.get(id=id).merge()
 
-    def iostat(self, id):
-        lv = LogicalVolume.objects.get(id=id)
-        fd = open("/sys/block/%s/stat" % lv.dmdevice[5:], "rb")
-        currstate = dict(zip((
-            "rd_ios", "rd_merges", "rd_sectors", "rd_ticks",
-            "wr_ios", "wr_merges", "wr_sectors", "wr_ticks",
-            "ios_in_prog", "tot_ticks", "rq_ticks"
-        ), fd.read().split()))
-        return currstate
-
 
 class LVMetadataHandler(ModelHandler):
     model = LVMetadata
@@ -181,9 +171,6 @@ class LvProxy(ProxyModelHandler, LvHandler):
 
     def run_initscript(self, id, script):
         return self._call_singlepeer_method("run_initscript", id, script)
-
-    def iostat(self, id):
-        return self._call_singlepeer_method("iostat", id)
 
 class SnapshotConfHandler(ModelHandler):
     model = SnapshotConf
