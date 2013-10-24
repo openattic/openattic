@@ -96,11 +96,6 @@ class Unit(BlockVolume):
         return self.unittype
 
     @property
-    def disk_stats( self ):
-        """ Return disk stats from the LV retrieved from the kernel. """
-        return blockdevices.get_disk_stats( self.path[5:] )
-
-    @property
     def raid_params(self):
         raiddisks = self.disk_set.count()
         if self.unittype == "RAID-0":

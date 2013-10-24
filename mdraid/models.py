@@ -35,10 +35,6 @@ class Array(BlockVolume):
         return "/dev/" + self.name
 
     @property
-    def disk_stats(self):
-        return blockdevices.get_disk_stats( self.name )
-
-    @property
     def member_set(self):
         return BlockVolume.objects.filter(upper_type=ContentType.objects.get_for_model(self.__class__), upper_id=self.id)
 

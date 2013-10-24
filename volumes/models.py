@@ -14,6 +14,7 @@
  *  GNU General Public License for more details.
 """
 
+import os.path
 import dbus
 
 from django.db import models
@@ -159,6 +160,25 @@ class BlockVolume(AbstractVolume):
     def __unicode__(self):
         return self.volume.name
 
+    @property
+    def disk_stats(self):
+        """ Get disk stats from `/sys/block/X/stat'. """
+        devname = os.path.realpath(self.path).replace("/dev/", "")
+        if not os.path.exists( "/sys/block/%s/stat" % devname ):
+            raise SystemError( "No such device: '%s'" % devname )
+
+        fd = open("/sys/block/%s/stat" % devname, "rb")
+        try:
+            stats = fd.read().split()
+        finally:
+            fd.close()
+
+        return dict( zip( [
+            "reads_completed",  "reads_merged",  "sectors_read",    "millisecs_reading",
+            "writes_completed", "writes_merged", "sectors_written", "millisecs_writing",
+            "ios_in_progress",  "millisecs_in_io", "weighted_millisecs_in_io"
+            ], [ int(num) for num in stats ] ) )
+
 
 class GenericDisk(BlockVolume):
     """ A standard disk that is NOT anything fancy (like a hardware raid). """
@@ -195,11 +215,6 @@ class GenericDisk(BlockVolume):
     @property
     def megs(self):
         return int(self.udev_device.attributes["size"]) * 512. / 1024. / 1024.
-
-    @property
-    def disk_stats( self ):
-        """ Return disk stats from the LV retrieved from the kernel. """
-        return blockdevices.get_disk_stats( self.name )
 
     def __unicode__(self):
         return "%s (%dMiB)" % (self.path, self.megs)

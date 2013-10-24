@@ -143,10 +143,6 @@ class Connection(models.Model):
         return blockdevices.get_disk_size( "drbd%d" % self.id )
 
     @property
-    def disk_stats(self):
-        return blockdevices.get_disk_stats( "drbd%d" % self.id )
-
-    @property
     def device(self):
         return "/dev/drbd%d" % self.id
 
