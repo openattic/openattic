@@ -37,6 +37,7 @@ from lvm.conf        import settings as lvm_settings
 from cron.models     import Cronjob
 from lvm             import snapcore
 
+from volumes.blockdevices import UnsupportedRAID
 from volumes.filesystems import FileSystem, FILESYSTEMS
 from volumes.models  import VolumePool, BlockVolume, FileSystemVolume
 from volumes         import capabilities
@@ -295,7 +296,7 @@ class LogicalVolume(BlockVolume):
         pvvol = self.vg.member_set.all()[0].volume
         if hasattr(pvvol, "raid_params"):
             return pvvol.raid_params
-        return None
+        raise UnsupportedRAID
 
     @property
     def fs(self):
