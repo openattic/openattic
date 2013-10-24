@@ -37,6 +37,9 @@ etc/init.d/openattic_rpcd           /etc/init.d
 etc/bash_completion.d/openattic_bash_completion /etc/bash_completion.d
 etc/pam.d/openattic                 /etc/pam.d
 
+# Volume initializaition scripts
+etc/openattic/volume_init.d/*       /etc/openattic/volume_init.d
+
 # System Configs
 debian/apache2_conf.d/openattic     /etc/apache2/conf.d
 debian/default/openattic            /etc/default
