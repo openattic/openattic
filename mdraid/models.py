@@ -66,8 +66,8 @@ class Array(BlockVolume):
             datadisks = raiddisks - 2
         elif raidlevel == 10:
             datadisks = raiddisks / 2
-        #else:
-            #raise UnsupportedRAIDLevel(raidlevel)
+        else:
+            raise blockdevices.UnsupportedRAIDLevel(raidlevel)
         stripewidth = chunksize * datadisks
         return {
             "chunksize": chunksize,
