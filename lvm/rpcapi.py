@@ -70,10 +70,6 @@ class BlockDevicesHandler(BaseHandler):
         """ Get all partitions from a given device. """
         return blockdevices.get_partitions(device)
 
-    def get_disk_stats(self, device):
-        """ Get Kernel disk stats for a given device. """
-        return blockdevices.get_disk_stats(device)
-
     def get_lvm_capabilities(self):
         return blockdevices.get_lvm_capabilities()
 
