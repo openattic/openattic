@@ -97,6 +97,7 @@ class VolumePool(CapabilitiesAwareModel):
         if issubclass(VolumeClass, FileSystemVolume):
             vol_options.update({"filesystem": filesystem, "fswarning": fswarning, "fscritical": fscritical})
         vol = VolumeClass(**vol_options)
+        vol.full_clean()
         vol.save()
 
         if issubclass(VolumeClass, FileSystemVolume) and not bool(filesystem):
@@ -105,6 +106,7 @@ class VolumePool(CapabilitiesAwareModel):
         elif issubclass(VolumeClass, BlockVolume) and bool(filesystem):
             vol = FileSystemProvider(base=vol, owner=owner, filesystem=filesystem,
                                      fswarning=fswarning, fscritical=fscritical)
+            vol.full_clean()
             vol.save()
 
         return vol
