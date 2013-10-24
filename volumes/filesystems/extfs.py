@@ -15,8 +15,8 @@
 """
 
 from systemd  import dbus_to_python
-from lvm.blockdevices import UnsupportedRAID, get_raid_params
 
+from volumes.blockdevices import UnsupportedRAID
 from volumes.filesystems.filesystem import FileSystem
 from volumes import capabilities
 
@@ -30,9 +30,9 @@ class Ext2(FileSystem):
         return dbus_to_python( self.dbus_object.e2fs_info( self.volume.base.volume.path ) )
 
     def format(self, jid):
-        if hasattr(self.volume.base.volume, "raid_params"):
+        try:
             raidparams = self.volume.base.volume.raid_params
-        else:
+        except UnsupportedRAID:
             raidparams = {"chunksize": -1, "datadisks": -1}
         self.dbus_object.e2fs_format( jid, self.volume.base.volume.path, self.volume.name, raidparams["chunksize"], raidparams["datadisks"] )
         self.mount(jid)
@@ -53,9 +53,9 @@ class Ext3(Ext2):
     desc = "Ext3 (max. 32TiB)"
 
     def format(self, jid):
-        if hasattr(self.volume.base.volume, "raid_params"):
+        try:
             raidparams = self.volume.base.volume.raid_params
-        else:
+        except UnsupportedRAID:
             raidparams = {"chunksize": -1, "datadisks": -1}
         self.dbus_object.e3fs_format( jid, self.volume.base.volume.path, self.volume.name, raidparams["chunksize"], raidparams["datadisks"] )
         self.mount(jid)
@@ -72,9 +72,9 @@ class Ext4(Ext2):
     desc = "Ext4 (recommended for file servers, supports Windows ACLs)"
 
     def format(self, jid):
-        if hasattr(self.volume.base.volume, "raid_params"):
+        try:
             raidparams = self.volume.base.volume.raid_params
-        else:
+        except UnsupportedRAID:
             raidparams = {"chunksize": -1, "datadisks": -1}
         self.dbus_object.e4fs_format( jid, self.volume.base.volume.path, self.volume.name, raidparams["chunksize"], raidparams["datadisks"] )
         self.mount(jid)
