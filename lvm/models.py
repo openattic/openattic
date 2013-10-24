@@ -26,7 +26,7 @@ import shlex
 from django.contrib.auth.models import User
 from django.db import models
 from django.conf import settings
-from django.utils.translation   import ugettext_lazy as _
+from django.utils.translation   import ugettext_noop as _
 
 from systemd         import invoke
 from ifconfig.models import Host, HostDependentManager, getHostDependentManagerClass
@@ -45,27 +45,27 @@ from volumes         import capabilities
 def validate_vg_name(value):
     from django.core.exceptions import ValidationError
     if value in ('.', '..'):
-        raise ValidationError("VG names may not be '.' or '..'.")
+        raise ValidationError(_("VG names may not be '.' or '..'."))
     if value[0] == '-':
-        raise ValidationError("VG names must not begin with a hyphen.")
+        raise ValidationError(_("VG names must not begin with a hyphen."))
     if os.path.exists( os.path.join("/dev", value) ):
-        raise ValidationError("'%s' exists as a device file, cannot use it as VG name" % value)
+        raise ValidationError(_("This name clashes with a file or directory in /dev."))
     if re.findall("[^a-zA-Z0-9+_.-]", value):
-        raise ValidationError("The following characters are valid for VG and LV names: a-z A-Z 0-9 + _ . -")
+        raise ValidationError(_("The following characters are valid for VG and LV names: a-z A-Z 0-9 + _ . -"))
 
 def validate_lv_name(value):
     # see http://linux.die.net/man/8/lvm -> "Valid Names"
     from django.core.exceptions import ValidationError
     if value in ('.', '..'):
-        raise ValidationError("LV names may not be '.' or '..'.")
+        raise ValidationError(_("LV names may not be '.' or '..'."))
     if value[0] == '-':
-        raise ValidationError("LV names must not begin with a hyphen.")
+        raise ValidationError(_("LV names must not begin with a hyphen."))
     if re.findall("[^a-zA-Z0-9+_.-]", value):
-        raise ValidationError("The following characters are valid for VG and LV names: a-z A-Z 0-9 + _ . -")
+        raise ValidationError(_("The following characters are valid for VG and LV names: a-z A-Z 0-9 + _ . -"))
     if value.startswith("snapshot") or value.startswith("pvmove"):
-        raise ValidationError("The volume name must not begin with 'snapshot' or 'pvmove'.")
+        raise ValidationError(_("The volume name must not begin with 'snapshot' or 'pvmove'."))
     if "_mlog" in value or "_mimage" in value:
-        raise ValidationError("The volume name must not contain '_mlog' or '_mimage'.")
+        raise ValidationError(_("The volume name must not contain '_mlog' or '_mimage'."))
 
 
 
@@ -121,16 +121,16 @@ class VolumeGroup(VolumePool):
         # 5  (c)lustered
         # flags are returned in a way that in most normal cases, the status string is as short as possible.
         flags = [
-            {"w": None, "r": "read-only"}[        attr[0] ],
-            {"z": None, "-": "non-resizable"}[    attr[1] ],
-            {"x": "exported", "-": None}[         attr[2] ],
-            {"p": "partial", "-": "online"}[      attr[3] ],
-            {"c": "contiguous allocation",
-             "l": "cling allocation",
+            {"w": None, "r": _("read-only")}[        attr[0] ],
+            {"z": None, "-": _("non-resizable")}[    attr[1] ],
+            {"x": _("exported"), "-": None}[         attr[2] ],
+            {"p": _("partial"), "-": _("online")}[   attr[3] ],
+            {"c": _("contiguous allocation"),
+             "l": _("cling allocation"),
              "n": None,
-             "a": "anywhere allocation",
-             "i": "inherited allocation"}[        attr[4] ],
-            {"c": "clustered", "-": None}[        attr[5] ],
+             "a": _("anywhere allocation"),
+             "i": _("inherited allocation")}[        attr[4] ],
+            {"c": _("clustered"), "-": None}[        attr[5] ],
         ]
         return ", ".join([flag for flag in flags if flag is not None])
 
@@ -144,7 +144,7 @@ class VolumeGroup(VolumePool):
 
     @property
     def type(self):
-        return "Volume Group"
+        return _("Volume Group")
 
     def get_volume_class(self, type):
         return LogicalVolume
@@ -171,7 +171,7 @@ class LogicalVolume(BlockVolume):
     createdate  = models.DateTimeField(auto_now_add=True, blank=True, null=True)
     snapshotconf= models.ForeignKey("SnapshotConf", blank=True, null=True, related_name="snapshot_set")
 
-    type        = "lv"
+    type        = _("Logical Volume")
 
     objects = getHostDependentManagerClass("vg__host")()
     all_objects = models.Manager()
@@ -236,42 +236,46 @@ class LogicalVolume(BlockVolume):
         # flags are returned in a way that in most normal cases, the status string is as short as possible.
         flags = [
             {
-                "m": "mirrored",       "M": "mirrored without initial sync",
-                "o": "origin",         "O": "merging origin",
-                "r": "RAID",           "R": "RAID without initial sync",
-                "s": "snapshot",       "S": "merging snapshot",
-                "p": "pvmove",         "v": "virtual",
-                "i": "image",          "I": "out-of-sync image",
-                "l": "mirror log",     "c": "conversion",
-                "V": "thin volume",    "t": "thin pool",
-                "T": "thin pool data", "e": "RAID/thin pool metadata",
+                "m": _("mirrored"),       "M": _("mirrored without initial sync"),
+                "o": _("origin"),         "O": _("merging origin"),
+                "r": _("RAID"),           "R": _("RAID without initial sync"),
+                "s": _("snapshot"),       "S": _("merging snapshot"),
+                "p": _("pvmove"),         "v": _("virtual"),
+                "i": _("image"),          "I": _("out-of-sync image"),
+                "l": _("mirror log"),     "c": _("conversion"),
+                "V": _("thin volume"),    "t": _("thin pool"),
+                "T": _("thin pool data"), "e": _("RAID/thin pool metadata"),
                 '-': None
             }[ attr[0] ],
-            {"w": None, "r": "read-only", "R": "temporarily read-only"}[ attr[1] ],
+            {"w": None, "r": _("read-only"), "R": _("temporarily read-only")}[ attr[1] ],
             {
-                "a": "anywhere",       "c": "contiguous allocation",
-                "i": None,             "l": "cling allocation",
-                "n": "normal allocation"
+                "a": _("anywhere"),       "c": _("contiguous allocation"),
+                "i": None,                "l": _("cling allocation"),
+                "n": _("normal allocation")
             }[ attr[2].lower() ],
             {"m": "fixed minor", "-": None}[ attr[3] ],
             {
-                "a": "active",         "s": "suspended",
-                "I": "invalid snapshot", "S": "invalid suspended snapshot",
-                "m": "snapshot merge failed", "M": "suspended snapshot merge failed",
-                "d": "mapped device present without tables", "i": "mapped device present with inactive table"
+                "a": _("active"),
+                "s": _("suspended"),
+                "I": _("invalid snapshot"),
+                "S": _("invalid suspended snapshot"),
+                "m": _("snapshot merge failed"),
+                "M": _("suspended snapshot merge failed"),
+                "d": _("mapped device present without tables"),
+                "i": _("mapped device present with inactive table")
             }[ attr[4] ],
-            {"o": "open", "-": None}[ attr[5] ],
+            {"o": _("open"), "-": None}[ attr[5] ],
             {
-                "m": "mirror",    "r": "raid",
-                "s": "snapshot",  "t": "thin",
-                "u": "unknown",   "v": "virtual",
+                "m": _("mirror"),    "r": _("raid"),
+                "s": _("snapshot"),  "t": _("thin"),
+                "u": _("unknown"),   "v": _("virtual"),
                 "-": None
             }[ attr[6] ],
-            {"z": "zeroed",  "-": None}[ attr[7] ],
+            {"z": _("zeroed"),  "-": None}[ attr[7] ],
             #{"p": "partial", "-": None}[ attr[8] ],
         ]
         if attr[2] in ("A", "C", "I", "L", "N"):
-            flags.append("pvmove in progress")
+            flags.append(_("pvmove in progress"))
         return ", ".join([flag for flag in flags if flag is not None])
 
     @property
