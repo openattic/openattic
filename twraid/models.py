@@ -56,9 +56,6 @@ class Enclosure(models.Model):
 
 
 
-class HostDependentUnitManager(UnitManager):
-    hostfilter  = "controller__host"
-
 class Unit(BlockVolume):
     index       = models.IntegerField()
     name        = models.CharField(max_length=150, blank=True)
@@ -74,7 +71,7 @@ class Unit(BlockVolume):
     rdcache     = models.CharField(max_length=150, blank=True)
     wrcache     = models.CharField(max_length=150, blank=True)
 
-    objects     = HostDependentUnitManager()
+    objects     = getHostDependentManagerClass("controller__host")()
     all_objects = CapabilitiesAwareManager()
 
     @property
