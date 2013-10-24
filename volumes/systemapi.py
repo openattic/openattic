@@ -17,6 +17,7 @@
 import os
 from systemd import invoke, logged, BasePlugin, method, signal
 
+from volumes.conf import settings as volumes_settings
 from volumes.models import VolumePool, FileSystemProvider
 from volumes import capabilities
 
@@ -160,5 +161,12 @@ class SystemD(BasePlugin):
                 fstab.write( line + "\n" )
         finally:
             fstab.close()
+
+    @method(in_signature="ss", out_signature="i")
+    def run_initscript(self, script, path):
+        if script.startswith("/"):
+            script = script[1:]
+        scpath = os.path.join(volumes_settings.VOLUME_INITD, script)
+        return invoke([scpath, "initialize", path])
 
 

@@ -181,16 +181,6 @@ class SystemD(BasePlugin):
         dev, info = out.split(":", 1)
         return info.strip()
 
-    @method(in_signature="sss", out_signature="i")
-    def run_initscript(self, script, device, mountpoint):
-        if script.startswith("/"):
-            script = script[1:]
-        scpath = os.path.join(lvm_settings.VOLUME_INITD, script)
-        cmd = [scpath, "initialize", device]
-        if mountpoint:
-            cmd.append(mountpoint)
-        return invoke(cmd)
-
     @method(in_signature="", out_signature="a{ss}")
     def get_lvm_capabilities(self):
         invoke(["/sbin/modprobe", "dm-snapshot"])

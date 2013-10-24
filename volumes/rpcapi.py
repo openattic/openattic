@@ -20,6 +20,7 @@ from rpcd.handlers import BaseHandler, ModelHandler
 from rpcd.handlers import ProxyModelHandler
 
 from volumes.models import GenericDisk, VolumePool, BlockVolume, FileSystemVolume, FileSystemProvider
+from volumes import initscripts
 from ifconfig.models import Host
 
 
@@ -129,6 +130,11 @@ class BlockVolumeHandler(ModelHandler):
         handler = self._get_handler_instance(obj.volume.__class__)
         return handler._getobj(obj.volume)
 
+    def run_initscript(self, id, script):
+        bv = BlockVolume.objects.get(id=id)
+        return initscripts.run_initscript(bv, script)
+
+
 class BlockVolumeProxy(ProxyModelHandler, BlockVolumeHandler):
     def _find_target_host_from_model_instance(self, model):
         if model.volume.host == Host.objects.get_current():
@@ -137,6 +143,9 @@ class BlockVolumeProxy(ProxyModelHandler, BlockVolumeHandler):
 
     def create(self, data):
         raise NotImplementedError("BlockVolume.create is disabled, call volumes.VolumePool.create_volume instead.")
+
+    def run_initscript(self, id, script):
+        return self._call_singlepeer_method("run_initscript", id, script)
 
 
 class AbstractFileSystemVolumeHandler(ModelHandler):
@@ -167,6 +176,10 @@ class FileSystemVolumeHandler(ModelHandler):
         handler = self._get_handler_instance(obj.volume.__class__)
         return handler._getobj(obj.volume)
 
+    def run_initscript(self, id, script):
+        fsv = FileSystemVolume.objects.get(id=id)
+        return initscripts.run_initscript(fsv, script)
+
 class FileSystemVolumeProxy(ProxyModelHandler, FileSystemVolumeHandler):
     def _find_target_host_from_model_instance(self, model):
         if model.volume.host == Host.objects.get_current():
@@ -175,6 +188,9 @@ class FileSystemVolumeProxy(ProxyModelHandler, FileSystemVolumeHandler):
 
     def create(self, data):
         raise NotImplementedError("FileSystemVolume.create is disabled, call volumes.VolumePool.create_volume instead.")
+
+    def run_initscript(self, id, script):
+        return self._call_singlepeer_method("run_initscript", id, script)
 
 
 class GenericDiskHandler(AbstractBlockVolumeHandler):
@@ -202,10 +218,23 @@ class FileSystemProviderProxy(ProxyModelHandler, FileSystemProviderHandler):
     def create(self, data):
         raise NotImplementedError("FileSystemProvider.create is disabled, call volumes.VolumePool.create_volume instead.")
 
+
+class InitScriptHandler(BaseHandler):
+    handler_name = "volumes.InitScript"
+
+    def get_initscripts(self):
+        return initscripts.get_initscripts()
+
+    def get_initscript_info(self, script):
+        return initscripts.get_initscript_info(script)
+
+
+
 RPCD_HANDLERS = [
     GenericDiskHandler,
     VolumePoolProxy,
     BlockVolumeProxy,
     FileSystemVolumeProxy,
     FileSystemProviderProxy,
+    InitScriptHandler,
     ]

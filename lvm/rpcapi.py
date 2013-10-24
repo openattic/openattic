@@ -101,16 +101,6 @@ class LvHandler(AbstractBlockVolumeHandler):
         lv = LogicalVolume.objects.get(id=id)
         return lv.disk_stats
 
-    def get_initscripts(self):
-        return initscripts.get_initscripts()
-
-    def get_initscript_info(self, script):
-        return initscripts.get_initscript_info(script)
-
-    def run_initscript(self, id, script):
-        lv = LogicalVolume.objects.get(id=id)
-        return initscripts.run_initscript(lv, script)
-
     def merge(self, id):
         """ Merge the snapshot given by `id` back into the original volume. """
         LogicalVolume.objects.get(id=id).merge()
@@ -164,9 +154,6 @@ class LvProxy(ProxyModelHandler, LvHandler):
                 return self._convert_datetimes( self._get_proxy_object(peer).create(data) )
             except Fault, flt:
                 raise translate_exception(flt)
-
-    def run_initscript(self, id, script):
-        return self._call_singlepeer_method("run_initscript", id, script)
 
 class SnapshotConfHandler(ModelHandler):
     model = SnapshotConf
