@@ -17,6 +17,15 @@
 import os
 import os.path
 
+class UnsupportedRAID(Exception):
+    pass
+
+class UnsupportedRAIDVendor(UnsupportedRAID):
+    pass
+
+class UnsupportedRAIDLevel(UnsupportedRAID):
+    pass
+
 def get_disk_stats(device):
     """ Get disk stats from `/sys/block/X/stat'. """
     if not os.path.exists( "/sys/block/%s/stat" % device ):
