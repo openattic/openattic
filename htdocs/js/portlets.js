@@ -15,7 +15,7 @@ Ext.namespace("Ext.oa");
 
 Ext.oa.getDefaultPortlets = function(tools){
   return [{
-    title: 'LVs',
+    title: 'Volumes',
     layout:'fit',
     id: 'portlet_lvs',
     tools: (function(){
@@ -39,28 +39,28 @@ Ext.oa.getDefaultPortlets = function(tools){
           storeId: "portlet_lvs_store",
           autoLoad: true,
           sorters: [{property: "fsused", direction: "DESC"}],
-          fields: ['name', 'megs', 'filesystem',  'formatted', 'id', 'state', 'fs', 'fswarning', 'fscritical', 'snapshot', {
+          fields: ['name', 'megs', 'filesystem',  'formatted', 'id', 'usedmegs', 'fs', 'fswarning', 'fscritical', 'snapshot', {
             name: 'fsused',
-            mapping: 'fs',
+            mapping: 'usedmegs',
             sortType: 'asFloat',
             convert: function( val, row ){
-              if( val === null || typeof val.stat === "undefined" ){
+              if( val === null ){
                 return -1; // fake to sort unknown values always at the bottom
               }
-              return (val.stat.used / val.stat.size * 100 ).toFixed(2);
+              return (val / row.data.megs * 100 ).toFixed(2);
             }
           }],
-          directFn: lvm__LogicalVolume.all
+          directFn: volumes__FileSystemVolume.all
         });
         store.on("load", function(self){
           self.filterBy(function(record){
-            return !record.data.snapshot && record.data.fs !== null && record.data.fs.mounted;
+            return !record.data.snapshot;
           });
         });
         return store;
       }()),
       columns: [{
-        header: "LV",
+        header: "Volume",
         width: 200,
         dataIndex: "name"
       }, {

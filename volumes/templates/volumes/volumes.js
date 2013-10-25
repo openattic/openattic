@@ -19,8 +19,8 @@ Ext.define('volumes__volumes_BlockVolume_model', {
     'Ext.data.NodeInterface'
   ],
   fields: [
-    'id', 'name', 'type', 'megs', 'filesystem', 'status', 'usedmegs', 'percent',
-    'fswarning', 'fscritical', 'fshost', 'fsmountpoint', 'poolname', 'ownername'
+    'id', 'name', 'type', 'megs', 'status', 'usedmegs', 'percent',
+    'fswarning', 'fscritical', 'host', 'path', 'poolname', 'ownername'
   ],
   createNode: function(record){
     // See if there is a specific model for this object type, and if so, use it
@@ -33,9 +33,10 @@ Ext.define('volumes__volumes_BlockVolume_model', {
     var rootNode;
     record.set("leaf", true);
     rootNode = this.callParent(arguments);
-    rootNode.set("type",   gettext(Ext.String.capitalize(toUnicode(record.raw.volumepool_type))));
-    rootNode.set("icon",   MEDIA_URL + '/icons2/16x16/apps/database.png');
-    rootNode.set("fshost", toUnicode(record.raw.host));
+    rootNode.set("icon",     MEDIA_URL + '/icons2/16x16/apps/database.png');
+    rootNode.set("host",     toUnicode(record.raw.host));
+    rootNode.set("poolname", toUnicode(record.raw.pool));
+    rootNode.set("percent",  null);
     return rootNode;
   }
 });
@@ -46,8 +47,8 @@ Ext.define('volumes__volumes_FileSystemVolume_model', {
     'Ext.data.NodeInterface'
   ],
   fields: [
-    'id', 'name', 'type', 'megs', 'filesystem', 'status', 'usedmegs', 'percent',
-    'fswarning', 'fscritical', 'fshost', 'fsmountpoint', 'poolname', 'ownername'
+    'id', 'name', 'type', 'megs', 'status', 'usedmegs', 'percent',
+    'fswarning', 'fscritical', 'host', 'path', 'poolname', 'ownername'
   ],
   createNode: function(record){
     // See if there is a specific model for this object type, and if so, use it
@@ -60,18 +61,11 @@ Ext.define('volumes__volumes_FileSystemVolume_model', {
     var rootNode;
     record.set("leaf", true);
     rootNode = this.callParent(arguments);
-    rootNode.set("type",         gettext(Ext.String.capitalize(record.raw.volume.obj ? record.raw.volume.obj : '')));
-    rootNode.set("fshost",       toUnicode(record.raw.fs.host));
-    rootNode.set("fsmountpoint", record.raw.fs.mountpoint);
+    rootNode.set("host",         toUnicode(record.raw.host));
     rootNode.set("poolname",     toUnicode(record.raw.pool));
     rootNode.set("ownername",    toUnicode(record.raw.owner));
     rootNode.set("icon",         MEDIA_URL + '/icons2/16x16/apps/database.png');
-    if( typeof record.raw.fs.stat !== "undefined" ){
-      rootNode.set("percent",    (record.raw.fs.stat.used / record.raw.fs.stat.size * 100).toFixed(2));
-    }
-    else{
-      rootNode.set("percent",    null);
-    }
+    rootNode.set("percent",      (record.data.usedmegs / record.data.megs * 100).toFixed(2));
     return rootNode;
   }
 });
@@ -93,6 +87,20 @@ Ext.define('Ext.oa.volumes__Volume_Panel', {
         tooltip: gettext('Reload'),
         handler: function(self){
           volumePanel.refresh();
+        }
+      }, {
+        text: gettext("Expand all"),
+        handler: function(self){
+          volumePanel.store.getRootNode().expand(true);
+        }
+      }, {
+        text: gettext("Collapse all"),
+        handler: function(self){
+          var i,
+              childNodes = store.getRootNode().childNodes;
+          for( i = 0; i < childNodes.length; i++ ){
+            childNodes[i].collapseChildren(true);
+          }
         }
       }],
       forceFit: true,
@@ -119,7 +127,7 @@ Ext.define('Ext.oa.volumes__Volume_Panel', {
             paramOrder: ["kwds"]
           },
           root: {
-            name: gettext("LUNs"),
+            name: gettext("Block-based"),
             id:   "volumes__volumes_blockvolumes_rootnode",
             type: ' ',
             megs: null,
@@ -135,7 +143,7 @@ Ext.define('Ext.oa.volumes__Volume_Panel', {
             directFn: volumes__FileSystemVolume.all
           },
           root: {
-            name: gettext("Volumes"),
+            name: gettext("File-based"),
             id:   "volumes__volumes_fsvolumes_rootnode",
             type: ' ',
             megs: null,
@@ -235,8 +243,12 @@ Ext.define('Ext.oa.volumes__Volume_Panel', {
         dataIndex: "fscritical",
         flex: 1
       },{
-        header: gettext('Mounted on Host'),
-        dataIndex: "fshost",
+        header: gettext('Path'),
+        dataIndex: "path",
+        flex: 1
+      },{
+        header: gettext('Host'),
+        dataIndex: "host",
         flex: 1
       },{
         header: gettext('Volume Pool'),

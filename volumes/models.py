@@ -14,7 +14,11 @@
  *  GNU General Public License for more details.
 """
 
+import os.path
+import dbus
+
 from django.db import models
+from django.conf import settings
 from django.contrib.contenttypes.models import ContentType
 from django.contrib.contenttypes import generic
 from django.utils.translation    import ugettext_lazy as _
@@ -26,6 +30,8 @@ from volumes import blockdevices, capabilities, filesystems
 class DeviceNotFound(Exception):
     pass
 
+class InvalidVolumeType(Exception):
+    pass
 
 class CapabilitiesAwareManager(models.Manager):
     def filter_by_capability(self, capability):
@@ -51,23 +57,31 @@ class CapabilitiesAwareModel(models.Model):
 
 
 class VolumePool(CapabilitiesAwareModel):
-    """ Something that joins a couple of BlockVolumes together. """
+    """ Something that joins a couple of BlockVolumes together and provides
+        BlockVolumes or FileSystemVolumes itself.
+
+        Classes that inherit from this one are required to implement the following properties:
+        * name       -> CharField or property
+        * type       -> CharField or property (to be displayed to the user)
+        * megs       -> IntegerField or property
+        * usedmegs   -> IntegerField or property
+        * status     -> CharField or property
+        * host       -> ForeignKey or property of a node that can modify the volumepool
+
+        ...and the following methods:
+        * get_volume_class(type) -> return the volume class to use for volumes of the given type
+    """
     volumepool_type = models.ForeignKey(ContentType, blank=True, null=True, related_name="%(class)s_volumepool_type_set")
     volumepool      = generic.GenericForeignKey("volumepool_type", "id")
 
     all_objects = models.Manager()
 
-    # Interface:
-    # name       -> CharField or property
-    # type       -> CharField or property
-    # megs       -> IntegerField or property
-    # usedmegs   -> IntegerField or property
-    # status     -> CharField or property
-    # host       -> ForeignKey or property that returns the node this device resides on (or the primary for DRBD)
-
     @property
     def member_set(self):
         return BlockVolume.objects.filter(upper_type=ContentType.objects.get_for_model(self.volumepool.__class__), upper_id=self.id)
+
+    def get_volume_class(self, type):
+        raise NotImplementedError("VolumePool::get_volume_class needs to be overridden")
 
     def save(self, *args, **kwargs):
         if self.__class__ is not VolumePool:
@@ -77,8 +91,31 @@ class VolumePool(CapabilitiesAwareModel):
     def __unicode__(self):
         return self.volumepool.name
 
+    def create_volume(self, name, megs, owner, filesystem, fswarning, fscritical):
+        """ Create a volume in this pool. """
+        VolumeClass = self.get_volume_class(filesystem)
+        vol_options = {"name": name, "megs": megs, "owner": owner, "pool": self}
+        if issubclass(VolumeClass, FileSystemVolume):
+            vol_options.update({"filesystem": filesystem, "fswarning": fswarning, "fscritical": fscritical})
+        vol = VolumeClass(**vol_options)
+        vol.full_clean()
+        vol.save()
+
+        if issubclass(VolumeClass, FileSystemVolume) and not bool(filesystem):
+            # vol = imagedatei in dem ding
+            pass
+        elif issubclass(VolumeClass, BlockVolume) and bool(filesystem):
+            vol = FileSystemProvider(base=vol, owner=owner, filesystem=filesystem,
+                                     fswarning=fswarning, fscritical=fscritical)
+            vol.full_clean()
+            vol.save()
+
+        return vol
+
+
 
 class AbstractVolume(CapabilitiesAwareModel):
+    """ Abstract base class for BlockVolume and FileSystemVolume. """
     pool        = models.ForeignKey(VolumePool,  blank=True, null=True)
     volume_type = models.ForeignKey(ContentType, blank=True, null=True, related_name="%(class)s_volume_type_set")
     volume      = generic.GenericForeignKey("volume_type", "id")
@@ -86,21 +123,34 @@ class AbstractVolume(CapabilitiesAwareModel):
     class Meta:
         abstract = True
 
-    # Interface:
-    # name       -> CharField or property
-    # megs       -> IntegerField or property
-    # disk_stats -> property that returns the current Kernel disk stats from /sys/block/sdX/stat as a dict
-    # host       -> ForeignKey or property that returns the node this device resides on (or the primary for DRBD)
-
 
 class BlockVolume(AbstractVolume):
-    """ Everything that is a /dev/something. """
+    """ Everything that is a /dev/something.
+
+        Classes that inherit from this one are required to implement the following properties:
+        * name       -> CharField or property
+        * type       -> CharField or property (to be displayed to the user)
+        * megs       -> IntegerField or property
+        * disk_stats -> property that returns the current Kernel disk stats from /sys/block/sdX/stat as a dict
+        * host       -> ForeignKey or property of a node that can modify the volume
+        * status     -> CharField or property
+        * path       -> CharField or property that returns /dev/path
+
+        Optionally, the following properties may be implemented:
+        * raid_params > RAID layout information (chunk/stripe size etc)
+
+        The ``upper'' field defined by this class is set to an object that is using this
+        device as part of a mirror, array or volume pool (i.e., NOT a share).
+    """
     upper_type  = models.ForeignKey(ContentType, blank=True, null=True, related_name="%(class)s_upper_type_set")
     upper_id    = models.PositiveIntegerField(blank=True, null=True)
     upper       = generic.GenericForeignKey("upper_type", "upper_id")
 
-    # Interface:
-    # device -> CharField or property that returns /dev/path
+    all_objects = models.Manager()
+
+    @property
+    def raid_params(self):
+        raise blockdevices.UnsupportedRAID()
 
     def save(self, *args, **kwargs):
         if self.__class__ is not BlockVolume:
@@ -109,6 +159,25 @@ class BlockVolume(AbstractVolume):
 
     def __unicode__(self):
         return self.volume.name
+
+    @property
+    def disk_stats(self):
+        """ Get disk stats from `/sys/block/X/stat'. """
+        devname = os.path.realpath(self.path).replace("/dev/", "")
+        if not os.path.exists( "/sys/block/%s/stat" % devname ):
+            raise SystemError( "No such device: '%s'" % devname )
+
+        fd = open("/sys/block/%s/stat" % devname, "rb")
+        try:
+            stats = fd.read().split()
+        finally:
+            fd.close()
+
+        return dict( zip( [
+            "reads_completed",  "reads_merged",  "sectors_read",    "millisecs_reading",
+            "writes_completed", "writes_merged", "sectors_written", "millisecs_writing",
+            "ios_in_progress",  "millisecs_in_io", "weighted_millisecs_in_io"
+            ], [ int(num) for num in stats ] ) )
 
 
 class GenericDisk(BlockVolume):
@@ -132,7 +201,11 @@ class GenericDisk(BlockVolume):
         raise DeviceNotFound(self.serial)
 
     @property
-    def device(self):
+    def status(self):
+        return ""
+
+    @property
+    def path(self):
         return self.udev_device.device_node
 
     @property
@@ -143,24 +216,29 @@ class GenericDisk(BlockVolume):
     def megs(self):
         return int(self.udev_device.attributes["size"]) * 512. / 1024. / 1024.
 
-    @property
-    def disk_stats( self ):
-        """ Return disk stats from the LV retrieved from the kernel. """
-        return blockdevices.get_disk_stats( self.name )
-
     def __unicode__(self):
-        return "%s (%dMiB)" % (self.device, self.megs)
+        return "%s (%dMiB)" % (self.path, self.megs)
 
 
 class FileSystemVolume(AbstractVolume):
-    """ Everything that can be mounted as a /media/something and is supposed to be able to be shared. """
+    """ Everything that can be mounted as a /media/something and is supposed to be shared.
+
+        Classes that inherit from this one are required to implement the following properties:
+        * name       -> CharField or property
+        * type       -> CharField or property (to be displayed to the user)
+        * megs       -> IntegerField or property
+        * host       -> ForeignKey or property of a node that can modify the volume
+        * path       -> CharField or property that returns the mount point
+        * disk_stats -> property that returns the current Kernel disk stats from /sys/block/sdX/stat as a dict
+        * status     -> CharField or property
+        * stat       -> property that returns { size:, free:, used: } in MiB
+    """
     filesystem  = models.CharField(max_length=50)
     owner       = models.ForeignKey(User, blank=True)
     fswarning   = models.IntegerField(_("Warning Level (%)"),  default=75 )
     fscritical  = models.IntegerField(_("Critical Level (%)"), default=85 )
 
-    # Interface:
-    # see FileSystemProvider
+    all_objects = models.Manager()
 
     def save(self, *args, **kwargs):
         if self.__class__ is not FileSystemVolume:
@@ -170,15 +248,34 @@ class FileSystemVolume(AbstractVolume):
     def __unicode__(self):
         return unicode(self.volume)
 
+    @property
+    def path(self):
+        return self.volume.fs.path
+
+    @property
+    def type(self):
+        return self.volume.fs.name
+
 
 class FileSystemProvider(FileSystemVolume):
     """ A FileSystem that resides on top of a BlockVolume. """
     base        = models.ForeignKey(BlockVolume)
 
+    all_objects = models.Manager()
+
+    def setupfs( self ):
+        sysd = dbus.SystemBus().get_object(settings.DBUS_IFACE_SYSTEMD, "/")
+        jid = sysd.build_job()
+        self.fs.format(jid)
+        sysd.enqueue_job(jid)
+
     def save(self, *args, **kwargs):
+        install = (self.id is None)
         FileSystemVolume.save(self, *args, **kwargs)
         self.base.upper = self
         self.base.save()
+        if install:
+            self.setupfs()
 
     @property
     def name(self):
@@ -186,7 +283,7 @@ class FileSystemProvider(FileSystemVolume):
 
     @property
     def status(self):
-        return self.base.volume.status
+        return {True: "online", False: "offline"}[self.mounted]
 
     @property
     def megs(self):
@@ -202,19 +299,7 @@ class FileSystemProvider(FileSystemVolume):
 
     @property
     def fs(self):
-        return filesystems.get_by_name(self.filesystem)(self.base)
-
-    @property
-    def fsname(self):
-        return self.fs.fsname
-
-    @property
-    def mountpoint(self):
-        return self.fs.mountpoint
-
-    @property
-    def mounthost(self):
-        return self.fs.mounthost
+        return filesystems.get_by_name(self.filesystem)(self)
 
     @property
     def mounted(self):

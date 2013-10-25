@@ -17,19 +17,11 @@
 import os
 import os.path
 
-def get_disk_stats(device):
-    """ Get disk stats from `/sys/block/X/stat'. """
-    if not os.path.exists( "/sys/block/%s/stat" % device ):
-        raise SystemError( "No such device: '%s'" % device )
+class UnsupportedRAID(Exception):
+    pass
 
-    fd = open("/sys/block/%s/stat" % device, "rb")
-    try:
-        stats = fd.read().split()
-    finally:
-        fd.close()
+class UnsupportedRAIDVendor(UnsupportedRAID):
+    pass
 
-    return dict( zip( [
-        "reads_completed",  "reads_merged",  "sectors_read",    "millisecs_reading",
-        "writes_completed", "writes_merged", "sectors_written", "millisecs_writing",
-        "ios_in_progress",  "millisecs_in_io", "weighted_millisecs_in_io"
-        ], [ int(num) for num in stats ] ) )
+class UnsupportedRAIDLevel(UnsupportedRAID):
+    pass

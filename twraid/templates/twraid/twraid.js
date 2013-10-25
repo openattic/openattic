@@ -19,11 +19,10 @@ Ext.define('volumes__twraid_Unit_model', {
     'Ext.data.NodeInterface'
   ],
   fields: [
-    'id', 'name', 'type', 'megs', 'percent', 'status',
+    'id', 'name', 'type', 'megs', 'percent', 'status', 'host', 'path',
     "index", "verify", "rebuild", "rdcache", "wrcache", "unittype", "autoverify", "serial", "chunksize",
   ],
   createNode: function(record){
-    console.log("volumes__twraid_Unit_model.createNode!");
     var rootNode;
     if( record.raw.disk_set.length > 0 ){
       var store = Ext.create("Ext.oa.SwitchingTreeStore", {
@@ -55,7 +54,8 @@ Ext.define('volumes__twraid_Unit_model', {
     else if( rootNode.get("status") === "REBUILD" ){
       rootNode.set("status", "REBUILDING:" + record.raw.rebuild)
     }
-    rootNode.set("name", toUnicode(record.raw))
+    rootNode.set("name", toUnicode(record.raw));
+    rootNode.set("host", toUnicode(record.raw.host));
     rootNode.commit();
     return rootNode;
   }
@@ -67,7 +67,7 @@ Ext.define('volumes__twraid_Disk_model', {
     'Ext.data.NodeInterface'
   ],
   fields: [
-    'id', 'name', 'type', 'megs', 'percent', 'status',
+    'id', 'name', 'type', 'megs', 'percent', 'status', 'path',
     "enclslot", "unitindex", "serial", "linkspeed", "power_on_h", "disktype", "port", "temp_c", "model", "rpm"
   ],
   createNode: function(record){

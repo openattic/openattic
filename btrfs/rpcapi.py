@@ -14,9 +14,23 @@
  *  GNU General Public License for more details.
 """
 
-from django.conf import settings
+from rpcd.handlers import ProxyModelHandler
 
-MOUNT_PREFIX     = getattr( settings, "LVM_MOUNT_PREFIX",   "/media"       )
-CHOWN_GROUP      = getattr( settings, "LVM_CHOWN_GROUP",    "domain users" )
-LOG_COMMANDS     = getattr( settings, "LVM_LOG_COMMANDS",   False )
-SYSD_INFO_TTL    = 5
+from btrfs.models    import Btrfs, BtrfsSubvolume
+from volumes.rpcapi  import AbstractVolumePoolHandler, AbstractFileSystemVolumeHandler
+
+class BtrfsHandler(AbstractVolumePoolHandler):
+    model = Btrfs
+
+class BtrfsProxy(ProxyModelHandler, BtrfsHandler):
+    pass
+
+
+class BtrfsSubvolumeHandler(AbstractFileSystemVolumeHandler):
+    model = BtrfsSubvolume
+
+class BtrfsSubvolumeProxy(ProxyModelHandler, BtrfsSubvolumeHandler):
+    pass
+
+
+RPCD_HANDLERS = [BtrfsProxy, BtrfsSubvolumeProxy]

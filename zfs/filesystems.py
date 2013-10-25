@@ -19,12 +19,27 @@ import os.path
 import re
 import dbus
 
-from systemd  import dbus_to_python
-from lvm.conf import settings as lvm_settings
-from lvm.blockdevices import UnsupportedRAID, get_raid_params
+from django.conf import settings
 
+from systemd  import dbus_to_python, wrap_as_job
+
+from volumes.conf import settings as volumes_settings
 from volumes.filesystems.filesystem import FileSystem
 from volumes import capabilities
+
+SIZE_MULTIPLIERS = {
+    'T': 1024**2,
+    'G': 1024**1,
+    'M': 1024**0,
+    'K': 1024**-1,
+}
+
+def scale_to_megs(size):
+    if size[-1] in SIZE_MULTIPLIERS:
+        # size is something like "672.42G", scale to MBytes
+        return float(size[:-1]) * SIZE_MULTIPLIERS[size[-1]]
+    # size seems to be in bytes
+    return float(size) * 1024**-2
 
 class Zfs(FileSystem):
     """ Handler for ZFS. """
@@ -60,10 +75,15 @@ class Zfs(FileSystem):
         def __iter__(self):
             return (data[1:3] for data in dbus_to_python(self.fs.dbus_object.zpool_get(self.fs.volume.name, "all")))
 
-    def __init__(self, volume):
+    def __init__(self, volume, pool=None):
         FileSystem.__init__(self, volume)
+        self.pool = pool or volume
         self._options = None
         self._pooloptions = None
+
+    @property
+    def dbus_object(self):
+        return dbus.SystemBus().get_object(settings.DBUS_IFACE_SYSTEMD, "/zfs")
 
     @classmethod
     def check_installed(cls):
@@ -83,8 +103,16 @@ class Zfs(FileSystem):
             raise ValidationError({"name": ["ZFS volume names cannot start with 'c[0-9]'."]})
 
     @property
-    def dbus_object(self):
-        return self.volume.zpool.dbus_object
+    def status(self):
+        return self.pool_options["health"]
+
+    @property
+    def megs(self):
+        return scale_to_megs(self.pool_options["size"])
+
+    @property
+    def usedmegs(self):
+        return scale_to_megs(self.pool_options["allocated"])
 
     @property
     def info(self):
@@ -92,13 +120,10 @@ class Zfs(FileSystem):
         opts.update(self.options)
         return opts
 
+    @wrap_as_job
     def format(self, jid):
         self.dbus_object.zfs_format(jid, self.volume.path, self.volume.name,
-            os.path.join(lvm_settings.MOUNT_PREFIX, self.volume.name))
-        if self.volume.dedup:
-            self.dbus_object.zfs_set(jid, self.volume.name, "dedup", "on")
-        if self.volume.compression:
-            self.dbus_object.zfs_set(jid, self.volume.name, "compression", "on")
+            os.path.join(volumes_settings.MOUNT_PREFIX, self.volume.name))
         self.chown(jid)
 
     def mount(self, jid):
@@ -123,20 +148,20 @@ class Zfs(FileSystem):
         else:
             self.dbus_object.zfs_expand( jid, self.volume.name, self.volume.path )
 
-    def create_subvolume(self, jid, subvolume):
-        self.dbus_object.zfs_create_volume(jid, self.volume.name, subvolume.volname)
+    def create_subvolume(self, path):
+        self.dbus_object.zfs_create_volume(self.pool.name, path)
 
-    def destroy_subvolume(self, subvolume):
-        self.dbus_object.zfs_destroy_volume(self.volume.name, subvolume.volname)
+    def destroy_subvolume(self, path):
+        self.dbus_object.zfs_destroy_volume(self.pool.name, path)
 
-    def create_snapshot(self, jid, snapshot):
-        self.dbus_object.zfs_create_snapshot(jid, snapshot.origvolume.name, snapshot.snapname)
+    def create_snapshot(self, path):
+        self.dbus_object.zfs_create_snapshot(self.volume.name, path)
 
-    def destroy_snapshot(self, snapshot):
-        self.dbus_object.zfs_destroy_snapshot(snapshot.origvolume.name, snapshot.snapname)
+    def destroy_snapshot(self, path):
+        self.dbus_object.zfs_destroy_snapshot(self.volume.name, path)
 
-    def rollback_snapshot(self, snapshot):
-        self.dbus_object.zfs_rollback_snapshot(snapshot.origvolume.name, snapshot.snapname)
+    def rollback_snapshot(self, path):
+        self.dbus_object.zfs_rollback_snapshot(self.volume.name, path)
 
     @property
     def mounted(self):
@@ -146,7 +171,7 @@ class Zfs(FileSystem):
             return None
 
     @property
-    def mountpoint(self):
+    def path(self):
         try:
             return self.options["mountpoint"]
         except dbus.DBusException:

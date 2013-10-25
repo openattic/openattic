@@ -31,9 +31,8 @@ case "$COMMAND" in
 	
 	initialize)
 		VOLUME="$2"
-		MOUNT="$3"
-		echo "Setting ownership of $MOUNT and all its subdirectories to 36:36."
-		chown -R 36:36 "$MOUNT"
+		echo "Setting ownership of $VOLUME and all its subdirectories to 36:36."
+		chown -R 36:36 "$VOLUME"
 		;;
 	
 	*)

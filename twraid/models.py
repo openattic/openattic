@@ -56,20 +56,6 @@ class Enclosure(models.Model):
 
 
 
-class UnitManager(CapabilitiesAwareManager):
-    def find_by_vg(self, vg):
-        units = []
-        for devname, devinfo in vg.get_base_device_info().items():
-            if "ID_SCSI_SERIAL" in devinfo:
-                try:
-                    units.append(self.get(serial=devinfo["ID_SCSI_SERIAL"]))
-                except Unit.DoesNotExist:
-                    pass
-        return units
-
-class HostDependentUnitManager(UnitManager):
-    hostfilter  = "controller__host"
-
 class Unit(BlockVolume):
     index       = models.IntegerField()
     name        = models.CharField(max_length=150, blank=True)
@@ -85,15 +71,15 @@ class Unit(BlockVolume):
     rdcache     = models.CharField(max_length=150, blank=True)
     wrcache     = models.CharField(max_length=150, blank=True)
 
-    objects     = HostDependentUnitManager()
-    all_objects = UnitManager()
+    objects     = getHostDependentManagerClass("controller__host")()
+    all_objects = CapabilitiesAwareManager()
 
     @property
     def host(self):
         return self.controller.host
 
     @property
-    def device(self):
+    def path(self):
         import pyudev
         ctx = pyudev.Context()
 
@@ -106,9 +92,31 @@ class Unit(BlockVolume):
         raise DeviceNotFound(self.serial)
 
     @property
-    def disk_stats( self ):
-        """ Return disk stats from the LV retrieved from the kernel. """
-        return blockdevices.get_disk_stats( self.device[5:] )
+    def type(self):
+        return self.unittype
+
+    @property
+    def raid_params(self):
+        raiddisks = self.disk_set.count()
+        if self.unittype == "RAID-0":
+            datadisks = raiddisks
+        elif self.unittype in ("RAID-1", "SINGLE"):
+            datadisks = 1
+        elif self.unittype == "RAID-5":
+            datadisks = raiddisks - 1
+        elif self.unittype == "RAID-6":
+            datadisks = raiddisks - 2
+        elif self.unittype == "RAID-10":
+            datadisks = raiddisks / 2
+        else:
+            raise blockdevices.UnsupportedRAIDLevel(raidlevel)
+        return {
+            "chunksize": self.chunksize,
+            "raiddisks": raiddisks,
+            "raidlevel": int(self.unittype[5:]) if self.unittype != "SINGLE" else 0,
+            "datadisks": datadisks,
+            "stripewidth": self.chunksize * datadisks
+            }
 
     def __unicode__(self):
         if self.name:

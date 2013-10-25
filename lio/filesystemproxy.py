@@ -22,10 +22,9 @@ import errno
 
 from xmlrpclib import Fault
 
-from lvm.filesystems import FileSystem, FILESYSTEMS
+from volumes.filesystems import FileSystem, FILESYSTEMS
 
 class FileSystemProxy(FileSystem):
-    name = "LIO Remote Filesystem"
     description = "Proxy for a filesystem on an iSCSI/FC Initiator"
     mount_in_fstab = False
     virtual = True
@@ -57,9 +56,9 @@ class FileSystemProxy(FileSystem):
             raise FileSystem.WrongFS(self.name)
 
     @property
-    def fsname(self):
+    def name(self):
         if "fs_type" not in self.disk:
-            return ""
+            return "LIO Remote File System"
         if self.disk["fs_type"] == "unknown":
             return ""
         if self.disk["fs_type"] == "partition_table":
@@ -67,7 +66,7 @@ class FileSystemProxy(FileSystem):
         return self.disk["fs_type"]
 
     @property
-    def mountpoint(self):
+    def path(self):
         if "fs_type" not in self.disk:
             return ""
         if self.disk["fs_type"] == "unknown":
@@ -75,10 +74,6 @@ class FileSystemProxy(FileSystem):
         if self.disk["fs_type"] == "partition_table" and "mountpoint" in self.disk["partitions"][0]:
             return self.disk["partitions"][0]["mountpoint"]
         return self.disk["mountpoint"]
-
-    @property
-    def mounthost(self):
-        return self.host
 
     def mount(self, jid):
         """ Mount the file system.
@@ -88,7 +83,7 @@ class FileSystemProxy(FileSystem):
     @property
     def mounted(self):
         """ True if the volume is currently mounted. """
-        return self.fsname != ""
+        return self.name != "LIO Remote File System"
 
     def unmount(self, jid):
         """ Unmount the volume. """
@@ -99,6 +94,7 @@ class FileSystemProxy(FileSystem):
         """ Return all file system metadata. """
         return self.disk
 
+    @property
     def stat(self):
         """ stat() the file system and return usage statistics. """
         if "fs_type" not in self.disk:
@@ -134,4 +130,3 @@ class FileSystemProxy(FileSystem):
 
         return stat
 
-FILESYSTEMS.append(FileSystemProxy)

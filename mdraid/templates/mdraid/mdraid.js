@@ -20,10 +20,9 @@ Ext.define('volumes__mdraid_Array_model', {
     'Ext.data.NodeInterface'
   ],
   fields: [
-    'id', 'name', 'type', 'megs', 'percent', 'status'
+    'id', 'name', 'type', 'megs', 'percent', 'status', 'path'
   ],
   createNode: function(record){
-    console.log("volumes__mdraid_Array_model.createNode!");
     var rootNode;
     if( record.raw.member_set.length > 0 ){
       var store = Ext.create("Ext.oa.SwitchingTreeStore", {

@@ -14,76 +14,81 @@
  *  GNU General Public License for more details.
 """
 
+
 from django.db import models
 
 from ifconfig.models import Host, HostDependentManager, getHostDependentManagerClass
 from volumes.models import InvalidVolumeType, VolumePool, FileSystemVolume, CapabilitiesAwareManager
 
-from zfs import filesystems
+from btrfs import filesystems
 
-class Zpool(VolumePool):
+
+class Btrfs(VolumePool):
     name        = models.CharField(max_length=150)
     host        = models.ForeignKey(Host)
 
     objects     = HostDependentManager()
     all_objects = models.Manager()
 
+    def save(self, *args, **kwargs):
+        install = (self.id is None)
+        VolumePool.save(self, *args, **kwargs)
+        if install:
+            self.fs.format()
+
     @property
-    def type(self):
-        return "Zpool"
+    def fullname(self):
+        return self.name
 
     @property
     def fs(self):
-        return filesystems.Zfs(self, self)
+        return filesystems.Btrfs(self)
+
+    @property
+    def type(self):
+        return "Btrfs"
 
     @property
     def status(self):
-        return self.fs.status
+        return "ok"
 
     @property
     def megs(self):
-        return self.fs.megs
+        return self.fs.stat["size"]
 
     @property
     def usedmegs(self):
-        return self.fs.usedmegs
+        return self.fs.stat["used"]
 
     def get_volume_class(self, type):
-        if type not in ("zfs", None):
+        if type not in ("btrfs", None):
             raise InvalidVolumeType(type)
-        return Zfs
+        return BtrfsSubvolume
 
-
-class RaidZ(models.Model):
+class BtrfsSubvolume(FileSystemVolume):
     name        = models.CharField(max_length=150)
-    zpool       = models.ForeignKey(Zpool)
-    type        = models.CharField(max_length=150)
+    btrfs       = models.ForeignKey(Btrfs)
+    parent      = models.ForeignKey('self', blank=True, null=True)
+    filesystem  = "btrfs"
 
-
-class Zfs(FileSystemVolume):
-    name        = models.CharField(max_length=150)
-    zpool       = models.ForeignKey(Zpool)
-    parent_zfs  = models.ForeignKey('self', blank=True, null=True)
-    filesystem  = "zfs"
-
-    objects     = getHostDependentManagerClass("zpool__host")()
+    objects     = getHostDependentManagerClass("btrfs__host")()
     all_objects = models.Manager()
 
     def save(self, *args, **kwargs):
         install = (self.id is None)
-        if self.zpool_id is None and self.pool is not None:
-            self.zpool = self.pool.volumepool
+        if self.btrfs_id is None and self.pool is not None:
+            self.btrfs = self.pool.volumepool
         FileSystemVolume.save(self, *args, **kwargs)
         if install:
-            self.fs.create_subvolume(self.name)
+            self.fs.create_subvolume(self.path)
 
     @property
     def fs(self):
-        return filesystems.Zfs(self, self.zpool)
+        return filesystems.Btrfs(self)
 
     @property
     def status(self):
-        return self.zpool.status
+        return self.btrfs.status
 
     @property
     def path(self):
@@ -99,18 +104,18 @@ class Zfs(FileSystemVolume):
 
     @property
     def megs(self):
-        return self.zpool.megs
+        return self.btrfs.megs
 
     @property
     def host(self):
-        return self.zpool.host
+        return self.btrfs.host
 
     @property
     def fullname(self):
-        if self.parent_zfs is not None:
-            parentname = self.parent_zfs.fullname
+        if self.parent is not None:
+            parentname = self.parent.fullname
         else:
-            parentname = self.zpool.name
+            parentname = self.btrfs.name
         return "%s/%s" % (parentname, self.name)
 
     def __unicode__(self):

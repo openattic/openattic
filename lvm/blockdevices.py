@@ -9,43 +9,6 @@ from django.conf import settings
 
 from systemd.helpers import dbus_to_python
 
-class UnsupportedRAID(Exception):
-    pass
-
-class UnsupportedRAIDVendor(UnsupportedRAID):
-    pass
-
-class UnsupportedRAIDLevel(UnsupportedRAID):
-    pass
-
-def get_raid_params(pvpath):
-    if not pvpath.startswith("/dev/md"):
-        raise UnsupportedRAIDVendor()
-    mddev = pvpath[5:]
-    chunksize = int(open("/sys/class/block/%s/md/chunk_size" % mddev, "r").read().strip())
-    raiddisks = int(open("/sys/class/block/%s/md/raid_disks" % mddev, "r").read().strip())
-    raidlevel = int(open("/sys/class/block/%s/md/level" % mddev, "r").read().strip()[4:])
-    if raidlevel == 0:
-        datadisks = raiddisks
-    elif raidlevel == 1:
-        datadisks = 1
-    elif raidlevel == 5:
-        datadisks = raiddisks - 1
-    elif raidlevel == 6:
-        datadisks = raiddisks - 2
-    elif raidlevel == 10:
-        datadisks = raiddisks / 2
-    else:
-        raise UnsupportedRAIDLevel(raidlevel)
-    stripewidth = chunksize * datadisks
-    return {
-        "chunksize": chunksize,
-        "raiddisks": raiddisks,
-        "raidlevel": raidlevel,
-        "datadisks": datadisks,
-        "stripewidth": stripewidth,
-        }
-
 def get_mounts():
     """ Get currently mounted devices. """
     fd = open("/proc/mounts", "rb")
@@ -121,23 +84,6 @@ def get_partitions(device):
     if ret:
         raise SystemError("parted failed, check the log")
     return dbus_to_python(disk), dbus_to_python(part)
-
-def get_disk_stats(device):
-    """ Get disk stats from `/sys/block/X/stat'. """
-    if not os.path.exists( "/sys/block/%s/stat" % device ):
-        raise SystemError( "No such device: '%s'" % device )
-
-    fd = open("/sys/block/%s/stat" % device, "rb")
-    try:
-        stats = fd.read().split()
-    finally:
-        fd.close()
-
-    return dict( zip( [
-        "reads_completed",  "reads_merged",  "sectors_read",    "millisecs_reading",
-        "writes_completed", "writes_merged", "sectors_written", "millisecs_writing",
-        "ios_in_progress",  "millisecs_in_io", "weighted_millisecs_in_io"
-        ], [ int(num) for num in stats ] ) )
 
 def get_lvm_capabilities():
     lvm  = dbus.SystemBus().get_object(settings.DBUS_IFACE_SYSTEMD, "/lvm")

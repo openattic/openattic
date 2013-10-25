@@ -17,8 +17,10 @@
 from rpcd.handlers import ModelHandler
 from rpcd.handlers import ProxyModelHandler
 
+from ifconfig.models import Host
 from lvm.models    import VolumeGroup
 from twraid.models import Controller, Enclosure, Unit, Disk
+from volumes.rpcapi import AbstractBlockVolumeHandler
 
 class ControllerHandler(ModelHandler):
     model = Controller
@@ -26,28 +28,22 @@ class ControllerHandler(ModelHandler):
 class EnclosureHandler(ModelHandler):
     model = Enclosure
 
-class UnitHandler(ModelHandler):
+class UnitHandler(AbstractBlockVolumeHandler):
     model = Unit
 
     def _override_get(self, obj, data):
-        data["disk_set"] = []
         handler = self._get_handler_instance(Disk)
-        for disk in obj.disk_set.all():
-            data["disk_set"].append( handler._idobj(disk) )
+        data["disk_set"] = [
+            handler._idobj(disk) for disk in obj.disk_set.all()
+            ]
         return data
 
-    def find_by_vg(self, id):
-        vg = VolumeGroup.objects.get(id=id)
-        return [self._getobj(unit) for unit in Unit.objects.find_by_vg(vg)]
+    def get_raid_params(self, id):
+        return Unit.objects.get(id=id).raid_params
 
 class UnitProxy(ProxyModelHandler, UnitHandler):
-    def find_by_vg(self, id):
-        handler = self._get_handler_instance(VolumeGroup)
-        targethost = handler._find_target_host(id)
-        if targethost is None:
-            return self.backing_handler.find_by_vg(id)
-        else:
-            return self._get_proxy_object(targethost).find_by_vg(id)
+    def get_raid_params(self, id):
+        return self._call_singlepeer_method("get_raid_params", id)
 
 class DiskHandler(ModelHandler):
     model = Disk

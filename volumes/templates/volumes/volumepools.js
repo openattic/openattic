@@ -47,8 +47,12 @@ Ext.define('volumes__volumes_VolumePool_model', {
        *  defines a volumes__<app>_<object>_model class somewhere that knows how to
        *  handle them.
        */
+      var modelname = Ext.String.format('volumes__{0}_{1}_model', record.raw.member_set[0].app, record.raw.member_set[0].obj);
+      if( Ext.ClassManager.get(modelname) === null ){
+        modelname = 'volumes__volumes_BlockVolume_model';
+      }
       var store = Ext.create("Ext.oa.SwitchingTreeStore", {
-        model: Ext.String.format('volumes__{0}_{1}_model', record.raw.member_set[0].app, record.raw.member_set[0].obj),
+        model: modelname,
         root:  record.data,
         proxy: {
           type: "direct",
@@ -125,7 +129,7 @@ Ext.define('volumes__volumes_GenericDisk_model', {
 
 
 /**
- *  Disk Management panel.
+ *  Volume Pool Management panel.
  *
  *  The store *always* loads volumes.VolumePool objects and uses
  *  volumes__volumes_VolumePool_model to process them, which will then
@@ -138,7 +142,7 @@ Ext.define('Ext.oa.volumes__VolumePool_Panel', {
     var volumeGroupPanel = this;
     Ext.apply(this, Ext.apply(this.initialConfig, {
       id: "volumes__volumepool_panel_inst",
-      title: gettext('Disk Management'),
+      title: gettext('Volume Pool Management'),
       border: false,
       rootVisible: false,
       buttons: [{
@@ -147,6 +151,16 @@ Ext.define('Ext.oa.volumes__VolumePool_Panel', {
         tooltip: gettext('Reload'),
         handler: function(self){
           volumeGroupPanel.store.load();
+        }
+      }, {
+        text: gettext("Expand all"),
+        handler: function(self){
+          volumeGroupPanel.store.getRootNode().expand(true);
+        }
+      }, {
+        text: gettext("Collapse all"),
+        handler: function(self){
+          volumeGroupPanel.store.getRootNode().collapseChildren(true);
         }
       }],
       forceFit: true,
@@ -258,7 +272,7 @@ Ext.oa.volumeGroup_Module = {
   panel: "volumes__volumepool_panel",
   prepareMenuTree: function(tree){
     tree.appendToRootNodeById("menu_storage", {
-      text: gettext('Disk Management'),
+      text: gettext('Volume Pool Management'),
       leaf: true,
       icon: MEDIA_URL + '/icons2/22x22/apps/database.png',
       panel: "volumes__volumepool_panel_inst"

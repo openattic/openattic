@@ -20,33 +20,32 @@ from rpcd.handlers import BaseHandler, ModelHandler
 from rpcd.handlers import ProxyModelHandler
 
 from volumes.models import GenericDisk, VolumePool, BlockVolume, FileSystemVolume, FileSystemProvider
+from volumes import initscripts
 from ifconfig.models import Host
 
-class GenericDiskHandler(ModelHandler):
-    model = GenericDisk
 
-    def _override_get(self, obj, data):
-        data["name"] = obj.name
-        data["megs"] = obj.megs
-        return data
+# This module actually does two things.
+# First of all, we want each and every volumepool and volume to provide the same set
+# of basic fields, which are defined in volumes/models.py.
+# Second, we want the BlockVolume and FileSystemVolume handlers to return exactly
+# what the various handlers would return.
+#
+# To achieve this, we define a set of Abstract*Handlers from which the concrete
+# handlers (i.e., VgHandler, LvHandler, ZpoolHandler etc) are derived. Those handlers
+# override _getobj to make sure a certain set of fields is always set.
+#
+# Concrete handlers in this module are implemented by selecting the appropriate
+# handler based on the volume(pool) type, and then calling that handler to get the
+# actual results.
 
-class VolumePoolHandler(ModelHandler):
-    model = VolumePool
 
-    def _idobj(self, obj):
-        if obj.volumepool is None:
-            return ModelHandler._idobj(self, obj)
-        handler = self._get_handler_instance(obj.volumepool.__class__)
-        return handler._idobj(obj.volumepool)
-
-    def _override_get(self, obj, data):
-        if obj.volumepool is not None:
-            handler = self._get_handler_instance(obj.volumepool.__class__)
-            data = handler._getobj(obj.volumepool)
-        data["member_set"] = []
-        for member in obj.member_set.all():
-            handler = self._get_handler_instance(member.__class__)
-            data["member_set"].append( handler._idobj(member) )
+class AbstractVolumePoolHandler(ModelHandler):
+    def _getobj(self, obj):
+        data = ModelHandler._getobj(self, obj)
+        data["member_set"] = [
+            self._get_handler_instance(member.__class__)._idobj(member)
+            for member in obj.member_set.all()
+            ]
         return data
 
     def get_status(self, id):
@@ -58,6 +57,36 @@ class VolumePoolHandler(ModelHandler):
             "type":      obj.volumepool.type,
         }
 
+class VolumePoolHandler(ModelHandler):
+    model = VolumePool
+
+    def _idobj(self, obj):
+        if obj.volumepool is None:
+            return ModelHandler._idobj(self, obj)
+        handler = self._get_handler_instance(obj.volumepool.__class__)
+        return handler._idobj(obj.volumepool)
+
+    def _getobj(self, obj):
+        if obj.volumepool is None:
+            return ModelHandler._getobj(self, obj)
+        handler = self._get_handler_instance(obj.volumepool.__class__)
+        return handler._getobj(obj.volumepool)
+
+    def get_status(self, id):
+        obj = VolumePool.objects.get(id=id)
+        return {
+            "status":    obj.volumepool.status,
+            "megs":      obj.volumepool.megs,
+            "usedmegs":  obj.volumepool.usedmegs,
+            "type":      obj.volumepool.type,
+        }
+
+    def create_volume(self, id, name, megs, owner, filesystem, fswarning, fscritical):
+        obj = VolumePool.objects.get(id=id)
+        owner = ModelHandler._get_object_by_id_dict(owner)
+        vol = obj.volumepool.create_volume(name, megs, owner, filesystem, fswarning, fscritical)
+        handler = self._get_handler_instance(vol.__class__)
+        return handler._idobj(vol)
 
 class VolumePoolProxy(ProxyModelHandler, VolumePoolHandler):
     def _find_target_host_from_model_instance(self, model):
@@ -65,6 +94,25 @@ class VolumePoolProxy(ProxyModelHandler, VolumePoolHandler):
             return None
         return model.volumepool.host.peerhost_set.all()[0]
 
+    def get_status(self, id):
+        return self._call_singlepeer_method("get_status", id)
+
+    def create_volume(self, id, name, megs, owner, filesystem, fswarning, fscritical):
+        return self._call_singlepeer_method("create_volume", id, name, megs, owner, filesystem, fswarning, fscritical)
+
+
+class AbstractBlockVolumeHandler(ModelHandler):
+    """ Actual volume handlers are supposed to inherit from this one. """
+
+    def _getobj(self, obj):
+        data = ModelHandler._getobj(self, obj)
+        data["name"]   = obj.volume.name
+        data["megs"]   = obj.volume.megs
+        data["host"]   = self._get_handler_instance(Host)._idobj(obj.volume.host)
+        data["path"]   = obj.volume.path
+        data["type"]   = obj.volume.type
+        data["status"] = obj.volume.status
+        return data
 
 
 class BlockVolumeHandler(ModelHandler):
@@ -76,12 +124,42 @@ class BlockVolumeHandler(ModelHandler):
         handler = self._get_handler_instance(obj.volume.__class__)
         return handler._idobj(obj.volume)
 
-    def _override_get(self, obj, data):
+    def _getobj(self, obj):
         if obj.volume is None:
-            return data
+            return ModelHandler._getobj(self, obj)
         handler = self._get_handler_instance(obj.volume.__class__)
         return handler._getobj(obj.volume)
 
+    def run_initscript(self, id, script):
+        bv = BlockVolume.objects.get(id=id)
+        return initscripts.run_initscript(bv, script)
+
+
+class BlockVolumeProxy(ProxyModelHandler, BlockVolumeHandler):
+    def _find_target_host_from_model_instance(self, model):
+        if model.volume.host == Host.objects.get_current():
+            return None
+        return model.volume.host.peerhost_set.all()[0]
+
+    def create(self, data):
+        raise NotImplementedError("BlockVolume.create is disabled, call volumes.VolumePool.create_volume instead.")
+
+    def run_initscript(self, id, script):
+        return self._call_singlepeer_method("run_initscript", id, script)
+
+
+class AbstractFileSystemVolumeHandler(ModelHandler):
+    def _getobj(self, obj):
+        data = ModelHandler._getobj(self, obj)
+        data["name"]    = obj.volume.name
+        data["megs"]    = obj.volume.megs
+        data["host"]    = self._get_handler_instance(Host)._idobj(obj.volume.host)
+        data["path"]    = obj.volume.path
+        data["type"]    = obj.volume.type
+        data["mounted"] = obj.volume.fs.mounted
+        data["usedmegs"]= obj.volume.fs.stat["used"]
+        data["status"]  = obj.volume.status
+        return data
 
 class FileSystemVolumeHandler(ModelHandler):
     model = FileSystemVolume
@@ -92,42 +170,71 @@ class FileSystemVolumeHandler(ModelHandler):
         handler = self._get_handler_instance(obj.volume.__class__)
         return handler._idobj(obj.volume)
 
-    def _override_get(self, obj, data):
-        if obj.volume is not None:
-            handler = self._get_handler_instance(obj.volume.__class__)
-            data = handler._getobj(obj.volume)
-        data["name"] = obj.volume.name
-        data["megs"] = obj.volume.megs
-        data["host"] = self._get_handler_instance(Host)._idobj(obj.volume.host)
-        return data
+    def _getobj(self, obj):
+        if obj.volume is None:
+            return ModelHandler._getobj(self, obj)
+        handler = self._get_handler_instance(obj.volume.__class__)
+        return handler._getobj(obj.volume)
+
+    def run_initscript(self, id, script):
+        fsv = FileSystemVolume.objects.get(id=id)
+        return initscripts.run_initscript(fsv, script)
+
+class FileSystemVolumeProxy(ProxyModelHandler, FileSystemVolumeHandler):
+    def _find_target_host_from_model_instance(self, model):
+        if model.volume.host == Host.objects.get_current():
+            return None
+        return model.volume.host.peerhost_set.all()[0]
+
+    def create(self, data):
+        raise NotImplementedError("FileSystemVolume.create is disabled, call volumes.VolumePool.create_volume instead.")
+
+    def run_initscript(self, id, script):
+        return self._call_singlepeer_method("run_initscript", id, script)
 
 
-class FileSystemProviderHandler(ModelHandler):
+class GenericDiskHandler(AbstractBlockVolumeHandler):
+    model = GenericDisk
+
+class FileSystemProviderHandler(AbstractFileSystemVolumeHandler):
     model = FileSystemProvider
 
     def _override_get(self, obj, data):
-        hosthandler = self._get_handler_instance(Host)
-        data['filesystem'] = obj.fsname
-        data['fs'] = {
-            'mountpoint':  obj.mountpoint,
-            'mounted':     obj.mounted,
-            'host':        hosthandler._idobj(obj.mounthost)
-            }
-        if obj.mounted:
-            data['fs']['stat'] = obj.stat
         # this looks fishy
         del data["volume_type"]
         del data["volume"]
-        data["volume_type"] = self._get_handler_instance(ContentType)._idobj(obj.volume_type)
+        handler = self._get_handler_instance(ContentType)
+        volume_type = ContentType.objects.get_for_model(obj.base.volume.__class__)
+        data["volume_type"] = handler._idobj(volume_type)
         data["volume"] = data["base"]
-        data["status"] = obj.status
         return data
+
+class FileSystemProviderProxy(ProxyModelHandler, FileSystemProviderHandler):
+    def _find_target_host_from_model_instance(self, model):
+        if model.base.volume.host == Host.objects.get_current():
+            return None
+        return model.base.volume.host.peerhost_set.all()[0]
+
+    def create(self, data):
+        raise NotImplementedError("FileSystemProvider.create is disabled, call volumes.VolumePool.create_volume instead.")
+
+
+class InitScriptHandler(BaseHandler):
+    handler_name = "volumes.InitScript"
+
+    def get_initscripts(self):
+        return initscripts.get_initscripts()
+
+    def get_initscript_info(self, script):
+        return initscripts.get_initscript_info(script)
+
 
 
 RPCD_HANDLERS = [
     GenericDiskHandler,
     VolumePoolProxy,
-    BlockVolumeHandler,
-    FileSystemVolumeHandler,
-    FileSystemProviderHandler,
+    BlockVolumeProxy,
+    FileSystemVolumeProxy,
+    FileSystemProviderProxy,
+    InitScriptHandler,
     ]

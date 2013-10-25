@@ -26,45 +26,46 @@ import shlex
 from django.contrib.auth.models import User
 from django.db import models
 from django.conf import settings
-from django.utils.translation   import ugettext_lazy as _
+from django.utils.translation   import ugettext_noop as _
 
 from systemd         import invoke
 from ifconfig.models import Host, HostDependentManager, getHostDependentManagerClass
 from systemd.helpers import dbus_to_python
-from lvm.filesystems import Zfs, FileSystem, FILESYSTEMS
 from lvm             import signals as lvm_signals
 from lvm             import blockdevices
 from lvm.conf        import settings as lvm_settings
 from cron.models     import Cronjob
 from lvm             import snapcore
 
+from volumes.blockdevices import UnsupportedRAID
+from volumes.filesystems import FileSystem, FILESYSTEMS
 from volumes.models  import VolumePool, BlockVolume, FileSystemVolume
 from volumes         import capabilities
 
 def validate_vg_name(value):
     from django.core.exceptions import ValidationError
     if value in ('.', '..'):
-        raise ValidationError("VG names may not be '.' or '..'.")
+        raise ValidationError(_("VG names may not be '.' or '..'."))
     if value[0] == '-':
-        raise ValidationError("VG names must not begin with a hyphen.")
+        raise ValidationError(_("VG names must not begin with a hyphen."))
     if os.path.exists( os.path.join("/dev", value) ):
-        raise ValidationError("'%s' exists as a device file, cannot use it as VG name" % value)
+        raise ValidationError(_("This name clashes with a file or directory in /dev."))
     if re.findall("[^a-zA-Z0-9+_.-]", value):
-        raise ValidationError("The following characters are valid for VG and LV names: a-z A-Z 0-9 + _ . -")
+        raise ValidationError(_("The following characters are valid for VG and LV names: a-z A-Z 0-9 + _ . -"))
 
 def validate_lv_name(value):
     # see http://linux.die.net/man/8/lvm -> "Valid Names"
     from django.core.exceptions import ValidationError
     if value in ('.', '..'):
-        raise ValidationError("LV names may not be '.' or '..'.")
+        raise ValidationError(_("LV names may not be '.' or '..'."))
     if value[0] == '-':
-        raise ValidationError("LV names must not begin with a hyphen.")
+        raise ValidationError(_("LV names must not begin with a hyphen."))
     if re.findall("[^a-zA-Z0-9+_.-]", value):
-        raise ValidationError("The following characters are valid for VG and LV names: a-z A-Z 0-9 + _ . -")
+        raise ValidationError(_("The following characters are valid for VG and LV names: a-z A-Z 0-9 + _ . -"))
     if value.startswith("snapshot") or value.startswith("pvmove"):
-        raise ValidationError("The volume name must not begin with 'snapshot' or 'pvmove'.")
+        raise ValidationError(_("The volume name must not begin with 'snapshot' or 'pvmove'."))
     if "_mlog" in value or "_mimage" in value:
-        raise ValidationError("The volume name must not contain '_mlog' or '_mimage'.")
+        raise ValidationError(_("The volume name must not contain '_mlog' or '_mimage'."))
 
 
 
@@ -83,41 +84,6 @@ class VolumeGroup(VolumePool):
 
     def __unicode__(self):
         return self.name
-
-    def join_device(self, device):
-        """ Reformat a device as a Physical Volume and add it to this Volume Group. """
-        if blockdevices.is_device_in_use(device):
-            raise ValueError( "Device '%s' is in use, won't touch it." % device )
-        lvm = dbus.SystemBus().get_object(settings.DBUS_IFACE_SYSTEMD, "/lvm")
-        return lvm.join_device_to_vg(device, self.name)
-
-    def get_pvs(self):
-        lvm = dbus.SystemBus().get_object(settings.DBUS_IFACE_SYSTEMD, "/lvm")
-        devs = []
-        for pvpath, pvinfo in lvm.pvs().items():
-            if pvinfo["LVM2_VG_NAME"] == self.name:
-                devs.append(pvinfo)
-        return devs
-
-    def get_base_device_info(self):
-        lvm = dbus.SystemBus().get_object(settings.DBUS_IFACE_SYSTEMD, "/lvm")
-        devs = {}
-        ctx = pyudev.Context()
-
-        def checkmd(devnode):
-            dev = pyudev.Device.from_name(ctx, "block", devnode)
-            if "MD_LEVEL" in dev.keys() and "ID_TYPE" not in dev.keys():
-                for subdev in os.listdir(os.path.join("/sys/class/block", devnode, "slaves")):
-                    checkmd(subdev)
-            else:
-                devs[devnode] = dict( dev.items() )
-
-        for pvpath, pvinfo in lvm.pvs().items():
-            if pvinfo["LVM2_VG_NAME"] == self.name:
-                devnode = os.path.split(pvpath)[-1]
-                checkmd(devnode)
-
-        return devs
 
     def save( self, *args, **kwargs ):
         VolumePool.save(self, *args, **kwargs)
@@ -144,10 +110,6 @@ class VolumeGroup(VolumePool):
         return self._lvm_info
 
     @property
-    def lvm_free_megs(self):
-        return float( self.lvm_info["LVM2_VG_FREE"] )
-
-    @property
     def status(self):
         attr = self.lvm_info["LVM2_VG_ATTR"].lower()
         # vg_attr bits according to ``man vgs'':
@@ -159,16 +121,16 @@ class VolumeGroup(VolumePool):
         # 5  (c)lustered
         # flags are returned in a way that in most normal cases, the status string is as short as possible.
         flags = [
-            {"w": None, "r": "read-only"}[        attr[0] ],
-            {"z": None, "-": "non-resizable"}[    attr[1] ],
-            {"x": "exported", "-": None}[         attr[2] ],
-            {"p": "partial", "-": "online"}[      attr[3] ],
-            {"c": "contiguous allocation",
-             "l": "cling allocation",
+            {"w": None, "r": _("read-only")}[        attr[0] ],
+            {"z": None, "-": _("non-resizable")}[    attr[1] ],
+            {"x": _("exported"), "-": None}[         attr[2] ],
+            {"p": _("partial"), "-": _("online")}[   attr[3] ],
+            {"c": _("contiguous allocation"),
+             "l": _("cling allocation"),
              "n": None,
-             "a": "anywhere allocation",
-             "i": "inherited allocation"}[        attr[4] ],
-            {"c": "clustered", "-": None}[        attr[5] ],
+             "a": _("anywhere allocation"),
+             "i": _("inherited allocation")}[        attr[4] ],
+            {"c": _("clustered"), "-": None}[        attr[5] ],
         ]
         return ", ".join([flag for flag in flags if flag is not None])
 
@@ -182,7 +144,10 @@ class VolumeGroup(VolumePool):
 
     @property
     def type(self):
-        return "Volume Group"
+        return _("Volume Group")
+
+    def get_volume_class(self, type):
+        return LogicalVolume
 
 
 class LogicalVolume(BlockVolume):
@@ -205,6 +170,8 @@ class LogicalVolume(BlockVolume):
     compression = models.BooleanField(_("Compression"), blank=True, default=False)
     createdate  = models.DateTimeField(auto_now_add=True, blank=True, null=True)
     snapshotconf= models.ForeignKey("SnapshotConf", blank=True, null=True, related_name="snapshot_set")
+
+    type        = _("Logical Volume")
 
     objects = getHostDependentManagerClass("vg__host")()
     all_objects = models.Manager()
@@ -236,6 +203,8 @@ class LogicalVolume(BlockVolume):
         BlockVolume.validate_unique(self, exclude=exclude)
 
     def full_clean(self):
+        if self.vg_id is None and self.pool is not None:
+            self.vg = self.pool.volumepool
         if float(self.vg.lvm_info["LVM2_VG_FREE"]) < int(self.megs):
             from django.core.exceptions import ValidationError
             raise ValidationError({"megs": ["Volume Group %s has insufficient free space." % self.vg.name]})
@@ -267,46 +236,50 @@ class LogicalVolume(BlockVolume):
         # flags are returned in a way that in most normal cases, the status string is as short as possible.
         flags = [
             {
-                "m": "mirrored",       "M": "mirrored without initial sync",
-                "o": "origin",         "O": "merging origin",
-                "r": "RAID",           "R": "RAID without initial sync",
-                "s": "snapshot",       "S": "merging snapshot",
-                "p": "pvmove",         "v": "virtual",
-                "i": "image",          "I": "out-of-sync image",
-                "l": "mirror log",     "c": "conversion",
-                "V": "thin volume",    "t": "thin pool",
-                "T": "thin pool data", "e": "RAID/thin pool metadata",
+                "m": _("mirrored"),       "M": _("mirrored without initial sync"),
+                "o": _("origin"),         "O": _("merging origin"),
+                "r": _("RAID"),           "R": _("RAID without initial sync"),
+                "s": _("snapshot"),       "S": _("merging snapshot"),
+                "p": _("pvmove"),         "v": _("virtual"),
+                "i": _("image"),          "I": _("out-of-sync image"),
+                "l": _("mirror log"),     "c": _("conversion"),
+                "V": _("thin volume"),    "t": _("thin pool"),
+                "T": _("thin pool data"), "e": _("RAID/thin pool metadata"),
                 '-': None
             }[ attr[0] ],
-            {"w": None, "r": "read-only", "R": "temporarily read-only"}[ attr[1] ],
+            {"w": None, "r": _("read-only"), "R": _("temporarily read-only")}[ attr[1] ],
             {
-                "a": "anywhere",       "c": "contiguous allocation",
-                "i": None,             "l": "cling allocation",
-                "n": "normal allocation"
+                "a": _("anywhere"),       "c": _("contiguous allocation"),
+                "i": None,                "l": _("cling allocation"),
+                "n": _("normal allocation")
             }[ attr[2].lower() ],
             {"m": "fixed minor", "-": None}[ attr[3] ],
             {
-                "a": "active",         "s": "suspended",
-                "I": "invalid snapshot", "S": "invalid suspended snapshot",
-                "m": "snapshot merge failed", "M": "suspended snapshot merge failed",
-                "d": "mapped device present without tables", "i": "mapped device present with inactive table"
+                "a": _("active"),
+                "s": _("suspended"),
+                "I": _("invalid snapshot"),
+                "S": _("invalid suspended snapshot"),
+                "m": _("snapshot merge failed"),
+                "M": _("suspended snapshot merge failed"),
+                "d": _("mapped device present without tables"),
+                "i": _("mapped device present with inactive table")
             }[ attr[4] ],
-            {"o": "open", "-": None}[ attr[5] ],
+            {"o": _("open"), "-": None}[ attr[5] ],
             {
-                "m": "mirror",    "r": "raid",
-                "s": "snapshot",  "t": "thin",
-                "u": "unknown",   "v": "virtual",
+                "m": _("mirror"),    "r": _("raid"),
+                "s": _("snapshot"),  "t": _("thin"),
+                "u": _("unknown"),   "v": _("virtual"),
                 "-": None
             }[ attr[6] ],
-            {"z": "zeroed",  "-": None}[ attr[7] ],
+            {"z": _("zeroed"),  "-": None}[ attr[7] ],
             #{"p": "partial", "-": None}[ attr[8] ],
         ]
         if attr[2] in ("A", "C", "I", "L", "N"):
-            flags.append("pvmove in progress")
+            flags.append(_("pvmove in progress"))
         return ", ".join([flag for flag in flags if flag is not None])
 
     @property
-    def device(self):
+    def path(self):
         """ The actual device under which this LV operates. """
         return os.path.join( "/dev", self.vg.name, self.name )
 
@@ -317,12 +290,11 @@ class LogicalVolume(BlockVolume):
     @property
     def dmdevice( self ):
         """ Returns the dm-X device that represents this LV. """
-        return os.path.realpath( self.device )
+        return os.path.realpath( self.path )
 
     @property
-    def disk_stats( self ):
-        """ Return disk stats from the LV retrieved from the kernel. """
-        return blockdevices.get_disk_stats( self.dmdevice[5:] )
+    def raid_params(self):
+        return self.vg.member_set.all()[0].volume.raid_params
 
     @property
     def fs(self):
@@ -336,85 +308,13 @@ class LogicalVolume(BlockVolume):
                     pass
         return self._fs
 
-    @property
-    def fsname(self):
-        """ The name of the file system on this volume. """
-        if not self.fs:
-            return None
-        return self.fs.fsname
-
-    @property
-    def fs_info(self):
-        if not self.fs:
-            return None
-        return self.fs.info
-
     def detect_fs(self):
         """ Try to detect the file system using `file'. """
-        typestring = self.lvm.get_type(self.device)
+        typestring = self.lvm.get_type(self.path)
         for fs in FILESYSTEMS:
             if fs.check_type(typestring):
                 return fs
         return None
-
-    def get_shares( self, app_label=None ):
-        """ Iterate all the shares configured for this LV. """
-        for relobj in ( self._meta.get_all_related_objects() + self._meta.get_all_related_many_to_many_objects() ):
-            if app_label  and relobj.model._meta.app_label != app_label:
-                continue
-
-            if not hasattr( relobj.model, "share_type" ):
-                # not a share
-                continue
-
-            for relmdl in relobj.model.objects.filter( **{ relobj.field.name: self } ):
-                yield relmdl
-
-    @property
-    def modchain( self, app_label=None ):
-        """ A list of block device modules operating on this LV, in the order
-            in which they are chained.
-        """
-        mc = []
-        for relobj in ( self._meta.get_all_related_objects() + self._meta.get_all_related_many_to_many_objects() ):
-            if app_label  and relobj.model._meta.app_label != app_label:
-                continue
-
-            if not issubclass( relobj.model, LVChainedModule ):
-                # not a mod
-                continue
-
-            mc.extend( relobj.model.objects.filter( **{ relobj.field.name: self } ) )
-
-        mc.sort(lambda a, b: cmp(a.ordering, b.ordering))
-        return mc
-
-    @property
-    def path(self):
-        """ Returns the block device on which the file system resides,
-            taking block device modules into account.
-        """
-        mc = self.modchain
-        if not mc:
-            return self.device
-        return mc[-1].path
-
-    @property
-    def standby(self):
-        """ Returns true if mods are configured and at least one reports
-            itself as in standby.
-        """
-        for mod in self.modchain:
-            if mod.standby:
-                return True
-        return False
-
-    @property
-    def mods_active(self):
-        """ True if no mods are in use or all mods are active. """
-        for mod in self.modchain:
-            return False
-        return True
 
     @property
     def lvm_info(self):
@@ -440,44 +340,6 @@ class LogicalVolume(BlockVolume):
         snap.save()
         return snap
 
-    @property
-    def mountpoint(self):
-        if not self.fs:
-            raise SystemError("Volume '%s' does not have a filesystem, cannot mount." % self.name)
-        return self.fs.mountpoint
-
-    @property
-    def mounthost(self):
-        if not self.fs:
-            raise SystemError("Volume '%s' does not have a filesystem, cannot mount." % self.name)
-        return self.fs.mounthost
-
-    @property
-    def topleveldir(self):
-        if not self.fs:
-            raise SystemError("Volume '%s' does not have a filesystem, cannot mount." % self.name)
-        return self.fs.topleveldir
-
-    @property
-    def mounted(self):
-        return self.fs.mounted
-
-    @property
-    def stat(self):
-        return self.fs.stat()
-
-    def mount(self):
-        if self.formatted and not self.mounted:
-            lvm_signals.pre_mount.send(sender=LogicalVolume, instance=self, mountpoint=self.mountpoint)
-            self.fs.mount(-1)
-            lvm_signals.post_mount.send(sender=LogicalVolume, instance=self, mountpoint=self.mountpoint)
-
-    def unmount(self):
-        if self.mounted:
-            lvm_signals.pre_unmount.send(sender=LogicalVolume, instance=self, mountpoint=self.mountpoint)
-            self.fs.unmount(-1)
-            lvm_signals.post_unmount.send(sender=LogicalVolume, instance=self, mountpoint=self.mountpoint)
-
     def install(self):
         lvm_signals.pre_install.send(sender=LogicalVolume, instance=self)
         if self.snapshot:
@@ -486,64 +348,26 @@ class LogicalVolume(BlockVolume):
             snap = ""
         self.lvm.lvcreate( self.vg.name, self.name, self.megs, snap )
         if not self.snapshot:
-            self.lvm.lvchange( self.device, True )
+            self.lvm.lvchange( self.path, True )
         lvm_signals.post_install.send(sender=LogicalVolume, instance=self)
 
     def uninstall(self):
         lvm_signals.pre_uninstall.send(sender=LogicalVolume, instance=self)
         if not self.snapshot:
-            self.lvm.lvchange(self.device, False)
-        self.lvm.lvremove(self.device)
+            self.lvm.lvchange(self.path, False)
+        self.lvm.lvremove(self.path)
         lvm_signals.post_uninstall.send(sender=LogicalVolume, instance=self)
 
     def resize( self ):
-        if self.filesystem and self.mounted and \
-           not self.fs.online_resize_available(self.megs > self.lvm_megs):
-            self.fs.unmount(self._jid)
-            need_mount = True
-        else:
-            need_mount = False
-
         if self.megs < self.lvm_megs:
-            # Shrink FS, then Volume
             lvm_signals.pre_shrink.send(sender=LogicalVolume, instance=self, jid=self._jid)
-
-            if self.filesystem:
-                self.fs.resize(self._jid, grow=False)
-
-            for mod in self.modchain:
-                mod.resize(self._jid)
-
-            self.lvm.lvresize(self._jid, self.device, self.megs, False)
-
+            self.lvm.lvresize(self._jid, self.path, self.megs, False)
             lvm_signals.post_shrink.send(sender=LogicalVolume, instance=self, jid=self._jid)
         else:
-            # Grow Volume, then FS
             lvm_signals.pre_grow.send(sender=LogicalVolume, instance=self, jid=self._jid)
-
-            self.lvm.lvresize(self._jid, self.device, self.megs, True)
-
-            for mod in self.modchain:
-                mod.resize(self._jid)
-
-            if self.filesystem:
-                self.fs.resize(self._jid, grow=True)
-
+            self.lvm.lvresize(self._jid, self.path, self.megs, True)
             lvm_signals.post_grow.send(sender=LogicalVolume, instance=self, jid=self._jid)
-
-        if need_mount:
-            self.fs.mount(self._jid)
-
         self._lvm_info = None # outdate cached information
-
-    def setupfs( self ):
-        if not self.formatted:
-            self.fs.format(self._jid)
-            self.formatted = True
-            return True
-        else:
-            self.fs.mount(self._jid)
-            return False
 
     def clean(self):
         if not self.snapshot:
@@ -572,6 +396,9 @@ class LogicalVolume(BlockVolume):
         if self.id is not None:
             old_self = LogicalVolume.objects.get(id=self.id)
 
+        if self.vg_id is None and self.pool is not None:
+            self.vg = self.pool.volumepool
+
         ret = BlockVolume.save(self, *args, **kwargs)
 
         self._build_job()
@@ -579,15 +406,6 @@ class LogicalVolume(BlockVolume):
         if install:
             self.install()
             self.uuid = self.lvm_info["LVM2_LV_UUID"]
-
-            if self.filesystem:
-                mc = self.modchain
-                modified = False
-                if mc:
-                    modified = mc[-1].setupfs()
-                else:
-                    modified = self.setupfs()
-                self.lvm.write_fstab()
 
             ret = BlockVolume.save(self, *args, **kwargs)
 
@@ -602,11 +420,6 @@ class LogicalVolume(BlockVolume):
     def delete(self):
         for share in self.get_shares():
             share.delete()
-
-        mc = self.modchain[:]
-        mc.reverse()
-        for mod in mc:
-            mod.delete()
 
         if self.filesystem:
             if self.mounted:
@@ -627,7 +440,7 @@ class LogicalVolume(BlockVolume):
         orig.unmount()
         for snapshot in orig.snapshot_set.all():
             snapshot.unmount()
-        self.lvm.lvmerge(  self.device )
+        self.lvm.lvmerge(  self.path )
         BlockVolume.delete(self)
         for snapshot in orig.snapshot_set.all():
             snapshot.mount()
@@ -656,256 +469,6 @@ class LogicalVolumeDevice(capabilities.Device):
         capabilities.SubvolumesCapability,
         capabilities.SubvolumeSnapshotCapability,
         ]
-
-
-
-
-
-class LVChainedModule(models.Model):
-    """ Represents block device oriented modules that create a block device
-        themselves, like DRBD or openDedup. This class only manages the
-        ordering and the link to the LV.
-    """
-
-    volume      = models.ForeignKey(LogicalVolume)
-    ordering    = models.IntegerField(default=0)
-
-    standby     = False
-
-    @property
-    def basedev(self):
-        """ Return the device on which this mod is operating. """
-        mc = self.volume.modchain
-        if mc[0] == self:
-            return self.volume.device
-        else:
-            last = self.volume
-            for curr in mc:
-                if curr == self:
-                    return last.path
-                last = curr
-
-    def setupfs(self):
-        return self.volume.setupfs()
-
-    def install(self):
-        return
-
-    def resize(self, jid):
-        return
-
-    def uninstall(self):
-        return
-
-    class Meta:
-        unique_together = ("volume", "ordering")
-        abstract = True
-
-    def save( self, *args, **kwargs ):
-        if not self.id:
-            self.install()
-        return models.Model.save(self, *args, **kwargs)
-
-    def delete(self):
-        self.uninstall()
-        models.Model.delete(self)
-
-
-
-class ZfsSubvolume(models.Model):
-    volume      = models.ForeignKey(LogicalVolume)
-    volname     = models.CharField(max_length=50)
-
-    lvm = LogicalVolume.lvm
-    objects = getHostDependentManagerClass("volume__vg__host")()
-    all_objects = models.Manager()
-
-    filesystem  = "zfs"
-
-    def __init__( self, *args, **kwargs ):
-        models.Model.__init__( self, *args, **kwargs )
-        self._lvm = None
-        self._fs = None
-
-    def clean(self):
-        from django.core.exceptions import ValidationError
-        if self.volume.filesystem != Zfs.name:
-            raise ValidationError('This share type can only be used on ZFS volumes.')
-
-    @property
-    def name(self):
-        return "%s/%s" % (self.volume.name, self.volname)
-
-    @property
-    def fs(self):
-        """ An instance of the filesystem handler class for this Subvolume. """
-        if self._fs is None:
-            self._fs = Zfs(self)
-        return self._fs
-
-    @property
-    def path(self):
-        return self.volume.path
-
-    def save( self, *args, **kwargs ):
-        ret = models.Model.save(self, *args, **kwargs)
-        self.volume._build_job()
-        self.volume.fs.create_subvolume(self.volume._jid, self)
-        self.volume._enqueue_job()
-        return ret
-
-    def delete( self ):
-        for snap in self.zfssnapshot_set.all():
-            snap.delete()
-        ret = models.Model.delete(self)
-        self.volume.fs.destroy_subvolume(self)
-        return ret
-
-    @property
-    def owner(self):
-        return self.volume.owner
-
-    @property
-    def fswarning(self):
-        return self.volume.fswarning
-
-    @property
-    def fscritical(self):
-        return self.volume.fscritical
-
-class ZfsSnapshot(models.Model):
-    volume      = models.ForeignKey(LogicalVolume)
-    subvolume   = models.ForeignKey(ZfsSubvolume, blank=True, null=True)
-    snapname    = models.CharField(max_length=50)
-    created_at  = models.DateTimeField(auto_now_add=True)
-
-    lvm = LogicalVolume.lvm
-    objects = getHostDependentManagerClass("volume__vg__host")()
-    all_objects = models.Manager()
-
-    def __init__( self, *args, **kwargs ):
-        if "volume" not in kwargs and "subvolume" in kwargs:
-            kwargs["volume"] = kwargs["subvolume"].volume
-        models.Model.__init__( self, *args, **kwargs )
-        self._lvm = None
-        self._fs  = None
-
-    def full_clean(self):
-        # this needs to be run before the fields are checked
-        try:
-            self.volume
-        except LogicalVolume.DoesNotExist:
-            if self.subvolume is not None:
-                self.volume = self.subvolume.volume
-            else:
-                raise
-        return models.Model.full_clean(self)
-
-    def clean(self):
-        from django.core.exceptions import ValidationError
-        if self.volume.filesystem != Zfs.name:
-            raise ValidationError('This share type can only be used on ZFS volumes.')
-
-    @property
-    def origvolume(self):
-        if self.subvolume:
-            return self.subvolume
-        return self.volume
-
-    @property
-    def name(self):
-        return "%s@%s" % (self.origvolume.name, self.snapname)
-
-    @property
-    def fs(self):
-        """ An instance of the filesystem handler class for this Subvolume. """
-        if self._fs is None:
-            self._fs = Zfs(self)
-        return self._fs
-
-    @property
-    def path(self):
-        return self.volume.path
-
-    def save( self, *args, **kwargs ):
-        self.volume._build_job()
-        self.volume.fs.create_snapshot(self.volume._jid, self)
-        self.volume._enqueue_job()
-        return models.Model.save(self, *args, **kwargs)
-
-    def delete( self, database_only=False ):
-        if not database_only:
-            self.volume.fs.destroy_snapshot(self)
-        return models.Model.delete(self)
-
-    def rollback( self ):
-        if self.subvolume is not None:
-            kwds = {"subvolume": self.subvolume}
-        else:
-            kwds = {"subvolume__isnull": True}
-        kwds["volume"] = self.volume
-        kwds["created_at__gt"] = self.created_at
-        print kwds
-        for snap in ZfsSnapshot.objects.filter(**kwds):
-            snap.delete(database_only=True) # -R will take care of them in the system
-        self.volume.fs.rollback_snapshot(self)
-
-
-
-class BtrfsSubvolume(models.Model):
-    volume   = models.ForeignKey(LogicalVolume)
-    name     = models.CharField(max_length=255)
-    snapshot = models.ForeignKey("self", blank=True, null=True, related_name="snapshot_set")
-    readonly = models.BooleanField(default=False)
-
-    objects = getHostDependentManagerClass("volume__vg__host")()
-    all_objects = models.Manager()
-
-    filesystem = "btrfs"
-
-    class Meta:
-        unique_together=("volume", "name")
-
-    def __unicode__(self):
-        if self.snapshot is None:
-            return "Subvolume %s/%s" % (self.volume.name, self.name)
-        else:
-            return "Snapshot %s/%s/%s" % (self.volume.name, self.snapshot.name, self.name)
-
-    @property
-    def path(self):
-        if self.snapshot is not None:
-            return os.path.join(self.volume.mountpoint, ".snapshots", self.snapshot.name, self.name)
-        return os.path.join(self.volume.mountpoint, self.name)
-
-    def save( self, database_only=False, *args, **kwargs ):
-        ret = models.Model.save(self, *args, **kwargs)
-        if not database_only:
-            self.volume.fs.create_subvolume(self)
-        return ret
-
-    def delete( self ):
-        for snap in self.snapshot_set.all():
-            snap.delete()
-        ret = models.Model.delete(self)
-        self.volume.fs.delete_subvolume(self)
-        return ret
-
-    @property
-    def owner(self):
-        return self.volume.owner
-
-    @property
-    def fswarning(self):
-        return self.volume.fswarning
-
-    @property
-    def fscritical(self):
-        return self.volume.fscritical
-
-    @property
-    def fs(self):
-        return self.volume.fs
 
 
 

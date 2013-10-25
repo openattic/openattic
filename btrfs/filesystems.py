@@ -15,7 +15,13 @@
 """
 
 import os
+import os.path
+import dbus
 
+from systemd  import wrap_as_job
+from django.conf import settings
+
+from volumes.conf import settings as volumes_settings
 from volumes.filesystems.filesystem import FileSystem
 from volumes import capabilities
 
@@ -27,14 +33,37 @@ class Btrfs(FileSystem):
     def info(self):
         return {}
 
+    @property
+    def dbus_object(self):
+        return dbus.SystemBus().get_object(settings.DBUS_IFACE_SYSTEMD, "/btrfs")
+
+    @wrap_as_job
     def format(self, jid):
-        self._lvm.btrfs_format( jid, self.lv.path )
+        self.dbus_object.format( jid, self.lv.path )
         self.mount(jid)
         self.chown(jid)
-        self._lvm.btrfs_create_subvolume(jid, os.path.join(self.mountpoint, "default"))
-        from lvm.models import BtrfsSubvolume as BtrfsSubvolumeModel
-        default = BtrfsSubvolumeModel(volume=self.lv, name="default")
-        default.save(database_only=True)
+        self.dbus_object.create_subvolume(jid, os.path.join(self.path, "default"))
+
+    @property
+    def path(self):
+        return os.path.join(volumes_settings.MOUNT_PREFIX, self.volume.fullname)
+
+    @property
+    def mounted(self):
+        return os.path.ismount(os.path.join(volumes_settings.MOUNT_PREFIX, self.volume.btrfs.name))
+
+    @classmethod
+    def check_type(cls, typestring):
+        return False
+
+    def create_subvolume(self, path):
+        self.dbus_object.create_subvolume(path)
+
+    def create_snapshot(self, origpath, snappath, readonly):
+        self.dbus_object.create_snapshot(origpath, snappath, readonly)
+
+    def delete_subvolume(self, path):
+        self.dbus_object.delete_subvolume(path)
 
 class BtrfsDevice(capabilities.Device):
     requires = [
@@ -59,5 +88,8 @@ class BtrfsDevice(capabilities.Device):
         capabilities.BlockIOCapability,
         ]
 
-class BtrfsSubvolume(capabilities.Device):
+class BtrfsSubvolumeDevice(capabilities.Device):
     requires = BtrfsDevice
+
+
+

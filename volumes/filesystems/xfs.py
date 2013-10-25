@@ -14,10 +14,7 @@
  *  GNU General Public License for more details.
 """
 
-import os.path
-
-from lvm.blockdevices import UnsupportedRAID, get_raid_params
-
+from volumes.blockdevices import UnsupportedRAID
 from volumes.filesystems.filesystem import FileSystem
 from volumes import capabilities
 
@@ -32,7 +29,7 @@ class Xfs(FileSystem):
 
     def get_agcount(self, megs=None):
         if megs is None:
-            megs = self.lv.megs
+            megs = self.volume.megs
         usablesize   = megs * 1024 * 1024
         usableblocks = int( usablesize / 4096 )
 
@@ -58,11 +55,11 @@ class Xfs(FileSystem):
 
     def format(self, jid):
         try:
-            raidparams = get_raid_params(self.lv.vg.get_pvs()[0]["LVM2_PV_NAME"])
+            raidparams = self.volume.base.volume.raid_params
         except UnsupportedRAID:
             raidparams = {"chunksize": -1, "datadisks": -1}
 
-        self._lvm.xfs_format( jid, self.lv.path, raidparams["chunksize"], raidparams["datadisks"], self.agcount )
+        self.dbus_object.xfs_format( jid, self.volume.base.volume.path, raidparams["chunksize"], raidparams["datadisks"], self.agcount )
         self.mount(jid)
         self.chown(jid)
 
@@ -72,7 +69,7 @@ class Xfs(FileSystem):
     def resize(self, jid, grow):
         if not grow:
             raise SystemError("XFS does not support shrinking.")
-        self._lvm.xfs_resize( jid, self.mountpoint, self.lv.megs )
+        self.dbus_object.xfs_resize( jid, self.volume.base.volume.path, self.volume.megs )
 
     @classmethod
     def check_type(cls, typestring):

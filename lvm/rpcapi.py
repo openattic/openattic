@@ -22,8 +22,6 @@ from rpcd.handlers import ProxyModelHandler
 from ifconfig.rpcapi import HostHandler
 
 from lvm.models import VolumeGroup, LogicalVolume, \
-                       ZfsSubvolume, ZfsSnapshot, \
-                       BtrfsSubvolume, \
                        LVMetadata, \
                        LVSnapshotJob, SnapshotConf
 from lvm import blockdevices
@@ -31,6 +29,7 @@ from lvm import initscripts
 from lvm import udevquery
 from ifconfig.models import Host
 from peering.models import PeerHost
+from volumes.rpcapi import AbstractVolumePoolHandler, AbstractBlockVolumeHandler
 
 from rpcd.exceptionhelper import translate_exception
 from xmlrpclib import Fault
@@ -71,79 +70,26 @@ class BlockDevicesHandler(BaseHandler):
         """ Get all partitions from a given device. """
         return blockdevices.get_partitions(device)
 
-    def get_disk_stats(self, device):
-        """ Get Kernel disk stats for a given device. """
-        return blockdevices.get_disk_stats(device)
-
     def get_lvm_capabilities(self):
         return blockdevices.get_lvm_capabilities()
 
-class VgHandler(ModelHandler):
+class VgHandler(AbstractVolumePoolHandler):
     model = VolumeGroup
     order = ("name",)
-
-    def join_device(self, id, device):
-        """ Join the given device into this Volume Group. """
-        if device.startswith("/dev"):
-            raise ValueError("device must be given without leading /dev")
-        vg = VolumeGroup.objects.get(id=id)
-        return vg.join_device(device)
 
     def create(self, data):
         if "host" not in data:
             data["host"] = self._get_handler_instance(Host).current_id()
         return ModelHandler.create(self, data)
 
-    def get_free_megs(self, id):
-        """ Get amount of free space in a Volume Group. """
-        return VolumeGroup.objects.get(id=id).lvm_free_megs
-
     def lvm_info(self, id):
         """ Return information about the LV retrieved from LVM. """
         vg = VolumeGroup.objects.get(id=id)
         return vg.lvm_info
 
-class LvHandler(ModelHandler):
+class LvHandler(AbstractBlockVolumeHandler):
     model = LogicalVolume
     order = ("name",)
-
-    def _override_get(self, obj, data):
-        if obj.fs:
-            hosthandler = self._get_handler_instance(Host)
-            data['filesystem'] = obj.fsname
-            data['fs'] = {
-                'mountpoint':  obj.mountpoint,
-                'topleveldir': obj.topleveldir,
-                'mounted':     obj.mounted,
-                'host':        hosthandler._idobj(obj.mounthost)
-                }
-            if obj.mounted:
-                data['fs']['stat'] = obj.stat
-        else:
-            data['fs'] = None
-        data["status"] = obj.status
-        return data
-
-    def avail_fs(self):
-        """ Return a list of available file systems. """
-        from lvm.filesystems import FILESYSTEMS
-        return [ {'name': fs.name, 'desc': fs.desc,
-            'supports_dedup': fs.supports_dedup,
-            'supports_compression': fs.supports_compression,
-            } for fs in FILESYSTEMS if not fs.virtual ]
-
-    def get_shares(self, id):
-        """ Return ID objects for shares that are configured for the given volume. """
-        lv = LogicalVolume.objects.get(id=id)
-        return [ ModelHandler._get_handler_for_model(sh.__class__)(self.user)._idobj(sh)
-            for sh in lv.get_shares() ]
-
-    def fs_info(self, id):
-        """ Return detailed information about the given file system. """
-        lv = LogicalVolume.objects.get(id=id)
-        if lv.fs:
-            return lv.fs_info
-        return {}
 
     def lvm_info(self, id):
         """ Return information about the LV retrieved from LVM. """
@@ -155,53 +101,9 @@ class LvHandler(ModelHandler):
         lv = LogicalVolume.objects.get(id=id)
         return lv.disk_stats
 
-    def mount(self, id):
-        """ Mount the given volume if it is not currently mounted. """
-        lv = LogicalVolume.objects.get(id=id)
-        if lv.fs and not lv.mounted:
-            return lv.mount()
-        return False
-
-    def unmount(self, id):
-        """ Unmount the given volume if it is currently mounted. """
-        lv = LogicalVolume.objects.get(id=id)
-        if lv.fs and lv.mounted:
-            return lv.unmount()
-        return False
-
-    def is_mounted(self, id):
-        """ Check if the given volume is currently mounted. """
-        lv = LogicalVolume.objects.get(id=id)
-        return lv.fs and lv.mounted
-
-    def is_in_standby(self, id):
-        """ Check if the given volume is currently in standby. """
-        lv = LogicalVolume.objects.get(id=id)
-        return lv.standby
-
-    def get_initscripts(self):
-        return initscripts.get_initscripts()
-
-    def get_initscript_info(self, script):
-        return initscripts.get_initscript_info(script)
-
-    def run_initscript(self, id, script):
-        lv = LogicalVolume.objects.get(id=id)
-        return initscripts.run_initscript(lv, script)
-
     def merge(self, id):
         """ Merge the snapshot given by `id` back into the original volume. """
         LogicalVolume.objects.get(id=id).merge()
-
-    def iostat(self, id):
-        lv = LogicalVolume.objects.get(id=id)
-        fd = open("/sys/block/%s/stat" % lv.dmdevice[5:], "rb")
-        currstate = dict(zip((
-            "rd_ios", "rd_merges", "rd_sectors", "rd_ticks",
-            "wr_ios", "wr_merges", "wr_sectors", "wr_ticks",
-            "ios_in_prog", "tot_ticks", "rq_ticks"
-        ), fd.read().split()))
-        return currstate
 
 
 class LVMetadataHandler(ModelHandler):
@@ -209,19 +111,6 @@ class LVMetadataHandler(ModelHandler):
 
 class LVSnapshotJobHandler(ModelHandler):
     model = LVSnapshotJob
-
-class ZfsSubvolumeHandler(ModelHandler):
-    model = ZfsSubvolume
-
-class ZfsSnapshotHandler(ModelHandler):
-    model = ZfsSnapshot
-
-    def rollback(self, id):
-        """ Rollback the volume to the snapshot given by `id`. """
-        return ZfsSnapshot.objects.get(id=id).rollback()
-
-class BtrfsSubvolumeHandler(ModelHandler):
-    model = BtrfsSubvolume
 
 class VgProxy(ProxyModelHandler, VgHandler):
     def get_free_megs(self, id):
@@ -240,17 +129,6 @@ class VgProxy(ProxyModelHandler, VgHandler):
 class LvProxy(ProxyModelHandler, LvHandler):
     model = LogicalVolume
 
-    def avail_fs(self):
-        h = LvHandler(self.user)
-        return h.avail_fs()
-
-    def get_shares(self, id):
-        return self._call_singlepeer_method("get_shares", id)
-
-    def fs_info(self, id):
-        """ Return detailed information about the given file system. """
-        return self._call_singlepeer_method("fs_info", id)
-
     def lvm_info(self, id):
         """ Return information about the LV retrieved from LVM. """
         return self._call_singlepeer_method("lvm_info", id)
@@ -258,22 +136,6 @@ class LvProxy(ProxyModelHandler, LvHandler):
     def disk_stats(self, id):
         """ Return disk stats from the LV retrieved from the kernel. """
         return self._call_singlepeer_method("disk_stats", id)
-
-    def mount(self, id):
-        """ Mount the given volume if it is not currently mounted. """
-        return self._call_singlepeer_method("mount", id)
-
-    def unmount(self, id):
-        """ Unmount the given volume if it is currently mounted. """
-        return self._call_singlepeer_method("unmount", id)
-
-    def is_mounted(self, id):
-        """ Check if the given volume is currently mounted. """
-        return self._call_singlepeer_method("is_mounted", id)
-
-    def is_in_standby(self, id):
-        """ Check if the given volume is currently in standby. """
-        return self._call_singlepeer_method("is_in_standby", id)
 
     def create(self, data):
         if "id" in data:
@@ -293,21 +155,6 @@ class LvProxy(ProxyModelHandler, LvHandler):
             except Fault, flt:
                 raise translate_exception(flt)
 
-    def run_initscript(self, id, script):
-        return self._call_singlepeer_method("run_initscript", id, script)
-
-    def iostat(self, id):
-        return self._call_singlepeer_method("iostat", id)
-
-class ZfsSubvolumeProxy(ProxyModelHandler, ZfsSubvolumeHandler):
-    model = ZfsSubvolume
-
-class ZfsSnapshotProxy(ProxyModelHandler, ZfsSnapshotHandler):
-    model = ZfsSnapshot
-
-class BtrfsSubvolumeProxy(ProxyModelHandler, BtrfsSubvolumeHandler):
-    model = BtrfsSubvolume
-
 class SnapshotConfHandler(ModelHandler):
     model = SnapshotConf
 
@@ -321,8 +168,6 @@ RPCD_HANDLERS = [
     DiskHandler,
     BlockDevicesHandler,
     VgProxy, LvProxy,
-    ZfsSubvolumeProxy, ZfsSnapshotProxy,
-    BtrfsSubvolumeProxy,
     LVMetadataHandler,
     LVSnapshotJobHandler,
     SnapshotConfHandler

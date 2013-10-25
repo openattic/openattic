@@ -14,9 +14,7 @@
  *  GNU General Public License for more details.
 """
 
-import os
-from time import time
-from systemd import invoke, logged, BasePlugin, method, signal
+from systemd import invoke, logged, BasePlugin, method
 
 @logged
 class SystemD(BasePlugin):
@@ -75,12 +73,12 @@ class SystemD(BasePlugin):
         return invoke(["zpool", "destroy", device])
 
     @method(in_signature="isss", out_signature="")
-    def zfs_format(self, jid, devpath, label, mountpoint):
-        self.job_add_command(jid, ["zpool", "create", "-m", mountpoint, label, devpath])
+    def zfs_format(self, jid, devpath, label, path):
+        self.job_add_command(jid, ["zpool", "create", "-m", path, label, devpath])
 
-    @method(in_signature="iss", out_signature="")
-    def zfs_create_volume(self, jid, pool, volume):
-        self.job_add_command(jid, ["zfs", "create", "%s/%s" % (pool, volume)])
+    @method(in_signature="ss", out_signature="i")
+    def zfs_create_volume(self, pool, volume):
+        return invoke(["zfs", "create", "%s/%s" % (pool, volume)])
 
     @method(in_signature="ss", out_signature="i")
     def zfs_destroy_volume(self, pool, volume):
