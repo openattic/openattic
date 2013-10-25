@@ -433,7 +433,7 @@ var setConfigForNode = function(node, data){
   }
   else{
     img_self = "green";
-    img_parent, img_childs = "gray";
+    img_parent = img_childs = "gray";
   }
 
   node.set("iconCls", node.data.csscl[img_self]);
@@ -565,7 +565,6 @@ var wizform = Ext.create("Ext.oa.WizPanel", {
             listeners : {
               click : function(btn, e){
                 setConfigForNode(wizform.activeNode, this.ownerCt.ownerCt.getValues());
-                console.log(config);
               }
             }
           });
