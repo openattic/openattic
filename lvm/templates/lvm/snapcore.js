@@ -114,7 +114,6 @@ Ext.define("Ext.oa.WizPanel", {
     this.pnl_hist.pop();
     this.layout.setActiveItem(this.pnl_hist[this.pnl_hist.length - 1]);
   },
-
   initComponent: function(){
     for(var i = this.items.length - 1; i >= 0; i--){
       var item = this.items[i];
@@ -513,9 +512,6 @@ var wizform = Ext.create("Ext.oa.WizPanel", {
         for(var j=0; j < configForms.length; j++){
           var btn_save = Ext.create("Ext.button.Button", {
             constructor: function(){
-              this.addEvents({
-                "setConfigData": true
-              });
               return this;
             },
             text: gettext('Save'),
@@ -523,7 +519,6 @@ var wizform = Ext.create("Ext.oa.WizPanel", {
             listeners : {
               click : function(btn, e){
                 setConfigForNode(wizform.activeNode, this.ownerCt.ownerCt.getValues());
-                this.fireEvent("setConfigData", this, config);
                 console.log(config);
               }
             }
