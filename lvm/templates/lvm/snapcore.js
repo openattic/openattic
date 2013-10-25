@@ -408,7 +408,53 @@ var getConfigForNode = function(node){
 }
 
 var setConfigForNode = function(node, data){
-  return getConfigForNode(node).data = data;
+  var img_self, img_parent, img_childs;
+  var config = getConfigForNode(node);
+  config.data = data;
+
+  if(typeof data === "undefined" || data === null){
+    img_self, img_parent, img_childs = "empty";
+
+    if(node.isLeaf()){
+      if(getConfigForNode(node.parentNode) !== null){
+        img_self = "gray";
+      }
+    }
+    else
+    {
+      for(var i=0; i < node.childNodes.length; i++)
+      {
+        if(getConfigForNode(node.childNodes[i]) !== null){
+          img_self = "gray";
+          break;
+        }
+      }
+    }
+  }
+  else{
+    img_self = "green";
+    img_parent, img_childs = "gray";
+  }
+
+  node.set("iconCls", node.data.csscl[img_self]);
+
+  if(node.isLeaf()){
+    var parentConf = getConfigForNode(node.parentNode);
+    if(parentConf.data === null){
+      node.parentNode.set("iconCls", node.parentNode.data.csscl[img_parent]);
+    }
+  }
+  else{
+    for(var i=0; i < node.childNodes.length; i++)
+    {
+      var childConf = getConfigForNode(node.childNodes[i]);
+      if(childConf.data === null){
+        node.childNodes[i].set("iconCls", node.childNodes[i].data.csscl[img_childs]);
+      }
+    }
+  }
+
+  return config;
 }
 
 var nextElement = function(item, e){
