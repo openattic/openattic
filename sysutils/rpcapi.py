@@ -14,6 +14,7 @@
  *  GNU General Public License for more details.
 """
 
+import os
 import dbus
 from time import time
 
@@ -21,6 +22,7 @@ from django.conf import settings
 
 from rpcd.handlers import BaseHandler, ModelHandler
 from sysutils.models import InitScript
+from sysutils import sysstats
 
 class SysUtilsHandler(BaseHandler):
     handler_name = "sysutils.System"
@@ -40,6 +42,25 @@ class SysUtilsHandler(BaseHandler):
     def set_time(self, timestamp):
         """ Set the current system time from the given `timestamp`. """
         return dbus.SystemBus().get_object(settings.DBUS_IFACE_SYSTEMD, "/sysutils").set_time(timestamp)
+
+    def get_load_avg(self):
+        """ Return the number of processes in the system run queue averaged over the last 1, 5, and 15 minutes. """
+        return os.getloadavg()
+
+    def get_cpu_percent(self):
+        """ Return CPU utilization indicators in percent. """
+        return sysstats.get_cpu_percent()
+
+    def get_system_boot_time(self):
+        """ Return the time the system was booted (in seconds since the epoch). """
+        return sysstats.get_system_boot_time()
+
+    def get_meminfo(self):
+        """ Return memory use indicators in MiB. """
+        meminfo = sysstats.get_meminfo()
+        return dict([(key, meminfo[key] / 1024.) for key in
+            ('MemTotal', 'MemFree', 'Buffers', 'Cached')])
+
 
 class InitScriptHandler(ModelHandler):
     model = InitScript
