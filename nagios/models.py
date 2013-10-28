@@ -121,61 +121,6 @@ class Service(models.Model):
         return RRD(xmlpath)
 
 
-def create_service_for_lv(**kwargs):
-    lv = kwargs["instance"]
-
-    cmd = Command.objects.get(name=nagios_settings.LV_UTIL_CHECK_CMD)
-    if lv.filesystem:
-        if Service.objects.filter(command=cmd, volume=lv).count() == 0:
-            serv = Service(
-                host        = None,
-                volume      = lv,
-                command     = cmd,
-                description = nagios_settings.LV_UTIL_DESCRIPTION % lv.name,
-                arguments   = "%d%%!%d%%!%s" % (100 - lv.fswarning, 100 - lv.fscritical, lv.mountpoint)
-                )
-            serv.save()
-        else:
-            # update the arguments because warn/crit may have changed
-            serv = Service.objects.get(command=cmd, volume=lv, arguments__endswith=lv.mountpoint)
-            serv.arguments = "%d%%!%d%%!%s" % (100 - lv.fswarning, 100 - lv.fscritical, lv.mountpoint)
-            serv.save()
-
-    cmd = Command.objects.get(name=nagios_settings.LV_PERF_CHECK_CMD)
-    if Service.objects.filter(command=cmd, volume=lv).count() == 0:
-        serv = Service(
-            host        = None,
-            volume      = lv,
-            command     = cmd,
-            description = nagios_settings.LV_PERF_DESCRIPTION % lv.name,
-            arguments   = lv.device
-            )
-        serv.save()
-
-    if lv.snapshot:
-        cmd = Command.objects.get(name=nagios_settings.LV_SNAP_CHECK_CMD)
-        if Service.objects.filter(command=cmd, volume=lv).count() == 0:
-            serv = Service(
-                host        = None,
-                volume      = lv,
-                command     = cmd,
-                description = nagios_settings.LV_SNAP_DESCRIPTION % lv.name,
-                arguments   = lv.name
-                )
-            serv.save()
-
-    if "OACONFIG" not in os.environ:
-        Service.write_conf()
-
-
-def delete_service_for_lv(**kwargs):
-    lv = kwargs["instance"]
-    for serv in Service.objects.filter(volume=lv):
-        serv.delete()
-
-    Service.write_conf()
-
-
 def update_contacts(**kwargs):
     nag = dbus.SystemBus().get_object(settings.DBUS_IFACE_SYSTEMD, "/nagios")
     nag.write_contacts()
@@ -214,9 +159,6 @@ def delete_service_for_ip(**kwargs):
 
     Service.write_conf()
 
-
-signals.post_save.connect(  create_service_for_lv, sender=LogicalVolume )
-signals.pre_delete.connect( delete_service_for_lv, sender=LogicalVolume )
 
 signals.post_save.connect(   update_contacts, sender=User )
 signals.post_delete.connect( update_contacts, sender=User )
