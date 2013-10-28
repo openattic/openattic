@@ -29,7 +29,6 @@ from django.contrib.auth.models import User
 from django.contrib.contenttypes.models import ContentType
 from django.contrib.contenttypes import generic
 
-from lvm.models import LogicalVolume
 from ifconfig.models import Host, IPAddress, HostDependentManager
 
 from nagios.conf import settings as nagios_settings
@@ -55,23 +54,8 @@ class Graph(models.Model):
         return "%s: %s" % (self.command.name, self.title)
 
 
-class ServiceManager(HostDependentManager):
-    def get_query_set(self):
-        """ Return services that are either associated with this host directly,
-            or with a volume in a group associated with this host.
-        """
-        return self.services_for_host(Host.objects.get_current())
-
-    def services_for_host(self, host):
-        """ Return services configured on a specific host. """
-        return models.Manager.get_query_set(self).filter(
-            Q(host=host, volume=None) |
-            Q(host=None, volume__in=LogicalVolume.all_objects.filter(vg__host=host)))
-
-
 class Service(models.Model):
     host        = models.ForeignKey(Host, blank=True, null=True)
-    volume      = models.ForeignKey(LogicalVolume, blank=True, null=True)
     target_type = models.ForeignKey(ContentType, blank=True, null=True)
     target_id   = models.PositiveIntegerField(blank=True, null=True)
     target      = generic.GenericForeignKey("target_type", "target_id")
@@ -80,7 +64,7 @@ class Service(models.Model):
     arguments   = models.CharField(max_length=500, blank=True)
 
     nagstate    = NagiosState()
-    objects     = ServiceManager()
+    objects     = HostDependentManager()
     all_objects = models.Manager()
 
     class Meta:
