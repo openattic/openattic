@@ -131,7 +131,8 @@ class SystemD(dbus.service.Object):
         self.deferred = []
 
     def call_deferred(self, func, *args, **kwargs):
-        self.deferred.append((func, args, kwargs))
+        if func not in [call[0] for call in self.deferred]:
+            self.deferred.append((func, args, kwargs))
         signal.signal(signal.SIGALRM, self.run_deferred_calls)
         signal.alarm(1)
 
