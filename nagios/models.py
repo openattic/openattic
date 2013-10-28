@@ -26,6 +26,8 @@ from django.db.models import signals
 from django.db.models import Q
 from django.utils.translation   import ugettext_lazy as _
 from django.contrib.auth.models import User
+from django.contrib.contenttypes.models import ContentType
+from django.contrib.contenttypes import generic
 
 from lvm.models import LogicalVolume
 from ifconfig.models import Host, IPAddress, HostDependentManager
@@ -70,6 +72,9 @@ class ServiceManager(HostDependentManager):
 class Service(models.Model):
     host        = models.ForeignKey(Host, blank=True, null=True)
     volume      = models.ForeignKey(LogicalVolume, blank=True, null=True)
+    target_type = models.ForeignKey(ContentType, blank=True, null=True)
+    target_id   = models.PositiveIntegerField(blank=True, null=True)
+    target      = generic.GenericForeignKey("target_type", "target_id")
     description = models.CharField(max_length=250)
     command     = models.ForeignKey(Command)
     arguments   = models.CharField(max_length=500, blank=True)
