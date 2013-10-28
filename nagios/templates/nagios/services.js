@@ -362,19 +362,11 @@ Ext.define('Ext.oa.Nagios__Service_Panel', {
             pageParam:  undefined
           },
           fields: ['id', 'description', {
-            name: "volumename",    mapping: "volume", convert: toUnicode
+            name: "targetname",    mapping: "target", convert: toUnicode
           }, {
             name: "hostname",
-            mapping: "state",
-            convert: function(val, row){
-              if(val && val.host_name !== "localhost"){
-                return val.host_name;
-              }
-              else if(row.host){
-                return row.host.name;
-              }
-              return "";
-            }
+            mapping: "host",
+            convert: toUnicode
           }, {
             name: "plugin_output", mapping: "state",  convert: function(val, row){ if(val){ return val.plugin_output; }}
           }, {
@@ -412,9 +404,9 @@ Ext.define('Ext.oa.Nagios__Service_Panel', {
           width: 200,
           dataIndex: "plugin_output"
         }, {
-          header: gettext('Volume'),
+          header: gettext('Target'),
           width: 100,
-          dataIndex: "volumename"
+          dataIndex: "targetname"
         }, {
           header: gettext('Host'),
           width: 100,
