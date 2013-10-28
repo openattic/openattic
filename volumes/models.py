@@ -192,7 +192,6 @@ class BlockVolume(AbstractVolume):
 
 if HAVE_NAGIOS:
     def __create_service_for_blockvolume(instance, **kwargs):
-        print "srs save", instance
         cmd = Command.objects.get(name=nagios_settings.LV_PERF_CHECK_CMD)
         srv = Service(
             host        = instance.host,
@@ -212,7 +211,6 @@ if HAVE_NAGIOS:
         if issubclass(sender, BlockVolume):
             signals.post_save.connect(  __create_service_for_blockvolume, sender=sender)
             signals.post_delete.connect(__delete_service_for_blockvolume, sender=sender)
-            print "srs signals", sender
 
     signals.class_prepared.connect(__connect_signals_for_blockvolume)
 
@@ -315,7 +313,6 @@ if HAVE_NAGIOS:
         if issubclass(sender, FileSystemVolume):
             signals.post_save.connect(  __create_service_for_blockvolume, sender=sender)
             signals.post_delete.connect(__delete_service_for_blockvolume, sender=sender)
-            print "srs signals", sender
 
     signals.class_prepared.connect(__connect_signals_for_filesystemvolume)
 
