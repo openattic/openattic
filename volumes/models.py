@@ -197,7 +197,7 @@ if HAVE_NAGIOS:
             host        = instance.host,
             target      = instance,
             command     = cmd,
-            description = nagios_settings.LV_PERF_DESCRIPTION % instance.name,
+            description = nagios_settings.LV_PERF_DESCRIPTION % unicode(instance),
             arguments   = instance.path
         )
         srv.save()
@@ -299,7 +299,7 @@ if HAVE_NAGIOS:
             host        = instance.host,
             target      = instance,
             command     = cmd,
-            description = nagios_settings.LV_UTIL_DESCRIPTION % instance.name,
+            description = nagios_settings.LV_UTIL_DESCRIPTION % unicode(instance),
             arguments   = instance.path
         )
         srv.save()
