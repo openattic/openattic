@@ -34,7 +34,6 @@ import sysutils.models
 from ifconfig.models  import Host
 from lvm              import blockdevices
 from lvm.models       import VolumeGroup, LogicalVolume
-from lvm.filesystems  import get_by_name as get_fs_by_name
 
 def create_vgs(**kwargs):
     lvm = dbus.SystemBus().get_object(settings.DBUS_IFACE_SYSTEMD, "/lvm")
@@ -79,29 +78,7 @@ def create_vgs(**kwargs):
                 continue
 
             lv = LogicalVolume(name=lvname, megs=float(lvs[lvname]["LVM2_LV_SIZE"]), vg=vg, owner=admin, uuid=lvs[lvname]["LVM2_LV_UUID"])
-
-            for mnt in mounts:
-                if mnt[0] in ( "/dev/%s/%s" % ( vg.name, lvname ), "/dev/mapper/%s-%s" % ( vg.name, lvname ) ):
-                    try:
-                        get_fs_by_name( mnt[2] )
-                    except AttributeError:
-                        pass
-                    else:
-                        lv.filesystem = mnt[2]
-
-            for zfsvol in zfs:
-                if lvname == zfsvol[0]:
-                    lv.filesystem = "zfs"
-
-            if not lv.filesystem:
-                fs = lv.detect_fs()
-                if fs is not None:
-                    lv.filesystem = fs.name
-
-            if lv.filesystem:
-                lv.formatted = True
-
-            print lv.name, lv.megs, lv.vg.name, lv.owner.username, lv.filesystem
+            print lv.name, lv.megs, lv.vg.name, lv.owner.username
             lv.save(database_only=True)
 
         else:

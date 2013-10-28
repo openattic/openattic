@@ -308,14 +308,6 @@ class LogicalVolume(BlockVolume):
                     pass
         return self._fs
 
-    def detect_fs(self):
-        """ Try to detect the file system using `file'. """
-        typestring = self.lvm.get_type(self.path)
-        for fs in FILESYSTEMS:
-            if fs.check_type(typestring):
-                return fs
-        return None
-
     @property
     def lvm_info(self):
         """ LV information from LVM. """
@@ -378,8 +370,6 @@ class LogicalVolume(BlockVolume):
                 raise ValidationError(_('The vg field is required unless you are creating a snapshot.'))
         elif self.snapshot.snapshot:
             raise ValidationError(_('LVM does not support snapshotting snapshots.'))
-        if self.filesystem:
-            self.fs.clean_volume(self)
 
     def save( self, database_only=False, *args, **kwargs ):
         if database_only:
@@ -390,8 +380,6 @@ class LogicalVolume(BlockVolume):
         if self.snapshot:
             self.owner = self.snapshot.owner
             self.vg    = self.snapshot.vg
-            self.filesystem = self.snapshot.filesystem
-            self.formatted  = self.snapshot.formatted
 
         if self.id is not None:
             old_self = LogicalVolume.objects.get(id=self.id)
@@ -421,17 +409,9 @@ class LogicalVolume(BlockVolume):
         for share in self.get_shares():
             share.delete()
 
-        if self.filesystem:
-            if self.mounted:
-                self.fs.unmount(-1)
-            self.fs.destroy()
-
         self.uninstall()
 
         BlockVolume.delete(self)
-
-        if self.filesystem:
-            self.lvm.write_fstab()
 
     def merge(self):
         if self.snapshot is None:
