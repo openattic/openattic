@@ -18,6 +18,7 @@ import os
 import traceback
 import logging
 import socket
+import signal
 
 from logging.handlers import SysLogHandler
 from threading import Lock
@@ -42,6 +43,8 @@ class SystemD(dbus.service.Object):
         self.bus = dbus.SystemBus()
         dbus.service.Object.__init__(self, self.bus, "/")
         self.busname = dbus.service.BusName(settings.DBUS_IFACE_SYSTEMD, self.bus)
+
+        self.deferred = []
 
         self.job_lock = Lock()
         self.job_id = 0
@@ -121,6 +124,16 @@ class SystemD(dbus.service.Object):
         del self.jobs[jid]
         self.job_lock.release()
 
+    # Deferred function execution via SIGALRM
+    def run_deferred_calls(self, sig, frame):
+        for func, args, kwargs in self.deferred:
+            func(*args, **kwargs)
+        self.deferred = []
+
+    def call_deferred(self, func, *args, **kwargs):
+        self.deferred.append((func, args, kwargs))
+        signal.signal(signal.SIGALRM, self.run_deferred_calls)
+        signal.alarm(1)
 
 
 def getloglevel(levelstr):
