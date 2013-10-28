@@ -84,8 +84,12 @@ class Service(models.Model):
 
     @property
     def state(self):
-        if self.hostname in Service.nagstate.servicemap and self.description in Service.nagstate.servicemap[self.hostname]:
-            return Service.nagstate.servicemap[self.hostname][self.description]
+        # Strip trailing space. Checks shouldn't ever be created as such, but if they
+        # are, let's at least make sure this works.
+        striphost = self.hostname.strip()
+        stripdesc = self.description.strip()
+        if striphost in Service.nagstate.servicemap and stripdesc in Service.nagstate.servicemap[striphost]:
+            return Service.nagstate.servicemap[striphost][stripdesc]
         raise KeyError("The status for this service could not be found in Nagios's status cache.")
 
     @property
