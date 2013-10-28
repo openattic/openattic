@@ -23,6 +23,7 @@ from os.path import join, exists
 
 from django.conf import settings
 from django.db import models
+from django.db.models import signals
 from django.utils.translation import ugettext_noop as _
 
 
@@ -343,3 +344,32 @@ class IPAddress(models.Model):
 
     def __unicode__(self):
         return self.address
+
+
+if "nagios" in settings.INSTALLED_APPS:
+    def __create_service_for_ipaddress(instance, **kwargs):
+        # can't import these in the module scope, because nagios imports stuff from us.
+        from nagios.models import Command, Service
+        from nagios.conf import settings as nagios_settings
+        cmd = Command.objects.get(name=nagios_settings.TRAFFIC_CHECK_CMD)
+        srv = Service(
+            host        = Host.objects.get_current(),
+            target      = instance,
+            command     = cmd,
+            description = nagios_settings.TRAFFIC_DESCRIPTION % ip.device.devname,
+            arguments   = ip.device.devname
+        )
+        srv.save()
+
+    def __delete_service_for_ipaddress(instance, **kwargs):
+        # can't import these in the module scope, because nagios imports stuff from us.
+        from nagios.models import Command, Service
+        from nagios.conf import settings as nagios_settings
+        ctype = ContentType.objects.get_for_model(instance.__class__)
+        for srv in Service.objects.filter(target_type=ctype, target_id=instance.id):
+            srv.delete()
+
+    signals.post_save.connect(  __create_service_for_ipaddress, sender=IPAddress)
+    signals.post_delete.connect(__delete_service_for_ipaddress, sender=IPAddress)
+
+

@@ -127,41 +127,5 @@ def update_contacts(**kwargs):
     nag.restart()
 
 
-def create_service_for_ip(**kwargs):
-    ip = kwargs["instance"]
-    if not ip.is_loopback:
-        try:
-            cmd = Command.objects.get(name=nagios_settings.TRAFFIC_CHECK_CMD)
-        except Command.DoesNotExist:
-            # fails during initial installation, when the ifconfig module does its iface
-            # recognition before my fixtures have been loaded.
-            pass
-        else:
-            if ip.device is not None and Service.objects.filter(command=cmd, arguments=ip.device.devname).count() == 0:
-                serv = Service(
-                    host        = Host.objects.get_current(),
-                    volume      = None,
-                    command     = cmd,
-                    description = nagios_settings.TRAFFIC_DESCRIPTION % ip.device.devname,
-                    arguments   = ip.device.devname
-                    )
-                serv.save()
-
-    if "OACONFIG" not in os.environ:
-        Service.write_conf()
-
-
-def delete_service_for_ip(**kwargs):
-    ip = kwargs["instance"]
-    cmd = Command.objects.get(name=nagios_settings.TRAFFIC_CHECK_CMD)
-    for serv in Service.objects.filter(command=cmd, arguments=ip.device.devname):
-        serv.delete()
-
-    Service.write_conf()
-
-
 signals.post_save.connect(   update_contacts, sender=User )
 signals.post_delete.connect( update_contacts, sender=User )
-
-signals.post_save.connect(  create_service_for_ip, sender=IPAddress )
-signals.pre_delete.connect( delete_service_for_ip, sender=IPAddress )
