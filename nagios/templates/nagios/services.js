@@ -362,15 +362,29 @@ Ext.define('Ext.oa.Nagios__Service_Panel', {
             pageParam:  undefined
           },
           fields: ['id', 'description', {
-            name: "targetname",    mapping: "target", convert: toUnicode
+            name: "targetname",
+            mapping: "target",
+            convert: toUnicode
           }, {
             name: "hostname",
             mapping: "host",
             convert: toUnicode
           }, {
-            name: "plugin_output", mapping: "state",  convert: function(val, row){ if(val){ return val.plugin_output; }}
+            name: "plugin_output",
+            mapping: "state",
+            convert: function(val){
+              if(val){
+                return val.plugin_output;
+              }
+            }
           }, {
-            name: "current_state", mapping: "state",  convert: function(val, row){ if(val){ return val.current_state; }}
+            name: "current_state",
+            mapping: "state",
+            convert: function(val){
+              if(val){
+                return val.current_state;
+              }
+            }
           }, {
             name: "last_check",
             mapping: "state",
