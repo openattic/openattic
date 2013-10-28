@@ -398,13 +398,13 @@ var config = {
 
 var getConfigForNode = function(node){
   var container = (node.parentNode.isRoot() ? config.plugin_data : getConfigForNode(node.parentNode).children);
-  if( typeof container[node.data.name] === "undefined" ){
-    container[node.data.name] = {
+  if( typeof container[node.data.objid] === "undefined" ){
+    container[node.data.objid] = {
       data: null,
       children: {}
     }
   }
-  return container[node.data.name];
+  return container[node.data.objid];
 }
 
 var setConfigForNode = function(node, data){
