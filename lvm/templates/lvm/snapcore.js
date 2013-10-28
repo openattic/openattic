@@ -526,7 +526,6 @@ var wizform = Ext.create("Ext.oa.WizPanel", {
       region    : 'center',
       id        : 'lvm__snapcore_wizard_treepanel',
       xtype     : 'lvm__snapcore_treepanel',
-      checkable : false,
       listeners : {
         itemclick: function(self, record, item, index, e, eOpts){
           var settings = Ext.getCmp('lvm__snapcore_wiz_snapitem_settings').layout;
@@ -1218,7 +1217,6 @@ Ext.define("Ext.oa.LVM__Snapcore_Panel", {
         width     : 280,
         height    : 990,
         xtype     : 'lvm__snapcore_treepanel',
-        checkable : false,
         showIcons : false,
         buttons   : [{
           text     : gettext('New configuration'),
