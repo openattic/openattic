@@ -18,6 +18,7 @@ import os.path
 import dbus
 
 from django.db import models
+from django.db.models import signals
 from django.conf import settings
 from django.contrib.contenttypes.models import ContentType
 from django.contrib.contenttypes import generic
@@ -26,6 +27,15 @@ from django.contrib.auth.models  import User
 
 from ifconfig.models import Host, HostDependentManager, getHostDependentManagerClass
 from volumes import blockdevices, capabilities, filesystems
+
+
+if "nagios" in settings.INSTALLED_APPS:
+    HAVE_NAGIOS = True
+    from nagios.models import Command, Service
+    from nagios.conf import settings as nagios_settings
+else:
+    HAVE_NAGIOS = False
+
 
 class DeviceNotFound(Exception):
     pass
@@ -180,6 +190,31 @@ class BlockVolume(AbstractVolume):
             ], [ int(num) for num in stats ] ) )
 
 
+if HAVE_NAGIOS:
+    def __create_service_for_blockvolume(instance, **kwargs):
+        cmd = Command.objects.get(name=nagios_settings.LV_PERF_CHECK_CMD)
+        srv = Service(
+            host        = instance.host,
+            target      = instance,
+            command     = cmd,
+            description = nagios_settings.LV_PERF_DESCRIPTION % unicode(instance),
+            arguments   = instance.path
+        )
+        srv.save()
+
+    def __delete_service_for_blockvolume(instance, **kwargs):
+        ctype = ContentType.objects.get_for_model(instance.__class__)
+        for srv in Service.objects.filter(target_type=ctype, target_id=instance.id):
+            srv.delete()
+
+    def __connect_signals_for_blockvolume(sender, **kwargs):
+        if issubclass(sender, BlockVolume):
+            signals.post_save.connect(  __create_service_for_blockvolume, sender=sender)
+            signals.post_delete.connect(__delete_service_for_blockvolume, sender=sender)
+
+    signals.class_prepared.connect(__connect_signals_for_blockvolume)
+
+
 class GenericDisk(BlockVolume):
     """ A standard disk that is NOT anything fancy (like a hardware raid). """
     host        = models.ForeignKey(Host)
@@ -255,6 +290,32 @@ class FileSystemVolume(AbstractVolume):
     @property
     def type(self):
         return self.volume.fs.name
+
+
+if HAVE_NAGIOS:
+    def __create_service_for_filesystemvolume(instance, **kwargs):
+        cmd = Command.objects.get(name=nagios_settings.LV_UTIL_CHECK_CMD)
+        srv = Service(
+            host        = instance.host,
+            target      = instance,
+            command     = cmd,
+            description = nagios_settings.LV_UTIL_DESCRIPTION % unicode(instance),
+            arguments   = instance.path
+        )
+        srv.save()
+
+    def __delete_service_for_filesystemvolume(instance, **kwargs):
+        ctype = ContentType.objects.get_for_model(instance.__class__)
+        for srv in Service.objects.filter(target_type=ctype, target_id=instance.id):
+            srv.delete()
+
+    def __connect_signals_for_filesystemvolume(sender, **kwargs):
+        if issubclass(sender, FileSystemVolume):
+            signals.post_save.connect(  __create_service_for_blockvolume, sender=sender)
+            signals.post_delete.connect(__delete_service_for_blockvolume, sender=sender)
+
+    signals.class_prepared.connect(__connect_signals_for_filesystemvolume)
+
 
 
 class FileSystemProvider(FileSystemVolume):

@@ -26,8 +26,9 @@ from django.db.models import signals
 from django.db.models import Q
 from django.utils.translation   import ugettext_lazy as _
 from django.contrib.auth.models import User
+from django.contrib.contenttypes.models import ContentType
+from django.contrib.contenttypes import generic
 
-from lvm.models import LogicalVolume
 from ifconfig.models import Host, IPAddress, HostDependentManager
 
 from nagios.conf import settings as nagios_settings
@@ -53,29 +54,17 @@ class Graph(models.Model):
         return "%s: %s" % (self.command.name, self.title)
 
 
-class ServiceManager(HostDependentManager):
-    def get_query_set(self):
-        """ Return services that are either associated with this host directly,
-            or with a volume in a group associated with this host.
-        """
-        return self.services_for_host(Host.objects.get_current())
-
-    def services_for_host(self, host):
-        """ Return services configured on a specific host. """
-        return models.Manager.get_query_set(self).filter(
-            Q(host=host, volume=None) |
-            Q(host=None, volume__in=LogicalVolume.all_objects.filter(vg__host=host)))
-
-
 class Service(models.Model):
     host        = models.ForeignKey(Host, blank=True, null=True)
-    volume      = models.ForeignKey(LogicalVolume, blank=True, null=True)
+    target_type = models.ForeignKey(ContentType, blank=True, null=True)
+    target_id   = models.PositiveIntegerField(blank=True, null=True)
+    target      = generic.GenericForeignKey("target_type", "target_id")
     description = models.CharField(max_length=250)
     command     = models.ForeignKey(Command)
     arguments   = models.CharField(max_length=500, blank=True)
 
     nagstate    = NagiosState()
-    objects     = ServiceManager()
+    objects     = HostDependentManager()
     all_objects = models.Manager()
 
     class Meta:
@@ -95,8 +84,12 @@ class Service(models.Model):
 
     @property
     def state(self):
-        if self.hostname in Service.nagstate.servicemap and self.description in Service.nagstate.servicemap[self.hostname]:
-            return Service.nagstate.servicemap[self.hostname][self.description]
+        # Strip trailing space. Checks shouldn't ever be created as such, but if they
+        # are, let's at least make sure this works.
+        striphost = self.hostname.strip()
+        stripdesc = self.description.strip()
+        if striphost in Service.nagstate.servicemap and stripdesc in Service.nagstate.servicemap[striphost]:
+            return Service.nagstate.servicemap[striphost][stripdesc]
         raise KeyError("The status for this service could not be found in Nagios's status cache.")
 
     @property
@@ -121,7 +114,7 @@ class Service(models.Model):
 
     @property
     def rrd(self):
-        servname = re.sub('[^\w\d_-]', '_', self.description).encode("UTF-8")
+        servname = re.sub('[^\w\d_-]', '_', self.description.strip()).encode("UTF-8")
         xmlpath = nagios_settings.XML_PATH % {
             'host': self.hostname,
             'serv': servname
@@ -132,105 +125,11 @@ class Service(models.Model):
         return RRD(xmlpath)
 
 
-def create_service_for_lv(**kwargs):
-    lv = kwargs["instance"]
-
-    cmd = Command.objects.get(name=nagios_settings.LV_UTIL_CHECK_CMD)
-    if lv.filesystem:
-        if Service.objects.filter(command=cmd, volume=lv).count() == 0:
-            serv = Service(
-                host        = None,
-                volume      = lv,
-                command     = cmd,
-                description = nagios_settings.LV_UTIL_DESCRIPTION % lv.name,
-                arguments   = "%d%%!%d%%!%s" % (100 - lv.fswarning, 100 - lv.fscritical, lv.mountpoint)
-                )
-            serv.save()
-        else:
-            # update the arguments because warn/crit may have changed
-            serv = Service.objects.get(command=cmd, volume=lv, arguments__endswith=lv.mountpoint)
-            serv.arguments = "%d%%!%d%%!%s" % (100 - lv.fswarning, 100 - lv.fscritical, lv.mountpoint)
-            serv.save()
-
-    cmd = Command.objects.get(name=nagios_settings.LV_PERF_CHECK_CMD)
-    if Service.objects.filter(command=cmd, volume=lv).count() == 0:
-        serv = Service(
-            host        = None,
-            volume      = lv,
-            command     = cmd,
-            description = nagios_settings.LV_PERF_DESCRIPTION % lv.name,
-            arguments   = lv.device
-            )
-        serv.save()
-
-    if lv.snapshot:
-        cmd = Command.objects.get(name=nagios_settings.LV_SNAP_CHECK_CMD)
-        if Service.objects.filter(command=cmd, volume=lv).count() == 0:
-            serv = Service(
-                host        = None,
-                volume      = lv,
-                command     = cmd,
-                description = nagios_settings.LV_SNAP_DESCRIPTION % lv.name,
-                arguments   = lv.name
-                )
-            serv.save()
-
-    if "OACONFIG" not in os.environ:
-        Service.write_conf()
-
-
-def delete_service_for_lv(**kwargs):
-    lv = kwargs["instance"]
-    for serv in Service.objects.filter(volume=lv):
-        serv.delete()
-
-    Service.write_conf()
-
-
 def update_contacts(**kwargs):
     nag = dbus.SystemBus().get_object(settings.DBUS_IFACE_SYSTEMD, "/nagios")
     nag.write_contacts()
     nag.restart()
 
 
-def create_service_for_ip(**kwargs):
-    ip = kwargs["instance"]
-    if not ip.is_loopback:
-        try:
-            cmd = Command.objects.get(name=nagios_settings.TRAFFIC_CHECK_CMD)
-        except Command.DoesNotExist:
-            # fails during initial installation, when the ifconfig module does its iface
-            # recognition before my fixtures have been loaded.
-            pass
-        else:
-            if ip.device is not None and Service.objects.filter(command=cmd, arguments=ip.device.devname).count() == 0:
-                serv = Service(
-                    host        = Host.objects.get_current(),
-                    volume      = None,
-                    command     = cmd,
-                    description = nagios_settings.TRAFFIC_DESCRIPTION % ip.device.devname,
-                    arguments   = ip.device.devname
-                    )
-                serv.save()
-
-    if "OACONFIG" not in os.environ:
-        Service.write_conf()
-
-
-def delete_service_for_ip(**kwargs):
-    ip = kwargs["instance"]
-    cmd = Command.objects.get(name=nagios_settings.TRAFFIC_CHECK_CMD)
-    for serv in Service.objects.filter(command=cmd, arguments=ip.device.devname):
-        serv.delete()
-
-    Service.write_conf()
-
-
-signals.post_save.connect(  create_service_for_lv, sender=LogicalVolume )
-signals.pre_delete.connect( delete_service_for_lv, sender=LogicalVolume )
-
 signals.post_save.connect(   update_contacts, sender=User )
 signals.post_delete.connect( update_contacts, sender=User )
-
-signals.post_save.connect(  create_service_for_ip, sender=IPAddress )
-signals.pre_delete.connect( delete_service_for_ip, sender=IPAddress )
