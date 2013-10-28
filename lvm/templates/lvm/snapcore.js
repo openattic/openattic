@@ -665,55 +665,28 @@ var wizform = Ext.create("Ext.oa.WizPanel", {
       title       : gettext('Drag volumes which should be snapshotted here:'),
       height      : 340
     }],
-/*    listeners : {
-      show  : function(self){
+    listeners: {
+      show: function(self){
         var volumes = [];
-        var requests = 0;
-        var moveItem = function(record, recordId, length, volumeId)
-        {
-          if(volumeId === record.get('id'))
-          {
-            secondGridStore.add(record);
 
-            var idx = secondGridStore.indexOf(record);
-            var row = secondGrid.getView().getRow(idx);
-            var element = Ext.get(row);
-
-            if(config.volumes.indexOf(volumeId, 0) === -1)
-            {
-              config.volumes.push(volumeId);
-              volumes.push(volumeId);
-            }
-
-            VolumeStore.remove(record);
-            element.addClass('x-grid3-row-over');
-            record.set('draggable', false);
+        var moveItem = function(record, recordId, length, volumeId){
+          if(record.data.id === volumeId){
+            console.log(record);
           }
         }
 
-        for(var plugin in config['plugin_data'])
-        {
+        for(var plugin in config['plugin_data']){
           var plugin_func = get_plugin(plugin);
 
-          plugin_func.getVolume(function(result, response){
+          plugin_func.getVolume(config, function(result, response){
             if(response.type !== 'exception'){
-              VolumeStore.each(Ext.bind(moveItem, this, [result.volume.id], true));
+              console.log(result.volume.id);
+              first_volume_grid_store.each(Ext.bind(moveItem, this, [result.volume.id], true));
             }
           });
         }
-
-/*          secondGrid.getView().dragZone.onBeforeDrag = function(data, e){
-            var volumeId = data.selections[0].data.id;
-            for(var i=0; i<volumes.length; i++){
-              if(volumes[i] === volumeId)
-              {
-                return false;
-              }
-            }
-            return true;
-          }
-        }
-      },*/
+      }
+    }
   },{
     title : gettext('Pre-/Post-Script - Conditions'),
     id    : 'lvm__snapcore_wiz_prepost',
