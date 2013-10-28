@@ -28,11 +28,6 @@ class ServiceHandler(ModelHandler):
     model = Service
     order = ("description",)
 
-    def write_conf(self):
-        """ Update the Nagios configuration and restart Nagios. """
-        Service.write_contacts()
-        Service.write_conf()
-
     def _override_get(self, obj, data):
         try:
             data['state']  = obj.state

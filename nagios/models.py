@@ -70,18 +70,6 @@ class Service(models.Model):
     class Meta:
         unique_together = ("host", "description")
 
-    @classmethod
-    def write_contacts(cls):
-        nag = dbus.SystemBus().get_object(settings.DBUS_IFACE_SYSTEMD, "/nagios")
-        nag.write_contacts()
-        nag.restart()
-
-    @classmethod
-    def write_conf(cls):
-        nag = dbus.SystemBus().get_object(settings.DBUS_IFACE_SYSTEMD, "/nagios")
-        nag.write_services()
-        nag.restart()
-
     @property
     def state(self):
         # Strip trailing space. Checks shouldn't ever be created as such, but if they
@@ -125,11 +113,13 @@ class Service(models.Model):
         return RRD(xmlpath)
 
 
-def update_contacts(**kwargs):
+def update_conf(**kwargs):
     nag = dbus.SystemBus().get_object(settings.DBUS_IFACE_SYSTEMD, "/nagios")
-    nag.write_contacts()
-    nag.restart()
+    nag.writeconf()
 
 
-signals.post_save.connect(   update_contacts, sender=User )
-signals.post_delete.connect( update_contacts, sender=User )
+signals.post_save.connect(   update_conf, sender=User )
+signals.post_delete.connect( update_conf, sender=User )
+
+signals.post_save.connect(   update_conf, sender=Service )
+signals.post_delete.connect( update_conf, sender=Service )

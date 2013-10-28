@@ -28,12 +28,6 @@ from nagios.models    import Service, Command
 
 def create_nagios(**kwargs):
     # Make sure the contacts config exists
-    try:
-        dbus.SystemBus().get_object(settings.DBUS_IFACE_SYSTEMD, "/nagios").write_contacts()
-    except dbus.DBusException:
-        # Fails during syncdb of initial installation, before daemons are running
-        return
-
     for servstate in Service.nagstate["servicestatus"]:
         cmdargs = servstate["check_command"].split('!')
         cmdname = cmdargs[0]
@@ -81,6 +75,6 @@ def create_nagios(**kwargs):
     for ip in IPAddress.objects.all():
         nagios.models.create_service_for_ip( instance=ip )
 
-    Service.write_conf()
+    dbus.SystemBus().get_object(settings.DBUS_IFACE_SYSTEMD, "/nagios").writeconf()
 
 sysutils.models.post_install.connect(create_nagios)

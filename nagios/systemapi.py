@@ -37,9 +37,15 @@ class SystemD(LockingPlugin):
     dbus_path = "/nagios"
 
     @method(in_signature="", out_signature="")
-    def write_services(self):
+    def writeconf(self):
+        self.mainobj.call_deferred(self._writeconf)
+
+    def _writeconf(self):
+        import logging
+        logging.warning("YAAAAAY")
         self.lock.acquire()
         try:
+            # Services
             fd = open( nagios_settings.SERVICES_CFG_PATH, "wb" )
             try:
                 fd.write( render_to_string( "nagios/services.cfg", {
@@ -50,13 +56,7 @@ class SystemD(LockingPlugin):
                     } ) )
             finally:
                 fd.close()
-        finally:
-            self.lock.release()
-
-    @method(in_signature="", out_signature="")
-    def write_contacts(self):
-        self.lock.acquire()
-        try:
+            # Contacts
             fd = open( nagios_settings.CONTACTS_CFG_PATH, "wb" )
             try:
                 fd.write( render_to_string( "nagios/contacts.cfg", {
@@ -66,9 +66,6 @@ class SystemD(LockingPlugin):
                 fd.close()
         finally:
             self.lock.release()
-
-    @method(in_signature="", out_signature="")
-    def restart(self):
         create_job([
             ["nagios3", "--verify-config", nagios_settings.NAGIOS_CFG_PATH],
             ["/etc/init.d/nagios3", "restart"]
