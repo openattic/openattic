@@ -114,7 +114,7 @@ class Service(models.Model):
 
     @property
     def rrd(self):
-        servname = re.sub('[^\w\d_-]', '_', self.description).encode("UTF-8")
+        servname = re.sub('[^\w\d_-]', '_', self.description.strip()).encode("UTF-8")
         xmlpath = nagios_settings.XML_PATH % {
             'host': self.hostname,
             'serv': servname
