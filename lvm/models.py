@@ -262,7 +262,8 @@ class LogicalVolume(BlockVolume):
                 "m": _("snapshot merge failed"),
                 "M": _("suspended snapshot merge failed"),
                 "d": _("mapped device present without tables"),
-                "i": _("mapped device present with inactive table")
+                "i": _("mapped device present with inactive table"),
+                "-": _("offline")
             }[ attr[4] ],
             {"o": _("open"), "-": None}[ attr[5] ],
             {
