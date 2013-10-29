@@ -416,7 +416,7 @@ var setConfigForNode = function(node, data){
     img_self, img_parent, img_childs = "empty";
 
     if(node.isLeaf()){
-      if(getConfigForNode(node.parentNode) !== null){
+      if(getConfigForNode(node.parentNode).data !== null){
         img_self = "gray";
       }
     }
@@ -424,7 +424,7 @@ var setConfigForNode = function(node, data){
     {
       for(var i=0; i < node.childNodes.length; i++)
       {
-        if(getConfigForNode(node.childNodes[i]) !== null){
+        if(getConfigForNode(node.childNodes[i]).data !== null){
           img_self = "gray";
           break;
         }
@@ -439,16 +439,14 @@ var setConfigForNode = function(node, data){
   node.set("iconCls", node.data.csscl[img_self]);
 
   if(node.isLeaf()){
-    var parentConf = getConfigForNode(node.parentNode);
-    if(parentConf.data === null){
+    if(getConfigForNode(node.parentNode).data === null){
       node.parentNode.set("iconCls", node.parentNode.data.csscl[img_parent]);
     }
   }
   else{
     for(var i=0; i < node.childNodes.length; i++)
     {
-      var childConf = getConfigForNode(node.childNodes[i]);
-      if(childConf.data === null){
+      if(getConfigForNode(node.childNodes[i]).data === null){
         node.childNodes[i].set("iconCls", node.childNodes[i].data.csscl[img_childs]);
       }
     }
