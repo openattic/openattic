@@ -649,6 +649,18 @@ var wizform = Ext.create("Ext.oa.WizPanel", {
     }],
     listeners: {
       show: function(self){
+        // first reset the grids if any former configs were deleted
+        config.volumes = [];
+
+        var reset = function(record, recordId, length){
+          snapcore_snapshot_volume_store.remove(record);
+          first_volume_grid_store.add(record);
+        }
+        if(snapcore_snapshot_volume_store.count() > 0){
+          snapcore_snapshot_volume_store.each(Ext.bind(reset, this));
+        }
+
+        // then move the configured volumes to the right grid
         var volumes = [];
 
         var moveItem = function(record, recordId, length, volumeId){
