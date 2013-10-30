@@ -622,11 +622,6 @@ var wizform = Ext.create("Ext.oa.WizPanel", {
           dragGroup: group1,
           dropGroup: group2
         },
-        listeners: {
-          drop: function(node, data, dropRec, dropPosition){
-            console.log("Drop");
-          }
-        }
       },
       store       : first_volume_grid_store,
       columns     : [ {text: gettext("Volumes"), dataIndex: "name", flex: 1}],
@@ -645,17 +640,6 @@ var wizform = Ext.create("Ext.oa.WizPanel", {
           dragGroup : group2,
           dropGroup : group1
         },
-        listeners: {
-          drop: function(node, data, dropRec, dropPosition) {
-            console.log("Drop");
-          }
-        },
-        getRowClass: function(record, rowIndex, rp, ds) {
-          if(typeof record.data.draggable !== 'undefined')
-            return 'x-grid3-row-over';
-          else
-            return '';
-        }
       },
       store       : snapcore_snapshot_volume_store,
       columns     : [{ text: "Volumes", dataIndex: "name", flex: 1}],
