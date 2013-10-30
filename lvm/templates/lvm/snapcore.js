@@ -491,6 +491,31 @@ var snapcore_snapshot_volume_store = Ext.create('Ext.data.ArrayStore', {
   }
 });
 
+Ext.define("Ext.oa.ExtendedGridDropZone", {
+  extend: "Ext.grid.ViewDropZone",
+  onNodeOver: function(node, dragZone, e, data){
+    if(data && data.records && data.records[0]){
+      if(data.records[0].data.draggable === false){
+        return this.dropNotAllowed;
+      }
+    }
+    return this.callParent(arguments);
+  },
+});
+
+Ext.define("Ext.oa.ExtendedGridDnD", {
+  extend: "Ext.grid.plugin.DragDrop",
+  alias: "plugin.extendeddnd",
+  onViewRender: function(view){
+    this.callParent(arguments);
+
+    this.dropZone = Ext.create("Ext.oa.ExtendedGridDropZone", {
+      view: view,
+      ddGroup: this.dropGroup || this.ddGroup
+    });
+  }
+});
+
 var group1 = this.id + 'group1',
     group2 = this.id + 'group2';
 
@@ -618,7 +643,7 @@ var wizform = Ext.create("Ext.oa.WizPanel", {
       region      : 'center',
       viewConfig  : {
         plugins : {
-          ptype: 'gridviewdragdrop',
+          ptype: 'extendeddnd',
           dragGroup: group1,
           dropGroup: group2
         },
@@ -661,21 +686,23 @@ var wizform = Ext.create("Ext.oa.WizPanel", {
         }
 
         // then move the configured volumes to the right grid
-        var volumes = [];
-
-        var moveItem = function(record, recordId, length, volumeId){
-          if(record.data.id === volumeId){
-            console.log(record);
-          }
-        }
-
         for(var plugin in config['plugin_data']){
           var plugin_func = get_plugin(plugin);
 
           plugin_func.getVolume(config, function(result, response){
             if(response.type !== 'exception'){
-              console.log(result.volume.id);
-              first_volume_grid_store.each(Ext.bind(moveItem, this, [result.volume.id], true));
+
+              var volumeRecord = first_volume_grid_store.getById(result.volume.id);
+
+              if(volumeRecord !== null){
+                snapcore_snapshot_volume_store.add(volumeRecord);
+                first_volume_grid_store.remove(volumeRecord);
+                volumeRecord.set("draggable", false);
+
+                if(config.volumes.indexOf(volumeRecord.data.id) === -1){
+                  config.volumes.push(volumeRecord.data.id);
+                }
+              }
             }
           });
         }
