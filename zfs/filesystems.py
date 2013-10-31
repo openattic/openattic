@@ -35,6 +35,9 @@ SIZE_MULTIPLIERS = {
 }
 
 def scale_to_megs(size):
+    if size == '-':
+        # faulty pool
+        return None
     if size[-1] in SIZE_MULTIPLIERS:
         # size is something like "672.42G", scale to MBytes
         return float(size[:-1]) * SIZE_MULTIPLIERS[size[-1]]
