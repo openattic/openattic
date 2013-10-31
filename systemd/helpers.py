@@ -14,12 +14,20 @@
  *  GNU General Public License for more details.
 """
 
+import threading
 import logging
 import dbus
 
 from functools import wraps
 
 from django.conf import settings
+
+threadstore = threading.local()
+
+def get_dbus_object(path="/"):
+    if not hasattr(threadstore, "systemdbus"):
+        threadstore.systemdbus = dbus.SystemBus(private=True)
+    return threadstore.systemdbus.get_object(settings.DBUS_IFACE_SYSTEMD, path)
 
 def dbus_type_to_python(obj):
     """ Convert a single dbus something to its python equivalent. """
