@@ -35,6 +35,7 @@ from django.conf import settings
 
 from systemd.helpers   import makeloggedfunc
 from systemd.procutils import create_job
+from systemd.plugins   import deferredmethod
 
 class SystemD(dbus.service.Object):
     """ Implements the main DBus section (/). """
@@ -135,6 +136,25 @@ class SystemD(dbus.service.Object):
             self.deferred.append((func, args, kwargs))
         signal.signal(signal.SIGALRM, self.run_deferred_calls)
         signal.alarm(1)
+
+    @dbus.service.method(settings.DBUS_IFACE_SYSTEMD, in_signature="", out_signature="", sender_keyword="sender")
+    def add_conn_job(self, sender):
+        if sender not in self.jobs:
+            self.jobs[sender] = []
+
+    @deferredmethod(in_signature="i")
+    def testmethod(self, somestuff, sender):
+        print "hai", somestuff
+
+    @dbus.service.method(settings.DBUS_IFACE_SYSTEMD, in_signature="", out_signature="", sender_keyword="sender")
+    def run_conn_job(self, sender):
+        if sender not in self.jobs:
+            return
+        try:
+            for func, scope, args, kwargs in self.jobs[sender]:
+                func(scope, *args, **kwargs)
+        finally:
+            del self.jobs[sender]
 
 
 def getloglevel(levelstr):
