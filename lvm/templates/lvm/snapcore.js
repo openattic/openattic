@@ -1178,6 +1178,28 @@ var wizform = Ext.create("Ext.oa.WizPanel", {
       listeners : {
         click: function(self, e, eOpts){
           config.data = config.data.data;
+          console.log(config.data);
+          // set datetimes
+          switch(config.data["scheduling_select"]){
+            case "execute_later":
+              if(config.data["date_select-inputEl"] !== null && typeof config.data["date_select-inputEl"] !== 'undefined' &&
+                config.data["time_select-inputEl"] !== null && typeof config.data["time_select-inputEl"] !== 'undefined')
+              {
+                config.data["executedate"] = set_time(config.data["date_select-inputEl"], config.data["time_select-inputEl"]);
+              }
+              break;
+            case "scheduling":
+              if(config.data["startdate_select-inputEl"] !== null && typeof config.data["startdate_select-inputEl"] !== "undefined" &&
+                config.data["starttime_select-inputEl"] !== null && typeof config.data["starttime_select-inputEl"] !== "undefined" &&
+                config.data["enddate_select-inputEl"] !== null && typeof config.data["enddate_select-inputEl"] !== "undefined" &&
+                config.data["endtime_select-inputEl"] !== null && typeof config.data["endtime_select-inputEl"] !== "undefined")
+              {
+                config.data["startdate"] = set_time(config.data["startdate_select-inputEl"], config.data["starttime_select-inputEl"]);
+                config.data["endddate"] = set_time(config.data["enddate_select-inputEl"], config.data["endtime_select-inputEl"]);
+              }
+              break;
+          }
+
 //           lvm__SnapshotConf.process_config(config)
 //           config_store.reload();
 //           wiz.hide();
