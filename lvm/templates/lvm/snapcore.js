@@ -275,7 +275,7 @@ Ext.data.validations.end_datetime = function(config, value, model){
 Ext.define('Ext.oa.LVM__Snapcore_Model', {
   extend: 'Ext.data.Model',
   fields: [
-    {name: 'is_active',                 type: 'bool'},
+    {name: 'is_active',                 type: 'bool',   defaultValue: true},
     {name: 'configname',                type: 'string'},
     {name: 'day_of_month',              type: 'string'},
     {name: 'prescript',                 type: 'string'},
