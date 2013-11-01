@@ -14,8 +14,6 @@
  *  GNU General Public License for more details.
 """
 
-import dbus
-
 from os.path   import realpath
 from rtslib        import target, tcm
 from rtslib.utils  import generate_wwn
@@ -24,6 +22,7 @@ from django.db   import models
 from django.conf import settings
 from django.utils.translation import ugettext_lazy as _
 
+from systemd import get_dbus_object
 from ifconfig.models import HostGroup, Host, IPAddress, HostDependentManager, getHostDependentManagerClass
 from lvm.models      import LogicalVolume
 
@@ -107,7 +106,7 @@ class Backstore(models.Model):
 
 def __backstore_pre_delete(instance, **kwargs):
     pre_uninstall.send(sender=Backstore, instance=instance)
-    dbus.SystemBus().get_object(settings.DBUS_IFACE_SYSTEMD, "/lio").backstore_delete(instance.id)
+    get_dbus_object("/lio").backstore_delete(instance.id)
     post_uninstall.send(sender=Backstore, instance=instance)
 
 models.signals.pre_delete.connect(__backstore_pre_delete, sender=Backstore)
@@ -143,12 +142,12 @@ class StorageObject(models.Model):
         models.Model.save(self, *args, **kwargs)
         if install:
             pre_install.send(sender=StorageObject, instance=self)
-            dbus.SystemBus().get_object(settings.DBUS_IFACE_SYSTEMD, "/lio").storage_object_create(self.id)
+            get_dbus_object("/lio").storage_object_create(self.id)
             post_install.send(sender=StorageObject, instance=self)
 
 def __storage_object_pre_delete(instance, **kwargs):
     pre_uninstall.send(sender=StorageObject, instance=instance)
-    dbus.SystemBus().get_object(settings.DBUS_IFACE_SYSTEMD, "/lio").storage_object_delete(instance.id)
+    get_dbus_object("/lio").storage_object_delete(instance.id)
     post_uninstall.send(sender=StorageObject, instance=instance)
 
 models.signals.pre_delete.connect(__storage_object_pre_delete, sender=StorageObject)
@@ -195,12 +194,12 @@ class Target(models.Model):
         models.Model.save(self, *args, **kwargs)
         if install:
             pre_install.send(sender=Target, instance=self)
-            dbus.SystemBus().get_object(settings.DBUS_IFACE_SYSTEMD, "/lio").target_create(self.id)
+            get_dbus_object("/lio").target_create(self.id)
             post_install.send(sender=Target, instance=self)
 
 def __target_pre_delete(instance, **kwargs):
     pre_uninstall.send(sender=Target, instance=instance)
-    dbus.SystemBus().get_object(settings.DBUS_IFACE_SYSTEMD, "/lio").target_delete(instance.id)
+    get_dbus_object("/lio").target_delete(instance.id)
     post_uninstall.send(sender=Target, instance=instance)
 
 models.signals.pre_delete.connect(__target_pre_delete, sender=Target)
@@ -257,18 +256,18 @@ class TPG(models.Model):
         models.Model.save(self, *args, **kwargs)
         if install:
             pre_install.send(sender=TPG, instance=self)
-            dbus.SystemBus().get_object(settings.DBUS_IFACE_SYSTEMD, "/lio").tpg_create(self.id)
+            get_dbus_object("/lio").tpg_create(self.id)
             post_install.send(sender=TPG, instance=self)
 
 def __tpg_pre_delete(instance, **kwargs):
     pre_uninstall.send(sender=TPG, instance=instance)
-    dbus.SystemBus().get_object(settings.DBUS_IFACE_SYSTEMD, "/lio").tpg_delete(instance.id)
+    get_dbus_object("/lio").tpg_delete(instance.id)
     post_uninstall.send(sender=TPG, instance=instance)
 
 models.signals.pre_delete.connect(__tpg_pre_delete, sender=TPG)
 
 def __tpg_portals_changed(instance, reverse, action, pk_set, **kwargs):
-    iface = dbus.SystemBus().get_object(settings.DBUS_IFACE_SYSTEMD, "/lio")
+    iface = get_dbus_object("/lio")
     if not reverse:
         tpgs    = [instance]
         portals = Portal.objects.filter(id__in=pk_set)
@@ -313,12 +312,12 @@ class LUN(models.Model):
         models.Model.save(self, *args, **kwargs)
         if install:
             pre_install.send(sender=LUN, instance=self)
-            dbus.SystemBus().get_object(settings.DBUS_IFACE_SYSTEMD, "/lio").lun_create(self.id)
+            get_dbus_object("/lio").lun_create(self.id)
             post_install.send(sender=LUN, instance=self)
 
 def __lun_pre_delete(instance, **kwargs):
     pre_uninstall.send(sender=LUN, instance=instance)
-    dbus.SystemBus().get_object(settings.DBUS_IFACE_SYSTEMD, "/lio").lun_delete(instance.id)
+    get_dbus_object("/lio").lun_delete(instance.id)
     post_uninstall.send(sender=LUN, instance=instance)
 
 models.signals.pre_delete.connect(__lun_pre_delete, sender=LUN)
@@ -351,18 +350,18 @@ class ACL(models.Model):
         models.Model.save(self, *args, **kwargs)
         if install:
             pre_install.send(sender=ACL, instance=self)
-            dbus.SystemBus().get_object(settings.DBUS_IFACE_SYSTEMD, "/lio").acl_create(self.id)
+            get_dbus_object("/lio").acl_create(self.id)
             post_install.send(sender=ACL, instance=self)
 
 def __acl_pre_delete(instance, **kwargs):
     pre_uninstall.send(sender=ACL, instance=instance)
-    dbus.SystemBus().get_object(settings.DBUS_IFACE_SYSTEMD, "/lio").acl_delete(instance.id)
+    get_dbus_object("/lio").acl_delete(instance.id)
     post_uninstall.send(sender=ACL, instance=instance)
 
 models.signals.pre_delete.connect(__acl_pre_delete, sender=ACL)
 
 def __acl_mappedluns_changed(instance, reverse, action, pk_set, **kwargs):
-    iface = dbus.SystemBus().get_object(settings.DBUS_IFACE_SYSTEMD, "/lio")
+    iface = get_dbus_object("/lio")
     if not reverse:
         acls = [instance]
         luns = LUN.objects.filter(id__in=pk_set)

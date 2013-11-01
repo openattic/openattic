@@ -14,11 +14,9 @@
  *  GNU General Public License for more details.
 """
 
-import dbus
-
 from django.db   import models
-from django.conf import settings
 
+from systemd import get_dbus_object
 from ifconfig.models import getHostDependentManagerClass, IPAddress
 from lvm.models import LogicalVolume
 
@@ -38,14 +36,14 @@ class Instance(models.Model):
 
     def save( self, *args, **kwargs ):
         ret = models.Model.save(self, *args, **kwargs)
-        tftp = dbus.SystemBus().get_object(settings.DBUS_IFACE_SYSTEMD, "/tftp")
+        tftp = get_dbus_object("/tftp")
         tftp.writeconf()
         tftp.reload()
         return ret
 
     def delete( self ):
         ret = models.Model.delete(self)
-        tftp = dbus.SystemBus().get_object(settings.DBUS_IFACE_SYSTEMD, "/tftp")
+        tftp = get_dbus_object("/tftp")
         tftp.writeconf()
         tftp.reload()
         return ret

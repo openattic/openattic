@@ -15,7 +15,6 @@
 """
 
 import os.path
-import dbus
 
 from django.db import models
 from django.db.models import signals
@@ -25,6 +24,7 @@ from django.contrib.contenttypes import generic
 from django.utils.translation    import ugettext_lazy as _
 from django.contrib.auth.models  import User
 
+from systemd import get_dbus_object
 from ifconfig.models import Host, HostDependentManager, getHostDependentManagerClass
 from volumes import blockdevices, capabilities, filesystems
 
@@ -103,6 +103,7 @@ class VolumePool(CapabilitiesAwareModel):
 
     def create_volume(self, name, megs, owner, filesystem, fswarning, fscritical):
         """ Create a volume in this pool. """
+        get_dbus_object("/").start_queue()
         VolumeClass = self.get_volume_class(filesystem)
         vol_options = {"name": name, "megs": megs, "owner": owner, "pool": self}
         if issubclass(VolumeClass, FileSystemVolume):
@@ -120,6 +121,7 @@ class VolumePool(CapabilitiesAwareModel):
             vol.full_clean()
             vol.save()
 
+        get_dbus_object("/").run_queue()
         return vol
 
 
@@ -325,10 +327,7 @@ class FileSystemProvider(FileSystemVolume):
     all_objects = models.Manager()
 
     def setupfs( self ):
-        sysd = dbus.SystemBus().get_object(settings.DBUS_IFACE_SYSTEMD, "/")
-        jid = sysd.build_job()
         self.fs.format()
-        sysd.enqueue_job(jid)
 
     def save(self, *args, **kwargs):
         install = (self.id is None)

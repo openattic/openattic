@@ -15,12 +15,10 @@
 """
 
 import os
-import dbus
 import re
 
 from os.path import exists
 
-from django.conf      import settings
 from django.db        import models
 from django.db.models import signals
 from django.db.models import Q
@@ -29,6 +27,7 @@ from django.contrib.auth.models import User
 from django.contrib.contenttypes.models import ContentType
 from django.contrib.contenttypes import generic
 
+from systemd import get_dbus_object
 from ifconfig.models import Host, IPAddress, HostDependentManager
 
 from nagios.conf import settings as nagios_settings
@@ -114,8 +113,7 @@ class Service(models.Model):
 
 
 def update_conf(**kwargs):
-    nag = dbus.SystemBus().get_object(settings.DBUS_IFACE_SYSTEMD, "/nagios")
-    nag.writeconf()
+    get_dbus_object("/nagios").writeconf()
 
 
 signals.post_save.connect(   update_conf, sender=User )

@@ -19,9 +19,7 @@ import os.path
 import re
 import dbus
 
-from django.conf import settings
-
-from systemd  import dbus_to_python
+from systemd  import dbus_to_python, get_dbus_object
 
 from volumes.conf import settings as volumes_settings
 from volumes.filesystems.filesystem import FileSystem
@@ -86,7 +84,7 @@ class Zfs(FileSystem):
 
     @property
     def dbus_object(self):
-        return dbus.SystemBus().get_object(settings.DBUS_IFACE_SYSTEMD, "/zfs")
+        return get_dbus_object("/zfs")
 
     @classmethod
     def check_installed(cls):

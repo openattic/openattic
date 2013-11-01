@@ -14,11 +14,9 @@
  *  GNU General Public License for more details.
 """
 
-import dbus
-
-from django.conf import settings
 from django.core.management import call_command
 
+from systemd import get_dbus_object
 from nagios.conf import settings as nagios_settings
 from ifconfig.models import Host, IPAddress
 
@@ -75,6 +73,6 @@ def create_nagios(**kwargs):
     for ip in IPAddress.objects.all():
         nagios.models.create_service_for_ip( instance=ip )
 
-    dbus.SystemBus().get_object(settings.DBUS_IFACE_SYSTEMD, "/nagios").writeconf()
+    get_dbus_object("/nagios").writeconf()
 
 sysutils.models.post_install.connect(create_nagios)

@@ -14,11 +14,9 @@
  *  GNU General Public License for more details.
 """
 
-import dbus
-
-from django.conf import settings
 from django.db   import models
 
+from systemd import get_dbus_object
 from rpcd.handlers import ModelHandler
 
 from ifconfig.models import HostGroup, Host, IPAddress, NetDevice
@@ -91,7 +89,7 @@ class NetDeviceHandler(ModelHandler):
 
     def activate_config(self):
         """ Stop networking, update /etc/network/interfaces and start up the new configuration. """
-        ifc = dbus.SystemBus().get_object(settings.DBUS_IFACE_SYSTEMD, "/ifconfig")
+        ifc = get_dbus_object("/ifconfig")
         NetDevice.validate_config()
         ifc.ifdown()
         NetDevice.write_interfaces()

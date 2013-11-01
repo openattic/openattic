@@ -14,26 +14,23 @@
  *  GNU General Public License for more details.
 """
 
-import dbus
-
 from rpcd.handlers import BaseHandler
-from django.conf import settings
 
-from systemd.helpers import dbus_to_python
+from systemd import dbus_to_python, get_dbus_object
 
 class PkgAptHandler(BaseHandler):
     handler_name = "pkgapt.Apt"
 
     def update(self):
         """ Update the package lists. """
-        return dbus.SystemBus().get_object(settings.DBUS_IFACE_SYSTEMD, "/pkgapt").update()
+        return get_dbus_object("/pkgapt").update()
 
     def get_upgrade_changes(self, distupgrade):
         """ Return a list of changes that would be applied by `apt-get [dist-]upgrade`. """
-        return dbus_to_python(dbus.SystemBus().get_object(settings.DBUS_IFACE_SYSTEMD, "/pkgapt").get_upgrade_changes(distupgrade))
+        return dbus_to_python(get_dbus_object("/pkgapt").get_upgrade_changes(distupgrade))
 
     def do_upgrade(self, distupgrade):
         """ Run `apt-get [dist-]upgrade`. """
-        return dbus.SystemBus().get_object(settings.DBUS_IFACE_SYSTEMD, "/pkgapt").do_upgrade(distupgrade)
+        return get_dbus_object("/pkgapt").do_upgrade(distupgrade)
 
 RPCD_HANDLERS = [PkgAptHandler]

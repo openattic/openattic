@@ -16,10 +16,8 @@
 
 import os
 import os.path
-import dbus
 
-from django.conf import settings
-
+from systemd import get_dbus_object
 from volumes.conf import settings as volumes_settings
 
 class FileSystemMeta(type):
@@ -80,7 +78,7 @@ class FileSystem(object):
 
     @property
     def dbus_object(self):
-        return dbus.SystemBus().get_object(settings.DBUS_IFACE_SYSTEMD, "/volumes")
+        return get_dbus_object("/volumes")
 
     @property
     def fsname(self):
@@ -97,7 +95,7 @@ class FileSystem(object):
         """
         if self.virtual:
             raise NotImplementedError("FileSystem::mount needs to be overridden for virtual FS handlers")
-        dbus_object = dbus.SystemBus().get_object(settings.DBUS_IFACE_SYSTEMD, "/volumes")
+        dbus_object = get_dbus_object("/volumes")
         dbus_object.fs_mount( self.name, self.volume.base.volume.path, self.path )
 
     @property
@@ -111,7 +109,7 @@ class FileSystem(object):
         """ Unmount the volume. """
         if self.virtual:
             raise NotImplementedError("FileSystem::unmount needs to be overridden for virtual FS handlers")
-        dbus_object = dbus.SystemBus().get_object(settings.DBUS_IFACE_SYSTEMD, "/volumes")
+        dbus_object = get_dbus_object("/volumes")
         dbus_object.fs_unmount( self.volume.base.volume.path, self.path )
 
     def format(self):
@@ -126,7 +124,7 @@ class FileSystem(object):
         """ Change ownership of the filesystem to be the LV's owner. """
         if self.virtual:
             raise NotImplementedError("FileSystem::chown needs to be overridden for virtual FS handlers")
-        dbus_object = dbus.SystemBus().get_object(settings.DBUS_IFACE_SYSTEMD, "/volumes")
+        dbus_object = get_dbus_object("/volumes")
         return dbus_object.fs_chown( self.path, self.volume.owner.username, volumes_settings.CHOWN_GROUP )
 
     def destroy(self):

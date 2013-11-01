@@ -16,9 +16,6 @@
 
 import os
 import os.path
-import dbus
-
-from django.conf import settings
 
 from volumes.conf import settings as volumes_settings
 from volumes.filesystems.filesystem import FileSystem
@@ -34,7 +31,7 @@ class Btrfs(FileSystem):
 
     @property
     def dbus_object(self):
-        return dbus.SystemBus().get_object(settings.DBUS_IFACE_SYSTEMD, "/btrfs")
+        return get_dbus_object("/btrfs")
 
     def format(self):
         self.dbus_object.format( self.lv.path )

@@ -16,7 +16,6 @@
 """
 
 import pyudev
-import dbus
 import re
 import os
 import os.path
@@ -25,7 +24,6 @@ import shlex
 
 from django.contrib.auth.models import User
 from django.db import models
-from django.conf import settings
 from django.utils.translation   import ugettext_noop as _
 
 from systemd         import invoke
@@ -87,10 +85,10 @@ class VolumeGroup(VolumePool):
 
     def save( self, *args, **kwargs ):
         VolumePool.save(self, *args, **kwargs)
-        dbus.SystemBus().get_object(settings.DBUS_IFACE_SYSTEMD, "/lvm").invalidate()
+        get_dbus_object("/lvm").invalidate()
 
     def delete(self):
-        lvm = dbus.SystemBus().get_object(settings.DBUS_IFACE_SYSTEMD, "/lvm")
+        lvm = get_dbus_object("/lvm")
         for lv in LogicalVolume.objects.filter(vg=self):
             lv.delete()
         pvs = lvm.pvs()
@@ -211,7 +209,7 @@ class LogicalVolume(BlockVolume):
     @property
     def lvm(self):
         if self._lvm is None:
-            self._lvm = dbus.SystemBus().get_object(settings.DBUS_IFACE_SYSTEMD, "/lvm")
+            self._lvm = get_dbus_object("/lvm")
         return self._lvm
 
     @property

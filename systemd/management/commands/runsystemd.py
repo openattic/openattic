@@ -78,12 +78,12 @@ class SystemD(dbus.service.Object):
         return "pong"
 
     @dbus.service.method(settings.DBUS_IFACE_SYSTEMD, in_signature="", out_signature="", sender_keyword="sender")
-    def add_conn_job(self, sender):
+    def start_queue(self, sender):
         if sender not in self.jobs:
             self.jobs[sender] = []
 
     @dbus.service.method(settings.DBUS_IFACE_SYSTEMD, in_signature="", out_signature="", sender_keyword="sender")
-    def run_conn_job(self, sender):
+    def run_queue(self, sender):
         if sender not in self.jobs:
             return
         try:

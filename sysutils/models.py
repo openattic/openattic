@@ -14,13 +14,11 @@
  *  GNU General Public License for more details.
 """
 
-import dbus
 
 from django.db import models
-from django.conf import settings
 from django.dispatch import Signal
 
-from systemd.helpers import dbus_to_python
+from systemd import dbus_to_python, get_dbus_object
 
 pre_install  = Signal()
 post_install = Signal()
@@ -29,9 +27,7 @@ class InitScript(models.Model):
     name        = models.CharField(max_length=50)
 
     def run_initscript(self, command):
-        return dbus_to_python(
-            dbus.SystemBus().get_object(settings.DBUS_IFACE_SYSTEMD, "/sysutils").run_initscript(self.name, command)
-            )
+        return dbus_to_python(get_dbus_object("/sysutils").run_initscript(self.name, command))
 
     def start(self):
         return self.run_initscript("start")

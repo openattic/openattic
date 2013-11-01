@@ -14,11 +14,9 @@
  *  GNU General Public License for more details.
 """
 
-import dbus
-
 from django.db import models
-from django.conf import settings
 
+from systemd import get_dbus_object
 from ifconfig.models import Host, HostDependentManager, getHostDependentManagerClass
 from volumes import blockdevices
 from volumes.models import DeviceNotFound, BlockVolume, CapabilitiesAwareManager
@@ -144,6 +142,5 @@ class Disk(models.Model):
     all_objects = models.Manager()
 
     def set_identify(self, state):
-        twraid = dbus.SystemBus().get_object(settings.DBUS_IFACE_SYSTEMD, "/twraid")
-        twraid.set_identify("/c%d/p%d" % (self.controller.index, self.port), state)
+        get_dbus_object("/twraid").set_identify("/c%d/p%d" % (self.controller.index, self.port), state)
 

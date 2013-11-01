@@ -14,11 +14,9 @@
  *  GNU General Public License for more details.
 """
 
-import dbus
-
 from django.db   import models
-from django.conf import settings
 
+from systemd import get_dbus_object
 from ifconfig.models import Host, HostDependentManager
 
 class Cronjob(models.Model):
@@ -36,9 +34,9 @@ class Cronjob(models.Model):
 
     def save(self, *args, **kwargs):
         models.Model.save(self, *args, **kwargs)
-        dbus.SystemBus().get_object(settings.DBUS_IFACE_SYSTEMD, "/cron").writeconf()
+        get_dbus_object("/cron").writeconf()
 
     def delete( self ):
         ret = models.Model.delete(self)
-        dbus.SystemBus().get_object(settings.DBUS_IFACE_SYSTEMD, "/cron").writeconf()
+        get_dbus_object("/cron").writeconf()
         return ret

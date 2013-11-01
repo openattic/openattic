@@ -15,11 +15,9 @@
 """
 
 import os
-import dbus
 from time import time
 
-from django.conf import settings
-
+from systemd import get_dbus_object
 from rpcd.handlers import BaseHandler, ModelHandler
 from sysutils.models import InitScript
 from sysutils import sysstats
@@ -29,11 +27,11 @@ class SysUtilsHandler(BaseHandler):
 
     def shutdown(self):
         """ Shut down the system. """
-        dbus.SystemBus().get_object(settings.DBUS_IFACE_SYSTEMD, "/sysutils").shutdown()
+        get_dbus_object("/sysutils").shutdown()
 
     def reboot(self):
         """ Reboot the system. """
-        dbus.SystemBus().get_object(settings.DBUS_IFACE_SYSTEMD, "/sysutils").reboot()
+        get_dbus_object("/sysutils").reboot()
 
     def get_time(self):
         """ Return the current time as a UNIX timestamp. """
@@ -41,7 +39,7 @@ class SysUtilsHandler(BaseHandler):
 
     def set_time(self, timestamp):
         """ Set the current system time from the given `timestamp`. """
-        return dbus.SystemBus().get_object(settings.DBUS_IFACE_SYSTEMD, "/sysutils").set_time(timestamp)
+        return get_dbus_object("/sysutils").set_time(timestamp)
 
     def get_load_avg(self):
         """ Return the number of processes in the system run queue averaged over the last 1, 5, and 15 minutes. """
