@@ -16,4 +16,4 @@
 
 from systemd.helpers   import get_dbus_object, dbus_to_python, logged, wrap_as_job
 from systemd.procutils import invoke, create_job
-from systemd.plugins   import BasePlugin, LockingPlugin, method, signal
+from systemd.plugins   import BasePlugin, LockingPlugin, method, signal, deferredmethod
