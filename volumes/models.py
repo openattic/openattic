@@ -121,7 +121,7 @@ class VolumePool(CapabilitiesAwareModel):
             vol.full_clean()
             vol.save()
 
-        get_dbus_object("/").run_queue()
+        get_dbus_object("/").run_queue_background()
         return vol
 
 
