@@ -65,7 +65,10 @@ Ext.define('volumes__volumes_FileSystemVolume_model', {
     rootNode.set("poolname",     toUnicode(record.raw.pool));
     rootNode.set("ownername",    toUnicode(record.raw.owner));
     rootNode.set("icon",         MEDIA_URL + '/icons2/16x16/apps/database.png');
-    rootNode.set("percent",      (record.data.usedmegs / record.data.megs * 100).toFixed(2));
+    if( record.data.usedmegs !== null )
+      rootNode.set("percent",    (record.data.usedmegs / record.data.megs * 100).toFixed(2));
+    else
+      rootNode.set("percent",    null);
     return rootNode;
   }
 });

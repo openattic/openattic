@@ -141,6 +141,8 @@ class FileSystem(object):
         """ stat() the file system and return usage statistics. """
         if self.virtual:
             raise NotImplementedError("FileSystem::stat needs to be overridden for virtual FS handlers")
+        if not self.mounted:
+            return {'size': None, 'free': None, 'used': None}
         s = os.statvfs(self.path)
         stats = {
             'size': (s.f_blocks * s.f_frsize) / 1024. / 1024.,
