@@ -18,6 +18,7 @@ import os
 import traceback
 import logging
 import socket
+import signal
 
 from logging.handlers import SysLogHandler
 from threading import Lock
@@ -33,7 +34,6 @@ from django.core.management.base import BaseCommand
 from django.conf import settings
 
 from systemd.helpers   import makeloggedfunc
-from systemd.procutils import create_job
 from systemd.plugins   import deferredmethod
 
 class SystemD(dbus.service.Object):
@@ -44,11 +44,8 @@ class SystemD(dbus.service.Object):
         dbus.service.Object.__init__(self, self.bus, "/")
         self.busname = dbus.service.BusName(settings.DBUS_IFACE_SYSTEMD, self.bus)
 
-        self.deferred = []
-
-        self.job_lock = Lock()
-        self.job_id = 0
         self.jobs = {}
+        self.procs = []
 
         self.detected_modules = detected_modules
         self.modules = {}
@@ -58,6 +55,8 @@ class SystemD(dbus.service.Object):
                 self.modules[ module.__name__ ] = daemon(self.bus, self.busname, self)
             except:
                 traceback.print_exc()
+
+        signal.signal(signal.SIGCHLD, self._cleanup_procs)
 
     @makeloggedfunc
     @dbus.service.method(settings.DBUS_IFACE_SYSTEMD, in_signature="", out_signature="as")
@@ -82,15 +81,40 @@ class SystemD(dbus.service.Object):
         if sender not in self.jobs:
             self.jobs[sender] = []
 
+    def _run_queue(self, sender):
+        for func, scope, args, kwargs in self.jobs[sender]:
+            func(scope, *args, **kwargs)
+
     @dbus.service.method(settings.DBUS_IFACE_SYSTEMD, in_signature="", out_signature="", sender_keyword="sender")
     def run_queue(self, sender):
         if sender not in self.jobs:
             return
         try:
-            for func, scope, args, kwargs in self.jobs[sender]:
-                func(scope, *args, **kwargs)
+            self._run_queue(sender)
         finally:
             del self.jobs[sender]
+
+    @dbus.service.method(settings.DBUS_IFACE_SYSTEMD, in_signature="", out_signature="", sender_keyword="sender")
+    def run_queue_background(self, sender):
+        if sender not in self.jobs:
+            return
+        try:
+            from multiprocessing import Process
+            pp = Process(target=self._run_queue, args=(sender,))
+            self.procs.append(pp)
+            pp.start()
+        finally:
+            del self.jobs[sender]
+
+    def _cleanup_procs(self, sig, frame):
+        signal.signal(signal.SIGCHLD, self._cleanup_procs)
+        deadprocs = []
+        for proc in self.procs:
+            if not proc.is_alive():
+                proc.join()
+                deadprocs.append(proc)
+        for proc in deadprocs:
+            self.procs.remove(proc)
 
 
 def getloglevel(levelstr):
