@@ -508,7 +508,7 @@ class ConfManager(models.Manager):
     def process_config(self, conf_obj):
         if conf_obj["data"]["scheduling_select"] is not None:
             if conf_obj["data"]["scheduling_select"] == "execute_now":
-                snapcore.process_config(conf_obj)
+                snapcore.process_config(conf_obj, None)
             else:
                 self.add_config(conf_obj)
         else:
