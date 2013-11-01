@@ -84,13 +84,3 @@ def logged(cls):
         elif hasattr(func, "_dbus_is_signal") and func._dbus_is_signal:
             setattr( cls, attr, makeloggedfunc(func, "Emitting") )
     return cls
-
-def wrap_as_job(meth):
-    @wraps(meth)
-    def wrappedmeth(self, *args, **kwargs):
-        sysd = dbus.SystemBus().get_object(settings.DBUS_IFACE_SYSTEMD, "/")
-        jid = sysd.build_job()
-        ret = meth(self, jid, *args, **kwargs)
-        sysd.enqueue_job(jid)
-        return ret
-    return wrappedmeth
