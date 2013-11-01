@@ -51,6 +51,11 @@ signal.__doc__ = "Signal decorator that has the DBus Interface pre-defined."
 
 def make_deferredmethod(in_signature, once_first, once_last, meth):
     """ Defers the actual function call using job control. """
+    import inspect
+    args = inspect.getargspec(meth)[0]
+    if "sender" not in args:
+        raise KeyError("'%s' needs to take a 'sender' argument" % meth.__name__)
+
     if once_first and once_last:
         raise ValueError("'%s' has once_first and once_last set to True" % meth.__name__)
 
