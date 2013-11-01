@@ -105,7 +105,7 @@ class Zfs(FileSystem):
 
     @property
     def status(self):
-        return self.pool_options["health"]
+        return self.pool_options["health"].lower()
 
     @property
     def megs(self):

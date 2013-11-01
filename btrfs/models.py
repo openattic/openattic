@@ -50,7 +50,7 @@ class Btrfs(VolumePool):
 
     @property
     def status(self):
-        return "ok"
+        return "online"
 
     @property
     def megs(self):

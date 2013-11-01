@@ -107,7 +107,7 @@ class VolumeGroup(VolumePool):
         return self._lvm_info
 
     @property
-    def status(self):
+    def attributes(self):
         attr = self.lvm_info["LVM2_VG_ATTR"].lower()
         # vg_attr bits according to ``man vgs'':
         # 0  Permissions: (w)riteable, (r)ead-only
@@ -130,6 +130,14 @@ class VolumeGroup(VolumePool):
             {"c": _("clustered"), "-": None}[        attr[5] ],
         ]
         return ", ".join([flag for flag in flags if flag is not None])
+
+    @property
+    def status(self):
+        attr = self.lvm_info["LVM2_VG_ATTR"].lower()
+        stat = "failed"
+        if attr[0] == "w": stat = "online"
+        if attr[0] == "r": stat = "readonly"
+        return stat
 
     @property
     def megs(self):
@@ -213,7 +221,7 @@ class LogicalVolume(BlockVolume):
         return self._lvm
 
     @property
-    def status(self):
+    def attributes(self):
         attr = self.lvm_info["LVM2_LV_ATTR"].lower()
         # lv_attr bits: see ``man lvs''
         # flags are returned in a way that in most normal cases, the status string is as short as possible.
@@ -261,6 +269,16 @@ class LogicalVolume(BlockVolume):
         if attr[2] in ("A", "C", "I", "L", "N"):
             flags.append(_("pvmove in progress"))
         return ", ".join([flag for flag in flags if flag is not None])
+
+    @property
+    def status(self):
+        attr = self.lvm_info["LVM2_LV_ATTR"].lower()
+        stat = "failed"
+        if attr[4] == "a": stat = "online"
+        if attr[4] == "-": stat = "offline"
+        if attr[0] == "O": stat = "restoring_snapshot"
+        if attr[1] == "r": stat = "readonly"
+        return stat
 
     @property
     def path(self):

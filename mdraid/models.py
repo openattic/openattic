@@ -45,7 +45,7 @@ class Array(BlockVolume):
                 if line.startswith(self.name):
                     if "(F)" in line:
                         return "degraded"
-                    return "ok"
+                    return "online"
 
     @property
     def raid_params(self):

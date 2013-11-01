@@ -80,6 +80,9 @@ class VolumePool(CapabilitiesAwareModel):
 
         ...and the following methods:
         * get_volume_class(type) -> return the volume class to use for volumes of the given type
+
+        Valid values for the ``status'' field are:
+          online, readonly, degraded, verifying, rebuilding, restoring_snapshot, failed, offline, unknown
     """
     volumepool_type = models.ForeignKey(ContentType, blank=True, null=True, related_name="%(class)s_volumepool_type_set")
     volumepool      = generic.GenericForeignKey("volumepool_type", "id")
@@ -242,7 +245,7 @@ class GenericDisk(BlockVolume):
 
     @property
     def status(self):
-        return ""
+        return "unknown"
 
     @property
     def path(self):
