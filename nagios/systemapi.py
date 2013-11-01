@@ -27,7 +27,7 @@ from django.contrib.auth.models import User
 from django.conf   import settings
 
 from ifconfig.models import Host
-from systemd       import invoke, logged, LockingPlugin, method, create_job
+from systemd       import invoke, logged, LockingPlugin, method, deferredmethod
 from nagios.models import Command, Service
 from nagios.conf   import settings as nagios_settings
 from nagios.graphbuilder import Graph as GraphBuilder, parse
@@ -36,13 +36,8 @@ from nagios.graphbuilder import Graph as GraphBuilder, parse
 class SystemD(LockingPlugin):
     dbus_path = "/nagios"
 
-    @method(in_signature="", out_signature="")
-    def writeconf(self):
-        self.mainobj.call_deferred(self._writeconf)
-
-    def _writeconf(self):
-        import logging
-        logging.warning("YAAAAAY")
+    @deferredmethod(in_signature="", once_last=True)
+    def writeconf(self, sender):
         self.lock.acquire()
         try:
             # Services
@@ -66,10 +61,8 @@ class SystemD(LockingPlugin):
                 fd.close()
         finally:
             self.lock.release()
-        create_job([
-            ["nagios3", "--verify-config", nagios_settings.NAGIOS_CFG_PATH],
-            ["/etc/init.d/nagios3", "restart"]
-            ])
+        invoke(["nagios3", "--verify-config", nagios_settings.NAGIOS_CFG_PATH])
+        invoke(["/etc/init.d/nagios3", "restart"])
 
     @method(in_signature="", out_signature="i")
     def check_conf(self):

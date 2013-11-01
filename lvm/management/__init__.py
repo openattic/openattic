@@ -14,8 +14,6 @@
  *  GNU General Public License for more details.
 """
 
-import dbus
-
 try:
     import readline
 except ImportError:
@@ -25,9 +23,8 @@ from os.path import exists
 
 from django.contrib.auth.models import User
 from django.db.models import signals
-from django.conf      import settings
 
-from systemd.helpers import dbus_to_python
+from systemd import dbus_to_python, get_dbus_object
 
 import lvm.models
 import sysutils.models
@@ -36,7 +33,7 @@ from lvm              import blockdevices
 from lvm.models       import VolumeGroup, LogicalVolume
 
 def create_vgs(**kwargs):
-    lvm = dbus.SystemBus().get_object(settings.DBUS_IFACE_SYSTEMD, "/lvm")
+    lvm = get_dbus_object("/lvm")
 
     vgs = dbus_to_python(lvm.vgs())
     lvs = dbus_to_python(lvm.lvs())

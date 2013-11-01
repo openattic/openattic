@@ -14,11 +14,9 @@
  *  GNU General Public License for more details.
 """
 
-import dbus
-
 from django.db   import models
-from django.conf import settings
 
+from systemd import get_dbus_object
 from ifconfig.models import getHostDependentManagerClass
 from lvm.models import LogicalVolume
 
@@ -42,7 +40,7 @@ class Export(models.Model):
 
     def save( self, *args, **kwargs ):
         ret = models.Model.save(self, *args, **kwargs)
-        nfs = dbus.SystemBus().get_object(settings.DBUS_IFACE_SYSTEMD, "/nfs")
+        nfs = get_dbus_object("/nfs")
         nfs.writeconf()
         if not self.volume.standby:
             nfs.exportfs(True, self.path, self.address, self.options)
@@ -50,7 +48,7 @@ class Export(models.Model):
 
     def delete( self ):
         ret = models.Model.delete(self)
-        nfs = dbus.SystemBus().get_object(settings.DBUS_IFACE_SYSTEMD, "/nfs")
+        nfs = get_dbus_object("/nfs")
         nfs.writeconf()
         if not self.volume.standby:
             nfs.exportfs(False, self.path, self.address, self.options)

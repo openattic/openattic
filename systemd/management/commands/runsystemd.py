@@ -34,7 +34,7 @@ from django.core.management.base import BaseCommand
 from django.conf import settings
 
 from systemd.helpers   import makeloggedfunc
-from systemd.procutils import create_job
+from systemd.plugins   import deferredmethod
 
 class SystemD(dbus.service.Object):
     """ Implements the main DBus section (/). """
@@ -44,11 +44,8 @@ class SystemD(dbus.service.Object):
         dbus.service.Object.__init__(self, self.bus, "/")
         self.busname = dbus.service.BusName(settings.DBUS_IFACE_SYSTEMD, self.bus)
 
-        self.deferred = []
-
-        self.job_lock = Lock()
-        self.job_id = 0
         self.jobs = {}
+        self.procs = []
 
         self.detected_modules = detected_modules
         self.modules = {}
@@ -58,6 +55,8 @@ class SystemD(dbus.service.Object):
                 self.modules[ module.__name__ ] = daemon(self.bus, self.busname, self)
             except:
                 traceback.print_exc()
+
+        signal.signal(signal.SIGCHLD, self._cleanup_procs)
 
     @makeloggedfunc
     @dbus.service.method(settings.DBUS_IFACE_SYSTEMD, in_signature="", out_signature="as")
@@ -77,64 +76,45 @@ class SystemD(dbus.service.Object):
         """ Return 'pong' for connectivity tests. """
         return "pong"
 
-    @makeloggedfunc
-    @dbus.service.method(settings.DBUS_IFACE_SYSTEMD, in_signature="", out_signature="i")
-    def build_job(self):
-        """ Create a new empty job queue and return its `jid`.
+    @dbus.service.method(settings.DBUS_IFACE_SYSTEMD, in_signature="", out_signature="", sender_keyword="sender")
+    def start_queue(self, sender):
+        if sender not in self.jobs:
+            self.jobs[sender] = []
 
-            Jobs can be enqueued using the `job_add_command` method and executed
-            using the `enqueue_job` method. The job queue will then run each command
-            sequentially in the background. Once finished, the `job_finished` event
-            will be fired.
-        """
-        self.job_lock.acquire()
-        self.job_id += 1
-        jid = self.job_id
-        self.jobs[jid] = []
-        self.job_lock.release()
-        return jid
+    def _run_queue(self, sender):
+        for func, scope, args, kwargs in self.jobs[sender]:
+            func(scope, *args, **kwargs)
 
-    def _job_add_command(self, jid, cmd):
-        self.job_lock.acquire()
-        self.jobs[jid].append(cmd)
-        self.job_lock.release()
+    @dbus.service.method(settings.DBUS_IFACE_SYSTEMD, in_signature="", out_signature="", sender_keyword="sender")
+    def run_queue(self, sender):
+        if sender not in self.jobs:
+            return
+        try:
+            self._run_queue(sender)
+        finally:
+            del self.jobs[sender]
 
-    @makeloggedfunc
-    @dbus.service.method(settings.DBUS_IFACE_SYSTEMD, in_signature="is", out_signature="")
-    def job_add_command(self, jid, cmd):
-        """ Add a job to the job queue given by `jid`. """
-        self._job_add_command(jid, cmd)
+    @dbus.service.method(settings.DBUS_IFACE_SYSTEMD, in_signature="", out_signature="", sender_keyword="sender")
+    def run_queue_background(self, sender):
+        if sender not in self.jobs:
+            return
+        try:
+            from multiprocessing import Process
+            pp = Process(target=self._run_queue, args=(sender,))
+            self.procs.append(pp)
+            pp.start()
+        finally:
+            del self.jobs[sender]
 
-    @makeloggedfunc
-    @dbus.service.method(settings.DBUS_IFACE_SYSTEMD, in_signature="i", out_signature="")
-    def enqueue_job(self, jid):
-        """ Start execution of the job queue given by `jid`, if any commands have been added to it. """
-        self.job_lock.acquire()
-        if self.jobs[jid]:
-            create_job( self.jobs[jid], self.job_finished, (jid,) )
-        else:
-            del self.jobs[jid]
-        self.job_lock.release()
-
-    @makeloggedfunc
-    @dbus.service.signal(settings.DBUS_IFACE_SYSTEMD, signature="i")
-    def job_finished(self, jid):
-        """ Event fired whenever a job has completed. """
-        self.job_lock.acquire()
-        del self.jobs[jid]
-        self.job_lock.release()
-
-    # Deferred function execution via SIGALRM
-    def run_deferred_calls(self, sig, frame):
-        for func, args, kwargs in self.deferred:
-            func(*args, **kwargs)
-        self.deferred = []
-
-    def call_deferred(self, func, *args, **kwargs):
-        if func not in [call[0] for call in self.deferred]:
-            self.deferred.append((func, args, kwargs))
-        signal.signal(signal.SIGALRM, self.run_deferred_calls)
-        signal.alarm(1)
+    def _cleanup_procs(self, sig, frame):
+        signal.signal(signal.SIGCHLD, self._cleanup_procs)
+        deadprocs = []
+        for proc in self.procs:
+            if not proc.is_alive():
+                proc.join()
+                deadprocs.append(proc)
+        for proc in deadprocs:
+            self.procs.remove(proc)
 
 
 def getloglevel(levelstr):

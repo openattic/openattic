@@ -16,7 +16,6 @@
 """
 
 import pyudev
-import dbus
 import re
 import os
 import os.path
@@ -25,12 +24,11 @@ import shlex
 
 from django.contrib.auth.models import User
 from django.db import models
-from django.conf import settings
 from django.utils.translation   import ugettext_noop as _
 
 from systemd         import invoke
 from ifconfig.models import Host, HostDependentManager, getHostDependentManagerClass
-from systemd.helpers import dbus_to_python
+from systemd.helpers import get_dbus_object, dbus_to_python
 from lvm             import signals as lvm_signals
 from lvm             import blockdevices
 from lvm.conf        import settings as lvm_settings
@@ -87,10 +85,10 @@ class VolumeGroup(VolumePool):
 
     def save( self, *args, **kwargs ):
         VolumePool.save(self, *args, **kwargs)
-        dbus.SystemBus().get_object(settings.DBUS_IFACE_SYSTEMD, "/lvm").invalidate()
+        get_dbus_object("/lvm").invalidate()
 
     def delete(self):
-        lvm = dbus.SystemBus().get_object(settings.DBUS_IFACE_SYSTEMD, "/lvm")
+        lvm = get_dbus_object("/lvm")
         for lv in LogicalVolume.objects.filter(vg=self):
             lv.delete()
         pvs = lvm.pvs()
@@ -105,12 +103,11 @@ class VolumeGroup(VolumePool):
     def lvm_info(self):
         """ VG information from LVM. """
         if self._lvm_info is None:
-            lvm = dbus.SystemBus().get_object(settings.DBUS_IFACE_SYSTEMD, "/lvm")
-            self._lvm_info = dbus_to_python(lvm.vgs())[self.name]
+            self._lvm_info = dbus_to_python(get_dbus_object("/lvm").vgs())[self.name]
         return self._lvm_info
 
     @property
-    def status(self):
+    def attributes(self):
         attr = self.lvm_info["LVM2_VG_ATTR"].lower()
         # vg_attr bits according to ``man vgs'':
         # 0  Permissions: (w)riteable, (r)ead-only
@@ -133,6 +130,14 @@ class VolumeGroup(VolumePool):
             {"c": _("clustered"), "-": None}[        attr[5] ],
         ]
         return ", ".join([flag for flag in flags if flag is not None])
+
+    @property
+    def status(self):
+        attr = self.lvm_info["LVM2_VG_ATTR"].lower()
+        stat = "failed"
+        if attr[0] == "w": stat = "online"
+        if attr[0] == "r": stat = "readonly"
+        return stat
 
     @property
     def megs(self):
@@ -188,7 +193,6 @@ class LogicalVolume(BlockVolume):
         self._lvm = None
         self._lvm_info = None
         self._fs = None
-        self._jid = None
 
     def __unicode__(self):
         return self.name
@@ -210,27 +214,14 @@ class LogicalVolume(BlockVolume):
             raise ValidationError({"megs": ["Volume Group %s has insufficient free space." % self.vg.name]})
         return BlockVolume.full_clean(self)
 
-    def _build_job(self):
-        if self._jid is not None:
-            raise SystemError("Already building a job...")
-        if self._sysd is None:
-            self._sysd = dbus.SystemBus().get_object(settings.DBUS_IFACE_SYSTEMD, "/")
-        self._jid = self._sysd.build_job()
-
-    def _enqueue_job(self):
-        if self._jid is None:
-            raise SystemError("Not building a job...")
-        self._sysd.enqueue_job(self._jid)
-        self._jid = None
-
     @property
     def lvm(self):
         if self._lvm is None:
-            self._lvm = dbus.SystemBus().get_object(settings.DBUS_IFACE_SYSTEMD, "/lvm")
+            self._lvm = get_dbus_object("/lvm")
         return self._lvm
 
     @property
-    def status(self):
+    def attributes(self):
         attr = self.lvm_info["LVM2_LV_ATTR"].lower()
         # lv_attr bits: see ``man lvs''
         # flags are returned in a way that in most normal cases, the status string is as short as possible.
@@ -278,6 +269,16 @@ class LogicalVolume(BlockVolume):
         if attr[2] in ("A", "C", "I", "L", "N"):
             flags.append(_("pvmove in progress"))
         return ", ".join([flag for flag in flags if flag is not None])
+
+    @property
+    def status(self):
+        attr = self.lvm_info["LVM2_LV_ATTR"].lower()
+        stat = "failed"
+        if attr[4] == "a": stat = "online"
+        if attr[4] == "-": stat = "offline"
+        if attr[0] == "O": stat = "restoring_snapshot"
+        if attr[1] == "r": stat = "readonly"
+        return stat
 
     @property
     def path(self):
@@ -353,13 +354,13 @@ class LogicalVolume(BlockVolume):
 
     def resize( self ):
         if self.megs < self.lvm_megs:
-            lvm_signals.pre_shrink.send(sender=LogicalVolume, instance=self, jid=self._jid)
+            lvm_signals.pre_shrink.send(sender=LogicalVolume, instance=self)
             self.lvm.lvresize(self._jid, self.path, self.megs, False)
-            lvm_signals.post_shrink.send(sender=LogicalVolume, instance=self, jid=self._jid)
+            lvm_signals.post_shrink.send(sender=LogicalVolume, instance=self)
         else:
-            lvm_signals.pre_grow.send(sender=LogicalVolume, instance=self, jid=self._jid)
+            lvm_signals.pre_grow.send(sender=LogicalVolume, instance=self)
             self.lvm.lvresize(self._jid, self.path, self.megs, True)
-            lvm_signals.post_grow.send(sender=LogicalVolume, instance=self, jid=self._jid)
+            lvm_signals.post_grow.send(sender=LogicalVolume, instance=self)
         self._lvm_info = None # outdate cached information
 
     def clean(self):
@@ -390,19 +391,16 @@ class LogicalVolume(BlockVolume):
 
         ret = BlockVolume.save(self, *args, **kwargs)
 
-        self._build_job()
-
         if install:
             self.install()
-            self.uuid = self.lvm_info["LVM2_LV_UUID"]
+            # TODO: Move to post_install or systemd
+            #self.uuid = self.lvm_info["LVM2_LV_UUID"]
 
             ret = BlockVolume.save(self, *args, **kwargs)
 
         else:
             if old_self.megs != self.megs:
                 self.resize()
-
-        self._enqueue_job()
 
         return ret
 

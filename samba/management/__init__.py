@@ -14,17 +14,9 @@
  *  GNU General Public License for more details.
 """
 
-import dbus
-
-from django.conf import settings
-from django.db.models import signals
-
-import samba.models
 import sysutils.models
-from samba.models import Share
 
 def writeconf(**kwargs):
-    samba = dbus.SystemBus().get_object(settings.DBUS_IFACE_SYSTEMD, "/samba")
-    samba.writeconf()
+    get_dbus_object("/samba").writeconf()
 
 sysutils.models.post_install.connect(writeconf, sender=sysutils.models)

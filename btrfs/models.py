@@ -50,7 +50,7 @@ class Btrfs(VolumePool):
 
     @property
     def status(self):
-        return "ok"
+        return "online"
 
     @property
     def megs(self):
@@ -73,6 +73,11 @@ class BtrfsSubvolume(FileSystemVolume):
 
     objects     = getHostDependentManagerClass("btrfs__host")()
     all_objects = models.Manager()
+
+    def full_clean(self):
+        if self.btrfs_id is None and self.pool is not None:
+            self.btrfs = self.pool.volumepool
+        return FileSystemVolume.full_clean(self)
 
     def save(self, *args, **kwargs):
         install = (self.id is None)

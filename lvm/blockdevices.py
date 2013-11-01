@@ -5,9 +5,7 @@ import os
 import re
 import dbus
 
-from django.conf import settings
-
-from systemd.helpers import dbus_to_python
+from systemd import dbus_to_python, get_dbus_object
 
 def get_mounts():
     """ Get currently mounted devices. """
@@ -46,7 +44,7 @@ def get_devices():
 
 def is_device_in_use(device):
     """ Check if this device is mounted somewhere or used as a physical volume. """
-    lvm = dbus.SystemBus().get_object(settings.DBUS_IFACE_SYSTEMD, "/lvm")
+    lvm = get_dbus_object("/lvm")
     pvs = lvm.pvs()
     for pvdev in pvs:
         if device in pvdev:
@@ -79,14 +77,14 @@ def is_device_in_use(device):
 
 def get_partitions(device):
     """ Get partitions from the given device. """
-    lvm = dbus.SystemBus().get_object(settings.DBUS_IFACE_SYSTEMD, "/lvm")
+    lvm = get_dbus_object("/lvm")
     ret, disk, part = lvm.get_partitions(device)
     if ret:
         raise SystemError("parted failed, check the log")
     return dbus_to_python(disk), dbus_to_python(part)
 
 def get_lvm_capabilities():
-    lvm  = dbus.SystemBus().get_object(settings.DBUS_IFACE_SYSTEMD, "/lvm")
+    lvm  = get_dbus_object("/lvm")
     return dbus_to_python(lvm.get_lvm_capabilities())
 
 def get_disk_size(device):

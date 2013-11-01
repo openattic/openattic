@@ -17,7 +17,6 @@
 import socket
 import netifaces
 import netaddr
-import dbus
 
 from os.path import join, exists
 
@@ -25,7 +24,6 @@ from django.conf import settings
 from django.db import models
 from django.db.models import signals
 from django.utils.translation import ugettext_noop as _
-
 
 AF_CHOICES = (
     (socket.AF_INET,  "IPv4"),
@@ -307,8 +305,8 @@ class NetDevice(models.Model):
 
     @classmethod
     def write_interfaces(cls):
-        ifconfig = dbus.SystemBus().get_object(settings.DBUS_IFACE_SYSTEMD, "/ifconfig")
-        ifconfig.write_interfaces()
+        from systemd import get_dbus_object
+        get_dbus_object("/ifconfig").write_interfaces()
 
 
 

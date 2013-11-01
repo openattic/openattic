@@ -17,12 +17,9 @@
  *  GNU General Public License for more details.
 """
 
-import dbus
-
-from django.conf import settings
 from django.db   import models
 
-from systemd.helpers import dbus_to_python
+from systemd import dbus_to_python, get_dbus_object
 
 from lvm.models import LVChainedModule
 from lvm        import blockdevices
@@ -192,7 +189,7 @@ class Connection(models.Model):
     @property
     def drbd(self):
         if self._drbd is None:
-            self._drbd = dbus.SystemBus().get_object(settings.DBUS_IFACE_SYSTEMD, "/drbd")
+            self._drbd = get_dbus_object("/drbd")
         return self._drbd
 
     @property

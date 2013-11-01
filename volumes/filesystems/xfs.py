@@ -53,23 +53,23 @@ class Xfs(FileSystem):
 
     agcount = property(get_agcount)
 
-    def format(self, jid):
+    def format(self):
         try:
             raidparams = self.volume.base.volume.raid_params
         except UnsupportedRAID:
             raidparams = {"chunksize": -1, "datadisks": -1}
 
-        self.dbus_object.xfs_format( jid, self.volume.base.volume.path, raidparams["chunksize"], raidparams["datadisks"], self.agcount )
-        self.mount(jid)
-        self.chown(jid)
+        self.dbus_object.xfs_format( self.volume.base.volume.path, raidparams["chunksize"], raidparams["datadisks"], self.agcount )
+        self.mount()
+        self.chown()
 
     def online_resize_available(self, grow):
         return grow
 
-    def resize(self, jid, grow):
+    def resize(self, grow):
         if not grow:
             raise SystemError("XFS does not support shrinking.")
-        self.dbus_object.xfs_resize( jid, self.volume.base.volume.path, self.volume.megs )
+        self.dbus_object.xfs_resize( self.volume.base.volume.path, self.volume.megs )
 
     @classmethod
     def check_type(cls, typestring):

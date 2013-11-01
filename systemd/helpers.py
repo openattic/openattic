@@ -14,12 +14,20 @@
  *  GNU General Public License for more details.
 """
 
+import threading
 import logging
 import dbus
 
 from functools import wraps
 
 from django.conf import settings
+
+threadstore = threading.local()
+
+def get_dbus_object(path="/"):
+    if not hasattr(threadstore, "systemdbus"):
+        threadstore.systemdbus = dbus.SystemBus(private=True)
+    return threadstore.systemdbus.get_object(settings.DBUS_IFACE_SYSTEMD, path)
 
 def dbus_type_to_python(obj):
     """ Convert a single dbus something to its python equivalent. """
@@ -76,13 +84,3 @@ def logged(cls):
         elif hasattr(func, "_dbus_is_signal") and func._dbus_is_signal:
             setattr( cls, attr, makeloggedfunc(func, "Emitting") )
     return cls
-
-def wrap_as_job(meth):
-    @wraps(meth)
-    def wrappedmeth(self, *args, **kwargs):
-        sysd = dbus.SystemBus().get_object(settings.DBUS_IFACE_SYSTEMD, "/")
-        jid = sysd.build_job()
-        ret = meth(self, jid, *args, **kwargs)
-        sysd.enqueue_job(jid)
-        return ret
-    return wrappedmeth

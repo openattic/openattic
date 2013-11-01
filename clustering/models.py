@@ -14,12 +14,10 @@
  *  GNU General Public License for more details.
 """
 
-import dbus
-
 from django.core.exceptions import ValidationError
-from django.conf import settings
 from django.db import models
 
+from systemd import get_dbus_object
 from ifconfig.models import IPAddress
 from peering.models  import PeerHost
 
@@ -52,7 +50,7 @@ class ServiceIP4(models.Model):
                     })
 
             if self.init_master:
-                crm = dbus.SystemBus().get_object(settings.DBUS_IFACE_SYSTEMD, "/clustering")
+                crm = get_dbus_object("/clustering")
                 crm.resource_create_ip4( self.resname, self.address )
 
             self.initialized = True

@@ -14,15 +14,12 @@
  *  GNU General Public License for more details.
 """
 
-import dbus
-
-from django.conf      import settings
 from django.db.models import signals
 from django.contrib.auth.models import User
 
 
 def update_contacts(**kwargs):
-    als = dbus.SystemBus().get_object(settings.DBUS_IFACE_SYSTEMD, "/mailaliases")
+    als = get_dbus_object("/mailaliases")
     als.write_aliases()
     als.newaliases()
 

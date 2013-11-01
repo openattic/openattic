@@ -20,22 +20,22 @@ from django.conf import settings
 
 from rpcd.handlers import BaseHandler
 
-from systemd.helpers import dbus_to_python
+from systemd import dbus_to_python, get_dbus_object
 
 class IpmiHandler(BaseHandler):
     handler_name = "ipmi.Sensor"
 
     def get_all_sensors(self):
-        return dbus_to_python(dbus.SystemBus().get_object(settings.DBUS_IFACE_SYSTEMD, "/ipmi").get_all_sensors())
+        return dbus_to_python(get_dbus_object("/ipmi").get_all_sensors())
 
     def get_most_sensors(self):
-        return dbus_to_python(dbus.SystemBus().get_object(settings.DBUS_IFACE_SYSTEMD, "/ipmi").get_most_sensors())
+        return dbus_to_python(get_dbus_object("/ipmi").get_most_sensors())
 
     def get_sensors_by_type(self, stype):
-        return dbus_to_python(dbus.SystemBus().get_object(settings.DBUS_IFACE_SYSTEMD, "/ipmi").get_sensors_by_type(stype))
+        return dbus_to_python(get_dbus_object("/ipmi").get_sensors_by_type(stype))
 
     def get_sensor_types(self):
-        return dbus_to_python(dbus.SystemBus().get_object(settings.DBUS_IFACE_SYSTEMD, "/ipmi").get_sensor_types())
+        return dbus_to_python(get_dbus_object("/ipmi").get_sensor_types())
 
 
 RPCD_HANDLERS = [IpmiHandler]

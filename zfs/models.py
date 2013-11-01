@@ -69,6 +69,11 @@ class Zfs(FileSystemVolume):
     objects     = getHostDependentManagerClass("zpool__host")()
     all_objects = models.Manager()
 
+    def full_clean(self):
+        if self.zpool_id is None and self.pool is not None:
+            self.zpool = self.pool.volumepool
+        return FileSystemVolume.full_clean(self)
+
     def save(self, *args, **kwargs):
         install = (self.id is None)
         if self.zpool_id is None and self.pool is not None:

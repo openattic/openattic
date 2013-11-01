@@ -15,24 +15,22 @@
 """
 
 import os
-from systemd import invoke, logged, BasePlugin, method
+from systemd import invoke, logged, BasePlugin, method, deferredmethod
 
 @logged
 class SystemD(BasePlugin):
     dbus_path = "/btrfs"
 
-    @method(in_signature="is", out_signature="")
-    def format(self, jid, devpath):
-        cmd = ["mkfs.btrfs"]
-        cmd.append(devpath)
-        self.job_add_command(jid, cmd)
+    @deferredmethod(in_signature="s")
+    def format(self, devpath, sender):
+        invoke(["mkfs.btrfs", devpath])
 
-    @method(in_signature="s", out_signature="")
-    def create_subvolume(self, path):
+    @deferredmethod(in_signature="s")
+    def create_subvolume(self, path, sender):
         invoke(["btrfs", "subvolume", "create", path])
 
-    @method(in_signature="ssb", out_signature="")
-    def create_snapshot(self, origpath, snappath, readonly):
+    @deferredmethod(in_signature="ssb")
+    def create_snapshot(self, origpath, snappath, readonly, sender):
         if not os.path.exists(os.path.dirname(snappath)):
             os.makedirs(os.path.dirname(snappath))
         cmd = ["btrfs", "subvolume", "snapshot"]
@@ -41,7 +39,7 @@ class SystemD(BasePlugin):
         cmd.extend([origpath, snappath])
         invoke(cmd)
 
-    @method(in_signature="s", out_signature="")
-    def delete_subvolume(self, path):
+    @deferredmethod(in_signature="s")
+    def delete_subvolume(self, path, sender):
         invoke(["btrfs", "subvolume", "delete", path])
 

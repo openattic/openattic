@@ -15,13 +15,12 @@
 """
 
 import new
-import dbus
 
-from django.conf import settings
 from django.contrib.auth.models import User
 from django.db.models import signals
 from django.db import models
 
+from systemd import get_dbus_object
 from ifconfig.models import getHostDependentManagerClass
 from lvm.models import LogicalVolume
 
@@ -71,7 +70,7 @@ class Share(models.Model):
 
     def save( self, *args, **kwargs ):
         ret = models.Model.save(self, *args, **kwargs)
-        samba = dbus.SystemBus().get_object(settings.DBUS_IFACE_SYSTEMD, "/samba")
+        samba = get_dbus_object("/samba")
         samba.writeconf()
         if not self.volume.standby:
             samba.reload()
@@ -80,7 +79,7 @@ class Share(models.Model):
     def delete( self ):
         volume = self.volume
         ret = models.Model.delete(self)
-        samba = dbus.SystemBus().get_object(settings.DBUS_IFACE_SYSTEMD, "/samba")
+        samba = get_dbus_object("/samba")
         samba.writeconf()
         if not volume.standby:
             samba.reload()

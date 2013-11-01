@@ -19,9 +19,7 @@ import os.path
 import re
 import dbus
 
-from django.conf import settings
-
-from systemd  import dbus_to_python, wrap_as_job
+from systemd  import dbus_to_python, get_dbus_object
 
 from volumes.conf import settings as volumes_settings
 from volumes.filesystems.filesystem import FileSystem
@@ -35,6 +33,9 @@ SIZE_MULTIPLIERS = {
 }
 
 def scale_to_megs(size):
+    if size == '-':
+        # faulty pool
+        return None
     if size[-1] in SIZE_MULTIPLIERS:
         # size is something like "672.42G", scale to MBytes
         return float(size[:-1]) * SIZE_MULTIPLIERS[size[-1]]
@@ -83,7 +84,7 @@ class Zfs(FileSystem):
 
     @property
     def dbus_object(self):
-        return dbus.SystemBus().get_object(settings.DBUS_IFACE_SYSTEMD, "/zfs")
+        return get_dbus_object("/zfs")
 
     @classmethod
     def check_installed(cls):
@@ -104,7 +105,7 @@ class Zfs(FileSystem):
 
     @property
     def status(self):
-        return self.pool_options["health"]
+        return self.pool_options["health"].lower()
 
     @property
     def megs(self):
@@ -120,17 +121,16 @@ class Zfs(FileSystem):
         opts.update(self.options)
         return opts
 
-    @wrap_as_job
-    def format(self, jid):
-        self.dbus_object.zfs_format(jid, self.volume.path, self.volume.name,
+    def format(self):
+        self.dbus_object.zfs_format(self.volume.path, self.volume.name,
             os.path.join(volumes_settings.MOUNT_PREFIX, self.volume.name))
-        self.chown(jid)
+        self.chown()
 
-    def mount(self, jid):
-        self.dbus_object.zfs_mount(jid, self.volume.name)
+    def mount(self):
+        self.dbus_object.zfs_mount(self.volume.name)
 
-    def unmount(self, jid):
-        self.dbus_object.zfs_unmount(jid, self.volume.name)
+    def unmount(self):
+        self.dbus_object.zfs_unmount(self.volume.name)
 
     def destroy(self):
         for snap in self.volume.zfssnapshot_set.all():
@@ -142,11 +142,11 @@ class Zfs(FileSystem):
     def online_resize_available(self, grow):
         return grow
 
-    def resize(self, jid, grow):
+    def resize(self, grow):
         if not grow:
             raise SystemError("ZFS does not support shrinking.")
         else:
-            self.dbus_object.zfs_expand( jid, self.volume.name, self.volume.path )
+            self.dbus_object.zfs_expand( self.volume.name, self.volume.path )
 
     def create_subvolume(self, path):
         self.dbus_object.zfs_create_volume(self.pool.name, path)

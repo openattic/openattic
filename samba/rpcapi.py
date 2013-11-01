@@ -14,10 +14,6 @@
  *  GNU General Public License for more details.
 """
 
-import dbus
-
-from django.conf import settings
-
 from rpcd.handlers import ModelHandler
 from rpcd.handlers import ProxyModelHandler
 
@@ -25,11 +21,6 @@ from samba.models import Share
 
 class ShareHandler(ModelHandler):
     model = Share
-
-    def writeconf(self):
-        samba = dbus.SystemBus().get_object(settings.DBUS_IFACE_SYSTEMD, "/samba")
-        samba.writeconf()
-        samba.reload()
 
 class ShareProxy(ProxyModelHandler, ShareHandler):
     pass

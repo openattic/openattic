@@ -16,7 +16,7 @@
 
 import os
 from time import time
-from systemd import invoke, logged, BasePlugin, method, signal
+from systemd import invoke, logged, BasePlugin, method, signal, deferredmethod
 
 from lvm.conf   import settings as lvm_settings
 from lvm.models import LogicalVolume
@@ -127,8 +127,8 @@ class SystemD(BasePlugin):
             self.lvs_cache = lvm_lvs()
         return self.lvs_cache
 
-    @method(in_signature="ssis", out_signature="i")
-    def lvcreate(self, vgname, lvname, megs, snapshot):
+    @deferredmethod(in_signature="ssis")
+    def lvcreate(self, vgname, lvname, megs, snapshot, sender):
         cmd = ["/sbin/lvcreate"]
         if snapshot:
             cmd.extend(["-s", snapshot])
@@ -138,42 +138,42 @@ class SystemD(BasePlugin):
         if not snapshot:
             cmd.append(vgname)
         self.lvs_time = 0
-        return invoke(cmd)
+        invoke(cmd)
 
-    @method(in_signature="sb", out_signature="i")
-    def lvchange(self, device, active):
+    @deferredmethod(in_signature="sb")
+    def lvchange(self, device, active, sender):
         self.lvs_time = 0
-        return invoke(["/sbin/lvchange", ('-a' + {False: 'n', True: 'y'}[active]), device])
+        invoke(["/sbin/lvchange", ('-a' + {False: 'n', True: 'y'}[active]), device])
 
-    @method(in_signature="isib", out_signature="")
-    def lvresize(self, jid, device, megs, grow):
+    @deferredmethod(in_signature="sib")
+    def lvresize(self, device, megs, grow, sender):
         if not grow:
-            self.job_add_command(jid, ["/sbin/lvchange", '-an', device])
+            invoke(["/sbin/lvchange", '-an', device])
 
-        self.job_add_command(jid, ["/sbin/lvresize", '-L', ("%dM" % megs), device])
+        invoke(["/sbin/lvresize", '-L', ("%dM" % megs), device])
 
         if not grow:
-            self.job_add_command(jid, ["/sbin/lvchange", '-ay', device])
+            invoke(["/sbin/lvchange", '-ay', device])
 
-    @method(in_signature="s", out_signature="i")
-    def lvmerge(self, device):
+    @deferredmethod(in_signature="s")
+    def lvmerge(self, device, sender):
         self.lvs_time = 0
-        return invoke(["/sbin/lvconvert", "--merge", device])
+        invoke(["/sbin/lvconvert", "--merge", device])
 
-    @method(in_signature="s", out_signature="i")
-    def lvremove(self, device):
+    @deferredmethod(in_signature="s")
+    def lvremove(self, device, sender):
         self.lvs_time = 0
-        return invoke(["/sbin/lvremove", '-f', device])
+        invoke(["/sbin/lvremove", '-f', device])
 
-    @method(in_signature="s", out_signature="i")
-    def vgremove(self, device):
+    @deferredmethod(in_signature="s")
+    def vgremove(self, device, sender):
         self.vgs_time = 0
-        return invoke(["/sbin/vgremove", '-f', device])
+        invoke(["/sbin/vgremove", '-f', device])
 
-    @method(in_signature="s", out_signature="i")
-    def pvremove(self, device):
+    @deferredmethod(in_signature="s")
+    def pvremove(self, device, sender):
         self.pvs_time = 0
-        return invoke(["/sbin/pvremove", '-f', device])
+        invoke(["/sbin/pvremove", '-f', device])
 
     @method(in_signature="s", out_signature="s")
     def get_type(self, device):

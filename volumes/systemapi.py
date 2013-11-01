@@ -15,7 +15,7 @@
 """
 
 import os
-from systemd import invoke, logged, BasePlugin, method, signal
+from systemd import invoke, logged, BasePlugin, method, signal, deferredmethod
 
 from volumes.conf import settings as volumes_settings
 from volumes.models import VolumePool, FileSystemProvider
@@ -25,82 +25,71 @@ from volumes import capabilities
 class SystemD(BasePlugin):
     dbus_path = "/volumes"
 
-    @method(in_signature="isss", out_signature="")
-    def fs_mount(self, jid, fstype, devpath, mountpoint):
+    @deferredmethod(in_signature="sss")
+    def fs_mount(self, fstype, devpath, mountpoint, sender):
         if not os.path.exists(mountpoint):
             os.makedirs(mountpoint)
-        cmd = ["/bin/mount", "-t", fstype, devpath, mountpoint]
-        if jid != -1:
-            self.job_add_command(jid, cmd)
-        else:
-            invoke(cmd)
+        invoke(["/bin/mount", "-t", fstype, devpath, mountpoint])
 
-    @method(in_signature="iss", out_signature="")
-    def fs_unmount(self, jid, devpath, mountpoint):
+    @deferredmethod(in_signature="ss")
+    def fs_unmount(self, devpath, mountpoint, sender):
         if not os.path.exists(mountpoint) or not os.path.ismount(mountpoint):
             return
-        cmd = ["/bin/umount", mountpoint]
-        if jid != -1:
-            self.job_add_command(jid, cmd)
-        else:
-            invoke(cmd)
+        invoke(["/bin/umount", mountpoint])
 
-    @method(in_signature="isss", out_signature="")
-    def fs_chown(self, jid, mountpoint, user, group):
+    @deferredmethod(in_signature="sss")
+    def fs_chown(self, mountpoint, user, group, sender):
         if group:
             cmd = ["/bin/chown", "-R", ("%s:%s" % (user, group)), mountpoint]
         else:
             cmd = ["/bin/chown", "-R", user, mountpoint]
-        if jid != -1:
-            self.job_add_command(jid, cmd)
-        else:
-            invoke(cmd)
+        invoke(cmd)
 
     @method(in_signature="s", out_signature="a{ss}")
     def e2fs_info(self, devpath):
         ret, out, err = invoke(["/sbin/tune2fs", "-l", devpath], return_out_err=True)
         return dict([ [part.strip() for part in line.split(":", 1)] for line in out.split("\n")[1:] if line ])
 
-    @method(in_signature="issii", out_signature="")
-    def e2fs_format(self, jid, devpath, label, chunksize, datadisks):
+    @deferredmethod(in_signature="ssii")
+    def e2fs_format(self, devpath, label, chunksize, datadisks, sender):
         cmd = ["/sbin/mke2fs"]
         if chunksize != -1 and datadisks != -1:
             stride = chunksize / 4096
             stripe_width = stride * datadisks
             cmd.extend([ "-E", "stride=%d,stripe_width=%d" % (stride, stripe_width) ])
         cmd.extend([ "-q", "-m0", "-L", label, devpath ])
-        self.job_add_command(jid, cmd)
+        invoke(cmd)
 
-    @method(in_signature="is", out_signature="")
-    def e2fs_check(self, jid, devpath):
-        self.job_add_command(jid, ["/sbin/e2fsck", "-y", "-f", devpath])
+    @deferredmethod(in_signature="s")
+    def e2fs_check(self, devpath, sender):
+        invoke(["/sbin/e2fsck", "-y", "-f", devpath])
 
-    @method(in_signature="isib", out_signature="")
-    def e2fs_resize(self, jid, devpath, megs, grow):
-        self.job_add_command(jid, ["/sbin/resize2fs", devpath, ("%dM" % megs)])
+    @deferredmethod(in_signature="sib")
+    def e2fs_resize(self, devpath, megs, grow, sender):
+        invoke(["/sbin/resize2fs", devpath, ("%dM" % megs)])
 
-    @method(in_signature="issii", out_signature="")
-    def e3fs_format(self, jid, devpath, label, chunksize, datadisks):
+    @deferredmethod(in_signature="ssii")
+    def e3fs_format(self, devpath, label, chunksize, datadisks, sender):
         cmd = ["/sbin/mke2fs"]
         if chunksize != -1 and datadisks != -1:
             stride = chunksize / 4096
             stripe_width = stride * datadisks
             cmd.extend([ "-E", "stride=%d,stripe_width=%d" % (stride, stripe_width) ])
         cmd.extend([ "-q", "-j", "-m0", "-L", label, devpath ])
-        self.job_add_command(jid, cmd)
+        invoke(cmd)
 
-    @method(in_signature="issii", out_signature="")
-    def e4fs_format(self, jid, devpath, label, chunksize, datadisks):
+    @deferredmethod(in_signature="ssii")
+    def e4fs_format(self, devpath, label, chunksize, datadisks, sender):
         cmd = ["/sbin/mkfs.ext4"]
         if chunksize != -1 and datadisks != -1:
             stride = chunksize / 4096
             stripe_width = stride * datadisks
             cmd.extend([ "-E", "stride=%d,stripe_width=%d" % (stride, stripe_width) ])
         cmd.extend([ "-q", "-m0", "-L", label, devpath ])
-        self.job_add_command(jid, cmd)
+        invoke(cmd)
 
-    @method(in_signature="isiii", out_signature="")
-    def xfs_format(self, jid, devpath, chunksize, datadisks, agcount):
+    @deferredmethod(in_signature="siii")
+    def xfs_format(self, devpath, chunksize, datadisks, agcount, sender):
         cmd = ["mkfs.xfs"]
         if chunksize != -1 and datadisks != -1:
             cmd.extend([
@@ -108,22 +97,22 @@ class SystemD(BasePlugin):
                 "-d", "sw=%d" % datadisks,
                 ])
         cmd.extend([ "-d", "agcount=%d" % agcount, devpath ])
-        self.job_add_command(jid, cmd)
+        invoke(cmd)
 
-    @method(in_signature="isi", out_signature="")
-    def xfs_resize(self, jid, mountpoint, megs):
-        self.job_add_command(jid, ["xfs_growfs", mountpoint])
+    @deferredmethod(in_signature="si")
+    def xfs_resize(self, mountpoint, megs, sender):
+        invoke(["xfs_growfs", mountpoint])
 
-    @method(in_signature="isi", out_signature="")
-    def ocfs2_format(self, jid, devpath, chunksize):
+    @deferredmethod(in_signature="si")
+    def ocfs2_format(self, devpath, chunksize, sender):
         cmd = ["mkfs.ocfs2", '-b', '4096', '-T', 'vmstore']
         if chunksize != -1:
             cmd.extend(["-C", "%dK" % (chunksize / 1024)])
         cmd.append(devpath)
-        self.job_add_command(jid, cmd)
+        invoke(cmd)
 
-    @method(in_signature="", out_signature="")
-    def write_fstab(self):
+    @deferredmethod(in_signature="")
+    def write_fstab(self, sender):
         # read current fstab
         fd = open( "/etc/fstab", "rb" )
         try:

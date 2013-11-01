@@ -2,12 +2,9 @@
 # kate: space-indent on; indent-width 4; replace-tabs on;
 
 import os
-import dbus
-
-from django.conf import settings
 
 from systemd.procutils import invoke
-from systemd.helpers import dbus_to_python
+from systemd import dbus_to_python, get_dbus_object
 from volumes.conf import settings as volumes_settings
 
 def get_initscripts():
@@ -24,5 +21,5 @@ def run_initscript(volume, script):
     info = get_initscript_info(script)
     if info["REQUIRES_FS"] == "true" and not volume.filesystem:
         raise ValueError("This init script can only be used for volumes that have a file system.")
-    dbus_object = dbus.SystemBus().get_object(settings.DBUS_IFACE_SYSTEMD, "/volumes")
+    dbus_object = get_dbus_object("/volumes")
     return dbus_to_python(dbus_object.run_initscript(script, volume.path))

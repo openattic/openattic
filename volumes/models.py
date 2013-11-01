@@ -15,7 +15,6 @@
 """
 
 import os.path
-import dbus
 
 from django.db import models
 from django.db.models import signals
@@ -25,6 +24,7 @@ from django.contrib.contenttypes import generic
 from django.utils.translation    import ugettext_lazy as _
 from django.contrib.auth.models  import User
 
+from systemd import get_dbus_object
 from ifconfig.models import Host, HostDependentManager, getHostDependentManagerClass
 from volumes import blockdevices, capabilities, filesystems
 
@@ -80,6 +80,9 @@ class VolumePool(CapabilitiesAwareModel):
 
         ...and the following methods:
         * get_volume_class(type) -> return the volume class to use for volumes of the given type
+
+        Valid values for the ``status'' field are:
+          online, readonly, degraded, verifying, rebuilding, restoring_snapshot, failed, offline, unknown
     """
     volumepool_type = models.ForeignKey(ContentType, blank=True, null=True, related_name="%(class)s_volumepool_type_set")
     volumepool      = generic.GenericForeignKey("volumepool_type", "id")
@@ -103,6 +106,7 @@ class VolumePool(CapabilitiesAwareModel):
 
     def create_volume(self, name, megs, owner, filesystem, fswarning, fscritical):
         """ Create a volume in this pool. """
+        get_dbus_object("/").start_queue()
         VolumeClass = self.get_volume_class(filesystem)
         vol_options = {"name": name, "megs": megs, "owner": owner, "pool": self}
         if issubclass(VolumeClass, FileSystemVolume):
@@ -120,6 +124,7 @@ class VolumePool(CapabilitiesAwareModel):
             vol.full_clean()
             vol.save()
 
+        get_dbus_object("/").run_queue_background()
         return vol
 
 
@@ -193,6 +198,9 @@ class BlockVolume(AbstractVolume):
 if HAVE_NAGIOS:
     def __create_service_for_blockvolume(instance, **kwargs):
         cmd = Command.objects.get(name=nagios_settings.LV_PERF_CHECK_CMD)
+        ctype = ContentType.objects.get_for_model(instance.__class__)
+        if Service.objects.filter(command=cmd, target_type=ctype, target_id=instance.id).count != 0:
+            return
         srv = Service(
             host        = instance.host,
             target      = instance,
@@ -237,7 +245,7 @@ class GenericDisk(BlockVolume):
 
     @property
     def status(self):
-        return ""
+        return "unknown"
 
     @property
     def path(self):
@@ -295,6 +303,8 @@ class FileSystemVolume(AbstractVolume):
 if HAVE_NAGIOS:
     def __create_service_for_filesystemvolume(instance, **kwargs):
         cmd = Command.objects.get(name=nagios_settings.LV_UTIL_CHECK_CMD)
+        if Service.objects.filter(command=cmd, target_type=ctype, target_id=instance.id).count != 0:
+            return
         srv = Service(
             host        = instance.host,
             target      = instance,
@@ -325,10 +335,7 @@ class FileSystemProvider(FileSystemVolume):
     all_objects = models.Manager()
 
     def setupfs( self ):
-        sysd = dbus.SystemBus().get_object(settings.DBUS_IFACE_SYSTEMD, "/")
-        jid = sysd.build_job()
-        self.fs.format(jid)
-        sysd.enqueue_job(jid)
+        self.fs.format()
 
     def save(self, *args, **kwargs):
         install = (self.id is None)

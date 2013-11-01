@@ -65,7 +65,10 @@ Ext.define('volumes__volumes_FileSystemVolume_model', {
     rootNode.set("poolname",     toUnicode(record.raw.pool));
     rootNode.set("ownername",    toUnicode(record.raw.owner));
     rootNode.set("icon",         MEDIA_URL + '/icons2/16x16/apps/database.png');
-    rootNode.set("percent",      (record.data.usedmegs / record.data.megs * 100).toFixed(2));
+    if( record.data.usedmegs !== null )
+      rootNode.set("percent",    (record.data.usedmegs / record.data.megs * 100).toFixed(2));
+    else
+      rootNode.set("percent",    null);
     return rootNode;
   }
 });
@@ -101,6 +104,77 @@ Ext.define('Ext.oa.volumes__Volume_Panel', {
           for( i = 0; i < childNodes.length; i++ ){
             childNodes[i].collapseChildren(true);
           }
+        }
+      }, {
+        text: gettext("Add Volume"),
+        handler: function(self){
+          var addwin = new Ext.Window(Ext.apply(config, {
+            height: 200,
+            width:  500,
+            layout: "fit",
+            defaults: {
+              autoScroll: true
+            },
+            items: [{
+              xtype: "form",
+              title: gettext("Volume configuration"),
+              bodyStyle: 'padding: 5px 5px;',
+              api: {
+                load:   volumes.BlockVolume.get_ext,
+                submit: volumes.BlockVolume.set_ext
+              },
+              baseParams: {
+                id: (record ? record.id: -1)
+              },
+              paramOrder: ["id"],
+              defaults: {
+                xtype: "textfield",
+                anchor: '-20px',
+                defaults : {
+                  anchor: "0px"
+                }
+              },
+              buttons: [{
+                text: gettext("Create Volume"),
+                icon: MEDIA_URL + "/oxygen/16x16/actions/dialog-ok-apply.png",
+                handler: function(btn){
+                  addwin.getEl().mask(gettext("Loading..."));
+                  var conf = {
+                    success: function(provider, response){
+                      if(response.result){
+                        if( typeof config.success === "function"){
+                          config.success();
+                        }
+                        addwin.close();
+                      }
+                    },
+                    failure: function(){
+                      addwin.getEl().unmask();
+                    }
+                  };
+                  var datform = btn.ownerCt.ownerCt;
+                  datform.submit(conf);
+                }
+              },{
+                text: gettext("Cancel"),
+                icon: MEDIA_URL + "/icons2/16x16/actions/gtk-cancel.png",
+                handler: function(){
+                  addwin.close();
+                }
+              }],
+              items: [{
+                fieldLabel: gettext("Name"),
+                name: "name"
+              }, {
+                fieldLabel: gettext("Size in MB"),
+                name: "megs"
+              }, {
+                fieldLabel: gettext("Pool"),
+                name: "name"
+              }]
+            }]
+          }));
+          addwin.show();
         }
       }],
       forceFit: true,

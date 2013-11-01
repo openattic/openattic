@@ -27,14 +27,14 @@ class Ocfs2(FileSystem):
     def info(self):
         return {}
 
-    def format(self, jid):
+    def format(self):
         try:
             raidparams = self.volume.base.volume.raid_params
         except UnsupportedRAID:
             raidparams = {"chunksize": -1, "datadisks": -1}
-        self.dbus_object.ocfs2_format( jid, self.volume.base.volume.path, raidparams["chunksize"] )
-        self.mount(jid)
-        self.chown(jid)
+        self.dbus_object.ocfs2_format( self.volume.base.volume.path, raidparams["chunksize"] )
+        self.mount()
+        self.chown()
 
     def online_resize_available(self, grow):
         return False
