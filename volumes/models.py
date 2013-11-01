@@ -195,6 +195,9 @@ class BlockVolume(AbstractVolume):
 if HAVE_NAGIOS:
     def __create_service_for_blockvolume(instance, **kwargs):
         cmd = Command.objects.get(name=nagios_settings.LV_PERF_CHECK_CMD)
+        ctype = ContentType.objects.get_for_model(instance.__class__)
+        if Service.objects.filter(command=cmd, target_type=ctype, target_id=instance.id).count != 0:
+            return
         srv = Service(
             host        = instance.host,
             target      = instance,
@@ -297,6 +300,8 @@ class FileSystemVolume(AbstractVolume):
 if HAVE_NAGIOS:
     def __create_service_for_filesystemvolume(instance, **kwargs):
         cmd = Command.objects.get(name=nagios_settings.LV_UTIL_CHECK_CMD)
+        if Service.objects.filter(command=cmd, target_type=ctype, target_id=instance.id).count != 0:
+            return
         srv = Service(
             host        = instance.host,
             target      = instance,
