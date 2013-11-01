@@ -376,7 +376,7 @@ class LogicalVolume(BlockVolume):
         if install:
             self.install()
             # TODO: Move to post_install or systemd
-            self.uuid = self.lvm_info["LVM2_LV_UUID"]
+            #self.uuid = self.lvm_info["LVM2_LV_UUID"]
 
             ret = BlockVolume.save(self, *args, **kwargs)
 
