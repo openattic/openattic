@@ -77,14 +77,6 @@ class SystemD(dbus.service.Object):
         """ Return 'pong' for connectivity tests. """
         return "pong"
 
-    @makeloggedfunc
-    @dbus.service.signal(settings.DBUS_IFACE_SYSTEMD, signature="i")
-    def job_finished(self, jid):
-        """ Event fired whenever a job has completed. """
-        self.job_lock.acquire()
-        del self.jobs[jid]
-        self.job_lock.release()
-
     @dbus.service.method(settings.DBUS_IFACE_SYSTEMD, in_signature="", out_signature="", sender_keyword="sender")
     def add_conn_job(self, sender):
         if sender not in self.jobs:
