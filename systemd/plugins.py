@@ -89,8 +89,7 @@ def make_deferredmethod(in_signature, once_first, once_last, meth):
                 obj.jobs[sender].append((meth, self, args, kwargs))
 
     # Now copy everything the method() decorator added to meth over to the wrapper.
-    for param in meth.__dict__:
-        setattr(wrapper, param, getattr(meth, param))
+    wrapper.__dict__.update(meth.__dict__)
 
     return wrapper
 
