@@ -336,7 +336,7 @@ class LogicalVolume(BlockVolume):
     def install(self):
         lvm_signals.pre_install.send(sender=LogicalVolume, instance=self)
         if self.snapshot:
-            snap = self.snapshot.device
+            snap = self.snapshot.path
         else:
             snap = ""
         self.lvm.lvcreate( self.vg.name, self.name, self.megs, snap )
