@@ -374,10 +374,9 @@ class LogicalVolume(BlockVolume):
 
         ret = BlockVolume.save(self, *args, **kwargs)
 
-        self._build_job()
-
         if install:
             self.install()
+            # TODO: Move to post_install or systemd
             self.uuid = self.lvm_info["LVM2_LV_UUID"]
 
             ret = BlockVolume.save(self, *args, **kwargs)
@@ -385,8 +384,6 @@ class LogicalVolume(BlockVolume):
         else:
             if old_self.megs != self.megs:
                 self.resize()
-
-        self._enqueue_job()
 
         return ret
 
