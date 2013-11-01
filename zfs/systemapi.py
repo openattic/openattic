@@ -14,7 +14,7 @@
  *  GNU General Public License for more details.
 """
 
-from systemd import invoke, logged, BasePlugin, method
+from systemd import invoke, logged, BasePlugin, method, deferredmethod
 
 @logged
 class SystemD(BasePlugin):
@@ -28,13 +28,9 @@ class SystemD(BasePlugin):
         ret, out, err = invoke(args, return_out_err=True, log=False)
         return [line.split() for line in out.split("\n")[1:-1]]
 
-    @method(in_signature="isss", out_signature="")
-    def zpool_set(self, jid, device, field, value):
-        cmd = ["zpool", "set", ("%s=%s" % (field, value)), device]
-        if jid != -1:
-            self.job_add_command(jid, cmd)
-        else:
-            invoke(cmd)
+    @deferredmethod(in_signature="sss")
+    def zpool_set(self, device, field, value, sender):
+        invoke(["zpool", "set", ("%s=%s" % (field, value)), device])
 
     @method(in_signature="ss", out_signature="a(ssss)")
     def zfs_get(self, device, field):
@@ -44,60 +40,45 @@ class SystemD(BasePlugin):
         ret, out, err = invoke(args, return_out_err=True, log=False)
         return [line.split("\t") for line in out.split("\n")[:-1]]
 
-    @method(in_signature="isss", out_signature="")
-    def zfs_set(self, jid, device, field, value):
-        cmd = ["zfs", "set", ("%s=%s" % (field, value)), device]
-        if jid != -1:
-            self.job_add_command(jid, cmd)
-        else:
-            invoke(cmd)
+    @deferredmethod(in_signature="sss")
+    def zfs_set(self, device, field, value, sender):
+        invoke(["zfs", "set", ("%s=%s" % (field, value)), device])
 
-    @method(in_signature="is", out_signature="")
-    def zfs_mount(self, jid, device):
-        cmd = ["zfs", "mount", device]
-        if jid != -1:
-            self.job_add_command(jid, cmd)
-        else:
-            invoke(cmd)
+    @deferredmethod(in_signature="s")
+    def zfs_mount(self, device, sender):
+        invoke(["zfs", "mount", device])
 
-    @method(in_signature="is", out_signature="")
-    def zfs_unmount(self, jid, device):
-        cmd = ["zfs", "unmount", device]
-        if jid != -1:
-            self.job_add_command(jid, cmd)
-        else:
-            invoke(cmd)
+    @deferredmethod(in_signature="s")
+    def zfs_unmount(self, device, sender):
+        invoke(["zfs", "unmount", device])
 
-    @method(in_signature="s", out_signature="i")
-    def zfs_destroy(self, device):
-        return invoke(["zpool", "destroy", device])
+    @deferredmethod(in_signature="s")
+    def zfs_destroy(self, device, sender):
+        invoke(["zpool", "destroy", device])
 
-    @method(in_signature="isss", out_signature="")
-    def zfs_format(self, jid, devpath, label, path):
-        self.job_add_command(jid, ["zpool", "create", "-m", path, label, devpath])
+    @deferredmethod(in_signature="sss")
+    def zfs_format(self, devpath, label, path, sender):
+        invoke(["zpool", "create", "-m", path, label, devpath])
 
-    @method(in_signature="ss", out_signature="i")
-    def zfs_create_volume(self, pool, volume):
-        return invoke(["zfs", "create", "%s/%s" % (pool, volume)])
+    @deferredmethod(in_signature="ss")
+    def zfs_create_volume(self, pool, volume, sender):
+        invoke(["zfs", "create", "%s/%s" % (pool, volume)])
 
-    @method(in_signature="ss", out_signature="i")
-    def zfs_destroy_volume(self, pool, volume):
-        return invoke(["zfs", "destroy", "%s/%s" % (pool, volume)])
+    @deferredmethod(in_signature="ss")
+    def zfs_destroy_volume(self, pool, volume, sender):
+        invoke(["zfs", "destroy", "%s/%s" % (pool, volume)])
 
-    @method(in_signature="iss", out_signature="")
-    def zfs_create_snapshot(self, jid, orig, snapshot):
-        self.job_add_command(jid, ["zfs", "snapshot", "%s@%s" % (orig, snapshot)])
-        self.job_add_command(jid, ["zfs", "clone",
-            "%s@%s" % (orig, snapshot),
-            "%s/.%s" % (orig, snapshot)
-            ])
+    @deferredmethod(in_signature="ss")
+    def zfs_create_snapshot(self, orig, snapshot, sender):
+        invoke(["zfs", "snapshot", "%s@%s" % (orig, snapshot)])
+        invoke(["zfs", "clone", "%s@%s" % (orig, snapshot), "%s/.%s" % (orig, snapshot) ])
 
-    @method(in_signature="ss", out_signature="i")
-    def zfs_destroy_snapshot(self, orig, snapshot):
+    @deferredmethod(in_signature="ss")
+    def zfs_destroy_snapshot(self, orig, snapshot, sender):
         return invoke(["zfs", "destroy", "-R", "%s@%s" % (orig, snapshot)])
 
-    @method(in_signature="ss", out_signature="i")
-    def zfs_rollback_snapshot(self, orig, snapshot):
+    @deferredmethod(in_signature="ss")
+    def zfs_rollback_snapshot(self, orig, snapshot, sender):
         return invoke(["zfs", "rollback", "-R", "%s@%s" % (orig, snapshot)])
 
     @method(in_signature="s", out_signature="a(sssssss)")
@@ -108,7 +89,7 @@ class SystemD(BasePlugin):
         ret, out, err = invoke(args, return_out_err=True, log=False)
         return [line.split("\t") for line in out.split("\n")[:-1]]
 
-    @method(in_signature="iss", out_signature="")
-    def zfs_expand(self, jid, name, device):
-        self.job_add_command(jid, ["zpool", "online", "-e", name, device])
+    @deferredmethod(in_signature="ss")
+    def zfs_expand(self, name, device, sender):
+        invoke(["zpool", "online", "-e", name, device])
 
