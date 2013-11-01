@@ -18,7 +18,6 @@ import os
 import traceback
 import logging
 import socket
-import signal
 
 from logging.handlers import SysLogHandler
 from threading import Lock
@@ -124,18 +123,6 @@ class SystemD(dbus.service.Object):
         self.job_lock.acquire()
         del self.jobs[jid]
         self.job_lock.release()
-
-    # Deferred function execution via SIGALRM
-    def run_deferred_calls(self, sig, frame):
-        for func, args, kwargs in self.deferred:
-            func(*args, **kwargs)
-        self.deferred = []
-
-    def call_deferred(self, func, *args, **kwargs):
-        if func not in [call[0] for call in self.deferred]:
-            self.deferred.append((func, args, kwargs))
-        signal.signal(signal.SIGALRM, self.run_deferred_calls)
-        signal.alarm(1)
 
     @dbus.service.method(settings.DBUS_IFACE_SYSTEMD, in_signature="", out_signature="", sender_keyword="sender")
     def add_conn_job(self, sender):
