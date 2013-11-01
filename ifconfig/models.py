@@ -25,8 +25,6 @@ from django.db import models
 from django.db.models import signals
 from django.utils.translation import ugettext_noop as _
 
-from systemd import get_dbus_object
-
 AF_CHOICES = (
     (socket.AF_INET,  "IPv4"),
     (socket.AF_INET6, "IPv6"),
@@ -307,6 +305,7 @@ class NetDevice(models.Model):
 
     @classmethod
     def write_interfaces(cls):
+        from systemd import get_dbus_object
         get_dbus_object("/ifconfig").write_interfaces()
 
 
