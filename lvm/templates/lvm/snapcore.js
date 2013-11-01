@@ -418,7 +418,7 @@ var setConfigForNode = function(node, data){
     img_self, img_parent, img_childs = "empty";
 
     if(node.isLeaf()){
-      if(getConfigForNode(node.parentNode) !== null){
+      if(getConfigForNode(node.parentNode).data !== null){
         img_self = "gray";
       }
     }
@@ -426,7 +426,7 @@ var setConfigForNode = function(node, data){
     {
       for(var i=0; i < node.childNodes.length; i++)
       {
-        if(getConfigForNode(node.childNodes[i]) !== null){
+        if(getConfigForNode(node.childNodes[i]).data !== null){
           img_self = "gray";
           break;
         }
@@ -441,16 +441,14 @@ var setConfigForNode = function(node, data){
   node.set("iconCls", node.data.csscl[img_self]);
 
   if(node.isLeaf()){
-    var parentConf = getConfigForNode(node.parentNode);
-    if(parentConf.data === null){
+    if(getConfigForNode(node.parentNode).data === null){
       node.parentNode.set("iconCls", node.parentNode.data.csscl[img_parent]);
     }
   }
   else{
     for(var i=0; i < node.childNodes.length; i++)
     {
-      var childConf = getConfigForNode(node.childNodes[i]);
-      if(childConf.data === null){
+      if(getConfigForNode(node.childNodes[i]).data === null){
         node.childNodes[i].set("iconCls", node.childNodes[i].data.csscl[img_childs]);
       }
     }
@@ -495,6 +493,31 @@ var snapcore_snapshot_volume_store = Ext.create('Ext.data.ArrayStore', {
   }
 });
 
+Ext.define("Ext.oa.ExtendedGridDropZone", {
+  extend: "Ext.grid.ViewDropZone",
+  onNodeOver: function(node, dragZone, e, data){
+    if(data && data.records && data.records[0]){
+      if(data.records[0].data.draggable === false){
+        return this.dropNotAllowed;
+      }
+    }
+    return this.callParent(arguments);
+  },
+});
+
+Ext.define("Ext.oa.ExtendedGridDnD", {
+  extend: "Ext.grid.plugin.DragDrop",
+  alias: "plugin.extendeddnd",
+  onViewRender: function(view){
+    this.callParent(arguments);
+
+    this.dropZone = Ext.create("Ext.oa.ExtendedGridDropZone", {
+      view: view,
+      ddGroup: this.dropGroup || this.ddGroup
+    });
+  }
+});
+
 var group1 = this.id + 'group1',
     group2 = this.id + 'group2';
 
@@ -528,7 +551,6 @@ var wizform = Ext.create("Ext.oa.WizPanel", {
       region    : 'center',
       id        : 'lvm__snapcore_wizard_treepanel',
       xtype     : 'lvm__snapcore_treepanel',
-      checkable : false,
       listeners : {
         itemclick: function(self, record, item, index, e, eOpts){
           var settings = Ext.getCmp('lvm__snapcore_wiz_snapitem_settings').layout;
@@ -623,15 +645,10 @@ var wizform = Ext.create("Ext.oa.WizPanel", {
       region      : 'center',
       viewConfig  : {
         plugins : {
-          ptype: 'gridviewdragdrop',
+          ptype: 'extendeddnd',
           dragGroup: group1,
           dropGroup: group2
         },
-        listeners: {
-          drop: function(node, data, dropRec, dropPosition){
-            console.log("Drop");
-          }
-        }
       },
       store       : first_volume_grid_store,
       columns     : [ {text: gettext("Volumes"), dataIndex: "name", flex: 1}],
@@ -650,17 +667,6 @@ var wizform = Ext.create("Ext.oa.WizPanel", {
           dragGroup : group2,
           dropGroup : group1
         },
-        listeners: {
-          drop: function(node, data, dropRec, dropPosition) {
-            console.log("Drop");
-          }
-        },
-        getRowClass: function(record, rowIndex, rp, ds) {
-          if(typeof record.data.draggable !== 'undefined')
-            return 'x-grid3-row-over';
-          else
-            return '';
-        }
       },
       store       : snapcore_snapshot_volume_store,
       columns     : [{ text: "Volumes", dataIndex: "name", flex: 1}],
@@ -668,55 +674,42 @@ var wizform = Ext.create("Ext.oa.WizPanel", {
       title       : gettext('Drag volumes which should be snapshotted here:'),
       height      : 340
     }],
-/*    listeners : {
-      show  : function(self){
-        var volumes = [];
-        var requests = 0;
-        var moveItem = function(record, recordId, length, volumeId)
-        {
-          if(volumeId === record.get('id'))
-          {
-            secondGridStore.add(record);
+    listeners: {
+      show: function(self){
+        // first reset the grids if any former configs were deleted
+        config.volumes = [];
 
-            var idx = secondGridStore.indexOf(record);
-            var row = secondGrid.getView().getRow(idx);
-            var element = Ext.get(row);
-
-            if(config.volumes.indexOf(volumeId, 0) === -1)
-            {
-              config.volumes.push(volumeId);
-              volumes.push(volumeId);
-            }
-
-            VolumeStore.remove(record);
-            element.addClass('x-grid3-row-over');
-            record.set('draggable', false);
-          }
+        var reset = function(record, recordId, length){
+          snapcore_snapshot_volume_store.remove(record);
+          first_volume_grid_store.add(record);
+        }
+        if(snapcore_snapshot_volume_store.count() > 0){
+          snapcore_snapshot_volume_store.each(Ext.bind(reset, this));
         }
 
-        for(var plugin in config['plugin_data'])
-        {
+        // then move the configured volumes to the right grid
+        for(var plugin in config['plugin_data']){
           var plugin_func = get_plugin(plugin);
 
-          plugin_func.getVolume(function(result, response){
+          plugin_func.getVolume(config, function(result, response){
             if(response.type !== 'exception'){
-              VolumeStore.each(Ext.bind(moveItem, this, [result.volume.id], true));
+
+              var volumeRecord = first_volume_grid_store.getById(result.volume.id);
+
+              if(volumeRecord !== null){
+                snapcore_snapshot_volume_store.add(volumeRecord);
+                first_volume_grid_store.remove(volumeRecord);
+                volumeRecord.set("draggable", false);
+
+                if(config.volumes.indexOf(volumeRecord.data.id) === -1){
+                  config.volumes.push(volumeRecord.data.id);
+                }
+              }
             }
           });
         }
-
-/*          secondGrid.getView().dragZone.onBeforeDrag = function(data, e){
-            var volumeId = data.selections[0].data.id;
-            for(var i=0; i<volumes.length; i++){
-              if(volumes[i] === volumeId)
-              {
-                return false;
-              }
-            }
-            return true;
-          }
-        }
-      },*/
+      }
+    }
   },{
     title : gettext('Pre-/Post-Script - Conditions'),
     id    : 'lvm__snapcore_wiz_prepost',
@@ -1187,6 +1180,31 @@ var wizform = Ext.create("Ext.oa.WizPanel", {
       listeners : {
         click: function(self, e, eOpts){
           config.data = config.data.data;
+          console.log(config.data);
+          // set datetimes
+          switch(config.data["scheduling_select"]){
+            case "execute_later":
+              if(config.data["date_select-inputEl"] !== null && typeof config.data["date_select-inputEl"] !== 'undefined' &&
+                config.data["time_select-inputEl"] !== null && typeof config.data["time_select-inputEl"] !== 'undefined')
+              {
+                config.data["executedate"] = set_time(config.data["date_select-inputEl"], config.data["time_select-inputEl"]);
+              }
+              break;
+            case "scheduling":
+              if(config.data["startdate_select-inputEl"] !== null && typeof config.data["startdate_select-inputEl"] !== "undefined" &&
+                config.data["starttime_select-inputEl"] !== null && typeof config.data["starttime_select-inputEl"] !== "undefined")
+              {
+                config.data["startdate"] = set_time(config.data["startdate_select-inputEl"], config.data["starttime_select-inputEl"]);
+              }
+
+              if(config.data["enddate_select-inputEl"] !== null && typeof config.data["enddate_select-inputEl"] !== "undefined" &&
+                config.data["endtime_select-inputEl"] !== null && typeof config.data["endtime_select-inputEl"] !== "undefined")
+              {
+                config.data["endddate"] = set_time(config.data["enddate_select-inputEl"], config.data["endtime_select-inputEl"]);
+              }
+              break;
+          }
+
 //           lvm__SnapshotConf.process_config(config)
 //           config_store.reload();
 //           wiz.hide();
@@ -1220,7 +1238,6 @@ Ext.define("Ext.oa.LVM__Snapcore_Panel", {
         width     : 280,
         height    : 990,
         xtype     : 'lvm__snapcore_treepanel',
-        checkable : false,
         showIcons : false,
         buttons   : [{
           text     : gettext('New configuration'),
