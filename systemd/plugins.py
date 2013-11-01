@@ -48,8 +48,11 @@ signal = partial( dbus.service.signal, settings.DBUS_IFACE_SYSTEMD )
 method.__doc__ = "Method decorator that has the DBus Interface pre-defined."
 signal.__doc__ = "Signal decorator that has the DBus Interface pre-defined."
 
-def make_deferredmethod(in_signature, meth):
+
+def make_deferredmethod(in_signature, once_first, once_last, meth):
     """ Defers the actual function call using job control. """
+    if once_first and once_last:
+        raise ValueError("'%s' has once_first and once_last set to True" % meth.__name__)
 
     # First let method() do its thing because it needs the original function.
     method(in_signature=in_signature, out_signature="", sender_keyword="sender")(meth)
@@ -69,7 +72,16 @@ def make_deferredmethod(in_signature, meth):
         if sender not in obj.jobs:
             return meth(self, *args, **kwargs)
         else:
-            obj.jobs[sender].append((meth, self, args, kwargs))
+            found = False
+            if once_first or once_last:
+                for call in obj.jobs[sender]:
+                    if call[0] == meth:
+                        if once_last:
+                            obj.jobs[sender].remove(call)
+                        found = True
+                        break
+            if once_last or not found:
+                obj.jobs[sender].append((meth, self, args, kwargs))
 
     # Now copy everything the method() decorator added to meth over to the wrapper.
     for param in meth.__dict__:
@@ -77,5 +89,5 @@ def make_deferredmethod(in_signature, meth):
 
     return wrapper
 
-def deferredmethod(in_signature):
-    return partial( make_deferredmethod, in_signature )
+def deferredmethod(in_signature, once_first=False, once_last=False):
+    return partial( make_deferredmethod, in_signature, once_first, once_last )
