@@ -1190,11 +1190,14 @@ var wizform = Ext.create("Ext.oa.WizPanel", {
               break;
             case "scheduling":
               if(config.data["startdate_select-inputEl"] !== null && typeof config.data["startdate_select-inputEl"] !== "undefined" &&
-                config.data["starttime_select-inputEl"] !== null && typeof config.data["starttime_select-inputEl"] !== "undefined" &&
-                config.data["enddate_select-inputEl"] !== null && typeof config.data["enddate_select-inputEl"] !== "undefined" &&
-                config.data["endtime_select-inputEl"] !== null && typeof config.data["endtime_select-inputEl"] !== "undefined")
+                config.data["starttime_select-inputEl"] !== null && typeof config.data["starttime_select-inputEl"] !== "undefined")
               {
                 config.data["startdate"] = set_time(config.data["startdate_select-inputEl"], config.data["starttime_select-inputEl"]);
+              }
+
+              if(config.data["enddate_select-inputEl"] !== null && typeof config.data["enddate_select-inputEl"] !== "undefined" &&
+                config.data["endtime_select-inputEl"] !== null && typeof config.data["endtime_select-inputEl"] !== "undefined")
+              {
                 config.data["endddate"] = set_time(config.data["enddate_select-inputEl"], config.data["endtime_select-inputEl"]);
               }
               break;
