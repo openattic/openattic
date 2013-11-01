@@ -1211,7 +1211,7 @@ var wizform = Ext.create("Ext.oa.WizPanel", {
     }],
   }],
 });
-var wiz = Ext.create("Ext.Window", {
+var wiz = Ext.create("Ext.window.Window", {
   title       : gettext('Configuration Assistant'),
   layout      : 'fit',
   items       : wizform,
