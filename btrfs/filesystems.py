@@ -17,6 +17,7 @@
 import os
 import os.path
 
+from systemd import get_dbus_object
 from volumes.conf import settings as volumes_settings
 from volumes.filesystems.filesystem import FileSystem
 from volumes import capabilities
