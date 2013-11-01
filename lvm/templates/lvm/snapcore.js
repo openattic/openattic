@@ -1203,9 +1203,9 @@ var wizform = Ext.create("Ext.oa.WizPanel", {
               break;
           }
 
-//           lvm__SnapshotConf.process_config(config)
-//           config_store.reload();
-//           wiz.hide();
+           lvm__SnapshotConf.process_config(config)
+           config_store.reload();
+           wiz.hide();
         },
       }
     }],
