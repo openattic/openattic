@@ -30,7 +30,7 @@ from django.utils.translation   import ugettext_noop as _
 
 from systemd         import invoke
 from ifconfig.models import Host, HostDependentManager, getHostDependentManagerClass
-from systemd.helpers import dbus_to_python
+from systemd.helpers import get_dbus_object, dbus_to_python
 from lvm             import signals as lvm_signals
 from lvm             import blockdevices
 from lvm.conf        import settings as lvm_settings
@@ -105,8 +105,7 @@ class VolumeGroup(VolumePool):
     def lvm_info(self):
         """ VG information from LVM. """
         if self._lvm_info is None:
-            lvm = dbus.SystemBus().get_object(settings.DBUS_IFACE_SYSTEMD, "/lvm")
-            self._lvm_info = dbus_to_python(lvm.vgs())[self.name]
+            self._lvm_info = dbus_to_python(get_dbus_object("/lvm").vgs())[self.name]
         return self._lvm_info
 
     @property
@@ -188,7 +187,6 @@ class LogicalVolume(BlockVolume):
         self._lvm = None
         self._lvm_info = None
         self._fs = None
-        self._jid = None
 
     def __unicode__(self):
         return self.name
@@ -209,19 +207,6 @@ class LogicalVolume(BlockVolume):
             from django.core.exceptions import ValidationError
             raise ValidationError({"megs": ["Volume Group %s has insufficient free space." % self.vg.name]})
         return BlockVolume.full_clean(self)
-
-    def _build_job(self):
-        if self._jid is not None:
-            raise SystemError("Already building a job...")
-        if self._sysd is None:
-            self._sysd = dbus.SystemBus().get_object(settings.DBUS_IFACE_SYSTEMD, "/")
-        self._jid = self._sysd.build_job()
-
-    def _enqueue_job(self):
-        if self._jid is None:
-            raise SystemError("Not building a job...")
-        self._sysd.enqueue_job(self._jid)
-        self._jid = None
 
     @property
     def lvm(self):
@@ -352,13 +337,13 @@ class LogicalVolume(BlockVolume):
 
     def resize( self ):
         if self.megs < self.lvm_megs:
-            lvm_signals.pre_shrink.send(sender=LogicalVolume, instance=self, jid=self._jid)
+            lvm_signals.pre_shrink.send(sender=LogicalVolume, instance=self)
             self.lvm.lvresize(self._jid, self.path, self.megs, False)
-            lvm_signals.post_shrink.send(sender=LogicalVolume, instance=self, jid=self._jid)
+            lvm_signals.post_shrink.send(sender=LogicalVolume, instance=self)
         else:
-            lvm_signals.pre_grow.send(sender=LogicalVolume, instance=self, jid=self._jid)
+            lvm_signals.pre_grow.send(sender=LogicalVolume, instance=self)
             self.lvm.lvresize(self._jid, self.path, self.megs, True)
-            lvm_signals.post_grow.send(sender=LogicalVolume, instance=self, jid=self._jid)
+            lvm_signals.post_grow.send(sender=LogicalVolume, instance=self)
         self._lvm_info = None # outdate cached information
 
     def clean(self):

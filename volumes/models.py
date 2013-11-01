@@ -327,7 +327,7 @@ class FileSystemProvider(FileSystemVolume):
     def setupfs( self ):
         sysd = dbus.SystemBus().get_object(settings.DBUS_IFACE_SYSTEMD, "/")
         jid = sysd.build_job()
-        self.fs.format(jid)
+        self.fs.format()
         sysd.enqueue_job(jid)
 
     def save(self, *args, **kwargs):

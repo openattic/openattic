@@ -18,7 +18,6 @@ import os
 import os.path
 import dbus
 
-from systemd  import wrap_as_job
 from django.conf import settings
 
 from volumes.conf import settings as volumes_settings
@@ -37,12 +36,11 @@ class Btrfs(FileSystem):
     def dbus_object(self):
         return dbus.SystemBus().get_object(settings.DBUS_IFACE_SYSTEMD, "/btrfs")
 
-    @wrap_as_job
-    def format(self, jid):
-        self.dbus_object.format( jid, self.lv.path )
-        self.mount(jid)
-        self.chown(jid)
-        self.dbus_object.create_subvolume(jid, os.path.join(self.path, "default"))
+    def format(self):
+        self.dbus_object.format( self.lv.path )
+        self.mount()
+        self.chown()
+        self.dbus_object.create_subvolume(os.path.join(self.path, "default"))
 
     @property
     def path(self):

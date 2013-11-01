@@ -21,7 +21,7 @@ import dbus
 
 from django.conf import settings
 
-from systemd  import dbus_to_python, wrap_as_job
+from systemd  import dbus_to_python
 
 from volumes.conf import settings as volumes_settings
 from volumes.filesystems.filesystem import FileSystem
@@ -123,17 +123,16 @@ class Zfs(FileSystem):
         opts.update(self.options)
         return opts
 
-    @wrap_as_job
-    def format(self, jid):
-        self.dbus_object.zfs_format(jid, self.volume.path, self.volume.name,
+    def format(self):
+        self.dbus_object.zfs_format(self.volume.path, self.volume.name,
             os.path.join(volumes_settings.MOUNT_PREFIX, self.volume.name))
-        self.chown(jid)
+        self.chown()
 
-    def mount(self, jid):
-        self.dbus_object.zfs_mount(jid, self.volume.name)
+    def mount(self):
+        self.dbus_object.zfs_mount(self.volume.name)
 
-    def unmount(self, jid):
-        self.dbus_object.zfs_unmount(jid, self.volume.name)
+    def unmount(self):
+        self.dbus_object.zfs_unmount(self.volume.name)
 
     def destroy(self):
         for snap in self.volume.zfssnapshot_set.all():
@@ -145,11 +144,11 @@ class Zfs(FileSystem):
     def online_resize_available(self, grow):
         return grow
 
-    def resize(self, jid, grow):
+    def resize(self, grow):
         if not grow:
             raise SystemError("ZFS does not support shrinking.")
         else:
-            self.dbus_object.zfs_expand( jid, self.volume.name, self.volume.path )
+            self.dbus_object.zfs_expand( self.volume.name, self.volume.path )
 
     def create_subvolume(self, path):
         self.dbus_object.zfs_create_volume(self.pool.name, path)

@@ -92,13 +92,13 @@ class FileSystem(object):
             raise NotImplementedError("FileSystem::path needs to be overridden for virtual FS handlers")
         return os.path.join(volumes_settings.MOUNT_PREFIX, self.volume.volume.name)
 
-    def mount(self, jid):
+    def mount(self):
         """ Mount the file system.
         """
         if self.virtual:
             raise NotImplementedError("FileSystem::mount needs to be overridden for virtual FS handlers")
         dbus_object = dbus.SystemBus().get_object(settings.DBUS_IFACE_SYSTEMD, "/volumes")
-        dbus_object.fs_mount( jid, self.name, self.volume.base.volume.path, self.path )
+        dbus_object.fs_mount( self.name, self.volume.base.volume.path, self.path )
 
     @property
     def mounted(self):
@@ -107,29 +107,27 @@ class FileSystem(object):
             raise NotImplementedError("FileSystem::mounted needs to be overridden for virtual FS handlers")
         return os.path.ismount(self.path)
 
-    def unmount(self, jid):
+    def unmount(self):
         """ Unmount the volume. """
         if self.virtual:
             raise NotImplementedError("FileSystem::unmount needs to be overridden for virtual FS handlers")
         dbus_object = dbus.SystemBus().get_object(settings.DBUS_IFACE_SYSTEMD, "/volumes")
-        dbus_object.fs_unmount( jid, self.volume.base.volume.path, self.path )
+        dbus_object.fs_unmount( self.volume.base.volume.path, self.path )
 
-    def format(self, jid):
+    def format(self):
         """ Format the volume. """
         raise NotImplementedError("FileSystem::format needs to be overridden")
 
-    def resize(self, jid, grow):
-        """ Add a command to the job with the given ``jid`` to resize the file system
-            to the current volume size.
-        """
+    def resize(self, grow):
+        """ Resize the file system to the current volume size. """
         raise NotImplementedError("FileSystem::resize needs to be overridden")
 
-    def chown(self, jid):
+    def chown(self):
         """ Change ownership of the filesystem to be the LV's owner. """
         if self.virtual:
             raise NotImplementedError("FileSystem::chown needs to be overridden for virtual FS handlers")
         dbus_object = dbus.SystemBus().get_object(settings.DBUS_IFACE_SYSTEMD, "/volumes")
-        return dbus_object.fs_chown( jid, self.path, self.volume.owner.username, volumes_settings.CHOWN_GROUP )
+        return dbus_object.fs_chown( self.path, self.volume.owner.username, volumes_settings.CHOWN_GROUP )
 
     def destroy(self):
         """ Destroy the file system. """

@@ -75,7 +75,7 @@ class FileSystemProxy(FileSystem):
             return self.disk["partitions"][0]["mountpoint"]
         return self.disk["mountpoint"]
 
-    def mount(self, jid):
+    def mount(self):
         """ Mount the file system.
         """
         raise NotImplementedError("Remote mount is not (yet?) implemented")
@@ -85,7 +85,7 @@ class FileSystemProxy(FileSystem):
         """ True if the volume is currently mounted. """
         return self.name != "LIO Remote File System"
 
-    def unmount(self, jid):
+    def unmount(self):
         """ Unmount the volume. """
         raise NotImplementedError("Remote unmount is not (yet?) implemented")
 

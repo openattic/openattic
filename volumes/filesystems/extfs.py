@@ -29,19 +29,19 @@ class Ext2(FileSystem):
     def info(self):
         return dbus_to_python( self.dbus_object.e2fs_info( self.volume.base.volume.path ) )
 
-    def format(self, jid):
+    def format(self):
         try:
             raidparams = self.volume.base.volume.raid_params
         except UnsupportedRAID:
             raidparams = {"chunksize": -1, "datadisks": -1}
-        self.dbus_object.e2fs_format( jid, self.volume.base.volume.path, self.volume.name, raidparams["chunksize"], raidparams["datadisks"] )
-        self.mount(jid)
-        self.chown(jid)
+        self.dbus_object.e2fs_format( self.volume.base.volume.path, self.volume.name, raidparams["chunksize"], raidparams["datadisks"] )
+        self.mount()
+        self.chown()
 
-    def resize(self, jid, grow):
+    def resize(self, grow):
         if not grow:
-            self.dbus_object.e2fs_check( jid, self.volume.base.volume.path )
-        self.dbus_object.e2fs_resize( jid, self.volume.base.volume.path, self.volume.megs, grow )
+            self.dbus_object.e2fs_check( self.volume.base.volume.path )
+        self.dbus_object.e2fs_resize( self.volume.base.volume.path, self.volume.megs, grow )
 
     @classmethod
     def check_type(cls, typestring):
@@ -52,14 +52,14 @@ class Ext3(Ext2):
     name = "ext3"
     desc = "Ext3 (max. 32TiB)"
 
-    def format(self, jid):
+    def format(self):
         try:
             raidparams = self.volume.base.volume.raid_params
         except UnsupportedRAID:
             raidparams = {"chunksize": -1, "datadisks": -1}
-        self.dbus_object.e3fs_format( jid, self.volume.base.volume.path, self.volume.name, raidparams["chunksize"], raidparams["datadisks"] )
-        self.mount(jid)
-        self.chown(jid)
+        self.dbus_object.e3fs_format( self.volume.base.volume.path, self.volume.name, raidparams["chunksize"], raidparams["datadisks"] )
+        self.mount()
+        self.chown()
 
     @classmethod
     def check_type(cls, typestring):
@@ -71,14 +71,14 @@ class Ext4(Ext2):
     name = "ext4"
     desc = "Ext4 (recommended for file servers, supports Windows ACLs)"
 
-    def format(self, jid):
+    def format(self):
         try:
             raidparams = self.volume.base.volume.raid_params
         except UnsupportedRAID:
             raidparams = {"chunksize": -1, "datadisks": -1}
-        self.dbus_object.e4fs_format( jid, self.volume.base.volume.path, self.volume.name, raidparams["chunksize"], raidparams["datadisks"] )
-        self.mount(jid)
-        self.chown(jid)
+        self.dbus_object.e4fs_format( self.volume.base.volume.path, self.volume.name, raidparams["chunksize"], raidparams["datadisks"] )
+        self.mount()
+        self.chown()
 
     @classmethod
     def check_type(cls, typestring):
