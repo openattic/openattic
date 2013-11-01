@@ -78,45 +78,6 @@ class SystemD(dbus.service.Object):
         return "pong"
 
     @makeloggedfunc
-    @dbus.service.method(settings.DBUS_IFACE_SYSTEMD, in_signature="", out_signature="i")
-    def build_job(self):
-        """ Create a new empty job queue and return its `jid`.
-
-            Jobs can be enqueued using the `job_add_command` method and executed
-            using the `enqueue_job` method. The job queue will then run each command
-            sequentially in the background. Once finished, the `job_finished` event
-            will be fired.
-        """
-        self.job_lock.acquire()
-        self.job_id += 1
-        jid = self.job_id
-        self.jobs[jid] = []
-        self.job_lock.release()
-        return jid
-
-    def _job_add_command(self, jid, cmd):
-        self.job_lock.acquire()
-        self.jobs[jid].append(cmd)
-        self.job_lock.release()
-
-    @makeloggedfunc
-    @dbus.service.method(settings.DBUS_IFACE_SYSTEMD, in_signature="is", out_signature="")
-    def job_add_command(self, jid, cmd):
-        """ Add a job to the job queue given by `jid`. """
-        self._job_add_command(jid, cmd)
-
-    @makeloggedfunc
-    @dbus.service.method(settings.DBUS_IFACE_SYSTEMD, in_signature="i", out_signature="")
-    def enqueue_job(self, jid):
-        """ Start execution of the job queue given by `jid`, if any commands have been added to it. """
-        self.job_lock.acquire()
-        if self.jobs[jid]:
-            create_job( self.jobs[jid], self.job_finished, (jid,) )
-        else:
-            del self.jobs[jid]
-        self.job_lock.release()
-
-    @makeloggedfunc
     @dbus.service.signal(settings.DBUS_IFACE_SYSTEMD, signature="i")
     def job_finished(self, jid):
         """ Event fired whenever a job has completed. """
@@ -128,10 +89,6 @@ class SystemD(dbus.service.Object):
     def add_conn_job(self, sender):
         if sender not in self.jobs:
             self.jobs[sender] = []
-
-    @deferredmethod(in_signature="i")
-    def testmethod(self, somestuff, sender):
-        print "hai", somestuff
 
     @dbus.service.method(settings.DBUS_IFACE_SYSTEMD, in_signature="", out_signature="", sender_keyword="sender")
     def run_conn_job(self, sender):

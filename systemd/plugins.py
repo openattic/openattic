@@ -32,10 +32,6 @@ class BasePlugin(dbus.service.Object):
         self.mainobj = mainobj
         dbus.service.Object.__init__(self, self.bus, self.dbus_path)
 
-    def job_add_command(self, jid, cmd):
-        """ Add the given command to the job queue with Job ID `jid`. """
-        return self.mainobj._job_add_command(jid, cmd)
-
 class LockingPlugin(BasePlugin):
     """ SystemD plugin with a threading.Lock instance available at self.lock. """
     def __init__(self, bus, busname, mainobj):
