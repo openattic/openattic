@@ -141,7 +141,7 @@ class Plugin(object):
                     child_instance, _ = rel_obj.get_or_create(name=child_id)
                     _save_items(child_conf, child_instance, child_conf_model, modelstack[1:])
 
-        for host_id, host_conf in conf_dict.items():
+        for host_id, host_conf in conf_dict['children'].items():
             host_model = self.models[0].objects.get(id=host_id)
             _save_items(host_conf, host_model, None, self.models[1:])
 
@@ -179,7 +179,7 @@ class Plugin(object):
 
         plugindata = Container({}, None)
 
-        for host_id, host_conf in conf_dict.items():
+        for host_id, host_conf in conf_dict['children'].items():
             host_model = self.models[0].objects.get(id=host_id)
             _create_subitem(host_conf, host_model, plugindata, self.models[1:])
 
