@@ -718,6 +718,7 @@ var wizform = Ext.create("Ext.oa.WizPanel", {
       items : [{
         xtype       : 'numberfield',
         id          : 'retention_time',
+        name        : 'retention_time',
         disabled    : true,
         minValue    : 1,
         allowBlank  : false
