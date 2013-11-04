@@ -165,8 +165,6 @@ Ext.define("Ext.oa.LVM__Snapcore_TreePanel", {
 
     this.callParent(arguments);
 
-    console.log(window.SnapAppPlugins);
-
     for(var i=0; i < window.SnapAppPlugins.length; i++){
       var childstore = window.SnapAppPlugins[i].getStore(this);
       treestore.getRootNode().appendChild(childstore.getRootNode());
