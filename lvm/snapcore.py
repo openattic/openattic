@@ -117,7 +117,7 @@ class Plugin(object):
             _populate_conf(modelstack[:-1])
 
         _populate_conf(self.models)
-        return {self.plugin_name: conf_dict}
+        return {self.plugin_name: {"children": conf_dict, "data": {}}}
 
     def save_config(self, conf_dict, snapconf):
         def _save_items(confobj, model_instance, confmodel, modelstack):
