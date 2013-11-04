@@ -87,6 +87,10 @@ class BtrfsSubvolume(FileSystemVolume):
         if install:
             self.fs.create_subvolume(self.path)
 
+    def delete(self):
+        self.fs.delete_subvolume(self.path)
+        FileSystemVolume.delete(self)
+
     @property
     def fs(self):
         return filesystems.Btrfs(self)
