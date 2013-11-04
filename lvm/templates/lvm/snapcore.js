@@ -1279,7 +1279,7 @@ Ext.define("Ext.oa.LVM__Snapcore_Panel", {
               var record = self.getStore().getAt(rowIndex);
               lvm__snapcore_snap_store.load({
                 params: {
-                  snapshotconf: record.data.id,
+                  snapshotconf: record.data.id
                 }
               })
             }
@@ -1325,15 +1325,18 @@ Ext.define("Ext.oa.LVM__Snapcore_Panel", {
           },*/{
             text      : gettext("Delete config"),
             listeners : {
-              click: function(btn, e){
-                if(typeof btn.ownerCt.ownerCt.getSelectionModel().getSelected() !== "undefined")
+              click: function(self, e, eOpts){
+                if(typeof self.ownerCt.ownerCt.getSelectionModel().getSelection() !== "undefined")
                 {
-                  var config_id = btn.ownerCt.ownerCt.getSelectionModel().getSelected().id;
-                  lvm__SnapshotConf.remove(config_id, function(result, response){
-                    if(response.type !== 'exception'){
-                      config_store.reload();
-                    }
-                  })
+                  if(self.ownerCt.ownerCt.getSelectionModel().getSelection().length > 0)
+                  {
+                    var config_id = self.ownerCt.ownerCt.getSelectionModel().getSelection()[0].data.id;
+                    lvm__SnapshotConf.remove(config_id, function(result, response){
+                      if(response.type !== 'exception'){
+                        config_store.reload();
+                      }
+                    })
+                  }
                 }
               }
             }
