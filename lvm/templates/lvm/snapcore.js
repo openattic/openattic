@@ -20,74 +20,6 @@ Ext.define("Ext.oa.WizPanel", {
   },
   pnl_hist: ['lvm__snapcore_wiz_welc'],
   nextpanel: function(nextid){
-
-/*    if( typeof this.layout.activeItem.getForm === "function" )
-    {
-      var formValues = this.layout.activeItem.getForm().getValues();
-      var dateTimeValues = [];
-      var comboValues = [];
-
-      for(var key in formValues)
-      {
-        var splittedVal = formValues[key].split('_');
-        if(splittedVal[2] === 'datetime')
-          dateTimeValues.push(splittedVal);
-        else if(splittedVal[2] === 'combo')
-          comboValues.push(splittedVal);
-      }
-
-      if(dateTimeValues.length > 0 || comboValues.length > 0)
-      {
-        if(dateTimeValues.length > 0)
-        {
-          for(var i = 0; i < dateTimeValues.length; i++)
-          {
-            var time = formValues[dateTimeValues[i][1] + '_time'].split(':');
-            var date = formValues[dateTimeValues[i][1] + '_date'].split('.');
-            date = Ext.Date.add(new Date(date[2], date[1], date[0]), Ext.Date.MINUTE, -1);
-            //date = new Date(date[2], date[1] - 1, date[0]);
-            date = Ext.Date.add(date, Date.HOUR, time[0]).add(date, Date.MINUTE, time[1]);
-            this.config.data[dateTimeValues[i][0]] = date;
-          }
-        }
-
-        if(comboValues.length > 0)
-        {
-          for(var i = 0; i < comboValues.length; i++)
-          {
-            var combo_index = Ext.getCmp(comboValues[i][0] + '_' + comboValues[i][1] + '_' + comboValues[i][2]).selectedIndex;
-            var fieldName = comboValues[i][0] + '_' + comboValues[i][1];
-            var value = Ext.getCmp(fieldName).value;
-            switch(combo_index){
-              case 0:
-                // Second(s)
-                break;
-              case 1:
-                // Minute(s)
-                this.config.data[fieldName] = value * 60;
-                break;
-              case 2:
-                // Hour(s)
-                this.config.data[fieldName] = value * 60 * 60;
-                break;
-              case 3:
-                // Day(s)
-                this.config.data[fieldName] = value * 24 * 60 * 60;
-                break;
-              case 4:
-                // Week(s)
-                this.config.data[fieldName] = value * 7 * 24 * 60 * 60;
-                break;
-            }
-          }
-        }
-      }
-      else
-      {
-        Ext.apply(this.config.data, formValues);
-      }
-    }*/
-
     if( typeof this.layout.activeItem.getForm === "function" )
     {
       var form = this.layout.activeItem.getForm();
@@ -1178,7 +1110,6 @@ var wizform = Ext.create("Ext.oa.WizPanel", {
       listeners : {
         click: function(self, e, eOpts){
           config.data = config.data.data;
-          console.log(config.data);
           // set datetimes
           switch(config.data["scheduling_select"]){
             case "execute_later":
