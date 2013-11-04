@@ -142,6 +142,18 @@ Ext.define('Ext.oa.ShareGridPanel', {
       height: 240,
       width:  500
     });
+    if( self.id.endsWith("_inst") ){
+      Ext.apply(this, {
+        stateId:  self.id.replace("_inst", "_state"),
+        stateful: true
+      });
+      for( i = 0; i < this.columns.length; i++ ){
+        Ext.apply(this.columns[0], {
+          stateId:  self.stateId + '_' + this.columns[0].dataIndex,
+          stateful: true
+        });
+      }
+    }
     // Without the next lines, further operations on this.columns would alter
     // the columns of the *prototype* instead of the object, thereby breaking
     // class inheritance. Solution: Copy the prototype's columns to the object.
