@@ -1138,9 +1138,14 @@ var wizform = Ext.create("Ext.oa.WizPanel", {
               break;
           }
 
-           lvm__SnapshotConf.process_config(config)
-           config_store.reload();
-           wiz.hide();
+          if(config.data["retentiontime"] === 'retention_time_retention' && config.data["retention_time"] > 0)
+          {
+            config.data["retention_time"] = config.data["retention_time"] * parseInt(config.data["retention_time_combo"]);
+          }
+
+          lvm__SnapshotConf.process_config(config)
+          config_store.reload();
+          wiz.hide();
         },
       }
     }],
