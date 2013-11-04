@@ -142,6 +142,8 @@ Ext.define('Ext.oa.volumes__VolumePool_Panel', {
     var volumeGroupPanel = this;
     Ext.apply(this, Ext.apply(this.initialConfig, {
       id: "volumes__volumepool_panel_inst",
+      stateId: "volumes__volumepool_panel_state",
+      stateful: true,
       title: gettext('Volume Pool Management'),
       border: false,
       rootVisible: false,
@@ -182,14 +184,17 @@ Ext.define('Ext.oa.volumes__VolumePool_Panel', {
       columns: [{
         xtype: 'treecolumn',
         header: gettext('Name'),
+        stateId: "volumes__volumepool_panel_state__name",
         dataIndex: "name"
       },{
         header: gettext('Type'),
         dataIndex: "type",
+        stateId: "volumes__volumepool_panel_state__type",
         renderer: function(val){ return (val ? val : '♻'); }
       },{
         header: gettext('Size'),
         dataIndex: "megs",
+        stateId: "volumes__volumepool_panel_state__megs",
         align: "right",
         renderer: function(val){
           if( val === null ){
@@ -208,6 +213,7 @@ Ext.define('Ext.oa.volumes__VolumePool_Panel', {
       },{
         header: gettext('Used%'),
         dataIndex: "percent",
+        stateId: "volumes__volumepool_panel_state__percent",
         renderer: function( val, x, store ){
           if( val === null ){
             return '';
@@ -233,6 +239,7 @@ Ext.define('Ext.oa.volumes__VolumePool_Panel', {
       },{
         header: gettext('Status'),
         dataIndex: "status",
+        stateId: "volumes__volumepool_panel_state__status",
         renderer: function( val, x, store ){
           if( val === null ){
             return '';

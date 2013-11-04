@@ -81,6 +81,8 @@ Ext.define('Ext.oa.volumes__Volume_Panel', {
     var volumePanel = this;
     Ext.apply(this, Ext.apply(this.initialConfig, {
       id: "volumes__volumes_panel_inst",
+      stateId: "volumes__volumes_panel_state",
+      stateful: true,
       title: gettext('Volume Management'),
       border: false,
       rootVisible: false,
@@ -238,14 +240,17 @@ Ext.define('Ext.oa.volumes__Volume_Panel', {
         xtype: 'treecolumn',
         header: gettext('Name'),
         dataIndex: "name",
+        stateId: "volumes__volumes_panel_state__name",
         flex: 3
       },{
         header: gettext('Type'),
         dataIndex: "type",
+        stateId: "volumes__volumes_panel_state__type",
         flex: 1
       },{
         header: gettext('Size'),
         dataIndex: "megs",
+        stateId: "volumes__volumes_panel_state__megs",
         align: "right",
         renderer: function(val){
           if( val === null ){
@@ -262,6 +267,7 @@ Ext.define('Ext.oa.volumes__Volume_Panel', {
       },{
         header: gettext('Used%'),
         dataIndex: "percent",
+        stateId: "volumes__volumes_panel_state__percent",
         renderer: function( val, x, store ){
           if( val === null ){
             return '';
@@ -285,6 +291,7 @@ Ext.define('Ext.oa.volumes__Volume_Panel', {
       },{
         header: gettext('Status'),
         dataIndex: "status",
+        stateId: "volumes__volumes_panel_state__status",
         renderer: function( val, x, store ){
           if( val === null ){
             return '';
@@ -311,26 +318,32 @@ Ext.define('Ext.oa.volumes__Volume_Panel', {
       },{
         header: gettext('Warning Level'),
         dataIndex: "fswarning",
+        stateId: "volumes__volumes_panel_state__fswarning",
         flex: 1
       },{
         header: gettext('Critical Level'),
         dataIndex: "fscritical",
+        stateId: "volumes__volumes_panel_state__fscritical",
         flex: 1
       },{
         header: gettext('Path'),
         dataIndex: "path",
+        stateId: "volumes__volumes_panel_state__path",
         flex: 1
       },{
         header: gettext('Host'),
         dataIndex: "host",
+        stateId: "volumes__volumes_panel_state__host",
         flex: 1
       },{
         header: gettext('Volume Pool'),
         dataIndex: "poolname",
+        stateId: "volumes__volumes_panel_state__poolname",
         flex: 1
       },{
         header: gettext('Owner'),
         dataIndex: "ownername",
+        stateId: "volumes__volumes_panel_state__ownername",
         flex: 1
       }]
     }));
