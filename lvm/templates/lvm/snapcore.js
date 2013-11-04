@@ -1284,7 +1284,7 @@ Ext.define("Ext.oa.LVM__Snapcore_Panel", {
               })
             }
           },
-          buttons   : [{
+          buttons   : [/*{
             text      : gettext("Edit config"),
             listeners : {
               click: function(btn, e){
@@ -1322,7 +1322,7 @@ Ext.define("Ext.oa.LVM__Snapcore_Panel", {
                 }
               }
             }
-          },{
+          },*/{
             text      : gettext("Delete config"),
             listeners : {
               click: function(btn, e){
