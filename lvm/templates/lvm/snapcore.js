@@ -738,8 +738,11 @@ var wizform = Ext.create("Ext.oa.WizPanel", {
         ],
         typeAhead:  true,
         triggerAction: 'all',
-        deferEmptyText: false,
-        emptyText : gettext('Select...')
+        listeners: {
+          afterrender: function(self, eOpts){
+            self.setValue('1');
+          }
+        }
       }],
     }]
   },{
