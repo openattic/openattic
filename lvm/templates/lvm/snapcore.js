@@ -1274,10 +1274,10 @@ Ext.define("Ext.oa.LVM__Snapcore_Panel", {
           selModel  : { mode: "SINGLE" },
           store: config_store,
           listeners : {
-            cellclick:  function(self, rowIndex, colIndex, e){
-              snap_store.removeAll();
+            cellclick:  function(self, td, cellIndex, record, tr, rowIndex, e, eOpts){
+              lvm__snapcore_snap_store.removeAll();
               var record = self.getStore().getAt(rowIndex);
-              snap_store.load({
+              lvm__snapcore_snap_store.load({
                 params: {
                   snapshotconf: record.data.id,
                 }
@@ -1353,7 +1353,7 @@ Ext.define("Ext.oa.LVM__Snapcore_Panel", {
             header: gettext("Created"),
             dataIndex: 'createdate',
           }],
-          store: snap_store
+          store: lvm__snapcore_snap_store
         }]
       }]
     }));
@@ -1382,11 +1382,14 @@ Ext.define('snapcore_snap_model', {
   extend: 'Ext.data.Model',
   fields:  ['id', 'name', 'snapshot_id', 'createdate']
 });
-var snap_store = Ext.create('Ext.data.Store', {
+var lvm__snapcore_snap_store = Ext.create('Ext.data.Store', {
   model: "snapcore_snap_model",
   proxy: {
     type: 'direct',
-    directFn: lvm__LogicalVolume.filter
+    directFn: lvm__LogicalVolume.filter,
+    pageParam:  undefined,
+    startParam: undefined,
+    limitParam: undefined
   },
 });
 
