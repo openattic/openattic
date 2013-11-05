@@ -7,6 +7,10 @@ from django.db import models
 
 class Migration(SchemaMigration):
 
+    needed_by = (
+        ("lvm", "0002_volumesapp"),
+    )
+
     def forwards(self, orm):
         # Adding model 'FileLog'
         db.create_table('ftp_filelog', (
