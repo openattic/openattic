@@ -19,13 +19,11 @@ from __future__ import division
 
 from rpcd.handlers import BaseHandler, ModelHandler
 from rpcd.handlers import ProxyModelHandler
-from ifconfig.rpcapi import HostHandler
 
 from lvm.models import VolumeGroup, LogicalVolume, \
                        LVMetadata, \
                        LVSnapshotJob, SnapshotConf
 from lvm import blockdevices
-from lvm import initscripts
 from lvm import udevquery
 from ifconfig.models import Host
 from peering.models import PeerHost
@@ -159,10 +157,10 @@ class SnapshotConfHandler(ModelHandler):
     model = SnapshotConf
 
     def restore_config(self, conf_id):
-      return SnapshotConf.objects.get(id=conf_id).restore_config()
+        return SnapshotConf.objects.get(id=conf_id).restore_config()
 
     def process_config(self, config):
-      return SnapshotConf.objects.process_config(config)
+        return SnapshotConf.objects.process_config(config)
 
 RPCD_HANDLERS = [
     DiskHandler,
