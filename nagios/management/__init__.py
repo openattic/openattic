@@ -70,9 +70,6 @@ def create_nagios(**kwargs):
             )
         serv.save()
 
-    for ip in IPAddress.objects.all():
-        nagios.models.create_service_for_ip( instance=ip )
-
     get_dbus_object("/nagios").writeconf()
 
 sysutils.models.post_install.connect(create_nagios)
