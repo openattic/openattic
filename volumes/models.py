@@ -381,3 +381,7 @@ class FileSystemProvider(FileSystemVolume):
         return unicode(self.base)
 
 
+def __delete_filesystemprovider(instance, **kwargs):
+    instance.fs.unmount()
+
+signals.pre_delete.connect(__delete_filesystemprovider, sender=FileSystemProvider)

@@ -17,6 +17,7 @@
 from django.db.models import signals
 from django.contrib.auth.models import User
 
+from systemd import get_dbus_object
 
 def update_contacts(**kwargs):
     als = get_dbus_object("/mailaliases")
