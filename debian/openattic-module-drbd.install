@@ -1,2 +1,2 @@
 drbd /usr/share/openattic
-installed_apps.d/60_drbd /usr/share/openattic/installed_apps.d
+#installed_apps.d/60_drbd /usr/share/openattic/installed_apps.d
