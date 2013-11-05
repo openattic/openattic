@@ -296,7 +296,9 @@ class LogicalVolume(BlockVolume):
 
     @property
     def raid_params(self):
-        return self.vg.member_set.all()[0].volume.raid_params
+        if self.vg.member_set.all().count() != 0:
+            return self.vg.member_set.all()[0].volume.raid_params
+        raise UnsupportedRAID()
 
     @property
     def fs(self):
