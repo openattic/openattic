@@ -16,6 +16,8 @@
 
 import sysutils.models
 
+from systemd import get_dbus_object
+
 def writeconf(**kwargs):
     get_dbus_object("/samba").writeconf()
 
