@@ -354,8 +354,8 @@ if "nagios" in settings.INSTALLED_APPS:
             host        = Host.objects.get_current(),
             target      = instance,
             command     = cmd,
-            description = nagios_settings.TRAFFIC_DESCRIPTION % ip.device.devname,
-            arguments   = ip.device.devname
+            description = nagios_settings.TRAFFIC_DESCRIPTION % instance.device.devname,
+            arguments   = instance.device.devname
         )
         srv.save()
 
