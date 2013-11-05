@@ -52,7 +52,6 @@ def create_nagios(**kwargs):
             print "Adding Service '%s'" % servstate["service_description"]
             serv = Service(
                 host        = Host.objects.get_current(),
-                volume      = None,
                 description = servstate["service_description"],
                 command     = cmd,
                 arguments   = ('!'.join(cmdargs))
@@ -63,7 +62,6 @@ def create_nagios(**kwargs):
     if Service.objects.filter(host=Host.objects.get_current(), command=cmd).count() == 0:
         serv = Service(
             host        = Host.objects.get_current(),
-            volume      = None,
             command     = cmd,
             description = nagios_settings.CPUTIME_DESCRIPTION,
             arguments   = ""
