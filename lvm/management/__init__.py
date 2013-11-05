@@ -38,10 +38,6 @@ def create_vgs(**kwargs):
     vgs = dbus_to_python(lvm.vgs())
     lvs = dbus_to_python(lvm.lvs())
     mounts = blockdevices.get_mounts()
-    if exists("/sbin/zfs"):
-        zfs = dbus_to_python(lvm.zfs_getspace(""))
-    else:
-        zfs = []
 
     for vgname in vgs:
         try:
