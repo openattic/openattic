@@ -7,6 +7,10 @@ from django.db import models
 
 class Migration(SchemaMigration):
 
+    depends_on = (
+        ("lvm", "0001_initial"),
+    )
+
     needed_by = (
         ("lvm", "0002_volumesapp"),
     )
