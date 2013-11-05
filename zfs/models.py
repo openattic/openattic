@@ -82,6 +82,10 @@ class Zfs(FileSystemVolume):
         if install:
             self.fs.create_subvolume(self.name)
 
+    def delete(self):
+        FileSystemVolume.delete(self)
+        self.fs.destroy_subvolume(self.name)
+
     @property
     def fs(self):
         return filesystems.Zfs(self, self.zpool)
@@ -104,7 +108,7 @@ class Zfs(FileSystemVolume):
 
     @property
     def megs(self):
-        return self.zpool.megs
+        return self.fs.stat["size"] or self.zpool.megs
 
     @property
     def host(self):
