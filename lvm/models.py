@@ -407,12 +407,8 @@ class LogicalVolume(BlockVolume):
         return ret
 
     def delete(self):
-        for share in self.get_shares():
-            share.delete()
-
-        self.uninstall()
-
         BlockVolume.delete(self)
+        self.uninstall()
 
     def merge(self):
         if self.snapshot is None:
