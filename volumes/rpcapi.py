@@ -161,6 +161,7 @@ class AbstractFileSystemVolumeHandler(ModelHandler):
         data["status"]  = obj.volume.status
         return data
 
+
 class FileSystemVolumeHandler(ModelHandler):
     model = FileSystemVolume
 
@@ -196,8 +197,12 @@ class FileSystemVolumeProxy(ProxyModelHandler, FileSystemVolumeHandler):
 class GenericDiskHandler(AbstractBlockVolumeHandler):
     model = GenericDisk
 
+
 class FileSystemProviderHandler(AbstractFileSystemVolumeHandler):
     model = FileSystemProvider
+
+    def remove_with_base(self, id):
+        return self.get_model_manager().get(id=id).base.delete()
 
 class FileSystemProviderProxy(ProxyModelHandler, FileSystemProviderHandler):
     def _find_target_host_from_model_instance(self, model):
@@ -207,6 +212,9 @@ class FileSystemProviderProxy(ProxyModelHandler, FileSystemProviderHandler):
 
     def create(self, data):
         raise NotImplementedError("FileSystemProvider.create is disabled, call volumes.VolumePool.create_volume instead.")
+
+    def remove_with_base(self, id):
+        return self._call_singlepeer_method("remove_with_base", id)
 
 
 class InitScriptHandler(BaseHandler):
