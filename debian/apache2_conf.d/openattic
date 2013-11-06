@@ -1,7 +1,7 @@
 <IfModule mod_wsgi.c>
 
 Alias                   /openattic/static/extjs_themes/images/default/ /usr/share/javascript/extjs/resources/images/default/
-Alias                   /openattic/static/extjs/  /usr/share/javascript/extjs/
+Alias                   /openattic/static/extjs/  /usr/share/javascript/extjs4/
 Alias                   /openattic/static/oxygen/ /usr/share/icons/oxygen/
 Alias                   /openattic/static/admin/  /usr/share/pyshared/django/contrib/admin/static/admin/
 Alias                   /openattic/static/        /usr/share/openattic/htdocs/
