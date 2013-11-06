@@ -83,7 +83,7 @@ Depends: ${misc:Depends}, python (>= 2.6),
  python-statgrab,
  oxygen-icon-theme,
  lsb-release,
- libjs-extjs (>= 3.0.0), libjs-extjs (<< 4.0),
+ libjs-extjs4 (>= 4.2.1),
  openattic-pgsql,
  libapache2-mod-wsgi, apache2
 Recommends: sudo
