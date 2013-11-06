@@ -199,16 +199,6 @@ class GenericDiskHandler(AbstractBlockVolumeHandler):
 class FileSystemProviderHandler(AbstractFileSystemVolumeHandler):
     model = FileSystemProvider
 
-    def _override_get(self, obj, data):
-        # this looks fishy
-        del data["volume_type"]
-        del data["volume"]
-        handler = self._get_handler_instance(ContentType)
-        volume_type = ContentType.objects.get_for_model(obj.base.volume.__class__)
-        data["volume_type"] = handler._idobj(volume_type)
-        data["volume"] = data["base"]
-        return data
-
 class FileSystemProviderProxy(ProxyModelHandler, FileSystemProviderHandler):
     def _find_target_host_from_model_instance(self, model):
         if model.base.volume.host == Host.objects.get_current():
