@@ -23,7 +23,7 @@ class SystemD(LockingPlugin):
     dbus_path = "/nfs"
 
     @deferredmethod(in_signature="")
-    def writeconf(self):
+    def writeconf(self, sender):
         self.lock.acquire()
         try:
             fd = open( nfs_settings.EXPORTS, "wb" )
@@ -36,7 +36,7 @@ class SystemD(LockingPlugin):
             self.lock.release()
 
     @deferredmethod(in_signature="bsss")
-    def exportfs(self, export, path, host, options):
+    def exportfs(self, export, path, host, options, sender):
         cmd = ["/usr/sbin/exportfs"]
         if not export:
             cmd.append("-u")
