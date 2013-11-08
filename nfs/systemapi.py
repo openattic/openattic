@@ -14,7 +14,7 @@
  *  GNU General Public License for more details.
 """
 
-from systemd       import invoke, logged, LockingPlugin, method
+from systemd       import invoke, logged, LockingPlugin, deferredmethod
 from nfs.models    import Export
 from nfs.conf      import settings as nfs_settings
 
@@ -22,7 +22,7 @@ from nfs.conf      import settings as nfs_settings
 class SystemD(LockingPlugin):
     dbus_path = "/nfs"
 
-    @method(in_signature="", out_signature="")
+    @deferredmethod(in_signature="")
     def writeconf(self):
         self.lock.acquire()
         try:
@@ -35,7 +35,7 @@ class SystemD(LockingPlugin):
         finally:
             self.lock.release()
 
-    @method(in_signature="bsss", out_signature="i")
+    @deferredmethod(in_signature="bsss")
     def exportfs(self, export, path, host, options):
         cmd = ["/usr/sbin/exportfs"]
         if not export:
@@ -43,4 +43,4 @@ class SystemD(LockingPlugin):
         if options:
             cmd.extend(["-o", options])
         cmd.append("%s:%s" % (host, path))
-        return invoke(cmd)
+        invoke(cmd)
