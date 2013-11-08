@@ -18,16 +18,16 @@ from django.db   import models
 
 from systemd import get_dbus_object
 from ifconfig.models import getHostDependentManagerClass
-from lvm.models import LogicalVolume
+from volumes.models import FileSystemVolume
 
 class Export(models.Model):
-    volume      = models.ForeignKey(LogicalVolume)
+    volume      = models.ForeignKey(FileSystemVolume)
     path        = models.CharField(max_length=255)
     address     = models.CharField(max_length=250)
     options     = models.CharField(max_length=250, default="rw,no_subtree_check,no_root_squash")
 
-    objects     = getHostDependentManagerClass("volume__vg__host")()
-    all_objects = models.Manager()
+    #objects     = getHostDependentManagerClass("volume__pool__host")()
+    #all_objects = models.Manager()
     share_type  = "nfs"
 
     def __unicode__(self):
@@ -42,14 +42,12 @@ class Export(models.Model):
         ret = models.Model.save(self, *args, **kwargs)
         nfs = get_dbus_object("/nfs")
         nfs.writeconf()
-        if not self.volume.standby:
-            nfs.exportfs(True, self.path, self.address, self.options)
+        nfs.exportfs(True, self.path, self.address, self.options)
         return ret
 
     def delete( self ):
         ret = models.Model.delete(self)
         nfs = get_dbus_object("/nfs")
         nfs.writeconf()
-        if not self.volume.standby:
-            nfs.exportfs(False, self.path, self.address, self.options)
+        nfs.exportfs(False, self.path, self.address, self.options)
         return ret
