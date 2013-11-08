@@ -22,7 +22,7 @@ from nfs.models import Export
 class NfsExportHandler(ModelHandler):
     model = Export
 
-class NfsExportProxy(ProxyModelHandler, NfsExportHandler):
-    pass
+#class NfsExportProxy(ProxyModelHandler, NfsExportHandler):
+    #pass
 
-RPCD_HANDLERS = [NfsExportProxy]
+RPCD_HANDLERS = [NfsExportHandler]
