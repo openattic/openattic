@@ -40,12 +40,12 @@ Ext.define('Ext.oa.Nfs__Export_Panel', {
       layout: 'form',
       items: [
         tipify({
-          xtype: 'volumefield',
+          xtype: 'filesystemvolumefield',
           listeners: {
             select: function(self, record, index){
               var dirfield = Ext.ComponentQuery.query("[name=path]", self.ownerCt)[0];
-              lvm__LogicalVolume.get( record[0].data.id, function( provider, response ){
-                dirfield.setValue( response.result.fs.topleveldir );
+              volumes__FileSystemVolume.get( record[0].data.id, function( provider, response ){
+                dirfield.setValue( response.result.path );
                 dirfield.enable();
               } );
             }
