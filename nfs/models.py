@@ -17,8 +17,15 @@
 from django.db   import models
 
 from systemd import get_dbus_object
-from ifconfig.models import getHostDependentManagerClass
+from ifconfig.models import HostDependentManager
 from volumes.models import FileSystemVolume
+
+class ExportManager(HostDependentManager):
+    hostfilter  = "volume__pool__volumepool__host"
+
+    def get_query_set(self):
+        return models.Manager.get_query_set(self)
+
 
 class Export(models.Model):
     volume      = models.ForeignKey(FileSystemVolume)
@@ -26,8 +33,8 @@ class Export(models.Model):
     address     = models.CharField(max_length=250)
     options     = models.CharField(max_length=250, default="rw,no_subtree_check,no_root_squash")
 
-    #objects     = getHostDependentManagerClass("volume__pool__host")()
-    #all_objects = models.Manager()
+    objects     = ExportManager()
+    all_objects = models.Manager()
     share_type  = "nfs"
 
     def __unicode__(self):
