@@ -8,6 +8,7 @@ from django.db import models
 class Migration(SchemaMigration):
 
     def forwards(self, orm):
+        return
         # Adding model 'Connection'
         db.create_table('drbd_connection', (
             ('id', self.gf('django.db.models.fields.AutoField')(primary_key=True)),
