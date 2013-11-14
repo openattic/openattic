@@ -16,32 +16,6 @@ resource {{ Connection.res_name }} {
 	meta-disk  internal;
 	device /dev/drbd{{ Connection.id }};
 	
-	startup {
-		{% if Connection.wfc_timeout          %}wfc-timeout          {{ Connection.wfc_timeout          }};{% endif %}
-		{% if Connection.degr_wfc_timeout     %}degr-wfc-timeout     {{ Connection.degr_wfc_timeout     }};{% endif %}
-		{% if Connection.outdated_wfc_timeout %}outdated-wfc-timeout {{ Connection.outdated_wfc_timeout }};{% endif %}
-	}
-	
-	disk {
-		on-io-error {{ Connection.on_io_error }};
-		fencing     {{ Connection.fencing     }};
-	}
-	
-	handlers {
-		fence-peer          "/usr/lib/drbd/crm-fence-peer.sh";
-		after-resync-target "/usr/lib/drbd/crm-unfence-peer.sh";
-	}
-	
-	net {
-		{% if Connection.cram_hmac_alg and Connection.secret %}
-		cram-hmac-alg {{ Connection.cram_hmac_alg }};
-		shared-secret {{ Connection.secret  }};
-		{% endif %}
-		after-sb-0pri {{ Connection.sb_0pri }};
-		after-sb-1pri {{ Connection.sb_1pri }};
-		after-sb-2pri {{ Connection.sb_2pri }};
-	}
-	
 	{% if Connection.syncer_rate %}
 	syncer {
 		rate {{ Connection.syncer_rate }};
@@ -52,12 +26,6 @@ resource {{ Connection.res_name }} {
 	on {{ endpoint.volume.vg.host.name }} {
 		disk       {{ endpoint.volume.device }};
 		address    {{ endpoint.ipaddress.host_part }}:{{ Connection.port }};
-	}
-	{% endfor %}
-	
-	{% for lowerconn in Connection.stack_child_set.all %}
-	stacked-on-top-of {{ lowerconn.res_name }} {
-		address    {{ lowerconn.ipaddress.host_part }}:{{ Connection.port }};
 	}
 	{% endfor %}
 }
