@@ -17,13 +17,13 @@
  *  GNU General Public License for more details.
 """
 
-from django.db   import models
+from django.db   		import models
 
-from systemd import dbus_to_python, get_dbus_object
+from systemd			import dbus_to_python, get_dbus_object
 
-from lvm.models import LVChainedModule
-from lvm        import blockdevices
-from ifconfig.models import IPAddress, Host
+from volumes.models 	import BlockVolume
+from lvm 				import blockdevices
+from ifconfig.models	import Host, IPAddress
 
 DRBD_PROTOCOL_CHOICES = (
     ('A', 'Protocol A: write IO is reported as completed, if it has reached local disk and local TCP send buffer.'),
@@ -31,249 +31,68 @@ DRBD_PROTOCOL_CHOICES = (
     ('C', 'Protocol C: write IO is reported as completed, if it has reached both local and remote disk.'),
     )
 
-DRBD_IO_ERROR_CHOICES = (
-    ('pass_on',                 'pass_on: Report the io-error to the upper layers. On Primary report it to the '
-                                'mounted file system. On Secondary ignore it.'),
-    ('call-local-io-error',     'call-local-io-error: Call the handler script local-io-error.'),
-    ('detach',                  'detach: The node drops its low level device, and continues in diskless mode.'),
-    )
+class Connection(BlockVolume):
+	name 		= models.CharField(max_length=50)
+	protocol 	= models.CharField(max_length=1, default="A", choices=DRBD_PROTOCOL_CHOICES)
+	syncer_rate = models.CharField(max_length=25, blank=True, default="5M", help_text=(
+									"Bandwidth limit for background synchronization, measured in "
+									"K/M/G<b><i>Bytes</i></b>."))
 
-DRBD_FENCING_CHOICES = (
-    ('dont-care',               'dont-care: This is the default policy. No fencing actions are undertaken.'),
-    ('resource-only',           'resource-only: Try to fence the peer´s disk by calling the fence-peer handler.'),
-    ('resource-and-stonith',    'resource-and-stonith: Try to fence the peer´s disk by calling the fence-peer '
-                                'handler, which has to outdate or STONITH the peer.'),
-    )
+	def __init__(self, *args, **kwargs):
+		models.Model.__init__(self, *args, **kwargs)
+		self._drbd = None
 
-DRBD_AFTER_SB_0PRI_CHOICES = (
-    ('disconnect',              'disconnect: No automatic resynchronization, simply disconnect.'),
-    ('discard-younger-primary', 'discard-younger-primary: Auto sync from the node that was primary before the '
-                                'split-brain situation happened.'),
-    ('discard-older-primary',   'discard-older-primary: Auto sync from the node that became primary as second '
-                                'during the split-brain situation.'),
-    ('discard-zero-changes',    'discard-zero-changes: Auto sync to the node that did not touch any blocks. '
-                                'If both nodes wrote something, disconnect.'),
-    ('discard-least-changes',   'discard-least-changes: Auto sync from the node that touched more blocks during '
-                                'the split brain situation.'),
-    # TODO: No idea how to implement DISCARD-NODE-<name> here
-    )
+	def __unicode__(self):
+		return self.name
 
-DRBD_AFTER_SB_1PRI_CHOICES = (
-    ('disconnect',              'disconnect: No automatic resynchronization, simply disconnect.'),
-    ('consensus',               'consensus: Discard the version of the secondary if the outcome of the '
-                                'after-sb-0pri algorithm would also destroy the current secondary´s data. '
-                                'Otherwise disconnect.'),
-    ('violently-as0p',          'violently-as0p: This is DANGEROUS, only choose if you KNOW what you are doing.'),
-    ('discard-secondary',       'discard-secondary: Discard the secondary´s version.'),
-    ('call-pri-lost-after-sb',  'call-pri-lost-after-sb: Always honor the outcome of the after-sb-0pri algorithm. '
-                                'In case it decides the current secondary has the right data, it calls the '
-                                '"pri-lost-after-sb" handler on the current primary.'),
-    )
+	@property
+	def drbd(self):
+		if self._drbd is None:
+			self._drbd = get_dbus_object("/drbd")
+		return self._drbd
 
-DRBD_AFTER_SB_2PRI_CHOICES = (
-    ('disconnect',              'disconnect: No automatic resynchronization, simply disconnect.'),
-    ('violently-as0p',          'violently-as0p: This is DANGEROUS, only choose if you KNOW what you are doing.'),
-    ('call-pri-lost-after-sb',  'call-pri-lost-after-sb: Always honor the outcome of the after-sb-0pri algorithm. '
-                                'In case it decides the current secondary has the right data, it calls the '
-                                '"pri-lost-after-sb" handler on the current primary.'),
-    )
+	@property
+	def megs(self):
+		return blockdevices.get_disk_size("drbd%d" % self.id)
 
+	@property
+	def host(self):
+		return Host.objects.get(name="srvliotest01.master.dns")
 
-class Connection(models.Model):
-    res_name    = models.CharField(max_length=50)
-    ipaddress   = models.ForeignKey(IPAddress, blank=True, null=True)
-    stack_parent = models.ForeignKey("self", blank=True, null=True, related_name="stack_child_set")
-    protocol    = models.CharField(max_length=1, default="C", choices=DRBD_PROTOCOL_CHOICES)
-    wfc_timeout          = models.IntegerField(blank=True, null=True, default=10,
-                           help_text=("Wait for connection timeout.  The init script drbd(8) blocks the boot "
-                                      "process until the DRBD resources are connected. When the cluster manager "
-                                      "starts later, it does not see a resource with internal split-brain. In "
-                                      "case you want to limit the wait time, do it here. Default is 0, which means "
-                                      "unlimited. The unit is seconds."))
-    degr_wfc_timeout     = models.IntegerField(blank=True, null=True, default=120,
-                           help_text=("Wait for connection timeout, if this node was a degraded cluster. In case a "
-                                      "degraded cluster (= cluster with only one node left) is rebooted, this "
-                                      "timeout value is used instead of wfc-timeout, because the peer is less "
-                                      "likely to show up in time, if it had been dead before. Value 0 means "
-                                      "unlimited."))
-    outdated_wfc_timeout = models.IntegerField(blank=True, null=True, default=15,
-                           help_text=("Wait for connection timeout, if the peer was outdated. In case a degraded "
-                                      "cluster (= cluster with only one node left) with an outdated peer disk is "
-                                      "rebooted, this timeout value is used instead of wfc-timeout, because the "
-                                      "peer is not allowed to become primary in the meantime. Value 0 means "
-                                      "unlimited."))
-    on_io_error = models.CharField(max_length=25, default="detach", choices=DRBD_IO_ERROR_CHOICES, help_text=(
-                                   "What to do if the lower level device reports an IO error."))
-    fencing     = models.CharField(max_length=25, default="dont-care", choices=DRBD_FENCING_CHOICES, help_text=(
-                                   "Preventive measures to avoid situations where both nodes are primary and "
-                                   "disconnected (AKA split brain)."))
-    cram_hmac_alg = models.CharField(max_length=25, default="sha1", help_text=(
-                                   "Digest algorithm used for peer authentication."))
-    secret      = models.CharField(max_length=250, blank=True, help_text=(
-                                   "Shared secret used for peer authentication."))
-    sb_0pri     = models.CharField(max_length=25, default="discard-younger-primary",
-                                   choices=DRBD_AFTER_SB_0PRI_CHOICES, help_text=(
-                                   "What to do if we reconnect a Split Brain with 0 Primaries."))
-    sb_1pri     = models.CharField(max_length=25, default="discard-secondary",
-                                   choices=DRBD_AFTER_SB_1PRI_CHOICES, help_text=(
-                                   "What to do if we reconnect a Split Brain with 1 Primary."))
-    sb_2pri     = models.CharField(max_length=25, default="disconnect",
-                                   choices=DRBD_AFTER_SB_2PRI_CHOICES, help_text=(
-                                   "What to do if we reconnect a Split Brain with 2 Primaries."))
-    syncer_rate = models.CharField(max_length=25, blank=True, default="5M", help_text=(
-                                   "Bandwidth limit for background synchronization, measured in "
-                                   "K/M/G<b><i>Bytes</i></b>."))
+	@property
+	def path(self):
+		return "/dev/drbd%d" % self.id
 
-    def __init__( self, *args, **kwargs ):
-        models.Model.__init__( self, *args, **kwargs )
-        self._drbd = None
+	@property
+	def status(self):
+		info = dbus_to_python(self.drbd.get_dstate(self.name, False))
 
-    def __unicode__(self):
-        return self.res_name
+		status = "%s(%s)" % (Host.objects.get_current().name, info["self"])
 
-    @property
-    def name(self):
-        return self.res_name
+		if self.peerhost:
+			status += "<br />%s(%s)" % (self.peerhost.name, info["peer"])
 
-    @property
-    def megs(self):
-        return blockdevices.get_disk_size( "drbd%d" % self.id )
+		return status
 
-    @property
-    def device(self):
-        return "/dev/drbd%d" % self.id
+	@property
+	def type(self):
+		return "DRBD Connection"
 
-    @property
-    def port(self):
-        return 7700 + self.id
+	@property
+	def peerhost(self):
+		for endpoint in Endpoint.objects.filter(connection=self):
+			if endpoint.ipaddress.device.host != Host.objects.get_current():
+				host_peer = endpoint.ipaddress.device.host
+				break
 
-    @property
-    def stacked(self):
-        if self.stack_child_set.count() > 0:
-            return max([ lowerconn.endpoints_running_here for lowerconn in self.stack_child_set.all() ])
-        return False
+		if host_peer:
+			return host_peer
+		else:
+			None
 
-    @property
-    def local_lower_connection(self):
-        """ Find the lower connection that is running on this host (if any). """
-        if not self.stacked:
-            return None
-        for lowerconn in self.stack_child_set.all():
-            if lowerconn.endpoints_running_here:
-                return lowerconn
+class Endpoint(models.Model):
+	connection 	= models.ForeignKey(Connection)
+	ipaddress 	= models.ForeignKey(IPAddress)
 
-    @property
-    def peerhost(self):
-        """ Find the host on which the other side is running at the moment. """
-        if not self.endpoints_running_here and not self.stacked:
-            raise ReferenceError("We're not one of the connection's endpoints, so there is no peer here.")
-        for lowerconn in self.stack_child_set.all():
-            if not lowerconn.endpoints_running_here:
-                return lowerconn.ipaddress.device.host
-        for endpoint in self.endpoint_set.all():
-            if not endpoint.running_here:
-                return endpoint.volume.vg.host
-
-    @property
-    def endpoints_running_here(self):
-        """ Check if any of my endpoints run here. """
-        return self.endpoint_set.filter(volume__vg__host=Host.objects.get_current()).count() > 0
-
-    @property
-    def local_endpoint(self):
-        """ Return the endpoint that runs here. """
-        if not self.endpoints_running_here and self.stacked:
-            return self.local_lower_connection.local_endpoint
-        return self.endpoint_set.get(volume__vg__host=Host.objects.get_current())
-
-    @property
-    def drbd(self):
-        if self._drbd is None:
-            self._drbd = get_dbus_object("/drbd")
-        return self._drbd
-
-    @property
-    def cstate(self):
-        return dbus_to_python(self.drbd.get_cstate(self.res_name, self.stacked))
-
-    @property
-    def dstate(self):
-        info = dbus_to_python(self.drbd.get_dstate(self.res_name, self.stacked))
-        return {
-            Host.objects.get_current().name : info["self"],
-            self.peerhost.name              : info["peer"]
-            }
-
-    @property
-    def role(self):
-        info = dbus_to_python(self.drbd.get_role(self.res_name, self.stacked))
-        return {
-            Host.objects.get_current().name : info["self"],
-            self.peerhost.name              : info["peer"]
-            }
-
-    def primary(self):
-        return self.drbd.primary(self.res_name, self.stacked) == 0
-
-    def secondary(self):
-        return self.drbd.secondary(self.res_name, self.stacked) == 0
-
-    @property
-    def is_primary(self):
-        info = dbus_to_python(self.drbd.get_role(self.res_name, self.stacked))
-        return info["self"] == "Primary"
-
-
-class Endpoint(LVChainedModule):
-    connection = models.ForeignKey(Connection)
-    ipaddress  = models.ForeignKey(IPAddress)
-
-    def __unicode__(self):
-        return "%s -> %s/%s" % (self.connection.res_name, self.volume.vg.name, self.volume.name)
-
-    @property
-    def running_here(self):
-        return (self.volume.vg.host == Host.objects.get_current())
-
-    @property
-    def res(self):
-        return self.connection.res_name
-
-    @property
-    def path(self):
-        if self.connection.stack_parent is not None:
-            return "/dev/drbd%d" % self.connection.stack_parent.id
-        return "/dev/drbd%d" % self.connection.id
-
-    @property
-    def standby(self):
-        if not self.connection.is_primary:
-            return True
-        if self.connection.stack_parent is None:
-            return False
-        return not self.connection.stack_parent.is_primary
-
-    def setupfs(self):
-        if not self.standby:
-            self.volume.setupfs()
-            return False
-        else:
-            self.volume.formatted = True
-            return True
-
-    def clean(self):
-        from django.core.exceptions import ValidationError
-        if self.volume.filesystem:
-            raise ValidationError('This share type can not be used on volumes with a file system.')
-
-    def install(self):
-        self.connection.drbd.conf_write(self.id)
-        self.connection.drbd.createmd(self.res, self.stacked)
-        self.connection.drbd.up(self.res, self.stacked)
-
-        if self.init_master:
-            self.connection.drbd.primary_overwrite(self.res, self.stacked)
-
-    def uninstall(self):
-        self.connection.drbd.down(self.res, self.stacked)
-        self.connection.drbd.conf_delete(self.id)
+	def __unicode__(self):
+		return "%s: %s" % (self.connection.name, self.ipaddress.device.host.name)
