@@ -17,6 +17,8 @@
  *  GNU General Public License for more details.
 """
 
+from collections 		import Counter
+
 from django.db   		import models
 
 from systemd			import dbus_to_python, get_dbus_object
@@ -57,7 +59,17 @@ class Connection(BlockVolume):
 
 	@property
 	def host(self):
-		return Host.objects.get(name="srvliotest01.master.dns")
+		info = dbus_to_python(self.drbd.get_role(self.name, False))
+		info_count = Counter(info.values())
+
+		if info_count["Primary"] == 2 or \
+			(info_count["Primary"] == 1 and \
+				[host for host, status in info.items() if status == "Primary"][0] == "self"):
+			return Host.objects.get_current()
+		elif info_count["Primary"] == 0:
+			return None
+		else:
+			return self.peerhost
 
 	@property
 	def path(self):
