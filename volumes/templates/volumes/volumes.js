@@ -293,7 +293,7 @@ Ext.define('Ext.oa.volumes__Volume_Panel', {
         dataIndex: "status",
         stateId: "volumes__volumes_panel_state__status",
         renderer: function( val, x, store ){
-          if( val === null ){
+          if( val === null || typeof val === 'undefined'){
             return '';
           }
           if( !val.contains(":") ){
