@@ -16,11 +16,32 @@
 
 from rpcd.handlers import ModelHandler
 
-from drbd.models import Connection
+from drbd.models import Connection, Endpoint
+from ifconfig.models import Host
 
 from volumes.rpcapi import AbstractBlockVolumeHandler
 
 class DrbdConnectionHandler(AbstractBlockVolumeHandler):
 	model = Connection
 
-RPCD_HANDLERS = [DrbdConnectionHandler]
+	def _override_get(self, obj, data):
+		handler = self._get_handler_instance(Endpoint)
+		data["endpoint_set"] = [
+			handler._idobj(endpoint) for endpoint in obj.endpoint_set.all()
+		]
+
+		return data
+
+class DrbdEndpointHandler(ModelHandler):
+	model = Endpoint
+
+	def _getobj(self, obj):
+		data = ModelHandler._getobj(self, obj)
+		data["type"] = obj.type
+		data["megs"] = obj.megs
+		data["status"] = obj.status
+		data["path"] = obj.path
+		data["host"] = self._get_handler_instance(Host)._idobj(obj.host)
+		return data
+
+RPCD_HANDLERS = [DrbdConnectionHandler, DrbdEndpointHandler]
