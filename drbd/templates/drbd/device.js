@@ -23,7 +23,6 @@ Ext.define('volumes__drbd_Connection_model', {
   ],
   createNode: function(record){
     var rootNode;
-    console.log(record.raw);
     if(record.raw.endpoint_set.length > 0){
       var store = Ext.create('Ext.oa.SwitchingTreeStore', {
         model: 'volumes__drbd_Endpoint_model',
@@ -71,7 +70,6 @@ Ext.define('volumes__drbd_Endpoint_model', {
   ],
   createNode: function(record){
     record.set("leaf", true);
-    console.log(record);
     var rootNode = this.callParent(arguments);
     rootNode.set('name', toUnicode(record.raw));
     rootNode.set('type', record.raw.type);
