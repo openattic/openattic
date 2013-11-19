@@ -77,14 +77,7 @@ class Connection(BlockVolume):
 
 	@property
 	def status(self):
-		info = dbus_to_python(self.drbd.get_dstate(self.name, False))
-
-		status = "%s(%s)" % (Host.objects.get_current().name, info["self"])
-
-		if self.peerhost:
-			status += "<br />%s(%s)" % (self.peerhost.name, info["peer"])
-
-		return status
+		return dbus_to_python(self.drbd.get_cstate(self.name, False))
 
 	@property
 	def type(self):
