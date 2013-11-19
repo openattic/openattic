@@ -103,8 +103,34 @@ class Connection(BlockVolume):
 			None
 
 class Endpoint(models.Model):
-	connection 	= models.ForeignKey(Connection)
+	connection 	= models.ForeignKey(Connection, related_name="endpoint_set")
 	ipaddress 	= models.ForeignKey(IPAddress)
+	volume 		= models.ForeignKey(BlockVolume, null=True, related_name="accessor_endpoint_set")
 
 	def __unicode__(self):
-		return "%s: %s" % (self.connection.name, self.ipaddress.device.host.name)
+		return self.ipaddress.device.host.name
+
+	@property
+	def running_here(self):
+		return (self.connection.host == Host.objects.get_current())
+
+	@property
+	def type(self):
+		return "DRBD Endpoint"
+
+	@property
+	def megs(self):
+		return blockdevices.get_disk_size("drbd%d" % self.connection.id)
+
+	@property
+	def path(self):
+		return self.volume.volume.path
+
+	@property
+	def status(self):
+		info = dbus_to_python(self.connection.drbd.get_dstate(self.connection.name, False))
+		return info["self"]
+
+	@property
+	def host(self):
+		return self.ipaddress.device.host
