@@ -73,6 +73,106 @@ Ext.define('volumes__volumes_FileSystemVolume_model', {
   }
 });
 
+var mirror_win = new Ext.Window({
+  title: gettext("Mirror"),
+  layout: "fit",
+  height: 180,
+  width: 500,
+  items: [{
+    xtype: "form",
+    border: false,
+    bodyStyle: "padding:5px 5px;",
+    items: [{
+      xtype: 'combo',
+      forceSelection: true,
+      fieldLabel: gettext("Choose mirrorhost"),
+      typeAhead: true,
+      triggerAction: "all",
+      deferEmptyText: false,
+      emptyText: gettext("Select..."),
+      id: "volumes_find_mirror_combo",
+      selectOnFocus: true,
+      displayField: "name",
+      valueField: "id",
+      store: (function(){
+        Ext.define("volumes__blockvolume_host_store", {
+          extend: "Ext.data.Model",
+          fields: [
+            {name: "id"},
+            {name: "name"}
+          ]
+        });
+
+        return Ext.create("Ext.data.Store", {
+          model: "volumes__blockvolume_host_store",
+          proxy: {
+            type: "direct",
+            directFn: ifconfig__Host.filter,
+            startParam: undefined,
+            limitParam: undefined,
+            pageParam:  undefined,
+            extraParams: {
+              kwds: {
+                "__exclude__": {
+                  "id": window.HOSTID
+                }
+              }
+            },
+            paramOrder: ["kwds"]
+          }
+        });
+      }()),
+      listeners: {
+        change: function(self, newValue, oldValue, eOpts){
+          var pool_combo = self.ownerCt.getComponent('volumes_find_volumepool_combo');
+          pool_combo.enable();
+          pool_combo.getStore().load({
+            params: {
+              kwds: {
+                "host_id": newValue,
+                "min_megs": self.ownerCt.ownerCt.volume_megs
+              }
+            }
+          });
+        }
+      }
+    },{
+      xtype: 'combo',
+      disabled: true,
+      forceSelection: true,
+      fieldLabel: gettext("Choose volumepool"),
+      typeAhead: true,
+      deferEmptyText: false,
+      emptyText: gettext("Select..."),
+      itemId: "volumes_find_volumepool_combo",
+      displayField: "name",
+      valueField: "id",
+      queryMode: "local",
+      store: (function(){
+        Ext.define("volumes__blockvolume_volumepool_store", {
+          extend: "Ext.data.Model",
+          fields: [
+            {name: "id"},
+            {name: "name"}
+          ]
+        });
+
+        return Ext.create("Ext.data.Store", {
+          autoLoad: false,
+          model: "volumes__blockvolume_volumepool_store",
+          proxy: {
+            type: "direct",
+            directFn: volumes__VolumePool.get_sufficient,
+            startParam: undefined,
+            limitParam: undefined,
+            pageParam:  undefined,
+            paramOrder: ["kwds"]
+          }
+        });
+      }()),
+    }],
+  }]
+});
 
 Ext.define('Ext.oa.volumes__Volume_Panel', {
   extend: 'Ext.tree.TreePanel',
