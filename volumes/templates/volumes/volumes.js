@@ -178,6 +178,21 @@ Ext.define('Ext.oa.volumes__Volume_Panel', {
           }));
           addwin.show();
         }
+      },{
+        text: gettext("Mirror"),
+        listeners: {
+          click: function(self, e, eOpts){
+            if(self.ownerCt.ownerCt.getSelectionModel().getSelection().length === 1){
+              var vol_selection = self.ownerCt.ownerCt.getSelectionModel().getSelection()[0];
+              if(vol_selection.$className.indexOf("BlockVolume") != -1){
+                if(typeof vol_selection.data.megs !== 'undefined' && vol_selection.data.megs > 0){
+                  mirror_win["volume_megs"] = vol_selection.data.megs;
+                  mirror_win.show();
+                }
+              }
+            }
+          }
+        }
       }],
       forceFit: true,
       store: (function(){
