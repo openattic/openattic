@@ -33,12 +33,18 @@ DRBD_PROTOCOL_CHOICES = (
     ('C', 'Protocol C: write IO is reported as completed, if it has reached both local and remote disk.'),
     )
 
+class ConnectionManager(models.Manager):
+	def create_connection(self, mirror_host_id, volumepool_id, volume_name):
+		return True
+
 class Connection(BlockVolume):
 	name 		= models.CharField(max_length=50)
 	protocol 	= models.CharField(max_length=1, default="A", choices=DRBD_PROTOCOL_CHOICES)
 	syncer_rate = models.CharField(max_length=25, blank=True, default="5M", help_text=(
 									"Bandwidth limit for background synchronization, measured in "
 									"K/M/G<b><i>Bytes</i></b>."))
+
+	objects = ConnectionManager()
 
 	def __init__(self, *args, **kwargs):
 		models.Model.__init__(self, *args, **kwargs)

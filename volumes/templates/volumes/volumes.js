@@ -178,8 +178,12 @@ var mirror_win = new Ext.Window({
           var volume_name = self.ownerCt.ownerCt.ownerCt.volume_name;
           var volumepool_id = self.ownerCt.ownerCt.getComponent('volumes_find_volumepool_combo').getValue();
 
-          if(mirror_host !== null && volume_name !== null && volumepool_id !== null){
-
+          if(mirror_host_id !== null && volume_name !== null && volumepool_id !== null){
+            drbd__Connection.create_connection(mirror_host_id, volumepool_id, volume_name, function(result, response){
+              if(response.type !== "exception"){
+                console.log(result);
+              }
+            });
           }
         }
       }
