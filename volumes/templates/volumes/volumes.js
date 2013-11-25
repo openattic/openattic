@@ -90,7 +90,7 @@ var mirror_win = new Ext.Window({
       triggerAction: "all",
       deferEmptyText: false,
       emptyText: gettext("Select..."),
-      id: "volumes_find_mirror_combo",
+      itemId: "volumes_find_mirror_combo",
       selectOnFocus: true,
       displayField: "name",
       valueField: "id",
@@ -169,6 +169,29 @@ var mirror_win = new Ext.Window({
         });
       }()),
     }],
+    buttons: [{
+      text: gettext("Choose"),
+      icon: MEDIA_URL + "/oxygen/16x16/actions/dialog-ok-apply.png",
+      listeners: {
+        click: function(self, e, eOpts){
+          var mirror_host_id = self.ownerCt.ownerCt.getComponent('volumes_find_mirror_combo').getValue();
+          var volume_name = self.ownerCt.ownerCt.ownerCt.volume_name;
+          var volumepool_id = self.ownerCt.ownerCt.getComponent('volumes_find_volumepool_combo').getValue();
+
+          if(mirror_host !== null && volume_name !== null && volumepool_id !== null){
+
+          }
+        }
+      }
+    },{
+      text: gettext("Cancel"),
+      icon: MEDIA_URL + "/icons2/16x16/actions/gtk-cancel.png",
+      listeners: {
+        click: function(self, e, eOpts){
+          mirror_win.close();
+        }
+      }
+    }]
   }]
 });
 
@@ -285,6 +308,7 @@ Ext.define('Ext.oa.volumes__Volume_Panel', {
               if(vol_selection.$className.indexOf("BlockVolume") != -1){
                 if(typeof vol_selection.data.megs !== 'undefined' && vol_selection.data.megs > 0){
                   mirror_win["volume_megs"] = vol_selection.data.megs;
+                  mirror_win["volume_name"] = vol_selection.data.name;
                   mirror_win.show();
                 }
               }
