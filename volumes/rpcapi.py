@@ -89,16 +89,18 @@ class VolumePoolHandler(ModelHandler):
         return handler._idobj(vol)
 
     def get_sufficient(self, host_id, min_megs):
-        print min_megs
         volumepools = VolumePool.objects.all()
         result_pools = []
         for volumepool in volumepools:
-            if volumepool.volumepool.host_id == host_id and volumepool.volumepool.megs >= min_megs:
-                result_pools.append({
-                    "id":   volumepool.volumepool.id,
-                    "name": volumepool.volumepool.name,
-                })
+            if volumepool.volumepool.host_id == host_id:
+                status = self.get_status(volumepool.id)
+                free_megs = status["megs"] - status["usedmegs"]
 
+                if free_megs >= min_megs:
+                    result_pools.append({
+                        "id":   volumepool.volumepool.id,
+                        "name": volumepool.volumepool.name,
+                    })
         return result_pools
 
 class VolumePoolProxy(ProxyModelHandler, VolumePoolHandler):
