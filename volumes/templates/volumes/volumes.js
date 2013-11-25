@@ -128,10 +128,8 @@ var mirror_win = new Ext.Window({
           pool_combo.enable();
           pool_combo.getStore().load({
             params: {
-              kwds: {
                 "host_id": newValue,
                 "min_megs": self.ownerCt.ownerCt.volume_megs
-              }
             }
           });
         }
@@ -166,7 +164,7 @@ var mirror_win = new Ext.Window({
             startParam: undefined,
             limitParam: undefined,
             pageParam:  undefined,
-            paramOrder: ["kwds"]
+            paramOrder: ["host_id", "min_megs"]
           }
         });
       }()),
