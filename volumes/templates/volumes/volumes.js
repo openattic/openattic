@@ -175,16 +175,14 @@ var mirror_win = new Ext.Window({
       listeners: {
         click: function(self, e, eOpts){
           var mirror_host_id = self.ownerCt.ownerCt.getComponent('volumes_find_mirror_combo').getValue();
-          var volume_name = self.ownerCt.ownerCt.ownerCt.volume_name;
           var volumepool_id = self.ownerCt.ownerCt.getComponent('volumes_find_volumepool_combo').getValue();
 
-          if(mirror_host_id !== null && volume_name !== null && volumepool_id !== null){
-            drbd__Connection.create_connection(mirror_host_id, volumepool_id, volume_name, function(result, response){
-              if(response.type !== "exception"){
-                console.log(result);
-              }
-            });
-          }
+          drbd__Connection.create_connection(mirror_host_id, volumepool_id, mirror_win.volume_name,
+            mirror_win.volume_megs, 1, mirror_win.fswarning, mirror_win.fscritical,
+            function(result, response){
+            if(response.type !== "exception"){
+            }
+          });
         }
       }
     },{
@@ -310,9 +308,12 @@ Ext.define('Ext.oa.volumes__Volume_Panel', {
             if(self.ownerCt.ownerCt.getSelectionModel().getSelection().length === 1){
               var vol_selection = self.ownerCt.ownerCt.getSelectionModel().getSelection()[0];
               if(vol_selection.$className.indexOf("BlockVolume") != -1){
-                if(typeof vol_selection.data.megs !== 'undefined' && vol_selection.data.megs > 0){
+                if(typeof vol_selection.data.megs !== 'undefined' && vol_selection.data.megs > 0 &&
+                  typeof vol_selection.data.name !== 'undefined' && vol_selection.data.name.length > 0){
                   mirror_win["volume_megs"] = vol_selection.data.megs;
                   mirror_win["volume_name"] = vol_selection.data.name;
+                  mirror_win["fswarning"] = vol_selection.data.fswarning || 0;
+                  mirror_win["fscritical"] = vol_selection.data.fscritical || 0;
                   mirror_win.show();
                 }
               }
