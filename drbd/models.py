@@ -17,15 +17,17 @@
  *  GNU General Public License for more details.
 """
 
-from collections 		import Counter
+from collections 				import Counter
 
-from django.db   		import models
+from django.db   				import models
+from django.contrib.auth.models import User
 
-from systemd			import dbus_to_python, get_dbus_object
+from systemd					import dbus_to_python, get_dbus_object
 
-from volumes.models 	import BlockVolume
-from lvm 				import blockdevices
-from ifconfig.models	import Host, IPAddress
+from volumes.models 			import BlockVolume, VolumePool
+from lvm 						import blockdevices
+from ifconfig.models			import Host, IPAddress
+from peering.models				import PeerHost
 
 DRBD_PROTOCOL_CHOICES = (
     ('A', 'Protocol A: write IO is reported as completed, if it has reached local disk and local TCP send buffer.'),
@@ -34,7 +36,9 @@ DRBD_PROTOCOL_CHOICES = (
     )
 
 class ConnectionManager(models.Manager):
-	def create_connection(self, mirror_host_id, volumepool_id, volume_name):
+	def create_connection(self, mirror_host_id, volumepool_id, volume_name, volume_megs, owner_id, fswarning, fscritical):
+		peer_host = PeerHost.objects.get(host_id=mirror_host_id)
+		peer_host.volumes.VolumePool.create_volume(volumepool_id, volume_name, volume_megs, {"app": "auth", "obj": "User", "id": owner_id}, "", fswarning, fscritical)
 		return True
 
 class Connection(BlockVolume):
