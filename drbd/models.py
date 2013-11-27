@@ -36,6 +36,14 @@ DRBD_PROTOCOL_CHOICES = (
     )
 
 class ConnectionManager(models.Manager):
+	def _get_host_primary_ipaddress(self, host):
+		netdevices = NetDevice.all_objects.filter(host=host)
+
+		for netdevice in netdevices:
+			ipaddress = IPAddress.all_objects.filter(device=netdevice, primary_address=True)
+
+			if len(ipaddress) == 1:
+				return ipaddress[0]
 
 	def create_connection(self, peer_host_id, peer_volumepool_id, self_volume_id, volume_name, volume_megs, owner_id, fswarning, fscritical):
 		peer_host = PeerHost.objects.get(host_id=peer_host_id)
