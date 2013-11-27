@@ -26,7 +26,7 @@ from systemd					import dbus_to_python, get_dbus_object
 
 from volumes.models 			import BlockVolume, VolumePool
 from lvm 						import blockdevices
-from ifconfig.models			import Host, IPAddress
+from ifconfig.models			import Host, IPAddress, NetDevice
 from peering.models				import PeerHost
 
 DRBD_PROTOCOL_CHOICES = (
@@ -36,9 +36,11 @@ DRBD_PROTOCOL_CHOICES = (
     )
 
 class ConnectionManager(models.Manager):
-	def create_connection(self, mirror_host_id, volumepool_id, volume_name, volume_megs, owner_id, fswarning, fscritical):
-		peer_host = PeerHost.objects.get(host_id=mirror_host_id)
-		peer_host.volumes.VolumePool.create_volume(volumepool_id, volume_name, volume_megs, {"app": "auth", "obj": "User", "id": owner_id}, "", fswarning, fscritical)
+
+	def create_connection(self, peer_host_id, peer_volumepool_id, self_volume_id, volume_name, volume_megs, owner_id, fswarning, fscritical):
+		peer_host = PeerHost.objects.get(host_id=peer_host_id)
+		peer_host.volumes.VolumePool.create_volume(peer_volumepool_id, volume_name, volume_megs, {"app": "auth", "obj": "User", "id": owner_id}, "", fswarning, fscritical)
+
 		return True
 
 class Connection(BlockVolume):
