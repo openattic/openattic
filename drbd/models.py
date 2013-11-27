@@ -41,13 +41,30 @@ class ConnectionManager(models.Manager):
 
 		for netdevice in netdevices:
 			ipaddress = IPAddress.all_objects.filter(device=netdevice, primary_address=True)
-
+			
 			if len(ipaddress) == 1:
 				return ipaddress[0]
 
 	def create_connection(self, peer_host_id, peer_volumepool_id, self_volume_id, volume_name, volume_megs, owner_id, fswarning, fscritical):
+		# create volume on peer host
 		peer_host = PeerHost.objects.get(host_id=peer_host_id)
-		peer_host.volumes.VolumePool.create_volume(peer_volumepool_id, volume_name, volume_megs, {"app": "auth", "obj": "User", "id": owner_id}, "", fswarning, fscritical)
+		peer_volume = peer_host.volumes.VolumePool.create_volume(peer_volumepool_id, volume_name, volume_megs, {"app": "auth", "obj": "User", "id": owner_id}, "", fswarning, fscritical)
+
+		# create drbd connection object
+		connection = Connection(name=volume_name, protocol="C", syncer_rate="200M")
+		print connection
+	#	connection.save()
+
+		# create drbd endpoints
+		self_ipaddress = self._get_host_primary_ipaddress(Host.objects.get_current())	
+		self_endpoint = Endpoint(connection=connection, ipaddress=self_ipaddress, volume=BlockVolume.objects.get(id=self_volume_id))
+		print self_endpoint
+	#	self_endpoint.save()
+
+		peer_ipaddress = self._get_host_primary_ipaddress(peer_host_id)
+		peer_endpoint = Endpoint(connection=connection, ipaddress=peer_ipaddress, volume=BlockVolume.objects.get(id=peer_volume))
+		print peer_endpoint
+	#	peer_endpoint.save()
 
 		return True
 
