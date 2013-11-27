@@ -62,6 +62,8 @@ class ContentTypeHandler(ModelHandler):
 
     def _idobj(self, obj):
         model = obj.model_class()
+        if model is None:
+            raise SystemError("Cannot resolve ContentType '%s.%s' into a model -- check INSTALLED_APPS" % (obj.app_label, obj.model))
         return {
             "app": model._meta.app_label,
             "obj": model._meta.object_name,
