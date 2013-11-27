@@ -311,15 +311,16 @@ class NetDevice(models.Model):
 
 
 class IPAddress(models.Model):
-    address     = models.CharField(max_length=250)
-    gateway     = models.CharField(max_length=50, blank=True)
-    nameservers = models.CharField(max_length=50, blank=True, null=True)
-    domain      = models.CharField(max_length=250, blank=True, null=True)
-    device      = models.ForeignKey(NetDevice, blank=True, null=True)
-    configure   = models.BooleanField(blank=True, default=True)
+    address         = models.CharField(max_length=250)
+    gateway         = models.CharField(max_length=50, blank=True)
+    nameservers     = models.CharField(max_length=50, blank=True, null=True)
+    domain          = models.CharField(max_length=250, blank=True, null=True)
+    device          = models.ForeignKey(NetDevice, blank=True, null=True)
+    configure       = models.BooleanField(blank=True, default=True)
+    primary_address = models.BooleanField(blank=True, default=False)
 
-    objects     = getHostDependentManagerClass("device__host")()
-    all_objects = models.Manager()
+    objects         = getHostDependentManagerClass("device__host")()
+    all_objects     = models.Manager()
 
     @property
     def in_use(self):
