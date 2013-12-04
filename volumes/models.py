@@ -199,7 +199,7 @@ if HAVE_NAGIOS:
     def __create_service_for_blockvolume(instance, **kwargs):
         cmd = Command.objects.get(name=nagios_settings.LV_PERF_CHECK_CMD)
         ctype = ContentType.objects.get_for_model(instance.__class__)
-        if Service.objects.filter(command=cmd, target_type=ctype, target_id=instance.id).count != 0:
+        if Service.objects.filter(command=cmd, target_type=ctype, target_id=instance.id).count() != 0:
             return
         srv = Service(
             host        = instance.host,
@@ -302,8 +302,9 @@ class FileSystemVolume(AbstractVolume):
 
 if HAVE_NAGIOS:
     def __create_service_for_filesystemvolume(instance, **kwargs):
+        ctype = ContentType.objects.get_for_model(instance.__class__)
         cmd = Command.objects.get(name=nagios_settings.LV_UTIL_CHECK_CMD)
-        if Service.objects.filter(command=cmd, target_type=ctype, target_id=instance.id).count != 0:
+        if Service.objects.filter(command=cmd, target_type=ctype, target_id=instance.id).count() != 0:
             return
         srv = Service(
             host        = instance.host,
@@ -321,8 +322,8 @@ if HAVE_NAGIOS:
 
     def __connect_signals_for_filesystemvolume(sender, **kwargs):
         if issubclass(sender, FileSystemVolume):
-            signals.post_save.connect(  __create_service_for_blockvolume, sender=sender)
-            signals.post_delete.connect(__delete_service_for_blockvolume, sender=sender)
+            signals.post_save.connect(  __create_service_for_filesystemvolume, sender=sender)
+            signals.post_delete.connect(__delete_service_for_filesystemvolume, sender=sender)
 
     signals.class_prepared.connect(__connect_signals_for_filesystemvolume)
 
