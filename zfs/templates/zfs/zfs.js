@@ -35,7 +35,7 @@ Ext.define('volumes__zfs_Zfs_model', {
     else
       rootNode.set("percent",    null);
     if( rootNode.get("name") === '' )
-      rootNode.set("name", '[zpool] ' + toUnicode(record.raw.pool));
+      rootNode.set("name", toUnicode(record.raw.pool) + ' ' + gettext('[zpool root volume]'));
     rootNode.commit();
     return rootNode;
   }
