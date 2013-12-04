@@ -120,6 +120,8 @@ class Zfs(FileSystemVolume):
             parentname = self.parent_zfs.fullname
         else:
             parentname = self.zpool.name
+        if not self.name:
+            return parentname
         return "%s/%s" % (parentname, self.name)
 
     def __unicode__(self):
