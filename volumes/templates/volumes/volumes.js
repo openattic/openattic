@@ -183,6 +183,8 @@ var mirror_win = new Ext.Window({
             if(response.type !== "exception"){
             }
           });
+
+          mirror_win.close();
         }
       }
     },{
