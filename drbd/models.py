@@ -37,19 +37,13 @@ DRBD_PROTOCOL_CHOICES = (
 
 class ConnectionManager(models.Manager):
 	def _get_host_primary_ipaddress(self, host):
-		netdevices = NetDevice.all_objects.filter(host=host)
-
-		for netdevice in netdevices:
-			ipaddress = IPAddress.all_objects.filter(device=netdevice, primary_address=True)
-			
-			if len(ipaddress) == 1:
-				return ipaddress[0]
+		return IPAddress.all_objects.get(device__host=host, primary_address=True)
 
 	def create_connection(self, peer_host_id, peer_volumepool_id, self_volume_id, volume_name, volume_megs, owner_id, fswarning, fscritical):
 		# create volume on peer host
 		peer_host = PeerHost.objects.get(host_id=peer_host_id)
 		peer_volume = peer_host.volumes.VolumePool.create_volume(peer_volumepool_id, volume_name, volume_megs, {"app": "auth", "obj": "User", "id": owner_id}, "", fswarning, fscritical)
-		
+
 		# create drbd connection object
 		connection = Connection(name=volume_name, protocol="C", syncer_rate="200M")
 		print connection
