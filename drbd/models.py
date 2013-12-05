@@ -49,7 +49,7 @@ class ConnectionManager(models.Manager):
 		# create volume on peer host
 		peer_host = PeerHost.objects.get(host_id=peer_host_id)
 		peer_volume = peer_host.volumes.VolumePool.create_volume(peer_volumepool_id, volume_name, volume_megs, {"app": "auth", "obj": "User", "id": owner_id}, "", fswarning, fscritical)
-
+		
 		# create drbd connection object
 		connection = Connection(name=volume_name, protocol="C", syncer_rate="200M")
 		print connection
@@ -61,8 +61,8 @@ class ConnectionManager(models.Manager):
 		print self_endpoint
 	#	self_endpoint.save()
 
-		peer_ipaddress = self._get_host_primary_ipaddress(peer_host_id)
-		peer_endpoint = Endpoint(connection=connection, ipaddress=peer_ipaddress, volume=BlockVolume.objects.get(id=peer_volume))
+		peer_ipaddress = self._get_host_primary_ipaddress(Host.objects.get(id=peer_host_id))
+		peer_endpoint = Endpoint(connection=connection, ipaddress=peer_ipaddress, volume=BlockVolume.objects.get(id=peer_volume["id"]))
 		print peer_endpoint
 	#	peer_endpoint.save()
 
