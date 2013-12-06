@@ -11,7 +11,7 @@
  GNU General Public License for more details.
 {% endcomment %}
 
-resource {{ Connection.res_name }} {
+resource {{ Connection.name }} {
 	protocol {{ Connection.protocol }};
 	meta-disk  internal;
 	device /dev/drbd{{ Connection.id }};
