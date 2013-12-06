@@ -46,21 +46,18 @@ class ConnectionManager(models.Manager):
 
 		# create drbd connection object
 		connection = Connection(name=volume_name, protocol="C", syncer_rate="200M")
-		print connection
-	#	connection.save()
+		connection.save()
 
 		# create drbd endpoints
 		self_ipaddress = self._get_host_primary_ipaddress(Host.objects.get_current())	
 		self_endpoint = Endpoint(connection=connection, ipaddress=self_ipaddress, volume=BlockVolume.objects.get(id=self_volume_id))
-		print self_endpoint
-	#	self_endpoint.save()
+		self_endpoint.save()
 
 		peer_ipaddress = self._get_host_primary_ipaddress(Host.objects.get(id=peer_host_id))
 		peer_endpoint = Endpoint(connection=connection, ipaddress=peer_ipaddress, volume=BlockVolume.objects.get(id=peer_volume["id"]))
-		print peer_endpoint
-	#	peer_endpoint.save()
+		peer_endpoint.save()
 
-		return True
+		return connection.id
 
 class Connection(BlockVolume):
 	name 		= models.CharField(max_length=50)
