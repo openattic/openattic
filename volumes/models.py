@@ -27,6 +27,7 @@ from django.contrib.auth.models  import User
 from systemd import get_dbus_object
 from ifconfig.models import Host, HostDependentManager, getHostDependentManagerClass
 from volumes import blockdevices, capabilities, filesystems
+from volumes import signals as volume_signals
 
 
 if "nagios" in settings.INSTALLED_APPS:
@@ -138,6 +139,21 @@ class AbstractVolume(CapabilitiesAwareModel):
     class Meta:
         abstract = True
 
+    def pre_install(self):
+        volume_signals.pre_install.send(sender=self.__class__, instance=self)
+
+    def post_install(self):
+        volume_signals.post_install.send(sender=self.__class__, instance=self)
+
+    def save(self, *args, **kwargs):
+        install = (self.id is None)
+        if install:
+            self.pre_install()
+        res = CapabilitiesAwareModel.save(self, *args, **kwargs)
+        if install:
+            self.post_install()
+
+        return res
 
 class BlockVolume(AbstractVolume):
     """ Everything that is a /dev/something.
