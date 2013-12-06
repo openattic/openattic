@@ -233,7 +233,7 @@ if HAVE_NAGIOS:
 
     def __connect_signals_for_blockvolume(sender, **kwargs):
         if issubclass(sender, BlockVolume):
-            signals.post_save.connect(  __create_service_for_blockvolume, sender=sender)
+            volume_signals.post_install.connect(  __create_service_for_blockvolume, sender=sender)
             signals.post_delete.connect(__delete_service_for_blockvolume, sender=sender)
 
     signals.class_prepared.connect(__connect_signals_for_blockvolume)
@@ -338,7 +338,7 @@ if HAVE_NAGIOS:
 
     def __connect_signals_for_filesystemvolume(sender, **kwargs):
         if issubclass(sender, FileSystemVolume):
-            signals.post_save.connect(  __create_service_for_filesystemvolume, sender=sender)
+            volume_signals.post_install.connect(  __create_service_for_filesystemvolume, sender=sender)
             signals.post_delete.connect(__delete_service_for_filesystemvolume, sender=sender)
 
     signals.class_prepared.connect(__connect_signals_for_filesystemvolume)
