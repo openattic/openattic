@@ -86,6 +86,10 @@ class Connection(BlockVolume):
 		return blockdevices.get_disk_size("drbd%d" % self.id)
 
 	@property
+	def port(self):
+		return 7700 + self.id
+
+	@property
 	def host(self):
 		info = dbus_to_python(self.drbd.get_role(self.name, False))
 		info_count = Counter(info.values())
