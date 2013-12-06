@@ -24,6 +24,7 @@ from django.contrib.auth.models import User
 
 from systemd					import dbus_to_python, get_dbus_object
 
+from volumes 					import signals as volume_signals
 from volumes.models 			import BlockVolume, VolumePool
 from lvm 						import blockdevices
 from ifconfig.models			import Host, IPAddress, NetDevice
@@ -56,6 +57,8 @@ class ConnectionManager(models.Manager):
 		peer_ipaddress = self._get_host_primary_ipaddress(Host.objects.get(id=peer_host_id))
 		peer_endpoint = Endpoint(connection=connection, ipaddress=peer_ipaddress, volume=BlockVolume.objects.get(id=peer_volume["id"]))
 		peer_endpoint.save()
+
+		volume_signals.post_install.send(sender=BlockVolume, instance=self)
 
 		return connection.id
 
@@ -126,6 +129,9 @@ class Connection(BlockVolume):
 			return host_peer
 		else:
 			None
+
+	def post_install(self):
+		pass
 
 class Endpoint(models.Model):
 	connection 	= models.ForeignKey(Connection, related_name="endpoint_set")
