@@ -193,6 +193,7 @@ var mirror_win = new Ext.Window({
       listeners: {
         click: function(self, e, eOpts){
           mirror_win.close();
+          mirror_win.volumePanel.refresh();
         }
       }
     }]
@@ -317,6 +318,7 @@ Ext.define('Ext.oa.volumes__Volume_Panel', {
                   mirror_win["volume_name"] = vol_selection.data.name;
                   mirror_win["fswarning"] = vol_selection.data.fswarning || 0;
                   mirror_win["fscritical"] = vol_selection.data.fscritical || 0;
+                  mirror_win["volumePanel"] = volumePanel;
                   mirror_win.show();
                 }
               }
