@@ -159,3 +159,7 @@ class Endpoint(models.Model):
 	@property
 	def host(self):
 		return self.ipaddress.device.host
+
+	def install(self):
+		self.connection.drbd.conf_write()
+		self.connection.drbd.up(self.connection.name, False)
