@@ -130,6 +130,14 @@ class Connection(BlockVolume):
 		else:
 			None
 
+	@property
+	def endpoints_running_here(self):
+		""" Check if any of my endpoints run here. """
+		if self.endpoint_set.filter(ipaddress__device__host=Host.objects.get_current()).count() > 0:
+			return True
+		else:
+			return False
+
 	def post_install(self):
 		pass
 
