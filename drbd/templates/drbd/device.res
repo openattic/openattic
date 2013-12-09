@@ -23,8 +23,8 @@ resource {{ Connection.name }} {
 	{% endif %}
 	
 	{% for endpoint in Connection.endpoint_set.all %}
-	on {{ endpoint.volume.host.name }} {
-		disk       {{ endpoint.volume.path }};
+	on {{ endpoint.ipaddress.device.host.hostname }} {
+		disk       {{ endpoint.path }};
 		address    {{ endpoint.ipaddress.host_part }}:{{ Connection.port }};
 	}
 	{% endfor %}
