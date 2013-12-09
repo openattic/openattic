@@ -176,4 +176,5 @@ class Endpoint(models.Model):
 
 	def install(self):
 		self.connection.drbd.conf_write()
+		self.connection.drbd.createmd(self.connection.name, False)
 		self.connection.drbd.up(self.connection.name, False)
