@@ -113,7 +113,7 @@ class SystemD(BasePlugin):
             # low level devices' endpoints do.
             if not conn.endpoints_running_here and not conn.stacked:
                 continue
-            fd = open("/etc/drbd.d/%s.res" % conn.res_name, "w")
+            fd = open("/etc/drbd.d/%s.res" % conn.name, "w")
             try:
                 for lowerconn in conn.stack_child_set.all():
                     fd.write( render_to_string( "drbd/device.res", {
