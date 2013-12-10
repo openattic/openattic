@@ -59,7 +59,7 @@ class ConnectionManager(models.Manager):
 		peer_endpoint.save()
 
 		self_endpoint.install(True)
-		peer_endpoint.install(False)
+		peer_host.drbd.Endpoint.install(peer_endpoint.id, False)
 
 		volume_signals.post_install.send(sender=BlockVolume, instance=self)
 
