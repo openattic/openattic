@@ -58,6 +58,9 @@ class ConnectionManager(models.Manager):
 		peer_endpoint = Endpoint(connection=connection, ipaddress=peer_ipaddress, volume=BlockVolume.objects.get(id=peer_volume["id"]))
 		peer_endpoint.save()
 
+		self_endpoint.install(True)
+		peer_endpoint.install(False)
+
 		volume_signals.post_install.send(sender=BlockVolume, instance=self)
 
 		return connection.id
@@ -174,7 +177,10 @@ class Endpoint(models.Model):
 	def host(self):
 		return self.ipaddress.device.host
 
-	def install(self):
+	def install(self, init_primary):
 		self.connection.drbd.conf_write()
 		self.connection.drbd.createmd(self.connection.name, False)
 		self.connection.drbd.up(self.connection.name, False)
+
+		if init_primary:
+			self.connection.drbd.primary_overwrite(self.connection.name, False)
