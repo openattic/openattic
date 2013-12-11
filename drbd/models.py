@@ -49,15 +49,25 @@ class ConnectionManager(models.Manager):
 		connection = Connection(name=volume_name, protocol="C", syncer_rate="200M")
 		connection.save()
 
+		# set upper volume
+		self_volume = BlockVolume.objects.get(id=self_volume_id)
+		self_volume.upper = connection
+		self_volume.save()
+
+		peer_volume = BlockVolume.objects.get(id=peer_volume["id"])
+		peer_volume.upper = connection
+		peer_volume.save()
+
 		# create drbd endpoints
 		self_ipaddress = self._get_host_primary_ipaddress(Host.objects.get_current())	
-		self_endpoint = Endpoint(connection=connection, ipaddress=self_ipaddress, volume=BlockVolume.objects.get(id=self_volume_id))
+		self_endpoint = Endpoint(connection=connection, ipaddress=self_ipaddress, volume=self_volume)
 		self_endpoint.save()
 
 		peer_ipaddress = self._get_host_primary_ipaddress(Host.objects.get(id=peer_host_id))
-		peer_endpoint = Endpoint(connection=connection, ipaddress=peer_ipaddress, volume=BlockVolume.objects.get(id=peer_volume["id"]))
+		peer_endpoint = Endpoint(connection=connection, ipaddress=peer_ipaddress, volume=peer_volume)
 		peer_endpoint.save()
 
+		# install drbd endpoints
 		self_endpoint.install(True)
 		peer_host.drbd.Endpoint.install(peer_endpoint.id, False)
 
@@ -184,4 +194,3 @@ class Endpoint(models.Model):
 
 		if init_primary:
 			self.connection.drbd.primary_overwrite(self.connection.name, False)
-			
