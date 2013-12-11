@@ -14,7 +14,7 @@
  *  GNU General Public License for more details.
 """
 
-from rpcd.handlers import ModelHandler, ProxyModelHandler
+from rpcd.handlers import ModelHandler
 
 from drbd.models import Connection, Endpoint
 from ifconfig.models import Host
@@ -47,13 +47,8 @@ class DrbdEndpointHandler(ModelHandler):
 		data["host"] = self._get_handler_instance(Host)._idobj(obj.host)
 		return data
 
-	def install(self, id, init_primary):
-		obj = Endpoint.objects.get(id=id)
-		obj.endpoint.install(init_primary)
-		return True
+	def install(self, endpoint_id, init_primary):
+		endpoint = Endpoint.objects.get(id=endpoint_id)
+		return endpoint.install(init_primary)
 
-class DrbdEndpointProxy(ProxyModelHandler, DrbdEndpointHandler):
-	def install(self, id, init_primary):
-		return self._call_singlepeer_method("install", id, init_primary)
-
-RPCD_HANDLERS = [DrbdConnectionHandler, DrbdEndpointProxy]
+RPCD_HANDLERS = [DrbdConnectionHandler, DrbdEndpointHandler]

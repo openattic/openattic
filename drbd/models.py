@@ -184,3 +184,4 @@ class Endpoint(models.Model):
 
 		if init_primary:
 			self.connection.drbd.primary_overwrite(self.connection.name, False)
+			
