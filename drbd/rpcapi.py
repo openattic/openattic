@@ -48,6 +48,12 @@ class DrbdEndpointHandler(ModelHandler):
 		return data
 
 	def install(self, id, init_primary):
+		obj = Endpoint.objects.get(id=id)
+		obj.endpoint.install(init_primary)
+		return True
+
+class DrbdEndpointProxy(ProxyModelHandler, DrbdEndpointHandler):
+	def install(self, id, init_primary):
 		return self._call_singlepeer_method("install", id, init_primary)
 
-RPCD_HANDLERS = [DrbdConnectionHandler, DrbdEndpointHandler]
+RPCD_HANDLERS = [DrbdConnectionHandler, DrbdEndpointProxy]
