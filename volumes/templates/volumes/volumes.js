@@ -76,7 +76,7 @@ Ext.define('volumes__volumes_FileSystemVolume_model', {
 var mirror_win = new Ext.Window({
   title: gettext("Mirror"),
   layout: "fit",
-  height: 180,
+  height: 210,
   width: 500,
   items: [{
     xtype: "form",
@@ -94,6 +94,7 @@ var mirror_win = new Ext.Window({
       selectOnFocus: true,
       displayField: "name",
       valueField: "id",
+      allowBlank: false,
       store: (function(){
         Ext.define("volumes__blockvolume_host_store", {
           extend: "Ext.data.Model",
@@ -146,6 +147,7 @@ var mirror_win = new Ext.Window({
       displayField: "name",
       valueField: "id",
       queryMode: "local",
+      allowBlank: false,
       store: (function(){
         Ext.define("volumes__blockvolume_volumepool_store", {
           extend: "Ext.data.Model",
@@ -168,6 +170,16 @@ var mirror_win = new Ext.Window({
           }
         });
       }()),
+    },{
+      xtype: 'radiogroup',
+      fieldLabel: gettext("Protocol"),
+      columns: 1,
+      itemId: "volumes_protocol_radio",
+      items: [
+        {name: "protocol", boxLabel: gettext("A: Asynchronous"), inputValue: "A"},
+        {name: "protocol", boxLabel: gettext("B: Memory Synchronous (Semi-Synchronous)"), inputValue: "B"},
+        {name: "protocol", boxLabel: gettext("C: Synchronous"), checked: true, inputValue: "C"}
+      ]
     }],
     buttons: [{
       text: gettext("Choose"),
@@ -176,9 +188,10 @@ var mirror_win = new Ext.Window({
         click: function(self, e, eOpts){
           var peer_host_id = self.ownerCt.ownerCt.getComponent('volumes_find_mirror_combo').getValue();
           var peer_volumepool_id = self.ownerCt.ownerCt.getComponent('volumes_find_volumepool_combo').getValue();
+          var protocol = self.ownerCt.ownerCt.getComponent('volumes_protocol_radio').getValue();
 
-          drbd__Connection.create_connection(peer_host_id, peer_volumepool_id, mirror_win.volume_id, mirror_win.volume_name,
-            mirror_win.volume_megs, 1, mirror_win.fswarning, mirror_win.fscritical,
+          drbd__Connection.create_connection(peer_host_id, peer_volumepool_id, protocol['protocol'], mirror_win.volume_id,
+            mirror_win.volume_name, mirror_win.volume_megs, 1, mirror_win.fswarning, mirror_win.fscritical,
             function(result, response){
             if(response.type !== "exception"){
               mirror_win.close();
