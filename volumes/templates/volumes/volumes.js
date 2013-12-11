@@ -181,10 +181,10 @@ var mirror_win = new Ext.Window({
             mirror_win.volume_megs, 1, mirror_win.fswarning, mirror_win.fscritical,
             function(result, response){
             if(response.type !== "exception"){
+              mirror_win.close();
+              mirror_win.volumePanel.refresh();
             }
           });
-
-          mirror_win.close();
         }
       }
     },{
@@ -193,7 +193,6 @@ var mirror_win = new Ext.Window({
       listeners: {
         click: function(self, e, eOpts){
           mirror_win.close();
-          mirror_win.volumePanel.refresh();
         }
       }
     }]
