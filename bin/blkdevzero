@@ -32,5 +32,7 @@ fi
 BLKSZ="`blockdev --getsize64 "$BLKDEV"`"
 SEEK=$(((31457280000 - 10485760)/10485760))
 
+set +e
+
 dd if=/dev/zero of="$BLKDEV" bs=10M count=1 2>/dev/null
 dd if=/dev/zero of="$BLKDEV" seek="$SEEK" bs=10M 2>/dev/null
