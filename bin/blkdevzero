@@ -1,0 +1,36 @@
+#!/bin/bash
+
+set -e
+set -u
+
+if [ "$#" -lt 1 ]
+then
+	echo "Usage: $0 <blockdevice>"
+	exit 1
+fi
+
+BLKDEV="$1"
+
+if [ "$BLKDEV" = "-h" -o "$BLKDEV" = "--help" ]
+then
+	echo "Usage: $0 <blockdevice>"
+	exit 1
+fi
+
+if [ ! -e "$BLKDEV" ]
+then
+	echo "'$BLKDEV': Device does not exist"
+	exit 2
+fi
+
+if [ ! -b "$BLKDEV" ]
+then
+	echo "'$BLKDEV' exists, but is not a block device"
+	exit 3
+fi
+
+BLKSZ="`blockdev --getsize64 "$BLKDEV"`"
+SEEK=$(((31457280000 - 10485760)/10485760))
+
+dd if=/dev/zero of="$BLKDEV" bs=10M count=1 2>/dev/null
+dd if=/dev/zero of="$BLKDEV" seek="$SEEK" bs=10M 2>/dev/null
