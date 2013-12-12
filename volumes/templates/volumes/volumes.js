@@ -77,7 +77,7 @@ var required = '<span style="color:red;font-weight:bold" data-qtip="Required">*<
 var mirror_win = new Ext.Window({
   title: gettext("Mirror"),
   layout: "fit",
-  height: 210,
+  height: 260,
   width: 500,
   items: [{
     xtype: "form",
@@ -174,16 +174,32 @@ var mirror_win = new Ext.Window({
         });
       }()),
     },{
-      xtype: 'radiogroup',
-      fieldLabel: gettext("Protocol"),
-      columns: 1,
-      itemId: "volumes_protocol_radio",
-      afterLabelTextTpl: required,
-      items: [
-        {name: "protocol", boxLabel: gettext("A: Asynchronous"), inputValue: "A"},
-        {name: "protocol", boxLabel: gettext("B: Memory Synchronous (Semi-Synchronous)"), inputValue: "B"},
-        {name: "protocol", boxLabel: gettext("C: Synchronous"), checked: true, inputValue: "C"}
-      ]
+      xtype: 'fieldset',
+      title: gettext('Advanced Settings'),
+      collapsible: true,
+      collapsed: true,
+      layout: 'anchor',
+      itemId: 'volumes_advanced_settings_fieldset',
+      defaults: {
+        anchor: '100%'
+      },
+      items: [{
+        xtype: 'radiogroup',
+        fieldLabel: gettext("Protocol"),
+        columns: 1,
+        itemId: "volumes_protocol_radio",
+        items: [
+          {name: "protocol", boxLabel: gettext("A: Asynchronous"), inputValue: "A"},
+          {name: "protocol", boxLabel: gettext("B: Memory Synchronous (Semi-Synchronous)"), inputValue: "B"},
+          {name: "protocol", boxLabel: gettext("C: Synchronous"), checked: true, inputValue: "C"}
+        ]
+      },{
+        fieldLabel: gettext('Syncer Rate'),
+        name: 'syncer_rate',
+        xtype: 'textfield',
+        itemId: 'volumes_syncerrate_text',
+        value: '5M'
+      }]
     }],
     buttons: [{
       text: gettext("Choose"),
@@ -192,9 +208,10 @@ var mirror_win = new Ext.Window({
         click: function(self, e, eOpts){
           var peer_host_id = self.ownerCt.ownerCt.getComponent('volumes_find_mirror_combo').getValue();
           var peer_volumepool_id = self.ownerCt.ownerCt.getComponent('volumes_find_volumepool_combo').getValue();
-          var protocol = self.ownerCt.ownerCt.getComponent('volumes_protocol_radio').getValue();
+          var protocol = self.ownerCt.ownerCt.getComponent('volumes_advanced_settings_fieldset').items.getByKey('volumes_protocol_radio').getValue();
+          var syncer_rate = self.ownerCt.ownerCt.getComponent('volumes_advanced_settings_fieldset').items.getByKey('volumes_syncerrate_text').getValue();
 
-          drbd__Connection.create_connection(peer_host_id, peer_volumepool_id, protocol['protocol'], mirror_win.volume_id,
+          drbd__Connection.create_connection(peer_host_id, peer_volumepool_id, protocol['protocol'], syncer_rate, mirror_win.volume_id,
             mirror_win.volume_name, mirror_win.volume_megs, 1, mirror_win.fswarning, mirror_win.fscritical,
             function(result, response){
             if(response.type !== "exception"){

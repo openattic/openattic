@@ -32,8 +32,8 @@ class DrbdConnectionHandler(AbstractBlockVolumeHandler):
 
 		return data
 
-	def create_connection(self, peer_host_id, peer_volumepool_id, protocol, self_volume_id, volume_name, volume_megs, owner_id, fswarning, fscritical):
-		return Connection.objects.create_connection(peer_host_id, peer_volumepool_id, protocol, self_volume_id, volume_name, volume_megs, owner_id, fswarning, fscritical)
+	def create_connection(self, peer_host_id, peer_volumepool_id, protocol, syncer_rate, self_volume_id, volume_name, volume_megs, owner_id, fswarning, fscritical):
+		return Connection.objects.create_connection(peer_host_id, peer_volumepool_id, protocol, syncer_rate, self_volume_id, volume_name, volume_megs, owner_id, fswarning, fscritical)
 
 class DrbdEndpointHandler(ModelHandler):
 	model = Endpoint

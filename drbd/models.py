@@ -40,13 +40,13 @@ class ConnectionManager(models.Manager):
 	def _get_host_primary_ipaddress(self, host):
 		return IPAddress.all_objects.get(device__host=host, primary_address=True)
 
-	def create_connection(self, peer_host_id, peer_volumepool_id, protocol, self_volume_id, volume_name, volume_megs, owner_id, fswarning, fscritical):
+	def create_connection(self, peer_host_id, peer_volumepool_id, protocol, syncer_rate, self_volume_id, volume_name, volume_megs, owner_id, fswarning, fscritical):
 		# create volume on peer host
 		peer_host = PeerHost.objects.get(host_id=peer_host_id)
 		peer_volume = peer_host.volumes.VolumePool.create_volume(peer_volumepool_id, volume_name, volume_megs, {"app": "auth", "obj": "User", "id": owner_id}, "", fswarning, fscritical)
 
 		# create drbd connection object
-		connection = Connection(name=volume_name, protocol=protocol, syncer_rate="200M")
+		connection = Connection(name=volume_name, protocol=protocol, syncer_rate=syncer_rate)
 		connection.save()
 
 		# set upper volume
