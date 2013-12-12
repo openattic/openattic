@@ -71,6 +71,7 @@ Ext.define('volumes__drbd_Endpoint_model', {
   createNode: function(record){
     record.set("leaf", true);
     var rootNode = this.callParent(arguments);
+    rootNode.set('id', ["drbd_endpoint", record.raw.id, Ext.id()].join("."));
     rootNode.set('name', toUnicode(record.raw));
     rootNode.set('type', record.raw.type);
     rootNode.set('megs', record.raw.megs);
