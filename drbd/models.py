@@ -159,6 +159,9 @@ class Endpoint(models.Model):
 	ipaddress 	= models.ForeignKey(IPAddress)
 	volume 		= models.ForeignKey(BlockVolume, null=True, related_name="accessor_endpoint_set")
 
+	objects     = models.Manager()
+	all_objects = models.Manager()
+
 	def __unicode__(self):
 		return self.ipaddress.device.host.name
 
@@ -186,6 +189,11 @@ class Endpoint(models.Model):
 	@property
 	def host(self):
 		return self.ipaddress.device.host
+
+	@property
+	def is_primary(self):
+		info = dbus_to_python(self.connection.drbd.get_role(self.connection.name, False))
+		return info["self"] == "Primary"
 
 	def install(self, init_primary):
 		self.connection.drbd.conf_write()
