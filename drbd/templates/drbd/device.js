@@ -69,6 +69,7 @@ Ext.define('volumes__drbd_Endpoint_model', {
     'connection', 'ipaddress', 'volume'
   ],
   createNode: function(record){
+    console.log(record);
     record.set("leaf", true);
     var rootNode = this.callParent(arguments);
     rootNode.set('id', ["drbd_endpoint", record.raw.id, Ext.id()].join("."));
@@ -79,6 +80,12 @@ Ext.define('volumes__drbd_Endpoint_model', {
     rootNode.set('status', record.raw.status);
     rootNode.set('path', record.raw.path);
     rootNode.set('host', toUnicode(record.raw.host));
+    if(record.raw.is_primary){
+      rootNode.set("icon", MEDIA_URL + 'drbd_primary.png');
+    }
+    else {
+      rootNode.set("icon", MEDIA_URL + 'drbd_secondary.png');
+    }
     rootNode.commit();
     return rootNode;
   }
