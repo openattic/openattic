@@ -139,6 +139,7 @@ class SystemD(BasePlugin):
             cmd.append(vgname)
         self.lvs_time = 0
         invoke(cmd)
+        invoke(["blkdevzero", "/dev/%s/%s" % (vgname, lvname)])
 
     @deferredmethod(in_signature="sb")
     def lvchange(self, device, active, sender):
