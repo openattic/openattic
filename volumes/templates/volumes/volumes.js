@@ -73,6 +73,7 @@ Ext.define('volumes__volumes_FileSystemVolume_model', {
   }
 });
 
+var required = '<span style="color:red;font-weight:bold" data-qtip="Required">*</span>';
 var mirror_win = new Ext.Window({
   title: gettext("Mirror"),
   layout: "fit",
@@ -95,6 +96,7 @@ var mirror_win = new Ext.Window({
       displayField: "name",
       valueField: "id",
       allowBlank: false,
+      afterLabelTextTpl: required,
       store: (function(){
         Ext.define("volumes__blockvolume_host_store", {
           extend: "Ext.data.Model",
@@ -148,6 +150,7 @@ var mirror_win = new Ext.Window({
       valueField: "id",
       queryMode: "local",
       allowBlank: false,
+      afterLabelTextTpl: required,
       store: (function(){
         Ext.define("volumes__blockvolume_volumepool_store", {
           extend: "Ext.data.Model",
@@ -175,6 +178,7 @@ var mirror_win = new Ext.Window({
       fieldLabel: gettext("Protocol"),
       columns: 1,
       itemId: "volumes_protocol_radio",
+      afterLabelTextTpl: required,
       items: [
         {name: "protocol", boxLabel: gettext("A: Asynchronous"), inputValue: "A"},
         {name: "protocol", boxLabel: gettext("B: Memory Synchronous (Semi-Synchronous)"), inputValue: "B"},
