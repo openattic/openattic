@@ -27,7 +27,7 @@ from systemd					import dbus_to_python, get_dbus_object
 from volumes 					import signals as volume_signals
 from volumes.models 			import BlockVolume, VolumePool
 from lvm 						import blockdevices
-from ifconfig.models			import Host, IPAddress, NetDevice
+from ifconfig.models			import Host, IPAddress, NetDevice, HostDependentManager
 from peering.models				import PeerHost
 
 DRBD_PROTOCOL_CHOICES = (
@@ -154,12 +154,18 @@ class Connection(BlockVolume):
 	def post_install(self):
 		pass
 
+class EndpointManager(HostDependentManager):
+	hostfilter = "ipaddress__device__host"
+
+	def get_query_set(self):
+		return models.Manager.get_query_set(self)
+
 class Endpoint(models.Model):
 	connection 	= models.ForeignKey(Connection, related_name="endpoint_set")
 	ipaddress 	= models.ForeignKey(IPAddress)
 	volume 		= models.ForeignKey(BlockVolume, null=True, related_name="accessor_endpoint_set")
 
-	objects     = models.Manager()
+	objects     = EndpointManager()
 	all_objects = models.Manager()
 
 	def __unicode__(self):
