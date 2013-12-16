@@ -69,7 +69,6 @@ Ext.define('volumes__drbd_Endpoint_model', {
     'connection', 'ipaddress', 'volume'
   ],
   createNode: function(record){
-    console.log(record);
     record.set("leaf", true);
     var rootNode = this.callParent(arguments);
     rootNode.set('id', ["drbd_endpoint", record.raw.id, Ext.id()].join("."));
