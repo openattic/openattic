@@ -82,6 +82,11 @@ class Host(models.Model):
     def hostname(self):
         return self.name.split('.')[0]
 
+    def get_primary_ip_address_speed(self):
+        ipaddress = IPAddress.all_objects.filter(primary_address=True, device__host=self)
+        if len(ipaddress) == 1:
+            return ipaddress[0].device.speed
+
 class HostDependentManager(models.Manager):
     hostfilter = "host"
 

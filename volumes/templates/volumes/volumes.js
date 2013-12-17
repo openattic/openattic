@@ -137,6 +137,13 @@ Ext.oa.getMirrorWindow = function(config){
               "min_megs": self.ownerCt.ownerCt.volume_megs
           }
         });
+
+        ifconfig__Host.get_lowest_primary_ip_address_speed(newValue, function(result, response){
+          if(response.type !== "exception"){
+            var syncer_rate = result * 0.3;
+            self.ownerCt.getComponent('volumes_advanced_settings_fieldset').items.getByKey('volumes_syncerrate_text').setValue(syncer_rate + "M");
+          }
+        });
       }
     }
   },{

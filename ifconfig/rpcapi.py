@@ -34,6 +34,15 @@ class HostHandler(ModelHandler):
     def current_id(self):
         return self._idobj(Host.objects.get_current())
 
+    def get_lowest_primary_ip_address_speed(self, peer_id):
+        speed_peer = Host.objects.get(id=peer_id).get_primary_ip_address_speed()
+        speed_self = Host.objects.get(id=Host.objects.get_current().id).get_primary_ip_address_speed()
+
+        if(speed_self <= speed_peer):
+            return speed_self
+        else:
+            return speed_peer
+
 class IPAddressHandler(ModelHandler):
     model = IPAddress
 
