@@ -81,6 +81,7 @@ class VolumePool(CapabilitiesAwareModel):
 
         ...and the following methods:
         * get_volume_class(type) -> return the volume class to use for volumes of the given type
+        * is_fs_supported(filesystem) -> return whether or not volumes with this file system can be created
 
         Valid values for the ``status'' field are:
           online, readonly, degraded, verifying, rebuilding, restoring_snapshot, failed, offline, unknown
@@ -96,6 +97,12 @@ class VolumePool(CapabilitiesAwareModel):
 
     def get_volume_class(self, type):
         raise NotImplementedError("VolumePool::get_volume_class needs to be overridden")
+
+    def is_fs_supported(self, type):
+        raise NotImplementedError("VolumePool::is_fs_supported needs to be overridden")
+
+    def get_supported_filesystems(self):
+        return [fs for fs in filesystems.FILESYSTEMS if self.is_fs_supported(fs)]
 
     def save(self, *args, **kwargs):
         if self.__class__ is not VolumePool:

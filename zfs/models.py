@@ -53,6 +53,9 @@ class Zpool(VolumePool):
             raise InvalidVolumeType(type)
         return Zfs
 
+    def is_fs_supported(self, filesystem):
+        return filesystem is filesystems.Zfs
+
 
 class RaidZ(models.Model):
     name        = models.CharField(max_length=150)

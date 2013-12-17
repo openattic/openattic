@@ -103,6 +103,11 @@ class VolumePoolHandler(ModelHandler):
                     })
         return result_pools
 
+    def get_supported_filesystems(self, id):
+        """ Return filesystems supported by a given Volume Pool. """
+        obj = VolumePool.objects.get(id=id)
+        return [fs.name for fs in obj.volumepool.get_supported_filesystems()]
+
 class VolumePoolProxy(ProxyModelHandler, VolumePoolHandler):
     def _find_target_host_from_model_instance(self, model):
         if model.volumepool.host == Host.objects.get_current():
@@ -111,6 +116,9 @@ class VolumePoolProxy(ProxyModelHandler, VolumePoolHandler):
 
     def get_status(self, id):
         return self._call_singlepeer_method("get_status", id)
+
+    def get_supported_filesystems(self, id):
+        return self._call_singlepeer_method("get_supported_filesystems", id)
 
     def create_volume(self, id, name, megs, owner, filesystem, fswarning, fscritical):
         return self._call_singlepeer_method("create_volume", id, name, megs, owner, filesystem, fswarning, fscritical)

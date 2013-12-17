@@ -65,6 +65,10 @@ class Btrfs(VolumePool):
             raise InvalidVolumeType(type)
         return BtrfsSubvolume
 
+    def is_fs_supported(self, filesystem):
+        return filesystem is filesystems.Btrfs
+
+
 class BtrfsSubvolume(FileSystemVolume):
     name        = models.CharField(max_length=150)
     btrfs       = models.ForeignKey(Btrfs)

@@ -154,6 +154,9 @@ class VolumeGroup(VolumePool):
     def get_volume_class(self, type):
         return LogicalVolume
 
+    def is_fs_supported(self, filesystem):
+        return True
+
 
 class LogicalVolume(BlockVolume):
     """ Represents a LVM Logical Volume and offers management functions.
