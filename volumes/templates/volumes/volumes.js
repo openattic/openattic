@@ -74,7 +74,6 @@ Ext.define('volumes__volumes_FileSystemVolume_model', {
 });
 
 Ext.oa.getMirrorWindow = function(config){
-  console.log(config);
   var required = '<span style="color:red;font-weight:bold" data-qtip="Required">*</span>';
   var mirror_win = new Ext.Window(Ext.apply(config, {
     title: gettext("Mirror"),
