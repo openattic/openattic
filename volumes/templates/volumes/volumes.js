@@ -200,7 +200,7 @@ Ext.oa.getMirrorWindow = function(config){
       name: 'syncer_rate',
       xtype: 'textfield',
       itemId: 'volumes_syncerrate_text',
-      value: '5M'
+      value: '30M'
     }]
   }],
   buttons: [{
