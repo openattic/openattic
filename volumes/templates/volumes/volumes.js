@@ -215,19 +215,21 @@ Ext.oa.getMirrorWindow = function(config){
     icon: MEDIA_URL + "/oxygen/16x16/actions/dialog-ok-apply.png",
     listeners: {
       click: function(self, e, eOpts){
-        var peer_host_id = self.ownerCt.ownerCt.getComponent('volumes_find_mirror_combo').getValue();
-        var peer_volumepool_id = self.ownerCt.ownerCt.getComponent('volumes_find_volumepool_combo').getValue();
-        var protocol = self.ownerCt.ownerCt.getComponent('volumes_advanced_settings_fieldset').items.getByKey('volumes_protocol_radio').getValue();
-        var syncer_rate = self.ownerCt.ownerCt.getComponent('volumes_advanced_settings_fieldset').items.getByKey('volumes_syncerrate_text').getValue();
+        if(self.ownerCt.ownerCt.getForm().isValid()){
+          var peer_host_id = self.ownerCt.ownerCt.getComponent('volumes_find_mirror_combo').getValue();
+          var peer_volumepool_id = self.ownerCt.ownerCt.getComponent('volumes_find_volumepool_combo').getValue();
+          var protocol = self.ownerCt.ownerCt.getComponent('volumes_advanced_settings_fieldset').items.getByKey('volumes_protocol_radio').getValue();
+          var syncer_rate = self.ownerCt.ownerCt.getComponent('volumes_advanced_settings_fieldset').items.getByKey('volumes_syncerrate_text').getValue();
 
-        drbd__Connection.create_connection(peer_host_id, peer_volumepool_id, protocol['protocol'], syncer_rate, mirror_win.volume_id,
-          mirror_win.volume_name, mirror_win.volume_megs, 1, mirror_win.fswarning, mirror_win.fscritical,
-          function(result, response){
-          if(response.type !== "exception"){
-            mirror_win.close();
-            mirror_win.volumePanel.refresh();
-          }
-        });
+          drbd__Connection.create_connection(peer_host_id, peer_volumepool_id, protocol['protocol'], syncer_rate, mirror_win.volume_id,
+            mirror_win.volume_name, mirror_win.volume_megs, 1, mirror_win.fswarning, mirror_win.fscritical,
+            function(result, response){
+            if(response.type !== "exception"){
+              mirror_win.close();
+              mirror_win.volumePanel.refresh();
+            }
+          });
+        }
       }
     }
   },{
