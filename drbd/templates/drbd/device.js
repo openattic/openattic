@@ -90,4 +90,157 @@ Ext.define('volumes__drbd_Endpoint_model', {
   }
 });
 
+Ext.oa.getMirrorForm = function(config, window){
+  var required = '<span style="color:red;font-weight:bold" data-qtip="Required">*</span>';
+  var form = {
+    xtype: 'form',
+    border: false,
+    bodyStyle: "padding:5px 5px;",
+    items: [{
+      xtype: 'combo',
+      forceSelection: true,
+      fieldLabel: gettext("Choose mirrorhost"),
+      typeAhead: true,
+      triggerAction: "all",
+      deferEmptyText: false,
+      emptyText: gettext("Select..."),
+      itemId: "volumes_find_mirror_combo",
+      selectOnFocus: true,
+      displayField: "name",
+      valueField: "id",
+      allowBlank: false,
+      afterLabelTextTpl: required,
+      closeAction :'destroy',
+      store: (function(){
+        Ext.define("volumes__blockvolume_host_store", {
+          extend: "Ext.data.Model",
+          fields: [
+            {name: "id"},
+            {name: "name"}
+          ]
+        });
+
+        return Ext.create("Ext.data.Store", {
+          model: "volumes__blockvolume_host_store",
+          proxy: {
+            type: "direct",
+            directFn: ifconfig__Host.filter,
+            startParam: undefined,
+            limitParam: undefined,
+            pageParam:  undefined,
+            extraParams: {
+              kwds: {
+                "__exclude__": {
+                  "id": window.HOSTID
+                }
+              }
+            },
+            paramOrder: ["kwds"]
+          }
+        });
+      }()),
+      listeners: {
+        change: function(self, newValue, oldValue, eOpts){
+          var pool_combo = self.ownerCt.getComponent('volumes_find_volumepool_combo');
+          pool_combo.enable();
+          pool_combo.getStore().load({
+            params: {
+                "host_id": newValue,
+                "min_megs": self.ownerCt.ownerCt.volume_megs
+            }
+          });
+
+          ifconfig__Host.get_lowest_primary_ip_address_speed(newValue, function(result, response){
+            if(response.type !== "exception"){
+              var syncer_rate = result * 0.3;
+              self.ownerCt.getComponent('volumes_advanced_settings_fieldset').items.getByKey('volumes_syncerrate_text').setValue(syncer_rate + "M");
+            }
+          });
+        }
+      }
+    },{
+      xtype: 'combo',
+      disabled: true,
+      forceSelection: true,
+      fieldLabel: gettext("Choose volumepool"),
+      typeAhead: true,
+      deferEmptyText: false,
+      emptyText: gettext("Select..."),
+      itemId: "volumes_find_volumepool_combo",
+      displayField: "name",
+      valueField: "id",
+      queryMode: "local",
+      allowBlank: false,
+      afterLabelTextTpl: required,
+      store: (function(){
+        Ext.define("volumes__blockvolume_volumepool_store", {
+          extend: "Ext.data.Model",
+          fields: [
+            {name: "id"},
+            {name: "name"}
+          ]
+        });
+
+        return Ext.create("Ext.data.Store", {
+          autoLoad: false,
+          model: "volumes__blockvolume_volumepool_store",
+          proxy: {
+            type: "direct",
+            directFn: volumes__VolumePool.get_sufficient,
+            startParam: undefined,
+            limitParam: undefined,
+            pageParam:  undefined,
+            paramOrder: ["host_id", "min_megs"]
+          }
+        });
+      }()),
+    },{
+      xtype: 'fieldset',
+      title: gettext('Advanced Settings'),
+      collapsible: true,
+      collapsed: true,
+      layout: 'anchor',
+      itemId: 'volumes_advanced_settings_fieldset',
+      defaults: {
+        anchor: '100%'
+      },
+      items: [{
+        xtype: 'radiogroup',
+        fieldLabel: gettext("Protocol"),
+        columns: 1,
+        itemId: "volumes_protocol_radio",
+        items: [
+          {name: "protocol", boxLabel: gettext("A: Asynchronous"), inputValue: "A"},
+          {name: "protocol", boxLabel: gettext("B: Memory Synchronous (Semi-Synchronous)"), inputValue: "B"},
+          {name: "protocol", boxLabel: gettext("C: Synchronous"), checked: true, inputValue: "C"}
+        ]
+      },{
+        fieldLabel: gettext('Syncer Rate'),
+        name: 'syncer_rate',
+        xtype: 'textfield',
+        itemId: 'volumes_syncerrate_text',
+        value: '30M',
+        regex: /^[0-9]+(M|G|K)/
+      }]
+    }],
+    buttons: [{
+      text: gettext("Choose"),
+      icon: MEDIA_URL + "/oxygen/16x16/actions/dialog-ok-apply.png",
+      listeners: {
+        click: function(self, e, eOpts){
+        }
+      }
+    },{
+      text: gettext("Cancel"),
+      icon: MEDIA_URL + "/icons2/16x16/actions/gtk-cancel.png",
+      listeners: {
+        click: function(self, e, eOpts){
+        }
+      }
+    }]
+  };
+
+  return form;
+}
+
 // kate: space-indent on; indent-width 2; replace-tabs on;
