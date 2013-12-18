@@ -96,6 +96,10 @@ Ext.oa.getMirrorForm = function(config, window){
     extend: "Ext.form.Panel",
     border: false,
     bodyStyle: "padding:5px 5px;",
+    initComponent: function(){
+      this.callParent(arguments);
+      this.addEvents("click_close", "click_ok");
+    },
     items: [{
       xtype: 'combo',
       forceSelection: true,
@@ -228,6 +232,7 @@ Ext.oa.getMirrorForm = function(config, window){
       icon: MEDIA_URL + "/oxygen/16x16/actions/dialog-ok-apply.png",
       listeners: {
         click: function(self, e, eOpts){
+          self.ownerCt.ownerCt.fireEvent("click_ok", self, e, eOpts);
         }
       }
     },{
@@ -235,6 +240,7 @@ Ext.oa.getMirrorForm = function(config, window){
       icon: MEDIA_URL + "/icons2/16x16/actions/gtk-cancel.png",
       listeners: {
         click: function(self, e, eOpts){
+          self.ownerCt.ownerCt.fireEvent("click_close", self, e, eOpts);
         }
       }
     }]
