@@ -98,7 +98,7 @@ Ext.oa.getMirrorForm = function(config, window){
     bodyStyle: "padding:5px 5px;",
     initComponent: function(){
       this.callParent(arguments);
-      this.addEvents("click_close", "click_ok");
+      this.addEvents("click_cancel", "click_ok");
     },
     items: [{
       xtype: 'combo',
@@ -240,7 +240,7 @@ Ext.oa.getMirrorForm = function(config, window){
       icon: MEDIA_URL + "/icons2/16x16/actions/gtk-cancel.png",
       listeners: {
         click: function(self, e, eOpts){
-          self.ownerCt.ownerCt.fireEvent("click_close", self, e, eOpts);
+          self.ownerCt.ownerCt.fireEvent("click_cancel", self, e, eOpts);
         }
       }
     }]
