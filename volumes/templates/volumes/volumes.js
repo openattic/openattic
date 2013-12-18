@@ -74,13 +74,23 @@ Ext.define('volumes__volumes_FileSystemVolume_model', {
 });
 
 Ext.oa.getMirrorWindow = function(config){
+  var mirror_form = Ext.oa.getMirrorForm(config, self);
   var mirror_win = new Ext.Window(Ext.apply(config, {
     title: gettext("Mirror"),
     layout: "fit",
     height: 260,
     width: 500,
-    items: Ext.oa.getMirrorForm(config, self)
+    items: mirror_form,
   }));
+
+  mirror_form.on("click_ok", function(self, e, eOpts){
+    mirror_win.close();
+    mirror_win.volumePanel.refresh();
+  });
+  mirror_form.on("click_cancel", function(self, e, eOpts){
+    mirror_win.close();
+  });
+
   return mirror_win;
 }
 
