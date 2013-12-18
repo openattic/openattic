@@ -92,8 +92,8 @@ Ext.define('volumes__drbd_Endpoint_model', {
 
 Ext.oa.getMirrorForm = function(config, window){
   var required = '<span style="color:red;font-weight:bold" data-qtip="Required">*</span>';
-  var form = {
-    xtype: 'form',
+  Ext.define('Ext.oa.drbd__device_mirror_panel', {
+    extend: "Ext.form.Panel",
     border: false,
     bodyStyle: "padding:5px 5px;",
     items: [{
@@ -238,9 +238,9 @@ Ext.oa.getMirrorForm = function(config, window){
         }
       }
     }]
-  };
+  });
 
-  return form;
+  return Ext.create("Ext.oa.drbd__device_mirror_panel");
 }
 
 // kate: space-indent on; indent-width 2; replace-tabs on;
