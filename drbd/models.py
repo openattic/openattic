@@ -17,18 +17,18 @@
  *  GNU General Public License for more details.
 """
 
-from collections 				import Counter
+from collections                import Counter
 
-from django.db   				import models
+from django.db                  import models
 from django.contrib.auth.models import User
 
-from systemd					import dbus_to_python, get_dbus_object
+from systemd                    import dbus_to_python, get_dbus_object
 
-from volumes 					import signals as volume_signals
-from volumes.models 			import BlockVolume, VolumePool
-from lvm 						import blockdevices
-from ifconfig.models			import Host, IPAddress, NetDevice, HostDependentManager
-from peering.models				import PeerHost
+from volumes                    import signals as volume_signals
+from volumes.models             import BlockVolume, VolumePool
+from lvm                        import blockdevices
+from ifconfig.models            import Host, IPAddress, NetDevice, HostDependentManager
+from peering.models             import PeerHost
 
 DRBD_PROTOCOL_CHOICES = (
     ('A', 'Protocol A: write IO is reported as completed, if it has reached local disk and local TCP send buffer.'),
@@ -37,174 +37,174 @@ DRBD_PROTOCOL_CHOICES = (
     )
 
 class ConnectionManager(models.Manager):
-	def _get_host_primary_ipaddress(self, host):
-		return IPAddress.all_objects.get(device__host=host, primary_address=True)
+    def _get_host_primary_ipaddress(self, host):
+        return IPAddress.all_objects.get(device__host=host, primary_address=True)
 
-	def create_connection(self, peer_host_id, peer_volumepool_id, protocol, syncer_rate, self_volume_id, volume_name, volume_megs, owner_id, fswarning, fscritical):
-		# create volume on peer host
-		peer_host = PeerHost.objects.get(host_id=peer_host_id)
-		peer_volume = peer_host.volumes.VolumePool.create_volume(peer_volumepool_id, volume_name, volume_megs, {"app": "auth", "obj": "User", "id": owner_id}, "", fswarning, fscritical)
+    def create_connection(self, peer_host_id, peer_volumepool_id, protocol, syncer_rate, self_volume_id, volume_name, volume_megs, owner_id, fswarning, fscritical):
+        # create volume on peer host
+        peer_host = PeerHost.objects.get(host_id=peer_host_id)
+        peer_volume = peer_host.volumes.VolumePool.create_volume(peer_volumepool_id, volume_name, volume_megs, {"app": "auth", "obj": "User", "id": owner_id}, "", fswarning, fscritical)
 
-		# create drbd connection object
-		connection = Connection(name=volume_name, protocol=protocol, syncer_rate=syncer_rate)
-		connection.save()
+        # create drbd connection object
+        connection = Connection(name=volume_name, protocol=protocol, syncer_rate=syncer_rate)
+        connection.save()
 
-		# set upper volume
-		self_volume = BlockVolume.objects.get(id=self_volume_id)
-		self_volume.upper = connection
-		self_volume.save()
+        # set upper volume
+        self_volume = BlockVolume.objects.get(id=self_volume_id)
+        self_volume.upper = connection
+        self_volume.save()
 
-		peer_volume = BlockVolume.objects.get(id=peer_volume["id"])
-		peer_volume.upper = connection
-		peer_volume.save()
+        peer_volume = BlockVolume.objects.get(id=peer_volume["id"])
+        peer_volume.upper = connection
+        peer_volume.save()
 
-		# create drbd endpoints
-		self_ipaddress = self._get_host_primary_ipaddress(Host.objects.get_current())	
-		self_endpoint = Endpoint(connection=connection, ipaddress=self_ipaddress, volume=self_volume)
-		self_endpoint.save()
+        # create drbd endpoints
+        self_ipaddress = self._get_host_primary_ipaddress(Host.objects.get_current())
+        self_endpoint = Endpoint(connection=connection, ipaddress=self_ipaddress, volume=self_volume)
+        self_endpoint.save()
 
-		peer_ipaddress = self._get_host_primary_ipaddress(Host.objects.get(id=peer_host_id))
-		peer_endpoint = Endpoint(connection=connection, ipaddress=peer_ipaddress, volume=peer_volume)
-		peer_endpoint.save()
+        peer_ipaddress = self._get_host_primary_ipaddress(Host.objects.get(id=peer_host_id))
+        peer_endpoint = Endpoint(connection=connection, ipaddress=peer_ipaddress, volume=peer_volume)
+        peer_endpoint.save()
 
-		# install drbd endpoints
-		self_endpoint.install(True)
-		peer_host.drbd.Endpoint.install(peer_endpoint.id, False)
+        # install drbd endpoints
+        self_endpoint.install(True)
+        peer_host.drbd.Endpoint.install(peer_endpoint.id, False)
 
-		volume_signals.post_install.send(sender=BlockVolume, instance=self)
+        volume_signals.post_install.send(sender=BlockVolume, instance=self)
 
-		return connection.id
+        return connection.id
 
 class Connection(BlockVolume):
-	name 		= models.CharField(max_length=50)
-	protocol 	= models.CharField(max_length=1, default="C", choices=DRBD_PROTOCOL_CHOICES)
-	syncer_rate = models.CharField(max_length=25, blank=True, default="5M", help_text=(
-									"Bandwidth limit for background synchronization, measured in "
-									"K/M/G<b><i>Bytes</i></b>."))
+    name        = models.CharField(max_length=50)
+    protocol    = models.CharField(max_length=1, default="C", choices=DRBD_PROTOCOL_CHOICES)
+    syncer_rate = models.CharField(max_length=25, blank=True, default="5M", help_text=(
+                                    "Bandwidth limit for background synchronization, measured in "
+                                    "K/M/G<b><i>Bytes</i></b>."))
 
-	objects = ConnectionManager()
+    objects = ConnectionManager()
 
-	def __init__(self, *args, **kwargs):
-		models.Model.__init__(self, *args, **kwargs)
-		self._drbd = None
+    def __init__(self, *args, **kwargs):
+        models.Model.__init__(self, *args, **kwargs)
+        self._drbd = None
 
-	def __unicode__(self):
-		return self.name
+    def __unicode__(self):
+        return self.name
 
-	@property
-	def drbd(self):
-		if self._drbd is None:
-			self._drbd = get_dbus_object("/drbd")
-		return self._drbd
+    @property
+    def drbd(self):
+        if self._drbd is None:
+            self._drbd = get_dbus_object("/drbd")
+        return self._drbd
 
-	@property
-	def megs(self):
-		return blockdevices.get_disk_size("drbd%d" % self.id)
+    @property
+    def megs(self):
+        return blockdevices.get_disk_size("drbd%d" % self.id)
 
-	@property
-	def port(self):
-		return 7700 + self.id
+    @property
+    def port(self):
+        return 7700 + self.id
 
-	@property
-	def host(self):
-		info = dbus_to_python(self.drbd.get_role(self.name, False))
-		info_count = Counter(info.values())
+    @property
+    def host(self):
+        info = dbus_to_python(self.drbd.get_role(self.name, False))
+        info_count = Counter(info.values())
 
-		if info_count["Primary"] == 2 or \
-			(info_count["Primary"] == 1 and \
-				[host for host, status in info.items() if status == "Primary"][0] == "self"):
-			return Host.objects.get_current()
-		elif info_count["Primary"] == 0:
-			return None
-		else:
-			return self.peerhost
+        if info_count["Primary"] == 2 or \
+            (info_count["Primary"] == 1 and \
+                [host for host, status in info.items() if status == "Primary"][0] == "self"):
+            return Host.objects.get_current()
+        elif info_count["Primary"] == 0:
+            return None
+        else:
+            return self.peerhost
 
-	@property
-	def path(self):
-		return "/dev/drbd%d" % self.id
+    @property
+    def path(self):
+        return "/dev/drbd%d" % self.id
 
-	@property
-	def status(self):
-		return dbus_to_python(self.drbd.get_cstate(self.name, False))
+    @property
+    def status(self):
+        return dbus_to_python(self.drbd.get_cstate(self.name, False))
 
-	@property
-	def type(self):
-		return "DRBD Connection"
+    @property
+    def type(self):
+        return "DRBD Connection"
 
-	@property
-	def peerhost(self):
-		for endpoint in Endpoint.objects.filter(connection=self):
-			if endpoint.ipaddress.device.host != Host.objects.get_current():
-				host_peer = endpoint.ipaddress.device.host
-				break
+    @property
+    def peerhost(self):
+        for endpoint in Endpoint.objects.filter(connection=self):
+            if endpoint.ipaddress.device.host != Host.objects.get_current():
+                host_peer = endpoint.ipaddress.device.host
+                break
 
-		if host_peer:
-			return host_peer
-		else:
-			None
+        if host_peer:
+            return host_peer
+        else:
+            None
 
-	@property
-	def endpoints_running_here(self):
-		""" Check if any of my endpoints run here. """
-		if self.endpoint_set.filter(ipaddress__device__host=Host.objects.get_current()).count() > 0:
-			return True
-		else:
-			return False
+    @property
+    def endpoints_running_here(self):
+        """ Check if any of my endpoints run here. """
+        if self.endpoint_set.filter(ipaddress__device__host=Host.objects.get_current()).count() > 0:
+            return True
+        else:
+            return False
 
-	def post_install(self):
-		pass
+    def post_install(self):
+        pass
 
 class EndpointManager(HostDependentManager):
-	hostfilter = "ipaddress__device__host"
+    hostfilter = "ipaddress__device__host"
 
-	def get_query_set(self):
-		return models.Manager.get_query_set(self)
+    def get_query_set(self):
+        return models.Manager.get_query_set(self)
 
 class Endpoint(models.Model):
-	connection 	= models.ForeignKey(Connection, related_name="endpoint_set")
-	ipaddress 	= models.ForeignKey(IPAddress)
-	volume 		= models.ForeignKey(BlockVolume, null=True, related_name="accessor_endpoint_set")
+    connection  = models.ForeignKey(Connection, related_name="endpoint_set")
+    ipaddress   = models.ForeignKey(IPAddress)
+    volume      = models.ForeignKey(BlockVolume, null=True, related_name="accessor_endpoint_set")
 
-	objects     = EndpointManager()
-	all_objects = models.Manager()
+    objects     = EndpointManager()
+    all_objects = models.Manager()
 
-	def __unicode__(self):
-		return self.ipaddress.device.host.name
+    def __unicode__(self):
+        return self.ipaddress.device.host.name
 
-	@property
-	def running_here(self):
-		return (self.connection.host == Host.objects.get_current())
+    @property
+    def running_here(self):
+        return (self.connection.host == Host.objects.get_current())
 
-	@property
-	def type(self):
-		return "DRBD Endpoint"
+    @property
+    def type(self):
+        return "DRBD Endpoint"
 
-	@property
-	def megs(self):
-		return blockdevices.get_disk_size("drbd%d" % self.connection.id)
+    @property
+    def megs(self):
+        return blockdevices.get_disk_size("drbd%d" % self.connection.id)
 
-	@property
-	def path(self):
-		return self.volume.volume.path
+    @property
+    def path(self):
+        return self.volume.volume.path
 
-	@property
-	def status(self):
-		info = dbus_to_python(self.connection.drbd.get_dstate(self.connection.name, False))
-		return info["self"]
+    @property
+    def status(self):
+        info = dbus_to_python(self.connection.drbd.get_dstate(self.connection.name, False))
+        return info["self"]
 
-	@property
-	def host(self):
-		return self.ipaddress.device.host
+    @property
+    def host(self):
+        return self.ipaddress.device.host
 
-	@property
-	def is_primary(self):
-		info = dbus_to_python(self.connection.drbd.get_role(self.connection.name, False))
-		return info["self"] == "Primary"
+    @property
+    def is_primary(self):
+        info = dbus_to_python(self.connection.drbd.get_role(self.connection.name, False))
+        return info["self"] == "Primary"
 
-	def install(self, init_primary):
-		self.connection.drbd.conf_write()
-		self.connection.drbd.createmd(self.connection.name, False)
-		self.connection.drbd.up(self.connection.name, False)
+    def install(self, init_primary):
+        self.connection.drbd.conf_write()
+        self.connection.drbd.createmd(self.connection.name, False)
+        self.connection.drbd.up(self.connection.name, False)
 
-		if init_primary:
-			self.connection.drbd.primary_overwrite(self.connection.name, False)
+        if init_primary:
+            self.connection.drbd.primary_overwrite(self.connection.name, False)
