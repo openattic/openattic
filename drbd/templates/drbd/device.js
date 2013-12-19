@@ -90,7 +90,7 @@ Ext.define('volumes__drbd_Endpoint_model', {
   }
 });
 
-Ext.oa.getMirrorForm = function(config, window){
+Ext.oa.getMirrorForm = function(config, host_id){
   var required = '<span style="color:red;font-weight:bold" data-qtip="Required">*</span>';
   Ext.define('Ext.oa.drbd__device_mirror_panel', {
     extend: "Ext.form.Panel",
@@ -135,7 +135,7 @@ Ext.oa.getMirrorForm = function(config, window){
             extraParams: {
               kwds: {
                 "__exclude__": {
-                  "id": window.HOSTID
+                  "id": host_id
                 }
               }
             },
@@ -237,7 +237,6 @@ Ext.oa.getMirrorForm = function(config, window){
             var peer_volumepool_id = self.ownerCt.ownerCt.getComponent('volumes_find_volumepool_combo').getValue();
             var protocol = self.ownerCt.ownerCt.getComponent('volumes_advanced_settings_fieldset').items.getByKey('volumes_protocol_radio').getValue();
             var syncer_rate = self.ownerCt.ownerCt.getComponent('volumes_advanced_settings_fieldset').items.getByKey('volumes_syncerrate_text').getValue();
-
             drbd__Connection.create_connection(peer_host_id, peer_volumepool_id, protocol['protocol'], syncer_rate, mirror_win.volume_id,
               mirror_win.volume_name, mirror_win.volume_megs, 1, mirror_win.fswarning, mirror_win.fscritical,
               function(result, response){
