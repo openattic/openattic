@@ -19,7 +19,7 @@ import socket
 
 from django.template.loader import render_to_string
 
-from systemd import invoke, logged, BasePlugin, method
+from systemd import invoke, logged, BasePlugin, method, deferredmethod
 from drbd.models import Connection
 
 def stackcmd(resource, stacked, command, options=None):
@@ -33,60 +33,60 @@ def stackcmd(resource, stacked, command, options=None):
 class SystemD(BasePlugin):
     dbus_path = "/drbd"
 
-    @method( in_signature="sb", out_signature="i")
-    def createmd(self, resource, stacked):
-        return invoke(stackcmd(resource, stacked, "create-md"), stdin="yes\n")
+    @deferredmethod(in_signature="sb")
+    def createmd(self, resource, stacked, sender):
+        invoke(stackcmd(resource, stacked, "create-md"), stdin="yes\n")
 
-    @method( in_signature="sb", out_signature="i")
-    def attach(self, resource, stacked):
+    @deferredmethod(in_signature="sb")
+    def attach(self, resource, stacked, sender):
         return invoke(stackcmd(resource, stacked, "attach"))
 
-    @method( in_signature="sb", out_signature="i")
-    def connect(self, resource, stacked):
+    @deferredmethod(in_signature="sb")
+    def connect(self, resource, stacked, sender):
         return invoke(stackcmd(resource, stacked, "connect"))
 
-    @method( in_signature="sb", out_signature="i")
-    def up(self, resource, stacked):
+    @deferredmethod(in_signature="sb")
+    def up(self, resource, stacked, sender):
         return invoke(stackcmd(resource, stacked, "up"))
 
-    @method( in_signature="sb", out_signature="i")
-    def primary(self, resource, stacked):
+    @deferredmethod(in_signature="sb")
+    def primary(self, resource, stacked, sender):
         return invoke(stackcmd(resource, stacked, "primary"))
 
-    @method( in_signature="sb", out_signature="i")
-    def primary_overwrite(self, resource, stacked):
+    @deferredmethod(in_signature="sb")
+    def primary_overwrite(self, resource, stacked, sender):
         return invoke(stackcmd(resource, stacked, "primary", ["--overwrite-data-of-peer"]))
 
-    @method( in_signature="sb", out_signature="i")
-    def primary_force(self, resource, stacked):
+    @deferredmethod(in_signature="sb")
+    def primary_force(self, resource, stacked, sender):
         return invoke(stackcmd(resource, stacked, "primary", ["--force"]))
 
-    @method( in_signature="sb", out_signature="i")
-    def secondary(self, resource, stacked):
+    @deferredmethod(in_signature="sb")
+    def secondary(self, resource, stacked, sender):
         return invoke(stackcmd(resource, stacked, "secondary"))
 
-    @method( in_signature="sb", out_signature="i")
-    def adjust(self, resource, stacked):
+    @deferredmethod(in_signature="sb")
+    def adjust(self, resource, stacked, sender):
         return invoke(stackcmd(resource, stacked, "adjust"))
 
-    @method( in_signature="sb", out_signature="i")
-    def disconnect(self, resource, stacked):
+    @deferredmethod(in_signature="sb")
+    def disconnect(self, resource, stacked, sender):
         return invoke(stackcmd(resource, stacked, "disconnect"))
 
-    @method( in_signature="sb", out_signature="i")
-    def detach(self, resource, stacked):
+    @deferredmethod(in_signature="sb")
+    def detach(self, resource, stacked, sender):
         return invoke(stackcmd(resource, stacked, "detach"))
 
-    @method( in_signature="sb", out_signature="i")
-    def down(self, resource, stacked):
+    @deferredmethod(in_signature="sb")
+    def down(self, resource, stacked, sender):
         return invoke(stackcmd(resource, stacked, "down"))
 
-    @method( in_signature="sb", out_signature="i")
-    def pausesync(self, resource, stacked):
+    @deferredmethod(in_signature="sb")
+    def pausesync(self, resource, stacked, sender):
         return invoke(stackcmd(resource, stacked, "pause-sync"))
 
-    @method( in_signature="sb", out_signature="i")
-    def resumesync(self, resource, stacked):
+    @deferredmethod(in_signature="sb")
+    def resumesync(self, resource, stacked, sender):
         return invoke(stackcmd(resource, stacked, "resume-sync"))
 
     @method( in_signature="sb", out_signature="a{ss}")
@@ -104,10 +104,10 @@ class SystemD(BasePlugin):
         ret, out, err = invoke(stackcmd(resource, stacked, "role"), return_out_err=True, log=False)
         return dict(zip(("self", "peer"), out.strip().split("/")))
 
-    @method( in_signature="", out_signature="")
-    def conf_write(self):
+    @deferredmethod( in_signature="")
+    def conf_write(self, sender):
         # Iterate over top-level connections
-        for conn in Connection.objects.filter(stack_parent__isnull=True):
+        for conn in Connection.objects.all():
             # Check if this connection (tree) has anything to do with the current host.
             # This is the case if any of my own endpoints run here, or one of my
             # low level devices' endpoints do.
@@ -115,12 +115,12 @@ class SystemD(BasePlugin):
                 continue
             fd = open("/etc/drbd.d/%s.res" % conn.name, "w")
             try:
-                for lowerconn in conn.stack_child_set.all():
-                    fd.write( render_to_string( "drbd/device.res", {
-                        'Hostname':   socket.gethostname(),
-                        'Connection': lowerconn,
-                        'UpperConn':  conn
-                        } ) )
+                #for lowerconn in conn.stack_child_set.all():
+                #    fd.write( render_to_string( "drbd/device.res", {
+                #        'Hostname':   socket.gethostname(),
+                #        'Connection': lowerconn,
+                #        'UpperConn':  conn
+                #        } ) )
 
                 fd.write( render_to_string( "drbd/device.res", {
                     'Hostname':   socket.gethostname(),
@@ -130,7 +130,7 @@ class SystemD(BasePlugin):
             finally:
                 fd.close()
 
-    @method( in_signature="i", out_signature="")
-    def conf_delete(self, devid):
+    @deferredmethod( in_signature="i")
+    def conf_delete(self, devid, sender):
         conn = Connection.objects.get(id=devid)
         os.unlink("/etc/drbd.d/%s.res" % conn.res_name)

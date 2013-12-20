@@ -112,9 +112,8 @@ class VolumePool(CapabilitiesAwareModel):
     def __unicode__(self):
         return self.volumepool.name
 
-    def create_volume(self, name, megs, owner, filesystem, fswarning, fscritical):
+    def _create_volume(self, name, megs, owner, filesystem, fswarning, fscritical):
         """ Create a volume in this pool. """
-        get_dbus_object("/").start_queue()
         VolumeClass = self.get_volume_class(filesystem)
         vol_options = {"name": name, "megs": megs, "owner": owner, "pool": self}
         if issubclass(VolumeClass, FileSystemVolume):
@@ -132,6 +131,12 @@ class VolumePool(CapabilitiesAwareModel):
             vol.full_clean()
             vol.save()
 
+        return vol
+
+    def create_volume(self, name, megs, owner, filesystem, fswarning, fscritical):
+        """ Create a volume in this pool. """
+        get_dbus_object("/").start_queue()
+        vol = self._create_volume(name, megs, owner, filesystem, fswarning, fscritical)
         get_dbus_object("/").run_queue_background()
         return vol
 
