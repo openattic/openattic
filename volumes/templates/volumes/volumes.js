@@ -205,18 +205,11 @@ Ext.define('Ext.oa.volumes__Volume_Panel', {
             if(self.ownerCt.ownerCt.getSelectionModel().getSelection().length === 1){
               var vol_selection = self.ownerCt.ownerCt.getSelectionModel().getSelection()[0];
               if(vol_selection.$className.indexOf("BlockVolume") != -1){
-                if(typeof vol_selection.data.megs !== 'undefined' && vol_selection.data.megs > 0 &&
-                  typeof vol_selection.data.name !== 'undefined' && vol_selection.data.name.length > 0){
-                  var mirror_win = Ext.oa.getMirrorWindow(Ext.apply(config, {
-                    volume_id:    vol_selection.data.id,
-                    volume_megs:  vol_selection.data.megs,
-                    volume_name:  vol_selection.data.name,
-                    fswarning:    vol_selection.data.fswarning || 0,
-                    fscritical:   vol_selection.data.fscritical || 0,
-                    volumePanel:  volumePanel
-                  }));
-                  mirror_win.show();
-                }
+                var mirror_win = Ext.oa.getMirrorWindow(Ext.apply(config, {
+                  volume_id:    vol_selection.data.id,
+                  volumePanel:  volumePanel
+                }));
+                mirror_win.show();
               }
             }
           }
