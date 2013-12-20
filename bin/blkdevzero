@@ -36,3 +36,4 @@ set +e
 
 dd if=/dev/zero of="$BLKDEV" bs=10M count=1 2>/dev/null
 dd if=/dev/zero of="$BLKDEV" seek="$SEEK" bs=10M 2>/dev/null
+exit 0
