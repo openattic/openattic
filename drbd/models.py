@@ -87,7 +87,7 @@ class ConnectionManager(models.Manager):
             peer_host.drbd.Connection.install_connection(connection.id, peer_host.id, self_host.id, False, primary_volume.id, peer_volumepool_id)
 
 
-        endpoint.install(primary_volume)
+        endpoint.install(is_primary)
         get_dbus_object("/").run_queue_background()
         return endpoint.id
 
