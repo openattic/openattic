@@ -117,6 +117,11 @@ Ext.define("Ext.oa.volumes__volumes_add_volume_form", {
     fieldLabel: gettext("Size in MB"),
     name: "megs"
   }, {
+    xtype: "label",
+    text:  gettext('Waiting for volume group selection...'),
+    cls:   "form_hint_label",
+    itemId: "volume_size_additional_label"
+  }, {
     fieldLabel: gettext("Pool"),
     name: "name"
   }, {
