@@ -260,4 +260,8 @@ Ext.oa.getMirrorForm = function(){
   return Ext.create("Ext.oa.drbd__device_mirror_panel");
 };
 
+window.AddVolumeSettings.push({
+  getForm: Ext.oa.getMirrorForm
+});
+
 // kate: space-indent on; indent-width 2; replace-tabs on;
