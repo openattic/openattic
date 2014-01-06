@@ -119,6 +119,18 @@ Ext.define("Ext.oa.volumes__volumes_add_volume_form", {
   }, {
     fieldLabel: gettext("Pool"),
     name: "name"
+  }, {
+    fieldLabel: gettext('Warning Level (%)'),
+    allowBlank: false,
+    name: "fswarning",
+    value: 75,
+    xtype: "numberfield"
+  }, {
+    fieldLabel: gettext('Critical Level (%)'),
+    allowBlank: false,
+    name: "fscritical",
+    value: 85,
+    xtype: "numberfield"
   }],
   buttons: [{
     text: gettext("Create Volume"),
