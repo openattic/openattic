@@ -94,6 +94,61 @@ Ext.oa.getMirrorWindow = function(config){
   return mirror_win;
 }
 
+Ext.define("Ext.oa.volumes__volumes_add_volume_form", {
+  extend: "Ext.form.Panel",
+  border: false,
+  bodyStyle: 'padding: 5px 5px;',
+  api: {
+    load:   volumes__BlockVolume.get_ext,
+    submit: volumes__BlockVolume.set_ext
+  },
+  paramOrder: ["id"],
+  defaults: {
+    xtype: "textfield",
+    anchor: '-20px',
+    defaults : {
+      anchor: "0px"
+    }
+  },
+  items: [{
+    fieldLabel: gettext("Name"),
+    name: "name"
+  }, {
+    fieldLabel: gettext("Size in MB"),
+    name: "megs"
+  }, {
+    fieldLabel: gettext("Pool"),
+    name: "name"
+  }],
+  buttons: [{
+    text: gettext("Create Volume"),
+    icon: MEDIA_URL + "/oxygen/16x16/actions/dialog-ok-apply.png",
+    listeners: {
+      click: function(self, e, eOpts){
+
+      }
+    }
+  },{
+    text: gettext("Cancel"),
+    icon: MEDIA_URL + "/icons2/16x16/actions/gtk-cancel.png",
+    listeners: {
+      click: function(self, e, eOpts){
+        self.ownerCt.ownerCt.ownerCt.close();
+      }
+    }
+  }]
+});
+Ext.oa.getAddVolumeWindow = function(config){
+  var add_volume_form = Ext.create("Ext.oa.volumes__volumes_add_volume_form");
+  return new Ext.Window(Ext.apply(config, {
+    title: gettext("Add Volume"),
+    height: 200,
+    width:  500,
+    layout: "fit",
+    items: add_volume_form,
+  }));
+};
+
 Ext.define('Ext.oa.volumes__Volume_Panel', {
   extend: 'Ext.tree.TreePanel',
   alias: 'widget.volumes__volumes_panel',
@@ -129,74 +184,11 @@ Ext.define('Ext.oa.volumes__Volume_Panel', {
         }
       }, {
         text: gettext("Add Volume"),
-        handler: function(self){
-          var addwin = new Ext.Window(Ext.apply(config, {
-            height: 200,
-            width:  500,
-            layout: "fit",
-            defaults: {
-              autoScroll: true
-            },
-            items: [{
-              xtype: "form",
-              title: gettext("Volume configuration"),
-              bodyStyle: 'padding: 5px 5px;',
-              api: {
-                load:   volumes.BlockVolume.get_ext,
-                submit: volumes.BlockVolume.set_ext
-              },
-              baseParams: {
-                id: (record ? record.id: -1)
-              },
-              paramOrder: ["id"],
-              defaults: {
-                xtype: "textfield",
-                anchor: '-20px',
-                defaults : {
-                  anchor: "0px"
-                }
-              },
-              buttons: [{
-                text: gettext("Create Volume"),
-                icon: MEDIA_URL + "/oxygen/16x16/actions/dialog-ok-apply.png",
-                handler: function(btn){
-                  addwin.getEl().mask(gettext("Loading..."));
-                  var conf = {
-                    success: function(provider, response){
-                      if(response.result){
-                        if( typeof config.success === "function"){
-                          config.success();
-                        }
-                        addwin.close();
-                      }
-                    },
-                    failure: function(){
-                      addwin.getEl().unmask();
-                    }
-                  };
-                  var datform = btn.ownerCt.ownerCt;
-                  datform.submit(conf);
-                }
-              },{
-                text: gettext("Cancel"),
-                icon: MEDIA_URL + "/icons2/16x16/actions/gtk-cancel.png",
-                handler: function(){
-                  addwin.close();
-                }
-              }],
-              items: [{
-                fieldLabel: gettext("Name"),
-                name: "name"
-              }, {
-                fieldLabel: gettext("Size in MB"),
-                name: "megs"
-              }, {
-                fieldLabel: gettext("Pool"),
-                name: "name"
-              }]
-            }]
-          }));
-          addwin.show();
+        listeners: {
+          click: function(self, e, eOpts){
+            var addwin = Ext.oa.getAddVolumeWindow(config);
+            addwin.show();
+          }
         }
       },{
         text: gettext("Mirror"),
