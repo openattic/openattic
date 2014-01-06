@@ -90,7 +90,7 @@ Ext.define('volumes__drbd_Endpoint_model', {
   }
 });
 
-Ext.oa.getMirrorForm = function(config, host_id){
+Ext.oa.getMirrorForm = function(config){
   var required = '<span style="color:red;font-weight:bold" data-qtip="Required">*</span>';
   Ext.define('Ext.oa.drbd__device_mirror_panel', {
     extend: "Ext.form.Panel",
@@ -135,7 +135,7 @@ Ext.oa.getMirrorForm = function(config, host_id){
             extraParams: {
               kwds: {
                 "__exclude__": {
-                  "id": host_id
+                  "id": self.HOSTID
                 }
               }
             },
