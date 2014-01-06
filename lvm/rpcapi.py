@@ -85,6 +85,11 @@ class VgHandler(AbstractVolumePoolHandler):
         vg = VolumeGroup.objects.get(id=id)
         return vg.lvm_info
 
+    def get_free_megs(self, id):
+        """ Get amount of free space in a Volume Group. """
+        vg = VolumeGroup.objects.get(id=id)
+        return vg.megs - vg.usedmegs
+
 class LvHandler(AbstractBlockVolumeHandler):
     model = LogicalVolume
     order = ("name",)
