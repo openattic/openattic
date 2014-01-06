@@ -154,7 +154,6 @@ Ext.oa.getAddVolumeWindow = function(config){
   var add_volume_form = Ext.create("Ext.oa.volumes__volumes_add_volume_form");
   return new Ext.Window(Ext.apply(config, {
     title: gettext("Add Volume"),
-    height: 200,
     width:  500,
     layout: "fit",
     items: add_volume_form,
