@@ -112,8 +112,48 @@ Ext.define("Ext.oa.volumes__volumes_add_volume_form", {
   },
   items: [{
     fieldLabel: gettext("Name"),
-    name: "name"
-  }, {
+    name: "name",
+    allowBlank: false
+  }, tipify({
+    xtype:      'combo',
+    allowBlank: false,
+    fieldLabel: gettext('Volume Group'),
+    name: 'vg',
+    typeAhead:     true,
+    triggerAction: 'all',
+    deferEmptyText: false,
+    emptyText:     gettext('Select...'),
+    selectOnFocus: true,
+    displayField: "name",
+    valueField: "id",
+    store: (function(){
+      Ext.define('lvm_logicalvolume_volumegroup_store', {
+        extend: 'Ext.data.Model',
+        fields: [
+          {name: 'id'},
+          {name: 'name'}
+        ]
+      });
+      return Ext.create('Ext.data.Store', {
+        model: "lvm_logicalvolume_volumegroup_store",
+        proxy: {
+          type: 'direct',
+          directFn: lvm__VolumeGroup.all
+        }
+      });
+    }()),
+    listeners: {
+      select: function(self, record, index){
+        self.ownerCt.volume_free_megs = null;
+        var volume_size_label = self.ownerCt.getComponent("volume_size_additional_label");
+        volume_size_label.setText(gettext("Querying data..."));
+        lvm__VolumeGroup.get_free_megs(record[0].data.id, function(provider, response){
+          self.ownerCt.volume_free_megs = response.result;
+          volume_size_label.setText(Ext.String.format("Max. {0} MB", response.result));
+        });
+      }
+    }
+  },gettext('The volume group in which you want the Volume to be created.')), {
     fieldLabel: gettext("Size in MB"),
     name: "megs"
   }, {
