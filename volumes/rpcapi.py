@@ -106,7 +106,7 @@ class VolumePoolHandler(ModelHandler):
     def get_supported_filesystems(self, id):
         """ Return filesystems supported by a given Volume Pool. """
         obj = VolumePool.objects.get(id=id)
-        return [fs.name for fs in obj.volumepool.get_supported_filesystems()]
+        return [{"name": fs.name} for fs in obj.volumepool.get_supported_filesystems()]
 
 class VolumePoolProxy(ProxyModelHandler, VolumePoolHandler):
     def _find_target_host_from_model_instance(self, model):
