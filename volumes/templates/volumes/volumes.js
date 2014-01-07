@@ -216,6 +216,18 @@ Ext.define("Ext.oa.volumes__volumes_add_volume_form", {
     fieldLabel: gettext("Pool"),
     name: "name"
   }, {
+    fieldLabel: gettext('Deduplication'),
+    name: "dedup",
+    xtype: "checkbox",
+    itemId: "volume_deduplication_checkbox",
+    disabled: true
+  }, {
+    fieldLabel: gettext('Compression'),
+    name: "compression",
+    xtype: "checkbox",
+    itemId: "volume_compression_checkbox",
+    disabled: true
+  },{
     fieldLabel: gettext('Warning Level (%)'),
     allowBlank: false,
     name: "fswarning",
