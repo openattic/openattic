@@ -153,7 +153,50 @@ Ext.define("Ext.oa.volumes__volumes_add_volume_form", {
         });
       }
     }
-  },gettext('The volume group in which you want the Volume to be created.')), {
+  },gettext('The volume group in which you want the Volume to be created.')),
+  tipify({
+    xtype:      'combo',
+    disabled:   true,
+    forceSelection: true,
+    fieldLabel: gettext('File System'),
+    typeAhead:     true,
+    deferEmptyText: false,
+    emptyText:     gettext('Select...'),
+    displayField:  'name',
+    valueField:    'name',
+    itemId:        'volumepool_filesystems_combo',
+    queryMode:     "local",
+    allowBlank:    false,
+    store: (function(){
+      Ext.define('volumes__volumepool_filesystem_store', {
+        extend: 'Ext.data.Model',
+        fields: [
+          {name: 'name'}
+      //     //{name: 'desc'},
+      //     //{name: 'supports_dedup'},
+      //     //{name: 'supports_compression'}
+        ]
+      });
+      return Ext.create('Ext.data.Store', {
+        autoLoad: false,
+        model: "volumes__volumepool_filesystem_store",
+        proxy: {
+          type: 'direct',
+          directFn: volumes__VolumePool.get_supported_filesystems,
+          startParam: undefined,
+          limitParam: undefined,
+          pageParam:  undefined,
+          paramOrder: ["id"]
+        }
+      });
+    }()),
+    listeners: {
+      select: function(self, record, index){
+        // Enable dedup and compression field
+      }
+    }
+  }, gettext("If you want to use DRBD with this device, do not yet create a file system on it, even if you want to share it using NAS services later on.")),
+  {
     fieldLabel: gettext("Size in MB"),
     name: "megs"
   }, {
