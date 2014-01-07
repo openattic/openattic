@@ -94,6 +94,7 @@ Ext.oa.getMirrorWindow = function(config){
   return mirror_win;
 }
 
+var required = '<span style="color:red;font-weight:bold" data-qtip="Required">*</span>';
 Ext.define("Ext.oa.volumes__volumes_add_volume_form", {
   extend: "Ext.form.Panel",
   border: false,
@@ -113,7 +114,8 @@ Ext.define("Ext.oa.volumes__volumes_add_volume_form", {
   items: [{
     fieldLabel: gettext("Name"),
     name: "name",
-    allowBlank: false
+    allowBlank: false,
+    afterLabelTextTpl: required
   }, tipify({
     xtype:      'combo',
     allowBlank: false,
@@ -126,6 +128,7 @@ Ext.define("Ext.oa.volumes__volumes_add_volume_form", {
     selectOnFocus: true,
     displayField: "name",
     valueField: "id",
+    afterLabelTextTpl: required,
     store: (function(){
       Ext.define('lvm_logicalvolume_volumegroup_store', {
         extend: 'Ext.data.Model',
@@ -175,6 +178,7 @@ Ext.define("Ext.oa.volumes__volumes_add_volume_form", {
     itemId:        'volumepool_filesystems_combo',
     queryMode:     "local",
     allowBlank:    false,
+    afterLabelTextTpl: required,
     store: (function(){
       Ext.define('volumes__volumepool_filesystem_store', {
         extend: 'Ext.data.Model',
@@ -206,7 +210,8 @@ Ext.define("Ext.oa.volumes__volumes_add_volume_form", {
   }, gettext("If you want to use DRBD with this device, do not yet create a file system on it, even if you want to share it using NAS services later on.")),
   {
     fieldLabel: gettext("Size in MB"),
-    name: "megs"
+    name: "megs",
+    afterLabelTextTpl: required
   }, {
     xtype: "label",
     text:  gettext('Waiting for volume group selection...'),
@@ -232,13 +237,15 @@ Ext.define("Ext.oa.volumes__volumes_add_volume_form", {
     allowBlank: false,
     name: "fswarning",
     value: 75,
-    xtype: "numberfield"
+    xtype: "numberfield",
+    afterLabelTextTpl: required
   }, {
     fieldLabel: gettext('Critical Level (%)'),
     allowBlank: false,
     name: "fscritical",
     value: 85,
-    xtype: "numberfield"
+    xtype: "numberfield",
+    afterLabelTextTpl: required
   }],
   buttons: [{
     text: gettext("Create Volume"),
