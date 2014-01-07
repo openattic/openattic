@@ -144,6 +144,14 @@ Ext.define("Ext.oa.volumes__volumes_add_volume_form", {
     }()),
     listeners: {
       select: function(self, record, index){
+        var filesystem_combo = self.ownerCt.getComponent('volumepool_filesystems_combo');
+        filesystem_combo.enable();
+        filesystem_combo.getStore().load({
+          params: {
+            "id": record[0].data.id
+          }
+        });
+
         self.ownerCt.volume_free_megs = null;
         var volume_size_label = self.ownerCt.getComponent("volume_size_additional_label");
         volume_size_label.setText(gettext("Querying data..."));
