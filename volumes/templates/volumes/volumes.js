@@ -155,6 +155,8 @@ Ext.define("Ext.oa.volumes__volumes_add_volume_form", {
           }
         });
 
+        self.ownerCt.getComponent('volume_size_textbox').enable();
+
         self.ownerCt.volume_free_megs = null;
         var volume_size_label = self.ownerCt.getComponent("volume_size_additional_label");
         volume_size_label.setText(gettext("Querying data..."));
@@ -211,7 +213,9 @@ Ext.define("Ext.oa.volumes__volumes_add_volume_form", {
   {
     fieldLabel: gettext("Size in MB"),
     name: "megs",
-    afterLabelTextTpl: required
+    afterLabelTextTpl: required,
+    disabled: true,
+    itemId: "volume_size_textbox"
   }, {
     xtype: "label",
     text:  gettext('Waiting for volume group selection...'),
