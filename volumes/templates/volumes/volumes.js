@@ -217,6 +217,14 @@ Ext.define("Ext.oa.volumes__volumes_add_volume_form", {
     name: "megs",
     afterLabelTextTpl: required,
     disabled: true,
+    validator: function(value){
+      if(value <= this.ownerCt.volume_free_megs){
+        return true;
+      }
+      else {
+        return gettext("Error! Needs to be less or equal maxvalue!");
+      }
+    },
     itemId: "volume_size_textbox"
   }, {
     xtype: "label",
