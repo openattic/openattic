@@ -247,6 +247,10 @@ Ext.define("Ext.oa.volumes__volumes_add_volume_form", {
     value: 85,
     xtype: "numberfield",
     afterLabelTextTpl: required
+  }, {
+    xtype: "auth__userfield",
+    allowBlank: false,
+    afterLabelTextTpl: required
   }],
   buttons: [{
     text: gettext("Create Volume"),
