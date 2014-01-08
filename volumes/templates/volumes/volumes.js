@@ -218,9 +218,6 @@ Ext.define("Ext.oa.volumes__volumes_add_volume_form", {
     cls:   "form_hint_label",
     itemId: "volume_size_additional_label"
   }, {
-    fieldLabel: gettext("Pool"),
-    name: "name"
-  }, {
     fieldLabel: gettext('Deduplication'),
     name: "dedup",
     xtype: "checkbox",
