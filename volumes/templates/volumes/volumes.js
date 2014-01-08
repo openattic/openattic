@@ -181,6 +181,7 @@ Ext.define("Ext.oa.volumes__volumes_add_volume_form", {
     queryMode:     "local",
     allowBlank:    false,
     afterLabelTextTpl: required,
+    name: "filesystem",
     store: (function(){
       Ext.define('volumes__volumepool_filesystem_store', {
         extend: 'Ext.data.Model',
@@ -251,6 +252,7 @@ Ext.define("Ext.oa.volumes__volumes_add_volume_form", {
   }, {
     xtype: "auth__userfield",
     allowBlank: false,
+    name: "owner",
     afterLabelTextTpl: required
   }],
   buttons: [{
