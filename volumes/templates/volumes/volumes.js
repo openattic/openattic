@@ -179,8 +179,6 @@ Ext.define("Ext.oa.volumes__volumes_add_volume_form", {
     valueField:    'name',
     itemId:        'volumepool_filesystems_combo',
     queryMode:     "local",
-    allowBlank:    false,
-    afterLabelTextTpl: required,
     name: "filesystem",
     store: (function(){
       Ext.define('volumes__volumepool_filesystem_store', {
