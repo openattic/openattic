@@ -261,6 +261,7 @@ Ext.oa.getMirrorForm = function(){
 };
 
 window.AddVolumeSettings.push({
+  title: gettext("Mirror"),
   getForm: Ext.oa.getMirrorForm
 });
 
