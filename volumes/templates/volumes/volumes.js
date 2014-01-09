@@ -80,7 +80,7 @@ Ext.oa.getMirrorWindow = function(config){
     layout: "fit",
     height: 260,
     width: 500,
-    items: mirror_form,
+    items: mirror_form
   }));
 
   mirror_form.on("click_ok", function(self, e, eOpts){
@@ -93,6 +93,87 @@ Ext.oa.getMirrorWindow = function(config){
 
   return mirror_win;
 }
+
+Ext.oa.getAdditSettingsWindow = function(config){
+  var cards = [];
+  var buttons = [];
+
+  var emptySettingForm = new Ext.form.FormPanel({
+    itemId: "empty",
+    border: false,
+    layout: "fit",
+    items : [{
+      xtype: "label",
+      text : gettext("No config options available!"),
+    }]
+  });
+  cards.push(emptySettingForm);
+
+  for(var i=0; i < window.AddVolumeSettings.length; i++){
+    var button = new Ext.button.Button({
+      text: window.AddVolumeSettings[i].title,
+      itemNumber: i + 1,
+      listeners: {
+        click: function(self, e, eOpts){
+          cards_panel.layout.setActiveItem(self.itemNumber);
+        }
+      }
+    });
+
+    var form = window.AddVolumeSettings[i].getForm();
+    form.itemNumber = i + 1; // emptySettingForm is number 0
+    form.on("click_ok", function(self, e, eOpts){
+      buttons[self.ownerCt.ownerCt.itemNumber - 1].setIcon(MEDIA_URL + "/oxygen/16x16/actions/dialog-ok-apply.png");
+      cards_panel.layout.setActiveItem(0);
+    })
+    form.on("click_cancel", function(self, e, eOpts){
+      cards_panel.layout.setActiveItem(0);
+    });
+
+    cards.push(form);
+    buttons.push(button);
+  }
+
+  var cards_panel = Ext.create("Ext.panel.Panel", {
+    layout: "card",
+    bodyStyle: "padding: 5px 5px;",
+    items: cards,
+    activeItem: 0,
+    width: "70%",
+    height: "100%"
+  });
+
+  return new Ext.Window(Ext.apply(config, {
+    title: gettext("Additional Settings"),
+    layout: "hbox",
+    height: 400,
+    width: 800,
+    border: false,
+    items: [{
+      region: "west",
+      height: "100%",
+      width: "30%",
+      layout: {
+        type: "vbox",
+        align: "stretch",
+        padding: '5'
+      },
+      items: buttons,
+      border: false
+    },
+      cards_panel
+    ],
+    buttons: [{
+      text: gettext("Close"),
+      icon: MEDIA_URL + "/icons2/16x16/actions/gtk-cancel.png",
+      listeners: {
+        click: function(self, e, eOpts){
+          self.ownerCt.ownerCt.close();
+        }
+      }
+    }]
+  }))
+};
 
 var required = '<span style="color:red;font-weight:bold" data-qtip="Required">*</span>';
 Ext.define("Ext.oa.volumes__volumes_add_volume_form", {
