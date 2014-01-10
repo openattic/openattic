@@ -75,7 +75,7 @@ Ext.define('volumes__volumes_FileSystemVolume_model', {
 
 Ext.oa.getMirrorWindow = function(config){
   var mirror_form = Ext.oa.getMirrorForm(config);
-  var mirror_win = new Ext.Window(Ext.apply(config, {
+  var mirror_win = Ext.create("Ext.Window", Ext.apply(config, {
     title: gettext("Mirror"),
     layout: "fit",
     height: 260,
@@ -98,7 +98,7 @@ Ext.oa.getAdditSettingsWindow = function(config){
   var cards = [];
   var buttons = [];
 
-  var emptySettingForm = new Ext.form.FormPanel({
+  var emptySettingForm = Ext.create("Ext.form.FormPanel", {
     itemId: "empty",
     border: false,
     layout: "fit",
@@ -110,7 +110,7 @@ Ext.oa.getAdditSettingsWindow = function(config){
   cards.push(emptySettingForm);
 
   for(var i=0; i < window.AddVolumeSettings.length; i++){
-    var button = new Ext.button.Button({
+    var button = Ext.create("Ext.button.Button", {
       text: window.AddVolumeSettings[i].title,
       itemNumber: i + 1,
       listeners: {
@@ -143,7 +143,7 @@ Ext.oa.getAdditSettingsWindow = function(config){
     height: "100%"
   });
 
-  return new Ext.Window(Ext.apply(config, {
+  return Ext.create("Ext.Window", {
     title: gettext("Additional Settings"),
     layout: "hbox",
     height: 400,
@@ -172,7 +172,7 @@ Ext.oa.getAdditSettingsWindow = function(config){
         }
       }
     }]
-  }))
+  });
 };
 
 var required = '<span style="color:red;font-weight:bold" data-qtip="Required">*</span>';
@@ -374,12 +374,12 @@ Ext.define("Ext.oa.volumes__volumes_add_volume_form", {
 });
 Ext.oa.getAddVolumeWindow = function(config){
   var add_volume_form = Ext.create("Ext.oa.volumes__volumes_add_volume_form");
-  return new Ext.Window(Ext.apply(config, {
+  return Ext.create("Ext.Window", {
     title: gettext("Add Volume"),
     width:  500,
     layout: "fit",
     items: add_volume_form,
-  }));
+  });
 };
 
 Ext.define('Ext.oa.volumes__Volume_Panel', {
