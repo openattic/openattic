@@ -140,7 +140,8 @@ Ext.oa.getAdditSettingsWindow = function(config){
     items: cards,
     activeItem: 0,
     width: "70%",
-    height: "100%"
+    height: "100%",
+    border: false
   });
 
   return Ext.create("Ext.Window", {
