@@ -149,6 +149,10 @@ Ext.oa.getAdditSettingsWindow = function(config){
     height: 400,
     width: 800,
     border: false,
+    close: function(){
+      this[this.closeAction].call(this);
+      config.volumePanel.refresh();
+    },
     items: [{
       region: "west",
       height: "100%",
@@ -169,7 +173,6 @@ Ext.oa.getAdditSettingsWindow = function(config){
       listeners: {
         click: function(self, e, eOpts){
           self.ownerCt.ownerCt.close();
-          config.volumePanel.refresh();
         }
       }
     }]
