@@ -169,6 +169,7 @@ Ext.oa.getAdditSettingsWindow = function(config){
       listeners: {
         click: function(self, e, eOpts){
           self.ownerCt.ownerCt.close();
+          config.volumePanel.refresh();
         }
       }
     }]
@@ -357,6 +358,12 @@ Ext.define("Ext.oa.volumes__volumes_add_volume_form", {
             function(result, response){
             if(response.type !== "exception"){
               self.ownerCt.ownerCt.ownerCt.close();
+
+              var settings_win = Ext.oa.getAdditSettingsWindow(Ext.apply(config, {
+                  volume_id:    result.id,
+                  volumePanel:  config.volumePanel
+              }));
+              settings_win.show();
             }
           });
         }
@@ -419,7 +426,9 @@ Ext.define('Ext.oa.volumes__Volume_Panel', {
         text: gettext("Add Volume"),
         listeners: {
           click: function(self, e, eOpts){
-            var addwin = Ext.oa.getAddVolumeWindow(config);
+            var addwin = Ext.oa.getAddVolumeWindow(Ext.apply(config, {
+              volumePanel: volumePanel
+            }));
             addwin.show();
           }
         }
