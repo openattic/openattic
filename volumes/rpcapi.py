@@ -153,6 +153,13 @@ class BlockVolumeHandler(ModelHandler):
         handler = self._get_handler_instance(obj.volume.__class__)
         return handler._getobj(obj.volume)
 
+    def remove(self, id):
+        obj = self._get_model_manager().get(id=id)
+        if obj.volume is None:
+            return obj.delete()
+        handler = self._get_handler_instance(obj.volume.__class__)
+        return handler.remove(obj.volume.id)
+
     def run_initscript(self, id, script):
         bv = BlockVolume.objects.get(id=id)
         return initscripts.run_initscript(bv, script)
@@ -199,6 +206,13 @@ class FileSystemVolumeHandler(ModelHandler):
             return ModelHandler._getobj(self, obj)
         handler = self._get_handler_instance(obj.volume.__class__)
         return handler._getobj(obj.volume)
+
+    def remove(self, id):
+        obj = self._get_model_manager().get(id=id)
+        if obj.volume is None:
+            return obj.delete()
+        handler = self._get_handler_instance(obj.volume.__class__)
+        return handler.remove(obj.volume.id)
 
     def run_initscript(self, id, script):
         fsv = FileSystemVolume.objects.get(id=id)
