@@ -92,7 +92,11 @@ Ext.define('Ext.oa.MainViewManager', {
         maxSize: 400,
         collapsible: true,
         border: false,
-        ddConfig: { enableDD: true },
+        viewConfig: {
+          plugins: {
+            ptype: "treeviewdragdrop"
+          }
+        },
         listeners: {
           'render': function(tree) {
             var findTreeNode = function(node, sourceEl){
