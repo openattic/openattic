@@ -239,7 +239,7 @@ class FileSystemProviderHandler(AbstractFileSystemVolumeHandler):
     model = FileSystemProvider
 
     def remove(self, id):
-        return self._get_model_manager().get(id=id).base.delete()
+        return self._get_model_manager().get(id=id).base.volume.delete()
 
 class FileSystemProviderProxy(ProxyModelHandler, FileSystemProviderHandler):
     def _find_target_host_from_model_instance(self, model):
