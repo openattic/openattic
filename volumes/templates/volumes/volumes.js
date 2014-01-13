@@ -436,6 +436,41 @@ Ext.define('Ext.oa.volumes__Volume_Panel', {
             addwin.show();
           }
         }
+      }, {
+        text: gettext("Delete Volume"),
+        handler: function(self){
+          var sel = volumePanel.getSelectionModel().getSelection()[0];
+          Ext.Msg.prompt(
+            gettext("Delete Volume"),
+            gettext('What was the name of the volume you wish to delete again?<br /><b>There is no undo and you will lose all data.</b>'),
+            function(btn, text){
+              if( btn === 'ok' ){
+                if( text == sel.data.name ){
+                  if( sel.raw.filesystem ){
+                    volumes__FileSystemVolume.remove(sel.data.id, function(result, response){
+                      if( response.type !== "exception" ){
+                        volumePanel.refresh();
+                      }
+                    });
+                  }
+                  else{
+                    volumes__BlockVolume.remove(sel.data.id, function(result, response){
+                      if( response.type !== "exception" ){
+                        volumePanel.refresh();
+                      }
+                    });
+                  }
+                }
+                else{
+                  Ext.Msg.alert(gettext("Delete Volume"), gettext("Hm, that doesn't seem right..."));
+                }
+              }
+              else{
+                Ext.Msg.alert(gettext("Delete Volume"), gettext("As you wish."));
+              }
+            }
+          );
+        }
       },{
         text: gettext("Mirror"),
         listeners: {
