@@ -60,7 +60,7 @@ class Service(models.Model):
     target      = generic.GenericForeignKey("target_type", "target_id")
     description = models.CharField(max_length=250)
     command     = models.ForeignKey(Command)
-    arguments   = models.CharField(max_length=500, blank=True)
+    arguments   = models.CharField(max_length=500, blank=True, default='')
 
     nagstate    = NagiosState()
     objects     = HostDependentManager()
