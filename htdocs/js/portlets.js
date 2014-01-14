@@ -39,7 +39,7 @@ Ext.oa.getDefaultPortlets = function(tools){
           storeId: "portlet_lvs_store",
           autoLoad: true,
           sorters: [{property: "fsused", direction: "DESC"}],
-          fields: ['name', 'megs', 'filesystem',  'formatted', 'id', 'usedmegs', 'fs', 'fswarning', 'fscritical', 'snapshot', {
+          fields: ['__unicode__', 'megs', 'filesystem',  'formatted', 'id', 'usedmegs', 'fs', 'fswarning', 'fscritical', 'snapshot', {
             name: 'fsused',
             mapping: 'usedmegs',
             sortType: 'asFloat',
@@ -62,7 +62,7 @@ Ext.oa.getDefaultPortlets = function(tools){
       columns: [{
         header: "Volume",
         width: 200,
-        dataIndex: "name"
+        dataIndex: "__unicode__"
       }, {
         header: "Used",
         width: 150,
