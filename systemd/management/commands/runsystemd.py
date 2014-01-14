@@ -82,8 +82,19 @@ class SystemD(dbus.service.Object):
             self.jobs[sender] = []
 
     def _run_queue(self, sender):
+        logging.info( "Incoming Queue Dump:" )
         for func, scope, args, kwargs in self.jobs[sender]:
-            func(scope, *args, **kwargs)
+            logging.info( "-> %s::%s(%s)", scope.dbus_path, func.__name__,
+                ', '.join([repr(arg) for arg in args]))
+        logging.info( "End of queue dump." )
+        for func, scope, args, kwargs in self.jobs[sender]:
+            logging.info( "Executing deferred call to %s::%s(%s)", scope.dbus_path, func.__name__,
+                ', '.join([repr(arg) for arg in args]))
+            try:
+                func(scope, *args, **kwargs)
+            except:
+                logging.error("Received error:\n" + traceback.format_exc())
+                return
 
     @dbus.service.method(settings.DBUS_IFACE_SYSTEMD, in_signature="", out_signature="", sender_keyword="sender")
     def run_queue(self, sender):
