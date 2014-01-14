@@ -84,7 +84,7 @@ Ext.define('Ext.oa.MainViewManager', {
           tbar.add(obj);
         }
       }),
-      items: [ new Ext.oa.MenuTree({
+      items: [ Ext.create('Ext.oa.MenuTree', {
         region: "west",
         split: true,
         width: 250,
@@ -112,7 +112,7 @@ Ext.define('Ext.oa.MainViewManager', {
               }
               return null;
             };
-            tree.dragZone = new Ext.dd.DragZone(tree.getEl(), {
+            tree.dragZone = Ext.create("Ext.dd.DragZone", tree.getEl(), {
               onBeforeDrag: function(evt){
                 var sourceEl = evt.sourceEl;
                 if( sourceEl ){
@@ -201,7 +201,7 @@ Ext.define('Ext.oa.MainViewManager', {
       currstate = Ext.state.Manager.get("toolbarbuttons");
       if( currstate ){
         for( i = 0; i < currstate.length; i++ ){
-          this.getDockedComponent('mainviewtoolbar').add( new Ext.Button({
+          this.getDockedComponent('mainviewtoolbar').add( Ext.create('Ext.Button', {
             text:  currstate[i].text,
             icon:  currstate[i].icon,
             panel: currstate[i].panel,
@@ -231,7 +231,7 @@ Ext.define('Ext.oa.MainViewManager', {
       this.getDockedComponent('mainviewtoolbar').on( 'remove', tbupdate, this );
     }, this);
 
-    var map = new Ext.util.KeyMap({
+    var map = Ext.create('Ext.util.KeyMap', {
       target: document,
       key: 'f',
       ctrl: true,
@@ -251,7 +251,7 @@ Ext.define('Ext.oa.MainViewManager', {
     var resetf5 = function(){
       f5again = false;
     };
-    var othermap = new Ext.util.KeyMap({
+    var othermap = Ext.create('Ext.util.KeyMap', {
       target: document,
       key: Ext.EventObject.F5,
       fn: function(key, evt){
