@@ -91,7 +91,17 @@ class HostDependentManager(models.Manager):
     hostfilter = "host"
 
     def get_query_set(self):
-        return super(HostDependentManager, self).get_query_set().filter(**{ self.hostfilter: Host.objects.get_current() })
+        objids = []
+        currhost = Host.objects.get_current();
+        for obj in super(HostDependentManager, self).get_query_set().all():
+            curr = obj
+            for field in self.model.objects.hostfilter.split('__'):
+                curr = getattr( curr, field )
+                if isinstance( curr, Host ):
+                    break
+            if curr == currhost:
+                objids.append(obj.id)
+        return super(HostDependentManager, self).get_query_set().filter(id__in=objids)
 
 
 def getHostDependentManagerClass(hostfilter="host"):
