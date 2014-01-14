@@ -756,6 +756,6 @@ Ext.oa.Lvm__LogicalVolume_Module = {
 };
 
 
-window.MainViewModules.push( Ext.oa.Lvm__LogicalVolume_Module );
+// window.MainViewModules.push( Ext.oa.Lvm__LogicalVolume_Module );
 
 // kate: space-indent on; indent-width 2; replace-tabs on;
