@@ -89,6 +89,7 @@ class VolumePool(CapabilitiesAwareModel):
     volumepool_type = models.ForeignKey(ContentType, blank=True, null=True, related_name="%(class)s_volumepool_type_set")
     volumepool      = generic.GenericForeignKey("volumepool_type", "id")
 
+    objects     = getHostDependentManagerClass('volumepool__host')()
     all_objects = models.Manager()
 
     @property
@@ -187,6 +188,7 @@ class BlockVolume(AbstractVolume):
     upper_id    = models.PositiveIntegerField(blank=True, null=True)
     upper       = generic.GenericForeignKey("upper_type", "upper_id")
 
+    objects     = getHostDependentManagerClass('volume__host')()
     all_objects = models.Manager()
 
     @property
@@ -307,6 +309,7 @@ class FileSystemVolume(AbstractVolume):
     fswarning   = models.IntegerField(_("Warning Level (%)"),  default=75 )
     fscritical  = models.IntegerField(_("Critical Level (%)"), default=85 )
 
+    objects     = getHostDependentManagerClass('volume__host')()
     all_objects = models.Manager()
 
     def save(self, *args, **kwargs):
@@ -359,6 +362,7 @@ class FileSystemProvider(FileSystemVolume):
     """ A FileSystem that resides on top of a BlockVolume. """
     base        = models.ForeignKey(BlockVolume)
 
+    objects     = getHostDependentManagerClass('base__volume__host')()
     all_objects = models.Manager()
 
     def setupfs( self ):
