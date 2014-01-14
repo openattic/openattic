@@ -50,6 +50,19 @@ class Zfs(FileSystem):
     supports_dedup = True
     supports_compression = True
 
+    @classmethod
+    def format_blockvolume(cls, volume, owner, fswarning, fscritical):
+        from zfs.models import Zpool, Zfs
+        pool = Zpool(name=volume.name, host=volume.host)
+        pool.full_clean()
+        pool.save()
+        volume.upper = pool
+        volume.save()
+        zvol = Zfs(name="", pool=pool, owner=owner, fswarning=fswarning, fscritical=fscritical)
+        zvol.full_clean()
+        zvol.save()
+        return zvol
+
     class ZfsOptions(object):
         def __init__(self, fs):
             self.fs = fs
@@ -122,8 +135,8 @@ class Zfs(FileSystem):
         return opts
 
     def format(self):
-        self.dbus_object.zfs_format(self.volume.path, self.volume.name,
-            os.path.join(volumes_settings.MOUNT_PREFIX, self.volume.name))
+        self.dbus_object.zpool_format(self.pool.member_set.all()[0].volume.path, self.pool.name,
+            os.path.join(volumes_settings.MOUNT_PREFIX, self.pool.name))
         self.chown()
 
     def mount(self):
@@ -133,11 +146,7 @@ class Zfs(FileSystem):
         self.dbus_object.zfs_unmount(self.volume.name)
 
     def destroy(self):
-        for snap in self.volume.zfssnapshot_set.all():
-            snap.delete()
-        for subv in self.volume.zfssubvolume_set.all():
-            subv.delete()
-        self.dbus_object.zfs_destroy(self.volume.name)
+        self.dbus_object.zpool_destroy(self.pool.name)
 
     def online_resize_available(self, grow):
         return grow
@@ -146,7 +155,7 @@ class Zfs(FileSystem):
         if not grow:
             raise SystemError("ZFS does not support shrinking.")
         else:
-            self.dbus_object.zfs_expand( self.volume.name, self.volume.path )
+            self.dbus_object.zpool_expand( self.volume.name, self.volume.path )
 
     def create_subvolume(self, path):
         self.dbus_object.zfs_create_volume(self.pool.name, path)
@@ -172,10 +181,10 @@ class Zfs(FileSystem):
 
     @property
     def path(self):
-        try:
-            return self.options["mountpoint"]
-        except dbus.DBusException:
-            return None
+        path = os.path.join(volumes_settings.MOUNT_PREFIX, self.pool.name)
+        if self.volume is not self.pool:
+            path = os.path.join(path, self.volume.name)
+        return path
 
     @property
     def options(self):
