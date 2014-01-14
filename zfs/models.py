@@ -64,15 +64,15 @@ class RaidZ(models.Model):
 
 
 class Zfs(FileSystemVolume):
-    name        = models.CharField(max_length=150)
+    name        = models.CharField(max_length=150, blank=True)
     zpool       = models.ForeignKey(Zpool)
     parent_zfs  = models.ForeignKey('self', blank=True, null=True)
-    filesystem  = "zfs"
 
     objects     = getHostDependentManagerClass("zpool__host")()
     all_objects = models.Manager()
 
     def full_clean(self):
+        self.filesystem = "zfs"
         if self.zpool_id is None and self.pool is not None:
             self.zpool = self.pool.volumepool
         return FileSystemVolume.full_clean(self)
@@ -83,11 +83,17 @@ class Zfs(FileSystemVolume):
             self.zpool = self.pool.volumepool
         FileSystemVolume.save(self, *args, **kwargs)
         if install:
-            self.fs.create_subvolume(self.name)
+            if self.name == "":
+                self.fs.format()
+            else:
+                self.fs.create_subvolume(self.name)
 
     def delete(self):
         FileSystemVolume.delete(self)
-        self.fs.destroy_subvolume(self.name)
+        if self.name == "":
+            self.fs.destroy()
+        else:
+            self.fs.destroy_subvolume(self.name)
 
     @property
     def fs(self):
