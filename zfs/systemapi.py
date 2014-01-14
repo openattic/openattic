@@ -53,11 +53,11 @@ class SystemD(BasePlugin):
         invoke(["zfs", "unmount", device])
 
     @deferredmethod(in_signature="s")
-    def zfs_destroy(self, device, sender):
+    def zpool_destroy(self, device, sender):
         invoke(["zpool", "destroy", device])
 
     @deferredmethod(in_signature="sss")
-    def zfs_format(self, devpath, label, path, sender):
+    def zpool_format(self, devpath, label, path, sender):
         invoke(["zpool", "create", "-m", path, label, devpath])
 
     @deferredmethod(in_signature="ss")
@@ -90,6 +90,6 @@ class SystemD(BasePlugin):
         return [line.split("\t") for line in out.split("\n")[:-1]]
 
     @deferredmethod(in_signature="ss")
-    def zfs_expand(self, name, device, sender):
+    def zpool_expand(self, name, device, sender):
         invoke(["zpool", "online", "-e", name, device])
 
