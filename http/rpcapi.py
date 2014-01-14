@@ -23,7 +23,7 @@ class HttpExportHandler(ModelHandler):
     model = Export
 
     def _override_get(self, obj, data):
-        data["url"] = "/volumes/%s" % obj.volume.name
+        data["url"] = "/volumes/%s" % unicode(obj.volume.volume)
         return data
 
 class HttpExportProxy(ProxyModelHandler, HttpExportHandler):

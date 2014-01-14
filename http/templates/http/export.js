@@ -45,12 +45,12 @@ Ext.define('Ext.oa.Http__Export_Panel', {
       title: 'HTTP',
       layout: 'form',
       items: [{
-        xtype: 'volumefield',
+        xtype: 'filesystemvolumefield',
         listeners: {
           select: function(self, record, index){
             var dirfield = Ext.ComponentQuery.query("[name=path]", self.ownerCt)[0];
-            lvm__LogicalVolume.get( record[0].data.id, function( provider, response ){
-              dirfield.setValue( response.result.fs.topleveldir );
+            volumes__FileSystemVolume.get( record[0].data.id, function( result, response ){
+              dirfield.setValue( result.path );
               dirfield.enable();
             } );
           }

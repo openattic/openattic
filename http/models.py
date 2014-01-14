@@ -21,13 +21,13 @@ from http.conf import settings as http_settings
 from django.db import models
 
 from ifconfig.models import getHostDependentManagerClass
-from lvm.models import LogicalVolume
+from volumes.models import FileSystemVolume
 
 class Export(models.Model):
-    volume      = models.ForeignKey(LogicalVolume, related_name="http_export_set")
+    volume      = models.ForeignKey(FileSystemVolume, related_name="http_export_set")
     path        = models.CharField(max_length=255)
 
-    objects     = getHostDependentManagerClass("volume__vg__host")()
+    objects     = getHostDependentManagerClass("volume__pool__volumepool__host")()
     all_objects = models.Manager()
 
     share_type  = "http"
@@ -41,15 +41,19 @@ class Export(models.Model):
             raise ValidationError('This share type can only be used on volumes with a file system.')
 
     def save( self, *args, **kwargs ):
+        print "savin'"
         ret = models.Model.save(self, *args, **kwargs)
-        linkname = join(http_settings.VOLUMESDIR, self.volume.name)
+        linkname = join(http_settings.VOLUMESDIR, unicode(self.volume.volume))
+        print "checkin' dem linkz", linkname
         if not exists( linkname ):
+            print "makin' link"
             symlink( self.path, linkname )
+        print "done"
         return ret
 
     def delete( self ):
         ret = models.Model.delete(self)
-        linkname = join(http_settings.VOLUMESDIR, self.volume.name)
+        linkname = join(http_settings.VOLUMESDIR, unicode(self.volume.volume))
         if islink( linkname ):
             unlink( linkname )
         return ret
