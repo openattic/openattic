@@ -54,6 +54,15 @@ class FileSystem(object):
     mount_in_fstab = True
     virtual = False
 
+    @classmethod
+    def format_blockvolume(cls, volume, owner, fswarning, fscritical):
+        from volumes.models import FileSystemProvider
+        vol = FileSystemProvider(base=volume, owner=owner, filesystem=cls.name,
+                                    fswarning=fswarning, fscritical=fscritical)
+        vol.full_clean()
+        vol.save()
+        return vol
+
     class WrongFS(Exception):
         """ Raised when a filesystem handler detects that the volume is formatted with a different fs. """
         pass

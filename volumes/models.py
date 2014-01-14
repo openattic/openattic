@@ -126,10 +126,8 @@ class VolumePool(CapabilitiesAwareModel):
             # vol = imagedatei in dem ding
             pass
         elif issubclass(VolumeClass, BlockVolume) and bool(filesystem):
-            vol = FileSystemProvider(base=vol, owner=owner, filesystem=filesystem,
-                                     fswarning=fswarning, fscritical=fscritical)
-            vol.full_clean()
-            vol.save()
+            fsclass = filesystems.get_by_name(filesystem)
+            vol = fsclass.format_blockvolume(vol, owner, fswarning, fscritical)
 
         return vol
 
