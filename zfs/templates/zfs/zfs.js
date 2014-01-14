@@ -30,6 +30,7 @@ Ext.define('volumes__zfs_Zfs_model', {
     rootNode.set("icon",     MEDIA_URL + '/icons2/16x16/apps/database.png');
     rootNode.set("host",     toUnicode(record.raw.host));
     rootNode.set("poolname", toUnicode(record.raw.pool));
+    rootNode.set("ownername",    toUnicode(record.raw.owner));
     if( record.data.usedmegs !== null )
       rootNode.set("percent",    (record.data.usedmegs / record.data.megs * 100).toFixed(2));
     else
