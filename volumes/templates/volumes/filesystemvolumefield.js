@@ -39,7 +39,7 @@ Ext.define('Ext.oa.FileSystemVolumeField', {
           extend: 'Ext.data.Model',
           fields: [
             {name: 'id'},
-            {name: 'name'}
+            {name: '__unicode__'}
           ]
         });
         return Ext.create('Ext.data.Store', {
@@ -59,7 +59,7 @@ Ext.define('Ext.oa.FileSystemVolumeField', {
       allowBlank:    false,
       selectOnFocus: true,
       forceSelection: true,
-      displayField:  'name',
+      displayField:  '__unicode__',
       valueField:    'id',
     }));
     this.callParent(arguments);
