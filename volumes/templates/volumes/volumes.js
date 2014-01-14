@@ -229,7 +229,7 @@ Ext.define("Ext.oa.volumes__volumes_add_volume_form", {
         model: "lvm_logicalvolume_volumegroup_store",
         proxy: {
           type: 'direct',
-          directFn: lvm__VolumeGroup.all
+          directFn: volumes__VolumePool.all
         }
       });
     }()),
@@ -248,9 +248,9 @@ Ext.define("Ext.oa.volumes__volumes_add_volume_form", {
         self.ownerCt.volume_free_megs = null;
         var volume_size_label = self.ownerCt.getComponent("volume_size_additional_label");
         volume_size_label.setText(gettext("Querying data..."));
-        lvm__VolumeGroup.get_free_megs(record[0].data.id, function(provider, response){
-          self.ownerCt.volume_free_megs = response.result;
-          volume_size_label.setText(Ext.String.format("Max. {0} MB", response.result));
+        volumes__VolumePool.get_status(record[0].data.id, function(provider, response){
+          self.ownerCt.volume_free_megs = response.result.megs - response.result.usedmegs;
+          volume_size_label.setText(Ext.String.format("Max. {0} MB", self.ownerCt.volume_free_megs));
         });
       }
     }
