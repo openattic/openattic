@@ -25,6 +25,7 @@ Ext.define('volumes__volumes_BlockVolume_model', {
   createNode: function(record){
     // See if there is a specific model for this object type, and if so, use it
     var modelname = Ext.String.format('volumes__{0}_{1}_model', record.raw.volume_type.app, record.raw.volume_type.obj);
+    record.set("id", [record.raw.id, "BlockVolume"].join('__'));
     if( Ext.ClassManager.get(modelname) !== null ){
       var model = Ext.create(modelname);
       return model.createNode(record);
@@ -53,6 +54,7 @@ Ext.define('volumes__volumes_FileSystemVolume_model', {
   createNode: function(record){
     // See if there is a specific model for this object type, and if so, use it
     var modelname = Ext.String.format('volumes__{0}_{1}_model', record.raw.volume_type.app, record.raw.volume_type.obj);
+    record.set("id", [record.raw.id, "FileSystemVolume"].join('__'));
     if( Ext.ClassManager.get(modelname) !== null ){
       var model = Ext.create(modelname);
       return model.createNode(record);
@@ -447,14 +449,14 @@ Ext.define('Ext.oa.volumes__Volume_Panel', {
               if( btn === 'ok' ){
                 if( text == sel.data.name ){
                   if( sel.raw.filesystem ){
-                    volumes__FileSystemVolume.remove(sel.data.id, function(result, response){
+                    volumes__FileSystemVolume.remove(sel.raw.id, function(result, response){
                       if( response.type !== "exception" ){
                         volumePanel.refresh();
                       }
                     });
                   }
                   else{
-                    volumes__BlockVolume.remove(sel.data.id, function(result, response){
+                    volumes__BlockVolume.remove(sel.raw.id, function(result, response){
                       if( response.type !== "exception" ){
                         volumePanel.refresh();
                       }
@@ -479,7 +481,7 @@ Ext.define('Ext.oa.volumes__Volume_Panel', {
               var vol_selection = self.ownerCt.ownerCt.getSelectionModel().getSelection()[0];
               if(vol_selection.$className.indexOf("BlockVolume") != -1){
                 var mirror_win = Ext.oa.getMirrorWindow(Ext.apply(config, {
-                  volume_id:    vol_selection.data.id,
+                  volume_id:    vol_selection.raw.id,
                   volumePanel:  volumePanel
                 }));
                 mirror_win.show();
