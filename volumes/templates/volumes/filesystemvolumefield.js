@@ -60,10 +60,10 @@ Ext.define('Ext.oa.FileSystemVolumeField', {
       selectOnFocus: true,
       forceSelection: true,
       displayField:  '__unicode__',
-      valueField:    'id',
+      valueField:    'id'
     }));
     this.callParent(arguments);
-  },
+  }
 });
 
 

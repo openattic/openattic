@@ -207,7 +207,7 @@ Ext.define('Ext.oa.ShareGridPanel', {
             }
           }
           return cols;
-        }()),
+        }())
       }),
       forceFit: true,
       bbar: {
@@ -318,7 +318,7 @@ Ext.define('Ext.oa.ShareGridPanel', {
         text:  self.texts.edit,
         icon: MEDIA_URL + "/icons2/16x16/actions/edit-redo.png",
         scope: self,
-        handler: Ext.bind(self.editFunction, self, [self]),
+        handler: Ext.bind(self.editFunction, self, [self])
       });
     }
     if( this.allowDelete ){

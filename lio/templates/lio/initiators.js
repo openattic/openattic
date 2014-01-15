@@ -28,7 +28,7 @@ Ext.oa.Lio__HostAttrPlugin = {
         text: gettext("Initiators"),
         id: "initiators_root",
         leaf: false,
-        expanded: false,
+        expanded: false
       },
       proxy: {
         type:       'direct',

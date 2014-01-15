@@ -28,7 +28,7 @@ Ext.oa.Peering__HostAttrPlugin = {
         text: gettext("Peers"),
         id: "peering_root",
         leaf: false,
-        expanded: false,
+        expanded: false
       },
       proxy: {
         type:       'direct',

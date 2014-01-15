@@ -109,7 +109,7 @@ Ext.oa.SysUtils__Service_Module = {
       text: gettext('Service State'),
       leaf: true,
       icon: '{{ MEDIA_URL }}/icons2/22x22/status/network-receive.png',
-      panel: "sysutils__service_panel_inst",
+      panel: "sysutils__service_panel_inst"
     });
     tree.appendToRootNodeById("menu_shutdown", {
       text: gettext('Reboot'),

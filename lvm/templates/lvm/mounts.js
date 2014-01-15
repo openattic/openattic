@@ -43,9 +43,9 @@ Ext.define('Ext.oa.Lvm__Mounts_Panel', {
           type: "direct",
           directFn: lvm__BlockDevices.get_mounts,
           reader: {
-            type:  "array",
+            type:  "array"
           }
-        },
+        }
       },
       defaults: {
         sortable: true

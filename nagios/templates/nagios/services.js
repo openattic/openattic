@@ -337,7 +337,7 @@ Ext.define('Ext.oa.Nagios__Service_Panel', {
                         }
                       });
                       return mytools;
-                    }()),
+                    }())
                   });
                 }
               },

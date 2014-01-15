@@ -15,7 +15,7 @@ Ext.define("Ext.oa.WizPanel", {
     anchor    : '-20px',
     defaults  : {
       border: false,
-      anchor: '-20px',
+      anchor: '-20px'
     }
   },
   pnl_hist: ['lvm__snapcore_wiz_welc'],
@@ -92,7 +92,7 @@ Ext.define("Ext.oa.LVM__Snapcore_TreePanel", {
      containerScroll: true,
      frame          : true,
      store          : treestore,
-     forceFit       : true,
+     forceFit       : true
     }));
 
     this.callParent(arguments);
@@ -251,7 +251,7 @@ Ext.define('Ext.oa.LVM__Snapcore_Model', {
     {type: 'execute_datetime', field: 'time_select-inputEl', message: gettext('The datetime must not be in the past')},
     {type: 'end_datetime',     field: 'enddate_select-inputEl', message: gettext('The enddatetime must not be before the startdatetime')},
     {type: 'end_datetime',     field: 'endtime_select-inputEl', message: gettext('The enddatetime must not be before the startdatetime')}
-  ],
+  ]
 });
 
 var config = {
@@ -265,27 +265,27 @@ var config = {
         children: {
           openattic01: {
             data: {
-              consistency: "mit ram",
+              consistency: "mit ram"
             },
             children: {
               vm01: {
                 data: {
-                  consistency: "mit ram",
+                  consistency: "mit ram"
                 },
                 children: {}
               },
               vm02: {
                 data: {
-                  consistency: "ohne ram",
+                  consistency: "ohne ram"
                 },
                 children: {}
               },
               vm03: {
                 data: {
-                  consistency: "keine konsistenz (aka kein snap)",
+                  consistency: "keine konsistenz (aka kein snap)"
                 },
                 children: {}
-              },
+              }
             }
           },
           openattic02: {
@@ -293,16 +293,16 @@ var config = {
             vms: {
               vm02: {
                 data: {
-                  consistency: "mit ram",
+                  consistency: "mit ram"
                 },
                 children: {}
               },
               vm05: {
                 data: {
-                  consistency: "ohne ram",
+                  consistency: "ohne ram"
                 },
                 children: {}
-              },
+              }
             }
           }
         }
@@ -419,7 +419,7 @@ var snapcore_snapshot_volume_store = Ext.create('Ext.data.ArrayStore', {
   model: "snapcore_secondgrid_store_model",
   proxy: {
     type: 'direct',
-    root: 'data',
+    root: 'data'
   }
 });
 
@@ -432,7 +432,7 @@ Ext.define("Ext.oa.ExtendedGridDropZone", {
       }
     }
     return this.callParent(arguments);
-  },
+  }
 });
 
 Ext.define("Ext.oa.ExtendedGridDnD", {
@@ -464,14 +464,14 @@ var wizform = Ext.create("Ext.oa.WizPanel", {
       xtype       : 'label',
       text        : gettext('Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed ' +
         'diam nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam erat, sed ' +
-        'diam voluptua. At vero eos et accusam et'),
+        'diam voluptua. At vero eos et accusam et')
     },{
       xtype       : 'tbspacer',
-      height      : 10,
+      height      : 10
     },{
       xtype           : 'textfield',
       name            : 'configname',
-      fieldLabel      : gettext('Description'),
+      fieldLabel      : gettext('Description')
     }]
   },{
     id        : 'wiz_snapitems',
@@ -502,7 +502,7 @@ var wizform = Ext.create("Ext.oa.WizPanel", {
         itemId: "emptyConfigForm",
         items : [{
           xtype: "label",
-          text : gettext("No config options available!"),
+          text : gettext("No config options available!")
         }]
       }));
 
@@ -551,7 +551,7 @@ var wizform = Ext.create("Ext.oa.WizPanel", {
         layout    : 'card',
         bodyStyle : 'padding; 5px 5px',
         items     : items,
-        activeItem: 0,
+        activeItem: 0
       };
     }())]
   },{
@@ -578,7 +578,7 @@ var wizform = Ext.create("Ext.oa.WizPanel", {
           ptype: 'extendeddnd',
           dragGroup: group1,
           dropGroup: group2
-        },
+        }
       },
       store       : first_volume_grid_store,
       columns     : [ {text: gettext("Volumes"), dataIndex: "name", flex: 1}],
@@ -596,7 +596,7 @@ var wizform = Ext.create("Ext.oa.WizPanel", {
           ptype     : 'gridviewdragdrop',
           dragGroup : group2,
           dropGroup : group1
-        },
+        }
       },
       store       : snapcore_snapshot_volume_store,
       columns     : [{ text: "Volumes", dataIndex: "name", flex: 1}],
@@ -649,45 +649,45 @@ var wizform = Ext.create("Ext.oa.WizPanel", {
       xtype     : 'label',
       text      : gettext('Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed ' +
         'diam nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam erat, sed ' +
-        'diam voluptua. At vero eos et accusam et'),
+        'diam voluptua. At vero eos et accusam et')
     },{
       xtype     : 'tbspacer',
-      height    : 10,
+      height    : 10
     },{
       xtype           : 'textfield',
       name            : 'prescript',
       fieldLabel      : gettext('Prescript conditions'),
       enableKeyEvents : true,
       listeners : {
-        keypress : nextElement,
+        keypress : nextElement
       }
     },{
       xtype           : 'textfield',
       name            : 'postscript',
-      fieldLabel      : gettext('Postscript conditions'),
+      fieldLabel      : gettext('Postscript conditions')
     }]
   },{
     title : gettext('Scheduling Part 1 / Expiry Date'),
     id    : 'lvm__snapcore_wiz_sched1',
     layout: {
       type  : 'vbox',
-      align : 'stretch',
+      align : 'stretch'
     },
     xtype : 'form',
     items : [{
       xtype     : 'label',
       text      :  gettext('Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed ' +
         'diam nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam erat, sed ' +
-        'diam voluptua. At vero eos et accusam et'),
+        'diam voluptua. At vero eos et accusam et')
     },{
       xtype     : 'tbspacer',
-      height    : 10,
+      height    : 10
     },{
       boxLabel  : gettext('Snapshots without retention time'),
       name      : 'retentiontime',
       inputValue: 'retention_time_noretention',
       xtype     : 'radio',
-      checked   : true,
+      checked   : true
     },{
       boxLabel  : gettext('Set retention time'),
       name      : 'retentiontime',
@@ -710,7 +710,7 @@ var wizform = Ext.create("Ext.oa.WizPanel", {
     },{
       xtype : 'panel',
       layout: {
-        type  : 'hbox',
+        type  : 'hbox'
       },
       defaults: {
         style: 'margin-left: 17px;'
@@ -734,7 +734,7 @@ var wizform = Ext.create("Ext.oa.WizPanel", {
             ['60', gettext('Minute(s)')],
             ['3600', gettext('Hour(s)')],
             ['86400', gettext('Day(s)')],
-            ['604800', gettext('Week(s)')],
+            ['604800', gettext('Week(s)')]
         ],
         typeAhead:  true,
         triggerAction: 'all',
@@ -743,14 +743,14 @@ var wizform = Ext.create("Ext.oa.WizPanel", {
             self.setValue('1');
           }
         }
-      }],
+      }]
     }]
   },{
     title : gettext('Scheduling Part 2 / Options'),
     id    : 'lvm__snapcore_wiz_sched2',
     layout: {
       type  : 'vbox',
-      align : 'stretch',
+      align : 'stretch'
     },
     noAutoNext: true,
     xtype     : 'form',
@@ -787,7 +787,7 @@ var wizform = Ext.create("Ext.oa.WizPanel", {
         type  : 'hbox'
       },
       defaults: {
-        style : 'margin-left: 17px;',
+        style : 'margin-left: 17px;'
       },
       items   : [{
         xtype       : 'datefield',
@@ -841,15 +841,15 @@ var wizform = Ext.create("Ext.oa.WizPanel", {
     },{
       xtype : 'panel',
       layout: {
-        type  : 'form',
+        type  : 'form'
       },
       items : [{
         xtype : 'panel',
         layout: {
-          type  : 'hbox',
+          type  : 'hbox'
         },
         defaults: {
-          style: 'margin-left: 17px;',
+          style: 'margin-left: 17px;'
         },
         border   : false,
         items   : [{
@@ -865,17 +865,17 @@ var wizform = Ext.create("Ext.oa.WizPanel", {
           value       : new Date(),
           format      : "H:i",
           fieldLabel  : gettext('Starttime')
-        }],
+        }]
       },{
         xtype : 'tbspacer',
-        height: 2,
+        height: 2
       },{
         xtype : 'panel',
         layout: {
-          type  : 'hbox',
+          type  : 'hbox'
         },
         defaults: {
-          style:  'margin-left: 17px;',
+          style:  'margin-left: 17px;'
         },
         border  : false,
         items   : [{
@@ -883,7 +883,7 @@ var wizform = Ext.create("Ext.oa.WizPanel", {
           id          : 'enddate_select',
           disabled    : true,
           value       : Ext.Date.add(new Date(), Ext.Date.DAY, +7),
-          fieldLabel  : gettext('Enddate'),
+          fieldLabel  : gettext('Enddate')
         },{
           xtype       : 'timefield',
           id          : 'endtime_select',
@@ -891,7 +891,7 @@ var wizform = Ext.create("Ext.oa.WizPanel", {
           value       : new Date(),
           fieldLabel  : gettext('Enddtime'),
           format      : "H:i"
-        }],
+        }]
       },{
         xtype       : 'checkbox',
         id          : 'no_enddatetime',
@@ -919,7 +919,7 @@ var wizform = Ext.create("Ext.oa.WizPanel", {
         disabled    : true,
         fieldLabel  : gettext('Is active'),
         checked     : true
-      }],
+      }]
     }],
     buttons: [{
       text    : gettext('Next'),
@@ -948,10 +948,10 @@ var wizform = Ext.create("Ext.oa.WizPanel", {
       xtype : 'label',
       text  : gettext('Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed ' +
                 'diam nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam erat, sed ' +
-                'diam voluptua. At vero eos et accusam et'),
+                'diam voluptua. At vero eos et accusam et')
     },{
       xtype : 'tbspacer',
-      height: 10,
+      height: 10
     },{
       xtype         : 'combo',
       name          : 'minute',
@@ -967,7 +967,7 @@ var wizform = Ext.create("Ext.oa.WizPanel", {
       triggerAction : 'all',
       deferEmptyText: false,
       emptyText     : gettext('Select...'),
-      selectOnFocus : true,
+      selectOnFocus : true
     },{
       xtype   : 'fieldset',
       title   : gettext('Hour'),
@@ -978,7 +978,7 @@ var wizform = Ext.create("Ext.oa.WizPanel", {
         columnWidth : .5,
         layout      : 'form',
         defaults    : {
-          xtype: 'checkbox',
+          xtype: 'checkbox'
         }
       },
       layout: 'column',
@@ -988,16 +988,16 @@ var wizform = Ext.create("Ext.oa.WizPanel", {
           for(var i = 0; i < 12; i++)
             it.push({id: 'h_' + i, fieldLabel: i.toString(), checked: (i%3 == 0) });
           return it;
-        }()),
+        }())
       },{
         items: (function(){
           var it = [];
           for(var i = 12; i < 24; i++)
             it.push({id: 'h_' + i, fieldLabel: i.toString(), checked: (i%3 == 0) });
           return it;
-        }()),
+        }())
       }]
-    }],
+    }]
   },{
     title : gettext('Scheduling Part 3 / Timemanagement Part 3'),
     id    : 'lvm__snapcore_wiz_sched33',
@@ -1006,10 +1006,10 @@ var wizform = Ext.create("Ext.oa.WizPanel", {
       xtype       : 'label',
       text        : gettext('Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed ' +
         'diam nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam erat, sed ' +
-        'diam voluptua. At vero eos et accusam et'),
+        'diam voluptua. At vero eos et accusam et')
     },{
       xtype : 'tbspacer',
-      height: 10,
+      height: 10
     },{
       xtype     : 'combo',
       name      : 'day_of_month',
@@ -1025,7 +1025,7 @@ var wizform = Ext.create("Ext.oa.WizPanel", {
       triggerAction : 'all',
       deferEmptyText: false,
       emptyText     : gettext('Select...'),
-      selectOnFocus : true,
+      selectOnFocus : true
     },{
       xtype   : 'fieldset',
       title   : gettext('Day of week'),
@@ -1037,7 +1037,7 @@ var wizform = Ext.create("Ext.oa.WizPanel", {
         layout      : 'form',
         defaults    : {
           xtype   : 'checkbox',
-          checked : true,
+          checked : true
         }
       },
       layout  : 'column',
@@ -1052,14 +1052,14 @@ var wizform = Ext.create("Ext.oa.WizPanel", {
           id: 'dow_4', fieldLabel: gettext('Thursday')
         },{
           id: 'dow_5', fieldLabel: gettext('Friday')
-        }],
+        }]
       },{
         items: [{
           id: 'dow_6', fieldLabel: gettext('Saturday')
         },{
           id: 'dow_0', fieldLabel: gettext('Sunday')
         }]
-      }],
+      }]
     },{
       xtype   : 'fieldset',
       ref     : '../moy_fieldset',
@@ -1070,7 +1070,7 @@ var wizform = Ext.create("Ext.oa.WizPanel", {
         layout      : 'form',
         defaults    : {
           xtype   : 'checkbox',
-          checked : true,
+          checked : true
         }
       },
       title : gettext('Month'),
@@ -1103,8 +1103,8 @@ var wizform = Ext.create("Ext.oa.WizPanel", {
         },{
           id: 'moy_12', fieldLabel: gettext('December')
         }]
-      }],
-    }],
+      }]
+    }]
   },{
     title       : gettext('Finish'),
     id          : 'lvm__snapcore_wiz_close',
@@ -1146,10 +1146,10 @@ var wizform = Ext.create("Ext.oa.WizPanel", {
           lvm__SnapshotConf.process_config(config)
           config_store.reload();
           wiz.hide();
-        },
+        }
       }
-    }],
-  }],
+    }]
+  }]
 });
 var wiz = Ext.create("Ext.window.Window", {
   title       : gettext('Configuration Assistant'),
@@ -1158,7 +1158,7 @@ var wiz = Ext.create("Ext.window.Window", {
   width       : 800,
   height      : 500,
   anchor      : '-20px',
-  closeAction : 'hide',
+  closeAction : 'hide'
 });
 
 Ext.define("Ext.oa.LVM__Snapcore_Panel", {
@@ -1291,10 +1291,10 @@ Ext.define("Ext.oa.LVM__Snapcore_Panel", {
           viewConfig: {forceFit: true},
           columns: [{
             header: gettext("Snapshot"),
-            dataIndex: 'name',
+            dataIndex: 'name'
           },{
             header: gettext("Created"),
-            dataIndex: 'createdate',
+            dataIndex: 'createdate'
           }],
           store: lvm__snapcore_snap_store
         }]
@@ -1333,7 +1333,7 @@ var lvm__snapcore_snap_store = Ext.create('Ext.data.Store', {
     pageParam:  undefined,
     startParam: undefined,
     limitParam: undefined
-  },
+  }
 });
 
 Ext.oa.VMSnapApp__Snap_Module = {
@@ -1343,7 +1343,7 @@ Ext.oa.VMSnapApp__Snap_Module = {
       text: gettext('SnapApps'),
       leaf: true,
       icon: MEDIA_URL + '/icons2/22x22/places/network_local.png',
-      panel: "lvm__snapcore_panel_inst",
+      panel: "lvm__snapcore_panel_inst"
     });
   }
 };

@@ -59,7 +59,7 @@ Ext.define('Ext.oa.Http__Export_Panel', {
         xtype: 'textfield',
         fieldLabel: gettext('Directory'),
         name: "path",
-        disabled: true,
+        disabled: true
       }]
     }]
   }

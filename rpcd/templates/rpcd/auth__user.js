@@ -43,7 +43,7 @@ Ext.define('Ext.oa.Auth__User_Panel', {
                 fields: [
                   {name: 'name'}
                 ],
-                extraParams: { owner__id: sel.data.id },
+                extraParams: { owner__id: sel.data.id }
               });
               return Ext.create('Ext.data.Store', {
                 model: "rpcd_volumes_of_user_store",

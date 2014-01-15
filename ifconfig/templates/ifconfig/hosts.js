@@ -150,7 +150,7 @@ Ext.define('Ext.oa.Ifconfig__Host_Groups_Panel', {
           itemclick: function( self, record, item, index, evt, evtOpts ){
             Ext.getCmp("ifconfig__host_attributes_panel_inst").setHost(record.data);
           }
-        },
+        }
       }, {
         region: "east",
         width: (Ext.core.Element.getViewWidth() - 200) / 2,

@@ -68,10 +68,10 @@ Ext.define('Ext.oa.VolumeField', {
       selectOnFocus: true,
       forceSelection: true,
       displayField:  'name',
-      valueField:    'id',
+      valueField:    'id'
     }));
     this.callParent(arguments);
-  },
+  }
 });
 
 

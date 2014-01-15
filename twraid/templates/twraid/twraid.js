@@ -20,7 +20,7 @@ Ext.define('volumes__twraid_Unit_model', {
   ],
   fields: [
     'id', 'name', 'type', 'megs', 'percent', 'status', 'host', 'path',
-    "index", "verify", "rebuild", "rdcache", "wrcache", "unittype", "autoverify", "serial", "chunksize",
+    "index", "verify", "rebuild", "rdcache", "wrcache", "unittype", "autoverify", "serial", "chunksize"
   ],
   createNode: function(record){
     var rootNode;

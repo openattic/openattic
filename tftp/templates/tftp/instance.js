@@ -63,7 +63,7 @@ Ext.define('Ext.oa.Tftp__Instance_Panel', {
           xtype: 'textfield',
           fieldLabel: gettext('Directory'),
           name: "path",
-          disabled: true,
+          disabled: true
         }, gettext('If you wish to share only a subpath of the volume, enter the path here.') ),
         {
           xtype:      'combo',

@@ -57,7 +57,7 @@ Ext.define('Ext.oa.Lio__Portal_Panel', {
           proxy: {
             type: "direct",
             directFn: ifconfig__IPAddress.ids
-          },
+          }
         };
       }()),
       typeAhead:     true,

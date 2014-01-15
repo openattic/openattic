@@ -196,7 +196,7 @@ Ext.define('Ext.oa.drbd__device_mirror_panel', {
           paramOrder: ["host_id", "min_megs"]
         }
       });
-    }()),
+    }())
   },{
     xtype: 'fieldset',
     title: gettext('Advanced Settings'),

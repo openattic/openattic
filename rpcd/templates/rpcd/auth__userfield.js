@@ -39,7 +39,7 @@ Ext.define('Ext.oa.Auth__UserField', {
             type: 'direct',
             directFn: auth__User.all_values,
             paramOrder: ["fields"],
-            extraParams: { fields: ["username", "id"] },
+            extraParams: { fields: ["username", "id"] }
           },
           sorters: [{property: "username"}]
         });

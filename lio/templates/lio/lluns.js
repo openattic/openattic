@@ -94,7 +94,7 @@ Ext.define('Ext.oa.Lio__LogicalLun_Panel', {
                       Ext.getCmp("lio_lun_edit_new_iscsi_target").setDisabled(false);
                     }
                   }
-                },
+                }
               },{
                 fieldLabel: gettext('Protokoll'),
                 name: "lio_edit_lun_protokoll",
@@ -122,7 +122,7 @@ Ext.define('Ext.oa.Lio__LogicalLun_Panel', {
                       Ext.getCmp("lio_lun_edit_new_iscsi_target").setDisabled(false);
                     }
                   }
-                },
+                }
               },{
                 xtype: 'grid', // Grid zur Anzeige der Adapter - WWN und iSCSI Target im OverviewTab
                 title: 'Adapters',
@@ -239,7 +239,7 @@ Ext.define('Ext.oa.Lio__LogicalLun_Panel', {
                 dataIndex: "lio_edit_map"
               },{
                 header: gettext("Name (Host/Group)"),
-                dataIndex: "name",
+                dataIndex: "name"
               },{
                 header: gettext("LUN ID"),
                 dataIndex: "lio_edit_lun_id"
@@ -274,7 +274,7 @@ Ext.define('Ext.oa.Lio__LogicalLun_Panel', {
             text: 'Save',
             icon: MEDIA_URL + "/oxygen/16x16/actions/dialog-ok-apply.png",
             ref: 'lio_lun_edit_save',
-            id: 'lio_lun_edit_save',
+            id: 'lio_lun_edit_save'
           },{
             text: 'Cancel',
             icon: MEDIA_URL + "/icons2/16x16/actions/gtk-cancel.png",
@@ -368,19 +368,19 @@ Ext.define('Ext.oa.Lio__LogicalLun_Panel', {
               xtype: "label",
               name:  "lun_name",
               id: "lun_name",
-              fieldLabel: gettext('Name'),
+              fieldLabel: gettext('Name')
             }, {
               xtype: "label",
               name:  "lun_path",
-              fieldLabel: gettext('Path'),
+              fieldLabel: gettext('Path')
             }, {
               xtype: "label",
               name:  "lun_size",
-              fieldLabel: gettext('Size'),
+              fieldLabel: gettext('Size')
             }, {
               xtype: "label",
               name:  "lun_status",
-              fieldLabel: gettext('Status'),
+              fieldLabel: gettext('Status')
             }, {
               xtype: "label",
               name:  "lun_descpription",

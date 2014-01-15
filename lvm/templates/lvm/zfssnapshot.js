@@ -268,7 +268,7 @@ Ext.define('Ext.oa.Zfs__Snapshot_Panel', {
                 startParam: undefined,
                 limitParam: undefined,
                 pageParam:  undefined,
-                directFn: lvm__ZfsSubvolume.all,
+                directFn: lvm__ZfsSubvolume.all
               }
             });
           }()),
@@ -294,7 +294,7 @@ Ext.define('Ext.oa.Zfs__Snapshot_Panel', {
               Ext.ComponentQuery.query("[region=south]", zfsSnapPanel)[0].store.load({ params: {"subvolume__id": record.data.id}});
             }
           }
-        }],
+        }]
       }, {
         xtype: "grid",
         region: "south",

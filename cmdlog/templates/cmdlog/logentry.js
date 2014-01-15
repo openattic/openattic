@@ -20,7 +20,7 @@ Ext.define('Ext.oa.Cmdlog__LogEntry_Panel', {
     var fields = ['id', 'command', 'exitcode', 'endtime', 'user'];
     Ext.define('cmdlog_logentry_store_model', {
       extend: 'Ext.data.Model',
-      fields: fields,
+      fields: fields
     });
     var store = Ext.create('Ext.data.Store', {
       model: "cmdlog_logentry_store_model",
@@ -43,7 +43,7 @@ Ext.define('Ext.oa.Cmdlog__LogEntry_Panel', {
           root:           'objects',
           totalProperty:  'total',
           fields:         fields
-        }),
+        })
       }
     });
     Ext.define('cmdlog_model', {

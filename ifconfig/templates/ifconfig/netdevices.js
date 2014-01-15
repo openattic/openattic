@@ -56,7 +56,7 @@ Ext.define('Ext.oa.Ifconfig__NetDevice_TreePanel', {
           text:     'root',
           expanded: true,
           children: [],
-          id: "network_root_node",
+          id: "network_root_node"
         }
       })
     }));

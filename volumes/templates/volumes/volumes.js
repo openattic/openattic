@@ -106,7 +106,7 @@ Ext.oa.getAdditSettingsWindow = function(config){
     layout: "fit",
     items : [{
       xtype: "label",
-      text : gettext("No config options available!"),
+      text : gettext("No config options available!")
     }]
   });
   cards.push(emptySettingForm);
@@ -391,7 +391,7 @@ Ext.oa.getAddVolumeWindow = function(config){
     title: gettext("Add Volume"),
     width:  500,
     layout: "fit",
-    items: add_volume_form,
+    items: add_volume_form
   });
 };
 
@@ -520,7 +520,7 @@ Ext.define('Ext.oa.volumes__Volume_Panel', {
             type: ' ',
             megs: null,
             percent: null,
-            status: null,
+            status: null
           },
           sorters: [{property: "name"}]
         });
@@ -536,7 +536,7 @@ Ext.define('Ext.oa.volumes__Volume_Panel', {
             type: ' ',
             megs: null,
             percent: null,
-            status: null,
+            status: null
           },
           sorters: [{property: "name"}]
         });

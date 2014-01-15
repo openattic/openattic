@@ -63,7 +63,7 @@ Ext.define('Ext.oa.Nfs__Export_Panel', {
           allowBlank: false,
           name: "address",
           ref: 'addrfield',
-          id: 'addrfield',
+          id: 'addrfield'
         }, {
           xtype: 'textfield',
           fieldLabel: gettext('Options'),

@@ -89,7 +89,7 @@ Ext.define('Ext.oa.Samba__Share_Panel', {
         xtype: 'checkbox',
         fieldLabel: gettext('Guest OK'),
         allowBlank: false,
-        name: "guest_ok",
+        name: "guest_ok"
       }, tipify({
         xtype: 'textfield',
         fieldLabel: gettext('Dir Mode'),
@@ -100,7 +100,7 @@ Ext.define('Ext.oa.Samba__Share_Panel', {
         xtype: 'textfield',
         fieldLabel: gettext('Comment'),
         allowBlank: true,
-        name: "comment",
+        name: "comment"
       }, tipify({
         xtype: 'textfield',
         fieldLabel: gettext('Create Mode'),
