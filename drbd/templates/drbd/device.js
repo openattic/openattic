@@ -32,7 +32,7 @@ Ext.define('volumes__drbd_Connection_model', {
           directFn: drbd__Endpoint.filter,
           extraParams: {
             kwds: {
-              connection__id: record.get('id')
+              connection__id: record.raw.id
             }
           },
           paramOrder: ['kwds'],
