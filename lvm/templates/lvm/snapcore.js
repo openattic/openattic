@@ -1301,7 +1301,7 @@ Ext.define("Ext.oa.LVM__Snapcore_Panel", {
       }]
     }));
     this.callParent(arguments);
-  },
+  }
   /*  refresh: function(){
     var tree = Ext.getCmp('lvm__snapcore_treepanel');
     tree.getLoader().load(tree.root);
