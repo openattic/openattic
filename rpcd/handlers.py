@@ -336,12 +336,16 @@ class ModelHandler(BaseHandler):
 
     def _set_m2m(self, obj, field, data):
         if field in data:
+            if not isinstance(data[field], (tuple, list)):
+                raise TypeError("tuple or list expected, got %s" % type(data[field]))
             setattr(obj, field, [
                 ModelHandler._get_object_by_id_dict(idobj) for idobj in data[field]
             ])
         for action in ("remove", "add"):
             actfield = "%s__%s" % (field, action)
             if actfield in data:
+                if not isinstance(data[actfield], (tuple, list)):
+                    raise TypeError("tuple or list expected, got %s" % type(data[actfield]))
                 m2m = getattr(obj, field)
                 for idobj in data[actfield]:
                     obj = ModelHandler._get_object_by_id_dict(idobj)
