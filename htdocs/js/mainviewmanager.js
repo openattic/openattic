@@ -45,7 +45,8 @@ Ext.define('Ext.oa.MainViewManager', {
           Ext.create('Ext.Component', {
             autoEl: {
               tag: "img",
-              src: MEDIA_URL + '/openattic.png'
+              src: MEDIA_URL + '/openattic.png',
+              width: 140
             },
             region: "north",
             cls: "atticlogo",
