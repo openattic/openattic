@@ -45,6 +45,12 @@
           return '<img src="{{ MEDIA_URL }}/oxygen/16x16/actions/dialog-ok-apply.png" title="yes" />';
         return '<img src="{{ MEDIA_URL }}/oxygen/16x16/actions/dialog-cancel.png" title="no" />';
       };
+      // IE fix
+      if( typeof String.prototype.endsWith === "undefined" ){
+        String.prototype.endsWith = function(suffix) {
+          return this.indexOf(suffix, this.length - suffix.length) !== -1;
+        };
+      }
       function toUnicode(val){
         if(val){
           return val.__unicode__;
