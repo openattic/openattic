@@ -22,7 +22,7 @@ import os.path
 import subprocess
 import traceback
 
-from xmlrpclib    import ServerProxy, DateTime
+from xmlrpclib    import ServerProxy, DateTime, Fault
 from ConfigParser import ConfigParser
 from optparse     import OptionParser
 from datetime     import datetime
@@ -343,11 +343,12 @@ def call(sectname, cmd, args):
         formatted = formatters[options.outformat](result)
         print formatted.encode(options.encoding)
     except Exception, e:
-        print >> sys.stderr, "Error processing the command:", unicode(type(e)), unicode(e)
-        if options.verbose:
+        if isinstance(e, Fault):
+            print >> sys.stderr, "Error processing the command:"
+            print e.faultString
+        else:
+            print >> sys.stderr, "Error processing the command:", unicode(type(e)), unicode(e)
             traceback.print_exc()
-        elif sys.stdout.isatty():
-            print "If you want to see a traceback here, enable verbose mode (oacli -v or in the shell section)."
 
 
 def call_argstr(sectname, cmd, argstr):
