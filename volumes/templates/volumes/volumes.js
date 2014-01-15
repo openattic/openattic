@@ -409,6 +409,7 @@ Ext.define('Ext.oa.volumes__Volume_Panel', {
       rootVisible: false,
       buttons: [{
         text: "",
+        minWidth: 16,
         icon: MEDIA_URL + '/icons2/16x16/actions/reload.png',
         tooltip: gettext('Reload'),
         handler: function(self){

@@ -293,6 +293,7 @@ Ext.define('Ext.oa.Nagios__Service_Panel', {
       border: false,
       buttons: [ {
         text: "",
+        minWidth: 16,
         icon: MEDIA_URL + "/icons2/16x16/actions/reload.png",
         tooltip: gettext('Reload'),
         handler: function(self){

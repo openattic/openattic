@@ -26,7 +26,8 @@ Ext.define('Ext.oa.Ipmi__Sensors_Panel', {
       buttons: [{
         text: "",
         icon: MEDIA_URL + "/icons2/16x16/actions/reload.png",
-        tooltip: gettext('load'),
+        minWidth: 16,
+        tooltip: gettext('Reload'),
         handler: function(self){
           sensorGrid.store.load();
         }
