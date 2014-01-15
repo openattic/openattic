@@ -123,7 +123,7 @@
 
         window.MainViewModules.unshift( Ext.create("Ext.oa.Portal") );
 
-        mainpanel = new Ext.oa.MainViewManager({
+        mainpanel = Ext.create('Ext.oa.MainViewManager', {
           renderTo: document.body,
           toolbarMessages: {
             title:   "{% trans 'Delete Button?' %}",

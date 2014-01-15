@@ -34,7 +34,7 @@
           disabled_account:    "{% trans 'Your account has been deactivated. Please consult an administrator.' %}",
           undefined:           "{% trans 'Did you fill in all the fields?' %}"
         };
-        login_form = new Ext.FormPanel({
+        login_form = Ext.create('Ext.FormPanel', {
           autoScroll: true,
           frame:      true,
           renderTo:   'x-login-form',
