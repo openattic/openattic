@@ -20,6 +20,7 @@ import logging
 import inspect
 import SocketServer
 import socket
+import xmlrpclib
 
 from SimpleXMLRPCServer import list_public_methods, SimpleXMLRPCServer
 from SimpleXMLRPCServer import SimpleXMLRPCRequestHandler, SimpleXMLRPCDispatcher
@@ -209,7 +210,9 @@ class RPCd(object):
             return self._resolve( method, user )( *params )
         except Exception:
             logging.error( traceback.format_exc() )
-            raise
+            # By default, the dispatcher doesn't send traceback information, which makes debugging
+            # really hard, so we create the Fault instance ourselves.
+            raise xmlrpclib.Fault(1, traceback.format_exc())
 
     def _methodHelp(self, method):
         doc = self._resolve(method, None).__doc__
