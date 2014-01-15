@@ -30,6 +30,7 @@ Ext.define('Ext.oa.Lvm__Mounts_Panel', {
       viewConfig: { forceFit: true },
       buttons: [{
         text: "",
+        minWidth: 16,
         icon: MEDIA_URL + "/icons2/16x16/actions/reload.png",
         tooltip: gettext('Reload'),
         handler: function(self){

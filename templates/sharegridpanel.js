@@ -285,6 +285,7 @@ Ext.define('Ext.oa.ShareGridPanel', {
       icon: MEDIA_URL + "/icons2/16x16/actions/reload.png",
       tooltip: self.texts.reload,
       scope: self,
+      minWidth: 16,
       handler: function(){
         if( typeof self.refresh !== "undefined" ){
           self.refresh();
