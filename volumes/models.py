@@ -370,6 +370,7 @@ class FileSystemProvider(FileSystemVolume):
 
     def save(self, *args, **kwargs):
         install = (self.id is None)
+        self.pool = self.base.pool
         FileSystemVolume.save(self, *args, **kwargs)
         self.base.upper = self
         self.base.save()
