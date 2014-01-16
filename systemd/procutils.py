@@ -16,13 +16,14 @@
 
 import os
 import pwd
+import errno
 import logging
 import threading
 import subprocess
 
 from time import sleep
 from datetime import datetime
-from select import select
+from select import select, error
 
 from cmdlog.models import LogEntry
 from ifconfig.models import Host
@@ -66,21 +67,29 @@ def invoke(args, close_fds=True, return_out_err=False, log=True, stdin=None, fai
     process_alive = True
     last_data_has_been_read = False
     while process_alive or not last_data_has_been_read:
-        rdy_read, rdy_write, rdy_other = select([proc.stdout, proc.stderr], [], [], 0.1)
-        if proc.stdout in rdy_read:
-            data = proc.stdout.read().decode("UTF-8")
-            procout += data
-            out.extend([ "O " + line for line in data.split("\n") if line ])
-        if proc.stderr in rdy_read:
-            data = proc.stderr.read().decode("UTF-8")
-            procerr += data
-            out.extend([ "E " + line for line in data.split("\n") if line ])
-        if proc.poll() is not None:
-            if process_alive:
-                proc.wait()
-                process_alive = False
-            else:
-                last_data_has_been_read = True
+        try:
+            rdy_read, rdy_write, rdy_other = select([proc.stdout, proc.stderr], [], [], 0.1)
+            if proc.stdout in rdy_read:
+                data = proc.stdout.read().decode("UTF-8")
+                procout += data
+                out.extend([ "O " + line for line in data.split("\n") if line ])
+            if proc.stderr in rdy_read:
+                data = proc.stderr.read().decode("UTF-8")
+                procerr += data
+                out.extend([ "E " + line for line in data.split("\n") if line ])
+            if proc.poll() is not None:
+                if process_alive:
+                    proc.wait()
+                    process_alive = False
+                else:
+                    last_data_has_been_read = True
+        except error, err:
+            # Catch and ignore Interrupted System Call exceptions.
+            # Those can occur when a background queue is terminating while we're select()ing
+            # or read()ing or wait()ing, in order to give our SIGCHLD handler a chance to run.
+            # This doesn't really have to concern us here, carry on.
+            if err.args[0] != errno.EINTR:
+                raise
 
     proc.stdout.close()
     proc.stderr.close()

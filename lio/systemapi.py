@@ -35,7 +35,7 @@ class SystemD(LockingPlugin):
     def storage_object_create(self, id):
         mdl_so = models.StorageObject.objects.get(id=id)
         lio_bs = mdl_so.backstore.lio_object
-        storage = lio_bs.storage_object(mdl_so.volume.name, mdl_so.volume.path, gen_wwn=False)
+        storage = lio_bs.storage_object(mdl_so.volume.volume.name, mdl_so.volume.volume.path, gen_wwn=False)
         storage.wwn = mdl_so.wwn
 
     @method(in_signature="i", out_signature="")
@@ -54,7 +54,10 @@ class SystemD(LockingPlugin):
 
     @method(in_signature="i", out_signature="")
     def target_delete(self, id):
-        models.Target.objects.get(id=id).lio_object.delete()
+        try:
+            models.Target.objects.get(id=id).lio_object.delete()
+        except KeyError:
+            pass
 
     @method(in_signature="i", out_signature="")
     def tpg_create(self, id):
@@ -75,14 +78,17 @@ class SystemD(LockingPlugin):
 
     @method(in_signature="i", out_signature="")
     def tpg_delete(self, id):
-        models.TPG.objects.get(id=id).lio_object.delete()
+        try:
+            models.TPG.objects.get(id=id).lio_object.delete()
+        except KeyError:
+            pass
 
     @method(in_signature="i", out_signature="")
     def lun_create(self, id):
         mdl_lun = models.LUN.objects.get(id=id)
         lio_tpg = mdl_lun.tpg.lio_object
         lio_lun = lio_tpg.lun(mdl_lun.lun_id, mdl_lun.storageobj.lio_object,
-                        "%s at %s" % (mdl_lun.storageobj.volume.name, Host.objects.get_current().name))
+                        "%s at %s" % (mdl_lun.storageobj.volume.volume.name, Host.objects.get_current().name))
 
     @method(in_signature="ii", out_signature="")
     def lun_map(self, id, acl_id):
@@ -100,7 +106,10 @@ class SystemD(LockingPlugin):
 
     @method(in_signature="i", out_signature="")
     def lun_delete(self, id):
-        models.LUN.objects.get(id=id).lio_object.delete()
+        try:
+            models.LUN.objects.get(id=id).lio_object.delete()
+        except KeyError:
+            pass
 
     @method(in_signature="ii", out_signature="")
     def portal_create(self, id, tpg_id):
@@ -126,7 +135,10 @@ class SystemD(LockingPlugin):
 
     @method(in_signature="i", out_signature="")
     def acl_delete(self, id):
-        models.ACL.objects.get(id=id).lio_object.delete()
+        try:
+            models.ACL.objects.get(id=id).lio_object.delete()
+        except KeyError:
+            pass
 
     @method(in_signature="", out_signature="")
     def saveconfig(self):

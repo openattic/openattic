@@ -24,7 +24,7 @@ from django.utils.translation import ugettext_lazy as _
 
 from systemd import get_dbus_object
 from ifconfig.models import HostGroup, Host, IPAddress, HostDependentManager, getHostDependentManagerClass
-from lvm.models      import LogicalVolume
+from volumes.models  import BlockVolume
 
 # This import is not actually needed for the name, but since Django only imports
 # the models, we need to make sure the filesystemproxy module has been loaded by Python.
@@ -115,7 +115,7 @@ models.signals.pre_delete.connect(__backstore_pre_delete, sender=Backstore)
 
 class StorageObject(models.Model):
     backstore   = models.ForeignKey(Backstore)
-    volume      = models.ForeignKey(LogicalVolume)
+    volume      = models.ForeignKey(BlockVolume)
     wwn         = models.CharField(max_length=250, blank=True)
 
     objects     = getHostDependentManagerClass("backstore__host")()
@@ -133,7 +133,7 @@ class StorageObject(models.Model):
         raise KeyError("Storage Object not found")
 
     def __unicode__(self):
-        return "/backstores/%s/%s" % (self.backstore.type, self.volume.name)
+        return "/backstores/%s/%s" % (self.backstore.type, unicode(self.volume.volume))
 
     def save(self, *args, **kwargs):
         install = (self.id is None)
@@ -300,12 +300,12 @@ class LUN(models.Model):
     def lio_object(self):
         lio_tpg = self.tpg.lio_object
         for lio_lun in lio_tpg.luns:
-            if realpath(lio_lun.storage_object.udev_path) == self.storageobj.volume.dmdevice:
+            if realpath(lio_lun.storage_object.udev_path) == realpath(self.storageobj.volume.volume.path):
                 return lio_lun
         raise KeyError("LUN not found")
 
     def __unicode__(self):
-        return "%s/luns/lun%d (%s)" % (self.tpg, self.lun_id, self.storageobj.volume.name)
+        return "%s/luns/lun%d (%s)" % (self.tpg, self.lun_id, self.storageobj.volume.volume.name)
 
     def save(self, *args, **kwargs):
         install = (self.id is None)
@@ -380,16 +380,26 @@ models.signals.m2m_changed.connect(__acl_mappedluns_changed, sender=ACL.mapped_l
 
 class LogicalLUN(models.Model):
     """ Mainmächtiges masterchief ultramodel of doom """
-    volume      = models.ForeignKey(LogicalVolume, unique=True)
-    hostgroups  = models.ManyToManyField(HostGroup)
-    hosts       = models.ManyToManyField(Host)
+    volume      = models.ForeignKey(BlockVolume, unique=True)
     targets     = models.ManyToManyField(Target)
 
-    objects     = getHostDependentManagerClass("volume__vg__host")()
+    objects     = getHostDependentManagerClass("volume__pool__volumepool__host")()
     all_objects = models.Manager()
 
     def __unicode__(self):
-        return "%s" % (self.volume.name)
+        return "%s" % (self.volume.volume.name)
+
+
+class LogicalLUNHostGroupACL(models.Model):
+    logicallun = models.ForeignKey(LogicalLUN)
+    hostgroup  = models.ForeignKey(HostGroup)
+    portals    = models.ManyToManyField(Portal)
+
+
+class LogicalLUNHostACL(models.Model):
+    logicallun = models.ForeignKey(LogicalLUN)
+    host       = models.ForeignKey(Host)
+    portals    = models.ManyToManyField(Portal)
 
 
 def __logicallun_hostgroups_changed(instance, reverse, action, pk_set, **kwargs):
@@ -412,7 +422,7 @@ def __logicallun_hostgroups_changed(instance, reverse, action, pk_set, **kwargs)
                 host_ids.add(host.id)
         __logicallun_hosts_changed(instance=llun, reverse=False, action=action, pk_set=host_ids)
 
-models.signals.m2m_changed.connect(__logicallun_hostgroups_changed, sender=LogicalLUN.hostgroups.through)
+#models.signals.m2m_changed.connect(__logicallun_hostgroups_changed, sender=LogicalLUN.hostgroups.through)
 
 
 def __acl_add_or_delete(llun, tpg, initiator, action):
@@ -454,7 +464,7 @@ def __logicallun_hosts_changed(instance, reverse, action, pk_set, **kwargs):
                         __acl_add_or_delete(llun, tpg, initiator, action)
 
 
-models.signals.m2m_changed.connect(__logicallun_hosts_changed, sender=LogicalLUN.hosts.through)
+#models.signals.m2m_changed.connect(__logicallun_hosts_changed, sender=LogicalLUN.hosts.through)
 
 
 def __hostgroup_hosts_changed(instance, reverse, action, pk_set, **kwargs):
