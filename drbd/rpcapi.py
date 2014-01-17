@@ -41,7 +41,7 @@ class DrbdConnectionHandler(AbstractBlockVolumeHandler):
         connection = Connection.objects.get(id=connection_id)
         self_host = Host.objects.get(id=self_host_id)
         peer_host = PeerHost.objects.get(id=peer_host_id)
-        primary_volume = BlockVolume.objects.get(id=primary_volume_id)
+        primary_volume = BlockVolume.all_objects.get(id=primary_volume_id)
         return Connection.objects.install_connection(connection, self_host, peer_host, is_primary, primary_volume, peer_volumepool_id)
 
 class DrbdEndpointHandler(ModelHandler):
