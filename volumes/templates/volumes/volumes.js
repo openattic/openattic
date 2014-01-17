@@ -449,15 +449,16 @@ Ext.define('Ext.oa.volumes__Volume_Panel', {
             function(btn, text){
               if( btn === 'ok' ){
                 if( text == sel.data.name ){
+                  var volId = parseInt(sel.raw.id);
                   if( sel.raw.filesystem ){
-                    volumes__FileSystemVolume.remove(sel.raw.id, function(result, response){
+                    volumes__FileSystemVolume.remove(volId, function(result, response){
                       if( response.type !== "exception" ){
                         volumePanel.refresh();
                       }
                     });
                   }
                   else{
-                    volumes__BlockVolume.remove(sel.raw.id, function(result, response){
+                    volumes__BlockVolume.remove(volId, function(result, response){
                       if( response.type !== "exception" ){
                         volumePanel.refresh();
                       }
