@@ -367,6 +367,7 @@ Ext.define("Ext.oa.volumes__volumes_add_volume_form", {
 
               var settings_win = Ext.oa.getAdditSettingsWindow(Ext.apply(config, {
                   volume_id:    result.id,
+                  volume_megs:  result.megs,
                   volumePanel:  config.volumePanel
               }));
               settings_win.show();
@@ -484,6 +485,7 @@ Ext.define('Ext.oa.volumes__Volume_Panel', {
               if(vol_selection.$className.indexOf("BlockVolume") != -1){
                 var mirror_win = Ext.oa.getMirrorWindow(Ext.apply(config, {
                   volume_id:    vol_selection.raw.id,
+                  volume_megs:  vol_selection.raw.megs,
                   volumePanel:  volumePanel
                 }));
                 mirror_win.show();

@@ -89,13 +89,12 @@ class VolumePoolHandler(ModelHandler):
         return handler._idobj(vol)
 
     def get_sufficient(self, host_id, min_megs):
-        volumepools = VolumePool.objects.all()
+        volumepools = VolumePool.all_objects.all()
         result_pools = []
         for volumepool in volumepools:
             if volumepool.volumepool.host_id == host_id:
                 status = self.get_status(volumepool.id)
                 free_megs = status["megs"] - status["usedmegs"]
-
                 if free_megs >= min_megs:
                     result_pools.append({
                         "id":   volumepool.volumepool.id,
