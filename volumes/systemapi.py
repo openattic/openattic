@@ -114,42 +114,50 @@ class SystemD(BasePlugin):
     @deferredmethod(in_signature="")
     def write_fstab(self, sender):
         # read current fstab
-        fd = open( "/etc/fstab", "rb" )
-        try:
-            fstab = fd.read()
-        finally:
-            fd.close()
+        with open( "/etc/fstab", "rb" ) as fstab:
 
-        delim = "# # openATTIC mounts. Insert your own before this line. # #"
+            delim = "# # openATTIC mounts. Insert your own before this line. # #"
 
-        # find lines at the beginning that need to be kept
-        newlines = []
-        for line in fstab.split("\n"):
-            if line == delim:
-                break
-            newlines.append(line)
+            # find lines at the beginning that need to be kept
+            newlines = []
+            for line in fstab:
+                line = line.strip("\n")
+                if line == delim:
+                    break
+                newlines.append(line)
 
-        newlines.append(delim)
+            newlines.append(delim)
 
-        for obj in VolumePool.objects.all():
-            if    capabilities.FileSystemCapability   in obj.capabilities \
-              and capabilities.HandlesMountCapability not in obj.capabilities:
-                for member in obj.member_set.all():
-                    newlines.append( "%-50s %-50s %-8s %s %d %d" % (
-                        member.path, obj.fs.path, obj.fs.name, "defaults", 0, 0
-                        ) )
+            for obj in VolumePool.objects.all():
+                if    capabilities.FileSystemCapability   in obj.capabilities \
+                and capabilities.HandlesMountCapability not in obj.capabilities:
+                    for member in obj.member_set.all():
+                        newlines.append( "%-50s %-50s %-8s %s %d %d" % (
+                            member.path, obj.fs.path, obj.fs.name, "defaults", 0, 0
+                            ) )
 
-        for obj in FileSystemProvider.objects.all():
-            newlines.append( "%-50s %-50s %-8s %s %d %d" % (
-                obj.base.volume.path, obj.path, obj.type, "defaults", 0, 0
-                ) )
+            for obj in FileSystemProvider.objects.all():
+                newlines.append( "%-50s %-50s %-8s %s %d %d" % (
+                    obj.base.volume.path, obj.path, obj.type, "defaults", 0, 0
+                    ) )
 
-        fstab = open("/etc/fstab", "wb")
-        try:
+            delim = "# # openATTIC mounts. Insert your own after this line. # #"
+            delimfound = False
+
+            # find lines at the end that need to be kept
+            for line in fstab:
+                line = line.strip("\n")
+                if line != delim and not delimfound:
+                    continue
+                delimfound = True
+                newlines.append(line)
+
+            if not delimfound:
+                newlines.append(delim)
+
+        with open( "/etc/fstab", "wb" ) as fstab:
             for line in newlines:
                 fstab.write( line + "\n" )
-        finally:
-            fstab.close()
 
     @method(in_signature="ss", out_signature="i")
     def run_initscript(self, script, path):
