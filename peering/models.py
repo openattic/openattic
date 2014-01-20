@@ -14,15 +14,17 @@
  *  GNU General Public License for more details.
 """
 
-import socket
-
 from urlparse  import urlparse, ParseResult
 from django.db import models
 from django.core import exceptions
 from django.conf import settings
+from django.contrib.auth.models import User
+
+import sysutils.models
 
 from ifconfig.models import Host
 from peering.xmlrpctimeout import ServerProxy
+from rpcd.models     import APIKey
 
 from south.modelsinspector import add_introspection_rules
 
@@ -98,3 +100,19 @@ class PeerHost(models.Model):
         if attr == "_host_cache":
             raise AttributeError(attr)
         return getattr( self.connection, attr)
+
+
+def __install_hostkeys(**kwargs):
+    localhost = Host.objects.get_current()
+    if PeerHost.objects.filter(host=localhost).count() != 0:
+        return
+    oauser = User.objects.filter(is_superuser=True)[0]
+    key = APIKey(owner=oauser, description=("APIKey for %s" % localhost.name),
+                 active=True)
+    key.full_clean()
+    key.save()
+    peer = PeerHost(host=localhost, base_url=("http://__:%s@%s:31234/" % (key.apikey, localhost.name)))
+    peer.full_clean()
+    peer.save()
+
+sysutils.models.post_install.connect(__install_hostkeys, sender=sysutils.models)
