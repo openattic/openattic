@@ -33,6 +33,7 @@ class Ocfs2(FileSystem):
         except UnsupportedRAID:
             raidparams = {"chunksize": -1, "datadisks": -1}
         self.dbus_object.ocfs2_format( self.volume.base.volume.path, raidparams["chunksize"] )
+        self.dbus_object.write_fstab()
         self.mount()
         self.chown()
 
