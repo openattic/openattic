@@ -111,7 +111,8 @@ class SystemD(BasePlugin):
             # Check if this connection (tree) has anything to do with the current host.
             # This is the case if any of my own endpoints run here, or one of my
             # low level devices' endpoints do.
-            if not conn.endpoints_running_here and not conn.stacked:
+            #if not conn.endpoints_running_here and not conn.stacked:
+            if not conn.endpoints_running_here:
                 continue
             fd = open("/etc/drbd.d/%s.res" % conn.name, "w")
             try:
