@@ -144,7 +144,7 @@ class SystemD(BasePlugin):
                 obj.base.volume.path, obj.path, obj.type, "defaults", 0, 0
                 ) )
 
-        fstab = open("/tmp/fstab", "wb")
+        fstab = open("/etc/fstab", "wb")
         try:
             for line in newlines:
                 fstab.write( line + "\n" )
