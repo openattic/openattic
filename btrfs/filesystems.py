@@ -36,6 +36,7 @@ class Btrfs(FileSystem):
 
     def format(self):
         self.dbus_object.format( self.lv.path )
+        self.dbus_object.write_fstab()
         self.mount()
         self.chown()
         self.dbus_object.create_subvolume(os.path.join(self.path, "default"))

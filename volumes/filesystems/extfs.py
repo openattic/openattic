@@ -35,6 +35,7 @@ class Ext2(FileSystem):
         except UnsupportedRAID:
             raidparams = {"chunksize": -1, "datadisks": -1}
         self.dbus_object.e2fs_format( self.volume.base.volume.path, self.volume.name, raidparams["chunksize"], raidparams["datadisks"] )
+        self.dbus_object.write_fstab()
         self.mount()
         self.chown()
 
@@ -58,6 +59,7 @@ class Ext3(Ext2):
         except UnsupportedRAID:
             raidparams = {"chunksize": -1, "datadisks": -1}
         self.dbus_object.e3fs_format( self.volume.base.volume.path, self.volume.name, raidparams["chunksize"], raidparams["datadisks"] )
+        self.dbus_object.write_fstab()
         self.mount()
         self.chown()
 
@@ -77,6 +79,7 @@ class Ext4(Ext2):
         except UnsupportedRAID:
             raidparams = {"chunksize": -1, "datadisks": -1}
         self.dbus_object.e4fs_format( self.volume.base.volume.path, self.volume.name, raidparams["chunksize"], raidparams["datadisks"] )
+        self.dbus_object.write_fstab()
         self.mount()
         self.chown()
 
