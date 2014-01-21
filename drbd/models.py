@@ -40,22 +40,22 @@ class ConnectionManager(models.Manager):
     def _get_host_primary_ipaddress(self, host):
         return IPAddress.all_objects.get(device__host=host, primary_address=True)
 
-    def create_connection(self, peer_host_id, peer_volumepool_id, protocol, syncer_rate, self_volume_id):
+    def create_connection(self, other_host_id, peer_volumepool_id, protocol, syncer_rate, self_volume_id):
         self_volume = BlockVolume.objects.get(id=self_volume_id)
-        peer_host = PeerHost.objects.get(id=peer_host_id)
+        other_host = Host.objects.get(id=other_host_id);
 
         # create drbd connection object
         connection = Connection(name=self_volume.volume.name, protocol=protocol, syncer_rate=syncer_rate)
         connection.save()
 
         # self endpoint install
-        self.install_connection(connection, Host.objects.get_current(), peer_host, True, self_volume, peer_volumepool_id)
+        self.install_connection(connection, Host.objects.get_current(), other_host, True, self_volume, peer_volumepool_id)
 
         volume_signals.post_install.send(sender=BlockVolume, instance=self)
 
         return connection.id
 
-    def install_connection(self, connection, self_host, peer_host, is_primary, primary_volume, peer_volumepool_id):
+    def install_connection(self, connection, self_host, other_host, is_primary, primary_volume, peer_volumepool_id):
         get_dbus_object("/").start_queue()
         if is_primary:
             # set upper volume
@@ -84,7 +84,8 @@ class ConnectionManager(models.Manager):
 
         if is_primary:
             # peer endpoint install
-            peer_host.drbd.Connection.install_connection(connection.id, peer_host.id, self_host.id, False, primary_volume.id, peer_volumepool_id)
+            peer_host = PeerHost.objects.get(host_id=other_host.id)
+            peer_host.drbd.Connection.install_connection(connection.id, other_host.id, self_host.id, False, primary_volume.id, peer_volumepool_id)
 
 
         endpoint.install(is_primary)

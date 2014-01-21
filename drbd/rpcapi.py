@@ -34,15 +34,13 @@ class DrbdConnectionHandler(AbstractBlockVolumeHandler):
 
         return data
 
-    def create_connection(self, peer_host_id, peer_volumepool_id, protocol, syncer_rate, self_volume_id):
-        return Connection.objects.create_connection(peer_host_id, peer_volumepool_id, protocol, syncer_rate, self_volume_id)
+    def create_connection(self, other_host_id, peer_volumepool_id, protocol, syncer_rate, self_volume_id):
+        return Connection.objects.create_connection(other_host_id, peer_volumepool_id, protocol, syncer_rate, self_volume_id)
 
-    def install_connection(self, connection_id, self_host_id, peer_host_id, is_primary, primary_volume_id, peer_volumepool_id):
+    def install_connection(self, connection_id, self_host, other_host, is_primary, primary_volume_id, peer_volumepool_id):
         connection = Connection.objects.get(id=connection_id)
-        self_host = Host.objects.get(id=self_host_id)
-        peer_host = PeerHost.objects.get(id=peer_host_id)
         primary_volume = BlockVolume.all_objects.get(id=primary_volume_id)
-        return Connection.objects.install_connection(connection, self_host, peer_host, is_primary, primary_volume, peer_volumepool_id)
+        return Connection.objects.install_connection(connection, self_host, other_host, is_primary, primary_volume, peer_volumepool_id)
 
 class DrbdEndpointHandler(ModelHandler):
     model = Endpoint
