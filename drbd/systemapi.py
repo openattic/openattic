@@ -39,55 +39,55 @@ class SystemD(BasePlugin):
 
     @deferredmethod(in_signature="sb")
     def attach(self, resource, stacked, sender):
-        return invoke(stackcmd(resource, stacked, "attach"))
+        invoke(stackcmd(resource, stacked, "attach"))
 
     @deferredmethod(in_signature="sb")
     def connect(self, resource, stacked, sender):
-        return invoke(stackcmd(resource, stacked, "connect"))
+        invoke(stackcmd(resource, stacked, "connect"))
 
     @deferredmethod(in_signature="sb")
     def up(self, resource, stacked, sender):
-        return invoke(stackcmd(resource, stacked, "up"))
+        invoke(stackcmd(resource, stacked, "up"))
 
     @deferredmethod(in_signature="sb")
     def primary(self, resource, stacked, sender):
-        return invoke(stackcmd(resource, stacked, "primary"))
+        invoke(stackcmd(resource, stacked, "primary"))
 
     @deferredmethod(in_signature="sb")
     def primary_overwrite(self, resource, stacked, sender):
-        return invoke(stackcmd(resource, stacked, "primary", ["--overwrite-data-of-peer"]))
+        invoke(stackcmd(resource, stacked, "primary", ["--overwrite-data-of-peer"]))
 
     @deferredmethod(in_signature="sb")
     def primary_force(self, resource, stacked, sender):
-        return invoke(stackcmd(resource, stacked, "primary", ["--force"]))
+        invoke(stackcmd(resource, stacked, "primary", ["--force"]))
 
     @deferredmethod(in_signature="sb")
     def secondary(self, resource, stacked, sender):
-        return invoke(stackcmd(resource, stacked, "secondary"))
+        invoke(stackcmd(resource, stacked, "secondary"))
 
     @deferredmethod(in_signature="sb")
     def adjust(self, resource, stacked, sender):
-        return invoke(stackcmd(resource, stacked, "adjust"))
+        invoke(stackcmd(resource, stacked, "adjust"))
 
     @deferredmethod(in_signature="sb")
     def disconnect(self, resource, stacked, sender):
-        return invoke(stackcmd(resource, stacked, "disconnect"))
+        invoke(stackcmd(resource, stacked, "disconnect"))
 
     @deferredmethod(in_signature="sb")
     def detach(self, resource, stacked, sender):
-        return invoke(stackcmd(resource, stacked, "detach"))
+        invoke(stackcmd(resource, stacked, "detach"))
 
     @deferredmethod(in_signature="sb")
     def down(self, resource, stacked, sender):
-        return invoke(stackcmd(resource, stacked, "down"))
+        invoke(stackcmd(resource, stacked, "down"))
 
     @deferredmethod(in_signature="sb")
     def pausesync(self, resource, stacked, sender):
-        return invoke(stackcmd(resource, stacked, "pause-sync"))
+        invoke(stackcmd(resource, stacked, "pause-sync"))
 
     @deferredmethod(in_signature="sb")
     def resumesync(self, resource, stacked, sender):
-        return invoke(stackcmd(resource, stacked, "resume-sync"))
+        invoke(stackcmd(resource, stacked, "resume-sync"))
 
     @method( in_signature="sb", out_signature="a{ss}")
     def get_dstate(self, resource, stacked):
