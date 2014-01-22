@@ -150,7 +150,7 @@ class Connection(BlockVolume):
 
     @property
     def peerhost(self):
-        for endpoint in Endpoint.objects.filter(connection=self):
+        for endpoint in Endpoint.all_objects.filter(connection=self):
             if endpoint.ipaddress.device.host != Host.objects.get_current():
                 host_peer = endpoint.ipaddress.device.host
                 break
