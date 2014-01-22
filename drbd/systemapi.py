@@ -20,7 +20,7 @@ import socket
 from django.template.loader import render_to_string
 
 from systemd import invoke, logged, BasePlugin, method, deferredmethod
-from drbd.models import Connection
+from drbd.models import Connection, Endpoint
 
 def stackcmd(resource, stacked, command, options=None):
     cmd = ["/sbin/drbdadm"]
@@ -126,6 +126,7 @@ class SystemD(BasePlugin):
                 fd.write( render_to_string( "drbd/device.res", {
                     'Hostname':   socket.gethostname(),
                     'Connection': conn,
+                    'Endpoints':  Endpoint.all_objects.filter(connection=conn),
                     'UpperConn':  None
                     } ) )
             finally:
