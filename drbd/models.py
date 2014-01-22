@@ -220,3 +220,8 @@ class Endpoint(models.Model):
 
         if init_primary:
             self.connection.drbd.primary_overwrite(self.connection.name, False)
+
+    def uninstall(self):
+        self.connection.drbd.down(self.connection.name, False)
+        self.connection.drbd.conf_delete(self.connection.id)
+        self.volume.volume.delete()
