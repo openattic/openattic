@@ -96,7 +96,7 @@ class VolumePoolHandler(ModelHandler):
             if volumepool.volumepool.host == host:
                 status = self.get_status(volumepool.id)
                 free_megs = status["megs"] - status["usedmegs"]
-                if free_megs >= min_megs:
+                if free_megs >= float(min_megs):
                     result_pools.append(self._getobj(volumepool))
         return result_pools
 
