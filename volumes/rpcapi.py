@@ -95,9 +95,10 @@ class VolumePoolHandler(ModelHandler):
         for volumepool in volumepools:
             if volumepool.volumepool.host == host:
                 status = self.get_status(volumepool.id)
-                free_megs = status["megs"] - status["usedmegs"]
-                if free_megs >= float(min_megs):
-                    result_pools.append(self._getobj(volumepool))
+                if status["megs"] is not None and status["usedmegs"] is not None:
+                    free_megs = status["megs"] - status["usedmegs"]
+                    if free_megs >= float(min_megs):
+                        result_pools.append(self._getobj(volumepool))
         return result_pools
 
     def get_supported_filesystems(self, id):
