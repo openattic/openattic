@@ -18,15 +18,15 @@ from django.db   import models
 
 from systemd import get_dbus_object
 from ifconfig.models import getHostDependentManagerClass, IPAddress
-from lvm.models import LogicalVolume
+from volumes.models import FileSystemVolume
 
 class Instance(models.Model):
-    volume      = models.ForeignKey(LogicalVolume)
+    volume      = models.ForeignKey(FileSystemVolume)
     path        = models.CharField(max_length=255)
     address     = models.ForeignKey(IPAddress, unique=True)
 
     share_type  = "tftp"
-    objects     = getHostDependentManagerClass("volume__vg__host")()
+    objects     = getHostDependentManagerClass("volume__volume__host")()
     all_objects = models.Manager()
 
     def clean(self):

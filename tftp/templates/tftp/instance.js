@@ -43,13 +43,13 @@ Ext.define('Ext.oa.Tftp__Instance_Panel', {
       layout: 'form',
       items: [
         tipify({
-          xtype: 'volumefield',
+          xtype: 'filesystemvolumefield',
           listeners: {
             select: function(self, record, index){
               var addrfield = Ext.ComponentQuery.query("[name=address]", self.ownerCt)[0];
               var dirfield  = Ext.ComponentQuery.query("[name=path]", self.ownerCt)[0];
-              lvm__LogicalVolume.get( record[0].data.id, function( provider, response ){
-                dirfield.setValue( response.result.fs.topleveldir );
+              volumes__FileSystemVolume.get( record[0].data.id, function( result, response ){
+                dirfield.setValue( result.path );
                 dirfield.enable();
               } );
               addrfield.clearValue();
@@ -64,8 +64,7 @@ Ext.define('Ext.oa.Tftp__Instance_Panel', {
           fieldLabel: gettext('Directory'),
           name: "path",
           disabled: true
-        }, gettext('If you wish to share only a subpath of the volume, enter the path here.') ),
-        {
+        }, gettext('If you wish to share only a subpath of the volume, enter the path here.') ), {
           xtype:      'combo',
           fieldLabel: gettext('Address'),
           allowBlank: false,
@@ -85,7 +84,7 @@ Ext.define('Ext.oa.Tftp__Instance_Panel', {
                 directFn: ifconfig__IPAddress.get_valid_ips,
                 extraParams: {
                   "idobj": {
-                    "app": "lvm", "obj": "LogicalVolume", "id": -1
+                    "app": "volumes", "obj": "FileSystemVolume", "id": -1
                   }
                 }
               }
