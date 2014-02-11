@@ -168,16 +168,10 @@ case $1 in
 		fi
 		;;
 
-	restart|force-reload)
-		/etc/init.d/openattic_systemd restart
-		/etc/init.d/openattic_rpcd restart
-		/etc/init.d/apache2 restart
-		;;
-
-	reload)
-		/etc/init.d/openattic_systemd restart
-		/etc/init.d/openattic_rpcd restart
-		/etc/init.d/apache2 reload
+	start|stop|restart|force-reload|reload)
+		/etc/init.d/openattic_systemd $1
+		/etc/init.d/openattic_rpcd $1
+		/etc/init.d/apache2 $1
 		;;
 
 	status)
