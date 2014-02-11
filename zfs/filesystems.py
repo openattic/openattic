@@ -173,13 +173,6 @@ class Zfs(FileSystem):
         self.dbus_object.zfs_rollback_snapshot(self.volume.name, path)
 
     @property
-    def mounted(self):
-        try:
-            return self.options["mounted"] == "yes"
-        except dbus.DBusException:
-            return None
-
-    @property
     def path(self):
         path = os.path.join(volumes_settings.MOUNT_PREFIX, self.pool.name)
         if self.volume is not self.pool:
