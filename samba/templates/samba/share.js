@@ -42,15 +42,15 @@ Ext.define('Ext.oa.Samba__Share_Panel', {
       title: 'Samba',
       layout: 'form',
       items: [{
-        xtype:'volumefield',
+        xtype:'filesystemvolumefield',
         listeners: {
           select: function(self, record, index){
             var namefield = Ext.ComponentQuery.query("[name=name]", self.ownerCt)[0];
             var dirfield  = Ext.ComponentQuery.query("[name=path]", self.ownerCt)[0];
-            lvm__LogicalVolume.get( record[0].data.id, function( provider, response ){
-              namefield.setValue( response.result.name );
+            volumes__FileSystemVolume.get( record[0].data.id, function( result, response ){
+              namefield.setValue( result.name );
               namefield.enable();
-              dirfield.setValue( response.result.fs.topleveldir );
+              dirfield.setValue( result.path );
               dirfield.enable();
             } );
           }
@@ -90,24 +90,12 @@ Ext.define('Ext.oa.Samba__Share_Panel', {
         fieldLabel: gettext('Guest OK'),
         allowBlank: false,
         name: "guest_ok"
-      }, tipify({
-        xtype: 'textfield',
-        fieldLabel: gettext('Dir Mode'),
-        allowBlank: false,
-        name: "dir_mode",
-        value:     '0775'
-      },gettext('Set rights for the Directory')), {
+      }, {
         xtype: 'textfield',
         fieldLabel: gettext('Comment'),
         allowBlank: true,
         name: "comment"
-      }, tipify({
-        xtype: 'textfield',
-        fieldLabel: gettext('Create Mode'),
-        allowBlank: false,
-        name: "create_mode",
-        value:     '0664'
-      }, gettext('Set rights for owner, group and others') ) ]
+      } ]
     }]
   }
 });
