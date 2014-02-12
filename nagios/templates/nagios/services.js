@@ -623,7 +623,7 @@ Ext.oa.Nagios__Service_Module = {
           mytools.unshift({
             type: 'refresh',
             handler: function(ev, btn, portlet, self){
-              portlet.items.items[0].reload();
+              portlet.ownerCt.items.items[0].reload();
             }
           });
           return mytools;
