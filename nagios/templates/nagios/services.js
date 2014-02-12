@@ -303,8 +303,8 @@ Ext.define('Ext.oa.Nagios__Service_Panel', {
         text: "Dashboard",
         icon: MEDIA_URL + '/icons2/16x16/apps/gnome-session.png',
         handler: function(self){
-          var dashboard = mainpanel.find( "id", "dashboard_inst" )[0];
-          var graphpanel = nagiosGrid.find("id", "naggraphpanel")[0];
+          var dashboard = Ext.getCmp("dashboard_inst");
+          var graphpanel = Ext.getCmp("naggraphpanel");
           if( graphpanel.currentRecord && graphpanel.currentGraph ){
             var record = graphpanel.currentRecord;
             var graph  = graphpanel.currentGraph;
