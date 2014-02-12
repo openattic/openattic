@@ -424,11 +424,7 @@ Ext.define('Ext.oa.volumes__Volume_Panel', {
       }, {
         text: gettext("Collapse all"),
         handler: function(self){
-          var i,
-              childNodes = store.getRootNode().childNodes;
-          for( i = 0; i < childNodes.length; i++ ){
-            childNodes[i].collapseChildren(true);
-          }
+            volumePanel.store.getRootNode().collapseChildren(true);
         }
       }, {
         text: gettext("Add Volume"),
