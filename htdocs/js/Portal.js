@@ -16,12 +16,7 @@ Ext.namespace("Ext.oa");
 Ext.define('Ext.oa.Portal', {
   extend: 'Ext.app.PortalPanel',
   initComponent: function(){
-    var tools = [{
-      id: 'close',
-      handler: function(e, target, panel){
-        panel.onClose();
-      }
-    }];
+    var tools = [];
     Ext.apply(this, Ext.apply(this.initialConfig, {
       id: "dashboard_inst",
       title: gettext("Dashboard"),
