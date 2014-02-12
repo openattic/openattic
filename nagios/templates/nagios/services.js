@@ -621,7 +621,7 @@ Ext.oa.Nagios__Service_Module = {
         tools: (function(){
           var mytools = tools.slice();
           mytools.unshift({
-            id: 'refresh',
+            type: 'refresh',
             handler: function(ev, btn, portlet, self){
               portlet.items.items[0].reload();
             }

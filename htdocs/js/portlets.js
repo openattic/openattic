@@ -21,7 +21,7 @@ Ext.oa.getDefaultPortlets = function(tools){
     tools: (function(){
       var mytools = tools.slice();
       mytools.unshift({
-        id: 'refresh',
+        type: 'refresh',
         handler: function(){
           Ext.StoreMgr.lookup("portlet_lvs_store").reload();
         }
