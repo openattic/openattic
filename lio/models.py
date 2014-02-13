@@ -490,9 +490,12 @@ class IscsiHander(ProtocolHandler):
 
     def get_targets(self):
         """ Yield the target to be used for the volume. """
-        try:
-            yield {"target": Target.objects.get(host=Host.objects.get_current(), type=self.module, tpg__lun__storageobj__volume=self.hostacl.volume)}
-        except Target.DoesNotExist:
+        tgts = Target.objects.filter(host=Host.objects.get_current(), type=self.module, tpg__lun__storageobj__volume=self.hostacl.volume).distinct()
+        if len(tgts) > 1:
+            raise Target.MultipleObjectsReturned("Found multiple Targets for the volume")
+        elif len(tgts) == 1:
+            yield {"target": tgts[0]}
+        else:
             tgt = Target(host=Host.objects.get_current(), type="iscsi", name=self.hostacl.volume.volume.name)
             tgt.full_clean()
             tgt.save()
