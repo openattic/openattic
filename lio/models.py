@@ -570,3 +570,13 @@ def __hostacl_pre_delete(instance, **kwargs):
     post_uninstall.send(sender=HostACL, instance=instance)
 
 models.signals.pre_delete.connect(__hostacl_pre_delete, sender=HostACL)
+
+def __hostacl_portals_changed(instance, reverse, action, pk_set, **kwargs):
+    if not reverse:
+        hostacls = [instance]
+    else:
+        hostacls = TPG.objects.filter(id__in=pk_set)
+    for hostacl in hostacls:
+        ProtocolHandler.install_hostacl(hostacl)
+
+models.signals.m2m_changed.connect(__hostacl_portals_changed, sender=HostACL.portals.through)
