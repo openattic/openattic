@@ -511,9 +511,11 @@ class IscsiHander(ProtocolHandler):
                 tag = max( v["tag"] for v in TPG.objects.filter(target=targetctx["target"]).values("tag") ) + 1
             except ValueError:
                 tag = 1
-            self.hostacl.tpg = TPG(target=targetctx["target"], tag=tag)
-            self.hostacl.tpg.full_clean()
-            self.hostacl.tpg.save()
+            tpg = TPG(target=targetctx["target"], tag=tag)
+            tpg.full_clean()
+            tpg.save()
+            self.hostacl.tpg = tpg
+            self.hostacl.full_clean()
             self.hostacl.save()
         yield ctxupdate(targetctx, tpg=self.hostacl.tpg)
 
