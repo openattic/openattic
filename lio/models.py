@@ -553,12 +553,15 @@ class HostACL(models.Model):
     lun_id      = models.IntegerField()
     tpg         = models.ForeignKey(TPG, blank=True, null=True)
 
+    objects     = getHostDependentManagerClass("volume__volume__host")()
+    all_objects = models.Manager()
+
     def save(self, *args, **kwargs):
         install = (self.id is None)
         models.Model.save(self, *args, **kwargs)
         if install:
             pre_install.send(sender=HostACL, instance=self)
-            #ProtocolHandler.install_hostacl(self)
+            ProtocolHandler.install_hostacl(self)
             post_install.send(sender=HostACL, instance=self)
 
 def __hostacl_pre_delete(instance, **kwargs):
