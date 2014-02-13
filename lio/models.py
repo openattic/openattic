@@ -184,13 +184,15 @@ class Target(models.Model):
     def __unicode__(self):
         return self.name
 
-    def save(self, *args, **kwargs):
-        install = (self.id is None)
+    def full_clean(self):
         if not self.wwn:
             self.wwn = generate_wwn({
                 'qla2xxx': 'free',
                 'iscsi':   'iqn'
                 }[self.type])
+
+    def save(self, *args, **kwargs):
+        install = (self.id is None)
         models.Model.save(self, *args, **kwargs)
         if install:
             pre_install.send(sender=Target, instance=self)
