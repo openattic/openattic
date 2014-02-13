@@ -377,5 +377,193 @@ def __acl_mappedluns_changed(instance, reverse, action, pk_set, **kwargs):
 models.signals.m2m_changed.connect(__acl_mappedluns_changed, sender=ACL.mapped_luns.through)
 
 
+def ctxupdate(ctx, **values):
+    """ Create a new context dict and update its values. """
+    newctx = ctx.copy()
+    newctx.update(values)
+    return newctx
+
+class ProtocolHandler(object):
+    """ Handles protocol independent installation parts. """
+    module = None
+
+    @classmethod
+    def install_hostacl(self, hostacl):
+        # 0. Find eligible modules according to configured initiator attributes
+        # 1. Find or create Target
+        # 2. Find or create TPGs
+        # 3. Find or create Portals
+        # 4. Find or create LUNs
+        # 5. Find or create Initiators
+        # 6. Find or create ACL
+        # 7. Find or create Mapped_LUN
+        luncontexts = []
+        portalcontexts = []
+        for handler in ProtocolHandler.get_handlers(hostacl):
+            for targetctx in handler.get_targets():
+                for tpgctx in handler.get_tpgs(targetctx):
+                    for lunctx in handler.get_luns(tpgctx):
+                        for initiatorctx in handler.get_initiators(lunctx):
+                            for aclctx in handler.get_acls(initiatorctx):
+                                for mappedlunctx in handler.get_mapped_luns(aclctx):
+                                    luncontexts.append(mappedlunctx)
+                    for portalctx in handler.get_portals(tpgctx):
+                        portalcontexts.append(portalctx)
+        return luncontexts, portalcontexts
+
+    @classmethod
+    def get_handlers(self, hostacl):
+        """ Find eligible modules according to configured initiator attributes """
+        yield IscsiHander(hostacl)
+        # TODO: Check if FC is actually possible (Kernel ≥3.5, found HBAs)
+        if False:
+            yield FcHandler(hostacl)
+
+    def __init__(self, hostacl):
+        self.hostacl = hostacl
+
+    def get_targets(self):
+        raise NotImplementedError("get_targets")
+
+    def get_tpgs(self, targetctx):
+        raise NotImplementedError("get_tpgs")
+
+    def get_portals(self, tpgctx):
+        raise NotImplementedError("get_portals")
+
+    def get_luns(self, tpgctx):
+        """ Find or create the LUN.
+
+            First, lookup the storage object used for the volume, creating it
+            if it does not exist. Backstores are never shared between Storage
+            Objects, so if a new SO is created, it creates a new BS as well.
+
+            Second, we check if there is a LUN already sharing that SO, and
+            if not, create one.
+        """
+        try:
+            storageobj = StorageObject.objects.get(volume=self.hostacl.volume)
+        except StorageObject.DoesNotExist:
+            try:
+                store_id = max( v["store_id"] for v in Backstore.objects.all().values("store_id") ) + 1
+            except ValueError:
+                store_id = 1
+            backstore  = Backstore(store_id=store_id, type="iblock", host=Host.objects.get_current())
+            backstore.full_clean()
+            backstore.save()
+            storageobj = StorageObject(backstore=backstore, volume=self.hostacl.volume, wwn=self.hostacl.volume.volume.uuid)
+            storageobj.full_clean()
+            storageobj.save()
+        try:
+            lun = LUN.objects.get(tpg=tpgctx["tpg"], storageobj=storageobj, lun_id=self.hostacl.lun_id)
+        except LUN.DoesNotExist:
+            lun = LUN(tpg=tpgctx["tpg"], storageobj=storageobj, lun_id=self.hostacl.lun_id)
+            lun.full_clean()
+            lun.save()
+        yield ctxupdate(tpgctx, lun=lun)
+
+    def get_initiators(self, lunctx):
+        """ Yield all initiators that are meant to have access to the LUN. """
+        for initr in Initiator.objects.filter(host=self.hostacl.host, type=self.module):
+            yield ctxupdate(lunctx, initiator=initr)
+
+    def get_acls(self, initiatorctx):
+        """ Yield an ACL object for the given initiator. """
+        try:
+            acl = ACL.objects.get(tpg=initiatorctx["tpg"], initiator=initiatorctx["initiator"])
+        except ACL.DoesNotExist:
+            acl = ACL(tpg=initiatorctx["tpg"], initiator=initiatorctx["initiator"])
+            acl.full_clean()
+            acl.save()
+        yield ctxupdate(initiatorctx, acl=acl)
+
+    def get_mapped_luns(self, aclctx):
+        """ Make sure the LUN is mapped in the given ACL and yield it. """
+        if aclctx["lun"] not in aclctx["acl"].mapped_luns.all():
+            aclctx["acl"].mapped_luns.add(aclctx["lun"])
+        yield ctxupdate(aclctx, mapped_lun=aclctx["lun"])
+
+class IscsiHander(ProtocolHandler):
+    module = "iscsi"
+
+    def get_targets(self):
+        """ Yield the target to be used for the volume. """
+        try:
+            yield {"target": Target.objects.get(host=Host.objects.get_current(), type=self.module, tpg__lun__storageobj__volume=self.hostacl.volume)}
+        except Target.DoesNotExist:
+            tgt = Target(host=Host.objects.get_current(), type="iscsi", name=self.hostacl.volume.volume.name)
+            tgt.full_clean()
+            tgt.save()
+            yield {"target": tgt}
+
+    def get_tpgs(self, targetctx):
+        """ Yield the TPG to be used for the HostACL.
+
+            iSCSI uses a TPG for each HostACL, so create one if there is none and yield it.
+        """
+        if self.hostacl.tpg is None:
+            try:
+                tag = max( v["tag"] for v in TPG.objects.filter(target=targetctx["target"]).values("tag") ) + 1
+            except ValueError:
+                tag = 1
+            self.hostacl.tpg = TPG(target=targetctx["target"], tag=tag)
+            self.hostacl.tpg.full_clean()
+            self.hostacl.tpg.save()
+            self.hostacl.save()
+        yield ctxupdate(targetctx, tpg=self.hostacl.tpg)
+
+    def get_portals(self, tpgctx):
+        """ Make sure the Portal is included in the ACL and yield it. """
+        for want_portal in self.hostacl.portals.all():
+            if want_portal not in tpgctx["tpg"].portals.all():
+                tpgctx["tpg"].portals.add(want_portal)
+            yield ctxupdate(tpgctx, portal=want_portal)
+
+class FcHandler(ProtocolHandler):
+    module = "qla2xxx"
+
+    def get_targets(self):
+        """ Yield all targets for this host (volume doesn't matter). """
+        for tgt in Target.objects.filter(host=Host.objects.get_current(), type=self.module):
+            yield {"target": tgt}
+
+    def get_tpgs(self, targetctx):
+        """ Associate the target's TPG with the HostACL and yield it. """
+        if self.hostacl.tpg is None:
+            try:
+                tpg = TPG.objects.get(target=targetctx["target"], tag=1)
+            except TPG.DoesNotExist:
+                tpg = TPG(target=targetctx["target"], tag=1)
+                tpg.full_clean()
+                tpg.save()
+            self.hostacl.tpg = tpg
+            self.hostacl.save()
+        yield ctxupdate(targetctx, tpg=self.hostacl.tpg)
+
+    def get_portals(self, tpgctx):
+        """ FC doesn't use portals, so this doesn't yield anything. """
+        pass
 
 
+class HostACL(models.Model):
+    """ Grant a Host access to a Volume via the given Portals (if applicable). """
+    host        = models.ForeignKey(Host)
+    volume      = models.ForeignKey(BlockVolume)
+    portals     = models.ManyToManyField(Portal)
+    lun_id      = models.IntegerField()
+    tpg         = models.ForeignKey(TPG, blank=True, null=True)
+
+    def save(self, *args, **kwargs):
+        install = (self.id is None)
+        models.Model.save(self, *args, **kwargs)
+        if install:
+            pre_install.send(sender=HostACL, instance=self)
+            #ProtocolHandler.install_hostacl(self)
+            post_install.send(sender=HostACL, instance=self)
+
+def __hostacl_pre_delete(instance, **kwargs):
+    pre_uninstall.send(sender=HostACL, instance=instance)
+    # ???
+    post_uninstall.send(sender=HostACL, instance=instance)
+
+models.signals.pre_delete.connect(__hostacl_pre_delete, sender=HostACL)

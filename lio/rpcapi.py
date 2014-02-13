@@ -29,6 +29,6 @@ RPCD_HANDLERS = [
     mkProxyModelHandler(models.TPG),
     mkProxyModelHandler(models.LUN),
     mkProxyModelHandler(models.ACL),
-    mkProxyModelHandler(models.LogicalLUN),
+    mkProxyModelHandler(models.HostACL),
     InitiatorHandler,
     ]
