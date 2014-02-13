@@ -42,19 +42,19 @@ Ext.define('Ext.oa.Auth__User_Panel', {
                 extend: 'Ext.data.Model',
                 fields: [
                   {name: 'name'}
-                ],
-                extraParams: { owner__id: sel.data.id }
+                ]
               });
               return Ext.create('Ext.data.Store', {
                 model: "rpcd_volumes_of_user_store",
+                autoLoad: true,
                 proxy: {
                   type: 'direct',
                   directFn: lvm__LogicalVolume.filter,
+                  extraParams: { "owner": sel.data.id },
                   startParam: undefined,
                   limitParam: undefined,
                   pageParam:  undefined
-                },
-                sorters: [{property: "username"}]
+                }
               });
             }()),
             defaults: {
