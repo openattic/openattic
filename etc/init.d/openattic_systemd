@@ -72,7 +72,7 @@ case $1 in
 		log_end_msg 0
 		;;
 	
-	foreground)
+	foreground|fg)
 		if start-stop-daemon --pidfile=$SYSD_PIDFILE --test --stop --exec $PYTHON --quiet
 		then
 			PID=`cat $SYSD_PIDFILE`
