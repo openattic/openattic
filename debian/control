@@ -13,7 +13,7 @@ Depends: ${misc:Depends},
  openattic-module-lvm,
  openattic-module-nfs,
  openattic-module-http,
- openattic-module-iet-iscsi,
+ openattic-module-lio,
  openattic-module-samba,
  openattic-module-apt,
  openattic-module-nagios,
@@ -141,22 +141,6 @@ Description: APT module for openATTIC
  programs using packages. It keeps track of installed and available programs
  and automates various procedures. This module extends the User interface
  for a Front End, which allows you to check for available upgrades easily.
-
-Package: openattic-module-iet-iscsi
-Architecture: all
-Depends: ${misc:Depends}, openattic-module-lvm,
- iscsitarget, iscsitarget-dkms
-Description: IET iSCSI module for openATTIC
- openATTIC is a storage management system based upon Open Source tools with
- a comprehensive user interface that allows you to create, share and backup
- storage space on demand.
- .
- iSCSI is a block-based Storage protocol, which allows a remote host to
- access a Volume and treat it as if it were a locally attached disk drive.
- Contrary to FibreChannel, iSCSI transmits its data over a standard Ethernet
- connection and does not require a dedicated infrastructure. This package
- offers configuration of iSCSI Targets and LUNs through the openATTIC
- framework.
 
 Package: openattic-module-samba
 Architecture: all
@@ -311,6 +295,7 @@ Package: openattic-module-lio
 Architecture: all
 Depends: ${misc:Depends}, openattic-module-lvm,
  python-rtslib (>> 2.1-2), lio-utils
+Conflicts: openattic-module-iet-iscsi
 Description: HTTP module for openATTIC
  openATTIC is a storage management system based upon Open Source tools with
  a comprehensive user interface that allows you to create, share and backup
