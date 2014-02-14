@@ -10,7 +10,6 @@ Vcs-Hg: https://bitbucket.org/openattic/openattic-debian
 Package: openattic
 Architecture: all
 Depends: ${misc:Depends},
- openattic-module-lvm,
  openattic-module-nfs,
  openattic-module-http,
  openattic-module-lio,
@@ -20,8 +19,12 @@ Depends: ${misc:Depends},
  openattic-module-cron,
  openattic-module-ftp,
  openattic-module-mailaliases
+Recommends:
+ openattic-module-btrfs,
+ openattic-module-lvm,
 Suggests: python-django-rosetta, lsscsi, openattic-module-twraid,
- openattic-module-ipmi
+ openattic-module-ipmi,
+ openattic-module-zfs
 Description: Comprehensive storage management system
  openATTIC is a storage management system based upon Open Source tools with
  a comprehensive user interface that allows you to create, share and backup
@@ -86,7 +89,8 @@ Depends: ${misc:Depends}, python (>= 2.6),
  libjs-extjs4 (>= 4.2.1),
  openattic-pgsql,
  libapache2-mod-wsgi, apache2
-Recommends: sudo
+Recommends: sudo, xfsprogs
+Suggests: ocfs2-tools
 Description: Basic requirements for openATTIC
  openATTIC is a storage management system based upon Open Source tools with
  a comprehensive user interface that allows you to create, share and backup
@@ -101,8 +105,6 @@ Package: openattic-module-lvm
 Architecture: all
 Depends: ${misc:Depends}, openattic-base, lvm2, parted, python-pyudev,
  openattic-module-cron, file, udisks
-Recommends: zfsonlinux, xfsprogs, btrfs-tools
-Suggests: ocfs2-tools
 Enhances: lvm2
 Description: LVM module for openATTIC
  openATTIC is a storage management system based upon Open Source tools with
@@ -117,8 +119,7 @@ Description: LVM module for openATTIC
 
 Package: openattic-module-nfs
 Architecture: all
-Depends: ${misc:Depends}, openattic-module-lvm,
- nfs-kernel-server
+Depends: ${misc:Depends}, openattic-base, nfs-kernel-server
 Description: NFS module for openATTIC
  openATTIC is a storage management system based upon Open Source tools with
  a comprehensive user interface that allows you to create, share and backup
@@ -144,7 +145,7 @@ Description: APT module for openATTIC
 
 Package: openattic-module-samba
 Architecture: all
-Depends: ${misc:Depends}, openattic-module-lvm, samba, samba-common-bin,
+Depends: ${misc:Depends}, openattic-base, samba, samba-common-bin,
  winbind, libnss-winbind, krb5-user | heimdal-clients, libpam-krb5
 Description: Samba module for openATTIC
  openATTIC is a storage management system based upon Open Source tools with
@@ -168,7 +169,7 @@ Description: Samba module for openATTIC
 
 Package: openattic-module-ftp
 Architecture: all
-Depends: ${misc:Depends}, openattic-module-lvm, openattic-module-samba,
+Depends: ${misc:Depends}, openattic-base, openattic-module-samba,
  proftpd-basic (>= 1.3.3),
  proftpd-mod-winbind
 Conflicts: openattic-module-ftp-pgsql, openattic-module-ftp-mysql
@@ -187,7 +188,7 @@ Package: openattic-module-nagios
 Architecture: all
 Depends: ${misc:Depends}, python (>= 2.6),
  ${python:Depends}, python-imaging, python-numpy, python-pyudev,
- openattic-base, openattic-module-lvm,
+ openattic-base, openattic-base,
  bc, adduser,
  nagios3-core, nagios-plugins-standard, nagios-plugins-basic,
  pnp4nagios-bin, rrdtool
@@ -225,7 +226,7 @@ Description: DRBD module for openATTIC
 
 Package: openattic-module-tftp
 Architecture: all
-Depends: ${misc:Depends}, openattic-module-lvm,
+Depends: ${misc:Depends}, openattic-base,
  xinetd, tftpd-hpa
 Description: TFTP module for openATTIC
  openATTIC is a storage management system based upon Open Source tools with
@@ -242,7 +243,7 @@ Description: TFTP module for openATTIC
 
 Package: openattic-module-http
 Architecture: all
-Depends: ${misc:Depends}, openattic-module-lvm,
+Depends: ${misc:Depends}, openattic-base,
  apache2
 Description: HTTP module for openATTIC
  openATTIC is a storage management system based upon Open Source tools with
@@ -282,7 +283,7 @@ Description: MailAliases module for openATTIC
 
 Package: openattic-module-twraid
 Architecture: all
-Depends: ${misc:Depends}, openattic-module-lvm, tw-cli, cron
+Depends: ${misc:Depends}, openattic-base, tw-cli, cron
 Description: 3ware RAID module for openATTIC
  openATTIC is a storage management system based upon Open Source tools with
  a comprehensive user interface that allows you to create, share and backup
@@ -293,10 +294,10 @@ Description: 3ware RAID module for openATTIC
 
 Package: openattic-module-lio
 Architecture: all
-Depends: ${misc:Depends}, openattic-module-lvm,
+Depends: ${misc:Depends}, openattic-base,
  python-rtslib (>> 2.1-2), lio-utils
 Conflicts: openattic-module-iet-iscsi
-Description: HTTP module for openATTIC
+Description: LIO module for openATTIC
  openATTIC is a storage management system based upon Open Source tools with
  a comprehensive user interface that allows you to create, share and backup
  storage space on demand.
@@ -305,3 +306,26 @@ Description: HTTP module for openATTIC
  users to configure FibreChannel, FCoE and iSCSI targets over the openATTIC
  user interface.
 
+Package: openattic-module-zfs
+Architecture: all
+Depends: ${misc:Depends}, openattic-base, debian-zfs
+Description: ZFS module for openATTIC
+ openATTIC is a storage management system based upon Open Source tools with
+ a comprehensive user interface that allows you to create, share and backup
+ storage space on demand.
+ .
+ This package includes support for ZFS, a pooled file system designed for
+ maximum data integrity, supporting data snapshots, multiple copies, and data
+ checksums. It depends on zfsonlinux, the native Linux port of ZFS.
+
+Package: openattic-module-btrfs
+Architecture: all
+Depends: ${misc:Depends}, openattic-base, btrfs-tools
+Description: ZFS module for openATTIC
+ openATTIC is a storage management system based upon Open Source tools with
+ a comprehensive user interface that allows you to create, share and backup
+ storage space on demand.
+ .
+ This package includes support for ZFS, a pooled file system designed for
+ maximum data integrity, supporting data snapshots, multiple copies, and data
+ checksums. It depends on zfsonlinux, the native Linux port of ZFS.
