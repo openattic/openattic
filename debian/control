@@ -37,7 +37,7 @@ Description: Comprehensive storage management system
   * LVM
   * NFS
   * HTTP
-  * IET (iSCSI)
+  * LIO (iSCSI, FC)
   * Samba
   * Apt
   * Nagios
