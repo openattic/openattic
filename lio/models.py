@@ -37,8 +37,8 @@ import filesystemproxy
 #         ↑                   │                                  │
 #         |                   v                                  v
 #      StorageObject ———> BlockVolume <——— HostACL ——————┐       │
-#         ↑                                  |           │       │
-#         |                                  ↓           │       │
+#         ↑                   ┌────────────┘ |           │       │
+#         |                   v              ↓           │       │
 #        LUN —————┬————————> TPG ————————> Portal        │       │
 #         ↑       │           ↑              |           │       │
 #         |       │           |              v           │       │
@@ -401,12 +401,14 @@ class ProtocolHandler(object):
         # install_hostacl won't actually create any new objects but only
         # return a list of existing contexts. said list of contexts can then
         # be used to delete stuff.
-        contexts = ProtocolHandler.install_hostacl(instance)
+        contexts = ProtocolHandler.install_hostacl(hostacl)
         # 0. Find eligible modules according to configured contexts
-        for ctx in context:
+        for ctx in contexts:
             for handler in ProtocolHandler.get_handlers(hostacl):
-                if handler.module == ctx["module"]:
-                    handler.delete(ctx)
+                luncontexts, portalcontexts = ctx
+                for lunctx in luncontexts:
+                    if handler.module == lunctx["module"]:
+                        handler.delete(lunctx)
         return contexts
 
     @classmethod
@@ -480,6 +482,37 @@ class ProtocolHandler(object):
         if aclctx["lun"] not in aclctx["acl"].mapped_luns.all():
             aclctx["acl"].mapped_luns.add(aclctx["lun"])
         yield ctxupdate(aclctx, mapped_lun=aclctx["lun"])
+
+    def delete(self, lunctx):
+        self.delete_mapped_luns(lunctx)
+        self.delete_acls(lunctx)
+        self.delete_luns(lunctx)
+        self.delete_targets(lunctx)
+
+    def delete_mapped_luns(self, lunctx):
+        """ Unmap LUNs. """
+        if lunctx["mapped_lun"] in lunctx["acl"].mapped_luns.all():
+            lunctx["acl"].mapped_luns.remove(lunctx["mapped_lun"])
+
+    def delete_acls(self, lunctx):
+        """ Delete the ACL named in the context. """
+        lunctx["acl"].delete()
+
+    def delete_luns(self, lunctx):
+        """ If there are no ACLs left, delete the LUN named in the context. """
+        if lunctx["lun"].acl_set.count() == 0:
+            lunctx["lun"].delete()
+
+    def delete_targets(self, lunctx):
+        """ If there are no LUNs left, delete the TPG. Same goes for the target. """
+        if lunctx["tpg"].lun_set.count() == 0:
+            # Disassociate HostACLs first so we don't cause an infinite recursion.
+            for hostacl in lunctx["tpg"].hostacl_set.all():
+                hostacl.tpg = None
+                hostacl.save()
+            lunctx["tpg"].delete()
+        if lunctx["target"].tpg_set.count() == 0:
+            lunctx["target"].delete()
 
 class IscsiHander(ProtocolHandler):
     module = "iscsi"
