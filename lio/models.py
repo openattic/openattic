@@ -379,19 +379,35 @@ class ProtocolHandler(object):
         # 5. Find or create Initiators
         # 6. Find or create ACL
         # 7. Find or create Mapped_LUN
-        luncontexts = []
-        portalcontexts = []
+        contexts = []
         for handler in ProtocolHandler.get_handlers(hostacl):
             for targetctx in handler.get_targets():
                 for tpgctx in handler.get_tpgs(targetctx):
+                    luncontexts = []
                     for lunctx in handler.get_luns(tpgctx):
                         for initiatorctx in handler.get_initiators(lunctx):
                             for aclctx in handler.get_acls(initiatorctx):
                                 for mappedlunctx in handler.get_mapped_luns(aclctx):
                                     luncontexts.append(mappedlunctx)
+                    portalcontexts = []
                     for portalctx in handler.get_portals(tpgctx):
                         portalcontexts.append(portalctx)
-        return luncontexts, portalcontexts
+                    contexts.append((luncontexts, portalcontexts))
+        return contexts
+
+    @classmethod
+    def uninstall_hostacl(self, hostacl):
+        # if we're uninstalling the hostacl, it has been installed already, so
+        # install_hostacl won't actually create any new objects but only
+        # return a list of existing contexts. said list of contexts can then
+        # be used to delete stuff.
+        contexts = ProtocolHandler.install_hostacl(instance)
+        # 0. Find eligible modules according to configured contexts
+        for ctx in context:
+            for handler in ProtocolHandler.get_handlers(hostacl):
+                if handler.module == ctx["module"]:
+                    handler.delete(ctx)
+        return contexts
 
     @classmethod
     def get_handlers(self, hostacl):
@@ -474,12 +490,12 @@ class IscsiHander(ProtocolHandler):
         if len(tgts) > 1:
             raise Target.MultipleObjectsReturned("Found multiple Targets for the volume")
         elif len(tgts) == 1:
-            yield {"target": tgts[0]}
+            yield {"target": tgts[0], "module": self.module}
         else:
             tgt = Target(host=Host.objects.get_current(), type="iscsi", name=self.hostacl.volume.volume.name)
             tgt.full_clean()
             tgt.save()
-            yield {"target": tgt}
+            yield {"target": tgt, "module": self.module}
 
     def get_tpgs(self, targetctx):
         """ Yield the TPG to be used for the HostACL.
@@ -512,7 +528,7 @@ class FcHandler(ProtocolHandler):
     def get_targets(self):
         """ Yield all targets for this host (volume doesn't matter). """
         for tgt in Target.objects.filter(host=Host.objects.get_current(), type=self.module):
-            yield {"target": tgt}
+            yield {"target": tgt, "module": self.module}
 
     def get_tpgs(self, targetctx):
         """ Associate the target's TPG with the HostACL and yield it. """
@@ -553,7 +569,7 @@ class HostACL(models.Model):
 
 def __hostacl_pre_delete(instance, **kwargs):
     pre_uninstall.send(sender=HostACL, instance=instance)
-    # ???
+    ProtocolHandler.uninstall_hostacl(instance)
     post_uninstall.send(sender=HostACL, instance=instance)
 
 models.signals.pre_delete.connect(__hostacl_pre_delete, sender=HostACL)
