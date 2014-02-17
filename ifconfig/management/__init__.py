@@ -42,6 +42,7 @@ def create_interfaces(**kwargs):
 
     ifstack = netifaces.interfaces()
     haveifaces = {}
+    have_primary = (IPAddress.objects.filter(primary_address=True).count() > 0)
 
     while ifstack:
         iface = ifstack.pop(0)
@@ -110,11 +111,13 @@ def create_interfaces(**kwargs):
                 if addrfam == socket.AF_INET6 and addr["addr"][:4] == "fe80":
                     # Don't record link-local addresses
                     continue
+                is_primary = not have_primary and addr["addr"] not in ("127.0.0.1", "::1")
+                have_primary = have_primary or is_primary
                 try:
                     ip = IPAddress.objects.get( device__host=host, address__startswith=addr["addr"]+"/" )
                 except IPAddress.DoesNotExist:
                     print "Adding ", addr
-                    ip = IPAddress(address=(addr["addr"] + "/" + addr["netmask"]), device=haveifaces[iface])
+                    ip = IPAddress(address=(addr["addr"] + "/" + addr["netmask"]), device=haveifaces[iface], primary_address=is_primary)
                     ip.save()
 
 
