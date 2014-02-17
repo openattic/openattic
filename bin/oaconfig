@@ -94,7 +94,6 @@ case $1 in
 		
 		# Initialize the schema so our daemons can start
 		su "$OAUSER" -c 'python manage.py syncdb --noinput'
-		su "$OAUSER" -c 'python manage.py migrate --noinput'
 		
 		su "$OAUSER" -c 'python manage.py add-host'
 		
