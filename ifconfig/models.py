@@ -383,6 +383,7 @@ if "nagios" in settings.INSTALLED_APPS:
         # can't import these in the module scope, because nagios imports stuff from us.
         from nagios.models import Command, Service
         from nagios.conf import settings as nagios_settings
+        from django.contrib.contenttypes.models import ContentType
         ctype = ContentType.objects.get_for_model(instance.__class__)
         for srv in Service.objects.filter(target_type=ctype, target_id=instance.id):
             srv.delete()
