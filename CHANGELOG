@@ -1,6 +1,28 @@
 openATTIC Changelog
 ===================
 
+Version 1.1.0, ?? ???? 2014:
+---------------------------------
+* Improved Nagios disk load graphs.
+* Added support for scheduled snapshots.
+* Added Host and HostGroup management.
+* Added support for querying file systems mounted on remote hosts.
+* Removed support for IETD.
+* Added support for LIO (linux-iscsi.org).
+* Added multithreading support to the RPCd.
+* Added fancy Nagios service notifications.
+* Added Host Attributes mechanism.
+* Added volume abstraction layer.
+* Updated ExtJS to version 4, yielding various GUI improvements.
+* Added support for SINGLE RAID units.
+* Added app for MD-RAID.
+* Refactored file system handlers.
+* Added support for deferred function execution to the systemd.
+* Added DRBD module.
+* Added function to automatically wipe old metadata from newly created volumes.
+* Added auto-create function for PeerHost and APIKey entries.
+
+
 Version 1.0.7, 22 May 2013:
 ---------------------------------
 
@@ -44,6 +66,7 @@ Version 0.7.4, 07 March 2012:
 ---------------------------------
 
 * Fixed the Nagios syncdb hook which caused the initial syncdb to fail.
+
 
 Version 0.7.3, 05 March 2012:
 ---------------------------------
