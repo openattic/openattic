@@ -287,7 +287,6 @@ INSTALLED_APPS = [
     'rpcd',
     'systemd',
     'sysutils',
-    'south',
 ]
 
 INSTALLED_MODULES = []
