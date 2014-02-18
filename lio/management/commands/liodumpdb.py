@@ -29,7 +29,7 @@ class Command( BaseCommand ):
         for backstore in Backstore.objects.all():
             print "Backstore: %s%d" % (backstore.type, backstore.store_id)
             for storage_object in backstore.storageobject_set.all():
-                print "    -> %s (%s, WWN=%s)" % (storage_object.volume.name, storage_object.volume.path, storage_object.wwn)
+                print "    -> %s (%s, WWN=%s)" % (storage_object.volume.volume.name, storage_object.volume.volume.path, storage_object.wwn)
 
         for fabricname, fabricdesc in TARGET_TYPE_CHOICES:
             print "Fabric:", fabricname
@@ -40,8 +40,8 @@ class Command( BaseCommand ):
                     for acl in tpg.acl_set.all():
                         print "          -> ACL %d: %s" % (acl.id, acl.initiator.wwn)
                         for mlun in acl.mapped_luns.all():
-                            print "              -> Mapped LUN %d: %s" % (mlun.lun_id, mlun.storageobj.volume.path)
+                            print "              -> Mapped LUN %d: %s" % (mlun.lun_id, mlun.storageobj.volume.volume.path)
                     for lun in tpg.lun_set.all():
-                        print "          -> LUN %d: %s" % (lun.id, lun.storageobj.volume.path)
+                        print "          -> LUN %d: %s" % (lun.id, lun.storageobj.volume.volume.path)
                     for portal in tpg.portals.all():
                         print "          -> Portal %d: %s" % (portal.id, portal)
