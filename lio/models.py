@@ -578,7 +578,7 @@ class FcHandler(ProtocolHandler):
 
     def get_portals(self, tpgctx):
         """ FC doesn't use portals, so this doesn't yield anything. """
-        pass
+        return []
 
 
 class HostACL(models.Model):
