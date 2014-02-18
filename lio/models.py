@@ -414,10 +414,11 @@ class ProtocolHandler(object):
     @classmethod
     def get_handlers(self, hostacl):
         """ Find eligible modules according to configured initiator attributes """
-        yield IscsiHander(hostacl)
+        inittypes = [v["type"] for v in hostacl.host.initiator_set.values("type").distinct()]
         # TODO: Check if FC is actually possible (Kernel ≥3.5, found HBAs)
-        if False:
-            yield FcHandler(hostacl)
+        for HandlerClass in (IscsiHander, FcHandler):
+            if HandlerClass.module in inittypes:
+                yield HandlerClass(hostacl)
 
     def __init__(self, hostacl):
         self.hostacl = hostacl
