@@ -359,9 +359,12 @@ def __acl_mappedluns_changed(instance, reverse, action, pk_set, **kwargs):
 models.signals.m2m_changed.connect(__acl_mappedluns_changed, sender=ACL.mapped_luns.through)
 
 
-def ctxupdate(ctx, **values):
+def ctxupdate(ctx=None, **values):
     """ Create a new context dict and update its values. """
-    newctx = ctx.copy()
+    if ctx is None:
+        newctx = {}
+    else:
+        newctx = ctx.copy()
     newctx.update(values)
     return newctx
 
@@ -529,7 +532,7 @@ class IscsiHander(ProtocolHandler):
             tgt = Target(host=Host.objects.get_current(), type="iscsi", name=self.hostacl.volume.volume.name)
             tgt.full_clean()
             tgt.save()
-            yield {"target": tgt, "module": self.module}
+            yield ctxupdate(target=tgt, module=self.module)
 
     def get_tpgs(self, targetctx):
         """ Yield the TPG to be used for the HostACL.
@@ -562,7 +565,7 @@ class FcHandler(ProtocolHandler):
     def get_targets(self):
         """ Yield all targets for this host (volume doesn't matter). """
         for tgt in Target.objects.filter(host=Host.objects.get_current(), type=self.module):
-            yield {"target": tgt, "module": self.module}
+            yield ctxupdate(target=tgt, module=self.module)
 
     def get_tpgs(self, targetctx):
         """ Associate the target's TPG with the HostACL and yield it. """
