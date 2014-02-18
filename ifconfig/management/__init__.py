@@ -39,6 +39,7 @@ def create_interfaces(**kwargs):
     ifstack = netifaces.interfaces()
     haveifaces = {}
     have_primary = (IPAddress.objects.filter(primary_address=True).count() > 0)
+    unseen_ifaces = [v["devname"] for v in NetDevice.objects.values("devname")]
 
     while ifstack:
         iface = ifstack.pop(0)
@@ -80,12 +81,14 @@ def create_interfaces(**kwargs):
 
         try:
             haveifaces[iface] = NetDevice.objects.get(host=host, devname=iface)
+            unseen_ifaces.remove(iface)
             print "Found", iface
 
         except NetDevice.DoesNotExist:
             print "Adding", iface
             haveifaces[iface] = NetDevice(**args)
             haveifaces[iface].save()
+            unseen_ifaces.remove(iface)
 
             if iftype in ("BRIDGE", "BONDING"):
                 depifaces = [ haveifaces[depiface] for depiface in depends ]
@@ -116,5 +119,8 @@ def create_interfaces(**kwargs):
                     ip = IPAddress(address=(addr["addr"] + "/" + addr["netmask"]), device=haveifaces[iface], primary_address=is_primary)
                     ip.save()
 
+    for iface in unseen_ifaces:
+        print "Removing unseen interface", iface
+        NetDevice.objects.get(devname=iface).delete()
 
 sysutils.models.post_install.connect(create_interfaces, sender=sysutils.models)
