@@ -568,17 +568,14 @@ class FcHandler(ProtocolHandler):
             yield ctxupdate(target=tgt, module=self.module)
 
     def get_tpgs(self, targetctx):
-        """ Associate the target's TPG with the HostACL and yield it. """
-        if self.hostacl.tpg is None:
-            try:
-                tpg = TPG.objects.get(target=targetctx["target"], tag=1)
-            except TPG.DoesNotExist:
-                tpg = TPG(target=targetctx["target"], tag=1)
-                tpg.full_clean()
-                tpg.save()
-            self.hostacl.tpg = tpg
-            self.hostacl.save()
-        yield ctxupdate(targetctx, tpg=self.hostacl.tpg)
+        """ Get the target's TPG and yield it. """
+        try:
+            tpg = TPG.objects.get(target=targetctx["target"], tag=1)
+        except TPG.DoesNotExist:
+            tpg = TPG(target=targetctx["target"], tag=1)
+            tpg.full_clean()
+            tpg.save()
+        yield ctxupdate(targetctx, tpg=tpg)
 
     def get_portals(self, tpgctx):
         """ FC doesn't use portals, so this doesn't yield anything. """
