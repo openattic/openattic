@@ -581,6 +581,10 @@ class FcHandler(ProtocolHandler):
         """ FC doesn't use portals, so this doesn't yield anything. """
         return []
 
+    def delete_targets(self, lunctx):
+        """ Deleting FC targets is not a good idea. """
+        pass
+
 
 class HostACL(models.Model):
     """ Grant a Host access to a Volume via the given Portals (if applicable). """
