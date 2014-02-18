@@ -64,7 +64,8 @@ class SystemD(LockingPlugin):
         mdl_tpg = models.TPG.objects.get(id=id)
         lio_tgt = mdl_tpg.target.lio_object
         lio_tpg = target.TPG(lio_tgt, mdl_tpg.tag)
-        lio_tpg.set_attribute("authentication",             str(int(mdl_tpg.chapauth)))
+        if mdl_tpg.target.type == "iscsi":
+            lio_tpg.set_attribute("authentication",         str(int(mdl_tpg.chapauth)))
         lio_tpg.set_attribute("generate_node_acls",         "0")
         lio_tpg.set_attribute("demo_mode_write_protect",    "0")
         #lio_tpg.set_parameter("InitialR2T",                 "No") # → Invalid Argument <_<
