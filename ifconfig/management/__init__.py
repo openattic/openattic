@@ -24,6 +24,7 @@ from django.db.models import signals
 import ifconfig.models
 import sysutils.models
 from ifconfig.models  import Host, NetDevice, IPAddress
+from systemd import get_dbus_object, dbus_to_python
 
 def create_interfaces(**kwargs):
     # Make sure we have *this* host in the database
@@ -33,12 +34,7 @@ def create_interfaces(**kwargs):
         host = Host(name=socket.gethostname())
         host.save()
 
-    if os.path.exists("/proc/net/vlan/config"):
-        with open("/proc/net/vlan/config") as vlanconf:
-            vlans = [ [ field.strip() for field in line.split('|') ] for line in vlanconf ]
-            vlans = dict( [ ( vln[0], vln[1:] ) for vln in vlans[2:] ] )
-    else:
-        vlans = {}
+    vlans = dbus_to_python(get_dbus_object("/ifconfig").get_vconfig())
 
     ifstack = netifaces.interfaces()
     haveifaces = {}
@@ -99,7 +95,7 @@ def create_interfaces(**kwargs):
                     haveifaces[iface].slaves  = depifaces
 
             elif iftype == "VLAN":
-                haveifaces[iface].vlanrawdev  = depends[0]
+                haveifaces[iface].vlanrawdev  = NetDevice.objects.get(devname=depends[0])
 
         #print "%s is a %s device with depends to %s" % ( iface, iftype, ','.join(depends) )
         #print args

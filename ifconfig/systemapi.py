@@ -14,6 +14,8 @@
  *  GNU General Public License for more details.
 """
 
+import os.path
+
 from datetime import datetime
 from StringIO import StringIO
 from systemd         import invoke, logged, LockingPlugin, method
@@ -157,4 +159,13 @@ class SystemD(LockingPlugin):
                 return spd
             return -1
 
+    @method(in_signature="", out_signature="a{sas}")
+    def get_vconfig(self):
+        if os.path.exists("/proc/net/vlan/config"):
+            with open("/proc/net/vlan/config") as vlanconf:
+                vlans = [ [ field.strip() for field in line.split('|') ] for line in vlanconf ]
+                vlans = dict( [ ( vln[0], vln[1:] ) for vln in vlans[2:] ] )
+        else:
+            vlans = {}
+        return vlans
 
