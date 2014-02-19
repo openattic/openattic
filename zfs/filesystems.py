@@ -53,12 +53,12 @@ class Zfs(FileSystem):
     @classmethod
     def format_blockvolume(cls, volume, owner, fswarning, fscritical):
         from zfs.models import Zpool, Zfs
-        pool = Zpool(name=volume.name, host=volume.host)
+        pool = Zpool(name=volume.name, host=volume.host, megs=volume.megs, is_origin=False)
         pool.full_clean()
         pool.save()
         volume.upper = pool
         volume.save()
-        zvol = Zfs(name="", pool=pool, owner=owner, fswarning=fswarning, fscritical=fscritical)
+        zvol = Zfs(name="", pool=pool, owner=owner, fswarning=fswarning, fscritical=fscritical, megs=volume.megs)
         zvol.full_clean()
         zvol.save()
         return zvol

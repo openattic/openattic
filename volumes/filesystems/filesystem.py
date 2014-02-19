@@ -58,7 +58,8 @@ class FileSystem(object):
     def format_blockvolume(cls, volume, owner, fswarning, fscritical):
         from volumes.models import FileSystemProvider
         vol = FileSystemProvider(base=volume, owner=owner, filesystem=cls.name,
-                                    fswarning=fswarning, fscritical=fscritical)
+                                 name=volume.name, type=cls.name, megs=volume.megs,
+                                 fswarning=fswarning, fscritical=fscritical)
         vol.full_clean()
         vol.save()
         return vol

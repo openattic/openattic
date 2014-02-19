@@ -29,15 +29,15 @@ class Btrfs(FileSystem):
     @classmethod
     def format_blockvolume(cls, volume, owner, fswarning, fscritical):
         from btrfs.models import Btrfs, BtrfsSubvolume
-        pool = Btrfs(name=volume.name, host=volume.host)
+        pool = Btrfs(name=volume.name, host=volume.host, megs=volume.megs, is_origin=False)
         pool.full_clean()
         pool.save()
         volume.upper = pool
         volume.save()
-        svol = BtrfsSubvolume(name="", pool=pool, owner=owner, fswarning=fswarning, fscritical=fscritical)
+        svol = BtrfsSubvolume(name="", pool=pool, owner=owner, fswarning=fswarning, fscritical=fscritical, megs=volume.megs)
         svol.full_clean()
         svol.save()
-        dvol = BtrfsSubvolume(name="default", pool=pool, owner=owner, fswarning=fswarning, fscritical=fscritical)
+        dvol = BtrfsSubvolume(name="default", pool=pool, owner=owner, fswarning=fswarning, fscritical=fscritical, megs=volume.megs)
         dvol.full_clean()
         dvol.save()
         return svol
