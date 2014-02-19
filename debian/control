@@ -328,3 +328,13 @@ Description: ZFS module for openATTIC
  This package includes support for ZFS, a pooled file system designed for
  maximum data integrity, supporting data snapshots, multiple copies, and data
  checksums. It depends on zfsonlinux, the native Linux port of ZFS.
+
+Package: openattic-module-mdraid
+Architecture: all
+Depends: ${misc:Depends}, openattic-base, mdadm
+Description: MDRAID module for openATTIC
+ openATTIC is a storage management system based upon Open Source tools with
+ a comprehensive user interface that allows you to create, share and backup
+ storage space on demand.
+ .
+ This package includes support for MD-RAID, the common Linux software RAID.
