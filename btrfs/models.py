@@ -30,12 +30,6 @@ class Btrfs(VolumePool):
     objects     = HostDependentManager()
     all_objects = models.Manager()
 
-    def save(self, *args, **kwargs):
-        install = (self.id is None)
-        VolumePool.save(self, *args, **kwargs)
-        if install:
-            self.fs.format()
-
     @property
     def fullname(self):
         return self.name
@@ -70,15 +64,15 @@ class Btrfs(VolumePool):
 
 
 class BtrfsSubvolume(FileSystemVolume):
-    name        = models.CharField(max_length=150)
+    name        = models.CharField(max_length=150, blank=True)
     btrfs       = models.ForeignKey(Btrfs)
     parent      = models.ForeignKey('self', blank=True, null=True)
-    filesystem  = "btrfs"
 
     objects     = getHostDependentManagerClass("btrfs__host")()
     all_objects = models.Manager()
 
     def full_clean(self):
+        self.filesystem = "btrfs"
         if self.btrfs_id is None and self.pool is not None:
             self.btrfs = self.pool.volumepool
         return FileSystemVolume.full_clean(self)
@@ -89,11 +83,19 @@ class BtrfsSubvolume(FileSystemVolume):
             self.btrfs = self.pool.volumepool
         FileSystemVolume.save(self, *args, **kwargs)
         if install:
-            self.fs.create_subvolume(self.path)
+            if self.name == "":
+                self.fs.format()
+            else:
+                self.fs.create_subvolume(self.path)
 
     def delete(self):
-        self.fs.delete_subvolume(self.path)
+        if self.name != "":
+            self.fs.delete_subvolume(self.path)
         FileSystemVolume.delete(self)
+
+    @property
+    def base(self):
+        return self.btrfs.member_set.all()[0]
 
     @property
     def fs(self):

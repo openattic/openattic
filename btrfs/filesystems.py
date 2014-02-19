@@ -26,6 +26,22 @@ class Btrfs(FileSystem):
     name = "btrfs"
     desc = "BTRFS (Experimental)"
 
+    @classmethod
+    def format_blockvolume(cls, volume, owner, fswarning, fscritical):
+        from btrfs.models import Btrfs, BtrfsSubvolume
+        pool = Btrfs(name=volume.name, host=volume.host)
+        pool.full_clean()
+        pool.save()
+        volume.upper = pool
+        volume.save()
+        svol = BtrfsSubvolume(name="", pool=pool, owner=owner, fswarning=fswarning, fscritical=fscritical)
+        svol.full_clean()
+        svol.save()
+        dvol = BtrfsSubvolume(name="default", pool=pool, owner=owner, fswarning=fswarning, fscritical=fscritical)
+        dvol.full_clean()
+        dvol.save()
+        return svol
+
     @property
     def info(self):
         return {}
@@ -35,11 +51,10 @@ class Btrfs(FileSystem):
         return get_dbus_object("/btrfs")
 
     def format(self):
-        self.dbus_object.format( self.lv.path )
-        self.dbus_object.write_fstab()
+        self.dbus_object.format( self.volume.volume.base.volume.path )
+        self.write_fstab()
         self.mount()
         self.chown()
-        self.dbus_object.create_subvolume(os.path.join(self.path, "default"))
 
     @property
     def path(self):
