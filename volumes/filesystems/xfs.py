@@ -60,7 +60,7 @@ class Xfs(FileSystem):
             raidparams = {"chunksize": -1, "datadisks": -1}
 
         self.dbus_object.xfs_format( self.volume.base.volume.path, raidparams["chunksize"], raidparams["datadisks"], self.agcount )
-        self.dbus_object.write_fstab()
+        self.write_fstab()
         self.mount()
         self.chown()
 
