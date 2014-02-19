@@ -19,7 +19,7 @@ Ext.define('volumes__volumes_BlockVolume_model', {
     'Ext.data.NodeInterface'
   ],
   fields: [
-    'id', 'name', 'type', 'megs', 'status', 'usedmegs', 'percent',
+    'id', '__unicode__', 'name', 'type', 'megs', 'status', 'usedmegs', 'percent',
     'fswarning', 'fscritical', 'host', 'path', 'poolname', 'ownername'
   ],
   createNode: function(record){
@@ -48,7 +48,7 @@ Ext.define('volumes__volumes_FileSystemVolume_model', {
     'Ext.data.NodeInterface'
   ],
   fields: [
-    'id', 'name', 'type', 'megs', 'status', 'usedmegs', 'percent',
+    'id', '__unicode__', 'name', 'type', 'megs', 'status', 'usedmegs', 'percent',
     'fswarning', 'fscritical', 'host', 'path', 'poolname', 'ownername'
   ],
   createNode: function(record){
@@ -550,7 +550,7 @@ Ext.define('Ext.oa.volumes__Volume_Panel', {
       columns: [{
         xtype: 'treecolumn',
         header: gettext('Name'),
-        dataIndex: "name",
+        dataIndex: "__unicode__",
         stateId: "volumes__volumes_panel_state__name",
         flex: 3
       },{

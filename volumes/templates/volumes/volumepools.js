@@ -22,7 +22,7 @@ Ext.define('volumes__volumes_VolumePool_model', {
     'Ext.data.NodeInterface'
   ],
   fields: [
-    'id', 'name', 'type', 'megs', 'percent', 'status'
+    'id', '__unicode__', 'name', 'type', 'megs', 'percent', 'status'
   ],
   createNode: function(record){
     var rootNode;
@@ -103,7 +103,7 @@ Ext.define('volumes__volumes_GenericDisk_model', {
     'Ext.data.NodeInterface'
   ],
   fields: [
-    'id', 'name', 'type', 'megs', 'percent', 'status',
+    'id', '__unicode__', 'name', 'type', 'megs', 'percent', 'status',
     'rpm'
   ],
   createNode: function(record){
@@ -186,7 +186,7 @@ Ext.define('Ext.oa.volumes__VolumePool_Panel', {
         xtype: 'treecolumn',
         header: gettext('Name'),
         stateId: "volumes__volumepool_panel_state__name",
-        dataIndex: "name"
+        dataIndex: "__unicode__"
       },{
         header: gettext('Type'),
         dataIndex: "type",

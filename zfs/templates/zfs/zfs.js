@@ -20,7 +20,7 @@ Ext.define('volumes__zfs_Zfs_model', {
     'Ext.data.NodeInterface'
   ],
   fields: [
-    'id', 'name', 'type', 'megs', 'status', 'usedmegs', 'percent',
+    'id', '__unicode__', 'name', 'type', 'megs', 'status', 'usedmegs', 'percent',
     'fswarning', 'fscritical', 'host', 'path', 'poolname', 'ownername'
   ],
   createNode: function(record){
@@ -36,7 +36,7 @@ Ext.define('volumes__zfs_Zfs_model', {
     else
       rootNode.set("percent",    null);
     if( rootNode.get("name") === '' )
-      rootNode.set("name", toUnicode(record.raw.pool) + ' ' + gettext('[zpool root volume]'));
+      rootNode.set("__unicode__", toUnicode(record.raw.pool) + ' ' + gettext('[zpool root volume]'));
     rootNode.commit();
     return rootNode;
   }

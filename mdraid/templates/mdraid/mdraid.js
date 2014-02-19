@@ -20,7 +20,7 @@ Ext.define('volumes__mdraid_Array_model', {
     'Ext.data.NodeInterface'
   ],
   fields: [
-    'id', 'name', 'type', 'megs', 'percent', 'status', 'path'
+    'id', '__unicode__', 'name', 'type', 'megs', 'percent', 'status', 'path'
   ],
   createNode: function(record){
     var rootNode;

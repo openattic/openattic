@@ -19,7 +19,7 @@ Ext.define('volumes__twraid_Unit_model', {
     'Ext.data.NodeInterface'
   ],
   fields: [
-    'id', 'name', 'type', 'megs', 'percent', 'status', 'host', 'path',
+    'id', '__unicode__', 'name', 'type', 'megs', 'percent', 'status', 'host', 'path',
     "index", "verify", "rebuild", "rdcache", "wrcache", "unittype", "autoverify", "serial", "chunksize"
   ],
   createNode: function(record){
@@ -67,7 +67,7 @@ Ext.define('volumes__twraid_Disk_model', {
     'Ext.data.NodeInterface'
   ],
   fields: [
-    'id', 'name', 'type', 'megs', 'percent', 'status', 'path',
+    'id', '__unicode__', 'name', 'type', 'megs', 'percent', 'status', 'path',
     "enclslot", "unitindex", "serial", "linkspeed", "power_on_h", "disktype", "port", "temp_c", "model", "rpm"
   ],
   createNode: function(record){
