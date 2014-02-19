@@ -174,8 +174,6 @@ class LogicalVolume(BlockVolume):
     createdate  = models.DateTimeField(auto_now_add=True, blank=True, null=True)
     snapshotconf= models.ForeignKey("SnapshotConf", blank=True, null=True, related_name="snapshot_set")
 
-    type        = _("Logical Volume")
-
     objects = getHostDependentManagerClass("vg__host")()
     all_objects = models.Manager()
 
