@@ -70,7 +70,6 @@ def validate_lv_name(value):
 class VolumeGroup(VolumePool):
     """ Represents a LVM Volume Group. """
 
-    name        = models.CharField(max_length=130, unique=True, validators=[validate_vg_name])
     host        = models.ForeignKey(Host, null=True)
 
     objects     = HostDependentManager()
@@ -140,16 +139,8 @@ class VolumeGroup(VolumePool):
         return stat
 
     @property
-    def megs(self):
-        return float(self.lvm_info["LVM2_VG_SIZE"])
-
-    @property
     def usedmegs(self):
         return float(self.lvm_info["LVM2_VG_SIZE"]) - float(self.lvm_info["LVM2_VG_FREE"])
-
-    @property
-    def type(self):
-        return _("Volume Group")
 
     def get_volume_class(self, type):
         return LogicalVolume
@@ -164,8 +155,6 @@ class LogicalVolume(BlockVolume):
         This is the main class of openATTIC's design.
     """
 
-    name        = models.CharField(max_length=130, validators=[validate_lv_name])
-    megs        = models.IntegerField(_("Size in MB"))
     vg          = models.ForeignKey(VolumeGroup, blank=True)
     snapshot    = models.ForeignKey("self", blank=True, null=True, related_name="snapshot_set")
     filesystem  = models.CharField(max_length=20, blank=True, choices=[(__fs.name, __fs.desc) for __fs in FILESYSTEMS] )
@@ -173,7 +162,6 @@ class LogicalVolume(BlockVolume):
     owner       = models.ForeignKey(User, blank=True)
     fswarning   = models.IntegerField(_("Warning Level (%)"),  default=75 )
     fscritical  = models.IntegerField(_("Critical Level (%)"), default=85 )
-    uuid        = models.CharField(max_length=38, blank=True, editable=False)
     dedup       = models.BooleanField(_("Deduplication"), blank=True, default=False)
     compression = models.BooleanField(_("Compression"), blank=True, default=False)
     createdate  = models.DateTimeField(auto_now_add=True, blank=True, null=True)
@@ -183,9 +171,6 @@ class LogicalVolume(BlockVolume):
 
     objects = getHostDependentManagerClass("vg__host")()
     all_objects = models.Manager()
-
-    class Meta:
-        unique_together = ("vg", "name")
 
     class NotASnapshot(Exception):
         pass
