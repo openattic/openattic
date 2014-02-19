@@ -70,4 +70,5 @@ class Array(BlockVolume):
             "stripewidth": stripewidth,
             }
 
-
+    def __unicode__(self):
+        return "MDRAID array %s" % self.name
