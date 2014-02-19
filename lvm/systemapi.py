@@ -140,6 +140,11 @@ class SystemD(BasePlugin):
         self.lvs_time = 0
         invoke(cmd)
         invoke(["blkdevzero", "/dev/%s/%s" % (vgname, lvname)])
+        # Update UUID
+        self.lvs_time = time()
+        self.lvs_cache = lvm_lvs()
+        lv_mdl = LogicalVolume.objects.get(name=lvname)
+        lv_mdl.uuid = self.lvs_cache[lvname]["LVM2_LV_UUID"]
 
     @deferredmethod(in_signature="sb")
     def lvchange(self, device, active, sender):
