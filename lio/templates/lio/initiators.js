@@ -76,7 +76,17 @@ Ext.oa.Lio__HostAttrPlugin = {
         }, {
           xtype: 'textfield',
           fieldLabel: gettext('WWN/IQN'),
-          name: "wwn"
+          name: "wwn",
+          listeners: {
+            change: function(self, newval, oldval){
+              if(addwin.items.items[0].items.findBy(function(item){return item.name == "type"}).getValue() != "qla2xxx"){
+                return;
+              }
+              if( /^([\da-f]{2}:){0,6}[\da-f]{2}$/.test(newval) ){
+                self.setValue(newval + ':');
+              }
+            }
+          }
         }]
       },
       success: function(){
