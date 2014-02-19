@@ -83,6 +83,11 @@ Ext.oa.Lio__HostAttrPlugin = {
                 return;
               }
               if( /^([\da-f]{2}:){0,6}[\da-f]{2}$/.test(newval) ){
+                // newval contains an incomplete WWN, but that ends with a complete octet. meaning:
+                // 11:22:33:4   - no match
+                // 11:22:33:44  - match
+                // 11:22:33:44: - no match
+                // 11:22:33:44:55:66:77:88 - no match
                 self.setValue(newval + ':');
               }
             }
