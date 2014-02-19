@@ -24,7 +24,6 @@ from btrfs import filesystems
 
 
 class Btrfs(VolumePool):
-    name        = models.CharField(max_length=150)
     host        = models.ForeignKey(Host)
 
     objects     = HostDependentManager()
@@ -39,16 +38,8 @@ class Btrfs(VolumePool):
         return filesystems.Btrfs(self)
 
     @property
-    def type(self):
-        return "Btrfs"
-
-    @property
     def status(self):
         return "online"
-
-    @property
-    def megs(self):
-        return self.fs.stat["size"]
 
     @property
     def usedmegs(self):
@@ -64,7 +55,6 @@ class Btrfs(VolumePool):
 
 
 class BtrfsSubvolume(FileSystemVolume):
-    name        = models.CharField(max_length=150, blank=True)
     btrfs       = models.ForeignKey(Btrfs)
     parent      = models.ForeignKey('self', blank=True, null=True)
 
@@ -116,10 +106,6 @@ class BtrfsSubvolume(FileSystemVolume):
     @property
     def stat(self):
         return self.fs.stat
-
-    @property
-    def megs(self):
-        return self.btrfs.megs
 
     @property
     def host(self):
