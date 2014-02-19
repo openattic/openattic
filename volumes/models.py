@@ -15,6 +15,7 @@
 """
 
 import os.path
+import uuid
 
 from django.db import models
 from django.db.models import signals
@@ -72,9 +73,6 @@ class VolumePool(CapabilitiesAwareModel):
         BlockVolumes or FileSystemVolumes itself.
 
         Classes that inherit from this one are required to implement the following properties:
-        * name       -> CharField or property
-        * type       -> CharField or property (to be displayed to the user)
-        * megs       -> IntegerField or property
         * usedmegs   -> IntegerField or property
         * status     -> CharField or property
         * host       -> ForeignKey or property of a node that can modify the volumepool
@@ -88,9 +86,19 @@ class VolumePool(CapabilitiesAwareModel):
     """
     volumepool_type = models.ForeignKey(ContentType, blank=True, null=True, related_name="%(class)s_volumepool_type_set")
     volumepool      = generic.GenericForeignKey("volumepool_type", "id")
+    name        = models.CharField(max_length=150)
+    type        = models.CharField(max_length=100, blank=True)
+    megs        = models.IntegerField()
+    uuid        = models.CharField(max_length=38, editable=False)
+    is_origin   = models.BooleanField()
 
     objects     = getHostDependentManagerClass('volumepool__host')()
     all_objects = models.Manager()
+
+    def full_clean(self):
+        CapabilitiesAwareModel.full_clean(self)
+        if not self.uuid:
+            self.uuid = str(uuid.uuid4())
 
     @property
     def member_set(self):
@@ -146,9 +154,18 @@ class AbstractVolume(CapabilitiesAwareModel):
     pool        = models.ForeignKey(VolumePool,  blank=True, null=True)
     volume_type = models.ForeignKey(ContentType, blank=True, null=True, related_name="%(class)s_volume_type_set")
     volume      = generic.GenericForeignKey("volume_type", "id")
+    name        = models.CharField(max_length=150, blank=True)
+    type        = models.CharField(max_length=100, blank=True)
+    megs        = models.IntegerField()
+    uuid        = models.CharField(max_length=38, editable=False)
 
     class Meta:
         abstract = True
+
+    def full_clean(self):
+        CapabilitiesAwareModel.full_clean(self)
+        if not self.uuid:
+            self.uuid = str(uuid.uuid4())
 
     def pre_install(self):
         volume_signals.pre_install.send(sender=self.__class__, instance=self)
@@ -170,9 +187,6 @@ class BlockVolume(AbstractVolume):
     """ Everything that is a /dev/something.
 
         Classes that inherit from this one are required to implement the following properties:
-        * name       -> CharField or property
-        * type       -> CharField or property (to be displayed to the user)
-        * megs       -> IntegerField or property
         * disk_stats -> property that returns the current Kernel disk stats from /sys/block/sdX/stat as a dict
         * host       -> ForeignKey or property of a node that can modify the volume
         * status     -> CharField or property
@@ -255,8 +269,13 @@ class GenericDisk(BlockVolume):
     """ A standard disk that is NOT anything fancy (like a hardware raid). """
     host        = models.ForeignKey(Host)
     serial      = models.CharField(max_length=150, blank=True)
-    type        = models.CharField(max_length=50, choices=(("sata", "SATA"), ("sas", "SAS"), ("ssd", "SSD")), default="sas")
     rpm         = models.IntegerField(blank=True, null=True)
+
+    def full_clean(self):
+        BlockVolume.full_clean(self)
+        from django.core.exceptions import ValidationError
+        if self.type not in ("sata", "sas", "ssd"):
+            raise ValidationError({"type": ["Type needs to be one of 'sata', 'sas', 'ssd'."]})
 
     @property
     def udev_device(self):
@@ -279,14 +298,6 @@ class GenericDisk(BlockVolume):
     def path(self):
         return self.udev_device.device_node
 
-    @property
-    def name(self):
-        return self.udev_device.sys_name
-
-    @property
-    def megs(self):
-        return int(self.udev_device.attributes["size"]) * 512. / 1024. / 1024.
-
     def __unicode__(self):
         return "%s (%dMiB)" % (self.path, self.megs)
 
@@ -295,9 +306,6 @@ class FileSystemVolume(AbstractVolume):
     """ Everything that can be mounted as a /media/something and is supposed to be shared.
 
         Classes that inherit from this one are required to implement the following properties:
-        * name       -> CharField or property
-        * type       -> CharField or property (to be displayed to the user)
-        * megs       -> IntegerField or property
         * host       -> ForeignKey or property of a node that can modify the volume
         * path       -> CharField or property that returns the mount point
         * disk_stats -> property that returns the current Kernel disk stats from /sys/block/sdX/stat as a dict
@@ -323,10 +331,6 @@ class FileSystemVolume(AbstractVolume):
     @property
     def path(self):
         return self.volume.fs.path
-
-    @property
-    def type(self):
-        return self.volume.fs.name
 
 
 if HAVE_NAGIOS:
@@ -378,16 +382,8 @@ class FileSystemProvider(FileSystemVolume):
             self.setupfs()
 
     @property
-    def name(self):
-        return self.base.volume.name
-
-    @property
     def status(self):
         return {True: "online", False: "offline"}[self.mounted]
-
-    @property
-    def megs(self):
-        return self.base.volume.megs
 
     @property
     def host(self):
