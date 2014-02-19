@@ -82,6 +82,11 @@ class VolumeGroup(VolumePool):
     def __unicode__(self):
         return self.name
 
+    def full_clean(self):
+        if self.megs is None:
+            self.megs = float(self.lvm_info["LVM2_VG_SIZE"])
+        VolumePool.full_clean(self)
+
     def save( self, *args, **kwargs ):
         VolumePool.save(self, *args, **kwargs)
         get_dbus_object("/lvm").invalidate()
