@@ -88,7 +88,6 @@ def create_interfaces(**kwargs):
             print "Adding", iface
             haveifaces[iface] = NetDevice(**args)
             haveifaces[iface].save()
-            unseen_ifaces.remove(iface)
 
             if iftype in ("BRIDGE", "BONDING"):
                 depifaces = [ haveifaces[depiface] for depiface in depends ]
