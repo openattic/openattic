@@ -56,7 +56,6 @@ class Enclosure(models.Model):
 
 class Unit(BlockVolume):
     index       = models.IntegerField()
-    name        = models.CharField(max_length=150, blank=True)
     serial      = models.CharField(max_length=150, blank=True)
     controller  = models.ForeignKey(Controller)
     unittype    = models.CharField(max_length=150, blank=True)
@@ -64,7 +63,6 @@ class Unit(BlockVolume):
     rebuild     = models.IntegerField(blank=True, null=True)
     verify      = models.IntegerField(blank=True, null=True)
     chunksize   = models.IntegerField(blank=True, null=True)
-    megs        = models.IntegerField()
     autoverify  = models.BooleanField()
     rdcache     = models.CharField(max_length=150, blank=True)
     wrcache     = models.CharField(max_length=150, blank=True)
@@ -88,10 +86,6 @@ class Unit(BlockVolume):
                 return dev.device_node
 
         raise DeviceNotFound(self.serial)
-
-    @property
-    def type(self):
-        return self.unittype
 
     @property
     def raid_params(self):
