@@ -96,6 +96,8 @@ class HostDependentManager(models.Manager):
         for obj in super(HostDependentManager, self).get_query_set().all():
             curr = obj
             for field in self.model.objects.hostfilter.split('__'):
+                if curr is None:
+                    raise ValueError("got none when querying model '%s' instance '%s' for field '%s'" % (self.model, obj.id, field))
                 curr = getattr( curr, field )
                 if isinstance( curr, Host ):
                     break
