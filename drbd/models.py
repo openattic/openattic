@@ -93,7 +93,6 @@ class ConnectionManager(models.Manager):
         return endpoint.id
 
 class Connection(BlockVolume):
-    name        = models.CharField(max_length=50)
     protocol    = models.CharField(max_length=1, default="C", choices=DRBD_PROTOCOL_CHOICES)
     syncer_rate = models.CharField(max_length=25, blank=True, default="5M", help_text=(
                                     "Bandwidth limit for background synchronization, measured in "
@@ -113,10 +112,6 @@ class Connection(BlockVolume):
         if self._drbd is None:
             self._drbd = get_dbus_object("/drbd")
         return self._drbd
-
-    @property
-    def megs(self):
-        return blockdevices.get_disk_size("drbd%d" % self.id)
 
     @property
     def port(self):
@@ -143,10 +138,6 @@ class Connection(BlockVolume):
     @property
     def status(self):
         return dbus_to_python(self.drbd.get_cstate(self.name, False))
-
-    @property
-    def type(self):
-        return "DRBD Connection"
 
     @property
     def peerhost(self):
