@@ -48,9 +48,9 @@ def create_vgs(**kwargs):
             vg.save()
         else:
             print "Volume Group", vgname, "already exists in the database"
-            if vg.host != Host.objects.get_current():
-                vg.host = Host.objects.get_current()
-                vg.save()
+            vg.host = Host.objects.get_current()
+            vg.megs = float(vgs[vgname]["LVM2_VG_SIZE"])
+            vg.save()
 
     if User.objects.count() == 0:
         print "Can't add LVs, no users have been configured yet"
@@ -76,9 +76,9 @@ def create_vgs(**kwargs):
 
         else:
             print "Logical Volume", lvname, "already exists in the database"
-            if not lv.uuid:
-                lv.uuid = lvs[lvname]["LVM2_LV_UUID"]
-                lv.save()
+            lv.uuid = lvs[lvname]["LVM2_LV_UUID"]
+            lv.megs = float(lvs[lvname]["LVM2_LV_SIZE"])
+            lv.save(database_only=True)
 
 
 sysutils.models.post_install.connect(create_vgs, sender=sysutils.models)
