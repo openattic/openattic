@@ -22,15 +22,10 @@ from volumes.models import InvalidVolumeType, VolumePool, FileSystemVolume, Capa
 from zfs import filesystems
 
 class Zpool(VolumePool):
-    name        = models.CharField(max_length=150)
     host        = models.ForeignKey(Host)
 
     objects     = HostDependentManager()
     all_objects = models.Manager()
-
-    @property
-    def type(self):
-        return "Zpool"
 
     @property
     def fs(self):
@@ -39,10 +34,6 @@ class Zpool(VolumePool):
     @property
     def status(self):
         return self.fs.status
-
-    @property
-    def megs(self):
-        return self.fs.megs
 
     @property
     def usedmegs(self):
@@ -64,7 +55,6 @@ class RaidZ(models.Model):
 
 
 class Zfs(FileSystemVolume):
-    name        = models.CharField(max_length=150, blank=True)
     zpool       = models.ForeignKey(Zpool)
     parent_zfs  = models.ForeignKey('self', blank=True, null=True)
 
@@ -114,10 +104,6 @@ class Zfs(FileSystemVolume):
     @property
     def stat(self):
         return self.fs.stat
-
-    @property
-    def megs(self):
-        return self.fs.stat["size"] or self.zpool.megs
 
     @property
     def host(self):
