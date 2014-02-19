@@ -514,7 +514,7 @@ Ext.define('Ext.oa.volumes__Volume_Panel', {
             paramOrder: ["kwds"]
           },
           root: {
-            name: gettext("Block-based"),
+            __unicode__: gettext("Block-based"),
             id:   "volumes__volumes_blockvolumes_rootnode",
             type: ' ',
             megs: null,
@@ -530,7 +530,7 @@ Ext.define('Ext.oa.volumes__Volume_Panel', {
             directFn: volumes__FileSystemVolume.all
           },
           root: {
-            name: gettext("File-based"),
+            __unicode__: gettext("File-based"),
             id:   "volumes__volumes_fsvolumes_rootnode",
             type: ' ',
             megs: null,
