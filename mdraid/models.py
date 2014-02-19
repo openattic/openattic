@@ -25,10 +25,7 @@ from volumes import blockdevices
 from volumes.models import DeviceNotFound, BlockVolume, CapabilitiesAwareManager
 
 class Array(BlockVolume):
-    name        = models.CharField(max_length=50)
-    megs        = models.IntegerField()
     host        = models.ForeignKey(Host)
-    type        = models.CharField(max_length=50)
 
     @property
     def path(self):
