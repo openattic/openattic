@@ -83,6 +83,7 @@ class VolumeGroup(VolumePool):
         return self.name
 
     def full_clean(self):
+        validate_vg_name(self.name)
         if self.megs is None:
             lvm = get_dbus_object("/lvm")
             lvm.invalidate()
@@ -201,13 +202,16 @@ class LogicalVolume(BlockVolume):
     def full_clean(self):
         if self.vg_id is None and self.pool is not None:
             self.vg = self.pool.volumepool
+        validate_lv_name(self.name)
+        BlockVolume.full_clean(self)
+        if self.id is None:
+            self.uuid = '-'
         currmegs = 0
         if self.id is not None:
             currmegs = self.lvm_megs
         if float(self.vg.lvm_info["LVM2_VG_FREE"]) < int(self.megs) - currmegs:
             from django.core.exceptions import ValidationError
             raise ValidationError({"megs": ["Volume Group %s has insufficient free space." % self.vg.name]})
-        return BlockVolume.full_clean(self)
 
     @property
     def lvm(self):
