@@ -145,6 +145,7 @@ class SystemD(BasePlugin):
         self.lvs_cache = lvm_lvs()
         lv_mdl = LogicalVolume.objects.get(name=lvname)
         lv_mdl.uuid = self.lvs_cache[lvname]["LVM2_LV_UUID"]
+        lv_mdl.save(database_only=True)
 
     @deferredmethod(in_signature="sb")
     def lvchange(self, device, active, sender):
