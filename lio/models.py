@@ -603,11 +603,13 @@ class HostACL(models.Model):
         if install:
             pre_install.send(sender=HostACL, instance=self)
             ProtocolHandler.install_hostacl(self)
+            get_dbus_object("/lio").saveconfig()
             post_install.send(sender=HostACL, instance=self)
 
 def __hostacl_pre_delete(instance, **kwargs):
     pre_uninstall.send(sender=HostACL, instance=instance)
     ProtocolHandler.uninstall_hostacl(instance)
+    get_dbus_object("/lio").saveconfig()
     post_uninstall.send(sender=HostACL, instance=instance)
 
 models.signals.pre_delete.connect(__hostacl_pre_delete, sender=HostACL)
@@ -619,5 +621,6 @@ def __hostacl_portals_changed(instance, reverse, action, pk_set, **kwargs):
         hostacls = TPG.objects.filter(id__in=pk_set)
     for hostacl in hostacls:
         ProtocolHandler.install_hostacl(hostacl)
+    get_dbus_object("/lio").saveconfig()
 
 models.signals.m2m_changed.connect(__hostacl_portals_changed, sender=HostACL.portals.through)
