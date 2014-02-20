@@ -101,7 +101,7 @@ class Unit(BlockVolume):
         elif self.unittype == "RAID-10":
             datadisks = raiddisks / 2
         else:
-            raise blockdevices.UnsupportedRAIDLevel(raidlevel)
+            raise blockdevices.UnsupportedRAIDLevel(self.unittype)
         return {
             "chunksize": self.chunksize,
             "raiddisks": raiddisks,

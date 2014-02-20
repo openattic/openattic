@@ -17,8 +17,6 @@
 from rpcd.handlers import ModelHandler
 from rpcd.handlers import ProxyModelHandler
 
-from ifconfig.models import Host
-from lvm.models    import VolumeGroup
 from twraid.models import Controller, Enclosure, Unit, Disk
 from volumes.rpcapi import AbstractBlockVolumeHandler
 
