@@ -2,14 +2,12 @@
 # kate: space-indent on; indent-width 4; replace-tabs on;
 # vim: tabstop=4 expandtab shiftwidth=4 softtabstop=4
 
+import shlex
+
 from datetime import datetime
 from django.db import models
 
-from ifconfig.models import Host
-
-""" 
-"""
-
+from systemd import invoke
 
 def process_config(conf_dict, snapconf):
     if len(conf_dict["data"]["prescript"]) > 0:

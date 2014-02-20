@@ -37,7 +37,6 @@ def create_vgs(**kwargs):
 
     vgs = dbus_to_python(lvm.vgs())
     lvs = dbus_to_python(lvm.lvs())
-    mounts = blockdevices.get_mounts()
 
     for vgname in vgs:
         try:

@@ -15,29 +15,24 @@
  *  GNU General Public License for more details.
 """
 
-import pyudev
 import re
 import os
 import os.path
 import datetime
-import shlex
 
 from django.contrib.auth.models import User
 from django.db import models
 from django.utils.translation   import ugettext_noop as _
 
-from systemd         import invoke
 from ifconfig.models import Host, HostDependentManager, getHostDependentManagerClass
 from systemd.helpers import get_dbus_object, dbus_to_python
 from lvm             import signals as lvm_signals
-from lvm             import blockdevices
-from lvm.conf        import settings as lvm_settings
 from cron.models     import Cronjob
 from lvm             import snapcore
 
 from volumes.blockdevices import UnsupportedRAID
 from volumes.filesystems import FileSystem, FILESYSTEMS
-from volumes.models  import VolumePool, BlockVolume, FileSystemVolume
+from volumes.models  import VolumePool, BlockVolume
 from volumes         import capabilities
 
 def validate_vg_name(value):
@@ -394,9 +389,6 @@ class LogicalVolume(BlockVolume):
 
         if install:
             self.install()
-            # TODO: Move to post_install or systemd
-            #self.uuid = self.lvm_info["LVM2_LV_UUID"]
-
             ret = BlockVolume.save(self, *args, **kwargs)
 
         else:
@@ -515,7 +507,7 @@ class ConfManager(models.Manager):
         snapconf.save()
 
         time_configs = {'h': [], 'moy': [], 'dow': []}
-        startdate = enddate = minute = day_of_month = '';
+        startdate = enddate = minute = day_of_month = ''
 
         # if the job should only run once
         if data['executedate'] is not None:
@@ -600,15 +592,15 @@ class SnapshotConf(models.Model):
 
             dow = job.doweek.split(',')
             for i in dow:
-              conf_obj['data']['dow_' + i.strip()] = 'on'
+                conf_obj['data']['dow_' + i.strip()] = 'on'
 
             hour = job.hour.split(',')
             for i in hour:
-              conf_obj['data']['h_' + i.strip()] = 'on'
+                conf_obj['data']['h_' + i.strip()] = 'on'
 
             moy = job.month.split(',')
             for i in moy:
-              conf_obj['data']['moy_' + i.strip()] = 'on'
+                conf_obj['data']['moy_' + i.strip()] = 'on'
 
         # restore plugin data
         conf_obj["plugin_data"] = {}
