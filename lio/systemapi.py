@@ -14,11 +14,11 @@
  *  GNU General Public License for more details.
 """
 
-from rtslib          import target, tcm
+from rtslib          import target
 from tcm_dump        import tcm_full_backup
 
 from ifconfig.models import Host
-from systemd         import invoke, logged, LockingPlugin, method
+from systemd         import logged, LockingPlugin, method
 
 from lio             import models
 
