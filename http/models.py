@@ -15,7 +15,7 @@
 """
 
 from os.path import join, exists, islink
-from os import unlink, symlink, mkdir
+from os import unlink, symlink
 
 from http.conf import settings as http_settings
 from django.db import models
