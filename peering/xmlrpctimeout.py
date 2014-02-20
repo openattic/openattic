@@ -2,7 +2,6 @@
 # kate: space-indent on; indent-width 4; replace-tabs on;
 
 import xmlrpclib
-import httplib
 
 class TimeoutTransport(xmlrpclib.Transport):
     def __init__(self, use_datetime=0, timeout=30):
