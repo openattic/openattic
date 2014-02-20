@@ -14,6 +14,7 @@
  *  GNU General Public License for more details.
 """
 
+import dbus
 
 from django.db import models
 from django.dispatch import Signal
