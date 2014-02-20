@@ -26,6 +26,7 @@ def update_disksize(**kwargs):
     admin = User.objects.filter( is_superuser=True )[0]
     zfs_space = dbus_to_python(get_dbus_object("/zfs").zfs_getspace(""))
     for name, avail, used, usedsnap, usedds, usedrefreserv, usedchild in zfs_space:
+        megs = size_to_megs(avail) + size_to_megs(used)
         if "/" in name:
             zpool_name, zvol_name = name.split("/", 1)
         else:
@@ -37,12 +38,12 @@ def update_disksize(**kwargs):
             print "Found existing ZPool", zpool_name
         except Zpool.DoesNotExist:
             print "Found new ZPool", zpool_name
-            zpool = Zpool(name=zpool_name, is_origin=True, megs=size_to_megs(avail), host=Host.objects.get_current())
+            zpool = Zpool(name=zpool_name, is_origin=True, megs=megs, host=Host.objects.get_current())
             zpool.full_clean()
             zpool.save()
 
         if zvol_name is None:
-            zpool.megs = size_to_megs(avail)
+            zpool.megs = megs
             zpool.full_clean()
             zpool.save()
             try:
@@ -61,7 +62,7 @@ def update_disksize(**kwargs):
                 print "Found new ZFS Volume", zvol_name
                 zfs = Zfs(name=zvol_name, pool=zpool, host=Host.objects.get_current(), owner=admin)
 
-            zfs.megs = size_to_megs(avail)
+            zfs.megs = megs
             zfs.full_clean()
             zfs.save(database_only=True)
 
