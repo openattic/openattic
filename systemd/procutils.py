@@ -18,10 +18,8 @@ import os
 import pwd
 import errno
 import logging
-import threading
 import subprocess
 
-from time import sleep
 from datetime import datetime
 from select import select, error
 
