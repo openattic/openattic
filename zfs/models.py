@@ -21,6 +21,13 @@ from volumes.models import InvalidVolumeType, VolumePool, FileSystemVolume, Capa
 
 from zfs import filesystems
 
+def size_to_megs(sizestr):
+    mult = {"K": 1024**-1, "M": 1, "G": 1024, "T": 1024**2}
+    if sizestr[-1] in mult:
+        return float(sizestr[:-1]) * mult[sizestr[-1]]
+    return float(sizestr[:-1])
+
+
 class Zpool(VolumePool):
     host        = models.ForeignKey(Host)
 
@@ -67,7 +74,9 @@ class Zfs(FileSystemVolume):
             self.zpool = self.pool.volumepool
         return FileSystemVolume.full_clean(self)
 
-    def save(self, *args, **kwargs):
+    def save(self, database_only=False, *args, **kwargs):
+        if database_only:
+            return FileSystemVolume.save(self, *args, **kwargs)
         install = (self.id is None)
         if self.zpool_id is None and self.pool is not None:
             self.zpool = self.pool.volumepool
