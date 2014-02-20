@@ -218,6 +218,8 @@ class FileSystemVolumeHandler(ModelHandler):
 
 class FileSystemVolumeProxy(ProxyModelHandler, FileSystemVolumeHandler):
     def _find_target_host_from_model_instance(self, model):
+        if model.volume is None:
+            raise ValueError("Got None when querying model '%s' instance '%s' for its concrete volume" % (type(model), model.id))
         if model.volume.host == Host.objects.get_current():
             return None
         return model.volume.host.peerhost_set.all()[0]
@@ -241,6 +243,8 @@ class FileSystemProviderHandler(AbstractFileSystemVolumeHandler):
 
 class FileSystemProviderProxy(ProxyModelHandler, FileSystemProviderHandler):
     def _find_target_host_from_model_instance(self, model):
+        if model.base.volume is None:
+            raise ValueError("Got None when querying model '%s' instance '%s' for its concrete base volume" % (type(model), model.id))
         if model.base.volume.host == Host.objects.get_current():
             return None
         return model.base.volume.host.peerhost_set.all()[0]
