@@ -14,18 +14,18 @@
  *  GNU General Public License for more details.
 """
 
-import dbus
-
 from django.db import models
-from django.conf import settings
 from django.contrib.contenttypes.models import ContentType
 
-from ifconfig.models import Host, HostDependentManager, getHostDependentManagerClass
-from volumes import blockdevices
-from volumes.models import DeviceNotFound, BlockVolume, CapabilitiesAwareManager
+from ifconfig.models import Host, HostDependentManager
+from volumes         import blockdevices
+from volumes.models  import BlockVolume
 
 class Array(BlockVolume):
     host        = models.ForeignKey(Host)
+
+    objects     = HostDependentManager()
+    all_objects = models.Manager()
 
     @property
     def path(self):

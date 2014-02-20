@@ -14,7 +14,6 @@
  *  GNU General Public License for more details.
 """
 
-from rpcd.handlers import ModelHandler
 from rpcd.handlers import ProxyModelHandler
 
 from mdraid.models import Array
@@ -33,4 +32,8 @@ class ArrayHandler(AbstractBlockVolumeHandler):
     def get_raid_params(self, id):
         return Array.objects.get(id=id).raid_params
 
-RPCD_HANDLERS = [ArrayHandler]
+
+class ArrayProxy(ProxyModelHandler, ArrayHandler):
+    pass
+
+RPCD_HANDLERS = [ArrayProxy]
