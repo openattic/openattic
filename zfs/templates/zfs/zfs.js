@@ -27,10 +27,11 @@ Ext.define('volumes__zfs_Zfs_model', {
     var rootNode;
     record.set("leaf", true);
     rootNode = this.callParent(arguments);
-    rootNode.set("icon",     MEDIA_URL + '/icons2/16x16/apps/database.png');
-    rootNode.set("host",     toUnicode(record.raw.host));
-    rootNode.set("poolname", toUnicode(record.raw.pool));
-    rootNode.set("ownername",    toUnicode(record.raw.owner));
+    rootNode.set("icon",      MEDIA_URL + '/icons2/16x16/apps/database.png');
+    rootNode.set("host",      toUnicode(record.raw.host));
+    rootNode.set("poolname",  toUnicode(record.raw.pool));
+    rootNode.set("ownername", toUnicode(record.raw.owner));
+    rootNode.set("type",      toUnicode(record.raw.volume_type));
     if( record.data.usedmegs !== null )
       rootNode.set("percent",    (record.data.usedmegs / record.data.megs * 100).toFixed(2));
     else
