@@ -359,20 +359,26 @@ Ext.define("Ext.oa.volumes__volumes_add_volume_form", {
           var input_vals = form.getValues();
           var owner_dict = {"app": "auth", "obj": "user", "id": input_vals.owner};
 
+          self.ownerCt.ownerCt.getEl().mask(gettext("Loading..."));
+
           volumes__VolumePool.create_volume(input_vals.vg, input_vals.name, input_vals.megs,
             owner_dict, input_vals.filesystem, input_vals.fswarning, input_vals.fscritical,
             function(result, response){
-            if(response.type !== "exception"){
-              self.ownerCt.ownerCt.ownerCt.close();
+              if(response.type !== "exception"){
+                self.ownerCt.ownerCt.ownerCt.close();
 
-              var settings_win = Ext.oa.getAdditSettingsWindow(Ext.apply(config, {
-                  volume_id:    result.id,
-                  volume_megs:  result.megs,
-                  volumePanel:  config.volumePanel
-              }));
-              settings_win.show();
+                var settings_win = Ext.oa.getAdditSettingsWindow(Ext.apply(config, {
+                    volume_id:    result.id,
+                    volume_megs:  result.megs,
+                    volumePanel:  config.volumePanel
+                }));
+                settings_win.show();
+              }
+              else{
+                self.ownerCt.ownerCt.getEl().unmask();
+              }
             }
-          });
+          );
         }
       }
     }
