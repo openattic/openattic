@@ -14,19 +14,8 @@
  *  GNU General Public License for more details.
 """
 
-import dbus
-
-from os.path import join, exists
-from os import makedirs
-
 from django.db import models
-from django.conf import settings
-
-from ftp.conf import settings as ftp_settings
-from ifconfig.models import getHostDependentManagerClass
 from django.contrib.auth.models import User
-from lvm.models import LogicalVolume
-import lvm.signals as lvm_signals
 
 
 class FileLog(models.Model):

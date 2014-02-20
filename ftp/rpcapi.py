@@ -15,7 +15,6 @@
 """
 
 from rpcd.handlers import ModelHandler
-from rpcd.handlers import ProxyModelHandler
 
 from ftp.models import FileLog
 
