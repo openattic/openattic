@@ -1,0 +1,56 @@
+#!/usr/bin/env python
+# -*- coding: utf-8 -*-
+# kate: space-indent on; indent-width 4; replace-tabs on;
+
+"""
+ *  Copyright (C) 2011-2014, it-novum GmbH <community@open-attic.org>
+ *
+ *  openATTIC is free software; you can redistribute it and/or modify it
+ *  under the terms of the GNU General Public License as published by
+ *  the Free Software Foundation; version 2.
+ *
+ *  This package is distributed in the hope that it will be useful,
+ *  but WITHOUT ANY WARRANTY; without even the implied warranty of
+ *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ *  GNU General Public License for more details.
+"""
+
+import sys
+from optparse     import OptionParser
+from ConfigParser import ConfigParser
+from xmlrpclib    import ServerProxy
+
+exitstatus = 0
+
+parser = OptionParser()
+options, progargs = parser.parse_args()
+
+if len(progargs) != 1:
+    print("Usage: check_twraid_unit <unit serial>")
+    sys.exit(2)
+
+conf = ConfigParser()
+conf.read(["/etc/openattic/cli.conf"])
+
+unit_serial = progargs[0]
+
+oa = ServerProxy(conf.get("options", "connect"))
+
+unit = oa.twraid.Unit.get({"serial": unit_serial})
+if unit["status"] == "DEGRADED":
+    exitstatus = 2
+    print "Unit %s is degraded" % unit["__unicode__"]
+
+elif unit["status"] == "REBUILD":
+    exitstatus = 1
+    print "Unit %s is rebuilding (%d%%)" % (unit["__unicode__"], unit["rebuild"])
+
+elif unit["status"] in ("VERIFYING", "INITIALIZING"):
+    exitstatus = 0
+    print "Unit %s is %s (%d%%)" % (unit["__unicode__"], unit["status"].lower(), unit["verify"])
+
+elif unit["status"] == "OK":
+    exitstatus = 0
+    print "Unit %s is OK" % unit["__unicode__"]
+
+sys.exit(exitstatus)
