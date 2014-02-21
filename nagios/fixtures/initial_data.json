@@ -1,5 +1,13 @@
 [
     {
+        "pk": 16,
+        "model": "nagios.command",
+        "fields": {
+            "query_only": false,
+            "name": "check_twraid_unit"
+        }
+    },
+    {
         "pk": 1,
         "model": "nagios.command",
         "fields": {
