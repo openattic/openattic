@@ -18,6 +18,7 @@ nagios/plugins/check_openattic_systemd  /usr/lib/nagios/plugins
 nagios/plugins/check_lvm_snapshot       /usr/lib/nagios/plugins
 nagios/plugins/check_cputime            /usr/lib/nagios/plugins
 nagios/plugins/check_protocol_traffic   /usr/lib/nagios/plugins
+nagios/plugins/check_twraid_unit        /usr/lib/nagios/plugins
 
 nagios/plugins/notify_openattic         /usr/lib/nagios/plugins
 
