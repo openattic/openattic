@@ -24,6 +24,9 @@ LV_PERF_CHECK_CMD        = getattr( settings, "NAGIOS_LV_PERF_CHECK_CMD",      "
 LV_SNAP_DESCRIPTION      = getattr( settings, "NAGIOS_LV_SNAP_DESCRIPTION",    "Snapshot Utilization of %s" )
 LV_SNAP_CHECK_CMD        = getattr( settings, "NAGIOS_LV_SNAP_CHECK_CMD",      "check_lvm_snapshot" )
 
+TWRAID_UNIT_DESCRIPTION  = getattr( settings, "NAGIOS_TWRAID_UNIT_DESCRIPTION","RAID Unit state %s" )
+TWRAID_UNIT_CHECK_CMD    = getattr( settings, "NAGIOS_TWRAID_UNIT_CHECK_CMD",  "check_twraid_unit" )
+
 TRAFFIC_DESCRIPTION      = getattr( settings, "NAGIOS_TRAFFIC_DESCRIPTION",    "Traffic on %s" )
 TRAFFIC_CHECK_CMD        = getattr( settings, "NAGIOS_TRAFFIC_CHECK_CMD",      "check_protocol_traffic" )
 
