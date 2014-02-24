@@ -440,7 +440,7 @@ Ext.define('Ext.oa.Nagios__Service_Panel', {
         listeners: {
           itemmousedown: function( self, record ){
             if( !record.raw.graphs || record.raw.graphs.length === 0 ){
-              self.ownerCt.items.items[1].getEl().mask(
+              self.ownerCt.ownerCt.items.items[2].getEl().mask(
                 gettext('No performance data available for service') + "<br />" +
                 "<center>" + record.data.description + "</center>"
               );
