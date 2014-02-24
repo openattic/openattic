@@ -119,6 +119,8 @@ class VolumePool(CapabilitiesAwareModel):
         return CapabilitiesAwareModel.save(self, *args, **kwargs)
 
     def __unicode__(self):
+        if self.volume is None:
+            return "<Invalid VolumePool %d>" % self.id
         return self.volumepool.name
 
     def _create_volume(self, name, megs, owner, filesystem, fswarning, fscritical):
@@ -215,6 +217,8 @@ class BlockVolume(AbstractVolume):
         return AbstractVolume.save(self, *args, **kwargs)
 
     def __unicode__(self):
+        if self.volume is None:
+            return "<Invalid BlockVolume %d>" % self.id
         return self.volume.name
 
     @property
@@ -326,6 +330,8 @@ class FileSystemVolume(AbstractVolume):
         return AbstractVolume.save(self, *args, **kwargs)
 
     def __unicode__(self):
+        if self.volume is None:
+            return "<Invalid FileSystemVolume %d>" % self.id
         return unicode(self.volume)
 
     @property
@@ -406,6 +412,8 @@ class FileSystemProvider(FileSystemVolume):
         return self.fs.stat
 
     def __unicode__(self):
+        if self.volume is None:
+            return "<Invalid FileSystemProvider %d>" % self.id
         return unicode(self.base)
 
 
