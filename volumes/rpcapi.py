@@ -44,10 +44,13 @@ from ifconfig.models import Host
 class AbstractVolumePoolHandler(ModelHandler):
     def _getobj(self, obj):
         data = ModelHandler._getobj(self, obj)
-        data["member_set"] = [
-            self._get_handler_instance(member.__class__)._idobj(member)
-            for member in obj.member_set.all()
-            ]
+        try:
+            data["member_set"] = [
+                self._get_handler_instance(member.__class__)._idobj(member)
+                for member in obj.member_set.all()
+                ]
+        except ValueError, err:
+            logging.error(unicode(err))
         return data
 
     def get_status(self, id):
