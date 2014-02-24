@@ -96,7 +96,8 @@ Ext.define('Ext.oa.MainViewManager', {
         viewConfig: {
           plugins: {
             ptype: "treeviewdragdrop",
-            ddGroup: "menutreedd"
+            ddGroup: "menutreedd",
+            enableDrop: false
           }
         },
         listeners: {
