@@ -119,7 +119,7 @@ class VolumePool(CapabilitiesAwareModel):
         return CapabilitiesAwareModel.save(self, *args, **kwargs)
 
     def __unicode__(self):
-        if self.volume is None:
+        if self.volumepool is None:
             return "<Invalid VolumePool %d>" % self.id
         return self.volumepool.name
 
