@@ -24,7 +24,7 @@ Ext.define('volumes__twraid_Unit_model', {
   ],
   createNode: function(record){
     var rootNode;
-    if( record.raw.disk_set.length > 0 ){
+    if( typeof record.raw.disk_set === "undefined" || record.raw.disk_set.length > 0 ){
       var store = Ext.create("Ext.oa.SwitchingTreeStore", {
         model: 'volumes__twraid_Disk_model',
         root: record.data,
@@ -33,7 +33,7 @@ Ext.define('volumes__twraid_Unit_model', {
           directFn: twraid__Disk.filter,
           extraParams: {
             kwds: {
-              unit__id: record.get("id")
+              unit__id: record.raw.id
             }
           },
           paramOrder: ["kwds"]
@@ -54,7 +54,6 @@ Ext.define('volumes__twraid_Unit_model', {
     else if( rootNode.get("status") === "REBUILD" ){
       rootNode.set("status", "REBUILDING:" + record.raw.rebuild)
     }
-    rootNode.set("name", toUnicode(record.raw));
     rootNode.set("host", toUnicode(record.raw.host));
     rootNode.commit();
     return rootNode;
