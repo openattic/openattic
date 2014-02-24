@@ -132,7 +132,10 @@ class AbstractBlockVolumeHandler(ModelHandler):
         data["name"]   = obj.volume.name
         data["megs"]   = obj.volume.megs
         data["host"]   = self._get_handler_instance(Host)._idobj(obj.volume.host)
-        data["path"]   = obj.volume.path
+        try:
+            data["path"] = obj.volume.path
+        except:
+            pass
         data["type"]   = obj.volume.type
         data["status"] = obj.volume.status
         return data
@@ -186,7 +189,10 @@ class AbstractFileSystemVolumeHandler(ModelHandler):
         data["name"]    = obj.volume.name
         data["megs"]    = obj.volume.megs
         data["host"]    = self._get_handler_instance(Host)._idobj(obj.volume.host)
-        data["path"]    = obj.volume.path
+        try:
+            data["path"] = obj.volume.path
+        except:
+            pass
         data["type"]    = obj.volume.type
         data["mounted"] = obj.volume.fs.mounted
         data["usedmegs"]= obj.volume.fs.stat["used"]
