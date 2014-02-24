@@ -440,10 +440,13 @@ Ext.define('Ext.oa.Nagios__Service_Panel', {
         listeners: {
           itemmousedown: function( self, record ){
             if( !record.raw.graphs || record.raw.graphs.length === 0 ){
-              self.ownerCt.ownerCt.items.items[2].getEl().mask(
+              var maskEl = self.ownerCt.ownerCt.items.items[2].getEl().mask(
                 gettext('No performance data available for service') + "<br />" +
-                "<center>" + record.data.description + "</center>"
+                "<center>" + record.data.description + "</center>",
+                ".x-mask-noload"
               );
+              var masktxtel = maskEl.parent().child(".x-mask-msg").child(".x-mask-msg-inner").child(".x-mask-msg-text");
+              masktxtel.replaceCls("x-mask-msg-text", "x-mask-noload");
             }
             else{
               self.ownerCt.ownerCt.items.items[2].getEl().unmask();
