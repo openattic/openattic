@@ -34,36 +34,42 @@ Ext.define('Ext.oa.MenuTree', {
           text: gettext('Status'),
           expanded: Ext.state.Manager.get("expand_root_nodes", true),
           icon: MEDIA_URL + '/icons2/22x22/emblems/emblem-web.png',
+          allowDrag: false,
           children: []
         }, {
           id: 'menu_storage',
           text: gettext('Storage'),
           expanded: Ext.state.Manager.get("expand_root_nodes", true),
           icon: MEDIA_URL + '/icons2/22x22/devices/gnome-dev-harddisk.png',
+          allowDrag: false,
           children: []
         }, {
           id: 'menu_luns',
           text: gettext('LUNs'),
           expanded: Ext.state.Manager.get("expand_root_nodes", true),
           icon: MEDIA_URL + '/icons2/22x22/places/network-server.png',
+          allowDrag: false,
           children: []
         }, {
           id: 'menu_shares',
           text: gettext('Shares'),
           expanded: Ext.state.Manager.get("expand_root_nodes", true),
           icon: MEDIA_URL + '/icons2/22x22/places/gnome-fs-share.png',
+          allowDrag: false,
           children: []
         }, {
           id: 'menu_services',
           text: gettext('Services'),
           expanded: Ext.state.Manager.get("expand_root_nodes", true),
           icon: MEDIA_URL + '/icons2/22x22/mimetypes/gnome-mime-application-x-killustrator.png',
+          allowDrag: false,
           children: []
         }, {
           id: 'menu_system',
           text: gettext('System'),
           expanded: Ext.state.Manager.get("expand_root_nodes", true),
           icon: MEDIA_URL + '/icons2/22x22/mimetypes/application-x-executable.png',
+          allowDrag: false,
           children: []
         }, {
           id: 'menu_usersettings',
@@ -77,6 +83,7 @@ Ext.define('Ext.oa.MenuTree', {
           text: gettext('Shutdown'),
           expanded: Ext.state.Manager.get("expand_root_nodes", true),
           icon: MEDIA_URL + '/oxygen/22x22/actions/system-shutdown.png',
+          allowDrag: false,
           children: []
         }
       ]
@@ -115,3 +122,4 @@ Ext.define('Ext.oa.MenuTree', {
 
 
 // kate: space-indent on; indent-width 2; replace-tabs on;
+
