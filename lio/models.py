@@ -14,6 +14,9 @@
  *  GNU General Public License for more details.
 """
 
+import socket
+import os
+
 from os.path   import realpath
 from rtslib        import target, tcm
 from rtslib.utils  import generate_wwn
@@ -166,10 +169,16 @@ class Target(models.Model):
 
     def full_clean(self):
         if not self.wwn:
-            self.wwn = generate_wwn({
-                'qla2xxx': 'free',
-                'iscsi':   'iqn'
-                }[self.type])
+            if self.type == "iscsi":
+                # Generate IQN. the "prefix" part is shamelessly stolen from rtslib, but we use
+                # the volume name instead of a random serial.
+                localname = socket.gethostname().split(".")[0]
+                localarch = os.uname()[4].replace("_", "")
+                prefix = "iqn.2003-01.org.linux-iscsi.%s.%s" % (localname, localarch)
+                prefix = prefix.strip().lower()
+                self.wwn = "%s:%s" % (prefix, self.name.replace("_", "").replace(" ", ""))
+            else:
+                self.wwn = generate_wwn('free', self.type)
 
     def save(self, *args, **kwargs):
         install = (self.id is None)
