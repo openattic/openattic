@@ -108,6 +108,8 @@ class VolumePoolHandler(ModelHandler):
 
 class VolumePoolProxy(ProxyModelHandler, VolumePoolHandler):
     def _find_target_host_from_model_instance(self, model):
+        if model.volume is None:
+            raise ValueError("Got None when querying model '%s' instance '%s' for its concrete volumepool" % (type(model), model.id))
         if model.volumepool.host == Host.objects.get_current():
             return None
         return model.volumepool.host.peerhost_set.all()[0]
@@ -165,6 +167,8 @@ class BlockVolumeHandler(ModelHandler):
 
 class BlockVolumeProxy(ProxyModelHandler, BlockVolumeHandler):
     def _find_target_host_from_model_instance(self, model):
+        if model.volume is None:
+            raise ValueError("Got None when querying model '%s' instance '%s' for its concrete volume" % (type(model), model.id))
         if model.volume.host == Host.objects.get_current():
             return None
         return model.volume.host.peerhost_set.all()[0]
