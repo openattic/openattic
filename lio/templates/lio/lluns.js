@@ -1,5 +1,5 @@
 /*
- Copyright (C) 2011-2014, it-novum GmbH <community@open-attic.org>
+ Copyright (C) 2011-2012, it-novum GmbH <community@open-attic.org>
 
  openATTIC is free software; you can redistribute it and/or modify it
  under the terms of the GNU General Public License as published by
@@ -17,7 +17,7 @@ Ext.define('Ext.oa.Lio__LogicalLun_Panel', {
 
   alias: 'widget.lio__logicallun_panel',
   extend: 'Ext.oa.ShareGridPanel',
-  api: lio__LogicalLUN,
+  api: volumes__BlockVolume,
   buttons: [{ // Edit Button für die LUN's
     text: 'Edit LUN',
     icon: MEDIA_URL + "/icons2/16x16/actions/edit-redo.png",
@@ -27,10 +27,33 @@ Ext.define('Ext.oa.Lio__LogicalLun_Panel', {
         Ext.Msg.alert ("Warning","Please select a LUN you want to edit");
         return;
       };
+      Ext.define('lio__HostACL_model', {
+        extend: 'Ext.data.Model',
+        fields: [
+          {name: "hostname", mapping: "host", convert: toUnicode},
+          {name: "lun_id"},
+          {name: "id"},
+          {name: "portals"}
+        ]
+      });
+      var hostaclstore = Ext.create('Ext.data.Store', {
+        model: "lio__HostACL_model",
+        autoLoad: true,
+        proxy: {
+          type: 'direct',
+          directFn: lio__HostACL.filter,
+          extraParams: { kwds: { "volume": sm.selected.items[0].data.id }},
+          paramOrder: ["kwds"],
+          startParam: undefined,
+          limitParam: undefined,
+          pageParam:  undefined
+        }
+      });
+
       var editwin = new Ext.Window({  //Start des Edit Window
-        title: gettext('Edit LUN'),
-        height: 600,
-        width: 400,
+        title: interpolate(gettext('Edit LUN %s'),[sm.selected.items[0].data.name]),
+        height: 350,
+        width: 500,
         maximizable: true,
         layout: "fit",
         items: [{
@@ -68,221 +91,232 @@ Ext.define('Ext.oa.Lio__LogicalLun_Panel', {
                 triggerAction: 'all',
                 deferEmptyText: false,
                 emptyText:     'Select...',
-                selectOnFocus: true,
-                listeners: { // Wenn Offline als Status gewählt wird, alle Tabs, Buttons etc. disable
-                  select: function(combo, record, index) {
-                    if(combo.getValue() == "offline")
-                    {
-                      Ext.getCmp("lio_edit_lun_protokoll").setDisabled(true);
-                      Ext.getCmp("lio_edit_adapters").setDisabled(true);
-                      Ext.getCmp("lun_edit_bindip_tab").setDisabled(true);
-                      Ext.getCmp("lun_edit_host_and_groups_tab").setDisabled(true);
-                    }
-                    else if (combo.getValue() == "online" && Ext.getCmp("lio_edit_lun_protokoll").getValue() == "fc"){
-                      Ext.getCmp("lun_edit_bindip_tab").setDisabled(true);
-                      Ext.getCmp("lio_lun_edit_new_iscsi_target").setDisabled(true);
-                      Ext.getCmp("lio_edit_lun_protokoll").setDisabled(false);
-                      Ext.getCmp("lio_edit_adapters").setDisabled(false);
-                      Ext.getCmp("lun_edit_host_and_groups_tab").setDisabled(false)
-                    }
-                    else
-                    {
-                      Ext.getCmp("lio_edit_lun_protokoll").setDisabled(false);
-                      Ext.getCmp("lio_edit_adapters").setDisabled(false);
-                      Ext.getCmp("lun_edit_bindip_tab").setDisabled(false);
-                      Ext.getCmp("lun_edit_host_and_groups_tab").setDisabled(false);
-                      Ext.getCmp("lio_lun_edit_new_iscsi_target").setDisabled(false);
-                    }
-                  }
-                }
-              },{
-                fieldLabel: gettext('Protokoll'),
-                name: "lio_edit_lun_protokoll",
-                ref: 'lio_edit_lun_protokoll',
-                id: 'lio_edit_lun_protokoll',
-                name: 'lun_protokoll',
-                xtype:      'combo',
-                store: [ [ 'iscsi', gettext('iSCSI')  ], [ 'fc', gettext('FibreChannel') ] ],
-                typeAhead:     true,
-                editable: false,
-                triggerAction: 'all',
-                deferEmptyText: false,
-                emptyText:     'Select...',
-                selectOnFocus: true,
-                listeners: { // Wenn FC als Protokoll gewählt wird, nicht brauchbare Tabs und Buttons disable
-                  select: function(combo, record, index) {
-                    if(combo.getValue() == "fc")
-                    {
-                      Ext.getCmp("lun_edit_bindip_tab").setDisabled(true);
-                      Ext.getCmp("lio_lun_edit_new_iscsi_target").setDisabled(true);
-                    }
-                    else
-                    {
-                      Ext.getCmp("lun_edit_bindip_tab").setDisabled(false);
-                      Ext.getCmp("lio_lun_edit_new_iscsi_target").setDisabled(false);
-                    }
-                  }
-                }
-              },{
-                xtype: 'grid', // Grid zur Anzeige der Adapter - WWN und iSCSI Target im OverviewTab
-                title: 'Adapters',
-                region: 'south',
-                id: 'lio_edit_adapters',
-                border: false,
-                forceFit: true,
-                autoScroll: true, 
-                store: [["namer"]],
-                defaults: {
-                  sortable: true
-                },
-                columns: [{
-                  header: "Name",
-                  dataIndex: "name"
-                }],
-                buttons: [{ //Neues iSCSI Target anlegen - Button
-                  text: 'New iSCSI Target',
-                  icon: MEDIA_URL + "/icons2/16x16/actions/add.png",
-                  ref: 'lio_lun_edit_new_iscsi_target',
-                  id: 'lio_lun_edit_new_iscsi_target',
-                  handler: function(){
-                  var fqdn = "";
-                  __main__.fqdn(function(provider, response){
-                      fqdn = response.result.split(".").join(".");
-                  });
-                  var addwin = new Ext.Window({ // Neues iSCSI Target - Window
-                    title: gettext('Add Target'),
-                    layout: "fit",
-                    height: 140,
-                    width: 500,
-                    items: [{
-                      xtype: "form",
-                      autoScroll: true,
-                      defaults: {
-                        xtype: "textfield",
-                        allowBlank: false,
-                        anchor: "-20px"
-                      },
-                      bodyStyle: 'padding:5px 5px;',
-                      items: [{
-                        fieldLabel: gettext('Name'),
-                        ref: "namefield",
-                        listeners: { // Prüfung des Targetname und Autovervollständigung 
-                          change: function( self, newValue, oldValue ){
-                            var d = new Date();
-                            var m = d.getMonth() + 1;
-                            self.ownerCt.iqn_ip_field.setValue(
-                              Ext.String.format("iqn.{0}-{1}.{2}:{3}",
-                                d.getFullYear(), (m < 10 ? "0" + m : m),
-                                fqdn, self.getValue()
-                              )
-                            );
-                          }
-                        }
-                      },{
-                        fieldLabel: gettext('IP/IQN'),
-                        ref: "iqn_ip_field"
-                      }],
-                      buttons: [{ // Erstellen des neuen iSCSI Target
-                        text: gettext('Create'),
-                        icon: MEDIA_URL + "/oxygen/16x16/actions/dialog-ok-apply.png",
-                        handler: function(self){
-                          if( !self.ownerCt.ownerCt.getForm().isValid() ){
-                            return;
-                          }
-                          var re = new RegExp("[^A-Za-z0-9\-]");
-                          if (re.test(self.ownerCt.ownerCt.namefield.getValue()))
-                          {
-                            Ext.Msg.alert("Warning","Illegal character in name");
-                            return;
-                          }
-                          iscsi__Target.create({
-                            'name': self.ownerCt.ownerCt.namefield.getValue(),
-                            'iscsiname': self.ownerCt.ownerCt.iqn_ip_field.getValue()
-                          }, function(provider, response){
-                            if( response.result ) {
-                              targetStore.load();
-                              addwin.hide();
-                            }
-                          });
-                        }
-                      }, {
-                        text: gettext('Cancel'), // Abbruch und verlassen des Window - iSCSI Target erstellen
-                        icon: MEDIA_URL + "/icons2/16x16/actions/gtk-cancel.png",
-                        handler: function(self){
-                          addwin.hide();
-                        }
-                      }]
-                    }]
-                  });
-                  addwin.show(); // addwin anzeigen
-                }
-                }]
+                selectOnFocus: true
               }]
             }]
           }, {
             layout: "fit", // Tab Host and Groups - Start
             ref: "lun_edit_tabpanel_host_and_groups",
-            title: gettext("Host and Groups"),
+            title: gettext("Hosts"),
             id: "lun_edit_host_and_groups_tab",
+            layout: 'border',
             items: [{
+              region: 'center',
               xtype: 'grid',
               autoScroll: true,
               ref: 'lio_host_and_groups_tab_form',
-              title: 'Host and Groups',
+              title: 'Hosts',
               border: false,
               forceFit: true,
+              listeners: {
+                cellClick: function(self, e, eOpts, record){
+                  self.ownerCt.ownerCt.items.items[2].store.loadData(record.data.portals);
+                }
+              },
               defaults: {
                 sortable: true
               },
+              store: hostaclstore,
               columns: [{
-                header: gettext("Map"),
-                dataIndex: "lio_edit_map"
-              },{
-                header: gettext("Name (Host/Group)"),
-                dataIndex: "name"
+                header: gettext("Hostname"),
+                dataIndex: "hostname"
               },{
                 header: gettext("LUN ID"),
-                dataIndex: "lio_edit_lun_id"
+                dataIndex: "lun_id"
               }]
-            }]
-          }, {
-            layout: "fit", // Tab BindIP - Start
-            ref: "lun_edit_bindip_tap",
-            title: gettext("BindIP"),
-            id: "lun_edit_bindip_tab",
-            items: [{
+            },{
+              region: 'east',
               xtype: 'grid',
+              width: 200,
+              split: true,
+              title: 'Portals',
+              autoHeight: true,
               autoScroll: true,
-              id: 'lio_bindip_tab_form',
-              ref: 'lio_bindip_tab_form',
-              title: 'BindIP',
               border: false,
               forceFit: true,
-              defaults: {
-                sortable: true
-              },
+              store: (function(){
+                var store = new Ext.data.JsonStore({
+                  fields: ["__unicode__", "id", "app", "obj",
+                    {name:"ip", mapping:"__unicode__", convert:function(val, rec){
+                      return rec.data.__unicode__.split(":")[0];
+                    }},
+                    {name:"port", mapping:"__unicode__", convert:function(val, rec){
+                      return rec.data.__unicode__.split(":")[1];
+                    }}
+                  ]
+                });
+                return store;
+              }()),
               columns: [{
-                header: gettext("Map"),
-                dataIndex: "lio_edit_bindip_map"
+              header: gettext("IP"),
+              dataIndex: "ip"
               },{
-                header: gettext("IP Adress"),
-                dataIndex: "lio_edit_bind_ipaddr"
+              header: gettext("Port"),
+              dataIndex: "port"
+              }],
+              buttons:[{
+                text: 'Edit Portal',
+                icon: MEDIA_URL + "/icons2/16x16/actions/edit-redo.png",
+                ref: 'edit_portal',
+                id: 'edit_portal',
+                listeners: {
+                  click: function(self, e, eOpts){
+                   
+                  } 
+                }
               }]
+            }],
+            buttons: [{ // Button Add und Remove
+              text: 'Hostlist',
+              icon: MEDIA_URL + "/oxygen/16x16/actions/dialog-ok-apply.png",
+              ref: 'lio_lun_edit_save',
+              id: 'lio_lun_edit_save',
+              handler: function(self){
+                var addwin = new Ext.Window({  //Start des Add Window
+                  title: gettext('Add Host'),
+                  height: 300,
+                  width: 400,
+                  maximizable: true,
+                  layout: "fit",
+                  items: [{
+                    xtype: 'grid',
+                    autoScroll: true,
+                    selType : 'cellmodel',
+                    title: 'Hosts',
+                    border: false,
+                    forceFit: true,
+                    defaults: {
+                      sortable: true
+                    },
+                    store: (function(){
+                      Ext.define('ifconfig__Host_ids_model', {
+                        extend: 'Ext.data.Model',
+                        fields: [
+                          "app",
+                          "obj",
+                          "id",
+                          "__unicode__",
+                          "share_lun_id"
+                        ]
+                      });
+                      return Ext.create('Ext.data.Store', {
+                        model: "ifconfig__Host_ids_model",
+                        autoLoad: true,
+                        proxy: {
+                          type: 'direct',
+                          directFn: ifconfig__Host.ids,
+                          startParam: undefined,
+                          limitParam: undefined,
+                          pageParam:  undefined
+                        }
+                      });
+                    }()),
+                    listeners: {
+                      cellClick: function(self, e, eOpts, record){
+                        self.ownerCt.plugins[0].startEdit(record, self.ownerCt.columns[1]);
+                      }
+                    },
+                    plugins: [
+                      Ext.create('Ext.grid.plugin.CellEditing', {
+                      })
+                    ],
+                    columns: [{
+                      header: gettext("Hostname"),
+                      dataIndex: "__unicode__"
+                    },{
+                      header: gettext("ID"),
+                      dataIndex: "share_lun_id",
+                      editor: {
+                        xtype: 'numberfield',
+                        minValue: 0,
+                        maxValue: 100,
+                        allowBlank: false
+                      }
+                    }]
+                  }],
+                  buttons:[{
+                    text: 'Add',
+                    icon: MEDIA_URL + "/oxygen/16x16/actions/dialog-ok-apply.png",
+                    ref: 'add_host',
+                    id: 'add_host',
+                    listeners: {
+                      click: function(self, e, eOpts){
+                        var sel = addwin.items.items[0].getSelectionModel();
+                        if( sel.hasSelection() && (sel.selected.items[0].data.share_lun_id != "") ){
+                          self.ownerCt.ownerCt.getEl().mask(gettext("Loading..."));
+                          lio__HostACL.create({
+                            'host': sel.selected.items[0].data,
+                            'volume': {
+                              "app": "volumes",
+                              "obj": "BlockVolume",
+                              "id":  sm.selected.items[0].data.id
+                            },
+                            'lun_id': sel.selected.items[0].data.share_lun_id,
+                            'portals': [{
+                              "app": "lio",
+                              "obj": "Portal",
+                              "id": 1,
+                              "__unicode__": "172.16.14.20:3260"
+                            }]
+                          },
+                          function(provider, response){
+                            if( response.result ){  
+                              hostaclstore.reload();
+                              addwin.close();
+                              editwin.show();
+                            }
+                            else
+                            {
+                              self.ownerCt.ownerCt.getEl().unmask();
+                            }
+                          });
+                        }
+                        else
+                        {
+                          Ext.Msg.alert('Info', interpolate(
+                          gettext('Please select a Host and enter an ID')))
+                        }
+                      }
+                    }
+                  },{
+                    text: 'Close',
+                    icon: MEDIA_URL + "/icons2/16x16/actions/gtk-cancel.png",
+                    ref: 'hostlist_cancel',
+                    id: 'hostlist_cancel',
+                    handler: function(self){
+                      addwin.close();
+                      editwin.show();
+                    }
+                  }]
+                });
+                addwin.show();
+              }
+            },{
+              text: 'Remove',
+              icon: MEDIA_URL + "/icons2/16x16/actions/gtk-cancel.png",
+              ref: 'lio_lun_edit_cancel',
+              id: 'lio_lun_edit_cancel',
+              handler: function(self){
+                var sel = editwin.items.items[0].items.items[1].items.items[0].getSelectionModel();
+                if( sel.hasSelection() ){
+                  self.ownerCt.ownerCt.getEl().mask(gettext("Loading..."));
+                  lio__HostACL.remove(sel.selected.items[0].data.id,
+                    function(provider, response){
+                      if( response.type !== "exception" ){
+                        hostaclstore.reload();
+                        self.ownerCt.ownerCt.getEl().unmask();
+                      }
+                   }
+                  );
+                }
+                else
+                {
+                  Ext.Msg.alert('Info', interpolate(
+                    gettext('No Host selected for deletion')))
+                  self.ownerCt.ownerCt.getEl().unmask();
+                }
+              }
             }]
-          }],
-          buttons: [{ // Button Save und Cancel sind im ganzen Window sichtbar
-            text: 'Save',
-            icon: MEDIA_URL + "/oxygen/16x16/actions/dialog-ok-apply.png",
-            ref: 'lio_lun_edit_save',
-            id: 'lio_lun_edit_save'
-          },{
-            text: 'Cancel',
-            icon: MEDIA_URL + "/icons2/16x16/actions/gtk-cancel.png",
-            ref: 'lio_lun_edit_cancel',
-            id: 'lio_lun_edit_cancel',
-            handler: function(self){
-              editwin.close();
-            }
           }]
         }]
       });
@@ -290,40 +324,48 @@ Ext.define('Ext.oa.Lio__LogicalLun_Panel', {
     }
   }],
   allowEdit: false, // Default Edit Button deaktiviert 
-  allowDelete: false, // Default Delete Button deaktivier
-  allowAdd: false, // Default Add Button deaktivier
-
-  store: { // Erzeugen des Stores für die LUN Ausgabe
-    fields: [{
-      name: "volumename",
-      mapping:  "volume",
-      convert: toUnicode
-    }]
-  },
-  columns: [{ // Oberes Column Grid mit der Anzeige der LUN's und ihren Eigenschaften
+  allowDelete: false, // Default Delete Button deaktiviert
+  allowAdd: false, // Default Add Button deaktiviert
+  store: (function(){
+    Ext.define('blockdevice_volumes', {
+      extend: 'Ext.data.Model',
+      fields: [
+        {name: "name"},
+        {name: "vg"},
+        {name: "status"},
+        {name: "createdate"}
+      ]
+    });
+    return Ext.create('Ext.data.Store', {
+      model: "blockdevice_volumes",
+      autoLoad: true,
+      proxy: {
+        type: 'direct',
+        directFn: volumes__BlockVolume.filter,
+        extraParams: { kwds: { "upper_id__isnull": true }},
+        paramOrder: ["kwds"],
+        startParam: undefined,
+        limitParam: undefined,
+        pageParam:  undefined
+      }
+    });
+  }()),
+  columns: [{ // Oberes Column Grid mit der Anzeige der LUNs und ihren Eigenschaften
     header: gettext('Volume'),
     width: 200,
-    dataIndex: "volumename"
-  }, {
-    header: gettext('Group'),
-    width:  50,
-    dataIndex: "lun_group"
+    dataIndex: "name"
   }, {
     header: gettext('Status'),
     width:  50,
-    dataIndex: "lun_status"
+    dataIndex: "status"
   }, {
-    header: gettext('Size'),
+    header: gettext('Group'),
     width:  50,
-    dataIndex: "lun_size"
+    dataIndex: "vg.__unicode__"
   }, {
-    header: gettext('Protokoll'),
+    header: gettext('Created'),
     width:  50,
-    dataIndex: "lun_protokoll"
-  }, {
-    header: gettext('LUN ID'),
-    width:  50,
-    dataIndex: "lun_id"
+    dataIndex: "createdate"
   }]
 });
 
@@ -343,7 +385,7 @@ Ext.define('Ext.oa.Lio__LogicalLun_Panel', {
         region: "center",
         listeners: {
           cellclick: function( self, td, cellIndex, record, tr, rowIndex, e, eOpts ){
-            Ext.getCmp("lun_name").setText(self.store.getAt(rowIndex).data["volumename"]);
+            Ext.getCmp("lun_name").setText(self.store.getAt(rowIndex).data["name"]);
           }
         }
       },{
@@ -389,16 +431,23 @@ Ext.define('Ext.oa.Lio__LogicalLun_Panel', {
           }] 
         }, { // Permissons Tabpanel
           ref: "lun_tabpanel_permissions",
-          title: gettext("Mapped to Host/Group"),
+          title: gettext("Mapped to Host"),
           id: "lun_permissions_tab",
           forceFit: true,
-          html: "test"
-        }, { // Interfaces Tabpanel
-          ref: "lun_tabpanel_shared_hosts",
-          title: gettext("Interfaces"),
-          id: "lun_shared_hosts_tab",
-          forceFit: true,
-          html: "test"
+          items: [{
+            xtype: 'grid',
+            autoScroll: true,
+            ref: 'lio_host_add_window',
+            border: false,
+            forceFit: true,
+            defaults: {
+              sortable: true
+            },
+            columns: [{ 
+              header: gettext('Hosts'),
+              dataIndex: "hostname"
+            }]
+          }]
         }]        
       }]
     }));
