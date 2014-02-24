@@ -264,6 +264,7 @@ def update_database(ctls):
         dbctl.curunits  = int(ctl.params["units"].split(" of ")[0])
         dbctl.maxunits  = int(ctl.params["active units"].split(" of ")[1])
         dbctl.autorebuild = (ctl.params["auto-rebuild policy"].lower() == 'on')
+        dbctl.full_clean()
         dbctl.save()
 
         for encl_id, encl in ctl.enclosures.items():
@@ -277,6 +278,7 @@ def update_database(ctls):
             dbencl.fans    = encl.fans
             dbencl.tsunits = encl.tsunits
             dbencl.psunits = encl.psunits
+            dbencl.full_clean()
             dbencl.save()
 
         unseen_units = [ u["serial"] for u in dbctl.unit_set.values("serial") ]
@@ -321,6 +323,7 @@ def update_database(ctls):
             dbunit.rdcache    = unit.params["read cache"]
             dbunit.wrcache    = unit.params["write cache"]
             dbunit.name       = unit.params["name"]
+            dbunit.full_clean()
             dbunit.save()
 
             if dbunit.serial in unseen_units:
@@ -356,6 +359,7 @@ def update_database(ctls):
             dbdisk.linkspeed  = float( re.match("^(\d+\.\d+)", disk.params["link speed"]).group(1) )
             dbdisk.power_on_h = int( disk.params["power on hours"] )
 
+            dbdisk.full_clean()
             dbdisk.save()
 
             if dbdisk.serial in unseen_disks:
