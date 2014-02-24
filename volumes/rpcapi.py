@@ -14,6 +14,8 @@
  *  GNU General Public License for more details.
 """
 
+import logging
+
 from django.contrib.contenttypes.models import ContentType
 
 from rpcd.handlers import BaseHandler, ModelHandler
@@ -108,8 +110,9 @@ class VolumePoolHandler(ModelHandler):
 
 class VolumePoolProxy(ProxyModelHandler, VolumePoolHandler):
     def _find_target_host_from_model_instance(self, model):
-        if model.volume is None:
-            raise ValueError("Got None when querying model '%s' instance '%s' for its concrete volumepool" % (type(model), model.id))
+        if model.volumepool is None:
+            logging.error("Got None when querying model '%s' instance '%s' for its concrete volumepool" % (type(model), model.id))
+            return None
         if model.volumepool.host == Host.objects.get_current():
             return None
         return model.volumepool.host.peerhost_set.all()[0]
@@ -171,7 +174,8 @@ class BlockVolumeHandler(ModelHandler):
 class BlockVolumeProxy(ProxyModelHandler, BlockVolumeHandler):
     def _find_target_host_from_model_instance(self, model):
         if model.volume is None:
-            raise ValueError("Got None when querying model '%s' instance '%s' for its concrete volume" % (type(model), model.id))
+            logging.error("Got None when querying model '%s' instance '%s' for its concrete volume" % (type(model), model.id))
+            return None
         if model.volume.host == Host.objects.get_current():
             return None
         return model.volume.host.peerhost_set.all()[0]
@@ -229,7 +233,8 @@ class FileSystemVolumeHandler(ModelHandler):
 class FileSystemVolumeProxy(ProxyModelHandler, FileSystemVolumeHandler):
     def _find_target_host_from_model_instance(self, model):
         if model.volume is None:
-            raise ValueError("Got None when querying model '%s' instance '%s' for its concrete volume" % (type(model), model.id))
+            logging.error("Got None when querying model '%s' instance '%s' for its concrete volume" % (type(model), model.id))
+            return None
         if model.volume.host == Host.objects.get_current():
             return None
         return model.volume.host.peerhost_set.all()[0]
@@ -254,7 +259,8 @@ class FileSystemProviderHandler(AbstractFileSystemVolumeHandler):
 class FileSystemProviderProxy(ProxyModelHandler, FileSystemProviderHandler):
     def _find_target_host_from_model_instance(self, model):
         if model.base.volume is None:
-            raise ValueError("Got None when querying model '%s' instance '%s' for its concrete base volume" % (type(model), model.id))
+            logging.error("Got None when querying model '%s' instance '%s' for its concrete base volume" % (type(model), model.id))
+            return None
         if model.base.volume.host == Host.objects.get_current():
             return None
         return model.base.volume.host.peerhost_set.all()[0]
