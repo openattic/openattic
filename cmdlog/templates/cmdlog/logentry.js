@@ -178,9 +178,9 @@ Ext.define('Ext.oa.Cmdlog__LogEntry_Panel', {
                       xtype: 'datefield',
                       ref:   'datefield',
                       listeners: {
-                        select: function( self, newValue ){
+                        select: function(self, newValue, eOpts){
                           cmdlog__LogEntry.count_older_than(
-                            parseInt(newValue.format("U"), 10),
+                            parseInt(Ext.Date.format(newValue, "U"), 10),
                             function(provider, response){
                               self.ownerCt.countlabel.setText(
                                 interpolate(gettext('%s Entries matched'), [response.result])
