@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2012-06-12 13:26+0200\n"
+"POT-Creation-Date: 2014-02-24 15:52+0100\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -18,42 +18,41 @@ msgstr ""
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=(n != 1)\n"
 
-#: templates/pkgapt/upgrade.js:22
+#: templates/pkgapt/upgrade.js:23
 msgid "APT"
 msgstr "APT"
 
-#: templates/pkgapt/upgrade.js:25
+#: templates/pkgapt/upgrade.js:26
 msgid "Reload Changes list"
 msgstr "Änderungsliste aktualisieren"
 
-#: templates/pkgapt/upgrade.js:32
+#: templates/pkgapt/upgrade.js:33
 msgid "Update Package lists"
 msgstr "Paketlisten aktualisieren"
 
-#: templates/pkgapt/upgrade.js:41
+#: templates/pkgapt/upgrade.js:42
 msgid "Allow installation/deletion"
 msgstr "Erlaube Installation/Löschen"
 
-#: templates/pkgapt/upgrade.js:50
-msgid "Do Upgrade"
-msgstr "Upgrade vornehmen"
-
-#: templates/pkgapt/upgrade.js:70
+#: templates/pkgapt/upgrade.js:65
 msgid "Name"
 msgstr "Name"
 
-#: templates/pkgapt/upgrade.js:74
+#: templates/pkgapt/upgrade.js:69
 msgid "Installed Version"
 msgstr "Installierte Version"
 
-#: templates/pkgapt/upgrade.js:78
+#: templates/pkgapt/upgrade.js:73
 msgid "Candidate Version"
 msgstr "Verfügbare Version"
 
-#: templates/pkgapt/upgrade.js:82
+#: templates/pkgapt/upgrade.js:77
 msgid "Action"
 msgstr "Aktion"
 
-#: templates/pkgapt/upgrade.js:124
+#: templates/pkgapt/upgrade.js:115
 msgid "Online Update"
 msgstr "Online-Update"
+
+#~ msgid "Do Upgrade"
+#~ msgstr "Upgrade vornehmen"

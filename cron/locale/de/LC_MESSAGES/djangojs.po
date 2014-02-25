@@ -8,8 +8,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2013-05-14 12:45+0200\n"
-"PO-Revision-Date: 2013-05-14 12:46\n"
+"POT-Creation-Date: 2014-02-24 15:47+0100\n"
+"PO-Revision-Date: 2014-02-24 17:09\n"
 "Last-Translator:   <>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
 "MIME-Version: 1.0\n"
@@ -19,51 +19,62 @@ msgstr ""
 "Plural-Forms: nplurals=2; plural=(n != 1)\n"
 "X-Translated-Using: django-rosetta 0.6.6\n"
 
-#: templates/cron/cronjobs.js:19 templates/cron/cronjobs.js.c:95
+#: templates/cron/cronjobs.js:21 templates/cron/cronjobs.js.c:141
 msgid "Cron Jobs"
 msgstr "Geplante Tasks"
 
-#: templates/cron/cronjobs.js:21
+#: templates/cron/cronjobs.js:23
 msgid "Add Job"
 msgstr "Task hinzufügen"
 
-#: templates/cron/cronjobs.js:22
+#: templates/cron/cronjobs.js:24
 msgid "Edit Job"
 msgstr "Task bearbeiten"
 
-#: templates/cron/cronjobs.js:23
+#: templates/cron/cronjobs.js:25
 msgid "Delete Job"
 msgstr "Task löschen"
 
-#: templates/cron/cronjobs.js:29 templates/cron/cronjobs.js.c:58
+#: templates/cron/cronjobs.js:38 templates/cron/cronjobs.js.c:74
+msgid "Host"
+msgstr "Host"
+
+#: templates/cron/cronjobs.js:42 templates/cron/cronjobs.js.c:107
 msgid "Minute"
 msgstr "Minute"
 
-#: templates/cron/cronjobs.js:33 templates/cron/cronjobs.js.c:61
+#: templates/cron/cronjobs.js:46 templates/cron/cronjobs.js.c:110
 msgid "Hour"
 msgstr "Stunde"
 
-#: templates/cron/cronjobs.js:37 templates/cron/cronjobs.js.c:64
+#: templates/cron/cronjobs.js:50 templates/cron/cronjobs.js.c:113
 msgid "Day of Month"
 msgstr "Tag des Monats"
 
-#: templates/cron/cronjobs.js:41 templates/cron/cronjobs.js.c:67
+#: templates/cron/cronjobs.js:54 templates/cron/cronjobs.js.c:116
 msgid "Month"
 msgstr "Monat"
 
-#: templates/cron/cronjobs.js:45 templates/cron/cronjobs.js.c:70
+#: templates/cron/cronjobs.js:58 templates/cron/cronjobs.js.c:119
 msgid "Day of Week"
 msgstr "Wochentag"
 
-#: templates/cron/cronjobs.js:49 templates/cron/cronjobs.js.c:73
+#: templates/cron/cronjobs.js:62 templates/cron/cronjobs.js.c:104
+msgid "User"
+msgstr "Benutzer"
+
+#: templates/cron/cronjobs.js:66 templates/cron/cronjobs.js.c:122
 msgid "Command"
 msgstr "Befehl"
 
-#: templates/cron/cronjobs.js:57
-msgid "When this volume is deleted, this cron job will be deleted as well."
-msgstr ""
-"Wird dieses Volume gelöscht, wird auch der dazugehörige Cron Job gelöscht."
+#: templates/cron/cronjobs.js:94
+msgid "Select..."
+msgstr "Auswählen..."
 
-#: templates/cron/cronjobs.js:82
+#: templates/cron/cronjobs.js:130
 msgid "Really delete this job?"
 msgstr "Wollen Sie diesen Job wirklich löschen?"
+
+#~ msgid "When this volume is deleted, this cron job will be deleted as well."
+#~ msgstr ""
+#~ "Wird dieses Volume gelöscht, wird auch der dazugehörige Cron Job gelöscht."

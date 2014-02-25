@@ -2,79 +2,73 @@
 # Copyright (C) YEAR THE PACKAGE'S COPYRIGHT HOLDER
 # This file is distributed under the same license as the PACKAGE package.
 # FIRST AUTHOR <EMAIL@ADDRESS>, YEAR.
-#
+# 
 #, fuzzy
 msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2012-06-12 13:26+0200\n"
-"PO-Revision-Date: 2012-04-03 11:03\n"
-"Last-Translator: Michael Ziegler <michael.ziegler@it-novum.com>\n"
+"POT-Creation-Date: 2014-02-24 15:53+0100\n"
+"PO-Revision-Date: 2014-02-25 09:17\n"
+"Last-Translator:   <>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
-"Language: \n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
+"Language: \n"
 "Plural-Forms: nplurals=2; plural=(n != 1)\n"
 "X-Translated-Using: django-rosetta 0.6.6\n"
 
-#: templates/samba/share.js:19
+#: templates/samba/share.js:21
 msgid "Samba"
 msgstr "Samba"
 
-#: templates/samba/share.js:24 templates/samba/share.js.c:57
+#: templates/samba/share.js:26 templates/samba/share.js.c:60
 msgid "Share name"
 msgstr "Freigabename"
 
-#: templates/samba/share.js:28 templates/samba/share.js.c:64
+#: templates/samba/share.js:30 templates/samba/share.js.c:66
 msgid "Path"
 msgstr "Pfad"
 
-#: templates/samba/share.js:32 templates/samba/share.js.c:89
+#: templates/samba/share.js:34 templates/samba/share.js.c:78
 msgid "Available"
 msgstr "Verfügbar"
 
-#: templates/samba/share.js:71
-msgid "System user"
-msgstr "Systembenutzer"
-
-#: templates/samba/share.js:77
-msgid "System Group"
-msgstr "Systemgruppe"
-
-#: templates/samba/share.js:83
+#: templates/samba/share.js:72
 msgid "Browseable"
 msgstr "Sichtbar"
 
-#: templates/samba/share.js:95
+#: templates/samba/share.js:84
 msgid "Writeable"
 msgstr "Schreibbar"
 
-#: templates/samba/share.js:101
+#: templates/samba/share.js:90
 msgid "Guest OK"
 msgstr "Erlaube Gast"
 
-#: templates/samba/share.js:107
-msgid "Dir Mode"
-msgstr "Verzeichnis Berechtigungen"
-
-#: templates/samba/share.js:112
-msgid "Set rights for the Directory"
-msgstr "Setze Rechte für Verzeichnis"
-
-#: templates/samba/share.js:114
+#: templates/samba/share.js:95
 msgid "Comment"
 msgstr "Kommentar"
 
-#: templates/samba/share.js:120
-msgid "Create Mode"
-msgstr "Berechtigungen"
+#: templates/samba/share.js:109
+msgid "Windows (CIFS)"
+msgstr "Windows (CIFS)"
 
-#: templates/samba/share.js:125
-msgid "Set rights for owner, group and others"
-msgstr "Rechte für Besitzer, Gruppe und andere Personen"
+#~ msgid "System user"
+#~ msgstr "Systembenutzer"
 
-#: templates/samba/share.js:139
-msgid "Windows (Samba)"
-msgstr "Windows (Samba)"
+#~ msgid "System Group"
+#~ msgstr "Systemgruppe"
+
+#~ msgid "Dir Mode"
+#~ msgstr "Verzeichnis Berechtigungen"
+
+#~ msgid "Set rights for the Directory"
+#~ msgstr "Setze Rechte für Verzeichnis"
+
+#~ msgid "Create Mode"
+#~ msgstr "Berechtigungen"
+
+#~ msgid "Set rights for owner, group and others"
+#~ msgstr "Rechte für Besitzer, Gruppe und andere Personen"

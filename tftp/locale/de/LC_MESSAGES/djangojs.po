@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2012-06-12 13:26+0200\n"
+"POT-Creation-Date: 2014-02-24 15:55+0100\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -18,36 +18,36 @@ msgstr ""
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=(n != 1)\n"
 
-#: templates/tftp/instance.js:19
+#: templates/tftp/instance.js:22
 msgid "TFTP"
 msgstr "TFTP"
 
-#: templates/tftp/instance.js:21
+#: templates/tftp/instance.js:24
 msgid "Path"
 msgstr "Pfad"
 
-#: templates/tftp/instance.js:25 templates/tftp/instance.js.c:67
+#: templates/tftp/instance.js:28 templates/tftp/instance.js.c:69
 msgid "Address"
 msgstr "Adresse"
 
-#: templates/tftp/instance.js:57
+#: templates/tftp/instance.js:61
 msgid "Please select the volume to share."
 msgstr "Bitte wählen Sie das Volume aus, welches Sie freigeben möchten."
 
-#: templates/tftp/instance.js:60
+#: templates/tftp/instance.js:64
 msgid "Directory"
 msgstr "Verzeichnis"
 
-#: templates/tftp/instance.js:64
+#: templates/tftp/instance.js:67
 msgid "If you wish to share only a subpath of the volume, enter the path here."
 msgstr ""
 "Wenn Sie nur einen Unterpfad eines Volumes freigeben möchten, geben Sie den "
 "entsprechenden Pfad hier ein."
 
-#: templates/tftp/instance.js:79
+#: templates/tftp/instance.js:97
 msgid "Select..."
 msgstr "Auswahl..."
 
-#: templates/tftp/instance.js:97
+#: templates/tftp/instance.js:112
 msgid "Embedded (TFTP)"
 msgstr "Embedded (TFTP)"

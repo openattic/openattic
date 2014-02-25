@@ -2,43 +2,39 @@
 # Copyright (C) YEAR THE PACKAGE'S COPYRIGHT HOLDER
 # This file is distributed under the same license as the PACKAGE package.
 # FIRST AUTHOR <EMAIL@ADDRESS>, YEAR.
-#
+# 
 #, fuzzy
 msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2014-02-24 15:49+0100\n"
-"PO-Revision-Date: 2012-04-17 13:16\n"
-"Last-Translator: Michael Ziegler <michael.ziegler@it-novum.com>\n"
+"PO-Revision-Date: 2014-02-24 16:12\n"
+"Last-Translator:   <>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
-"Language: \n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
+"Language: \n"
 "Plural-Forms: nplurals=2; plural=(n != 1)\n"
 "X-Translated-Using: django-rosetta 0.6.6\n"
 
-#: templates/http/export.js:21
-msgid "HTTP"
-msgstr "HTTP"
+#: templates/ipmi/sensors.js:24 templates/ipmi/sensors.js.c:85
+msgid "Sensoren"
+msgstr "Sensoren"
 
-#: templates/http/export.js:26
-msgid "Path"
-msgstr "Pfad"
+#: templates/ipmi/sensors.js:30
+msgid "Reload"
+msgstr "Neu laden"
 
-#: templates/http/export.js:30
-msgid "Browse"
-msgstr "Anzeigen"
+#: templates/ipmi/sensors.js:55
+msgid "Sensor"
+msgstr "Sensor"
 
-#: templates/http/export.js:39
-msgid "Browse in new window"
-msgstr "In neuem Fenster öffnen"
+#: templates/ipmi/sensors.js:59
+msgid "Current value"
+msgstr "Aktueller Wert"
 
-#: templates/http/export.js:60
-msgid "Directory"
-msgstr "Verzeichnis"
-
-#: templates/http/export.js:72
-msgid "Web (HTTP)"
-msgstr "Web (HTTP)"
+#: templates/ipmi/sensors.js:63
+msgid "Status"
+msgstr "Status"

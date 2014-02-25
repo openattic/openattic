@@ -8,9 +8,9 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2013-05-16 11:14+0200\n"
-"PO-Revision-Date: 2013-07-03 14:09\n"
-"Last-Translator: Michael Ziegler <michael.ziegler@it-novum.com>\n"
+"POT-Creation-Date: 2014-02-24 15:57+0100\n"
+"PO-Revision-Date: 2014-02-25 12:22\n"
+"Last-Translator:   <>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
@@ -19,15 +19,404 @@ msgstr ""
 "Plural-Forms: nplurals=2; plural=(n != 1)\n"
 "X-Translated-Using: django-rosetta 0.6.6\n"
 
-#: index_ext_authed.html:140
+#: cmdlog/models.py:24
+msgid "Command"
+msgstr "Kommando"
+
+#: cmdlog/models.py:26 nagios/graphbuilder.py:758
+msgid "Start time"
+msgstr "Startzeit"
+
+#: cmdlog/models.py:27 nagios/graphbuilder.py:759
+msgid "End time"
+msgstr "Endzeit"
+
+#: cmdlog/models.py:28
+msgid "Exit code"
+msgstr "Exit code"
+
+#: cmdlog/models.py:29
+msgid "Output"
+msgstr "Ausgabe"
+
+#: ifconfig/models.py:42
+msgid "balance-rr: Balanced Round Robin"
+msgstr "balance-rr: Balanced Round Robin"
+
+#: ifconfig/models.py:43
+msgid "active-backup: Failover"
+msgstr "active-backup: Failover"
+
+#: ifconfig/models.py:44
+msgid "balance-xor"
+msgstr "balance-xor"
+
+#: ifconfig/models.py:45
+msgid "broadcast"
+msgstr "Broadcast"
+
+#: ifconfig/models.py:46
+msgid "802.3ad"
+msgstr "802.3ad"
+
+#: ifconfig/models.py:47
+msgid "balance-tlb"
+msgstr "balance-tlb"
+
+#: ifconfig/models.py:48
+msgid "balance-alb"
+msgstr "balance-alb"
+
+#: ifconfig/models.py:128
+msgid "If this interface is a bonding device, add the slave devices here."
+msgstr ""
+
+#: ifconfig/models.py:130
+msgid "If this interface is a bridge, add the ports here."
+msgstr "Wenn dieses Interface eine Bridge ist, für die Ports hier hinzu."
+
+#: ifconfig/models.py:132
+msgid "If this interface is VLAN device, name the raw device here."
+msgstr ""
+"Wenn dieses Interface ein VLAN Device ist, nenne die Raw Devices hier."
+
+#: ifconfig/models.py:167
+#, python-format
+msgid "Interface %s has children and has an address"
+msgstr "Interface %s hat Kinder und eine Adresse"
+
+#: ifconfig/models.py:171
+#, python-format
+msgid "Interface %s uses DHCP but has an address"
+msgstr "Interface %s benutzt DHCP, hat aber eine Adresse"
+
+#: ifconfig/models.py:173
+#, python-format
+msgid "Interface %s has children and uses DHCP"
+msgstr "Interface %s hat Kinder und benutzt DHCP"
+
+#: ifconfig/models.py:185
+#, python-format
+msgid "Interface %s has an address without a netmask"
+msgstr "Interface %s hat eine Adresse ohne Netmask"
+
+#: ifconfig/models.py:196
+#, python-format
+msgid "Vlan %s has ITSELF as its base interface"
+msgstr "Vlan %s hat sich selbst als Basisinterface."
+
+#: ifconfig/models.py:200
+#, python-format
+msgid "Bridge %s has ITSELF as one of its ports"
+msgstr ""
+
+#: ifconfig/models.py:204
+#, python-format
+msgid "Bonding %s has ITSELF as one of its slaves"
+msgstr ""
+
+#: ifconfig/models.py:206
+#, python-format
+msgid "Bonding %s has slaves with mismatching Jumbo Frames setting"
+msgstr ""
+
+#: ifconfig/models.py:209
+msgid ""
+"There is no interface that has an IP (none with dhcp and none with static "
+"address)."
+msgstr ""
+"Es gibt kein Interface mit IP-Adresse (keins mit DHCP und keins mit "
+"statischer Adresse)"
+
+#: ifconfig/models.py:212
+msgid "There is no default gateway."
+msgstr "Es gibt kein Default Gateway."
+
+#: ifconfig/models.py:215
+msgid "There is are no name servers configured."
+msgstr "Es sind keine Nameserver konfiguriert."
+
+#: ifconfig/models.py:218
+msgid "There is no domain configured."
+msgstr "Es gibt keine konfigurierte Domain."
+
+#: lio/models.py:146
+msgid "Human readable name."
+msgstr ""
+
+#: lvm/models.py:41
+msgid "VG names may not be '.' or '..'."
+msgstr "Als VG-Namen dürfen '.' oder '..' nicht verwendet werden."
+
+#: lvm/models.py:43
+msgid "VG names must not begin with a hyphen."
+msgstr "VG-Namen dürfen nicht mit einem Bindestrich beginnen."
+
+#: lvm/models.py:45
+msgid "This name clashes with a file or directory in /dev."
+msgstr ""
+"Dieser Name steht in Konflikt mit einer Datei oder einem Verzeichnis unter "
+"/dev."
+
+#: lvm/models.py:47 lvm/models.py:57
+msgid ""
+"The following characters are valid for VG and LV names: a-z A-Z 0-9 + _ . -"
+msgstr ""
+"Die folgenden Zeichen sind für die VG- und LV-Namen zulässig: a-z A-Z 0-9 + "
+"_ . -"
+
+#: lvm/models.py:53
+msgid "LV names may not be '.' or '..'."
+msgstr "Als LV-Namen dürfen '.' oder '..' nicht verwendet werden."
+
+#: lvm/models.py:55
+msgid "LV names must not begin with a hyphen."
+msgstr "LV-Namen dürfen nicht mit einem Bindestrich beginnen."
+
+#: lvm/models.py:59
+msgid "The volume name must not begin with 'snapshot' or 'pvmove'."
+msgstr "Der Volume-Name darf nicht mit 'snapshot' oder 'pvmove' beginnen."
+
+#: lvm/models.py:61
+msgid "The volume name must not contain '_mlog' or '_mimage'."
+msgstr "Der Volume-Name darf '_mlog' oder '_mimage' nicht beinhalten."
+
+#: lvm/models.py:123 lvm/models.py:235
+msgid "read-only"
+msgstr "Schreibgeschützt"
+
+#: lvm/models.py:124
+msgid "non-resizable"
+msgstr "Nicht größenveränderbar"
+
+#: lvm/models.py:125
+msgid "exported"
+msgstr "Exportiert"
+
+#: lvm/models.py:126
+msgid "partial"
+msgstr "Unvollständig"
+
+#: lvm/models.py:126
+msgid "online"
+msgstr "online"
+
+#: lvm/models.py:127 lvm/models.py:237
+msgid "contiguous allocation"
+msgstr "Contiguous Allocation"
+
+#: lvm/models.py:128 lvm/models.py:238
+msgid "cling allocation"
+msgstr "Cling Allocation"
+
+#: lvm/models.py:130
+msgid "anywhere allocation"
+msgstr "Anywhere Allocation"
+
+#: lvm/models.py:131
+msgid "inherited allocation"
+msgstr "Inherited Allocation"
+
+#: lvm/models.py:132
+msgid "clustered"
+msgstr "Geclustert"
+
+#: lvm/models.py:165 volumes/models.py:321
+msgid "Warning Level (%)"
+msgstr "Warnschwelle (%)"
+
+#: lvm/models.py:166 volumes/models.py:322
+msgid "Critical Level (%)"
+msgstr "Kritische Schwelle (%)"
+
+#: lvm/models.py:167
+msgid "Deduplication"
+msgstr "Dedublizierung"
+
+#: lvm/models.py:168
+msgid "Compression"
+msgstr "Kompression"
+
+#: lvm/models.py:224
+msgid "mirrored"
+msgstr "Gespiegelt"
+
+#: lvm/models.py:224
+msgid "mirrored without initial sync"
+msgstr "Ohne initiale Synchronisation gespiegelt"
+
+#: lvm/models.py:225
+msgid "origin"
+msgstr "Ursprung"
+
+#: lvm/models.py:225
+msgid "merging origin"
+msgstr "Ursprung zusammenführen"
+
+#: lvm/models.py:226
+msgid "RAID"
+msgstr "RAID"
+
+#: lvm/models.py:226
+msgid "RAID without initial sync"
+msgstr "RAID ohne initiale Synchronisation"
+
+#: lvm/models.py:227 lvm/models.py:256
+msgid "snapshot"
+msgstr "Snapshot"
+
+#: lvm/models.py:227
+msgid "merging snapshot"
+msgstr "Snapshot zusammenführen"
+
+#: lvm/models.py:228
+msgid "pvmove"
+msgstr "Pvmove"
+
+#: lvm/models.py:228 lvm/models.py:257
+msgid "virtual"
+msgstr "virtuell"
+
+#: lvm/models.py:229
+msgid "image"
+msgstr "Abbildung"
+
+#: lvm/models.py:229
+msgid "out-of-sync image"
+msgstr "out-of-sync image"
+
+#: lvm/models.py:230
+msgid "mirror log"
+msgstr ""
+
+#: lvm/models.py:230
+msgid "conversion"
+msgstr "Umwandlung"
+
+#: lvm/models.py:231
+msgid "thin volume"
+msgstr "Thin Volume"
+
+#: lvm/models.py:231
+msgid "thin pool"
+msgstr "Thin Pool"
+
+#: lvm/models.py:232
+msgid "thin pool data"
+msgstr "Thin Pool Daten"
+
+#: lvm/models.py:232
+msgid "RAID/thin pool metadata"
+msgstr "RAID/Thin Pool Metadaten"
+
+#: lvm/models.py:235
+msgid "temporarily read-only"
+msgstr "Vorübergehend schreibgeschützt"
+
+#: lvm/models.py:237
+msgid "anywhere"
+msgstr "Irgendwo"
+
+#: lvm/models.py:239
+msgid "normal allocation"
+msgstr "Normal Allocation"
+
+#: lvm/models.py:243
+msgid "active"
+msgstr "Aktiv"
+
+#: lvm/models.py:244
+msgid "suspended"
+msgstr "Suspended"
+
+#: lvm/models.py:245
+msgid "invalid snapshot"
+msgstr "Ungültiger Snapshot"
+
+#: lvm/models.py:246
+msgid "invalid suspended snapshot"
+msgstr "Invalid suspended snapshot"
+
+#: lvm/models.py:247
+msgid "snapshot merge failed"
+msgstr "Zusammenführen des Snapshots fehlgeschlagen"
+
+#: lvm/models.py:248
+msgid "suspended snapshot merge failed"
+msgstr ""
+
+#: lvm/models.py:249
+msgid "mapped device present without tables"
+msgstr ""
+
+#: lvm/models.py:250
+msgid "mapped device present with inactive table"
+msgstr ""
+
+#: lvm/models.py:251
+msgid "offline"
+msgstr "Offline"
+
+#: lvm/models.py:253
+msgid "open"
+msgstr "Offen"
+
+#: lvm/models.py:255
+msgid "mirror"
+msgstr "Spiegel"
+
+#: lvm/models.py:255
+msgid "raid"
+msgstr "Raid"
+
+#: lvm/models.py:256
+msgid "thin"
+msgstr "Thin"
+
+#: lvm/models.py:257
+msgid "unknown"
+msgstr "Unbekannt"
+
+#: lvm/models.py:260
+msgid "zeroed"
+msgstr "Genullt"
+
+#: lvm/models.py:264
+msgid "pvmove in progress"
+msgstr "Pvmove in Arbeit"
+
+#: lvm/models.py:366
+msgid "The owner field is required unless you are creating a snapshot."
+msgstr ""
+"Das Besitzer-Feld wird benötigt, es sei denn Sie erstellen einen Snapshot."
+
+#: lvm/models.py:368
+msgid "The vg field is required unless you are creating a snapshot."
+msgstr "Das VG-Feld wird benötigt, es sei denn Sie erstellen einen Snapshot."
+
+#: lvm/models.py:370
+msgid "LVM does not support snapshotting snapshots."
+msgstr "LVM unterstützt nicht, Snapshots von Snapshots anzulegen."
+
+#: nagios/models.py:40
+msgid ""
+"Check this if openATTIC should not configure services with this command, "
+"only query those that exist."
+msgstr ""
+
+#: templates/index_ext_authed.html:135
+msgid "Delete Button?"
+msgstr "Element löschen?"
+
+#: templates/index_ext_authed.html:136
 msgid "Do you really wish to remove this button from the toolbar?"
 msgstr "Wollen Sie diesen Button wirklich aus der toolbar-Leiste entfernen?"
 
-#: index_ext_unauthed.html:33
+#: templates/index_ext_unauthed.html:32
 msgid "The credentials you entered are invalid."
 msgstr "Die eingegebenen Anmeldedaten sind ungültig."
 
-#: index_ext_unauthed.html:34
+#: templates/index_ext_unauthed.html:33
 msgid ""
 "The request that has been sent to the server has been invalid - this is not "
 "supposed to happen..."
@@ -35,20 +424,20 @@ msgstr ""
 "Die Anfrage die an den Server gesendet wurde war ungültig - das sollte "
 "eigentlich nicht passieren..."
 
-#: index_ext_unauthed.html:35
+#: templates/index_ext_unauthed.html:34
 msgid "Your account has been deactivated. Please consult an administrator."
 msgstr ""
 "Ihr Account wurde deaktiviert. Bitte wenden Sie sich an einen Administrator."
 
-#: index_ext_unauthed.html:36
+#: templates/index_ext_unauthed.html:35
 msgid "Did you fill in all the fields?"
 msgstr "Haben Sie alle Felder ausgefüllt?"
 
-#: index_ext_unauthed.html:52
+#: templates/index_ext_unauthed.html:51
 msgid "Loading..."
 msgstr "Lade..."
 
-#: index_ext_unauthed.html:57
+#: templates/index_ext_unauthed.html:56
 msgid ""
 "Your browser does not support Kerberos. Please log in using your username "
 "and password."
@@ -56,7 +445,7 @@ msgstr ""
 "Ihr Browser unterstützt Kerberos nicht. Bitte loggen Sie sich mit Ihrem "
 "Benutzernamen und Passwort ein."
 
-#: index_ext_unauthed.html:101 index_ext_unauthed.html.py:111
-#: index_ext_unauthed.html:134
+#: templates/index_ext_unauthed.html:98 templates/index_ext_unauthed.html:108
+#: templates/index_ext_unauthed.html:131
 msgid "Checking..."
 msgstr "Prüfe..."

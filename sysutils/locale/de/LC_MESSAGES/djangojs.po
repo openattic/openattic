@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2012-06-12 13:26+0200\n"
+"POT-Creation-Date: 2014-02-24 15:55+0100\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -18,54 +18,49 @@ msgstr ""
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=(n != 1)\n"
 
-#: templates/sysutils/sysutils.js:22 templates/sysutils/sysutils.js.c:107
+#: templates/sysutils/sysutils.js:24 templates/sysutils/sysutils.js.c:109
 msgid "Service State"
 msgstr "Dienststatus"
 
-#: templates/sysutils/sysutils.js:37
+#: templates/sysutils/sysutils.js:42
 msgid "Service Name"
 msgstr "Dienstname"
 
-#: templates/sysutils/sysutils.js:40
+#: templates/sysutils/sysutils.js:45
 msgid "Status"
 msgstr "Status"
 
-#: templates/sysutils/sysutils.js:63
+#: templates/sysutils/sysutils.js:68
 msgid "Reload"
 msgstr "Neu laden"
 
-#: templates/sysutils/sysutils.js:114
+#: templates/sysutils/sysutils.js:115
 msgid "Reboot"
 msgstr "Neustarten"
 
 #: templates/sysutils/sysutils.js:121
-msgid "Do you really want to reboot openATTIC?"
-msgstr "Wollen Sie openATTIC wirklich neustarten?"
-
-#: templates/sysutils/sysutils.js:134
 msgid "Shutdown"
 msgstr "Herunterfahren"
 
-#: templates/sysutils/sysutils.js:141
+#: templates/sysutils/sysutils.js:131
+msgid "Do you really want to reboot openATTIC?"
+msgstr "Wollen Sie openATTIC wirklich neustarten?"
+
+#: templates/sysutils/sysutils.js:144
 msgid "Do you really want to shutdown openATTIC?"
 msgstr "Wollen Sie openATTIC wirklich herunterfahren?"
 
-#: templates/sysutils/time.js:21 templates/sysutils/time.js.c:70
-msgid "Date/Time"
-msgstr "Datum/Zeit"
+#~ msgid "Date/Time"
+#~ msgstr "Datum/Zeit"
 
-#: templates/sysutils/time.js:41
-msgid "NTP Server"
-msgstr "NTP-Server"
+#~ msgid "NTP Server"
+#~ msgstr "NTP-Server"
 
-#: templates/sysutils/time.js:48
-msgid "Save"
-msgstr "Speichern"
+#~ msgid "Save"
+#~ msgstr "Speichern"
 
-#: templates/sysutils/time.js:54
-msgid "NTP"
-msgstr "NTP"
+#~ msgid "NTP"
+#~ msgstr "NTP"
 
-#: templates/sysutils/time.js:55
-msgid "Successfully Updated NTP Server"
-msgstr "Der NTP-Server wurde erfolgreich aktualisiert."
+#~ msgid "Successfully Updated NTP Server"
+#~ msgstr "Der NTP-Server wurde erfolgreich aktualisiert."

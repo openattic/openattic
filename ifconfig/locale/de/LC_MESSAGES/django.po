@@ -2,108 +2,108 @@
 # Copyright (C) YEAR THE PACKAGE'S COPYRIGHT HOLDER
 # This file is distributed under the same license as the PACKAGE package.
 # FIRST AUTHOR <EMAIL@ADDRESS>, YEAR.
-#
+# 
 #, fuzzy
 msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2013-05-14 13:12+0200\n"
-"PO-Revision-Date: 2012-04-02 12:05\n"
-"Last-Translator: Michael Ziegler <michael.ziegler@it-novum.com>\n"
+"POT-Creation-Date: 2014-02-24 15:49+0100\n"
+"PO-Revision-Date: 2014-02-24 16:17\n"
+"Last-Translator:   <>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
-"Language: \n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
+"Language: \n"
 "Plural-Forms: nplurals=2; plural=(n != 1)\n"
 "X-Translated-Using: django-rosetta 0.6.6\n"
 
-#: models.py:43
+#: models.py:42
 msgid "balance-rr: Balanced Round Robin"
 msgstr "balance-rr: Balanciert: Round-Robin"
 
-#: models.py:44
+#: models.py:43
 msgid "active-backup: Failover"
 msgstr "Ausfallsicherheit (Active-Backup)"
 
-#: models.py:45
+#: models.py:44
 msgid "balance-xor"
 msgstr "balance-xor: Balanciert: XOR"
 
-#: models.py:46
+#: models.py:45
 msgid "broadcast"
-msgstr ""
+msgstr "Broadcast"
+
+#: models.py:46
+msgid "802.3ad"
+msgstr "802.3ad"
 
 #: models.py:47
-msgid "802.3ad"
-msgstr ""
+msgid "balance-tlb"
+msgstr "balance-tlb"
 
 #: models.py:48
-msgid "balance-tlb"
-msgstr ""
-
-#: models.py:49
 msgid "balance-alb"
-msgstr ""
+msgstr "balance-alb"
 
-#: models.py:104
+#: models.py:128
 msgid "If this interface is a bonding device, add the slave devices here."
 msgstr ""
 "Wenn dieses Gerät ein Bonding-Gerät ist, fügen Sie hier die Basisgeräte "
 "hinzu."
 
-#: models.py:106
+#: models.py:130
 msgid "If this interface is a bridge, add the ports here."
 msgstr "Wenn dieses Gerät eine Bridge ist, fügen Sie hier die Ports hinzu."
 
-#: models.py:108
+#: models.py:132
 msgid "If this interface is VLAN device, name the raw device here."
 msgstr ""
 "Wenn dieses Gerät ein VLAN-Gerät ist, geben Sie hier das Basisgerät an."
 
-#: models.py:143
+#: models.py:167
 #, python-format
 msgid "Interface %s has children and has an address"
 msgstr "Interface %s hat abhängige Geräte und eine IP-Adresse"
 
-#: models.py:147
+#: models.py:171
 #, python-format
 msgid "Interface %s uses DHCP but has an address"
 msgstr "Gerät %s nutzt DHCP und hat eine statische IP-Adresse"
 
-#: models.py:149
+#: models.py:173
 #, python-format
 msgid "Interface %s has children and uses DHCP"
 msgstr "Gerät %s hat abhängige Geräte und nutzt DHCP"
 
-#: models.py:161
+#: models.py:185
 #, python-format
 msgid "Interface %s has an address without a netmask"
 msgstr "Gerät %s hat eine Adresse ohne angegebene Netzmaske"
 
-#: models.py:172
+#: models.py:196
 #, python-format
 msgid "Vlan %s has ITSELF as its base interface"
 msgstr "VLAN-Gerät %s nutzt sich selbst als Basisgerät"
 
-#: models.py:176
+#: models.py:200
 #, python-format
 msgid "Bridge %s has ITSELF as one of its ports"
 msgstr "Bridge %s nutzt sich selbst als einen ihrer Ports"
 
-#: models.py:180
+#: models.py:204
 #, python-format
 msgid "Bonding %s has ITSELF as one of its slaves"
 msgstr "Bonding %s nutzt sich selbst als einen seiner Slaves"
 
-#: models.py:182
+#: models.py:206
 #, python-format
 msgid "Bonding %s has slaves with mismatching Jumbo Frames setting"
 msgstr ""
 "Bonding %s benutzt andere Jumbo-Frames-Einstellungen als seine Basisgeräte."
 
-#: models.py:185
+#: models.py:209
 msgid ""
 "There is no interface that has an IP (none with dhcp and none with static "
 "address)."
@@ -111,14 +111,14 @@ msgstr ""
 "Kein Gerät hat eine IP-Adresse (keines nutzt DHCP und keines ist statisch "
 "konfiguriert)."
 
-#: models.py:188
+#: models.py:212
 msgid "There is no default gateway."
 msgstr "Es gibt keinen Standard-Gateway."
 
-#: models.py:191
+#: models.py:215
 msgid "There is are no name servers configured."
 msgstr "Es sind keine Nameserver konfiguriert."
 
-#: models.py:194
+#: models.py:218
 msgid "There is no domain configured."
 msgstr "Es ist kein Domain-Name konfiguriert."

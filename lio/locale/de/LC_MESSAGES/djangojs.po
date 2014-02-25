@@ -8,9 +8,9 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2013-07-03 13:58+0200\n"
-"PO-Revision-Date: 2013-07-03 14:10\n"
-"Last-Translator: Michael Ziegler <michael.ziegler@it-novum.com>\n"
+"POT-Creation-Date: 2014-02-24 15:50+0100\n"
+"PO-Revision-Date: 2014-02-25 09:29\n"
+"Last-Translator:   <>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
@@ -19,146 +19,210 @@ msgstr ""
 "Plural-Forms: nplurals=2; plural=(n != 1)\n"
 "X-Translated-Using: django-rosetta 0.6.6\n"
 
-#: templates/lio/initiators.js:31
+#: templates/lio/initiators.js:28
 msgid "Initiators"
 msgstr "Initiatoren"
 
-#: templates/lio/initiators.js:39
+#: templates/lio/initiators.js:58
 msgid "Add Initiator"
 msgstr "Initiator hinzufügen"
 
-#: templates/lio/initiators.js:47 templates/lio/lluns.js:202
+#: templates/lio/initiators.js:66
 msgid "Type"
 msgstr "Typ"
 
-#: templates/lio/initiators.js:50 templates/lio/lluns.js:205
+#: templates/lio/initiators.js:69
 msgid "iSCSI"
 msgstr "iSCSI"
 
-#: templates/lio/initiators.js:50
+#: templates/lio/initiators.js:69
 msgid "Fibre Channel"
 msgstr "Fibre Channel"
 
-#: templates/lio/initiators.js:58
+#: templates/lio/initiators.js:78
 msgid "WWN/IQN"
 msgstr "WWN/IQN"
 
-#: templates/lio/initiators.js:88
+#: templates/lio/initiators.js:108
 msgid "Confirm delete"
 msgstr "Löschen bestätigen"
 
-#: templates/lio/initiators.js:89
+#: templates/lio/initiators.js:109
 #, c-format
 msgid "Really delete Initiator %s?"
 msgstr "Initiator %s wirklich löschen?"
 
-#: templates/lio/lluns.js:19
-msgid "Add LUN"
-msgstr "LUN hinzufügen"
-
-#: templates/lio/lluns.js:20
-msgid "Delete LUN"
-msgstr "LUN löschen"
-
-#: templates/lio/lluns.js:21
+#: templates/lio/lluns.js:54
 #, c-format
-msgid "Do you really want to delete LUN %s?"
-msgstr "LUN %s wirklich löschen?"
+msgid "Edit LUN %s"
+msgstr "Bearbeite LUN %s"
 
-#: templates/lio/lluns.js:32 templates/lio/lluns.js.c:47
-msgid "Volume"
-msgstr "Volume"
+#: templates/lio/lluns.js:67
+msgid "Overview"
+msgstr "Übersicht"
 
-#: templates/lio/lluns.js:36 templates/lio/lluns.js.c:52
-msgid "LUN ID"
-msgstr "LUN-ID"
+#: templates/lio/lluns.js:75
+msgid "LUN Details"
+msgstr "LUN Details"
 
-#: templates/lio/lluns.js:85 templates/lio/lluns.js.c:514
-msgid "LUNs"
-msgstr "LUNs"
-
-#: templates/lio/lluns.js:129
-msgid "Targets"
-msgstr "Targets"
-
-#: templates/lio/lluns.js:154
-msgid "Add Target"
-msgstr "Target hinzufügen"
-
-#: templates/lio/lluns.js:155
-msgid "Edit Target"
-msgstr "Target löschen"
-
-#: templates/lio/lluns.js:156
-msgid "Delete Target"
-msgstr "Target löschen"
-
-#: templates/lio/lluns.js:157
-#, c-format
-msgid "Do you really want to delete Target %s?"
-msgstr "Target %s wirklich löschen?"
-
-#: templates/lio/lluns.js:176
+#: templates/lio/lluns.js:80 templates/lio/lluns.js.c:413
 msgid "Name"
 msgstr "Name"
 
-#: templates/lio/lluns.js:181
-msgid "Host"
-msgstr "Host"
+#: templates/lio/lluns.js:83 templates/lio/lluns.js.c:358
+#: templates/lio/lluns.js:425
+msgid "Status"
+msgstr "Status"
 
-#: templates/lio/lluns.js:191 templates/lio/portals.js:54
-msgid "Select..."
-msgstr "Bitte wählen..."
+#: templates/lio/lluns.js:88
+msgid "Online"
+msgstr "Online"
 
-#: templates/lio/lluns.js:205
-msgid "FC"
-msgstr "FC"
+#: templates/lio/lluns.js:88
+msgid "Offline"
+msgstr "Offline"
 
-#: templates/lio/lluns.js:213
-msgid "WWN or IQN"
-msgstr "WWN oder IQN"
-
-#: templates/lio/lluns.js:224
-msgid "Remove Target"
-msgstr "Target entfernen"
-
-#: templates/lio/lluns.js:296
-msgid "Host Groups"
-msgstr "Hostgruppen"
-
-#: templates/lio/lluns.js:331
-msgid "Remove Host group"
-msgstr "Hostgruppe entfernen"
-
-#: templates/lio/lluns.js:405
+#: templates/lio/lluns.js:100 templates/lio/lluns.js.c:447
 msgid "Hosts"
 msgstr "Hosts"
 
-#: templates/lio/lluns.js:440
-msgid "Remove Host"
-msgstr "Host entfernen"
+#: templates/lio/lluns.js:121 templates/lio/lluns.js.c:224
+msgid "Hostname"
+msgstr "Hostname"
 
-#: templates/lio/portals.js:21
+#: templates/lio/lluns.js:124
+msgid "LUN ID"
+msgstr "LUN-ID"
+
+#: templates/lio/lluns.js:151
+msgid "IP"
+msgstr "IP"
+
+#: templates/lio/lluns.js:154 templates/lio/portals.js:33
+#: templates/lio/portals.js.c:72
+msgid "Port"
+msgstr "Port"
+
+#: templates/lio/lluns.js:176
+msgid "Add Host"
+msgstr "Host hinzufügen"
+
+#: templates/lio/lluns.js:227
+msgid "ID"
+msgstr "ID"
+
+#: templates/lio/lluns.js:246 templates/lio/lluns.js.c:302
+msgid "Loading..."
+msgstr "Lade..."
+
+#: templates/lio/lluns.js:277
+msgid "Please select a Host and enter an ID"
+msgstr "Bitte wählen Sie einen Host aus und geben eine ID ein"
+
+#: templates/lio/lluns.js:315
+msgid "No Host selected for deletion"
+msgstr "Kein Host zum löschen ausgewählt"
+
+#: templates/lio/lluns.js:354
+msgid "Volume"
+msgstr "Volume"
+
+#: templates/lio/lluns.js:362
+msgid "Group"
+msgstr "Gruppe"
+
+#: templates/lio/lluns.js:366
+msgid "Created"
+msgstr "Erstellt"
+
+#: templates/lio/lluns.js:380 templates/lio/lluns.js.c:464
+msgid "LUNs"
+msgstr "LUNs"
+
+#: templates/lio/lluns.js:401
+msgid "Details"
+msgstr "Details"
+
+#: templates/lio/lluns.js:406
+msgid "Infos"
+msgstr "Infos"
+
+#: templates/lio/lluns.js:417
+msgid "Path"
+msgstr "Pfad"
+
+#: templates/lio/lluns.js:421
+msgid "Size"
+msgstr "Größe"
+
+#: templates/lio/lluns.js:429
+msgid "Description"
+msgstr "Beschreibung"
+
+#: templates/lio/lluns.js:434
+msgid "Mapped to Host"
+msgstr ""
+
+#: templates/lio/portals.js:23
 msgid "Add Portal"
 msgstr "Portal hinzufügen"
 
-#: templates/lio/portals.js:22
+#: templates/lio/portals.js:24
 msgid "Delete Portal"
 msgstr "Portal löschen"
 
-#: templates/lio/portals.js:23
+#: templates/lio/portals.js:25
 #, c-format
 msgid "Do you really want to delete Portal %s?"
 msgstr "Portal %s wirklich löschen?"
 
-#: templates/lio/portals.js:27 templates/lio/portals.js.c:45
+#: templates/lio/portals.js:29 templates/lio/portals.js.c:47
 msgid "Address"
 msgstr "Adresse"
 
-#: templates/lio/portals.js:31 templates/lio/portals.js.c:60
-msgid "Port"
-msgstr "Port"
+#: templates/lio/portals.js:66
+msgid "Select..."
+msgstr "Bitte wählen..."
 
-#: templates/lio/portals.js:76
+#: templates/lio/portals.js:86
 msgid "Network Portals"
 msgstr "Portale"
+
+#~ msgid "Add LUN"
+#~ msgstr "LUN hinzufügen"
+
+#~ msgid "Delete LUN"
+#~ msgstr "LUN löschen"
+
+#~ msgid "Do you really want to delete LUN %s?"
+#~ msgstr "LUN %s wirklich löschen?"
+
+#~ msgid "Targets"
+#~ msgstr "Targets"
+
+#~ msgid "Add Target"
+#~ msgstr "Target hinzufügen"
+
+#~ msgid "Edit Target"
+#~ msgstr "Target löschen"
+
+#~ msgid "Delete Target"
+#~ msgstr "Target löschen"
+
+#~ msgid "Do you really want to delete Target %s?"
+#~ msgstr "Target %s wirklich löschen?"
+
+#~ msgid "FC"
+#~ msgstr "FC"
+
+#~ msgid "WWN or IQN"
+#~ msgstr "WWN oder IQN"
+
+#~ msgid "Remove Target"
+#~ msgstr "Target entfernen"
+
+#~ msgid "Remove Host group"
+#~ msgstr "Hostgruppe entfernen"
+
+#~ msgid "Remove Host"
+#~ msgstr "Host entfernen"

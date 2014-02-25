@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2012-06-12 13:26+0200\n"
+"POT-Creation-Date: 2014-02-24 15:46+0100\n"
 "PO-Revision-Date: 2012-04-02 13:29\n"
 "Last-Translator: Michael Ziegler <michael.ziegler@it-novum.com>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -19,22 +19,22 @@ msgstr ""
 "Plural-Forms: nplurals=2; plural=(n != 1)\n"
 "X-Translated-Using: django-rosetta 0.6.6\n"
 
-#: models.py:21
+#: models.py:24
 msgid "Command"
 msgstr "Befehl"
 
-#: models.py:22
+#: models.py:26
 msgid "Start time"
 msgstr "Startzeitpunkt"
 
-#: models.py:23
+#: models.py:27
 msgid "End time"
 msgstr "Endzeitpunkt"
 
-#: models.py:24
+#: models.py:28
 msgid "Exit code"
 msgstr "Rückgabewert"
 
-#: models.py:25
+#: models.py:29
 msgid "Output"
 msgstr "Ausgabe"

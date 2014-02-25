@@ -2,59 +2,59 @@
 # Copyright (C) YEAR THE PACKAGE'S COPYRIGHT HOLDER
 # This file is distributed under the same license as the PACKAGE package.
 # FIRST AUTHOR <EMAIL@ADDRESS>, YEAR.
-#
+# 
 #, fuzzy
 msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2012-06-12 13:26+0200\n"
-"PO-Revision-Date: 2012-04-24 11:48\n"
-"Last-Translator: Michael Ziegler <michael.ziegler@it-novum.com>\n"
+"POT-Creation-Date: 2014-02-24 15:52+0100\n"
+"PO-Revision-Date: 2014-02-25 11:39\n"
+"Last-Translator:   <>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
-"Language: \n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
+"Language: \n"
 "Plural-Forms: nplurals=2; plural=(n != 1)\n"
 "X-Translated-Using: django-rosetta 0.6.6\n"
 
-#: templates/rpcd/apikey.js:38 templates/rpcd/apikey.js.c:126
+#: templates/rpcd/apikey.js:21 templates/rpcd/apikey.js.c:100
 msgid "API Keys"
 msgstr "API-Schlüssel"
 
-#: templates/rpcd/apikey.js:40
+#: templates/rpcd/apikey.js:23
 msgid "Add Key"
 msgstr "Schlüssel hinzufügen"
 
-#: templates/rpcd/apikey.js:41
+#: templates/rpcd/apikey.js:24
 msgid "Edit Key"
 msgstr "Schlüssel bearbeiten"
 
-#: templates/rpcd/apikey.js:42
+#: templates/rpcd/apikey.js:25
 msgid "Delete Key"
 msgstr "Schlüssel löschen"
 
-#: templates/rpcd/apikey.js:46
+#: templates/rpcd/apikey.js:30
 msgid "Do you really want to delete %(user)s's key '%(key)s'?"
 msgstr "%(user)ss Schlüssel '%(key)s' wirklich löschen?"
 
-#: templates/rpcd/apikey.js:63
+#: templates/rpcd/apikey.js:45
 msgid "Show API URL"
 msgstr "API-URL anzeigen"
 
-#: templates/rpcd/apikey.js:71
+#: templates/rpcd/apikey.js:52
 msgid "API URL"
 msgstr "API-URL"
 
-#: templates/rpcd/apikey.js:72
+#: templates/rpcd/apikey.js:53
 msgid ""
 "Use this URL to connect to the openATTIC API using the API Key you selected."
 msgstr ""
 "Benutze diese URL, um mit dem gewählten API-Schlüssel zur openATTIC-API zu "
 "verbinden."
 
-#: templates/rpcd/apikey.js:73
+#: templates/rpcd/apikey.js:54
 msgid ""
 "Note that the input field only allows for easier copy-paste, any value you "
 "enter here will be ignored."
@@ -62,101 +62,105 @@ msgstr ""
 "Das Eingabefeld ist nur dazu da, das Kopieren der URL zu vereinfachen. "
 "Eingaben werden ignoriert."
 
-#: templates/rpcd/apikey.js:82 templates/rpcd/apikey.js.c:104
+#: templates/rpcd/apikey.js:63 templates/rpcd/apikey.js.c:81
 msgid "Description"
 msgstr "Beschreibung"
 
-#: templates/rpcd/apikey.js:86 templates/rpcd/auth__userfield.js:26
+#: templates/rpcd/apikey.js:67 templates/rpcd/auth__userfield.js:27
 msgid "Owner"
 msgstr "Besitzer"
 
-#: templates/rpcd/apikey.js:90 templates/rpcd/apikey.js.c:109
-#: templates/rpcd/auth__user.js:108 templates/rpcd/auth__user.js.c:154
+#: templates/rpcd/apikey.js:71 templates/rpcd/apikey.js.c:86
+#: templates/rpcd/auth__user.js:96 templates/rpcd/auth__user.js.c:139
 msgid "Active"
 msgstr "Aktiv"
 
-#: templates/rpcd/auth__user.js:43
+#: templates/rpcd/auth__user.js:21
 msgid "Users"
 msgstr "Benutzer"
 
-#: templates/rpcd/auth__user.js:48
+#: templates/rpcd/auth__user.js:26
 msgid "Show Volumes of User"
 msgstr "Volumes des Benutzers anzeigen"
 
-#: templates/rpcd/auth__user.js:57
+#: templates/rpcd/auth__user.js:34
 msgid "Volumes of User"
 msgstr "Volumes des Benutzers"
 
-#: templates/rpcd/auth__user.js:75
+#: templates/rpcd/auth__user.js:64
 msgid "Volume Name"
 msgstr "Volume-Name"
 
-#: templates/rpcd/auth__user.js:87
+#: templates/rpcd/auth__user.js:75
 msgid "Add User"
 msgstr "Benutzer hinzufügen"
 
-#: templates/rpcd/auth__user.js:88
+#: templates/rpcd/auth__user.js:76
 msgid "Edit User"
 msgstr "Benutzer bearbeiten"
 
-#: templates/rpcd/auth__user.js:89 templates/rpcd/auth__user.js.c:177
-#: templates/rpcd/auth__user.js:184
+#: templates/rpcd/auth__user.js:77 templates/rpcd/auth__user.js.c:158
+#: templates/rpcd/auth__user.js:165
 msgid "Delete User"
 msgstr "Benutzer löschen"
 
-#: templates/rpcd/auth__user.js:92 templates/rpcd/auth__user.js.c:133
+#: templates/rpcd/auth__user.js:80 templates/rpcd/auth__user.js.c:122
 msgid "User Name"
 msgstr "Benutzername"
 
-#: templates/rpcd/auth__user.js:96 templates/rpcd/auth__user.js.c:141
+#: templates/rpcd/auth__user.js:84 templates/rpcd/auth__user.js.c:129
 msgid "First Name"
 msgstr "Vorname"
 
-#: templates/rpcd/auth__user.js:100 templates/rpcd/auth__user.js.c:145
+#: templates/rpcd/auth__user.js:88 templates/rpcd/auth__user.js.c:132
 msgid "Last Name"
 msgstr "Nachname"
 
-#: templates/rpcd/auth__user.js:104
+#: templates/rpcd/auth__user.js:92
 msgid "E-Mail Address"
 msgstr "E-Mail-Adresse"
 
-#: templates/rpcd/auth__user.js:113 templates/rpcd/auth__user.js.c:159
+#: templates/rpcd/auth__user.js:101 templates/rpcd/auth__user.js.c:143
 msgid "Staff"
 msgstr "Personal"
 
-#: templates/rpcd/auth__user.js:118
+#: templates/rpcd/auth__user.js:106
 msgid "SU"
 msgstr "SuperUser"
 
-#: templates/rpcd/auth__user.js:123
+#: templates/rpcd/auth__user.js:111
 msgid "Last Login"
 msgstr "Letzter Login"
 
-#: templates/rpcd/auth__user.js:137
+#: templates/rpcd/auth__user.js:115
+msgid "unknown"
+msgstr "Unbekannt"
+
+#: templates/rpcd/auth__user.js:125
 msgid "Password"
 msgstr "Passwort"
 
-#: templates/rpcd/auth__user.js:149
+#: templates/rpcd/auth__user.js:135
 msgid "E-Mail"
 msgstr "E-Mail"
 
-#: templates/rpcd/auth__user.js:164
+#: templates/rpcd/auth__user.js:147
 msgid "SuperUser"
 msgstr "Administrator"
 
-#: templates/rpcd/auth__user.js:178
+#: templates/rpcd/auth__user.js:159
 msgid "User %(user)s is the owner of %(volcount)s volumes."
 msgstr "%(user)s ist der Besitzer von %(volcount)s Volumes."
 
-#: templates/rpcd/auth__user.js:186
+#: templates/rpcd/auth__user.js:167
 #, c-format
 msgid "Do you really want to delete user %s?"
 msgstr "Benutzer %s wirklich löschen?"
 
-#: templates/rpcd/auth__user.js:211
+#: templates/rpcd/auth__user.js:189
 msgid "User Management"
 msgstr "Benutzerverwaltung"
 
-#: templates/rpcd/auth__userfield.js:39
+#: templates/rpcd/auth__userfield.js:52
 msgid "Select..."
 msgstr "Bitte wählen..."

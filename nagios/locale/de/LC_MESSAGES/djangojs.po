@@ -2,21 +2,22 @@
 # Copyright (C) YEAR THE PACKAGE'S COPYRIGHT HOLDER
 # This file is distributed under the same license as the PACKAGE package.
 # FIRST AUTHOR <EMAIL@ADDRESS>, YEAR.
-#
+# 
 #, fuzzy
 msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2012-06-12 13:26+0200\n"
-"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
-"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"POT-Creation-Date: 2014-02-24 15:51+0100\n"
+"PO-Revision-Date: 2014-02-24 17:07\n"
+"Last-Translator:   <>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
-"Language: \n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
+"Language: \n"
 "Plural-Forms: nplurals=2; plural=(n != 1)\n"
+"X-Translated-Using: django-rosetta 0.6.6\n"
 
 #: templates/nagios/services.js:153
 msgid "Image not available yet"
@@ -26,66 +27,81 @@ msgstr "Bild noch nicht verfügbar"
 msgid "Loading..."
 msgstr "Lade..."
 
-#: templates/nagios/services.js:289
+#: templates/nagios/services.js:274
+msgid "unknown"
+msgstr "Unbekannt"
+
+#: templates/nagios/services.js:291
 msgid "Nagios Services"
 msgstr "Nagios-Services"
 
-#: templates/nagios/services.js:294
+#: templates/nagios/services.js:298
 msgid "Reload"
 msgstr "Neu laden"
 
-#: templates/nagios/services.js:362
+#: templates/nagios/services.js:413
 msgid "Service Description"
 msgstr "Service-Beschreibung"
 
-#: templates/nagios/services.js:367
+#: templates/nagios/services.js:418
 msgid "Plugin Output"
 msgstr "Plugin-Ausgabe"
 
-#: templates/nagios/services.js:371
-msgid "Volume"
-msgstr "Volume"
+#: templates/nagios/services.js:422
+msgid "Target"
+msgstr "Ziel"
 
-#: templates/nagios/services.js:375
+#: templates/nagios/services.js:426
+msgid "Host"
+msgstr "Host"
+
+#: templates/nagios/services.js:430
 msgid "Last Check"
 msgstr "Letzter Check"
 
-#: templates/nagios/services.js:380
+#: templates/nagios/services.js:435
 msgid "Next Check"
 msgstr "Nächster Check"
 
-#: templates/nagios/services.js:391
+#: templates/nagios/services.js:444
 msgid "No performance data available for service"
 msgstr "Keine Performance-Daten verfügbar für"
 
-#: templates/nagios/services.js:421
+#: templates/nagios/services.js:477
 msgid "4 hours"
 msgstr "4 Stunden"
 
-#: templates/nagios/services.js:426
+#: templates/nagios/services.js:482
 msgid "1 day"
 msgstr "1 Tag"
 
-#: templates/nagios/services.js:430
+#: templates/nagios/services.js:486
 msgid "1 week"
 msgstr "1 Woche"
 
-#: templates/nagios/services.js:434
+#: templates/nagios/services.js:490
 msgid "1 month"
 msgstr "1 Monat"
 
-#: templates/nagios/services.js:438
+#: templates/nagios/services.js:494
 msgid "1 year"
 msgstr "1 Jahr"
 
-#: templates/nagios/services.js:450
+#: templates/nagios/services.js:506
 msgid "Graphs"
 msgstr "Graphen"
 
-#: templates/nagios/services.js:465
+#: templates/nagios/services.js:519
 msgid "Graph"
 msgstr "Graph"
 
-#: templates/nagios/services.js:510
+#: templates/nagios/services.js:543
+msgid "Search..."
+msgstr "Suchen..."
+
+#: templates/nagios/services.js:608
 msgid "Monitoring"
 msgstr "Monitoring"
+
+#~ msgid "Volume"
+#~ msgstr "Volume"

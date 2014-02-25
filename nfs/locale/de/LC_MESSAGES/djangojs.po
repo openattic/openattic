@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2012-06-12 13:26+0200\n"
+"POT-Creation-Date: 2014-02-24 15:51+0100\n"
 "PO-Revision-Date: 2012-04-18 10:07\n"
 "Last-Translator: Michael Ziegler <michael.ziegler@it-novum.com>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -19,33 +19,33 @@ msgstr ""
 "Plural-Forms: nplurals=2; plural=(n != 1)\n"
 "X-Translated-Using: django-rosetta 0.6.6\n"
 
-#: templates/nfs/export.js:21 templates/nfs/export.js.c:60
+#: templates/nfs/export.js:24 templates/nfs/export.js.c:62
 msgid "Address"
 msgstr "Adresse"
 
-#: templates/nfs/export.js:25
+#: templates/nfs/export.js:28
 msgid "Path"
 msgstr "Pfad"
 
-#: templates/nfs/export.js:29 templates/nfs/export.js.c:66
+#: templates/nfs/export.js:32 templates/nfs/export.js.c:69
 msgid "Options"
 msgstr "Optionen"
 
-#: templates/nfs/export.js:50
+#: templates/nfs/export.js:53
 msgid "Please select the volume to share."
 msgstr "Bitte wählen Sie das Volume aus, welches Sie freigeben möchten"
 
-#: templates/nfs/export.js:53
+#: templates/nfs/export.js:56
 msgid "Directory"
 msgstr "Verzeichnis"
 
-#: templates/nfs/export.js:57
+#: templates/nfs/export.js:59
 msgid "If you wish to share only a subpath of the volume, enter the path here."
 msgstr ""
 "Wenn Sie nur ein Verzeichnis des Volumes freigeben möchten, geben Sie bitte "
 "hier den Pfad an"
 
-#: templates/nfs/export.js:73
+#: templates/nfs/export.js:77
 msgid ""
 "See <a href=\"http://man.cx/exports%285%29\" target=\"_blank\">the NFS "
 "manual</a> for details."
@@ -53,6 +53,6 @@ msgstr ""
 "Weitere Informationen finden Sie <a href=\"http://man.cx/exports%285%29/de\" "
 "target=\"_blank\">in der NFS-Dokumentation</a>."
 
-#: templates/nfs/export.js:90
+#: templates/nfs/export.js:91
 msgid "Linux (NFS)"
 msgstr "Linux (NFS)"
