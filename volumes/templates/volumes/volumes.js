@@ -452,30 +452,25 @@ Ext.define('Ext.oa.volumes__Volume_Panel', {
         text: gettext("Delete Volume"),
         handler: function(self){
           var sel = volumePanel.getSelectionModel().getSelection()[0];
-          Ext.Msg.prompt(
+          Ext.Msg.confirm(
             gettext("Delete Volume"),
-            gettext('What was the name of the volume you wish to delete again?<br /><b>There is no undo and you will lose all data.</b>'),
+            interpolate(gettext("You are about to permanently delete the following volume:<br /><strong>%s</strong><br />Are you sure? There is no undo and you will lose all data on that volume."), [sel.data.__unicode__]),
             function(btn, text){
-              if( btn === 'ok' ){
-                if( text == sel.data.name ){
-                  var volId = parseInt(sel.raw.id);
-                  if( sel.raw.filesystem ){
-                    volumes__FileSystemVolume.remove(volId, function(result, response){
-                      if( response.type !== "exception" ){
-                        volumePanel.refresh();
-                      }
-                    });
-                  }
-                  else{
-                    volumes__BlockVolume.remove(volId, function(result, response){
-                      if( response.type !== "exception" ){
-                        volumePanel.refresh();
-                      }
-                    });
-                  }
+              if( btn === 'yes' ){
+                var volId = parseInt(sel.raw.id);
+                if( sel.raw.filesystem ){
+                  volumes__FileSystemVolume.remove(volId, function(result, response){
+                    if( response.type !== "exception" ){
+                      volumePanel.refresh();
+                    }
+                  });
                 }
                 else{
-                  Ext.Msg.alert(gettext("Delete Volume"), gettext("Hm, that doesn't seem right..."));
+                  volumes__BlockVolume.remove(volId, function(result, response){
+                    if( response.type !== "exception" ){
+                      volumePanel.refresh();
+                    }
+                  });
                 }
               }
               else{
