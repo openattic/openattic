@@ -165,6 +165,7 @@ Ext.define('Ext.oa.Cmdlog__LogEntry_Panel', {
                 modal: true,
                 items: [{
                   xtype: "form",
+                  bodyStyle: "padding:5px 5px;",
                   defaults: {
                     xtype: "textfield",
                     anchor: '-20px'
