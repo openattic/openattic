@@ -182,7 +182,8 @@ Ext.define('Ext.oa.Cmdlog__LogEntry_Panel', {
                           cmdlog__LogEntry.count_older_than(
                             parseInt(Ext.Date.format(newValue, "U"), 10),
                             function(provider, response){
-                              self.ownerCt.countlabel.setText(
+                              var countlabel = self.ownerCt.getComponent("countlabel")
+                              countlabel.setText(
                                 interpolate(gettext('%s Entries matched'), [response.result])
                               );
                             }
@@ -191,10 +192,10 @@ Ext.define('Ext.oa.Cmdlog__LogEntry_Panel', {
                       }
                     }, gettext('Log Entries newer than the date you enter here will be kept.')
                   ), {
-                    xtype: "label",
-                    text:  gettext('Waiting for date selection...'),
-                    cls:   "form_hint_label",
-                    ref:   "countlabel"
+                    xtype:  "label",
+                    text:   gettext('Waiting for date selection...'),
+                    cls:    "form_hint_label",
+                    itemId: "countlabel"
                   }],
                   buttons: [{
                     text: gettext('Delete'),
