@@ -13,10 +13,10 @@
 
 function mkFocusFunc(tiptext){
   return function( self ){
-    if( !Ext.state.Manager.get("form_tooltip_show", true) ){
+    if( !Ext.state.Manager.get("form_tooltip_show", true) || self.fieldtip ){
       return;
     }
-    self.fieldtip = new Ext.ToolTip({
+    self.fieldtip = Ext.create("Ext.tip.ToolTip", {
       target: ( self.trigger ? self.trigger.id : self.id ),
       anchor: 'left',
       html: tiptext,
@@ -31,6 +31,17 @@ function mkFocusFunc(tiptext){
       }
     });
     self.fieldtip.show();
+    // Problem: When the tooltip shows up, it somehow causes the window to be focused
+    // again, thereby breaking the flow if the user wants to use their keyboard *only*
+    // to edit a form. The following "steals back" the focus every 100ms, but do we
+    // really wanna do it this way? :/
+    var regainFocus = function(){
+      if( self.fieldtip ){
+        self.focusInput();
+        setTimeout(regainFocus, 100);
+      }
+    };
+    setTimeout(regainFocus, 100);
   };
 }
 
