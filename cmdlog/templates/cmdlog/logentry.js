@@ -203,7 +203,7 @@ Ext.define('Ext.oa.Cmdlog__LogEntry_Panel', {
                     handler: function(self){
                       var date = self.ownerCt.ownerCt.datefield.getValue();
                       cmdlog__LogEntry.remove_older_than(
-                        parseInt(date.format("U"), 10),
+                        parseInt(Ext.Date.format(date, "U"), 10),
                         function(provider, response){
                           win.hide();
                           store.load();
