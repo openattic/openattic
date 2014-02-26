@@ -176,7 +176,7 @@ Ext.define('Ext.oa.Cmdlog__LogEntry_Panel', {
                       allowBlank: false,
                       name:  "date",
                       xtype: 'datefield',
-                      ref:   'datefield',
+                      itemId:'datefield',
                       listeners: {
                         select: function(self, newValue, eOpts){
                           cmdlog__LogEntry.count_older_than(
@@ -201,7 +201,7 @@ Ext.define('Ext.oa.Cmdlog__LogEntry_Panel', {
                     text: gettext('Delete'),
                     ref:   'shoopmit',
                     handler: function(self){
-                      var date = self.ownerCt.ownerCt.datefield.getValue();
+                      var date = self.ownerCt.ownerCt.getComponent("datefield").getValue();
                       cmdlog__LogEntry.remove_older_than(
                         parseInt(Ext.Date.format(date, "U"), 10),
                         function(provider, response){
