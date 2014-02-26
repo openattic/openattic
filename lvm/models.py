@@ -160,13 +160,6 @@ class LogicalVolume(BlockVolume):
 
     vg          = models.ForeignKey(VolumeGroup, blank=True)
     snapshot    = models.ForeignKey("self", blank=True, null=True, related_name="snapshot_set")
-    formatted   = models.BooleanField(default=False, editable=False)
-    owner       = models.ForeignKey(User, blank=True)
-    fswarning   = models.IntegerField(_("Warning Level (%)"),  default=75 )
-    fscritical  = models.IntegerField(_("Critical Level (%)"), default=85 )
-    dedup       = models.BooleanField(_("Deduplication"), blank=True, default=False)
-    compression = models.BooleanField(_("Compression"), blank=True, default=False)
-    createdate  = models.DateTimeField(auto_now_add=True, blank=True, null=True)
     snapshotconf= models.ForeignKey("SnapshotConf", blank=True, null=True, related_name="snapshot_set")
 
     objects = getHostDependentManagerClass("vg__host")()
