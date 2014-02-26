@@ -177,6 +177,7 @@ Ext.define('Ext.oa.Cmdlog__LogEntry_Panel', {
                       name:  "date",
                       xtype: 'datefield',
                       itemId:'datefield',
+                      value: new Date().getDate() + 1,
                       listeners: {
                         select: function(self, newValue, eOpts){
                           cmdlog__LogEntry.count_older_than(
