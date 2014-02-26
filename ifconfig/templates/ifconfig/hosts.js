@@ -140,7 +140,7 @@ Ext.define('Ext.oa.Ifconfig__Host_Groups_Panel', {
   initComponent: function(){
     Ext.apply(this, Ext.apply(this.initialConfig, {
       id: "ifconfig__host_group_panel_inst",
-      title: gettext('Hosts and Groups'),
+      title: gettext('Hosts'),
       layout: 'border',
       items: [{
         xtype: "ifconfig__host_panel",
