@@ -66,8 +66,13 @@ Ext.define('Ext.oa.Ifconfig__HostGroup_HostGroup_TreePanel', {
       store           : store,
       viewConfig      : {
         plugins: {
-          ptype           : 'treeviewdragdrop'
-        }
+          ptype           : 'treeviewdragdrop',
+          containerScroll : true,
+          appendOnly      : true,
+          ddGroup         : 'hostgroup',
+          dropGroup       : 'host'
+        },
+        copy: true,
       }
     }));
     this.callParent(arguments)
@@ -105,8 +110,13 @@ Ext.define('Ext.oa.Ifconfig__HostGroup_Host_TreePanel', {
       store           : store,
       viewConfig      : {
         plugins: {
-          ptype           : 'treeviewdragdrop'
-        }
+          ptype           : 'treeviewdragdrop',
+          containerScroll : true,
+          appendOnly      : true,
+          ddGroup         : 'host',
+          dropGroup       : 'hostgroup'
+        },
+        copy: true
       }
     }));
     this.callParent(arguments)
@@ -178,7 +188,6 @@ Ext.define('ifconfig__hostgroup_subitem_model', {
   requires: ['Ext.data.NodeInterface'],
   fields: ['id', '__unicode__'],
   createNode: function(record){
-    console.log(record);
     var rootNode = this.callParent(arguments);
     rootNode.set('leaf', true);
     rootNode.set('text', record.raw.name);
