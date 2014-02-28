@@ -183,6 +183,7 @@ Ext.define('ifconfig__hostgroup_subitem_model', {
     rootNode.set('leaf', true);
     rootNode.set('text', record.raw.name);
     rootNode.set('id', ['ifconfig__hostgroup_subitem', record.raw.id, Ext.id()].join('.'));
+    rootNode.set('allowDrag', false);
     return rootNode;
   }
 });
