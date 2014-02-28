@@ -63,7 +63,12 @@ Ext.define('Ext.oa.Ifconfig__HostGroup_HostGroup_TreePanel', {
       containerScroll : true,
       rootVisible     : false,
       frame           : true,
-      store           : store
+      store           : store,
+      viewConfig      : {
+        plugins: {
+          ptype           : 'treeviewdragdrop'
+        }
+      }
     }));
     this.callParent(arguments)
   }
@@ -97,7 +102,12 @@ Ext.define('Ext.oa.Ifconfig__HostGroup_Host_TreePanel', {
       containerScroll : true,
       rootVisible     : false,
       frame           : true,
-      store           : store
+      store           : store,
+      viewConfig      : {
+        plugins: {
+          ptype           : 'treeviewdragdrop'
+        }
+      }
     }));
     this.callParent(arguments)
   }
