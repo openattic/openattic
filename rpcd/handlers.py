@@ -14,6 +14,7 @@
  *  GNU General Public License for more details.
 """
 
+import logging
 import socket
 import errno
 import sys
@@ -260,24 +261,30 @@ class ModelHandler(BaseHandler):
             if self.exclude is not None and field.name in self.exclude:
                 continue
 
-            value = getattr(obj, field.name)
-            if isinstance( field, models.ManyToManyField ):
-                data[field.name] = [
-                    self._get_handler_instance(val.__class__)._idobj(val)
-                    for val in value.all()
-                    ]
-            elif isinstance( field, (models.ForeignKey, generic.GenericForeignKey) ):
-                if value is not None:
-                    try:
-                        handler = self._get_handler_instance(value.__class__)
-                    except KeyError:
-                        data[field.name] = unicode(value)
+            try:
+                value = getattr(obj, field.name)
+                if isinstance( field, models.ManyToManyField ):
+                    data[field.name] = [
+                        self._get_handler_instance(val.__class__)._idobj(val)
+                        for val in value.all()
+                        ]
+                elif isinstance( field, (models.ForeignKey, generic.GenericForeignKey) ):
+                    if value is not None:
+                        try:
+                            handler = self._get_handler_instance(value.__class__)
+                        except KeyError:
+                            data[field.name] = unicode(value)
+                        else:
+                            data[field.name] = handler._idobj(value)
                     else:
-                        data[field.name] = handler._idobj(value)
+                        data[field.name] = None
                 else:
-                    data[field.name] = None
-            else:
-                data[field.name] = value
+                    data[field.name] = value
+            except Exception, err:
+                logging.error("Got exception '%s' when querying '%s' for field '%s'" % (
+                              unicode(err), repr(obj), field.name
+                              ))
+                raise
 
         for rel_m2m in obj._meta.get_all_related_many_to_many_objects():
             fname = rel_m2m.get_accessor_name()
