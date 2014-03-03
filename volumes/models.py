@@ -54,7 +54,7 @@ class StorageObject(models.Model):
     name        = models.CharField(max_length=150)
     megs        = models.IntegerField()
     uuid        = models.CharField(max_length=38, editable=False)
-    is_origin   = models.BooleanField()
+    is_origin   = models.BooleanField(default=False)
     createdate  = models.DateTimeField(auto_now_add=True, blank=True, null=True)
     # TODO: This should probably be wrapped in a CapabilitiesField or something
     capflags    = models.BigIntegerField(default=0)
