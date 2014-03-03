@@ -59,7 +59,7 @@ class StorageObject(models.Model):
     # TODO: This should probably be wrapped in a CapabilitiesField or something
     capflags    = models.BigIntegerField(default=0)
 
-    objects     = getHostDependentManagerClass('host')()
+    objects     = CapabilitiesAwareManager()
     all_objects = models.Manager()
 
     @property
