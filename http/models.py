@@ -27,7 +27,7 @@ class Export(models.Model):
     volume      = models.ForeignKey(FileSystemVolume, related_name="http_export_set")
     path        = models.CharField(max_length=255)
 
-    objects     = getHostDependentManagerClass("volume__pool__volumepool__host")()
+    objects     = getHostDependentManagerClass("volume__storageobj__host")()
     all_objects = models.Manager()
 
     share_type  = "http"
