@@ -51,14 +51,12 @@ class Zfs(FileSystem):
     supports_compression = True
 
     @classmethod
-    def format_blockvolume(cls, volume, owner, fswarning, fscritical):
+    def format_blockvolume(cls, volume, options):
         from zfs.models import Zpool, Zfs
-        pool = Zpool(name=volume.name, host=volume.host, megs=volume.megs, is_origin=False)
+        pool = Zpool(storageobj=volume.storageobj, host=volume.host)
         pool.full_clean()
         pool.save()
-        volume.upper = pool
-        volume.save()
-        zvol = Zfs(name="", pool=pool, owner=owner, fswarning=fswarning, fscritical=fscritical, megs=volume.megs)
+        zvol = Zfs(storageobj=volume.storageobj, zpool=pool, owner=options["owner"], fswarning=options["fswarning"], fscritical=options["fscritical"])
         zvol.full_clean()
         zvol.save()
         return zvol
