@@ -50,14 +50,17 @@ class CapabilitiesAwareManager(models.Manager):
         return self.extra(where=[self.model._meta.db_table + '.capflags & %s = %s'], params=[capability.flag, capability.flag])
 
 
-class CapabilitiesAwareModel(models.Model):
+class StorageObject(models.Model):
+    name        = models.CharField(max_length=150)
+    megs        = models.IntegerField()
+    uuid        = models.CharField(max_length=38, editable=False)
+    is_origin   = models.BooleanField()
+    createdate  = models.DateTimeField(auto_now_add=True, blank=True, null=True)
     # TODO: This should probably be wrapped in a CapabilitiesField or something
     capflags    = models.BigIntegerField(default=0)
 
-    objects     = CapabilitiesAwareManager()
-
-    class Meta:
-        abstract = True
+    objects     = getHostDependentManagerClass('host')()
+    all_objects = models.Manager()
 
     @property
     def capabilities(self):
@@ -67,8 +70,31 @@ class CapabilitiesAwareModel(models.Model):
     def capabilities(self, value):
         self.capflags = capabilities.to_flags(value)
 
+    @property
+    def authoritative_obj(self):
+        try:
+            return self.volumepool.volumepool
+        except VolumePool.DoesNotExist:
+            pass
+        try:
+            return self.blockvolume.volume
+        except BlockVolume.DoesNotExist:
+            pass
+        try:
+            return self.filesystemvolume.volume
+        except FileSystemVolume.DoesNotExist:
+            pass
+        raise ValueError
 
-class VolumePool(CapabilitiesAwareModel):
+    @property
+    def host(self):
+        return self.authoritative_obj.host
+
+    def __unicode__(self):
+        return self.name
+
+
+class VolumePool(models.Model):
     """ Something that joins a couple of BlockVolumes together and provides
         BlockVolumes or FileSystemVolumes itself.
 
@@ -84,25 +110,21 @@ class VolumePool(CapabilitiesAwareModel):
         Valid values for the ``status'' field are:
           online, readonly, degraded, verifying, rebuilding, restoring_snapshot, failed, offline, unknown
     """
+    storageobj  = models.OneToOneField(StorageObject)
     volumepool_type = models.ForeignKey(ContentType, blank=True, null=True, related_name="%(class)s_volumepool_type_set")
     volumepool      = generic.GenericForeignKey("volumepool_type", "id")
-    name        = models.CharField(max_length=150)
-    type        = models.CharField(max_length=100, blank=True)
-    megs        = models.IntegerField()
-    uuid        = models.CharField(max_length=38, editable=False)
-    is_origin   = models.BooleanField()
 
     objects     = getHostDependentManagerClass('volumepool__host')()
     all_objects = models.Manager()
 
     def full_clean(self):
-        CapabilitiesAwareModel.full_clean(self)
+        models.Model.full_clean(self)
         if not self.uuid:
             self.uuid = str(uuid.uuid4())
 
     @property
     def member_set(self):
-        return BlockVolume.objects.filter(upper_type=ContentType.objects.get_for_model(self.volumepool.__class__), upper_id=self.id)
+        return BlockVolume.objects.filter(upper=self.storageobj)
 
     def get_volume_class(self, type):
         raise NotImplementedError("VolumePool::get_volume_class needs to be overridden")
@@ -116,12 +138,12 @@ class VolumePool(CapabilitiesAwareModel):
     def save(self, *args, **kwargs):
         if self.__class__ is not VolumePool:
             self.volumepool_type = ContentType.objects.get_for_model(self.__class__)
-        return CapabilitiesAwareModel.save(self, *args, **kwargs)
+        return models.Model.save(self, *args, **kwargs)
 
     def __unicode__(self):
         if self.volumepool is None:
             return "<Invalid VolumePool %d>" % self.id
-        return self.volumepool.name
+        return self.storageobj.name
 
     def _create_volume(self, name, megs, owner, filesystem, fswarning, fscritical):
         """ Create a volume in this pool. """
@@ -151,21 +173,17 @@ class VolumePool(CapabilitiesAwareModel):
 
 
 
-class AbstractVolume(CapabilitiesAwareModel):
+class AbstractVolume(models.Model):
     """ Abstract base class for BlockVolume and FileSystemVolume. """
-    pool        = models.ForeignKey(VolumePool,  blank=True, null=True)
+    storageobj  = models.OneToOneField(StorageObject)
     volume_type = models.ForeignKey(ContentType, blank=True, null=True, related_name="%(class)s_volume_type_set")
     volume      = generic.GenericForeignKey("volume_type", "id")
-    name        = models.CharField(max_length=150, blank=True)
-    type        = models.CharField(max_length=100, blank=True)
-    megs        = models.IntegerField()
-    uuid        = models.CharField(max_length=38, editable=False)
 
     class Meta:
         abstract = True
 
     def full_clean(self):
-        CapabilitiesAwareModel.full_clean(self)
+        models.Model.full_clean(self)
         if not self.uuid:
             self.uuid = str(uuid.uuid4())
 
@@ -179,7 +197,7 @@ class AbstractVolume(CapabilitiesAwareModel):
         install = (self.id is None)
         if install:
             self.pre_install()
-        res = CapabilitiesAwareModel.save(self, *args, **kwargs)
+        res = models.Model.save(self, *args, **kwargs)
         if install:
             self.post_install()
 
@@ -200,9 +218,7 @@ class BlockVolume(AbstractVolume):
         The ``upper'' field defined by this class is set to an object that is using this
         device as part of a mirror, array or volume pool (i.e., NOT a share).
     """
-    upper_type  = models.ForeignKey(ContentType, blank=True, null=True, related_name="%(class)s_upper_type_set")
-    upper_id    = models.PositiveIntegerField(blank=True, null=True)
-    upper       = generic.GenericForeignKey("upper_type", "upper_id")
+    upper       = models.ForeignKey(StorageObject, blank=True, null=True, related_name="base_set")
 
     objects     = getHostDependentManagerClass('volume__host')()
     all_objects = models.Manager()
@@ -316,7 +332,6 @@ class FileSystemVolume(AbstractVolume):
         * status     -> CharField or property
         * stat       -> property that returns { size:, free:, used: } in MiB
     """
-    filesystem  = models.CharField(max_length=50)
     owner       = models.ForeignKey(User, blank=True)
     fswarning   = models.IntegerField(_("Warning Level (%)"),  default=75 )
     fscritical  = models.IntegerField(_("Critical Level (%)"), default=85 )
@@ -370,7 +385,7 @@ if HAVE_NAGIOS:
 
 class FileSystemProvider(FileSystemVolume):
     """ A FileSystem that resides on top of a BlockVolume. """
-    base        = models.ForeignKey(BlockVolume)
+    fstype      = models.CharField(max_length=100, blank=True)
 
     objects     = getHostDependentManagerClass('base__volume__host')()
     all_objects = models.Manager()
@@ -380,10 +395,10 @@ class FileSystemProvider(FileSystemVolume):
 
     def save(self, *args, **kwargs):
         install = (self.id is None)
-        self.pool = self.base.pool
+        self.pool = self.storageobj.pool
         FileSystemVolume.save(self, *args, **kwargs)
-        self.base.upper = self
-        self.base.save()
+        self.storageobj.upper = self
+        self.storageobj.save()
         if install:
             self.setupfs()
 
@@ -393,15 +408,15 @@ class FileSystemProvider(FileSystemVolume):
 
     @property
     def host(self):
-        return self.base.volume.host
+        return self.storageobj.blockvolume.volume.host
 
     @property
     def disk_stats(self):
-        return self.base.volume.disk_stats
+        return self.storageobj.blockvolume.volume.disk_stats
 
     @property
     def fs(self):
-        return filesystems.get_by_name(self.filesystem)(self)
+        return filesystems.get_by_name(self.fstype)(self)
 
     @property
     def mounted(self):
@@ -414,7 +429,7 @@ class FileSystemProvider(FileSystemVolume):
     def __unicode__(self):
         if self.volume is None:
             return "<Invalid FileSystemProvider %d>" % self.id
-        return unicode(self.base)
+        return unicode(self.storageobj)
 
 
 def __delete_filesystemprovider(instance, **kwargs):
