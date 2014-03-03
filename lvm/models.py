@@ -79,10 +79,6 @@ class VolumeGroup(VolumePool):
 
     def full_clean(self):
         validate_vg_name(self.storageobj.name)
-        if self.megs is None:
-            lvm = get_dbus_object("/lvm")
-            lvm.invalidate()
-            self.megs = float(lvm.vgs()[self.storageobj.name]["LVM2_VG_SIZE"])
         VolumePool.full_clean(self)
 
     def save( self, *args, **kwargs ):
