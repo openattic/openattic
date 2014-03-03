@@ -132,5 +132,9 @@ class Zfs(FileSystemVolume):
             parentname = self.storageobj.name
         return "%s/%s" % (parentname, self.storageobj.name)
 
+    @property
+    def usedmegs(self):
+        return self.fs.usedmegs
+
     def __unicode__(self):
         return self.fullname
