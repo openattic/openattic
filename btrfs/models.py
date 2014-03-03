@@ -45,10 +45,12 @@ class Btrfs(VolumePool):
     def usedmegs(self):
         return self.fs.stat["used"]
 
-    def get_volume_class(self, type):
-        if type not in ("btrfs", None):
-            raise InvalidVolumeType(type)
-        return BtrfsSubvolume
+    def _create_volume_for_storageobject(self, storageobj, options):
+        if options.get("filesystem", None) not in ("btrfs", None):
+            raise InvalidVolumeType(options.get("filesystem", None))
+        sv = BtrfsSubvolume(storageobj=storageobj, btrfs=self)
+        sv.full_clean()
+        sv.save()
 
     def is_fs_supported(self, filesystem):
         return filesystem is filesystems.Btrfs

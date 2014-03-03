@@ -109,7 +109,7 @@ class VolumePool(models.Model):
         * host       -> ForeignKey or property of a node that can modify the volumepool
 
         ...and the following methods:
-        * get_volume_class(type) -> return the volume class to use for volumes of the given type
+        * _create_volume_for_storageobject(storageobj, options) -> create a volume for the given options in this pool
         * is_fs_supported(filesystem) -> return whether or not volumes with this file system can be created
 
         Valid values for the ``status'' field are:
@@ -126,8 +126,8 @@ class VolumePool(models.Model):
     def member_set(self):
         return BlockVolume.objects.filter(upper=self.storageobj)
 
-    def get_volume_class(self, type):
-        raise NotImplementedError("VolumePool::get_volume_class needs to be overridden")
+    def _create_volume_for_storageobject(self, type):
+        raise NotImplementedError("VolumePool::_create_volume_for_storageobject needs to be overridden")
 
     def is_fs_supported(self, type):
         raise NotImplementedError("VolumePool::is_fs_supported needs to be overridden")
@@ -145,29 +145,33 @@ class VolumePool(models.Model):
             return "<Invalid VolumePool %d>" % self.id
         return self.storageobj.name
 
-    def _create_volume(self, name, megs, owner, filesystem, fswarning, fscritical):
-        """ Create a volume in this pool. """
-        VolumeClass = self.get_volume_class(filesystem)
-        vol_options = {"name": name, "megs": megs, "owner": owner, "pool": self}
-        if issubclass(VolumeClass, FileSystemVolume):
-            vol_options.update({"filesystem": filesystem, "fswarning": fswarning, "fscritical": fscritical})
-        vol = VolumeClass(**vol_options)
-        vol.full_clean()
-        vol.save()
+    def _create_volume(self, name, megs, options):
+        """ Actual volume creation. """
+        storageobj = StorageObject(name=name, megs=megs)
+        storageobj.full_clean()
+        storageobj.save()
+        vol = self._create_volume_for_storageobject(storageobj, options)
 
-        if issubclass(VolumeClass, FileSystemVolume) and not bool(filesystem):
-            # vol = imagedatei in dem ding
+        if isinstance(vol, FileSystemVolume) and not bool(options.get("filesystem", None)):
+            # TODO: vol = imagedatei in dem ding
             pass
-        elif issubclass(VolumeClass, BlockVolume) and bool(filesystem):
+        elif isinstance(vol, BlockVolume) and bool(options.get("filesystem", None)):
             fsclass = filesystems.get_by_name(filesystem)
             vol = fsclass.format_blockvolume(vol, owner, fswarning, fscritical)
 
         return vol
 
-    def create_volume(self, name, megs, owner, filesystem, fswarning, fscritical):
-        """ Create a volume in this pool. """
+    def create_volume(self, name, megs, options):
+        """ Create a volume in this pool.
+
+            Options include:
+             * filesystem: The filesystem the volume is supposed to have (if any).
+             * owner:      The owner of the file system.
+             * fswarning:  Warning Threshold for Nagios checks.
+             * fscritical: Critical Threshold for Nagios checks.
+        """
         get_dbus_object("/").start_queue()
-        vol = self._create_volume(name, megs, owner, filesystem, fswarning, fscritical)
+        vol = self._create_volume(name, megs, options)
         get_dbus_object("/").run_queue_background()
         return vol
 

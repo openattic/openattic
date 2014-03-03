@@ -46,10 +46,13 @@ class Zpool(VolumePool):
     def usedmegs(self):
         return self.fs.usedmegs
 
-    def get_volume_class(self, type):
-        if type not in ("zfs", None):
-            raise InvalidVolumeType(type)
-        return Zfs
+    def _create_volume_for_storageobject(self, storageobj, options):
+        if options.get("filesystem", None) not in ("zfs", None):
+            raise InvalidVolumeType(options.get("filesystem"], None))
+        zfs = Zfs(storageobj=storageobj, zpool=self)
+        zfs.full_clean()
+        zfs.save()
+        return zfs
 
     def is_fs_supported(self, filesystem):
         return filesystem is filesystems.Zfs
