@@ -55,11 +55,10 @@ class FileSystem(object):
     virtual = False
 
     @classmethod
-    def format_blockvolume(cls, volume, owner, fswarning, fscritical):
+    def format_blockvolume(cls, volume, options):
         from volumes.models import FileSystemProvider
-        vol = FileSystemProvider(base=volume, owner=owner, filesystem=cls.name,
-                                 name=volume.name, type=cls.name, megs=volume.megs,
-                                 fswarning=fswarning, fscritical=fscritical)
+        vol = FileSystemProvider(storageobj=volume.storageobj, owner=options["owner"], fstype=cls.name,
+                                 fswarning=options["fswarning"], fscritical=options["fscritical"])
         vol.full_clean()
         vol.save()
         return vol
@@ -106,7 +105,7 @@ class FileSystem(object):
         if self.virtual:
             raise NotImplementedError("FileSystem::mount needs to be overridden for virtual FS handlers")
         dbus_object = get_dbus_object("/volumes")
-        dbus_object.fs_mount( self.name, self.volume.base.volume.path, self.path )
+        dbus_object.fs_mount( self.name, self.volume.storageobj.blockvolume.volume.path, self.path )
 
     @property
     def mounted(self):
@@ -120,7 +119,7 @@ class FileSystem(object):
         if self.virtual:
             raise NotImplementedError("FileSystem::unmount needs to be overridden for virtual FS handlers")
         dbus_object = get_dbus_object("/volumes")
-        dbus_object.fs_unmount( self.volume.base.volume.path, self.path )
+        dbus_object.fs_unmount( self.volume.storageobj.blockvolume.volume.path, self.path )
 
     def format(self):
         """ Format the volume. """

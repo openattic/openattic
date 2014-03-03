@@ -27,22 +27,22 @@ class Ext2(FileSystem):
 
     @property
     def info(self):
-        return dbus_to_python( self.dbus_object.e2fs_info( self.volume.base.volume.path ) )
+        return dbus_to_python( self.dbus_object.e2fs_info( self.volume.storageobj.blockvolume.volume.path ) )
 
     def format(self):
         try:
-            raidparams = self.volume.base.volume.raid_params
+            raidparams = self.volume.storageobj.blockvolume.volume.raid_params
         except UnsupportedRAID:
             raidparams = {"chunksize": -1, "datadisks": -1}
-        self.dbus_object.e2fs_format( self.volume.base.volume.path, self.volume.name, raidparams["chunksize"], raidparams["datadisks"] )
+        self.dbus_object.e2fs_format( self.volume.storageobj.blockvolume.volume.path, self.volume.storageobj.name, raidparams["chunksize"], raidparams["datadisks"] )
         self.write_fstab()
         self.mount()
         self.chown()
 
     def resize(self, grow):
         if not grow:
-            self.dbus_object.e2fs_check( self.volume.base.volume.path )
-        self.dbus_object.e2fs_resize( self.volume.base.volume.path, self.volume.megs, grow )
+            self.dbus_object.e2fs_check( self.volume.storageobj.blockvolume.volume.path )
+        self.dbus_object.e2fs_resize( self.volume.storageobj.blockvolume.volume.path, self.volume.storageobj.megs, grow )
 
     @classmethod
     def check_type(cls, typestring):
@@ -55,10 +55,10 @@ class Ext3(Ext2):
 
     def format(self):
         try:
-            raidparams = self.volume.base.volume.raid_params
+            raidparams = self.volume.storageobj.blockvolume.volume.raid_params
         except UnsupportedRAID:
             raidparams = {"chunksize": -1, "datadisks": -1}
-        self.dbus_object.e3fs_format( self.volume.base.volume.path, self.volume.name, raidparams["chunksize"], raidparams["datadisks"] )
+        self.dbus_object.e3fs_format( self.volume.storageobj.blockvolume.volume.path, self.volume.storageobj.name, raidparams["chunksize"], raidparams["datadisks"] )
         self.write_fstab()
         self.mount()
         self.chown()
@@ -75,10 +75,10 @@ class Ext4(Ext2):
 
     def format(self):
         try:
-            raidparams = self.volume.base.volume.raid_params
+            raidparams = self.volume.storageobj.blockvolume.volume.raid_params
         except UnsupportedRAID:
             raidparams = {"chunksize": -1, "datadisks": -1}
-        self.dbus_object.e4fs_format( self.volume.base.volume.path, self.volume.name, raidparams["chunksize"], raidparams["datadisks"] )
+        self.dbus_object.e4fs_format( self.volume.storageobj.blockvolume.volume.path, self.volume.storageobj.name, raidparams["chunksize"], raidparams["datadisks"] )
         self.write_fstab()
         self.mount()
         self.chown()
