@@ -279,6 +279,7 @@ class GenericDisk(BlockVolume):
     """ A standard disk that is NOT anything fancy (like a hardware raid). """
     host        = models.ForeignKey(Host)
     serial      = models.CharField(max_length=150, blank=True)
+    type        = models.CharField(max_length=150, blank=True)
     rpm         = models.IntegerField(blank=True, null=True)
 
     def full_clean(self):
