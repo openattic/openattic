@@ -31,6 +31,7 @@ import sysutils.models
 from ifconfig.models  import Host
 from lvm              import blockdevices
 from lvm.models       import VolumeGroup, LogicalVolume
+from volumes.models   import StorageObject
 
 def create_vgs(**kwargs):
     lvm = get_dbus_object("/lvm")
@@ -40,16 +41,19 @@ def create_vgs(**kwargs):
 
     for vgname in vgs:
         try:
-            vg = VolumeGroup.objects.get(name=vgname)
+            vg = VolumeGroup.objects.get(storageobj__name=vgname)
         except VolumeGroup.DoesNotExist:
             print "Adding Volume Group", vgname
-            vg = VolumeGroup(host=Host.objects.get_current(), name=vgname)
+            so = StorageObject(name=vgname, megs=float(vgs[vgname]["LVM2_VG_SIZE"]))
+            so.save()
+            vg = VolumeGroup(host=Host.objects.get_current(), storageobj=so)
             vg.save()
         else:
             print "Volume Group", vgname, "already exists in the database"
             vg.host = Host.objects.get_current()
-            vg.megs = float(vgs[vgname]["LVM2_VG_SIZE"])
-            vg.save()
+            so = vg.storageobj
+            so.megs = float(vgs[vgname]["LVM2_VG_SIZE"])
+            so.save()
 
     if User.objects.count() == 0:
         print "Can't add LVs, no users have been configured yet"
@@ -61,23 +65,26 @@ def create_vgs(**kwargs):
         admin = User.objects.filter( is_superuser=True )[0]
 
     for lvname in lvs:
-        vg = VolumeGroup.objects.get(name=lvs[lvname]["LVM2_VG_NAME"])
+        vg = VolumeGroup.objects.get(storageobj__name=lvs[lvname]["LVM2_VG_NAME"])
         try:
-            lv = LogicalVolume.objects.get(vg=vg, name=lvname)
+            lv = LogicalVolume.objects.get(vg=vg, storageobj__name=lvname)
         except LogicalVolume.DoesNotExist:
             if "sys" in lvs[lvname]["LVM2_LV_TAGS"].split(','):
                 print "Logical Volume %s is tagged as @sys, ignored." % lvname
                 continue
 
-            lv = LogicalVolume(name=lvname, megs=float(lvs[lvname]["LVM2_LV_SIZE"]), vg=vg, owner=admin, uuid=lvs[lvname]["LVM2_LV_UUID"])
-            print lv.name, lv.megs, lv.vg.name, lv.owner.username
+            so = StorageObject(name=lvname, megs=float(lvs[lvname]["LVM2_LV_SIZE"]), uuid=lvs[lvname]["LVM2_LV_UUID"])
+            so.save()
+            lv = LogicalVolume(storageobj=so, vg=vg)
+            print lv.storageobj.name, lv.storageobj.megs, lv.vg.storageobj.name
             lv.save(database_only=True)
 
         else:
             print "Logical Volume", lvname, "already exists in the database"
-            lv.uuid = lvs[lvname]["LVM2_LV_UUID"]
-            lv.megs = float(lvs[lvname]["LVM2_LV_SIZE"])
-            lv.save(database_only=True)
+            so = lv.storageobj
+            so.uuid = lvs[lvname]["LVM2_LV_UUID"]
+            so.megs = float(lvs[lvname]["LVM2_LV_SIZE"])
+            so.save()
 
 
 sysutils.models.post_install.connect(create_vgs, sender=sysutils.models)
