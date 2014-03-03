@@ -13,6 +13,96 @@
 
 Ext.namespace("Ext.oa");
 
+window.StorageObjectHandlers = {
+  lvm: {
+    VolumeGroup: {
+      volumes_filter: "blockvolume__logicalvolume__vg__id"
+    }
+  },
+  zfs: {
+    Zpool: {
+      volumes_filter: "filesystemvolume__zfs__zpool__id",
+      extra_params: {
+        volumepool__isnull: true
+      }
+    }
+  },
+  btrfs: {
+    Btrfs: {
+      volumes_filter: "filesystemvolume__btrfssubvolume__btrfs__id",
+      extra_params: {
+        volumepool__isnull: true
+      }
+    }
+  }
+}
+
+
+
+Ext.define('volumes__volumes_StorageObject_model', {
+  extend: 'Ext.data.TreeModel',
+  requires: [
+    'Ext.data.NodeInterface'
+  ],
+  fields: [
+    'id', '__unicode__', 'name', 'type', 'megs', 'status', 'usedmegs', 'percent',
+    'fswarning', 'fscritical', 'host', 'path', 'poolname', 'ownername'
+  ],
+  createNode: function(record){
+    var rootNode;
+    if( record.raw.volumepool !== null ){
+      var vptype = record.raw.volumepool.volumepool_type,
+          kwds = {};
+      Ext.apply(kwds, window.StorageObjectHandlers[vptype.app][vptype.obj].extra_params || {});
+      kwds[ window.StorageObjectHandlers[vptype.app][vptype.obj].volumes_filter ] = record.raw.volumepool.id;
+      var store = Ext.create("Ext.oa.SwitchingTreeStore", {
+        model: 'volumes__volumes_StorageObject_model',
+        root: record.data,
+        proxy: {
+          type: "direct",
+          directFn: volumes__StorageObject.filter,
+          extraParams: {
+            kwds: kwds
+          },
+          paramOrder: ["kwds"]
+        }
+      });
+      rootNode = store.getRootNode();
+      rootNode.set("type", toUnicode(vptype));
+      rootNode.set("host", toUnicode(record.raw.volumepool.host));
+      if( record.raw.volumepool.usedmegs !== null )
+        rootNode.set("percent", (record.raw.volumepool.usedmegs / record.raw.megs * 100).toFixed(2));
+    }
+    else{
+      record.set("leaf", true);
+      rootNode = this.callParent(arguments);
+      if( record.raw.blockvolume !== null ){
+        var voltype = record.raw.blockvolume.volume_type;
+        rootNode.set("type", toUnicode(voltype));
+        rootNode.set("path", record.raw.blockvolume.path);
+        rootNode.set("host", toUnicode(record.raw.blockvolume.host));
+        rootNode.set("percent",  null);
+      }
+    }
+    if( record.raw.filesystemvolume !== null ){
+      var voltype = record.raw.filesystemvolume.volume_type;
+      rootNode.set("path",       record.raw.filesystemvolume.path);
+      rootNode.set("host",       toUnicode(record.raw.filesystemvolume.host));
+      rootNode.set("fswarning",  record.raw.filesystemvolume.fswarning);
+      rootNode.set("fscritical", record.raw.filesystemvolume.fscritical);
+      rootNode.set("ownername",  toUnicode(record.raw.filesystemvolume.owner));
+      rootNode.set("type",       toUnicode(voltype));
+      if( record.raw.filesystemvolume.usedmegs !== null )
+        rootNode.set("percent",    (record.raw.filesystemvolume.usedmegs / record.raw.megs * 100).toFixed(2));
+      if( record.raw.filesystemvolume.fstype )
+        rootNode.set("type", record.raw.filesystemvolume.fstype);
+    }
+    rootNode.set("icon",     MEDIA_URL + '/icons2/16x16/apps/database.png');
+    return rootNode;
+  }
+});
+
+
 Ext.define('volumes__volumes_BlockVolume_model', {
   extend: 'Ext.data.TreeModel',
   requires: [
@@ -500,28 +590,20 @@ Ext.define('Ext.oa.volumes__Volume_Panel', {
       forceFit: true,
       store: (function(){
         var treestore = Ext.create("Ext.oa.SwitchingTreeStore", {
-          fields: ['name'],
-          proxy: { type: "memory" },
-          root: {
-            name:     'root',
-            expanded: true,
-            id: "volumes_root_node"
-          }
-        });
-        var blockvolstore = Ext.create('Ext.oa.SwitchingTreeStore', {
-          model: 'volumes__volumes_BlockVolume_model',
+          model: 'volumes__volumes_StorageObject_model',
           proxy: {
             type:     'direct',
-            directFn: volumes__BlockVolume.filter,
+            directFn: volumes__StorageObject.filter,
             extraParams: {
               kwds: {
-                upper_id__isnull: true
+                volumepool__isnull: false,
+                is_origin: true
               }
             },
             paramOrder: ["kwds"]
           },
           root: {
-            __unicode__: gettext("Block-based"),
+            __unicode__: gettext("Volume Pools"),
             id:   "volumes__volumes_blockvolumes_rootnode",
             type: ' ',
             megs: null,
@@ -530,25 +612,6 @@ Ext.define('Ext.oa.volumes__Volume_Panel', {
           },
           sorters: [{property: "name"}]
         });
-        var fsvolstore = Ext.create('Ext.oa.SwitchingTreeStore', {
-          model: 'volumes__volumes_FileSystemVolume_model',
-          proxy: {
-            type:     'direct',
-            directFn: volumes__FileSystemVolume.all
-          },
-          root: {
-            __unicode__: gettext("File-based"),
-            id:   "volumes__volumes_fsvolumes_rootnode",
-            type: ' ',
-            megs: null,
-            percent: null,
-            status: null
-          },
-          sorters: [{property: "name"}]
-        });
-        var rootNode = treestore.getRootNode();
-        rootNode.appendChild(blockvolstore.getRootNode());
-        rootNode.appendChild(fsvolstore.getRootNode());
         return treestore;
       }()),
       defaults: {
@@ -652,11 +715,6 @@ Ext.define('Ext.oa.volumes__Volume_Panel', {
         header: gettext('Host'),
         dataIndex: "host",
         stateId: "volumes__volumes_panel_state__host",
-        flex: 1
-      },{
-        header: gettext('Volume Pool'),
-        dataIndex: "poolname",
-        stateId: "volumes__volumes_panel_state__poolname",
         flex: 1
       },{
         header: gettext('Owner'),
