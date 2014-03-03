@@ -87,10 +87,19 @@ class VolumePoolHandler(ModelHandler):
             "type":      obj.volumepool.type,
         }
 
-    def create_volume(self, id, name, megs, owner, filesystem, fswarning, fscritical):
+    def create_volume(self, id, name, megs, options):
+        """ Create a volume in this pool.
+
+            Options include:
+             * filesystem: The filesystem the volume is supposed to have (if any).
+             * owner:      The owner of the file system.
+             * fswarning:  Warning Threshold for Nagios checks.
+             * fscritical: Critical Threshold for Nagios checks.
+        """
         obj = VolumePool.objects.get(id=id)
-        owner = ModelHandler._get_object_by_id_dict(owner)
-        vol = obj.volumepool.create_volume(name, megs, owner, filesystem, fswarning, fscritical)
+        if "owner" in options:
+            options["owner"] = ModelHandler._get_object_by_id_dict(options["owner"])
+        vol = obj.volumepool.create_volume(name, megs, options)
         handler = self._get_handler_instance(vol.__class__)
         return handler._idobj(vol)
 
@@ -127,8 +136,16 @@ class VolumePoolProxy(ProxyModelHandler, VolumePoolHandler):
     def get_supported_filesystems(self, id):
         return self._call_singlepeer_method("get_supported_filesystems", id)
 
-    def create_volume(self, id, name, megs, owner, filesystem, fswarning, fscritical):
-        return self._call_singlepeer_method("create_volume", id, name, megs, owner, filesystem, fswarning, fscritical)
+    def create_volume(self, id, name, megs, options):
+        """ Create a volume in this pool.
+
+            Options include:
+             * filesystem: The filesystem the volume is supposed to have (if any).
+             * owner:      The owner of the file system.
+             * fswarning:  Warning Threshold for Nagios checks.
+             * fscritical: Critical Threshold for Nagios checks.
+        """
+        return self._call_singlepeer_method("create_volume", id, name, megs, options)
 
 
 class AbstractBlockVolumeHandler(ModelHandler):
