@@ -27,17 +27,19 @@ class Btrfs(FileSystem):
     desc = "BTRFS (Experimental)"
 
     @classmethod
-    def format_blockvolume(cls, volume, owner, fswarning, fscritical):
+    def format_blockvolume(cls, volume, options):
         from btrfs.models import Btrfs, BtrfsSubvolume
-        pool = Btrfs(name=volume.name, host=volume.host, megs=volume.megs, is_origin=False)
+        from volumes.models import StorageObject
+        pool = Btrfs(storageobj=volume.storageobj, host=volume.host)
         pool.full_clean()
         pool.save()
-        volume.upper = pool
-        volume.save()
-        svol = BtrfsSubvolume(name="", pool=pool, owner=owner, fswarning=fswarning, fscritical=fscritical, megs=volume.megs)
+        svol = BtrfsSubvolume(storageobj=volume.storageobj, btrfs=pool, owner=options["owner"], fswarning=options["fswarning"], fscritical=options["fscritical"])
         svol.full_clean()
         svol.save()
-        dvol = BtrfsSubvolume(name="default", pool=pool, owner=owner, fswarning=fswarning, fscritical=fscritical, megs=volume.megs)
+        dso = StorageObject(name="default", megs=volume.storageobj.megs)
+        dso.full_clean()
+        dso.save()
+        dvol = BtrfsSubvolume(storageobj=dso, btrfs=pool, owner=options["owner"], fswarning=options["fswarning"], fscritical=options["fscritical"])
         dvol.full_clean()
         dvol.save()
         return svol
