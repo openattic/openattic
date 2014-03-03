@@ -141,8 +141,11 @@ class VolumeGroup(VolumePool):
     def usedmegs(self):
         return float(self.lvm_info["LVM2_VG_SIZE"]) - float(self.lvm_info["LVM2_VG_FREE"])
 
-    def get_volume_class(self, type):
-        return LogicalVolume
+    def _create_volume_for_storageobject(self, storageobj, options):
+        lv = LogicalVolume(vg=self, storageobj=storageobj)
+        lv.full_clean()
+        lv.save()
+        return lv
 
     def is_fs_supported(self, filesystem):
         return True
@@ -184,8 +187,6 @@ class LogicalVolume(BlockVolume):
         BlockVolume.validate_unique(self, exclude=exclude)
 
     def full_clean(self):
-        if self.vg_id is None and self.pool is not None:
-            self.vg = self.pool.volumepool
         validate_lv_name(self.storageobj.name)
         BlockVolume.full_clean(self)
         if self.id is None:
@@ -325,7 +326,7 @@ class LogicalVolume(BlockVolume):
             snap = self.snapshot.path
         else:
             snap = ""
-        self.lvm.lvcreate( self.vg.storageobj.name, self.storageobj.name, self.megs, snap )
+        self.lvm.lvcreate( self.vg.storageobj.name, self.storageobj.name, self.storageobj.megs, snap )
         if not self.snapshot:
             self.lvm.lvchange( self.path, True )
         lvm_signals.post_install.send(sender=LogicalVolume, instance=self)
@@ -351,8 +352,6 @@ class LogicalVolume(BlockVolume):
     def clean(self):
         if not self.snapshot:
             from django.core.exceptions import ValidationError
-            if not self.owner:
-                raise ValidationError(_('The owner field is required unless you are creating a snapshot.'))
             if not self.vg:
                 raise ValidationError(_('The vg field is required unless you are creating a snapshot.'))
         elif self.snapshot.snapshot:
