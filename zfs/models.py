@@ -17,7 +17,7 @@
 from django.db import models
 
 from ifconfig.models import Host, HostDependentManager, getHostDependentManagerClass
-from volumes.models import InvalidVolumeType, VolumePool, FileSystemVolume, CapabilitiesAwareManager
+from volumes.models import InvalidVolumeType, StorageObject, VolumePool, FileSystemVolume, CapabilitiesAwareManager
 
 from zfs import filesystems
 
@@ -62,8 +62,7 @@ class RaidZ(models.Model):
 
 
 class Zfs(FileSystemVolume):
-    zpool       = models.ForeignKey(Zpool)
-    parent_zfs  = models.ForeignKey('self', blank=True, null=True)
+    parent      = models.ForeignKey(StorageObject, blank=True, null=True)
 
     objects     = getHostDependentManagerClass("zpool__host")()
     all_objects = models.Manager()
