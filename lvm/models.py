@@ -199,7 +199,7 @@ class LogicalVolume(BlockVolume):
             currmegs = self.lvm_megs
         if float(self.vg.lvm_info["LVM2_VG_FREE"]) < int(self.megs) - currmegs:
             from django.core.exceptions import ValidationError
-            raise ValidationError({"megs": ["Volume Group %s has insufficient free space." % self.vg.name]})
+            raise ValidationError({"megs": ["Volume Group %s has insufficient free space." % self.vg.storageobj.name]})
 
     @property
     def lvm(self):
@@ -270,7 +270,7 @@ class LogicalVolume(BlockVolume):
     @property
     def path(self):
         """ The actual device under which this LV operates. """
-        return os.path.join( "/dev", self.vg.name, self.storageobj.name )
+        return os.path.join( "/dev", self.vg.storageobj.name, self.storageobj.name )
 
     @property
     def host(self):
@@ -329,7 +329,7 @@ class LogicalVolume(BlockVolume):
             snap = self.snapshot.path
         else:
             snap = ""
-        self.lvm.lvcreate( self.vg.name, self.storageobj.name, self.megs, snap )
+        self.lvm.lvcreate( self.vg.storageobj.name, self.storageobj.name, self.megs, snap )
         if not self.snapshot:
             self.lvm.lvchange( self.path, True )
         lvm_signals.post_install.send(sender=LogicalVolume, instance=self)
