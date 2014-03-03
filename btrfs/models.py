@@ -55,6 +55,7 @@ class Btrfs(VolumePool):
 
 
 class BtrfsSubvolume(FileSystemVolume):
+    btrfs       = models.ForeignKey(Btrfs)
     parent      = models.ForeignKey(StorageObject, blank=True, null=True)
 
     objects     = getHostDependentManagerClass("btrfs__host")()

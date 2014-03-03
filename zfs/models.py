@@ -62,6 +62,7 @@ class RaidZ(models.Model):
 
 
 class Zfs(FileSystemVolume):
+    zpool       = models.ForeignKey(Zpool)
     parent      = models.ForeignKey(StorageObject, blank=True, null=True)
 
     objects     = getHostDependentManagerClass("zpool__host")()
