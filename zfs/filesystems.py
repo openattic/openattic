@@ -81,13 +81,13 @@ class Zfs(FileSystem):
             self.fs = fs
 
         def __getitem__(self, item):
-            return dbus_to_python(self.fs.dbus_object.zpool_get(self.fs.volume.name, item))[0][2]
+            return dbus_to_python(self.fs.dbus_object.zpool_get(self.fs.volume.storageobj.name, item))[0][2]
 
         def __setitem__(self, item, value):
             self.fsdbus_object.zpool_set(-1, self.fs.volume.name, item, str(value))
 
         def __iter__(self):
-            return (data[1:3] for data in dbus_to_python(self.fs.dbus_object.zpool_get(self.fs.volume.name, "all")))
+            return (data[1:3] for data in dbus_to_python(self.fs.dbus_object.zpool_get(self.fs.volume.storageobj.name, "all")))
 
     def __init__(self, volume, pool=None):
         FileSystem.__init__(self, volume)
@@ -174,9 +174,9 @@ class Zfs(FileSystem):
 
     @property
     def path(self):
-        path = os.path.join(volumes_settings.MOUNT_PREFIX, self.pool.name)
+        path = os.path.join(volumes_settings.MOUNT_PREFIX, self.pool.storageobj.name)
         if self.volume is not self.pool:
-            path = os.path.join(path, self.volume.name)
+            path = os.path.join(path, self.volume.storageobj.name)
         return path
 
     @property

@@ -95,11 +95,15 @@ class Zfs(FileSystemVolume):
 
     @property
     def fs(self):
-        return filesystems.Zfs(self, self.zpool)
+        if self.parent is not None:
+            return filesystems.Zfs(self, self.parent.volumepool)
+        return filesystems.Zfs(self, self.storageobj.volumepool)
 
     @property
     def status(self):
-        return self.zpool.status
+        if self.parent is not None:
+            return self.parent.volumepool.volumepool.status
+        return self.storageobj.volumepool.volumepool.status
 
     @property
     def path(self):
@@ -115,17 +119,17 @@ class Zfs(FileSystemVolume):
 
     @property
     def host(self):
-        return self.zpool.host
+        if self.parent is not None:
+            return self.parent.volumepool.volumepool.host
+        return self.storageobj.volumepool.volumepool.host
 
     @property
     def fullname(self):
-        if self.parent_zfs is not None:
-            parentname = self.parent_zfs.fullname
+        if self.parent is not None:
+            parentname = self.parent.filesystemvolume.volume.fullname
         else:
-            parentname = self.zpool.name
-        if not self.name:
-            return parentname
-        return "%s/%s" % (parentname, self.name)
+            parentname = self.storageobj.name
+        return "%s/%s" % (parentname, self.storageobj.name)
 
     def __unicode__(self):
         return self.fullname

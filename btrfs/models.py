@@ -84,7 +84,7 @@ class BtrfsSubvolume(FileSystemVolume):
 
     @property
     def base(self):
-        return self.btrfs.member_set.all()[0]
+        return self.storageobj.volumepool.volumepool.member_set.all()[0]
 
     @property
     def fs(self):
@@ -92,7 +92,9 @@ class BtrfsSubvolume(FileSystemVolume):
 
     @property
     def status(self):
-        return self.btrfs.status
+        if self.parent is not None:
+            return self.parent.volumepool.volumepool.status
+        return self.storageobj.volumepool.volumepool.status
 
     @property
     def path(self):
@@ -108,15 +110,17 @@ class BtrfsSubvolume(FileSystemVolume):
 
     @property
     def host(self):
-        return self.btrfs.host
+        if self.parent is not None:
+            return self.parent.volumepool.volumepool.host
+        return self.storageobj.volumepool.volumepool.host
 
     @property
     def fullname(self):
         if self.parent is not None:
-            parentname = self.parent.fullname
+            parentname = self.parent.filesystemvolume.volume.fullname
         else:
-            parentname = self.btrfs.name
-        return "%s/%s" % (parentname, self.name)
+            parentname = self.storageobj.name
+        return "%s/%s" % (parentname, self.storageobj.name)
 
     def __unicode__(self):
         return self.fullname

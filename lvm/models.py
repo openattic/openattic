@@ -75,14 +75,14 @@ class VolumeGroup(VolumePool):
         self._lvm_info = None
 
     def __unicode__(self):
-        return self.name
+        return self.storageobj.name
 
     def full_clean(self):
-        validate_vg_name(self.name)
+        validate_vg_name(self.storageobj.name)
         if self.megs is None:
             lvm = get_dbus_object("/lvm")
             lvm.invalidate()
-            self.megs = float(lvm.vgs()[self.name]["LVM2_VG_SIZE"])
+            self.megs = float(lvm.vgs()[self.storageobj.name]["LVM2_VG_SIZE"])
         VolumePool.full_clean(self)
 
     def save( self, *args, **kwargs ):
@@ -94,10 +94,10 @@ class VolumeGroup(VolumePool):
         for lv in LogicalVolume.objects.filter(vg=self):
             lv.delete()
         pvs = lvm.pvs()
-        lvm.vgremove(self.name)
+        lvm.vgremove(self.storageobj.name)
         if pvs:
             for device in pvs:
-                if pvs[device]["LVM2_VG_NAME"] == self.name:
+                if pvs[device]["LVM2_VG_NAME"] == self.storageobj.name:
                     lvm.pvremove(device)
         VolumePool.delete(self)
 
@@ -105,7 +105,7 @@ class VolumeGroup(VolumePool):
     def lvm_info(self):
         """ VG information from LVM. """
         if self._lvm_info is None:
-            self._lvm_info = dbus_to_python(get_dbus_object("/lvm").vgs())[self.name]
+            self._lvm_info = dbus_to_python(get_dbus_object("/lvm").vgs())[self.storageobj.name]
         return self._lvm_info
 
     @property
@@ -176,21 +176,21 @@ class LogicalVolume(BlockVolume):
         self._fs = None
 
     def __unicode__(self):
-        return self.name
+        return self.storageobj.name
 
     def validate_unique(self, exclude=None):
-        qry = LogicalVolume.objects.filter(name=self.name)
+        qry = LogicalVolume.objects.filter(name=self.storageobj.name)
         if self.id is not None:
             qry = qry.exclude(id=self.id)
         if qry.count() > 0:
             from django.core.exceptions import ValidationError
-            raise ValidationError({"name": ["A Volume named '%s' already exists on this host." % self.name]})
+            raise ValidationError({"name": ["A Volume named '%s' already exists on this host." % self.storageobj.name]})
         BlockVolume.validate_unique(self, exclude=exclude)
 
     def full_clean(self):
         if self.vg_id is None and self.pool is not None:
             self.vg = self.pool.volumepool
-        validate_lv_name(self.name)
+        validate_lv_name(self.storageobj.name)
         BlockVolume.full_clean(self)
         if self.id is None:
             self.uuid = '-'
@@ -270,7 +270,7 @@ class LogicalVolume(BlockVolume):
     @property
     def path(self):
         """ The actual device under which this LV operates. """
-        return os.path.join( "/dev", self.vg.name, self.name )
+        return os.path.join( "/dev", self.vg.name, self.storageobj.name )
 
     @property
     def host(self):
@@ -303,7 +303,7 @@ class LogicalVolume(BlockVolume):
     def lvm_info(self):
         """ LV information from LVM. """
         if self._lvm_info is None:
-            self._lvm_info = dbus_to_python(self.lvm.lvs())[self.name]
+            self._lvm_info = dbus_to_python(self.lvm.lvs())[self.storageobj.name]
         return self._lvm_info
 
     @property
@@ -329,7 +329,7 @@ class LogicalVolume(BlockVolume):
             snap = self.snapshot.path
         else:
             snap = ""
-        self.lvm.lvcreate( self.vg.name, self.name, self.megs, snap )
+        self.lvm.lvcreate( self.vg.name, self.storageobj.name, self.megs, snap )
         if not self.snapshot:
             self.lvm.lvchange( self.path, True )
         lvm_signals.post_install.send(sender=LogicalVolume, instance=self)
@@ -396,7 +396,7 @@ class LogicalVolume(BlockVolume):
 
     def merge(self):
         if self.snapshot is None:
-            raise LogicalVolume.NotASnapshot(self.name)
+            raise LogicalVolume.NotASnapshot(self.storageobj.name)
         orig = self.snapshot
         orig.unmount()
         for snapshot in orig.snapshot_set.all():

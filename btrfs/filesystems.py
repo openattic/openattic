@@ -62,7 +62,7 @@ class Btrfs(FileSystem):
 
     @property
     def mounted(self):
-        return os.path.ismount(os.path.join(volumes_settings.MOUNT_PREFIX, self.volume.btrfs.name))
+        return os.path.ismount(os.path.join(volumes_settings.MOUNT_PREFIX, self.volume.storageobj.filesystemvolume.volume.fullname))
 
     @classmethod
     def check_type(cls, typestring):

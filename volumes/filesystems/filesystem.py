@@ -98,7 +98,7 @@ class FileSystem(object):
     def path(self):
         if self.virtual:
             raise NotImplementedError("FileSystem::path needs to be overridden for virtual FS handlers")
-        return os.path.join(volumes_settings.MOUNT_PREFIX, self.volume.volume.name)
+        return os.path.join(volumes_settings.MOUNT_PREFIX, self.volume.storageobj.name)
 
     def mount(self):
         """ Mount the file system.
