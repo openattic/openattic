@@ -314,6 +314,9 @@ class StorageObjectProxy(ProxyModelHandler, StorageObjectHandler):
             return None
         return model.host.peerhost_set.all()[0]
 
+    def create(self, data):
+        return self.backing_handler.create(data)
+
 
 class InitScriptHandler(BaseHandler):
     handler_name = "volumes.InitScript"
