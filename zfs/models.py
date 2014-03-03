@@ -48,7 +48,7 @@ class Zpool(VolumePool):
 
     def _create_volume_for_storageobject(self, storageobj, options):
         if options.get("filesystem", None) not in ("zfs", None):
-            raise InvalidVolumeType(options.get("filesystem"], None))
+            raise InvalidVolumeType(options.get("filesystem", None))
         zfs = Zfs(storageobj=storageobj, zpool=self)
         zfs.full_clean()
         zfs.save()
