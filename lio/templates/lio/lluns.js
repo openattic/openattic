@@ -18,6 +18,34 @@ Ext.define('Ext.oa.Lio__LogicalLun_Panel', {
   alias: 'widget.lio__logicallun_panel',
   extend: 'Ext.oa.ShareGridPanel',
   api: volumes__BlockVolume,
+  allowEdit: false, // Default Edit Button deaktiviert 
+  allowDelete: false, // Default Delete Button deaktiviert
+  allowAdd: false, // Default Add Button deaktiviert
+  store: (function(){
+    Ext.define('blockdevice_volumes', {
+      extend: 'Ext.data.Model',
+      fields: [
+        {name: "name"},
+        {name: "vg"},
+        {name: "status"},
+        {name: "createdate"},
+        {name: "hostname", mapping: "host", convert: toUnicode}
+      ]
+    });
+    return Ext.create('Ext.data.Store', {
+      model: "blockdevice_volumes",
+      autoLoad: true,
+      proxy: {
+        type: 'direct',
+        directFn: volumes__BlockVolume.filter,
+        extraParams: { kwds: { "upper_id__isnull": true }},
+        paramOrder: ["kwds"],
+        startParam: undefined,
+        limitParam: undefined,
+        pageParam:  undefined
+      }
+    });
+  }()),
   buttons: [{ // Edit Button für die LUN's
     text: 'Edit LUN',
     icon: MEDIA_URL + "/icons2/16x16/actions/edit-redo.png",
@@ -49,7 +77,6 @@ Ext.define('Ext.oa.Lio__LogicalLun_Panel', {
           pageParam:  undefined
         }
       });
-
       var editwin = new Ext.Window({  //Start des Edit Window
         title: interpolate(gettext('Edit LUN %s'),[sm.selected.items[0].data.name]),
         height: 350,
@@ -63,38 +90,6 @@ Ext.define('Ext.oa.Lio__LogicalLun_Panel', {
           id:    "lio_logicallun_edit_tabpanel_inst",
           ref: "lio_logicallun_edit_tabpanel_inst",
           items: [{
-            ref: "lun_edit_tabpanel_overview", // Overview Tab
-            title: gettext("Overview"),
-            id: "lun_edit_overview_tab",
-            layout: "fit",
-            bodyStyle: 'padding:5px 5px;',
-            items: [{
-              forceFit: true,
-              region: 'center',
-              xtype: 'fieldset',
-              title: gettext('LUN Details'),
-              items: [{
-                xtype: "label",
-                name:  "lun_name_edit",
-                id: "lun_name_edit",
-                fieldLabel: gettext('Name'),
-                text: sm.selected.items[0].data.volumename
-              },{
-                fieldLabel: gettext('Status'),
-                name: "lun_status",
-                ref: 'lun_status',
-                name: 'lun_status',
-                xtype:      'combo',
-                store: [ [ 'online' ,gettext('Online')  ], [ 'offline', gettext('Offline') ] ],
-                typeAhead:     true,
-                editable: false,
-                triggerAction: 'all',
-                deferEmptyText: false,
-                emptyText:     'Select...',
-                selectOnFocus: true
-              }]
-            }]
-          }, {
             layout: "fit", // Tab Host and Groups - Start
             ref: "lun_edit_tabpanel_host_and_groups",
             title: gettext("Hosts"),
@@ -105,12 +100,18 @@ Ext.define('Ext.oa.Lio__LogicalLun_Panel', {
               xtype: 'grid',
               autoScroll: true,
               ref: 'lio_host_and_groups_tab_form',
-              title: 'Hosts',
+              title: 'Host',
               border: false,
               forceFit: true,
               listeners: {
                 cellClick: function(self, e, eOpts, record){
-                  self.ownerCt.ownerCt.items.items[2].store.loadData(record.data.portals);
+                  if (record.raw.tpg != null){
+                    self.ownerCt.ownerCt.items.items[2].store.loadData(record.data.portals);
+                  }
+                  else
+                  {
+                    self.ownerCt.ownerCt.items.items[2].store.removeAll();
+                  }
                 }
               },
               defaults: {
@@ -154,17 +155,6 @@ Ext.define('Ext.oa.Lio__LogicalLun_Panel', {
               header: gettext("Port"),
               dataIndex: "port"
               }],
-              buttons:[{
-                text: 'Edit Portal',
-                icon: MEDIA_URL + "/icons2/16x16/actions/edit-redo.png",
-                ref: 'edit_portal',
-                id: 'edit_portal',
-                listeners: {
-                  click: function(self, e, eOpts){
-                   
-                  } 
-                }
-              }]
             }],
             buttons: [{ // Button Add und Remove
               text: 'Hostlist',
@@ -244,31 +234,59 @@ Ext.define('Ext.oa.Lio__LogicalLun_Panel', {
                         var sel = addwin.items.items[0].getSelectionModel();
                         if( sel.hasSelection() && (sel.selected.items[0].data.share_lun_id != "") ){
                           self.ownerCt.ownerCt.getEl().mask(gettext("Loading..."));
-                          lio__HostACL.create({
-                            'host': sel.selected.items[0].data,
-                            'volume': {
-                              "app": "volumes",
-                              "obj": "BlockVolume",
-                              "id":  sm.selected.items[0].data.id
-                            },
-                            'lun_id': sel.selected.items[0].data.share_lun_id,
-                            'portals': [{
-                              "app": "lio",
-                              "obj": "Portal",
-                              "id": 1,
-                              "__unicode__": "172.16.14.20:3260"
-                            }]
-                          },
-                          function(provider, response){
-                            if( response.result ){  
-                              hostaclstore.reload();
-                              addwin.close();
-                              editwin.show();
-                            }
-                            else
-                            {
-                              self.ownerCt.ownerCt.getEl().unmask();
-                            }
+                          var host = sm.selected.items[0].raw.host;
+                          // Get primary IP...
+                          ifconfig__IPAddress.get({
+                            "primary_address": true,
+                            "device__host": host.id
+                          }, function(result, response){
+                            var ipaddr = result;
+                            // See if there is a portal for this IP...
+                            lio__Portal.get({
+                              "ipaddress": ipaddr.id
+                            }, function(result, response){
+                              // Build a function that takes a portal and creates the ACL with it
+                              var create_acl_with_portal = function(portal){
+                                lio__HostACL.create({
+                                  'host': sel.selected.items[0].data,
+                                  'volume': {
+                                    "app": "volumes",
+                                    "obj": "BlockVolume",
+                                    "id":  sm.selected.items[0].data.id
+                                  },
+                                  'lun_id': sel.selected.items[0].data.share_lun_id,
+                                  'portals': [{
+                                    "app": "lio",
+                                    "obj": "Portal",
+                                    "id": portal.id
+                                  }]
+                                },
+                                function(provider, response){
+                                  if( response.result ){
+                                    hostaclstore.reload();
+                                    addwin.close();
+                                    editwin.show();
+                                  }
+                                  else
+                                  {
+                                    self.ownerCt.ownerCt.getEl().unmask();
+                                  }
+                                });
+                              }
+                              if( response.type == "exception" ){
+                                // No portal → create it
+                                lio__Portal.create({
+                                  "ipaddress": ipaddr
+                                }, function(result, response){
+                                  // Use the portal we just created
+                                  create_acl_with_portal(result);
+                                });
+                              }
+                              else{
+                                // Portal exists → use it
+                                create_acl_with_portal(result);
+                              }
+                            });
                           });
                         }
                         else
@@ -293,7 +311,7 @@ Ext.define('Ext.oa.Lio__LogicalLun_Panel', {
               }
             },{
               text: 'Remove',
-              icon: MEDIA_URL + "/icons2/16x16/actions/gtk-cancel.png",
+              icon: MEDIA_URL + "/icons2/16x16/actions/gtk-remove.png",
               ref: 'lio_lun_edit_cancel',
               id: 'lio_lun_edit_cancel',
               handler: function(self){
@@ -316,40 +334,19 @@ Ext.define('Ext.oa.Lio__LogicalLun_Panel', {
                   self.ownerCt.ownerCt.getEl().unmask();
                 }
               }
-            }]
+            },{
+                text: 'Close',
+                icon: MEDIA_URL + "/icons2/16x16/actions/gtk-cancel.png",
+                handler: function(self){
+                  editwin.close();
+                }
+              }]
           }]
         }]
       });
       editwin.show(); // editwin anzeigen
     }
   }],
-  allowEdit: false, // Default Edit Button deaktiviert 
-  allowDelete: false, // Default Delete Button deaktiviert
-  allowAdd: false, // Default Add Button deaktiviert
-  store: (function(){
-    Ext.define('blockdevice_volumes', {
-      extend: 'Ext.data.Model',
-      fields: [
-        {name: "name"},
-        {name: "vg"},
-        {name: "status"},
-        {name: "createdate"}
-      ]
-    });
-    return Ext.create('Ext.data.Store', {
-      model: "blockdevice_volumes",
-      autoLoad: true,
-      proxy: {
-        type: 'direct',
-        directFn: volumes__BlockVolume.filter,
-        extraParams: { kwds: { "upper_id__isnull": true }},
-        paramOrder: ["kwds"],
-        startParam: undefined,
-        limitParam: undefined,
-        pageParam:  undefined
-      }
-    });
-  }()),
   columns: [{ // Oberes Column Grid mit der Anzeige der LUNs und ihren Eigenschaften
     header: gettext('Volume'),
     width: 200,
@@ -369,9 +366,7 @@ Ext.define('Ext.oa.Lio__LogicalLun_Panel', {
   }]
 });
 
-
- Ext.define('Ext.oa.Lio__Panel', {
-
+Ext.define('Ext.oa.Lio__Panel', {
   alias:'widget.lio__panel',
   extend: 'Ext.Panel',
   initComponent: function(){
@@ -429,25 +424,6 @@ Ext.define('Ext.oa.Lio__LogicalLun_Panel', {
               fieldLabel: gettext('Description')
             }]
           }] 
-        }, { // Permissons Tabpanel
-          ref: "lun_tabpanel_permissions",
-          title: gettext("Mapped to Host"),
-          id: "lun_permissions_tab",
-          forceFit: true,
-          items: [{
-            xtype: 'grid',
-            autoScroll: true,
-            ref: 'lio_host_add_window',
-            border: false,
-            forceFit: true,
-            defaults: {
-              sortable: true
-            },
-            columns: [{ 
-              header: gettext('Hosts'),
-              dataIndex: "hostname"
-            }]
-          }]
         }]        
       }]
     }));
