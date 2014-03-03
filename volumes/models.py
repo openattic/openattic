@@ -117,11 +117,6 @@ class VolumePool(models.Model):
     objects     = getHostDependentManagerClass('volumepool__host')()
     all_objects = models.Manager()
 
-    def full_clean(self):
-        models.Model.full_clean(self)
-        if not self.uuid:
-            self.uuid = str(uuid.uuid4())
-
     @property
     def member_set(self):
         return BlockVolume.objects.filter(upper=self.storageobj)
@@ -181,11 +176,6 @@ class AbstractVolume(models.Model):
 
     class Meta:
         abstract = True
-
-    def full_clean(self):
-        models.Model.full_clean(self)
-        if not self.uuid:
-            self.uuid = str(uuid.uuid4())
 
     def pre_install(self):
         volume_signals.pre_install.send(sender=self.__class__, instance=self)
