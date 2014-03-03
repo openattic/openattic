@@ -18,7 +18,7 @@
 from django.db import models
 
 from ifconfig.models import Host, HostDependentManager, getHostDependentManagerClass
-from volumes.models import InvalidVolumeType, VolumePool, FileSystemVolume, CapabilitiesAwareManager
+from volumes.models import InvalidVolumeType, StorageObject, VolumePool, FileSystemVolume, CapabilitiesAwareManager
 
 from btrfs import filesystems
 
@@ -55,8 +55,7 @@ class Btrfs(VolumePool):
 
 
 class BtrfsSubvolume(FileSystemVolume):
-    btrfs       = models.ForeignKey(Btrfs)
-    parent      = models.ForeignKey('self', blank=True, null=True)
+    parent      = models.ForeignKey(StorageObject, blank=True, null=True)
 
     objects     = getHostDependentManagerClass("btrfs__host")()
     all_objects = models.Manager()
