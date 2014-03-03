@@ -387,7 +387,7 @@ class FileSystemProvider(FileSystemVolume):
     """ A FileSystem that resides on top of a BlockVolume. """
     fstype      = models.CharField(max_length=100, blank=True)
 
-    objects     = getHostDependentManagerClass('base__volume__host')()
+    objects     = getHostDependentManagerClass('storageobj__host')()
     all_objects = models.Manager()
 
     def setupfs( self ):
@@ -395,10 +395,7 @@ class FileSystemProvider(FileSystemVolume):
 
     def save(self, *args, **kwargs):
         install = (self.id is None)
-        self.pool = self.storageobj.pool
         FileSystemVolume.save(self, *args, **kwargs)
-        self.storageobj.upper = self
-        self.storageobj.save()
         if install:
             self.setupfs()
 
