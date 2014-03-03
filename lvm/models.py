@@ -178,7 +178,7 @@ class LogicalVolume(BlockVolume):
         return self.storageobj.name
 
     def validate_unique(self, exclude=None):
-        qry = LogicalVolume.objects.filter(name=self.storageobj.name)
+        qry = LogicalVolume.objects.filter(storageobj__name=self.storageobj.name)
         if self.id is not None:
             qry = qry.exclude(id=self.id)
         if qry.count() > 0:
@@ -194,7 +194,7 @@ class LogicalVolume(BlockVolume):
         currmegs = 0
         if self.id is not None:
             currmegs = self.lvm_megs
-        if float(self.vg.lvm_info["LVM2_VG_FREE"]) < int(self.megs) - currmegs:
+        if float(self.vg.lvm_info["LVM2_VG_FREE"]) < int(self.storageobj.megs) - currmegs:
             from django.core.exceptions import ValidationError
             raise ValidationError({"megs": ["Volume Group %s has insufficient free space." % self.vg.storageobj.name]})
 
