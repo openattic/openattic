@@ -21,7 +21,7 @@ from django.contrib.contenttypes.models import ContentType
 from rpcd.handlers import BaseHandler, ModelHandler
 from rpcd.handlers import ProxyModelHandler
 
-from volumes.models import GenericDisk, VolumePool, BlockVolume, FileSystemVolume, FileSystemProvider
+from volumes.models import GenericDisk, StorageObject, VolumePool, BlockVolume, FileSystemVolume, FileSystemProvider
 from volumes import initscripts
 from ifconfig.models import Host
 
@@ -135,14 +135,13 @@ class AbstractBlockVolumeHandler(ModelHandler):
 
     def _getobj(self, obj):
         data = ModelHandler._getobj(self, obj)
-        data["name"]   = obj.volume.name
-        data["megs"]   = obj.volume.megs
+        data["name"]   = obj.storageobj.name
+        data["megs"]   = obj.storageobj.megs
         data["host"]   = self._get_handler_instance(Host)._idobj(obj.volume.host)
         try:
             data["path"] = obj.volume.path
         except:
             pass
-        data["type"]   = obj.volume.type
         data["status"] = obj.volume.status
         return data
 
@@ -193,14 +192,13 @@ class BlockVolumeProxy(ProxyModelHandler, BlockVolumeHandler):
 class AbstractFileSystemVolumeHandler(ModelHandler):
     def _getobj(self, obj):
         data = ModelHandler._getobj(self, obj)
-        data["name"]    = obj.volume.name
-        data["megs"]    = obj.volume.megs
+        data["name"]    = obj.storageobj.name
+        data["megs"]    = obj.storageobj.megs
         data["host"]    = self._get_handler_instance(Host)._idobj(obj.volume.host)
         try:
             data["path"] = obj.volume.path
         except:
             pass
-        data["type"]    = obj.volume.type
         data["mounted"] = obj.volume.fs.mounted
         data["usedmegs"]= obj.volume.fs.stat["used"]
         data["status"]  = obj.volume.status
@@ -275,6 +273,47 @@ class FileSystemProviderProxy(ProxyModelHandler, FileSystemProviderHandler):
         return self._call_singlepeer_method("remove", id)
 
 
+
+class StorageObjectHandler(ModelHandler):
+    model = StorageObject
+
+    def _getobj(self, obj):
+        data = ModelHandler._getobj(self, obj)
+
+        try:
+            obj.volumepool
+        except VolumePool.DoesNotExist:
+            data["volumepool"] = None
+        else:
+            handler = self._get_handler_instance(obj.volumepool.__class__)
+            data["volumepool"] = handler._getobj(obj.volumepool)
+
+        try:
+            obj.blockvolume
+        except BlockVolume.DoesNotExist:
+            data["blockvolume"] = None
+        else:
+            handler = self._get_handler_instance(obj.blockvolume.__class__)
+            data["blockvolume"] = handler._getobj(obj.blockvolume)
+
+        try:
+            obj.filesystemvolume
+        except FileSystemVolume.DoesNotExist:
+            data["filesystemvolume"] = None
+        else:
+            handler = self._get_handler_instance(obj.filesystemvolume.__class__)
+            data["filesystemvolume"] = handler._getobj(obj.filesystemvolume)
+
+        return data
+
+
+class StorageObjectProxy(ProxyModelHandler, StorageObjectHandler):
+    def _find_target_host_from_model_instance(self, model):
+        if model.host == Host.objects.get_current():
+            return None
+        return model.host.peerhost_set.all()[0]
+
+
 class InitScriptHandler(BaseHandler):
     handler_name = "volumes.InitScript"
 
@@ -293,4 +332,5 @@ RPCD_HANDLERS = [
     FileSystemVolumeProxy,
     FileSystemProviderProxy,
     InitScriptHandler,
+    StorageObjectProxy,
     ]
