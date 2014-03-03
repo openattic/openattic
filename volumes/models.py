@@ -156,8 +156,8 @@ class VolumePool(models.Model):
             # TODO: vol = imagedatei in dem ding
             pass
         elif isinstance(vol, BlockVolume) and bool(options.get("filesystem", None)):
-            fsclass = filesystems.get_by_name(filesystem)
-            vol = fsclass.format_blockvolume(vol, owner, fswarning, fscritical)
+            fsclass = filesystems.get_by_name(options["filesystem"])
+            vol = fsclass.format_blockvolume(vol, options)
 
         return vol
 
