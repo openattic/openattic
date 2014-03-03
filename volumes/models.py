@@ -62,6 +62,11 @@ class StorageObject(models.Model):
     objects     = CapabilitiesAwareManager()
     all_objects = models.Manager()
 
+    def full_clean(self):
+        models.Model.full_clean(self)
+        if not self.uuid:
+            self.uuid = str(uuid.uuid4())
+
     @property
     def capabilities(self):
         return capabilities.from_flags(self.capflags)
