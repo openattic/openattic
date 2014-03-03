@@ -31,7 +31,7 @@ class Share(models.Model):
     comment       = models.CharField(max_length=250, blank=True)
 
     share_type    = "samba"
-    objects       = getHostDependentManagerClass("volume__volume__host")()
+    objects       = getHostDependentManagerClass("volume__storageobj__host")()
     all_objects   = models.Manager()
 
     def __unicode__(self):
