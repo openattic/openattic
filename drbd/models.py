@@ -66,8 +66,7 @@ class ConnectionManager(models.Manager):
         else:
             # create volume on peer host
             vpool = VolumePool.objects.get(id=peer_volumepool_id)
-            peer_volume = vpool.volumepool._create_volume(primary_volume.volume.name, primary_volume.volume.megs, \
-                primary_volume.volume.owner, "", primary_volume.volume.fswarning, primary_volume.volume.fscritical)
+            peer_volume = vpool.volumepool._create_volume(primary_volume.volume.name, primary_volume.volume.megs, {})
 
             # set upper volume
             peer_volume.upper = connection
