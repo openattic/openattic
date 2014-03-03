@@ -458,8 +458,12 @@ Ext.define("Ext.oa.volumes__volumes_add_volume_form", {
           self.ownerCt.ownerCt.getEl().mask(gettext("Loading..."));
 
           volumes__VolumePool.create_volume(input_vals.vg, input_vals.name, input_vals.megs,
-            owner_dict, input_vals.filesystem, input_vals.fswarning, input_vals.fscritical,
-            function(result, response){
+            {
+              owner:      owner_dict,
+              filesystem: input_vals.filesystem,
+              fswarning:  input_vals.fswarning,
+              fscritical: input_vals.fscritical
+            }, function(result, response){
               if(response.type !== "exception"){
                 self.ownerCt.ownerCt.ownerCt.close();
 
