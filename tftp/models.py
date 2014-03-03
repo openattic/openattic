@@ -26,7 +26,7 @@ class Instance(models.Model):
     address     = models.ForeignKey(IPAddress, unique=True)
 
     share_type  = "tftp"
-    objects     = getHostDependentManagerClass("volume__volume__host")()
+    objects     = getHostDependentManagerClass("volume__storageobj__host")()
     all_objects = models.Manager()
 
     def clean(self):
