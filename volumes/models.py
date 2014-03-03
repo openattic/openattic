@@ -84,7 +84,7 @@ class StorageObject(models.Model):
             return self.filesystemvolume.volume
         except FileSystemVolume.DoesNotExist:
             pass
-        raise ValueError
+        raise ValueError("No authoritative object found for storageobj %d ('%s')" % (self.id, self.name))
 
     @property
     def host(self):
