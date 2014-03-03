@@ -24,11 +24,6 @@ class NfsExportHandler(ModelHandler):
     model = Export
 
 class NfsExportProxy(ProxyModelHandler, NfsExportHandler):
-    def _find_target_host_from_model_instance(self, model):
-        if model.volume.pool.volumepool.host == Host.objects.get_current():
-            return None
-        return model.volume.pool.volumepool.host.peerhost_set.all()[0]
-
-
+    pass
 
 RPCD_HANDLERS = [NfsExportProxy]
