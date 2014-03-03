@@ -26,7 +26,7 @@ class Export(models.Model):
     address     = models.CharField(max_length=250)
     options     = models.CharField(max_length=250, default="rw,no_subtree_check,no_root_squash")
 
-    objects     = getHostDependentManagerClass("volume__pool__volumepool__host")()
+    objects     = getHostDependentManagerClass("volume__storageobj__host")()
     all_objects = models.Manager()
     share_type  = "nfs"
 
