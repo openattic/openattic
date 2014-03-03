@@ -176,13 +176,15 @@ Ext.define('Ext.oa.Cmdlog__LogEntry_Panel', {
                       allowBlank: false,
                       name:  "date",
                       xtype: 'datefield',
-                      ref:   'datefield',
+                      itemId:'datefield',
+                      value: new Date().getDate() + 1,
                       listeners: {
-                        select: function( self, newValue ){
+                        select: function(self, newValue, eOpts){
                           cmdlog__LogEntry.count_older_than(
-                            parseInt(newValue.format("U"), 10),
+                            parseInt(Ext.Date.format(newValue, "U"), 10),
                             function(provider, response){
-                              self.ownerCt.countlabel.setText(
+                              var countlabel = self.ownerCt.getComponent("countlabel")
+                              countlabel.setText(
                                 interpolate(gettext('%s Entries matched'), [response.result])
                               );
                             }
@@ -191,18 +193,18 @@ Ext.define('Ext.oa.Cmdlog__LogEntry_Panel', {
                       }
                     }, gettext('Log Entries newer than the date you enter here will be kept.')
                   ), {
-                    xtype: "label",
-                    text:  gettext('Waiting for date selection...'),
-                    cls:   "form_hint_label",
-                    ref:   "countlabel"
+                    xtype:  "label",
+                    text:   gettext('Waiting for date selection...'),
+                    cls:    "form_hint_label",
+                    itemId: "countlabel"
                   }],
                   buttons: [{
                     text: gettext('Delete'),
                     ref:   'shoopmit',
                     handler: function(self){
-                      var date = self.ownerCt.ownerCt.datefield.getValue();
+                      var date = self.ownerCt.ownerCt.getComponent("datefield").getValue();
                       cmdlog__LogEntry.remove_older_than(
-                        parseInt(date.format("U"), 10),
+                        parseInt(Ext.Date.format(date, "U"), 10),
                         function(provider, response){
                           win.hide();
                           store.load();
