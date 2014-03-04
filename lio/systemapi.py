@@ -35,7 +35,7 @@ class SystemD(LockingPlugin):
     def storage_object_create(self, id):
         mdl_so = models.StorageObject.objects.get(id=id)
         lio_bs = mdl_so.backstore.lio_object
-        storage = lio_bs.storage_object(mdl_so.volume.volume.name, mdl_so.volume.volume.path, gen_wwn=False)
+        storage = lio_bs.storage_object(mdl_so.volume.storageobj.name, mdl_so.volume.volume.path, gen_wwn=False)
         storage.wwn = mdl_so.wwn
 
     @method(in_signature="i", out_signature="")
@@ -89,7 +89,7 @@ class SystemD(LockingPlugin):
         mdl_lun = models.LUN.objects.get(id=id)
         lio_tpg = mdl_lun.tpg.lio_object
         lio_lun = lio_tpg.lun(mdl_lun.lun_id, mdl_lun.storageobj.lio_object,
-                        "%s at %s" % (mdl_lun.storageobj.volume.volume.name, Host.objects.get_current().name))
+                        "%s at %s" % (mdl_lun.storageobj.volume.storageobj.name, Host.objects.get_current().name))
 
     @method(in_signature="ii", out_signature="")
     def lun_map(self, id, acl_id):
