@@ -145,7 +145,7 @@ case $1 in
 		HOSTID=`oacli 'ifconfig.Host.current' | grep '^id' | cut -d\' -f2`
 		eval `LANG=C vgs --units M -o vg_size,vg_uuid --noheadings --nameprefixes --nosuffix "$2"`
 		ROUNDEDMEGS=`awk '{printf "%.0f\n", $1}' <<< $LVM2_VG_SIZE`
-		STOROBJID=`oacli volumes.StorageObject.create 'json:{"name": "'$2'", "megs": "'$ROUNDEDMEGS'", "uuid": "'$LVM2_VG_UUID'" }' | grep '^id' | cut -d\' -f2`
+		STOROBJID=`oacli volumes.StorageObject.create 'json:{"name": "'$2'", "megs": "'$ROUNDEDMEGS'", "uuid": "'$LVM2_VG_UUID'", "is_origin": true }' | grep '^id' | cut -d\' -f2`
 		oacli lvm.VolumeGroup.create 'json:{"storageobj": {"app": "volumes", "obj": "StorageObject", "id": '$STOROBJID'}, "host": {"app":"ifconfig", "obj":"Host", "id":'$HOSTID'} }'
 		;;
 
