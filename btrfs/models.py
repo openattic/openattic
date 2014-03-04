@@ -91,7 +91,7 @@ class BtrfsSubvolume(FileSystemVolume):
     def status(self):
         if self.parent is not None:
             return self.parent.volumepool.volumepool.status
-        return self.storageobj.volumepool.volumepool.status
+        return self.btrfs.status
 
     @property
     def path(self):
@@ -109,7 +109,7 @@ class BtrfsSubvolume(FileSystemVolume):
     def host(self):
         if self.parent is not None:
             return self.parent.volumepool.volumepool.host
-        return self.storageobj.volumepool.volumepool.host
+        return self.btrfs.host
 
     @property
     def fullname(self):
