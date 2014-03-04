@@ -35,11 +35,6 @@ class Export(models.Model):
     def __unicode__(self):
         return unicode( self.volume )
 
-    def clean(self):
-        from django.core.exceptions import ValidationError
-        if not self.volume.filesystem:
-            raise ValidationError('This share type can only be used on volumes with a file system.')
-
     def save( self, *args, **kwargs ):
         print "savin'"
         ret = models.Model.save(self, *args, **kwargs)
