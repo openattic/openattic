@@ -29,7 +29,7 @@ class Command( BaseCommand ):
         for backstore in Backstore.objects.all():
             print "Backstore: %s%d" % (backstore.type, backstore.store_id)
             for storage_object in backstore.storageobject_set.all():
-                print "    -> %s (%s, WWN=%s)" % (storage_object.volume.volume.name, storage_object.volume.volume.path, storage_object.wwn)
+                print "    -> %s (%s, WWN=%s)" % (storage_object.volume.storageobj.name, storage_object.volume.volume.path, storage_object.wwn)
 
         for fabricname, fabricdesc in TARGET_TYPE_CHOICES:
             print "Fabric:", fabricname
