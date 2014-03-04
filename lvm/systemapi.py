@@ -142,7 +142,7 @@ class SystemD(BasePlugin):
         # Update UUID
         self.lvs_time = time()
         self.lvs_cache = lvm_lvs()
-        lv_mdl = LogicalVolume.objects.get(strorageobj__name=lvname)
+        lv_mdl = LogicalVolume.objects.get(storageobj__name=lvname)
         lv_mdl.uuid = self.lvs_cache[lvname]["LVM2_LV_UUID"]
         lv_mdl.save(database_only=True)
 
