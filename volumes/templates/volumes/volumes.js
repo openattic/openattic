@@ -58,6 +58,10 @@ Ext.define('volumes__volumes_StorageObject_model', {
       var store = Ext.create("Ext.oa.SwitchingTreeStore", {
         model: 'volumes__volumes_StorageObject_model',
         root: record.data,
+        sorters: [{
+          property: "__unicode__",
+          root: "data"
+        }],
         proxy: {
           type: "direct",
           directFn: volumes__StorageObject.filter,
