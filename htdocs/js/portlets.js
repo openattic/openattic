@@ -39,18 +39,41 @@ Ext.oa.getDefaultPortlets = function(tools){
           storeId: "portlet_lvs_store",
           autoLoad: true,
           sorters: [{property: "fsused", direction: "DESC"}],
-          fields: ['__unicode__', 'megs', 'filesystem',  'formatted', 'id', 'usedmegs', 'fs', 'fswarning', 'fscritical', 'snapshot', {
+          fields: ['__unicode__', 'megs', 'id', {
+            name: 'fswarning',
+            mapping: 'filesystemvolume',
+            sortType: 'asFloat',
+            convert: function( val, row ){
+              return val && val.fswarning;
+            }
+          }, {
+            name: 'fscritical',
+            mapping: 'filesystemvolume',
+            sortType: 'asFloat',
+            convert: function( val, row ){
+              return val && val.fscritical;
+            }
+          }, {
             name: 'fsused',
-            mapping: 'usedmegs',
+            mapping: 'filesystemvolume',
             sortType: 'asFloat',
             convert: function( val, row ){
               if( val === null ){
                 return -1; // fake to sort unknown values always at the bottom
               }
-              return (val / row.data.megs * 100 ).toFixed(2);
+              return (val.usedmegs / row.data.megs * 100 ).toFixed(2);
             }
           }],
-          directFn: volumes__FileSystemVolume.all
+          proxy: {
+            type: "direct",
+            directFn: volumes__StorageObject.filter,
+            extraParams: {
+              kwds: {
+                filesystemvolume__isnull: false
+              }
+            },
+            paramOrder: ["kwds"]
+          }
         });
         store.on("load", function(self){
           self.filterBy(function(record){
