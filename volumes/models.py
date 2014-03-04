@@ -315,7 +315,7 @@ class GenericDisk(BlockVolume):
         return self.udev_device.device_node
 
     def __unicode__(self):
-        return "%s (%dMiB)" % (self.path, self.megs)
+        return "%s (%dMiB)" % (self.path, self.storageobj.megs)
 
 
 class FileSystemVolume(AbstractVolume):
