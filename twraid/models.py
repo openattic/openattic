@@ -122,8 +122,8 @@ class Unit(BlockVolume):
             }
 
     def __unicode__(self):
-        if self.name:
-            return self.name
+        if self.storageobj.name:
+            return self.storageobj.name
         return "Unnamed Unit (/c%d/u%d)" % (self.controller.index, self.index)
 
 
