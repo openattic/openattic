@@ -121,7 +121,7 @@ class StorageObject(models.Model):
     def save(self, *args, **kwargs):
         install = (self.id is None)
         if not self.wwn:
-            self.wwn = self.volume.uuid
+            self.wwn = self.volume.storageobj.uuid
         models.Model.save(self, *args, **kwargs)
         if install:
             pre_install.send(sender=StorageObject, instance=self)
@@ -295,7 +295,7 @@ class LUN(models.Model):
         raise KeyError("LUN not found")
 
     def __unicode__(self):
-        return "%s/luns/lun%d (%s)" % (self.tpg, self.lun_id, self.storageobj.volume.volume.name)
+        return "%s/luns/lun%d (%s)" % (self.tpg, self.lun_id, self.storageobj.volume.storageobj.name)
 
     def save(self, *args, **kwargs):
         install = (self.id is None)
@@ -464,7 +464,7 @@ class ProtocolHandler(object):
             backstore  = Backstore(store_id=store_id, type="iblock", host=Host.objects.get_current())
             backstore.full_clean()
             backstore.save()
-            storageobj = StorageObject(backstore=backstore, volume=self.hostacl.volume, wwn=self.hostacl.volume.volume.uuid)
+            storageobj = StorageObject(backstore=backstore, volume=self.hostacl.volume, wwn=self.hostacl.volume.storageobj.uuid)
             storageobj.full_clean()
             storageobj.save()
         try:
@@ -538,7 +538,7 @@ class IscsiHander(ProtocolHandler):
         elif len(tgts) == 1:
             yield {"target": tgts[0], "module": self.module}
         else:
-            tgt = Target(host=Host.objects.get_current(), type="iscsi", name=self.hostacl.volume.volume.name)
+            tgt = Target(host=Host.objects.get_current(), type="iscsi", name=self.hostacl.volume.storageobj.name)
             tgt.full_clean()
             tgt.save()
             yield ctxupdate(target=tgt, module=self.module)
