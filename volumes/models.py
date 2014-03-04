@@ -141,8 +141,6 @@ class VolumePool(models.Model):
         return models.Model.save(self, *args, **kwargs)
 
     def __unicode__(self):
-        if self.volumepool is None:
-            return "<Invalid VolumePool %d>" % self.id
         return self.storageobj.name
 
     def _create_volume(self, name, megs, options):
@@ -232,9 +230,7 @@ class BlockVolume(AbstractVolume):
         return AbstractVolume.save(self, *args, **kwargs)
 
     def __unicode__(self):
-        if self.volume is None:
-            return "<Invalid BlockVolume %d>" % self.id
-        return self.volume.name
+        return self.storageobj.name
 
     @property
     def disk_stats(self):
@@ -345,9 +341,7 @@ class FileSystemVolume(AbstractVolume):
         return AbstractVolume.save(self, *args, **kwargs)
 
     def __unicode__(self):
-        if self.volume is None:
-            return "<Invalid FileSystemVolume %d>" % self.id
-        return unicode(self.volume)
+        return self.storageobj.name
 
     @property
     def path(self):
@@ -424,9 +418,7 @@ class FileSystemProvider(FileSystemVolume):
         return self.fs.stat
 
     def __unicode__(self):
-        if self.volume is None:
-            return "<Invalid FileSystemProvider %d>" % self.id
-        return unicode(self.storageobj)
+        return self.storageobj.name
 
 
 def __delete_filesystemprovider(instance, **kwargs):
