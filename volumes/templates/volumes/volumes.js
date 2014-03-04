@@ -329,7 +329,11 @@ Ext.define("Ext.oa.volumes__volumes_add_volume_form", {
         model: "lvm_logicalvolume_volumegroup_store",
         proxy: {
           type: 'direct',
-          directFn: volumes__VolumePool.all
+          directFn: volumes__StorageObject.filter,
+          extraParams: {
+            kwds: {volumepool__isnull: false}
+          },
+          paramOrder: ["kwds"]
         }
       });
     }()),
@@ -348,8 +352,8 @@ Ext.define("Ext.oa.volumes__volumes_add_volume_form", {
         self.ownerCt.volume_free_megs = null;
         var volume_size_label = self.ownerCt.getComponent("volume_size_additional_label");
         volume_size_label.setText(gettext("Querying data..."));
-        volumes__VolumePool.get_status(record[0].data.id, function(provider, response){
-          self.ownerCt.volume_free_megs = response.result.megs - response.result.usedmegs;
+        volumes__StorageObject.get(record[0].data.id, function(result, response){
+          self.ownerCt.volume_free_megs = result.megs - result.volumepool.usedmegs;
           volume_size_label.setText(Ext.String.format("Max. {0} MB", self.ownerCt.volume_free_megs));
         });
       }
