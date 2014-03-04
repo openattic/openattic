@@ -18,7 +18,7 @@ import os
 from systemd import invoke, logged, BasePlugin, method, signal, deferredmethod
 
 from volumes.conf import settings as volumes_settings
-from volumes.models import VolumePool, FileSystemProvider
+from volumes.models import StorageObject, VolumePool, BlockVolume, FileSystemVolume
 from volumes import capabilities
 
 @logged
@@ -128,18 +128,13 @@ class SystemD(BasePlugin):
 
             newlines.append(delim)
 
-            for obj in VolumePool.objects.all():
-                if    capabilities.FileSystemCapability   in obj.capabilities \
-                and capabilities.HandlesMountCapability not in obj.capabilities:
-                    for member in obj.member_set.all():
-                        newlines.append( "%-50s %-50s %-8s %s %d %d" % (
-                            member.path, obj.fs.path, obj.fs.name, "defaults", 0, 0
-                            ) )
-
-            for obj in FileSystemProvider.objects.all():
-                newlines.append( "%-50s %-50s %-8s %s %d %d" % (
-                    obj.base.volume.path, obj.path, obj.type, "defaults", 0, 0
-                    ) )
+            for obj in StorageObject.objects.all():
+                try:
+                    newlines.append( "%-50s %-50s %-8s %s %d %d" % (
+                        obj.blockvolume.volume.path, obj.filesystemvolume.volume.path, obj.filesystemvolume.volume.fstype, "defaults", 0, 0
+                        ) )
+                except (BlockVolume.DoesNotExist, FileSystemVolume.DoesNotExist):
+                    pass
 
             delim = "# # openATTIC mounts. Insert your own after this line. # #"
             delimfound = False
