@@ -29,7 +29,7 @@ class Array(BlockVolume):
 
     @property
     def path(self):
-        return "/dev/" + self.name
+        return "/dev/" + self.storageobj.name
 
     @property
     def member_set(self):
@@ -39,16 +39,16 @@ class Array(BlockVolume):
     def status(self):
         with open("/proc/mdstat") as fd:
             for line in fd:
-                if line.startswith(self.name):
+                if line.startswith(self.storageobj.name):
                     if "(F)" in line:
                         return "degraded"
                     return "online"
 
     @property
     def raid_params(self):
-        chunksize = int(open("/sys/class/block/%s/md/chunk_size" % self.name, "r").read().strip())
-        raiddisks = int(open("/sys/class/block/%s/md/raid_disks" % self.name, "r").read().strip())
-        raidlevel = int(open("/sys/class/block/%s/md/level" % self.name, "r").read().strip()[4:])
+        chunksize = int(open("/sys/class/block/%s/md/chunk_size" % self.storageobj.name, "r").read().strip())
+        raiddisks = int(open("/sys/class/block/%s/md/raid_disks" % self.storageobj.name, "r").read().strip())
+        raidlevel = int(open("/sys/class/block/%s/md/level" % self.storageobj.name, "r").read().strip()[4:])
         if raidlevel == 0:
             datadisks = raiddisks
         elif raidlevel == 1:
@@ -71,4 +71,4 @@ class Array(BlockVolume):
             }
 
     def __unicode__(self):
-        return "MDRAID array %s" % self.name
+        return "MDRAID array %s" % self.storageobj.name
