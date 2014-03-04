@@ -33,7 +33,7 @@ class Array(BlockVolume):
 
     @property
     def member_set(self):
-        return BlockVolume.objects.filter(upper_type=ContentType.objects.get_for_model(self.__class__), upper_id=self.id)
+        return BlockVolume.objects.filter(upper=self.id)
 
     @property
     def status(self):
