@@ -23,6 +23,7 @@ from ifconfig.models import Host
 from zfs.models import Zpool, Zfs, size_to_megs
 
 def update_disksize(**kwargs):
+    return
     admin = User.objects.filter( is_superuser=True )[0]
     zfs_space = dbus_to_python(get_dbus_object("/zfs").zfs_getspace(""))
     for name, avail, used, usedsnap, usedds, usedrefreserv, usedchild in zfs_space:

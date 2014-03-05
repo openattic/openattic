@@ -315,14 +315,17 @@ Ext.define("Ext.oa.volumes__volumes_add_volume_form", {
     emptyText:     gettext('Select...'),
     selectOnFocus: true,
     displayField: "name",
-    valueField: "id",
+    valueField: "volumepool_id",
     afterLabelTextTpl: required,
     store: (function(){
       Ext.define('lvm_logicalvolume_volumegroup_store', {
         extend: 'Ext.data.Model',
         fields: [
           {name: 'id'},
-          {name: 'name'}
+          {name: 'name'},
+          {name: 'volumepool_id', mapping: 'volumepool', convert: function(val){
+            return val.volumepool.id;
+          } }
         ]
       });
       return Ext.create('Ext.data.Store', {
