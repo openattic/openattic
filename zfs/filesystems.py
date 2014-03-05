@@ -66,12 +66,14 @@ class Zfs(FileSystem):
         if re.match("^c[0-9]", volume.storageobj.name):
             raise ValidationError({"name": ["ZFS volume.storageobj.names cannot start with 'c[0-9]'."]})
 
+        if "filesystem" in options:
+            options = options.copy()
+            del options["filesystem"]
+
         from zfs.models import Zpool, Zfs
         pool = Zpool(storageobj=volume.storageobj, host=volume.host)
         pool.full_clean()
         pool.save()
-        if "filesystem" in options:
-            del options["filesystem"]
         zvol = Zfs(storageobj=volume.storageobj, zpool=pool, **options)
         zvol.full_clean()
         zvol.save()

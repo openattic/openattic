@@ -50,6 +50,7 @@ class Zpool(VolumePool):
         if options.get("filesystem", None) not in ("zfs", None):
             raise InvalidVolumeType(options.get("filesystem", None))
         if "filesystem" in options:
+            options = options.copy()
             del options["filesystem"]
         zfs = Zfs(storageobj=storageobj, zpool=self, parent=self.storageobj, **options)
         zfs.full_clean()
