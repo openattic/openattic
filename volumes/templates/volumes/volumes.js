@@ -341,9 +341,10 @@ Ext.define("Ext.oa.volumes__volumes_add_volume_form", {
       select: function(self, record, index){
         var filesystem_combo = self.ownerCt.getComponent('volumepool_filesystems_combo');
         filesystem_combo.enable();
+        filesystem_combo.clearValue();
         filesystem_combo.getStore().load({
           params: {
-            "id": record[0].data.id
+            "id": record[0].raw.volumepool.id
           }
         });
 
