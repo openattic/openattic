@@ -29,7 +29,7 @@ class Xfs(FileSystem):
 
     def get_agcount(self, megs=None):
         if megs is None:
-            megs = self.volume.megs
+            megs = self.volume.storageobj.megs
         usablesize   = megs * 1024 * 1024
         usableblocks = int( usablesize / 4096 )
 
@@ -70,7 +70,7 @@ class Xfs(FileSystem):
     def resize(self, grow):
         if not grow:
             raise SystemError("XFS does not support shrinking.")
-        self.dbus_object.xfs_resize( self.volume.storageobj.blockvolume.volume.path, self.volume.megs )
+        self.dbus_object.xfs_resize( self.volume.storageobj.blockvolume.volume.path, self.volume.storageobj.megs )
 
     @classmethod
     def check_type(cls, typestring):
