@@ -163,18 +163,24 @@ class VolumePool(models.Model):
 
     def _create_volume(self, name, megs, options):
         """ Actual volume creation. """
+        from django.core.exceptions import ValidationError
         storageobj = StorageObject(name=name, megs=megs)
         storageobj.full_clean()
         storageobj.save()
-        vol = self._create_volume_for_storageobject(storageobj, options)
 
-        if isinstance(vol, FileSystemVolume) and not bool(options.get("filesystem", None)):
-            # TODO: vol = imagedatei in dem ding
-            pass
-        elif isinstance(vol, BlockVolume) and bool(options.get("filesystem", None)):
-            fsclass = filesystems.get_by_name(options["filesystem"])
-            del options["filesystem"]
-            vol = fsclass.format_blockvolume(vol, options)
+        try:
+            vol = self._create_volume_for_storageobject(storageobj, options)
+
+            if isinstance(vol, FileSystemVolume) and not bool(options.get("filesystem", None)):
+                # TODO: vol = imagedatei in dem ding
+                pass
+            elif isinstance(vol, BlockVolume) and bool(options.get("filesystem", None)):
+                fsclass = filesystems.get_by_name(options["filesystem"])
+                del options["filesystem"]
+                vol = fsclass.format_blockvolume(vol, options)
+        except ValidationError:
+            storageobj.delete()
+            raise
 
         return vol
 
