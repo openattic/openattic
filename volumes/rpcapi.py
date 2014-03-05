@@ -58,9 +58,9 @@ class AbstractVolumePoolHandler(ModelHandler):
         obj = VolumePool.objects.get(id=id)
         return {
             "status":    obj.volumepool.status,
-            "megs":      obj.volumepool.megs,
+            "megs":      obj.storageobj.megs,
             "usedmegs":  obj.volumepool.usedmegs,
-            "type":      obj.volumepool.type,
+            "type":      obj.volumepool_type.app_label,
         }
 
 class VolumePoolHandler(ModelHandler):
@@ -82,9 +82,9 @@ class VolumePoolHandler(ModelHandler):
         obj = VolumePool.objects.get(id=id)
         return {
             "status":    obj.volumepool.status,
-            "megs":      obj.volumepool.megs,
+            "megs":      obj.storageobj.megs,
             "usedmegs":  obj.volumepool.usedmegs,
-            "type":      obj.volumepool.type,
+            "type":      obj.volumepool_type.app_label,
         }
 
     def create_volume(self, id, name, megs, options):
