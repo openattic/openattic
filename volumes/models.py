@@ -173,6 +173,7 @@ class VolumePool(models.Model):
             pass
         elif isinstance(vol, BlockVolume) and bool(options.get("filesystem", None)):
             fsclass = filesystems.get_by_name(options["filesystem"])
+            del options["filesystem"]
             vol = fsclass.format_blockvolume(vol, options)
 
         return vol
