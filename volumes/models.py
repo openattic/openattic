@@ -95,6 +95,24 @@ class StorageObject(models.Model):
     def host(self):
         return self.authoritative_obj.host
 
+    def delete(self):
+        try:
+            self.filesystemvolume.volume.delete()
+        except FileSystemVolume.DoesNotExist:
+            pass
+
+        try:
+            self.volumepool.volumepool.delete()
+        except VolumePool.DoesNotExist:
+            pass
+
+        try:
+            self.blockvolume.volume.delete()
+        except BlockVolume.DoesNotExist:
+            pass
+
+        return models.Model.delete(self)
+
     def __unicode__(self):
         return self.name
 
