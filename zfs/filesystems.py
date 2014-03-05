@@ -42,152 +42,83 @@ def scale_to_megs(size):
     # size seems to be in bytes
     return float(size) * 1024**-2
 
+
 class Zfs(FileSystem):
     """ Handler for ZFS. """
     name = "zfs"
     desc = "ZFS (supports snapshots, deduplication and compression)"
-    mount_in_fstab = False
-    supports_dedup = True
-    supports_compression = True
-
-    @classmethod
-    def format_blockvolume(cls, volume, options):
-        from zfs.models import Zpool, Zfs
-        pool = Zpool(storageobj=volume.storageobj, host=volume.host)
-        pool.full_clean()
-        pool.save()
-        zvol = Zfs(storageobj=volume.storageobj, zpool=pool, owner=options["owner"], fswarning=options["fswarning"], fscritical=options["fscritical"])
-        zvol.full_clean()
-        zvol.save()
-        return zvol
-
-    class ZfsOptions(object):
-        def __init__(self, fs):
-            self.fs = fs
-
-        def __getitem__(self, item):
-            return dbus_to_python(self.fs.dbus_object.zfs_get(self.fs.volume.fullname, item))[0][2]
-
-        def __setitem__(self, item, value):
-            self.fs.dbus_object.zfs_set(-1, self.fs.volume.fullname, item, str(value))
-
-        def __iter__(self):
-            return (data[1:3] for data in dbus_to_python(self.fs.dbus_object.zfs_get(self.fs.volume.fullname, "all")))
-
-    class ZpoolOptions(object):
-        def __init__(self, fs):
-            self.fs = fs
-
-        def __getitem__(self, item):
-            return dbus_to_python(self.fs.dbus_object.zpool_get(self.fs.volume.storageobj.name, item))[0][2]
-
-        def __setitem__(self, item, value):
-            self.fsdbus_object.zpool_set(-1, self.fs.volume.name, item, str(value))
-
-        def __iter__(self):
-            return (data[1:3] for data in dbus_to_python(self.fs.dbus_object.zpool_get(self.fs.volume.storageobj.name, "all")))
-
-    def __init__(self, volume, pool=None):
-        FileSystem.__init__(self, volume)
-        self.pool = pool or volume
-        self._options = None
-        self._pooloptions = None
-
-    @property
-    def dbus_object(self):
-        return get_dbus_object("/zfs")
 
     @classmethod
     def check_installed(cls):
         return os.path.exists("/sbin/zfs")
 
-    def clean_volume(self, volume):
+    @classmethod
+    def format_blockvolume(cls, volume, options):
         from django.core.exceptions import ValidationError
-        if volume.name == "log":
+        if volume.storageobj.name == "log":
             raise ValidationError({"name": ["ZFS volumes cannot be named 'log'."]})
-        if volume.name.startswith( "mirror" ):
-            raise ValidationError({"name": ["ZFS volume names cannot start with 'mirror'."]})
-        if volume.name.startswith( "raidz" ):
-            raise ValidationError({"name": ["ZFS volume names cannot start with 'raidz'."]})
-        if volume.name.startswith( "spare" ):
-            raise ValidationError({"name": ["ZFS volume names cannot start with 'spare'."]})
-        if re.match("^c[0-9]", volume.name):
-            raise ValidationError({"name": ["ZFS volume names cannot start with 'c[0-9]'."]})
+        if volume.storageobj.name.startswith( "mirror" ):
+            raise ValidationError({"name": ["ZFS volume.storageobj.names cannot start with 'mirror'."]})
+        if volume.storageobj.name.startswith( "raidz" ):
+            raise ValidationError({"name": ["ZFS volume.storageobj.names cannot start with 'raidz'."]})
+        if volume.storageobj.name.startswith( "spare" ):
+            raise ValidationError({"name": ["ZFS volume.storageobj.names cannot start with 'spare'."]})
+        if re.match("^c[0-9]", volume.storageobj.name):
+            raise ValidationError({"name": ["ZFS volume.storageobj.names cannot start with 'c[0-9]'."]})
+
+        from zfs.models import Zpool, Zfs
+        pool = Zpool(storageobj=volume.storageobj, host=volume.host)
+        pool.full_clean()
+        pool.save()
+        zvol = Zfs(storageobj=volume.storageobj, zpool=pool, **options)
+        zvol.full_clean()
+        zvol.save()
+        return zvol
+
+    def __init__(self, zpool, zfs):
+        FileSystem.__init__(self, zfs)
+        self.zpool = zpool
 
     @property
-    def status(self):
-        return self.pool_options["health"].lower()
-
-    @property
-    def megs(self):
-        return scale_to_megs(self.pool_options["size"])
-
-    @property
-    def usedmegs(self):
-        return scale_to_megs(self.pool_options["allocated"])
-
-    @property
-    def info(self):
-        opts = self.pool_options.copy()
-        opts.update(self.options)
-        return opts
-
-    def format(self):
-        self.dbus_object.zpool_format(self.pool.member_set.all()[0].volume.path, self.pool.name,
-            os.path.join(volumes_settings.MOUNT_PREFIX, self.pool.name))
-        self.chown()
-
-    def mount(self):
-        self.dbus_object.zfs_mount(self.volume.name)
-
-    def unmount(self):
-        self.dbus_object.zfs_unmount(self.volume.name)
-
-    def destroy(self):
-        self.dbus_object.zpool_destroy(self.pool.name)
-
-    def online_resize_available(self, grow):
-        return grow
-
-    def resize(self, grow):
-        if not grow:
-            raise SystemError("ZFS does not support shrinking.")
-        else:
-            self.dbus_object.zpool_expand( self.volume.name, self.volume.path )
-
-    def create_subvolume(self, path):
-        self.dbus_object.zfs_create_volume(self.pool.name, path)
-
-    def destroy_subvolume(self, path):
-        self.dbus_object.zfs_destroy_volume(self.pool.name, path)
-
-    def create_snapshot(self, path):
-        self.dbus_object.zfs_create_snapshot(self.volume.name, path)
-
-    def destroy_snapshot(self, path):
-        self.dbus_object.zfs_destroy_snapshot(self.volume.name, path)
-
-    def rollback_snapshot(self, path):
-        self.dbus_object.zfs_rollback_snapshot(self.volume.name, path)
+    def dbus_object(self):
+        return get_dbus_object("/zfs")
 
     @property
     def path(self):
-        path = os.path.join(volumes_settings.MOUNT_PREFIX, self.pool.storageobj.name)
-        if self.volume is not self.pool:
-            path = os.path.join(path, self.volume.storageobj.name)
-        return path
+        return os.path.join(volumes_settings.MOUNT_PREFIX, self.volume.fullname)
 
     @property
-    def options(self):
-        if self._options is None:
-            self._options = Zfs.ZfsOptions(self)
-        return self._options
+    def status(self):
+        return dbus_to_python(self.dbus_object.zpool_get(self.zpool.storageobj.name, "health"))[0][2].lower()
 
-    @property
-    def pool_options(self):
-        if self._pooloptions is None:
-            self._pooloptions = Zfs.ZpoolOptions(self)
-        return self._pooloptions
+    def format(self):
+        self.dbus_object.zpool_format(self.zpool.blockvolume.volume.path, self.zpool.storageobj.name,
+            os.path.join(volumes_settings.MOUNT_PREFIX, self.zpool.storageobj.name))
+        self.chown()
+
+    def destroy(self):
+        self.dbus_object.zpool_destroy(self.zpool.storageobj.name)
+
+    def mount(self):
+        self.dbus_object.zfs_mount(self.volume.fullname)
+
+    def unmount(self):
+        self.dbus_object.zfs_unmount(self.volume.fullname)
+
+    def create_subvolume(self, path):
+        self.dbus_object.zfs_create_volume(self.zpool.storageobj.name, path)
+
+    def destroy_subvolume(self, path):
+        self.dbus_object.zfs_destroy_volume(self.zpool.storageobj.name, path)
+
+    def create_snapshot(self, path):
+        self.dbus_object.zfs_create_snapshot(self.volume.storageobj.name, path)
+
+    def destroy_snapshot(self, path):
+        self.dbus_object.zfs_destroy_snapshot(self.volume.storageobj.name, path)
+
+    def rollback_snapshot(self, path):
+        self.dbus_object.zfs_rollback_snapshot(self.volume.storageobj.name, path)
 
 
 class ZpoolDevice(capabilities.Device):

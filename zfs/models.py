@@ -34,9 +34,21 @@ class Zpool(VolumePool):
     objects     = HostDependentManager()
     all_objects = models.Manager()
 
+    def save(self, database_only=False, *args, **kwargs):
+        if database_only:
+            return VolumePool.save(self, *args, **kwargs)
+        install = (self.id is None)
+        VolumePool.save(self, *args, **kwargs)
+        if install:
+            self.fs.format()
+
+    def delete(self):
+        VolumePool.delete(self)
+        self.fs.destroy()
+
     @property
     def fs(self):
-        return filesystems.Zfs(self, self)
+        return filesystems.Zfs(self, self.storageobj.filesystemvolume.volume)
 
     @property
     def status(self):
@@ -44,7 +56,7 @@ class Zpool(VolumePool):
 
     @property
     def usedmegs(self):
-        return self.fs.usedmegs
+        return self.fs.stat["used"]
 
     def _create_volume_for_storageobject(self, storageobj, options):
         if options.get("filesystem", None) not in ("zfs", None):
@@ -75,63 +87,37 @@ class Zfs(FileSystemVolume):
         if database_only:
             return FileSystemVolume.save(self, *args, **kwargs)
         install = (self.id is None)
-        if self.zpool_id is None and self.pool is not None:
-            self.zpool = self.pool.volumepool
         FileSystemVolume.save(self, *args, **kwargs)
-        if install:
-            if self.name == "":
-                self.fs.format()
-            else:
-                self.fs.create_subvolume(self.name)
+        if install and self.parent is not None:
+            self.fs.create_subvolume(self.fullname)
 
     def delete(self):
         FileSystemVolume.delete(self)
-        if self.name == "":
-            self.fs.destroy()
-        else:
-            self.fs.destroy_subvolume(self.name)
+        if self.parent is not None:
+            self.fs.destroy_subvolume(self.fullname)
 
     @property
     def fs(self):
-        if self.parent is not None:
-            return filesystems.Zfs(self, self.parent.volumepool)
-        return filesystems.Zfs(self, self.storageobj.volumepool)
+        return filesystems.Zfs(self.zpool, self)
 
     @property
     def status(self):
-        if self.parent is not None:
-            return self.parent.volumepool.volumepool.status
-        return self.storageobj.volumepool.volumepool.status
-
-    @property
-    def path(self):
-        return self.fs.path
-
-    @property
-    def mounted(self):
-        return self.fs.mounted
-
-    @property
-    def stat(self):
-        return self.fs.stat
+        return self.zpool.status
 
     @property
     def host(self):
-        if self.parent is not None:
-            return self.parent.volumepool.volumepool.host
-        return self.storageobj.volumepool.volumepool.host
+        return self.zpool.host
 
     @property
     def fullname(self):
         if self.parent is not None:
             parentname = self.parent.filesystemvolume.volume.fullname
-        else:
-            parentname = self.storageobj.name
-        return "%s/%s" % (parentname, self.storageobj.name)
+            return "%s/%s" % (parentname, self.storageobj.name)
+        return self.storageobj.name
 
     @property
     def usedmegs(self):
-        return self.fs.usedmegs
+        return self.fs.stat["used"]
 
     def __unicode__(self):
         return self.fullname
