@@ -36,7 +36,7 @@ Ext.define('Ext.oa.Ifconfig__HostGroup_Panel', {
 });
 
 Ext.define('Ext.oa.Ifconfig__HostGroup_HostGroup_TreePanel', {
-  extend: 'Ext.tree.TreePanel',
+  extend: 'Ext.tree.Panel',
   alias : 'widget.ifconfig__hostgroup_hostgroup_treepanel',
   title : gettext('Host Groups'),
   initComponent: function(){
