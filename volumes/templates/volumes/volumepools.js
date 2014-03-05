@@ -83,7 +83,7 @@ Ext.define('volumes__volumes_VolumePool_model', {
         rootNode.set("percent", (response.result.usedmegs / response.result.megs * 100).toFixed(2));
         rootNode.set("megs",    response.result.megs);
         rootNode.set("status",  response.result.status);
-        rootNode.set("type",    response.result.type);
+        rootNode.set("type",    toUnicode(response.result.type));
       }
       rootNode.commit();
     });
