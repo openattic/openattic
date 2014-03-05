@@ -563,21 +563,9 @@ Ext.define('Ext.oa.volumes__Volume_Panel', {
             interpolate(gettext("You are about to permanently delete the following volume:<br /><strong>%s</strong><br />Are you sure? There is no undo and you will lose all data on that volume."), [sel.data.__unicode__]),
             function(btn, text){
               if( btn === 'yes' ){
-                var volId = parseInt(sel.raw.id);
-                if( sel.raw.filesystem ){
-                  volumes__FileSystemVolume.remove(volId, function(result, response){
-                    if( response.type !== "exception" ){
-                      volumePanel.refresh();
-                    }
-                  });
-                }
-                else{
-                  volumes__BlockVolume.remove(volId, function(result, response){
-                    if( response.type !== "exception" ){
-                      volumePanel.refresh();
-                    }
-                  });
-                }
+                volumes__StorageObject.remove(sel.raw.id, function(result, response){
+                  volumePanel.refresh();
+                });
               }
               else{
                 Ext.Msg.alert(gettext("Delete Volume"), gettext("As you wish."));
