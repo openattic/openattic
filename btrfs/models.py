@@ -62,6 +62,7 @@ class BtrfsSubvolume(FileSystemVolume):
 
     objects     = getHostDependentManagerClass("btrfs__host")()
     all_objects = models.Manager()
+    fstype      = "btrfs"
 
     def save(self, *args, **kwargs):
         install = (self.id is None)

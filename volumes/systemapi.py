@@ -130,6 +130,8 @@ class SystemD(BasePlugin):
 
             for obj in StorageObject.objects.all():
                 try:
+                    if not hasattr(obj.filesystemvolume.volume, "fstype"):
+                        continue
                     newlines.append( "%-50s %-50s %-8s %s %d %d" % (
                         obj.blockvolume.volume.path, obj.filesystemvolume.volume.path, obj.filesystemvolume.volume.fstype, "defaults", 0, 0
                         ) )
