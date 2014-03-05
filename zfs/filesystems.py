@@ -70,6 +70,8 @@ class Zfs(FileSystem):
         pool = Zpool(storageobj=volume.storageobj, host=volume.host)
         pool.full_clean()
         pool.save()
+        if "filesystem" in options:
+            del options["filesystem"]
         zvol = Zfs(storageobj=volume.storageobj, zpool=pool, **options)
         zvol.full_clean()
         zvol.save()
@@ -92,7 +94,7 @@ class Zfs(FileSystem):
         return dbus_to_python(self.dbus_object.zpool_get(self.zpool.storageobj.name, "health"))[0][2].lower()
 
     def format(self):
-        self.dbus_object.zpool_format(self.zpool.blockvolume.volume.path, self.zpool.storageobj.name,
+        self.dbus_object.zpool_format(self.zpool.storageobj.blockvolume.volume.path, self.zpool.storageobj.name,
             os.path.join(volumes_settings.MOUNT_PREFIX, self.zpool.storageobj.name))
         self.chown()
 

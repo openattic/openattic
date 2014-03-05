@@ -34,18 +34,6 @@ class Zpool(VolumePool):
     objects     = HostDependentManager()
     all_objects = models.Manager()
 
-    def save(self, database_only=False, *args, **kwargs):
-        if database_only:
-            return VolumePool.save(self, *args, **kwargs)
-        install = (self.id is None)
-        VolumePool.save(self, *args, **kwargs)
-        if install:
-            self.fs.format()
-
-    def delete(self):
-        VolumePool.delete(self)
-        self.fs.destroy()
-
     @property
     def fs(self):
         return filesystems.Zfs(self, self.storageobj.filesystemvolume.volume)
@@ -61,7 +49,9 @@ class Zpool(VolumePool):
     def _create_volume_for_storageobject(self, storageobj, options):
         if options.get("filesystem", None) not in ("zfs", None):
             raise InvalidVolumeType(options.get("filesystem", None))
-        zfs = Zfs(storageobj=storageobj, zpool=self)
+        if "filesystem" in options:
+            del options["filesystem"]
+        zfs = Zfs(storageobj=storageobj, zpool=self, parent=self.storageobj, **options)
         zfs.full_clean()
         zfs.save()
         return zfs
@@ -88,12 +78,17 @@ class Zfs(FileSystemVolume):
             return FileSystemVolume.save(self, *args, **kwargs)
         install = (self.id is None)
         FileSystemVolume.save(self, *args, **kwargs)
-        if install and self.parent is not None:
-            self.fs.create_subvolume(self.fullname)
+        if install:
+            if self.parent is None:
+                self.fs.format()
+            else:
+                self.fs.create_subvolume(self.fullname)
 
     def delete(self):
         FileSystemVolume.delete(self)
-        if self.parent is not None:
+        if self.parent is None:
+            self.fs.destroy()
+        else:
             self.fs.destroy_subvolume(self.fullname)
 
     @property
