@@ -343,7 +343,7 @@ EOF
 		fi
 		;;
 
-	dbdump)
+	dbdump|dumpdb)
 		if which sudo > /dev/null; then
 			DBNAME="`grep name /etc/openattic/database.ini  | cut -d= -f2`"
 			sudo -u postgres -s `which pg_dump` $DBNAME
