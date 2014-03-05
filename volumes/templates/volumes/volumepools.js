@@ -230,9 +230,7 @@ Ext.define('Ext.oa.volumes__VolumePool_Panel', {
             new Ext.ProgressBar({
               renderTo: id,
               value: val/100.0,
-              text:  Ext.String.format("{0}%", val),
-              cls:   ( val > 85 ? "lv_used_crit" :
-                      (val > 70 ? "lv_used_warn" : "lv_used_ok"))
+              text:  Ext.String.format("{0}%", val)
             });
           }, 25);
           return Ext.String.format('<span id="{0}"></span>', id);
