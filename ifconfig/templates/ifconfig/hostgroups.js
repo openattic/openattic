@@ -75,18 +75,8 @@ Ext.define('Ext.oa.Ifconfig__HostGroup_HostGroup_TreePanel', {
         copy: true,
       }
     }));
-    this.callParent(arguments)
-  },
-  listeners: {
-    render: function(self, eOpts){
-      self.view.on("render", function(){
-        self.dropZone = new Ext.dd.DropZone(self.view.getEl(), {
-          notifyOver: function(source, e, data){
-            console.log("notifyOver");
-          }
-        });
-      });
-    }
+
+    this.callParent(arguments);
   }
 });
 
