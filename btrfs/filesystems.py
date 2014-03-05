@@ -27,22 +27,35 @@ class Btrfs(FileSystem):
     desc = "BTRFS (Experimental)"
 
     @classmethod
+    def check_installed(cls):
+        return os.path.exists("/sbin/btrfs")
+
+    @classmethod
     def format_blockvolume(cls, volume, options):
         from btrfs.models import Btrfs, BtrfsSubvolume
         from volumes.models import StorageObject
+
+        if "filesystem" in options:
+            options = options.copy()
+            del options["filesystem"]
+
         pool = Btrfs(storageobj=volume.storageobj, host=volume.host)
         pool.full_clean()
         pool.save()
-        svol = BtrfsSubvolume(storageobj=volume.storageobj, btrfs=pool, owner=options["owner"], fswarning=options["fswarning"], fscritical=options["fscritical"])
+        svol = BtrfsSubvolume(storageobj=volume.storageobj, btrfs=pool, **options)
         svol.full_clean()
         svol.save()
+
         dso = StorageObject(name="default", megs=volume.storageobj.megs)
         dso.full_clean()
         dso.save()
-        dvol = BtrfsSubvolume(storageobj=dso, btrfs=pool, owner=options["owner"], fswarning=options["fswarning"], fscritical=options["fscritical"])
-        dvol.full_clean()
-        dvol.save()
-        return svol
+        dvol = pool._create_volume_for_storageobject(dso, options)
+
+        return dvol
+
+    def __init__(self, btrfs, btrfssubvolume):
+        FileSystem.__init__(self, btrfssubvolume)
+        self.btrfs = btrfs
 
     @property
     def info(self):
@@ -53,7 +66,7 @@ class Btrfs(FileSystem):
         return get_dbus_object("/btrfs")
 
     def format(self):
-        self.dbus_object.format( self.volume.volume.base.volume.path )
+        self.dbus_object.format( self.btrfs.storageobj.blockvolume.volume.path )
         self.write_fstab()
         self.mount()
         self.chown()
@@ -61,10 +74,6 @@ class Btrfs(FileSystem):
     @property
     def path(self):
         return os.path.join(volumes_settings.MOUNT_PREFIX, self.volume.fullname)
-
-    @property
-    def mounted(self):
-        return os.path.ismount(os.path.join(volumes_settings.MOUNT_PREFIX, self.volume.storageobj.filesystemvolume.volume.fullname))
 
     @classmethod
     def check_type(cls, typestring):

@@ -35,7 +35,7 @@ class Btrfs(VolumePool):
 
     @property
     def fs(self):
-        return filesystems.Btrfs(self)
+        return filesystems.Btrfs(self, self.storageobj.filesystemvolume.volume)
 
     @property
     def status(self):
@@ -48,9 +48,13 @@ class Btrfs(VolumePool):
     def _create_volume_for_storageobject(self, storageobj, options):
         if options.get("filesystem", None) not in ("btrfs", None):
             raise InvalidVolumeType(options.get("filesystem", None))
-        sv = BtrfsSubvolume(storageobj=storageobj, btrfs=self)
+        if "filesystem" in options:
+            options = options.copy()
+            del options["filesystem"]
+        sv = BtrfsSubvolume(storageobj=storageobj, btrfs=self, parent=self.storageobj, **options)
         sv.full_clean()
         sv.save()
+        return sv
 
     def is_fs_supported(self, filesystem):
         return filesystem is filesystems.Btrfs
@@ -70,55 +74,40 @@ class BtrfsSubvolume(FileSystemVolume):
             self.btrfs = self.pool.volumepool
         FileSystemVolume.save(self, *args, **kwargs)
         if install:
-            if self.name == "":
+            if self.parent is None:
                 self.fs.format()
             else:
                 self.fs.create_subvolume(self.path)
 
     def delete(self):
-        if self.name != "":
+        if self.parent is None:
+            self.fs.unmount()
+        else:
             self.fs.delete_subvolume(self.path)
         FileSystemVolume.delete(self)
 
     @property
-    def base(self):
-        return self.storageobj.volumepool.volumepool.member_set.all()[0]
-
-    @property
     def fs(self):
-        return filesystems.Btrfs(self)
+        return filesystems.Btrfs(self.btrfs, self)
 
     @property
     def status(self):
-        if self.parent is not None:
-            return self.parent.volumepool.volumepool.status
         return self.btrfs.status
 
     @property
-    def path(self):
-        return self.fs.path
-
-    @property
-    def mounted(self):
-        return self.fs.mounted
-
-    @property
-    def stat(self):
-        return self.fs.stat
+    def usedmegs(self):
+        return self.fs.stat["used"]
 
     @property
     def host(self):
-        if self.parent is not None:
-            return self.parent.volumepool.volumepool.host
         return self.btrfs.host
 
     @property
     def fullname(self):
         if self.parent is not None:
             parentname = self.parent.filesystemvolume.volume.fullname
-        else:
-            parentname = self.storageobj.name
-        return "%s/%s" % (parentname, self.storageobj.name)
+            return "%s/%s" % (parentname, self.storageobj.name)
+        return self.storageobj.name
 
     def __unicode__(self):
         return self.fullname
