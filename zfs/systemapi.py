@@ -62,11 +62,11 @@ class SystemD(BasePlugin):
 
     @deferredmethod(in_signature="ss")
     def zfs_create_volume(self, pool, volume, sender):
-        invoke(["zfs", "create", "%s/%s" % (pool, volume)])
+        invoke(["zfs", "create", volume])
 
     @deferredmethod(in_signature="ss")
     def zfs_destroy_volume(self, pool, volume, sender):
-        invoke(["zfs", "destroy", "%s/%s" % (pool, volume)])
+        invoke(["zfs", "destroy", volume])
 
     @deferredmethod(in_signature="ss")
     def zfs_create_snapshot(self, orig, snapshot, sender):
