@@ -82,9 +82,6 @@ class FileSystem(object):
             if self.volume.upper is not None:
                 raise FileSystem.WrongFS(self.name)
 
-    def clean_volume(self, volume):
-        pass
-
     @property
     def dbus_object(self):
         return get_dbus_object("/volumes")
