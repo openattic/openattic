@@ -42,6 +42,8 @@ from ifconfig.models import Host
 
 
 class AbstractVolumePoolHandler(ModelHandler):
+    order = ("storageobj__name",)
+
     def _getobj(self, obj):
         data = ModelHandler._getobj(self, obj)
         data["usedmegs"] = obj.volumepool.usedmegs
@@ -151,6 +153,7 @@ class VolumePoolProxy(ProxyModelHandler, VolumePoolHandler):
 
 class AbstractBlockVolumeHandler(ModelHandler):
     """ Actual volume handlers are supposed to inherit from this one. """
+    order = ("storageobj__name",)
 
     def _getobj(self, obj):
         data = ModelHandler._getobj(self, obj)
@@ -295,6 +298,7 @@ class FileSystemProviderProxy(ProxyModelHandler, FileSystemProviderHandler):
 
 class StorageObjectHandler(ModelHandler):
     model = StorageObject
+    order = ("name",)
 
     def _getobj(self, obj):
         data = ModelHandler._getobj(self, obj)
