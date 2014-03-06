@@ -42,7 +42,6 @@ class BaseHandler(object):
     def __init__(self, user, request=None):
         self.user = user
         self.request = request
-        logging.warning("Initializing handler " + self.handler_name)
 
     handler_name = "bogus.Handler"
 
@@ -499,11 +498,6 @@ class ProxyModelBaseHandler(ProxyHandler, ModelHandler):
 
 class ProxyModelHandler(ProxyModelBaseHandler):
     def _filter(self, kwds, order):
-        from time import time
-        thost = 0
-        tpeer = 0
-        tlocal = 0
-
         if "__fields__" in kwds:
             fields = kwds["__fields__"]
             del kwds["__fields__"]
@@ -514,20 +508,14 @@ class ProxyModelHandler(ProxyModelBaseHandler):
         result = []
         for instance in db_objects:
             try:
-                start = time()
                 peer = self._find_target_host_from_model_instance(instance)
-                thost += time() - start
             except RuntimeError:
                 continue
             if peer is None:
-                start = time()
                 data = self._getobj(instance)
-                tpeer += time() - start
             else:
                 try:
-                    start = time()
                     data = self._convert_datetimes(self._get_proxy_object(peer).get(instance.id))
-                    tlocal += time() - start
                 except socket.error, err:
                     if err.errno in (errno.ECONNREFUSED, errno.ECONNABORTED, errno.ECONNRESET,
                             errno.EHOSTUNREACH, errno.ENETUNREACH, errno.ETIMEDOUT) or isinstance(err, socket.timeout):
@@ -541,8 +529,6 @@ class ProxyModelHandler(ProxyModelBaseHandler):
                 result.append( dict([(key, data[key]) for key in fields]) )
             else:
                 result.append( data )
-
-        logging.warning("Spent %fs looking for hosts, %fs connected to peers, %fs locally." % (thost, tpeer, tlocal))
 
         if order:
             return sorted( result, key=lambda obj: order[0] in obj and obj[order[0]] or None )

@@ -91,8 +91,6 @@ class HostDependentManager(models.Manager):
     hostfilter = "host"
 
     def get_query_set(self):
-        from time import time
-        start = time()
         objids = []
         currhost = Host.objects.get_current();
         for obj in super(HostDependentManager, self).get_query_set().all():
@@ -105,9 +103,6 @@ class HostDependentManager(models.Manager):
                     break
             if curr == currhost:
                 objids.append(obj.id)
-        stop = time()
-        import logging
-        logging.warning("Building host filter for '%s' took %f seconds" % (self.model, stop - start))
         return super(HostDependentManager, self).get_query_set().filter(id__in=objids)
 
 
