@@ -111,17 +111,6 @@ Ext.define('Ext.oa.Lio__LogicalLun_Panel', {
               title: 'Host',
               border: false,
               forceFit: true,
-              listeners: {
-                cellClick: function(self, e, eOpts, record){
-                  if (record.raw.tpg != null){
-                    self.ownerCt.ownerCt.items.items[2].store.loadData(record.data.portals);
-                  }
-                  else
-                  {
-                    self.ownerCt.ownerCt.items.items[2].store.removeAll();
-                  }
-                }
-              },
               defaults: {
                 sortable: true
               },
@@ -133,36 +122,6 @@ Ext.define('Ext.oa.Lio__LogicalLun_Panel', {
                 header: gettext("LUN ID"),
                 dataIndex: "lun_id"
               }]
-            },{
-              region: 'east',
-              xtype: 'grid',
-              width: 200,
-              split: true,
-              title: 'Portals',
-              autoHeight: true,
-              autoScroll: true,
-              border: false,
-              forceFit: true,
-              store: (function(){
-                var store = new Ext.data.JsonStore({
-                  fields: ["__unicode__", "id", "app", "obj",
-                    {name:"ip", mapping:"__unicode__", convert:function(val, rec){
-                      return rec.data.__unicode__.split(":")[0];
-                    }},
-                    {name:"port", mapping:"__unicode__", convert:function(val, rec){
-                      return rec.data.__unicode__.split(":")[1];
-                    }}
-                  ]
-                });
-                return store;
-              }()),
-              columns: [{
-              header: gettext("IP"),
-              dataIndex: "ip"
-              },{
-              header: gettext("Port"),
-              dataIndex: "port"
-              }],
             }],
             buttons: [{ // Button Add und Remove
               text: 'Hostlist',
@@ -327,7 +286,7 @@ Ext.define('Ext.oa.Lio__LogicalLun_Panel', {
               ref: 'lio_lun_edit_cancel',
               id: 'lio_lun_edit_cancel',
               handler: function(self){
-                var sel = editwin.items.items[0].items.items[1].items.items[0].getSelectionModel();
+                var sel = editwin.items.items[0].items.items[0].items.items[0].getSelectionModel();
                 if( sel.hasSelection() ){
                   self.ownerCt.ownerCt.getEl().mask(gettext("Loading..."));
                   lio__HostACL.remove(sel.selected.items[0].data.id,
