@@ -17,7 +17,7 @@ window.RECORDED_COMMANDS = [];
 Ext.onReady(function(){
   for( var id = 0; id < Ext.Direct.providers.items.length; id++ ){
     Ext.Direct.providers.items[id].on("beforecall", function( provider, opt ){
-      if( !window.RECORDING || ["create", "set", "set_ext", "remove"].indexOf(opt.method) == -1 )
+      if( !window.RECORDING || ["create", "create_volume", "set", "set_ext", "remove"].indexOf(opt.method) == -1 )
         return;
       var methstr = opt.method;
       var obj = opt.action.split("__");
