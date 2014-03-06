@@ -45,7 +45,15 @@ Ext.define('Ext.oa.Lio__LogicalLun_Panel', {
       }
     });
   }()),
-  buttons: [{ // Edit Button für die LUN's
+  buttons: [{
+    text: "",
+    icon: MEDIA_URL + "/icons2/16x16/actions/reload.png",
+    tooltip: gettext('Reload'),
+    minWidth: 16,
+    handler: function(){
+      this.ownerCt.ownerCt.store.load();
+    }
+  }, {
     text: 'Edit LUN',
     icon: MEDIA_URL + "/icons2/16x16/actions/edit-redo.png",
     handler: function(self){
