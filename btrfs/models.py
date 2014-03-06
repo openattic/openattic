@@ -51,6 +51,8 @@ class Btrfs(VolumePool):
         if "filesystem" in options:
             options = options.copy()
             del options["filesystem"]
+        storageobj.megs = self.storageobj.megs
+        storageobj.save()
         sv = BtrfsSubvolume(storageobj=storageobj, btrfs=self, parent=self.storageobj, **options)
         sv.full_clean()
         sv.save()

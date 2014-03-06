@@ -52,6 +52,8 @@ class Zpool(VolumePool):
         if "filesystem" in options:
             options = options.copy()
             del options["filesystem"]
+        storageobj.megs = self.storageobj.megs
+        storageobj.save()
         zfs = Zfs(storageobj=storageobj, zpool=self, parent=self.storageobj, **options)
         zfs.full_clean()
         zfs.save()
