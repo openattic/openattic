@@ -68,12 +68,5 @@
         "fields": {
             "name": "nagios3"
         }
-    },
-    {
-        "pk": 11,
-        "model": "sysutils.initscript",
-        "fields": {
-            "name": "iscsitarget"
-        }
     }
 ]
