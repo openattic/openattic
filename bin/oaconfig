@@ -336,7 +336,7 @@ EOF
 
 	dbshell)
 		if which sudo > /dev/null; then
-			DBNAME="`grep name /etc/openattic/database.ini  | cut -d= -f2`"
+			DBNAME="`grep '^name' /etc/openattic/database.ini  | cut -d= -f2`"
 			sudo -u postgres -s `which psql` $DBNAME
 		else
 			echo "Please install sudo for this command to work."
