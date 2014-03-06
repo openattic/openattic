@@ -58,7 +58,7 @@ class SystemD(BasePlugin):
 
     @deferredmethod(in_signature="sss")
     def zpool_format(self, devpath, label, path, sender):
-        invoke(["zpool", "create", "-m", path, label, devpath])
+        invoke(["zpool", "create", "-f", "-m", path, label, devpath])
 
     @deferredmethod(in_signature="ss")
     def zfs_create_volume(self, pool, volume, sender):
