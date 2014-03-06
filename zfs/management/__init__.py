@@ -20,6 +20,7 @@ from django.contrib.auth.models import User
 
 from systemd import get_dbus_object, dbus_to_python
 from ifconfig.models import Host
+from volumes.models import StorageObject, FileSystemVolume
 from zfs.models import Zpool, Zfs, size_to_megs
 
 def update_disksize(**kwargs):
@@ -34,37 +35,45 @@ def update_disksize(**kwargs):
             zvol_name  = None
 
         try:
-            zpool = Zpool.objects.get(name=zpool_name)
             print "Found existing ZPool", zpool_name
+            zpool = Zpool.objects.get(storageobj__name=zpool_name)
+            zp_so = zpool.storageobj
         except Zpool.DoesNotExist:
             print "Found new ZPool", zpool_name
-            zpool = Zpool(name=zpool_name, is_origin=True, megs=megs, host=Host.objects.get_current())
+            zp_so = StorageObject(name=zpool_name, is_origin=True, megs=megs)
+            zp_so.full_clean()
+            zp_so.save()
+            zpool = Zpool(storageobj=zp_so, host=Host.objects.get_current())
             zpool.full_clean()
             zpool.save()
 
         if zvol_name is None:
-            zpool.megs = megs
-            zpool.full_clean()
-            zpool.save()
+            zp_so.megs = megs
+            zp_so.full_clean()
+            zp_so.save()
             try:
-                rootvol = zpool.zfs_set.get(name="")
-            except Zfs.DoesNotExist:
+                rootvol = zp_so.filesystemvolume.volume
+            except FileSystemVolume.DoesNotExist:
                 print "Root volume for zpool %s is missing, creating it" % zpool_name
-                rootvol = Zfs(name="", pool=zpool, host=Host.objects.get_current(), owner=admin)
-            rootvol.megs = zpool.megs
-            rootvol.full_clean()
-            rootvol.save(database_only=True)
+                rootvol = Zfs(storageobj=zp_so, zpool=zpool, host=Host.objects.get_current(), owner=admin)
+                rootvol.full_clean()
+                rootvol.save(database_only=True)
         else:
             try:
-                zfs = Zfs.objects.get(name=zvol_name, pool=zpool)
                 print "Found existing ZFS Volume", zvol_name
+                zfs = Zfs.objects.get(storageobj__name=zvol_name, zpool=zpool)
+                zfs_so = zfs.storageobj
+                zfs_so.megs = megs
+                zfs_so.full_clean()
+                zfs_so.save()
             except Zfs.DoesNotExist:
                 print "Found new ZFS Volume", zvol_name
-                zfs = Zfs(name=zvol_name, pool=zpool, host=Host.objects.get_current(), owner=admin)
-
-            zfs.megs = megs
-            zfs.full_clean()
-            zfs.save(database_only=True)
+                zfs_so = StorageObject(name=zvol_name, megs=megs)
+                zfs_so.full_clean()
+                zfs_so.save()
+                zfs = Zfs(storageobj=zfs_so, zpool=zpool, host=Host.objects.get_current(), owner=admin)
+                zfs.full_clean()
+                zfs.save(database_only=True)
 
 
 sysutils.models.post_install.connect(update_disksize, sender=sysutils.models)
