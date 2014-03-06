@@ -34,7 +34,7 @@ Ext.define('volumes__mdraid_Array_model', {
           directFn: volumes__BlockVolume.filter,
           extraParams: {
             kwds: {
-              upper: record.raw.volume
+              upper: record.raw.storageobj.id
             }
           },
           paramOrder: ["kwds"]
@@ -46,9 +46,7 @@ Ext.define('volumes__mdraid_Array_model', {
       record.set("leaf", true);
       rootNode = this.callParent(arguments);
     }
-    if( rootNode.get("type").startsWith("raid") ){
-      rootNode.set("type", "RAID-" + record.get("type").substr(4));
-    }
+    rootNode.set("type",    toUnicode(record.raw.volume_type));
     rootNode.set("icon",    MEDIA_URL + '/oxygen/16x16/actions/distribute-horizontal-center.png');
     rootNode.set("percent", null);
     rootNode.commit();
