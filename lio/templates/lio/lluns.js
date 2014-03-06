@@ -16,11 +16,7 @@ Ext.namespace("Ext.oa");
 Ext.define('Ext.oa.Lio__LogicalLun_Panel', {
 
   alias: 'widget.lio__logicallun_panel',
-  extend: 'Ext.oa.ShareGridPanel',
-  api: volumes__BlockVolume,
-  allowEdit: false, // Default Edit Button deaktiviert 
-  allowDelete: false, // Default Delete Button deaktiviert
-  allowAdd: false, // Default Add Button deaktiviert
+  extend: 'Ext.grid.Panel',
   store: (function(){
     Ext.define('blockdevice_volumes', {
       extend: 'Ext.data.Model',
@@ -38,7 +34,10 @@ Ext.define('Ext.oa.Lio__LogicalLun_Panel', {
       proxy: {
         type: 'direct',
         directFn: volumes__BlockVolume.filter,
-        extraParams: { kwds: { "upper_id__isnull": true }},
+        extraParams: { kwds: {
+          storageobj__filesystemvolume__isnull: true,
+          storageobj__volumepool__isnull: true
+        }},
         paramOrder: ["kwds"],
         startParam: undefined,
         limitParam: undefined,
