@@ -37,20 +37,43 @@ Ext.define('Ext.oa.Auth__User_Panel', {
           width: 350,
           items: {
             xtype: "grid",
+            forceFit: true,
             store: (function(){
               Ext.define('rpcd_volumes_of_user_store', {
                 extend: 'Ext.data.Model',
-                fields: [
-                  {name: 'name'}
-                ]
+                fields: ['__unicode__', 'name', 'megs', 'id', {
+                  name: 'fswarning',
+                  mapping: 'filesystemvolume',
+                  sortType: 'asFloat',
+                  convert: function( val, row ){
+                    return val && val.fswarning;
+                  }
+                }, {
+                  name: 'fscritical',
+                  mapping: 'filesystemvolume',
+                  sortType: 'asFloat',
+                  convert: function( val, row ){
+                    return val && val.fscritical;
+                  }
+                }, {
+                  name: 'fsused',
+                  mapping: 'filesystemvolume',
+                  sortType: 'asFloat',
+                  convert: function( val, row ){
+                    if( val === null ){
+                      return -1; // fake to sort unknown values always at the bottom
+                    }
+                    return (val.usedmegs / row.data.megs * 100 ).toFixed(2);
+                  }
+                }],
               });
               return Ext.create('Ext.data.Store', {
                 model: "rpcd_volumes_of_user_store",
                 autoLoad: true,
                 proxy: {
                   type: 'direct',
-                  directFn: lvm__LogicalVolume.filter,
-                  extraParams: { "owner": sel.data.id },
+                  directFn: volumes__StorageObject.filter,
+                  extraParams: { "filesystemvolume__owner__id": sel.data.id },
                   startParam: undefined,
                   limitParam: undefined,
                   pageParam:  undefined
@@ -61,9 +84,35 @@ Ext.define('Ext.oa.Auth__User_Panel', {
               sortable: true
             },
             columns: [{
-              header: gettext('Volume Name'),
-              width: 250,
-              dataIndex: "name"
+              header: "Volume",
+              width: 200,
+              dataIndex: "__unicode__"
+            }, {
+              header: "Used",
+              width: 150,
+              dataIndex: "fsused",
+              align: 'right',
+              renderer: function( val, x, store ){
+                if( !val || val === -1 ){
+                  return '';
+                }
+                var id = Ext.id();
+
+                Ext.defer(function(){
+                  if( Ext.get(id) === null ){
+                    return;
+                  }
+                  new Ext.ProgressBar({
+                    renderTo: id,
+                    value: val/100.0,
+                    text:  Ext.String.format("{0}%", val),
+                    cls:   ( val > store.data.fscritical ? "lv_used_crit" :
+                            (val > store.data.fswarning  ? "lv_used_warn" : "lv_used_ok"))
+                  });
+                  }, 25);
+
+                return '<span id="' + id + '"></span>';
+              }
             }]
           }
         } );
