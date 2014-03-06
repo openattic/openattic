@@ -125,7 +125,15 @@ Ext.define('Ext.oa.Ifconfig__HostGroup_Host_TreePanel', {
           ddGroup         : 'host',
           dropGroup       : 'hostgroup'
         },
-        copy: true
+        copy: true,
+        listeners: {
+          drop: function(node, data, overModel, dropPosition, eOpts){
+            var hostId = overModel.raw.id;
+            var hostGroupId = data.records[0].raw.id;
+            ifconfig__HostGroup.set(hostGroupId, {'hosts__add':
+              [{'app': 'ifconfig', 'obj': 'Host', 'id': hostId}]});
+          }
+        }
       }
     }));
     this.callParent(arguments)
