@@ -56,8 +56,9 @@ Ext.define('Ext.oa.Lio__LogicalLun_Panel', {
   }, {
     text: 'Edit LUN',
     icon: MEDIA_URL + "/icons2/16x16/actions/edit-redo.png",
-    handler: function(self){
-      var sm = self.scope.getSelectionModel();
+    handler: function(btn){
+      var self = btn.ownerCt.ownerCt;
+      var sm = self.getSelectionModel();
       if (sm.selected.items.length === 0){
         Ext.Msg.alert ("Warning","Please select a LUN you want to edit");
         return;
