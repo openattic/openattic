@@ -78,6 +78,7 @@ class BtrfsSubvolume(FileSystemVolume):
                 self.fs.format()
             else:
                 self.fs.create_subvolume(self.path)
+            self.fs.chown()
 
     def delete(self):
         if self.parent is None:
