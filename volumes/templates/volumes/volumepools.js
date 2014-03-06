@@ -59,7 +59,7 @@ Ext.define('volumes__volumes_VolumePool_model', {
           directFn: volumes__BlockVolume.filter,
           extraParams: {
             kwds: {
-              upper: record.raw.volumepool
+              upper: record.raw.storageobj.id
             }
           },
           paramOrder: ["kwds"]
