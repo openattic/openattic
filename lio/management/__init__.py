@@ -18,9 +18,11 @@ import re
 import os
 import os.path
 
+from django.db.models import signals
+
 import sysutils.models
 
-from ifconfig.models import Host
+from ifconfig.models import Host, IPAddress
 
 
 def create_fc_objects(**kwargs):
@@ -69,3 +71,13 @@ def create_fc_objects(**kwargs):
         host.target_set.get(wwn=tgt_wwn).delete()
 
 sysutils.models.post_install.connect(create_fc_objects, sender=sysutils.models)
+
+
+def create_ip_portals(instance, **kwargs):
+    if not instance.primary_address:
+        return
+    if instance.portal_set.count() > 0:
+        return
+    instance.portal_set.create()
+
+signals.post_save.connect(create_ip_portals, sender=IPAddress)
