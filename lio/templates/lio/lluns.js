@@ -202,7 +202,11 @@ Ext.define('Ext.oa.Lio__LogicalLun_Panel', {
                         autoLoad: true,
                         proxy: {
                           type: 'direct',
-                          directFn: ifconfig__Host.ids,
+                          directFn: ifconfig__Host.ids_filter,
+                          extraParams: { kwds: {
+                            initiator__isnull: false
+                          }},
+                          paramOrder: ["kwds"],
                           startParam: undefined,
                           limitParam: undefined,
                           pageParam:  undefined
