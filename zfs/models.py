@@ -84,6 +84,7 @@ class Zfs(FileSystemVolume):
                 self.fs.format()
             else:
                 self.fs.create_subvolume(self.fullname)
+            self.fs.chown()
 
     def delete(self):
         FileSystemVolume.delete(self)
