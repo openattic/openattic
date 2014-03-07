@@ -193,7 +193,8 @@ Ext.define('Ext.oa.ShareGridPanel', {
           directFn: self.api.filter,
           startParam: undefined,
           limitParam: undefined,
-          pageParam:  undefined
+          pageParam:  undefined,
+          sortParam:  undefined
         },
         fields: (function(){
           var cols = ["id", "__unicode__"],
