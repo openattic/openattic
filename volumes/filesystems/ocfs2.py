@@ -37,9 +37,6 @@ class Ocfs2(FileSystem):
         self.mount()
         self.chown()
 
-    def online_resize_available(self, grow):
-        return False
-
     @classmethod
     def check_type(cls, typestring):
         return False
