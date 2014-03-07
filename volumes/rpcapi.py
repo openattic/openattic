@@ -341,6 +341,8 @@ class StorageObjectHandler(ModelHandler):
 
         return data
 
+    def resize(self, id, newmegs):
+        return StorageObject.objects.get(id=id).resize(newmegs)
 
 class StorageObjectProxy(ProxyModelHandler, StorageObjectHandler):
     def _find_target_host_from_model_instance(self, model):
@@ -350,6 +352,9 @@ class StorageObjectProxy(ProxyModelHandler, StorageObjectHandler):
 
     def create(self, data):
         return self.backing_handler.create(data)
+
+    def resize(self, id, newmegs):
+        return self._call_singlepeer_method("resize", id, newmegs)
 
 
 class InitScriptHandler(BaseHandler):
