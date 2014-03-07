@@ -126,13 +126,20 @@ class StorageObject(models.Model):
             # if we're shrinking stuff, reverse the order
             objs.reverse()
 
-        for obj in objs:
-            if obj is None:
-                continue
-            if oldmegs > newmegs:
-                obj.shrink(oldmegs, newmegs)
-            else:
-                obj.grow(oldmegs, newmegs)
+        get_dbus_object("/").start_queue()
+        try:
+            for obj in objs:
+                if obj is None:
+                    continue
+                if oldmegs > newmegs:
+                    obj.shrink(oldmegs, newmegs)
+                else:
+                    obj.grow(oldmegs, newmegs)
+        except NotImplementedError:
+            get_dbus_object("/").discard_queue()
+            raise
+        else:
+            get_dbus_object("/").run_queue_background()
 
     def __unicode__(self):
         return self.name
