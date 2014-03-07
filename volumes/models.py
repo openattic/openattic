@@ -135,7 +135,7 @@ class StorageObject(models.Model):
                     obj.shrink(oldmegs, newmegs)
                 else:
                     obj.grow(oldmegs, newmegs)
-        except NotImplementedError:
+        except:
             get_dbus_object("/").discard_queue()
             raise
         else:
