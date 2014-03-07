@@ -346,13 +346,13 @@ class LogicalVolume(BlockVolume):
 
     def shrink( self, oldmegs, newmegs ):
         lvm_signals.pre_shrink.send(sender=LogicalVolume, instance=self)
-        self.lvm.lvresize(self._jid, self.path, newmegs, False)
+        self.lvm.lvresize(self.path, newmegs, False)
         lvm_signals.post_shrink.send(sender=LogicalVolume, instance=self)
         self._lvm_info = None # outdate cached information
 
     def grow( self, oldmegs, newmegs ):
         lvm_signals.pre_grow.send(sender=LogicalVolume, instance=self)
-        self.lvm.lvresize(self._jid, self.path, newmegs, True)
+        self.lvm.lvresize(self.path, newmegs, True)
         lvm_signals.post_grow.send(sender=LogicalVolume, instance=self)
         self._lvm_info = None # outdate cached information
 
