@@ -23,10 +23,12 @@ Ext.define('Ext.oa.Ifconfig__HostGroup_Panel', {
       items: [{
         xtype :'ifconfig__hostgroup_hostgroup_treepanel',
         id    : 'ifconfig__hostgroup_hostgroup_treepanel_inst',
+        itemId: 'hostgroup_treepanel',
         region: 'center'
       },{
         xtype : 'ifconfig__hostgroup_host_treepanel',
         id    : 'ifconfig__hostgroup_host_treepanel_inst',
+        itemId: 'host_treepanel',
         region: 'east',
         width : (Ext.core.Element.getViewWidth() - 200) / 2
       }]
