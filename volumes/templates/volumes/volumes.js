@@ -606,6 +606,7 @@ Ext.define('Ext.oa.volumes__Volume_Panel', {
         }
       }, {
         text: gettext("Add Volume"),
+        icon: MEDIA_URL + "/icons2/16x16/actions/add.png",
         listeners: {
           click: function(self, e, eOpts){
             var addwin = Ext.oa.getAddVolumeWindow(Ext.apply(config, {
@@ -616,6 +617,7 @@ Ext.define('Ext.oa.volumes__Volume_Panel', {
         }
       }, {
         text: gettext("Delete Volume"),
+        icon: MEDIA_URL + "/icons2/16x16/actions/remove.png",
         handler: function(self){
           var sel = volumePanel.getSelectionModel().getSelection()[0];
           Ext.Msg.confirm(
