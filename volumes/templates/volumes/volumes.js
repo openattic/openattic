@@ -538,11 +538,13 @@ Ext.define('Ext.oa.volumes__Volume_Panel', {
         }
       }, {
         text: gettext("Expand all"),
+        icon: MEDIA_URL + "/extjs/resources/ext-theme-classic/images/tree/elbow-end-plus.gif",
         handler: function(self){
           volumePanel.store.getRootNode().expand(true);
         }
       }, {
         text: gettext("Collapse all"),
+        icon: MEDIA_URL + "/extjs/resources/ext-theme-classic/images/tree/elbow-end-minus.gif",
         handler: function(self){
             volumePanel.store.getRootNode().collapseChildren(true);
         }
