@@ -63,7 +63,7 @@ Ext.define('volumes__volumes_StorageObject_model', {
       kwds[ window.StorageObjectHandlers[vptype.app][vptype.obj].volumes_filter ] = record.raw.volumepool.id;
       var store = Ext.create("Ext.oa.SwitchingTreeStore", {
         model: 'volumes__volumes_StorageObject_model',
-        root: record.data,
+        root: record.raw,
         sorters: [{
           property: "__unicode__",
           root: "data"
@@ -92,7 +92,7 @@ Ext.define('volumes__volumes_StorageObject_model', {
         kwds[ window.StorageObjectHandlers[voltype.app][voltype.obj].snapshots_filter ] = record.raw.blockvolume.id;
         var store = Ext.create("Ext.oa.SwitchingTreeStore", {
           model: 'volumes__volumes_StorageObject_model',
-          root: record.data,
+          root: record.raw,
           sorters: [{
             property: "__unicode__",
             root: "data"
