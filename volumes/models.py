@@ -114,6 +114,26 @@ class StorageObject(models.Model):
 
         return models.Model.delete(self)
 
+    def resize(self, megs):
+        oldmegs = self.megs
+        newmegs = megs
+        self.megs = newmegs
+        self.save()
+
+        objs = [self.blockvolume_or_none, self.volumepool_or_none, self.filesystemvolume_or_none]
+
+        if oldmegs > newmegs:
+            # if we're shrinking stuff, reverse the order
+            objs.reverse()
+
+        for obj in objs:
+            if obj is None:
+                continue
+            if oldmegs > newmegs:
+                obj.shrink(oldmegs, newmegs)
+            else:
+                obj.grow(oldmegs, newmegs)
+
     def __unicode__(self):
         return self.name
 
@@ -198,7 +218,11 @@ class VolumePool(models.Model):
         get_dbus_object("/").run_queue_background()
         return vol
 
+    def grow(self, oldmegs, newmegs):
+        raise NotImplementedError("%s does not support grow" % self.__class__)
 
+    def shrink(self, oldmegs, newmegs):
+        raise NotImplementedError("%s does not support shrink" % self.__class__)
 
 class AbstractVolume(models.Model):
     """ Abstract base class for BlockVolume and FileSystemVolume. """
@@ -224,6 +248,12 @@ class AbstractVolume(models.Model):
             self.post_install()
 
         return res
+
+    def grow(self, oldmegs, newmegs):
+        raise NotImplementedError("%s does not support grow" % self.__class__)
+
+    def shrink(self, oldmegs, newmegs):
+        raise NotImplementedError("%s does not support shrink" % self.__class__)
 
 class BlockVolume(AbstractVolume):
     """ Everything that is a /dev/something.
