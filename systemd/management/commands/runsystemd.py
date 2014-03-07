@@ -127,6 +127,12 @@ class SystemD(dbus.service.Object):
         finally:
             del self.jobs[sender]
 
+    @dbus.service.method(settings.DBUS_IFACE_SYSTEMD, in_signature="", out_signature="", sender_keyword="sender")
+    def discard_queue(self, sender):
+        if sender not in self.jobs:
+            return
+        del self.jobs[sender]
+
     def _cleanup_procs(self, sig, frame):
         signal.signal(signal.SIGCHLD, self._cleanup_procs)
         deadprocs = []
