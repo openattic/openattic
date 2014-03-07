@@ -310,9 +310,9 @@ class LogicalVolume(BlockVolume):
 
     def _create_snapshot_for_storageobject(self, storageobj, options):
         snap_lv = LogicalVolume(storageobj=storageobj, vg=self.vg, snapshot=self)
-        lv.full_clean()
-        lv.save()
-        return lv
+        snap_lv.full_clean()
+        snap_lv.save()
+        return snap_lv
 
     ##########################
     ### PROCESSING METHODS ###
