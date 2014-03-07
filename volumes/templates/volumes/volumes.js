@@ -16,7 +16,13 @@ Ext.namespace("Ext.oa");
 window.StorageObjectHandlers = {
   lvm: {
     VolumeGroup: {
-      volumes_filter: "blockvolume__logicalvolume__vg__id"
+      volumes_filter: "blockvolume__logicalvolume__vg__id",
+      extra_params: {
+        blockvolume__logicalvolume__snapshot__isnull: true
+      }
+    },
+    LogicalVolume: {
+      snapshots_filter: "blockvolume__logicalvolume__snapshot__id"
     }
   },
   zfs: {
@@ -49,10 +55,10 @@ Ext.define('volumes__volumes_StorageObject_model', {
     'fswarning', 'fscritical', 'host', 'path', 'poolname', 'ownername'
   ],
   createNode: function(record){
-    var rootNode;
+    var rootNode,
+        kwds = {};
     if( record.raw.volumepool !== null ){
-      var vptype = record.raw.volumepool.volumepool_type,
-          kwds = {};
+      var vptype = record.raw.volumepool.volumepool_type;
       Ext.apply(kwds, window.StorageObjectHandlers[vptype.app][vptype.obj].extra_params || {});
       kwds[ window.StorageObjectHandlers[vptype.app][vptype.obj].volumes_filter ] = record.raw.volumepool.id;
       var store = Ext.create("Ext.oa.SwitchingTreeStore", {
@@ -77,16 +83,43 @@ Ext.define('volumes__volumes_StorageObject_model', {
       if( record.raw.volumepool.usedmegs !== null )
         rootNode.set("percent", (record.raw.volumepool.usedmegs / record.raw.megs * 100).toFixed(2));
     }
+    else if( record.raw.blockvolume !== null ){
+      var voltype = record.raw.blockvolume.volume_type;
+      if( !record.raw.blockvolume.snapshot &&
+          typeof window.StorageObjectHandlers[voltype.app][voltype.obj] !== "undefined" &&
+          typeof window.StorageObjectHandlers[voltype.app][voltype.obj].snapshots_filter !== "undefined" ){
+        // May or may not haz Snapshots
+        kwds[ window.StorageObjectHandlers[voltype.app][voltype.obj].snapshots_filter ] = record.raw.blockvolume.id;
+        var store = Ext.create("Ext.oa.SwitchingTreeStore", {
+          model: 'volumes__volumes_StorageObject_model',
+          root: record.data,
+          sorters: [{
+            property: "__unicode__",
+            root: "data"
+          }],
+          proxy: {
+            type: "direct",
+            directFn: volumes__StorageObject.filter,
+            extraParams: {
+              kwds: kwds
+            },
+            paramOrder: ["kwds"]
+          }
+        });
+        rootNode = store.getRootNode();
+      }
+      else{
+        record.set("leaf", true);
+        rootNode = this.callParent(arguments);
+      }
+      rootNode.set("type", toUnicode(voltype));
+      rootNode.set("path", record.raw.blockvolume.path);
+      rootNode.set("host", toUnicode(record.raw.blockvolume.host));
+      rootNode.set("percent",  null);
+    }
     else{
       record.set("leaf", true);
       rootNode = this.callParent(arguments);
-      if( record.raw.blockvolume !== null ){
-        var voltype = record.raw.blockvolume.volume_type;
-        rootNode.set("type", toUnicode(voltype));
-        rootNode.set("path", record.raw.blockvolume.path);
-        rootNode.set("host", toUnicode(record.raw.blockvolume.host));
-        rootNode.set("percent",  null);
-      }
     }
     if( record.raw.filesystemvolume !== null ){
       var voltype = record.raw.filesystemvolume.volume_type;
