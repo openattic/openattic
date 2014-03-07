@@ -481,6 +481,12 @@ class FileSystemProvider(FileSystemVolume):
     def __unicode__(self):
         return self.storageobj.name
 
+    def grow(self, oldmegs, newmegs):
+        return self.fs.grow(oldmegs, newmegs)
+
+    def shrink(self, oldmegs, newmegs):
+        return self.fs.grow(oldmegs, newmegs)
+
 
 def __delete_filesystemprovider(instance, **kwargs):
     instance.fs.unmount()
