@@ -643,6 +643,74 @@ Ext.define('Ext.oa.volumes__Volume_Panel', {
           }
         }
       }, {
+        text: gettext("Create Snapshot"),
+        icon: MEDIA_URL + "/icons2/16x16/actions/gtk-execute.png",
+        listeners: {
+          click: function(self, e, eOpts){
+            var sel = volumePanel.getSelectionModel().getSelection()[0];
+            var win = new Ext.Window(Ext.apply({
+              layout: "fit",
+              title: gettext('Create Snapshot'),
+              defaults: { autoScroll: true },
+              height: 200,
+              width: 500,
+              items: [{
+                xtype: "form",
+                defaults: {
+                  xtype: "textfield",
+                  anchor: '-20',
+                  defaults: {
+                    anchor: "0px"
+                  }
+                },
+                items: [{
+                  xtype: 'textfield',
+                  name:  "name",
+                  fieldLabel: gettext('Name'),
+                  value: sel.raw.name + '_' + Ext.Date.format(new Date(), "Y-m-d-H-i-s"),
+                }, {
+                  xtype: 'numberfield',
+                  fieldLabel: gettext('MB'),
+                  allowBlank: false,
+                  name: "megs",
+                  minValue: 100,
+                  maxValue: sel.raw.megs,
+                  enableKeyEvents: true,
+                  value: sel.raw.megs
+                }],
+                buttons: [{
+                  text:  gettext('Create Snapshot'),
+                  icon: MEDIA_URL + "/icons2/16x16/actions/edit-redo.png",
+                  handler: function(btn){
+                    var frm = btn.ownerCt.ownerCt;
+                    if( !frm.getForm().isValid() ){
+                      return;
+                    }
+                    var values = frm.getValues();
+                    frm.getEl().mask();
+                    volumes__StorageObject.create_snapshot(sel.raw.id, values["name"], values["megs"], {}, function(result, response){
+                      if( response.type === "exception" ){
+                        frm.getEl().unmask();
+                      }
+                      else{
+                        win.close();
+                        sel.store.load();
+                      }
+                    });
+                  }
+                },{
+                  text: gettext('Cancel'),
+                  icon: MEDIA_URL + "/icons2/16x16/actions/gtk-cancel.png",
+                  handler: function(){
+                    win.close();
+                  }
+                }]
+              }]
+            }));
+            win.show();
+          }
+        }
+      }, {
         text: gettext("Add Volume"),
         icon: MEDIA_URL + "/icons2/16x16/actions/add.png",
         listeners: {
