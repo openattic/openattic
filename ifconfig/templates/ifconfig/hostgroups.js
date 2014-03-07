@@ -81,7 +81,19 @@ Ext.define('Ext.oa.Ifconfig__HostGroup_HostGroup_TreePanel', {
               [{'app': 'ifconfig', 'obj': 'Host', 'id': hostId}]});
           }
         }
-      }
+      },
+      buttons: [{
+        text     : '',
+        minWidth : 16,
+        icon     : MEDIA_URL + "/icons2/16x16/actions/reload.png",
+        tooltop  : gettext('Reload'),
+        listeners: {
+          click: function(self, e, eOpts){
+            store.load();
+            console.log(self.ownerCt.ownerCt.getStore());
+          }
+        }
+      }]
     }));
 
     this.callParent(arguments);
