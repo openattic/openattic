@@ -142,6 +142,18 @@ class StorageObject(models.Model):
         else:
             get_dbus_object("/").run_queue_background()
 
+    def create_snapshot(self, name, megs, options):
+        for obj in (self.filesystemvolume_or_none, self.blockvolume_or_none):
+            if obj is not None:
+                try:
+                    vol = obj.create_snapshot(name, megs, options)
+                except NotImplementedError:
+                    pass
+                else:
+                    return vol.storageobj
+
+        raise NotImplementedError("This volume cannot be snapshotted")
+
     def __unicode__(self):
         return self.name
 
