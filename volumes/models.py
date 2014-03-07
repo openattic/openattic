@@ -237,6 +237,8 @@ class VolumePool(models.Model):
     def shrink(self, oldmegs, newmegs):
         raise NotImplementedError("%s does not support shrink" % self.__class__)
 
+
+
 class AbstractVolume(models.Model):
     """ Abstract base class for BlockVolume and FileSystemVolume. """
     storageobj  = models.OneToOneField(StorageObject)
@@ -262,11 +264,49 @@ class AbstractVolume(models.Model):
 
         return res
 
+    def _create_snapshot_for_storageobject(self, storageobj, options):
+        raise NotImplementedError("%s does not support snapshots" % self.__class__)
+
+    def _create_snapshot(self, name, megs, options):
+        """ Actual volume creation. """
+        storageobj = StorageObject(name=name, megs=megs)
+        storageobj.full_clean()
+        storageobj.save()
+
+        try:
+            vol = self._create_snapshot_for_storageobject(storageobj, options)
+
+            if isinstance(vol, FileSystemVolume) and not bool(options.get("filesystem", None)):
+                # TODO: vol = imagedatei in dem ding
+                pass
+            elif isinstance(vol, BlockVolume) and bool(options.get("filesystem", None)):
+                fsclass = filesystems.get_by_name(options["filesystem"])
+                vol = fsclass.format_blockvolume(vol, options)
+        except (ValidationError, NotImplementedError):
+            storageobj.delete()
+            raise
+
+        return vol
+
+    def create_snapshot(self, name, megs, options):
+        """ Create a snapshot of this volume. """
+        get_dbus_object("/").start_queue()
+        try:
+            vol = self._create_snapshot(name, megs, options)
+        except:
+            get_dbus_object("/").discard_queue()
+            raise
+        else:
+            get_dbus_object("/").run_queue_background()
+            return vol
+
     def grow(self, oldmegs, newmegs):
         raise NotImplementedError("%s does not support grow" % self.__class__)
 
     def shrink(self, oldmegs, newmegs):
         raise NotImplementedError("%s does not support shrink" % self.__class__)
+
+
 
 class BlockVolume(AbstractVolume):
     """ Everything that is a /dev/something.
