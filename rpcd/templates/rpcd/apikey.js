@@ -50,7 +50,7 @@ Ext.define('Ext.oa.ApiKey_Panel', {
         var sel = sm.selected.items[0];
         __main__.fqdn(function(provider, response){
           Ext.Msg.prompt(gettext('API URL'),
-            gettext('Use this URL to connect to the openATTIC API using the API Key you selected.') +
+            gettext('Use this URL to connect to the openATTIC API using the API Key you selected.') + ' ' +
             gettext('Note that the input field only allows for easier copy-paste, any value you enter here will be ignored.'),
             null, null, false,
             Ext.String.format("http://__:{0}@{1}:31234/", sel.data.apikey, response.result)
