@@ -345,7 +345,7 @@ class StorageObjectHandler(ModelHandler):
         return StorageObject.objects.get(id=id).resize(newmegs)
 
     def create_snapshot(self, id, name, megs, options):
-        return StorageObject.objects.get(id=id).create_snapshot(name, megs, options)
+        return self._idobj(StorageObject.objects.get(id=id).create_snapshot(name, megs, options))
 
 class StorageObjectProxy(ProxyModelHandler, StorageObjectHandler):
     def _find_target_host_from_model_instance(self, model):
