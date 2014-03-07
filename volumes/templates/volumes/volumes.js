@@ -694,7 +694,7 @@ Ext.define('Ext.oa.volumes__Volume_Panel', {
                       }
                       else{
                         win.close();
-                        sel.store.load();
+                        sel.parentNode.store.load();
                       }
                     });
                   }
