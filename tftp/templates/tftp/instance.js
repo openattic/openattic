@@ -20,6 +20,7 @@ Ext.define('Ext.oa.Tftp__Instance_Panel', {
   api: tftp__Instance,
   id: "tftp__instance_panel_inst",
   title: gettext("TFTP"),
+  allowEdit: false,
   columns: [{
     header: gettext('Path'),
     width: 200,

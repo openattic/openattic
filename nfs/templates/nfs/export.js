@@ -20,6 +20,7 @@ Ext.define('Ext.oa.Nfs__Export_Panel', {
   api: nfs__Export,
   id: "nfs__export_panel_inst",
   title: "NFS",
+  allowEdit: false,
   columns: [{
     header: gettext('Address'),
     width: 100,

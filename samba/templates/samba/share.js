@@ -19,6 +19,7 @@ Ext.define('Ext.oa.Samba__Share_Panel', {
   api: samba__Share,
   id: "samba__share_panel_inst",
   title: gettext("Samba"),
+  allowEdit: false,
   window: {
     height: 450
   },

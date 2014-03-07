@@ -19,6 +19,7 @@ Ext.define('Ext.oa.Http__Export_Panel', {
   api: http__Export,
   id: "http__export_panel_inst",
   title: gettext("HTTP"),
+  allowEdit: false,
   window: {
     height: 200
   },
