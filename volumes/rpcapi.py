@@ -116,7 +116,7 @@ class VolumePoolHandler(ModelHandler):
                 if status["megs"] is not None and status["usedmegs"] is not None:
                     free_megs = status["megs"] - status["usedmegs"]
                     if free_megs >= float(min_megs):
-                        result_pools.append(self._getobj(volumepool))
+                        result_pools.append(self.get(volumepool.id))
         return result_pools
 
     def get_supported_filesystems(self, id):
