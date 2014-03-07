@@ -538,11 +538,13 @@ Ext.define('Ext.oa.volumes__Volume_Panel', {
         }
       }, {
         text: gettext("Expand all"),
+        icon: MEDIA_URL + "/extjs/resources/ext-theme-classic/images/tree/elbow-end-plus.gif",
         handler: function(self){
           volumePanel.store.getRootNode().expand(true);
         }
       }, {
         text: gettext("Collapse all"),
+        icon: MEDIA_URL + "/extjs/resources/ext-theme-classic/images/tree/elbow-end-minus.gif",
         handler: function(self){
             volumePanel.store.getRootNode().collapseChildren(true);
         }
@@ -587,7 +589,26 @@ Ext.define('Ext.oa.volumes__Volume_Panel', {
           );
         }
       }, {
+        text: gettext("Mirror"),
+        icon: MEDIA_URL + "/oxygen/16x16/actions/distribute-horizontal-center.png",
+        listeners: {
+          click: function(self, e, eOpts){
+            if(self.ownerCt.ownerCt.getSelectionModel().getSelection().length === 1){
+              var vol_selection = self.ownerCt.ownerCt.getSelectionModel().getSelection()[0];
+              if(vol_selection.$className.indexOf("BlockVolume") != -1){
+                var mirror_win = Ext.oa.getMirrorWindow(Ext.apply(config, {
+                  volume_id:    vol_selection.raw.id,
+                  volume_megs:  vol_selection.raw.megs,
+                  volumePanel:  volumePanel
+                }));
+                mirror_win.show();
+              }
+            }
+          }
+        }
+      }, {
         text: gettext("Add Volume"),
+        icon: MEDIA_URL + "/icons2/16x16/actions/add.png",
         listeners: {
           click: function(self, e, eOpts){
             var addwin = Ext.oa.getAddVolumeWindow(Ext.apply(config, {
@@ -598,6 +619,7 @@ Ext.define('Ext.oa.volumes__Volume_Panel', {
         }
       }, {
         text: gettext("Delete Volume"),
+        icon: MEDIA_URL + "/icons2/16x16/actions/remove.png",
         handler: function(self){
           var sel = volumePanel.getSelectionModel().getSelection()[0];
           Ext.Msg.confirm(
@@ -614,23 +636,6 @@ Ext.define('Ext.oa.volumes__Volume_Panel', {
               }
             }
           );
-        }
-      },{
-        text: gettext("Mirror"),
-        listeners: {
-          click: function(self, e, eOpts){
-            if(self.ownerCt.ownerCt.getSelectionModel().getSelection().length === 1){
-              var vol_selection = self.ownerCt.ownerCt.getSelectionModel().getSelection()[0];
-              if(vol_selection.$className.indexOf("BlockVolume") != -1){
-                var mirror_win = Ext.oa.getMirrorWindow(Ext.apply(config, {
-                  volume_id:    vol_selection.raw.id,
-                  volume_megs:  vol_selection.raw.megs,
-                  volumePanel:  volumePanel
-                }));
-                mirror_win.show();
-              }
-            }
-          }
         }
       }],
       forceFit: true,

@@ -22,9 +22,8 @@ Ext.define('Ext.oa.Lio__LogicalLun_Panel', {
       extend: 'Ext.data.Model',
       fields: [
         {name: "name"},
-        {name: "vg"},
+        {name: "vgname", mapping: "host", convert: toUnicode},
         {name: "status"},
-        {name: "createdate"},
         {name: "hostname", mapping: "host", convert: toUnicode}
       ]
     });
@@ -318,22 +317,16 @@ Ext.define('Ext.oa.Lio__LogicalLun_Panel', {
       editwin.show(); // editwin anzeigen
     }
   }],
+  forceFit: true,
   columns: [{ // Oberes Column Grid mit der Anzeige der LUNs und ihren Eigenschaften
     header: gettext('Volume'),
-    width: 200,
     dataIndex: "name"
   }, {
     header: gettext('Status'),
-    width:  50,
     dataIndex: "status"
   }, {
     header: gettext('Group'),
-    width:  50,
-    dataIndex: "vg.__unicode__"
-  }, {
-    header: gettext('Created'),
-    width:  50,
-    dataIndex: "createdate"
+    dataIndex: "vgname"
   }]
 });
 
