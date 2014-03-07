@@ -1266,6 +1266,7 @@ Ext.define("Ext.oa.LVM__Snapcore_Panel", {
             }
           },*/{
             text      : gettext("Delete config"),
+            icon      : MEDIA_URL + "/icons2/16x16/actions/remove.png",
             listeners : {
               click: function(self, e, eOpts){
                 if(typeof self.ownerCt.ownerCt.getSelectionModel().getSelection() !== "undefined")
