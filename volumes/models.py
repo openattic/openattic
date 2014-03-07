@@ -275,13 +275,6 @@ class AbstractVolume(models.Model):
 
         try:
             vol = self._create_snapshot_for_storageobject(storageobj, options)
-
-            if isinstance(vol, FileSystemVolume) and not bool(options.get("filesystem", None)):
-                # TODO: vol = imagedatei in dem ding
-                pass
-            elif isinstance(vol, BlockVolume) and bool(options.get("filesystem", None)):
-                fsclass = filesystems.get_by_name(options["filesystem"])
-                vol = fsclass.format_blockvolume(vol, options)
         except (ValidationError, NotImplementedError):
             storageobj.delete()
             raise
