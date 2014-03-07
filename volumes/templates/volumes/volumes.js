@@ -487,6 +487,9 @@ Ext.define("Ext.oa.volumes__volumes_add_volume_form", {
                   }));
                   settings_win.show();
                 }
+                else{
+                  config.volumePanel.refresh();
+                }
               }
               else{
                 self.ownerCt.ownerCt.getEl().unmask();
