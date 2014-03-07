@@ -479,12 +479,14 @@ Ext.define("Ext.oa.volumes__volumes_add_volume_form", {
               if(response.type !== "exception"){
                 self.ownerCt.ownerCt.ownerCt.close();
 
-                var settings_win = Ext.oa.getAdditSettingsWindow(Ext.apply(config, {
-                    volume_id:    result.id,
-                    volume_megs:  result.megs,
-                    volumePanel:  config.volumePanel
-                }));
-                settings_win.show();
+                if(window.AddVolumeSettings.length > 0){
+                  var settings_win = Ext.oa.getAdditSettingsWindow(Ext.apply(config, {
+                      volume_id:    result.id,
+                      volume_megs:  result.megs,
+                      volumePanel:  config.volumePanel
+                  }));
+                  settings_win.show();
+                }
               }
               else{
                 self.ownerCt.ownerCt.getEl().unmask();
