@@ -64,13 +64,8 @@ class Xfs(FileSystem):
         self.mount()
         self.chown()
 
-    def online_resize_available(self, grow):
-        return grow
-
-    def resize(self, grow):
-        if not grow:
-            raise SystemError("XFS does not support shrinking.")
-        self.dbus_object.xfs_resize( self.volume.storageobj.blockvolume.volume.path, self.volume.storageobj.megs )
+    def grow(self, oldmegs, newmegs):
+        self.dbus_object.xfs_resize( self.volume.storageobj.blockvolume.volume.path, newmegs )
 
     @classmethod
     def check_type(cls, typestring):
