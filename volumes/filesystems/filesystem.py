@@ -170,3 +170,9 @@ class FileSystem(object):
         dbus_object = get_dbus_object("/volumes")
         return dbus_object.write_fstab()
 
+    def grow(self, oldmegs, newmegs):
+        raise NotImplementedError("%s does not support grow" % self.name)
+
+    def shrink(self, oldmegs, newmegs):
+        raise NotImplementedError("%s does not support shrink" % self.name)
+
