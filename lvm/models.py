@@ -338,15 +338,16 @@ class LogicalVolume(BlockVolume):
         self.lvm.lvremove(self.path)
         lvm_signals.post_uninstall.send(sender=LogicalVolume, instance=self)
 
-    def resize( self ):
-        if self.megs < self.lvm_megs:
-            lvm_signals.pre_shrink.send(sender=LogicalVolume, instance=self)
-            self.lvm.lvresize(self._jid, self.path, self.megs, False)
-            lvm_signals.post_shrink.send(sender=LogicalVolume, instance=self)
-        else:
-            lvm_signals.pre_grow.send(sender=LogicalVolume, instance=self)
-            self.lvm.lvresize(self._jid, self.path, self.megs, True)
-            lvm_signals.post_grow.send(sender=LogicalVolume, instance=self)
+    def shrink( self, oldmegs, newmegs ):
+        lvm_signals.pre_shrink.send(sender=LogicalVolume, instance=self)
+        self.lvm.lvresize(self._jid, self.path, newmegs, False)
+        lvm_signals.post_shrink.send(sender=LogicalVolume, instance=self)
+        self._lvm_info = None # outdate cached information
+
+    def grow( self, oldmegs, newmegs ):
+        lvm_signals.pre_grow.send(sender=LogicalVolume, instance=self)
+        self.lvm.lvresize(self._jid, self.path, newmegs, True)
+        lvm_signals.post_grow.send(sender=LogicalVolume, instance=self)
         self._lvm_info = None # outdate cached information
 
     def clean(self):
