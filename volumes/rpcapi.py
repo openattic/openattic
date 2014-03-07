@@ -253,6 +253,12 @@ class FileSystemVolumeHandler(ModelHandler):
         fsv = FileSystemVolume.objects.get(id=id)
         return initscripts.run_initscript(fsv, script)
 
+    def mount(self, id):
+        return FileSystemVolume.objects.get(id=id).mount()
+
+    def unmount(self, id):
+        return FileSystemVolume.objects.get(id=id).unmount()
+
 class FileSystemVolumeProxy(ProxyModelHandler, FileSystemVolumeHandler):
     def _find_target_host_from_model_instance(self, model):
         if model.volume is None:
@@ -267,6 +273,12 @@ class FileSystemVolumeProxy(ProxyModelHandler, FileSystemVolumeHandler):
 
     def run_initscript(self, id, script):
         return self._call_singlepeer_method("run_initscript", id, script)
+
+    def mount(self, id):
+        return self._call_singlepeer_method("mount", id)
+
+    def unmount(self, id):
+        return self._call_singlepeer_method("unmount", id)
 
 
 class GenericDiskHandler(AbstractBlockVolumeHandler):

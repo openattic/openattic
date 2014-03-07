@@ -371,6 +371,12 @@ class FileSystemVolume(AbstractVolume):
     def path(self):
         return self.volume.fs.path
 
+    def mount(self):
+        return self.volume.fs.mount()
+
+    def unmount(self):
+        return self.volume.fs.unmount()
+
 
 if HAVE_NAGIOS:
     def __create_service_for_filesystemvolume(instance, **kwargs):
