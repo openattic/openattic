@@ -711,6 +711,132 @@ Ext.define('Ext.oa.volumes__Volume_Panel', {
           }
         }
       }, {
+        text: gettext('Resize Volume'),
+        icon: MEDIA_URL + "/icons2/16x16/actions/gtk-execute.png",
+        handler: function(){
+          "use strict";
+          var sm = volumePanel.getSelectionModel();
+          if( sm.hasSelection() ){
+            var sel = sm.selected.items[0];
+              var freemegs = sel.parentNode.raw.megs - sel.parentNode.raw.volumepool.usedmegs + sel.raw.megs;
+              var resizewin = new Ext.Window(Ext.apply({
+                layout: "fit",
+                title: gettext('Resize Volume'),
+                defaults: { autoScroll: true },
+                height: 200,
+                width: 500,
+                items: [{
+                  xtype: "form",
+                  ref: "resize",
+                  id: "resize",
+                  title: gettext('Please enter your desired size'),
+                  bodyStyle: 'padding:5px ;',
+                  defaults: {
+                    xtype: "textfield",
+                    anchor: '-20',
+                    defaults: {
+                      anchor: "0px"
+                    }
+                  },
+                  items: [{
+                    xtype: 'slider',
+                    id: 'slider',
+                    increment: 100,
+                    layout: 'form',
+                    width: 220,
+                    value: sel.data.megs,
+                    minValue: 100,
+                    maxValue: freemegs,
+                    listeners: {
+                      change: function(sld) {
+                        if( typeof sld.ownerCt.getComponent("megabyte") !== "undefined" )
+                          sld.ownerCt.getComponent("megabyte").setValue(sld.getValue());
+                        if( typeof sld.ownerCt.getComponent("remaining_megabyte") !== "undefined" )
+                          sld.ownerCt.getComponent("remaining_megabyte").setValue(freemegs - sld.getValue());
+                      }
+                    }
+                  }, {
+                    xtype: 'numberfield',
+                    fieldLabel: gettext('Megabyte'),
+                    id: 'megabyte',
+                    allowBlank: false,
+                    minValue: 100,
+                    maxValue: freemegs,
+                    enableKeyEvents: true,
+                    value: sel.data.megs,
+                    listeners: {
+                      change: function change(event) {
+                        if(this.ownerCt.getComponent("megabyte").getValue() > freemegs){
+                          this.ownerCt.getComponent("megabyte").setValue(freemegs);
+                        }
+                        this.ownerCt.getComponent("slider").setValue(this.ownerCt.getComponent("megabyte").getValue(), false);
+                        this.ownerCt.getComponent("remaining_megabyte").setValue(freemegs - this.ownerCt.getComponent("megabyte").getValue());
+                      },
+                      specialkey: function(f,e){
+                        if(e.getKey() === e.ENTER){
+                          if(this.ownerCt.getComponent("megabyte").getValue() > freemegs){
+                            this.ownerCt.getComponent("megabyte").setValue(freemegs);
+                          }
+                          this.ownerCt.getComponent("slider").setValue(this.ownerCt.getComponent("megabyte").getValue(), false);
+                          this.ownerCt.getComponent("remaining_megabyte").setValue(freemegs - this.ownerCt.getComponent("megabyte").getValue());
+                        }
+                      }
+                    }
+                  },{
+                    xtype: 'textfield',
+                    readOnly: true,
+                    id: 'remaining_megabyte',
+                    fieldLabel: gettext('Remaining Space'),
+                    value: freemegs,
+                    disabled: true
+                  }],
+                  buttons: [{
+                    text:  gettext('Edit'),
+                    icon: MEDIA_URL + "/icons2/16x16/actions/edit-redo.png",
+                    handler: function(editbtn){
+                      var frm = editbtn.ownerCt.ownerCt;
+                      if( !frm.getForm().isValid() ){
+                        return;
+                      }
+                      Ext.Msg.confirm(
+                        gettext('Warning'),
+                        interpolate(
+                          gettext('Do you really want to change Volume size of <b>%(lv)s</b> to <b>%(megs)s</b> MB?'),
+                          { "lv": sel.data.name, "megs": frm.getComponent("megabyte").getValue() }, true ),
+                        function(btn){
+                          if( btn === 'yes' ){
+                            var progresswin = new Ext.Window({
+                              title: gettext('Resizing Volume'),
+                              layout: "fit",
+                              height: 250,
+                              width: 400,
+                              modal: true,
+                              html: gettext('Please wait while your volume is being resized...')
+                            });
+                            resizewin.hide();
+                            progresswin.show();
+                            volumes__StorageObject.resize( sel.raw.id,
+                              parseFloat(frm.getComponent("megabyte").getValue()), function(provider, response){
+                              sel.parentNode.store.load();
+                              progresswin.close();
+                            } );
+                          }
+                        }
+                      );
+                    }
+                  },{
+                    text: gettext('Cancel'),
+                    icon: MEDIA_URL + "/icons2/16x16/actions/gtk-cancel.png",
+                    handler: function(){
+                      resizewin.close();
+                    }
+                  }]
+                }]
+              }));
+              resizewin.show();
+          }
+        }
+      }, {
         text: gettext("Add Volume"),
         icon: MEDIA_URL + "/icons2/16x16/actions/add.png",
         listeners: {
