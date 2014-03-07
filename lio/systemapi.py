@@ -89,7 +89,7 @@ class SystemD(LockingPlugin):
         mdl_lun = models.LUN.objects.get(id=id)
         lio_tpg = mdl_lun.tpg.lio_object
         lio_lun = lio_tpg.lun(mdl_lun.lun_id, mdl_lun.storageobj.lio_object,
-                        "%s at %s" % (mdl_lun.storageobj.volume.storageobj.name, Host.objects.get_current().name))
+                        "%s_at_%s" % (mdl_lun.storageobj.volume.storageobj.name, Host.objects.get_current().name))
 
     @method(in_signature="ii", out_signature="")
     def lun_map(self, id, acl_id):
