@@ -81,6 +81,8 @@ Ext.define('Ext.oa.Ifconfig__HostGroup_HostGroup_TreePanel', {
             var hostGroupId = overModel.raw.id;
             ifconfig__HostGroup.set(hostGroupId, {'hosts__add':
               [{'app': 'ifconfig', 'obj': 'Host', 'id': hostId}]});
+
+            this.ownerCt.ownerCt.getComponent('host_treepanel').store.load();
           }
         }
       },
