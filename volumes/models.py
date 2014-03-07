@@ -76,19 +76,31 @@ class StorageObject(models.Model):
         self.capflags = capabilities.to_flags(value)
 
     @property
-    def authoritative_obj(self):
+    def volumepool_or_none(self):
         try:
             return self.volumepool.volumepool
         except VolumePool.DoesNotExist:
-            pass
+            return None
+
+    @property
+    def blockvolume_or_none(self):
         try:
             return self.blockvolume.volume
         except BlockVolume.DoesNotExist:
-            pass
+            return None
+
+    @property
+    def filesystemvolume_or_none(self):
         try:
             return self.filesystemvolume.volume
         except FileSystemVolume.DoesNotExist:
-            pass
+            return None
+
+    @property
+    def authoritative_obj(self):
+        obj = self.volumepool_or_none or self.blockvolume_or_none or self.filesystemvolume_or_none
+        if obj is not None:
+            return obj
         raise ValueError("No authoritative object found for storageobj %d ('%s')" % (self.id, self.name))
 
     @property
@@ -96,20 +108,9 @@ class StorageObject(models.Model):
         return self.authoritative_obj.host
 
     def delete(self):
-        try:
-            self.filesystemvolume.volume.delete()
-        except FileSystemVolume.DoesNotExist:
-            pass
-
-        try:
-            self.volumepool.volumepool.delete()
-        except VolumePool.DoesNotExist:
-            pass
-
-        try:
-            self.blockvolume.volume.delete()
-        except BlockVolume.DoesNotExist:
-            pass
+        for obj in (self.filesystemvolume_or_none, self.volumepool_or_none, self.blockvolume_or_none):
+            if obj is not None:
+                obj.delete()
 
         return models.Model.delete(self)
 
