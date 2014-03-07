@@ -108,20 +108,9 @@ class StorageObject(models.Model):
         return self.authoritative_obj.host
 
     def delete(self):
-        try:
-            self.filesystemvolume.volume.delete()
-        except FileSystemVolume.DoesNotExist:
-            pass
-
-        try:
-            self.volumepool.volumepool.delete()
-        except VolumePool.DoesNotExist:
-            pass
-
-        try:
-            self.blockvolume.volume.delete()
-        except BlockVolume.DoesNotExist:
-            pass
+        for obj in (self.filesystemvolume_or_none, self.volumepool_or_none, self.blockvolume_or_none):
+            if obj is not None:
+                obj.delete()
 
         return models.Model.delete(self)
 
