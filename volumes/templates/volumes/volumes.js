@@ -547,6 +547,46 @@ Ext.define('Ext.oa.volumes__Volume_Panel', {
             volumePanel.store.getRootNode().collapseChildren(true);
         }
       }, {
+        text: gettext("Mount"),
+        icon: MEDIA_URL + "/oxygen/16x16/emblems/emblem-mounted.png",
+        handler: function(self){
+          var sel = volumePanel.getSelectionModel().getSelection()[0];
+          if( !sel.raw.filesystemvolume ){
+            Ext.Msg.alert(
+              gettext("Mount"),
+              interpolate(gettext("Volume %s does not have a filesystem."), [sel.data.__unicode__])
+            );
+            return;
+          }
+          volumes__FileSystemVolume.mount(sel.raw.filesystemvolume.id, function(result, response){
+            volumePanel.refresh();
+          });
+        }
+      }, {
+        text: gettext("Unmount"),
+        icon: MEDIA_URL + "/oxygen/16x16/emblems/emblem-unmounted.png",
+        handler: function(self){
+          var sel = volumePanel.getSelectionModel().getSelection()[0];
+          if( !sel.raw.filesystemvolume ){
+            Ext.Msg.alert(
+              gettext("Unmount"),
+              interpolate(gettext("Volume %s does not have a filesystem."), [sel.data.__unicode__])
+            );
+            return;
+          }
+          Ext.Msg.confirm(
+            gettext("Unmount"),
+            interpolate(gettext("You are about to unmount volume %s. Are you sure?"), [sel.data.__unicode__]),
+            function(btn, text){
+              if( btn === 'yes' ){
+                volumes__FileSystemVolume.unmount(sel.raw.filesystemvolume.id, function(result, response){
+                  volumePanel.refresh();
+                });
+              }
+            }
+          );
+        }
+      }, {
         text: gettext("Add Volume"),
         listeners: {
           click: function(self, e, eOpts){
