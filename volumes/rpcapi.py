@@ -106,19 +106,6 @@ class VolumePoolHandler(ModelHandler):
         handler = self._get_handler_instance(vol.__class__)
         return handler._idobj(vol)
 
-    def get_sufficient(self, host_id, min_megs):
-        volumepools = VolumePool.all_objects.all()
-        host = Host.objects.get(id=host_id)
-        result_pools = []
-        for volumepool in volumepools:
-            if volumepool.volumepool.host == host:
-                status = self.get_status(volumepool.id)
-                if status["megs"] is not None and status["usedmegs"] is not None:
-                    free_megs = status["megs"] - status["usedmegs"]
-                    if free_megs >= float(min_megs):
-                        result_pools.append(self.get(volumepool.id))
-        return result_pools
-
     def get_supported_filesystems(self, id):
         """ Return filesystems supported by a given Volume Pool. """
         obj = VolumePool.objects.get(id=id)
@@ -138,6 +125,19 @@ class VolumePoolProxy(ProxyModelHandler, VolumePoolHandler):
 
     def get_supported_filesystems(self, id):
         return self._call_singlepeer_method("get_supported_filesystems", id)
+
+    def get_sufficient(self, host_id, min_megs):
+        volumepools = VolumePool.all_objects.all()
+        host = Host.objects.get(id=host_id)
+        result_pools = []
+        for volumepool in volumepools:
+            if volumepool.volumepool.host == host:
+                status = self.get_status(volumepool.id)
+                if status["megs"] is not None and status["usedmegs"] is not None:
+                    free_megs = status["megs"] - status["usedmegs"]
+                    if free_megs >= float(min_megs):
+                        result_pools.append(self.get(volumepool.id))
+        return result_pools
 
     def create_volume(self, id, name, megs, options):
         """ Create a volume in this pool.
