@@ -24,6 +24,7 @@ from django.contrib.contenttypes.models import ContentType
 from django.contrib.contenttypes import generic
 from django.utils.translation    import ugettext_lazy as _
 from django.contrib.auth.models  import User
+from django.core.exceptions      import ValidationError
 
 from systemd import get_dbus_object
 from ifconfig.models import Host, HostDependentManager, getHostDependentManagerClass
@@ -221,9 +222,14 @@ class VolumePool(models.Model):
              * fscritical: Critical Threshold for Nagios checks.
         """
         get_dbus_object("/").start_queue()
-        vol = self._create_volume(name, megs, options)
-        get_dbus_object("/").run_queue_background()
-        return vol
+        try:
+            vol = self._create_volume(name, megs, options)
+        except:
+            get_dbus_object("/").discard_queue()
+            raise
+        else:
+            get_dbus_object("/").run_queue_background()
+            return vol
 
     def grow(self, oldmegs, newmegs):
         raise NotImplementedError("%s does not support grow" % self.__class__)
@@ -351,7 +357,6 @@ class GenericDisk(BlockVolume):
 
     def full_clean(self):
         BlockVolume.full_clean(self)
-        from django.core.exceptions import ValidationError
         if self.type not in ("sata", "sas", "ssd"):
             raise ValidationError({"type": ["Type needs to be one of 'sata', 'sas', 'ssd'."]})
 
