@@ -1178,7 +1178,8 @@ Ext.define("Ext.oa.LVM__Snapcore_Panel", {
         xtype     : 'lvm__snapcore_treepanel',
         showIcons : false,
         buttons   : [{
-          text     : gettext('New configuration'),
+          text    : gettext('New configuration'),
+          icon    : MEDIA_URL + "/icons2/16x16/actions/add.png",
           listeners: {
             click: function(self, e, eOpts){
               wiz.show();
@@ -1186,6 +1187,7 @@ Ext.define("Ext.oa.LVM__Snapcore_Panel", {
           }
         },{
           text     : gettext('Collapse all'),
+          icon     : MEDIA_URL + "/extjs/resources/ext-theme-classic/images/tree/elbow-end-minus.gif",
           listeners: {
             click: function(self, e, eOpts){
               self.ownerCt.ownerCt.collapseAll();
