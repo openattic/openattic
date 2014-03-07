@@ -206,7 +206,7 @@ class VolumePool(models.Model):
             elif isinstance(vol, BlockVolume) and bool(options.get("filesystem", None)):
                 fsclass = filesystems.get_by_name(options["filesystem"])
                 vol = fsclass.format_blockvolume(vol, options)
-        except ValidationError:
+        except:
             storageobj.delete()
             raise
 
@@ -275,7 +275,7 @@ class AbstractVolume(models.Model):
 
         try:
             vol = self._create_snapshot_for_storageobject(storageobj, options)
-        except (ValidationError, NotImplementedError):
+        except:
             storageobj.delete()
             raise
 
