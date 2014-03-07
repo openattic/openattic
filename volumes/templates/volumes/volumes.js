@@ -656,6 +656,7 @@ Ext.define('Ext.oa.volumes__Volume_Panel', {
               width: 500,
               items: [{
                 xtype: "form",
+                bodyStyle: 'padding:5px ;',
                 defaults: {
                   xtype: "textfield",
                   anchor: '-20',
