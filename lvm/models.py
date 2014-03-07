@@ -308,6 +308,12 @@ class LogicalVolume(BlockVolume):
         """ The actual size of this LV in Megs, retrieved from LVM. """
         return float(self.lvm_info["LVM2_LV_SIZE"][:-1])
 
+    def _create_snapshot_for_storageobject(self, storageobj, options):
+        snap_lv = LogicalVolume(storageobj=storageobj, vg=self.vg, snapshot=self)
+        lv.full_clean()
+        lv.save()
+        return lv
+
     ##########################
     ### PROCESSING METHODS ###
     ##########################
