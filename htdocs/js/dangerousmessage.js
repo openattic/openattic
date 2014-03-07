@@ -21,7 +21,7 @@ Ext.define("Ext.oa.DangerousMessage", {
     this.callParent(arguments);
     this.getMaskTarget().unmask();
     var mask = Ext.getBody().mask();
-    mask.addClass(this.maskCssClass);
+    mask.addCls(this.maskCssClass);
     this.on("hide", function(){
       Ext.getBody().unmask();
     });
