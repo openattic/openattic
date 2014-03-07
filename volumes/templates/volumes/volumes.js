@@ -587,6 +587,24 @@ Ext.define('Ext.oa.volumes__Volume_Panel', {
           );
         }
       }, {
+        text: gettext("Mirror"),
+        icon: MEDIA_URL + "/oxygen/16x16/actions/distribute-horizontal-center.png",
+        listeners: {
+          click: function(self, e, eOpts){
+            if(self.ownerCt.ownerCt.getSelectionModel().getSelection().length === 1){
+              var vol_selection = self.ownerCt.ownerCt.getSelectionModel().getSelection()[0];
+              if(vol_selection.$className.indexOf("BlockVolume") != -1){
+                var mirror_win = Ext.oa.getMirrorWindow(Ext.apply(config, {
+                  volume_id:    vol_selection.raw.id,
+                  volume_megs:  vol_selection.raw.megs,
+                  volumePanel:  volumePanel
+                }));
+                mirror_win.show();
+              }
+            }
+          }
+        }
+      }, {
         text: gettext("Add Volume"),
         listeners: {
           click: function(self, e, eOpts){
@@ -614,23 +632,6 @@ Ext.define('Ext.oa.volumes__Volume_Panel', {
               }
             }
           );
-        }
-      },{
-        text: gettext("Mirror"),
-        listeners: {
-          click: function(self, e, eOpts){
-            if(self.ownerCt.ownerCt.getSelectionModel().getSelection().length === 1){
-              var vol_selection = self.ownerCt.ownerCt.getSelectionModel().getSelection()[0];
-              if(vol_selection.$className.indexOf("BlockVolume") != -1){
-                var mirror_win = Ext.oa.getMirrorWindow(Ext.apply(config, {
-                  volume_id:    vol_selection.raw.id,
-                  volume_megs:  vol_selection.raw.megs,
-                  volumePanel:  volumePanel
-                }));
-                mirror_win.show();
-              }
-            }
-          }
         }
       }],
       forceFit: true,
