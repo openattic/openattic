@@ -410,10 +410,12 @@ class FileSystemVolume(AbstractVolume):
         return self.volume.fs.path
 
     def mount(self):
-        return self.volume.fs.mount()
+        if not self.volume.fs.mounted:
+            self.volume.fs.mount()
 
     def unmount(self):
-        return self.volume.fs.unmount()
+        if self.volume.fs.mounted:
+            self.volume.fs.unmount()
 
 
 if HAVE_NAGIOS:
