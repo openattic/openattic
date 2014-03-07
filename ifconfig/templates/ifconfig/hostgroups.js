@@ -53,7 +53,6 @@ Ext.define('Ext.oa.Ifconfig__HostGroup_HostGroup_TreePanel', {
       },
       root: {
         text    : 'root',
-        expanded: true,
         id      : 'ifconfig__hostgroup_hostgoup_rootnode'
       }
     });
@@ -120,7 +119,6 @@ Ext.define('Ext.oa.Ifconfig__HostGroup_Host_TreePanel', {
       },
       root: {
         text    : 'root',
-        expanded: true,
         id      : 'ifconfig__hostgroup_host_rootnode'
       }
     });
