@@ -65,7 +65,7 @@ Ext.define('Ext.oa.Auth__User_Panel', {
                     }
                     return (val.usedmegs / row.data.megs * 100 ).toFixed(2);
                   }
-                }],
+                }]
               });
               return Ext.create('Ext.data.Store', {
                 model: "rpcd_volumes_of_user_store",
