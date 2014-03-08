@@ -644,7 +644,7 @@ Ext.define('Ext.oa.volumes__Volume_Panel', {
         }
       }, {
         text: gettext("Create Snapshot"),
-        icon: MEDIA_URL + "/icons2/16x16/actions/gtk-execute.png",
+        icon: MEDIA_URL + "/oxygen/16x16/devices/camera-photo.png",
         listeners: {
           click: function(self, e, eOpts){
             var sel = volumePanel.getSelectionModel().getSelection()[0];
