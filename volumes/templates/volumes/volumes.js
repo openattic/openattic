@@ -820,6 +820,7 @@ Ext.define('Ext.oa.volumes__Volume_Panel', {
                               parseFloat(frm.getComponent("megabyte").getValue()), function(provider, response){
                               sel.parentNode.store.load();
                               progresswin.close();
+                              resizewin.close();
                             } );
                           }
                         }
