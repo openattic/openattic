@@ -25,7 +25,7 @@ from django.contrib.auth.models import User
 from systemd                    import dbus_to_python, get_dbus_object
 
 from volumes                    import signals as volume_signals
-from volumes.models             import BlockVolume, VolumePool
+from volumes.models             import StorageObject, BlockVolume, VolumePool
 from lvm                        import blockdevices
 from ifconfig.models            import Host, IPAddress, NetDevice, getHostDependentManagerClass
 from peering.models             import PeerHost
@@ -45,7 +45,10 @@ class ConnectionManager(models.Manager):
         other_host = Host.objects.get(id=other_host_id);
 
         # create drbd connection object
-        connection = Connection(name=self_volume.volume.name, protocol=protocol, syncer_rate=syncer_rate)
+        self_storageobj = StorageObject(name=self_volume.storageobj.name, megs=self_volume.storageobj.megs)
+        self_storageobj.full_clean()
+        self_storageobj.save()
+        connection = Connection(storageobj=self_storageobj, protocol=protocol, syncer_rate=syncer_rate)
         connection.save()
 
         # self endpoint install
@@ -59,7 +62,7 @@ class ConnectionManager(models.Manager):
         get_dbus_object("/").start_queue()
         if is_primary:
             # set upper volume
-            primary_volume.upper = connection
+            primary_volume.upper = connection.storageobj
             primary_volume.save()
 
             volume = primary_volume
@@ -69,7 +72,7 @@ class ConnectionManager(models.Manager):
             peer_volume = vpool.volumepool._create_volume(primary_volume.volume.name, primary_volume.volume.megs, {})
 
             # set upper volume
-            peer_volume.upper = connection
+            peer_volume.upper = connection.storageobj
             peer_volume.save()
 
             volume = peer_volume
@@ -102,6 +105,10 @@ class Connection(BlockVolume):
     def __init__(self, *args, **kwargs):
         models.Model.__init__(self, *args, **kwargs)
         self._drbd = None
+
+    @property
+    def name(self):
+        return self.storageobj.name
 
     def __unicode__(self):
         return self.name
