@@ -886,7 +886,6 @@ Ext.define('Ext.oa.volumes__Volume_Panel', {
             directFn: volumes__StorageObject.filter,
             extraParams: {
               kwds: {
-                volumepool__isnull: false,
                 is_origin: true
               }
             },
