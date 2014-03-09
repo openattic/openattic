@@ -464,7 +464,7 @@ var setConfigForNode = function(node, data){
         xtype       : 'label',
         html        : gettext('Im folgenden Assistenten werden automatisierte Snapshots auf Basis ' +
           'der openATTIC SnapApps konfiguriert. <br /> <br />' +
-          'Bitte wählen Sie einen Namen für die neue Konfiguration.'),
+          'Bitte wählen Sie einen Namen für die neue Konfiguration.')
       },{
         xtype       : 'tbspacer',
         height      : 10
@@ -675,7 +675,7 @@ var setConfigForNode = function(node, data){
     xtype : 'form',
     items : [{
       xtype     : 'label',
-      text      :  gettext('Bitte wählen Sie den Aufbewahrungszeitraum für automatisch erstellte Snapshots. '),
+      text      :  gettext('Bitte wählen Sie den Aufbewahrungszeitraum für automatisch erstellte Snapshots. ')
     },{
       xtype     : 'tbspacer',
       height    : 10
@@ -943,7 +943,7 @@ var setConfigForNode = function(node, data){
     xtype : 'form',
     items : [{
       xtype : 'label',
-      text  : gettext('Bitte wählen Sie die Zeitpunkte der Snapshot-Erstellung '),
+      text  : gettext('Bitte wählen Sie die Zeitpunkte der Snapshot-Erstellung ')
     },{
       xtype : 'tbspacer',
       height: 10
@@ -999,7 +999,7 @@ var setConfigForNode = function(node, data){
     xtype : 'form',
     items : [{
       xtype       : 'label',
-      text        : gettext('Bitte wählen Sie Wochentage und Monate der Snapshot-Erstellung '),
+      text        : gettext('Bitte wählen Sie Wochentage und Monate der Snapshot-Erstellung ')
     },{
       xtype : 'tbspacer',
       height: 10
