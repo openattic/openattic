@@ -8,9 +8,9 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2014-02-24 15:50+0100\n"
-"PO-Revision-Date: 2014-02-24 16:29\n"
-"Last-Translator:   <>\n"
+"POT-Creation-Date: 2014-03-09 15:30+0100\n"
+"PO-Revision-Date: 2014-03-09 15:30\n"
+"Last-Translator: Michael Ziegler <michael.ziegler@it-novum.com>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
@@ -19,342 +19,21 @@ msgstr ""
 "Plural-Forms: nplurals=2; plural=(n != 1)\n"
 "X-Translated-Using: django-rosetta 0.6.6\n"
 
-#: templates/lvm/btrfssubvolume.js:24 templates/lvm/zfssubvolume.js:88
-msgid "Add Subvolume"
-msgstr "Subvolume hinzufügen"
-
-#: templates/lvm/btrfssubvolume.js:25
-msgid "Edit Subvolume"
-msgstr "Subvolume bearbeiten"
-
-#: templates/lvm/btrfssubvolume.js:26 templates/lvm/zfssubvolume.js:95
-msgid "Delete Subvolume"
-msgstr "Subvolume löschen"
-
-#: templates/lvm/btrfssubvolume.js:29 templates/lvm/btrfssubvolume.js.c:67
-#: templates/lvm/snapshots.js:115 templates/lvm/zfssubvolume.js:29
-msgid "Name"
-msgstr "Name"
-
-#: templates/lvm/btrfssubvolume.js:33 templates/lvm/volumefield.js:43
-#: templates/lvm/zfssnapshot.js:232 templates/lvm/zfssnapshot.js.c:282
-#: templates/lvm/zfssubvolume.js:39 templates/lvm/zfssubvolume.js.c:132
-msgid "Volume"
-msgstr "Volume"
-
-#: templates/lvm/btrfssubvolume.js:37
-msgid "Snapshot of volume"
-msgstr "Snapshot von Volume"
-
-#: templates/lvm/btrfssubvolume.js:41
-msgid "Read only"
-msgstr "Nur lesbar"
-
-#: templates/lvm/btrfssubvolume.js:85
-msgid "Please select the base volume."
-msgstr "Bitte wählen Sie das Basisvolume."
-
-#: templates/lvm/btrfssubvolume.js:89
-msgid "Snapshot of..."
-msgstr "Snapshot von..."
-
-#: templates/lvm/btrfssubvolume.js:119 templates/lvm/logicalvolume.js:624
-#: templates/lvm/logicalvolume.js.c:680 templates/lvm/snapcore.js:969
-#: templates/lvm/snapcore.js.c:1027 templates/lvm/snapshots.js:66
-#: templates/lvm/volumefield.js:66
-msgid "Select..."
-msgstr "Bitte wählen..."
-
-#: templates/lvm/btrfssubvolume.js:125
-msgid "Read Only"
-msgstr "Nur lesbar"
-
-#: templates/lvm/btrfssubvolume.js:138
-msgid "BTRFS"
-msgstr "BTRFS"
-
-#: templates/lvm/logicalvolume.js:96
-msgid "LV"
-msgstr "LV"
-
-#: templates/lvm/logicalvolume.js:99
-msgid "Size"
-msgstr "Größe"
-
-#: templates/lvm/logicalvolume.js:109
-msgid "FS"
-msgstr "Dateisystem"
-
-#: templates/lvm/logicalvolume.js:118
-msgid "Free"
-msgstr "Frei"
-
-#: templates/lvm/logicalvolume.js:128
-msgid "Used"
-msgstr "Belegt"
-
-#: templates/lvm/logicalvolume.js:138
-msgid "Used%"
-msgstr "Belegt%"
-
-#: templates/lvm/logicalvolume.js:161
-msgid "Owner"
-msgstr "Besitzer"
-
-#: templates/lvm/logicalvolume.js:164
-msgid "Mounted at host"
-msgstr "Eingehängt auf Host"
-
-#: templates/lvm/logicalvolume.js:167 templates/lvm/mounts.js:58
-msgid "Mount Point"
-msgstr "Einhängepunkt"
-
-#: templates/lvm/logicalvolume.js:170
-msgid "Group"
-msgstr "Gruppe"
-
-#: templates/lvm/logicalvolume.js:178
-msgid "Set warning threshold"
-msgstr "Warnschwelle festlegen"
-
-#: templates/lvm/logicalvolume.js:185 templates/lvm/logicalvolume.js.c:211
-msgid "Update Levels"
-msgstr "Schwellen anpassen"
-
-#: templates/lvm/logicalvolume.js:198 templates/lvm/logicalvolume.js.c:706
-msgid "Warning Level (%)"
-msgstr "Warnschwelle"
-
-#: templates/lvm/logicalvolume.js:204 templates/lvm/logicalvolume.js.c:712
-msgid "Critical Level (%)"
-msgstr "Kritische Schwelle"
-
-#: templates/lvm/logicalvolume.js:228 templates/lvm/logicalvolume.js.c:553
-msgid "Cancel"
-msgstr "Abbrechen"
-
-#: templates/lvm/logicalvolume.js:240
-msgid "Mount"
-msgstr "Einhängen"
-
-#: templates/lvm/logicalvolume.js:249
-#, c-format
-msgid "Volume %s does not have a file system and therefore cannot be mounted."
-msgstr ""
-"Volume %s hat kein Dateisystem und kann daher nicht eingehängt werden."
-
-#: templates/lvm/logicalvolume.js:255
-#, c-format
-msgid "Volume %s is already mounted."
-msgstr "Volume %s ist bereits eingehängt."
-
-#: templates/lvm/logicalvolume.js:261
-#, c-format
-msgid "Volume %s cannot be mounted at the current time."
-msgstr "Volume %s kann momentan nicht eingehängt werden."
-
-#: templates/lvm/logicalvolume.js:267
-#, c-format
-msgid "Volume %s could not be mounted, please check the logs."
-msgstr ""
-"Volume %s konnte nicht eingehängt werden, bitte in den Logs nachsehen."
-
-#: templates/lvm/logicalvolume.js:271
-#, c-format
-msgid "Volume %s has been mounted."
-msgstr "Volume %s wurde eingehängt."
-
-#: templates/lvm/logicalvolume.js:280 templates/lvm/logicalvolume.js.c:293
-msgid "Unmount"
-msgstr "Aushängen"
-
-#: templates/lvm/logicalvolume.js:288
-#, c-format
-msgid "Volume %s is not mounted."
-msgstr "Volume %s ist nicht eingehängt."
-
-#: templates/lvm/logicalvolume.js:295
-#, c-format
-msgid "Do you really want to unmount %s?"
-msgstr "Möchten Sie %s wirklich aushängen?"
-
-#: templates/lvm/logicalvolume.js:302
-#, c-format
-msgid "Volume %s could not be unmounted, please check the logs."
-msgstr ""
-"Volume %s konnte nicht ausgehängt werden, bitte in den Logs nachsehen."
-
-#: templates/lvm/logicalvolume.js:307
-#, c-format
-msgid "Volume %s has been unmounted."
-msgstr "Volume %s wurde ausgehängt."
-
-#: templates/lvm/logicalvolume.js:320 templates/lvm/logicalvolume.js.c:327
-msgid "Shares"
-msgstr "Freigaben"
-
-#: templates/lvm/logicalvolume.js:357
-msgid "App"
-msgstr "App"
-
-#: templates/lvm/logicalvolume.js:361
-msgid "Object"
-msgstr "Objekt"
-
-#: templates/lvm/logicalvolume.js:365 templates/lvm/snapcore.js:474
-msgid "Description"
-msgstr "Beschreibung"
-
-#: templates/lvm/logicalvolume.js:375 templates/lvm/logicalvolume.js.c:382
-#: templates/lvm/logicalvolume.js:418
-msgid "Initialize"
-msgstr "Initialisieren"
-
-#: templates/lvm/logicalvolume.js:414
-msgid "Script"
-msgstr "Skript"
-
-#: templates/lvm/logicalvolume.js:425
-msgid "Initialization complete"
-msgstr "Initialisierung erfolgreich"
-
-#: templates/lvm/logicalvolume.js:427
-msgid ""
-"Initialization script %(script)s has been executed successfully on %(lv)s."
-msgstr ""
-"Initialisierungs-Script %(script)s wurde erfolgreich auf das Volume %(lv)s "
-"angewendet."
-
-#: templates/lvm/logicalvolume.js:443 templates/lvm/logicalvolume.js.c:453
-msgid "Resize Volume"
-msgstr "Volume-Größe ändern"
-
-#: templates/lvm/logicalvolume.js:459
-msgid "Please enter your desired size"
-msgstr "Bitte die gewünschte Größe eingeben"
-
-#: templates/lvm/logicalvolume.js:484
-msgid "Megabyte"
-msgstr "Megabyte"
-
-#: templates/lvm/logicalvolume.js:513
-msgid "Remaining Space"
-msgstr "Verbleibender Platz"
-
-#: templates/lvm/logicalvolume.js:518
-msgid "Edit"
-msgstr "Bearbeiten"
-
-#: templates/lvm/logicalvolume.js:526
-msgid "Warning"
-msgstr "Warnung"
-
-#: templates/lvm/logicalvolume.js:528
-msgid ""
-"Do you really want to change Volume size of <b>%(lv)s</b> to <b>%(megs)s</b>"
-" MB?"
-msgstr ""
-"Möchten Sie wirklich die Volume-Größe von <b>%(lv)s</b> auf <b>%(megs)s</b> "
-"MB ändern?"
-
-#: templates/lvm/logicalvolume.js:533
-msgid "Resizing Volume"
-msgstr "Passe Volume-Größe an"
-
-#: templates/lvm/logicalvolume.js:538
-msgid "Please wait while your volume is being resized..."
-msgstr "Bitte warten, während die Volume-Größe geändert wird..."
-
-#: templates/lvm/logicalvolume.js:575
-msgid "Logical Volumes"
-msgstr "Logische Volumes"
-
-#: templates/lvm/logicalvolume.js:580
-msgid "Add Volume"
-msgstr "Volume hinzufügen"
-
-#: templates/lvm/logicalvolume.js:581
-msgid "Edit Volume"
-msgstr "Volume bearbeiten"
-
-#: templates/lvm/logicalvolume.js:582
-msgid "Delete Volume"
-msgstr "Volume löschen"
-
-#: templates/lvm/logicalvolume.js:603
-msgid "Volume Group"
-msgstr "Volume-Gruppe"
-
-#: templates/lvm/logicalvolume.js:634 templates/lvm/snapshots.js:79
-msgid "Querying data..."
-msgstr "Warte auf Daten..."
-
-#: templates/lvm/logicalvolume.js:641
-msgid "The volume group in which you want the Volume to be created."
-msgstr "Die Volume-Gruppe in der das Volume angelegt werden soll."
-
-#: templates/lvm/logicalvolume.js:644
-msgid "File System"
-msgstr "Dateisystem"
-
-#: templates/lvm/logicalvolume.js:684
-msgid ""
-"If you want to use DRBD with this device, do not yet create a file system on"
-" it, even if you want to share it using NAS services later on."
-msgstr ""
-"Wenn DRBD mit diesem Volume benutzt werden soll, darf noch kein Dateisystem "
-"angelegt werden, selbst wenn es später mit NAS-Diensten freigegeben werden "
-"soll."
-
-#: templates/lvm/logicalvolume.js:686 templates/lvm/snapshots.js:122
-msgid "Size in MB"
-msgstr "Größe in MB"
-
-#: templates/lvm/logicalvolume.js:693
-msgid "Waiting for volume group selection..."
-msgstr "Warte auf Auswahl der Volume-Gruppe..."
-
-#: templates/lvm/logicalvolume.js:696
-msgid "Deduplication"
-msgstr "Deduplizierung"
-
-#: templates/lvm/logicalvolume.js:701
-msgid "Compression"
-msgstr "Kompression"
-
-#: templates/lvm/logicalvolume.js:726 templates/lvm/snapshots.js:238
-msgid ""
-"What was the name of the volume you wish to delete again?<br /><b>There is "
-"no undo and you will lose all data.</b>"
-msgstr ""
-"Wie war der Name des Volumes das Sie löschen möchten?<br /><b>Diese Aktion "
-"kann nicht rückgängig gemacht werden und Sie werden alle Daten des Volumes "
-"verlieren.</b>"
-
-#: templates/lvm/logicalvolume.js:733 templates/lvm/snapshots.js:245
-msgid "Hm, that doesn't seem right..."
-msgstr "Das sieht nicht richtig aus..."
-
-#: templates/lvm/logicalvolume.js:737 templates/lvm/snapshots.js:249
-msgid "As you wish."
-msgstr "Wie Sie wollen."
-
-#: templates/lvm/logicalvolume.js:750
-msgid "Volume Management"
-msgstr "Volume-Verwaltung"
-
 #: templates/lvm/mounts.js:29 templates/lvm/mounts.js.c:85
 msgid "Mount Points"
 msgstr "Einhängepunkte"
 
-#: templates/lvm/mounts.js:35 templates/lvm/zfssnapshot.js:30
-#: templates/lvm/zfssubvolume.js:79
+#: templates/lvm/mounts.js:35
 msgid "Reload"
 msgstr "Neu laden"
 
 #: templates/lvm/mounts.js:54
 msgid "Device"
 msgstr "Gerät"
+
+#: templates/lvm/mounts.js:58
+msgid "Mount Point"
+msgstr "Einhängepunkt"
 
 #: templates/lvm/mounts.js:62
 msgid "FS Type"
@@ -364,7 +43,7 @@ msgstr "Dateisystemtyp"
 msgid "Options"
 msgstr "Optionen"
 
-#: templates/lvm/snapcore.js:57 templates/lvm/snapcore.js.c:925
+#: templates/lvm/snapcore.js:57 templates/lvm/snapcore.js.c:917
 msgid "Next"
 msgstr "Weiter"
 
@@ -388,379 +67,649 @@ msgstr "Der Endzeitpunkt darf nicht vor dem Startzeitpunkt liegen."
 msgid "Welcome"
 msgstr "Willkommen"
 
-#: templates/lvm/snapcore.js:465 templates/lvm/snapcore.js.c:566
-#: templates/lvm/snapcore.js:650 templates/lvm/snapcore.js.c:679
-#: templates/lvm/snapcore.js:949 templates/lvm/snapcore.js.c:1007
-msgid "Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed "
-msgstr "Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed "
+#: templates/lvm/snapcore.js:465
+msgid ""
+"The following wizard configures automated snapshots using the openATTIC "
+"SnapApps.<br /><br />Please enter a name for the new configuration."
+msgstr ""
+"Im folgenden Assistenten werden automatisierte Snapshots auf Basis der "
+"openATTIC SnapApps konfiguriert. <br /><br /> Bitte wählen Sie einen Namen "
+"für die neue Konfiguration."
 
-#: templates/lvm/snapcore.js:480
-msgid "Available items"
+#: templates/lvm/snapcore.js:472
+msgid "Description"
+msgstr "Beschreibung"
+
+#: templates/lvm/snapcore.js:478
+msgid "Available Items"
 msgstr "Verfügbare Objekte"
 
-#: templates/lvm/snapcore.js:505
-msgid "No config options available!"
-msgstr "Keine Konfigurationsoptionen verfügbar!"
+#: templates/lvm/snapcore.js:503
+msgid "There are no configuration options available."
+msgstr "Es sind keine Konfigurationsoptionen verfügbar!"
 
-#: templates/lvm/snapcore.js:517
+#: templates/lvm/snapcore.js:515
 msgid "Save"
 msgstr "Speichern"
 
-#: templates/lvm/snapcore.js:527
+#: templates/lvm/snapcore.js:525
 msgid "Clear"
 msgstr "Leeren"
 
-#: templates/lvm/snapcore.js:544
+#: templates/lvm/snapcore.js:542
 msgid "Item settings"
 msgstr "Objekteinstellungen"
 
-#: templates/lvm/snapcore.js:558
+#: templates/lvm/snapcore.js:556
 msgid "Additional Drives"
 msgstr "Zusätzliche Laufwerke"
 
-#: templates/lvm/snapcore.js:584 templates/lvm/snapcore.js.c:586
-#: templates/lvm/zfssnapshot.js:204
+#: templates/lvm/snapcore.js:564
+msgid ""
+"If other devices need to be included in the snapshot (e.g. for raw device "
+"mappings), they can be added via Drag&Drop."
+msgstr ""
+"Sollte ein zeitgleicher Snapshot von weiteren Volumes notwendig sein (z.B. "
+"Raw-Device-Mappings) können diese per Drag&Drop hinzugefügt werden."
+
+#: templates/lvm/snapcore.js:580 templates/lvm/snapcore.js.c:598
+msgid "Volume"
+msgstr "Volume"
+
+#: templates/lvm/snapcore.js:582
 msgid "Volumes"
 msgstr "Volumes"
 
-#: templates/lvm/snapcore.js:604
-msgid "Drag volumes which should be snapshotted here:"
+#: templates/lvm/snapcore.js:600
+msgid "Drag and drop additional volumes here:"
+msgstr "Zusätzliche Volumes hierher ziehen:"
+
+#: templates/lvm/snapcore.js:640
+msgid "Pre-/Post-Scripts"
+msgstr "Prä-/Post-Skripte"
+
+#: templates/lvm/snapcore.js:646
+msgid ""
+"Before and after the snapshot is made, user-defined scripts can be executed."
+" Please enter the path to your scripts or leave these fields empty if you "
+"don't have any."
 msgstr ""
-"Ziehen Sie die Volumes, von denen ein Snapshot erstellt werden soll, hier "
-"hin:"
+"Bei der automatischen Ausführung der SnapApp-Konfiguration können "
+"benutzerdefinierte Skripte ausgeführt werden. <br /> Bitte geben Sie den "
+"Pfad zu Ihren Skripten an, sofern Sie welche haben."
 
-#: templates/lvm/snapcore.js:644
-msgid "Pre-/Post-Script - Conditions"
-msgstr "Pre-/Post-Skripte"
+#: templates/lvm/snapcore.js:653
+msgid "Prescript"
+msgstr "Präskript"
 
-#: templates/lvm/snapcore.js:659
-msgid "Prescript conditions"
-msgstr "Preskript"
-
-#: templates/lvm/snapcore.js:667
-msgid "Postscript conditions"
+#: templates/lvm/snapcore.js:661
+msgid "Postscript"
 msgstr "Postskript"
 
-#: templates/lvm/snapcore.js:670
-msgid "Scheduling Part 1 / Expiry Date"
+#: templates/lvm/snapcore.js:664
+msgid "Schedule Part 1 / Expiry Date"
 msgstr "Zeitplan Teil 1 / Ablaufdatum"
 
-#: templates/lvm/snapcore.js:686
-msgid "Snapshots without retention time"
-msgstr "Snapshots ohne Aufbewahrungszeit"
+#: templates/lvm/snapcore.js:673
+msgid "Please define the retention time for snapshots."
+msgstr ""
+"Bitte wählen Sie den Aufbewahrungszeitraum für automatisch erstellte "
+"Snapshots."
 
-#: templates/lvm/snapcore.js:692
-msgid "Set retention time"
-msgstr "Setzen der Aufbewahrungszeit"
+#: templates/lvm/snapcore.js:678
+msgid "Never automatically delete snapshots"
+msgstr "Snapshots nicht automatisch löschen"
 
-#: templates/lvm/snapcore.js:733
+#: templates/lvm/snapcore.js:684
+msgid "Automatically delete snapahots after:"
+msgstr "Snapshots automatisch löschen nach:"
+
+#: templates/lvm/snapcore.js:725
 msgid "Second(s)"
 msgstr "Sekunde(n)"
 
-#: templates/lvm/snapcore.js:734
+#: templates/lvm/snapcore.js:726
 msgid "Minute(s)"
 msgstr "Minute(n)"
 
-#: templates/lvm/snapcore.js:735
+#: templates/lvm/snapcore.js:727
 msgid "Hour(s)"
 msgstr "Stunde(n)"
 
-#: templates/lvm/snapcore.js:736
+#: templates/lvm/snapcore.js:728
 msgid "Day(s)"
 msgstr "Tag(e)"
 
-#: templates/lvm/snapcore.js:737
+#: templates/lvm/snapcore.js:729
 msgid "Week(s)"
 msgstr "Woche(n)"
 
-#: templates/lvm/snapcore.js:749
-msgid "Scheduling Part 2 / Options"
+#: templates/lvm/snapcore.js:741
+msgid "Schedule Part 2 / Options"
 msgstr "Zeitplan Teil 2 / Optionen"
 
-#: templates/lvm/snapcore.js:758
-msgid "Execute now"
+#: templates/lvm/snapcore.js:750
+msgid "Execute immediately"
 msgstr "Sofort ausführen"
 
-#: templates/lvm/snapcore.js:765
+#: templates/lvm/snapcore.js:757
 msgid "Execute later"
 msgstr "Später ausführen"
 
-#: templates/lvm/snapcore.js:797
-msgid "Executetime"
+#: templates/lvm/snapcore.js:789
+msgid "Execute time"
 msgstr "Zeit der Ausführung"
 
-#: templates/lvm/snapcore.js:804
-msgid "Executedate"
+#: templates/lvm/snapcore.js:796
+msgid "Execute date"
 msgstr "Datum der Ausführung"
 
-#: templates/lvm/snapcore.js:807
-msgid "Create scheduling"
+#: templates/lvm/snapcore.js:799
+msgid "Create Schedule"
 msgstr "Zeitplan anlegen"
 
-#: templates/lvm/snapcore.js:860
-msgid "Startdate"
+#: templates/lvm/snapcore.js:852
+msgid "Start date"
 msgstr "Anfangsdatum"
 
-#: templates/lvm/snapcore.js:867
-msgid "Starttime"
+#: templates/lvm/snapcore.js:859
+msgid "Start time"
 msgstr "Anfangszeit"
 
-#: templates/lvm/snapcore.js:886
-msgid "Enddate"
+#: templates/lvm/snapcore.js:878
+msgid "End date"
 msgstr "Enddatum"
 
-#: templates/lvm/snapcore.js:892
-msgid "Enddtime"
+#: templates/lvm/snapcore.js:884
+msgid "End time"
 msgstr "Endzeit"
 
-#: templates/lvm/snapcore.js:900
-msgid "No Enddatetime"
-msgstr "Keinen Endzeitpunkt"
+#: templates/lvm/snapcore.js:892
+msgid "No end date"
+msgstr "Kein Ablaufdatum"
 
-#: templates/lvm/snapcore.js:920
+#: templates/lvm/snapcore.js:912
 msgid "Is active"
 msgstr "Ist aktiv"
 
-#: templates/lvm/snapcore.js:944
-msgid "Scheduling Part 3 / Timemanagement Part 2"
+#: templates/lvm/snapcore.js:936
+msgid "Schedule Part 3 / Times Part 2"
 msgstr "Ablaufplanung Teil 3 / Zeitmanagement Teil 2"
 
-#: templates/lvm/snapcore.js:958
+#: templates/lvm/snapcore.js:941
+msgid "Please select the time"
+msgstr "Bitte wählen Sie die Zeit."
+
+#: templates/lvm/snapcore.js:948
 msgid "Minute"
 msgstr "Minute"
 
-#: templates/lvm/snapcore.js:973
+#: templates/lvm/snapcore.js:959 templates/lvm/snapcore.js.c:1015
+msgid "Select..."
+msgstr "Bitte wählen..."
+
+#: templates/lvm/snapcore.js:963
 msgid "Hour"
 msgstr "Stunde"
 
-#: templates/lvm/snapcore.js:1002
-msgid "Scheduling Part 3 / Timemanagement Part 3"
+#: templates/lvm/snapcore.js:992
+msgid "Schedule Part 3 / Times Part 3"
 msgstr "Ablaufplanung Teil 3 / Zeitmanagement Teil 3"
 
-#: templates/lvm/snapcore.js:1016
+#: templates/lvm/snapcore.js:997
+msgid "Please select the week day and months"
+msgstr "Bitte wählen Sie Wochentage und Monate."
+
+#: templates/lvm/snapcore.js:1004
 msgid "Day"
 msgstr "Tag"
 
-#: templates/lvm/snapcore.js:1031
-msgid "Day of week"
+#: templates/lvm/snapcore.js:1019
+msgid "Day of Week"
 msgstr "Wochentag"
 
-#: templates/lvm/snapcore.js:1046
+#: templates/lvm/snapcore.js:1034 templates/lvm/snapcore.js.c:1064
 msgid "Monday"
 msgstr "Montag"
 
-#: templates/lvm/snapcore.js:1048
+#: templates/lvm/snapcore.js:1036
 msgid "Tuesday"
 msgstr "Dienstag"
 
-#: templates/lvm/snapcore.js:1050
+#: templates/lvm/snapcore.js:1038
 msgid "Wednesday"
 msgstr "Mittwoch"
 
-#: templates/lvm/snapcore.js:1052
+#: templates/lvm/snapcore.js:1040
 msgid "Thursday"
 msgstr "Donnerstag"
 
-#: templates/lvm/snapcore.js:1054
+#: templates/lvm/snapcore.js:1042
 msgid "Friday"
 msgstr "Freitag"
 
-#: templates/lvm/snapcore.js:1058
+#: templates/lvm/snapcore.js:1046
 msgid "Saturday"
 msgstr "Samstag"
 
-#: templates/lvm/snapcore.js:1060
+#: templates/lvm/snapcore.js:1048
 msgid "Sunday"
 msgstr "Sonntag"
 
-#: templates/lvm/snapcore.js:1076
-msgid "Month"
-msgstr "Monat"
-
-#: templates/lvm/snapcore.js:1080
+#: templates/lvm/snapcore.js:1068
 msgid "January"
 msgstr "Januar"
 
-#: templates/lvm/snapcore.js:1082
+#: templates/lvm/snapcore.js:1070
 msgid "Feburary"
 msgstr "Februar"
 
-#: templates/lvm/snapcore.js:1084
+#: templates/lvm/snapcore.js:1072
 msgid "March"
 msgstr "März"
 
-#: templates/lvm/snapcore.js:1086
+#: templates/lvm/snapcore.js:1074
 msgid "April"
 msgstr "April"
 
-#: templates/lvm/snapcore.js:1088
+#: templates/lvm/snapcore.js:1076
 msgid "May"
 msgstr "Mai"
 
-#: templates/lvm/snapcore.js:1090
+#: templates/lvm/snapcore.js:1078
 msgid "June"
 msgstr "Juni"
 
-#: templates/lvm/snapcore.js:1094
+#: templates/lvm/snapcore.js:1082
 msgid "July"
 msgstr "Juli"
 
-#: templates/lvm/snapcore.js:1096
+#: templates/lvm/snapcore.js:1084
 msgid "August"
 msgstr "August"
 
-#: templates/lvm/snapcore.js:1098
+#: templates/lvm/snapcore.js:1086
 msgid "September"
 msgstr "September"
 
-#: templates/lvm/snapcore.js:1100
+#: templates/lvm/snapcore.js:1088
 msgid "October"
 msgstr "Oktober"
 
-#: templates/lvm/snapcore.js:1102
+#: templates/lvm/snapcore.js:1090
 msgid "November"
 msgstr "November"
 
-#: templates/lvm/snapcore.js:1104
+#: templates/lvm/snapcore.js:1092
 msgid "December"
 msgstr "Dezember"
 
-#: templates/lvm/snapcore.js:1109 templates/lvm/snapcore.js.c:1113
+#: templates/lvm/snapcore.js:1097
+msgid "Done"
+msgstr "Fertig"
+
+#: templates/lvm/snapcore.js:1101
 msgid "Finish"
 msgstr "Fertig stellen"
 
-#: templates/lvm/snapcore.js:1155
+#: templates/lvm/snapcore.js:1143
 msgid "Configuration Assistant"
 msgstr "Konfigurationsassistent"
 
-#: templates/lvm/snapcore.js:1171 templates/lvm/snapcore.js.c:1343
+#: templates/lvm/snapcore.js:1159 templates/lvm/snapcore.js.c:1334
 msgid "SnapApps"
 msgstr "SnapApps"
 
-#: templates/lvm/snapcore.js:1181
+#: templates/lvm/snapcore.js:1169
 msgid "New configuration"
 msgstr "Neue Konfiguration"
 
-#: templates/lvm/snapcore.js:1188
+#: templates/lvm/snapcore.js:1177
 msgid "Collapse all"
 msgstr "Alle einklappen"
 
-#: templates/lvm/snapcore.js:1208
+#: templates/lvm/snapcore.js:1198
 msgid "Schedules"
 msgstr "Zeitpläne"
 
-#: templates/lvm/snapcore.js:1211
+#: templates/lvm/snapcore.js:1201
 msgid "Last execution"
 msgstr "Letzte Ausführung"
 
-#: templates/lvm/snapcore.js:1266
+#: templates/lvm/snapcore.js:1256
 msgid "Delete config"
 msgstr "Konfiguration löschen"
 
-#: templates/lvm/snapcore.js:1293 templates/lvm/snapshots.js:136
+#: templates/lvm/snapcore.js:1284
 msgid "Snapshot"
 msgstr "Snapshot"
 
-#: templates/lvm/snapcore.js:1296 templates/lvm/zfssnapshot.js:313
+#: templates/lvm/snapcore.js:1287
 msgid "Created"
 msgstr "Angelegt"
 
-#: templates/lvm/snapshots.js:24
-msgid "Logical Volume Snapshots"
-msgstr "Volume-Snapshots"
+#~ msgid "Pre-/Post-Script - Bedingungen"
+#~ msgstr "Pre-/Post-Skripte"
 
-#: templates/lvm/snapshots.js:29 templates/lvm/zfssnapshot.js:41
-msgid "Add Snapshot"
-msgstr "Snapshot hinzufügen"
+#~ msgid "Add Subvolume"
+#~ msgstr "Subvolume hinzufügen"
 
-#: templates/lvm/snapshots.js:30 templates/lvm/zfssnapshot.js:155
-msgid "Delete Snapshot"
-msgstr "Snapshot löschen"
+#~ msgid "Edit Subvolume"
+#~ msgstr "Subvolume bearbeiten"
 
-#: templates/lvm/snapshots.js:36 templates/lvm/snapshots.js.c:161
-msgid "Original Volume"
-msgstr "Original-Volume"
+#~ msgid "Delete Subvolume"
+#~ msgstr "Subvolume löschen"
 
-#: templates/lvm/snapshots.js:126
-msgid ""
-"Please consider, that the size of your snapshot depends on the kind and "
-"frequency of change."
-msgstr ""
-"Bitte beachten, dass die Größe des Snapshots von der Art und Häufigkeit von "
-"Änderungen abhängig ist."
+#~ msgid "Name"
+#~ msgstr "Name"
 
-#: templates/lvm/snapshots.js:129
-msgid "Waiting for volume selection..."
-msgstr "Warte auf Volume-Auswahl..."
+#~ msgid "Snapshot of volume"
+#~ msgstr "Snapshot von Volume"
 
-#: templates/lvm/snapshots.js:138
-msgid "Snapshot usage (%)"
-msgstr "Snapshot-Belegung"
+#~ msgid "Read only"
+#~ msgstr "Nur lesbar"
 
-#: templates/lvm/snapshots.js:262
-msgid "Volume Snapshots"
-msgstr "Volume-Snapshots"
+#~ msgid "Snapshot of..."
+#~ msgstr "Snapshot von..."
 
-#: templates/lvm/zfssnapshot.js:24 templates/lvm/zfssnapshot.js.c:357
-msgid "Zfs Snapshots"
-msgstr "ZFS-Snapshots"
+#~ msgid "Read Only"
+#~ msgstr "Nur lesbar"
 
-#: templates/lvm/zfssnapshot.js:37 templates/lvm/zfssnapshot.js.c:60
-msgid "Create Snapshot"
-msgstr "Snapshot erzeugen"
+#~ msgid "BTRFS"
+#~ msgstr "BTRFS"
 
-#: templates/lvm/zfssnapshot.js:115
-msgid "Rollback Snapshot"
-msgstr "Snapshot zurückspielen"
+#~ msgid "LV"
+#~ msgstr "LV"
 
-#: templates/lvm/zfssnapshot.js:122
-msgid "Confirm rollback"
-msgstr "Zurückspielen bestätigen"
+#~ msgid "Size"
+#~ msgstr "Größe"
 
-#: templates/lvm/zfssnapshot.js:124
-#, c-format
-msgid "Really rollback snapshot %s ?<br /><b>There is no undo.</b>"
-msgstr ""
-"Snapshot %s wirklich zurückspielen?<br />\n"
-"<b>Dies kann nicht rückgängig gemacht werden.</b>"
+#~ msgid "FS"
+#~ msgstr "Dateisystem"
 
-#: templates/lvm/zfssnapshot.js:162 templates/lvm/zfssubvolume.js:143
-msgid "Confirm delete"
-msgstr "Löschen bestätigen"
+#~ msgid "Free"
+#~ msgstr "Frei"
 
-#: templates/lvm/zfssnapshot.js:164
-#, c-format
-msgid "Really delete snapshot %s ?<br /><b>There is no undo.</b>"
-msgstr ""
-"Snapshot %s wirklich löschen?<br />\n"
-"<b>Diese Aktion kann nicht rückgängig gemacht werden.</b>"
+#~ msgid "Used"
+#~ msgstr "Belegt"
 
-#: templates/lvm/zfssnapshot.js:246
-msgid "Subvolumes"
-msgstr "Subvolumes"
+#~ msgid "Used%"
+#~ msgstr "Belegt%"
 
-#: templates/lvm/zfssnapshot.js:279 templates/lvm/zfssubvolume.js:129
-msgid "Subvolume"
-msgstr "Subvolume"
+#~ msgid "Owner"
+#~ msgstr "Besitzer"
 
-#: templates/lvm/zfssnapshot.js:310
-msgid "Snapshots"
-msgstr "Snapshots"
+#~ msgid "Mounted at host"
+#~ msgstr "Eingehängt auf Host"
 
-#: templates/lvm/zfssnapshot.js:362
-msgid "Zfs Subvolume"
-msgstr "ZFS-Subvolume"
+#~ msgid "Group"
+#~ msgstr "Gruppe"
 
-#: templates/lvm/zfssubvolume.js:84 templates/lvm/zfssubvolume.js.c:90
-msgid "Create Subvolume"
-msgstr "Subvolume anlegen"
+#~ msgid "Set warning threshold"
+#~ msgstr "Warnschwelle festlegen"
 
-#: templates/lvm/zfssubvolume.js:145
-#, c-format
-msgid "Really delete subvolume %s ?<br /><b>There is no undo.</b>"
-msgstr ""
-"Subvolume %s wirklich löschen?<br />\n"
-"<b>Diese Aktion kann nicht rückgängig gemacht werden.</b>"
+#~ msgid "Update Levels"
+#~ msgstr "Schwellen anpassen"
+
+#~ msgid "Warning Level (%)"
+#~ msgstr "Warnschwelle"
+
+#~ msgid "Critical Level (%)"
+#~ msgstr "Kritische Schwelle"
+
+#~ msgid "Cancel"
+#~ msgstr "Abbrechen"
+
+#~ msgid "Mount"
+#~ msgstr "Einhängen"
+
+#~ msgid "Volume %s does not have a file system and therefore cannot be mounted."
+#~ msgstr ""
+#~ "Volume %s hat kein Dateisystem und kann daher nicht eingehängt werden."
+
+#~ msgid "Volume %s is already mounted."
+#~ msgstr "Volume %s ist bereits eingehängt."
+
+#~ msgid "Volume %s cannot be mounted at the current time."
+#~ msgstr "Volume %s kann momentan nicht eingehängt werden."
+
+#~ msgid "Volume %s could not be mounted, please check the logs."
+#~ msgstr ""
+#~ "Volume %s konnte nicht eingehängt werden, bitte in den Logs nachsehen."
+
+#~ msgid "Volume %s has been mounted."
+#~ msgstr "Volume %s wurde eingehängt."
+
+#~ msgid "Unmount"
+#~ msgstr "Aushängen"
+
+#~ msgid "Volume %s is not mounted."
+#~ msgstr "Volume %s ist nicht eingehängt."
+
+#~ msgid "Do you really want to unmount %s?"
+#~ msgstr "Möchten Sie %s wirklich aushängen?"
+
+#~ msgid "Volume %s could not be unmounted, please check the logs."
+#~ msgstr ""
+#~ "Volume %s konnte nicht ausgehängt werden, bitte in den Logs nachsehen."
+
+#~ msgid "Volume %s has been unmounted."
+#~ msgstr "Volume %s wurde ausgehängt."
+
+#~ msgid "Shares"
+#~ msgstr "Freigaben"
+
+#~ msgid "App"
+#~ msgstr "App"
+
+#~ msgid "Object"
+#~ msgstr "Objekt"
+
+#~ msgid "Initialize"
+#~ msgstr "Initialisieren"
+
+#~ msgid "Script"
+#~ msgstr "Skript"
+
+#~ msgid "Initialization complete"
+#~ msgstr "Initialisierung erfolgreich"
+
+#~ msgid ""
+#~ "Initialization script %(script)s has been executed successfully on %(lv)s."
+#~ msgstr ""
+#~ "Initialisierungs-Script %(script)s wurde erfolgreich auf das Volume %(lv)s "
+#~ "angewendet."
+
+#~ msgid "Resize Volume"
+#~ msgstr "Volume-Größe ändern"
+
+#~ msgid "Please enter your desired size"
+#~ msgstr "Bitte die gewünschte Größe eingeben"
+
+#~ msgid "Megabyte"
+#~ msgstr "Megabyte"
+
+#~ msgid "Remaining Space"
+#~ msgstr "Verbleibender Platz"
+
+#~ msgid "Edit"
+#~ msgstr "Bearbeiten"
+
+#~ msgid "Warning"
+#~ msgstr "Warnung"
+
+#~ msgid ""
+#~ "Do you really want to change Volume size of <b>%(lv)s</b> to <b>%(megs)s</b>"
+#~ " MB?"
+#~ msgstr ""
+#~ "Möchten Sie wirklich die Volume-Größe von <b>%(lv)s</b> auf <b>%(megs)s</b> "
+#~ "MB ändern?"
+
+#~ msgid "Resizing Volume"
+#~ msgstr "Passe Volume-Größe an"
+
+#~ msgid "Please wait while your volume is being resized..."
+#~ msgstr "Bitte warten, während die Volume-Größe geändert wird..."
+
+#~ msgid "Logical Volumes"
+#~ msgstr "Logische Volumes"
+
+#~ msgid "Add Volume"
+#~ msgstr "Volume hinzufügen"
+
+#~ msgid "Edit Volume"
+#~ msgstr "Volume bearbeiten"
+
+#~ msgid "Delete Volume"
+#~ msgstr "Volume löschen"
+
+#~ msgid "Volume Group"
+#~ msgstr "Volume-Gruppe"
+
+#~ msgid "Querying data..."
+#~ msgstr "Warte auf Daten..."
+
+#~ msgid "The volume group in which you want the Volume to be created."
+#~ msgstr "Die Volume-Gruppe in der das Volume angelegt werden soll."
+
+#~ msgid "File System"
+#~ msgstr "Dateisystem"
+
+#~ msgid ""
+#~ "If you want to use DRBD with this device, do not yet create a file system on"
+#~ " it, even if you want to share it using NAS services later on."
+#~ msgstr ""
+#~ "Wenn DRBD mit diesem Volume benutzt werden soll, darf noch kein Dateisystem "
+#~ "angelegt werden, selbst wenn es später mit NAS-Diensten freigegeben werden "
+#~ "soll."
+
+#~ msgid "Size in MB"
+#~ msgstr "Größe in MB"
+
+#~ msgid "Waiting for volume group selection..."
+#~ msgstr "Warte auf Auswahl der Volume-Gruppe..."
+
+#~ msgid "Deduplication"
+#~ msgstr "Deduplizierung"
+
+#~ msgid "Compression"
+#~ msgstr "Kompression"
+
+#~ msgid ""
+#~ "What was the name of the volume you wish to delete again?<br /><b>There is "
+#~ "no undo and you will lose all data.</b>"
+#~ msgstr ""
+#~ "Wie war der Name des Volumes das Sie löschen möchten?<br /><b>Diese Aktion "
+#~ "kann nicht rückgängig gemacht werden und Sie werden alle Daten des Volumes "
+#~ "verlieren.</b>"
+
+#~ msgid "Hm, that doesn't seem right..."
+#~ msgstr "Das sieht nicht richtig aus..."
+
+#~ msgid "As you wish."
+#~ msgstr "Wie Sie wollen."
+
+#~ msgid "Volume Management"
+#~ msgstr "Volume-Verwaltung"
+
+#~ msgid "Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed "
+#~ msgstr "Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed "
+
+#~ msgid "Drag volumes which should be snapshotted here:"
+#~ msgstr ""
+#~ "Ziehen Sie die Volumes, von denen ein Snapshot erstellt werden soll, hier "
+#~ "hin:"
+
+#~ msgid "Prescript conditions"
+#~ msgstr "Preskript"
+
+#~ msgid "Snapshots without retention time"
+#~ msgstr "Snapshots ohne Aufbewahrungszeit"
+
+#~ msgid "Set retention time"
+#~ msgstr "Setzen der Aufbewahrungszeit"
+
+#~ msgid "Execute now"
+#~ msgstr "Sofort ausführen"
+
+#~ msgid "No Enddatetime"
+#~ msgstr "Keinen Endzeitpunkt"
+
+#~ msgid "Month"
+#~ msgstr "Monat"
+
+#~ msgid "Logical Volume Snapshots"
+#~ msgstr "Volume-Snapshots"
+
+#~ msgid "Add Snapshot"
+#~ msgstr "Snapshot hinzufügen"
+
+#~ msgid "Delete Snapshot"
+#~ msgstr "Snapshot löschen"
+
+#~ msgid "Original Volume"
+#~ msgstr "Original-Volume"
+
+#~ msgid ""
+#~ "Please consider, that the size of your snapshot depends on the kind and "
+#~ "frequency of change."
+#~ msgstr ""
+#~ "Bitte beachten, dass die Größe des Snapshots von der Art und Häufigkeit von "
+#~ "Änderungen abhängig ist."
+
+#~ msgid "Waiting for volume selection..."
+#~ msgstr "Warte auf Volume-Auswahl..."
+
+#~ msgid "Snapshot usage (%)"
+#~ msgstr "Snapshot-Belegung"
+
+#~ msgid "Volume Snapshots"
+#~ msgstr "Volume-Snapshots"
+
+#~ msgid "Zfs Snapshots"
+#~ msgstr "ZFS-Snapshots"
+
+#~ msgid "Create Snapshot"
+#~ msgstr "Snapshot erzeugen"
+
+#~ msgid "Rollback Snapshot"
+#~ msgstr "Snapshot zurückspielen"
+
+#~ msgid "Confirm rollback"
+#~ msgstr "Zurückspielen bestätigen"
+
+#~ msgid "Really rollback snapshot %s ?<br /><b>There is no undo.</b>"
+#~ msgstr ""
+#~ "Snapshot %s wirklich zurückspielen?<br />\n"
+#~ "<b>Dies kann nicht rückgängig gemacht werden.</b>"
+
+#~ msgid "Confirm delete"
+#~ msgstr "Löschen bestätigen"
+
+#~ msgid "Really delete snapshot %s ?<br /><b>There is no undo.</b>"
+#~ msgstr ""
+#~ "Snapshot %s wirklich löschen?<br />\n"
+#~ "<b>Diese Aktion kann nicht rückgängig gemacht werden.</b>"
+
+#~ msgid "Subvolumes"
+#~ msgstr "Subvolumes"
+
+#~ msgid "Subvolume"
+#~ msgstr "Subvolume"
+
+#~ msgid "Snapshots"
+#~ msgstr "Snapshots"
+
+#~ msgid "Zfs Subvolume"
+#~ msgstr "ZFS-Subvolume"
+
+#~ msgid "Create Subvolume"
+#~ msgstr "Subvolume anlegen"
+
+#~ msgid "Really delete subvolume %s ?<br /><b>There is no undo.</b>"
+#~ msgstr ""
+#~ "Subvolume %s wirklich löschen?<br />\n"
+#~ "<b>Diese Aktion kann nicht rückgängig gemacht werden.</b>"
 
 #~ msgid "Volume Groups"
 #~ msgstr "Volume-Gruppen"
@@ -829,9 +778,6 @@ msgstr ""
 
 #~ msgid "Add Host"
 #~ msgstr "Host hinzufügen"
-
-#~ msgid "No expiry date"
-#~ msgstr "Kein Ablaufdatum"
 
 #~ msgid "Expiry date"
 #~ msgstr "Ablaufdatum"

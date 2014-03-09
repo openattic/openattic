@@ -2,20 +2,20 @@
 # Copyright (C) YEAR THE PACKAGE'S COPYRIGHT HOLDER
 # This file is distributed under the same license as the PACKAGE package.
 # FIRST AUTHOR <EMAIL@ADDRESS>, YEAR.
-# 
+#
 #, fuzzy
 msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2014-02-24 15:50+0100\n"
+"POT-Creation-Date: 2014-03-09 15:20+0100\n"
 "PO-Revision-Date: 2014-02-25 11:24\n"
 "Last-Translator:   <>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
+"Language: \n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"Language: \n"
 "Plural-Forms: nplurals=2; plural=(n != 1)\n"
 "X-Translated-Using: django-rosetta 0.6.6\n"
 
@@ -30,8 +30,8 @@ msgstr "VG-Namen dürfen nicht mit einem Bindestrich beginnen."
 #: models.py:45
 msgid "This name clashes with a file or directory in /dev."
 msgstr ""
-"Dieser Name steht in Konflikt mit einer Datei oder einem Verzeichnis unter "
-"/dev."
+"Dieser Name steht in Konflikt mit einer Datei oder einem Verzeichnis unter /"
+"dev."
 
 #: models.py:47 models.py:57
 msgid ""
@@ -56,222 +56,217 @@ msgstr "Der Volume-Name darf nicht mit 'snapshot' oder 'pvmove' beginnen."
 msgid "The volume name must not contain '_mlog' or '_mimage'."
 msgstr "Der Volume-Name darf '_mlog' oder '_mimage' nicht beinhalten."
 
-#: models.py:123 models.py:235
+#: models.py:119 models.py:225
 msgid "read-only"
 msgstr "Schreibgeschützt"
 
-#: models.py:124
+#: models.py:120
 msgid "non-resizable"
 msgstr "Nicht größenveränderbar"
 
-#: models.py:125
+#: models.py:121
 msgid "exported"
 msgstr "Exportiert"
 
-#: models.py:126
+#: models.py:122
 msgid "partial"
 msgstr "Unvollständig"
 
-#: models.py:126
+#: models.py:122
 msgid "online"
 msgstr "online"
 
-#: models.py:127 models.py:237
+#: models.py:123 models.py:227
 msgid "contiguous allocation"
 msgstr "Contiguous Allocation"
 
-#: models.py:128 models.py:238
+#: models.py:124 models.py:228
 msgid "cling allocation"
 msgstr "Cling Allocation"
 
-#: models.py:130
+#: models.py:126
 msgid "anywhere allocation"
 msgstr "Anywhere Allocation"
 
-#: models.py:131
+#: models.py:127
 msgid "inherited allocation"
 msgstr "Inherited Allocation"
 
-#: models.py:132
+#: models.py:128
 msgid "clustered"
 msgstr "Geclustert"
 
-#: models.py:165
-msgid "Warning Level (%)"
-msgstr "Warnschwelle (%)"
-
-#: models.py:166
-msgid "Critical Level (%)"
-msgstr "Kritische Schwelle (%)"
-
-#: models.py:167
-msgid "Deduplication"
-msgstr "Dedublizierung"
-
-#: models.py:168
-msgid "Compression"
-msgstr "Kompression"
-
-#: models.py:224
+#: models.py:214
 msgid "mirrored"
 msgstr "Gespiegelt"
 
-#: models.py:224
+#: models.py:214
 msgid "mirrored without initial sync"
 msgstr "Ohne initiale Synchronisation gespiegelt"
 
-#: models.py:225
+#: models.py:215
 msgid "origin"
 msgstr "Ursprung"
 
-#: models.py:225
+#: models.py:215
 msgid "merging origin"
 msgstr "Ursprung zusammenführen"
 
-#: models.py:226
+#: models.py:216
 msgid "RAID"
 msgstr "RAID"
 
-#: models.py:226
+#: models.py:216
 msgid "RAID without initial sync"
 msgstr "RAID ohne initiale Synchronisation"
 
-#: models.py:227 models.py:256
+#: models.py:217 models.py:246
 msgid "snapshot"
 msgstr "Snapshot"
 
-#: models.py:227
+#: models.py:217
 msgid "merging snapshot"
 msgstr "Snapshot zusammenführen"
 
-#: models.py:228
+#: models.py:218
 msgid "pvmove"
 msgstr "Pvmove"
 
-#: models.py:228 models.py:257
+#: models.py:218 models.py:247
 msgid "virtual"
 msgstr "virtuell"
 
-#: models.py:229
+#: models.py:219
 msgid "image"
 msgstr "Abbildung"
 
-#: models.py:229
+#: models.py:219
 msgid "out-of-sync image"
 msgstr "out-of-sync image"
 
-#: models.py:230
+#: models.py:220
 msgid "mirror log"
 msgstr ""
 
-#: models.py:230
+#: models.py:220
 msgid "conversion"
 msgstr "Umwandlung"
 
-#: models.py:231
+#: models.py:221
 msgid "thin volume"
 msgstr "Thin Volume"
 
-#: models.py:231
+#: models.py:221
 msgid "thin pool"
 msgstr "Thin Pool"
 
-#: models.py:232
+#: models.py:222
 msgid "thin pool data"
 msgstr "Thin Pool Daten"
 
-#: models.py:232
+#: models.py:222
 msgid "RAID/thin pool metadata"
 msgstr "RAID/Thin Pool Metadaten"
 
-#: models.py:235
+#: models.py:225
 msgid "temporarily read-only"
 msgstr "Vorübergehend schreibgeschützt"
 
-#: models.py:237
+#: models.py:227
 msgid "anywhere"
 msgstr "Irgendwo"
 
-#: models.py:239
+#: models.py:229
 msgid "normal allocation"
 msgstr "Normal Allocation"
 
-#: models.py:243
+#: models.py:233
 msgid "active"
 msgstr "Aktiv"
 
-#: models.py:244
+#: models.py:234
 msgid "suspended"
 msgstr ""
 
-#: models.py:245
+#: models.py:235
 msgid "invalid snapshot"
 msgstr "Ungültiger Snapshot"
 
-#: models.py:246
+#: models.py:236
 msgid "invalid suspended snapshot"
 msgstr ""
 
-#: models.py:247
+#: models.py:237
 msgid "snapshot merge failed"
 msgstr "Zusammenführen des Snapshots fehlgeschlagen"
 
-#: models.py:248
+#: models.py:238
 msgid "suspended snapshot merge failed"
 msgstr ""
 
-#: models.py:249
+#: models.py:239
 msgid "mapped device present without tables"
 msgstr ""
 
-#: models.py:250
+#: models.py:240
 msgid "mapped device present with inactive table"
 msgstr ""
 
-#: models.py:251
+#: models.py:241
 msgid "offline"
 msgstr "Offline"
 
-#: models.py:253
+#: models.py:243
 msgid "open"
 msgstr "Offen"
 
-#: models.py:255
+#: models.py:245
 msgid "mirror"
 msgstr "Spiegel"
 
-#: models.py:255
+#: models.py:245
 msgid "raid"
 msgstr "Raid"
 
-#: models.py:256
+#: models.py:246
 msgid "thin"
 msgstr "Thin"
 
-#: models.py:257
+#: models.py:247
 msgid "unknown"
 msgstr "Unbekannt"
 
-#: models.py:260
+#: models.py:250
 msgid "zeroed"
 msgstr "Genullt"
 
-#: models.py:264
+#: models.py:254
 msgid "pvmove in progress"
 msgstr "Pvmove in Arbeit"
 
-#: models.py:366
-msgid "The owner field is required unless you are creating a snapshot."
-msgstr ""
-"Das Besitzer-Feld wird benötigt, es sei denn Sie erstellen einen Snapshot."
-
-#: models.py:368
+#: models.py:363
 msgid "The vg field is required unless you are creating a snapshot."
 msgstr "Das VG-Feld wird benötigt, es sei denn Sie erstellen einen Snapshot."
 
-#: models.py:370
+#: models.py:365
 msgid "LVM does not support snapshotting snapshots."
 msgstr "LVM unterstützt nicht, Snapshots von Snapshots anzulegen."
+
+#~ msgid "Warning Level (%)"
+#~ msgstr "Warnschwelle (%)"
+
+#~ msgid "Critical Level (%)"
+#~ msgstr "Kritische Schwelle (%)"
+
+#~ msgid "Deduplication"
+#~ msgstr "Dedublizierung"
+
+#~ msgid "Compression"
+#~ msgstr "Kompression"
+
+#~ msgid "The owner field is required unless you are creating a snapshot."
+#~ msgstr ""
+#~ "Das Besitzer-Feld wird benötigt, es sei denn Sie erstellen einen Snapshot."
 
 #~ msgid "Size in MB"
 #~ msgstr "Größe in MB"
