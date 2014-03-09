@@ -118,5 +118,8 @@ class Zfs(FileSystemVolume):
     def usedmegs(self):
         return self.fs.stat["used"]
 
+    def _create_snapshot_for_storageobject(self, storageobj, options):
+        raise TypeError("BTRFS Snapshots have not yet been implemented.")
+
     def __unicode__(self):
         return self.fullname

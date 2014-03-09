@@ -112,5 +112,8 @@ class BtrfsSubvolume(FileSystemVolume):
             return "%s/%s" % (parentname, self.storageobj.name)
         return self.storageobj.name
 
+    def _create_snapshot_for_storageobject(self, storageobj, options):
+        raise TypeError("BTRFS Snapshots have not yet been implemented.")
+
     def __unicode__(self):
         return self.fullname
