@@ -47,7 +47,7 @@ class ConnectionManager(models.Manager):
         other_host = Host.objects.get(id=other_host_id);
 
         # create drbd connection object
-        self_storageobj = StorageObject(name=self_volume.storageobj.name, megs=self_volume.storageobj.megs)
+        self_storageobj = StorageObject(name=self_volume.storageobj.name, megs=self_volume.storageobj.megs, is_origin=True)
         self_storageobj.full_clean()
         self_storageobj.save()
         connection = Connection(storageobj=self_storageobj, protocol=protocol, syncer_rate=syncer_rate)
