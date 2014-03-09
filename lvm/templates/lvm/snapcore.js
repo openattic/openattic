@@ -597,7 +597,7 @@ var setConfigForNode = function(node, data){
       store       : snapcore_snapshot_volume_store,
       columns     : [{ text: gettext("Volume"), dataIndex: "name", flex: 1}],
       stripeRows  : true,
-      title       : gettext('Zusätzlich zu snapshottende Volumes hier einfügen ( Drag&Drop ):'),
+      title       : gettext('Drag and drop additional volumes here:'),
       height      : 340
     }],
     listeners: {
@@ -637,7 +637,7 @@ var setConfigForNode = function(node, data){
       }
     }
   },{
-    title : gettext('Pre-/Post-Script - Bedingungen'),
+    title : gettext('Pre-/Post-Scripts'),
     id    : 'lvm__snapcore_wiz_prepost',
     labelWidth: 150,
     xtype : 'form',
