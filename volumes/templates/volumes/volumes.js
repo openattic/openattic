@@ -86,6 +86,7 @@ Ext.define('volumes__volumes_StorageObject_model', {
     else if( record.raw.blockvolume !== null ){
       var voltype = record.raw.blockvolume.volume_type;
       if( !record.raw.blockvolume.snapshot &&
+          typeof window.StorageObjectHandlers[voltype.app] !== "undefined" &&
           typeof window.StorageObjectHandlers[voltype.app][voltype.obj] !== "undefined" &&
           typeof window.StorageObjectHandlers[voltype.app][voltype.obj].snapshots_filter !== "undefined" ){
         // May or may not haz Snapshots
