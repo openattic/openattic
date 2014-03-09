@@ -19,11 +19,11 @@ Ext.define('volumes__drbd_Connection_model', {
     'Ext.data.NodeInterface'
   ],
   fields: [
-    'type', 'megs', 'status', 'host', 'path'
+    'type', 'megs', 'status', 'host', 'path', '__unicode__'
   ],
   createNode: function(record){
     var rootNode;
-    if(record.raw.endpoint_set.length > 0){
+    if(record.raw.blockvolume.endpoint_set.length > 0){
       var store = Ext.create('Ext.oa.SwitchingTreeStore', {
         model: 'volumes__drbd_Endpoint_model',
         root: record.data,
@@ -32,7 +32,7 @@ Ext.define('volumes__drbd_Connection_model', {
           directFn: drbd__Endpoint.filter,
           extraParams: {
             kwds: {
-              connection__id: record.raw.id
+              connection__id: record.raw.blockvolume.id
             }
           },
           paramOrder: ['kwds'],
@@ -48,13 +48,13 @@ Ext.define('volumes__drbd_Connection_model', {
       rootNode = this.callParent(arguments);
     }
     rootNode.set('icon', MEDIA_URL + '/icons2/16x16/apps/database.png');
-    rootNode.set('name', toUnicode(record.raw));
+    rootNode.set('name', record.raw.name);
     rootNode.set('megs', record.raw.megs);
     rootNode.set('percent', null);
-    rootNode.set('status', record.raw.status);
-    rootNode.set('path', record.raw.path);
-    rootNode.set('type', record.data.type);
-    rootNode.set('host', toUnicode(record.raw.host));
+    rootNode.set('status', record.raw.blockvolume.status);
+    rootNode.set('path', record.raw.blockvolume.path);
+    rootNode.set('type', toUnicode(record.raw.blockvolume.volume_type));
+    rootNode.set('host', toUnicode(record.raw.blockvolume.host));
     rootNode.commit();
     return rootNode;
   }
@@ -66,13 +66,13 @@ Ext.define('volumes__drbd_Endpoint_model', {
     'Ext.data.NodeInterface'
   ],
   fields: [
-    'connection', 'ipaddress', 'volume'
+    'connection', 'ipaddress', 'volume', '__unicode__'
   ],
   createNode: function(record){
     record.set("leaf", true);
     var rootNode = this.callParent(arguments);
     rootNode.set('id', ["drbd_endpoint", record.raw.id, Ext.id()].join("."));
-    rootNode.set('name', toUnicode(record.raw));
+    rootNode.set('name', toUnicode(record.raw.volume));
     rootNode.set('type', record.raw.type);
     rootNode.set('megs', record.raw.megs);
     rootNode.set('percent', null);
