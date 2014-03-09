@@ -99,6 +99,12 @@ Ext.define('Ext.oa.drbd__device_mirror_panel', {
     this.callParent(arguments);
     this.addEvents("click_cancel", "click_ok");
   },
+  defaults: [{
+    anchor: '-20px',
+    defaults : {
+      anchor: "0px"
+    }
+  }],
   items: [{
     xtype: 'combo',
     forceSelection: true,
@@ -170,7 +176,7 @@ Ext.define('Ext.oa.drbd__device_mirror_panel', {
     deferEmptyText: false,
     emptyText: gettext("Select..."),
     itemId: "volumes_find_volumepool_combo",
-    displayField: "name",
+    displayField: "__unicode__",
     valueField: "id",
     queryMode: "local",
     allowBlank: false,
@@ -180,7 +186,7 @@ Ext.define('Ext.oa.drbd__device_mirror_panel', {
         extend: "Ext.data.Model",
         fields: [
           {name: "id"},
-          {name: "name"}
+          {name: "__unicode__"}
         ]
       });
 
