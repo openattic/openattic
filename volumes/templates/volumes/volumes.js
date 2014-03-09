@@ -57,6 +57,16 @@ Ext.define('volumes__volumes_StorageObject_model', {
   createNode: function(record){
     var rootNode,
         kwds = {};
+    // This sucks ass, but we're on a schedule here
+    if( record.raw.blockvolume != null && record.raw.blockvolume.volume_type.app == "drbd" ){
+      // See if there is a specific model for this object type, and if so, use it
+      var modelname = Ext.String.format('volumes__{0}_{1}_model', record.raw.blockvolume.volume_type.app, record.raw.blockvolume.volume_type.obj);
+      if( Ext.ClassManager.get(modelname) !== null ){
+        var model = Ext.create(modelname);
+        return model.createNode(record);
+      }
+    }
+    // There is none, rely on the object having everything we need
     if( record.raw.volumepool !== null ){
       var vptype = record.raw.volumepool.volumepool_type;
       Ext.apply(kwds, window.StorageObjectHandlers[vptype.app][vptype.obj].extra_params || {});
