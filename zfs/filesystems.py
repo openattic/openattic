@@ -93,7 +93,10 @@ class Zfs(FileSystem):
 
     @property
     def status(self):
-        return dbus_to_python(self.dbus_object.zpool_get(self.zpool.storageobj.name, "health"))[0][2].lower()
+        try:
+            return dbus_to_python(self.dbus_object.zpool_get(self.zpool.storageobj.name, "health"))[0][2].lower()
+        except dbus.DBusException:
+            return "unknown"
 
     def format(self):
         self.dbus_object.zpool_format(self.zpool.storageobj.blockvolume.volume.path, self.zpool.storageobj.name,
