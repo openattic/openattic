@@ -376,115 +376,115 @@ var setConfigForNode = function(node, data){
     }
   }
   else{
-    for(var i=0; i < node.childNodes.length; i++)
-    {
-      if(getConfigForNode(node.childNodes[i]).data === null){
-        node.childNodes[i].set("iconCls", node.childNodes[i].data.csscl[img_childs]);
+      for(var i=0; i < node.childNodes.length; i++)
+      {
+        if(getConfigForNode(node.childNodes[i]).data === null){
+          node.childNodes[i].set("iconCls", node.childNodes[i].data.csscl[img_childs]);
+        }
       }
+    }
+
+    return config;
+  }
+
+  var nextElement = function(item, e){
+    if (e.getCharCode() == Ext.EventObject.ENTER) {
+      item.nextSibling().focus();
     }
   }
 
-  return config;
-}
-
-var nextElement = function(item, e){
-  if (e.getCharCode() == Ext.EventObject.ENTER) {
-    item.nextSibling().focus();
-  }
-}
-
-Ext.define('snapcore_volume_store_model', {
-  extend: 'Ext.data.Model',
-  fields:  ["id", "name"]
-});
-var first_volume_grid_store = Ext.create('Ext.data.Store', {
-  model: 'snapcore_volume_store_model',
-  proxy: {
-    extraParams: {
-      kwds: {
-        'snapshot__isnull': true
-      }
+  Ext.define('snapcore_volume_store_model', {
+    extend: 'Ext.data.Model',
+    fields:  ["id", "name"]
+  });
+  var first_volume_grid_store = Ext.create('Ext.data.Store', {
+    model: 'snapcore_volume_store_model',
+    proxy: {
+      extraParams: {
+        kwds: {
+          'snapshot__isnull': true
+        }
+      },
+      type: 'direct',
+      directFn: lvm__LogicalVolume.filter
     },
-    type: 'direct',
-    directFn: lvm__LogicalVolume.filter
-  },
-  autoLoad: true
-});
+    autoLoad: true
+  });
 
-Ext.define('snapcore_snapshot_volume_store_model', {
-  extend: 'Ext.data.Model',
-  fields : ["id", "name"]
-});
-var snapcore_snapshot_volume_store = Ext.create('Ext.data.ArrayStore', {
-  model: "snapcore_secondgrid_store_model",
-  proxy: {
-    type: 'direct',
-    root: 'data'
-  }
-});
-
-Ext.define("Ext.oa.ExtendedGridDropZone", {
-  extend: "Ext.grid.ViewDropZone",
-  onNodeOver: function(node, dragZone, e, data){
-    if(data && data.records && data.records[0]){
-      if(data.records[0].data.draggable === false){
-        return this.dropNotAllowed;
-      }
+  Ext.define('snapcore_snapshot_volume_store_model', {
+    extend: 'Ext.data.Model',
+    fields : ["id", "name"]
+  });
+  var snapcore_snapshot_volume_store = Ext.create('Ext.data.ArrayStore', {
+    model: "snapcore_secondgrid_store_model",
+    proxy: {
+      type: 'direct',
+      root: 'data'
     }
-    return this.callParent(arguments);
-  }
-});
+  });
 
-Ext.define("Ext.oa.ExtendedGridDnD", {
-  extend: "Ext.grid.plugin.DragDrop",
-  alias: "plugin.extendeddnd",
-  onViewRender: function(view){
-    this.callParent(arguments);
+  Ext.define("Ext.oa.ExtendedGridDropZone", {
+    extend: "Ext.grid.ViewDropZone",
+    onNodeOver: function(node, dragZone, e, data){
+      if(data && data.records && data.records[0]){
+        if(data.records[0].data.draggable === false){
+          return this.dropNotAllowed;
+        }
+      }
+      return this.callParent(arguments);
+    }
+  });
 
-    this.dropZone = Ext.create("Ext.oa.ExtendedGridDropZone", {
-      view: view,
-      ddGroup: this.dropGroup || this.ddGroup
-    });
-  }
-});
+  Ext.define("Ext.oa.ExtendedGridDnD", {
+    extend: "Ext.grid.plugin.DragDrop",
+    alias: "plugin.extendeddnd",
+    onViewRender: function(view){
+      this.callParent(arguments);
 
-var group1 = this.id + 'group1',
-    group2 = this.id + 'group2';
+      this.dropZone = Ext.create("Ext.oa.ExtendedGridDropZone", {
+        view: view,
+        ddGroup: this.dropGroup || this.ddGroup
+      });
+    }
+  });
 
-var wizform = Ext.create("Ext.oa.WizPanel", {
-  config    : config,
-  activeNode: null,
-  activeItem: 'lvm__snapcore_wiz_welc',
-  items     : [{
-    title     : gettext('Welcome'),
-    id        : 'lvm__snapcore_wiz_welc',
-    noAutoPrev: true,
-    xtype     : 'form',
+  var group1 = this.id + 'group1',
+      group2 = this.id + 'group2';
+
+  var wizform = Ext.create("Ext.oa.WizPanel", {
+    config    : config,
+    activeNode: null,
+    activeItem: 'lvm__snapcore_wiz_welc',
     items     : [{
-      xtype       : 'label',
-      text        : gettext('Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed ' +
-        'diam nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam erat, sed ' +
-        'diam voluptua. At vero eos et accusam et')
+      title     : gettext('Welcome'),
+      id        : 'lvm__snapcore_wiz_welc',
+      noAutoPrev: true,
+      xtype     : 'form',
+      items     : [{
+        xtype       : 'label',
+        html        : gettext('Im folgenden Assistenten werden automatisierte Snapshots auf Basis ' +
+          'der openATTIC SnapApps konfiguriert. <br /> <br />' +
+          'Bitte wählen Sie einen Namen für die neue Konfiguration.'),
+      },{
+        xtype       : 'tbspacer',
+        height      : 10
+      },{
+        xtype           : 'textfield',
+        name            : 'configname',
+        fieldLabel      : gettext('Description')
+      }]
     },{
-      xtype       : 'tbspacer',
-      height      : 10
-    },{
-      xtype           : 'textfield',
-      name            : 'configname',
-      fieldLabel      : gettext('Description')
-    }]
-  },{
-    id        : 'wiz_snapitems',
-    layout    : 'border',
-    items     : [{
-      title     : gettext('Available items'),
-      region    : 'center',
-      id        : 'lvm__snapcore_wizard_treepanel',
-      xtype     : 'lvm__snapcore_treepanel',
-      listeners : {
-        itemclick: function(self, record, item, index, e, eOpts){
-          var settings = Ext.getCmp('lvm__snapcore_wiz_snapitem_settings').layout;
-          if(typeof record.data.configForm !== 'undefined' && record.data.configForm.length > 0){
+      id        : 'wiz_snapitems',
+      layout    : 'border',
+      items     : [{
+        title     : gettext('Verfuegbare Items'),
+        region    : 'center',
+        id        : 'lvm__snapcore_wizard_treepanel',
+        xtype     : 'lvm__snapcore_treepanel',
+        listeners : {
+          itemclick: function(self, record, item, index, e, eOpts){
+            var settings = Ext.getCmp('lvm__snapcore_wiz_snapitem_settings').layout;
+            if(typeof record.data.configForm !== 'undefined' && record.data.configForm.length > 0){
             wizform.activeNode = record;
             settings.setActiveItem(record.data.configForm);
           }
@@ -502,7 +502,7 @@ var wizform = Ext.create("Ext.oa.WizPanel", {
         itemId: "emptyConfigForm",
         items : [{
           xtype: "label",
-          text : gettext("No config options available!")
+          text : gettext("Es sind keine Konfigurations-Optionen verfügbar!")
         }]
       }));
 
@@ -563,9 +563,8 @@ var wizform = Ext.create("Ext.oa.WizPanel", {
     items     : [{
       xtype    : 'label',
       region   : 'north',
-      text     : gettext('Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed ' +
-        'diam nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam erat, sed ' +
-        'diam voluptua. At vero eos et accusam et'),
+      text     : gettext('Sollte ein zeitgleicher Snapshot von weiteren Volumes notwendig sein (z.B. Raw-Device-Mappings) ' +
+        'können diese per Drag&Drop hinzugefügt werden.'),
       bodyStyle: "padding: 10px"
     },{
       itemId      : 'first_volume_grid',
@@ -601,7 +600,7 @@ var wizform = Ext.create("Ext.oa.WizPanel", {
       store       : snapcore_snapshot_volume_store,
       columns     : [{ text: "Volumes", dataIndex: "name", flex: 1}],
       stripeRows  : true,
-      title       : gettext('Drag volumes which should be snapshotted here:'),
+      title       : gettext('Zusätzlich zu snapshottende Volumes hier einfügen ( Drag&Drop ):'),
       height      : 340
     }],
     listeners: {
@@ -641,15 +640,15 @@ var wizform = Ext.create("Ext.oa.WizPanel", {
       }
     }
   },{
-    title : gettext('Pre-/Post-Script - Conditions'),
+    title : gettext('Pre-/Post-Script - Bedingungen'),
     id    : 'lvm__snapcore_wiz_prepost',
     labelWidth: 150,
     xtype : 'form',
     items : [{
       xtype     : 'label',
-      text      : gettext('Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed ' +
-        'diam nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam erat, sed ' +
-        'diam voluptua. At vero eos et accusam et')
+      html      : gettext('Bei der automatischen Ausführung der SnapApp-Konfiguration können ' +
+        'benutzerdefinierte Skripte ausgeführt werden. <br /> ' +
+        'Bitte wählen Sie den Pfad zu Ihren Skripten.')
     },{
       xtype     : 'tbspacer',
       height    : 10
@@ -676,20 +675,18 @@ var wizform = Ext.create("Ext.oa.WizPanel", {
     xtype : 'form',
     items : [{
       xtype     : 'label',
-      text      :  gettext('Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed ' +
-        'diam nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam erat, sed ' +
-        'diam voluptua. At vero eos et accusam et')
+      text      :  gettext('Bitte wählen Sie den Aufbewahrungszeitraum für automatisch erstellte Snapshots. '),
     },{
       xtype     : 'tbspacer',
       height    : 10
     },{
-      boxLabel  : gettext('Snapshots without retention time'),
+      boxLabel  : gettext('Snapshots nicht automatisch löschen'),
       name      : 'retentiontime',
       inputValue: 'retention_time_noretention',
       xtype     : 'radio',
       checked   : true
     },{
-      boxLabel  : gettext('Set retention time'),
+      boxLabel  : gettext('Snapshots automatisch löschen nach:'),
       name      : 'retentiontime',
       inputValue: 'retention_time_retention',
       xtype     : 'radio',
@@ -746,7 +743,7 @@ var wizform = Ext.create("Ext.oa.WizPanel", {
       }]
     }]
   },{
-    title : gettext('Scheduling Part 2 / Options'),
+    title : gettext('Zeitplan Part 2 / Optionen'),
     id    : 'lvm__snapcore_wiz_sched2',
     layout: {
       type  : 'vbox',
@@ -755,14 +752,14 @@ var wizform = Ext.create("Ext.oa.WizPanel", {
     noAutoNext: true,
     xtype     : 'form',
     items     : [{
-      boxLabel  : gettext('Execute now'),
+      boxLabel  : gettext('Jetzt ausführen'),
       id        : 'execute_now',
       name      : 'scheduling_select',
       inputValue: 'execute_now',
       xtype     : 'radio',
       checked   : true
     },{
-      boxLabel  : gettext('Execute later'),
+      boxLabel  : gettext('Später ausführen'),
       id        : 'execute_later',
       name      : 'scheduling_select',
       inputValue: 'execute_later',
@@ -804,7 +801,7 @@ var wizform = Ext.create("Ext.oa.WizPanel", {
         fieldLabel  : gettext("Executedate")
       }]
     },{
-      boxLabel  : gettext('Create scheduling'),
+      boxLabel  : gettext('Erstelle Zeitplan'),
       id        : 'scheduling',
       name      : 'scheduling_select',
       inputValue: 'scheduling',
@@ -857,14 +854,14 @@ var wizform = Ext.create("Ext.oa.WizPanel", {
           id          : 'startdate_select',
           disabled    : true,
           value       : new Date(),
-          fieldLabel  : gettext('Startdate')
+          fieldLabel  : gettext('Startdatum')
         },{
           xtype       : 'timefield',
           id          : 'starttime_select',
           disabled    : true,
           value       : new Date(),
           format      : "H:i",
-          fieldLabel  : gettext('Starttime')
+          fieldLabel  : gettext('Startzeit')
         }]
       },{
         xtype : 'tbspacer',
@@ -883,13 +880,13 @@ var wizform = Ext.create("Ext.oa.WizPanel", {
           id          : 'enddate_select',
           disabled    : true,
           value       : Ext.Date.add(new Date(), Ext.Date.DAY, +7),
-          fieldLabel  : gettext('Enddate')
+          fieldLabel  : gettext('Enddatum')
         },{
           xtype       : 'timefield',
           id          : 'endtime_select',
           disabled    : true,
           value       : new Date(),
-          fieldLabel  : gettext('Enddtime'),
+          fieldLabel  : gettext('Endzeit'),
           format      : "H:i"
         }]
       },{
@@ -897,7 +894,7 @@ var wizform = Ext.create("Ext.oa.WizPanel", {
         id          : 'no_enddatetime',
         name        : 'no_enddatetime',
         disabled    : true,
-        fieldLabel  : gettext('No Enddatetime'),
+        fieldLabel  : gettext('Kein Endzeitraum'),
         listeners : {
           change: function(self, newValue, oldValue, eOpts ){
             if(newValue)
@@ -941,14 +938,12 @@ var wizform = Ext.create("Ext.oa.WizPanel", {
       }
     }]
   },{
-    title : gettext('Scheduling Part 3 / Timemanagement Part 2'),
+    title : gettext('Zeitplan Part 3 / Zeitmanagement Part 2'),
     id    : 'lvm__snapcore_wiz_sched32',
     xtype : 'form',
     items : [{
       xtype : 'label',
-      text  : gettext('Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed ' +
-                'diam nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam erat, sed ' +
-                'diam voluptua. At vero eos et accusam et')
+      text  : gettext('Bitte wählen Sie die Zeitpunkte der Snapshot-Erstellung '),
     },{
       xtype : 'tbspacer',
       height: 10
@@ -966,11 +961,11 @@ var wizform = Ext.create("Ext.oa.WizPanel", {
       typeAhead     : true,
       triggerAction : 'all',
       deferEmptyText: false,
-      emptyText     : gettext('Select...'),
+      emptyText     : gettext('Auswahl...'),
       selectOnFocus : true
     },{
       xtype   : 'fieldset',
-      title   : gettext('Hour'),
+      title   : gettext('Stunde'),
       ref     : '../h_fieldset',
       border  : true,
       defaults: {
@@ -999,14 +994,12 @@ var wizform = Ext.create("Ext.oa.WizPanel", {
       }]
     }]
   },{
-    title : gettext('Scheduling Part 3 / Timemanagement Part 3'),
+    title : gettext('Zeitplan Part 3 / Zeitmanagement Part 3'),
     id    : 'lvm__snapcore_wiz_sched33',
     xtype : 'form',
     items : [{
       xtype       : 'label',
-      text        : gettext('Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed ' +
-        'diam nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam erat, sed ' +
-        'diam voluptua. At vero eos et accusam et')
+      text        : gettext('Bitte wählen Sie Wochentage und Monate der Snapshot-Erstellung '),
     },{
       xtype : 'tbspacer',
       height: 10
@@ -1024,11 +1017,11 @@ var wizform = Ext.create("Ext.oa.WizPanel", {
       typeAhead     : true,
       triggerAction : 'all',
       deferEmptyText: false,
-      emptyText     : gettext('Select...'),
+      emptyText     : gettext('Auswahl...'),
       selectOnFocus : true
     },{
       xtype   : 'fieldset',
-      title   : gettext('Day of week'),
+      title   : gettext('Wochentag'),
       ref     : '../dow_fieldset',
       border  : true,
       defaults: {
@@ -1043,21 +1036,21 @@ var wizform = Ext.create("Ext.oa.WizPanel", {
       layout  : 'column',
       items   : [{
         items: [{
-          id: 'dow_1', fieldLabel: gettext('Monday')
+          id: 'dow_1', fieldLabel: gettext('Montag')
         },{
-          id: 'dow_2', fieldLabel: gettext('Tuesday')
+          id: 'dow_2', fieldLabel: gettext('Dienstag')
         },{
-          id: 'dow_3', fieldLabel: gettext('Wednesday')
+          id: 'dow_3', fieldLabel: gettext('Mittwoch')
         },{
-          id: 'dow_4', fieldLabel: gettext('Thursday')
+          id: 'dow_4', fieldLabel: gettext('Donnerstag')
         },{
-          id: 'dow_5', fieldLabel: gettext('Friday')
+          id: 'dow_5', fieldLabel: gettext('Freitag')
         }]
       },{
         items: [{
-          id: 'dow_6', fieldLabel: gettext('Saturday')
+          id: 'dow_6', fieldLabel: gettext('Samstag')
         },{
-          id: 'dow_0', fieldLabel: gettext('Sunday')
+          id: 'dow_0', fieldLabel: gettext('Sonntag')
         }]
       }]
     },{
@@ -1073,40 +1066,40 @@ var wizform = Ext.create("Ext.oa.WizPanel", {
           checked : true
         }
       },
-      title : gettext('Month'),
+      title : gettext('Montag'),
       layout: 'column',
       items : [{
         items: [{
-          id: 'moy_1', fieldLabel: gettext('January')
+          id: 'moy_1', fieldLabel: gettext('Januar')
         },{
-          id: 'moy_2', fieldLabel: gettext('Feburary')
+          id: 'moy_2', fieldLabel: gettext('Feburar')
         },{
-          id: 'moy_3', fieldLabel: gettext('March')
+          id: 'moy_3', fieldLabel: gettext('Maerz')
         },{
           id: 'moy_4', fieldLabel: gettext('April')
         },{
-          id: 'moy_5', fieldLabel: gettext('May')
+          id: 'moy_5', fieldLabel: gettext('Mai')
         },{
-          id: 'moy_6', fieldLabel: gettext('June')
+          id: 'moy_6', fieldLabel: gettext('Juni')
         }]
       },{
         items: [{
-          id: 'moy_7', fieldLabel: gettext('July')
+          id: 'moy_7', fieldLabel: gettext('Juli')
         },{
           id: 'moy_8', fieldLabel: gettext('August')
         },{
           id: 'moy_9', fieldLabel: gettext('September')
         },{
-          id: 'moy_10', fieldLabel: gettext('October')
+          id: 'moy_10', fieldLabel: gettext('Oktober')
         },{
           id: 'moy_11', fieldLabel: gettext('November')
         },{
-          id: 'moy_12', fieldLabel: gettext('December')
+          id: 'moy_12', fieldLabel: gettext('Dezember')
         }]
       }]
     }]
   },{
-    title       : gettext('Finish'),
+    title       : gettext('Fertig'),
     id          : 'lvm__snapcore_wiz_close',
     noAutoNext  : true,
     buttons     : [{
