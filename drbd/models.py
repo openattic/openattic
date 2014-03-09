@@ -17,6 +17,8 @@
  *  GNU General Public License for more details.
 """
 
+import dbus
+
 from collections                import Counter
 
 from django.db                  import models
@@ -125,7 +127,12 @@ class Connection(BlockVolume):
 
     @property
     def host(self):
-        info = dbus_to_python(self.drbd.get_role(self.name, False))
+        import dbus
+        try:
+            info = dbus_to_python(self.drbd.get_role(self.name, False))
+        except dbus.DBusException:
+            return None
+
         info_count = Counter(info.values())
 
         if info_count["Primary"] == 2 or \
@@ -143,7 +150,10 @@ class Connection(BlockVolume):
 
     @property
     def status(self):
-        return dbus_to_python(self.drbd.get_cstate(self.name, False))
+        try:
+            return dbus_to_python(self.drbd.get_cstate(self.name, False))
+        except dbus.DBusException:
+            return None
 
     @property
     def peerhost(self):
@@ -209,8 +219,11 @@ class Endpoint(models.Model):
 
     @property
     def status(self):
-        info = dbus_to_python(self.connection.drbd.get_dstate(self.connection.name, False))
-        return info["self"]
+        try:
+            info = dbus_to_python(self.connection.drbd.get_dstate(self.connection.name, False))
+            return info["self"]
+        except dbus.DBusException:
+            return None
 
     @property
     def host(self):
@@ -218,8 +231,11 @@ class Endpoint(models.Model):
 
     @property
     def is_primary(self):
-        info = dbus_to_python(self.connection.drbd.get_role(self.connection.name, False))
-        return info["self"] == "Primary"
+        try:
+            info = dbus_to_python(self.connection.drbd.get_role(self.connection.name, False))
+            return info["self"] == "Primary"
+        except dbus.DBusException:
+            return None
 
     def install(self, init_primary):
         self.connection.drbd.conf_write()
