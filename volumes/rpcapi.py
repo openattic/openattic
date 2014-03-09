@@ -116,7 +116,7 @@ class VolumePoolProxy(ProxyModelHandler, VolumePoolHandler):
         if model.volumepool is None:
             logging.error("Got None when querying model '%s' instance '%s' for its concrete volumepool" % (type(model), model.id))
             return None
-        if model.volumepool.host == Host.objects.get_current():
+        if model.volumepool.host in (None, Host.objects.get_current()):
             return None
         return model.volumepool.host.peerhost_set.all()[0]
 
@@ -159,7 +159,10 @@ class AbstractBlockVolumeHandler(ModelHandler):
         data = ModelHandler._getobj(self, obj)
         data["name"]   = obj.storageobj.name
         data["megs"]   = obj.storageobj.megs
-        data["host"]   = self._get_handler_instance(Host)._idobj(obj.volume.host)
+        if obj.volume.host is not None:
+            data["host"] = self._get_handler_instance(Host)._idobj(obj.volume.host)
+        else:
+            data["host"] = None
         try:
             data["path"] = obj.volume.path
         except:
@@ -200,7 +203,7 @@ class BlockVolumeProxy(ProxyModelHandler, BlockVolumeHandler):
         if model.volume is None:
             logging.error("Got None when querying model '%s' instance '%s' for its concrete volume" % (type(model), model.id))
             return None
-        if model.volume.host == Host.objects.get_current():
+        if model.volume.host in (None, Host.objects.get_current()):
             return None
         return model.volume.host.peerhost_set.all()[0]
 
@@ -216,7 +219,10 @@ class AbstractFileSystemVolumeHandler(ModelHandler):
         data = ModelHandler._getobj(self, obj)
         data["name"]    = obj.storageobj.name
         data["megs"]    = obj.storageobj.megs
-        data["host"]    = self._get_handler_instance(Host)._idobj(obj.volume.host)
+        if obj.volume.host is not None:
+            data["host"] = self._get_handler_instance(Host)._idobj(obj.volume.host)
+        else:
+            data["host"] = None
         try:
             data["path"] = obj.volume.path
         except:
@@ -264,7 +270,7 @@ class FileSystemVolumeProxy(ProxyModelHandler, FileSystemVolumeHandler):
         if model.volume is None:
             logging.error("Got None when querying model '%s' instance '%s' for its concrete volume" % (type(model), model.id))
             return None
-        if model.volume.host == Host.objects.get_current():
+        if model.volume.host in (None, Host.objects.get_current()):
             return None
         return model.volume.host.peerhost_set.all()[0]
 
@@ -296,7 +302,7 @@ class FileSystemProviderProxy(ProxyModelHandler, FileSystemProviderHandler):
         if model.base.volume is None:
             logging.error("Got None when querying model '%s' instance '%s' for its concrete base volume" % (type(model), model.id))
             return None
-        if model.base.volume.host == Host.objects.get_current():
+        if model.base.volume.host in (None, Host.objects.get_current()):
             return None
         return model.base.volume.host.peerhost_set.all()[0]
 
@@ -349,7 +355,7 @@ class StorageObjectHandler(ModelHandler):
 
 class StorageObjectProxy(ProxyModelHandler, StorageObjectHandler):
     def _find_target_host_from_model_instance(self, model):
-        if model.host == Host.objects.get_current():
+        if model.host in (None, Host.objects.get_current()):
             return None
         return model.host.peerhost_set.all()[0]
 
