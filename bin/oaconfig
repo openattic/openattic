@@ -87,7 +87,7 @@ case $1 in
 			apt-get install $@
 		fi
 		
-		if ! /etc/init.d/openattic_systemd status ; then
+		if /etc/init.d/openattic_systemd status ; then
 			# restart the daemons so they don't keep any locks open
 			$0 reload
 		fi
