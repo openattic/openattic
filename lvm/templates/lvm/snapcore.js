@@ -462,9 +462,7 @@ var setConfigForNode = function(node, data){
       xtype     : 'form',
       items     : [{
         xtype       : 'label',
-        html        : gettext('Im folgenden Assistenten werden automatisierte Snapshots auf Basis ' +
-          'der openATTIC SnapApps konfiguriert. <br /> <br />' +
-          'Bitte wählen Sie einen Namen für die neue Konfiguration.')
+        html        : gettext('The following wizard configures automated snapshots using the openATTIC SnapApps.<br /><br />Please enter a name for the new configuration.')
       },{
         xtype       : 'tbspacer',
         height      : 10
@@ -477,7 +475,7 @@ var setConfigForNode = function(node, data){
       id        : 'wiz_snapitems',
       layout    : 'border',
       items     : [{
-        title     : gettext('Verfuegbare Items'),
+        title     : gettext('Available Items'),
         region    : 'center',
         id        : 'lvm__snapcore_wizard_treepanel',
         xtype     : 'lvm__snapcore_treepanel',
@@ -502,7 +500,7 @@ var setConfigForNode = function(node, data){
         itemId: "emptyConfigForm",
         items : [{
           xtype: "label",
-          text : gettext("Es sind keine Konfigurations-Optionen verfügbar!")
+          text : gettext("There are no configuration options available.")
         }]
       }));
 
@@ -563,8 +561,7 @@ var setConfigForNode = function(node, data){
     items     : [{
       xtype    : 'label',
       region   : 'north',
-      text     : gettext('Sollte ein zeitgleicher Snapshot von weiteren Volumes notwendig sein (z.B. Raw-Device-Mappings) ' +
-        'können diese per Drag&Drop hinzugefügt werden.'),
+      text     : gettext('If other devices need to be included in the snapshot (e.g. for raw device mappings), they can be added via Drag&Drop.'),
       bodyStyle: "padding: 10px"
     },{
       itemId      : 'first_volume_grid',
@@ -580,7 +577,7 @@ var setConfigForNode = function(node, data){
         }
       },
       store       : first_volume_grid_store,
-      columns     : [ {text: gettext("Volumes"), dataIndex: "name", flex: 1}],
+      columns     : [ {text: gettext("Volume"), dataIndex: "name", flex: 1}],
       stripeRows  : true,
       title       : gettext("Volumes"),
       height      : 340
@@ -598,7 +595,7 @@ var setConfigForNode = function(node, data){
         }
       },
       store       : snapcore_snapshot_volume_store,
-      columns     : [{ text: "Volumes", dataIndex: "name", flex: 1}],
+      columns     : [{ text: gettext("Volume"), dataIndex: "name", flex: 1}],
       stripeRows  : true,
       title       : gettext('Zusätzlich zu snapshottende Volumes hier einfügen ( Drag&Drop ):'),
       height      : 340
@@ -646,16 +643,14 @@ var setConfigForNode = function(node, data){
     xtype : 'form',
     items : [{
       xtype     : 'label',
-      html      : gettext('Bei der automatischen Ausführung der SnapApp-Konfiguration können ' +
-        'benutzerdefinierte Skripte ausgeführt werden. <br /> ' +
-        'Bitte wählen Sie den Pfad zu Ihren Skripten.')
+      html      : gettext("Before and after the snapshot is made, user-defined scripts can be executed. Please enter the path to your scripts or leave these fields empty if you don't have any.")
     },{
       xtype     : 'tbspacer',
       height    : 10
     },{
       xtype           : 'textfield',
       name            : 'prescript',
-      fieldLabel      : gettext('Prescript conditions'),
+      fieldLabel      : gettext('Prescript'),
       enableKeyEvents : true,
       listeners : {
         keypress : nextElement
@@ -663,10 +658,10 @@ var setConfigForNode = function(node, data){
     },{
       xtype           : 'textfield',
       name            : 'postscript',
-      fieldLabel      : gettext('Postscript conditions')
+      fieldLabel      : gettext('Postscript')
     }]
   },{
-    title : gettext('Scheduling Part 1 / Expiry Date'),
+    title : gettext('Schedule Part 1 / Expiry Date'),
     id    : 'lvm__snapcore_wiz_sched1',
     layout: {
       type  : 'vbox',
@@ -675,18 +670,18 @@ var setConfigForNode = function(node, data){
     xtype : 'form',
     items : [{
       xtype     : 'label',
-      text      :  gettext('Bitte wählen Sie den Aufbewahrungszeitraum für automatisch erstellte Snapshots. ')
+      text      :  gettext('Please define the retention time for snapshots.')
     },{
       xtype     : 'tbspacer',
       height    : 10
     },{
-      boxLabel  : gettext('Snapshots nicht automatisch löschen'),
+      boxLabel  : gettext('Never automatically delete snapshots'),
       name      : 'retentiontime',
       inputValue: 'retention_time_noretention',
       xtype     : 'radio',
       checked   : true
     },{
-      boxLabel  : gettext('Snapshots automatisch löschen nach:'),
+      boxLabel  : gettext('Automatically delete snapahots after:'),
       name      : 'retentiontime',
       inputValue: 'retention_time_retention',
       xtype     : 'radio',
@@ -743,7 +738,7 @@ var setConfigForNode = function(node, data){
       }]
     }]
   },{
-    title : gettext('Zeitplan Part 2 / Optionen'),
+    title : gettext('Schedule Part 2 / Options'),
     id    : 'lvm__snapcore_wiz_sched2',
     layout: {
       type  : 'vbox',
@@ -752,14 +747,14 @@ var setConfigForNode = function(node, data){
     noAutoNext: true,
     xtype     : 'form',
     items     : [{
-      boxLabel  : gettext('Jetzt ausführen'),
+      boxLabel  : gettext('Execute immediately'),
       id        : 'execute_now',
       name      : 'scheduling_select',
       inputValue: 'execute_now',
       xtype     : 'radio',
       checked   : true
     },{
-      boxLabel  : gettext('Später ausführen'),
+      boxLabel  : gettext('Execute later'),
       id        : 'execute_later',
       name      : 'scheduling_select',
       inputValue: 'execute_later',
@@ -791,17 +786,17 @@ var setConfigForNode = function(node, data){
         id          : 'date_select',
         disabled    : true,
         value       : new Date(),
-        fieldLabel  : gettext("Executetime")
+        fieldLabel  : gettext("Execute time")
       },{
         xtype       : 'timefield',
         id          : 'time_select',
         disabled    : true,
         value       : Ext.Date.add(new Date(), Ext.Date.HOUR, +1),
         format      : "H:i",
-        fieldLabel  : gettext("Executedate")
+        fieldLabel  : gettext("Execute date")
       }]
     },{
-      boxLabel  : gettext('Erstelle Zeitplan'),
+      boxLabel  : gettext('Create Schedule'),
       id        : 'scheduling',
       name      : 'scheduling_select',
       inputValue: 'scheduling',
@@ -854,14 +849,14 @@ var setConfigForNode = function(node, data){
           id          : 'startdate_select',
           disabled    : true,
           value       : new Date(),
-          fieldLabel  : gettext('Startdatum')
+          fieldLabel  : gettext('Start date')
         },{
           xtype       : 'timefield',
           id          : 'starttime_select',
           disabled    : true,
           value       : new Date(),
           format      : "H:i",
-          fieldLabel  : gettext('Startzeit')
+          fieldLabel  : gettext('Start time')
         }]
       },{
         xtype : 'tbspacer',
@@ -880,13 +875,13 @@ var setConfigForNode = function(node, data){
           id          : 'enddate_select',
           disabled    : true,
           value       : Ext.Date.add(new Date(), Ext.Date.DAY, +7),
-          fieldLabel  : gettext('Enddatum')
+          fieldLabel  : gettext('End date')
         },{
           xtype       : 'timefield',
           id          : 'endtime_select',
           disabled    : true,
           value       : new Date(),
-          fieldLabel  : gettext('Endzeit'),
+          fieldLabel  : gettext('End time'),
           format      : "H:i"
         }]
       },{
@@ -894,7 +889,7 @@ var setConfigForNode = function(node, data){
         id          : 'no_enddatetime',
         name        : 'no_enddatetime',
         disabled    : true,
-        fieldLabel  : gettext('Kein Endzeitraum'),
+        fieldLabel  : gettext('No end date'),
         listeners : {
           change: function(self, newValue, oldValue, eOpts ){
             if(newValue)
@@ -938,12 +933,12 @@ var setConfigForNode = function(node, data){
       }
     }]
   },{
-    title : gettext('Zeitplan Part 3 / Zeitmanagement Part 2'),
+    title : gettext('Schedule Part 3 / Times Part 2'),
     id    : 'lvm__snapcore_wiz_sched32',
     xtype : 'form',
     items : [{
       xtype : 'label',
-      text  : gettext('Bitte wählen Sie die Zeitpunkte der Snapshot-Erstellung ')
+      text  : gettext('Please select the time')
     },{
       xtype : 'tbspacer',
       height: 10
@@ -961,11 +956,11 @@ var setConfigForNode = function(node, data){
       typeAhead     : true,
       triggerAction : 'all',
       deferEmptyText: false,
-      emptyText     : gettext('Auswahl...'),
+      emptyText     : gettext('Select...'),
       selectOnFocus : true
     },{
       xtype   : 'fieldset',
-      title   : gettext('Stunde'),
+      title   : gettext('Hour'),
       ref     : '../h_fieldset',
       border  : true,
       defaults: {
@@ -994,12 +989,12 @@ var setConfigForNode = function(node, data){
       }]
     }]
   },{
-    title : gettext('Zeitplan Part 3 / Zeitmanagement Part 3'),
+    title : gettext('Schedule Part 3 / Times Part 3'),
     id    : 'lvm__snapcore_wiz_sched33',
     xtype : 'form',
     items : [{
       xtype       : 'label',
-      text        : gettext('Bitte wählen Sie Wochentage und Monate der Snapshot-Erstellung ')
+      text        : gettext('Please select the week day and months')
     },{
       xtype : 'tbspacer',
       height: 10
@@ -1017,11 +1012,11 @@ var setConfigForNode = function(node, data){
       typeAhead     : true,
       triggerAction : 'all',
       deferEmptyText: false,
-      emptyText     : gettext('Auswahl...'),
+      emptyText     : gettext('Select...'),
       selectOnFocus : true
     },{
       xtype   : 'fieldset',
-      title   : gettext('Wochentag'),
+      title   : gettext('Day of Week'),
       ref     : '../dow_fieldset',
       border  : true,
       defaults: {
@@ -1036,21 +1031,21 @@ var setConfigForNode = function(node, data){
       layout  : 'column',
       items   : [{
         items: [{
-          id: 'dow_1', fieldLabel: gettext('Montag')
+          id: 'dow_1', fieldLabel: gettext('Monday')
         },{
-          id: 'dow_2', fieldLabel: gettext('Dienstag')
+          id: 'dow_2', fieldLabel: gettext('Tuesday')
         },{
-          id: 'dow_3', fieldLabel: gettext('Mittwoch')
+          id: 'dow_3', fieldLabel: gettext('Wednesday')
         },{
-          id: 'dow_4', fieldLabel: gettext('Donnerstag')
+          id: 'dow_4', fieldLabel: gettext('Thursday')
         },{
-          id: 'dow_5', fieldLabel: gettext('Freitag')
+          id: 'dow_5', fieldLabel: gettext('Friday')
         }]
       },{
         items: [{
-          id: 'dow_6', fieldLabel: gettext('Samstag')
+          id: 'dow_6', fieldLabel: gettext('Saturday')
         },{
-          id: 'dow_0', fieldLabel: gettext('Sonntag')
+          id: 'dow_0', fieldLabel: gettext('Sunday')
         }]
       }]
     },{
@@ -1066,40 +1061,40 @@ var setConfigForNode = function(node, data){
           checked : true
         }
       },
-      title : gettext('Montag'),
+      title : gettext('Monday'),
       layout: 'column',
       items : [{
         items: [{
-          id: 'moy_1', fieldLabel: gettext('Januar')
+          id: 'moy_1', fieldLabel: gettext('January')
         },{
-          id: 'moy_2', fieldLabel: gettext('Feburar')
+          id: 'moy_2', fieldLabel: gettext('Feburary')
         },{
-          id: 'moy_3', fieldLabel: gettext('Maerz')
+          id: 'moy_3', fieldLabel: gettext('March')
         },{
           id: 'moy_4', fieldLabel: gettext('April')
         },{
-          id: 'moy_5', fieldLabel: gettext('Mai')
+          id: 'moy_5', fieldLabel: gettext('May')
         },{
-          id: 'moy_6', fieldLabel: gettext('Juni')
+          id: 'moy_6', fieldLabel: gettext('June')
         }]
       },{
         items: [{
-          id: 'moy_7', fieldLabel: gettext('Juli')
+          id: 'moy_7', fieldLabel: gettext('July')
         },{
           id: 'moy_8', fieldLabel: gettext('August')
         },{
           id: 'moy_9', fieldLabel: gettext('September')
         },{
-          id: 'moy_10', fieldLabel: gettext('Oktober')
+          id: 'moy_10', fieldLabel: gettext('October')
         },{
           id: 'moy_11', fieldLabel: gettext('November')
         },{
-          id: 'moy_12', fieldLabel: gettext('Dezember')
+          id: 'moy_12', fieldLabel: gettext('December')
         }]
       }]
     }]
   },{
-    title       : gettext('Fertig'),
+    title       : gettext('Done'),
     id          : 'lvm__snapcore_wiz_close',
     noAutoNext  : true,
     buttons     : [{
