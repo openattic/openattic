@@ -629,11 +629,17 @@ Ext.define('Ext.oa.volumes__Volume_Panel', {
         icon: MEDIA_URL + "/oxygen/16x16/actions/distribute-horizontal-center.png",
         listeners: {
           click: function(self, e, eOpts){
+            if( typeof Ext.oa.getMirrorForm !== "function" ){
+              Ext.Msg.alert(gettext("Missing DRBD module"),
+                gettext("Please install the openATTIC DRBD module for this feature to work.")
+              );
+              return;
+            }
             if(self.ownerCt.ownerCt.getSelectionModel().getSelection().length === 1){
               var vol_selection = self.ownerCt.ownerCt.getSelectionModel().getSelection()[0];
-              if(vol_selection.$className.indexOf("BlockVolume") != -1){
+              if(vol_selection.raw.blockvolume){
                 var mirror_win = Ext.oa.getMirrorWindow(Ext.apply(config, {
-                  volume_id:    vol_selection.raw.id,
+                  volume_id:    vol_selection.raw.blockvolume.id,
                   volume_megs:  vol_selection.raw.megs,
                   volumePanel:  volumePanel
                 }));
