@@ -1034,10 +1034,15 @@ Ext.define('Ext.oa.volumes__Volume_Panel', {
     }
   },
   refresh: function(){
-    var i, nodes = this.getRootNode().childNodes;
-    for(var i = 0; i < nodes.length; i++){
-      nodes[i].store.load();
-    }
+    var self = this;
+    this.store.load({
+      callback: function(){
+        var i, nodes = self.getRootNode().childNodes;
+        for(var i = 0; i < nodes.length; i++){
+          nodes[i].expand();
+        }
+      }
+    });
   }
 });
 
