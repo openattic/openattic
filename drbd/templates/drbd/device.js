@@ -155,7 +155,7 @@ Ext.define('Ext.oa.drbd__device_mirror_panel', {
         pool_combo.getStore().load({
           params: {
               "host_id": newValue,
-              "min_megs": self.ownerCt.ownerCt.volume_megs
+              "min_megs": config.volume_megs
           }
         });
 
