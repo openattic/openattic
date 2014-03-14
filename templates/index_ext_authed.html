@@ -23,6 +23,7 @@
     {% if LANGUAGE_CODE %}
       <script src="{{ MEDIA_URL }}/extjs/locale/ext-lang-{{ LANGUAGE_CODE }}.js"></script>
     {% endif %}
+    <link rel="stylesheet" type="text/css" href="/openattic/static/bootstraptheme/resources/css/bootstrap/bootstrap.css" />
     <script src="{% url django.views.i18n.javascript_catalog %}"></script>
     <script src="{{ PROJECT_URL }}/userprefs/initprefs.js"></script>
     <script src="{{ PROJECT_URL }}/direct/api.js"></script>

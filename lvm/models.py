@@ -206,7 +206,10 @@ class LogicalVolume(BlockVolume):
 
     @property
     def attributes(self):
-        attr = self.lvm_info["LVM2_LV_ATTR"].lower()
+        try:
+            attr = self.lvm_info["LVM2_LV_ATTR"].lower()
+        except KeyError:
+            return "unknown"
         # lv_attr bits: see ``man lvs''
         # flags are returned in a way that in most normal cases, the status string is as short as possible.
         flags = [
@@ -256,7 +259,10 @@ class LogicalVolume(BlockVolume):
 
     @property
     def status(self):
-        attr = self.lvm_info["LVM2_LV_ATTR"].lower()
+        try:
+            attr = self.lvm_info["LVM2_LV_ATTR"].lower()
+        except KeyError:
+            return "unknown"
         stat = "failed"
         if attr[4] == "a": stat = "online"
         if attr[4] == "-": stat = "offline"
