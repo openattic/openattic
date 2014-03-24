@@ -1,4 +1,4 @@
-openattic (1.1.1-0) UNRELEASED; urgency=low
+openattic (1.1.1-1) UNRELEASED; urgency=low
 
   * New upstream release.
   * Include drbd kernel module config to increase the default maximum device
