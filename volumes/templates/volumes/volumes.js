@@ -524,12 +524,16 @@ Ext.define("Ext.oa.volumes__volumes_add_volume_form", {
                 self.ownerCt.ownerCt.ownerCt.close();
 
                 if(window.AddVolumeSettings.length > 0){
-                  var settings_win = Ext.oa.getAdditSettingsWindow(Ext.apply(config, {
-                      volume_id:    result.id,
-                      volume_megs:  result.megs,
-                      volumePanel:  config.volumePanel
-                  }));
-                  settings_win.show();
+                  volumes__StorageObject.get({blockvolume__id: result.id}, function(result, response){
+                    if(response.type !== "exception"){
+                      var settings_win = Ext.oa.getAdditSettingsWindow(Ext.apply(config, {
+                        volume_id:    result.blockvolume.id,
+                        volume_megs:  result.megs,
+                        volumePanel:  config.volumePanel
+                      }));
+                      settings_win.show();
+                    }
+                  });
                 }
                 else{
                   config.volumePanel.refresh();
