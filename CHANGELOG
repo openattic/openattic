@@ -1,6 +1,14 @@
 openATTIC Changelog
 ===================
 
+Version 1.1.1, ?? ????? 2014:
+---------------------------------
+
+* Fixed Volume Management refresh to also refresh the root objects.
+* Fixed exception caused by querying an LV that has not yet been fully created.
+* Fixed LVM VG detection (detected VGs did not show up in the GUI).
+* Fixed DRBD mirror plugin for the Volume Options GUI.
+
 Version 1.1.0, 09 March 2014:
 ---------------------------------
 * Improved Nagios disk load graphs.
