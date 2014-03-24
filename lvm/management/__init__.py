@@ -44,7 +44,7 @@ def create_vgs(**kwargs):
             vg = VolumeGroup.objects.get(storageobj__name=vgname)
         except VolumeGroup.DoesNotExist:
             print "Adding Volume Group", vgname
-            so = StorageObject(name=vgname, megs=float(vgs[vgname]["LVM2_VG_SIZE"]))
+            so = StorageObject(name=vgname, megs=float(vgs[vgname]["LVM2_VG_SIZE"]), is_origin=True)
             so.save()
             vg = VolumeGroup(host=Host.objects.get_current(), storageobj=so)
             vg.save()
