@@ -158,7 +158,7 @@ Description: Samba module for openATTIC
 Package: openattic-module-cron
 Architecture: all
 Depends: ${misc:Depends}, cron, openattic-base
-Description: Samba module for openATTIC
+Description: Cron module for openATTIC
  openATTIC is a storage management system based upon Open Source tools with
  a comprehensive user interface that allows you to create, share and backup
  storage space on demand.
@@ -320,14 +320,14 @@ Description: ZFS module for openATTIC
 Package: openattic-module-btrfs
 Architecture: all
 Depends: ${misc:Depends}, openattic-base, btrfs-tools
-Description: ZFS module for openATTIC
+Description: BTRFS module for openATTIC
  openATTIC is a storage management system based upon Open Source tools with
  a comprehensive user interface that allows you to create, share and backup
  storage space on demand.
  .
- This package includes support for ZFS, a pooled file system designed for
- maximum data integrity, supporting data snapshots, multiple copies, and data
- checksums. It depends on zfsonlinux, the native Linux port of ZFS.
+ This package includes support for BTRFS, a new copy on write filesystem for
+ Linux aimed at implementing advanced features while focusing on fault
+ tolerance, repair and easy administration.
 
 Package: openattic-module-mdraid
 Architecture: all
