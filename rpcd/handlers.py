@@ -612,6 +612,9 @@ class ProxyModelHandler(ProxyModelBaseHandler):
                 raise translate_exception(flt)
 
 
+def mkModelHandler(model):
+    return type(model._meta.object_name + "Handler", (ModelHandler,), {"model": model})
+
 def mkProxyModelHandler(model):
-    handler = type(model._meta.object_name + "Handler", (ModelHandler,), {"model": model})
+    handler = mkModelHandler(model)
     return type(model._meta.object_name + "Proxy", (ProxyModelHandler, handler), {})
