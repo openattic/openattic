@@ -31,7 +31,9 @@ def update(**kwargs):
     admin = User.objects.filter( is_superuser=True )[0]
 
     conf = ConfigParser()
-    conf.read("/etc/ceph/ceph.conf")
+    if not conf.read("/etc/ceph/ceph.conf"):
+        print "There doesn't seem to be a ceph cluster here, skipping detection"
+        return
 
     print "Checking Ceph cluster %s..." % conf.get("global", "fsid"),
     try:
