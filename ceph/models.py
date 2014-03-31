@@ -23,6 +23,9 @@ class Cluster(models.Model):
     uuid        = models.CharField(max_length=36, unique=True)
     displayname = models.CharField(max_length=250, default='', blank=True)
 
+    def __unicode__(self):
+        return "'%s' (%s)" % (self.displayname, self.uuid)
+
 class Type(models.Model):
     cluster     = models.ForeignKey(Cluster)
     ceph_id     = models.IntegerField()
@@ -30,6 +33,9 @@ class Type(models.Model):
 
     class Meta:
         unique_together = (('cluster', 'ceph_id'), ('cluster', 'name'))
+
+    def __unicode__(self):
+        return "'%s' (%s)" % (self.name, self.ceph_id)
 
 class Bucket(models.Model):
     cluster     = models.ForeignKey(Cluster)
@@ -45,6 +51,9 @@ class Bucket(models.Model):
     class Meta:
         unique_together = (('cluster', 'ceph_id'), ('cluster', 'name'))
 
+    def __unicode__(self):
+        return "'%s' (%s)" % (self.name, self.ceph_id)
+
 class OSD(models.Model):
     cluster     = models.ForeignKey(Cluster)
     ceph_id     = models.IntegerField()
@@ -58,15 +67,24 @@ class OSD(models.Model):
     class Meta:
         unique_together = (('cluster', 'ceph_id'),)
 
+    def __unicode__(self):
+        return "osd.%s (%s)" % (self.ceph_id, unicode(self.volume))
+
 class Mon(models.Model):
     cluster     = models.ForeignKey(Cluster)
     is_by_oa    = models.BooleanField(help_text="True if this OSD has been set up by openATTIC.")
     host        = models.ForeignKey(Host)
 
+    def __unicode__(self):
+        return unicode(self.host)
+
 class MDS(models.Model):
     cluster     = models.ForeignKey(Cluster)
     is_by_oa    = models.BooleanField(help_text="True if this OSD has been set up by openATTIC.")
     host        = models.ForeignKey(Host)
+
+    def __unicode__(self):
+        return unicode(self.host)
 
 class Pool(models.Model):
     cluster     = models.ForeignKey(Cluster)
@@ -76,3 +94,6 @@ class Pool(models.Model):
 
     class Meta:
         unique_together = (('cluster', 'ceph_id'),)
+
+    def __unicode__(self):
+        return unicode(self.host)
