@@ -174,6 +174,17 @@ class ModelHandler(BaseHandler):
                     raise TypeError("Don't know how to handle virtual field of type '%s'" % type(field))
         return kwds
 
+    def get_or_create(self, get_values, create_values):
+        result = self.filter(get_values)
+
+        if len(result) == 1:
+            result = result[0]
+        else:
+            get_values.update(create_values)
+            result = self.create(get_values)
+
+        return result
+
     def _filter_queryset(self, kwds, queryset=None):
         if queryset is None:
             queryset = self._get_model_manager()
