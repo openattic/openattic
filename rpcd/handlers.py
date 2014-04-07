@@ -174,13 +174,14 @@ class ModelHandler(BaseHandler):
                     raise TypeError("Don't know how to handle virtual field of type '%s'" % type(field))
         return kwds
 
-    def get_or_create(self, get_values, create_values):
+    def get_or_create(self, get_values, create_values=None):
         result = self.filter(get_values)
 
         if len(result) == 1:
             result = result[0]
         else:
-            get_values.update(create_values)
+            if create_values is not None:
+                get_values.update(create_values)
             result = self.create(get_values)
 
         return result
