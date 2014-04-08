@@ -73,7 +73,7 @@ class BlockDevicesHandler(BaseHandler):
 
 class VgHandler(AbstractVolumePoolHandler):
     model = VolumeGroup
-    order = ("name",)
+    order = ("storageobj__name",)
 
     def create(self, data):
         if "host" not in data:
@@ -92,7 +92,7 @@ class VgHandler(AbstractVolumePoolHandler):
 
 class LvHandler(AbstractBlockVolumeHandler):
     model = LogicalVolume
-    order = ("name",)
+    order = ("storageobj__name",)
 
     def lvm_info(self, id):
         """ Return information about the LV retrieved from LVM. """
