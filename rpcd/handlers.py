@@ -175,6 +175,18 @@ class ModelHandler(BaseHandler):
                     raise TypeError("Don't know how to handle virtual field of type '%s'" % type(field))
         return kwds
 
+    def _filter_foreignkey(self, kwds):
+        model = self.model()
+        for kwd in kwds:
+            for field in model._meta.fields:
+                if field.name == kwd and isinstance(field, models.ForeignKey):
+                    if isinstance(kwds[kwd], dict):
+                        if "id" in kwds[kwd]:
+                            kwds[kwd] = kwds[kwd]["id"]
+                        else:
+                            raise LookupError("No id found in object dictionary '%s'" % kwds[kwd])
+        return kwds
+
     def get_or_create(self, get_values, create_values):
         # is implemented solely through functions provived by the modelhandler, and therefor works when
         # inherited by the proxymodelhandler as well
@@ -206,9 +218,11 @@ class ModelHandler(BaseHandler):
 
         if kwds:
             self._filter_virtual(kwds)
+            self._filter_foreignkey(kwds)
             queryset = queryset.filter(**kwds)
         if exclude_kwds:
             self._filter_virtual(exclude_kwds)
+            self._filter_foreignkey(execlude_kwds)
             queryset = queryset.exclude(**exclude_kwds)
         if fields:
             queryset = queryset.values(*fields)
