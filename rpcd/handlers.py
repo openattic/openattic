@@ -158,6 +158,7 @@ class ModelHandler(BaseHandler):
         return { "success": True, "data": data }
 
     def _filter_virtual(self, kwds):
+        """ Support filtering by GenericForeignKeys. """
         for field in self.model._meta.virtual_fields:
             if field.name in kwds:
                 if isinstance( field, generic.GenericForeignKey ):
@@ -174,7 +175,9 @@ class ModelHandler(BaseHandler):
                     raise TypeError("Don't know how to handle virtual field of type '%s'" % type(field))
         return kwds
 
-    def get_or_create(self, get_values, create_values=None):
+    def get_or_create(self, get_values, create_values):
+        # is implemented solely through functions provived by the modelhandler, and therefor works when
+        # inherited by the proxymodelhandler as well
         result = self.filter(get_values)
 
         if len(result) == 1:
