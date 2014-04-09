@@ -183,8 +183,7 @@ class ModelHandler(BaseHandler):
         if len(result) == 1:
             result = result[0]
         else:
-            if create_values is not None:
-                get_values.update(create_values)
+            get_values.update(create_values)
             result = self.create(get_values)
 
         return result
