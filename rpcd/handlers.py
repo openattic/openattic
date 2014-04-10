@@ -178,13 +178,21 @@ class ModelHandler(BaseHandler):
     def _filter_foreignkey(self, kwds):
         model = self.model()
         for kwd in kwds:
-            for field in model._meta.fields:
-                if field.name == kwd and isinstance(field, models.ForeignKey):
-                    if isinstance(kwds[kwd], dict):
-                        if "id" in kwds[kwd]:
-                            kwds[kwd] = kwds[kwd]["id"]
-                        else:
-                            raise LookupError("No id found in object dictionary '%s'" % kwds[kwd])
+            model = self.model()
+
+            for split in kwd.split('__'):
+                if model is not None:
+                    for field in model._meta.fields:
+                        if field.name == split and isinstance(field, models.ForeignKey):
+                            model = field.rel.to
+                else:
+                    raise LookupError("Filtering by the foreign keys '%s' is not valid" % kwds)
+
+            if isinstance(kwds[kwd], dict):
+                if "id" in kwds[kwd]:
+                    kwds[kwd] = kwds[kwd]["id"]
+                else:
+                    raise LookupError("No id found in object dictionary '%s'" % kwds[kwd])
         return kwds
 
     def get_or_create(self, get_values, create_values):
