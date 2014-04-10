@@ -78,15 +78,22 @@ class BtrfsSubvolume(FileSystemVolume):
         if install:
             if self.parent is None:
                 self.fs.format()
+            elif self.storageobj.snapshot is not None:
+                # the volume represented by self is supposed to be a snapshot of the
+                # btrfs subvolume that my storageobj's "snapshot" attribute points to.
+                origin = self.storageobj.snapshot.filesystemvolume.volume
+                if not isinstance(origin, BtrfsSubvolume):
+                    raise TypeError("btrfs can only snapshot btrfs subvolumes")
+                self.fs.create_snapshot(origin, False)
             else:
-                self.fs.create_subvolume(self.path)
+                self.fs.create_subvolume()
             self.fs.chown()
 
     def delete(self):
         if self.parent is None:
             self.fs.unmount()
         else:
-            self.fs.delete_subvolume(self.path)
+            self.fs.delete_subvolume()
         FileSystemVolume.delete(self)
 
     @property
@@ -113,7 +120,11 @@ class BtrfsSubvolume(FileSystemVolume):
         return self.storageobj.name
 
     def _create_snapshot_for_storageobject(self, storageobj, options):
-        raise TypeError("BTRFS Snapshots have not yet been implemented.")
+        sv = BtrfsSubvolume(storageobj=storageobj, btrfs=self.btrfs, parent=self.parent,
+                            fswarning=self.fswarning, fscritical=self.fscritical, owner=self.owner)
+        sv.full_clean()
+        sv.save()
+        return sv
 
     def __unicode__(self):
         return self.fullname

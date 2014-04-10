@@ -73,20 +73,27 @@ class Btrfs(FileSystem):
 
     @property
     def path(self):
-        return os.path.join(volumes_settings.MOUNT_PREFIX, self.volume.fullname)
+        if self.volume.storageobj.snapshot is None:
+            return os.path.join(volumes_settings.MOUNT_PREFIX, self.volume.fullname)
+        else:
+            origin = self.volume.storageobj.snapshot.filesystemvolume.volume
+            return os.path.join(origin.path, ".snapshots", self.volume.storageobj.name)
 
     @classmethod
     def check_type(cls, typestring):
         return False
 
-    def create_subvolume(self, path):
-        self.dbus_object.create_subvolume(path)
+    def create_subvolume(self):
+        # self represents the subvolume to be created.
+        self.dbus_object.create_subvolume(self.path)
 
-    def create_snapshot(self, origpath, snappath, readonly):
-        self.dbus_object.create_snapshot(origpath, snappath, readonly)
+    def create_snapshot(self, origin, readonly=False):
+        # self represents the snapshot to be created with contents from origin.
+        self.dbus_object.create_snapshot(origin.path, self.path, readonly)
 
-    def delete_subvolume(self, path):
-        self.dbus_object.delete_subvolume(path)
+    def delete_subvolume(self):
+        # self represents the snapshot to be deleted.
+        self.dbus_object.delete_subvolume(self.path)
 
 class BtrfsDevice(capabilities.Device):
     requires = [
