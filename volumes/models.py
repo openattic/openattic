@@ -59,6 +59,7 @@ class StorageObject(models.Model):
     createdate  = models.DateTimeField(auto_now_add=True, blank=True, null=True)
     # TODO: This should probably be wrapped in a CapabilitiesField or something
     capflags    = models.BigIntegerField(default=0)
+    snapshot    = models.ForeignKey('self', blank=True, null=True)
 
     objects     = CapabilitiesAwareManager()
     all_objects = models.Manager()
@@ -281,7 +282,7 @@ class AbstractVolume(models.Model):
 
     def _create_snapshot(self, name, megs, options):
         """ Actual volume creation. """
-        storageobj = StorageObject(name=name, megs=megs)
+        storageobj = StorageObject(snapshot=self.storageobj, name=name, megs=megs)
         storageobj.full_clean()
         storageobj.save()
 
