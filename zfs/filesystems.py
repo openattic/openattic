@@ -112,20 +112,20 @@ class Zfs(FileSystem):
     def unmount(self):
         self.dbus_object.zfs_unmount(self.volume.fullname)
 
-    def create_subvolume(self, path):
-        self.dbus_object.zfs_create_volume(self.zpool.storageobj.name, path)
+    def create_subvolume(self):
+        self.dbus_object.zfs_create_volume(self.volume.fullname)
 
-    def destroy_subvolume(self, path):
-        self.dbus_object.zfs_destroy_volume(self.zpool.storageobj.name, path)
+    def destroy_subvolume(self):
+        self.dbus_object.zfs_destroy_volume(self.volume.fullname)
 
-    def create_snapshot(self, path):
-        self.dbus_object.zfs_create_snapshot(self.volume.storageobj.name, path)
+    def create_snapshot(self, orig_zfs):
+        self.dbus_object.zfs_create_snapshot(orig_zfs.fullname, self.volume.storageobj.name)
 
-    def destroy_snapshot(self, path):
-        self.dbus_object.zfs_destroy_snapshot(self.volume.storageobj.name, path)
+    def destroy_snapshot(self, orig_zfs):
+        self.dbus_object.zfs_destroy_snapshot(orig_zfs.fullname, self.volume.storageobj.name)
 
-    def rollback_snapshot(self, path):
-        self.dbus_object.zfs_rollback_snapshot(self.volume.storageobj.name, path)
+    def rollback_snapshot(self, orig_zfs):
+        self.dbus_object.zfs_rollback_snapshot(orig_zfs.fullname, self.volume.storageobj.name)
 
 
 class ZpoolDevice(capabilities.Device):

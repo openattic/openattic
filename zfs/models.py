@@ -84,16 +84,26 @@ class Zfs(FileSystemVolume):
         if install:
             if self.parent is None:
                 self.fs.format()
+            elif self.storageobj.snapshot is not None:
+                # the volume represented by self is supposed to be a snapshot of the
+                # zfs subvolume that my storageobj's "snapshot" attribute points to.
+                origin = self.storageobj.snapshot.filesystemvolume.volume
+                if not isinstance(origin, Zfs):
+                    raise TypeError("zfs can only snapshot zfs volumes")
+                self.fs.create_snapshot(origin)
             else:
-                self.fs.create_subvolume(self.fullname)
+                self.fs.create_subvolume()
             self.fs.chown()
 
     def delete(self):
         FileSystemVolume.delete(self)
         if self.parent is None:
             self.fs.destroy()
+        elif self.storageobj.snapshot is not None:
+            origin = self.storageobj.snapshot.filesystemvolume.volume
+            self.fs.destroy_snapshot(origin)
         else:
-            self.fs.destroy_subvolume(self.fullname)
+            self.fs.destroy_subvolume()
 
     @property
     def fs(self):
@@ -119,7 +129,11 @@ class Zfs(FileSystemVolume):
         return self.fs.stat["used"]
 
     def _create_snapshot_for_storageobject(self, storageobj, options):
-        raise TypeError("BTRFS Snapshots have not yet been implemented.")
+        sv = Zfs(storageobj=storageobj, zpool=self.zpool, parent=self.parent,
+                 fswarning=self.fswarning, fscritical=self.fscritical, owner=self.owner)
+        sv.full_clean()
+        sv.save()
+        return sv
 
     def __unicode__(self):
         return self.fullname

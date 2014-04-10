@@ -60,12 +60,12 @@ class SystemD(BasePlugin):
     def zpool_format(self, devpath, label, path, sender):
         invoke(["zpool", "create", "-f", "-m", path, label, devpath])
 
-    @deferredmethod(in_signature="ss")
-    def zfs_create_volume(self, pool, volume, sender):
+    @deferredmethod(in_signature="s")
+    def zfs_create_volume(self, volume, sender):
         invoke(["zfs", "create", volume])
 
-    @deferredmethod(in_signature="ss")
-    def zfs_destroy_volume(self, pool, volume, sender):
+    @deferredmethod(in_signature="s")
+    def zfs_destroy_volume(self, volume, sender):
         invoke(["zfs", "destroy", volume])
 
     @deferredmethod(in_signature="ss")
@@ -75,11 +75,11 @@ class SystemD(BasePlugin):
 
     @deferredmethod(in_signature="ss")
     def zfs_destroy_snapshot(self, orig, snapshot, sender):
-        return invoke(["zfs", "destroy", "-R", "%s@%s" % (orig, snapshot)])
+        invoke(["zfs", "destroy", "-R", "%s@%s" % (orig, snapshot)])
 
     @deferredmethod(in_signature="ss")
     def zfs_rollback_snapshot(self, orig, snapshot, sender):
-        return invoke(["zfs", "rollback", "-R", "%s@%s" % (orig, snapshot)])
+        invoke(["zfs", "rollback", "-R", "%s@%s" % (orig, snapshot)])
 
     @method(in_signature="s", out_signature="a(sssssss)")
     def zfs_getspace(self, device):
