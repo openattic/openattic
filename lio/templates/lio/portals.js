@@ -82,7 +82,7 @@ Ext.define('Ext.oa.Lio__Portal_Panel', {
 Ext.oa.Lio__Portal_Module = {
   panel: "lio__portal_panel",
   prepareMenuTree: function(tree){
-    tree.appendToRootNodeById("menu_luns", {
+    tree.appendToRootNodeById("menu_san", {
       text: gettext('Network Portals'),
       leaf: true,
       icon: MEDIA_URL + '/icons2/22x22/apps/nfs.png',

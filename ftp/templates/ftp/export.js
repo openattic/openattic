@@ -26,7 +26,7 @@ Ext.define('Ext.oa.Ftp__Export_Panel', {
 Ext.oa.Ftp__Export_Module =  {
   panel: "ftp__export_panel",
   prepareMenuTree: function(tree){
-    tree.appendToRootNodeById("menu_shares", {
+    tree.appendToRootNodeById("menu_nas", {
       text: gettext('Web (FTP)'),
       leaf: true,
       panel: "ftp__export_panel_inst",

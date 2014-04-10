@@ -88,7 +88,7 @@ Ext.define('Ext.oa.Nfs__Export_Panel', {
 Ext.oa.Nfs__Export_Module = {
   panel: "nfs__export_panel",
   prepareMenuTree: function(tree){
-    tree.appendToRootNodeById("menu_shares", {
+    tree.appendToRootNodeById("menu_nas", {
       text: gettext('Linux (NFS)'),
       leaf: true,
       icon: MEDIA_URL + '/icons2/22x22/apps/nfs.png',

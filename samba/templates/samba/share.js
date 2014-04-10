@@ -106,7 +106,7 @@ Ext.define('Ext.oa.Samba__Share_Panel', {
 Ext.oa.Samba__Share_Module = {
   panel: "samba__share_panel",
   prepareMenuTree: function(tree){
-    tree.appendToRootNodeById("menu_shares", {
+    tree.appendToRootNodeById("menu_nas", {
       text: gettext('Windows (CIFS)'),
       leaf: true,
       icon: MEDIA_URL + '/icons2/22x22/apps/samba.png',

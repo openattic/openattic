@@ -400,7 +400,7 @@ Ext.oa.Lio__LogicalLun_Module = {
   panel: "lio__panel",
 
   prepareMenuTree: function(tree){
-    tree.appendToRootNodeById("menu_luns", {
+    tree.appendToRootNodeById("menu_san", {
       text: gettext('LUNs'),
       leaf: true,
       icon: MEDIA_URL + '/icons2/22x22/apps/disk_use.png',

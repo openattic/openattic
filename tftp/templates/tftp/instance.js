@@ -109,7 +109,7 @@ Ext.define('Ext.oa.Tftp__Instance_Panel', {
 Ext.oa.Tftp__Instance_Module = {
   panel: "tftp__instance_panel",
   prepareMenuTree: function(tree){
-    tree.appendToRootNodeById("menu_shares", {
+    tree.appendToRootNodeById("menu_nas", {
       text: gettext('Embedded (TFTP)'),
       leaf: true,
       icon: MEDIA_URL + '/oxygen/22x22/categories/preferences-other.png',

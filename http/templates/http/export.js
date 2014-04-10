@@ -69,7 +69,7 @@ Ext.define('Ext.oa.Http__Export_Panel', {
 Ext.oa.Http__Export_Module = {
   panel: "http__export_panel",
   prepareMenuTree: function(tree){
-    tree.appendToRootNodeById("menu_shares", {
+    tree.appendToRootNodeById("menu_nas", {
       text: gettext('Web (HTTP)'),
       leaf: true,
       panel: "http__export_panel_inst",

@@ -44,15 +44,15 @@ Ext.define('Ext.oa.MenuTree', {
           allowDrag: false,
           children: []
         }, {
-          id: 'menu_luns',
-          text: gettext('LUNs'),
+          id: 'menu_san',
+          text: gettext('SAN'),
           expanded: Ext.state.Manager.get("expand_root_nodes", true),
           icon: MEDIA_URL + '/icons2/22x22/places/network-server.png',
           allowDrag: false,
           children: []
         }, {
-          id: 'menu_shares',
-          text: gettext('Shares'),
+          id: 'menu_nas',
+          text: gettext('NAS'),
           expanded: Ext.state.Manager.get("expand_root_nodes", true),
           icon: MEDIA_URL + '/icons2/22x22/places/gnome-fs-share.png',
           allowDrag: false,
