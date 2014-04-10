@@ -138,7 +138,8 @@ class SystemD(BasePlugin):
             cmd.append(vgname)
         self.lvs_time = 0
         invoke(cmd)
-        invoke(["blkdevzero", "/dev/%s/%s" % (vgname, lvname)])
+        if not snapshot:
+            invoke(["blkdevzero", "/dev/%s/%s" % (vgname, lvname)])
         # Update UUID
         self.lvs_time = time()
         self.lvs_cache = lvm_lvs()
