@@ -59,7 +59,7 @@ class StorageObject(models.Model):
     createdate  = models.DateTimeField(auto_now_add=True, blank=True, null=True)
     # TODO: This should probably be wrapped in a CapabilitiesField or something
     capflags    = models.BigIntegerField(default=0)
-    snapshot    = models.ForeignKey('self', blank=True, null=True)
+    snapshot    = models.ForeignKey('self', blank=True, null=True, related_name="snapshot_storageobject_set")
 
     objects     = CapabilitiesAwareManager()
     all_objects = models.Manager()
