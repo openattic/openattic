@@ -11,6 +11,7 @@ Version 1.1.2, ?? ????? 2014:
   file system.
 * Added automatic creation of pre-existing Nagios services for existing
   volumes during oaconfig install.
+* Fixed mountpoints not being deleted when volumes are unmounted.
 
 Version 1.1.1, 01 April 2014:
 ---------------------------------

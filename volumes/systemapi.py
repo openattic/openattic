@@ -36,6 +36,7 @@ class SystemD(BasePlugin):
         if not os.path.exists(mountpoint) or not os.path.ismount(mountpoint):
             return
         invoke(["/bin/umount", mountpoint])
+        os.rmdir(mountpoint)
 
     @deferredmethod(in_signature="sss")
     def fs_chown(self, mountpoint, user, group, sender):
