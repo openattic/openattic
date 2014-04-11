@@ -209,6 +209,8 @@ class ModelHandler(BaseHandler):
         return result
 
     def _filter_queryset(self, kwds, queryset=None):
+        kwds = kwds.copy()
+
         if queryset is None:
             queryset = self._get_model_manager()
 
