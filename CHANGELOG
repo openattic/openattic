@@ -7,6 +7,8 @@ Version 1.1.2, ?? ????? 2014:
 * Fixed LVM snapshots being zeroed after creation.
 * Added ZFS snapshots.
 * Added BTRFS snapshots.
+* Added mounting of OtherFS snapshots in a .snapshots directory under the
+  file system.
 
 Version 1.1.1, 01 April 2014:
 ---------------------------------
