@@ -60,6 +60,7 @@ Ext.define('Ext.oa.Lio__Portal_Panel', {
           }
         };
       }()),
+      forceSelection: true,
       typeAhead:     true,
       triggerAction: 'all',
       deferEmptyText: false,
