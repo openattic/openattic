@@ -9,6 +9,8 @@ Version 1.1.2, ?? ????? 2014:
 * Added BTRFS snapshots.
 * Added mounting of OtherFS snapshots in a .snapshots directory under the
   file system.
+* Added automatic creation of pre-existing Nagios services for existing
+  volumes during oaconfig install.
 
 Version 1.1.1, 01 April 2014:
 ---------------------------------
