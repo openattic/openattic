@@ -290,6 +290,17 @@ class AbstractVolume(models.Model):
 
         try:
             vol = self._create_snapshot_for_storageobject(storageobj, options)
+
+            if self.storageobj.filesystemvolume_or_none is not None and storageobj.filesystemvolume_or_none is None:
+                # The origin has an FSV but the snapshot does not. if we have an FSP, this makes
+                # sense; create a new one for the snapshot in this case.
+                origin = self.storageobj.filesystemvolume_or_none.volume
+                if not isinstance(origin, FileSystemProvider):
+                    raise TypeError("Missing file system on snapshot of '%s': '%s'" % (unicode(self), unicode(storageobj)))
+                snapfsp = FileSystemProvider(storageobj=storageobj, fstype=origin.fstype,
+                                                fswarning=origin.fswarning, fscritical=origin.fscritical, owner=origin.owner)
+                snapfsp.full_clean()
+                snapfsp.save()
         except:
             from django.db import connection
             connection.connection.rollback()
@@ -513,7 +524,10 @@ class FileSystemProvider(FileSystemVolume):
         install = (self.id is None)
         FileSystemVolume.save(self, *args, **kwargs)
         if install:
-            self.fs.format()
+            if self.storageobj.snapshot is None:
+                self.fs.format()
+            else:
+                self.fs.mount()
 
     @property
     def status(self):

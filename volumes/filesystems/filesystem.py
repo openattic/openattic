@@ -94,7 +94,14 @@ class FileSystem(object):
     def path(self):
         if self.virtual:
             raise NotImplementedError("FileSystem::path needs to be overridden for virtual FS handlers")
-        return os.path.join(volumes_settings.MOUNT_PREFIX, self.volume.storageobj.name)
+        if self.volume.storageobj.snapshot is None:
+            # not a snapshot -> mount under /media/
+            mountdir = volumes_settings.MOUNT_PREFIX
+        else:
+            # snapshot -> mount under /media/origin/.snapshots/
+            origin   = self.volume.storageobj.snapshot.filesystemvolume.volume.fs
+            mountdir = os.path.join(origin.path, '.snapshots')
+        return os.path.join(mountdir, self.volume.storageobj.name)
 
     def mount(self):
         """ Mount the file system.
@@ -102,6 +109,16 @@ class FileSystem(object):
         if self.virtual:
             raise NotImplementedError("FileSystem::mount needs to be overridden for virtual FS handlers")
         dbus_object = get_dbus_object("/volumes")
+        if self.volume.storageobj.snapshot is not None:
+            # snapshot -> ensure origin is mounted, ensure tmpfs is mounted to .snapshots, then proceed to
+            # mounting as usual
+            origin = self.volume.storageobj.snapshot.filesystemvolume.volume.fs
+            if not origin.mounted:
+                origin.mount()
+            dbus_object = get_dbus_object("/volumes")
+            snapdir = os.path.join(origin.path, ".snapshots")
+            if not os.path.exists(snapdir) or not os.path.ismount(snapdir):
+                dbus_object.fs_mount( "tmpfs", "tmpfs", snapdir )
         dbus_object.fs_mount( self.name, self.volume.storageobj.blockvolume.volume.path, self.path )
 
     @property
