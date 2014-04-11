@@ -515,7 +515,7 @@ if HAVE_NAGIOS:
 
 class FileSystemProvider(FileSystemVolume):
     """ A FileSystem that resides on top of a BlockVolume. """
-    fstype      = models.CharField(max_length=100, blank=True)
+    fstype      = models.CharField(max_length=100)
 
     objects     = getHostDependentManagerClass('storageobj__host')()
     all_objects = models.Manager()
