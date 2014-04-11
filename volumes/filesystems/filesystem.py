@@ -134,6 +134,12 @@ class FileSystem(object):
             raise NotImplementedError("FileSystem::unmount needs to be overridden for virtual FS handlers")
         dbus_object = get_dbus_object("/volumes")
         dbus_object.fs_unmount( self.volume.storageobj.blockvolume.volume.path, self.path )
+        if self.volume.storageobj.snapshot is not None:
+            # snapshot -> if no other snapshots exist, unmount the tmpfs
+            origin = self.volume.storageobj.snapshot
+            if origin.snapshot_storageobject_set.count() <= 1:
+                snapdir = os.path.join(origin.filesystemvolume.volume.path, ".snapshots")
+                dbus_object.fs_unmount( "tmpfs", snapdir )
 
     def format(self):
         """ Format the volume. """
