@@ -509,14 +509,11 @@ class FileSystemProvider(FileSystemVolume):
     objects     = getHostDependentManagerClass('storageobj__host')()
     all_objects = models.Manager()
 
-    def setupfs( self ):
-        self.fs.format()
-
     def save(self, *args, **kwargs):
         install = (self.id is None)
         FileSystemVolume.save(self, *args, **kwargs)
         if install:
-            self.setupfs()
+            self.fs.format()
 
     @property
     def status(self):
