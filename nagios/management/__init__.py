@@ -15,10 +15,12 @@
 """
 
 from django.core.management import call_command
+from django.contrib.contenttypes.models import ContentType
 
 from systemd import get_dbus_object
 from nagios.conf import settings as nagios_settings
 from ifconfig.models import Host, IPAddress
+from volumes.models import BlockVolume, FileSystemVolume
 
 import nagios.models
 import sysutils.models
@@ -69,5 +71,36 @@ def create_nagios(**kwargs):
         serv.save()
 
     get_dbus_object("/nagios").writeconf()
+
+    cmd = Command.objects.get(name=nagios_settings.LV_PERF_CHECK_CMD)
+    for bv in BlockVolume.objects.all():
+        instance = bv.volume
+        ctype = ContentType.objects.get_for_model(instance.__class__)
+        if Service.objects.filter(command=cmd, target_type=ctype, target_id=instance.id).count() != 0:
+            return
+        srv = Service(
+            host        = instance.host,
+            target      = instance,
+            command     = cmd,
+            description = nagios_settings.LV_PERF_DESCRIPTION % unicode(instance),
+            arguments   = instance.path
+        )
+        srv.save()
+
+    cmd = Command.objects.get(name=nagios_settings.LV_PERF_CHECK_CMD)
+    for fsv in FileSystemVolume.objects.all():
+        instance = fsv.volume
+        ctype = ContentType.objects.get_for_model(instance.__class__)
+        if Service.objects.filter(command=cmd, target_type=ctype, target_id=instance.id).count() != 0:
+            return
+        srv = Service(
+            host        = instance.host,
+            target      = instance,
+            command     = cmd,
+            description = nagios_settings.LV_UTIL_DESCRIPTION % unicode(instance),
+            arguments   = instance.path
+        )
+        srv.save()
+
 
 sysutils.models.post_install.connect(create_nagios)
