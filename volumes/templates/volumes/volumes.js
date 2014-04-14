@@ -448,7 +448,7 @@ Ext.define("Ext.oa.volumes__volumes_add_volume_form", {
         // Enable dedup and compression field
       }
     }
-  }, gettext("If you want to use DRBD with this device, do not yet create a file system on it, even if you want to share it using NAS services later on.")),
+  }, gettext("If you want to use DRBD with this device, do not yet create a file system on it, even if you want to share it using SAN services later on.")),
   {
     fieldLabel: gettext("Size in MB"),
     allowBlank: false,
