@@ -25,6 +25,12 @@ from volumes import capabilities
 class SystemD(BasePlugin):
     dbus_path = "/volumes"
 
+    @deferredmethod(in_signature="ss")
+    def dd(self, infile, outfile, sender):
+        invoke(['/bin/dd', 'if=%s' % infile, 'of=%s' % outfile,
+                'bs=%s' % volumes_settings.DD_BLOCKSIZE,
+                'conv=fdatasync'])
+
     @deferredmethod(in_signature="sss")
     def fs_mount(self, fstype, devpath, mountpoint, sender):
         if not os.path.exists(mountpoint):

@@ -353,6 +353,9 @@ class StorageObjectHandler(ModelHandler):
     def create_snapshot(self, id, name, megs, options):
         return self._idobj(StorageObject.objects.get(id=id).create_snapshot(name, megs, options))
 
+    def clone(self, id, target_id, options):
+        StorageObject.objects.get(id=id).clone(StorageObject.objects.get(id=target_id), options)
+
 class StorageObjectProxy(ProxyModelHandler, StorageObjectHandler):
     def _find_target_host_from_model_instance(self, model):
         if model.host in (None, Host.objects.get_current()):
@@ -367,6 +370,9 @@ class StorageObjectProxy(ProxyModelHandler, StorageObjectHandler):
 
     def create_snapshot(self, id, name, megs, options):
         return self._call_singlepeer_method("create_snapshot", id, name, megs, options)
+
+    def clone(self, id, target_id, options):
+        return self._call_singlepeer_method("clone", id, target_id, options)
 
 
 class InitScriptHandler(BaseHandler):

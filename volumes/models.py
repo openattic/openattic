@@ -155,6 +155,12 @@ class StorageObject(models.Model):
 
         raise NotImplementedError("This volume cannot be snapshotted")
 
+    def clone(self, target, options):
+        try:
+            return self.blockvolume.clone(target, options)
+        except BlockVolume.DoesNotExist:
+            raise NotImplementedError("This volume cannot be cloned")
+
     def __unicode__(self):
         return self.name
 
@@ -379,6 +385,20 @@ class BlockVolume(AbstractVolume):
             "writes_completed", "writes_merged", "sectors_written", "millisecs_writing",
             "ios_in_progress",  "millisecs_in_io", "weighted_millisecs_in_io"
             ], [ int(num) for num in stats ] ) )
+
+    def _clone(self, target_storageobject, options):
+        get_dbus_object("/volumes").dd(self.volume.path, target_storageobject.blockvolume.volume.path)
+
+    def clone(self, target_storageobject, options):
+        """ Clone this volume into the given target. """
+        get_dbus_object("/").start_queue()
+        try:
+            self._clone(target_storageobject, options)
+        except:
+            get_dbus_object("/").discard_queue()
+            raise
+        else:
+            get_dbus_object("/").run_queue_background()
 
 
 if HAVE_NAGIOS:
