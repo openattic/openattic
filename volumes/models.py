@@ -143,6 +143,12 @@ class StorageObject(models.Model):
         else:
             get_dbus_object("/").run_queue_background()
 
+    def create_volume(self, name, megs, options):
+        try:
+            return self.volumepool.volumepool.create_volume(name, megs, options).storageobj
+        except VolumePool.DoesNotExist:
+            raise NotImplementedError("This object is not a volume pool, cannot create volumes in it")
+
     def create_snapshot(self, name, megs, options):
         for obj in (self.filesystemvolume_or_none, self.blockvolume_or_none):
             if obj is not None:

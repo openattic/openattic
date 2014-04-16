@@ -350,6 +350,21 @@ class StorageObjectHandler(ModelHandler):
     def resize(self, id, newmegs):
         return StorageObject.objects.get(id=id).resize(newmegs)
 
+    def create_volume(self, id, name, megs, options):
+        """ Create a volume in this pool.
+
+            Options include:
+             * filesystem: The filesystem the volume is supposed to have (if any).
+             * owner:      The owner of the file system.
+             * fswarning:  Warning Threshold for Nagios checks.
+             * fscritical: Critical Threshold for Nagios checks.
+        """
+        obj = StorageObject.objects.get(id=id)
+        if "owner" in options:
+            options["owner"] = ModelHandler._get_object_by_id_dict(options["owner"])
+        vol = obj.create_volume(name, megs, options)
+        return self._idobj(vol)
+
     def create_snapshot(self, id, name, megs, options):
         return self._idobj(StorageObject.objects.get(id=id).create_snapshot(name, megs, options))
 
@@ -374,6 +389,9 @@ class StorageObjectProxy(ProxyModelHandler, StorageObjectHandler):
 
     def resize(self, id, newmegs):
         return self._call_singlepeer_method("resize", id, newmegs)
+
+    def create_volume(self, id, name, megs, options):
+        return self._call_singlepeer_method("create_volume", id, name, megs, options)
 
     def create_snapshot(self, id, name, megs, options):
         return self._call_singlepeer_method("create_snapshot", id, name, megs, options)
