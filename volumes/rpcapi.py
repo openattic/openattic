@@ -365,6 +365,13 @@ class StorageObjectProxy(ProxyModelHandler, StorageObjectHandler):
     def create(self, data):
         return self.backing_handler.create(data)
 
+    def remove(self, id):
+        try:
+            ProxyModelHandler.remove(self, id)
+        except ValueError:
+            # no authoritative object found → delete database entry directly
+            self.backing_handler.remove(id)
+
     def resize(self, id, newmegs):
         return self._call_singlepeer_method("resize", id, newmegs)
 
