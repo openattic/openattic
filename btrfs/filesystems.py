@@ -45,13 +45,7 @@ class Btrfs(FileSystem):
         svol = BtrfsSubvolume(storageobj=volume.storageobj, btrfs=pool, **options)
         svol.full_clean()
         svol.save()
-
-        dso = StorageObject(name="default", megs=volume.storageobj.megs)
-        dso.full_clean()
-        dso.save()
-        dvol = pool._create_volume_for_storageobject(dso, options)
-
-        return dvol
+        return svol
 
     def __init__(self, btrfs, btrfssubvolume):
         FileSystem.__init__(self, btrfssubvolume)
