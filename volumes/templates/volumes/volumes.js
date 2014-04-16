@@ -881,7 +881,7 @@ Ext.define('Ext.oa.volumes__Volume_Panel', {
                           var input_vals = form.getValues();
                           volumes__StorageObject.create_volume(input_vals.vg, input_vals.name, sel.data.megs,
                           {
-                            filesystem: "",
+                            filesystem: ""
                           }, function(result, response){
                             if(response.type !== "exception"){
                               volumes__StorageObject.clone(sel.data.id, result.id, {});
