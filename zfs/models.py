@@ -14,10 +14,12 @@
  *  GNU General Public License for more details.
 """
 
+import os.path
+
 from django.db import models
 
 from ifconfig.models import Host, HostDependentManager, getHostDependentManagerClass
-from volumes.models import InvalidVolumeType, StorageObject, VolumePool, FileSystemVolume, CapabilitiesAwareManager
+from volumes.models import InvalidVolumeType, StorageObject, VolumePool, BlockVolume, FileSystemVolume, CapabilitiesAwareManager
 
 from zfs import filesystems
 
@@ -47,17 +49,25 @@ class Zpool(VolumePool):
         return self.fs.stat["used"]
 
     def _create_volume_for_storageobject(self, storageobj, options):
-        if options.get("filesystem", None) not in ("zfs", None):
+        if options.get("filesystem", None) not in ("zfs", '', None):
             raise InvalidVolumeType(options.get("filesystem", None))
-        if "filesystem" in options:
-            options = options.copy()
-            del options["filesystem"]
-        storageobj.megs = self.storageobj.megs
-        storageobj.save()
-        zfs = Zfs(storageobj=storageobj, zpool=self, parent=self.storageobj, **options)
-        zfs.full_clean()
-        zfs.save()
-        return zfs
+
+        if not options.get("filesystem", None):
+            zvol = ZVol(storageobj=storageobj, zpool=self)
+            zvol.full_clean()
+            zvol.save()
+            return zvol
+        else:
+            if "filesystem" in options:
+                options = options.copy()
+                del options["filesystem"]
+
+            storageobj.megs = self.storageobj.megs
+            storageobj.save()
+            zfs = Zfs(storageobj=storageobj, zpool=self, parent=self.storageobj, **options)
+            zfs.full_clean()
+            zfs.save()
+            return zfs
 
     def is_fs_supported(self, filesystem):
         return filesystem is filesystems.Zfs
@@ -89,7 +99,7 @@ class Zfs(FileSystemVolume):
                 # zfs subvolume that my storageobj's "snapshot" attribute points to.
                 origin = self.storageobj.snapshot.filesystemvolume.volume
                 if not isinstance(origin, Zfs):
-                    raise TypeError("zfs can only snapshot zfs volumes")
+                    raise TypeError("zfs can only snapshot zfs volumes, got '%s' instead" % unicode(origin))
                 self.fs.create_snapshot(origin)
             else:
                 self.fs.create_subvolume()
@@ -137,3 +147,71 @@ class Zfs(FileSystemVolume):
 
     def __unicode__(self):
         return self.fullname
+
+
+class ZVol(BlockVolume):
+    zpool       = models.ForeignKey(Zpool)
+
+    objects     = getHostDependentManagerClass("zpool__host")()
+    all_objects = models.Manager()
+
+    def save(self, database_only=False, *args, **kwargs):
+        if database_only:
+            return BlockVolume.save(self, *args, **kwargs)
+        install = (self.id is None)
+        BlockVolume.save(self, *args, **kwargs)
+        if install:
+            if self.storageobj.snapshot is not None:
+                # the volume represented by self is supposed to be a snapshot of the
+                # zfs subvolume that my storageobj's "snapshot" attribute points to.
+                origin = self.storageobj.snapshot.blockvolume.volume
+                if not isinstance(origin, ZVol):
+                    raise TypeError("zfs can only snapshot zfs volumes, got '%s' instead" % unicode(origin))
+                self.fs.create_zvol_snapshot(origin)
+            else:
+                self.fs.create_zvol()
+
+    def delete(self):
+        BlockVolume.delete(self)
+        if self.storageobj.snapshot is not None:
+            origin = self.storageobj.snapshot.blockvolume.volume
+            self.fs.destroy_snapshot(origin)
+        else:
+            self.fs.destroy_subvolume()
+
+    @property
+    def fs(self):
+        return filesystems.Zfs(self.zpool, self)
+
+    @property
+    def path(self):
+        return os.path.join("/dev", self.zpool.storageobj.name, self.storageobj.name)
+
+    @property
+    def status(self):
+        return self.zpool.status
+
+    @property
+    def host(self):
+        return self.zpool.host
+
+    @property
+    def fullname(self):
+        return self.storageobj.name
+
+    @property
+    def usedmegs(self):
+        return self.fs.stat["used"]
+
+    def _create_snapshot_for_storageobject(self, storageobj, options):
+        sv = Zfs(storageobj=storageobj, zpool=self.zpool, parent=self.parent,
+                 fswarning=self.fswarning, fscritical=self.fscritical, owner=self.owner)
+        sv.full_clean()
+        sv.save()
+        return sv
+
+    def __unicode__(self):
+        return self.fullname
+
+
+

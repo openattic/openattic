@@ -16,8 +16,8 @@
 
 from rpcd.handlers import ProxyModelHandler
 
-from zfs.models import Zpool, Zfs
-from volumes.rpcapi import AbstractVolumePoolHandler, AbstractFileSystemVolumeHandler
+from zfs.models import Zpool, Zfs, ZVol
+from volumes.rpcapi import AbstractVolumePoolHandler, AbstractBlockVolumeHandler, AbstractFileSystemVolumeHandler
 
 class ZpoolHandler(AbstractVolumePoolHandler):
     model = Zpool
@@ -31,4 +31,10 @@ class ZfsHandler(AbstractFileSystemVolumeHandler):
 class ZfsProxy(ProxyModelHandler, ZfsHandler):
     pass
 
-RPCD_HANDLERS = [ZpoolProxy, ZfsProxy]
+class ZVolHandler(AbstractBlockVolumeHandler):
+    model = ZVol
+
+class ZVolProxy(ProxyModelHandler, ZVolHandler):
+    pass
+
+RPCD_HANDLERS = [ZpoolProxy, ZfsProxy, ZVolProxy]

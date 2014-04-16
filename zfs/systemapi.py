@@ -64,6 +64,10 @@ class SystemD(BasePlugin):
     def zfs_create_volume(self, volume, sender):
         invoke(["zfs", "create", volume])
 
+    @deferredmethod(in_signature="si")
+    def zvol_create_volume(self, volume, megs, sender):
+        invoke(["zfs", "create", "-V", "%dM" % megs, volume])
+
     @deferredmethod(in_signature="s")
     def zfs_destroy_volume(self, volume, sender):
         invoke(["zfs", "destroy", volume])
@@ -72,6 +76,10 @@ class SystemD(BasePlugin):
     def zfs_create_snapshot(self, orig, snapshot, sender):
         invoke(["zfs", "snapshot", "%s@%s" % (orig, snapshot)])
         invoke(["zfs", "clone", "%s@%s" % (orig, snapshot), "%s/.%s" % (orig, snapshot) ])
+
+    @deferredmethod(in_signature="ss")
+    def zvol_create_snapshot(self, orig, snapshot, sender):
+        invoke(["zfs", "snapshot", "%s@%s" % (orig, snapshot)])
 
     @deferredmethod(in_signature="ss")
     def zfs_destroy_snapshot(self, orig, snapshot, sender):
@@ -92,4 +100,3 @@ class SystemD(BasePlugin):
     @deferredmethod(in_signature="ss")
     def zpool_expand(self, name, device, sender):
         invoke(["zpool", "online", "-e", name, device])
-

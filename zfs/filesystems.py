@@ -80,7 +80,7 @@ class Zfs(FileSystem):
         return zvol
 
     def __init__(self, zpool, zfs):
-        FileSystem.__init__(self, zfs)
+        self.volume = zfs
         self.zpool = zpool
 
     @property
@@ -115,11 +115,17 @@ class Zfs(FileSystem):
     def create_subvolume(self):
         self.dbus_object.zfs_create_volume(self.volume.fullname)
 
+    def create_zvol(self):
+        self.dbus_object.zvol_create_volume(self.volume.fullname, self.volume.storageobj.megs)
+
     def destroy_subvolume(self):
         self.dbus_object.zfs_destroy_volume(self.volume.fullname)
 
     def create_snapshot(self, orig_zfs):
         self.dbus_object.zfs_create_snapshot(orig_zfs.fullname, self.volume.storageobj.name)
+
+    def create_zvol_snapshot(self, orig_zvol):
+        self.dbus_object.zvol_create_snapshot(orig_zvol.fullname, self.volume.storageobj.name)
 
     def destroy_snapshot(self, orig_zfs):
         self.dbus_object.zfs_destroy_snapshot(orig_zfs.fullname, self.volume.storageobj.name)
