@@ -733,6 +733,180 @@ Ext.define('Ext.oa.volumes__Volume_Panel', {
           }
         }
       }, {
+        text: gettext("Create Clone"),
+        icon: MEDIA_URL + "/oxygen/16x16/actions/document-new.png",
+        handler: function(){
+          "use strict";
+          var sm = volumePanel.getSelectionModel();
+          if( sm.hasSelection() ){
+            var sel = sm.selected.items[0];
+              var clonewin = new Ext.Window(Ext.apply({
+                layout: "fit",
+                title: gettext('Clone'),
+                defaults: { autoScroll: true },
+                height: 300,
+                width: 500,
+                items: [{
+                  xtype: "form",
+                  id: "clone",
+                  bodyStyle: 'padding:5px ;',
+                  defaults: {
+                    xtype: "textfield",
+                    anchor: '-20',
+                    defaults: {
+                      anchor: "0px"
+                    }
+                  },
+                  items:[{
+                    xtype: 'textfield',
+                    readOnly: false,
+                    name: 'name',
+                    id: 'new_clone_volumename',
+                    fieldLabel: gettext('Name'),
+                    afterLabelTextTpl: required
+                  },{
+                    xtype:      'combo',
+                    allowBlank: false,
+                    fieldLabel: gettext('Volume Group'),
+                    name: 'vg',
+                    typeAhead:     true,
+                    triggerAction: 'all',
+                    deferEmptyText: false,
+                    emptyText:     gettext('Select...'),
+                    selectOnFocus: true,
+                    displayField: "name",
+                    valueField: "volumepool_id",
+                    afterLabelTextTpl: required,
+                    store: (function(){
+                      Ext.define('lvm_logicalvolume_volumegroup_store', {
+                        extend: 'Ext.data.Model',
+                        fields: [
+                          {name: 'id'},
+                          {name: 'name'},
+                          {name: 'volumepool_id', mapping: 'volumepool', convert: function(val){
+                            return val.volumepool.id;
+                          } }
+                        ]
+                      });
+                      return Ext.create('Ext.data.Store', {
+                        model: "lvm_logicalvolume_volumegroup_store",
+                        proxy: {
+                          type: 'direct',
+                          directFn: volumes__StorageObject.filter,
+                          extraParams: {
+                            kwds: {volumepool__isnull: false}
+                          },
+                          paramOrder: ["kwds"]
+                        }
+                      });
+                    }())
+                  },{
+                    xtype       : 'radio',
+                    id          : 'use_selected',
+                    name        : 'use_selected',
+                    checked   : true,
+                    boxLabel  : gettext('Use selected Volume/Snapshot'),
+                    listeners : {
+                      change: function(self, newValue, oldValue, eOpts){
+                        if(newValue)
+                        {
+                          Ext.getCmp('use_other').setValue(false);
+                          Ext.getCmp('snapshot').disable();
+                        }
+                      }
+                    }
+                  },{
+                    xtype       : 'radio',
+                    id          : 'use_other',
+                    name        : 'use_other',
+                    boxLabel  : gettext('Use an other Snapshot'),
+                    listeners : {
+                      change: function(self, newValue, oldValue, eOpts){
+                        if(newValue)
+                        {
+                          Ext.getCmp('snapshot').enable();
+                          Ext.getCmp('use_selected').setValue(false);
+                        }
+                      }
+                    }
+                  },{
+                    xtype:      'combo',
+                    allowBlank: false,
+                    fieldLabel: gettext('Snapshot'),
+                    name: 'snapshot',
+                    id: 'snapshot',
+                    typeAhead:     true,
+                    triggerAction: 'all',
+                    deferEmptyText: false,
+                    emptyText:     gettext('Select...'),
+                    selectOnFocus: true,
+                    disabled: true,
+                    displayField: "name",
+                    valueField: "snapshot_id",
+                    afterLabelTextTpl: required,
+                    store: (function(){
+                      Ext.define('volumes_storageobject_snapshots', {
+                        extend: 'Ext.data.Model',
+                        fields: [
+                          {name: 'id'},
+                          {name: 'name'}
+                        ]
+                      });
+                      return Ext.create('Ext.data.Store', {
+                        model: "volumes_storageobject_snapshots",
+                        proxy: {
+                          type: 'direct',
+                          directFn: volumes__StorageObject.filter,
+                          extraParams: {
+                            kwds: {
+                              "snapshot": {
+                                "app": "volumes",
+                                "obj": "StorageObject",
+                                "id" : sel.raw.id
+                              }
+                            }
+                          },
+                          paramOrder: ["kwds"]
+                        }
+                      });
+                    }())
+                  }],
+                  buttons: [{
+                    text: gettext('Create'),
+                    icon: MEDIA_URL + "/oxygen/16x16/actions/dialog-ok-apply.png",
+                    listeners: {
+                      click: function(self, e, eOpts){
+                        var form = self.ownerCt.ownerCt.getForm();
+                        if(form.isValid()){
+                          var input_vals = form.getValues();
+                          volumes__StorageObject.create_volume(input_vals.vg, input_vals.name, sel.data.megs,
+                          {
+                            filesystem: "",
+                          }, function(result, response){
+                            if(response.type !== "exception"){
+                              volumes__StorageObject.clone(sel.data.id, result.id, {});
+                              self.ownerCt.ownerCt.ownerCt.close();
+                            }
+                            else{
+                              self.ownerCt.ownerCt.getEl().unmask();
+                            }
+                          });
+                        }
+                      }
+                    }
+                  },{
+                    text: gettext('Cancel'),
+                    icon: MEDIA_URL + "/icons2/16x16/actions/gtk-cancel.png",
+                    handler: function(){
+                      clonewin.close();
+                    }
+                  }]
+                }]
+              }));
+              clonewin.show();
+          }
+        }
+      }, {
         text: gettext('Resize Volume'),
         icon: MEDIA_URL + "/icons2/16x16/actions/gtk-execute.png",
         handler: function(){
