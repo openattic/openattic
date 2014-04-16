@@ -40,7 +40,10 @@ class SystemD(LockingPlugin):
 
     @method(in_signature="i", out_signature="")
     def storage_object_delete(self, id):
-        models.StorageObject.objects.get(id=id).lio_object.delete()
+        try:
+            models.StorageObject.objects.get(id=id).lio_object.delete()
+        except KeyError:
+            pass
 
     @method(in_signature="i", out_signature="")
     def target_create(self, id):
