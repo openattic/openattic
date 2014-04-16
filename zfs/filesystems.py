@@ -80,6 +80,12 @@ class Zfs(FileSystem):
         return zvol
 
     def __init__(self, zpool, zfs):
+        # We do *not* call FileSystem.__init__ here because there's a check in there
+        # that makes sure that FileSystem instances can only be created for volumes
+        # that actually *have* a file system, which BlockVolumes do not.
+        # Unless it's a ZVol.
+        # In that case, you need a FileSystem handler in order to manipulate a block
+        # device, which doesn't really make any sense but that's the way it is.
         self.volume = zfs
         self.zpool = zpool
 
