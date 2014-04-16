@@ -45,6 +45,13 @@ class Btrfs(FileSystem):
         svol = BtrfsSubvolume(storageobj=volume.storageobj, btrfs=pool, **options)
         svol.full_clean()
         svol.save()
+
+        # Create a subvolume named .snapshots for snapshots to reside in.
+        dso = StorageObject(name=".snapshots", megs=volume.storageobj.megs)
+        dso.full_clean()
+        dso.save()
+        dvol = pool._create_volume_for_storageobject(dso, {})
+
         return svol
 
     def __init__(self, btrfs, btrfssubvolume):
@@ -67,11 +74,15 @@ class Btrfs(FileSystem):
 
     @property
     def path(self):
-        if self.volume.storageobj.snapshot is None:
-            return os.path.join(volumes_settings.MOUNT_PREFIX, self.volume.fullname)
+        if "/" not in self.volume.fullname:
+            subpath = ""
         else:
-            origin = self.volume.storageobj.snapshot.filesystemvolume.volume
-            return os.path.join(origin.path, ".snapshots", self.volume.storageobj.name)
+            subpath = os.path.join(*os.path.split(self.volume.fullname)[1:])
+
+        if self.volume.storageobj.snapshot is None:
+            return os.path.join(volumes_settings.MOUNT_PREFIX, self.btrfs.storageobj.name, subpath)
+        else:
+            return os.path.join(volumes_settings.MOUNT_PREFIX, self.btrfs.storageobj.name, ".snapshots", subpath)
 
     @classmethod
     def check_type(cls, typestring):
