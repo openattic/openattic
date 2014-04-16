@@ -42,6 +42,11 @@ from ifconfig.models import Host
 
 
 class AbstractVolumePoolHandler(ModelHandler):
+    """ Handler class that Handlers for concrete VolumePool implementation
+        classes are supposed to inherit from.
+
+        Ensures a basic amount of information is provided.
+    """
     order = ("storageobj__name",)
 
     def _getobj(self, obj):
@@ -127,6 +132,7 @@ class VolumePoolProxy(ProxyModelHandler, VolumePoolHandler):
         return self._call_singlepeer_method("get_supported_filesystems", id)
 
     def get_sufficient(self, host_id, min_megs):
+        """ Find a volumepool that has sufficient free space for a new volume to be created. """
         volumepools = VolumePool.all_objects.all()
         host = Host.objects.get(id=host_id)
         result_pools = []
@@ -152,7 +158,11 @@ class VolumePoolProxy(ProxyModelHandler, VolumePoolHandler):
 
 
 class AbstractBlockVolumeHandler(ModelHandler):
-    """ Actual volume handlers are supposed to inherit from this one. """
+    """ Handler class that Handlers for concrete BlockVolume implementation
+        classes are supposed to inherit from.
+
+        Ensures a basic amount of information is provided.
+    """
     order = ("storageobj__name",)
 
     def _getobj(self, obj):
@@ -215,6 +225,11 @@ class BlockVolumeProxy(ProxyModelHandler, BlockVolumeHandler):
 
 
 class AbstractFileSystemVolumeHandler(ModelHandler):
+    """ Handler class that Handlers for concrete FileSystemVolume implementation
+        classes are supposed to inherit from.
+
+        Ensures a basic amount of information is provided.
+    """
     def _getobj(self, obj):
         data = ModelHandler._getobj(self, obj)
         data["name"]    = obj.storageobj.name
@@ -281,9 +296,11 @@ class FileSystemVolumeProxy(ProxyModelHandler, FileSystemVolumeHandler):
         return self._call_singlepeer_method("run_initscript", id, script)
 
     def mount(self, id):
+        """ Mount a file system. """
         return self._call_singlepeer_method("mount", id)
 
     def unmount(self, id):
+        """ Unmount a file system. """
         return self._call_singlepeer_method("unmount", id)
 
 
@@ -348,17 +365,10 @@ class StorageObjectHandler(ModelHandler):
         return data
 
     def resize(self, id, newmegs):
+        """ Resize this object to the new size. """
         return StorageObject.objects.get(id=id).resize(newmegs)
 
     def create_volume(self, id, name, megs, options):
-        """ Create a volume in this pool.
-
-            Options include:
-             * filesystem: The filesystem the volume is supposed to have (if any).
-             * owner:      The owner of the file system.
-             * fswarning:  Warning Threshold for Nagios checks.
-             * fscritical: Critical Threshold for Nagios checks.
-        """
         obj = StorageObject.objects.get(id=id)
         if "owner" in options:
             options["owner"] = ModelHandler._get_object_by_id_dict(options["owner"])
@@ -391,12 +401,27 @@ class StorageObjectProxy(ProxyModelHandler, StorageObjectHandler):
         return self._call_singlepeer_method("resize", id, newmegs)
 
     def create_volume(self, id, name, megs, options):
+        """ Create a volume in this pool.
+
+            Options include:
+             * filesystem: The filesystem the volume is supposed to have (if any).
+             * owner:      The owner of the file system.
+             * fswarning:  Warning Threshold for Nagios checks.
+             * fscritical: Critical Threshold for Nagios checks.
+
+            What exactly this means is up to the volume implementation.
+        """
         return self._call_singlepeer_method("create_volume", id, name, megs, options)
 
     def create_snapshot(self, id, name, megs, options):
+        """ Create a snapshot of this volume and return its StorageObject.
+
+            What exactly this means is up to the volume implementation.
+        """
         return self._call_singlepeer_method("create_snapshot", id, name, megs, options)
 
     def clone(self, id, target_id, options):
+        """ Clone the given volume into the target. """
         return self._call_singlepeer_method("clone", id, target_id, options)
 
 

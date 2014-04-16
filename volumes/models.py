@@ -52,6 +52,12 @@ class CapabilitiesAwareManager(models.Manager):
 
 
 class StorageObject(models.Model):
+    """ A general object that may be just about anything.
+
+        The StorageObject is a general entry point that collects all information
+        about objects in one place, no matter if they are volume pools, block
+        volumes or file system volumes.
+    """
     name        = models.CharField(max_length=150)
     megs        = models.IntegerField()
     uuid        = models.CharField(max_length=38, editable=False)
@@ -110,6 +116,7 @@ class StorageObject(models.Model):
         return self.authoritative_obj.host
 
     def delete(self):
+        """ Delete this StorageObject and any object associated with it. """
         for obj in (self.filesystemvolume_or_none, self.volumepool_or_none, self.blockvolume_or_none):
             if obj is not None:
                 obj.delete()
@@ -117,6 +124,7 @@ class StorageObject(models.Model):
         return models.Model.delete(self)
 
     def resize(self, megs):
+        """ Resize everything to the given size. """
         oldmegs = self.megs
         newmegs = megs
         self.megs = newmegs
@@ -144,12 +152,20 @@ class StorageObject(models.Model):
             get_dbus_object("/").run_queue_background()
 
     def create_volume(self, name, megs, options):
+        """ If this is a Volume Pool, create a volume in it.
+
+            Otherwise, raise NotImplementedError.
+        """
         try:
             return self.volumepool.volumepool.create_volume(name, megs, options).storageobj
         except VolumePool.DoesNotExist:
             raise NotImplementedError("This object is not a volume pool, cannot create volumes in it")
 
     def create_snapshot(self, name, megs, options):
+        """ If this is a volume that supports snapshots, snap it.
+
+            Otherwise, raise NotImplementedError.
+        """
         for obj in (self.filesystemvolume_or_none, self.blockvolume_or_none):
             if obj is not None:
                 try:
@@ -162,6 +178,10 @@ class StorageObject(models.Model):
         raise NotImplementedError("This volume cannot be snapshotted")
 
     def clone(self, target, options):
+        """ If this is a block volume, clone it into the target.
+
+            Otherwise, raise NotImplementedError.
+        """
         try:
             return self.blockvolume.volume.clone(target, options)
         except BlockVolume.DoesNotExist:
@@ -196,15 +216,21 @@ class VolumePool(models.Model):
 
     @property
     def member_set(self):
+        """ The block devices that provide the storage for this volume pool. """
         return BlockVolume.objects.filter(upper=self.storageobj)
 
-    def _create_volume_for_storageobject(self, type):
+    def _create_volume_for_storageobject(self, storageobj, options):
+        """ Create a volume that best fulfills the specification given
+            in `options' and attach it to the passed storageobj.
+        """
         raise NotImplementedError("VolumePool::_create_volume_for_storageobject needs to be overridden")
 
     def is_fs_supported(self, type):
+        """ Check if we can create a volume with the given file system. """
         raise NotImplementedError("VolumePool::is_fs_supported needs to be overridden")
 
     def get_supported_filesystems(self):
+        """ Get all file systems supported by this volume pool. """
         return [fs for fs in filesystems.FILESYSTEMS if self.is_fs_supported(fs)]
 
     def save(self, *args, **kwargs):
@@ -292,10 +318,13 @@ class AbstractVolume(models.Model):
         return res
 
     def _create_snapshot_for_storageobject(self, storageobj, options):
+        """ Create a volume that best fulfills the specification given
+            in `options' and attach it to the passed storageobj.
+        """
         raise NotImplementedError("%s does not support snapshots" % self.__class__)
 
     def _create_snapshot(self, name, megs, options):
-        """ Actual volume creation. """
+        """ Actual snapshot creation. """
         storageobj = StorageObject(snapshot=self.storageobj, name=name, megs=megs)
         storageobj.full_clean()
         storageobj.save()
@@ -393,6 +422,9 @@ class BlockVolume(AbstractVolume):
             ], [ int(num) for num in stats ] ) )
 
     def _clone(self, target_storageobject, options):
+        """ Clone this volume into the target_storageobject in a way that best
+            fulfills the specification given in `options'.
+        """
         get_dbus_object("/volumes").dd(self.volume.path, target_storageobject.blockvolume.volume.path)
 
     def clone(self, target_storageobject, options):
