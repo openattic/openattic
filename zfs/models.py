@@ -139,7 +139,11 @@ class Zfs(FileSystemVolume):
         return self.fs.stat["used"]
 
     def _create_snapshot_for_storageobject(self, storageobj, options):
-        sv = Zfs(storageobj=storageobj, zpool=self.zpool, parent=self.parent,
+        if self.parent is not None:
+            snapparent = self.parent
+        else:
+            snapparent = self.zpool.storageobj
+        sv = Zfs(storageobj=storageobj, zpool=self.zpool, parent=snapparent,
                  fswarning=self.fswarning, fscritical=self.fscritical, owner=self.owner)
         sv.full_clean()
         sv.save()
@@ -204,8 +208,11 @@ class ZVol(BlockVolume):
         return self.fs.stat["used"]
 
     def _create_snapshot_for_storageobject(self, storageobj, options):
-        sv = Zfs(storageobj=storageobj, zpool=self.zpool, parent=self.parent,
-                 fswarning=self.fswarning, fscritical=self.fscritical, owner=self.owner)
+        if self.parent is not None:
+            snapparent = self.parent
+        else:
+            snapparent = self.zpool.storageobj
+        sv = ZVol(storageobj=storageobj, zpool=self.zpool, parent=snapparent)
         sv.full_clean()
         sv.save()
         return sv

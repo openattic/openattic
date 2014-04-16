@@ -77,6 +77,13 @@ class Zfs(FileSystem):
         zvol = Zfs(storageobj=volume.storageobj, zpool=pool, **options)
         zvol.full_clean()
         zvol.save()
+
+        # Create a subvolume named .snapshots for snapshots to reside in.
+        dso = StorageObject(name=".snapshots", megs=volume.storageobj.megs)
+        dso.full_clean()
+        dso.save()
+        dvol = pool._create_volume_for_storageobject(dso, {})
+
         return zvol
 
     def __init__(self, zpool, zfs):
@@ -95,7 +102,15 @@ class Zfs(FileSystem):
 
     @property
     def path(self):
-        return os.path.join(volumes_settings.MOUNT_PREFIX, self.volume.fullname)
+        if "/" not in self.volume.fullname:
+            subpath = ""
+        else:
+            subpath = os.path.join(*os.path.split(self.volume.fullname)[1:])
+
+        if self.volume.storageobj.snapshot is None:
+            return os.path.join(volumes_settings.MOUNT_PREFIX, self.zpool.storageobj.name, subpath)
+        else:
+            return os.path.join(volumes_settings.MOUNT_PREFIX, self.zpool.storageobj.name, ".snapshots", subpath)
 
     @property
     def status(self):

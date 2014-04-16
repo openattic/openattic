@@ -14,6 +14,9 @@
  *  GNU General Public License for more details.
 """
 
+import os
+import os.path
+
 from systemd import invoke, logged, BasePlugin, method, deferredmethod
 
 @logged
@@ -73,9 +76,20 @@ class SystemD(BasePlugin):
         invoke(["zfs", "destroy", volume])
 
     @deferredmethod(in_signature="ss")
-    def zfs_create_snapshot(self, orig, snapshot, sender):
-        invoke(["zfs", "snapshot", "%s@%s" % (orig, snapshot)])
-        invoke(["zfs", "clone", "%s@%s" % (orig, snapshot), "%s/.%s" % (orig, snapshot) ])
+    def zfs_create_snapshot(self, origfullname, snapshotname, sender):
+        if "/" not in origfullname:
+            # snapshots for demo_zfs go to demo_zfs/.snapshots/snapname
+            poolname = origfullname
+            origsubpath = ""
+        else:
+            # snapshots for demo_zfs/subvolume go to demo_zfs/.snapshots/subvolume/snapname
+            poolname, origsubpath = origfullname.split("/", 1)
+
+        snapfullname = "%s@%s" % (origfullname, snapshotname)
+        snapfullpath = os.path.join(poolname, ".snapshots", snapshotname)
+
+        invoke(["zfs", "snapshot", snapfullname])
+        invoke(["zfs", "clone",    snapfullname, snapfullpath ])
 
     @deferredmethod(in_signature="ss")
     def zvol_create_snapshot(self, orig, snapshot, sender):
