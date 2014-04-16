@@ -157,7 +157,7 @@ class StorageObject(models.Model):
 
     def clone(self, target, options):
         try:
-            return self.blockvolume.clone(target, options)
+            return self.blockvolume.volume.clone(target, options)
         except BlockVolume.DoesNotExist:
             raise NotImplementedError("This volume cannot be cloned")
 
