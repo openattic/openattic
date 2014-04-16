@@ -75,33 +75,21 @@ class SystemD(BasePlugin):
     def zfs_destroy_volume(self, volume, sender):
         invoke(["zfs", "destroy", volume])
 
-    @deferredmethod(in_signature="ss")
-    def zfs_create_snapshot(self, origfullname, snapshotname, sender):
-        if "/" not in origfullname:
-            # snapshots for demo_zfs go to demo_zfs/.snapshots/snapname
-            poolname = origfullname
-            origsubpath = ""
-        else:
-            # snapshots for demo_zfs/subvolume go to demo_zfs/.snapshots/subvolume/snapname
-            poolname, origsubpath = origfullname.split("/", 1)
-
-        snapfullname = "%s@%s" % (origfullname, snapshotname)
-        snapfullpath = os.path.join(poolname, ".snapshots", snapshotname)
-
+    @deferredmethod(in_signature="s")
+    def zfs_create_snapshot(self, snapfullname, sender):
         invoke(["zfs", "snapshot", snapfullname])
-        invoke(["zfs", "clone",    snapfullname, snapfullpath ])
 
     @deferredmethod(in_signature="ss")
-    def zvol_create_snapshot(self, orig, snapshot, sender):
-        invoke(["zfs", "snapshot", "%s@%s" % (orig, snapshot)])
+    def zfs_clone(self, origfullname, clonefullname, sender):
+        invoke(["zfs", "clone", origfullname, clonefullname ])
 
-    @deferredmethod(in_signature="ss")
-    def zfs_destroy_snapshot(self, orig, snapshot, sender):
-        invoke(["zfs", "destroy", "-R", "%s@%s" % (orig, snapshot)])
+    @deferredmethod(in_signature="s")
+    def zfs_destroy_snapshot(self, snapfullname, sender):
+        invoke(["zfs", "destroy", "-R", snapfullname])
 
-    @deferredmethod(in_signature="ss")
-    def zfs_rollback_snapshot(self, orig, snapshot, sender):
-        invoke(["zfs", "rollback", "-R", "%s@%s" % (orig, snapshot)])
+    @deferredmethod(in_signature="s")
+    def zfs_rollback_snapshot(self, snapfullname, sender):
+        invoke(["zfs", "rollback", "-R", snapfullname])
 
     @method(in_signature="s", out_signature="a(sssssss)")
     def zfs_getspace(self, device):

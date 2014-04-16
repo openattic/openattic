@@ -143,16 +143,24 @@ class Zfs(FileSystem):
         self.dbus_object.zfs_destroy_volume(self.volume.fullname)
 
     def create_snapshot(self, orig_zfs):
-        self.dbus_object.zfs_create_snapshot(orig_zfs.fullname, self.volume.storageobj.name)
+        """ Create a snapshot of the given orig_zfs and clone it to the .snapshots subdirectory. """
+        snapfullname = "%s@%s" % (orig_zfs.fullname, self.volume.storageobj.name)
+        snapfullpath = os.path.join(self.zpool.storageobj.name, ".snapshots", self.volume.storageobj.name)
+        self.dbus_object.zfs_create_snapshot(snapfullname)
+        self.dbus_object.zfs_clone(snapfullname, snapfullpath)
 
     def create_zvol_snapshot(self, orig_zvol):
-        self.dbus_object.zvol_create_snapshot(orig_zvol.fullname, self.volume.storageobj.name)
+        """ Create a snapshot. """
+        snapfullname = "%s@%s" % (orig_zvol.fullname, self.volume.storageobj.name)
+        self.dbus_object.zfs_create_snapshot(snapfullname)
 
     def destroy_snapshot(self, orig_zfs):
-        self.dbus_object.zfs_destroy_snapshot(orig_zfs.fullname, self.volume.storageobj.name)
+        snapfullname = "%s@%s" % (orig_zfs.fullname, self.volume.storageobj.name)
+        self.dbus_object.zfs_destroy_snapshot(snapfullname)
 
     def rollback_snapshot(self, orig_zfs):
-        self.dbus_object.zfs_rollback_snapshot(orig_zfs.fullname, self.volume.storageobj.name)
+        snapfullname = "%s@%s" % (orig_zfs.fullname, self.volume.storageobj.name)
+        self.dbus_object.zfs_rollback_snapshot(snapfullname)
 
 
 class ZpoolDevice(capabilities.Device):
