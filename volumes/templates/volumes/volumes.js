@@ -775,7 +775,7 @@ Ext.define('Ext.oa.volumes__Volume_Panel', {
                     emptyText:     gettext('Select...'),
                     selectOnFocus: true,
                     displayField: "name",
-                    valueField: "volumepool_id",
+                    valueField: "id",
                     afterLabelTextTpl: required,
                     store: (function(){
                       Ext.define('lvm_logicalvolume_volumegroup_store', {
