@@ -31,7 +31,7 @@ class Btrfs(VolumePool):
 
     @property
     def fullname(self):
-        return self.name
+        return self.storageobj.name
 
     @property
     def fs(self):
