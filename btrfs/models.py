@@ -87,7 +87,7 @@ class BtrfsSubvolume(FileSystemVolume):
                 self.fs.create_snapshot(origin, False)
             else:
                 self.fs.create_subvolume()
-            self.fs.chown()
+                self.fs.chown()
 
     def delete(self):
         if self.parent is None:
