@@ -35,7 +35,10 @@ class SystemD(LockingPlugin):
     def storage_object_create(self, id):
         mdl_so = models.StorageObject.objects.get(id=id)
         lio_bs = mdl_so.backstore.lio_object
-        storage = lio_bs.storage_object(mdl_so.volume.storageobj.name, mdl_so.volume.volume.path, gen_wwn=False)
+        kwargs = {"gen_wwn": False}
+        if mdl_so.backstore.type == "fileio":
+            kwargs.update({"size": "%dM" % mdl_so.volume.storageobj.megs})
+        storage = lio_bs.storage_object(mdl_so.volume.storageobj.name, mdl_so.volume.volume.path, **kwargs)
         storage.wwn = mdl_so.wwn
 
     @method(in_signature="i", out_signature="")
