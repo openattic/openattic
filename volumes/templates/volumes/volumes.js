@@ -763,6 +763,7 @@ Ext.define('Ext.oa.volumes__Volume_Panel', {
                     name: 'name',
                     id: 'new_clone_volumename',
                     fieldLabel: gettext('Name'),
+                    allowBlank: false,
                     afterLabelTextTpl: required
                   },{
                     xtype:      'combo',
@@ -842,14 +843,15 @@ Ext.define('Ext.oa.volumes__Volume_Panel', {
                     selectOnFocus: true,
                     disabled: true,
                     displayField: "name",
-                    valueField: "snapshot_id",
+                    valueField: "id",
                     afterLabelTextTpl: required,
                     store: (function(){
                       Ext.define('volumes_storageobject_snapshots', {
                         extend: 'Ext.data.Model',
                         fields: [
                           {name: 'id'},
-                          {name: 'name'}
+                          {name: 'name'},
+
                         ]
                       });
                       return Ext.create('Ext.data.Store', {
@@ -879,12 +881,18 @@ Ext.define('Ext.oa.volumes__Volume_Panel', {
                         var form = self.ownerCt.ownerCt.getForm();
                         if(form.isValid()){
                           var input_vals = form.getValues();
+                          if(input_vals.snapshot == null){
+                            var storageobjectid = sel.data.id
+                          }
+                          else{
+                           var storageobjectid = input_vals.snapshot
+                          }
                           volumes__StorageObject.create_volume(input_vals.vg, input_vals.name, sel.data.megs,
                           {
                             filesystem: ""
                           }, function(result, response){
                             if(response.type !== "exception"){
-                              volumes__StorageObject.clone(sel.data.id, result.id, {});
+                              volumes__StorageObject.clone(storageobjectid, result.id, {});
                               self.ownerCt.ownerCt.ownerCt.close();
                             }
                             else{
