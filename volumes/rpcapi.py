@@ -364,6 +364,35 @@ class StorageObjectHandler(ModelHandler):
 
         return data
 
+    def _idobj(self, obj):
+        data = ModelHandler._idobj(self, obj)
+
+        try:
+            obj.volumepool
+        except VolumePool.DoesNotExist:
+            data["volumepool"] = None
+        else:
+            handler = self._get_handler_instance(obj.volumepool.__class__)
+            data["volumepool"] = handler._idobj(obj.volumepool)
+
+        try:
+            obj.blockvolume
+        except BlockVolume.DoesNotExist:
+            data["blockvolume"] = None
+        else:
+            handler = self._get_handler_instance(obj.blockvolume.__class__)
+            data["blockvolume"] = handler._idobj(obj.blockvolume)
+
+        try:
+            obj.filesystemvolume
+        except FileSystemVolume.DoesNotExist:
+            data["filesystemvolume"] = None
+        else:
+            handler = self._get_handler_instance(obj.filesystemvolume.__class__)
+            data["filesystemvolume"] = handler._idobj(obj.filesystemvolume)
+
+        return data
+
     def resize(self, id, newmegs):
         """ Resize this object to the new size. """
         return StorageObject.objects.get(id=id).resize(newmegs)
