@@ -848,11 +848,7 @@ Ext.define('Ext.oa.volumes__Volume_Panel', {
                     store: (function(){
                       Ext.define('volumes_storageobject_snapshots', {
                         extend: 'Ext.data.Model',
-                        fields: [
-                          {name: 'id'},
-                          {name: 'name'},
-
-                        ]
+                        fields: ['id', 'name']
                       });
                       return Ext.create('Ext.data.Store', {
                         model: "volumes_storageobject_snapshots",
