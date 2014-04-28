@@ -44,7 +44,13 @@ class ThreadingHTTPServer(ThreadingMixIn, HTTPServer):
     pass
 
 class ThreadingXMLRPCServer(ThreadingMixIn, SimpleXMLRPCServer):
-    pass
+    def shutdown_request(self, request):
+        from django.db import close_connection
+        # Close the database connection after every request because keeping it open
+        # would result in lots of "<IDLE> in transaction" postgresql processes hogging
+        # the max_connection_limit and thereby breaking pretty much everything else.
+        close_connection()
+        return super(ThreadingXMLRPCServer, self).shutdown_request(request)
 
 class SecureXMLRPCServer(ThreadingHTTPServer, SimpleXMLRPCDispatcher):
     """ Secure XML-RPC server.
