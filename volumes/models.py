@@ -401,11 +401,25 @@ class BlockVolume(AbstractVolume):
             "ios_in_progress",  "millisecs_in_io", "weighted_millisecs_in_io"
             ], [ int(num) for num in stats ] ) )
 
-    def _clone(self, target_storageobject, options):
+    def _clone_to_storageobj(self, target_storageobject, options):
         """ Clone this volume into the target_storageobject in a way that best
             fulfills the specification given in `options'.
         """
         get_dbus_object("/volumes").dd(self.volume.path, target_storageobject.blockvolume.volume.path)
+
+    def _clone(self, target_storageobject, options):
+        self._clone_to_storageobj(target_storageobject, options)
+        try:
+            fsv = self.storageobj.filesystemvolume.volume
+        except FileSystemVolume.DoesNotExist:
+            pass
+        else:
+            if target_storageobject.filesystemvolume_or_none is None:
+                if not isinstance(fsv, FileSystemProvider):
+                    raise TypeError("Cannot clone a volume with a FileSystem of type '%s' inside" % type(fsv))
+                clonefsp = FileSystemProvider(storageobj=target_storageobject, fstype=fsv.fstype,
+                                            fswarning=fsv.fswarning, fscritical=fsv.fscritical, owner=fsv.owner)
+                clonefsp.save_clone()
 
     def clone(self, target_storageobject, options):
         """ Clone this volume into the given target. """
@@ -560,6 +574,12 @@ class FileSystemProvider(FileSystemVolume):
                 self.fs.format()
             else:
                 self.fs.mount()
+
+    def save_clone(self, source_storageobj):
+        if self.id is not None:
+            raise ValueError("Cannot save an already saved object as a clone")
+        FileSystemVolume.save(self, *args, **kwargs)
+        self.fs.set_uuid(generate=True)
 
     @property
     def status(self):
