@@ -26,7 +26,7 @@ from django.utils.translation    import ugettext_lazy as _
 from django.contrib.auth.models  import User
 from django.core.exceptions      import ValidationError
 
-from systemd import get_dbus_object, BackgroundTransaction
+from systemd import get_dbus_object, Transaction
 from ifconfig.models import Host, HostDependentManager, getHostDependentManagerClass
 from volumes import blockdevices, capabilities, filesystems
 from volumes import signals as volume_signals
@@ -136,7 +136,7 @@ class StorageObject(models.Model):
             # if we're shrinking stuff, reverse the order
             objs.reverse()
 
-        with BackgroundTransaction():
+        with Transaction():
             for obj in objs:
                 if obj is None:
                     continue
@@ -268,7 +268,7 @@ class VolumePool(models.Model):
              * fswarning:  Warning Threshold for Nagios checks.
              * fscritical: Critical Threshold for Nagios checks.
         """
-        with BackgroundTransaction():
+        with Transaction():
             return self._create_volume(name, megs, options)
 
     def grow(self, oldmegs, newmegs):
@@ -339,7 +339,7 @@ class AbstractVolume(models.Model):
 
     def create_snapshot(self, name, megs, options):
         """ Create a snapshot of this volume. """
-        with BackgroundTransaction():
+        with Transaction():
             return self._create_snapshot(name, megs, options)
 
     def grow(self, oldmegs, newmegs):
@@ -409,7 +409,7 @@ class BlockVolume(AbstractVolume):
 
     def clone(self, target_storageobject, options):
         """ Clone this volume into the given target. """
-        with BackgroundTransaction():
+        with Transaction():
             self._clone(target_storageobject, options)
 
 
