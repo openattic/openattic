@@ -408,18 +408,28 @@ class BlockVolume(AbstractVolume):
         get_dbus_object("/volumes").dd(self.volume.path, target_storageobject.blockvolume.volume.path)
 
     def _clone(self, target_storageobject, options):
+        src_fsv = self.storageobj.filesystemvolume_or_none
+        tgt_fsv = target_storageobject.filesystemvolume_or_none
+        mount = False
+
+        if src_fsv and src_fsv.mounted:
+            src_fsv.unmount()
+            mount = True
+        if tgt_fsv and tgt_fsv.mounted:
+            tgt_fsv.unmount()
+
         self._clone_to_storageobj(target_storageobject, options)
-        try:
-            fsv = self.storageobj.filesystemvolume.volume
-        except FileSystemVolume.DoesNotExist:
-            pass
-        else:
-            if target_storageobject.filesystemvolume_or_none is None:
-                if not isinstance(fsv, FileSystemProvider):
-                    raise TypeError("Cannot clone a volume with a FileSystem of type '%s' inside" % type(fsv))
-                clonefsp = FileSystemProvider(storageobj=target_storageobject, fstype=fsv.fstype,
-                                            fswarning=fsv.fswarning, fscritical=fsv.fscritical, owner=fsv.owner)
-                clonefsp.save_clone()
+
+        if src_fsv:
+            if tgt_fsv is None:
+                if not isinstance(src_fsv, FileSystemProvider):
+                    raise TypeError("Cannot clone a volume with a FileSystem of type '%s' inside" % type(src_fsv))
+                tgt_fsv = FileSystemProvider(storageobj=target_storageobject, fstype=src_fsv.fstype,
+                                             fswarning=src_fsv.fswarning, fscritical=src_fsv.fscritical, owner=src_fsv.owner)
+                tgt_fsv.save_clone()
+            if mount:
+                src_fsv.mount()
+                tgt_fsv.mount()
 
     def clone(self, target_storageobject, options):
         """ Clone this volume into the given target. """
