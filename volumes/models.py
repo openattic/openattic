@@ -580,6 +580,7 @@ class FileSystemProvider(FileSystemVolume):
             raise ValueError("Cannot save an already saved object as a clone")
         FileSystemVolume.save(self, *args, **kwargs)
         self.fs.set_uuid(generate=True)
+        self.fs.write_fstab()
 
     @property
     def status(self):
