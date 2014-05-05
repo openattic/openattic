@@ -94,33 +94,17 @@ class Transaction(object):
             with Transaction():
                 <some code that does stuff and ultimately calls systemd>
 
-        In case of an exception, the queue will be discarded and no
-        action will be taken. Otherwise, the transaction will block
-        until the operations in the queue have finished.
-    """
-    def __enter__(self):
-        get_dbus_object("/").start_queue()
-
-    def __exit__(self, type, value, traceback):
-        if type is not None:
-            # some exception occurred
-            get_dbus_object("/").discard_queue()
-        else:
-            get_dbus_object("/").run_queue()
-
-class BackgroundTransaction(object):
-    """ Collects deferrable systemd operations in a queue and runs it
-        in a background process.
-
-        Usage:
-
-            with BackgroundTransaction():
+            with Transaction(background=False):
                 <some code that does stuff and ultimately calls systemd>
 
         In case of an exception, the queue will be discarded and no
-        action will be taken. Otherwise, it will be run in the
-        background.
+        action will be taken. Otherwise, the transaction will either
+        run in the background or block until the operations in the queue
+        have finished, depending on the ``background`` parameter.
     """
+    def __init__(self, background=True):
+        self.background = background
+
     def __enter__(self):
         get_dbus_object("/").start_queue()
 
@@ -128,6 +112,9 @@ class BackgroundTransaction(object):
         if type is not None:
             # some exception occurred
             get_dbus_object("/").discard_queue()
-        else:
+        elif self.background:
             get_dbus_object("/").run_queue_background()
+        else:
+            get_dbus_object("/").run_queue()
+
 
