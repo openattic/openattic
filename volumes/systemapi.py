@@ -75,6 +75,10 @@ class SystemD(BasePlugin):
     def e2fs_resize(self, devpath, megs, grow, sender):
         invoke(["/sbin/resize2fs", devpath, ("%dM" % megs)])
 
+    @deferredmethod(in_signature="ss")
+    def e2fs_set_uuid(self, devpath, uuid, sender):
+        invoke(["/sbin/tune2fs", "-U", uuid, devpath])
+
     @deferredmethod(in_signature="ssii")
     def e3fs_format(self, devpath, label, chunksize, datadisks, sender):
         cmd = ["/sbin/mke2fs"]
@@ -109,6 +113,10 @@ class SystemD(BasePlugin):
     @deferredmethod(in_signature="si")
     def xfs_resize(self, mountpoint, megs, sender):
         invoke(["xfs_growfs", mountpoint])
+
+    @deferredmethod(in_signature="ss")
+    def xfs_set_uuid(self, devpath, uuid, sender):
+        invoke(["/usr/sbin/xfs_admin", "-U", uuid, devpath])
 
     @deferredmethod(in_signature="si")
     def ocfs2_format(self, devpath, chunksize, sender):

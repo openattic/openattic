@@ -53,6 +53,12 @@ class Ext2(FileSystem):
         # grow can be called as part of shrink(), so make sure we set the `grow' param correctly
         self.dbus_object.e2fs_resize( self.volume.storageobj.blockvolume.volume.path, newmegs, (newmegs > oldmegs) )
 
+    def set_uuid(self, value="", generate=False):
+        """ Set the file system's UUID. """
+        if generate:
+            value = "random"
+        self.dbus_object.e2fs_set_uuid( self.volume.storageobj.blockvolume.volume.path, value )
+
     @classmethod
     def check_type(cls, typestring):
         return "ext2 filesystem data" in typestring

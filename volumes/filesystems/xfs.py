@@ -67,6 +67,12 @@ class Xfs(FileSystem):
     def grow(self, oldmegs, newmegs):
         self.dbus_object.xfs_resize( self.volume.storageobj.blockvolume.volume.path, newmegs )
 
+    def set_uuid(self, value="", generate=False):
+        """ Set the file system's UUID. """
+        if generate:
+            value = "generate"
+        self.dbus_object.xfs_set_uuid( self.volume.storageobj.blockvolume.volume.path, value )
+
     @classmethod
     def check_type(cls, typestring):
         return "SGI XFS filesystem data" in typestring

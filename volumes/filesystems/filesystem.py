@@ -149,6 +149,10 @@ class FileSystem(object):
         """ Resize the file system to the current volume size. """
         raise NotImplementedError("FileSystem::resize needs to be overridden")
 
+    def set_uuid(self, value="", generate=False):
+        """ Set the file system's UUID. """
+        raise NotImplementedError("FileSystem::set_uuid needs to be overridden")
+
     def chown(self):
         """ Change ownership of the filesystem to be the LV's owner. """
         if self.virtual:
