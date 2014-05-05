@@ -575,7 +575,7 @@ class FileSystemProvider(FileSystemVolume):
             else:
                 self.fs.mount()
 
-    def save_clone(self, source_storageobj):
+    def save_clone(self, *args, **kwargs):
         if self.id is not None:
             raise ValueError("Cannot save an already saved object as a clone")
         FileSystemVolume.save(self, *args, **kwargs)
