@@ -29,6 +29,9 @@ def create_fc_objects(**kwargs):
     if not os.path.exists("/sys/module/qla2xxx"):
         # Module not loaded, there's probably no FC adapter installed
         return
+    if not os.path.exists("/sys/module/qla2xxx/parameters/qlini_mode"):
+        # There's an adapter installed, but qlini_mode doesn't exist for some reason
+        return
 
     host  = Host.objects.get_current()
     qlini = open("/sys/module/qla2xxx/parameters/qlini_mode", "rb").read().strip()
