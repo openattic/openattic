@@ -14,6 +14,6 @@
  *  GNU General Public License for more details.
 """
 
-from systemd.helpers   import get_dbus_object, dbus_to_python, logged
+from systemd.helpers   import get_dbus_object, dbus_to_python, logged, Transaction, BackgroundTransaction
 from systemd.procutils import invoke
 from systemd.plugins   import BasePlugin, LockingPlugin, method, signal, deferredmethod

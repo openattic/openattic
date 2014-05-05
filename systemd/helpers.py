@@ -84,3 +84,50 @@ def logged(cls):
         elif hasattr(func, "_dbus_is_signal") and func._dbus_is_signal:
             setattr( cls, attr, makeloggedfunc(func, "Emitting") )
     return cls
+
+
+class Transaction(object):
+    """ Collects deferrable systemd operations in a queue and runs it.
+
+        Usage:
+
+            with Transaction():
+                <some code that does stuff and ultimately calls systemd>
+
+        In case of an exception, the queue will be discarded and no
+        action will be taken. Otherwise, the transaction will block
+        until the operations in the queue have finished.
+    """
+    def __enter__(self):
+        get_dbus_object("/").start_queue()
+
+    def __exit__(self, type, value, traceback):
+        if type is not None:
+            # some exception occurred
+            get_dbus_object("/").discard_queue()
+        else:
+            get_dbus_object("/").run_queue()
+
+class BackgroundTransaction(object):
+    """ Collects deferrable systemd operations in a queue and runs it
+        in a background process.
+
+        Usage:
+
+            with BackgroundTransaction():
+                <some code that does stuff and ultimately calls systemd>
+
+        In case of an exception, the queue will be discarded and no
+        action will be taken. Otherwise, it will be run in the
+        background.
+    """
+    def __enter__(self):
+        get_dbus_object("/").start_queue()
+
+    def __exit__(self, type, value, traceback):
+        if type is not None:
+            # some exception occurred
+            get_dbus_object("/").discard_queue()
+        else:
+            get_dbus_object("/").run_queue_background()
+
