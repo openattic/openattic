@@ -26,7 +26,7 @@ from django.utils.translation    import ugettext_lazy as _
 from django.contrib.auth.models  import User
 from django.core.exceptions      import ValidationError
 
-from systemd import get_dbus_object
+from systemd import get_dbus_object, BackgroundTransaction
 from ifconfig.models import Host, HostDependentManager, getHostDependentManagerClass
 from volumes import blockdevices, capabilities, filesystems
 from volumes import signals as volume_signals
@@ -136,8 +136,7 @@ class StorageObject(models.Model):
             # if we're shrinking stuff, reverse the order
             objs.reverse()
 
-        get_dbus_object("/").start_queue()
-        try:
+        with BackgroundTransaction():
             for obj in objs:
                 if obj is None:
                     continue
@@ -145,11 +144,6 @@ class StorageObject(models.Model):
                     obj.shrink(oldmegs, newmegs)
                 else:
                     obj.grow(oldmegs, newmegs)
-        except:
-            get_dbus_object("/").discard_queue()
-            raise
-        else:
-            get_dbus_object("/").run_queue_background()
 
     def create_volume(self, name, megs, options):
         """ If this is a Volume Pool, create a volume in it.
@@ -274,15 +268,8 @@ class VolumePool(models.Model):
              * fswarning:  Warning Threshold for Nagios checks.
              * fscritical: Critical Threshold for Nagios checks.
         """
-        get_dbus_object("/").start_queue()
-        try:
-            vol = self._create_volume(name, megs, options)
-        except:
-            get_dbus_object("/").discard_queue()
-            raise
-        else:
-            get_dbus_object("/").run_queue_background()
-            return vol
+        with BackgroundTransaction():
+            return self._create_volume(name, megs, options)
 
     def grow(self, oldmegs, newmegs):
         raise NotImplementedError("%s does not support grow" % self.__class__)
@@ -352,15 +339,8 @@ class AbstractVolume(models.Model):
 
     def create_snapshot(self, name, megs, options):
         """ Create a snapshot of this volume. """
-        get_dbus_object("/").start_queue()
-        try:
-            vol = self._create_snapshot(name, megs, options)
-        except:
-            get_dbus_object("/").discard_queue()
-            raise
-        else:
-            get_dbus_object("/").run_queue_background()
-            return vol
+        with BackgroundTransaction():
+            return self._create_snapshot(name, megs, options)
 
     def grow(self, oldmegs, newmegs):
         raise NotImplementedError("%s does not support grow" % self.__class__)
@@ -429,14 +409,8 @@ class BlockVolume(AbstractVolume):
 
     def clone(self, target_storageobject, options):
         """ Clone this volume into the given target. """
-        get_dbus_object("/").start_queue()
-        try:
+        with BackgroundTransaction():
             self._clone(target_storageobject, options)
-        except:
-            get_dbus_object("/").discard_queue()
-            raise
-        else:
-            get_dbus_object("/").run_queue_background()
 
 
 if HAVE_NAGIOS:
