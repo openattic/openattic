@@ -349,28 +349,22 @@ Ext.define("Ext.oa.volumes__volumes_add_volume_form", {
     allowBlank: false,
     afterLabelTextTpl: required
   }, tipify({
-    xtype:      'combo',
-    allowBlank: false,
-    fieldLabel: gettext('Volume Group'),
-    name: 'vg',
-    typeAhead:     true,
-    triggerAction: 'all',
+    xtype:          'combo',
+    allowBlank:     false,
+    fieldLabel:     gettext('Volume Pool'),
+    name:           'pool',
+    typeAhead:      true,
+    triggerAction:  'all',
     deferEmptyText: false,
-    emptyText:     gettext('Select...'),
-    selectOnFocus: true,
-    displayField: "name",
-    valueField: "volumepool_id",
+    emptyText:      gettext('Select...'),
+    selectOnFocus:  true,
+    displayField:   "name",
+    valueField:     "id",
     afterLabelTextTpl: required,
     store: (function(){
       Ext.define('lvm_logicalvolume_volumegroup_store', {
         extend: 'Ext.data.Model',
-        fields: [
-          {name: 'id'},
-          {name: 'name'},
-          {name: 'volumepool_id', mapping: 'volumepool', convert: function(val){
-            return val.volumepool.id;
-          } }
-        ]
+        fields: ['id', 'name']
       });
       return Ext.create('Ext.data.Store', {
         model: "lvm_logicalvolume_volumegroup_store",
@@ -513,7 +507,7 @@ Ext.define("Ext.oa.volumes__volumes_add_volume_form", {
 
           self.ownerCt.ownerCt.getEl().mask(gettext("Loading..."));
 
-          volumes__VolumePool.create_volume(input_vals.vg, input_vals.name, input_vals.megs,
+          volumes__StorageObject.create_volume(input_vals.pool, input_vals.name, input_vals.megs,
             {
               owner:      owner_dict,
               filesystem: input_vals.filesystem,
@@ -524,7 +518,7 @@ Ext.define("Ext.oa.volumes__volumes_add_volume_form", {
                 self.ownerCt.ownerCt.ownerCt.close();
 
                 if(window.AddVolumeSettings.length > 0){
-                  volumes__StorageObject.get({blockvolume__id: result.id}, function(result, response){
+                  volumes__StorageObject.get(result.id, function(result, response){
                     if(response.type !== "exception"){
                       var settings_win = Ext.oa.getAdditSettingsWindow(Ext.apply(config, {
                         volume_id:    result.blockvolume.id,
