@@ -760,28 +760,22 @@ Ext.define('Ext.oa.volumes__Volume_Panel', {
                     allowBlank: false,
                     afterLabelTextTpl: required
                   },{
-                    xtype:      'combo',
-                    allowBlank: false,
-                    fieldLabel: gettext('Volume Group'),
-                    name: 'vg',
-                    typeAhead:     true,
-                    triggerAction: 'all',
+                    xtype:          'combo',
+                    allowBlank:     false,
+                    fieldLabel:     gettext('Volume Pool'),
+                    name:           'pool',
+                    typeAhead:      true,
+                    triggerAction:  'all',
                     deferEmptyText: false,
-                    emptyText:     gettext('Select...'),
-                    selectOnFocus: true,
-                    displayField: "name",
-                    valueField: "id",
+                    emptyText:      gettext('Select...'),
+                    selectOnFocus:  true,
+                    displayField:   "name",
+                    valueField:     "id",
                     afterLabelTextTpl: required,
                     store: (function(){
                       Ext.define('lvm_logicalvolume_volumegroup_store', {
                         extend: 'Ext.data.Model',
-                        fields: [
-                          {name: 'id'},
-                          {name: 'name'},
-                          {name: 'volumepool_id', mapping: 'volumepool', convert: function(val){
-                            return val.volumepool.id;
-                          } }
-                        ]
+                        fields: ['id', 'name']
                       });
                       return Ext.create('Ext.data.Store', {
                         model: "lvm_logicalvolume_volumegroup_store",
@@ -877,7 +871,7 @@ Ext.define('Ext.oa.volumes__Volume_Panel', {
                           else{
                            var storageobjectid = input_vals.snapshot
                           }
-                          volumes__StorageObject.create_volume(input_vals.vg, input_vals.name, sel.data.megs,
+                          volumes__StorageObject.create_volume(input_vals.pool, input_vals.name, sel.data.megs,
                           {
                             filesystem: ""
                           }, function(result, response){
