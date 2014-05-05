@@ -428,8 +428,12 @@ class BlockVolume(AbstractVolume):
                                              fswarning=src_fsv.fswarning, fscritical=src_fsv.fscritical, owner=src_fsv.owner)
                 tgt_fsv.save_clone()
             if mount:
-                src_fsv.mount()
-                tgt_fsv.mount()
+                # we need to use fsv.fs.mount here because fsv.mount only mounts if it
+                # has to, which it finds out by checking whether or not the path is
+                # a mountpoint, which it *is* because .unmount() has been deferred
+                # in the systemd transaction and not yet executed.
+                src_fsv.fs.mount()
+                tgt_fsv.fs.mount()
 
     def clone(self, target_storageobject, options):
         """ Clone this volume into the given target. """
@@ -532,10 +536,12 @@ class FileSystemVolume(AbstractVolume):
         return self.volume.fs.path
 
     def mount(self):
+        # TODO: this check should probably be moved to the systemapi.
         if not self.volume.fs.mounted:
             self.volume.fs.mount()
 
     def unmount(self):
+        # TODO: this check should probably be moved to the systemapi.
         if self.volume.fs.mounted:
             self.volume.fs.unmount()
 
