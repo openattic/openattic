@@ -14,7 +14,7 @@
  *  GNU General Public License for more details.
 """
 
-from django.conf.urls.defaults import patterns
+from django.conf.urls import patterns
 
 urlpatterns = patterns('',
     ( r'(?P<service_id>\d+)/(?P<srcidx>[\d\w_-]+)\.png', 'nagios.views.graph' ),
