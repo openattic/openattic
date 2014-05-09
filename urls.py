@@ -14,8 +14,8 @@
  *  GNU General Public License for more details.
 """
 
-from django.conf.urls.defaults   import include, patterns
-from django.views.generic.simple import direct_to_template
+from django.conf.urls            import url, patterns, include
+from django.views.generic        import TemplateView
 
 from django.contrib import admin
 admin.autodiscover()
@@ -57,12 +57,12 @@ urlpatterns = [
     (r'^index.html$', 'views.index', {}, 'index'),
 
     (r'^js/(?P<app>\w+)/(?P<file>\w+)\.js$',
-        lambda request, app, file: direct_to_template(request, template="%s/%s.js" % (app, file), mimetype="text/javascript"),
+        lambda request, app, file: TemplateView.as_view(template_name="%s/%s.js" % (app, file))(request, mimetype="text/javascript"),
         {},
         'javascript'
     ),
     (r'^js/(?P<file>\w+)\.js$',
-        lambda request, file: direct_to_template(request, template="%s.js" % file, mimetype="text/javascript"),
+        lambda request, file: TemplateView.as_view(template_name="%s.js" % file)(request, mimetype="text/javascript"),
         {},
         'javascript_main'
     ),
