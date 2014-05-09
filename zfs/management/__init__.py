@@ -76,7 +76,7 @@ def update_disksize(**kwargs):
                 zfs_so = StorageObject(name=zvol_name, megs=megs)
                 zfs_so.full_clean()
                 zfs_so.save()
-                zfs = Zfs(storageobj=zfs_so, zpool=zpool, host=Host.objects.get_current(), owner=admin, parent=rootvol)
+                zfs = Zfs(storageobj=zfs_so, zpool=zpool, host=Host.objects.get_current(), owner=admin, parent=rootvol.storageobj)
                 zfs.full_clean()
                 zfs.save(database_only=True)
 
