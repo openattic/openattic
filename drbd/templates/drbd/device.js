@@ -155,7 +155,7 @@ Ext.define('Ext.oa.drbd__device_mirror_panel', {
         pool_combo.getStore().load({
           params: {
               "host_id": newValue,
-              "min_megs": config.volume_megs
+              "min_megs": config.volume.megs
           }
         });
 
@@ -242,7 +242,7 @@ Ext.define('Ext.oa.drbd__device_mirror_panel', {
           var peer_volumepool_id = self.ownerCt.ownerCt.getComponent('volumes_find_volumepool_combo').getValue();
           var protocol = self.ownerCt.ownerCt.getComponent('volumes_advanced_settings_fieldset').items.getByKey('volumes_protocol_radio').getValue();
           var syncer_rate = self.ownerCt.ownerCt.getComponent('volumes_advanced_settings_fieldset').items.getByKey('volumes_syncerrate_text').getValue();
-          drbd__Connection.create_connection(peer_host_id, peer_volumepool_id, protocol['protocol'], syncer_rate, config.volume_id,
+          drbd__Connection.create_connection(peer_host_id, peer_volumepool_id, protocol['protocol'], syncer_rate, config.volume.blockvolume.id,
             function(result, response){
             if(response.type !== "exception"){
               self.ownerCt.ownerCt.fireEvent("click_ok", self, e, eOpts);

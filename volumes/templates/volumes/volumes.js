@@ -527,8 +527,7 @@ Ext.define("Ext.oa.volumes__volumes_add_volume_form", {
                   volumes__StorageObject.get({blockvolume__id: result.id}, function(result, response){
                     if(response.type !== "exception"){
                       var settings_win = Ext.oa.getAdditSettingsWindow(Ext.apply(config, {
-                        volume_id:    result.blockvolume.id,
-                        volume_megs:  result.megs,
+                        volume:       result,
                         volumePanel:  config.volumePanel
                       }));
                       settings_win.show();
