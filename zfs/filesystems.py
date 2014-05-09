@@ -119,6 +119,23 @@ class Zfs(FileSystem):
         except dbus.DBusException:
             return "unknown"
 
+    @property
+    def stat(self):
+        """ stat() the file system and return usage statistics. """
+        if self.virtual:
+            raise NotImplementedError("FileSystem::stat needs to be overridden for virtual FS handlers")
+        if not self.mounted:
+            return {'size': None, 'free': None, 'used': None}
+        data = dict([ (row[1], scale_to_megs(row[2])) for row in
+                      dbus_to_python(self.dbus_object.zpool_get(self.zpool.storageobj.name,
+                              "size,free,allocated")) ])
+        stats = {
+            'size': data["size"],
+            'free': data["free"],
+            'used': data["allocated"]
+            }
+        return stats
+
     def format(self):
         self.dbus_object.zpool_format(self.zpool.storageobj.blockvolume.volume.path, self.zpool.storageobj.name,
             os.path.join(volumes_settings.MOUNT_PREFIX, self.zpool.storageobj.name))
