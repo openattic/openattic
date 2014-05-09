@@ -64,6 +64,7 @@ def update_disksize(**kwargs):
                 rootvol.full_clean()
                 rootvol.save(database_only=True)
         else:
+            megs    = zp_so.megs
             try:
                 print "Found existing ZFS Volume", zvol_name
                 zfs = Zfs.objects.get(storageobj__name=zvol_name, zpool=zpool)
