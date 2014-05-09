@@ -306,7 +306,7 @@ Description: LIO module for openATTIC
 
 Package: openattic-module-zfs
 Architecture: all
-Depends: ${misc:Depends}, openattic-base, debian-zfs
+Depends: ${misc:Depends}, openattic-base, debian-zfs | ubuntu-zfs
 Description: ZFS module for openATTIC
  openATTIC is a storage management system based upon Open Source tools with
  a comprehensive user interface that allows you to create, share and backup
