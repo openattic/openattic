@@ -23,11 +23,11 @@
     {% if LANGUAGE_CODE %}
       <script src="{{ MEDIA_URL }}/extjs/locale/ext-lang-{{ LANGUAGE_CODE }}.js"></script>
     {% endif %}
-    <script src="{% url django.views.i18n.javascript_catalog %}"></script>
+    <script src="{% url 'django.views.i18n.javascript_catalog' %}"></script>
     <script>
       Ext.onReady( function(){
         Ext.QuickTips.init();
-        window.nexturl = "{% url index %}";
+        window.nexturl = "{% url 'index' %}";
         window.errmsg = {
           invalid_credentials: "{% trans 'The credentials you entered are invalid.' %}",
           invalid_request:     "{% trans 'The request that has been sent to the server has been invalid - this is not supposed to happen...' %}",
@@ -40,7 +40,7 @@
           renderTo:   'x-login-form',
           id:         'form_allgemeines',
           title:      'Login',
-          url:        '{% url login %}',
+          url:        '{% url "login" %}',
           serverResponseHandlers: {
             headers: {
               "X-CSRFToken": Ext.util.Cookies.get("csrftoken")
@@ -109,7 +109,7 @@
                 Ext.Ajax.request(
                   // create a copy of serverResponseHandlers which we can modify without modifying the original
                   Ext.apply(Ext.apply({}, login_form.serverResponseHandlers), {
-                    url: '{% url kerblogin %}',
+                    url: '{% url "kerblogin" %}',
                     success: function(response, opts){
                       response.result = Ext.decode(response.responseText);
                       if(response.result.success){

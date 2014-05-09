@@ -23,7 +23,7 @@
     {% if LANGUAGE_CODE %}
       <script src="{{ MEDIA_URL }}/extjs/locale/ext-lang-{{ LANGUAGE_CODE }}.js"></script>
     {% endif %}
-    <script src="{% url django.views.i18n.javascript_catalog %}"></script>
+    <script src="{% url 'django.views.i18n.javascript_catalog' %}"></script>
     <script src="{{ PROJECT_URL }}/userprefs/initprefs.js"></script>
     <script src="{{ PROJECT_URL }}/direct/api.js"></script>
     <script type="text/javascript">
@@ -34,8 +34,8 @@
       Ext.namespace("Ext.ux");
       window.MEDIA_URL   = '{{ MEDIA_URL  }}';
       window.PROJECT_URL = '{{ PROJECT_URL  }}';
-      window.LOGOUT_URL  = '{% url logout %}';
-      window.INDEX_URL   = '{% url index  %}';
+      window.LOGOUT_URL  = '{% url "logout" %}';
+      window.INDEX_URL   = '{% url "index"  %}';
       window.HOSTNAME    = '{{ LOCALHOST.name }}';
       window.HOSTID      = '{{ LOCALHOST.id}}';
       Ext.BLANK_IMAGE_URL = MEDIA_URL + "/extjs/resources/themes/images/gray/tree/s.gif";
@@ -109,11 +109,11 @@
         }
       });
     </script>
-    <script src="{% url javascript_main 'recorder' %}"></script>
-    <script src="{% url javascript_main 'sharegridpanel' %}"></script>
-    <script src="{% url javascript_main 'menutree' %}"></script>
-    <script src="{% url javascript_main 'settings' %}"></script>
-    <script src="{% url javascript_main 'logout' %}"></script>
+    <script src="{% url 'javascript_main' 'recorder' %}"></script>
+    <script src="{% url 'javascript_main' 'sharegridpanel' %}"></script>
+    <script src="{% url 'javascript_main' 'menutree' %}"></script>
+    <script src="{% url 'javascript_main' 'settings' %}"></script>
+    <script src="{% url 'javascript_main' 'logout' %}"></script>
 
     <script src="{{ MEDIA_URL }}/js/Reorderer.js"></script>
     <script src="{{ MEDIA_URL }}/js/ToolbarReorderer.js"></script>

@@ -77,7 +77,7 @@ def create_nagios(**kwargs):
         instance = bv.volume
         ctype = ContentType.objects.get_for_model(instance.__class__)
         if Service.objects.filter(command=cmd, target_type=ctype, target_id=instance.id).count() != 0:
-            return
+            continue
         srv = Service(
             host        = instance.host,
             target      = instance,
@@ -92,7 +92,7 @@ def create_nagios(**kwargs):
         instance = fsv.volume
         ctype = ContentType.objects.get_for_model(instance.__class__)
         if Service.objects.filter(command=cmd, target_type=ctype, target_id=instance.id).count() != 0:
-            return
+            continue
         srv = Service(
             host        = instance.host,
             target      = instance,
