@@ -33,22 +33,23 @@ class Export(models.Model):
     share_type  = "http"
 
     def __unicode__(self):
-        return unicode( self.volume )
+        return self.volume.storageobj.name
+
+    @property
+    def url(self):
+        return "/volumes/%s" % self.volume.storageobj.name
 
     def save( self, *args, **kwargs ):
-        print "savin'"
         ret = models.Model.save(self, *args, **kwargs)
-        linkname = join(http_settings.VOLUMESDIR, unicode(self.volume.volume))
-        print "checkin' dem linkz", linkname
+        linkname = join(http_settings.VOLUMESDIR, self.volume.storageobj.name)
         if not exists( linkname ):
-            print "makin' link"
             symlink( self.path, linkname )
         print "done"
         return ret
 
     def delete( self ):
         ret = models.Model.delete(self)
-        linkname = join(http_settings.VOLUMESDIR, unicode(self.volume.volume))
+        linkname = join(http_settings.VOLUMESDIR, self.volume.storageobj.name)
         if islink( linkname ):
             unlink( linkname )
         return ret
