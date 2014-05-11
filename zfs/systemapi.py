@@ -91,13 +91,16 @@ class SystemD(BasePlugin):
     def zfs_rollback_snapshot(self, snapfullname, sender):
         invoke(["zfs", "rollback", "-R", snapfullname])
 
-    @method(in_signature="s", out_signature="a(sssssss)")
+    @method(in_signature="s", out_signature="aa{sv}")
     def zfs_getspace(self, device):
-        args = ["zfs", "list", "-Ho", "space"]
+        args = ["zfs", "list", "-o", "type,space,quota,volsize"]
         if device:
             args.append(device)
         ret, out, err = invoke(args, return_out_err=True, log=False)
-        return [line.split("\t") for line in out.split("\n")[:-1]]
+        lines = out.split("\n")[:-1]
+        headers = [val.lower() for val in lines[0].split()]
+        return [ dict(zip(headers, line))
+            for line in [line.split() for line in lines[1:]] ]
 
     @deferredmethod(in_signature="ss")
     def zpool_expand(self, name, device, sender):

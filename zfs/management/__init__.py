@@ -32,8 +32,11 @@ def update_disksize(**kwargs):
     except DBusException:
         # ZFS not installed
         return
-    for name, avail, used, usedsnap, usedds, usedrefreserv, usedchild in zfs_space:
-        megs = scale_to_megs(avail) + scale_to_megs(used)
+    for record in zfs_space:
+        name  = record["name"]
+        avail = scale_to_megs(record["avail"])
+        used  = scale_to_megs(record["used"])
+        megs  = avail + used
         if "/" in name:
             zpool_name, zvol_name = name.split("/", 1)
         else:
@@ -67,8 +70,14 @@ def update_disksize(**kwargs):
                 rootvol = Zfs(storageobj=zp_so, zpool=zpool, host=Host.objects.get_current(), owner=admin)
                 rootvol.full_clean()
                 rootvol.save(database_only=True)
+        elif record["type"] == "volume":
+            megs = scale_to_megs(record["volsize"])
+            print "Found ZVol", zvol_name
         else:
-            megs    = zp_so.megs
+            if record["quota"] not in ("none", "-"):
+                megs = scale_to_megs(record["quota"])
+            else:
+                megs = zp_so.megs
             try:
                 print "Found existing ZFS Volume", zvol_name
                 zfs = Zfs.objects.get(storageobj__name=zvol_name, zpool=zpool)
