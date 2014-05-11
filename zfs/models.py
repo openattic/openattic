@@ -23,12 +23,6 @@ from volumes.models import InvalidVolumeType, StorageObject, VolumePool, BlockVo
 
 from zfs import filesystems
 
-def size_to_megs(sizestr):
-    mult = {"K": 1024**-1, "M": 1, "G": 1024, "T": 1024**2}
-    if sizestr[-1] in mult:
-        return float(sizestr[:-1]) * mult[sizestr[-1]]
-    return float(sizestr[:-1])
-
 
 class Zpool(VolumePool):
     host        = models.ForeignKey(Host)

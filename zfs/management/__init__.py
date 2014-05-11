@@ -22,7 +22,8 @@ from dbus import DBusException
 from systemd import get_dbus_object, dbus_to_python
 from ifconfig.models import Host
 from volumes.models import StorageObject, FileSystemVolume
-from zfs.models import Zpool, Zfs, size_to_megs
+from zfs.models import Zpool, Zfs
+from zfs.filesystems import scale_to_megs
 
 def update_disksize(**kwargs):
     admin = User.objects.filter( is_superuser=True )[0]
@@ -32,7 +33,7 @@ def update_disksize(**kwargs):
         # ZFS not installed
         return
     for name, avail, used, usedsnap, usedds, usedrefreserv, usedchild in zfs_space:
-        megs = size_to_megs(avail) + size_to_megs(used)
+        megs = scale_to_megs(avail) + scale_to_megs(used)
         if "/" in name:
             zpool_name, zvol_name = name.split("/", 1)
         else:
