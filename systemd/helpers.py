@@ -33,6 +33,7 @@ def dbus_type_to_python(obj):
     """ Convert a single dbus something to its python equivalent. """
     conv = {
         dbus.Array: list,
+        dbus.Double: float,
         dbus.Dictionary: dict,
         dbus.Boolean: bool,
         dbus.Int16: int,
