@@ -126,15 +126,18 @@ class Zfs(FileSystem):
             raise NotImplementedError("FileSystem::stat needs to be overridden for virtual FS handlers")
         if not self.mounted:
             return {'size': None, 'free': None, 'used': None}
-        data = dict([ (row[1], scale_to_megs(row[2])) for row in
-                      dbus_to_python(self.dbus_object.zpool_get(self.zpool.storageobj.name,
-                              "size,free,allocated")) ])
+        s = os.statvfs(self.path)
         stats = {
-            'size': data["size"],
-            'free': data["free"],
-            'used': data["allocated"]
+            'size': self.volume.storageobj.megs,
+            'used': ((s.f_blocks - s.f_bfree) * s.f_frsize) / 1024. / 1024.,
             }
+        stats["free"] = stats["size"] - stats["used"]
         return stats
+
+    @property
+    def allocated_megs(self):
+        return scale_to_megs(dbus_to_python(self.dbus_object.zpool_get(
+                self.zpool.storageobj.name, "allocated"))[0][2])
 
     def format(self):
         self.dbus_object.zpool_format(self.zpool.storageobj.blockvolume.volume.path, self.zpool.storageobj.name,

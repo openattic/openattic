@@ -40,7 +40,7 @@ class Zpool(VolumePool):
 
     @property
     def usedmegs(self):
-        return self.fs.stat["used"]
+        return self.fs.allocated_megs
 
     def _create_volume_for_storageobject(self, storageobj, options):
         if options.get("filesystem", None) not in ("zfs", '', None):
