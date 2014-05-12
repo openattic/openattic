@@ -44,8 +44,8 @@ def update_disksize(**kwargs):
             zvol_name  = None
 
         try:
-            print "Found existing ZPool", zpool_name
             zpool = Zpool.objects.get(storageobj__name=zpool_name)
+            print "Found existing ZPool", zpool_name
             zp_so = zpool.storageobj
         except Zpool.DoesNotExist:
             print "Found new ZPool", zpool_name
@@ -79,8 +79,8 @@ def update_disksize(**kwargs):
             else:
                 megs = zp_so.megs
             try:
-                print "Found existing ZFS Volume", zvol_name
                 zfs = Zfs.objects.get(storageobj__name=zvol_name, zpool=zpool)
+                print "Found existing ZFS Volume", zvol_name
                 zfs_so = zfs.storageobj
                 zfs_so.megs = megs
                 zfs_so.full_clean()
