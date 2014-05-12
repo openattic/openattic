@@ -87,10 +87,11 @@ def create_nagios(**kwargs):
         )
         srv.save()
 
-    cmd = Command.objects.get(name=nagios_settings.LV_PERF_CHECK_CMD)
+    cmd = Command.objects.get(name=nagios_settings.LV_UTIL_CHECK_CMD)
     for fsv in FileSystemVolume.objects.all():
         instance = fsv.volume
         ctype = ContentType.objects.get_for_model(instance.__class__)
+        print type(instance), instance, instance.id
         if Service.objects.filter(command=cmd, target_type=ctype, target_id=instance.id).count() != 0:
             continue
         srv = Service(
