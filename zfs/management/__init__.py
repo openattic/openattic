@@ -22,7 +22,7 @@ from dbus import DBusException
 from systemd import get_dbus_object, dbus_to_python
 from ifconfig.models import Host
 from volumes.models import StorageObject, FileSystemVolume
-from zfs.models import Zpool, Zfs
+from zfs.models import Zpool, Zfs, ZVol
 from zfs.filesystems import scale_to_megs
 
 def update_disksize(**kwargs):
@@ -70,9 +70,25 @@ def update_disksize(**kwargs):
                 rootvol = Zfs(storageobj=zp_so, zpool=zpool, host=Host.objects.get_current(), owner=admin)
                 rootvol.full_clean()
                 rootvol.save(database_only=True)
+
         elif record["type"] == "volume":
             megs = scale_to_megs(record["volsize"])
-            print "Found ZVol", zvol_name
+            try:
+                zfs = ZVol.objects.get(storageobj__name=zvol_name, zpool=zpool)
+                print "Found existing ZVol", zvol_name
+                zfs_so = zfs.storageobj
+                zfs_so.megs = megs
+                zfs_so.full_clean()
+                zfs_so.save()
+            except Zfs.DoesNotExist:
+                print "Found new ZVol", zvol_name
+                zfs_so = StorageObject(name=zvol_name, megs=megs)
+                zfs_so.full_clean()
+                zfs_so.save()
+                zfs = ZVol(storageobj=zfs_so, zpool=zpool, host=Host.objects.get_current(), parent=zp_so)
+                zfs.full_clean()
+                zfs.save(database_only=True)
+
         else:
             if record["quota"] not in ("none", "-"):
                 megs = scale_to_megs(record["quota"])
