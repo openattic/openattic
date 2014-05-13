@@ -69,8 +69,6 @@ Ext.define('volumes__volumes_StorageObject_model', {
     // There is none, rely on the object having everything we need
     if( record.raw.volumepool !== null ){
       var vptype = record.raw.volumepool.volumepool_type;
-      Ext.apply(kwds, window.StorageObjectHandlers[vptype.app][vptype.obj].extra_params || {});
-      kwds[ window.StorageObjectHandlers[vptype.app][vptype.obj].volumes_filter ] = record.raw.volumepool.id;
       var store = Ext.create("Ext.oa.SwitchingTreeStore", {
         model: 'volumes__volumes_StorageObject_model',
         root: record.raw,
@@ -82,7 +80,7 @@ Ext.define('volumes__volumes_StorageObject_model', {
           type: "direct",
           directFn: volumes__StorageObject.filter,
           extraParams: {
-            kwds: kwds
+            kwds: {"source_pool": record.raw.volumepool}
           },
           paramOrder: ["kwds"]
         }
