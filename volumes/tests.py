@@ -41,8 +41,8 @@ class FileSystemTestCase(TestCase):
             volume.storageobj.blockvolume.volume.raid_params = {"chunksize": 256*1024, "datadisks": 4}
             volume.owner.username = "mziegler"
 
-            e2fs = get_by_name("ext4")(volume)
-            e2fs.format()
+            fs = get_by_name("ext4")(volume)
+            fs.format()
 
             self.assertTrue( mock_get_dbus_object.called)
             self.assertEqual(mock_get_dbus_object.call_args[0][0], "/volumes")
@@ -60,6 +60,80 @@ class FileSystemTestCase(TestCase):
             self.assertTrue( mock_get_dbus_object().fs_mount.called)
             self.assertEqual(mock_get_dbus_object().fs_mount.call_count, 1)
             self.assertEqual(mock_get_dbus_object().fs_mount.call_args[0][0], "ext4")
+            self.assertEqual(mock_get_dbus_object().fs_mount.call_args[0][1], "/dev/testpath")
+            self.assertEqual(mock_get_dbus_object().fs_mount.call_args[0][2], "/media/yaaayname")
+
+            self.assertTrue( mock_get_dbus_object().fs_chown.called)
+            self.assertEqual(mock_get_dbus_object().fs_chown.call_count, 1)
+            self.assertEqual(mock_get_dbus_object().fs_chown.call_args[0][0], "/media/yaaayname")
+            self.assertEqual(mock_get_dbus_object().fs_chown.call_args[0][1], "mziegler")
+            self.assertEqual(mock_get_dbus_object().fs_chown.call_args[0][2], "users")
+
+    def test_xfs_format(self):
+        with mock.patch("volumes.filesystems.filesystem.get_dbus_object") as mock_get_dbus_object:
+            volume = mock.MagicMock()
+            volume.storageobj.name = "yaaayname"
+            volume.storageobj.megs = 100000
+            volume.storageobj.snapshot = None
+            volume.storageobj.blockvolume.volume.path = "/dev/testpath"
+            volume.storageobj.blockvolume.volume.raid_params = {"chunksize": 256*1024, "datadisks": 4}
+            volume.owner.username = "mziegler"
+
+            fs = get_by_name("xfs")(volume)
+            fs.format()
+
+            self.assertTrue( mock_get_dbus_object.called)
+            self.assertEqual(mock_get_dbus_object.call_args[0][0], "/volumes")
+
+            self.assertTrue( mock_get_dbus_object().xfs_format.called)
+            self.assertEqual(mock_get_dbus_object().xfs_format.call_count, 1)
+            self.assertEqual(mock_get_dbus_object().xfs_format.call_args[0][0], "/dev/testpath")
+            self.assertEqual(mock_get_dbus_object().xfs_format.call_args[0][1], 256*1024)
+            self.assertEqual(mock_get_dbus_object().xfs_format.call_args[0][2], 4)
+            self.assertEqual(mock_get_dbus_object().xfs_format.call_args[0][3], 16)
+
+            self.assertTrue( mock_get_dbus_object().write_fstab.called)
+            self.assertEqual(mock_get_dbus_object().write_fstab.call_count, 1)
+
+            self.assertTrue( mock_get_dbus_object().fs_mount.called)
+            self.assertEqual(mock_get_dbus_object().fs_mount.call_count, 1)
+            self.assertEqual(mock_get_dbus_object().fs_mount.call_args[0][0], "xfs")
+            self.assertEqual(mock_get_dbus_object().fs_mount.call_args[0][1], "/dev/testpath")
+            self.assertEqual(mock_get_dbus_object().fs_mount.call_args[0][2], "/media/yaaayname")
+
+            self.assertTrue( mock_get_dbus_object().fs_chown.called)
+            self.assertEqual(mock_get_dbus_object().fs_chown.call_count, 1)
+            self.assertEqual(mock_get_dbus_object().fs_chown.call_args[0][0], "/media/yaaayname")
+            self.assertEqual(mock_get_dbus_object().fs_chown.call_args[0][1], "mziegler")
+            self.assertEqual(mock_get_dbus_object().fs_chown.call_args[0][2], "users")
+
+    def test_ocfs2_format(self):
+        with mock.patch("volumes.filesystems.filesystem.get_dbus_object") as mock_get_dbus_object:
+            volume = mock.MagicMock()
+            volume.storageobj.name = "yaaayname"
+            volume.storageobj.megs = 100000
+            volume.storageobj.snapshot = None
+            volume.storageobj.blockvolume.volume.path = "/dev/testpath"
+            volume.storageobj.blockvolume.volume.raid_params = {"chunksize": 256*1024, "datadisks": 4}
+            volume.owner.username = "mziegler"
+
+            fs = get_by_name("ocfs2")(volume)
+            fs.format()
+
+            self.assertTrue( mock_get_dbus_object.called)
+            self.assertEqual(mock_get_dbus_object.call_args[0][0], "/volumes")
+
+            self.assertTrue( mock_get_dbus_object().ocfs2_format.called)
+            self.assertEqual(mock_get_dbus_object().ocfs2_format.call_count, 1)
+            self.assertEqual(mock_get_dbus_object().ocfs2_format.call_args[0][0], "/dev/testpath")
+            self.assertEqual(mock_get_dbus_object().ocfs2_format.call_args[0][1], 256*1024)
+
+            self.assertTrue( mock_get_dbus_object().write_fstab.called)
+            self.assertEqual(mock_get_dbus_object().write_fstab.call_count, 1)
+
+            self.assertTrue( mock_get_dbus_object().fs_mount.called)
+            self.assertEqual(mock_get_dbus_object().fs_mount.call_count, 1)
+            self.assertEqual(mock_get_dbus_object().fs_mount.call_args[0][0], "ocfs2")
             self.assertEqual(mock_get_dbus_object().fs_mount.call_args[0][1], "/dev/testpath")
             self.assertEqual(mock_get_dbus_object().fs_mount.call_args[0][2], "/media/yaaayname")
 
