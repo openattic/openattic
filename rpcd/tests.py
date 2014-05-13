@@ -40,12 +40,15 @@ def makeTest():
         return testMethod
 
     for app in rpcdplugins:
+        if not hasattr(app.rpcapi, "RPCD_HANDLERS"):
+            logging.error("App %s has an API but does not export any handlers!?" % app)
+            continue
         for handler in app.rpcapi.RPCD_HANDLERS:
             hname = handler.handler_name.replace(".", "__")
             for method in list_public_methods(handler):
                 fullname = "test_%s__%s" % ( hname, method )
                 meth = makeTestmethod(getattr(handler, method))
-                meth.__name__ = fullname
+                meth.__name__ = str(fullname)
                 setattr(DocStringTestCase, fullname, meth)
 
     return DocStringTestCase
