@@ -143,3 +143,193 @@ class ZfsFileSystemTestCase(TestCase):
             self.assertEqual(mock_get_dbus_object("/zfs").zpool_get.call_args[0][0], "honky")
             self.assertEqual(mock_get_dbus_object("/zfs").zpool_get.call_args[0][1], "allocated")
 
+    def test_format(self):
+        with mock.patch("zfs.filesystems.get_dbus_object") as mock_get_dbus_object, \
+             mock.patch("volumes.filesystems.filesystem.get_dbus_object") as mock_volumes_get_dbus_object:
+
+            zpool = mock.MagicMock()
+            zpool.storageobj.name = "honky"
+            zpool.storageobj.blockvolume.volume.path = "/dev/testpath"
+
+            volume = mock.MagicMock()
+            volume.fullname = "honky"
+            volume.storageobj.snapshot = None
+            volume.owner.username = "mziegler"
+
+            fs = Zfs(zpool, volume)
+            fs.format()
+
+            self.assertTrue( mock_get_dbus_object.called)
+            self.assertEqual(mock_get_dbus_object.call_args[0][0], "/zfs")
+
+            self.assertTrue( mock_get_dbus_object().zpool_format.called)
+            self.assertEqual(mock_get_dbus_object().zpool_format.call_count, 1)
+            self.assertEqual(mock_get_dbus_object().zpool_format.call_args[0][0], "/dev/testpath")
+            self.assertEqual(mock_get_dbus_object().zpool_format.call_args[0][1], "honky")
+            self.assertEqual(mock_get_dbus_object().zpool_format.call_args[0][2], "/media/honky")
+
+            self.assertFalse(mock_volumes_get_dbus_object().write_fstab.called)
+            self.assertFalse(mock_volumes_get_dbus_object().fs_mount.called)
+
+            self.assertTrue( mock_volumes_get_dbus_object().fs_chown.called)
+            self.assertEqual(mock_volumes_get_dbus_object().fs_chown.call_count, 1)
+            self.assertEqual(mock_volumes_get_dbus_object().fs_chown.call_args[0][0], "/media/honky")
+            self.assertEqual(mock_volumes_get_dbus_object().fs_chown.call_args[0][1], "mziegler")
+            self.assertEqual(mock_volumes_get_dbus_object().fs_chown.call_args[0][2], "users")
+
+    def test_destroy(self):
+        with mock.patch("zfs.filesystems.get_dbus_object") as mock_get_dbus_object:
+            zpool = mock.MagicMock()
+            zpool.storageobj.name = "honky"
+
+            fs = Zfs(zpool, None)
+            fs.destroy()
+
+            self.assertTrue( mock_get_dbus_object().zpool_destroy.called)
+            self.assertEqual(mock_get_dbus_object().zpool_destroy.call_count, 1)
+            self.assertEqual(mock_get_dbus_object().zpool_destroy.call_args[0][0], "honky")
+
+    def test_mount(self):
+        with mock.patch("zfs.filesystems.get_dbus_object") as mock_get_dbus_object, \
+             mock.patch("volumes.filesystems.filesystem.get_dbus_object") as mock_volumes_get_dbus_object:
+
+            volume = mock.MagicMock()
+            volume.fullname = "honky"
+
+            fs = Zfs(volume, volume)
+            fs.mount()
+
+            self.assertTrue( mock_get_dbus_object().zfs_mount.called)
+            self.assertEqual(mock_get_dbus_object().zfs_mount.call_count, 1)
+            self.assertEqual(mock_get_dbus_object().zfs_mount.call_args[0][0], "honky")
+
+            self.assertFalse(mock_volumes_get_dbus_object().fs_mount.called)
+
+    def test_unmount(self):
+        with mock.patch("zfs.filesystems.get_dbus_object") as mock_get_dbus_object, \
+             mock.patch("volumes.filesystems.filesystem.get_dbus_object") as mock_volumes_get_dbus_object:
+
+            volume = mock.MagicMock()
+            volume.fullname = "honky"
+
+            fs = Zfs(volume, volume)
+            fs.unmount()
+
+            self.assertTrue( mock_get_dbus_object().zfs_unmount.called)
+            self.assertEqual(mock_get_dbus_object().zfs_unmount.call_count, 1)
+            self.assertEqual(mock_get_dbus_object().zfs_unmount.call_args[0][0], "honky")
+
+            self.assertFalse(mock_volumes_get_dbus_object().fs_unmount.called)
+
+    def test_create_subvolume(self):
+        with mock.patch("zfs.filesystems.get_dbus_object") as mock_get_dbus_object:
+            volume = mock.MagicMock()
+            volume.fullname = "honky/tonk"
+
+            fs = Zfs(None, volume)
+            fs.create_subvolume()
+
+            self.assertFalse(mock_get_dbus_object().zvol_create_volume.called)
+            self.assertTrue( mock_get_dbus_object().zfs_create_volume.called)
+            self.assertEqual(mock_get_dbus_object().zfs_create_volume.call_count, 1)
+            self.assertEqual(mock_get_dbus_object().zfs_create_volume.call_args[0][0], "honky/tonk")
+
+    def test_create_zvol(self):
+        with mock.patch("zfs.filesystems.get_dbus_object") as mock_get_dbus_object:
+            volume = mock.MagicMock()
+            volume.fullname = "honky/tonk"
+            volume.storageobj.megs = 10000
+
+            fs = Zfs(None, volume)
+            fs.create_zvol()
+
+            self.assertFalse(mock_get_dbus_object().zfs_create_volume.called)
+            self.assertTrue( mock_get_dbus_object().zvol_create_volume.called)
+            self.assertEqual(mock_get_dbus_object().zvol_create_volume.call_count, 1)
+            self.assertEqual(mock_get_dbus_object().zvol_create_volume.call_args[0][0], "honky/tonk")
+            self.assertEqual(mock_get_dbus_object().zvol_create_volume.call_args[0][1], 10000)
+
+    def test_destroy_subvolume(self):
+        with mock.patch("zfs.filesystems.get_dbus_object") as mock_get_dbus_object:
+            volume = mock.MagicMock()
+            volume.fullname = "honky/tonk"
+
+            fs = Zfs(None, volume)
+            fs.destroy_subvolume()
+
+            self.assertTrue( mock_get_dbus_object().zfs_destroy_volume.called)
+            self.assertEqual(mock_get_dbus_object().zfs_destroy_volume.call_count, 1)
+            self.assertEqual(mock_get_dbus_object().zfs_destroy_volume.call_args[0][0], "honky/tonk")
+
+    def test_create_snapshot(self):
+        with mock.patch("zfs.filesystems.get_dbus_object") as mock_get_dbus_object:
+            zpool = mock.MagicMock()
+            zpool.storageobj.name = "honky"
+
+            origvolume = mock.MagicMock()
+            origvolume.storageobj.name = "tonk"
+            origvolume.fullname = "honky/tonk"
+
+            volume = mock.MagicMock()
+            volume.storageobj.name = "tonk_2014-05-13-17-12-43"
+            volume.fullname = "honky/tonk_2014-05-13-17-12-43"
+
+            fs = Zfs(zpool, volume)
+            fs.create_snapshot(origvolume)
+
+            self.assertTrue( mock_get_dbus_object().zfs_create_snapshot.called)
+            self.assertEqual(mock_get_dbus_object().zfs_create_snapshot.call_count, 1)
+            self.assertEqual(mock_get_dbus_object().zfs_create_snapshot.call_args[0][0], "honky/tonk@tonk_2014-05-13-17-12-43")
+
+            self.assertTrue( mock_get_dbus_object().zfs_clone.called)
+            self.assertEqual(mock_get_dbus_object().zfs_clone.call_count, 1)
+            self.assertEqual(mock_get_dbus_object().zfs_clone.call_args[0][0], "honky/tonk@tonk_2014-05-13-17-12-43")
+            self.assertEqual(mock_get_dbus_object().zfs_clone.call_args[0][1], "honky/.snapshots/tonk_2014-05-13-17-12-43")
+
+    def test_create_zvol_snapshot(self):
+        with mock.patch("zfs.filesystems.get_dbus_object") as mock_get_dbus_object:
+            origvolume = mock.MagicMock()
+            origvolume.fullname = "honky/tonk"
+
+            volume = mock.MagicMock()
+            volume.storageobj.name = "tonk_2014-05-13-17-12-43"
+
+            fs = Zfs(None, volume)
+            fs.create_zvol_snapshot(origvolume)
+
+            self.assertTrue( mock_get_dbus_object().zfs_create_snapshot.called)
+            self.assertEqual(mock_get_dbus_object().zfs_create_snapshot.call_count, 1)
+            self.assertEqual(mock_get_dbus_object().zfs_create_snapshot.call_args[0][0], "honky/tonk@tonk_2014-05-13-17-12-43")
+
+            self.assertFalse(mock_get_dbus_object().zfs_clone.called)
+
+    def test_destroy_snapshot(self):
+        with mock.patch("zfs.filesystems.get_dbus_object") as mock_get_dbus_object:
+            origvolume = mock.MagicMock()
+            origvolume.fullname = "honky/tonk"
+
+            volume = mock.MagicMock()
+            volume.storageobj.name = "tonk_2014-05-13-17-12-43"
+
+            fs = Zfs(None, volume)
+            fs.destroy_snapshot(origvolume)
+
+            self.assertTrue( mock_get_dbus_object().zfs_destroy_snapshot.called)
+            self.assertEqual(mock_get_dbus_object().zfs_destroy_snapshot.call_count, 1)
+            self.assertEqual(mock_get_dbus_object().zfs_destroy_snapshot.call_args[0][0], "honky/tonk@tonk_2014-05-13-17-12-43")
+
+    def test_rollback_snapshot(self):
+        with mock.patch("zfs.filesystems.get_dbus_object") as mock_get_dbus_object:
+            origvolume = mock.MagicMock()
+            origvolume.fullname = "honky/tonk"
+
+            volume = mock.MagicMock()
+            volume.storageobj.name = "tonk_2014-05-13-17-12-43"
+
+            fs = Zfs(None, volume)
+            fs.rollback_snapshot(origvolume)
+
+            self.assertTrue( mock_get_dbus_object().zfs_rollback_snapshot.called)
+            self.assertEqual(mock_get_dbus_object().zfs_rollback_snapshot.call_count, 1)
+            self.assertEqual(mock_get_dbus_object().zfs_rollback_snapshot.call_args[0][0], "honky/tonk@tonk_2014-05-13-17-12-43")
+
