@@ -13,38 +13,6 @@
 
 Ext.namespace("Ext.oa");
 
-window.StorageObjectHandlers = {
-  lvm: {
-    VolumeGroup: {
-      volumes_filter: "blockvolume__logicalvolume__vg__id",
-      extra_params: {
-        blockvolume__logicalvolume__snapshot__isnull: true
-      }
-    },
-    LogicalVolume: {
-      snapshots_filter: "blockvolume__logicalvolume__snapshot__id"
-    }
-  },
-  zfs: {
-    Zpool: {
-      volumes_filter: "filesystemvolume__zfs__zpool__id",
-      extra_params: {
-        volumepool__isnull: true
-      }
-    }
-  },
-  btrfs: {
-    Btrfs: {
-      volumes_filter: "filesystemvolume__btrfssubvolume__btrfs__id",
-      extra_params: {
-        volumepool__isnull: true
-      }
-    }
-  }
-}
-
-
-
 Ext.define('volumes__volumes_StorageObject_model', {
   extend: 'Ext.data.TreeModel',
   requires: [
