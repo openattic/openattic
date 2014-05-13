@@ -14,6 +14,7 @@
 """
 
 import mock
+import dbus
 
 from django.test import TestCase
 
@@ -119,4 +120,26 @@ class ZfsFileSystemTestCase(TestCase):
 
         fs = Zfs(zpool, volume)
         self.assertEqual(fs.path, "/media/honky/.snapshots/tonk/badonk/adonk")
+
+    def test_allocated_megs(self):
+        with mock.patch("zfs.filesystems.get_dbus_object") as mock_get_dbus_object:
+            mock_get_dbus_object("/zfs").zpool_get.return_value = dbus.Array([
+                dbus.Array([
+                    dbus.String("tank"),
+                    dbus.String("allocated"),
+                    dbus.String("3.62T"),
+                    dbus.String("-")
+                ])
+            ])
+
+            zpool = mock.MagicMock()
+            zpool.storageobj.name = "honky"
+
+            fs = Zfs(zpool, None)
+            self.assertEqual(fs.allocated_megs, 3795845.12)
+
+            self.assertTrue( mock_get_dbus_object("/zfs").zpool_get.called)
+            self.assertEqual(mock_get_dbus_object("/zfs").zpool_get.call_count, 1)
+            self.assertEqual(mock_get_dbus_object("/zfs").zpool_get.call_args[0][0], "honky")
+            self.assertEqual(mock_get_dbus_object("/zfs").zpool_get.call_args[0][1], "allocated")
 
