@@ -196,7 +196,10 @@ class ModelHandler(BaseHandler):
         return kwds
 
     def get_or_create(self, get_values, create_values):
-        # is implemented solely through functions provived by the modelhandler, and therefor works when
+        """ Try to get an object filtered by `get_values'. If none exists,
+            create it using data from both `get_values' and `create_values'.
+        """
+        # is implemented solely through functions provived by the modelhandler, and therefore works when
         # inherited by the proxymodelhandler as well
         result = self.filter(get_values)
 
@@ -577,29 +580,48 @@ class ProxyModelHandler(ProxyModelBaseHandler):
         return self.backing_handler._idobj(obj)
 
     def idobj(self, numeric_id):
+        """ Get an ID object for the object given by `numeric_id`. """
         return self._idobj( self._get_model_all_manager().get(id=numeric_id) )
 
     def ids(self):
+        """ Get a list of all existing object IDs. """
         return [self._idobj(o) for o in self._get_model_all_manager().all().order_by(*self.order) ]
 
     def ids_filter(self, kwds):
+        """ Get a list of existing object IDs, filtered according to kwds. """
         return [ self._idobj(obj) for obj in self._filter_queryset(kwds, self._get_model_all_manager()).order_by(*self.order) ]
 
     def all(self):
+        """ Return all objects. """
         return self.filter({})
 
     def filter(self, kwds):
+        """ Search for objects with the keywords specified in the kwds dict.
+
+            `kwds` may contain the following special fields:
+
+            * __exclude__: ``**kwargs`` for an :meth:`~django.db.models.query.QuerySet.exclude` call.
+            * __fields__: ``*args`` for a :meth:`~django.db.models.query.QuerySet.values` call.
+
+            Any other fields will be passed as ``**kwargs`` to :meth:`~django.db.models.query.QuerySet.filter`.
+            See the `Django docs <https://docs.djangoproject.com/en/dev/topics/db/queries/>`_ for details.
+        """
         return self._filter(kwds, self.order)
 
     def get(self, id):
+        """ Return an object given by ID. """
         return self._call_singlepeer_method("get", id)
 
     def get_ext(self, id):
+        """ Return an object given by ID.
+            Meant to be used in conjunction with ExtJS datastores.
+        """
         if id == -1:
             return {}
         return self._call_singlepeer_method("get_ext", id)
 
     def filter_range(self, start, limit, sort, dir, kwds ):
+        """ Return a range of objects ordered by the `sort` field. """
         start = int(start)
         limit = int(limit)
         if dir == "DESC":
@@ -611,22 +633,33 @@ class ProxyModelHandler(ProxyModelBaseHandler):
             }
 
     def filter_combo(self, field, query, kwds):
+        """ Filter method that is meant to be used in conjunction with ExtJS
+            ComboBoxes. Combos can be filtered by any text the user enters,
+            which is passed in the `query` parameter.
+            Before calling `filter`, this method augments the `kwds` dict
+            by adding ``<field>__icontains = <query>``.
+        """
         if query:
             kwds[field + '__icontains'] = query
         return self._filter(kwds, field)
 
     def all_values(self, fields):
+        """ Return only the fields named in the `fields` list (plus ID).
+        """
         return self.backing_handler.all_values(fields)
 
     def remove(self, id):
+        """ Delete an object given by ID. """
         return self._call_singlepeer_method("remove", id)
 
     def set(self, id, data):
+        """ Update the object given by ID with values from the `data` dict. """
         if "id" in data:
             raise KeyError("Wai u ID")
         return self._call_singlepeer_method("set", id, data)
 
     def create(self, data):
+        """ Create a new object with values from the `data` dict. """
         if "id" in data:
             raise KeyError("Wai u ID")
         # Find the peer by walking through the given data
