@@ -27,7 +27,6 @@ class FileSystemTestCase(TestCase):
             fs.write_fstab()
 
             self.assertTrue( mock_get_dbus_object.called)
-            self.assertEqual(mock_get_dbus_object.call_count, 1)
             self.assertEqual(mock_get_dbus_object.call_args[0][0], "/volumes")
 
             self.assertTrue( mock_get_dbus_object().write_fstab.called)
