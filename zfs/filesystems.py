@@ -108,9 +108,13 @@ class Zfs(FileSystem):
             subpath = "/".join(self.volume.fullname.split("/")[1:])
 
         if self.volume.storageobj.snapshot is None:
-            return os.path.join(volumes_settings.MOUNT_PREFIX, self.zpool.storageobj.name, subpath)
+            basepath = os.path.join(volumes_settings.MOUNT_PREFIX, self.zpool.storageobj.name)
         else:
-            return os.path.join(volumes_settings.MOUNT_PREFIX, self.zpool.storageobj.name, ".snapshots", subpath)
+            basepath = os.path.join(volumes_settings.MOUNT_PREFIX, self.zpool.storageobj.name, ".snapshots")
+
+        if subpath:
+            return os.path.join(basepath, subpath)
+        return basepath
 
     @property
     def status(self):
