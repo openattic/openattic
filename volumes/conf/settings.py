@@ -18,5 +18,5 @@ from django.conf import settings
 
 VOLUME_INITD     = getattr( settings, "LVM_VOLUME_INITD",   '/etc/openattic/volume_init.d')
 MOUNT_PREFIX     = getattr( settings, "LVM_MOUNT_PREFIX",   "/media"       )
-CHOWN_GROUP      = getattr( settings, "LVM_CHOWN_GROUP",    "domain users" )
+CHOWN_GROUP      = getattr( settings, "LVM_CHOWN_GROUP",    "users" )
 DD_BLOCKSIZE     = getattr( settings, "DD_BLOCKSIZE",       "1M" )
