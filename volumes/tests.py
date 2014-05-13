@@ -261,7 +261,6 @@ class FileSystemTestCase(TestCase):
 
     def test_xfs_grow(self):
         with mock.patch("volumes.filesystems.filesystem.get_dbus_object") as mock_get_dbus_object:
-
             volume = mock.MagicMock()
             volume.storageobj.blockvolume.volume.path = "/dev/testpath"
 
