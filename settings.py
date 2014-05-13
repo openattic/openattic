@@ -272,7 +272,6 @@ INSTALLED_APPS = [
     'ifconfig',
     'userprefs',
     'cmdlog',
-    'hoststats',
     'peering',
     'rpcd',
     'systemd',
