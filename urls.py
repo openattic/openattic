@@ -70,10 +70,6 @@ urlpatterns = [
     (r'^jsi18n/$', 'django.views.i18n.javascript_catalog', js_info_dict),
 
     (r'^/?$', 'views.index', {}, '__main__' ),
-
-    #(r'^lvm/',    include("lvm.urls")),
-    #(r'^stats/',  include("hoststats.urls")),
-    #(r'^nagios/', include("nagios.urls")),
 ]
 
 for app in settings.INSTALLED_MODULES:
