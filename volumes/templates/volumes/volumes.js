@@ -93,34 +93,24 @@ Ext.define('volumes__volumes_StorageObject_model', {
     }
     else if( record.raw.blockvolume !== null ){
       var voltype = record.raw.blockvolume.volume_type;
-      if( !record.raw.blockvolume.snapshot &&
-          typeof window.StorageObjectHandlers[voltype.app] !== "undefined" &&
-          typeof window.StorageObjectHandlers[voltype.app][voltype.obj] !== "undefined" &&
-          typeof window.StorageObjectHandlers[voltype.app][voltype.obj].snapshots_filter !== "undefined" ){
-        // May or may not haz Snapshots
-        kwds[ window.StorageObjectHandlers[voltype.app][voltype.obj].snapshots_filter ] = record.raw.blockvolume.id;
-        var store = Ext.create("Ext.oa.SwitchingTreeStore", {
-          model: 'volumes__volumes_StorageObject_model',
-          root: record.raw,
-          sorters: [{
-            property: "__unicode__",
-            root: "data"
-          }],
-          proxy: {
-            type: "direct",
-            directFn: volumes__StorageObject.filter,
-            extraParams: {
-              kwds: kwds
-            },
-            paramOrder: ["kwds"]
-          }
-        });
-        rootNode = store.getRootNode();
-      }
-      else{
-        record.set("leaf", true);
-        rootNode = this.callParent(arguments);
-      }
+      // May or may not haz Snapshots
+      var store = Ext.create("Ext.oa.SwitchingTreeStore", {
+        model: 'volumes__volumes_StorageObject_model',
+        root: record.raw,
+        sorters: [{
+          property: "__unicode__",
+          root: "data"
+        }],
+        proxy: {
+          type: "direct",
+          directFn: volumes__StorageObject.filter,
+          extraParams: {
+            kwds: {"snapshot": record.raw.id}
+          },
+          paramOrder: ["kwds"]
+        }
+      });
+      rootNode = store.getRootNode();
       rootNode.set("type", toUnicode(voltype));
       rootNode.set("path", record.raw.blockvolume.path);
       rootNode.set("host", toUnicode(record.raw.blockvolume.host));
