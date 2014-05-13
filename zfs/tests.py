@@ -33,98 +33,90 @@ class ZfsFileSystemTestCase(TestCase):
         self.assertEqual(get_by_name("zfs"), Zfs)
 
     def test_path_zpool(self):
-        with mock.patch("zfs.filesystems.get_dbus_object") as mock_get_dbus_object:
-            zpool = mock.MagicMock()
-            zpool.storageobj.name = "honky"
+        zpool = mock.MagicMock()
+        zpool.storageobj.name = "honky"
 
-            volume = mock.MagicMock()
-            volume.fullname = "honky"
-            volume.storageobj.snapshot = None
+        volume = mock.MagicMock()
+        volume.fullname = "honky"
+        volume.storageobj.snapshot = None
 
-            fs = Zfs(zpool, volume)
-            self.assertEqual(fs.path, "/media/honky")
+        fs = Zfs(zpool, volume)
+        self.assertEqual(fs.path, "/media/honky")
 
     def test_path_volume(self):
-        with mock.patch("zfs.filesystems.get_dbus_object") as mock_get_dbus_object:
-            zpool = mock.MagicMock()
-            zpool.storageobj.name = "honky"
+        zpool = mock.MagicMock()
+        zpool.storageobj.name = "honky"
 
-            volume = mock.MagicMock()
-            volume.fullname = "honky/tonk"
-            volume.storageobj.snapshot = None
+        volume = mock.MagicMock()
+        volume.fullname = "honky/tonk"
+        volume.storageobj.snapshot = None
 
-            fs = Zfs(zpool, volume)
-            self.assertEqual(fs.path, "/media/honky/tonk")
+        fs = Zfs(zpool, volume)
+        self.assertEqual(fs.path, "/media/honky/tonk")
 
     def test_path_subvolume(self):
-        with mock.patch("zfs.filesystems.get_dbus_object") as mock_get_dbus_object:
-            zpool = mock.MagicMock()
-            zpool.storageobj.name = "honky"
+        zpool = mock.MagicMock()
+        zpool.storageobj.name = "honky"
 
-            volume = mock.MagicMock()
-            volume.fullname = "honky/tonk/badonk"
-            volume.storageobj.snapshot = None
+        volume = mock.MagicMock()
+        volume.fullname = "honky/tonk/badonk"
+        volume.storageobj.snapshot = None
 
-            fs = Zfs(zpool, volume)
-            self.assertEqual(fs.path, "/media/honky/tonk/badonk")
+        fs = Zfs(zpool, volume)
+        self.assertEqual(fs.path, "/media/honky/tonk/badonk")
 
     def test_path_subsubvolume(self):
-        with mock.patch("zfs.filesystems.get_dbus_object") as mock_get_dbus_object:
-            zpool = mock.MagicMock()
-            zpool.storageobj.name = "honky"
+        zpool = mock.MagicMock()
+        zpool.storageobj.name = "honky"
 
-            volume = mock.MagicMock()
-            volume.fullname = "honky/tonk/badonk/adonk"
-            volume.storageobj.snapshot = None
+        volume = mock.MagicMock()
+        volume.fullname = "honky/tonk/badonk/adonk"
+        volume.storageobj.snapshot = None
 
-            fs = Zfs(zpool, volume)
-            self.assertEqual(fs.path, "/media/honky/tonk/badonk/adonk")
+        fs = Zfs(zpool, volume)
+        self.assertEqual(fs.path, "/media/honky/tonk/badonk/adonk")
 
     def test_snappath_zpool(self):
-        with mock.patch("zfs.filesystems.get_dbus_object") as mock_get_dbus_object:
-            zpool = mock.MagicMock()
-            zpool.storageobj.name = "honky"
+        zpool = mock.MagicMock()
+        zpool.storageobj.name = "honky"
 
-            volume = mock.MagicMock()
-            volume.fullname = "honky"
-            volume.storageobj.snapshot = "not None"
+        volume = mock.MagicMock()
+        volume.fullname = "honky"
+        volume.storageobj.snapshot = "not None"
 
-            fs = Zfs(zpool, volume)
-            self.assertEqual(fs.path, "/media/honky/.snapshots")
+        fs = Zfs(zpool, volume)
+        self.assertEqual(fs.path, "/media/honky/.snapshots")
 
     def test_snappath_volume(self):
-        with mock.patch("zfs.filesystems.get_dbus_object") as mock_get_dbus_object:
-            zpool = mock.MagicMock()
-            zpool.storageobj.name = "honky"
+        zpool = mock.MagicMock()
+        zpool.storageobj.name = "honky"
 
-            volume = mock.MagicMock()
-            volume.fullname = "honky/tonk"
-            volume.storageobj.snapshot = "not None"
+        volume = mock.MagicMock()
+        volume.fullname = "honky/tonk"
+        volume.storageobj.snapshot = "not None"
 
-            fs = Zfs(zpool, volume)
-            self.assertEqual(fs.path, "/media/honky/.snapshots/tonk")
+        fs = Zfs(zpool, volume)
+        self.assertEqual(fs.path, "/media/honky/.snapshots/tonk")
 
     def test_snappath_subvolume(self):
-        with mock.patch("zfs.filesystems.get_dbus_object") as mock_get_dbus_object:
-            zpool = mock.MagicMock()
-            zpool.storageobj.name = "honky"
+        zpool = mock.MagicMock()
+        zpool.storageobj.name = "honky"
 
-            volume = mock.MagicMock()
-            volume.fullname = "honky/tonk/badonk"
-            volume.storageobj.snapshot = "not None"
+        volume = mock.MagicMock()
+        volume.fullname = "honky/tonk/badonk"
+        volume.storageobj.snapshot = "not None"
 
-            fs = Zfs(zpool, volume)
-            self.assertEqual(fs.path, "/media/honky/.snapshots/tonk/badonk")
+        fs = Zfs(zpool, volume)
+        self.assertEqual(fs.path, "/media/honky/.snapshots/tonk/badonk")
 
     def test_snappath_subsubvolume(self):
-        with mock.patch("zfs.filesystems.get_dbus_object") as mock_get_dbus_object:
-            zpool = mock.MagicMock()
-            zpool.storageobj.name = "honky"
+        zpool = mock.MagicMock()
+        zpool.storageobj.name = "honky"
 
-            volume = mock.MagicMock()
-            volume.fullname = "honky/tonk/badonk/adonk"
-            volume.storageobj.snapshot = "not None"
+        volume = mock.MagicMock()
+        volume.fullname = "honky/tonk/badonk/adonk"
+        volume.storageobj.snapshot = "not None"
 
-            fs = Zfs(zpool, volume)
-            self.assertEqual(fs.path, "/media/honky/.snapshots/tonk/badonk/adonk")
+        fs = Zfs(zpool, volume)
+        self.assertEqual(fs.path, "/media/honky/.snapshots/tonk/badonk/adonk")
 
