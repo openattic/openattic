@@ -105,7 +105,7 @@ class Zfs(FileSystem):
         if "/" not in self.volume.fullname:
             subpath = ""
         else:
-            subpath = os.path.join(*os.path.split(self.volume.fullname)[1:])
+            subpath = "/".join(self.volume.fullname.split("/")[1:])
 
         if self.volume.storageobj.snapshot is None:
             return os.path.join(volumes_settings.MOUNT_PREFIX, self.zpool.storageobj.name, subpath)
