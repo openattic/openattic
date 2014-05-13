@@ -59,8 +59,7 @@ Ext.define('volumes__volumes_StorageObject_model', {
       if( record.raw.volumepool.usedmegs !== null )
         rootNode.set("percent", (record.raw.volumepool.usedmegs / record.raw.megs * 100).toFixed(2));
     }
-    else if( record.raw.blockvolume !== null ){
-      var voltype = record.raw.blockvolume.volume_type;
+    else{
       // May or may not haz Snapshots
       var store = Ext.create("Ext.oa.SwitchingTreeStore", {
         model: 'volumes__volumes_StorageObject_model',
@@ -79,14 +78,13 @@ Ext.define('volumes__volumes_StorageObject_model', {
         }
       });
       rootNode = store.getRootNode();
+    }
+    if( record.raw.blockvolume !== null ){
+      var voltype = record.raw.blockvolume.volume_type;
       rootNode.set("type", toUnicode(voltype));
       rootNode.set("path", record.raw.blockvolume.path);
       rootNode.set("host", toUnicode(record.raw.blockvolume.host));
       rootNode.set("percent",  null);
-    }
-    else{
-      record.set("leaf", true);
-      rootNode = this.callParent(arguments);
     }
     if( record.raw.filesystemvolume !== null ){
       var voltype = record.raw.filesystemvolume.volume_type;
