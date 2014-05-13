@@ -69,6 +69,149 @@ class FileSystemTestCase(TestCase):
             self.assertEqual(mock_get_dbus_object().fs_chown.call_args[0][1], "mziegler")
             self.assertEqual(mock_get_dbus_object().fs_chown.call_args[0][2], "users")
 
+    def test_e2fs_shrink_online(self):
+        with mock.patch("volumes.filesystems.filesystem.get_dbus_object") as mock_get_dbus_object, \
+             mock.patch("os.path.ismount") as mock_os_path_ismount:
+
+            volume = mock.MagicMock()
+            volume.storageobj.name = "yaaayname"
+            volume.storageobj.snapshot = None
+            volume.storageobj.blockvolume.volume.path = "/dev/testpath"
+
+            mock_os_path_ismount.return_value = True
+
+            fs = get_by_name("ext2")(volume)
+            fs.shrink(100000, 10000)
+
+            self.assertTrue( mock_get_dbus_object().fs_unmount.called)
+            self.assertEqual(mock_get_dbus_object().fs_unmount.call_count, 1)
+            self.assertEqual(mock_get_dbus_object().fs_unmount.call_args[0][0], "/dev/testpath")
+            self.assertEqual(mock_get_dbus_object().fs_unmount.call_args[0][1], "/media/yaaayname")
+
+            self.assertTrue( mock_get_dbus_object().e2fs_check.called)
+            self.assertEqual(mock_get_dbus_object().e2fs_check.call_count, 1)
+            self.assertEqual(mock_get_dbus_object().e2fs_check.call_args[0][0], "/dev/testpath")
+
+            self.assertTrue( mock_get_dbus_object().e2fs_resize.called)
+            self.assertEqual(mock_get_dbus_object().e2fs_resize.call_count, 1)
+            self.assertEqual(mock_get_dbus_object().e2fs_resize.call_args[0][0], "/dev/testpath")
+            self.assertEqual(mock_get_dbus_object().e2fs_resize.call_args[0][1], 10000)
+            self.assertEqual(mock_get_dbus_object().e2fs_resize.call_args[0][2], False)
+
+            self.assertTrue( mock_get_dbus_object().fs_mount.called)
+            self.assertEqual(mock_get_dbus_object().fs_mount.call_count, 1)
+            self.assertEqual(mock_get_dbus_object().fs_mount.call_args[0][0], "ext2")
+            self.assertEqual(mock_get_dbus_object().fs_mount.call_args[0][1], "/dev/testpath")
+            self.assertEqual(mock_get_dbus_object().fs_mount.call_args[0][2], "/media/yaaayname")
+
+    def test_e2fs_shrink_offline(self):
+        with mock.patch("volumes.filesystems.filesystem.get_dbus_object") as mock_get_dbus_object, \
+             mock.patch("os.path.ismount") as mock_os_path_ismount:
+
+            volume = mock.MagicMock()
+            volume.storageobj.name = "yaaayname"
+            volume.storageobj.snapshot = None
+            volume.storageobj.blockvolume.volume.path = "/dev/testpath"
+
+            mock_os_path_ismount.return_value = False
+
+            fs = get_by_name("ext2")(volume)
+            fs.shrink(100000, 10000)
+
+            self.assertFalse(mock_get_dbus_object().fs_unmount.called)
+
+            self.assertTrue( mock_get_dbus_object().e2fs_check.called)
+            self.assertEqual(mock_get_dbus_object().e2fs_check.call_count, 1)
+            self.assertEqual(mock_get_dbus_object().e2fs_check.call_args[0][0], "/dev/testpath")
+
+            self.assertTrue( mock_get_dbus_object().e2fs_resize.called)
+            self.assertEqual(mock_get_dbus_object().e2fs_resize.call_count, 1)
+            self.assertEqual(mock_get_dbus_object().e2fs_resize.call_args[0][0], "/dev/testpath")
+            self.assertEqual(mock_get_dbus_object().e2fs_resize.call_args[0][1], 10000)
+            self.assertEqual(mock_get_dbus_object().e2fs_resize.call_args[0][2], False)
+
+            self.assertFalse( mock_get_dbus_object().fs_mount.called)
+
+    def test_e2fs_grow_online(self):
+        with mock.patch("volumes.filesystems.filesystem.get_dbus_object") as mock_get_dbus_object, \
+             mock.patch("os.path.ismount") as mock_os_path_ismount:
+
+            volume = mock.MagicMock()
+            volume.storageobj.name = "yaaayname"
+            volume.storageobj.snapshot = None
+            volume.storageobj.blockvolume.volume.path = "/dev/testpath"
+
+            mock_os_path_ismount.return_value = True
+
+            fs = get_by_name("ext2")(volume)
+            fs.grow(10000, 100000)
+
+            self.assertFalse(mock_get_dbus_object().fs_unmount.called)
+
+            self.assertFalse(mock_get_dbus_object().e2fs_check.called)
+
+            self.assertTrue( mock_get_dbus_object().e2fs_resize.called)
+            self.assertEqual(mock_get_dbus_object().e2fs_resize.call_count, 1)
+            self.assertEqual(mock_get_dbus_object().e2fs_resize.call_args[0][0], "/dev/testpath")
+            self.assertEqual(mock_get_dbus_object().e2fs_resize.call_args[0][1], 100000)
+            self.assertEqual(mock_get_dbus_object().e2fs_resize.call_args[0][2], True)
+
+            self.assertFalse(mock_get_dbus_object().fs_mount.called)
+
+    def test_e2fs_grow_offline(self):
+        with mock.patch("volumes.filesystems.filesystem.get_dbus_object") as mock_get_dbus_object, \
+             mock.patch("os.path.ismount") as mock_os_path_ismount:
+
+            volume = mock.MagicMock()
+            volume.storageobj.name = "yaaayname"
+            volume.storageobj.snapshot = None
+            volume.storageobj.blockvolume.volume.path = "/dev/testpath"
+            volume.storageobj.blockvolume.volume.raid_params = {"chunksize": 256*1024, "datadisks": 4}
+            volume.owner.username = "mziegler"
+
+            mock_os_path_ismount.return_value = False
+
+            fs = get_by_name("ext2")(volume)
+            fs.grow(10000, 100000)
+
+            self.assertFalse(mock_get_dbus_object().fs_unmount.called)
+
+            self.assertFalse(mock_get_dbus_object().e2fs_check.called)
+
+            self.assertTrue( mock_get_dbus_object().e2fs_resize.called)
+            self.assertEqual(mock_get_dbus_object().e2fs_resize.call_count, 1)
+            self.assertEqual(mock_get_dbus_object().e2fs_resize.call_args[0][0], "/dev/testpath")
+            self.assertEqual(mock_get_dbus_object().e2fs_resize.call_args[0][1], 100000)
+            self.assertEqual(mock_get_dbus_object().e2fs_resize.call_args[0][2], True)
+
+            self.assertFalse(mock_get_dbus_object().fs_mount.called)
+
+    def test_e2fs_set_uuid_value(self):
+        with mock.patch("volumes.filesystems.filesystem.get_dbus_object") as mock_get_dbus_object:
+            volume = mock.MagicMock()
+            volume.storageobj.blockvolume.volume.path = "/dev/testpath"
+
+            fs = get_by_name("ext2")(volume)
+            fs.set_uuid("1111-2222-3333-4444")
+
+            self.assertTrue( mock_get_dbus_object().e2fs_set_uuid.called)
+            self.assertEqual(mock_get_dbus_object().e2fs_set_uuid.call_count, 1)
+            self.assertEqual(mock_get_dbus_object().e2fs_set_uuid.call_args[0][0], "/dev/testpath")
+            self.assertEqual(mock_get_dbus_object().e2fs_set_uuid.call_args[0][1], "1111-2222-3333-4444")
+
+    def test_e2fs_set_uuid_generate(self):
+        with mock.patch("volumes.filesystems.filesystem.get_dbus_object") as mock_get_dbus_object:
+            volume = mock.MagicMock()
+            volume.storageobj.blockvolume.volume.path = "/dev/testpath"
+
+            fs = get_by_name("ext2")(volume)
+            fs.set_uuid(generate=True)
+
+            self.assertTrue( mock_get_dbus_object().e2fs_set_uuid.called)
+            self.assertEqual(mock_get_dbus_object().e2fs_set_uuid.call_count, 1)
+            self.assertEqual(mock_get_dbus_object().e2fs_set_uuid.call_args[0][0], "/dev/testpath")
+            self.assertEqual(mock_get_dbus_object().e2fs_set_uuid.call_args[0][1], "random")
+
     def test_xfs_format(self):
         with mock.patch("volumes.filesystems.filesystem.get_dbus_object") as mock_get_dbus_object:
             volume = mock.MagicMock()
