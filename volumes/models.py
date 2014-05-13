@@ -65,6 +65,7 @@ class StorageObject(models.Model):
     createdate  = models.DateTimeField(auto_now_add=True, blank=True, null=True)
     # TODO: This should probably be wrapped in a CapabilitiesField or something
     capflags    = models.BigIntegerField(default=0)
+    source_pool = models.ForeignKey('VolumePool', blank=True, null=True, related_name="volume_set")
     snapshot    = models.ForeignKey('self', blank=True, null=True, related_name="snapshot_storageobject_set")
 
     objects     = CapabilitiesAwareManager()
