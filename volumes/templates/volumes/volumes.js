@@ -48,7 +48,21 @@ Ext.define('volumes__volumes_StorageObject_model', {
           type: "direct",
           directFn: volumes__StorageObject.filter,
           extraParams: {
-            kwds: {"source_pool": record.raw.volumepool}
+            kwds: {
+              // Filter for volumes that are subvolumes of what we're displaying...
+              "source_pool": {
+                "app": "volumes", "obj": "VolumePool", "id": record.raw.volumepool.id
+              },
+              // *and* (either not a snapshot at all, or a snapshot of the root volume).
+              "__or__": {
+                "snapshot__isnull": true,
+                "snapshot": {
+                  "app": "volumes",
+                  "obj": "StorageObject",
+                  "id":  record.raw.id
+                }
+              }
+            }
           },
           paramOrder: ["kwds"]
         }
