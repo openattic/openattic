@@ -79,6 +79,7 @@ class Zfs(FileSystem):
         zvol.save()
 
         # Create a subvolume named .snapshots for snapshots to reside in.
+        from volumes.models import StorageObject
         dso = StorageObject(name=".snapshots", megs=volume.storageobj.megs)
         dso.full_clean()
         dso.save()
