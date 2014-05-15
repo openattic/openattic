@@ -49,25 +49,18 @@ class FileSystemTestCase(TestCase):
 
             self.assertTrue( mock_get_dbus_object().e4fs_format.called)
             self.assertEqual(mock_get_dbus_object().e4fs_format.call_count, 1)
-            self.assertEqual(mock_get_dbus_object().e4fs_format.call_args[0][0], "/dev/testpath")
-            self.assertEqual(mock_get_dbus_object().e4fs_format.call_args[0][1], "yaaayname")
-            self.assertEqual(mock_get_dbus_object().e4fs_format.call_args[0][2], 256*1024)
-            self.assertEqual(mock_get_dbus_object().e4fs_format.call_args[0][3], 4)
+            self.assertEqual(mock_get_dbus_object().e4fs_format.call_args[0], ("/dev/testpath", "yaaayname", 256*1024, 4))
 
             self.assertTrue( mock_get_dbus_object().write_fstab.called)
             self.assertEqual(mock_get_dbus_object().write_fstab.call_count, 1)
 
             self.assertTrue( mock_get_dbus_object().fs_mount.called)
             self.assertEqual(mock_get_dbus_object().fs_mount.call_count, 1)
-            self.assertEqual(mock_get_dbus_object().fs_mount.call_args[0][0], "ext4")
-            self.assertEqual(mock_get_dbus_object().fs_mount.call_args[0][1], "/dev/testpath")
-            self.assertEqual(mock_get_dbus_object().fs_mount.call_args[0][2], "/media/yaaayname")
+            self.assertEqual(mock_get_dbus_object().fs_mount.call_args[0], ("ext4", "/dev/testpath", "/media/yaaayname"))
 
             self.assertTrue( mock_get_dbus_object().fs_chown.called)
             self.assertEqual(mock_get_dbus_object().fs_chown.call_count, 1)
-            self.assertEqual(mock_get_dbus_object().fs_chown.call_args[0][0], "/media/yaaayname")
-            self.assertEqual(mock_get_dbus_object().fs_chown.call_args[0][1], "mziegler")
-            self.assertEqual(mock_get_dbus_object().fs_chown.call_args[0][2], "users")
+            self.assertEqual(mock_get_dbus_object().fs_chown.call_args[0], ("/media/yaaayname", "mziegler", "users"))
 
     def test_e2fs_shrink_online(self):
         with mock.patch("volumes.filesystems.filesystem.get_dbus_object") as mock_get_dbus_object, \
@@ -85,24 +78,19 @@ class FileSystemTestCase(TestCase):
 
             self.assertTrue( mock_get_dbus_object().fs_unmount.called)
             self.assertEqual(mock_get_dbus_object().fs_unmount.call_count, 1)
-            self.assertEqual(mock_get_dbus_object().fs_unmount.call_args[0][0], "/dev/testpath")
-            self.assertEqual(mock_get_dbus_object().fs_unmount.call_args[0][1], "/media/yaaayname")
+            self.assertEqual(mock_get_dbus_object().fs_unmount.call_args[0], ("/dev/testpath", "/media/yaaayname"))
 
             self.assertTrue( mock_get_dbus_object().e2fs_check.called)
             self.assertEqual(mock_get_dbus_object().e2fs_check.call_count, 1)
-            self.assertEqual(mock_get_dbus_object().e2fs_check.call_args[0][0], "/dev/testpath")
+            self.assertEqual(mock_get_dbus_object().e2fs_check.call_args[0], ("/dev/testpath",))
 
             self.assertTrue( mock_get_dbus_object().e2fs_resize.called)
             self.assertEqual(mock_get_dbus_object().e2fs_resize.call_count, 1)
-            self.assertEqual(mock_get_dbus_object().e2fs_resize.call_args[0][0], "/dev/testpath")
-            self.assertEqual(mock_get_dbus_object().e2fs_resize.call_args[0][1], 10000)
-            self.assertEqual(mock_get_dbus_object().e2fs_resize.call_args[0][2], False)
+            self.assertEqual(mock_get_dbus_object().e2fs_resize.call_args[0], ("/dev/testpath", 10000, False))
 
             self.assertTrue( mock_get_dbus_object().fs_mount.called)
             self.assertEqual(mock_get_dbus_object().fs_mount.call_count, 1)
-            self.assertEqual(mock_get_dbus_object().fs_mount.call_args[0][0], "ext2")
-            self.assertEqual(mock_get_dbus_object().fs_mount.call_args[0][1], "/dev/testpath")
-            self.assertEqual(mock_get_dbus_object().fs_mount.call_args[0][2], "/media/yaaayname")
+            self.assertEqual(mock_get_dbus_object().fs_mount.call_args[0], ("ext2", "/dev/testpath", "/media/yaaayname"))
 
     def test_e2fs_shrink_offline(self):
         with mock.patch("volumes.filesystems.filesystem.get_dbus_object") as mock_get_dbus_object, \
@@ -122,13 +110,11 @@ class FileSystemTestCase(TestCase):
 
             self.assertTrue( mock_get_dbus_object().e2fs_check.called)
             self.assertEqual(mock_get_dbus_object().e2fs_check.call_count, 1)
-            self.assertEqual(mock_get_dbus_object().e2fs_check.call_args[0][0], "/dev/testpath")
+            self.assertEqual(mock_get_dbus_object().e2fs_check.call_args[0], ("/dev/testpath",))
 
             self.assertTrue( mock_get_dbus_object().e2fs_resize.called)
             self.assertEqual(mock_get_dbus_object().e2fs_resize.call_count, 1)
-            self.assertEqual(mock_get_dbus_object().e2fs_resize.call_args[0][0], "/dev/testpath")
-            self.assertEqual(mock_get_dbus_object().e2fs_resize.call_args[0][1], 10000)
-            self.assertEqual(mock_get_dbus_object().e2fs_resize.call_args[0][2], False)
+            self.assertEqual(mock_get_dbus_object().e2fs_resize.call_args[0], ("/dev/testpath", 10000, False))
 
             self.assertFalse( mock_get_dbus_object().fs_mount.called)
 
@@ -152,9 +138,7 @@ class FileSystemTestCase(TestCase):
 
             self.assertTrue( mock_get_dbus_object().e2fs_resize.called)
             self.assertEqual(mock_get_dbus_object().e2fs_resize.call_count, 1)
-            self.assertEqual(mock_get_dbus_object().e2fs_resize.call_args[0][0], "/dev/testpath")
-            self.assertEqual(mock_get_dbus_object().e2fs_resize.call_args[0][1], 100000)
-            self.assertEqual(mock_get_dbus_object().e2fs_resize.call_args[0][2], True)
+            self.assertEqual(mock_get_dbus_object().e2fs_resize.call_args[0], ("/dev/testpath", 100000, True))
 
             self.assertFalse(mock_get_dbus_object().fs_mount.called)
 
@@ -180,9 +164,7 @@ class FileSystemTestCase(TestCase):
 
             self.assertTrue( mock_get_dbus_object().e2fs_resize.called)
             self.assertEqual(mock_get_dbus_object().e2fs_resize.call_count, 1)
-            self.assertEqual(mock_get_dbus_object().e2fs_resize.call_args[0][0], "/dev/testpath")
-            self.assertEqual(mock_get_dbus_object().e2fs_resize.call_args[0][1], 100000)
-            self.assertEqual(mock_get_dbus_object().e2fs_resize.call_args[0][2], True)
+            self.assertEqual(mock_get_dbus_object().e2fs_resize.call_args[0], ("/dev/testpath", 100000, True))
 
             self.assertFalse(mock_get_dbus_object().fs_mount.called)
 
@@ -196,8 +178,7 @@ class FileSystemTestCase(TestCase):
 
             self.assertTrue( mock_get_dbus_object().e2fs_set_uuid.called)
             self.assertEqual(mock_get_dbus_object().e2fs_set_uuid.call_count, 1)
-            self.assertEqual(mock_get_dbus_object().e2fs_set_uuid.call_args[0][0], "/dev/testpath")
-            self.assertEqual(mock_get_dbus_object().e2fs_set_uuid.call_args[0][1], "1111-2222-3333-4444")
+            self.assertEqual(mock_get_dbus_object().e2fs_set_uuid.call_args[0], ("/dev/testpath", "1111-2222-3333-4444"))
 
     def test_e2fs_set_uuid_generate(self):
         with mock.patch("volumes.filesystems.filesystem.get_dbus_object") as mock_get_dbus_object:
@@ -209,8 +190,7 @@ class FileSystemTestCase(TestCase):
 
             self.assertTrue( mock_get_dbus_object().e2fs_set_uuid.called)
             self.assertEqual(mock_get_dbus_object().e2fs_set_uuid.call_count, 1)
-            self.assertEqual(mock_get_dbus_object().e2fs_set_uuid.call_args[0][0], "/dev/testpath")
-            self.assertEqual(mock_get_dbus_object().e2fs_set_uuid.call_args[0][1], "random")
+            self.assertEqual(mock_get_dbus_object().e2fs_set_uuid.call_args[0], ("/dev/testpath", "random"))
 
     def test_e3fs_check_type(self):
         from volumes.filesystems.extfs import Ext3
@@ -234,25 +214,18 @@ class FileSystemTestCase(TestCase):
 
             self.assertTrue( mock_get_dbus_object().xfs_format.called)
             self.assertEqual(mock_get_dbus_object().xfs_format.call_count, 1)
-            self.assertEqual(mock_get_dbus_object().xfs_format.call_args[0][0], "/dev/testpath")
-            self.assertEqual(mock_get_dbus_object().xfs_format.call_args[0][1], 256*1024)
-            self.assertEqual(mock_get_dbus_object().xfs_format.call_args[0][2], 4)
-            self.assertEqual(mock_get_dbus_object().xfs_format.call_args[0][3], 16)
+            self.assertEqual(mock_get_dbus_object().xfs_format.call_args[0], ("/dev/testpath", 256*1024, 4, 16))
 
             self.assertTrue( mock_get_dbus_object().write_fstab.called)
             self.assertEqual(mock_get_dbus_object().write_fstab.call_count, 1)
 
             self.assertTrue( mock_get_dbus_object().fs_mount.called)
             self.assertEqual(mock_get_dbus_object().fs_mount.call_count, 1)
-            self.assertEqual(mock_get_dbus_object().fs_mount.call_args[0][0], "xfs")
-            self.assertEqual(mock_get_dbus_object().fs_mount.call_args[0][1], "/dev/testpath")
-            self.assertEqual(mock_get_dbus_object().fs_mount.call_args[0][2], "/media/yaaayname")
+            self.assertEqual(mock_get_dbus_object().fs_mount.call_args[0], ("xfs", "/dev/testpath", "/media/yaaayname"))
 
             self.assertTrue( mock_get_dbus_object().fs_chown.called)
             self.assertEqual(mock_get_dbus_object().fs_chown.call_count, 1)
-            self.assertEqual(mock_get_dbus_object().fs_chown.call_args[0][0], "/media/yaaayname")
-            self.assertEqual(mock_get_dbus_object().fs_chown.call_args[0][1], "mziegler")
-            self.assertEqual(mock_get_dbus_object().fs_chown.call_args[0][2], "users")
+            self.assertEqual(mock_get_dbus_object().fs_chown.call_args[0], ("/media/yaaayname", "mziegler", "users"))
 
     def test_xfs_shrink(self):
         with self.assertRaises(NotImplementedError):
@@ -271,8 +244,7 @@ class FileSystemTestCase(TestCase):
 
             self.assertTrue( mock_get_dbus_object().xfs_resize.called)
             self.assertEqual(mock_get_dbus_object().xfs_resize.call_count, 1)
-            self.assertEqual(mock_get_dbus_object().xfs_resize.call_args[0][0], "/dev/testpath")
-            self.assertEqual(mock_get_dbus_object().xfs_resize.call_args[0][1], 100000)
+            self.assertEqual(mock_get_dbus_object().xfs_resize.call_args[0], ("/dev/testpath", 100000))
 
             self.assertFalse(mock_get_dbus_object().fs_mount.called)
 
@@ -286,8 +258,7 @@ class FileSystemTestCase(TestCase):
 
             self.assertTrue( mock_get_dbus_object().xfs_set_uuid.called)
             self.assertEqual(mock_get_dbus_object().xfs_set_uuid.call_count, 1)
-            self.assertEqual(mock_get_dbus_object().xfs_set_uuid.call_args[0][0], "/dev/testpath")
-            self.assertEqual(mock_get_dbus_object().xfs_set_uuid.call_args[0][1], "1111-2222-3333-4444")
+            self.assertEqual(mock_get_dbus_object().xfs_set_uuid.call_args[0], ("/dev/testpath", "1111-2222-3333-4444"))
 
     def test_xfs_set_uuid_generate(self):
         with mock.patch("volumes.filesystems.filesystem.get_dbus_object") as mock_get_dbus_object:
@@ -299,8 +270,7 @@ class FileSystemTestCase(TestCase):
 
             self.assertTrue( mock_get_dbus_object().xfs_set_uuid.called)
             self.assertEqual(mock_get_dbus_object().xfs_set_uuid.call_count, 1)
-            self.assertEqual(mock_get_dbus_object().xfs_set_uuid.call_args[0][0], "/dev/testpath")
-            self.assertEqual(mock_get_dbus_object().xfs_set_uuid.call_args[0][1], "generate")
+            self.assertEqual(mock_get_dbus_object().xfs_set_uuid.call_args[0], ("/dev/testpath", "generate"))
 
     def test_xfs_check_type(self):
         from volumes.filesystems.xfs import Xfs
@@ -324,21 +294,16 @@ class FileSystemTestCase(TestCase):
 
             self.assertTrue( mock_get_dbus_object().ocfs2_format.called)
             self.assertEqual(mock_get_dbus_object().ocfs2_format.call_count, 1)
-            self.assertEqual(mock_get_dbus_object().ocfs2_format.call_args[0][0], "/dev/testpath")
-            self.assertEqual(mock_get_dbus_object().ocfs2_format.call_args[0][1], 256*1024)
+            self.assertEqual(mock_get_dbus_object().ocfs2_format.call_args[0], ("/dev/testpath", 256*1024))
 
             self.assertTrue( mock_get_dbus_object().write_fstab.called)
             self.assertEqual(mock_get_dbus_object().write_fstab.call_count, 1)
 
             self.assertTrue( mock_get_dbus_object().fs_mount.called)
             self.assertEqual(mock_get_dbus_object().fs_mount.call_count, 1)
-            self.assertEqual(mock_get_dbus_object().fs_mount.call_args[0][0], "ocfs2")
-            self.assertEqual(mock_get_dbus_object().fs_mount.call_args[0][1], "/dev/testpath")
-            self.assertEqual(mock_get_dbus_object().fs_mount.call_args[0][2], "/media/yaaayname")
+            self.assertEqual(mock_get_dbus_object().fs_mount.call_args[0], ("ocfs2", "/dev/testpath", "/media/yaaayname"))
 
             self.assertTrue( mock_get_dbus_object().fs_chown.called)
             self.assertEqual(mock_get_dbus_object().fs_chown.call_count, 1)
-            self.assertEqual(mock_get_dbus_object().fs_chown.call_args[0][0], "/media/yaaayname")
-            self.assertEqual(mock_get_dbus_object().fs_chown.call_args[0][1], "mziegler")
-            self.assertEqual(mock_get_dbus_object().fs_chown.call_args[0][2], "users")
+            self.assertEqual(mock_get_dbus_object().fs_chown.call_args[0], ("/media/yaaayname", "mziegler", "users"))
 
