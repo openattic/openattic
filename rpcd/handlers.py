@@ -19,7 +19,10 @@ import socket
 import errno
 import sys
 
+from operator import or_
+
 from django.db import models
+from django.db.models import Q
 from django.contrib.contenttypes import generic
 from django.contrib.contenttypes.models import ContentType
 
@@ -229,14 +232,33 @@ class ModelHandler(BaseHandler):
         else:
             fields = None
 
+        if '__or__' in kwds:
+            if isinstance(kwds['__or__'], dict):
+                orlist = [kwds['__or__']]
+            else:
+                orlist = kwds['__or__']
+            del kwds['__or__']
+        else:
+            orlist = None
+
         if kwds:
             self._filter_virtual(kwds)
             self._filter_foreignkey(kwds)
             queryset = queryset.filter(**kwds)
+
         if exclude_kwds:
             self._filter_virtual(exclude_kwds)
             self._filter_foreignkey(exclude_kwds)
             queryset = queryset.exclude(**exclude_kwds)
+
+        if orlist:
+            for ordict in orlist:
+                self._filter_virtual(ordict)
+                self._filter_foreignkey(ordict)
+                queryset = queryset.filter( reduce(or_, [
+                    Q(**{key: ordict[key]}) for key in ordict
+                ] ) )
+
         if fields:
             queryset = queryset.values(*fields)
         return queryset
