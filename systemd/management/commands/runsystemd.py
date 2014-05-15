@@ -82,6 +82,8 @@ class SystemD(dbus.service.Object):
             self.jobs[sender] = []
 
     def _run_queue(self, sender):
+        # In case we're in a background process, make super-duper sure SIGCHLD is handled
+        signal.signal(signal.SIGCHLD, self._cleanup_procs)
         logging.info( "Incoming Queue Dump:" )
         for func, scope, args, kwargs in self.jobs[sender]:
             logging.info( "-> %s::%s(%s)", scope.dbus_path, func.__name__,
@@ -137,9 +139,14 @@ class SystemD(dbus.service.Object):
         signal.signal(signal.SIGCHLD, self._cleanup_procs)
         deadprocs = []
         for proc in self.procs:
-            if not proc.is_alive():
-                proc.join()
-                deadprocs.append(proc)
+            try:
+                if not proc.is_alive():
+                    proc.join()
+                    deadprocs.append(proc)
+            except AssertionError:
+                # Apparently, a process *ran* by one of our children terminated and
+                # we got SIGCHLD for it for some reason.
+                pass
         for proc in deadprocs:
             self.procs.remove(proc)
 
