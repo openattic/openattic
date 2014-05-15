@@ -235,7 +235,7 @@ class ModelHandler(BaseHandler):
             queryset = queryset.filter(**kwds)
         if exclude_kwds:
             self._filter_virtual(exclude_kwds)
-            self._filter_foreignkey(execlude_kwds)
+            self._filter_foreignkey(exclude_kwds)
             queryset = queryset.exclude(**exclude_kwds)
         if fields:
             queryset = queryset.values(*fields)
