@@ -83,7 +83,9 @@ class Zfs(FileSystem):
         dso = StorageObject(name=".snapshots", megs=volume.storageobj.megs)
         dso.full_clean()
         dso.save()
-        dvol = pool._create_volume_for_storageobject(dso, {})
+        dvol = pool._create_volume_for_storageobject(dso, {
+            "filesystem": "zfs", "fswarning": 99, "fscritical": 99, "owner": options["owner"]
+            })
 
         return zvol
 
