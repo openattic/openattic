@@ -73,7 +73,7 @@ def create_vgs(**kwargs):
                 print "Logical Volume %s is tagged as @sys, ignored." % lvname
                 continue
 
-            so = StorageObject(name=lvname, megs=float(lvs[lvname]["LVM2_LV_SIZE"]), uuid=lvs[lvname]["LVM2_LV_UUID"])
+            so = StorageObject(name=lvname, megs=float(lvs[lvname]["LVM2_LV_SIZE"]), uuid=lvs[lvname]["LVM2_LV_UUID"], source_pool=vg)
             so.save()
             lv = LogicalVolume(storageobj=so, vg=vg)
             print lv.storageobj.name, lv.storageobj.megs, lv.vg.storageobj.name

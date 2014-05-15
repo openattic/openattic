@@ -82,7 +82,7 @@ def update_disksize(**kwargs):
                 zfs_so.save()
             except Zfs.DoesNotExist:
                 print "Found new ZVol", zvol_name
-                zfs_so = StorageObject(name=zvol_name, megs=megs)
+                zfs_so = StorageObject(name=zvol_name, megs=megs, source_pool=zpool)
                 zfs_so.full_clean()
                 zfs_so.save()
                 zfs = ZVol(storageobj=zfs_so, zpool=zpool, host=Host.objects.get_current(), parent=zp_so)
@@ -103,7 +103,7 @@ def update_disksize(**kwargs):
                 zfs_so.save()
             except Zfs.DoesNotExist:
                 print "Found new ZFS Volume", zvol_name
-                zfs_so = StorageObject(name=zvol_name, megs=megs)
+                zfs_so = StorageObject(name=zvol_name, megs=megs, source_pool=zpool)
                 zfs_so.full_clean()
                 zfs_so.save()
                 zfs = Zfs(storageobj=zfs_so, zpool=zpool, host=Host.objects.get_current(), owner=admin, parent=zp_so)

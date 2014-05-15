@@ -313,7 +313,7 @@ class AbstractVolume(models.Model):
 
     def _create_snapshot(self, name, megs, options):
         """ Actual snapshot creation. """
-        storageobj = StorageObject(snapshot=self.storageobj, name=name, megs=megs)
+        storageobj = StorageObject(snapshot=self.storageobj, name=name, megs=megs, source_pool=self.storageobj.source_pool)
         storageobj.full_clean()
         storageobj.save()
 

@@ -47,7 +47,7 @@ class Btrfs(FileSystem):
         svol.save()
 
         # Create a subvolume named .snapshots for snapshots to reside in.
-        dso = StorageObject(name=".snapshots", megs=volume.storageobj.megs)
+        dso = StorageObject(name=".snapshots", megs=volume.storageobj.megs, source_pool=pool)
         dso.full_clean()
         dso.save()
         dvol = pool._create_volume_for_storageobject(dso, {
