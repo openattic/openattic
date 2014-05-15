@@ -40,7 +40,13 @@ class Zpool(VolumePool):
 
     @property
     def usedmegs(self):
-        return self.fs.allocated_megs
+        import dbus
+        try:
+            # This may fail when we're trying to query for a volumepool which
+            # has not yet been created
+            return self.fs.allocated_megs
+        except dbus.DBusException:
+            return None
 
     def _create_volume_for_storageobject(self, storageobj, options):
         if options.get("filesystem", None) not in ("zfs", '', None):
