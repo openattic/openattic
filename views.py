@@ -45,8 +45,7 @@ def do_login( request ):
 
     # Otherwise, take a look at the REMOTE_USER.
     elif "REMOTE_USER" in request.META:
-        if request.user.is_authenticated():
-            user = request.user
+        user = authenticate( remote_user=request.META["REMOTE_USER"] )
 
     else:
         return HttpResponse( json.dumps({ "success": False, "errormsg": 'invalid_request' }), "application/json" )

@@ -232,7 +232,6 @@ MIDDLEWARE_CLASSES = (
     'django.middleware.csrf.CsrfViewMiddleware',
     'django.middleware.locale.LocaleMiddleware',
     'django.contrib.auth.middleware.AuthenticationMiddleware',
-    'django.contrib.auth.middleware.RemoteUserMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
 )
 
