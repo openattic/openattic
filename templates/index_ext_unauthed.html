@@ -52,11 +52,17 @@
               login_form.getEl().mask("{% trans 'Loading...' %}");
             },
             failure: function( form, action ){
-              var result = Ext.decode(action.response.responseText);
+              var result;
+              try{
+                result = Ext.decode(action.response.responseText);
+              }
+              catch(err){
+                result = {"errormsg": "invalid_request"};
+              }
               Ext.Msg.alert( "Error", window.errmsg[result.errormsg], function(){
                 Ext.defer(function(){
                   Ext.ComponentQuery.query("[name=password]", login_form)[0].focus();
-                },250);
+                }, 250);
               } );
               login_form.getEl().unmask();
             }
