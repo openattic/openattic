@@ -14,12 +14,17 @@
  *  GNU General Public License for more details.
 """
 
+import logging
+import json
+import grp
+
 from django import template
 from django.shortcuts  import render_to_response
 from django.template   import RequestContext
 from django.http       import HttpResponse
 from django.conf       import settings
 from django.contrib.auth            import authenticate, login, logout
+from django.contrib.auth.models     import User
 from django.contrib.auth.decorators import login_required
 
 from userprefs.models import UserProfile
@@ -27,31 +32,66 @@ from ifconfig.models  import Host
 
 def do_login( request ):
     """ Check login credentials sent by ExtJS. """
-    if "username" not in request.POST or "password" not in request.POST:
-        # Request is invalid, but check if user is already authed, and if so: return success nevertheless
+
+    # AUTHENTICATION
+
+    user = None
+
+    # If username + password given, check PAM and our database through authenticate().
+    if "username" in request.POST and "password" in request.POST:
+        username = request.POST['username']
+        password = request.POST['password']
+        user = authenticate( username=username, password=password )
+
+    # Otherwise, take a look at the REMOTE_USER.
+    elif "REMOTE_USER" in request.META:
         if request.user.is_authenticated():
-            return HttpResponse( "{ success: true }", "application/json" )
-        return HttpResponse( "{ success: false, errormsg: 'invalid_request' }", "application/json" )
+            user = request.user
 
-    username = request.POST['username']
-    password = request.POST['password']
-
-    user = authenticate( username=username, password=password )
-
-    if user is not None:
-        if user.is_active:
-            login( request, user )
-            return HttpResponse( "{ success: true }", "application/json" )
-        else:
-            return HttpResponse( "{ success: false, errormsg: 'disabled_account' }", "application/json" )
     else:
-        return HttpResponse( "{ success: false, errormsg: 'invalid_credentials' }", "application/json" )
+        return HttpResponse( json.dumps({ "success": False, "errormsg": 'invalid_request' }), "application/json" )
+
+    if user is None:
+        return HttpResponse( json.dumps({ "success": False, "errormsg": 'invalid_credentials' }), "application/json" )
+
+    # OK, so now we have a user object and we know they are who they say they are.
+
+    # AUTHORIZATION
+
+    # If we have a system user group configured and the user is not a staff member,
+    # we may have to grant them staff privileges if they are a member of the
+    # configured group.
+    if settings.AUTHZ_SYSGROUP is not None and not user.is_staff:
+        try:
+            sysgroup = grp.getgrnam(settings.AUTHZ_SYSGROUP)
+        except KeyError, err:
+            logging.error("Failed to query system group '%s': %s" % (settings.AUTHZ_SYSGROUP, unicode(err)))
+        else:
+            if user.username in sysgroup.gr_mem:
+                logging.warning("User '%s' is a member of system group '%s', granting staff privileges" % (
+                                user.username, settings.AUTHZ_SYSGROUP))
+                user.is_staff = True
+                user.save()
+            else:
+                logging.warning("User '%s' is not a member of system group '%s' (Members: %s)" % (
+                                user.username, settings.AUTHZ_SYSGROUP, ', '.join(sysgroup.gr_mem)))
+
+    # We only allow active staff members to log in.
+    if not user.is_active:
+        return HttpResponse( json.dumps({ "success": False, "errormsg": 'disabled_account' }), "application/json" )
+
+    if not user.is_staff:
+        return HttpResponse( json.dumps({ "success": False, "errormsg": 'unauthorized' }), "application/json" )
+
+    # Good to go!
+    login( request, user )
+    return HttpResponse( json.dumps({ "success": True }), "application/json" )
 
 @login_required
 def do_logout( request ):
     """ Log out the user. """
     logout( request )
-    return HttpResponse( "{ success: true }", "application/json" )
+    return HttpResponse( json.dumps({ "success": True }), "application/json" )
 
 def index(request):
     # make sure CsrfResponseMiddleware sends a CSRF token cookie, so we can properly

@@ -32,6 +32,7 @@
           invalid_credentials: "{% trans 'The credentials you entered are invalid.' %}",
           invalid_request:     "{% trans 'The request that has been sent to the server has been invalid - this is not supposed to happen...' %}",
           disabled_account:    "{% trans 'Your account has been deactivated. Please consult an administrator.' %}",
+          unauthorized:        "{% trans 'Your account is not allowed to access openATTIC. Please consult an administrator.' %}",
           undefined:           "{% trans 'Did you fill in all the fields?' %}"
         };
         login_form = Ext.create('Ext.FormPanel', {
@@ -51,7 +52,7 @@
               login_form.getEl().mask("{% trans 'Loading...' %}");
             },
             failure: function( f, a ){
-              if( "{{ HAVE_KERBEROS }}" === "True" && f.status === 401 ){
+              if( "{{ HAVE_KERBEROS }}" === "True" && a.status === 401 ){
                 Ext.Msg.alert( "Error",
                   "{% trans 'Your browser does not support Kerberos. Please log in using your username and password.' %}",
                   Ext.defer(function(){
