@@ -57,6 +57,10 @@ def do_login( request ):
 
     # AUTHORIZATION
 
+    # We only allow active staff members to log in.
+    if not user.is_active:
+        return HttpResponse( json.dumps({ "success": False, "errormsg": 'disabled_account' }), "application/json", status=403 )
+
     # If we have a system user group configured and the user is not a staff member,
     # we may have to grant them staff privileges if they are a member of the
     # configured group.
@@ -74,10 +78,6 @@ def do_login( request ):
             else:
                 logging.warning("User '%s' is not a member of system group '%s' (Members: %s)" % (
                                 user.username, settings.AUTHZ_SYSGROUP, ', '.join(sysgroup.gr_mem)))
-
-    # We only allow active staff members to log in.
-    if not user.is_active:
-        return HttpResponse( json.dumps({ "success": False, "errormsg": 'disabled_account' }), "application/json", status=403 )
 
     if not user.is_staff:
         return HttpResponse( json.dumps({ "success": False, "errormsg": 'unauthorized' }), "application/json", status=403 )
