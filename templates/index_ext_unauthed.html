@@ -30,7 +30,7 @@
         window.nexturl = "{% url 'index' %}";
         window.errmsg = {
           invalid_credentials: "{% trans 'The credentials you entered are invalid.' %}",
-          invalid_request:     "{% trans 'The request that has been sent to the server has been invalid - this is not supposed to happen...' %}",
+          invalid_request:     "{% trans 'Your browser does not support Kerberos. Please log in using your username and password.' %}",
           disabled_account:    "{% trans 'Your account has been deactivated. Please consult an administrator.' %}",
           unauthorized:        "{% trans 'Your account is not allowed to access openATTIC. Please consult an administrator.' %}",
           undefined:           "{% trans 'Did you fill in all the fields?' %}"
@@ -46,32 +46,18 @@
             headers: {
               "X-CSRFToken": Ext.util.Cookies.get("csrftoken")
             },
-            success: function( f, a ){
+            success: function( form, action ){
               location.href=window.nexturl;
               login_form.getEl().unmask();
               login_form.getEl().mask("{% trans 'Loading...' %}");
             },
-            failure: function( f, a ){
-              if( "{{ HAVE_KERBEROS }}" === "True" && a.status === 401 ){
-                Ext.Msg.alert( "Error",
-                  "{% trans 'Your browser does not support Kerberos. Please log in using your username and password.' %}",
-                  Ext.defer(function(){
-                    (function(){
-                      Ext.ComponentQuery.query("[name=username]", login_form)[0].focus();
-                    },250);
-                  })
-                );
-              }
-              else if( a.result ){
-                Ext.Msg.alert( "Error", window.errmsg[a.result.errormsg], function(){
-                  Ext.defer(function(){
-                    Ext.ComponentQuery.query("[name=password]", login_form)[0].focus();
-                  },250);
-                } );
-              }
-              else{
-                Ext.Msg.alert( "Error", window.errmsg['undefined'] );
-              }
+            failure: function( form, action ){
+              var result = Ext.decode(action.response.responseText);
+              Ext.Msg.alert( "Error", window.errmsg[result.errormsg], function(){
+                Ext.defer(function(){
+                  Ext.ComponentQuery.query("[name=password]", login_form)[0].focus();
+                },250);
+              } );
               login_form.getEl().unmask();
             }
           },
@@ -112,13 +98,10 @@
                   Ext.apply(Ext.apply({}, login_form.serverResponseHandlers), {
                     url: '{% url "kerblogin" %}',
                     success: function(response, opts){
-                      response.result = Ext.decode(response.responseText);
-                      if(response.result.success){
-                        login_form.serverResponseHandlers.success.apply(window, []);
-                      }
-                      else{
-                        login_form.serverResponseHandlers.failure.apply(window, [null, response]);
-                      }
+                      login_form.serverResponseHandlers.success.apply(window, []);
+                    },
+                    failure: function(response, opts){
+                      login_form.serverResponseHandlers.failure.apply(window, [null, {"response": response}]);
                     }
                   })
                 );
