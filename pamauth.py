@@ -17,6 +17,7 @@
     GNU General Public License for more details.
 """
 
+import logging
 import sys
 import PAM
 
@@ -65,9 +66,9 @@ class PamBackend( ModelBackend ):
             auth.authenticate()
             auth.acct_mgmt()
         except PAM.error, err:
-            print >> sys.stderr, "[openATTIC error] PAM Login failed for user '%s': %s" % (username, err)
+            logging.error("PAM Login failed for user '%s': %s" % (username, err))
         else:
-            print >> sys.stderr, "[openATTIC notice] PAM Login succeeded for user '%s'" % username
+            logging.warning("PAM Login succeeded for user '%s'" % username)
 
             UserModel = get_user_model()
 
