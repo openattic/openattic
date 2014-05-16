@@ -19,13 +19,24 @@
 
 import sys
 import PAM
+
+from django.contrib.auth          import get_user_model
 from django.contrib.auth.backends import ModelBackend
-from django.contrib.auth.models   import User
 
 from django.conf                  import settings
 
 class PamBackend( ModelBackend ):
-    """ The PAM authentication backend for Django. """
+    """ PAM authentication backend for Django.
+
+        This backend's implementation works somewhat like RemoteUserBackend
+        (see https://docs.djangoproject.com/en/dev/howto/auth-remote-user/). It
+        supports create_unknown_user, clean_username and configure_user overrides
+        just like RemoteUserBackend does and employs the same mechanisms for
+        user authentication and creation.
+    """
+
+    # Create a User object if not already in the database?
+    create_unknown_user = True
 
     def __init__( self, service=settings.PAM_AUTH_SERVICE, *args, **kwargs ):
         ModelBackend.__init__( self, *args, **kwargs )
@@ -41,15 +52,13 @@ class PamBackend( ModelBackend ):
 
     def authenticate( self, username=None, password=None ):
         """ Check the username/password and return a User. """
+        user = None
+
         auth = PAM.pam()
         auth.start( self.service )
 
-        # For some reason or another, Kerberos requires the username to be all UPPERCASE.
-        if settings.PAM_AUTH_KERBEROS:
-            auth.set_item( PAM.PAM_USER, username.upper() )
-        else:
-            auth.set_item( PAM.PAM_USER, username )
         self.userPassword = password
+        auth.set_item( PAM.PAM_USER, self.clean_username(username) )
         auth.set_item( PAM.PAM_CONV, self.pam_conversation )
 
         try:    # This is a bit ugly, but authenticate() doesn't return a status code :(
@@ -59,16 +68,39 @@ class PamBackend( ModelBackend ):
             print >> sys.stderr, "[openATTIC error] PAM Login failed for user '%s': %s" % (username, err)
         else:
             print >> sys.stderr, "[openATTIC notice] PAM Login succeeded for user '%s'" % username
-            try:
-                return User.objects.get( username=username )
-            except User.DoesNotExist:
-                pass
-        return None
 
-    def get_user( self, userid ):
-        """ Get the user with the given ID, or None if not found. """
-        try:
-            return User.objects.get( id=userid )
-        except User.DoesNotExist:
-            return None
+            UserModel = get_user_model()
 
+            # See the implementation of RemoteUserBackend for details.
+            if self.create_unknown_user:
+                user, created = UserModel.objects.get_or_create(**{
+                    UserModel.USERNAME_FIELD: username
+                })
+                if created:
+                    user = self.configure_user(user)
+            else:
+                try:
+                    user = UserModel.objects.get_by_natural_key(username)
+                except UserModel.DoesNotExist:
+                    pass
+
+        return user
+
+    def clean_username(self, username):
+        """ Performs any cleaning on the "username" prior to using it to get or
+            create the user object.  Returns the cleaned username.
+
+            By default, returns the username unchanged, unless PAM_AUTH_KERBEROS
+            is set to True; then the username is converted to upper case.
+        """
+        # For some reason or another, Kerberos requires the username to be all UPPERCASE.
+        if settings.PAM_AUTH_KERBEROS:
+            return username.upper()
+        return username
+
+    def configure_user(self, user):
+        """ Configures a user after creation and returns the updated user.
+
+            By default, returns the user unmodified.
+        """
+        return user
