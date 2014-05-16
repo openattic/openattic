@@ -177,6 +177,9 @@ __domconf__.set("kerberos", "enabled", "no")
 __domconf__.add_section("database")
 __domconf__.set("database", "enabled", "yes")
 
+__domconf__.add_section("authz")
+__domconf__.set("authz", "group", None)
+
 #   now read the actual config, if it exists. If it doesn't, the defaults are fine,
 #   so we don't need to care about whether or not this works.
 __domconf__.read("/etc/openattic/domain.ini")
@@ -206,7 +209,9 @@ if __domconf__.get("domain", "realm"):
 if __domconf__.get("domain", "workgroup"):
     SAMBA_WORKGROUP = __domconf__.get("domain", "workgroup")
 
-
+# Group used for authorization. (If a user is in this group, they get superuser
+# privileges when they login, if they don't have them already.)
+AUTHZ_SYSGROUP = __domconf__.get("authz", "group")
 
 
 # Timeout to use when connecting to peers via XMLRPC. This timeout only applies for
