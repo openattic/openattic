@@ -48,10 +48,10 @@ def do_login( request ):
         user = authenticate( remote_user=request.META["REMOTE_USER"] )
 
     else:
-        return HttpResponse( json.dumps({ "success": False, "errormsg": 'invalid_request' }), "application/json" )
+        return HttpResponse( json.dumps({ "success": False, "errormsg": 'invalid_request' }), "application/json", status=400 )
 
     if user is None:
-        return HttpResponse( json.dumps({ "success": False, "errormsg": 'invalid_credentials' }), "application/json" )
+        return HttpResponse( json.dumps({ "success": False, "errormsg": 'invalid_credentials' }), "application/json", status=401 )
 
     # OK, so now we have a user object and we know they are who they say they are.
 
@@ -77,14 +77,14 @@ def do_login( request ):
 
     # We only allow active staff members to log in.
     if not user.is_active:
-        return HttpResponse( json.dumps({ "success": False, "errormsg": 'disabled_account' }), "application/json" )
+        return HttpResponse( json.dumps({ "success": False, "errormsg": 'disabled_account' }), "application/json", status=403 )
 
     if not user.is_staff:
-        return HttpResponse( json.dumps({ "success": False, "errormsg": 'unauthorized' }), "application/json" )
+        return HttpResponse( json.dumps({ "success": False, "errormsg": 'unauthorized' }), "application/json", status=403 )
 
     # Good to go!
     login( request, user )
-    return HttpResponse( json.dumps({ "success": True }), "application/json" )
+    return HttpResponse( json.dumps({ "success": True }), "application/json", status=200 )
 
 @login_required
 def do_logout( request ):
