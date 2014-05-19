@@ -17,6 +17,7 @@ Version 1.1.2, ?? ????? 2014:
 * Fixed RPCd causing mayhem by not properly closing database connections.
 * Fixed FileSystemVolume Nagios checks being initialized incorrectly during
   oaconfig install.
+* Added basic quota support for ZFS volumes.
 
 Version 1.1.1, 01 April 2014:
 ---------------------------------

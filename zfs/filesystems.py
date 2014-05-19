@@ -161,7 +161,10 @@ class Zfs(FileSystem):
         self.dbus_object.zfs_unmount(self.volume.fullname)
 
     def create_subvolume(self):
-        self.dbus_object.zfs_create_volume(self.volume.fullname)
+        megs = 0
+        if self.volume.storageobj.megs < self.zpool.storageobj.megs:
+            megs = self.volume.storageobj.megs
+        self.dbus_object.zfs_create_volume(self.volume.fullname, megs)
 
     def create_zvol(self):
         self.dbus_object.zvol_create_volume(self.volume.fullname, self.volume.storageobj.megs)

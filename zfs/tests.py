@@ -216,18 +216,37 @@ class ZfsFileSystemTestCase(TestCase):
 
             self.assertFalse(mock_volumes_get_dbus_object().fs_unmount.called)
 
-    def test_create_subvolume(self):
+    def test_create_subvolume_eqsize(self):
         with mock.patch("zfs.filesystems.get_dbus_object") as mock_get_dbus_object:
             volume = mock.MagicMock()
             volume.fullname = "honky/tonk"
+            volume.storageobj.megs = 10000
+            zpool = mock.MagicMock()
+            zpool.storageobj.megs  = 10000
 
-            fs = Zfs(None, volume)
+            fs = Zfs(zpool, volume)
             fs.create_subvolume()
 
             self.assertFalse(mock_get_dbus_object().zvol_create_volume.called)
             self.assertTrue( mock_get_dbus_object().zfs_create_volume.called)
             self.assertEqual(mock_get_dbus_object().zfs_create_volume.call_count, 1)
-            self.assertEqual(mock_get_dbus_object().zfs_create_volume.call_args[0], ("honky/tonk",))
+            self.assertEqual(mock_get_dbus_object().zfs_create_volume.call_args[0], ("honky/tonk", 0))
+
+    def test_create_subvolume_smallersize(self):
+        with mock.patch("zfs.filesystems.get_dbus_object") as mock_get_dbus_object:
+            volume = mock.MagicMock()
+            volume.fullname = "honky/tonk"
+            volume.storageobj.megs = 1000
+            zpool = mock.MagicMock()
+            zpool.storageobj.megs  = 10000
+
+            fs = Zfs(zpool, volume)
+            fs.create_subvolume()
+
+            self.assertFalse(mock_get_dbus_object().zvol_create_volume.called)
+            self.assertTrue( mock_get_dbus_object().zfs_create_volume.called)
+            self.assertEqual(mock_get_dbus_object().zfs_create_volume.call_count, 1)
+            self.assertEqual(mock_get_dbus_object().zfs_create_volume.call_args[0], ("honky/tonk", 1000))
 
     def test_create_zvol(self):
         with mock.patch("zfs.filesystems.get_dbus_object") as mock_get_dbus_object:
