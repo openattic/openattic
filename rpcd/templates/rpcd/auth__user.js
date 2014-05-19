@@ -202,7 +202,7 @@ Ext.define('Ext.oa.Auth__User_Panel', {
     var self = this;
     if( sm.hasSelection() ){
       var sel = sm.selected.items[0];
-      lvm__LogicalVolume.filter( { 'owner__id': sel.data.id }, function(provider, response){
+      volumes__StorageObject.filter( { 'filesystemvolume__owner__id': sel.data.id }, function(provider, response){
         if( response.result.length > 0 ){
           Ext.Msg.alert( gettext('Delete User'), interpolate(
             gettext('User %(user)s is the owner of %(volcount)s volumes.'), {
