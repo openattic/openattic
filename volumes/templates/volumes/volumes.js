@@ -1115,7 +1115,7 @@ Ext.define('Ext.oa.volumes__Volume_Panel', {
           if( val === null || typeof val === 'undefined'){
             return '';
           }
-          if( !val.contains(":") ){
+          if( val.indexOf(":") == -1 ){
             return val;
           }
           var id = Ext.id();
