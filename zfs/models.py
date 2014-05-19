@@ -199,7 +199,7 @@ class ZVol(BlockVolume):
 
     @property
     def fullname(self):
-        return self.storageobj.name
+        return "%s/%s" % (self.zpool.storageobj.name, self.storageobj.name)
 
     @property
     def usedmegs(self):
