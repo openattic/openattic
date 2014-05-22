@@ -70,8 +70,9 @@ Ext.define('volumes__volumes_StorageObject_model', {
       rootNode = store.getRootNode();
       rootNode.set("type", toUnicode(vptype));
       rootNode.set("host", toUnicode(record.raw.volumepool.host));
-      if( record.raw.volumepool.usedmegs !== null )
-        rootNode.set("percent", (record.raw.volumepool.usedmegs / record.raw.megs * 100).toFixed(2));
+      rootNode.set("percent",  null);
+      rootNode.set("freemegs", null);
+      rootNode.set("usedmegs", null);
     }
     else{
       // May or may not haz Snapshots
@@ -99,8 +100,8 @@ Ext.define('volumes__volumes_StorageObject_model', {
       rootNode.set("path", record.raw.blockvolume.path);
       rootNode.set("host", toUnicode(record.raw.blockvolume.host));
       rootNode.set("percent",  null);
-      rootNode.set("freemegs",   null);
-      rootNode.set("usedmegs",   null);
+      rootNode.set("freemegs", null);
+      rootNode.set("usedmegs", null);
     }
     if( record.raw.filesystemvolume !== null ){
       var voltype = record.raw.filesystemvolume.volume_type;
