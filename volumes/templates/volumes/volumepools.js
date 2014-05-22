@@ -13,6 +13,18 @@
 
 Ext.namespace("Ext.oa");
 
+function renderMegs(val){
+  if( val === null ){
+    return '';
+  }
+  if( val >= 1000 ){
+    return Ext.String.format("{0} GB", (val / 1000).toFixed(2));
+  }
+  else{
+    return Ext.String.format("{0} MB", val);
+  }
+}
+
 /**
  *  Model for volumes.VolumePool objects.
  */
@@ -22,7 +34,7 @@ Ext.define('volumes__volumes_VolumePool_model', {
     'Ext.data.NodeInterface'
   ],
   fields: [
-    'id', '__unicode__', 'name', 'type', 'megs', 'percent', 'status'
+    'id', '__unicode__', 'name', 'type', 'megs', 'percent', 'status', 'usedmegs', 'freemegs'
   ],
   createNode: function(record){
     var rootNode;
@@ -78,10 +90,14 @@ Ext.define('volumes__volumes_VolumePool_model', {
       if( response.type === "exception" ){
         rootNode.set("percent", '?');
         rootNode.set("megs", '?');
+        rootNode.set("usedmegs",'?');
+        rootNode.set("freemegs",'?');
       }
       else{
         rootNode.set("percent", (response.result.usedmegs / response.result.megs * 100).toFixed(2));
         rootNode.set("megs",    response.result.megs);
+        rootNode.set("usedmegs",response.result.usedmegs);
+        rootNode.set("freemegs",response.result.megs - response.result.usedmegs);
         rootNode.set("status",  response.result.status);
         rootNode.set("type",    toUnicode(response.result.type));
       }
@@ -199,20 +215,19 @@ Ext.define('Ext.oa.volumes__VolumePool_Panel', {
         dataIndex: "megs",
         stateId: "volumes__volumepool_panel_state__megs",
         align: "right",
-        renderer: function(val){
-          if( val === null ){
-            return '';
-          }
-          if( !val || val === -1 ){
-            return '♻';
-          }
-          if( val >= 1000 ){
-            return Ext.String.format("{0} GB", (val / 1000).toFixed(2));
-          }
-          else{
-            return Ext.String.format("{0} MB", val);
-          }
-        }
+        renderer: renderMegs
+      },{
+        header: gettext('Free'),
+        dataIndex: "freemegs",
+        stateId: "volumes__volumepool_panel_state__freemegs",
+        align: "right",
+        renderer: renderMegs
+      },{
+        header: gettext('Used'),
+        dataIndex: "usedmegs",
+        stateId: "volumes__volumepool_panel_state__usedmegs",
+        align: "right",
+        renderer: renderMegs
       },{
         header: gettext('Used%'),
         dataIndex: "percent",

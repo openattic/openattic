@@ -299,18 +299,6 @@ Ext.oa.getAdditSettingsWindow = function(config){
 };
 
 
-function renderMegs(val){
-  if( val === null ){
-    return '';
-  }
-  if( val >= 1000 ){
-    return Ext.String.format("{0} GB", (val / 1000).toFixed(2));
-  }
-  else{
-    return Ext.String.format("{0} MB", val);
-  }
-}
-
 var required = '<span style="color:red;font-weight:bold" data-qtip="Required">*</span>';
 Ext.define("Ext.oa.volumes__volumes_add_volume_form", {
   extend: "Ext.form.Panel",
