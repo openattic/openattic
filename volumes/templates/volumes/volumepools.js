@@ -17,8 +17,8 @@ function renderMegs(val){
   if( val === null ){
     return '';
   }
-  if( val >= 1000 ){
-    return Ext.String.format("{0} GB", (val / 1000).toFixed(2));
+  if( val >= 1024 ){
+    return Ext.String.format("{0} GB", (val / 1024).toFixed(2));
   }
   else{
     return Ext.String.format("{0} MB", val.toFixed(2));
