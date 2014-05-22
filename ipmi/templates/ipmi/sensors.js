@@ -21,7 +21,7 @@ Ext.define('Ext.oa.Ipmi__Sensors_Panel', {
     var sensorGrid = this;
     Ext.apply(this, Ext.apply(this.initialConfig, {
       id: "ipmi__sensors_panel_inst",
-      title: gettext('Sensoren'),
+      title: gettext('Sensors'),
       forceFit: true,
       buttons: [{
         text: "",
