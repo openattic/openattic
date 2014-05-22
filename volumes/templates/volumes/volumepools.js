@@ -21,7 +21,7 @@ function renderMegs(val){
     return Ext.String.format("{0} GB", (val / 1000).toFixed(2));
   }
   else{
-    return Ext.String.format("{0} MB", val);
+    return Ext.String.format("{0} MB", val.toFixed(2));
   }
 }
 
