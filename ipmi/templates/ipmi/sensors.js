@@ -82,7 +82,7 @@ Ext.oa.Lvm__Mounts_Module = {
 
   prepareMenuTree: function(tree){
     tree.appendToRootNodeById("menu_status", {
-      text: gettext('Sensoren'),
+      text: gettext('Sensors'),
       leaf: true,
       icon: MEDIA_URL + '/icons2/22x22/apps/gnome-monitor.png',
       panel: "ipmi__sensors_panel_inst"
