@@ -65,7 +65,7 @@ class Xfs(FileSystem):
         self.chown()
 
     def grow(self, oldmegs, newmegs):
-        self.dbus_object.xfs_resize( self.volume.storageobj.blockvolume.volume.path, newmegs )
+        self.dbus_object.xfs_resize( self.path, newmegs )
 
     def set_uuid(self, value="", generate=False):
         """ Set the file system's UUID. """

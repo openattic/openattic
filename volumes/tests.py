@@ -235,7 +235,8 @@ class FileSystemTestCase(TestCase):
     def test_xfs_grow(self):
         with mock.patch("volumes.filesystems.filesystem.get_dbus_object") as mock_get_dbus_object:
             volume = mock.MagicMock()
-            volume.storageobj.blockvolume.volume.path = "/dev/testpath"
+            volume.storageobj.name = "yaaayname"
+            volume.storageobj.snapshot = None
 
             fs = get_by_name("xfs")(volume)
             fs.grow(10000, 100000)
@@ -244,7 +245,7 @@ class FileSystemTestCase(TestCase):
 
             self.assertTrue( mock_get_dbus_object().xfs_resize.called)
             self.assertEqual(mock_get_dbus_object().xfs_resize.call_count, 1)
-            self.assertEqual(mock_get_dbus_object().xfs_resize.call_args[0], ("/dev/testpath", 100000))
+            self.assertEqual(mock_get_dbus_object().xfs_resize.call_args[0], ("/media/yaaayname", 100000))
 
             self.assertFalse(mock_get_dbus_object().fs_mount.called)
 
