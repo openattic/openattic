@@ -42,6 +42,9 @@ class DrbdConnectionHandler(AbstractBlockVolumeHandler):
         primary_volume = BlockVolume.all_objects.get(id=primary_volume_id)
         return Connection.objects.install_connection(connection, self_host, other_host, is_primary, primary_volume, peer_volumepool_id)
 
+class DrbdConnectionProxy(ProxyModelHandler, DrbdConnectionHandler):
+    pass
+
 class DrbdEndpointHandler(ModelHandler):
     model = Endpoint
 
@@ -66,4 +69,4 @@ class DrbdEndpointHandler(ModelHandler):
 class DrbdEndpointProxy(ProxyModelHandler, DrbdEndpointHandler):
     pass
 
-RPCD_HANDLERS = [DrbdConnectionHandler, DrbdEndpointProxy]
+RPCD_HANDLERS = [DrbdConnectionProxy, DrbdEndpointProxy]
