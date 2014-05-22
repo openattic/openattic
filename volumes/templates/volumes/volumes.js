@@ -19,7 +19,7 @@ Ext.define('volumes__volumes_StorageObject_model', {
     'Ext.data.NodeInterface'
   ],
   fields: [
-    'id', '__unicode__', 'name', 'type', 'megs', 'status', 'usedmegs', 'percent',
+    'id', '__unicode__', 'name', 'type', 'megs', 'freemegs', 'status', 'usedmegs', 'percent',
     'fswarning', 'fscritical', 'host', 'path', 'poolname', 'ownername'
   ],
   createNode: function(record){
@@ -99,6 +99,8 @@ Ext.define('volumes__volumes_StorageObject_model', {
       rootNode.set("path", record.raw.blockvolume.path);
       rootNode.set("host", toUnicode(record.raw.blockvolume.host));
       rootNode.set("percent",  null);
+      rootNode.set("freemegs",   null);
+      rootNode.set("usedmegs",   null);
     }
     if( record.raw.filesystemvolume !== null ){
       var voltype = record.raw.filesystemvolume.volume_type;
@@ -107,6 +109,8 @@ Ext.define('volumes__volumes_StorageObject_model', {
       rootNode.set("fswarning",  record.raw.filesystemvolume.fswarning);
       rootNode.set("fscritical", record.raw.filesystemvolume.fscritical);
       rootNode.set("ownername",  toUnicode(record.raw.filesystemvolume.owner));
+      rootNode.set("freemegs",   record.raw.megs - record.raw.filesystemvolume.usedmegs);
+      rootNode.set("usedmegs",   record.raw.filesystemvolume.usedmegs);
       rootNode.set("type",       toUnicode(voltype));
       if( record.raw.filesystemvolume.usedmegs !== null )
         rootNode.set("percent",    (record.raw.filesystemvolume.usedmegs / record.raw.megs * 100).toFixed(2));
@@ -293,6 +297,19 @@ Ext.oa.getAdditSettingsWindow = function(config){
     }]
   });
 };
+
+
+function renderMegs(val){
+  if( val === null ){
+    return '';
+  }
+  if( val >= 1000 ){
+    return Ext.String.format("{0} GB", (val / 1000).toFixed(2));
+  }
+  else{
+    return Ext.String.format("{0} MB", val);
+  }
+}
 
 var required = '<span style="color:red;font-weight:bold" data-qtip="Required">*</span>';
 Ext.define("Ext.oa.volumes__volumes_add_volume_form", {
@@ -1069,17 +1086,21 @@ Ext.define('Ext.oa.volumes__Volume_Panel', {
         dataIndex: "megs",
         stateId: "volumes__volumes_panel_state__megs",
         align: "right",
-        renderer: function(val){
-          if( val === null ){
-            return '';
-          }
-          if( val >= 1000 ){
-            return Ext.String.format("{0} GB", (val / 1000).toFixed(2));
-          }
-          else{
-            return Ext.String.format("{0} MB", val);
-          }
-        },
+        renderer: renderMegs,
+        flex: 1
+      },{
+        header: gettext('Free'),
+        dataIndex: "freemegs",
+        stateId: "volumes__volumes_panel_state__freemegs",
+        align: "right",
+        renderer: renderMegs,
+        flex: 1
+      },{
+        header: gettext('Used'),
+        dataIndex: "usedmegs",
+        stateId: "volumes__volumes_panel_state__usedmegs",
+        align: "right",
+        renderer: renderMegs,
         flex: 1
       },{
         header: gettext('Used%'),
