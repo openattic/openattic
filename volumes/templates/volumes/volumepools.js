@@ -24,7 +24,7 @@ function renderMegs(val){
   // (either because val <= 1024 or because we ran out of units) and
   // count how many times we could do so.
   var units = ["MiB", "GiB", "TiB", "PiB", "EiB", "ZiB", "YiB"];
-  for( var i = 0; i < units.length - 1 && val >= 1024; i++, val /= 1024 );
+  for( var i = 0; i < units.length - 1 && val >= 1024; i++, val /= 1024.0 );
   return Ext.String.format("{0} {1}", val.toFixed(2), units[i]);
 }
 
