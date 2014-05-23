@@ -194,6 +194,14 @@ class VerifyingRequestHandler(SecureXMLRPCRequestHandler):
         return self.server.instance._dispatch( method, params, self.current_user )
 
 
+class ProfilingRequestHandler(VerifyingRequestHandler):
+    def _dispatch(self, method, params):
+        import cProfile
+        from time import time
+        prof = cProfile.Profile()
+        prof.runcall(VerifyingRequestHandler._dispatch, self, method, params)
+        prof.dump_stats("/tmp/profile_data/%s.profile" % time())
+
 
 class RPCd(object):
     def __init__(self, rpcdplugins):
@@ -348,6 +356,10 @@ class Command( BaseCommand ):
             help="SSL certificate key file.",
             default=None
             ),
+        make_option(       "--profile",
+            help="Store profile data in /tmp/profile_data.",
+            default=False, action="store_true"
+            ),
     )
 
     def handle(self, **options):
@@ -391,15 +403,20 @@ class Command( BaseCommand ):
                 rpcdplugins.append(module)
         logging.info( "Loaded modules: %s", ', '.join([module.__name__ for module in rpcdplugins]) )
 
+        if options["profile"]:
+            requestHandler = ProfilingRequestHandler
+        else:
+            requestHandler = VerifyingRequestHandler
+
         if options["certfile"] and options["keyfile"]:
             logging.info( "Initializing SecureXMLRPCServer (using SSL)" )
             serv = SecureXMLRPCServer((options['bindaddr'], options['bindport']),
                 certFile=options["certfile"], keyFile=options["keyfile"],
-                allow_none=True, requestHandler=VerifyingRequestHandler)
+                allow_none=True, requestHandler=requestHandler)
         else:
             logging.info( "Initializing SimpleXMLRPCServer (not using SSL)" )
             serv = ThreadingXMLRPCServer((options['bindaddr'], options['bindport']),
-                allow_none=True, requestHandler=VerifyingRequestHandler)
+                allow_none=True, requestHandler=requestHandler)
         serv.register_introspection_functions()
         serv.register_instance(RPCd(rpcdplugins), allow_dotted_names=True)
         serv.serve_forever()

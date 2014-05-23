@@ -91,6 +91,27 @@ case $1 in
 		fi
 		;;
 	
+	profile)
+		$0 stop
+		cd $OADIR
+		shift
+		mkdir -p /tmp/profile_data
+		chown -R ${RPCD_CHUID%%:*} /tmp/profile_data
+		echo "Starting openattic_rpcd in profiling mode..."
+		su ${RPCD_CHUID%%:*} -- -c "$PYTHON $RPCD_OPTIONS -l $RPCD_LOGFILE -L $RPCD_LOGLEVEL --profile" || true
+		if [ -z "`which pyprof2calltree`" ]; then
+			easy_install pyprof2calltree
+		fi
+		echo "Converting files for kcachegrind..."
+		for profile in /tmp/profile_data/*.profile; do
+			converted="${profile%%.*}.kcachegrind"
+			if [ ! -e "$converted" ]; then
+				echo "$profile"
+				pyprof2calltree -i "$profile" -o "$converted"
+			fi
+		done
+		;;
+	
 	stop)
 		log_daemon_msg "Stopping" "openATTIC rpcd"
 		env - PATH="/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin" \
