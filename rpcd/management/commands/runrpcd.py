@@ -50,7 +50,7 @@ class ThreadingXMLRPCServer(ThreadingMixIn, SimpleXMLRPCServer):
         # would result in lots of "<IDLE> in transaction" postgresql processes hogging
         # the max_connection_limit and thereby breaking pretty much everything else.
         close_connection()
-        return super(ThreadingXMLRPCServer, self).shutdown_request(request)
+        return SimpleXMLRPCServer.shutdown_request(self, request)
 
 class SecureXMLRPCServer(ThreadingHTTPServer, SimpleXMLRPCDispatcher):
     """ Secure XML-RPC server.

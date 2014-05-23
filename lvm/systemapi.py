@@ -14,6 +14,8 @@
  *  GNU General Public License for more details.
 """
 
+import logging
+
 from time import time
 from systemd import invoke, logged, BasePlugin, method, deferredmethod
 
@@ -108,6 +110,7 @@ class SystemD(BasePlugin):
     @method(in_signature="", out_signature="a{sa{ss}}")
     def pvs(self):
         if( time() - self.pvs_time > lvm_settings.SYSD_INFO_TTL ):
+            logging.warn("renewing pvs cache")
             self.pvs_time = time()
             self.pvs_cache = lvm_pvs()
         return self.pvs_cache
@@ -115,6 +118,7 @@ class SystemD(BasePlugin):
     @method(in_signature="", out_signature="a{sa{ss}}")
     def vgs(self):
         if( time() - self.vgs_time > lvm_settings.SYSD_INFO_TTL ):
+            logging.warn("renewing vgs cache")
             self.vgs_time = time()
             self.vgs_cache = lvm_vgs()
         return self.vgs_cache
@@ -122,6 +126,7 @@ class SystemD(BasePlugin):
     @method(in_signature="", out_signature="a{sa{ss}}")
     def lvs(self):
         if( time() - self.lvs_time > lvm_settings.SYSD_INFO_TTL ):
+            logging.warn("renewing lvs cache")
             self.lvs_time = time()
             self.lvs_cache = lvm_lvs()
         return self.lvs_cache
