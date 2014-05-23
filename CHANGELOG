@@ -19,6 +19,8 @@ Version 1.1.2, ?? ????? 2014:
   oaconfig install.
 * Added basic quota support for ZFS volumes.
 * Fixed XFS resize.
+* Fixed date conversion in the Nagios module.
+* Fixed incorrect service arguments for check_disk check command.
 
 Version 1.1.1, 01 April 2014:
 ---------------------------------
