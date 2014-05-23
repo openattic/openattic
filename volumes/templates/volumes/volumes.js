@@ -718,117 +718,47 @@ Ext.define('Ext.oa.volumes__Volume_Panel', {
                   id: "clone",
                   bodyStyle: 'padding:5px ;',
                   defaults: {
-                    xtype: "textfield",
                     anchor: '-20',
                     defaults: {
                       anchor: "0px"
                     }
                   },
                   items:[{
-                    xtype: 'textfield',
-                    readOnly: false,
-                    name: 'name',
-                    id: 'new_clone_volumename',
-                    fieldLabel: gettext('Name'),
-                    allowBlank: false,
-                    afterLabelTextTpl: required
-                  },{
-                    xtype:          'combo',
-                    allowBlank:     false,
-                    fieldLabel:     gettext('Volume Pool'),
-                    name:           'pool',
-                    typeAhead:      true,
-                    triggerAction:  'all',
-                    deferEmptyText: false,
-                    emptyText:      gettext('Select...'),
-                    selectOnFocus:  true,
-                    displayField:   "name",
-                    valueField:     "id",
-                    afterLabelTextTpl: required,
-                    store: (function(){
-                      Ext.define('lvm_logicalvolume_volumegroup_store', {
-                        extend: 'Ext.data.Model',
-                        fields: ['id', 'name']
-                      });
-                      return Ext.create('Ext.data.Store', {
-                        model: "lvm_logicalvolume_volumegroup_store",
-                        proxy: {
-                          type: 'direct',
-                          directFn: volumes__StorageObject.filter,
-                          extraParams: {
-                            kwds: {volumepool__isnull: false}
-                          },
-                          paramOrder: ["kwds"]
-                        }
-                      });
-                    }())
-                  },{
-                    xtype       : 'radio',
-                    id          : 'use_selected',
-                    name        : 'use_selected',
-                    checked   : true,
-                    boxLabel  : gettext('Use selected Volume/Snapshot'),
-                    listeners : {
-                      change: function(self, newValue, oldValue, eOpts){
-                        if(newValue)
-                        {
-                          Ext.getCmp('use_other').setValue(false);
-                          Ext.getCmp('snapshot').disable();
-                        }
-                      }
-                    }
-                  },{
-                    xtype       : 'radio',
-                    id          : 'use_other',
-                    name        : 'use_other',
-                    boxLabel  : gettext('Use an other Snapshot'),
-                    listeners : {
-                      change: function(self, newValue, oldValue, eOpts){
-                        if(newValue)
-                        {
-                          Ext.getCmp('snapshot').enable();
-                          Ext.getCmp('use_selected').setValue(false);
-                        }
-                      }
-                    }
-                  },{
-                    xtype:      'combo',
-                    allowBlank: false,
-                    fieldLabel: gettext('Snapshot'),
-                    name: 'snapshot',
-                    id: 'snapshot',
-                    typeAhead:     true,
-                    triggerAction: 'all',
-                    deferEmptyText: false,
-                    emptyText:     gettext('Select...'),
-                    selectOnFocus: true,
-                    disabled: true,
-                    displayField: "name",
-                    valueField: "id",
-                    afterLabelTextTpl: required,
-                    store: (function(){
-                      Ext.define('volumes_storageobject_snapshots', {
-                        extend: 'Ext.data.Model',
-                        fields: ['id', 'name']
-                      });
-                      return Ext.create('Ext.data.Store', {
-                        model: "volumes_storageobject_snapshots",
-                        proxy: {
-                          type: 'direct',
-                          directFn: volumes__StorageObject.filter,
-                          extraParams: {
-                            kwds: {
-                              "snapshot": {
-                                "app": "volumes",
-                                "obj": "StorageObject",
-                                "id" : sel.raw.id
-                              }
-                            }
-                          },
-                          paramOrder: ["kwds"]
-                        }
-                      });
-                    }())
+                    xtype:      "blockvolumefield",
+                    fieldLabel: gettext("Source"),
+                    name:       "source",
+                    value:      sel.data.id
+                  }, {
+                    xtype: "fieldcontainer",
+                    layout: {
+                      type: "hbox",
+                      align: "stretch"
+                    },
+                    items: [{
+                      xtype: "radiofield",
+                      boxLabel: gettext("Existing Target volume:"),
+                      name:  "use_existing",
+                      value: "yes"
+                    }, {
+                      xtype: "blockvolumefield",
+                      name:  "existing_target",
+                      fieldLabel: ""
+                    }]
+                  }, {
+                    xtype: "fieldcontainer",
+                    layout: {
+                      type:  "hbox",
+                      align: "stretch"
+                    },
+                    items: [{
+                      xtype: "radiofield",
+                      boxLabel: gettext("New Target volume:"),
+                      name:  "use_existing",
+                      value: "no"
+                    }, {
+                      xtype: "textfield",
+                      name:  "new_target_name"
+                    }]
                   }],
                   buttons: [{
                     text: gettext('Create'),
@@ -838,24 +768,18 @@ Ext.define('Ext.oa.volumes__Volume_Panel', {
                         var form = self.ownerCt.ownerCt.getForm();
                         if(form.isValid()){
                           var input_vals = form.getValues();
-                          if(input_vals.snapshot == null){
-                            var storageobjectid = sel.data.id
+                          console.log(input_vals);
+                          var target_id = 0;
+                          var options   = {};
+                          if( input_vals.use_existing === "on" ){
+                            target_id = input_vals.existing_target;
                           }
                           else{
-                           var storageobjectid = input_vals.snapshot
+                            options["name"] = input_vals.new_target_name;
                           }
-                          volumes__StorageObject.create_volume(input_vals.pool, input_vals.name, sel.data.megs,
-                          {
-                            filesystem: ""
-                          }, function(result, response){
-                            if(response.type !== "exception"){
-                              volumes__StorageObject.clone(storageobjectid, result.id, {});
-                              self.ownerCt.ownerCt.ownerCt.close();
-                            }
-                            else{
-                              self.ownerCt.ownerCt.getEl().unmask();
-                            }
-                          });
+//                           volumes__StorageObject.clone(storageobjectid, target_id, options, function(){
+//                             self.ownerCt.ownerCt.ownerCt.close();
+//                           });
                         }
                       }
                     }
