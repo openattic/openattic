@@ -410,6 +410,12 @@ class BlockVolume(AbstractVolume):
         get_dbus_object("/volumes").dd(self.volume.path, target_storageobject.blockvolume.volume.path)
 
     def _clone(self, target_storageobject, options):
+        if target_storageobject is None:
+            if self.storageobj.source_pool is None:
+                raise NotImplementedError("This volume can only be cloned into existing targets.")
+            target_volume = self.storageobj.source_pool.volumepool._create_volume(options["name"], self.storageobj.megs, {})
+            target_storageobject = target_volume.storageobj
+
         src_fsv = self.storageobj.filesystemvolume_or_none
         tgt_fsv = target_storageobject.filesystemvolume_or_none
         mount = False
@@ -437,10 +443,12 @@ class BlockVolume(AbstractVolume):
                 src_fsv.fs.mount()
                 tgt_fsv.fs.mount()
 
+        return target_storageobject
+
     def clone(self, target_storageobject, options):
         """ Clone this volume into the given target. """
         with Transaction():
-            self._clone(target_storageobject, options)
+            return self._clone(target_storageobject, options)
 
 
 if HAVE_NAGIOS:

@@ -408,7 +408,10 @@ class StorageObjectHandler(ModelHandler):
         return self._idobj(StorageObject.objects.get(id=id).create_snapshot(name, megs, options))
 
     def clone(self, id, target_id, options):
-        StorageObject.objects.get(id=id).clone(StorageObject.objects.get(id=target_id), options)
+        target = None
+        if int(target_id):
+            target = StorageObject.objects.get(id=int(target_id))
+        return self._idobj(StorageObject.objects.get(id=id).clone(target, options))
 
 class StorageObjectProxy(ProxyModelHandler, StorageObjectHandler):
     def _find_target_host_from_model_instance(self, model):
@@ -450,7 +453,12 @@ class StorageObjectProxy(ProxyModelHandler, StorageObjectHandler):
         return self._call_singlepeer_method("create_snapshot", id, name, megs, options)
 
     def clone(self, id, target_id, options):
-        """ Clone the given volume into the target. """
+        """ Clone the given volume into the target.
+
+            The target need not exist: If you pass 0 as the target_id and
+            the `name' option in the options dict, a new volume will be
+            created if possible before cloning takes place.
+        """
         return self._call_singlepeer_method("clone", id, target_id, options)
 
 
