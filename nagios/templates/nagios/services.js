@@ -272,7 +272,7 @@ Ext.define('Ext.oa.Nagios__Service_Panel', {
     var nagiosGrid = this;
     var renderDate = function(val, x, store){
       if(!val) return gettext("unknown");
-      var date = new Date(val * 10000);
+      var date = new Date(val * 1000);
       return Ext.Date.format(date, get_format_ext("SHORT_DATETIME_FORMAT"));
     };
     var stateicons = {
