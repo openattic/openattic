@@ -15,6 +15,7 @@
 """
 
 import os
+import os.path
 import traceback
 import logging
 import socket
@@ -35,6 +36,7 @@ from django.conf import settings
 
 from systemd.helpers   import makeloggedfunc
 from systemd.plugins   import deferredmethod
+from systemd.lockutils import acquire_lock, release_lock, Lockfile
 
 class SystemD(dbus.service.Object):
     """ Implements the main DBus section (/). """
@@ -45,6 +47,7 @@ class SystemD(dbus.service.Object):
         self.busname = dbus.service.BusName(settings.DBUS_IFACE_SYSTEMD, self.bus)
 
         self.jobs = {}
+        self.locks = {}
         self.procs = []
 
         self.detected_modules = detected_modules
@@ -89,14 +92,18 @@ class SystemD(dbus.service.Object):
             logging.info( "-> %s::%s(%s)", scope.dbus_path, func.__name__,
                 ', '.join([repr(arg) for arg in args]))
         logging.info( "End of queue dump." )
-        for func, scope, args, kwargs in self.jobs[sender]:
-            logging.info( "Executing deferred call to %s::%s(%s)", scope.dbus_path, func.__name__,
-                ', '.join([repr(arg) for arg in args]))
-            try:
-                func(scope, *args, **kwargs)
-            except:
-                logging.error("Received error:\n" + traceback.format_exc())
-                return
+        # one of the job's functions may be acquire_locks, so make sure they get released
+        try:
+            for func, scope, args, kwargs in self.jobs[sender]:
+                logging.info( "Executing deferred call to %s::%s(%s)", scope.dbus_path, func.__name__,
+                    ', '.join([repr(arg) for arg in args]))
+                try:
+                    func(scope, *args, **kwargs)
+                except:
+                    logging.error("Received error:\n" + traceback.format_exc())
+                    return
+        finally:
+            self._release_acquired_locks(sender)
 
     @dbus.service.method(settings.DBUS_IFACE_SYSTEMD, in_signature="", out_signature="", sender_keyword="sender")
     def run_queue(self, sender):
@@ -131,6 +138,7 @@ class SystemD(dbus.service.Object):
 
     @dbus.service.method(settings.DBUS_IFACE_SYSTEMD, in_signature="", out_signature="", sender_keyword="sender")
     def discard_queue(self, sender):
+        self._release_acquired_locks(sender)
         if sender not in self.jobs:
             return
         del self.jobs[sender]
@@ -150,6 +158,24 @@ class SystemD(dbus.service.Object):
         for proc in deadprocs:
             self.procs.remove(proc)
 
+    @deferredmethod(in_signature="as")
+    def acquire_locks(self, volumes, sender):
+        if sender in self.locks:
+            raise SystemError("cannot acquire_locks more than once per Transaction!")
+        self.locks[sender] = []
+        with Lockfile("/var/lock/openattic/volumes"):
+            for volume in volumes:
+                logging.info("Locking volume '%s'." % volume)
+                self.locks[sender].append( acquire_lock(os.path.join("/var/lock/openattic/volume/", volume)) )
+
+    def _release_acquired_locks(self, sender):
+        if sender not in self.locks:
+            logging.info("Releasing acquired locks: None acquired.")
+            return
+        for lock in self.locks[sender]:
+            logging.info("Releasing acquired lock for volume '%s'." % volume)
+            release_lock(lock)
+        del self.locks[sender]
 
 def getloglevel(levelstr):
     numeric_level = getattr(logging, levelstr.upper(), None)
