@@ -15,6 +15,7 @@
 """
 
 import os
+import pwd
 import errno
 import time
 import stat
@@ -85,6 +86,10 @@ def acquire_lock(lockfile, max_wait=600):
     f = os.fdopen(fd, "w")
     f.write("%d\n" % os.getpid())
     f.flush()
+
+    # make sure the openattic user can access the lockfile
+    openattic = pwd.getpwnam("openattic")
+    os.chown(lockfile, openattic.pw_uid, openattic.pw_gid)
 
     return (lockfile, f)
 
