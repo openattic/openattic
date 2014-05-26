@@ -15,6 +15,7 @@
 """
 
 import os
+import os.path
 import pwd
 import errno
 import time
@@ -34,6 +35,11 @@ def acquire_lock(lockfile, max_wait=600):
     """
 
     # http://www.velocityreviews.com/forums/t359733-how-to-lock-files-the-easiest-best-way.html
+
+    if not os.path.exists("/var/lock/openattic"):
+        os.mkdir("/var/lock/openattic", 0755)
+        openattic = pwd.getpwnam("openattic")
+        os.chown("/var/lock/openattic", openattic.pw_uid, openattic.pw_gid)
 
     while True:
         try:
