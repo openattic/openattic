@@ -532,6 +532,8 @@ class GenericDisk(BlockVolume):
 
     @property
     def status(self):
+        if self.storageobj.is_locked:
+            return "locked"
         return "unknown"
 
     @property
@@ -640,6 +642,8 @@ class FileSystemProvider(FileSystemVolume):
 
     @property
     def status(self):
+        if self.storageobj.is_locked:
+            return "locked"
         return {True: "online", False: "offline"}[self.mounted]
 
     @property

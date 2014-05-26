@@ -131,6 +131,8 @@ class VolumeGroup(VolumePool):
 
     @property
     def status(self):
+        if self.storageobj.is_locked:
+            return "locked"
         attr = self.lvm_info["LVM2_VG_ATTR"].lower()
         stat = "failed"
         if attr[0] == "w": stat = "online"
@@ -259,6 +261,8 @@ class LogicalVolume(BlockVolume):
 
     @property
     def status(self):
+        if self.storageobj.is_locked:
+            return "locked"
         try:
             attr = self.lvm_info["LVM2_LV_ATTR"].lower()
         except KeyError:

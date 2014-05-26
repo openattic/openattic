@@ -36,6 +36,8 @@ class Zpool(VolumePool):
 
     @property
     def status(self):
+        if self.storageobj.is_locked:
+            return "locked"
         return self.fs.status
 
     @property
@@ -119,6 +121,8 @@ class Zfs(FileSystemVolume):
 
     @property
     def status(self):
+        if self.storageobj.is_locked:
+            return "locked"
         return self.zpool.status
 
     @property
@@ -191,6 +195,8 @@ class ZVol(BlockVolume):
 
     @property
     def status(self):
+        if self.storageobj.is_locked:
+            return "locked"
         return self.zpool.status
 
     @property

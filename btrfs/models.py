@@ -39,6 +39,8 @@ class Btrfs(VolumePool):
 
     @property
     def status(self):
+        if self.storageobj.is_locked:
+            return "locked"
         return "online"
 
     @property
@@ -102,6 +104,8 @@ class BtrfsSubvolume(FileSystemVolume):
 
     @property
     def status(self):
+        if self.storageobj.is_locked:
+            return "locked"
         return self.btrfs.status
 
     @property

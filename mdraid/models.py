@@ -37,6 +37,8 @@ class Array(BlockVolume):
 
     @property
     def status(self):
+        if self.storageobj.is_locked:
+            return "locked"
         with open("/proc/mdstat") as fd:
             for line in fd:
                 if line.startswith(self.storageobj.name):

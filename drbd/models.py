@@ -150,6 +150,8 @@ class Connection(BlockVolume):
 
     @property
     def status(self):
+        if self.storageobj.is_locked:
+            return "locked"
         try:
             return dbus_to_python(self.drbd.get_cstate(self.name, False))
         except dbus.DBusException:
