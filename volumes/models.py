@@ -27,6 +27,7 @@ from django.contrib.auth.models  import User
 from django.core.exceptions      import ValidationError
 
 from systemd import get_dbus_object, Transaction
+from systemd.lockutils import Lockfile, AlreadyLocked
 from ifconfig.models import Host, HostDependentManager, getHostDependentManagerClass
 from volumes import blockdevices, capabilities, filesystems
 from volumes import signals as volume_signals
@@ -75,6 +76,20 @@ class StorageObject(models.Model):
         models.Model.full_clean(self)
         if not self.uuid:
             self.uuid = str(uuid.uuid4())
+
+    def lock(self):
+        if not self.uuid:
+            self.uuid = str(uuid.uuid4())
+        get_dbus_object("/").acquire_lock(self.uuid)
+
+    @property
+    def is_locked(self):
+        from systemd.lockutils import Lockfile
+        try:
+            with Lockfile(os.path.join("/var/lock/openattic/volume/", self.uuid), 0.1):
+                return False
+        except AlreadyLocked:
+            return True
 
     @property
     def capabilities(self):
