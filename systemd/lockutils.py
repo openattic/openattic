@@ -38,8 +38,9 @@ def acquire_lock(lockfile, max_wait=600):
 
     if not os.path.exists("/var/lock/openattic"):
         os.mkdir("/var/lock/openattic", 0755)
-        openattic = pwd.getpwnam("openattic")
-        os.chown("/var/lock/openattic", openattic.pw_uid, openattic.pw_gid)
+        if os.getuid() == 0:
+            openattic = pwd.getpwnam("openattic")
+            os.chown("/var/lock/openattic", openattic.pw_uid, openattic.pw_gid)
 
     while True:
         try:
@@ -94,8 +95,9 @@ def acquire_lock(lockfile, max_wait=600):
     f.flush()
 
     # make sure the openattic user can access the lockfile
-    openattic = pwd.getpwnam("openattic")
-    os.chown(lockfile, openattic.pw_uid, openattic.pw_gid)
+    if os.getuid() == 0:
+        openattic = pwd.getpwnam("openattic")
+        os.chown(lockfile, openattic.pw_uid, openattic.pw_gid)
 
     return (lockfile, f)
 
