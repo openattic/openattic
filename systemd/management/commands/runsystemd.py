@@ -47,7 +47,8 @@ class SystemD(dbus.service.Object):
         self.busname = dbus.service.BusName(settings.DBUS_IFACE_SYSTEMD, self.bus)
 
         self.jobs = {}
-        self.locks = {}
+        self.wantlocks = {}
+        self.havelocks = {}
         self.procs = []
 
         self.detected_modules = detected_modules
@@ -92,18 +93,26 @@ class SystemD(dbus.service.Object):
             logging.info( "-> %s::%s(%s)", scope.dbus_path, func.__name__,
                 ', '.join([repr(arg) for arg in args]))
         logging.info( "End of queue dump." )
-        # one of the job's functions may be acquire_locks, so make sure they get released
         try:
+            if sender in self.wantlocks:
+                self.havelocks[sender] = []
+                with Lockfile("/var/lock/openattic/volumes"):
+                    for volume in self.wantlocks[sender]:
+                        self.havelocks[sender].append(acquire_lock(os.path.join("/var/lock/openattic/volume/", volume)))
+                        logging.info("Acquired lock for volume '%s'." % volume)
+            else:
+                logging.info("No locks were requested for this queue.")
+
             for func, scope, args, kwargs in self.jobs[sender]:
                 logging.info( "Executing deferred call to %s::%s(%s)", scope.dbus_path, func.__name__,
                     ', '.join([repr(arg) for arg in args]))
-                try:
-                    func(scope, *args, **kwargs)
-                except:
-                    logging.error("Received error:\n" + traceback.format_exc())
-                    return
+                func(scope, *args, **kwargs)
+        except:
+            logging.error("Received error:\n" + traceback.format_exc())
         finally:
             self._release_acquired_locks(sender)
+            if sender in self.wantlocks:
+                del self.wantlocks[sender]
 
     @dbus.service.method(settings.DBUS_IFACE_SYSTEMD, in_signature="", out_signature="", sender_keyword="sender")
     def run_queue(self, sender):
@@ -139,9 +148,10 @@ class SystemD(dbus.service.Object):
     @dbus.service.method(settings.DBUS_IFACE_SYSTEMD, in_signature="", out_signature="", sender_keyword="sender")
     def discard_queue(self, sender):
         self._release_acquired_locks(sender)
-        if sender not in self.jobs:
-            return
-        del self.jobs[sender]
+        if sender in self.wantlocks:
+            del self.wantlocks[sender]
+        if sender in self.jobs:
+            del self.jobs[sender]
 
     def _cleanup_procs(self, sig, frame):
         signal.signal(signal.SIGCHLD, self._cleanup_procs)
@@ -158,24 +168,22 @@ class SystemD(dbus.service.Object):
         for proc in deadprocs:
             self.procs.remove(proc)
 
-    @deferredmethod(in_signature="as")
-    def acquire_locks(self, volumes, sender):
-        if sender in self.locks:
-            raise SystemError("cannot acquire_locks more than once per Transaction!")
-        self.locks[sender] = []
-        with Lockfile("/var/lock/openattic/volumes"):
-            for volume in volumes:
-                logging.info("Locking volume '%s'." % volume)
-                self.locks[sender].append( acquire_lock(os.path.join("/var/lock/openattic/volume/", volume)) )
+    @dbus.service.method(settings.DBUS_IFACE_SYSTEMD, in_signature="s", out_signature="", sender_keyword="sender")
+    def acquire_lock(self, volume, sender):
+        if sender not in self.jobs:
+            raise SystemError("Logs can only be acquired within transactions")
+        if sender not in self.wantlocks:
+            self.wantlocks[sender] = []
+        self.wantlocks[sender].append( volume )
 
     def _release_acquired_locks(self, sender):
-        if sender not in self.locks:
+        if sender not in self.havelocks:
             logging.info("Releasing acquired locks: None acquired.")
             return
-        for lock in self.locks[sender]:
-            logging.info("Releasing acquired lock for volume '%s'." % volume)
+        for lock in self.havelocks[sender]:
+            logging.info("Releasing acquired lock '%s'." % lock[0])
             release_lock(lock)
-        del self.locks[sender]
+        del self.havelocks[sender]
 
 def getloglevel(levelstr):
     numeric_level = getattr(logging, levelstr.upper(), None)
