@@ -133,11 +133,13 @@ class StorageObject(models.Model):
 
     def delete(self):
         """ Delete this StorageObject and any object associated with it. """
-        for obj in (self.filesystemvolume_or_none, self.volumepool_or_none, self.blockvolume_or_none):
-            if obj is not None:
-                obj.delete()
+        with Transaction(background=False):
+            self.lock()
+            for obj in (self.filesystemvolume_or_none, self.volumepool_or_none, self.blockvolume_or_none):
+                if obj is not None:
+                    obj.delete()
 
-        return models.Model.delete(self)
+            return models.Model.delete(self)
 
     def resize(self, megs):
         """ Resize everything to the given size. """
@@ -153,6 +155,7 @@ class StorageObject(models.Model):
             objs.reverse()
 
         with Transaction():
+            self.lock()
             for obj in objs:
                 if obj is None:
                     continue
@@ -257,6 +260,7 @@ class VolumePool(models.Model):
         storageobj = StorageObject(name=name, megs=megs, source_pool=self)
         storageobj.full_clean()
         storageobj.save()
+        storageobj.lock()
 
         try:
             vol = self._create_volume_for_storageobject(storageobj, options)
@@ -332,6 +336,8 @@ class AbstractVolume(models.Model):
         storageobj = StorageObject(snapshot=self.storageobj, name=name, megs=megs, source_pool=sourcepool)
         storageobj.full_clean()
         storageobj.save()
+        storageobj.lock()
+        self.storageobj.lock()
 
         try:
             vol = self._create_snapshot_for_storageobject(storageobj, options)
@@ -425,11 +431,16 @@ class BlockVolume(AbstractVolume):
         get_dbus_object("/volumes").dd(self.volume.path, target_storageobject.blockvolume.volume.path)
 
     def _clone(self, target_storageobject, options):
+        self.storageobj.lock()
+
         if target_storageobject is None:
             if self.storageobj.source_pool is None:
                 raise NotImplementedError("This volume can only be cloned into existing targets.")
             target_volume = self.storageobj.source_pool.volumepool._create_volume(options["name"], self.storageobj.megs, {})
             target_storageobject = target_volume.storageobj
+            # target_storageobject will be locked by _create_volume
+        else:
+            target_storageobject.lock()
 
         src_fsv = self.storageobj.filesystemvolume_or_none
         tgt_fsv = target_storageobject.filesystemvolume_or_none
@@ -563,12 +574,16 @@ class FileSystemVolume(AbstractVolume):
     def mount(self):
         # TODO: this check should probably be moved to the systemapi.
         if not self.volume.fs.mounted:
-            self.volume.fs.mount()
+            with Transaction(background=False):
+                self.storageobj.lock()
+                self.volume.fs.mount()
 
     def unmount(self):
         # TODO: this check should probably be moved to the systemapi.
         if self.volume.fs.mounted:
-            self.volume.fs.unmount()
+            with Transaction(background=False):
+                self.storageobj.lock()
+                self.volume.fs.unmount()
 
 
 if HAVE_NAGIOS:
