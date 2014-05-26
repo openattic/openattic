@@ -67,23 +67,27 @@ def acquire_lock(lockfile, max_wait=600):
                 # gone now. Just try again
                 continue
 
+        # If we reach this line, we have a valid file descriptor in `fd`.
+
         try:
             fcntl.flock(fd, fcntl.LOCK_EX | fcntl.LOCK_NB)
             # we flock()ed it, so we're the owner.
             break
 
         except IOError, e:
-            # we didn't create the lockfile and it's still there, check its age
-            now = int(time.time())
-            if now - s[stat.ST_MTIME] > max_wait:
-                f = os.fdopen(fd, "r")
-                try:
+            # we didn't flock() the lockfile and it's still there, check its age
+            # we need to fdopen() the lockfile outside of the if: clause so it gets
+            # closed properly in all the cases. Otherwise we would leak file descriptors.
+            f = os.fdopen(fd, "r")
+            try:
+                now = int(time.time())
+                if now - s[stat.ST_MTIME] > max_wait:
                     pid = f.readline()
                     logging.error("%s has been locked for more than "
                             "%d seconds (PID %s)" % (lockfile, max_wait, pid))
                     raise AlreadyLocked("timeout waiting for lockfile '%s'" % lockfile)
-                finally:
-                    f.close()
+            finally:
+                f.close()
 
             # it has not been locked for too long, wait a while and retry
             time.sleep(1)
