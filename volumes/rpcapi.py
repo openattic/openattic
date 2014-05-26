@@ -413,6 +413,19 @@ class StorageObjectHandler(ModelHandler):
             target = StorageObject.objects.get(id=int(target_id))
         return self._idobj(StorageObject.objects.get(id=id).clone(target, options))
 
+    def wait(self, id, max_wait):
+        """ Wait until the StorageObject's lock has been released.
+
+            If the StorageObject in question is not currently locked,
+            wait() will return True instantly.
+
+            If max_wait is 0, wait() will return instantly.
+
+            If the lock has not been released during the given
+            time period, wait() will return False; True otherwise.
+        """
+        return StorageObject.objects.get(id=id).wait(int(max_wait))
+
 class StorageObjectProxy(ProxyModelHandler, StorageObjectHandler):
     def _find_target_host_from_model_instance(self, model):
         if model.host in (None, Host.objects.get_current()):
