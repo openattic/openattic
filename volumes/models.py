@@ -77,19 +77,31 @@ class StorageObject(models.Model):
         if not self.uuid:
             self.uuid = str(uuid.uuid4())
 
+    @property
+    def lockfile(self):
+        return "/var/lock/openattic/volume-%s" % self.uuid
+
     def lock(self):
         if not self.uuid:
             self.uuid = str(uuid.uuid4())
-        get_dbus_object("/").acquire_lock(self.uuid)
+        get_dbus_object("/").acquire_lock(self.lockfile)
 
     @property
     def is_locked(self):
         from systemd.lockutils import Lockfile
         try:
-            with Lockfile(os.path.join("/var/lock/openattic/volume/", self.uuid), 0.1):
+            with Lockfile(self.lockfile, 0):
                 return False
         except AlreadyLocked:
             return True
+
+    def wait(self, max_wait=600):
+        from systemd.lockutils import Lockfile
+        try:
+            with Lockfile(self.lockfile, max_wait):
+                return True
+        except AlreadyLocked:
+            return False
 
     @property
     def capabilities(self):
