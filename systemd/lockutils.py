@@ -37,8 +37,9 @@ def acquire_lock(lockfile, max_wait=600):
     while True:
         try:
             fd = os.open(lockfile, os.O_RDWR | os.O_CREAT | os.O_EXCL)
-            # we created the lockfile, so we're the owner
+            # we created the lockfile, so make sure it's ours.
             fcntl.flock(fd, fcntl.LOCK_EX | fcntl.LOCK_NB)
+            # we flock()ed it, so we're the owner.
             break
 
         except OSError, e:
@@ -85,6 +86,11 @@ def acquire_lock(lockfile, max_wait=600):
 
             # it has not been locked for too long, wait a while and retry
             time.sleep(1)
+
+        except IOError, e:
+            # we created the file, but another process flock()ed it before we could do so.
+            # we're gonna have to wait until they're done and try again.
+            continue
 
     # if we get here. we have the lockfile. Convert the os.open file
     # descriptor into a Python file object and record our PID in it
