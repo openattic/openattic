@@ -96,10 +96,10 @@ class SystemD(dbus.service.Object):
         try:
             if sender in self.wantlocks:
                 self.havelocks[sender] = []
-                with Lockfile("/var/lock/openattic/volumes"):
-                    for volume in self.wantlocks[sender]:
-                        self.havelocks[sender].append(acquire_lock(os.path.join("/var/lock/openattic/volume/", volume)))
-                        logging.info("Acquired lock for volume '%s'." % volume)
+                with Lockfile("/var/lock/openattic/acquire_lock"):
+                    for lockfile in self.wantlocks[sender]:
+                        self.havelocks[sender].append(acquire_lock(lockfile))
+                        logging.info("Acquired lock '%s'." % lockfile)
             else:
                 logging.info("No locks were requested for this queue.")
 
@@ -169,12 +169,12 @@ class SystemD(dbus.service.Object):
             self.procs.remove(proc)
 
     @dbus.service.method(settings.DBUS_IFACE_SYSTEMD, in_signature="s", out_signature="", sender_keyword="sender")
-    def acquire_lock(self, volume, sender):
+    def acquire_lock(self, lockfile, sender):
         if sender not in self.jobs:
             raise SystemError("Logs can only be acquired within transactions")
         if sender not in self.wantlocks:
             self.wantlocks[sender] = []
-        self.wantlocks[sender].append( volume )
+        self.wantlocks[sender].append( lockfile )
 
     def _release_acquired_locks(self, sender):
         if sender not in self.havelocks:
