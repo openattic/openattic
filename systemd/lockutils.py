@@ -36,11 +36,9 @@ def acquire_lock(lockfile, max_wait=600):
 
     while True:
         try:
+            # try to create the lockfile
             fd = os.open(lockfile, os.O_RDWR | os.O_CREAT | os.O_EXCL)
-            # we created the lockfile, so make sure it's ours.
-            fcntl.flock(fd, fcntl.LOCK_EX | fcntl.LOCK_NB)
-            # we flock()ed it, so we're the owner.
-            break
+            s  = os.stat(lockfile)
 
         except OSError, e:
             if e.errno != errno.EEXIST:
@@ -49,15 +47,9 @@ def acquire_lock(lockfile, max_wait=600):
 
             try:
                 # the lock file exists.
-                # * try to stat it to get its age and read its contents to report the owner PID.
-                # * try to flock it to see if the process that created it is still around.
+                # try to stat it to get its age and read its contents to report the owner PID.
                 s  = os.stat(lockfile)
                 fd = os.open(lockfile, os.O_RDWR)
-                fcntl.flock(fd, fcntl.LOCK_EX | fcntl.LOCK_NB)
-            except IOError, e:
-                # flock failed, so the process is indeed still around. check the
-                # timeout and retry.
-                pass
             except OSError, e:
                 if e.errno != errno.ENOENT:
                     logging.error("%s exists but stat() failed: %s" %
@@ -66,12 +58,13 @@ def acquire_lock(lockfile, max_wait=600):
                 # we didn't create the lockfile, so it did exist, but it's
                 # gone now. Just try again
                 continue
-            else:
-                # we didn't create the lockfile, but flock() worked, so the
-                # process that DID create it died in the meantime.
-                # this means we have the lock now.
-                break
 
+        try:
+            fcntl.flock(fd, fcntl.LOCK_EX | fcntl.LOCK_NB)
+            # we flock()ed it, so we're the owner.
+            break
+
+        except IOError, e:
             # we didn't create the lockfile and it's still there, check its age
             now = int(time.time())
             if now - s[stat.ST_MTIME] > max_wait:
@@ -86,11 +79,6 @@ def acquire_lock(lockfile, max_wait=600):
 
             # it has not been locked for too long, wait a while and retry
             time.sleep(1)
-
-        except IOError, e:
-            # we created the file, but another process flock()ed it before we could do so.
-            # we're gonna have to wait until they're done and try again.
-            continue
 
     # if we get here. we have the lockfile. Convert the os.open file
     # descriptor into a Python file object and record our PID in it
