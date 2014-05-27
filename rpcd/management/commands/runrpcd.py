@@ -202,7 +202,7 @@ class ProfilingRequestHandler(VerifyingRequestHandler):
         try:
             return prof.runcall(VerifyingRequestHandler._dispatch, self, method, params)
         finally:
-            prof.dump_stats("/tmp/profile_data/%s.profile" % time())
+            prof.dump_stats("/tmp/profile_data/%s.%s.profile" % (time(), method))
 
 
 class RPCd(object):
