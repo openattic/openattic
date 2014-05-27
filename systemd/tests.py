@@ -26,10 +26,11 @@ from systemd.lockutils import acquire_lock, release_lock, AlreadyLocked, Lockfil
 
 class LockutilsTestCase(TestCase):
 
-    def test_acquire_nonexistant_lock(self):
+    def setUp(self):
         if os.path.exists("/tmp/testlock"):
             os.unlink("/tmp/testlock")
 
+    def test_acquire_nonexistant_lock(self):
         self.assertFalse(os.path.exists("/tmp/testlock"))
 
         lock = acquire_lock("/tmp/testlock")
@@ -50,9 +51,11 @@ class LockutilsTestCase(TestCase):
         self.assertTrue(os.path.exists("/tmp/testlock"))
         self.assertIsInstance(lock, tuple)
         release_lock(lock)
-        self.assertFalse(os.path.exists("/tmp/testlock"))
+        # Existing locks are not supposed to get unlink()ed
+        self.assertTrue(os.path.exists("/tmp/testlock"))
 
     def test_acquire_lock_fails_when_acquired(self):
+        self.assertFalse(os.path.exists("/tmp/testlock"))
         lock = acquire_lock("/tmp/testlock")
 
         start = time()

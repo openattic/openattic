@@ -56,6 +56,8 @@ def acquire_lock(lockfile, max_wait=600):
             openattic = pwd.getpwnam("openattic")
             os.chown("/var/lock/openattic", openattic.pw_uid, openattic.pw_gid)
 
+    created = None
+
     while True:
         # Stage 1: Get a file descriptor.
         try:
@@ -66,10 +68,13 @@ def acquire_lock(lockfile, max_wait=600):
             # processes that own the lock would unlink() it, but there is no
             # such process or else the create would have failed.
             s  = os.stat(lockfile)
+            created = True
 
         except OSError, e:
             if e.errno != errno.EEXIST:
                 raise
+
+            created = False
 
             try:
                 # the lock file exists.
@@ -139,11 +144,11 @@ def acquire_lock(lockfile, max_wait=600):
         openattic = pwd.getpwnam("openattic")
         os.chown(lockfile, openattic.pw_uid, openattic.pw_gid)
 
-    return (lockfile, f)
+    return (lockfile, f, created)
 
 def release_lock(locktuple):
     """ Release a lock acquired by acquire_lock. """
-    lockfile, f = locktuple
+    lockfile, f, created = locktuple
     # the lock consists of a flock()ed file which we want to unlink so as not to leave
     # any stale lockfiles lying around.
     # we need to unlink the file whilst holding the lock, because otherwise another
@@ -152,7 +157,11 @@ def release_lock(locktuple):
     # If we unlink first, the flock will then point to a file descriptor that is no
     # longer available to other processes, so it doesn't matter when we get around
     # to closing the fd.
-    os.unlink(lockfile)
+    # However, we may only safely unlink the file if we created it ourselves, because
+    # otherwise we might destroy another process's lockfile that they didn't get to
+    # flock() yet.
+    if created:
+        os.unlink(lockfile)
     ##############################################
     # YOU ARE NOW LEAVING THE CRITICAL SECTION.  #
     # THANK YOU FOR VISITING.                    #
