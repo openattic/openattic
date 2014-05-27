@@ -61,10 +61,11 @@ case $1 in
 			RPCD_OPTIONS="$RPCD_OPTIONS -c $RPCD_CERTFILE -k $RPCD_KEYFILE"
 		fi
 		mklogfile "$RPCD_LOGFILE"
+		shift
 		env - PATH="/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin" \
 			start-stop-daemon --pidfile=$RPCD_PIDFILE --make-pidfile --background --oknodo --start \
 			--exec $PYTHON --chdir $OADIR --chuid $RPCD_CHUID -- \
-			$RPCD_OPTIONS -l $RPCD_LOGFILE -L $RPCD_LOGLEVEL -q
+			$RPCD_OPTIONS -l $RPCD_LOGFILE -L $RPCD_LOGLEVEL -q "$@"
 		while ! start-stop-daemon --pidfile=$RPCD_PIDFILE --test --stop --exec $PYTHON --quiet; do
 			sleep .1
 			if [ $i -ge 100 ]; then
@@ -92,23 +93,29 @@ case $1 in
 		;;
 	
 	profile)
-		$0 stop
-		cd $OADIR
-		shift
-		mkdir -p /tmp/profile_data
-		chown -R ${RPCD_CHUID%%:*} /tmp/profile_data
-		echo "Starting openattic_rpcd in profiling mode..."
-		su ${RPCD_CHUID%%:*} -- -c "$PYTHON $RPCD_OPTIONS -l $RPCD_LOGFILE -L $RPCD_LOGLEVEL --profile" || true
 		if [ -z "`which pyprof2calltree`" ]; then
-			easy_install pyprof2calltree
+			echo "This command requires pyprof2calltree. You can install it using easy_install pyprof2calltree."
+			exit 1
 		fi
+		
+		$0 stop
+		
+		mkdir -p /tmp/profile_data
+		mkdir -p /tmp/profile_kcachegrind
+		chown -R ${RPCD_CHUID%%:*} /tmp/profile_data
+		
+		$0 start --profile
+		
 		echo "Converting files for kcachegrind..."
-		for profile in /tmp/profile_data/*.profile; do
-			converted="${profile%%.*}.kcachegrind"
-			if [ ! -e "$converted" ]; then
-				echo "$profile"
-				pyprof2calltree -i "$profile" -o "$converted"
-			fi
+		cd /tmp/profile_data
+		while sleep 1; do
+			for profile in *.profile; do
+				converted="/tmp/profile_kcachegrind/$profile"
+				if [ ! -e "$converted" ]; then
+					echo "$profile"
+					pyprof2calltree -i "$profile" -o "$converted"
+				fi
+			done
 		done
 		;;
 	
