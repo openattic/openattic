@@ -199,8 +199,10 @@ class ProfilingRequestHandler(VerifyingRequestHandler):
         import cProfile
         from time import time
         prof = cProfile.Profile()
-        prof.runcall(VerifyingRequestHandler._dispatch, self, method, params)
-        prof.dump_stats("/tmp/profile_data/%s.profile" % time())
+        try:
+            return prof.runcall(VerifyingRequestHandler._dispatch, self, method, params)
+        finally:
+            prof.dump_stats("/tmp/profile_data/%s.profile" % time())
 
 
 class RPCd(object):
