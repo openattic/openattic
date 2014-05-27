@@ -92,6 +92,13 @@ def acquire_lock(lockfile, max_wait=600):
             # it has not been locked for too long, wait a while and retry
             time.sleep(1)
 
+    ##############################################
+    #               WARNING                      #
+    #                                            #
+    # YOU ARE NOW ENTERING THE CRITICAL SECTION. #
+    # TRESPASSERS WILL BE `kill -9`ed ON SIGHT.  #
+    ##############################################
+
     # if we get here. we have the lockfile. Convert the os.open file
     # descriptor into a Python file object and record our PID in it
     f = os.fdopen(fd, "w")
@@ -108,8 +115,20 @@ def acquire_lock(lockfile, max_wait=600):
 def release_lock(locktuple):
     """ Release a lock acquired by acquire_lock. """
     lockfile, f = locktuple
+    # the lock consists of a flock()ed file which we want to unlink so as not to leave
+    # any stale lockfiles lying around.
+    # we need to unlink the file whilst holding the lock, because otherwise another
+    # process might acquire it before we get to delete it, and when we finally do,
+    # we'd break their lock.
+    # If we unlink first, the flock will then point to a file descriptor that is no
+    # longer available to other processes, so it doesn't matter when we get around
+    # to closing the fd.
+    os.unlink(lockfile)
+    ##############################################
+    # YOU ARE NOW LEAVING THE CRITICAL SECTION.  #
+    # THANK YOU FOR VISITING.                    #
+    ##############################################
     f.close()
-   # os.unlink(lockfile)
 
 
 class Lockfile(object):
