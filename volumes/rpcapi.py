@@ -52,6 +52,7 @@ class AbstractVolumePoolHandler(ModelHandler):
     def _getobj(self, obj):
         data = ModelHandler._getobj(self, obj)
         data["usedmegs"] = obj.volumepool.usedmegs
+        data["status"]   = obj.volumepool.status
         try:
             data["member_set"] = [
                 self._get_handler_instance(member.__class__)._idobj(member)
