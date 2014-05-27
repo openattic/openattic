@@ -34,7 +34,21 @@ def acquire_lock(lockfile, max_wait=600):
         Returns a tuple of (file path, file descriptor) to be passed into release_lock.
     """
 
+    # The following is based on this thread:
     # http://www.velocityreviews.com/forums/t359733-how-to-lock-files-the-easiest-best-way.html
+    # Sadly, this code cannot cope with situations in which the lockfile exists, but there
+    # is no process using it. This situation arises when the owner process does not get around
+    # to actually unlink()ing the lockfile, e.g. due to a crash, the node being STONITHED,
+    # malicious sysadmins testing their cluster or other dubious reasons that I can't think of
+    # right now.
+    # For this, we require locks that are bound to file descriptors, so they disappear together
+    # with the process owning the locks.
+    #
+    # This mechanism works in two stages:
+    # 1. Get a file descriptor on the lockfile, making sure we don't accidentally replace the
+    #    file in the process or we couldn't be sure that flock() uses the very same file that
+    #    other processes use for locking.
+    # 2. flock() the file to tell other processes that there is someone alive using the file.
 
     if not os.path.exists("/var/lock/openattic"):
         os.mkdir("/var/lock/openattic", 0755)
@@ -43,19 +57,26 @@ def acquire_lock(lockfile, max_wait=600):
             os.chown("/var/lock/openattic", openattic.pw_uid, openattic.pw_gid)
 
     while True:
+        # Stage 1: Get a file descriptor.
         try:
-            # try to create the lockfile
+            # try to create the lockfile and stat it so that stat info is
+            # available in case the flock() fails later on.
             fd = os.open(lockfile, os.O_RDWR | os.O_CREAT | os.O_EXCL)
+            # stat should not fail because we just created the file, and only
+            # processes that own the lock would unlink() it, but there is no
+            # such process or else the create would have failed.
             s  = os.stat(lockfile)
 
         except OSError, e:
             if e.errno != errno.EEXIST:
-                # should not occur
                 raise
 
             try:
                 # the lock file exists.
-                # try to stat it to get its age and read its contents to report the owner PID.
+                # try to stat it to get its age and open it for later reading.
+                # the open() call comes second so that when the file disappears
+                # in the meantime, we don't have a maybe-file-descriptor laying
+                # around.
                 s  = os.stat(lockfile)
                 fd = os.open(lockfile, os.O_RDWR)
             except OSError, e:
@@ -63,29 +84,33 @@ def acquire_lock(lockfile, max_wait=600):
                     logging.error("%s exists but stat() failed: %s" %
                             (lockfile, e.strerror))
                     raise
-                # we didn't create the lockfile, so it did exist, but it's
-                # gone now. Just try again
+                # We didn't create the lockfile, so it did exist, but it's
+                # gone now. Just try again.
                 continue
 
-        # If we reach this line, we have a valid file descriptor in `fd`.
+        # If we reach this line, we have a valid file descriptor in `fd`, so even
+        # if the owner process decides to unlink() the lock file, we'll still be
+        # able to access it and read from it.
+        #
+        # Stage 2: flock() it.
 
         try:
             fcntl.flock(fd, fcntl.LOCK_EX | fcntl.LOCK_NB)
-            # we flock()ed it, so we're the owner.
+            # we flock()ed the file, so we're the owner.
             break
 
         except IOError, e:
             if e.errno != errno.EWOULDBLOCK:
-                # should not occur
                 raise
 
-            # we didn't flock() the lockfile and it's still there, check its age
+            # we didn't flock() the lockfile, so check its age
             # we need to fdopen() the lockfile outside of the if: clause so it gets
             # closed properly in all the cases. Otherwise we would leak file descriptors.
             f = os.fdopen(fd, "r")
             try:
                 now = int(time.time())
                 if now - s[stat.ST_MTIME] > max_wait:
+                    # read lockfile contents to report the owner PID.
                     pid = f.readline()
                     logging.error("%s has been locked for more than "
                             "%d seconds (PID %s)" % (lockfile, max_wait, pid))
