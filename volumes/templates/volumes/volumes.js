@@ -70,6 +70,7 @@ Ext.define('volumes__volumes_StorageObject_model', {
       rootNode = store.getRootNode();
       rootNode.set("type", toUnicode(vptype));
       rootNode.set("host", toUnicode(record.raw.volumepool.host));
+      rootNode.set("status",   record.raw.volumepool.status);
       rootNode.set("percent",  null);
       rootNode.set("freemegs", null);
       rootNode.set("usedmegs", null);
@@ -99,6 +100,7 @@ Ext.define('volumes__volumes_StorageObject_model', {
       rootNode.set("type", toUnicode(voltype));
       rootNode.set("path", record.raw.blockvolume.path);
       rootNode.set("host", toUnicode(record.raw.blockvolume.host));
+      rootNode.set("status",   record.raw.blockvolume.status);
       rootNode.set("percent",  null);
       rootNode.set("freemegs", null);
       rootNode.set("usedmegs", null);
@@ -110,6 +112,7 @@ Ext.define('volumes__volumes_StorageObject_model', {
       rootNode.set("fswarning",  record.raw.filesystemvolume.fswarning);
       rootNode.set("fscritical", record.raw.filesystemvolume.fscritical);
       rootNode.set("ownername",  toUnicode(record.raw.filesystemvolume.owner));
+      rootNode.set("status",     record.raw.filesystemvolume.status);
       rootNode.set("freemegs",   record.raw.megs - record.raw.filesystemvolume.usedmegs);
       rootNode.set("usedmegs",   record.raw.filesystemvolume.usedmegs);
       rootNode.set("type",       toUnicode(voltype));
