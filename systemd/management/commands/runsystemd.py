@@ -105,7 +105,7 @@ class SystemD(dbus.service.Object):
                 logging.info("[%d] No locks were requested for this queue." % os.getpid())
 
             for func, scope, args, kwargs in self.jobs[sender]:
-                logging.info( "[%d] Executing deferred call to %s::%s(%s)", os.getpid(), scope.dbus_path, func.__name__,
+                logging.info( "[%d/%s] Executing deferred call to %s::%s(%s)", os.getpid(), sender, scope.dbus_path, func.__name__,
                     ', '.join([repr(arg) for arg in args]))
                 func(scope, *args, **kwargs)
         except:
