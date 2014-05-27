@@ -75,6 +75,10 @@ def acquire_lock(lockfile, max_wait=600):
             break
 
         except IOError, e:
+            if e.errno != errno.EWOULDBLOCK:
+                # should not occur
+                raise
+
             # we didn't flock() the lockfile and it's still there, check its age
             # we need to fdopen() the lockfile outside of the if: clause so it gets
             # closed properly in all the cases. Otherwise we would leak file descriptors.
