@@ -98,13 +98,14 @@ class SystemD(dbus.service.Object):
                 self.havelocks[sender] = []
                 with Lockfile("/var/lock/openattic/acquire_lock"):
                     for lockfile in self.wantlocks[sender]:
+                        logging.info("[%d/%s] Acquiring lock '%s'..." % (os.getpid(), sender, lockfile))
                         self.havelocks[sender].append(acquire_lock(lockfile))
-                        logging.info("Acquired lock '%s'." % lockfile)
+                        logging.info("[%d/%s] Acquired lock '%s'." % (os.getpid(), sender, lockfile))
             else:
-                logging.info("No locks were requested for this queue.")
+                logging.info("[%d] No locks were requested for this queue." % os.getpid())
 
             for func, scope, args, kwargs in self.jobs[sender]:
-                logging.info( "Executing deferred call to %s::%s(%s)", scope.dbus_path, func.__name__,
+                logging.info( "[%d] Executing deferred call to %s::%s(%s)", os.getpid(), scope.dbus_path, func.__name__,
                     ', '.join([repr(arg) for arg in args]))
                 func(scope, *args, **kwargs)
         except:
@@ -178,10 +179,10 @@ class SystemD(dbus.service.Object):
 
     def _release_acquired_locks(self, sender):
         if sender not in self.havelocks:
-            logging.info("Releasing acquired locks: None acquired.")
+            logging.info("[%d/%s] Releasing acquired locks: None acquired." % (os.getpid(), sender))
             return
         for lock in self.havelocks[sender]:
-            logging.info("Releasing acquired lock '%s'." % lock[0])
+            logging.info("[%d/%s] Releasing acquired lock '%s'." % (os.getpid(), sender, lock[0]))
             release_lock(lock)
         del self.havelocks[sender]
 
