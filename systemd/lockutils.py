@@ -109,7 +109,7 @@ def release_lock(locktuple):
     """ Release a lock acquired by acquire_lock. """
     lockfile, f = locktuple
     f.close()
-    os.unlink(lockfile)
+   # os.unlink(lockfile)
 
 
 class Lockfile(object):
