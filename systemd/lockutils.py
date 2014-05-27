@@ -114,7 +114,7 @@ def acquire_lock(lockfile, max_wait=600):
             f = os.fdopen(fd, "r")
             try:
                 now = int(time.time())
-                if now - s[stat.ST_MTIME] > max_wait:
+                if now - s[stat.ST_MTIME] >= max_wait:
                     # read lockfile contents to report the owner PID.
                     pid = f.readline()
                     logging.error("%s has been locked for more than "

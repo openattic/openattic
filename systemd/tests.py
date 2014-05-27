@@ -61,11 +61,10 @@ class LockutilsTestCase(TestCase):
         start = time()
         with mock.patch("systemd.lockutils.logging") as mock_logging:
             with self.assertRaises(AlreadyLocked):
-                acquire_lock("/tmp/testlock", 2)
+                acquire_lock("/tmp/testlock", 0)
             self.assertTrue(mock_logging.error.called)
 
-        self.assertTrue( time() - start >= 2 )
-        self.assertTrue( time() - start < 3.1 )
+        self.assertTrue( time() - start < 0.1 )
 
         release_lock(lock)
         self.assertFalse(os.path.exists("/tmp/testlock"))
