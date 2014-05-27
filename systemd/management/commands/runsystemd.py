@@ -175,7 +175,8 @@ class SystemD(dbus.service.Object):
             raise SystemError("Logs can only be acquired within transactions")
         if sender not in self.wantlocks:
             self.wantlocks[sender] = []
-        self.wantlocks[sender].append( lockfile )
+        if lockfile not in self.wantlocks[sender]:
+            self.wantlocks[sender].append( lockfile )
 
     def _release_acquired_locks(self, sender):
         if sender not in self.havelocks:
