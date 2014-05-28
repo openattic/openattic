@@ -727,8 +727,10 @@ Ext.define('Ext.oa.volumes__Volume_Panel', {
                     }
                   },
                   items:[{
-                    xtype:      "blockvolumefield",
+                    xtype:      "storageobjectfield",
                     fieldLabel: gettext("Source"),
+                    blockvolume: true,
+                    volumepool:  false,
                     name:       "source",
                     value:      sel.data.id
                   }, {
@@ -740,12 +742,17 @@ Ext.define('Ext.oa.volumes__Volume_Panel', {
                     items: [{
                       xtype: "radiofield",
                       boxLabel: gettext("Existing Target volume:"),
-                      name:  "use_existing",
-                      value: "yes"
+                      flex: 1,
+                      name:  "use_target",
+                      inputValue: "existing"
                     }, {
-                      xtype: "blockvolumefield",
+                      xtype: "storageobjectfield",
+                      blockvolume: true,
+                      volumepool:  false,
+                      flex: 1,
                       name:  "existing_target",
-                      fieldLabel: ""
+                      fieldLabel: "",
+                      allowBlank: true
                     }]
                   }, {
                     xtype: "fieldcontainer",
@@ -756,11 +763,15 @@ Ext.define('Ext.oa.volumes__Volume_Panel', {
                     items: [{
                       xtype: "radiofield",
                       boxLabel: gettext("New Target volume:"),
-                      name:  "use_existing",
-                      value: "no"
+                      flex: 1,
+                      name:  "use_target",
+                      inputValue: "new",
+                      checked: true
                     }, {
                       xtype: "textfield",
-                      name:  "new_target_name"
+                      flex: 1,
+                      name:  "new_target_name",
+                      allowBlank: true
                     }]
                   }],
                   buttons: [{
@@ -774,15 +785,15 @@ Ext.define('Ext.oa.volumes__Volume_Panel', {
                           console.log(input_vals);
                           var target_id = 0;
                           var options   = {};
-                          if( input_vals.use_existing === "on" ){
+                          if( input_vals.use_target === "existing" ){
                             target_id = input_vals.existing_target;
                           }
                           else{
                             options["name"] = input_vals.new_target_name;
                           }
-//                           volumes__StorageObject.clone(storageobjectid, target_id, options, function(){
-//                             self.ownerCt.ownerCt.ownerCt.close();
-//                           });
+                          volumes__StorageObject.clone(sel.data.id, target_id, options, function(){
+                            self.ownerCt.ownerCt.ownerCt.close();
+                          });
                         }
                       }
                     }
