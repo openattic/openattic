@@ -115,6 +115,7 @@ class SystemD(dbus.service.Object):
             if sender in self.wantlocks:
                 del self.wantlocks[sender]
 
+    @makeloggedfunc
     @dbus.service.method(settings.DBUS_IFACE_SYSTEMD, in_signature="", out_signature="", sender_keyword="sender")
     def run_queue(self, sender):
         if sender not in self.jobs:
@@ -124,6 +125,7 @@ class SystemD(dbus.service.Object):
         finally:
             del self.jobs[sender]
 
+    @makeloggedfunc
     @dbus.service.method(settings.DBUS_IFACE_SYSTEMD, in_signature="", out_signature="", sender_keyword="sender")
     def run_queue_background(self, sender):
         if sender not in self.jobs:
@@ -146,6 +148,7 @@ class SystemD(dbus.service.Object):
         finally:
             del self.jobs[sender]
 
+    @makeloggedfunc
     @dbus.service.method(settings.DBUS_IFACE_SYSTEMD, in_signature="", out_signature="", sender_keyword="sender")
     def discard_queue(self, sender):
         self._release_acquired_locks(sender)
@@ -169,6 +172,7 @@ class SystemD(dbus.service.Object):
         for proc in deadprocs:
             self.procs.remove(proc)
 
+    @makeloggedfunc
     @dbus.service.method(settings.DBUS_IFACE_SYSTEMD, in_signature="s", out_signature="", sender_keyword="sender")
     def acquire_lock(self, lockfile, sender):
         if sender not in self.jobs:
