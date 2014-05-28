@@ -459,10 +459,10 @@ class BlockVolume(AbstractVolume):
         mount = False
 
         if src_fsv and src_fsv.mounted:
-            src_fsv.unmount()
+            src_fsv.fs.unmount()
             mount = True
         if tgt_fsv and tgt_fsv.mounted:
-            tgt_fsv.unmount()
+            tgt_fsv.fs.unmount()
 
         self._clone_to_storageobj(target_storageobject, options)
 
