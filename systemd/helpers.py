@@ -18,6 +18,7 @@ import threading
 import logging
 import dbus
 
+from time import sleep
 from functools import wraps
 
 from django.conf import settings
@@ -25,9 +26,15 @@ from django.conf import settings
 threadstore = threading.local()
 
 def get_dbus_object(path="/"):
-    if not hasattr(threadstore, "systemdbus"):
-        threadstore.systemdbus = dbus.SystemBus(private=True)
-    return threadstore.systemdbus.get_object(settings.DBUS_IFACE_SYSTEMD, path)
+    while True:
+        if not hasattr(threadstore, "systemdbus") or threadstore.systemdbus is None:
+            threadstore.systemdbus = dbus.SystemBus(private=True)
+        try:
+            return threadstore.systemdbus.get_object(settings.DBUS_IFACE_SYSTEMD, path)
+        except dbus.DBusException:
+            logging.error("Caught DBusException, reconnecting in one second")
+            threadstore.systemdbus = None
+            sleep(1)
 
 def dbus_type_to_python(obj):
     """ Convert a single dbus something to its python equivalent. """
