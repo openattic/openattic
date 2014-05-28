@@ -16,7 +16,6 @@ Ext.namespace("Ext.oa");
 Ext.define('Ext.oa.BlockVolumeField', {
   alias: 'widget.blockvolumefield',
   extend: 'Ext.form.ComboBox',
-  filesystem__isnull: false,
   initComponent: function(){
     var extraParams = {
       "field": "name",

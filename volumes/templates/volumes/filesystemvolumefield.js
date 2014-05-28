@@ -16,7 +16,6 @@ Ext.namespace("Ext.oa");
 Ext.define('Ext.oa.FileSystemVolumeField', {
   alias: 'widget.filesystemvolumefield',
   extend: 'Ext.form.ComboBox',
-  filesystem__isnull: false,
   initComponent: function(){
     var extraParams = {
       "field": "name",
