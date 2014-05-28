@@ -14,6 +14,7 @@
  *  GNU General Public License for more details.
 """
 
+import os
 import logging
 import dbus.service
 from functools     import partial, wraps
@@ -74,8 +75,8 @@ def make_deferredmethod(in_signature, once_first, once_last, meth):
         if sender not in obj.jobs:
             return meth(self, *args, **kwargs)
         else:
-            logging.info( "Deferring call to %s::%s(%s)", self.dbus_path, meth.__name__,
-                ', '.join([repr(arg) for arg in args]))
+            logging.info( "[%d/%s] Deferring call to %s::%s(%s)", os.getpid(), sender,
+                self.dbus_path, meth.__name__, ', '.join([repr(arg) for arg in args]))
             found = False
             if once_first or once_last:
                 for call in obj.jobs[sender]:

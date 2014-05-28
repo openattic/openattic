@@ -88,11 +88,11 @@ class SystemD(dbus.service.Object):
     def _run_queue(self, sender):
         # In case we're in a background process, make super-duper sure SIGCHLD is handled
         signal.signal(signal.SIGCHLD, self._cleanup_procs)
-        logging.info( "Incoming Queue Dump:" )
+        logging.info( "[%d/%s] Incoming Queue Dump:", os.getpid(), sender )
         for func, scope, args, kwargs in self.jobs[sender]:
-            logging.info( "-> %s::%s(%s)", scope.dbus_path, func.__name__,
+            logging.info( "[%d/%s] -> %s::%s(%s)", os.getpid(), sender, scope.dbus_path, func.__name__,
                 ', '.join([repr(arg) for arg in args]))
-        logging.info( "End of queue dump." )
+        logging.info( "[%d/%s] End of queue dump.", os.getpid(), sender )
         try:
             if sender in self.wantlocks:
                 self.havelocks[sender] = []
