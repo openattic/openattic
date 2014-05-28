@@ -30,7 +30,7 @@ then
 fi
 
 BLKSZ="`blockdev --getsize64 "$BLKDEV"`"
-SEEK=$(((31457280000 - 10485760)/10485760))
+SEEK=$((($BLKSZ - 10485760)/10485760))
 
 set +e
 
