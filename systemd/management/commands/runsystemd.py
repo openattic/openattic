@@ -16,6 +16,7 @@
 
 import os
 import os.path
+import sys
 import traceback
 import logging
 import socket
@@ -213,10 +214,6 @@ class Command( BaseCommand ):
             help="loglevel with which to log to syslog, defaults to WARNING. OFF disables syslog altogether.",
             default="WARNING"
             ),
-        make_option( "-q", "--quiet",
-            help="Don't log to stdout.",
-            default=False, action="store_true"
-            ),
     )
 
     def handle(self, **options):
@@ -227,21 +224,20 @@ class Command( BaseCommand ):
 
         os.environ["LANG"] = "en_US.UTF-8"
 
+        if 'logfile' in options and options['logfile']:
+            sys.stdout.close()
+            sys.stderr.close()
+            sys.stdout = open(options['logfile'], "ab", buffering=False)
+            sys.stderr = sys.stdout
+
         rootlogger = logging.getLogger()
         rootlogger.name = "openattic_systemd"
         rootlogger.setLevel(logging.DEBUG)
 
-        if not options['quiet']:
-            logch = logging.StreamHandler()
-            logch.setLevel({2: logging.DEBUG, 1: logging.INFO, 0: logging.WARNING}[int(options['verbosity'])])
-            logch.setFormatter( logging.Formatter('%(asctime)s - %(levelname)s - %(message)s') )
-            rootlogger.addHandler(logch)
-
-        if 'logfile' in options and options['logfile']:
-            logfh = logging.FileHandler(options['logfile'])
-            logfh.setLevel( getloglevel(options['loglevel']) )
-            logfh.setFormatter( logging.Formatter('%(asctime)s - %(levelname)s - %(message)s') )
-            rootlogger.addHandler(logfh)
+        logch = logging.StreamHandler()
+        logch.setLevel({2: logging.DEBUG, 1: logging.INFO, 0: logging.WARNING}[int(options['verbosity'])])
+        logch.setFormatter( logging.Formatter('%(asctime)s - %(levelname)s - %(message)s') )
+        rootlogger.addHandler(logch)
 
         if 'sysloglevel' in options and options['sysloglevel'].upper() != 'OFF':
             try:

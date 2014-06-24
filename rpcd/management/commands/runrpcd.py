@@ -15,6 +15,7 @@
 """
 
 import os
+import sys
 import traceback
 import logging
 import inspect
@@ -330,17 +331,9 @@ class Command( BaseCommand ):
             help="Log to a logfile.",
             default=None
             ),
-        make_option( "-L", "--loglevel",
-            help="loglevel of said logfile, defaults to INFO.",
-            default="INFO"
-            ),
         make_option( "-s", "--sysloglevel",
             help="loglevel with which to log to syslog, defaults to WARNING. OFF disables syslog altogether.",
             default="WARNING"
-            ),
-        make_option( "-q", "--quiet",
-            help="Don't log to stdout.",
-            default=False, action="store_true"
             ),
         make_option( "-b", "--bindaddr",
             help="The IP address to bind to (default: 0.0.0.0).",
@@ -367,21 +360,20 @@ class Command( BaseCommand ):
     def handle(self, **options):
         os.environ["LANG"] = "en_US.UTF-8"
 
+        if 'logfile' in options and options['logfile']:
+            sys.stdout.close()
+            sys.stderr.close()
+            sys.stdout = open(options['logfile'], "ab", buffering=False)
+            sys.stderr = sys.stdout
+
         rootlogger = logging.getLogger()
         rootlogger.name = "openattic_rpcd"
         rootlogger.setLevel(logging.DEBUG)
 
-        if not options['quiet']:
-            logch = logging.StreamHandler()
-            logch.setLevel({2: logging.DEBUG, 1: logging.INFO, 0: logging.WARNING}[int(options['verbosity'])])
-            logch.setFormatter( logging.Formatter('%(asctime)s - %(levelname)s - %(message)s') )
-            rootlogger.addHandler(logch)
-
-        if 'logfile' in options and options['logfile']:
-            logfh = logging.FileHandler(options['logfile'])
-            logfh.setLevel( getloglevel(options['loglevel']) )
-            logfh.setFormatter( logging.Formatter('%(asctime)s - %(levelname)s - %(message)s') )
-            rootlogger.addHandler(logfh)
+        logch = logging.StreamHandler()
+        logch.setLevel({2: logging.DEBUG, 1: logging.INFO, 0: logging.WARNING}[int(options['verbosity'])])
+        logch.setFormatter( logging.Formatter('%(asctime)s - %(levelname)s - %(message)s') )
+        rootlogger.addHandler(logch)
 
         if 'sysloglevel' in options and options['sysloglevel'].upper() != 'OFF':
             try:

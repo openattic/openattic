@@ -65,7 +65,7 @@ case $1 in
 		env - PATH="/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin" \
 			start-stop-daemon --pidfile=$RPCD_PIDFILE --make-pidfile --background --oknodo --start \
 			--exec $PYTHON --chdir $OADIR --chuid $RPCD_CHUID -- \
-			$RPCD_OPTIONS -l $RPCD_LOGFILE -L $RPCD_LOGLEVEL -q "$@"
+			$RPCD_OPTIONS -l $RPCD_LOGFILE "$@"
 		while ! start-stop-daemon --pidfile=$RPCD_PIDFILE --test --stop --exec $PYTHON --quiet; do
 			sleep .1
 			if [ $i -ge 100 ]; then
@@ -88,7 +88,7 @@ case $1 in
 		else
 			cd $OADIR
 			shift
-			su ${RPCD_CHUID%%:*} -- -c "$PYTHON $RPCD_OPTIONS -l $RPCD_LOGFILE -L $RPCD_LOGLEVEL"
+			su ${RPCD_CHUID%%:*} -- -c "$PYTHON $RPCD_OPTIONS -l $RPCD_LOGFILE"
 		fi
 		;;
 	
