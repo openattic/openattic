@@ -212,11 +212,7 @@ class ZVol(BlockVolume):
         return self.fs.stat["used"]
 
     def _create_snapshot_for_storageobject(self, storageobj, options):
-        if self.parent is not None:
-            snapparent = self.parent
-        else:
-            snapparent = self.zpool.storageobj
-        sv = ZVol(storageobj=storageobj, zpool=self.zpool, parent=snapparent)
+        sv = ZVol(storageobj=storageobj, zpool=self.zpool)
         sv.full_clean()
         sv.save()
         return sv
