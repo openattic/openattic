@@ -220,5 +220,8 @@ class ZVol(BlockVolume):
     def __unicode__(self):
         return self.fullname
 
+    def shrink( self, oldmegs, newmegs ):
+        self.fs.set_zvol_size(newmegs)
 
-
+    def grow( self, oldmegs, newmegs ):
+        self.fs.set_zvol_size(newmegs)

@@ -192,6 +192,8 @@ class Zfs(FileSystem):
         snapfullname = "%s@%s" % (orig_zfs.fullname, self.volume.storageobj.name)
         self.dbus_object.zfs_rollback_snapshot(snapfullname)
 
+    def set_zvol_size(self, megs):
+        self.dbus_object.zfs_set(self.volume.fullname, "volsize", "%dM" % megs)
 
 class ZpoolDevice(capabilities.Device):
     model = Zfs
