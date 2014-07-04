@@ -21,6 +21,7 @@ Version 1.1.2, ?? ????? 2014:
 * Fixed XFS resize.
 * Fixed date conversion in the Nagios module.
 * Fixed incorrect service arguments for check_disk check command.
+* Removed support for OCFS2.
 
 Version 1.1.1, 01 April 2014:
 ---------------------------------

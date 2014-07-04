@@ -118,14 +118,6 @@ class SystemD(BasePlugin):
     def xfs_set_uuid(self, devpath, uuid, sender):
         invoke(["/usr/sbin/xfs_admin", "-U", uuid, devpath])
 
-    @deferredmethod(in_signature="si")
-    def ocfs2_format(self, devpath, chunksize, sender):
-        cmd = ["mkfs.ocfs2", '-b', '4096', '-T', 'vmstore']
-        if chunksize != -1:
-            cmd.extend(["-C", "%dK" % (chunksize / 1024)])
-        cmd.append(devpath)
-        invoke(cmd)
-
     @deferredmethod(in_signature="")
     def write_fstab(self, sender):
         # read current fstab

@@ -277,34 +277,3 @@ class FileSystemTestCase(TestCase):
         from volumes.filesystems.xfs import Xfs
         self.assertTrue( Xfs.check_type("""/dev/vgfaithdata/ceph03: sticky SGI XFS filesystem data (blksz 4096, inosz 256, v2 dirs)""") )
 
-    def test_ocfs2_format(self):
-        with mock.patch("volumes.filesystems.filesystem.get_dbus_object") as mock_get_dbus_object:
-            volume = mock.MagicMock()
-            volume.storageobj.name = "yaaayname"
-            volume.storageobj.megs = 100000
-            volume.storageobj.snapshot = None
-            volume.storageobj.blockvolume.volume.path = "/dev/testpath"
-            volume.storageobj.blockvolume.volume.raid_params = {"chunksize": 256*1024, "datadisks": 4}
-            volume.owner.username = "mziegler"
-
-            fs = get_by_name("ocfs2")(volume)
-            fs.format()
-
-            self.assertTrue( mock_get_dbus_object.called)
-            self.assertEqual(mock_get_dbus_object.call_args[0][0], "/volumes")
-
-            self.assertTrue( mock_get_dbus_object().ocfs2_format.called)
-            self.assertEqual(mock_get_dbus_object().ocfs2_format.call_count, 1)
-            self.assertEqual(mock_get_dbus_object().ocfs2_format.call_args[0], ("/dev/testpath", 256*1024))
-
-            self.assertTrue( mock_get_dbus_object().write_fstab.called)
-            self.assertEqual(mock_get_dbus_object().write_fstab.call_count, 1)
-
-            self.assertTrue( mock_get_dbus_object().fs_mount.called)
-            self.assertEqual(mock_get_dbus_object().fs_mount.call_count, 1)
-            self.assertEqual(mock_get_dbus_object().fs_mount.call_args[0], ("ocfs2", "/dev/testpath", "/media/yaaayname"))
-
-            self.assertTrue( mock_get_dbus_object().fs_chown.called)
-            self.assertEqual(mock_get_dbus_object().fs_chown.call_count, 1)
-            self.assertEqual(mock_get_dbus_object().fs_chown.call_args[0], ("/media/yaaayname", "mziegler", "users"))
-
