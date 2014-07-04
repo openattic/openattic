@@ -17,6 +17,8 @@
 import os
 import os.path
 
+from time import sleep
+
 from systemd import invoke, logged, BasePlugin, method, deferredmethod
 
 @logged
@@ -74,6 +76,8 @@ class SystemD(BasePlugin):
     @deferredmethod(in_signature="si")
     def zvol_create_volume(self, volume, megs, sender):
         invoke(["zfs", "create", "-V", "%dM" % megs, volume])
+        while not os.path.exists("/dev/%s" % volume):
+            sleep(0.1)
 
     @deferredmethod(in_signature="s")
     def zfs_destroy_volume(self, volume, sender):
