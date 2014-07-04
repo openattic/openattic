@@ -440,6 +440,8 @@ class BlockVolume(AbstractVolume):
         """ Clone this volume into the target_storageobject in a way that best
             fulfills the specification given in `options'.
         """
+        if target_storageobject.megs < self.volume.storageobj.megs:
+            raise ValueError("target volume is too small")
         get_dbus_object("/volumes").dd(self.volume.path, target_storageobject.blockvolume.volume.path, self.volume.storageobj.megs, "1M")
 
     def _clone(self, target_storageobject, options):
