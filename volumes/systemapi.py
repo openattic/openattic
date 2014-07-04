@@ -25,10 +25,10 @@ from volumes import capabilities
 class SystemD(BasePlugin):
     dbus_path = "/volumes"
 
-    @deferredmethod(in_signature="ss")
-    def dd(self, infile, outfile, sender):
+    @deferredmethod(in_signature="ssss")
+    def dd(self, infile, outfile, count, bs, sender):
         invoke(['/bin/dd', 'if=%s' % infile, 'of=%s' % outfile,
-                'bs=%s' % volumes_settings.DD_BLOCKSIZE,
+                'count=%s' % count, 'bs=%s' % bs,
                 'conv=fdatasync'])
 
     @deferredmethod(in_signature="sss")
