@@ -88,7 +88,6 @@ Depends: ${misc:Depends}, python (>= 2.6),
  openattic-pgsql,
  libapache2-mod-wsgi, apache2
 Recommends: sudo, xfsprogs
-Suggests: ocfs2-tools
 Description: Basic requirements for openATTIC
  openATTIC is a storage management system based upon Open Source tools with
  a comprehensive user interface that allows you to create, share and backup

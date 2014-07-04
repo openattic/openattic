@@ -3,6 +3,7 @@ openattic (1.1.1-1) unstable; urgency=low
   * New upstream release.
   * Include drbd kernel module config to increase the default maximum device
     IDs to 255.
+  * Remove ocfs2-tools from suggests.
 
  -- Michael Ziegler <diese-addy@funzt-halt.net>  Tue, 01 Apr 2014 13:05:23 +0200
 
