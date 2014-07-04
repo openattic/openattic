@@ -204,10 +204,10 @@ class ModelHandler(BaseHandler):
         """
         # is implemented solely through functions provived by the modelhandler, and therefore works when
         # inherited by the proxymodelhandler as well
-        result = self.filter(get_values)
+        result = self._filter_queryset(get_values)
 
         if len(result) == 1:
-            result = result[0]
+            result = self._idobj(result[0])
         else:
             get_values.update(create_values)
             result = self.create(get_values)

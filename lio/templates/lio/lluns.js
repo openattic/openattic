@@ -188,7 +188,7 @@ Ext.define('Ext.oa.Lio__LogicalLun_Panel', {
                       dataIndex: "share_lun_id",
                       editor: {
                         xtype: 'numberfield',
-                        minValue: 0,
+                        minValue: -1,
                         maxValue: 100,
                         allowBlank: false
                       }
