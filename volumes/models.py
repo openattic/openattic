@@ -687,7 +687,7 @@ class FileSystemProvider(FileSystemVolume):
         return self.fs.grow(oldmegs, newmegs)
 
     def shrink(self, oldmegs, newmegs):
-        return self.fs.grow(oldmegs, newmegs)
+        return self.fs.shrink(oldmegs, newmegs)
 
 
 def __delete_filesystemprovider(instance, **kwargs):
