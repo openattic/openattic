@@ -192,7 +192,7 @@ class ZVol(BlockVolume):
             currmegs = ZVol.objects.get(id=self.id).storageobj.megs
         if float(self.zpool.fs.allocated_megs) < int(self.storageobj.megs) - currmegs:
             from django.core.exceptions import ValidationError
-            raise ValidationError({"megs": ["ZPool %s has insufficient free space." % self.vg.storageobj.name]})
+            raise ValidationError({"megs": ["ZPool %s has insufficient free space." % self.zpool.storageobj.name]})
 
     @property
     def fs(self):
