@@ -83,7 +83,6 @@ class VolumeGroup(VolumePool):
 
     def save( self, *args, **kwargs ):
         VolumePool.save(self, *args, **kwargs)
-        get_dbus_object("/lvm").invalidate()
 
     def delete(self):
         lvm = get_dbus_object("/lvm")
