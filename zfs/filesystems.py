@@ -146,6 +146,11 @@ class Zfs(FileSystem):
         return scale_to_megs(dbus_to_python(self.dbus_object.zpool_get(
                 self.zpool.storageobj.name, "allocated"))[0][2])
 
+    @property
+    def rootfs_used_megs(self):
+        return scale_to_megs(dbus_to_python(self.dbus_object.zfs_get(
+                self.zpool.storageobj.name, "used"))[0][2])
+
     def format(self):
         self.dbus_object.zpool_format(self.zpool.storageobj.blockvolume.volume.path, self.zpool.storageobj.name,
             os.path.join(volumes_settings.MOUNT_PREFIX, self.zpool.storageobj.name))

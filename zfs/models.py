@@ -121,7 +121,8 @@ class Zfs(FileSystemVolume):
         # real size limit
         if float(self.zpool.storageobj.megs) < int(self.storageobj.megs):
             from django.core.exceptions import ValidationError
-            raise ValidationError({"megs": ["ZPool %s has insufficient space." % self.zpool.storageobj.name]})
+            raise ValidationError({"megs": ["ZPool %s has insufficient space (%f < %d)." % (
+                self.zpool.storageobj.name, self.zpool.storageobj.megs, self.storageobj.megs)]})
 
     @property
     def fs(self):
@@ -198,9 +199,11 @@ class ZVol(BlockVolume):
         currmegs = 0
         if self.id is not None:
             currmegs = ZVol.objects.get(id=self.id).storageobj.megs
-        if float(self.zpool.fs.allocated_megs) < int(self.storageobj.megs) - currmegs:
+        unalloced_megs = self.zpool.storageobj.megs - float(self.zpool.fs.rootfs_used_megs)
+        if unalloced_megs < int(self.storageobj.megs) - currmegs:
             from django.core.exceptions import ValidationError
-            raise ValidationError({"megs": ["ZPool %s has insufficient free space." % self.zpool.storageobj.name]})
+            raise ValidationError({"megs": ["ZPool %s has insufficient free space (%f < %d)." % (
+                self.zpool.storageobj.name, unalloced_megs, self.storageobj.megs - currmegs)]})
 
     @property
     def fs(self):
