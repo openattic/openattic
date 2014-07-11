@@ -92,44 +92,17 @@ def lvm_lvs():
 class SystemD(BasePlugin):
     dbus_path = "/lvm"
 
-    def __init__(self, bus, busname, mainobj):
-        BasePlugin.__init__(self, bus, busname, mainobj)
-        self.pvs_cache = None
-        self.vgs_cache = None
-        self.lvs_cache = None
-        self.pvs_time  = 0
-        self.vgs_time  = 0
-        self.lvs_time  = 0
-
-    @method(in_signature="", out_signature="")
-    def invalidate(self):
-        self.pvs_time  = 0
-        self.vgs_time  = 0
-        self.lvs_time  = 0
-
     @method(in_signature="", out_signature="a{sa{ss}}")
     def pvs(self):
-        if( time() - self.pvs_time > lvm_settings.SYSD_INFO_TTL ):
-            logging.warn("renewing pvs cache")
-            self.pvs_time = time()
-            self.pvs_cache = lvm_pvs()
-        return self.pvs_cache
+        return lvm_pvs()
 
     @method(in_signature="", out_signature="a{sa{ss}}")
     def vgs(self):
-        if( time() - self.vgs_time > lvm_settings.SYSD_INFO_TTL ):
-            logging.warn("renewing vgs cache")
-            self.vgs_time = time()
-            self.vgs_cache = lvm_vgs()
-        return self.vgs_cache
+        return lvm_vgs()
 
     @method(in_signature="", out_signature="a{sa{ss}}")
     def lvs(self):
-        if( time() - self.lvs_time > lvm_settings.SYSD_INFO_TTL ):
-            logging.warn("renewing lvs cache")
-            self.lvs_time = time()
-            self.lvs_cache = lvm_lvs()
-        return self.lvs_cache
+        return lvm_lvs()
 
     @deferredmethod(in_signature="ssis")
     def lvcreate(self, vgname, lvname, megs, snapshot, sender):
