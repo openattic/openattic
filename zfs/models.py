@@ -185,6 +185,15 @@ class ZVol(BlockVolume):
         else:
             self.fs.destroy_subvolume()
 
+    def full_clean(self):
+        BlockVolume.full_clean(self)
+        currmegs = 0
+        if self.id is not None:
+            currmegs = ZVol.objects.get(id=self.id).storageobj.megs
+        if float(self.zpool.fs.allocated_megs) < int(self.storageobj.megs) - currmegs:
+            from django.core.exceptions import ValidationError
+            raise ValidationError({"megs": ["ZPool %s has insufficient free space." % self.vg.storageobj.name]})
+
     @property
     def fs(self):
         return filesystems.Zfs(self.zpool, self)
