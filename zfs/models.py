@@ -115,6 +115,14 @@ class Zfs(FileSystemVolume):
         else:
             self.fs.destroy_subvolume()
 
+    def full_clean(self):
+        FileSystemVolume.full_clean(self)
+        # free space is irrelevant for a Zfs because it's just a quota, not a
+        # real size limit
+        if float(self.zpool.storageobj.megs) < int(self.storageobj.megs):
+            from django.core.exceptions import ValidationError
+            raise ValidationError({"megs": ["ZPool %s has insufficient space." % self.zpool.storageobj.name]})
+
     @property
     def fs(self):
         return filesystems.Zfs(self.zpool, self)
