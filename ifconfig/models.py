@@ -87,13 +87,11 @@ class Host(models.Model):
         if len(ipaddress) == 1:
             return ipaddress[0].device.speed
 
-class HostDependentManager(models.Manager):
-    hostfilter = "host"
 
-    def get_query_set(self):
-        objids = []
+class HostDependentQuerySet(models.query.QuerySet):
+    def iterator(self):
         currhost = Host.objects.get_current();
-        for obj in super(HostDependentManager, self).get_query_set().all():
+        for obj in super(HostDependentQuerySet, self).iterator():
             curr = obj
             for field in self.model.objects.hostfilter.split('__'):
                 if curr is None:
@@ -102,8 +100,15 @@ class HostDependentManager(models.Manager):
                 if isinstance( curr, Host ):
                     break
             if curr == currhost:
-                objids.append(obj.id)
-        return super(HostDependentManager, self).get_query_set().filter(id__in=objids)
+                yield obj
+        raise StopIteration
+
+
+class HostDependentManager(models.Manager):
+    hostfilter = "host"
+
+    def get_query_set(self):
+        return HostDependentQuerySet(self.model, using=self._db)
 
 
 def getHostDependentManagerClass(hostfilter="host"):
