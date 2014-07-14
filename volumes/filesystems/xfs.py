@@ -14,6 +14,8 @@
  *  GNU General Public License for more details.
 """
 
+import dbus
+
 from volumes.blockdevices import UnsupportedRAID
 from volumes.filesystems.filesystem import FileSystem
 from volumes import capabilities
@@ -67,7 +69,7 @@ class Xfs(FileSystem):
     def get_mount_options(self):
         if self.volume.storageobj.snapshot is not None:
             return ["nouuid"]
-        return []
+        return dbus.Array([], signature="as")
 
     def grow(self, oldmegs, newmegs):
         self.dbus_object.xfs_resize( self.path, newmegs )
