@@ -469,12 +469,20 @@ class BlockVolume(AbstractVolume):
         self._clone_to_storageobj(target_storageobject, options)
 
         if src_fsv:
+            if not isinstance(src_fsv, FileSystemProvider):
+                raise TypeError("Cannot clone a volume with a FileSystem of type '%s' inside" % type(src_fsv))
+
             if tgt_fsv is None:
-                if not isinstance(src_fsv, FileSystemProvider):
-                    raise TypeError("Cannot clone a volume with a FileSystem of type '%s' inside" % type(src_fsv))
                 tgt_fsv = FileSystemProvider(storageobj=target_storageobject, fstype=src_fsv.fstype,
                                              fswarning=src_fsv.fswarning, fscritical=src_fsv.fscritical, owner=src_fsv.owner)
-                tgt_fsv.save_clone()
+            else:
+                tgt_fsv.fstype     = src_fsv.fstype
+                tgt_fsv.fswarning  = src_fsv.fswarning
+                tgt_fsv.fscritical = src_fsv.fscritical
+                tgt_fsv.owner      = src_fsv.owner
+
+            tgt_fsv.save_clone()
+
             if mount:
                 # we need to use fsv.fs.mount here because fsv.mount only mounts if it
                 # has to, which it finds out by checking whether or not the path is
@@ -648,8 +656,6 @@ class FileSystemProvider(FileSystemVolume):
                 self.fs.mount()
 
     def save_clone(self, *args, **kwargs):
-        if self.id is not None:
-            raise ValueError("Cannot save an already saved object as a clone")
         FileSystemVolume.save(self, *args, **kwargs)
         self.fs.set_uuid(generate=True)
         self.fs.write_fstab()
