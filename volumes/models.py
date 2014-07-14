@@ -146,12 +146,15 @@ class StorageObject(models.Model):
     def delete(self):
         """ Delete this StorageObject and any object associated with it. """
         with Transaction(background=False):
-            self.lock()
-            for obj in (self.filesystemvolume_or_none, self.volumepool_or_none, self.blockvolume_or_none):
-                if obj is not None:
-                    obj.delete()
+            self._delete()
 
-            return models.Model.delete(self)
+    def _delete(self):
+        self.lock()
+        for obj in (self.filesystemvolume_or_none, self.volumepool_or_none, self.blockvolume_or_none):
+            if obj is not None:
+                obj.delete()
+
+        return models.Model.delete(self)
 
     def resize(self, megs):
         """ Resize everything to the given size. """
@@ -286,7 +289,7 @@ class VolumePool(models.Model):
         except:
             from django.db import connection
             connection.connection.rollback()
-            storageobj.delete()
+            storageobj._delete()
             raise
 
         return vol
@@ -367,7 +370,7 @@ class AbstractVolume(models.Model):
         except:
             from django.db import connection
             connection.connection.rollback()
-            storageobj.delete()
+            storageobj._delete()
             raise
 
         return vol
