@@ -14,6 +14,7 @@
  *  GNU General Public License for more details.
 """
 
+import dbus
 import os
 import os.path
 
@@ -118,12 +119,11 @@ class FileSystem(object):
             dbus_object = get_dbus_object("/volumes")
             snapdir = os.path.join(origin.path, ".snapshots")
             if not os.path.exists(snapdir) or not os.path.ismount(snapdir):
-                import dbus
                 dbus_object.fs_mount( "tmpfs", "tmpfs", snapdir, dbus.Array([], signature="as") )
         dbus_object.fs_mount( self.name, self.volume.storageobj.blockvolume.volume.path, self.path, self.get_mount_options() )
 
     def get_mount_options(self):
-        return []
+        return dbus.Array([], signature="as")
 
     @property
     def mounted(self):
