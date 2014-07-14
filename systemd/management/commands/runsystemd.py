@@ -81,10 +81,13 @@ class SystemD(dbus.service.Object):
         """ Return 'pong' for connectivity tests. """
         return "pong"
 
+    @makeloggedfunc
     @dbus.service.method(settings.DBUS_IFACE_SYSTEMD, in_signature="", out_signature="", sender_keyword="sender")
     def start_queue(self, sender):
         if sender not in self.jobs:
             self.jobs[sender] = []
+        else:
+            raise ValueError("there is already an open queue")
 
     def _run_queue(self, sender):
         # In case we're in a background process, make super-duper sure SIGCHLD is handled
