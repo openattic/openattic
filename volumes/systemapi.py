@@ -31,11 +31,15 @@ class SystemD(BasePlugin):
                 'count=%s' % count, 'bs=%s' % bs,
                 'conv=fdatasync'])
 
-    @deferredmethod(in_signature="sss")
-    def fs_mount(self, fstype, devpath, mountpoint, sender):
+    @deferredmethod(in_signature="sssas")
+    def fs_mount(self, fstype, devpath, mountpoint, options, sender):
         if not os.path.exists(mountpoint):
             os.makedirs(mountpoint)
-        invoke(["/bin/mount", "-t", fstype, devpath, mountpoint])
+        if options:
+            options = ["-o", ",".join(options)]
+        else:
+            options = []
+        invoke(["/bin/mount", "-t", fstype] + options + [devpath, mountpoint])
 
     @deferredmethod(in_signature="ss")
     def fs_unmount(self, devpath, mountpoint, sender):
