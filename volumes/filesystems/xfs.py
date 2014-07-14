@@ -64,6 +64,11 @@ class Xfs(FileSystem):
         self.mount()
         self.chown()
 
+    def get_mount_options(self):
+        if self.volume.storageobj.snapshot is not None:
+            return ["nouuid"]
+        return []
+
     def grow(self, oldmegs, newmegs):
         self.dbus_object.xfs_resize( self.path, newmegs )
 
