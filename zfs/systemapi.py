@@ -75,7 +75,7 @@ class SystemD(BasePlugin):
 
     @deferredmethod(in_signature="si")
     def zvol_create_volume(self, volume, megs, sender):
-        invoke(["zfs", "create", "-V", "%dM" % megs, volume])
+        invoke(["zfs", "create", "-o", "snapdev=visible", "-V", "%dM" % megs, volume])
         while not os.path.exists("/dev/%s" % volume):
             sleep(0.1)
 
@@ -86,6 +86,12 @@ class SystemD(BasePlugin):
     @deferredmethod(in_signature="s")
     def zfs_create_snapshot(self, snapfullname, sender):
         invoke(["zfs", "snapshot", snapfullname])
+
+    @deferredmethod(in_signature="s")
+    def zvol_create_snapshot(self, snapfullname, sender):
+        invoke(["zfs", "snapshot", snapfullname])
+        while not os.path.exists("/dev/%s" % snapfullname):
+            sleep(0.1)
 
     @deferredmethod(in_signature="ss")
     def zfs_clone(self, origfullname, clonefullname, sender):

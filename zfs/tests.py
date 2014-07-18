@@ -310,9 +310,9 @@ class ZfsFileSystemTestCase(TestCase):
             fs = Zfs(None, volume)
             fs.create_zvol_snapshot(origvolume)
 
-            self.assertTrue( mock_get_dbus_object().zfs_create_snapshot.called)
-            self.assertEqual(mock_get_dbus_object().zfs_create_snapshot.call_count, 1)
-            self.assertEqual(mock_get_dbus_object().zfs_create_snapshot.call_args[0], ("honky/tonk@tonk_2014-05-13-17-12-43",))
+            self.assertTrue( mock_get_dbus_object().zvol_create_snapshot.called)
+            self.assertEqual(mock_get_dbus_object().zvol_create_snapshot.call_count, 1)
+            self.assertEqual(mock_get_dbus_object().zvol_create_snapshot.call_args[0], ("honky/tonk@tonk_2014-05-13-17-12-43",))
 
             self.assertFalse(mock_get_dbus_object().zfs_clone.called)
 

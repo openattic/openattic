@@ -187,7 +187,7 @@ class Zfs(FileSystem):
     def create_zvol_snapshot(self, orig_zvol):
         """ Create a snapshot. """
         snapfullname = "%s@%s" % (orig_zvol.fullname, self.volume.storageobj.name)
-        self.dbus_object.zfs_create_snapshot(snapfullname)
+        self.dbus_object.zvol_create_snapshot(snapfullname)
 
     def destroy_snapshot(self, orig_zfs):
         snapfullname = "%s@%s" % (orig_zfs.fullname, self.volume.storageobj.name)
