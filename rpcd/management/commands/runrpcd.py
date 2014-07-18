@@ -358,7 +358,7 @@ class Command( BaseCommand ):
     )
 
     def handle(self, **options):
-        os.environ["LANG"] = "en_US.UTF-8"
+        os.environ["LANG"] = "C"
 
         if 'logfile' in options and options['logfile']:
             sys.stdout.close()

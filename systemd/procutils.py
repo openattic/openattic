@@ -42,7 +42,7 @@ def invoke(args, close_fds=True, return_out_err=False, log=True, stdin=None, fai
     starttime = datetime.now()
 
     procenv = os.environ.copy()
-    procenv["LANG"] = procenv["LANGUAGE"] = procenv["LC_ALL"] = "en_US.UTF-8"
+    procenv["LANG"] = procenv["LANGUAGE"] = procenv["LC_ALL"] = "C"
 
     proc = subprocess.Popen( [arg.encode("UTF-8") if isinstance(arg, unicode) else arg for arg in args],
         stdin  = (None if stdin is None else subprocess.PIPE),
