@@ -211,7 +211,7 @@ class ZVol(BlockVolume):
 
     @property
     def path(self):
-        return os.path.join("/dev", self.zpool.storageobj.name, self.storageobj.name)
+        return os.path.join("/dev", self.fullname)
 
     @property
     def status(self):
@@ -225,6 +225,8 @@ class ZVol(BlockVolume):
 
     @property
     def fullname(self):
+        if self.storageobj.snapshot is not None:
+            return "%s@%s" % (self.storageobj.snapshot.blockvolume.volume.fullname, self.storageobj.name)
         return "%s/%s" % (self.zpool.storageobj.name, self.storageobj.name)
 
     @property
