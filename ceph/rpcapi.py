@@ -15,6 +15,7 @@
 """
 
 from rpcd.handlers import ModelHandler, mkModelHandler
+from volumes.rpcapi import AbstractVolumePoolHandler
 
 from ceph import models
 
@@ -25,15 +26,18 @@ class ClusterHandler(ModelHandler):
         data["status"] = obj.status
         return data
 
+class PoolHandler(AbstractVolumePoolHandler):
+    model = models.Pool
+
 
 RPCD_HANDLERS = [
     ClusterHandler,
+    PoolHandler,
     mkModelHandler(models.Type),
     mkModelHandler(models.Bucket),
     mkModelHandler(models.OSD),
     mkModelHandler(models.Mon),
     mkModelHandler(models.MDS),
-    mkModelHandler(models.Pool),
     mkModelHandler(models.Entity),
     mkModelHandler(models.Ruleset),
     ]

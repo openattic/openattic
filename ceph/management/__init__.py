@@ -26,6 +26,7 @@ from django.contrib.auth.models import User
 from systemd import get_dbus_object, dbus_to_python
 from ifconfig.models import Host, IPAddress
 from ceph import models as ceph_models
+from volumes.models import StorageObject
 
 
 def update(**kwargs):
@@ -62,6 +63,7 @@ def update(**kwargs):
         mds_stat = json.loads(dbus_to_python(get_dbus_object("/ceph").mds_stat(cluster.displayname)))
         mon_stat = json.loads(dbus_to_python(get_dbus_object("/ceph").mon_status(cluster.displayname)))
         auth_list= json.loads(dbus_to_python(get_dbus_object("/ceph").auth_list(cluster.displayname)))
+        df       = json.loads(dbus_to_python(get_dbus_object("/ceph").df(cluster.displayname)))
 
         for ctype in crushmap["types"]:
             print "Checking ceph type '%s'..." % ctype["name"],
@@ -156,7 +158,10 @@ def update(**kwargs):
                 mdlpool.ruleset = mdlrule
                 mdlpool.save()
             except ceph_models.Pool.DoesNotExist:
-                mdlpool = ceph_models.Pool(cluster=cluster, ceph_id=cpool["pool"], name=cpool["pool_name"], size=cpool["size"],
+                storageobj = StorageObject(name=cpool["pool_name"], megs=df["stats"]["total_space"] / 1024)
+                storageobj.full_clean()
+                storageobj.save()
+                mdlpool = ceph_models.Pool(cluster=cluster, ceph_id=cpool["pool"], storageobj=storageobj, size=cpool["size"],
                               ruleset=mdlrule, min_size=cpool["min_size"], pg_num=cpool["pg_num"], pgp_num=cpool["pg_placement_num"])
                 mdlpool.full_clean()
                 mdlpool.save()

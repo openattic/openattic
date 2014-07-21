@@ -49,3 +49,8 @@ class SystemD(LockingPlugin):
     def status(self, cluster):
         ret, out, err = invoke(["ceph", "--format", "json", "--cluster", cluster, "status"], log=False, return_out_err=True)
         return out
+
+    @method(in_signature="i", out_signature="s")
+    def df(self, cluster):
+        ret, out, err = invoke(["ceph", "--format", "json", "--cluster", cluster, "df"], log=False, return_out_err=True)
+        return out

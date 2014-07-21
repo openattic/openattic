@@ -21,7 +21,7 @@ from django.utils.translation import ugettext_noop as _
 
 from systemd import get_dbus_object, dbus_to_python
 from ifconfig.models import Host
-from volumes.models import FileSystemVolume
+from volumes.models import FileSystemVolume, VolumePool
 
 class Cluster(models.Model):
     AUTH_CHOICES = (
@@ -37,6 +37,9 @@ class Cluster(models.Model):
 
     def get_status(self):
         return json.loads(dbus_to_python(get_dbus_object("/ceph").status(self.displayname)))
+
+    def df(self):
+        return json.loads(dbus_to_python(get_dbus_object("/ceph").df(self.displayname)))
 
     @property
     def status(self):
@@ -113,10 +116,9 @@ class Ruleset(models.Model):
     min_size    = models.IntegerField(default=1)
     max_size    = models.IntegerField(default=10)
 
-class Pool(models.Model):
+class Pool(VolumePool):
     cluster     = models.ForeignKey(Cluster)
     ceph_id     = models.IntegerField()
-    name        = models.CharField(max_length=250)
     size        = models.IntegerField(default=3)
     min_size    = models.IntegerField(default=2)
     pg_num      = models.IntegerField(default=64)
@@ -127,7 +129,26 @@ class Pool(models.Model):
         unique_together = (('cluster', 'ceph_id'),)
 
     def __unicode__(self):
-        return unicode(self.name)
+        return unicode(self.storageobj.name)
+
+    @property
+    def usedmegs(self):
+        for poolinfo in self.cluster.df()["pools"]:
+            if poolinfo["name"] == self.storageobj.name:
+                return int(poolinfo["stats"]["kb_used"] / 1024.)
+        raise KeyError("pool not found in ceph df")
+
+    @property
+    def status(self):
+        return self.cluster.status
+
+    @property
+    def host(self):
+        return None
+
+    def is_fs_supported(self, filesystem):
+        return True
+
 
 class Entity(models.Model):
     cluster     = models.ForeignKey(Cluster)
