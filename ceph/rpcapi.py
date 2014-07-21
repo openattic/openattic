@@ -40,4 +40,5 @@ RPCD_HANDLERS = [
     mkModelHandler(models.MDS),
     mkModelHandler(models.Entity),
     mkModelHandler(models.Ruleset),
+    mkModelHandler(models.Image),
     ]

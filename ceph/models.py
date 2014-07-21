@@ -21,7 +21,7 @@ from django.utils.translation import ugettext_noop as _
 
 from systemd import get_dbus_object, dbus_to_python
 from ifconfig.models import Host
-from volumes.models import FileSystemVolume, VolumePool
+from volumes.models import FileSystemVolume, VolumePool, BlockVolume
 
 class Cluster(models.Model):
     AUTH_CHOICES = (
@@ -144,10 +144,16 @@ class Pool(VolumePool):
 
     @property
     def host(self):
-        return None
+        return Host.objects.get_current()
 
     def is_fs_supported(self, filesystem):
         return True
+
+    def _create_volume_for_storageobject(self, storageobj, options):
+        image = Image(rbd_pool=self, storageobj=storageobj)
+        image.full_clean()
+        image.save()
+        return image
 
 
 class Entity(models.Model):
@@ -155,3 +161,32 @@ class Entity(models.Model):
     entity      = models.CharField(max_length=250)
     key         = models.CharField(max_length=50)
 
+
+class Image(BlockVolume):
+    rbd_pool    = models.ForeignKey(Pool)
+
+    def save( self, database_only=False, *args, **kwargs ):
+        if database_only:
+            return BlockVolume.save(self, *args, **kwargs)
+        install = (self.id is None)
+        BlockVolume.save(self, *args, **kwargs)
+        if install:
+            get_dbus_object("/ceph").rbd_create(self.rbd_pool.cluster.displayname, self.rbd_pool.storageobj.name, self.storageobj.name, self.storageobj.megs)
+
+    def delete(self):
+        BlockVolume.delete(self)
+        get_dbus_object("/ceph").rbd_rm(self.rbd_pool.cluster.displayname, self.rbd_pool.storageobj.name, self.storageobj.name)
+
+    @property
+    def host(self):
+        return Host.objects.get_current()
+
+    @property
+    def status(self):
+        if self.storageobj.is_locked:
+            return "locked"
+        return self.rbd_pool.status
+
+    @property
+    def path(self):
+        return "/dev/rbd/%s/%s" % (self.rbd_pool.storageobj.name, self.storageobj.name)

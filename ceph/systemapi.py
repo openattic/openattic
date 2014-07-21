@@ -14,7 +14,7 @@
  *  GNU General Public License for more details.
 """
 
-from systemd       import invoke, logged, LockingPlugin, method
+from systemd       import invoke, logged, LockingPlugin, method, deferredmethod
 
 @logged
 class SystemD(LockingPlugin):
@@ -54,3 +54,12 @@ class SystemD(LockingPlugin):
     def df(self, cluster):
         ret, out, err = invoke(["ceph", "--format", "json", "--cluster", cluster, "df"], log=False, return_out_err=True)
         return out
+
+    @deferredmethod(in_signature="sssi")
+    def rbd_create(self, cluster, pool, image, megs, sender):
+        invoke(["rbd", "-c", "/etc/ceph/%s.conf" % cluster, "-p", pool, "create", image, "--size", str(megs)])
+
+    @deferredmethod(in_signature="sss")
+    def rbd_rm(self, cluster, pool, image, sender):
+        invoke(["rbd", "-c", "/etc/ceph/%s.conf" % cluster, "-p", pool, "rm", image])
+
