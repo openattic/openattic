@@ -20,29 +20,29 @@ from systemd       import invoke, logged, LockingPlugin, method
 class SystemD(LockingPlugin):
     dbus_path = "/ceph"
 
-    @method(in_signature="", out_signature="s")
-    def osd_crush_dump(self):
-        ret, out, err = invoke(["ceph", "--format", "json", "osd", "crush", "dump"], log=False, return_out_err=True)
+    @method(in_signature="i", out_signature="s")
+    def osd_crush_dump(self, cluster):
+        ret, out, err = invoke(["ceph", "--format", "json", "--cluster", cluster, "osd", "crush", "dump"], log=False, return_out_err=True)
         return out
 
-    @method(in_signature="", out_signature="s")
-    def osd_dump(self):
-        ret, out, err = invoke(["ceph", "--format", "json", "osd", "dump"], log=False, return_out_err=True)
+    @method(in_signature="i", out_signature="s")
+    def osd_dump(self, cluster):
+        ret, out, err = invoke(["ceph", "--format", "json", "--cluster", cluster, "osd", "dump"], log=False, return_out_err=True)
         return out
 
-    @method(in_signature="", out_signature="s")
-    def mds_stat(self):
-        ret, out, err = invoke(["ceph", "--format", "json", "mds", "stat"], log=False, return_out_err=True)
+    @method(in_signature="i", out_signature="s")
+    def mds_stat(self, cluster):
+        ret, out, err = invoke(["ceph", "--format", "json", "--cluster", cluster, "mds", "stat"], log=False, return_out_err=True)
         return out
 
-    @method(in_signature="", out_signature="s")
-    def mon_status(self):
-        ret, out, err = invoke(["ceph", "--format", "json", "mon_status"], log=False, return_out_err=True)
+    @method(in_signature="i", out_signature="s")
+    def mon_status(self, cluster):
+        ret, out, err = invoke(["ceph", "--format", "json", "--cluster", cluster, "mon_status"], log=False, return_out_err=True)
         return out
 
-    @method(in_signature="", out_signature="s")
-    def auth_list(self):
-        ret, out, err = invoke(["ceph", "--format", "json", "auth", "list"], log=False, return_out_err=True)
+    @method(in_signature="i", out_signature="s")
+    def auth_list(self, cluster):
+        ret, out, err = invoke(["ceph", "--format", "json", "--cluster", cluster, "auth", "list"], log=False, return_out_err=True)
         return out
 
     @method(in_signature="i", out_signature="s")
