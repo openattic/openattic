@@ -133,7 +133,8 @@ def update(**kwargs):
             mdlpool = ceph_models.Pool.objects.get(cluster=cluster, ceph_id=cpool["pool"])
             print "known"
         except ceph_models.Pool.DoesNotExist:
-            mdlpool = ceph_models.Pool(cluster=cluster, ceph_id=cpool["pool"], name=cpool["pool_name"], rep_size=cpool["size"])
+            mdlpool = ceph_models.Pool(cluster=cluster, ceph_id=cpool["pool"], name=cpool["pool_name"], size=cpool["size"],
+                                       min_size=cpool["min_size"], pg_num=cpool["pg_num"], pgp_num=cpool["pg_placement_num"])
             mdlpool.full_clean()
             mdlpool.save()
             print "added"

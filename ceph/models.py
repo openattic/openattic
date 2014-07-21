@@ -109,13 +109,16 @@ class Pool(models.Model):
     cluster     = models.ForeignKey(Cluster)
     ceph_id     = models.IntegerField()
     name        = models.CharField(max_length=250)
-    rep_size    = models.IntegerField()
+    size        = models.IntegerField(default=3)
+    min_size    = models.IntegerField(default=2)
+    pg_num      = models.IntegerField(default=64)
+    pgp_num     = models.IntegerField(default=64)
 
     class Meta:
         unique_together = (('cluster', 'ceph_id'),)
 
     def __unicode__(self):
-        return unicode(self.host)
+        return unicode(self.name)
 
 class Entity(models.Model):
     cluster     = models.ForeignKey(Cluster)
