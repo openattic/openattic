@@ -14,9 +14,12 @@
  *  GNU General Public License for more details.
 """
 
+import json
+
 from django.db import models
 from django.utils.translation import ugettext_noop as _
 
+from systemd import get_dbus_object, dbus_to_python
 from ifconfig.models import Host
 from volumes.models import FileSystemVolume
 
@@ -31,6 +34,13 @@ class Cluster(models.Model):
     auth_cluster_required   = models.CharField(max_length=10, default='cephx', choices=AUTH_CHOICES)
     auth_service_required   = models.CharField(max_length=10, default='cephx', choices=AUTH_CHOICES)
     auth_client_required    = models.CharField(max_length=10, default='cephx', choices=AUTH_CHOICES)
+
+    def get_status(self):
+        return json.loads(dbus_to_python(get_dbus_object("/ceph").status(self.displayname)))
+
+    @property
+    def status(self):
+        return self.get_status()["health"]["overall_status"]
 
     def __unicode__(self):
         return "'%s' (%s)" % (self.displayname, self.uuid)

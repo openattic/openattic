@@ -18,8 +18,16 @@ from rpcd.handlers import ModelHandler, mkModelHandler
 
 from ceph import models
 
+class ClusterHandler(ModelHandler):
+    model = models.Cluster
+
+    def _override_get(self, obj, data):
+        data["status"] = obj.status
+        return data
+
+
 RPCD_HANDLERS = [
-    mkModelHandler(models.Cluster),
+    ClusterHandler,
     mkModelHandler(models.Type),
     mkModelHandler(models.Bucket),
     mkModelHandler(models.OSD),
