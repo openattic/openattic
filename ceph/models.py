@@ -15,13 +15,22 @@
 """
 
 from django.db import models
+from django.utils.translation import ugettext_noop as _
 
 from ifconfig.models import Host
 from volumes.models import FileSystemVolume
 
 class Cluster(models.Model):
+    AUTH_CHOICES = (
+        ('none',  _('Authentication disabled')),
+        ('cephx', _('CephX Authentication')),
+        )
+
     uuid        = models.CharField(max_length=36, unique=True)
     displayname = models.CharField(max_length=250, default='', blank=True)
+    auth_cluster_required   = models.CharField(max_length=10, default='cephx', choices=AUTH_CHOICES)
+    auth_service_required   = models.CharField(max_length=10, default='cephx', choices=AUTH_CHOICES)
+    auth_client_required    = models.CharField(max_length=10, default='cephx', choices=AUTH_CHOICES)
 
     def __unicode__(self):
         return "'%s' (%s)" % (self.displayname, self.uuid)

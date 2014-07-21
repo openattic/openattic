@@ -40,7 +40,11 @@ def update(**kwargs):
         cluster = ceph_models.Cluster.objects.get(uuid=conf.get("global", "fsid"))
         print "known"
     except ceph_models.Cluster.DoesNotExist:
-        cluster = ceph_models.Cluster(uuid=conf.get("global", "fsid"), displayname="ceph")
+        cluster = ceph_models.Cluster(uuid=conf.get("global", "fsid"), displayname="ceph",
+                                      auth_cluster_required = conf.get("global", "auth_cluster_required"),
+                                      auth_service_required = conf.get("global", "auth_service_required"),
+                                      auth_client_required  = conf.get("global", "auth_client_required"),
+                                      )
         cluster.full_clean()
         cluster.save()
         print "added"
