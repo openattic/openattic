@@ -22,20 +22,20 @@ class SystemD(LockingPlugin):
 
     @method(in_signature="", out_signature="s")
     def osd_crush_dump(self):
-        ret, out, err = invoke(["ceph", "osd", "crush", "dump"], log=False, return_out_err=True)
+        ret, out, err = invoke(["ceph", "--format", "json", "osd", "crush", "dump"], log=False, return_out_err=True)
         return out
 
     @method(in_signature="", out_signature="s")
     def osd_dump(self):
-        ret, out, err = invoke(["ceph", "osd", "dump", "--format", "json"], log=False, return_out_err=True)
+        ret, out, err = invoke(["ceph", "--format", "json", "osd", "dump"], log=False, return_out_err=True)
         return out
 
     @method(in_signature="", out_signature="s")
     def mds_stat(self):
-        ret, out, err = invoke(["ceph", "mds", "stat", "--format", "json"], log=False, return_out_err=True)
+        ret, out, err = invoke(["ceph", "--format", "json", "mds", "stat"], log=False, return_out_err=True)
         return out
 
     @method(in_signature="", out_signature="s")
     def mon_status(self):
-        ret, out, err = invoke(["ceph", "mon_status"], log=False, return_out_err=True)
+        ret, out, err = invoke(["ceph", "--format", "json", "mon_status"], log=False, return_out_err=True)
         return out
