@@ -88,7 +88,7 @@ case $1 in
 		else
 			cd $OADIR
 			shift
-			su ${RPCD_CHUID%%:*} -- -c "$PYTHON $RPCD_OPTIONS -l $RPCD_LOGFILE"
+			su ${RPCD_CHUID%%:*} -- -c "$PYTHON $RPCD_OPTIONS"
 		fi
 		;;
 	
