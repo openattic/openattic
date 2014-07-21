@@ -28,7 +28,7 @@ class Command( BaseCommand ):
 
     def handle(self, **options):
         if os.path.exists("/etc/openattic/cli.conf"):
-            print "/etc/openattic/cli.conf already exists, quitting"
+            print "/etc/openattic/cli.conf already exists"
             return
 
         try:
