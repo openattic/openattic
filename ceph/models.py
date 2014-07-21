@@ -105,6 +105,14 @@ class MDS(models.Model):
     def __unicode__(self):
         return unicode(self.host)
 
+class Ruleset(models.Model):
+    cluster     = models.ForeignKey(Cluster)
+    ceph_id     = models.IntegerField()
+    name        = models.CharField(max_length=250)
+    type        = models.IntegerField(default=1)
+    min_size    = models.IntegerField(default=1)
+    max_size    = models.IntegerField(default=10)
+
 class Pool(models.Model):
     cluster     = models.ForeignKey(Cluster)
     ceph_id     = models.IntegerField()
@@ -113,6 +121,7 @@ class Pool(models.Model):
     min_size    = models.IntegerField(default=2)
     pg_num      = models.IntegerField(default=64)
     pgp_num     = models.IntegerField(default=64)
+    ruleset     = models.ForeignKey(Ruleset)
 
     class Meta:
         unique_together = (('cluster', 'ceph_id'),)

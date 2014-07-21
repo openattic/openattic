@@ -123,6 +123,18 @@ def update(**kwargs):
                     else:
                         print "known"
 
+        for crule in crushmap["rules"]:
+            print "Checking ceph ruleset %s..." % crule["rule_name"],
+            try:
+                mdlrule = ceph_models.Ruleset.objects.get(cluster=cluster, ceph_id=crule["ruleset"])
+                print "known"
+            except ceph_models.Ruleset.DoesNotExist:
+                mdlrule = ceph_models.Ruleset(cluster=cluster, ceph_id=crule["ruleset"], name=crule["rule_name"],
+                              type=crule["type"], min_size=crule["min_size"], max_size=crule["max_size"])
+                mdlrule.full_clean()
+                mdlrule.save()
+                print "added"
+
         for cosd in osdmap["osds"]:
             print "Checking Ceph OSD %d..." % cosd["osd"],
             try:
@@ -137,12 +149,15 @@ def update(**kwargs):
 
         for cpool in osdmap["pools"]:
             print "Checking Ceph pool %s..." % cpool["pool_name"],
+            mdlrule = ceph_models.Ruleset.objects.get(cluster=cluster, ceph_id=cpool["crush_ruleset"])
             try:
                 mdlpool = ceph_models.Pool.objects.get(cluster=cluster, ceph_id=cpool["pool"])
                 print "known"
+                mdlpool.ruleset = mdlrule
+                mdlpool.save()
             except ceph_models.Pool.DoesNotExist:
                 mdlpool = ceph_models.Pool(cluster=cluster, ceph_id=cpool["pool"], name=cpool["pool_name"], size=cpool["size"],
-                                        min_size=cpool["min_size"], pg_num=cpool["pg_num"], pgp_num=cpool["pg_placement_num"])
+                              ruleset=mdlrule, min_size=cpool["min_size"], pg_num=cpool["pg_num"], pgp_num=cpool["pg_placement_num"])
                 mdlpool.full_clean()
                 mdlpool.save()
                 print "added"
