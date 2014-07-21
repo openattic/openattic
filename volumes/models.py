@@ -178,6 +178,14 @@ class StorageObject(models.Model):
                     obj.shrink(oldmegs, newmegs)
                 else:
                     obj.grow(oldmegs, newmegs)
+            objs.reverse()
+            for obj in objs:
+                if obj is None:
+                    continue
+                if oldmegs > newmegs:
+                    obj.post_shrink(oldmegs, newmegs)
+                else:
+                    obj.post_grow(oldmegs, newmegs)
 
     def create_volume(self, name, megs, options):
         """ If this is a Volume Pool, create a volume in it.
@@ -312,6 +320,12 @@ class VolumePool(models.Model):
     def shrink(self, oldmegs, newmegs):
         raise NotImplementedError("%s does not support shrink" % self.__class__)
 
+    def post_grow(self, oldmegs, newmegs):
+        pass
+
+    def post_shrink(self, oldmegs, newmegs):
+        pass
+
 
 
 class AbstractVolume(models.Model):
@@ -385,6 +399,12 @@ class AbstractVolume(models.Model):
 
     def shrink(self, oldmegs, newmegs):
         raise NotImplementedError("%s does not support shrink" % self.__class__)
+
+    def post_grow(self, oldmegs, newmegs):
+        pass
+
+    def post_shrink(self, oldmegs, newmegs):
+        pass
 
 
 
@@ -697,6 +717,12 @@ class FileSystemProvider(FileSystemVolume):
 
     def shrink(self, oldmegs, newmegs):
         return self.fs.shrink(oldmegs, newmegs)
+
+    def post_grow(self, oldmegs, newmegs):
+        return self.fs.post_grow(oldmegs, newmegs)
+
+    def post_shrink(self, oldmegs, newmegs):
+        return self.fs.post_shrink(oldmegs, newmegs)
 
 
 def __delete_filesystemprovider(instance, **kwargs):

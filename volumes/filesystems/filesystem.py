@@ -207,3 +207,9 @@ class FileSystem(object):
     def shrink(self, oldmegs, newmegs):
         raise NotImplementedError("%s does not support shrink" % self.name)
 
+    def post_grow(self, oldmegs, newmegs):
+        pass
+
+    def post_shrink(self, oldmegs, newmegs):
+        pass
+

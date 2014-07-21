@@ -40,14 +40,14 @@ class Ext2(FileSystem):
         self.chown()
 
     def shrink(self, oldmegs, newmegs):
-        mounted = self.mounted
-        if mounted:
+        if self.mounted:
             self.unmount()
         self.dbus_object.e2fs_check( self.volume.storageobj.blockvolume.volume.path )
         # call grow for the actual resize2fs
         self.grow(oldmegs, newmegs)
-        if mounted:
-            self.mount()
+
+    def post_shrink(self, oldmegs, newmegs):
+        self.mount()
 
     def grow(self, oldmegs, newmegs):
         # grow can be called as part of shrink(), so make sure we set the `grow' param correctly
