@@ -39,3 +39,8 @@ class SystemD(LockingPlugin):
     def mon_status(self):
         ret, out, err = invoke(["ceph", "--format", "json", "mon_status"], log=False, return_out_err=True)
         return out
+
+    @method(in_signature="", out_signature="s")
+    def auth_list(self):
+        ret, out, err = invoke(["ceph", "--format", "json", "auth", "list"], log=False, return_out_err=True)
+        return out

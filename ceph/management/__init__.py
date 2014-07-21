@@ -53,6 +53,7 @@ def update(**kwargs):
     crushmap = json.loads(dbus_to_python(get_dbus_object("/ceph").osd_crush_dump()))
     mds_stat = json.loads(dbus_to_python(get_dbus_object("/ceph").mds_stat()))
     mon_stat = json.loads(dbus_to_python(get_dbus_object("/ceph").mon_status()))
+    auth_list= json.loads(dbus_to_python(get_dbus_object("/ceph").auth_list()))
 
     for ctype in crushmap["types"]:
         print "Checking ceph type '%s'..." % ctype["name"],
@@ -175,5 +176,18 @@ def update(**kwargs):
             mdlmon.full_clean()
             mdlmon.save()
             print "added"
+
+    for centity in auth_list["auth_dump"]:
+        print "Checking Ceph auth entity %s..." % centity["entity"],
+
+        try:
+            mdlentity = ceph_models.Entity.objects.get(entity=centity["entity"])
+            print "found"
+        except ceph_models.Entity.DoesNotExist:
+            mdlentity = ceph_models.Entity(cluster=cluster, entity=centity["entity"], key=centity["key"])
+            mdlentity.full_clean()
+            mdlentity.save()
+            print "added"
+
 
 sysutils.models.post_install.connect(update, sender=sysutils.models)

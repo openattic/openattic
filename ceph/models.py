@@ -106,3 +106,9 @@ class Pool(models.Model):
 
     def __unicode__(self):
         return unicode(self.host)
+
+class Entity(models.Model):
+    cluster     = models.ForeignKey(Cluster)
+    entity      = models.CharField(max_length=250)
+    key         = models.CharField(max_length=50)
+
