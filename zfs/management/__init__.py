@@ -110,5 +110,17 @@ def update_disksize(**kwargs):
                 zfs.full_clean()
                 zfs.save(database_only=True)
 
+    # make sure the zpools we now know all have a .snapshots subvolume.
+    for storageobj in StorageObject.objects.filter(volumepool__zpool__isnull=False):
+        vp = storageobj.volumepool.volumepool
+        try:
+            snapshots = vp.volume_set.get(name=".snapshots")
+        except StorageObject.DoesNotExist:
+            dso = StorageObject(name=".snapshots", megs=vp.storageobj.megs, source_pool=vp)
+            dso.full_clean()
+            dso.save()
+            dvol = vp._create_volume_for_storageobject(dso, {
+                "filesystem": "zfs", "fswarning": 99, "fscritical": 99, "owner": admin
+                })
 
 sysutils.models.post_install.connect(update_disksize, sender=sysutils.models)
