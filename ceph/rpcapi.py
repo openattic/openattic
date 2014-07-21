@@ -35,4 +35,5 @@ RPCD_HANDLERS = [
     mkModelHandler(models.MDS),
     mkModelHandler(models.Pool),
     mkModelHandler(models.Entity),
+    mkModelHandler(models.Ruleset),
     ]
