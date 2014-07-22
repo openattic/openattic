@@ -65,7 +65,6 @@ class Bucket(models.Model):
     ceph_id     = models.IntegerField()
     name        = models.CharField(max_length=50)
     parent      = models.ForeignKey('self', null=True, blank=True)
-    weight      = models.FloatField(help_text="My weight in the parent container (if any).", default=1.0)
     alg         = models.CharField(max_length=50, default="straw",
                                    choices=(("uniform", "uniform"), ("list", "list"), ("tree", "tree"), ("straw", "straw")))
     hash        = models.CharField(max_length=50, default="rjenkins1")
@@ -81,7 +80,6 @@ class OSD(models.Model):
     ceph_id     = models.IntegerField()
     uuid        = models.CharField(max_length=36, unique=True)
     bucket      = models.ForeignKey(Bucket)
-    weight      = models.FloatField(help_text="My weight in the bucket.", default=1.0)
     is_by_oa    = models.BooleanField(help_text="True if this OSD has been set up by openATTIC.")
     volume      = models.ForeignKey(FileSystemVolume, null=True, blank=True)
     journal     = models.ForeignKey(BlockVolume,      null=True, blank=True)
