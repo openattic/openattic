@@ -153,6 +153,9 @@ class Pool(VolumePool):
             get_dbus_object("/ceph").osd_pool_create(self.cluster.displayname, self.storageobj.name,
                                                      self.cluster.get_recommended_pg_num(self.size),
                                                      self.ruleset.ceph_id)
+        elif not database_only:
+            get_dbus_object("/ceph").osd_pool_set(self.cluster.displayname, self.storageobj.name, "size",     str(self.size))
+            get_dbus_object("/ceph").osd_pool_set(self.cluster.displayname, self.storageobj.name, "min_size", str(self.min_size))
 
     def delete(self):
         super(Pool, self).delete()

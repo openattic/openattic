@@ -114,3 +114,8 @@ class SystemD(LockingPlugin):
         invoke(["ceph", "--format", "json", "--cluster", cluster,
                 "osd", "pool", "delete", poolname, poolname, "--yes-i-really-really-mean-it"])
 
+    @deferredmethod(in_signature="ssss")
+    def osd_pool_set(self, cluster, poolname, key, value, sender):
+        invoke(["ceph", "--format", "json", "--cluster", cluster,
+                "osd", "pool", "set", poolname, key, value])
+
