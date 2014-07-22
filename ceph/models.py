@@ -89,6 +89,14 @@ class OSD(models.Model):
     def __unicode__(self):
         return "osd.%s (%s)" % (self.ceph_id, unicode(self.volume))
 
+    def save( self, database_only=False, *args, **kwargs ):
+        install = (self.id is None)
+        models.Model.save(self, *args, **kwargs)
+        if install and not database_only:
+            fspath = self.volume.volume.path
+            jnldev = self.journal.volume.path if self.journal is not None else ""
+            get_dbus_object("/ceph").format_volume_as_osd(self.rbd_pool.cluster.displayname, fspath, jnldev)
+
 class Mon(models.Model):
     cluster     = models.ForeignKey(Cluster)
     host        = models.ForeignKey(Host)
