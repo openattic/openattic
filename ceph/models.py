@@ -140,6 +140,18 @@ class Pool(VolumePool):
     def __unicode__(self):
         return unicode(self.storageobj.name)
 
+    def save( self, database_only=False, *args, **kwargs ):
+        install = (self.id is None)
+        super(Pool, self).save(*args, **kwargs)
+        if install and not database_only:
+            get_dbus_object("/ceph").osd_pool_create(self.cluster.displayname, self.storageobj.name,
+                                                     self.cluster.get_recommended_pg_num(self.size),
+                                                     self.ruleset.ceph_id)
+
+    def delete(self):
+        super(Pool, self).delete()
+        get_dbus_object("/ceph").osd_pool_delete(self.cluster.displayname, self.storageobj.name)
+
     @property
     def usedmegs(self):
         for poolinfo in self.cluster.df()["pools"]:

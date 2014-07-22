@@ -103,3 +103,14 @@ class SystemD(LockingPlugin):
                     os.rmdir(os.path.join(root, name))
             os.unlink(osdpath)
             invoke(["ceph", "--format", "json", "--cluster", cluster, "osd", "rm", str(osdid)])
+
+    @deferredmethod(in_signature="ssii")
+    def osd_pool_create(self, cluster, poolname, pg_num, ruleset, sender):
+        invoke(["ceph", "--format", "json", "--cluster", cluster,
+                "osd", "pool", "create", poolname, str(pg_num), str(pg_num), "replicated", str(ruleset)])
+
+    @deferredmethod(in_signature="ss")
+    def osd_pool_delete(self, cluster, poolname, sender):
+        invoke(["ceph", "--format", "json", "--cluster", cluster,
+                "osd", "pool", "delete", poolname, poolname, "--yes-i-really-really-mean-it"])
+
