@@ -84,7 +84,7 @@ class OSD(models.Model):
     weight      = models.FloatField(help_text="My weight in the bucket.", default=1.0)
     is_by_oa    = models.BooleanField(help_text="True if this OSD has been set up by openATTIC.")
     volume      = models.ForeignKey(FileSystemVolume, null=True, blank=True)
-    path        = models.CharField(max_length=250,    null=True, blank=True)
+    journal     = models.ForeignKey(BlockVolume,      null=True, blank=True)
 
     class Meta:
         unique_together = (('cluster', 'ceph_id'),)
