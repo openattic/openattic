@@ -190,7 +190,20 @@ class Pool(VolumePool):
 class Entity(models.Model):
     cluster     = models.ForeignKey(Cluster)
     entity      = models.CharField(max_length=250)
-    key         = models.CharField(max_length=50)
+    key         = models.CharField(max_length=50, blank=True)
+
+    def save(self, database_only=False, *args, **kwargs ):
+        if self.id is None and not database_only:
+            get_dbus_object("/ceph").auth_add(self.cluster.displayname, self.entity)
+            self.key = json.loads(get_dbus_object("/ceph").auth_get_key(self.cluster.displayname, self.entity))["key"]
+        super(Entity, self).save(*args, **kwargs)
+
+    def delete(self):
+        super(Entity, self).delete()
+        get_dbus_object("/ceph").auth_del(self.cluster.displayname, self.entity)
+
+    def __unicode__(self):
+        return self.entity
 
 
 class Image(BlockVolume):

@@ -52,6 +52,19 @@ class SystemD(LockingPlugin):
         ret, out, err = self.invoke_ceph(cluster, ["auth", "list"], log=False)
         return out
 
+    @method(in_signature="ss", out_signature="")
+    def auth_add(self, cluster, entity):
+        self.invoke_ceph(cluster, ["auth", "add", entity])
+
+    @method(in_signature="ss", out_signature="s")
+    def auth_get_key(self, cluster, entity):
+        ret, out, err = self.invoke_ceph(cluster, ["auth", "get-key", entity], log=False)
+        return out
+
+    @method(in_signature="ss", out_signature="")
+    def auth_del(self, cluster, entity):
+        self.invoke_ceph(cluster, ["auth", "del", entity])
+
     @method(in_signature="s", out_signature="s")
     def status(self, cluster):
         ret, out, err = self.invoke_ceph(cluster, ["status"], log=False)
