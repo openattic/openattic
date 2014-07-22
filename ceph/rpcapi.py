@@ -15,7 +15,7 @@
 """
 
 from rpcd.handlers import ModelHandler, mkModelHandler
-from volumes.rpcapi import AbstractVolumePoolHandler
+from volumes.rpcapi import AbstractVolumePoolHandler, AbstractBlockVolumeHandler
 
 from ceph import models
 
@@ -29,10 +29,13 @@ class ClusterHandler(ModelHandler):
 class PoolHandler(AbstractVolumePoolHandler):
     model = models.Pool
 
+class ImageHandler(AbstractBlockVolumeHandler):
+    model = models.Image
 
 RPCD_HANDLERS = [
     ClusterHandler,
     PoolHandler,
+    ImageHandler,
     mkModelHandler(models.Type),
     mkModelHandler(models.Bucket),
     mkModelHandler(models.OSD),
@@ -40,5 +43,4 @@ RPCD_HANDLERS = [
     mkModelHandler(models.MDS),
     mkModelHandler(models.Entity),
     mkModelHandler(models.Ruleset),
-    mkModelHandler(models.Image),
     ]
