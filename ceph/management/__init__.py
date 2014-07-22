@@ -16,6 +16,7 @@
 
 import re
 import os
+import os.path
 import json
 import sysutils.models
 
@@ -148,6 +149,31 @@ def update(**kwargs):
                 mdlosd.full_clean()
                 mdlosd.save()
                 print "added"
+
+            # If the volume is unknown and this is a local OSD, let's see if we can update that
+            osdpath = os.path.join("/var/lib/ceph/osd", "%s-%d" % (mdlosd.cluster.displayname, mdlosd.ceph_id))
+            if ((mdlosd.volume is None or mdlosd.journal is None) and
+                os.path.exists(osdpath) and os.path.islink(osdpath)):
+                volumepath = os.readlink(osdpath)
+                journalpath = os.path.join(osdpath, "journal")
+                if os.path.exists(journalpath) and os.path.islink(journalpath):
+                    journaldevpath = os.readlink(journalpath)
+                else:
+                    journaldevpath = ""
+                dirty = False
+                for fsv_so in StorageObject.objects.filter(filesystemvolume__isnull=False):
+                    if volumepath.startswith(fsv_so.filesystemvolume.volume.path):
+                        mdlosd.volume = fsv_so.filesystemvolume.volume
+                        dirty = True
+                        break
+                for bv_so in StorageObject.objects.filter(blockvolume__isnull=False):
+                    if volumepath.startswith(bv_so.blockvolume.volume.path):
+                        mdlosd.journal = bv_so.blockvolume.volume
+                        dirty = True
+                        break
+                if dirty:
+                    mdlosd.full_clean()
+                    mdlosd.save()
 
         for cpool in osdmap["pools"]:
             print "Checking Ceph pool %s..." % cpool["pool_name"],
