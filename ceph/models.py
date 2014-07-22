@@ -19,6 +19,7 @@ import math
 
 from django.db import models
 from django.utils.translation import ugettext_noop as _
+from django.core.exceptions import ValidationError
 
 from systemd import get_dbus_object, dbus_to_python
 from ifconfig.models import Host
@@ -139,6 +140,11 @@ class Pool(VolumePool):
 
     def __unicode__(self):
         return unicode(self.storageobj.name)
+
+    def full_clean(self):
+        super(Pool, self).full_clean()
+        if self.min_size > self.size:
+            raise ValidationError({"min_size": ["min_size must be less than or equal to size"]})
 
     def save( self, database_only=False, *args, **kwargs ):
         install = (self.id is None)
