@@ -80,7 +80,6 @@ class OSD(models.Model):
     ceph_id     = models.IntegerField()
     uuid        = models.CharField(max_length=36, unique=True)
     bucket      = models.ForeignKey(Bucket)
-    is_by_oa    = models.BooleanField(help_text="True if this OSD has been set up by openATTIC.")
     volume      = models.ForeignKey(FileSystemVolume, null=True, blank=True)
     journal     = models.ForeignKey(BlockVolume,      null=True, blank=True)
 
@@ -92,7 +91,6 @@ class OSD(models.Model):
 
 class Mon(models.Model):
     cluster     = models.ForeignKey(Cluster)
-    is_by_oa    = models.BooleanField(help_text="True if this OSD has been set up by openATTIC.")
     host        = models.ForeignKey(Host)
 
     def __unicode__(self):
@@ -100,7 +98,6 @@ class Mon(models.Model):
 
 class MDS(models.Model):
     cluster     = models.ForeignKey(Cluster)
-    is_by_oa    = models.BooleanField(help_text="True if this OSD has been set up by openATTIC.")
     host        = models.ForeignKey(Host)
 
     def __unicode__(self):

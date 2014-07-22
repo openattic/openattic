@@ -145,7 +145,7 @@ def update(**kwargs):
                 print "known"
             except ceph_models.OSD.DoesNotExist:
                 osdname = "osd.%d" % cosd["osd"]
-                mdlosd = ceph_models.OSD(cluster=cluster, ceph_id=cosd["osd"], uuid=cosd["uuid"], bucket=osdbuckets[osdname], is_by_oa=False)
+                mdlosd = ceph_models.OSD(cluster=cluster, ceph_id=cosd["osd"], uuid=cosd["uuid"], bucket=osdbuckets[osdname])
                 mdlosd.full_clean()
                 mdlosd.save()
                 print "added"
@@ -208,7 +208,7 @@ def update(**kwargs):
                 mdlmds = ceph_models.MDS.objects.get(cluster=cluster, host=ip.device.host)
                 print "found"
             except ceph_models.MDS.DoesNotExist:
-                mdlmds = ceph_models.MDS(cluster=cluster, host=ip.device.host, is_by_oa=False)
+                mdlmds = ceph_models.MDS(cluster=cluster, host=ip.device.host)
                 mdlmds.full_clean()
                 mdlmds.save()
                 print "added"
@@ -227,7 +227,7 @@ def update(**kwargs):
                 mdlmon = ceph_models.Mon.objects.get(cluster=cluster, host=ip.device.host)
                 print "found"
             except ceph_models.Mon.DoesNotExist:
-                mdlmon = ceph_models.Mon(cluster=cluster, host=ip.device.host, is_by_oa=False)
+                mdlmon = ceph_models.Mon(cluster=cluster, host=ip.device.host)
                 mdlmon.full_clean()
                 mdlmon.save()
                 print "added"
