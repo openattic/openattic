@@ -124,8 +124,6 @@ class Pool(VolumePool):
     ceph_id     = models.IntegerField()
     size        = models.IntegerField(default=3)
     min_size    = models.IntegerField(default=2)
-    pg_num      = models.IntegerField(default=64)
-    pgp_num     = models.IntegerField(default=64)
     ruleset     = models.ForeignKey(Ruleset)
 
     class Meta:

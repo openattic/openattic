@@ -188,7 +188,7 @@ def update(**kwargs):
                 storageobj.full_clean()
                 storageobj.save()
                 mdlpool = ceph_models.Pool(cluster=cluster, ceph_id=cpool["pool"], storageobj=storageobj, size=cpool["size"],
-                              ruleset=mdlrule, min_size=cpool["min_size"], pg_num=cpool["pg_num"], pgp_num=cpool["pg_placement_num"])
+                              ruleset=mdlrule, min_size=cpool["min_size"])
                 mdlpool.full_clean()
                 mdlpool.save()
                 print "added"
