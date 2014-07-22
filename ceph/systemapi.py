@@ -75,9 +75,11 @@ class SystemD(LockingPlugin):
         # symlink the file system to /var/lib/ceph/osd/<cluster>-<id>
         osdpath = "/var/lib/ceph/osd/%s-%d" % (cluster, osdid)
         os.symlink(fspath, osdpath)
-        # symlink the journal device to .../journal if we have one
+        # symlink the journal device to .../journal if we have one, otherwise use a file
         if journaldev:
             os.symlink(journaldev, os.path.join(osdpath, "journal"))
+        else:
+            open(os.path.join(osdpath, "journal"), "w").close()
         try:
             # create the OSD's file system
             invoke(["ceph-osd", "-c", "/etc/ceph/%s.conf" % cluster, "-i", str(osdid), "--mkfs", "--mkkey"])
