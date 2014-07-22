@@ -99,7 +99,7 @@ class OSD(models.Model):
 
     def save( self, database_only=False, *args, **kwargs ):
         install = (self.id is None)
-        models.Model.save(self, *args, **kwargs)
+        super(OSD, self).save(*args, **kwargs)
         if install and not database_only:
             fspath = self.volume.volume.path
             jnldev = self.journal.volume.path if self.journal is not None else ""
@@ -178,12 +178,12 @@ class Image(BlockVolume):
         if database_only:
             return BlockVolume.save(self, *args, **kwargs)
         install = (self.id is None)
-        BlockVolume.save(self, *args, **kwargs)
+        super(Image, self).save(*args, **kwargs)
         if install:
             get_dbus_object("/ceph").rbd_create(self.rbd_pool.cluster.displayname, self.rbd_pool.storageobj.name, self.storageobj.name, self.storageobj.megs)
 
     def delete(self):
-        BlockVolume.delete(self)
+        super(Image, self).delete()
         get_dbus_object("/ceph").rbd_rm(self.rbd_pool.cluster.displayname, self.rbd_pool.storageobj.name, self.storageobj.name)
 
     @property
