@@ -47,7 +47,7 @@ class Cluster(models.Model):
 
             See http://ceph.com/docs/master/rados/operations/placement-groups/ for details.
         """
-        return 2 ** math.ceil(math.log(( self.osd_set.count() * 100 / repsize ), 2))
+        return int(2 ** math.ceil(math.log(( self.osd_set.count() * 100 / repsize ), 2)))
 
     @property
     def status(self):
