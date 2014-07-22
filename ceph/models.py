@@ -15,6 +15,7 @@
 """
 
 import json
+import math
 
 from django.db import models
 from django.utils.translation import ugettext_noop as _
@@ -40,6 +41,13 @@ class Cluster(models.Model):
 
     def df(self):
         return json.loads(dbus_to_python(get_dbus_object("/ceph").df(self.displayname)))
+
+    def get_recommended_pg_num(self, repsize):
+        """ Calculate the recommended number of PGs for a given repsize.
+
+            See http://ceph.com/docs/master/rados/operations/placement-groups/ for details.
+        """
+        return 2 ** math.ceil(math.log(( self.osd_set.count() * 100 / repsize ), 2))
 
     @property
     def status(self):
