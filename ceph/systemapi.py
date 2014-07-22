@@ -27,37 +27,37 @@ class SystemD(LockingPlugin):
     def invoke_ceph(self, cluster, args, log=True):
         return invoke(["ceph", "--format", "json", "--cluster", cluster] + args, log=log, return_out_err=True)
 
-    @method(in_signature="i", out_signature="s")
+    @method(in_signature="s", out_signature="s")
     def osd_crush_dump(self, cluster):
         ret, out, err = self.invoke_ceph(cluster, ["osd", "crush", "dump"], log=False)
         return out
 
-    @method(in_signature="i", out_signature="s")
+    @method(in_signature="s", out_signature="s")
     def osd_dump(self, cluster):
         ret, out, err = self.invoke_ceph(cluster, ["osd", "dump"], log=False)
         return out
 
-    @method(in_signature="i", out_signature="s")
+    @method(in_signature="s", out_signature="s")
     def mds_stat(self, cluster):
         ret, out, err = self.invoke_ceph(cluster, ["mds", "stat"], log=False)
         return out
 
-    @method(in_signature="i", out_signature="s")
+    @method(in_signature="s", out_signature="s")
     def mon_status(self, cluster):
         ret, out, err = self.invoke_ceph(cluster, ["mon_status"], log=False)
         return out
 
-    @method(in_signature="i", out_signature="s")
+    @method(in_signature="s", out_signature="s")
     def auth_list(self, cluster):
         ret, out, err = self.invoke_ceph(cluster, ["auth", "list"], log=False)
         return out
 
-    @method(in_signature="i", out_signature="s")
+    @method(in_signature="s", out_signature="s")
     def status(self, cluster):
         ret, out, err = self.invoke_ceph(cluster, ["status"], log=False)
         return out
 
-    @method(in_signature="i", out_signature="s")
+    @method(in_signature="s", out_signature="s")
     def df(self, cluster):
         ret, out, err = self.invoke_ceph(cluster, ["df"], log=False)
         return out
