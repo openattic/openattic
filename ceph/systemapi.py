@@ -67,8 +67,8 @@ class SystemD(LockingPlugin):
     def rbd_rm(self, cluster, pool, image, sender):
         invoke(["rbd", "-c", "/etc/ceph/%s.conf" % cluster, "-p", pool, "rm", image])
 
-    @deferredmethod(in_signature="ssss")
-    def format_volume_as_osd(self, cluster, fspath, journaldev, bucket, sender):
+    @deferredmethod(in_signature="sss")
+    def format_volume_as_osd(self, cluster, fspath, journaldev, sender):
         # run "ceph osd create" to get an ID
         ret, out, err = invoke(["ceph", "--format", "json", "--cluster", cluster, "osd", "create"], return_out_err=True)
         osdid = json.loads(out)["osdid"]
