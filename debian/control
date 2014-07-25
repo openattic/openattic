@@ -24,7 +24,8 @@ Recommends:
  openattic-module-lvm,
 Suggests: python-django-rosetta, lsscsi, openattic-module-twraid,
  openattic-module-ipmi,
- openattic-module-zfs
+ openattic-module-zfs,
+ openattic-module-ceph
 Description: Comprehensive storage management system
  openATTIC is a storage management system based upon Open Source tools with
  a comprehensive user interface that allows you to create, share and backup
