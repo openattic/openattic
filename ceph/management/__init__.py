@@ -186,7 +186,7 @@ def update(**kwargs):
                 mdlpool = ceph_models.Pool.objects.get(cluster=cluster, ceph_id=cpool["pool"])
                 print "known"
                 mdlpool.ruleset = mdlrule
-                mdlpool.save()
+                mdlpool.save(database_only=True)
             except ceph_models.Pool.DoesNotExist:
                 storageobj = StorageObject(name=cpool["pool_name"], megs=df["stats"]["total_space"] / 1024)
                 storageobj.full_clean()
