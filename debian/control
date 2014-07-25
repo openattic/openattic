@@ -341,7 +341,8 @@ Description: MDRAID module for openATTIC
 
 Package: openattic-module-ceph
 Architecture: all
-Depends: ${misc:Depends}, openattic-base, ceph (>= 0.80)
+Depends: ${misc:Depends}, openattic-base, ceph (>= 0.80),
+ python-django-mptt (>= 0.6.0)
 Description: Ceph module for openATTIC
  openATTIC is a storage management system based upon Open Source tools with
  a comprehensive user interface that allows you to create, share and backup
