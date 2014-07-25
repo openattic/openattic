@@ -151,7 +151,7 @@ def update(**kwargs):
                 osdname = "osd.%d" % cosd["osd"]
                 mdlosd = ceph_models.OSD(cluster=cluster, ceph_id=cosd["osd"], uuid=cosd["uuid"], bucket=osdbuckets[osdname])
                 mdlosd.full_clean()
-                mdlosd.save()
+                mdlosd.save(database_only=True)
                 print "added"
 
             # If the volume is unknown and this is a local OSD, let's see if we can update that
@@ -194,7 +194,7 @@ def update(**kwargs):
                 mdlpool = ceph_models.Pool(cluster=cluster, ceph_id=cpool["pool"], storageobj=storageobj, size=cpool["size"],
                               ruleset=mdlrule, min_size=cpool["min_size"])
                 mdlpool.full_clean()
-                mdlpool.save()
+                mdlpool.save(database_only=True)
                 print "added"
 
         iprgx = re.compile(r"^(?P<ip>.+):(?P<port>\d+)/\d+$")
@@ -245,7 +245,7 @@ def update(**kwargs):
             except ceph_models.Entity.DoesNotExist:
                 mdlentity = ceph_models.Entity(cluster=cluster, entity=centity["entity"], key=centity["key"])
                 mdlentity.full_clean()
-                mdlentity.save()
+                mdlentity.save(database_only=True)
                 print "added"
 
 
