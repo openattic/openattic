@@ -337,3 +337,14 @@ Description: MDRAID module for openATTIC
  storage space on demand.
  .
  This package includes support for MD-RAID, the common Linux software RAID.
+
+Package: openattic-module-ceph
+Architecture: all
+Depends: ${misc:Depends}, openattic-base, ceph (>= 0.80)
+Description: Ceph module for openATTIC
+ openATTIC is a storage management system based upon Open Source tools with
+ a comprehensive user interface that allows you to create, share and backup
+ storage space on demand.
+ .
+ This package includes support for Ceph, a unified, distributed storage
+ system designed for excellent performance, reliability and scalability.
