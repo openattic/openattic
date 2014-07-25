@@ -63,12 +63,12 @@ def update(**kwargs):
             cluster.save()
             print "added"
 
-        osdmap   = json.loads(dbus_to_python(get_dbus_object("/ceph").osd_dump(cluster.displayname)))
-        crushmap = json.loads(dbus_to_python(get_dbus_object("/ceph").osd_crush_dump(cluster.displayname)))
-        mds_stat = json.loads(dbus_to_python(get_dbus_object("/ceph").mds_stat(cluster.displayname)))
-        mon_stat = json.loads(dbus_to_python(get_dbus_object("/ceph").mon_status(cluster.displayname)))
-        auth_list= json.loads(dbus_to_python(get_dbus_object("/ceph").auth_list(cluster.displayname)))
-        df       = json.loads(dbus_to_python(get_dbus_object("/ceph").df(cluster.displayname)))
+        osdmap   = cluster.get_osdmap()
+        crushmap = cluster.get_crushmap()
+        mds_stat = cluster.get_mds_stat()
+        mon_stat = cluster.get_mon_status()
+        auth_list= cluster.get_auth_list()
+        df       = cluster.df()
 
         for ctype in crushmap["types"]:
             print "Checking ceph type '%s'..." % ctype["name"],

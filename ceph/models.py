@@ -48,6 +48,18 @@ class Cluster(models.Model):
     def get_crushmap(self):
         return json.loads(dbus_to_python(get_dbus_object("/ceph").osd_crush_dump(self.displayname)))
 
+    def get_osdmap(self):
+        return json.loads(dbus_to_python(get_dbus_object("/ceph").osd_dump(self.displayname)))
+
+    def get_mds_stat(self):
+        return json.loads(dbus_to_python(get_dbus_object("/ceph").mds_stat(self.displayname)))
+
+    def get_mon_status(self):
+        return json.loads(dbus_to_python(get_dbus_object("/ceph").mon_status(self.displayname)))
+
+    def get_auth_list(self):
+        return json.loads(dbus_to_python(get_dbus_object("/ceph").auth_list(self.displayname)))
+
     def get_recommended_pg_num(self, repsize):
         """ Calculate the recommended number of PGs for a given repsize.
 
