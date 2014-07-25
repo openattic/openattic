@@ -81,6 +81,7 @@ Depends: ${misc:Depends}, python (>= 2.6),
  python-m2crypto,
  python-netifaces,
  python-netaddr,
+ python-pyudev,
  python-django-extdirect (>= 0.6),
  oxygen-icon-theme,
  lsb-release,
@@ -100,7 +101,7 @@ Description: Basic requirements for openATTIC
 
 Package: openattic-module-lvm
 Architecture: all
-Depends: ${misc:Depends}, openattic-base, lvm2, parted, python-pyudev,
+Depends: ${misc:Depends}, openattic-base, lvm2, parted,
  openattic-module-cron, file, udisks
 Enhances: lvm2
 Description: LVM module for openATTIC
@@ -184,7 +185,7 @@ Description: FTP module for openATTIC
 Package: openattic-module-nagios
 Architecture: all
 Depends: ${misc:Depends}, python (>= 2.6),
- ${python:Depends}, python-imaging, python-numpy, python-pyudev,
+ ${python:Depends}, python-imaging, python-numpy,
  openattic-base, openattic-base,
  bc, adduser,
  nagios3-core, nagios-plugins-standard, nagios-plugins-basic,
