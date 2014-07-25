@@ -21,6 +21,8 @@ from django.db import models
 from django.utils.translation import ugettext_noop as _
 from django.core.exceptions import ValidationError
 
+from mptt import models as mptt_models
+
 from systemd import get_dbus_object, dbus_to_python
 from ifconfig.models import Host
 from volumes.models import FileSystemVolume, VolumePool, BlockVolume
@@ -68,15 +70,18 @@ class Type(models.Model):
     def __unicode__(self):
         return "'%s' (%s)" % (self.name, self.ceph_id)
 
-class Bucket(models.Model):
+class Bucket(mptt_models.MPTTModel):
     cluster     = models.ForeignKey(Cluster)
     type        = models.ForeignKey(Type)
     ceph_id     = models.IntegerField()
     name        = models.CharField(max_length=50)
-    parent      = models.ForeignKey('self', null=True, blank=True)
+    parent      = mptt_models.TreeForeignKey('self', null=True, blank=True, related_name='children')
     alg         = models.CharField(max_length=50, default="straw",
                                    choices=(("uniform", "uniform"), ("list", "list"), ("tree", "tree"), ("straw", "straw")))
     hash        = models.CharField(max_length=50, default="rjenkins1")
+
+    class MPTTMeta:
+        order_insertion_by = ['name']
 
     class Meta:
         unique_together = (('cluster', 'ceph_id'), ('cluster', 'name'))
