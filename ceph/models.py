@@ -45,6 +45,9 @@ class Cluster(models.Model):
     def df(self):
         return json.loads(dbus_to_python(get_dbus_object("/ceph").df(self.displayname)))
 
+    def get_crushmap(self):
+        return json.loads(dbus_to_python(get_dbus_object("/ceph").osd_crush_dump(self.displayname)))
+
     def get_recommended_pg_num(self, repsize):
         """ Calculate the recommended number of PGs for a given repsize.
 
@@ -132,6 +135,29 @@ class Ruleset(models.Model):
     type        = models.IntegerField(default=1)
     min_size    = models.IntegerField(default=1)
     max_size    = models.IntegerField(default=10)
+
+    def get_description(self):
+        """ Generate a human-readable description of what this ruleset does. """
+        crushmap = self.cluster.get_crushmap()
+        for crule in crushmap["rules"]:
+            if crule["ruleset"] != self.ceph_id:
+                continue
+            bits = []
+            for step in crule["steps"]:
+                if step["op"] == "take":
+                    bits.append("from the %s tree" % step["item_name"])
+                elif step["op"].startswith("choose"):
+                    if not step["num"]:
+                        bitpart = "select as many %ss as necessary" % step["type"]
+                    else:
+                        bitpart = "select %d %ss" % (step["num"], step["type"])
+                    bits.append(bitpart)
+                    if step["op"].startswith("chooseleaf"):
+                        bits.append("descend to their OSDs")
+                elif step["op"] == "emit":
+                    bits.append("done")
+            return ", ".join(bits)
+        raise KeyError("rule not found in crushmap")
 
 class Pool(VolumePool):
     cluster     = models.ForeignKey(Cluster)
