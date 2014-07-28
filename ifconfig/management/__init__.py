@@ -16,7 +16,9 @@
 
 import os
 import socket
+import netaddr
 import netifaces
+import socket, struct
 
 from django.core.management import call_command
 from django.db.models import signals
@@ -25,6 +27,18 @@ import ifconfig.models
 import sysutils.models
 from ifconfig.models  import Host, NetDevice, IPAddress
 from systemd import get_dbus_object, dbus_to_python
+
+def get_default_gateway_linux():
+    """Read the default gateway directly from /proc."""
+    with open("/proc/net/route") as fh:
+        for line in fh:
+            fields = line.strip().split()
+            if fields[1] != '00000000' or not int(fields[3], 16) & 2:
+                continue
+
+            return netaddr.IPAddress(socket.inet_ntoa(struct.pack("<L", int(fields[2], 16))))
+    raise SystemError("default gw not found")
+
 
 def create_interfaces(**kwargs):
     # Make sure we have *this* host in the database
@@ -37,6 +51,7 @@ def create_interfaces(**kwargs):
     vlans = dbus_to_python(get_dbus_object("/ifconfig").get_vconfig())
 
     ifstack = netifaces.interfaces()
+    defaultgw = get_default_gateway_linux()
     haveifaces = {}
     have_primary = (IPAddress.objects.filter(primary_address=True).count() > 0)
     unseen_ifaces = [v["devname"] for v in NetDevice.objects.filter(host=host).values("devname")]
@@ -80,7 +95,7 @@ def create_interfaces(**kwargs):
             continue
 
         try:
-            haveifaces[iface] = NetDevice.objects.get(host=host, devname=iface)
+            haveifaces[iface] = NetDevice.objects.get(devname=iface)
             unseen_ifaces.remove(iface)
             print "Found", iface
 
@@ -109,13 +124,12 @@ def create_interfaces(**kwargs):
                 if addrfam == socket.AF_INET6 and addr["addr"][:4] == "fe80":
                     # Don't record link-local addresses
                     continue
-                is_primary = not have_primary and addr["addr"] not in ("127.0.0.1", "::1")
-                have_primary = have_primary or is_primary
                 try:
                     ip = IPAddress.objects.get( device__host=host, address__startswith=addr["addr"]+"/" )
                 except IPAddress.DoesNotExist:
                     print "Adding ", addr
-                    ip = IPAddress(address=(addr["addr"] + "/" + addr["netmask"]), device=haveifaces[iface], primary_address=is_primary)
+                    ipnet = netaddr.IPNetwork(addr["addr"] + "/" + addr["netmask"])
+                    ip = IPAddress(address=str(ipnet), device=haveifaces[iface], primary_address=(defaultgw in ipnet))
                     ip.save()
 
     for iface in unseen_ifaces:
