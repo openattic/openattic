@@ -128,6 +128,7 @@ def create_interfaces(**kwargs):
                 try:
                     ip = IPAddress.objects.get( device__host=host, address__startswith=addr["addr"]+"/" )
                     ip.address = str(ipnet)
+                    primary_address=(defaultgw in ipnet)
                     ip.full_clean()
                     ip.save()
                 except IPAddress.DoesNotExist:
