@@ -39,7 +39,7 @@ def create_interfaces(**kwargs):
     ifstack = netifaces.interfaces()
     haveifaces = {}
     have_primary = (IPAddress.objects.filter(primary_address=True).count() > 0)
-    unseen_ifaces = [v["devname"] for v in NetDevice.objects.values("devname")]
+    unseen_ifaces = [v["devname"] for v in NetDevice.objects.filter(host=host).values("devname")]
 
     while ifstack:
         iface = ifstack.pop(0)
