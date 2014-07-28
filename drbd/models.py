@@ -39,6 +39,8 @@ DRBD_PROTOCOL_CHOICES = (
     )
 
 class ConnectionManager(models.Manager):
+    hostfilter = "host"
+
     def _get_host_primary_ipaddress(self, host):
         return IPAddress.all_objects.get(device__host=host, primary_address=True)
 
@@ -103,6 +105,7 @@ class Connection(BlockVolume):
                                     "K/M/G<b><i>Bytes</i></b>."))
 
     objects = ConnectionManager()
+    all_objects = models.Manager()
 
     def __init__(self, *args, **kwargs):
         models.Model.__init__(self, *args, **kwargs)
