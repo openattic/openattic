@@ -124,11 +124,14 @@ def create_interfaces(**kwargs):
                 if addrfam == socket.AF_INET6 and addr["addr"][:4] == "fe80":
                     # Don't record link-local addresses
                     continue
+                ipnet = netaddr.IPNetwork(addr["addr"] + "/" + addr["netmask"])
                 try:
                     ip = IPAddress.objects.get( device__host=host, address__startswith=addr["addr"]+"/" )
+                    ip.address = str(ipnet)
+                    ip.full_clean()
+                    ip.save()
                 except IPAddress.DoesNotExist:
                     print "Adding ", addr
-                    ipnet = netaddr.IPNetwork(addr["addr"] + "/" + addr["netmask"])
                     ip = IPAddress(address=str(ipnet), device=haveifaces[iface], primary_address=(defaultgw in ipnet))
                     ip.save()
 
