@@ -615,6 +615,9 @@ class HostACL(models.Model):
             get_dbus_object("/lio").saveconfig()
             post_install.send(sender=HostACL, instance=self)
 
+    def __unicode__(self):
+        return "%s -> %s" % (self.volume, self.host)
+
 def __hostacl_pre_delete(instance, **kwargs):
     pre_uninstall.send(sender=HostACL, instance=instance)
     ProtocolHandler.uninstall_hostacl(instance)
