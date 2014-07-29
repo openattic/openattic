@@ -64,6 +64,7 @@ class ConnectionManager(models.Manager):
 
     def install_connection(self, connection, self_host, other_host, is_primary, primary_volume, peer_volumepool_id):
         get_dbus_object("/").start_queue()
+        connection.storageobj.lock()
         if is_primary:
             # set upper volume
             primary_volume.upper = connection.storageobj
