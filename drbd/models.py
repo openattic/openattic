@@ -46,7 +46,7 @@ class ConnectionManager(models.Manager):
 
     def create_connection(self, other_host_id, peer_volumepool_id, protocol, syncer_rate, self_volume_id):
         self_volume = BlockVolume.objects.get(id=self_volume_id)
-        other_host = Host.objects.get(id=other_host_id);
+        other_host = Host.objects.get(id=other_host_id)
 
         # create drbd connection object
         self_storageobj = StorageObject(name=self_volume.storageobj.name, megs=self_volume.storageobj.megs, is_origin=True)
@@ -130,7 +130,6 @@ class Connection(BlockVolume):
 
     @property
     def host(self):
-        import dbus
         try:
             info = dbus_to_python(self.drbd.get_role(self.name, False))
         except dbus.DBusException:
