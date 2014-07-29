@@ -257,3 +257,12 @@ class Endpoint(models.Model):
         self.connection.drbd.down(self.connection.name, False)
         self.connection.drbd.conf_delete(self.connection.id)
         self.volume.volume.delete()
+
+    def uninstall_from_remote(self):
+        # wrapper around uninstall() that runs uninstall in a Transaction.
+        # locally, this is done when uninstall() is called as a part of StorageObject.delete(),
+        # but when that function calls out to its peer, the peer doesn't use SO.delete() and
+        # hence would not be inside a transaction without this wrapper.
+        from systemd.helpers import Transaction
+        with Transaction(background=False):
+            self.uninstall()
