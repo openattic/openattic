@@ -26,7 +26,7 @@ from django.db                  import models
 from django.contrib.auth.models import User
 from django.template.loader     import render_to_string
 
-from systemd                    import dbus_to_python, get_dbus_object
+from systemd                    import dbus_to_python, get_dbus_object, Transaction
 
 from volumes                    import signals as volume_signals
 from volumes.models             import StorageObject, BlockVolume, VolumePool
@@ -65,39 +65,39 @@ class ConnectionManager(models.Manager):
         return connection.id
 
     def install_connection(self, connection, self_host, other_host, is_primary, primary_volume, peer_volumepool_id):
-        get_dbus_object("/").start_queue()
-        if is_primary:
-            # set upper volume
-            primary_volume.upper = connection.storageobj
-            primary_volume.save()
+        with Transaction():
+            if is_primary:
+                # set upper volume
+                primary_volume.upper = connection.storageobj
+                primary_volume.save()
 
-            volume = primary_volume
-        else:
-            # create volume on peer host
-            vpool = VolumePool.objects.get(id=peer_volumepool_id)
-            peer_volume = vpool.volumepool._create_volume(primary_volume.storageobj.name, primary_volume.storageobj.megs, {})
+                volume = primary_volume
+            else:
+                # create volume on peer host
+                vpool = VolumePool.objects.get(id=peer_volumepool_id)
+                peer_volume = vpool.volumepool._create_volume(primary_volume.storageobj.name, primary_volume.storageobj.megs, {})
 
-            # set upper volume
-            peer_volume.upper = connection.storageobj
-            peer_volume.save()
+                # set upper volume
+                peer_volume.upper = connection.storageobj
+                peer_volume.save()
 
-            volume = peer_volume
+                volume = peer_volume
 
-        # get primary ip-address
-        ipaddress = self._get_host_primary_ipaddress(self_host)
+            # get primary ip-address
+            ipaddress = self._get_host_primary_ipaddress(self_host)
 
-        # create drbd endpoint
-        endpoint = Endpoint(connection=connection, ipaddress=ipaddress, volume=volume)
-        endpoint.save()
+            # create drbd endpoint
+            endpoint = Endpoint(connection=connection, ipaddress=ipaddress, volume=volume)
+            endpoint.save()
 
-        if is_primary:
-            # peer endpoint install
-            peer_host = PeerHost.objects.get(host_id=other_host.id)
-            peer_host.drbd.Connection.install_connection(connection.id, other_host.id, self_host.id, False, primary_volume.id, peer_volumepool_id)
+            if is_primary:
+                # peer endpoint install
+                peer_host = PeerHost.objects.get(host_id=other_host.id)
+                peer_host.drbd.Connection.install_connection(connection.id, other_host.id, self_host.id, False, primary_volume.id, peer_volumepool_id)
 
 
-        endpoint.install(is_primary)
-        get_dbus_object("/").run_queue_background()
+            endpoint.install(is_primary)
+
         return endpoint.id
 
 class Connection(BlockVolume):
