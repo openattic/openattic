@@ -17,12 +17,14 @@
  *  GNU General Public License for more details.
 """
 
+import socket
 import dbus
 
 from collections                import Counter
 
 from django.db                  import models
 from django.contrib.auth.models import User
+from django.template.loader     import render_to_string
 
 from systemd                    import dbus_to_python, get_dbus_object
 
@@ -242,9 +244,24 @@ class Endpoint(models.Model):
             return None
 
     def install(self, init_primary):
+        conf = ""
+        #for lowerconn in self.connection.stack_child_set.all():
+        #    conf += render_to_string( "drbd/device.res", {
+        #        'Hostname':   socket.gethostname(),
+        #        'Connection': lowerconn,
+        #        'UpperConn':  self.connection
+        #        } )
+
+        conf += render_to_string( "drbd/device.res", {
+            'Hostname':   socket.gethostname(),
+            'Connection': self.connection,
+            'Endpoints':  Endpoint.all_objects.filter(connection=self.connection),
+            'UpperConn':  None
+            } )
+
         self.connection.storageobj.lock()
         self.connection.drbd.modprobe()
-        self.connection.drbd.conf_write()
+        self.connection.drbd.conf_write(self.connection.name, conf)
         self.connection.drbd.createmd(self.connection.name, False)
         self.connection.drbd.up(self.connection.name, False)
 

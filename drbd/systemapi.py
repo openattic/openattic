@@ -15,12 +15,8 @@
 """
 
 import os
-import socket
-
-from django.template.loader import render_to_string
 
 from systemd import invoke, logged, BasePlugin, method, deferredmethod
-from drbd.models import Connection, Endpoint
 
 def stackcmd(resource, stacked, command, options=None):
     cmd = ["/sbin/drbdadm"]
@@ -108,33 +104,10 @@ class SystemD(BasePlugin):
         ret, out, err = invoke(stackcmd(resource, stacked, "role"), return_out_err=True, log=False)
         return dict(zip(("self", "peer"), out.strip().split("/")))
 
-    @deferredmethod( in_signature="")
-    def conf_write(self, sender):
-        # Iterate over top-level connections
-        for conn in Connection.objects.all():
-            # Check if this connection (tree) has anything to do with the current host.
-            # This is the case if any of my own endpoints run here, or one of my
-            # low level devices' endpoints do.
-            #if not conn.endpoints_running_here and not conn.stacked:
-            if not conn.endpoints_running_here:
-                continue
-            fd = open("/etc/drbd.d/%s.res" % conn.name, "w")
-            try:
-                #for lowerconn in conn.stack_child_set.all():
-                #    fd.write( render_to_string( "drbd/device.res", {
-                #        'Hostname':   socket.gethostname(),
-                #        'Connection': lowerconn,
-                #        'UpperConn':  conn
-                #        } ) )
-
-                fd.write( render_to_string( "drbd/device.res", {
-                    'Hostname':   socket.gethostname(),
-                    'Connection': conn,
-                    'Endpoints':  Endpoint.all_objects.filter(connection=conn),
-                    'UpperConn':  None
-                    } ) )
-            finally:
-                fd.close()
+    @deferredmethod( in_signature="ss")
+    def conf_write(self, resource_name, conf, sender):
+        with open("/etc/drbd.d/%s.res" % resource_name, "wb") as fd:
+            fd.write(unicode(conf).encode("utf-8"))
 
     @deferredmethod( in_signature="s")
     def conf_delete(self, resource_name, sender):
