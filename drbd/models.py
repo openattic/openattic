@@ -255,7 +255,7 @@ class Endpoint(models.Model):
     def uninstall(self):
         self.connection.storageobj.lock()
         self.connection.drbd.down(self.connection.name, False)
-        self.connection.drbd.conf_delete(self.connection.id)
+        self.connection.drbd.conf_delete(self.connection.name)
         self.volume.storageobj._delete()
 
     def uninstall_from_remote(self):

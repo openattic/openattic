@@ -136,7 +136,6 @@ class SystemD(BasePlugin):
             finally:
                 fd.close()
 
-    @deferredmethod( in_signature="i")
-    def conf_delete(self, devid, sender):
-        conn = Connection.objects.get(id=devid)
-        os.unlink("/etc/drbd.d/%s.res" % conn.name)
+    @deferredmethod( in_signature="s")
+    def conf_delete(self, resource_name, sender):
+        os.unlink("/etc/drbd.d/%s.res" % resource_name)
