@@ -64,7 +64,6 @@ class ConnectionManager(models.Manager):
 
     def install_connection(self, connection, self_host, other_host, is_primary, primary_volume, peer_volumepool_id):
         get_dbus_object("/").start_queue()
-        connection.storageobj.lock()
         if is_primary:
             # set upper volume
             primary_volume.upper = connection.storageobj
@@ -244,6 +243,7 @@ class Endpoint(models.Model):
             return None
 
     def install(self, init_primary):
+        self.connection.storageobj.lock()
         self.connection.drbd.modprobe()
         self.connection.drbd.conf_write()
         self.connection.drbd.createmd(self.connection.name, False)
@@ -253,6 +253,7 @@ class Endpoint(models.Model):
             self.connection.drbd.primary_overwrite(self.connection.name, False)
 
     def uninstall(self):
+        self.connection.storageobj.lock()
         self.connection.drbd.down(self.connection.name, False)
         self.connection.drbd.conf_delete(self.connection.id)
         self.volume.volume.delete()
