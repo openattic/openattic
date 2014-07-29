@@ -132,6 +132,9 @@ class Connection(BlockVolume):
 
     @property
     def host(self):
+        if self.storageobj.is_locked:
+            return Host.objects.get_current()
+
         try:
             info = dbus_to_python(self.drbd.get_role(self.name, False))
         except dbus.DBusException:
@@ -225,6 +228,8 @@ class Endpoint(models.Model):
 
     @property
     def status(self):
+        if self.connection.storageobj.is_locked:
+            return "locked"
         try:
             info = dbus_to_python(self.connection.drbd.get_dstate(self.connection.name, False))
             return info["self"]
@@ -237,6 +242,8 @@ class Endpoint(models.Model):
 
     @property
     def is_primary(self):
+        if self.connection.storageobj.is_locked:
+            return None
         try:
             info = dbus_to_python(self.connection.drbd.get_role(self.connection.name, False))
             return info["self"] == "Primary"
