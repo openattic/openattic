@@ -121,9 +121,15 @@ class SystemD(BasePlugin):
         # Update UUID
         self.lvs_time = time()
         self.lvs_cache = lvm_lvs()
-        lv_mdl = LogicalVolume.objects.get(storageobj__name=lvname)
-        lv_mdl.uuid = self.lvs_cache[lvname]["LVM2_LV_UUID"]
-        lv_mdl.save(database_only=True)
+        try:
+            lv_mdl = LogicalVolume.objects.get(storageobj__name=lvname)
+        except LogicalVolume.DoesNotExist:
+            # Apparently, someone decided to delete the model before we even
+            # got here, so no need to try updating the UUID.
+            pass
+        else:
+            lv_mdl.uuid = self.lvs_cache[lvname]["LVM2_LV_UUID"]
+            lv_mdl.save(database_only=True)
 
     @deferredmethod(in_signature="sb")
     def lvchange(self, device, active, sender):
