@@ -33,6 +33,10 @@ def stackcmd(resource, stacked, command, options=None):
 class SystemD(BasePlugin):
     dbus_path = "/drbd"
 
+    @deferredmethod(in_signature="")
+    def modprobe(self, sender):
+        invoke(["modprobe", "drbd"])
+
     @deferredmethod(in_signature="sb")
     def createmd(self, resource, stacked, sender):
         invoke(stackcmd(resource, stacked, "create-md"), stdin="yes\n")

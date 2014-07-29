@@ -243,6 +243,7 @@ class Endpoint(models.Model):
             return None
 
     def install(self, init_primary):
+        self.connection.drbd.modprobe()
         self.connection.drbd.conf_write()
         self.connection.drbd.createmd(self.connection.name, False)
         self.connection.drbd.up(self.connection.name, False)
