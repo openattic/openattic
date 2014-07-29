@@ -35,7 +35,7 @@ class SystemD(BasePlugin):
 
     @deferredmethod(in_signature="")
     def modprobe(self, sender):
-        invoke(["modprobe", "drbd"])
+        invoke(["modprobe", "drbd", "minor_count=255"])
 
     @deferredmethod(in_signature="sb")
     def createmd(self, resource, stacked, sender):
