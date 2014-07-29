@@ -256,7 +256,7 @@ class Endpoint(models.Model):
         self.connection.storageobj.lock()
         self.connection.drbd.down(self.connection.name, False)
         self.connection.drbd.conf_delete(self.connection.id)
-        self.volume.volume.delete()
+        self.volume.storageobj._delete()
 
     def uninstall_from_remote(self):
         # wrapper around uninstall() that runs uninstall in a Transaction.
