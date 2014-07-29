@@ -103,6 +103,8 @@ class HostDependentQuerySet(models.query.QuerySet):
                 yield obj
         raise StopIteration
 
+    def count(self):
+        return len(list(self.iterator()))
 
 class HostDependentManager(models.Manager):
     hostfilter = "host"
