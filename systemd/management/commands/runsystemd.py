@@ -180,7 +180,7 @@ class SystemD(dbus.service.Object):
     @dbus.service.method(settings.DBUS_IFACE_SYSTEMD, in_signature="s", out_signature="", sender_keyword="sender")
     def acquire_lock(self, lockfile, sender):
         if sender not in self.jobs:
-            raise SystemError("Logs can only be acquired within transactions")
+            raise SystemError("Locks can only be acquired within transactions")
         if sender not in self.wantlocks:
             self.wantlocks[sender] = []
         if lockfile not in self.wantlocks[sender]:
