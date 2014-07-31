@@ -405,6 +405,12 @@ class StorageObjectHandler(ModelHandler):
         vol = obj.create_volume(name, megs, options)
         return self._idobj(vol)
 
+    def create_filesystem(self, id, fstype, options):
+        obj = StorageObject.objects.get(id=id)
+        if "owner" in options:
+            options["owner"] = ModelHandler._get_object_by_id_dict(options["owner"])
+        return self._idobj(obj.create_filesystem(fstype, options))
+
     def create_snapshot(self, id, name, megs, options):
         return self._idobj(StorageObject.objects.get(id=id).create_snapshot(name, megs, options))
 

@@ -197,6 +197,16 @@ class StorageObject(models.Model):
         except VolumePool.DoesNotExist:
             raise NotImplementedError("This object is not a volume pool, cannot create volumes in it")
 
+    def create_filesystem(self, fstype, options):
+        """ If this is a block volume, format it with the given fstype.
+
+            Otherwise, raise NotImplementedError.
+        """
+        try:
+            return self.blockvolume.volume.create_filesystem(fstype, options).storageobj
+        except BlockVolume.DoesNotExist:
+            raise NotImplementedError("This volume cannot be formatted")
+
     def create_snapshot(self, name, megs, options):
         """ If this is a volume that supports snapshots, snap it.
 
@@ -292,8 +302,9 @@ class VolumePool(models.Model):
                 # TODO: vol = imagedatei in dem ding
                 pass
             elif isinstance(vol, BlockVolume) and bool(options.get("filesystem", None)):
-                fsclass = filesystems.get_by_name(options["filesystem"])
-                vol = fsclass.format_blockvolume(vol, options)
+                options = options.copy()
+                fstype = options.pop("filesystem")
+                vol = vol._create_filesystem(fstype, options)
         except:
             from django.db import connection
             connection.connection.rollback()
@@ -458,6 +469,16 @@ class BlockVolume(AbstractVolume):
             "writes_completed", "writes_merged", "sectors_written", "millisecs_writing",
             "ios_in_progress",  "millisecs_in_io", "weighted_millisecs_in_io"
             ], [ int(num) for num in stats ] ) )
+
+    def _create_filesystem(self, fstype, options):
+        fsclass = filesystems.get_by_name(fstype)
+        return fsclass.format_blockvolume(self, options)
+
+    def create_filesystem(self, fstype, options):
+        """ Format this volume. """
+        with Transaction():
+            self.storageobj.lock()
+            return self._create_filesystem(fstype, options)
 
     def _clone_to_storageobj(self, target_storageobject, options):
         """ Clone this volume into the target_storageobject in a way that best

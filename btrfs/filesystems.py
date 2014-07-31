@@ -35,10 +35,6 @@ class Btrfs(FileSystem):
         from btrfs.models import Btrfs, BtrfsSubvolume
         from volumes.models import StorageObject
 
-        if "filesystem" in options:
-            options = options.copy()
-            del options["filesystem"]
-
         pool = Btrfs(storageobj=volume.storageobj, host=volume.host)
         pool.full_clean()
         pool.save()
