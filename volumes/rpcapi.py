@@ -22,6 +22,7 @@ from rpcd.handlers import BaseHandler, ModelHandler
 from rpcd.handlers import ProxyModelHandler
 
 from volumes.models import GenericDisk, StorageObject, VolumePool, BlockVolume, FileSystemVolume, FileSystemProvider
+from volumes.filesystems import FILESYSTEMS
 from volumes import initscripts
 from ifconfig.models import Host
 
@@ -314,6 +315,9 @@ class FileSystemProviderHandler(AbstractFileSystemVolumeHandler):
 
     def remove(self, id):
         return self._get_model_manager().get(id=id).base.volume.delete()
+
+    def get_installed_filesystems(self):
+        return [{"name": fs.name} for fs in FILESYSTEMS]
 
 class FileSystemProviderProxy(ProxyModelHandler, FileSystemProviderHandler):
     def _find_target_host_from_model_instance(self, model):
