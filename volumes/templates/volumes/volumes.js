@@ -703,6 +703,110 @@ Ext.define('Ext.oa.volumes__Volume_Panel', {
           }
         }
       }, {
+        text: gettext("Create Filesystem"),
+        icon: MEDIA_URL + "/oxygen/16x16/apps/preferences-desktop-filetype-association.png",
+        listeners: {
+          click: function(self, e, eOpts){
+            var sel = volumePanel.getSelectionModel().getSelection()[0];
+            var win = new Ext.Window(Ext.apply({
+              layout: "fit",
+              title: gettext('Create Filesystem'),
+              defaults: { autoScroll: true },
+              height: 200,
+              width: 500,
+              items: [{
+                xtype: "form",
+                bodyStyle: 'padding:5px ;',
+                defaults: {
+                  xtype: "textfield",
+                  anchor: '-20',
+                  defaults: {
+                    anchor: "0px"
+                  }
+                },
+                items: [{
+                  xtype:      'combo',
+                  forceSelection: true,
+                  fieldLabel: gettext('File System'),
+                  typeAhead:     true,
+                  deferEmptyText: false,
+                  emptyText:     gettext('Select...'),
+                  displayField:  'name',
+                  valueField:    'name',
+                  itemId:        'volumepool_filesystems_combo',
+                  queryMode:     "local",
+                  name: "filesystem",
+                  store: (function(){
+                    Ext.define('volumes__volumepool_filesystem_store', {
+                      extend: 'Ext.data.Model',
+                      fields: ['name']
+                    });
+                    return Ext.create('Ext.data.Store', {
+                      autoLoad: true,
+                      model: "volumes__volumepool_filesystem_store",
+                      proxy: {
+                        type: 'direct',
+                        directFn: volumes__VolumePool.get_supported_filesystems,
+                        startParam: undefined,
+                        limitParam: undefined,
+                        pageParam:  undefined,
+                        paramOrder: ["id"],
+                        extraParams: {
+                          id: sel.raw.source_pool.id
+                        }
+                      }
+                    });
+                  }())
+                }, {
+                  fieldLabel: gettext('Warning Level (%)'),
+                  allowBlank: false,
+                  name: "fswarning",
+                  value: 75,
+                  xtype: "numberfield",
+                  afterLabelTextTpl: required
+                }, {
+                  fieldLabel: gettext('Critical Level (%)'),
+                  allowBlank: false,
+                  name: "fscritical",
+                  value: 85,
+                  xtype: "numberfield",
+                  afterLabelTextTpl: required
+                }, {
+                  xtype: "auth__userfield",
+                  allowBlank: false,
+                  name: "owner",
+                  afterLabelTextTpl: required
+                }],
+                buttons: [{
+                  text:  gettext('Create Filesystem'),
+                  icon: MEDIA_URL + "/oxygen/16x16/apps/preferences-desktop-filetype-association.png",
+                  handler: function(btn){
+                    var form = btn.ownerCt.ownerCt.getForm();
+                    if(form.isValid()){
+                      var input_vals = form.getValues();
+                      volumes__StorageObject.create_filesystem(sel.raw.id, input_vals.filesystem, {
+                        "fswarning":  input_vals.fswarning,
+                        "fscritical": input_vals.fscritical,
+                        "owner":      {"app": "auth", "obj": "user", "id": input_vals.owner}
+                      }, function(provider, response){
+                        sel.parentNode.store.load();
+                        win.close();
+                      });
+                    }
+                  }
+                },{
+                  text: gettext('Cancel'),
+                  icon: MEDIA_URL + "/icons2/16x16/actions/gtk-cancel.png",
+                  handler: function(){
+                    win.close();
+                  }
+                }]
+              }]
+            }));
+            win.show();
+          }
+        }
+      }, {
         text: gettext("Create Clone"),
         icon: MEDIA_URL + "/oxygen/16x16/actions/document-new.png",
         handler: function(){
