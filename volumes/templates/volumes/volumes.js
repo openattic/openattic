@@ -741,19 +741,23 @@ Ext.define('Ext.oa.volumes__Volume_Panel', {
                       extend: 'Ext.data.Model',
                       fields: ['name']
                     });
+                    var directFn = volumes__FileSystemProvider.get_installed_filesystems,
+                        params = {};
+                    if( typeof sel.raw.source_pool !== "undefined" && sel.raw.source_pool !== null ){
+                      directFn = volumes__VolumePool.get_supported_filesystems;
+                      params.id = sel.raw.source_pool.id;
+                    }
                     return Ext.create('Ext.data.Store', {
                       autoLoad: true,
                       model: "volumes__volumepool_filesystem_store",
                       proxy: {
                         type: 'direct',
-                        directFn: volumes__VolumePool.get_supported_filesystems,
+                        directFn: directFn,
                         startParam: undefined,
                         limitParam: undefined,
                         pageParam:  undefined,
                         paramOrder: ["id"],
-                        extraParams: {
-                          id: sel.raw.source_pool.id
-                        }
+                        extraParams: params
                       }
                     });
                   }())
