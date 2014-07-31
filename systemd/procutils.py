@@ -59,7 +59,10 @@ def invoke(args, close_fds=True, return_out_err=False, log=True, stdin=None, fai
     out = [ "> " + cmdline ]
 
     if stdin is not None:
-        proc.stdin.write(stdin)
+        try:
+            proc.stdin.write(stdin)
+        except IOError:
+            pass
         proc.stdin.close()
 
     process_alive = True
