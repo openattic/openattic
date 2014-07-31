@@ -19,7 +19,8 @@ Ext.define('volumes__drbd_Connection_model', {
     'Ext.data.NodeInterface'
   ],
   fields: [
-    'type', 'megs', 'status', 'host', 'path', '__unicode__'
+    'id', '__unicode__', 'name', 'type', 'megs', 'freemegs', 'status', 'usedmegs', 'percent',
+    'fswarning', 'fscritical', 'host', 'path', 'poolname', 'ownername'
   ],
   createNode: function(record){
     var rootNode;
@@ -50,11 +51,31 @@ Ext.define('volumes__drbd_Connection_model', {
     rootNode.set('icon', MEDIA_URL + '/icons2/16x16/apps/database.png');
     rootNode.set('name', record.raw.name);
     rootNode.set('megs', record.raw.megs);
+    rootNode.set('usedmegs', null);
+    rootNode.set('freemegs', null);
     rootNode.set('percent', null);
+    rootNode.set('fswarning', null);
+    rootNode.set('fscritical', null);
+    rootNode.set('ownername', null);
     rootNode.set('status', record.raw.blockvolume.status);
     rootNode.set('path', record.raw.blockvolume.path);
     rootNode.set('type', toUnicode(record.raw.blockvolume.volume_type));
     rootNode.set('host', toUnicode(record.raw.blockvolume.host));
+
+    if( record.raw.filesystemvolume !== null ){
+      rootNode.set("path",       record.raw.filesystemvolume.path);
+      rootNode.set("fswarning",  record.raw.filesystemvolume.fswarning);
+      rootNode.set("fscritical", record.raw.filesystemvolume.fscritical);
+      rootNode.set("ownername",  toUnicode(record.raw.filesystemvolume.owner));
+      rootNode.set("status",     Ext.String.format("{0} ({1})", record.raw.filesystemvolume.status, record.raw.blockvolume.status));
+      rootNode.set("freemegs",   record.raw.megs - record.raw.filesystemvolume.usedmegs);
+      rootNode.set("usedmegs",   record.raw.filesystemvolume.usedmegs);
+      if( record.raw.filesystemvolume.usedmegs !== null )
+        rootNode.set("percent",  (record.raw.filesystemvolume.usedmegs / record.raw.megs * 100).toFixed(2));
+      if( record.raw.filesystemvolume.fstype )
+        rootNode.set("type",     record.raw.filesystemvolume.fstype);
+    }
+
     rootNode.commit();
     return rootNode;
   }
