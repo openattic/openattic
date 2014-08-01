@@ -28,15 +28,16 @@ Ext.define('Ext.oa.Cmdlog__LogEntry_Panel', {
       proxy: {
         type: 'direct',
         directFn: cmdlog__LogEntry.filter_range,
-        startParam: undefined,
-        limitParam: undefined,
+        startParam: "start",
+        limitParam: "limit",
+        pageSize:   100,
         pageParam:  undefined,
         paramOrder: ['start', 'limit', 'sort', 'dir', 'kwds'],
+        autoLoad: false,
         extraParams: {
           kwds: {
             '__fields__': fields
           },
-          'start': 0, 'limit': 100,
           'sort': 'endtime', 'dir': 'DESC'
         },
         reader: new Ext.data.JsonReader({
@@ -46,6 +47,7 @@ Ext.define('Ext.oa.Cmdlog__LogEntry_Panel', {
         })
       }
     });
+    store.load({params: {start: 0, limit: 100}});
     Ext.define('cmdlog_model', {
       extend: 'Ext.data.Model',
       fields: ['id', 'command', 'exitcode', 'endtime', 'starttime', 'text', {
@@ -121,7 +123,7 @@ Ext.define('Ext.oa.Cmdlog__LogEntry_Panel', {
             textStore.load({ params: { id: record.data.id } });
           }
         },
-        bbar: new Ext.PagingToolbar({
+        bbar: Ext.create("Ext.PagingToolbar", {
           afterPageText:  gettext('of {0}'),
           beforePageText: gettext('Page'),
           store:    store,
