@@ -29,6 +29,7 @@ class LogEntry(models.Model):
     text      = models.TextField(verbose_name=_("Output"))
 
     objects   = HostDependentManager()
+    all_objects = models.Manager()
 
     def __unicode__(self):
         if self.exitcode == 0:

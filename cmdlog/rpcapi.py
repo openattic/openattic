@@ -16,7 +16,7 @@
 
 from datetime import datetime
 
-from rpcd.handlers import ModelHandler
+from rpcd.handlers import ProxyModelHandler, ModelHandler
 
 from cmdlog.models import LogEntry
 
@@ -31,4 +31,13 @@ class LogEntryHandler(ModelHandler):
         """ Delete log entries that are older than `timestamp`. """
         return LogEntry.objects.filter( endtime__lt=datetime.fromtimestamp(timestamp) ).delete()
 
-RPCD_HANDLERS = [LogEntryHandler]
+class LogEntryProxy(ProxyModelHandler, LogEntryHandler):
+    def count_older_than(self, timestamp):
+        """ Return the count of log entries that are older than `timestamp`. """
+        return LogEntry.all_objects.filter( endtime__lt=datetime.fromtimestamp(timestamp) ).count()
+
+    def remove_older_than(self, timestamp):
+        """ Delete log entries that are older than `timestamp`. """
+        return LogEntry.all_objects.filter( endtime__lt=datetime.fromtimestamp(timestamp) ).delete()
+
+RPCD_HANDLERS = [LogEntryProxy]
