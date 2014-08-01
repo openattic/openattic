@@ -21,4 +21,4 @@ longer necessary to be intimately familiar with the inner workings of the
 individual storage tools. Any task can be carried out using the intuitive
 openATTIC interface.
 
-Please refer to the Website <http://www.open-attic.org> for more information.
+Please refer to the Website <http://www.openattic.org> for more information.
