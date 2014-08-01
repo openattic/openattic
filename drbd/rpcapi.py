@@ -14,7 +14,9 @@
  *  GNU General Public License for more details.
 """
 
+from xmlrpclib import Fault
 from rpcd.handlers import ModelHandler, ProxyModelHandler
+from rpcd.exceptionhelper import translate_exception
 
 from drbd.models import Connection, Endpoint
 from ifconfig.models import Host
@@ -43,7 +45,18 @@ class DrbdConnectionHandler(AbstractBlockVolumeHandler):
         return Connection.objects.install_connection(connection, self_host, other_host, is_primary, primary_volume, peer_volumepool_id)
 
 class DrbdConnectionProxy(ProxyModelHandler, DrbdConnectionHandler):
-    pass
+    def create_connection(self, other_host_id, peer_volumepool_id, protocol, syncer_rate, self_volume_id):
+        volume = BlockVolume.all_objects.get(id=self_volume_id).volume
+        peer  = self._find_target_host_from_model_instance(volume)
+        if peer is None:
+            create_connection = self.backing_handler.create_connection
+        else:
+            create_connection = self._get_proxy_object(peer).create_connection
+        try:
+            res = create_connection(other_host_id, peer_volumepool_id, protocol, syncer_rate, self_volume_id)
+        except Fault, flt:
+            raise translate_exception(flt)
+        return self._convert_datetimes( res )
 
 class DrbdEndpointHandler(ModelHandler):
     model = Endpoint
