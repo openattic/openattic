@@ -485,6 +485,19 @@ class StorageObjectProxy(ProxyModelHandler, StorageObjectHandler):
         """
         return self._call_singlepeer_method("clone", id, target_id, options)
 
+    def wait(self, id, max_wait):
+        """ Wait until the StorageObject's lock has been released.
+
+            If the StorageObject in question is not currently locked,
+            wait() will return True instantly.
+
+            If max_wait is 0, wait() will return instantly.
+
+            If the lock has not been released during the given
+            time period, wait() will return False; True otherwise.
+        """
+        return self._call_singlepeer_method("wait", id, max_wait)
+
 
 class InitScriptHandler(BaseHandler):
     handler_name = "volumes.InitScript"
