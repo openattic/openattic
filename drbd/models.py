@@ -168,21 +168,13 @@ class Connection(BlockVolume):
     def peerhost(self):
         for endpoint in Endpoint.all_objects.filter(connection=self):
             if endpoint.ipaddress.device.host != Host.objects.get_current():
-                host_peer = endpoint.ipaddress.device.host
-                break
-
-        if host_peer:
-            return host_peer
-        else:
-            None
+                return endpoint.ipaddress.device.host
+        return None
 
     @property
     def endpoints_running_here(self):
         """ Check if any of my endpoints run here. """
-        if self.endpoint_set.filter(ipaddress__device__host=Host.objects.get_current()).count() > 0:
-            return True
-        else:
-            return False
+        return self.endpoint_set.filter(ipaddress__device__host=Host.objects.get_current()).count() > 0
 
     def post_install(self):
         pass
