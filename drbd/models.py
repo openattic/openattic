@@ -22,7 +22,7 @@ import dbus
 
 from collections                import Counter
 
-from django.db                  import models
+from django.db                  import models, transaction
 from django.contrib.auth.models import User
 from django.template.loader     import render_to_string
 
@@ -47,6 +47,9 @@ class ConnectionManager(models.Manager):
         return IPAddress.all_objects.get(device__host=host, primary_address=True)
 
     def create_connection(self, other_host_id, peer_volumepool_id, protocol, syncer_rate, self_volume_id):
+        if Connection.all_objects.all().count() > 256:
+            raise SystemError("Cannot create more than 256 connections at a time")
+
         self_volume = BlockVolume.objects.get(id=self_volume_id)
         other_host = Host.objects.get(id=other_host_id)
 
@@ -56,6 +59,18 @@ class ConnectionManager(models.Manager):
         self_storageobj.save()
         connection = Connection(storageobj=self_storageobj, protocol=protocol, syncer_rate=syncer_rate)
         connection.save()
+
+        # Allocate minor
+        with transaction.atomic():
+            # First we select all free minors, in the process locking them for the duration of this
+            # transaction, so no other process can steal the minor we're going to use.
+            free_minor = min([dm["minor"] for dm in
+                DeviceMinor.objects.select_for_update().filter(connection__isnull=True).values("minor")])
+            # now update the minor with our ID.
+            DeviceMinor.objects.filter(minor=free_minor).update(connection=connection)
+
+        # Re-query the Connection so the deviceminor is known
+        connection = Connection.all_objects.get(id=connection.id)
 
         # self endpoint install
         self.install_connection(connection, Host.objects.get_current(), other_host, True, self_volume, peer_volumepool_id)
@@ -128,7 +143,7 @@ class Connection(BlockVolume):
 
     @property
     def port(self):
-        return 7700 + self.id
+        return 7700 + self.deviceminor.minor
 
     @property
     def host(self):
@@ -153,7 +168,7 @@ class Connection(BlockVolume):
 
     @property
     def path(self):
-        return "/dev/drbd%d" % self.id
+        return "/dev/drbd%d" % self.deviceminor.minor
 
     @property
     def status(self):
@@ -280,3 +295,9 @@ class Endpoint(models.Model):
         from systemd.helpers import Transaction
         with Transaction(background=False):
             self.uninstall()
+
+
+class DeviceMinor(models.Model):
+    minor       = models.IntegerField(unique=True)
+    connection  = models.OneToOneField(Connection, null=True, on_delete=models.SET_NULL)
+

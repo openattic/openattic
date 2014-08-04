@@ -12,9 +12,9 @@
 {% endcomment %}
 
 resource {{ Connection.name }} {
-	protocol {{ Connection.protocol }};
-	meta-disk  internal;
-	device /dev/drbd{{ Connection.id }};
+	protocol  {{ Connection.protocol }};
+	meta-disk internal;
+	device    {{ Connection.path }};
 	
 	{% if Connection.syncer_rate %}
 	syncer {
