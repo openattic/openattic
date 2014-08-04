@@ -181,7 +181,6 @@ class Connection(BlockVolume):
 
 def __connection_pre_delete(instance, **kwargs):
     for endpoint in Endpoint.all_objects.filter(connection=instance):
-        print endpoint
         if endpoint.ipaddress.device.host == Host.objects.get_current():
             endpoint.uninstall()
         else:
