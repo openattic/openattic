@@ -30,7 +30,6 @@ from systemd                    import dbus_to_python, get_dbus_object, Transact
 
 from volumes                    import signals as volume_signals
 from volumes.models             import StorageObject, BlockVolume, VolumePool
-from lvm                        import blockdevices
 from ifconfig.models            import Host, IPAddress, NetDevice, getHostDependentManagerClass
 from peering.models             import PeerHost
 
@@ -226,7 +225,7 @@ class Endpoint(models.Model):
 
     @property
     def megs(self):
-        return blockdevices.get_disk_size("drbd%d" % self.connection.id)
+        return self.volume.storageobj.megs
 
     @property
     def path(self):
