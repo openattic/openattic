@@ -27,6 +27,8 @@ Version 1.1.2, ?? ????? 2014:
 * Fixed various bugs in the DRBD resource creation and deletion process.
 * Added functionality to format existing block devices.
 * Fixed the paginator in the command log panel.
+* Changed DRBD Device Minor allocation to use the lowest available ID, which
+  fixed the bug that openATTIC ran out of usable IDs.
 
 Version 1.1.1, 01 April 2014:
 ---------------------------------
