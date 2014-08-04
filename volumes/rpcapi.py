@@ -469,6 +469,18 @@ class StorageObjectProxy(ProxyModelHandler, StorageObjectHandler):
         """
         return self._call_singlepeer_method("create_volume", id, name, megs, options)
 
+    def create_filesystem(self, id, fstype, options):
+        """ Create a filesystem on this blockvolume.
+
+            Options include:
+             * owner:      The owner of the file system.
+             * fswarning:  Warning Threshold for Nagios checks.
+             * fscritical: Critical Threshold for Nagios checks.
+
+            What exactly this means is up to the file system implementation.
+        """
+        return self._call_singlepeer_method("create_filesystem", id, fstype, options)
+
     def create_snapshot(self, id, name, megs, options):
         """ Create a snapshot of this volume and return its StorageObject.
 
