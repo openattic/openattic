@@ -17,7 +17,7 @@
 from django.db import models
 from django.utils.translation   import ugettext_lazy as _
 
-from ifconfig.models import Host, HostDependentManager
+from ifconfig.models import Host
 
 class LogEntry(models.Model):
     host      = models.ForeignKey(Host)
@@ -27,9 +27,6 @@ class LogEntry(models.Model):
     endtime   = models.DateTimeField(verbose_name=_("End time"))
     exitcode  = models.IntegerField(verbose_name=_("Exit code"))
     text      = models.TextField(verbose_name=_("Output"))
-
-    objects   = HostDependentManager()
-    all_objects = models.Manager()
 
     def __unicode__(self):
         if self.exitcode == 0:
