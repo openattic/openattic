@@ -360,7 +360,8 @@ Ext.define('Ext.oa.Nagios__Service_Panel', {
             directFn: nagios__Service.filter,
             startParam: undefined,
             limitParam: undefined,
-            pageParam:  undefined
+            pageParam:  undefined,
+            sortParam:  undefined
           },
           fields: ['id', 'description', {
             name: "targetname",
