@@ -208,9 +208,9 @@ models.signals.pre_delete.connect(__connection_pre_delete, sender=Connection)
 class Endpoint(models.Model):
     connection  = models.ForeignKey(Connection, related_name="endpoint_set")
     ipaddress   = models.ForeignKey(IPAddress)
-    volume      = models.ForeignKey(BlockVolume, null=True, related_name="accessor_endpoint_set")
+    volume      = models.ForeignKey(BlockVolume, related_name="accessor_endpoint_set")
 
-    objects     = getHostDependentManagerClass("ipaddress__device__host")()
+    objects     = getHostDependentManagerClass("volume__volume__host")()
     all_objects = models.Manager()
 
     def __unicode__(self):
@@ -244,7 +244,7 @@ class Endpoint(models.Model):
 
     @property
     def host(self):
-        return self.ipaddress.device.host
+        return self.volume.volume.host
 
     @property
     def is_primary(self):
