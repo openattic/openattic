@@ -89,6 +89,10 @@ class SystemD(BasePlugin):
     def resumesync(self, resource, stacked, sender):
         invoke(stackcmd(resource, stacked, "resume-sync"))
 
+    @deferredmethod(in_signature="sb")
+    def resize(self, resource, stacked, sender):
+        invoke(stackcmd(resource, stacked, "resize", ["--assume-clean"]))
+
     @method( in_signature="sb", out_signature="a{ss}")
     def get_dstate(self, resource, stacked):
         ret, out, err = invoke(stackcmd(resource, stacked, "dstate"), return_out_err=True, log=False)
