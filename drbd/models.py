@@ -46,9 +46,6 @@ class ConnectionManager(models.Manager):
         return IPAddress.all_objects.get(device__host=host, primary_address=True)
 
     def create_connection(self, other_host_id, peer_volumepool_id, protocol, syncer_rate, self_volume_id):
-        if Connection.all_objects.all().count() > 256:
-            raise SystemError("Cannot create more than 256 connections at a time")
-
         self_volume = BlockVolume.objects.get(id=self_volume_id)
         other_host = Host.objects.get(id=other_host_id)
 
@@ -60,13 +57,17 @@ class ConnectionManager(models.Manager):
         connection.save()
 
         # Allocate minor
-        with transaction.atomic():
-            # First we select all free minors, in the process locking them for the duration of this
-            # transaction, so no other process can steal the minor we're going to use.
-            free_minor = min([dm["minor"] for dm in
-                DeviceMinor.objects.select_for_update().filter(connection__isnull=True).values("minor")])
-            # now update the minor with our ID.
-            DeviceMinor.objects.filter(minor=free_minor).update(connection=connection)
+        try:
+            with transaction.atomic():
+                # First we select all free minors, in the process locking them for the duration of this
+                # transaction, so no other process can steal the minor we're going to use.
+                free_minor = min([dm["minor"] for dm in
+                    DeviceMinor.objects.select_for_update().filter(connection__isnull=True).values("minor")])
+                # now update the minor with our ID.
+                DeviceMinor.objects.filter(minor=free_minor).update(connection=connection)
+        except ValueError:
+            self_storageobj.delete()
+            raise SystemError("Cannot allocate device minor")
 
         # Re-query the Connection so the deviceminor is known
         connection = Connection.all_objects.get(id=connection.id)
