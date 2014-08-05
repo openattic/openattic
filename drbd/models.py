@@ -182,8 +182,8 @@ class Connection(BlockVolume):
     @property
     def peerhost(self):
         for endpoint in Endpoint.all_objects.filter(connection=self):
-            if endpoint.ipaddress.device.host != Host.objects.get_current():
-                return endpoint.ipaddress.device.host
+            if endpoint.host != Host.objects.get_current():
+                return endpoint.host
         return None
 
     @property
@@ -196,10 +196,10 @@ class Connection(BlockVolume):
 
 def __connection_pre_delete(instance, **kwargs):
     for endpoint in Endpoint.all_objects.filter(connection=instance):
-        if endpoint.ipaddress.device.host == Host.objects.get_current():
+        if endpoint.host == Host.objects.get_current():
             endpoint.uninstall()
         else:
-            peer_host = PeerHost.objects.get(host_id=endpoint.ipaddress.device.host.id)
+            peer_host = PeerHost.objects.get(host_id=endpoint.host.id)
             peer_host.drbd.Endpoint.uninstall(endpoint.id)
 
 models.signals.pre_delete.connect(__connection_pre_delete, sender=Connection)
