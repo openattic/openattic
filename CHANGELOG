@@ -29,6 +29,7 @@ Version 1.1.2, ?? ????? 2014:
 * Fixed the paginator in the command log panel.
 * Changed DRBD Device Minor allocation to use the lowest available ID, which
   fixed the bug that openATTIC ran out of usable IDs.
+* Added resize functionality for DRBD connections.
 
 Version 1.1.1, 01 April 2014:
 ---------------------------------
