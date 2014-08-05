@@ -157,6 +157,10 @@ class StorageObject(models.Model):
         return models.Model.delete(self)
 
     def resize(self, megs):
+        with Transaction():
+            self._resize(megs)
+
+    def _resize(self, megs):
         """ Resize everything to the given size. """
         oldmegs = self.megs
         newmegs = megs
@@ -169,23 +173,22 @@ class StorageObject(models.Model):
             # if we're shrinking stuff, reverse the order
             objs.reverse()
 
-        with Transaction():
-            self.lock()
-            for obj in objs:
-                if obj is None:
-                    continue
-                if oldmegs > newmegs:
-                    obj.shrink(oldmegs, newmegs)
-                else:
-                    obj.grow(oldmegs, newmegs)
-            objs.reverse()
-            for obj in objs:
-                if obj is None:
-                    continue
-                if oldmegs > newmegs:
-                    obj.post_shrink(oldmegs, newmegs)
-                else:
-                    obj.post_grow(oldmegs, newmegs)
+        self.lock()
+        for obj in objs:
+            if obj is None:
+                continue
+            if oldmegs > newmegs:
+                obj.shrink(oldmegs, newmegs)
+            else:
+                obj.grow(oldmegs, newmegs)
+        objs.reverse()
+        for obj in objs:
+            if obj is None:
+                continue
+            if oldmegs > newmegs:
+                obj.post_shrink(oldmegs, newmegs)
+            else:
+                obj.post_grow(oldmegs, newmegs)
 
     def create_volume(self, name, megs, options):
         """ If this is a Volume Pool, create a volume in it.
