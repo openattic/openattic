@@ -427,6 +427,9 @@ Ext.define("Ext.oa.volumes__volumes_add_volume_form", {
     afterLabelTextTpl: required,
     disabled: true,
     validator: function(value){
+      if(value < 100){
+        return gettext("Volumes need to be at least 100MB in size.");
+      }
       if(value <= this.ownerCt.volume_free_megs){
         return true;
       }
