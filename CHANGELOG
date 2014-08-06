@@ -30,6 +30,7 @@ Version 1.2.0, ?? ????? 2014:
 * Changed DRBD Device Minor allocation to use the lowest available ID, which
   fixed the bug that openATTIC ran out of usable IDs.
 * Added resize functionality for DRBD connections.
+* Fixed error when deleting a volume that has snapshots.
 
 Version 1.1.1, 01 April 2014:
 ---------------------------------

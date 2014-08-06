@@ -150,6 +150,8 @@ class StorageObject(models.Model):
 
     def _delete(self):
         self.lock()
+        for snap in self.snapshot_storageobject_set.all():
+            snap._delete()
         for obj in (self.filesystemvolume_or_none, self.volumepool_or_none, self.blockvolume_or_none):
             if obj is not None:
                 obj.delete()
