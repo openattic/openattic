@@ -62,7 +62,7 @@ class Service(models.Model):
     command     = models.ForeignKey(Command)
     arguments   = models.CharField(max_length=500, blank=True, default='')
 
-    nagstate    = NagiosState()
+    nagstate    = NagiosState(nagios_settings.STATUS_DAT_PATH)
     objects     = HostDependentManager()
     all_objects = models.Manager()
 
