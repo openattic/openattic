@@ -295,6 +295,9 @@ class VolumePool(models.Model):
     def _create_volume(self, name, megs, options):
         """ Actual volume creation. """
         from django.core.exceptions import ValidationError
+        if megs < 100:
+            raise ValidationError({"megs": ["Volumes need to be at least 100MB in size."]})
+
         storageobj = StorageObject(name=name, megs=megs, source_pool=self)
         storageobj.full_clean()
         storageobj.save()
