@@ -18,8 +18,9 @@ import re
 import email
 import smtplib
 import socket
+import os.path
 
-from time import time
+from time import time, sleep
 from hashlib import md5
 
 from django.template.loader import render_to_string
@@ -63,6 +64,8 @@ class SystemD(LockingPlugin):
             self.lock.release()
         invoke(["nagios3", "--verify-config", nagios_settings.NAGIOS_CFG_PATH])
         invoke(["/etc/init.d/nagios3", "restart"])
+        while not os.path.exists(nagios_settings.STATUS_DAT_PATH):
+            sleep(0.1)
 
     @method(in_signature="", out_signature="i")
     def check_conf(self):
