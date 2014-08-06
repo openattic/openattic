@@ -164,6 +164,10 @@ class StorageObject(models.Model):
 
     def _resize(self, megs):
         """ Resize everything to the given size. """
+        from django.core.exceptions import ValidationError
+        if megs < 100:
+            raise ValidationError({"megs": ["Volumes need to be at least 100MB in size."]})
+
         oldmegs = self.megs
         newmegs = megs
         self.megs = newmegs
