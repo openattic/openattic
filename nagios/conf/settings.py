@@ -36,6 +36,7 @@ CPUTIME_CHECK_CMD        = getattr( settings, "NAGIOS_CPUTIME_CHECK_CMD",      "
 RRD_PATH                 = getattr( settings, "NAGIOS_RRD_PATH",          "/var/lib/pnp4nagios/perfdata/%(host)s/%(serv)s.rrd" )
 XML_PATH                 = getattr( settings, "NAGIOS_RRD_PATH",          "/var/lib/pnp4nagios/perfdata/%(host)s/%(serv)s.xml" )
 CMD_PATH                 = getattr( settings, "NAGIOS_CMD_PATH",          "/var/lib/nagios3/rw/nagios.cmd" )
+STATUS_DAT_PATH          = getattr( settings, "NAGIOS_STATUS_DAT_PATH",   "/var/cache/nagios3/status.dat" )
 
 NAGIOS_CFG_PATH          = getattr( settings, "NAGIOS_CONTACTS_CFG_PATH",   "/etc/nagios3/nagios.cfg" )
 CONTACTS_CFG_PATH        = getattr( settings, "NAGIOS_CONTACTS_CFG_PATH",   "/etc/nagios3/conf.d/openattic_contacts.cfg" )
