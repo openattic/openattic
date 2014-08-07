@@ -1,7 +1,7 @@
 openATTIC Changelog
 ===================
 
-Version 1.2.0, ?? ????? 2014:
+Version 1.2.0, 12 August 2014:
 ---------------------------------
 
 * Fixed LVM snapshots being zeroed after creation.
