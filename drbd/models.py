@@ -50,34 +50,32 @@ class ConnectionManager(models.Manager):
         other_host = Host.objects.get(id=other_host_id)
 
         # create drbd connection object
-        self_storageobj = StorageObject(name=self_volume.storageobj.name, megs=self_volume.storageobj.megs, is_origin=True)
-        self_storageobj.full_clean()
-        self_storageobj.save()
-        connection = Connection(storageobj=self_storageobj, protocol=protocol, syncer_rate=syncer_rate)
-        connection.save()
+        with StorageObject(name=self_volume.storageobj.name, megs=self_volume.storageobj.megs, is_origin=True) as self_storageobj:
+            connection = Connection(storageobj=self_storageobj, protocol=protocol, syncer_rate=syncer_rate)
+            connection.full_clean()
+            connection.save()
 
-        # Allocate minor
-        try:
-            with transaction.atomic():
-                # First we select all free minors, in the process locking them for the duration of this
-                # transaction, so no other process can steal the minor we're going to use.
-                free_minor = min([dm["minor"] for dm in
-                    DeviceMinor.objects.select_for_update().filter(connection__isnull=True).values("minor")])
-                # now update the minor with our ID.
-                DeviceMinor.objects.filter(minor=free_minor).update(connection=connection)
-        except ValueError:
-            self_storageobj.delete()
-            raise SystemError("Cannot allocate device minor")
+            # Allocate minor
+            try:
+                with transaction.atomic():
+                    # First we select all free minors, in the process locking them for the duration of this
+                    # transaction, so no other process can steal the minor we're going to use.
+                    free_minor = min([dm["minor"] for dm in
+                        DeviceMinor.objects.select_for_update().filter(connection__isnull=True).values("minor")])
+                    # now update the minor with our ID.
+                    DeviceMinor.objects.filter(minor=free_minor).update(connection=connection)
+            except ValueError:
+                raise SystemError("Cannot allocate device minor")
 
-        # Re-query the Connection so the deviceminor is known
-        connection = Connection.all_objects.get(id=connection.id)
+            # Re-query the Connection so the deviceminor is known
+            connection = Connection.all_objects.get(id=connection.id)
 
-        # self endpoint install
-        self.install_connection(connection, Host.objects.get_current(), other_host, True, self_volume, peer_volumepool_id)
+            # self endpoint install
+            self.install_connection(connection, Host.objects.get_current(), other_host, True, self_volume, peer_volumepool_id)
 
-        volume_signals.post_install.send(sender=BlockVolume, instance=self)
+            volume_signals.post_install.send(sender=BlockVolume, instance=self)
 
-        return connection.id
+            return connection.id
 
     def install_connection(self, connection, self_host, other_host, is_primary, primary_volume, peer_volumepool_id):
         with Transaction():
