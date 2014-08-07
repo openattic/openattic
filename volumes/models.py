@@ -58,6 +58,18 @@ class StorageObject(models.Model):
         The StorageObject is a general entry point that collects all information
         about objects in one place, no matter if they are volume pools, block
         volumes or file system volumes.
+
+        StorageObjects can be used as Context Guards when creating new objects,
+        like so:
+
+            with StorageObject(name="herp", megs=1338) as so:
+                thing = Thing(storageobj=so)
+                thing.full_clean()
+                thing.save()
+                thing.doThings()
+
+        In case any one of the operations inside the with: block fails, so._delete()
+        will be called by the context guard automatically.
     """
     name        = models.CharField(max_length=150)
     megs        = models.IntegerField()
@@ -76,6 +88,18 @@ class StorageObject(models.Model):
         models.Model.full_clean(self)
         if not self.uuid:
             self.uuid = str(uuid.uuid4())
+
+    def __enter__(self):
+        if self.id is not None:
+            raise ValueError("cannot use existing StorageObjects as a Context Guard")
+        self.full_clean()
+        self.save()
+        return self
+
+    def __exit__(self, type, value, traceback):
+        if type is not None:
+            # some exception occurred
+            self._delete()
 
     @property
     def lockfile(self):
