@@ -132,7 +132,7 @@ class Connection(BlockVolume):
         self._drbd = None
 
     def full_clean(self):
-        # see http://linux.die.net/man/8/lvm -> "Valid Names"
+        models.Model.full_clean(self)
         from django.core.exceptions import ValidationError
         try:
             rate = self.get_syncer_rate()
