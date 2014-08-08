@@ -17,6 +17,7 @@
  *  GNU General Public License for more details.
 """
 
+import re
 import socket
 import dbus
 
@@ -24,6 +25,7 @@ from collections                import Counter
 
 from django.db                  import models, transaction
 from django.template.loader     import render_to_string
+from django.utils.translation   import ugettext_noop as _
 
 from systemd                    import dbus_to_python, get_dbus_object, Transaction
 
@@ -128,6 +130,28 @@ class Connection(BlockVolume):
     def __init__(self, *args, **kwargs):
         models.Model.__init__(self, *args, **kwargs)
         self._drbd = None
+
+    def full_clean(self):
+        # see http://linux.die.net/man/8/lvm -> "Valid Names"
+        from django.core.exceptions import ValidationError
+        try:
+            rate = self.get_syncer_rate()
+        except ValueError, err:
+            raise ValidationError({"syncer_rate": [unicode(err)]})
+        if not (500 * 1024 <= rate <= 100 * 1024**2):
+            raise ValidationError({"syncer_rate": [_("syncer rate must be between 500K and 100M")]})
+
+    def get_syncer_rate(self):
+        m = re.match(r'^(?P<num>\d+)(?P<unit>[KMG]?)$', self.syncer_rate)
+        if m is None:
+            raise ValueError(_("syncer rate must be in <number>[K|M|G] format"))
+        mult = {
+            '':  1024,
+            'K': 1024,
+            'M': 1024**2,
+            'G': 1024**3,
+            }
+        return int(m.group("num")) * mult[m.group("unit")]
 
     @property
     def name(self):
