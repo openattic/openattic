@@ -9,8 +9,8 @@ Version 1.2.0, 12 August 2014:
 * Added BTRFS snapshots.
 * Added mounting of OtherFS snapshots in a .snapshots directory under the
   file system.
-* Added automatic creation of pre-existing Nagios services for existing
-  volumes during oaconfig install.
+* Added automatic creation of Nagios services for existing volumes during
+  oaconfig install.
 * Fixed mountpoints not being deleted when volumes are unmounted.
 * Added volume clone API.
 * Added ZVol API.
