@@ -23,14 +23,13 @@ import dbus
 from collections                import Counter
 
 from django.db                  import models, transaction
-from django.contrib.auth.models import User
 from django.template.loader     import render_to_string
 
 from systemd                    import dbus_to_python, get_dbus_object, Transaction
 
 from volumes                    import signals as volume_signals
 from volumes.models             import StorageObject, BlockVolume, VolumePool
-from ifconfig.models            import Host, IPAddress, NetDevice, getHostDependentManagerClass
+from ifconfig.models            import Host, IPAddress, getHostDependentManagerClass
 from peering.models             import PeerHost
 
 DRBD_PROTOCOL_CHOICES = (

@@ -20,7 +20,6 @@ from rpcd.exceptionhelper import translate_exception
 
 from drbd.models import Connection, Endpoint
 from ifconfig.models import Host
-from peering.models import PeerHost
 
 from volumes.rpcapi import AbstractBlockVolumeHandler
 from volumes.models import BlockVolume
