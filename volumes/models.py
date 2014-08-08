@@ -99,6 +99,8 @@ class StorageObject(models.Model):
     def __exit__(self, type, value, traceback):
         if type is not None:
             # some exception occurred
+            from django.db import connection
+            connection.connection.rollback()
             self._delete()
 
     @property
