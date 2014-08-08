@@ -50,66 +50,70 @@ class ConnectionManager(models.Manager):
         other_host = Host.objects.get(id=other_host_id)
 
         # create drbd connection object
-        with StorageObject(name=self_volume.storageobj.name, megs=self_volume.storageobj.megs, is_origin=True) as self_storageobj:
-            connection = Connection(storageobj=self_storageobj, protocol=protocol, syncer_rate=syncer_rate)
-            connection.full_clean()
-            connection.save()
+        with Transaction():
+            with StorageObject(name=self_volume.storageobj.name, megs=self_volume.storageobj.megs, is_origin=True) as self_storageobj:
+                connection = Connection(storageobj=self_storageobj, protocol=protocol, syncer_rate=syncer_rate)
+                connection.full_clean()
+                connection.save()
 
-            # Allocate minor
-            try:
-                with transaction.atomic():
-                    # First we select all free minors, in the process locking them for the duration of this
-                    # transaction, so no other process can steal the minor we're going to use.
-                    free_minor = min([dm["minor"] for dm in
-                        DeviceMinor.objects.select_for_update().filter(connection__isnull=True).values("minor")])
-                    # now update the minor with our ID.
-                    DeviceMinor.objects.filter(minor=free_minor).update(connection=connection)
-            except ValueError:
-                raise SystemError("Cannot allocate device minor")
+                # Allocate minor
+                try:
+                    with transaction.atomic():
+                        # First we select all free minors, in the process locking them for the duration of this
+                        # transaction, so no other process can steal the minor we're going to use.
+                        free_minor = min([dm["minor"] for dm in
+                            DeviceMinor.objects.select_for_update().filter(connection__isnull=True).values("minor")])
+                        # now update the minor with our ID.
+                        DeviceMinor.objects.filter(minor=free_minor).update(connection=connection)
+                except ValueError:
+                    raise SystemError("Cannot allocate device minor")
 
-            # Re-query the Connection so the deviceminor is known
-            connection = Connection.all_objects.get(id=connection.id)
+                # Re-query the Connection so the deviceminor is known
+                connection = Connection.all_objects.get(id=connection.id)
 
-            # self endpoint install
-            self.install_connection(connection, Host.objects.get_current(), other_host, True, self_volume, peer_volumepool_id)
+                # self endpoint install
+                self._install_connection(connection, Host.objects.get_current(), other_host, True, self_volume, peer_volumepool_id)
 
-            volume_signals.post_install.send(sender=BlockVolume, instance=self)
+                volume_signals.post_install.send(sender=BlockVolume, instance=self)
 
-            return connection.id
+                return connection.id
 
     def install_connection(self, connection, self_host, other_host, is_primary, primary_volume, peer_volumepool_id):
         with Transaction():
-            if is_primary:
-                # set upper volume
-                primary_volume.upper = connection.storageobj
-                primary_volume.save()
+            return self._install_connection(connection, self_host, other_host, is_primary, primary_volume, peer_volumepool_id)
 
-                volume = primary_volume
-            else:
-                # create volume on peer host
-                vpool = VolumePool.objects.get(id=peer_volumepool_id)
-                peer_volume = vpool.volumepool._create_volume(primary_volume.storageobj.name, primary_volume.storageobj.megs, {})
+    def _install_connection(self, connection, self_host, other_host, is_primary, primary_volume, peer_volumepool_id):
+        if is_primary:
+            # set upper volume
+            primary_volume.upper = connection.storageobj
+            primary_volume.save()
 
-                # set upper volume
-                peer_volume.upper = connection.storageobj
-                peer_volume.save()
+            volume = primary_volume
+        else:
+            # create volume on peer host
+            vpool = VolumePool.objects.get(id=peer_volumepool_id)
+            peer_volume = vpool.volumepool._create_volume(primary_volume.storageobj.name, primary_volume.storageobj.megs, {})
 
-                volume = peer_volume
+            # set upper volume
+            peer_volume.upper = connection.storageobj
+            peer_volume.save()
 
-            # get primary ip-address
-            ipaddress = self._get_host_primary_ipaddress(self_host)
+            volume = peer_volume
 
-            # create drbd endpoint
-            endpoint = Endpoint(connection=connection, ipaddress=ipaddress, volume=volume)
-            endpoint.save()
+        # get primary ip-address
+        ipaddress = self._get_host_primary_ipaddress(self_host)
 
-            if is_primary:
-                # peer endpoint install
-                peer_host = PeerHost.objects.get(host_id=other_host.id)
-                peer_host.drbd.Connection.install_connection(connection.id, other_host.id, self_host.id, False, primary_volume.id, peer_volumepool_id)
+        # create drbd endpoint
+        endpoint = Endpoint(connection=connection, ipaddress=ipaddress, volume=volume)
+        endpoint.save()
+
+        if is_primary:
+            # peer endpoint install
+            peer_host = PeerHost.objects.get(host_id=other_host.id)
+            peer_host.drbd.Connection.install_connection(connection.id, other_host.id, self_host.id, False, primary_volume.id, peer_volumepool_id)
 
 
-            endpoint.install(is_primary)
+        endpoint.install(is_primary)
 
         return endpoint.id
 
