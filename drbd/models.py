@@ -216,7 +216,7 @@ class Connection(BlockVolume):
 def __connection_pre_delete(instance, **kwargs):
     for endpoint in Endpoint.all_objects.filter(connection=instance):
         if endpoint.host == Host.objects.get_current():
-            endpoint.uninstall()
+            endpoint._uninstall()
         else:
             peer_host = PeerHost.objects.get(host_id=endpoint.host.id)
             peer_host.drbd.Endpoint.uninstall(endpoint.id)
@@ -300,20 +300,19 @@ class Endpoint(models.Model):
         if init_primary:
             self.connection.drbd.primary_overwrite(self.connection.name, False)
 
-    def uninstall(self):
+    def _uninstall(self):
         self.connection.storageobj.lock()
         self.connection.drbd.down(self.connection.name, False)
         self.connection.drbd.conf_delete(self.connection.name)
         self.volume.storageobj._delete()
 
-    def uninstall_from_remote(self):
-        # wrapper around uninstall() that runs uninstall in a Transaction.
-        # locally, this is done when uninstall() is called as a part of StorageObject.delete(),
+    def uninstall(self):
+        # wrapper around _uninstall() that runs uninstall in a Transaction.
+        # locally, this is done when _uninstall() is called as a part of StorageObject.delete(),
         # but when that function calls out to its peer, the peer doesn't use SO.delete() and
         # hence would not be inside a transaction without this wrapper.
-        from systemd.helpers import Transaction
         with Transaction(background=False):
-            self.uninstall()
+            self._uninstall()
 
 
 class DeviceMinor(models.Model):

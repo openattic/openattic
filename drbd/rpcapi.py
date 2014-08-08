@@ -77,7 +77,7 @@ class DrbdEndpointHandler(ModelHandler):
 
     def uninstall(self, endpoint_id):
         endpoint = Endpoint.objects.get(id=endpoint_id)
-        return endpoint.uninstall_from_remote()
+        return endpoint.uninstall()
 
 class DrbdEndpointProxy(ProxyModelHandler, DrbdEndpointHandler):
     pass
