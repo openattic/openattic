@@ -1,3 +1,15 @@
+openattic (1.2.0-1) unstable; urgency=medium
+
+  * New upstream release.
+  * Add dependency to postgresql-contrib.
+  * Remove dependency to python-statgrab.
+  * Update dependencies for Django 1.6.
+  * Remove obsolete AuthzLDAP directives from apache2.conf.
+  * Move pyudev dependency to openattic-base.
+  * Add openattic-module-ceph package.
+
+ -- Michael Ziegler <diese-addy@funzt-halt.net>  Mon, 11 Aug 2014 09:39:05 +0200
+
 openattic (1.1.1-1) unstable; urgency=low
 
   * New upstream release.
