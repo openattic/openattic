@@ -1,3 +1,0 @@
-<Directory /var/cache/munin/www>
-    Allow From All
-</Directory>
