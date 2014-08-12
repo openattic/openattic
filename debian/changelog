@@ -1,3 +1,10 @@
+openattic (1.2.0-2) unstable; urgency=medium
+
+  * Adapt apache2 configurations for Apache 2.4.
+  * Bump apache2 dependency to 2.4.
+
+ -- Michael Ziegler <diese-addy@funzt-halt.net>  Mon, 11 Aug 2014 10:33:10 +0200
+
 openattic (1.2.0-1) unstable; urgency=medium
 
   * New upstream release.
