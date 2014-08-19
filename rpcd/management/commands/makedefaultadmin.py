@@ -23,7 +23,6 @@ class Command( BaseCommand ):
     def handle(self, **options):
         if User.objects.filter( is_superuser=True ).count() == 0:
             admin = User(username="openattic", is_superuser=True, is_staff=True, is_active=True)
-            admin.save()
             admin.set_password("openattic")
             admin.save()
             print 'Created default user "openattic" with password "openattic".'
