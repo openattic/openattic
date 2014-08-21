@@ -226,7 +226,7 @@ Ext.oa.getAdditSettingsWindow = function(config){
     layout: "fit",
     items : [{
       xtype: "label",
-      text : gettext("No config options available!")
+      text : gettext("Please choose a module on the left to configure further options.")
     }]
   });
   cards.push(emptySettingForm);
