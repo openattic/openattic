@@ -33,6 +33,10 @@ from volumes.models import StorageObject
 def update(**kwargs):
     admin = User.objects.filter( is_superuser=True )[0]
 
+    if not os.path.exists("/etc/ceph"):
+        print "Ceph does not appear to be installed, skipping detection"
+        return
+
     for fname in os.listdir("/etc/ceph"):
         m = re.match(r'^(?P<displayname>\w+)\.conf$', fname)
         if m is None:
