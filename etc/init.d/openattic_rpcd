@@ -110,6 +110,7 @@ case $1 in
 		cd /tmp/profile_data
 		while sleep 1; do
 			for profile in *.profile; do
+				[ -f "$profile" ] || continue
 				converted="/tmp/profile_kcachegrind/$profile"
 				if [ ! -e "$converted" ]; then
 					echo "$profile"
