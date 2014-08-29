@@ -19,6 +19,7 @@ import re
 
 from systemd.procutils import invoke
 from volumes import capabilities
+from volumes.models import StorageObject
 
 from twraid import models
 
@@ -309,7 +310,11 @@ def update_database(ctls):
                     else:
                         devcaps.append(capabilities.SlowSATASpeedCapability)
 
-                dbunit = models.Unit(controller=dbctl, serial=unit.params["serial number"], capflags=capabilities.to_flags(devcaps))
+		# TODO: actually use capabilities
+		#dbunit = models.Unit(controller=dbctl, serial=unit.params["serial number"], capflags=capabilities.to_flags(devcaps))
+		with StorageObject(name=(unit.params["name"] or ("Unnamed Unit %d" % unit_id)),
+				   megs=int(float(unit.totalsize) * 1024)) as so:
+                    dbunit = models.Unit(storageobj=so, controller=dbctl, serial=unit.params["serial number"])
 
             dbunit.index      = unit_id
             dbunit.unittype   = unit.unittype
@@ -331,7 +336,7 @@ def update_database(ctls):
 
         for serial in unseen_units:
             dbunit = models.Unit.objects.get(controller=dbctl, serial=serial)
-            dbunit.delete()
+            dbunit.storageobj.delete()
 
         unseen_disks = [ d["serial"] for d in dbctl.disk_set.values("serial") ]
 
