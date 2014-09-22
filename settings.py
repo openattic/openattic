@@ -275,6 +275,7 @@ INSTALLED_APPS = [
     'django.contrib.admin',
     'django.contrib.admindocs',
     'django.contrib.staticfiles',
+    'rest_framework',
     'ifconfig',
     'userprefs',
     'cmdlog',

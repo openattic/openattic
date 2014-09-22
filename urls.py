@@ -23,6 +23,7 @@ admin.autodiscover()
 from django.conf import settings
 
 from rpcd.extdirect import PROVIDER
+from rpcd.rest      import ROUTER
 
 def _get_openattic_apps():
     from os.path import commonprefix
@@ -43,6 +44,9 @@ urlpatterns = [
 
     (r'^accounts/login/$',  'django.contrib.auth.views.login' ),
     (r'^accounts/logout/$', 'django.contrib.auth.views.logout', {'next_page': settings.PROJECT_URL+"/"}),
+
+    (r'^api/',      include(ROUTER.urls)),
+    (r'^api-auth/', include('rest_framework.urls', namespace='rest_framework')),
 
     (r'^direct/', include(PROVIDER.urls)),
     (r'^userprefs/',   include("userprefs.urls")),
