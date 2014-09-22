@@ -126,8 +126,9 @@ MEDIA_ROOT = join(PROJECT_ROOT, 'htdocs')
 # Examples: "http://media.lawrence.com", "http://example.com/media/"
 MEDIA_URL = PROJECT_URL + '/static/'
 
-STATIC_URL  = MEDIA_URL
-STATIC_ROOT = MEDIA_ROOT
+STATIC_URL  = PROJECT_URL + '/staticfiles/'
+STATIC_ROOT = "/var/lib/openattic/static"
+STATICFILES_DIRS = (MEDIA_ROOT,)
 
 import django
 if django.VERSION[:2] == (1, 2):
@@ -273,6 +274,7 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.admin',
     'django.contrib.admindocs',
+    'django.contrib.staticfiles',
     'ifconfig',
     'userprefs',
     'cmdlog',
