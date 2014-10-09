@@ -7,7 +7,7 @@ import shlex
 from datetime import datetime
 from django.db import models
 
-from systemd import invoke
+from systemd.procutils import invoke
 
 def process_config(conf_dict, snapconf):
     if len(conf_dict["data"]["prescript"]) > 0:

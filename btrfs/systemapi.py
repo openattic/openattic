@@ -15,7 +15,8 @@
 """
 
 import os
-from systemd import invoke, logged, BasePlugin, method, deferredmethod
+from systemd.procutils import invoke
+from systemd.plugins   import logged, BasePlugin, method, deferredmethod
 
 @logged
 class SystemD(BasePlugin):

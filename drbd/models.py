@@ -27,7 +27,8 @@ from django.db                  import models, transaction
 from django.template.loader     import render_to_string
 from django.utils.translation   import ugettext_noop as _
 
-from systemd                    import dbus_to_python, get_dbus_object, Transaction
+from systemd                    import dbus_to_python, get_dbus_object
+from systemd.helpers            import Transaction
 
 from volumes                    import signals as volume_signals
 from volumes.models             import StorageObject, BlockVolume, VolumePool

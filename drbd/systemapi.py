@@ -16,7 +16,8 @@
 
 import os
 
-from systemd import invoke, logged, BasePlugin, method, deferredmethod
+from systemd.procutils import invoke
+from systemd.plugins   import logged, BasePlugin, method, deferredmethod
 
 def stackcmd(resource, stacked, command, options=None):
     cmd = ["/sbin/drbdadm"]

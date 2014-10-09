@@ -16,7 +16,8 @@
 
 from django.template.loader import render_to_string
 
-from systemd       import invoke, logged, LockingPlugin, method
+from systemd.procutils import invoke
+from systemd.plugins   import logged, LockingPlugin, method
 
 from tftp.conf     import settings as tftp_settings
 from tftp.models   import Instance

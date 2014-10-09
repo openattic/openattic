@@ -16,7 +16,8 @@
 
 from django.contrib.auth.models import User
 
-from systemd import invoke, logged, LockingPlugin, method
+from systemd.procutils import invoke
+from systemd.plugins   import logged, LockingPlugin, method
 
 @logged
 class SystemD(LockingPlugin):

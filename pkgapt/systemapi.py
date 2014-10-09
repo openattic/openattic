@@ -14,7 +14,7 @@
 """
 
 import apt
-from systemd import logged, BasePlugin, method
+from systemd.plugins import logged, BasePlugin, method
 
 @logged
 class SystemD(BasePlugin):

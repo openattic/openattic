@@ -18,7 +18,8 @@ import os.path
 
 from datetime import datetime
 from StringIO import StringIO
-from systemd         import invoke, logged, LockingPlugin, method
+from systemd.procutils import invoke
+from systemd.plugins   import logged, LockingPlugin, method
 from ifconfig.models import NetDevice
 
 def cidr2mask(len):

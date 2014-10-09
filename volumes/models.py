@@ -26,7 +26,8 @@ from django.utils.translation    import ugettext_lazy as _
 from django.contrib.auth.models  import User
 from django.core.exceptions      import ValidationError
 
-from systemd import get_dbus_object, Transaction
+from systemd import get_dbus_object
+from systemd.helpers import Transaction
 from systemd.lockutils import Lockfile, AlreadyLocked
 from ifconfig.models import Host, HostDependentManager, getHostDependentManagerClass
 from volumes import blockdevices, capabilities, filesystems

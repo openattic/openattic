@@ -14,7 +14,8 @@
  *  GNU General Public License for more details.
 """
 
-from systemd       import invoke, logged, LockingPlugin, deferredmethod
+from systemd.procutils import invoke
+from systemd.plugins   import logged, LockingPlugin, deferredmethod
 from nfs.models    import Export
 from nfs.conf      import settings as nfs_settings
 

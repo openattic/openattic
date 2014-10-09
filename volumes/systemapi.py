@@ -15,7 +15,8 @@
 """
 
 import os
-from systemd import invoke, logged, BasePlugin, method, signal, deferredmethod
+from systemd.procutils import invoke
+from systemd.plugins   import logged, BasePlugin, method, signal, deferredmethod
 
 from volumes.conf import settings as volumes_settings
 from volumes.models import StorageObject, VolumePool, BlockVolume, FileSystemVolume

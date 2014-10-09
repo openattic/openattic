@@ -18,7 +18,8 @@ from rtslib          import target
 from tcm_dump        import tcm_full_backup
 
 from ifconfig.models import Host
-from systemd         import logged, LockingPlugin, method, dbus_to_python
+from systemd         import dbus_to_python
+from systemd.plugins import logged, LockingPlugin, method
 
 from lio             import models
 

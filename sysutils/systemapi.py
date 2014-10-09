@@ -17,7 +17,8 @@
 import os.path
 import ctypes
 
-from systemd import invoke, logged, LockingPlugin, method
+from systemd.procutils import invoke
+from systemd.plugins   import logged, LockingPlugin, method
 
 
 @logged

@@ -18,7 +18,8 @@ import os
 import os.path
 import json
 
-from systemd       import invoke, logged, LockingPlugin, method, deferredmethod
+from systemd.procutils import invoke
+from systemd.plugins   import logged, LockingPlugin, method, deferredmethod
 
 @logged
 class SystemD(LockingPlugin):

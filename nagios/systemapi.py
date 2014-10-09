@@ -28,7 +28,8 @@ from django.contrib.auth.models import User
 from django.conf   import settings
 
 from ifconfig.models import Host
-from systemd       import invoke, logged, LockingPlugin, method, deferredmethod
+from systemd.procutils import invoke
+from systemd.plugins   import logged, LockingPlugin, method, deferredmethod
 from nagios.models import Command, Service
 from nagios.conf   import settings as nagios_settings
 from nagios.graphbuilder import Graph as GraphBuilder, parse

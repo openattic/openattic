@@ -35,8 +35,7 @@ import dbus.mainloop.glib
 from django.core.management.base import BaseCommand
 from django.conf import settings
 
-from systemd.helpers   import makeloggedfunc
-from systemd.plugins   import deferredmethod
+from systemd.plugins   import makeloggedfunc, deferredmethod
 from systemd.lockutils import acquire_lock, release_lock, Lockfile
 
 class SystemD(dbus.service.Object):

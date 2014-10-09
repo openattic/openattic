@@ -17,7 +17,8 @@
 import logging
 
 from time import time
-from systemd import invoke, logged, BasePlugin, method, deferredmethod
+from systemd.procutils import invoke
+from systemd.plugins   import logged, BasePlugin, method, deferredmethod
 
 from lvm.conf   import settings as lvm_settings
 from lvm.models import LogicalVolume

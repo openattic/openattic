@@ -18,7 +18,8 @@ import socket
 
 from django.template.loader import render_to_string
 
-from systemd       import logged, invoke, LockingPlugin, method
+from systemd.procutils import invoke
+from systemd.plugins   import logged, LockingPlugin, method
 from samba.models  import Share
 from samba.conf    import settings as samba_settings
 

@@ -14,7 +14,8 @@
  *  GNU General Public License for more details.
 """
 
-from systemd import invoke, logged, BasePlugin, method
+from systemd.procutils import invoke
+from systemd.plugins   import logged, BasePlugin, method
 
 @logged
 class SystemD(BasePlugin):
