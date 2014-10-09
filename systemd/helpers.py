@@ -65,34 +65,6 @@ def dbus_to_python(obj):
         return dict([(dbus_type_to_python(key), dbus_to_python(obj[key])) for key in py])
     return py
 
-def makeloggedfunc(func, action="Calling"):
-    """ Create a wrapper around the method that does some logging """
-    if hasattr(func, "im_class") and hasattr(func.im_class, "dbus_path"):
-        @wraps(func)
-        def loggedfunc(*args, **kwargs):
-            logging.info( "%s %s::%s(%s)", action, func.im_class.dbus_path, func.__name__,
-                ', '.join([repr(arg) for arg in args[1:]]))
-            return func(*args, **kwargs)
-    else:
-        @wraps(func)
-        def loggedfunc(*args, **kwargs):
-            logging.info( "%s %s(%s)", action, func.__name__,
-                ', '.join([repr(arg) for arg in args[1:]]))
-            return func(*args, **kwargs)
-    return loggedfunc
-
-def logged(cls):
-    """ Search for methods that are exported via DBus and put a log wrapper around them """
-    for attr in dir(cls):
-        func = getattr(cls, attr)
-        if hasattr(func, "_dbus_is_method") and \
-           func._dbus_is_method and func.__name__ != "Introspect" and \
-           getattr(func, "_enable_logging", True):
-            setattr( cls, attr, makeloggedfunc(func, "Calling") )
-        elif hasattr(func, "_dbus_is_signal") and func._dbus_is_signal:
-            setattr( cls, attr, makeloggedfunc(func, "Emitting") )
-    return cls
-
 
 class Transaction(object):
     """ Collects deferrable systemd operations in a queue and runs it.
