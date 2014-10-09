@@ -18,7 +18,6 @@ import os
 import logging
 import dbus.service
 from functools     import partial, wraps
-from threading     import Lock
 
 from django.conf   import settings
 
@@ -34,11 +33,6 @@ class BasePlugin(dbus.service.Object):
         self.mainobj = mainobj
         dbus.service.Object.__init__(self, self.bus, self.dbus_path)
 
-class LockingPlugin(BasePlugin):
-    """ SystemD plugin with a threading.Lock instance available at self.lock. """
-    def __init__(self, bus, busname, mainobj):
-        BasePlugin.__init__(self, bus, busname, mainobj)
-        self.lock    = Lock()
 
 method = partial( dbus.service.method, settings.DBUS_IFACE_SYSTEMD )
 signal = partial( dbus.service.signal, settings.DBUS_IFACE_SYSTEMD )
