@@ -19,13 +19,13 @@ from tcm_dump        import tcm_full_backup
 
 from ifconfig.models import Host
 from systemd         import dbus_to_python
-from systemd.plugins import logged, LockingPlugin, method
+from systemd.plugins import logged, BasePlugin, method
 
 from lio             import models
 
 
 @logged
-class SystemD(LockingPlugin):
+class SystemD(BasePlugin):
     dbus_path = "/lio"
 
     @method(in_signature="i", out_signature="")

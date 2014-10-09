@@ -15,26 +15,22 @@
 """
 
 from systemd.procutils import invoke
-from systemd.plugins   import logged, LockingPlugin, deferredmethod
+from systemd.plugins   import logged, BasePlugin, deferredmethod
 from nfs.models    import Export
 from nfs.conf      import settings as nfs_settings
 
 @logged
-class SystemD(LockingPlugin):
+class SystemD(BasePlugin):
     dbus_path = "/nfs"
 
     @deferredmethod(in_signature="")
     def writeconf(self, sender):
-        self.lock.acquire()
+        fd = open( nfs_settings.EXPORTS, "wb" )
         try:
-            fd = open( nfs_settings.EXPORTS, "wb" )
-            try:
-                for export in Export.objects.all():
-                    fd.write( "%-50s %s(%s)\n" % ( export.path, export.address, export.options ) )
-            finally:
-                fd.close()
+            for export in Export.objects.all():
+                fd.write( "%-50s %s(%s)\n" % ( export.path, export.address, export.options ) )
         finally:
-            self.lock.release()
+            fd.close()
 
     @deferredmethod(in_signature="bsss")
     def exportfs(self, export, path, host, options, sender):

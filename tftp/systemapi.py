@@ -17,28 +17,24 @@
 from django.template.loader import render_to_string
 
 from systemd.procutils import invoke
-from systemd.plugins   import logged, LockingPlugin, method
+from systemd.plugins   import logged, BasePlugin, method
 
 from tftp.conf     import settings as tftp_settings
 from tftp.models   import Instance
 
 @logged
-class SystemD(LockingPlugin):
+class SystemD(BasePlugin):
     dbus_path = "/tftp"
 
     @method(in_signature="", out_signature="")
     def writeconf(self):
-        self.lock.acquire()
+        fd = open( tftp_settings.XINETD_CONF, "wb" )
         try:
-            fd = open( tftp_settings.XINETD_CONF, "wb" )
-            try:
-                fd.write( render_to_string( "tftp/xinetd.conf", {
-                    'Instances': Instance.objects.all(),
-                    } ) )
-            finally:
-                fd.close()
+            fd.write( render_to_string( "tftp/xinetd.conf", {
+                'Instances': Instance.objects.all(),
+                } ) )
         finally:
-            self.lock.release()
+            fd.close()
 
     @method(in_signature="", out_signature="i")
     def reload(self):

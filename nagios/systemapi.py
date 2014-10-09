@@ -29,40 +29,36 @@ from django.conf   import settings
 
 from ifconfig.models import Host
 from systemd.procutils import invoke
-from systemd.plugins   import logged, LockingPlugin, method, deferredmethod
+from systemd.plugins   import logged, BasePlugin, method, deferredmethod
 from nagios.models import Command, Service
 from nagios.conf   import settings as nagios_settings
 from nagios.graphbuilder import Graph as GraphBuilder, parse
 
 @logged
-class SystemD(LockingPlugin):
+class SystemD(BasePlugin):
     dbus_path = "/nagios"
 
     @deferredmethod(in_signature="", once_last=True)
     def writeconf(self, sender):
-        self.lock.acquire()
+        # Services
+        fd = open( nagios_settings.SERVICES_CFG_PATH, "wb" )
         try:
-            # Services
-            fd = open( nagios_settings.SERVICES_CFG_PATH, "wb" )
-            try:
-                fd.write( render_to_string( "nagios/services.cfg", {
-                    "IncludeHost": nagios_settings.INCLUDE_HOST_IN_CFG,
-                    "Host":     Host.objects.get_current(),
-                    "Commands": Command.objects.all(),
-                    "Services": Service.objects.filter(command__query_only=False)
-                    } ) )
-            finally:
-                fd.close()
-            # Contacts
-            fd = open( nagios_settings.CONTACTS_CFG_PATH, "wb" )
-            try:
-                fd.write( render_to_string( "nagios/contacts.cfg", {
-                    "Admins": User.objects.filter(is_active=True, is_superuser=True).exclude(email=""),
-                    } ) )
-            finally:
-                fd.close()
+            fd.write( render_to_string( "nagios/services.cfg", {
+                "IncludeHost": nagios_settings.INCLUDE_HOST_IN_CFG,
+                "Host":     Host.objects.get_current(),
+                "Commands": Command.objects.all(),
+                "Services": Service.objects.filter(command__query_only=False)
+                } ) )
         finally:
-            self.lock.release()
+            fd.close()
+        # Contacts
+        fd = open( nagios_settings.CONTACTS_CFG_PATH, "wb" )
+        try:
+            fd.write( render_to_string( "nagios/contacts.cfg", {
+                "Admins": User.objects.filter(is_active=True, is_superuser=True).exclude(email=""),
+                } ) )
+        finally:
+            fd.close()
         invoke(["nagios3", "--verify-config", nagios_settings.NAGIOS_CFG_PATH])
         invoke(["/etc/init.d/nagios3", "restart"])
         while not os.path.exists(nagios_settings.STATUS_DAT_PATH):

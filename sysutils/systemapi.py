@@ -18,11 +18,11 @@ import os.path
 import ctypes
 
 from systemd.procutils import invoke
-from systemd.plugins   import logged, LockingPlugin, method
+from systemd.plugins   import logged, BasePlugin, method
 
 
 @logged
-class SystemD(LockingPlugin):
+class SystemD(BasePlugin):
     dbus_path = "/sysutils"
 
     @method(in_signature="", out_signature="i")

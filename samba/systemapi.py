@@ -19,30 +19,26 @@ import socket
 from django.template.loader import render_to_string
 
 from systemd.procutils import invoke
-from systemd.plugins   import logged, LockingPlugin, method
+from systemd.plugins   import logged, BasePlugin, method
 from samba.models  import Share
 from samba.conf    import settings as samba_settings
 
 @logged
-class SystemD(LockingPlugin):
+class SystemD(BasePlugin):
     dbus_path = "/samba"
 
     @method(in_signature="", out_signature="")
     def writeconf(self):
-        self.lock.acquire()
+        fd = open( samba_settings.SMB_CONF, "wb" )
         try:
-            fd = open( samba_settings.SMB_CONF, "wb" )
-            try:
-                fd.write( render_to_string( "samba/smb.conf", {
-                    'Hostname':  socket.gethostname(),
-                    'Domain':    samba_settings.DOMAIN,
-                    'Workgroup': samba_settings.WORKGROUP,
-                    'Shares':    Share.objects.all()
-                    } ).encode("UTF-8") )
-            finally:
-                fd.close()
+            fd.write( render_to_string( "samba/smb.conf", {
+                'Hostname':  socket.gethostname(),
+                'Domain':    samba_settings.DOMAIN,
+                'Workgroup': samba_settings.WORKGROUP,
+                'Shares':    Share.objects.all()
+                } ).encode("UTF-8") )
         finally:
-            self.lock.release()
+            fd.close()
 
     @method(in_signature="", out_signature="i")
     def reload(self):

@@ -19,10 +19,10 @@ import os.path
 import json
 
 from systemd.procutils import invoke
-from systemd.plugins   import logged, LockingPlugin, method, deferredmethod
+from systemd.plugins   import logged, BasePlugin, method, deferredmethod
 
 @logged
-class SystemD(LockingPlugin):
+class SystemD(BasePlugin):
     dbus_path = "/ceph"
 
     def invoke_ceph(self, cluster, args, log=True):

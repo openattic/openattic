@@ -17,53 +17,49 @@
 from django.contrib.auth.models import User
 
 from systemd.procutils import invoke
-from systemd.plugins   import logged, LockingPlugin, method
+from systemd.plugins   import logged, BasePlugin, method
 
 @logged
-class SystemD(LockingPlugin):
+class SystemD(BasePlugin):
     dbus_path = "/mailaliases"
 
     @method(in_signature="", out_signature="")
     def write_aliases(self):
-        self.lock.acquire()
+        # read current aliases
+        fd = open( "/etc/aliases", "rb" )
         try:
-            # read current aliases
-            fd = open( "/etc/aliases", "rb" )
-            try:
-                aliases = fd.read()
-            finally:
-                fd.close()
-
-            aliases = dict([
-                [part.strip() for part in line.split(":")]
-                for line in aliases.split("\n")
-                if line.strip() and line[0] != '#'
-                ])
-
-            for user in User.objects.all():
-                if user.email:
-                    aliases[user.username] = user.email
-                elif user.username in aliases:
-                    del aliases[user.username]
-
-            userqry = User.objects.filter(is_active=True, is_superuser=True).exclude(email="")
-            if userqry.count():
-                aliases["root"] = ', '.join([ user.username
-                    for user in userqry
-                    ])
-            elif "root" in aliases:
-                del aliases["root"]
-
-            fd = open( "/etc/aliases", "wb" )
-            try:
-                users = aliases.keys()
-                users.sort()
-                for username in users:
-                    fd.write("%s: %s\n" % ( username, aliases[username] ))
-            finally:
-                fd.close()
+            aliases = fd.read()
         finally:
-            self.lock.release()
+            fd.close()
+
+        aliases = dict([
+            [part.strip() for part in line.split(":")]
+            for line in aliases.split("\n")
+            if line.strip() and line[0] != '#'
+            ])
+
+        for user in User.objects.all():
+            if user.email:
+                aliases[user.username] = user.email
+            elif user.username in aliases:
+                del aliases[user.username]
+
+        userqry = User.objects.filter(is_active=True, is_superuser=True).exclude(email="")
+        if userqry.count():
+            aliases["root"] = ', '.join([ user.username
+                for user in userqry
+                ])
+        elif "root" in aliases:
+            del aliases["root"]
+
+        fd = open( "/etc/aliases", "wb" )
+        try:
+            users = aliases.keys()
+            users.sort()
+            for username in users:
+                fd.write("%s: %s\n" % ( username, aliases[username] ))
+        finally:
+            fd.close()
 
     @method(in_signature="", out_signature="i")
     def newaliases(self):
