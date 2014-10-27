@@ -23,7 +23,7 @@ admin.autodiscover()
 from django.conf import settings
 
 from rpcd.extdirect import PROVIDER
-from rpcd.rest      import ROUTER
+from restapi.router import ROUTER
 
 def _get_openattic_apps():
     from os.path import commonprefix
