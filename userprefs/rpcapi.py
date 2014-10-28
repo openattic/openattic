@@ -24,28 +24,34 @@ class UserProfileHandler(ModelHandler):
 
     def all_preferences(self):
         """ Return a dict with all preferences for the current user profile. """
-        return dict([( pref.setting, json.loads(pref.value)) for pref in self.user.get_profile()])
+        profile = UserProfile.objects.get(user=self.user)
+        return dict([( pref.setting, json.loads(pref.value)) for pref in profile])
 
     def has_preference(self, setting):
         """ See if the user profile has the given `setting`. """
-        return setting in self.user.get_profile()
+        profile = UserProfile.objects.get(user=self.user)
+        return setting in profile
 
     def get_preference_or_default(self, setting, default):
         """ Get the given `setting` if it is set, `default` otherwise. """
-        if setting not in self.user.get_profile():
+        profile = UserProfile.objects.get(user=self.user)
+        if setting not in profile:
             return default
-        return self.user.get_profile()[setting]
+        return profile[setting]
 
     def get_preference(self, setting):
         """ Get a setting from the current user's profile. """
-        return self.user.get_profile()[setting]
+        profile = UserProfile.objects.get(user=self.user)
+        return profile[setting]
 
     def set_preference(self, setting, value):
         """ Set a setting in the current user's profile. """
-        self.user.get_profile()[setting] = value
+        profile = UserProfile.objects.get(user=self.user)
+        profile[setting] = value
 
     def clear_preference(self, setting):
         """ Clear a setting from the current user's profile. """
-        del self.user.get_profile()[setting]
+        profile = UserProfile.objects.get(user=self.user)
+        del profile[setting]
 
 RPCD_HANDLERS = [UserProfileHandler]

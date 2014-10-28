@@ -22,7 +22,7 @@ from userprefs.models import UserProfile
 
 def get_prefs(request):
     try:
-        profile = request.user.get_profile()
+        profile = UserProfile.objects.get(user=request.user)
     except UserProfile.DoesNotExist:
         profile = UserProfile(user=request.user)
         profile.save()
@@ -30,4 +30,4 @@ def get_prefs(request):
     return HttpResponse(
         "window.InitDirectState = " + json.dumps(
             dict([( pref.setting, json.loads(pref.value)) for pref in profile])
-        ) + ";\n", mimetype="text/javascript")
+        ) + ";\n", content_type="text/javascript")

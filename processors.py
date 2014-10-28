@@ -25,7 +25,7 @@ def profile(request):
         return {}
     else:
         try:
-            profile = request.user.get_profile()
+            profile = UserProfile.objects.get(user=request.user)
         except UserProfile.DoesNotExist:
             profile = UserProfile(user=request.user)
             profile.save()
