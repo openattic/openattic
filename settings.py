@@ -39,6 +39,17 @@ LVM_CHOWN_GROUP = "users"
 
 MANAGERS = ADMINS
 
+REST_FRAMEWORK = {
+    'DEFAULT_FILTER_BACKENDS': (
+        'rest_framework.filters.DjangoFilterBackend',
+        'rest_framework.filters.SearchFilter',
+        'rest_framework.filters.OrderingFilter',
+    ),
+    'PAGINATE_BY':        50,
+    'PAGINATE_BY_PARAM': 'page_size',
+    'MAX_PAGINATE_BY':   100,
+}
+
 # Read database.ini
 DATABASES = {}
 
