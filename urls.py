@@ -61,12 +61,12 @@ urlpatterns = [
     (r'^index.html$', 'views.index', {}, 'index'),
 
     (r'^js/(?P<app>\w+)/(?P<file>\w+)\.js$',
-        lambda request, app, file: TemplateView.as_view(template_name="%s/%s.js" % (app, file))(request, mimetype="text/javascript"),
+        lambda request, app, file: TemplateView.as_view(template_name="%s/%s.js" % (app, file), content_type="text/javascript")(request),
         {},
         'javascript'
     ),
     (r'^js/(?P<file>\w+)\.js$',
-        lambda request, file: TemplateView.as_view(template_name="%s.js" % file)(request, mimetype="text/javascript"),
+        lambda request, file: TemplateView.as_view(template_name="%s.js" % file, content_type="text/javascript")(request),
         {},
         'javascript_main'
     ),

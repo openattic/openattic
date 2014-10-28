@@ -120,5 +120,5 @@ def graph(request, service_id, srcidx):
             builder.title += ' - ' + dbgraph.title
 
 
-    return HttpResponse( builder.get_image(), mimetype="image/png" )
+    return HttpResponse( builder.get_image(), content_type="image/png" )
 
