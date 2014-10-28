@@ -1,5 +1,6 @@
 # Python Modules
 rpcd      /usr/share/openattic
+restapi   /usr/share/openattic
 systemd   /usr/share/openattic
 cmdlog    /usr/share/openattic
 peering   /usr/share/openattic
