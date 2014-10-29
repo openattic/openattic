@@ -18,20 +18,25 @@ from rest_framework import serializers, viewsets
 
 from ifconfig import models
 
-
-class NetDeviceSerializer(serializers.ModelSerializer):
-    class Meta:
-        model = models.NetDevice
-
 class IPAddressSerializer(serializers.ModelSerializer):
     class Meta:
         model = models.IPAddress
+
+class NetDeviceSerializer(serializers.ModelSerializer):
+    ipaddress_set = serializers.HyperlinkedRelatedField(view_name='ipaddress-detail', many=True)
+
+    class Meta:
+        model = models.NetDevice
 
 class HostSerializer(serializers.ModelSerializer):
     netdevice_set = serializers.HyperlinkedRelatedField(view_name='netdevice-detail', many=True)
 
     class Meta:
         model = models.Host
+
+class IPAddressViewSet(viewsets.ModelViewSet):
+    queryset = models.IPAddress.objects.all()
+    serializer_class = IPAddressSerializer
 
 class NetDeviceViewSet(viewsets.ModelViewSet):
     queryset = models.NetDevice.objects.all()
@@ -45,4 +50,5 @@ class HostViewSet(viewsets.ModelViewSet):
 RESTAPI_VIEWSETS = [
     ('hosts', HostViewSet),
     ('netdevices', NetDeviceViewSet),
+    ('ipaddresses', IPAddressViewSet),
 ]
