@@ -15,11 +15,23 @@
 """
 
 from django.contrib.auth.models import User
+from django.contrib.contenttypes.models import ContentType
+
 from rest_framework import serializers, viewsets
 from rest_framework.decorators import detail_route
 from rest_framework.response import Response
 
 from volumes.restapi import FileSystemVolumeSerializer
+
+
+class ContentTypeSerializer(serializers.HyperlinkedModelSerializer):
+    class Meta:
+        model = ContentType
+
+class ContentTypeViewSet(viewsets.ReadOnlyModelViewSet):
+    queryset = ContentType.objects.all()
+    serializer_class = ContentTypeSerializer
+
 
 # Serializers define the API representation.
 class UserSerializer(serializers.HyperlinkedModelSerializer):
@@ -46,4 +58,5 @@ class UserViewSet(viewsets.ModelViewSet):
 
 RESTAPI_VIEWSETS = [
     ('users', UserViewSet),
+    ('contenttypes', ContentTypeViewSet),
 ]
