@@ -30,9 +30,16 @@ class NetDeviceSerializer(serializers.ModelSerializer):
 
 class HostSerializer(serializers.ModelSerializer):
     netdevice_set = serializers.HyperlinkedRelatedField(view_name='netdevice-detail', many=True)
+    hostgroup_set = serializers.HyperlinkedRelatedField(view_name='hostgroup-detail', many=True)
 
     class Meta:
         model = models.Host
+
+class HostGroupSerializer(serializers.ModelSerializer):
+    hosts = serializers.HyperlinkedRelatedField(view_name='host-detail', many=True)
+
+    class Meta:
+        model = models.HostGroup
 
 class IPAddressViewSet(viewsets.ModelViewSet):
     queryset = models.IPAddress.objects.all()
@@ -46,9 +53,14 @@ class HostViewSet(viewsets.ModelViewSet):
     queryset = models.Host.objects.all()
     serializer_class = HostSerializer
 
+class HostGroupViewSet(viewsets.ModelViewSet):
+    queryset = models.HostGroup.objects.all()
+    serializer_class = HostGroupSerializer
+
 
 RESTAPI_VIEWSETS = [
     ('hosts', HostViewSet),
+    ('hostgroups', HostGroupViewSet),
     ('netdevices', NetDeviceViewSet),
     ('ipaddresses', IPAddressViewSet),
 ]
