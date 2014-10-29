@@ -19,12 +19,7 @@ from rest_framework import serializers, viewsets
 from rest_framework.decorators import detail_route
 from rest_framework.response import Response
 
-from volumes.models import FileSystemVolume
-
-# Serializers define the API representation.
-class FsvSerializer(serializers.ModelSerializer):
-    class Meta:
-        model = FileSystemVolume
+from volumes.restapi import FileSystemVolumeSerializer
 
 # Serializers define the API representation.
 class UserSerializer(serializers.HyperlinkedModelSerializer):
@@ -45,8 +40,8 @@ class UserViewSet(viewsets.ModelViewSet):
     @detail_route()
     def volumes(self, request, *args, **kwargs):
         user = self.get_object()
-        vols = FileSystemVolume.objects.filter(owner=user)
-        serializer = FsvSerializer(vols, many=True, context={'request': request})
+        vols = user.filesystemvolume_set.all()
+        serializer = FileSystemVolumeSerializer(vols, many=True, context={'request': request})
         return Response(serializer.data)
 
 RESTAPI_VIEWSETS = [
