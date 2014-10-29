@@ -23,7 +23,7 @@ from volumes import models
 
 
 class AbstractFileSystemVolumeSerializer(serializers.Serializer):
-    host        = serializers.Field()
+    host        = serializers.HyperlinkedRelatedField(read_only=True, view_name="host-detail")
     path        = serializers.CharField()
     #mounted     = serializers.BooleanField()
     #usedmegs    = serializers.Field()
@@ -33,16 +33,18 @@ class FileSystemVolumeSerializer(serializers.ModelSerializer):
     class Meta:
         model = models.FileSystemVolume
 
-    volume = serializers.SerializerMethodField("serialize_volume")
+    owner       = serializers.HyperlinkedRelatedField(view_name="user-detail")
+    volume_type = serializers.HyperlinkedRelatedField(view_name="contenttype-detail")
+    volume      = serializers.SerializerMethodField("serialize_volume")
 
     def serialize_volume(self, obj):
-        ser = AbstractFileSystemVolumeSerializer(obj.volume)
+        ser = AbstractFileSystemVolumeSerializer(obj.volume, context=self.context)
         return ser.data
 
 
 
 class AbstractBlockVolumeSerializer(serializers.Serializer):
-    host        = serializers.Field()
+    host        = serializers.HyperlinkedRelatedField(read_only=True, view_name="host-detail")
     path        = serializers.CharField()
     status      = serializers.Field()
 
@@ -50,16 +52,17 @@ class BlockVolumeSerializer(serializers.ModelSerializer):
     class Meta:
         model = models.BlockVolume
 
-    volume = serializers.SerializerMethodField("serialize_volume")
+    volume      = serializers.SerializerMethodField("serialize_volume")
+    volume_type = serializers.HyperlinkedRelatedField(view_name="contenttype-detail")
 
     def serialize_volume(self, obj):
-        ser = AbstractBlockVolumeSerializer(obj.volume)
+        ser = AbstractBlockVolumeSerializer(obj.volume, context=self.context)
         return ser.data
 
 
 
 class AbstractVolumePoolSerializer(serializers.Serializer):
-    host        = serializers.Field()
+    host        = serializers.HyperlinkedRelatedField(read_only=True, view_name="host-detail")
     usedmegs    = serializers.Field()
     status      = serializers.Field()
 
@@ -67,10 +70,11 @@ class VolumePoolSerializer(serializers.ModelSerializer):
     class Meta:
         model = models.VolumePool
 
-    volumepool = serializers.SerializerMethodField("serialize_volumepool")
+    volumepool  = serializers.SerializerMethodField("serialize_volumepool")
+    volumepool_type = serializers.HyperlinkedRelatedField(view_name="contenttype-detail")
 
     def serialize_volumepool(self, obj):
-        ser = AbstractVolumePoolSerializer(obj.volumepool)
+        ser = AbstractVolumePoolSerializer(obj.volumepool, context=self.context)
         return ser.data
 
 
