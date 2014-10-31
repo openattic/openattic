@@ -23,6 +23,8 @@ from rest_framework.response import Response
 from volumes import models
 
 
+VOLUME_FILTER_Q = Q(Q(filesystemvolume__isnull=False)|Q(blockvolume__isnull=False)) & Q(snapshot__isnull=True)
+
 ##################################
 #            Pool                #
 ##################################
@@ -55,11 +57,12 @@ class PoolSerializer(serializers.HyperlinkedModelSerializer):
     """ Serializer for a pool. """
 
     url         = serializers.HyperlinkedIdentityField(view_name="volume-detail")
+    volumes     = serializers.HyperlinkedIdentityField(view_name="pool-volumes")
     source_pool = serializers.HyperlinkedRelatedField(view_name="pool-detail", read_only=True)
 
     class Meta:
         model  = models.StorageObject
-        fields = ('url', 'name', 'megs', 'uuid', 'createdate', 'source_pool', 'snapshot')
+        fields = ('url', 'name', 'megs', 'uuid', 'createdate', 'source_pool', 'volumes')
 
     def to_native(self, obj):
         data = dict([(key, None) for key in ("type", "host", "status", "usedmegs", "freemegs")])
@@ -77,6 +80,12 @@ class PoolViewSet(viewsets.ModelViewSet):
     serializer_class = PoolSerializer
     filter_fields = ('name', 'uuid', 'megs', 'createdate')
     search_fields = ('name')
+
+    @detail_route()
+    def volumes(self, request, *args, **kwargs):
+        pool = self.get_object()
+        serializer_instance = VolumeSerializer(pool.volumepool.volume_set.filter(VOLUME_FILTER_Q), many=True, context={"request": request})
+        return Response(serializer_instance.data)
 
 
 
@@ -172,7 +181,7 @@ class VolumeSerializer(serializers.HyperlinkedModelSerializer):
 
 class VolumeViewSet(viewsets.ModelViewSet):
     # filter queryset by "(has an FSV or a BV) and is not a snapshot"
-    queryset = models.StorageObject.objects.filter(Q(Q(filesystemvolume__isnull=False)|Q(blockvolume__isnull=False)) & Q(snapshot__isnull=True))
+    queryset = models.StorageObject.objects.filter(VOLUME_FILTER_Q)
     serializer_class = VolumeSerializer
     filter_fields = ('name', 'uuid', 'megs', 'createdate')
     search_fields = ('name')
