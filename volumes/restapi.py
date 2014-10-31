@@ -14,6 +14,7 @@
  *  GNU General Public License for more details.
 """
 
+from django.db.models import Q
 from django.contrib.auth.models import User
 from rest_framework import serializers, viewsets
 from rest_framework.decorators import detail_route
@@ -168,7 +169,8 @@ class VolumeSerializer(serializers.HyperlinkedModelSerializer):
         return data
 
 class VolumeViewSet(viewsets.ModelViewSet):
-    queryset = models.StorageObject.objects.filter(snapshot__isnull=True)
+    # filter queryset by "(has an FSV or a BV) and is not a snapshot"
+    queryset = models.StorageObject.objects.filter(Q(Q(filesystemvolume__isnull=False)|Q(blockvolume__isnull=False)) & Q(snapshot__isnull=True))
     serializer_class = VolumeSerializer
 
     @detail_route()
