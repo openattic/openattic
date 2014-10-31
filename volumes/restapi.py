@@ -75,6 +75,8 @@ class PoolSerializer(serializers.HyperlinkedModelSerializer):
 class PoolViewSet(viewsets.ModelViewSet):
     queryset = models.StorageObject.objects.filter(volumepool__isnull=False)
     serializer_class = PoolSerializer
+    filter_fields = ('name', 'uuid', 'megs', 'createdate')
+    search_fields = ('name')
 
 
 
@@ -172,6 +174,8 @@ class VolumeViewSet(viewsets.ModelViewSet):
     # filter queryset by "(has an FSV or a BV) and is not a snapshot"
     queryset = models.StorageObject.objects.filter(Q(Q(filesystemvolume__isnull=False)|Q(blockvolume__isnull=False)) & Q(snapshot__isnull=True))
     serializer_class = VolumeSerializer
+    filter_fields = ('name', 'uuid', 'megs', 'createdate')
+    search_fields = ('name')
 
     @detail_route()
     def snapshots(self, request, *args, **kwargs):
