@@ -35,8 +35,8 @@ def get_router():
     router = DefaultRouter()
 
     for plugin in rpcdplugins:
-        for (name, handler) in getattr(getattr(plugin, "restapi"), "RESTAPI_VIEWSETS", []):
-            router.register(name, handler)
+        for args in getattr(getattr(plugin, "restapi"), "RESTAPI_VIEWSETS", []):
+            router.register(*args)
 
     return router
 
