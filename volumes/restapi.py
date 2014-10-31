@@ -79,7 +79,7 @@ class PoolViewSet(viewsets.ModelViewSet):
     queryset = models.StorageObject.objects.filter(volumepool__isnull=False)
     serializer_class = PoolSerializer
     filter_fields = ('name', 'uuid', 'megs', 'createdate')
-    search_fields = ('name')
+    search_fields = ('name',)
 
     @detail_route()
     def volumes(self, request, *args, **kwargs):
@@ -184,7 +184,7 @@ class VolumeViewSet(viewsets.ModelViewSet):
     queryset = models.StorageObject.objects.filter(VOLUME_FILTER_Q)
     serializer_class = VolumeSerializer
     filter_fields = ('name', 'uuid', 'megs', 'createdate')
-    search_fields = ('name')
+    search_fields = ('name',)
 
     @detail_route()
     def snapshots(self, request, *args, **kwargs):
