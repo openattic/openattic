@@ -662,7 +662,7 @@ Ext.define('Ext.oa.volumes__Volume_Panel', {
                   xtype: 'textfield',
                   name:  "name",
                   fieldLabel: gettext('Name'),
-                  value: sel.raw.name + '_' + Ext.Date.format(new Date(), "Y-m-d-H-i-s")
+                  value: Ext.Date.format(new Date(), "Y-m-d-H-i-s")
                 }, {
                   xtype: 'numberfield',
                   fieldLabel: gettext('MB'),
