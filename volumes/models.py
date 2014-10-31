@@ -320,6 +320,14 @@ class VolumePool(models.Model):
             self.volumepool_type = ContentType.objects.get_for_model(self.__class__)
         return models.Model.save(self, *args, **kwargs)
 
+    @property
+    def usedmegs(self):
+        return self.volumepool.usedmegs
+
+    @property
+    def freemegs(self):
+        return self.storageobj.megs - self.usedmegs
+
     def __unicode__(self):
         return self.storageobj.name
 
