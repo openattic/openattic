@@ -53,12 +53,12 @@ class VolumePoolSerializer(serializers.Serializer):
 class PoolSerializer(serializers.HyperlinkedModelSerializer):
     """ Serializer for a pool. """
 
-    url         = serializers.HyperlinkedRelatedField(read_only=True, view_name="volume-detail")
-    source_pool = serializers.HyperlinkedRelatedField(read_only=True, view_name="pool-detail")
+    url         = serializers.HyperlinkedIdentityField(view_name="volume-detail")
+    source_pool = serializers.HyperlinkedRelatedField(view_name="pool-detail", read_only=True)
 
     class Meta:
         model  = models.StorageObject
-        fields = ('name', 'megs', 'uuid', 'createdate', 'source_pool', 'snapshot')
+        fields = ('url', 'name', 'megs', 'uuid', 'createdate', 'source_pool', 'snapshot')
 
     def to_native(self, obj):
         data = dict([(key, None) for key in ("type", "host", "status", "usedmegs", "freemegs")])
@@ -142,12 +142,14 @@ class VolumeSerializer(serializers.HyperlinkedModelSerializer):
         then allowing higher-level serializers to add more information.
     """
 
-    url         = serializers.HyperlinkedRelatedField(read_only=True, view_name="volume-detail")
-    source_pool = serializers.HyperlinkedRelatedField(read_only=True, view_name="pool-detail")
+    url         = serializers.HyperlinkedIdentityField(view_name="volume-detail")
+    snapshots   = serializers.HyperlinkedIdentityField(view_name="volume-snapshots")
+    snapshot    = serializers.HyperlinkedRelatedField(view_name="volume-detail", read_only=True)
+    source_pool = serializers.HyperlinkedRelatedField(view_name="pool-detail",   read_only=True)
 
     class Meta:
         model  = models.StorageObject
-        fields = ('name', 'megs', 'uuid', 'createdate', 'source_pool', 'snapshot')
+        fields = ('url', 'name', 'megs', 'uuid', 'createdate', 'source_pool', 'snapshot', 'snapshots')
 
     def to_native(self, obj):
         data = dict([(key, None) for key in ("type", "host", "status", "path",
@@ -165,10 +167,15 @@ class VolumeSerializer(serializers.HyperlinkedModelSerializer):
             data.update(dict([(key, value) for (key, value) in serializer_instance.data.items() if value is not None]))
         return data
 
-
 class VolumeViewSet(viewsets.ModelViewSet):
     queryset = models.StorageObject.objects.filter(snapshot__isnull=True)
     serializer_class = VolumeSerializer
+
+    @detail_route()
+    def snapshots(self, request, *args, **kwargs):
+        origin = self.get_object()
+        serializer_instance = VolumeSerializer(origin.snapshot_storageobject_set.all(), many=True, context={"request": request})
+        return Response(serializer_instance.data)
 
 
 RESTAPI_VIEWSETS = [
