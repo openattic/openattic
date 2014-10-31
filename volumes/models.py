@@ -678,6 +678,14 @@ class FileSystemVolume(AbstractVolume):
     def path(self):
         return self.volume.fs.path
 
+    @property
+    def usedmegs(self):
+        return self.volume.fs.stat["used"]
+
+    @property
+    def freemegs(self):
+        return self.storageobj.megs - self.volume.fs.stat["used"]
+
     def mount(self):
         # TODO: this check should probably be moved to the systemapi.
         if not self.volume.fs.mounted:
