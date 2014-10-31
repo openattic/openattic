@@ -97,16 +97,6 @@ case $1 in
 		
 		su "$OAUSER" -c 'python manage.py add-host'
 		
-		# Configure nsswitch.conf
-		OADBENGINE=$(grep engine /etc/openattic/database.ini | cut -d= -f2)
-		if [ $OADBENGINE = "django.db.backends.postgresql_psycopg2" ]; then
-			if grep passwd: /etc/nsswitch.conf | grep -qv pgsql; then
-				# nsswitch does not yet include pgsql
-				echo "Configuring nsswitch.conf to include pgsql. The current version will be backuped as nsswitch.conf.bak."
-				sed -i.bak -e 's/^\(passwd:.*\)$/\0 pgsql/' /etc/nsswitch.conf
-			fi
-		fi
-		
 		# (re)start the daemons
 		$0 reload
 		
@@ -315,7 +305,7 @@ EOF
 		$0 reload
 		
 		echo "Configuring libnss..."
-		sed -i -e 's/^passwd:.*$/passwd:         compat winbind pgsql/' /etc/nsswitch.conf
+		sed -i -e 's/^passwd:.*$/passwd:         compat winbind/' /etc/nsswitch.conf
 		sed -i -e 's/^group:.*$/group:          compat winbind/' /etc/nsswitch.conf
 		
 		echo "Restarting Samba and Winbind..."
