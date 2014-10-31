@@ -692,7 +692,7 @@ class FileSystemVolume(AbstractVolume):
 
     @property
     def freemegs(self):
-        return self.storageobj.megs - self.volume.fs.stat["used"]
+        return self.storageobj.megs - self.usedmegs
 
     def mount(self):
         # TODO: this check should probably be moved to the systemapi.
