@@ -15,6 +15,7 @@
 """
 
 import os
+import os.path
 from systemd.procutils import invoke
 from systemd.plugins   import logged, BasePlugin, method, signal, deferredmethod
 
@@ -56,6 +57,18 @@ class SystemD(BasePlugin):
         else:
             cmd = ["/bin/chown", "-R", user, mountpoint]
         invoke(cmd)
+
+    @method(in_signature="s", out_signature="a{sd}")
+    def fs_stat(self, mountpoint):
+        if not os.path.ismount(mountpoint):
+            raise SystemError("not mounted")
+        s = os.statvfs(mountpoint)
+        stats = {
+            'size': (s.f_blocks * s.f_frsize) / 1024. / 1024.,
+            'free': (s.f_bavail * s.f_frsize) / 1024. / 1024.,
+            'used': ((s.f_blocks - s.f_bfree) * s.f_frsize) / 1024. / 1024.,
+            }
+        return stats
 
     @method(in_signature="s", out_signature="a{ss}")
     def e2fs_info(self, devpath):

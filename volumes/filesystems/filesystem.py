@@ -18,7 +18,7 @@ import dbus
 import os
 import os.path
 
-from systemd import get_dbus_object
+from systemd import get_dbus_object, dbus_to_python
 from volumes.conf import settings as volumes_settings
 
 class FileSystemMeta(type):
@@ -178,15 +178,11 @@ class FileSystem(object):
         """ stat() the file system and return usage statistics. """
         if self.virtual:
             raise NotImplementedError("FileSystem::stat needs to be overridden for virtual FS handlers")
-        if not self.mounted:
-            return {'size': None, 'free': None, 'used': None}
-        s = os.statvfs(self.path)
-        stats = {
-            'size': (s.f_blocks * s.f_frsize) / 1024. / 1024.,
-            'free': (s.f_bavail * s.f_frsize) / 1024. / 1024.,
-            'used': ((s.f_blocks - s.f_bfree) * s.f_frsize) / 1024. / 1024.,
-            }
-        return stats
+        dbus_object = get_dbus_object("/volumes")
+        try:
+            return dbus_to_python(dbus_object.fs_stat(self.path))
+        except dbus.DBusException:
+            return {"size": None, "free": None, "used": None}
 
     @classmethod
     def check_type(cls, typestring):
