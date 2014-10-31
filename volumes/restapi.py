@@ -62,7 +62,7 @@ class PoolSerializer(serializers.HyperlinkedModelSerializer):
 
     class Meta:
         model  = models.StorageObject
-        fields = ('url', 'name', 'megs', 'uuid', 'createdate', 'source_pool', 'volumes')
+        fields = ('url', 'id', 'name', 'megs', 'uuid', 'createdate', 'source_pool', 'volumes')
 
     def to_native(self, obj):
         data = dict([(key, None) for key in ("type", "host", "status", "usedmegs", "freemegs")])
@@ -161,7 +161,7 @@ class VolumeSerializer(serializers.HyperlinkedModelSerializer):
 
     class Meta:
         model  = models.StorageObject
-        fields = ('url', 'name', 'megs', 'uuid', 'createdate', 'source_pool', 'snapshot', 'snapshots')
+        fields = ('url', 'id', 'name', 'megs', 'uuid', 'createdate', 'source_pool', 'snapshot', 'snapshots')
 
     def to_native(self, obj):
         data = dict([(key, None) for key in ("type", "host", "status", "path",
