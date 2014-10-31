@@ -22,76 +22,156 @@ from rest_framework.response import Response
 from volumes import models
 
 
-class AbstractFileSystemVolumeSerializer(serializers.Serializer):
+##################################
+#            Pool                #
+##################################
+
+
+# Pool fields
+#                 Writeable...
+#   Field         Create  Edit  Source (A -> B = B overrides A)
+#   name          x             SO
+#   megs          x       x     SO
+#   uuid                        SO
+#   createdate                  SO
+#   source_pool   x             SO
+#   snapshot      x             SO
+#   type          x                   VP
+#   host                              VP
+#   status                            VP
+#   usedmegs                          VP
+#
+
+class VolumePoolSerializer(serializers.Serializer):
+    type        = serializers.Field(source="volumepool_type")
     host        = serializers.HyperlinkedRelatedField(read_only=True, view_name="host-detail")
-    path        = serializers.CharField()
-    #mounted     = serializers.BooleanField()
-    #usedmegs    = serializers.Field()
     status      = serializers.Field()
-
-class FileSystemVolumeSerializer(serializers.ModelSerializer):
-    class Meta:
-        model = models.FileSystemVolume
-
-    owner       = serializers.HyperlinkedRelatedField(view_name="user-detail")
-    volume_type = serializers.HyperlinkedRelatedField(view_name="contenttype-detail")
-    volume      = serializers.SerializerMethodField("serialize_volume")
-
-    def serialize_volume(self, obj):
-        ser = AbstractFileSystemVolumeSerializer(obj.volume, context=self.context)
-        return ser.data
-
-
-
-class AbstractBlockVolumeSerializer(serializers.Serializer):
-    host        = serializers.HyperlinkedRelatedField(read_only=True, view_name="host-detail")
-    path        = serializers.CharField()
-    status      = serializers.Field()
-
-class BlockVolumeSerializer(serializers.ModelSerializer):
-    class Meta:
-        model = models.BlockVolume
-
-    volume      = serializers.SerializerMethodField("serialize_volume")
-    volume_type = serializers.HyperlinkedRelatedField(view_name="contenttype-detail")
-
-    def serialize_volume(self, obj):
-        ser = AbstractBlockVolumeSerializer(obj.volume, context=self.context)
-        return ser.data
-
-
-
-class AbstractVolumePoolSerializer(serializers.Serializer):
-    host        = serializers.HyperlinkedRelatedField(read_only=True, view_name="host-detail")
     usedmegs    = serializers.Field()
+    freemegs    = serializers.Field()
+
+
+class PoolSerializer(serializers.HyperlinkedModelSerializer):
+    """ Serializer for a pool. """
+
+    url         = serializers.HyperlinkedRelatedField(read_only=True, view_name="volume-detail")
+    source_pool = serializers.HyperlinkedRelatedField(read_only=True, view_name="pool-detail")
+
+    class Meta:
+        model  = models.StorageObject
+        fields = ('name', 'megs', 'uuid', 'createdate', 'source_pool', 'snapshot')
+
+    def to_native(self, obj):
+        data = dict([(key, None) for key in ("type", "host", "status", "usedmegs", "freemegs")])
+        data.update(serializers.HyperlinkedModelSerializer.to_native(self, obj))
+        if obj is None:
+            return data
+        if obj.volumepool_or_none is not None:
+            serializer_instance = VolumePoolSerializer(obj.volumepool_or_none, context=self.context)
+            data.update(dict([(key, value) for (key, value) in serializer_instance.data.items() if value is not None]))
+        return data
+
+
+class PoolViewSet(viewsets.ModelViewSet):
+    queryset = models.StorageObject.objects.filter(volumepool__isnull=False)
+    serializer_class = PoolSerializer
+
+
+
+##################################
+#            Volume              #
+##################################
+
+
+# Volume fields
+#                 Writeable...
+#   Field         Create  Edit  Source (A -> B = B overrides A)
+#   name          x             SO
+#   megs          x       x     SO
+#   uuid                        SO
+#   createdate                  SO
+#   source_pool   x             SO
+#   snapshot      x             SO
+#   type          x                   VP -> BV -> FSV.type -> FSV.volume.fstype
+#   host                              VP -> BV -> FSV
+#   status                            VP -> BV -> FSV
+#   path                                    BV -> FSV
+#   usedmegs                                      FSV
+#   freemegs                                      FSV
+#   fswarning     x       x                       FSV
+#   fscritical    x       x                       FSV
+#   owner(name)   x                               FSV
+#
+
+class FileSystemVolumeSerializer(serializers.Serializer):
+    type        = serializers.SerializerMethodField("serialize_type")
+    host        = serializers.HyperlinkedRelatedField(read_only=True, view_name="host-detail")
+    status      = serializers.Field()
+    path        = serializers.CharField()
+    usedmegs    = serializers.Field()
+    freemegs    = serializers.Field()
+    fswarning   = serializers.Field()
+    fscritical  = serializers.Field()
+    owner       = serializers.HyperlinkedRelatedField(read_only=True, view_name="user-detail")
+
+    def serialize_type(self, obj):
+        if isinstance(obj, models.FileSystemProvider):
+            return obj.fstype
+        return unicode(obj.volume_type)
+
+
+class BlockVolumeSerializer(serializers.Serializer):
+    type        = serializers.Field(source="volume_type")
+    host        = serializers.HyperlinkedRelatedField(read_only=True, view_name="host-detail")
+    status      = serializers.Field()
+    path        = serializers.CharField()
+
+
+class VolumePoolRootVolumeSerializer(serializers.Serializer):
+    type        = serializers.Field(source="volumepool_type")
+    host        = serializers.HyperlinkedRelatedField(read_only=True, view_name="host-detail")
     status      = serializers.Field()
 
-class VolumePoolSerializer(serializers.ModelSerializer):
-    class Meta:
-        model = models.VolumePool
 
-    volumepool  = serializers.SerializerMethodField("serialize_volumepool")
-    volumepool_type = serializers.HyperlinkedRelatedField(view_name="contenttype-detail")
+class VolumeSerializer(serializers.HyperlinkedModelSerializer):
+    """ Serializer for a volume.
 
-    def serialize_volumepool(self, obj):
-        ser = AbstractVolumePoolSerializer(obj.volumepool, context=self.context)
-        return ser.data
+        Of course, there is no such thing as "a volume" in the models layer,
+        but we'd like to hide that complexity from our users so as to not
+        drive everyone completely insane. We shall do this by first using
+        our own serialization powers for the underlying StorageObject, and
+        then allowing higher-level serializers to add more information.
+    """
 
-
-
-class StorageObjectSerializer(serializers.ModelSerializer):
-    volumepool          = VolumePoolSerializer()
-    filesystemvolume    = FileSystemVolumeSerializer()
-    blockvolume         = BlockVolumeSerializer()
+    url         = serializers.HyperlinkedRelatedField(read_only=True, view_name="volume-detail")
+    source_pool = serializers.HyperlinkedRelatedField(read_only=True, view_name="pool-detail")
 
     class Meta:
-        model = models.StorageObject
+        model  = models.StorageObject
+        fields = ('name', 'megs', 'uuid', 'createdate', 'source_pool', 'snapshot')
 
-class StorageObjectViewSet(viewsets.ModelViewSet):
-    queryset = models.StorageObject.objects.all()
-    serializer_class = StorageObjectSerializer
+    def to_native(self, obj):
+        data = dict([(key, None) for key in ("type", "host", "status", "path",
+                     "usedmegs", "freemegs", "fswarning", "fscritical", "owner")])
+        data.update(serializers.HyperlinkedModelSerializer.to_native(self, obj))
+        if obj is None:
+            return data
+        for (Serializer, top_obj) in (
+                (VolumePoolRootVolumeSerializer, obj.volumepool_or_none),
+                (BlockVolumeSerializer,          obj.blockvolume_or_none),
+                (FileSystemVolumeSerializer,     obj.filesystemvolume_or_none)):
+            if top_obj is None:
+                continue
+            serializer_instance = Serializer(top_obj, context=self.context)
+            data.update(dict([(key, value) for (key, value) in serializer_instance.data.items() if value is not None]))
+        return data
+
+
+class VolumeViewSet(viewsets.ModelViewSet):
+    queryset = models.StorageObject.objects.filter(snapshot__isnull=True)
+    serializer_class = VolumeSerializer
 
 
 RESTAPI_VIEWSETS = [
-    ('volumes', StorageObjectViewSet),
+    ('pools',   PoolViewSet,   'pool'),
+    ('volumes', VolumeViewSet, 'volume'),
 ]
