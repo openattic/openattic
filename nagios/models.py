@@ -17,12 +17,14 @@
 import os
 import re
 
+from datetime import datetime
 from os.path import exists
 
 from django.db        import models
 from django.db.models import signals
 from django.db.models import Q
 from django.utils.translation   import ugettext_lazy as _
+from django.utils.timezone import make_aware, get_default_timezone
 from django.contrib.auth.models import User
 from django.contrib.contenttypes.models import ContentType
 from django.contrib.contenttypes import generic
@@ -130,6 +132,31 @@ class Service(models.Model):
                 } for (k, v) in self.rrd.source_labels.items() ]
             except SystemError:
                 return []
+
+    @property
+    def last_check(self):
+        try:
+            tstamp = int(self.state["last_check"]) or self.rrd.last_check
+        except (KeyError, SystemError):
+            return None
+        else:
+            return make_aware(datetime.fromtimestamp(tstamp), get_default_timezone())
+
+    @property
+    def next_check(self):
+        try:
+            tstamp = int(self.state["next_check"])
+        except KeyError:
+            return None
+        else:
+            return make_aware(datetime.fromtimestamp(tstamp), get_default_timezone())
+
+    @property
+    def status(self):
+        try:
+            return {"0": "OK", "1": "Warning", "2": "Critical"}[self.state["current_state"]]
+        except KeyError:
+            return "Unknown"
 
 def update_conf(**kwargs):
     get_dbus_object("/nagios").writeconf()
