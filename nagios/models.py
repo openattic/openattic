@@ -115,6 +115,21 @@ class Service(models.Model):
 
         return RRD(xmlpath)
 
+    def get_graph_info(self):
+        qryset = Graph.objects.filter( command=self.command )
+        if qryset.count():
+            return [ {
+                "id":           gr.id,
+                "title":        gr.title,
+            } for gr in qryset ]
+        else:
+            try:
+                return [ {
+                    "id":           k,
+                    "title":        v,
+                } for (k, v) in self.rrd.source_labels.items() ]
+            except SystemError:
+                return []
 
 def update_conf(**kwargs):
     get_dbus_object("/nagios").writeconf()
