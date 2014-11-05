@@ -1,520 +1,490 @@
 [
-    {
-        "pk": 16,
-        "model": "nagios.command",
-        "fields": {
-            "query_only": false,
-            "name": "check_twraid_unit"
-        }
-    },
-    {
-        "pk": 1,
-        "model": "nagios.command",
-        "fields": {
-            "query_only": false,
-            "name": "check_disk"
-        }
-    },
-    {
-        "pk": 8,
-        "model": "nagios.command",
-        "fields": {
-            "query_only": false,
-            "name": "check_iface_traffic"
-        }
-    },
-    {
-        "pk": 9,
-        "model": "nagios.command",
-        "fields": {
-            "query_only": false,
-            "name": "check_diskstats"
-        }
-    },
-    {
-        "pk": 10,
-        "model": "nagios.command",
-        "fields": {
-            "query_only": false,
-            "name": "check_protocol_traffic"
-        }
-    },
-    {
-        "pk": 2,
-        "model": "nagios.command",
-        "fields": {
-            "query_only": true,
-            "name": "check_all_disks"
-        }
-    },
-    {
-        "pk": 3,
-        "model": "nagios.command",
-        "fields": {
-            "query_only": true,
-            "name": "check_users"
-        }
-    },
-    {
-        "pk": 4,
-        "model": "nagios.command",
-        "fields": {
-            "query_only": true,
-            "name": "check_procs"
-        }
-    },
-    {
-        "pk": 5,
-        "model": "nagios.command",
-        "fields": {
-            "query_only": true,
-            "name": "check_load"
-        }
-    },
-    {
-        "pk": 6,
-        "model": "nagios.command",
-        "fields": {
-            "query_only": true,
-            "name": "check_http"
-        }
-    },
-    {
-        "pk": 7,
-        "model": "nagios.command",
-        "fields": {
-            "query_only": true,
-            "name": "check_ssh"
-        }
-    },
-    {
-        "pk": 13,
-        "model": "nagios.command",
-        "fields": {
-            "query_only": false,
-            "name": "check_lvm_snapshot"
-        }
-    },
-    {
-        "pk": 11,
-        "model": "nagios.command",
-        "fields": {
-            "query_only": true,
-            "name": "check_openattic_rpcd"
-        }
-    },
-    {
-        "pk": 12,
-        "model": "nagios.command",
-        "fields": {
-            "query_only": true,
-            "name": "check_openattic_systemd"
-        }
-    },
-    {
-        "pk": 14,
-        "model": "nagios.command",
-        "fields": {
-            "query_only": false,
-            "name": "check_cputime"
-        }
-    },
-    {
-        "pk": 15,
-        "model": "nagios.command",
-        "fields": {
-            "query_only": false,
-            "name": "check_drbd"
-        }
-    },
-    {
-        "pk": 34,
-        "model": "nagios.graph",
-        "fields": {
-            "verttitle": "%",
-            "fields": "user ** nice ** system ** iowait ** irq ** softirq",
-            "command": 14,
-            "title": "CPU Time"
-        }
-    },
-    {
-        "pk": 4,
-        "model": "nagios.graph",
-        "fields": {
-            "verttitle": "read (-) / write (+)",
-            "fields": "-rd_normiops wr_normiops",
-            "command": 9,
-            "title": "IOs per Second (Normalized)"
-        }
-    },
-    {
-        "pk": 38,
-        "model": "nagios.graph",
-        "fields": {
-            "verttitle": "%",
-            "fields": "tot_iops * tot_avg_wait * 100",
-            "command": 9,
-            "title": "Disk Load (Normalized)"
-        }
-    },
-    {
-        "pk": 35,
-        "model": "nagios.graph",
-        "fields": {
-            "verttitle": "read (-) / write (+)",
-            "fields": "-rd_normratio wr_normratio",
-            "command": 9,
-            "title": "Normalization Ratio"
-        }
-    },
-    {
-        "pk": 36,
-        "model": "nagios.graph",
-        "fields": {
-            "verttitle": "",
-            "fields": "ioindex",
-            "command": 9,
-            "title": "IO Index"
-        }
-    },
-    {
-        "pk": 37,
-        "model": "nagios.graph",
-        "fields": {
-            "verttitle": "",
-            "fields": "normindex",
-            "command": 9,
-            "title": "IO Index (Normalized)"
-        }
-    },
-    {
-        "pk": 1,
-        "model": "nagios.graph",
-        "fields": {
-            "verttitle": "read (-) / write (+)",
-            "fields": "-rd_iops wr_iops",
-            "command": 9,
-            "title": "IOs per second"
-        }
-    },
-    {
-        "pk": 2,
-        "model": "nagios.graph",
-        "fields": {
-            "verttitle": "",
-            "fields": "tot_iops",
-            "command": 9,
-            "title": "Total IOs per second"
-        }
-    },
-    {
-        "pk": 3,
-        "model": "nagios.graph",
-        "fields": {
-            "verttitle": "Byte/s read (-) / write (+)",
-            "fields": "-rd_bps wr_bps",
-            "command": 9,
-            "title": "Throughput"
-        }
-    },
-    {
-        "pk": 5,
-        "model": "nagios.graph",
-        "fields": {
-            "verttitle": "s",
-            "fields": "tot_avg_wait",
-            "command": 9,
-            "title": "Average Latency"
-        }
-    },
-    {
-        "pk": 6,
-        "model": "nagios.graph",
-        "fields": {
-            "verttitle": "s read (-) / write (+)",
-            "fields": "-rd_avg_wait wr_avg_wait",
-            "command": 9,
-            "title": "Average Latency (r/w)"
-        }
-    },
-    {
-        "pk": 7,
-        "model": "nagios.graph",
-        "fields": {
-            "verttitle": "Bytes read (-) / write (+)",
-            "fields": "-rd_avg_size wr_avg_size",
-            "command": 9,
-            "title": "Average Request size (r/w)"
-        }
-    },
-    {
-        "pk": 8,
-        "model": "nagios.graph",
-        "fields": {
-            "verttitle": "%",
-            "fields": "load_percent",
-            "command": 9,
-            "title": "Disk Load"
-        }
-    },
-    {
-        "pk": 9,
-        "model": "nagios.graph",
-        "fields": {
-            "verttitle": "bytes/s rx (-) / tx (+)",
-            "fields": "-rxbytes txbytes",
-            "command": 8,
-            "title": "Traffic"
-        }
-    },
-    {
-        "pk": 13,
-        "model": "nagios.graph",
-        "fields": {
-            "verttitle": "bytes/s rx (-) / tx (+)",
-            "fields": "-ftpctrl_in_bytes ** -ftpdata_in_bytes ** -http_in_bytes ** -https_in_bytes ** -iscsi_in_bytes ** -nfstcp_in_bytes ** -nfsudp_in_bytes ** -smb_in_bytes ** -ssh_in_bytes ** -other_in_bytes ftpctrl_out_bytes ** ftpdata_out_bytes ** http_out_bytes ** https_out_bytes ** iscsi_out_bytes ** nfstcp_out_bytes ** nfsudp_out_bytes ** smb_out_bytes ** ssh_out_bytes ** other_out_bytes",
-            "command": 10,
-            "title": "All protocols [bytes/s]"
-        }
-    },
-    {
-        "pk": 14,
-        "model": "nagios.graph",
-        "fields": {
-            "verttitle": "packets/s rx (-) / tx (+)",
-            "fields": "-ftpctrl_in_pkgs ** -ftpdata_in_pkgs ** -http_in_pkgs ** -https_in_pkgs ** -iscsi_in_pkgs ** -nfstcp_in_pkgs ** -nfsudp_in_pkgs ** -smb_in_pkgs ** -ssh_in_pkgs ** -other_in_pkgs ftpctrl_out_pkgs ** ftpdata_out_pkgs ** http_out_pkgs ** https_out_pkgs ** iscsi_out_pkgs ** nfstcp_out_pkgs ** nfsudp_out_pkgs ** smb_out_pkgs ** ssh_out_pkgs ** other_out_pkgs",
-            "command": 10,
-            "title": "All protocols [packets/s]"
-        }
-    },
-    {
-        "pk": 15,
-        "model": "nagios.graph",
-        "fields": {
-            "verttitle": "packets/s rx (-) / tx (+)",
-            "fields": "-ssh_in_pkgs ssh_out_pkgs",
-            "command": 10,
-            "title": "SSH [packets/s]"
-        }
-    },
-    {
-        "pk": 12,
-        "model": "nagios.graph",
-        "fields": {
-            "verttitle": "bytes/s rx (-) / tx (+)",
-            "fields": "-ssh_in_bytes ssh_out_bytes",
-            "command": 10,
-            "title": "SSH [bytes/s]"
-        }
-    },
-    {
-        "pk": 10,
-        "model": "nagios.graph",
-        "fields": {
-            "verttitle": "bytes/s rx (-) / tx (+)",
-            "fields": "-kernel_in_bytes kernel_out_bytes",
-            "command": 10,
-            "title": "Traffic [bytes/s]"
-        }
-    },
-    {
-        "pk": 11,
-        "model": "nagios.graph",
-        "fields": {
-            "verttitle": "packets/s rx (-) / tx (+)",
-            "fields": "-kernel_in_pkgs kernel_out_pkgs",
-            "command": 10,
-            "title": "Traffic [packets/s]"
-        }
-    },
-    {
-        "pk": 16,
-        "model": "nagios.graph",
-        "fields": {
-            "verttitle": "packets/s rx (-) / tx (+)",
-            "fields": "-http_in_pkgs http_out_pkgs",
-            "command": 10,
-            "title": "HTTP [packets/s]"
-        }
-    },
-    {
-        "pk": 17,
-        "model": "nagios.graph",
-        "fields": {
-            "verttitle": "bytes/s rx (-) / tx (+)",
-            "fields": "-http_in_bytes http_out_bytes",
-            "command": 10,
-            "title": "HTTP [bytes/s]"
-        }
-    },
-    {
-        "pk": 18,
-        "model": "nagios.graph",
-        "fields": {
-            "verttitle": "bytes/s rx (-) / tx (+)",
-            "fields": "-https_in_bytes https_out_bytes",
-            "command": 10,
-            "title": "HTTPS [bytes/s]"
-        }
-    },
-    {
-        "pk": 19,
-        "model": "nagios.graph",
-        "fields": {
-            "verttitle": "packets/s rx (-) / tx (+)",
-            "fields": "-https_in_pkgs https_out_pkgs",
-            "command": 10,
-            "title": "HTTPS [packets/s]"
-        }
-    },
-    {
-        "pk": 21,
-        "model": "nagios.graph",
-        "fields": {
-            "verttitle": "packets/s rx (-) / tx (+)",
-            "fields": "-iscsi_in_pkgs iscsi_out_pkgs",
-            "command": 10,
-            "title": "iSCSI [packets/s]"
-        }
-    },
-    {
-        "pk": 20,
-        "model": "nagios.graph",
-        "fields": {
-            "verttitle": "bytes/s rx (-) / tx (+)",
-            "fields": "-iscsi_in_bytes iscsi_out_bytes",
-            "command": 10,
-            "title": "iSCSI [bytes/s]"
-        }
-    },
-    {
-        "pk": 22,
-        "model": "nagios.graph",
-        "fields": {
-            "verttitle": "bytes/s rx (-) / tx (+)",
-            "fields": "-nfstcp_in_bytes nfstcp_out_bytes",
-            "command": 10,
-            "title": "NFS (TCP) [bytes/s]"
-        }
-    },
-    {
-        "pk": 23,
-        "model": "nagios.graph",
-        "fields": {
-            "verttitle": "packets/s rx (-) / tx (+)",
-            "fields": "-nfstcp_in_pkgs nfstcp_out_pkgs",
-            "command": 10,
-            "title": "NFS (TCP) [packets/s]"
-        }
-    },
-    {
-        "pk": 24,
-        "model": "nagios.graph",
-        "fields": {
-            "verttitle": "bytes/s rx (-) / tx (+)",
-            "fields": "-nfsudp_in_bytes nfsudp_out_bytes",
-            "command": 10,
-            "title": "NFS (UDP) [bytes/s]"
-        }
-    },
-    {
-        "pk": 25,
-        "model": "nagios.graph",
-        "fields": {
-            "verttitle": "packets/s rx (-) / tx (+)",
-            "fields": "-nfsudp_in_pkgs nfsudp_out_pkgs",
-            "command": 10,
-            "title": "NFS (UDP) [packets/s]"
-        }
-    },
-    {
-        "pk": 27,
-        "model": "nagios.graph",
-        "fields": {
-            "verttitle": "packets/s rx (-) / tx (+)",
-            "fields": "-smb_in_pkgs smb_out_pkgs",
-            "command": 10,
-            "title": "SMB [packets/s]"
-        }
-    },
-    {
-        "pk": 26,
-        "model": "nagios.graph",
-        "fields": {
-            "verttitle": "bytes/s rx (-) / tx (+)",
-            "fields": "-smb_in_bytes smb_out_bytes",
-            "command": 10,
-            "title": "SMB [bytes/s]"
-        }
-    },
-    {
-        "pk": 28,
-        "model": "nagios.graph",
-        "fields": {
-            "verttitle": "bytes/s rx (-) / tx (+)",
-            "fields": "-other_in_bytes other_out_bytes",
-            "command": 10,
-            "title": "Other [bytes/s]"
-        }
-    },
-    {
-        "pk": 29,
-        "model": "nagios.graph",
-        "fields": {
-            "verttitle": "packets/s rx (-) / tx (+)",
-            "fields": "-other_in_pkgs other_out_pkgs",
-            "command": 10,
-            "title": "Other [packets/s]"
-        }
-    },
-    {
-        "pk": 30,
-        "model": "nagios.graph",
-        "fields": {
-            "verttitle": "bytes/s rx (-) / tx (+)",
-            "fields": "-ftpctrl_in_bytes ftpctrl_out_bytes",
-            "command": 10,
-            "title": "FTP (Control) [bytes/s]"
-        }
-    },
-    {
-        "pk": 31,
-        "model": "nagios.graph",
-        "fields": {
-            "verttitle": "packets/s rx (-) / tx (+)",
-            "fields": "-ftpctrl_in_pkgs ftpctrl_out_pkgs",
-            "command": 10,
-            "title": "FTP (Control) [packets/s]"
-        }
-    },
-    {
-        "pk": 32,
-        "model": "nagios.graph",
-        "fields": {
-            "verttitle": "bytes/s rx (-) / tx (+)",
-            "fields": "-ftpdata_in_bytes ftpdata_out_bytes",
-            "command": 10,
-            "title": "FTP (Data) [bytes/s]"
-        }
-    },
-    {
-        "pk": 33,
-        "model": "nagios.graph",
-        "fields": {
-            "verttitle": "packets/s rx (-) / tx (+)",
-            "fields": "-ftpdata_in_pkgs ftpdata_out_pkgs",
-            "command": 10,
-            "title": "FTP (Data) [packets/s]"
-        }
-    },
-    {
-        "pk": 39,
-        "model": "nagios.graph",
-        "fields": {
-            "verttitle": "% read (-) / write (+)",
-            "fields": "-(rd_iops * rd_avg_wait * 100) wr_iops * wr_avg_wait * 100",
-            "command": 9,
-            "title": "Disk Load (Normalized r/w)"
-        }
+{
+    "pk": 1, 
+    "model": "nagios.command", 
+    "fields": {
+        "query_only": false, 
+        "name": "check_disk"
     }
+},
+{
+    "pk": 2, 
+    "model": "nagios.command", 
+    "fields": {
+        "query_only": true, 
+        "name": "check_all_disks"
+    }
+},
+{
+    "pk": 3, 
+    "model": "nagios.command", 
+    "fields": {
+        "query_only": true, 
+        "name": "check_users"
+    }
+},
+{
+    "pk": 4, 
+    "model": "nagios.command", 
+    "fields": {
+        "query_only": true, 
+        "name": "check_procs"
+    }
+},
+{
+    "pk": 5, 
+    "model": "nagios.command", 
+    "fields": {
+        "query_only": true, 
+        "name": "check_load"
+    }
+},
+{
+    "pk": 6, 
+    "model": "nagios.command", 
+    "fields": {
+        "query_only": true, 
+        "name": "check_http"
+    }
+},
+{
+    "pk": 7, 
+    "model": "nagios.command", 
+    "fields": {
+        "query_only": true, 
+        "name": "check_ssh"
+    }
+},
+{
+    "pk": 8, 
+    "model": "nagios.command", 
+    "fields": {
+        "query_only": false, 
+        "name": "check_iface_traffic"
+    }
+},
+{
+    "pk": 9, 
+    "model": "nagios.command", 
+    "fields": {
+        "query_only": false, 
+        "name": "check_diskstats"
+    }
+},
+{
+    "pk": 10, 
+    "model": "nagios.command", 
+    "fields": {
+        "query_only": false, 
+        "name": "check_protocol_traffic"
+    }
+},
+{
+    "pk": 11, 
+    "model": "nagios.command", 
+    "fields": {
+        "query_only": true, 
+        "name": "check_openattic_rpcd"
+    }
+},
+{
+    "pk": 12, 
+    "model": "nagios.command", 
+    "fields": {
+        "query_only": true, 
+        "name": "check_openattic_systemd"
+    }
+},
+{
+    "pk": 13, 
+    "model": "nagios.command", 
+    "fields": {
+        "query_only": false, 
+        "name": "check_lvm_snapshot"
+    }
+},
+{
+    "pk": 14, 
+    "model": "nagios.command", 
+    "fields": {
+        "query_only": false, 
+        "name": "check_cputime"
+    }
+},
+{
+    "pk": 15, 
+    "model": "nagios.command", 
+    "fields": {
+        "query_only": false, 
+        "name": "check_drbd"
+    }
+},
+{
+    "pk": 16, 
+    "model": "nagios.command", 
+    "fields": {
+        "query_only": false, 
+        "name": "check_twraid_unit"
+    }
+},
+{
+    "pk": 1, 
+    "model": "nagios.graph", 
+    "fields": {
+        "verttitle": "read (-) / write (+)", 
+        "fields": "-rd_iops wr_iops", 
+        "command": 9, 
+        "title": "IOs per second"
+    }
+},
+{
+    "pk": 2, 
+    "model": "nagios.graph", 
+    "fields": {
+        "verttitle": "", 
+        "fields": "tot_iops", 
+        "command": 9, 
+        "title": "Total IOs per second"
+    }
+},
+{
+    "pk": 3, 
+    "model": "nagios.graph", 
+    "fields": {
+        "verttitle": "Byte/s read (-) / write (+)", 
+        "fields": "-rd_bps wr_bps", 
+        "command": 9, 
+        "title": "Throughput"
+    }
+},
+{
+    "pk": 4, 
+    "model": "nagios.graph", 
+    "fields": {
+        "verttitle": "read (-) / write (+)", 
+        "fields": "-rd_normiops wr_normiops", 
+        "command": 9, 
+        "title": "IOs per Second (Normalized)"
+    }
+},
+{
+    "pk": 5, 
+    "model": "nagios.graph", 
+    "fields": {
+        "verttitle": "s", 
+        "fields": "tot_avg_wait", 
+        "command": 9, 
+        "title": "Average Latency"
+    }
+},
+{
+    "pk": 6, 
+    "model": "nagios.graph", 
+    "fields": {
+        "verttitle": "s read (-) / write (+)", 
+        "fields": "-rd_avg_wait wr_avg_wait", 
+        "command": 9, 
+        "title": "Average Latency (r/w)"
+    }
+},
+{
+    "pk": 7, 
+    "model": "nagios.graph", 
+    "fields": {
+        "verttitle": "Bytes read (-) / write (+)", 
+        "fields": "-rd_avg_size wr_avg_size", 
+        "command": 9, 
+        "title": "Average Request size (r/w)"
+    }
+},
+{
+    "pk": 8, 
+    "model": "nagios.graph", 
+    "fields": {
+        "verttitle": "%", 
+        "fields": "load_percent", 
+        "command": 9, 
+        "title": "Disk Load"
+    }
+},
+{
+    "pk": 9, 
+    "model": "nagios.graph", 
+    "fields": {
+        "verttitle": "bytes/s rx (-) / tx (+)", 
+        "fields": "-rxbytes txbytes", 
+        "command": 8, 
+        "title": "Traffic"
+    }
+},
+{
+    "pk": 10, 
+    "model": "nagios.graph", 
+    "fields": {
+        "verttitle": "bytes/s rx (-) / tx (+)", 
+        "fields": "-kernel_in_bytes kernel_out_bytes", 
+        "command": 10, 
+        "title": "Traffic [bytes/s]"
+    }
+},
+{
+    "pk": 11, 
+    "model": "nagios.graph", 
+    "fields": {
+        "verttitle": "packets/s rx (-) / tx (+)", 
+        "fields": "-kernel_in_pkgs kernel_out_pkgs", 
+        "command": 10, 
+        "title": "Traffic [packets/s]"
+    }
+},
+{
+    "pk": 12, 
+    "model": "nagios.graph", 
+    "fields": {
+        "verttitle": "bytes/s rx (-) / tx (+)", 
+        "fields": "-ssh_in_bytes ssh_out_bytes", 
+        "command": 10, 
+        "title": "SSH [bytes/s]"
+    }
+},
+{
+    "pk": 13, 
+    "model": "nagios.graph", 
+    "fields": {
+        "verttitle": "bytes/s rx (-) / tx (+)", 
+        "fields": "-ftpctrl_in_bytes ** -ftpdata_in_bytes ** -http_in_bytes ** -https_in_bytes ** -iscsi_in_bytes ** -nfstcp_in_bytes ** -nfsudp_in_bytes ** -smb_in_bytes ** -ssh_in_bytes ** -other_in_bytes ftpctrl_out_bytes ** ftpdata_out_bytes ** http_out_bytes ** https_out_bytes ** iscsi_out_bytes ** nfstcp_out_bytes ** nfsudp_out_bytes ** smb_out_bytes ** ssh_out_bytes ** other_out_bytes", 
+        "command": 10, 
+        "title": "All protocols [bytes/s]"
+    }
+},
+{
+    "pk": 14, 
+    "model": "nagios.graph", 
+    "fields": {
+        "verttitle": "packets/s rx (-) / tx (+)", 
+        "fields": "-ftpctrl_in_pkgs ** -ftpdata_in_pkgs ** -http_in_pkgs ** -https_in_pkgs ** -iscsi_in_pkgs ** -nfstcp_in_pkgs ** -nfsudp_in_pkgs ** -smb_in_pkgs ** -ssh_in_pkgs ** -other_in_pkgs ftpctrl_out_pkgs ** ftpdata_out_pkgs ** http_out_pkgs ** https_out_pkgs ** iscsi_out_pkgs ** nfstcp_out_pkgs ** nfsudp_out_pkgs ** smb_out_pkgs ** ssh_out_pkgs ** other_out_pkgs", 
+        "command": 10, 
+        "title": "All protocols [packets/s]"
+    }
+},
+{
+    "pk": 15, 
+    "model": "nagios.graph", 
+    "fields": {
+        "verttitle": "packets/s rx (-) / tx (+)", 
+        "fields": "-ssh_in_pkgs ssh_out_pkgs", 
+        "command": 10, 
+        "title": "SSH [packets/s]"
+    }
+},
+{
+    "pk": 16, 
+    "model": "nagios.graph", 
+    "fields": {
+        "verttitle": "packets/s rx (-) / tx (+)", 
+        "fields": "-http_in_pkgs http_out_pkgs", 
+        "command": 10, 
+        "title": "HTTP [packets/s]"
+    }
+},
+{
+    "pk": 17, 
+    "model": "nagios.graph", 
+    "fields": {
+        "verttitle": "bytes/s rx (-) / tx (+)", 
+        "fields": "-http_in_bytes http_out_bytes", 
+        "command": 10, 
+        "title": "HTTP [bytes/s]"
+    }
+},
+{
+    "pk": 18, 
+    "model": "nagios.graph", 
+    "fields": {
+        "verttitle": "bytes/s rx (-) / tx (+)", 
+        "fields": "-https_in_bytes https_out_bytes", 
+        "command": 10, 
+        "title": "HTTPS [bytes/s]"
+    }
+},
+{
+    "pk": 19, 
+    "model": "nagios.graph", 
+    "fields": {
+        "verttitle": "packets/s rx (-) / tx (+)", 
+        "fields": "-https_in_pkgs https_out_pkgs", 
+        "command": 10, 
+        "title": "HTTPS [packets/s]"
+    }
+},
+{
+    "pk": 20, 
+    "model": "nagios.graph", 
+    "fields": {
+        "verttitle": "bytes/s rx (-) / tx (+)", 
+        "fields": "-iscsi_in_bytes iscsi_out_bytes", 
+        "command": 10, 
+        "title": "iSCSI [bytes/s]"
+    }
+},
+{
+    "pk": 21, 
+    "model": "nagios.graph", 
+    "fields": {
+        "verttitle": "packets/s rx (-) / tx (+)", 
+        "fields": "-iscsi_in_pkgs iscsi_out_pkgs", 
+        "command": 10, 
+        "title": "iSCSI [packets/s]"
+    }
+},
+{
+    "pk": 22, 
+    "model": "nagios.graph", 
+    "fields": {
+        "verttitle": "bytes/s rx (-) / tx (+)", 
+        "fields": "-nfstcp_in_bytes nfstcp_out_bytes", 
+        "command": 10, 
+        "title": "NFS (TCP) [bytes/s]"
+    }
+},
+{
+    "pk": 23, 
+    "model": "nagios.graph", 
+    "fields": {
+        "verttitle": "packets/s rx (-) / tx (+)", 
+        "fields": "-nfstcp_in_pkgs nfstcp_out_pkgs", 
+        "command": 10, 
+        "title": "NFS (TCP) [packets/s]"
+    }
+},
+{
+    "pk": 24, 
+    "model": "nagios.graph", 
+    "fields": {
+        "verttitle": "bytes/s rx (-) / tx (+)", 
+        "fields": "-nfsudp_in_bytes nfsudp_out_bytes", 
+        "command": 10, 
+        "title": "NFS (UDP) [bytes/s]"
+    }
+},
+{
+    "pk": 25, 
+    "model": "nagios.graph", 
+    "fields": {
+        "verttitle": "packets/s rx (-) / tx (+)", 
+        "fields": "-nfsudp_in_pkgs nfsudp_out_pkgs", 
+        "command": 10, 
+        "title": "NFS (UDP) [packets/s]"
+    }
+},
+{
+    "pk": 26, 
+    "model": "nagios.graph", 
+    "fields": {
+        "verttitle": "bytes/s rx (-) / tx (+)", 
+        "fields": "-smb_in_bytes smb_out_bytes", 
+        "command": 10, 
+        "title": "SMB [bytes/s]"
+    }
+},
+{
+    "pk": 27, 
+    "model": "nagios.graph", 
+    "fields": {
+        "verttitle": "packets/s rx (-) / tx (+)", 
+        "fields": "-smb_in_pkgs smb_out_pkgs", 
+        "command": 10, 
+        "title": "SMB [packets/s]"
+    }
+},
+{
+    "pk": 28, 
+    "model": "nagios.graph", 
+    "fields": {
+        "verttitle": "bytes/s rx (-) / tx (+)", 
+        "fields": "-other_in_bytes other_out_bytes", 
+        "command": 10, 
+        "title": "Other [bytes/s]"
+    }
+},
+{
+    "pk": 29, 
+    "model": "nagios.graph", 
+    "fields": {
+        "verttitle": "packets/s rx (-) / tx (+)", 
+        "fields": "-other_in_pkgs other_out_pkgs", 
+        "command": 10, 
+        "title": "Other [packets/s]"
+    }
+},
+{
+    "pk": 30, 
+    "model": "nagios.graph", 
+    "fields": {
+        "verttitle": "bytes/s rx (-) / tx (+)", 
+        "fields": "-ftpctrl_in_bytes ftpctrl_out_bytes", 
+        "command": 10, 
+        "title": "FTP (Control) [bytes/s]"
+    }
+},
+{
+    "pk": 31, 
+    "model": "nagios.graph", 
+    "fields": {
+        "verttitle": "packets/s rx (-) / tx (+)", 
+        "fields": "-ftpctrl_in_pkgs ftpctrl_out_pkgs", 
+        "command": 10, 
+        "title": "FTP (Control) [packets/s]"
+    }
+},
+{
+    "pk": 32, 
+    "model": "nagios.graph", 
+    "fields": {
+        "verttitle": "bytes/s rx (-) / tx (+)", 
+        "fields": "-ftpdata_in_bytes ftpdata_out_bytes", 
+        "command": 10, 
+        "title": "FTP (Data) [bytes/s]"
+    }
+},
+{
+    "pk": 33, 
+    "model": "nagios.graph", 
+    "fields": {
+        "verttitle": "packets/s rx (-) / tx (+)", 
+        "fields": "-ftpdata_in_pkgs ftpdata_out_pkgs", 
+        "command": 10, 
+        "title": "FTP (Data) [packets/s]"
+    }
+},
+{
+    "pk": 34, 
+    "model": "nagios.graph", 
+    "fields": {
+        "verttitle": "%", 
+        "fields": "user ** nice ** system ** iowait ** irq ** softirq", 
+        "command": 14, 
+        "title": "CPU Time"
+    }
+},
+{
+    "pk": 35, 
+    "model": "nagios.graph", 
+    "fields": {
+        "verttitle": "read (-) / write (+)", 
+        "fields": "-rd_normratio wr_normratio", 
+        "command": 9, 
+        "title": "Normalization Ratio"
+    }
+},
+{
+    "pk": 40, 
+    "model": "nagios.graph", 
+    "fields": {
+        "verttitle": "read (-) / write (+)", 
+        "fields": "-(rd_bps * 86400) wr_bps * 86400", 
+        "command": 9, 
+        "title": "Throughput per day"
+    }
+}
 ]
