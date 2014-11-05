@@ -82,7 +82,11 @@ class Service(models.Model):
     @property
     def perfdata(self):
         """ Get current performance data. """
-        return [ pv.split('=', 1) for pv in self.state["performance_data"].split() ]
+        perfdata = self.state.get("performance_data", "")
+        # Fix for braindead check plugins that format the perfdata with their locale.
+        # this is ugly as hell, but PNP does it the same way.
+        perfdata = perfdata.replace(",", ".")
+        return [ pv.split('=', 1) for pv in perfdata.split() ]
 
     def __unicode__(self):
         return self.description
