@@ -14,8 +14,10 @@
  *  GNU General Public License for more details.
 """
 
+from django.http import Http404
 from django.db.models import Q
-from django.contrib.auth.models import User
+from django.contrib.contenttypes.models import ContentType
+
 from rest_framework import serializers, viewsets
 from rest_framework.decorators import detail_route
 from rest_framework.response import Response
@@ -155,13 +157,14 @@ class VolumeSerializer(serializers.HyperlinkedModelSerializer):
     """
 
     url         = serializers.HyperlinkedIdentityField(view_name="volume-detail")
+    services    = serializers.HyperlinkedIdentityField(view_name="volume-services")
     snapshots   = serializers.HyperlinkedIdentityField(view_name="volume-snapshots")
     snapshot    = serializers.HyperlinkedRelatedField(view_name="volume-detail", read_only=True)
     source_pool = serializers.HyperlinkedRelatedField(view_name="pool-detail",   read_only=True)
 
     class Meta:
         model  = models.StorageObject
-        fields = ('url', 'id', 'name', 'megs', 'uuid', 'createdate', 'source_pool', 'snapshot', 'snapshots')
+        fields = ('url', 'id', 'name', 'megs', 'uuid', 'createdate', 'source_pool', 'snapshot', 'snapshots', 'services')
 
     def to_native(self, obj):
         data = dict([(key, None) for key in ("type", "host", "status", "path",
@@ -191,6 +194,26 @@ class VolumeViewSet(viewsets.ModelViewSet):
         origin = self.get_object()
         serializer_instance = VolumeSerializer(origin.snapshot_storageobject_set.all(), many=True, context={"request": request})
         return Response(serializer_instance.data)
+
+    @detail_route()
+    def services(self, request, *args, **kwargs):
+        try:
+            from nagios.models  import Service
+            from nagios.restapi import ServiceSerializer
+        except ImportError:
+            # no nagios app then, apparently
+            raise Http404
+        storageobj = self.get_object()
+        services = []
+        for volume in (storageobj.blockvolume_or_none, storageobj.filesystemvolume_or_none):
+            if volume is None:
+                continue
+            ct = ContentType.objects.get_for_model(type(volume))
+            serializer_instance = ServiceSerializer(
+                Service.objects.filter(target_id=volume.id, target_type=ct),
+                many=True, context={"request": request})
+            services.extend(serializer_instance.data)
+        return Response(services)
 
 
 RESTAPI_VIEWSETS = [
