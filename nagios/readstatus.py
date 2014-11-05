@@ -128,9 +128,10 @@ class NagiosState(object):
                             state = ST_BEGINSECT
                             result[currsect].append(curresult)
                             if currsect == "servicestatus":
-                                # Fix for braindead check plugins that format the perfdata with their locale.
-                                # this is ugly as hell, but PNP does it the same way.
-                                curresult["performance_data"] = curresult["performance_data"].replace(",", ".")
+                                if "performance_data" in curresult:
+                                    # Fix for braindead check plugins that format the perfdata with their locale.
+                                    # this is ugly as hell, but PNP does it the same way.
+                                    curresult["performance_data"] = curresult["performance_data"].replace(",", ".")
                                 if curresult["host_name"] not in self._servicemap:
                                     self._servicemap[curresult["host_name"]] = {}
                                 self._servicemap[curresult["host_name"]][curresult["service_description"]] = curresult
