@@ -18,6 +18,7 @@
 from __future__ import division
 
 import sys
+import re
 from time     import time
 
 from django.http       import HttpResponse, Http404
@@ -93,14 +94,22 @@ def graph(request, service_id, srcidx):
 
     builder.height = int(request.GET.get("height", 150))
     builder.width  = int(request.GET.get("width",  700))
-    bgcol  = request.GET.get("bgcol", nagios_settings.GRAPH_BGCOLOR)
-    builder.bgcol  = bgcol
-    builder.fgcol  = request.GET.get("fgcol", nagios_settings.GRAPH_FGCOLOR)
-    builder.grcol  = request.GET.get("grcol", nagios_settings.GRAPH_GRCOLOR)
-    builder.sacol  = request.GET.get("sacol", "")
-    builder.sbcol  = request.GET.get("sbcol", "")
-    builder.grad   = request.GET.get("grad", "false") == "true"
-    builder.bgimage = nagios_settings.GRAPH_BGIMAGE
+
+    def request_GET_clr(field, default):
+        """ Get a color code from request.GET and use it only if it validates
+            instead of relying on RRDtool to detect shenanigans itself.
+        """
+        inp = request.GET.get(field, default).strip().upper()
+        if not re.match(r'^[0-9A-F]{6}$', inp):
+            return default
+        return inp
+
+    builder.bgcol  = request_GET_clr("bgcol", builder.bgcol)
+    builder.fgcol  = request_GET_clr("fgcol", builder.fgcol)
+    builder.grcol  = request_GET_clr("grcol", builder.grcol)
+    builder.sacol  = request_GET_clr("sacol", builder.sacol)
+    builder.sbcol  = request_GET_clr("sbcol", builder.sbcol)
+    builder.grad   = request.GET.get("grad",  builder.grad) == "true"
 
     if rrd.last_check < builder.start and "start" in request.GET and "end" not in request.GET:
         # Apparently, something is wrong and Nagios hasn't been checking the service
@@ -110,15 +119,10 @@ def graph(request, service_id, srcidx):
         # grey graph (all values are undefined in the RRD).
         builder.end = int(time())
 
-    if (bgcol and len(bgcol) < 6) or (builder.fgcol and len(builder.fgcol) < 6) or (builder.grcol and len(builder.grcol) < 6):
-        raise Http404("Invalid color specified")
-
     builder.title = serv.description
     if dbgraph is not None:
         builder.verttitle = dbgraph.verttitle
         if builder.width >= 350:
             builder.title += ' - ' + dbgraph.title
 
-
     return HttpResponse( builder.get_image(), content_type="image/png" )
-
