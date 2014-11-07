@@ -38,16 +38,21 @@ def do_login( request ):
     user = None
 
     # If username + password given, check PAM and our database through authenticate().
-    #if "username" in request.POST and "password" in request.POST:
-    #    username = request.POST['username']
-    #    password = request.POST['password']
-    #    user = authenticate( username=username, password=password )
+    if "username" in request.POST and "password" in request.POST:
+       username = request.POST['username']
+       password = request.POST['password']
+       user = authenticate( username=username, password=password )
 
-    if request.body is not None:
-        rawjson = json.loads(request.body)
-        username = rawjson['username']
-        password = rawjson['password']
-        user = authenticate(username=username, password=password)
+    # username + password may also be given as a JSON object.
+    elif request.body is not None:
+        try:
+            rawjson = json.loads(request.body)
+            username = rawjson['username']
+            password = rawjson['password']
+            user = authenticate(username=username, password=password)
+        except ValueError:
+            pass
+
     # Otherwise, take a look at the REMOTE_USER.
     elif "REMOTE_USER" in request.META:
         user = authenticate( remote_user=request.META["REMOTE_USER"] )
