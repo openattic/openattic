@@ -39,6 +39,8 @@ LVM_CHOWN_GROUP = "users"
 
 MANAGERS = ADMINS
 
+ANGULAR_LOGIN = False
+
 REST_FRAMEWORK = {
     'DEFAULT_AUTHENTICATION_CLASSES': (
         'rest_framework.authentication.BasicAuthentication',

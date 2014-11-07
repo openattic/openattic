@@ -97,6 +97,9 @@ def do_login( request ):
 def do_logout( request ):
     """ Log out the user. """
     logout( request )
+    if settings.ANGULAR_LOGIN:
+        return HttpResponseRedirect("angular/login_oa.html")
+
     return HttpResponse( json.dumps({ "success": True }), "application/json" )
 
 def index(request):
@@ -113,6 +116,9 @@ def index(request):
         except UserProfile.DoesNotExist:
             profile = UserProfile(user=request.user, host=Host.objects.get_current())
             profile.save()
+
+        if settings.ANGULAR_LOGIN:
+            return HttpResponseRedirect("angular/login_oa.html")
 
         if "theme" in profile:
             theme = profile["theme"]
