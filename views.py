@@ -100,7 +100,7 @@ def do_login( request ):
 def do_logout( request ):
     """ Log out the user. """
     logout( request )
-    return HttpResponseRedirect("angular/login_oa.html")
+    return HttpResponse( json.dumps({ "success": True }), "application/json" )
 
 def index(request):
     # make sure CsrfResponseMiddleware sends a CSRF token cookie, so we can properly
