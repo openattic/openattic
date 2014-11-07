@@ -203,17 +203,23 @@ class VolumeViewSet(viewsets.ModelViewSet):
         except ImportError:
             # no nagios app then, apparently
             raise Http404
+
         storageobj = self.get_object()
-        services = []
-        for volume in (storageobj.blockvolume_or_none, storageobj.filesystemvolume_or_none):
+
+        def serialize_volume_service(volume):
+            """ `volume' is either a filesystemvolume or a blockvolume instance, or None. """
             if volume is None:
-                continue
+                return []
             ct = ContentType.objects.get_for_model(type(volume))
             serializer_instance = ServiceSerializer(
                 Service.objects.filter(target_id=volume.id, target_type=ct),
                 many=True, context={"request": request})
-            services.extend(serializer_instance.data)
-        return Response(services)
+            return serializer_instance.data
+
+        return Response({
+            "blockvolume":      serialize_volume_service(storageobj.blockvolume_or_none),
+            "filesystemvolume": serialize_volume_service(storageobj.filesystemvolume_or_none),
+        })
 
 
 RESTAPI_VIEWSETS = [
