@@ -43,22 +43,19 @@ def do_login( request ):
        password = request.POST['password']
        user = authenticate( username=username, password=password )
 
-    # username + password may also be given as a JSON object.
-    elif request.body is not None:
-        try:
-            rawjson = json.loads(request.body)
-            username = rawjson['username']
-            password = rawjson['password']
-            user = authenticate(username=username, password=password)
-        except ValueError:
-            pass
-
     # Otherwise, take a look at the REMOTE_USER.
     elif "REMOTE_USER" in request.META:
         user = authenticate( remote_user=request.META["REMOTE_USER"] )
 
     else:
-        return HttpResponse( json.dumps({ "success": False, "errormsg": 'invalid_request' }), "application/json", status=400 )
+        # username + password may also be given as a JSON object.
+        try:
+            rawjson = json.loads(request.body)
+            username = rawjson['username']
+            password = rawjson['password']
+            user = authenticate(username=username, password=password)
+        except (ValueError, KeyError):
+            return HttpResponse( json.dumps({ "success": False, "errormsg": 'invalid_request' }), "application/json", status=400 )
 
     if user is None:
         return HttpResponse( json.dumps({ "success": False, "errormsg": 'invalid_credentials' }), "application/json", status=401 )
