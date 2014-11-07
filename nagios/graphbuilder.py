@@ -656,11 +656,11 @@ class Graph(object):
         self.start  = self.end - 24*60*60
         self.height = 150
         self.width  = 700
-        self.bgcol  = "1F2730"
-        self.fgcol  = "FFFFFF"
-        self.grcol  = "222222"
-        self.sacol  = None
-        self.sbcol  = None
+        self.bgcol  = "FFFFFF"
+        self.fgcol  = "111111"
+        self.grcol  = "EEEEEE"
+        self.sacol  = "FFFFFF"
+        self.sbcol  = "FFFFFF"
         self.grad   = False
         self.title  = "Untitled Service"
         self.args   = None
