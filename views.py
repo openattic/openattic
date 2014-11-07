@@ -21,7 +21,7 @@ import grp
 from django import template
 from django.shortcuts  import render_to_response
 from django.template   import RequestContext
-from django.http       import HttpResponse
+from django.http       import HttpResponse, HttpResponseRedirect
 from django.conf       import settings
 from django.contrib.auth            import authenticate, login, logout
 from django.contrib.auth.models     import User
@@ -38,11 +38,16 @@ def do_login( request ):
     user = None
 
     # If username + password given, check PAM and our database through authenticate().
-    if "username" in request.POST and "password" in request.POST:
-        username = request.POST['username']
-        password = request.POST['password']
-        user = authenticate( username=username, password=password )
+    #if "username" in request.POST and "password" in request.POST:
+    #    username = request.POST['username']
+    #    password = request.POST['password']
+    #    user = authenticate( username=username, password=password )
 
+    if request.body is not None:
+        rawjson = json.loads(request.body)
+        username = rawjson['username']
+        password = rawjson['password']
+        user = authenticate(username=username, password=password)
     # Otherwise, take a look at the REMOTE_USER.
     elif "REMOTE_USER" in request.META:
         user = authenticate( remote_user=request.META["REMOTE_USER"] )
@@ -90,16 +95,14 @@ def do_login( request ):
 def do_logout( request ):
     """ Log out the user. """
     logout( request )
-    return HttpResponse( json.dumps({ "success": True }), "application/json" )
+    return HttpResponseRedirect("angular/login_oa.html")
 
 def index(request):
     # make sure CsrfResponseMiddleware sends a CSRF token cookie, so we can properly
     # authenticate our login form when it is submitted.
     request.META["CSRF_COOKIE_USED"] = True
     if not request.user.is_authenticated():
-        return render_to_response('index_ext_unauthed.html', {
-            'HAVE_KERBEROS': settings.HAVE_KERBEROS,
-            }, context_instance = RequestContext(request))
+        return HttpResponseRedirect("angular/login_oa.html")
     else:
         try:
             profile = UserProfile.objects.get(user=request.user)
@@ -107,24 +110,4 @@ def index(request):
             profile = UserProfile(user=request.user, host=Host.objects.get_current())
             profile.save()
 
-        if "theme" in profile:
-            theme = profile["theme"]
-        else:
-            theme = None
-
-        found_templates = []
-        for app in settings.INSTALLED_APPS:
-            try:
-                tpl = "%s/mainhead.html" % app
-                template.loader.get_template( tpl )
-            except template.TemplateDoesNotExist:
-                pass
-            else:
-                found_templates.append(tpl)
-
-        return render_to_response('index_ext_authed.html', {
-            'THEME': theme,
-            'LOCALHOST': Host.objects.get_current(),
-            'INSTALLED_APPS': settings.INSTALLED_APPS,
-            'INSTALLED_APP_TEMPLATES': found_templates
-            }, context_instance = RequestContext(request))
+        return HttpResponseRedirect("angular/login_oa.html")
