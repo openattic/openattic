@@ -71,7 +71,7 @@ def do_login( request ):
     # If we have a system user group configured and the user is not a staff member,
     # we may have to grant them staff privileges if they are a member of the
     # configured group.
-    if settings.AUTHZ_SYSGROUP is not None and not user.is_staff:
+    if settings.AUTHZ_SYSGROUP and not user.is_staff:
         try:
             sysgroup = grp.getgrnam(settings.AUTHZ_SYSGROUP.encode("utf-8"))
         except KeyError, err:

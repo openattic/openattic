@@ -200,7 +200,7 @@ __domconf__.add_section("database")
 __domconf__.set("database", "enabled", "yes")
 
 __domconf__.add_section("authz")
-__domconf__.set("authz", "group", None)
+__domconf__.set("authz", "group", "")
 
 #   now read the actual config, if it exists. If it doesn't, the defaults are fine,
 #   so we don't need to care about whether or not this works.
