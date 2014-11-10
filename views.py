@@ -77,7 +77,7 @@ def do_login( request ):
         except KeyError, err:
             logging.error("Failed to query system group '%s': %s" % (settings.AUTHZ_SYSGROUP, unicode(err)))
         else:
-            if user.username in sysgroup.gr_mem:
+            if user.username.lower() in [mem.lower() for mem in sysgroup.gr_mem]:
                 logging.warning("User '%s' is a member of system group '%s', granting staff privileges" % (
                                 user.username, settings.AUTHZ_SYSGROUP))
                 user.is_staff = True
