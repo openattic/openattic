@@ -233,7 +233,7 @@ if __domconf__.get("domain", "workgroup"):
 
 # Group used for authorization. (If a user is in this group, they get superuser
 # privileges when they login, if they don't have them already.)
-AUTHZ_SYSGROUP = __domconf__.get("authz", "group")
+AUTHZ_SYSGROUP = __domconf__.get("authz", "group").decode("utf-8")
 
 
 # Timeout to use when connecting to peers via XMLRPC. This timeout only applies for

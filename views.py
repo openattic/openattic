@@ -73,7 +73,7 @@ def do_login( request ):
     # configured group.
     if settings.AUTHZ_SYSGROUP is not None and not user.is_staff:
         try:
-            sysgroup = grp.getgrnam(settings.AUTHZ_SYSGROUP)
+            sysgroup = grp.getgrnam(settings.AUTHZ_SYSGROUP.encode("utf-8"))
         except KeyError, err:
             logging.error("Failed to query system group '%s': %s" % (settings.AUTHZ_SYSGROUP, unicode(err)))
         else:
