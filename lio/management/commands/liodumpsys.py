@@ -40,6 +40,6 @@ class Command( BaseCommand ):
                         for mlun in acl.mapped_luns:
                             print "              -> Mapped LUN %d: %s" % (mlun.mapped_lun, mlun.tpg_lun.storage_object.udev_path)
                     for lun in tpg.luns:
-                        print "          -> LUN %s" % lun.storage_object.udev_path
+                        print "          -> LUN %s (%d)" % (lun.storage_object.udev_path, lun.lun)
                     for portal in tpg.network_portals:
                         print "          -> Portal %s:%s" % (portal.ip_address, portal.port)
