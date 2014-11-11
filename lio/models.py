@@ -283,9 +283,6 @@ class LUN(models.Model):
     objects     = getHostDependentManagerClass("storageobj__backstore__host")()
     all_objects = models.Manager()
 
-    class Meta:
-        unique_together = [('tpg', 'storageobj'),]
-
     @property
     def lio_object(self):
         lio_tpg = self.tpg.lio_object
