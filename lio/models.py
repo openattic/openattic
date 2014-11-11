@@ -133,7 +133,11 @@ def __storage_object_pre_delete(instance, **kwargs):
     get_dbus_object("/lio").storage_object_delete(instance.id)
     post_uninstall.send(sender=StorageObject, instance=instance)
 
+def __storage_object_post_delete(instance, **kwargs):
+    instance.backstore.delete()
+
 models.signals.pre_delete.connect(__storage_object_pre_delete, sender=StorageObject)
+models.signals.post_delete.connect(__storage_object_post_delete, sender=StorageObject)
 
 
 
@@ -282,9 +286,6 @@ class LUN(models.Model):
 
     objects     = getHostDependentManagerClass("storageobj__backstore__host")()
     all_objects = models.Manager()
-
-    class Meta:
-        unique_together = [('tpg', 'storageobj'),]
 
     @property
     def lio_object(self):
