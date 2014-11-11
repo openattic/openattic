@@ -27,8 +27,38 @@ from django.contrib.auth            import authenticate, login, logout
 from django.contrib.auth.models     import User
 from django.contrib.auth.decorators import login_required
 
+from rest_framework import exceptions
+from rest_framework.authentication import BasicAuthentication
+
 from userprefs.models import UserProfile
 from ifconfig.models  import Host
+
+
+class ExtendedBasicAuthentication(BasicAuthentication):
+    def authenticate_credentials(self, userid, password):
+        user = authenticate(username=userid, password=password)
+        if user is None or not user.is_active:
+            raise exceptions.AuthenticationFailed('Invalid username/password')
+
+        if settings.AUTHZ_SYSGROUP and not user.is_staff:
+            try:
+                sysgroup = grp.getgrnam(settings.AUTHZ_SYSGROUP.encode("utf-8"))
+            except KeyError, err:
+                logging.error("Failed to query system group '%s': %s" % (settings.AUTHZ_SYSGROUP, unicode(err)))
+            else:
+                if user.username.lower() in [mem.lower() for mem in sysgroup.gr_mem]:
+                    logging.warning("User '%s' is a member of system group '%s', granting staff privileges" % (
+                                    user.username, settings.AUTHZ_SYSGROUP))
+                    user.is_staff = True
+                    user.save()
+                else:
+                    logging.warning("User '%s' is not a member of system group '%s' (Members: %s)" % (
+                                    user.username, settings.AUTHZ_SYSGROUP, ', '.join(sysgroup.gr_mem)))
+
+        if not user.is_staff:
+            raise exceptions.PermissionDenied('The user needs to be staff.')
+
+        return (user, None)
 
 def do_login( request ):
     """ Check login credentials sent by ExtJS. """
