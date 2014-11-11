@@ -25,6 +25,8 @@ from django.conf import settings
 from rpcd.extdirect import PROVIDER
 from restapi.router import ROUTER
 
+from views import AuthView
+
 def _get_openattic_apps():
     from os.path import commonprefix
     from django.conf import settings
@@ -39,6 +41,8 @@ def _get_openattic_apps():
 js_info_dict = { "packages": list(_get_openattic_apps()) }
 
 urlpatterns = [
+    (r'^api/auth$', AuthView.as_view(), {}, 'authenticate'),
+
     (r'^admin/doc/', include('django.contrib.admindocs.urls')),
     (r'^admin/', include(admin.site.urls)),
 
