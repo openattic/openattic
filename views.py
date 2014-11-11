@@ -28,7 +28,11 @@ from django.contrib.auth.models     import User
 from django.contrib.auth.decorators import login_required
 
 from rest_framework import exceptions
+from rest_framework.views import APIView
 from rest_framework.authentication import BasicAuthentication
+from rest_framework.response import Response
+
+from restapi.restapi import UserSerializer
 
 from userprefs.models import UserProfile
 from ifconfig.models  import Host
@@ -59,6 +63,19 @@ class ExtendedBasicAuthentication(BasicAuthentication):
             raise exceptions.PermissionDenied('The user needs to be staff.')
 
         return (user, None)
+
+
+class AuthView(APIView):
+    authentication_classes = (ExtendedBasicAuthentication,)
+
+    def post(self, request, *args, **kwargs):
+        login(request, request.user)
+        return Response(UserSerializer(request.user, context={'request': request}).data)
+
+    def delete(self, request, *args, **kwargs):
+        logout(request)
+        return Response({})
+
 
 def do_login( request ):
     """ Check login credentials sent by ExtJS. """
