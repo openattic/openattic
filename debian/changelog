@@ -1,3 +1,9 @@
+openattic (1.2.1-1) unstable; urgency=medium
+
+  * New upstream version.
+
+ -- Michael Ziegler <diese-addy@funzt-halt.net>  Tue, 11 Nov 2014 14:10:40 +0100
+
 openattic (1.2.0-3) unstable; urgency=medium
 
   * Invoke apache2 debhelper.
