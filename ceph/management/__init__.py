@@ -188,7 +188,13 @@ def update(**kwargs):
                 mdlpool.ruleset = mdlrule
                 mdlpool.save(database_only=True)
             except ceph_models.Pool.DoesNotExist:
-                storageobj = StorageObject(name=cpool["pool_name"], megs=df["stats"]["total_space"] / 1024)
+                # Sometimes, "ceph df" returns total_space in KiB, and sometimes total_bytes.
+                # See what we have and turn it all into megs.
+                if "total_space" in df["stats"]:
+                    megs = df["stats"]["total_space"] / 1024
+                else:
+                    megs = df["stats"]["total_bytes"] / 1024 / 1024
+                storageobj = StorageObject(name=cpool["pool_name"], megs=megs)
                 storageobj.full_clean()
                 storageobj.save()
                 mdlpool = ceph_models.Pool(cluster=cluster, ceph_id=cpool["pool"], storageobj=storageobj, size=cpool["size"],
