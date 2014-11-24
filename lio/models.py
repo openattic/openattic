@@ -133,7 +133,11 @@ def __storage_object_pre_delete(instance, **kwargs):
     get_dbus_object("/lio").storage_object_delete(instance.id)
     post_uninstall.send(sender=StorageObject, instance=instance)
 
+def __storage_object_post_delete(instance, **kwargs):
+    instance.backstore.delete()
+
 models.signals.pre_delete.connect(__storage_object_pre_delete, sender=StorageObject)
+models.signals.post_delete.connect(__storage_object_post_delete, sender=StorageObject)
 
 
 
@@ -282,9 +286,6 @@ class LUN(models.Model):
 
     objects     = getHostDependentManagerClass("storageobj__backstore__host")()
     all_objects = models.Manager()
-
-    class Meta:
-        unique_together = [('tpg', 'storageobj'),]
 
     @property
     def lio_object(self):
@@ -519,10 +520,6 @@ class ProtocolHandler(object):
     def delete_targets(self, lunctx):
         """ If there are no LUNs left, delete the TPG. Same goes for the target. """
         if lunctx["tpg"].lun_set.count() == 0:
-            # Disassociate HostACLs first so we don't cause an infinite recursion.
-            for hostacl in lunctx["tpg"].hostacl_set.all():
-                hostacl.tpg = None
-                hostacl.save()
             lunctx["tpg"].delete()
         if lunctx["target"].tpg_set.count() == 0:
             lunctx["target"].delete()
@@ -548,7 +545,9 @@ class IscsiHander(ProtocolHandler):
 
             iSCSI uses a TPG for each HostACL, so create one if there is none and yield it.
         """
-        if self.hostacl.tpg is None:
+        try:
+            tpg = TPG.objects.get(target=targetctx["target"])
+        except TPG.DoesNotExist:
             try:
                 tag = max( v["tag"] for v in TPG.objects.filter(target=targetctx["target"]).values("tag") ) + 1
             except ValueError:
@@ -556,10 +555,7 @@ class IscsiHander(ProtocolHandler):
             tpg = TPG(target=targetctx["target"], tag=tag)
             tpg.full_clean()
             tpg.save()
-            self.hostacl.tpg = tpg
-            self.hostacl.full_clean()
-            self.hostacl.save()
-        yield ctxupdate(targetctx, tpg=self.hostacl.tpg)
+        yield ctxupdate(targetctx, tpg=tpg)
 
     def get_portals(self, tpgctx):
         """ Make sure the Portal is included in the ACL and yield it. """
@@ -601,7 +597,6 @@ class HostACL(models.Model):
     volume      = models.ForeignKey(BlockVolume)
     portals     = models.ManyToManyField(Portal)
     lun_id      = models.IntegerField()
-    tpg         = models.ForeignKey(TPG, blank=True, null=True)
 
     objects     = getHostDependentManagerClass("volume__volume__host")()
     all_objects = models.Manager()

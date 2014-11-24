@@ -42,6 +42,6 @@ class Command( BaseCommand ):
                         for mlun in acl.mapped_luns.all():
                             print "              -> Mapped LUN %d: %s" % (mlun.lun_id, mlun.storageobj.volume.volume.path)
                     for lun in tpg.lun_set.all():
-                        print "          -> LUN %d: %s" % (lun.id, lun.storageobj.volume.volume.path)
+                        print "          -> LUN %d: %s (%d)" % (lun.id, lun.storageobj.volume.volume.path, lun.lun_id)
                     for portal in tpg.portals.all():
                         print "          -> Portal %d: %s" % (portal.id, portal)
