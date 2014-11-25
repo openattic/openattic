@@ -1,0 +1,10 @@
+app		/usr/share/openattic-gui
+img		/usr/share/openattic-gui
+js		/usr/share/openattic-gui
+login		/usr/share/openattic-gui
+resources	/usr/share/openattic-gui
+sound		/usr/share/openattic-gui
+styles		/usr/share/openattic-gui
+
+index.html	/usr/share/openattic-gui
+login.html	/usr/share/openattic-gui
