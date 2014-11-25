@@ -1,0 +1,19 @@
+Source: openattic-gui
+Section: net
+Priority: optional
+Maintainer: Michael Ziegler <diese-addy@funzt-halt.net>
+Build-Depends: debhelper (>= 8.0.0)
+Standards-Version: 3.9.4
+Homepage: http://openattic.org
+#Vcs-Git: git://git.debian.org/collab-maint/openattic-gui.git
+#Vcs-Browser: http://git.debian.org/?p=collab-maint/openattic-gui.git;a=summary
+
+Package: openattic-gui
+Architecture: all
+Depends: ${misc:Depends}, libjs-angularjs
+Description: Web GUI for openATTIC
+ openATTIC is a storage management system based upon Open Source tools with
+ a comprehensive user interface that allows you to create, share and backup
+ storage space on demand.
+ .
+ This package provides the web graphical user interface.
