@@ -10,7 +10,7 @@ Homepage: http://openattic.org
 
 Package: openattic-gui
 Architecture: all
-Depends: ${misc:Depends}, libjs-angularjs
+Depends: ${misc:Depends}
 Description: Web GUI for openATTIC
  openATTIC is a storage management system based upon Open Source tools with
  a comprehensive user interface that allows you to create, share and backup
