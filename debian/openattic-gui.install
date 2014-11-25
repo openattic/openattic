@@ -8,3 +8,5 @@ styles		/usr/share/openattic-gui
 
 index.html	/usr/share/openattic-gui
 login.html	/usr/share/openattic-gui
+
+debian/apache2_conf.d/openattic-gui /etc/apache2/conf.d
