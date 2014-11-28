@@ -4,5 +4,16 @@
 # Uncomment this to turn on verbose mode.
 #export DH_VERBOSE=1
 
+export PATH=/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin
+
+override_dh_auto_install:
+	which bower || npm install -g bower
+	which grunt || npm install -g grunt-cli
+	
+	cd bower && bower install --allow-root
+	cd grunt && npm install && grunt vtp && grunt
+	
+	dh_auto_install
+
 %:
 	dh $@ 
