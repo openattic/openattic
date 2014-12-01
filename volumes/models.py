@@ -326,6 +326,8 @@ class VolumePool(models.Model):
 
     @property
     def freemegs(self):
+        if self.usedmegs is None:
+            return None
         return self.storageobj.megs - self.usedmegs
 
     def __unicode__(self):
@@ -692,6 +694,8 @@ class FileSystemVolume(AbstractVolume):
 
     @property
     def freemegs(self):
+        if self.usedmegs is None:
+            return None
         return self.storageobj.megs - self.usedmegs
 
     def mount(self):
