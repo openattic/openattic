@@ -31,6 +31,7 @@ from rest_framework import exceptions
 from rest_framework.views import APIView
 from rest_framework.authentication import BasicAuthentication
 from rest_framework.response import Response
+from rest_framework.permissions import AllowAny
 
 from restapi.restapi import UserSerializer
 
@@ -66,6 +67,7 @@ class ExtendedBasicAuthentication(BasicAuthentication):
 
 
 class AuthView(APIView):
+    permission_classes = (AllowAny,)
     authentication_classes = (ExtendedBasicAuthentication,)
 
     def post(self, request, *args, **kwargs):
