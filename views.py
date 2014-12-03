@@ -153,6 +153,9 @@ def index(request):
     # authenticate our login form when it is submitted.
     request.META["CSRF_COOKIE_USED"] = True
     if not request.user.is_authenticated():
+        if settings.ANGULAR_LOGIN:
+            return HttpResponseRedirect("angular/#/login")
+
         return render_to_response('index_ext_unauthed.html', {
             'HAVE_KERBEROS': settings.HAVE_KERBEROS,
             }, context_instance = RequestContext(request))
