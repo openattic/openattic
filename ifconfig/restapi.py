@@ -23,20 +23,20 @@ class IPAddressSerializer(serializers.ModelSerializer):
         model = models.IPAddress
 
 class NetDeviceSerializer(serializers.ModelSerializer):
-    ipaddress_set = serializers.HyperlinkedRelatedField(view_name='ipaddress-detail', many=True)
+    ipaddress_set = serializers.HyperlinkedRelatedField(view_name='ipaddress-detail', many=True, read_only=True)
 
     class Meta:
         model = models.NetDevice
 
 class HostSerializer(serializers.ModelSerializer):
-    netdevice_set = serializers.HyperlinkedRelatedField(view_name='netdevice-detail', many=True)
-    hostgroup_set = serializers.HyperlinkedRelatedField(view_name='hostgroup-detail', many=True)
+    netdevice_set = serializers.HyperlinkedRelatedField(view_name='netdevice-detail', many=True, read_only=True)
+    hostgroup_set = serializers.HyperlinkedRelatedField(view_name='hostgroup-detail', many=True, read_only=True)
 
     class Meta:
         model = models.Host
 
 class HostGroupSerializer(serializers.ModelSerializer):
-    hosts = serializers.HyperlinkedRelatedField(view_name='host-detail', many=True)
+    hosts = serializers.HyperlinkedRelatedField(view_name='host-detail', many=True , read_only=True)
 
     class Meta:
         model = models.HostGroup
