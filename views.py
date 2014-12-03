@@ -164,7 +164,7 @@ def index(request):
             profile.save()
 
         if settings.ANGULAR_LOGIN:
-            return HttpResponseRedirect("angular/login_oa.html")
+            return HttpResponseRedirect("angular/#/dashboard")
 
         if "theme" in profile:
             theme = profile["theme"]
