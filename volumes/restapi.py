@@ -48,11 +48,11 @@ VOLUME_FILTER_Q = Q(Q(filesystemvolume__isnull=False)|Q(blockvolume__isnull=Fals
 #
 
 class VolumePoolSerializer(serializers.Serializer):
-    type        = serializers.Field(source="volumepool_type")
+    type        = serializers.CharField(source="volumepool_type")
     host        = serializers.HyperlinkedRelatedField(read_only=True, view_name="host-detail")
-    status      = serializers.Field()
-    usedmegs    = serializers.Field()
-    freemegs    = serializers.Field()
+    status      = serializers.CharField()
+    usedmegs    = serializers.CharField()
+    freemegs    = serializers.CharField()
 
 
 class PoolSerializer(serializers.HyperlinkedModelSerializer):
@@ -119,12 +119,12 @@ class PoolViewSet(viewsets.ModelViewSet):
 class FileSystemVolumeSerializer(serializers.Serializer):
     type        = serializers.SerializerMethodField("serialize_type")
     host        = serializers.HyperlinkedRelatedField(read_only=True, view_name="host-detail")
-    status      = serializers.Field()
+    status      = serializers.CharField()
     path        = serializers.CharField()
-    usedmegs    = serializers.Field()
-    freemegs    = serializers.Field()
-    fswarning   = serializers.Field()
-    fscritical  = serializers.Field()
+    usedmegs    = serializers.FloatField()
+    freemegs    = serializers.FloatField()
+    fswarning   = serializers.IntegerField()
+    fscritical  = serializers.IntegerField()
     owner       = serializers.HyperlinkedRelatedField(read_only=True, view_name="user-detail")
 
     def serialize_type(self, obj):
@@ -134,16 +134,16 @@ class FileSystemVolumeSerializer(serializers.Serializer):
 
 
 class BlockVolumeSerializer(serializers.Serializer):
-    type        = serializers.Field(source="volume_type")
+    type        = serializers.CharField(source="volume_type")
     host        = serializers.HyperlinkedRelatedField(read_only=True, view_name="host-detail")
-    status      = serializers.Field()
+    status      = serializers.CharField()
     path        = serializers.CharField()
 
 
 class VolumePoolRootVolumeSerializer(serializers.Serializer):
-    type        = serializers.Field(source="volumepool_type")
+    type        = serializers.CharField(source="volumepool_type")
     host        = serializers.HyperlinkedRelatedField(read_only=True, view_name="host-detail")
-    status      = serializers.Field()
+    status      = serializers.CharField()
 
 
 class VolumeSerializer(serializers.HyperlinkedModelSerializer):
