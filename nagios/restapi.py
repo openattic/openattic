@@ -24,7 +24,7 @@ class ServiceSerializer(serializers.HyperlinkedModelSerializer):
     graph_info  = serializers.SerializerMethodField('get_graph_info')
     last_check  = serializers.DateTimeField(read_only=True)
     next_check  = serializers.DateTimeField(read_only=True)
-    status      = serializers.DateTimeField(read_only=True)
+    status      = serializers.CharField(read_only=True)
     plugin_output = serializers.CharField(source="state.plugin_output", read_only=True)
 
     class Meta:
