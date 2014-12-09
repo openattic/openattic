@@ -24,8 +24,7 @@ Recommends:
  openattic-module-lvm,
 Suggests: python-django-rosetta, lsscsi, openattic-module-twraid,
  openattic-module-ipmi,
- openattic-module-zfs,
- openattic-module-ceph
+ openattic-module-zfs
 Description: Comprehensive storage management system
  openATTIC is a storage management system based upon Open Source tools with
  a comprehensive user interface that allows you to create, share and backup
@@ -339,15 +338,3 @@ Description: MDRAID module for openATTIC
  storage space on demand.
  .
  This package includes support for MD-RAID, the common Linux software RAID.
-
-Package: openattic-module-ceph
-Architecture: all
-Depends: ${misc:Depends}, openattic-base, ceph (>= 0.80),
- python-django-mptt (>= 0.6.0)
-Description: Ceph module for openATTIC
- openATTIC is a storage management system based upon Open Source tools with
- a comprehensive user interface that allows you to create, share and backup
- storage space on demand.
- .
- This package includes support for Ceph, a unified, distributed storage
- system designed for excellent performance, reliability and scalability.
