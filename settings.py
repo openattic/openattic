@@ -302,7 +302,7 @@ INSTALLED_APPS = [
     'cmdlog',
     'peering',
     'rpcd',
-    'restapi',
+    'rest',
     'systemd',
     'sysutils',
 ]

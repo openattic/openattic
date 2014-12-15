@@ -23,7 +23,7 @@ admin.autodiscover()
 from django.conf import settings
 
 from rpcd.extdirect import PROVIDER
-from restapi.router import ROUTER
+from rest.router import ROUTER
 
 from views import AuthView
 

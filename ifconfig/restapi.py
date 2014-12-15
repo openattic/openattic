@@ -17,26 +17,27 @@
 from rest_framework import serializers, viewsets
 
 from ifconfig import models
+from rest import relations
 
 class IPAddressSerializer(serializers.ModelSerializer):
     class Meta:
         model = models.IPAddress
 
 class NetDeviceSerializer(serializers.ModelSerializer):
-    ipaddress_set = serializers.HyperlinkedRelatedField(view_name='ipaddress-detail', many=True, read_only=True)
+    ipaddress_set = relations.HyperlinkedRelatedField(view_name='ipaddress-detail', many=True, read_only=True)
 
     class Meta:
         model = models.NetDevice
 
 class HostSerializer(serializers.ModelSerializer):
-    netdevice_set = serializers.HyperlinkedRelatedField(view_name='netdevice-detail', many=True, read_only=True)
-    hostgroup_set = serializers.HyperlinkedRelatedField(view_name='hostgroup-detail', many=True, read_only=True)
+    netdevice_set = relations.HyperlinkedRelatedField(view_name='netdevice-detail', many=True, read_only=True)
+    hostgroup_set = relations.HyperlinkedRelatedField(view_name='hostgroup-detail', many=True, read_only=True)
 
     class Meta:
         model = models.Host
 
 class HostGroupSerializer(serializers.ModelSerializer):
-    hosts = serializers.HyperlinkedRelatedField(view_name='host-detail', many=True , read_only=True)
+    hosts = relations.HyperlinkedRelatedField(view_name='host-detail', many=True , read_only=True)
 
     class Meta:
         model = models.HostGroup

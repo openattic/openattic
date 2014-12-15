@@ -22,6 +22,7 @@ from rest_framework.decorators import detail_route
 from rest_framework.response import Response
 
 from volumes.restapi import FileSystemVolumeSerializer
+from rest import relations
 
 
 class ContentTypeSerializer(serializers.HyperlinkedModelSerializer):
@@ -35,7 +36,7 @@ class ContentTypeViewSet(viewsets.ReadOnlyModelViewSet):
 
 # Serializers define the API representation.
 class UserSerializer(serializers.HyperlinkedModelSerializer):
-    volumes = serializers.HyperlinkedIdentityField(view_name='user-volumes', format='html')
+    volumes = relations.HyperlinkedIdentityField(view_name='user-volumes', format='html')
 
     class Meta:
         model = User
