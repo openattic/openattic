@@ -22,6 +22,8 @@ from rest_framework import serializers, viewsets
 from rest_framework.decorators import detail_route
 from rest_framework.response import Response
 
+from rest import relations
+
 from volumes import models
 
 
@@ -49,7 +51,7 @@ VOLUME_FILTER_Q = Q(Q(filesystemvolume__isnull=False)|Q(blockvolume__isnull=Fals
 
 class VolumePoolSerializer(serializers.Serializer):
     type        = serializers.CharField(source="volumepool_type")
-    host        = serializers.HyperlinkedRelatedField(read_only=True, view_name="host-detail")
+    host        = relations.HyperlinkedRelatedField(read_only=True, view_name="host-detail")
     status      = serializers.CharField()
     usedmegs    = serializers.CharField()
     freemegs    = serializers.CharField()
@@ -58,9 +60,9 @@ class VolumePoolSerializer(serializers.Serializer):
 class PoolSerializer(serializers.HyperlinkedModelSerializer):
     """ Serializer for a pool. """
 
-    url         = serializers.HyperlinkedIdentityField(view_name="volume-detail")
-    volumes     = serializers.HyperlinkedIdentityField(view_name="pool-volumes")
-    source_pool = serializers.HyperlinkedRelatedField(view_name="pool-detail", read_only=True)
+    url         = relations.HyperlinkedIdentityField(view_name="volume-detail")
+    volumes     = relations.HyperlinkedIdentityField(view_name="pool-volumes")
+    source_pool = relations.HyperlinkedRelatedField(view_name="pool-detail", read_only=True)
 
     class Meta:
         model  = models.StorageObject
@@ -118,14 +120,14 @@ class PoolViewSet(viewsets.ModelViewSet):
 
 class FileSystemVolumeSerializer(serializers.Serializer):
     type        = serializers.SerializerMethodField("serialize_type")
-    host        = serializers.HyperlinkedRelatedField(read_only=True, view_name="host-detail")
+    host        = relations.HyperlinkedRelatedField(read_only=True, view_name="host-detail")
     status      = serializers.CharField()
     path        = serializers.CharField()
     usedmegs    = serializers.FloatField()
     freemegs    = serializers.FloatField()
     fswarning   = serializers.IntegerField()
     fscritical  = serializers.IntegerField()
-    owner       = serializers.HyperlinkedRelatedField(read_only=True, view_name="user-detail")
+    owner       = relations.HyperlinkedRelatedField(read_only=True, view_name="user-detail")
 
     def serialize_type(self, obj):
         if isinstance(obj, models.FileSystemProvider):
@@ -135,14 +137,14 @@ class FileSystemVolumeSerializer(serializers.Serializer):
 
 class BlockVolumeSerializer(serializers.Serializer):
     type        = serializers.CharField(source="volume_type")
-    host        = serializers.HyperlinkedRelatedField(read_only=True, view_name="host-detail")
+    host        = relations.HyperlinkedRelatedField(read_only=True, view_name="host-detail")
     status      = serializers.CharField()
     path        = serializers.CharField()
 
 
 class VolumePoolRootVolumeSerializer(serializers.Serializer):
     type        = serializers.CharField(source="volumepool_type")
-    host        = serializers.HyperlinkedRelatedField(read_only=True, view_name="host-detail")
+    host        = relations.HyperlinkedRelatedField(read_only=True, view_name="host-detail")
     status      = serializers.CharField()
 
 
@@ -156,11 +158,11 @@ class VolumeSerializer(serializers.HyperlinkedModelSerializer):
         then allowing higher-level serializers to add more information.
     """
 
-    url         = serializers.HyperlinkedIdentityField(view_name="volume-detail")
-    services    = serializers.HyperlinkedIdentityField(view_name="volume-services")
-    snapshots   = serializers.HyperlinkedIdentityField(view_name="volume-snapshots")
-    snapshot    = serializers.HyperlinkedRelatedField(view_name="volume-detail", read_only=True)
-    source_pool = serializers.HyperlinkedRelatedField(view_name="pool-detail",   read_only=True)
+    url         = relations.HyperlinkedIdentityField(view_name="volume-detail")
+    services    = relations.HyperlinkedIdentityField(view_name="volume-services")
+    snapshots   = relations.HyperlinkedIdentityField(view_name="volume-snapshots")
+    snapshot    = relations.HyperlinkedRelatedField(view_name="volume-detail", read_only=True)
+    source_pool = relations.HyperlinkedRelatedField(view_name="pool-detail",   read_only=True)
 
     class Meta:
         model  = models.StorageObject
