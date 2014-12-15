@@ -22,7 +22,7 @@ class HyperlinkedRelatedField(RestFramework_HyperlinkedRelatedField):
     def to_native(self, obj):
         url = super(HyperlinkedRelatedField, self).to_native(obj)
         return {
-            'pk':   obj.pk,
+            'id':   obj.pk,
             'href': url,
             'text': unicode(obj)
         }
@@ -30,11 +30,11 @@ class HyperlinkedRelatedField(RestFramework_HyperlinkedRelatedField):
     def from_native(self, value):
         if type(value) != dict:
             raise TypeError("value needs to be a dictionary")
-        if "pk" in value:
-            return self.queryset.get(pk=value["pk"])
+        if "id" in value:
+            return self.queryset.get(id=value["id"])
         if "href" in value:
             return super(HyperlinkedRelatedField, self).from_native(value["href"])
-        raise KeyError("need pk or href field (pk preferred)")
+        raise KeyError("need id or href field (id preferred)")
 
 class HyperlinkedIdentityField(RestFramework_HyperlinkedIdentityField):
     def field_to_native(self, obj, field_name):
