@@ -37,10 +37,8 @@ class HyperlinkedRelatedField(RestFramework_HyperlinkedRelatedField):
         raise KeyError("need pk or href field (pk preferred)")
 
 class HyperlinkedIdentityField(RestFramework_HyperlinkedIdentityField):
-    def to_native(self, obj):
-        url = super(HyperlinkedIdentityField, self).to_native(obj)
+    def field_to_native(self, obj, field_name):
+        url = super(HyperlinkedIdentityField, self).field_to_native(obj, field_name)
         return {
-            'pk':   obj.pk,
-            'href': url,
-            'text': unicode(obj)
+            'href': url
         }
