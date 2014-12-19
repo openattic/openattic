@@ -18,6 +18,7 @@ from rest_framework import serializers, viewsets
 from rest_framework.reverse import reverse
 
 from nagios.models import Service
+from rest import relations
 
 
 class ServiceSerializer(serializers.HyperlinkedModelSerializer):
@@ -26,6 +27,7 @@ class ServiceSerializer(serializers.HyperlinkedModelSerializer):
     next_check  = serializers.DateTimeField(read_only=True)
     status      = serializers.CharField(read_only=True)
     plugin_output = serializers.CharField(source="state.plugin_output", read_only=True)
+    host          = relations.HyperlinkedRelatedField(view_name='host-detail', many=False, read_only=False)
 
     class Meta:
         model  = Service
