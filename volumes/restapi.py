@@ -60,7 +60,7 @@ class VolumePoolSerializer(serializers.Serializer):
 class PoolSerializer(serializers.HyperlinkedModelSerializer):
     """ Serializer for a pool. """
 
-    url         = relations.HyperlinkedIdentityField(view_name="volume-detail")
+    url         = serializers.HyperlinkedIdentityField(view_name="pool-detail")
     volumes     = relations.HyperlinkedIdentityField(view_name="pool-volumes")
     source_pool = relations.HyperlinkedRelatedField(view_name="pool-detail", read_only=True)
 
@@ -158,7 +158,7 @@ class VolumeSerializer(serializers.HyperlinkedModelSerializer):
         then allowing higher-level serializers to add more information.
     """
 
-    url         = relations.HyperlinkedIdentityField(view_name="volume-detail")
+    url         = serializers.HyperlinkedIdentityField(view_name="volume-detail")
     services    = relations.HyperlinkedIdentityField(view_name="volume-services")
     snapshots   = relations.HyperlinkedIdentityField(view_name="volume-snapshots")
     snapshot    = relations.HyperlinkedRelatedField(view_name="volume-detail", read_only=True)
