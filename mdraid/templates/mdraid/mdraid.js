@@ -31,10 +31,10 @@ Ext.define('volumes__mdraid_Array_model', {
         root: record.data,
         proxy: {
           type: "direct",
-          directFn: volumes__BlockVolume.filter,
+          directFn: volumes__StorageObject.filter,
           extraParams: {
             kwds: {
-              storageobj__upper: record.raw.storageobj.id
+              upper: record.raw.storageobj.id
             }
           },
           paramOrder: ["kwds"]

@@ -71,7 +71,7 @@ Ext.define('volumes__volumes_VolumePool_model', {
         root:  record.data,
         proxy: {
           type: "direct",
-          directFn: volumes__BlockVolume.filter,
+          directFn: volumes__StorageObject.filter,
           extraParams: {
             kwds: {
               upper: record.raw.storageobj.id
