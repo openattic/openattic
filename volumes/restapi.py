@@ -27,7 +27,9 @@ from rest import relations
 from volumes import models
 
 
-VOLUME_FILTER_Q = Q(Q(filesystemvolume__isnull=False)|Q(blockvolume__isnull=False)) & Q(snapshot__isnull=True)
+# filter queryset by "(has an FSV or a BV) and is not a snapshot and is not named '.snapshots'"
+VOLUME_FILTER_Q = Q(Q(filesystemvolume__isnull=False)|Q(blockvolume__isnull=False)) & Q(snapshot__isnull=True) & ~Q(name=".snapshots")
+
 
 ##################################
 #            Pool                #
@@ -185,7 +187,6 @@ class VolumeSerializer(serializers.HyperlinkedModelSerializer):
         return data
 
 class VolumeViewSet(viewsets.ModelViewSet):
-    # filter queryset by "(has an FSV or a BV) and is not a snapshot"
     queryset = models.StorageObject.objects.filter(VOLUME_FILTER_Q)
     serializer_class = VolumeSerializer
     filter_fields = ('name', 'uuid', 'megs', 'createdate')
