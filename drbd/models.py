@@ -86,21 +86,16 @@ class ConnectionManager(models.Manager):
 
     def _install_connection(self, connection, self_host, other_host, is_primary, primary_volume, peer_volumepool_id):
         if is_primary:
-            # set upper volume
-            primary_volume.upper = connection.storageobj
-            primary_volume.save()
-
             volume = primary_volume
         else:
             # create volume on peer host
             vpool = VolumePool.objects.get(id=peer_volumepool_id)
             peer_volume = vpool.volumepool._create_volume(primary_volume.storageobj.name, primary_volume.storageobj.megs, {})
-
-            # set upper volume
-            peer_volume.upper = connection.storageobj
-            peer_volume.save()
-
             volume = peer_volume
+
+        # set upper volume
+        volume.upper = connection.storageobj
+        volume.save()
 
         # get primary ip-address
         ipaddress = self._get_host_primary_ipaddress(self_host)
