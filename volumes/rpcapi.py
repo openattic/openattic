@@ -439,9 +439,12 @@ class StorageObjectHandler(ModelHandler):
 
 class StorageObjectProxy(ProxyModelHandler, StorageObjectHandler):
     def _find_target_host_from_model_instance(self, model):
-        if model.host in (None, Host.objects.get_current()):
+        try:
+            if model.host in (None, Host.objects.get_current()):
+                return None
+            return model.host.peerhost_set.all()[0]
+        except ValueError:
             return None
-        return model.host.peerhost_set.all()[0]
 
     def create(self, data):
         return self.backing_handler.create(data)
