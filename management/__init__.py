@@ -52,16 +52,15 @@ def update(**kwargs):
         print "Checking Ceph cluster %s (%s)..." % (displayname, conf.get("global", "fsid")),
         try:
             cluster = ceph_models.Cluster.objects.get(uuid=conf.get("global", "fsid"))
+            known = True
             print "known"
         except ceph_models.Cluster.DoesNotExist:
-            cluster = ceph_models.Cluster(uuid=conf.get("global", "fsid"), displayname=displayname,
+            cluster = ceph_models.Cluster(uuid=conf.get("global", "fsid"), name=displayname,
                                         auth_cluster_required = conf.get("global", "auth_cluster_required"),
                                         auth_service_required = conf.get("global", "auth_service_required"),
                                         auth_client_required  = conf.get("global", "auth_client_required"),
                                         )
-            cluster.full_clean()
-            cluster.save()
-            print "added"
+            known = False
 
         osdmap   = cluster.get_osdmap()
         crushmap = cluster.get_crushmap()
@@ -69,6 +68,19 @@ def update(**kwargs):
         mon_stat = cluster.get_mon_status()
         auth_list= cluster.get_auth_list()
         df       = cluster.df()
+
+        # Sometimes, "ceph df" returns total_space in KiB, and sometimes total_bytes.
+        # See what we have and turn it all into megs.
+        if "total_space" in df["stats"]:
+            megs = df["stats"]["total_space"] / 1024
+        else:
+            megs = df["stats"]["total_bytes"] / 1024 / 1024
+
+        if not known:
+            cluster.megs = megs
+            cluster.full_clean()
+            cluster.save()
+            print "added"
 
         for ctype in crushmap["types"]:
             print "Checking ceph type '%s'..." % ctype["name"],
@@ -155,7 +167,7 @@ def update(**kwargs):
                 print "added"
 
             # If the volume is unknown and this is a local OSD, let's see if we can update that
-            osdpath = os.path.join("/var/lib/ceph/osd", "%s-%d" % (mdlosd.cluster.displayname, mdlosd.ceph_id))
+            osdpath = os.path.join("/var/lib/ceph/osd", "%s-%d" % (mdlosd.cluster.name, mdlosd.ceph_id))
             if ((mdlosd.volume is None or mdlosd.journal is None) and
                 os.path.exists(osdpath) and os.path.islink(osdpath)):
                 volumepath = os.readlink(osdpath)
@@ -188,12 +200,6 @@ def update(**kwargs):
                 mdlpool.ruleset = mdlrule
                 mdlpool.save(database_only=True)
             except ceph_models.Pool.DoesNotExist:
-                # Sometimes, "ceph df" returns total_space in KiB, and sometimes total_bytes.
-                # See what we have and turn it all into megs.
-                if "total_space" in df["stats"]:
-                    megs = df["stats"]["total_space"] / 1024
-                else:
-                    megs = df["stats"]["total_bytes"] / 1024 / 1024
                 storageobj = StorageObject(name=cpool["pool_name"], megs=megs)
                 storageobj.full_clean()
                 storageobj.save()

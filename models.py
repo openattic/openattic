@@ -25,40 +25,38 @@ from mptt import models as mptt_models
 
 from systemd import get_dbus_object, dbus_to_python
 from ifconfig.models import Host
-from volumes.models import FileSystemVolume, VolumePool, BlockVolume
+from volumes.models import StorageObject, FileSystemVolume, VolumePool, BlockVolume
 
-class Cluster(models.Model):
+class Cluster(StorageObject):
     AUTH_CHOICES = (
         ('none',  _('Authentication disabled')),
         ('cephx', _('CephX Authentication')),
         )
 
-    uuid        = models.CharField(max_length=36, unique=True)
-    displayname = models.CharField(max_length=250, default='', blank=True)
     auth_cluster_required   = models.CharField(max_length=10, default='cephx', choices=AUTH_CHOICES)
     auth_service_required   = models.CharField(max_length=10, default='cephx', choices=AUTH_CHOICES)
     auth_client_required    = models.CharField(max_length=10, default='cephx', choices=AUTH_CHOICES)
 
     def get_status(self):
-        return json.loads(dbus_to_python(get_dbus_object("/ceph").status(self.displayname)))
+        return json.loads(dbus_to_python(get_dbus_object("/ceph").status(self.name)))
 
     def df(self):
-        return json.loads(dbus_to_python(get_dbus_object("/ceph").df(self.displayname)))
+        return json.loads(dbus_to_python(get_dbus_object("/ceph").df(self.name)))
 
     def get_crushmap(self):
-        return json.loads(dbus_to_python(get_dbus_object("/ceph").osd_crush_dump(self.displayname)))
+        return json.loads(dbus_to_python(get_dbus_object("/ceph").osd_crush_dump(self.name)))
 
     def get_osdmap(self):
-        return json.loads(dbus_to_python(get_dbus_object("/ceph").osd_dump(self.displayname)))
+        return json.loads(dbus_to_python(get_dbus_object("/ceph").osd_dump(self.name)))
 
     def get_mds_stat(self):
-        return json.loads(dbus_to_python(get_dbus_object("/ceph").mds_stat(self.displayname)))
+        return json.loads(dbus_to_python(get_dbus_object("/ceph").mds_stat(self.name)))
 
     def get_mon_status(self):
-        return json.loads(dbus_to_python(get_dbus_object("/ceph").mon_status(self.displayname)))
+        return json.loads(dbus_to_python(get_dbus_object("/ceph").mon_status(self.name)))
 
     def get_auth_list(self):
-        return json.loads(dbus_to_python(get_dbus_object("/ceph").auth_list(self.displayname)))
+        return json.loads(dbus_to_python(get_dbus_object("/ceph").auth_list(self.name)))
 
     def get_recommended_pg_num(self, repsize):
         """ Calculate the recommended number of PGs for a given repsize.
@@ -72,7 +70,7 @@ class Cluster(models.Model):
         return self.get_status()["health"]["overall_status"]
 
     def __unicode__(self):
-        return "'%s' (%s)" % (self.displayname, self.uuid)
+        return "'%s' (%s)" % (self.name, self.uuid)
 
 class Type(models.Model):
     cluster     = models.ForeignKey(Cluster)
@@ -124,7 +122,7 @@ class OSD(models.Model):
         if install and not database_only:
             fspath = self.volume.volume.path
             jnldev = self.journal.volume.path if self.journal is not None else ""
-            get_dbus_object("/ceph").format_volume_as_osd(self.rbd_pool.cluster.displayname, fspath, jnldev)
+            get_dbus_object("/ceph").format_volume_as_osd(self.rbd_pool.cluster.name, fspath, jnldev)
 
 class Mon(models.Model):
     cluster     = models.ForeignKey(Cluster)
@@ -195,17 +193,17 @@ class Pool(VolumePool):
         if database_only:
             return
         if install:
-            get_dbus_object("/ceph").osd_pool_create(self.cluster.displayname, self.storageobj.name,
+            get_dbus_object("/ceph").osd_pool_create(self.cluster.name, self.storageobj.name,
                                                      self.cluster.get_recommended_pg_num(self.size),
                                                      self.ruleset.ceph_id)
         else:
-            get_dbus_object("/ceph").osd_pool_set(self.cluster.displayname, self.storageobj.name, "size",          str(self.size))
-            get_dbus_object("/ceph").osd_pool_set(self.cluster.displayname, self.storageobj.name, "min_size",      str(self.min_size))
-            get_dbus_object("/ceph").osd_pool_set(self.cluster.displayname, self.storageobj.name, "crush_ruleset", str(self.ruleset.ceph_id))
+            get_dbus_object("/ceph").osd_pool_set(self.cluster.name, self.storageobj.name, "size",          str(self.size))
+            get_dbus_object("/ceph").osd_pool_set(self.cluster.name, self.storageobj.name, "min_size",      str(self.min_size))
+            get_dbus_object("/ceph").osd_pool_set(self.cluster.name, self.storageobj.name, "crush_ruleset", str(self.ruleset.ceph_id))
 
     def delete(self):
         super(Pool, self).delete()
-        get_dbus_object("/ceph").osd_pool_delete(self.cluster.displayname, self.storageobj.name)
+        get_dbus_object("/ceph").osd_pool_delete(self.cluster.name, self.storageobj.name)
 
     @property
     def usedmegs(self):
@@ -239,13 +237,13 @@ class Entity(models.Model):
 
     def save(self, database_only=False, *args, **kwargs ):
         if self.id is None and not database_only:
-            get_dbus_object("/ceph").auth_add(self.cluster.displayname, self.entity)
-            self.key = json.loads(get_dbus_object("/ceph").auth_get_key(self.cluster.displayname, self.entity))["key"]
+            get_dbus_object("/ceph").auth_add(self.cluster.name, self.entity)
+            self.key = json.loads(get_dbus_object("/ceph").auth_get_key(self.cluster.name, self.entity))["key"]
         super(Entity, self).save(*args, **kwargs)
 
     def delete(self):
         super(Entity, self).delete()
-        get_dbus_object("/ceph").auth_del(self.cluster.displayname, self.entity)
+        get_dbus_object("/ceph").auth_del(self.cluster.name, self.entity)
 
     def __unicode__(self):
         return self.entity
@@ -260,11 +258,11 @@ class Image(BlockVolume):
         install = (self.id is None)
         super(Image, self).save(*args, **kwargs)
         if install:
-            get_dbus_object("/ceph").rbd_create(self.rbd_pool.cluster.displayname, self.rbd_pool.storageobj.name, self.storageobj.name, self.storageobj.megs)
+            get_dbus_object("/ceph").rbd_create(self.rbd_pool.cluster.name, self.rbd_pool.storageobj.name, self.storageobj.name, self.storageobj.megs)
 
     def delete(self):
         super(Image, self).delete()
-        get_dbus_object("/ceph").rbd_rm(self.rbd_pool.cluster.displayname, self.rbd_pool.storageobj.name, self.storageobj.name)
+        get_dbus_object("/ceph").rbd_rm(self.rbd_pool.cluster.name, self.rbd_pool.storageobj.name, self.storageobj.name)
 
     @property
     def host(self):
