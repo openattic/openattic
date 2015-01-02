@@ -33,7 +33,7 @@ class Array(BlockVolume):
 
     @property
     def member_set(self):
-        return BlockVolume.objects.filter(upper=self.storageobj)
+        return self.storageobj.base_set.all()
 
     @property
     def status(self):

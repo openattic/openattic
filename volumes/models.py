@@ -71,6 +71,9 @@ class StorageObject(models.Model):
 
         In case any one of the operations inside the with: block fails, so._delete()
         will be called by the context guard automatically.
+
+        The ``upper'' field defined by this class is set to an object that is using this
+        device as part of a mirror, array or volume pool (i.e., NOT a share).
     """
     name        = models.CharField(max_length=150)
     megs        = models.IntegerField()
@@ -81,6 +84,7 @@ class StorageObject(models.Model):
     capflags    = models.BigIntegerField(default=0)
     source_pool = models.ForeignKey('VolumePool', blank=True, null=True, related_name="volume_set")
     snapshot    = models.ForeignKey('self', blank=True, null=True, related_name="snapshot_storageobject_set")
+    upper       = models.ForeignKey('self', blank=True, null=True, related_name="base_set")
 
     objects     = CapabilitiesAwareManager()
     all_objects = models.Manager()
@@ -299,7 +303,7 @@ class VolumePool(models.Model):
     @property
     def member_set(self):
         """ The block devices that provide the storage for this volume pool. """
-        return BlockVolume.objects.filter(upper=self.storageobj)
+        return self.storageobj.base_set.all()
 
     def _create_volume_for_storageobject(self, storageobj, options):
         """ Create a volume that best fulfills the specification given
@@ -479,12 +483,7 @@ class BlockVolume(AbstractVolume):
 
         Optionally, the following properties may be implemented:
         * raid_params > RAID layout information (chunk/stripe size etc)
-
-        The ``upper'' field defined by this class is set to an object that is using this
-        device as part of a mirror, array or volume pool (i.e., NOT a share).
     """
-    upper       = models.ForeignKey(StorageObject, blank=True, null=True, related_name="base_set")
-
     objects     = getHostDependentManagerClass('volume__host')()
     all_objects = models.Manager()
 

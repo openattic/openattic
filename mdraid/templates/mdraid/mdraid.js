@@ -34,7 +34,7 @@ Ext.define('volumes__mdraid_Array_model', {
           directFn: volumes__BlockVolume.filter,
           extraParams: {
             kwds: {
-              upper: record.raw.storageobj.id
+              storageobj__upper: record.raw.storageobj.id
             }
           },
           paramOrder: ["kwds"]

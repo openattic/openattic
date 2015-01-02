@@ -94,8 +94,9 @@ class ConnectionManager(models.Manager):
             volume = peer_volume
 
         # set upper volume
-        volume.upper = connection.storageobj
-        volume.save()
+        volume_so = volume.storageobj
+        volume_so.upper = connection.storageobj
+        volume_so.save()
 
         # get primary ip-address
         ipaddress = self._get_host_primary_ipaddress(self_host)

@@ -73,14 +73,11 @@ class FileSystem(object):
         # Make sure virtual FS handlers are only employed on volumes that don't have a native
         # FS configured and vice-versa.
         if not self.virtual:
-            from volumes.models import BlockVolume
-            if (isinstance(self.volume, BlockVolume)
-                and ( self.volume.upper is None
-                      or not hasattr(self.volume.upper, "filesystem")
-                      or self.volume.upper.filesystem != self.name )):
+            from volumes.models import FileSystemProvider
+            if isinstance(self.volume, FileSystemProvider) and self.volume.fstype != self.name:
                 raise FileSystem.WrongFS(self.name)
         else:
-            if self.volume.upper is not None:
+            if self.volume.storageobj.upper is not None:
                 raise FileSystem.WrongFS(self.name)
 
     @property
