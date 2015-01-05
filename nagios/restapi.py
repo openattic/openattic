@@ -27,11 +27,12 @@ class ServiceSerializer(serializers.HyperlinkedModelSerializer):
     next_check  = serializers.DateTimeField(read_only=True)
     status      = serializers.CharField(read_only=True)
     plugin_output = serializers.CharField(source="state.plugin_output", read_only=True)
+    perfdata      = serializers.SerializerMethodField('get_performance_data')
     host          = relations.HyperlinkedRelatedField(view_name='host-detail', many=False, read_only=False)
 
     class Meta:
         model  = Service
-        fields = ('host', 'description', 'graph_info', 'last_check', 'next_check', 'status', 'plugin_output')
+        fields = ('url', 'id', 'host', 'description', 'graph_info', 'last_check', 'next_check', 'status', 'plugin_output', 'perfdata')
 
     def get_graph_info(self, obj):
         graphs = []
@@ -40,6 +41,8 @@ class ServiceSerializer(serializers.HyperlinkedModelSerializer):
             graphs.append(graph)
         return graphs
 
+    def get_performance_data(self, obj):
+        return obj.perfdata
 
 class ServiceViewSet(viewsets.ReadOnlyModelViewSet):
     queryset = Service.objects.filter(target_type__isnull=True)
