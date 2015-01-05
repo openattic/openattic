@@ -45,7 +45,7 @@ class ServiceSerializer(serializers.HyperlinkedModelSerializer):
         return obj.perfdata
 
 class ServiceViewSet(viewsets.ReadOnlyModelViewSet):
-    queryset = Service.objects.filter(target_type__isnull=True)
+    queryset = Service.objects.all()
     serializer_class = ServiceSerializer
 
 
