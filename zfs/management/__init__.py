@@ -57,10 +57,7 @@ def update_disksize(**kwargs):
             zpool.save()
 
         if zvol_name is None:
-            data = dict([ (row[1], scale_to_megs(row[2])) for row in
-                        dbus_to_python(get_dbus_object("/zfs").zpool_get(zp_so.name,
-                                "size")) ])
-            zp_so.megs = data["size"]
+            zp_so.megs = megs
             zp_so.full_clean()
             zp_so.save()
             try:
@@ -80,12 +77,12 @@ def update_disksize(**kwargs):
                 zfs_so.megs = megs
                 zfs_so.full_clean()
                 zfs_so.save()
-            except Zfs.DoesNotExist:
+            except ZVol.DoesNotExist:
                 print "Found new ZVol", zvol_name
                 zfs_so = StorageObject(name=zvol_name, megs=megs, source_pool=zpool)
                 zfs_so.full_clean()
                 zfs_so.save()
-                zfs = ZVol(storageobj=zfs_so, zpool=zpool, host=Host.objects.get_current(), parent=zp_so)
+                zfs = ZVol(storageobj=zfs_so, zpool=zpool, host=Host.objects.get_current())
                 zfs.full_clean()
                 zfs.save(database_only=True)
 
