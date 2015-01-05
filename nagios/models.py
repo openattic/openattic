@@ -84,11 +84,26 @@ class Service(models.Model):
     @property
     def perfdata(self):
         """ Get current performance data. """
-        perfdata = self.state.get("performance_data", "")
+        perfdata = self.state.get("performance_data", "").strip()
+        if not perfdata:
+            return {}
         # Fix for braindead check plugins that format the perfdata with their locale.
         # this is ugly as hell, but PNP does it the same way.
         perfdata = perfdata.replace(",", ".")
-        return [ pv.split('=', 1) for pv in perfdata.split() ]
+        data = {}
+        for definition in perfdata.split(" "):
+            key, values = definition.split("=", 1)
+            data[key] = dict(zip(
+                ["curr", "warn", "crit", "min", "max"],
+                [v for v in values.split(";") if v]))
+            m = re.match( '^(?P<value>\d*(?:\.\d+)?)(?P<unit>[^\d]*)$', data[key]["curr"] )
+            if m:
+                data[key]["curr"] = float(m.group("value"))
+                data[key]["unit"] = m.group("unit")
+            for perfkey in data[key]:
+                if perfkey != "unit":
+                    data[key][perfkey] = float(data[key][perfkey])
+        return data
 
     def __unicode__(self):
         return self.description
