@@ -57,10 +57,7 @@ def update_disksize(**kwargs):
             zpool.save()
 
         if zvol_name is None:
-            data = dict([ (row[1], scale_to_megs(row[2])) for row in
-                        dbus_to_python(get_dbus_object("/zfs").zpool_get(zp_so.name,
-                                "size")) ])
-            zp_so.megs = data["size"]
+            zp_so.megs = megs
             zp_so.full_clean()
             zp_so.save()
             try:
