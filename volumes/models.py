@@ -14,8 +14,12 @@
  *  GNU General Public License for more details.
 """
 
+from __future__ import division
+
 import os.path
 import uuid
+
+from datetime import datetime, timedelta
 
 from django.db import models
 from django.db.models import signals
@@ -23,6 +27,7 @@ from django.conf import settings
 from django.contrib.contenttypes.models import ContentType
 from django.contrib.contenttypes import generic
 from django.utils.translation    import ugettext_lazy as _
+from django.utils.timezone       import make_aware, get_default_timezone
 from django.contrib.auth.models  import User
 from django.core.exceptions      import ValidationError
 
@@ -590,6 +595,36 @@ class BlockVolume(AbstractVolume):
         with Transaction():
             return self._clone(target_storageobject, options)
 
+    @property
+    def perfdata(self):
+        if not HAVE_NAGIOS:
+            return None
+        cmd = Command.objects.get(name=nagios_settings.LV_PERF_CHECK_CMD)
+        try:
+            serv = Service.objects.get(command=cmd, target_type=self.volume_type, target_id=self.id)
+        except Service.DoesNotExist:
+            return None
+        if make_aware(datetime.now(), get_default_timezone()) - serv.last_check > timedelta(minutes=15):
+            # perfdata is outdated
+            return None
+        pd = serv.perfdata
+        return {
+            "load":            pd["load_percent"]["curr"],
+            "bps_read":        pd["rd_bps"]["curr"],
+            "bps_write":       pd["wr_bps"]["curr"],
+            "tbpd_read":       pd["rd_bps"]["curr"] * 86400 / 1024**4,
+            "tbpd_write":      pd["wr_bps"]["curr"] * 86400 / 1024**4,
+            "iops_read":       pd["rd_iops"]["curr"],
+            "iops_write":      pd["wr_iops"]["curr"],
+            "reqsz_read":      pd["rd_avg_size"]["curr"],
+            "reqsz_write":     pd["wr_avg_size"]["curr"],
+            "latency_read":    pd["rd_avg_wait"]["curr"],
+            "latency_write":   pd["wr_avg_wait"]["curr"],
+            "normratio_read":  pd["rd_avg_size"]["curr"] / 4096,
+            "normratio_write": pd["wr_avg_size"]["curr"] / 4096,
+            "normiops_read":   pd["rd_avg_size"]["curr"] / 4096 * pd["rd_iops"]["curr"],
+            "normiops_write":  pd["wr_avg_size"]["curr"] / 4096 * pd["wr_iops"]["curr"],
+            }
 
 if HAVE_NAGIOS:
     def __create_service_for_blockvolume(instance, **kwargs):

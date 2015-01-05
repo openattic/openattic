@@ -148,6 +148,10 @@ class BlockVolumeSerializer(serializers.Serializer):
     host        = relations.HyperlinkedRelatedField(read_only=True, view_name="host-detail")
     status      = serializers.CharField()
     path        = serializers.CharField()
+    perfdata    = serializers.SerializerMethodField('get_performance_data')
+
+    def get_performance_data(self, obj):
+        return obj.perfdata
 
 
 class VolumePoolRootVolumeSerializer(serializers.Serializer):
