@@ -24,7 +24,7 @@ class ArrayHandler(AbstractBlockVolumeHandler):
 
     def _override_get(self, obj, data):
         data["member_set"] = [
-            self._get_handler_instance(member.__class__)._idobj(member)
+            self._get_handler_instance(member.blockvolume.__class__)._idobj(member.blockvolume)
             for member in obj.member_set.all()
             ]
         return data
