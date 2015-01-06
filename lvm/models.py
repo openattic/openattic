@@ -407,6 +407,68 @@ class LogicalVolume(BlockVolume):
             snapshot.mount()
         orig.mount()
 
+    def get_volume_usage(self, stats):
+        """ Get volume usage statistics, taking snapshot usage in account.
+
+            If we're writing into the origin volume,
+                the origin's   "used"  increases
+                the origin's   "free"  decreases
+                the snapshot's "steal" increases
+
+            if we're writing into the snapshot volume,
+                the snapshot's "used"  increases
+                the snapshot's "free"  decreases
+                the origin's   "steal" increases
+
+            if we're an origin:
+                used  = unknown
+                free  = unknown
+                steal = size - the least amount of free space in a snapshot
+
+            if we're a snapshot:
+                used  = megs * LVM2_DATA_PERCENT / 100
+                free  = megs - used
+                steal = 0
+
+        """
+
+        stats["bd_megs"] = self.storageobj.megs
+        stats.setdefault("used", None)
+        stats.setdefault("free", float("inf"))
+
+        if self.storageobj.snapshot is not None:
+            # Are we a snapshot? If so, add block device usage info.
+            stats["bd_used"] = self.storageobj.megs * float(self.lvm_info["LVM2_DATA_PERCENT"]) / 100.
+            stats["bd_free"] = stats["bd_megs"] - stats["bd_used"]
+
+            stats["used"]  = max(stats["used"], stats["bd_used"])
+            stats["free"]  = min(stats["free"], stats["bd_free"])
+
+        else:
+            # Are we a snapshotted origin? If so, we can only write data until the
+            # snapshot that has the least free space left is full, so the other space
+            # is stolen from us by the snapshots.
+
+            snap_free_space  = float("inf")
+            snap_used_space  = None
+            snap_used_create = None
+
+            # Find the snapshot with the least space left
+            for snapshot_so in self.storageobj.snapshot_storageobject_set.all():
+                snapstats = snapshot_so.get_volume_usage()
+                if snapstats["free"] < snap_free_space:
+                    snap_free_space  = snapstats["free"]
+                    snap_used_space  = snapstats["used"]
+                    snap_used_create = snapstats["used"] # TODO: use snapshot_so.usedmegs_at_create
+
+            # This snapshot steals everything from us except for the space that is
+            # usable in the snapshot as well.
+            if snap_free_space is not None and snap_used_space is not None:
+                stats["steal"] = self.storageobj.megs - snap_free_space - snap_used_create
+                stats["used"]  = max(stats["used"], snap_used_space)
+                stats["free"]  = min(stats["free"], snap_free_space)
+
+        return stats
 
 class VolumeGroupDevice(capabilities.Device):
     model = VolumeGroup
