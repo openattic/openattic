@@ -18,6 +18,7 @@ from __future__ import division
 
 import os.path
 import uuid
+import operator
 
 from datetime import datetime, timedelta
 
@@ -37,6 +38,16 @@ from systemd.lockutils import Lockfile, AlreadyLocked
 from ifconfig.models import Host, HostDependentManager, getHostDependentManagerClass
 from volumes import blockdevices, capabilities, filesystems
 from volumes import signals as volume_signals
+
+
+def _opNone(operator, *args):
+    if len(args) > 2:
+        arg1 = args[0]
+        return _opNone(operator, arg1, _opNone(operator, *args[1:]))
+    arg1, arg2 = args
+    if arg1 is not None and arg2 is not None:
+        return operator(arg1, arg2)
+    return None
 
 
 if "nagios" in settings.INSTALLED_APPS:
@@ -280,6 +291,39 @@ class StorageObject(models.Model):
 
     def __unicode__(self):
         return self.name
+
+
+    def get_volume_usage(self):
+        stats = {
+            "db_megs":  self.megs,
+            "fs_megs":  None,
+            "fs_used":  None,
+            "fs_free":  float("inf"),
+            "bd_megs":  None,
+            "bd_used":  None,
+            "bd_free":  float("inf"),
+            "steal":       0,
+            "used":     None,
+            "free":     float("inf")
+        }
+
+        for obj in [self.blockvolume_or_none, self.filesystemvolume_or_none]:
+            if obj is not None:
+                obj.get_volume_usage(stats)
+
+        return {
+            "steal":  stats["steal"],
+            "used":   stats["used"],
+            "free":   stats["free"],
+            "usable": _opNone(operator.add, stats["used"], stats["free"]),
+            "size":   _opNone(operator.add, stats["used"], stats["free"], stats["steal"]),
+            "used%":  _opNone(operator.mul, _opNone(operator.div, stats["used"], _opNone(operator.add, stats["used"], stats["free"])), 100.)
+        }
+
+
+    def get_volumepool_usage(self):
+        pass
+
 
 
 class VolumePool(models.Model):
@@ -838,6 +882,17 @@ class FileSystemProvider(FileSystemVolume):
     def post_shrink(self, oldmegs, newmegs):
         return self.fs.post_shrink(oldmegs, newmegs)
 
+    def get_volume_usage(self, stats):
+        stats["fs_megs"] = self.storageobj.megs
+        fs_stat = self.fs.stat
+        if fs_stat["used"] is not None and fs_stat["free"] is not None:
+            stats["fs_used"] = fs_stat["used"]
+            stats["fs_free"] = fs_stat["free"]
+
+        stats["used"]  = max(stats.get("used", None),         stats["fs_used"])
+        stats["free"]  = min(stats.get("free", float("inf")), stats["fs_free"])
+
+        return stats
 
 def __delete_filesystemprovider(instance, **kwargs):
     instance.fs.unmount()
