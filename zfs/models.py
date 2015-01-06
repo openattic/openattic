@@ -72,6 +72,13 @@ class Zpool(VolumePool):
     def is_fs_supported(self, filesystem):
         return filesystem is filesystems.Zfs
 
+    def get_volumepool_usage(self, stats):
+        stats["fs_megs"] = self.storageobj.megs
+        stats["fs_used"] = self.fs.rootfs_used_megs
+        stats["fs_free"] = self.fs.rootfs_free_megs
+        stats["used"]  = max(stats["used"], stats["fs_used"])
+        stats["free"]  = min(stats["free"], stats["fs_free"])
+        return stats
 
 class RaidZ(models.Model):
     name        = models.CharField(max_length=150)
@@ -163,6 +170,18 @@ class Zfs(FileSystemVolume):
     def __unicode__(self):
         return self.fullname
 
+    def get_volume_usage(self, stats):
+        stats["fs_megs"] = self.storageobj.megs
+        fs_stat = self.fs.stat
+        if fs_stat["used"] is not None and fs_stat["free"] is not None:
+            stats["fs_used"] = fs_stat["used"]
+            stats["fs_free"] = fs_stat["free"]
+            stats["steal"]   = self.storageobj.megs - fs_stat["used"] - fs_stat["free"]
+
+        stats["used"]  = max(stats.get("used", None),         stats["fs_used"])
+        stats["free"]  = min(stats.get("free", float("inf")), stats["fs_free"])
+
+        return stats
 
 class ZVol(BlockVolume):
     zpool       = models.ForeignKey(Zpool)
