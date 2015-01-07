@@ -648,6 +648,9 @@ class BlockVolume(AbstractVolume):
             serv = Service.objects.get(command=cmd, target_type=self.volume_type, target_id=self.id)
         except Service.DoesNotExist:
             return None
+        if serv.last_check is None:
+            # service has never been checked
+            return None
         if make_aware(datetime.now(), get_default_timezone()) - serv.last_check > timedelta(minutes=15):
             # perfdata is outdated
             return None
