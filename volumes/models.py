@@ -655,6 +655,9 @@ class BlockVolume(AbstractVolume):
             # perfdata is outdated
             return None
         pd = serv.perfdata
+        if not pd:
+            # perfdata not yet processed by nagios, so the value is empty
+            return None
         return {
             "load":            pd["load_percent"]["curr"],
             "bps_read":        pd["rd_bps"]["curr"],
