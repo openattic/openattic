@@ -71,10 +71,11 @@ class PoolSerializer(serializers.HyperlinkedModelSerializer):
     url         = serializers.HyperlinkedIdentityField(view_name="pool-detail")
     volumes     = relations.HyperlinkedIdentityField(view_name="pool-volumes")
     source_pool = relations.HyperlinkedRelatedField(view_name="pool-detail", read_only=True)
+    filesystems = relations.HyperlinkedIdentityField(view_name="pool-filesystems")
 
     class Meta:
         model  = models.StorageObject
-        fields = ('url', 'id', 'name', 'megs', 'uuid', 'createdate', 'source_pool', 'volumes')
+        fields = ('url', 'id', 'name', 'megs', 'uuid', 'createdate', 'source_pool', 'volumes', 'filesystems')
 
     def to_native(self, obj):
         data = dict([(key, None) for key in ("type", "host", "status", "usedmegs", "freemegs")])
@@ -99,6 +100,12 @@ class PoolViewSet(viewsets.ModelViewSet):
         serializer_instance = VolumeSerializer(pool.volumepool.volume_set.filter(VOLUME_FILTER_Q), many=True, context={"request": request})
         return Response(serializer_instance.data)
 
+    @detail_route()
+    def filesystems(self, *args, **kwargs):
+        obj = self.get_object()
+        pool = models.VolumePool.objects.get(id=obj.volumepool.id)
+        fss = {fs.name: fs.desc for fs in pool.volumepool.get_supported_filesystems()}
+        return Response(fss)
 
 
 ##################################
