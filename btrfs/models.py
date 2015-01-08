@@ -138,6 +138,8 @@ class BtrfsSubvolume(FileSystemVolume):
         return self.fullname
 
     def get_volume_usage(self, stats):
+        if self.parent is not None:
+            return
         stats["fs_megs"] = self.storageobj.megs
         fs_stat = self.fs.stat
         if fs_stat["used"] is not None and fs_stat["free"] is not None:
