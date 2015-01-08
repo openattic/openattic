@@ -72,10 +72,11 @@ class PoolSerializer(serializers.HyperlinkedModelSerializer):
     volumes     = relations.HyperlinkedIdentityField(view_name="pool-volumes")
     source_pool = relations.HyperlinkedRelatedField(view_name="pool-detail", read_only=True)
     filesystems = relations.HyperlinkedIdentityField(view_name="pool-filesystems")
+    usage       = serializers.SerializerMethodField("get_usage")
 
     class Meta:
         model  = models.StorageObject
-        fields = ('url', 'id', 'name', 'megs', 'uuid', 'createdate', 'source_pool', 'volumes', 'filesystems')
+        fields = ('url', 'id', 'name', 'megs', 'uuid', 'createdate', 'source_pool', 'volumes', 'filesystems', 'usage')
 
     def to_native(self, obj):
         data = dict([(key, None) for key in ("type", "host", "status", "usedmegs", "freemegs")])
@@ -86,6 +87,9 @@ class PoolSerializer(serializers.HyperlinkedModelSerializer):
             serializer_instance = VolumePoolSerializer(obj.volumepool_or_none, context=self.context)
             data.update(dict([(key, value) for (key, value) in serializer_instance.data.items() if value is not None]))
         return data
+
+    def get_usage(self, obj):
+        return obj.get_volumepool_usage()
 
 
 class PoolViewSet(viewsets.ModelViewSet):
