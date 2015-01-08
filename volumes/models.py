@@ -320,7 +320,7 @@ class StorageObject(models.Model):
             "free":   stats["free"],
             "usable": _opNone(operator.add, stats["used"], stats["free"]),
             "size":   _opNone(operator.add, stats["used"], stats["free"], stats["steal"]),
-            "used%":  _opNone(operator.mul, _opNone(operator.div, stats["used"], _opNone(operator.add, stats["used"], stats["free"])), 100.)
+            "used_pcnt": _opNone(operator.mul, _opNone(operator.div, stats["used"], _opNone(operator.add, stats["used"], stats["free"])), 100.)
         }
 
 
