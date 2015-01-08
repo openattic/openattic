@@ -136,3 +136,15 @@ class BtrfsSubvolume(FileSystemVolume):
 
     def __unicode__(self):
         return self.fullname
+
+    def get_volume_usage(self, stats):
+        stats["fs_megs"] = self.storageobj.megs
+        fs_stat = self.fs.stat
+        if fs_stat["used"] is not None and fs_stat["free"] is not None:
+            stats["fs_used"] = fs_stat["used"]
+            stats["fs_free"] = fs_stat["free"]
+
+        stats["used"]  = max(stats.get("used", None),         stats["fs_used"])
+        stats["free"]  = min(stats.get("free", float("inf")), stats["fs_free"])
+
+        return stats
