@@ -17,6 +17,7 @@
 from django.http import Http404
 from django.db.models import Q
 from django.contrib.contenttypes.models import ContentType
+from django.contrib.auth.models import User
 
 from rest_framework import serializers, viewsets
 from rest_framework.decorators import detail_route
@@ -252,6 +253,21 @@ class VolumeViewSet(viewsets.ModelViewSet):
         volume = storageobj.create_volume(request.DATA["name"], request.DATA["megs"], {"owner": 2})
         volume = VolumeSerializer(volume, many=False, context={"request": request})
 
+        return Response(volume.data)
+
+    def update(self, request, *args, **kwargs):
+        user = User.objects.get(id=2)
+
+        storageobj = models.StorageObject.objects.get(id=request.DATA["id"])
+
+        if "filesystem" in request.QUERY_PARAMS:
+            storageobj.create_filesystem(request.QUERY_PARAMS["filesystem"], {
+                "owner"     : user,
+                "fswarning" : 75,
+                "fscritical": 85,
+            })
+
+        volume = VolumeSerializer(storageobj, many=False, context={"request": request})
         return Response(volume.data)
 
 
