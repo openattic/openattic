@@ -311,6 +311,9 @@ class StorageObject(models.Model):
             if obj is not None:
                 obj.get_volume_usage(stats)
 
+        if stats["used"] is None or stats["free"] == float("inf"):
+            return {}
+
         return {
             "steal":  stats["steal"],
             "used":   stats["used"],
