@@ -123,6 +123,10 @@ class OSD(models.Model):
             fspath = self.volume.volume.path
             jnldev = self.journal.volume.path if self.journal is not None else ""
             get_dbus_object("/ceph").format_volume_as_osd(self.rbd_pool.cluster.name, fspath, jnldev)
+            # set upper volume
+            volume_so = self.volume.storageobj
+            volume_so.upper = self.cluster
+            volume_so.save()
 
 class Mon(models.Model):
     cluster     = models.ForeignKey(Cluster)
