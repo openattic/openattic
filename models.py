@@ -233,6 +233,9 @@ class Pool(VolumePool):
         image.save()
         return image
 
+    def get_volumepool_usage(self, stats):
+        return
+
 
 class Entity(models.Model):
     cluster     = models.ForeignKey(Cluster)
