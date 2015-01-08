@@ -325,7 +325,35 @@ class StorageObject(models.Model):
 
 
     def get_volumepool_usage(self):
-        pass
+        stats = {
+            "db_megs":  self.megs,
+            "vp_megs":  None,
+            "vp_used":  None,
+            "vp_free":  float("inf"),
+            "bd_megs":  None,
+            "bd_used":  None,
+            "bd_free":  float("inf"),
+            "steal":       0,
+            "used":     None,
+            "free":     float("inf")
+        }
+
+        if self.blockvolume_or_none is not None:
+            self.blockvolume_or_none.get_volume_usage(stats)
+        if self.volumepool_or_none is not None:
+            self.volumepool_or_none.get_volumepool_usage(stats)
+
+        if stats["used"] is None or stats["free"] == float("inf"):
+            return {}
+
+        return {
+            "steal":  stats["steal"],
+            "used":   stats["used"],
+            "free":   stats["free"],
+            "usable": _opNone(operator.add, stats["used"], stats["free"]),
+            "size":   _opNone(operator.add, stats["used"], stats["free"], stats["steal"]),
+            "used_pcnt": _opNone(operator.mul, _opNone(operator.div, stats["used"], _opNone(operator.add, stats["used"], stats["free"])), 100.)
+        }
 
 
 
