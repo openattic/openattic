@@ -63,6 +63,9 @@ class Btrfs(VolumePool):
     def is_fs_supported(self, filesystem):
         return filesystem is filesystems.Btrfs
 
+    def get_volumepool_usage(self, stats):
+        return
+
 
 class BtrfsSubvolume(FileSystemVolume):
     btrfs       = models.ForeignKey(Btrfs)

@@ -73,11 +73,11 @@ class Zpool(VolumePool):
         return filesystem is filesystems.Zfs
 
     def get_volumepool_usage(self, stats):
-        stats["fs_megs"] = self.storageobj.megs
-        stats["fs_used"] = self.fs.rootfs_used_megs
-        stats["fs_free"] = self.fs.rootfs_free_megs
-        stats["used"]  = max(stats["used"], stats["fs_used"])
-        stats["free"]  = min(stats["free"], stats["fs_free"])
+        stats["vp_megs"] = self.storageobj.megs
+        stats["vp_used"] = self.fs.rootfs_used_megs
+        stats["vp_free"] = self.fs.rootfs_free_megs
+        stats["used"]  = max(stats.get("used", None),         stats["vp_used"])
+        stats["free"]  = min(stats.get("free", float("inf")), stats["vp_free"])
         return stats
 
 class RaidZ(models.Model):

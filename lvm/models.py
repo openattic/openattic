@@ -151,6 +151,14 @@ class VolumeGroup(VolumePool):
     def is_fs_supported(self, filesystem):
         return True
 
+    def get_volumepool_usage(self, stats):
+        stats["vp_megs"] = float(self.lvm_info["LVM2_VG_SIZE"])
+        stats["vp_free"] = float(self.lvm_info["LVM2_VG_FREE"])
+        stats["vp_used"] = stats["vp_megs"] - stats["vp_free"]
+        stats["used"]  = max(stats.get("used", None),         stats["vp_used"])
+        stats["free"]  = min(stats.get("free", float("inf")), stats["vp_free"])
+        return stats
+
 
 class LogicalVolume(BlockVolume):
     """ Represents a LVM Logical Volume and offers management functions.
