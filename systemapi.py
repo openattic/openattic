@@ -18,6 +18,8 @@ import os
 import os.path
 import json
 
+from django.core.cache import get_cache
+
 from systemd.procutils import invoke
 from systemd.plugins   import logged, BasePlugin, method, deferredmethod
 
@@ -68,12 +70,18 @@ class SystemD(BasePlugin):
 
     @method(in_signature="s", out_signature="s")
     def status(self, cluster):
-        ret, out, err = self.invoke_ceph(cluster, ["status"], log=False)
+        out = get_cache("systemd").get("ceph_status:%s" % cluster)
+        if out is None:
+            ret, out, err = self.invoke_ceph(cluster, ["status"], log=False)
+            get_cache("systemd").set("ceph_status:%s" % cluster, out, 15)
         return out
 
     @method(in_signature="s", out_signature="s")
     def df(self, cluster):
-        ret, out, err = self.invoke_ceph(cluster, ["df"], log=False)
+        out = get_cache("systemd").get("ceph_df:%s" % cluster)
+        if out is None:
+            ret, out, err = self.invoke_ceph(cluster, ["df"], log=False)
+            get_cache("systemd").set("ceph_df:%s" % cluster, out, 15)
         return out
 
     @deferredmethod(in_signature="sssi")
