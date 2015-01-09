@@ -360,7 +360,10 @@ class StorageObject(models.Model):
 
     def _mkstats(self, stats):
         if stats["used"] is None or stats["free"] == float("inf"):
-            return {}
+            return {
+                "size":      self.megs,
+                "size_text": _to_number_with_unit(self.megs)
+            }
 
         _stats = {
             "steal":       stats["steal"],
