@@ -95,6 +95,9 @@ case $1 in
 		# Initialize the schema so our daemons can start
 		su "$OAUSER" -c 'python manage.py syncdb --noinput'
 		
+		# Create the status_cache table, ignoring failures (those mean we did this before)
+		su "$OAUSER" -c 'python manage.py createcachetable status_cache >/dev/null 2>/dev/null' || /bin/true
+		
 		su "$OAUSER" -c 'python manage.py add-host'
 		
 		# (re)start the daemons
