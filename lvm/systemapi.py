@@ -79,7 +79,7 @@ def lvm_command(cmd):
             else:
                 valbuf += char
 
-    cache.set(cmd[0], json.dumps(result), 60)
+    cache.set(cmd[0], json.dumps(result), 15)
 
     return result
 
