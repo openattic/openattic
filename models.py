@@ -249,7 +249,17 @@ class Pool(VolumePool):
         return image
 
     def get_volumepool_usage(self, stats):
-        return
+        df = self.cluster.df()
+        for poolinfo in df["pools"]:
+            if poolinfo["name"] == self.storageobj.name:
+                stats["vp_megs"] = df["stats"]["total_space_megs"] / self.size
+                stats["vp_used"] = poolinfo["stats"]["kb_used"] / 1024.
+                stats["vp_free"] = df["stats"]["total_avail_megs"] / self.size
+                stats["steal"]   = df["stats"]["total_space_megs"] - stats["vp_used"] - stats["vp_free"]
+                stats["used"]  = max(stats.get("used", None),         stats["vp_used"])
+                stats["free"]  = min(stats.get("free", float("inf")), stats["vp_free"])
+                break
+        return stats
 
 
 class Entity(models.Model):
