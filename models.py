@@ -235,6 +235,14 @@ class Pool(VolumePool):
     def status(self):
         return self.cluster.status
 
+    def get_status(self, status):
+        status["flags"].add({
+            "HEALTH_OK": "online",
+            "HEALTH_WARN": "degraded",
+            "HEALTH_CRIT": "failed"
+        }[self.cluster.status])
+        return status
+
     @property
     def host(self):
         return Host.objects.get_current()
@@ -312,3 +320,6 @@ class Image(BlockVolume):
 
     def get_volume_usage(self, stats):
         return
+
+    def get_status(self, status):
+        return self.rbd_pool.get_status(status)
