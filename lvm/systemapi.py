@@ -132,8 +132,7 @@ class SystemD(BasePlugin):
             cmd.append(vgname)
         self.lvs_time = 0
         invoke(cmd)
-        get_cache("systemd").delete("/sbin/lvs")
-        get_cache("systemd").delete("/sbin/vgs")
+        get_cache("systemd").delete_many(["/sbin/lvs", "/sbin/vgs"])
         if not snapshot:
             invoke(["blkdevzero", "/dev/%s/%s" % (vgname, lvname)])
         # Update UUID
