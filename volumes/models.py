@@ -18,7 +18,6 @@ from __future__ import division
 
 import os.path
 import uuid
-import json
 import operator
 
 from datetime import datetime, timedelta
@@ -438,7 +437,7 @@ class StorageObject(models.Model):
 
         status = cache.get(ckey)
         if status is not None:
-            return json.loads(status)
+            return status
 
         status = {
             "status": "good",
@@ -455,7 +454,7 @@ class StorageObject(models.Model):
         status["text"]   = STORAGEOBJECT_STATUS_CHOICES[maxseverity + 1][1]
         status["flags"]  = dict([ (flag, STORAGEOBJECT_STATUS_FLAGS[flag]["desc"]) for flag in status["flags"] ])
 
-        cache.set(ckey, json.dumps(status), 300)
+        cache.set(ckey, status, 300)
         return status
 
 

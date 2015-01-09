@@ -15,7 +15,6 @@
 """
 
 import logging
-import json
 
 from time import time
 
@@ -32,10 +31,7 @@ def lvm_command(cmd):
 
     cachedval = cache.get(cmd[0])
     if cachedval is not None:
-        try:
-            return json.loads(cachedval)
-        except ValueError:
-            pass
+        return cachedval
 
     ret, out, err = invoke(
         (cmd + ["--noheadings", "--nameprefixes", "--units", "m"]),
@@ -79,7 +75,7 @@ def lvm_command(cmd):
             else:
                 valbuf += char
 
-    cache.set(cmd[0], json.dumps(result), 15)
+    cache.set(cmd[0], result, 15)
 
     return result
 
