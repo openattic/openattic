@@ -122,7 +122,9 @@ class Unit(BlockVolume):
             }
 
     def get_status(self, status):
-        if self.status:
+        if self.status == "OK":
+            status["flags"].add("online")
+        elif self.status:
             status["flags"].add(self.status.lower())
 
     def __unicode__(self):
