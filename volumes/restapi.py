@@ -249,7 +249,7 @@ class VolumeViewSet(viewsets.ModelViewSet):
             "filesystemvolume": serialize_volume_service(storageobj.filesystemvolume_or_none),
         })
 
-    def create(self, request):
+    def create(self, request, *args, **kwargs):
         storageobj = models.StorageObject.all_objects.filter(volumepool__id=request.DATA["source_pool"]["id"])
         storageobj = models.StorageObject.objects.get(id=(storageobj.values())[0]["id"])
 
