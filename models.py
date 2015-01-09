@@ -309,3 +309,6 @@ class Image(BlockVolume):
     @property
     def path(self):
         return "/dev/rbd/%s/%s" % (self.rbd_pool.storageobj.name, self.storageobj.name)
+
+    def get_volume_usage(self, stats):
+        return
