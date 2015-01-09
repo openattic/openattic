@@ -121,6 +121,9 @@ class Unit(BlockVolume):
             "stripewidth": self.chunksize * datadisks
             }
 
+    def get_volume_usage(self, stats):
+        return
+
     def get_status(self, status):
         if self.status == "OK":
             status["flags"].add("online")

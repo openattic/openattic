@@ -46,6 +46,9 @@ class Array(BlockVolume):
                         return "degraded"
                     return "online"
 
+    def get_volume_usage(self, stats):
+        return
+
     def get_status(self, status):
         with open("/proc/mdstat") as fd:
             for line in fd:
