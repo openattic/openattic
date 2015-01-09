@@ -15,8 +15,12 @@
 """
 
 import logging
+import json
 
 from time import time
+
+from django.core.cache import get_cache
+
 from systemd.procutils import invoke
 from systemd.plugins   import logged, BasePlugin, method, deferredmethod
 
@@ -24,6 +28,15 @@ from lvm.conf   import settings as lvm_settings
 from lvm.models import LogicalVolume
 
 def lvm_command(cmd):
+    cache = get_cache("systemd")
+
+    cachedval = cache.get(cmd[0])
+    if cachedval is not None:
+        try:
+            return json.loads(cachedval)
+        except ValueError:
+            pass
+
     ret, out, err = invoke(
         (cmd + ["--noheadings", "--nameprefixes", "--units", "m"]),
         return_out_err=True, log=lvm_settings.LOG_COMMANDS
@@ -65,6 +78,8 @@ def lvm_command(cmd):
                 valbuf  = ""
             else:
                 valbuf += char
+
+    cache.set(cmd[0], json.dumps(result), 60)
 
     return result
 
@@ -117,6 +132,8 @@ class SystemD(BasePlugin):
             cmd.append(vgname)
         self.lvs_time = 0
         invoke(cmd)
+        get_cache("systemd").delete("/sbin/lvs")
+        get_cache("systemd").delete("/sbin/vgs")
         if not snapshot:
             invoke(["blkdevzero", "/dev/%s/%s" % (vgname, lvname)])
         # Update UUID
@@ -143,6 +160,7 @@ class SystemD(BasePlugin):
             invoke(["/sbin/lvchange", '-an', device])
 
         invoke(["/sbin/lvresize", '-L', ("%dM" % megs), device])
+        get_cache("systemd").delete_many(["/sbin/lvs", "/sbin/vgs"])
 
         if not grow:
             invoke(["/sbin/lvchange", '-ay', device])
@@ -151,21 +169,25 @@ class SystemD(BasePlugin):
     def lvmerge(self, device, sender):
         self.lvs_time = 0
         invoke(["/sbin/lvconvert", "--merge", device])
+        get_cache("systemd").delete_many(["/sbin/lvs", "/sbin/vgs"])
 
     @deferredmethod(in_signature="s")
     def lvremove(self, device, sender):
         self.lvs_time = 0
         invoke(["/sbin/lvremove", '-f', device])
+        get_cache("systemd").delete_many(["/sbin/lvs", "/sbin/vgs"])
 
     @deferredmethod(in_signature="s")
     def vgremove(self, device, sender):
         self.vgs_time = 0
         invoke(["/sbin/vgremove", '-f', device])
+        get_cache("systemd").delete_many(["/sbin/lvs", "/sbin/vgs", "/sbin/pvs"])
 
     @deferredmethod(in_signature="s")
     def pvremove(self, device, sender):
         self.pvs_time = 0
         invoke(["/sbin/pvremove", '-f', device])
+        get_cache("systemd").delete_many(["/sbin/lvs", "/sbin/vgs", "/sbin/pvs"])
 
     @method(in_signature="s", out_signature="s")
     def get_type(self, device):
