@@ -79,6 +79,16 @@ DBUS_IFACE_SYSTEMD = "org.openattic.systemd"
 
 AUTH_PROFILE_MODULE = 'userprefs.UserProfile'
 
+CACHES = {
+    'systemd': {
+        'BACKEND': 'django.core.cache.backends.memcached.MemcachedCache',
+        'LOCATION': '127.0.0.1:11211',
+    },
+    'default': {
+        'BACKEND': 'django.core.cache.backends.dummy.DummyCache',
+    }
+}
+
 # Log execution of "lvs" and "vgs" commands.
 # Those don't usually fail and are executed quite often (tm) to generate the LV and VG lists,
 # so logging them might not make too much sense, but it's up to you. :)
