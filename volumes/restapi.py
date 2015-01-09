@@ -51,15 +51,14 @@ VOLUME_FILTER_Q = \
 #   createdate                  SO
 #   source_pool   x             SO
 #   snapshot      x             SO
+#   status                      SO
 #   type          x                   VP
 #   host                              VP
-#   status                            VP
 #
 
 class VolumePoolSerializer(serializers.Serializer):
     type        = serializers.CharField(source="volumepool_type")
     host        = relations.HyperlinkedRelatedField(read_only=True, view_name="host-detail")
-    status      = serializers.CharField()
 
 
 class PoolSerializer(serializers.HyperlinkedModelSerializer):
@@ -70,13 +69,14 @@ class PoolSerializer(serializers.HyperlinkedModelSerializer):
     source_pool = relations.HyperlinkedRelatedField(view_name="pool-detail", read_only=True)
     filesystems = relations.HyperlinkedIdentityField(view_name="pool-filesystems")
     usage       = serializers.SerializerMethodField("get_usage")
+    status      = serializers.SerializerMethodField("get_status")
 
     class Meta:
         model  = models.StorageObject
-        fields = ('url', 'id', 'name', 'uuid', 'createdate', 'source_pool', 'volumes', 'filesystems', 'usage')
+        fields = ('url', 'id', 'name', 'uuid', 'createdate', 'source_pool', 'volumes', 'filesystems', 'usage', 'status')
 
     def to_native(self, obj):
-        data = dict([(key, None) for key in ("type", "host", "status")])
+        data = dict([(key, None) for key in ("type", "host")])
         data.update(serializers.HyperlinkedModelSerializer.to_native(self, obj))
         if obj is None:
             return data
@@ -87,6 +87,9 @@ class PoolSerializer(serializers.HyperlinkedModelSerializer):
 
     def get_usage(self, obj):
         return obj.get_volumepool_usage()
+
+    def get_status(self, obj):
+        return obj.get_status()
 
 
 class PoolViewSet(viewsets.ModelViewSet):
@@ -123,9 +126,9 @@ class PoolViewSet(viewsets.ModelViewSet):
 #   createdate                  SO
 #   source_pool   x             SO
 #   snapshot      x             SO
+#   status                      SO
 #   type          x                   VP -> BV -> FSV.type -> FSV.volume.fstype
 #   host                              VP -> BV -> FSV
-#   status                            VP -> BV -> FSV
 #   path                                    BV -> FSV
 #   fswarning     x       x                       FSV
 #   fscritical    x       x                       FSV
@@ -135,7 +138,6 @@ class PoolViewSet(viewsets.ModelViewSet):
 class FileSystemVolumeSerializer(serializers.Serializer):
     type        = serializers.SerializerMethodField("serialize_type")
     host        = relations.HyperlinkedRelatedField(read_only=True, view_name="host-detail")
-    status      = serializers.CharField()
     path        = serializers.CharField()
     fswarning   = serializers.IntegerField()
     fscritical  = serializers.IntegerField()
@@ -150,7 +152,6 @@ class FileSystemVolumeSerializer(serializers.Serializer):
 class BlockVolumeSerializer(serializers.Serializer):
     type        = serializers.CharField(source="volume_type")
     host        = relations.HyperlinkedRelatedField(read_only=True, view_name="host-detail")
-    status      = serializers.CharField()
     path        = serializers.CharField()
     perfdata    = serializers.SerializerMethodField('get_performance_data')
 
@@ -161,7 +162,6 @@ class BlockVolumeSerializer(serializers.Serializer):
 class VolumePoolRootVolumeSerializer(serializers.Serializer):
     type        = serializers.CharField(source="volumepool_type")
     host        = relations.HyperlinkedRelatedField(read_only=True, view_name="host-detail")
-    status      = serializers.CharField()
 
 
 class VolumeSerializer(serializers.HyperlinkedModelSerializer):
@@ -180,13 +180,14 @@ class VolumeSerializer(serializers.HyperlinkedModelSerializer):
     snapshot    = relations.HyperlinkedRelatedField(view_name="volume-detail", read_only=True)
     source_pool = relations.HyperlinkedRelatedField(view_name="pool-detail",   read_only=True)
     usage       = serializers.SerializerMethodField("get_usage")
+    status      = serializers.SerializerMethodField("get_status")
 
     class Meta:
         model  = models.StorageObject
-        fields = ('url', 'id', 'name', 'uuid', 'createdate', 'source_pool', 'snapshot', 'snapshots', 'services', 'usage')
+        fields = ('url', 'id', 'name', 'uuid', 'createdate', 'source_pool', 'snapshot', 'snapshots', 'services', 'usage', 'status')
 
     def to_native(self, obj):
-        data = dict([(key, None) for key in ("type", "host", "status", "path",
+        data = dict([(key, None) for key in ("type", "host", "path",
                      "fswarning", "fscritical", "owner")])
         data.update(serializers.HyperlinkedModelSerializer.to_native(self, obj))
         if obj is None:
@@ -203,6 +204,9 @@ class VolumeSerializer(serializers.HyperlinkedModelSerializer):
 
     def get_usage(self, obj):
         return obj.get_volume_usage()
+
+    def get_status(self, obj):
+        return obj.get_status()
 
 class VolumeViewSet(viewsets.ModelViewSet):
     queryset = models.StorageObject.objects.filter(VOLUME_FILTER_Q)
