@@ -88,7 +88,8 @@ Depends: ${misc:Depends}, python (>= 2.6),
  lsb-release,
  libjs-extjs4 (>= 4.2.1),
  openattic-pgsql,
- libapache2-mod-wsgi, apache2
+ libapache2-mod-wsgi, apache2,
+ memcached, python-memcache
 Recommends: sudo, xfsprogs
 Description: Basic requirements for openATTIC
  openATTIC is a storage management system based upon Open Source tools with
