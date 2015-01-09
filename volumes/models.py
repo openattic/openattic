@@ -58,6 +58,29 @@ else:
     HAVE_NAGIOS = False
 
 
+def _to_number_with_unit(value, unit="B", base=1024):
+    """ Try to convert the given value to a number string like 14MiB. """
+    if value is None:
+        return None
+    mult = ['M', 'G', 'T', 'P', 'E']
+    for exp, facunit in enumerate(mult):
+        factor = base ** exp
+        divided = value / factor
+        if 1 <= divided < base:
+            value = divided
+            if base == 1024:
+                unit = facunit + "i" + unit
+            else:
+                unit = facunit + unit
+            break
+    try:
+        return "{:,.2f}{:}".format(value, unit)
+    except (AttributeError, ValueError): # python 2.5 and 2.6 respectively
+        return str(value) + unit
+
+
+
+
 class DeviceNotFound(Exception):
     pass
 
@@ -311,17 +334,7 @@ class StorageObject(models.Model):
             if obj is not None:
                 obj.get_volume_usage(stats)
 
-        if stats["used"] is None or stats["free"] == float("inf"):
-            return {}
-
-        return {
-            "steal":  stats["steal"],
-            "used":   stats["used"],
-            "free":   stats["free"],
-            "usable": _opNone(operator.add, stats["used"], stats["free"]),
-            "size":   _opNone(operator.add, stats["used"], stats["free"], stats["steal"]),
-            "used_pcnt": _opNone(operator.mul, _opNone(operator.div, stats["used"], _opNone(operator.add, stats["used"], stats["free"])), 100.)
-        }
+        return self._mkstats(stats)
 
 
     def get_volumepool_usage(self):
@@ -343,17 +356,28 @@ class StorageObject(models.Model):
         if self.volumepool_or_none is not None:
             self.volumepool_or_none.get_volumepool_usage(stats)
 
+        return self._mkstats(stats)
+
+    def _mkstats(self, stats):
         if stats["used"] is None or stats["free"] == float("inf"):
             return {}
 
-        return {
-            "steal":  stats["steal"],
-            "used":   stats["used"],
-            "free":   stats["free"],
-            "usable": _opNone(operator.add, stats["used"], stats["free"]),
-            "size":   _opNone(operator.add, stats["used"], stats["free"], stats["steal"]),
-            "used_pcnt": _opNone(operator.mul, _opNone(operator.div, stats["used"], _opNone(operator.add, stats["used"], stats["free"])), 100.)
+        _stats = {
+            "steal":       stats["steal"],
+            "used":        stats["used"],
+            "free":        stats["free"],
+            "usable":      _opNone(operator.add, stats["used"], stats["free"]),
+            "size":        _opNone(operator.add, stats["used"], stats["free"], stats["steal"]),
+            "used_pcnt":   _opNone(operator.mul, _opNone(operator.div, stats["used"], _opNone(operator.add, stats["used"], stats["free"])), 100.)
         }
+        _stats.update({
+            "used_text":   _to_number_with_unit(_stats["used"]),
+            "free_text":   _to_number_with_unit(_stats["free"]),
+            "steal_text":  _to_number_with_unit(_stats["steal"]),
+            "usable_text": _to_number_with_unit(_stats["usable"]),
+            "size_text":   _to_number_with_unit(_stats["size"]),
+        })
+        return _stats
 
 
 
