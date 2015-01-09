@@ -46,7 +46,7 @@ VOLUME_FILTER_Q = \
 #                 Writeable...
 #   Field         Create  Edit  Source (A -> B = B overrides A)
 #   name          x             SO
-#   megs          x       x     SO
+#   megs          x       x
 #   uuid                        SO
 #   createdate                  SO
 #   source_pool   x             SO
@@ -54,15 +54,12 @@ VOLUME_FILTER_Q = \
 #   type          x                   VP
 #   host                              VP
 #   status                            VP
-#   usedmegs                          VP
 #
 
 class VolumePoolSerializer(serializers.Serializer):
     type        = serializers.CharField(source="volumepool_type")
     host        = relations.HyperlinkedRelatedField(read_only=True, view_name="host-detail")
     status      = serializers.CharField()
-    usedmegs    = serializers.CharField()
-    freemegs    = serializers.CharField()
 
 
 class PoolSerializer(serializers.HyperlinkedModelSerializer):
@@ -76,10 +73,10 @@ class PoolSerializer(serializers.HyperlinkedModelSerializer):
 
     class Meta:
         model  = models.StorageObject
-        fields = ('url', 'id', 'name', 'megs', 'uuid', 'createdate', 'source_pool', 'volumes', 'filesystems', 'usage')
+        fields = ('url', 'id', 'name', 'uuid', 'createdate', 'source_pool', 'volumes', 'filesystems', 'usage')
 
     def to_native(self, obj):
-        data = dict([(key, None) for key in ("type", "host", "status", "usedmegs", "freemegs")])
+        data = dict([(key, None) for key in ("type", "host", "status")])
         data.update(serializers.HyperlinkedModelSerializer.to_native(self, obj))
         if obj is None:
             return data
@@ -95,7 +92,7 @@ class PoolSerializer(serializers.HyperlinkedModelSerializer):
 class PoolViewSet(viewsets.ModelViewSet):
     queryset = models.StorageObject.objects.filter(volumepool__isnull=False)
     serializer_class = PoolSerializer
-    filter_fields = ('name', 'uuid', 'megs', 'createdate')
+    filter_fields = ('name', 'uuid', 'createdate')
     search_fields = ('name',)
 
     @detail_route()
@@ -121,7 +118,7 @@ class PoolViewSet(viewsets.ModelViewSet):
 #                 Writeable...
 #   Field         Create  Edit  Source (A -> B = B overrides A)
 #   name          x             SO
-#   megs          x       x     SO
+#   megs          x       x
 #   uuid                        SO
 #   createdate                  SO
 #   source_pool   x             SO
@@ -130,8 +127,6 @@ class PoolViewSet(viewsets.ModelViewSet):
 #   host                              VP -> BV -> FSV
 #   status                            VP -> BV -> FSV
 #   path                                    BV -> FSV
-#   usedmegs                                      FSV
-#   freemegs                                      FSV
 #   fswarning     x       x                       FSV
 #   fscritical    x       x                       FSV
 #   owner(name)   x                               FSV
@@ -142,8 +137,6 @@ class FileSystemVolumeSerializer(serializers.Serializer):
     host        = relations.HyperlinkedRelatedField(read_only=True, view_name="host-detail")
     status      = serializers.CharField()
     path        = serializers.CharField()
-    usedmegs    = serializers.FloatField()
-    freemegs    = serializers.FloatField()
     fswarning   = serializers.IntegerField()
     fscritical  = serializers.IntegerField()
     owner       = relations.HyperlinkedRelatedField(read_only=True, view_name="user-detail")
@@ -190,11 +183,11 @@ class VolumeSerializer(serializers.HyperlinkedModelSerializer):
 
     class Meta:
         model  = models.StorageObject
-        fields = ('url', 'id', 'name', 'megs', 'uuid', 'createdate', 'source_pool', 'snapshot', 'snapshots', 'services', 'usage')
+        fields = ('url', 'id', 'name', 'uuid', 'createdate', 'source_pool', 'snapshot', 'snapshots', 'services', 'usage')
 
     def to_native(self, obj):
         data = dict([(key, None) for key in ("type", "host", "status", "path",
-                     "usedmegs", "freemegs", "fswarning", "fscritical", "owner")])
+                     "fswarning", "fscritical", "owner")])
         data.update(serializers.HyperlinkedModelSerializer.to_native(self, obj))
         if obj is None:
             return data
@@ -214,7 +207,7 @@ class VolumeSerializer(serializers.HyperlinkedModelSerializer):
 class VolumeViewSet(viewsets.ModelViewSet):
     queryset = models.StorageObject.objects.filter(VOLUME_FILTER_Q)
     serializer_class = VolumeSerializer
-    filter_fields = ('name', 'uuid', 'megs', 'createdate')
+    filter_fields = ('name', 'uuid', 'createdate')
     search_fields = ('name',)
 
     @detail_route()
