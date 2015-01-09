@@ -40,6 +40,13 @@ class Zpool(VolumePool):
             return "locked"
         return self.fs.status
 
+    def get_status(self, status):
+        stat = self.fs.status.lower()
+        if stat in ("faulted", "unavail"):
+            stat = "failed"
+        status["flags"].add(stat)
+        return status
+
     @property
     def usedmegs(self):
         import dbus
@@ -140,6 +147,9 @@ class Zfs(FileSystemVolume):
         if self.storageobj.is_locked:
             return "locked"
         return self.zpool.status
+
+    def get_status(self, status):
+        return self.zpool.get_status(status)
 
     @property
     def host(self):

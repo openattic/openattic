@@ -138,6 +138,12 @@ class VolumeGroup(VolumePool):
         if attr[0] == "r": stat = "readonly"
         return stat
 
+    def get_status(self, status):
+        attr = self.lvm_info["LVM2_VG_ATTR"].lower()
+        if attr[0] == "w": status["flags"].add("online"  )
+        if attr[0] == "r": status["flags"].add("readonly")
+        return status
+
     @property
     def usedmegs(self):
         return float(self.lvm_info["LVM2_VG_SIZE"]) - float(self.lvm_info["LVM2_VG_FREE"])
@@ -280,6 +286,18 @@ class LogicalVolume(BlockVolume):
         if attr[0] == "O": stat = "restoring_snapshot"
         if attr[1] == "r": stat = "readonly"
         return stat
+
+    def get_status(self, status):
+        try:
+            attr = self.lvm_info["LVM2_LV_ATTR"].lower()
+        except KeyError:
+            status["flags"].add("unknown")
+        else:
+            if attr[4] == "a": status["flags"].add("online"    )
+            if attr[4] == "-": status["flags"].add("offline"   )
+            if attr[0] == "O": status["flags"].add("rebuilding")
+            if attr[1] == "r": status["flags"].add("readonly"  )
+        return status
 
     @property
     def path(self):

@@ -121,6 +121,10 @@ class Unit(BlockVolume):
             "stripewidth": self.chunksize * datadisks
             }
 
+    def get_status(self, status):
+        if self.status:
+            status["flags"].add(self.status.lower())
+
     def __unicode__(self):
         if self.storageobj.name:
             return self.storageobj.name

@@ -46,6 +46,16 @@ class Array(BlockVolume):
                         return "degraded"
                     return "online"
 
+    def get_status(self, status):
+        with open("/proc/mdstat") as fd:
+            for line in fd:
+                if line.startswith(self.storageobj.name):
+                    if "(F)" in line:
+                        status["flags"].add("degraded")
+                    else:
+                        status["flags"].add("online")
+                    return
+
     @property
     def raid_params(self):
         chunksize = int(open("/sys/class/block/%s/md/chunk_size" % self.storageobj.name, "r").read().strip())

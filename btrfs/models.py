@@ -43,6 +43,10 @@ class Btrfs(VolumePool):
             return "locked"
         return "online"
 
+    def get_status(self, status):
+        status["flags"].add("online")
+        return status
+
     @property
     def usedmegs(self):
         return self.fs.stat["used"]
@@ -110,6 +114,9 @@ class BtrfsSubvolume(FileSystemVolume):
         if self.storageobj.is_locked:
             return "locked"
         return self.btrfs.status
+
+    def get_status(self, status):
+        return self.btrfs.get_status(status)
 
     @property
     def usedmegs(self):
