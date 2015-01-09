@@ -14,6 +14,8 @@
  *  GNU General Public License for more details.
 """
 
+from __future__ import division
+
 import json
 import math
 
@@ -41,7 +43,20 @@ class Cluster(StorageObject):
         return json.loads(dbus_to_python(get_dbus_object("/ceph").status(self.name)))
 
     def df(self):
-        return json.loads(dbus_to_python(get_dbus_object("/ceph").df(self.name)))
+        _df = json.loads(dbus_to_python(get_dbus_object("/ceph").df(self.name)))
+
+        # Sometimes, "ceph df" returns total_space in KiB, and sometimes total_bytes.
+        # See what we have and turn it all into megs.
+        if "total_space" in _df["stats"]:
+            _df["stats"]["total_space_megs"] = _df["stats"]["total_space"] / 1024.
+            _df["stats"]["total_used_megs" ] = _df["stats"]["total_used" ] / 1024.
+            _df["stats"]["total_avail_megs"] = _df["stats"]["total_avail"] / 1024.
+        else:
+            _df["stats"]["total_space_megs"] = _df["stats"]["total_bytes"]       / 1024. / 1024.
+            _df["stats"]["total_used_megs" ] = _df["stats"]["total_used_bytes" ] / 1024. / 1024.
+            _df["stats"]["total_avail_megs"] = _df["stats"]["total_avail_bytes"] / 1024. / 1024.
+
+        return _df
 
     def get_crushmap(self):
         return json.loads(dbus_to_python(get_dbus_object("/ceph").osd_crush_dump(self.name)))

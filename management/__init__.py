@@ -69,12 +69,7 @@ def update(**kwargs):
         auth_list= cluster.get_auth_list()
         df       = cluster.df()
 
-        # Sometimes, "ceph df" returns total_space in KiB, and sometimes total_bytes.
-        # See what we have and turn it all into megs.
-        if "total_space" in df["stats"]:
-            megs = df["stats"]["total_space"] / 1024
-        else:
-            megs = df["stats"]["total_bytes"] / 1024 / 1024
+        megs = df["stats"]["total_space_megs"]
 
         if not known:
             cluster.megs = megs
