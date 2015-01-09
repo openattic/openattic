@@ -18,6 +18,7 @@ from __future__ import division
 
 import os.path
 import uuid
+import json
 import operator
 
 from datetime import datetime, timedelta
@@ -27,10 +28,11 @@ from django.db.models import signals
 from django.conf import settings
 from django.contrib.contenttypes.models import ContentType
 from django.contrib.contenttypes import generic
-from django.utils.translation    import ugettext_lazy as _
+from django.utils.translation    import ugettext_lazy as _, ugettext_noop
 from django.utils.timezone       import make_aware, get_default_timezone
 from django.contrib.auth.models  import User
 from django.core.exceptions      import ValidationError
+from django.core.cache           import get_cache
 
 from systemd import get_dbus_object
 from systemd.helpers import Transaction
@@ -90,6 +92,30 @@ class InvalidVolumeType(Exception):
 class CapabilitiesAwareManager(models.Manager):
     def filter_by_capability(self, capability):
         return self.extra(where=[self.model._meta.db_table + '.capflags & %s = %s'], params=[capability.flag, capability.flag])
+
+
+STORAGEOBJECT_STATUS_CHOICES = (
+    ("",     ugettext_noop("The status is unknown.")),
+    ("good", ugettext_noop("Everything seems to be in order")),
+    ("warn", ugettext_noop("An error might occur soon")),
+    ("crit", ugettext_noop("An error has occurred, but the volume can be recovered")),
+    ("fail", ugettext_noop("The object is broken and cannot be recovered")),
+    )
+
+STORAGEOBJECT_STATUS_FLAGS = {
+    "unknown":       {"severity": -1, "desc": ugettext_noop("The status cannot be checked and is therefore unknown.")},
+    "online":        {"severity":  0, "desc": ugettext_noop("The volume is accessible.")},
+    "readonly":      {"severity":  0, "desc": ugettext_noop("The volume cannot be written to.")},
+    "offline":       {"severity":  0, "desc": ugettext_noop("The volume is inaccessible.")},
+    "creating":      {"severity":  0, "desc": ugettext_noop("The volume is being created.")},
+    "initializing":  {"severity":  0, "desc": ugettext_noop("The storage device is initializing the volume.")},
+    "verifying":     {"severity":  0, "desc": ugettext_noop("The storage device is verifying the volume's integrity.")},
+    "rebuilding":    {"severity":  1, "desc": ugettext_noop("The storage device is rebuilding data.")},
+    "degraded":      {"severity":  2, "desc": ugettext_noop("A storage device has failed and needs to be replaced.")},
+    "failed":        {"severity":  3, "desc": ugettext_noop("The volume has failed and cannot be recovered.")},
+    "nearfull":      {"severity":  1, "desc": ugettext_noop("The volume is nearly full.")},
+    "highload":      {"severity":  1, "desc": ugettext_noop("The volume is experiencing high load.")},
+    }
 
 
 class StorageObject(models.Model):
@@ -382,6 +408,40 @@ class StorageObject(models.Model):
         })
         return _stats
 
+    def get_status(self):
+        cache = get_cache("status")
+        ckey  = "storageobject__status__%d" % self.id
+
+        if self.is_locked:
+            return {
+                "status": "locked",
+                "text":   ugettext_noop("The volume is locked."),
+                "flags": {}
+            }
+
+        status = cache.get(ckey)
+        if status is not None:
+            return json.loads(status)
+
+        status = {
+            "status": "good",
+            "flags":  set()
+            }
+
+        for obj in (self.blockvolume_or_none, self.volumepool_or_none, self.filesystemvolume_or_none):
+            if obj is not None:
+                obj.get_status(status)
+
+        maxseverity = -1
+        for flag in status["flags"]:
+            maxseverity = max(STORAGEOBJECT_STATUS_FLAGS[flag]["severity"], maxseverity)
+
+        status["status"] = STORAGEOBJECT_STATUS_CHOICES[maxseverity + 1][0]
+        status["text"]   = STORAGEOBJECT_STATUS_CHOICES[maxseverity + 1][1]
+        status["flags"]  = dict([ (flag, STORAGEOBJECT_STATUS_FLAGS[flag]["desc"]) for flag in status["flags"] ])
+
+        cache.set(ckey, json.dumps(status), 300)
+        return status
 
 
 class VolumePool(models.Model):
@@ -910,6 +970,12 @@ class FileSystemProvider(FileSystemVolume):
         if self.storageobj.is_locked:
             return "locked"
         return {True: "online", False: "offline"}[self.mounted]
+
+    def get_status(self, status):
+        if self.mounted:
+            status["flags"].add("online")
+        else:
+            status["flags"].add("offline")
 
     @property
     def host(self):
