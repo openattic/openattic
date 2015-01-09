@@ -408,6 +408,14 @@ class StorageObject(models.Model):
         })
         return _stats
 
+    def _get_status(self, status):
+        for obj in self.base_set.all():
+            obj._get_status(status)
+
+        for obj in (self.blockvolume_or_none, self.volumepool_or_none, self.filesystemvolume_or_none):
+            if obj is not None:
+                obj.get_status(status)
+
     def get_status(self):
         cache = get_cache("status")
         ckey  = "storageobject__status__%d" % self.id
@@ -428,9 +436,7 @@ class StorageObject(models.Model):
             "flags":  set()
             }
 
-        for obj in (self.blockvolume_or_none, self.volumepool_or_none, self.filesystemvolume_or_none):
-            if obj is not None:
-                obj.get_status(status)
+        self._get_status(status)
 
         maxseverity = -1
         for flag in status["flags"]:
