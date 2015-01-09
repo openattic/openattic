@@ -113,7 +113,7 @@ STORAGEOBJECT_STATUS_FLAGS = {
     "rebuilding":    {"severity":  1, "desc": ugettext_noop("The storage device is rebuilding data.")},
     "degraded":      {"severity":  2, "desc": ugettext_noop("A storage device has failed and needs to be replaced.")},
     "failed":        {"severity":  3, "desc": ugettext_noop("The volume has failed and cannot be recovered.")},
-    "nearfull":      {"severity":  1, "desc": ugettext_noop("The volume is nearly full.")},
+    "nearfull":      {"severity":  2, "desc": ugettext_noop("The volume is nearly full.")},
     "highload":      {"severity":  1, "desc": ugettext_noop("The volume is experiencing high load.")},
     }
 
@@ -415,6 +415,15 @@ class StorageObject(models.Model):
         for obj in (self.blockvolume_or_none, self.volumepool_or_none, self.filesystemvolume_or_none):
             if obj is not None:
                 obj.get_status(status)
+
+        if self.blockvolume_or_none is not None:
+            pd = self.blockvolume_or_none.perfdata
+            if pd is not None:
+                if pd["load"] > 30:
+                    status["flags"].add("highload")
+        if self.filesystemvolume_or_none is not None:
+            if self.get_volume_usage().get("used_pcnt", 0) >= self.filesystemvolume_or_none.fscritical:
+                status["flags"].add("nearfull")
 
     def get_status(self):
         cache = get_cache("status")
