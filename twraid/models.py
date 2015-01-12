@@ -124,11 +124,11 @@ class Unit(BlockVolume):
     def get_volume_usage(self, stats):
         return
 
-    def get_status(self, status):
+    def get_status(self):
         if self.status == "OK":
-            status["flags"].add("online")
+            return ["online"]
         elif self.status:
-            status["flags"].add(self.status.lower())
+            return [self.status.lower()]
 
     def __unicode__(self):
         if self.storageobj.name:

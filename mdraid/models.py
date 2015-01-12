@@ -49,15 +49,14 @@ class Array(BlockVolume):
     def get_volume_usage(self, stats):
         return
 
-    def get_status(self, status):
+    def get_status(self):
         with open("/proc/mdstat") as fd:
             for line in fd:
                 if line.startswith(self.storageobj.name):
                     if "(F)" in line:
-                        status["flags"].add("degraded")
+                        return ["degraded"]
                     else:
-                        status["flags"].add("online")
-                    return
+                        return ["online"]
 
     @property
     def raid_params(self):

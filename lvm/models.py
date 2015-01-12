@@ -138,11 +138,10 @@ class VolumeGroup(VolumePool):
         if attr[0] == "r": stat = "readonly"
         return stat
 
-    def get_status(self, status):
+    def get_status(self):
         attr = self.lvm_info["LVM2_VG_ATTR"].lower()
-        if attr[0] == "w": status["flags"].add("online"  )
-        if attr[0] == "r": status["flags"].add("readonly")
-        return status
+        if attr[0] == "w": return ["online"]
+        if attr[0] == "r": return ["readonly"]
 
     @property
     def usedmegs(self):
@@ -287,17 +286,18 @@ class LogicalVolume(BlockVolume):
         if attr[1] == "r": stat = "readonly"
         return stat
 
-    def get_status(self, status):
+    def get_status(self):
+        flags = self.vg.get_status()
         try:
             attr = self.lvm_info["LVM2_LV_ATTR"].lower()
         except KeyError:
-            status["flags"].add("unknown")
+            flags.append("unknown")
         else:
-            if attr[4] == "a": status["flags"].add("online"    )
-            if attr[4] == "-": status["flags"].add("offline"   )
-            if attr[0] == "O": status["flags"].add("rebuilding")
-            if attr[1] == "r": status["flags"].add("readonly"  )
-        return status
+            if attr[4] == "a": flags.append("online"    )
+            if attr[4] == "-": flags.append("offline"   )
+            if attr[0] == "O": flags.append("rebuilding")
+            if attr[1] == "r": flags.append("readonly"  )
+        return flags
 
     @property
     def path(self):
@@ -467,6 +467,7 @@ class LogicalVolume(BlockVolume):
             stats["bd_used"] = self.storageobj.megs * float(self.lvm_info["LVM2_DATA_PERCENT"]) / 100.
             stats["bd_free"] = stats["bd_megs"] - stats["bd_used"]
 
+            stats["steal"] = self.storageobj.megs - stats["bd_free"] - stats["bd_used"]
             stats["used"]  = max(stats["used"], stats["bd_used"])
             stats["free"]  = min(stats["free"], stats["bd_free"])
 

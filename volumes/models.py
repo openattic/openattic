@@ -407,27 +407,38 @@ class StorageObject(models.Model):
         })
         return _stats
 
-    def _get_status(self, status):
+    def _get_status(self):
+        cache = get_cache("status")
+        ckey  = "storageobject__status__%d" % self.id
+
+        flags = cache.get(ckey)
+        if flags is not None and isinstance(flags, set):
+            return flags
+
+        flags = set()
+
         for obj in self.base_set.all():
-            obj._get_status(status)
+            flags = flags.union(obj._get_status())
 
         for obj in (self.blockvolume_or_none, self.volumepool_or_none, self.filesystemvolume_or_none):
             if obj is not None:
-                obj.get_status(status)
+                flags = flags.union(obj.get_status())
 
         if self.blockvolume_or_none is not None:
             pd = self.blockvolume_or_none.perfdata
             if pd is not None:
                 if pd["load"] > 30:
-                    status["flags"].add("highload")
+                    flags.add("highload")
+
         if self.filesystemvolume_or_none is not None:
             if self.get_volume_usage().get("used_pcnt", 0) >= self.filesystemvolume_or_none.fscritical:
-                status["flags"].add("nearfull")
+                flags.add("nearfull")
+
+        cache.set(ckey, flags, 300)
+
+        return flags
 
     def get_status(self):
-        cache = get_cache("status")
-        ckey  = "storageobject__status__%d" % self.id
-
         if self.is_locked:
             return {
                 "status": "locked",
@@ -435,27 +446,17 @@ class StorageObject(models.Model):
                 "flags": {}
             }
 
-        status = cache.get(ckey)
-        if status is not None:
-            return status
-
-        status = {
-            "status": "good",
-            "flags":  set()
-            }
-
-        self._get_status(status)
+        flags = self._get_status()
 
         maxseverity = -1
-        for flag in status["flags"]:
+        for flag in flags:
             maxseverity = max(STORAGEOBJECT_STATUS_FLAGS[flag]["severity"], maxseverity)
 
-        status["status"] = STORAGEOBJECT_STATUS_CHOICES[maxseverity + 1][0]
-        status["text"]   = STORAGEOBJECT_STATUS_CHOICES[maxseverity + 1][1]
-        status["flags"]  = dict([ (flag, STORAGEOBJECT_STATUS_FLAGS[flag]["desc"]) for flag in status["flags"] ])
-
-        cache.set(ckey, status, 300)
-        return status
+        return {
+            "status": STORAGEOBJECT_STATUS_CHOICES[maxseverity + 1][0],
+            "text":   STORAGEOBJECT_STATUS_CHOICES[maxseverity + 1][1],
+            "flags":  dict([ (flag, STORAGEOBJECT_STATUS_FLAGS[flag]["desc"]) for flag in flags ])
+        }
 
 
 class VolumePool(models.Model):
@@ -985,11 +986,11 @@ class FileSystemProvider(FileSystemVolume):
             return "locked"
         return {True: "online", False: "offline"}[self.mounted]
 
-    def get_status(self, status):
+    def get_status(self):
         if self.mounted:
-            status["flags"].add("online")
+            return ["online"]
         else:
-            status["flags"].add("offline")
+            return ["offline"]
 
     @property
     def host(self):

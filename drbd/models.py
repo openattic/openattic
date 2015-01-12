@@ -201,8 +201,8 @@ class Connection(BlockVolume):
         except dbus.DBusException:
             return None
 
-    def get_status(self, status):
-        status["flags"].add({
+    def get_status(self):
+        return {
             "StandAlone":   "degraded",
             "WFConnection": "degraded",
             "Connected":    "online",
@@ -210,8 +210,7 @@ class Connection(BlockVolume):
             "WFBitMapT":    "rebuilding",
             "SyncSource":   "rebuilding",
             "SyncTarget":   "rebuilding",
-        }[self.status])
-        return status
+        }[self.status]
 
     @property
     def peerhost(self):
