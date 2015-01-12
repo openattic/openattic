@@ -236,11 +236,11 @@ class Pool(VolumePool):
         return self.cluster.status
 
     def get_status(self):
-        return {
+        return [{
             "HEALTH_OK": "online",
             "HEALTH_WARN": "degraded",
             "HEALTH_CRIT": "failed"
-        }[self.cluster.status]
+        }[self.cluster.status]]
 
     @property
     def host(self):
