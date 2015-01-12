@@ -202,7 +202,7 @@ class Connection(BlockVolume):
             return None
 
     def get_status(self):
-        return {
+        return [{
             "StandAlone":   "degraded",
             "WFConnection": "degraded",
             "Connected":    "online",
@@ -210,7 +210,7 @@ class Connection(BlockVolume):
             "WFBitMapT":    "rebuilding",
             "SyncSource":   "rebuilding",
             "SyncTarget":   "rebuilding",
-        }[self.status]
+        }[self.status]]
 
     @property
     def peerhost(self):
