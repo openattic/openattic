@@ -18,7 +18,7 @@ from django.http import Http404
 from django.db.models import Q
 from django.contrib.contenttypes.models import ContentType
 
-from rest_framework import serializers, viewsets
+from rest_framework import serializers, viewsets, generics
 from rest_framework.decorators import detail_route
 from rest_framework.response import Response
 
@@ -208,6 +208,13 @@ class VolumeSerializer(serializers.HyperlinkedModelSerializer):
     def get_status(self, obj):
         return obj.get_status()
 
+
+class VolumeSnapshotView(generics.ListAPIView):
+    serializer_class = VolumeSerializer
+    filter_fields = ('name', 'uuid', 'createdate')
+    search_fields = ('name',)
+
+
 class VolumeViewSet(viewsets.ModelViewSet):
     queryset = models.StorageObject.objects.filter(VOLUME_FILTER_Q)
     serializer_class = VolumeSerializer
@@ -217,8 +224,9 @@ class VolumeViewSet(viewsets.ModelViewSet):
     @detail_route()
     def snapshots(self, request, *args, **kwargs):
         origin = self.get_object()
-        serializer_instance = VolumeSerializer(origin.snapshot_storageobject_set.all(), many=True, context={"request": request})
-        return Response(serializer_instance.data)
+        view = VolumeSnapshotView()
+        view.queryset = origin.snapshot_storageobject_set.all()
+        return view.dispatch(request, *args, **kwargs)
 
     @detail_route()
     def services(self, request, *args, **kwargs):
