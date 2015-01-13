@@ -184,7 +184,7 @@ class VolumeSerializer(serializers.HyperlinkedModelSerializer):
 
     class Meta:
         model  = models.StorageObject
-        fields = ('url', 'id', 'name', 'uuid', 'createdate', 'source_pool', 'snapshot', 'snapshots', 'services', 'usage', 'status')
+        fields = ('url', 'id', 'name', 'uuid', 'createdate', 'source_pool', 'snapshots', 'services', 'usage', 'status')
 
     def to_native(self, obj):
         data = dict([(key, None) for key in ("type", "host", "path",
@@ -211,10 +211,25 @@ class VolumeSerializer(serializers.HyperlinkedModelSerializer):
         return obj.get_status()
 
 
-class VolumeSnapshotView(generics.ListAPIView):
-    serializer_class = VolumeSerializer
+class SnapshotSerializer(VolumeSerializer):
+    """ Serializer for a Snapshot. """
+    url         = serializers.HyperlinkedIdentityField(view_name="snapshot-detail")
+
+    class Meta:
+        model  = models.StorageObject
+        fields = ('url', 'id', 'name', 'uuid', 'createdate', 'source_pool', 'snapshot', 'services', 'usage', 'status')
+
+
+class SnapshotViewSet(viewsets.ModelViewSet):
+    queryset = models.StorageObject.objects.filter(snapshot__isnull=False)
+    serializer_class = SnapshotSerializer
     filter_fields = ('name', 'uuid', 'createdate')
     search_fields = ('name',)
+
+    def create(self, request, *args, **kwargs):
+        volume_so = self.origin.create_snapshot(request.DATA["name"], request.DATA["megs"], {})
+        serializer = SnapshotSerializer(volume_so, many=False, context={"request": request})
+        return Response(serializer.data, status=status.HTTP_201_CREATED)
 
 
 class VolumeViewSet(viewsets.ModelViewSet):
@@ -223,12 +238,14 @@ class VolumeViewSet(viewsets.ModelViewSet):
     filter_fields = ('name', 'uuid', 'createdate')
     search_fields = ('name',)
 
-    @detail_route()
+    @detail_route(["get", "post"])
     def snapshots(self, request, *args, **kwargs):
         origin = self.get_object()
-        view = VolumeSnapshotView()
-        view.queryset = origin.snapshot_storageobject_set.all()
-        return view.dispatch(request, *args, **kwargs)
+        ViewSet = type("VolumeSnapshotViewSet", (SnapshotViewSet,), {
+            "queryset": origin.snapshot_storageobject_set.all(),
+            "origin":   origin
+            })
+        return ViewSet.as_view({'get': 'list', 'post': 'create'})(request, *args, **kwargs)
 
     @detail_route()
     def services(self, request, *args, **kwargs):
@@ -279,8 +296,8 @@ class VolumeViewSet(viewsets.ModelViewSet):
         return Response(volume.data)
 
 
-
 RESTAPI_VIEWSETS = [
-    ('pools',   PoolViewSet,   'pool'),
-    ('volumes', VolumeViewSet, 'volume'),
+    ('pools',     PoolViewSet,     'pool'),
+    ('volumes',   VolumeViewSet,   'volume'),
+    ('snapshots', SnapshotViewSet, 'snapshot'),
 ]
