@@ -128,8 +128,8 @@ class Zfs(FileSystemVolume):
         else:
             self.fs.destroy_subvolume()
 
-    def full_clean(self):
-        FileSystemVolume.full_clean(self)
+    def full_clean(self, exclude=None, validate_unique=True):
+        FileSystemVolume.full_clean(self, exclude=exclude, validate_unique=validate_unique)
         # free space is irrelevant for a Zfs because it's just a quota, not a
         # real size limit
         if float(self.zpool.storageobj.megs) < int(self.storageobj.megs):
@@ -222,8 +222,8 @@ class ZVol(BlockVolume):
         else:
             self.fs.destroy_subvolume()
 
-    def full_clean(self):
-        BlockVolume.full_clean(self)
+    def full_clean(self, exclude=None, validate_unique=True):
+        BlockVolume.full_clean(self, exclude=exclude, validate_unique=validate_unique)
         currmegs = 0
         if self.id is not None:
             currmegs = ZVol.objects.get(id=self.id).storageobj.megs

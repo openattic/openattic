@@ -77,9 +77,9 @@ class VolumeGroup(VolumePool):
     def __unicode__(self):
         return self.storageobj.name
 
-    def full_clean(self):
+    def full_clean(self, exclude=None, validate_unique=True):
         validate_vg_name(self.storageobj.name)
-        VolumePool.full_clean(self)
+        VolumePool.full_clean(self, exclude=exclude, validate_unique=validate_unique)
 
     def save( self, *args, **kwargs ):
         VolumePool.save(self, *args, **kwargs)
@@ -200,9 +200,9 @@ class LogicalVolume(BlockVolume):
             raise ValidationError({"name": ["A Volume named '%s' already exists on this host." % self.storageobj.name]})
         BlockVolume.validate_unique(self, exclude=exclude)
 
-    def full_clean(self):
+    def full_clean(self, exclude=None, validate_unique=True):
         validate_lv_name(self.storageobj.name)
-        BlockVolume.full_clean(self)
+        BlockVolume.full_clean(self, exclude=exclude, validate_unique=validate_unique)
         if self.id is None:
             self.uuid = '-'
         currmegs = 0
@@ -544,7 +544,7 @@ class LVSnapshotJob(Cronjob):
     objects     = HostDependentManager()
     all_objects = models.Manager()
 
-    def full_clean(self):
+    def full_clean(self, exclude=None, validate_unique=True):
         return #lol
 
     def dosnapshot(self):

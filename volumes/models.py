@@ -153,8 +153,8 @@ class StorageObject(models.Model):
     objects     = CapabilitiesAwareManager()
     all_objects = models.Manager()
 
-    def full_clean(self):
-        models.Model.full_clean(self)
+    def full_clean(self, exclude=None, validate_unique=True):
+        models.Model.full_clean(self, exclude=exclude, validate_unique=validate_unique)
         if not self.uuid:
             self.uuid = str(uuid.uuid4())
 
@@ -844,8 +844,8 @@ class GenericDisk(BlockVolume):
     type        = models.CharField(max_length=150, blank=True)
     rpm         = models.IntegerField(blank=True, null=True)
 
-    def full_clean(self):
-        BlockVolume.full_clean(self)
+    def full_clean(self, exclude=None, validate_unique=True):
+        BlockVolume.full_clean(self, exclude=exclude, validate_unique=validate_unique)
         if self.type not in ("sata", "sas", "ssd"):
             raise ValidationError({"type": ["Type needs to be one of 'sata', 'sas', 'ssd'."]})
 

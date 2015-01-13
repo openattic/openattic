@@ -25,7 +25,7 @@ class APIKey(models.Model):
     description = models.CharField( max_length=250 )
     active      = models.BooleanField( default=True, blank=True )
 
-    def full_clean(self):
+    def full_clean(self, exclude=None, validate_unique=True):
         if not self.apikey:
             self.apikey = unicode(uuid.uuid4())
-        return models.Model.full_clean(self)
+        return models.Model.full_clean(self, exclude=exclude, validate_unique=validate_unique)

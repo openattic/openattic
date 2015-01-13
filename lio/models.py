@@ -171,7 +171,8 @@ class Target(models.Model):
     def __unicode__(self):
         return self.name
 
-    def full_clean(self):
+    def full_clean(self, exclude=None, validate_unique=True):
+        models.Model.full_clean(self, exclude=exclude, validate_unique=validate_unique)
         if not self.wwn:
             if self.type == "iscsi":
                 # Generate IQN. the "prefix" part is shamelessly stolen from rtslib, but we use

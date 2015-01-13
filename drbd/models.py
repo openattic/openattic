@@ -128,8 +128,8 @@ class Connection(BlockVolume):
         models.Model.__init__(self, *args, **kwargs)
         self._drbd = None
 
-    def full_clean(self):
-        models.Model.full_clean(self)
+    def full_clean(self, exclude=None, validate_unique=True):
+        models.Model.full_clean(self, exclude=exclude, validate_unique=validate_unique)
         from django.core.exceptions import ValidationError
         try:
             rate = self.get_syncer_rate()
