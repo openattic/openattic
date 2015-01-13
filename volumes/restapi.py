@@ -276,6 +276,12 @@ class VolumeViewSet(viewsets.ModelViewSet):
         volume = VolumeSerializer(storageobj, many=False, context={"request": request})
         return Response(volume.data)
 
+    def destroy(self, request, *args, **kwargs):
+        storageobj = models.StorageObject.objects.get(id=kwargs["pk"])
+        storageobj.delete();
+
+        return Response(True)
+
 
 RESTAPI_VIEWSETS = [
     ('pools',   PoolViewSet,   'pool'),
