@@ -280,7 +280,7 @@ class VolumeViewSet(viewsets.ModelViewSet):
         volume = storageobj.create_volume(request.DATA["name"], request.DATA["megs"], {"owner": request.user.id})
         serializer = VolumeSerializer(volume, many=False, context={"request": request})
 
-        return Response(serializer.data)
+        return Response(serializer.data, status=HTTP_201_CREATED)
 
     def update(self, request, *args, **kwargs):
         storageobj = models.StorageObject.objects.get(id=request.DATA["id"])
