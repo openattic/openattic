@@ -274,13 +274,12 @@ class VolumeViewSet(viewsets.ModelViewSet):
         })
 
     def create(self, request, *args, **kwargs):
-        storageobj = models.StorageObject.all_objects.filter(volumepool__id=request.DATA["source_pool"]["id"])
-        storageobj = models.StorageObject.objects.get(id=(storageobj.values())[0]["id"])
+        storageobj = models.StorageObject.all_objects.get(volumepool__id=request.DATA["source_pool"]["id"])
 
         volume = storageobj.create_volume(request.DATA["name"], request.DATA["megs"], {"owner": request.user.id})
-        volume = VolumeSerializer(volume, many=False, context={"request": request})
+        serializer = VolumeSerializer(volume, many=False, context={"request": request})
 
-        return Response(volume.data)
+        return Response(serializer.data)
 
     def update(self, request, *args, **kwargs):
         storageobj = models.StorageObject.objects.get(id=request.DATA["id"])
