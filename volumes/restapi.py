@@ -192,14 +192,16 @@ class VolumeSerializer(serializers.HyperlinkedModelSerializer):
         data.update(serializers.HyperlinkedModelSerializer.to_native(self, obj))
         if obj is None:
             return data
-        for (Serializer, top_obj) in (
-                (VolumePoolRootVolumeSerializer, obj.volumepool_or_none),
-                (BlockVolumeSerializer,          obj.blockvolume_or_none),
-                (FileSystemVolumeSerializer,     obj.filesystemvolume_or_none)):
+        for (Serializer, top_obj, flag) in (
+                (VolumePoolRootVolumeSerializer, obj.volumepool_or_none,       "is_volumepool"),
+                (BlockVolumeSerializer,          obj.blockvolume_or_none,      "is_blockvolume"),
+                (FileSystemVolumeSerializer,     obj.filesystemvolume_or_none, "is_filesystemvolume")):
             if top_obj is None:
+                data[flag] = False
                 continue
             serializer_instance = Serializer(top_obj, context=self.context)
             data.update(dict([(key, value) for (key, value) in serializer_instance.data.items() if value is not None]))
+            data[flag] = True
         return data
 
     def get_usage(self, obj):
