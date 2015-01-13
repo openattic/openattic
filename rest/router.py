@@ -32,7 +32,7 @@ def get_router():
             rpcdplugins.append(module)
     logging.info( "Loaded modules: %s", ', '.join([module.__name__ for module in rpcdplugins]) )
 
-    router = DefaultRouter()
+    router = DefaultRouter(trailing_slash=False)
 
     for plugin in rpcdplugins:
         for args in getattr(getattr(plugin, "restapi"), "RESTAPI_VIEWSETS", []):

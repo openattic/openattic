@@ -35,6 +35,8 @@ ADMINS = (
     # ('Your Name', 'your_email@domain.com'),
 )
 
+APPEND_SLASH = False
+
 LVM_CHOWN_GROUP = "users"
 
 MANAGERS = ADMINS
