@@ -21,6 +21,7 @@ from django.contrib.contenttypes.models import ContentType
 from rest_framework import serializers, viewsets, generics
 from rest_framework.decorators import detail_route
 from rest_framework.response import Response
+from rest_framework.status import HTTP_201_CREATED
 
 from rest import relations
 
@@ -229,7 +230,7 @@ class SnapshotViewSet(viewsets.ModelViewSet):
     def create(self, request, *args, **kwargs):
         volume_so = self.origin.create_snapshot(request.DATA["name"], request.DATA["megs"], {})
         serializer = SnapshotSerializer(volume_so, many=False, context={"request": request})
-        return Response(serializer.data, status=status.HTTP_201_CREATED)
+        return Response(serializer.data, status=HTTP_201_CREATED)
 
 
 class VolumeViewSet(viewsets.ModelViewSet):
