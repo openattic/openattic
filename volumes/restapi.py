@@ -27,6 +27,9 @@ from rest import relations
 
 from volumes import models
 
+from nfs import models as nfs_models
+from nfs import restapi as nfs_restapi
+
 
 # filter queryset by...
 # * (has an FSV or a BV) and
@@ -178,6 +181,7 @@ class VolumeSerializer(serializers.HyperlinkedModelSerializer):
     url         = serializers.HyperlinkedIdentityField(view_name="volume-detail")
     services    = relations.HyperlinkedIdentityField(view_name="volume-services")
     snapshots   = relations.HyperlinkedIdentityField(view_name="volume-snapshots")
+    nfsshares   = relations.HyperlinkedIdentityField(view_name="volume-nfsshares")
     snapshot    = relations.HyperlinkedRelatedField(view_name="volume-detail", read_only=True)
     source_pool = relations.HyperlinkedRelatedField(view_name="pool-detail",   read_only=True)
     usage       = serializers.SerializerMethodField("get_usage")
@@ -185,7 +189,7 @@ class VolumeSerializer(serializers.HyperlinkedModelSerializer):
 
     class Meta:
         model  = models.StorageObject
-        fields = ('url', 'id', 'name', 'uuid', 'createdate', 'source_pool', 'snapshots', 'services', 'usage', 'status')
+        fields = ('url', 'id', 'name', 'uuid', 'createdate', 'source_pool', 'snapshots', 'services', 'nfsshares', 'usage', 'status')
 
     def to_native(self, obj):
         data = dict([(key, None) for key in ("type", "host", "path",
@@ -273,6 +277,15 @@ class VolumeViewSet(viewsets.ModelViewSet):
             "blockvolume":      serialize_volume_service(storageobj.blockvolume_or_none),
             "filesystemvolume": serialize_volume_service(storageobj.filesystemvolume_or_none),
         })
+
+    @detail_route(["get", "post"])
+    def nfsshares(self, request, *args, **kwargs):
+        origin = self.get_object()
+        viewSet = type("VolumeNfsshareViewSet", (nfs_restapi.NfsshareViewSet,), {
+            "origin":   origin,
+            "queryset": nfs_models.Export.objects.filter(volume__id=origin.id)
+        })
+        return viewSet.as_view({'get': 'list', 'post': 'create'})(request, *args, **kwargs)
 
     def create(self, request, *args, **kwargs):
         storageobj = models.StorageObject.all_objects.get(volumepool__id=request.DATA["source_pool"]["id"])
