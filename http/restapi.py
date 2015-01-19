@@ -22,7 +22,7 @@ from rest import relations
 from http.models import Export
 
 class HttpShareSerializer(serializers.HyperlinkedModelSerializer):
-    """ Serializer for a NFS Export. """
+    """ Serializer for a HTTP Export. """
     url         = serializers.HyperlinkedIdentityField(view_name="httpshare-detail")
     volume      = relations.HyperlinkedRelatedField(view_name="volume-detail", read_only=True, source="volume.storageobj")
 
@@ -44,7 +44,7 @@ class HttpShareViewSet(viewsets.ModelViewSet):
 
     def create(self, request, *args, **kwargs):
         print request.items()
-        print "create NFS share"
+        print "create HTTP share"
         return Response(True)
 
 
