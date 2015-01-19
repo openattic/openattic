@@ -12,6 +12,8 @@
  *  GNU General Public License for more details.
 """
 
+import django_filters
+
 from rest_framework import serializers, viewsets
 from rest_framework.response import Response
 
@@ -27,10 +29,17 @@ class NfsshareSerializer(serializers.HyperlinkedModelSerializer):
         model = Export
         fields = ('url', 'id', 'path', 'address', 'options')
 
+class NfsshareFilter(django_filters.FilterSet):
+    volume = django_filters.NumberFilter(name="volume__storageobj__id")
+
+    class Meta:
+        model  = Export
+        fields = ['volume']
 
 class NfsshareViewSet(viewsets.ModelViewSet):
     queryset         = Export.objects.all()
     serializer_class = NfsshareSerializer
+    filter_class     = NfsshareFilter
 
     def create(self, request, *args, **kwargs):
         print request.items()
