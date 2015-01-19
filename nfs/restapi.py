@@ -21,7 +21,7 @@ from rest import relations
 
 from nfs.models import Export
 
-class NfsshareSerializer(serializers.HyperlinkedModelSerializer):
+class NfsShareSerializer(serializers.HyperlinkedModelSerializer):
     """ Serializer for a NFS Export. """
     url         = serializers.HyperlinkedIdentityField(view_name="nfsshare-detail")
     volume      = relations.HyperlinkedRelatedField(view_name="volume-detail", read_only=True, source="volume.storageobj")
@@ -30,17 +30,17 @@ class NfsshareSerializer(serializers.HyperlinkedModelSerializer):
         model = Export
         fields = ('url', 'id', 'path', 'address', 'options', 'volume')
 
-class NfsshareFilter(django_filters.FilterSet):
+class NfsShareFilter(django_filters.FilterSet):
     volume = django_filters.NumberFilter(name="volume__storageobj__id")
 
     class Meta:
         model  = Export
         fields = ['volume']
 
-class NfsshareViewSet(viewsets.ModelViewSet):
+class NfsShareViewSet(viewsets.ModelViewSet):
     queryset         = Export.objects.all()
-    serializer_class = NfsshareSerializer
-    filter_class     = NfsshareFilter
+    serializer_class = NfsShareSerializer
+    filter_class     = NfsShareFilter
 
     def create(self, request, *args, **kwargs):
         print request.items()
@@ -49,5 +49,5 @@ class NfsshareViewSet(viewsets.ModelViewSet):
 
 
 RESTAPI_VIEWSETS = [
-    ('nfsshares', NfsshareViewSet, 'nfsshare')
+    ('nfsshares', NfsShareViewSet, 'nfsshare')
 ]
