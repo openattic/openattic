@@ -123,6 +123,8 @@ def graph(request, service_id, srcidx):
     if dbgraph is not None:
         builder.verttitle = dbgraph.verttitle
         if builder.width >= 350:
-            builder.title += ' - ' + dbgraph.title
+            builder.title = '%s - %s' % (serv.description, dbgraph.title)
+        else:
+            builder.title = dbgraph.title
 
     return HttpResponse( builder.get_image(), content_type="image/png" )
