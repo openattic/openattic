@@ -28,7 +28,7 @@ class SambaShareSerializer(serializers.HyperlinkedModelSerializer):
 
     class Meta:
         model = Share
-        fields = ('url', 'id', 'path', 'available', 'browseable', 'guest_ok', 'writeable', 'comment', 'volume')
+        fields = ('url', 'id', 'name', 'path', 'available', 'browseable', 'guest_ok', 'writeable', 'comment', 'volume')
 
 class SambaShareFilter(django_filters.FilterSet):
     volume = django_filters.NumberFilter(name="volume__storageobj__id")
