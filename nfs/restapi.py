@@ -23,11 +23,12 @@ from nfs.models import Export
 
 class NfsshareSerializer(serializers.HyperlinkedModelSerializer):
     """ Serializer for a NFS Export. """
-    url           = serializers.HyperlinkedIdentityField(view_name="nfsshare-detail")
+    url         = serializers.HyperlinkedIdentityField(view_name="nfsshare-detail")
+    volume      = relations.HyperlinkedRelatedField(view_name="volume-detail", read_only=True, source="volume.storageobj")
 
     class Meta:
         model = Export
-        fields = ('url', 'id', 'path', 'address', 'options')
+        fields = ('url', 'id', 'path', 'address', 'options', 'volume')
 
 class NfsshareFilter(django_filters.FilterSet):
     volume = django_filters.NumberFilter(name="volume__storageobj__id")
