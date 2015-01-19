@@ -22,6 +22,7 @@ import datetime
 
 from django.contrib.auth.models import User
 from django.db import models
+from django.core.cache import get_cache
 from django.utils.translation   import ugettext_noop as _
 
 from ifconfig.models import Host, HostDependentManager, getHostDependentManagerClass
@@ -83,6 +84,7 @@ class VolumeGroup(VolumePool):
 
     def save( self, *args, **kwargs ):
         VolumePool.save(self, *args, **kwargs)
+        get_cache("systemd").delete_many(["/sbin/lvs", "/sbin/vgs", "/sbin/pvs"])
 
     def delete(self):
         lvm = get_dbus_object("/lvm")
@@ -95,6 +97,7 @@ class VolumeGroup(VolumePool):
                 if pvs[device]["LVM2_VG_NAME"] == self.storageobj.name:
                     lvm.pvremove(device)
         VolumePool.delete(self)
+        get_cache("systemd").delete_many(["/sbin/lvs", "/sbin/vgs", "/sbin/pvs"])
 
     @property
     def lvm_info(self):
