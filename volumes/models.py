@@ -114,6 +114,8 @@ STORAGEOBJECT_STATUS_FLAGS = {
     "failed":        {"severity":  3, "desc": ugettext_noop("The volume has failed and cannot be recovered.")},
     "nearfull":      {"severity":  1, "desc": ugettext_noop("The volume is nearly full.")},
     "highload":      {"severity":  1, "desc": ugettext_noop("The volume is experiencing high load.")},
+    "highlatency":   {"severity":  1, "desc": ugettext_noop("Write operations take a long time to complete. Consider using a battery-backed-up hardware cache or faster disks.")},
+    "randomio":      {"severity":  1, "desc": ugettext_noop("The workload is mostly random. Consider tuning the application to reduce the amount of random IO operations.")},
     }
 
 
@@ -429,6 +431,10 @@ class StorageObject(models.Model):
             if pd is not None:
                 if pd["load"] > 30:
                     flags.add("highload")
+                if pd["latency_write"] > 0.010: # > 10ms
+                    flags.add("highlatency")
+                if pd["iops_write"] and pd["reqsz_write"] < 32 * 1024: # <32KiB
+                    flags.add("randomio")
 
         if self.filesystemvolume_or_none is not None:
             if self.get_volume_usage().get("used_pcnt", 0) >= self.filesystemvolume_or_none.fscritical:
