@@ -23,6 +23,7 @@ from os.path import exists
 
 from django.contrib.auth.models import User
 from django.db.models import signals
+from django.core.cache import get_cache
 
 from systemd import dbus_to_python, get_dbus_object
 
@@ -34,6 +35,7 @@ from lvm.models       import VolumeGroup, LogicalVolume
 from volumes.models   import StorageObject
 
 def create_vgs(**kwargs):
+    get_cache("systemd").delete_many(["/sbin/lvs", "/sbin/vgs", "/sbin/pvs"])
     lvm = get_dbus_object("/lvm")
 
     vgs = dbus_to_python(lvm.vgs())
