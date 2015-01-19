@@ -174,9 +174,9 @@ if havestate:
 
     util_percent = tot_ticks / (interval * 1000.) * 100.
 
-    if util_percent > 75:
+    if util_percent > 30:
         exit = 1
-    if util_percent > 85:
+    if util_percent > 50:
         exit = 2
 
     out =  ("Disk load for %(disk)s is at %(util_percent).2f%%.|"
