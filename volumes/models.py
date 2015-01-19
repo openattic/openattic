@@ -112,7 +112,7 @@ STORAGEOBJECT_STATUS_FLAGS = {
     "rebuilding":    {"severity":  1, "desc": ugettext_noop("The storage device is rebuilding data.")},
     "degraded":      {"severity":  2, "desc": ugettext_noop("A storage device has failed and needs to be replaced.")},
     "failed":        {"severity":  3, "desc": ugettext_noop("The volume has failed and cannot be recovered.")},
-    "nearfull":      {"severity":  2, "desc": ugettext_noop("The volume is nearly full.")},
+    "nearfull":      {"severity":  1, "desc": ugettext_noop("The volume is nearly full.")},
     "highload":      {"severity":  1, "desc": ugettext_noop("The volume is experiencing high load.")},
     }
 
