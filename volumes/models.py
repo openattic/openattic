@@ -876,6 +876,9 @@ class GenericDisk(BlockVolume):
             return "locked"
         return "unknown"
 
+    def get_status(self):
+        return [self.status]
+
     @property
     def path(self):
         return self.udev_device.device_node
