@@ -292,6 +292,21 @@ class Endpoint(models.Model):
         except dbus.DBusException:
             return None
 
+    def get_status(self):
+        return [{
+            None:           "unknown",
+            "locked":       "locked",
+            "Diskless":     "offline",
+            "Inconsistent": "degraded",
+            "Outdated":     "degraded",
+            "Consistent":   "offline",
+            "UpToDate":     "online",
+        }[self.status], {
+            None:   "unknown",
+            False:  "secondary",
+            True:   "primary"
+        }[self.is_primary]]
+
     @property
     def host(self):
         return self.volume.volume.host
