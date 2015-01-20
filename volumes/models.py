@@ -1068,3 +1068,26 @@ def __delete_filesystemprovider(instance, **kwargs):
     instance.fs.unmount()
 
 signals.pre_delete.connect(__delete_filesystemprovider, sender=FileSystemProvider)
+
+
+def get_storage_tree(top_obj):
+    def serialize_obj(obj):
+        return {
+            "status":  obj.get_status(),
+            "title":   unicode(obj)
+            }
+
+    def mktree(obj):
+        nodes = []
+        for basedev in obj.get_storage_devices():
+            node = serialize_obj(basedev)
+            if hasattr(basedev, "get_storage_devices") and not isinstance(basedev, VolumePool):
+                node["devices"] = mktree(basedev)
+            nodes.append(node)
+        return nodes
+
+    top = serialize_obj(top_obj)
+    top["devices"] = mktree(top_obj)
+    return top
+
+

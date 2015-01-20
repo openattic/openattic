@@ -38,6 +38,7 @@ VOLUME_FILTER_Q = \
     Q(upper__isnull=True)
 
 
+
 ##################################
 #            Pool                #
 ##################################
@@ -112,6 +113,10 @@ class PoolViewSet(viewsets.ModelViewSet):
         fss = {fs.name: fs.desc for fs in pool.volumepool.get_supported_filesystems()}
         return Response(fss)
 
+    @detail_route()
+    def storage(self, request, *args, **kwargs):
+        return Response(models.get_storage_tree(self.get_object().authoritative_obj))
+
 
 ##################################
 #            Volume              #
@@ -177,6 +182,7 @@ class VolumeSerializer(serializers.HyperlinkedModelSerializer):
 
     url         = serializers.HyperlinkedIdentityField(view_name="volume-detail")
     services    = relations.HyperlinkedIdentityField(view_name="volume-services")
+    storage     = relations.HyperlinkedIdentityField(view_name="volume-storage")
     snapshots   = relations.HyperlinkedIdentityField(view_name="volume-snapshots")
     snapshot    = relations.HyperlinkedRelatedField(view_name="volume-detail", read_only=True)
     source_pool = relations.HyperlinkedRelatedField(view_name="pool-detail",   read_only=True)
@@ -247,6 +253,10 @@ class VolumeViewSet(viewsets.ModelViewSet):
             "origin":   origin
             })
         return ViewSet.as_view({'get': 'list', 'post': 'create'})(request, *args, **kwargs)
+
+    @detail_route()
+    def storage(self, request, *args, **kwargs):
+        return Response(models.get_storage_tree(self.get_object().authoritative_obj))
 
     @detail_route()
     def services(self, request, *args, **kwargs):
