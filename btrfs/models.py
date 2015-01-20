@@ -67,7 +67,17 @@ class Btrfs(VolumePool):
         return filesystem is filesystems.Btrfs
 
     def get_volumepool_usage(self, stats):
-        return
+        stats["vp_megs"] = self.storageobj.megs
+        fs_stat = self.fs.stat
+        if fs_stat["used"] is not None and fs_stat["free"] is not None:
+            stats["vp_used"] = fs_stat["used"]
+            stats["vp_free"] = fs_stat["free"]
+
+        stats["used"]  = max(stats.get("used", None),         stats["vp_used"])
+        stats["free"]  = min(stats.get("free", float("inf")), stats["vp_free"])
+
+        return stats
+
 
 
 class BtrfsSubvolume(FileSystemVolume):
