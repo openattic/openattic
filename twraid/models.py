@@ -188,3 +188,9 @@ class Disk(models.Model):
     def set_identify(self, state):
         get_dbus_object("/twraid").set_identify("/c%d/p%d" % (self.controller.index, self.port), state)
 
+    def get_status(self):
+        if self.status == "OK":
+            return ["online"]
+        elif self.status:
+            return [self.status.lower()]
+
