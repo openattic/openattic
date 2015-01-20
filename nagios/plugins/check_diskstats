@@ -189,7 +189,7 @@ if havestate:
             "tot_avg_wait=%(tot_avg_wait)fs "
             "rd_avg_wait=%(rd_avg_wait)fs wr_avg_wait=%(wr_avg_wait)fs "
             "rd_avg_size=%(rd_avg_size).2fB wr_avg_size=%(wr_avg_size).2fB "
-            "load_percent=%(util_percent).2f%%;75;85;0;100 ") % {
+            "load_percent=%(util_percent).2f%%;30;50;0;100 ") % {
         "disk":         disk,
         "util_percent": util_percent,
         "rd_iops":      rd_iops,
