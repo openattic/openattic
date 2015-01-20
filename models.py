@@ -143,6 +143,16 @@ class OSD(models.Model):
             volume_so.upper = self.cluster
             volume_so.save()
 
+    def get_status(self):
+        status = []
+        if self.volume is not None:
+            status.extend(self.volume.get_status())
+        if self.journal is not None:
+            status.extend(self.journal.get_status())
+        if not status:
+            status = ["unknown"]
+        return status
+
 class Mon(models.Model):
     cluster     = models.ForeignKey(Cluster)
     host        = models.ForeignKey(Host)
