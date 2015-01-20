@@ -109,6 +109,8 @@ STORAGEOBJECT_STATUS_FLAGS = {
     "creating":      {"severity":  0, "desc": ugettext_noop("The volume is being created.")},
     "initializing":  {"severity":  0, "desc": ugettext_noop("The storage device is initializing the volume.")},
     "verifying":     {"severity":  0, "desc": ugettext_noop("The storage device is verifying the volume's integrity.")},
+    "primary":       {"severity":  0, "desc": ugettext_noop("The volume is in Primary mode.")},
+    "secondary":     {"severity":  0, "desc": ugettext_noop("The volume is in Secondary mode.")},
     "rebuilding":    {"severity":  1, "desc": ugettext_noop("The storage device is rebuilding data.")},
     "degraded":      {"severity":  2, "desc": ugettext_noop("A storage device has failed and needs to be replaced.")},
     "failed":        {"severity":  3, "desc": ugettext_noop("The volume has failed and cannot be recovered.")},
