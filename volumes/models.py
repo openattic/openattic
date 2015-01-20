@@ -466,6 +466,14 @@ class StorageObject(models.Model):
             "flags":  dict([ (flag, STORAGEOBJECT_STATUS_FLAGS[flag]["desc"]) for flag in flags ])
         }
 
+    def get_storage_devices(self):
+        for obj in (self.filesystemvolume_or_none, self.volumepool_or_none, self.blockvolume_or_none):
+            if obj is not None:
+                qryset = obj.get_storage_devices()
+                if qryset is not None:
+                    return qryset
+        return []
+
 
 class VolumePool(models.Model):
     """ Something that joins a couple of BlockVolumes together and provides
@@ -494,6 +502,9 @@ class VolumePool(models.Model):
     def member_set(self):
         """ The block devices that provide the storage for this volume pool. """
         return self.storageobj.base_set.all()
+
+    def get_storage_devices(self):
+        return [so.blockvolume_or_none for so in self.storageobj.base_set.all()]
 
     def _create_volume_for_storageobject(self, storageobj, options):
         """ Create a volume that best fulfills the specification given
@@ -606,6 +617,9 @@ class AbstractVolume(models.Model):
             self.post_install()
 
         return res
+
+    def get_storage_devices(self):
+        return [self.storageobj.source_pool.volumepool]
 
     def _create_snapshot_for_storageobject(self, storageobj, options):
         """ Create a volume that best fulfills the specification given

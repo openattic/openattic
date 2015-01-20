@@ -243,6 +243,9 @@ class Connection(BlockVolume):
         # now drbdadm resize the connection
         self.drbd.resize(self.name, False)
 
+    def get_storage_devices(self):
+        return Endpoint.all_objects.filter(connection=self)
+
 
 def __connection_pre_delete(instance, **kwargs):
     for endpoint in Endpoint.all_objects.filter(connection=instance):
@@ -306,6 +309,9 @@ class Endpoint(models.Model):
             False:  "secondary",
             True:   "primary"
         }[self.is_primary]]
+
+    def get_storage_devices(self):
+        return [self.volume]
 
     @property
     def host(self):

@@ -121,6 +121,9 @@ class Unit(BlockVolume):
             "stripewidth": self.chunksize * datadisks
             }
 
+    def get_storage_devices(self):
+        return self.disk_set.all().order_by("enclslot")
+
     def get_volume_usage(self, stats):
         return
 
@@ -132,8 +135,8 @@ class Unit(BlockVolume):
 
     def __unicode__(self):
         if self.storageobj.name:
-            return self.storageobj.name
-        return "Unnamed Unit (/c%d/u%d)" % (self.controller.index, self.index)
+            return "%s (%s)" % (self.storageobj.name, self.unittype)
+        return "Unnamed Unit (/c%d/u%d, %s)" % (self.controller.index, self.index, self.unittype)
 
 
 if HAVE_NAGIOS:
@@ -194,3 +197,5 @@ class Disk(models.Model):
         elif self.status:
             return [self.status.lower()]
 
+    def __unicode__(self):
+        return "%s %dk (Slot %d)" % (self.disktype, self.rpm / 1000, self.enclslot)

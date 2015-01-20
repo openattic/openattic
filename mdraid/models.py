@@ -35,6 +35,9 @@ class Array(BlockVolume):
     def member_set(self):
         return self.storageobj.base_set.all()
 
+    def get_storage_devices(self):
+        return [bv.volume for bv in BlockVolume.objects.filter(storageobj__in=self.member_set).order_by("storageobj__name")]
+
     @property
     def status(self):
         if self.storageobj.is_locked:
@@ -85,4 +88,4 @@ class Array(BlockVolume):
             }
 
     def __unicode__(self):
-        return "MDRAID array %s" % self.storageobj.name
+        return "%s (RAID-%d)" % (self.storageobj.name, self.raid_params["raidlevel"])
