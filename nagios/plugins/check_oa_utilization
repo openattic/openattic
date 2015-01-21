@@ -52,8 +52,8 @@ def print_status(status, message, perfdata):
             if type(perfdata[key]) in (tuple, list):
                 value = ';'.join("%.2f" % part for part in perfdata[key])
             else:
-                value = "%.2f " % perfdata[key]
-            out += "%s=%s" % (key, value)
+                value = "%.2f" % perfdata[key]
+            out += "%s=%s " % (key, value)
     print out.strip()
 
 
