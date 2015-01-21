@@ -92,7 +92,7 @@ def main(argv):
     # Make sure usage contains all the values we need, not just size.
     for key in ("used", "free", "steal", "used_pcnt"):
         if key not in usage:
-            print_status(3, "Usage did not report used/free/steal values -> unknown", {})
+            print_status(3, "Usage did not report used/free/steal values", {})
             return 3
 
     # Make sure we have warn/crit options. If not given, try reading them from the FSV...
