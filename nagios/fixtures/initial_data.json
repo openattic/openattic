@@ -520,7 +520,7 @@
         "verttitle": "Bytes", 
         "fields": "used ** free ** steal", 
         "command": 17, 
-        "title": "Volume Usage"
+        "title": "Volume Space"
     }
 },
 {
@@ -539,6 +539,26 @@
     "fields": {
         "verttitle": "Bytes", 
         "fields": "used ** free ** steal", 
+        "command": 18, 
+        "title": "Pool Space"
+    }
+},
+{
+    "pk": 48, 
+    "model": "nagios.graph", 
+    "fields": {
+        "verttitle": "Bytes", 
+        "fields": "used", 
+        "command": 17, 
+        "title": "Volume Usage"
+    }
+},
+{
+    "pk": 49, 
+    "model": "nagios.graph", 
+    "fields": {
+        "verttitle": "Bytes", 
+        "fields": "used", 
         "command": 18, 
         "title": "Pool Usage"
     }
