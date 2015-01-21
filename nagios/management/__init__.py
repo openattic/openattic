@@ -99,7 +99,7 @@ def create_nagios(**kwargs):
             target      = instance,
             command     = cmd,
             description = nagios_settings.LV_UTIL_DESCRIPTION % unicode(instance),
-            arguments   = "%d%%!%d%%!%s" % (100 - instance.fswarning, 100 - instance.fscritical, instance.path)
+            arguments   = instance.storageobj.uuid
         )
         srv.save()
 
