@@ -1,0 +1,131 @@
+#!/usr/bin/env python
+# -*- coding: utf-8 -*-
+# kate: space-indent on; indent-width 4; replace-tabs on;
+
+"""
+ *  Copyright (C) 2011-2014, it-novum GmbH <community@open-attic.org>
+ *
+ *  openATTIC is free software; you can redistribute it and/or modify it
+ *  under the terms of the GNU General Public License as published by
+ *  the Free Software Foundation; version 2.
+ *
+ *  This package is distributed in the hope that it will be useful,
+ *  but WITHOUT ANY WARRANTY; without even the implied warranty of
+ *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ *  GNU General Public License for more details.
+"""
+
+import os, sys
+
+def get_openattic_dir():
+    defaults = open("/etc/default/openattic")
+    for line in defaults:
+        key, val = line.strip().split("=", 1)
+        if key == "OADIR":
+            return val.replace('"', '')
+    raise KeyError("OADIR not found")
+
+# environment variables
+sys.path.insert( 0, get_openattic_dir() )
+os.environ['DJANGO_SETTINGS_MODULE'] = 'settings'
+
+# If you get an error about Python not being able to write to the Python
+# egg cache, the egg cache path might be set awkwardly. This should not
+# happen under normal circumstances, but every now and then, it does.
+# Uncomment this line to point the egg cache to /tmp.
+#os.environ['PYTHON_EGG_CACHE'] = '/tmp/pyeggs'
+
+from optparse import OptionParser
+
+from volumes.models import StorageObject
+
+
+def print_status(status, message, perfdata):
+    perfkeys = perfdata.keys()
+    perfkeys.sort()
+    out = "%s: %s" % (
+        {0: "OK", 1: "Warning", 2: "Critical", 3: "Unknown"}.get(status, "Error"),
+        message)
+    if perfdata:
+        out += '|'
+        for key in perfkeys:
+            if type(perfdata[key]) in (tuple, list):
+                value = ';'.join("%.2f" % part for part in perfdata[key])
+            else:
+                value = "%.2f " % perfdata[key]
+            out += "%s=%s" % (key, value)
+    print out.strip()
+
+
+def main(argv):
+    parser = OptionParser(usage="%prog [options] <volume UUID>")
+    parser.add_option( "-p", "--pool",
+        help="Check utilization of the volume pool instead of the volume.",
+        default=False, action="store_true"
+    )
+    parser.add_option( "-w", "--warn",
+        help="Warning level in % (default: 75).", default=None, type="int"
+    )
+    parser.add_option( "-c", "--crit",
+        help="Warning level in % (default: 85).", default=None, type="int"
+    )
+    options, progargs = parser.parse_args()
+
+    if len(progargs) != 1:
+        parser.print_usage()
+        sys.exit(4)
+
+    try:
+        volume = StorageObject.objects.get(uuid=progargs[0])
+    except StorageObject.DoesNotExist:
+        try:
+            volume = StorageObject.objects.get(name=progargs[0])
+        except StorageObject.DoesNotExist:
+            print_status(4, "Volume not found!", {})
+            return 4
+
+    if options.pool:
+        usage = volume.get_volumepool_usage()
+    else:
+        usage = volume.get_volume_usage()
+
+    # Make sure usage contains all the values we need, not just size.
+    for key in ("used", "free", "steal", "used_pcnt"):
+        if key not in usage:
+            print_status(3, "Usage did not report used/free/steal values -> unknown", {})
+            return 3
+
+    # Make sure we have warn/crit options. If not given, try reading them from the FSV...
+    if volume.filesystemvolume_or_none is not None:
+        if options.warn is None:
+            options.warn = volume.filesystemvolume_or_none.fswarning
+        if options.crit is None:
+            options.crit = volume.filesystemvolume_or_none.fscritical
+
+    # and if that didn't work, use hardcoded defaults.
+    if options.warn is None:
+        options.warn = 75
+    if options.crit is None:
+        options.crit = 85
+
+    status = 0
+    if usage["used_pcnt"] >= options.warn:
+        status = 1
+    if usage["used_pcnt"] >= options.crit:
+        status = 2
+
+    # get_*_usage() returns stuff in MiB, but we need to report perfdata in bytes
+    # to prevent RRDtool from printing "10 MMB" later on.
+    print_status(status, "%s: %.2f%% used, %s usable, %s used, %s free" % (
+        volume.name, usage["used_pcnt"], usage["usable_text"], usage["used_text"], usage["free_text"]), {
+        "used":   usage["used"]   * 1024**2,
+        "free":   usage["free"]   * 1024**2,
+        "steal":  usage["steal"]  * 1024**2,
+        "usable": usage["usable"] * 1024**2,
+        "size":   usage["size"]   * 1024**2,
+        "used_pcnt": (usage["used_pcnt"], options.warn, options.crit, 0, 100),
+        })
+    return status
+
+
+sys.exit(main(sys.argv))
