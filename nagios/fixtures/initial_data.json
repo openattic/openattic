@@ -128,6 +128,22 @@
     }
 },
 {
+    "pk": 17, 
+    "model": "nagios.command", 
+    "fields": {
+        "query_only": false, 
+        "name": "check_volume_utilization"
+    }
+},
+{
+    "pk": 18, 
+    "model": "nagios.command", 
+    "fields": {
+        "query_only": false, 
+        "name": "check_pool_utilization"
+    }
+},
+{
     "pk": 1, 
     "model": "nagios.graph", 
     "fields": {
@@ -485,6 +501,46 @@
         "fields": "-(rd_bps * 86400) wr_bps * 86400", 
         "command": 9, 
         "title": "Throughput per day"
+    }
+},
+{
+    "pk": 44, 
+    "model": "nagios.graph", 
+    "fields": {
+        "verttitle": "%", 
+        "fields": "used_pcnt", 
+        "command": 17, 
+        "title": "Volume Utilization"
+    }
+},
+{
+    "pk": 45, 
+    "model": "nagios.graph", 
+    "fields": {
+        "verttitle": "Bytes", 
+        "fields": "used ** free ** steal", 
+        "command": 17, 
+        "title": "Volume Usage"
+    }
+},
+{
+    "pk": 46, 
+    "model": "nagios.graph", 
+    "fields": {
+        "verttitle": "%", 
+        "fields": "used_pcnt", 
+        "command": 18, 
+        "title": "Pool Utilization"
+    }
+},
+{
+    "pk": 47, 
+    "model": "nagios.graph", 
+    "fields": {
+        "verttitle": "Bytes", 
+        "fields": "used ** free ** steal", 
+        "command": 18, 
+        "title": "Pool Usage"
     }
 }
 ]
