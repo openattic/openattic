@@ -12,6 +12,7 @@ debian/nagios_conf.d/openattic_static.cfg  /etc/nagios3/conf.d
 debian/nagios_plugins_conf.d/openattic.cfg /etc/nagios-plugins/config
 
 nagios/plugins/check_diskstats          /usr/lib/nagios/plugins
+nagios/plugins/check_oa_utilization     /usr/lib/nagios/plugins
 nagios/plugins/check_iface_traffic      /usr/lib/nagios/plugins
 nagios/plugins/check_openattic_rpcd     /usr/lib/nagios/plugins
 nagios/plugins/check_openattic_systemd  /usr/lib/nagios/plugins
