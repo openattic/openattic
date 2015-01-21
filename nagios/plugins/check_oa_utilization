@@ -118,7 +118,10 @@ def main(argv):
     # to prevent RRDtool from printing "10 MMB" later on.
     print_status(status, "%s: %.2f%% used, %s usable, %s used, %s free" % (
         volume.name, usage["used_pcnt"], usage["usable_text"], usage["used_text"], usage["free_text"]), {
-        "used":   usage["used"]   * 1024**2,
+        "used": ( usage["used"] * 1024**2,
+             usage["used"] * 1024**2 * options.warn / 100.,
+             usage["used"] * 1024**2 * options.crit / 100.,
+             0, usage["usable"] * 1024**2 ),
         "free":   usage["free"]   * 1024**2,
         "steal":  usage["steal"]  * 1024**2,
         "usable": usage["usable"] * 1024**2,
