@@ -16,7 +16,7 @@
 
 from django.core.management.base import BaseCommand
 
-from volumes.models import StorageObject, VolumePool
+from volumes.models import StorageObject, get_storage_tree
 
 class Command(BaseCommand):
     help = "Lists all StorageObjects or prints the storage device tree if a volume name is given."
@@ -24,18 +24,15 @@ class Command(BaseCommand):
     def handle(self, volname=None, **options):
         if volname is None:
             for so in StorageObject.objects.all().order_by("name"):
-                print so
+                print "%-20s %-10s %s" % (so, so.get_status()["status"], so.uuid)
+
         else:
             def printobj(obj, level):
-                print "%s%s" % (" " * level, obj)
+                print "%-20s %-10s" % ("%s%s" % (" " * level, obj["title"]), obj["status"])
 
-            def mktree(obj, level):
-                if not hasattr(obj, "get_storage_devices") or isinstance(obj, VolumePool):
-                    return
-                for basedev in obj.get_storage_devices():
-                    printobj(basedev, level)
-                    mktree(basedev, level + 1)
+                if "devices" in obj:
+                    for childdev in obj["devices"]:
+                        printobj(childdev, level + 1)
 
-            so = StorageObject.objects.get(name=volname)
-            printobj(so, 0)
-            mktree(so, 1)
+            obj = StorageObject.objects.get(name=volname).authoritative_obj
+            printobj(get_storage_tree(obj), 0)
