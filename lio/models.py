@@ -172,7 +172,6 @@ class Target(models.Model):
         return self.name
 
     def full_clean(self, exclude=None, validate_unique=True):
-        models.Model.full_clean(self, exclude=exclude, validate_unique=validate_unique)
         if not self.wwn:
             if self.type == "iscsi":
                 # Generate IQN. the "prefix" part is shamelessly stolen from rtslib, but we use
@@ -184,6 +183,7 @@ class Target(models.Model):
                 self.wwn = "%s:%s" % (prefix, self.name.replace("_", "").replace(" ", ""))
             else:
                 self.wwn = generate_wwn('free', self.type)
+        models.Model.full_clean(self, exclude=exclude, validate_unique=validate_unique)
 
     def save(self, *args, **kwargs):
         install = (self.id is None)
