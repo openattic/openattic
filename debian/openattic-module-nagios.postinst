@@ -6,6 +6,9 @@ if [ "$1" = "configure" ] ; then
 	if ! groups openattic | grep -q nagios; then
 		adduser openattic nagios
 	fi
+	if ! groups nagios | grep -q openattic; then
+		adduser nagios openattic
+	fi
 fi
 
 #DEBHELPER#
