@@ -1,0 +1,12 @@
+[Unit]
+Description=openATTIC RPC Daemon
+After=network.target remote-fs.target nss-lookup.target
+
+[Service]
+Type=simple
+EnvironmentFile=/etc/default/openattic
+ExecStart=/usr/bin/python -- /usr/share/openattic/manage.py runrpcd -l /var/log/openattic_rpcd
+PIDFile=/var/run/openattic_rpcd.pid
+
+[Install]
+WantedBy=multi-user.target
