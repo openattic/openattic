@@ -103,33 +103,15 @@ LVM_LOG_COMMANDS = False
 
 # Auto-Configure distro defaults
 try:
-    import lsb_release
-    distro = lsb_release.get_distro_information()
+    import platform
+    distro, version, codename = platform.linux_distribution()
 except:
     pass
 else:
-    if distro['ID'] == 'Debian' and distro['RELEASE'] >= "6.0":
-        ISCSI_IETD_CONF     = "/etc/iet/ietd.conf"
-        ISCSI_TARGETS_ALLOW = "/etc/iet/targets.allow"
-        ISCSI_TARGETS_DENY  = "/etc/iet/targets.deny"
-        ISCSI_INITR_ALLOW   = "/etc/iet/initiators.allow"
-        ISCSI_INITR_DENY    = "/etc/iet/initiators.deny"
-        SAMBA_INITSCRIPT    = "/etc/init.d/samba"
-    elif distro['ID'] == 'Ubuntu' and distro['RELEASE'] >= "10.04":
-        ISCSI_IETD_CONF     = "/etc/ietd.conf"
-        ISCSI_TARGETS_ALLOW = "/etc/targets.allow"
-        ISCSI_TARGETS_DENY  = "/etc/targets.deny"
-        ISCSI_INITR_ALLOW   = "/etc/initiators.allow"
-        ISCSI_INITR_DENY    = "/etc/initiators.deny"
-        SAMBA_INITSCRIPT    = "/etc/init.d/smbd"
-    elif distro['ID'] == 'Univention':
-        ISCSI_IETD_CONF     = "/etc/ietd.conf"
-        ISCSI_TARGETS_ALLOW = "/etc/targets.allow"
-        ISCSI_TARGETS_DENY  = "/etc/targets.deny"
-        ISCSI_INITR_ALLOW   = "/etc/initiators.allow"
-        ISCSI_INITR_DENY    = "/etc/initiators.deny"
-        SAMBA_INITSCRIPT    = "/etc/init.d/samba"
-        SAMBA_SMB_CONF      = "/etc/samba/openattic.conf"
+    if distro == 'CentOS Linux':
+        NAGIOS_CFG_PATH = "/etc/nagios/nagios.cfg"
+        NAGIOS_CONTACTS_CFG_PATH = "/etc/nagios/conf.d/openattic_contacts.cfg"
+        NAGIOS_SERVICES_CFG_PATH = "/etc/nagios/conf.d/openattic.cfg"
 
 # Local time zone for this installation. Choices can be found here:
 # http://en.wikipedia.org/wiki/List_of_tz_zones_by_name
