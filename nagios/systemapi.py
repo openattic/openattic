@@ -59,14 +59,14 @@ class SystemD(BasePlugin):
                 } ) )
         finally:
             fd.close()
-        invoke(["nagios3", "--verify-config", nagios_settings.NAGIOS_CFG_PATH])
-        invoke(["/etc/init.d/nagios3", "restart"])
+        invoke([nagios_settings.BINARY_NAME, "--verify-config", nagios_settings.NAGIOS_CFG_PATH])
+        invoke([nagios_settings.INIT_SCRIPT, "restart"])
         while not os.path.exists(nagios_settings.STATUS_DAT_PATH):
             sleep(0.1)
 
     @method(in_signature="", out_signature="i")
     def check_conf(self):
-        return invoke(["nagios3", "--verify-config", nagios_settings.NAGIOS_CFG_PATH])
+        return invoke([nagios_settings.BINARY_NAME, "--verify-config", nagios_settings.NAGIOS_CFG_PATH])
 
     @method(in_signature="s", out_signature="")
     def schedule_host(self, hostname):
