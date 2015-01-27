@@ -16,7 +16,7 @@
 
 from django.conf import settings
 
-INITSCRIPT      = getattr( settings, "SAMBA_INITSCRIPT", "/etc/init.d/smbd" )
+INITSCRIPT      = getattr( settings, "SAMBA_INITSCRIPT", "/etc/init.d/samba" )
 SMB_CONF        = getattr( settings, "SAMBA_SMB_CONF",   "/etc/samba/smb.conf" )
 DOMAIN          = getattr( settings, "SAMBA_DOMAIN",     "" )
 WORKGROUP       = getattr( settings, "SAMBA_WORKGROUP",  "" )
