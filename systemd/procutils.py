@@ -16,7 +16,9 @@
 
 import os
 import pwd
+import dbus
 import errno
+import os.path
 import logging
 import subprocess
 
@@ -117,3 +119,44 @@ def invoke(args, close_fds=True, return_out_err=False, log=True, stdin=None, fai
     if return_out_err:
         return proc.returncode, procout, procerr
     return proc.returncode
+
+
+def service_command(service, command="reload"):
+    """ Restart a service, preferrably by telling systemd(1) to do so via its
+        DBus API, and if that is not available, by executing '/usr/sbin/service $service restart'
+        or '/etc/init.d/$service restart'.
+    """
+
+    if command not in ("start", "stop", "reload", "restart"):
+        raise ValueError("invalid command %s" % command)
+
+    try:
+        obj = dbus.SystemBus().get_object("org.freedesktop.systemd1", "/org/freedesktop/systemd1")
+        systemd = dbus.Interface(obj, "org.freedesktop.systemd1.Manager")
+    except dbus.DBusException:
+        logging.warn("restart(%s): systemd(1) not available, falling back to invoke()" % service)
+    else:
+        logging.info("restart(%s): calling systemd(1)" % service)
+        if command == "reload":
+            systemd.ReloadOrRestartUnit("%s.service" % service, "replace")
+        elif command == "restart":
+            systemd.RestartUnit("%s.service" % service, "replace")
+        elif command == "start":
+            systemd.StartUnit("%s.service" % service, "replace")
+        elif command == "stop":
+            systemd.StopUnit("%s.service" % service, "replace")
+        return
+
+    if os.path.exists("/usr/sbin/service"):
+        logging.info("restart(%s): invoking `service %s %s`" % (service, service, command))
+        invoke(["/usr/sbin/service", service, command])
+        return
+
+    initscript = os.path.join("/etc/init.d", service)
+    if os.path.exists(initscript):
+        logging.info("restart(%s): invoking `%s %s`" % (service, initscript, command))
+        invoke([initscript, command])
+        return
+
+    raise SystemError("restart(%s): don't know how (no systemd, no /usr/sbin/service installed, no init script found)" % service)
+
