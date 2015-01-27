@@ -2,14 +2,14 @@
 NAGIOS_RESTART_REQ="false"
 NAGIOS_CONF="/etc/nagios3/nagios.cfg"
 
-if grep process_performance_data /etc/nagios3/nagios.cfg | cut -d= -f2 | grep -q 0; then
+if grep process_performance_data $NAGIOS_CONF | cut -d= -f2 | grep -q 0; then
 	# Enable processing of performance data
 	sed -i -e 's/^process_performance_data=0$/process_performance_data=1/' $NAGIOS_CONF
 	NAGIOS_RESTART_REQ="true"
 fi
 
 # Enable NPCD broker module
-if ! grep broker_module /etc/nagios3/nagios.cfg | grep -v '#' | grep -q npcdmod.o; then
+if ! grep broker_module $NAGIOS_CONF | grep -v '#' | grep -q npcdmod.o; then
 	echo "broker_module=/usr/lib/pnp4nagios/npcdmod.o config_file=/etc/pnp4nagios/npcd.cfg" >> $NAGIOS_CONF
 	NAGIOS_RESTART_REQ="true"
 fi
