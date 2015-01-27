@@ -108,7 +108,7 @@ try:
 except:
     pass
 else:
-    if distro == 'CentOS Linux':
+    if distro in ('Red Hat Enterprise Linux Server', 'CentOS Linux'):
         NAGIOS_CFG_PATH = "/etc/nagios/nagios.cfg"
         NAGIOS_CONTACTS_CFG_PATH = "/etc/nagios/conf.d/openattic_contacts.cfg"
         NAGIOS_SERVICES_CFG_PATH = "/etc/nagios/conf.d/openattic.cfg"
