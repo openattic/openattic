@@ -131,7 +131,8 @@ def service_command(service, command="reload"):
         raise ValueError("invalid command %s" % command)
 
     try:
-        obj = dbus.SystemBus().get_object("org.freedesktop.systemd1", "/org/freedesktop/systemd1")
+        bus = dbus.SystemBus(private=True)
+        obj = bus.get_object("org.freedesktop.systemd1", "/org/freedesktop/systemd1")
         systemd = dbus.Interface(obj, "org.freedesktop.systemd1.Manager")
     except dbus.DBusException:
         logging.warn("service_command(%s): systemd(1) not available, falling back to invoke()" % service)
