@@ -134,9 +134,9 @@ def service_command(service, command="reload"):
         obj = dbus.SystemBus().get_object("org.freedesktop.systemd1", "/org/freedesktop/systemd1")
         systemd = dbus.Interface(obj, "org.freedesktop.systemd1.Manager")
     except dbus.DBusException:
-        logging.warn("restart(%s): systemd(1) not available, falling back to invoke()" % service)
+        logging.warn("service_command(%s): systemd(1) not available, falling back to invoke()" % service)
     else:
-        logging.info("restart(%s): calling systemd(1)" % service)
+        logging.info("service_command(%s): calling systemd(1)" % service)
         if command == "reload":
             systemd.ReloadOrRestartUnit("%s.service" % service, "replace")
         elif command == "restart":
@@ -148,15 +148,15 @@ def service_command(service, command="reload"):
         return
 
     if os.path.exists("/usr/sbin/service"):
-        logging.info("restart(%s): invoking `service %s %s`" % (service, service, command))
+        logging.info("service_command(%s): invoking `service %s %s`" % (service, service, command))
         invoke(["/usr/sbin/service", service, command])
         return
 
     initscript = os.path.join("/etc/init.d", service)
     if os.path.exists(initscript):
-        logging.info("restart(%s): invoking `%s %s`" % (service, initscript, command))
+        logging.info("service_command(%s): invoking `%s %s`" % (service, initscript, command))
         invoke([initscript, command])
         return
 
-    raise SystemError("restart(%s): don't know how (no systemd, no /usr/sbin/service installed, no init script found)" % service)
+    raise SystemError("service_command(%s): don't know how (no systemd, no /usr/sbin/service installed, no init script found)" % service)
 
