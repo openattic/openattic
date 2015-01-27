@@ -18,8 +18,8 @@ import socket
 
 from django.template.loader import render_to_string
 
-from systemd.procutils import invoke
-from systemd.plugins   import logged, BasePlugin, method
+from systemd.procutils import service_command
+from systemd.plugins   import logged, BasePlugin, method, deferredmethod
 from samba.models  import Share
 from samba.conf    import settings as samba_settings
 
@@ -40,6 +40,6 @@ class SystemD(BasePlugin):
         finally:
             fd.close()
 
-    @method(in_signature="", out_signature="i")
-    def reload(self):
-        return invoke([samba_settings.INITSCRIPT, "reload"])
+    @deferredmethod(in_signature="")
+    def reload(self, sender):
+        return service_command(samba_settings.SERVICE_NAME, "reload")

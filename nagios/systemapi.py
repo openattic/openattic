@@ -28,7 +28,7 @@ from django.contrib.auth.models import User
 from django.conf   import settings
 
 from ifconfig.models import Host
-from systemd.procutils import invoke
+from systemd.procutils import invoke, service_command
 from systemd.plugins   import logged, BasePlugin, method, deferredmethod
 from nagios.models import Command, Service
 from nagios.conf   import settings as nagios_settings
@@ -60,7 +60,7 @@ class SystemD(BasePlugin):
         finally:
             fd.close()
         invoke([nagios_settings.BINARY_NAME, "--verify-config", nagios_settings.NAGIOS_CFG_PATH])
-        invoke([nagios_settings.INIT_SCRIPT, "restart"])
+        service_command(nagios_settings.SERVICE_NAME, "reload")
         while not os.path.exists(nagios_settings.STATUS_DAT_PATH):
             sleep(0.1)
 

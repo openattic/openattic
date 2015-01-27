@@ -113,8 +113,9 @@ else:
         NAGIOS_CONTACTS_CFG_PATH = "/etc/nagios/conf.d/openattic_contacts.cfg"
         NAGIOS_SERVICES_CFG_PATH = "/etc/nagios/conf.d/openattic.cfg"
         NAGIOS_BINARY_NAME = "nagios"
-        NAGIOS_INIT_SCRIPT = "/etc/init.d/nagios"
+        NAGIOS_SERVICE_NAME = "nagios"
         NAGIOS_STATUS_DAT_PATH = "/var/log/nagios/status.dat"
+        SAMBA_SERVICE_NAME = "smb"
 
 # Local time zone for this installation. Choices can be found here:
 # http://en.wikipedia.org/wiki/List_of_tz_zones_by_name

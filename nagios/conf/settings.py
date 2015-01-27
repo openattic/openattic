@@ -44,4 +44,4 @@ SERVICES_CFG_PATH        = getattr( settings, "NAGIOS_SERVICES_CFG_PATH",   "/et
 INCLUDE_HOST_IN_CFG      = getattr( settings, "NAGIOS_INCLUDE_HOST_IN_CFG", True )
 
 BINARY_NAME              = getattr( settings, "NAGIOS_BINARY_NAME",         "nagios3" )
-INIT_SCRIPT              = getattr( settings, "NAGIOS_INIT_SCRIPT",         "/etc/init.d/nagios3" )
+SERVICE_NAME             = getattr( settings, "NAGIOS_SERVICE_NAME",        "nagios3" )

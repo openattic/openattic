@@ -16,8 +16,8 @@
 
 from django.template.loader import render_to_string
 
-from systemd.procutils import invoke
-from systemd.plugins   import logged, BasePlugin, method
+from systemd.procutils import service_command
+from systemd.plugins   import logged, BasePlugin, method, deferredmethod
 
 from tftp.conf     import settings as tftp_settings
 from tftp.models   import Instance
@@ -36,6 +36,6 @@ class SystemD(BasePlugin):
         finally:
             fd.close()
 
-    @method(in_signature="", out_signature="i")
-    def reload(self):
-        return invoke(["/etc/init.d/xinetd", "reload"])
+    @deferredmethod(in_signature="")
+    def reload(self, sender):
+        return service_command("xinetd", "reload")
