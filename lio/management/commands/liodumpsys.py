@@ -24,10 +24,9 @@ class Command( BaseCommand ):
     def handle(self, **options):
         r = RTSRoot()
 
-        for backstore in r.backstores:
-            print "Backstore:", backstore.name
-            for storage_object in backstore.storage_objects:
-                print "    -> %s (%s, WWN=%s)" % (storage_object.name, storage_object.udev_path, storage_object.wwn)
+        print "Storage Objects:"
+        for storage_object in r.storage_objects:
+            print "    -> %s (%s, WWN=%s, backstore=%s)" % (storage_object.name, storage_object.udev_path, storage_object.wwn, storage_object.backstore.name)
 
         for fabric in r.fabric_modules:
             print "Fabric:", fabric.name
