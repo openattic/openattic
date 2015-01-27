@@ -118,7 +118,7 @@ class SystemD(BasePlugin):
 
     @deferredmethod(in_signature="ssis")
     def lvcreate(self, vgname, lvname, megs, snapshot, sender):
-        cmd = ["/sbin/lvcreate"]
+        cmd = ["/sbin/lvcreate", "--yes"]
         if snapshot:
             cmd.extend(["-s", snapshot])
         cmd.extend(["-L", ("%dM" % megs),
