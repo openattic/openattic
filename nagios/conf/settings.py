@@ -34,7 +34,7 @@ CPUTIME_DESCRIPTION      = getattr( settings, "NAGIOS_CPUTIME_DESCRIPTION",    "
 CPUTIME_CHECK_CMD        = getattr( settings, "NAGIOS_CPUTIME_CHECK_CMD",      "check_cputime" )
 
 RRD_PATH                 = getattr( settings, "NAGIOS_RRD_PATH",          "/var/lib/pnp4nagios/perfdata/%(host)s/%(serv)s.rrd" )
-XML_PATH                 = getattr( settings, "NAGIOS_RRD_PATH",          "/var/lib/pnp4nagios/perfdata/%(host)s/%(serv)s.xml" )
+XML_PATH                 = getattr( settings, "NAGIOS_XML_PATH",          "/var/lib/pnp4nagios/perfdata/%(host)s/%(serv)s.xml" )
 CMD_PATH                 = getattr( settings, "NAGIOS_CMD_PATH",          "/var/lib/nagios3/rw/nagios.cmd" )
 STATUS_DAT_PATH          = getattr( settings, "NAGIOS_STATUS_DAT_PATH",   "/var/cache/nagios3/status.dat" )
 
