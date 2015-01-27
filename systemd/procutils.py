@@ -137,15 +137,20 @@ def service_command(service, command="reload"):
         logging.warn("service_command(%s): systemd(1) not available, falling back to invoke()" % service)
     else:
         logging.info("service_command(%s): calling systemd(1)" % service)
-        if command == "reload":
-            systemd.ReloadOrRestartUnit("%s.service" % service, "replace")
-        elif command == "restart":
-            systemd.RestartUnit("%s.service" % service, "replace")
-        elif command == "start":
-            systemd.StartUnit("%s.service" % service, "replace")
-        elif command == "stop":
-            systemd.StopUnit("%s.service" % service, "replace")
-        return
+        try:
+            if command == "reload":
+                systemd.ReloadOrRestartUnit("%s.service" % service, "replace")
+            elif command == "restart":
+                systemd.RestartUnit("%s.service" % service, "replace")
+            elif command == "start":
+                systemd.StartUnit("%s.service" % service, "replace")
+            elif command == "stop":
+                systemd.StopUnit("%s.service" % service, "replace")
+        except dbus.DBusException, err:
+            import traceback
+            logging.error("service_command(%s): caught exception, falling back to invoke():\n%s" % (service, traceback.format_exc()))
+        else:
+            return
 
     if os.path.exists("/usr/sbin/service"):
         logging.info("service_command(%s): invoking `service %s %s`" % (service, service, command))
