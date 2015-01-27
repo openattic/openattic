@@ -180,6 +180,20 @@ class SystemD(BasePlugin):
         except (ImportError, AttributeError):
             logging.warn("CliConfig.save_running_config is unavailable.")
 
+        # now, being a smartass and trying to invoke(["targetcli"], stdin="cd /\nsaveconfig\nyes\n")
+        # would just lead to targetcli complaining about the following:
+        #
+        # Traceback (most recent call last):
+        #   File "/usr/bin/targetcli", line 89, in <module>
+        #     main()
+        #   File "/usr/bin/targetcli", line 82, in main
+        #     shell.run_interactive()
+        #   File "/usr/lib/python2.7/site-packages/configshell/shell.py", line 955, in run_interactive
+        #     readline.set_completer(old_completer)
+        # NameError: global name 'readline' is not defined
+        #
+        # So, this won't work.
+
         raise SystemError(
             "Config cannot be saved because none of the ways we know of are available on your system. "
             "This is likely a bug. Please contact the openATTIC team at http://open-attic.org.")
