@@ -25,8 +25,8 @@ if [ "$1" = "configure" ] ; then
     touch /var/log/openattic_vgmanager
     setperm /var/log/openattic_vgmanager 0640
 
-    update-rc.d openattic_systemd defaults >/dev/null
-    update-rc.d openattic_rpcd    defaults >/dev/null
+    update-rc.d openattic-systemd defaults >/dev/null
+    update-rc.d openattic-rpcd    defaults >/dev/null
 
     if [ -x /etc/init.d/apache2 ]; then
         invoke-rc.d --quiet apache2 reload
