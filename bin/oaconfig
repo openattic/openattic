@@ -321,7 +321,7 @@ EOF
 		dbus-send --system --print-reply --dest=org.openattic.systemd /samba org.openattic.systemd.writeconf
 		for SERVICE in $SAMBA_SERVICES; do
 			service $SERVICE restart
-		fi
+		done
 		service "$WINBIND_SERVICE" restart
 		
 		echo "To see if it worked, let's try 'getent passwd \"$user\"':"
