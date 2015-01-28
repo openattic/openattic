@@ -23,3 +23,7 @@ SYSD_PIDFILE="/var/run/openattic_systemd.pid"
 SYSD_LOGFILE="/var/log/openattic_systemd"
 SYSD_OPTIONS="$OADIR/manage.py runsystemd"
 
+WEBSERVER_SERVICE="apache2"
+SAMBA_SERVICES="samba"
+#SAMBA_SERVICES="smbd nmbd"
+WINBIND_SERVICE="winbind"

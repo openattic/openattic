@@ -87,7 +87,7 @@ case $1 in
 			apt-get install $@
 		fi
 		
-		if /etc/init.d/openattic_systemd status ; then
+		if service openattic-systemd status >/dev/null; then
 			# restart the daemons so they don't keep any locks open
 			$0 reload
 		fi
@@ -164,15 +164,15 @@ case $1 in
 		;;
 
 	start|stop|restart|force-reload|reload)
-		/etc/init.d/openattic_systemd $1
-		/etc/init.d/openattic_rpcd $1
-		/etc/init.d/apache2 $1
+		service openattic-systemd $1
+		service openattic-rpcd $1
+		service "${WEBSERVER_SERVICE}" $1
 		;;
 
 	status)
-		/etc/init.d/openattic_systemd status || /bin/true
-		/etc/init.d/openattic_rpcd status    || /bin/true
-		/etc/init.d/apache2 status           || /bin/true
+		service openattic-systemd status || /bin/true
+		service openattic-rpcd status    || /bin/true
+		service "${WEBSERVER_SERVICE}" status || /bin/true
 		;;
 
 	rootshell|shell)
@@ -195,16 +195,19 @@ case $1 in
 			exit 2
 		fi
 		
-		if [ ! -e "/etc/init.d/winbind" ]; then
-			echo "Winbind is not installed."
+		if ! which smbd > /dev/null; then
+			echo "smbd not found."
 			exit 2
 		fi
 		
-		if [ ! -e "/etc/init.d/samba" ]; then
-			if [ ! -e /etc/init.d/smbd -o ! -e /etc/init.d/nmbd ]; then
-				echo "Samba is not installed."
-				exit 2
-			fi
+		if ! which nmbd > /dev/null; then
+			echo "nmbd not found."
+			exit 2
+		fi
+		
+		if ! which winbindd > /dev/null; then
+			echo "winbindd not found."
+			exit 2
 		fi
 		
 		function lower () {
@@ -316,13 +319,10 @@ EOF
 			sleep 1
 		done
 		dbus-send --system --print-reply --dest=org.openattic.systemd /samba org.openattic.systemd.writeconf
-		if [ -e "/etc/init.d/samba" ]; then
-			/etc/init.d/samba restart
-		else
-			/etc/init.d/smbd restart
-			/etc/init.d/nmbd restart
+		for SERVICE in $SAMBA_SERVICES; do
+			service $SERVICE restart
 		fi
-		/etc/init.d/winbind restart
+		service "$WINBIND_SERVICE" restart
 		
 		echo "To see if it worked, let's try 'getent passwd \"$user\"':"
 		getent passwd "$user"
