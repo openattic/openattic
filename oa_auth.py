@@ -86,6 +86,8 @@ def oa_authorize(user):
 
 
 class ExtendedBasicAuthentication(BasicAuthentication):
+    """ Basic Authentication that additionally checks authorization the openATTIC way. """
+
     def authenticate_credentials(self, userid, password):
         user = oa_authenticate(username=userid, password=password)
         if user is None:
@@ -98,3 +100,20 @@ class ExtendedBasicAuthentication(BasicAuthentication):
 
         return (user, None)
 
+
+class RequestAuthentication(BasicAuthentication):
+    """ Authenticate using data from the request, be it either username/password
+        in POST fields, or a REMOTE_USER set by e.g. Kerberos.
+    """
+
+    def authenticate(self, request):
+        user = oa_authenticate(request=request)
+        if user is None:
+            raise exceptions.AuthenticationFailed('Invalid credentials')
+
+        try:
+            oa_authorize(user)
+        except Unauthorized, err:
+            raise exceptions.PermissionDenied(err.args[0])
+
+        return (user, None)

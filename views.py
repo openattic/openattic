@@ -27,14 +27,16 @@ from django.contrib.auth.decorators import login_required
 from rest_framework.views import APIView
 from rest_framework.permissions import AllowAny
 from rest_framework.response import Response
+from rest_framework.authentication import SessionAuthentication
 
 from userprefs.models import UserProfile
 from ifconfig.models  import Host
 
-from oa_auth import oa_authenticate, oa_authorize, Unauthorized
+from oa_auth import oa_authenticate, oa_authorize, Unauthorized, RequestAuthentication
 from rest.restapi import UserSerializer
 
 class AuthView(APIView):
+    authentication_classes = (SessionAuthentication, RequestAuthentication)
     permission_classes = (AllowAny,)
 
     def post(self, request, *args, **kwargs):
