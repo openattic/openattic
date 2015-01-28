@@ -212,7 +212,7 @@ class Pool(VolumePool):
         return unicode(self.storageobj.name)
 
     def full_clean(self, exclude=None, validate_unique=True):
-        super(Pool, self).full_clean(self, exclude=exclude, validate_unique=validate_unique)
+        super(Pool, self).full_clean(exclude=exclude, validate_unique=validate_unique)
         if self.min_size > self.size:
             raise ValidationError({"min_size": ["min_size must be less than or equal to size"]})
 
