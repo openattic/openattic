@@ -117,6 +117,7 @@ else:
         NAGIOS_SERVICE_NAME = "nagios"
         NAGIOS_STATUS_DAT_PATH = "/var/log/nagios/status.dat"
         SAMBA_SERVICE_NAME = "smb"
+        LVM_HAVE_YES_OPTION = True
 
 # Local time zone for this installation. Choices can be found here:
 # http://en.wikipedia.org/wiki/List_of_tz_zones_by_name
