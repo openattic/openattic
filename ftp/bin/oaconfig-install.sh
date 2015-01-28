@@ -4,4 +4,4 @@ if [ -e "/etc/proftpd/proftpd.conf" -a -e "/etc/proftpd/conf.d" ]; then
 		service proftpd restart
 	fi
 fi
-service proftpd status || service proftpd start
+service proftpd status >/dev/null || service proftpd start
