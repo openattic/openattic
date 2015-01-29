@@ -88,8 +88,8 @@ def index(request):
             profile = UserProfile(user=request.user, host=Host.objects.get_current())
             profile.save()
 
-        if settings.ANGULAR_LOGIN:
-            return HttpResponseRedirect("angular/#/dashboard")
+        #if settings.ANGULAR_LOGIN:
+            #return HttpResponseRedirect("angular/#/dashboard")
 
         if "theme" in profile:
             theme = profile["theme"]
