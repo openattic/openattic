@@ -64,6 +64,21 @@ class FileSystem(object):
         vol.save()
         return vol
 
+    @classmethod
+    def configure_blockvolume(cls, volume):
+        from django.contrib.auth.models import User
+        from volumes.models import FileSystemProvider
+        try:
+            admin = User.objects.get(username="openattic")
+        except User.DoesNotExist:
+            admin = User.objects.filter(is_superuser=True)[0]
+        vol = FileSystemProvider(storageobj=volume.storageobj, owner=admin, fstype=cls.name,
+                                 fswarning=75, fscritical=85)
+        vol.full_clean()
+        vol.save(database_only=True)
+        vol.mount()
+        return vol
+
     class WrongFS(Exception):
         """ Raised when a filesystem handler detects that the volume is formatted with a different fs. """
         pass

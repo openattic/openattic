@@ -80,6 +80,7 @@ def create_vgs(**kwargs):
             lv = LogicalVolume(storageobj=so, vg=vg)
             print lv.storageobj.name, lv.storageobj.megs, lv.vg.storageobj.name
             lv.save(database_only=True)
+            lv.detect_fs()
 
         else:
             print "Logical Volume", lvname, "already exists in the database"

@@ -831,6 +831,19 @@ class BlockVolume(AbstractVolume):
             "normiops_write":  pd["wr_avg_size"]["curr"] / 4096 * pd["wr_iops"]["curr"],
             }
 
+    def detect_fs(self):
+        typestring = get_dbus_object("/volumes").get_type(self.path)
+        detected_fs = None
+        for fs in filesystems.FILESYSTEMS:
+            if fs.check_type(typestring):
+                detected_fs = fs
+                break
+        else:
+            return None
+        fs.configure_blockvolume(self)
+        return fs
+
+
 if HAVE_NAGIOS:
     def __create_service_for_blockvolume(instance, **kwargs):
         cmd = Command.objects.get(name=nagios_settings.LV_PERF_CHECK_CMD)
@@ -991,8 +1004,8 @@ class FileSystemProvider(FileSystemVolume):
     objects     = getHostDependentManagerClass('storageobj__host')()
     all_objects = models.Manager()
 
-    def save(self, *args, **kwargs):
-        install = (self.id is None)
+    def save(self, database_only=False, *args, **kwargs):
+        install = (self.id is None and not database_only)
         FileSystemVolume.save(self, *args, **kwargs)
         if install:
             if self.storageobj.snapshot is None:

@@ -52,6 +52,39 @@ class Btrfs(FileSystem):
 
         return svol
 
+    @classmethod
+    def configure_blockvolume(cls, volume):
+        from django.contrib.auth.models import User
+        from btrfs.models import Btrfs, BtrfsSubvolume
+        from volumes.models import StorageObject
+
+        try:
+            admin = User.objects.get(username="openattic")
+        except User.DoesNotExist:
+            admin = User.objects.filter(is_superuser=True)[0]
+
+        pool = Btrfs(storageobj=volume.storageobj, host=volume.host)
+        pool.full_clean()
+        pool.save()
+        svol = BtrfsSubvolume(storageobj=volume.storageobj, btrfs=pool,
+                              fswarning=75, fscritical=85, owner=admin)
+        svol.full_clean()
+        svol.save(database_only=True)
+        svol.mount()
+
+        # Create a subvolume named .snapshots for snapshots to reside in.
+        try:
+            snapshots = pool.volume_set.get(name=".snapshots")
+        except StorageObject.DoesNotExist:
+            dso = StorageObject(name=".snapshots", megs=volume.storageobj.megs, source_pool=pool)
+            dso.full_clean()
+            dso.save()
+            dvol = pool._create_volume_for_storageobject(dso, {
+                "filesystem": "btrfs", "fswarning": 99, "fscritical": 99, "owner": admin
+                })
+
+        return svol
+
     def __init__(self, btrfs, btrfssubvolume):
         FileSystem.__init__(self, btrfssubvolume)
         self.btrfs = btrfs
@@ -84,7 +117,7 @@ class Btrfs(FileSystem):
 
     @classmethod
     def check_type(cls, typestring):
-        return False
+        return "BTRFS" in typestring
 
     def create_subvolume(self):
         # self represents the subvolume to be created.

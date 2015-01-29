@@ -188,4 +188,9 @@ class SystemD(BasePlugin):
         scpath = os.path.join(volumes_settings.VOLUME_INITD, script)
         return invoke([scpath, "initialize", path])
 
+    @method(in_signature="s", out_signature="s")
+    def get_type(self, device):
+        ret, out, err = invoke(["file", "-sL", device], return_out_err=True)
+        dev, info = out.split(":", 1)
+        return info.strip()
 

@@ -88,8 +88,8 @@ class BtrfsSubvolume(FileSystemVolume):
     all_objects = models.Manager()
     fstype      = "btrfs"
 
-    def save(self, *args, **kwargs):
-        install = (self.id is None)
+    def save(self, database_only=False, *args, **kwargs):
+        install = (self.id is None and not database_only)
         if self.btrfs_id is None and self.pool is not None:
             self.btrfs = self.pool.volumepool
         FileSystemVolume.save(self, *args, **kwargs)
