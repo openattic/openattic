@@ -41,7 +41,7 @@ Ext.onReady(function(){
         } );
         var argstr = argstrings.join(', ');
       }
-      window.RECORDED_COMMANDS.push(Ext.String.format("{0}.{1}.{2}({3})",
+      window.RECORDED_COMMANDS.push(Ext.String.format("api.{0}.{1}.{2}({3})",
         obj[0], obj[1], methstr, argstr ));
     });
   }
@@ -63,14 +63,18 @@ window.MainViewModules.push({
     if( window.RECORDING ){
       window.RECORDED_COMMANDS.push('');
       var win = new Ext.Window({
-        title: "API",
+        title: "API Client Script",
         items: {
           xtype: "textarea",
-          value: (window.RECORDED_COMMANDS.join(';\n'))
+          value: ([
+            '#!/usr/bin/env python\n\n',
+            'from xmlrpclib import ServerProxy\n\n',
+            'api = ServerProxy("http://__:<<paste API key here>>@'+window.HOSTNAME+':31234/")\n\n'
+          ].join('') + window.RECORDED_COMMANDS.join('\n'))
         },
         layout: "fit",
-        height: 180,
-        width:  300
+        height: 480,
+        width:  640
       });
       win.show();
       record.set("icon", MEDIA_URL + '/oxygen/22x22/actions/media-record.png');
