@@ -25,6 +25,7 @@ locale    /usr/share/openattic
 __init__.py    /usr/share/openattic
 settings.py    /etc/openattic
 manage.py      /usr/share/openattic
+oa_auth.py     /usr/share/openattic
 pamauth.py     /usr/share/openattic
 processors.py  /usr/share/openattic
 urls.py        /usr/share/openattic
