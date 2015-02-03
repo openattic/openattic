@@ -247,6 +247,10 @@ class ZVol(BlockVolume):
             return "locked"
         return self.zpool.status
 
+    def get_volume_usage(self, stats):
+        stats["bd_megs"] = self.storageobj.megs
+        return stats
+
     @property
     def host(self):
         return self.zpool.host

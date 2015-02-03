@@ -212,6 +212,10 @@ class Connection(BlockVolume):
             "SyncTarget":   "rebuilding",
         }[self.status]]
 
+    def get_volume_usage(self, stats):
+        stats["bd_megs"] = self.storageobj.megs
+        return stats
+
     @property
     def peerhost(self):
         for endpoint in Endpoint.all_objects.filter(connection=self):
@@ -311,7 +315,7 @@ class Endpoint(models.Model):
         }[self.is_primary]]
 
     def get_storage_devices(self):
-        return [self.volume]
+        return [self.volume.volume]
 
     @property
     def host(self):
