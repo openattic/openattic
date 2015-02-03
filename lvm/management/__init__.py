@@ -85,7 +85,6 @@ def create_vgs(**kwargs):
         else:
             print "Logical Volume", lvname, "already exists in the database"
             so = lv.storageobj
-            so.uuid = lvs[lvname]["LVM2_LV_UUID"]
             so.megs = float(lvs[lvname]["LVM2_LV_SIZE"])
             so.save()
 
