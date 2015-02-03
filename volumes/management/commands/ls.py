@@ -34,5 +34,13 @@ class Command(BaseCommand):
                     for childdev in obj["devices"]:
                         printobj(childdev, level + 1)
 
-            obj = StorageObject.objects.get(name=volname).authoritative_obj
-            printobj(get_storage_tree(obj), 0)
+            try:
+                volume = StorageObject.objects.get(uuid=volname)
+            except StorageObject.DoesNotExist:
+                try:
+                    volume = StorageObject.objects.get(name=volname)
+                except StorageObject.DoesNotExist:
+                    print "Volume not found!"
+                    return
+
+            printobj(get_storage_tree(volume.authoritative_obj), 0)
