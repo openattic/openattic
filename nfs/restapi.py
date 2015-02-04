@@ -19,6 +19,8 @@ from rest_framework.response import Response
 
 from rest import relations
 
+from volumes.models import StorageObject
+
 from nfs.models import Export
 
 class NfsShareSerializer(serializers.HyperlinkedModelSerializer):
@@ -43,9 +45,20 @@ class NfsShareViewSet(viewsets.ModelViewSet):
     filter_class     = NfsShareFilter
 
     def create(self, request, *args, **kwargs):
-        print request.items()
-        print "create NFS share"
-        return Response(True)
+        nfs_data        = request.DATA
+        storageobj_data = request.QUERY_PARAMS
+        storageobj      = StorageObject.objects.get(id=storageobj_data["id"])
+        volume          = storageobj.filesystemvolume_or_none.volume
+
+        if volume:
+            export = Export(volume=volume,
+                            path=volume.path,
+                            address=nfs_data["address"],
+                            options=nfs_data["options"])
+            export.save()
+            return Response(True)
+
+        return Response(False)
 
 
 RESTAPI_VIEWSETS = [
