@@ -1,16 +1,18 @@
-<div class="row" ng-show="selection.item.is_filesystemvolume">
-    <graph volume-services="selection.item_services" voltype="filesystemvolume" graph="Volume Usage" width="660" profile="3m" profile-date-hint="{{selection.item.createdate}}" />
-</div>
-<div class="row" ng-show="selection.item.is_blockvolume">
-    <graph volume-services="selection.item_services" voltype="blockvolume" graph="Disk Load" width="660" profile="48h" profile-date-hint="{{selection.item.createdate}}" />
-</div>
-<div class="row" ng-show="selection.item.is_blockvolume">
-    <graph volume-services="selection.item_services" voltype="blockvolume" graph="Throughput per day" width="200" profile="4h" />
-    <graph volume-services="selection.item_services" voltype="blockvolume" graph="IOs per second" width="200" profile="4h" />
-    <graph volume-services="selection.item_services" voltype="blockvolume" graph="Average Latency (r/w)" width="200" profile="4h" />
-</div>
-<div class="row" ng-show="selection.item.is_blockvolume">
-    <graph volume-services="selection.item_services" voltype="blockvolume" graph="Average Request size (r/w)" width="200" profile="4h" />
-    <graph volume-services="selection.item_services" voltype="blockvolume" graph="IOs per Second (Normalized)" width="200" profile="4h" />
-    <graph volume-services="selection.item_services" voltype="blockvolume" graph="Normalization Ratio" width="200" profile="4h" />
+<div ng-controller="VolumeStatisticsCtrl">
+    <div class="row" ng-show="selection.item.is_filesystemvolume">
+        <graph volume-services="active_volume_services" voltype="filesystemvolume" graph="Volume Usage" width="660" profile="3m" profile-date-hint="{{selection.item.createdate}}" />
+    </div>
+    <div class="row" ng-show="selection.item.is_blockvolume">
+        <graph volume-services="active_volume_services" voltype="blockvolume" graph="Disk Load" width="660" profile="48h" profile-date-hint="{{selection.item.createdate}}" />
+    </div>
+    <div class="row" ng-show="selection.item.is_blockvolume">
+        <graph volume-services="active_volume_services" voltype="blockvolume" graph="Throughput per day" width="200" profile="4h" />
+        <graph volume-services="active_volume_services" voltype="blockvolume" graph="IOs per second" width="200" profile="4h" />
+        <graph volume-services="active_volume_services" voltype="blockvolume" graph="Average Latency (r/w)" width="200" profile="4h" />
+    </div>
+    <div class="row" ng-show="selection.item.is_blockvolume">
+        <graph volume-services="active_volume_services" voltype="blockvolume" graph="Average Request size (r/w)" width="200" profile="4h" />
+        <graph volume-services="active_volume_services" voltype="blockvolume" graph="IOs per Second (Normalized)" width="200" profile="4h" />
+        <graph volume-services="active_volume_services" voltype="blockvolume" graph="Normalization Ratio" width="200" profile="4h" />
+    </div>
 </div>

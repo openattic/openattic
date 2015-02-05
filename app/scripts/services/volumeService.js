@@ -11,6 +11,10 @@ angular.module('openattic')
           return JSON.parse(data).results;
         }
       },
+      services: {
+        method: "GET",
+        url: "/openattic/api/volumes/:id/services"
+      },
       storage: {
         method: "GET",
         url: "/openattic/api/volumes/:id/storage"
