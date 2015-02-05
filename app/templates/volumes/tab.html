@@ -1,18 +1,18 @@
 <div class="tabbable tabs-left">
     <ul class="nav nav-tabs">
-        <li ui-sref-active="active"><a ui-sref="pools.detail.status({volume:  stateParams.volume})"
+        <li ui-sref-active="active"><a ui-sref="volumes.detail.status({volume:  stateParams.volume})"
                                        data-toggle="tab">Status</a></li>
-        <li ui-sref-active="active"><a ui-sref="pools.detail.stats({volume: stateParams.volume})"
+        <li ui-sref-active="active"><a ui-sref="volumes.detail.stats({volume: stateParams.volume})"
                                        data-toggle="tab">Statistics</a></li>
-        <li ui-sref-active="active"><a ui-sref="pools.detail.cifs({volume: stateParams.volume})"
+        <li ui-sref-active="active"><a ui-sref="volumes.detail.cifs({volume: stateParams.volume})"
                                        data-toggle="tab">CIFS</a></li>
-        <li ui-sref-active="active"><a ui-sref="pools.detail.nfs({volume: stateParams.volume})"
+        <li ui-sref-active="active"><a ui-sref="volumes.detail.nfs({volume: stateParams.volume})"
                                        data-toggle="tab">NFS</a></li>
-        <li ui-sref-active="active"><a ui-sref="pools.detail.http({volume: stateParams.volume})"
+        <li ui-sref-active="active"><a ui-sref="volumes.detail.http({volume: stateParams.volume})"
                                        data-toggle="tab">HTTP</a></li>
-        <li ui-sref-active="active"><a ui-sref="pools.detail.storage({volume: stateParams.volume})"
+        <li ui-sref-active="active"><a ui-sref="volumes.detail.storage({volume: stateParams.volume})"
                                        data-toggle="tab">Storage</a></li>
-        <li ui-sref-active="active"><a ui-sref="pools.detail.snapshots({volume: stateParams.volume})"
+        <li ui-sref-active="active"><a ui-sref="volumes.detail.snapshots({volume: stateParams.volume})"
                                        data-toggle="tab">Snapshots</a></li>
     </ul>
     <div class="tab-content" ui-view="tab-content">
