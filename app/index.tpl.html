@@ -107,7 +107,7 @@
     <nav>
         <ul>
             <li data-ui-sref-active="active">
-                <a data-ui-sref="app.dashboard" title="Dashboard"><i class="fa fa-lg fa-fw fa-home"></i> <span
+                <a data-ui-sref="dashboard" title="Dashboard"><i class="fa fa-lg fa-fw fa-home"></i> <span
                         class="menu-item-parent">Dashboard</span></a>
             </li>
             <li data-ui-sref-active="active">
@@ -180,9 +180,8 @@
     </div>
     <!-- END RIBBON -->
 
-    <div id="content">
-        <h1>Hallo {{name}}</h1>
-        <input type="text" ng-model="name"/>
+    <div id="content" ui-view="main">
+
     </div>
 
 </div>
