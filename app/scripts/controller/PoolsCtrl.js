@@ -29,7 +29,7 @@ angular.module('openattic')
       .catch(function (error) {
         console.log('An error occurred', error);
       });
-    });
+    }, true);
 
     $scope.$watch("selection.item", function(selitem){
       if (selitem) {

@@ -32,7 +32,7 @@ angular.module('openattic')
       .catch(function (error) {
         console.log('An error occurred', error);
       });
-    });
+    }, true);
   });
 
 // kate: space-indent on; indent-width 2; replace-tabs on;
