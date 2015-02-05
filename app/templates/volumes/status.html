@@ -1,8 +1,8 @@
-<h2 ng-bind="active_volume.status.text"></h2>
+<h2 ng-bind="selection.item.status.text"></h2>
 <ul>
-    <li ng-repeat="(flag, desc) in active_volume.status.flags" ng-bind="desc"></li>
+    <li ng-repeat="(flag, desc) in selection.item.status.flags" ng-bind="desc"></li>
 </ul>
-<div ng-show="active_volume.usage.steal > 0">
+<div ng-show="selection.item.usage.steal > 0">
     <h2>Stolen space</h2>
     <p>
         The volume reports stolen space. This means that storage capacity which should be available for use in this volume
