@@ -23,10 +23,6 @@ angular.module('openattic')
         method: "GET",
         url: "/openattic/api/volumes/:id/snapshots"
       },
-      filesystems: {
-        method: "GET",
-        url: "/openattic/api/volumes/:id/filesystems"
-      },
       filter: {
         method: "GET",
         url: '/openattic/api/volumes'
