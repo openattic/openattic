@@ -1,0 +1,16 @@
+<oadatatable service="/openattic/api/httpshares?volume={{active_volume.id}}" active="active_volume !== undefined && active_volume !== null" entries="10">
+    <table class="table table-striped table-bordered table-hover dataTable">
+        <thead>
+            <tr>
+                <th class="oadatatablecheckbox" ng-if="select.available"><input type="checkbox" ng-model="select.checkAll"/></th>
+                <th sortfield="path"       sortdir="asc" sortheaderclass sortdefault ng-show="columns['Path']"      >Path</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr ng-repeat="row in data" ng-class="{ info: isRowSelected(row) }" ng-click="toggleSelection(row, $event)">
+                <td ng-if="select.available"><input type="checkbox" checklist-model="select.checkedItems" checklist-value="row"/></td>
+                <td ng-show="columns['Path']"       ng-bind="row.path"></td>
+            </tr>
+        </tbody>
+    </table>
+</oadatatable>
