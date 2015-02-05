@@ -1,0 +1,11 @@
+<div class="widget-toolbar btn-group">
+    <a class="btn btn-lg btn-primary" type="button"
+        ng-bind-html="actions[actions.topAction].html"
+        ng-class="{disabled: !actions[actions.topAction].is_active()}"
+        ng-click="triggerTopAction()"></a>
+    <a class="btn btn-lg btn-primary dropdown-toggle" data-toggle="dropdown">
+        <span class="caret"></span>
+    </a>
+    <ul class="dropdown-menu arrow-box-up-right pull-right oadatatableactionsmenu" role="menu">
+    </ul>
+</div>

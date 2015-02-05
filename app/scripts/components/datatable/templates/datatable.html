@@ -1,0 +1,54 @@
+<div class="jarviswidget">
+    <div>
+        <div class="widget-body no-padding">
+            <div class="overlay">
+                <div class="overlay-content">
+                    <i class="fa fa-4x fa-spinner fa-spin"></i>
+                </div>
+            </div>
+            <div class="dt-toolbar" role="menu" style="border-top: 1px solid #c2c2c2; padding-bottom: 6px;">
+                <div class="col-xs-12 col-sm-6">
+                    <div class="input-group">
+                            <span class="input-group-addon">
+                                <i class="glyphicon glyphicon-search"></i>
+                            </span>
+                            <input class="form-control" type="search" ng-model="search" />
+                    </div>
+                </div>
+                <div class="col-xs-12 col-sm-6">
+                    <div class="widget-toolbar">
+                        <div class="dataTables_length" >
+                            <label>
+                                <select class="form-control" name="dt_basic_length" ng-model="entries">
+                                    <option value="2">2</option>
+                                    <option value="10">10</option>
+                                    <option value="25">25</option>
+                                    <option value="50">50</option>
+                                    <option value="100">100</option>
+                                </select>
+                            </label>
+                        </div>
+                    </div>
+                    <div class="oadatatableactions"></div>
+                    <showhidecolumns></showhidecolumns>
+                    <div class="widget-toolbar">
+                        <a ng-click="reloadTable()">
+                            <i class="fa fa-lg fa-refresh"></i>
+                        </a>
+                    </div>
+                </div>
+            </div>
+            <div class="dataTables_wrapper"  ></div>
+            <div class="dt-toolbar-footer">
+                <div class="col-xs-12 col-sm-6">
+                    <div class="dataTables_info" role="status" aria-live="polite">
+                        <span class="text-danger">Showing {{firstEntry}} to {{lastEntry}} of {{totalEntries}} entries</span>
+                    </div>
+                </div>
+                <div class="col-xs-12 col-sm-6">
+                    <paginator page="page" pages="pages"></paginator>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
