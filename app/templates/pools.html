@@ -5,7 +5,7 @@
             <a ui-sref="pools.detail.status({pool:{{$index}} })">pool {{$index}}</a></li>
     </ul>
 
-    <oadatatable service="/openattic/api/pools" entries="10" on-selection-change="onSelectionChange(oadatatable)">
+    <oadatatable service="data/pools.json" entries="10" on-selection-change="onSelectionChange(oadatatable)">
         <actions>
             <li dtaction trigger="addAction(oadatatable)"><i class="fa fa-fw fa-plus"></i> Add</li>
             <li dtaction min-selected=1 max-selected=1 trigger="deleteAction(oadatatable)"><i class="fa fa-fw fa-trash-o"></i> Delete</li>
