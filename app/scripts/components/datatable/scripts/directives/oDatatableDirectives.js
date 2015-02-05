@@ -5,9 +5,6 @@ angular.module('openattic.datatable')
       transclude: true,
       templateUrl: "scripts/components/datatable/templates/datatable.html",
       scope: {
-        service: "@",
-        active: "@",
-        startEntries: "@entries",
         selection: "=",
         data: "=",
         filterConfig: "="
