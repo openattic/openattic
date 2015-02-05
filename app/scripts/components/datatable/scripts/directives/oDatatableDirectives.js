@@ -8,8 +8,7 @@ angular.module('openattic.datatable')
         service: "@",
         active: "@",
         startEntries: "@entries",
-        // TODO: Remove comma
-        onSelectionChange: "&",
+        onSelectionChange: "&"
       },
       link: function (scope, element, attr, controller, transclude) {
         transclude(scope, function (clone, scope) {

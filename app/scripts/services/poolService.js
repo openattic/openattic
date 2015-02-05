@@ -21,7 +21,6 @@ angular.module('openattic')
       },
       filter: {
         method: "GET",
-        isArray: true,
         url: '/openattic/api/pools/'
       }
     });
