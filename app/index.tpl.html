@@ -80,6 +80,74 @@
 </header>
 <!-- END HEADER -->
 
+
+
+<aside id="left-panel">
+
+    <!-- User info -->
+    <div class="login-info">
+				<span> <!-- User image size is adjusted inside CSS, it should stay as it -->
+
+					<a href="javascript:void(0);" id="show-shortcut" data-action="toggleShortcut">
+                        <img src="//www.gravatar.com/avatar/b8cf0cf91f5f05f7f24cd6d6d0983096?s=25" alt="me" class="online" />
+						<span>
+							john.doe
+						</span>
+                        <i class="fa fa-angle-down"></i>
+                    </a>
+
+				</span>
+    </div>
+    <!-- end user info -->
+
+
+
+    <!-- NAVIGATION : This navigation is also responsive-->
+    <nav>
+        <ul>
+            <li data-ui-sref-active="active">
+                <a data-ui-sref="app.dashboard" title="Dashboard"><i class="fa fa-lg fa-fw fa-home"></i> <span
+                        class="menu-item-parent">Dashboard</span></a>
+            </li>
+            <li data-ui-sref-active="active">
+                <a data-ui-sref="app.dashboard" title="Disks"><i class="fa fa-lg fa-fw fa-database"></i> <span
+                        class="menu-item-parent">Disks</span></a>
+            </li>
+            <li data-ui-sref-active="active">
+                <a data-ui-sref="app.pools" title="Pools"><i class="fa fa-lg fa-fw fa-cube"></i> <span
+                        class="menu-item-parent">Pools</span></a>
+            </li>
+            <li data-ui-sref-active="active">
+                <a data-ui-sref="app.volumes" title="Volumes"><i class="fa fa-lg fa-fw fa-dot-circle-o"></i> <span
+                        class="menu-item-parent">Volumes</span></a>
+            </li>
+            <li data-ui-sref-active="active">
+                <a data-ui-sref="app.hosts" title="Hosts"><i class="fa fa-lg fa-fw fa-sitemap"></i> <span
+                        class="menu-item-parent">Hosts</span></a>
+            </li>
+            <li data-menu-collapse>
+                <a href="#"><i class="fa fa-lg fa-fw fa-wrench"></i> <span class="menu-item-parent">System</span></a>
+                <ul>
+                    <li data-ui-sref-active="active">
+                        <a data-ui-sref="app.users">Users</a>
+                    </li>
+                    <li data-ui-sref-active="active">
+                        <a data-ui-sref="app.apikeys">API Keys</a>
+                    </li>
+                </ul>
+            </li>
+
+        </ul>
+    </nav>
+			<span class="minifyme" data-action="minifyMenu">
+				<i class="fa fa-arrow-circle-left hit"></i>
+			</span>
+
+</aside>
+<!-- END NAVIGATION -->
+
+
+
 <div ng-view>
 </div>
 
