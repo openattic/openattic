@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html ng-app="bmApp">
+<head>
+    <meta charset="utf-8">
+    <!--<meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">-->
+
+    <title> SmartAdmin </title>
+    <meta name="description" content="">
+    <meta name="author" content="">
+
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+
+
+    <!--
+        ### Stylesheets ###
+    -->
+
+    <!-- build:css bm-app.css -->
+
+    <!-- 3rd-Party Libraries -->
+    <link rel="stylesheet" type="text/css" media="screen" href="css/bootstrap.min.css">
+    <link rel="stylesheet" type="text/css" media="screen" href="css/font-awesome.min.css">
+
+    <!-- SmartAdmin Styles : Caution! DO NOT change the order -->
+    <link rel="stylesheet" type="text/css" media="screen" href="css/smartadmin-production-plugins.min.css">
+    <link rel="stylesheet" type="text/css" media="screen" href="css/smartadmin-production.min.css">
+    <link rel="stylesheet" type="text/css" media="screen" href="css/smartadmin-skins.min.css">
+
+    <!-- SmartAdmin RTL Support  -->
+    <link rel="stylesheet" type="text/css" media="screen" href="css/smartadmin-rtl.min.css">
+
+    <!-- We recommend you use "your_style.css" to override SmartAdmin
+         specific styles this will also ensure you retrain your customization with each SmartAdmin update.
+    <link rel="stylesheet" type="text/css" media="screen" href="css/your_style.css"> -->
+
+
+    <!-- FAVICONS -->
+
+    <!--
+    TODO
+    <link rel="shortcut icon" href="img/favicon/favicon.ico" type="image/x-icon">
+    <link rel="icon" href="img/favicon/favicon.ico" type="image/x-icon">-->
+    
+
+<link type="text/css" rel="stylesheet" href="styles/main.css" />
+
+
+    <!-- endbuild -->
+
+
+</head>
+<body>
+<header>
+    <h1>BookMonkey</h1>
+</header>
+
+<div ng-view>
+</div>
+
+<!-- build:js bm-app.js -->
+
+<!-- 3rd-Party Libraries -->
+<script src="lib/jquery/jquery-1.10.2.min.js"></script>
+<script src="lib/jquery-ui/jquery-ui.min.js"></script>
+<script src="lib/bootstrap-tokenfield/bootstrap-tokenfield.min.js"></script>
+<script src="lib/angular/angular.min.js"></script>
+<script src="lib/angular-route/angular-route.min.js"></script>
+
+<script type="text/javascript" src="scripts/module.js"></script>
+<script type="text/javascript" src="scripts/services/book_data.js"></script>
+<script type="text/javascript" src="scripts/config/bookDataConfig.js"></script>
+<script type="text/javascript" src="scripts/config/routeConfig.js"></script>
+<script type="text/javascript" src="scripts/controllers/admin_book_list.js"></script>
+<script type="text/javascript" src="scripts/controllers/admin_delete_book.js"></script>
+<script type="text/javascript" src="scripts/controllers/admin_edit_book.js"></script>
+<script type="text/javascript" src="scripts/controllers/admin_new_book.js"></script>
+<script type="text/javascript" src="scripts/controllers/admin_reset.js"></script>
+<script type="text/javascript" src="scripts/controllers/book_details.js"></script>
+<script type="text/javascript" src="scripts/controllers/book_list.js"></script>
+<script type="text/javascript" src="scripts/directives/tags.js"></script>
+<script type="text/javascript" src="scripts/directives/tokenfield.js"></script>
+
+<!-- endbuild -->
+
+</body>
+</html>

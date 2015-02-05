@@ -1,0 +1,25 @@
+<h2 ng-bind="book.title" class="bm-book-title"></h2>
+<h3 ng-bind="book.subtitle" class="bm-book-subtitle"></h3>
+<p>
+    <ul>
+        <li ng-bind-template="ISBN: {{ book.isbn }}"
+            class="bm-book-isbn"></li>
+        <li ng-bind-template="Seiten: {{ book.numPages }}"
+            class="bm-book-num-pages"></li>
+        <li ng-bind-template="Autor: {{ book.author }}"
+            class="bm-book-author"></li>
+        <li>
+            Verlag:
+            <a ng-bind="book.publisher.name"
+               ng-href="{{ book.publisher.url }}"
+               target="_blank"
+               class="bm-book-publisher-name">
+            </a>
+        </li>
+    </ul>
+    <tags tag-data="book.tags"></tags>
+</p>
+<hr>
+<p ng-bind="book.abstract" class="bm-book-abstract">
+</p>
+<a ng-click="goToListView()" href="" class="bm-list-view-btn">Zurück</a>

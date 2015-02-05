@@ -1,0 +1,101 @@
+<!DOCTYPE html>
+<html ng-app="bmApp">
+<head>
+    <meta charset="utf-8">
+    <!--<meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">-->
+
+    <title> SmartAdmin </title>
+    <meta name="description" content="">
+    <meta name="author" content="">
+
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+
+
+    <!--
+        ### Stylesheets ###
+    -->
+
+    <!-- build:css bm-app.css -->
+
+    <!-- 3rd-Party Libraries -->
+    <link rel="stylesheet" type="text/css" media="screen" href="css/bootstrap.min.css">
+    <link rel="stylesheet" type="text/css" media="screen" href="css/font-awesome.min.css">
+
+    <!-- SmartAdmin Styles : Caution! DO NOT change the order -->
+    <link rel="stylesheet" type="text/css" media="screen" href="css/smartadmin-production-plugins.min.css">
+    <link rel="stylesheet" type="text/css" media="screen" href="css/smartadmin-production.min.css">
+    <link rel="stylesheet" type="text/css" media="screen" href="css/smartadmin-skins.min.css">
+
+    <!-- SmartAdmin RTL Support  -->
+    <link rel="stylesheet" type="text/css" media="screen" href="css/smartadmin-rtl.min.css">
+
+    <!-- We recommend you use "your_style.css" to override SmartAdmin
+         specific styles this will also ensure you retrain your customization with each SmartAdmin update.
+    <link rel="stylesheet" type="text/css" media="screen" href="css/your_style.css"> -->
+
+
+    <!-- FAVICONS -->
+
+    <!--
+    TODO
+    <link rel="shortcut icon" href="img/favicon/favicon.ico" type="image/x-icon">
+    <link rel="icon" href="img/favicon/favicon.ico" type="image/x-icon">-->
+
+
+    <!-- htmlbuild:style bundle -->
+    <!-- Application -->
+    <link rel="stylesheet" href="styles/main.css">
+    <!-- /htmlbuild -->
+
+
+    <!-- endbuild -->
+
+
+</head>
+<body>
+<header id="header">
+    <div id="logo-group">
+
+        <!-- PLACE YOUR LOGO HERE -->
+        <span id="logo"> OPENATTIC </span>
+        <!-- END LOGO PLACEHOLDER -->
+
+    </div>
+
+
+    <!-- pulled right: nav area -->
+    <div class="pull-right">
+        <div id="hide-menu" class="btn-header transparent pull-right">
+            <span> <a toggle-menu="" title="Collapse Menu"><i class="fa fa-reorder"></i></a> </span>
+        </div>
+        <div id="logout" class="btn-header transparent pull-right ng-scope" ng-controller="AuthController">
+            <span> <a ui-sref="login" title="Sign Out" ng-click="logout()" data-logout-msg="You can improve your security further after logging out by closing this opened browser" href="#/login"><i class="fa fa-sign-out"></i></a> </span>
+        </div>
+        <div id="fullscreen" class="btn-header transparent pull-right">
+            <span> <a full-screen="" title="Full Screen"><i class="fa fa-arrows-alt"></i></a> </span>
+        </div>
+    </div>
+    <!-- end pulled right: nav area -->
+
+</header>
+<!-- END HEADER -->
+
+<div ng-view>
+</div>
+
+<!-- build:js bm-app.js -->
+
+<!-- 3rd-Party Libraries -->
+<script src="lib/jquery/jquery-1.10.2.min.js"></script>
+<script src="lib/jquery-ui/jquery-ui.min.js"></script>
+<script src="lib/bootstrap-tokenfield/bootstrap-tokenfield.min.js"></script>
+<script src="lib/angular/angular.min.js"></script>
+<script src="lib/angular-route/angular-route.min.js"></script>
+
+<!-- htmlbuild:script src -->
+<!-- /htmlbuild -->
+
+<!-- endbuild -->
+
+</body>
+</html>
