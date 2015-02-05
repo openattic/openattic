@@ -12,16 +12,22 @@ angular.module('openattic').config(function ($stateProvider, $urlRouterProvider)
           "main": {templateUrl: "templates/pools.html"}
         }
       })
-      .state('pools.status', {
-        url: "/:pool/status",
+      .state('pools.detail', {
+        url: "/:pool",
         views: {
-          "tab-content": {template: "<h1>Status</h1>"}
+          "tab": {templateUrl: "templates/pools/tab.html"}
         }
       })
-      .state('pools.storage', {
-        url: "/:pool/storage",
+      .state('pools.detail.status', {
+        url: "/status",
         views: {
-          "tab-content": {template: "<h1>Storage</h1>"}
+          "tab-content": {template: "Status"}
+        }
+      })
+      .state('pools.detail.storage', {
+        url: "/storage",
+        views: {
+          "tab-content": {template: "Storage"}
         }
       })
        .state("disks", {

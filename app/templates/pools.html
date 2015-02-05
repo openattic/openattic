@@ -2,20 +2,11 @@
 <div ng-controller="PoolCtrl">
     <ul>
         <li ng-repeat="pool in [1,2,3,4,5,6]">
-            <a ui-sref="pools.status({pool:{{$index}} })">pool {{$index}}</a></li>
+            <a ui-sref="pools.detail.status({pool:{{$index}} })">pool {{$index}}</a></li>
     </ul>
 
-    <h1>{{stateParams.pool}}</h1>
 
-    <div class="tabbable tabs-left">
-        <ul class="nav nav-tabs">
-            <li ui-sref-active="active"><a ui-sref="pools.status({pool:  stateParams.pool })"
-                                           data-toggle="tab">Status</a></li>
-            <li ui-sref-active="active"><a ui-sref="pools.storage({pool: stateParams.pool})"
-                                           data-toggle="tab">Storage</a></li>
-        </ul>
-        <div class="tab-content" ui-view="tab-content">
+    <div ui-view="tab">
 
-        </div>
     </div>
 </div>
