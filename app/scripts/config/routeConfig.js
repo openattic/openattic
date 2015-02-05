@@ -38,14 +38,6 @@ angular.module('openattic').config(function ($stateProvider, $urlRouterProvider)
             }
         }
       })
-      .state("pools", {
-        url: "/pools",
-        views: {
-            "main": {
-                templateUrl: "templates/pools.html"
-            }
-        }
-      })
       .state("volumes", {
         url: "/volumes",
         views: {
