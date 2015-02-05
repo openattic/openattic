@@ -21,13 +21,13 @@ angular.module('openattic').config(function ($stateProvider, $urlRouterProvider)
       .state('pools.detail.status', {
         url: "/status",
         views: {
-          "tab-content": {template: "Status"}
+          "tab-content": {templateUrl: "templates/pools/status.html"}
         }
       })
       .state('pools.detail.storage', {
         url: "/storage",
         views: {
-          "tab-content": {template: "Storage"}
+          "tab-content": {templateUrl: "templates/pools/storage.html"}
         }
       })
        .state("disks", {
