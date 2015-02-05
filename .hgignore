@@ -3,3 +3,4 @@ syntax:glob
 node_modules
 dist
 bower_components
+app/index.html
