@@ -21,7 +21,7 @@ angular.module('openattic')
       },
       filter: {
         method: "GET",
-        url: 'data/pools.json'
+        url: '/openattic/api/pools'
       }
     });
   });

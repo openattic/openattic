@@ -8,7 +8,9 @@ angular.module('openattic.datatable')
         service: "@",
         active: "@",
         startEntries: "@entries",
-        onSelectionChange: "&"
+        onSelectionChange: "&",
+        data: "=",
+        filterConfig: "="
       },
       link: function (scope, element, attr, controller, transclude) {
         transclude(scope, function (clone, scope) {
@@ -105,109 +107,36 @@ angular.module('openattic.datatable')
           $scope.onSelectionChange({"oadatatable": $scope});
         });
 
-        $scope.reloadTable = function () {
-          // TODO: $parent ref in a isolated scope/component => BAD
-          if (typeof $scope.active !== "undefined" && !$scope.$parent.$eval($scope.active)) {
-            return;
-          }
-
-
-          if ($scope.loadingOverlay) {
-            $scope.loadingOverlay.fadeIn();
-          }
+        $scope.$watch("data", function () {
           $scope.select.checkedItems = [];
+          $scope.firstEntry   = ($scope.filterConfig.page * $scope.filterConfig.entries) + 1;
+          $scope.lastEntry    = ($scope.filterConfig.page + 1) * $scope.filterConfig.entries;
+          $scope.totalEntries = $scope.data.count;
+          $scope.pages = Math.ceil($scope.totalEntries / $scope.filterConfig.entries)
+          if ($scope.totalEntries <= $scope.lastEntry) {
+            $scope.lastEntry = $scope.totalEntries;
+            if ($scope.lastEntry == 0) {
+              $scope.firstEntry = 0;
+            }
+          }
+        });
 
-
-          PoolService.filter({
-            page: $scope.page + 1,
-            page_size: $scope.entries,
-            search: $scope.search,
-            ordering: ($scope.sortorder == "ASC" ? "" : "-") + $scope.sortfield
-          })
-            .$promise
-            .then(function (res) {
-              $scope.select.checkedItems = [];
-              $scope.data = res.results;
-              $scope.firstEntry = ($scope.page * $scope.entries) + 1;
-              $scope.lastEntry = ($scope.page + 1) * $scope.entries;
-              $scope.totalEntries = res.count;
-              $scope.pages = Math.ceil($scope.totalEntries / $scope.entries)
-              if ($scope.totalEntries <= $scope.lastEntry) {
-                $scope.lastEntry = $scope.totalEntries;
-                if ($scope.lastEntry == 0) {
-                  $scope.firstEntry = 0;
-                }
-              }
-            })
-            .catch(function (error) {
-              console.log('An error occurred', error);
-            })
-            .finally(function () {
-              if ($scope.loadingOverlay) {
-                $scope.loadingOverlay.fadeOut();
-              }
-            });
-        }
-
-        $scope.page = 0;
-        $scope.entries = $scope.startEntries || 10;
-        $scope.search = "";
-
-        $scope.sortfield = "";
-        $scope.sortorder = "ASC";
         $scope.sortByField = function (field, direction) {
-          if ($scope.sortfield !== field) {
-            $scope.sortfield = field;
-            $scope.sortorder = direction || "ASC";
+          if ($scope.filterConfig.sortfield !== field) {
+            $scope.filterConfig.sortfield = field;
+            $scope.filterConfig.sortorder = direction || "ASC";
           }
           else {
-            $scope.sortorder = {"ASC": "DESC", "DESC": "ASC"}[$scope.sortorder];
+            $scope.filterConfig.sortorder = {"ASC": "DESC", "DESC": "ASC"}[$scope.sortorder];
           }
         }
 
-        var timeoutPromise;
-        var watchFunction = function (newVal, oldVal) {
-          if ($scope['search'] === '') {
-            // TODO: Add vat to the timeout => else "EVIL GLOBAL SCOPE"
-            timeout = 20;
-          }
-          else {
-            timeout = 1500;
-          }
-          $timeout.cancel(timeoutPromise);
-          timeoutPromise = $timeout(function () {
-            $scope.reloadTable();
-          }, timeout);
-        };
-
-
-        $scope.$watch('service', watchFunction);
-        $scope.$watch('page', watchFunction);
-        $scope.$watch('entries', watchFunction);
-        $scope.$watch('sortfield', watchFunction);
-        $scope.$watch('sortorder', watchFunction);
-        $scope.$watch('search', watchFunction);
-
-        // $watchGroup is only available from angular version 1.3.0
-        /*$scope.$watchGroup(['page', 'entries', 'sortfield', 'sortorder', 'search'], function(newVal, oldVal, scope) {
-         if(scope['search'] === ''){
-         self.reloadTable();
-         }
-         else {
-         $timeout.cancel(timeoutPromise);
-         timeoutPromise = $timeout(function(){
-         self.reloadTable();
-         }, 1500);
-         }
-         });*/
-
-
-        $scope.$watch("entries", function (newVal, oldVal) {
-          $scope.page = Math.floor($scope.page * oldVal / newVal);
+        $scope.$watch("filterConfig.entries", function (newVal, oldVal) {
+          $scope.filterConfig.page = Math.floor($scope.filterConfig.page * oldVal / newVal);
         });
       }
     }
 
   })
 
-// kate: space-indent on; indent-width 4; replace-tabs on;
+// kate: space-indent on; indent-width 2; replace-tabs on;

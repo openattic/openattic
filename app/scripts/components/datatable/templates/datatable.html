@@ -12,14 +12,14 @@
                             <span class="input-group-addon">
                                 <i class="glyphicon glyphicon-search"></i>
                             </span>
-                            <input class="form-control" type="search" ng-model="search" />
+                            <input class="form-control" type="search" ng-model="filterConfig.search" />
                     </div>
                 </div>
                 <div class="col-xs-12 col-sm-6">
                     <div class="widget-toolbar">
                         <div class="dataTables_length" >
                             <label>
-                                <select class="form-control" name="dt_basic_length" ng-model="entries">
+                                <select class="form-control" name="dt_basic_length" ng-model="filterConfig.entries">
                                     <option value="2">2</option>
                                     <option value="10">10</option>
                                     <option value="25">25</option>
@@ -46,7 +46,7 @@
                     </div>
                 </div>
                 <div class="col-xs-12 col-sm-6">
-                    <paginator page="page" pages="pages"></paginator>
+                    <paginator page="filterConfig.page" pages="filterConfig.pages"></paginator>
                 </div>
             </div>
         </div>
