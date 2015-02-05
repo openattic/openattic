@@ -134,9 +134,16 @@ angular.module('openattic.datatable')
         $scope.$watch("filterConfig.entries", function (newVal, oldVal) {
           $scope.filterConfig.page = Math.floor($scope.filterConfig.page * oldVal / newVal);
         });
+
+        $scope.searchModelOptions = {
+          updateOn: 'default blur',
+          debounce: {
+            'default': 500,
+             'blur': 0
+          }
+        };
       }
     }
-
-  })
+  });
 
 // kate: space-indent on; indent-width 2; replace-tabs on;
