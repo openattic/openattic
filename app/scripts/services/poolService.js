@@ -18,6 +18,11 @@ angular.module('openattic')
       filesystems: {
         method: "GET",
         url: "/openattic/api/pools/:id/filesystems"
+      },
+      filter: {
+        method: "GET",
+        isArray: true,
+        url: '/openattic/api/pools/'
       }
     });
   });

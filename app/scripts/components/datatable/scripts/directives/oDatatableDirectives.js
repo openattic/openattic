@@ -24,7 +24,7 @@ angular.module('openattic.datatable')
         });
         scope.loadingOverlay = element.find(".overlay");
       },
-      controller: function ($scope, $timeout, FilterService) {
+      controller: function ($scope, $timeout, PoolService) {
         $scope.columns = {};
 
         $scope.sortfields = {};
@@ -108,18 +108,24 @@ angular.module('openattic.datatable')
 
         $scope.reloadTable = function () {
           // TODO: $parent ref in a isolated scope/component => BAD
-          if (typeof $scope.active !== "undefined" && !$scope.$parent.$eval($scope.active))
+          if (typeof $scope.active !== "undefined" && !$scope.$parent.$eval($scope.active)) {
             return;
-          FilterService.api_action($scope.service)
-            .filter($scope.search)
-            .paginate($scope.page, $scope.entries)
-            .sortByField($scope.sortfield, $scope.sortorder)
-            .first(function () {
-              if ($scope.loadingOverlay) {
-                $scope.loadingOverlay.fadeIn();
-              }
-              $scope.select.checkedItems = [];
-            })
+          }
+
+
+          if ($scope.loadingOverlay) {
+            $scope.loadingOverlay.fadeIn();
+          }
+          $scope.select.checkedItems = [];
+
+
+          PoolService.filter({
+            page: $scope.page + 1,
+            page_size: $scope.entries,
+            search: $scope.search,
+            ordering: ($scope.sortorder == "ASC" ? "" : "-") + $scope.sortfield
+          })
+            .$promise
             .then(function (res) {
               $scope.select.checkedItems = [];
               $scope.data = res.data.results;
@@ -134,15 +140,14 @@ angular.module('openattic.datatable')
                 }
               }
             })
-            .else_(function (error) {
+            .catch(function (error) {
               console.log('An error occurred', error);
             })
-            .finally_(function () {
+            .finally(function () {
               if ($scope.loadingOverlay) {
                 $scope.loadingOverlay.fadeOut();
               }
-            })
-            .go();
+            });
         }
 
         $scope.page = 0;
