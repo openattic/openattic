@@ -1,5 +1,5 @@
 angular.module('openattic')
-  .controller('PoolStorageCtrl', function ($scope, $stateParams) {
+  .controller('PoolStorageCtrl', function ($scope, $stateParams, PoolService) {
     new PoolService($scope.selection.item).$storage().then(function (res) {
       $scope.active_pool_storage = res;
     });

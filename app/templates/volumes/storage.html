@@ -1,5 +1,5 @@
-<div class="tree">
-    <oadatatree data="selection.item_storage" children-attribute="devices">
+<div class="tree" ng-controller="VolumeStorageCtrl">
+    <oadatatree data="active_volume_storage" children-attribute="devices">
         <p ng-bind="data.title" />
     </oadatatree>
 </div>
