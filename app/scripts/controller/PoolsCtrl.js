@@ -32,24 +32,14 @@ angular.module('openattic')
       });
     });
 
-    $scope.onSelectionChange = function (oadatatable) {
-      var selection = oadatatable.getSelection();
-      if (selection.length == 1) {
-        $scope.active_pool = selection[0];
-        $scope.selection.current = selection[0];
-        $scope.active_pool_storage = null;
-        $state.go('pools.detail.status', {pool: selection[0].id})
-        new PoolService($scope.active_pool).$storage().then(function (res) {
-          $scope.active_pool_storage = res;
-        });
-
+    $scope.$watch("selection.item", function(selitem){
+      if (selitem) {
+        $state.go('pools.detail.status', {pool: selitem.id})
       }
       else {
         $state.go('pools');
-        $scope.active_pool = null;
-        $scope.active_pool_storage = null;
       }
-    }
+    });
   });
 
 // kate: space-indent on; indent-width 2; replace-tabs on;

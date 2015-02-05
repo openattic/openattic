@@ -8,7 +8,7 @@ angular.module('openattic.datatable')
         service: "@",
         active: "@",
         startEntries: "@entries",
-        onSelectionChange: "&",
+        selection: "=",
         data: "=",
         filterConfig: "="
       },
@@ -30,20 +30,21 @@ angular.module('openattic.datatable')
 
         $scope.sortfields = {};
 
-        $scope.select = {
-          checkedItems: [],
+        $scope.selection = {
+          item: null,
+          items: [],
           checkAll: false,
           available: true
         };
-        $scope.$watch('select.checkAll', function (newVal) {
+        $scope.$watch('selection.checkAll', function (newVal) {
           if (!$scope.data) {
             return;
           }
           if (newVal) {
-            $scope.select.checkedItems = $scope.data.slice();
+            $scope.selection.items = $scope.data.slice();
           }
           else {
-            $scope.select.checkedItems = [];
+            $scope.selection.items = [];
           }
         });
         $scope.toggleSelection = function (row, $event) {
@@ -53,38 +54,38 @@ angular.module('openattic.datatable')
           $event.preventDefault();
           $event.stopPropagation();
           if ($event.ctrlKey) {
-            idx = $scope.select.checkedItems.indexOf(row);
+            idx = $scope.selection.items.indexOf(row);
             if (idx === -1) {
-              $scope.select.checkedItems.push(row);
+              $scope.selection.items.push(row);
             }
             else {
-              $scope.select.checkedItems.splice(idx, 1);
+              $scope.selection.items.splice(idx, 1);
             }
           }
           else if ($event.shiftKey) {
             for (add = false, idx = 0; idx < $scope.data.length; idx++) {
               if (add)
-                $scope.select.checkedItems.push($scope.data[idx]);
-              else if ($scope.select.checkedItems.indexOf($scope.data[idx]) !== -1)
+                $scope.selection.items.push($scope.data[idx]);
+              else if ($scope.selection.items.indexOf($scope.data[idx]) !== -1)
                 add = true;
               if ($scope.data[idx] === row)
                 break;
             }
           }
           else {
-            $scope.select.checkedItems = [row];
+            $scope.selection.items = [row];
           }
         }
         $scope.isRowSelected = function (row) {
-          return $scope.select.checkedItems.indexOf(row) != -1;
+          return $scope.selection.items.indexOf(row) != -1;
         }
 
         $scope.getSelection = function () {
-          return $scope.select.checkedItems.slice();
+          return $scope.selection.items.slice();
         }
         // TODO: Why is this function on the scope?
         $scope.watchSelection = function (callback) {
-          return $scope.$watchCollection('select.checkedItems', callback);
+          return $scope.$watchCollection('selection.items', callback);
         }
 
         $scope.actions = [];
@@ -95,20 +96,19 @@ angular.module('openattic.datatable')
         $scope.triggerTopAction = function () {
           $scope.actions[$scope.actions.topAction].fn();
         }
-        $scope.watchSelection(function () {
-          if ($scope.select.checkedItems.length == 1) {
+        $scope.$watchCollection('selection.items', function () {
+          if ($scope.selection.items.length == 1) {
             $scope.actions.topAction = 1;
+            $scope.selection.item = $scope.selection.items[0];
           }
           else {
             $scope.actions.topAction = 0;
+            $scope.selection.item = null;
           }
-        });
-        $scope.watchSelection(function () {
-          $scope.onSelectionChange({"oadatatable": $scope});
         });
 
         $scope.$watch("data", function () {
-          $scope.select.checkedItems = [];
+          $scope.selection.items = [];
           $scope.firstEntry   = ($scope.filterConfig.page * $scope.filterConfig.entries) + 1;
           $scope.lastEntry    = ($scope.filterConfig.page + 1) * $scope.filterConfig.entries;
           $scope.totalEntries = $scope.data.count;
