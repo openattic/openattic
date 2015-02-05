@@ -30,7 +30,7 @@ angular.module('openattic').config(function ($stateProvider, $urlRouterProvider)
           "tab-content": {templateUrl: "templates/pools/storage.html"}
         }
       })
-       .state("disks", {
+      .state("disks", {
         url: "/disks",
         views: {
             "main": {
