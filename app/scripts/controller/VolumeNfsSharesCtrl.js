@@ -24,7 +24,7 @@ angular.module('openattic')
         page:      $scope.nfsFilter.page + 1,
         page_size: $scope.nfsFilter.entries,
         search:    $scope.nfsFilter.search,
-        ordering:  $scope.nfsFilter.ordering,
+        ordering:  ($scope.nfsFilter.sortorder == "ASC" ? "" : "-") + $scope.nfsFilter.sortfield,
         volume:    $scope.nfsFilter.volume.id
       })
       .$promise

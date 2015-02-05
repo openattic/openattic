@@ -24,7 +24,7 @@ angular.module('openattic')
         page:      $scope.lunsFilter.page + 1,
         page_size: $scope.lunsFilter.entries,
         search:    $scope.lunsFilter.search,
-        ordering:  $scope.lunsFilter.ordering,
+        ordering:  ($scope.lunsFilter.sortorder == "ASC" ? "" : "-") + $scope.lunsFilter.sortfield,
         volume:    $scope.lunsFilter.volume.id
       })
       .$promise

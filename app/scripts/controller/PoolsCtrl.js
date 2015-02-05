@@ -20,7 +20,7 @@ angular.module('openattic')
         page:      $scope.filterConfig.page + 1,
         page_size: $scope.filterConfig.entries,
         search:    $scope.filterConfig.search,
-        ordering:  $scope.filterConfig.ordering
+        ordering:  ($scope.filterConfig.sortorder == "ASC" ? "" : "-") + $scope.filterConfig.sortfield
       })
       .$promise
       .then(function (res) {

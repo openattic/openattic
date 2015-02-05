@@ -24,7 +24,7 @@ angular.module('openattic')
         page:      $scope.cifsFilter.page + 1,
         page_size: $scope.cifsFilter.entries,
         search:    $scope.cifsFilter.search,
-        ordering:  $scope.cifsFilter.ordering,
+        ordering:  ($scope.cifsFilter.sortorder == "ASC" ? "" : "-") + $scope.cifsFilter.sortfield,
         volume:    $scope.cifsFilter.volume.id
       })
       .$promise

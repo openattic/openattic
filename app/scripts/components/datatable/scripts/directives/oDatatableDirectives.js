@@ -127,7 +127,7 @@ angular.module('openattic.datatable')
             $scope.filterConfig.sortorder = direction || "ASC";
           }
           else {
-            $scope.filterConfig.sortorder = {"ASC": "DESC", "DESC": "ASC"}[$scope.sortorder];
+            $scope.filterConfig.sortorder = {"ASC": "DESC", "DESC": "ASC"}[$scope.filterConfig.sortorder];
           }
         }
 

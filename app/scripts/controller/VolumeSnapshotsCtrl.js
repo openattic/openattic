@@ -24,7 +24,7 @@ angular.module('openattic')
         page:      $scope.snapshotsFilter.page + 1,
         page_size: $scope.snapshotsFilter.entries,
         search:    $scope.snapshotsFilter.search,
-        ordering:  $scope.snapshotsFilter.ordering
+        ordering:  ($scope.snapshotsFilter.sortorder == "ASC" ? "" : "-") + $scope.snapshotsFilter.sortfield
       })
       .then(function (res) {
         $scope.snapshotsData = res;

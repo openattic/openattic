@@ -7,9 +7,9 @@ angular.module('openattic.datatable')
         var fieldName = scope.sortfields[$(element).text()];
         element.attr("ng-click", "sortByField('" + fieldName + "')");
         element.attr("ng-class",
-          "{ sorting_asc: sortfield == '" + fieldName + "' && sortorder == 'ASC'," +
-            "sorting: sortfield != '" + fieldName + "'," +
-            "sorting_desc: sortfield == '" + fieldName + "' && sortorder == 'DESC'" +
+          "{ sorting_asc: filterConfig.sortfield == '" + fieldName + "' && filterConfig.sortorder == 'ASC'," +
+            "sorting: filterConfig.sortfield != '" + fieldName + "'," +
+            "sorting_desc: filterConfig.sortfield == '" + fieldName + "' && filterConfig.sortorder == 'DESC'" +
           "}");
         element.removeAttr('sortheaderclass');
         $compile(element)(scope);
