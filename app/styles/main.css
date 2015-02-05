@@ -9,3 +9,115 @@ form input.ng-invalid:focus {
 form input.ng-valid.ng-dirty {
     background-color: #1dca07;
 }
+
+
+form .ng-invalid.ng-dirty {
+    border: 2px solid #ffcbc1;
+}
+
+form .ng-invalid:focus {
+    outline-color: red;
+}
+
+form .ng-valid.ng-dirty {
+    border: 2px solid green;
+}
+
+oadatatable div.widget-body {
+    position: relative;
+}
+
+oadatatable div.overlay {
+    position:      absolute;
+    top:           0;
+    left:          0;
+    z-index:       10;
+    height:        100%;
+    width:         100%;
+    background-color: rgba(30, 30, 30, 0.2);
+    display:       none;
+}
+
+oadatatable div.overlay-content {
+    margin:        200px auto;
+    width:         50px;
+    height:        50px;
+    background-color: rgba(30, 30, 30, 0);
+}
+
+oadatatable th.oadatatablecheckbox {
+    width: 16px;
+}
+
+oadatatable .oadatatableshowhidemenu {
+    padding-left: 20px;
+}
+
+oadatatable .oadatatableactionsmenu a {
+    text-align: left;
+    padding-left: 40px;
+}
+
+oadatatable .oadatatableactionsmenu a i {
+    margin-left: -20px;
+}
+
+oadatatable .btn {
+    margin-top: 0px !important;
+    height: 32px !important;
+    line-height: 28px !important;
+}
+
+oadatatable .input-group {
+    width: 40%;
+}
+
+.oaprogress {
+    position: relative;
+    margin-bottom: 0;
+}
+
+.oaprogress div.progress-bar {
+    position: static;
+}
+
+.oaprogress span {
+    position: absolute;
+    display: block;
+    width: 100%;
+    color: black;
+    font-weight: normal;
+}
+
+.tabs-left .tab-content .row {
+    margin-left: 10px;
+}
+
+.tabs-left > .tab-content > .tab-pane {
+    padding-left: 10px;
+}
+
+.tab-pane > h2 {
+    margin-top: 0;
+}
+
+.formactions.well {
+    overflow: auto;
+    padding: 10px 20px;
+}
+
+.greenicon {
+    color: green;
+}
+
+.redicon {
+    color: red;
+}
+
+.progress-bar-freespace {
+    background-color: #ddd;
+}
+
+.progress-bar-stolenspace {
+    background-color: #aaa;
+}
