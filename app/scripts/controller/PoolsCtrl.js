@@ -13,7 +13,6 @@ angular.module('openattic')
     };
 
     $scope.selection = {
-      current: "A"
     };
 
     $scope.$watch("filterConfig", function(){
