@@ -1,5 +1,6 @@
 angular.module('openattic')
   .controller('VolumeLunsCtrl', function ($scope, $stateParams, LunsService) {
+    'use strict';
     $scope.lunsData = {};
 
     $scope.lunsFilter = {
@@ -14,17 +15,19 @@ angular.module('openattic')
     $scope.lunsSelection = {
     };
 
-    $scope.$watch("selection.item", function(selitem){
+    $scope.$watch('selection.item', function(selitem){
       $scope.lunsFilter.volume = selitem;
     });
 
-    $scope.$watch("lunsFilter", function(){
-      if(!$scope.lunsFilter.volume) return;
+    $scope.$watch('lunsFilter', function(){
+      if(!$scope.lunsFilter.volume){
+        return;
+      }
       LunsService.filter({
         page:      $scope.lunsFilter.page + 1,
         page_size: $scope.lunsFilter.entries,
         search:    $scope.lunsFilter.search,
-        ordering:  ($scope.lunsFilter.sortorder == "ASC" ? "" : "-") + $scope.lunsFilter.sortfield,
+        ordering:  ($scope.lunsFilter.sortorder === 'ASC' ? '' : '-') + $scope.lunsFilter.sortfield,
         volume:    $scope.lunsFilter.volume.id
       })
       .$promise

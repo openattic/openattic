@@ -1,9 +1,10 @@
 angular.module('openattic')
-  .factory("VolumeService", function ($resource) {
-    return $resource("/openattic/api/volumes/:id", {
-      id: "@id"
+  .factory('VolumeService', function ($resource) {
+    'use strict';
+    return $resource('/openattic/api/volumes/:id', {
+      id: '@id'
     }, {
-      update: {method: "PUT"},
+      update: {method: 'PUT'},
       query: {
         method: 'GET',
         isArray: true,
@@ -12,19 +13,19 @@ angular.module('openattic')
         }
       },
       services: {
-        method: "GET",
-        url: "/openattic/api/volumes/:id/services"
+        method: 'GET',
+        url: '/openattic/api/volumes/:id/services'
       },
       storage: {
-        method: "GET",
-        url: "/openattic/api/volumes/:id/storage"
+        method: 'GET',
+        url: '/openattic/api/volumes/:id/storage'
       },
       snapshots: {
-        method: "GET",
-        url: "/openattic/api/volumes/:id/snapshots"
+        method: 'GET',
+        url: '/openattic/api/volumes/:id/snapshots'
       },
       filter: {
-        method: "GET",
+        method: 'GET',
         url: '/openattic/api/volumes'
       }
     });

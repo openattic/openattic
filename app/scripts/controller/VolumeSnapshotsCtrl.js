@@ -1,5 +1,6 @@
 angular.module('openattic')
   .controller('VolumeSnapshotsCtrl', function ($scope, $stateParams, VolumeService) {
+    'use strict';
     $scope.snapshotsData = {};
 
     $scope.snapshotsFilter = {
@@ -14,17 +15,19 @@ angular.module('openattic')
     $scope.snapshotsSelection = {
     };
 
-    $scope.$watch("selection.item", function(selitem){
+    $scope.$watch('selection.item', function(selitem){
       $scope.snapshotsFilter.volume = selitem;
     });
 
-    $scope.$watch("snapshotsFilter", function(){
-      if(!$scope.snapshotsFilter.volume) return;
+    $scope.$watch('snapshotsFilter', function(){
+      if(!$scope.snapshotsFilter.volume){
+        return;
+      }
       new VolumeService($scope.snapshotsFilter.volume).$snapshots({
         page:      $scope.snapshotsFilter.page + 1,
         page_size: $scope.snapshotsFilter.entries,
         search:    $scope.snapshotsFilter.search,
-        ordering:  ($scope.snapshotsFilter.sortorder == "ASC" ? "" : "-") + $scope.snapshotsFilter.sortfield
+        ordering:  ($scope.snapshotsFilter.sortorder === 'ASC' ? '' : '-') + $scope.snapshotsFilter.sortfield
       })
       .then(function (res) {
         $scope.snapshotsData = res;

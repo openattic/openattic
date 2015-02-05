@@ -1,9 +1,10 @@
 angular.module('openattic')
-  .factory("CifsSharesService", function ($resource) {
-    return $resource("/openattic/api/sambashares/:id", {
-      id: "@id"
+  .factory('CifsSharesService', function ($resource) {
+    'use strict';
+    return $resource('/openattic/api/sambashares/:id', {
+      id: '@id'
     }, {
-      update: {method: "PUT"},
+      update: {method: 'PUT'},
       query: {
         method: 'GET',
         isArray: true,
@@ -12,7 +13,7 @@ angular.module('openattic')
         }
       },
       filter: {
-        method: "GET",
+        method: 'GET',
         url: '/openattic/api/sambashares'
       }
     });

@@ -1,8 +1,10 @@
 angular.module('openattic')
   .controller('VolumeStatisticsCtrl', function ($scope, $stateParams, VolumeService) {
-    $scope.$watch("selection.item", function(selitem){
-      if(!selitem) return;
-      console.log(selitem);
+    'use strict';
+    $scope.$watch('selection.item', function(selitem){
+      if(!selitem){
+        return;
+      }
       $scope.active_volume_services = new VolumeService(selitem).$services();
     });
   });

@@ -1,5 +1,6 @@
 angular.module('openattic')
   .controller('VolumeHttpSharesCtrl', function ($scope, $stateParams, HttpSharesService) {
+    'use strict';
     $scope.httpData = {};
 
     $scope.httpFilter = {
@@ -14,17 +15,19 @@ angular.module('openattic')
     $scope.httpSelection = {
     };
 
-    $scope.$watch("selection.item", function(selitem){
+    $scope.$watch('selection.item', function(selitem){
       $scope.httpFilter.volume = selitem;
     });
 
-    $scope.$watch("httpFilter", function(){
-      if(!$scope.httpFilter.volume) return;
+    $scope.$watch('httpFilter', function(){
+      if(!$scope.httpFilter.volume){
+        return;
+      }
       HttpSharesService.filter({
         page:      $scope.httpFilter.page + 1,
         page_size: $scope.httpFilter.entries,
         search:    $scope.httpFilter.search,
-        ordering:  ($scope.httpFilter.sortorder == "ASC" ? "" : "-") + $scope.httpFilter.sortfield,
+        ordering:  ($scope.httpFilter.sortorder === 'ASC' ? '' : '-') + $scope.httpFilter.sortfield,
         volume:    $scope.httpFilter.volume.id
       })
       .$promise

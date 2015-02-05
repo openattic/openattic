@@ -1,9 +1,10 @@
 angular.module('openattic')
-  .factory("HttpSharesService", function ($resource) {
-    return $resource("/openattic/api/httpshares/:id", {
-      id: "@id"
+  .factory('HttpSharesService', function ($resource) {
+    'use strict';
+    return $resource('/openattic/api/httpshares/:id', {
+      id: '@id'
     }, {
-      update: {method: "PUT"},
+      update: {method: 'PUT'},
       query: {
         method: 'GET',
         isArray: true,
@@ -12,7 +13,7 @@ angular.module('openattic')
         }
       },
       filter: {
-        method: "GET",
+        method: 'GET',
         url: '/openattic/api/httpshares'
       }
     });

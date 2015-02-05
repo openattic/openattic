@@ -1,9 +1,10 @@
 angular.module('openattic')
-  .factory("PoolService", function ($resource) {
-    return $resource("/openattic/api/pools/:id", {
-      id: "@id"
+  .factory('PoolService', function ($resource) {
+    'use strict';
+    return $resource('/openattic/api/pools/:id', {
+      id: '@id'
     }, {
-      update: {method: "PUT"},
+      update: {method: 'PUT'},
       query: {
         method: 'GET',
         isArray: true,
@@ -12,15 +13,15 @@ angular.module('openattic')
         }
       },
       storage: {
-        method: "GET",
-        url: "/openattic/api/pools/:id/storage"
+        method: 'GET',
+        url: '/openattic/api/pools/:id/storage'
       },
       filesystems: {
-        method: "GET",
-        url: "/openattic/api/pools/:id/filesystems"
+        method: 'GET',
+        url: '/openattic/api/pools/:id/filesystems'
       },
       filter: {
-        method: "GET",
+        method: 'GET',
         url: '/openattic/api/pools'
       }
     });

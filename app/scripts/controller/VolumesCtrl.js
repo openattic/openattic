@@ -1,5 +1,6 @@
 angular.module('openattic')
   .controller('VolumeCtrl', function ($scope, $stateParams, $state, VolumeService) {
+    'use strict';
     $scope.stateParams = $stateParams;
 
     $scope.data = {};
@@ -15,12 +16,12 @@ angular.module('openattic')
     $scope.selection = {
     };
 
-    $scope.$watch("filterConfig", function(){
+    $scope.$watch('filterConfig', function(){
       VolumeService.filter({
         page:      $scope.filterConfig.page + 1,
         page_size: $scope.filterConfig.entries,
         search:    $scope.filterConfig.search,
-        ordering:  ($scope.filterConfig.sortorder == "ASC" ? "" : "-") + $scope.filterConfig.sortfield
+        ordering:  ($scope.filterConfig.sortorder === 'ASC' ? '' : '-') + $scope.filterConfig.sortfield
       })
       .$promise
       .then(function (res) {
@@ -31,9 +32,9 @@ angular.module('openattic')
       });
     }, true);
 
-    $scope.$watch("selection.item", function(selitem){
+    $scope.$watch('selection.item', function(selitem){
       if (selitem) {
-        $state.go('volumes.detail.status', {volume: selitem.id})
+        $state.go('volumes.detail.status', {volume: selitem.id});
       }
       else {
         $state.go('volumes');

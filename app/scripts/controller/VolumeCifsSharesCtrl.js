@@ -1,5 +1,6 @@
 angular.module('openattic')
   .controller('VolumeCifsSharesCtrl', function ($scope, $stateParams, CifsSharesService) {
+    'use strict';
     $scope.cifsData = {};
 
     $scope.cifsFilter = {
@@ -14,17 +15,19 @@ angular.module('openattic')
     $scope.cifsSelection = {
     };
 
-    $scope.$watch("selection.item", function(selitem){
+    $scope.$watch('selection.item', function(selitem){
       $scope.cifsFilter.volume = selitem;
     });
 
-    $scope.$watch("cifsFilter", function(){
-      if(!$scope.cifsFilter.volume) return;
+    $scope.$watch('cifsFilter', function(){
+      if(!$scope.cifsFilter.volume){
+        return;
+      }
       CifsSharesService.filter({
         page:      $scope.cifsFilter.page + 1,
         page_size: $scope.cifsFilter.entries,
         search:    $scope.cifsFilter.search,
-        ordering:  ($scope.cifsFilter.sortorder == "ASC" ? "" : "-") + $scope.cifsFilter.sortfield,
+        ordering:  ($scope.cifsFilter.sortorder === 'ASC' ? '' : '-') + $scope.cifsFilter.sortfield,
         volume:    $scope.cifsFilter.volume.id
       })
       .$promise

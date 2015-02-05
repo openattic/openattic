@@ -1,5 +1,6 @@
 angular.module('openattic')
   .controller('VolumeNfsSharesCtrl', function ($scope, $stateParams, NfsSharesService) {
+    'use strict';
     $scope.nfsData = {};
 
     $scope.nfsFilter = {
@@ -14,17 +15,19 @@ angular.module('openattic')
     $scope.nfsSelection = {
     };
 
-    $scope.$watch("selection.item", function(selitem){
+    $scope.$watch('selection.item', function(selitem){
       $scope.nfsFilter.volume = selitem;
     });
 
-    $scope.$watch("nfsFilter", function(){
-      if(!$scope.nfsFilter.volume) return;
+    $scope.$watch('nfsFilter', function(){
+      if(!$scope.nfsFilter.volume){
+        return;
+      }
       NfsSharesService.filter({
         page:      $scope.nfsFilter.page + 1,
         page_size: $scope.nfsFilter.entries,
         search:    $scope.nfsFilter.search,
-        ordering:  ($scope.nfsFilter.sortorder == "ASC" ? "" : "-") + $scope.nfsFilter.sortfield,
+        ordering:  ($scope.nfsFilter.sortorder === 'ASC' ? '' : '-') + $scope.nfsFilter.sortfield,
         volume:    $scope.nfsFilter.volume.id
       })
       .$promise

@@ -1,5 +1,4 @@
-"use strict";
-
+'use strict';
 
 // TODO: Temp Hack, fix grunt
 angular.module('openattic.datatree', []);

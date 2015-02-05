@@ -1,5 +1,6 @@
 angular.module('openattic')
   .controller('PoolCtrl', function ($scope, $stateParams, $state, PoolService) {
+    'use strict';
     $scope.stateParams = $stateParams;
 
     $scope.data = {};
@@ -15,12 +16,12 @@ angular.module('openattic')
     $scope.selection = {
     };
 
-    $scope.$watch("filterConfig", function(){
+    $scope.$watch('filterConfig', function(){
       PoolService.filter({
         page:      $scope.filterConfig.page + 1,
         page_size: $scope.filterConfig.entries,
         search:    $scope.filterConfig.search,
-        ordering:  ($scope.filterConfig.sortorder == "ASC" ? "" : "-") + $scope.filterConfig.sortfield
+        ordering:  ($scope.filterConfig.sortorder === 'ASC' ? '' : '-') + $scope.filterConfig.sortfield
       })
       .$promise
       .then(function (res) {
@@ -31,9 +32,9 @@ angular.module('openattic')
       });
     }, true);
 
-    $scope.$watch("selection.item", function(selitem){
+    $scope.$watch('selection.item', function(selitem){
       if (selitem) {
-        $state.go('pools.detail.status', {pool: selitem.id})
+        $state.go('pools.detail.status', {pool: selitem.id});
       }
       else {
         $state.go('pools');
