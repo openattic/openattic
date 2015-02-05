@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html ng-app="bmApp">
+<html ng-app="openattic">
 <head>
     <meta charset="utf-8">
     <!--<meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">-->
@@ -20,6 +20,7 @@
     <!-- 3rd-Party Libraries -->
     <link rel="stylesheet" type="text/css" media="screen" href="css/bootstrap.min.css">
     <link rel="stylesheet" type="text/css" media="screen" href="css/font-awesome.min.css">
+    <link rel="stylesheet" type="text/css" media="screen" href="../bower_components/angular/angular-csp.css">
 
     <!-- SmartAdmin Styles : Caution! DO NOT change the order -->
     <link rel="stylesheet" type="text/css" media="screen" href="css/smartadmin-production-plugins.min.css">
@@ -40,7 +41,7 @@
     TODO
     <link rel="shortcut icon" href="img/favicon/favicon.ico" type="image/x-icon">
     <link rel="icon" href="img/favicon/favicon.ico" type="image/x-icon">-->
-    
+
 
 <link type="text/css" rel="stylesheet" href="styles/main.css" />
 
@@ -50,35 +51,147 @@
 
 </head>
 <body>
-<header>
-    <h1>BookMonkey</h1>
-</header>
+<header id="header">
+    <div id="logo-group">
 
-<div ng-view>
+        <!-- PLACE YOUR LOGO HERE -->
+        <span id="logo"> OPENATTIC </span>
+        <!-- END LOGO PLACEHOLDER -->
+
+    </div>
+
+
+    <!-- pulled right: nav area -->
+    <div class="pull-right">
+        <div id="hide-menu" class="btn-header transparent pull-right">
+            <span> <a toggle-menu="" title="Collapse Menu"><i class="fa fa-reorder"></i></a> </span>
+        </div>
+        <div id="logout" class="btn-header transparent pull-right ng-scope">
+            <span> <a ui-sref="login" title="Sign Out" ng-click="logout()" data-logout-msg="You can improve your security further after logging out by closing this opened browser" href="#/login"><i class="fa fa-sign-out"></i></a> </span>
+        </div>
+        <div id="fullscreen" class="btn-header transparent pull-right">
+            <span> <a full-screen="" title="Full Screen"><i class="fa fa-arrows-alt"></i></a> </span>
+        </div>
+    </div>
+    <!-- end pulled right: nav area -->
+
+</header>
+<!-- END HEADER -->
+
+
+
+<aside id="left-panel">
+
+    <!-- User info -->
+    <div class="login-info">
+				<span> <!-- User image size is adjusted inside CSS, it should stay as it -->
+
+					<a href="javascript:void(0);" id="show-shortcut" data-action="toggleShortcut">
+                        <img src="//www.gravatar.com/avatar/b8cf0cf91f5f05f7f24cd6d6d0983096?s=25" alt="me" class="online" />
+						<span>
+							john.doe
+						</span>
+                        <i class="fa fa-angle-down"></i>
+                    </a>
+
+				</span>
+    </div>
+    <!-- end user info -->
+
+
+
+    <!-- NAVIGATION : This navigation is also responsive-->
+    <nav>
+        <ul>
+            <li data-ui-sref-active="active">
+                <a data-ui-sref="app.dashboard" title="Dashboard"><i class="fa fa-lg fa-fw fa-home"></i> <span
+                        class="menu-item-parent">Dashboard</span></a>
+            </li>
+            <li data-ui-sref-active="active">
+                <a data-ui-sref="app.dashboard" title="Disks"><i class="fa fa-lg fa-fw fa-database"></i> <span
+                        class="menu-item-parent">Disks</span></a>
+            </li>
+            <li data-ui-sref-active="active">
+                <a data-ui-sref="app.pools" title="Pools"><i class="fa fa-lg fa-fw fa-cube"></i> <span
+                        class="menu-item-parent">Pools</span></a>
+            </li>
+            <li data-ui-sref-active="active">
+                <a data-ui-sref="app.volumes" title="Volumes"><i class="fa fa-lg fa-fw fa-dot-circle-o"></i> <span
+                        class="menu-item-parent">Volumes</span></a>
+            </li>
+            <li data-ui-sref-active="active">
+                <a data-ui-sref="app.hosts" title="Hosts"><i class="fa fa-lg fa-fw fa-sitemap"></i> <span
+                        class="menu-item-parent">Hosts</span></a>
+            </li>
+            <li data-menu-collapse>
+                <a href="#"><i class="fa fa-lg fa-fw fa-wrench"></i> <span class="menu-item-parent">System</span></a>
+                <ul>
+                    <li data-ui-sref-active="active">
+                        <a data-ui-sref="app.users">Users</a>
+                    </li>
+                    <li data-ui-sref-active="active">
+                        <a data-ui-sref="app.apikeys">API Keys</a>
+                    </li>
+                </ul>
+            </li>
+
+        </ul>
+    </nav>
+			<span class="minifyme" data-action="minifyMenu">
+				<i class="fa fa-arrow-circle-left hit"></i>
+			</span>
+
+</aside>
+<!-- END NAVIGATION -->
+
+
+
+<div id="main" role="main">
+
+    <!-- RIBBON -->
+    <div id="ribbon">
+
+				<span class="ribbon-button-alignment">
+					<span id="refresh" class="btn btn-ribbon" data-action="resetWidgets" data-title="refresh"  rel="tooltip" data-placement="bottom" data-original-title="<i class='text-warning fa fa-warning'></i> Warning! This will reset all your widget settings." data-html="true">
+						<i class="fa fa-refresh"></i>
+					</span>
+				</span>
+
+        <!-- breadcrumb -->
+        <ol class="breadcrumb">
+            <li>Home</li><li>Dashboard</li>
+        </ol>
+        <!-- end breadcrumb -->
+
+        <!-- You can also add more buttons to the
+        ribbon for further usability
+
+        Example below:
+
+        <span class="ribbon-button-alignment pull-right">
+        <span id="search" class="btn btn-ribbon hidden-xs" data-title="search"><i class="fa-grid"></i> Change Grid</span>
+        <span id="add" class="btn btn-ribbon hidden-xs" data-title="add"><i class="fa-plus"></i> Add</span>
+        <span id="search" class="btn btn-ribbon" data-title="search"><i class="fa-search"></i> <span class="hidden-mobile">Search</span></span>
+        </span> -->
+
+    </div>
+    <!-- END RIBBON -->
+
+    <div id="content">
+        <h1>Hallo {{name}}</h1>
+        <input type="text" ng-model="name"/>
+    </div>
+
 </div>
 
 <!-- build:js bm-app.js -->
 
 <!-- 3rd-Party Libraries -->
-<script src="lib/jquery/jquery-1.10.2.min.js"></script>
-<script src="lib/jquery-ui/jquery-ui.min.js"></script>
-<script src="lib/bootstrap-tokenfield/bootstrap-tokenfield.min.js"></script>
-<script src="lib/angular/angular.min.js"></script>
-<script src="lib/angular-route/angular-route.min.js"></script>
+<script src="../bower_components/angular/angular.js"></script>
+<script src="../bower_components/ui-router/release/angular-ui-router.js"></script>
 
 <script type="text/javascript" src="scripts/module.js"></script>
-<script type="text/javascript" src="scripts/services/book_data.js"></script>
-<script type="text/javascript" src="scripts/config/bookDataConfig.js"></script>
 <script type="text/javascript" src="scripts/config/routeConfig.js"></script>
-<script type="text/javascript" src="scripts/controllers/admin_book_list.js"></script>
-<script type="text/javascript" src="scripts/controllers/admin_delete_book.js"></script>
-<script type="text/javascript" src="scripts/controllers/admin_edit_book.js"></script>
-<script type="text/javascript" src="scripts/controllers/admin_new_book.js"></script>
-<script type="text/javascript" src="scripts/controllers/admin_reset.js"></script>
-<script type="text/javascript" src="scripts/controllers/book_details.js"></script>
-<script type="text/javascript" src="scripts/controllers/book_list.js"></script>
-<script type="text/javascript" src="scripts/directives/tags.js"></script>
-<script type="text/javascript" src="scripts/directives/tokenfield.js"></script>
 
 <!-- endbuild -->
 
