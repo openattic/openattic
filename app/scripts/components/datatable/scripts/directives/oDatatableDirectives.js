@@ -127,10 +127,10 @@ angular.module('openattic.datatable')
             .$promise
             .then(function (res) {
               $scope.select.checkedItems = [];
-              $scope.data = res.data.results;
+              $scope.data = res.results;
               $scope.firstEntry = ($scope.page * $scope.entries) + 1;
               $scope.lastEntry = ($scope.page + 1) * $scope.entries;
-              $scope.totalEntries = res.data.count;
+              $scope.totalEntries = res.count;
               $scope.pages = Math.ceil($scope.totalEntries / $scope.entries)
               if ($scope.totalEntries <= $scope.lastEntry) {
                 $scope.lastEntry = $scope.totalEntries;
