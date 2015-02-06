@@ -4,3 +4,4 @@ node_modules
 dist
 bower_components
 app/index.html
+coverage
