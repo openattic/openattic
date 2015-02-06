@@ -2,7 +2,7 @@ angular.module('openattic.datatable')
   .directive('paginator', function (paginatorService) {
     return {
       restrict: 'E',
-      templateUrl: "scripts/components/datatable/templates/pagination.html",
+      templateUrl: "components/datatable/templates/pagination.html",
       scope: {
         page: "=",
         pages: "="

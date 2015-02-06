@@ -3,7 +3,7 @@ angular.module('openattic.datatable')
     return {
       restrict: 'E',
       // TODO: Use JSLint to use only " or '
-      templateUrl: "scripts/components/datatable/templates/actionmenu.html",
+      templateUrl: "components/datatable/templates/actionmenu.html",
       transclude: true,
       link: function (scope, element, attr, controller, transclude) {
         // TODO: Whaa? 100% not reusable/isolated ... oowww

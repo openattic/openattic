@@ -3,7 +3,7 @@ angular.module('openattic.datatable')
     return {
       restrict: 'E',
       transclude: true,
-      templateUrl: "scripts/components/datatable/templates/datatable.html",
+      templateUrl: "components/datatable/templates/datatable.html",
       scope: {
         selection: "=",
         data: "=",
