@@ -21,6 +21,9 @@ angular.module('openattic.datatable')
     var _numbers = function (page, pages, buttons) {
       // Shamelessly stolen from DataTables:
       // https://github.com/DataTables/DataTables/blob/master/media/js/jquery.dataTables.js#L13852
+      if(arguments.length !== 3){
+	throw new Error("Need exactly <page>, <pages>, <buttons> args");
+      }
       var numbers = [],
         half = Math.floor(buttons / 2);
       if (pages <= buttons) {
@@ -43,7 +46,6 @@ angular.module('openattic.datatable')
         numbers.splice(0, 0, 'ellipsis');
         numbers.splice(0, 0, 0);
       }
-      numbers.DT_el = 'span';
       return numbers;
     };
 
