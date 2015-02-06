@@ -29,4 +29,14 @@ angular.module('openattic')
         url: '/openattic/api/volumes'
       }
     });
+  })
+  .config(function($provide) {
+    $provide.decorator('VolumeService', function($delegate) {
+      var saveOld = $delegate.filter;
+      $delegate.filter = function(){
+        console.log(arguments);
+        return saveOld.apply(arguments);
+      }
+      return $delegate;
+    });
   });
