@@ -13,12 +13,11 @@ module.exports = function (config) {
 
         // list of files / patterns to load in the browser
         files: [
-            'app/lib/jquery/jquery-1.10.2.min.js',
-            'app/lib/jquery-ui/jquery-ui.min.js',
-            'app/lib/bootstrap-tokenfield/bootstrap-tokenfield.min.js',
-            'app/lib/angular/angular.min.js',
-            'app/lib/angular-route/angular-route.min.js',
-            'app/lib/angular-mocks/angular-mocks.js',
+            'app/bower_components/jquery/dist/jquery.js',
+            'app/bower_components/angular/angular.js',
+            'app/bower_components/angular-mocks/angular-mocks.js',
+            'app/bower_components/angular-resource/angular-resource.js',
+            'app/bower_components/ui-router/release/angular-ui-router.js',
             'app/scripts/module.js',
             'app/scripts/services/*.js',
             'app/scripts/**/*.js',
