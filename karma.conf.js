@@ -18,10 +18,14 @@ module.exports = function (config) {
             'app/bower_components/angular-resource/angular-resource.js',
             'app/bower_components/ui-router/release/angular-ui-router.js',
             'app/bower_components/angular-mocks/angular-mocks.js',
+            'app/components/**/module.js',
+            'app/components/**/services/*.js',
+            'app/components/**/*.js',
             'app/scripts/module.js',
             'app/scripts/services/*.js',
             'app/scripts/**/*.js',
-            'test/unit/**/*.js'
+            'test/unit/**/*.js',
+            'app/**/*.html'
         ],
 
         preprocessors: {
@@ -30,13 +34,20 @@ module.exports = function (config) {
             // (these files will be instrumented by Istanbul via Ibrik unless
             // specified otherwise in coverageReporter.instrumenter)
             'app/**/*.js': ['coverage'],
-            '!app/bower_components/**/*.js': ['coverage']
+            '!app/bower_components/**/*.js': ['coverage'],
+            'app/scripts/**/*.html': 'ng-html2js',
+            'app/components/**/*.html': 'ng-html2js'
         },
 
         // optionally, configure the reporter
         coverageReporter: {
             type : 'html',
             dir : 'coverage/'
+        },
+
+        ngHtml2JsPreprocessor: {
+            stripPrefix: 'app/',
+            moduleName: 'templates'
         },
 
 
