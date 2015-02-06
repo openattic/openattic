@@ -1,14 +1,11 @@
 describe('Dashboard', function() {
 
   it('should have a title', function() {
-    browser.get('http://172.16.13.125/openattic/angular/#/login');
+    browser.get('http://openattic:openattic@172.16.13.125/openattic/angular2/#/pools');
 
-    element(by.model('username')).sendKeys('openattic');
-    element(by.model('password')).sendKeys('openattic');
-
-    element(by.css('input[type="submit"]'))
-      .click()
-      
+    expect(browser.getTitle()).toEqual('openATTIC');
+    expect(element.all(by.css('.breadcrumb li')).get(0).getText()).toEqual('Home');
+    expect(element.all(by.css('.breadcrumb li')).get(1).getText()).toEqual('Dashboard');
 
 
   });
