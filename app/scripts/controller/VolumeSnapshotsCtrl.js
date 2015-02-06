@@ -7,8 +7,8 @@ angular.module('openattic')
       page: 0,
       entries: 10,
       search: '',
-      sortfield: 'name',
-      sortorder: 'ASC',
+      sortfield: null,
+      sortorder: null,
       volume: null
     };
 
