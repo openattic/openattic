@@ -78,6 +78,11 @@ describe('A paginatorDirective', function () {
     expect(angular.element(element.find('.paginate_button')[6]).text()).toMatch('…');
     expect(angular.element(element.find('.paginate_button')[7]).text()).toMatch('10');
     expect(angular.element(element.find('.paginate_button')[8]).text()).toMatch('Next');
+    expect(angular.element(element.find('.paginate_button')[1]).hasClass("active")).toBe(true);
+    expect(angular.element(element.find('.paginate_button')[2]).hasClass("active")).toBe(false);
+    expect(angular.element(element.find('.paginate_button')[3]).hasClass("active")).toBe(false);
+    expect(angular.element(element.find('.paginate_button')[4]).hasClass("active")).toBe(false);
+    expect(angular.element(element.find('.paginate_button')[5]).hasClass("active")).toBe(false);
 
   });
 
@@ -101,6 +106,11 @@ describe('A paginatorDirective', function () {
     expect(angular.element(element.find('.paginate_button')[6]).text()).toMatch('…');
     expect(angular.element(element.find('.paginate_button')[7]).text()).toMatch('10');
     expect(angular.element(element.find('.paginate_button')[8]).text()).toMatch('Next');
+    expect(angular.element(element.find('.paginate_button')[1]).hasClass("active")).toBe(true);
+    expect(angular.element(element.find('.paginate_button')[2]).hasClass("active")).toBe(false);
+    expect(angular.element(element.find('.paginate_button')[3]).hasClass("active")).toBe(false);
+    expect(angular.element(element.find('.paginate_button')[4]).hasClass("active")).toBe(false);
+    expect(angular.element(element.find('.paginate_button')[5]).hasClass("active")).toBe(false);
 
 
     angular.element(element.find('.paginate_button')[5]).click();
@@ -108,6 +118,11 @@ describe('A paginatorDirective', function () {
 
 
     expect($rootScope.pageData).toBe(4);
+    expect(angular.element(element.find('.paginate_button')[1]).hasClass("active")).toBe(false);
+    expect(angular.element(element.find('.paginate_button')[2]).hasClass("active")).toBe(false);
+    expect(angular.element(element.find('.paginate_button')[3]).hasClass("active")).toBe(false);
+    expect(angular.element(element.find('.paginate_button')[4]).hasClass("active")).toBe(true);
+    expect(angular.element(element.find('.paginate_button')[5]).hasClass("active")).toBe(false);
 
     expect(angular.element(element.find('.paginate_button')[0]).text()).toMatch('Previous');
     expect(angular.element(element.find('.paginate_button')[1]).text()).toMatch('1');
@@ -142,6 +157,7 @@ describe('A paginatorDirective', function () {
     expect(angular.element(element.find('.paginate_button')[6]).text()).toMatch('…');
     expect(angular.element(element.find('.paginate_button')[7]).text()).toMatch('10');
     expect(angular.element(element.find('.paginate_button')[8]).text()).toMatch('Next');
+    expect(angular.element(element.find('.paginate_button')[1]).hasClass("active")).toBe(true);
 
 
     angular.element(element.find('.paginate_button')[0]).click();
@@ -149,6 +165,7 @@ describe('A paginatorDirective', function () {
 
 
     expect($rootScope.pageData).toBe(0);
+    expect(angular.element(element.find('.paginate_button')[1]).hasClass("active")).toBe(true);
 
     expect(angular.element(element.find('.paginate_button')[0]).text()).toMatch('Previous');
     expect(angular.element(element.find('.paginate_button')[1]).text()).toMatch('1');
@@ -157,6 +174,85 @@ describe('A paginatorDirective', function () {
     expect(angular.element(element.find('.paginate_button')[4]).text()).toMatch('4');
     expect(angular.element(element.find('.paginate_button')[5]).text()).toMatch('5');
     expect(angular.element(element.find('.paginate_button')[6]).text()).toMatch('…');
+    expect(angular.element(element.find('.paginate_button')[7]).text()).toMatch('10');
+    expect(angular.element(element.find('.paginate_button')[8]).text()).toMatch('Next');
+
+
+  });
+
+
+  it('should go to page 2 if next is clicked on page 1', function(){
+
+    var html = '<paginator page="pageData" pages="pagesData"></paginator>';
+
+    $rootScope.pageData = 0;
+    $rootScope.pagesData = 10;
+
+    var element = $compile(html)($rootScope);
+    $rootScope.$apply();
+
+    expect(angular.element(element.find('.paginate_button')[0]).text()).toMatch('Previous');
+    expect(angular.element(element.find('.paginate_button')[1]).text()).toMatch('1');
+    expect(angular.element(element.find('.paginate_button')[2]).text()).toMatch('2');
+    expect(angular.element(element.find('.paginate_button')[3]).text()).toMatch('3');
+    expect(angular.element(element.find('.paginate_button')[4]).text()).toMatch('4');
+    expect(angular.element(element.find('.paginate_button')[5]).text()).toMatch('5');
+    expect(angular.element(element.find('.paginate_button')[6]).text()).toMatch('…');
+    expect(angular.element(element.find('.paginate_button')[7]).text()).toMatch('10');
+    expect(angular.element(element.find('.paginate_button')[8]).text()).toMatch('Next');
+
+
+    angular.element(element.find('.paginate_button')[8]).click();
+    $rootScope.$apply();
+
+    expect($rootScope.pageData).toBe(1);
+
+    expect(angular.element(element.find('.paginate_button')[0]).text()).toMatch('Previous');
+    expect(angular.element(element.find('.paginate_button')[1]).text()).toMatch('1');
+    expect(angular.element(element.find('.paginate_button')[2]).text()).toMatch('2');
+    expect(angular.element(element.find('.paginate_button')[3]).text()).toMatch('3');
+    expect(angular.element(element.find('.paginate_button')[4]).text()).toMatch('4');
+    expect(angular.element(element.find('.paginate_button')[5]).text()).toMatch('5');
+    expect(angular.element(element.find('.paginate_button')[6]).text()).toMatch('…');
+    expect(angular.element(element.find('.paginate_button')[7]).text()).toMatch('10');
+    expect(angular.element(element.find('.paginate_button')[8]).text()).toMatch('Next');
+
+
+  });
+
+  it('should go to page 9 if prev is clicked on page 10', function(){
+
+    var html = '<paginator page="pageData" pages="pagesData"></paginator>';
+
+    $rootScope.pageData = 9;
+    $rootScope.pagesData = 10;
+
+    var element = $compile(html)($rootScope);
+    $rootScope.$apply();
+
+    expect(angular.element(element.find('.paginate_button')[0]).text()).toMatch('Previous');
+    expect(angular.element(element.find('.paginate_button')[1]).text()).toMatch('1');
+    expect(angular.element(element.find('.paginate_button')[2]).text()).toMatch('…');
+    expect(angular.element(element.find('.paginate_button')[3]).text()).toMatch('6');
+    expect(angular.element(element.find('.paginate_button')[4]).text()).toMatch('7');
+    expect(angular.element(element.find('.paginate_button')[5]).text()).toMatch('8');
+    expect(angular.element(element.find('.paginate_button')[6]).text()).toMatch('9');
+    expect(angular.element(element.find('.paginate_button')[7]).text()).toMatch('10');
+    expect(angular.element(element.find('.paginate_button')[8]).text()).toMatch('Next');
+
+
+    angular.element(element.find('.paginate_button')[0]).click();
+    $rootScope.$apply();
+
+    expect($rootScope.pageData).toBe(8);
+
+    expect(angular.element(element.find('.paginate_button')[0]).text()).toMatch('Previous');
+    expect(angular.element(element.find('.paginate_button')[1]).text()).toMatch('1');
+    expect(angular.element(element.find('.paginate_button')[2]).text()).toMatch('…');
+    expect(angular.element(element.find('.paginate_button')[3]).text()).toMatch('6');
+    expect(angular.element(element.find('.paginate_button')[4]).text()).toMatch('7');
+    expect(angular.element(element.find('.paginate_button')[5]).text()).toMatch('8');
+    expect(angular.element(element.find('.paginate_button')[6]).text()).toMatch('9');
     expect(angular.element(element.find('.paginate_button')[7]).text()).toMatch('10');
     expect(angular.element(element.find('.paginate_button')[8]).text()).toMatch('Next');
 
@@ -187,7 +283,6 @@ describe('A paginatorDirective', function () {
 
     angular.element(element.find('.paginate_button')[8]).click();
     $rootScope.$apply();
-
 
     expect($rootScope.pageData).toBe(9);
 
