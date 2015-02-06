@@ -48,7 +48,7 @@ describe('Service: paginatorService', function () {
 
         it('should always return the max number', function(){
             expect(paginatorService.getNumbers(4,26,7)[6]).toBe(25);
-            expect(paginatorService.getNumbers(3,10,3)[2]).toBe(9);
+            expect(paginatorService.getNumbers(3,10,3)[2]).toBe(2);
             expect(paginatorService.getNumbers(9,99,7)[6]).toBe(98);
         });
 
