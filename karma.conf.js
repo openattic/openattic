@@ -25,6 +25,20 @@ module.exports = function (config) {
             'test/unit/**/*.js'
         ],
 
+        preprocessors: {
+            // source files, that you wanna generate coverage for
+            // do not include tests or libraries
+            // (these files will be instrumented by Istanbul via Ibrik unless
+            // specified otherwise in coverageReporter.instrumenter)
+            'app/**/*.js': ['coverage']
+        },
+
+        // optionally, configure the reporter
+        coverageReporter: {
+            type : 'html',
+            dir : 'coverage/'
+        },
+
 
         // list of files to exclude
         exclude: [
@@ -34,7 +48,7 @@ module.exports = function (config) {
 
         // test results reporter to use
         // possible values: 'dots', 'progress', 'junit', 'growl', 'coverage'
-        reporters: ['progress'],
+        reporters: ['progress', 'coverage'],
 
 
         // web server port
