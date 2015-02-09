@@ -3,8 +3,10 @@
 <div ng-controller="PoolCtrl">
     <oadatatable data="data" filter-config="filterConfig" selection="selection">
         <actions>
-            <li dtaction trigger="addAction(oadatatable)"><i class="fa fa-fw fa-plus"></i> Add</li>
-            <li dtaction min-selected=1 max-selected=1 trigger="deleteAction(oadatatable)"><i class="fa fa-fw fa-trash-o"></i> Delete</li>
+            <a class="btn btn-lg btn-primary" type="button" ng-click="addAction()" ng-hide="hasSelection"><i class="fa fa-fw fa-plus"></i> Add</a>
+            <a class="btn btn-lg btn-primary" type="button" ng-click="deleteAction()" ng-show="hasSelection"><i class="fa fa-fw fa-trash-o"></i> Delete</a>
+            <li><a ng-click="addAction(oadatatable)"><i class="fa fa-fw fa-plus"></i> Add</a></li>
+            <li ng-class="{disabled: !hasSelection}" max-selected=1><a ng-click="deleteAction()"><i class="fa fa-fw fa-trash-o"></i> Delete</a></li>
         </actions>
         <table class="table table-striped table-bordered table-hover dataTable">
             <thead>

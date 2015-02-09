@@ -6,16 +6,16 @@
         <li ui-sref-active="active">
             <a ui-sref="volumes.detail.statistics({volume: stateParams.volume})" data-toggle="tab">Statistics</a>
         </li>
-        <li ui-sref-active="active" ng-show="selection.item.is_filesystemvolume">
+        <li ui-sref-active="active" ng-show="volumeForShare">
             <a ui-sref="volumes.detail.cifs({volume: stateParams.volume})" data-toggle="tab">CIFS</a>
         </li>
-        <li ui-sref-active="active" ng-show="selection.item.is_filesystemvolume">
+        <li ui-sref-active="active" ng-show="volumeForShare">
             <a ui-sref="volumes.detail.nfs({volume: stateParams.volume})" data-toggle="tab">NFS</a>
         </li>
-        <li ui-sref-active="active" ng-show="selection.item.is_filesystemvolume">
+        <li ui-sref-active="active" ng-show="volumeForShare">
             <a ui-sref="volumes.detail.http({volume: stateParams.volume})" data-toggle="tab">HTTP</a>
         </li>
-        <li ui-sref-active="active" ng-show="selection.item.is_blockvolume && !selection.item.is_filesystemvolume">
+        <li ui-sref-active="active" ng-show="volumeForLun">
             <a ui-sref="volumes.detail.luns({volume: stateParams.volume})" data-toggle="tab">LUNs</a>
         </li>
         <li ui-sref-active="active">

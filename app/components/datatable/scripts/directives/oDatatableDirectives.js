@@ -39,11 +39,11 @@ angular.module('openattic.datatable')
           available: true
         };
         $scope.$watch('selection.checkAll', function (newVal) {
-          if (!$scope.data) {
+          if (!$scope.data.results) {
             return;
           }
           if (newVal) {
-            $scope.selection.items = $scope.data.slice();
+            $scope.selection.items = $scope.data.results.slice();
           }
           else {
             $scope.selection.items = [];
@@ -65,12 +65,12 @@ angular.module('openattic.datatable')
             }
           }
           else if ($event.shiftKey) {
-            for (add = false, idx = 0; idx < $scope.data.length; idx++) {
+            for (add = false, idx = 0; idx < $scope.data.results.length; idx++) {
               if (add)
-                $scope.selection.items.push($scope.data[idx]);
-              else if ($scope.selection.items.indexOf($scope.data[idx]) !== -1)
+                $scope.selection.items.push($scope.data.results[idx]);
+              else if ($scope.selection.items.indexOf($scope.data.results[idx]) !== -1)
                 add = true;
-              if ($scope.data[idx] === row)
+              if ($scope.data.results[idx] === row)
                 break;
             }
           }
@@ -90,21 +90,11 @@ angular.module('openattic.datatable')
           return $scope.$watchCollection('selection.items', callback);
         }
 
-        $scope.actions = [];
-        $scope.actions.topAction = 0;
-        $scope.addAction = function (action) {
-          $scope.actions.push(action);
-        }
-        $scope.triggerTopAction = function () {
-          $scope.actions[$scope.actions.topAction].fn();
-        }
         $scope.$watchCollection('selection.items', function () {
           if ($scope.selection.items.length == 1) {
-            $scope.actions.topAction = 1;
             $scope.selection.item = $scope.selection.items[0];
           }
           else {
-            $scope.actions.topAction = 0;
             $scope.selection.item = null;
           }
         });

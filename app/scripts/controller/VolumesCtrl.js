@@ -40,6 +40,27 @@ angular.module('openattic')
         $state.go('volumes');
       }
     });
+
+    $scope.$watchCollection("selection.item", function(item){
+      $scope.hasSelection = !!item;
+      if( !item ){
+        return;
+      }
+      $scope.volumeForShare = item.is_filesystemvolume;
+      $scope.volumeForLun   = item.is_blockvolume && !item.is_filesystemvolume;
+    });
+
+    $scope.addAction = function(){
+      console.log(["addAction", arguments]);
+    }
+
+    $scope.resizeAction = function(){
+      console.log(["resizeAction", arguments]);
+    }
+
+    $scope.deleteAction = function(){
+      console.log(["deleteAction", arguments]);
+    }
   });
 
 // kate: space-indent on; indent-width 2; replace-tabs on;
