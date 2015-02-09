@@ -139,6 +139,10 @@ angular.module('openattic.datatable')
              'blur': 0
           }
         };
+
+        $scope.reloadTable = function(){
+          $scope.filterConfig.reload = new Date();
+        };
       }
     }
   });
