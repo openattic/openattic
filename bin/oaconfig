@@ -279,9 +279,10 @@ EOF
 			rm /etc/krb5.keytab
 		fi
 		echo "Joining Domain..."
-		net ads join -U "$user"
+		net ads join -k
 		net ads keytab create
 		net ads keytab add HTTP
+		net ads keytab add HTTPS
 		
 		chmod g+r /etc/krb5.keytab
 		chgrp openattic /etc/krb5.keytab
