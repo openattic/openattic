@@ -25,7 +25,6 @@ angular.module('openattic.datatable')
         $scope.$watch(function(){
           return $http.pendingRequests.length > 0;
         }, function(value) {
-          console.log('Pending requests: '+ $http.pendingRequests.length + " => " + value);
           $scope.waiting = value;
         });
 
