@@ -1,4 +1,4 @@
-angular.module('openattic.datatable')
+angular.module('openattic.graph')
   .directive('graph', function(){
     return {
         restrict: 'E',
