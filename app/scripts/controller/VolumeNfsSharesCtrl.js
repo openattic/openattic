@@ -38,6 +38,14 @@ angular.module('openattic')
         console.log('An error occurred', error);
       });
     }, true);
+
+    $scope.addNfsAction = function(){
+      console.log(["addNfsAction", arguments]);
+    }
+
+    $scope.deleteNfsAction = function(){
+      console.log(["deleteNfsAction", arguments]);
+    }
   });
 
 // kate: space-indent on; indent-width 2; replace-tabs on;

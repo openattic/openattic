@@ -16,7 +16,7 @@
             </thead>
             <tbody>
                 <tr ng-repeat="row in data.results" ng-class="{ info: isRowSelected(row) }" ng-click="toggleSelection(row, $event)">
-                    <td ng-if="cifsSelection.available"><input type="checkbox" checklist-model="cifsSelection.checkedItems" checklist-value="row"/></td>
+                    <td ng-if="cifsSelection.available"><input type="checkbox" checklist-model="cifsSelection.items" checklist-value="row"/></td>
                     <td ng-show="columns['Name']"       ng-bind="row.name"></td>
                     <td ng-show="columns['Path']"       ng-bind="row.path"></td>
                     <td ng-show="columns['Available']"  ><i class="fa" ng-class="{

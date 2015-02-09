@@ -11,7 +11,7 @@
             </thead>
             <tbody>
                 <tr ng-repeat="row in data.results" ng-class="{ info: isRowSelected(row) }" ng-click="toggleSelection(row, $event)">
-                    <td ng-if="lunSelection.available"><input type="checkbox" checklist-model="lunSelection.checkedItems" checklist-value="row"/></td>
+                    <td ng-if="lunSelection.available"><input type="checkbox" checklist-model="lunSelection.items" checklist-value="row"/></td>
                     <td ng-show="columns['Host']"   ng-bind="row.host.title"></td>
                     <td ng-show="columns['LUN ID']" ng-bind="row.lun_id"></td>
                 </tr>
