@@ -5,7 +5,7 @@
             <a class="btn btn-lg btn-primary" type="button" ng-click="addAction()" ng-hide="hasSelection"><i class="fa fa-fw fa-plus"></i> Add</a>
             <a class="btn btn-lg btn-primary" type="button" ng-click="resizeAction()" ng-show="hasSelection"><i class="fa fa-fw fa-upload"></i> Resize</a>
             <li><a ng-click="addAction()"><i class="fa fa-fw fa-plus"></i> Add</a></li>
-            <li ng-class="{disabled: !volumeForShare}"><a><i class="fa fa-fw fa-upload"></i> Resize</a></li>
+            <li ng-class="{disabled: !hasSelection}"><a><i class="fa fa-fw fa-upload"></i> Resize</a></li>
             <li class="divider"></li>
             <li ng-class="{disabled: !volumeForShare}"><a><i class="fa fa-fw fa-folder"></i>Share via CIFS</a></li>
             <li ng-class="{disabled: !volumeForShare}"><a ng-click="nfsAction()"><i class="fa fa-fw fa-linux"></i>Share via NFS</a></li>
