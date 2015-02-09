@@ -1,9 +1,9 @@
 <div class="tabbable tabs-left">
     <ul class="nav nav-tabs">
         <li ui-sref-active="active"><a ui-sref="pools.detail.status({pool:  stateParams.pool })"
-                                       data-toggle="tab">Status</a></li>
+                                       data-toggle="tab" data-target="#tab-content">Status</a></li>
         <li ui-sref-active="active"><a ui-sref="pools.detail.storage({pool: stateParams.pool})"
-                                       data-toggle="tab">Storage</a></li>
+                                       data-toggle="tab" data-target="#tab-content">Storage</a></li>
     </ul>
     <div class="tab-content" ui-view="tab-content">
     </div>
