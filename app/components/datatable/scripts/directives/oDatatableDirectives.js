@@ -20,9 +20,15 @@ angular.module('openattic.datatable')
             }
           });
         });
-        scope.loadingOverlay = element.find(".overlay");
       },
-      controller: function ($scope, $timeout, PoolService) {
+      controller: function ($scope, $timeout, PoolService, $http) {
+        $scope.$watch(function(){
+          return $http.pendingRequests.length > 0;
+        }, function(value) {
+          console.log('Pending requests: '+ $http.pendingRequests.length + " => " + value);
+          $scope.waiting = value;
+        });
+
         $scope.columns = {};
 
         $scope.sortfields = {};

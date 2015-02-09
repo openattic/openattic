@@ -35,7 +35,6 @@ oadatatable div.overlay {
     height:        100%;
     width:         100%;
     background-color: rgba(30, 30, 30, 0.2);
-    display:       none;
 }
 
 oadatatable div.overlay-content {
