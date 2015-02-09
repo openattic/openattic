@@ -92,8 +92,8 @@ oadatatable .input-group {
     margin-left: 10px;
 }
 
-.tabs-left > .tab-content > .tab-pane {
-    padding-left: 10px;
+.tabs-left > .tab-content {
+    padding-left: 15px;
 }
 
 .tab-pane > h2 {
