@@ -1,0 +1,63 @@
+<div ng-controller="VolumeCifsSharesFormCtrl">
+    <form name="shareForm" role="form" class="smart-form" novalidate>
+        <fieldset>
+            <section>
+                <label class="label" for="shareName">Name</label>
+                <label class="input" ng-class="{'state-error': shareForm.shareName.$invalid}"> <i class="icon-prepend fa fa-share"></i>
+                    <input type="text" placeholder="Name..." ng-model="share.name" name="name" id="shareName" required>
+                    <span ng-show="shareForm.shareName.$dirty && shareForm.shareName.$invalid">
+                        The name is required.
+                    </span>
+                </label>
+            </section>
+            <section>
+                <label class="label" for="sharePath">Path</label>
+                <label class="input" ng-class="{'state-error': shareForm.sharePath.$invalid}"> <i class="icon-prepend fa fa-share"></i>
+                    <input type="text" placeholder="Path..." ng-model="share.path" name="path" id="sharePath" required>
+                    <span ng-show="shareForm.sharePath.$dirty && shareForm.sharePath.$invalid">
+                        The name is required.
+                    </span>
+                </label>
+            </section>
+            <section>
+                <label class="label" for="shareComment">Comment</label>
+                <label class="input" ng-class="{'state-error': shareForm.shareComment.$invalid}"> <i class="icon-prepend fa fa-share"></i>
+                    <input type="text" placeholder="Comment (shows up in the detail view of Windows Explorer)..."
+                           ng-model="share.comment" name="comment" id="shareComment">
+                </label>
+            </section>
+            <section>
+                <label class="checkbox" for="shareAvailable">
+                    <input type="checkbox" ng-model="share.available" name="available" id="shareAvailable">
+                    <i></i>Is available
+                </label>
+            </section>
+            <section>
+                <label class="checkbox" for="shareBrowseable">
+                    <input type="checkbox" ng-model="share.browseable" name="browseable" id="shareBrowseable">
+                    <i></i>Is browseable
+                </label>
+            </section>
+            <section>
+                <label class="checkbox" for="shareWriteable">
+                    <input type="checkbox" ng-model="share.writeable" name="writeable" id="shareWriteable">
+                    <i></i>Is writeable
+                </label>
+            </section>
+            <section>
+                <label class="checkbox" for="shareGuestOk">
+                    <input type="checkbox" ng-model="share.guest_ok" name="guest_ok" id="shareGuestOk">
+                    <i></i>Accessible by guests
+                </label>
+            </section>
+        </fieldset>
+        <footer>
+            <button type="submit" class="btn btn-primary" ng-click="submitAction()" ng-disabled="shareForm.$invalid">
+                Submit
+            </button>
+            <button type="button" class="btn btn-default" ng-click="cancelAction()">
+                Back
+            </button>
+        </footer>
+    </form>
+</div>

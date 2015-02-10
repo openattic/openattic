@@ -1,5 +1,5 @@
 angular.module('openattic')
-  .controller('VolumeCifsSharesCtrl', function ($scope, CifsSharesService) {
+  .controller('VolumeCifsSharesCtrl', function ($scope, $state, CifsSharesService) {
     'use strict';
 
     $scope.cifsData = {};
@@ -39,6 +39,41 @@ angular.module('openattic')
         console.log('An error occurred', error);
       });
     }, true);
+
+    $scope.addCifsAction = function(){
+      $state.go('volumes.detail.cifs-add');
+    }
+
+    $scope.editCifsAction = function(){
+      $state.go('volumes.detail.cifs-edit', {share: $scope.cifsSelection.item.id});
+    }
+
+    $scope.deleteCifsAction = function(){
+      $.SmartMessageBox({
+        title: 'Delete CIFS share',
+        content: 'Do you really want to delete the CIFS share "' + $scope.cifsSelection.item.name + '"?',
+        buttons: '[No][Yes]'
+      }, function (ButtonPressed) {
+        if (ButtonPressed === 'Yes') {
+          CifsSharesService.delete({id: $scope.cifsSelection.item.id})
+            .$promise
+            .then(function() {
+              $scope.filterConfig.refresh = new Date();
+            }, function(error){
+              console.log('An error occured', error);
+            });
+        }
+        if (ButtonPressed === 'No') {
+          $.smallBox({
+            title: 'Delete CIFS share',
+            content: '<i class="fa fa-clock-o"></i> <i>Cancelled</i>',
+            color: '#C46A69',
+            iconSmall: 'fa fa-times fa-2x fadeInRight animated',
+            timeout: 4000
+          });
+        }
+      });
+    }
   });
 
 // kate: space-indent on; indent-width 2; replace-tabs on;

@@ -69,6 +69,18 @@ angular.module('openattic').config(function ($stateProvider, $urlRouterProvider)
       'tab-content': {templateUrl: 'templates/volumes/cifs.html'}
     }
   })
+  .state('volumes.detail.cifs-add', {
+    url: '/cifs/add',
+    views: {
+      'tab-content': {templateUrl: 'templates/volumes/cifs-form.html'}
+    }
+  })
+  .state('volumes.detail.cifs-edit', {
+    url: '/cifs/edit/:share',
+    views: {
+      'tab-content': {templateUrl: 'templates/volumes/cifs-form.html'}
+    }
+  })
   .state('volumes.detail.nfs', {
     url: '/nfs',
     views: {
