@@ -46,7 +46,7 @@ angular.module('openattic')
 
     $scope.deleteNfsAction = function(){
       $.SmartMessageBox({
-        title: 'Delete NFS share',
+        title: 'Delete NFS export',
         content: 'Do you really want to delete the NFS export to "' + $scope.nfsSelection.item.address + '"?',
         buttons: '[No][Yes]'
       }, function (ButtonPressed) {
@@ -61,7 +61,7 @@ angular.module('openattic')
         }
         if (ButtonPressed === 'No') {
           $.smallBox({
-            title: 'Delete NFS share',
+            title: 'Delete NFS export',
             content: '<i class="fa fa-clock-o"></i> <i>Cancelled</i>',
             color: '#C46A69',
             iconSmall: 'fa fa-times fa-2x fadeInRight animated',

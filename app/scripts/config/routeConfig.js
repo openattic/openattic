@@ -93,12 +93,6 @@ angular.module('openattic').config(function ($stateProvider, $urlRouterProvider)
       'tab-content': {templateUrl: 'templates/volumes/nfs-form.html'}
     }
   })
-  .state('volumes.detail.nfs-edit', {
-    url: '/nfs/edit/:share',
-    views: {
-      'tab-content': {templateUrl: 'templates/volumes/nfs-form.html'}
-    }
-  })
   .state('volumes.detail.luns', {
     url: '/luns',
     views: {
@@ -109,6 +103,12 @@ angular.module('openattic').config(function ($stateProvider, $urlRouterProvider)
     url: '/http',
     views: {
       'tab-content': {templateUrl: 'templates/volumes/http.html'}
+    }
+  })
+  .state('volumes.detail.http-add', {
+    url: '/http/add',
+    views: {
+      'tab-content': {templateUrl: 'templates/volumes/http-form.html'}
     }
   })
   .state('volumes.detail.storage', {

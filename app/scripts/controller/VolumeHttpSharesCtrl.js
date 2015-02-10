@@ -1,5 +1,5 @@
 angular.module('openattic')
-  .controller('VolumeHttpSharesCtrl', function ($scope, HttpSharesService) {
+  .controller('VolumeHttpSharesCtrl', function ($scope, $state, HttpSharesService) {
     'use strict';
 
     $scope.httpData = {};
@@ -39,6 +39,37 @@ angular.module('openattic')
         console.log('An error occurred', error);
       });
     }, true);
+
+    $scope.addHttpAction = function(){
+      $state.go('volumes.detail.http-add');
+    }
+
+    $scope.deleteHttpAction = function(){
+      $.SmartMessageBox({
+        title: 'Delete HTTP export',
+        content: 'Do you really want to delete the HTTP export for "' + $scope.httpSelection.item.path + '"?',
+        buttons: '[No][Yes]'
+      }, function (ButtonPressed) {
+        if (ButtonPressed === 'Yes') {
+          HttpSharesService.delete({id: $scope.httpSelection.item.id})
+            .$promise
+            .then(function() {
+              $scope.httpFilter.refresh = new Date();
+            }, function(error){
+              console.log('An error occured', error);
+            });
+        }
+        if (ButtonPressed === 'No') {
+          $.smallBox({
+            title: 'Delete HTTP export',
+            content: '<i class="fa fa-clock-o"></i> <i>Cancelled</i>',
+            color: '#C46A69',
+            iconSmall: 'fa fa-times fa-2x fadeInRight animated',
+            timeout: 4000
+          });
+        }
+      });
+    }
   });
 
 // kate: space-indent on; indent-width 2; replace-tabs on;

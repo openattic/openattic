@@ -1,0 +1,23 @@
+<div ng-controller="VolumeHttpSharesFormCtrl">
+    <form name="shareForm" role="form" class="smart-form" novalidate>
+        <fieldset>
+            <section>
+                <label class="label" for="sharePath">Path</label>
+                <label class="input" ng-class="{'state-error': shareForm.sharePath.$invalid}"> <i class="icon-prepend fa fa-share"></i>
+                    <input type="text" placeholder="Path..." ng-model="share.path" name="path" id="sharePath" required>
+                    <span ng-show="shareForm.sharePath.$dirty && shareForm.sharePath.$invalid">
+                        The path is required.
+                    </span>
+                </label>
+            </section>
+        </fieldset>
+        <footer>
+            <button type="submit" class="btn btn-primary" ng-click="submitAction()" ng-disabled="shareForm.$invalid">
+                Submit
+            </button>
+            <button type="button" class="btn btn-default" ng-click="cancelAction()">
+                Back
+            </button>
+        </footer>
+    </form>
+</div>

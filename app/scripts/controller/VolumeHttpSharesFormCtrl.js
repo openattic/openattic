@@ -1,16 +1,14 @@
 angular.module('openattic')
-  .controller('VolumeNfsSharesFormCtrl', function ($scope, $state, $stateParams, NfsSharesService) {
+  .controller('VolumeHttpSharesFormCtrl', function ($scope, $state, $stateParams, HttpSharesService) {
     if(!$stateParams.share){
       $scope.share = {
         'volume': $scope.selection.item.id,
-        'path':   $scope.selection.item.path,
-        'address':  '',
-        'options':  'rw,no_subtree_check,no_root_squash'
+        'path':   $scope.selection.item.path
       };
       $scope.editing = false;
 
       $scope.submitAction = function() {
-        NfsSharesService.save($scope.share)
+        HttpSharesService.save($scope.share)
           .$promise
           .then(function() {
             goToListView();
@@ -25,7 +23,7 @@ angular.module('openattic')
     }
 
     var goToListView = function() {
-        $state.go('volumes.detail.nfs');
+        $state.go('volumes.detail.http');
     }
   });
 
