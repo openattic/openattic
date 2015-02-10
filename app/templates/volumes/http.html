@@ -13,12 +13,14 @@
                 <tr>
                     <th class="oadatatablecheckbox" ng-if="httpSelection.available"><input type="checkbox" ng-model="httpSelection.checkAll"/></th>
                     <th sortfield="path"       sortdir="asc" sortheaderclass sortdefault ng-show="columns['Path']"      >Path</th>
+                    <th ng-show="columns['Browse']">Browse</th>
                 </tr>
             </thead>
             <tbody>
                 <tr ng-repeat="row in data.results" ng-class="{ info: isRowSelected(row) }" ng-click="toggleSelection(row, $event)">
                     <td ng-if="httpSelection.available"><input type="checkbox" checklist-model="httpSelection.items" checklist-value="row"/></td>
                     <td ng-show="columns['Path']"       ng-bind="row.path"></td>
+                    <td ng-show="columns['Browse']"><a href="/volumes/{{row.volume.title}}" target="_blank">/volumes/{{row.volume.title}}</a></td>
                 </tr>
             </tbody>
         </table>
