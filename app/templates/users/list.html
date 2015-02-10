@@ -16,7 +16,7 @@
                     <th sortfield="first_name"   sortheaderclass ng-show="columns['Firstname']">Firstname</th>
                     <th sortfield="last_name"    sortheaderclass ng-show="columns['Lastname']">Lastname</th>
                     <th sortfield="email"        sortheaderclass ng-show="columns['E-Mail-Address']">E-Mail-Address</th>
-                    <th sortfield="is_active"    sortheaderclass ng-show="columns['active']">Active</th>
+                    <th sortfield="is_active"    sortheaderclass ng-show="columns['Active']">Active</th>
                     <th sortfield="is_staff"     sortheaderclass ng-show="columns['Is administrator']">Is administrator</th>
                     <th sortfield="is_superuser" sortheaderclass ng-show="columns['Has all privileges']">Has all privileges</th>
                     <th sortfield="last_login"   sortheaderclass ng-show="columns['Last Login']">Last Login</th>
@@ -26,12 +26,12 @@
                 <tr ng-repeat="row in data.results" ng-class="{ info: isRowSelected(row) }" ng-click="toggleSelection(row, $event)">
                     <td ng-if="selection.available"><input type="checkbox" checklist-model="selection.items" checklist-value="row"/></td>
                     <td ng-show="columns['Username']">
-                        <a ui-sref="app.users.edit({id:row.id})" ng-bind="row.username"></a>
+                        <a ui-sref="users.edit({user:row.id})" ng-bind="row.username"></a>
                     </td>
                     <td ng-show="columns['Firstname']"          ng-bind="row.first_name"></td>
                     <td ng-show="columns['Lastname']"           ng-bind="row.last_name"></td>
                     <td ng-show="columns['E-Mail-Address']"     ng-bind="row.email"></td>
-                    <td ng-show="columns['active']">            <i class="fa fa-check fa-fw" ng-show="row.is_active"></i></td>
+                    <td ng-show="columns['Active']">            <i class="fa fa-check fa-fw" ng-show="row.is_active"></i></td>
                     <td ng-show="columns['Is administrator']">  <i class="fa fa-check fa-fw" ng-show="row.is_staff"></i></td>
                     <td ng-show="columns['Has all privileges']"><i class="fa fa-check fa-fw" ng-show="row.is_superuser"></i></td>
                     <td ng-show="columns['Last Login']"         ng-bind="row.last_login | date:'short'"></td>

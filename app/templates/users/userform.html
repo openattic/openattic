@@ -8,7 +8,8 @@
             <div class="jarviswidget" id="wid-id-1" data-widget-editbutton="false" data-widget-custombutton="false">
                 <header>
                     <span class="widget-icon"> <i class="fa fa-edit"></i> </span>
-                    <h2 ng-bind-template="{{userAction}} {{user.username}}"></h2>
+                    <h2 ng-hide="editing">Create User: {{user.username}}</h2>
+                    <h2 ng-show="editing">Edit User: {{user.username}}</h2>
                 </header>
                 <div>
                     <div class="widget-body no-padding">
@@ -23,7 +24,7 @@
                                         </span>
                                     </label>
                                 </section>
-                                <section>
+                                <section ng-if="!editing">
                                     <label class="label" for="userPassword">Password</label>
                                     <label class="input" ng-class="{'state-error': userForm.password.$invalid}"> <i class="icon-prepend fa fa-key"></i>
                                         <input type="password" placeholder="Password..." ng-model="user.password" name="password" id="userPassword">
