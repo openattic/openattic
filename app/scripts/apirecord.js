@@ -1,12 +1,32 @@
 angular.module('openattic')
+  .service('ApiRecorderService', function(){
+    var recording = false;
+    var recorded_commands = [];
+    return {
+      startRecording: function(){
+        recording = true;
+        recorded_commands = [];
+      },
+      isRecording: function(){
+        return recording;
+      },
+      stopRecording: function(){
+        recording = false;
+        return recorded_commands;
+      },
+      recordCommand: function(config){
+        if(recording){
+          recorded_commands.push(config);
+        }
+      }
+    };
+  })
   .config(function($provide, $httpProvider){
-    window.API_RECORDING = false;
-    window.API_RECORDED_COMMANDS = [];
-    $provide.factory('apiRecordHttpInterceptor', function() {
+    $provide.factory('apiRecordHttpInterceptor', function(ApiRecorderService) {
       return {
         'request': function(config) {
-          if( window.API_RECORDING && config.method != "GET"){
-            window.API_RECORDED_COMMANDS.push(config);
+          if( config.method != "GET"){
+            ApiRecorderService.recordCommand(config);
           }
           return config;
         },
@@ -18,16 +38,15 @@ angular.module('openattic')
   .directive('apiRecorder', function(){
     return {
       template: [
-        '<a title="API Recorder" >',
-          '<i class="fa" ng-class="{\'fa-dot-circle-o\': !recording, \'fa-stop\': recording }"></i>',
+        '<a title="API Recorder" ng-click="handleClick()" >',
+          '<i class="fa" ng-class="{\'fa-dot-circle-o\': !isRecording(), \'fa-stop\': isRecording() }"></i>',
         '</a>'
       ].join(''),
-      link: function(scope, element, attr){
-        element.bind("click", function(){
-          if(!window.API_RECORDING){
-            scope.recording = true;
-            scope.$apply();
-            window.API_RECORDING = true;
+      controller: function($scope, ApiRecorderService){
+        $scope.isRecording = ApiRecorderService.isRecording;
+        $scope.handleClick = function(){
+          if(!ApiRecorderService.isRecording()){
+            ApiRecorderService.startRecording()
           }
           else{
             var script = [
@@ -36,18 +55,13 @@ angular.module('openattic')
               'host = "' + window.location.protocol + '//' + window.location.hostname + '"',
               'auth = ("username", "password")'
             ]
-            var i;
-            for(i = 0; i < API_RECORDED_COMMANDS.length; i++){
-              script.push('requests.' + API_RECORDED_COMMANDS[i].method.toLowerCase() + '(host + "' + API_RECORDED_COMMANDS[i].url + '", {"auth": auth, "data": ' + angular.toJson(API_RECORDED_COMMANDS[i].data) + '})')
+            var i, cmds = ApiRecorderService.stopRecording();
+            for(i = 0; i < cmds.length; i++){
+              script.push('requests.' + cmds[i].method.toLowerCase() + '(host + "' + cmds[i].url + '", {"auth": auth, "data": ' + angular.toJson(cmds[i].data) + '})')
             }
             console.log(script.join('\n'));
-
-            scope.recording = false;
-            scope.$apply();
-            window.API_RECORDING = false;
-            window.API_RECORDED_COMMANDS = [];
           }
-        });
+        };
       }
     };
   });
