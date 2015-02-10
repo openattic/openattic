@@ -14,13 +14,12 @@
 
 import django_filters
 
-from rest_framework import serializers, viewsets
+from rest_framework import serializers, viewsets, status
 from rest_framework.response import Response
 
 from rest import relations
 
 from volumes.models import StorageObject
-
 from nfs.models import Export
 
 class NfsShareSerializer(serializers.HyperlinkedModelSerializer):
@@ -45,20 +44,20 @@ class NfsShareViewSet(viewsets.ModelViewSet):
     filter_class     = NfsShareFilter
 
     def create(self, request, *args, **kwargs):
-        nfs_data        = request.DATA
-        storageobj_data = request.QUERY_PARAMS
-        storageobj      = StorageObject.objects.get(id=storageobj_data["id"])
-        volume          = storageobj.filesystemvolume_or_none.volume
+        volume = StorageObject.objects.get(id=request.DATA["volume"])
+        del request.DATA["volume"]
+        instance = Export(volume = volume.filesystemvolume_or_none)
+        serializer = self.get_serializer(instance=instance, data=request.DATA, files=request.FILES)
 
-        if volume:
-            export = Export(volume=volume,
-                            path=volume.path,
-                            address=nfs_data["address"],
-                            options=nfs_data["options"])
-            export.save()
-            return Response(True)
+        if serializer.is_valid():
+            self.pre_save(serializer.object)
+            self.object = serializer.save(force_insert=True)
+            self.post_save(self.object, created=True)
+            headers = self.get_success_headers(serializer.data)
+            return Response(serializer.data, status=status.HTTP_201_CREATED,
+                            headers=headers)
 
-        return Response(False)
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
 
 RESTAPI_VIEWSETS = [
