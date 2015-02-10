@@ -57,7 +57,13 @@ angular.module('openattic')
             ]
             var cmds = ApiRecorderService.stopRecording();
             if(cmds.length === 0){
-              console.log("No commands recorded");
+              $.smallBox({
+                title: 'API Recorder',
+                content: '<i class="fa fa-clock-o"></i> <i>Did not capture any API requests.</i>',
+                color: '#C46A69',
+                iconSmall: 'fa fa-times fa-2x fadeInRight animated',
+                timeout: 4000
+              });
               return;
             }
             var i, url, args, datajson;
@@ -69,7 +75,8 @@ angular.module('openattic')
               }
               script.push('requests.' + cmds[i].method.toLowerCase() + '(' + args.join(', ') + ')\n');
             }
-            console.log(script.join('\n'));
+            $('#apirecord-script').val(script.join('\n'));
+            $('#apirecord-modal').modal();
           }
         };
       }
