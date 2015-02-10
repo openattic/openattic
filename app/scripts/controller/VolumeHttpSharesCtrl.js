@@ -1,6 +1,7 @@
 angular.module('openattic')
-  .controller('VolumeHttpSharesCtrl', function ($scope, $stateParams, HttpSharesService) {
+  .controller('VolumeHttpSharesCtrl', function ($scope, HttpSharesService) {
     'use strict';
+
     $scope.httpData = {};
 
     $scope.httpFilter = {

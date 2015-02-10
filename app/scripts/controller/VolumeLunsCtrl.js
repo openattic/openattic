@@ -1,6 +1,7 @@
 angular.module('openattic')
-  .controller('VolumeLunsCtrl', function ($scope, $stateParams, LunsService) {
+  .controller('VolumeLunsCtrl', function ($scope, LunsService) {
     'use strict';
+
     $scope.lunsData = {};
 
     $scope.lunsFilter = {

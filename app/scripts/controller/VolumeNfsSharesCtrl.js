@@ -1,6 +1,7 @@
 angular.module('openattic')
-  .controller('VolumeNfsSharesCtrl', function ($scope, $stateParams, NfsSharesService) {
+  .controller('VolumeNfsSharesCtrl', function ($scope, NfsSharesService) {
     'use strict';
+
     $scope.nfsData = {};
 
     $scope.nfsFilter = {

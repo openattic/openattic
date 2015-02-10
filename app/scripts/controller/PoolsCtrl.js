@@ -1,7 +1,6 @@
 angular.module('openattic')
-  .controller('PoolCtrl', function ($scope, $stateParams, $state, PoolService) {
+  .controller('PoolCtrl', function ($scope, $state, PoolService) {
     'use strict';
-    $scope.stateParams = $stateParams;
 
     $scope.data = {};
 

@@ -1,6 +1,7 @@
 angular.module('openattic')
-  .controller('VolumeSnapshotsCtrl', function ($scope, $stateParams, VolumeService) {
+  .controller('VolumeSnapshotsCtrl', function ($scope, VolumeService) {
     'use strict';
+
     $scope.snapshotsData = {};
 
     $scope.snapshotsFilter = {

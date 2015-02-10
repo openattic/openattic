@@ -1,6 +1,7 @@
 angular.module('openattic')
-  .controller('VolumeCifsSharesCtrl', function ($scope, $stateParams, CifsSharesService) {
+  .controller('VolumeCifsSharesCtrl', function ($scope, CifsSharesService) {
     'use strict';
+
     $scope.cifsData = {};
 
     $scope.cifsFilter = {
