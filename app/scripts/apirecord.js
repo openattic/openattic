@@ -1,12 +1,12 @@
 angular.module('openattic')
   .config(function($provide, $httpProvider){
+    window.API_RECORDING = false;
+    window.API_RECORDED_COMMANDS = [];
     $provide.factory('apiRecordHttpInterceptor', function() {
       return {
-        // optional method
         'request': function(config) {
-          // do something on success
-          if(config.method != "GET"){
-            console.log(arguments);
+          if( window.API_RECORDING && config.method != "GET"){
+            window.API_RECORDED_COMMANDS.push(config);
           }
           return config;
         },
@@ -14,44 +14,45 @@ angular.module('openattic')
     });
 
     $httpProvider.interceptors.push('apiRecordHttpInterceptor');
+  })
+  .directive('apiRecorder', function(){
+    return {
+      template: [
+        '<a title="API Recorder" >',
+          '<i class="fa" ng-class="{\'fa-dot-circle-o\': !recording, \'fa-stop\': recording }"></i>',
+        '</a>'
+      ].join(''),
+      link: function(scope, element, attr){
+        element.bind("click", function(){
+          if(!window.API_RECORDING){
+            scope.recording = true;
+            scope.$apply();
+            window.API_RECORDING = true;
+          }
+          else{
+            var script = [
+              '#!/usr/bin/env python',
+              'import requests',
+              'host = "' + window.location.protocol + '//' + window.location.hostname + '"',
+              'auth = ("username", "password")'
+            ]
+            var i;
+            for(i = 0; i < API_RECORDED_COMMANDS.length; i++){
+              script.push('requests.' + API_RECORDED_COMMANDS[i].method.toLowerCase() + '(host + "' + API_RECORDED_COMMANDS[i].url + '", {"auth": auth, "data": ' + angular.toJson(API_RECORDED_COMMANDS[i].data) + '})')
+            }
+            console.log(script.join('\n'));
+
+            scope.recording = false;
+            scope.$apply();
+            window.API_RECORDING = false;
+            window.API_RECORDED_COMMANDS = [];
+          }
+        });
+      }
+    };
   });
 
-function recordtest(){
-  var dataz = [{
-      "transformRequest" : [
-         null
-      ],
-      "headers" : {
-         "X-CSRFToken" : "Gz5vEVfTipBI33jXLwIraeSz91EwAjbw",
-         "Content-Type" : "application/json;charset=utf-8",
-         "Accept" : "application/json, text/plain, */*"
-      },
-      "url" : "/openattic/api/volumes",
-      "data" : {
-         "megs" : 1000,
-         "name" : "interceptest2",
-         "source_pool" : {
-            "id" : 1,
-         }
-      },
-      "method" : "POST",
-      "transformResponse" : [
-         null
-      ]
-   }]
 
-  var script = [
-    '#!/usr/bin/env python',
-    'import requests',
-    'host = "' + window.location.protocol + '//' + window.location.hostname + '"',
-    'auth = ("username", "password")'
-  ]
-  var i;
-  for(i = 0; i < dataz.length; i++){
-    script.push('requests.' + dataz[i].method.toLowerCase() + '(host + "' + dataz[i].url + '", {"auth": auth, "data": ' + angular.toJson(dataz[i].data) + '})')
-  }
-  return script.join('\n');
-}
 
 
 // kate: space-indent on; indent-width 2; replace-tabs on;
