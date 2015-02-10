@@ -58,7 +58,7 @@ angular.module('openattic')
           CifsSharesService.delete({id: $scope.cifsSelection.item.id})
             .$promise
             .then(function() {
-              $scope.filterConfig.refresh = new Date();
+              $scope.cifsFilter.refresh = new Date();
             }, function(error){
               console.log('An error occured', error);
             });
