@@ -52,12 +52,22 @@ angular.module('openattic')
             var script = [
               '#!/usr/bin/env python',
               'import requests',
-              'host = "' + window.location.protocol + '//' + window.location.hostname + '"',
-              'auth = ("username", "password")'
+              'auth = ("username", "password")',
+              ''
             ]
-            var i, cmds = ApiRecorderService.stopRecording();
+            var cmds = ApiRecorderService.stopRecording();
+            if(cmds.length === 0){
+              console.log("No commands recorded");
+              return;
+            }
+            var i, url, args, datajson;
             for(i = 0; i < cmds.length; i++){
-              script.push('requests.' + cmds[i].method.toLowerCase() + '(host + "' + cmds[i].url + '", {"auth": auth, "data": ' + angular.toJson(cmds[i].data) + '})')
+              url = window.location.origin + cmds[i].url;
+              args = ['"' + url + '"', 'auth=auth'];
+              if(cmds[i].data){
+                args.push('data=' + angular.toJson(cmds[i].data, 4));
+              }
+              script.push('requests.' + cmds[i].method.toLowerCase() + '(' + args.join(', ') + ')\n');
             }
             console.log(script.join('\n'));
           }
