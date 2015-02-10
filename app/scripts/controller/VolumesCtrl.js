@@ -1,7 +1,6 @@
 angular.module('openattic')
-  .controller('VolumeCtrl', function ($scope, $stateParams, $state, VolumeService) {
+  .controller('VolumeCtrl', function ($scope, $state, VolumeService) {
     'use strict';
-    $scope.stateParams = $stateParams;
 
     $scope.data = {};
 
