@@ -36,7 +36,11 @@ angular.module('openattic')
     });
 
     $scope.addAction = function(){
-      console.log(["addAction", arguments]);
+      $state.go("users.add");
+    }
+
+    $scope.editAction = function(){
+      $state.go("users.edit", {user: $scope.selection.item.id});
     }
 
     $scope.deleteAction = function(){

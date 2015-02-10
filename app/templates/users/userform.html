@@ -1,0 +1,89 @@
+<div ng-controller="UserFormCtrl">
+    <div class="row">
+        <big-breadcrumbs items="['System', 'Users']" class="col-xs-12 col-sm-7 col-md-7 col-lg-4"></big-breadcrumbs>
+    </div>
+
+    <div class="row">
+        <article class="col-sm-4 col-md-4 col-lg-4">
+            <div class="jarviswidget" id="wid-id-1" data-widget-editbutton="false" data-widget-custombutton="false">
+                <header>
+                    <span class="widget-icon"> <i class="fa fa-edit"></i> </span>
+                    <h2 ng-bind-template="{{userAction}} {{user.username}}"></h2>
+                </header>
+                <div>
+                    <div class="widget-body no-padding">
+                        <form name="userForm" role="form" class="smart-form" novalidate>
+                            <fieldset>
+                                <section>
+                                    <label class="label" for="userUsername">Username</label>
+                                    <label class="input" ng-class="{'state-error': userForm.username.$invalid}"> <i class="icon-prepend fa fa-user"></i>
+                                        <input type="text" placeholder="Username..." ng-model="user.username" name="username" id="userUsername" required>
+                                        <span ng-show="userForm.username.$dirty && userForm.username.$invalid">
+                                            The username is required.
+                                        </span>
+                                    </label>
+                                </section>
+                                <section>
+                                    <label class="label" for="userPassword">Password</label>
+                                    <label class="input" ng-class="{'state-error': userForm.password.$invalid}"> <i class="icon-prepend fa fa-key"></i>
+                                        <input type="password" placeholder="Password..." ng-model="user.password" name="password" id="userPassword">
+                                        <span ng-show="userForm.password.$dirty && userForm.password.$invalid">
+                                            A password is required.
+                                        </span>
+                                    </label>
+                                </section>
+                                <section>
+                                    <label class="label" for="userFirstname">Firstname</label>
+                                    <label class="input"> <i class="icon-prepend fa fa-user"></i>
+                                        <input type="text" placeholder="Firstname..." ng-model="user.first_name" name="firstname" id="userFirstname">
+                                    </label>
+                                </section>
+                                <section>
+                                    <label class="label" for="userLastname">Lastname</label>
+                                    <label class="input"> <i class="icon-prepend fa fa-user"></i>
+                                        <input type="text" placeholder="Lastname..." ng-model="user.last_name" name="last">
+                                    </label>
+                                </section>
+                                <section>
+                                    <label class="label" for="userEmail">Email Address</label>
+                                    <label class="input" ng-class="{'state-error': userForm.email.$invalid}"> <i class="icon-prepend fa fa-envelope-o"></i>
+                                        <input type="email" placeholder="Email Address..." ng-model="user.email" name="email" id="userEmail">
+                                        <span ng-show="userForm.email.$dirty && userForm.email.$invalid">
+                                            It's not a valid email address.
+                                        </span>
+                                    </label>
+                                </section>
+                                <section>
+                                    <label class="checkbox" for="userActive">
+                                        <input type="checkbox" ng-model="user.is_active" name="active" id="userActive">
+                                        <i></i>Is active
+                                    </label>
+                                </section>
+                                <section>
+                                    <label class="checkbox" for="userStaff">
+                                        <input type="checkbox" ng-model="user.is_staff" name="staff" id="userStaff">
+                                        <i></i>Is administrator
+                                    </label>
+                                </section>
+                                <section>
+                                    <label class="checkbox" for="userSuperuser">
+                                        <input type="checkbox" ng-model="user.is_superuser" name="superuser" id="userSuperuser">
+                                        <i></i>Has all privileges
+                                    </label>
+                                </section>
+                            </fieldset>
+                            <footer>
+                                <button type="submit" class="btn btn-primary" ng-click="submitAction()" ng-disabled="userForm.$invalid">
+                                    Submit
+                                </button>
+                                <button type="button" class="btn btn-default" ng-click="cancelAction()">
+                                    Back
+                                </button>
+                            </footer>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </article>
+    </div>
+</div>

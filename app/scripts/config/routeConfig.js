@@ -115,6 +115,22 @@ angular.module('openattic').config(function ($stateProvider, $urlRouterProvider)
       }
     }
   })
+  .state('users.add', {
+    url: '/add',
+    views: {
+      'main': {
+        templateUrl: 'templates/users/userform.html'
+      }
+    }
+  })
+  .state('users.edit', {
+    url: '/edit/:user',
+    views: {
+      'main': {
+        templateUrl: 'templates/users/userform.html'
+      }
+    }
+  })
   .state('apikeys', {
     url: '/apikeys',
     views: {
