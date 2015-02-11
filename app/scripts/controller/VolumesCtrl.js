@@ -58,7 +58,48 @@ angular.module('openattic')
     }
 
     $scope.deleteAction = function(){
-      console.log(["deleteAction", arguments]);
+      $.SmartMessageBox({
+        title: 'Delete HTTP export',
+        content: [
+          '<p>You are about to delete the volume ' + $scope.selection.item.name + '.</p>',
+          '<p>Be aware that you will <b>lose all data</b> in that volume and that this operation <b>cannot be undone</b>.</p>',
+          '<p>To confirm, please enter the volume name and click Accept.</p>'
+        ].join(''),
+        buttons: '[Cancel][Accept]',
+        input: 'text',
+        inputValue: '',
+        placeholder: $scope.selection.item.name
+      }, function (ButtonPressed, Value) {
+        if (ButtonPressed === 'Accept') {
+          if( Value === $scope.selection.item.name ){
+            VolumeService.delete({id: $scope.selection.item.id})
+              .$promise
+              .then(function() {
+                $scope.filterConfig.refresh = new Date();
+              }, function(error){
+                console.log('An error occured', error);
+              });
+          }
+          else{
+            $.smallBox({
+              title: 'Delete volume',
+              content: '<i class="fa fa-clock-o"></i> <i>Wrong volume name.</i>',
+              color: '#C46A69',
+              iconSmall: 'fa fa-times fa-2x fadeInRight animated',
+              timeout: 4000
+            });
+          }
+        }
+        else{
+          $.smallBox({
+            title: 'Delete volume',
+            content: '<i class="fa fa-clock-o"></i> <i>Cancelled</i>',
+            color: '#C46A69',
+            iconSmall: 'fa fa-times fa-2x fadeInRight animated',
+            timeout: 4000
+          });
+        }
+      });
     }
   });
 
