@@ -50,16 +50,32 @@ angular.module('openattic')
     });
 
     $scope.addAction = function(){
-      $state.go("volumes-add");
-    };
+      $state.go('volumes-add');
+    }
 
     $scope.resizeAction = function(){
-      console.log(['resizeAction', arguments]);
-    };
+      $.SmartMessageBox({
+        title: 'Resize Volume',
+        content: 'Please enter the new volume size.',
+        buttons: '[Cancel][Accept]',
+        input: 'text',
+        inputValue: $scope.selection.item.usage.size,
+        placeholder: $scope.selection.item.usage.size
+      }, function (ButtonPressed, Value) {
+        if (ButtonPressed === 'Accept') {
+          new VolumeService($scope.selection.item).$update({ "megs": parseInt(Value, 10) })
+            .then(function() {
+              $scope.filterConfig.refresh = new Date();
+            }, function(error){
+              console.log('An error occured', error);
+            });
+        }
+      });
+    }
 
     $scope.deleteAction = function(){
       $.SmartMessageBox({
-        title: 'Delete HTTP export',
+        title: 'Delete Volume',
         content: [
           '<p>You are about to delete the volume ' + $scope.selection.item.name + '.</p>',
           '<p>Be aware that you will <b>lose all data</b> in that volume and that this operation <b>cannot be undone</b>.</p>',
