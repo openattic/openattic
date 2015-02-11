@@ -121,3 +121,7 @@ oadatatable .input-group {
 .progress-bar-stolenspace {
     background-color: #aaa;
 }
+
+.progress-bar {
+    background-image: none !important;
+}
