@@ -50,7 +50,7 @@ angular.module('openattic')
     });
 
     $scope.addAction = function(){
-      $state.go('volumes-add');
+      $state.go('volumes-add.create');
     }
 
     $scope.resizeAction = function(){
