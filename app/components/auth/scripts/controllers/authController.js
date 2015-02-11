@@ -1,3 +1,5 @@
+'use strict';
+
 angular.module('openattic.auth')
   .controller('authController', function ($scope, $window, authService) {
     $scope.login = function(){
@@ -6,10 +8,10 @@ angular.module('openattic.auth')
         .$promise
         .then(function(res){
           $scope.user = res.username;
-          $window.location.href = '/openattic/angular2/#/dashboard'
+          $window.location.href = '/openattic/angular2/#/dashboard';
         })
-        .catch(function(res){
-          $window.location.href = '/openattic/angular2/login.html'
+        .catch(function(){
+          $window.location.href = '/openattic/angular2/login.html';
         });
     };
   });

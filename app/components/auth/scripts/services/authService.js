@@ -1,3 +1,5 @@
+'use strict';
+
 angular.module('openattic.auth')
   .factory('authService', function($resource) {
     return $resource('/openattic/api/auth', {}, {
