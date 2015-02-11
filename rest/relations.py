@@ -19,6 +19,27 @@ from rest_framework.relations import \
     HyperlinkedIdentityField as RestFramework_HyperlinkedIdentityField
 
 class HyperlinkedRelatedField(RestFramework_HyperlinkedRelatedField):
+    def __init__(self, *args, **kwargs):
+        # Work around a bug in Django Rest Framework that causes the
+        # serializer context to not be passed down to us.
+        #
+        # https://github.com/tomchristie/django-rest-framework/issues/1237
+        #
+        # To fix this, we add a dummy request object that provides a
+        # build_absolute_uri method which doesn't do anything. This does
+        # not affect all cases where the context is set correctly because
+        # it will be overwritten before being used.
+
+        class DummyRequest(object):
+            def build_absolute_uri(self, url):
+                return url
+
+        self.context = {
+            "request": DummyRequest()
+        }
+
+        super(HyperlinkedRelatedField, self).__init__(*args, **kwargs)
+
     def to_native(self, obj):
         url = super(HyperlinkedRelatedField, self).to_native(obj)
         return {
