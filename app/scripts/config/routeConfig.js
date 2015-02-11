@@ -160,6 +160,22 @@ angular.module('openattic').config(function ($stateProvider, $urlRouterProvider)
         }
       }
     })
+    .state('hosts-add', {
+      url: '/hosts/add',
+      views: {
+        'main': {
+          templateUrl: 'templates/hosts/form.html'
+        }
+      }
+    })
+    .state('hosts-edit', {
+      url: '/hosts/edit/:host',
+      views: {
+        'main': {
+          templateUrl: 'templates/hosts/form.html'
+        }
+      }
+    })
     .state('users', {
       url: '/users',
       views: {

@@ -31,16 +31,16 @@ angular.module('openattic')
       });
     }, true);
 
-    $scope.$watchCollection("selection.item", function(item){
+    $scope.$watchCollection('selection.item', function(item){
       $scope.hasSelection = !!item;
     });
 
     $scope.addAction = function(){
-      $state.go("hosts.add");
+      $state.go('hosts-add');
     }
 
     $scope.editAction = function(){
-      $state.go("hosts.edit", {host: $scope.selection.item.id});
+      $state.go('hosts.edit', {host: $scope.selection.item.id});
     }
 
     $scope.deleteAction = function(){
