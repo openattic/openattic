@@ -20,7 +20,7 @@ from rest_framework.response import Response
 from rest import relations
 
 from volumes.models import StorageObject
-from lio.models import HostACL
+from lio.models import HostACL, Initiator
 
 class HostACLSerializer(serializers.HyperlinkedModelSerializer):
     """ Serializer for a HostACL. """
@@ -51,6 +51,22 @@ class HostACLViewSet(viewsets.ModelViewSet):
     filter_class     = HostACLFilter
 
 
+class InitiatorSerializer(serializers.HyperlinkedModelSerializer):
+    """ Serializer for a Initiator. """
+    url         = serializers.HyperlinkedIdentityField(view_name="nfsshare-detail")
+    host        = relations.HyperlinkedRelatedField(view_name="host-detail")
+
+    class Meta:
+        model = Initiator
+        fields = ('url', 'host', 'wwn', 'type')
+
+
+class InitiatorViewSet(viewsets.ModelViewSet):
+    queryset         = Initiator.objects.all()
+    serializer_class = InitiatorSerializer
+
+
 RESTAPI_VIEWSETS = [
-    ('luns', HostACLViewSet, 'lun')
+    ('luns', HostACLViewSet, 'lun'),
+    ('initiators', InitiatorViewSet, 'initiator')
 ]
