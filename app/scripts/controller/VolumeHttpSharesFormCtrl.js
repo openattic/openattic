@@ -2,7 +2,7 @@ angular.module('openattic')
   .controller('VolumeHttpSharesFormCtrl', function ($scope, $state, $stateParams, HttpSharesService) {
     if(!$stateParams.share){
       $scope.share = {
-        'volume': $scope.selection.item.id,
+        'volume': {id: $scope.selection.item.id},
         'path':   $scope.selection.item.path
       };
       $scope.editing = false;

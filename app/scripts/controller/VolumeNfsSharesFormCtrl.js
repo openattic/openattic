@@ -2,7 +2,7 @@ angular.module('openattic')
   .controller('VolumeNfsSharesFormCtrl', function ($scope, $state, $stateParams, NfsSharesService) {
     if(!$stateParams.share){
       $scope.share = {
-        'volume': $scope.selection.item.id,
+        'volume': {id: $scope.selection.item.id},
         'path':   $scope.selection.item.path,
         'address':  '',
         'options':  'rw,no_subtree_check,no_root_squash'

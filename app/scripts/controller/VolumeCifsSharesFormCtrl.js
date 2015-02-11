@@ -2,7 +2,7 @@ angular.module('openattic')
   .controller('VolumeCifsSharesFormCtrl', function ($scope, $state, $stateParams, CifsSharesService) {
     if(!$stateParams.share){
       $scope.share = {
-        'volume': $scope.selection.item.id,
+        'volume': {id: $scope.selection.item.id},
         'name': $scope.selection.item.name,
         'path': $scope.selection.item.path,
         'available':  true,
