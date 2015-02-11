@@ -64,6 +64,7 @@ class InitiatorSerializer(serializers.HyperlinkedModelSerializer):
 class InitiatorViewSet(viewsets.ModelViewSet):
     queryset         = Initiator.objects.all()
     serializer_class = InitiatorSerializer
+    filter_fields = ('host', 'wwn')
 
 
 RESTAPI_VIEWSETS = [

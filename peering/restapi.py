@@ -36,6 +36,7 @@ class PeerHostSerializer(serializers.HyperlinkedModelSerializer):
 class PeerHostViewSet(viewsets.ModelViewSet):
     queryset         = PeerHost.objects.all()
     serializer_class = PeerHostSerializer
+    filter_fields = ('host', 'base_url')
 
 
 RESTAPI_VIEWSETS = [
