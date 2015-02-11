@@ -6,11 +6,9 @@ angular.module('openattic.auth')
         .$promise
         .then(function(res){
           $scope.user = res.username;
-          console.log(res);
           $window.location.href = '/openattic/angular2/#/dashboard'
         })
         .catch(function(res){
-          console.log(res);
           $window.location.href = '/openattic/angular2/login.html'
         });
     };
