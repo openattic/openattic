@@ -1,3 +1,5 @@
+# -*- coding: utf-8 -*-
+# kate: space-indent on; indent-width 4; replace-tabs on;
 
 """
  *  Copyright (C) 2011-2014, it-novum GmbH <community@open-attic.org>
@@ -25,11 +27,16 @@ from nfs.models import Export
 class NfsShareSerializer(serializers.HyperlinkedModelSerializer):
     """ Serializer for a NFS Export. """
     url         = serializers.HyperlinkedIdentityField(view_name="nfsshare-detail")
-    volume      = relations.HyperlinkedRelatedField(view_name="volume-detail", read_only=True, source="volume.storageobj")
+    volume      = relations.HyperlinkedRelatedField(view_name="volume-detail", source="volume.storageobj", queryset=StorageObject.objects.all())
 
     class Meta:
         model = Export
         fields = ('url', 'id', 'path', 'address', 'options', 'volume')
+
+    def restore_object(self, attrs, instance=None):
+        attrs["volume"] = attrs["volume.storageobj"].filesystemvolume_or_none
+        del attrs["volume.storageobj"]
+        return super(NfsShareSerializer, self).restore_object(attrs, instance)
 
 class NfsShareFilter(django_filters.FilterSet):
     volume = django_filters.NumberFilter(name="volume__storageobj__id")
@@ -42,22 +49,6 @@ class NfsShareViewSet(viewsets.ModelViewSet):
     queryset         = Export.objects.all()
     serializer_class = NfsShareSerializer
     filter_class     = NfsShareFilter
-
-    def create(self, request, *args, **kwargs):
-        volume = StorageObject.objects.get(id=request.DATA["volume"])
-        del request.DATA["volume"]
-        instance = Export(volume = volume.filesystemvolume_or_none)
-        serializer = self.get_serializer(instance=instance, data=request.DATA, files=request.FILES)
-
-        if serializer.is_valid():
-            self.pre_save(serializer.object)
-            self.object = serializer.save(force_insert=True)
-            self.post_save(self.object, created=True)
-            headers = self.get_success_headers(serializer.data)
-            return Response(serializer.data, status=status.HTTP_201_CREATED,
-                            headers=headers)
-
-        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
 
 RESTAPI_VIEWSETS = [

@@ -25,11 +25,16 @@ from http.models import Export
 class HttpShareSerializer(serializers.HyperlinkedModelSerializer):
     """ Serializer for a HTTP Export. """
     url         = serializers.HyperlinkedIdentityField(view_name="httpshare-detail")
-    volume      = relations.HyperlinkedRelatedField(view_name="volume-detail", read_only=True, source="volume.storageobj")
+    volume      = relations.HyperlinkedRelatedField(view_name="volume-detail", source="volume.storageobj", queryset=StorageObject.objects.all())
 
     class Meta:
         model = Export
         fields = ('url', 'id', 'path', 'volume')
+
+    def restore_object(self, attrs, instance=None):
+        attrs["volume"] = attrs["volume.storageobj"].filesystemvolume_or_none
+        del attrs["volume.storageobj"]
+        return super(HttpShareSerializer, self).restore_object(attrs, instance)
 
 class HttpShareFilter(django_filters.FilterSet):
     volume = django_filters.NumberFilter(name="volume__storageobj__id")
@@ -42,22 +47,6 @@ class HttpShareViewSet(viewsets.ModelViewSet):
     queryset         = Export.objects.all()
     serializer_class = HttpShareSerializer
     filter_class     = HttpShareFilter
-
-    def create(self, request, *args, **kwargs):
-        volume = StorageObject.objects.get(id=request.DATA["volume"])
-        del request.DATA["volume"]
-        instance = Export(volume = volume.filesystemvolume_or_none)
-        serializer = self.get_serializer(instance=instance, data=request.DATA, files=request.FILES)
-
-        if serializer.is_valid():
-            self.pre_save(serializer.object)
-            self.object = serializer.save(force_insert=True)
-            self.post_save(self.object, created=True)
-            headers = self.get_success_headers(serializer.data)
-            return Response(serializer.data, status=status.HTTP_201_CREATED,
-                            headers=headers)
-
-        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
 
 RESTAPI_VIEWSETS = [
