@@ -40,7 +40,12 @@ class AuthView(APIView):
     permission_classes = (AllowAny,)
 
     def post(self, request, *args, **kwargs):
-        login(request, request.user)
+        if hasattr(request.user, "backend"):
+            # If the user was already logged in when posting data to the login
+            # view, the authentication code has not been run and login() will
+            # fail. hence, we only call it if the `backend' attribute is present,
+            # which is set by django's authenticate().
+            login(request, request.user)
         return Response(UserSerializer(request.user, context={'request': request}).data)
 
     def delete(self, request, *args, **kwargs):
