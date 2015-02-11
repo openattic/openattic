@@ -63,7 +63,10 @@ angular.module('openattic')
         placeholder: $scope.selection.item.usage.size_text
       }, function (ButtonPressed, Value) {
         if (ButtonPressed === 'Accept') {
-          new VolumeService($scope.selection.item).$update({ "megs": SizeParserService.parseInt(Value) })
+          new VolumeService({
+            id: $scope.selection.item.id,
+            megs: SizeParserService.parseInt(Value)
+          }).$update()
             .then(function() {
               $scope.filterConfig.refresh = new Date();
             }, function(error){

@@ -83,7 +83,10 @@ angular.module('openattic')
         });
       }
       else if(!$scope.state.formatted) {
-        $scope.volume.$update({filesystem: $scope.data.filesystem})
+        new VolumeService({
+          id: $scope.volume.id,
+          filesystem: $scope.data.filesystem
+        }).$update()
           .then(function(res) {
             $scope.volume = res;
             $scope.state.formatted = true;
