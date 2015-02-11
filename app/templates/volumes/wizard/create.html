@@ -23,8 +23,7 @@
         <div class="form-group">
             <label class="col-md-2 control-label">Size</label>
             <div class="col-md-10">
-                <input type="number" class="form-control" name="megs" required
-                    ng-model="volume.megs" min="100" max="{{ data.sourcePool.usage.free }}">
+                <input class="form-control" name="megs" required ng-model="data.megs">
                 <span ng-show="volumeForm.megs.$dirty && volumeForm.megs.$error.required">This field is required!</span>
                 <span ng-show="volumeForm.megs.$dirty && volumeForm.megs.$error.number">This is not a valid number!</span>
                 <span ng-show="volumeForm.megs.$dirty && (volumeForm.megs.$error.min || volumeForm.megs.$error.max)">The size must be at least 100mb and can not be greater than max available size of the volumepool. Please select a volumepool if you haven't done it yet!</span>

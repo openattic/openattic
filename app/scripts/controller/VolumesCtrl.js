@@ -1,5 +1,5 @@
 angular.module('openattic')
-  .controller('VolumeCtrl', function ($scope, $state, VolumeService) {
+  .controller('VolumeCtrl', function ($scope, $state, VolumeService, SizeParserService) {
     'use strict';
 
     $scope.data = {};
@@ -59,11 +59,11 @@ angular.module('openattic')
         content: 'Please enter the new volume size.',
         buttons: '[Cancel][Accept]',
         input: 'text',
-        inputValue: $scope.selection.item.usage.size,
-        placeholder: $scope.selection.item.usage.size
+        inputValue:  $scope.selection.item.usage.size_text,
+        placeholder: $scope.selection.item.usage.size_text
       }, function (ButtonPressed, Value) {
         if (ButtonPressed === 'Accept') {
-          new VolumeService($scope.selection.item).$update({ "megs": parseInt(Value, 10) })
+          new VolumeService($scope.selection.item).$update({ "megs": SizeParserService.parseInt(Value) })
             .then(function() {
               $scope.filterConfig.refresh = new Date();
             }, function(error){

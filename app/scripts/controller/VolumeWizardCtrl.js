@@ -1,10 +1,11 @@
 angular.module('openattic')
-  .controller('VolumeWizardCtrl', function ($scope, $state, VolumeService, PoolService) {
+  .controller('VolumeWizardCtrl', function ($scope, $state, VolumeService, PoolService, SizeParserService) {
     'use strict';
 
     $scope.volume  = {};
     $scope.data = {
       sourcePool: null,
+      megs: 0,
       mirrorHost: '',
       mirrorPool: null,
       filesystem: ''
@@ -24,7 +25,7 @@ angular.module('openattic')
         console.log('An error occurred', error);
       });
 
-    $scope.$watch("data.sourcePool", function(sourcePool) {
+    $scope.$watch('data.sourcePool', function(sourcePool) {
       if(sourcePool){
         $scope.volume.source_pool = { id: sourcePool.id };
         new PoolService(sourcePool).$filesystems()
@@ -34,6 +35,9 @@ angular.module('openattic')
             console.log('An error occured', error);
           });
       }
+    });
+    $scope.$watch('data.megs', function(megs){
+      $scope.volume.megs = SizeParserService.parseInt(megs);
     });
 
     var goToListView = function() {
