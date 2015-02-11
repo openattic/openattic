@@ -1,3 +1,5 @@
+'use strict';
+
 angular.module('openattic')
   .service('ApiRecorderService', function(){
     var recording = false;
@@ -25,7 +27,7 @@ angular.module('openattic')
     $provide.factory('apiRecordHttpInterceptor', function(ApiRecorderService) {
       return {
         'request': function(config) {
-          if( config.method != "GET"){
+          if( config.method != 'GET'){
             ApiRecorderService.recordCommand(config);
           }
           return config;
