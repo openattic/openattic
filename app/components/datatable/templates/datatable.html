@@ -18,15 +18,16 @@
                 <div class="col-xs-12 col-sm-6">
                     <div class="widget-toolbar">
                         <div class="dataTables_length" >
-                            <label>
-                                <select class="form-control" name="dt_basic_length" ng-model="filterConfig.entries">
-                                    <option value="2">2</option>
-                                    <option value="10">10</option>
-                                    <option value="25">25</option>
-                                    <option value="50">50</option>
-                                    <option value="100">100</option>
-                                </select>
-                            </label>
+                            <button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown" aria-expanded="false">
+                                {{ filterConfig.entries }} <span class="caret"></span>
+                            </button>
+                            <ul class="dropdown-menu arrow-box-up-right pull-right oadatatableshowhidemenu" role="menu">
+                                <li ng-class="{active: filterConfig.entries ===   2}"><a ng-click="filterConfig.entries =   2">   2 </a></li>
+                                <li ng-class="{active: filterConfig.entries ===  10}"><a ng-click="filterConfig.entries =  10">  10 </a></li>
+                                <li ng-class="{active: filterConfig.entries ===  25}"><a ng-click="filterConfig.entries =  25">  25 </a></li>
+                                <li ng-class="{active: filterConfig.entries ===  50}"><a ng-click="filterConfig.entries =  50">  50 </a></li>
+                                <li ng-class="{active: filterConfig.entries === 100}"><a ng-click="filterConfig.entries = 100"> 100 </a></li>
+                            </ul>
                         </div>
                     </div>
                     <div class="oadatatableactions"></div>
