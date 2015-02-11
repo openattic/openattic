@@ -300,15 +300,15 @@ class VolumeViewSet(viewsets.ModelViewSet):
     def update(self, request, *args, **kwargs):
         storageobj = models.StorageObject.objects.get(id=request.DATA["id"])
 
-        if "filesystem" in request.QUERY_PARAMS:
-            storageobj.create_filesystem(request.QUERY_PARAMS["filesystem"], {
+        if "filesystem" in request.DATA:
+            storageobj.create_filesystem(request.DATA["filesystem"], {
                 "owner"     : request.user,
                 "fswarning" : 75,
                 "fscritical": 85,
             })
 
-        if "megs" in request.QUERY_PARAMS:
-            storageobj.resize(int(request.QUERY_PARAMS["megs"]))
+        if "megs" in request.DATA:
+            storageobj.resize(int(request.DATA["megs"]))
 
         volume = VolumeSerializer(storageobj, many=False, context={"request": request})
         return Response(volume.data)
