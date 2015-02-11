@@ -40,7 +40,7 @@ angular.module('openattic')
       }
     });
 
-    $scope.$watchCollection("selection.item", function(item){
+    $scope.$watchCollection('selection.item', function(item){
       $scope.hasSelection = !!item;
       if( !item ){
         return;
@@ -50,16 +50,16 @@ angular.module('openattic')
     });
 
     $scope.addAction = function(){
-      console.log(["addAction", arguments]);
-    }
+      console.log(['addAction', arguments]);
+    };
 
     $scope.resizeAction = function(){
-      console.log(["resizeAction", arguments]);
-    }
+      console.log(['resizeAction', arguments]);
+    };
 
     $scope.deleteAction = function(){
-      console.log(["deleteAction", arguments]);
-    }
+      console.log(['deleteAction', arguments]);
+    };
   });
 
 // kate: space-indent on; indent-width 2; replace-tabs on;
