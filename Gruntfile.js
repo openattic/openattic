@@ -18,7 +18,8 @@ module.exports = function (grunt) {
     ],
     watchFiles: [
       '<%= buildConfig.src %>index.tpl.html',
-      '<%= buildConfig.src %>scripts/**/*.js'
+      '<%= buildConfig.src %>scripts/**/*.js',
+      '<%= buildConfig.src %>components/**/*.js'
     ]
   };
 
@@ -71,7 +72,9 @@ module.exports = function (grunt) {
           jshintrc: '.jshintrc'
         },
         all: [
-          '<%= buildConfig.src %>scripts/{,*/}*.js'
+          '<%= buildConfig.src %>scripts/{,*/}*.js',
+          '<%= buildConfig.src %>components/{,**/}*.js',
+          '!<%= buildConfig.src %>components/smartadmin/{,**/}*.js',
         ]
       },
 
