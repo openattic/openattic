@@ -5,6 +5,8 @@ angular.module('openattic')
     $scope.volume  = {};
     $scope.data = {
       sourcePool: null,
+      mirrorHost: '',
+      mirrorPool: null,
       filesystem: ''
     };
     $scope.supported_filesystems = {};
@@ -34,19 +36,40 @@ angular.module('openattic')
       }
     });
 
+    var goToListView = function() {
+      $state.go('volumes');
+    }
+
+    var goToNextSensibleState = function(){
+      if(!$scope.state.created){
+        $state.go('volumes-add.create');
+      }
+      // TODO: if !mirrored goto mirror once that's implemented
+      else if(!$scope.state.formatted){
+        $state.go('volumes-add.filesystem');
+      }
+      else{
+        goToListView();
+      }
+    }
+
     $scope.submitAction = function() {
-      if ($state.is('volumes-add.create') && !$scope.state.created) {
+      if (!$scope.state.created) {
+        if( $scope.data.filesystem !== '' ){
+          $scope.volume.filesystem = $scope.data.filesystem;
+        }
         VolumeService.save($scope.volume)
           .$promise
           .then(function(res) {
             $scope.volume = res;
             $scope.state.created = true;
-            $state.go('volumes-add.filesystem'); // TODO: goto mirror here once that's implemented
+            $scope.state.formatted = $scope.volume.is_filesystemvolume;
+            goToNextSensibleState();
           }, function(error){
             console.log('An error occured', error);
           });
       }
-      else if($state.is('volumes-add.mirror') && !$scope.state.mirrored) {
+      else if(!$scope.state.mirrored && $scope.data.mirrorHost !== '') {
         $.smallBox({
           title: 'Mirror Volume',
           content: '<i class="fa fa-clock-o"></i> <i>Sorry, we haven\'t implemented that yet.</i>',
@@ -55,11 +78,12 @@ angular.module('openattic')
           timeout: 4000
         });
       }
-      else if($state.is('volumes-add.filesystem') && !$scope.state.formatted) {
+      else if(!$scope.state.formatted) {
         $scope.volume.$update({filesystem: $scope.data.filesystem})
           .then(function(res) {
             $scope.volume = res;
             $scope.state.formatted = true;
+            goToNextSensibleState();
           }, function(error) {
             console.log('An error occured', error);
           });
@@ -68,10 +92,6 @@ angular.module('openattic')
 
     $scope.cancelAction = function() {
       goToListView();
-    }
-
-    var goToListView = function() {
-      $state.go('volumes');
     }
   });
 
