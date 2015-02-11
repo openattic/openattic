@@ -40,17 +40,17 @@ angular.module('openattic')
       }
     });
 
-    $scope.$watchCollection("selection.item", function(item){
+    $scope.$watchCollection('selection.item', function(item){
       $scope.hasSelection = !!item;
     });
 
     $scope.addAction = function(){
-      console.log(["addAction", arguments]);
-    }
+      console.log(['addAction', arguments]);
+    };
 
     $scope.deleteAction = function(){
-      console.log(["deleteAction", arguments]);
-    }
+      console.log(['deleteAction', arguments]);
+    };
   });
 
 // kate: space-indent on; indent-width 2; replace-tabs on;
