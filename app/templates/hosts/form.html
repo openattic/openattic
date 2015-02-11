@@ -24,6 +24,24 @@
                                         </span>
                                     </label>
                                 </section>
+                                <section>
+                                    <label class="label" for="hostPeerHostUrl">Peer Host URL</label>
+                                    <label class="input"> <i class="icon-prepend fa fa-host"></i>
+                                        <input type="text" placeholder="Peer Host URL..." ng-model="data.peerHost.base_url" name="peerHostUrl" id="hostPeerHostUrl">
+                                    </label>
+                                </section>
+                                <section>
+                                    <label class="label" for="hostLastname">iSCSI IQN</label>
+                                    <label class="input"> <i class="icon-prepend fa fa-host"></i>
+                                        <input type="text" placeholder="iSCSI IQN..." ng-model="data.iscsi.wwn" name="iscsiIqn">
+                                    </label>
+                                </section>
+                                <section>
+                                    <label class="label" for="hostLastname">FC WWN</label>
+                                    <label class="input"> <i class="icon-prepend fa fa-host"></i>
+                                        <input type="text" placeholder="FC WWN..." ng-model="data.fc.wwn" name="fcWwn">
+                                    </label>
+                                </section>
                             </fieldset>
                             <footer>
                                 <button type="submit" class="btn btn-primary" ng-click="submitAction()" ng-disabled="hostForm.$invalid">
