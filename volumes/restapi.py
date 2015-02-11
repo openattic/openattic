@@ -287,7 +287,12 @@ class VolumeViewSet(viewsets.ModelViewSet):
     def create(self, request, *args, **kwargs):
         storageobj = models.StorageObject.all_objects.get(volumepool__id=request.DATA["source_pool"]["id"])
 
-        volume = storageobj.create_volume(request.DATA["name"], request.DATA["megs"], {"owner": request.user.id})
+        volume = storageobj.create_volume(request.DATA["name"], request.DATA["megs"], {
+            "owner": request.user,
+            "fswarning" : 75,
+            "fscritical": 85,
+            "filesystem": request.DATA.get("filesystem", None)
+            })
         serializer = VolumeSerializer(volume, many=False, context={"request": request})
 
         return Response(serializer.data, status=HTTP_201_CREATED)
