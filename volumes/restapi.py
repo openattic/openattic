@@ -307,6 +307,9 @@ class VolumeViewSet(viewsets.ModelViewSet):
                 "fscritical": 85,
             })
 
+        if "megs" in request.QUERY_PARAMS:
+            storageobj.resize(int(request.QUERY_PARAMS["megs"]))
+
         volume = VolumeSerializer(storageobj, many=False, context={"request": request})
         return Response(volume.data)
 
