@@ -1,5 +1,5 @@
 angular.module('openattic')
-  .controller('CmdlogCtrl', function ($scope, $state, CmdlogService) {
+  .controller('CmdlogCtrl', function ($scope, $state, $filter, CmdlogService) {
     'use strict';
 
     $scope.data = {};
@@ -29,4 +29,37 @@ angular.module('openattic')
           console.log('An error occurred', error);
         });
     }, true);
+
+    $scope.$watchCollection('selection.item', function(item){
+      $scope.hasSelection = !!item;
+    });
+
+    $scope.deleteAction = function(){
+      var itemText = $filter('shortlog')($scope.selection.item.text);
+
+      $.SmartMessageBox({
+        title: 'Delete log entry',
+        content: 'Do you really want to delete that log entry: <pre>"' + itemText + '"</pre>',
+        buttons: '[No][Yes]'
+      }, function (ButtonPressed) {
+        if (ButtonPressed === 'Yes') {
+          CmdlogService.delete({id: $scope.selection.item.id})
+            .$promise
+            .then(function() {
+              $scope.filterConfig.refresh = new Date();
+            }, function(error){
+              console.log('An error occured', error);
+            });
+        }
+        if (ButtonPressed === 'No') {
+          $.smallBox({
+            title: 'Delete log entry',
+            content: '<i class="fa fa-clock-o"></i> <i>Cancelled</i>',
+            color: '#C46A69',
+            iconSmall: 'fa fa-times fa-2x fadeInRight animated',
+            timeout: 4000
+          });
+        }
+      });
+    }
   });
