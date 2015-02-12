@@ -56,6 +56,8 @@ class NetDeviceViewSet(viewsets.ModelViewSet):
 class HostViewSet(viewsets.ModelViewSet):
     queryset = models.Host.objects.all()
     serializer_class = HostSerializer
+    filter_fields = ('name',)
+    search_fields = ('name',)
 
 class HostGroupViewSet(viewsets.ModelViewSet):
     queryset = models.HostGroup.objects.all()
