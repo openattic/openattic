@@ -23,6 +23,7 @@ class LogEntrySerializer(serializers.HyperlinkedModelSerializer):
 
     class Meta:
         model = models.LogEntry
+        fields = ('url', 'id', 'host', 'command', 'user', 'starttime', 'endtime', 'exitcode', 'text')
 
 
 class LogEntryViewSet(viewsets.ModelViewSet):
