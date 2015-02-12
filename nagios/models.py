@@ -173,11 +173,16 @@ class Service(models.Model):
         except KeyError:
             return "Unknown"
 
+def update_conf_for_user(instance, **kwargs):
+    old_user = User.objects.get(id=instance.id)
+    if instance.email != old_user.email:
+        get_dbus_object("/nagios").writeconf()
+
 def update_conf(**kwargs):
     get_dbus_object("/nagios").writeconf()
 
 
-signals.post_save.connect(   update_conf, sender=User )
+signals.pre_save.connect(    update_conf_for_user, sender=User )
 signals.post_delete.connect( update_conf, sender=User )
 
 signals.post_save.connect(   update_conf, sender=Service )

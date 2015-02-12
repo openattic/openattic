@@ -24,5 +24,10 @@ def update_contacts(**kwargs):
     als.write_aliases()
     als.newaliases()
 
-signals.post_save.connect(   update_contacts, sender=User )
+def update_contacts_for_edit(instance, **kwargs):
+    old_user = User.objects.get(id=instance.id)
+    if instance.email != old_user.email:
+        update_contacts()
+
+signals.pre_save.connect(    update_contacts_for_edit, sender=User )
 signals.post_delete.connect( update_contacts, sender=User )
