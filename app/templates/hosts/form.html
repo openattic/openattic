@@ -8,8 +8,7 @@
             <div class="jarviswidget" id="wid-id-1" data-widget-editbutton="false" data-widget-custombutton="false">
                 <header>
                     <span class="widget-icon"> <i class="fa fa-edit"></i> </span>
-                    <h2 ng-hide="editing">Create Host: {{host.name}}</h2>
-                    <h2 ng-show="editing">Edit Host: {{host.name}}</h2>
+                    <h2>Create Host: {{host.name}}</h2>
                 </header>
                 <div>
                     <div class="widget-body no-padding">
@@ -22,24 +21,6 @@
                                         <span ng-show="hostForm.name.$dirty && hostForm.name.$invalid">
                                             The name is required.
                                         </span>
-                                    </label>
-                                </section>
-                                <section>
-                                    <label class="label" for="hostPeerHostUrl">Peer Host URL</label>
-                                    <label class="input"> <i class="icon-prepend fa fa-host"></i>
-                                        <input type="text" placeholder="Peer Host URL..." ng-model="data.peerHost.base_url" name="peerHostUrl" id="hostPeerHostUrl">
-                                    </label>
-                                </section>
-                                <section>
-                                    <label class="label" for="hostLastname">iSCSI IQN</label>
-                                    <label class="input"> <i class="icon-prepend fa fa-host"></i>
-                                        <input type="text" placeholder="iSCSI IQN..." ng-model="data.iscsi.wwn" name="iscsiIqn">
-                                    </label>
-                                </section>
-                                <section>
-                                    <label class="label" for="hostLastname">FC WWN</label>
-                                    <label class="input"> <i class="icon-prepend fa fa-host"></i>
-                                        <input type="text" placeholder="FC WWN..." ng-model="data.fc.wwn" name="fcWwn">
                                     </label>
                                 </section>
                             </fieldset>

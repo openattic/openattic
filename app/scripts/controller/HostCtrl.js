@@ -31,8 +31,14 @@ angular.module('openattic')
       });
     }, true);
 
-    $scope.$watchCollection('selection.item', function(item){
-      $scope.hasSelection = !!item;
+    $scope.$watch('selection.item', function(selitem){
+      $scope.hasSelection = !!selitem;
+      if (selitem) {
+        $state.go('hosts.attributes', {host: selitem.id});
+      }
+      else {
+        $state.go('hosts');
+      }
     });
 
     $scope.addAction = function(){
@@ -40,7 +46,7 @@ angular.module('openattic')
     }
 
     $scope.editAction = function(){
-      $state.go('hosts.edit', {host: $scope.selection.item.id});
+      $state.go('hosts-edit', {host: $scope.selection.item.id});
     }
 
     $scope.deleteAction = function(){
