@@ -1,7 +1,7 @@
 angular.module('openattic')
   .factory('CmdlogService', function($resource) {
     'use strict';
-    return $resource('openattic/api/cmdlogs/:id', {
+    return $resource('/openattic/api/cmdlogs/:id', {
     },{
       query: {
         method: 'GET',
