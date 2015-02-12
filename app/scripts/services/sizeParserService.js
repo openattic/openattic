@@ -1,5 +1,5 @@
-angular.module('openattic')
-  .factory('SizeParserService', function ($resource) {
+angular.module('openattic.sizeparser', [])
+  .factory('SizeParserService', function () {
     var mult = ['M', 'G', 'T', 'P', 'E'];
 
     var _parseInt = function(value){

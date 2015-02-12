@@ -7,6 +7,7 @@ angular.module('openattic', [
   'openattic.datatable',
   'openattic.datatree',
   'openattic.graph',
+  'openattic.sizeparser',
   'smartadmin.smartmenu'
 ]);
 

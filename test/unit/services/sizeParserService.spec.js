@@ -4,7 +4,7 @@ describe('Service: sizeParserService', function () {
 
   var SizeParserService = null;
 
-  beforeEach(module('openattic'));
+  beforeEach(module('openattic.sizeparser'));
   beforeEach(inject(function(_SizeParserService_){
     SizeParserService = _SizeParserService_;
   }));
