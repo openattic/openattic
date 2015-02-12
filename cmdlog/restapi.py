@@ -18,7 +18,7 @@ from rest import relations
 
 from cmdlog import models
 
-class LogEntrySerializer(serializers.ModelSerializer):
+class LogEntrySerializer(serializers.HyperlinkedModelSerializer):
     host = relations.HyperlinkedRelatedField(view_name='host-detail', read_only=True)
 
     class Meta:
