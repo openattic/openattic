@@ -409,6 +409,13 @@ class StorageObject(models.Model):
             "usable_text": _to_number_with_unit(_stats["usable"]),
             "size_text":   _to_number_with_unit(_stats["size"]),
         })
+        if "vp_max_new_fsv" in stats:
+            _stats.update({
+                "max_new_fsv":      stats["vp_max_new_fsv"],
+                "max_new_fsv_text": _to_number_with_unit(stats["vp_max_new_fsv"]),
+                "max_new_bv":       stats["vp_max_new_bv"],
+                "max_new_bv_text":  _to_number_with_unit(stats["vp_max_new_bv"]),
+            })
         return _stats
 
     def _get_status(self):

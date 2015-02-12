@@ -68,6 +68,8 @@ class Btrfs(VolumePool):
 
     def get_volumepool_usage(self, stats):
         stats["vp_megs"] = self.storageobj.megs
+        stats["vp_max_new_fsv"] = self.storageobj.megs
+        stats["vp_max_new_bv"]  = self.storageobj.megs
         fs_stat = self.fs.stat
         if fs_stat["used"] is not None and fs_stat["free"] is not None:
             stats["vp_used"] = fs_stat["used"]

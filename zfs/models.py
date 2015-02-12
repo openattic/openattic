@@ -82,6 +82,8 @@ class Zpool(VolumePool):
         stats["vp_megs"] = self.storageobj.megs
         stats["vp_used"] = self.fs.rootfs_used_megs
         stats["vp_free"] = self.fs.rootfs_free_megs
+        stats["vp_max_new_fsv"] = self.storageobj.megs
+        stats["vp_max_new_bv"]  = self.fs.rootfs_free_megs
         stats["used"]  = max(stats.get("used", None),         stats["vp_used"])
         stats["free"]  = min(stats.get("free", float("inf")), stats["vp_free"])
         return stats
