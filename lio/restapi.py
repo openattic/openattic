@@ -58,7 +58,7 @@ class InitiatorSerializer(serializers.HyperlinkedModelSerializer):
 
     class Meta:
         model = Initiator
-        fields = ('url', 'host', 'wwn', 'type')
+        fields = ('url', 'id', 'host', 'wwn', 'type')
 
 
 class InitiatorViewSet(viewsets.ModelViewSet):

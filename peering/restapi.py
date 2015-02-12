@@ -30,7 +30,7 @@ class PeerHostSerializer(serializers.HyperlinkedModelSerializer):
 
     class Meta:
         model = PeerHost
-        fields = ('url', 'host', 'base_url')
+        fields = ('url', 'id', 'host', 'base_url')
 
 
 class PeerHostViewSet(viewsets.ModelViewSet):
