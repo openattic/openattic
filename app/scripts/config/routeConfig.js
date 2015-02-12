@@ -176,6 +176,14 @@ angular.module('openattic').config(function ($stateProvider, $urlRouterProvider)
         }
       }
     })
+    .state('hosts.attributes', {
+      url: '/:host',
+      views: {
+        'detail': {
+          templateUrl: 'templates/hosts/attributes.html'
+        }
+      }
+    })
     .state('users', {
       url: '/users',
       views: {

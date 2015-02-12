@@ -1,5 +1,5 @@
 angular.module('openattic')
-  .controller('HostFormCtrl', function ($scope, $state, $stateParams, HostService, PeerHostService, InitiatorService) {
+  .controller('HostFormCtrl', function ($scope, $state, $stateParams, HostService) {
     if(!$stateParams.host){
       $scope.host = {};
       $scope.editing = false;
@@ -26,29 +26,6 @@ angular.module('openattic')
         .$promise
         .then(function(res){
           $scope.host = res;
-        }, function(error){
-          console.log('An error occurred', error);
-        });
-
-      PeerHostService.get({host: $stateParams.host})
-        .$promise
-        .then(function(res){
-          $scope.data.peerHost = res.results[0];
-        }, function(error){
-          console.log('An error occurred', error);
-        });
-
-      InitiatorService.get({host: $stateParams.host})
-        .$promise
-        .then(function(res){
-          for( var i = 0; i < res.results.length; i++ ){
-            if( res.results[i].type === 'iscsi' ){
-              $scope.data.iscsi = res.results[i];
-            }
-            else{
-              $scope.data.fc = res.results[i];
-            }
-          }
         }, function(error){
           console.log('An error occurred', error);
         });
