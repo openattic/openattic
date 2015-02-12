@@ -100,6 +100,14 @@ class ExtendedBasicAuthentication(BasicAuthentication):
 
         return (user, None)
 
+    def authenticate_header(self, request):
+        if request.META["HTTP_X_REQUESTED_WITH"] == "XMLHttpRequest":
+            # If the client is a web browser running the GUI, do not send back
+            # a "Basic" authentication header because it would cause the browser
+            # to ask for username/password in its ugly standard dialog, thereby
+            # preventing the GUI from displaying something nice.
+            return "FormAuthentication"
+        return super(ExtendedBasicAuthentication, self).authenticate_header(request)
 
 class RequestAuthentication(BasicAuthentication):
     """ Authenticate using data from the request, be it either username/password
