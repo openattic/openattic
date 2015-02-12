@@ -216,6 +216,14 @@ angular.module('openattic').config(function ($stateProvider, $urlRouterProvider)
         }
       }
     })
+    .state('cmdlogs', {
+      url: '/cmdlogs',
+      views: {
+        'main': {
+          templateUrl: 'templates/cmdlogs.html'
+        }
+      }
+    });
 });
 
 // kate: space-indent on; indent-width 2; replace-tabs on;
