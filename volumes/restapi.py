@@ -285,7 +285,7 @@ class VolumeViewSet(viewsets.ModelViewSet):
         })
 
     def create(self, request, *args, **kwargs):
-        storageobj = models.StorageObject.all_objects.get(volumepool__id=request.DATA["source_pool"]["id"])
+        storageobj = models.StorageObject.all_objects.get(id=request.DATA["source_pool"]["id"])
 
         volume = storageobj.create_volume(request.DATA["name"], request.DATA["megs"], {
             "owner": request.user,
