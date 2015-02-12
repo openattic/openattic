@@ -14,7 +14,7 @@
                 <select class="form-control" ng-model="data.sourcePool" ng-options="pool.name for pool in pools track by pool.id" name="pool" required>
                     <option value="">-- Select a pool --</option>
                 </select>
-                <span ng-show="volumeForm.pool.$dirty && volumeForm.pool.$error.required">This field is required!</span>
+                <span ng-show="volumeForm.pool.$error.required">This field is required!</span>
                 <div ng-show="data.sourcePool">
                     {{data.sourcePool.usage.free_text}} available
                 </div>
@@ -23,11 +23,14 @@
         <div class="form-group">
             <label class="col-md-2 control-label">Size</label>
             <div class="col-md-10">
-                <input class="form-control" name="megs" required ng-model="data.megs">
-                <span ng-show="volumeForm.megs.$dirty && volumeForm.megs.$error.required">This field is required!</span>
-                <span ng-show="volumeForm.megs.$dirty && volumeForm.megs.$error.number">This is not a valid number!</span>
-                <span ng-show="volumeForm.megs.$dirty && (volumeForm.megs.$error.min || volumeForm.megs.$error.max)">The size must be at least 100mb and can not be greater than max available size of the volumepool. Please select a volumepool if you haven't done it yet!</span>
+                <input class="form-control" name="megs" required ng-disabled="data.sourcePool === null"
+                       volume-size-format volume-size-value max-value="{{data.sourcePool.usage.free}}"
+                       ng-model="data.megs" placeholder="e.g., 10GB">
+                <span ng-show="volumeForm.megs.$dirty && volumeForm.megs.$error.required">This field is required.</span>
+                <span ng-show="volumeForm.megs.$dirty && volumeForm.megs.$error.volumeSizeFormat">This is not a valid number.</span>
+                <span ng-show="volumeForm.megs.$dirty && volumeForm.megs.$error.volumeSizeValue">The size must be at least 100MB and must not exceed {{data.sourcePool.usage.free_text}}.</span>
             </div>
+            {{volumeForm.megs.$error}}
         </div>
     </fieldset>
 </div>

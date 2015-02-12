@@ -5,7 +5,7 @@ angular.module('openattic')
     $scope.volume  = {};
     $scope.data = {
       sourcePool: null,
-      megs: 0,
+      megs: "",
       mirrorHost: '',
       mirrorPool: null,
       filesystem: ''
