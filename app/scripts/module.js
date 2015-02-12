@@ -2,6 +2,7 @@
 angular.module('openattic', [
   'ngResource',
   'ui.router',
+  'ngTagsInput',
   'openattic.auth',
   'openattic.datatable',
   'openattic.datatree',
