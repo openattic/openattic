@@ -2,6 +2,7 @@ angular.module('openattic')
   .factory('CmdlogService', function($resource) {
     'use strict';
     return $resource('/openattic/api/cmdlogs/:id', {
+      id: '@id'
     },{
       query: {
         method: 'GET',
