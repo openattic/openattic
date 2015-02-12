@@ -8,10 +8,10 @@ angular.module('openattic.auth')
         .$promise
         .then(function(res){
           $scope.user = res.username;
-          $window.location.href = '/openattic/angular2/#/dashboard';
+          $window.location.href = '/openattic/angular/#/dashboard';
         })
         .catch(function(){
-          $window.location.href = '/openattic/angular2/login.html';
+          $window.location.href = '/openattic/angular/login.html';
         });
     };
   });
