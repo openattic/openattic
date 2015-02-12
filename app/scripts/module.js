@@ -4,6 +4,7 @@ angular.module('openattic', [
   'ui.router',
   'ngTagsInput',
   'openattic.auth',
+  'openattic.apirecorder',
   'openattic.datatable',
   'openattic.datatree',
   'openattic.graph',
