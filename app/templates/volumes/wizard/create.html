@@ -30,7 +30,6 @@
                 <span ng-show="volumeForm.megs.$dirty && volumeForm.megs.$error.volumeSizeFormat">This is not a valid number.</span>
                 <span ng-show="volumeForm.megs.$dirty && volumeForm.megs.$error.volumeSizeValue">The size must be at least 100MB and must not exceed {{data.sourcePool.usage.free_text}}.</span>
             </div>
-            {{volumeForm.megs.$error}}
         </div>
     </fieldset>
 </div>
