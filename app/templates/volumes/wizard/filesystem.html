@@ -15,6 +15,12 @@
                         <span>Create Virtualization Store -> XFS</span>
                     </label>
                 </div>
+                <div class="radio" ng-show="supported_filesystems.zfs">
+                    <label>
+                        <input type="radio" class="radiobox style-0" ng-model="data.filesystem" value="zfs" ng-disabled="state.formatted">
+                        <span>Create ZFS Volume</span>
+                    </label>
+                </div>
                 <div class="radio" ng-show="supported_filesystems.btrfs">
                     <label>
                         <input type="radio" class="radiobox style-0" ng-model="data.filesystem" value="btrfs" ng-disabled="state.formatted">
