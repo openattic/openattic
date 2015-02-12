@@ -28,6 +28,7 @@ class LogEntrySerializer(serializers.ModelSerializer):
 class LogEntryViewSet(viewsets.ModelViewSet):
     queryset = models.LogEntry.objects.all()
     serializer_class = LogEntrySerializer
+    search_fields = ('command', 'text')
 
 
 RESTAPI_VIEWSETS = [
