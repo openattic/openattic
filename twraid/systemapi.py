@@ -16,21 +16,10 @@
 
 from systemd.procutils import invoke
 from systemd.plugins   import logged, BasePlugin, method
-from nfs.models    import Export
-from nfs.conf      import settings as nfs_settings
 
 @logged
 class SystemD(BasePlugin):
     dbus_path = "/twraid"
-
-    @method(in_signature="", out_signature="")
-    def writeconf(self):
-        fd = open( nfs_settings.EXPORTS, "wb" )
-        try:
-            for export in Export.objects.all():
-                fd.write( "%-50s %s(%s)\n" % ( export.path, export.address, export.options ) )
-        finally:
-            fd.close()
 
     @method(in_signature="sb", out_signature="i")
     def set_identify(self, path, state):
