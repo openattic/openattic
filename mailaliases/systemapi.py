@@ -63,4 +63,4 @@ class SystemD(BasePlugin):
 
     @method(in_signature="", out_signature="i")
     def newaliases(self):
-        return invoke(["newaliases"])
+        return invoke(["newaliases"], fail_on_err=False)
