@@ -104,7 +104,7 @@ module.exports = function (grunt) {
             {
               expand: true,
               cwd: buildConfig.dist,
-              src: buildConfig.applicationFiles,
+              src: ['bm-app.js'],
               dest: buildConfig.dist
             }
           ]
