@@ -17,7 +17,7 @@ module.exports = function (grunt) {
       '<%= buildConfig.src %>components/**/*.js'
     ],
     watchFiles: [
-      '<%= buildConfig.src %>index.tpl.html',
+      '<%= buildConfig.src %>*.tpl.html',
       '<%= buildConfig.src %>scripts/**/*.js',
       '<%= buildConfig.src %>components/**/*.js'
     ]
@@ -45,9 +45,28 @@ module.exports = function (grunt) {
        Inserts all project scripts and styles into 'htmlbuild:' prefixed html comment blocks from 'index.tpl.html'.
        */
       htmlbuild: {
-        dev: {
+        dev_index: {
           src: '<%= buildConfig.src %>index.tpl.html',
           dest: '<%= buildConfig.src %>index.html',
+          options: {
+            relative: true,
+            prefix: 'scripts/',
+            parseTag: 'htmlbuild',
+            scripts: {
+              src: {
+                files: buildConfig.applicationFiles
+              }
+            },
+            styles: {
+              bundle: [
+                '<%= buildConfig.src %>styles/**/*.css'
+              ]
+            }
+          }
+        },
+        dev_login: {
+          src: '<%= buildConfig.src %>login.tpl.html',
+          dest: '<%= buildConfig.src %>login.html',
           options: {
             relative: true,
             prefix: 'scripts/',
@@ -99,7 +118,7 @@ module.exports = function (grunt) {
             {
               expand: true,
               cwd: buildConfig.src,
-              src: ['index.html', '**/*.html', '!index.tpl.html'],
+              src: ['index.html', '**/*.html', '!*.tpl.html'],
               dest: buildConfig.dist
             },
             {
