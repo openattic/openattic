@@ -12,7 +12,7 @@ override_dh_auto_install:
 	
 	bower install --allow-root
 	npm install
-	grunt build
+	grunt --no-color build
 	
 	dh_auto_install
 
