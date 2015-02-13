@@ -4,6 +4,10 @@ angular.module('openattic.sizeparser', [])
 
     var _parseInt = function(value){
       // If it's a plain number, just parseInt() it
+      if(!value){
+        return null;
+      }
+
       if( /^[\d.]+$/.test(value) ){
         return parseInt(parseFloat(value), 10);
       }
