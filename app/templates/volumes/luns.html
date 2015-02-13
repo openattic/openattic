@@ -1,6 +1,12 @@
 <!-- kate: space-indent on; indent-width 4; replace-tabs on; -->
 <div ng-controller="VolumeLunsCtrl">
-    <oadatatable data="lunsData" filter-config="lunsFilter" selection="lunsSelection">
+    <oadatatable data="lunsData" filter-config="lunsFilter" selection="lunSelection">
+        <actions>
+            <a class="btn btn-lg btn-primary" type="button" ng-click="addLunAction()" ng-show="hasSelection"><i class="fa fa-fw fa-plus"></i> Add</a>
+            <li><a ng-click="addLunAction()"><i class="fa fa-fw fa-plus"></i> Add</a></li>
+            <li class="divider"></li>
+            <li ng-class="{disabled: !lunSelection.item}" max-selected=1><a ng-click="deleteLunAction()"><i class="fa fa-fw fa-trash-o"></i> Delete</a></li>
+        </actions>
         <table class="table table-striped table-bordered table-hover dataTable">
             <thead>
                 <tr>
