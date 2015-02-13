@@ -13,15 +13,18 @@
  *  GNU General Public License for more details.
 """
 
+import socket
 import django_filters
 
 from rest_framework import serializers, viewsets, status
+from rest_framework.decorators import list_route
 from rest_framework.response import Response
 
 from rest import relations
 
 from volumes.models import StorageObject
 from samba.models import Share
+from samba.conf import settings as samba_settings
 
 class SambaShareSerializer(serializers.HyperlinkedModelSerializer):
     """ Serializer for a Samba Share. """
@@ -49,6 +52,13 @@ class SambaShareViewSet(viewsets.ModelViewSet):
     serializer_class = SambaShareSerializer
     filter_class     = SambaShareFilter
 
+    @list_route()
+    def domainconfig(self, request):
+        return Response({
+            'hostname':  socket.gethostname(),
+            'homain':    samba_settings.DOMAIN,
+            'workgroup': samba_settings.WORKGROUP,
+        })
 
 RESTAPI_VIEWSETS = [
     ('sambashares', SambaShareViewSet, 'sambashare')
