@@ -98,6 +98,12 @@ angular.module('openattic').config(function ($stateProvider, $urlRouterProvider)
         'tab-content': {templateUrl: 'templates/volumes/luns.html'}
       }
     })
+    .state('volumes.detail.luns-add', {
+      url: '/luns/add',
+      views: {
+        'tab-content': {templateUrl: 'templates/volumes/luns-form.html'}
+      }
+    })
     .state('volumes.detail.http', {
       url: '/http',
       views: {

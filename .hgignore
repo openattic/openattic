@@ -6,5 +6,5 @@ bower_components
 app/index.html
 coverage
 npm-debug.log
-
-*.swp
+*.orig
+.hgignore
