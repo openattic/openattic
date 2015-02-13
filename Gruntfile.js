@@ -101,6 +101,12 @@ module.exports = function (grunt) {
               cwd: buildConfig.src,
               src: ['index.html', '**/*.html', '!index.tpl.html'],
               dest: buildConfig.dist
+            },
+            {
+              expand: true,
+              cwd: buildConfig.src,
+              src: ['bower_components/*'],
+              dest: buildConfig.dist
             }
           ]
         }
