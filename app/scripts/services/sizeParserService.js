@@ -12,7 +12,7 @@ angular.module('openattic.sizeparser', [])
         return parseInt(parseFloat(value), 10);
       }
 
-      value = value.toLowerCase();
+      value = value.toLowerCase().replace(/\s/g, '');
       // If it's a valid size string, calc its int value
       var facs = mult.join('');
       var rgx  = new RegExp( '^([\\d.]+)([' + facs + ']?)(i?)(b?)$' );
