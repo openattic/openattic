@@ -85,7 +85,7 @@ module.exports = function (grunt) {
             {
               expand: true,
               cwd: buildConfig.dist,
-              src: '**/*.js',
+              src: buildConfig.applicationFiles,
               dest: buildConfig.dist
             }
           ]
