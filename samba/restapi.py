@@ -56,7 +56,7 @@ class SambaShareViewSet(viewsets.ModelViewSet):
     def domainconfig(self, request):
         return Response({
             'hostname':  socket.gethostname(),
-            'homain':    samba_settings.DOMAIN,
+            'domain':    samba_settings.DOMAIN,
             'workgroup': samba_settings.WORKGROUP,
         })
 
