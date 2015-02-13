@@ -1,11 +1,3 @@
-public/app			/usr/share/openattic-gui
-public/build			/usr/share/openattic-gui
-public/plugin			/usr/share/openattic-gui
-public/smartadmin-plugin	/usr/share/openattic-gui
-public/sound			/usr/share/openattic-gui
-public/styles			/usr/share/openattic-gui
-
-public/index.html		/usr/share/openattic-gui
-# public/login.html		/usr/share/openattic-gui
+dist/*			/usr/share/openattic-gui
 
 debian/apache2_conf.d/openattic-gui /etc/apache2/conf.d

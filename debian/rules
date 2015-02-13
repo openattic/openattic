@@ -10,8 +10,9 @@ override_dh_auto_install:
 	which bower || npm install -g bower
 	which grunt || npm install -g grunt-cli
 	
-	cd bower && bower install --allow-root
-	cd grunt && npm install && grunt vtp && grunt
+	bower install --allow-root
+	npm install
+	grunt build
 	
 	dh_auto_install
 
