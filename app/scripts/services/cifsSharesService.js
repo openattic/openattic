@@ -15,6 +15,10 @@ angular.module('openattic')
       filter: {
         method: 'GET',
         url: '/openattic/api/sambashares'
+      },
+      domainconfig: {
+        method: 'GET',
+        url: '/openattic/api/sambashares/domainconfig'
       }
     });
   });

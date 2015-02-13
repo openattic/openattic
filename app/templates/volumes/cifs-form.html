@@ -48,6 +48,9 @@
                 <label class="checkbox" for="shareGuestOk">
                     <input type="checkbox" ng-model="share.guest_ok" name="guest_ok" id="shareGuestOk">
                     <i></i>Accessible by guests
+                    <span ng-show="domainconfig.domain === ''" class="warning">
+                        Currently, this host supports guest access only, because it is not part of an Active Directory Domain.
+                    </span>
                 </label>
             </section>
         </fieldset>
