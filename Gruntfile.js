@@ -142,7 +142,7 @@ module.exports = function (grunt) {
        This task also generates configurations for 'concat', 'cssmin' and 'uglify' tasks referenced in build task
        */
       useminPrepare: {
-        html: '<%= buildConfig.src %>/index.html',
+        html: ['<%= buildConfig.src %>/index.html', '<%= buildConfig.src %>/login.html'],
         options: {
           dest: buildConfig.dist
         }
@@ -150,7 +150,7 @@ module.exports = function (grunt) {
 
       // replaces js and css includes in index.html
       usemin: {
-        html: '<%= buildConfig.dist %>/index.html'
+        html: ['<%= buildConfig.dist %>/index.html', '<%= buildConfig.dist %>/login.html']
       }
     }
   );
