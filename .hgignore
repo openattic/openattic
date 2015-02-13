@@ -4,6 +4,7 @@ node_modules
 dist
 bower_components
 app/index.html
+app/login.html
 coverage
 npm-debug.log
 
