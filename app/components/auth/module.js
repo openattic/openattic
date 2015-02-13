@@ -4,13 +4,14 @@ angular.module('openattic.auth', [
   'ngResource'
 ]);
 
-angular.module('openattic.auth').config(function($httpProvider){
-  $httpProvider.defaults.xsrfCookieName = 'csrftoken';
-  $httpProvider.defaults.xsrfHeaderName = 'X-CSRFToken';
-});
+angular.module('openattic.auth')
+  .config(function($httpProvider){
+    $httpProvider.defaults.xsrfCookieName = 'csrftoken';
+    $httpProvider.defaults.xsrfHeaderName = 'X-CSRFToken';
+  });
 
-angular.module('openattic.auth').config(function($provide, $httpProvider){
-  $provide.factory('AuthHttpInterceptor', function($q){
+angular.module('openattic.auth')
+  .factory('AuthHttpInterceptor', function($q){
     return {
       request: function(config) {
         // Give the backend a clue that we're using AJAX here...
@@ -24,7 +25,7 @@ angular.module('openattic.auth').config(function($provide, $httpProvider){
         return $q.reject(rejection);
       }
     };
+  })
+  .config(function($httpProvider){
+    $httpProvider.interceptors.push('AuthHttpInterceptor');
   });
-
-  $httpProvider.interceptors.push('AuthHttpInterceptor');
-});
