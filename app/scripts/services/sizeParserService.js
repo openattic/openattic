@@ -1,6 +1,6 @@
 angular.module('openattic.sizeparser', [])
   .factory('SizeParserService', function () {
-    var mult = ['M', 'G', 'T', 'P', 'E'];
+    var mult = ['m', 'g', 't', 'p', 'e'];
 
     var _parseInt = function(value){
       // If it's a plain number, just parseInt() it
@@ -8,9 +8,10 @@ angular.module('openattic.sizeparser', [])
         return parseInt(parseFloat(value), 10);
       }
 
+      value = value.toLowerCase();
       // If it's a valid size string, calc its int value
       var facs = mult.join('');
-      var rgx  = new RegExp( '^([\\d.]+)([' + facs + ']?)(i?)(B?)$' );
+      var rgx  = new RegExp( '^([\\d.]+)([' + facs + ']?)(i?)(b?)$' );
 
       if( rgx.test(value) ){
         var matched = rgx.exec(value);
