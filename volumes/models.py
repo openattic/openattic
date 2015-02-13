@@ -69,10 +69,7 @@ def _to_number_with_unit(value, unit="B", base=1024):
         divided = value / factor
         if 1 <= divided < base:
             value = divided
-            if base == 1024:
-                unit = facunit + "i" + unit
-            else:
-                unit = facunit + unit
+            unit = facunit + unit
             break
     try:
         return "{:,.2f}{:}".format(value, unit)
