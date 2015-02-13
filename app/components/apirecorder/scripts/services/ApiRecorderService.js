@@ -23,19 +23,18 @@ angular.module('openattic.apirecorder')
       }
     };
   })
-  .config(function($provide, $httpProvider){
-    $provide.factory('apiRecordHttpInterceptor', function(ApiRecorderService) {
-      return {
-        'request': function(config) {
-          if( config.method != 'GET'){
-            ApiRecorderService.recordCommand(config);
-          }
-          return config;
-        },
-      };
-    });
-
-    $httpProvider.interceptors.push('apiRecordHttpInterceptor');
+  .factory('ApiRecordHttpInterceptor', function(ApiRecorderService) {
+    return {
+      'request': function(config) {
+        if( config.method != 'GET'){
+          ApiRecorderService.recordCommand(config);
+        }
+        return config;
+      },
+    };
+  })
+  .config(function($httpProvider){
+    $httpProvider.interceptors.push('ApiRecordHttpInterceptor');
   });
 
 // kate: space-indent on; indent-width 2; replace-tabs on;
