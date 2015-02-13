@@ -1,5 +1,11 @@
 angular.module('openattic')
   .controller('VolumeCifsSharesFormCtrl', function ($scope, $state, $stateParams, CifsSharesService) {
+    $scope.domainconfig = {};
+    CifsSharesService.domainconfig()
+      .$promise
+      .then(function(res){
+        $scope.domainconfig = res;
+      });
     if(!$stateParams.share){
       $scope.share = {
         'volume': {id: $scope.selection.item.id},
@@ -21,6 +27,10 @@ angular.module('openattic')
             console.log('An error occured', error);
           });
       }
+
+      $scope.$watch('domainconfig', function(domcfg){
+        $scope.share.guest_ok = (domcfg.domain === '');
+      });
     }
     else {
       $scope.editing = true;
