@@ -23,7 +23,7 @@
                         <td ng-show="columns['Text']"><pre ng-bind="(row.text | shortlog)"></pre></td>
                         <td ng-show="columns['Exitcode']" ng-bind="row.exitcode"></td>
                         <td ng-show="columns['Host']" ng-bind="row.host.title"></td>
-                        <th ng-show="columns['Endtime']" ng-bind="row.endtime"></th>
+                        <td ng-show="columns['Endtime']" ng-bind="row.endtime | date:'short'"></td>
                     </tr>
                 </tbody>
             </table>
