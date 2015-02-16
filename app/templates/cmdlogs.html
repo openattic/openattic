@@ -2,7 +2,7 @@
     <div>
         <oadatatable data="data" filter-config="filterConfig" selection="selection">
             <actions>
-                <a class="btn btn-lg btn-primary" type="button" ng-click="deleteAction()" ng-class="{disabled: !hasSelection}" max-selected=1><i class="fa fa-fw fa-trash-o"></i> Delete</a>
+                <a class="btn btn-lg btn-primary" type="button" ng-click="deleteAction()" ng-class="{disabled: !hasSelection}"><i class="fa fa-fw fa-trash-o"></i> Delete</a>
                 <li ng-class="{disabled: !hasSelection}" max-selected=1><a ng-click="deleteAction()"><i class="fa fa-fw fa-trash-o"></i> Delete</a></li>
             </actions>
             <table class="table table-striped table-bordered table-hover dataTable">

@@ -30,8 +30,8 @@ angular.module('openattic')
         });
     }, true);
 
-    $scope.$watchCollection('selection.item', function(item){
-      $scope.hasSelection = !!item;
+    $scope.$watchCollection('selection.items', function(items){
+      $scope.hasSelection = items.length > 0;
     });
 
     $scope.deleteAction = function(){
