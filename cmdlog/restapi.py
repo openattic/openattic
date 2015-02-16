@@ -13,10 +13,12 @@
 """
 
 from rest_framework import serializers, viewsets
+from rest_framework_bulk.generics import BulkDestroyAPIView
 
 from rest import relations
 
 from cmdlog import models
+
 
 class LogEntrySerializer(serializers.HyperlinkedModelSerializer):
     host = relations.HyperlinkedRelatedField(view_name='host-detail', read_only=True)
@@ -26,10 +28,21 @@ class LogEntrySerializer(serializers.HyperlinkedModelSerializer):
         fields = ('url', 'id', 'host', 'command', 'user', 'starttime', 'endtime', 'exitcode', 'text')
 
 
-class LogEntryViewSet(viewsets.ModelViewSet):
+class LogEntryViewSet(viewsets.ModelViewSet, BulkDestroyAPIView):
     queryset = models.LogEntry.objects.all()
     serializer_class = LogEntrySerializer
     search_fields = ('command', 'text')
+
+    def filter_queryset(self, queryset):
+        if self.request.method == 'DELETE':
+            filtered_items = []
+
+            for key, value in self.request.QUERY_PARAMS.items():
+                filtered_items.append(queryset.get(id=value))
+
+            return filtered_items
+
+        return queryset
 
 
 RESTAPI_VIEWSETS = [
