@@ -31,7 +31,9 @@ angular.module('openattic')
     }, true);
 
     $scope.$watchCollection('selection.items', function(items){
-      $scope.hasSelection = items.length > 0;
+      if(items !== undefined) {
+        $scope.hasSelection = items.length > 0;
+      }
     });
 
     $scope.deleteAction = function(){
