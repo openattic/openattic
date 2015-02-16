@@ -36,6 +36,12 @@ angular.module('openattic')
 
     $scope.deleteAction = function(){
       var itemText = $filter('shortlog')($scope.selection.item.text);
+      var selection = $scope.selection.items;
+      var ids = [];
+
+      for(var i=0; i<selection.length; i++){
+        ids.push(selection[i].id);
+      }
 
       $.SmartMessageBox({
         title: 'Delete log entry',
@@ -43,7 +49,7 @@ angular.module('openattic')
         buttons: '[No][Yes]'
       }, function (ButtonPressed) {
         if (ButtonPressed === 'Yes') {
-          CmdlogService.delete({id: $scope.selection.item.id})
+          CmdlogService.delete(ids)
             .$promise
             .then(function() {
               $scope.filterConfig.refresh = new Date();
