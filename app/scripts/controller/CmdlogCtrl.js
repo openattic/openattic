@@ -35,17 +35,25 @@ angular.module('openattic')
     });
 
     $scope.deleteAction = function(){
-      var itemText = $filter('shortlog')($scope.selection.item.text);
       var selection = $scope.selection.items;
+      var messageText = '';
       var ids = [];
 
       for(var i=0; i<selection.length; i++){
         ids.push(selection[i].id);
       }
 
+      if(selection.length > 1){
+        messageText = 'Do you really want to delete these ' + selection.length + ' items';
+      }
+      else {
+        var itemText = $filter('shortlog')($scope.selection.item.text);
+        messageText = 'Do you really want to delete that log entry: <pre>"' + itemText + '"</pre>'
+      }
+
       $.SmartMessageBox({
         title: 'Delete log entry',
-        content: 'Do you really want to delete that log entry: <pre>"' + itemText + '"</pre>',
+        content: messageText,
         buttons: '[No][Yes]'
       }, function (ButtonPressed) {
         if (ButtonPressed === 'Yes') {
