@@ -21,16 +21,43 @@ from rest_framework.response import Response
 
 from rest import relations
 
-from ceph.models import Cluster
+from ceph.models import Cluster, Ruleset
+
+
+class RulesetSerializer(serializers.HyperlinkedModelSerializer):
+    description = serializers.SerializerMethodField("get_description")
+
+    class Meta:
+        model = Ruleset
+        fields = ('id', 'ceph_id', 'name', 'type', 'min_size', 'max_size', 'description')
+
+    def get_description(self, obj):
+        return obj.get_description()
+
 
 class ClusterSerializer(serializers.HyperlinkedModelSerializer):
     """ Serializer for a NFS Export. """
-    url         = serializers.HyperlinkedIdentityField(view_name="nfsshare-detail")
+    url         = serializers.HyperlinkedIdentityField(view_name="cephcluster-detail")
+    crush_map   = serializers.SerializerMethodField("get_crush_map")
+    rulesets    = RulesetSerializer(many=True, read_only=True, source="ruleset_set")
 
     class Meta:
         model = Cluster
-        fields = ('url', 'id', 'name', 'auth_cluster_required', 'auth_client_required', 'auth_service_required')
+        fields = ('url', 'id', 'name', 'crush_map', 'rulesets',
+                  'auth_cluster_required', 'auth_client_required', 'auth_service_required')
 
+    def get_crush_map(self, obj):
+        def serialize_bucket(obj):
+            return {
+                "name":     obj.name,
+                "ceph_id":  obj.ceph_id,
+                "alg":      obj.alg,
+                "type":     obj.type.name,
+                "children": [ serialize_bucket(child) for child in obj.children.all() ]
+            }
+
+        return [ serialize_bucket(rootbkt) for rootbkt in
+                 obj.bucket_set.filter(parent__isnull=True) ]
 
 class ClusterViewSet(viewsets.ModelViewSet):
     queryset         = Cluster.objects.all()
