@@ -26,7 +26,7 @@ class HostACLSerializer(serializers.HyperlinkedModelSerializer):
     """ Serializer for a HostACL. """
     url         = serializers.HyperlinkedIdentityField(view_name="lun-detail")
     volume      = relations.HyperlinkedRelatedField(view_name="volume-detail", source="volume.storageobj", queryset=StorageObject.objects.all())
-    host        = relations.HyperlinkedRelatedField(view_name="host-detail",   read_only=True)
+    host        = relations.HyperlinkedRelatedField(view_name="host-detail")
 
     class Meta:
         model = HostACL
