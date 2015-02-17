@@ -1,5 +1,5 @@
 angular.module('openattic')
-  .factory('LunsService', function ($resource) {
+  .factory('LunService', function ($resource) {
     'use strict';
     return $resource('/openattic/api/luns/:id', {
       id: '@id'
