@@ -11,6 +11,9 @@ angular.module('openattic')
         transformResponse: function (data) {
           return JSON.parse(data).results;
         }
+      },
+      filter: {
+        method: 'GET'
       }
     });
   });
