@@ -1,9 +1,12 @@
 angular.module('openattic')
-  .controller('VolumeLunFormCtrl', function ($scope, $state, $stateParams, LunService, HostService) {
+  .controller('VolumeLunFormCtrl', function ($scope, $state, $stateParams, LunService, HostService, InitiatorService) {
 
-    $scope.data = {
-      targetHost: null
-    };
+    $scope.share = {
+        'volume': {id: $scope.selection.item.id},
+        'host': null,
+        'lun_id':  '0'
+      };
+
     HostService.query()
       .$promise
       .then(function(res){
@@ -12,24 +15,32 @@ angular.module('openattic')
         console.log('An error occurred', error);
       });
 
-    if(!$stateParams.share){
-      $scope.share = {
-        'volume': {id: $scope.selection.item.id},
-        'host': $scope.selection.item.host,
-        'lun_id':  '0'
-      };
-      $scope.editing = false;
-
-      $scope.submitAction = function() {
-        LunService.save($scope.share)
+    $scope.$watch('share.host', function(host) {
+      console.log(arguments);
+      if('host'){
+        InitiatorService.filter({host: host.id, type: 'qla2xxx'})
           .$promise
-          .then(function() {
-            goToListView();
+          .then(function(res) {
+            $scope.haz_initiator = (res.count > 0);
           }, function(error) {
             console.log('An error occured', error);
           });
       }
+    });
+
+
+    $scope.editing = false;
+
+    $scope.submitAction = function() {
+      LunService.save($scope.share)
+        .$promise
+        .then(function() {
+          goToListView();
+        }, function(error) {
+          console.log('An error occured', error);
+        });
     }
+
 
     $scope.cancelAction = function() {
         goToListView();
