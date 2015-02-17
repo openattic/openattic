@@ -8,10 +8,10 @@
                 </select>
                 <span ng-show="shareForm.host.$error.required">This field is required!</span>
         </section>
-        <section>
+        <section ng-show="haz_initiator">
                 <label class="label" for="lun_id">ID</label>
                 <label class="input" ng-class="{'state-error': shareForm.lun_id.$invalid}"> <i class="icon-prepend fa fa-share"></i>
-                    <input type="text" placeholder="ID..." ng-model="share.path" name="path" id="lun_id">
+                    <input type="text" placeholder="ID..." ng-model="share.lun_id" name="lun_id" id="shareLun">
                     <span ng-show="shareForm.lun_id.$dirty && shareForm.lun_id.$invalid"></span>
                 </label>
             </section>
