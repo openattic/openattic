@@ -41,8 +41,16 @@ angular.module('openattic.apirecorder')
               }
               script.push('requests.' + cmds[i].method.toLowerCase() + '(' + args.join(', ') + ')\n');
             }
-            $('#apirecord-script').val(script.join('\n'));
-            $('#apirecord-modal').modal();
+            $.SmartMessageBox({
+              title: 'API Recorder',
+              content: [
+                'Replay the actions you recorded by running this Python script:<br />',
+                '<textarea rows="14" cols="80" style="color: black">',
+                  script.join('\n'),
+                '</textarea>'
+              ].join(''),
+              buttons: '[OK]'
+            });
           }
         };
       }
