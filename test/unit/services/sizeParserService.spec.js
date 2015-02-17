@@ -21,6 +21,7 @@ describe('Service: sizeParserService', function () {
   it("should parse ints followed by a size modifier", function(){
     expect(SizeParserService.parseInt( "0G" )).toBe(0);
     expect(SizeParserService.parseInt("10G" )).toBe(10 * 1024);
+    expect(SizeParserService.parseInt("10 G")).toBe(10 * 1024);
     expect(SizeParserService.parseInt("15T" )).toBe(15 * 1024 * 1024);
     expect(SizeParserService.parseInt("30TB")).toBe(30 * 1024 * 1024);
   });
@@ -36,7 +37,6 @@ describe('Service: sizeParserService', function () {
     expect(SizeParserService.parseInt(   "0x10")).toBeNull();
     expect(SizeParserService.parseInt(   "0b15")).toBeNull();
     expect(SizeParserService.parseInt(   "10ZB")).toBeNull();
-    expect(SizeParserService.parseInt(   "10 G")).toBeNull();
     expect(SizeParserService.parseInt(    "10k")).toBeNull();
     expect(SizeParserService.parseInt("10Bytes")).toBeNull();
   });
@@ -47,6 +47,7 @@ describe('Service: sizeParserService', function () {
     expect(SizeParserService.isValid("1000")).toBe(true);
     expect(SizeParserService.isValid( "1.2")).toBe(true);
     expect(SizeParserService.isValid("1.0G")).toBe(true);
+    expect(SizeParserService.isValid("10 G")).toBe(true);
     expect(SizeParserService.isValid("30TB")).toBe(true);
   });
 
@@ -54,7 +55,6 @@ describe('Service: sizeParserService', function () {
     expect(SizeParserService.isValid(   "0x10")).toBe(false);
     expect(SizeParserService.isValid(   "0b15")).toBe(false);
     expect(SizeParserService.isValid(   "10ZB")).toBe(false);
-    expect(SizeParserService.isValid(   "10 G")).toBe(false);
     expect(SizeParserService.isValid(    "10k")).toBe(false);
     expect(SizeParserService.isValid("10Bytes")).toBe(false);
   });
