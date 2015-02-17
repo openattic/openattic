@@ -101,7 +101,7 @@ angular.module('openattic').config(function ($stateProvider, $urlRouterProvider)
     .state('volumes.detail.luns-add', {
       url: '/luns/add',
       views: {
-        'tab-content': {templateUrl: 'templates/volumes/luns-form.html'}
+        'tab-content': {templateUrl: 'templates/volumes/lun-form.html'}
       }
     })
     .state('volumes.detail.http', {
