@@ -1,0 +1,28 @@
+<div ng-controller="VolumeLunFormCtrl">
+    <form name="shareForm" role="form" class="smart-form" novalidate>
+    <fieldset>
+        <section>
+            <label class="label" for="shareHost">Host</label>
+                <select class="form-control" ng-model="share.host" ng-options="host.name for host in hosts" name="host" required>
+                    <option value="">-- Select a host --</option>
+                </select>
+                <span ng-show="shareForm.host.$error.required">This field is required!</span>
+        </section>
+        <section>
+                <label class="label" for="lun_id">ID</label>
+                <label class="input" ng-class="{'state-error': shareForm.lun_id.$invalid}"> <i class="icon-prepend fa fa-share"></i>
+                    <input type="text" placeholder="ID..." ng-model="share.path" name="path" id="lun_id">
+                    <span ng-show="shareForm.lun_id.$dirty && shareForm.lun_id.$invalid"></span>
+                </label>
+            </section>
+        </fieldset>
+        <footer>
+            <button type="submit" class="btn btn-primary" ng-click="submitAction()" ng-disabled="shareForm.$invalid">
+                Submit
+            </button>
+            <button type="button" class="btn btn-default" ng-click="cancelAction()">
+                Back
+            </button>
+        </footer>
+    </form>
+</div>
