@@ -33,7 +33,7 @@ angular.module('openattic')
       })
       .$promise
       .then(function (res) {
-        $scope.lunsData = res;
+        $scope.lunData = res;
       })
       .catch(function (error) {
         console.log('An error occurred', error);
