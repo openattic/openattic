@@ -25,7 +25,7 @@ from volumes.models import StorageObject
 from nfs.models import Export
 
 class NfsShareSerializer(serializers.HyperlinkedModelSerializer):
-    """ Serializer for a NFS Export. """
+    """ Serializer for an NFS Export. """
     url         = serializers.HyperlinkedIdentityField(view_name="nfsshare-detail")
     volume      = relations.HyperlinkedRelatedField(view_name="volume-detail", source="volume.storageobj", queryset=StorageObject.objects.all())
 
