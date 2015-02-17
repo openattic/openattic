@@ -1,14 +1,10 @@
 angular.module('openattic')
-  .controller('VolumeLunsCtrl', function ($scope, $state, LunsService, HostService) {
+  .controller('VolumeLunCtrl', function ($scope, $state, LunService, HostService) {
     'use strict';
 
-    $scope.data = {
-      targetHost: null
-    };
+    $scope.lunData = {};
 
-    $scope.lunsData = {};
-
-    $scope.lunsFilter = {
+    $scope.lunFilter = {
       page: 0,
       entries: 10,
       search: '',
@@ -21,19 +17,19 @@ angular.module('openattic')
     };
 
     $scope.$watch('selection.item', function(selitem){
-      $scope.lunsFilter.volume = selitem;
+      $scope.lunFilter.volume = selitem;
     });
 
-    $scope.$watch('lunsFilter', function(){
-      if(!$scope.lunsFilter.volume){
+    $scope.$watch('lunFilter', function(){
+      if(!$scope.lunFilter.volume){
         return;
       }
-      LunsService.filter({
-        page:      $scope.lunsFilter.page + 1,
-        page_size: $scope.lunsFilter.entries,
-        search:    $scope.lunsFilter.search,
-        ordering:  ($scope.lunsFilter.sortorder === 'ASC' ? '' : '-') + $scope.lunsFilter.sortfield,
-        volume:    $scope.lunsFilter.volume.id
+      LunService.filter({
+        page:      $scope.lunFilter.page + 1,
+        page_size: $scope.lunFilter.entries,
+        search:    $scope.lunFilter.search,
+        ordering:  ($scope.lunFilter.sortorder === 'ASC' ? '' : '-') + $scope.lunFilter.sortfield,
+        volume:    $scope.lunFilter.volume.id
       })
       .$promise
       .then(function (res) {
@@ -47,14 +43,6 @@ angular.module('openattic')
       $state.go('volumes.detail.luns-add');
     }
 
-    HostService.query()
-      .$promise
-      .then(function(res){
-        $scope.hosts = res;
-      }, function (error) {
-        console.log('An error occurred', error);
-      });
-
     $scope.deleteLunAction = function(){
       $.SmartMessageBox({
         title: 'Delete LUN',
@@ -62,10 +50,10 @@ angular.module('openattic')
         buttons: '[No][Yes]'
       }, function (ButtonPressed) {
         if (ButtonPressed === 'Yes') {
-          LunsService.delete({id: $scope.lunSelection.item.id})
+          LunService.delete({id: $scope.lunSelection.item.id})
             .$promise
             .then(function() {
-              $scope.lunsFilter.refresh = new Date();
+              $scope.lunFilter.refresh = new Date();
             }, function(error){
               console.log('An error occured', error);
             });
