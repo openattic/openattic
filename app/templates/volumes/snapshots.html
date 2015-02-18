@@ -48,7 +48,7 @@
                             </div>
                         </div>
                     </td>
-                    <td ng-show="columns['Type']" ng-bind="row.type"></td>
+                    <td ng-show="columns['Type']" ng-bind="row.type.name"></td>
                     <td ng-show="columns['Status']"><i class="fa" ng-class="{
                         'fa-question':             row.status.status == '',
                         'fa-check':                row.status.status == 'good',
