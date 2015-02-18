@@ -134,6 +134,12 @@ angular.module('openattic').config(function ($stateProvider, $urlRouterProvider)
         'tab-content': {templateUrl: 'templates/volumes/snapshots.html'}
       }
     })
+    .state('volumes.detail.snapshots-add', {
+      url: '/snapshots/add',
+      views: {
+        'tab-content': {templateUrl: 'templates/volumes/snapshot-form.html'}
+      }
+    })
     .state('volumes-add', {
       url: '/volumes/add',
       views: {
