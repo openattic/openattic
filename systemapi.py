@@ -93,6 +93,19 @@ class SystemD(BasePlugin):
         invoke(["rbd", "-c", "/etc/ceph/%s.conf" % cluster, "-p", pool, "rm", image])
 
     @deferredmethod(in_signature="sss")
+    def rbd_map(self, cluster, pool, image, sender):
+        invoke(["rbd", "-c", "/etc/ceph/%s.conf" % cluster, "-p", pool, "map", image])
+
+    @deferredmethod(in_signature="sss")
+    def rbd_unmap(self, cluster, pool, image, sender):
+        invoke(["rbd", "-c", "/etc/ceph/%s.conf" % cluster, "unmap", "/dev/rbd/%s/%s" % (pool, image)])
+
+    @method(in_signature="s", out_signature="s")
+    def rbd_showmapped(self, cluster, pool, image, sender):
+        ret, out, err = invoke(["rbd", "-c", "/etc/ceph/%s.conf" % cluster, "showmapped"], log=False, return_out_err=True)
+        return out
+
+    @deferredmethod(in_signature="sss")
     def format_volume_as_osd(self, cluster, fspath, journaldev, sender):
         # run "ceph osd create" to get an ID
         ret, out, err = self.invoke_ceph(cluster, ["osd", "create"])
