@@ -42,7 +42,7 @@ class LogEntryViewSet(viewsets.ModelViewSet, BulkDestroyAPIView):
 
             return filtered_items
 
-        return queryset
+        return super(LogEntryViewSet, self).filter_queryset(queryset)
 
 
 RESTAPI_VIEWSETS = [
