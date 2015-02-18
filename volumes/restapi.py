@@ -24,6 +24,7 @@ from rest_framework.response import Response
 from rest_framework.status import HTTP_201_CREATED
 
 from rest import relations
+from rest.restapi import ContentTypeSerializer
 
 from volumes import models
 
@@ -59,7 +60,7 @@ VOLUME_FILTER_Q = \
 #
 
 class VolumePoolSerializer(serializers.Serializer):
-    type        = serializers.CharField(source="volumepool_type")
+    type        = ContentTypeSerializer(read_only=True, source="volumepool_type")
     host        = relations.HyperlinkedRelatedField(read_only=True, view_name="host-detail")
 
 
@@ -150,13 +151,15 @@ class FileSystemVolumeSerializer(serializers.Serializer):
     owner       = relations.HyperlinkedRelatedField(read_only=True, view_name="user-detail")
 
     def serialize_type(self, obj):
+        ser = ContentTypeSerializer(obj.volume_type, many=False, context=self.context)
+        data = ser.data
         if isinstance(obj, models.FileSystemProvider):
-            return obj.fstype
-        return unicode(obj.volume_type)
+            data["name"] = obj.fstype
+        return data
 
 
 class BlockVolumeSerializer(serializers.Serializer):
-    type        = serializers.CharField(source="volume_type")
+    type        = ContentTypeSerializer(read_only=True, source="volume_type")
     host        = relations.HyperlinkedRelatedField(read_only=True, view_name="host-detail")
     path        = serializers.CharField()
     perfdata    = serializers.SerializerMethodField('get_performance_data')
