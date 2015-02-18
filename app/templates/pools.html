@@ -56,7 +56,7 @@
                                 'fa-chain-broken':         row.status.status == 'fail',
                                 'fa-lock':                 row.status.status == 'locked'
                                 }"></i></td>
-                <td ng-show="columns['Type']" ng-bind="row.type"></td>
+                <td ng-show="columns['Type']" ng-bind="row.type.name"></td>
             </tr>
             </tbody>
         </table>

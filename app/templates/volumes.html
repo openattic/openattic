@@ -59,7 +59,7 @@
                         'fa-chain-broken':         row.status.status == 'fail',
                         'fa-lock':                 row.status.status == 'locked'
                         }"></i></td>
-                    <td ng-show="columns['Type']" ng-bind="row.type"></td>
+                    <td ng-show="columns['Type']" ng-bind="row.type.name"></td>
                     <td ng-show="columns['Path']" ng-bind="row.path"></td>
                     <td ng-show="columns['Created']" ng-bind="row.createdate | date:'short'"></td>
                 </tr>
