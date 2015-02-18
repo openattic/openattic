@@ -18,7 +18,9 @@
                 </tr>
             </thead>
             <tbody>
-                <tr ng-repeat="row in data.results" ng-class="{ info: isRowSelected(row) }" ng-click="toggleSelection(row, $event)">
+                <tr ng-repeat="row in data.results | orderBy:filterConfig.sortfield:filterConfig.sortorder=='DESC'"
+                    ng-class="{ info: isRowSelected(row) }"
+                    ng-click="toggleSelection(row, $event)">
                     <td ng-if="selection.available"><input type="checkbox" checklist-model="selection.items" checklist-value="row"/></td>
                     <td ng-show="columns['Name']">
                         <a ui-sref="hosts-edit({host:row.id})" ng-bind="row.name"></a>
