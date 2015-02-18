@@ -243,6 +243,14 @@ angular.module('openattic').config(function ($stateProvider, $urlRouterProvider)
           templateUrl: 'templates/cmdlogs.html'
         }
       }
+    })
+    .state('crushmap', {
+      url: '/crushmap',
+      views: {
+        'main': {
+          templateUrl: 'templates/crushmap.html'
+        }
+      }
     });
 });
 
