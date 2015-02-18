@@ -43,7 +43,7 @@ class HostACLFilter(django_filters.FilterSet):
 
     class Meta:
         model  = HostACL
-        fields = ['volume']
+        fields = ['volume', 'host']
 
 class HostACLViewSet(viewsets.ModelViewSet):
     queryset         = HostACL.objects.all()
