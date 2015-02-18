@@ -59,7 +59,7 @@ angular.module('openattic')
         buttons: '[No][Yes]'
       }, function (ButtonPressed) {
         if (ButtonPressed === 'Yes') {
-          CmdlogService.delete(ids)
+          CmdlogService.delete({'ids': ids})
             .$promise
             .then(function() {
               $scope.filterConfig.refresh = new Date();
