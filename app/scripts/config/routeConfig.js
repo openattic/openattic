@@ -30,6 +30,12 @@ angular.module('openattic').config(function ($stateProvider, $urlRouterProvider)
         'tab-content': {templateUrl: 'templates/pools/storage.html'}
       }
     })
+    .state('pools.detail.cephpool', {
+      url: '/cephpool',
+      views: {
+        'tab-content': {templateUrl: 'templates/pools/cephpool.html'}
+      }
+    })
     .state('disks', {
       url: '/disks',
       views: {
