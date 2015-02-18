@@ -1,0 +1,31 @@
+<div ng-controller="VolumeSnapshotFormCtrl">
+    <form name="snapForm" role="form" class="smart-form" novalidate>
+        <fieldset>
+            <section>
+                <label class="label" for="snapName">Name</label>
+                <label class="input" ng-class="{'state-error': snapForm.snapName.$invalid}"> <i class="icon-prepend fa fa-share"></i>
+                    <input type="text" placeholder="Name..." ng-model="snap.name" name="name" id="snapName" required>
+                    <span ng-show="snapForm.snapName.$dirty && snapForm.snapName.$invalid">
+                        The name is required.
+                    </span>
+                </label>
+            </section>
+            <section>
+                <label class="label" for="snapMegs">Size</label>
+                <label class="input" ng-class="{'state-error': snapForm.snapMegs.$invalid}"> <i class="icon-prepend fa fa-share"></i>
+                    <input type="text" placeholder="..." ng-model="megs" name="description" id="snapMegs" required>
+                    <span ng-show="snapForm.snapMegs.$dirty && snapForm.snapMegs.$invalid">
+                    </span>
+                </label>
+            </section>
+        </fieldset>
+        <footer>
+            <button type="submit" class="btn btn-primary" ng-click="submitAction()" ng-disabled="snapForm.$invalid">
+                Submit
+            </button>
+            <button type="button" class="btn btn-default" ng-click="cancelAction()">
+                Back
+            </button>
+        </footer>
+    </form>
+</div>
