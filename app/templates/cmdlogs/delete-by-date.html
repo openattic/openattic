@@ -1,0 +1,15 @@
+<span class="MsgTitle">Delete log entry by date</span>
+<p class="pText">Do you really want to delete that log entry?</p>
+<p class="input-group">
+    <input type="text" class="form-control" datepicker-popup="dd-MMMM-yyyy" ng-model="data.dt"
+           datepicker-mode="year" is-open="opened" show-button-bar="false" />
+    <span class="input-group-btn">
+        <button class="btn btn-default" ng-click="open($event)">
+            <span class="glyphicon glyphicon-calendar"></span>
+        </button>
+    </span>
+    <div class="MessageBoxButtonSection">
+        <button id="bot1-Msg1" class="btn btn-default btn-sm botTempo" ng-click="no()"> No</button>
+        <button id="bot2-Msg1" class="btn btn-default btn-sm botTempo" ng-click="yes()"> Yes</button>
+    </div>
+</p>
