@@ -88,7 +88,7 @@ angular.module('openattic')
     };
   })
 
-  .controller('DeleteByDateCtrl', function ($scope, $modalInstance) {
+  .controller('DeleteByDateCtrl', function ($scope, CmdlogService, $modalInstance) {
     $scope.datePicker = {
       opened    : false,
       maxDate   : null,
@@ -105,6 +105,13 @@ angular.module('openattic')
     };
 
     $scope.yes = function(){
+      console.log($scope.datePicker.dateTime);
+      CmdlogService.delete({'datetime': $scope.datePicker.dateTime})
+        .$promise
+        .then(function() {
+        }, function(error){
+          console.log('An error occured', error);
+        });
     };
 
     $scope.no = function(){
