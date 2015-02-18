@@ -37,8 +37,13 @@ class LogEntryViewSet(viewsets.ModelViewSet, BulkDestroyAPIView):
         if self.request.method == 'DELETE':
             filtered_items = []
 
-            for key, value in self.request.QUERY_PARAMS.items():
-                filtered_items.append(queryset.get(id=value))
+            for key in ['ids', 'datetime']:
+                for entry in self.request.QUERY_PARAMS.getlist(key):
+                    if key == 'ids':
+                        print 'remove by id'
+                        filtered_items.append(queryset.get(id=entry))
+                    if key == 'datetime':
+                        print 'remove by datettime'
 
             return filtered_items
 
