@@ -101,7 +101,7 @@ class SystemD(BasePlugin):
         invoke(["rbd", "-c", "/etc/ceph/%s.conf" % cluster, "unmap", "/dev/rbd/%s/%s" % (pool, image)])
 
     @method(in_signature="s", out_signature="s")
-    def rbd_showmapped(self, cluster, pool, image, sender):
+    def rbd_showmapped(self, cluster):
         ret, out, err = invoke(["rbd", "-c", "/etc/ceph/%s.conf" % cluster, "showmapped"], log=False, return_out_err=True)
         return out
 
