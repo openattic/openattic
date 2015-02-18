@@ -46,7 +46,7 @@ angular.module('openattic')
     $scope.deleteLunAction = function(){
       $.SmartMessageBox({
         title: 'Delete LUN',
-        content: 'Do you really want to delete the LUN share "' + $scope.lunSelection.item.name + '"?',
+        content: 'Do you really want to delete the LUN ACL for "' + $scope.lunSelection.item.host.title + '"?',
         buttons: '[No][Yes]'
       }, function (ButtonPressed) {
         if (ButtonPressed === 'Yes') {
