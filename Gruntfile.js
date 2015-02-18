@@ -9,6 +9,7 @@ module.exports = function (grunt) {
     dist: 'dist/',
     name: 'bookmonkey-web',
     applicationFiles: [
+      '<%= buildConfig.src %>scripts/module_enterprise.js',
       '<%= buildConfig.src %>scripts/**/module.js',
       '<%= buildConfig.src %>scripts/services/*.js',
       '<%= buildConfig.src %>scripts/**/*.js',
