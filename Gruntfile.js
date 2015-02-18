@@ -14,12 +14,16 @@ module.exports = function (grunt) {
       '<%= buildConfig.src %>scripts/**/*.js',
       '<%= buildConfig.src %>components/**/module.js',
       '<%= buildConfig.src %>components/services/*.js',
-      '<%= buildConfig.src %>components/**/*.js'
+      '<%= buildConfig.src %>components/**/*.js',
+      '<%= buildConfig.src %>enterprise_components/**/module.js',
+      '<%= buildConfig.src %>enterprise_components/services/*.js',
+      '<%= buildConfig.src %>enterprise_components/**/*.js'
     ],
     watchFiles: [
       '<%= buildConfig.src %>*.tpl.html',
       '<%= buildConfig.src %>scripts/**/*.js',
-      '<%= buildConfig.src %>components/**/*.js'
+      '<%= buildConfig.src %>components/**/*.js',
+      '<%= buildConfig.src %>enterprise_components/**/*.js'
     ]
   };
 
