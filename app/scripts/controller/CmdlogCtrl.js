@@ -89,10 +89,12 @@ angular.module('openattic')
   })
 
   .controller('DeleteByDateCtrl', function ($scope, $modalInstance) {
+    $scope.datePicker = {opened: false};
+
     $scope.open = function($event){
       $event.preventDefault();
       $event.stopPropagation();
-      $scope.opened = true;
+      $scope.datePicker.opened = true;
     };
 
     $scope.yes = function(){
