@@ -308,10 +308,12 @@ class Image(BlockVolume):
         super(Image, self).save(*args, **kwargs)
         if install:
             get_dbus_object("/ceph").rbd_create(self.rbd_pool.cluster.name, self.rbd_pool.storageobj.name, self.storageobj.name, self.storageobj.megs)
+            get_dbus_object("/ceph").rbd_map(   self.rbd_pool.cluster.name, self.rbd_pool.storageobj.name, self.storageobj.name)
 
     def delete(self):
         super(Image, self).delete()
-        get_dbus_object("/ceph").rbd_rm(self.rbd_pool.cluster.name, self.rbd_pool.storageobj.name, self.storageobj.name)
+        get_dbus_object("/ceph").rbd_unmap(self.rbd_pool.cluster.name, self.rbd_pool.storageobj.name, self.storageobj.name)
+        get_dbus_object("/ceph").rbd_rm(   self.rbd_pool.cluster.name, self.rbd_pool.storageobj.name, self.storageobj.name)
 
     @property
     def host(self):
