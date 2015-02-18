@@ -21,7 +21,6 @@ from rest_framework import serializers, viewsets
 from rest_framework.decorators import detail_route
 from rest_framework.response import Response
 
-from volumes.restapi import FileSystemVolumeSerializer
 from rest import relations
 
 
@@ -52,6 +51,7 @@ class UserViewSet(viewsets.ModelViewSet):
 
     @detail_route()
     def volumes(self, request, *args, **kwargs):
+        from volumes.restapi import FileSystemVolumeSerializer
         user = self.get_object()
         vols = user.filesystemvolume_set.all()
         serializer = FileSystemVolumeSerializer(vols, many=True, context={'request': request})
