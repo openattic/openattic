@@ -1,8 +1,8 @@
 <span class="MsgTitle">Delete log entry by date</span>
 <p class="pText">Select a date. Are entries that are older than this date will be deleted.</p>
 <p class="input-group col-md-4">
-    <input type="text" class="form-control" datepicker-popup="dd/MM/yyyy" ng-model="datetime"
-           is-open="datePicker.opened" show-button-bar="false" max-date="maxDate"/>
+    <input type="text" class="form-control" datepicker-popup="{{datePicker.format}}" ng-model="datePicker.dateTime"
+           is-open="datePicker.opened" show-button-bar="datePicker.showBtnBar" max-date="datePicker.maxDate"/>
     <span class="input-group-btn">
         <button class="btn btn-default" ng-click="open($event)">
             <span class="glyphicon glyphicon-calendar"></span>

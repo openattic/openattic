@@ -89,12 +89,18 @@ angular.module('openattic')
   })
 
   .controller('DeleteByDateCtrl', function ($scope, $modalInstance) {
-    $scope.datePicker = {opened: false};
+    $scope.datePicker = {
+      opened    : false,
+      maxDate   : null,
+      dateTime  : null,
+      format    : 'dd/MM/yyyy',
+      showBtnBar: false
+    };
 
     $scope.open = function($event){
       $event.preventDefault();
       $event.stopPropagation();
-      $scope.maxDate = new Date();
+      $scope.datePicker.maxDate = new Date();
       $scope.datePicker.opened = true;
     };
 
