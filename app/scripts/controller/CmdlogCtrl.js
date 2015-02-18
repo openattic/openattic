@@ -94,6 +94,7 @@ angular.module('openattic')
     $scope.open = function($event){
       $event.preventDefault();
       $event.stopPropagation();
+      $scope.maxDate = new Date();
       $scope.datePicker.opened = true;
     };
 
