@@ -24,9 +24,20 @@ angular.module('openattic')
         method: 'GET',
         url: '/openattic/api/volumes/:id/snapshots'
       },
+      create_snapshot: {
+        method: 'POST',
+        url: '/openattic/api/volumes/:id/snapshots'
+      },
       filter: {
         method: 'GET',
         url: '/openattic/api/volumes'
       }
+    });
+  })
+  .factory('VolumeSnapshotService', function ($resource) {
+    'use strict';
+    return $resource('/openattic/api/volumes/:volumeId/snapshots', {
+      volumeId: '@volumeId'
+    }, {
     });
   });
