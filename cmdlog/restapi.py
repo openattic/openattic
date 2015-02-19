@@ -17,6 +17,8 @@ from rest_framework_bulk.generics import BulkDestroyAPIView
 
 from rest import relations
 
+from datetime import datetime
+
 from cmdlog import models
 
 
@@ -42,6 +44,8 @@ class LogEntryViewSet(viewsets.ModelViewSet, BulkDestroyAPIView):
                     if key == 'ids':
                         filtered_items.append(queryset.get(id=entry))
                     if key == 'datetime':
+                        entryDatetime = datetime.strptime(entry, '%Y-%m-%dT%H:%M:%S.%fZ')
+                        filtered_items = models.LogEntry.objects.filter(endtime__lt=entryDatetime)
             return filtered_items
 
         return super(LogEntryViewSet, self).filter_queryset(queryset)
