@@ -1,15 +1,22 @@
 <span class="MsgTitle">Delete log entry by date</span>
 <p class="pText">Select a date. All entries that are older than this date will be deleted.</p>
-<p class="input-group col-md-4">
-    <input type="text" class="form-control" datepicker-popup="{{datePicker.format}}" ng-model="datePicker.dateTime"
-           is-open="datePicker.opened" show-button-bar="datePicker.showBtnBar" max-date="datePicker.maxDate"/>
-    <span class="input-group-btn">
-        <button class="btn btn-default" ng-click="open($event)">
-            <span class="glyphicon glyphicon-calendar"></span>
-        </button>
-    </span>
-    <div class="MessageBoxButtonSection">
-        <button id="bot1-Msg1" class="btn btn-default btn-sm botTempo" ng-click="no()"> No</button>
-        <button id="bot2-Msg1" class="btn btn-default btn-sm botTempo" ng-click="yes()"> Yes</button>
-    </div>
-</p>
+<form name="pickDateForm" role="form" novalidate>
+    <p class="input-group col-md-4">
+        <input type="text" class="form-control" datepicker-popup="{{datePicker.format}}" ng-model="datePicker.dateTime"
+               is-open="datePicker.opened" show-button-bar="datePicker.showBtnBar" max-date="datePicker.maxDate"
+               name="datePicker" required/>
+        <span class="input-group-btn">
+            <button class="btn btn-default" ng-click="open($event)">
+                <span class="glyphicon glyphicon-calendar"></span>
+            </button>
+        </span>
+        <div class="MessageBoxButtonSection">
+            <button id="bot1-Msg1" class="btn btn-default btn-sm botTempo" ng-click="no()"> No</button>
+            <button id="bot2-Msg1" class="btn btn-default btn-sm botTempo" ng-click="yes()"
+                    ng-disabled="pickDateForm.$invalid"> Yes</button>
+            <span ng-show="pickDateForm.datePicker.$dirty && pickDateForm.datePicker.$error.required">
+                This field is required.</span>
+        </div>
+    </p>
+</form>
+
