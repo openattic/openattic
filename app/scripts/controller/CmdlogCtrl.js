@@ -85,6 +85,10 @@ angular.module('openattic')
         templateUrl: 'templates/cmdlogs/delete-by-date.html',
         controller: 'DeleteByDateCtrl'
       });
+
+      modalInstance.result.then(function(res){
+        $scope.filterConfig.refresh = new Date();
+      });
     };
   })
 
@@ -108,6 +112,7 @@ angular.module('openattic')
       CmdlogService.delete({'datetime': $scope.datePicker.dateTime})
         .$promise
         .then(function() {
+          $modalInstance.close('deleted');
         }, function(error){
           console.log('An error occured', error);
         });
