@@ -22,6 +22,10 @@ form .ng-valid.ng-dirty {
     border: 2px solid green;
 }
 
+.MessageBoxContainer table {
+    color: black;
+}
+
 oadatatable div.widget-body {
     position: relative;
 }
