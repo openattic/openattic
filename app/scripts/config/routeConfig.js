@@ -2,9 +2,15 @@
 
 angular.module('openattic').config(function ($stateProvider, $urlRouterProvider) {
 
-  $urlRouterProvider.otherwise('/pools');
+  $urlRouterProvider.otherwise('/dashboard');
 
   $stateProvider
+    .state('dashboard', {
+      url: '/dashboard',
+      views: {
+        'main': {templateUrl: 'templates/dashboard.html'}
+      }
+    })
     .state('pools', {
       url: '/pools',
       controller: 'PoolCtrl',
