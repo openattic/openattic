@@ -7,9 +7,8 @@ form input.ng-invalid:focus {
 }
 
 form input.ng-valid.ng-dirty {
-    background-color: #1dca07;
+    background-color: #a6e79e;
 }
-
 
 form .ng-invalid.ng-dirty {
     border: 2px solid #ffcbc1;
