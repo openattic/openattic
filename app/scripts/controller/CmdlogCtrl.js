@@ -105,7 +105,6 @@ angular.module('openattic')
     };
 
     $scope.yes = function(){
-      console.log($scope.datePicker.dateTime);
       CmdlogService.delete({'datetime': $scope.datePicker.dateTime})
         .$promise
         .then(function() {
