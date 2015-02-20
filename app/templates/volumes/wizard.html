@@ -16,6 +16,9 @@
                     <div class="widget-body">
                         <form name="volumeForm" role="form" class="form-horizontal" novalidate>
                             <fieldset ng-disabled="volume.id">
+                                <label>
+                                    <b>Volume Properties</b>
+                                </label>
                                 <div class="form-group">
                                     <label class="col-md-2 control-label">Name</label>
                                     <div class="col-md-10">
@@ -51,6 +54,9 @@
                                 </div>
                             </fieldset>
                             <fieldset>
+                                <label>
+                                    <b>Volume Mirroring</b>
+                                </label>
                                 <div class="form-group">
                                     <label class="col-md-2 control-label">Mirror Host</label>
                                     <div class="col-md-10">
@@ -70,6 +76,9 @@
                                 </div>
                             </fieldset>
                             <fieldset>
+                                <label>
+                                    <b>File System</b>
+                                </label>
                                 <div class="form-group">
                                     <label class="col-md-4 control-label">What do you want to do with the volume?</label>
                                     <div class="col-md-8">
@@ -101,7 +110,7 @@
                                 </div>
                             </fieldset>
                             <div class="form-group">
-                                <div class="btn pull-right">
+                                <div class="pull-right" style="padding: 6px 12px">
                                     <button type="submit" class="btn btn-primary" ng-click="submitAction()" ng-disabled="volumeForm.$invalid">
                                         Submit
                                     </button>
