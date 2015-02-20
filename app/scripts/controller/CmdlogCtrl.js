@@ -81,7 +81,7 @@ angular.module('openattic')
 
     $scope.deleteByDateAction = function(){
       var modalInstance = $modal.open({
-        windowTemplateUrl: 'templates/cmdlogs/delete-by-date-window.html',
+        windowTemplateUrl: 'templates/messagebox.html',
         templateUrl: 'templates/cmdlogs/delete-by-date.html',
         controller: 'CmdlogDeleteByDateCtrl'
       });
