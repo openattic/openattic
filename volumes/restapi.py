@@ -248,6 +248,11 @@ class VolumeViewSet(viewsets.ModelViewSet):
     filter_fields = ('name', 'uuid', 'createdate')
     search_fields = ('name',)
 
+    @detail_route(["post"])
+    def clone(self, request, *args, **kwargs):
+        print request.DATA
+        return Response(True)
+
     @detail_route(["get", "post"])
     def snapshots(self, request, *args, **kwargs):
         origin = self.get_object()
