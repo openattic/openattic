@@ -152,30 +152,6 @@ angular.module('openattic').config(function ($stateProvider, $urlRouterProvider)
         'main': {templateUrl: 'templates/volumes/wizard.html'}
       }
     })
-    .state('volumes-add.create', {
-      url: '/create',
-      views: {
-        'volume-add-wizard-page': {
-          templateUrl: 'templates/volumes/wizard/create.html'
-        }
-      }
-    })
-    .state('volumes-add.mirror', {
-      url: '/mirror',
-      views: {
-        'volume-add-wizard-page': {
-          templateUrl: 'templates/volumes/wizard/mirror.html'
-        }
-      }
-    })
-    .state('volumes-add.filesystem', {
-      url: '/filesystem',
-      views: {
-        'volume-add-wizard-page': {
-          templateUrl: 'templates/volumes/wizard/filesystem.html'
-        }
-      }
-    })
     .state('hosts', {
       url: '/hosts',
       views: {

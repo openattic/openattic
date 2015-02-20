@@ -11,32 +11,95 @@
                 <header>
                     <span class="widget-icon"> <i class="fa fa-edit"></i></span>
                     <h2>Create Volume: {{volume.name}}</h2>
-                    <ul class="nav nav-tabs pull-right">
-                        <li ui-sref-active="active">
-                            <a data-target="#vol-tab1" data-toggle="tab" ui-sref="volumes-add.create">
-                                Basic Configuration
-                                <i class="greenicon fa fa-check-circle-o fa-lg" ng-show="state.created"></i>
-                            </a>
-                        </li>
-                        <li ui-sref-active="active">
-                            <a data-target="#vol-tab2" data-toggle="tab" ui-sref="volumes-add.mirror">
-                                Mirror
-                                <i class="greenicon fa fa-check-circle-o fa-lg" ng-show="state.mirrored"></i>
-                            </a>
-                        </li>
-                        <li ui-sref-active="active">
-                            <a data-target="#vol-tab3" data-toggle="tab" ui-sref="volumes-add.filesystem">
-                                Filesystem
-                                <i class="greenicon fa fa-check-circle-o fa-lg" ng-show="state.formatted"></i>
-                            </a>
-                        </li>
-                    </ul>
                 </header>
                 <div>
                     <div class="widget-body">
                         <form name="volumeForm" role="form" class="form-horizontal" novalidate>
-                            <div class="tab-content" ui-view="volume-add-wizard-page">
-                            </div>
+                            <fieldset ng-disabled="volume.id">
+                                <div class="form-group">
+                                    <label class="col-md-2 control-label">Name</label>
+                                    <div class="col-md-10">
+                                        <input type="text" class="form-control" placeholder="Name..." ng-model="volume.name" name="name" validname required>
+                                        <span ng-show="volumeForm.name.$dirty && volumeForm.name.$error.required">This field is required!</span>
+                                        <span ng-show="volumeForm.name.$dirty && volumeForm.name.$error.validname">{{errortext}}</span>
+                                    </div>
+                                </div>
+                                <div class="form-group">
+                                    <label class="col-md-2 control-label">Pool</label>
+                                    <div class="col-md-10">
+                                        <select class="form-control" ng-model="data.sourcePool" ng-options="(pool.name + ' (' + pool.type.name + ')') for pool in pools track by pool.id" name="pool" required>
+                                            <option value="">-- Select a pool --</option>
+                                        </select>
+                                        <span ng-show="volumeForm.pool.$error.required">This field is required!</span>
+                                        <div ng-show="data.sourcePool">
+                                            {{data.sourcePool.usage.max_new_fsv_text}} available
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="form-group">
+                                    <label class="col-md-2 control-label">Size</label>
+                                    <div class="col-md-10">
+                                        <input class="form-control" name="megs" required ng-disabled="data.sourcePool === null"
+                                            volume-size-format volume-size-value max-value="{{data.sourcePool.usage.max_new_fsv}}"
+                                            ng-model="data.megs" placeholder="e.g., 10GB">
+                                        <span ng-show="volumeForm.megs.$dirty && volumeForm.megs.$error.required">This field is required.</span>
+                                        <span ng-show="volumeForm.megs.$dirty && volumeForm.megs.$error.volumeSizeFormat">This is not a valid number.</span>
+                                        <span ng-show="volumeForm.megs.$dirty && volumeForm.megs.$error.volumeSizeValue">
+                                            The size must be at least 100MB and must not exceed {{data.sourcePool.usage.max_new_fsv_text}}.
+                                        </span>
+                                    </div>
+                                </div>
+                            </fieldset>
+                            <fieldset>
+                                <div class="form-group">
+                                    <label class="col-md-2 control-label">Mirror Host</label>
+                                    <div class="col-md-10">
+                                        <select class="form-control" ng-model="data.mirrorHost" ng-options="host.name for host in hosts track by host.name">
+                                            <option value="">-- Select a host --</option>
+                                        </select>
+                                    </div>
+                                </div>
+                                <div class="form-group">
+                                    <label class="col-md-2 control-label">Mirror Pool</label>
+                                    <div class="col-md-10">
+                                        <select class="form-control" ng-model="data.mirrorPool" ng-options="
+                                                pool.name for pool in pools track by pool.name">
+                                            <option value="">-- Select a host --</option>
+                                        </select>
+                                    </div>
+                                </div>
+                            </fieldset>
+                            <fieldset>
+                                <div class="form-group">
+                                    <label class="col-md-4 control-label">What do you want to do with the volume?</label>
+                                    <div class="col-md-8">
+                                        <div class="radio">
+                                            <label>
+                                                <input type="radio" class="radiobox style-0" ng-model="data.filesystem" value="" ng-disabled="state.formatted">
+                                                <span>Create LUN</span>
+                                            </label>
+                                        </div>
+                                        <div class="radio" ng-show="supported_filesystems.xfs">
+                                            <label>
+                                                <input type="radio" class="radiobox style-0" ng-model="data.filesystem" value="xfs" ng-disabled="state.formatted">
+                                                <span>Create Virtualization Store -> XFS</span>
+                                            </label>
+                                        </div>
+                                        <div class="radio" ng-show="supported_filesystems.zfs">
+                                            <label>
+                                                <input type="radio" class="radiobox style-0" ng-model="data.filesystem" value="zfs" ng-disabled="state.formatted">
+                                                <span>Create ZFS Volume</span>
+                                            </label>
+                                        </div>
+                                        <div class="radio" ng-show="supported_filesystems.btrfs">
+                                            <label>
+                                                <input type="radio" class="radiobox style-0" ng-model="data.filesystem" value="btrfs" ng-disabled="state.formatted">
+                                                <span>Create File Store -> BTRFS</span>
+                                            </label>
+                                        </div>
+                                    </div>
+                                </div>
+                            </fieldset>
                             <div class="form-group">
                                 <div class="btn pull-right">
                                     <button type="submit" class="btn btn-primary" ng-click="submitAction()" ng-disabled="volumeForm.$invalid">
