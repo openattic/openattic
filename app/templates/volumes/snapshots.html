@@ -3,10 +3,10 @@
     <oadatatable data="snapshotsData" filter-config="snapshotsFilter" selection="snapshotsSelection">
         <actions>
             <a class="btn btn-lg btn-primary" type="button" ng-click="addAction()" ng-hide="snapshotsSelection.item"><i class="fa fa-fw fa-plus"></i> Add</a>
-<!--             <a class="btn btn-lg btn-primary" type="button" ng-click="deleteAction()" ng-show="snapshotsSelection.item"><i class="fa fa-fw fa-trash-o"></i> Delete</a> -->
+            <a class="btn btn-lg btn-primary" type="button" ng-click="deleteAction()" ng-show="snapshotsSelection.item"><i class="fa fa-fw fa-trash-o"></i> Delete</a>
             <li><a ng-click="addAction()"><i class="fa fa-fw fa-plus"></i> Add</a></li>
             <li class="divider"></li>
-<!--             <li ng-class="{disabled: !snapshotsSelection.item}" max-selected=1><a ng-click="deleteAction()"><i class="fa fa-fw fa-trash-o"></i> Delete</a></li> -->
+            <li ng-class="{disabled: !snapshotsSelection.item}" max-selected=1><a ng-click="deleteAction()"><i class="fa fa-fw fa-trash-o"></i> Delete</a></li>
         </actions>
         <table class="table table-striped table-bordered table-hover dataTable">
             <thead>
