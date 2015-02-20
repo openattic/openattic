@@ -1,5 +1,5 @@
 angular.module('openattic')
-  .controller('VolumeSnapshotsCtrl', function ($scope, $state, VolumeService) {
+  .controller('VolumeSnapshotsCtrl', function ($scope, $state, VolumeService, SnapshotService) {
     'use strict';
 
     $scope.snapshotsData = {};
@@ -28,7 +28,8 @@ angular.module('openattic')
         page:      $scope.snapshotsFilter.page + 1,
         page_size: $scope.snapshotsFilter.entries,
         search:    $scope.snapshotsFilter.search,
-        ordering:  ($scope.snapshotsFilter.sortorder === 'ASC' ? '' : '-') + $scope.snapshotsFilter.sortfield
+        ordering:  ($scope.snapshotsFilter.sortorder === 'ASC' ? '' : '-') + $scope.snapshotsFilter.sortfield,
+        volume:    $scope.snapshotsFilter.volume.id
       })
       .then(function (res) {
         $scope.snapshotsData = res;
@@ -42,32 +43,32 @@ angular.module('openattic')
       $state.go('volumes.detail.snapshots-add');
     }
 
-//     $scope.deleteAction = function(){
-//       $.SmartMessageBox({
-//         title: 'Delete snapshot',
-//         content: 'Do you really want to delete snapshot  "' + $scope.snapshotsSelection.item.snapshot.title + '"?',
-//         buttons: '[No][Yes]'
-//       }, function (ButtonPressed) {
-//         if (ButtonPressed === 'Yes') {
-//           .delete({id: $scope.snapshotsSelection.item.snapshot.id})
-//             .$promise
-//             .then(function() {
-//               $scope.snapshotsFilter.refresh = new Date();
-//             }, function(error){
-//               console.log('An error occured', error);
-//             });
-//         }
-//         if (ButtonPressed === 'No') {
-//           $.smallBox({
-//             title: 'Delete snapshot',
-//             content: '<i class="fa fa-clock-o"></i> <i>Cancelled</i>',
-//             color: '#C46A69',
-//             iconSmall: 'fa fa-times fa-2x fadeInRight animated',
-//             timeout: 4000
-//           });
-//         }
-//       });
-//     }
+    $scope.deleteAction = function(){
+      $.SmartMessageBox({
+        title: 'Delete snapshot',
+        content: 'Do you really want to delete snapshot  "' + $scope.snapshotsSelection.item.name + '"?',
+        buttons: '[No][Yes]'
+      }, function (ButtonPressed) {
+        if (ButtonPressed === 'Yes') {
+          SnapshotService.delete({id: $scope.snapshotsSelection.item.id})
+            .$promise
+            .then(function() {
+              $scope.snapshotsFilter.refresh = new Date();
+            }, function(error){
+              console.log('An error occured', error);
+            });
+        }
+        if (ButtonPressed === 'No') {
+          $.smallBox({
+            title: 'Delete snapshot',
+            content: '<i class="fa fa-clock-o"></i> <i>Cancelled</i>',
+            color: '#C46A69',
+            iconSmall: 'fa fa-times fa-2x fadeInRight animated',
+            timeout: 4000
+          });
+        }
+      });
+    }
    });
 
 // kate: space-indent on; indent-width 2; replace-tabs on;
