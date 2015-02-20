@@ -14,10 +14,6 @@ angular.module('openattic')
 
     $scope.editing = false;
 
-    var goToListView = function() {
-        $state.go('volumes.detail.snapshots');
-    }
-
     $scope.submitAction = function() {
       new VolumeSnapshotService($scope.snap)
         .$save()
@@ -30,6 +26,10 @@ angular.module('openattic')
 
     $scope.cancelAction = function() {
         goToListView();
+    }
+
+    var goToListView = function() {
+        $state.go('volumes.detail.snapshots');
     }
   });
 
