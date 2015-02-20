@@ -83,7 +83,7 @@ angular.module('openattic')
       var modalInstance = $modal.open({
         windowTemplateUrl: 'templates/cmdlogs/delete-by-date-window.html',
         templateUrl: 'templates/cmdlogs/delete-by-date.html',
-        controller: 'DeleteByDateCtrl'
+        controller: 'CmdlogDeleteByDateCtrl'
       });
 
       modalInstance.result.then(function(res){
@@ -92,7 +92,7 @@ angular.module('openattic')
     };
   })
 
-  .controller('DeleteByDateCtrl', function ($scope, CmdlogService, $modalInstance) {
+  .controller('CmdlogDeleteByDateCtrl', function ($scope, CmdlogService, $modalInstance) {
     $scope.datePicker = {
       opened    : false,
       maxDate   : null,
