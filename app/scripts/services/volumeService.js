@@ -31,6 +31,10 @@ angular.module('openattic')
       filter: {
         method: 'GET',
         url: '/openattic/api/volumes'
+      },
+      clone: {
+        method: 'POST',
+        url: '/openattic/api/volumes/:id/clone'
       }
     });
   })

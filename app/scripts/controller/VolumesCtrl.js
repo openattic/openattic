@@ -1,5 +1,5 @@
 angular.module('openattic')
-  .controller('VolumeCtrl', function ($scope, $state, VolumeService, SizeParserService) {
+  .controller('VolumeCtrl', function ($scope, $state, VolumeService, SizeParserService, $modal) {
     'use strict';
 
     $scope.data = {};
@@ -117,6 +117,19 @@ angular.module('openattic')
             iconSmall: 'fa fa-times fa-2x fadeInRight animated',
             timeout: 4000
           });
+        }
+      });
+    }
+
+    $scope.cloneAction = function(){
+      var modalInstance = $modal.open({
+        windowTemplateUrl: 'templates/messagebox.html',
+        templateUrl: 'templates/volumes/clone.html',
+        controller: 'VolumeCloneCtrl',
+        resolve: {
+          volume: function() {
+            return $scope.selection.item;
+          }
         }
       });
     }
