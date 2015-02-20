@@ -1,0 +1,13 @@
+<span class="MsgTitle">Clone the selected {{type}}</span>
+<p class="pText">In order to create a clone of the {{type}} {{volume.name}} type in the name of the clone.</p>
+<form name="cloneForm" role="form" novalidate>
+    <p class="input-group col-md-4">
+        <input type="text" class="form-control" placeholder="Name..." ng-model="clone_obj.name" name="name" required>
+        <span ng-show="cloneForm.name.$dirty && cloneForm.name.$error.required">This field is required.</span>
+        <div class="MessageBoxButtonSection">
+            <button id="bot1-Msg1" class="btn btn-default btn-sm botTempo" ng-click="cancel()"> Cancel</button>
+            <button id="bot2-Msg1" class="btn btn-default btn-sm botTempo" ng-click="clone()"
+                    ng-disable="cloneForm.$invalid"> Clone</button>
+        </div>
+    </p>
+</form>
