@@ -6,7 +6,7 @@
             <a class="btn btn-lg btn-primary" type="button" ng-click="resizeAction()" ng-show="hasSelection"><i class="fa fa-fw fa-upload"></i> Resize</a>
             <li><a ng-click="addAction()"><i class="fa fa-fw fa-plus"></i> Add</a></li>
             <li ng-class="{disabled: !hasSelection}"><a><i class="fa fa-fw fa-upload"></i> Resize</a></li>
-            <li ng-class="{disabled: !hasSelection}" ng-click="cloneAction()"><a><i class="fa fa-fw fa-files-o"></i> Clone</a></li>
+            <li ng-class="{disabled: !(hasSelection && cloneable)}" ng-click="cloneAction()"><a><i class="fa fa-fw fa-files-o"></i> Clone</a></li>
             <li class="divider"></li>
             <li ng-class="{disabled: !hasSelection}" max-selected=1><a ng-click="deleteAction()"><i class="fa fa-fw fa-trash-o"></i> Delete</a></li>
         </actions>

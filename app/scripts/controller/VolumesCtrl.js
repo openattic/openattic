@@ -45,6 +45,7 @@ angular.module('openattic')
       if( !item ){
         return;
       }
+      $scope.cloneable = item.type.name !== 'zfs';
       $scope.volumeForShare = item.is_filesystemvolume;
       $scope.volumeForLun   = item.is_blockvolume && !item.is_filesystemvolume;
     });
