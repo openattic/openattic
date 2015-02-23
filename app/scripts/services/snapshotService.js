@@ -14,6 +14,10 @@ angular.module('openattic')
       },
       filter: {
         method: 'GET'
+      },
+      clone: {
+        method: 'POST',
+        url: '/openattic/api/snapshots/:id/clone'
       }
     });
   });
