@@ -24,5 +24,13 @@ angular.module('openattic')
 
     $scope.cancel = function(){
       $modalInstance.dismiss('cancel');
+
+      $.smallBox({
+        title: 'Delete log entry',
+        content: '<i class="fa fa-clock-o"></i> <i>Cancelled</i>',
+        color: '#C46A69',
+        iconSmall: 'fa fa-times fa-2x fadeInRight animated',
+        timeout: 4000
+      });
     }
   });
