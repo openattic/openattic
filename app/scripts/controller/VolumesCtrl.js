@@ -136,7 +136,7 @@ angular.module('openattic')
 
       modalInstance.result.then(function(res) {
         $scope.filterConfig.refresh = new Date();
-      })
+      });
     }
   });
 
