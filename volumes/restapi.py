@@ -241,6 +241,16 @@ class SnapshotViewSet(viewsets.ModelViewSet):
         serializer = SnapshotSerializer(volume_so, many=False, context={"request": request})
         return Response(serializer.data, status=HTTP_201_CREATED)
 
+    @detail_route(["post"])
+    def clone(self, request, *args, **kwargs):
+        options = {"name": request.DATA["name"]}
+
+        storageobj = self.get_object()
+        clone = storageobj.clone(None, options)
+
+        serializedClone = SnapshotSerializer(clone, many=False, context={"request": request})
+
+        return Response(serializedClone.data, status=HTTP_201_CREATED)
 
 class VolumeViewSet(viewsets.ModelViewSet):
     queryset = models.StorageObject.objects.filter(VOLUME_FILTER_Q)
