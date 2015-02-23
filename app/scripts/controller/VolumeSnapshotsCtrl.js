@@ -1,5 +1,5 @@
 angular.module('openattic')
-  .controller('VolumeSnapshotsCtrl', function ($scope, $state, VolumeService, SnapshotService) {
+  .controller('VolumeSnapshotsCtrl', function ($scope, $state, VolumeService, SnapshotService, $modal) {
     'use strict';
 
     $scope.snapshotsData = {};
@@ -67,6 +67,23 @@ angular.module('openattic')
             timeout: 4000
           });
         }
+      });
+    }
+
+    $scope.cloneAction = function(){
+      var modalInstance = $modal.open({
+        windowTemplateUrl: 'templates/messagebox.html',
+        templateUrl: 'templates/volumes/clone.html',
+        controller: 'VolumeCloneCtrl',
+        resolve: {
+          volume: function() {
+            return $scope.snapshotsSelection.item;
+          }
+        }
+      });
+
+      modalInstance.result.then(function(res) {
+        $scope.snapshotsFilter.refresh = new Date();
       });
     }
    });
