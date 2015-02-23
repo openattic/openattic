@@ -1,5 +1,5 @@
 angular.module('openattic')
-  .controller('VolumeCloneCtrl', function($scope, VolumeService, $modalInstance, volume) {
+  .controller('VolumeCloneCtrl', function($scope, VolumeService, SnapshotService, $modalInstance, volume) {
     'use strict';
 
     $scope.volume = volume;
@@ -13,13 +13,24 @@ angular.module('openattic')
     }
 
     $scope.clone = function(){
-      VolumeService.clone({'id': $scope.volume.id, 'name': $scope.clone_obj.name})
-        .$promise
-        .then(function() {
-          $modalInstance.close('cloned');
-        }, function(error){
-          console.log('An error occured', error);
-        });
+      if('snapshot' in volume){
+        SnapshotService.clone({'id': $scope.volume.id, 'name': $scope.clone_obj.name})
+          .$promise
+          .then(function () {
+            $modalInstance.close('cloned');
+          }, function (error) {
+            console.log('An error occured', error);
+          });
+      }
+      else {
+        VolumeService.clone({'id': $scope.volume.id, 'name': $scope.clone_obj.name})
+          .$promise
+          .then(function () {
+            $modalInstance.close('cloned');
+          }, function (error) {
+            console.log('An error occured', error);
+          });
+      }
     };
 
     $scope.cancel = function(){
