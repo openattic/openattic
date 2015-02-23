@@ -26,7 +26,7 @@ angular.module('openattic')
       $modalInstance.dismiss('cancel');
 
       $.smallBox({
-        title: 'Delete log entry',
+        title: 'Clone volume',
         content: '<i class="fa fa-clock-o"></i> <i>Cancelled</i>',
         color: '#C46A69',
         iconSmall: 'fa fa-times fa-2x fadeInRight animated',
