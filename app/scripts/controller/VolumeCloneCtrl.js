@@ -16,7 +16,7 @@ angular.module('openattic')
       VolumeService.clone({'id': $scope.volume.id, 'clone_obj': $scope.clone_obj})
         .$promise
         .then(function() {
-
+          $modalInstance.close('cloned');
         }, function(error){
           console.log('An error occured', error);
         });
