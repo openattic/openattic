@@ -250,8 +250,14 @@ class VolumeViewSet(viewsets.ModelViewSet):
 
     @detail_route(["post"])
     def clone(self, request, *args, **kwargs):
-        print request.DATA
-        return Response(True)
+        options = {"name": request.DATA["name"]}
+
+        storageobj = self.get_object()
+        clone = storageobj.clone(None, options)
+
+        serializedClone = VolumeSerializer(clone, many=False, context={"request": request})
+
+        return Response(serializedClone.data, status=HTTP_201_CREATED)
 
     @detail_route(["get", "post"])
     def snapshots(self, request, *args, **kwargs):
