@@ -41,7 +41,7 @@ angular.module('openattic')
 
     $scope.addAction = function(){
       $state.go('volumes.detail.snapshots-add');
-    }
+    };
 
     $scope.deleteAction = function(){
       $.SmartMessageBox({
@@ -68,7 +68,7 @@ angular.module('openattic')
           });
         }
       });
-    }
+    };
 
     $scope.cloneAction = function(){
       var modalInstance = $modal.open({
