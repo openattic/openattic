@@ -1,16 +1,19 @@
 angular.module('openattic')
-  .controller('VolumeSnapshotFormCtrl', function ($scope, $state, $filter, $stateParams, VolumeService, VolumeSnapshotService, SizeParserService) {
+  .controller('VolumeSnapshotFormCtrl', function ($scope, $state, $filter, $stateParams, VolumeService, VolumeSnapshotService, PoolService, SizeParserService) {
 
     $scope.snap = {
         'volumeId': $scope.selection.item.id,
         'name': $filter('date')(new Date(), 'yyyy-MM-dd-HH-mm-ss'),
-        'megs':  ""
+        'megs':  "",
     };
+
     $scope.megs = $scope.selection.item.usage.size_text;
 
     $scope.$watch('megs', function(megs){
       $scope.snap.megs = SizeParserService.parseInt(megs);
     });
+
+    $scope.pool = new PoolService.get($scope.selection.item.source_pool);
 
     $scope.editing = false;
 
