@@ -14,11 +14,9 @@
  *  GNU General Public License for more details.
 """
 
-from django.http import Http404
 from django.db.models import Q
-from django.contrib.contenttypes.models import ContentType
 
-from rest_framework import serializers, viewsets, generics
+from rest_framework import serializers, viewsets
 from rest_framework.decorators import detail_route
 from rest_framework.response import Response
 from rest_framework.status import HTTP_201_CREATED
@@ -184,7 +182,6 @@ class VolumeSerializer(serializers.HyperlinkedModelSerializer):
     """
 
     url         = serializers.HyperlinkedIdentityField(view_name="volume-detail")
-    services    = relations.HyperlinkedIdentityField(view_name="volume-services")
     storage     = relations.HyperlinkedIdentityField(view_name="volume-storage")
     snapshots   = relations.HyperlinkedIdentityField(view_name="volume-snapshots")
     snapshot    = relations.HyperlinkedRelatedField(view_name="volume-detail", read_only=True)
@@ -194,7 +191,7 @@ class VolumeSerializer(serializers.HyperlinkedModelSerializer):
 
     class Meta:
         model  = models.StorageObject
-        fields = ('url', 'id', 'name', 'uuid', 'createdate', 'source_pool', 'snapshots', 'services', 'usage', 'status')
+        fields = ('url', 'id', 'name', 'uuid', 'createdate', 'source_pool', 'snapshots', 'usage', 'status')
 
     def to_native(self, obj):
         data = dict([(key, None) for key in ("type", "host", "path",
@@ -227,7 +224,7 @@ class SnapshotSerializer(VolumeSerializer):
 
     class Meta:
         model  = models.StorageObject
-        fields = ('url', 'id', 'name', 'uuid', 'createdate', 'source_pool', 'snapshot', 'services', 'usage', 'status')
+        fields = ('url', 'id', 'name', 'uuid', 'createdate', 'source_pool', 'snapshot', 'usage', 'status')
 
 
 class SnapshotViewSet(viewsets.ModelViewSet):
@@ -281,32 +278,6 @@ class VolumeViewSet(viewsets.ModelViewSet):
     @detail_route()
     def storage(self, request, *args, **kwargs):
         return Response(models.get_storage_tree(self.get_object().authoritative_obj))
-
-    @detail_route()
-    def services(self, request, *args, **kwargs):
-        try:
-            from nagios.models  import Service
-            from nagios.restapi import ServiceSerializer
-        except ImportError:
-            # no nagios app then, apparently
-            raise Http404
-
-        storageobj = self.get_object()
-
-        def serialize_volume_service(volume):
-            """ `volume' is either a filesystemvolume or a blockvolume instance, or None. """
-            if volume is None:
-                return []
-            ct = ContentType.objects.get_for_model(type(volume))
-            serializer_instance = ServiceSerializer(
-                Service.objects.filter(target_id=volume.id, target_type=ct),
-                many=True, context={"request": request})
-            return serializer_instance.data
-
-        return Response({
-            "blockvolume":      serialize_volume_service(storageobj.blockvolume_or_none),
-            "filesystemvolume": serialize_volume_service(storageobj.filesystemvolume_or_none),
-        })
 
     def create(self, request, *args, **kwargs):
         storageobj = models.StorageObject.all_objects.get(id=request.DATA["source_pool"]["id"])
