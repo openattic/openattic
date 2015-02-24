@@ -90,6 +90,20 @@ def graph(request, service_id, srcidx):
     try:
         builder.start  = int(request.GET.get("start",  rrd.last_check - 24*60*60))
         builder.end    = int(request.GET.get("end",    rrd.last_check))
+
+        # Accept negative numbers for start and end by interpreting them as
+        # "x seconds before last_check". The numbers are negative already,
+        # so we need to ADD them.
+        if builder.end < 0:
+            builder.end = rrd.last_check + builder.end
+        if builder.start < 0:
+            builder.start = rrd.last_check + builder.start
+
+        if builder.start <= 0:
+            raise ValueError("start date must be greater than zero")
+        if builder.end <= 0:
+            raise ValueError("end date must be greater than zero")
+
     except ValueError, err:
         print >> sys.stderr, unicode(err)
         raise Http404("Invalid start or end specified")
