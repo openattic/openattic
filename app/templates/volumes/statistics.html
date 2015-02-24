@@ -2,11 +2,11 @@
 <div ng-controller="VolumeStatisticsCtrl" class="tab-pane active fuelux">
     <div class="wizard">
         <ul class="steps">
-            <li class="active" data-target="#utilgraphs">
+            <li ui-sref-active="active" data-target="#utilgraphs">
                 <a ui-sref="volumes.detail.statistics.utilgraphs">Utilization</a>
                 <span class="chevron"></span>
             </li>
-            <li data-target="#perfgraphs">
+            <li ui-sref-active="active" data-target="#perfgraphs">
                 <a ui-sref="volumes.detail.statistics.perfgraphs">Performance</a>
                 <span class="chevron"></span>
             </li>
