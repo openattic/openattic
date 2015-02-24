@@ -52,7 +52,7 @@ angular.module('openattic')
 
     $scope.addAction = function(){
       $state.go('volumes-add');
-    }
+    };
 
     $scope.resizeAction = function(){
       $.SmartMessageBox({
@@ -75,7 +75,7 @@ angular.module('openattic')
             });
         }
       });
-    }
+    };
 
     $scope.deleteAction = function(){
       $.SmartMessageBox({
@@ -120,7 +120,7 @@ angular.module('openattic')
           });
         }
       });
-    }
+    };
 
     $scope.cloneAction = function(){
       var modalInstance = $modal.open({
@@ -137,7 +137,7 @@ angular.module('openattic')
       modalInstance.result.then(function(res) {
         $scope.filterConfig.refresh = new Date();
       });
-    }
+    };
   });
 
 // kate: space-indent on; indent-width 2; replace-tabs on;
