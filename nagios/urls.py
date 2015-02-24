@@ -17,6 +17,6 @@
 from django.conf.urls import patterns
 
 urlpatterns = patterns('',
-    ( r'v/(?P<storageobj_id>\d+)/(?P<graph_title>[\s\w_\.-]+)\.png', 'nagios.views.storageobj_graph' ),
+    ( r'v/(?P<storageobj_id>\d+)/(?P<graph_title>[\s\w_\.\-\(\)/]+)\.png', 'nagios.views.storageobj_graph' ),
     ( r'(?P<service_id>\d+)/(?P<srcidx>[\d\w_\.-]+)\.png', 'nagios.views.graph' ),
     )
