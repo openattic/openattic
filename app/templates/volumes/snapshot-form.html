@@ -10,14 +10,16 @@
                     </span>
                 </label>
             </section>
-            <section>
+            <div>
                 <label class="label" for="snapMegs">Size</label>
-                <label class="input" ng-class="{'state-error': snapForm.snapMegs.$invalid}"> <i class="icon-prepend fa fa-share"></i>
-                    <input type="text" placeholder="..." ng-model="megs" name="description" id="snapMegs" required>
-                    <span ng-show="snapForm.snapMegs.$dirty && snapForm.snapMegs.$invalid">
-                    </span>
-                </label>
-            </section>
+                <input class="form-control" name="megs" ng-model="megs" required
+                    volume-size-format volume-size-value max-value="{{pool.usage.max_new_fsv}}">
+                <span ng-show="snapForm.megs.$dirty && snapForm.megs.$error.required">This field is required.</span>
+                <span ng-show="snapForm.megs.$dirty && snapForm.megs.$error.volumeSizeFormat">This is not a valid number.</span>
+                <span ng-show="snapForm.megs.$dirty && snapForm.megs.$error.volumeSizeValue">
+                    The size must be at least as big as the original volume and must not exceed {{pool.usage.max_new_fsv_text}}.
+                </span>
+            </div>
         </fieldset>
         <footer>
             <button type="button" class="btn btn-default" ng-click="cancelAction()">
