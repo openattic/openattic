@@ -17,7 +17,7 @@
 from rest_framework import serializers, viewsets
 from rest_framework.reverse import reverse
 
-from nagios.models import Service
+from nagios.models import Service, Graph
 from rest import relations
 
 
@@ -36,9 +36,18 @@ class ServiceSerializer(serializers.HyperlinkedModelSerializer):
 
     def get_graph_info(self, obj):
         graphs = []
-        for graph in obj.get_graph_info():
-            graph["url"] = reverse("nagios.views.graph", args=(obj.id, graph["id"]), request=self.context["request"])
-            graphs.append(graph)
+        for graph in Graph.objects.filter( command=obj.command ):
+            graphs.append({
+                "id":    graph.id,
+                "title": graph.title,
+                "url":   reverse("nagios.views.graph", args=(obj.id, graph.id), request=self.context["request"])
+            })
+        for (srcid, title) in obj.rrd.source_labels.items():
+            graphs.append({
+                "id":    srcid,
+                "title": title,
+                "url":   reverse("nagios.views.graph", args=(obj.id, srcid), request=self.context["request"])
+            })
         return graphs
 
     def get_performance_data(self, obj):
@@ -47,7 +56,8 @@ class ServiceSerializer(serializers.HyperlinkedModelSerializer):
 class ServiceViewSet(viewsets.ReadOnlyModelViewSet):
     queryset = Service.objects.all()
     serializer_class = ServiceSerializer
-
+    filter_fields = ('host__name', 'description')
+    search_fields = ('host__name', 'description')
 
 RESTAPI_VIEWSETS = [
     ('services', ServiceViewSet),
