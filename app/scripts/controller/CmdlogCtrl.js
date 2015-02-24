@@ -50,7 +50,7 @@ angular.module('openattic')
       }
       else {
         var itemText = $filter('shortlog')($scope.selection.item.text);
-        messageText = 'Do you really want to delete that log entry: <pre>"' + itemText + '"</pre>'
+        messageText = 'Do you really want to delete that log entry: <pre>"' + itemText + '"</pre>';
       }
 
       $.SmartMessageBox({
@@ -86,7 +86,7 @@ angular.module('openattic')
         controller: 'CmdlogDeleteByDateCtrl'
       });
 
-      modalInstance.result.then(function(res){
+      modalInstance.result.then(function(){
         $scope.filterConfig.refresh = new Date();
       });
     };
