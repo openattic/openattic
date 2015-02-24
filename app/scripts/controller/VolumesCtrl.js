@@ -31,23 +31,27 @@ angular.module('openattic')
       });
     }, true);
 
-    $scope.$watch('selection.item', function(selitem){
-      if (selitem) {
-        $state.go('volumes.detail.status', {volume: selitem.id});
-      }
-      else {
-        $state.go('volumes');
-      }
-    });
-
-    $scope.$watchCollection('selection.item', function(item){
+    $scope.$watch('selection.item', function(item){
       $scope.hasSelection = !!item;
       if( !item ){
+        $state.go('volumes');
         return;
       }
       $scope.cloneable = item.type.name !== 'zfs';
       $scope.volumeForShare = item.is_filesystemvolume;
       $scope.volumeForLun   = item.is_blockvolume && !item.is_filesystemvolume;
+
+      if( $state.current.name === 'volumes' ||
+         ($state.current.name === 'volumes.detail.cifs' && !$scope.volumeForShare) ||
+         ($state.current.name === 'volumes.detail.nfs'  && !$scope.volumeForShare) ||
+         ($state.current.name === 'volumes.detail.http' && !$scope.volumeForShare) ||
+         ($state.current.name === 'volumes.detail.tftp' && !$scope.volumeForShare) ||
+         ($state.current.name === 'volumes.detail.luns' && !$scope.volumeForLun)){
+        $state.go('volumes.detail.status', {volume: item.id});
+      }
+      else{
+        $state.go($state.current.name, {volume: item.id});
+      }
     });
 
     $scope.addAction = function(){
