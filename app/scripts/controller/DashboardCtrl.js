@@ -41,6 +41,7 @@ angular.module('openattic')
       else if(volume.status.flags.randomio){
         $scope.graphTitle = 'Average Request Size (r/w)';
       }
+      console.log("ctrl", $scope);
     };
   });
 

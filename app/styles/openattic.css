@@ -128,3 +128,8 @@ oadatatable .input-group {
 .progress-bar {
     background-image: none !important;
 }
+
+.graphcontainer {
+/*    margin: 5px;
+    border: 1px solid black;*/
+}

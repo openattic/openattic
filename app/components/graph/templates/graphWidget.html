@@ -1,0 +1,24 @@
+<!-- kate: space-indent on; indent-width 4; replace-tabs on; -->
+<div class="jarviswidget" role="widget">
+    <header role="heading">
+        <div class="jarviswidget-ctrls" role="menu">
+            <a data-original-title="Edit" href="javascript:void(0);" class="button-icon jarviswidget-edit-btn" rel="tooltip" title="" data-placement="bottom"><i class="fa fa-cog"></i></a>
+            <a data-original-title="Collapse" href="javascript:void(0);" class="button-icon jarviswidget-toggle-btn" rel="tooltip" title="" data-placement="bottom"><i class="fa fa-minus "></i></a>
+            <a data-original-title="Fullscreen" href="javascript:void(0);" class="button-icon jarviswidget-fullscreen-btn" rel="tooltip" title="" data-placement="bottom"><i class="fa fa-expand "></i></a>
+            <a data-original-title="Delete" href="javascript:void(0);" class="button-icon jarviswidget-delete-btn" rel="tooltip" title="" data-placement="bottom"><i class="fa fa-times"></i></a>
+        </div>
+        <div class="widget-toolbar" role="menu">
+            <a class="dropdown-toggle selector" data-toggle="dropdown"><i class="fa fa-clock-o"></i></a>
+            <ul class="dropdown-menu arrow-box-up-right pull-right">
+                <li ng-repeat="profile in profiles" class="pull-left">
+                    <button class="btn btn-sm btn-default" ng-bind="profile.title" ng-click="setActiveProfile(profile)"></button>
+                </li>
+            </ul>
+        </div>
+        <h2>Default Widget lolol</h2>
+    </header>
+    <div role="content">
+        <div role="widget-body">
+        </div>
+    </div>
+</div>

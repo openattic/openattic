@@ -61,7 +61,9 @@
                     </div>
                     <div class="col-lg-8" style="min-height: 300px">
                         <div ng-show="graphTitle">
-                            <graph volume="selectedVolume" graph="{{ graphTitle }}" width="660" profile="3m" />
+                            <graph-widget volume="selectedVolume" width="660" profile="3m">
+                                <graph graph="{{ graphTitle }}" />
+                            </graph-widget>
                         </div>
                         <div ng-hide="graphTitle">
                             Please select a volume on the left to see details about possible issues here.
