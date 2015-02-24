@@ -22,7 +22,7 @@ from rest import relations
 
 
 class ServiceSerializer(serializers.HyperlinkedModelSerializer):
-    graph_info  = serializers.SerializerMethodField('get_graph_info')
+    graphs  = serializers.SerializerMethodField('get_graphs')
     last_check  = serializers.DateTimeField(read_only=True)
     next_check  = serializers.DateTimeField(read_only=True)
     status      = serializers.CharField(read_only=True)
@@ -32,9 +32,9 @@ class ServiceSerializer(serializers.HyperlinkedModelSerializer):
 
     class Meta:
         model  = Service
-        fields = ('url', 'id', 'host', 'description', 'graph_info', 'last_check', 'next_check', 'status', 'plugin_output', 'perfdata')
+        fields = ('url', 'id', 'host', 'description', 'graphs', 'last_check', 'next_check', 'status', 'plugin_output', 'perfdata')
 
-    def get_graph_info(self, obj):
+    def get_graphs(self, obj):
         graphs = []
         for graph in Graph.objects.filter( command=obj.command ):
             graphs.append({
