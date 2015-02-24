@@ -1,14 +1,12 @@
-<div class="step-pane active">
-    <graph-widget params="perfparams">
-        <div class="row" ng-show="selection.item.is_blockvolume">
-            <graph title="Throughput per day"          volume="selection.item" width="200" profile="4h" global-params="perfparams" />
-            <graph title="IOs per second"              volume="selection.item" width="200" profile="4h" global-params="perfparams" />
-            <graph title="Average Latency (r/w)"       volume="selection.item" width="200" profile="4h" global-params="perfparams" />
-        </div>
-        <div class="row" ng-show="selection.item.is_blockvolume">
-            <graph title="Average Request size (r/w)"  volume="selection.item" width="200" profile="4h" global-params="perfparams" />
-            <graph title="IOs per Second (Normalized)" volume="selection.item" width="200" profile="4h" global-params="perfparams" />
-            <graph title="Normalization Ratio"         volume="selection.item" width="200" profile="4h" global-params="perfparams" />
-        </div>
-    </graph-widget>
+<div class="step-pane active perfgraphs">
+    <div class="row" ng-show="selection.item.is_blockvolume">
+        <graph title="Throughput per day"          volume="selection.item" width="200" profile="4h" global-params="perfparams" />
+        <graph title="IOs per second"              volume="selection.item" width="200" profile="4h" global-params="perfparams" />
+        <graph title="Average Latency (r/w)"       volume="selection.item" width="200" profile="4h" global-params="perfparams" />
+    </div>
+    <div class="row" ng-show="selection.item.is_blockvolume">
+        <graph title="Average Request size (r/w)"  volume="selection.item" width="200" profile="4h" global-params="perfparams" />
+        <graph title="IOs per Second (Normalized)" volume="selection.item" width="200" profile="4h" global-params="perfparams" />
+        <graph title="Normalization Ratio"         volume="selection.item" width="200" profile="4h" global-params="perfparams" />
+    </div>
 </div>

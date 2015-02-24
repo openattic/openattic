@@ -129,7 +129,19 @@ oadatatable .input-group {
     background-image: none !important;
 }
 
-.graphcontainer {
-/*    margin: 5px;
-    border: 1px solid black;*/
+.graph-widget ul {
+    width: 300px !important;
+}
+
+.graph-widget ul li {
+    padding: 0 !important;
+    background: none repeat scroll 0 0 transparent !important;
+}
+
+utilgraphs img {
+    margin: 10px;
+}
+
+perfgraphs img {
+    margin: 10px;
 }

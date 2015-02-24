@@ -61,9 +61,21 @@
                     </div>
                     <div class="col-lg-8" style="min-height: 300px">
                         <div ng-show="graphTitle">
-                            <graph-widget params="dashboardparams">
-                                <graph volume="selectedVolume" title="{{ graphTitle }}" width="660" profile="48h" global-params="dashboardparams" />
-                            </graph-widget>
+                            <div class="jarviswidget" role="widget">
+                                <header role="heading">
+                                    <div class="jarviswidget-ctrls" role="menu">
+                                    </div>
+                                    <div class="widget-toolbar" role="menu">
+                                        <graph-widget params="dashboardparams"></graph-widget>
+                                    </div>
+                                    <h2>Details about {{selectedVolume.name}}</h2>
+                                </header>
+                                <div role="content">
+                                    <div role="widget-body">
+                                        <graph volume="selectedVolume" title="{{ graphTitle }}" width="660" profile="48h" global-params="dashboardparams" />
+                                    </div>
+                                </div>
+                            </div>
                         </div>
                         <div ng-hide="graphTitle">
                             Please select a volume on the left to see details about possible issues here.

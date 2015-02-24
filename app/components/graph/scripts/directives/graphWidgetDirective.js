@@ -2,7 +2,6 @@ angular.module('openattic.graph')
   .directive('graphWidget', function(){
     return {
         restrict: 'E',
-        transclude: true,
         scope: {
             params: '='
         },

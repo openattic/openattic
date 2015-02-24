@@ -11,8 +11,12 @@
                 <span class="chevron"></span>
             </li>
         </ul>
+        <div class="actions">
+            <span ng-show="state.name === 'volumes.detail.statistics.utilgraphs'"><graph-widget params="utilparams"></graph-widget></span>
+            <span ng-show="state.name === 'volumes.detail.statistics.perfgraphs'"><graph-widget params="perfparams"></graph-widget></span>
+        </div>
         <div class="clearfix"></div>
-    </div>
-    <div class="step-content" ui-view="statistics-content">
+        <div class="step-content" ui-view="statistics-content">
+        </div>
     </div>
 </div>

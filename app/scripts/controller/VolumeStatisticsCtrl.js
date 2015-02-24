@@ -1,6 +1,11 @@
 angular.module('openattic')
-  .controller('VolumeStatisticsCtrl', function ($scope, VolumeService) {
+  .controller('VolumeStatisticsCtrl', function ($scope, $state, VolumeService) {
     'use strict';
+    $scope.$watch(function(){
+        return $state.current;
+    }, function(current){
+        $scope.state = current;
+    });
     $scope.utilparams = {
         profile: null
     };
@@ -9,4 +14,4 @@ angular.module('openattic')
     };
   });
 
-// kate: space-indent on; indent-width 2; replace-tabs on;
+// kate: space-indent on; indent-width 4; replace-tabs on;
