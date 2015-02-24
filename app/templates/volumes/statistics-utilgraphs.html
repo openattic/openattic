@@ -1,0 +1,8 @@
+<div class="step-pane active">
+    <div class="row" ng-show="selection.item.is_filesystemvolume">
+        <graph volume="selection.item" graph="Volume Usage" width="660" profile="3m"  />
+    </div>
+    <div class="row" ng-show="selection.item.is_blockvolume">
+        <graph volume="selection.item" graph="Disk Load"    width="660" profile="48h" />
+    </div>
+</div>

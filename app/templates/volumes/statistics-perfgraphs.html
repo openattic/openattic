@@ -1,0 +1,12 @@
+<div class="step-pane active">
+    <div class="row" ng-show="selection.item.is_blockvolume">
+        <graph volume="selection.item" graph="Throughput per day"          width="200" profile="4h" />
+        <graph volume="selection.item" graph="IOs per second"              width="200" profile="4h" />
+        <graph volume="selection.item" graph="Average Latency (r/w)"       width="200" profile="4h" />
+    </div>
+    <div class="row" ng-show="selection.item.is_blockvolume">
+        <graph volume="selection.item" graph="Average Request size (r/w)"  width="200" profile="4h" />
+        <graph volume="selection.item" graph="IOs per Second (Normalized)" width="200" profile="4h" />
+        <graph volume="selection.item" graph="Normalization Ratio"         width="200" profile="4h" />
+    </div>
+</div>

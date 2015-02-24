@@ -1,18 +1,18 @@
-<div ng-controller="VolumeStatisticsCtrl">
-    <div class="row" ng-show="selection.item.is_filesystemvolume">
-        <graph volume="selection.item" graph="Volume Usage" width="660" profile="3m"  />
-    </div>
-    <div class="row" ng-show="selection.item.is_blockvolume">
-        <graph volume="selection.item" graph="Disk Load"    width="660" profile="48h" />
-    </div>
-    <div class="row" ng-show="selection.item.is_blockvolume">
-        <graph volume="selection.item" graph="Throughput per day"          width="200" profile="4h" />
-        <graph volume="selection.item" graph="IOs per second"              width="200" profile="4h" />
-        <graph volume="selection.item" graph="Average Latency (r/w)"       width="200" profile="4h" />
-    </div>
-    <div class="row" ng-show="selection.item.is_blockvolume">
-        <graph volume="selection.item" graph="Average Request size (r/w)"  width="200" profile="4h" />
-        <graph volume="selection.item" graph="IOs per Second (Normalized)" width="200" profile="4h" />
-        <graph volume="selection.item" graph="Normalization Ratio"         width="200" profile="4h" />
+<!-- kate: space-indent on; indent-width 4; replace-tabs on; -->
+<div ng-controller="VolumeStatisticsCtrl" class="tab-pane active fuelux">
+    <div class="wizard">
+        <ul class="steps">
+            <li class="active" data-target="#utilgraphs">
+                <a ui-sref="volumes.detail.statistics.utilgraphs">Utilization</a>
+                <span class="chevron"></span>
+            </li>
+            <li data-target="#perfgraphs">
+                <a ui-sref="volumes.detail.statistics.perfgraphs">Performance</a>
+                <span class="chevron"></span>
+            </li>
+        </ul>
+        <div class="clearfix"></div>
+        <div class="step-content" ui-view="statistics-content">
+        </div>
     </div>
 </div>

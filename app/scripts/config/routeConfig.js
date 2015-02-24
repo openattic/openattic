@@ -74,6 +74,18 @@ angular.module('openattic').config(function ($stateProvider, $urlRouterProvider)
         'tab-content': {templateUrl: 'templates/volumes/statistics.html'}
       }
     })
+    .state('volumes.detail.statistics.utilgraphs', {
+      url: '/util',
+      views: {
+        'statistics-content': {templateUrl: 'templates/volumes/statistics-utilgraphs.html'}
+      }
+    })
+    .state('volumes.detail.statistics.perfgraphs', {
+      url: '/perf',
+      views: {
+        'statistics-content': {templateUrl: 'templates/volumes/statistics-perfgraphs.html'}
+      }
+    })
     .state('volumes.detail.cifs', {
       url: '/cifs',
       views: {

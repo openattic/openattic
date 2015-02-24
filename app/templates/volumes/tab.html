@@ -4,7 +4,7 @@
             <a ui-sref="volumes.detail.status({volume:  selection.item.id})" data-toggle="tab" data-target="#tab-content">Status</a>
         </li>
         <li ui-sref-active="active">
-            <a ui-sref="volumes.detail.statistics({volume: selection.item.id})" data-toggle="tab" data-target="#tab-content">Statistics</a>
+            <a ui-sref="volumes.detail.statistics.utilgraphs({volume: selection.item.id})" data-toggle="tab" data-target="#tab-content">Statistics</a>
         </li>
         <li ui-sref-active="active" ng-show="volumeForShare">
             <a ui-sref="volumes.detail.cifs({volume: selection.item.id})" data-toggle="tab" data-target="#tab-content">CIFS</a>
