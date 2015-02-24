@@ -1,5 +1,7 @@
 angular.module('openattic')
   .controller('HostAttributesCtrl', function ($scope, $state, $stateParams, PeerHostService, InitiatorService) {
+    'use strict';
+
     $scope.data = {
       peerhosts: [],
       iscsiInis: [],
@@ -105,15 +107,15 @@ angular.module('openattic')
       });
 
     $scope.submitAction = function() {
-    }
+    };
 
     $scope.cancelAction = function() {
         goToListView();
-    }
+    };
 
     var goToListView = function() {
         $state.go('hosts');
-    }
+    };
   });
 
 // kate: space-indent on; indent-width 2; replace-tabs on;

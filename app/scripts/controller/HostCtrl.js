@@ -43,11 +43,11 @@ angular.module('openattic')
 
     $scope.addAction = function(){
       $state.go('hosts-add');
-    }
+    };
 
     $scope.editAction = function(){
       $state.go('hosts-edit', {host: $scope.selection.item.id});
-    }
+    };
 
     $scope.deleteAction = function(){
       $.SmartMessageBox({
@@ -74,5 +74,5 @@ angular.module('openattic')
           });
         }
       });
-    }
+    };
   });
