@@ -60,8 +60,10 @@
                         </table>
                     </div>
                     <div class="col-lg-8" style="min-height: 300px">
-                        <div ng-show="serviceId && graphId"><img src="/openattic/nagios/{{ serviceId }}/{{ graphId }}.png?width=660" /></div>
-                        <div ng-hide="serviceId && graphId">Please select a volume on the left to see details about possible issues here.</div>
+                        <div ng-show="graphTitle">
+                            <graph volume="selectedVolume" graph="{{ graphTitle }}" width="660" profile="3m" />
+                        </div>
+                        <div ng-hide="graphTitle">Please select a volume on the left to see details about possible issues here.</div>
                     </div>
                 </div>
             </div>
