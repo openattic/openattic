@@ -1,5 +1,5 @@
 angular.module('openattic')
-  .controller('CmdlogCtrl', function ($scope, $state, $filter, CmdlogService, $modal) {
+  .controller('CmdlogCtrl', function ($scope, $state, CmdlogService, $modal) {
     'use strict';
 
     $scope.data = {};
@@ -37,45 +37,19 @@ angular.module('openattic')
     });
 
     $scope.deleteAction = function(){
-      var selection = $scope.selection.items;
-      var messageText = '';
-      var ids = [];
-
-      for(var i=0; i<selection.length; i++){
-        ids.push(selection[i].id);
-      }
-
-      if(selection.length > 1){
-        messageText = 'Do you really want to delete these ' + selection.length + ' items';
-      }
-      else {
-        var itemText = $filter('shortlog')($scope.selection.item.text);
-        messageText = 'Do you really want to delete that log entry: <pre>"' + itemText + '"</pre>';
-      }
-
-      $.SmartMessageBox({
-        title: 'Delete log entry',
-        content: messageText,
-        buttons: '[No][Yes]'
-      }, function (ButtonPressed) {
-        if (ButtonPressed === 'Yes') {
-          CmdlogService.delete({'ids': ids})
-            .$promise
-            .then(function() {
-              $scope.filterConfig.refresh = new Date();
-            }, function(error){
-              console.log('An error occured', error);
-            });
+      var modalInstance = $modal.open({
+        windowTemplateUrl: 'templates/messagebox.html',
+        templateUrl: 'templates/cmdlogs/delete-by-selection.html',
+        controller: 'CmdlogDeleteBySelectionCtrl',
+        resolve: {
+          selection: function(){
+            return $scope.selection.items;
+          }
         }
-        if (ButtonPressed === 'No') {
-          $.smallBox({
-            title: 'Delete log entry',
-            content: '<i class="fa fa-clock-o"></i> <i>Cancelled</i>',
-            color: '#C46A69',
-            iconSmall: 'fa fa-times fa-2x fadeInRight animated',
-            timeout: 4000
-          });
-        }
+      });
+
+      modalInstance.result.then(function(){
+        $scope.filterConfig.refresh = new Date();
       });
     };
 

@@ -1,0 +1,9 @@
+<span class="MsgTitle">Delete log entry by selection</span>
+<p class="pText" ng-show="!itemText">Do you really want to delete these {{selectionLength}} items?</p>
+<p class="pText" ng-show="itemText">Do you really want to delete that log entry:
+    <pre ng-show="itemText">{{itemText}}</pre>
+</p>
+<div class="MessageBoxButtonSection">
+    <button id="bot1-Msg1" class="btn btn-default btn-sm botTempo" ng-click="no()"> No</button>
+    <button id="bot2-Msg1" class="btn btn-default btn-sm botTempo" ng-click="yes()"> Yes</button>
+</div>
