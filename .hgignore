@@ -7,5 +7,5 @@ app/index.html
 app/login.html
 coverage
 npm-debug.log
-
+*.orig
 *.swp
