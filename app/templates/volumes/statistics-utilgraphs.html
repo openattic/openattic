@@ -1,10 +1,10 @@
 <div class="step-pane active">
-    <graph-widget volume="selection.item" width="660" profile="3m">
+    <graph-widget params="utilparams">
         <div class="row" ng-show="selection.item.is_filesystemvolume">
-            <graph graph="Volume Usage" profile="3m"  />
+            <graph title="Volume Usage" profile="3m"  volume="selection.item" width="660" profile="3m" global-params="utilparams" />
         </div>
         <div class="row" ng-show="selection.item.is_blockvolume">
-            <graph graph="Disk Load"    profile="48h" />
+            <graph title="Disk Load"    profile="48h" volume="selection.item" width="660" profile="3m" global-params="utilparams" />
         </div>
     </graph-widget>
 </div>

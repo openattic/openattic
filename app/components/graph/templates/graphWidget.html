@@ -13,12 +13,15 @@
                 <li ng-repeat="profile in profiles" class="pull-left">
                     <button class="btn btn-sm btn-default" ng-bind="profile.title" ng-click="setActiveProfile(profile)"></button>
                 </li>
+                <li class="pull-left">
+                    <button class="btn btn-sm btn-default" ng-click="setActiveProfile(null)">Default</button>
+                </li>
             </ul>
         </div>
         <h2>Default Widget lolol</h2>
     </header>
     <div role="content">
-        <div role="widget-body">
+        <div role="widget-body" ng-transclude>
         </div>
     </div>
 </div>

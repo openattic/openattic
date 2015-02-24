@@ -61,8 +61,8 @@
                     </div>
                     <div class="col-lg-8" style="min-height: 300px">
                         <div ng-show="graphTitle">
-                            <graph-widget volume="selectedVolume" width="660" profile="3m">
-                                <graph graph="{{ graphTitle }}" />
+                            <graph-widget params="dashboardparams">
+                                <graph volume="selectedVolume" title="{{ graphTitle }}" width="660" profile="48h" global-params="dashboardparams" />
                             </graph-widget>
                         </div>
                         <div ng-hide="graphTitle">

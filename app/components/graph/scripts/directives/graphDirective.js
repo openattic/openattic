@@ -2,34 +2,55 @@ angular.module('openattic.graph')
   .directive('graph', function(){
     return {
         restrict: 'E',
-        scope: true,
+        scope: {
+            volume:  '=',
+            width:   '@',
+            profile: '@',
+            title:   '@',
+            globalParams: '='
+        },
         template: [
-            '<div class="imgcontainer" style="position: relative; display: inline-block" >',
-                '<div class="imgselector" ',
+            '<div class="graphcontainer" style="position: relative; display: inline-block" >',
+                '<div class="graphselector" ',
                     'style="background-color: rgba(30, 30, 220, 0.4); ',
                         'position: absolute; height: 153px; width: 1px; ',
                         'z-index: 100; visibility: hidden;">&nbsp;</div>',
-                '<img ng-src="/openattic/nagios/v/{{ volume.id }}/{{ graph }}.png?{{ urlparams }}" />',
+                '<img ng-src="/openattic/nagios/v/{{ volume.id }}/{{ title }}.png?{{ urlparams }}" />',
             '</div>'].join(''),
-        controller: function($scope, $http, $interval){
-            $scope.$watch('volume', function(volume){
-                console.log("new volume!", $scope, volume);
-            }, true);
-            $scope.$watch('graph', function(volume){
-                console.log("new graph!", $scope, volume);
-            }, true);
+        controller: function($scope, GraphProfileService){
+            $scope.params = {
+                width: $scope.width
+            };
+
             $scope.$watch('params', function(params){
-                console.log("new params!", $scope, params);
                 if(params){
                     $scope.urlparams = $.param(params);
                 }
             }, true);
+
+            $scope.$watch('globalParams', function(globalParams){
+                var activeProfile;
+                if(!globalParams){
+                    return;
+                }
+                if(globalParams.start && globalParams.end){
+                    $scope.params.start = globalParams.start;
+                    $scope.params.end   = globalParams.end;
+                }
+                else{
+                    activeProfile = globalParams.profile || GraphProfileService.getProfile($scope.profile);
+                    delete $scope.params['end'];
+                    $scope.params.start = -activeProfile.duration;
+                }
+            }, true);
+
+            $scope.zoomTo = function(start, end){
+                $scope.globalParams.start   = start;
+                $scope.globalParams.end     = end;
+                $scope.globalParams.profile = null;
+            };
         },
         link: function(scope, element, attr){
-            attr.$observe('graph', function(graph){
-                scope.graph = attr.graph;
-            });
-
             var imgel    = element.find('img'),
                 selector = element.find('.graphselector'),
                 in_drag  = false,

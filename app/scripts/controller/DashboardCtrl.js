@@ -4,6 +4,10 @@ angular.module('openattic')
     $scope.volumesLoaded = false;
     $scope.selectedVolume = null;
 
+    $scope.dashboardparams = {
+        profile: null
+    };
+
     VolumeService.query()
     .$promise
     .then(function (res) {
@@ -41,7 +45,6 @@ angular.module('openattic')
       else if(volume.status.flags.randomio){
         $scope.graphTitle = 'Average Request Size (r/w)';
       }
-      console.log("ctrl", $scope);
     };
   });
 
