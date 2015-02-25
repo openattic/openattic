@@ -5,7 +5,7 @@ angular.module('openattic')
     $scope.volume  = {};
     $scope.data = {
       sourcePool: null,
-      megs: "",
+      megs: '',
       mirrorHost: '',
       mirrorPool: null,
       filesystem: ''
@@ -42,7 +42,7 @@ angular.module('openattic')
 
     var goToListView = function() {
       $state.go('volumes');
-    }
+    };
 
     var goToNextSensibleState = function(){
       if(!$scope.state.created){
@@ -55,7 +55,7 @@ angular.module('openattic')
       else{
         goToListView();
       }
-    }
+    };
 
     $scope.submitAction = function() {
       if (!$scope.state.created) {
@@ -95,11 +95,11 @@ angular.module('openattic')
             console.log('An error occured', error);
           });
       }
-    }
+    };
 
     $scope.cancelAction = function() {
       goToListView();
-    }
+    };
   });
 
 // kate: space-indent on; indent-width 2; replace-tabs on;
