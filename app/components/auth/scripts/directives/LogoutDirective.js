@@ -13,9 +13,9 @@ angular.module('openattic.auth')
           authService.logout()
           .$promise
           .then(function(){
-            window.location="login.html";
+            window.location='login.html';
           });
-        }
+        };
       }
     };
   });
