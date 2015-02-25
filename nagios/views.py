@@ -24,6 +24,7 @@ from time     import time
 from django.http       import HttpResponse, Http404
 from django.shortcuts  import get_object_or_404
 from django.contrib.contenttypes.models import ContentType
+from django.views.decorators.cache import never_cache
 
 from nagios.conf   import settings as nagios_settings
 from nagios.models import Service, Graph
@@ -31,7 +32,7 @@ from nagios.graphbuilder import Graph as GraphBuilder, parse
 
 from volumes.models import StorageObject
 
-
+@never_cache
 def graph(request, service_id, srcidx):
     """ Creates a graph image using RRDTool.
 
@@ -146,6 +147,7 @@ def graph(request, service_id, srcidx):
     return HttpResponse( builder.get_image(), content_type="image/png" )
 
 
+@never_cache
 def storageobj_graph(request, storageobj_id, graph_title):
     """ Return a graph image for a given StorageObject.
 
