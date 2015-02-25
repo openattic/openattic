@@ -1,5 +1,6 @@
 angular.module('openattic')
   .controller('VolumeSnapshotFormCtrl', function ($scope, $state, $filter, $stateParams, VolumeService, VolumeSnapshotService, PoolService, SizeParserService) {
+    'use strict';
 
     $scope.snap = {
         'volumeId': $scope.selection.item.id,
