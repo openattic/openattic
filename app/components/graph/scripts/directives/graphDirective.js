@@ -24,7 +24,9 @@ angular.module('openattic.graph')
 
             $scope.$watch('params', function(params){
                 if(params){
-                    $scope.urlparams = $.param(params);
+                    $scope.urlparams = $.param(angular.extend({
+                        ts: new Date().getTime()
+                    }, params));
                 }
             }, true);
 
