@@ -1,5 +1,7 @@
 angular.module('openattic')
   .controller('HostFormCtrl', function ($scope, $state, $stateParams, HostService) {
+    'use strict';
+
     if(!$stateParams.host){
       $scope.host = {};
       $scope.editing = false;
@@ -12,7 +14,7 @@ angular.module('openattic')
           }, function(error) {
             console.log('An error occured', error);
           });
-      }
+      };
     }
     else {
       $scope.editing = true;
@@ -38,16 +40,16 @@ angular.module('openattic')
           }, function(error){
             console.log('An error occured', error);
           });
-      }
+      };
     }
 
     $scope.cancelAction = function() {
         goToListView();
-    }
+    };
 
     var goToListView = function() {
         $state.go('hosts');
-    }
+    };
   });
 
 // kate: space-indent on; indent-width 2; replace-tabs on;
