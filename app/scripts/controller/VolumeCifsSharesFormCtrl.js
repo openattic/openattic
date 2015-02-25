@@ -1,5 +1,7 @@
 angular.module('openattic')
   .controller('VolumeCifsSharesFormCtrl', function ($scope, $state, $stateParams, CifsSharesService) {
+    'use strict';
+
     $scope.domainconfig = {};
     CifsSharesService.domainconfig()
       .$promise
@@ -26,7 +28,7 @@ angular.module('openattic')
           }, function(error) {
             console.log('An error occured', error);
           });
-      }
+      };
 
       $scope.$watch('domainconfig', function(domcfg){
         $scope.share.guest_ok = (domcfg.domain === '');
@@ -51,16 +53,16 @@ angular.module('openattic')
           }, function(error){
             console.log('An error occured', error);
           });
-      }
+      };
     }
 
     $scope.cancelAction = function() {
         goToListView();
-    }
+    };
 
     var goToListView = function() {
         $state.go('volumes.detail.cifs');
-    }
+    };
   });
 
 // kate: space-indent on; indent-width 2; replace-tabs on;

@@ -42,11 +42,11 @@ angular.module('openattic')
 
     $scope.addCifsAction = function(){
       $state.go('volumes.detail.cifs-add');
-    }
+    };
 
     $scope.editCifsAction = function(){
       $state.go('volumes.detail.cifs-edit', {share: $scope.cifsSelection.item.id});
-    }
+    };
 
     $scope.deleteCifsAction = function(){
       $.SmartMessageBox({
@@ -73,7 +73,7 @@ angular.module('openattic')
           });
         }
       });
-    }
+    };
   });
 
 // kate: space-indent on; indent-width 2; replace-tabs on;
