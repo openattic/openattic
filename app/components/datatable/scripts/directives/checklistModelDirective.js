@@ -6,6 +6,8 @@
 
 angular.module('openattic.datatable')
   .directive('checklistModel', function ($parse, $compile) {
+    'use strict';
+
     // contains
     var contains = function (arr, item) {
       if (angular.isArray(arr)) {
@@ -16,7 +18,7 @@ angular.module('openattic.datatable')
         }
       }
       return false;
-    }
+    };
 
     // add
     var add = function (arr, item) {
@@ -28,7 +30,7 @@ angular.module('openattic.datatable')
       }
       arr.push(item);
       return arr;
-    }
+    };
 
     // remove
     var remove = function (arr, item) {
@@ -41,7 +43,7 @@ angular.module('openattic.datatable')
         }
       }
       return arr;
-    }
+    };
 
     // http://stackoverflow.com/a/19228302/1458162
     var postLinkFn = function (scope, elem, attrs) {
@@ -72,7 +74,7 @@ angular.module('openattic.datatable')
       scope.$parent.$watch(attrs.checklistModel, function (newArr, oldArr) {
         scope.checked = contains(newArr, value);
       }, true);
-    }
+    };
 
     return {
       priority: 1000,
@@ -96,4 +98,4 @@ angular.module('openattic.datatable')
         return postLinkFn;
       }
     };
-  })
+  });
