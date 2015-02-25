@@ -1,5 +1,7 @@
 angular.module('openattic')
   .directive('volumeSizeFormat', function(SizeParserService) {
+    'use strict';
+
     return {
       require: 'ngModel',
       link: function(scope, elm, attrs, ctrl) {
