@@ -1,5 +1,7 @@
 angular.module('openattic')
   .controller('DashboardCtrl', function ($scope, VolumeService){
+    'use strict';
+
     $scope.volumes = [];
     $scope.volumesLoaded = false;
     $scope.selectedVolume = null;
