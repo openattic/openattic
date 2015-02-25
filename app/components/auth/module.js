@@ -15,7 +15,7 @@ angular.module('openattic.auth')
     return {
       request: function(config) {
         // Give the backend a clue that we're using AJAX here...
-        config.headers["X-Requested-With"] = "XMLHttpRequest";
+        config.headers['X-Requested-With'] = 'XMLHttpRequest';
         return config;
       },
       responseError: function(rejection){
