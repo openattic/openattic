@@ -7,5 +7,5 @@ angular.module('openattic')
         return inp;
       }
       return [lines[0], lines[1], '...', lines[lines.length - 2], lines[lines.length - 1]].join('\n');
-    }
+    };
   });
