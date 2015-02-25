@@ -86,7 +86,7 @@ angular.module('openattic')
         $scope.filterConfig.refresh = new Date();
         $scope.snapshotsFilter.refresh = new Date();
       });
-    }
+    };
    });
 
 // kate: space-indent on; indent-width 2; replace-tabs on;

@@ -43,5 +43,5 @@ angular.module('openattic')
         iconSmall: 'fa fa-times fa-2x fadeInRight animated',
         timeout: 4000
       });
-    }
+    };
   });
