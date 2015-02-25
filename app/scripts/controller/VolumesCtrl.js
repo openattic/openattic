@@ -93,7 +93,7 @@ angular.module('openattic')
         }
       });
 
-      modalInstance.result.then(function(res) {
+      modalInstance.result.then(function() {
         $scope.filterConfig.refresh = new Date();
       });
     };
@@ -110,7 +110,7 @@ angular.module('openattic')
         }
       });
 
-      modalInstance.result.then(function(res) {
+      modalInstance.result.then(function() {
         $scope.filterConfig.refresh = new Date();
       });
     };
