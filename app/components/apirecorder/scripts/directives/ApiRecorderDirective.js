@@ -12,7 +12,7 @@ angular.module('openattic.apirecorder')
         $scope.isRecording = ApiRecorderService.isRecording;
         $scope.handleClick = function(){
           if(!ApiRecorderService.isRecording()){
-            ApiRecorderService.startRecording()
+            ApiRecorderService.startRecording();
           }
           else{
             var script = [
@@ -20,7 +20,7 @@ angular.module('openattic.apirecorder')
               'import requests',
               'auth = ("username", "password")',
               ''
-            ]
+            ];
             var cmds = ApiRecorderService.stopRecording();
             if(cmds.length === 0){
               $.smallBox({
