@@ -37,11 +37,11 @@ angular.module('openattic')
 
     $scope.addAction = function(){
       $state.go('users.add');
-    }
+    };
 
     $scope.editAction = function(){
       $state.go('users.edit', {user: $scope.selection.item.id});
-    }
+    };
 
     $scope.deleteAction = function(){
       $.SmartMessageBox({
@@ -68,7 +68,7 @@ angular.module('openattic')
           });
         }
       });
-    }
+    };
   });
 
 // kate: space-indent on; indent-width 2; replace-tabs on;
