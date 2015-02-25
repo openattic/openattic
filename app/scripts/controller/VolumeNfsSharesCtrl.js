@@ -42,7 +42,7 @@ angular.module('openattic')
 
     $scope.addNfsAction = function(){
       $state.go('volumes.detail.nfs-add');
-    }
+    };
 
     $scope.deleteNfsAction = function(){
       $.SmartMessageBox({
@@ -69,7 +69,7 @@ angular.module('openattic')
           });
         }
       });
-    }
+    };
   });
 
 // kate: space-indent on; indent-width 2; replace-tabs on;

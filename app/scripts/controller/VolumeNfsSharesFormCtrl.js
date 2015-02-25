@@ -1,5 +1,7 @@
 angular.module('openattic')
   .controller('VolumeNfsSharesFormCtrl', function ($scope, $state, $stateParams, NfsSharesService) {
+    'use strict';
+
     if(!$stateParams.share){
       $scope.share = {
         'volume': {id: $scope.selection.item.id},
@@ -22,11 +24,11 @@ angular.module('openattic')
 
     $scope.cancelAction = function() {
         goToListView();
-    }
+    };
 
     var goToListView = function() {
         $state.go('volumes.detail.nfs');
-    }
+    };
   });
 
 // kate: space-indent on; indent-width 2; replace-tabs on;
