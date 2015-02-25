@@ -1,5 +1,6 @@
 angular.module('openattic')
   .controller('VolumeLunFormCtrl', function ($scope, $state, $stateParams, LunService, HostService, InitiatorService) {
+    'use strict';
 
     $scope.share = {
         'volume': {id: $scope.selection.item.id},
@@ -39,16 +40,16 @@ angular.module('openattic')
         }, function(error) {
           console.log('An error occured', error);
         });
-    }
+    };
 
 
     $scope.cancelAction = function() {
         goToListView();
-    }
+    };
 
     var goToListView = function() {
         $state.go('volumes.detail.luns');
-    }
+    };
   });
 
 // kate: space-indent on; indent-width 2; replace-tabs on;

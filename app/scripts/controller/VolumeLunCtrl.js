@@ -41,7 +41,7 @@ angular.module('openattic')
     }, true);
     $scope.addLunAction = function(){
       $state.go('volumes.detail.luns-add');
-    }
+    };
 
     $scope.deleteLunAction = function(){
       $.SmartMessageBox({
@@ -68,7 +68,7 @@ angular.module('openattic')
           });
         }
       });
-    }
+    };
   });
 
 // kate: space-indent on; indent-width 2; replace-tabs on;
