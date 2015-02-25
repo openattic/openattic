@@ -1,5 +1,7 @@
 angular.module('openattic.sizeparser', [])
   .factory('SizeParserService', function () {
+    'use strict';
+
     var mult = ['m', 'g', 't', 'p', 'e'];
 
     var _parseInt = function(value){
