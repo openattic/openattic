@@ -1,11 +1,13 @@
 angular.module('openattic.datatree')
   .directive('oadatatree', function($compile){
+    'use strict';
+
     return {
-        restrict: "E",
+        restrict: 'E',
         transclude: true,
         scope: {
-            data: "=",
-            childrenAttribute: "@"
+            data: '=',
+            childrenAttribute: '@'
         },
         template: [
             '<span ng-transclude></span>',
@@ -34,7 +36,7 @@ angular.module('openattic.datatree')
                 // "Calling the linking function returns the element of the template.
                 //    It is either the original element passed in,
                 //    or the clone of the element if the cloneAttachFn is provided."
-                scope.$watch("data", function(){
+                scope.$watch('data', function(){
                     if( scope.data )
                         scope.children = scope.data[scope.childrenAttribute];
                 });
