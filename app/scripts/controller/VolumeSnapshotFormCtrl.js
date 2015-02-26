@@ -3,9 +3,9 @@ angular.module('openattic')
     'use strict';
 
     $scope.snap = {
-        'volumeId': $scope.selection.item.id,
-        'name': $filter('date')(new Date(), 'yyyy-MM-dd-HH-mm-ss'),
-        'megs':  '',
+      'volumeId': $scope.selection.item.id,
+      'name': $filter('date')(new Date(), 'yyyy-MM-dd-HH-mm-ss'),
+      'megs':  ''
     };
 
     $scope.megs = $scope.selection.item.usage.size_text;
@@ -29,11 +29,11 @@ angular.module('openattic')
     };
 
     $scope.cancelAction = function() {
-        goToListView();
+      goToListView();
     };
 
     var goToListView = function() {
-        $state.go('volumes.detail.snapshots');
+      $state.go('volumes.detail.snapshots');
     };
   });
 

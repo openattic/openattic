@@ -82,11 +82,11 @@ angular.module('openattic')
         }
       });
 
-      modalInstance.result.then(function(res) {
+      modalInstance.result.then(function() {
         $scope.filterConfig.refresh = new Date();
         $scope.snapshotsFilter.refresh = new Date();
       });
     };
-   });
+  });
 
 // kate: space-indent on; indent-width 2; replace-tabs on;

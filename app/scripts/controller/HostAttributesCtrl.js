@@ -110,11 +110,11 @@ angular.module('openattic')
     };
 
     $scope.cancelAction = function() {
-        goToListView();
+      goToListView();
     };
 
     var goToListView = function() {
-        $state.go('hosts');
+      $state.go('hosts');
     };
   });
 

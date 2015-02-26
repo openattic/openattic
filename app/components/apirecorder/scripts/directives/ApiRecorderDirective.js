@@ -5,7 +5,7 @@ angular.module('openattic.apirecorder')
     return {
       template: [
         '<a title="API Recorder" ng-click="handleClick()" >',
-          '<i class="fa" ng-class="{\'fa-dot-circle-o\': !isRecording(), \'fa-stop\': isRecording() }"></i>',
+        '<i class="fa" ng-class="{\'fa-dot-circle-o\': !isRecording(), \'fa-stop\': isRecording() }"></i>',
         '</a>'
       ].join(''),
       controller: function($scope, ApiRecorderService){
@@ -32,7 +32,7 @@ angular.module('openattic.apirecorder')
               });
               return;
             }
-            var i, url, args, datajson;
+            var i, url, args;
             for(i = 0; i < cmds.length; i++){
               url = window.location.origin + cmds[i].url;
               args = ['"' + url + '"', 'auth=auth'];
@@ -46,7 +46,7 @@ angular.module('openattic.apirecorder')
               content: [
                 'Replay the actions you recorded by running this Python script:<br />',
                 '<textarea rows="14" cols="80" style="color: black">',
-                  script.join('\n'),
+                script.join('\n'),
                 '</textarea>'
               ].join(''),
               buttons: '[OK]'

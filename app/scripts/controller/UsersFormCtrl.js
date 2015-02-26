@@ -39,11 +39,11 @@ angular.module('openattic')
     }
 
     $scope.cancelAction = function() {
-        goToListView();
+      goToListView();
     };
 
     var goToListView = function() {
-        $state.go('users.list');
+      $state.go('users.list');
     };
   });
 

@@ -23,11 +23,11 @@ angular.module('openattic')
     }
 
     $scope.cancelAction = function() {
-        goToListView();
+      goToListView();
     };
 
     var goToListView = function() {
-        $state.go('volumes.detail.nfs');
+      $state.go('volumes.detail.nfs');
     };
   });
 

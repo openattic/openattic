@@ -1,5 +1,5 @@
 angular.module('openattic')
-  .controller('VolumeLunCtrl', function ($scope, $state, LunService, HostService) {
+  .controller('VolumeLunCtrl', function ($scope, $state, LunService) {
     'use strict';
 
     $scope.lunData = {};

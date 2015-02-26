@@ -5,7 +5,7 @@ angular.module('openattic.auth')
     return {
       template: [
         '<a title="Sign Out" ng-click="handleLogout()">',
-          '<i class="fa fa-sign-out"></i>',
+        '<i class="fa fa-sign-out"></i>',
         '</a>'
       ].join(''),
       controller: function($scope, authService){

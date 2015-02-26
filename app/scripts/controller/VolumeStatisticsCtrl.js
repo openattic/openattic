@@ -1,16 +1,16 @@
 angular.module('openattic')
-  .controller('VolumeStatisticsCtrl', function ($scope, $state, VolumeService) {
+  .controller('VolumeStatisticsCtrl', function ($scope, $state) {
     'use strict';
     $scope.$watch(function(){
-        return $state.current;
+      return $state.current;
     }, function(current){
-        $scope.state = current;
+      $scope.state = current;
     });
     $scope.utilparams = {
-        profile: null
+      profile: null
     };
     $scope.perfparams = {
-        profile: null
+      profile: null
     };
   });
 

@@ -71,7 +71,7 @@ angular.module('openattic.datatable')
       });
 
       // watch original model change
-      scope.$parent.$watch(attrs.checklistModel, function (newArr, oldArr) {
+      scope.$parent.$watch(attrs.checklistModel, function (newArr) {
         scope.checked = contains(newArr, value);
       }, true);
     };

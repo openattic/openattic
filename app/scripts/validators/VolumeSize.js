@@ -5,20 +5,22 @@ angular.module('openattic')
     return {
       require: 'ngModel',
       link: function(scope, elm, attrs, ctrl) {
-        ctrl.$validators.volumeSizeFormat = function(modelValue, viewValue){
+        ctrl.$validators.volumeSizeFormat = function(modelValue){
           return ctrl.$isEmpty(modelValue) || SizeParserService.isValid(modelValue);
         };
       }
     };
   })
   .directive('volumeSizeValue', function(SizeParserService) {
+    'use strict';
+
     return {
       require: 'ngModel',
       scope: {
         maxValue: '@'
       },
       link: function(scope, elm, attrs, ctrl) {
-        ctrl.$validators.volumeSizeValue = function(modelValue, viewValue){
+        ctrl.$validators.volumeSizeValue = function(modelValue){
           if( !modelValue || !SizeParserService.isValid(modelValue) ){
             return; // don't care
           }

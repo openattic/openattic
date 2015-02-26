@@ -57,11 +57,11 @@ angular.module('openattic')
     }
 
     $scope.cancelAction = function() {
-        goToListView();
+      goToListView();
     };
 
     var goToListView = function() {
-        $state.go('volumes.detail.cifs');
+      $state.go('volumes.detail.cifs');
     };
   });
 

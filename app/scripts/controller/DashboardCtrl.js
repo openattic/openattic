@@ -7,7 +7,7 @@ angular.module('openattic')
     $scope.selectedVolume = null;
 
     $scope.dashboardparams = {
-        profile: null
+      profile: null
     };
 
     VolumeService.query()
