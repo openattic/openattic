@@ -26,7 +26,7 @@ angular.module('openattic.apirecorder')
   .factory('ApiRecordHttpInterceptor', function(ApiRecorderService) {
     return {
       'request': function(config) {
-        if( config.method != 'GET'){
+        if( config.method !== 'GET'){
           ApiRecorderService.recordCommand(config);
         }
         return config;
