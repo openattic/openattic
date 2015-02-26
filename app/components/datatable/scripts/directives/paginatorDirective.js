@@ -1,13 +1,14 @@
 angular.module('openattic.datatable')
   .directive('paginator', function (paginatorService) {
+    'use strict';
     return {
       restrict: 'E',
-      templateUrl: "components/datatable/templates/pagination.html",
+      templateUrl: 'components/datatable/templates/pagination.html',
       scope: {
-        page: "=",
-        pages: "="
+        page: '=',
+        pages: '='
       },
-      link: function (scope, element, attr) {
+      link: function (scope) {
 
         var update_pages = function () {
           scope.buttons = paginatorService.getNumbers(scope.page, scope.pages, 7);
@@ -20,7 +21,7 @@ angular.module('openattic.datatable')
         };
 
         // TODO: Should be done automatically via view, we should take a look at it
-        scope.$watch("pages", update_pages);
+        scope.$watch('pages', update_pages);
       }
     };
   });

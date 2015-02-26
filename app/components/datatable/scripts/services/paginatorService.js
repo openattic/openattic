@@ -1,9 +1,10 @@
 angular.module('openattic.datatable')
   .factory('paginatorService', function () {
-    // TODO: Extract this in a service
+    'use strict';
+
     var _range = function () {
       var start, end, i, nums = [];
-      if (arguments.length == 1) {
+      if (arguments.length === 1) {
         start = 0;
         end = arguments[0];
       }
@@ -17,12 +18,11 @@ angular.module('openattic.datatable')
       return nums;
     };
 
-    // TODO: Extract this in a service
     var _numbers = function (page, pages, buttons) {
       // Shamelessly stolen from DataTables:
       // https://github.com/DataTables/DataTables/blob/master/media/js/jquery.dataTables.js#L13852
       if(arguments.length !== 3){
-	throw new Error("Need exactly <page>, <pages>, <buttons> args");
+	      throw new Error('Need exactly <page>, <pages>, <buttons> args');
       }
       var numbers = [],
         half = Math.floor(buttons / 2);
