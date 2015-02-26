@@ -1,22 +1,24 @@
 angular.module('openattic.datatable')
   .directive('oadatatable', function () {
+    'use strict';
+
     return {
       restrict: 'E',
       transclude: true,
-      templateUrl: "components/datatable/templates/datatable.html",
+      templateUrl: 'components/datatable/templates/datatable.html',
       scope: {
-        selection: "=",
-        data: "=",
-        filterConfig: "="
+        selection: '=',
+        data: '=',
+        filterConfig: '='
       },
       link: function (scope, element, attr, controller, transclude) {
         transclude(scope, function (clone, scope) {
-          element.find(".oadatatableactions").append(clone.filter("actions"));
-          element.find(".dataTables_wrapper").append(clone.filter("table"));
-          element.find("th").each(function (index, item) {
+          element.find('.oadatatableactions').append(clone.filter('actions'));
+          element.find('.dataTables_wrapper').append(clone.filter('table'));
+          element.find('th').each(function (index, item) {
             scope.columns[$(item).text()] = true;
-            if (item.attributes['sortfield'] != undefined) {
-              scope.sortfields[$(item).text()] = item.attributes['sortfield'].value;
+            if (item.attributes.sortfield !== undefined) {
+              scope.sortfields[$(item).text()] = item.attributes.sortfield.value;
             }
           });
         });
@@ -51,8 +53,10 @@ angular.module('openattic.datatable')
         });
         $scope.toggleSelection = function (row, $event) {
           var idx, add;
-          if ($event.target.tagName == "INPUT" || $event.target.tagName == "A")
+          if ($event.target.tagName === 'INPUT' || $event.target.tagName === 'A') {
             return;
+          }
+
           $event.preventDefault();
           $event.stopPropagation();
           if ($event.ctrlKey) {
@@ -66,32 +70,38 @@ angular.module('openattic.datatable')
           }
           else if ($event.shiftKey) {
             for (add = false, idx = 0; idx < $scope.data.results.length; idx++) {
-              if (add)
+              if (add){
                 $scope.selection.items.push($scope.data.results[idx]);
-              else if ($scope.selection.items.indexOf($scope.data.results[idx]) !== -1)
+              }
+              else if ($scope.selection.items.indexOf($scope.data.results[idx]) !== -1) {
                 add = true;
-              if ($scope.data.results[idx] === row)
+              }
+
+              if ($scope.data.results[idx] === row) {
                 break;
+              }
             }
           }
           else {
             $scope.selection.items = [row];
           }
-        }
+        };
+
         $scope.isRowSelected = function (row) {
-          return $scope.selection.items.indexOf(row) != -1;
-        }
+          return $scope.selection.items.indexOf(row) !== -1;
+        };
 
         $scope.getSelection = function () {
           return $scope.selection.items.slice();
-        }
+        };
+
         // TODO: Why is this function on the scope?
         $scope.watchSelection = function (callback) {
           return $scope.$watchCollection('selection.items', callback);
-        }
+        };
 
         $scope.$watchCollection('selection.items', function () {
-          if ($scope.selection.items.length == 1) {
+          if ($scope.selection.items.length === 1) {
             $scope.selection.item = $scope.selection.items[0];
           }
           else {
@@ -99,15 +109,15 @@ angular.module('openattic.datatable')
           }
         });
 
-        $scope.$watch("data", function () {
+        $scope.$watch('data', function () {
           $scope.selection.items = [];
           $scope.firstEntry   = ($scope.filterConfig.page * $scope.filterConfig.entries) + 1;
           $scope.lastEntry    = ($scope.filterConfig.page + 1) * $scope.filterConfig.entries;
           $scope.totalEntries = $scope.data.count;
-          $scope.pages = Math.ceil($scope.totalEntries / $scope.filterConfig.entries)
+          $scope.pages = Math.ceil($scope.totalEntries / $scope.filterConfig.entries);
           if ($scope.totalEntries <= $scope.lastEntry) {
             $scope.lastEntry = $scope.totalEntries;
-            if ($scope.lastEntry == 0) {
+            if ($scope.lastEntry === 0) {
               $scope.firstEntry = 0;
             }
           }
@@ -116,14 +126,14 @@ angular.module('openattic.datatable')
         $scope.sortByField = function (field, direction) {
           if ($scope.filterConfig.sortfield !== field) {
             $scope.filterConfig.sortfield = field;
-            $scope.filterConfig.sortorder = direction || "ASC";
+            $scope.filterConfig.sortorder = direction || 'ASC';
           }
           else {
-            $scope.filterConfig.sortorder = {"ASC": "DESC", "DESC": "ASC"}[$scope.filterConfig.sortorder];
+            $scope.filterConfig.sortorder = {'ASC': 'DESC', 'DESC': 'ASC'}[$scope.filterConfig.sortorder];
           }
-        }
+        };
 
-        $scope.$watch("filterConfig.entries", function (newVal, oldVal) {
+        $scope.$watch('filterConfig.entries', function (newVal, oldVal) {
           $scope.filterConfig.page = Math.floor($scope.filterConfig.page * oldVal / newVal);
         });
 
@@ -131,7 +141,7 @@ angular.module('openattic.datatable')
           updateOn: 'default blur',
           debounce: {
             'default': 500,
-             'blur': 0
+            'blur': 0
           }
         };
 
@@ -139,7 +149,7 @@ angular.module('openattic.datatable')
           $scope.filterConfig.reload = new Date();
         };
       }
-    }
+    };
   });
 
 // kate: space-indent on; indent-width 2; replace-tabs on;
