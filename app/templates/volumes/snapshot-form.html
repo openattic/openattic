@@ -30,7 +30,7 @@
                                         <span ng-show="snapForm.megs.$dirty && snapForm.megs.$error.required">This field is required.</span>
                                         <span ng-show="snapForm.megs.$dirty && snapForm.megs.$error.volumeSizeFormat">This is not a valid number.</span>
                                         <span ng-show="snapForm.megs.$dirty && snapForm.megs.$error.volumeSizeValue">
-                                            The size must be at least as big as the original volume and must not exceed {{pool.usage.max_new_fsv_text}}.
+                                            The size should be at least as big as the original volume and must not exceed {{pool.usage.max_new_fsv_text}}.
                                         </span>
                                     </div>
                                 </div>
