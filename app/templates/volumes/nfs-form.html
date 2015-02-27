@@ -1,40 +1,64 @@
 <div ng-controller="VolumeNfsSharesFormCtrl">
-    <form name="shareForm" role="form" class="smart-form" novalidate>
-        <fieldset>
-            <section>
-                <label class="label" for="sharePath">Path</label>
-                <label class="input" ng-class="{'state-error': shareForm.sharePath.$invalid}"> <i class="icon-prepend fa fa-share"></i>
-                    <input type="text" placeholder="Path..." ng-model="share.path" name="path" id="sharePath" required>
-                    <span ng-show="shareForm.sharePath.$dirty && shareForm.sharePath.$invalid">
-                        The path is required.
-                    </span>
-                </label>
-            </section>
-            <section>
-                <label class="label" for="shareAddress">Address</label>
-                <label class="input" ng-class="{'state-error': shareForm.shareAddress.$invalid}"> <i class="icon-prepend fa fa-share"></i>
-                    <input type="text" placeholder="Address..." ng-model="share.address" name="address" id="shareAddress" required>
-                    <span ng-show="shareForm.shareAddress.$dirty && shareForm.shareAddress.$invalid">
-                        The address is required.
-                    </span>
-                </label>
-            </section>
-            <section>
-                <label class="label" for="shareOptions">Options</label>
-                <label class="input" ng-class="{'state-error': shareForm.shareOptions.$invalid}"> <i class="icon-prepend fa fa-share"></i>
-                    <input type="text" placeholder="Options..."
-                           ng-model="share.options" name="options" id="shareOptions">
-                </label>
-            </section>
-        </fieldset>
-        <footer>
-            <button type="button" class="btn btn-default" ng-click="cancelAction()">
-                Back
-            </button>
-            <button type="submit" class="btn btn-primary" ng-click="submitAction()" ng-disabled="shareForm.$invalid">
-                Submit
-            </button>
-
-        </footer>
-    </form>
+    <div class="row">
+        <article class="col-sm-12 col-md-12 col-lg-6">
+            <div class="jarviswidget" id="wid-id-0">
+                <header>
+                    <span class="widget-icon"> <i class="fa fa-edit"></i></span>
+                    <h2>Create NFS Share</h2>
+                </header>
+                <div>
+                    <div class="widget-body">
+                        <form name="shareForm" role="form" class="form-horizontal" novalidate>
+                            <fieldset>
+                                <div class="form-group">
+                                    <label class="col-md-1 control-label" for="sharePath">Path</label>
+                                    <div class="col-md-11">
+                                        <div class="input-group">
+                                            <span class="input-group-addon"> <i class="icon-prepend fa fa-share"></i></span>
+                                            <input class="form-control" type="text" placeholder="Path..." ng-model="share.path" name="path" id="sharePath" required>
+                                            <span ng-show="shareForm.sharePath.$dirty && shareForm.sharePath.$invalid">
+                                                The path is required.
+                                            </span>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="form-group">
+                                    <label class="col-md-1 control-label" for="shareAddress">Address</label>
+                                    <div class="col-md-11">
+                                        <div class="input-group">
+                                            <span class="input-group-addon"><i class="icon-prepend fa fa-share"></i></span>
+                                            <input class="form-control" type="text" placeholder="Address..." ng-model="share.address" name="address" id="shareAddress" required>
+                                            <span ng-show="shareForm.shareAddress.$dirty && shareForm.shareAddress.$invalid">
+                                                The address is required.
+                                            </span>
+                                        </div>
+                                    </div> 
+                                </div>
+                                <div class="form-group">
+                                    <label class="col-md-1 control-label" for="shareOptions">Options</label>
+                                    <div class="col-md-11">
+                                        <div class="input-group">
+                                            <span class="input-group-addon"><i class="icon-prepend fa fa-share"></i></span>
+                                            <input class="form-control" type="text" placeholder="Options..."
+                                                ng-model="share.options" name="options" id="shareOptions">
+                                        </div>
+                                    </div>
+                                </div>
+                            </fieldset>
+                            <div class="form-group">
+                                <div class="pull-right" style="padding: 6px 16px">
+                                    <button type="button" class="btn btn-default" ng-click="cancelAction()">
+                                        Back
+                                    </button>
+                                    <button type="submit" class="btn btn-primary" ng-click="submitAction()" ng-disabled="shareForm.$invalid">
+                                        Submit
+                                    </button>
+                                </div>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </article>
+    </div>
 </div>
