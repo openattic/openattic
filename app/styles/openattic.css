@@ -27,6 +27,10 @@ form .input-group-addon{
     background-color: transparent;
 }
 
+accordion .panel-title {
+    font-size: 14px !important;
+}
+
 .MessageBoxContainer table {
     color: black;
 }
