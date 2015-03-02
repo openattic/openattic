@@ -19,6 +19,7 @@
                     <th sortfield="megs"     sortdir="asc" sortheaderclass ng-show="columns['Size']">Size</th>
                     <th ng-show="columns['Used']">Used</th>
                     <th ng-show="columns['Status']">Status</th>
+                    <th ng-show="columns['Protection']">Protection</th>
                     <th ng-show="columns['Type']">Type</th>
                     <th ng-show="columns['Path']">Path</th>
                     <th ng-show="columns['Created']">Created</th>
@@ -61,6 +62,9 @@
                         'fa-chain-broken':         row.status.status == 'fail',
                         'fa-lock':                 row.status.status == 'locked'
                         }"></i></td>
+                    <td ng-show="columns['Protection']">
+                        <i class="fa" ng-class="{'fa-check': row.is_protected == true}"></i>
+                    </td>
                     <td ng-show="columns['Type']" ng-bind="row.type.name"></td>
                     <td ng-show="columns['Path']" ng-bind="row.path"></td>
                     <td ng-show="columns['Created']" ng-bind="row.createdate | date:'short'"></td>
