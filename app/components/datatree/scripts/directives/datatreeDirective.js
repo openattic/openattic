@@ -12,11 +12,11 @@ angular.module('openattic.datatree')
       template: [
         '<span ng-transclude></span>',
         '<ul role="tree">',
-        '<li ng-repeat="child in children">',
-        '<oadatatree data="child" children-attribute="{{childrenAttribute}}">',
-        '<lol ng-transclude></lol>',
-        '</oadatatree>',
-        '</li>',
+          '<li ng-repeat="child in children">',
+            '<oadatatree data="child" children-attribute="{{childrenAttribute}}">',
+              '<lol ng-transclude></lol>',
+            '</oadatatree>',
+          '</li>',
         '</ul>'
       ].join(''),
       compile: function(tElement, tAttr, transclude) {
@@ -53,4 +53,4 @@ angular.module('openattic.datatree')
     };
   });
 
-// kate: space-indent on; indent-width 4; replace-tabs on;
+// kate: space-indent on; indent-width 2; replace-tabs on;
