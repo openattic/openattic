@@ -86,10 +86,10 @@
                             </fieldset>
                             <div class="form-group">
                                 <div class="pull-right" style="padding: 6px 16px">
-                                    <button type="button" class="btn btn-default" ng-click="cancelAction()">
+                                    <button type="submit" class="btn btn-primary" ng-click="submitAction()" ng-disabled="shareForm.$invalid">
                                         Submit
                                     </button>
-                                    <button type="submit" class="btn btn-primary" ng-click="submitAction()" ng-disabled="shareForm.$invalid">
+                                    <button type="button" class="btn btn-default" ng-click="cancelAction()">
                                         Back
                                     </button>
                                 </div>
