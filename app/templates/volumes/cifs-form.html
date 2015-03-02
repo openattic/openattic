@@ -45,32 +45,40 @@
                                     </div>
                                 </div>
                                 <div class="form-group">
-                                    <div class="col-md-10">
+                                    <div class="col-sm-offset-2 col-sm-10">
                                         <div class="checkbox">
-                                            <label class="checkbox" for="shareAvailable">
-                                                <input type="checkbox" ng-model="share.available" name="available" id="shareAvailable">
-                                                <i></i>Is available
+                                            <label>
+                                                <input type="checkbox" ng-model="share.available" name="available" id="shareAvailable">Is available
                                             </label>
                                         </div>
+                                    </div>
+                                </div>
+                                <div class="form-group">
+                                    <div class="col-sm-offset-2 col-sm-10">
                                         <div class="checkbox">
-                                            <label class="checkbox" for="shareBrowseable">
-                                                <input type="checkbox" ng-model="share.browseable" name="browseable" id="shareBrowseable">
-                                                <i></i>Is browseable
+                                            <label>
+                                                <input type="checkbox" ng-model="share.browseable" name="browseable" id="shareBrowseable">Is browseable
                                             </label>
                                         </div>
+                                    </div>
+                                </div>
+                                <div class="form-group">
+                                    <div class="col-sm-offset-2 col-sm-10">
                                         <div class="checkbox">
-                                            <label class="checkbox" for="shareWriteable">
-                                                <input type="checkbox" ng-model="share.writeable" name="writeable" id="shareWriteable">
-                                                <i></i>Is writeable
+                                            <label>
+                                                <input type="checkbox" ng-model="share.writeable" name="writeable" id="shareWriteable">Is writeable
                                             </label>
                                         </div>
+                                    </div>
+                                </div>
+                                <div class="form-group">
+                                    <div class="col-sm-offset-2 col-sm-4">
                                         <div class="checkbox">
-                                            <label class="checkbox" for="shareGuestOk">
-                                                <input type="checkbox" ng-model="share.guest_ok" name="guest_ok" id="shareGuestOk">
-                                                <i></i>Accessible by guests
-                                                <span ng-show="domainconfig.domain === ''" class="warning">
+                                            <label>
+                                                <input type="checkbox" ng-model="share.guest_ok" name="guest_ok" id="shareGuestOk">Accessible by guests
+                                                <!--<span ng-show="domainconfig.domain === ''" class="warning">
                                                     Currently, this host supports guest access only, because it is not part of an Active Directory Domain.
-                                                </span>
+                                                </span>-->
                                             </label>
                                         </div>
                                     </div>
