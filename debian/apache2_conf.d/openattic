@@ -7,7 +7,7 @@ Alias                   /openattic/static/admin/  /usr/share/pyshared/django/con
 Alias                   /openattic/static/        /usr/share/openattic/htdocs/
 
 WSGIScriptAlias         /openattic                /usr/share/openattic/openattic.wsgi
-WSGIDaemonProcess       openattic threads=25 user=openattic group=openattic
+WSGIDaemonProcess       openattic processes=25 threads=1 user=openattic group=openattic
 WSGIProcessGroup        openattic
 WSGIScriptReloading     Off
 WSGIPassAuthorization   On
