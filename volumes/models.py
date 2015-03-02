@@ -140,16 +140,17 @@ class StorageObject(models.Model):
         The ``upper'' field defined by this class is set to an object that is using this
         device as part of a mirror, array or volume pool (i.e., NOT a share).
     """
-    name        = models.CharField(max_length=150)
-    megs        = models.IntegerField()
-    uuid        = models.CharField(max_length=38, editable=False)
-    is_origin   = models.BooleanField(default=False)
-    createdate  = models.DateTimeField(auto_now_add=True, blank=True, null=True)
+    name            = models.CharField(max_length=150)
+    megs            = models.IntegerField()
+    uuid            = models.CharField(max_length=38, editable=False)
+    is_origin       = models.BooleanField(default=False)
+    createdate      = models.DateTimeField(auto_now_add=True, blank=True, null=True)
     # TODO: This should probably be wrapped in a CapabilitiesField or something
-    capflags    = models.BigIntegerField(default=0)
-    source_pool = models.ForeignKey('VolumePool', blank=True, null=True, related_name="volume_set")
-    snapshot    = models.ForeignKey('self', blank=True, null=True, related_name="snapshot_storageobject_set")
-    upper       = models.ForeignKey('self', blank=True, null=True, related_name="base_set")
+    capflags        = models.BigIntegerField(default=0)
+    source_pool     = models.ForeignKey('VolumePool', blank=True, null=True, related_name="volume_set")
+    snapshot        = models.ForeignKey('self', blank=True, null=True, related_name="snapshot_storageobject_set")
+    upper           = models.ForeignKey('self', blank=True, null=True, related_name="base_set")
+    is_protected    = models.BooleanField(default=False)
 
     objects     = CapabilitiesAwareManager()
     all_objects = models.Manager()
@@ -548,7 +549,9 @@ class VolumePool(models.Model):
         if megs < 100:
             raise ValidationError({"megs": ["Volumes need to be at least 100MB in size."]})
 
-        storageobj = StorageObject(name=name, megs=megs, source_pool=self)
+        is_protected = options.get('is_protected', False);
+
+        storageobj = StorageObject(name=name, megs=megs, source_pool=self, is_protected=is_protected)
         storageobj.full_clean()
         storageobj.save()
         storageobj.lock()
