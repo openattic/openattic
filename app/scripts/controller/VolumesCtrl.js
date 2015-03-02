@@ -98,6 +98,35 @@ angular.module('openattic')
       });
     };
 
+    $scope.deleteAction = function(){
+      if($scope.selection.item.is_protected){
+        $.smallBox({
+          title: 'Volume is not deletable',
+          content: '<i class="fa fa-clock-o"></i><i> Release the deletion protection in order to be able to delete' +
+                   'the volume.</i>',
+          color: '#C46A69',
+          iconSmall: 'fa fa-times fa-2x fadeInRight animated',
+          timeout: 6000
+        });
+      }
+      else {
+        var modalInstance = $modal.open({
+          windowTemplateUrl: 'templates/messagebox.html',
+          templateUrl: 'templates/volumes/delete.html',
+          controller: 'VolumeDeleteCtrl',
+          resolve: {
+            volume: function () {
+              return $scope.selection.item;
+            }
+          }
+        });
+
+        modalInstance.result.then(function () {
+          $scope.filterConfig.refresh = new Date();
+        });
+      }
+    };
+
     $scope.cloneAction = function(){
       var modalInstance = $modal.open({
         windowTemplateUrl: 'templates/messagebox.html',
