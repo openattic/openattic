@@ -43,6 +43,35 @@
                                         </div>
                                     </div>
                                     <div class="form-group">
+                                        <label class="col-md-2 control-label">Type</label>
+                                        <div class="col-md-10">
+                                            <div class="radio">
+                                                <label>
+                                                    <input type="radio" class="radiobox style-0" ng-model="data.filesystem" value="" ng-disabled="state.formatted">
+                                                    <span>Create LUN</span>
+                                                </label>
+                                            </div>
+                                            <div class="radio" ng-show="supported_filesystems.xfs">
+                                                <label>
+                                                    <input type="radio" class="radiobox style-0" ng-model="data.filesystem" value="xfs" ng-disabled="state.formatted">
+                                                    <span>Create Virtualization Store -> XFS</span>
+                                                </label>
+                                            </div>
+                                            <div class="radio" ng-show="supported_filesystems.zfs">
+                                                <label>
+                                                    <input type="radio" class="radiobox style-0" ng-model="data.filesystem" value="zfs" ng-disabled="state.formatted">
+                                                    <span>Create ZFS Volume</span>
+                                                </label>
+                                            </div>
+                                            <div class="radio" ng-show="supported_filesystems.btrfs">
+                                                <label>
+                                                    <input type="radio" class="radiobox style-0" ng-model="data.filesystem" value="btrfs" ng-disabled="state.formatted">
+                                                    <span>Create File Store -> BTRFS</span>
+                                                </label>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="form-group">
                                         <label class="col-md-2 control-label">Size</label>
                                         <div class="col-md-10">
                                             <input class="form-control" name="megs" required ng-disabled="data.sourcePool === null"
@@ -81,44 +110,6 @@
                                         pool.name for pool in pools track by pool.name">
                                             <option value="">-- Select a host --</option>
                                         </select>
-                                    </div>
-                                </div>
-                            </accordion-group>
-                        </accordion>
-                        <accordion>
-                            <accordion-group is-open="accordionOpen.filesystem">
-                                <accordion-heading>
-                                    File System
-                                    <i class="pull-right" ng-class="{'fa fa-angle-up':accordionOpen.filesystem,
-                                        'fa fa-angle-down': !accordionOpen.filesystem}"></i>
-                                </accordion-heading>
-                                <div class="form-group">
-                                    <label class="col-md-4 control-label">What do you want to do with the volume?</label>
-                                    <div class="col-md-8">
-                                        <div class="radio">
-                                            <label>
-                                                <input type="radio" class="radiobox style-0" ng-model="data.filesystem" value="" ng-disabled="state.formatted">
-                                                <span>Create LUN</span>
-                                            </label>
-                                        </div>
-                                        <div class="radio" ng-show="supported_filesystems.xfs">
-                                            <label>
-                                                <input type="radio" class="radiobox style-0" ng-model="data.filesystem" value="xfs" ng-disabled="state.formatted">
-                                                <span>Create Virtualization Store -> XFS</span>
-                                            </label>
-                                        </div>
-                                        <div class="radio" ng-show="supported_filesystems.zfs">
-                                            <label>
-                                                <input type="radio" class="radiobox style-0" ng-model="data.filesystem" value="zfs" ng-disabled="state.formatted">
-                                                <span>Create ZFS Volume</span>
-                                            </label>
-                                        </div>
-                                        <div class="radio" ng-show="supported_filesystems.btrfs">
-                                            <label>
-                                                <input type="radio" class="radiobox style-0" ng-model="data.filesystem" value="btrfs" ng-disabled="state.formatted">
-                                                <span>Create File Store -> BTRFS</span>
-                                            </label>
-                                        </div>
                                     </div>
                                 </div>
                             </accordion-group>
