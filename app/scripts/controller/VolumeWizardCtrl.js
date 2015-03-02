@@ -16,14 +16,10 @@ angular.module('openattic')
       mirrored:  false,
       formatted: false
     };
-    $scope.mirrorpnl = {
-      open: false
-    };
     $scope.accordionOpen = {
       properties: true,
-      mirror: false,
-      filesystem: true
-    }
+      mirror: false
+    };
 
     PoolService.query()
       .$promise
