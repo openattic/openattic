@@ -191,7 +191,7 @@ class VolumeSerializer(serializers.HyperlinkedModelSerializer):
 
     class Meta:
         model  = models.StorageObject
-        fields = ('url', 'id', 'name', 'uuid', 'createdate', 'source_pool', 'snapshots', 'usage', 'status')
+        fields = ('url', 'id', 'name', 'uuid', 'createdate', 'source_pool', 'snapshots', 'usage', 'status', 'is_protected')
 
     def to_native(self, obj):
         data = dict([(key, None) for key in ("type", "host", "path",
@@ -284,9 +284,10 @@ class VolumeViewSet(viewsets.ModelViewSet):
 
         volume = storageobj.create_volume(request.DATA["name"], request.DATA["megs"], {
             "owner": request.user,
-            "fswarning" : 75,
-            "fscritical": 85,
-            "filesystem": request.DATA.get("filesystem", None)
+            "fswarning"     : 75,
+            "fscritical"    : 85,
+            "filesystem"    : request.DATA.get("filesystem", None),
+            "is_protected": request.DATA.get('is_protected', False)
             })
         serializer = VolumeSerializer(volume, many=False, context={"request": request})
 
