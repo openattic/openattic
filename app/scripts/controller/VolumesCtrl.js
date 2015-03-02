@@ -81,11 +81,11 @@ angular.module('openattic')
       });
     };
 
-    $scope.deleteAction = function(){
+    $scope.protectionAction = function(){
       var modalInstance = $modal.open({
         windowTemplateUrl: 'templates/messagebox.html',
-        templateUrl: 'templates/volumes/delete.html',
-        controller: 'VolumeDeleteCtrl',
+        templateUrl: 'templates/volumes/protection.html',
+        controller: 'VolumeProtectionCtrl',
         resolve: {
           volume: function(){
             return $scope.selection.item;
