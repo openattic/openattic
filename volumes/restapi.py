@@ -306,6 +306,10 @@ class VolumeViewSet(viewsets.ModelViewSet):
         if "megs" in request.DATA:
             storageobj.resize(int(request.DATA["megs"]))
 
+        if "is_protected" in request.DATA:
+            storageobj.is_protected = request.DATA["is_protected"]
+            storageobj.save()
+
         volume = VolumeSerializer(storageobj, many=False, context={"request": request})
         return Response(volume.data)
 
