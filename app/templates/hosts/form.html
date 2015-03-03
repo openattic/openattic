@@ -1,37 +1,33 @@
-<div ng-controller="HostFormCtrl">
-    <div class="row">
-        <article class="col-sm-4 col-md-4 col-lg-4">
-            <div class="jarviswidget" id="wid-id-1" data-widget-editbutton="false" data-widget-custombutton="false">
-                <header>
-                    <span class="widget-icon"> <i class="fa fa-edit"></i> </span>
-                    <h2>Create Host: {{host.name}}</h2>
-                </header>
-                <div>
-                    <div class="widget-body no-padding">
-                        <form name="hostForm" role="form" class="smart-form" novalidate>
-                            <fieldset>
-                                <section>
-                                    <label class="label" for="hostHostname">Hostname</label>
-                                    <label class="input" ng-class="{'state-error': hostForm.name.$invalid}"> <i class="icon-prepend fa fa-host"></i>
-                                        <input type="text" placeholder="Hostname..." ng-model="host.name" name="name" id="hostHostname" required>
-                                        <span ng-show="hostForm.name.$dirty && hostForm.name.$invalid">
-                                            The name is required.
-                                        </span>
-                                    </label>
-                                </section>
-                            </fieldset>
-                            <footer>
-                                <button type="button" class="btn btn-default" ng-click="cancelAction()">
-                                    Back
-                                </button>
-                                <button type="submit" class="btn btn-primary" ng-click="submitAction()" ng-disabled="hostForm.$invalid">
-                                    Submit
-                                </button>
-                            </footer>
-                        </form>
-                    </div>
-                </div>
+<article class="col-sm-4 col-md-4 col-lg-4">
+    <div class="jarviswidget" id="wid-id-1" data-widget-editbutton="false" data-widget-custombutton="false">
+        <header>
+            <span class="widget-icon"> <i class="fa fa-edit"></i> </span>
+            <h2>Create Host: {{host.name}}</h2>
+        </header>
+        <div>
+            <div class="widget-body no-padding">
+                <form name="hostForm" role="form" class="smart-form" novalidate>
+                    <fieldset>
+                        <section>
+                            <label class="label" for="hostHostname">Hostname</label>
+                            <label class="input" ng-class="{'state-error': hostForm.name.$invalid}"> <i class="icon-prepend fa fa-host"></i>
+                                <input type="text" placeholder="Hostname..." ng-model="host.name" name="name" id="hostHostname" required>
+                                <span ng-show="hostForm.name.$dirty && hostForm.name.$invalid">
+                                    The name is required.
+                                </span>
+                            </label>
+                        </section>
+                    </fieldset>
+                    <footer>
+                        <button type="button" class="btn btn-default" ng-click="cancelAction()">
+                            Back
+                        </button>
+                        <button type="submit" class="btn btn-primary" ng-click="submitAction()" ng-disabled="hostForm.$invalid">
+                            Submit
+                        </button>
+                    </footer>
+                </form>
             </div>
-        </article>
+        </div>
     </div>
-</div>
+</article>

@@ -256,7 +256,8 @@ angular.module('openattic').config(function ($stateProvider, $urlRouterProvider)
       url: '/hosts',
       views: {
         'main': {
-          templateUrl: 'templates/hosts.html'
+          templateUrl: 'templates/hosts.html',
+          controller : 'HostCtrl'
         }
       },
       ncyBreadcrumb: {
@@ -267,7 +268,8 @@ angular.module('openattic').config(function ($stateProvider, $urlRouterProvider)
       url: '/hosts/add',
       views: {
         'main': {
-          templateUrl: 'templates/hosts/form.html'
+          templateUrl: 'templates/hosts/form.html',
+          controller : 'HostFormCtrl'
         }
       },
       ncyBreadcrumb: {
@@ -279,7 +281,8 @@ angular.module('openattic').config(function ($stateProvider, $urlRouterProvider)
       url: '/hosts/edit/:host',
       views: {
         'main': {
-          templateUrl: 'templates/hosts/form.html'
+          templateUrl: 'templates/hosts/form.html',
+          controller : 'HostFormCtrl'
         }
       },
       ncyBreadcrumb: {
@@ -291,7 +294,8 @@ angular.module('openattic').config(function ($stateProvider, $urlRouterProvider)
       url: '/:host',
       views: {
         'detail': {
-          templateUrl: 'templates/hosts/attributes.html'
+          templateUrl: 'templates/hosts/attributes.html',
+          controller : 'HostAttributesCtrl'
         }
       },
       ncyBreadcrumb: {
