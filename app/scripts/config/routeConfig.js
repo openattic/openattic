@@ -9,6 +9,9 @@ angular.module('openattic').config(function ($stateProvider, $urlRouterProvider)
       url: '/dashboard',
       views: {
         'main': {templateUrl: 'templates/dashboard.html'}
+      },
+      ncyBreadcrumb: {
+        label: 'Dashboard'
       }
     })
     .state('pools', {
