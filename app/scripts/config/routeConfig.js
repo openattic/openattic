@@ -66,6 +66,9 @@ angular.module('openattic').config(function ($stateProvider, $urlRouterProvider)
         'main': {
           templateUrl: 'templates/disks.html'
         }
+      },
+      ncyBreadcrumb: {
+        label: 'Disks'
       }
     })
     .state('volumes', {
