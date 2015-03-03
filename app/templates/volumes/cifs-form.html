@@ -45,42 +45,38 @@
                                     </div>
                                 </div>
                                 <div class="form-group">
-                                    <div class="col-sm-offset-2 col-sm-10">
-                                        <div class="checkbox">
-                                            <label>
-                                                <input type="checkbox" ng-model="share.available" name="available" id="shareAvailable">Is available
-                                            </label>
-                                        </div>
+                                    <div class="col-sm-offset-2 col-sm-12">
+                                        <checkbox ng-model="share.available" name="available" id="shareAvailable"></checkbox>
+                                        <label>
+                                            Is available
+                                        </label>
                                     </div>
                                 </div>
                                 <div class="form-group">
                                     <div class="col-sm-offset-2 col-sm-10">
-                                        <div class="checkbox">
-                                            <label>
-                                                <input type="checkbox" ng-model="share.browseable" name="browseable" id="shareBrowseable">Is browseable
-                                            </label>
-                                        </div>
+                                        <checkbox ng-model="share.browseable" name="browseable" id="shareBrowseable" ng-false-value="browseable"></checkbox>
+                                        <label>
+                                            Is browseable
+                                        </label>
                                     </div>
                                 </div>
                                 <div class="form-group">
                                     <div class="col-sm-offset-2 col-sm-10">
-                                        <div class="checkbox">
-                                            <label>
-                                                <input type="checkbox" ng-model="share.writeable" name="writeable" id="shareWriteable">Is writeable
-                                            </label>
-                                        </div>
+                                        <checkbox ng-model="share.writeable" name="writeable" id="shareWriteable"></checkbox>
+                                        <label>
+                                            Is writeable
+                                        </label>
                                     </div>
                                 </div>
                                 <div class="form-group">
-                                    <div class="col-sm-offset-2 col-sm-4">
-                                        <div class="checkbox">
-                                            <label>
-                                                <input type="checkbox" ng-model="share.guest_ok" name="guest_ok" id="shareGuestOk">Accessible by guests
-                                                <!--<span ng-show="domainconfig.domain === ''" class="warning">
-                                                    Currently, this host supports guest access only, because it is not part of an Active Directory Domain.
-                                                </span>-->
-                                            </label>
-                                        </div>
+                                    <div class="col-sm-offset-2 col-sm-10">
+                                        <checkbox ng-model="share.guest_ok" name="guest_ok" id="shareGuestOk"></checkbox>
+                                        <label>
+                                            Accessible by guests
+                                            <!--<span ng-show="domainconfig.domain === ''" class="warning">
+                                                Currently, this host supports guest access only, because it is not part of an Active Directory Domain.
+                                            </span>-->
+                                        </label>
                                     </div>
                                 </div>
                             </fieldset>
