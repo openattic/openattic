@@ -271,14 +271,6 @@ angular.module('openattic').config(function ($stateProvider, $urlRouterProvider)
         }
       }
     })
-    .state('users.list', {
-      url: '/list',
-      views: {
-        'usersview': {
-          templateUrl: 'templates/users/list.html'
-        }
-      }
-    })
     .state('users.add', {
       url: '/add',
       views: {
