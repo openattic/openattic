@@ -274,7 +274,7 @@ angular.module('openattic').config(function ($stateProvider, $urlRouterProvider)
     .state('users.add', {
       url: '/add',
       views: {
-        'usersview': {
+        'main': {
           templateUrl: 'templates/users/userform.html'
         }
       }
