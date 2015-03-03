@@ -387,6 +387,7 @@ angular.module('openattic').config(function ($stateProvider, $urlRouterProvider)
         }
       },
       ncyBreadcrumb: {
+        label: 'Edit {{user.username}}',
         parent: 'users'
       }
     })
