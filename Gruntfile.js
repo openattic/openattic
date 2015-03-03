@@ -9,22 +9,22 @@ module.exports = function (grunt) {
     dist: 'dist/',
     name: 'bookmonkey-web',
     applicationFiles: [
-      '<%= buildConfig.src %>scripts/module_enterprise.js',
+      '<%= buildConfig.src %>scripts/module_extensions.js',
       '<%= buildConfig.src %>scripts/**/module.js',
       '<%= buildConfig.src %>scripts/services/*.js',
       '<%= buildConfig.src %>scripts/**/*.js',
       '<%= buildConfig.src %>components/**/module.js',
       '<%= buildConfig.src %>components/services/*.js',
       '<%= buildConfig.src %>components/**/*.js',
-      '<%= buildConfig.src %>enterprise_components/**/module.js',
-      '<%= buildConfig.src %>enterprise_components/services/*.js',
-      '<%= buildConfig.src %>enterprise_components/**/*.js'
+      '<%= buildConfig.src %>extensions/**/module.js',
+      '<%= buildConfig.src %>extensions/services/*.js',
+      '<%= buildConfig.src %>extensions/**/*.js'
     ],
     watchFiles: [
       '<%= buildConfig.src %>*.tpl.html',
       '<%= buildConfig.src %>scripts/**/*.js',
       '<%= buildConfig.src %>components/**/*.js',
-      '<%= buildConfig.src %>enterprise_components/**/*.js'
+      '<%= buildConfig.src %>extensions/**/*.js'
     ]
   };
 

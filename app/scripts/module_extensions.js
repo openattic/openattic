@@ -1,5 +1,5 @@
 'use strict';
-angular.module('openattic.enterprise', [
+angular.module('openattic.extensions', [
   'ngResource',
   'ui.router',
   'ui.bootstrap',
