@@ -312,7 +312,8 @@ angular.module('openattic').config(function ($stateProvider, $urlRouterProvider)
       url: '/users',
       views: {
         'main': {
-          templateUrl: 'templates/users.html'
+          templateUrl: 'templates/users.html',
+          controller : 'UserCtrl'
         }
       },
       ncyBreadcrumb: {
@@ -323,7 +324,8 @@ angular.module('openattic').config(function ($stateProvider, $urlRouterProvider)
       url: '/add',
       views: {
         'main': {
-          templateUrl: 'templates/users/userform.html'
+          templateUrl: 'templates/users/userform.html',
+          controller : 'UserFormCtrl'
         }
       },
       ncyBreadcrumb: {
@@ -335,7 +337,8 @@ angular.module('openattic').config(function ($stateProvider, $urlRouterProvider)
       url: '/edit/:user',
       views: {
         'main': {
-          templateUrl: 'templates/users/userform.html'
+          templateUrl: 'templates/users/userform.html',
+          controller : 'UserFormCtrl'
         }
       },
       ncyBreadcrumb: {
