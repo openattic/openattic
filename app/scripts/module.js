@@ -11,7 +11,8 @@ angular.module('openattic', [
   'openattic.graph',
   'openattic.sizeparser',
   'openattic.extensions',
-  'smartadmin.smartmenu'
+  'smartadmin.smartmenu',
+  'ui.checkbox'
 ]);
 
 angular.module('openattic').config(function($httpProvider){
