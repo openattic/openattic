@@ -4,6 +4,7 @@ angular.module('openattic', [
   'ui.router',
   'ui.bootstrap',
   'ngTagsInput',
+  'ncy-angular-breadcrumb',
   'openattic.auth',
   'openattic.apirecorder',
   'openattic.datatable',
