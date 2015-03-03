@@ -29,7 +29,7 @@
                                     <select class="form-control" ng-model="data.sourcePool" ng-options="(pool.name + ' (' + pool.type.name + ')') for pool in pools track by pool.id" name="pool" required>
                                         <option value="">-- Select a pool --</option>
                                     </select>
-                                    <span ng-show="volumeForm.pool.$error.required">This field is required!</span>
+                                    <span ng-show="volumeForm.pool.$dirty && volumeForm.pool.$error.required">This field is required!</span>
                                     <div ng-show="data.sourcePool">
                                         {{data.sourcePool.usage.max_new_fsv_text}} available
                                     </div>
