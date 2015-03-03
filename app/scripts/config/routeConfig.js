@@ -19,30 +19,45 @@ angular.module('openattic').config(function ($stateProvider, $urlRouterProvider)
       controller: 'PoolCtrl',
       views: {
         'main': {templateUrl: 'templates/pools.html'}
+      },
+      ncyBreadcrumb: {
+        label: 'Pools'
       }
     })
     .state('pools.detail', {
       url: '/:pool',
       views: {
         'tab': {templateUrl: 'templates/pools/tab.html'}
+      },
+      ncyBreadcrumb: {
+        skip: true
       }
     })
     .state('pools.detail.status', {
       url: '/status',
       views: {
         'tab-content': {templateUrl: 'templates/pools/status.html'}
+      },
+      ncyBreadcrumb: {
+        label: '{{selection.item.name}} Status'
       }
     })
     .state('pools.detail.storage', {
       url: '/storage',
       views: {
         'tab-content': {templateUrl: 'templates/pools/storage.html'}
+      },
+      ncyBreadcrumb: {
+        label: '{{selection.item.name}} Storage'
       }
     })
     .state('pools.detail.cephpool', {
       url: '/cephpool',
       views: {
         'tab-content': {templateUrl: 'templates/pools/cephpool.html'}
+      },
+      ncyBreadcrumb: {
+        label: '{{selection.item.name}} Cephpool'
       }
     })
     .state('disks', {
