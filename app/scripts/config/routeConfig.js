@@ -255,6 +255,9 @@ angular.module('openattic').config(function ($stateProvider, $urlRouterProvider)
         'main': {
           templateUrl: 'templates/hosts.html'
         }
+      },
+      ncyBreadcrumb: {
+        label: 'Hosts'
       }
     })
     .state('hosts-add', {
@@ -263,6 +266,10 @@ angular.module('openattic').config(function ($stateProvider, $urlRouterProvider)
         'main': {
           templateUrl: 'templates/hosts/form.html'
         }
+      },
+      ncyBreadcrumb: {
+        label: 'Add',
+        parent: 'hosts'
       }
     })
     .state('hosts-edit', {
@@ -271,6 +278,10 @@ angular.module('openattic').config(function ($stateProvider, $urlRouterProvider)
         'main': {
           templateUrl: 'templates/hosts/form.html'
         }
+      },
+      ncyBreadcrumb: {
+        label: 'Edit',
+        parent: 'hosts'
       }
     })
     .state('hosts.attributes', {
@@ -279,6 +290,10 @@ angular.module('openattic').config(function ($stateProvider, $urlRouterProvider)
         'detail': {
           templateUrl: 'templates/hosts/attributes.html'
         }
+      },
+      ncyBreadcrumb: {
+        label: 'Attributes',
+        parent: 'hosts'
       }
     })
     .state('users', {
