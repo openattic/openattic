@@ -11,7 +11,7 @@
                     <span class="widget-icon"> <i class="fa fa-edit"></i> </span>
                     <h2>CRUSH Map for {{cluster.name}}</h2>
                 </header>
-                <div ng-repeat="root in cluster.crush_map">
+                <div class="tree" ng-repeat="root in cluster.crush_map">
                     <oadatatree data="root" children-attribute="children">
                         <p ng-bind="data.name" />
                     </oadatatree>
