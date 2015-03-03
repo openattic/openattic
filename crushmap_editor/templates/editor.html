@@ -1,6 +1,12 @@
 <!-- kate: space-indent on; indent-width 4; replace-tabs on; -->
 <div class="container-fluid">
-    <div class="row">
+    <div class="row" ng-show="!clusters.$resolved">
+        Loading...
+    </div>
+    <div class="row" ng-show="clusters.$resolved && clusters.length === 0">
+        No Ceph clusters available.
+    </div>
+    <div class="row" ng-show="clusters.$resolved && clusters.length > 0">
         <article class="col-sm-12 col-md-12 col-lg-12">
             <div class="jarviswidget" id="wid-id-1" data-widget-editbutton="false" data-widget-custombutton="false">
                 <header>
