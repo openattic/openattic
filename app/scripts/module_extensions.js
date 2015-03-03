@@ -5,7 +5,6 @@ angular.module('openattic.extensions', [
   'ui.bootstrap',
   'ngTagsInput',
   'openattic.datatable',
-  'openattic.datatree',
   'openattic.graph',
   'openattic.sizeparser'
 ]);
