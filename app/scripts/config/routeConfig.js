@@ -309,6 +309,9 @@ angular.module('openattic').config(function ($stateProvider, $urlRouterProvider)
         'main': {
           templateUrl: 'templates/cmdlogs.html'
         }
+      },
+      ncyBreadcrumb: {
+        label: 'Command logs'
       }
     })
     .state('crushmap', {
