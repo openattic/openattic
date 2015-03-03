@@ -8,7 +8,6 @@ angular.module('openattic', [
   'openattic.auth',
   'openattic.apirecorder',
   'openattic.datatable',
-  'openattic.datatree',
   'openattic.graph',
   'openattic.sizeparser',
   'openattic.extensions',
