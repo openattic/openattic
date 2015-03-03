@@ -1,8 +1,8 @@
-angular.module('openattic.enterprise')
+angular.module('openattic.extensions')
   .directive('cephPoolAttributesEditor', function(){
     return {
       restrict: 'E',
-      templateUrl: 'enterprise_components/ceph_pool_attributes_editor/templates/editor.html'
+      templateUrl: 'extensions/ceph_pool_attributes_editor/templates/editor.html'
     };
   });
 

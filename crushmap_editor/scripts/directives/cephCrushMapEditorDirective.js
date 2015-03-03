@@ -1,8 +1,8 @@
-angular.module('openattic.enterprise')
+angular.module('openattic.extensions')
   .directive('cephCrushMapEditor', function(){
     return {
       restrict: 'E',
-      templateUrl: 'enterprise_components/crushmap_editor/templates/editor.html'
+      templateUrl: 'extensions/crushmap_editor/templates/editor.html'
     };
   });
 
