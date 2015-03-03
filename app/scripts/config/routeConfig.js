@@ -19,9 +19,11 @@ angular.module('openattic').config(function ($stateProvider, $urlRouterProvider)
     })
     .state('pools', {
       url: '/pools',
-      controller: 'PoolCtrl',
       views: {
-        'main': {templateUrl: 'templates/pools.html'}
+        'main': {
+          templateUrl: 'templates/pools.html',
+          controller : 'PoolCtrl'
+        }
       },
       ncyBreadcrumb: {
         label: 'Pools'
@@ -48,7 +50,10 @@ angular.module('openattic').config(function ($stateProvider, $urlRouterProvider)
     .state('pools.detail.storage', {
       url: '/storage',
       views: {
-        'tab-content': {templateUrl: 'templates/pools/storage.html'}
+        'tab-content': {
+          templateUrl: 'templates/pools/storage.html',
+          controller : 'PoolStorageCtrl'
+        }
       },
       ncyBreadcrumb: {
         label: '{{selection.item.name}} Storage'
