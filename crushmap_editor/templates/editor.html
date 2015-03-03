@@ -1,4 +1,12 @@
 <!-- kate: space-indent on; indent-width 4; replace-tabs on; -->
+
+<script type="text/ng-template"  id="ceph_crush_node.html">
+    <span ng-bind="data.name"></span>
+    <ul>
+        <li ng-repeat="data in data.children" ng-include="'ceph_crush_node.html'"></li>
+    </ul>
+</script>
+
 <div class="container-fluid">
     <div class="row">
         <big-breadcrumbs items="['System', 'Hosts']" class="col-xs-12 col-sm-7 col-md-7 col-lg-4"></big-breadcrumbs>
@@ -11,10 +19,10 @@
                     <span class="widget-icon"> <i class="fa fa-edit"></i> </span>
                     <h2>CRUSH Map for {{cluster.name}}</h2>
                 </header>
-                <div class="tree" ng-repeat="root in cluster.crush_map">
-                    <oadatatree data="root" children-attribute="children">
-                        <p ng-bind="data.name" />
-                    </oadatatree>
+                <div class="tree">
+                    <ul>
+                        <li ng-repeat="data in cluster.crush_map" ng-include="'ceph_crush_node.html'"></li>
+                    </ul>
                 </div>
             </div>
         </article>
