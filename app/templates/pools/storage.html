@@ -1,5 +1,5 @@
 <div class="tree" ng-controller="PoolStorageCtrl">
-    <oadatatree data="active_pool_storage" children-attribute="devices">
-        <p ng-bind="data.title" />
-    </oadatatree>
+    <ul>
+        <li ng-repeat="data in active_pool_storage.devices" ng-include="'templates/storageTreeNode.html'"></li>
+    </ul>
 </div>
