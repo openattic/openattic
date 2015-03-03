@@ -95,9 +95,9 @@ def graph(request, service_id, srcidx):
         # Accept negative numbers for start and end by interpreting them as
         # "x seconds before last_check". The numbers are negative already,
         # so we need to ADD them.
-        if builder.end < 0:
+        if builder.end <= 0:
             builder.end = rrd.last_check + builder.end
-        if builder.start < 0:
+        if builder.start <= 0:
             builder.start = rrd.last_check + builder.start
 
         if builder.start <= 0:
