@@ -336,7 +336,7 @@ angular.module('openattic').config(function ($stateProvider, $urlRouterProvider)
         }
       },
       ncyBreadcrumb: {
-        label: 'Edit',
+        label: 'Edit {{host.name}}',
         parent: 'hosts'
       }
     })
@@ -349,7 +349,7 @@ angular.module('openattic').config(function ($stateProvider, $urlRouterProvider)
         }
       },
       ncyBreadcrumb: {
-        label: 'Attributes',
+        label: '{{host.name}} Attributes',
         parent: 'hosts'
       }
     })
