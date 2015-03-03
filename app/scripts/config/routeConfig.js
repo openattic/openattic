@@ -269,6 +269,9 @@ angular.module('openattic').config(function ($stateProvider, $urlRouterProvider)
         'main': {
           templateUrl: 'templates/users.html'
         }
+      },
+      ncyBreadcrumb: {
+        label: 'Users'
       }
     })
     .state('users-add', {
@@ -277,6 +280,10 @@ angular.module('openattic').config(function ($stateProvider, $urlRouterProvider)
         'main': {
           templateUrl: 'templates/users/userform.html'
         }
+      },
+      ncyBreadcrumb: {
+        label: 'Add',
+        parent: 'users'
       }
     })
     .state('users-edit', {
@@ -285,6 +292,9 @@ angular.module('openattic').config(function ($stateProvider, $urlRouterProvider)
         'main': {
           templateUrl: 'templates/users/userform.html'
         }
+      },
+      ncyBreadcrumb: {
+        parent: 'users'
       }
     })
     .state('apikeys', {
