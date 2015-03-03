@@ -241,7 +241,7 @@ class ZVol(BlockVolume):
 
     @property
     def path(self):
-        return os.path.join("/dev", self.fullname)
+        return os.path.join("/dev/zvol", self.fullname)
 
     @property
     def status(self):

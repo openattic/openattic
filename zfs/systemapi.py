@@ -77,7 +77,7 @@ class SystemD(BasePlugin):
     @deferredmethod(in_signature="si")
     def zvol_create_volume(self, volume, megs, sender):
         invoke(["zfs", "create", "-o", "snapdev=visible", "-V", "%dM" % megs, volume])
-        while not os.path.exists("/dev/%s" % volume):
+        while not os.path.exists("/dev/zvol/%s" % volume):
             sleep(0.1)
 
     @deferredmethod(in_signature="s")
