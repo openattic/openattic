@@ -82,7 +82,10 @@ angular.module('openattic').config(function ($stateProvider, $urlRouterProvider)
     .state('volumes', {
       url: '/volumes',
       views: {
-        'main': {templateUrl: 'templates/volumes.html'}
+        'main': {
+          templateUrl: 'templates/volumes.html',
+          controller : 'VolumeCtrl'
+        }
       },
       ncyBreadcrumb: {
         label: 'Volumes'
@@ -109,7 +112,10 @@ angular.module('openattic').config(function ($stateProvider, $urlRouterProvider)
     .state('volumes.detail.statistics', {
       url: '/statistics',
       views: {
-        'tab-content': {templateUrl: 'templates/volumes/statistics.html'}
+        'tab-content': {
+          templateUrl: 'templates/volumes/statistics.html',
+          controller : 'VolumeStatisticsCtrl'
+        }
       },
       ncyBreadcrumb: {
         skip: true
@@ -136,7 +142,10 @@ angular.module('openattic').config(function ($stateProvider, $urlRouterProvider)
     .state('volumes.detail.cifs', {
       url: '/cifs',
       views: {
-        'tab-content': {templateUrl: 'templates/volumes/cifs.html'}
+        'tab-content': {
+          templateUrl: 'templates/volumes/cifs.html',
+          controller : 'VolumeCifsSharesCtrl'
+        }
       },
       ncyBreadcrumb: {
         label: '{{selection.item.name}} CIFS'
@@ -145,7 +154,10 @@ angular.module('openattic').config(function ($stateProvider, $urlRouterProvider)
     .state('volumes.detail.cifs-add', {
       url: '/cifs/add',
       views: {
-        'tab-content': {templateUrl: 'templates/volumes/cifs-form.html'}
+        'tab-content': {
+          templateUrl: 'templates/volumes/cifs-form.html',
+          controller : 'VolumeCifsSharesFormCtrl'
+        }
       },
       ncyBreadcrumb: {
         label: 'Add',
@@ -155,7 +167,10 @@ angular.module('openattic').config(function ($stateProvider, $urlRouterProvider)
     .state('volumes.detail.cifs-edit', {
       url: '/cifs/edit/:share',
       views: {
-        'tab-content': {templateUrl: 'templates/volumes/cifs-form.html'}
+        'tab-content': {
+          templateUrl: 'templates/volumes/cifs-form.html',
+          controller : 'VolumeCifsSharesFormCtrl'
+        }
       },
       ncyBreadcrumb: {
         label: 'Edit',
@@ -165,7 +180,10 @@ angular.module('openattic').config(function ($stateProvider, $urlRouterProvider)
     .state('volumes.detail.nfs', {
       url: '/nfs',
       views: {
-        'tab-content': {templateUrl: 'templates/volumes/nfs.html'}
+        'tab-content': {
+          templateUrl: 'templates/volumes/nfs.html',
+          controller : 'VolumeNfsSharesCtrl'
+        }
       },
       ncyBreadcrumb: {
         label: '{{selection.item.name}} NFS'
@@ -174,7 +192,10 @@ angular.module('openattic').config(function ($stateProvider, $urlRouterProvider)
     .state('volumes.detail.nfs-add', {
       url: '/nfs/add',
       views: {
-        'tab-content': {templateUrl: 'templates/volumes/nfs-form.html'}
+        'tab-content': {
+          templateUrl: 'templates/volumes/nfs-form.html',
+          controller : 'VolumeNfsSharesFormCtrl'
+        }
       },
       ncyBreadcrumb: {
         label: 'Add',
@@ -184,7 +205,10 @@ angular.module('openattic').config(function ($stateProvider, $urlRouterProvider)
     .state('volumes.detail.luns', {
       url: '/luns',
       views: {
-        'tab-content': {templateUrl: 'templates/volumes/luns.html'}
+        'tab-content': {
+          templateUrl: 'templates/volumes/luns.html',
+          controller : 'VolumeLunCtrl'
+        }
       },
       ncyBreadcrumb: {
         label: '{{selection.item.name}} LUNs'
@@ -193,7 +217,10 @@ angular.module('openattic').config(function ($stateProvider, $urlRouterProvider)
     .state('volumes.detail.luns-add', {
       url: '/luns/add',
       views: {
-        'tab-content': {templateUrl: 'templates/volumes/lun-form.html'}
+        'tab-content': {
+          templateUrl: 'templates/volumes/lun-form.html',
+          controller : 'VolumeLunFormCtrl'
+        }
       },
       ncyBreadcrumb: {
         label: 'Add',
@@ -203,7 +230,10 @@ angular.module('openattic').config(function ($stateProvider, $urlRouterProvider)
     .state('volumes.detail.http', {
       url: '/http',
       views: {
-        'tab-content': {templateUrl: 'templates/volumes/http.html'}
+        'tab-content': {
+          templateUrl: 'templates/volumes/http.html',
+          controller : 'VolumeHttpSharesCtrl'
+        }
       },
       ncyBreadcrumb: {
         label: '{{selection.item.name}} HTTP'
@@ -212,7 +242,10 @@ angular.module('openattic').config(function ($stateProvider, $urlRouterProvider)
     .state('volumes.detail.http-add', {
       url: '/http/add',
       views: {
-        'tab-content': {templateUrl: 'templates/volumes/http-form.html'}
+        'tab-content': {
+          templateUrl: 'templates/volumes/http-form.html',
+          controller : 'VolumeHttpSharesFormCtrl'
+        }
       },
       ncyBreadcrumb: {
         label: 'Add',
@@ -222,7 +255,10 @@ angular.module('openattic').config(function ($stateProvider, $urlRouterProvider)
     .state('volumes.detail.storage', {
       url: '/storage',
       views: {
-        'tab-content': {templateUrl: 'templates/volumes/storage.html'}
+        'tab-content': {
+          templateUrl: 'templates/volumes/storage.html',
+          controller : 'VolumeStorageCtrl'
+        }
       },
       ncyBreadcrumb: {
         label: '{{selection.item.name}} Storage'
@@ -231,7 +267,10 @@ angular.module('openattic').config(function ($stateProvider, $urlRouterProvider)
     .state('volumes.detail.snapshots', {
       url: '/snapshots',
       views: {
-        'tab-content': {templateUrl: 'templates/volumes/snapshots.html'}
+        'tab-content': {
+          templateUrl: 'templates/volumes/snapshots.html',
+          controller : 'VolumeSnapshotsCtrl'
+        }
       },
       ncyBreadcrumb: {
         label: '{{selection.item.name}} Snapshots'
@@ -240,7 +279,10 @@ angular.module('openattic').config(function ($stateProvider, $urlRouterProvider)
     .state('volumes.detail.snapshots-add', {
       url: '/snapshots/add',
       views: {
-        'tab-content': {templateUrl: 'templates/volumes/snapshot-form.html'}
+        'tab-content': {
+          templateUrl: 'templates/volumes/snapshot-form.html',
+          controller : 'VolumeSnapshotFormCtrl'
+        }
       },
       ncyBreadcrumb: {
         label: 'Add',
@@ -250,7 +292,10 @@ angular.module('openattic').config(function ($stateProvider, $urlRouterProvider)
     .state('volumes-add', {
       url: '/volumes/add',
       views: {
-        'main': {templateUrl: 'templates/volumes/wizard.html'}
+        'main': {
+          templateUrl: 'templates/volumes/wizard.html',
+          controller : 'VolumeWizardCtrl'
+        }
       },
       ncyBreadcrumb: {
         parent: 'volumes',

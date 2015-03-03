@@ -1,40 +1,36 @@
-<div ng-controller="VolumeHttpSharesFormCtrl">
-    <div class="row">
-        <article class="col-sm-12 col-md-12 col-lg-6">
-            <div class="jarviswidget" id="wid-id-0">
-                <header>
-                    <span class="widget-icon"> <i class="fa fa-edit"></i></span>
-                    <h2>Create HTTP Share</h2>
-                </header>
-                <div class="widget-body">
-                    <form name="shareForm" role="form" class="form-horizontal" novalidate>
-                        <fieldset>
-                            <div class="form-group">
-                                <label class="col-md-2 control-label" for="sharePath">Path</label>
-                                <div class="col-md-10">
-                                    <div class="input-group">
-                                        <span class="input-group-addon"><i class="fa fa-share"></i></span>
-                                        <input type="text" class="form-control" placeholder="Path..."
-                                               ng-model="share.path" name="path" id="sharePath" required>
-                                        <span ng-show="shareForm.sharePath.$dirty && shareForm.sharePath.$invalid">
-                                            The path is required.
-                                        </span>
-                                    </div>
-                                </div>
+<article class="col-sm-12 col-md-12 col-lg-6">
+    <div class="jarviswidget" id="wid-id-0">
+        <header>
+            <span class="widget-icon"> <i class="fa fa-edit"></i></span>
+            <h2>Create HTTP Share</h2>
+        </header>
+        <div class="widget-body">
+            <form name="shareForm" role="form" class="form-horizontal" novalidate>
+                <fieldset>
+                    <div class="form-group">
+                        <label class="col-md-2 control-label" for="sharePath">Path</label>
+                        <div class="col-md-10">
+                            <div class="input-group">
+                                <span class="input-group-addon"><i class="fa fa-share"></i></span>
+                                <input type="text" class="form-control" placeholder="Path..."
+                                       ng-model="share.path" name="path" id="sharePath" required>
+                                <span ng-show="shareForm.sharePath.$dirty && shareForm.sharePath.$invalid">
+                                    The path is required.
+                                </span>
                             </div>
-                        </fieldset>
-                        <div class="pull-right" style="padding: 6px 16px">
-                            <button type="button" class="btn btn-default" ng-click="cancelAction()">
-                                Back
-                            </button>
-                            <button type="submit" class="btn btn-primary" ng-click="submitAction()"
-                                    ng-disabled="shareForm.$invalid">
-                                Submit
-                            </button>
                         </div>
-                    </form>
+                    </div>
+                </fieldset>
+                <div class="pull-right" style="padding: 6px 16px">
+                    <button type="button" class="btn btn-default" ng-click="cancelAction()">
+                        Back
+                    </button>
+                    <button type="submit" class="btn btn-primary" ng-click="submitAction()"
+                            ng-disabled="shareForm.$invalid">
+                        Submit
+                    </button>
                 </div>
-            </div>
-        </article>
+            </form>
+        </div>
     </div>
-</div>
+</article>

@@ -1,57 +1,53 @@
-<div ng-controller="VolumeSnapshotFormCtrl">
-    <div class="row">
-        <article class="col-sm-12 col-md-12 col-lg-6">
-            <div class="jarviswidget" id="wid-id-0">
-                <header>
-                    <span class="widget-icon"> <i class="fa fa-edit"></i></span>
-                    <h2>Create Snapshot</h2>
-                </header>
-                <div>
-                    <div class="widget-body">
-                        <form name="snapForm" role="form" class="form-horizontal" novalidate>
-                            <fieldset>
-                                <div class="form-group">
-                                    <label class="col-md-1 control-label" for="snapName">Name</label>
-                                    <div class="col-md-11">
-                                        <div class="input-group">
-                                            <span class="input-group-addon"><i class="fa fa-share"></i></span>
-                                            <input class="form-control" type="text" placeholder="Name..." ng-model="snap.name" name="name" id="snapName" required>
-                                            <span ng-show="snapForm.snapName.$dirty && snapForm.snapName.$invalid">
-                                                The name is required.
-                                            </span>
-                                        </div>
-                                    </div>
-                                </div>
-                                <div class="form-group">
-                                    <label class="col-md-1 control-label" for="snapMegs">Size</label>
-                                    <div class="col-md-11">
-                                        <div class="input-group">
-                                            <span class="input-group-addon"><i class="fa fa-share"></i></span>
-                                            <input class="form-control" name="megs" ng-model="megs" required
-                                                volume-size-format volume-size-value max-value="{{pool.usage.max_new_fsv}}">
-                                            <span ng-show="snapForm.megs.$dirty && snapForm.megs.$error.required">This field is required.</span>
-                                            <span ng-show="snapForm.megs.$dirty && snapForm.megs.$error.volumeSizeFormat">This is not a valid number.</span>
-                                            <span ng-show="snapForm.megs.$dirty && snapForm.megs.$error.volumeSizeValue">
-                                                The size should be at least as big as the original volume and must not exceed {{pool.usage.max_new_fsv_text}}.
-                                            </span>
-                                        </div>
-                                    </div>
-                                </div>
-                            </fieldset>
-                            <div class="form-group">
-                                <div class="pull-right" style="padding: 6px 16px">
-                                    <button type="submit" class="btn btn-primary" ng-click="submitAction()" ng-disabled="snapForm.$invalid">
-                                        Submit
-                                    </button>
-                                    <button type="button" class="btn btn-default" ng-click="cancelAction()">
-                                        Back
-                                    </button>
+<article class="col-sm-12 col-md-12 col-lg-6">
+    <div class="jarviswidget" id="wid-id-0">
+        <header>
+            <span class="widget-icon"> <i class="fa fa-edit"></i></span>
+            <h2>Create Snapshot</h2>
+        </header>
+        <div>
+            <div class="widget-body">
+                <form name="snapForm" role="form" class="form-horizontal" novalidate>
+                    <fieldset>
+                        <div class="form-group">
+                            <label class="col-md-1 control-label" for="snapName">Name</label>
+                            <div class="col-md-11">
+                                <div class="input-group">
+                                    <span class="input-group-addon"><i class="fa fa-share"></i></span>
+                                    <input class="form-control" type="text" placeholder="Name..." ng-model="snap.name" name="name" id="snapName" required>
+                                    <span ng-show="snapForm.snapName.$dirty && snapForm.snapName.$invalid">
+                                        The name is required.
+                                    </span>
                                 </div>
                             </div>
-                        </form>
+                        </div>
+                        <div class="form-group">
+                            <label class="col-md-1 control-label" for="snapMegs">Size</label>
+                            <div class="col-md-11">
+                                <div class="input-group">
+                                    <span class="input-group-addon"><i class="fa fa-share"></i></span>
+                                    <input class="form-control" name="megs" ng-model="megs" required
+                                        volume-size-format volume-size-value max-value="{{pool.usage.max_new_fsv}}">
+                                    <span ng-show="snapForm.megs.$dirty && snapForm.megs.$error.required">This field is required.</span>
+                                    <span ng-show="snapForm.megs.$dirty && snapForm.megs.$error.volumeSizeFormat">This is not a valid number.</span>
+                                    <span ng-show="snapForm.megs.$dirty && snapForm.megs.$error.volumeSizeValue">
+                                        The size should be at least as big as the original volume and must not exceed {{pool.usage.max_new_fsv_text}}.
+                                    </span>
+                                </div>
+                            </div>
+                        </div>
+                    </fieldset>
+                    <div class="form-group">
+                        <div class="pull-right" style="padding: 6px 16px">
+                            <button type="submit" class="btn btn-primary" ng-click="submitAction()" ng-disabled="snapForm.$invalid">
+                                Submit
+                            </button>
+                            <button type="button" class="btn btn-default" ng-click="cancelAction()">
+                                Back
+                            </button>
+                        </div>
                     </div>
-                </div>
+                </form>
             </div>
-        </article>
+        </div>
     </div>
-</div>
+</article>

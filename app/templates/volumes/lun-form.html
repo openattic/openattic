@@ -1,54 +1,50 @@
-<div ng-controller="VolumeLunFormCtrl">
-    <div class="row">
-        <article class="col-sm-12 col-md-12 col-lg-6">
-            <div class="jarviswidget" id="wid-id-0">
-                <header>
-                    <span class="widget-icon"> <i class="fa fa-edit"></i></span>
-                    <h2>Create CIFS Share</h2>
-                </header>
-                <div>
-                    <div class="widget-body">
-                        <form name="shareForm" role="form" class="form-horizontal" novalidate>
-                            <fieldset>
-                                <div class="form-group">
-                                    <label class="col-md-2 control-label" for="shareHost">Host</label>
-                                    <div class="col-md-10">
-                                        <select class="form-control" ng-model="share.host"
-                                                ng-options="host.name for host in hosts" name="host" required>
-                                            <option value="">-- Select a host --</option>
-                                        </select>
-                                        <span ng-show="shareForm.host.$dirty && shareForm.host.$error.required">
-                                            This field is required!
-                                        </span>
-                                    </div>
-                                </div>
-                                <div class="form-group" ng-show="haz_initiator">
-                                    <label class="col-md-2 control-label" for="LunId">ID</label>
-                                    <div class="col-md-10">
-                                        <div class="input-group">
-                                            <span class="input-group-addon"><i class="fa fa-share"></i></span>
-                                            <input type="text" class="form-control" placeholder="ID..."
-                                                   ng-model="share.lun_id" name="lun_id" id="LunId">
-                                            <span ng-show="shareForm.lun_id.$dirty && shareForm.lun_id.$invalid"></span>
-                                        </div>
-                                    </div>
-                                </div>
-                            </fieldset>
-                            <div class="form-group">
-                                <div class="pull-right" style="padding: 6px 16px">
-                                    <button type="submit" class="btn btn-primary" ng-click="submitAction()"
-                                            ng-disabled="shareForm.$invalid">
-                                        Submit
-                                    </button>
-                                    <button type="button" class="btn btn-default" ng-click="cancelAction()">
-                                        Back
-                                    </button>
+<article class="col-sm-12 col-md-12 col-lg-6">
+    <div class="jarviswidget" id="wid-id-0">
+        <header>
+            <span class="widget-icon"> <i class="fa fa-edit"></i></span>
+            <h2>Create CIFS Share</h2>
+        </header>
+        <div>
+            <div class="widget-body">
+                <form name="shareForm" role="form" class="form-horizontal" novalidate>
+                    <fieldset>
+                        <div class="form-group">
+                            <label class="col-md-2 control-label" for="shareHost">Host</label>
+                            <div class="col-md-10">
+                                <select class="form-control" ng-model="share.host"
+                                        ng-options="host.name for host in hosts" name="host" required>
+                                    <option value="">-- Select a host --</option>
+                                </select>
+                                <span ng-show="shareForm.host.$dirty && shareForm.host.$error.required">
+                                    This field is required!
+                                </span>
+                            </div>
+                        </div>
+                        <div class="form-group" ng-show="haz_initiator">
+                            <label class="col-md-2 control-label" for="LunId">ID</label>
+                            <div class="col-md-10">
+                                <div class="input-group">
+                                    <span class="input-group-addon"><i class="fa fa-share"></i></span>
+                                    <input type="text" class="form-control" placeholder="ID..."
+                                           ng-model="share.lun_id" name="lun_id" id="LunId">
+                                    <span ng-show="shareForm.lun_id.$dirty && shareForm.lun_id.$invalid"></span>
                                 </div>
                             </div>
-                        </form>
+                        </div>
+                    </fieldset>
+                    <div class="form-group">
+                        <div class="pull-right" style="padding: 6px 16px">
+                            <button type="submit" class="btn btn-primary" ng-click="submitAction()"
+                                    ng-disabled="shareForm.$invalid">
+                                Submit
+                            </button>
+                            <button type="button" class="btn btn-default" ng-click="cancelAction()">
+                                Back
+                            </button>
+                        </div>
                     </div>
-                </div>
+                </form>
             </div>
-        </article>
+        </div>
     </div>
-</div>
+</article>

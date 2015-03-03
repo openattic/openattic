@@ -1,30 +1,28 @@
 <!-- kate: space-indent on; indent-width 4; replace-tabs on; -->
-<div ng-controller="VolumeNfsSharesCtrl">
-    <oadatatable data="nfsData" filter-config="nfsFilter" selection="nfsSelection">
-        <actions>
-            <a class="btn btn-lg btn-primary" type="button" ng-click="addNfsAction()" ng-hide="nfsSelection.item"><i class="fa fa-fw fa-plus"></i> Add</a>
-            <a class="btn btn-lg btn-primary" type="button" ng-click="deleteNfsAction()" ng-show="nfsSelection.item"><i class="fa fa-fw fa-trash-o"></i> Delete</a>
-            <li><a ng-click="addNfsAction()"><i class="fa fa-fw fa-plus"></i> Add</a></li>
-            <li class="divider"></li>
-            <li ng-class="{disabled: !nfsSelection.item}" max-selected=1><a ng-click="deleteNfsAction()"><i class="fa fa-fw fa-trash-o"></i> Delete</a></li>
-        </actions>
-        <table class="table table-striped table-bordered table-hover dataTable">
-            <thead>
-                <tr>
-                    <th class="oadatatablecheckbox" ng-if="nfsSelection.available"><input type="checkbox" ng-model="nfsSelection.checkAll"/></th>
-                    <th sortfield="address"  sortdir="asc" sortheaderclass sortdefault ng-show="columns['Address']">Address</th>
-                    <th sortfield="path"     sortdir="asc" sortheaderclass ng-show="columns['Path']">Path</th>
-                    <th sortfield="options"  sortdir="asc" sortheaderclass ng-show="columns['Options']">Options</th>
-                </tr>
-            </thead>
-            <tbody>
-                <tr ng-repeat="row in data.results" ng-class="{ info: isRowSelected(row) }" ng-click="toggleSelection(row, $event)">
-                    <td ng-if="nfsSelection.available"><input type="checkbox" checklist-model="nfsSelection.items" checklist-value="row"/></td>
-                    <td ng-show="columns['Address']" ng-bind="row.address"></td>
-                    <td ng-show="columns['Path']"    ng-bind="row.path"></td>
-                    <td ng-show="columns['Options']" ng-bind="row.options"></td>
-                </tr>
-            </tbody>
-        </table>
-    </oadatatable>
-</div>
+<oadatatable data="nfsData" filter-config="nfsFilter" selection="nfsSelection">
+    <actions>
+        <a class="btn btn-lg btn-primary" type="button" ng-click="addNfsAction()" ng-hide="nfsSelection.item"><i class="fa fa-fw fa-plus"></i> Add</a>
+        <a class="btn btn-lg btn-primary" type="button" ng-click="deleteNfsAction()" ng-show="nfsSelection.item"><i class="fa fa-fw fa-trash-o"></i> Delete</a>
+        <li><a ng-click="addNfsAction()"><i class="fa fa-fw fa-plus"></i> Add</a></li>
+        <li class="divider"></li>
+        <li ng-class="{disabled: !nfsSelection.item}" max-selected=1><a ng-click="deleteNfsAction()"><i class="fa fa-fw fa-trash-o"></i> Delete</a></li>
+    </actions>
+    <table class="table table-striped table-bordered table-hover dataTable">
+        <thead>
+            <tr>
+                <th class="oadatatablecheckbox" ng-if="nfsSelection.available"><input type="checkbox" ng-model="nfsSelection.checkAll"/></th>
+                <th sortfield="address"  sortdir="asc" sortheaderclass sortdefault ng-show="columns['Address']">Address</th>
+                <th sortfield="path"     sortdir="asc" sortheaderclass ng-show="columns['Path']">Path</th>
+                <th sortfield="options"  sortdir="asc" sortheaderclass ng-show="columns['Options']">Options</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr ng-repeat="row in data.results" ng-class="{ info: isRowSelected(row) }" ng-click="toggleSelection(row, $event)">
+                <td ng-if="nfsSelection.available"><input type="checkbox" checklist-model="nfsSelection.items" checklist-value="row"/></td>
+                <td ng-show="columns['Address']" ng-bind="row.address"></td>
+                <td ng-show="columns['Path']"    ng-bind="row.path"></td>
+                <td ng-show="columns['Options']" ng-bind="row.options"></td>
+            </tr>
+        </tbody>
+    </table>
+</oadatatable>

@@ -1,99 +1,95 @@
-<div ng-controller="VolumeCifsSharesFormCtrl">
-    <div class="row">
-        <article class="col-sm-12 col-md-12 col-lg-6">
-            <div class="jarviswidget" id="wid-id-0">
-                <header>
-                    <span class="widget-icon"> <i class="fa fa-edit"></i></span>
-                    <h2>Create CIFS Share</h2>
-                </header>
-                <div>
-                    <div class="widget-body">
-                        <form name="shareForm" role="form" class="form-horizontal" novalidate>
-                            <fieldset>
-                                <div class="form-group">
-                                    <label class="col-md-2 control-label" for="shareName">Name</label>
-                                    <div class="col-md-10">
-                                        <div class="input-group">
-                                            <span class="input-group-addon"><i class="fa fa-share"></i></span>
-                                            <input class="form-control" type="text" placeholder="Name..." ng-model="share.name" name="name" id="shareName" required>
-                                            <span ng-show="shareForm.shareName.$dirty && shareForm.shareName.$invalid">
-                                                The name is required.
-                                            </span>
-                                        </div>
-                                    </div>
-                                </div>
-                                <div class="form-group">
-                                    <label class="col-md-2 control-label" for="sharePath">Path</label>
-                                    <div class="col-md-10">
-                                        <div class="input-group">
-                                            <span class="input-group-addon"><i class="fa fa-share"></i></span>
-                                            <input class="form-control" type="text" placeholder="Path..." ng-model="share.path" name="path" id="sharePath" required>
-                                            <span ng-show="shareForm.sharePath.$dirty && shareForm.sharePath.$invalid">
-                                                The name is required.
-                                            </span>
-                                        </div>
-                                    </div>
-                                </div>
-                                <div class="form-group">
-                                    <label class="col-md-2 control-label" for="shareComment">Comment</label>
-                                    <div class="col-md-10">
-                                        <div class="input-group">
-                                            <span class="input-group-addon"><i class="icon-prepend fa fa-share"></i></span>
-                                            <input class="form-control" type="text" placeholder="Comment (shows up in the detail view of Windows Explorer)..."
-                                                ng-model="share.comment" name="comment" id="shareComment">
-                                        </div>
-                                    </div>
-                                </div>
-                                <div class="form-group">
-                                    <div class="col-sm-offset-2 col-sm-10">
-                                        <checkbox ng-model="share.available" name="available" id="shareAvailable"></checkbox>
-                                        <label>
-                                            Is available
-                                        </label>
-                                    </div>
-                                </div>
-                                <div class="form-group">
-                                    <div class="col-sm-offset-2 col-sm-10">
-                                        <checkbox ng-model="share.browseable" name="browseable" id="shareBrowseable" ng-false-value="browseable"></checkbox>
-                                        <label>
-                                            Is browseable
-                                        </label>
-                                    </div>
-                                </div>
-                                <div class="form-group">
-                                    <div class="col-sm-offset-2 col-sm-10">
-                                        <checkbox ng-model="share.writeable" name="writeable" id="shareWriteable"></checkbox>
-                                        <label>
-                                            Is writeable
-                                        </label>
-                                    </div>
-                                </div>
-                                <div class="form-group">
-                                    <div class="col-sm-offset-2 col-sm-10">
-                                        <checkbox ng-model="share.guest_ok" name="guest_ok" id="shareGuestOk"></checkbox>
-                                        <label>
-                                            Accessible by guests
-                                            <!--<span ng-show="domainconfig.domain === ''" class="warning">
-                                                Currently, this host supports guest access only, because it is not part of an Active Directory Domain.
-                                            </span>-->
-                                        </label>
-                                    </div>
-                                </div>
-                            </fieldset>
-                            <div class="form-group">
-                                <div class="pull-right" style="padding: 6px 16px">
-                                    <button type="submit" class="btn btn-primary" ng-click="submitAction()" ng-disabled="shareForm.$invalid">
-                                        Submit
-                                    </button>
-                                    <button type="button" class="btn btn-default" ng-click="cancelAction()">
-                                        Back
-                                    </button>
+<article class="col-sm-12 col-md-12 col-lg-6">
+    <div class="jarviswidget" id="wid-id-0">
+        <header>
+            <span class="widget-icon"> <i class="fa fa-edit"></i></span>
+            <h2>Create CIFS Share</h2>
+        </header>
+        <div>
+            <div class="widget-body">
+                <form name="shareForm" role="form" class="form-horizontal" novalidate>
+                    <fieldset>
+                        <div class="form-group">
+                            <label class="col-md-2 control-label" for="shareName">Name</label>
+                            <div class="col-md-10">
+                                <div class="input-group">
+                                    <span class="input-group-addon"><i class="fa fa-share"></i></span>
+                                    <input class="form-control" type="text" placeholder="Name..." ng-model="share.name" name="name" id="shareName" required>
+                                    <span ng-show="shareForm.shareName.$dirty && shareForm.shareName.$invalid">
+                                        The name is required.
+                                    </span>
                                 </div>
                             </div>
-                        </form>
+                        </div>
+                        <div class="form-group">
+                            <label class="col-md-2 control-label" for="sharePath">Path</label>
+                            <div class="col-md-10">
+                                <div class="input-group">
+                                    <span class="input-group-addon"><i class="fa fa-share"></i></span>
+                                    <input class="form-control" type="text" placeholder="Path..." ng-model="share.path" name="path" id="sharePath" required>
+                                    <span ng-show="shareForm.sharePath.$dirty && shareForm.sharePath.$invalid">
+                                        The name is required.
+                                    </span>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label class="col-md-2 control-label" for="shareComment">Comment</label>
+                            <div class="col-md-10">
+                                <div class="input-group">
+                                    <span class="input-group-addon"><i class="icon-prepend fa fa-share"></i></span>
+                                    <input class="form-control" type="text" placeholder="Comment (shows up in the detail view of Windows Explorer)..."
+                                        ng-model="share.comment" name="comment" id="shareComment">
+                                </div>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <div class="col-sm-offset-2 col-sm-10">
+                                <checkbox ng-model="share.available" name="available" id="shareAvailable"></checkbox>
+                                <label>
+                                    Is available
+                                </label>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <div class="col-sm-offset-2 col-sm-10">
+                                <checkbox ng-model="share.browseable" name="browseable" id="shareBrowseable" ng-false-value="browseable"></checkbox>
+                                <label>
+                                    Is browseable
+                                </label>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <div class="col-sm-offset-2 col-sm-10">
+                                <checkbox ng-model="share.writeable" name="writeable" id="shareWriteable"></checkbox>
+                                <label>
+                                    Is writeable
+                                </label>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <div class="col-sm-offset-2 col-sm-10">
+                                <checkbox ng-model="share.guest_ok" name="guest_ok" id="shareGuestOk"></checkbox>
+                                <label>
+                                    Accessible by guests
+                                    <!--<span ng-show="domainconfig.domain === ''" class="warning">
+                                        Currently, this host supports guest access only, because it is not part of an Active Directory Domain.
+                                    </span>-->
+                                </label>
+                            </div>
+                        </div>
+                    </fieldset>
+                    <div class="form-group">
+                        <div class="pull-right" style="padding: 6px 16px">
+                            <button type="submit" class="btn btn-primary" ng-click="submitAction()" ng-disabled="shareForm.$invalid">
+                                Submit
+                            </button>
+                            <button type="button" class="btn btn-default" ng-click="cancelAction()">
+                                Back
+                            </button>
+                        </div>
                     </div>
-                </div>
+                </form>
             </div>
-        </article>
+        </div>
     </div>
-</div>
+</article>
