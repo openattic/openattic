@@ -325,6 +325,9 @@ angular.module('openattic').config(function ($stateProvider, $urlRouterProvider)
         'main': {
           templateUrl: 'templates/crushmap.html'
         }
+      },
+      ncyBreadcrumb: {
+        label: 'CRUSH Map Editor'
       }
     });
 });
