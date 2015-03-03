@@ -15,7 +15,10 @@
                 </header>
                 <div class="tree">
                     <ul>
-                        <li ng-repeat="data in cluster.crush_map" ng-include="'extensions/crushmap_editor/templates/crushMapNode.html'"></li>
+                        <li><span ng-bind="cluster.name"></span></li>
+                        <ul>
+                            <li ng-repeat="data in cluster.crush_map" ng-include="'extensions/crushmap_editor/templates/crushMapNode.html'"></li>
+                        </ul>
                     </ul>
                 </div>
             </div>
