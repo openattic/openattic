@@ -35,7 +35,7 @@ angular.module('openattic.graph')
                 if(!globalParams){
                     return;
                 }
-                if(globalParams.start && globalParams.end){
+                if(angular.isNumber(globalParams.start) && angular.isNumber(globalParams.end)){
                     $scope.params.start = globalParams.start;
                     $scope.params.end   = globalParams.end;
                 }
