@@ -18,9 +18,9 @@ form .ng-invalid:focus {
     outline-color: red;
 }
 
-form .ng-valid.ng-dirty {
+/*form .ng-valid.ng-dirty {
     border: 2px solid green;
-}
+}*/
 
 form .input-group-addon{
     color: #A2A2A2 !important;
