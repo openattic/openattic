@@ -43,7 +43,7 @@ angular.module('openattic')
     };
 
     var goToListView = function() {
-      $state.go('users.list');
+      $state.go('users');
     };
   });
 

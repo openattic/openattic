@@ -26,7 +26,7 @@
             <tr ng-repeat="row in data.results" ng-class="{ info: isRowSelected(row) }" ng-click="toggleSelection(row, $event)">
                 <td ng-if="selection.available"><input type="checkbox" checklist-model="selection.items" checklist-value="row"/></td>
                 <td ng-show="columns['Username']">
-                    <a ui-sref="users.edit({user:row.id})" ng-bind="row.username"></a>
+                    <a ui-sref="users-edit({user:row.id})" ng-bind="row.username"></a>
                 </td>
                 <td ng-show="columns['Firstname']"          ng-bind="row.first_name"></td>
                 <td ng-show="columns['Lastname']"           ng-bind="row.last_name"></td>

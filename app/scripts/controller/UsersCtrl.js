@@ -36,11 +36,11 @@ angular.module('openattic')
     });
 
     $scope.addAction = function(){
-      $state.go('users.add');
+      $state.go('users-add');
     };
 
     $scope.editAction = function(){
-      $state.go('users.edit', {user: $scope.selection.item.id});
+      $state.go('users-edit', {user: $scope.selection.item.id});
     };
 
     $scope.deleteAction = function(){
