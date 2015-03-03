@@ -301,6 +301,9 @@ angular.module('openattic').config(function ($stateProvider, $urlRouterProvider)
         'main': {
           templateUrl: 'templates/apikeys.html'
         }
+      },
+      ncyBreadcrumb: {
+        label: 'Apikeys'
       }
     })
     .state('cmdlogs', {
