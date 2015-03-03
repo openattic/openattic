@@ -1,5 +1,5 @@
 <!-- kate: space-indent on; indent-width 4; replace-tabs on; -->
-<span ng-bind="data.name"></span>
+<span>{{ data.name }}</span><em> &mdash; {{ data.type }}</em>
 <ul>
     <li ng-repeat="data in data.children" ng-include="'extensions/crushmap_editor/templates/crushMapNode.html'"></li>
 </ul>
