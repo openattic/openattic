@@ -1,5 +1,8 @@
 <div class="tree" ng-controller="PoolStorageCtrl">
     <ul>
-        <li ng-repeat="data in storage.devices" ng-include="'templates/storageTreeNode.html'"></li>
+        <li><span ng-bind="selection.item.name"></span></li>
+        <ul>
+            <li ng-repeat="data in storage.devices" ng-include="'templates/storageTreeNode.html'"></li>
+        </ul>
     </ul>
 </div>
