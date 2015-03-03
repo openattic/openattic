@@ -345,7 +345,8 @@ angular.module('openattic').config(function ($stateProvider, $urlRouterProvider)
       url: '/cmdlogs',
       views: {
         'main': {
-          templateUrl: 'templates/cmdlogs.html'
+          templateUrl: 'templates/cmdlogs.html',
+          controller : 'CmdlogCtrl'
         }
       },
       ncyBreadcrumb: {
