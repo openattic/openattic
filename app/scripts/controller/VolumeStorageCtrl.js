@@ -1,8 +1,10 @@
 angular.module('openattic')
   .controller('VolumeStorageCtrl', function ($scope, VolumeService) {
     'use strict';
-    new VolumeService($scope.selection.item).$storage().then(function (res) {
-      $scope.active_volume_storage = res;
+    $scope.$watch('selection.item', function(item){
+      if(item){
+        $scope.storage = VolumeService.storage({id: item.id});
+      }
     });
   });
 
