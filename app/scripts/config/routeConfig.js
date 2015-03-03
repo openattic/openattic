@@ -19,30 +19,45 @@ angular.module('openattic').config(function ($stateProvider, $urlRouterProvider)
       controller: 'PoolCtrl',
       views: {
         'main': {templateUrl: 'templates/pools.html'}
+      },
+      ncyBreadcrumb: {
+        label: 'Pools'
       }
     })
     .state('pools.detail', {
       url: '/:pool',
       views: {
         'tab': {templateUrl: 'templates/pools/tab.html'}
+      },
+      ncyBreadcrumb: {
+        skip: true
       }
     })
     .state('pools.detail.status', {
       url: '/status',
       views: {
         'tab-content': {templateUrl: 'templates/pools/status.html'}
+      },
+      ncyBreadcrumb: {
+        label: '{{selection.item.name}} Status'
       }
     })
     .state('pools.detail.storage', {
       url: '/storage',
       views: {
         'tab-content': {templateUrl: 'templates/pools/storage.html'}
+      },
+      ncyBreadcrumb: {
+        label: '{{selection.item.name}} Storage'
       }
     })
     .state('pools.detail.cephpool', {
       url: '/cephpool',
       views: {
         'tab-content': {templateUrl: 'templates/pools/cephpool.html'}
+      },
+      ncyBreadcrumb: {
+        label: '{{selection.item.name}} Cephpool'
       }
     })
     .state('disks', {
@@ -51,6 +66,9 @@ angular.module('openattic').config(function ($stateProvider, $urlRouterProvider)
         'main': {
           templateUrl: 'templates/disks.html'
         }
+      },
+      ncyBreadcrumb: {
+        label: 'Disks'
       }
     })
     .state('volumes', {
@@ -237,6 +255,9 @@ angular.module('openattic').config(function ($stateProvider, $urlRouterProvider)
         'main': {
           templateUrl: 'templates/hosts.html'
         }
+      },
+      ncyBreadcrumb: {
+        label: 'Hosts'
       }
     })
     .state('hosts-add', {
@@ -245,6 +266,10 @@ angular.module('openattic').config(function ($stateProvider, $urlRouterProvider)
         'main': {
           templateUrl: 'templates/hosts/form.html'
         }
+      },
+      ncyBreadcrumb: {
+        label: 'Add',
+        parent: 'hosts'
       }
     })
     .state('hosts-edit', {
@@ -253,6 +278,10 @@ angular.module('openattic').config(function ($stateProvider, $urlRouterProvider)
         'main': {
           templateUrl: 'templates/hosts/form.html'
         }
+      },
+      ncyBreadcrumb: {
+        label: 'Edit',
+        parent: 'hosts'
       }
     })
     .state('hosts.attributes', {
@@ -261,6 +290,10 @@ angular.module('openattic').config(function ($stateProvider, $urlRouterProvider)
         'detail': {
           templateUrl: 'templates/hosts/attributes.html'
         }
+      },
+      ncyBreadcrumb: {
+        label: 'Attributes',
+        parent: 'hosts'
       }
     })
     .state('users', {
@@ -269,6 +302,9 @@ angular.module('openattic').config(function ($stateProvider, $urlRouterProvider)
         'main': {
           templateUrl: 'templates/users.html'
         }
+      },
+      ncyBreadcrumb: {
+        label: 'Users'
       }
     })
     .state('users-add', {
@@ -277,6 +313,10 @@ angular.module('openattic').config(function ($stateProvider, $urlRouterProvider)
         'main': {
           templateUrl: 'templates/users/userform.html'
         }
+      },
+      ncyBreadcrumb: {
+        label: 'Add',
+        parent: 'users'
       }
     })
     .state('users-edit', {
@@ -285,6 +325,9 @@ angular.module('openattic').config(function ($stateProvider, $urlRouterProvider)
         'main': {
           templateUrl: 'templates/users/userform.html'
         }
+      },
+      ncyBreadcrumb: {
+        parent: 'users'
       }
     })
     .state('apikeys', {
@@ -315,6 +358,9 @@ angular.module('openattic').config(function ($stateProvider, $urlRouterProvider)
         'main': {
           templateUrl: 'templates/crushmap.html'
         }
+      },
+      ncyBreadcrumb: {
+        label: 'CRUSH Map Editor'
       }
     });
 });
