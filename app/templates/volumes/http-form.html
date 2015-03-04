@@ -14,10 +14,10 @@
                                 <span class="input-group-addon"><i class="fa fa-share"></i></span>
                                 <input type="text" class="form-control" placeholder="Path..."
                                        ng-model="share.path" name="path" id="sharePath" required>
-                                <span ng-show="shareForm.sharePath.$dirty && shareForm.sharePath.$invalid">
-                                    The path is required.
-                                </span>
                             </div>
+                            <span ng-show="shareForm.sharePath.$dirty && shareForm.sharePath.$invalid">
+                                The path is required.
+                            </span>
                         </div>
                     </div>
                 </fieldset>
