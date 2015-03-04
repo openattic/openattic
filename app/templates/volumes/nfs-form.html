@@ -14,10 +14,10 @@
                                 <div class="input-group">
                                     <span class="input-group-addon"> <i class="icon-prepend fa fa-share"></i></span>
                                     <input class="form-control" type="text" placeholder="Path..." ng-model="share.path" name="path" id="sharePath" required>
-                                    <span ng-show="shareForm.sharePath.$dirty && shareForm.sharePath.$invalid">
-                                        The path is required.
-                                    </span>
                                 </div>
+                                <span ng-show="shareForm.sharePath.$dirty && shareForm.sharePath.$invalid">
+                                    The path is required.
+                                </span>
                             </div>
                         </div>
                         <div class="form-group">
@@ -26,10 +26,10 @@
                                 <div class="input-group">
                                     <span class="input-group-addon"><i class="icon-prepend fa fa-share"></i></span>
                                     <input class="form-control" type="text" placeholder="Address..." ng-model="share.address" name="address" id="shareAddress" required>
-                                    <span ng-show="shareForm.shareAddress.$dirty && shareForm.shareAddress.$invalid">
-                                        The address is required.
-                                    </span>
                                 </div>
+                                <span ng-show="shareForm.shareAddress.$dirty && shareForm.shareAddress.$invalid">
+                                    The address is required.
+                                </span>
                             </div>
                         </div>
                         <div class="form-group">
