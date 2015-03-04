@@ -100,6 +100,10 @@ angular.module('openattic')
       });
     };
 
+    $scope.moreOptionsAction = function(){
+      $('#more').effect('highlight', {}, 2000);
+    };
+
     $scope.deleteAction = function(){
       if($scope.selection.item.is_protected){
         $.smallBox({
