@@ -101,7 +101,7 @@ angular.module('openattic')
     };
 
     $scope.moreOptionsAction = function(){
-      $('#more').effect('highlight', {}, 2000);
+      $('#more').effect('highlight', {}, 3000);
     };
 
     $scope.deleteAction = function(){
