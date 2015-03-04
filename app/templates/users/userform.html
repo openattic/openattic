@@ -26,7 +26,7 @@
                             <div class="col-md-10">
                                 <div class="input-group">
                                     <span class="input-group-addon"> <i class="icon-prepend fa fa-key"></i></span>
-                                    <input class="form-control" type="password" placeholder="Password..." ng-model="user.password" name="password" id="userPassword">
+                                    <input class="form-control" type="text" placeholder="Password..." ng-model="user.password" name="password" id="userPassword" required>
                                 </div>
                                 <span ng-show="userForm.password.$dirty && userForm.password.$invalid">
                                     A password is required.
