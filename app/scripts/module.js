@@ -3,6 +3,8 @@ angular.module('openattic', [
   'ngResource',
   'ui.router',
   'ui.bootstrap',
+  'ui.sortable',
+  'ui.dashboard',
   'ngTagsInput',
   'ncy-angular-breadcrumb',
   'openattic.auth',
