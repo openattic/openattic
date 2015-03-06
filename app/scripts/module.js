@@ -13,6 +13,7 @@ angular.module('openattic', [
   'openattic.graph',
   'openattic.sizeparser',
   'openattic.extensions',
+  'openattic.clock',
   'smartadmin.smartmenu',
   'ui.checkbox'
 ]);

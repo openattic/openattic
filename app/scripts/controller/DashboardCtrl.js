@@ -5,10 +5,18 @@ angular.module('openattic')
       name: 'Volume Stats',
       title: 'Volume Stats',
       directive: 'volumestatwidget'
+    }, {
+      name: 'Clock',
+      title: 'Clock',
+      directive: 'clockwidget',
+      size: {
+        width: '15%'
+      }
     }
   ])
   .value('defaultWidgets', [
-    { name: 'Volume Stats' }
+    { name: 'Volume Stats' },
+    { name: 'Clock' }
   ])
   .controller('DashboardCtrl', function ($scope, $window, widgetDefinitions, defaultWidgets){
     $scope.dashboardOptions = {
