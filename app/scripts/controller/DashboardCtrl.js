@@ -12,7 +12,7 @@ angular.module('openattic')
   ])
   .controller('DashboardCtrl', function ($scope, $window, widgetDefinitions, defaultWidgets){
     $scope.dashboardOptions = {
-      widgetButtons: true,
+      widgetButtons: false,
       widgetDefinitions: widgetDefinitions,
       defaultWidgets: defaultWidgets,
       storage: $window.localStorage,
