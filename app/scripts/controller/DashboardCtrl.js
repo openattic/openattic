@@ -3,6 +3,7 @@
 angular.module('openattic')
   .value('widgetDefinitions', [{
       name: 'Volume Stats',
+      title: 'Volume Stats',
       directive: 'volumestatwidget'
     }
   ])
