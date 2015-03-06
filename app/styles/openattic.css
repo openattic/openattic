@@ -154,3 +154,10 @@ utilgraphs img {
 perfgraphs img {
     margin: 10px;
 }
+
+/* dashboard widgets --> */
+.widget {
+    border: 1px solid #d4d4d4 !important;
+}
+/* <-- dashboard widget */
+
