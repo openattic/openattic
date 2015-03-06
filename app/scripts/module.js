@@ -14,6 +14,7 @@ angular.module('openattic', [
   'openattic.sizeparser',
   'openattic.extensions',
   'openattic.clock',
+  'openattic.todowidget',
   'smartadmin.smartmenu',
   'ui.checkbox'
 ]);
