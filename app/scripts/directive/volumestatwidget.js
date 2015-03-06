@@ -1,12 +1,12 @@
 angular.module('openattic')
-  .directive('volumewidget', function() {
+  .directive('volumestatwidget', function() {
     'use strict';
 
     return {
       restrict: 'A',
       scope: true,
       replace: true,
-      templateUrl: 'templates/volumes/widget.html',
+      templateUrl: 'templates/volumes/statwidget.html',
       controller: function($scope, VolumeService) {
         $scope.volumes = [];
         $scope.volumesLoaded = false;

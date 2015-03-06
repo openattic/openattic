@@ -2,12 +2,12 @@
 
 angular.module('openattic')
   .value('widgetDefinitions', [{
-      name: 'volumes',
-      directive: 'volumewidget'
+      name: 'Volume Stats',
+      directive: 'volumestatwidget'
     }
   ])
   .value('defaultWidgets', [
-    { name: 'volumes' }
+    { name: 'Volume Stats' }
   ])
   .controller('DashboardCtrl', function ($scope, $window, widgetDefinitions, defaultWidgets){
     $scope.dashboardOptions = {
