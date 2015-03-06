@@ -12,11 +12,16 @@ angular.module('openattic')
       size: {
         width: '15%'
       }
+    }, {
+      name: 'ToDos',
+      title: 'ToDos',
+      directive: 'todowidget'
     }
   ])
   .value('defaultWidgets', [
     { name: 'Volume Stats' },
-    { name: 'Clock' }
+    { name: 'Clock' },
+    { name: 'ToDos' }
   ])
   .controller('DashboardCtrl', function ($scope, $window, widgetDefinitions, defaultWidgets){
     $scope.dashboardOptions = {
