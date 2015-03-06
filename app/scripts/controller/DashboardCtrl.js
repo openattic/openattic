@@ -24,7 +24,8 @@ angular.module('openattic')
       widgetDefinitions: widgetDefinitions,
       defaultWidgets: defaultWidgets,
       storage: $window.localStorage,
-      storageId: 'oa_widgets'
+      storageId: 'oa_widgets',
+      hideWidgetName: true
     };
   });
 // kate: space-indent on; indent-width 2; replace-tabs on;
