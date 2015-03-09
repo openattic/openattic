@@ -25,11 +25,15 @@ from ceph.models import Cluster, Ruleset
 
 
 class RulesetSerializer(serializers.HyperlinkedModelSerializer):
+    steps       = serializers.SerializerMethodField("get_rule_steps")
     description = serializers.SerializerMethodField("get_description")
 
     class Meta:
         model = Ruleset
-        fields = ('id', 'ceph_id', 'name', 'type', 'min_size', 'max_size', 'description')
+        fields = ('id', 'ceph_id', 'name', 'type', 'min_size', 'max_size', 'description', 'steps')
+
+    def get_rule_steps(self, obj):
+        return obj.get_rule()["steps"]
 
     def get_description(self, obj):
         return obj.get_description()

@@ -175,28 +175,30 @@ class Ruleset(models.Model):
     min_size    = models.IntegerField(default=1)
     max_size    = models.IntegerField(default=10)
 
-    def get_description(self):
-        """ Generate a human-readable description of what this ruleset does. """
+    def get_rule(self):
         crushmap = self.cluster.get_crushmap()
         for crule in crushmap["rules"]:
-            if crule["ruleset"] != self.ceph_id:
-                continue
-            bits = []
-            for step in crule["steps"]:
-                if step["op"] == "take":
-                    bits.append("from the %s tree" % step["item_name"])
-                elif step["op"].startswith("choose"):
-                    if not step["num"]:
-                        bitpart = "select as many %ss as necessary" % step["type"]
-                    else:
-                        bitpart = "select %d %ss" % (step["num"], step["type"])
-                    bits.append(bitpart)
-                    if step["op"].startswith("chooseleaf"):
-                        bits.append("descend to their OSDs")
-                elif step["op"] == "emit":
-                    bits.append("done")
-            return ", ".join(bits)
+            if crule["ruleset"] == self.ceph_id:
+                return crule
         raise KeyError("rule not found in crushmap")
+
+    def get_description(self):
+        """ Generate a human-readable description of what this ruleset does. """
+        bits = []
+        for step in self.get_rule()["steps"]:
+            if step["op"] == "take":
+                bits.append("from the %s tree" % step["item_name"])
+            elif step["op"].startswith("choose"):
+                if not step["num"]:
+                    bitpart = "select as many %ss as necessary" % step["type"]
+                else:
+                    bitpart = "select %d %ss" % (step["num"], step["type"])
+                bits.append(bitpart)
+                if step["op"].startswith("chooseleaf"):
+                    bits.append("descend to their OSDs")
+            elif step["op"] == "emit":
+                bits.append("done")
+        return ", ".join(bits)
 
 class Pool(VolumePool):
     cluster     = models.ForeignKey(Cluster)
