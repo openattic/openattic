@@ -13,7 +13,7 @@ angular.module('openattic')
       title: 'Clock',
       directive: 'clockwidget',
       size: {
-        width: '15%'
+        width: '245px'
       }
     }, {
       name: 'ToDos',
