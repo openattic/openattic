@@ -7,7 +7,7 @@ angular.module('openattic.userinfo')
       template: [
         '<div class="login-info">',
         '<span>',
-        '<a href="javascript:void(0);" id="show-shortcut" data-action="toggleShortcut">',
+        '<a ui-sref="users-edit({user:user.id})" id="show-shortcut" data-action="toggleShortcut">',
         '<img src="http://www.gravatar.com/avatar/{{ user.email | gravatar }}.jpg?d=monsterid" alt="me" style="border-left: 0px;"/>',
         '<span ng-bind="user.username"></span>',
         '</a>',
