@@ -8,94 +8,99 @@
         <div>
             <div class="widget-body">
                 <form name="userForm" role="form" class="form-horizontal" novalidate>
-                    <fieldset>
-                        <div class="form-group">
-                            <label class="col-md-2 control-label" for="userUsername">Username</label>
-                            <div class="col-md-10">
-                                <div class="input-group">
-                                    <span class="input-group-addon"> <i class="icon-prepend fa fa-user"></i></span>
-                                    <input class="form-control" type="text" placeholder="Username..." ng-model="user.username" name="username" id="userUsername" required>
-                                </div>
-                                <span ng-show="userForm.username.$dirty && userForm.username.$invalid">
-                                    The username is required.
-                                </span>
-                            </div>
-                        </div>
-                        <div class="form-group" ng-if="!editing">
-                            <label class="col-md-2 control-label" for="userPassword">Password</label>
-                            <div class="col-md-10">
-                                <div class="input-group">
-                                    <span class="input-group-addon"> <i class="icon-prepend fa fa-key"></i></span>
-                                    <input class="form-control" type="password" placeholder="Password..." ng-model="user.password" name="password" id="userPassword" required>
-                                </div>
-                                <span ng-show="userForm.password.$dirty && userForm.password.$invalid">
-                                    A password is required.
-                                </span>
-                            </div>
-                        </div>
-                        <div class="form-group">
-                            <label class="col-md-2 control-label" for="userFirstname">Firstname</label>
-                            <div class="col-md-10">
-                                <div class="input-group">
-                                    <span class="input-group-addon"><i class="icon-prepend fa fa-user"></i></span>
-                                    <input class="form-control" type="text" placeholder="Firstname..." ng-model="user.first_name" name="firstname" id="userFirstname">
+                    <div class="col-md-2">
+                        <img ng-src="{{image}}" class="img-thumbnail"/>
+                    </div>
+                    <div class="col-md-10">
+                        <fieldset>
+                            <div class="form-group">
+                                <label class="col-md-2 control-label" for="userUsername">Username</label>
+                                <div class="col-md-10">
+                                    <div class="input-group">
+                                        <span class="input-group-addon"> <i class="icon-prepend fa fa-user"></i></span>
+                                        <input class="form-control" type="text" placeholder="Username..." ng-model="user.username" name="username" id="userUsername" required>
+                                    </div>
+                                    <span ng-show="userForm.username.$dirty && userForm.username.$invalid">
+                                        The username is required.
+                                    </span>
                                 </div>
                             </div>
-                        </div>
-                        <div class="form-group">
-                            <label class="col-md-2 control-label" for="userLastname">Lastname</label>
-                            <div class="col-md-10">
-                                <div class="input-group">
-                                    <span class="input-group-addon"> <i class="icon-prepend fa fa-user"></i></span>
-                                    <input class="form-control" type="text" placeholder="Lastname..." ng-model="user.last_name" name="last">
+                            <div class="form-group" ng-if="!editing">
+                                <label class="col-md-2 control-label" for="userPassword">Password</label>
+                                <div class="col-md-10">
+                                    <div class="input-group">
+                                        <span class="input-group-addon"> <i class="icon-prepend fa fa-key"></i></span>
+                                        <input class="form-control" type="password" placeholder="Password..." ng-model="user.password" name="password" id="userPassword" required>
+                                    </div>
+                                    <span ng-show="userForm.password.$dirty && userForm.password.$invalid">
+                                        A password is required.
+                                    </span>
                                 </div>
                             </div>
-                        </div>
-                        <div class="form-group">
-                            <label class="col-md-2 control-label" for="userEmail">Email Address</label>
-                            <div class="col-md-10">
-                                <div class="input-group">
-                                    <span class="input-group-addon"> <i class="icon-prepend fa fa-envelope-o"></i></span>
-                                    <input class="form-control" type="email" placeholder="Email Address..." ng-model="user.email" name="email" id="userEmail">
+                            <div class="form-group">
+                                <label class="col-md-2 control-label" for="userFirstname">Firstname</label>
+                                <div class="col-md-10">
+                                    <div class="input-group">
+                                        <span class="input-group-addon"><i class="icon-prepend fa fa-user"></i></span>
+                                        <input class="form-control" type="text" placeholder="Firstname..." ng-model="user.first_name" name="firstname" id="userFirstname">
+                                    </div>
                                 </div>
-                                <span ng-show="userForm.email.$dirty && userForm.email.$invalid">
-                                    It's not a valid email address.
-                                </span>
                             </div>
-                        </div>
+                            <div class="form-group">
+                                <label class="col-md-2 control-label" for="userLastname">Lastname</label>
+                                <div class="col-md-10">
+                                    <div class="input-group">
+                                        <span class="input-group-addon"> <i class="icon-prepend fa fa-user"></i></span>
+                                        <input class="form-control" type="text" placeholder="Lastname..." ng-model="user.last_name" name="last">
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <label class="col-md-2 control-label" for="userEmail">Email Address</label>
+                                <div class="col-md-10">
+                                    <div class="input-group">
+                                        <span class="input-group-addon"> <i class="icon-prepend fa fa-envelope-o"></i></span>
+                                        <input class="form-control" type="email" placeholder="Email Address..." ng-model="user.email" name="email" id="userEmail">
+                                    </div>
+                                    <span ng-show="userForm.email.$dirty && userForm.email.$invalid">
+                                        It's not a valid email address.
+                                    </span>
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <div class="col-sm-offset-2 col-sm-10">
+                                    <checkbox ng-model="user.is_active" name="active" id="userActive"></checkbox>
+                                    <label>
+                                        Is active
+                                    </label>
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <div class="col-sm-offset-2 col-sm-10">
+                                    <checkbox ng-model="user.is_staff" name="staff" id="userStaff"></checkbox>
+                                    <label>
+                                        Is administrator
+                                    </label>
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <div class="col-sm-offset-2 col-sm-10">
+                                    <checkbox ng-model="user.is_superuser" name="superuser" id="userSuperuser"></checkbox>
+                                    <label>
+                                        Has all privileges
+                                    </label>
+                                </div>
+                            </div>
+                        </fieldset>
                         <div class="form-group">
-                            <div class="col-sm-offset-2 col-sm-10">
-                                <checkbox ng-model="user.is_active" name="active" id="userActive"></checkbox>
-                                <label>
-                                    Is active
-                                </label>
+                            <div class="pull-right" style="padding: 6px 16px">
+                                <button type="button" class="btn btn-default" ng-click="cancelAction()">
+                                    Back
+                                </button>
+                                <button type="submit" class="btn btn-primary" ng-click="submitAction()" ng-disabled="userForm.$invalid">
+                                    Submit
+                                </button>
                             </div>
-                        </div>
-                        <div class="form-group">
-                            <div class="col-sm-offset-2 col-sm-10">
-                                <checkbox ng-model="user.is_staff" name="staff" id="userStaff"></checkbox>
-                                <label>
-                                    Is administrator
-                                </label>
-                            </div>
-                        </div>
-                        <div class="form-group">
-                            <div class="col-sm-offset-2 col-sm-10">
-                                <checkbox ng-model="user.is_superuser" name="superuser" id="userSuperuser"></checkbox>
-                                <label>
-                                    Has all privileges
-                                </label>
-                            </div>
-                        </div>
-                    </fieldset>
-                    <div class="form-group">
-                        <div class="pull-right" style="padding: 6px 16px">
-                            <button type="button" class="btn btn-default" ng-click="cancelAction()">
-                                Back
-                            </button>
-                            <button type="submit" class="btn btn-primary" ng-click="submitAction()" ng-disabled="userForm.$invalid">
-                                Submit
-                            </button>
                         </div>
                     </div>
                 </form>

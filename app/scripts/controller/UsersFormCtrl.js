@@ -1,10 +1,14 @@
 angular.module('openattic')
-  .controller('UserFormCtrl', function ($scope, $state, $stateParams, UserService) {
+  .controller('UserFormCtrl', function ($scope, $state, $stateParams, UserService, $filter) {
     'use strict';
+
+    var gravatarId = $filter('gravatar')('');
 
     if(!$stateParams.user){
       $scope.user = {'active': true};
       $scope.editing = false;
+
+      $scope.image = 'http://www.gravatar.com/avatar/' + gravatarId + '.jpg?d=monsterid';
 
       $scope.submitAction = function() {
         UserService.save($scope.user)
@@ -23,6 +27,9 @@ angular.module('openattic')
         .$promise
         .then(function(res){
           $scope.user = res;
+
+          gravatarId = $filter('gravatar')($scope.user.email);
+          $scope.image = 'http://www.gravatar.com/avatar/' + gravatarId + '.jpg?d=monsterid';
         }, function(error){
           console.log('An error occurred', error);
         });
