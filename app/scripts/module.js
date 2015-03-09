@@ -7,6 +7,7 @@ angular.module('openattic', [
   'ui.dashboard',
   'ngTagsInput',
   'ncy-angular-breadcrumb',
+  'angular-md5',
   'openattic.auth',
   'openattic.apirecorder',
   'openattic.datatable',
