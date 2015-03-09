@@ -14,6 +14,10 @@ angular.module('openattic')
       },
       filter: {
         method: 'GET'
+      },
+      current: {
+        method: 'GET',
+        url: '/openattic/api/users/current'
       }
     });
   });
