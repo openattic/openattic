@@ -18,7 +18,7 @@ from django.contrib.auth.models import User
 from django.contrib.contenttypes.models import ContentType
 
 from rest_framework import serializers, viewsets
-from rest_framework.decorators import detail_route
+from rest_framework.decorators import detail_route, list_route
 from rest_framework.response import Response
 
 from rest import relations
@@ -56,6 +56,12 @@ class UserViewSet(viewsets.ModelViewSet):
         vols = user.filesystemvolume_set.all()
         serializer = FileSystemVolumeSerializer(vols, many=True, context={'request': request})
         return Response(serializer.data)
+
+    @list_route()
+    def current(self, request, *args, **kwargs):
+        serializer = UserSerializer(request.user, many=False, context={"request": request})
+        return Response(serializer.data)
+
 
 RESTAPI_VIEWSETS = [
     ('users', UserViewSet),
