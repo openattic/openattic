@@ -15,12 +15,16 @@ angular.module('openattic.graph')
                     'style="background-color: rgba(30, 30, 220, 0.4); ',
                         'position: absolute; height: 153px; width: 1px; ',
                         'z-index: 100; visibility: hidden;">&nbsp;</div>',
-                '<img ng-src="/openattic/nagios/v/{{ volume.id }}/{{ title }}.png?{{ urlparams }}" />',
+                '<img ng-src="/openattic/nagios/v/{{ volume.id }}/{{ encodedTitle }}.png?{{ urlparams }}" />',
             '</div>'].join(''),
         controller: function($scope, GraphProfileService){
             $scope.params = {
                 width: $scope.width
             };
+
+            $scope.$watch('title', function(title){
+                $scope.encodedTitle = encodeURIComponent(title);
+            });
 
             $scope.$watch('params', function(params){
                 if(params){
