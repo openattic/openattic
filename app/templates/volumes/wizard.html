@@ -87,32 +87,31 @@
                     </accordion-group>
                 </accordion>
                 <accordion>
-                    <accordion-group is-open="accordionOpen.mirror">
+                    <accordion-group is-open="accordionOpen.mirror" is-disabled="true">
                         <accordion-heading>
-                            Volume Mirroring
+                            <div style="color: #BDBDBD;">
+                                Volume Mirroring - <i><b>Coming Soon...</b></i>
                             <i class="pull-right" ng-class="{'fa fa-angle-up': accordionOpen.mirror,
-                            'fa fa-angle-down': !accordionOpen.mirror}"></i>
+                            'fa fa-angle-down': !accordionOpen.mirror}"></i></div>
                         </accordion-heading>
-                        <fieldset disabled>
-                            <div class="form-group">
-                                <label class="col-md-2 control-label">Mirror Host</label>
-                                <div class="col-md-10">
-                                    <select class="form-control" ng-model="data.mirrorHost"
-                                            ng-options="host.name for host in hosts track by host.name">
-                                        <option value="">-- Select a host --</option>
-                                    </select>
-                                </div>
+                        <div class="form-group">
+                            <label class="col-md-2 control-label">Mirror Host</label>
+                            <div class="col-md-10">
+                                <select class="form-control" ng-model="data.mirrorHost" id="mirror-host"
+                                        ng-options="host.name for host in hosts track by host.name" title="Coming soon...">
+                                    <option value="">-- Select a host --</option>
+                                </select>
                             </div>
-                            <div class="form-group">
-                                <label class="col-md-2 control-label">Mirror Pool</label>
-                                <div class="col-md-10">
-                                    <select class="form-control" ng-model="data.mirrorPool" ng-options="
-                                    pool.name for pool in pools track by pool.name">
-                                        <option value="">-- Select a host --</option>
-                                    </select>
-                                </div>
+                        </div>
+                        <div class="form-group">
+                            <label class="col-md-2 control-label">Mirror Pool</label>
+                            <div class="col-md-10">
+                                <select class="form-control" ng-model="data.mirrorPool" ng-options="
+                                pool.name for pool in pools track by pool.name">
+                                    <option value="">-- Select a host --</option>
+                                </select>
                             </div>
-                        </fieldset>
+                        </div>
                     </accordion-group>
                 </accordion>
                 <div class="form-group">
