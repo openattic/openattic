@@ -1,5 +1,11 @@
 <!-- kate: space-indent on; indent-width 4; replace-tabs on; -->
-<span>{{ data.name }}</span><em> &mdash; {{ data.type }}</em>
+<span ng-class="{
+    'bg-primary': data.isRootNode,
+    'bg-info':    data.isBelowRootNode && !data.isSelectorNode,
+    'bg-success': data.isSelectorNode
+}" >{{ data.name }}</span><em> &mdash; {{ data.type }}</em>
 <ul>
-    <li ng-repeat="data in data.children" ng-include="'extensions/crushmap_editor/templates/crushMapNode.html'"></li>
+    <li ng-repeat="data in data.children"
+        ng-include="'extensions/crushmap_editor/templates/crushMapNode.html'"
+        ></li>
 </ul>

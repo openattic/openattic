@@ -10,6 +10,24 @@
         <article class="col-sm-12 col-md-12 col-lg-12">
             <div class="jarviswidget" id="wid-id-1" data-widget-editbutton="false" data-widget-custombutton="false">
                 <header>
+                    <div class="widget-toolbar" role="menu">
+                        <a class="dropdown-toggle" data-toggle="dropdown"><i class="fa fa-clock-o"></i> Rulesets </a>
+                        <ul class="dropdown-menu arrow-box-up-right pull-right">
+                            <li ng-repeat="ruleset in cluster.rulesets">
+                                <button class="btn btn-sm"
+                                    ng-bind="ruleset.name"
+                                    ng-click="setActiveRuleset(ruleset)"
+                                    ng-class="{
+                                        'btn-default': true,
+                                        'btn-primary': false
+                                    }"
+                                    ></button>
+                            </li>
+                            <li class="pull-left">
+                                <button class="btn btn-sm btn-default" ng-click="setActiveRuleset(null)">Default</button>
+                            </li>
+                        </ul>
+                    </div>
                     <span class="widget-icon"> <i class="fa fa-edit"></i> </span>
                     <h2>CRUSH Map for Cluster &ldquo;{{cluster.name}}&rdquo;</h2>
                 </header>
