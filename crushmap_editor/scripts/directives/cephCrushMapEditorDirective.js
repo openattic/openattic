@@ -18,16 +18,33 @@ angular.module('openattic.extensions')
         };
         $scope.setActiveRuleset(null);
 
+        $scope.repsize = 3;
+        $scope.$watch('repsize', function(repsize){
+          if( $scope.activeRuleset ){
+            if( repsize < $scope.activeRuleset.min_size ){
+              $scope.repsize = $scope.activeRuleset.min_size;
+            }
+            if( repsize > $scope.activeRuleset.max_size ){
+              $scope.repsize = $scope.activeRuleset.max_size;
+            }
+          }
+        });
+
         $scope.$watch('activeRuleset', function(activeRuleset){
+          var checkNode, checksteps, c, init, prev_step_count;
           if( !$scope.cluster ){
             return;
           }
-          var checkNode = function(steps, node, isBelowRootNode){
+          $scope.repsize = activeRuleset.min_size;
+          var checkNode = function(steps, node, isBelowRootNode, init){
             var step, i;
 
-            node.isRootNode      = false;
-            node.isBelowRootNode = false;
-            node.isSelectorNode  = false;
+            if(init){
+              node.isRootNode      = false;
+              node.isBelowRootNode = false;
+              node.isSelectorNode  = false;
+              node.nextStep        = null;
+            }
 
             if( steps.length > 0 ){
               step = steps[0];
@@ -35,7 +52,7 @@ angular.module('openattic.extensions')
                 if( step.item === node.ceph_id ){
                   node.isRootNode = true;
                   isBelowRootNode = true;
-                  steps = steps.slice();
+                  node.nextStep = steps[1];
                   steps.shift();
                 }
               }
@@ -43,19 +60,43 @@ angular.module('openattic.extensions')
                 node.isBelowRootNode = isBelowRootNode;
                 if( step.type === node.type ){
                   node.isSelectorNode = true;
-                  steps = steps.slice();
+                  node.nextStep = steps[1];
                   steps.shift();
                 }
               }
+              if(steps[0].op === 'emit' && node.children.length === 0 ){
+                steps.shift();
+              }
             }
             for( i = 0; i < node.children.length; i++ ){
-              checkNode(steps, node.children[i], isBelowRootNode);
+              checkNode(steps, node.children[i], isBelowRootNode, init);
             }
           };
-          for( var c = 0; c < $scope.cluster.crush_map.length; c++ ){
-            checkNode( (activeRuleset ? activeRuleset.steps : []), $scope.cluster.crush_map[c], false);
-          }
+
+          checksteps = (activeRuleset ? activeRuleset.steps.slice() : []);
+          init = true;
+          do{
+            prev_step_count = checksteps.length;
+            for( c = 0; c < $scope.cluster.crush_map.length; c++ ){
+              checkNode(checksteps, $scope.cluster.crush_map[c], false, init);
+            }
+            init = false;
+            console.log(checksteps);
+            if( checksteps.length >= prev_step_count ){
+              // Safety measure: checkNode should consume a coupl'a steps. If it
+              // didn't, something seem to be wrong.
+              throw "The CRUSH map renderer seems unable to render this CRUSH map ruleset."
+            }
+          } while(checksteps.length > 0);
         });
+
+        $scope.getRealNum = function(step){
+          if( !step ) return;
+          if( step.num <= 0 ){
+            return step.num + $scope.repsize;
+          }
+          return step.num;
+        }
       }
     };
   });
