@@ -14,6 +14,8 @@
  *  GNU General Public License for more details.
 """
 
+import django_filters
+
 from django.db.models import Q
 
 from rest_framework import serializers, viewsets
@@ -93,10 +95,18 @@ class PoolSerializer(serializers.HyperlinkedModelSerializer):
         return obj.get_status()
 
 
+class PoolFilter(django_filters.FilterSet):
+    type = django_filters.CharFilter(name="volumepool__volumepool_type__app_label", lookup_type="iexact")
+
+    class Meta:
+        model  = models.StorageObject
+        fields = ['name', 'uuid', 'createdate']
+
+
 class PoolViewSet(viewsets.ModelViewSet):
     queryset = models.StorageObject.objects.filter(volumepool__isnull=False)
     serializer_class = PoolSerializer
-    filter_fields = ('name', 'uuid', 'createdate')
+    filter_class  = PoolFilter
     search_fields = ('name',)
 
     @detail_route()
