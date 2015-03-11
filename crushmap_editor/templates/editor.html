@@ -27,7 +27,7 @@
             <div class="jarviswidget" id="wid-id-1" data-widget-editbutton="false" data-widget-custombutton="false">
                 <header>
                     <span class="widget-icon"> <i class="fa fa-edit"></i> </span>
-                    <h2>Ruleset editor &ldquo;{{cluster.name}}&rdquo;</h2>
+                    <h2>Ruleset editor</h2>
                 </header>
                 <div>
                     <form name="hostForm" role="form" class="form-horizontal" novalidate>
@@ -53,11 +53,23 @@
                             <div class="form-group">
                                 <label class="col-md-2 control-label" for="steps">Steps</label>
                                 <div class="col-md-10">
-                                    <ul>
+                                    <ol>
                                         <li ng-repeat="step in activeRuleset.steps">
-                                            {{ step.op }} {{ step.type }} {{ step.item_name }}
+                                            <span ng-show="step.op === 'take'">
+                                                Start at {{ step.item_name }}
+                                            </span>
+                                            <span ng-show="step.op === 'choose_firstn' || step.op === 'chooseleaf_firstn'">
+                                                Choose
+                                                <ng-pluralize count="getRealNum(step)" when="{
+                                                    '1': 'one ' + step.type,
+                                                    'other': '{} ' + step.type + 's'
+                                                }"></ng-pluralize>
+                                                <span ng-show="step.num < 0">({{ repsize }} - {{ -step.num}})</span>
+                                                <span ng-show="step.op === 'chooseleaf_firstn'">and descend to the OSDs</span>
+                                            </span>
+                                            <span ng-show="step.op === 'emit'">Add these OSDs to the list</span>
                                         </li>
-                                    </ul>
+                                    </ol>
                                 </div>
                             </div>
                         </fieldset>
