@@ -65,13 +65,12 @@
                                                 Start at {{ step.item_name }}
                                             </span>
                                             <span ng-show="step.op === 'choose_firstn' || step.op === 'chooseleaf_firstn'">
-                                                Choose
+                                                Choose <span ng-show="step.op === 'chooseleaf_firstn'">one OSD from each of </span>
                                                 <ng-pluralize count="getRealNum(step)" when="{
                                                     '1': 'one ' + step.type,
                                                     'other': '{} ' + step.type + 's'
                                                 }"></ng-pluralize>
                                                 <span ng-show="step.num < 0">({{ repsize }} - {{ -step.num}})</span>
-                                                <span ng-show="step.op === 'chooseleaf_firstn'">and descend to the OSDs</span>
                                             </span>
                                             <span ng-show="step.op === 'emit'">Add these OSDs to the list</span>
                                         </li>
