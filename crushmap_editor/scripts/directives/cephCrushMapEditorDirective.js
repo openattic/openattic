@@ -31,63 +31,76 @@ angular.module('openattic.extensions')
         });
 
         $scope.$watch('activeRuleset', function(activeRuleset){
-          var checkNode, checksteps, c, init, prev_step_count;
+          var resetNodes, renderNodes, rendersteps, c, init, prevStepCount;
           if( !$scope.cluster ){
             return;
           }
-          $scope.repsize = activeRuleset.min_size;
-          var checkNode = function(steps, node, isBelowRootNode, init){
-            var step, i;
-
-            if(init){
+          $scope.repsize = (activeRuleset ? activeRuleset.min_size : 3);
+          resetNodes = function(nodes){
+            var i, node;
+            for( i = 0; i < nodes.length; i++ ){
+              node = nodes[i];
               node.isRootNode      = false;
               node.isBelowRootNode = false;
               node.isSelectorNode  = false;
               node.nextStep        = null;
+              resetNodes(node.children);
             }
+          };
+          renderNodes = function(steps, nodes, isBelowRootNode){
+            var i, node, substeps;
 
-            if( steps.length > 0 ){
-              step = steps[0];
-              if(step.op === 'take'){
-                if( step.item === node.ceph_id ){
+            for( i = 0; i < nodes.length; i++ ){
+              substeps = steps;
+              node = nodes[i];
+              console.log([node.name, steps]);
+
+              if(steps[0].op === 'take'){
+                if( steps[0].item === node.ceph_id ){
                   node.isRootNode = true;
                   isBelowRootNode = true;
                   node.nextStep = steps[1];
+                  console.log([node.name, steps[0].op, "shift!"]);
                   steps.shift();
                 }
               }
-              else if(step.op === 'choose_firstn' || step.op === 'chooseleaf_firstn'){
+              else if(steps[0].op === 'choose_firstn' || steps[0].op === 'chooseleaf_firstn'){
                 node.isBelowRootNode = isBelowRootNode;
-                if( step.type === node.type ){
+                if( steps[0].type === node.type ){
+                  typeMatch = true;
                   node.isSelectorNode = true;
                   node.nextStep = steps[1];
-                  steps.shift();
+                  console.log([node.name, steps[0].op, "shift!"]);
+                  substeps = steps.slice();
+                  substeps.shift();
                 }
               }
-              if(steps[0].op === 'emit' && node.children.length === 0 ){
-                steps.shift();
+              if( node.children.length > 0 ){
+                renderNodes(substeps, node.children, isBelowRootNode);
               }
-            }
-            for( i = 0; i < node.children.length; i++ ){
-              checkNode(steps, node.children[i], isBelowRootNode, init);
+              if( node.isRootNode ){
+                while(steps.length > 0 && steps[0].op !== 'take'){
+                  steps.shift();
+                }
+                if(steps.length === 0){
+                  return;
+                }
+              }
             }
           };
 
-          checksteps = (activeRuleset ? activeRuleset.steps.slice() : []);
-          init = true;
-          do{
-            prev_step_count = checksteps.length;
-            for( c = 0; c < $scope.cluster.crush_map.length; c++ ){
-              checkNode(checksteps, $scope.cluster.crush_map[c], false, init);
+          rendersteps = (activeRuleset ? activeRuleset.steps.slice() : []);
+          resetNodes($scope.cluster.crush_map);
+          while(rendersteps.length > 0){
+            prevStepCount = rendersteps.length;
+            renderNodes(rendersteps, $scope.cluster.crush_map, false);
+            console.log(rendersteps);
+            if( rendersteps.length >= prevStepCount ){
+              // Safety measure: renderNodes should consume a coupl'a steps. If it
+              // didn't, something seems to be wrong.
+              throw 'The CRUSH map renderer seems unable to render this CRUSH map ruleset.';
             }
-            init = false;
-            console.log(checksteps);
-            if( checksteps.length >= prev_step_count ){
-              // Safety measure: checkNode should consume a coupl'a steps. If it
-              // didn't, something seem to be wrong.
-              throw "The CRUSH map renderer seems unable to render this CRUSH map ruleset."
-            }
-          } while(checksteps.length > 0);
+          }
         });
 
         $scope.getRealNum = function(step){
