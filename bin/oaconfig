@@ -280,9 +280,9 @@ EOF
 		fi
 		echo "Joining Domain..."
 		net ads join -k
-		net ads keytab create
-		net ads keytab add HTTP
-		net ads keytab add HTTPS
+		net ads keytab -k create
+		net ads keytab -k add HTTP
+		net ads keytab -k add HTTPS
 		
 		chmod g+r /etc/krb5.keytab
 		chgrp openattic /etc/krb5.keytab
