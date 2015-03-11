@@ -35,21 +35,27 @@
                             <div class="form-group">
                                 <label class="col-md-2 control-label" for="ruleset">Ruleset</label>
                                 <div class="col-md-10">
-                                    <select
+                                    <select class="form-control"
                                         ng-options="ruleset as ruleset.name for ruleset in cluster.rulesets track by ruleset.id"
-                                        ng-model="activeRuleset" />
+                                        ng-model="activeRuleset">
+                                        <option value="">Select a ruleset...</option>
+                                    </select>
                                 </div>
                             </div>
                         </fieldset>
-                        <fieldset>
+                        <fieldset ng-show="activeRuleset">
                             <div class="form-group">
                                 <label class="col-md-2 control-label" for="replicas">Replicas</label>
                                 <div class="col-md-10">
-                                    <input type="number" ng-model="repsize" />
+                                    <input type="number" class="form-control" ng-model="repsize" />
+                                    <span>
+                                        The selected ruleset allows {{activeRuleset.min_size}} to {{activeRuleset.max_size}} replicas.
+                                        Choose the number of replicas for which you would like to simulate replica placement.
+                                    </span>
                                 </div>
                             </div>
                         </fieldset>
-                        <fieldset>
+                        <fieldset ng-show="activeRuleset">
                             <div class="form-group">
                                 <label class="col-md-2 control-label" for="steps">Steps</label>
                                 <div class="col-md-10">
