@@ -7,29 +7,9 @@
         No Ceph clusters available.
     </div>
     <div class="row" ng-show="clusters.$resolved && clusters.length > 0">
-        <article class="col-sm-12 col-md-12 col-lg-12">
+        <article class="col-sm-12 col-md-12 col-lg-6">
             <div class="jarviswidget" id="wid-id-1" data-widget-editbutton="false" data-widget-custombutton="false">
                 <header>
-                    <div class="widget-toolbar" role="menu">
-                        <a class="dropdown-toggle" data-toggle="dropdown"><i class="fa fa-clock-o"></i> Rulesets </a>
-                        <ul class="dropdown-menu arrow-box-up-right pull-right">
-                            <li ng-repeat="ruleset in cluster.rulesets">
-                                <button class="btn btn-sm"
-                                    ng-bind="ruleset.name"
-                                    ng-click="setActiveRuleset(ruleset)"
-                                    ng-class="{
-                                        'btn-default': true,
-                                        'btn-primary': false
-                                    }"
-                                    ></button>
-                            </li>
-                            <li class="pull-left">
-                                <button class="btn btn-sm btn-default" ng-click="setActiveRuleset(null)">Default</button>
-                            </li>
-                        </ul>
-                        <input type="number" ng-model="repsize" />
-<!--                         <select ng-options="pool as pool.name for pool in pools track by pool.id" ng-model="selectedPool" /> -->
-                    </div>
                     <span class="widget-icon"> <i class="fa fa-edit"></i> </span>
                     <h2>CRUSH Map for Cluster &ldquo;{{cluster.name}}&rdquo;</h2>
                 </header>
@@ -40,6 +20,48 @@
                             <li ng-repeat="data in cluster.crush_map" ng-include="'extensions/crushmap_editor/templates/crushMapNode.html'"></li>
                         </ul>
                     </ul>
+                </div>
+            </div>
+        </article>
+        <article class="col-sm-12 col-md-12 col-lg-6">
+            <div class="jarviswidget" id="wid-id-1" data-widget-editbutton="false" data-widget-custombutton="false">
+                <header>
+                    <span class="widget-icon"> <i class="fa fa-edit"></i> </span>
+                    <h2>Ruleset editor &ldquo;{{cluster.name}}&rdquo;</h2>
+                </header>
+                <div>
+                    <form name="hostForm" role="form" class="form-horizontal" novalidate>
+                        <fieldset>
+                            <div class="form-group">
+                                <label class="col-md-2 control-label" for="ruleset">Ruleset</label>
+                                <div class="col-md-10">
+                                    <select
+                                        ng-options="ruleset as ruleset.name for ruleset in cluster.rulesets track by ruleset.id"
+                                        ng-model="activeRuleset" />
+                                </div>
+                            </div>
+                        </fieldset>
+                        <fieldset>
+                            <div class="form-group">
+                                <label class="col-md-2 control-label" for="replicas">Replicas</label>
+                                <div class="col-md-10">
+                                    <input type="number" ng-model="repsize" />
+                                </div>
+                            </div>
+                        </fieldset>
+                        <fieldset>
+                            <div class="form-group">
+                                <label class="col-md-2 control-label" for="steps">Steps</label>
+                                <div class="col-md-10">
+                                    <ul>
+                                        <li ng-repeat="step in activeRuleset.steps">
+                                            {{ step.op }} {{ step.type }} {{ step.item_name }}
+                                        </li>
+                                    </ul>
+                                </div>
+                            </div>
+                        </fieldset>
+                    </form>
                 </div>
             </div>
         </article>
