@@ -549,7 +549,7 @@ class VolumePool(models.Model):
         if megs < 100:
             raise ValidationError({"megs": ["Volumes need to be at least 100MB in size."]})
 
-        is_protected = options.get('is_protected', False);
+        is_protected = options.pop('is_protected', False)
 
         storageobj = StorageObject(name=name, megs=megs, source_pool=self, is_protected=is_protected)
         storageobj.full_clean()
