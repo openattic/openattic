@@ -48,19 +48,6 @@ angular.module('openattic')
       $state.go('volumes');
     };
 
-    var goToNextSensibleState = function(){
-      if(!$scope.state.created){
-        $state.go('volumes-add.create');
-      }
-      // TODO: if !mirrored goto mirror once that's implemented
-      else if(!$scope.state.formatted){
-        $state.go('volumes-add.filesystem');
-      }
-      else{
-        goToListView();
-      }
-    };
-
     $scope.submitAction = function() {
       if (!$scope.state.created) {
         if( $scope.data.filesystem !== '' ){
@@ -72,7 +59,7 @@ angular.module('openattic')
             $scope.volume = res;
             $scope.state.created = true;
             $scope.state.formatted = $scope.volume.is_filesystemvolume;
-            goToNextSensibleState();
+            goToListView();
           }, function(error){
             console.log('An error occured', error);
           });
@@ -94,7 +81,7 @@ angular.module('openattic')
           .then(function(res) {
             $scope.volume = res;
             $scope.state.formatted = true;
-            goToNextSensibleState();
+            goToListView();
           }, function(error) {
             console.log('An error occured', error);
           });
