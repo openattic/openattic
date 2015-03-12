@@ -641,8 +641,8 @@ else
 	groupmems -g openattic  -a nagios
 fi
 # for double security only, should be installed correctly
-chown openattic:openattic /var/lock/openattic
-chown -R openattic:openattic  /var/lib/openattic
+chown -R openattic:openattic /var/lock/openattic
+chown -R openattic:openattic /var/lib/openattic
 
 # Sollte im Paket erledigt sein, aber wird zur Sicherheit noch angelegt
 touch /var/log/openattic_rpcd
