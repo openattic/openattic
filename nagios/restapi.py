@@ -42,16 +42,22 @@ class ServiceSerializer(serializers.HyperlinkedModelSerializer):
                 "title": graph.title,
                 "url":   reverse("nagios.views.graph", args=(obj.id, graph.id), request=self.context["request"])
             })
-        for (srcid, title) in obj.rrd.source_labels.items():
-            graphs.append({
-                "id":    srcid,
-                "title": title,
-                "url":   reverse("nagios.views.graph", args=(obj.id, srcid), request=self.context["request"])
-            })
+        try:
+            for (srcid, title) in obj.rrd.source_labels.items():
+                graphs.append({
+                    "id":    srcid,
+                    "title": title,
+                    "url":   reverse("nagios.views.graph", args=(obj.id, srcid), request=self.context["request"])
+                })
+        except SystemError:
+            pass
         return graphs
 
     def get_performance_data(self, obj):
-        return obj.perfdata
+        try:
+            return obj.perfdata
+        except SystemError:
+            return None
 
 class ServiceViewSet(viewsets.ReadOnlyModelViewSet):
     queryset = Service.objects.all()
