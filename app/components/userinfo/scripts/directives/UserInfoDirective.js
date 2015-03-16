@@ -9,7 +9,7 @@ angular.module('openattic.userinfo')
         '<span>',
         '<a ui-sref="users-edit({user:user.id})" id="show-shortcut" data-action="toggleShortcut">',
         '<img ng-src="{{image}}" style="border-left: 0px;"/>',
-        '<span ng-bind="user.username"></span>',
+        '<span class="tc_usernameinfo" ng-bind="user.username"></span>',
         '</a>',
         '</span>',
         '</div>'
