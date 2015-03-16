@@ -4,14 +4,17 @@ angular.module('openattic.extensions')
       restrict: 'E',
       templateUrl: 'extensions/crushmap_editor/templates/editor.html',
       controller: function($scope, ClusterResource){
-        $scope.clusters = ClusterResource.query(function(clusters){
-          if(clusters.length === 1){
-            $scope.cluster = clusters[0];
-          }
-          else{
-            $scope.cluster = null;
-          }
-        });
+        $scope.query = function(){
+          $scope.clusters = ClusterResource.query(function(clusters){
+            if(clusters.length === 1){
+              $scope.cluster = clusters[0];
+            }
+            else{
+              $scope.cluster = null;
+            }
+          });
+        };
+        $scope.query();
 
         $scope.setActiveRuleset = function(activeRuleset){
           $scope.activeRuleset = activeRuleset;
