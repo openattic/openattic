@@ -12,6 +12,10 @@ describe('General', function() {
     expect(browser.getTitle()).toEqual('openATTIC');
   });
 
+  it('should show the name of the current user', function(){
+    expect(element(by.css('span .tc_usernameinfo')).getText()).toEqual('Openattic');
+  });
+
   it('should have dashboard as first nav item', function(){
     expect(element.all(by.css('ul .tc_menuitem')).get(0).getText()).toEqual('Dashboard');
   });
@@ -34,5 +38,12 @@ describe('General', function() {
 
   it('should have system as sixth nav item', function(){
     expect(element.all(by.css('ul .tc_menuitem')).get(5).getText()).toEqual('System');
+  });
+
+  it('should have 3 subitems under the system menu item', function(){
+    var systemItem = element.all(by.css('ul .tc_menuitem')).get(5);
+    systemItem.click();
+
+    expect(systemItem.all(by.css('ul .tc_submenuitem')).count()).toEqual(3);
   });
 });
