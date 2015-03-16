@@ -92,6 +92,8 @@ class Service(models.Model):
         perfdata = perfdata.replace(",", ".")
         data = {}
         for definition in perfdata.split(" "):
+            if '=' not in definition:
+                continue
             key, values = definition.split("=", 1)
             data[key] = dict(zip(
                 ["curr", "warn", "crit", "min", "max"],

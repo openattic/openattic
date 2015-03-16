@@ -614,6 +614,7 @@ class RRD(object):
         self.perfdata = dict( [
             pd.split('=', 1) for pd in
             self.xml.getElementsByTagName("NAGIOS_SERVICEPERFDATA")[0].childNodes[0].nodeValue.split(' ')
+            if '=' in pd
             ] )
 
     def get_source(self, srcname):
