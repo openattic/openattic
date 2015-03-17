@@ -161,3 +161,7 @@ perfgraphs img {
 }
 /* <-- dashboard widget */
 
+.required {
+    color: red;
+}
+
