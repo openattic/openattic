@@ -28,7 +28,7 @@
                                 <div class="col-md-10">
                                     <select class="form-control" ng-model="data.sourcePool" id="data.sourcePool"
                                             ng-options="(pool.name + ' (' + pool.type.name + ')') for pool in pools track by pool.id" name="pool" required>
-                                        <option value="">-- Select a pool --</option>
+                                        <option class="tc_volumePoolOption" value="">-- Select a pool --</option>
                                     </select>
                                     <span ng-show="volumeForm.pool.$dirty && volumeForm.pool.$error.required">This field is required!</span>
                                     <div ng-show="data.sourcePool">
@@ -120,7 +120,7 @@
                         <button type="submit" class="btn btn-primary" ng-click="submitAction()" ng-disabled="volumeForm.$invalid">
                             Submit
                         </button>
-                        <button type="button" class="btn btn-default" ng-click="cancelAction()">
+                        <button type="button" class="btn btn-default tc_backButton" ng-click="cancelAction()">
                             Back
                         </button>
                     </div>
