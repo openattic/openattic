@@ -40,7 +40,7 @@ class RulesetSerializer(serializers.HyperlinkedModelSerializer):
 
 
 class ClusterSerializer(serializers.HyperlinkedModelSerializer):
-    """ Serializer for a NFS Export. """
+    """ Serializer for a Ceph Cluster. """
     url         = serializers.HyperlinkedIdentityField(view_name="cephcluster-detail")
     crush_map   = serializers.SerializerMethodField("get_crush_map")
     rulesets    = RulesetSerializer(many=True, read_only=True, source="ruleset_set")
