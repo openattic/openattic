@@ -277,6 +277,8 @@ class Pool(VolumePool):
                 stats["steal"]   = df["stats"]["total_space_megs"] - stats["vp_used"] - stats["vp_free"]
                 stats["used"]  = max(stats.get("used", None),         stats["vp_used"])
                 stats["free"]  = min(stats.get("free", float("inf")), stats["vp_free"])
+                stats["vp_max_new_fsv"] = stats["vp_free"]
+                stats["vp_max_new_bv"]  = stats["vp_free"]
                 break
         return stats
 
