@@ -1,29 +1,17 @@
-
 <div class="jarviswidget" id="wid-id-4" widget-editbutton="false" widget-colorbutton="false">
     <div class="widget-body no-padding smart-form">
-        <h5 class="todo-group-title"><i class="fa fa-warning"></i> Tasks (<small class="num-of-tasks">{{getTotalTodos()}}</small>)</h5>
-        <ul id="sortable1" class="todo" ng-repeat="todo in todos">
-            <li>
-                <span class="handle"> 
-                    <checkbox ng-model="todo.open"></checkbox> 
-                 </span>
-                <p>
-                    {{todo.text}} [<a ui-sref="volumes-add" class="font-xs">Start Task</a>]
-                </p>
-            </li>
-        </ul>
         <div>
-            <h5 class="todo-group-title"><i class="fa fa-check"></i> Completed Tasks</h5>
-            <ul id="sortable3" class="todo">
-                <li class="complete">
-                    <span class="handle"> 
-                        <label class="checkbox state-disabled" style="display:none">
-                            <input type="checkbox" name="checkbox-inline" checked="checked" disabled="disabled"><i></i>
-                        </label>
+            <h5 class="todo-group-title"><i class="fa fa-warning"></i> Tasks (<small>{{getTotalTodos()}}</small>)</h5>
+            <ul class="todo" ng-repeat="todo in todos">
+                <li>
+                    <span> 
+                        <checkbox ng-model="todo.open"></checkbox> 
                     </span>
-                    <p></p>
+                    <p>
+                        <strong> <span class="done-{{todo.open}}"> {{todo.text}} </span></strong> [<a ui-sref="volumes-add" class="font-xs"> Start Task </a>]
+                    </p>
                 </li>
             </ul>
-        <div>
+        </div>
     </div>
 </div>
