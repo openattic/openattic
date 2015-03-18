@@ -9,8 +9,8 @@ angular.module('openattic.todowidget')
         templateUrl:'components/todoWidget/templates/todo.html',
         controller: function($scope){
             $scope.todos = [
-                {text: "Create Disk", open: true },
-                {text: "Create Pool", open: true },
+//              {text: "Create Disk", open: true },
+//              {text: "Create Pool", open: true },
                 {text: "Create Volume", open: true }
             ];
 
@@ -19,4 +19,4 @@ angular.module('openattic.todowidget')
             };
         }
     }
-  });
+});
