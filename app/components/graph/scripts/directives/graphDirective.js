@@ -23,7 +23,11 @@ angular.module('openattic.graph')
             };
 
             $scope.$watch('title', function(title){
-                $scope.encodedTitle = encodeURIComponent(title);
+                // Replace spaces with %20 while leaving all other characters intact.
+                // Normally, you'd want to use encodeURIComponent here, but that would
+                // also encode / as %2F, which is acceptable neither for apache, nor
+                // WSGI, nor Django itself, so we'd better not do that, I guess.
+                $scope.encodedTitle = title.replace(' ', '%20');
             });
 
             $scope.$watch('params', function(params){
