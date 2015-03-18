@@ -164,4 +164,8 @@ perfgraphs img {
 .required {
     color: red;
 }
+.done-false {
+    text-decoration: line-through;
+    color: grey;
+}
 
