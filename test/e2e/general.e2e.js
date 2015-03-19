@@ -1,11 +1,7 @@
+var helpers = require('./common.js');
 describe('General', function() {
   beforeEach(function() {
-    browser.get('http://172.16.13.135/openattic/angular/login.html');
-    element.all(by.model('username')).sendKeys('openattic');
-    element.all(by.model('password')).sendKeys('openattic');
-    element.all(by.css('input[type="submit"]')).click();
-
-    browser.sleep(2000);
+    helpers.login();
   });
 
   it('should have a title', function(){
