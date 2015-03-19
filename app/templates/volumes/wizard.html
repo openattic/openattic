@@ -73,7 +73,7 @@
                                            ng-model="data.megs" placeholder="e.g., 10GB" id="data.megs" required>
                                     <span ng-show="volumeForm.megs.$dirty && volumeForm.megs.$error.required">This field is required.</span>
                                     <span ng-show="volumeForm.megs.$dirty && volumeForm.megs.$error.volumeSizeFormat">This is not a valid number.</span>
-                                    <span ng-show="volumeForm.megs.$dirty && volumeForm.megs.$error.volumeSizeValue">
+                                    <span class="tc_wrongVolumeSize" ng-show="volumeForm.megs.$dirty && volumeForm.megs.$error.volumeSizeValue">
                                         The size must be at least 100MB and must not exceed {{data.sourcePool.usage.max_new_fsv_text}}.
                                     </span>
                                 </div>

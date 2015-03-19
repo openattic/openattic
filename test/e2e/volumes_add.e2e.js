@@ -39,4 +39,14 @@ describe('Volumes add', function() {
     expect(volumepoolSelect.all(by.css('select .tc_volumePoolOption')).count()).toBeGreaterThan(0);
   });
 
+  it('should show a message if the chosen volume size is smaller than 100mb', function(){
+    var volumepoolSelect = element(by.model('data.sourcePool'));
+
+    helpers.selectDropdownByIndex(volumepoolSelect, 2);
+
+    var volumeSizeInput = element(by.model('data.megs'));
+    volumeSizeInput.sendKeys('99mb');
+
+    expect(element(by.css('.tc_wrongVolumeSize')).isPresent()).toBe(true);
+  });
 });
