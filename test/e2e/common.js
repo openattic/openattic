@@ -9,6 +9,15 @@
       element.all(by.css('input[type="submit"]')).click();
 
       browser.sleep(2000);
+    },
+    selectDropdownByIndex: function (dropdown, index) {
+      dropdown.click();
+      if (index) {
+        dropdown.all(by.tagName('option'))
+          .then(function (options) {
+            options[index].click();
+          });
+      }
     }
   };
 }());
