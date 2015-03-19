@@ -41,12 +41,21 @@ describe('Volumes add', function() {
 
   it('should show a message if the chosen volume size is smaller than 100mb', function(){
     var volumepoolSelect = element(by.model('data.sourcePool'));
-
     helpers.selectDropdownByIndex(volumepoolSelect, 2);
 
     var volumeSizeInput = element(by.model('data.megs'));
     volumeSizeInput.sendKeys('99mb');
 
     expect(element(by.css('.tc_wrongVolumeSize')).isPresent()).toBe(true);
+  });
+
+  it('should show a message if the given volume size the is just a string', function(){
+    var volumepoolSelect = element(by.model('data.sourcePool'));
+    helpers.selectDropdownByIndex(volumepoolSelect, 2);
+
+    var volumeSizeInput = element(by.model('data.megs'));
+    volumeSizeInput.sendKeys('abc');
+
+    expect(element(by.css('.tc_noValidNumber')).isPresent()).toBe(true);
   });
 });
