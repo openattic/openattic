@@ -1,14 +1,21 @@
 'use strict';
 
+var configs = {
+  url     : 'http://172.16.13.135/openattic/angular/login.html',
+  username: 'openattic',
+  password: 'openattic',
+  sleep   : 2000
+};
+
 (function() {
   module.exports = {
     login: function() {
-      browser.get('http://172.16.13.135/openattic/angular/login.html');
-      element.all(by.model('username')).sendKeys('openattic');
-      element.all(by.model('password')).sendKeys('openattic');
+      browser.get(configs.url);
+      element.all(by.model('username')).sendKeys(configs.username);
+      element.all(by.model('password')).sendKeys(configs.password);
       element.all(by.css('input[type="submit"]')).click();
 
-      browser.sleep(2000);
+      browser.sleep(configs.sleep);
     },
     selectDropdownByIndex: function (dropdown, index) {
       dropdown.click();
