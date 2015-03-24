@@ -40,7 +40,7 @@ class Share(models.Model):
     def save( self, *args, **kwargs ):
         ret = models.Model.save(self, *args, **kwargs)
         samba = get_dbus_object("/samba")
-        samba.writeconf()
+        samba.writeconf("", "")
         samba.reload()
         return ret
 
@@ -48,6 +48,6 @@ class Share(models.Model):
         volume = self.volume
         ret = models.Model.delete(self)
         samba = get_dbus_object("/samba")
-        samba.writeconf()
+        samba.writeconf("", "")
         samba.reload()
         return ret

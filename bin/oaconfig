@@ -269,10 +269,7 @@ EOF
 		kinit "$user"
 		
 		echo "Configuring Samba..."
-		dbus-send --system --print-reply --dest=org.openattic.systemd /samba org.openattic.systemd.writeconf
-		sed -i -e 's/\s*workgroup\s*=.*$/   workgroup = '$workgroup'/' /etc/samba/smb.conf
-		sed -i -e 's/\s*realm\s*=.*$/   realm = '$realm'/' /etc/samba/smb.conf
-		sed -i -e 's/\s*netbios\s*name\s*=.*$/   netbios name = '$netbios'/' /etc/samba/smb.conf
+		dbus-send --system --print-reply --dest=org.openattic.systemd /samba org.openattic.systemd.writeconf "string:$realm" "string:$workgroup"
 		
 		if [ -e /etc/krb5.keytab ]; then
 			echo "Removing old keytab..."
@@ -325,7 +322,7 @@ EOF
 		while ! oacli ping ; do
 			sleep 1
 		done
-		dbus-send --system --print-reply --dest=org.openattic.systemd /samba org.openattic.systemd.writeconf
+		dbus-send --system --print-reply --dest=org.openattic.systemd /samba org.openattic.systemd.writeconf "string:" "string:"
 		for SERVICE in $SAMBA_SERVICES; do
 			service $SERVICE restart
 		done

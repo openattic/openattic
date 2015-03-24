@@ -27,14 +27,15 @@ from samba.conf    import settings as samba_settings
 class SystemD(BasePlugin):
     dbus_path = "/samba"
 
-    @method(in_signature="", out_signature="")
-    def writeconf(self):
+    @method(in_signature="ss", out_signature="")
+    def writeconf(self, fake_domain, fake_workgroup):
+        # the fake_* arguments are needed for domain join.
         fd = open( samba_settings.SMB_CONF, "wb" )
         try:
             fd.write( render_to_string( "samba/smb.conf", {
                 'Hostname':  socket.gethostname(),
-                'Domain':    samba_settings.DOMAIN,
-                'Workgroup': samba_settings.WORKGROUP,
+                'Domain':    samba_settings.DOMAIN    or fake_domain,
+                'Workgroup': samba_settings.WORKGROUP or fake_workgroup,
                 'Shares':    Share.objects.all()
                 } ).encode("UTF-8") )
         finally:
