@@ -7,7 +7,7 @@
         </header>
         <div>
             <div class="widget-body">
-                <form name="volumeForm" role="form" class="form-horizontal" ng-submit="volumeForm.$valid && submitAction()" novalidate>
+                <form name="volumeForm" role="form" class="form-horizontal" novalidate>
                     <accordion>
                         <accordion-group is-open="accordionOpen.properties">
                             <accordion-heading>
@@ -118,7 +118,7 @@
                     </accordion>
                     <div class="form-group">
                         <div class="pull-right" style="padding: 6px 12px">
-                            <button type="submit" class="btn btn-primary">
+                            <button type="submit" class="btn btn-primary" ng-click="submitAction(volumeForm)">
                                 Submit
                             </button>
                             <button type="button" class="btn btn-default tc_backButton" ng-click="cancelAction()">

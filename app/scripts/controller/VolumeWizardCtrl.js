@@ -48,43 +48,45 @@ angular.module('openattic')
       $state.go('volumes');
     };
 
-    $scope.submitAction = function() {
-      if (!$scope.state.created) {
-        if( $scope.data.filesystem !== '' ){
-          $scope.volume.filesystem = $scope.data.filesystem;
+    $scope.submitAction = function(volumeForm) {
+      if(volumeForm.$valid === true) {
+        if (!$scope.state.created) {
+          if ($scope.data.filesystem !== '') {
+            $scope.volume.filesystem = $scope.data.filesystem;
+          }
+          VolumeService.save($scope.volume)
+            .$promise
+            .then(function (res) {
+              $scope.volume = res;
+              $scope.state.created = true;
+              $scope.state.formatted = $scope.volume.is_filesystemvolume;
+              goToListView();
+            }, function (error) {
+              console.log('An error occured', error);
+            });
         }
-        VolumeService.save($scope.volume)
-          .$promise
-          .then(function(res) {
-            $scope.volume = res;
-            $scope.state.created = true;
-            $scope.state.formatted = $scope.volume.is_filesystemvolume;
-            goToListView();
-          }, function(error){
-            console.log('An error occured', error);
+        else if (!$scope.state.mirrored && $scope.data.mirrorHost !== '') {
+          $.smallBox({
+            title: 'Mirror Volume',
+            content: '<i class="fa fa-clock-o"></i> <i>Sorry, we haven\'t implemented that yet.</i>',
+            color: '#C46A69',
+            iconSmall: 'fa fa-times fa-2x fadeInRight animated',
+            timeout: 4000
           });
-      }
-      else if(!$scope.state.mirrored && $scope.data.mirrorHost !== '') {
-        $.smallBox({
-          title: 'Mirror Volume',
-          content: '<i class="fa fa-clock-o"></i> <i>Sorry, we haven\'t implemented that yet.</i>',
-          color: '#C46A69',
-          iconSmall: 'fa fa-times fa-2x fadeInRight animated',
-          timeout: 4000
-        });
-      }
-      else if(!$scope.state.formatted) {
-        new VolumeService({
-          id: $scope.volume.id,
-          filesystem: $scope.data.filesystem
-        }).$update()
-          .then(function(res) {
-            $scope.volume = res;
-            $scope.state.formatted = true;
-            goToListView();
-          }, function(error) {
-            console.log('An error occured', error);
-          });
+        }
+        else if (!$scope.state.formatted) {
+          new VolumeService({
+            id: $scope.volume.id,
+            filesystem: $scope.data.filesystem
+          }).$update()
+            .then(function (res) {
+              $scope.volume = res;
+              $scope.state.formatted = true;
+              goToListView();
+            }, function (error) {
+              console.log('An error occured', error);
+            });
+        }
       }
     };
 
