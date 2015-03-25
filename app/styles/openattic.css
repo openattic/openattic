@@ -1,27 +1,3 @@
-form input.ng-invalid.ng-dirty {
-    background-color: #ffcbc1;
-}
-
-form input.ng-invalid:focus {
-    outline-color: red;
-}
-
-form input.ng-valid.ng-dirty {
-    background-color: #a6e79e;
-}
-
-form .ng-invalid.ng-dirty {
-    border: 2px solid #ffcbc1;
-}
-
-form .ng-invalid:focus {
-    outline-color: red;
-}
-
-/*form .ng-valid.ng-dirty {
-    border: 2px solid green;
-}*/
-
 form .input-group-addon{
     color: #A2A2A2 !important;
     background-color: transparent;
