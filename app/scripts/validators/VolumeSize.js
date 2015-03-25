@@ -22,7 +22,7 @@ angular.module('openattic')
       link: function(scope, elm, attrs, ctrl) {
         ctrl.$validators.volumeSizeValue = function(modelValue){
           if( !modelValue || !SizeParserService.isValid(modelValue) ){
-            return; // don't care
+            return true;
           }
           var megs = SizeParserService.parseInt(modelValue),
               maxv = parseInt(scope.maxValue, 10);

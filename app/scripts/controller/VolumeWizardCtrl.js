@@ -49,6 +49,7 @@ angular.module('openattic')
     };
 
     $scope.submitAction = function(volumeForm) {
+      $scope.submitted = true;
       if(volumeForm.$valid === true) {
         if (!$scope.state.created) {
           if ($scope.data.filesystem !== '') {
