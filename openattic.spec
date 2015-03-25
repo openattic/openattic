@@ -378,9 +378,9 @@ echo "==================="
 
 mkdir -p ${RPM_BUILD_ROOT}%{_defaultdocdir}/%{name}-%{version}
 
-mv ${RPM_BUILD_ROOT}/usr/share/openattic/CHANGELOG   ${RPM_BUILD_ROOT}%{_defaultdocdir}/%{name}-%{version}
-mv ${RPM_BUILD_ROOT}/usr/share/openattic/LICENSE  ${RPM_BUILD_ROOT}%{_defaultdocdir}/%{name}-%{version}
-mv ${RPM_BUILD_ROOT}/usr/share/openattic/README.rst  ${RPM_BUILD_ROOT}%{_defaultdocdir}/%{name}-%{version}
+mv ${RPM_BUILD_ROOT}/usr/share/openattic/CHANGELOG %{_builddir}
+mv ${RPM_BUILD_ROOT}/usr/share/openattic/LICENSE   %{_builddir}
+mv ${RPM_BUILD_ROOT}/usr/share/openattic/README.rst   %{_builddir}
 
 cd ${RPM_BUILD_ROOT}
 mkdir -p ${RPM_BUILD_ROOT}/usr/share
