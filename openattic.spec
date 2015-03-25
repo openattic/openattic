@@ -886,9 +886,7 @@ echo ""
 /etc/openattic/
 
 
-
 %changelog
-
 * Tue Feb 24 2015 Markus Koch  <mkoch@redhat.com> - 1.2 build 
 - split into package modules
 * Fri May 23 2003 Markus Koch  <mkoch@redhat.com> - 1.2 build version 1
