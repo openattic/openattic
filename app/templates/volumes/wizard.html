@@ -15,75 +15,73 @@
                                 <i class="pull-right" ng-class="{'fa fa-angle-up': accordionOpen.properties,
                                 'fa fa-angle-down': !accordionOpen.properties}"></i>
                             </accordion-heading>
-                            <div class="control-group">
-                                <div class="form-group">
-                                    <label class="col-md-2 control-label" for="volume.name">Name</label>
-                                    <div class="col-md-10">
-                                        <input type="text" class="form-control" id="volume.name" placeholder="Name..." ng-model="volume.name" name="name" validname required>
-                                        <span ng-show="volumeForm.name.$dirty && volumeForm.name.$error.required">This field is required!</span>
-                                        <span ng-show="volumeForm.name.$dirty && volumeForm.name.$error.validname">{{errortext}}</span>
+                            <div class="form-group">
+                                <label class="col-md-2 control-label" for="volume.name">Name</label>
+                                <div class="col-md-10">
+                                    <input type="text" class="form-control" id="volume.name" placeholder="Name..." ng-model="volume.name" name="name" validname required>
+                                    <span ng-show="volumeForm.name.$dirty && volumeForm.name.$error.required">This field is required!</span>
+                                    <span ng-show="volumeForm.name.$dirty && volumeForm.name.$error.validname">{{errortext}}</span>
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <label class="col-md-2 control-label" for="data.sourcePool">Pool</label>
+                                <div class="col-md-10">
+                                    <select class="form-control" ng-model="data.sourcePool" id="data.sourcePool"
+                                            ng-options="(pool.name + ' (' + pool.type.name + ')') for pool in pools track by pool.id" name="pool" required>
+                                        <option class="tc_volumePoolOption" value="">-- Select a pool --</option>
+                                    </select>
+                                    <span ng-show="volumeForm.pool.$dirty && volumeForm.pool.$error.required">This field is required!</span>
+                                    <div ng-show="data.sourcePool">
+                                        {{data.sourcePool.usage.max_new_fsv_text}} available
                                     </div>
                                 </div>
-                                <div class="form-group">
-                                    <label class="col-md-2 control-label" for="data.sourcePool">Pool</label>
-                                    <div class="col-md-10">
-                                        <select class="form-control" ng-model="data.sourcePool" id="data.sourcePool"
-                                                ng-options="(pool.name + ' (' + pool.type.name + ')') for pool in pools track by pool.id" name="pool" required>
-                                            <option class="tc_volumePoolOption" value="">-- Select a pool --</option>
-                                        </select>
-                                        <span ng-show="volumeForm.pool.$dirty && volumeForm.pool.$error.required">This field is required!</span>
-                                        <div ng-show="data.sourcePool">
-                                            {{data.sourcePool.usage.max_new_fsv_text}} available
-                                        </div>
+                            </div>
+                            <div class="form-group">
+                                <label class="col-md-2 control-label">Type</label>
+                                <div class="col-md-10">
+                                    <div class="radio">
+                                        <label>
+                                            <input type="radio" class="radiobox style-0" ng-model="data.filesystem" value="" ng-disabled="state.formatted">
+                                            <span>Create LUN</span>
+                                        </label>
+                                    </div>
+                                    <div class="radio" ng-show="supported_filesystems.xfs">
+                                        <label>
+                                            <input type="radio" class="radiobox style-0" ng-model="data.filesystem" value="xfs" ng-disabled="state.formatted">
+                                            <span>Create Virtualization Store -> XFS</span>
+                                        </label>
+                                    </div>
+                                    <div class="radio" ng-show="supported_filesystems.zfs">
+                                        <label>
+                                            <input type="radio" class="radiobox style-0" ng-model="data.filesystem" value="zfs" ng-disabled="state.formatted">
+                                            <span>Create ZFS Volume</span>
+                                        </label>
+                                    </div>
+                                    <div class="radio" ng-show="supported_filesystems.btrfs">
+                                        <label>
+                                            <input type="radio" class="radiobox style-0" ng-model="data.filesystem" value="btrfs" ng-disabled="state.formatted">
+                                            <span>Create File Store -> BTRFS</span>
+                                        </label>
                                     </div>
                                 </div>
-                                <div class="form-group">
-                                    <label class="col-md-2 control-label">Type</label>
-                                    <div class="col-md-10">
-                                        <div class="radio">
-                                            <label>
-                                                <input type="radio" class="radiobox style-0" ng-model="data.filesystem" value="" ng-disabled="state.formatted">
-                                                <span>Create LUN</span>
-                                            </label>
-                                        </div>
-                                        <div class="radio" ng-show="supported_filesystems.xfs">
-                                            <label>
-                                                <input type="radio" class="radiobox style-0" ng-model="data.filesystem" value="xfs" ng-disabled="state.formatted">
-                                                <span>Create Virtualization Store -> XFS</span>
-                                            </label>
-                                        </div>
-                                        <div class="radio" ng-show="supported_filesystems.zfs">
-                                            <label>
-                                                <input type="radio" class="radiobox style-0" ng-model="data.filesystem" value="zfs" ng-disabled="state.formatted">
-                                                <span>Create ZFS Volume</span>
-                                            </label>
-                                        </div>
-                                        <div class="radio" ng-show="supported_filesystems.btrfs">
-                                            <label>
-                                                <input type="radio" class="radiobox style-0" ng-model="data.filesystem" value="btrfs" ng-disabled="state.formatted">
-                                                <span>Create File Store -> BTRFS</span>
-                                            </label>
-                                        </div>
-                                    </div>
+                            </div>
+                            <div class="form-group">
+                                <label class="col-md-2 control-label" for="data.megs">Size</label>
+                                <div class="col-md-10">
+                                    <input class="form-control" name="megs" required ng-disabled="data.sourcePool === null"
+                                           volume-size-format volume-size-value max-value="{{data.sourcePool.usage.max_new_fsv}}"
+                                           ng-model="data.megs" placeholder="e.g., 10GB" id="data.megs" required>
+                                    <span ng-show="volumeForm.megs.$dirty && volumeForm.megs.$error.required">This field is required.</span>
+                                    <span ng-show="volumeForm.megs.$dirty && volumeForm.megs.$error.volumeSizeFormat">This is not a valid number.</span>
+                                    <span class="tc_wrongVolumeSize" ng-show="volumeForm.megs.$dirty && volumeForm.megs.$error.volumeSizeValue">
+                                        The size must be at least 100MB and must not exceed {{data.sourcePool.usage.max_new_fsv_text}}.
+                                    </span>
                                 </div>
-                                <div class="form-group">
-                                    <label class="col-md-2 control-label" for="data.megs">Size</label>
-                                    <div class="col-md-10">
-                                        <input class="form-control" name="megs" required ng-disabled="data.sourcePool === null"
-                                               volume-size-format volume-size-value max-value="{{data.sourcePool.usage.max_new_fsv}}"
-                                               ng-model="data.megs" placeholder="e.g., 10GB" id="data.megs" required>
-                                        <span ng-show="volumeForm.megs.$dirty && volumeForm.megs.$error.required">This field is required.</span>
-                                        <span ng-show="volumeForm.megs.$dirty && volumeForm.megs.$error.volumeSizeFormat">This is not a valid number.</span>
-                                        <span class="tc_wrongVolumeSize" ng-show="volumeForm.megs.$dirty && volumeForm.megs.$error.volumeSizeValue">
-                                            The size must be at least 100MB and must not exceed {{data.sourcePool.usage.max_new_fsv_text}}.
-                                        </span>
-                                    </div>
-                                </div>
-                                <div class="form-group">
-                                    <label class="col-md-2 control-label">Deletion protection</label>
-                                    <div class="col-md-10">
-                                        <checkbox ng-model="volume.is_protected" name="deletionProtection"></checkbox>
-                                    </div>
+                            </div>
+                            <div class="form-group">
+                                <label class="col-md-2 control-label">Deletion protection</label>
+                                <div class="col-md-10">
+                                    <checkbox ng-model="volume.is_protected" name="deletionProtection"></checkbox>
                                 </div>
                             </div>
                         </accordion-group>
