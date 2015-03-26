@@ -17,7 +17,6 @@ angular.module('openattic')
       });
 
     $scope.$watch('share.host', function(host) {
-      console.log(arguments);
       if(host){
         InitiatorService.filter({host: host.id, type: 'qla2xxx'})
           .$promise
