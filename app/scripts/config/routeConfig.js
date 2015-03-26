@@ -318,7 +318,7 @@ angular.module('openattic').config(function ($stateProvider, $urlRouterProvider)
       url: '/hosts/add',
       views: {
         'main': {
-          templateUrl: 'templates/hosts/form.html',
+          templateUrl: 'templates/hosts/host-form.html',
           controller : 'HostFormCtrl'
         }
       },
@@ -331,7 +331,7 @@ angular.module('openattic').config(function ($stateProvider, $urlRouterProvider)
       url: '/hosts/edit/:host',
       views: {
         'main': {
-          templateUrl: 'templates/hosts/form.html',
+          templateUrl: 'templates/hosts/host-form.html',
           controller : 'HostFormCtrl'
         }
       },
