@@ -9,10 +9,10 @@
                 <form name="shareForm" role="form" class="form-horizontal" novalidate>
                     <fieldset>
                         <div class="form-group">
-                            <label class="col-md-2 control-label" for="shareHost">Host</label>
+                            <label class="col-md-2 control-label" for="host">Host</label>
                             <div class="col-md-10">
                                 <select class="form-control" ng-model="share.host"
-                                        ng-options="host.name for host in hosts" name="host" required>
+                                        ng-options="host.name for host in hosts" id="host" name="host" required>
                                     <option value="">-- Select a host --</option>
                                 </select>
                                 <span ng-show="shareForm.host.$dirty && shareForm.host.$error.required">
