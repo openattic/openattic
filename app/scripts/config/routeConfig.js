@@ -293,7 +293,7 @@ angular.module('openattic').config(function ($stateProvider, $urlRouterProvider)
       url: '/volumes/add',
       views: {
         'main': {
-          templateUrl: 'templates/volumes/wizard.html',
+          templateUrl: 'templates/volumes/volume-form.html',
           controller : 'VolumeWizardCtrl'
         }
       },
