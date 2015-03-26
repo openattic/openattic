@@ -7,7 +7,8 @@
         <div class="widget-body">
             <form name="shareForm" role="form" class="form-horizontal" novalidate>
                 <fieldset>
-                    <div class="form-group">
+                    <div class="form-group" ng-class="{'has-error': (submitted || shareForm.path.$dirty)
+                    && shareForm.path.$invalid }">
                         <label class="col-md-2 control-label" for="sharePath">Path</label>
                         <div class="col-md-10">
                             <div class="input-group">
@@ -15,7 +16,7 @@
                                 <input type="text" class="form-control" placeholder="Path..."
                                        ng-model="share.path" name="path" id="sharePath" required>
                             </div>
-                            <span ng-show="shareForm.sharePath.$dirty && shareForm.sharePath.$invalid">
+                            <span ng-show="(submitted || shareForm.path.$dirty) && shareForm.path.$error.required">
                                 The path is required.
                             </span>
                         </div>
@@ -25,8 +26,7 @@
                     <button type="button" class="btn btn-default" ng-click="cancelAction()">
                         Back
                     </button>
-                    <button type="submit" class="btn btn-primary" ng-click="submitAction()"
-                            ng-disabled="shareForm.$invalid">
+                    <button type="submit" class="btn btn-primary" ng-click="submitAction(shareForm)">
                         Submit
                     </button>
                 </div>

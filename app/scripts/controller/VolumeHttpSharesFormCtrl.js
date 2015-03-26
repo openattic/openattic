@@ -9,14 +9,17 @@ angular.module('openattic')
       };
       $scope.editing = false;
 
-      $scope.submitAction = function() {
-        HttpSharesService.save($scope.share)
-          .$promise
-          .then(function() {
-            goToListView();
-          }, function(error) {
-            console.log('An error occured', error);
-          });
+      $scope.submitAction = function(httpForm) {
+        $scope.submitted = true;
+        if(httpForm.$valid === true) {
+          HttpSharesService.save($scope.share)
+            .$promise
+            .then(function () {
+              goToListView();
+            }, function (error) {
+              console.log('An error occured', error);
+            });
+        }
       };
     }
 
