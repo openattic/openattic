@@ -1,5 +1,5 @@
 angular.module('openattic')
-  .controller('VolumeWizardCtrl', function ($scope, $state, VolumeService, PoolService, SizeParserService) {
+  .controller('VolumeFormCtrl', function ($scope, $state, VolumeService, PoolService, SizeParserService) {
     'use strict';
 
     $scope.volume  = {};

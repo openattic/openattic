@@ -294,7 +294,7 @@ angular.module('openattic').config(function ($stateProvider, $urlRouterProvider)
       views: {
         'main': {
           templateUrl: 'templates/volumes/volume-form.html',
-          controller : 'VolumeWizardCtrl'
+          controller : 'VolumeFormCtrl'
         }
       },
       ncyBreadcrumb: {
