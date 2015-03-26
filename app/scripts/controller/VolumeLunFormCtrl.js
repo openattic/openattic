@@ -28,9 +28,6 @@ angular.module('openattic')
       }
     });
 
-
-    $scope.editing = false;
-
     $scope.submitAction = function() {
       LunService.save($scope.share)
         .$promise
