@@ -8,26 +8,26 @@
             <div class="widget-body">
                 <form name="shareForm" role="form" class="form-horizontal" novalidate>
                     <fieldset>
-                        <div class="form-group">
+                        <div class="form-group" ng-class="{'has-error': (submitted || shareForm.name.$dirty) && shareForm.name.$invalid}">
                             <label class="col-md-2 control-label" for="shareName">Name</label>
                             <div class="col-md-10">
                                 <div class="input-group">
                                     <span class="input-group-addon"><i class="fa fa-share"></i></span>
                                     <input class="form-control" type="text" placeholder="Name..." ng-model="share.name" name="name" id="shareName" required>
                                 </div>
-                                <span ng-show="shareForm.shareName.$dirty && shareForm.shareName.$invalid">
+                                <span class="help-block" ng-show="(submitted || shareForm.name.$dirty)&& shareForm.name.$error.required">
                                     The name is required.
                                 </span>
                             </div>
                         </div>
-                        <div class="form-group">
+                        <div class="form-group" ng-class="{'has-error': (submitted || shareForm.path.$dirty) && shareForm.path.$invalid}">
                             <label class="col-md-2 control-label" for="sharePath">Path</label>
                             <div class="col-md-10">
                                 <div class="input-group">
                                     <span class="input-group-addon"><i class="fa fa-share"></i></span>
                                     <input class="form-control" type="text" placeholder="Path..." ng-model="share.path" name="path" id="sharePath" required>
                                 </div>
-                                <span ng-show="shareForm.sharePath.$dirty && shareForm.sharePath.$invalid">
+                                <span class="help-block" ng-show="(submitted || shareForm.path.$dirty) && shareForm.path.$error.required">
                                     The name is required.
                                 </span>
                             </div>
@@ -80,7 +80,7 @@
                     </fieldset>
                     <div class="form-group">
                         <div class="pull-right" style="padding: 6px 16px">
-                            <button type="submit" class="btn btn-primary" ng-click="submitAction()" ng-disabled="shareForm.$invalid">
+                            <button type="submit" class="btn btn-primary" ng-click="submitAction(shareForm)">
                                 Submit
                             </button>
                             <button type="button" class="btn btn-default" ng-click="cancelAction()">

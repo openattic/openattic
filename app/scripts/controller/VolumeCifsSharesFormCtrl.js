@@ -20,14 +20,17 @@ angular.module('openattic')
       };
       $scope.editing = false;
 
-      $scope.submitAction = function() {
-        CifsSharesService.save($scope.share)
-          .$promise
-          .then(function() {
-            goToListView();
-          }, function(error) {
-            console.log('An error occured', error);
-          });
+      $scope.submitAction = function(shareForm) {
+        $scope.submitted = true;
+        if(shareForm.$valid === true) {
+          CifsSharesService.save($scope.share)
+            .$promise
+            .then(function () {
+              goToListView();
+            }, function (error) {
+              console.log('An error occured', error);
+            });
+        }
       };
 
       $scope.$watch('domainconfig', function(domcfg){
@@ -45,14 +48,17 @@ angular.module('openattic')
           console.log('An error occurred', error);
         });
 
-      $scope.submitAction = function() {
-        CifsSharesService.update({id: $scope.share.id}, $scope.share)
-          .$promise
-          .then(function() {
-            goToListView();
-          }, function(error){
-            console.log('An error occured', error);
-          });
+      $scope.submitAction = function(shareForm) {
+        $scope.submitted = true;
+        if(shareForm.$valid === true) {
+          CifsSharesService.update({id: $scope.share.id}, $scope.share)
+            .$promise
+            .then(function () {
+              goToListView();
+            }, function (error) {
+              console.log('An error occured', error);
+            });
+        }
       };
     }
 
