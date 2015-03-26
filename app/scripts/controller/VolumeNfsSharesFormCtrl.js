@@ -10,15 +10,18 @@ angular.module('openattic')
         'options':  'rw,no_subtree_check,no_root_squash'
       };
 
-      $scope.submitAction = function() {
-        NfsSharesService.save($scope.share)
-          .$promise
-          .then(function() {
-            goToListView();
-          }, function(error) {
-            console.log('An error occured', error);
-          });
-      };
+      $scope.submitAction = function(shareForm) {
+        $scope.submitted = true;
+        if (shareForm.$valid === true) {
+          NfsSharesService.save($scope.share)
+            .$promise
+            .then(function () {
+              goToListView();
+            }, function (error) {
+              console.log('An error occured', error);
+            });
+        }
+      }
     }
 
     $scope.cancelAction = function() {
