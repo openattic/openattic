@@ -28,14 +28,17 @@ angular.module('openattic')
       }
     });
 
-    $scope.submitAction = function() {
-      LunService.save($scope.share)
-        .$promise
-        .then(function() {
-          goToListView();
-        }, function(error) {
-          console.log('An error occured', error);
-        });
+    $scope.submitAction = function(shareForm) {
+      $scope.submitted = true;
+      if(shareForm.$valid === true) {
+        LunService.save($scope.share)
+          .$promise
+          .then(function () {
+            goToListView();
+          }, function (error) {
+            console.log('An error occured', error);
+          });
+      }
     };
 
 
