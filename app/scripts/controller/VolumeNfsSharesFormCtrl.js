@@ -9,7 +9,6 @@ angular.module('openattic')
         'address':  '',
         'options':  'rw,no_subtree_check,no_root_squash'
       };
-      $scope.editing = false;
 
       $scope.submitAction = function() {
         NfsSharesService.save($scope.share)
