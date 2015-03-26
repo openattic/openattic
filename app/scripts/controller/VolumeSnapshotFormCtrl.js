@@ -16,8 +16,6 @@ angular.module('openattic')
 
     $scope.pool = new PoolService.get($scope.selection.item.source_pool);
 
-    $scope.editing = false;
-
     $scope.submitAction = function() {
       new VolumeSnapshotService($scope.snap)
         .$save()
