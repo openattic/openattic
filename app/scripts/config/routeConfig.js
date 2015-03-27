@@ -366,7 +366,7 @@ angular.module('openattic').config(function ($stateProvider, $urlRouterProvider)
       }
     })
     .state('users-add', {
-      url: '/add',
+      url: '/users/add',
       views: {
         'main': {
           templateUrl: 'templates/users/user-form.html',
@@ -379,7 +379,7 @@ angular.module('openattic').config(function ($stateProvider, $urlRouterProvider)
       }
     })
     .state('users-edit', {
-      url: '/edit/:user',
+      url: '/users/edit/:user',
       views: {
         'main': {
           templateUrl: 'templates/users/user-form.html',
