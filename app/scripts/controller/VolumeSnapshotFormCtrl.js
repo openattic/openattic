@@ -16,14 +16,17 @@ angular.module('openattic')
 
     $scope.pool = new PoolService.get($scope.selection.item.source_pool);
 
-    $scope.submitAction = function() {
-      new VolumeSnapshotService($scope.snap)
-        .$save()
-        .then(function() {
-          goToListView();
-        }, function(error) {
-          console.log('An error occured', error);
-        });
+    $scope.submitAction = function(snapForm) {
+      $scope.submitted = true;
+      if(snapForm.$valid === true) {
+        new VolumeSnapshotService($scope.snap)
+          .$save()
+          .then(function () {
+            goToListView();
+          }, function (error) {
+            console.log('An error occured', error);
+          });
+      }
     };
 
     $scope.cancelAction = function() {
