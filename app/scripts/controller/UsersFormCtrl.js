@@ -10,14 +10,17 @@ angular.module('openattic')
 
       $scope.image = 'http://www.gravatar.com/avatar/' + gravatarId + '.jpg?d=monsterid';
 
-      $scope.submitAction = function() {
-        UserService.save($scope.user)
-          .$promise
-          .then(function() {
-            goToListView();
-          }, function(error) {
-            console.log('An error occured', error);
-          });
+      $scope.submitAction = function(userForm) {
+        $scope.submitted = true;
+        if(userForm.$valid === true) {
+          UserService.save($scope.user)
+            .$promise
+            .then(function () {
+              goToListView();
+            }, function (error) {
+              console.log('An error occured', error);
+            });
+        }
       };
     }
     else {
@@ -34,14 +37,17 @@ angular.module('openattic')
           console.log('An error occurred', error);
         });
 
-      $scope.submitAction = function() {
-        UserService.update({id: $scope.user.id}, $scope.user)
-          .$promise
-          .then(function() {
-            goToListView();
-          }, function(error){
-            console.log('An error occured', error);
-          });
+      $scope.submitAction = function(userForm) {
+        $scope.submitted = true;
+        if(userForm.$valid === true) {
+          UserService.update({id: $scope.user.id}, $scope.user)
+            .$promise
+            .then(function () {
+              goToListView();
+            }, function (error) {
+              console.log('An error occured', error);
+            });
+        }
       };
     }
 
