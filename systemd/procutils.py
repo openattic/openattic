@@ -25,6 +25,8 @@ import subprocess
 from datetime import datetime
 from select import select, error
 
+from django.conf import settings
+
 from cmdlog.models import LogEntry
 from ifconfig.models import Host
 
@@ -130,30 +132,31 @@ def service_command(service, command="reload"):
     if command not in ("start", "stop", "reload", "restart"):
         raise ValueError("invalid command %s" % command)
 
-    try:
-        bus = dbus.SystemBus(private=True)
-        obj = bus.get_object("org.freedesktop.systemd1", "/org/freedesktop/systemd1")
-        systemd = dbus.Interface(obj, "org.freedesktop.systemd1.Manager")
-    except dbus.DBusException:
-        logging.warn("service_command(%s): systemd(1) not available, falling back to invoke()" % service)
-    else:
-        logging.info("service_command(%s): calling systemd(1)" % service)
-        def passfn(*args):
-            pass
+    if settings.USE_SYSTEMD_IF_AVAIL:
         try:
-            if command == "reload":
-                systemd.ReloadOrRestartUnit("%s.service" % service, "replace", reply_handler=passfn, error_handler=passfn)
-            elif command == "restart":
-                systemd.RestartUnit("%s.service" % service, "replace", reply_handler=passfn, error_handler=passfn)
-            elif command == "start":
-                systemd.StartUnit("%s.service" % service, "replace", reply_handler=passfn, error_handler=passfn)
-            elif command == "stop":
-                systemd.StopUnit("%s.service" % service, "replace", reply_handler=passfn, error_handler=passfn)
-        except dbus.DBusException, err:
-            import traceback
-            logging.error("service_command(%s): caught exception, falling back to invoke():\n%s" % (service, traceback.format_exc()))
+            bus = dbus.SystemBus(private=True)
+            obj = bus.get_object("org.freedesktop.systemd1", "/org/freedesktop/systemd1")
+            systemd = dbus.Interface(obj, "org.freedesktop.systemd1.Manager")
+        except dbus.DBusException:
+            logging.warn("service_command(%s): systemd(1) not available, falling back to invoke()" % service)
         else:
-            return
+            logging.info("service_command(%s): calling systemd(1)" % service)
+            def passfn(*args):
+                pass
+            try:
+                if command == "reload":
+                    systemd.ReloadOrRestartUnit("%s.service" % service, "replace", reply_handler=passfn, error_handler=passfn)
+                elif command == "restart":
+                    systemd.RestartUnit("%s.service" % service, "replace", reply_handler=passfn, error_handler=passfn)
+                elif command == "start":
+                    systemd.StartUnit("%s.service" % service, "replace", reply_handler=passfn, error_handler=passfn)
+                elif command == "stop":
+                    systemd.StopUnit("%s.service" % service, "replace", reply_handler=passfn, error_handler=passfn)
+            except dbus.DBusException, err:
+                import traceback
+                logging.error("service_command(%s): caught exception, falling back to invoke():\n%s" % (service, traceback.format_exc()))
+            else:
+                return
 
     if os.path.exists("/usr/sbin/service"):
         logging.info("service_command(%s): invoking `service %s %s`" % (service, service, command))
