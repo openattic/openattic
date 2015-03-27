@@ -1,3 +1,7 @@
+.errorbox {
+    color: #a94442;
+}
+
 form .input-group-addon{
     color: #A2A2A2 !important;
     background-color: transparent;
