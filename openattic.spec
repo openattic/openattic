@@ -18,11 +18,14 @@ Source:		openattic.tar.bz2
 Requires: 	openattic-base
 Requires:	openattic-module-cron
 Requires:	openattic-module-lvm
+Requires:	openattic-module-nfs
+Requires:	openattic-module-http
+Requires:	openattic-module-samba
+Requires:	openattic-module-nagios
 Requires:	openattic-module-mailaliases
-Requires:	openattic-base
+Requires:	openattic-pgsql
 
 BuildRequires:  mercurial
-
 
 ##
 ##  requires djextdirect python plugin
@@ -63,9 +66,7 @@ BuildRequires:  mercurial
   * HTTP
   * LIO (iSCSI, FC)
   * Samba
-  * Apt
   * Nagios
-  * FTP
   * Cron
   * MailAliases (EMail configuration)
  .
@@ -100,6 +101,10 @@ Requires:	python-pyudev
 Requires:	mod_wsgi 
 Requires:	xfsprogs 
 Requires:	udisks2 
+Requires:	libjs-extjs4
+Requires:	djangorestframework
+Requires:	djangorestframework-bulk
+Requires:	django-filter
 Summary:  Basic requirements for openATTIC
  
 %description base
@@ -447,6 +452,8 @@ host     = localhost
 port     =
 EOF
 
+ln -s /etc/openattic/databases/pgsql.ini ${RPM_BUILD_ROOT}/etc/openattic/database.ini
+
 # configure dbus
 mkdir -p  ${RPM_BUILD_ROOT}/etc/dbus-1/system.d/
 cat <<EOF >  ${RPM_BUILD_ROOT}/etc/dbus-1/system.d/openattic.conf
@@ -652,18 +659,12 @@ touch /var/log/openattic_systemd
 chown openattic:openattic /var/log/openattic_systemd
 chmod 644 /var/log/openattic_systemd
 
-# get a required package for python
-# TODO: would be nice to have this as rpm later
-# TODO: if proxy is set run pip install --proxy [user:passwd@]proxy.server:port -U pip
-pip install -U pip 
-pip install djangorestframework==2.4.3
-
 %post base
-systemctl reload  dbus.service
+systemctl restart  dbus.service
 systemctl daemon-reload
 
 %postun base
-systemctl reload  dbus.service
+systemctl restart  dbus.service
 systemctl daemon-reload
 
 %post pgsql
