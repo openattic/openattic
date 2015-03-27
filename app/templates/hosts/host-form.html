@@ -7,19 +7,22 @@
         <div class="widget-body">
             <form name="hostForm" role="form" class="form-horizontal" novalidate>
                 <fieldset>
-                    <div class="form-group">
+                    <div class="form-group" ng-class="{'has-error': (submitted || hostForm.name.$dirty)
+                    && hostForm.name.$invalid}">
                         <label class="col-md-2 control-label" for="hostHostname">Hostname</label>
                         <div class="col-md-10">
-                            <input type="text" class="form-control" placeholder="Hostname..." ng-model="host.name" name="name"
+                            <input type="text" class="form-control" placeholder="Hostname..."
+                                   ng-model="host.name" name="name"
                                     id="hostHostname" required>
-                            <span ng-show="hostForm.name.$dirty && hostForm.name.$invalid">
+                            <span class="help-block" ng-show="(submitted || hostForm.name.$dirty)
+                            && hostForm.name.$error.required">
                                 The name is required.
                             </span>
                         </div>
                     </div>
                 </fieldset>
                 <div class="pull-right" style="padding: 6px 16px">
-                    <button type="submit" class="btn btn-primary" ng-click="submitAction()" ng-disabled="hostForm.$invalid">
+                    <button type="submit" class="btn btn-primary" ng-click="submitAction(hostForm)">
                         Submit
                     </button>
                     <button type="button" class="btn btn-default" ng-click="cancelAction()">
