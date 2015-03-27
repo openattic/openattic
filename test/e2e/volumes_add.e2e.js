@@ -49,7 +49,7 @@ describe('Volumes add', function() {
     expect(element(by.css('.tc_wrongVolumeSize')).isPresent()).toBe(true);
   });
 
-  it('should show a message if the given volume size the is just a string', function(){
+  it('should show a message if the given volume size is just a string', function(){
     var volumepoolSelect = element(by.model('data.sourcePool'));
     helpers.selectDropdownByIndex(volumepoolSelect, 2);
 
