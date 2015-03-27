@@ -54,34 +54,38 @@
     </header>
     <div id="main" role="main">
         <div id="content" class="container">
-            <div class="row">
-                <div class="col-xs-8 col-sm-8 col-md-8 col-lg-8" ng-controller="authController">
-                    <div class="well no-padding" style="width: 60%; left: 25%">
-                        <form id="auth_form" ng-submit="login()" class="smart-form client-form">
-                            <header>
-                                Sign In
-                            </header>
+            <div class="col-xs-5 col-sm-5 col-md-5 col-md-offset-2 col-lg-5" ng-controller="authController">
+                <form name="loginForm" ng-submit="login()">
+                    <div class="panel panel-default">
+                        <div class="panel-heading">
+                            <div class="panel-title">Sign In</div>
+                        </div>
+                        <div class="panel-body">
                             <fieldset>
-                                <section>
-                                    <label class="label">Username</label>
-                                    <label class="input"><i class="icon-append fa fa-user"></i>
-                                        <input ng-model="username" type="text"><b class="tooltip tooltip-top-right"><i class="fa fa-user txt-color-teal"></i> Please enter your username</b>
-                                    </label>
-                                </section>
-                                <section>
-                                    <label class="label">Password</label>
-                                    <label class="input"><i class="icon-append fa fa-key"></i>
-                                        <input ng-model="password" type="password">
-                                        <b class="tooltip tooltip-top-right"><i class="fa fa-lock txt-color-teal"></i> Please enter your password</b>
-                                    </label>
-                                </section>
+                                <div class="form-group">
+                                    <label>Username</label>
+                                    <div class="input-group">
+                                        <span class="input-group-addon"><i class="fa fa-user"></i></span>
+                                        <input class="form-control" ng-model="username" type="text">
+                                    </div>
+                                </div>
+                                <div class="form-group">
+                                    <label>Password</label>
+                                    <div class="input-group">
+                                        <span class="input-group-addon"><i class="fa fa-key"></i></span>
+                                        <input class="form-control" ng-model="password" type="password">
+                                    </div>
+                                </div>
                             </fieldset>
-                            <footer>
+                        </div>
+                        <div class="panel-footer">
+                            <div class="pull-right" style="padding: 6px">
                                 <input type="submit" class="btn btn-primary" value="Sign In">
-                            </footer>
-                        </form>
+                            </div>
+                            <div class="clearfix"></div>
+                        </div>
                     </div>
-                </div>
+                </form>
             </div>
         </div>
     </div>
