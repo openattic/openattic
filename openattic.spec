@@ -77,7 +77,6 @@ BuildRequires:  mercurial
 %package       base
 Requires:	python-memcached 
 Requires:	memcached
-Requires:	python-pip
 Requires:	python-imaging 
 Requires:	numpy 
 Requires:	python-rtslib
@@ -102,6 +101,7 @@ Requires:	mod_wsgi
 Requires:	xfsprogs 
 Requires:	udisks2 
 Requires:	libjs-extjs4
+Requires:	djextdirect
 Requires:	djangorestframework
 Requires:	djangorestframework-bulk
 Requires:	django-filter
