@@ -31,7 +31,7 @@
                                         <option class="tc_volumePoolOption" value="">-- Select a pool --</option>
                                     </select>
                                     <span class="help-block" ng-show="(submitted || volumeForm.pool.$dirty) && volumeForm.pool.$error.required">This field is required!</span>
-                                    <div ng-show="data.sourcePool">
+                                    <div ng-show="data.sourcePool" class="tc_poolAvailableSize">
                                         {{data.sourcePool.usage.max_new_fsv_text}} available
                                     </div>
                                 </div>
