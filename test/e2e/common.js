@@ -23,6 +23,7 @@ var configs = {
 
 (function() {
   module.exports = {
+    configs: configs,
     login: function() {
       browser.get(configs.url);
       element.all(by.model('username')).sendKeys(configs.username);
