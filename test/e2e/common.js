@@ -8,15 +8,18 @@ var configs = {
   pools   : {
     vg: {
       name: 'vg_lorlen',
-      size: '19.70GB'
+      size: 19.70,
+      unit: 'GB'
     },
     btrfs: {
       name: 'testnfs',
-      size: '100.00MB'
+      size: 100.00,
+      unit: 'MB'
     },
     zfs: {
       name: 'tank',
-      size: '19.60GB'
+      size: 19.60,
+      unit: 'GB'
     }
   }
 };
