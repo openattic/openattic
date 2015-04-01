@@ -4,7 +4,21 @@ var configs = {
   url     : 'http://172.16.13.135/openattic/angular/login.html',
   username: 'openattic',
   password: 'openattic',
-  sleep   : 2000
+  sleep   : 2000,
+  pools   : {
+    vg: {
+      name: 'vg_lorlen',
+      size: '19.70GB'
+    },
+    btrfs: {
+      name: 'testnfs',
+      size: '100.00MB'
+    },
+    zfs: {
+      name: 'tank',
+      size: '19.60GB'
+    }
+  }
 };
 
 (function() {
