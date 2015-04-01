@@ -69,6 +69,45 @@ describe('Volumes add', function() {
     }
   });
 
+  it('should show the correct volume group size if it is configured', function(){
+    if(helpers.configs.pools.vg){
+      var volumepoolSelect = element(by.model('data.sourcePool'));
+      volumepoolSelect.click();
+
+      var vg = helpers.configs.pools.vg;
+      volumepoolSelect.element(by.cssContainingText('option', vg.name)).click();
+
+      expect(element(by.css('.tc_poolAvailableSize')).isPresent()).toBe(true);
+      expect(element(by.css('.tc_poolAvailableSize')).getText()).toEqual(vg.size + ' available');
+    }
+  });
+
+  it('should show the correct btrfs pool size if it is configured', function(){
+    if(helpers.configs.pools.btrfs){
+      var volumepoolSelect = element(by.model('data.sourcePool'));
+      volumepoolSelect.click();
+
+      var btrfs = helpers.configs.pools.btrfs;
+      volumepoolSelect.element(by.cssContainingText('option', btrfs.name)).click();
+
+      expect(element(by.css('.tc_poolAvailableSize')).isPresent()).toBe(true);
+      expect(element(by.css('.tc_poolAvailableSize')).getText()).toEqual(btrfs.size + ' available');
+    }
+  });
+
+  it('should show the correct zfs pool size if it is configured', function(){
+    if(helpers.configs.pools.zfs){
+      var volumepoolSelect = element(by.model('data.sourcePool'));
+      volumepoolSelect.click();
+
+      var zfs = helpers.configs.pools.zfs;
+      volumepoolSelect.element(by.cssContainingText('option', zfs.name)).click();
+
+      expect(element(by.css('.tc_poolAvailableSize')).isPresent()).toBe(true);
+      expect(element(by.css('.tc_poolAvailableSize')).getText()).toEqual(zfs.size + ' available');
+    }
+  });
+
   it('should show a message if the chosen volume size is smaller than 100mb', function(){
     var volumepoolSelect = element(by.model('data.sourcePool'));
     helpers.selectDropdownByIndex(volumepoolSelect, 2);
