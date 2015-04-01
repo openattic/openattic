@@ -45,7 +45,7 @@ describe('Volumes add', function() {
       volumepoolSelect.click();
 
       var vg = helpers.configs.pools.vg;
-      expect(element(by.cssContainingText('option', vg.name)).isPresent()).toBe(true);
+      expect(volumepoolSelect.element(by.cssContainingText('option', vg.name)).isPresent()).toBe(true);
     }
   });
 
@@ -55,7 +55,7 @@ describe('Volumes add', function() {
       volumepoolSelect.click();
 
       var btrfs = helpers.configs.pools.btrfs;
-      expect(element(by.cssContainingText('option', btrfs.name)).isPresent()).toBe(true);
+      expect(volumepoolSelect.element(by.cssContainingText('option', btrfs.name)).isPresent()).toBe(true);
     }
   });
 
@@ -65,7 +65,7 @@ describe('Volumes add', function() {
       volumepoolSelect.click();
 
       var zfs = helpers.configs.pools.zfs;
-      expect(element(by.cssContainingText('option', zfs.name)).isPresent()).toBe(true);
+      expect(volumepoolSelect.element(by.cssContainingText('option', zfs.name)).isPresent()).toBe(true);
     }
   });
 
