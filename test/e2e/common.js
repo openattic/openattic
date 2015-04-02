@@ -27,6 +27,22 @@ var configs = {
 (function() {
   module.exports = {
     configs: configs,
+    volumeTypes: {
+      vg: [
+        'Create LUN',
+        'Create Virtualization Store -> XFS',
+        'Create ZFS Volume',
+        'Create File Store -> BTRFS'
+      ],
+      btrfs: [
+        'Create LUN',
+        'Create File Store -> BTRFS'
+      ],
+      zfs: [
+        'Create LUN',
+        'Create ZFS Volume'
+      ]
+    },
     login: function() {
       browser.get(configs.url);
       element.all(by.model('username')).sendKeys(configs.username);
