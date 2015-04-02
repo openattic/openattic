@@ -32,6 +32,22 @@ describe('Volumes add', function() {
     expect(element(by.css('h2')).getText()).toEqual('Create Volume: protractor_test');
   });
 
+  it('should have a volume name input field', function(){
+    expect(element(by.id('volume.name')).isDisplayed()).toBe(true);
+  });
+
+  it('should have a volume pool select box', function(){
+    expect(element(by.id('data.sourcePool')).isDisplayed()).toBe(true);
+  });
+
+  it('should have a volume size input field', function(){
+    expect(element(by.id('data.megs')).isDisplayed()).toBe(true);
+  });
+
+  it('should have a deletion protection checkbox', function(){
+    expect(element(by.id('volume.is_protected')).isDisplayed()).toBe(true);
+  });
+
   it('should stay on the create volume form if the submit button is clicked without editing anything', function(){
     var submitButton = element(by.css('.tc_submitButton'));
     submitButton.click();
