@@ -91,7 +91,6 @@ describe('Volumes add', function() {
       volumeSizeInput.clear().sendKeys(volumeSize + pool.unit);
 
       expect(element(by.css('.tc_wrongVolumeSize')).isDisplayed()).toBe(true);
-      browser.sleep(8000);
     }
   });
 
