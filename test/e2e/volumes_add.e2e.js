@@ -162,4 +162,14 @@ describe('Volumes add', function() {
 
     expect(element(by.css('.tc_noValidNumber')).isPresent()).toBe(true);
   });
+
+  it('should show a message if the given volume size is a combination of numbers and string', function(){
+    var volumepoolSelect = element(by.model('data.sourcePool'));
+    helpers.selectDropdownByIndex(volumepoolSelect, 2);
+
+    var volumeSizeInput = element(by.model('data.megs'));
+    volumeSizeInput.sendKeys('120asd');
+
+    expect(element(by.css('.tc_noValidNumber')).isDisplayed()).toBe(true);
+  });
 });
