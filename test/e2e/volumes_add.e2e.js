@@ -78,6 +78,23 @@ describe('Volumes add', function() {
     }
   });
 
+  it('should not allow a volume size that is higher than the selected pool capacity', function(){
+    var volumepoolSelect = element(by.model('data.sourcePool'));
+    var volumeSizeInput = element(by.model('data.megs'));
+
+    for(var key in helpers.configs.pools) {
+      var pool = helpers.configs.pools[key];
+      volumepoolSelect.click();
+      volumepoolSelect.element(by.cssContainingText('option', pool.name)).click();
+
+      var volumeSize = (pool.size + 0.1).toFixed(2);
+      volumeSizeInput.clear().sendKeys(volumeSize + pool.unit);
+
+      expect(element(by.css('.tc_wrongVolumeSize')).isDisplayed()).toBe(true);
+      browser.sleep(8000);
+    }
+  });
+
   it('should show a message if the chosen volume size is smaller than 100mb', function(){
     var volumepoolSelect = element(by.model('data.sourcePool'));
     helpers.selectDropdownByIndex(volumepoolSelect, 2);
