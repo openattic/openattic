@@ -32,6 +32,22 @@ describe('Volumes add', function() {
     expect(element(by.css('h2')).getText()).toEqual('Create Volume: protractor_test');
   });
 
+  it('should stay on the create volume form if the submit button is clicked without editing anything', function(){
+    var submitButton = element(by.css('.tc_submitButton'));
+    submitButton.click();
+
+    expect(element(by.id('ribbon')).getText()).toEqual('Volumes Add');
+  });
+
+  it('should show required field errors if the submit button is clicked without editing anything', function(){
+    var submitButton = element(by.css('.tc_submitButton'));
+    submitButton.click();
+
+    expect(element(by.css('.tc_nameRequired')).isDisplayed()).toBe(true);
+    expect(element(by.css('.tc_poolRequired')).isDisplayed()).toBe(true);
+    expect(element(by.css('.tc_sizeRequired')).isDisplayed()).toBe(true);
+  });
+
   it('should offer a list of volume pools', function(){
     var volumepoolSelect = element(by.model('data.sourcePool'));
     volumepoolSelect.click();
