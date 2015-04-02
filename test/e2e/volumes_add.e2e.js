@@ -39,33 +39,13 @@ describe('Volumes add', function() {
     expect(volumepoolSelect.all(by.css('select .tc_volumePoolOption')).count()).toBeGreaterThan(0);
   });
 
-  it('should have a volume group if it is configured', function(){
-    if(helpers.configs.pools.vg){
-      var volumepoolSelect = element(by.model('data.sourcePool'));
-      volumepoolSelect.click();
+  it('should have the configured pools', function(){
+    var volumepoolSelect = element(by.model('data.sourcePool'));
+    volumepoolSelect.click();
 
-      var vg = helpers.configs.pools.vg;
-      expect(volumepoolSelect.element(by.cssContainingText('option', vg.name)).isPresent()).toBe(true);
-    }
-  });
-
-  it('should have a btrfs pool if it is configured', function(){
-    if(helpers.configs.pools.btrfs){
-      var volumepoolSelect = element(by.model('data.sourcePool'));
-      volumepoolSelect.click();
-
-      var btrfs = helpers.configs.pools.btrfs;
-      expect(volumepoolSelect.element(by.cssContainingText('option', btrfs.name)).isPresent()).toBe(true);
-    }
-  });
-
-  it('should have a zfs pool if it is configured', function(){
-    if(helpers.configs.pools.zfs) {
-      var volumepoolSelect = element(by.model('data.sourcePool'));
-      volumepoolSelect.click();
-
-      var zfs = helpers.configs.pools.zfs;
-      expect(volumepoolSelect.element(by.cssContainingText('option', zfs.name)).isPresent()).toBe(true);
+    for(var key in helpers.configs.pools){
+      var pool = helpers.configs.pools[key];
+      expect(volumepoolSelect.element(by.cssContainingText('option', pool.name)).isDisplayed()).toBe(true);
     }
   });
 
