@@ -69,42 +69,16 @@ describe('Volumes add', function() {
     }
   });
 
-  it('should show the correct volume group size if it is configured', function(){
-    if(helpers.configs.pools.vg){
-      var volumepoolSelect = element(by.model('data.sourcePool'));
+  it('should show the correct size of the selected pool', function(){
+    var volumepoolSelect = element(by.model('data.sourcePool'));
+
+    for(var key in helpers.configs.pools){
+      var pool = helpers.configs.pools[key];
       volumepoolSelect.click();
+      volumepoolSelect.element(by.cssContainingText('option', pool.name)).click();
 
-      var vg = helpers.configs.pools.vg;
-      volumepoolSelect.element(by.cssContainingText('option', vg.name)).click();
-
-      expect(element(by.css('.tc_poolAvailableSize')).isPresent()).toBe(true);
-      expect(element(by.css('.tc_poolAvailableSize')).getText()).toEqual(vg.size.toFixed(2) + vg.unit + ' available');
-    }
-  });
-
-  it('should show the correct btrfs pool size if it is configured', function(){
-    if(helpers.configs.pools.btrfs){
-      var volumepoolSelect = element(by.model('data.sourcePool'));
-      volumepoolSelect.click();
-
-      var btrfs = helpers.configs.pools.btrfs;
-      volumepoolSelect.element(by.cssContainingText('option', btrfs.name)).click();
-
-      expect(element(by.css('.tc_poolAvailableSize')).isPresent()).toBe(true);
-      expect(element(by.css('.tc_poolAvailableSize')).getText()).toEqual(btrfs.size.toFixed(2) + btrfs.unit + ' available');
-    }
-  });
-
-  it('should show the correct zfs pool size if it is configured', function(){
-    if(helpers.configs.pools.zfs){
-      var volumepoolSelect = element(by.model('data.sourcePool'));
-      volumepoolSelect.click();
-
-      var zfs = helpers.configs.pools.zfs;
-      volumepoolSelect.element(by.cssContainingText('option', zfs.name)).click();
-
-      expect(element(by.css('.tc_poolAvailableSize')).isPresent()).toBe(true);
-      expect(element(by.css('.tc_poolAvailableSize')).getText()).toEqual(zfs.size.toFixed(2) + zfs.unit + ' available');
+      expect(element(by.css('.tc_poolAvailableSize')).isDisplayed()).toBe(true);
+      expect(element(by.css('.tc_poolAvailableSize')).getText()).toEqual(pool.size.toFixed(2) + pool.unit + ' available');
     }
   });
 
