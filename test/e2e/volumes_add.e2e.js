@@ -125,6 +125,24 @@ describe('Volumes add', function() {
     }
   });
 
+  it('should show the predefined volume types for each pool', function(){
+    var volumepoolSelect = element(by.model('data.sourcePool'));
+
+    for(var key in helpers.configs.pools) {
+      if(key in helpers.volumeTypes) {
+        var pool = helpers.configs.pools[key];
+        var volumeTypes = helpers.volumeTypes[key];
+
+        volumepoolSelect.click();
+        volumepoolSelect.element(by.cssContainingText('option', pool.name)).click();
+
+        for (var i = 0; i < volumeTypes.length; i++) {
+          expect(element(by.cssContainingText('span', volumeTypes[i])).isDisplayed()).toBe(true);
+        }
+      }
+    }
+  });
+
   it('should show a message if the chosen volume size is smaller than 100mb', function(){
     var volumepoolSelect = element(by.model('data.sourcePool'));
     helpers.selectDropdownByIndex(volumepoolSelect, 2);
