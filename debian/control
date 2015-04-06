@@ -17,7 +17,6 @@ Depends: ${misc:Depends},
  openattic-module-apt,
  openattic-module-nagios,
  openattic-module-cron,
- openattic-module-ftp,
  openattic-module-mailaliases
 Recommends:
  openattic-module-btrfs,
