@@ -147,7 +147,7 @@ Description: APT module for openATTIC
 Package: openattic-module-samba
 Architecture: all
 Depends: ${misc:Depends}, openattic-base, samba, samba-common-bin,
- winbind, libnss-winbind, krb5-user | heimdal-clients, libpam-krb5
+ winbind, libnss-winbind
 Description: Samba module for openATTIC
  openATTIC is a storage management system based upon Open Source tools with
  a comprehensive user interface that allows you to create, share and backup
@@ -156,6 +156,17 @@ Description: Samba module for openATTIC
  Samba implements the SMB/CIFS protocol and enables file sharing with hosts
  that run the Microsoft Windows family of operating systems. This package
  provides configuration facilities for Samba Shares.
+
+Package: openattic-auth-kerberos
+Architecture: all
+Depends: ${misc:Depends}, openattic-module-samba,
+ krb5-user | heimdal-clients, libpam-krb5, libapache2-mod-auth-kerb
+Description: Samba module for openATTIC
+ openATTIC is a storage management system based upon Open Source tools with
+ a comprehensive user interface that allows you to create, share and backup
+ storage space on demand.
+ .
+ This package installs dependencies necessary for Kerberos authentication.
 
 Package: openattic-module-cron
 Architecture: all
