@@ -8,15 +8,22 @@ angular.module('openattic.todowidget')
         replace: true,
         templateUrl:'components/todoWidget/templates/todo.html',
         controller: function($scope){
-            $scope.todos = [
-//              {text: "Create Disk", open: true },
-//              {text: "Create Pool", open: true },
-                {text: "Create Volume", open: true }
+            $scope.todos = (localStorage.getItem('todos')!== null) ? JSON.parse(localStorage.getItem('todos')):
+            [
+                { text: "Create Volume", done: false },
+                { text: "Task 2", done: false },
+                { text: "Task 3", done: false }
             ];
+            localStorage.setItem('todos', JSON.stringify($scope.todos));
+
+            $scope.saveCheck = function(){
+                localStorage.setItem('todos', JSON.stringify($scope.todos));
+            }
 
             $scope.getTotalTodos = function(){
                 return $scope.todos.length;
             };
         }
     }
+
 });
