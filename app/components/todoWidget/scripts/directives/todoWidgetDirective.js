@@ -10,12 +10,12 @@ angular.module('openattic.todowidget')
         controller: function($scope){
             $scope.todos = (localStorage.getItem('todos')!== null) ? JSON.parse(localStorage.getItem('todos')):
             [
-                { text: "Create Volume", done: false },
-                { text: "Task 2", done: false },
-                { text: "Task 3", done: false }
+                { text: 'Create Volume', done: false, link: 'volumes-add' },
+                { text: 'Task 2', done: false, link: 'volumes-add' },
+                { text: 'Task 3', done: false, link: 'volumes-add' }
             ];
-            localStorage.setItem('todos', JSON.stringify($scope.todos));
 
+            localStorage.setItem('todos', JSON.stringify($scope.todos));
             $scope.saveCheck = function(){
                 localStorage.setItem('todos', JSON.stringify($scope.todos));
             }
