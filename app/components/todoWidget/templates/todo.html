@@ -1,17 +1,18 @@
-<div class="jarviswidget" id="wid-id-4" widget-editbutton="false" widget-colorbutton="false">
-    <div class="widget-body no-padding smart-form">
-        <div>
-            <h5 class="todo-group-title"><i class="fa fa-warning"></i> Tasks (<small>{{getTotalTodos()}}</small>)</h5>
-            <ul class="todo" ng-repeat="todo in todos">
-                <li>
-                    <span>
-                        <input type="checkbox" ng-model="todo.done" ng-change="saveCheck()">
-                    </span>
-                    <p>
-                        <strong> <span class="done-{{todo.done}}"> {{todo.text}} </span></strong> [<a ui-sref="volumes-add" class="font-xs"> Start Task </a>]
-                    </p>
-                </li>
-            </ul>
-        </div>
+<div>
+    <div>
+        <i class="fa fa-warning"></i> Tasks ({{getTotalTodos()}})
+    </div>
+    <div>
+        <ul class="list-unstyled" ng-repeat="todo in todos">
+            <li class="oatodo">
+                <div class="checkbox">
+                    <input type="checkbox" ng-model="todo.done" ng-change="saveCheck()">
+                    <label>
+                        <strong><span class="done-{{todo.done}}"> {{todo.text}} </span></strong>
+                        [<a ui-sref="{{todo.link}}" class="font-xs"> Start Task </a>]
+                    </label>
+                </div>
+            </li>
+        </ul>
     </div>
 </div>

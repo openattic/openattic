@@ -15,6 +15,10 @@ accordion .panel-title {
     color: black;
 }
 
+.oatodo {
+    padding-left: 20px;
+}
+
 oadatatable div.widget-body {
     position: relative;
 }
