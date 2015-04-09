@@ -145,15 +145,14 @@ describe('Volumes add', function() {
     var volumepoolSelect = element(by.model('data.sourcePool'));
 
     for(var key in helpers.configs.pools) {
-      if(key in helpers.volumeTypes) {
-        var pool = helpers.configs.pools[key];
-        var volumeTypes = helpers.volumeTypes[key];
+      var pool = helpers.configs.pools[key];
 
+      if('volumeTypes' in pool) {
         volumepoolSelect.click();
         volumepoolSelect.element(by.cssContainingText('option', pool.name)).click();
 
-        for (var i = 0; i < volumeTypes.length; i++) {
-          expect(element(by.cssContainingText('span', volumeTypes[i])).isDisplayed()).toBe(true);
+        for (var i = 0; i < pool.volumeTypes.length; i++) {
+          expect(element(by.cssContainingText('span', pool.volumeTypes[i])).isDisplayed()).toBe(true);
         }
       }
     }
