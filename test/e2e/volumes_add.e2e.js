@@ -190,12 +190,14 @@ describe('Volumes add', function() {
   });
 
   it('should create a volume in a volume group', function(){
+    var vg = helpers.configs.pools.vg;
+
     // create a volume
     element(by.id('volume.name')).sendKeys('protractor_vg_volume');
 
     var volumePoolSelect = element(by.id('data.sourcePool'));
     volumePoolSelect.click();
-    volumePoolSelect.element(by.cssContainingText('option', 'vg_lorlen')).click();
+    volumePoolSelect.element(by.cssContainingText('option', vg.name)).click();
 
     //element(by.id('lunType')).click();
     element(by.id('data.megs')).sendKeys('100mb');
