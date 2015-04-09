@@ -1,4 +1,4 @@
-var helpers = require('./common.js');
+var helpers = require('../common.js');
 describe('Volumes add', function() {
   beforeEach(function() {
     helpers.login();

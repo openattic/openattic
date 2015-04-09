@@ -1,4 +1,4 @@
-var helpers = require('./common.js');
+var helpers = require('../common.js');
 describe('General', function() {
   beforeEach(function() {
     helpers.login();
