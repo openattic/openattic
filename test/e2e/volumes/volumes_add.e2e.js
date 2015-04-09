@@ -210,33 +210,41 @@ describe('Volumes add', function() {
     }
   });
 
-  it('should create a volume in a volume group', function(){
-    var vg = helpers.configs.pools.vg;
-    var volumename = 'protractor_volume_' + vg.name;
+  it('should create a volume in the configured pools', function(){
+    for(var key in helpers.configs.pools) {
+      var pool = helpers.configs.pools[key];
+      var volumename = 'protractor_volume_' + pool.name;
 
-    // create a volume
-    element(by.id('volume.name')).sendKeys(volumename);
+      // create a volume
+      element(by.id('volume.name')).sendKeys(volumename);
 
-    var volumePoolSelect = element(by.id('data.sourcePool'));
-    volumePoolSelect.click();
-    volumePoolSelect.element(by.cssContainingText('option', vg.name)).click();
+      var volumePoolSelect = element(by.id('data.sourcePool'));
+      volumePoolSelect.click();
+      volumePoolSelect.element(by.cssContainingText('option', pool.name)).click();
 
-    //element(by.id('lunType')).click();
-    element(by.id('data.megs')).sendKeys('100mb');
-    element(by.css('.tc_submitButton')).click();
+      //element(by.id('lunType')).click();
+      element(by.id('data.megs')).sendKeys('100mb');
+      element(by.css('.tc_submitButton')).click();
 
-    // is it displayed on the volume overview?
-    var volume = element(by.cssContainingText('tr', volumename));
-    expect(volume.isDisplayed()).toBe(true);
+      // is it displayed on the volume overview?
+      var volume = element(by.cssContainingText('tr', volumename));
+      expect(volume.isDisplayed()).toBe(true);
 
-    // delete the volume
-    volume.click();
+      // delete the volume
+      volume.click();
+      browser.sleep(400);
+      element(by.css('.tc_menudropdown')).click();
+      browser.sleep(400);
+      element(by.css('.tc_deleteItem')).click();
+      browser.sleep(400);
 
-    element(by.css('.tc_menudropdown')).click();
-    element(by.css('.tc_deleteItem')).click();
-    element(by.model('input.enteredName')).sendKeys(volumename);
-    element(by.id('bot2-Msg1')).click();
+      element(by.model('input.enteredName')).sendKeys(volumename);
+      element(by.id('bot2-Msg1')).click();
 
-    expect(volume.isPresent()).toBe(false);
+      expect(volume.isPresent()).toBe(false);
+
+      var addBtn = element(by.css('oadatatable .tc_add_btn'));
+      addBtn.click();
+    }
   });
 });
