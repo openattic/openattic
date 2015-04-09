@@ -10,7 +10,7 @@
         <li class="divider"></li>
         <li ng-class="{disabled: !hasSelection}" ng-click="moreOptionsAction()" tooltip="E.g. snapshots, shares"><a><i class="fa fa-fw fa-star"></i> More Options</a></li>
         <li class="divider"></li>
-        <li ng-class="{disabled: !hasSelection}" max-selected=1><a ng-click="deleteAction()"><i class="fa fa-fw fa-trash-o"></i> Delete</a></li>
+        <li class="tc_deleteItem" ng-class="{disabled: !hasSelection}" max-selected=1><a ng-click="deleteAction()"><i class="fa fa-fw fa-trash-o"></i> Delete</a></li>
     </actions>
     <table class="table table-striped table-bordered table-hover dataTable">
         <thead>
