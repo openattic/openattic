@@ -188,4 +188,31 @@ describe('Volumes add', function() {
 
     expect(element(by.css('.tc_noValidNumber')).isDisplayed()).toBe(true);
   });
+
+  it('should create a volume in a volume group', function(){
+    // create a volume
+    element(by.id('volume.name')).sendKeys('protractor_vg_volume');
+
+    var volumePoolSelect = element(by.id('data.sourcePool'));
+    volumePoolSelect.click();
+    volumePoolSelect.element(by.cssContainingText('option', 'vg_lorlen')).click();
+
+    //element(by.id('lunType')).click();
+    element(by.id('data.megs')).sendKeys('100mb');
+    element(by.css('.tc_submitButton')).click();
+
+    // is it displayed on the volume overview?
+    var volume = element(by.cssContainingText('tr', 'protractor_vg_volume'));
+    expect(volume.isDisplayed()).toBe(true);
+
+    // delete the volume
+    volume.click();
+
+    element(by.css('.tc_menudropdown')).click();
+    element(by.css('.tc_deleteItem')).click();
+    element(by.model('input.enteredName')).sendKeys('protractor_vg_volume');
+    element(by.id('bot2-Msg1')).click();
+
+    expect(volume.isPresent()).toBe(false);
+  });
 });
