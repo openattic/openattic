@@ -190,8 +190,8 @@ describe('Volumes add', function() {
   });
 
   it('should create a volume in a volume group', function(){
-    var volumename = 'protractor_vg_volume';
     var vg = helpers.configs.pools.vg;
+    var volumename = 'protractor_volume_' + vg.name;
 
     // create a volume
     element(by.id('volume.name')).sendKeys(volumename);
