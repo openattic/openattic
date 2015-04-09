@@ -160,33 +160,54 @@ describe('Volumes add', function() {
   });
 
   it('should show a message if the chosen volume size is smaller than 100mb', function(){
-    var volumepoolSelect = element(by.model('data.sourcePool'));
-    helpers.selectDropdownByIndex(volumepoolSelect, 2);
+    for(var key in helpers.configs.pools) {
+      var pool = helpers.configs.pools[key];
 
-    var volumeSizeInput = element(by.model('data.megs'));
-    volumeSizeInput.sendKeys('99mb');
+      var volumepoolSelect = element(by.model('data.sourcePool'));
+      volumepoolSelect.click();
+      volumepoolSelect.element(by.cssContainingText('option', pool.name)).click();
 
-    expect(element(by.css('.tc_wrongVolumeSize')).isPresent()).toBe(true);
+      var volumeSizeInput = element(by.model('data.megs'));
+      volumeSizeInput.sendKeys('99mb');
+
+      expect(element(by.css('.tc_wrongVolumeSize')).isPresent()).toBe(true);
+
+      break;
+    }
   });
 
   it('should show a message if the given volume size is just a string', function(){
-    var volumepoolSelect = element(by.model('data.sourcePool'));
-    helpers.selectDropdownByIndex(volumepoolSelect, 2);
+    for(var key in helpers.configs.pools) {
+      var pool = helpers.configs.pools[key];
 
-    var volumeSizeInput = element(by.model('data.megs'));
-    volumeSizeInput.sendKeys('abc');
+      var volumepoolSelect = element(by.model('data.sourcePool'));
+      volumepoolSelect.click();
+      volumepoolSelect.element(by.cssContainingText('option', pool.name)).click();
 
-    expect(element(by.css('.tc_noValidNumber')).isPresent()).toBe(true);
+      var volumeSizeInput = element(by.model('data.megs'));
+      volumeSizeInput.sendKeys('abc');
+
+      expect(element(by.css('.tc_noValidNumber')).isPresent()).toBe(true);
+
+      break;
+    }
   });
 
   it('should show a message if the given volume size is a combination of numbers and string', function(){
-    var volumepoolSelect = element(by.model('data.sourcePool'));
-    helpers.selectDropdownByIndex(volumepoolSelect, 2);
+    for(var key in helpers.configs.pools) {
+      var pool = helpers.configs.pools[key];
 
-    var volumeSizeInput = element(by.model('data.megs'));
-    volumeSizeInput.sendKeys('120asd');
+      var volumepoolSelect = element(by.model('data.sourcePool'));
+      volumepoolSelect.click();
+      volumepoolSelect.element(by.cssContainingText('option', pool.name)).click();
 
-    expect(element(by.css('.tc_noValidNumber')).isDisplayed()).toBe(true);
+      var volumeSizeInput = element(by.model('data.megs'));
+      volumeSizeInput.sendKeys('120asd');
+
+      expect(element(by.css('.tc_noValidNumber')).isDisplayed()).toBe(true);
+
+      break;
+    }
   });
 
   it('should create a volume in a volume group', function(){
