@@ -39,8 +39,8 @@
                             <div class="col-md-10">
                                 <div class="radio radio-primary">
                                     <input type="radio" ng-model="data.filesystem"
-                                               value="lunType" ng-disabled="state.formatted" id="lunType">
-                                    <label for="lunType">Create LUN</label>
+                                               value="" ng-disabled="state.formatted" id="lun">
+                                    <label for="lun">Create LUN</label>
                                 </div>
                                 <div class="radio radio-primary" ng-show="supported_filesystems.xfs">
                                     <input type="radio" ng-model="data.filesystem" value="xfs"
