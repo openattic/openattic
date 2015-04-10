@@ -209,41 +209,45 @@ describe('Volumes add', function() {
     }
   });
 
-  it('should create a volume in the configured pools', function(){
+  it('should create a volume of the configured volume types in the configured pools', function(){
     for(var key in helpers.configs.pools) {
       var pool = helpers.configs.pools[key];
-      var volumename = 'protractor_volume_' + pool.name;
 
-      // create a volume
-      element(by.id('volume.name')).sendKeys(volumename);
+      for(var i=0; i < pool.volumeTypes.length; i++){
+        var volumeType = pool.volumeTypes[i];
+        var volumename = 'protractor_volume_' + pool.name;
 
-      var volumePoolSelect = element(by.id('data.sourcePool'));
-      volumePoolSelect.click();
-      volumePoolSelect.element(by.cssContainingText('option', pool.name)).click();
+        // create a volume
+        element(by.id('volume.name')).sendKeys(volumename);
 
-      //element(by.id('lunType')).click();
-      element(by.id('data.megs')).sendKeys('100mb');
-      element(by.css('.tc_submitButton')).click();
+        var volumePoolSelect = element(by.id('data.sourcePool'));
+        volumePoolSelect.click();
+        volumePoolSelect.element(by.cssContainingText('option', pool.name)).click();
 
-      // is it displayed on the volume overview?
-      var volume = element(by.cssContainingText('tr', volumename));
-      expect(volume.isDisplayed()).toBe(true);
+        element(by.cssContainingText('label', volumeType)).click();
+        element(by.id('data.megs')).sendKeys('100mb');
+        element(by.css('.tc_submitButton')).click();
 
-      // delete the volume
-      volume.click();
-      browser.sleep(400);
-      element(by.css('.tc_menudropdown')).click();
-      browser.sleep(400);
-      element(by.css('.tc_deleteItem')).click();
-      browser.sleep(400);
+        // is it displayed on the volume overview?
+        var volume = element(by.cssContainingText('tr', volumename));
+        expect(volume.isDisplayed()).toBe(true);
 
-      element(by.model('input.enteredName')).sendKeys(volumename);
-      element(by.id('bot2-Msg1')).click();
+        // delete the volume
+        volume.click();
+        browser.sleep(400);
+        element(by.css('.tc_menudropdown')).click();
+        browser.sleep(400);
+        element(by.css('.tc_deleteItem')).click();
+        browser.sleep(400);
 
-      expect(volume.isPresent()).toBe(false);
+        element(by.model('input.enteredName')).sendKeys(volumename);
+        element(by.id('bot2-Msg1')).click();
 
-      var addBtn = element(by.css('oadatatable .tc_add_btn'));
-      addBtn.click();
+        expect(volume.isPresent()).toBe(false);
+
+        var addBtn = element(by.css('oadatatable .tc_add_btn'));
+        addBtn.click();
+      }
     }
   });
 });
