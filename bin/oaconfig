@@ -259,6 +259,8 @@ case $1 in
 [libdefaults]
 	default_realm = $realm
 	default_keytab_name = /etc/krb5.keytab
+	default_tkt_enctypes = rc4-hmac des-cbc-crc des-cbc-md5
+	default_tgs_enctypes = rc4-hmac des-cbc-crc des-cbc-md5
 
 [domain_realm]
 	.$domain = $realm
