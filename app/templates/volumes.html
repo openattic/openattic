@@ -6,7 +6,7 @@
         <li><a ng-click="addAction()"><i class="fa fa-fw fa-plus"></i> Add</a></li>
         <li ng-class="{disabled: !hasSelection}"><a><i class="fa fa-fw fa-upload"></i> Resize</a></li>
         <li ng-class="{disabled: !(hasSelection && cloneable)}" ng-click="cloneAction()"><a><i class="fa fa-fw fa-files-o"></i> Clone</a></li>
-        <li ng-class="{disabled: !hasSelection}" ng-click="protectionAction()"><a><i class="fa fa-fw fa-ban"></i> Protection</a></li>
+        <li class="tc_setProtection" ng-class="{disabled: !hasSelection}" ng-click="protectionAction()"><a><i class="fa fa-fw fa-ban"></i> Protection</a></li>
         <li class="divider"></li>
         <li ng-class="{disabled: !hasSelection}" ng-click="moreOptionsAction()" tooltip="E.g. snapshots, shares"><a><i class="fa fa-fw fa-star"></i> More Options</a></li>
         <li class="divider"></li>
@@ -63,7 +63,7 @@
                     'fa-chain-broken':         row.status.status == 'fail',
                     'fa-lock':                 row.status.status == 'locked'
                     }"></i></td>
-                <td ng-show="columns['Protection']">
+                <td ng-show="columns['Protection']" id="is_protected">
                     <i class="fa" ng-class="{'fa-check': row.is_protected == true}"></i>
                 </td>
                 <td ng-show="columns['Type']" ng-bind="row.type.name"></td>
