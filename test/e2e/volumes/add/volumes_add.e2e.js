@@ -9,7 +9,7 @@ describe('Volumes add', function() {
     var addBtn = element(by.css('oadatatable .tc_add_btn'));
     addBtn.click();
   });
-/*
+
   it('should open an add volume form with "Create Volume:" header', function(){
     expect(element(by.css('h2')).getText()).toEqual('Create Volume:');
   });
@@ -207,7 +207,7 @@ describe('Volumes add', function() {
 
       break;
     }
-  }); */
+  });
 
   it('should create a volume with deletion protection', function(){
     for(var key in helpers.configs.pools) {
@@ -260,7 +260,6 @@ describe('Volumes add', function() {
     }
   });
 
-  /*
   it('should create a volume of the configured volume types in the configured pools', function(){
     for(var key in helpers.configs.pools) {
       var pool = helpers.configs.pools[key];
@@ -302,5 +301,5 @@ describe('Volumes add', function() {
         addBtn.click();
       }
     }
-  });*/
+  });
 });
