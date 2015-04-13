@@ -4,9 +4,8 @@ After that he can delete the volume.</p>
 <form name="protectionForm" role="form" class="form-horizontal" novalidate>
     <p class="input-group">
         <div class="col-md-8 checkbox">
-            <label>
-                <input type="checkbox" ng-model="volume.is_protected" name="protection"> Deletion protection
-            </label>
+            <input type="checkbox" ng-model="volume.is_protected" name="protection" id="protection">
+            <label for="protection">Deletion protection</label>
         </div>
         <div class="MessageBoxButtonSection">
             <button id="bot1-Msg1" class="btn btn-default btn-sm botTempo" ng-click="cancel()"> Cancel</button>
