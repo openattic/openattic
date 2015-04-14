@@ -15,6 +15,7 @@
 """
 
 from userprefs.models import UserProfile
+from ifconfig.models  import Host
 
 def project_url(request):
     from django.conf import settings
@@ -27,7 +28,8 @@ def profile(request):
         try:
             profile = UserProfile.objects.get(user=request.user)
         except UserProfile.DoesNotExist:
-            profile = UserProfile(user=request.user)
+            localhost = Host.objects.get_current()
+            profile = UserProfile(user=request.user, host=localhost)
             profile.save()
 
         return {"PROFILE": profile}
