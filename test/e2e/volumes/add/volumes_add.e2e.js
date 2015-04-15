@@ -11,7 +11,7 @@ describe('Volumes add', function() {
   });
 
   it('should open an add volume form with "Create Volume:" header', function(){
-    expect(element(by.css('.panel-heading')).getText()).toEqual('Create Volume:');
+    expect(element(by.css('.tc_formHeadline')).getText()).toEqual('Create Volume:');
   });
 
   it('should have a back button', function(){
@@ -29,7 +29,7 @@ describe('Volumes add', function() {
     var volumeNameInput = element(by.model('volume.name'));
     volumeNameInput.sendKeys('protractor_test');
 
-    expect(element(by.css('.panel-heading')).getText()).toEqual('Create Volume: protractor_test');
+    expect(element(by.css('.tc_formHeadline')).getText()).toEqual('Create Volume: protractor_test');
   });
 
   it('should have a volume name input field', function(){
