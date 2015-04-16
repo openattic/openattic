@@ -14,6 +14,8 @@ angular.module('openattic.todowidget')
                 { text: 'Task 2', done: false, link: 'volumes-add' },
                 { text: 'Task 3', done: false, link: 'volumes-add' }
             ];
+            
+            //TODO: add disks- and pools link later on
 
             localStorage.setItem('todos', JSON.stringify($scope.todos));
             $scope.saveCheck = function(){
