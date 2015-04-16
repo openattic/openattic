@@ -155,7 +155,7 @@ describe('Volumes add', function() {
         volumepoolSelect.element(by.cssContainingText('option', pool.name)).click();
 
         for (var i = 0; i < pool.volumeTypes.length; i++) {
-          expect(element(by.cssContainingText('span', pool.volumeTypes[i])).isDisplayed()).toBe(true);
+          expect(element(by.cssContainingText('label', pool.volumeTypes[i])).isDisplayed()).toBe(true);
         }
       }
     }
