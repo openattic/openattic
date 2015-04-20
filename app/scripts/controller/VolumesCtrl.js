@@ -59,26 +59,20 @@ angular.module('openattic')
     };
 
     $scope.resizeAction = function(){
-      $.SmartMessageBox({
-        title: 'Resize Volume',
-        content: 'Please enter the new volume size.',
-        buttons: '[Cancel][Accept]',
-        input: 'text',
-        inputValue:  $scope.selection.item.usage.size_text,
-        placeholder: $scope.selection.item.usage.size_text
-      }, function (ButtonPressed, Value) {
-        if (ButtonPressed === 'Accept') {
-          new VolumeService({
-            id: $scope.selection.item.id,
-            megs: SizeParserService.parseInt(Value)
-          }).$update()
-            .then(function() {
-              $scope.filterConfig.refresh = new Date();
-            }, function(error){
-              console.log('An error occured', error);
-            });
+      var modalInstance = $modal.open({
+        windowTemplateUrl: 'templates/messagebox.html',
+        templateUrl: 'templates/volumes/resize.html',
+        controller: 'VolumeResizeCtrl',
+        resolve: {
+          volume: function(){
+            return $scope.selection.item;
+          }
         }
       });
+
+      modalInstance.result.then(function() {
+        $scope.filterConfig.refresh = new Date();
+      }, function() {});
     };
 
     $scope.protectionAction = function(){

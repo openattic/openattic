@@ -153,3 +153,7 @@ perfgraphs img {
     color: grey;
 }
 
+.thicker-border {
+    border-width: 2px !important;
+}
+
