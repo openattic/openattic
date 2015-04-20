@@ -47,8 +47,6 @@ Description: Comprehensive storage management system
   * Cron
   * MailAliases (EMail configuration)
  .
- You can install additional modules yourself or use the openattic-full package.
- .
  Upstream URL: http://www.openattic.org
 
 Package: openattic-pgsql
