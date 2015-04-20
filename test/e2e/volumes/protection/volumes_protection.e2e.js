@@ -22,6 +22,13 @@ describe('Volume protection dialog', function() {
 
       break;
     }
+
+    element(by.cssContainingText('tr', volumename)).click();
+    browser.sleep(helpers.configs.sleep);
+    element(by.css('.tc_menudropdown')).click();
+    browser.sleep(helpers.configs.sleep);
+    element(by.css('.tc_setProtection')).click();
+    browser.sleep(helpers.configs.sleep);
   });
 
   afterEach(function() {
@@ -36,13 +43,6 @@ describe('Volume protection dialog', function() {
   });
 
   it('should have a deletion protection checkbox', function(){
-    element(by.cssContainingText('tr', volumename)).click();
-    browser.sleep(helpers.configs.sleep);
-    element(by.css('.tc_menudropdown')).click();
-    browser.sleep(helpers.configs.sleep);
-    element(by.css('.tc_setProtection')).click();
-    browser.sleep(helpers.configs.sleep);
-
     expect(element(by.model('volume.is_protected')).isPresent()).toBe(true);
 
     element(by.id('bot1-Msg1')).click();
