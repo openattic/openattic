@@ -9,10 +9,19 @@
             <div class="col-md-8">
                 <input type="text" class="form-control" id="newsize" placeholder="{{volume.usage.size_text}}"
                        ng-model="input.newsize" name="newsize" ng-class="{'thicker-border': (submitted
-                       || input.resizeForm.newsize.$dirty) && input.resizeForm.newsize.$invalid}" required>
+                       || input.resizeForm.newsize.$dirty) && input.resizeForm.newsize.$invalid}"
+                       max-value="{{pool.usage.max_new_fsv}}" volume-size-format volume-size-value required>
                 <p>{{pool.usage.max_new_fsv_text}} free</p>
                 <span class="help-block" ng-show="(submitted || input.resizeForm.newsize.$dirty) &&
-                    input.resizeForm.newsize.$error.required">This field is required!</span>
+                    input.resizeForm.newsize.$error.required">
+                    This field is required!
+                </span>
+                <span class="help-block" ng-show="input.resizeForm.newsize.$error.volumeSizeFormat">
+                    This is not a valid number.
+                </span>
+                <span class="help-block" ng-show="input.resizeForm.newsize.$error.volumeSizeValue">
+                    The size must not exceed {{pool.usage.max_new_fsv_text}}.
+                </span>
                 <div class="MessageBoxButtonSection">
                     <button id="bot1-Msg1" class="btn btn-default btn-sm botTempo" ng-click="cancel()"> Cancel</button>
                     <button id="bot2-Msg1" class="btn btn-default btn-sm botTempo" ng-click="resize()"> Resize</button>
