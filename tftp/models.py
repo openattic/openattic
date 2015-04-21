@@ -16,7 +16,7 @@
 
 from django.db   import models
 
-from systemd import get_dbus_object
+from systemd.helpers import Transaction, get_dbus_object
 from ifconfig.models import getHostDependentManagerClass, IPAddress
 from volumes.models import FileSystemVolume
 
@@ -31,14 +31,16 @@ class Instance(models.Model):
 
     def save( self, *args, **kwargs ):
         ret = models.Model.save(self, *args, **kwargs)
-        tftp = get_dbus_object("/tftp")
-        tftp.writeconf()
-        tftp.reload()
+        with Transaction():
+            tftp = get_dbus_object("/tftp")
+            tftp.writeconf()
+            tftp.reload()
         return ret
 
     def delete( self ):
         ret = models.Model.delete(self)
-        tftp = get_dbus_object("/tftp")
-        tftp.writeconf()
-        tftp.reload()
+        with Transaction():
+            tftp = get_dbus_object("/tftp")
+            tftp.writeconf()
+            tftp.reload()
         return ret

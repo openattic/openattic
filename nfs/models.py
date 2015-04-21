@@ -16,7 +16,7 @@
 
 from django.db   import models
 
-from systemd import get_dbus_object
+from systemd.helpers import get_dbus_object, Transaction
 from ifconfig.models import getHostDependentManagerClass
 from volumes.models import FileSystemVolume
 
@@ -35,14 +35,16 @@ class Export(models.Model):
 
     def save( self, *args, **kwargs ):
         ret = models.Model.save(self, *args, **kwargs)
-        nfs = get_dbus_object("/nfs")
-        nfs.writeconf()
-        nfs.exportfs(True, self.path, self.address, self.options)
+        with Transaction():
+            nfs = get_dbus_object("/nfs")
+            nfs.writeconf()
+            nfs.exportfs(True, self.path, self.address, self.options)
         return ret
 
     def delete( self ):
         ret = models.Model.delete(self)
-        nfs = get_dbus_object("/nfs")
-        nfs.writeconf()
-        nfs.exportfs(False, self.path, self.address, self.options)
+        with Transaction():
+            nfs = get_dbus_object("/nfs")
+            nfs.writeconf()
+            nfs.exportfs(False, self.path, self.address, self.options)
         return ret

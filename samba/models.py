@@ -16,7 +16,7 @@
 
 from django.db import models
 
-from systemd import get_dbus_object
+from systemd.helpers import get_dbus_object, Transaction
 from ifconfig.models import getHostDependentManagerClass
 from volumes.models import FileSystemVolume
 
@@ -39,15 +39,17 @@ class Share(models.Model):
 
     def save( self, *args, **kwargs ):
         ret = models.Model.save(self, *args, **kwargs)
-        samba = get_dbus_object("/samba")
-        samba.writeconf("", "")
-        samba.reload()
+        with Transaction():
+            samba = get_dbus_object("/samba")
+            samba.writeconf("", "")
+            samba.reload()
         return ret
 
     def delete( self ):
         volume = self.volume
         ret = models.Model.delete(self)
-        samba = get_dbus_object("/samba")
-        samba.writeconf("", "")
-        samba.reload()
+        with Transaction():
+            samba = get_dbus_object("/samba")
+            samba.writeconf("", "")
+            samba.reload()
         return ret
