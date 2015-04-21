@@ -76,4 +76,32 @@ describe('Volume protection dialog', function() {
     protectedColumn = volume.element(by.id('is_protected'));
     expect(protectedColumn.element(by.className('fa-check')).isPresent()).toBe(false);
   });
+
+  it('should not allow to delete a protected volume', function(){
+    // set volume protection and close dialog window
+    element(by.model('volume.is_protected')).click();
+    element(by.id('bot2-Msg1')).click();
+
+    // try to delete the volume
+    element(by.cssContainingText('tr', volumename)).click();
+    browser.sleep(helpers.configs.sleep);
+    element(by.css('.tc_menudropdown')).click();
+    browser.sleep(helpers.configs.sleep);
+    element(by.css('.tc_deleteItem')).click();
+    browser.sleep(helpers.configs.sleep);
+
+    // the volume management should show an error message
+    expect(element(by.css('.tc_notDeletable')).isPresent()).toBe(true);
+
+    // release volume protection
+    element(by.cssContainingText('tr', volumename)).click();
+    browser.sleep(helpers.configs.sleep);
+    element(by.css('.tc_menudropdown')).click();
+    browser.sleep(helpers.configs.sleep);
+    element(by.css('.tc_setProtection')).click();
+    browser.sleep(helpers.configs.sleep);
+    element(by.model('volume.is_protected')).click();
+    element(by.id('bot2-Msg1')).click();
+    browser.sleep(helpers.configs.sleep);
+  });
 });
