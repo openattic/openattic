@@ -1,7 +1,7 @@
+'use strict';
+
 angular.module('openattic')
   .directive('validname', function() {
-    'use strict';
-
     return {
       require: 'ngModel',
       link: function (scope, elem, attrs, ctrl) {
