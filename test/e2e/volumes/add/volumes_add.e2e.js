@@ -205,6 +205,44 @@ describe('Volumes add', function() {
     }
   });
 
+  it('should only allow unique volume names', function(){
+    for(var key in helpers.configs.pools) {
+      var volumename = 'protractor_test_volume';
+      var pool = helpers.configs.pools[key];
+
+      // create a volume
+      element(by.id('volume.name')).sendKeys(volumename);
+
+      var volumePoolSelect = element(by.id('data.sourcePool'));
+      volumePoolSelect.click();
+      volumePoolSelect.element(by.cssContainingText('option', pool.name)).click();
+
+      element(by.id('data.megs')).sendKeys('100mb');
+      element(by.css('.tc_submitButton')).click();
+      browser.sleep(helpers.configs.sleep);
+
+      // try to create the volume again
+      element(by.css('.tc_add_btn')).click();
+      element(by.id('volume.name')).sendKeys(volumename);
+      expect(element(by.css('.tc_noUniqueName')).isDisplayed()).toBe(true);
+      element(by.css('.tc_backButton')).click();
+
+      // delete the volume
+      var volume = element(by.cssContainingText('tr', volumename));
+      volume.click();
+      browser.sleep(400);
+      element(by.css('.tc_menudropdown')).click();
+      browser.sleep(400);
+      element(by.css('.tc_deleteItem')).click();
+      browser.sleep(400);
+
+      element(by.model('input.enteredName')).sendKeys(volumename);
+      element(by.id('bot2-Msg1')).click();
+
+      break;
+    }
+  });
+
   it('should create a volume of the configured volume types in the configured pools', function(){
     for(var key in helpers.configs.pools) {
       var pool = helpers.configs.pools[key];
