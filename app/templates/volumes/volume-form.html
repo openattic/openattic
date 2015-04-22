@@ -19,7 +19,7 @@
                                 <input type="text" class="form-control" id="volume.name" placeholder="Name..." ng-model="volume.name" name="name" validname uniquename required>
                                 <span class="help-block tc_nameRequired" ng-show="(submitted || volumeForm.name.$dirty) && volumeForm.name.$error.required">This field is required!</span>
                                 <span class="help-block" ng-show="volumeForm.name.$error.validname">{{errortext}}</span>
-                                <span class="help-block" ng-show="volumeForm.name.$error.uniquename">The chosen volume name is already in use.</span>
+                                <span class="help-block tc_noUniqueName" ng-show="volumeForm.name.$error.uniquename">The chosen volume name is already in use.</span>
                             </div>
                         </div>
                         <div class="form-group" ng-class="{'has-error': (submitted || volumeForm.pool.$dirty) && volumeForm.pool.$invalid}">
