@@ -20,7 +20,7 @@
                     This is not a valid number.
                 </span>
                 <span class="help-block" ng-show="input.resizeForm.newsize.$error.volumeSizeValue">
-                    The size must not exceed {{pool.usage.max_new_fsv_text}}.
+                    The size must be at least 100MB and must not exceed {{pool.usage.max_new_fsv_text}}.
                 </span>
                 <div class="MessageBoxButtonSection">
                     <button id="bot1-Msg1" class="btn btn-default btn-sm botTempo" ng-click="cancel()"> Cancel</button>

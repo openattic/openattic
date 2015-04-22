@@ -12,6 +12,7 @@ angular.module('openattic')
       .$promise
       .then(function (res) {
         $scope.pool = res;
+        $scope.pool.usage.max_new_fsv = $scope.pool.usage.max_new_fsv + $scope.volume.usage.size;
       });
 
     $scope.resize = function(){
