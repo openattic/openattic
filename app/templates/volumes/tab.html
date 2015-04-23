@@ -22,7 +22,7 @@
             <a ui-sref="volumes.detail.storage({volume: selection.item.id})" data-toggle="tab" data-target="#tab-content">Storage</a>
         </li>
         <li ui-sref-active="active">
-            <a ui-sref="volumes.detail.snapshots({volume: selection.item.id})" data-toggle="tab" data-target="#tab-content">Snapshots</a>
+            <a ui-sref="volumes.detail.snapshots({volume: selection.item.id})" class="tc_snapshotTab" data-toggle="tab" data-target="#tab-content">Snapshots</a>
         </li>
     </ul>
     <div class="tab-content" ui-view="tab-content" style="min-height: 300px;">
