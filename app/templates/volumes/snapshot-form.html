@@ -9,13 +9,13 @@
                 <form name="snapForm" role="form" class="form-horizontal" novalidate>
                     <fieldset>
                         <div class="form-group" ng-class="{'has-error': (submitted || snapForm.name.$dirty) && snapForm.name.$invalid}">
-                            <label class="col-md-2 control-label" for="snapName">Name</label>
+                            <label class="col-md-2 control-label tc_snapname" for="snap.name">Name</label>
                             <div class="col-md-10">
                                 <div class="input-group">
                                     <span class="input-group-addon"><i class="fa fa-share"></i></span>
-                                    <input class="form-control" type="text" placeholder="Name..." ng-model="snap.name" name="name" id="snapName" required>
+                                    <input class="form-control" type="text" placeholder="Name..." ng-model="snap.name" name="name" id="snap.name" required>
                                 </div>
-                                <span class="help-block" ng-show="(submitted || snapForm.name.$dirty) && snapForm.name.$invalid">
+                                <span class="help-block tc_nameRequired" ng-show="(submitted || snapForm.name.$dirty) && snapForm.name.$invalid">
                                     The name is required.
                                 </span>
                             </div>
@@ -28,12 +28,12 @@
                                     <input class="form-control" name="megs" ng-model="megs" id="megs" required
                                         volume-size-format volume-size-value max-value="{{pool.usage.max_new_fsv}}">
                                 </div>
-                                <span class="help-block" ng-show="(submitted || snapForm.megs.$dirty)
+                                <span class="help-block tc_sizeRequired" ng-show="(submitted || snapForm.megs.$dirty)
                                 && snapForm.megs.$error.required">This field is required.</span>
                                 <span class="help-block" ng-show="snapForm.megs.$error.volumeSizeFormat">
                                     This is not a valid number.
                                 </span>
-                                <span class="help-block" ng-show="snapForm.megs.$error.volumeSizeValue">
+                                <span class="help-block tc_sizeExceeded" ng-show="snapForm.megs.$error.volumeSizeValue">
                                     The size should be at least as big as the original volume and must not exceed {{pool.usage.max_new_fsv_text}}.
                                 </span>
                             </div>
@@ -41,10 +41,10 @@
                     </fieldset>
                     <div class="form-group">
                         <div class="pull-right" style="padding: 6px 16px">
-                            <button type="submit" class="btn btn-primary" ng-click="submitAction(snapForm)">
+                            <button type="submit" class="btn btn-primary tc_submitButton" ng-click="submitAction(snapForm)">
                                 Submit
                             </button>
-                            <button type="button" class="btn btn-default" ng-click="cancelAction()">
+                            <button type="button" class="btn btn-default tc_backButton" ng-click="cancelAction()">
                                 Back
                             </button>
                         </div>
