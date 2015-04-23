@@ -13,14 +13,14 @@
                        max-value="{{pool.usage.max_new_fsv}}" min-value="{{volume.usage.size_text}}" volume-size-format
                        volume-size-value required>
                 <p>{{pool.usage.max_new_fsv_text}} free</p>
-                <span class="help-block" ng-show="(submitted || input.resizeForm.newsize.$dirty) &&
+                <span class="help-block tc_required" ng-show="(submitted || input.resizeForm.newsize.$dirty) &&
                     input.resizeForm.newsize.$error.required">
                     This field is required!
                 </span>
-                <span class="help-block" ng-show="input.resizeForm.newsize.$error.volumeSizeFormat">
+                <span class="help-block tc_noValidNumber" ng-show="input.resizeForm.newsize.$error.volumeSizeFormat">
                     This is not a valid number.
                 </span>
-                <span class="help-block" ng-show="input.resizeForm.newsize.$error.volumeSizeValue">
+                <span class="help-block tc_wrongSize" ng-show="input.resizeForm.newsize.$error.volumeSizeValue">
                     The size must greater than {{volume.usage.size_text}} and must not exceed {{pool.usage.max_new_fsv_text}}.
                 </span>
                 <div class="MessageBoxButtonSection">
