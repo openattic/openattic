@@ -44,29 +44,18 @@ angular.module('openattic')
     };
 
     $scope.deleteAction = function(){
-      $.SmartMessageBox({
-        title: 'Delete snapshot',
-        content: 'Do you really want to delete snapshot  "' + $scope.snapshotsSelection.item.name + '"?',
-        buttons: '[No][Yes]'
-      }, function (ButtonPressed) {
-        if (ButtonPressed === 'Yes') {
-          SnapshotService.delete({id: $scope.snapshotsSelection.item.id})
-            .$promise
-            .then(function() {
-              $scope.snapshotsFilter.refresh = new Date();
-            }, function(error){
-              console.log('An error occured', error);
-            });
+      var modalInstance = $modal.open({
+        windowTemplateUrl: 'templates/messagebox.html',
+        templateUrl: 'templates/volumes/snapshot-delete.html',
+        controller: 'SnapshotDeleteCtrl',
+        resolve: {
+          snap: function(){
+            return $scope.snapshotsSelection.item;
+          }
         }
-        if (ButtonPressed === 'No') {
-          $.smallBox({
-            title: 'Delete snapshot',
-            content: '<i class="fa fa-clock-o"></i> <i>Cancelled</i>',
-            color: '#C46A69',
-            iconSmall: 'fa fa-times fa-2x fadeInRight animated',
-            timeout: 4000
-          });
-        }
+      });
+      modalInstance.result.then(function(){
+        $scope.filterConfig.refresh = new Date();
       });
     };
 
