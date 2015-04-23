@@ -10,7 +10,8 @@
                 <input type="text" class="form-control" id="newsize" placeholder="{{volume.usage.size_text}}"
                        ng-model="input.newsize" name="newsize" ng-class="{'thicker-border': (submitted
                        || input.resizeForm.newsize.$dirty) && input.resizeForm.newsize.$invalid}"
-                       max-value="{{pool.usage.max_new_fsv}}" volume-size-format volume-size-value required>
+                       max-value="{{pool.usage.max_new_fsv}}" min-value="{{volume.usage.size_text}}" volume-size-format
+                       volume-size-value required>
                 <p>{{pool.usage.max_new_fsv_text}} free</p>
                 <span class="help-block" ng-show="(submitted || input.resizeForm.newsize.$dirty) &&
                     input.resizeForm.newsize.$error.required">
@@ -20,7 +21,7 @@
                     This is not a valid number.
                 </span>
                 <span class="help-block" ng-show="input.resizeForm.newsize.$error.volumeSizeValue">
-                    The size must be at least 100MB and must not exceed {{pool.usage.max_new_fsv_text}}.
+                    The size must greater than {{volume.usage.size_text}} and must not exceed {{pool.usage.max_new_fsv_text}}.
                 </span>
                 <div class="MessageBoxButtonSection">
                     <button id="bot1-Msg1" class="btn btn-default btn-sm botTempo" ng-click="cancel()"> Cancel</button>
