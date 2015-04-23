@@ -17,18 +17,21 @@ angular.module('openattic')
     return {
       require: 'ngModel',
       scope: {
-        maxValue: '@'
+        maxValue: '@',
+        minValue: '@'
       },
       link: function(scope, elm, attrs, ctrl) {
         ctrl.$validators.volumeSizeValue = function(modelValue){
           if( !modelValue || !SizeParserService.isValid(modelValue) ){
             return true;
           }
+
           var megs = SizeParserService.parseInt(modelValue),
-              maxv = parseInt(scope.maxValue, 10);
-          return !maxv || megs >= 100 && megs <= maxv;
+              maxv = parseInt(scope.maxValue, 10),
+              minv = parseInt(scope.minValue, 10) || 100;
+
+          return !maxv || megs >= minv && megs <= maxv;
         };
       }
     };
   });
-
