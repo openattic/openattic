@@ -10,6 +10,7 @@ exports.config = {
     volumes           : 'test/e2e/volumes/**/*.e2e.js',
     volumes_add       : 'test/e2e/volumes/add/**/*.e2e.js',
     volumes_protection: 'test/e2e/volumes/protection/**/*.e2e.js',
-    volumes_resize    : 'test/e2e/volumes/resize/**/*.e2e.js'
+    volumes_resize    : 'test/e2e/volumes/resize/**/*.e2e.js',
+    snapshots_add     : 'test/e2e/snapshots/add/**/*.e2e.js'
   }
 };
