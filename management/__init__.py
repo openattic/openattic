@@ -105,6 +105,10 @@ def update(**kwargs):
                 mdlbucket.full_clean()
                 mdlbucket.save()
                 print "added"
+            else:
+                if mdlbucket.name != cbucket["name"]:
+                    mdlbucket.name = cbucket["name"]
+                    mdlbucket.save()
 
             # Now check dependencies.
             for member in cbucket["items"]:
@@ -148,6 +152,11 @@ def update(**kwargs):
                 mdlrule.full_clean()
                 mdlrule.save()
                 print "added"
+            else:
+                mdlrule.name     = crule["rule_name"]
+                mdlrule.min_size = crule["min_size"]
+                mdlrule.max_size = crule["max_size"]
+                mdlrule.save()
 
         for cosd in osdmap["osds"]:
             print "Checking Ceph OSD %d..." % cosd["osd"],
