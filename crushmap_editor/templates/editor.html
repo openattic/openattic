@@ -36,7 +36,7 @@
                     <form name="hostForm" role="form" class="form-horizontal" novalidate>
                         <fieldset>
                             <div class="form-group">
-                                <label class="col-md-2 control-label" for="ruleset">Ruleset</label>
+                                <label class="col-md-2 control-label" for="ruleset">Contents</label>
                                 <div class="col-md-10">
                                     <select class="form-control"
                                         ng-options="ruleset as ruleset.name for ruleset in cluster.rulesets track by ruleset.id"
@@ -50,10 +50,25 @@
                             <div class="form-group">
                                 <label class="col-md-2 control-label" for="replicas">Replicas</label>
                                 <div class="col-md-10">
-                                    <input type="number" class="form-control" ng-model="repsize" />
                                     <span>
-                                        The selected ruleset allows {{activeRuleset.min_size}} to {{activeRuleset.max_size}} replicas.
-                                        Choose the number of replicas for which you would like to simulate replica placement.
+                                        <p>Choose the number of replicas for which you would like to simulate data placement.</p>
+                                    </span>
+                                    <div class="row">
+                                        <div class="col-md-6">
+                                            <input type="number" class="form-control" ng-model="activeRuleset.min_size" />
+                                        </div>
+                                        <div class="col-md-6">
+                                            <input type="number" class="form-control" ng-model="activeRuleset.max_size" />
+                                        </div>
+                                    </div>
+                                    <span ng-show="activeRuleset.min_size === 1">
+                                        <p class="text-danger">1 replica means <em>no copies</em>. If you lose the original, your data is lost.</p>
+                                    </span>
+                                    <span ng-show="activeRuleset.min_size > 1">
+                                        <p ng-class="{ 'text-warning': activeRuleset.min_size == 2, 'text-muted': activeRuleset.min_size > 2 }">
+                                            {{ activeRuleset.min_size }} replicas means "the original file + {{ activeRuleset.min_size - 1 }}
+                                            <ng-pluralize count="activeRuleset.min_size - 1" when="{1: 'copy', 'other': 'copies'}"></ng-pluralize>".
+                                        </p>
                                     </span>
                                 </div>
                             </div>
