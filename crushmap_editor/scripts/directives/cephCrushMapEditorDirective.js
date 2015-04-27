@@ -96,14 +96,12 @@ angular.module('openattic.extensions')
             for( i = 0; i < nodes.length; i++ ){
               substeps = steps;
               node = nodes[i];
-              console.log([node.name, steps]);
 
               if(steps[0].op === 'take'){
                 if( steps[0].item === node.ceph_id ){
                   node.isRootNode = true;
                   isBelowRootNode = true;
                   node.nextStep = steps[1];
-                  console.log([node.name, steps[0].op, "shift!"]);
                   steps.shift();
                 }
               }
@@ -113,7 +111,6 @@ angular.module('openattic.extensions')
                   typeMatch = true;
                   node.isSelectorNode = true;
                   node.nextStep = steps[1];
-                  console.log([node.name, steps[0].op, "shift!"]);
                   substeps = steps.slice();
                   substeps.shift();
                 }
@@ -137,7 +134,6 @@ angular.module('openattic.extensions')
           while(rendersteps.length > 0){
             prevStepCount = rendersteps.length;
             renderNodes(rendersteps, $scope.cluster.crush_map, false);
-            console.log(rendersteps);
             if( rendersteps.length >= prevStepCount ){
               // Safety measure: renderNodes should consume a coupl'a steps. If it
               // didn't, something seems to be wrong.
