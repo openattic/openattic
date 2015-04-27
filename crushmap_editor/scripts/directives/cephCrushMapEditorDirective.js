@@ -38,7 +38,21 @@ angular.module('openattic.extensions')
           if( !$scope.cluster ){
             return;
           }
-          $scope.repsize = (activeRuleset ? activeRuleset.min_size : 3);
+          $scope.repsize = 3;
+          if( activeRuleset ){
+            // Try to keep the repsize to 3 if the ruleset allows it
+            if( activeRuleset.min_size <= 3 && 3 <= activeRuleset.max_size ){
+              $scope.repsize = 3;
+            }
+            // It does not. Try 2...
+            else if( activeRuleset.min_size <= 2 && 2 <= activeRuleset.max_size ){
+              $scope.repsize = 2;
+            }
+            // Seems we'll just have to use whatever the minimum is then :(
+            else{
+              $scope.repsize = activeRuleset.min_size;
+            }
+          }
           resetNodes = function(nodes){
             var i, node;
             for( i = 0; i < nodes.length; i++ ){
@@ -104,7 +118,7 @@ angular.module('openattic.extensions')
               throw 'The CRUSH map renderer seems unable to render this CRUSH map ruleset.';
             }
           }
-        });
+        }, true);
 
         $scope.getRealNum = function(step){
           if( !step ) return;
