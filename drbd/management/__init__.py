@@ -19,7 +19,7 @@ from drbd.models import DeviceMinor
 
 def create_devminors(**kwargs):
     existing_minors = [dm["minor"] for dm in DeviceMinor.objects.all().values("minor")]
-    for i in range(256):
+    for i in range(10, 256):
         if i not in existing_minors:
             DeviceMinor.objects.create(minor=i, connection=None)
     DeviceMinor.objects.filter(minor__gte=256).delete()
