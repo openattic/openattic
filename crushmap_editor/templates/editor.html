@@ -75,17 +75,17 @@
                         </fieldset>
                         <fieldset ng-show="activeRuleset">
                             <div class="form-group">
-                                <label class="col-md-2 control-label" for="steps">Rules</label>
+                                <label class="col-md-2 control-label">Placement</label>
                                 <div class="col-md-10">
-                                    <ol>
-                                        <li ng-repeat="stepset in stepsets">
-                                            Spread {{ stepset.replicas }}
-                                            <ng-pluralize count="stepset.replicas" when="{1: 'replica', 'other': 'replicas'}"></ng-pluralize>
-                                            across {{ stepset.acrosstype }}s
-                                            <span ng-show="stepset.groupbytype">in the same {{ stepset.groupbytype }}</span>
-                                            underneath {{ stepset.take }}.
-                                        </li>
-                                    </ol>
+                                    <p ng-repeat="stepset in stepsets">
+                                        Place
+                                        <ng-pluralize count="stepset.replicas" when="{
+                                            1:       'one replica on a {{ stepset.acrosstype }}',
+                                            'other': '{} replicas on {{ stepset.acrosstype }}s'
+                                        }"></ng-pluralize>
+                                        <span ng-show="stepset.groupbytype">in the same {{ stepset.groupbytype }}</span>
+                                        underneath {{ stepset.take }}.
+                                    </p>
                                 </div>
                             </div>
                         </fieldset>
