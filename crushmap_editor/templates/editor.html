@@ -55,10 +55,12 @@
                                     </span>
                                     <div class="row">
                                         <div class="col-md-6">
-                                            <input type="number" class="form-control" ng-model="activeRuleset.min_size" />
+                                            <input type="number" class="form-control" ng-model="activeRuleset.min_size"
+                                            ng-model-options="{ updateOn: 'default blur', debounce: {'default': 1000, 'blur': 0} }" />
                                         </div>
                                         <div class="col-md-6">
-                                            <input type="number" class="form-control" ng-model="activeRuleset.max_size" />
+                                            <input type="number" class="form-control" ng-model="activeRuleset.max_size"
+                                            ng-model-options="{ updateOn: 'default blur', debounce: {'default': 1000, 'blur': 0} }" />
                                         </div>
                                     </div>
                                     <span ng-show="activeRuleset.min_size === 1">
