@@ -40,6 +40,13 @@ angular.module('openattic.extensions')
           }
           $scope.repsize = 3;
           if( activeRuleset ){
+            // Force sensible min/max
+            if( activeRuleset.min_size < 1 ){
+              activeRuleset.min_size = 1;
+            }
+            if( activeRuleset.max_size < activeRuleset.min_size ){
+              activeRuleset.max_size = activeRuleset.min_size;
+            }
             // Try to keep the repsize to 3 if the ruleset allows it
             if( activeRuleset.min_size <= 3 && 3 <= activeRuleset.max_size ){
               $scope.repsize = 3;
