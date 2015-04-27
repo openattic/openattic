@@ -75,22 +75,15 @@
                         </fieldset>
                         <fieldset ng-show="activeRuleset">
                             <div class="form-group">
-                                <label class="col-md-2 control-label" for="steps">Steps</label>
+                                <label class="col-md-2 control-label" for="steps">Rules</label>
                                 <div class="col-md-10">
                                     <ol>
-                                        <li ng-repeat="step in activeRuleset.steps">
-                                            <span ng-show="step.op === 'take'">
-                                                Start at {{ step.item_name }}
-                                            </span>
-                                            <span ng-show="step.op === 'choose_firstn' || step.op === 'chooseleaf_firstn'">
-                                                Choose <span ng-show="step.op === 'chooseleaf_firstn'">one OSD from each of </span>
-                                                <ng-pluralize count="getRealNum(step)" when="{
-                                                    '1': 'one ' + step.type,
-                                                    'other': '{} ' + step.type + 's'
-                                                }"></ng-pluralize>
-                                                <span ng-show="step.num < 0">({{ repsize }} - {{ -step.num}})</span>
-                                            </span>
-                                            <span ng-show="step.op === 'emit'">Add these OSDs to the list</span>
+                                        <li ng-repeat="stepset in stepsets">
+                                            Spread {{ stepset.replicas }}
+                                            <ng-pluralize count="stepset.replicas" when="{1: 'replica', 'other': 'replicas'}"></ng-pluralize>
+                                            across {{ stepset.acrosstype }}s
+                                            <span ng-show="stepset.groupbytype">in the same {{ stepset.groupbytype }}</span>
+                                            underneath {{ stepset.take }}.
                                         </li>
                                     </ol>
                                 </div>

@@ -34,11 +34,12 @@ angular.module('openattic.extensions')
         });
 
         $scope.$watch('activeRuleset', function(activeRuleset){
-          var resetNodes, renderNodes, rendersteps, c, init, prevStepCount;
+          var resetNodes, renderNodes, rendersteps, s, step, stepset, init, prevStepCount;
           if( !$scope.cluster ){
             return;
           }
           $scope.repsize = 3;
+          $scope.stepsets = [];
           if( activeRuleset ){
             // Force sensible min/max
             if( activeRuleset.min_size < 1 ){
@@ -58,6 +59,24 @@ angular.module('openattic.extensions')
             // Seems we'll just have to use whatever the minimum is then :(
             else{
               $scope.repsize = activeRuleset.min_size;
+            }
+            // Split the steps into stepsets, where each describes steps from "take" to "emit".
+            for(s = 0; s < activeRuleset.steps.length; s++){
+              step = activeRuleset.steps[s];
+              if( step.op === 'take' ){
+                stepset = {};
+                stepset.take = step.item_name;
+              }
+              else if( step.op === 'choose_firstn' ){
+                stepset.groupbytype = step.type;
+              }
+              else if( step.op === 'chooseleaf_firstn' ){
+                stepset.acrosstype = step.type;
+                stepset.replicas = $scope.getRealNum(step);
+              }
+              else if( step.op === 'emit' ){
+                $scope.stepsets.push(stepset);
+              }
             }
           }
           resetNodes = function(nodes){
