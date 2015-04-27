@@ -64,11 +64,11 @@
                                         </div>
                                     </div>
                                     <span ng-show="activeRuleset.min_size === 1">
-                                        <p class="text-danger">1 replica means <em>no copies</em>. If you lose the original, your data is lost.</p>
+                                        <p class="text-danger">One replica means <em>no copies</em>. If you lose the original, your data is lost.</p>
                                     </span>
                                     <span ng-show="activeRuleset.min_size > 1">
                                         <p ng-class="{ 'text-warning': activeRuleset.min_size == 2, 'text-muted': activeRuleset.min_size > 2 }">
-                                            {{ activeRuleset.min_size }} replicas means "the original file + {{ activeRuleset.min_size - 1 }}
+                                            {{ activeRuleset.min_size|humanizeInt }} replicas means "the original file + {{ (activeRuleset.min_size - 1)|humanizeInt }}
                                             <ng-pluralize count="activeRuleset.min_size - 1" when="{1: 'copy', 'other': 'copies'}"></ng-pluralize>".
                                         </p>
                                     </span>
@@ -83,7 +83,7 @@
                                         Place
                                         <ng-pluralize count="stepset.replicas" when="{
                                             1:       'one replica on a {{ stepset.acrosstype }}',
-                                            'other': '{} replicas on {{ stepset.acrosstype }}s'
+                                            'other': '{{ stepset.replicas|humanizeInt }} replicas on {{ stepset.acrosstype }}s'
                                         }"></ng-pluralize>
                                         <span ng-show="stepset.groupbytype">in the same {{ stepset.groupbytype }}</span>
                                         underneath {{ stepset.take }}.
