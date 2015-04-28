@@ -141,7 +141,10 @@ perfgraphs img {
 
 /* dashboard widgets --> */
 .widget {
-    border: 1px solid #d4d4d4 !important;
+    border: 0px solid #d4d4d4 !important;
+    margin-left: 10px;
+    margin-bottom: 10px;
+    margin-right: 10px;
 }
 /* <-- dashboard widget */
 
@@ -156,4 +159,5 @@ perfgraphs img {
 .thicker-border {
     border-width: 2px !important;
 }
+
 
