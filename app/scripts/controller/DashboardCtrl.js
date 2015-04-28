@@ -23,7 +23,6 @@ angular.module('openattic')
   ])
   .value('defaultWidgets', [
     { name: 'Volume Stats' },
-    { name: 'Clock' },
     { name: 'ToDos' }
   ])
   .controller('DashboardCtrl', function ($scope, $window, widgetDefinitions, defaultWidgets){
