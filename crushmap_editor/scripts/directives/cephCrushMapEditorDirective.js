@@ -122,9 +122,9 @@ angular.module('openattic.extensions')
                 while(steps.length > 0 && steps[0].op !== 'take'){
                   steps.shift();
                 }
-                if(steps.length === 0){
-                  return;
-                }
+              }
+              if(steps.length === 0){
+                return;
               }
             }
           };
