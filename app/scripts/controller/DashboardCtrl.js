@@ -32,7 +32,10 @@ angular.module('openattic')
       defaultWidgets: defaultWidgets,
       storage: $window.localStorage,
       storageId: 'oa_widgets',
-      hideWidgetName: true
+      hideWidgetName: true,
+      hideToolbar: true,
+      hideWidgetSettings: true,
+      hideWidgetClose: true
     };
   });
 // kate: space-indent on; indent-width 2; replace-tabs on;
