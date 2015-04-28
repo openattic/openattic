@@ -47,7 +47,7 @@ angular.module('openattic')
       var modalInstance = $modal.open({
         windowTemplateUrl: 'templates/messagebox.html',
         templateUrl: 'templates/volumes/snapshot-delete.html',
-        controller: 'SnapshotDeleteCtrl',
+        controller: 'VolumeSnapshotDeleteCtrl',
         resolve: {
           snap: function(){
             return $scope.snapshotsSelection.item;

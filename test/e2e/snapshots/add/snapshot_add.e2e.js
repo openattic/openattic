@@ -20,7 +20,7 @@ describe('Should create a Snapshot', function(){
       volumePoolSelect.click();
       volumePoolSelect.element(by.cssContainingText('option', pool.name)).click();
 
-      element(by.model('data.megs')).sendKeys('100mb');
+      element(by.model('data.megs')).sendKeys('100MB');
       element(by.css('.tc_submitButton')).click();
       browser.sleep(helpers.configs.sleep);
 
@@ -67,16 +67,20 @@ describe('Should create a Snapshot', function(){
     expect(element(by.id('megs')).isDisplayed()).toBe(true);
   });
 
-    //test if snap.name format -> YYYY-mm-dd-HH-mm-ss
-//     it('given snap.name should have the format yyyy-mm-dd-HH-mm-ss', function(){
-//
-//     });
+//test if snap.name format -> YYYY-mm-dd-HH-mm-ss
+//   it('given snap.name should have the format yyyy-mm-dd-HH-mm-ss', function(){
+//     goToSnapAdd();
+//     var snapname = element(by.model('snap.name'));
+//   });
 
-    //test if given megs value is origin vol size
-
-//     it('given megs should match to the origin volume size', function(){
-//
-//     });
+  //test if given megs value is origin vol size
+  it('given megs should match to the origin volume size', function(){
+    goToSnapAdd();
+    var volmegs = '100';
+    var megs = element(by.model('megs'));
+    expect(megs.getAttribute('value')).toEqual(volmegs + ".00MB");
+    
+  });
 
   it('should show required field errors if the submit button is clicked without editing anything', function(){
     goToSnapAdd();
@@ -93,14 +97,16 @@ describe('Should create a Snapshot', function(){
     goToSnapAdd();
     var volumepool = element(by.model('data.sourcePool'));
     var snapshotname = 'protractor_test_snap';
-    //element(by.id('megs')).clear();
     var snapSizeInput = element(by.model('megs'));
     for(var key in helpers.configs.pools) {
       var pool = helpers.configs.pools[key];
       var snapSize = (pool.size + 0.1).toFixed(2);
       snapSizeInput.clear().sendKeys(snapSize + pool.unit);
       expect(element(by.css('.tc_sizeExceeded')).isDisplayed()).toBe(true);
-    }
+      
+      break;
+    }    
+    
   });
 
   it('should create the snapshot', function(){

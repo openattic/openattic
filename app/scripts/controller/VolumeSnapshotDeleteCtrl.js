@@ -1,5 +1,5 @@
 angular.module('openattic')
-  .controller('SnapshotDeleteCtrl', function($scope, VolumeService, SnapshotService, $modalInstance, snap) {
+  .controller('VolumeSnapshotDeleteCtrl', function($scope, VolumeService, SnapshotService, $modalInstance, snap) {
     'use strict';
 
     $scope.snap = snap;
