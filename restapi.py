@@ -43,11 +43,12 @@ class ClusterSerializer(serializers.HyperlinkedModelSerializer):
     """ Serializer for a Ceph Cluster. """
     url         = serializers.HyperlinkedIdentityField(view_name="cephcluster-detail")
     crush_map   = serializers.SerializerMethodField("get_crush_map")
+    bucket_types= serializers.SerializerMethodField("get_bucket_types")
     rulesets    = RulesetSerializer(many=True, read_only=True, source="ruleset_set")
 
     class Meta:
         model = Cluster
-        fields = ('url', 'id', 'name', 'crush_map', 'rulesets',
+        fields = ('url', 'id', 'name', 'crush_map', 'bucket_types', 'rulesets',
                   'auth_cluster_required', 'auth_client_required', 'auth_service_required')
 
     def get_crush_map(self, obj):
@@ -62,6 +63,10 @@ class ClusterSerializer(serializers.HyperlinkedModelSerializer):
 
         return [ serialize_bucket(rootbkt) for rootbkt in
                  obj.bucket_set.filter(parent__isnull=True) ]
+
+    def get_bucket_types(self, obj):
+        return [ {"id": bucket_type.ceph_id, "name": bucket_type.name}
+                 for bucket_type in obj.type_set.all() ]
 
 class ClusterViewSet(viewsets.ModelViewSet):
     queryset         = Cluster.objects.all()
