@@ -60,6 +60,12 @@ angular.module('openattic.extensions')
           }
           $scope.repsize = 3;
           $scope.stepsets = [];
+          $scope.newstepset = {
+            take:       $scope.findNodeByName('default'),
+            acrosstype: $scope.findTypeByName('host'),
+            groupbytype: null,
+            replicas:    3
+          };
           if( activeRuleset ){
             // Force sensible min/max
             if( activeRuleset.min_size < 1 ){

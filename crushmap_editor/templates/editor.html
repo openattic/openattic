@@ -87,6 +87,21 @@
                                         <span ng-show="stepset.groupbytype">in the same {{ stepset.groupbytype }}</span>
                                         in the {{ stepset.take.name }} {{ stepset.take.type === 'root' ? 'tree' : stepset.take.type }}.
                                     </p>
+                                    <p>
+                                        Place
+                                        <input type="number" class="form-control" ng-model="newstepset.replicas"
+                                            style="width: 50px; display: inline-block" />
+                                        replicas on different
+                                        <select class="form-control" style="display: inline-block; width: 150px"
+                                            ng-model="newstepset.acrosstype"
+                                            ng-options="btype.name + 's' for btype in cluster.bucket_types track by btype.id">
+                                        </select>
+                                        in the
+                                        <button
+                                            class="btn btn-default"
+                                            ng-bind="newstepset.take.name" ng-click="alert('lol')"></button>
+                                        {{ newstepset.take.type === 'root' ? 'tree' : newstepset.take.type }}.
+                                    </p>
                                 </div>
                             </div>
                         </fieldset>
