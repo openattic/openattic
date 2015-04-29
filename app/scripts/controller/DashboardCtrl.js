@@ -19,11 +19,16 @@ angular.module('openattic')
       name: 'ToDos',
       title: 'ToDos',
       directive: 'todowidget'
+    }, {
+      name: 'openATTIC Wizards',
+      title: 'openATTIC Wizards',
+      directive: 'oawizards'
     }
   ])
   .value('defaultWidgets', [
     { name: 'Volume Stats' },
-    { name: 'ToDos' }
+    { name: 'ToDos' },
+    { name: 'openATTIC Wizards'}
   ])
   .controller('DashboardCtrl', function ($scope, $window, widgetDefinitions, defaultWidgets){
     $scope.dashboardOptions = {
