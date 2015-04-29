@@ -5,7 +5,6 @@
     'bg-success': data.isSelectorNode
 }" >{{ data.name }}</span>
 <em> &mdash; {{ data.type }}</em>
-<em ng-show="data.nextStep && data.nextStep.op != 'emit'">We're looking for {{ getRealNum(data.nextStep) }} {{data.nextStep.type}}s </em>
 <ul>
     <li ng-repeat="data in data.children"
         ng-include="'extensions/crushmap_editor/templates/crushMapNode.html'"
