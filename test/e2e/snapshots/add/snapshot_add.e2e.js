@@ -2,9 +2,13 @@ var helpers = require('../../common.js');
 
 describe('Should create a Snapshot', function(){
   var volumename = 'protractor_test_volume';
-
+  var snapshotname = 'protractor_test_snap';
+  var volume = element(by.cssContainingText('tr', volumename));
+  var snapshot = element(by.cssContainingText('tr', snapshotname));
+  var submitButton = element(by.css('.tc_submitButton'));
+  
   beforeEach(function() {
-    helpers.login();
+    helpers.login(); 
     var volumesItem = element.all(by.css('ul .tc_menuitem')).get(3);
     volumesItem.click();
   });
@@ -21,15 +25,15 @@ describe('Should create a Snapshot', function(){
       volumePoolSelect.element(by.cssContainingText('option', pool.name)).click();
 
       element(by.model('data.megs')).sendKeys('100MB');
-      element(by.css('.tc_submitButton')).click();
+      submitButton.click();
       browser.sleep(helpers.configs.sleep);
 
       break;
     }
   });
 
-  function goToSnapAdd (){
-    var volume = element(by.cssContainingText('tr', volumename));
+  //navigate to snapshot form
+  function goToSnapAdd() {
     expect(volume.isDisplayed()).toBe(true);
     volume.click();
     browser.sleep(400);
@@ -48,8 +52,13 @@ describe('Should create a Snapshot', function(){
     goToSnapAdd();
     expect(element(by.css('.tc_backButton')).isPresent()).toBe(true);
   });
+  
+  it('should have a submit button', function(){
+    goToSnapAdd();
+    expect(element(by.css('.tc_submitButton')).isPresent()).toBe(true);
+  });
 
-  it('should have a back button to navigate back to the snapshot overview', function(){
+  it('should have a back button which navigates back to the snapshot overview', function(){
     goToSnapAdd();
     var backButton = element(by.css('.tc_backButton'));
     backButton.click();
@@ -67,10 +76,11 @@ describe('Should create a Snapshot', function(){
     expect(element(by.id('megs')).isDisplayed()).toBe(true);
   });
 
-//test if snap.name format -> YYYY-mm-dd-HH-mm-ss
+//test if given snap.name has the format 'YYYY-mm-dd-HH-mm-ss'
 //   it('given snap.name should have the format yyyy-mm-dd-HH-mm-ss', function(){
 //     goToSnapAdd();
 //     var snapname = element(by.model('snap.name'));
+//     expect(snapname.getAttribute('value')).to ?
 //   });
 
   //test if given megs value is origin vol size
@@ -82,21 +92,19 @@ describe('Should create a Snapshot', function(){
     
   });
 
-  it('should show required field errors if the submit button is clicked without editing anything', function(){
+  it('should show required field errors if the submit button is clicked without any input data', function(){
     goToSnapAdd();
     element(by.id('snap.name')).clear();
     element(by.id('megs')).clear();
-    var submitButton = element(by.css('.tc_submitButton'));
     submitButton.click();
 
     expect(element(by.css('.tc_nameRequired')).isDisplayed()).toBe(true);
     expect(element(by.css('.tc_sizeRequired')).isDisplayed()).toBe(true);
   });
 
-  it('should should show a error message when the given snapshot size is bigger than the source pool', function(){
+  it('should show an error message when the given snapshot size is bigger than the source pool', function(){
     goToSnapAdd();
     var volumepool = element(by.model('data.sourcePool'));
-    var snapshotname = 'protractor_test_snap';
     var snapSizeInput = element(by.model('megs'));
     for(var key in helpers.configs.pools) {
       var pool = helpers.configs.pools[key];
@@ -111,22 +119,14 @@ describe('Should create a Snapshot', function(){
 
   it('should create the snapshot', function(){
     goToSnapAdd();
-    var snapshotname = 'protractor_test_snap';
     element(by.id('snap.name')).clear();
     browser.sleep(400);
     element(by.model('snap.name')).sendKeys(snapshotname);
     browser.sleep(400);
-    element(by.css('.tc_submitButton')).click();
+    submitButton.click();
   });
 
-    // clean everything up
   it('should delete the snapshot', function(){
-    var volumename = 'protractor_test_volume';
-    var volume = element(by.cssContainingText('tr', volumename));
-
-    var snapshotname = 'protractor_test_snap';
-    var snapshot = element(by.cssContainingText('tr', snapshotname));
-
     expect(volume.isDisplayed()).toBe(true);
     volume.click();
     browser.sleep(400);
@@ -145,10 +145,8 @@ describe('Should create a Snapshot', function(){
     browser.sleep(400);
   });
 
-//now we need to delete the protractor_test_volume
+  //now we need to delete the protractor_test_volume
   it('should delete the protractor_test_volume', function(){
-    var volumename = 'protractor_test_volume';
-    var volume = element(by.cssContainingText('tr', volumename));
     volume.click();
     browser.sleep(400);
     element(by.css('.tc_menudropdown')).click();
