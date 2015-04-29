@@ -1,0 +1,7 @@
+<div ng-repeat="wizard in wizards">
+    <article class="col-sm-6 col-md-6 col-lg-6" style="padding-bottom: 30px;">
+        <button type="button" class="btn btn-default btn-lg btn-block" ng-click="selectPage(wizard.page)">
+            <i ng-class="wizard.icon"></i><br />{{wizard.title}}
+        </button>
+    </article>
+</div>
