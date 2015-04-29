@@ -62,15 +62,15 @@
                                             ng-model-options="{ updateOn: 'default blur', debounce: {'default': 1000, 'blur': 0} }" />
                                         </div>
                                     </div>
-                                    <span ng-show="activeRuleset.min_size === 1">
-                                        <p class="text-danger">One replica means <em>no copies</em>. If you lose the original, your data is lost.</p>
-                                    </span>
-                                    <span ng-show="activeRuleset.min_size > 1">
-                                        <p ng-class="{ 'text-warning': activeRuleset.min_size == 2, 'text-muted': activeRuleset.min_size > 2 }">
-                                            {{ activeRuleset.min_size|humanizeInt }} replicas means "the original file + {{ (activeRuleset.min_size - 1)|humanizeInt }}
-                                            <ng-pluralize count="activeRuleset.min_size - 1" when="{1: 'copy', 'other': 'copies'}"></ng-pluralize>".
-                                        </p>
-                                    </span>
+                                    <p class="text-danger" style="padding-top: 7px" ng-show="activeRuleset.min_size === 1">
+                                        One replica means <em>no copies</em>. If you lose the original, your data is lost.
+                                    </p>
+                                    <p ng-show="activeRuleset.min_size > 1"
+                                       ng-class="{ 'text-warning': activeRuleset.min_size == 2, 'text-muted': activeRuleset.min_size > 2 }"
+                                       style="padding-top: 7px">
+                                        {{ activeRuleset.min_size|humanizeInt }} replicas means "the original file + {{ (activeRuleset.min_size - 1)|humanizeInt }}
+                                        <ng-pluralize count="activeRuleset.min_size - 1" when="{1: 'copy', 'other': 'copies'}"></ng-pluralize>".
+                                    </p>
                                 </div>
                             </div>
                         </fieldset>
