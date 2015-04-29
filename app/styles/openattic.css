@@ -146,6 +146,10 @@ perfgraphs img {
     margin-bottom: 10px;
     margin-right: 10px;
 }
+
+.widget-icon {
+    line-height: 37px !important;
+}
 /* <-- dashboard widget */
 
 .required {
