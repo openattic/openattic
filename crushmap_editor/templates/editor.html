@@ -81,8 +81,8 @@
                                     <p ng-repeat="stepset in stepsets">
                                         Place
                                         <ng-pluralize count="stepset.replicas" when="{
-                                            1:       'one replica on a {{ stepset.acrosstype }}',
-                                            'other': '{{ stepset.replicas|humanizeInt }} replicas on {{ stepset.acrosstype }}s'
+                                            1:       'one replica',
+                                            'other': '{{ stepset.replicas|humanizeInt }} replicas on different {{ stepset.acrosstype }}s'
                                         }"></ng-pluralize>
                                         <span ng-show="stepset.groupbytype">in the same {{ stepset.groupbytype }}</span>
                                         in the {{ stepset.take.name }} {{ stepset.take.type === 'root' ? 'tree' : stepset.take.type }}.
