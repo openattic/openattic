@@ -6,15 +6,16 @@ var wizardDefinitions = [{
   page: 'filestorage.html'
 },{
   title: 'VM Storage',
-  icon: 'fa fa-desktop fa-4x',
-  page: ''
+  icon: 'fa fa-align-left fa-rotate-270 fa-stack-1x',
+  page: '',
+  stackedIcon: true
 },{
   title: 'Raw Blockstorage',
   icon: 'fa fa-cube fa-4x',
   page: ''
 }/*,{
   title: 'Ceph',
-  icon: 'fa fa-rocket fa-4x',
+  icon: 'fa fa-bullseye fa-4x',
   page: ''
 }*/];
 
