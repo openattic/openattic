@@ -1,7 +1,12 @@
 <div ng-repeat="wizard in wizards">
     <article class="col-sm-6 col-md-6 col-lg-6" style="padding-bottom: 30px;">
         <button type="button" class="btn btn-default btn-lg btn-block" ng-click="selectPage(wizard.page)">
-            <i ng-class="wizard.icon"></i><br />{{wizard.title}}
+            <i ng-show="!wizard.stackedIcon" ng-class="wizard.icon"></i>
+            <span ng-show="wizard.stackedIcon" class="fa-stack fa-2x">
+                <i class="fa fa-square-o fa-stack-2x"></i>
+                <i ng-class="wizard.icon"></i>
+            </span>
+            <br />{{wizard.title}}
         </button>
     </article>
 </div>
