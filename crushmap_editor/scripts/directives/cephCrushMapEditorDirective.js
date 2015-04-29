@@ -22,6 +22,26 @@ angular.module('openattic.extensions')
         $scope.setActiveRuleset(null);
 
         $scope.repsize = 3;
+
+        $scope.findNodeByName = function(name){
+          var node = null;
+          var iterfn = function(item){
+            if( item.name === name ){
+              node = item;
+            }
+            else{
+              item.children.map(iterfn);
+            }
+          };
+          $scope.cluster.crush_map.map(iterfn);
+          return node;
+        };
+        $scope.findTypeByName = function(name){
+          return $scope.cluster.bucket_types.find(function(item){
+            return item.name === name
+          });
+        };
+
         $scope.$watch('repsize', function(repsize){
           if( $scope.activeRuleset ){
             if( repsize < $scope.activeRuleset.min_size ){
@@ -65,7 +85,7 @@ angular.module('openattic.extensions')
               step = activeRuleset.steps[s];
               if( step.op === 'take' ){
                 stepset = {};
-                stepset.take = step.item_name;
+                stepset.take = $scope.findNodeByName(step.item_name);
               }
               else if( step.op === 'choose_firstn' ){
                 stepset.groupbytype = step.type;

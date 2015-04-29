@@ -85,7 +85,7 @@
                                             'other': '{{ stepset.replicas|humanizeInt }} replicas on {{ stepset.acrosstype }}s'
                                         }"></ng-pluralize>
                                         <span ng-show="stepset.groupbytype">in the same {{ stepset.groupbytype }}</span>
-                                        underneath {{ stepset.take }}.
+                                        in the {{ stepset.take.name }} {{ stepset.take.type === 'root' ? 'tree' : stepset.take.type }}.
                                     </p>
                                 </div>
                             </div>
