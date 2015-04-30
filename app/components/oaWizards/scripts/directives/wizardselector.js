@@ -1,7 +1,7 @@
 'use strict';
 
 var wizardDefinitions = [{
-  title: 'Filestorage',
+  title: 'File Storage',
   icon: 'fa fa-folder-o fa-4x',
   page: 'filestorage.html'
 },{
@@ -10,7 +10,7 @@ var wizardDefinitions = [{
   page: '',
   stackedIcon: true
 },{
-  title: 'Raw Blockstorage',
+  title: 'Raw Block Storage',
   icon: 'fa fa-cube fa-4x',
   page: ''
 }/*,{
@@ -20,7 +20,7 @@ var wizardDefinitions = [{
 }*/];
 
 angular.module('openattic.oaWizards')
-  .directive('oawizards', function(){
+  .directive('wizardselector', function(){
     return {
       template: '<div ng-include="page"></div>',
       controller: function($scope){

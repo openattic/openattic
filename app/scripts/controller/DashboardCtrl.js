@@ -22,7 +22,7 @@ angular.module('openattic')
     }, {
       name: 'openATTIC Wizards',
       title: 'openATTIC Wizards',
-      directive: 'oawizards'
+      directive: 'wizardselector'
     }
   ])
   .value('defaultWidgets', [
