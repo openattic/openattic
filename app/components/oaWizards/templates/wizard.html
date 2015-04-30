@@ -1,0 +1,30 @@
+<form id="wizard" novalidate="novalidate">
+    <div id="bootstrap-wizard-1" class="col-sm-12">
+        <div class="form-bootstrapWizard">
+            <ul class="bootstrapWizard form-wizard">
+                <li ng-repeat="tab in tabs" class="{{tab.className}}" data-target="#step{{tab.index}}">
+                    <a href="#tab{{tab.index}}" data-toggle="tab">
+                        <span class="step">{{tab.index}}</span>
+                        <span class="title">{{tab.title}}</span>
+                    </a>
+                </li>
+            </ul>
+            <div class="clearfix"></div>
+        </div><br /><br /><br />
+        <ng-transclude></ng-transclude>
+        <div class="form-actions">
+            <div class="row">
+                <div class="col-sm-12">
+                    <ul class="pager wizard no-margin">
+                        <li>
+                            <a class="btn btn-lg btn-default pull-right">Next</a>
+                        </li>
+                        <li>
+                            <a href="#" class="btn btn-lg btn-default pull-right">Previous</a>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+</form>
