@@ -87,21 +87,29 @@
                                         <span ng-show="stepset.groupbytype">in the same {{ stepset.groupbytype }}</span>
                                         in the {{ stepset.take.name }} {{ stepset.take.type === 'root' ? 'tree' : stepset.take.type }}.
                                     </p>
-                                    <p>
+                                    <span>
                                         Place
                                         <button
                                             class="btn btn-default"
                                             ng-bind="newstepset.replicas"></button>
                                         replicas on different
-                                        <button
-                                            class="btn btn-default"
-                                            ng-bind="newstepset.acrosstype.name + 's'"></button>
+                                        <span class="dropdown">
+                                            <button
+                                                class="btn btn-default dropdown-toggle" data-toggle="dropdown">
+                                                {{ newstepset.acrosstype.name }}s <span class="caret"></span>
+                                            </button>
+                                            <ul class="dropdown-menu" role="menu">
+                                                <li ng-repeat="btype in cluster.bucket_types" role="presentation">
+                                                    <a role="menuitem" ng-click="newstepset.acrosstype = btype">{{ btype.name }}s</a>
+                                                </li>
+                                            </ul>
+                                        </span>
                                         in the
                                         <button
                                             class="btn btn-default"
                                             ng-bind="newstepset.take.name" ng-click="alert('lol')"></button>
                                         {{ newstepset.take.type === 'root' ? 'tree' : newstepset.take.type }}.
-                                    </p>
+                                    </span>
                                 </div>
                             </div>
                         </fieldset>
