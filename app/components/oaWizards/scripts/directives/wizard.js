@@ -38,6 +38,12 @@ angular.module('openattic.oaWizards')
         $scope.setTab = function(index){
           $scope.activeTab = index;
         };
+        $scope.disabledNext = function(){
+          return $scope.activeTab === $scope.tabs.length;
+        };
+        $scope.disabledPrev = function(){
+          return $scope.activeTab === 1;
+        };
       }
     }
   });

@@ -16,10 +16,10 @@
             <div class="row">
                 <div class="col-sm-12">
                     <ul class="pager wizard no-margin">
-                        <li>
+                        <li ng-class="{disabled: disabledNext()}">
                             <a href="#" class="btn btn-lg btn-default pull-right" ng-click="nextTab()">Next</a>
                         </li>
-                        <li>
+                        <li ng-class="{disabled: disabledPrev()}">
                             <a href="#" class="btn btn-lg btn-default pull-right" ng-click="previousTab()">Previous</a>
                         </li>
                     </ul>
