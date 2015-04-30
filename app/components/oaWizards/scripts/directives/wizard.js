@@ -21,6 +21,23 @@ angular.module('openattic.oaWizards')
           scope.tabs = tabs;
       },
       controller: function($scope){
+        $scope.activeTab = 1;
+        $scope.isActiveTab = function(index){
+          return $scope.activeTab === index;
+        };
+        $scope.nextTab = function(){
+          if($scope.activeTab < $scope.tabs.length) {
+            $scope.activeTab++;
+          }
+        };
+        $scope.previousTab = function(){
+          if($scope.activeTab > 1) {
+            $scope.activeTab--;
+          }
+        };
+        $scope.setTab = function(index){
+          $scope.activeTab = index;
+        };
       }
     }
   });
