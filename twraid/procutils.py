@@ -310,10 +310,10 @@ def update_database(ctls):
                     else:
                         devcaps.append(capabilities.SlowSATASpeedCapability)
 
-		# TODO: actually use capabilities
-		#dbunit = models.Unit(controller=dbctl, serial=unit.params["serial number"], capflags=capabilities.to_flags(devcaps))
-		with StorageObject(name=(unit.params["name"] or ("Unnamed Unit %d" % unit_id)),
-				   megs=int(float(unit.totalsize) * 1024)) as so:
+                # TODO: actually use capabilities
+                #dbunit = models.Unit(controller=dbctl, serial=unit.params["serial number"], capflags=capabilities.to_flags(devcaps))
+                with StorageObject(name=(unit.params["name"] or ("Unnamed Unit %d" % unit_id)),
+                                   megs=int(float(unit.totalsize) * 1024)) as so:
                     dbunit = models.Unit(storageobj=so, controller=dbctl, serial=unit.params["serial number"])
 
             dbunit.index      = unit_id
