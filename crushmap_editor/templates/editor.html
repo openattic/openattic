@@ -80,10 +80,8 @@
                                 <div class="col-md-10">
                                     <p ng-repeat="stepset in stepsets">
                                         Place
-                                        <ng-pluralize count="stepset.replicas" when="{
-                                            1:       'one replica',
-                                            'other': '{{ stepset.replicas|humanizeInt }} replicas on different {{ stepset.acrosstype }}s'
-                                        }"></ng-pluralize>
+                                        {{ stepset|humanizeRuleNum:activeRuleset }}
+                                        replica<span ng-show="getRealNum(stepset).max">s on different {{ stepset.acrosstype }}s</span>
                                         <span ng-show="stepset.groupbytype">in the same {{ stepset.groupbytype }}</span>
                                         in the {{ stepset.take.name }} {{ stepset.take.type === 'root' ? 'tree' : stepset.take.type }}.
                                     </p>
@@ -92,27 +90,29 @@
                                         <button
                                             class="btn btn-default"
                                             ng-class="{ active: editreplicas }"
-                                            ng-bind="newstepset.replicas"
-                                            ng-click="editreplicas = !editreplicas"
-                                            ></button>
+                                            ng-click="editreplicas = !editreplicas">
+                                            {{ newstepset|humanizeRuleNum:activeRuleset }}
+                                        </button>
                                         <div class="well" ng-show="editreplicas">
                                             <div class="radio">
-                                                <input type="radio" name="optionsRadios" id="optionsRadios1" ng-model="lolol" ng-value="option1" />
-                                                <label for="radio3">
-                                                    all replicas
-                                                </label>
+                                                <input type="radio" name="repsz" id="repsz0" ng-model="replicas_source" value="fix" />
+                                                <label for="repsz0">all replicas</label>
                                             </div>
                                             <div class="radio">
-                                                <input type="radio" name="optionsRadios" id="optionsRadios1" ng-model="lolol" ng-value="option2" />
-                                                <label for="radio3">
-                                                    exactly <input type="number" class="form-control"  /> replicas
-                                                </label>
+                                                <input type="radio" name="repsz" id="repszPos" ng-model="replicas_source" value="pos" />
+                                                <label for="repszPos">exactly</label>
+                                                <input type="number" class="form-control" id="repszNumPos"
+                                                    ng-disabled="replicas_source != 'pos'"
+                                                    ng-model="replicas_pos" />
+                                                replicas
                                             </div>
                                             <div class="radio">
-                                                <input type="radio" name="optionsRadios" id="optionsRadios3" ng-model="lolol" ng-value="option3" />
-                                                <label for="radio3">
-                                                    all but <input type="number" class="form-control"  /> replicas
-                                                </label>
+                                                <input type="radio" name="repsz" id="repszNeg" ng-model="replicas_source" value="neg" />
+                                                <label for="repszNeg">all but</label>
+                                                <input type="number" class="form-control" id="repszNumNeg"
+                                                    ng-disabled="replicas_source != 'neg'"
+                                                    ng-model="replicas_neg" />
+                                                replicas
                                             </div>
                                         </div>
                                         replicas on different

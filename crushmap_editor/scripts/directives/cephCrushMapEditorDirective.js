@@ -98,7 +98,8 @@ angular.module('openattic.extensions')
               }
               else if( step.op === 'chooseleaf_firstn' ){
                 stepset.acrosstype = step.type;
-                stepset.replicas = $scope.getRealNum(step);
+                stepset.num = step.num;
+                stepset.replicas = $scope.getRealNum(stepset);
               }
               else if( step.op === 'emit' ){
                 $scope.stepsets.push(stepset);
@@ -171,10 +172,15 @@ angular.module('openattic.extensions')
         $scope.getRealNum = function(step){
           if( !step ) return;
           if( step.num <= 0 ){
-            return step.num + $scope.repsize;
+            return {
+              min: $scope.activeRuleset.min_size + step.num,
+              max: $scope.activeRuleset.max_size + step.num
+            };
           }
-          return step.num;
-        }
+          return {
+            min: step.num
+          };
+        };
       }
     };
   });
