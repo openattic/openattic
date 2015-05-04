@@ -64,8 +64,11 @@ angular.module('openattic.extensions')
             take:       $scope.findNodeByName('default'),
             acrosstype: $scope.findTypeByName('host'),
             groupbytype: null,
-            replicas:    3
+            num:        0,
           };
+          $scope.replicas_pos = 1;
+          $scope.replicas_neg = 1;
+          $scope.replicas_source = 'fix';
           if( activeRuleset ){
             // Force sensible min/max
             if( activeRuleset.min_size < 1 ){
@@ -168,6 +171,18 @@ angular.module('openattic.extensions')
             }
           }
         }, true);
+
+        $scope.$watchGroup(['replicas_source', 'replicas_pos', 'replicas_neg'], function(){
+          if($scope.replicas_source == 'fix'){
+            $scope.newstepset.num = 0;
+          }
+          else if($scope.replicas_source == 'pos'){
+            $scope.newstepset.num = $scope.replicas_pos;
+          }
+          else if($scope.replicas_source == 'neg'){
+            $scope.newstepset.num = -$scope.replicas_neg;
+          }
+        });
 
         $scope.getRealNum = function(step){
           if( !step ) return;
