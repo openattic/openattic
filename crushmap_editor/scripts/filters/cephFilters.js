@@ -19,7 +19,7 @@ angular.module('openattic')
       if( !inp || !activeRuleset ) return '';
       var num = getRealNum(activeRuleset, inp);
       var ret = humanizeIntFilter(num.min);
-      if( num.max ){
+      if( num.max && num.min != num.max ){
         ret += " to " + humanizeIntFilter(num.max);
       }
       return ret;
