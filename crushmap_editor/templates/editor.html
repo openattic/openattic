@@ -98,18 +98,18 @@
                                                 <input type="radio" name="repsz" id="repsz0" ng-model="replicas_source" value="fix" />
                                                 <label for="repsz0">all replicas</label>
                                             </div>
-                                            <div class="radio">
+                                            <div class="radio form-inline">
                                                 <input type="radio" name="repsz" id="repszPos" ng-model="replicas_source" value="pos" />
                                                 <label for="repszPos">exactly</label>
-                                                <input type="number" class="form-control" id="repszNumPos"
+                                                <input type="number" class="form-control input-small" id="repszNumPos"
                                                     ng-disabled="replicas_source != 'pos'"
                                                     ng-model="replicas_pos" />
                                                 replicas
                                             </div>
-                                            <div class="radio">
+                                            <div class="radio form-inline">
                                                 <input type="radio" name="repsz" id="repszNeg" ng-model="replicas_source" value="neg" />
                                                 <label for="repszNeg">all but</label>
-                                                <input type="number" class="form-control" id="repszNumNeg"
+                                                <input type="number" class="form-control input-small" id="repszNumNeg"
                                                     ng-disabled="replicas_source != 'neg'"
                                                     ng-model="replicas_neg" />
                                                 replicas
