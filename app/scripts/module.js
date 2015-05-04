@@ -19,8 +19,7 @@ angular.module('openattic', [
   'openattic.oaWizards',
   'openattic.userinfo',
   'openattic.required',
-  'smartadmin.smartmenu',
-  'ui.checkbox'
+  'smartadmin.smartmenu'
 ]);
 
 angular.module('openattic').config(function($httpProvider){
