@@ -1,25 +1,24 @@
 <div ng-controller="filestorage">
-        <div class="row">
-            <div class="col-sm-12">
-                <ul class="pager wizard no-margin">
-                    <li>
-                        <a href="#" ng-click="selectSelector()" class="btn btn-lg btn-default pull-left">Wizard Overview</a>
-                    </li>
-                </ul>
-            </div>
+    <div class="row">
+        <div class="col-sm-12">
+            <ul class="pager wizard no-margin">
+                <li>
+                    <a href="#" ng-click="selectSelector()" class="btn btn-lg btn-default pull-left">Wizard Overview</a>
+                </li>
+            </ul>
         </div>
-        <br /><br />
-        <div>
-            <div class="widget-body">
-                <wizard>
-                    <div class="tab-content">
-                        <div ng-class="{'active': isActiveTab(1)}" title="Title tab 1" class="tab-pane">Content tab 1</div>
-                        <div ng-class="{'active': isActiveTab(2)}" title="Title tab 2" class="tab-pane">Content tab 2</div>
-                        <div ng-class="{'active': isActiveTab(3)}" title="Title tab 3" class="tab-pane">Content tab 3</div>
-                        <div ng-class="{'active': isActiveTab(4)}" title="Title tab 4" class="tab-pane">Content tab 4</div>
-                    </div>
-                </wizard>
-            </div>
+    </div>
+    <br /><br />
+    <div>
+        <div class="widget-body">
+            <wizard>
+                <div class="tab-content">
+                    <div ng-class="{'active': isActiveTab(1)}" title="Title tab 1" class="tab-pane">Content tab 1</div>
+                    <div ng-class="{'active': isActiveTab(2)}" title="Title tab 2" class="tab-pane">Content tab 2</div>
+                    <div ng-class="{'active': isActiveTab(3)}" title="Title tab 3" class="tab-pane">Content tab 3</div>
+                    <div ng-class="{'active': isActiveTab(4)}" title="Title tab 4" class="tab-pane">Content tab 4</div>
+                </div>
+            </wizard>
         </div>
     </div>
 </div>
