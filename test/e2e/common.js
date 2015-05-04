@@ -12,6 +12,22 @@
 
       browser.sleep(configs.sleep);
     },
+
+    create_blockvol: function(){
+      var blockvol = require('./general/create_blockvol.e2e.js');
+    },
+    
+    create_fsvol: function(){
+      var fsvol = require('./general/create_fsvol.e2e.js');
+    },
+ 
+    delete_volume: function(){
+      var del_blockvol = require('./general/delete_protractor_test_volume.e2e.js');  
+    },
+
+
+      
+
     selectDropdownByIndex: function (dropdown, index) {
       dropdown.click();
       if (index) {
