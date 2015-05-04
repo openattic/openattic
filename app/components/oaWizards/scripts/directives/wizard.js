@@ -44,6 +44,15 @@ angular.module('openattic.oaWizards')
         $scope.disabledPrev = function(){
           return $scope.activeTab === 1;
         };
+        $scope.nextBtnText = function(){
+          var btnText = 'Next';
+
+          if($scope.activeTab === $scope.tabs.length){
+            btnText = 'Done';
+          }
+
+          return btnText;
+        };
       }
     };
   });
