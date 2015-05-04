@@ -19,8 +19,12 @@ angular.module('openattic')
       if( !inp || !activeRuleset ) return '';
       var num = getRealNum(activeRuleset, inp);
       var ret = humanizeIntFilter(num.min);
+      if( num.min === 0 && num.max > 0 ){
+        // if num is 0 but max is > 0, say "up to x" instead of "no to x"
+        ret = 'up';
+      }
       if( num.max && num.min != num.max ){
-        ret += " to " + humanizeIntFilter(num.max);
+        ret += ' to ' + humanizeIntFilter(num.max);
       }
       return ret;
     };
