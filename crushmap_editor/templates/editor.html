@@ -91,7 +91,30 @@
                                         Place
                                         <button
                                             class="btn btn-default"
-                                            ng-bind="newstepset.replicas"></button>
+                                            ng-class="{ active: editreplicas }"
+                                            ng-bind="newstepset.replicas"
+                                            ng-click="editreplicas = !editreplicas"
+                                            ></button>
+                                        <div class="well" ng-show="editreplicas">
+                                            <div class="radio">
+                                                <input type="radio" name="optionsRadios" id="optionsRadios1" ng-model="lolol" ng-value="option1" />
+                                                <label for="radio3">
+                                                    all replicas
+                                                </label>
+                                            </div>
+                                            <div class="radio">
+                                                <input type="radio" name="optionsRadios" id="optionsRadios1" ng-model="lolol" ng-value="option2" />
+                                                <label for="radio3">
+                                                    exactly <input type="number" class="form-control"  /> replicas
+                                                </label>
+                                            </div>
+                                            <div class="radio">
+                                                <input type="radio" name="optionsRadios" id="optionsRadios3" ng-model="lolol" ng-value="option3" />
+                                                <label for="radio3">
+                                                    all but <input type="number" class="form-control"  /> replicas
+                                                </label>
+                                            </div>
+                                        </div>
                                         replicas on different
                                         <span class="dropdown">
                                             <button
