@@ -81,7 +81,7 @@
                                     <p ng-repeat="stepset in stepsets">
                                         Place
                                         {{ stepset|humanizeRuleNum:activeRuleset }}
-                                        replica<span ng-show="getRealNum(stepset).max">s on different {{ stepset.acrosstype }}s</span>
+                                        replica<span ng-show="getRealNum(stepset).max && getRealNum(stepset).max > 1">s on different {{ stepset.acrosstype }}s</span>
                                         <span ng-show="stepset.groupbytype">in the same {{ stepset.groupbytype }}</span>
                                         in the {{ stepset.take.name }} {{ stepset.take.type === 'root' ? 'tree' : stepset.take.type }}.
                                     </p>
