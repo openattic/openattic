@@ -55,5 +55,5 @@ angular.module('openattic')
           }
         };
       }
-    }
+    };
   });

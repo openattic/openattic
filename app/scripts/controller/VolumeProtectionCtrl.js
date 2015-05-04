@@ -13,7 +13,7 @@ angular.module('openattic')
           $modalInstance.dismiss('protection set');
         }, function(error) {
           console.log('An error occured', error);
-        })
+        });
     };
 
     $scope.cancel = function(){

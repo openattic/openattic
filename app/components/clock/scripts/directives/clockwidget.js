@@ -17,5 +17,5 @@ angular.module('openattic.clock')
         $interval(calculateRotation, 1000);
         calculateRotation();
       }
-    }
+    };
   });

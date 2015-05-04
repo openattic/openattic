@@ -2,8 +2,8 @@
 
 angular.module('openattic.auth')
   .controller('authController', function ($scope, $window, authService) {
-    $scope.fieldRequired = "This field is required.";
-    $scope.correctInput = "The given login informations are not correct.";
+    $scope.fieldRequired = 'This field is required.';
+    $scope.correctInput = 'The given login informations are not correct.';
 
     $scope.login = function(loginForm){
       $scope.submitted = true;

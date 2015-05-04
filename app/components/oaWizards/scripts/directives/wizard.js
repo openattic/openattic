@@ -7,18 +7,18 @@ angular.module('openattic.oaWizards')
       transclude: true,
       replace: true,
       templateUrl: 'components/oaWizards/templates/wizard.html',
-      link: function(scope, elem, attr, controller){
-          var rawTabs = elem.find('.tab-pane');
-          var tabs = [];
+      link: function(scope, elem){
+        var rawTabs = elem.find('.tab-pane');
+        var tabs = [];
 
-          for(var i=0; i <  rawTabs.length; i++){
-            tabs.push({
-              index: i+1,
-              title: rawTabs[i].title
-            });
-          }
+        for(var i=0; i <  rawTabs.length; i++){
+          tabs.push({
+            index: i+1,
+            title: rawTabs[i].title
+          });
+        }
 
-          scope.tabs = tabs;
+        scope.tabs = tabs;
       },
       controller: function($scope){
         $scope.activeTab = 1;
@@ -45,5 +45,5 @@ angular.module('openattic.oaWizards')
           return $scope.activeTab === 1;
         };
       }
-    }
+    };
   });

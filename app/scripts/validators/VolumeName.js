@@ -57,7 +57,7 @@ angular.module('openattic')
               VolumeService.query({'name': modelValue})
                 .$promise
                 .then(function (res) {
-                  return ctrl.$setValidity('uniquename', res.length == 0);
+                  return ctrl.$setValidity('uniquename', res.length === 0);
                 })
                 .catch(function (error) {
                   console.log('An error occurred', error);

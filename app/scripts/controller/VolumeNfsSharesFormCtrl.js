@@ -21,7 +21,7 @@ angular.module('openattic')
               console.log('An error occured', error);
             });
         }
-      }
+      };
     }
 
     $scope.cancelAction = function() {
