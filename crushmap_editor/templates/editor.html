@@ -63,7 +63,7 @@
                                         </div>
                                     </div>
                                     <p class="text-danger" style="padding-top: 7px" ng-show="activeRuleset.min_size === 1">
-                                        One replica means <em>no copies</em>. If you lose the original, your data is lost.
+                                        One replica means <em>no copies</em>. If you lose a storage node, your data is lost.
                                     </p>
                                     <p ng-show="activeRuleset.min_size > 1"
                                        ng-class="{ 'text-warning': activeRuleset.min_size == 2, 'text-muted': activeRuleset.min_size > 2 }"
