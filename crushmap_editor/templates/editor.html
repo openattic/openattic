@@ -85,7 +85,13 @@
                                         <span ng-show="stepset.groupbytype">in the same {{ stepset.groupbytype }}</span>
                                         in the {{ stepset.take.name }} {{ stepset.take.type === 'root' ? 'tree' : stepset.take.type }}.
                                     </p>
-                                    <span>
+                                    <button
+                                        class="btn btn-default pull-right"
+                                        ng-hide="addnewrule"
+                                        ng-click="addnewrule = !addnewrule">
+                                        <i class="fa fa-fw fa-plus"></i>
+                                    </button>
+                                    <span ng-show="addnewrule">
                                         Place
                                         <button
                                             class="btn btn-default"
