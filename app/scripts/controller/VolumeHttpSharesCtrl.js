@@ -1,5 +1,5 @@
 angular.module('openattic')
-  .controller('VolumeHttpSharesCtrl', function ($scope, $state, HttpSharesService) {
+  .controller('VolumeHttpSharesCtrl', function ($scope, $state, HttpSharesService, $modal) {
     'use strict';
 
     $scope.httpData = {};
@@ -45,29 +45,19 @@ angular.module('openattic')
     };
 
     $scope.deleteHttpAction = function(){
-      $.SmartMessageBox({
-        title: 'Delete HTTP export',
-        content: 'Do you really want to delete the HTTP export for "' + $scope.httpSelection.item.path + '"?',
-        buttons: '[No][Yes]'
-      }, function (ButtonPressed) {
-        if (ButtonPressed === 'Yes') {
-          HttpSharesService.delete({id: $scope.httpSelection.item.id})
-            .$promise
-            .then(function() {
-              $scope.httpFilter.refresh = new Date();
-            }, function(error){
-              console.log('An error occured', error);
-            });
+      var modalInstance = $modal.open({
+        windowTemplateUrl: 'templates/messagebox.html',
+        templateUrl: 'templates/volumes/delete-http-share.html',
+        controller: 'HttpShareDeleteCtrl',
+        resolve: {
+          share: function(){
+            return $scope.httpSelection.item;
+          }
         }
-        if (ButtonPressed === 'No') {
-          $.smallBox({
-            title: 'Delete HTTP export',
-            content: '<i class="fa fa-clock-o"></i> <i>Cancelled</i>',
-            color: '#C46A69',
-            iconSmall: 'fa fa-times fa-2x fadeInRight animated',
-            timeout: 4000
-          });
-        }
+      });
+      
+      modalInstance.result.then(function(){
+        $scope.filterConfig.refresh = new Date();
       });
     };
   });
