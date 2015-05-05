@@ -131,6 +131,10 @@ oadatatable .input-group {
     background: none repeat scroll 0 0 transparent !important;
 }
 
+.statistics-content {
+    min-height: 700px;
+}
+
 utilgraphs img {
     margin: 10px;
 }
