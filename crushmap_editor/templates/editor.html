@@ -130,8 +130,10 @@
                                         in the
                                         <button
                                             class="btn btn-default"
-                                            ng-bind="newstepset.take.name" ng-click="alert('lol')"></button>
-                                        {{ newstepset.take.type === 'root' ? 'tree' : newstepset.take.type }}.
+                                            ng-class="{ active: edittakenode }"
+                                            ng-click="edittakenode = !edittakenode">
+                                            {{ newstepset.take.name }} {{ newstepset.take.type === 'root' ? 'tree' : newstepset.take.type }}.
+                                        </button>
                                     </span>
                                 </div>
                             </div>
