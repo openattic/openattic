@@ -54,12 +54,7 @@ angular.module('openattic.extensions')
         });
 
         $scope.$watch('activeRuleset', function(activeRuleset){
-          var resetNodes, renderNodes, rendersteps, s, step, stepset, init, prevStepCount;
-          if( !$scope.cluster ){
-            return;
-          }
-          $scope.repsize = 3;
-          $scope.stepsets = [];
+          // Standard (non-deep) watcher
           $scope.newstepset = {
             take:       $scope.findNodeByName('default'),
             acrosstype: $scope.findTypeByName('host'),
@@ -69,6 +64,17 @@ angular.module('openattic.extensions')
           $scope.replicas_pos = 1;
           $scope.replicas_neg = 1;
           $scope.replicas_source = 'fix';
+          $scope.addnewrule = false;
+        }, false);
+
+        $scope.$watch('activeRuleset', function(activeRuleset){
+          // deep watcher that keeps track of min/max sanity etc
+          var resetNodes, renderNodes, rendersteps, s, step, stepset, init, prevStepCount;
+          if( !$scope.cluster ){
+            return;
+          }
+          $scope.repsize = 3;
+          $scope.stepsets = [];
           if( activeRuleset ){
             // Force sensible min/max
             if( activeRuleset.min_size < 1 ){
