@@ -135,14 +135,6 @@ oadatatable .input-group {
     min-height: 700px;
 }
 
-utilgraphs img {
-    margin: 10px;
-}
-
-perfgraphs img {
-    margin: 10px;
-}
-
 /* dashboard widgets --> */
 .widget {
     border: 0px solid #d4d4d4 !important;
