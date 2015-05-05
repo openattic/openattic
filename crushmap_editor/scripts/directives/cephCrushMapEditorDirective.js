@@ -202,7 +202,7 @@ angular.module('openattic.extensions')
             $scope.newstepset.take = node;
             $scope.edittakenode = false;
           }
-        }
+        };
       }
     };
   });
