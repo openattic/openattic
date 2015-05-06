@@ -151,6 +151,10 @@ oadatatable .input-group {
     margin-top: 15px !important;
     margin-left: 15px !important;
 }
+
+.wizard-selector-lower-row{
+    margin-top: 30px;
+}
 /* <-- dashboard widget */
 
 .required {
