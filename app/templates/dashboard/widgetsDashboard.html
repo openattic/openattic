@@ -57,8 +57,8 @@
                         <span class="label label-primary" ng-if="!options.hideWidgetName">{{widget.name}}</span>
                     </h2>
                 </header>
-                <div role="content">
-                    <div class="panel-body widget-content" ng-style="widget.contentStyle"></div>
+                <div role="content" class="no-padding">
+                    <div class="widget-content"></div>
                     <div class="widget-ew-resizer" ng-mousedown="grabResizer($event)"></div>
                     <div ng-if="widget.enableVerticalResize" class="widget-s-resizer"
                          ng-mousedown="grabSouthResizer($event)"></div>

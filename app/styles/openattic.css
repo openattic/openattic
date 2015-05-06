@@ -146,6 +146,11 @@ oadatatable .input-group {
 .widget-icon {
     line-height: 37px !important;
 }
+
+.wizard-overview-btn{
+    margin-top: 15px !important;
+    margin-left: 15px !important;
+}
 /* <-- dashboard widget */
 
 .required {
