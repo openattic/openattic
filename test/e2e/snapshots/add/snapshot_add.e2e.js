@@ -36,6 +36,8 @@ describe('Should create a Snapshot', function(){
     browser.sleep(400);
     submitButton.click();
   });
+  
+  //check if snapshot is present
 
   it('should delete the snapshot', function(){
     expect(volume.isDisplayed()).toBe(true);
@@ -52,6 +54,7 @@ describe('Should create a Snapshot', function(){
     volume.click();
     browser.sleep(400);
     element(by.css('.tc_snapshotTab')).click();
+    browser.sleep(400);
     expect(snapshot.isPresent()).toBe(false);
     browser.sleep(400);
   });
