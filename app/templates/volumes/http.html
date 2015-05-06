@@ -2,7 +2,7 @@
 <oadatatable data="httpData" class="tc_oadatatable_http_shares" filter-config="httpFilter" selection="httpSelection">
     <actions>
         <a class="btn btn-lg btn-primary tc_httpShareAdd" type="button" ng-click="addHttpAction()" ng-hide="httpSelection.item"><i class="fa fa-fw fa-plus"></i> Add</a>
-        <a class="btn btn-lg btn-primary" type="button" ng-click="deleteHttpAction()" ng-show="httpSelection.item"><i class="fa fa-fw fa-trash-o"></i> Delete</a>
+        <a class="btn btn-lg btn-primary tc_deleteHttpShare" type="button" ng-click="deleteHttpAction()" ng-show="httpSelection.item"><i class="fa fa-fw fa-trash-o"></i> Delete</a>
         <li><a ng-click="addHttpAction()"><i class="fa fa-fw fa-plus"></i> Add</a></li>
         <li class="divider"></li>
         <li ng-class="{disabled: !httpSelection.item}" max-selected=1><a ng-click="deleteHttpAction()"><i class="fa fa-fw fa-trash-o"></i> Delete</a></li>
