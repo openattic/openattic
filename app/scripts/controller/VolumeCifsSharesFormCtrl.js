@@ -8,18 +8,21 @@ angular.module('openattic')
       .then(function(res){
         $scope.domainconfig = res;
       });
+      
     if(!$stateParams.share){
+      
       $scope.share = {
-        'volume': {id: $scope.selection.item.id},
-        'name': $scope.selection.item.name,
-        'path': $scope.selection.item.path,
-        'available':  true,
+        'volume'    : {id: $scope.selection.item.id},
+        'name'      : $scope.selection.item.name,
+        'path'      : $scope.selection.item.path,
+        'available' : true,
         'browseable': true,
-        'writeable':  true,
-        'guest_ok':   false
+        'writeable' : true,
+        'guest_ok'  : false
       };
+      
       $scope.editing = false;
-
+      
       $scope.submitAction = function(shareForm) {
         $scope.submitted = true;
         if(shareForm.$valid === true) {
