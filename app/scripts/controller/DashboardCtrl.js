@@ -5,17 +5,20 @@ angular.module('openattic')
     name: 'Volume Stats',
     title: 'Volume Stats',
     directive: 'volumestatwidget',
+    enableVerticalResize: false,
     size: {
       width: '100%'
     }
   }, {
     name: 'ToDos',
     title: 'ToDos',
-    directive: 'todowidget'
+    directive: 'todowidget',
+    enableVerticalResize: false
   }, {
     name: 'openATTIC Wizards',
     title: 'openATTIC Wizards',
-    directive: 'wizardselector'
+    directive: 'wizardselector',
+    enableVerticalResize: false
   }])
   .value('defaultWidgets', [
     { name: 'Volume Stats' },
