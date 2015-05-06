@@ -44,37 +44,45 @@
                         </div>
                         <div class="form-group">
                             <div class="col-sm-offset-2 col-sm-10">
-                                <checkbox ng-model="share.available" name="available" id="shareAvailable"></checkbox>
-                                <label>
-                                    Is available
-                                </label>
+                                <div class="checkbox checkbox-primary">
+                                    <input type="checkbox" ng-model="share.available" name="available" id="shareAvailable">
+                                    <label for="shareAvailable">
+                                        Is available
+                                    </label>
+                                </div>
                             </div>
                         </div>
                         <div class="form-group">
                             <div class="col-sm-offset-2 col-sm-10">
-                                <checkbox ng-model="share.browseable" name="browseable" id="shareBrowseable" ng-false-value="browseable"></checkbox>
-                                <label>
-                                    Is browseable
-                                </label>
+                                <div class="checkbox checkbox-primary">
+                                    <input type="checkbox" ng-model="share.browseable" name="browseable" id="shareBrowseable">
+                                    <label for="shareBrowseable">
+                                        Is browseable
+                                    </label>
+                                </div>
                             </div>
                         </div>
                         <div class="form-group">
                             <div class="col-sm-offset-2 col-sm-10">
-                                <checkbox ng-model="share.writeable" name="writeable" id="shareWriteable"></checkbox>
-                                <label>
-                                    Is writeable
-                                </label>
+                                <div class="checkbox checkbox-primary">
+                                    <input type="checkbox" ng-model="share.writeable" name="writeable" id="shareWriteable">
+                                    <label for="shareWriteable">
+                                        Is writeable
+                                    </label>
+                                </div>
                             </div>
                         </div>
                         <div class="form-group">
                             <div class="col-sm-offset-2 col-sm-10">
-                                <checkbox ng-model="share.guest_ok" name="guest_ok" id="shareGuestOk"></checkbox>
-                                <label>
-                                    Accessible by guests
-                                    <!--<span ng-show="domainconfig.domain === ''" class="warning">
-                                        Currently, this host supports guest access only, because it is not part of an Active Directory Domain.
-                                    </span>-->
-                                </label>
+                                <div class="checkbox checkbox-primary">
+                                    <input type="checkbox" ng-model="share.guest_ok" name="guest_ok" id="shareGuestOk">
+                                    <label for="shareGuestOk">
+                                        Accessible by guests
+                                        <!--<span ng-show="domainconfig.domain === ''" class="warning">
+                                            <p>Currently, this host supports guest access only, because it is not part of an Active Directory Domain.</p>
+                                        </span>-->
+                                    </label>
+                                </div>
                             </div>
                         </div>
                     </fieldset>
