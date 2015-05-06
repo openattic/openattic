@@ -1,5 +1,5 @@
 angular.module('openattic')
-  .controller('VolumeNfsSharesCtrl', function ($scope, $state, NfsSharesService) {
+  .controller('VolumeNfsSharesCtrl', function ($scope, $state, NfsSharesService, $modal) {
     'use strict';
 
     $scope.nfsData = {};
@@ -45,29 +45,19 @@ angular.module('openattic')
     };
 
     $scope.deleteNfsAction = function(){
-      $.SmartMessageBox({
-        title: 'Delete NFS export',
-        content: 'Do you really want to delete the NFS export to "' + $scope.nfsSelection.item.address + '"?',
-        buttons: '[No][Yes]'
-      }, function (ButtonPressed) {
-        if (ButtonPressed === 'Yes') {
-          NfsSharesService.delete({id: $scope.nfsSelection.item.id})
-            .$promise
-            .then(function() {
-              $scope.nfsFilter.refresh = new Date();
-            }, function(error){
-              console.log('An error occured', error);
-            });
+      var modalInstance = $modal.open({
+        windowTemplateUrl: 'templates/messagebox.html',
+        templateUrl: 'templates/volumes/delete-nfs-share.html',
+        controller: 'NfsShareDeleteCtrl',
+        resolve: {
+          share: function(){
+            return $scope.nfsSelection.item;
+          }
         }
-        if (ButtonPressed === 'No') {
-          $.smallBox({
-            title: 'Delete NFS export',
-            content: '<i class="fa fa-clock-o"></i> <i>Cancelled</i>',
-            color: '#C46A69',
-            iconSmall: 'fa fa-times fa-2x fadeInRight animated',
-            timeout: 4000
-          });
-        }
+      });
+      
+      modalInstance.result.then(function(){
+        $scope.filterConfig.refresh = new Date();
       });
     };
   });
