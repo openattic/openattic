@@ -14,7 +14,6 @@ angular.module('openattic', [
   'openattic.graph',
   'openattic.sizeparser',
   'openattic.extensions',
-  'openattic.clock',
   'openattic.todowidget',
   'openattic.oaWizards',
   'openattic.userinfo',

@@ -1,1 +1,0 @@
-angular.module('openattic.clock', []);

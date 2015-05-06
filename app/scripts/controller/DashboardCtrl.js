@@ -9,13 +9,6 @@ angular.module('openattic')
       width: '100%'
     }
   }, {
-    name: 'Clock',
-    title: 'Clock',
-    directive: 'clockwidget',
-    size: {
-      width: '245px'
-    }
-  }, {
     name: 'ToDos',
     title: 'ToDos',
     directive: 'todowidget'
