@@ -21,6 +21,7 @@ angular.module('openattic.oaWizards')
         scope.tabs = tabs;
       },
       controller: function($scope){
+        $scope.input = {};
         $scope.activeTab = 1;
         $scope.isActiveTab = function(index){
           return $scope.activeTab === index;
