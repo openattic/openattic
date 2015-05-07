@@ -32,6 +32,9 @@ angular.module('openattic.oaWizards')
             if ($scope.activeTab < $scope.tabs.length) {
               $scope.activeTab++;
             }
+            else if ($scope.activeTab === $scope.tabs.length) {
+              // wizard is done e.g. return $scope.input
+            }
           }
         };
         $scope.previousTab = function(){
