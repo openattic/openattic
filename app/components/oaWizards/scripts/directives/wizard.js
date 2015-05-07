@@ -50,6 +50,9 @@ angular.module('openattic.oaWizards')
 
           return btnText;
         };
+        $scope.getWizardItemsClass = function(){
+          return 'wizard-nav-items-' + $scope.tabs.length;
+        }
       }
     };
   });

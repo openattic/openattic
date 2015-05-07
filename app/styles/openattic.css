@@ -160,6 +160,18 @@ oadatatable .input-group {
     margin-bottom: 10px !important;
     margin-left: 5px !important;
 }
+
+.wizard-nav-items-4 {
+    left: 0%;
+}
+
+.wizard-nav-items-3 {
+    left: 15%;
+}
+
+.wizard-nav-items-2 {
+    left: 25%;
+}
 /* <-- dashboard widget */
 
 .required {

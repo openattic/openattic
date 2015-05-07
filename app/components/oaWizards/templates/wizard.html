@@ -1,7 +1,7 @@
 <form id="wizard" novalidate="novalidate">
     <div id="bootstrap-wizard-1" class="col-sm-12">
         <div class="form-bootstrapWizard">
-            <ul class="bootstrapWizard form-wizard">
+            <ul class="bootstrapWizard form-wizard" ng-class="getWizardItemsClass()">
                 <li ng-repeat="tab in tabs" ng-class="{'active': isActiveTab(tab.index)}">
                     <a href="#" ng-click="setTab(tab.index)" data-toggle="tab">
                         <span class="step">{{tab.index}}</span>
