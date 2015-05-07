@@ -27,8 +27,11 @@ angular.module('openattic.oaWizards')
           return $scope.activeTab === index;
         };
         $scope.nextTab = function(){
-          if($scope.activeTab < $scope.tabs.length) {
-            $scope.activeTab++;
+          var currentForm = $scope['contentForm' + $scope.activeTab];
+          if(currentForm.$valid) {
+            if ($scope.activeTab < $scope.tabs.length) {
+              $scope.activeTab++;
+            }
           }
         };
         $scope.previousTab = function(){
