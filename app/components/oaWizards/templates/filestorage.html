@@ -21,7 +21,7 @@
                                 <label class="col-md-2 control-label" for="volumename">Name</label>
                                 <div class="col-md-10">
                                     <input type="text" class="form-control" id="volumename" placeholder="Name..."
-                                           ng-model="input.contentForm1.volume.name" name="volumename" validname
+                                           ng-model="input.volume.name" name="volumename" validname
                                            uniquename required>
                                     <span class="help-block tc_nameRequired" ng-show="(contentForm1.submitted ||
                                         contentForm1.volumename.$dirty) && contentForm1.volumename.$error.required">
@@ -40,7 +40,7 @@
                                 contentForm1.volumepool.$dirty) && contentForm1.volumepool.$invalid}">
                                 <label class="col-md-2 control-label" for="volumepool">Pool</label>
                                 <div class="col-md-10">
-                                    <select class="form-control" ng-model="input.contentForm1.volume.volumepool"
+                                    <select class="form-control" ng-model="input.volume.volumepool"
                                             id="volumepool" ng-options="(pool.name + ' (' + pool.type.name + ')')
                                             for pool in pools track by pool.id" name="volumepool" required>
                                         <option class="tc_volumePoolOption" value="">-- Select a pool --</option>
@@ -49,31 +49,31 @@
                                         contentForm1.volumepool.$dirty) && contentForm1.volumepool.$error.required">
                                         This field is required!
                                     </span>
-                                    <div ng-show="input.contentForm1.volume.volumepool" class="tc_poolAvailableSize">
-                                        {{input.contentForm1.volume.volumepool.usage.max_new_fsv_text}} available
+                                    <div ng-show="input.volume.volumepool" class="tc_poolAvailableSize">
+                                        {{input.volume.volumepool.usage.max_new_fsv_text}} available
                                     </div>
                                 </div>
                             </div>
                             <div class="form-group">
                                 <label class="col-md-2 control-label">Type</label>
-                                <div class="col-md-10" ng-init="input.contentForm1.volume.filesystem=''">
+                                <div class="col-md-10" ng-init="input.volume.filesystem=''">
                                     <div class="radio radio-primary">
-                                        <input type="radio" ng-model="input.contentForm1.volume.filesystem" value=""
+                                        <input type="radio" ng-model="input.volume.filesystem" value=""
                                                id="lun">
                                         <label for="lun">Create LUN</label>
                                     </div>
                                     <div class="radio radio-primary" ng-show="supported_filesystems.xfs">
-                                        <input type="radio" ng-model="input.contentForm1.volume.filesystem"
+                                        <input type="radio" ng-model="input.volume.filesystem"
                                                value="xfs" id="xfs">
                                         <label for="xfs">Create Virtualization Store -> XFS</label>
                                     </div>
                                     <div class="radio radio-primary" ng-show="supported_filesystems.zfs">
-                                        <input type="radio" ng-model="input.contentForm1.volume.filesystem" value="zfs"
+                                        <input type="radio" ng-model="input.volume.filesystem" value="zfs"
                                                id="zfs">
                                         <label for="zfs">Create ZFS Volume</label>
                                     </div>
                                     <div class="radio radio-primary" ng-show="supported_filesystems.btrfs">
-                                        <input type="radio" ng-model="input.contentForm1.volume.filesystem"
+                                        <input type="radio" ng-model="input.volume.filesystem"
                                                value="btrfs" id="btrfs">
                                         <label for="btrfs">Create File Store -> BTRFS</label>
                                     </div>
@@ -84,10 +84,10 @@
                                 <label class="col-md-2 control-label" for="volumemegs">Size</label>
                                 <div class="col-md-10">
                                     <input class="form-control" type="text" name="volumemegs"
-                                           ng-disabled="input.contentForm1.volume.volumepool == null"
+                                           ng-disabled="input.volume.volumepool == null"
                                            volume-size-format volume-size-value
-                                           max-value="{{input.contentForm1.volume.volumepool.usage.max_new_fsv}}"
-                                           ng-model="input.contentForm1.volume.megs" placeholder="e.g., 10GB"
+                                           max-value="{{input.volume.volumepool.usage.max_new_fsv}}"
+                                           ng-model="input.volume.megs" placeholder="e.g., 10GB"
                                            id="volumemegs" required>
                                     <span class="help-block tc_sizeRequired" ng-show="(contentForm1.submitted ||
                                         contentForm1.volumemegs.$dirty) && contentForm1.volumemegs.$error.required">
@@ -100,14 +100,14 @@
                                     <span class="help-block tc_wrongVolumeSize"
                                           ng-show="contentForm1.volumemegs.$error.volumeSizeValue">
                                         The size must be at least 100MB and must not exceed
-                                        {{input.contentForm1.volume.volumepool.usage.max_new_fsv_text}}.
+                                        {{input.volume.volumepool.usage.max_new_fsv_text}}.
                                     </span>
                                 </div>
                             </div>
                             <div class="form-group">
                                 <div class="col-sm-offset-2 col-sm-10">
                                     <div class="checkbox checkbox-primary">
-                                        <input type="checkbox" ng-model="input.contentForm1.volume.is_protected"
+                                        <input type="checkbox" ng-model="input.volume.is_protected"
                                                id="volumeisprotected" name="volumeisprotected">
                                         <label for="volumeisprotected">Deletion protection</label>
                                     </div>

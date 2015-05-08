@@ -10,7 +10,7 @@ angular.module('openattic.oaWizards')
         console.log('An error occurred', error);
       });
 
-    $scope.$watch('input.contentForm1.volume.volumepool', function(sourcePool) {
+    $scope.$watch('input.volume.volumepool', function(sourcePool) {
       if(sourcePool){
         new PoolService(sourcePool).$filesystems()
           .then(function(res) {
