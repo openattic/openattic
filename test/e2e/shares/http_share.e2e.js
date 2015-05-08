@@ -65,6 +65,6 @@ describe('HTTP Share add', function(){
     browser.sleep(400);
   });
   
-  //helpers.delete_volume();
+  helpers.delete_volume();
 
 });
