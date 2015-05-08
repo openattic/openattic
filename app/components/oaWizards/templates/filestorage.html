@@ -13,10 +13,118 @@
         <div class="widget-body">
             <wizard>
                 <div class="tab-content">
-                    <div ng-class="{'active': isActiveTab(1)}" title="Title tab 1" class="tab-pane">Content tab 1</div>
-                    <div ng-class="{'active': isActiveTab(2)}" title="Title tab 2" class="tab-pane">Content tab 2</div>
-                    <div ng-class="{'active': isActiveTab(3)}" title="Title tab 3" class="tab-pane">Content tab 3</div>
-                    <div ng-class="{'active': isActiveTab(4)}" title="Title tab 4" class="tab-pane">Content tab 4</div>
+                    <div ng-class="{'active': isActiveTab(1)}" title="Create Volume" class="tab-pane">
+                        <h3><strong>Step 1 </strong> - Create Volume</h3>
+                        <!--<form name="$parent.contentForm1" role="form" class="form-horizontal" novalidate>
+                            <input type="text" name="data_input" ng-model="input.contentForm1.input1" required>
+                            <input type="text" name="data_input" ng-model="input.contentForm1.input2" required>
+                        </form>-->
+                        <form name="$parent.contentForm1" role="form" class="form-horizontal" novalidate>
+                            <div class="form-group" ng-class="{'has-error': (contentForm1.submitted ||
+                                contentForm1.volumename.$dirty) && contentForm1.volumename.$invalid}">
+                                <label class="col-md-2 control-label" for="volumename">Name</label>
+                                <div class="col-md-10">
+                                    <input type="text" class="form-control" id="volumename" placeholder="Name..."
+                                           ng-model="input.contentForm1.volume.name" name="volumename" validname
+                                           uniquename required>
+                                    <span class="help-block tc_nameRequired" ng-show="(contentForm1.submitted ||
+                                        contentForm1.volumename.$dirty) && contentForm1.volumename.$error.required">
+                                        This field is required!
+                                    </span>
+                                    <span class="help-block" ng-show="contentForm1.volumename.$error.validname">
+                                        {{errortext}}
+                                    </span>
+                                    <span class="help-block tc_noUniqueName"
+                                          ng-show="contentForm1.volumename.$error.uniquename">
+                                        The chosen volume name is already in use.
+                                    </span>
+                                </div>
+                            </div>
+                            <div class="form-group" ng-class="{'has-error': (contentForm1.submitted ||
+                                contentForm1.volumepool.$dirty) && contentForm1.volumepool.$invalid}">
+                                <label class="col-md-2 control-label" for="volumepool">Pool</label>
+                                <div class="col-md-10">
+                                    <select class="form-control" ng-model="input.contentForm1.volume.volumepool"
+                                            id="volumepool" ng-options="(pool.name + ' (' + pool.type.name + ')')
+                                            for pool in pools track by pool.id" name="volumepool" required>
+                                        <option class="tc_volumePoolOption" value="">-- Select a pool --</option>
+                                    </select>
+                                    <span class="help-block tc_poolRequired" ng-show="(contentForm1.submitted ||
+                                        contentForm1.volumepool.$dirty) && contentForm1.volumepool.$error.required">
+                                        This field is required!
+                                    </span>
+                                    <div ng-show="input.contentForm1.volume.volumepool" class="tc_poolAvailableSize">
+                                        {{input.contentForm1.volume.volumepool.usage.max_new_fsv_text}} available
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <label class="col-md-2 control-label">Type</label>
+                                <div class="col-md-10" ng-init="input.contentForm1.volume.filesystem=''">
+                                    <div class="radio radio-primary">
+                                        <input type="radio" ng-model="input.contentForm1.volume.filesystem" value=""
+                                               id="lun">
+                                        <label for="lun">Create LUN</label>
+                                    </div>
+                                    <div class="radio radio-primary" ng-show="supported_filesystems.xfs">
+                                        <input type="radio" ng-model="input.contentForm1.volume.filesystem"
+                                               value="xfs" id="xfs">
+                                        <label for="xfs">Create Virtualization Store -> XFS</label>
+                                    </div>
+                                    <div class="radio radio-primary" ng-show="supported_filesystems.zfs">
+                                        <input type="radio" ng-model="input.contentForm1.volume.filesystem" value="zfs"
+                                               id="zfs">
+                                        <label for="zfs">Create ZFS Volume</label>
+                                    </div>
+                                    <div class="radio radio-primary" ng-show="supported_filesystems.btrfs">
+                                        <input type="radio" ng-model="input.contentForm1.volume.filesystem"
+                                               value="btrfs" id="btrfs">
+                                        <label for="btrfs">Create File Store -> BTRFS</label>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="form-group" ng-class="{'has-error': (contentForm1.submitted ||
+                                contentForm1.volumemegs.$dirty) && contentForm1.volumemegs.$invalid}">
+                                <label class="col-md-2 control-label" for="volumemegs">Size</label>
+                                <div class="col-md-10">
+                                    <input class="form-control" type="text" name="volumemegs"
+                                           ng-disabled="input.contentForm1.volume.volumepool == null"
+                                           volume-size-format volume-size-value
+                                           max-value="{{input.contentForm1.volume.volumepool.usage.max_new_fsv}}"
+                                           ng-model="input.contentForm1.volume.megs" placeholder="e.g., 10GB"
+                                           id="volumemegs" required>
+                                    <span class="help-block tc_sizeRequired" ng-show="(contentForm1.submitted ||
+                                        contentForm1.volumemegs.$dirty) && contentForm1.volumemegs.$error.required">
+                                        This field is required!
+                                    </span>
+                                    <span class="help-block tc_noValidNumber"
+                                          ng-show="contentForm1.volumemegs.$error.volumeSizeFormat">
+                                        This is not a valid number.
+                                    </span>
+                                    <span class="help-block tc_wrongVolumeSize"
+                                          ng-show="contentForm1.volumemegs.$error.volumeSizeValue">
+                                        The size must be at least 100MB and must not exceed
+                                        {{input.contentForm1.volume.volumepool.usage.max_new_fsv_text}}.
+                                    </span>
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <div class="col-sm-offset-2 col-sm-10">
+                                    <div class="checkbox checkbox-primary">
+                                        <input type="checkbox" ng-model="input.contentForm1.volume.is_protected"
+                                               id="volumeisprotected" name="volumeisprotected">
+                                        <label for="volumeisprotected">Deletion protection</label>
+                                    </div>
+                                </div>
+                            </div>
+                        </form>
+                    </div>
+                    <div ng-class="{'active': isActiveTab(2)}" title="Create Mirror" class="tab-pane">
+                        <h3><strong>Step 2 </strong> - Create Mirror</h3>
+                    </div>
+                    <div ng-class="{'active': isActiveTab(3)}" title="Create Shares" class="tab-pane">
+                        <h3><strong>Step 3 </strong> - Create Shares</h3>
+                    </div>
                 </div>
             </wizard>
         </div>
