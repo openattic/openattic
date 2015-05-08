@@ -1,6 +1,23 @@
 'use strict';
 
 angular.module('openattic.oaWizards')
-  .controller('filestorage', function($scope) {
-    $scope.text = 'Filestorage';
+  .controller('filestorage', function($scope, PoolService) {
+    PoolService.query()
+      .$promise
+      .then(function(res){
+        $scope.pools = res;
+      }, function (error) {
+        console.log('An error occurred', error);
+      });
+
+    $scope.$watch('input.contentForm1.volume.volumepool', function(sourcePool) {
+      if(sourcePool){
+        new PoolService(sourcePool).$filesystems()
+          .then(function(res) {
+            $scope.supported_filesystems = res;
+          }, function(error) {
+            console.log('An error occured', error);
+          });
+      }
+    });
   });
