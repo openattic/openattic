@@ -15,8 +15,6 @@ describe('Should create a Snapshot', function(){
 
   helpers.create_blockvol();
     
-  var sw = require('./snapshot_workflow.e2e.js');  
-    
   //navigate to snapshot form
   function goToSnapAdd() {
     expect(volume.isDisplayed()).toBe(true);
@@ -38,6 +36,15 @@ describe('Should create a Snapshot', function(){
   });
   
   //check if snapshot is present
+  
+  it('should display the snapshot in the snapshots overview panel', function(){
+    expect(volume.isDisplayed()).toBe(true);
+    volume.click();
+    browser.sleep(400);
+    element(by.css('.tc_snapshotTab')).click();
+    browser.sleep(400);
+    expect(snapshot.isPresent()).toBe(true);
+  });
 
   it('should delete the snapshot', function(){
     expect(volume.isDisplayed()).toBe(true);
