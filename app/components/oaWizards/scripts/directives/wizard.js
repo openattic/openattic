@@ -28,6 +28,7 @@ angular.module('openattic.oaWizards')
         };
         $scope.nextTab = function(){
           var currentForm = $scope['contentForm' + $scope.activeTab];
+          currentForm.submitted = true;
           if(currentForm.$valid) {
             if ($scope.activeTab < $scope.tabs.length) {
               $scope.activeTab++;
