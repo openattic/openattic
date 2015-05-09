@@ -115,6 +115,8 @@ else:
         NAGIOS_CFG_PATH = "/etc/nagios/nagios.cfg"
         NAGIOS_CONTACTS_CFG_PATH = "/etc/nagios/conf.d/openattic_contacts.cfg"
         NAGIOS_SERVICES_CFG_PATH = "/etc/nagios/conf.d/openattic.cfg"
+        NAGIOS_RRD_BASEDIR = "/var/lib/pnp4nagios"
+        NAGIOS_RRD_PATH = "/var/lib/pnp4nagios/%(host)s/%(serv)s.rrd"
         NAGIOS_XML_PATH = "/var/lib/pnp4nagios/%(host)s/%(serv)s.xml"
         NAGIOS_BINARY_NAME = "nagios"
         NAGIOS_SERVICE_NAME = "nagios"
