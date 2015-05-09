@@ -21,6 +21,7 @@ import re
 import subprocess
 import tokenize
 import hashlib
+import logging
 
 from os.path  import getmtime
 from time     import time
@@ -761,8 +762,12 @@ class Graph(object):
             ])
 
         #print '"' + '" "'.join(self.args).encode("utf-8") + '"'
-        rrdtool = subprocess.Popen([arg.encode("utf-8") for arg in self.args], stdout=subprocess.PIPE)
+        rrdtool = subprocess.Popen([arg.encode("utf-8") for arg in self.args], stdout=subprocess.PIPE, stderr=subprocess.PIPE)
         out, err = rrdtool.communicate()
+        if err:
+            logging.error('"' + '" "'.join(self.args).encode("utf-8") + '"')
+            logging.error(err)
+
 
         if self.bgcol:
             # User wants a background color, so we made the image transparent
