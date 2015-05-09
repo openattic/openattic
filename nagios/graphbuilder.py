@@ -36,6 +36,8 @@ from colorsys import rgb_to_hls, hls_to_rgb
 from django.utils import formats
 from django.utils.translation import ugettext as _
 
+from nagios.conf import settings as nagios_settings
+
 
 def rgbstr_to_rgb_int(string, default="FFFFFF"):
     """ Turn the given RGB string into a tuple that contains its integer values. """
@@ -683,6 +685,8 @@ class Graph(object):
             "--height", str(self.height), "--width", str(self.width),
             "--imgformat", "PNG", "--title", self.title
             ]
+        if nagios_settings.RRDCACHED_SOCKET:
+            self.args.extend(["--daemon", nagios_settings.RRDCACHED_SOCKET])
         if self.verttitle is None:
             for src in self.sources:
                 if src.unit:
@@ -762,12 +766,13 @@ class Graph(object):
             ])
 
         #print '"' + '" "'.join(self.args).encode("utf-8") + '"'
-        rrdtool = subprocess.Popen([arg.encode("utf-8") for arg in self.args], stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+        rrdtool = subprocess.Popen([arg.encode("utf-8") for arg in self.args],
+                                   stdout=subprocess.PIPE, stderr=subprocess.PIPE,
+                                   cwd=nagios_settings.RRD_BASEDIR)
         out, err = rrdtool.communicate()
         if err:
             logging.error('"' + '" "'.join(self.args).encode("utf-8") + '"')
             logging.error(err)
-
 
         if self.bgcol:
             # User wants a background color, so we made the image transparent

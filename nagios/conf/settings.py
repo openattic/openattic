@@ -33,6 +33,7 @@ TRAFFIC_CHECK_CMD        = getattr( settings, "NAGIOS_TRAFFIC_CHECK_CMD",      "
 CPUTIME_DESCRIPTION      = getattr( settings, "NAGIOS_CPUTIME_DESCRIPTION",    "CPU Time" )
 CPUTIME_CHECK_CMD        = getattr( settings, "NAGIOS_CPUTIME_CHECK_CMD",      "check_cputime" )
 
+RRD_BASEDIR              = getattr( settings, "NAGIOS_RRD_BASEDIR",       "/var/lib/pnp4nagios/perfdata" )
 RRD_PATH                 = getattr( settings, "NAGIOS_RRD_PATH",          "/var/lib/pnp4nagios/perfdata/%(host)s/%(serv)s.rrd" )
 XML_PATH                 = getattr( settings, "NAGIOS_XML_PATH",          "/var/lib/pnp4nagios/perfdata/%(host)s/%(serv)s.xml" )
 CMD_PATH                 = getattr( settings, "NAGIOS_CMD_PATH",          "/var/lib/nagios3/rw/nagios.cmd" )
@@ -45,3 +46,5 @@ INCLUDE_HOST_IN_CFG      = getattr( settings, "NAGIOS_INCLUDE_HOST_IN_CFG", True
 
 BINARY_NAME              = getattr( settings, "NAGIOS_BINARY_NAME",         "nagios3" )
 SERVICE_NAME             = getattr( settings, "NAGIOS_SERVICE_NAME",        "nagios3" )
+
+RRDCACHED_SOCKET         = getattr( settings, "NAGIOS_RRDCACHED_SOCKET",    None )
