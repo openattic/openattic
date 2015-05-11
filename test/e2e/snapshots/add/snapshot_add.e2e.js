@@ -25,6 +25,8 @@ describe('Should create a Snapshot', function(){
     element(by.css('.tc_snapshotAdd')).click();
     browser.sleep(400);
   }
+  
+  require('./snapshot_workflow.e2e.js');
 
   it('should create the snapshot', function(){
     goToSnapAdd();
@@ -52,6 +54,7 @@ describe('Should create a Snapshot', function(){
     browser.sleep(400);
     element(by.css('.tc_snapshotTab')).click();
     browser.sleep(400);
+    expect(snapshot.isPresent()).toBe(true);
     snapshot.click();
     browser.sleep(400);
     element(by.css('.tc_deleteSnapItem')).click();
