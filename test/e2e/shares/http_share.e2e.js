@@ -17,6 +17,8 @@ describe('HTTP Share add', function(){
   
   helpers.create_fsvol();
   
+  require('./http_share_workflow.e2e.js');
+  
   
   function goToHTTPShare(){
     expect(volume.isDisplayed()).toBe(true);
