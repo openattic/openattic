@@ -5,14 +5,7 @@ describe('HTTP Share workflow', function(){
   var volumename = 'protractor_test_volume';
   var volume = element(by.cssContainingText('tr', volumename));
   var submitButton = element(by.css('.tc_submitButton'));
-
-//   beforeEach(function(){
-//     helpers.login();
-//     var volumesItem = element.all(by.css('ul .tc_menuitem')).get(3);
-//     volumesItem.click();
-// 
-//   });  
-  
+ 
   function goToHTTPShare(){
     expect(volume.isDisplayed()).toBe(true);
     volume.click();
@@ -57,5 +50,4 @@ describe('HTTP Share workflow', function(){
 
     expect(element(by.css('.tc_oadatatable_http_shares')).isPresent()).toBe(true);    
   });
-    
 });
