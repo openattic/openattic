@@ -38,6 +38,28 @@ describe('should create a clone volume of a snapshot (base: blockvolume)', funct
     submitButton.click();
   });
   
+  it('should not allow spaces or additional characters', function(){
+    expect(volume.isDisplayed()).toBe(true);
+    volume.click();
+    browser.sleep(400);
+    element(by.css('.tc_snapshotTab')).click();
+    browser.sleep(400);
+    expect(snapshot.isDisplayed()).toBe(true);
+    snapshot.click();
+    browser.sleep(400);
+    cloneButton.click();
+    browser.sleep(400);
+    element(by.css('.tc_snap_clone')).click();
+    browser.sleep(400);
+    var test = "öasdf 123";
+    element(by.model('clone_obj.name')).sendKeys(test);
+    browser.sleep(400);
+    expect(element(by.css('.tc_cloneNoValidName')).isDisplayed()).toBe(true);
+    element(by.id('bot1-Msg1')).click();
+    expect(element(by.css('.tc_oadatatable_snapshots')).isPresent()).toBe(true);
+  });
+  
+  
   
   it('it should create a clone of the volume', function(){
     expect(volume.isDisplayed()).toBe(true);
