@@ -68,7 +68,7 @@ Pre-Depends: adduser
 Depends: ${misc:Depends}, python (>= 2.6),
  ${python:Depends},
  python-django (>= 1.6),
- python-django (<< 1.7),
+ python-django (<< 1.8),
  dbus,
  ntp,
  resolvconf, bridge-utils, vlan, ifenslave-2.6,
