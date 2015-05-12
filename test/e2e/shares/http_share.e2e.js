@@ -4,8 +4,7 @@ describe('HTTP Share add', function(){
   
   var volumename = 'protractor_test_volume';
   var volume = element(by.cssContainingText('tr', volumename));
-  var sharename = "/media/test";
-  var share = element(by.cssContainingText('tr', sharename));
+  var share = element(by.css('.tc_http_share'));
   var submitButton = element(by.css('.tc_submitButton'));
   
   beforeEach(function(){
@@ -19,7 +18,6 @@ describe('HTTP Share add', function(){
   
   require('./http_share_workflow.e2e.js');
   
-  
   function goToHTTPShare(){
     expect(volume.isDisplayed()).toBe(true);
     volume.click();
@@ -32,8 +30,6 @@ describe('HTTP Share add', function(){
   
   it('should create the http-share', function(){
     goToHTTPShare();
-    var shareInput = element(by.id('sharePath'));
-    shareInput.clear().sendKeys(sharename);
     submitButton.click();
   });
   
@@ -42,6 +38,7 @@ describe('HTTP Share add', function(){
     volume.click();
     browser.sleep(400);
     element(by.css('.tc_httpShareTab')).click();
+    share.click();
     browser.sleep(400);
     expect(share.isPresent()).toBe(true);
   });
@@ -59,12 +56,15 @@ describe('HTTP Share add', function(){
     browser.sleep(400);
     element(by.id('bot2-Msg1')).click();
     browser.sleep(400);
+    
+  });
+  
+  it('should not display the share anymore', function(){
+    expect(volume.isDisplayed()).toBe(true);
     volume.click();
     browser.sleep(400);
     element(by.css('.tc_httpShareTab')).click();
-    browser.sleep(400);
     expect(share.isPresent()).toBe(false);
-    browser.sleep(400);
   });
   
   helpers.delete_volume();
