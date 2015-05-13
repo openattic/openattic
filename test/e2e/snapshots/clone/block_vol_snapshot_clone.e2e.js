@@ -44,17 +44,13 @@ describe('should create a clone volume of a snapshot (base: blockvolume)', funct
     expect(element(by.css('.tc_oadatatable_snapshots')).isPresent()).toBe(true);
   });
   
-  
-  
-helpers.create_snap_clone();
-  
+  helpers.create_snap_clone();
   
   it('should display the clone in the volumes list', function(){
     browser.sleep(600);
     expect(clone.isPresent()).toBe(true);
   });
   
-
   helpers.delete_snap_clone();  
   
   helpers.delete_snapshot();
