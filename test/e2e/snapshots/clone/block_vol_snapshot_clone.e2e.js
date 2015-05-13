@@ -13,7 +13,7 @@ describe('should create a clone volume of a snapshot (base: blockvolume)', funct
   
   var submitButton = element(by.css('.tc_submitButton'));  
     
-  var cloneButton = element.all(by.css('.tc_menudropdown')).get(1);
+  var snapMenuBtn = element.all(by.css('.tc_menudropdown')).get(1);
   
   beforeEach(function() {
     helpers.login(); 
@@ -47,7 +47,7 @@ describe('should create a clone volume of a snapshot (base: blockvolume)', funct
     expect(snapshot.isDisplayed()).toBe(true);
     snapshot.click();
     browser.sleep(400);
-    cloneButton.click();
+    snapMenuBtn.click();
     browser.sleep(400);
     element(by.css('.tc_snap_clone')).click();
     browser.sleep(400);
@@ -69,7 +69,7 @@ describe('should create a clone volume of a snapshot (base: blockvolume)', funct
     browser.sleep(400);
     expect(snapshot.isDisplayed()).toBe(true);
     snapshot.click();
-    cloneButton.click();
+    snapMenuBtn.click();
     browser.sleep(400);
     element(by.css('.tc_snap_clone')).click();
     browser.sleep(400);
