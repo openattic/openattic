@@ -14,5 +14,6 @@ exports.config = {
     snapshot_add      : 'test/e2e/snapshots/add/**/*.e2e.js',
     snapshot_clone    : 'test/e2e/snapshots/clone/**/*.e2e.js',
     http_share_add    : 'test/e2e/shares/http/*.e2e.js',
+    nfs_share_add     : 'test/e2e/shares/nfs/*.e2e.js'
   }
 };
