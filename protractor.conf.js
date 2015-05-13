@@ -11,7 +11,8 @@ exports.config = {
     volumes_add       : 'test/e2e/volumes/add/**/*.e2e.js',
     volumes_protection: 'test/e2e/volumes/protection/**/*.e2e.js',
     volumes_resize    : 'test/e2e/volumes/resize/**/*.e2e.js',
-    snapshots_add     : 'test/e2e/snapshots/add/**/*.e2e.js',
-    http_share_add    : 'test/e2e/shares/*.e2e.js'    
+    snapshot_add      : 'test/e2e/snapshots/add/**/*.e2e.js',
+    snapshot_clone    : 'test/e2e/snapshots/clone/**/*.e2e.js',
+    http_share_add    : 'test/e2e/shares/http/*.e2e.js',
   }
 };
