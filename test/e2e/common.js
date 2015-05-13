@@ -22,9 +22,24 @@
     },
  
     delete_volume: function(){
-      var del_blockvol = require('./general/delete_protractor_test_volume.e2e.js');  
+      var del_vol = require('./general/delete_protractor_test_volume.e2e.js');
     },
-
+ 
+    create_snapshot: function(){
+      var create_snap = require('./general/create_snapshot.e2e.js');
+    },
+    
+    delete_snapshot: function(){
+      var delete_snap = require('./general/delete_snapshot.e2e.js');
+    },
+ 
+    create_snap_clone: function(){
+        var create_snapclone = require('./general/create_snap_clone.e2e.js');
+    },
+ 
+    delete_snap_clone: function(){
+        var delete_snapclone = require('./general/delete_snap_clone.e2e.js');
+    },
 
       
 
