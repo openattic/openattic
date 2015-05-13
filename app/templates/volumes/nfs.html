@@ -1,8 +1,8 @@
 <!-- kate: space-indent on; indent-width 4; replace-tabs on; -->
-<oadatatable data="nfsData" filter-config="nfsFilter" selection="nfsSelection">
+<oadatatable data="nfsData" class="tc_oadatatable_nfs_shares" filter-config="nfsFilter" selection="nfsSelection">
     <actions>
-        <a class="btn btn-lg btn-primary" type="button" ng-click="addNfsAction()" ng-hide="nfsSelection.item"><i class="fa fa-fw fa-plus"></i> Add</a>
-        <a class="btn btn-lg btn-primary" type="button" ng-click="deleteNfsAction()" ng-show="nfsSelection.item"><i class="fa fa-fw fa-trash-o"></i> Delete</a>
+        <a class="btn btn-lg btn-primary tc_nfsShareAdd" type="button" ng-click="addNfsAction()" ng-hide="nfsSelection.item"><i class="fa fa-fw fa-plus"></i> Add</a>
+        <a class="btn btn-lg btn-primary tc_nfsShareDelete" type="button" ng-click="deleteNfsAction()" ng-show="nfsSelection.item"><i class="fa fa-fw fa-trash-o"></i> Delete</a>
         <li><a ng-click="addNfsAction()"><i class="fa fa-fw fa-plus"></i> Add</a></li>
         <li class="divider"></li>
         <li ng-class="{disabled: !nfsSelection.item}" max-selected=1><a ng-click="deleteNfsAction()"><i class="fa fa-fw fa-trash-o"></i> Delete</a></li>
@@ -20,7 +20,7 @@
             <tr ng-repeat="row in data.results" ng-class="{ info: isRowSelected(row) }" ng-click="toggleSelection(row, $event)">
                 <td ng-if="nfsSelection.available"><input type="checkbox" checklist-model="nfsSelection.items" checklist-value="row"/></td>
                 <td ng-show="columns['Address']" ng-bind="row.address"></td>
-                <td ng-show="columns['Path']"    ng-bind="row.path"></td>
+                <td class="tc_nfs_share" ng-show="columns['Path']"    ng-bind="row.path"></td>
                 <td ng-show="columns['Options']" ng-bind="row.options"></td>
             </tr>
         </tbody>
