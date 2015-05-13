@@ -42,7 +42,7 @@ etc/pam.d/openattic                 /etc/pam.d
 etc/openattic/volume_init.d/*       /etc/openattic/volume_init.d
 
 # System Configs
-debian/apache2_conf.d/openattic     /etc/apache2/conf.d
+debian/apache2_conf.d/openattic.conf /etc/apache2/conf-available
 debian/default/openattic            /etc/default
 debian/dbus_system.d/openattic.conf /etc/dbus-1/system.d
 
