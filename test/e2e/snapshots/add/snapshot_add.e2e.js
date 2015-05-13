@@ -14,30 +14,10 @@ describe('Should create a Snapshot', function(){
   });
 
   helpers.create_blockvol();
-    
-  //navigate to snapshot form
-  function goToSnapAdd() {
-    expect(volume.isDisplayed()).toBe(true);
-    volume.click();
-    browser.sleep(400);
-    element(by.css('.tc_snapshotTab')).click();
-    browser.sleep(400);
-    element(by.css('.tc_snapshotAdd')).click();
-    browser.sleep(400);
-  }
   
   require('./snapshot_workflow.e2e.js');
-
-  it('should create the snapshot', function(){
-    goToSnapAdd();
-    element(by.id('snap.name')).clear();
-    browser.sleep(400);
-    element(by.model('snap.name')).sendKeys(snapshotname);
-    browser.sleep(400);
-    submitButton.click();
-  });
   
-  //check if snapshot is present
+  helpers.create_snapshot();
   
   it('should display the snapshot in the snapshots overview panel', function(){
     expect(volume.isDisplayed()).toBe(true);
@@ -47,27 +27,8 @@ describe('Should create a Snapshot', function(){
     browser.sleep(400);
     expect(snapshot.isPresent()).toBe(true);
   });
-
-  it('should delete the snapshot', function(){
-    expect(volume.isDisplayed()).toBe(true);
-    volume.click();
-    browser.sleep(400);
-    element(by.css('.tc_snapshotTab')).click();
-    browser.sleep(400);
-    expect(snapshot.isPresent()).toBe(true);
-    snapshot.click();
-    browser.sleep(400);
-    element(by.css('.tc_deleteSnapItem')).click();
-    browser.sleep(400);
-    element(by.id('bot2-Msg1')).click();
-    browser.sleep(400);
-    volume.click();
-    browser.sleep(400);
-    element(by.css('.tc_snapshotTab')).click();
-    browser.sleep(400);
-    expect(snapshot.isPresent()).toBe(false);
-    browser.sleep(400);
-  });
   
+  helpers.delete_snapshot();
+
   helpers.delete_volume();
 });
