@@ -27,6 +27,6 @@ describe('Should create clone of a snapshot', function(){
     browser.sleep(400);
     element(by.model('clone_obj.name')).sendKeys(clonename);
     element(by.id('bot2-Msg1')).click();
-    browser.sleep(400);
+    browser.sleep(800);
   });
 });
