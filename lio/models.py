@@ -442,7 +442,19 @@ class ProtocolHandler(object):
         raise NotImplementedError("get_targets")
 
     def get_tpgs(self, targetctx):
-        raise NotImplementedError("get_tpgs")
+        """ Yield the TPG to be used for the HostACL. """
+        lio_tgt = targetctx["target"]
+        for lio_tpg in lio_tgt.tpgs:
+            # use the first one, if it exists.
+            break
+        else:
+            lio_tpg = rtslib.TPG(lio_tgt, 1)
+            if self.module == "iscsi":
+                lio_tpg.set_attribute("authentication",      str(int(False)))
+            lio_tpg.set_attribute("generate_node_acls",      "0")
+            lio_tpg.set_attribute("demo_mode_write_protect", "0")
+            lio_tpg.enable = True
+        yield ctxupdate(targetctx, tpg=lio_tpg)
 
     def get_portals(self, tpgctx):
         raise NotImplementedError("get_portals")
@@ -566,21 +578,6 @@ class IscsiHandler(ProtocolHandler):
 
         yield ctxupdate(target=lio_tgt, fabric=fabric, module=self.module)
 
-    def get_tpgs(self, targetctx):
-        """ Yield the TPG to be used for the HostACL. """
-        lio_tgt = targetctx["target"]
-        for lio_tpg in lio_tgt.tpgs:
-            # use the first one, if it exists.
-            break
-        else:
-            lio_tpg = rtslib.TPG(lio_tgt, 1)
-            if self.module == "iscsi":
-                lio_tpg.set_attribute("authentication",      str(int(False)))
-            lio_tpg.set_attribute("generate_node_acls",      "0")
-            lio_tpg.set_attribute("demo_mode_write_protect", "0")
-            lio_tpg.enable = True
-        yield ctxupdate(targetctx, tpg=lio_tpg)
-
     def get_portals(self, tpgctx):
         """ Make sure the Portal is included in the ACL and yield it. """
         for want_portal in self.hostacl.portals.all():
@@ -593,18 +590,12 @@ class FcHandler(ProtocolHandler):
 
     def get_targets(self):
         """ Yield all targets for this host (volume doesn't matter). """
-        for tgt in Target.objects.filter(host=Host.objects.get_current(), type=self.module):
-            yield ctxupdate(target=tgt, module=self.module)
+        fabric = rtslib.FabricModule(self.module)
+        if not fabric.exists:
+            raise SystemError("fabric not loaded")
 
-    def get_tpgs(self, targetctx):
-        """ Get the target's TPG and yield it. """
-        try:
-            tpg = TPG.objects.get(target=targetctx["target"], tag=1)
-        except TPG.DoesNotExist:
-            tpg = TPG(target=targetctx["target"], tag=1)
-            tpg.full_clean()
-            tpg.save()
-        yield ctxupdate(targetctx, tpg=tpg)
+        for lio_tgt in fabric.targets:
+            yield ctxupdate(target=lio_tgt, fabric=fabric, module=self.module)
 
     def get_portals(self, tpgctx):
         """ FC doesn't use portals, so this doesn't yield anything. """
