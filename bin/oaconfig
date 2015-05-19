@@ -31,7 +31,7 @@ set -e
 set -u
 
 create_indexpage () {
-<<EOF cat >/var/www/index.html
+<<EOF cat >/var/www/html/index.html
 <html>
   <head>
     <meta http-equiv="refresh" content="1;url=/openattic" ></meta>
@@ -111,7 +111,8 @@ case $1 in
 			source $hook
 		done
 		
-		if [ "`md5sum /var/www/index.html | cut -d' ' -f1`" = '21dde95d9d269cbb2fa6560309dca40c' ]; then
+		INDEXHTML="`md5sum /var/www/html/index.html | cut -d' ' -f1`"
+		if [ "$INDEXHTML" = '74cec59a19e5d16f7cc6a2445e35fa3b' ] || [ "$INDEXHTML" = 'c32ad802df5abca941d784abf642e7fd' ]; then
 			create_indexpage
 		fi
 		
