@@ -48,9 +48,9 @@ class Command( BaseCommand ):
                 print "          -> Portal %s" % portal
 
         print "Fabric: qla2xxx"
+        print "    -> Target free=UNKNOWN"
+        print "       -> TPG 1"
         for hostacl in HostACL.objects.filter(host__initiator__type="qla2xxx"):
-            print "    -> Target free=UNKNOWN"
-            print "       -> TPG 1"
             for initiator in hostacl.host.initiator_set.filter(type="qla2xxx"):
                 print "          -> ACL %s" % (initiator.wwn)
                 print "              -> Mapped LUN %d: %s" % (hostacl.lun_id, hostacl.volume.volume.path)
