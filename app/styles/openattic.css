@@ -180,6 +180,37 @@ oadatatable .input-group {
 .wizard-default {
     cursor: default;
 }
+
+.bootstrapWizard li.prevtab .step, .bootstrapWizard li.prevtab.complete .step {
+    background-image: initial;
+    background-position-x: initial;
+    background-position-y: initial;
+    background-size: initial;
+    background-attachment: initial;
+    background-origin: initial;
+    background-clip: initial;
+    background-color: #0aa66e;
+    color: #fff;
+    font-weight: 700;
+    padding-top: 7px;
+    padding-right: 13px;
+    padding-bottom: 7px;
+    padding-left: 13px;
+    font-size: 15px;
+    border-radius: 50%;
+    border-top-color: rgb(85, 96, 110);
+    border-top-style: solid;
+    border-top-width: 3px;
+    border-right-color: rgb(85, 96, 110);
+    border-right-style: solid;
+    border-right-width: 3px;
+    border-bottom-color: rgb(85, 96, 110);
+    border-bottom-style: solid;
+    border-bottom-width: 3px;
+    border-left-color: rgb(85, 96, 110);
+    border-left-style: solid;
+    border-left-width: 3px;
+}
 /* <-- dashboard widget */
 
 .required {
