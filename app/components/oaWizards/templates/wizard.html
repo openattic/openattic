@@ -3,7 +3,7 @@
         <div class="form-bootstrapWizard">
             <ul class="bootstrapWizard form-wizard" ng-class="getWizardItemsClass()">
                 <li ng-repeat="tab in tabs" ng-class="{'active': isActiveTab(tab.index)}">
-                    <a href="#" ng-click="setTab(tab.index)" data-toggle="tab">
+                    <a href="#" ng-click="setTab(tab.index)">
                         <span class="step">{{tab.index}}</span>
                         <span class="title">{{tab.title}}</span>
                     </a>

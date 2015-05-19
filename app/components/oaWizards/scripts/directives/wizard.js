@@ -44,7 +44,9 @@ angular.module('openattic.oaWizards')
           }
         };
         $scope.setTab = function(index){
-          $scope.activeTab = index;
+          if(index <= $scope.activeTab) {
+            $scope.activeTab = index;
+          }
         };
         $scope.disabledPrev = function(){
           return $scope.activeTab === 1;
