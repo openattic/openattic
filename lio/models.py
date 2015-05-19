@@ -482,7 +482,7 @@ class ProtocolHandler(object):
                 lio_so = rtslib.BlockStorageObject(volume_name, volume_path, volume_wwn)
             except AttributeError:
                 # Old Backstore+StorageObject system. create new backstore...
-                max_idx = max([bs.index for bs in root.backstores]) + [0]
+                max_idx = max([bs.index for bs in root.backstores] + [0])
                 lio_bs = rtslib.IBlockBackstore(max_idx + 1)
                 lio_so = rtslib.IBlockStorageObject(lio_bs, volume_name, volume_path, gen_wwn=False)
                 lio_so.wwn = volume_wwn
