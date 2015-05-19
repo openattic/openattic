@@ -265,12 +265,23 @@ class ProtocolHandler(object):
     def delete_luns(self, lunctx):
         """ If there are no ACLs left, delete the LUN named in the context. """
         found = False
+        storage_object = lunctx["lun"].storage_object
         for acl in lunctx["tpg"].node_acls:
             for mlun in acl.mapped_luns:
-               if mlun.tpg_lun.storage_object.wwn == lunctx["lun"].storage_object.wwn:
+               if mlun.tpg_lun.storage_object.wwn == storage_object.wwn:
                    found = True
         if not found:
             lunctx["lun"].delete()
+        # Check if we still need the StorageObject, and if not, get rid of it
+        root = rtslib.RTSRoot()
+        found = False
+        for lio_tgt in root.targets:
+            for lio_tpg in lio_tgt.tpgs:
+                for lio_lun in lio_tpg.luns:
+                    if lio_lun.storage_object.wwn == storage_object.wwn:
+                        found = True
+        if not found:
+            storage_object.delete()
 
     def delete_targets(self, lunctx):
         """ If there are no LUNs left, delete the TPG. Same goes for the target. """
