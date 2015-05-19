@@ -580,10 +580,15 @@ class IscsiHandler(ProtocolHandler):
 
     def get_portals(self, tpgctx):
         """ Make sure the Portal is included in the ACL and yield it. """
+        lio_tpg = tpgctx["tpg"]
         for want_portal in self.hostacl.portals.all():
-            if want_portal not in tpgctx["tpg"].portals.all():
-                tpgctx["tpg"].portals.add(want_portal)
-            yield ctxupdate(tpgctx, portal=want_portal)
+            for lio_portal in lio_tpg.network_portals:
+                if want_portal.ipaddress.host_part == lio_portal.ip_address and want_portal.port == lio_portal.port:
+                    break
+            else:
+                lio_portal = lio_tpg.network_portal(want_portal.ipaddress.host_part, want_portal.port)
+            yield ctxupdate(tpgctx, portal=lio_portal)
+        # Todo: delete unseen portals
 
 class FcHandler(ProtocolHandler):
     module = "qla2xxx"
@@ -642,7 +647,7 @@ def __hostacl_portals_changed(instance, reverse, action, pk_set, **kwargs):
     else:
         hostacls = TPG.objects.filter(id__in=pk_set)
     for hostacl in hostacls:
-        ProtocolHandler.install_hostacl(hostacl)
+        get_dbus_object("/lio").install_hostacl(hostacl.id)
     get_dbus_object("/lio").saveconfig()
 
 models.signals.m2m_changed.connect(__hostacl_portals_changed, sender=HostACL.portals.through)
