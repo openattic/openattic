@@ -22,13 +22,7 @@ class InitiatorHandler(ModelHandler):
     model = models.Initiator
 
 RPCD_HANDLERS = [
-    mkProxyModelHandler(models.Backstore),
-    mkProxyModelHandler(models.StorageObject),
-    mkProxyModelHandler(models.Target),
     mkProxyModelHandler(models.Portal),
-    mkProxyModelHandler(models.TPG),
-    mkProxyModelHandler(models.LUN),
-    mkProxyModelHandler(models.ACL),
     mkProxyModelHandler(models.HostACL),
     InitiatorHandler,
     ]
