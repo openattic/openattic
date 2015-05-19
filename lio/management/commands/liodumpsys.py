@@ -26,7 +26,10 @@ class Command( BaseCommand ):
 
         print "Storage Objects:"
         for storage_object in r.storage_objects:
-            print "    -> %s (%s, WWN=%s, backstore=%s)" % (storage_object.name, storage_object.udev_path, storage_object.wwn, storage_object.backstore.name)
+            try:
+                print "    -> %s (%s, WWN=%s, backstore=%s)" % (storage_object.name, storage_object.udev_path, storage_object.wwn, storage_object.backstore.name)
+            except AttributeError:
+                print "    -> %s (%s, WWN=%s)" % (storage_object.name, storage_object.udev_path, storage_object.wwn)
 
         for fabric in r.fabric_modules:
             print "Fabric:", fabric.name

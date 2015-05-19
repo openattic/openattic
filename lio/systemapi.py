@@ -15,11 +15,12 @@
 """
 
 import logging
+
 from rtslib          import target
 
 from ifconfig.models import Host
 from systemd         import dbus_to_python
-from systemd.plugins import logged, BasePlugin, method
+from systemd.plugins import logged, BasePlugin, method, deferredmethod
 
 from lio             import models
 
@@ -148,8 +149,13 @@ class SystemD(BasePlugin):
         except KeyError:
             pass
 
-    @method(in_signature="", out_signature="")
-    def saveconfig(self):
+    @deferredmethod(in_signature="i")
+    def install_hostacl(self, id, sender):
+        hostacl = models.HostACL.objects.get(id=id)
+        models.ProtocolHandler.install_hostacl(hostacl)
+
+    @deferredmethod(in_signature="")
+    def saveconfig(self, sender):
         # LIO is a pretty fast moving target currently, especially when it comes to saving the
         # config. We want to deal with this situation without having to hardcode Distro versions,
         # so we'll just have to try all the known ways and see which one works here.

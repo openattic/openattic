@@ -15,6 +15,7 @@
 """
 
 import socket
+import rtslib
 import os
 
 from os.path   import realpath
@@ -456,26 +457,33 @@ class ProtocolHandler(object):
             Second, we check if there is a LUN already sharing that SO, and
             if not, create one.
         """
-        try:
-            storageobj = StorageObject.objects.get(volume=self.hostacl.volume)
-        except StorageObject.DoesNotExist:
+        volume_name = self.hostacl.volume.storageobj.name
+        volume_path = self.hostacl.volume.volume.path
+        volume_wwn  = self.hostacl.volume.storageobj.uuid
+        lio_root = rtslib.RTSRoot()
+        for lio_so in lio_root.storage_objects:
+            if lio_so.wwn == volume_wwn:
+                break
+        else:
             try:
-                store_id = max( v["store_id"] for v in Backstore.objects.all().values("store_id") ) + 1
-            except ValueError:
-                store_id = 1
-            backstore  = Backstore(store_id=store_id, type="iblock", host=Host.objects.get_current())
-            backstore.full_clean()
-            backstore.save()
-            storageobj = StorageObject(backstore=backstore, volume=self.hostacl.volume, wwn=self.hostacl.volume.storageobj.uuid)
-            storageobj.full_clean()
-            storageobj.save()
-        try:
-            lun = LUN.objects.get(tpg=tpgctx["tpg"], storageobj=storageobj, lun_id=self.hostacl.lun_id)
-        except LUN.DoesNotExist:
-            lun = LUN(tpg=tpgctx["tpg"], storageobj=storageobj, lun_id=self.hostacl.lun_id)
-            lun.full_clean()
-            lun.save()
-        yield ctxupdate(tpgctx, lun=lun)
+                # new no-Backstore layout
+                lio_so = rtslib.BlockStorageObject(volume_name, volume_path, volume_wwn)
+            except AttributeError:
+                # Old Backstore+StorageObject system. create new backstore...
+                max_idx = max([bs.index for bs in root.backstores]) + [0]
+                lio_bs = rtslib.IBlockBackstore(max_idx + 1)
+                lio_so = rtslib.IBlockStorageObject(lio_bs, volume_name, volume_path, gen_wwn=False)
+                lio_so.wwn = volume_wwn
+
+        lio_tpg = tpgctx["tpg"]
+        for lio_lun in lio_tpg.luns:
+            if realpath(lio_lun.storage_object.udev_path) == realpath(volume_path):
+                break
+        else:
+            lio_lun = lio_tpg.lun(self.hostacl.lun_id, lio_so,
+                "%s_at_%s" % (volume_name, Host.objects.get_current().name))
+
+        yield ctxupdate(tpgctx, storageobj=lio_so, lun=lio_lun)
 
     def get_initiators(self, lunctx):
         """ Yield all initiators that are meant to have access to the LUN. """
@@ -484,19 +492,26 @@ class ProtocolHandler(object):
 
     def get_acls(self, initiatorctx):
         """ Yield an ACL object for the given initiator. """
-        try:
-            acl = ACL.objects.get(tpg=initiatorctx["tpg"], initiator=initiatorctx["initiator"])
-        except ACL.DoesNotExist:
-            acl = ACL(tpg=initiatorctx["tpg"], initiator=initiatorctx["initiator"])
-            acl.full_clean()
-            acl.save()
-        yield ctxupdate(initiatorctx, acl=acl)
+        lio_tpg = initiatorctx["tpg"]
+        initr_wwn = initiatorctx["initiator"].wwn
+        for lio_acl in lio_tpg.node_acls:
+            if lio_acl.node_wwn == initr_wwn:
+                break
+        else:
+            lio_acl = lio_tpg.node_acl(initr_wwn)
+        yield ctxupdate(initiatorctx, acl=lio_acl)
 
     def get_mapped_luns(self, aclctx):
         """ Make sure the LUN is mapped in the given ACL and yield it. """
-        if aclctx["lun"] not in aclctx["acl"].mapped_luns.all():
-            aclctx["acl"].mapped_luns.add(aclctx["lun"])
-        yield ctxupdate(aclctx, mapped_lun=aclctx["lun"])
+        lio_lun = aclctx["lun"]
+        lio_acl = aclctx["acl"]
+        volume_wwn = self.hostacl.volume.storageobj.uuid
+        for lio_mapped_lun in lio_acl.mapped_luns:
+            if lio_mapped_lun.tpg_lun.storage_object.wwn == volume_wwn:
+                break
+        else:
+            lio_mapped_lun = lio_acl.mapped_lun(self.hostacl.lun_id, lio_lun)
+        yield ctxupdate(aclctx, mapped_lun=lio_mapped_lun)
 
     def delete(self, lunctx):
         self.delete_mapped_luns(lunctx)
@@ -530,33 +545,41 @@ class IscsiHandler(ProtocolHandler):
 
     def get_targets(self):
         """ Yield the target to be used for the volume. """
-        tgts = Target.objects.filter(host=Host.objects.get_current(), type=self.module, name=self.hostacl.volume.storageobj.name).distinct()
-        if len(tgts) > 1:
-            raise Target.MultipleObjectsReturned("Found multiple Targets for the volume")
-        elif len(tgts) == 1:
-            yield {"target": tgts[0], "module": self.module}
+        fabric = rtslib.FabricModule(self.module)
+        if not fabric.exists:
+            raise SystemError("fabric not loaded")
+
+        # Generate IQN. the "prefix" part is shamelessly stolen from rtslib, but we use
+        # the volume name instead of a random serial.
+        localname = socket.gethostname().split(".")[0]
+        localarch = os.uname()[4].replace("_", "")
+        prefix = "iqn.2003-01.org.linux-iscsi.%s.%s" % (localname, localarch)
+        prefix = prefix.strip().lower()
+        volume_name = self.hostacl.volume.storageobj.name
+        tgt_wwn = "%s:%s" % (prefix, volume_name.replace("_", "").replace(" ", ""))
+
+        for lio_tgt in fabric.targets:
+            if lio_tgt.wwn == tgt_wwn:
+                break
         else:
-            tgt = Target(host=Host.objects.get_current(), type="iscsi", name=self.hostacl.volume.storageobj.name)
-            tgt.full_clean()
-            tgt.save()
-            yield ctxupdate(target=tgt, module=self.module)
+            lio_tgt = rtslib.Target(fabric, tgt_wwn)
+
+        yield ctxupdate(target=lio_tgt, fabric=fabric, module=self.module)
 
     def get_tpgs(self, targetctx):
-        """ Yield the TPG to be used for the HostACL.
-
-            iSCSI uses a TPG for each HostACL, so create one if there is none and yield it.
-        """
-        try:
-            tpg = TPG.objects.get(target=targetctx["target"])
-        except TPG.DoesNotExist:
-            try:
-                tag = max( v["tag"] for v in TPG.objects.filter(target=targetctx["target"]).values("tag") ) + 1
-            except ValueError:
-                tag = 1
-            tpg = TPG(target=targetctx["target"], tag=tag)
-            tpg.full_clean()
-            tpg.save()
-        yield ctxupdate(targetctx, tpg=tpg)
+        """ Yield the TPG to be used for the HostACL. """
+        lio_tgt = targetctx["target"]
+        for lio_tpg in lio_tgt.tpgs:
+            # use the first one, if it exists.
+            break
+        else:
+            lio_tpg = rtslib.TPG(lio_tgt, 1)
+            if self.module == "iscsi":
+                lio_tpg.set_attribute("authentication",      str(int(False)))
+            lio_tpg.set_attribute("generate_node_acls",      "0")
+            lio_tpg.set_attribute("demo_mode_write_protect", "0")
+            lio_tpg.enable = True
+        yield ctxupdate(targetctx, tpg=lio_tpg)
 
     def get_portals(self, tpgctx):
         """ Make sure the Portal is included in the ACL and yield it. """
@@ -607,7 +630,7 @@ class HostACL(models.Model):
         models.Model.save(self, *args, **kwargs)
         if install:
             pre_install.send(sender=HostACL, instance=self)
-            ProtocolHandler.install_hostacl(self)
+            get_dbus_object("/lio").install_hostacl(self.id)
             get_dbus_object("/lio").saveconfig()
             post_install.send(sender=HostACL, instance=self)
 
