@@ -26,6 +26,12 @@ angular.module('openattic.oaWizards')
         $scope.isActiveTab = function(index){
           return $scope.activeTab === index;
         };
+        $scope.isPrevTab = function(index){
+          return index < $scope.activeTab;
+        };
+        $scope.isNextTab = function(index){
+          return index > $scope.activeTab;
+        };
         $scope.nextTab = function(){
           var currentForm = $scope['contentForm' + $scope.activeTab];
           currentForm.submitted = true;

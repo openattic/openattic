@@ -172,6 +172,14 @@ oadatatable .input-group {
 .wizard-nav-items-2 {
     left: 25%;
 }
+
+.wizard-pointer {
+    cursor: pointer;
+}
+
+.wizard-default {
+    cursor: default;
+}
 /* <-- dashboard widget */
 
 .required {
