@@ -154,6 +154,11 @@ class SystemD(BasePlugin):
         hostacl = models.HostACL.objects.get(id=id)
         models.ProtocolHandler.install_hostacl(hostacl)
 
+    @deferredmethod(in_signature="i")
+    def uninstall_hostacl(self, id, sender):
+        hostacl = models.HostACL.objects.get(id=id)
+        models.ProtocolHandler.uninstall_hostacl(hostacl)
+
     @deferredmethod(in_signature="")
     def saveconfig(self, sender):
         # LIO is a pretty fast moving target currently, especially when it comes to saving the

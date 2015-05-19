@@ -533,8 +533,9 @@ class ProtocolHandler(object):
 
     def delete_mapped_luns(self, lunctx):
         """ Unmap LUNs. """
-        if lunctx["mapped_lun"] in lunctx["acl"].mapped_luns.all():
-            lunctx["acl"].mapped_luns.remove(lunctx["mapped_lun"])
+        for lio_mlun in lunctx["acl"].mapped_luns:
+            if lio_mlun.tpg_lun.storage_object.wwn == lunctx["lun"].storage_object.wwn:
+                lio_mlun.delete()
 
     def delete_acls(self, lunctx):
         """ Delete the ACL named in the context. """
@@ -542,14 +543,21 @@ class ProtocolHandler(object):
 
     def delete_luns(self, lunctx):
         """ If there are no ACLs left, delete the LUN named in the context. """
-        if lunctx["lun"].acl_set.count() == 0:
+        found = False
+        for acl in lunctx["tpg"].node_acls:
+            for mlun in acl.mapped_luns:
+               if mlun.tpg_lun.storage_object.wwn == lunctx["lun"].storage_object.wwn:
+                   found = True
+        if not found:
             lunctx["lun"].delete()
 
     def delete_targets(self, lunctx):
         """ If there are no LUNs left, delete the TPG. Same goes for the target. """
-        if lunctx["tpg"].lun_set.count() == 0:
+        if len(list(lunctx["tpg"].luns)) == 0:
+            for lio_portal in lunctx["tpg"].network_portals:
+                lio_portal.delete()
             lunctx["tpg"].delete()
-        if lunctx["target"].tpg_set.count() == 0:
+        if len(list(lunctx["target"].tpgs)) == 0:
             lunctx["target"].delete()
 
 class IscsiHandler(ProtocolHandler):
@@ -635,7 +643,7 @@ class HostACL(models.Model):
 
 def __hostacl_pre_delete(instance, **kwargs):
     pre_uninstall.send(sender=HostACL, instance=instance)
-    ProtocolHandler.uninstall_hostacl(instance)
+    get_dbus_object("/lio").uninstall_hostacl(instance.id)
     get_dbus_object("/lio").saveconfig()
     post_uninstall.send(sender=HostACL, instance=instance)
 
