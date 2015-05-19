@@ -17,6 +17,7 @@
 import re
 import os
 import os.path
+import rtslib
 
 from django.db.models import signals
 
@@ -36,8 +37,9 @@ def create_fc_objects(**kwargs):
     host  = Host.objects.get_current()
     qlini = open("/sys/module/qla2xxx/parameters/qlini_mode", "rb").read().strip()
 
-    unseen_tgt_wwns = [tgt.wwn for tgt in host.target_set.filter(type="qla2xxx")]
     unseen_ini_wwns = [ini.wwn for ini in host.initiator_set.filter(type="qla2xxx")]
+
+    fabric = rtslib.FabricModule("qla2xxx")
 
     for hba in os.listdir("/sys/class/fc_host"):
         port_name = open(os.path.join("/sys/class/fc_host", hba, "port_name"), "rb").read().strip()
@@ -55,23 +57,16 @@ def create_fc_objects(**kwargs):
                 print "Found new initiator", port_wwn
                 host.initiator_set.create(type="qla2xxx", wwn=port_wwn)
         else:
-            # We're a target
-            if port_wwn in unseen_tgt_wwns:
-                # Target exists
-                print "Found existing target", port_wwn
-                unseen_tgt_wwns.remove(port_wwn)
+            # We're a target, make sure LIO knows it
+            for lio_tgt in fabric.targets:
+                if lio_tgt.wwn == port_wwn:
+                    break
             else:
-                print "Found new target", port_wwn
-                symname = open(os.path.join("/sys/class/fc_host", hba, "symbolic_name"), "rb").read().strip()
-                host.target_set.create(type="qla2xxx", wwn=port_wwn, name=("%s: %s" % (hba, symname)))
+                rtslib.Target(fabric, port_wwn)
 
     for ini_wwn in unseen_ini_wwns:
         print "Removing unseen initiator", ini_wwn
         host.initiator_set.get(wwn=ini_wwn).delete()
-
-    for tgt_wwn in unseen_tgt_wwns:
-        print "Removing unseen target", tgt_wwn
-        host.target_set.get(wwn=tgt_wwn).delete()
 
 sysutils.models.post_install.connect(create_fc_objects, sender=sysutils.models)
 
