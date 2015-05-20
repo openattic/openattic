@@ -31,6 +31,11 @@ angular.module('openattic.oaWizards')
         new PoolService(sourcePool).$filesystems()
           .then(function(res) {
             $scope.supported_filesystems = res;
+
+            var chosenFilesystem = $scope.input.volume.filesystem;
+            if(!(chosenFilesystem in $scope.supported_filesystems)){
+              $scope.input.volume.filesystem = '';
+            }
           }, function(error) {
             console.log('An error occured', error);
           });
