@@ -122,7 +122,7 @@
                                 <label class="col-md-2 control-label">Mirror Host</label>
                                 <div class="col-md-10">
                                     <select class="form-control" ng-model="input.mirror.host" id="mirrorhost"
-                                            ng-options="host.name for host in hosts track by host.name">
+                                            ng-options="host.name for host in hosts track by host.name" disabled>
                                         <option value="">-- Select a host --</option>
                                     </select>
                                 </div>
@@ -131,7 +131,7 @@
                                 <label class="col-md-2 control-label">Mirror Pool</label>
                                 <div class="col-md-10">
                                     <select class="form-control" ng-model="input.mirror.pool" ng-options="
-                                        pool.name for pool in pools track by pool.name">
+                                        pool.name for pool in pools track by pool.name" disabled>
                                         <option value="">-- Select a host --</option>
                                     </select>
                                 </div>
