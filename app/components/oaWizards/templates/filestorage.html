@@ -150,11 +150,11 @@
                         </div><br /><br />
                         <form name="$parent.contentForm3" role="form" class="form-horizontal" novalidate>
                             <accordion close-others="false">
-                                <accordion-group is-open="accordionOpen.cifs">
+                                <accordion-group is-open="input.cifs.create">
                                     <accordion-heading>
                                         CIFS
-                                        <i class="pull-right" ng-class="{'fa fa-angle-up': accordionOpen.cifs,
-                                        'fa fa-angle-down': !accordionOpen.cifs}"></i>
+                                        <i class="pull-right" ng-class="{'fa fa-angle-up': input.cifs.create,
+                                        'fa fa-angle-down': !input.cifs.create}"></i>
                                     </accordion-heading>
                                     <div class="form-group" ng-class="{'has-error': (contentForm3.submitted ||
                                         contentForm3.cifsname.$dirty) && contentForm3.cifsname.$invalid}">
@@ -244,11 +244,11 @@
                                         </div>
                                     </div>
                                 </accordion-group>
-                                <accordion-group is-open="accordionOpen.nfs">
+                                <accordion-group is-open="input.nfs.create">
                                     <accordion-heading>
                                         NFS
-                                        <i class="pull-right" ng-class="{'fa fa-angle-up': accordionOpen.nfs,
-                                        'fa fa-angle-down': !accordionOpen.nfs}"></i>
+                                        <i class="pull-right" ng-class="{'fa fa-angle-up': input.nfs.create,
+                                        'fa fa-angle-down': !input.nfs.create}"></i>
                                     </accordion-heading>
                                 </accordion-group>
                             </accordion>
