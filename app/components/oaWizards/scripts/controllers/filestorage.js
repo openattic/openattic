@@ -13,7 +13,8 @@ angular.module('openattic.oaWizards')
         writeable : true
       },
       nfs: {
-        create    : false
+        create    : false,
+        options   : 'rw,no_subtree_check,no_root_squash'
       }
     };
 
@@ -40,6 +41,7 @@ angular.module('openattic.oaWizards')
       if(volumename){
         $scope.input.cifs.name = volumename;
         $scope.input.cifs.path = '/media/' + volumename;
+        $scope.input.nfs.path = '/media/' + volumename;
       }
     })
   });
