@@ -43,5 +43,5 @@ angular.module('openattic.oaWizards')
         $scope.input.cifs.path = '/media/' + volumename;
         $scope.input.nfs.path = '/media/' + volumename;
       }
-    })
+    });
   });
