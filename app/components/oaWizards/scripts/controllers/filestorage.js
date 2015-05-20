@@ -2,6 +2,12 @@
 
 angular.module('openattic.oaWizards')
   .controller('filestorage', function($scope, PoolService) {
+    $scope.input = {
+      volume: {
+        filesystem: ''
+      }
+    };
+
     PoolService.query()
       .$promise
       .then(function(res){
