@@ -140,6 +140,112 @@
                     </div>
                     <div ng-class="{'active': isActiveTab(3)}" title="Create Shares" class="tab-pane">
                         <h3><strong>Step 3 </strong> - Create Shares</h3>
+                        <form name="$parent.contentForm3" role="form" class="form-horizontal" novalidate>
+                            <accordion close-others="false">
+                                <accordion-group is-open="accordionOpen.cifs">
+                                    <accordion-heading>
+                                        CIFS
+                                        <i class="pull-right" ng-class="{'fa fa-angle-up': accordionOpen.cifs,
+                                        'fa fa-angle-down': !accordionOpen.cifs}"></i>
+                                    </accordion-heading>
+                                    <div class="form-group" ng-class="{'has-error': (contentForm3.submitted ||
+                                        contentForm3.cifsname.$dirty) && contentForm3.cifsname.$invalid}">
+                                        <label class="col-md-2 control-label" for="cifsname">Name</label>
+                                        <div class="col-md-10">
+                                            <div class="input-group">
+                                                <span class="input-group-addon"><i class="fa fa-share"></i></span>
+                                                <input type="text" class="form-control" id="cifsname"
+                                                       placeholder="Name..." ng-model="input.cifs.name" name="cifsname"
+                                                       required>
+                                            </div>
+                                            <span class="help-block" ng-show="(contentForm3.submitted ||
+                                                contentForm3.cifsname.$dirty) && contentForm3.cifsname.$error.required">
+                                                This field is required!
+                                            </span>
+                                        </div>
+                                    </div>
+                                    <div class="form-group" ng-class="{'has-error': (contentForm3.submitted ||
+                                        contentForm3.cifspath.$dirty) && contentForm3.cifspath.$invalid}">
+                                        <label class="col-md-2 control-label" for="cifspath">Path</label>
+                                        <div class="col-md-10">
+                                            <div class="input-group">
+                                                <span class="input-group-addon"><i class="fa fa-share"></i></span>
+                                                <input type="text" class="form-control" id="cifspath"
+                                                       placeholder="Path..." ng-model="input.cifs.path" name="cifspath"
+                                                       required>
+                                            </div>
+                                            <span class="help-block" ng-show="(contentForm3.submitted ||
+                                                contentForm3.cifspath.$dirty) && contentForm3.cifspath.$error.required">
+                                                This field is required!
+                                            </span>
+                                        </div>
+                                    </div>
+                                    <div class="form-group" ng-class="{'has-error': (contentForm3.submitted ||
+                                        contentForm3.cifscomment.$dirty) && contentForm3.cifscomment.$invalid}">
+                                        <label class="col-md-2 control-label" for="cifscomment">Comment</label>
+                                        <div class="col-md-10">
+                                            <div class="input-group">
+                                                <span class="input-group-addon"><i class="fa fa-share"></i></span>
+                                                <input type="text" class="form-control" id="cifscomment"
+                                                       placeholder="Comment (shows up in the detail view of Windows Explorer)..."
+                                                       ng-model="input.cifs.comment" name="cifscomment">
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="form-group">
+                                        <div class="col-sm-offset-2 col-sm-10">
+                                            <div class="checkbox checkbox-primary">
+                                                <input type="checkbox" ng-model="input.cifs.available"
+                                                       name="cifsavailable" id="cifsavailable">
+                                                <label for="cifsavailable">
+                                                    Is available
+                                                </label>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="form-group">
+                                        <div class="col-sm-offset-2 col-sm-10">
+                                            <div class="checkbox checkbox-primary">
+                                                <input type="checkbox" ng-model="input.cifs.browseable"
+                                                       name="cifsbrowseable" id="cifsbrowseable">
+                                                <label for="cifsbrowseable">
+                                                    is browseable
+                                                </label>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="form-group">
+                                        <div class="col-sm-offset-2 col-sm-10">
+                                            <div class="checkbox checkbox-primary">
+                                                <input type="checkbox" ng-model="input.cifs.writeable"
+                                                       name="cifswriteable" id="cifswriteable">
+                                                <label for="cifswriteable">
+                                                    Is writeable
+                                                </label>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="form-group">
+                                        <div class="col-sm-offset-2 col-sm-10">
+                                            <div class="checkbox checkbox-primary">
+                                                <input type="checkbox" ng-model="input.cifs.guest_ok" name="cifsguestok"
+                                                       id="cifsguestok">
+                                                <label for="cifsguestok">
+                                                    Accessible by guests
+                                                </label>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </accordion-group>
+                                <accordion-group is-open="accprdionOpen.nfs">
+                                    <accordion-heading>
+                                        NFS
+                                        <i class="pull-right" ng-class="{'fa fa-angle-up': accordionOpen.nfs,
+                                        'fa fa-angle-down': !accordionOpen.nfs}"></i>
+                                    </accordion-heading>
+                                </accordion-group>
+                            </accordion>
+                        </form>
                     </div>
                 </div>
             </wizard>

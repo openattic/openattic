@@ -2,9 +2,19 @@
 
 angular.module('openattic.oaWizards')
   .controller('filestorage', function($scope, PoolService) {
+    $scope.accordionOpen = {
+      cifs: true,
+      nfs : true
+    };
+
     $scope.input = {
       volume: {
         filesystem: ''
+      },
+      cifs: {
+        available : true,
+        browseable: true,
+        writeable : true
       }
     };
 
@@ -26,4 +36,11 @@ angular.module('openattic.oaWizards')
           });
       }
     });
+
+    $scope.$watch('input.volume.name', function(volumename) {
+      if(volumename){
+        $scope.input.cifs.name = volumename;
+        $scope.input.cifs.path = '/media/' + volumename;
+      }
+    })
   });
