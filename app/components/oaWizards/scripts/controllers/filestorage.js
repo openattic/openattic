@@ -2,11 +2,6 @@
 
 angular.module('openattic.oaWizards')
   .controller('filestorage', function($scope, PoolService) {
-    $scope.accordionOpen = {
-      cifs: true,
-      nfs : true
-    };
-
     $scope.input = {
       volume: {
         filesystem: ''
