@@ -7,9 +7,13 @@ angular.module('openattic.oaWizards')
         filesystem: ''
       },
       cifs: {
+        create    : false,
         available : true,
         browseable: true,
         writeable : true
+      },
+      nfs: {
+        create    : false
       }
     };
 
