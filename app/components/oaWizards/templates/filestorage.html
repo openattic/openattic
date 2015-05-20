@@ -164,7 +164,7 @@
                                                 <span class="input-group-addon"><i class="fa fa-share"></i></span>
                                                 <input type="text" class="form-control" id="cifsname"
                                                        placeholder="Name..." ng-model="input.cifs.name" name="cifsname"
-                                                       required>
+                                                       ng-required="input.cifs.create">
                                             </div>
                                             <span class="help-block" ng-show="(contentForm3.submitted ||
                                                 contentForm3.cifsname.$dirty) && contentForm3.cifsname.$error.required">
@@ -180,7 +180,7 @@
                                                 <span class="input-group-addon"><i class="fa fa-share"></i></span>
                                                 <input type="text" class="form-control" id="cifspath"
                                                        placeholder="Path..." ng-model="input.cifs.path" name="cifspath"
-                                                       required>
+                                                       ng-required="input.cifs.create">
                                             </div>
                                             <span class="help-block" ng-show="(contentForm3.submitted ||
                                                 contentForm3.cifspath.$dirty) && contentForm3.cifspath.$error.required">
