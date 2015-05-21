@@ -1,6 +1,6 @@
 Name:           openattic
-Version:        1.2
-Release:        1%{?dist}
+Version:        %{BUILDVERSION}
+Release:        %{PKGVERSION}%{?dist}
 Summary:        OpenAttic Comprehensive Storage Management System
 
 Group:          System Environment/Libraries
