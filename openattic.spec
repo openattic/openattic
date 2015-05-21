@@ -9,10 +9,7 @@ URL:            https://www.openattic.org
 BuildArch: 	noarch
 Source:		openattic.tar.bz2
 
-
-%global hgrepo   https://bitbucket.org/openattic/openattic
-
-## Dokumentation at https://fedoraproject.org/wiki/How_to_create_an_RPM_package
+## Documentation at https://fedoraproject.org/wiki/How_to_create_an_RPM_package
 #Requires:	zfs-release
 #Requires:	epel-release
 Requires: 	openattic-base
@@ -361,25 +358,14 @@ Summary:  PGSQL database for openATTIC
  
 %prep
 
-rm -rf openattic
-hg clone %{hgrepo}
-cd openattic
-#hg archive -t tbz2 %{_sourcedir}/%{name}_%{version}.tar.bz2 -X ".hg*"
-hg archive -t tbz2 %{_sourcedir}/%{name}.tar.bz2 -X ".hg*"
-cd ..
-rm -rf openattic/.hg*
-rm -rf openattic/pkgapt
-
 
 %build
 
 
 %install
 
-echo "==================="
 mkdir -p ${RPM_BUILD_ROOT}/usr/share/
 rsync -aAX openattic ${RPM_BUILD_ROOT}/usr/share/
-echo "==================="
 
 mkdir -p ${RPM_BUILD_ROOT}%{_defaultdocdir}/%{name}-%{version}
 
@@ -404,7 +390,6 @@ cd ${RPM_BUILD_ROOT}/usr/sbin
 ln -s /usr/share/openattic/bin/blkdevzero .
 ln -s /usr/share/openattic/bin/oaconfig .
 
-rm -f ${RPM_BUILD_ROOT}/usr/share/openattic/installed_apps.d/50_pkgapt
 sed -i -e 's/^ANGULAR_LOGIN.*$/ANGULAR_LOGIN = False/g' ${RPM_BUILD_ROOT}/usr/share/openattic/settings.py
 
 # Configure /etc/default/openattic
@@ -888,7 +873,7 @@ echo ""
 
 
 %changelog
-* Tue Feb 24 2015 Markus Koch  <mkoch@redhat.com> - 1.2 build 
+* Tue Feb 24 2015 Markus Koch  <mkoch@redhat.com> - 1.2 build
 - split into package modules
 * Fri May 23 2003 Markus Koch  <mkoch@redhat.com> - 1.2 build version 1
 - First build.
