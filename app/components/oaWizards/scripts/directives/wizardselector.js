@@ -12,7 +12,7 @@ var wizardDefinitions = [{
 },{
   title: 'Raw Block Storage',
   icon: 'fa fa-cube fa-4x',
-  page: ''
+  page: 'blockstorage.html'
 }/*,{
   title: 'Ceph',
   icon: 'fa fa-bullseye fa-4x',
