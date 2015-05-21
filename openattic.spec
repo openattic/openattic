@@ -526,8 +526,9 @@ define command{
 EOF
 
 mkdir -p  ${RPM_BUILD_ROOT}/usr/lib64/nagios/plugins/
-cd  ${RPM_BUILD_ROOT}/usr/lib64/nagios/plugins/
-ln -s ../../../share/openattic/nagios/plugins/* .
+for NAGPLUGIN in `ls -1 ${RPM_BUILD_ROOT}/usr/share/openattic/nagios/plugins/`; do
+    ln -s "/usr/share/openattic/nagios/plugins/$NAGPLUGIN" "${RPM_BUILD_ROOT}/usr/lib64/nagios/plugins/$NAGPLUGIN"
+done
 
 mkdir -p ${RPM_BUILD_ROOT}/lib/systemd/system/
 cd ${RPM_BUILD_ROOT}/lib/systemd/system/
