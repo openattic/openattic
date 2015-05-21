@@ -1,6 +1,6 @@
 Name:		openattic-gui
-Version:	0.0.2
-Release:	1%{?dist}
+Version:        %{BUILDVERSION}
+Release:        %{PKGVERSION}%{?dist}
 Summary:	New Openattic User Interface	
 
 Group:		System Environment/Libraries
@@ -8,10 +8,7 @@ License:	GPLv2
 URL:		http://apt.open-attic.org/pool/main/o/openattic-gui/openattic-gui_0.0.2.orig.tar.bz2
 BuildArch:      noarch
 
-Source0:	http://apt.open-attic.org/pool/main/o/openattic-gui/openattic-gui_0.0.2.orig.tar.bz2
-
-#BuildRequires:	npm
-BuildRequires: 	git
+BuildRequires:	git
 Requires:	openattic
 
 
@@ -23,42 +20,31 @@ storage space on demand.
 This is the new GUI
 
 %prep
-echo "===>" %{_sourcedir}
-%setup -q -n %{name}_%{version}.orig
 
 
 %build
-# need to switch to the correct directory 
-# 
-pwd
-
+cd openattic-gui
 which bower || npm install -g bower
 which grunt || npm install -g grunt-cli
 npm install
 bower --allow-root install
 grunt build
 
-# Now the directory <%_builddir>/dist exists and contains the new gui
-
-
 %install
 # copy the dist directory
 mkdir -p ${RPM_BUILD_ROOT}/usr/share/openattic-gui
-cd dist
-rsync -avPAX . ${RPM_BUILD_ROOT}/usr/share/openattic-gui/
+rsync -aAX openattic-gui/dist/ ${RPM_BUILD_ROOT}/usr/share/openattic-gui/
 
 # update http-config files /etc/httpd/conf.d/openattic-gui.conf
 mkdir -p ${RPM_BUILD_ROOT}/etc/httpd/conf.d/
 cat > ${RPM_BUILD_ROOT}/etc/httpd/conf.d/openattic-gui.conf << EOT
-<IfModule mod_wsgi.c>
+Alias /openattic/angular/ /usr/share/openattic-gui/
+
 <Directory /usr/share/openattic-gui>
         Options Indexes FollowSymLinks
         AllowOverride None
         Require all granted
 </Directory>
-
-Alias /openattic/angular/ /usr/share/openattic-gui/
-</IfModule>
 EOT
 
 %pre
@@ -66,11 +52,12 @@ EOT
 %post
 semanage fcontext -a -t httpd_sys_rw_content_t "/usr/share/openattic-gui(/.*)?"
 restorecon -vvR
-oaconfig reload
+service httpd reload
 
-# TODO: Sauberes %postun
-# semanage fcontext -d -t httpd_sys_rw_content_t "/usr/share/openattic-gui(/.*)?"
-# pip uninstall djangorestframework-bulk
+%postun
+semanage fcontext -d -t httpd_sys_rw_content_t "/usr/share/openattic-gui(/.*)?"
+restorecon -vvR
+service httpd reload
 
 %files
 %defattr(-,openattic,openattic,-)
