@@ -25,17 +25,6 @@ Requires:	openattic-pgsql
 BuildRequires:  mercurial
 
 ##
-##  requires djextdirect python plugin
-#   Install manually with:
-# wget https://bitbucket.org/Svedrin/djextdirect/get/v0.10.tar.bz2
-# tar xjfv v0.10.tar.bz2
-# cd Svedrin-djextdirect-00d267d0d9aa
-# python setup.py install
-#
-# => TODO: Create package/spec file for this
-#
-
-##
 ## requires libjs-extjs4
 #  Install manually with
 # cd /srv
