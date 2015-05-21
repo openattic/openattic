@@ -854,7 +854,13 @@ echo ""
 
 
 %changelog
+* Thu May 21 2015 Michael Ziegler <michael@open-attic.org> - %{BUILDVERSION}-%{PKGVERSION}
+- Remove prep stuff
+- Replace fixed version numbers by BUILDVERSION and PKGVERSION macros which are populated with info from HG
+- rm the docs from RPM_BUILD_ROOT and properly install them through %doc
+
 * Tue Feb 24 2015 Markus Koch  <mkoch@redhat.com> - 1.2 build
 - split into package modules
+
 * Fri May 23 2003 Markus Koch  <mkoch@redhat.com> - 1.2 build version 1
 - First build.

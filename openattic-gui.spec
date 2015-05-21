@@ -67,6 +67,14 @@ service httpd reload
 
 
 %changelog
+* Thu May 21 2015 Michael Ziegler <michael@open-attic.org> - %{BUILDVERSION}-%{PKGVERSION}
+- Remove prep stuff
+- Replace fixed version numbers by BUILDVERSION and PKGVERSION macros which are populated with info from HG
+- Remove Source0 which is no longer valid anyway
+- Clean up apache configuration
+- Cleanup postinst
+- Add postun
+
 * Thu Mar 26 2015 Markus Koch  <mkoch@redhat.com> - 0.2 build version 1
 - First build.
 
