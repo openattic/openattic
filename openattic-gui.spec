@@ -10,9 +10,8 @@ BuildArch:      noarch
 
 Source0:	http://apt.open-attic.org/pool/main/o/openattic-gui/openattic-gui_0.0.2.orig.tar.bz2
 
-BuildRequires:	npm
+#BuildRequires:	npm
 BuildRequires: 	git
-Requires:	pip
 Requires:	openattic
 
 
@@ -33,7 +32,8 @@ echo "===>" %{_sourcedir}
 # 
 pwd
 
-npm install -g bower grunt-cli 
+which bower || npm install -g bower
+which grunt || npm install -g grunt-cli
 npm install
 bower --allow-root install
 grunt build
@@ -51,12 +51,17 @@ rsync -avPAX . ${RPM_BUILD_ROOT}/usr/share/openattic-gui/
 mkdir -p ${RPM_BUILD_ROOT}/etc/httpd/conf.d/
 cat > ${RPM_BUILD_ROOT}/etc/httpd/conf.d/openattic-gui.conf << EOT
 <IfModule mod_wsgi.c>
-Alias                   /openattic/angular/       /usr/share/openattic-gui/
+<Directory /usr/share/openattic-gui>
+        Options Indexes FollowSymLinks
+        AllowOverride None
+        Require all granted
+</Directory>
+
+Alias /openattic/angular/ /usr/share/openattic-gui/
 </IfModule>
 EOT
 
 %pre
-pip install djangorestframework-bulk
 
 %post
 semanage fcontext -a -t httpd_sys_rw_content_t "/usr/share/openattic-gui(/.*)?"
