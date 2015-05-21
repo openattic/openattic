@@ -3,9 +3,6 @@
 angular.module('openattic.oaWizards')
   .controller('filestorage', function($scope, PoolService) {
     $scope.input = {
-      volume: {
-        filesystem: ''
-      },
       cifs: {
         create    : false,
         available : true,
@@ -33,8 +30,13 @@ angular.module('openattic.oaWizards')
             $scope.supported_filesystems = res;
 
             var chosenFilesystem = $scope.input.volume.filesystem;
-            if(!(chosenFilesystem in $scope.supported_filesystems)){
-              $scope.input.volume.filesystem = '';
+            if(typeof chosenFilesystem === 'undefined' || !(chosenFilesystem in $scope.supported_filesystems)){
+              if('xfs' in $scope.supported_filesystems){
+                $scope.input.volume.filesystem = 'xfs';
+              }
+              else {
+                $scope.input.volume.filesystem = '';
+              }
             }
           }, function(error) {
             console.log('An error occured', error);
