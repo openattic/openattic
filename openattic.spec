@@ -24,17 +24,6 @@ Requires:	openattic-pgsql
 
 BuildRequires:  mercurial
 
-##
-## requires libjs-extjs4
-#  Install manually with
-# cd /srv
-# wget http://apt.open-attic.org/pool/main/libj/libjs-extjs4/libjs-extjs4_4.2.1.orig.tar.bz2
-# tar xjfv libjs-extjs4_4.2.1.orig.tar.bz2
-# chown -R apache:apache /srv/ext-4.2.1.883/
-# #add /srv as managed context
-# semanage fcontext -a -t httpd_sys_rw_content_t "/srv/ext-4.2.1.883(/.*)?"
-# restorecon-vvR .
-
 %description 
  openATTIC is a storage management system based upon Open Source tools with
  a comprehensive user interface that allows you to create, share and backup
