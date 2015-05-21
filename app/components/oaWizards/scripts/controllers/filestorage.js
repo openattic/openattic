@@ -31,9 +31,6 @@ angular.module('openattic.oaWizards')
 
             var chosenFilesystem = $scope.input.volume.filesystem;
             if(typeof chosenFilesystem === 'undefined' || !(chosenFilesystem in $scope.supported_filesystems)){
-              if('xfs' in $scope.supported_filesystems){
-                $scope.input.volume.filesystem = 'xfs';
-              }
             }
           }, function(error) {
             console.log('An error occured', error);
