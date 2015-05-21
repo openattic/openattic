@@ -347,9 +347,9 @@ rsync -aAX openattic ${RPM_BUILD_ROOT}/usr/share/
 
 mkdir -p ${RPM_BUILD_ROOT}%{_defaultdocdir}/%{name}-%{version}
 
-mv ${RPM_BUILD_ROOT}/usr/share/openattic/CHANGELOG %{_builddir}
-mv ${RPM_BUILD_ROOT}/usr/share/openattic/LICENSE   %{_builddir}
-mv ${RPM_BUILD_ROOT}/usr/share/openattic/README.rst   %{_builddir}
+rm ${RPM_BUILD_ROOT}/usr/share/openattic/CHANGELOG
+rm ${RPM_BUILD_ROOT}/usr/share/openattic/LICENSE
+rm ${RPM_BUILD_ROOT}/usr/share/openattic/README.rst
 
 cd ${RPM_BUILD_ROOT}
 mkdir -p ${RPM_BUILD_ROOT}/usr/share
@@ -676,7 +676,7 @@ echo ""
 
 %files 	
 %defattr(-,root,root,-)
-%doc CHANGELOG LICENSE README.rst
+%doc openattic/CHANGELOG openattic/LICENSE openattic/README.rst
 
 %files 	base
 %defattr(-,root,root,-)
