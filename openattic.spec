@@ -378,7 +378,7 @@ rm -rf openattic/pkgapt
 
 echo "==================="
 mkdir -p ${RPM_BUILD_ROOT}/usr/share/
-rsync -avPAX openattic ${RPM_BUILD_ROOT}/usr/share/
+rsync -aAX openattic ${RPM_BUILD_ROOT}/usr/share/
 echo "==================="
 
 mkdir -p ${RPM_BUILD_ROOT}%{_defaultdocdir}/%{name}-%{version}
