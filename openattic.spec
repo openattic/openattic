@@ -626,12 +626,14 @@ chown openattic:openattic /var/log/openattic_systemd
 chmod 644 /var/log/openattic_systemd
 
 %post base
-systemctl restart  dbus.service
 systemctl daemon-reload
+systemctl restart  dbus.service
+systemctl start httpd
 
 %postun base
-systemctl restart  dbus.service
 systemctl daemon-reload
+systemctl restart  dbus.service
+systemctl restart httpd
 
 %post pgsql
 
@@ -771,6 +773,10 @@ echo ""
 /usr/share/openattic/installed_apps.d/60_http
 %defattr(-,openattic,openattic,-)
 
+%post module-http
+systemctl daemon-reload
+systemctl restart httpd
+
 %files 	module-ipmi
 %defattr(-,openattic,openattic,-)
 /usr/share/openattic/installed_apps.d/50_ipmi
@@ -785,6 +791,11 @@ echo ""
 %defattr(-,openattic,openattic,-)
 /usr/share/openattic/lvm/
 /usr/share/openattic/installed_apps.d/10_lvm
+
+%post module-lvm
+systemctl daemon-reload
+systemctl enable lvm2-lvmetad
+systemctl start lvm2-lvmetad
 
 %files 	module-mailaliases
 %defattr(-,openattic,openattic,-)
@@ -819,11 +830,20 @@ echo ""
 /usr/share/openattic/installed_apps.d/50_nagios
 /usr/share/openattic/nagios
 
+%post module-nagios
+systemctl daemon-reload
+chkconfig nagios on
+systemctl start nagios
+
 %files 	module-nfs
 %defattr(-,openattic,openattic,-)
 /var/lib/openattic/nfs_dummy/
 /usr/share/openattic/installed_apps.d/60_nfs
 /usr/share/openattic/nfs/
+
+%post module-nfs
+systemctl daemon-reload
+systemctl start nfs
 
 %files 	module-samba
 %defattr(-,openattic,openattic,-)

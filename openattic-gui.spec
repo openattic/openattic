@@ -52,12 +52,12 @@ EOT
 %post
 semanage fcontext -a -t httpd_sys_rw_content_t "/usr/share/openattic-gui(/.*)?"
 restorecon -vvR
-service httpd reload
+service httpd restart
 
 %postun
 semanage fcontext -d -t httpd_sys_rw_content_t "/usr/share/openattic-gui(/.*)?"
 restorecon -vvR
-service httpd reload
+service httpd restart
 
 %files
 %defattr(-,openattic,openattic,-)
