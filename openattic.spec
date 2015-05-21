@@ -599,6 +599,7 @@ WSGIPassAuthorization   On
         </IfModule>
 </Location>
 
+<IfModule mod_auth_kerb.c>
 # Enable this after you joined openAttic into the domain.
 #<Location /openattic/accounts/kerblogin.js>
 #    AuthType Kerberos
@@ -610,6 +611,7 @@ WSGIPassAuthorization   On
 #    KrbLocalUserMapping on
 #    Require valid-user
 #</Location>
+</IfModule>
 </IfModule>
 EOF
 
