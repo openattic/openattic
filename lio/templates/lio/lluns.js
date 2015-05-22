@@ -203,60 +203,22 @@ Ext.define('Ext.oa.Lio__LogicalLun_Panel', {
                       click: function(self, e, eOpts){
                         var sel = addwin.items.items[0].getSelectionModel();
                         if( sel.hasSelection() && (sel.selected.items[0].data.share_lun_id != "") ){
-                          self.ownerCt.ownerCt.getEl().mask(gettext("Loading..."));
-                          var host = sm.selected.items[0].raw.host;
-                          // Get primary IP...
-                          ifconfig__IPAddress.get({
-                            "primary_address": true,
-                            "device__host": host.id
-                          }, function(result, response){
-                            var ipaddr = result;
-                            // See if there is a portal for this IP...
-                            lio__Portal.get({
-                              "ipaddress": ipaddr.id
-                            }, function(result, response){
-                              // Build a function that takes a portal and creates the ACL with it
-                              var create_acl_with_portal = function(portal){
-                                lio__HostACL.create({
-                                  'host': sel.selected.items[0].data,
-                                  'volume': {
-                                    "app": "volumes",
-                                    "obj": "BlockVolume",
-                                    "id":  sm.selected.items[0].data.id
-                                  },
-                                  'lun_id': sel.selected.items[0].data.share_lun_id,
-                                  'portals': [{
-                                    "app": "lio",
-                                    "obj": "Portal",
-                                    "id": portal.id
-                                  }]
-                                },
-                                function(provider, response){
-                                  if( response.result ){
-                                    hostaclstore.reload();
-                                    addwin.close();
-                                    editwin.show();
-                                  }
-                                  else
-                                  {
-                                    self.ownerCt.ownerCt.getEl().unmask();
-                                  }
-                                });
-                              }
-                              if( response.type == "exception" ){
-                                // No portal → create it
-                                lio__Portal.create({
-                                  "ipaddress": ipaddr
-                                }, function(result, response){
-                                  // Use the portal we just created
-                                  create_acl_with_portal(result);
-                                });
-                              }
-                              else{
-                                // Portal exists → use it
-                                create_acl_with_portal(result);
-                              }
-                            });
+                          lio__HostACL.create({
+                            'host': sel.selected.items[0].data,
+                            'volume': {
+                              "app": "volumes",
+                              "obj": "BlockVolume",
+                              "id":  sm.selected.items[0].data.id
+                            },
+                            'lun_id': sel.selected.items[0].data.share_lun_id,
+                            'portals': [] // empty = all portals
+                          },
+                          function(provider, response){
+                            if( response.result ){
+                              hostaclstore.reload();
+                              addwin.close();
+                              editwin.show();
+                            }
                           });
                         }
                         else
