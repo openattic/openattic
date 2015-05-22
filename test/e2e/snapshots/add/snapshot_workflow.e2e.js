@@ -46,12 +46,12 @@ describe('Should check the snapshot add workflow', function(){
     expect(element(by.id('megs')).isDisplayed()).toBe(true);
   });
 
-//test if given snap.name has the format 'YYYY-mm-dd-HH-mm-ss'
-//   it('given snap.name should have the format yyyy-mm-dd-HH-mm-ss', function(){
-//     goToSnapAdd();
-//     var snapname = element(by.model('snap.name'));
-//     expect(snapname.getAttribute('value')).to ?
-//   });
+  //TODO: name validation
+  //test if given snap.name has the format 'YYYY-mm-dd-HH-mm-ss'
+  //   it('given snap.name should have the format yyyy-mm-dd-HH-mm-ss', function(){
+  //     var snapname = element(by.model('snap.name'));
+  //     expect(snapname.getAttribute('value')).to ?
+  //   });
 
   //test if given megs value is origin vol size
   it('given megs should match to the origin volume size', function(){

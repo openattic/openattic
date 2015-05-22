@@ -1,5 +1,5 @@
 angular.module('openattic')
-  .controller('HostCtrl', function ($scope, $state, HostService) {
+  .controller('HostCtrl', function ($scope, $state, HostService, $modal) {
     'use strict';
 
     $scope.data = {};
@@ -50,29 +50,18 @@ angular.module('openattic')
     };
 
     $scope.deleteAction = function(){
-      $.SmartMessageBox({
-        title: 'Delete Host',
-        content: 'Do you really want to delete the Host "' + $scope.selection.item.name + '"?',
-        buttons: '[No][Yes]'
-      }, function (ButtonPressed) {
-        if (ButtonPressed === 'Yes') {
-          HostService.delete({id: $scope.selection.item.id})
-            .$promise
-            .then(function() {
-              $scope.filterConfig.refresh = new Date();
-            }, function(error){
-              console.log('An error occured', error);
-            });
+      var modalInstance = $modal.open({
+        windowTemplateUrl: 'templates/messagebox.html',
+        templateUrl: 'templates/hosts/delete-host.html',
+        controller: 'HostDeleteCtrl',
+        resolve: {
+          host: function(){
+            return $scope.selection.item;
+          }
         }
-        if (ButtonPressed === 'No') {
-          $.smallBox({
-            title: 'Delete Host',
-            content: '<i class="fa fa-clock-o"></i> <i>Cancelled</i>',
-            color: '#C46A69',
-            iconSmall: 'fa fa-times fa-2x fadeInRight animated',
-            timeout: 4000
-          });
-        }
+      });
+      modalInstance.result.then(function(){
+        $scope.filterConfig.refresh = new Date();
       });
     };
   });
