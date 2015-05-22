@@ -5,6 +5,7 @@ describe('Should add a NFS Share', function(){
   var volumename = 'protractor_test_volume';
   var volume = element(by.cssContainingText('tr', volumename));
   var submitButton = element(by.css('.tc_submitButton'));
+  //TODO -> shareAddress
   var shareAddress = '172.16.13.19';
   var share = element(by.cssContainingText('td', shareAddress));
   
