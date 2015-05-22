@@ -321,14 +321,23 @@ class IscsiHandler(ProtocolHandler):
     def get_portals(self, tpgctx):
         """ Make sure the Portal is included in the ACL and yield it. """
         lio_tpg = tpgctx["tpg"]
-        for want_portal in self.hostacl.portals.all():
+        wanted_portals = self.hostacl.portals.all()
+        if not wanted_portals:
+            wanted_portals = Portal.objects.all()
+        unseen_portals = list(lio_tpg.network_portals)
+        for want_portal in wanted_portals:
             for lio_portal in lio_tpg.network_portals:
                 if want_portal.ipaddress.host_part == lio_portal.ip_address and want_portal.port == lio_portal.port:
+                    for unseen_portal in unseen_portals:
+                        if unseen_portal.ip_address == lio_portal.ip_address and unseen_portal.port == lio_portal.port:
+                            unseen_portals.remove(unseen_portal)
                     break
             else:
                 lio_portal = lio_tpg.network_portal(want_portal.ipaddress.host_part, want_portal.port)
             yield ctxupdate(tpgctx, portal=lio_portal)
-        # Todo: delete unseen portals
+        print "unseen", unseen_portals
+        for unseen_portal in unseen_portals:
+            unseen_portal.delete()
 
 class FcHandler(ProtocolHandler):
     module = "qla2xxx"
