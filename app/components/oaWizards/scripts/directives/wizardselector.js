@@ -7,7 +7,7 @@ var wizardDefinitions = [{
 },{
   title: 'VM Storage',
   icon: 'fa fa-align-left fa-rotate-270 fa-stack-1x',
-  page: '',
+  page: 'vmstorage.html',
   stackedIcon: true
 },{
   title: 'Raw Block Storage',
