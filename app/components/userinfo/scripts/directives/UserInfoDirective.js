@@ -8,7 +8,6 @@ angular.module('openattic.userinfo')
         '<div class="login-info">',
         '<span>',
         '<a ui-sref="users-edit({user:user.id})" id="show-shortcut" data-action="toggleShortcut">',
-        '<img ng-src="{{image}}" style="border-left: 0px;"/>',
         '<span class="tc_usernameinfo" ng-bind="user.username"></span>',
         '</a>',
         '</span>',
@@ -19,9 +18,6 @@ angular.module('openattic.userinfo')
           .$promise
           .then(function(res) {
             $scope.user = res;
-
-            var gravatarId = $filter('gravatar')($scope.user.email);
-            $scope.image = 'http://www.gravatar.com/avatar/' + gravatarId + '.jpg?d=monsterid';
           })
           .catch(function(){
             console.log('an error occured');
