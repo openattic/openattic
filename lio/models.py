@@ -335,7 +335,6 @@ class IscsiHandler(ProtocolHandler):
             else:
                 lio_portal = lio_tpg.network_portal(want_portal.ipaddress.host_part, want_portal.port)
             yield ctxupdate(tpgctx, portal=lio_portal)
-        print "unseen", unseen_portals
         for unseen_portal in unseen_portals:
             unseen_portal.delete()
 
