@@ -221,13 +221,6 @@ angular.module('openattic.extensions')
             min: step.num
           };
         };
-
-        $scope.treeNodeClicked = function(node){
-          if( $scope.edittakenode ){
-            $scope.newstepset.take = node;
-            $scope.edittakenode = false;
-          }
-        };
       }
     };
   });
