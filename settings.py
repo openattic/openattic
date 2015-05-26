@@ -26,20 +26,16 @@ from os.path import join, dirname, abspath, exists
 if not PROJECT_ROOT or not exists( PROJECT_ROOT ):
     PROJECT_ROOT = dirname(abspath(__file__))
 
+BASE_DIR = PROJECT_ROOT
+
 from ConfigParser import ConfigParser
 
 DEBUG = True
 TEMPLATE_DEBUG = DEBUG
 
-ADMINS = (
-    # ('Your Name', 'your_email@domain.com'),
-)
-
 APPEND_SLASH = False
 
 LVM_CHOWN_GROUP = "users"
-
-MANAGERS = ADMINS
 
 ANGULAR_LOGIN = True
 
@@ -255,13 +251,6 @@ AUTHZ_SYSGROUP = __domconf__.get("authz", "group").decode("utf-8")
 # the connect() and send() operations, but not for recv(); hence it can be set to an
 # aggressively low value in order to either be sure we will get an answer or move on.
 PEER_CONNECT_TIMEOUT=0.5
-
-# List of callables that know how to import templates from various sources.
-TEMPLATE_LOADERS = (
-    'django.template.loaders.filesystem.Loader',
-    'django.template.loaders.app_directories.Loader',
-#     'django.template.loaders.eggs.Loader',
-)
 
 MIDDLEWARE_CLASSES = (
     'django.middleware.common.CommonMiddleware',
