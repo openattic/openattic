@@ -109,7 +109,7 @@ class HostDependentQuerySet(models.query.QuerySet):
 class HostDependentManager(models.Manager):
     hostfilter = "host"
 
-    def get_query_set(self):
+    def get_queryset(self):
         return HostDependentQuerySet(self.model, using=self._db)
 
 
