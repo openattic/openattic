@@ -16,12 +16,11 @@
                     <span class="widget-icon"> <i class="fa fa-edit"></i> </span>
                     <h2>Physical setup</h2>
                 </header>
-                <div class="tree">
-                    <ul>
-                        <li><span ng-bind="cluster.name"></span></li>
-                        <ul>
-                            <li ng-repeat="data in cluster.crushmap.crushmap.buckets" ng-include="'extensions/crushmap_editor/templates/crushMapNode.html'"></li>
-                        </ul>
+                <div class="tree" ui-tree>
+                    <ul ui-tree-nodes="" ng-model="cluster.crushmap.crushmap.buckets">
+                        <li ui-tree-node
+                            ng-repeat="data in cluster.crushmap.crushmap.buckets"
+                            ng-include="'extensions/crushmap_editor/templates/crushMapNode.html'"></li>
                     </ul>
                 </div>
             </div>

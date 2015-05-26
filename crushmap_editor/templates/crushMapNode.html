@@ -3,10 +3,11 @@
     'bg-primary': data.isRootNode,
     'bg-info':    data.isBelowRootNode && !data.isSelectorNode,
     'bg-success': data.isSelectorNode
-}" ng-click="treeNodeClicked(data)">{{ data.name }}</span>
+}" ng-click="treeNodeClicked(data)" ui-tree-handle>{{ data.name }}</span>
 <em> &mdash; {{ data.type_name }}</em>
-<ul>
-    <li ng-repeat="data in data.items"
+<ul ui-tree-nodes="" ng-model="data.items">
+    <li ui-tree-node
+        ng-repeat="data in data.items"
         ng-include="'extensions/crushmap_editor/templates/crushMapNode.html'"
         ></li>
 </ul>
