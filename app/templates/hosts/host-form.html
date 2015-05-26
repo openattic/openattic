@@ -14,7 +14,7 @@
                             <input type="text" class="form-control" placeholder="Hostname..."
                                    ng-model="host.name" name="name"
                                     id="hostHostname" required>
-                            <span class="help-block" ng-show="(submitted || hostForm.name.$dirty)
+                            <span class="help-block tc_hostnameRequired" ng-show="(submitted || hostForm.name.$dirty)
                             && hostForm.name.$error.required">
                                 The name is required.
                             </span>
@@ -22,10 +22,10 @@
                     </div>
                 </fieldset>
                 <div class="pull-right" style="padding: 6px 16px">
-                    <button type="submit" class="btn btn-primary" ng-click="submitAction(hostForm)">
+                    <button type="submit" class="btn btn-primary tc_submitButton" ng-click="submitAction(hostForm)">
                         Submit
                     </button>
-                    <button type="button" class="btn btn-default" ng-click="cancelAction()">
+                    <button type="button" class="btn btn-default tc_backButton" ng-click="cancelAction()">
                         Back
                     </button>
                 </div>
