@@ -28,6 +28,7 @@ from systemd import get_dbus_object, dbus_to_python
 from ifconfig.models import Host
 from volumes.models import StorageObject, FileSystemVolume, VolumePool, BlockVolume
 
+
 class Cluster(StorageObject):
     AUTH_CHOICES = (
         ('none',  _('Authentication disabled')),
@@ -87,7 +88,6 @@ class Cluster(StorageObject):
         return "'%s' (%s)" % (self.name, self.uuid)
 
 
-
 class CrushmapVersion(models.Model):
     cluster     = models.ForeignKey(Cluster)
     epoch       = models.IntegerField()
@@ -139,7 +139,6 @@ class CrushmapVersion(models.Model):
         return crushmap
 
 
-
 class OSD(models.Model):
     cluster     = models.ForeignKey(Cluster)
     ceph_id     = models.IntegerField()
@@ -175,6 +174,7 @@ class OSD(models.Model):
             status = ["unknown"]
         return status
 
+
 class Mon(models.Model):
     cluster     = models.ForeignKey(Cluster)
     host        = models.ForeignKey(Host)
@@ -182,12 +182,14 @@ class Mon(models.Model):
     def __unicode__(self):
         return unicode(self.host)
 
+
 class MDS(models.Model):
     cluster     = models.ForeignKey(Cluster)
     host        = models.ForeignKey(Host)
 
     def __unicode__(self):
         return unicode(self.host)
+
 
 class Pool(VolumePool):
     cluster     = models.ForeignKey(Cluster)
