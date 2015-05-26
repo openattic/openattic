@@ -41,8 +41,9 @@
                                 <label class="col-md-2 control-label" for="volumepool">Pool</label>
                                 <div class="col-md-10">
                                     <select class="form-control" ng-model="input.volume.volumepool"
-                                            id="volumepool" ng-options="(pool.name + ' (' + pool.type.name + ')')
-                                            for pool in pools track by pool.id" name="volumepool" required>
+                                            id="volumepool" ng-options="(pool.name + ' (' + pool.type.name + ', ' +
+                                            pool.usage.free_text + ' free)' ) for pool in pools track by pool.id"
+                                            name="volumepool" required>
                                         <option class="tc_volumePoolOption" value="">-- Select a pool --</option>
                                     </select>
                                     <span class="help-block tc_poolRequired" ng-show="(contentForm1.submitted ||

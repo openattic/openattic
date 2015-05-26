@@ -26,7 +26,8 @@
                             <label class="col-md-2 control-label" for="data.sourcePool">Pool</label>
                             <div class="col-md-10">
                                 <select class="form-control" ng-model="data.sourcePool" id="data.sourcePool"
-                                        ng-options="(pool.name + ' (' + pool.type.name + ')') for pool in pools track by pool.id" name="pool" required>
+                                        ng-options="(pool.name + ' (' + pool.type.name + ', ' + pool.usage.free_text +
+                                        ' free)') for pool in pools track by pool.id" name="pool" required>
                                     <option class="tc_volumePoolOption" value="">-- Select a pool --</option>
                                 </select>
                                 <span class="help-block tc_poolRequired" ng-show="(submitted || volumeForm.pool.$dirty) && volumeForm.pool.$error.required">This field is required!</span>
