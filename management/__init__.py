@@ -63,7 +63,6 @@ def update(**kwargs):
             known = False
 
         osdmap   = cluster.get_osdmap()
-        crushmap = cluster.get_crushmap()
         mds_stat = cluster.get_mds_stat()
         mon_stat = cluster.get_mon_status()
         auth_list= cluster.get_auth_list()
