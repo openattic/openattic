@@ -6,12 +6,7 @@ angular.module('openattic.extensions')
       controller: function($scope, ClusterResource){
         $scope.query = function(){
           $scope.clusters = ClusterResource.query(function(clusters){
-            if(clusters.length === 1){
-              $scope.cluster = clusters[0];
-            }
-            else{
-              $scope.cluster = null;
-            }
+            $scope.cluster = clusters[0];
           });
         };
         $scope.query();
@@ -30,14 +25,14 @@ angular.module('openattic.extensions')
               node = item;
             }
             else{
-              item.children.map(iterfn);
+              item.items.map(iterfn);
             }
           };
-          $scope.cluster.crush_map.map(iterfn);
+          $scope.cluster.crushmap.crushmap.buckets.map(iterfn);
           return node;
         };
         $scope.findTypeByName = function(name){
-          return $scope.cluster.bucket_types.find(function(item){
+          return $scope.cluster.crushmap.crushmap.types.find(function(item){
             return item.name === name
           });
         };
@@ -123,7 +118,7 @@ angular.module('openattic.extensions')
               node.isBelowRootNode = false;
               node.isSelectorNode  = false;
               node.nextStep        = null;
-              resetNodes(node.children);
+              resetNodes(node.items);
             }
           };
           renderNodes = function(steps, nodes, isBelowRootNode){
@@ -134,7 +129,7 @@ angular.module('openattic.extensions')
               node = nodes[i];
 
               if(steps[0].op === 'take'){
-                if( steps[0].item === node.ceph_id ){
+                if( steps[0].item === node.id ){
                   node.isRootNode = true;
                   isBelowRootNode = true;
                   node.nextStep = steps[1];
@@ -143,7 +138,7 @@ angular.module('openattic.extensions')
               }
               else if(steps[0].op === 'choose_firstn' || steps[0].op === 'chooseleaf_firstn'){
                 node.isBelowRootNode = isBelowRootNode;
-                if( steps[0].type === node.type ){
+                if( steps[0].type === node.type_name ){
                   typeMatch = true;
                   node.isSelectorNode = true;
                   node.nextStep = steps[1];
@@ -151,8 +146,8 @@ angular.module('openattic.extensions')
                   substeps.shift();
                 }
               }
-              if( node.children.length > 0 ){
-                renderNodes(substeps, node.children, isBelowRootNode);
+              if( node.items.length > 0 ){
+                renderNodes(substeps, node.items, isBelowRootNode);
               }
               if( node.isRootNode ){
                 while(steps.length > 0 && steps[0].op !== 'take'){
@@ -166,10 +161,10 @@ angular.module('openattic.extensions')
           };
 
           rendersteps = (activeRuleset ? activeRuleset.steps.slice() : []);
-          resetNodes($scope.cluster.crush_map);
+          resetNodes($scope.cluster.crushmap.crushmap.buckets);
           while(rendersteps.length > 0){
             prevStepCount = rendersteps.length;
-            renderNodes(rendersteps, $scope.cluster.crush_map, false);
+            renderNodes(rendersteps, $scope.cluster.crushmap.crushmap.buckets, false);
             if( rendersteps.length >= prevStepCount ){
               // Safety measure: renderNodes should consume a coupl'a steps. If it
               // didn't, something seems to be wrong.

@@ -20,7 +20,7 @@
                     <ul>
                         <li><span ng-bind="cluster.name"></span></li>
                         <ul>
-                            <li ng-repeat="data in cluster.crush_map" ng-include="'extensions/crushmap_editor/templates/crushMapNode.html'"></li>
+                            <li ng-repeat="data in cluster.crushmap.crushmap.buckets" ng-include="'extensions/crushmap_editor/templates/crushMapNode.html'"></li>
                         </ul>
                     </ul>
                 </div>
@@ -39,7 +39,7 @@
                                 <label class="col-md-2 control-label" for="ruleset">Content</label>
                                 <div class="col-md-10">
                                     <select class="form-control"
-                                        ng-options="ruleset as ruleset.name for ruleset in cluster.rulesets track by ruleset.id"
+                                        ng-options="ruleset as ruleset.rule_name for ruleset in cluster.crushmap.crushmap.rules track by ruleset.rule_id"
                                         ng-model="activeRuleset">
                                         <option value="">Select a ruleset...</option>
                                     </select>
@@ -128,7 +128,7 @@
                                                 {{ newstepset.acrosstype.name }}s <span class="caret"></span>
                                             </button>
                                             <ul class="dropdown-menu" role="menu">
-                                                <li ng-repeat="btype in cluster.bucket_types" role="presentation">
+                                                <li ng-repeat="btype in cluster.crushmap.crushmap.types" role="presentation">
                                                     <a role="menuitem" ng-click="newstepset.acrosstype = btype">{{ btype.name }}s</a>
                                                 </li>
                                             </ul>
@@ -138,7 +138,7 @@
                                             class="btn btn-default"
                                             ng-class="{ active: edittakenode }"
                                             ng-click="edittakenode = !edittakenode">
-                                            {{ newstepset.take.name }} {{ newstepset.take.type === 'root' ? 'tree' : newstepset.take.type }}.
+                                            {{ newstepset.take.name }} {{ newstepset.take.type_name === 'root' ? 'tree' : newstepset.take.type_name }}.
                                         </button>
                                     </span>
                                 </div>
