@@ -62,7 +62,7 @@ angular.module('openattic.extensions')
           $scope.addnewrule = false;
         }, false);
 
-        var rerenderNodes = function(activeRuleset){
+        var rerenderNodes = function(){
           // deep watcher that keeps track of min/max sanity etc
           var resetNodes, renderNodes, rendersteps, s, step, stepset, init, prevStepCount;
           var activeRuleset = $scope.activeRuleset;
