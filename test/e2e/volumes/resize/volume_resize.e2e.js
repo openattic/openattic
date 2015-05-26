@@ -58,14 +58,14 @@ describe('Volumes resize', function(){
     element(by.id('newsize')).sendKeys('99mb');
     expect(element(by.css('.tc_wrongSize')).isDisplayed()).toBe(true);
     element(by.id('bot1-Msg1')).click();
-  })
+  });
 
   it('should show a message if the chosen size is higher than the pool size', function(){
     var newsize = pool.size + 201;
     element(by.id('newsize')).sendKeys(newsize + pool.unit);
     expect(element(by.css('.tc_wrongSize')).isDisplayed()).toBe(true);
     element(by.id('bot1-Msg1')).click();
-  })
+  });
 
   it('should be able to resize a volume with a valid size', function(){
     element(by.id('newsize')).sendKeys('250mb');
