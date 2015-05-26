@@ -3,7 +3,7 @@ angular.module('openattic.extensions')
     return {
       restrict: 'E',
       templateUrl: 'extensions/crushmap_editor/templates/editor.html',
-      controller: function($scope, ClusterResource){
+      controller: function($scope, $timeout, ClusterResource){
         $scope.query = function(){
           $scope.clusters = ClusterResource.query(function(clusters){
             $scope.cluster = clusters[0];
@@ -177,6 +177,24 @@ angular.module('openattic.extensions')
           accept: function(sourceNodeScope, destNodesScope, destIndex) {
             return sourceNodeScope.$modelValue.type_id < destNodesScope.$parent.$modelValue.type_id;
           },
+          beforeDrag: function(sourceNodeScope){
+            // ok, so beforeDrag gets fired once for the node clicked, and if that returns
+            // false, it gets fired AGAIN for each parent node right up to the root.
+            // So, if we're supposed to find a new "take" node, defer setting
+            // edittakenode to false by 25 ms, so we can return false for ALL tree nodes,
+            // and then only execute the first update (otherwise we'd choose the root
+            // node instead of the one that has actually been clicked).
+            if( $scope.edittakenode ){
+              $timeout(function(){
+                if( $scope.edittakenode ){
+                  $scope.newstepset.take = sourceNodeScope.$modelValue;
+                  $scope.edittakenode = false;
+                }
+              }, 25);
+              return false;
+            }
+            return true;
+          }
         };
 
         $scope.$watchGroup(['replicas_source', 'replicas_pos', 'replicas_neg'], function(){

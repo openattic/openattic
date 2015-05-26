@@ -3,7 +3,7 @@
     'bg-primary': data.isRootNode,
     'bg-info':    data.isBelowRootNode && !data.isSelectorNode,
     'bg-success': data.isSelectorNode
-}" ng-click="treeNodeClicked(data)" ui-tree-handle>{{ data.name }}</span>
+}" ui-tree-handle>{{ data.name }}</span>
 <em> &mdash; {{ data.type_name }}</em>
 <ul ui-tree-nodes="" ng-model="data.items">
     <li ui-tree-node
