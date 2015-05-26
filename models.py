@@ -59,7 +59,12 @@ class Cluster(StorageObject):
         return _df
 
     def get_crushmap(self):
-        return json.loads(dbus_to_python(get_dbus_object("/ceph").osd_crush_dump(self.name)))
+        osdmap   = json.loads(dbus_to_python(get_dbus_object("/ceph").osd_dump(self.name)))
+        try:
+            return self.crushmapversion_set.get(epoch=osdmap["epoch"])
+        except CrushmapVersion.DoesNotExist:
+            crushmap = dbus_to_python(get_dbus_object("/ceph").osd_crush_dump(self.name))
+            return self.crushmapversion_set.create(epoch=osdmap["epoch"], crushmap=crushmap)
 
     def get_osdmap(self):
         return json.loads(dbus_to_python(get_dbus_object("/ceph").osd_dump(self.name)))
@@ -95,6 +100,9 @@ class CrushmapVersion(models.Model):
     edited_at   = models.DateTimeField(auto_now=True)
     author      = models.ForeignKey(User, null=True, blank=True)
     crushmap    = models.TextField()
+
+    class Meta:
+        unique_together = (("cluster", "epoch"),)
 
     @property
     def is_current(self):
