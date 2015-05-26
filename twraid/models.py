@@ -45,7 +45,7 @@ class Controller(models.Model):
     actunits    = models.IntegerField()
     curunits    = models.IntegerField()
     maxunits    = models.IntegerField()
-    autorebuild = models.BooleanField()
+    autorebuild = models.BooleanField(default=False)
 
     objects     = HostDependentManager()
     all_objects = models.Manager()
@@ -74,7 +74,7 @@ class Unit(BlockVolume):
     rebuild     = models.IntegerField(blank=True, null=True)
     verify      = models.IntegerField(blank=True, null=True)
     chunksize   = models.IntegerField(blank=True, null=True)
-    autoverify  = models.BooleanField()
+    autoverify  = models.BooleanField(default=False)
     rdcache     = models.CharField(max_length=150, blank=True)
     wrcache     = models.CharField(max_length=150, blank=True)
 

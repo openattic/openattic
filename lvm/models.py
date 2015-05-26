@@ -543,7 +543,7 @@ class LVSnapshotJob(Cronjob):
     """ Scheduled snapshots. """
     start_time  = models.DateTimeField(null=True, blank=True)
     end_time    = models.DateTimeField(null=True, blank=True)
-    is_active   = models.BooleanField()
+    is_active   = models.BooleanField(default=False)
     conf        = models.ForeignKey('SnapshotConf')
 
     objects     = HostDependentManager()
