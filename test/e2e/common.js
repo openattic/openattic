@@ -14,34 +14,32 @@
     },
 
     create_blockvol: function(){
-      var blockvol = require('./general/create_blockvol.e2e.js');
+      var blockvol = require('./helpers/create_blockvol.e2e.js');
     },
     
     create_fsvol: function(){
-      var fsvol = require('./general/create_fsvol.e2e.js');
+      var fsvol = require('./helpers/create_fsvol.e2e.js');
     },
  
     delete_volume: function(){
-      var del_vol = require('./general/delete_protractor_test_volume.e2e.js');
+      var del_vol = require('./helpers/delete_protractor_test_volume.e2e.js');
     },
  
     create_snapshot: function(){
-      var create_snap = require('./general/create_snapshot.e2e.js');
+      var create_snap = require('./helpers/create_snapshot.e2e.js');
     },
     
     delete_snapshot: function(){
-      var delete_snap = require('./general/delete_snapshot.e2e.js');
+      var delete_snap = require('./helpers/delete_snapshot.e2e.js');
     },
  
     create_snap_clone: function(){
-        var create_snapclone = require('./general/create_snap_clone.e2e.js');
+        var create_snapclone = require('./helpers/create_snap_clone.e2e.js');
     },
  
     delete_snap_clone: function(){
-        var delete_snapclone = require('./general/delete_snap_clone.e2e.js');
+        var delete_snapclone = require('./helpers/delete_snap_clone.e2e.js');
     },
-
-      
 
     selectDropdownByIndex: function (dropdown, index) {
       dropdown.click();
