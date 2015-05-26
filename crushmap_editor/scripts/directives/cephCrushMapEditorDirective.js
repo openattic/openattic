@@ -62,9 +62,10 @@ angular.module('openattic.extensions')
           $scope.addnewrule = false;
         }, false);
 
-        $scope.$watch('activeRuleset', function(activeRuleset){
+        var rerenderNodes = function(activeRuleset){
           // deep watcher that keeps track of min/max sanity etc
           var resetNodes, renderNodes, rendersteps, s, step, stepset, init, prevStepCount;
+          var activeRuleset = $scope.activeRuleset;
           if( !$scope.cluster ){
             return;
           }
@@ -171,7 +172,8 @@ angular.module('openattic.extensions')
               throw 'The CRUSH map renderer seems unable to render this CRUSH map ruleset.';
             }
           }
-        }, true);
+        };
+        $scope.$watch('activeRuleset', rerenderNodes, true);
 
         $scope.treeOptions = {
           accept: function(sourceNodeScope, destNodesScope, destIndex) {
@@ -194,6 +196,9 @@ angular.module('openattic.extensions')
               return false;
             }
             return true;
+          },
+          dropped: function(event){
+            rerenderNodes();
           }
         };
 
