@@ -21,22 +21,7 @@ from rest_framework.response import Response
 
 from rest import relations
 
-from ceph.models import Cluster, Ruleset
-
-
-class RulesetSerializer(serializers.HyperlinkedModelSerializer):
-    steps       = serializers.SerializerMethodField("get_rule_steps")
-    description = serializers.SerializerMethodField("get_description")
-
-    class Meta:
-        model = Ruleset
-        fields = ('id', 'ceph_id', 'name', 'type', 'min_size', 'max_size', 'description', 'steps')
-
-    def get_rule_steps(self, obj):
-        return obj.get_rule()["steps"]
-
-    def get_description(self, obj):
-        return obj.get_description()
+from ceph.models import Cluster
 
 
 class ClusterSerializer(serializers.HyperlinkedModelSerializer):
@@ -44,7 +29,8 @@ class ClusterSerializer(serializers.HyperlinkedModelSerializer):
     url         = serializers.HyperlinkedIdentityField(view_name="cephcluster-detail")
     crush_map   = serializers.SerializerMethodField("get_crush_map")
     bucket_types= serializers.SerializerMethodField("get_bucket_types")
-    rulesets    = RulesetSerializer(many=True, read_only=True, source="ruleset_set")
+    rulesets    = serializers.SerializerMethodField("get_rulesets")
+    #rulesets    = RulesetSerializer(many=True, read_only=True, source="ruleset_set")
 
     class Meta:
         model = Cluster
@@ -61,12 +47,17 @@ class ClusterSerializer(serializers.HyperlinkedModelSerializer):
                 "children": [ serialize_bucket(child) for child in obj.children.all() ]
             }
 
+        return []
         return [ serialize_bucket(rootbkt) for rootbkt in
                  obj.bucket_set.filter(parent__isnull=True) ]
 
     def get_bucket_types(self, obj):
+        return []
         return [ {"id": bucket_type.ceph_id, "name": bucket_type.name}
                  for bucket_type in obj.type_set.all() ]
+
+    def get_rulesets(self, obj):
+        return []
 
 class ClusterViewSet(viewsets.ModelViewSet):
     queryset         = Cluster.objects.all()

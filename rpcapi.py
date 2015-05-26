@@ -36,11 +36,8 @@ RPCD_HANDLERS = [
     ClusterHandler,
     PoolHandler,
     ImageHandler,
-    mkModelHandler(models.Type),
-    mkModelHandler(models.Bucket),
     mkModelHandler(models.OSD),
     mkModelHandler(models.Mon),
     mkModelHandler(models.MDS),
     mkModelHandler(models.Entity),
-    mkModelHandler(models.Ruleset),
     ]

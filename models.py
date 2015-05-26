@@ -23,8 +23,6 @@ from django.db import models
 from django.utils.translation import ugettext_noop as _
 from django.core.exceptions import ValidationError
 
-from mptt import models as mptt_models
-
 from systemd import get_dbus_object, dbus_to_python
 from ifconfig.models import Host
 from volumes.models import StorageObject, FileSystemVolume, VolumePool, BlockVolume
@@ -87,41 +85,12 @@ class Cluster(StorageObject):
     def __unicode__(self):
         return "'%s' (%s)" % (self.name, self.uuid)
 
-class Type(models.Model):
-    cluster     = models.ForeignKey(Cluster)
-    ceph_id     = models.IntegerField()
-    name        = models.CharField(max_length=50)
 
-    class Meta:
-        unique_together = (('cluster', 'ceph_id'), ('cluster', 'name'))
-
-    def __unicode__(self):
-        return "'%s' (%s)" % (self.name, self.ceph_id)
-
-class Bucket(mptt_models.MPTTModel):
-    cluster     = models.ForeignKey(Cluster)
-    type        = models.ForeignKey(Type)
-    ceph_id     = models.IntegerField()
-    name        = models.CharField(max_length=50)
-    parent      = mptt_models.TreeForeignKey('self', null=True, blank=True, related_name='children')
-    alg         = models.CharField(max_length=50, default="straw",
-                                   choices=(("uniform", "uniform"), ("list", "list"), ("tree", "tree"), ("straw", "straw")))
-    hash        = models.CharField(max_length=50, default="rjenkins1")
-
-    class MPTTMeta:
-        order_insertion_by = ['name']
-
-    class Meta:
-        unique_together = (('cluster', 'ceph_id'), ('cluster', 'name'))
-
-    def __unicode__(self):
-        return "'%s' (%s)" % (self.name, self.ceph_id)
 
 class OSD(models.Model):
     cluster     = models.ForeignKey(Cluster)
     ceph_id     = models.IntegerField()
     uuid        = models.CharField(max_length=36, unique=True)
-    bucket      = models.ForeignKey(Bucket)
     volume      = models.ForeignKey(FileSystemVolume, null=True, blank=True)
     journal     = models.ForeignKey(BlockVolume,      null=True, blank=True)
 
@@ -167,45 +136,12 @@ class MDS(models.Model):
     def __unicode__(self):
         return unicode(self.host)
 
-class Ruleset(models.Model):
-    cluster     = models.ForeignKey(Cluster)
-    ceph_id     = models.IntegerField()
-    name        = models.CharField(max_length=250)
-    type        = models.IntegerField(default=1)
-    min_size    = models.IntegerField(default=1)
-    max_size    = models.IntegerField(default=10)
-
-    def get_rule(self):
-        crushmap = self.cluster.get_crushmap()
-        for crule in crushmap["rules"]:
-            if crule["ruleset"] == self.ceph_id:
-                return crule
-        raise KeyError("rule not found in crushmap")
-
-    def get_description(self):
-        """ Generate a human-readable description of what this ruleset does. """
-        bits = []
-        for step in self.get_rule()["steps"]:
-            if step["op"] == "take":
-                bits.append("from the %s tree" % step["item_name"])
-            elif step["op"].startswith("choose"):
-                if not step["num"]:
-                    bitpart = "select as many %ss as necessary" % step["type"]
-                else:
-                    bitpart = "select %d %ss" % (step["num"], step["type"])
-                bits.append(bitpart)
-                if step["op"].startswith("chooseleaf"):
-                    bits.append("descend to their OSDs")
-            elif step["op"] == "emit":
-                bits.append("done")
-        return ", ".join(bits)
-
 class Pool(VolumePool):
     cluster     = models.ForeignKey(Cluster)
     ceph_id     = models.IntegerField()
     size        = models.IntegerField(default=3)
     min_size    = models.IntegerField(default=2)
-    ruleset     = models.ForeignKey(Ruleset)
+    ruleset     = models.IntegerField(default=0)
 
     class Meta:
         unique_together = (('cluster', 'ceph_id'),)
@@ -226,11 +162,11 @@ class Pool(VolumePool):
         if install:
             get_dbus_object("/ceph").osd_pool_create(self.cluster.name, self.storageobj.name,
                                                      self.cluster.get_recommended_pg_num(self.size),
-                                                     self.ruleset.ceph_id)
+                                                     self.ruleset)
         else:
             get_dbus_object("/ceph").osd_pool_set(self.cluster.name, self.storageobj.name, "size",          str(self.size))
             get_dbus_object("/ceph").osd_pool_set(self.cluster.name, self.storageobj.name, "min_size",      str(self.min_size))
-            get_dbus_object("/ceph").osd_pool_set(self.cluster.name, self.storageobj.name, "crush_ruleset", str(self.ruleset.ceph_id))
+            get_dbus_object("/ceph").osd_pool_set(self.cluster.name, self.storageobj.name, "crush_ruleset", str(self.ruleset))
 
     def delete(self):
         super(Pool, self).delete()
