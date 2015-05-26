@@ -177,6 +177,9 @@ angular.module('openattic.extensions')
 
         $scope.treeOptions = {
           accept: function(sourceNodeScope, destNodesScope, destIndex) {
+            if( !destNodesScope.$parent.$modelValue ){
+              return true; // moved to the root level
+            }
             return sourceNodeScope.$modelValue.type_id < destNodesScope.$parent.$modelValue.type_id;
           },
           beforeDrag: function(sourceNodeScope){
