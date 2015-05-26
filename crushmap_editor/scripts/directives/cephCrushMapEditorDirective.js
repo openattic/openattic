@@ -173,6 +173,12 @@ angular.module('openattic.extensions')
           }
         }, true);
 
+        $scope.treeOptions = {
+          accept: function(sourceNodeScope, destNodesScope, destIndex) {
+            return sourceNodeScope.$modelValue.type_id < destNodesScope.$parent.$modelValue.type_id;
+          },
+        };
+
         $scope.$watchGroup(['replicas_source', 'replicas_pos', 'replicas_neg'], function(){
           if($scope.replicas_source == 'fix'){
             $scope.newstepset.num = 0;
