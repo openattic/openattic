@@ -36,14 +36,14 @@ class CrushmapVersionSerializer(serializers.ModelSerializer):
 class ClusterSerializer(serializers.HyperlinkedModelSerializer):
     """ Serializer for a Ceph Cluster. """
     url         = serializers.HyperlinkedIdentityField(view_name="cephcluster-detail")
-    crush_map   = serializers.SerializerMethodField("get_crush_map")
+    crushmap    = serializers.SerializerMethodField("get_crushmap")
 
     class Meta:
         model = Cluster
-        fields = ('url', 'id', 'name', 'crush_map',
+        fields = ('url', 'id', 'name', 'crushmap',
                   'auth_cluster_required', 'auth_client_required', 'auth_service_required')
 
-    def get_crush_map(self, obj):
+    def get_crushmap(self, obj):
         return CrushmapVersionSerializer(obj.get_crushmap(), many=False, read_only=True).data
 
 
