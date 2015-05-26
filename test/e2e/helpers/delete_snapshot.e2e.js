@@ -6,7 +6,6 @@ describe('Should delete a Snapshot', function(){
   var snapshotname = 'protractor_test_snap';
   var volume = element(by.cssContainingText('tr', volumename));
   var snapshot = element(by.cssContainingText('tr', snapshotname));
-  var submitButton = element(by.css('.tc_submitButton'));   
   
   it('should delete the snapshot', function(){
     expect(volume.isDisplayed()).toBe(true);
