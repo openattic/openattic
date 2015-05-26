@@ -22,6 +22,7 @@ import math
 from django.db import models
 from django.utils.translation import ugettext_noop as _
 from django.core.exceptions import ValidationError
+from django.contrib.auth.models import User
 
 from systemd import get_dbus_object, dbus_to_python
 from ifconfig.models import Host
@@ -84,6 +85,58 @@ class Cluster(StorageObject):
 
     def __unicode__(self):
         return "'%s' (%s)" % (self.name, self.uuid)
+
+
+
+class CrushmapVersion(models.Model):
+    cluster     = models.ForeignKey(Cluster)
+    epoch       = models.IntegerField()
+    created_at  = models.DateTimeField(auto_now_add=True)
+    edited_at   = models.DateTimeField(auto_now=True)
+    author      = models.ForeignKey(User, null=True, blank=True)
+    crushmap    = models.TextField()
+
+    @property
+    def is_current(self):
+        return self.epoch == self.cluster.get_osdmap()["epoch"]
+
+    def get_tree(self):
+        crushmap  = json.loads(self.crushmap)
+        crushtree = dict(crushmap, buckets=[])
+
+        parentbucket = {}
+
+        for cbucket in crushmap["buckets"]:
+            for member in cbucket["items"]:
+                parentbucket[member["id"]] = cbucket
+            cbucket["items"] = []
+
+        buckets = crushmap["buckets"][:]
+        while buckets:
+            cbucket = buckets.pop(0)
+
+            if cbucket["id"] in parentbucket:
+                parentbucket[cbucket["id"]]["items"].append(cbucket)
+            elif cbucket["type_name"] != "root":
+                buckets.append(cbucket)
+            else:
+                crushtree["buckets"].append(cbucket)
+
+        return crushtree
+
+    def update_from_tree(self, crushtree, save=True):
+        crushmap = dict(crushtree, buckets=[])
+        buckets = crushtree["buckets"][:]
+        while buckets:
+            cbucket = buckets.pop(0)
+            crushmap["buckets"].append(dict(cbucket, items=[
+                {"pos": i, "weight": item["weight"], "id": item["id"]}
+                for (i, item) in enumerate(cbucket["items"])
+            ]))
+            buckets.extend(cbucket["items"])
+        if save:
+            self.save()
+        return crushmap
 
 
 
