@@ -57,6 +57,10 @@
                                         contentForm1.volumepool.$dirty) && contentForm1.volumepool.$error.required">
                                         This field is required!
                                     </span>
+                                    <span class="help-block" ng-show="contentForm1.volumepool.$error.usablesize">
+                                        The selected volumepool provides less than 100MB free space, so it's not
+                                        usable for the new volume.
+                                    </span>
                                 </div>
                             </div>
                             <div class="form-group">
