@@ -6,7 +6,7 @@
 }" ui-tree-handle>
     <div style="display: inline" ng-hide="data.$editing">{{ data.name }}</div>
     <div style="display: inline" ng-show="data.$editing">
-        <input type="text" ng-model="data.name" style="color: black" ng-enter="data.$editing = false" />
+        <input type="text" ng-model="data.name" style="color: black" focus-me="data.$editing" ng-enter="data.$editing=false" />
     </div>
 </span>
 <em>
