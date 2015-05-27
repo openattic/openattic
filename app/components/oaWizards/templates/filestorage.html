@@ -93,7 +93,7 @@
                                            ng-disabled="input.volume.volumepool == null ||
                                            input.volume.volumepool.usage.free < 100"
                                            volume-size-format volume-size-value
-                                           max-value="{{input.volume.volumepool.usage.max_new_fsv}}"
+                                           max-value="{{input.volume.volumepool.usage.free}}"
                                            ng-model="input.volume.megs" placeholder="e.g., 10GB"
                                            id="volumemegs" required>
                                     <span class="help-block tc_sizeRequired" ng-show="(contentForm1.submitted ||
@@ -107,7 +107,7 @@
                                     <span class="help-block tc_wrongVolumeSize"
                                           ng-show="contentForm1.volumemegs.$error.volumeSizeValue">
                                         The size must be at least 100MB and must not exceed
-                                        {{input.volume.volumepool.usage.max_new_fsv_text}}.
+                                        {{input.volume.volumepool.usage.free_text}}.
                                     </span>
                                 </div>
                             </div>
