@@ -46,12 +46,16 @@
                                             name="volumepool" required>
                                         <option class="tc_volumePoolOption" value="">-- Select a pool --</option>
                                     </select>
-                                    <div ng-show="input.volume.volumepool" class="progress-bar-outer">
-                                        <progressbar max="100" value="selPoolUsedPercent">
-                                            <span>{{selPoolUsedPercent}}%</span>
+                                    <div ng-show="input.volume.volumepool" class="progress-bar-outer clearfix">
+                                        <progressbar max="100" class="progress-striped" value="selPoolUsedPercent">
+                                            <span></span>
                                         </progressbar>
-                                        {{input.volume.volumepool.usage.free_text}} of
-                                        {{input.volume.volumepool.usage.size_text}} available
+                                        <span class="pull-left">
+                                            {{input.volume.volumepool.usage.used_text}} of
+                                            {{input.volume.volumepool.usage.size_text}} used</span>
+                                        <span class="pull-right">
+                                            {{input.volume.volumepool.usage.free_text}} free
+                                        </span>
                                     </div>
                                     <span class="help-block tc_poolRequired" ng-show="(contentForm1.submitted ||
                                         contentForm1.volumepool.$dirty) && contentForm1.volumepool.$error.required">
