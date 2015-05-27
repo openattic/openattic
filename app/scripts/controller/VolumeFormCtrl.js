@@ -20,6 +20,7 @@ angular.module('openattic')
       properties: true,
       mirror: false
     };
+    $scope.selPoolUsedPercent = 0;
 
     PoolService.query()
       .$promise
@@ -32,12 +33,20 @@ angular.module('openattic')
     $scope.$watch('data.sourcePool', function(sourcePool) {
       if(sourcePool){
         $scope.volume.source_pool = { id: sourcePool.id };
+        $scope.selPoolUsedPercent = parseFloat(sourcePool.usage.used_pcnt).toFixed(2);
+        $scope.volumeForm.pool.$setValidity('usablesize', $scope.data.sourcePool.usage.free >= 100);
+
         new PoolService(sourcePool).$filesystems()
           .then(function(res) {
             $scope.supported_filesystems = res;
           }, function(error) {
             console.log('An error occured', error);
           });
+      }
+      else {
+        if($scope.volumeForm) {
+          $scope.volumeForm.pool.$setValidity('usablesize', true);
+        }
       }
     });
     $scope.$watch('data.megs', function(megs){

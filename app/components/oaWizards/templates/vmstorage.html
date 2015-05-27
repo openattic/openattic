@@ -48,13 +48,25 @@
                                             name="volumepool" required>
                                         <option class="tc_volumePoolOption" value="">-- Select a pool --</option>
                                     </select>
+                                    <div ng-show="input.volume.volumepool" class="progress-bar-outer clearfix">
+                                        <progressbar max="100" class="progress-striped" value="selPoolUsedPercent">
+                                            <span></span>
+                                        </progressbar>
+                                        <span class="pull-left">
+                                            {{input.volume.volumepool.usage.used_text}} of
+                                            {{input.volume.volumepool.usage.size_text}} used</span>
+                                        <span class="pull-right">
+                                            {{input.volume.volumepool.usage.free_text}} free
+                                        </span>
+                                    </div>
                                     <span class="help-block tc_poolRequired" ng-show="(contentForm1.submitted ||
                                         contentForm1.volumepool.$dirty) && contentForm1.volumepool.$error.required">
                                         This field is required!
                                     </span>
-                                    <div ng-show="input.volume.volumepool" class="tc_poolAvailableSize">
-                                        {{input.volume.volumepool.usage.free_text}} available
-                                    </div>
+                                    <span class="help-block" ng-show="contentForm1.volumepool.$error.usablesize">
+                                        The selected volumepool provides less than 100MB free space, so it's not
+                                        usable for the new volume.
+                                    </span>
                                 </div>
                             </div>
                             <div class="form-group" ng-class="{'has-error': (contentForm1.submitted ||

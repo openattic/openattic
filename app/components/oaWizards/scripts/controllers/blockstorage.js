@@ -23,6 +23,7 @@ angular.module('openattic.oaWizards')
         lun_id: 0
       }
     };
+    $scope.selPoolUsedPercent = 0;
 
     $scope.$watch('input.share.host', function(host) {
       if(host){
@@ -33,6 +34,18 @@ angular.module('openattic.oaWizards')
           }, function(error) {
             console.log('An error occured', error);
           });
+      }
+    });
+
+    $scope.$watch('input.volume.volumepool', function(sourcePool) {
+      if(sourcePool){
+        $scope.selPoolUsedPercent = parseFloat(sourcePool.usage.used_pcnt).toFixed(2);
+        $scope.contentForm1.volumepool.$setValidity('usablesize', $scope.input.volume.volumepool.usage.free >= 100);
+      }
+      else {
+        if($scope.contentForm1) {
+          $scope.contentForm1.volumepool.$setValidity('usablesize', true);
+        }
       }
     });
   });
