@@ -246,7 +246,7 @@ angular.module('openattic.extensions')
             alg:       "straw",
             hash:      "rjenkins",
             items:     [],
-            name:      "lol",
+            name:      "New " + btype.name,
             type_id:   btype.type_id,
             type_name: btype.name,
             weight:    0
