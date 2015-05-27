@@ -5,7 +5,9 @@
     'bg-success': data.isSelectorNode
 }" ui-tree-handle>
     <div style="display: inline" ng-hide="data.$editing">{{ data.name }}</div>
-    <div style="display: inline" ng-show="data.$editing"><input type="text" ng-model="data.name" style="color: black" /></div>
+    <div style="display: inline" ng-show="data.$editing">
+        <input type="text" ng-model="data.name" style="color: black" ng-enter="data.$editing = false" />
+    </div>
 </span>
 <em><i class="fa fa-edit" ng-click="data.$editing = !data.$editing"></i> &mdash; {{ data.type_name }}</em>
 <ul ui-tree-nodes="" ng-model="data.items">
