@@ -55,6 +55,10 @@ angular.module('openattic.oaWizards')
       else {
         $scope.filesystems_count = 0;
         $scope.supported_filesystems = 'Choose a pool first';
+
+        if($scope.contentForm1) {
+          $scope.contentForm1.volumepool.$setValidity('usablesize', true);
+        }
       }
     });
 
