@@ -7,6 +7,9 @@ angular.module('openattic.extensions')
         $scope.query = function(){
           $scope.clusters = ClusterResource.query(function(clusters){
             $scope.cluster = clusters[0];
+            $scope.usableTypes = $scope.cluster.crushmap.crushmap.types.filter(function(btype){
+              return btype.type_id > 1; // *users* aren't supposed to add hosts or OSDs
+            });
           });
         };
         $scope.query();
@@ -228,6 +231,19 @@ angular.module('openattic.extensions')
           return {
             min: step.num
           };
+        };
+
+        $scope.addBucket = function(btype){
+          $scope.cluster.crushmap.crushmap.buckets.push({
+            id:        -1,
+            alg:       "straw",
+            hash:      "rjenkins",
+            items:     [],
+            name:      "lol",
+            type_id:   btype.type_id,
+            type_name: btype.name,
+            weight:    0
+          });
         };
       }
     };
