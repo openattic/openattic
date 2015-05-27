@@ -10,8 +10,8 @@
     </div>
 </span>
 <em>
-    <i class="fa fa-pencil" ng-click="data.$editing = !data.$editing"></i>
-    <i class="fa fa-times"  ng-click="deleteBucket(data)" ng-if="data.type_id > 1"></i>
+    <i class="fa fa-pencil" ng-if="data.type_id > 1" ng-click="data.$editing = !data.$editing"></i>
+    <i class="fa fa-times"  ng-if="data.type_id > 1" ng-click="deleteBucket(data)"></i>
     &mdash; {{ data.type_name }}
 </em>
 <ul ui-tree-nodes="" ng-model="data.items">
