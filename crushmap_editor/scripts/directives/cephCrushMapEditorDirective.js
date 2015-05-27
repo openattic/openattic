@@ -253,6 +253,47 @@ angular.module('openattic.extensions')
             weight:    0
           });
         };
+
+        $scope.deleteBucket = function(bucket){
+          // See if there are any hosts in the bucket's subtree
+          var has_hosts = false;
+          var iterfn = function(item){
+            if( item.type_id <= 1 ){
+              has_hosts = true;
+            }
+            else{
+              item.items.map(iterfn);
+            }
+          };
+          bucket.items.map(iterfn);
+          if(has_hosts){
+            $.smallBox({
+              title: 'Bucket is not empty',
+              content: ['<i class="fa fa-clock-o tc_notDeletable"></i><i> ',
+                          'The ', bucket.name, ' ', (bucket.type_name === 'root' ? 'tree' : bucket.type_name),
+                          ' still contains some hosts. ',
+                          'Please move the hosts away first.',
+                        '</i>'].join(''),
+              color: '#C46A69',
+              iconSmall: 'fa fa-times fa-2x fadeInRight animated',
+              timeout: 6000
+            });
+          }
+          else{
+            iterfn = function(item){
+              var matches = item.items.filter(function(subitem){
+                return subitem.id == bucket.id;
+              });
+              if( matches.length > 0 ){
+                item.items.splice(item.items.indexOf(matches[0]), 1);
+              }
+              else{
+                item.items.map(iterfn);
+              }
+            };
+            $scope.cluster.crushmap.crushmap.buckets.map(iterfn);
+          }
+        };
       }
     };
   });

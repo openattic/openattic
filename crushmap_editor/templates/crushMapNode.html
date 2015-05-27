@@ -9,7 +9,11 @@
         <input type="text" ng-model="data.name" style="color: black" ng-enter="data.$editing = false" />
     </div>
 </span>
-<em><i class="fa fa-edit" ng-click="data.$editing = !data.$editing"></i> &mdash; {{ data.type_name }}</em>
+<em>
+    <i class="fa fa-pencil" ng-click="data.$editing = !data.$editing"></i>
+    <i class="fa fa-times"  ng-click="deleteBucket(data)" ng-if="data.type_id > 1"></i>
+    &mdash; {{ data.type_name }}
+</em>
 <ul ui-tree-nodes="" ng-model="data.items">
     <li ui-tree-node
         ng-repeat="data in data.items"
