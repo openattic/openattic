@@ -8,16 +8,13 @@ angular.module('openattic.auth')
     $scope.login = function(loginForm){
       $scope.submitted = true;
       var loginData = {'username': $scope.username, 'password': $scope.password};
-      authService.login(loginData)
-        .$promise
-        .then(function (res) {
-          $scope.user = res.username;
-          $window.location.href = '/openattic/angular/#/dashboard';
-        })
-        .catch(function () {
-          loginForm.username.$setValidity('correctInput', false);
-          loginForm.password.$setValidity('correctInput', false);
-          $scope.submitted = false;
-        });
+      authService.login(loginData, function(res){
+        $scope.user = res.username;
+        $window.location.href = '/openattic/angular/#/dashboard';
+      }, function(){
+        loginForm.username.$setValidity('correctInput', false);
+        loginForm.password.$setValidity('correctInput', false);
+        $scope.submitted = false;
+      });
     };
   });
