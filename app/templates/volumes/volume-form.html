@@ -64,7 +64,8 @@
                         <div class="form-group" ng-class="{'has-error': (submitted || volumeForm.megs.$dirty) && volumeForm.megs.$invalid}">
                             <label class="col-md-2 control-label" for="data.megs">Size</label>
                             <div class="col-md-10">
-                                <input class="form-control" type="text" name="megs" ng-disabled="data.sourcePool === null"
+                                <input class="form-control" type="text" name="megs"
+                                       ng-disabled="data.sourcePool === null  || data.sourcePool.usage.free < 100"
                                        volume-size-format volume-size-value max-value="{{data.sourcePool.usage.free}}"
                                        ng-model="data.megs" placeholder="e.g., 10GB" id="data.megs" required>
                                 <span class="help-block tc_sizeRequired" ng-show="(submitted || volumeForm.megs.$dirty) && volumeForm.megs.$error.required">This field is required!</span>
