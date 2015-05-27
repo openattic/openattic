@@ -63,32 +63,6 @@
                                     </span>
                                 </div>
                             </div>
-                            <div class="form-group">
-                                <label class="col-md-2 control-label">Filesystem</label>
-                                <div class="col-md-10" ng-show="filesystems_count > 1">
-                                    <div class="radio radio-primary" ng-show="supported_filesystems.zfs">
-                                        <input type="radio" ng-model="input.volume.filesystem" value="zfs"
-                                               id="zfs">
-                                        <label for="zfs">ZFS</label>
-                                    </div>
-                                    <div class="radio radio-primary" ng-show="supported_filesystems.btrfs">
-                                        <input type="radio" ng-model="input.volume.filesystem"
-                                               value="btrfs" id="btrfs">
-                                        <label for="btrfs">BTRFS</label>
-                                    </div>
-                                    <div class="radio radio-primary" ng-show="supported_filesystems.ext4">
-                                        <input type="radio" ng-model="input.volume.filesystem" value="ext4" id="ext4">
-                                        <label for="ext4">Ext4</label>
-                                    </div>
-                                    <div class="radio radio-primary" ng-show="supported_filesystems.ext3">
-                                        <input type="radio" ng-model="input.volume.filesystem" value="ext3" id="ext3">
-                                        <label for="ext3">Ext3</label>
-                                    </div>
-                                </div>
-                                <div class="col-md-10" ng-show="filesystems_count <= 1">
-                                    <p class="form-control-static">{{supported_filesystems}}</p>
-                                </div>
-                            </div>
                             <div class="form-group" ng-class="{'has-error': (contentForm1.submitted ||
                                 contentForm1.volumemegs.$dirty) && contentForm1.volumemegs.$invalid}">
                                 <label class="col-md-2 control-label" for="volumemegs">Size</label>
@@ -113,6 +87,32 @@
                                         The size must be at least 100MB and must not exceed
                                         {{input.volume.volumepool.usage.free_text}}.
                                     </span>
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <label class="col-md-2 control-label">Filesystem</label>
+                                <div class="col-md-10" ng-show="filesystems_count > 1">
+                                    <div class="radio radio-primary" ng-show="supported_filesystems.zfs">
+                                        <input type="radio" ng-model="input.volume.filesystem" value="zfs"
+                                               id="zfs">
+                                        <label for="zfs">ZFS</label>
+                                    </div>
+                                    <div class="radio radio-primary" ng-show="supported_filesystems.btrfs">
+                                        <input type="radio" ng-model="input.volume.filesystem"
+                                               value="btrfs" id="btrfs">
+                                        <label for="btrfs">BTRFS</label>
+                                    </div>
+                                    <div class="radio radio-primary" ng-show="supported_filesystems.ext4">
+                                        <input type="radio" ng-model="input.volume.filesystem" value="ext4" id="ext4">
+                                        <label for="ext4">Ext4</label>
+                                    </div>
+                                    <div class="radio radio-primary" ng-show="supported_filesystems.ext3">
+                                        <input type="radio" ng-model="input.volume.filesystem" value="ext3" id="ext3">
+                                        <label for="ext3">Ext3</label>
+                                    </div>
+                                </div>
+                                <div class="col-md-10" ng-show="filesystems_count <= 1">
+                                    <p class="form-control-static">{{supported_filesystems}}</p>
                                 </div>
                             </div>
                             <div class="form-group">

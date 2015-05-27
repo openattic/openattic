@@ -36,6 +36,20 @@
                                 </div>
                             </div>
                         </div>
+                        <div class="form-group" ng-class="{'has-error': (submitted || volumeForm.megs.$dirty) && volumeForm.megs.$invalid}">
+                            <label class="col-md-2 control-label" for="data.megs">Size</label>
+                            <div class="col-md-10">
+                                <input class="form-control" type="text" name="megs"
+                                       ng-disabled="data.sourcePool === null  || data.sourcePool.usage.free < 100"
+                                       volume-size-format volume-size-value max-value="{{data.sourcePool.usage.free}}"
+                                       ng-model="data.megs" placeholder="e.g., 10GB" id="data.megs" required>
+                                <span class="help-block tc_sizeRequired" ng-show="(submitted || volumeForm.megs.$dirty) && volumeForm.megs.$error.required">This field is required!</span>
+                                <span class="help-block tc_noValidNumber" ng-show="volumeForm.megs.$error.volumeSizeFormat">This is not a valid number.</span>
+                                <span class="help-block tc_wrongVolumeSize" ng-show="volumeForm.megs.$error.volumeSizeValue">
+                                    The size must be at least 100MB and must not exceed {{data.sourcePool.usage.free_text}}.
+                                </span>
+                            </div>
+                        </div>
                         <div class="form-group">
                             <label class="col-md-2 control-label">Type</label>
                             <div class="col-md-10">
@@ -59,20 +73,6 @@
                                            ng-disabled="state.formatted" id="btrfs">
                                     <label for="btrfs">Create File Store -> BTRFS</label>
                                 </div>
-                            </div>
-                        </div>
-                        <div class="form-group" ng-class="{'has-error': (submitted || volumeForm.megs.$dirty) && volumeForm.megs.$invalid}">
-                            <label class="col-md-2 control-label" for="data.megs">Size</label>
-                            <div class="col-md-10">
-                                <input class="form-control" type="text" name="megs"
-                                       ng-disabled="data.sourcePool === null  || data.sourcePool.usage.free < 100"
-                                       volume-size-format volume-size-value max-value="{{data.sourcePool.usage.free}}"
-                                       ng-model="data.megs" placeholder="e.g., 10GB" id="data.megs" required>
-                                <span class="help-block tc_sizeRequired" ng-show="(submitted || volumeForm.megs.$dirty) && volumeForm.megs.$error.required">This field is required!</span>
-                                <span class="help-block tc_noValidNumber" ng-show="volumeForm.megs.$error.volumeSizeFormat">This is not a valid number.</span>
-                                <span class="help-block tc_wrongVolumeSize" ng-show="volumeForm.megs.$error.volumeSizeValue">
-                                    The size must be at least 100MB and must not exceed {{data.sourcePool.usage.free_text}}.
-                                </span>
                             </div>
                         </div>
                         <div class="form-group">
