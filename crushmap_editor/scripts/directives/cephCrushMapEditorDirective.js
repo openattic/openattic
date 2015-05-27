@@ -280,18 +280,20 @@ angular.module('openattic.extensions')
             });
           }
           else{
-            iterfn = function(item){
-              var matches = item.items.filter(function(subitem){
+            iterfn = function(items){
+              var matches = items.filter(function(subitem){
                 return subitem.id == bucket.id;
               });
               if( matches.length > 0 ){
-                item.items.splice(item.items.indexOf(matches[0]), 1);
+                items.splice(items.indexOf(matches[0]), 1);
               }
               else{
-                item.items.map(iterfn);
+                items.map(function(subitem){
+                  iterfn(subitem.items);
+                });
               }
             };
-            $scope.cluster.crushmap.crushmap.buckets.map(iterfn);
+            iterfn($scope.cluster.crushmap.crushmap.buckets);
           }
         };
       }
