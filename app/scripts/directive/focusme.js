@@ -12,7 +12,6 @@ angular.module('openattic')
           }
         });
         element.bind('blur', function() {
-           console.log('blur');
            scope.$apply(model.assign(scope, false));
         });
       }
