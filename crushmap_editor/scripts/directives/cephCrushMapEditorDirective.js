@@ -241,7 +241,7 @@ angular.module('openattic.extensions')
         };
 
         $scope.addBucket = function(btype){
-          $scope.cluster.crushmap.crushmap.buckets.push({
+          $scope.cluster.crushmap.crushmap.buckets.unshift({
             id:        -1,
             alg:       "straw",
             hash:      "rjenkins",
