@@ -28,7 +28,7 @@ angular.module('openattic.oaWizards')
 
     $scope.$watch('input.volume.volumepool', function(sourcePool) {
       if(sourcePool){
-        $scope.selPoolUsedPercent = parseFloat(sourcePool.usage.used / sourcePool.usage.free * 100).toFixed(2);
+        $scope.selPoolUsedPercent = parseFloat(sourcePool.usage.used_pcnt).toFixed(2);
         $scope.contentForm1.volumepool.$setValidity('usablesize', $scope.input.volume.volumepool.usage.free >= 100);
 
         new PoolService(sourcePool).$filesystems()
