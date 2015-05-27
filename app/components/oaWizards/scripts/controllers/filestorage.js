@@ -16,6 +16,7 @@ angular.module('openattic.oaWizards')
         options   : 'rw,no_subtree_check,no_root_squash'
       }
     };
+    $scope.selPoolUsedPercent = 0;
 
     PoolService.query()
       .$promise
@@ -27,6 +28,7 @@ angular.module('openattic.oaWizards')
 
     $scope.$watch('input.volume.volumepool', function(sourcePool) {
       if(sourcePool){
+        $scope.selPoolUsedPercent = parseFloat(sourcePool.usage.used / sourcePool.usage.free * 100).toFixed(2);
         new PoolService(sourcePool).$filesystems()
           .then(function(res) {
             var filesystems = [];

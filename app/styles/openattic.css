@@ -181,6 +181,30 @@ oadatatable .input-group {
     cursor: default;
 }
 
+.progress-bar-outer{
+    margin-top: 5px !important;
+}
+
+.progress-bar-outer div {
+    border-radius: 31px;
+    background-color: #ffffff;
+    border: 1px solid #ccc;
+    box-shadow: 0 0 0 0;
+    -webkit-box-shadow: 0 0 0 0;
+    -moz-box-shadow: 0 0 0 0;
+    margin: 0;
+    height: 16px;
+}
+
+.progress-bar-outer div div {
+    background-color: #0091d9;
+}
+
+.progress-bar-outer div div span {
+    position: relative;
+    top: -3px;
+}
+
 .bootstrapWizard li.prevtab .step, .bootstrapWizard li.prevtab.complete .step {
     background-image: initial;
     background-position-x: initial;
