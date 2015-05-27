@@ -183,6 +183,13 @@ angular.module('openattic.extensions')
             if( !destNodesScope.$parent.$modelValue ){
               return true; // moved to the root level
             }
+            // If there are any other nodes in the destination, only accept if their types match ours
+            for( var i = 0; i < destNodesScope.$modelValue.length; i++ ){
+              if( destNodesScope.$modelValue[i].type_id != sourceNodeScope.$modelValue.type_id ){
+                return false;
+              }
+            }
+            // Now make sure we put racks in datacenters and not vice versa
             return sourceNodeScope.$modelValue.type_id < destNodesScope.$parent.$modelValue.type_id;
           },
           beforeDrag: function(sourceNodeScope){
