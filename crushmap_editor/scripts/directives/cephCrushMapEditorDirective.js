@@ -243,7 +243,7 @@ angular.module('openattic.extensions')
         $scope.addBucket = function(btype){
           $scope.cluster.crushmap.crushmap.buckets.unshift({
             $editing:  true,
-            id:        -1,
+            id:        new Date().toJSON(),
             alg:       "straw",
             hash:      "rjenkins",
             items:     [],
