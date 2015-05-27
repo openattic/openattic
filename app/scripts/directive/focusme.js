@@ -12,7 +12,7 @@ angular.module('openattic')
           }
         });
         element.bind('blur', function() {
-           scope.$apply(model.assign(scope, false));
+          scope.$apply(model.assign(scope, false));
         });
       }
     };
