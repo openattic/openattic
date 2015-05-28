@@ -1,6 +1,7 @@
 'use strict';
 angular.module('openattic', [
   'ngResource',
+  'ngSanitize',
   'ui.router',
   'ui.bootstrap',
   'ui.sortable',
