@@ -13,10 +13,13 @@ describe('Should create a Snapshot', function(){
     volumesItem.click();
   });
 
-  helpers.create_blockvol();
-  
   require('./snapshot_workflow.e2e.js');
   
+  it('should create a btrfs volume', function(){
+    helpers.create_volume("btrfs");    
+  });
+  
+  //TODO: replace function
   helpers.create_snapshot();
   
   it('should display the snapshot in the snapshots overview panel', function(){
