@@ -488,7 +488,7 @@ class LogicalVolume(BlockVolume):
             # Find the snapshot with the least space left
             for snapshot_so in self.storageobj.snapshot_storageobject_set.all():
                 snapstats = snapshot_so.get_volume_usage()
-                if snapstats["free"] < snap_free_space:
+                if "free" in snapstats and snapstats["free"] < snap_free_space:
                     snap_free_space  = snapstats["free"]
                     snap_used_space  = snapstats["used"]
                     snap_used_create = snapstats["used"] # TODO: use snapshot_so.usedmegs_at_create
