@@ -79,26 +79,33 @@
                             </div>
                             <div class="form-group">
                                 <div class="col-sm-offset-2 col-sm-10">
-                                    <checkbox ng-model="user.is_active" name="active" id="userActive"></checkbox>
-                                    <label>
-                                        Is active
-                                    </label>
+                                    <div class="checkbox checkbox-primary">
+                                        <input type="checkbox" ng-model="user.is_active" name="active" id="userActive">
+                                        <label>
+                                            Is active
+                                        </label>
+                                    </div>
                                 </div>
                             </div>
                             <div class="form-group">
                                 <div class="col-sm-offset-2 col-sm-10">
-                                    <checkbox ng-model="user.is_staff" name="staff" id="userStaff"></checkbox>
-                                    <label>
-                                        Is administrator
-                                    </label>
+                                    <div class="checkbox checkbox-primary">
+                                        <input type="checkbox" ng-model="user.is_staff" name="staff" id="userStaff">
+                                        <label>
+                                            Is administrator
+                                        </label>
+                                    </div>
                                 </div>
                             </div>
                             <div class="form-group">
                                 <div class="col-sm-offset-2 col-sm-10">
-                                    <checkbox ng-model="user.is_superuser" name="superuser" id="userSuperuser"></checkbox>
-                                    <label>
-                                        Has all privileges
-                                    </label>
+                                    <div class="checkbox checkbox-primary">
+                                        <input type="checkbox" ng-model="user.is_superuser" name="superuser"
+                                               id="userSuperuser">
+                                        <label>
+                                            Has all privileges
+                                        </label>
+                                    </div>
                                 </div>
                             </div>
                         </fieldset>
