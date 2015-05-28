@@ -51,20 +51,6 @@ angular.module('openattic.extensions')
           }
         });
 
-        $scope.$watch('activeRuleset', function(activeRuleset){
-          // Standard (non-deep) watcher
-          $scope.newstepset = {
-            take:       $scope.findNodeByName('default'),
-            acrosstype: $scope.findTypeByName('host'),
-            groupbytype: null,
-            num:        0,
-          };
-          $scope.replicas_pos = 1;
-          $scope.replicas_neg = 1;
-          $scope.replicas_source = 'fix';
-          $scope.addnewrule = false;
-        }, false);
-
         var rerenderNodes = function(){
           // deep watcher that keeps track of min/max sanity etc
           var resetNodes, renderNodes, rendersteps, s, step, stepset, init, prevStepCount;
@@ -102,10 +88,10 @@ angular.module('openattic.extensions')
                 stepset.take = $scope.findNodeByName(step.item_name);
               }
               else if( step.op === 'choose_firstn' ){
-                stepset.groupbytype = step.type;
+                stepset.groupbytype = $scope.findTypeByName(step.type);
               }
               else if( step.op === 'chooseleaf_firstn' ){
-                stepset.acrosstype = step.type;
+                stepset.acrosstype = $scope.findTypeByName(step.type);
                 stepset.num = step.num;
                 stepset.replicas = $scope.getRealNum(stepset);
               }
@@ -215,18 +201,6 @@ angular.module('openattic.extensions')
           }
         };
 
-        $scope.$watchGroup(['replicas_source', 'replicas_pos', 'replicas_neg'], function(){
-          if($scope.replicas_source == 'fix'){
-            $scope.newstepset.num = 0;
-          }
-          else if($scope.replicas_source == 'pos'){
-            $scope.newstepset.num = $scope.replicas_pos;
-          }
-          else if($scope.replicas_source == 'neg'){
-            $scope.newstepset.num = -$scope.replicas_neg;
-          }
-        });
-
         $scope.getRealNum = function(step){
           if( !step ) return;
           if( step.num <= 0 ){
@@ -296,6 +270,35 @@ angular.module('openattic.extensions')
             iterfn($scope.cluster.crushmap.crushmap.buckets);
           }
         };
+
+        $scope.addRuleset = function(){
+          $scope.cluster.crushmap.crushmap.rules.push({
+            type:      1,
+            max_size:  5,
+            min_size:  3,
+            rule_id:   new Date().toJSON(),
+            rule_name: 'New Rule',
+            ruleset:   new Date().toJSON(),
+            steps:     [
+              { op: 'take', item: -1, item_name: 'default' },
+              { op: 'chooseleaf_firstn', num: 0, type: 'host' },
+              { op: 'emit' }
+            ]
+          });
+        };
+
+        $scope.addStepset = function(){
+          $scope.stepsets.push({
+            take:       $scope.findNodeByName('default'),
+            acrosstype: $scope.findTypeByName('host'),
+            num:        0
+          });
+        };
+
+        $scope.deleteRuleset = function(ruleset){
+          $scope.cluster.crushmap.crushmap.rules.splice(
+            $scope.cluster.crushmap.crushmap.rules.indexOf(ruleset), 1);
+        }
       }
     };
   });

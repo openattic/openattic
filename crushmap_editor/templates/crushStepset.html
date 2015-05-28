@@ -1,0 +1,58 @@
+<!-- kate: space-indent on; indent-width 4; replace-tabs on; -->
+<p ng-hide="editing">
+    Place {{ stepset|humanizeRuleNum:rule }}
+    replica<span ng-show="getRealNum(stepset).max && getRealNum(stepset).max > 1">s on different {{ stepset.acrosstype.name }}s</span>
+    <span ng-show="stepset.groupbytype">in the same {{ stepset.groupbytype }}</span>
+    in the {{ stepset.take.name }} {{ stepset.take.type_name === 'root' ? 'tree' : stepset.take.type_name }}.
+    <i class="fa fa-pencil" ng-click="editing = !editing"></i>
+</p>
+<span ng-show="editing">
+    Place
+    <button
+        class="btn btn-default"
+        ng-class="{ active: editreplicas }"
+        ng-click="editreplicas = !editreplicas">
+        {{ stepset|humanizeRuleNum:rule }}
+    </button>
+    <div class="well" ng-show="editreplicas">
+        <div class="radio">
+            <input type="radio" name="repsz" id="repsz0" ng-model="replicas_source" value="fix" />
+            <label for="repsz0">all replicas</label>
+        </div>
+        <div class="radio form-inline">
+            <input type="radio" name="repsz" id="repszPos" ng-model="replicas_source" value="pos" />
+            <label for="repszPos">exactly</label>
+            <input type="number" class="form-control input-small" id="repszNumPos"
+                ng-disabled="replicas_source != 'pos'"
+                ng-model="replicas_pos" />
+            replicas
+        </div>
+        <div class="radio form-inline">
+            <input type="radio" name="repsz" id="repszNeg" ng-model="replicas_source" value="neg" />
+            <label for="repszNeg">all but</label>
+            <input type="number" class="form-control input-small" id="repszNumNeg"
+                ng-disabled="replicas_source != 'neg'"
+                ng-model="replicas_neg" />
+            replicas
+        </div>
+    </div>
+    replicas on different
+    <span class="dropdown">
+        <button
+            class="btn btn-default dropdown-toggle" data-toggle="dropdown">
+            {{ stepset.acrosstype.name }}s <span class="caret"></span>
+        </button>
+        <ul class="dropdown-menu" role="menu">
+            <li ng-repeat="btype in cluster.crushmap.crushmap.types" role="presentation">
+                <a role="menuitem" ng-click="stepset.acrosstype = btype">{{ btype.name }}s</a>
+            </li>
+        </ul>
+    </span>
+    in the
+    <button
+        class="btn btn-default"
+        ng-class="{ active: edittakenode }"
+        ng-click="edittakenode = !edittakenode">
+        {{ stepset.take.name }} {{ stepset.take.type_name === 'root' ? 'tree' : stepset.take.type_name }}.
+    </button>
+</span>
