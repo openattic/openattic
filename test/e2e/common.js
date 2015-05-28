@@ -12,7 +12,28 @@
 
       browser.sleep(configs.sleep);
     },
+ 
+    create_volume: function(type){
+      var volumename = 'protractor_test_volume';
+      element(by.css('oadatatable .tc_add_btn')).click();
 
+      for(var key in configs.pools) {
+        element(by.id('volume.name')).sendKeys(volumename);
+        var pool = configs.pools[key];
+        var volumePoolSelect = element(by.id('data.sourcePool'));
+        volumePoolSelect.click();
+        volumePoolSelect.element(by.cssContainingText('option', pool.name)).click();
+        element(by.id(type)).click();
+
+        element(by.model('data.megs')).sendKeys('100MB');
+        element(by.css('.tc_submitButton')).click();
+        browser.sleep(configs.sleep);
+
+        break;
+      }
+    }, 
+    
+    //TODO: remove create_blockvol / create_fsvol here and in all files which use those functions
     create_blockvol: function(){
       var blockvol = require('./helpers/create_blockvol.e2e.js');
     },
@@ -40,7 +61,7 @@
     delete_snap_clone: function(){
         var delete_snapclone = require('./helpers/delete_snap_clone.e2e.js');
     },
-
+ 
     selectDropdownByIndex: function (dropdown, index) {
       dropdown.click();
       if (index) {
