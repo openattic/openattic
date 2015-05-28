@@ -29,7 +29,7 @@
                     <input type="checkbox" checklist-model="selection.items" checklist-value="row"/>
                 </td>
                 <td ng-show="columns['Command']" ng-bind="row.command"></td>
-                <td ng-show="columns['Text']"><pre ng-bind="(row.text | shortlog)"></pre></td>
+                <td ng-show="columns['Text']"><p ng-bind-html="(row.text | shortlog)"></p></td>
                 <td ng-show="columns['Exitcode']" ng-bind="row.exitcode"></td>
                 <td ng-show="columns['Host']" ng-bind="row.host.title"></td>
                 <td ng-show="columns['Endtime']" ng-bind="row.endtime | date:'short'"></td>
