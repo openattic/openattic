@@ -4,8 +4,9 @@ angular.module('openattic')
     return function(inp) {
       var lines = inp.split('\n');
       if (lines.length <= 5) {
-        return inp;
+        return lines.join('<br />');
       }
-      return [lines[0], lines[1], '...', lines[lines.length - 2], lines[lines.length - 1]].join('\n');
+
+      return [lines[0], lines[1], '...', lines[lines.length - 2], lines[lines.length - 1]].join('<br />');
     };
   });
