@@ -2,7 +2,7 @@
 <p ng-hide="editing">
     Place {{ stepset|humanizeRuleNum:rule }}
     replica<span ng-show="getRealNum(stepset).max && getRealNum(stepset).max > 1">s on different {{ stepset.acrosstype.name }}s</span>
-    <span ng-show="stepset.groupbytype">in the same {{ stepset.groupbytype }}</span>
+    <span ng-show="stepset.groupbytype">in the same {{ stepset.groupbytype.name }}</span>
     in the {{ stepset.take.name }} {{ stepset.take.type_name === 'root' ? 'tree' : stepset.take.type_name }}.
     <i class="fa fa-pencil" ng-click="editing = !editing"></i>
 </p>
