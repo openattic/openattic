@@ -15,6 +15,7 @@ angular.module('openattic', [
   'openattic.sizeparser',
   'openattic.extensions',
   'openattic.todowidget',
+  'openattic.clusterstatuswidget',
   'openattic.oaWizards',
   'openattic.userinfo',
   'openattic.required',

@@ -19,11 +19,18 @@ angular.module('openattic')
     title: 'openATTIC Wizards',
     directive: 'wizardselector',
     enableVerticalResize: false
+  }, {
+    name: 'Cluster Status',
+    title: 'Cluster Status',
+    directive: 'clusterstatuswidget',
+    enableVerticalResize: false,
+    size: {
+      width: '100%'
+    }
   }])
   .value('defaultWidgets', [
-    { name: 'Volume Stats' },
-    { name: 'ToDos' },
-    { name: 'openATTIC Wizards'}
+    { name: 'openATTIC Wizards'},
+    { name: 'Cluster Status'}
   ])
   .controller('DashboardCtrl', function ($scope, $window, widgetDefinitions, defaultWidgets){
     $scope.dashboardOptions = {
