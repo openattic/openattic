@@ -11,7 +11,7 @@
     </div>
     <div class="row" ng-show="volumes.length > 0">
         <div class="col-lg-4" style="min-height: 300px">
-            <table class="table table-striped table-bordered table-hover dataTable">
+            <table class="table table-striped table-bordered table-hover">
                 <tbody>
                 <tr ng-repeat="row in volumes | orderBy:'name'" ng-click="select(row)" ng-class="{ info: selectedVolume == row }">
                     <td title="{{ volumeStatusMsg(row) }}">
