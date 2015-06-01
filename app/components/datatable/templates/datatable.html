@@ -12,21 +12,33 @@
                             <span class="input-group-addon">
                                 <i class="glyphicon glyphicon-search"></i>
                             </span>
-                            <input class="form-control" type="search" ng-model="filterConfig.search" ng-model-options="searchModelOptions" />
+                            <input class="form-control" type="search" ng-model="filterConfig.search"
+                                   ng-model-options="searchModelOptions" />
                     </div>
                 </div>
                 <div class="col-xs-12 col-sm-6">
                     <div class="widget-toolbar">
                         <div class="dataTables_length" >
-                            <button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown" aria-expanded="false">
+                            <button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown"
+                                    aria-expanded="false">
                                 {{ filterConfig.entries }} <span class="caret"></span>
                             </button>
                             <ul class="dropdown-menu arrow-box-up-right pull-right oadatatableshowhidemenu" role="menu">
-                                <li ng-class="{active: filterConfig.entries ===   2}"><a ng-click="filterConfig.entries =   2">   2 </a></li>
-                                <li ng-class="{active: filterConfig.entries ===  10}"><a ng-click="filterConfig.entries =  10">  10 </a></li>
-                                <li ng-class="{active: filterConfig.entries ===  25}"><a ng-click="filterConfig.entries =  25">  25 </a></li>
-                                <li ng-class="{active: filterConfig.entries ===  50}"><a ng-click="filterConfig.entries =  50">  50 </a></li>
-                                <li ng-class="{active: filterConfig.entries === 100}"><a ng-click="filterConfig.entries = 100"> 100 </a></li>
+                                <li ng-class="{active: filterConfig.entries ===   2}">
+                                    <a ng-click="filterConfig.entries =   2">   2 </a>
+                                </li>
+                                <li ng-class="{active: filterConfig.entries ===  10}">
+                                    <a ng-click="filterConfig.entries =  10">  10 </a>
+                                </li>
+                                <li ng-class="{active: filterConfig.entries ===  25}">
+                                    <a ng-click="filterConfig.entries =  25">  25 </a>
+                                </li>
+                                <li ng-class="{active: filterConfig.entries ===  50}">
+                                    <a ng-click="filterConfig.entries =  50">  50 </a>
+                                </li>
+                                <li ng-class="{active: filterConfig.entries === 100}">
+                                    <a ng-click="filterConfig.entries = 100"> 100 </a>
+                                </li>
                             </ul>
                         </div>
                     </div>
@@ -43,7 +55,9 @@
             <div class="dt-toolbar-footer">
                 <div class="col-xs-12 col-sm-6">
                     <div class="dataTables_info" role="status" aria-live="polite">
-                        <span class="text-danger">Showing {{firstEntry}} to {{lastEntry}} of {{totalEntries}} entries</span>
+                        <span class="text-danger">
+                            Showing {{firstEntry}} to {{lastEntry}} of {{totalEntries}} entries
+                        </span>
                     </div>
                 </div>
                 <div class="col-xs-12 col-sm-6">
