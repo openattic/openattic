@@ -34,15 +34,6 @@
       }
     }, 
     
-    //TODO: remove create_blockvol / create_fsvol here and in all files which use those functions
-    create_blockvol: function(){
-      var blockvol = require('./helpers/create_blockvol.e2e.js');
-    },
-    
-    create_fsvol: function(){
-      var fsvol = require('./helpers/create_fsvol.e2e.js');
-    },
- 
     delete_volume: function(){
       var volume = element(by.cssContainingText('tr', volumename));
       volumesItem.click();
