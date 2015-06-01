@@ -2,6 +2,8 @@
 
 (function() {
   var configs = require('./configs.js');
+  var volumesItem = element.all(by.css('ul .tc_menuitem')).get(3);
+  var volumename = 'protractor_test_volume';
   module.exports = {
     configs: configs,
     login: function() {
@@ -14,11 +16,8 @@
     },
  
     create_volume: function(type){
-      var volumesItem = element.all(by.css('ul .tc_menuitem')).get(3);
       volumesItem.click();
-      var volumename = 'protractor_test_volume';
       element(by.css('oadatatable .tc_add_btn')).click();
-
       for(var key in configs.pools) {
         element(by.id('volume.name')).sendKeys(volumename);
         var pool = configs.pools[key];
