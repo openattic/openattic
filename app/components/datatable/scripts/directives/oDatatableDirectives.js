@@ -95,11 +95,6 @@ angular.module('openattic.datatable')
           return $scope.selection.items.slice();
         };
 
-        // TODO: Why is this function on the scope?
-        $scope.watchSelection = function (callback) {
-          return $scope.$watchCollection('selection.items', callback);
-        };
-
         $scope.$watchCollection('selection.items', function () {
           if ($scope.selection.items.length === 1) {
             $scope.selection.item = $scope.selection.items[0];
