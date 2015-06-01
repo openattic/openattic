@@ -8,15 +8,17 @@ describe('Should add a NFS Share', function(){
   //TODO -> shareAddress
   var shareAddress = '172.16.13.19';
   var share = element(by.cssContainingText('td', shareAddress));
+  var volumesItem = element.all(by.css('ul .tc_menuitem')).get(3);  
+  
+  beforeAll(function(){
+    helpers.login();
+    helpers.create_volume("xfs");
+  });
   
   beforeEach(function() {
-    helpers.login(); 
-    var volumesItem = element.all(by.css('ul .tc_menuitem')).get(3);
     volumesItem.click();
   });
 
-  helpers.create_fsvol();
-  
   require('./nfs_share_workflow.e2e.js');
 
   it('should create the NFS share', function(){
@@ -64,6 +66,7 @@ describe('Should add a NFS Share', function(){
     expect(share.isPresent()).toBe(false);      
   });  
   
-  helpers.delete_volume();
-  
+  afterAll(function(){
+    helpers.delete_volume();  
+  });
 });

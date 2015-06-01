@@ -6,15 +6,17 @@ describe('HTTP Share add', function(){
   var volume = element(by.cssContainingText('tr', volumename));
   var share = element(by.css('.tc_http_share'));
   var submitButton = element(by.css('.tc_submitButton'));
+  var volumesItem = element.all(by.css('ul .tc_menuitem')).get(3);
   
-  beforeEach(function(){
+  
+  beforeAll(function(){
     helpers.login();
-    var volumesItem = element.all(by.css('ul .tc_menuitem')).get(3);
-    volumesItem.click();
-
+    helpers.create_volume("xfs");
   });
-  
-  helpers.create_fsvol();
+
+  beforeEach(function(){
+    volumesItem.click();
+  });
   
   require('./http_share_workflow.e2e.js');
   
@@ -67,6 +69,7 @@ describe('HTTP Share add', function(){
     expect(share.isPresent()).toBe(false);
   });
   
-  helpers.delete_volume();
-
+  afterAll(function(){
+    helpers.delete_volume();  
+  });
 });

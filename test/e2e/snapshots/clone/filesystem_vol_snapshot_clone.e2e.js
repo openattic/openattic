@@ -12,14 +12,16 @@ describe('should create a clone volume of a snapshot (base: filesystem volume)',
   var clone = element(by.cssContainingText('tr', clonename));
     
   var snapMenuBtn = element.all(by.css('.tc_menudropdown')).get(1);
+  var volumesItem = element.all(by.css('ul .tc_menuitem')).get(3);
   
-  beforeEach(function() {
-    helpers.login(); 
-    var volumesItem = element.all(by.css('ul .tc_menuitem')).get(3);
-    volumesItem.click();
+  beforeAll(function(){
+    helpers.login();
+    helpers.create_volume("xfs");
   });
   
-  helpers.create_fsvol();
+  beforeEach(function() {
+    volumesItem.click();
+  });
   
   helpers.create_snapshot();
   
@@ -36,6 +38,8 @@ describe('should create a clone volume of a snapshot (base: filesystem volume)',
   
   helpers.delete_snapshot();
   
-  helpers.delete_volume();
-    
+  
+  afterAll(function(){
+    helpers.delete_volume();  
+  });
 });

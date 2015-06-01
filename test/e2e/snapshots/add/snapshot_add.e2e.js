@@ -6,24 +6,38 @@ describe('Should create a Snapshot', function(){
   var volume = element(by.cssContainingText('tr', volumename));
   var snapshot = element(by.cssContainingText('tr', snapshotname));
   var submitButton = element(by.css('.tc_submitButton'));
+  var volumesItem = element.all(by.css('ul .tc_menuitem')).get(3);
   
-  beforeEach(function() {
-    helpers.login(); 
-    var volumesItem = element.all(by.css('ul .tc_menuitem')).get(3);
-    volumesItem.click();
+  beforeAll(function() {
+    helpers.login();
+    helpers.create_volume("btrfs");
   });
 
-  require('./snapshot_workflow.e2e.js');
+  //require('./snapshot_workflow.e2e.js');
   
-  it('should create a btrfs volume', function(){
-    helpers.create_volume("btrfs");    
+  beforeEach(function(){
+    volumesItem.click();  
   });
   
-  //TODO: replace function
-  helpers.create_snapshot();
+  it('should create the snapshot "protractor_test_snap"', function(){
+    expect(volume.isDisplayed()).toBe(true);
+    volume.click();
+    browser.sleep(400);
+    element(by.css('.tc_snapshotTab')).click();
+    browser.sleep(400);
+    element(by.css('.tc_snapshotAdd')).click();
+    browser.sleep(400);
+    element(by.id('snap.name')).clear();
+    browser.sleep(400);
+    element(by.model('snap.name')).sendKeys(snapshotname);
+    browser.sleep(400);
+    submitButton.click();
+    browser.sleep(400);
+    
+  });
   
   it('should display the snapshot in the snapshots overview panel', function(){
-    expect(volume.isDisplayed()).toBe(true);
+    expect(volume.isPresent()).toBe(true);
     volume.click();
     browser.sleep(400);
     element(by.css('.tc_snapshotTab')).click();
@@ -31,7 +45,29 @@ describe('Should create a Snapshot', function(){
     expect(snapshot.isPresent()).toBe(true);
   });
   
-  helpers.delete_snapshot();
+  it('should delete the "protractor_test_snap" snapshot', function(){
+    expect(volume.isDisplayed()).toBe(true);
+    volume.click();
+    browser.sleep(400);
+    element(by.css('.tc_snapshotTab')).click();
+    browser.sleep(400);
+    expect(snapshot.isPresent()).toBe(true);
+    snapshot.click();
+    browser.sleep(400);
+    element(by.css('.tc_deleteSnapItem')).click();
+    browser.sleep(400);
+    element(by.id('bot2-Msg1')).click();
+    browser.sleep(400);
+    volume.click();
+    browser.sleep(400);
+    element(by.css('.tc_snapshotTab')).click();
+    browser.sleep(400);
+    expect(snapshot.isPresent()).toBe(false);
+    browser.sleep(400);      
+  });
 
-  helpers.delete_volume();
+  afterAll(function(){
+    helpers.delete_volume();  
+  });
+  
 });
