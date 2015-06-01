@@ -44,7 +44,19 @@
     },
  
     delete_volume: function(){
-      var del_vol = require('./helpers/delete_protractor_test_volume.e2e.js');
+      var volume = element(by.cssContainingText('tr', volumename));
+      volumesItem.click();
+      browser.sleep(400);
+      volume.click();
+      browser.sleep(400);
+      element(by.css('.tc_menudropdown')).click();
+      browser.sleep(400);
+      element(by.css('.tc_deleteItem')).click();
+      browser.sleep(400);
+
+      element(by.model('input.enteredName')).sendKeys(volumename);
+      element(by.id('bot2-Msg1')).click();    
+      expect(volume.isPresent()).toBe(false);
     },
  
     create_snapshot: function(){
