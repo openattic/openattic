@@ -14,6 +14,8 @@
     },
  
     create_volume: function(type){
+      var volumesItem = element.all(by.css('ul .tc_menuitem')).get(3);
+      volumesItem.click();
       var volumename = 'protractor_test_volume';
       element(by.css('oadatatable .tc_add_btn')).click();
 
