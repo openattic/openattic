@@ -1,8 +1,11 @@
 exports.config = {
+    
   seleniumAddress: 'http://localhost:4444/wd/hub',
   jasmineNodeOpts: {
     defaultTimeoutInterval: 360000
   },
+  framework: 'jasmine2',
+  
   suites: {
     dashboard         : 'test/e2e/dashboard/**/*.e2e.js',
     todowidget        : 'test/e2e/dashboard/todoWidget/*.e2e.js',
@@ -16,5 +19,9 @@ exports.config = {
     http_share_add    : 'test/e2e/shares/http/*.e2e.js',
     nfs_share_add     : 'test/e2e/shares/nfs/*.e2e.js',
     hosts             : 'test/e2e/hosts/**/*.e2e.js',
-  }
+  },
+  
+  onPrepare: function(){
+    browser.driver.manage().window().maximize();
+  },
 };
