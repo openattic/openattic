@@ -6,6 +6,7 @@ syntax: glob
 *.pyc
 *.swo
 *.png
+*.iml
 *~
 .pc/
 
