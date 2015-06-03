@@ -9,4 +9,5 @@ coverage
 npm-debug.log
 *.orig
 *.swp
+*.iml
 test/e2e/configs.js
