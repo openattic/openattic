@@ -59,11 +59,13 @@
                 </header>
                 <div role="content" class="no-padding">
                     <div class="widget-content"></div>
-                    <div class="widget-ew-resizer" ng-mousedown="grabResizer($event)"></div>
+                    <div ng-if="!widget.settingsModalOptions.lockHorizontalResize" class="widget-ew-resizer"
+                         ng-mousedown="grabResizer($event)"></div>
                     <div ng-if="widget.enableVerticalResize" class="widget-s-resizer"
                          ng-mousedown="grabSouthResizer($event)"></div>
                 </div>
             </div>
         </div>
     </div>
+
 </div>

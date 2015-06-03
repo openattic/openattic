@@ -86,7 +86,7 @@ describe('Volumes add', function() {
       volumepoolSelect.element(by.cssContainingText('option', pool.name)).click();
 
       expect(element(by.css('.tc_poolAvailableSize')).isDisplayed()).toBe(true);
-      expect(element(by.css('.tc_poolAvailableSize')).getText()).toEqual(pool.size.toFixed(2) + pool.unit + ' available');
+      expect(element(by.css('.tc_poolAvailableSize')).getText()).toEqual(pool.size.toFixed(2) + pool.unit + ' free');
     }
   });
 
