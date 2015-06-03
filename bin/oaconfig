@@ -260,6 +260,8 @@ case $1 in
 			exit 1
 		fi
 		
+		apt-get install -y openattic-auth-kerberos
+		
 		echo "Updating krb5.conf..."
 		<<EOF cat > /etc/krb5.conf
 [libdefaults]
