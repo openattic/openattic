@@ -26,9 +26,9 @@ angular.module('openattic')
             return true;
           }
 
-          var megs = SizeParserService.parseInt(modelValue),
-              maxv = parseInt(scope.maxValue, 10),
-              minv = parseInt(scope.minValue, 10) || 100;
+          var megs = SizeParserService.parseFloat(modelValue),
+              maxv = parseFloat(scope.maxValue),
+              minv = parseFloat(scope.minValue) || 100;
 
           return !maxv || megs >= minv && megs <= maxv;
         };
