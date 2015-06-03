@@ -16,6 +16,8 @@
 
 from rest_framework import serializers, viewsets
 from rest_framework.reverse import reverse
+from rest_framework.response import Response
+from rest_framework.decorators import detail_route
 
 from nagios.models import Service, Graph
 from rest import relations
@@ -59,11 +61,42 @@ class ServiceSerializer(serializers.HyperlinkedModelSerializer):
         except SystemError:
             return None
 
+
 class ServiceViewSet(viewsets.ReadOnlyModelViewSet):
     queryset = Service.objects.all()
     serializer_class = ServiceSerializer
     filter_fields = ('host__name', 'description')
     search_fields = ('host__name', 'description')
+
+    @detail_route()
+    def fetch(self, request, *args, **kwargs):
+        obj = self.get_object()
+        rrd = obj.rrd
+        srcname = request.GET["srcname"]
+        try:
+            start  = int(request.GET.get("start",  rrd.last_check - 24*60*60))
+            end    = int(request.GET.get("end",    rrd.last_check))
+
+            # Accept negative numbers for start and end by interpreting them as
+            # "x seconds before last_check". The numbers are negative already,
+            # so we need to ADD them.
+            if end <= 0:
+                end = rrd.last_check + end
+            if start <= 0:
+                start = rrd.last_check + start
+
+            if start <= 0:
+                raise ValueError("start date must be greater than zero")
+            if end <= 0:
+                raise ValueError("end date must be greater than zero")
+
+        except ValueError, err:
+            print >> sys.stderr, unicode(err)
+            raise Http404("Invalid start or end specified")
+
+        return Response(rrd.fetch(srcname, start, end))
+
+
 
 RESTAPI_VIEWSETS = [
     ('services', ServiceViewSet),

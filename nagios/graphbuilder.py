@@ -652,6 +652,59 @@ class RRD(object):
     def service_description(self):
         return self.xml.getElementsByTagName("NAGIOS_DISP_SERVICEDESC")[0].childNodes[0].nodeValue
 
+    def fetch(self, srcname, start, end):
+        args = [
+            "rrdtool", "fetch", "--start", str(int(start)), "--end", str(int(end)),
+            self.rrdpaths[srcname], "AVERAGE"
+        ]
+        #print '"' + '" "'.join(args).encode("utf-8") + '"'
+        rrdtool = subprocess.Popen([arg.encode("utf-8") for arg in args],
+                                   stdout=subprocess.PIPE, stderr=subprocess.PIPE,
+                                   cwd=nagios_settings.RRD_BASEDIR, env={"LANG": "C"})
+        out, err = rrdtool.communicate()
+        if err:
+            logging.error('"' + '" "'.join(self.args).encode("utf-8") + '"')
+            logging.error(err)
+
+        # RRDtool will now dump all data in the given rrd, regardless of source.
+        # So maybe we get only the source we asked for or maybe we get everything,
+        # depending on the PNP template.
+        #
+        # Format:
+        #                1           2           3
+        # <empty line>
+        # timestamp      0.1234e5    0.1234e5    0.1234e5
+
+        values = []
+        parsing_values = False
+        datacolumns = []
+        for line in out.split("\n"):
+            if not line:
+                if not parsing_values:
+                    parsing_values = True
+                continue
+
+            if not parsing_values:
+                dsnames = line.split()
+                if len(dsnames) == 1:
+                    datacolumns.append(srcname)
+                else:
+                    for dsname in dsnames:
+                        # find out which srcname belongs to this ds name
+                        for rrd_srcname, rrd_dsname in self.sources.iteritems():
+                            if str(rrd_dsname) == dsname:
+                                datacolumns.append(rrd_srcname)
+
+            else:
+                timestamp, data = line.split(": ")
+                data_values = data.split()
+                values.append(dict(
+                    zip(datacolumns, [ float(dv) for dv in data_values ]),
+                    t = int(timestamp)
+                ) )
+
+        return values
+
 
 class Graph(object):
     def __init__(self):
