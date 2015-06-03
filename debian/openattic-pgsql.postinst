@@ -27,11 +27,6 @@ if [ "$1" = "configure" ] ; then
             dpkg-statoverride --update --add openattic openattic "0640" "$INIFILE"
     fi
 
-    dbconfig-generate-include -f template \
-        -o template_infile=/etc/openattic/databases/nss_pgsql_template.conf \
-        /etc/dbconfig-common/openattic.conf \
-        /etc/nss-pgsql.conf
-
     rm -f /var/lib/openattic/database-unconfigured
 fi
 

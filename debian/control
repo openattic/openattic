@@ -52,7 +52,7 @@ Description: Comprehensive storage management system
 Package: openattic-pgsql
 Architecture: all
 Depends: ${misc:Depends}, python-psycopg2, openattic-base,
- dbconfig-common, postgresql-client, libnss-pgsql2, postgresql-contrib
+ dbconfig-common, postgresql-client, postgresql-contrib
 Recommends: postgresql
 Conflicts: openattic-mysql
 Description: PGSQL database for openATTIC
