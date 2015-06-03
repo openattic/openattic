@@ -52,8 +52,8 @@ Description: Comprehensive storage management system
 Package: openattic-pgsql
 Architecture: all
 Depends: ${misc:Depends}, python-psycopg2, openattic-base,
- dbconfig-common, postgresql, libnss-pgsql2, postgresql-contrib
-Recommends: postgresql-client
+ dbconfig-common, postgresql-client, libnss-pgsql2, postgresql-contrib
+Recommends: postgresql
 Conflicts: openattic-mysql
 Description: PGSQL database for openATTIC
  openATTIC is a storage management system based upon Open Source tools with
