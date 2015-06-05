@@ -94,7 +94,6 @@ class Cluster(StorageObject):
         return "'%s' (%s)" % (self.name, self.uuid)
 
     def set_crushmap(self, crushtree):
-        crushmap = dict(crushtree, buckets=[])
         buckets = crushtree["buckets"][:]
         parentbucket = {}
         ceph = get_dbus_object("/ceph")
@@ -107,14 +106,9 @@ class Cluster(StorageObject):
                 if cbucket["id"] in parentbucket:
                     print "make move %s %s=%s" % (cbucket["name"], parentbucket[cbucket["id"]]["type_name"], parentbucket[cbucket["id"]]["name"])
                     ceph.osd_crush_move(self.name, cbucket["name"], parentbucket[cbucket["id"]]["type_name"], parentbucket[cbucket["id"]]["name"])
-                crushmap["buckets"].append(dict(cbucket, items=[
-                    {"pos": i, "weight": item["weight"], "id": item["id"]}
-                    for (i, item) in enumerate(cbucket["items"])
-                ]))
                 for member in cbucket["items"]:
                     parentbucket[member["id"]] = cbucket
                 buckets.extend(cbucket["items"])
-        return crushmap
 
 
 class CrushmapVersion(models.Model):
