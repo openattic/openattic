@@ -25,6 +25,7 @@ from django.core.exceptions import ValidationError
 from django.contrib.auth.models import User
 
 from systemd import get_dbus_object, dbus_to_python
+from systemd.helpers import Transaction
 from ifconfig.models import Host
 from volumes.models import StorageObject, FileSystemVolume, VolumePool, BlockVolume
 
@@ -96,19 +97,23 @@ class Cluster(StorageObject):
         crushmap = dict(crushtree, buckets=[])
         buckets = crushtree["buckets"][:]
         parentbucket = {}
-        while buckets:
-            cbucket = buckets.pop(0)
-            if type(cbucket["id"]) is not int:
-                print "make bucket", cbucket["name"], cbucket["type_name"]
-            if cbucket["id"] in parentbucket:
-                print "make move %s %s=%s" % (cbucket["name"], parentbucket[cbucket["id"]]["type_name"], parentbucket[cbucket["id"]]["name"])
-            crushmap["buckets"].append(dict(cbucket, items=[
-                {"pos": i, "weight": item["weight"], "id": item["id"]}
-                for (i, item) in enumerate(cbucket["items"])
-            ]))
-            for member in cbucket["items"]:
-                parentbucket[member["id"]] = cbucket
-            buckets.extend(cbucket["items"])
+        ceph = get_dbus_object("/ceph")
+        with Transaction():
+            while buckets:
+                cbucket = buckets.pop(0)
+                if type(cbucket["id"]) is not int:
+                    print "make bucket", cbucket["name"], cbucket["type_name"]
+                    ceph.osd_crush_add_bucket(self.name, cbucket["name"], cbucket["type_name"])
+                if cbucket["id"] in parentbucket:
+                    print "make move %s %s=%s" % (cbucket["name"], parentbucket[cbucket["id"]]["type_name"], parentbucket[cbucket["id"]]["name"])
+                    ceph.osd_crush_move(self.name, cbucket["name"], parentbucket[cbucket["id"]]["type_name"], parentbucket[cbucket["id"]]["name"])
+                crushmap["buckets"].append(dict(cbucket, items=[
+                    {"pos": i, "weight": item["weight"], "id": item["id"]}
+                    for (i, item) in enumerate(cbucket["items"])
+                ]))
+                for member in cbucket["items"]:
+                    parentbucket[member["id"]] = cbucket
+                buckets.extend(cbucket["items"])
         return crushmap
 
 
