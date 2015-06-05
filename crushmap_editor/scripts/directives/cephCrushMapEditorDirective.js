@@ -14,6 +14,10 @@ angular.module('openattic.extensions')
         };
         $scope.query();
 
+        $scope.activate = function(){
+          ClusterResource.update({id: $scope.cluster.id}, {crushmap: $scope.cluster.crushmap.crushmap});
+        };
+
         $scope.setActiveRuleset = function(activeRuleset){
           $scope.activeRuleset = activeRuleset;
         };
