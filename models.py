@@ -92,6 +92,20 @@ class Cluster(StorageObject):
     def __unicode__(self):
         return "'%s' (%s)" % (self.name, self.uuid)
 
+    def update_buckets_from_tree(self, crushtree, save=True):
+        crushmap = dict(crushtree, buckets=[])
+        buckets = crushtree["buckets"][:]
+        while buckets:
+            cbucket = buckets.pop(0)
+            crushmap["buckets"].append(dict(cbucket, items=[
+                {"pos": i, "weight": item["weight"], "id": item["id"]}
+                for (i, item) in enumerate(cbucket["items"])
+            ]))
+            buckets.extend(cbucket["items"])
+        if save:
+            self.save()
+        return crushmap
+
 
 class CrushmapVersion(models.Model):
     cluster     = models.ForeignKey(Cluster)
@@ -131,20 +145,6 @@ class CrushmapVersion(models.Model):
                 crushtree["buckets"].append(cbucket)
 
         return crushtree
-
-    def update_from_tree(self, crushtree, save=True):
-        crushmap = dict(crushtree, buckets=[])
-        buckets = crushtree["buckets"][:]
-        while buckets:
-            cbucket = buckets.pop(0)
-            crushmap["buckets"].append(dict(cbucket, items=[
-                {"pos": i, "weight": item["weight"], "id": item["id"]}
-                for (i, item) in enumerate(cbucket["items"])
-            ]))
-            buckets.extend(cbucket["items"])
-        if save:
-            self.save()
-        return crushmap
 
 
 class OSD(models.Model):
