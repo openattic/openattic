@@ -17,6 +17,7 @@
 import django_filters
 
 from rest_framework import serializers, viewsets, status
+from rest_framework.decorators import detail_route
 from rest_framework.response import Response
 
 from rest import relations
@@ -46,12 +47,20 @@ class ClusterSerializer(serializers.HyperlinkedModelSerializer):
     def get_crushmap(self, obj):
         return CrushmapVersionSerializer(obj.get_crushmap(), many=False, read_only=True).data
 
-
 class ClusterViewSet(viewsets.ModelViewSet):
     queryset         = Cluster.objects.all()
     serializer_class = ClusterSerializer
     filter_fields    = ('name',)
     search_fields    = ('name',)
+
+    def update(self, request, *args, **kwargs):
+        cluster = self.get_object()
+
+        if "crushmap" in request.DATA:
+            cluster.set_crushmap(request.DATA["crushmap"])
+
+        cluster_ser = ClusterSerializer(cluster, many=False, context={"request": request})
+        return Response(cluster_ser.data)
 
 
 RESTAPI_VIEWSETS = [

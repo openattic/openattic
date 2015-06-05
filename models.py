@@ -92,18 +92,23 @@ class Cluster(StorageObject):
     def __unicode__(self):
         return "'%s' (%s)" % (self.name, self.uuid)
 
-    def update_buckets_from_tree(self, crushtree, save=True):
+    def set_crushmap(self, crushtree):
         crushmap = dict(crushtree, buckets=[])
         buckets = crushtree["buckets"][:]
+        parentbucket = {}
         while buckets:
             cbucket = buckets.pop(0)
+            if type(cbucket["id"]) is not int:
+                print "make bucket", cbucket["name"], cbucket["type_name"]
+            if cbucket["id"] in parentbucket:
+                print "make move %s %s=%s" % (cbucket["name"], parentbucket[cbucket["id"]]["type_name"], parentbucket[cbucket["id"]]["name"])
             crushmap["buckets"].append(dict(cbucket, items=[
                 {"pos": i, "weight": item["weight"], "id": item["id"]}
                 for (i, item) in enumerate(cbucket["items"])
             ]))
+            for member in cbucket["items"]:
+                parentbucket[member["id"]] = cbucket
             buckets.extend(cbucket["items"])
-        if save:
-            self.save()
         return crushmap
 
 
