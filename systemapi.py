@@ -35,6 +35,14 @@ class SystemD(BasePlugin):
         ret, out, err = self.invoke_ceph(cluster, ["osd", "crush", "dump"], log=False)
         return out
 
+    @deferredmethod(in_signature="sss")
+    def osd_crush_add_bucket(self, cluster, bucketname, buckettype, sender):
+        self.invoke_ceph(cluster, ["osd", "crush", "add-bucket", bucketname, buckettype])
+
+    @deferredmethod(in_signature="ssss")
+    def osd_crush_move(self, cluster, bucketname, parenttype, parentname, sender):
+        self.invoke_ceph(cluster, ["osd", "crush", "move", bucketname, "%s=%s" % (parenttype, parentname)])
+
     @method(in_signature="s", out_signature="s")
     def osd_dump(self, cluster):
         ret, out, err = self.invoke_ceph(cluster, ["osd", "dump"], log=False)
