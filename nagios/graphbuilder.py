@@ -18,6 +18,7 @@
 from __future__ import division
 
 import re
+import math
 import subprocess
 import tokenize
 import hashlib
@@ -698,6 +699,8 @@ class RRD(object):
             else:
                 timestamp, data = line.split(": ")
                 data_values = data.split()
+                if max([ math.isnan(float(dv)) for dv in data_values ]):
+                    continue
                 values.append(dict(
                     zip(datacolumns, [ float(dv) for dv in data_values ]),
                     t = int(timestamp)
