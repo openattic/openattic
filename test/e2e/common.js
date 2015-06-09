@@ -3,7 +3,13 @@
 (function() {
   var configs = require('./configs.js');
   var volumesItem = element.all(by.css('ul .tc_menuitem')).get(3);
+  
   var volumename = 'protractor_test_volume';
+  var volume = element(by.cssContainingText('tr', volumename));
+  
+  var snapshotname = 'protractor_test_snap';
+  var snapshot = element(by.cssContainingText('tr', snapshotname));
+  
   module.exports = {
     configs: configs,
     login: function() {
@@ -35,7 +41,6 @@
     }, 
     
     delete_volume: function(){
-      var volume = element(by.cssContainingText('tr', volumename));
       volumesItem.click();
       browser.sleep(400);
       volume.click();
@@ -51,11 +56,32 @@
     },
  
     create_snapshot: function(){
-      var create_snap = require('./helpers/create_snapshot.e2e.js');
+      expect(volume.isDisplayed()).toBe(true);
+      volume.click();
+      browser.sleep(400);
+      element(by.css('.tc_snapshotTab')).click();
+      browser.sleep(400);
+      element(by.css('.tc_snapshotAdd')).click();
+      browser.sleep(400);
+      element(by.id('snap.name')).clear();
+      browser.sleep(400);
+      element(by.model('snap.name')).sendKeys(snapshotname);
+      browser.sleep(400);
+      element(by.css('.tc_submitButton')).click();      
     },
     
     delete_snapshot: function(){
-      var delete_snap = require('./helpers/delete_snapshot.e2e.js');
+      volume.click();
+      browser.sleep(400);
+      element(by.css('.tc_snapshotTab')).click();
+      browser.sleep(400);
+      expect(snapshot.isPresent()).toBe(true);
+      snapshot.click();
+      browser.sleep(400);
+      element(by.css('.tc_deleteSnapItem')).click();
+      browser.sleep(400);
+      element(by.id('bot2-Msg1')).click();
+      browser.sleep(400);
     },
  
     create_snap_clone: function(){
