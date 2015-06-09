@@ -3,8 +3,7 @@ var helpers = require('../../common.js');
 describe('Should check the snapshot add workflow', function(){
   var volumename = 'protractor_test_volume';
   var volume = element(by.cssContainingText('tr', volumename));
-  var submitButton = element(by.css('.tc_submitButton'));    
-  var volumesItem = element.all(by.css('ul .tc_menuitem')).get(3);
+  //var volumesItem = element.all(by.css('ul .tc_menuitem')).get(3);
 
   beforeEach(function() {
     expect(volume.isDisplayed()).toBe(true);
@@ -62,7 +61,7 @@ describe('Should check the snapshot add workflow', function(){
   it('should show required field errors if the submit button is clicked without any input data', function(){
     element(by.id('snap.name')).clear();
     element(by.id('megs')).clear();
-    submitButton.click();
+    element(by.css('.tc_submitButton')).click();
 
     expect(element(by.css('.tc_nameRequired')).isDisplayed()).toBe(true);
     expect(element(by.css('.tc_sizeRequired')).isDisplayed()).toBe(true);
