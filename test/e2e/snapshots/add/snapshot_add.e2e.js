@@ -10,10 +10,10 @@ describe('Should create a Snapshot', function(){
   
   beforeAll(function() {
     helpers.login();
-    helpers.create_volume("btrfs");
+    helpers.create_volume("xfs");
   });
 
-  //require('./snapshot_workflow.e2e.js');
+  require('./snapshot_workflow.e2e.js');
   
   beforeEach(function(){
     volumesItem.click();  
