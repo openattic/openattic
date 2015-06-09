@@ -16,17 +16,11 @@ describe('should create a clone volume of a snapshot (base: filesystem volume)',
   
   beforeAll(function(){
     helpers.login();
-    helpers.create_volume("xfs");
-  });
-  
-  beforeEach(function() {
     volumesItem.click();
+    helpers.create_volume("xfs");
+    helpers.create_snapshot();
+    helpers.create_snap_clone();
   });
-  
-  helpers.create_snapshot();
-  
-  helpers.create_snap_clone();
-  browser.sleep(600);
   
   
   it('should display the clone in the volumes list', function(){
@@ -34,12 +28,12 @@ describe('should create a clone volume of a snapshot (base: filesystem volume)',
     expect(clone.isDisplayed()).toBe(true);
   });
   
-  helpers.delete_snap_clone();  
-  
-  helpers.delete_snapshot();
   
   
   afterAll(function(){
-    helpers.delete_volume();  
+    helpers.delete_snapshot();
+    helpers.delete_snap_clone();
+    helpers.delete_volume();
   });
+  
 });

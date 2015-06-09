@@ -1,6 +1,7 @@
 'use strict';
 
 (function() {
+
   var configs = require('./configs.js');
   var volumesItem = element.all(by.css('ul .tc_menuitem')).get(3);
   
@@ -9,6 +10,9 @@
   
   var snapshotname = 'protractor_test_snap';
   var snapshot = element(by.cssContainingText('tr', snapshotname));
+  
+  var clonename ="protractor_test_clone";
+  var clone = element(by.cssContainingText('tr', clonename));  
   
   module.exports = {
     configs: configs,
@@ -85,11 +89,31 @@
     },
  
     create_snap_clone: function(){
-        var create_snapclone = require('./helpers/create_snap_clone.e2e.js');
+      volume.click();
+      browser.sleep(400);
+      element(by.css('.tc_snapshotTab')).click();
+      browser.sleep(400);
+      expect(snapshot.isDisplayed()).toBe(true);
+      snapshot.click();
+      element.all(by.css('.tc_menudropdown')).get(1).click();
+      browser.sleep(400);
+      element(by.css('.tc_snap_clone')).click();
+      browser.sleep(400);
+      element(by.model('clone_obj.name')).sendKeys(clonename);
+      element(by.id('bot2-Msg1')).click();
+      browser.sleep(800);
     },
  
     delete_snap_clone: function(){
-        var delete_snapclone = require('./helpers/delete_snap_clone.e2e.js');
+      clone.click();
+      browser.sleep(400);
+      element(by.css('.tc_menudropdown')).click();
+      browser.sleep(400);
+      element(by.css('.tc_deleteItem')).click();
+      browser.sleep(400);
+
+      element(by.model('input.enteredName')).sendKeys(clonename);
+      element(by.id('bot2-Msg1')).click();      
     },
  
     selectDropdownByIndex: function (dropdown, index) {
