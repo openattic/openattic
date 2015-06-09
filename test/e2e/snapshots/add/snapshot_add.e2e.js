@@ -5,7 +5,6 @@ describe('Should create a Snapshot', function(){
   var snapshotname = 'protractor_test_snap';
   var volume = element(by.cssContainingText('tr', volumename));
   var snapshot = element(by.cssContainingText('tr', snapshotname));
-  var submitButton = element(by.css('.tc_submitButton'));
   var volumesItem = element.all(by.css('ul .tc_menuitem')).get(3);
   
   beforeAll(function() {
@@ -31,7 +30,7 @@ describe('Should create a Snapshot', function(){
     browser.sleep(400);
     element(by.model('snap.name')).sendKeys(snapshotname);
     browser.sleep(400);
-    submitButton.click();
+    element(by.css('.tc_submitButton')).click();
     browser.sleep(400);
     
   });
