@@ -4,11 +4,9 @@ describe('HTTP Share workflow', function(){
   
   var volumename = 'protractor_test_volume';
   var volume = element(by.cssContainingText('tr', volumename));
-  var submitButton = element(by.css('.tc_submitButton'));
   var volumesItem = element.all(by.css('ul .tc_menuitem')).get(3);
  
   beforeEach(function(){
-    
     volumesItem.click();
     expect(volume.isDisplayed()).toBe(true);
     volume.click();
@@ -37,7 +35,7 @@ describe('HTTP Share workflow', function(){
   
   it('should show an error message when hitting the submit button without any data', function(){
     element(by.id('sharePath')).clear();
-    submitButton.click();
+    element(by.css('.tc_submitButton')).click();
     expect(element(by.css('.tc_pathRequired')).isDisplayed()).toBe(true);
   });
   
