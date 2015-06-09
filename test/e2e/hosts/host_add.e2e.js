@@ -6,7 +6,6 @@ describe('Should add a host and attributes', function(){
   var host = element(by.cssContainingText('tr', hostname));
   var hostsItem = element.all(by.css('ul .tc_menuitem')).get(4);
 
-
   beforeAll(function(){
     helpers.login();
     hostsItem.click();
@@ -31,6 +30,6 @@ describe('Should add a host and attributes', function(){
     browser.sleep(400);
     element(by.css('.tc_deleteHost')).click();
     browser.sleep(400);
-    element(by.id('bot2-Msg1')).click();        
+    element(by.id('bot2-Msg1')).click();
   });
 });
