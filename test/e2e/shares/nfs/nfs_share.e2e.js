@@ -4,21 +4,17 @@ describe('Should add a NFS Share', function(){
   
   var volumename = 'protractor_test_volume';
   var volume = element(by.cssContainingText('tr', volumename));
-  var submitButton = element(by.css('.tc_submitButton'));
   //TODO -> shareAddress
-  var shareAddress = '172.16.13.19';
+  var shareAddress = 'srvoademo';
   var share = element(by.cssContainingText('td', shareAddress));
   var volumesItem = element.all(by.css('ul .tc_menuitem')).get(3);  
   
   beforeAll(function(){
     helpers.login();
+    volumesItem.click();
     helpers.create_volume("xfs");
   });
   
-  beforeEach(function() {
-    volumesItem.click();
-  });
-
   require('./nfs_share_workflow.e2e.js');
 
   it('should create the NFS share', function(){
@@ -31,7 +27,7 @@ describe('Should add a NFS Share', function(){
     browser.sleep(400);      
     element(by.model('share.address')).sendKeys(shareAddress);
     browser.sleep();
-    submitButton.click();
+    element(by.css('.tc_submitButton')).click();
   });
 
   it('should display the NFS share in the NFS panel', function(){
