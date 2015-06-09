@@ -83,6 +83,4 @@ describe('should create a clone volume of a snapshot (base: blockvolume)', funct
     helpers.delete_volume();
     
   });
-  
-    
 });
