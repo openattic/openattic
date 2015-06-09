@@ -3,13 +3,10 @@ var helpers = require('../../common.js');
 describe('Should check the snapshot add workflow', function(){
   var volumename = 'protractor_test_volume';
   var volume = element(by.cssContainingText('tr', volumename));
-  var snapshotname = 'protractor_test_snap';
-  var snapshot = element(by.cssContainingText('tr', snapshotname));
   var submitButton = element(by.css('.tc_submitButton'));    
   var volumesItem = element.all(by.css('ul .tc_menuitem')).get(3);
-  
+
   beforeEach(function() {
-    volumesItem.click();
     expect(volume.isDisplayed()).toBe(true);
     volume.click();
     browser.sleep(400);
@@ -53,7 +50,7 @@ describe('Should check the snapshot add workflow', function(){
   //     expect(snapname.getAttribute('value')).to ?
   //   });
 
-  //test if given megs value is origin vol size
+  //test if given megs value is origin vol size -> TODO fix Task OP-441
   it('given megs should match to the origin volume size', function(){
     //we need the volume.megs here
     var volmegs = '100';
@@ -70,19 +67,37 @@ describe('Should check the snapshot add workflow', function(){
     expect(element(by.css('.tc_nameRequired')).isDisplayed()).toBe(true);
     expect(element(by.css('.tc_sizeRequired')).isDisplayed()).toBe(true);
   });
+  
+  
+  //TODO fix Task OP-467
+  it('should allow a snapshot size that is as big as the selected pool capacity', function(){
+    var snapSizeInput = element(by.model('megs'));
 
+    for(var key in helpers.configs.pools) {
+      var pool = helpers.configs.pools[key];
+      var pool_size = element(by.id('megs')).evaluate('pool.usage.max_new_fsv_text').then(function(psize){
+        console.log(psize);
+        snapSizeInput.clear().sendKeys(psize); 
+      });
+      
+      browser.sleep(400);
+      expect(element(by.css('.tc_sizeExceeded')).isDisplayed()).toBe(false);
+      
+      break;
+    }
+  });    
+  
   it('should show an error message when the given snapshot size is bigger than the source pool', function(){
-    var volumepool = element(by.model('data.sourcePool'));
     var snapSizeInput = element(by.model('megs'));
     for(var key in helpers.configs.pools) {
       var pool = helpers.configs.pools[key];
       var snapSize = (pool.size + 0.1).toFixed(2);
       snapSizeInput.clear().sendKeys(snapSize + pool.unit);
+      browser.sleep(400);
       expect(element(by.css('.tc_sizeExceeded')).isDisplayed()).toBe(true);
       
       break;
     }    
-    
   });
 });  
 
