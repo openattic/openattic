@@ -16,14 +16,11 @@ describe('should create a clone volume of a snapshot (base: blockvolume)', funct
   
   beforeAll(function(){
     helpers.login();
-    helpers.create_volume("LUN");
-  });
-  
-  beforeEach(function() {
     volumesItem.click();
+    helpers.create_volume("lun");
+    helpers.create_snapshot();
+    
   });
-  
-  helpers.create_snapshot();
   
   it('should not allow spaces or additional characters', function(){
     expect(volume.isDisplayed()).toBe(true);
@@ -58,7 +55,9 @@ describe('should create a clone volume of a snapshot (base: blockvolume)', funct
   helpers.delete_snapshot();
   
   afterAll(function(){
-    helpers.delete_volume();  
+    helpers.delete_snapshot();
+    helpers.delete_volume();
+    
   });
   
     
