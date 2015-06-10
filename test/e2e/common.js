@@ -4,6 +4,7 @@
 
   var configs = require('./configs.js');
   var volumesItem = element.all(by.css('ul .tc_menuitem')).get(3);
+  var hostsItem = element.all(by.css('ul .tc_menuitem')).get(4);
   
   var volumename = 'protractor_test_volume';
   var volume = element(by.cssContainingText('tr', volumename));
@@ -12,7 +13,10 @@
   var snapshot = element(by.cssContainingText('tr', snapshotname));
   
   var clonename ="protractor_test_clone";
-  var clone = element(by.cssContainingText('tr', clonename));  
+  var clone = element(by.cssContainingText('tr', clonename));
+  
+  var hostname ="protractor_test_host";
+  var host = element(by.cssContainingText('tr', hostname));
   
   module.exports = {
     configs: configs,
@@ -114,6 +118,25 @@
 
       element(by.model('input.enteredName')).sendKeys(clonename);
       element(by.id('bot2-Msg1')).click();      
+    },
+ 
+    create_host: function(){
+      element.all(by.css('ul .tc_menuitem')).get(4).click();
+      element(by.css('.tc_addHost')).click();
+      element(by.model('host.name')).sendKeys(hostname);
+      element(by.css('.tc_submitButton')).click();
+      browser.sleep(400);        
+    },
+ 
+    delete_host: function(){
+      hostsItem.click();
+      host.click();
+      browser.sleep(400);
+      element(by.css('.tc_menudropdown')).click();
+      browser.sleep(400);
+      element(by.css('.tc_deleteHost')).click();
+      browser.sleep(400);
+      element(by.id('bot2-Msg1')).click();                
     },
  
     selectDropdownByIndex: function (dropdown, index) {
