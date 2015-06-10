@@ -15,7 +15,7 @@
                                     <span class="input-group-addon"><i class="fa fa-share"></i></span>
                                     <input class="form-control" type="text" placeholder="Name..." ng-model="share.name" name="name" id="shareName" required>
                                 </div>
-                                <span class="help-block" ng-show="(submitted || shareForm.name.$dirty)&& shareForm.name.$error.required">
+                                <span class="help-block tc_cifsNameRequired" ng-show="(submitted || shareForm.name.$dirty)&& shareForm.name.$error.required">
                                     The name is required.
                                 </span>
                             </div>
@@ -27,8 +27,8 @@
                                     <span class="input-group-addon"><i class="fa fa-share"></i></span>
                                     <input class="form-control" type="text" placeholder="Path..." ng-model="share.path" name="path" id="sharePath" required>
                                 </div>
-                                <span class="help-block" ng-show="(submitted || shareForm.path.$dirty) && shareForm.path.$error.required">
-                                    The name is required.
+                                <span class="help-block tc_cifsPathRequired" ng-show="(submitted || shareForm.path.$dirty) && shareForm.path.$error.required">
+                                    The path is required.
                                 </span>
                             </div>
                         </div>
@@ -88,10 +88,10 @@
                     </fieldset>
                     <div class="form-group">
                         <div class="pull-right" style="padding: 6px 16px">
-                            <button type="submit" class="btn btn-primary" ng-click="submitAction(shareForm)">
+                            <button type="submit" class="btn btn-primary tc_submitButton" ng-click="submitAction(shareForm)">
                                 Submit
                             </button>
-                            <button type="button" class="btn btn-default" ng-click="cancelAction()">
+                            <button type="button" class="btn btn-default tc_backButton" ng-click="cancelAction()">
                                 Back
                             </button>
                         </div>
