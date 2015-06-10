@@ -9,6 +9,7 @@ nagios/locale     /usr/share/openattic/nagios
 installed_apps.d/50_nagios /usr/share/openattic/installed_apps.d
 
 debian/nagios_conf.d/openattic_static.cfg  /etc/nagios3/conf.d
+debian/nagios_conf.d/openattic_contacts.cfg  /etc/nagios3/conf.d
 debian/nagios_plugins_conf.d/openattic.cfg /etc/nagios-plugins/config
 
 nagios/plugins/check_diskstats          /usr/lib/nagios/plugins
