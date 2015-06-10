@@ -26,7 +26,7 @@ describe('Should add a NFS Share', function(){
     element(by.css('.tc_nfsShareAdd')).click();
     browser.sleep(400);      
     element(by.model('share.address')).sendKeys(shareAddress);
-    browser.sleep();
+    browser.sleep(400);
     element(by.css('.tc_submitButton')).click();
   });
 
