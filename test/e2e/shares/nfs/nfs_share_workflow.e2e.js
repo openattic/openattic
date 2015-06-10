@@ -7,7 +7,7 @@ describe('NFS Share workflow', function(){
   var submitButton = element(by.css('.tc_submitButton'));
   var path = element(by.id('sharePath'));
   var options = element(by.id('shareOptions'));
-  var volumesItem = element.all(by.css('ul .tc_menuitem')).get(3);  
+  var volumesItem = element.all(by.css('ul .tc_menuitem')).get(3);
   
   beforeEach(function(){
     volumesItem.click();
@@ -25,7 +25,7 @@ describe('NFS Share workflow', function(){
   });
   
   it('should have the input field "Path"', function(){
-    expect(element(by.id('sharePath')).isDisplayed()).toBe(true);  
+    expect(element(by.id('sharePath')).isDisplayed()).toBe(true);
   });
 
   it('should have the input field "Address"', function(){
@@ -63,11 +63,11 @@ describe('NFS Share workflow', function(){
 //   });
 
   it('should have a submit button', function(){
-    expect(element(by.css('.tc_submitButton')).isPresent()).toBe(true);  
+    expect(element(by.css('.tc_submitButton')).isPresent()).toBe(true);
   });
   
   it('should have a back button', function(){
-    expect(element(by.css('.tc_backButton')).isPresent()).toBe(true);  
+    expect(element(by.css('.tc_backButton')).isPresent()).toBe(true); 
   });
   
   it('should go back to nfs panel when back button was pressed', function(){
