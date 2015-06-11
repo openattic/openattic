@@ -1,4 +1,4 @@
- 
+
 var helpers = require('../common.js');
 
 describe('Should add a host and attributes', function(){
@@ -10,18 +10,18 @@ describe('Should add a host and attributes', function(){
     helpers.login();
     hostsItem.click();
   });
-  
+
   it('should create a test host', function(){
     element(by.css('.tc_addHost')).click();
     element(by.model('host.name')).sendKeys(hostname);
     element(by.css('.tc_submitButton')).click();
     browser.sleep(400);
   });
-  
+
   it('should display the created test host', function(){
-    expect(host.isPresent()).toBe(true);
+    expect(host.isDisplayed()).toBe(true);
   });
-  
+
   it('should delete the test host', function(){
     expect(host.isDisplayed()).toBe(true);
     host.click();
