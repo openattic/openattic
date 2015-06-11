@@ -3,7 +3,7 @@ var helpers = require('../../common.js');
 describe('Should add a NFS Share', function(){
   
   var volumename = 'protractor_test_volume';
-  var volume = element(by.cssContainingText('tr', volumename));
+  var volume = element.all(by.cssContainingText('tr', volumename)).get(0);
   //TODO -> shareAddress
   var shareAddress = 'srvoademo';
   var share = element(by.cssContainingText('td', shareAddress));
@@ -14,8 +14,6 @@ describe('Should add a NFS Share', function(){
     volumesItem.click();
     helpers.create_volume("xfs");
   });
-  
-  require('./nfs_share_workflow.e2e.js');
 
   it('should create the NFS share', function(){
     expect(volume.isDisplayed()).toBe(true);
