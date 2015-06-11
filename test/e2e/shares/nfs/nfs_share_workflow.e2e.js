@@ -3,11 +3,16 @@ var helpers = require('../../common.js');
 describe('NFS Share workflow', function(){
  
   var volumename = 'protractor_test_volume';
-  var volume = element(by.cssContainingText('tr', volumename));
+  var volume = element.all(by.cssContainingText('tr', volumename)).get(0);
   var submitButton = element(by.css('.tc_submitButton'));
-  var path = element(by.id('sharePath'));
+  var path = element(by.model('share.path'));
   var options = element(by.id('shareOptions'));
   var volumesItem = element.all(by.css('ul .tc_menuitem')).get(3);
+  
+  beforeAll(function(){
+    helpers.login();
+    helpers.create_volume("xfs");
+  });
   
   beforeEach(function(){
     volumesItem.click();
@@ -36,6 +41,7 @@ describe('NFS Share workflow', function(){
     expect(element(by.id('shareOptions')).isDisplayed()).toBe(true); 
   });
 
+  //path changes if volume is i.e. a btrfs vol
   it('should have path field filled in with "/media/protractor_test_volume"', function(){
     expect(path.getAttribute('value')).toEqual("/media/protractor_test_volume");
   });
@@ -75,6 +81,10 @@ describe('NFS Share workflow', function(){
     backButton.click();
     
     expect(element(by.css('.tc_oadatatable_nfs_shares')).isDisplayed()).toBe(true);
+  });
+  
+  afterAll(function(){
+    helpers.delete_volume();    
   });
   
 });
