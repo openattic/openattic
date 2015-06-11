@@ -14,8 +14,6 @@ describe('HTTP Share add', function(){
     helpers.create_volume("xfs");
   });
 
-  require('./http_share_workflow.e2e.js');
-
   function goToHTTPShare(){
     expect(volume.isDisplayed()).toBe(true);
     volume.click();
