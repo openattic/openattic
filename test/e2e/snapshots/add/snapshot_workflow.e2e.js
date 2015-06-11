@@ -3,8 +3,12 @@ var helpers = require('../../common.js');
 describe('Should check the snapshot add workflow', function(){
   var volumename = 'protractor_test_volume';
   var volume = element(by.cssContainingText('tr', volumename));
-  //var volumesItem = element.all(by.css('ul .tc_menuitem')).get(3);
-
+  
+  beforeAll(function(){
+    helpers.login();
+    helpers.create_volume("lun");  
+  });
+  
   beforeEach(function() {
     expect(volume.isDisplayed()).toBe(true);
     volume.click();
@@ -13,7 +17,7 @@ describe('Should check the snapshot add workflow', function(){
     browser.sleep(400);
     element(by.css('.tc_snapshotAdd')).click();
     browser.sleep(400);
-  });  
+  });
 
   it('should a "Create Snapshot" header', function(){
     expect(element(by.css('h2')).getText()).toEqual('Create Snapshot');
@@ -75,7 +79,7 @@ describe('Should check the snapshot add workflow', function(){
     for(var key in helpers.configs.pools) {
       var pool = helpers.configs.pools[key];
       var pool_size = element(by.id('megs')).evaluate('pool.usage.max_new_fsv_text').then(function(psize){
-        console.log(psize);
+        //console.log(psize);
         snapSizeInput.clear().sendKeys(psize); 
       });
       
@@ -98,5 +102,10 @@ describe('Should check the snapshot add workflow', function(){
       break;
     }    
   });
+  
+  afterAll(function(){
+    helpers.delete_volume();    
+  });
+  
 });  
 

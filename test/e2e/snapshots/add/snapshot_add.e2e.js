@@ -12,8 +12,6 @@ describe('Should create a Snapshot', function(){
     helpers.create_volume("xfs");
   });
 
-  require('./snapshot_workflow.e2e.js');
-  
   beforeEach(function(){
     volumesItem.click();  
   });
