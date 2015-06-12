@@ -67,7 +67,7 @@ angular.module('openattic.oaWizards')
         };
         $scope.getWizardItemsClass = function(){
           return 'wizard-nav-items-' + $scope.tabs.length;
-        }
+        };
       }
     };
   });
