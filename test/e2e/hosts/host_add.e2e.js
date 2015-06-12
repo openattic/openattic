@@ -32,4 +32,8 @@ describe('Should add a host and attributes', function(){
     browser.sleep(400);
     element(by.id('bot2-Msg1')).click();
   });
+  
+  it('should not list the host any longer', function(){
+    expect(host.isPresent()).toBe(false);
+  });
 });
