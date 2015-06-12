@@ -39,31 +39,31 @@
                                 </div>
                             </div>
                             <div class="form-group" ng-class="{'has-error': (contentForm1.submitted ||
-                                contentForm1.volumepool.$dirty) && contentForm1.volumepool.$invalid}">
-                                <label class="col-md-2 control-label" for="volumepool">Pool</label>
+                                contentForm1.source_pool.$dirty) && contentForm1.source_pool.$invalid}">
+                                <label class="col-md-2 control-label" for="source_pool">Pool</label>
                                 <div class="col-md-10">
-                                    <select class="form-control" ng-model="input.volume.volumepool"
-                                            id="volumepool" ng-options="(pool.name + ' (' + pool.type.name + ', ' +
+                                    <select class="form-control" ng-model="input.volume.source_pool"
+                                            id="source_pool" ng-options="(pool.name + ' (' + pool.type.name + ', ' +
                                             pool.usage.free_text + ' available)' ) for pool in pools track by pool.id"
-                                            name="volumepool" required>
+                                            name="source_pool" required>
                                         <option class="tc_volumePoolOption" value="">-- Select a pool --</option>
                                     </select>
-                                    <div ng-show="input.volume.volumepool" class="progress-bar-outer clearfix">
+                                    <div ng-show="input.volume.source_pool" class="progress-bar-outer clearfix">
                                         <progressbar max="100" class="progress-striped" value="selPoolUsedPercent">
                                             <span></span>
                                         </progressbar>
                                         <span class="pull-left">
-                                            {{input.volume.volumepool.usage.used_text}} of
-                                            {{input.volume.volumepool.usage.size_text}} used</span>
+                                            {{input.volume.source_pool.usage.used_text}} of
+                                            {{input.volume.source_pool.usage.size_text}} used</span>
                                         <span class="pull-right">
-                                            {{input.volume.volumepool.usage.free_text}} free
+                                            {{input.volume.source_pool.usage.free_text}} free
                                         </span>
                                     </div>
                                     <span class="help-block tc_poolRequired" ng-show="(contentForm1.submitted ||
-                                        contentForm1.volumepool.$dirty) && contentForm1.volumepool.$error.required">
+                                        contentForm1.source_pool.$dirty) && contentForm1.source_pool.$error.required">
                                         This field is required!
                                     </span>
-                                    <span class="help-block" ng-show="contentForm1.volumepool.$error.usablesize">
+                                    <span class="help-block" ng-show="contentForm1.source_pool.$error.usablesize">
                                         The selected volumepool provides less than 100MB free space, so it's not
                                         usable for the new volume.
                                     </span>
@@ -74,10 +74,10 @@
                                 <label class="col-md-2 control-label" for="volumemegs">Size</label>
                                 <div class="col-md-10">
                                     <input class="form-control" type="text" name="volumemegs"
-                                           ng-disabled="input.volume.volumepool == null ||
-                                           input.volume.volumepool.usage.free < 100"
+                                           ng-disabled="input.volume.source_pool == null ||
+                                           input.volume.source_pool.usage.free < 100"
                                            volume-size-format volume-size-value
-                                           max-value="{{input.volume.volumepool.usage.free}}"
+                                           max-value="{{input.volume.source_pool.usage.free}}"
                                            ng-model="input.volume.megs" placeholder="e.g., 10GB"
                                            id="volumemegs" required>
                                     <span class="help-block tc_sizeRequired" ng-show="(contentForm1.submitted ||
@@ -91,7 +91,7 @@
                                     <span class="help-block tc_wrongVolumeSize"
                                           ng-show="contentForm1.volumemegs.$error.volumeSizeValue">
                                         The size must be at least 100MB and must not exceed
-                                        {{input.volume.volumepool.usage.free_text}}.
+                                        {{input.volume.source_pool.usage.free_text}}.
                                     </span>
                                 </div>
                             </div>
