@@ -26,10 +26,10 @@ angular.module('openattic.oaWizards')
         console.log('An error occurred', error);
       });
 
-    $scope.$watch('input.volume.volumepool', function(sourcePool) {
+    $scope.$watch('input.volume.source_pool', function(sourcePool) {
       if(sourcePool){
         $scope.selPoolUsedPercent = parseFloat(sourcePool.usage.used_pcnt).toFixed(2);
-        $scope.contentForm1.volumepool.$setValidity('usablesize', $scope.input.volume.volumepool.usage.free >= 100);
+        $scope.contentForm1.source_pool.$setValidity('usablesize', $scope.input.volume.source_pool.usage.free >= 100);
 
         new PoolService(sourcePool).$filesystems()
           .then(function(res) {
@@ -64,7 +64,7 @@ angular.module('openattic.oaWizards')
         $scope.supported_filesystems = 'Choose a pool first';
 
         if($scope.contentForm1) {
-          $scope.contentForm1.volumepool.$setValidity('usablesize', true);
+          $scope.contentForm1.source_pool.$setValidity('usablesize', true);
         }
       }
     });
