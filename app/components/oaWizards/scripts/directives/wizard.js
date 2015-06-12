@@ -20,7 +20,7 @@ angular.module('openattic.oaWizards')
 
         scope.tabs = tabs;
       },
-      controller: function($scope){
+      controller: function($scope, VolumeService){
         $scope.activeTab = 1;
         $scope.isActiveTab = function(index){
           return $scope.activeTab === index;
@@ -39,6 +39,13 @@ angular.module('openattic.oaWizards')
               $scope.activeTab++;
             }
             else if ($scope.activeTab === $scope.tabs.length) {
+              console.log($scope.input);
+              VolumeService.save($scope.input.volume)
+                .$promise
+                .then(function (res){
+                }, function(error) {
+                  console.log('An error occured', error);
+                });
               // wizard is done e.g. return $scope.input
             }
           }
