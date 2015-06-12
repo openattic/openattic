@@ -26,6 +26,9 @@ angular.module('openattic')
     enableVerticalResize: false,
     size: {
       width: '100%'
+    },
+    settingsModalOptions: {
+      lockHorizontalResize: true,
     }
   }])
   .value('defaultWidgets', [
