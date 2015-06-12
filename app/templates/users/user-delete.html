@@ -1,0 +1,11 @@
+<span class="MsgTitle">Delete Host</span>
+<p class="pText">Do you really want to delete the User "{{user.username}}"?</p>
+<form name="deleteForm" role="form" novalidate>
+    <p class="input-group col-md-4">
+        <div class="MessageBoxButtonSection">
+            <button id="bot1-Msg1" class="btn btn-default btn-sm botTempo" ng-click="cancel()"> Cancel</button>
+            <button id="bot2-Msg1" class="btn btn-default btn-sm botTempo" ng-click="delete()"
+                    ng-disabled="deleteForm.$invalid"> Delete</button>
+        </div>
+    </p>
+</form>

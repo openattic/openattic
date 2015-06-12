@@ -1,5 +1,5 @@
 angular.module('openattic')
-  .controller('UserCtrl', function ($scope, $state, UserService) {
+  .controller('UserCtrl', function ($scope, $state, UserService, $modal) {
     'use strict';
 
     $scope.data = {};
@@ -44,29 +44,18 @@ angular.module('openattic')
     };
 
     $scope.deleteAction = function(){
-      $.SmartMessageBox({
-        title: 'Delete user',
-        content: 'Do you really want to delete the user "' + $scope.selection.item.username + '"?',
-        buttons: '[No][Yes]'
-      }, function (ButtonPressed) {
-        if (ButtonPressed === 'Yes') {
-          UserService.delete({id: $scope.selection.item.id})
-            .$promise
-            .then(function() {
-              $scope.filterConfig.refresh = new Date();
-            }, function(error){
-              console.log('An error occured', error);
-            });
+      var modalInstance = $modal.open({
+        windowTemplateUrl: 'templates/messagebox.html',
+        templateUrl: 'templates/users/user-delete.html',
+        controller: 'UserDeleteCtrl',
+        resolve: {
+          user: function(){
+            return $scope.selection.item;
+          }
         }
-        if (ButtonPressed === 'No') {
-          $.smallBox({
-            title: 'Delete user',
-            content: '<i class="fa fa-clock-o"></i> <i>Cancelled</i>',
-            color: '#C46A69',
-            iconSmall: 'fa fa-times fa-2x fadeInRight animated',
-            timeout: 4000
-          });
-        }
+      });
+      modalInstance.result.then(function(){
+        $scope.filterConfig.refresh = new Date();
       });
     };
   });
