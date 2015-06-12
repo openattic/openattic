@@ -19,13 +19,13 @@ angular.module('openattic.oaWizards')
       });
 
     $scope.input = {
-      share: {
+      iscsi_fc: {
         lun_id: 0
       }
     };
     $scope.selPoolUsedPercent = 0;
 
-    $scope.$watch('input.share.host', function(host) {
+    $scope.$watch('input.iscsi_fc.host', function(host) {
       if(host){
         InitiatorService.filter({host: host.id, type: 'qla2xxx'})
           .$promise

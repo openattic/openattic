@@ -133,29 +133,29 @@
                         <h3><strong>Raw Block Storage Step 3 </strong> - Create a iSCSI/FC Share</h3>
                         <form name="$parent.contentForm3" role="form" class="form-horizontal" novalidate>
                             <div class="form-group" ng-class="{'has-error': (contentForm3.submitted ||
-                                contentForm3.sharehost.$dirty) && contentForm3.sharehost.$invalid}">
-                                <label class="col-md-2 control-label" for="sharehost">Host</label>
+                                contentForm3.iscsifchost.$dirty) && contentForm3.iscsifchost.$invalid}">
+                                <label class="col-md-2 control-label" for="iscsifchost">Host</label>
                                 <div class="col-md-10">
-                                    <select class="form-control" ng-model="input.share.host"
-                                            ng-options="host.name for host in hosts" id="sharehost" name="sharehost"
-                                            required>
+                                    <select class="form-control" ng-model="input.iscsi_fc.host"
+                                            ng-options="host.name for host in hosts" id="iscsifchost"
+                                            name="iscsifchost" required>
                                         <option value="">-- Select a host --</option>
                                     </select>
                                     <span class="help-block" ng-show="(contentForm3.submitted ||
-                                        contentForm3.sharehost.$dirty) && contentForm3.sharehost.$error.required">
+                                        contentForm3.iscsifchost.$dirty) && contentForm3.iscsifchost.$error.required">
                                         This field is required!
                                     </span>
                                 </div>
                             </div>
                             <div class="form-group" ng-class="{'has-error': (contentForm3.submitted ||
-                                contentForm3.sharelunid.$dirty) && contentForm3.sharelunid.$invalid}"
+                                contentForm3.iscsifclunid.$dirty) && contentForm3.iscsifclunid.$invalid}"
                                  ng-show="has_initiator">
-                                <label class="col-md-2 control-label" for="sharelunid">ID</label>
+                                <label class="col-md-2 control-label" for="iscsifclunid">ID</label>
                                 <div class="col-md-10">
                                     <input type="number" class="form-control" placeholder="ID..." min="0"
-                                           ng-model="input.share.lun_id" name="sharelunid" id="sharelunid">
+                                           ng-model="input.iscsi_fc.lun_id" name="iscsifclunid" id="iscsifclunid">
                                     <span class="help-block" ng-show="(contentForm3.submitted ||
-                                        contentForm3.sharelunid.$dirty) && contentForm3.sharelunid.$error.min">
+                                        contentForm3.iscsifclunid.$dirty) && contentForm3.iscsifclunid.$error.min">
                                         The LUN ID must be a positive number.
                                     </span>
                                 </div>
