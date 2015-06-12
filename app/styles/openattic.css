@@ -265,3 +265,18 @@ oadatatable .input-group {
     font-family: Menlo,Monaco,Consolas,"Courier New",monospace;
 }
 
+/* Dashboard Clusterstatus */
+.cluster-status {
+    padding-bottom:0!important;
+}
+.cluster-status .show-stat-microcharts {
+    margin-top: 10px!important;
+}
+.cluster-status .show-stat-microcharts > div {
+    margin-top: 0px!important;
+}
+
+/* Celsius instead of Fahrenheit */
+.degree-sign:after {
+    content: "\00B0 C"!important;
+}
