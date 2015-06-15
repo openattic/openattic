@@ -20,7 +20,7 @@ angular.module('openattic.oaWizards')
 
         scope.tabs = tabs;
       },
-      controller: function($scope, VolumeService){
+      controller: function($scope, VolumeService, CifsSharesService, NfsSharesService){
         $scope.activeTab = 1;
         $scope.isActiveTab = function(index){
           return $scope.activeTab === index;
@@ -43,6 +43,27 @@ angular.module('openattic.oaWizards')
               VolumeService.save($scope.input.volume)
                 .$promise
                 .then(function (res){
+                  if('cifs' in $scope.input && 'nfs' in $scope.input){
+                    if($scope.input.cifs.create){
+                      $scope.input.cifs.volume = {'id': res.id};
+                      CifsSharesService.save($scope.input.cifs)
+                        .$promise
+                        .then(function() {
+                        }, function(error){
+                          console.log('An error occured', error);
+                        });
+                    }
+
+                    if($scope.input.nfs.create){
+                      $scope.input.nfs.volume = {'id': res.id};
+                      NfsSharesService.save($scope.input.nfs)
+                        .$promise
+                        .then(function() {
+                        }, function(error) {
+                          console.log('An error occured', error);
+                        });
+                    }
+                  }
                 }, function(error) {
                   console.log('An error occured', error);
                 });
