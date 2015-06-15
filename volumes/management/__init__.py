@@ -16,6 +16,7 @@
 
 import os
 import os.path
+import dbus
 import pyudev
 import sysutils.models
 
@@ -71,7 +72,10 @@ def update_disks(**kwargs):
                 else:
                     dtype = "SATA"
 
-                drpm = int(get_dbus_object("/volumes").get_rotational_rate(dev.device_node))
+                try:
+                    drpm = int(get_dbus_object("/volumes").get_rotational_rate(dev.device_node))
+                except dbus.DBusException:
+                    drpm = 0
 
             megs = int(get_dbus_object("/volumes").get_disk_size(dev.device_node))
 

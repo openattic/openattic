@@ -1111,7 +1111,6 @@ class DiskDevice(PhysicalBlockDevice):
         for key in self.udev_device.parent.attributes.keys():
             if key.startswith("enclosure_device:Slot"):
                 return int(key.split()[1])
-        raise KeyError("slot not found")
 
     @property
     def status(self):
@@ -1131,6 +1130,8 @@ class DiskDevice(PhysicalBlockDevice):
             raise SystemError("locate LED not available (looking for '%s')" % identify_path)
 
     def __unicode__(self):
+        if self.enclslot is None:
+            return "%s %dk" % (self.type, self.rpm / 1000)
         return "%s %dk Slot %d" % (self.type, self.rpm / 1000, self.enclslot)
 
 
