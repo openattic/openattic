@@ -3,6 +3,10 @@ var helpers = require('../common.js');
 describe('Host form workflow', function(){
   var hostsItem = element.all(by.css('ul .tc_menuitem')).get(4);
 
+  beforeAll(function(){
+    helpers.login();    
+  });
+
   beforeEach(function(){
     hostsItem.click();
     browser.sleep(400);
