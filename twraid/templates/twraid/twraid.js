@@ -67,7 +67,7 @@ Ext.define('volumes__twraid_Disk_model', {
   ],
   fields: [
     'id', '__unicode__', 'name', 'type', 'megs', 'percent', 'status', 'path',
-    "enclslot", "unitindex", "serial", "linkspeed", "power_on_h", "disktype", "port", "temp_c", "model", "rpm"
+    "enclslot", "unitindex", "serial", "linkspeed", "power_on_h", "type", "port", "temp_c", "model", "rpm"
   ],
   createNode: function(record){
     record.set("leaf", true);
@@ -82,7 +82,7 @@ Ext.define('volumes__twraid_Disk_model', {
     rootNode.set("icon",    MEDIA_URL + '/oxygen/16x16/devices/drive-harddisk.png');
     rootNode.set("leaf", true);
     rootNode.set("percent", null);
-    rootNode.set("type", Ext.String.format("{0} {1}k", rootNode.get("disktype"), krpm));
+    rootNode.set("type", Ext.String.format("{0} {1}k", rootNode.get("type"), krpm));
     rootNode.set("name", rootNode.get("model"));
     rootNode.commit();
     return rootNode;

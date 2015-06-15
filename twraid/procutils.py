@@ -352,7 +352,7 @@ def update_database(ctls):
                     dbdisk = models.Disk(storageobj=so, controller=dbctl, serial=disk.params["serial"])
 
             dbdisk.port       = port_id
-            dbdisk.disktype   = disk.type
+            dbdisk.type       = disk.type
             dbdisk.encl       = models.Enclosure.objects.get(controller=dbctl, index=disk.encl_id)
             dbdisk.enclslot   = disk.slot_id
             dbdisk.megs       = megs

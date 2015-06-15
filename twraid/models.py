@@ -171,7 +171,7 @@ if HAVE_NAGIOS:
 class Disk(PhysicalBlockDevice):
     controller  = models.ForeignKey(Controller)
     port        = models.IntegerField()
-    disktype    = models.CharField(max_length=150)
+    type        = models.CharField(max_length=150)
     encl        = models.ForeignKey(Enclosure)
     enclslot    = models.IntegerField()
     megs        = models.IntegerField()
@@ -198,4 +198,4 @@ class Disk(PhysicalBlockDevice):
             return [self.status.lower()]
 
     def __unicode__(self):
-        return "%s %dk (Slot %d)" % (self.disktype, self.rpm / 1000, self.enclslot)
+        return "%s %dk (Slot %d)" % (self.type, self.rpm / 1000, self.enclslot)
