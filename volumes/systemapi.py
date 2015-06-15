@@ -194,3 +194,7 @@ class SystemD(BasePlugin):
         dev, info = out.split(":", 1)
         return info.strip()
 
+    @deferredmethod(in_signature="sb")
+    def set_identify(self, identify_path, state, sender):
+        with open(identify_path, "w") as fd:
+            fd.write(str(int(bool(state))))

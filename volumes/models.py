@@ -1083,8 +1083,9 @@ class DiskDevice(PhysicalBlockDevice):
         for dev in ctx.list_devices():
             if dev.subsystem != "block":
                 continue
-            if "ID_SCSI_SERIAL" in dev and dev["ID_SCSI_SERIAL"] == self.serial:
-                return dev
+            for attr in ("ID_SCSI_SERIAL", "ID_SERIAL_SHORT", "ID_SERIAL"):
+                if attr in dev and dev[attr].strip("\0") == self.serial:
+                    return dev
 
         raise DeviceNotFound(self.serial)
 
@@ -1109,9 +1110,10 @@ class DiskDevice(PhysicalBlockDevice):
 
     @property
     def enclslot(self):
-        for key, val in self.udev_device.parent.attributes:
+        for key in self.udev_device.parent.attributes.keys():
             if key.startswith("enclosure_device:Slot"):
                 return int(key.split()[1])
+        raise KeyError("slot not found")
 
     @property
     def status(self):
@@ -1123,8 +1125,12 @@ class DiskDevice(PhysicalBlockDevice):
         return [self.status]
 
     def set_identify(self, state):
-        #echo 1 > /sys/class/block/sda/device/enclosure_device:Slot 03/locate
-        pass
+        identify_path = os.path.join(self.udev_device.sys_path, "device",
+                                     "enclosure_device:Slot %02d" % self.enclslot, "locate")
+        if os.path.exists(identify_path):
+            get_dbus_object("/volumes").set_identify(identify_path, bool(state))
+        else:
+            raise SystemError("locate LED not available (looking for '%s')" % identify_path)
 
     def __unicode__(self):
         return "%s %dk (Slot %d)" % (self.type, self.rpm / 1000, self.enclslot)
