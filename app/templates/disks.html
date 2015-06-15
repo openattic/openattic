@@ -43,7 +43,7 @@
                     'fa-chain-broken':         row.status.status == 'fail',
                     'fa-lock':                 row.status.status == 'locked'
                     }"></i></td>
-                <td ng-show="columns['Size']"   ng-bind="row.megs"></td>
+                <td ng-show="columns['Size']"   ng-bind="row.size.size_text"></td>
                 <td ng-show="columns['Type']"   ng-bind="row.type"></td>
                 <td ng-show="columns['RPM']"    ng-bind="row.rpm"></td>
                 <td ng-show="columns['Model']"  ng-bind="row.model"></td>
