@@ -16,12 +16,13 @@
                                 <div class="input-group">
                                     <span class="input-group-addon"> <i class="icon-prepend fa fa-user"></i></span>
                                     <input class="form-control" type="text" placeholder="Username..."
-                                           ng-model="user.username" name="username" id="userUsername" required>
+                                           ng-model="user.username" name="username" id="userUsername" required validname>
                                 </div>
                                 <span class="help-block tc_usernameRequired" ng-show="(submitted ||userForm.username.$dirty)
                                 && userForm.username.$error.required">
                                     The username is required.
                                 </span>
+                                <span class="help-block tc_userNameNotValid" ng-show="userForm.username.$error.validname">{{errortext}}</span>
                             </div>
                         </div>
                         <div class="form-group" ng-if="!editing" ng-class="{'has-error': (submitted || userForm.password.$dirty)
