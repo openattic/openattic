@@ -21,7 +21,7 @@ angular.module('openattic')
             }
             else if (match.length > 0) {
               ctrl.$setValidity('validname', false);
-              scope.errortext = 'The following characters are valid for VG and LV names: ' +
+              scope.errortext = 'The following characters are valid: ' +
               'a-z A-Z 0-9 + _ . -';
             }
             else if (viewValue.indexOf('snapshot') === 0 || viewValue.indexOf('pvmove') === 0) {
