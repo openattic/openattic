@@ -34,10 +34,14 @@ describe('Host form workflow', function(){
     element(by.css('.tc_submitButton')).click();
     expect(element(by.css('.tc_hostnameRequired')).isDisplayed()).toBe(true);
   });
+
+  it('should show an error message when entered name is not valid', function(){
+    element(by.model('host.name')).sendKeys('üüü asdfo dfä');
+    expect(element(by.css('.tc_hostNameNotValid')).isDisplayed()).toBe(true);
+  });  
   
   it('should navigate back to the Host overview when hitting the button', function(){
     element(by.css('.tc_backButton')).click();
     expect(element(by.css('.tc_oadatatable_hosts')).isPresent()).toBe(true);
   });
-  
 });
