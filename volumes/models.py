@@ -231,6 +231,13 @@ class StorageObject(models.Model):
             return None
 
     @property
+    def physicalblockdevice_or_none(self):
+        try:
+            return self.physicalblockdevice.device
+        except PhysicalBlockDevice.DoesNotExist:
+            return None
+
+    @property
     def authoritative_obj(self):
         obj = self.volumepool_or_none or self.blockvolume_or_none or self.filesystemvolume_or_none
         if obj is not None:
