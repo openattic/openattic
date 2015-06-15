@@ -63,8 +63,12 @@ angular.module('openattic.oaWizards')
                         });
                     }
                   }
-                }, function(error) {
+                })
+                .catch(function(error) {
                   console.log('An error occured', error);
+                })
+                .then(function(res){
+                  $scope.selectSelector();
                 });
             }
           }
