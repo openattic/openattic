@@ -198,3 +198,18 @@ class SystemD(BasePlugin):
     def set_identify(self, identify_path, state, sender):
         with open(identify_path, "w") as fd:
             fd.write(str(int(bool(state))))
+
+    @method(in_signature="s", out_signature="i")
+    def get_rotational_rate(self, device):
+        ret, out, err = invoke(["sginfo", "-g", device], return_out_err=True, log=False)
+        for line in out.split("\n"):
+            if "Rotational Rate" in line:
+                return int(line.split()[-1])
+        raise ValueError("not found")
+
+    @method(in_signature="s", out_signature="i")
+    def get_disk_size(self, device):
+        with open(device, "rb") as fd:
+            fd.seek(0, 2) # seek to the end
+            return fd.tell() / 1024 / 1024
+
