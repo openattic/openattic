@@ -341,16 +341,21 @@ def update_database(ctls):
         unseen_disks = [ d["serial"] for d in dbctl.disk_set.values("serial") ]
 
         for port_id, disk in ctl.ports.items():
+            rpm        = int( re.match("^(\d+)", disk.params["spindle speed"]).group(1) )
+            megs       = int(float(disk.size[:-3]) * 1024)
+
             try:
                 dbdisk = models.Disk.objects.get(controller=dbctl, serial=disk.params["serial"])
             except models.Disk.DoesNotExist:
-                dbdisk = models.Disk(controller=dbctl, serial=disk.params["serial"])
+                name = "%s %dk (Slot %d)" % (disk.type, rpm / 1000, disk.slot_id)
+                with StorageObject(name=name, megs=megs) as so:
+                    dbdisk = models.Disk(storageobj=so, controller=dbctl, serial=disk.params["serial"])
 
             dbdisk.port       = port_id
             dbdisk.disktype   = disk.type
             dbdisk.encl       = models.Enclosure.objects.get(controller=dbctl, index=disk.encl_id)
             dbdisk.enclslot   = disk.slot_id
-            dbdisk.megs       = int(float(disk.size[:-3]) * 1024)
+            dbdisk.megs       = megs
             dbdisk.model      = disk.model
             if disk.unit != '-':
                 dbdisk.unit   = models.Unit.objects.get(controller=dbctl, index=disk.unit_id)
@@ -358,7 +363,7 @@ def update_database(ctls):
             else:
                 dbdisk.unit   = None
                 dbdisk.unitindex = None
-            dbdisk.rpm        = int( re.match("^(\d+)", disk.params["spindle speed"]).group(1) )
+            dbdisk.rpm        = rpm
             dbdisk.status     = disk.params["status"]
             dbdisk.temp_c     = int( re.match("^(\d+)", disk.params["temperature"]).group(1) )
             dbdisk.linkspeed  = float( re.match("^(\d+\.\d+)", disk.params["link speed"]).group(1) )
