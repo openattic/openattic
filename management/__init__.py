@@ -83,7 +83,7 @@ def update(**kwargs):
                 print "known"
             except ceph_models.OSD.DoesNotExist:
                 osdname = "osd.%d" % cosd["osd"]
-                mdlosd = ceph_models.OSD(cluster=cluster, ceph_id=cosd["osd"], uuid=cosd["uuid"], bucket=osdbuckets[osdname])
+                mdlosd = ceph_models.OSD(cluster=cluster, ceph_id=cosd["osd"], uuid=cosd["uuid"])
                 mdlosd.full_clean()
                 mdlosd.save(database_only=True)
                 print "added"
@@ -115,18 +115,16 @@ def update(**kwargs):
 
         for cpool in osdmap["pools"]:
             print "Checking Ceph pool %s..." % cpool["pool_name"],
-            mdlrule = ceph_models.Ruleset.objects.get(cluster=cluster, ceph_id=cpool["crush_ruleset"])
             try:
                 mdlpool = ceph_models.Pool.objects.get(cluster=cluster, ceph_id=cpool["pool"])
                 print "known"
-                mdlpool.ruleset = mdlrule
                 mdlpool.save(database_only=True)
             except ceph_models.Pool.DoesNotExist:
                 storageobj = StorageObject(name=cpool["pool_name"], megs=megs)
                 storageobj.full_clean()
                 storageobj.save()
                 mdlpool = ceph_models.Pool(cluster=cluster, ceph_id=cpool["pool"], storageobj=storageobj, size=cpool["size"],
-                              ruleset=mdlrule, min_size=cpool["min_size"])
+                              min_size=cpool["min_size"])
                 mdlpool.full_clean()
                 mdlpool.save(database_only=True)
                 print "added"
