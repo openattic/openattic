@@ -60,6 +60,7 @@ class DiskSerializer(serializers.HyperlinkedModelSerializer):
 
     url         = serializers.HyperlinkedIdentityField(view_name="disk-detail")
     status      = serializers.SerializerMethodField("get_status")
+    size        = serializers.SerializerMethodField("get_size")
 
     def to_native(self, obj):
         data = dict([(key, None) for key in ("type", "host")])
@@ -73,7 +74,10 @@ class DiskSerializer(serializers.HyperlinkedModelSerializer):
 
     class Meta:
         model  = models.StorageObject
-        fields = ('url', 'id', 'megs', 'status')
+        fields = ('url', 'id', 'status', 'size')
+
+    def get_size(self, obj):
+        return obj.get_size()
 
     def get_status(self, obj):
         return obj.get_status()

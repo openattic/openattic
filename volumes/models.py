@@ -393,6 +393,12 @@ class StorageObject(models.Model):
 
         return self._mkstats(stats)
 
+    def get_size(self):
+        return {
+            "size":      self.megs,
+            "size_text": _to_number_with_unit(self.megs)
+        }
+
     def _mkstats(self, stats):
         if stats["used"] is None or stats["free"] == float("inf"):
             return {
