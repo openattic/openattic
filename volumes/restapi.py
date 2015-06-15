@@ -41,6 +41,60 @@ VOLUME_FILTER_Q = \
 
 
 ##################################
+#            Disk                #
+##################################
+
+
+class PhysicalDiskSerializer(serializers.Serializer):
+    """ Serializer for a PhysicalDisk. """
+
+    enclslot    = serializers.CharField()
+    model       = serializers.CharField()
+    serial      = serializers.CharField()
+    type        = serializers.CharField()
+    rpm         = serializers.IntegerField()
+
+
+class DiskSerializer(serializers.HyperlinkedModelSerializer):
+    """ Serializer for a disk. """
+
+    url         = serializers.HyperlinkedIdentityField(view_name="disk-detail")
+    status      = serializers.SerializerMethodField("get_status")
+
+    def to_native(self, obj):
+        data = dict([(key, None) for key in ("type", "host")])
+        data.update(serializers.HyperlinkedModelSerializer.to_native(self, obj))
+        if obj is None:
+            return data
+        if obj.physicalblockdevice_or_none is not None:
+            serializer_instance = PhysicalDiskSerializer(obj.physicalblockdevice_or_none, context=self.context)
+            data.update(dict([(key, value) for (key, value) in serializer_instance.data.items() if value is not None]))
+        return data
+
+    class Meta:
+        model  = models.StorageObject
+        fields = ('url', 'id', 'megs', 'status')
+
+    def get_status(self, obj):
+        return obj.get_status()
+
+
+class DiskFilter(django_filters.FilterSet):
+    type = django_filters.CharFilter(name="physicalblockdevice__device_type__app_label", lookup_type="iexact")
+
+    class Meta:
+        model  = models.StorageObject
+        fields = ['name']
+
+
+class DiskViewSet(viewsets.ModelViewSet):
+    queryset = models.StorageObject.objects.filter(physicalblockdevice__isnull=False)
+    serializer_class = DiskSerializer
+    filter_class  = DiskFilter
+    search_fields = ('name',)
+
+
+##################################
 #            Pool                #
 ##################################
 
@@ -325,6 +379,7 @@ class VolumeViewSet(viewsets.ModelViewSet):
 
 
 RESTAPI_VIEWSETS = [
+    ('disks',     DiskViewSet,     'disk'),
     ('pools',     PoolViewSet,     'pool'),
     ('volumes',   VolumeViewSet,   'volume'),
     ('snapshots', SnapshotViewSet, 'snapshot'),
