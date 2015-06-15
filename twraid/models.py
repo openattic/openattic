@@ -22,7 +22,7 @@ from django.contrib.contenttypes.models import ContentType
 from systemd import get_dbus_object
 from ifconfig.models import Host, HostDependentManager, getHostDependentManagerClass
 from volumes import blockdevices
-from volumes.models import DeviceNotFound, BlockVolume, CapabilitiesAwareManager
+from volumes.models import DeviceNotFound, BlockVolume, CapabilitiesAwareManager, PhysicalBlockDevice
 
 if "nagios" in settings.INSTALLED_APPS:
     HAVE_NAGIOS = True
@@ -168,7 +168,7 @@ if HAVE_NAGIOS:
 
 
 
-class Disk(models.Model):
+class Disk(PhysicalBlockDevice):
     controller  = models.ForeignKey(Controller)
     port        = models.IntegerField()
     disktype    = models.CharField(max_length=150)

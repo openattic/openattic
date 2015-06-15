@@ -16,6 +16,7 @@
 
 from __future__ import division
 
+import os
 import os.path
 import uuid
 import operator
@@ -879,48 +880,6 @@ if HAVE_NAGIOS:
     signals.class_prepared.connect(__connect_signals_for_blockvolume)
 
 
-class GenericDisk(BlockVolume):
-    """ A standard disk that is NOT anything fancy (like a hardware raid). """
-    host        = models.ForeignKey(Host)
-    serial      = models.CharField(max_length=150, blank=True)
-    type        = models.CharField(max_length=150, blank=True)
-    rpm         = models.IntegerField(blank=True, null=True)
-
-    def full_clean(self, exclude=None, validate_unique=True):
-        BlockVolume.full_clean(self, exclude=exclude, validate_unique=validate_unique)
-        if self.type not in ("sata", "sas", "ssd"):
-            raise ValidationError({"type": ["Type needs to be one of 'sata', 'sas', 'ssd'."]})
-
-    @property
-    def udev_device(self):
-        import pyudev
-        ctx = pyudev.Context()
-
-        for dev in ctx.list_devices():
-            if dev.subsystem != "block":
-                continue
-            if "ID_SCSI_SERIAL" in dev and dev["ID_SCSI_SERIAL"] == self.serial:
-                return dev
-
-        raise DeviceNotFound(self.serial)
-
-    @property
-    def status(self):
-        if self.storageobj.is_locked:
-            return "locked"
-        return "unknown"
-
-    def get_status(self):
-        return [self.status]
-
-    @property
-    def path(self):
-        return self.udev_device.device_node
-
-    def __unicode__(self):
-        return "%s (%dMiB)" % (self.path, self.storageobj.megs)
-
-
 class FileSystemVolume(AbstractVolume):
     """ Everything that can be mounted as a /media/something and is supposed to be shared.
 
@@ -1088,6 +1047,114 @@ def __delete_filesystemprovider(instance, **kwargs):
     instance.fs.unmount()
 
 signals.pre_delete.connect(__delete_filesystemprovider, sender=FileSystemProvider)
+
+
+class PhysicalBlockDevice(models.Model):
+    """ Base class for physical block devices.
+    """
+    storageobj  = models.OneToOneField(StorageObject)
+    device_type = models.ForeignKey(ContentType, blank=True, null=True, related_name="%(class)s_volume_type_set")
+    device      = generic.GenericForeignKey("device_type", "id")
+
+    def save(self, *args, **kwargs):
+        if self.__class__ is not PhysicalBlockDevice:
+            self.device_type = ContentType.objects.get_for_model(self.__class__)
+        return models.Model.save(self, *args, **kwargs)
+
+
+class DiskDevice(PhysicalBlockDevice):
+    """ The physical view of a standard disk (hence, PhysicalBlockDevice). """
+    host        = models.ForeignKey(Host)
+    model       = models.CharField(max_length=150, blank=True)
+    serial      = models.CharField(max_length=150, blank=True)
+    type        = models.CharField(max_length=150, blank=True)
+    rpm         = models.IntegerField(blank=True, null=True)
+
+    def full_clean(self, exclude=None, validate_unique=True):
+        PhysicalBlockDevice.full_clean(self, exclude=exclude, validate_unique=validate_unique)
+        if self.type not in ("sata", "sas", "ssd"):
+            raise ValidationError({"type": ["Type needs to be one of 'sata', 'sas', 'ssd'."]})
+
+    @property
+    def udev_device(self):
+        import pyudev
+        ctx = pyudev.Context()
+
+        for dev in ctx.list_devices():
+            if dev.subsystem != "block":
+                continue
+            if "ID_SCSI_SERIAL" in dev and dev["ID_SCSI_SERIAL"] == self.serial:
+                return dev
+
+        raise DeviceNotFound(self.serial)
+
+    @property
+    def path(self):
+        return self.disk_device.udev_device.device_node
+
+    @property
+    def megs(self):
+        import fcntl
+        import array
+        import struct
+
+        ioctl_BLKGETSIZE64 = 0x80081272
+        try:
+            fd = os.open(device, os.O_RDONLY)
+            buf = array.array('c', [chr(0)] * 8)
+            fcntl.ioctl(fd, ioctl_BLKGETSIZE64, buf)
+            return struct.unpack('L',buf)[0]
+        finally:
+            os.close(fd)
+
+    @property
+    def enclslot(self):
+        for key, val in self.udev_device.parent.attributes:
+            if key.startswith("enclosure_device:Slot"):
+                return int(key.split()[1])
+
+    @property
+    def status(self):
+        if self.storageobj.is_locked:
+            return "locked"
+        return "unknown"
+
+    def get_status(self):
+        return [self.status]
+
+    def set_identify(self, state):
+        #echo 1 > /sys/class/block/sda/device/enclosure_device:Slot 03/locate
+        pass
+
+    def __unicode__(self):
+        return "%s %dk (Slot %d)" % (self.type, self.rpm / 1000, self.enclslot)
+
+
+class GenericDisk(BlockVolume):
+    """ The logical view of a standard disk (hence, BlockVolume). """
+    disk_device = models.OneToOneField(DiskDevice)
+
+    @property
+    def path(self):
+        return self.disk_device.path
+
+    @property
+    def megs(self):
+        return self.disk_device.megs
+
+    @property
+    def status(self):
+        if self.storageobj.is_locked:
+            return "locked"
+        return self.disk_device.status
+
+    def get_status(self):
+        return [self.status]
+
+    def __unicode__(self):
+        return unicode(self.disk_device)
+
+
 
 
 def get_storage_tree(top_obj):
