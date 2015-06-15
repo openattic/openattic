@@ -13,11 +13,12 @@
                         <div class="col-md-10">
                             <input type="text" class="form-control" placeholder="Hostname..."
                                    ng-model="host.name" name="name"
-                                    id="hostHostname" required>
+                                    id="hostHostname" required validname>
                             <span class="help-block tc_hostnameRequired" ng-show="(submitted || hostForm.name.$dirty)
                             && hostForm.name.$error.required">
                                 The name is required.
                             </span>
+                            <span class="help-block tc_hostNameNotValid" ng-show="hostForm.name.$error.validname">{{errortext}}</span>
                         </div>
                     </div>
                 </fieldset>
