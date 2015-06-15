@@ -17,6 +17,36 @@ angular.module('openattic').config(function ($stateProvider, $urlRouterProvider)
         label: 'Dashboard'
       }
     })
+    .state('disks', {
+      url: '/disks',
+      views: {
+        'main': {
+          templateUrl: 'templates/disks.html',
+          controller : 'DiskCtrl'
+        }
+      },
+      ncyBreadcrumb: {
+        label: 'Disks'
+      }
+    })
+    .state('disks.detail', {
+      url: '/:disk',
+      views: {
+        'tab': {templateUrl: 'templates/disks/tab.html'}
+      },
+      ncyBreadcrumb: {
+        skip: true
+      }
+    })
+    .state('disks.detail.status', {
+      url: '/status',
+      views: {
+        'tab-content': {templateUrl: 'templates/disks/status.html'}
+      },
+      ncyBreadcrumb: {
+        label: '{{selection.item.name}} Status'
+      }
+    })
     .state('pools', {
       url: '/pools',
       views: {
@@ -66,17 +96,6 @@ angular.module('openattic').config(function ($stateProvider, $urlRouterProvider)
       },
       ncyBreadcrumb: {
         label: '{{selection.item.name}} Cephpool'
-      }
-    })
-    .state('disks', {
-      url: '/disks',
-      views: {
-        'main': {
-          templateUrl: 'templates/disks.html'
-        }
-      },
-      ncyBreadcrumb: {
-        label: 'Disks'
       }
     })
     .state('volumes', {
