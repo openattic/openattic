@@ -39,7 +39,6 @@ angular.module('openattic.oaWizards')
               $scope.activeTab++;
             }
             else if ($scope.activeTab === $scope.tabs.length) {
-              console.log($scope.input);
               VolumeService.save($scope.input.volume)
                 .$promise
                 .then(function (res){
@@ -67,7 +66,6 @@ angular.module('openattic.oaWizards')
                 }, function(error) {
                   console.log('An error occured', error);
                 });
-              // wizard is done e.g. return $scope.input
             }
           }
         };
