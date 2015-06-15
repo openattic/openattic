@@ -1085,8 +1085,8 @@ class DiskDevice(PhysicalBlockDevice):
 
     def full_clean(self, exclude=None, validate_unique=True):
         PhysicalBlockDevice.full_clean(self, exclude=exclude, validate_unique=validate_unique)
-        if self.type not in ("sata", "sas", "ssd"):
-            raise ValidationError({"type": ["Type needs to be one of 'sata', 'sas', 'ssd'."]})
+        if self.type not in ("SATA", "SAS", "SSD"):
+            raise ValidationError({"type": ["Type needs to be one of 'SATA', 'SAS', 'SSD'."]})
 
     @property
     def udev_device(self):
@@ -1104,22 +1104,7 @@ class DiskDevice(PhysicalBlockDevice):
 
     @property
     def path(self):
-        return self.disk_device.udev_device.device_node
-
-    @property
-    def megs(self):
-        import fcntl
-        import array
-        import struct
-
-        ioctl_BLKGETSIZE64 = 0x80081272
-        try:
-            fd = os.open(device, os.O_RDONLY)
-            buf = array.array('c', [chr(0)] * 8)
-            fcntl.ioctl(fd, ioctl_BLKGETSIZE64, buf)
-            return struct.unpack('L',buf)[0]
-        finally:
-            os.close(fd)
+        return self.udev_device.device_node
 
     @property
     def enclslot(self):
@@ -1146,7 +1131,7 @@ class DiskDevice(PhysicalBlockDevice):
             raise SystemError("locate LED not available (looking for '%s')" % identify_path)
 
     def __unicode__(self):
-        return "%s %dk (Slot %d)" % (self.type, self.rpm / 1000, self.enclslot)
+        return "%s %dk Slot %d" % (self.type, self.rpm / 1000, self.enclslot)
 
 
 class GenericDisk(BlockVolume):
@@ -1158,8 +1143,8 @@ class GenericDisk(BlockVolume):
         return self.disk_device.path
 
     @property
-    def megs(self):
-        return self.disk_device.megs
+    def host(self):
+        return self.disk_device.host
 
     @property
     def status(self):
