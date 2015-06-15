@@ -1,0 +1,9 @@
+<div class="tabbable tabs-left">
+    <ul class="nav nav-tabs">
+        <li ui-sref-active="active">
+            <a ui-sref="disks.detail.status({disk:  selection.item.id })" data-toggle="tab" data-target="#tab-content">Status</a>
+        </li>
+    </ul>
+    <div class="tab-content" ui-view="tab-content">
+    </div>
+</div>
