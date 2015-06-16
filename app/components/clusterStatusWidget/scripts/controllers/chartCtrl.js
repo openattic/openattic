@@ -30,18 +30,18 @@ angular.module('openattic.clusterstatuswidget', ['easypiechart', 'angular-flot']
         };
 
         // Line Chart
-        //lineChartService.graphOptions.colors = [colorSet.blue,colorSet.yellow,colorSet.red];
-        //lineChartService.graphOptions.series.lines.fill = false;
-        //lineChartService.graphOptions.xaxis.mode = 'time';
-        //lineChartService.graphOptions.xaxis.timezone = 'browser';
-        //lineChartService.graphOptions.yaxis.max = 10;
-        //lineChartService.setMaxGraphValues(289);
-
         lineChartService.graphOptions.colors = [colorSet.blue,colorSet.yellow,colorSet.red];
         lineChartService.graphOptions.series.lines.fill = true;
-        lineChartService.graphOptions.xaxis.max = 100;
-        lineChartService.graphOptions.yaxis.max = 10;
-        lineChartService.setMaxGraphValues(288);
+        lineChartService.graphOptions.xaxis.mode = 'time';
+        lineChartService.graphOptions.xaxis.timezone = 'browser';
+        lineChartService.graphOptions.yaxis.max = 100;
+        lineChartService.setMaxGraphValues(301);
+
+        //lineChartService.graphOptions.colors = [colorSet.blue,colorSet.yellow,colorSet.red];
+        //lineChartService.graphOptions.series.lines.fill = true;
+        //lineChartService.graphOptions.xaxis.max = 100;
+        //lineChartService.graphOptions.yaxis.max = 10;
+        //lineChartService.setMaxGraphValues(288);
 
         $scope.lineChartOptions = lineChartService.graphOptions;
 
@@ -138,30 +138,33 @@ angular.module('openattic.clusterstatuswidget', ['easypiechart', 'angular-flot']
         // ------------------------- END TEST MODE NORMAL -------------------------
 
         // ------------------------- START TEST MODE DERP -------------------------
-        //var first=true;
-        //var date;
-        //var last1, last2;
-        //var discLoad;
-        //var evtSource = new EventSource("../../derp/stream");
-        //evtSource.onmessage = function(e) {
-        //    var data = e.data.replace(/\s*[^\w.]\s*/g, " ").split(" ");
-        //
-        //    if(first) {
-        //        last1 = data[0];
-        //        last2 = data[10];
-        //        first = false;
-        //    } else {
-        //        var interval = data[0] - last1;
-        //        var tot_ticks = data[10] - last2;
-        //        discLoad = tot_ticks / (interval * 1000.) * 100.;
-        //
-        //        //console.log('last:' + last1 + ' Curr:' + data[0]);
-        //        //console.log('last:' + last2 + ' Curr:' + data[10]);
-        //
-        //        last1 = data[0];
-        //        last2 = data[10];
-        //    }
-        //}
+        var globalData3;
+        var counter = 0;
+        var first3=true;
+        var date;
+        var last1, last2;
+        var discLoad;
+        var evtSource = new EventSource("../../derp/stream");
+        evtSource.onmessage = function(e) {
+            var data = e.data.replace(/\s*[^\w.]\s*/g, " ").split(" ");
+
+            if(first3) {
+                last1 = data[0];
+                last2 = data[10];
+                first3 = false;
+            } else {
+                var interval = data[0] - last1;
+                var tot_ticks = data[10] - last2;
+                date = Math.round(data[0]*1000);
+                discLoad = tot_ticks / (interval * 1000.) * 100.;
+
+                //console.log('last:' + last1 + ' Curr:' + data[0]);
+                //console.log('last:' + last2 + ' Curr:' + data[10]);
+
+                last1 = data[0];
+                last2 = data[10];
+            }
+        }
         // ------------------------- END TEST MODE DERP -------------------------
 
         var drawGraph = function() {
@@ -195,26 +198,26 @@ angular.module('openattic.clusterstatuswidget', ['easypiechart', 'angular-flot']
             //        globalData[0].push([date - i*1000, 0]);
             //    }
             //}
-            //if(discLoad != null) {
-            //    if(globalData[0].length < 300) {
-            //        globalData[0].push([date, discLoad]);
-            //    } else {
-            //        globalData[0] = globalData[0].slice(1);
-            //        globalData[0].push([date, discLoad]);
-            //    }
-            //    console.log(discLoad + ' in %');
-
-            //    $scope.lineChartDataset = lineChartService.getDataset([
-            //        {id: 0, label: 'Line1', data: globalData[0]},
-            //        {id: 1, label: 'Line2', data: globalData[1]},
-            //        {id: 2, label: 'Line3', data: globalData[2]}
-            //    ]);
+            globalData3 = [[]];
+            if(discLoad != null) {
+                globalData3[0].push([date, discLoad]);
+                counter++;
+                console.log('Nummer:' + counter + ' Load:' + discLoad + ' in % um:' + date);
                 $scope.lineChartDataset = lineChartService.getDataset([
-                    {id: 0, label: 'Line1', data: globalData2[0]},
-                    //{id: 1, label: 'Line2', data: globalData2[1]},
-                    //{id: 2, label: 'Line3', data: globalData2[2]}
+                    {id: 0, label: 'ServerLoad', data: globalData3[0]},
                 ]);
-            //}
+            }
+
+                //$scope.lineChartDataset = lineChartService.getDataset([
+                //    {id: 0, label: 'Line1', data: globalData[0]},
+                //    //{id: 1, label: 'Line2', data: globalData[1]},
+                //    //{id: 2, label: 'Line3', data: globalData[2]}
+                //]);
+            //    $scope.lineChartDataset = lineChartService.getDataset([
+            //        {id: 0, label: 'Line1', data: globalData2[0]},
+            //        //{id: 1, label: 'Line2', data: globalData2[1]},
+            //        //{id: 2, label: 'Line3', data: globalData2[2]}
+            //    ]);
 
             $timeout(drawGraph, 1000);
         }
