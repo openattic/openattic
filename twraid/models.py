@@ -93,8 +93,9 @@ class Unit(BlockVolume):
         for dev in ctx.list_devices():
             if dev.subsystem != "block":
                 continue
-            if "ID_SCSI_SERIAL" in dev and dev["ID_SCSI_SERIAL"] == self.serial:
-                return dev.device_node
+            for attr in ("ID_SCSI_SERIAL", "ID_SERIAL_SHORT", "ID_SERIAL"):
+                if attr in dev and dev[attr] == self.serial:
+                    return dev.device_node
 
         raise DeviceNotFound(self.serial)
 
