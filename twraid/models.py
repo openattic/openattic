@@ -140,8 +140,8 @@ class Unit(BlockVolume):
 
     def __unicode__(self):
         if self.storageobj.name:
-            return "%s, %s" % (self.storageobj.name, self.unittype)
-        return "Unnamed Unit /c%d/u%d, %s" % (self.controller.index, self.index, self.unittype)
+            return "%s %s" % (self.storageobj.name, self.unittype)
+        return "Unnamed Unit /c%d/u%d %s" % (self.controller.index, self.index, self.unittype)
 
 
 if HAVE_NAGIOS:
