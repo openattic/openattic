@@ -118,6 +118,14 @@ STORAGEOBJECT_STATUS_FLAGS = {
     "randomio":      {"severity":  1, "desc": ugettext_noop("The workload is mostly random. Consider tuning the application to reduce the amount of random IO operations.")},
     }
 
+CATALOGS = {
+    'blockvolume':         [],
+    'filesystemvolume':    [],
+    'volumepool':          [],
+    'physicalblockdevice': []
+}
+
+
 
 class StorageObject(models.Model):
     """ A general object that may be just about anything.
@@ -975,6 +983,33 @@ if HAVE_NAGIOS:
     signals.class_prepared.connect(__connect_signals_for_filesystemvolume)
 
 
+class PhysicalBlockDevice(models.Model):
+    """ Base class for physical block devices.
+    """
+    storageobj  = models.OneToOneField(StorageObject)
+    device_type = models.ForeignKey(ContentType, blank=True, null=True, related_name="%(class)s_volume_type_set")
+    device      = generic.GenericForeignKey("device_type", "id")
+
+    def save(self, *args, **kwargs):
+        if self.__class__ is not PhysicalBlockDevice:
+            self.device_type = ContentType.objects.get_for_model(self.__class__)
+        return models.Model.save(self, *args, **kwargs)
+
+
+def __add_to_catalogs(sender, **kwargs):
+    if issubclass(sender, BlockVolume):
+        CATALOGS['blockvolume'].append(sender)
+    if issubclass(sender, FileSystemVolume):
+        CATALOGS['filesystemvolume'].append(sender)
+    if issubclass(sender, VolumePool):
+        CATALOGS['volumepool'].append(sender)
+    if issubclass(sender, PhysicalBlockDevice):
+        CATALOGS['physicalblockdevice'].append(sender)
+
+signals.class_prepared.connect(__add_to_catalogs)
+
+
+
 
 class FileSystemProvider(FileSystemVolume):
     """ A FileSystem that resides on top of a BlockVolume. """
@@ -1060,19 +1095,6 @@ def __delete_filesystemprovider(instance, **kwargs):
     instance.fs.unmount()
 
 signals.pre_delete.connect(__delete_filesystemprovider, sender=FileSystemProvider)
-
-
-class PhysicalBlockDevice(models.Model):
-    """ Base class for physical block devices.
-    """
-    storageobj  = models.OneToOneField(StorageObject)
-    device_type = models.ForeignKey(ContentType, blank=True, null=True, related_name="%(class)s_volume_type_set")
-    device      = generic.GenericForeignKey("device_type", "id")
-
-    def save(self, *args, **kwargs):
-        if self.__class__ is not PhysicalBlockDevice:
-            self.device_type = ContentType.objects.get_for_model(self.__class__)
-        return models.Model.save(self, *args, **kwargs)
 
 
 class DiskDevice(PhysicalBlockDevice):
