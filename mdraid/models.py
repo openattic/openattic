@@ -88,4 +88,4 @@ class Array(BlockVolume):
             }
 
     def __unicode__(self):
-        return "%s (RAID-%d)" % (self.storageobj.name, self.raid_params["raidlevel"])
+        return "%s RAID-%d" % (self.storageobj.name, self.raid_params["raidlevel"])
