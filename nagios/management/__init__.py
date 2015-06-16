@@ -16,6 +16,7 @@
 
 from django.core.management import call_command
 from django.contrib.contenttypes.models import ContentType
+from django.db.models import signals
 
 from systemd import get_dbus_object
 from nagios.conf import settings as nagios_settings
@@ -24,10 +25,12 @@ from volumes.models import BlockVolume, FileSystemVolume
 
 import nagios.models
 import sysutils.models
-from nagios.models    import Service, Command
+from nagios.models    import Service, Command, update_conf
 
 def create_nagios(**kwargs):
     # Make sure the contacts config exists
+    signals.post_save.disconnect(update_conf, sender=Service)
+
     for servstate in Service.nagstate["servicestatus"]:
         cmdargs = servstate["check_command"].split('!')
         cmdname = cmdargs[0]
@@ -102,6 +105,9 @@ def create_nagios(**kwargs):
             arguments   = instance.storageobj.uuid
         )
         srv.save()
+
+    update_conf()
+    signals.post_save.connect(update_conf, sender=Service)
 
 
 sysutils.models.post_install.connect(create_nagios)
