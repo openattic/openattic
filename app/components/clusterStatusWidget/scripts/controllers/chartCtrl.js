@@ -202,7 +202,7 @@ angular.module('openattic.clusterstatuswidget', ['easypiechart', 'angular-flot']
             if(discLoad != null) {
                 globalData3[0].push([date, discLoad]);
                 counter++;
-                console.log('Nummer:' + counter + ' Load:' + discLoad + ' in % um:' + date);
+                //console.log('Nummer:' + counter + ' Load:' + discLoad + ' in % um:' + date);
                 $scope.lineChartDataset = lineChartService.getDataset([
                     {id: 0, label: 'ServerLoad', data: globalData3[0]},
                 ]);
