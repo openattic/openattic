@@ -90,6 +90,10 @@ class Unit(BlockVolume):
         import pyudev
         ctx = pyudev.Context()
 
+        if self.host != Host.objects.get_current():
+            # TODO: Remove this after multinode has been implemented in the REST API
+            return
+
         for dev in ctx.list_devices():
             if dev.subsystem != "block":
                 continue
