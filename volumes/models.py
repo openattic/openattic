@@ -1178,6 +1178,10 @@ class GenericDisk(BlockVolume):
     def get_status(self):
         return [self.status]
 
+    def get_volume_usage(self, stats):
+        stats["bd_megs"] = self.storageobj.megs
+        return stats
+
     def __unicode__(self):
         return unicode(self.disk_device)
 
