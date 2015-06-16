@@ -1,7 +1,7 @@
 'use strict';
 
 angular.module('openattic.auth')
-  .controller('authController', function ($scope, $window, authService) {
+  .controller('authController', function ($scope, $rootScope, $state, authService) {
     $scope.fieldRequired = 'This field is required.';
     $scope.correctInput = 'The given credentials are not correct.';
 
@@ -9,8 +9,8 @@ angular.module('openattic.auth')
       $scope.submitted = true;
       var loginData = {'username': $scope.username, 'password': $scope.password};
       authService.login(loginData, function(res){
-        $scope.user = res.username;
-        $window.location.href = '/openattic/angular/#/dashboard';
+        $rootScope.user = res;
+        $state.go('dashboard');
       }, function(){
         loginForm.username.$setValidity('correctInput', false);
         loginForm.password.$setValidity('correctInput', false);

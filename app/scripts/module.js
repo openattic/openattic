@@ -28,4 +28,10 @@ angular.module('openattic').config(function($httpProvider){
   $httpProvider.defaults.xsrfHeaderName = 'X-CSRFToken';
 });
 
+angular.module('openattic').run(function($rootScope, $state){
+  $rootScope.loginActive = function(){
+    return $state.is('login');
+  }
+});
+
 // kate: space-indent on; indent-width 2; replace-tabs on;

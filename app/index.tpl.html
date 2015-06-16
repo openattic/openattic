@@ -66,7 +66,7 @@
 
 
     <!-- pulled right: nav area -->
-    <div class="pull-right">
+    <div class="pull-right" ng-hide="loginActive()">
         <div id="hide-menu" class="btn-header transparent pull-right">
             <span> <a toggle-menu title="Collapse Menu"><i class="fa fa-reorder"></i></a> </span>
         </div>
@@ -87,7 +87,7 @@
 
 
 
-<aside id="left-panel">
+<aside id="left-panel" ng-hide="loginActive()">
 
     <userinfo></userinfo>
 
@@ -142,7 +142,7 @@
 
 <div id="main" role="main">
     <!-- RIBBON -->
-    <div id="ribbon">
+    <div id="ribbon" ng-hide="loginActive()">
         <!-- breadcrumb -->
         <div ncy-breadcrumb></div>
         <!-- end breadcrumb -->
@@ -152,7 +152,6 @@
     <div id="content" ui-view="main">
     </div>
 </div>
-
 <!-- build:js bm-app.js -->
 
 <!-- 3rd-Party Libraries -->
@@ -177,7 +176,6 @@
 <script src="bower_components/jquery-flot/jquery.flot.selection.js"></script>
 <script src="bower_components/jquery-flot/jquery.flot.time.js"></script>
 <script src="bower_components/angular-flot/angular-flot.js"></script>
-
 
 <!-- htmlbuild:script src -->
 <!-- /htmlbuild -->
