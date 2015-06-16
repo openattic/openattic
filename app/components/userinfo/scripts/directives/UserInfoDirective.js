@@ -13,11 +13,11 @@ angular.module('openattic.userinfo')
         '</span>',
         '</div>'
       ].join(''),
-      controller: function($scope, $filter, UserService){
+      controller: function($rootScope, UserService){
         UserService.current()
           .$promise
           .then(function(res) {
-            $scope.user = res;
+            $rootScope.user = res;
           })
           .catch(function(){
             console.log('an error occured');

@@ -8,12 +8,13 @@ angular.module('openattic.auth')
         '<i class="fa fa-sign-out"></i>',
         '</a>'
       ].join(''),
-      controller: function($scope, authService){
+      controller: function($scope, $rootScope, $state, authService){
         $scope.handleLogout = function(){
           authService.logout()
           .$promise
           .then(function(){
-            window.location='login.html';
+            $rootScope.user = null;
+            $state.go('login');
           });
         };
       }

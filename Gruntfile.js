@@ -68,25 +68,6 @@ module.exports = function (grunt) {
               ]
             }
           }
-        },
-        dev_login: {
-          src: '<%= buildConfig.src %>login.tpl.html',
-          dest: '<%= buildConfig.src %>login.html',
-          options: {
-            relative: true,
-            prefix: 'scripts/',
-            parseTag: 'htmlbuild',
-            scripts: {
-              src: {
-                files: buildConfig.applicationFiles
-              }
-            },
-            styles: {
-              bundle: [
-                '<%= buildConfig.src %>styles/**/*.css'
-              ]
-            }
-          }
         }
       },
 
@@ -147,7 +128,7 @@ module.exports = function (grunt) {
        This task also generates configurations for 'concat', 'cssmin' and 'uglify' tasks referenced in build task
        */
       useminPrepare: {
-        html: ['<%= buildConfig.src %>/index.html', '<%= buildConfig.src %>/login.html'],
+        html: ['<%= buildConfig.src %>/index.html'],
         options: {
           dest: buildConfig.dist
         }
@@ -155,7 +136,7 @@ module.exports = function (grunt) {
 
       // replaces js and css includes in index.html
       usemin: {
-        html: ['<%= buildConfig.dist %>/index.html', '<%= buildConfig.dist %>/login.html']
+        html: ['<%= buildConfig.dist %>/index.html']
       }
     }
   );
