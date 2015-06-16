@@ -1,1 +1,89 @@
-<div></div>
+<div ng-controller="chartCtrl" class="cluster-status container-fluid padding-10">
+
+    <div class="row no-space">
+        <div class="col-xs-12 col-sm-12 col-md-8 col-lg-8">
+            <flot dataset="lineChartDataset" options="lineChartOptions" height="250px"></flot>
+        </div>
+        <div class="col-xs-12 col-sm-12 col-md-4 col-lg-4 show-stats">
+            <div class="row">
+                <div class="col-xs-12 col-sm-6 col-md-12 col-lg-12">
+                    <span class="text"> My Tasks <span class="pull-right">130/200</span> </span>
+                    <progressbar value="33"></progressbar>
+                </div>
+
+                <div class="col-xs-12 col-sm-6 col-md-12 col-lg-12">
+                    <span class="text"> My Tasks <span class="pull-right">130/200</span> </span>
+                    <progressbar value="55"></progressbar>
+                </div>
+
+                <div class="col-xs-12 col-sm-6 col-md-12 col-lg-12">
+                    <span class="text"> My Tasks <span class="pull-right">130/200</span> </span>
+                    <progressbar value="55"></progressbar>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="row show-stat-microcharts">
+        <div class="col-xs-12 col-sm-6 col-md-6 col-lg-3">
+            <div class="easy-pie-chart" easypiechart ng-init="percent1 = 95;" percent="percent1" options="defaultOptions">
+                <span class="percent percent-sign" ng-bind="percent"></span>
+            </div>
+            <span class="easy-pie-title"> Server Load <i class="fa fa-caret-up icon-color-bad"></i> </span>
+            <ul class="smaller-stat pull-right">
+                <li>
+                    <span class="label bg-color-greenLight"><i class="fa fa-caret-up"></i> 97%</span>
+                </li>
+                <li>
+                    <span class="label bg-color-blueLight"><i class="fa fa-caret-down"></i> 44%</span>
+                </li>
+            </ul>
+        </div>
+
+        <div class="col-xs-12 col-sm-6 col-md-6 col-lg-3">
+            <div class="easy-pie-chart" easypiechart ng-init="percent2 = 65;" percent="percent2" options="defaultOptions">
+                <span class="percent percent-sign" ng-bind="percent"></span>
+            </div>
+            <span class="easy-pie-title"> Disk Space <i class="fa fa-caret-up icon-color-bad"></i> </span>
+            <ul class="smaller-stat pull-right hidden-sm">
+                <li>
+                    <span class="label bg-color-darken"><i class="fa fa-caret-up"></i> 97%</span>
+                </li>
+                <li>
+                    <span class="label bg-color-blueLight"><i class="fa fa-caret-down"></i> 44%</span>
+                </li>
+            </ul>
+        </div>
+
+        <div class="col-xs-12 col-sm-6 col-md-6 col-lg-3">
+            <div class="easy-pie-chart" easypiechart ng-init="percent3 = 18;" percent="percent3" options="defaultOptions">
+                <span class="percent percent-sign" ng-bind="percent"></span>
+            </div>
+            <span class="easy-pie-title"> Hosts <i class="fa fa-caret-up icon-color-bad"></i> </span>
+            <ul class="smaller-stat pull-right">
+                <li>
+                    <span class="label bg-color-greenLight"><i class="fa fa-caret-up"></i> 97%</span>
+                </li>
+                <li>
+                    <span class="label bg-color-red"><i class="fa fa-caret-down"></i> 44%</span>
+                </li>
+            </ul>
+        </div>
+
+        <div class="col-xs-12 col-sm-6 col-md-6 col-lg-3">
+            <div class="easy-pie-chart" easypiechart ng-init="percent3 = 18;" percent="percent3" options="defaultOptions">
+                <span class="percent degree-sign" ng-bind="percent"></span>
+            </div>
+            <span class="easy-pie-title"> Temperature <i class="fa fa-caret-up icon-color-bad"></i> </span>
+            <ul class="smaller-stat pull-right">
+                <li>
+                    <span class="label bg-color-greenLight"><i class="fa fa-caret-up"></i> 97%</span>
+                </li>
+                <li>
+                    <span class="label bg-color-blueLight"><i class="fa fa-caret-down"></i> 44%</span>
+                </li>
+            </ul>
+        </div>
+    </div>
+</div>
+
