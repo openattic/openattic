@@ -50,6 +50,10 @@ class Btrfs(VolumePool):
     def usedmegs(self):
         return self.fs.stat["used"]
 
+    @classmethod
+    def create_volumepool(cls, blockvolumes, options):
+        return None
+
     def _create_volume_for_storageobject(self, storageobj, options):
         if options.get("filesystem", None) not in ("btrfs", None):
             raise InvalidVolumeType(options.get("filesystem", None))

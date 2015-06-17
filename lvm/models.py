@@ -150,6 +150,10 @@ class VolumeGroup(VolumePool):
     def usedmegs(self):
         return float(self.lvm_info["LVM2_VG_SIZE"]) - float(self.lvm_info["LVM2_VG_FREE"])
 
+    @classmethod
+    def create_volumepool(cls, blockvolumes, options):
+        return None
+
     def _create_volume_for_storageobject(self, storageobj, options):
         lv = LogicalVolume(vg=self, storageobj=storageobj)
         lv.full_clean()
