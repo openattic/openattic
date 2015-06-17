@@ -21,6 +21,21 @@ describe('Should add a host and attributes', function(){
   it('should display the created test host', function(){
     expect(host.isDisplayed()).toBe(true);
   });
+  
+  it('should edit the created host', function(){
+    expect(host.isDisplayed()).toBe(true);
+    host.click();
+    element(by.css('.tc_editHost')).click();
+    browser.sleep(400);
+    var hostName = element(by.model('host.name'));
+    expect(hostName.getAttribute('value')).toEqual('protractor_test_host');
+    hostName.clear();
+    hostName.sendKeys('renamed_protractor_test_host');
+    browser.sleep(400);
+    element(by.css('.tc_submitButton')).click();
+    var edited_host = element(by.cssContainingText('tr', 'renamed_protractor_test_host'));
+    expect(edited_host.isDisplayed()).toBe(true);
+  });  
 
   it('should delete the test host', function(){
     expect(host.isDisplayed()).toBe(true);
