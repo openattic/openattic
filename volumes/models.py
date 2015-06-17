@@ -440,7 +440,9 @@ class StorageObject(models.Model):
 
     def _get_status(self):
         cache = get_cache("status")
-        ckey  = "storageobject__status__%d" % self.id
+        if self.pk is None:
+            return []
+        ckey  = "storageobject__status__%d" % self.pk
 
         flags = cache.get(ckey)
         if flags is not None and isinstance(flags, set):
