@@ -16,6 +16,8 @@
 
 import os
 
+from time import time, sleep
+
 from systemd.procutils import invoke
 from systemd.plugins   import logged, BasePlugin, method, deferredmethod
 
@@ -45,6 +47,22 @@ class SystemD(BasePlugin):
     @deferredmethod(in_signature="sb")
     def connect(self, resource, stacked, sender):
         invoke(stackcmd(resource, stacked, "connect"))
+
+    @deferredmethod(in_signature="s")
+    def wait_for_device(self, device, sender):
+        # the device may or may not be busy completing a previous operation.
+        # if so, wait for a max of ten seconds for the device to become available.
+        start = time()
+        while time() < start + 10:
+            try:
+                fd = os.open(device, os.O_RDWR|os.O_EXCL)
+            except OSError:
+                sleep(0.1)
+            else:
+                os.close(fd)
+                return
+        import errno
+        raise OSError(errno.EBUSY, 'Device or resource busy', str(device))
 
     @deferredmethod(in_signature="sb")
     def up(self, resource, stacked, sender):

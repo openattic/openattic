@@ -502,6 +502,14 @@ class StorageObject(models.Model):
         return []
 
 
+def create_volumepool(blockvolumes, options):
+    for PoolClass in CATALOG['volumepool']:
+        if PoolClass.create_volumepool(blockvolumes, options):
+            break
+    else:
+        raise NotImplementedError("No volumepool wanted to do that, y'know")
+
+
 class VolumePool(models.Model):
     """ Something that joins a couple of BlockVolumes together and provides
         BlockVolumes or FileSystemVolumes itself.

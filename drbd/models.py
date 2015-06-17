@@ -351,6 +351,7 @@ class Endpoint(models.Model):
         self.connection.drbd.modprobe()
         self.connection.drbd.conf_write(self.connection.name, conf)
         self.connection.drbd.createmd(self.connection.name, False)
+        self.connection.drbd.wait_for_device(self.volume.volume.path)
         self.connection.drbd.up(self.connection.name, False)
 
         if init_primary:
