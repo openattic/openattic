@@ -167,6 +167,14 @@ class PoolViewSet(viewsets.ModelViewSet):
     filter_class  = PoolFilter
     search_fields = ('name',)
 
+    def create(self, request, *args, **kwargs):
+        vp_so = models.create_volumepool(
+            [models.StorageObject.objects.get(id=disk_id)
+                for disk_id in request.DATA.get("disks", [])],
+            dict(request.DATA.get('options', {}), name=request.DATA["name"]))
+        serializer = PoolSerializer(vp_so, many=False, context={"request": request})
+        return Response(serializer.data, status=HTTP_201_CREATED)
+
     @detail_route()
     def volumes(self, request, *args, **kwargs):
         pool = self.get_object()

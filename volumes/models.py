@@ -507,7 +507,7 @@ def create_volumepool(disks, options):
         # TODO: disks may contain a bunch of BlockVolumes, but it may also
         # contain PhysicalBlockDevices. For the latter, we need to build
         # BlockVolumes to pass to the VolumePool, but for now,
-        blockvolumes = disks
+        blockvolumes = [disk.blockvolume_or_none for disk in disks]
 
         with StorageObject(name=options['name'], megs=0) as vp_storageobj:
             vp_storageobj.lock()
