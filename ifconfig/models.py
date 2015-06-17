@@ -87,6 +87,9 @@ class Host(models.Model):
         if len(ipaddress) == 1:
             return ipaddress[0].device.speed
 
+    def get_primary_ip_address(self):
+        return IPAddress.all_objects.get(primary_address=True, device__host=self)
+
 
 class HostDependentQuerySet(models.query.QuerySet):
     def iterator(self):
