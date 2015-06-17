@@ -1,15 +1,11 @@
 <!-- kate: space-indent on; indent-width 4; replace-tabs on; -->
 <oadatatable data="data" class="tc_oadatatable_volumes" filter-config="filterConfig" selection="selection">
     <actions>
-        <a class="btn btn-lg btn-primary" type="button" ng-click="addAction()" ng-hide="hasSelection">
-            <i class="fa fa-fw fa-plus"></i> Add
+        <a class="btn btn-lg btn-primary" ng-class="{disabled: !hasSelection}" type="button" ng-click="createPoolAction()">
+            <i class="fa fa-fw fa-plus"></i> Create pool...
         </a>
-        <a class="btn btn-lg btn-primary" type="button" ng-click="deleteAction()" ng-show="hasSelection">
-            <i class="fa fa-fw fa-trash-o"></i> Delete
-        </a>
-        <li><a ng-click="addAction(oadatatable)"><i class="fa fa-fw fa-plus"></i> Add</a></li>
         <li ng-class="{disabled: !hasSelection}" max-selected=1>
-            <a ng-click="deleteAction()"><i class="fa fa-fw fa-trash-o"></i> Delete</a>
+            <a ng-click="createPoolAction()"><i class="fa fa-fw fa-trash-o"></i> Create pool...</a>
         </li>
     </actions>
     <table class="table table-striped table-bordered table-hover">
