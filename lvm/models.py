@@ -186,13 +186,17 @@ class VolumeGroup(VolumePool):
         return True
 
     def get_volumepool_usage(self, stats):
-        stats["vp_megs"] = float(self.lvm_info["LVM2_VG_SIZE"])
-        stats["vp_free"] = float(self.lvm_info["LVM2_VG_FREE"])
-        stats["vp_used"] = stats["vp_megs"] - stats["vp_free"]
-        stats["vp_max_new_fsv"] = stats["vp_free"]
-        stats["vp_max_new_bv"]  = stats["vp_free"]
-        stats["used"]  = max(stats.get("used", None),         stats["vp_used"])
-        stats["free"]  = min(stats.get("free", float("inf")), stats["vp_free"])
+        try:
+            stats["vp_megs"] = float(self.lvm_info["LVM2_VG_SIZE"])
+            stats["vp_free"] = float(self.lvm_info["LVM2_VG_FREE"])
+            stats["vp_used"] = stats["vp_megs"] - stats["vp_free"]
+            stats["vp_max_new_fsv"] = stats["vp_free"]
+            stats["vp_max_new_bv"]  = stats["vp_free"]
+            stats["used"]  = max(stats.get("used", None),         stats["vp_used"])
+            stats["free"]  = min(stats.get("free", float("inf")), stats["vp_free"])
+        except KeyError:
+            # Seems the VG has *just* been created, so we can't query the stats yet.
+            pass
         return stats
 
 
