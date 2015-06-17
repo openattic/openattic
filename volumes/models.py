@@ -1172,8 +1172,8 @@ class DiskDevice(PhysicalBlockDevice):
 
     def __unicode__(self):
         if self.enclslot is None:
-            return "%s %dk" % (self.type, self.rpm / 1000)
-        return "%s %dk Slot %d" % (self.type, self.rpm / 1000, self.enclslot)
+            return "%s %s %dk" % (self.storageobj.name, self.type, self.rpm / 1000)
+        return "%s %s %dk Slot %d" % (self.storageobj.name, self.type, self.rpm / 1000, self.enclslot)
 
 
 class GenericDisk(BlockVolume):
