@@ -37,7 +37,7 @@ def update_disks(**kwargs):
         if "MINOR" not in dev or int(dev["MINOR"].strip("\0")) % 16 != 0:
             continue
 
-        if "ID_TYPE" not in dev or dev["ID_TYPE"].strip("\0") != "disk":
+        if "ID_TYPE" in dev and dev["ID_TYPE"].strip("\0") != "disk":
             continue
 
         if "ID_VENDOR" in dev and dev["ID_VENDOR"].strip("\0") in ("LSI", "IBM", "AMI"):
