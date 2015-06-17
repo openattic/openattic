@@ -502,13 +502,20 @@ class StorageObject(models.Model):
         return []
 
 
-def create_volumepool(blockvolumes, options):
-    for PoolClass in CATALOGS['volumepool']:
-        vp_storageobj = PoolClass.create_volumepool(blockvolumes, options)
-        if vp_storageobj is not None:
-            return vp_storageobj
-    else:
-        raise NotImplementedError("No volume pool class satisfies the given criteria")
+def create_volumepool(disks, options):
+    with Transaction():
+        # TODO: disks may contain a bunch of BlockVolumes, but it may also
+        # contain PhysicalBlockDevices. For the latter, we need to build
+        # BlockVolumes to pass to the VolumePool, but for now,
+        blockvolumes = disks
+
+        with StorageObject(name=options['name'], megs=0) as vp_storageobj:
+            vp_storageobj.lock()
+            for PoolClass in CATALOGS['volumepool']:
+                if PoolClass.create_volumepool(vp_storageobj, blockvolumes, options):
+                    return vp_storageobj
+            else:
+                raise NotImplementedError("No volume pool class satisfies the given criteria")
 
 
 class VolumePool(models.Model):

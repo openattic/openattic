@@ -57,7 +57,7 @@ class Zpool(VolumePool):
             return None
 
     @classmethod
-    def create_volumepool(cls, blockvolumes, options):
+    def create_volumepool(cls, vp_storageobj, blockvolumes, options):
         return None
 
     def _create_volume_for_storageobject(self, storageobj, options):

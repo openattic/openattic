@@ -151,8 +151,27 @@ class VolumeGroup(VolumePool):
         return float(self.lvm_info["LVM2_VG_SIZE"]) - float(self.lvm_info["LVM2_VG_FREE"])
 
     @classmethod
-    def create_volumepool(cls, blockvolumes, options):
-        return None
+    def create_volumepool(cls, vp_storageobj, blockvolumes, options):
+        if options.get('type', None) != 'lvm':
+            # TODO: looks like we don't want to do anything, but we
+            # may STILL want to create a VG if the devices list
+            # looks appropriate.
+            return None
+
+        if not blockvolumes:
+            return None
+
+        lvm = get_dbus_object("/lvm")
+
+        # Create PVs...
+        for bv in blockvolumes:
+            lvm.pvcreate(bv.volume.path)
+
+        # Create VG...
+        lvm.vgcreate(vp_storageobj.name, [bv.volume.path for bv in blockvolumes])
+
+        # Return not None
+        return vp_storageobj
 
     def _create_volume_for_storageobject(self, storageobj, options):
         lv = LogicalVolume(vg=self, storageobj=storageobj)
