@@ -116,6 +116,18 @@ class SystemD(BasePlugin):
     def lvs(self):
         return lvm_lvs()
 
+    @deferredmethod(in_signature="s")
+    def pvcreate(self, device, sender):
+        invoke(["/sbin/pvcreate", device])
+        get_cache("systemd").delete_many(["/sbin/lvs", "/sbin/vgs", "/sbin/pvs"])
+
+    @deferredmethod(in_signature="sas")
+    def vgcreate(self, vgname, devices, sender):
+        cmd = ["/sbin/vgcreate", vgname]
+        cmd.extend(devices)
+        invoke(cmd)
+        get_cache("systemd").delete_many(["/sbin/lvs", "/sbin/vgs", "/sbin/pvs"])
+
     @deferredmethod(in_signature="ssis")
     def lvcreate(self, vgname, lvname, megs, snapshot, sender):
         cmd = ["/sbin/lvcreate"]
