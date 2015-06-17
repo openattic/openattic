@@ -14,9 +14,6 @@
  *  GNU General Public License for more details.
 """
 
-import logging
-
-from django.conf import settings
 from rest_framework.routers import DefaultRouter
 
 from rest.loader import load_viewsets
