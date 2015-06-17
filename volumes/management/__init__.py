@@ -80,7 +80,12 @@ def update_disks(**kwargs):
 
             megs = int(get_dbus_object("/volumes").get_disk_size(dev.device_node))
 
-            with StorageObject(name=dev.get("ID_MODEL", "unknown disk"), megs=megs) as so:
+            if "ID_MODEL" in dev:
+                so_name = "%s %s" % (dev["ID_MODEL"], serial)
+            else:
+                so_name = dev.device_node
+
+            with StorageObject(name=so_name, megs=megs) as so:
                 diskdev = DiskDevice(storageobj=so, host=Host.objects.get_current(), serial=serial,
                                     model=dev.get("ID_MODEL", "unknown"), type=dtype, rpm=drpm)
                 diskdev.save()
