@@ -170,6 +170,9 @@ class VolumeGroup(VolumePool):
         # Create VG...
         lvm.vgcreate(vp_storageobj.name, [bv.volume.path for bv in blockvolumes])
 
+        vg = VolumeGroup(storageobj=vp_storageobj, host=Host.objects.get_current())
+        vg.save()
+
         # Return not None
         return vp_storageobj
 
