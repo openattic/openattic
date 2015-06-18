@@ -24,14 +24,6 @@ from ifconfig.models import Host, HostDependentManager, getHostDependentManagerC
 from volumes import blockdevices
 from volumes.models import DeviceNotFound, BlockVolume, CapabilitiesAwareManager, PhysicalBlockDevice
 
-if "nagios" in settings.INSTALLED_APPS:
-    HAVE_NAGIOS = True
-    from nagios.models import Command, Service
-    from nagios.conf import settings as nagios_settings
-else:
-    HAVE_NAGIOS = False
-
-
 
 class Controller(models.Model):
     host        = models.ForeignKey(Host)
@@ -142,35 +134,6 @@ class Unit(BlockVolume):
         if self.storageobj.name:
             return "%s %s" % (self.storageobj.name, self.unittype)
         return "Unnamed Unit /c%d/u%d %s" % (self.controller.index, self.index, self.unittype)
-
-
-if HAVE_NAGIOS:
-    def __create_service_for_unit(instance, **kwargs):
-        cmd = Command.objects.get(name=nagios_settings.TWRAID_UNIT_CHECK_CMD)
-        ctype = ContentType.objects.get_for_model(instance.__class__)
-        if Service.objects.filter(command=cmd, target_type=ctype, target_id=instance.id).count() != 0:
-            return
-        # fuck you nagios
-        desc = nagios_settings.TWRAID_UNIT_DESCRIPTION % unicode(instance)
-        for illegalchar in """`~!$%^&*|'"<>?,()=""":
-            desc = desc.replace(illegalchar, "")
-        srv = Service(
-            host        = instance.host,
-            target      = instance,
-            command     = cmd,
-            description = desc,
-            arguments   = instance.serial
-        )
-        srv.save()
-
-    def __delete_service_for_unit(instance, **kwargs):
-        ctype = ContentType.objects.get_for_model(instance.__class__)
-        for srv in Service.objects.filter(target_type=ctype, target_id=instance.id):
-            srv.delete()
-
-    signals.post_save.connect(  __create_service_for_unit, sender=Unit)
-    signals.post_delete.connect(__delete_service_for_unit, sender=Unit)
-
 
 
 class Disk(PhysicalBlockDevice):
