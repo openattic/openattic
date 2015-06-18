@@ -904,14 +904,25 @@ if HAVE_NAGIOS:
         ctype = ContentType.objects.get_for_model(instance.__class__)
         if Service.objects.filter(command=cmd, target_type=ctype, target_id=instance.id).count() != 0:
             return
-        srv = Service(
-            host        = instance.host,
-            target      = instance,
-            command     = cmd,
-            description = nagios_settings.LV_PERF_DESCRIPTION % unicode(instance),
-            arguments   = instance.path
-        )
-        srv.save()
+
+        desc = nagios_settings.LV_PERF_DESCRIPTION % unicode(instance)
+        for illegalchar in """`~!$%^&*|'"<>?,()=""":
+            desc = desc.replace(illegalchar, "")
+
+        try:
+            srv = Service.objects.get(description=desc)
+        except Service.DoesNotExist:
+            srv = Service(
+                host        = instance.host,
+                target      = instance,
+                command     = cmd,
+                description = ,
+                arguments   = instance.path
+            )
+        else:
+            srv.target = instance
+        finally:
+            srv.save()
 
     def __delete_service_for_blockvolume(instance, **kwargs):
         ctype = ContentType.objects.get_for_model(instance.__class__)
@@ -986,14 +997,25 @@ if HAVE_NAGIOS:
         cmd = Command.objects.get(name=nagios_settings.LV_UTIL_CHECK_CMD)
         if Service.objects.filter(command=cmd, target_type=ctype, target_id=instance.id).count() != 0:
             return
-        srv = Service(
-            host        = instance.host,
-            target      = instance,
-            command     = cmd,
-            description = nagios_settings.LV_UTIL_DESCRIPTION % unicode(instance),
-            arguments   = instance.storageobj.uuid
-        )
-        srv.save()
+
+        desc = nagios_settings.LV_UTIL_DESCRIPTION % unicode(instance)
+        for illegalchar in """`~!$%^&*|'"<>?,()=""":
+            desc = desc.replace(illegalchar, "")
+
+        try:
+            srv = Service.objects.get(description=desc)
+        except Service.DoesNotExist:
+            srv = Service(
+                host        = instance.host,
+                target      = instance,
+                command     = cmd,
+                description = desc,
+                arguments   = instance.storageobj.uuid
+            )
+        else:
+            srv.target = instance
+        finally:
+            srv.save()
 
     def __delete_service_for_filesystemvolume(instance, **kwargs):
         ctype = ContentType.objects.get_for_model(instance.__class__)
