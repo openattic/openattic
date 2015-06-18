@@ -31,7 +31,7 @@ def update_disks(**kwargs):
         if dev.subsystem != "block":
             continue
 
-        if "MAJOR" not in dev or int(dev["MAJOR"].strip("\0")) not in (8, 254):
+        if ("MAJOR" not in dev or int(dev["MAJOR"].strip("\0")) != 8) and "virtio" not in dev.device_path:
             continue
 
         if "MINOR" not in dev or int(dev["MINOR"].strip("\0")) % 16 != 0:
