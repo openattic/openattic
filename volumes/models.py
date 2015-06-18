@@ -1188,7 +1188,12 @@ class DiskDevice(PhysicalBlockDevice):
     def status(self):
         if self.storageobj.is_locked:
             return "locked"
-        return "unknown"
+        try:
+            self.udev_device
+        except DeviceNotFound:
+            return "failed"
+        else:
+            return "online"
 
     def get_status(self):
         return [self.status]
