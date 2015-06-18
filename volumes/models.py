@@ -516,9 +516,15 @@ def create_volumepool(disks, options):
             vp_storageobj.lock()
             for PoolClass in CATALOGS['volumepool']:
                 if PoolClass.create_volumepool(vp_storageobj, blockvolumes, options):
-                    return vp_storageobj
+                    break
             else:
                 raise NotImplementedError("No volume pool class satisfies the given criteria")
+
+            for disk in disks:
+                disk.upper = vp_storageobj
+                disk.save()
+
+            return vp_storageobj
 
 
 class VolumePool(models.Model):
