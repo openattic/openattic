@@ -673,7 +673,10 @@ class AbstractVolume(models.Model):
         return res
 
     def get_storage_devices(self):
-        return [self.storageobj.source_pool.volumepool]
+        if self.storageobj.source_pool is not None:
+            return [self.storageobj.source_pool.volumepool]
+        else:
+            return []
 
     def _create_snapshot_for_storageobject(self, storageobj, options):
         """ Create a volume that best fulfills the specification given
