@@ -916,7 +916,7 @@ if HAVE_NAGIOS:
                 host        = instance.host,
                 target      = instance,
                 command     = cmd,
-                description = ,
+                description = desc,
                 arguments   = instance.path
             )
         else:
