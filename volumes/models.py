@@ -921,8 +921,8 @@ if HAVE_NAGIOS:
             )
         else:
             srv.target = instance
-        finally:
-            srv.save()
+
+        srv.save()
 
     def __delete_service_for_blockvolume(instance, **kwargs):
         ctype = ContentType.objects.get_for_model(instance.__class__)
@@ -1014,8 +1014,8 @@ if HAVE_NAGIOS:
             )
         else:
             srv.target = instance
-        finally:
-            srv.save()
+
+        srv.save()
 
     def __delete_service_for_filesystemvolume(instance, **kwargs):
         ctype = ContentType.objects.get_for_model(instance.__class__)
