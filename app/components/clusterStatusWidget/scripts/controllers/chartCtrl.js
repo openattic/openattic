@@ -16,7 +16,7 @@ angular.module('openattic.clusterstatuswidget', ['easypiechart', 'angular-flot']
         // Easy Pie Chart
         $scope.defaultOptions = {
             barColor:function(percent) {
-                return(percent<50 ? colorSet.green : percent<85 ? colorSet.yellow : colorSet.red);
+                return(percent<50 ? colorSet.green : percent<75 ? colorSet.yellow : colorSet.red);
             },
             trackColor:colorSet.bgrey,
             scaleColor:false,
@@ -29,200 +29,97 @@ angular.module('openattic.clusterstatuswidget', ['easypiechart', 'angular-flot']
             }
         };
 
-        // Line Chart
+        $scope.hostOptions = {
+            barColor:colorSet.green,
+            trackColor:colorSet.red,
+            scaleColor:false,
+            size:50,
+            lineWidth:5,
+            trackWidth:4,
+            lineCap:'butt',
+            rotate:-90,
+            onStep: function(from, to, percent) {
+                $(this.el).find('.percent').text(Math.round(percent));
+            }
+        };
+
+        var hosts = 4;
+        var hostsOnline = 3;
+        $scope.testHosts = hostsOnline + '/' + hosts;
+        $scope.percentServerLoad =  Math.round(Math.random()*40+45);
+        $scope.percentServerLoadUp = false;
+        $scope.percentServerLoadChange = 0;
+
+        $scope.percentDiscSpace = 10;
+        $scope.percentDiscSpaceUp = false;
+
+        $scope.hosts = 100/hosts * hostsOnline;
+        $scope.temperature = 23;
+
+        var last;
+        //var checkHosts = function() {
+        //    // ServerLoad
+        //    last = $scope.percentServerLoad;
+        //    $scope.percentServerLoad = Math.round(Math.random()*40+45);
+        //    if(last < $scope.percentServerLoad) $scope.percentServerLoadUp = true; else $scope.percentServerLoadUp = false;
+        //    $scope.percentServerLoadChange = (($scope.percentServerLoad / last) -1) *100;
+        //    $scope.percentServerLoadChange = Math.round($scope.percentServerLoadChange);
+        //
+        //    // DiscSpace
+        //    if($scope.percentDiscSpace > 90) $scope.percentDiscSpace = 10;
+        //    $scope.percentDiscSpace = $scope.percentDiscSpace + Math.random()*5;
+        //
+        //    // Hosts
+        //
+        //    // Temp
+        //    $scope.temperature = Math.round(Math.random()*3+23);
+        //
+        //    $timeout(checkHosts, 10000);
+        //};
+        //checkHosts();
+
+        // Live Chart
         lineChartService.graphOptions.colors = [colorSet.blue,colorSet.yellow,colorSet.red];
         lineChartService.graphOptions.series.lines.fill = true;
         lineChartService.graphOptions.xaxis.mode = 'time';
         lineChartService.graphOptions.xaxis.timezone = 'browser';
-        lineChartService.graphOptions.yaxis.max = 100;
-        lineChartService.setMaxGraphValues(301);
-
-        //lineChartService.graphOptions.colors = [colorSet.blue,colorSet.yellow,colorSet.red];
-        //lineChartService.graphOptions.series.lines.fill = true;
-        //lineChartService.graphOptions.xaxis.max = 100;
-        //lineChartService.graphOptions.yaxis.max = 10;
-        //lineChartService.setMaxGraphValues(288);
+        lineChartService.setMaxGraphValues(121);
 
         $scope.lineChartOptions = lineChartService.graphOptions;
+        $scope.lineChartDataset = [{data: [[0,0],[1000,0]]}];    // Init empty Graph
 
-        // ------------------------- START TEST MODE TIME -------------------------
-        var globalData = [[], [], []];
-        var j=288;
-        var first1 = true;
-        var deleteGetData = function() {
-            var date = new Date().getTime();
-            var data = [];
-            data[0] = globalData[0].slice(0);
-            data[1] = globalData[1].slice(0)
-            data[2] = globalData[2].slice(0);
 
-            if(first1) {
-                if (data[0].length) {
-                    data[0] = data[0].slice(1);
-                    data[1] = data[1].slice(1);
-                    data[2] = data[2].slice(1);
-
-                    //for(var i=0; i<data.length; i++) {
-                    //    data[i][0] = i * (100/288);
-                    //}
-                }
-
-                while (data[0].length <= 288) {
-                    data[0].push([date - j * 1000, getValueFromRestApi(data[0])]);
-                    data[1].push([date - j * 1000, getValueFromRestApi(data[1])]);
-                    data[2].push([date - j * 1000, getValueFromRestApi(data[2])]);
-                    j < 1 ? j = 0 : j--;
-                }
-                first1 = false;
-            } else {
-                var prev1 = data[0][data[0].length-1][1];
-                var prev2 = data[1][data[1].length-1][1];
-                var prev3 = data[2][data[2].length-1][1];
-                data = [[],[],[]];
-                data[0].push([date - j * 1000, getValueFromRestApi3(prev1)]);
-                data[1].push([date - j * 1000, getValueFromRestApi3(prev2)]);
-                data[2].push([date - j * 1000, getValueFromRestApi3(prev3)]);
-            }
-
-            return data;
-        }
-        function getValueFromRestApi(data) {
-            var len = data.length;
-            var prev = len ? data[len-1][1] : Math.random() * 10;
-            var y =  prev + Math.random() * 1 - 0.5;
-
-            return y<0 ? 0 : y>10? 10 : y;
-        }
-        // ------------------------- END TEST MODE TIME -------------------------
-        // ------------------------- START TEST MODE NORMAL -------------------------
-        var globalData2 = [[],[],[]];
-        var maxVal = lineChartService.getMaxGraphValues();
-        var first2 = true;
-        var deleteGetData2 = function() {
-            var data = [];
-            data[0] = globalData2[0].slice(0);
-            data[1] = globalData2[1].slice(0);
-            data[2] = globalData2[2].slice(0);
-
-            if(first2) {
-                for (var i = 0; i < maxVal; i++) {
-                    data[0].push(getValueFromRestApi2(data[0]));
-                    data[1].push(getValueFromRestApi2(data[1]));
-                    data[2].push(getValueFromRestApi2(data[2]));
-                }
-                first2=false;
-            } else {
-                var prev1 = data[0][data[0].length-1];
-                var prev2 = data[1][data[1].length-1];
-                var prev3 = data[2][data[2].length-1];
-                data = [[],[],[]];
-                data[0].push(getValueFromRestApi3(prev1));
-                data[1].push(getValueFromRestApi3(prev2));
-                data[2].push(getValueFromRestApi3(prev3));
-            }
-
-            return data;
-        }
-        function getValueFromRestApi2(data) {
-            var len = data.length
-            var prev = len ? data[len-1] : Math.random() * 10;
-            var y =  prev + Math.random() * 1 - 0.5;
-
-            return y<0 ? 0 : y>10? 10 : y;
-        }
-        function getValueFromRestApi3(prev) {
-            var y =  prev + Math.random() * 1 - 0.5;
-
-            return y<0 ? 0 : y>10? 10 : y;
-        }
-        // ------------------------- END TEST MODE NORMAL -------------------------
-
-        // ------------------------- START TEST MODE DERP -------------------------
-        var globalData3;
-        var counter = 0;
-        var first3=true;
+        // ------------------------- AKTUELLES LIVE BLAA START -------------------------
+        var cpuLoadData;
+        var data;
         var date;
-        var last1, last2;
-        var discLoad;
         var evtSource = new EventSource("../../derp/stream");
         evtSource.onmessage = function(e) {
-            var data = e.data.replace(/\s*[^\w.]\s*/g, " ").split(" ");
+            date = new Date().getTime();
+            data = JSON.parse(e.data);
+            console.log(data.CPU.loadavg);
+            $scope.lineChartDataset = lineChartService.getDataset([
+                {id: 0, label: 'CPU Load', data: [[date, data.CPU.loadavg]]}
+            ]);
+            $scope.$digest();
+        };
+        // ------------------------- AKTUELLES LIVE BLAA END -------------------------
 
-            if(first3) {
-                last1 = data[0];
-                last2 = data[10];
-                first3 = false;
-            } else {
-                var interval = data[0] - last1;
-                var tot_ticks = data[10] - last2;
-                date = Math.round(data[0]*1000);
-                discLoad = tot_ticks / (interval * 1000.) * 100.;
+        //var drawGraph = function() {
+        //    //globalData3 = [[]];
+        //    //if(discLoad != null) {
+        //    //    globalData3[0].push([date, discLoad]);
+        //    //    counter++;
+        //    //    //console.log('Nummer:' + counter + ' Load:' + discLoad + ' in % um:' + date);
+        //    //    $scope.lineChartDataset = lineChartService.getDataset([
+        //    //        {id: 0, label: '', data: globalData3[0]},
+        //    //    ]);
+        //    //}
+        //    $timeout(drawGraph, 1000);
+        //};
+        //drawGraph();
 
-                //console.log('last:' + last1 + ' Curr:' + data[0]);
-                //console.log('last:' + last2 + ' Curr:' + data[10]);
-
-                last1 = data[0];
-                last2 = data[10];
-            }
-        }
-        // ------------------------- END TEST MODE DERP -------------------------
-
-        var drawGraph = function() {
-            /*serverLoadService.query().$promise.then(function(res)
-             {
-             var data = [];
-             var data2 = [];
-             var data3 = [];
-
-             for(var i in res) {
-             if(i%5 === 0 && i>(res.length/1.25)) {
-             data.push([res[i].t * 1000, res[i].load1]);
-             data2.push([res[i].t * 1000, res[i].load5]);
-             data3.push([res[i].t * 1000, res[i].load15]);
-             }
-             }
-
-             $scope.lineChartDataset = lineChartService.getDataset(0, 'load1', data);
-             $scope.lineChartDataset = lineChartService.getDataset(1, 'load5', data2, '#ff0000');
-             $scope.lineChartDataset = lineChartService.getDataset(2, 'load15', data3, '#ffff00');
-             }, function (error) {
-             console.log('An error occurred', error);
-             });*/
-
-            globalData = deleteGetData();
-            globalData2 = deleteGetData2();
-
-            //date = new Date().getTime();
-            //if(globalData[0].length === 0) {
-            //    for(var i=299; i>=0; i--) {
-            //        globalData[0].push([date - i*1000, 0]);
-            //    }
-            //}
-            globalData3 = [[]];
-            if(discLoad != null) {
-                globalData3[0].push([date, discLoad]);
-                counter++;
-                //console.log('Nummer:' + counter + ' Load:' + discLoad + ' in % um:' + date);
-                $scope.lineChartDataset = lineChartService.getDataset([
-                    {id: 0, label: 'ServerLoad', data: globalData3[0]},
-                ]);
-            }
-
-                //$scope.lineChartDataset = lineChartService.getDataset([
-                //    {id: 0, label: 'Line1', data: globalData[0]},
-                //    //{id: 1, label: 'Line2', data: globalData[1]},
-                //    //{id: 2, label: 'Line3', data: globalData[2]}
-                //]);
-            //    $scope.lineChartDataset = lineChartService.getDataset([
-            //        {id: 0, label: 'Line1', data: globalData2[0]},
-            //        //{id: 1, label: 'Line2', data: globalData2[1]},
-            //        //{id: 2, label: 'Line3', data: globalData2[2]}
-            //    ]);
-
-            $timeout(drawGraph, 1000);
-        }
-        drawGraph();
-
+        // bind functions on flot-element
         var graphElement = $("flot");
         graphElement.mousedown(function () { disableDrawing = true; lineChartService.disableDrawing(); });
         $("body").mouseup(function () { disableDrawing = false; lineChartService.enableDrawing(); });
@@ -246,4 +143,20 @@ angular.module('openattic.clusterstatuswidget', ['easypiechart', 'angular-flot']
             lineChartService.lockY(ranges.yaxis.from, ranges.yaxis.to);
             $scope.$digest();
         });
+        //graphElement.bind("plothover", function (event, pos, item)
+        //{
+        //    if (item) {
+        //        var x = item.datapoint[0].toFixed(2),
+        //            y = item.datapoint[1].toFixed(2);
+        //
+        //        var date = new Date(Math.floor(x));
+        //        var formattedDate = date.getHours() + ':' + date.getMinutes() + ':' + date.getSeconds();
+        //
+        //        $("#tooltip").html(y + " | " + formattedDate)
+        //            .css({top: item.pageY+5, left: item.pageX+5, border: "solid 1px black"})
+        //            .fadeIn(200);
+        //    } else {
+        //        $("#tooltip").hide();
+        //    }
+        //});
     });
