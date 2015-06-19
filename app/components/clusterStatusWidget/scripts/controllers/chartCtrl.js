@@ -96,7 +96,8 @@ angular.module('openattic.clusterstatuswidget', ['easypiechart', 'angular-flot']
         $scope.lineChartDataset = lineChartService.getDataset([{id: 0, data: data}]); // Init empty Graph
 
         // ------------------------- AKTUELLES LIVE BLAA START -------------------------
-        var evtSource = new EventSource("../../derp/stream");
+        //var evtSource = new EventSource("../../derp/stream");
+        var evtSource = new EventSource("../../openattic/serverstats/stream");
         evtSource.onmessage = function(e) {
             date = new Date().getTime();
             data = JSON.parse(e.data);
