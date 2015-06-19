@@ -1,5 +1,5 @@
 angular.module('openattic.clusterstatuswidget', ['easypiechart', 'angular-flot'])
-    .controller('chartCtrl', function ($scope, $timeout, lineChartService, serverLoadService) {
+    .controller('chartCtrl', function ($scope, $timeout, lineChartService) {
         // ColorSet
         var colorSet = {
             white:  "#ffffff",  // white
@@ -78,7 +78,7 @@ angular.module('openattic.clusterstatuswidget', ['easypiechart', 'angular-flot']
         //};
         //checkHosts();
 
-        // Live Chart
+        /** Live Chart */
         lineChartService.graphOptions.colors = [colorSet.blue,colorSet.yellow,colorSet.red];
         lineChartService.graphOptions.series.lines.fill = true;
         lineChartService.graphOptions.xaxis.mode = 'time';
@@ -86,18 +86,31 @@ angular.module('openattic.clusterstatuswidget', ['easypiechart', 'angular-flot']
         lineChartService.setMaxGraphValues(121);
 
         $scope.lineChartOptions = lineChartService.graphOptions;
-        $scope.lineChartDataset = [{data: [[0,0],[1000,0]]}];    // Init empty Graph
 
-
-        // ------------------------- AKTUELLES LIVE BLAA START -------------------------
-        var cpuLoadData;
+        // init variables
         var data;
         var date;
+        var updatetime;
+        var maxValues;
+
+        // delcare variables
+        updatetime = 1000; // time in ms -> 1000ms equals 1s
+        maxValues = lineChartService.getMaxGraphValues();
+        data = [];
+        date = new Date().getTime();
+
+        // Init empty graph
+        for(var i=0; i<maxValues; i++) {
+            data.push([date - (((maxValues-i)-1) * updatetime),0]);
+        }
+        $scope.lineChartDataset = lineChartService.getDataset([{id: 0, data: data}]); // Init empty Graph
+
+        // ------------------------- AKTUELLES LIVE BLAA START -------------------------
         var evtSource = new EventSource("../../derp/stream");
         evtSource.onmessage = function(e) {
             date = new Date().getTime();
             data = JSON.parse(e.data);
-            console.log(data.CPU.loadavg);
+
             $scope.lineChartDataset = lineChartService.getDataset([
                 {id: 0, label: 'CPU Load', data: [[date, data.CPU.loadavg]]}
             ]);
