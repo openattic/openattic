@@ -27,6 +27,7 @@ angular.module('openattic.oaWizards')
 
     $scope.$watch('input.iscsi_fc.host', function(host) {
       if(host){
+        $scope.input.iscsi_fc.create = true;
         InitiatorService.filter({host: host.id, type: 'qla2xxx'})
           .$promise
           .then(function(res) {
@@ -34,6 +35,9 @@ angular.module('openattic.oaWizards')
           }, function(error) {
             console.log('An error occured', error);
           });
+      }
+      else {
+        $scope.input.iscsi_fc.create = false;
       }
     });
 
