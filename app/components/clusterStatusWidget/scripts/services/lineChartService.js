@@ -64,13 +64,13 @@ angular.module('openattic.clusterstatuswidget').service('lineChartService', func
                 bottom: '#000',
                 left: '#000'
             },
-            hoverable: true,
-            clickable: true
+            hoverable: false,
+            clickable: false
         },
         legend: {
             show: true,
             position: 'nw',
-            backgroundOpacity: 0,
+            backgroundOpacity: 0
         },
         series: {
             shadowSize: 0,
@@ -110,7 +110,7 @@ angular.module('openattic.clusterstatuswidget').service('lineChartService', func
             min: [],
             max: []
         }
-    }
+    };
 
     // private methods
     function buildGraph(graphNumber, graphData) {
@@ -122,7 +122,7 @@ angular.module('openattic.clusterstatuswidget').service('lineChartService', func
 
             for(var i=0; i<maxGraphValues; i++) {
                 // fill empty data with 0
-                if(graphOptions.xaxis.mode == 'time') {
+                if(graphOptions.xaxis.mode === 'time') {
                     graphDataset[graphNumber].data.push([graphData[0][0],0]); // TODO ggf besser lösen bei time mode
                 } else {
                     graphDataset[graphNumber].data.push([i * (graphOptions.xaxis.max/(maxGraphValues-1)),0]);
@@ -131,7 +131,7 @@ angular.module('openattic.clusterstatuswidget').service('lineChartService', func
             }
         }
 
-        if(graphOptions.xaxis.mode == 'time') {
+        if(graphOptions.xaxis.mode === 'time') {
             data = [];
 
             if (graphData.length >= maxGraphValues) {
@@ -212,15 +212,15 @@ angular.module('openattic.clusterstatuswidget').service('lineChartService', func
         }
 
         return graphDataset;
-    }
+    };
 
     this.setMaxGraphValues = function(values) {
         maxGraphValues = values;
-    }
+    };
 
     this.getMaxGraphValues = function() {
         return maxGraphValues;
-    }
+    };
 
     this.lockX = function(min, max) {
         selectOptions.xaxis.min.push(graphOptions.xaxis.min);
@@ -242,7 +242,7 @@ angular.module('openattic.clusterstatuswidget').service('lineChartService', func
 
         graphOptions.xaxis.min = min;
         graphOptions.xaxis.max = max;
-    }
+    };
 
     this.unlockX = function(reset) {
         if(selectOptions.xaxis.min.length > 0 && selectOptions.xaxis.max.length > 0) {
@@ -260,7 +260,7 @@ angular.module('openattic.clusterstatuswidget').service('lineChartService', func
         if(selectOptions.xaxis.min.length == 0 && selectOptions.xaxis.max.length == 0) {
             selectOptions.xaxis.locked = false;
         }
-    }
+    };
 
     this.lockY = function(min, max) {
         selectOptions.yaxis.min.push(graphOptions.yaxis.min);
@@ -269,7 +269,7 @@ angular.module('openattic.clusterstatuswidget').service('lineChartService', func
 
         graphOptions.yaxis.min = min;
         graphOptions.yaxis.max = max;
-    }
+    };
 
     this.unlockY = function(reset) {
         if(selectOptions.yaxis.min.length > 0 && selectOptions.yaxis.max.length > 0) {
@@ -287,13 +287,13 @@ angular.module('openattic.clusterstatuswidget').service('lineChartService', func
         if(selectOptions.yaxis.min.length == 0 && selectOptions.yaxis.max.length == 0) {
             selectOptions.yaxis.locked = false;
         }
-    }
+    };
 
     this.disableDrawing = function() {
         disableDrawing = true;
-    }
+    };
 
     this.enableDrawing = function() {
         disableDrawing = false;
-    }
+    };
 });
