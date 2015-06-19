@@ -177,6 +177,7 @@ class ProtocolHandler(object):
             lio_tpg.set_parameter("MaxOutstandingR2T",        str(16))
             lio_tpg.set_parameter("FirstBurstLength",         str(2**16))
             lio_tpg.set_parameter("MaxRecvDataSegmentLength", str(256*1024))
+            lio_tpg.set_parameter("MaxXmitDataSegmentLength", str(256*1024))
             lio_tpg.enable = True
         yield ctxupdate(targetctx, tpg=lio_tpg)
 
