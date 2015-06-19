@@ -110,7 +110,7 @@ module.exports = function (grunt) {
             {
               expand: true,
               cwd: buildConfig.src,
-              src: ['bower_components/**', 'fonts/**'],
+              src: ['bower_components/**', 'fonts/**', 'images/**'],
               dest: buildConfig.dist
             }
           ]

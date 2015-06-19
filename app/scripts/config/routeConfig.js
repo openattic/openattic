@@ -68,6 +68,19 @@ angular.module('openattic').config(function ($stateProvider, $urlRouterProvider)
         label: 'Pools'
       }
     })
+    .state('pools-add', {
+      url: '/pools/add/:diskId',
+      views: {
+        'main': {
+          templateUrl: 'templates/pools/pool-form.html',
+          controller : 'PoolFormCtrl'
+        }
+      },
+      ncyBreadcrumb: {
+        parent: 'pools',
+        label: 'Add'
+      }
+    })
     .state('pools.detail', {
       url: '/:pool',
       views: {

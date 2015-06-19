@@ -44,12 +44,9 @@ angular.module('openattic')
       $scope.hasSelection = !!item;
     });
 
-    $scope.addAction = function(){
-      console.log(['addAction', arguments]);
-    };
-
-    $scope.deleteAction = function(){
-      console.log(['deleteAction', arguments]);
+    $scope.createPoolAction = function(){
+      console.log("createPoolAction");
+      $state.go('pools-add', {diskId: $scope.selection.item.id});
     };
   });
 

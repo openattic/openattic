@@ -20,7 +20,7 @@ angular.module('openattic.oaWizards')
 
         scope.tabs = tabs;
       },
-      controller: function($scope, VolumeService, CifsSharesService, NfsSharesService){
+      controller: function($scope, VolumeService, CifsSharesService, NfsSharesService, LunService){
         $scope.activeTab = 1;
         $scope.isActiveTab = function(index){
           return $scope.activeTab === index;
@@ -59,6 +59,17 @@ angular.module('openattic.oaWizards')
                         .$promise
                         .then(function() {
                         }, function(error) {
+                          console.log('An error occured', error);
+                        });
+                    }
+                  }
+                  else if('iscsi_fc' in $scope.input){
+                    if($scope.input.iscsi_fc.create) {
+                      $scope.input.iscsi_fc.volume = {id: res.id};
+                      LunService.save($scope.input.iscsi_fc)
+                        .$promise
+                        .then(function () {
+                        }, function (error) {
                           console.log('An error occured', error);
                         });
                     }
