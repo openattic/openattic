@@ -49,7 +49,6 @@
 angular.module('openattic.clusterstatuswidget').service('lineChartService', function() {
     // private attributes
     var graphDataset = [];
-    var tempGraphDataset = [];
     var maxGraphValues = 200;
     var disableDrawing = false;
 
@@ -64,7 +63,9 @@ angular.module('openattic.clusterstatuswidget').service('lineChartService', func
                 right: '#000',
                 bottom: '#000',
                 left: '#000'
-            }
+            },
+            hoverable: true,
+            clickable: true
         },
         legend: {
             show: true,
@@ -92,8 +93,7 @@ angular.module('openattic.clusterstatuswidget').service('lineChartService', func
             timeformat: "%H:%M:%S"
         },
         yaxis: {
-            min: 0,
-            max: 100
+            min: 0
         },
         selection: {
             mode: "xy"
@@ -119,10 +119,15 @@ angular.module('openattic.clusterstatuswidget').service('lineChartService', func
         // On first call
         if(typeof graphDataset[graphNumber] === 'undefined') {
             graphDataset[graphNumber] = { data: [] };
-// TODO fill for mode 'time' with placeholder
+
             for(var i=0; i<maxGraphValues; i++) {
                 // fill empty data with 0
-                graphDataset[graphNumber].data.push([i * (graphOptions.xaxis.max/(maxGraphValues-1)),0]);
+                if(graphOptions.xaxis.mode == 'time') {
+                    graphDataset[graphNumber].data.push([graphData[0][0],0]); // TODO ggf besser lösen bei time mode
+                } else {
+                    graphDataset[graphNumber].data.push([i * (graphOptions.xaxis.max/(maxGraphValues-1)),0]);
+                }
+
             }
         }
 
@@ -132,7 +137,12 @@ angular.module('openattic.clusterstatuswidget').service('lineChartService', func
             if (graphData.length >= maxGraphValues) {
                 data = graphData;
             } else {
-                data = graphDataset[graphNumber].data.slice(graphData.length);
+                if(!disableDrawing) {
+                    var sliceSize = graphDataset[graphNumber].data.length - (maxGraphValues - graphData.length);
+                    data = graphDataset[graphNumber].data.slice(sliceSize);
+                } else {
+                    data = graphDataset[graphNumber].data.slice(0);
+                }
                 for (var i in graphData) {
                     data.push([graphData[i][0], graphData[i][1]]);
                 }
@@ -140,8 +150,10 @@ angular.module('openattic.clusterstatuswidget').service('lineChartService', func
 
             if (!selectOptions.xaxis.locked) {
                 // if area unselected
-                graphOptions.xaxis.min = data[0][0];
-                graphOptions.xaxis.max = data[data.length - 1][0];
+                if(!disableDrawing) {
+                    graphOptions.xaxis.min = data[0][0];
+                    graphOptions.xaxis.max = data[data.length - 1][0];
+                }
             } else {
                 // if area selected
                 var diff = data[1][0] - data[0][0];
@@ -158,8 +170,10 @@ angular.module('openattic.clusterstatuswidget').service('lineChartService', func
                     }
 
                     // Make selected area moveable
-                    graphOptions.xaxis.min = graphOptions.xaxis.min + diff;
-                    graphOptions.xaxis.max = graphOptions.xaxis.max + diff;
+                    if(!disableDrawing) {
+                        graphOptions.xaxis.min = graphOptions.xaxis.min + diff;
+                        graphOptions.xaxis.max = graphOptions.xaxis.max + diff;
+                    }
                 }
             }
         } else {
@@ -190,42 +204,11 @@ angular.module('openattic.clusterstatuswidget').service('lineChartService', func
 
     // public methods
     this.getDataset = function(graphSets) {
-        if(graphOptions.xaxis.mode == 'time') {
-            //time mode
-            if(!disableDrawing) {
-                for(var i in graphSets) {
-                    if(tempGraphDataset.length > 0) {
-
-                        tempGraphDataset[i] = tempGraphDataset[i].concat(graphSets[i].data);
-
-                        graphDataset[graphSets[i].id] = {
-                            label: graphSets[i].label,
-                            data: buildGraph(graphSets[i].id, tempGraphDataset[i])
-                        };
-                    } else {
-                        graphDataset[graphSets[i].id] = {
-                            label: graphSets[i].label,
-                            data: buildGraph(graphSets[i].id, graphSets[i].data)
-                        };
-                    }
-                }
-                tempGraphDataset = [];
-            } else {
-                for(var i in graphSets) {
-                    if(typeof tempGraphDataset[i] === 'undefined') {
-                        tempGraphDataset[i] = [];
-                    }
-                    tempGraphDataset[i] = tempGraphDataset[i].concat(graphSets[i].data);
-                }
-            }
-        } else {
-            // normal mode
-            for(var i in graphSets) {
-                graphDataset[graphSets[i].id] = {
-                    label: graphSets[i].label,
-                    data: buildGraph(graphSets[i].id, graphSets[i].data)
-                };
-            }
+        for(var i in graphSets) {
+            graphDataset[graphSets[i].id] = {
+                label: graphSets[i].label,
+                data: buildGraph(graphSets[i].id, graphSets[i].data)
+            };
         }
 
         return graphDataset;
@@ -240,23 +223,22 @@ angular.module('openattic.clusterstatuswidget').service('lineChartService', func
     }
 
     this.lockX = function(min, max) {
-        if(graphOptions.xaxis.mode == 'time' && typeof tempGraphDataset[0] !== 'undefined') {
-            var tempLen = tempGraphDataset[0].length;
-            var diff = tempGraphDataset[0][tempLen-1][0] - graphDataset[0].data[graphDataset[0].data.length-1][0];
-
-            if(!selectOptions.xaxis.locked) {
-                graphOptions.xaxis.min = graphDataset[0].data[tempLen][0];
-                graphOptions.xaxis.max = tempGraphDataset[0][tempLen - 1][0];
-                } else {
-                for(var i in selectOptions.xaxis.min) {
-                    selectOptions.xaxis.min[i] = selectOptions.xaxis.min[i] + diff;
-                    selectOptions.xaxis.max[i] = selectOptions.xaxis.max[i] + diff;
-                }
-            }
-        }
         selectOptions.xaxis.min.push(graphOptions.xaxis.min);
         selectOptions.xaxis.max.push(graphOptions.xaxis.max);
         selectOptions.xaxis.locked = true;
+
+        // If mode time is active
+        if(graphOptions.xaxis.mode == 'time') {
+            var pos = graphDataset[0].data.length - maxGraphValues;
+            var diff = graphDataset[0].data[pos][0] - graphDataset[0].data[0][0];
+
+            selectOptions.xaxis.min.push(selectOptions.xaxis.min.pop() + diff);
+            selectOptions.xaxis.max.push(selectOptions.xaxis.max.pop() + diff);
+
+            if(min < graphDataset[0].data[pos][0]) {
+                min = min + diff;
+            }
+        }
 
         graphOptions.xaxis.min = min;
         graphOptions.xaxis.max = max;
