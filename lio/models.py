@@ -171,9 +171,12 @@ class ProtocolHandler(object):
         else:
             lio_tpg = rtslib.TPG(lio_tgt, 1)
             if self.module == "iscsi":
-                lio_tpg.set_attribute("authentication",      str(int(False)))
-            lio_tpg.set_attribute("generate_node_acls",      "0")
-            lio_tpg.set_attribute("demo_mode_write_protect", "0")
+                lio_tpg.set_attribute("authentication",       str(int(False)))
+            lio_tpg.set_attribute("generate_node_acls",       str(0))
+            lio_tpg.set_attribute("demo_mode_write_protect",  str(0))
+            lio_tpg.set_parameter("MaxOutstandingR2T",        str(16))
+            lio_tpg.set_parameter("FirstBurstLength",         str(2**16))
+            lio_tpg.set_parameter("MaxRecvDataSegmentLength", str(256*1024))
             lio_tpg.enable = True
         yield ctxupdate(targetctx, tpg=lio_tpg)
 
