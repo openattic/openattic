@@ -43,20 +43,10 @@ angular.module('openattic.clusterstatuswidget', ['easypiechart', 'angular-flot']
             }
         };
 
-        var hosts = 4;
-        var hostsOnline = 3;
-        $scope.testHosts = hostsOnline + '/' + hosts;
-        $scope.percentServerLoad =  Math.round(Math.random()*40+45);
-        $scope.percentServerLoadUp = false;
-        $scope.percentServerLoadChange = 0;
-
-        $scope.percentDiscSpace = 10;
-        $scope.percentDiscSpaceUp = false;
-
-        $scope.hosts = 100/hosts * hostsOnline;
+        $scope.percentDiscUsage = 70;
         $scope.temperature = 23;
 
-        var last;
+        //var last;
         //var checkHosts = function() {
         //    // ServerLoad
         //    last = $scope.percentServerLoad;
@@ -132,10 +122,10 @@ angular.module('openattic.clusterstatuswidget', ['easypiechart', 'angular-flot']
         //};
         //drawGraph();
 
-        // bind functions on flot-element
+        /** bind functions on flot-element */
         var graphElement = $("flot");
-        graphElement.mousedown(function () { disableDrawing = true; lineChartService.disableDrawing(); });
-        $("body").mouseup(function () { disableDrawing = false; lineChartService.enableDrawing(); });
+        graphElement.mousedown(function () { lineChartService.disableDrawing(); });
+        $("body").mouseup(function () { lineChartService.enableDrawing(); });
         graphElement.bind("contextmenu",function(){
             return false;
         });
