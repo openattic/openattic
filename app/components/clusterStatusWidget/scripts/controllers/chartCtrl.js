@@ -97,7 +97,7 @@ angular.module('openattic.clusterstatuswidget', ['easypiechart', 'angular-flot']
 
         // ------------------------- AKTUELLES LIVE BLAA START -------------------------
         //var evtSource = new EventSource("../../derp/stream");
-        var evtSource = new EventSource("../../openattic/serverstats/stream");
+        var evtSource = new EventSource("/openattic/serverstats/stream");
         evtSource.onmessage = function(e) {
             date = new Date().getTime();
             data = JSON.parse(e.data);
