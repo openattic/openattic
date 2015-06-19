@@ -31,6 +31,7 @@ processors.py  /usr/share/openattic
 urls.py        /usr/share/openattic
 views.py       /usr/share/openattic
 openattic.wsgi /usr/share/openattic
+serverstats.wsgi /usr/share/openattic
 
 # Init scripts, configs that are shipped upstream
 etc/init.d/openattic-systemd        /etc/init.d
