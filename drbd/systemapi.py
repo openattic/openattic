@@ -66,7 +66,13 @@ class SystemD(BasePlugin):
 
     @deferredmethod(in_signature="sb")
     def up(self, resource, stacked, sender):
-        invoke(stackcmd(resource, stacked, "up"))
+        try:
+            invoke(stackcmd(resource, stacked, "up"))
+        except SystemError:
+            # Sometimes, this command fails with "device or resource busy"
+            # and I have no idea why
+            sleep(1)
+            invoke(stackcmd(resource, stacked, "up"))
 
     @deferredmethod(in_signature="sb")
     def primary(self, resource, stacked, sender):
