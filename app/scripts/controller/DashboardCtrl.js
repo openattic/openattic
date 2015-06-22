@@ -2,6 +2,28 @@
 
 angular.module('openattic')
   .value('widgetDefinitions', [{
+    name: 'Cluster Status',
+    title: 'Cluster Status',
+    directive: 'clusterstatuswidget',
+    enableVerticalResize: false,
+    size: {
+      width: '100%'
+    },
+    settingsModalOptions: {
+      lockHorizontalResize: true
+    }
+  }, {
+    name: 'openATTIC Wizards',
+    title: 'openATTIC Wizards',
+    directive: 'wizardselector',
+    enableVerticalResize: false,
+    size: {
+      width: '100%'
+    },
+    settingsModalOptions: {
+      lockHorizontalResize: true
+    }
+  }, {
     name: 'Volume Stats',
     title: 'Volume Stats',
     directive: 'volumestatwidget',
@@ -14,26 +36,10 @@ angular.module('openattic')
     title: 'ToDos',
     directive: 'todowidget',
     enableVerticalResize: false
-  }, {
-    name: 'openATTIC Wizards',
-    title: 'openATTIC Wizards',
-    directive: 'wizardselector',
-    enableVerticalResize: false
-  }, {
-    name: 'Cluster Status',
-    title: 'Cluster Status',
-    directive: 'clusterstatuswidget',
-    enableVerticalResize: false,
-    size: {
-      width: '100%'
-    },
-    settingsModalOptions: {
-      lockHorizontalResize: true,
-    }
   }])
   .value('defaultWidgets', [
-    { name: 'openATTIC Wizards'},
-    { name: 'Cluster Status'}
+    { name: 'Cluster Status' },
+    { name: 'openATTIC Wizards' }
   ])
   .controller('DashboardCtrl', function ($scope, $window, widgetDefinitions, defaultWidgets){
     $scope.dashboardOptions = {
