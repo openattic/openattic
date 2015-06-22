@@ -65,8 +65,11 @@ describe('should add a CIFS share', function(){
     browser.sleep(400);
     element(by.css('.tc_submitButton')).click();
     browser.sleep(400);
-    var guestColumn = share.element(by.id('shareComment'));
+    var guestColumn = share.element(by.id('guest_ok'));
     expect(guestColumn.element(by.className('fa-check')).isPresent()).toBe(false);
+    var comment = share.element(by.binding('row.comment'));
+    expect(comment.getText()).toEqual('this is a protractor test cifs share');
+    
   });
 
   it('should remove the cifs share', function(){

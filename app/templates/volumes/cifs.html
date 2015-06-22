@@ -26,19 +26,19 @@
                 <td ng-if="cifsSelection.available"><input type="checkbox" checklist-model="cifsSelection.items" checklist-value="row"/></td>
                 <td ng-show="columns['Name']"       ng-bind="row.name"></td>
                 <td ng-show="columns['Path']"       ng-bind="row.path"></td>
-                <td ng-show="columns['Available']"  ><i class="fa" ng-class="{
+                <td ng-show="columns['Available']"  id="is_available"   ><i class="fa" ng-class="{
                     'fa-check':  row.available,
                     'fa-times': !row.available
                     }"></i></td>
-                <td ng-show="columns['Browseable']" ><i class="fa" ng-class="{
+                <td ng-show="columns['Browseable']" id="is_browseable"  ><i class="fa" ng-class="{
                     'fa-check':  row.browseable,
                     'fa-times': !row.browseable
                     }"></i></td>
-                <td ng-show="columns['Guest OK']"   ><i class="fa" ng-class="{
+                <td ng-show="columns['Guest OK']" id="guest_ok"         ><i class="fa" ng-class="{
                     'fa-check':  row.guest_ok,
                     'fa-times': !row.guest_ok
                     }"></i></td>
-                <td ng-show="columns['Writeable']"  ><i class="fa" ng-class="{
+                <td ng-show="columns['Writeable']" id="is_writeable"    ><i class="fa" ng-class="{
                     'fa-check':  row.writeable,
                     'fa-times': !row.writeable
                     }"></i></td>
