@@ -66,6 +66,7 @@ class SystemD(BasePlugin):
 
     @deferredmethod(in_signature="sb")
     def up(self, resource, stacked, sender):
+        sleep(1)
         try:
             invoke(stackcmd(resource, stacked, "up"))
         except SystemError:
