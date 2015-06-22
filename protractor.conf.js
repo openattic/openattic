@@ -5,8 +5,7 @@ exports.config = {
     defaultTimeoutInterval: 360000,
   },
   framework: 'jasmine2',
-//   allScriptsTimeout: 50000,
-  
+
   suites: {
     //dashboard         : 'test/e2e/dashboard/**/*.e2e.js',
     //todowidget        : 'test/e2e/dashboard/todoWidget/*.e2e.js',
