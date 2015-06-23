@@ -2,11 +2,24 @@
 # kate: hl python; space-indent on; indent-width 4; replace-tabs on;
 
 import os
+import sys
 
 import time
 import json
 
 from cgi import parse_qs
+
+# setup Django
+from os.path import join, dirname, abspath, exists
+PROJECT_ROOT = dirname(abspath(__file__))
+
+# environment variables
+sys.path.insert( 0, PROJECT_ROOT )
+os.environ['DJANGO_SETTINGS_MODULE'] = 'settings'
+
+# now we can use the openattic backend, for example
+# from ifconfig.models import Host
+# current_host = Host.objects.get_current()
 
 sse_data = """
 <!DOCTYPE html>
