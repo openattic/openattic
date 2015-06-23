@@ -182,7 +182,7 @@ class PoolViewSet(viewsets.ModelViewSet):
         return Response(serializer_instance.data)
 
     @detail_route()
-    def filesystems(self, *args, **kwargs):
+    def filesystems(self, request, *args, **kwargs):
         obj = self.get_object()
         pool = models.VolumePool.objects.get(id=obj.volumepool.id)
         fss = {fs.name: fs.desc for fs in pool.volumepool.get_supported_filesystems()}
