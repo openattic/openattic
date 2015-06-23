@@ -99,11 +99,6 @@ class LvHandler(AbstractBlockVolumeHandler):
         lv = LogicalVolume.objects.get(id=id)
         return lv.lvm_info
 
-    def disk_stats(self, id):
-        """ Return disk stats from the LV retrieved from the kernel. """
-        lv = LogicalVolume.objects.get(id=id)
-        return lv.disk_stats
-
     def merge(self, id):
         """ Merge the snapshot given by `id` back into the original volume. """
         LogicalVolume.objects.get(id=id).merge()
@@ -135,10 +130,6 @@ class LvProxy(ProxyModelHandler, LvHandler):
     def lvm_info(self, id):
         """ Return information about the LV retrieved from LVM. """
         return self._call_singlepeer_method("lvm_info", id)
-
-    def disk_stats(self, id):
-        """ Return disk stats from the LV retrieved from the kernel. """
-        return self._call_singlepeer_method("disk_stats", id)
 
     def create(self, data):
         if "id" in data:

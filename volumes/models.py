@@ -737,7 +737,6 @@ class BlockVolume(AbstractVolume):
     """ Everything that is a /dev/something.
 
         Classes that inherit from this one are required to implement the following properties:
-        * disk_stats -> property that returns the current Kernel disk stats from /sys/block/sdX/stat as a dict
         * host       -> ForeignKey or property of a node that can modify the volume
         * status     -> CharField or property
         * path       -> CharField or property that returns /dev/path
@@ -759,25 +758,6 @@ class BlockVolume(AbstractVolume):
 
     def __unicode__(self):
         return self.storageobj.name
-
-    @property
-    def disk_stats(self):
-        """ Get disk stats from `/sys/block/X/stat'. """
-        devname = os.path.realpath(self.path).replace("/dev/", "")
-        if not os.path.exists( "/sys/block/%s/stat" % devname ):
-            raise SystemError( "No such device: '%s'" % devname )
-
-        fd = open("/sys/block/%s/stat" % devname, "rb")
-        try:
-            stats = fd.read().split()
-        finally:
-            fd.close()
-
-        return dict( zip( [
-            "reads_completed",  "reads_merged",  "sectors_read",    "millisecs_reading",
-            "writes_completed", "writes_merged", "sectors_written", "millisecs_writing",
-            "ios_in_progress",  "millisecs_in_io", "weighted_millisecs_in_io"
-            ], [ int(num) for num in stats ] ) )
 
     def _create_filesystem(self, fstype, options):
         fsclass = filesystems.get_by_name(fstype)
@@ -946,7 +926,6 @@ class FileSystemVolume(AbstractVolume):
         Classes that inherit from this one are required to implement the following properties:
         * host       -> ForeignKey or property of a node that can modify the volume
         * path       -> CharField or property that returns the mount point
-        * disk_stats -> property that returns the current Kernel disk stats from /sys/block/sdX/stat as a dict
         * status     -> CharField or property
         * stat       -> property that returns { size:, free:, used: } in MiB
     """
@@ -1097,10 +1076,6 @@ class FileSystemProvider(FileSystemVolume):
     @property
     def host(self):
         return self.storageobj.blockvolume.volume.host
-
-    @property
-    def disk_stats(self):
-        return self.storageobj.blockvolume.volume.disk_stats
 
     @property
     def fs(self):
