@@ -2,6 +2,8 @@ var helpers = require('../common.js');
 
 describe('General', function() {
 
+  var systemItem = element.all(by.css('ul .tc_menuitem')).get(5);
+  
   beforeAll(function() {
     helpers.login();
   });
@@ -39,7 +41,6 @@ describe('General', function() {
   });
 
   it('should have subitems under the system menu item', function(){
-    var systemItem = element.all(by.css('ul .tc_menuitem')).get(5);
     systemItem.click();
 
     expect(systemItem.all(by.css('ul .tc_submenuitem')).count()).toBeGreaterThan(0);
