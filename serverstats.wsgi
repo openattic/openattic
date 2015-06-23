@@ -33,12 +33,9 @@ sse_data = """
 """
 
 
-# A relatively simple WSGI application. It's going to print out the
-# environment dictionary after being updated by setup_testing_defaults
 def application(environ, start_response):
 
     status = '200 OK'
-
 
     if not environ["PATH_INFO"].startswith('/stream'):
         headers = [('Content-type', 'text/html; encoding=utf8')]
