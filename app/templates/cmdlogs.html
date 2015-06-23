@@ -1,10 +1,10 @@
-<oadatatable data="data" filter-config="filterConfig" selection="selection">
+<oadatatable data="data" class="tc_oadatatable_cmdlogs" filter-config="filterConfig" selection="selection">
     <actions>
-        <a class="btn btn-lg btn-primary" type="button" ng-click="deleteByDateAction()">
+        <a class="btn btn-lg btn-primary tc_deleteByDateBtn" type="button" ng-click="deleteByDateAction()">
             <i class="fa fa-fw fa-calendar"></i> Delete By Date
         </a>
         <li ng-class="{disabled: !hasSelection}" max-selected=1>
-            <a ng-click="deleteAction()"><i class="fa fa-fw fa-trash-o"></i> Delete</a>
+            <a ng-click="deleteAction()" class="tc_deleteBtn"><i class="fa fa-fw fa-trash-o"></i> Delete</a>
         </li>
     </actions>
     <table class="table table-striped table-bordered table-hover">
