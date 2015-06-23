@@ -1,4 +1,3 @@
-
 var helpers = require('../common.js');
 
 describe('Should add a host and attributes', function(){
