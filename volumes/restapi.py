@@ -194,6 +194,23 @@ class PoolViewSet(viewsets.ModelViewSet):
         return Response(models.get_storage_tree(self.get_object().authoritative_obj))
 
 
+class PoolProxyViewSet(RequestHandlers, PoolViewSet):
+    api_prefix = 'pools'
+    model = models.StorageObject
+
+    @detail_route()
+    def volumes(self, request, *args, **kwargs):
+        return self.retrieve(request, 'volumes', *args, **kwargs)
+
+    @detail_route()
+    def filesystems(self, request, *args, **kwargs):
+        return self.retrieve(request, 'filesystems', *args, **kwargs)
+
+    @detail_route()
+    def storage(self, request, *args, **kwargs):
+        return self.retrieve(request, 'storage', *args, **kwargs)
+
+
 ##################################
 #            Volume              #
 ##################################
@@ -411,7 +428,7 @@ class VolumeProxyViewSet(RequestHandlers, VolumeViewSet):
 
 RESTAPI_VIEWSETS = [
     ('disks',     DiskViewSet,          'disk'),
-    ('pools',     PoolViewSet,          'pool'),
+    ('pools',     PoolProxyViewSet,     'pool'),
     ('volumes',   VolumeProxyViewSet,   'volume'),
     ('snapshots', SnapshotViewSet,      'snapshot'),
 ]
