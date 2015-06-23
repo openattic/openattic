@@ -4,23 +4,27 @@
             <a ui-sref="volumes.detail.status({volume:  selection.item.id})" class="tc_statusTab" data-toggle="tab"
                data-target="#tab-content">Status</a>
         </li>
-        <li ui-sref-active="active">
+        <li ui-sref-active="active" ng-show="selection.item.is_filesystemvolume">
             <a ui-sref="volumes.detail.statistics.utilgraphs({volume: selection.item.id})" class="tc_statisticsTab"
                data-toggle="tab" data-target="#tab-content">Statistics</a>
         </li>
-        <li ui-sref-active="active" ng-show="volumeForShare">
+        <li ui-sref-active="active" ng-show="selection.item.is_blockvolume &amp;&amp; !selection.item.is_filesystemvolume">
+            <a ui-sref="volumes.detail.statistics.perfgraphs({volume: selection.item.id})" class="tc_statisticsTab"
+               data-toggle="tab" data-target="#tab-content">Statistics</a>
+        </li>
+        <li ui-sref-active="active" ng-show="selection.item.is_filesystemvolume">
             <a ui-sref="volumes.detail.cifs({volume: selection.item.id})" class="tc_cifsShareTab" data-toggle="tab"
                data-target="#tab-content">CIFS</a>
         </li>
-        <li ui-sref-active="active" ng-show="volumeForShare">
+        <li ui-sref-active="active" ng-show="selection.item.is_filesystemvolume">
             <a ui-sref="volumes.detail.nfs({volume: selection.item.id})" class="tc_nfsShareTab" data-toggle="tab"
                data-target="#tab-content">NFS</a>
         </li>
-        <li ui-sref-active="active" ng-show="volumeForShare">
+        <li ui-sref-active="active" ng-show="selection.item.is_filesystemvolume">
             <a ui-sref="volumes.detail.http({volume: selection.item.id})" class="tc_httpShareTab" data-toggle="tab"
                data-target="#tab-content">HTTP</a>
         </li>
-        <li ui-sref-active="active" ng-show="volumeForLun">
+        <li ui-sref-active="active" ng-show="selection.item.is_blockvolume">
             <a ui-sref="volumes.detail.luns({volume: selection.item.id})" class="tc_iscsi_fcTab" data-toggle="tab"
                data-target="#tab-content">iSCSI/FC</a>
         </li>

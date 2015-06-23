@@ -2,11 +2,11 @@
 <div class="tab-pane active fuelux">
     <div class="wizard">
         <ul class="steps">
-            <li ui-sref-active="active" data-target="#utilgraphs">
+            <li ui-sref-active="active" data-target="#utilgraphs" ng-show="selection.item.is_filesystemvolume">
                 <a ui-sref="volumes.detail.statistics.utilgraphs">Utilization</a>
                 <span class="chevron"></span>
             </li>
-            <li ui-sref-active="active" data-target="#perfgraphs">
+            <li ui-sref-active="active" data-target="#perfgraphs" ng-show="selection.item.is_blockvolume">
                 <a ui-sref="volumes.detail.statistics.perfgraphs">Performance</a>
                 <span class="chevron"></span>
             </li>

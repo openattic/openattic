@@ -38,16 +38,20 @@ angular.module('openattic')
         return;
       }
       $scope.cloneable = item.type.name !== 'zfs';
-      $scope.volumeForShare = item.is_filesystemvolume;
-      $scope.volumeForLun   = item.is_blockvolume && !item.is_filesystemvolume;
 
       if( $state.current.name === 'volumes' ||
-         ($state.current.name === 'volumes.detail.cifs' && !$scope.volumeForShare) ||
-         ($state.current.name === 'volumes.detail.nfs'  && !$scope.volumeForShare) ||
-         ($state.current.name === 'volumes.detail.http' && !$scope.volumeForShare) ||
-         ($state.current.name === 'volumes.detail.tftp' && !$scope.volumeForShare) ||
-         ($state.current.name === 'volumes.detail.luns' && !$scope.volumeForLun)){
+         ($state.current.name === 'volumes.detail.cifs' && !item.is_filesystemvolume) ||
+         ($state.current.name === 'volumes.detail.nfs'  && !item.is_filesystemvolume) ||
+         ($state.current.name === 'volumes.detail.http' && !item.is_filesystemvolume) ||
+         ($state.current.name === 'volumes.detail.tftp' && !item.is_filesystemvolume) ||
+         ($state.current.name === 'volumes.detail.luns' && (!item.is_blockvolume || item.is_filesystemvolume) )){
         $state.go('volumes.detail.status', {volume: item.id});
+      }
+      else if($state.current.name === 'volumes.detail.statistics.utilgraphs' && !item.is_filesystemvolume){
+        $state.go('volumes.detail.statistics.perfgraphs', {volume: item.id});
+      }
+      else if($state.current.name === 'volumes.detail.statistics.perfgraphs' && !item.is_blockvolume){
+        $state.go('volumes.detail.statistics.utilgraphs', {volume: item.id});
       }
       else{
         $state.go($state.current.name, {volume: item.id});
