@@ -14,7 +14,7 @@
  *  GNU General Public License for more details.
 """
 
-import django_filters
+import django_filters, requests, json
 
 from django.db.models import Q
 
@@ -25,6 +25,7 @@ from rest_framework.status import HTTP_201_CREATED
 
 from rest import relations
 from rest.restapi import ContentTypeSerializer
+from rest.multinode.handlers import RequestHandlers
 
 from volumes import models
 
@@ -390,9 +391,27 @@ class VolumeViewSet(viewsets.ModelViewSet):
         return Response(volume.data)
 
 
+class VolumeProxyViewSet(RequestHandlers, VolumeViewSet):
+    api_prefix = 'volumes'
+    host_filter = 'source_pool__volumepool__host__id'
+    model = models.StorageObject
+
+    @detail_route(["post"])
+    def clone(self, request, *args, **kwargs):
+        return self.retrieve(request, 'clone', *args, **kwargs)
+
+    @detail_route(["get", "post"])
+    def snapshots(self, request, *args, **kwargs):
+        return self.retrieve(request, 'snapshots', *args, **kwargs)
+
+    @detail_route()
+    def storage(self, request, *args, **kwargs):
+        return self.retrieve(request, 'storage', *args, **kwargs)
+
+
 RESTAPI_VIEWSETS = [
-    ('disks',     DiskViewSet,     'disk'),
-    ('pools',     PoolViewSet,     'pool'),
-    ('volumes',   VolumeViewSet,   'volume'),
-    ('snapshots', SnapshotViewSet, 'snapshot'),
+    ('disks',     DiskViewSet,          'disk'),
+    ('pools',     PoolViewSet,          'pool'),
+    ('volumes',   VolumeProxyViewSet,   'volume'),
+    ('snapshots', SnapshotViewSet,      'snapshot'),
 ]
