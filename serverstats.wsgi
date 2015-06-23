@@ -1,20 +1,12 @@
+# -*- coding: utf-8 -*-
+# kate: hl python; space-indent on; indent-width 4; replace-tabs on;
+
 import os
-# import sys
 
-# Change working directory so relative paths (and template lookup) work again
-# os.chdir(os.path.dirname(__file__))
-
-# sys.path.append( os.getcwd() )
-
-import bottle
 import time
 import json
 
-# Bottle requires gevent.monkey.patch_all() even if you don't like it.
-from gevent import monkey; #monkey.patch_all()
-from gevent import sleep
-from bottle import get, post, request, response
-from bottle import GeventServer, run
+from cgi import parse_qs
 
 sse_data = """
 <!DOCTYPE html>
@@ -40,60 +32,70 @@ sse_data = """
 </html>
 """
 
-@get('/')
-def index():
-    return sse_data
 
-@get('/stream')
-def stream():
-    # "Using server-sent events"
-    # https://developer.mozilla.org/en-US/docs/Server-sent_events/Using_server-sent_events
-    # "Stream updates with server-sent events"
-    # http://www.html5rocks.com/en/tutorials/eventsource/basics/
+# A relatively simple WSGI application. It's going to print out the
+# environment dictionary after being updated by setup_testing_defaults
+def application(environ, start_response):
 
-    response.content_type  = 'text/event-stream'
-    response.cache_control = 'no-cache'
+    status = '200 OK'
 
-    # Set client-side auto-reconnect timeout, ms.
-    yield 'retry: 100\n\n'
 
-    # Dict filled with systemstats
-    system_stats = { "CPU": {}, "temperature": {}, "disks": {}}
+    if not environ["PATH_INFO"].startswith('/stream'):
+        headers = [('Content-type', 'text/html; encoding=utf8')]
+        start_response(status, headers)
+        yield sse_data
+        return
 
-    # Dict filled with sysstats from the last and the actual call
-    data = {}
+    else:
+        # "Using server-sent events"
+        # https://developer.mozilla.org/en-US/docs/Server-sent_events/Using_server-sent_events
+        # "Stream updates with server-sent events"
+        # http://www.html5rocks.com/en/tutorials/eventsource/basics/
 
-    # Keep connection alive no more then... (s)
-    itv = int(request.GET.get("interval", "1"))
-    startup = True
-    last = 0
-    now  = time.time()
-    end = now + 600
-    while now < end:
-        if now >= last + itv:
-            if startup:
-                # Collect data from first call
-                startup = False
-                data["CPU_stats_old"] = getCpuTime()
-                sleep(1)
-            # CPU stats
-            data["CPU_stats_now"] = getCpuTime() #get actual stats
-            total = data["CPU_stats_now"]["cpu"]["total"] - data["CPU_stats_old"]["cpu"]["total"]
-            idle = data["CPU_stats_now"]["cpu"]["idle"] - data["CPU_stats_old"]["cpu"]["idle"]
-            system_stats["CPU"]["loadavg"] = (total - idle) / total * 100
-            data["CPU_stats_old"] = data["CPU_stats_now"] #update old stats
+        headers = [('Content-type', 'text/event-stream; encoding=utf8'), ('Cache-Control', 'no-cache')]
+        start_response(status, headers)
 
-            # Temperature
+        # Set client-side auto-reconnect timeout, ms.
+        yield 'retry: 100\n\n'
 
-            last = now
-            yield 'data: %s\n\n' % (json.dumps(system_stats))
-        sleep(1)
+        # Dict filled with systemstats
+        system_stats = { "CPU": {}, "temperature": {}, "disks": {}}
+
+        # Dict filled with sysstats from the last and the actual call
+        data = {}
+
+        # Keep connection alive no more then... (s)
+        request_GET_params = parse_qs(environ.get("QUERY_STRING", ""))
+        itv = int(request_GET_params.get("interval", ["1"])[0])
+        startup = True
+        last = 0
         now  = time.time()
+        end = now + 600
+        while now < end:
+            if now >= last + itv:
+                if startup:
+                    # Collect data from first call
+                    startup = False
+                    data["CPU_stats_old"] = getCpuTime()
+                    time.sleep(1)
+                # CPU stats
+                data["CPU_stats_now"] = getCpuTime() #get actual stats
+                total = data["CPU_stats_now"]["cpu"]["total"] - data["CPU_stats_old"]["cpu"]["total"]
+                idle = data["CPU_stats_now"]["cpu"]["idle"] - data["CPU_stats_old"]["cpu"]["idle"]
+                system_stats["CPU"]["loadavg"] = (total - idle) / total * 100
+                data["CPU_stats_old"] = data["CPU_stats_now"] #update old stats
+
+                # Temperature
+
+                last = now
+                yield 'data: %s\n\n' % (json.dumps(system_stats))
+            time.sleep(1)
+            now  = time.time()
 
 def getCpuTime():
     '''
     load from /proc/stat
-	
+
         user    nice   system  idle      iowait irq   softirq  steal  guest  guest_nice
     cpu  74608   2520   24433   1117073   6176   4054  0        0      0      0
 
@@ -124,9 +126,3 @@ def getCpuTime():
 
 
 
-#if __name__ == '__main__':
-#        run(server=GeventServer)
-
-application = bottle.default_app()
-
-# kate: hl python
