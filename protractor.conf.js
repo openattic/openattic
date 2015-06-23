@@ -10,6 +10,8 @@ exports.config = {
     //dashboard         : 'test/e2e/dashboard/**/*.e2e.js',
     //todowidget        : 'test/e2e/dashboard/todoWidget/*.e2e.js',
     general           : 'test/e2e/general/**/*.e2e.js',
+    disks             : 'test/e2e/disks/**/*.e2e.js',
+    pools             : 'test/e2e/pools/**/*e2e.js',
     volumes           : 'test/e2e/volumes/**/*.e2e.js',
     volumes_add       : 'test/e2e/volumes/add/**/*.e2e.js',
     volumes_protection: 'test/e2e/volumes/protection/**/*.e2e.js',
@@ -23,6 +25,7 @@ exports.config = {
     hosts             : 'test/e2e/hosts/**/*.e2e.js',
     users             : 'test/e2e/users/**/*.e2e.js',
     auth              : 'test/e2e/auth/*.e2e.js',
+    cmdlogs           : 'test/e2e/commandLogs/**/*e2e.js',
   },
 
   onPrepare: function(){
