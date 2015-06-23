@@ -20,7 +20,7 @@ angular.module('openattic.oaWizards')
 
         scope.tabs = tabs;
       },
-      controller: function($scope, VolumeService, CifsSharesService, NfsSharesService, LunService){
+      controller: function($scope, VolumeService, CifsSharesService, NfsSharesService, LunService, SizeParserService){
         $scope.activeTab = 1;
         $scope.isActiveTab = function(index){
           return $scope.activeTab === index;
@@ -39,7 +39,9 @@ angular.module('openattic.oaWizards')
               $scope.activeTab++;
             }
             else if ($scope.activeTab === $scope.tabs.length) {
-              VolumeService.save($scope.input.volume)
+	      var volume = $.extend({}, $scope.input.volume);
+	      volume.megs = SizeParserService.parseInt($scope.input.volume.megs);
+              VolumeService.save(volume)
                 .$promise
                 .then(function (res){
                   if('cifs' in $scope.input && 'nfs' in $scope.input){
