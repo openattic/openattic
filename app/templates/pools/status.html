@@ -5,13 +5,12 @@
 <div ng-show="selection.item.usage.steal > 0">
     <h2>Stolen space</h2>
     <p>
-        The volume reports stolen space. This means that storage capacity which should be available for use in this volume
-        is instead used elsewhere. Depending on the volume type, examples may be:
+        The pool reports stolen space. This means that storage capacity which should be available for use in this pool
+        is instead used elsewhere. Depending on the pool type, examples may be:
     </p>
     <ul>
         <li>Redundancy and/or parity for data recovery after a disk failure.</li>
-        <li>Space used by other volumes in the same pool if the pool is overcommitted.</li>
+        <li>Space used by other pools in the same cluster.</li>
         <li>Space used for snapshots.</li>
-        <li>Snapshots limiting the maximum amount of data that can be written to the volume.</li>
     </ul>
 </div>
