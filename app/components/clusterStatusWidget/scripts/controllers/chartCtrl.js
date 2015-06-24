@@ -103,7 +103,7 @@ angular.module('openattic.clusterstatuswidget', ['easypiechart', 'angular-flot']
             data = JSON.parse(e.data);
 
             $scope.lineChartDataset = lineChartService.getDataset([
-                {id: 0, label: 'CPU Load', data: [[date, data.CPU.loadavg]]}
+                {id: 0, label: 'CPU Load', data: [[date, data.cpu.load_percent]]}
             ]);
             $scope.$digest();
         };
@@ -132,6 +132,7 @@ angular.module('openattic.clusterstatuswidget', ['easypiechart', 'angular-flot']
         });
         graphElement.bind("dblclick", function() {
             lineChartService.unlockX(true);
+
             lineChartService.unlockY(true);
             $scope.$digest();
         });
