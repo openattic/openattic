@@ -46,11 +46,12 @@ class RequestHandlers(object):
 
         results = []
         for obj in queryset:
-            if obj.host == current_host:
+            host = self._get_object_host(obj)
+            if host == current_host:
                 serializer = self.get_serializer(obj)
                 results.append(serializer.data)
             else:
-                results.append(json.loads(self._remote_request(request, obj)))
+                results.append(json.loads(self._remote_request(request, obj, None, host)))
 
         next_page = None
         prev_page = None
