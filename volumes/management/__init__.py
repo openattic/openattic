@@ -44,6 +44,9 @@ def update_disks(**kwargs):
             # skip disks created by LSI hardware raid adapters or AMI IPMI (SuperMicro)
             continue
 
+        if int(dev.attributes["size"].strip("\0")) == 0:
+            continue
+
         print "checking disk", dev.device_node
 
         # See if we have a serial
