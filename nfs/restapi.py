@@ -17,7 +17,6 @@
 import django_filters
 
 from rest_framework import serializers, viewsets, status
-from rest_framework.response import Response
 
 from rest import relations
 
