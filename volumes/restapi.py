@@ -343,6 +343,17 @@ class SnapshotViewSet(viewsets.ModelViewSet):
 
         return Response(serializedClone.data, status=HTTP_201_CREATED)
 
+
+class SnapshotProxyViewSet(RequestHandlers, SnapshotViewSet):
+    api_prefix  = 'snapshots'
+    host_filter = 'source_pool__volumepool__host__id'
+    model       = models.StorageObject
+
+    @detail_route(["post"])
+    def clone(self, request, *args, **kwargs):
+        return self.retrieve(request, 'clone', *args, **kwargs)
+
+
 class VolumeViewSet(viewsets.ModelViewSet):
     queryset = models.StorageObject.objects.filter(VOLUME_FILTER_Q)
     serializer_class = VolumeSerializer
@@ -430,5 +441,5 @@ RESTAPI_VIEWSETS = [
     ('disks',     DiskViewSet,          'disk'),
     ('pools',     PoolProxyViewSet,     'pool'),
     ('volumes',   VolumeProxyViewSet,   'volume'),
-    ('snapshots', SnapshotViewSet,      'snapshot'),
+    ('snapshots', SnapshotProxyViewSet, 'snapshot'),
 ]
