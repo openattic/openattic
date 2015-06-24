@@ -66,6 +66,9 @@ def dbus_to_python(obj):
     return py
 
 
+class InTransaction(Exception):
+    pass
+
 class Transaction(object):
     """ Collects deferrable systemd operations in a queue and runs it.
 
@@ -77,16 +80,36 @@ class Transaction(object):
             with Transaction(background=False):
                 <some code that does stuff and ultimately calls systemd>
 
+            with Transaction():
+                <some code that does stuff and ultimately calls systemd>
+                with Transaction():
+                    <calls get merged into the outer transaction>
+
+            with Transaction():
+                <some code that does stuff and ultimately calls systemd>
+                with Transaction(reentrant=False):
+                    <raises InTransaction>
+
         In case of an exception, the queue will be discarded and no
         action will be taken. Otherwise, the transaction will either
         run in the background or block until the operations in the queue
         have finished, depending on the ``background`` parameter.
+
+        If the ``reentrant`` parameter is set to True, nesting Transactions
+        will not cause an error, but instead be merged into one.
     """
-    def __init__(self, background=True):
+    def __init__(self, background=True, reentrant=True):
         self.background = background
+        self.reentrant  = reentrant
 
     def __enter__(self):
+        if hasattr(threadstore, "in_transaction") and threadstore.in_transaction:
+            if not self.reentrant:
+                raise InTransaction()
+            else:
+                return
         get_dbus_object("/").start_queue()
+        threadstore.in_transaction = True
 
     def __exit__(self, type, value, traceback):
         if type is not None:
@@ -96,5 +119,6 @@ class Transaction(object):
             get_dbus_object("/").run_queue_background()
         else:
             get_dbus_object("/").run_queue()
+        threadstore.in_transaction = False
 
 
