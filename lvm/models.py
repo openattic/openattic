@@ -499,12 +499,16 @@ class LogicalVolume(BlockVolume):
 
         if self.storageobj.snapshot is not None:
             # Are we a snapshot? If so, add block device usage info.
-            stats["bd_used"] = self.storageobj.megs * float(self.lvm_info["LVM2_DATA_PERCENT"]) / 100.
-            stats["bd_free"] = stats["bd_megs"] - stats["bd_used"]
+            try:
+                stats["bd_used"] = self.storageobj.megs * float(self.lvm_info["LVM2_DATA_PERCENT"]) / 100.
+            except KeyError:
+                pass
+            else:
+                stats["bd_free"] = stats["bd_megs"] - stats["bd_used"]
 
-            stats["steal"] = self.storageobj.megs - stats["bd_free"] - stats["bd_used"]
-            stats["used"]  = max(stats["used"], stats["bd_used"])
-            stats["free"]  = min(stats["free"], stats["bd_free"])
+                stats["steal"] = self.storageobj.megs - stats["bd_free"] - stats["bd_used"]
+                stats["used"]  = max(stats["used"], stats["bd_used"])
+                stats["free"]  = min(stats["free"], stats["bd_free"])
 
         else:
             # Are we a snapshotted origin? If so, we can only write data until the
