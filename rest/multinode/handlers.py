@@ -26,16 +26,17 @@ class RequestHandlers(object):
 
     def retrieve(self, request, view_name=None, *args, **kwargs):
         obj = self.get_object()
+        host = self._get_object_host(obj)
         current_host = Host.objects.get_current()
 
-        if obj.host == current_host:
+        if host == current_host:
             if view_name:
                 local_view = getattr(super(RequestHandlers, self), view_name)
                 return local_view(request, args, kwargs)
 
             return super(RequestHandlers, self).retrieve(request, args, kwargs)
 
-        return Response(json.loads(self._remote_request(request, obj, view_name)))
+        return Response(json.loads(self._remote_request(request, obj, view_name, host)))
 
     def list(self, request, *args, **kwargs):
         queryset_total = self.get_queryset()
@@ -86,11 +87,12 @@ class RequestHandlers(object):
 
     def destroy(self, request, *args, **kwargs):
         obj = self.get_object()
+        host = self._get_object_host(obj)
 
-        if obj.host == Host.objects.get_current():
+        if host == Host.objects.get_current():
             return super(RequestHandlers, self).destroy(request, args, kwargs)
 
-        return Response(self._remote_request(request, obj))
+        return Response(self._remote_request(request, obj, None, host))
 
     def update(self, request, *args, **kwargs):
         obj = self.get_object_or_none()
@@ -98,10 +100,11 @@ class RequestHandlers(object):
         if obj is None:
             return self.create(request, args, kwargs)
 
-        if obj.host == Host.objects.get_current():
+        host = self._get_object_host(obj)
+        if host == Host.objects.get_current():
             return super(RequestHandlers, self).update(request, args, kwargs)
 
-        return Response(self._remote_request(request, obj))
+        return Response(self._remote_request(request, obj, None, host))
 
     def _remote_request(self, request, obj=None, view_name=None, host=None):
         if not host:
