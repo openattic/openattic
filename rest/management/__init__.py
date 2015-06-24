@@ -33,7 +33,7 @@ def create_auth_token(**kwargs):
 
     try:
         user.auth_token
-    except AttributeError:
+    except Token.DoesNotExist:
         Token.objects.create(user=user)
     else:
         print "The authentication token for 'openattic' does already exist."
