@@ -53,7 +53,7 @@ class HttpShareViewSet(viewsets.ModelViewSet):
 class HttpShareProxyViewSet(RequestHandlers, HttpShareViewSet):
     queryset    = Export.all_objects.all()
     api_prefix  = 'httpshares'
-    host_filter = 'volume__storageobj__host__id'
+    host_filter = 'volume__storageobj__host'
     model       = Export
 
 

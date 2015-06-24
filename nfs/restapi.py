@@ -55,7 +55,7 @@ class NfsShareViewSet(viewsets.ModelViewSet):
 class NfsShareProxyViewSet(RequestHandlers, NfsShareViewSet):
     queryset    = Export.all_objects.all()
     api_prefix  = 'nfsshares'
-    host_filter = 'volume__storageobj__host__id'
+    host_filter = 'volume__storageobj__host'
     model       = Export
 
 

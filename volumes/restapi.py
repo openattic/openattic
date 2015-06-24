@@ -346,7 +346,7 @@ class SnapshotViewSet(viewsets.ModelViewSet):
 
 class SnapshotProxyViewSet(RequestHandlers, SnapshotViewSet):
     api_prefix  = 'snapshots'
-    host_filter = 'source_pool__volumepool__host__id'
+    host_filter = 'source_pool__volumepool__host'
     model       = models.StorageObject
 
     @detail_route(["post"])
@@ -421,7 +421,7 @@ class VolumeViewSet(viewsets.ModelViewSet):
 
 class VolumeProxyViewSet(RequestHandlers, VolumeViewSet):
     api_prefix = 'volumes'
-    host_filter = 'source_pool__volumepool__host__id'
+    host_filter = 'source_pool__volumepool__host'
     model = models.StorageObject
 
     @detail_route(["post"])
