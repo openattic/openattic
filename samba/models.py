@@ -45,11 +45,11 @@ class Share(models.Model):
             samba.reload()
         return ret
 
-    def delete( self ):
-        volume = self.volume
-        ret = models.Model.delete(self)
-        with Transaction():
-            samba = get_dbus_object("/samba")
-            samba.writeconf("", "")
-            samba.reload()
-        return ret
+def __share_post_delete(instance, **kwargs):
+    with Transaction():
+        samba = get_dbus_object("/samba")
+        samba.writeconf("", "")
+        samba.reload()
+
+models.signals.post_delete.connect(__share_post_delete, sender=Share)
+
