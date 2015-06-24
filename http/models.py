@@ -44,12 +44,12 @@ class Export(models.Model):
         linkname = join(http_settings.VOLUMESDIR, self.volume.storageobj.name)
         if not exists( linkname ):
             symlink( self.path, linkname )
-        print "done"
         return ret
 
-    def delete( self ):
-        ret = models.Model.delete(self)
-        linkname = join(http_settings.VOLUMESDIR, self.volume.storageobj.name)
-        if islink( linkname ):
-            unlink( linkname )
-        return ret
+def __export_pre_delete(instance, **kwargs):
+    linkname = join(http_settings.VOLUMESDIR, instance.volume.storageobj.name)
+    if islink( linkname ):
+        unlink( linkname )
+
+models.signals.pre_delete.connect(__export_pre_delete, sender=Export)
+
