@@ -44,13 +44,13 @@ class RequestHandlers(object):
 
         current_host = Host.objects.get_current()
 
-        result_pools = []
+        results = []
         for obj in queryset:
             if obj.host == current_host:
                 serializer = self.get_serializer(obj)
-                result_pools.append(serializer.data)
+                results.append(serializer.data)
             else:
-                result_pools.append(json.loads(self._remote_request(request, obj)))
+                results.append(json.loads(self._remote_request(request, obj)))
 
         next_page = None
         prev_page = None
@@ -72,7 +72,7 @@ class RequestHandlers(object):
             ('count',       len(queryset_total)),
             ('next',        next_page),
             ('previous',    prev_page),
-            ('results',     result_pools)
+            ('results',     results)
         ]))
 
     def create(self, request, *args, **kwargs):
