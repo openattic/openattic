@@ -19,7 +19,7 @@ import socket
 from django.template.loader import render_to_string
 
 from systemd.procutils import service_command
-from systemd.plugins   import logged, BasePlugin, method, deferredmethod
+from systemd.plugins   import logged, BasePlugin, deferredmethod
 from samba.models  import Share
 from samba.conf    import settings as samba_settings
 
@@ -27,8 +27,8 @@ from samba.conf    import settings as samba_settings
 class SystemD(BasePlugin):
     dbus_path = "/samba"
 
-    @method(in_signature="ss", out_signature="")
-    def writeconf(self, fake_domain, fake_workgroup):
+    @deferredmethod(in_signature="ss")
+    def writeconf(self, fake_domain, fake_workgroup, sender):
         # the fake_* arguments are needed for domain join.
         fd = open( samba_settings.SMB_CONF, "wb" )
         try:
