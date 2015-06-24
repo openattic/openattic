@@ -151,7 +151,13 @@ class RequestHandlers(object):
         if target_model == Host:
             return Host.objects.get(id=data[host_filter[0]]['id'])
         else:
-            host = target_model.all_objects.get(id=data[host_filter[0]]['id'])
+            try:
+                host = target_model.all_objects.get(id=data[host_filter[0]]['id'])
+            except target_model.DoesNotExist:
+                key = host_filter.pop(0)
+                target_model = target_model._meta.get_field_by_name(host_filter[0])[0].related.parent_model
+                host = target_model.all_objects.get(id=data[key]['id'])
+
             for field in host_filter[1:]:
                 host = getattr(host, field)
                 if isinstance(host, Host):
