@@ -378,8 +378,10 @@ class HostACL(models.Model):
         models.Model.save(self, *args, **kwargs)
         if install:
             pre_install.send(sender=HostACL, instance=self)
-            get_dbus_object("/lio").install_hostacl(self.id)
-            get_dbus_object("/lio").saveconfig()
+            with Transaction():
+                self.volume.storageobj.lock()
+                get_dbus_object("/lio").install_hostacl(self.id)
+                get_dbus_object("/lio").saveconfig()
             post_install.send(sender=HostACL, instance=self)
 
     def __unicode__(self):

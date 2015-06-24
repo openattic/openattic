@@ -40,6 +40,7 @@ class Share(models.Model):
     def save( self, *args, **kwargs ):
         ret = models.Model.save(self, *args, **kwargs)
         with Transaction():
+            self.volume.storageobj.lock()
             samba = get_dbus_object("/samba")
             samba.writeconf("", "")
             samba.reload()

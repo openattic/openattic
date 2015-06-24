@@ -36,6 +36,7 @@ class Export(models.Model):
     def save( self, *args, **kwargs ):
         ret = models.Model.save(self, *args, **kwargs)
         with Transaction():
+            self.volume.storageobj.lock()
             nfs = get_dbus_object("/nfs")
             nfs.writeconf()
             nfs.exportfs(True, self.path, self.address, self.options)
