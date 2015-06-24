@@ -99,6 +99,11 @@ class DiskViewSet(viewsets.ModelViewSet):
     search_fields = ('name',)
 
 
+class DiskProxyViewSet(RequestHandlers, DiskViewSet):
+    api_prefix = 'disks'
+    model = models.StorageObject
+
+
 ##################################
 #            Pool                #
 ##################################
@@ -438,7 +443,7 @@ class VolumeProxyViewSet(RequestHandlers, VolumeViewSet):
 
 
 RESTAPI_VIEWSETS = [
-    ('disks',     DiskViewSet,          'disk'),
+    ('disks',     DiskProxyViewSet,     'disk'),
     ('pools',     PoolProxyViewSet,     'pool'),
     ('volumes',   VolumeProxyViewSet,   'volume'),
     ('snapshots', SnapshotProxyViewSet, 'snapshot'),
