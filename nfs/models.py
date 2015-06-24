@@ -41,10 +41,11 @@ class Export(models.Model):
             nfs.exportfs(True, self.path, self.address, self.options)
         return ret
 
-    def delete( self ):
-        ret = models.Model.delete(self)
-        with Transaction():
-            nfs = get_dbus_object("/nfs")
-            nfs.writeconf()
-            nfs.exportfs(False, self.path, self.address, self.options)
-        return ret
+def __export_post_delete(instance, **kwargs):
+    with Transaction():
+        nfs = get_dbus_object("/nfs")
+        nfs.writeconf()
+        nfs.exportfs(False, instance.path, instance.address, instance.options)
+
+models.signals.post_delete.connect(__export_post_delete, sender=Export)
+
