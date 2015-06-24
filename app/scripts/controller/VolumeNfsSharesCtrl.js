@@ -57,7 +57,7 @@ angular.module('openattic')
       });
       
       modalInstance.result.then(function(){
-        $scope.filterConfig.refresh = new Date();
+        $scope.nfsFilter.refresh = new Date();
       });
     };
   });
