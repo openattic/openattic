@@ -38,14 +38,14 @@ class RequestHandlers(object):
         return Response(json.loads(self._remote_request(request, obj, view_name)))
 
     def list(self, request, *args, **kwargs):
-        queryset = self.get_queryset()
-        pools = self.filter_queryset(queryset)
-        pools = self.paginate_queryset(pools)
+        queryset_total = self.get_queryset()
+        queryset = self.filter_queryset(queryset_total)
+        queryset = self.paginate_queryset(queryset)
 
         current_host = Host.objects.get_current()
 
         result_pools = []
-        for obj in pools:
+        for obj in queryset:
             if obj.host == current_host:
                 serializer = self.get_serializer(obj)
                 result_pools.append(serializer.data)
@@ -57,19 +57,19 @@ class RequestHandlers(object):
 
         ip = current_host.get_primary_ip_address().host_part
 
-        if pools.has_next():
+        if queryset.has_next():
             next_page = '%s?ordering=%s&page=%s&page_size=%s' % (self._get_base_url(ip),
                                                                  request.QUERY_PARAMS['ordering'],
-                                                                 pools.next_page_number(),
+                                                                 queryset.next_page_number(),
                                                                  request.QUERY_PARAMS['page_size'])
-        if pools.has_previous():
+        if queryset.has_previous():
             prev_page = '%s?ordering=%s&page=%s&page_size=%s' % (self._get_base_url(ip),
                                                                  request.QUERY_PARAMS['ordering'],
-                                                                 pools.previous_page_number(),
+                                                                 queryset.previous_page_number(),
                                                                  request.QUERY_PARAMS['page_size'])
 
         return Response(OrderedDict([
-            ('count',       len(queryset)),
+            ('count',       len(queryset_total)),
             ('next',        next_page),
             ('previous',    prev_page),
             ('results',     result_pools)
