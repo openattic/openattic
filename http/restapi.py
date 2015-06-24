@@ -21,6 +21,8 @@ from rest import relations
 from volumes.models import StorageObject
 from http.models import Export
 
+from rest.multinode.handlers import RequestHandlers
+
 class HttpShareSerializer(serializers.HyperlinkedModelSerializer):
     """ Serializer for a HTTP Export. """
     url         = serializers.HyperlinkedIdentityField(view_name="httpshare-detail")
@@ -48,6 +50,13 @@ class HttpShareViewSet(viewsets.ModelViewSet):
     filter_class     = HttpShareFilter
 
 
+class HttpShareProxyViewSet(RequestHandlers, HttpShareViewSet):
+    queryset    = Export.all_objects.all()
+    api_prefix  = 'httpshares'
+    host_filter = 'volume__storageobj__host__id'
+    model       = Export
+
+
 RESTAPI_VIEWSETS = [
-    ('httpshares', HttpShareViewSet, 'httpshare')
+    ('httpshares', HttpShareProxyViewSet, 'httpshare')
 ]
