@@ -23,6 +23,8 @@ from rest import relations
 from volumes.models import StorageObject
 from nfs.models import Export
 
+from rest.multinode.handlers import RequestHandlers
+
 class NfsShareSerializer(serializers.HyperlinkedModelSerializer):
     """ Serializer for an NFS Export. """
     url         = serializers.HyperlinkedIdentityField(view_name="nfsshare-detail")
@@ -50,6 +52,13 @@ class NfsShareViewSet(viewsets.ModelViewSet):
     filter_class     = NfsShareFilter
 
 
+class NfsShareProxyViewSet(RequestHandlers, NfsShareViewSet):
+    queryset    = Export.all_objects.all()
+    api_prefix  = 'nfsshares'
+    host_filter = 'volume__storageobj__host__id'
+    model       = Export
+
+
 RESTAPI_VIEWSETS = [
-    ('nfsshares', NfsShareViewSet, 'nfsshare')
+    ('nfsshares', NfsShareProxyViewSet, 'nfsshare')
 ]
