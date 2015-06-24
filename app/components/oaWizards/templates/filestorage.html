@@ -17,7 +17,7 @@
                                     contentForm1.volumename.$dirty) && contentForm1.volumename.$error.required">
                                     This field is required!
                                 </span>
-                                <span class="help-block" ng-show="contentForm1.volumename.$error.validname">
+                                <span class="help-block tc_noValidName" ng-show="contentForm1.volumename.$error.validname">
                                     {{errortext}}
                                 </span>
                                 <span class="help-block tc_noUniqueName"
@@ -267,7 +267,7 @@
                                                    ng-model="input.nfs.path" name="nfspath" id="nfspath"
                                                    ng-required="input.nfs.create">
                                         </div>
-                                        <span class="help-block" ng-show="(contentForm3.submitted ||
+                                        <span class="help-block tc_nfsPathRequired" ng-show="(contentForm3.submitted ||
                                             contentForm3.nfspath.$dirty) && contentForm3.nfspath.$error.required">
                                             The path is required.
                                         </span>
@@ -285,7 +285,7 @@
                                                    ng-model="input.nfs.address" name="nfsaddress" id="nfsaddress"
                                                    ng-required="input.nfs.create">
                                         </div>
-                                        <span class="help-block" ng-show="(contentForm3.submitted ||
+                                        <span class="help-block tc_nfsAddressRequired" ng-show="(contentForm3.submitted ||
                                             contentForm3.nfsaddress.$dirty) &&
                                             contentForm3.nfsaddress.$error.required">
                                             The address is required.
