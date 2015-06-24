@@ -36,7 +36,7 @@ class RequestHandlers(object):
 
             return super(RequestHandlers, self).retrieve(request, args, kwargs)
 
-        return Response(json.loads(self._remote_request(request, obj, view_name, host)))
+        return Response(json.loads(self._remote_request(request, host, obj, view_name)))
 
     def list(self, request, *args, **kwargs):
         queryset_total = self.get_queryset()
@@ -52,7 +52,7 @@ class RequestHandlers(object):
                 serializer = self.get_serializer(obj)
                 results.append(serializer.data)
             else:
-                results.append(json.loads(self._remote_request(request, obj, None, host)))
+                results.append(json.loads(self._remote_request(request, host, obj)))
 
         next_page = None
         prev_page = None
@@ -83,7 +83,7 @@ class RequestHandlers(object):
         if host == Host.objects.get_current():
             return super(RequestHandlers, self).create(request, args, kwargs)
 
-        return Response(self._remote_request(request, None, None, host))
+        return Response(self._remote_request(request, host))
 
     def destroy(self, request, *args, **kwargs):
         obj = self.get_object()
@@ -92,7 +92,7 @@ class RequestHandlers(object):
         if host == Host.objects.get_current():
             return super(RequestHandlers, self).destroy(request, args, kwargs)
 
-        return Response(self._remote_request(request, obj, None, host))
+        return Response(self._remote_request(request, host, obj))
 
     def update(self, request, *args, **kwargs):
         obj = self.get_object_or_none()
@@ -104,12 +104,9 @@ class RequestHandlers(object):
         if host == Host.objects.get_current():
             return super(RequestHandlers, self).update(request, args, kwargs)
 
-        return Response(self._remote_request(request, obj, None, host))
+        return Response(self._remote_request(request, host, obj))
 
-    def _remote_request(self, request, obj=None, view_name=None, host=None):
-        if not host:
-            host = self._get_object_host(obj)
-
+    def _remote_request(self, request, host, obj=None, view_name=None):
         ip = host.get_primary_ip_address().host_part
 
         if obj:
