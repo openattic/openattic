@@ -26,6 +26,8 @@ from volumes.models import StorageObject
 from samba.models import Share
 from samba.conf import settings as samba_settings
 
+from rest.multinode.handlers import RequestHandlers
+
 class SambaShareSerializer(serializers.HyperlinkedModelSerializer):
     """ Serializer for a Samba Share. """
     url         = serializers.HyperlinkedIdentityField(view_name="sambashare-detail")
@@ -61,6 +63,18 @@ class SambaShareViewSet(viewsets.ModelViewSet):
             'workgroup': samba_settings.WORKGROUP,
         })
 
+
+class SambaShareProxyViewSet(RequestHandlers, SambaShareViewSet):
+    queryset    = Share.all_objects.all()
+    api_prefix  = 'sambashares'
+    host_filter = 'volume__storageobj__host'
+    model       = Share
+
+    @list_route()
+    def domainconfig(self, request, *args, **kwargs):
+        return self.list(request, 'domainconfig', *args, **kwargs)
+
+
 RESTAPI_VIEWSETS = [
-    ('sambashares', SambaShareViewSet, 'sambashare')
+    ('sambashares', SambaShareProxyViewSet, 'sambashare')
 ]
