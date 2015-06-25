@@ -62,10 +62,7 @@ describe('Wizard panel', function(){
     expect(size.isDisplayed()).toBe(true);
     //expect(is_protected.Present()).toBe(true);
     
-    //check what happens if next button has been clicked without entering any data
-    //nextBtn.click();
-
-    //enter some data for validation
+    //enter volume data
     volume.sendKeys('protractor_test_volume');
     
     //in order to enter a size we need to choose a pool first
