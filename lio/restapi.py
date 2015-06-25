@@ -21,6 +21,8 @@ from rest import relations
 from volumes.models import StorageObject
 from lio.models import HostACL, Initiator
 
+from rest.multinode.handlers import RequestHandlers
+
 class HostACLSerializer(serializers.HyperlinkedModelSerializer):
     """ Serializer for a HostACL. """
     url         = serializers.HyperlinkedIdentityField(view_name="lun-detail")
@@ -50,6 +52,13 @@ class HostACLViewSet(viewsets.ModelViewSet):
     filter_class     = HostACLFilter
 
 
+class HostACLProxyViewSet(RequestHandlers, HostACLViewSet):
+    queryset    = HostACL.all_objects.all()
+    api_prefix  = 'luns'
+    host_filter = 'volume__storageobj__host'
+    model       = HostACL
+
+
 class InitiatorSerializer(serializers.HyperlinkedModelSerializer):
     """ Serializer for a Initiator. """
     url         = serializers.HyperlinkedIdentityField(view_name="nfsshare-detail")
@@ -67,6 +76,6 @@ class InitiatorViewSet(viewsets.ModelViewSet):
 
 
 RESTAPI_VIEWSETS = [
-    ('luns', HostACLViewSet, 'lun'),
+    ('luns', HostACLProxyViewSet, 'lun'),
     ('initiators', InitiatorViewSet, 'initiator')
 ]
