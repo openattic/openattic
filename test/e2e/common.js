@@ -60,9 +60,9 @@
 
       element(by.model('input.enteredName')).sendKeys(volumename);
       element(by.id('bot2-Msg1')).click();
-      //browser.sleep(400);
-      //This doesn't work at the moment TODO: fix
-      //expect(volume.isDisplayed()).toBe(false);
+      volumesItem.click();
+      browser.sleep(400);
+      expect(volume.isPresent()).toBe(false); 
     },
  
     create_snapshot: function(){
