@@ -94,7 +94,7 @@ describe('Wizard panel', function(){
     
     //enter some data to get to the next site
     volume.clear();
-    volume.sendKeys('fs_storage_wizard_test');
+    volume.sendKeys('protractor_test_volume');
     size.clear();
     size.sendKeys('100MB');
     element(by.id("ext4")).click();
@@ -125,10 +125,10 @@ describe('Wizard panel', function(){
     var path = element(by.id('nfspath'));
     var options = element(by.id('nfsoptions'));
 
-    expect(path.isDisplayed()).toBe(true);
+    expect(path.isPresent()).toBe(true);
     expect(address.isDisplayed()).toBe(true);
     expect(element(by.id('nfsoptions')).isDisplayed()).toBe(true);
-    expect(path.getAttribute('value')).toEqual('/media/fs_storage_wizard_test');
+    expect(path.getAttribute('value')).toEqual('/media/protractor_test_volume');
     expect(options.getAttribute('value')).toEqual('rw,no_subtree_check,no_root_squash');
     address.clear();
     nextBtn.click();
@@ -136,7 +136,7 @@ describe('Wizard panel', function(){
     path.clear();
     nextBtn.click();
     expect(element(by.css('.tc_nfsPathRequired')).isDisplayed()).toBe(true);
-    path.sendKeys('/media/fs_storage_wizard_test');
+    path.sendKeys('/media/protractor_test_volume');
     nextBtn.click();
     
     //Step 4 - Done
@@ -147,4 +147,9 @@ describe('Wizard panel', function(){
     
     //TODO check if volume exists and delete it; same for share
   });
+  
+  afterAll(function(){
+    helpers.delete_volume();    
+  });
+  
 });
