@@ -56,17 +56,17 @@ describe('should add a CIFS share', function(){
     expect(element(by.model('share.available')).isSelected()).toBe(true);
     expect(element(by.model('share.browseable')).isSelected()).toBe(true);
     expect(element(by.model('share.writeable')).isSelected()).toBe(true);
-    expect(element(by.model('share.guest_ok')).isSelected()).toBe(true);
+    expect(element(by.model('share.guest_ok')).isSelected()).toBe(false);
     //edit the share configuration
     element(by.model('share.guest_ok')).click();
     browser.sleep(400);
-    expect(element(by.model('share.guest_ok')).isSelected()).toBe(false);
+    expect(element(by.model('share.guest_ok')).isSelected()).toBe(true);
     element(by.model('share.comment')).sendKeys('this is a protractor test cifs share');
     browser.sleep(400);
     element(by.css('.tc_submitButton')).click();
     browser.sleep(400);
     var guestColumn = share.element(by.id('guest_ok'));
-    expect(guestColumn.element(by.className('fa-check')).isPresent()).toBe(false);
+    expect(guestColumn.element(by.className('fa-check')).isPresent()).toBe(true);
     var comment = share.element(by.binding('row.comment'));
     expect(comment.getText()).toEqual('this is a protractor test cifs share');
     
