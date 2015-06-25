@@ -21,6 +21,8 @@ from rest import relations
 from volumes.models import StorageObject
 from tftp.models import Instance
 
+from rest.multinode.handlers import RequestHandlers
+
 class TftpShareSerializer(serializers.HyperlinkedModelSerializer):
     """ Serializer for a TFTP Instance. """
     url         = serializers.HyperlinkedIdentityField(view_name="tftpshare-detail")
@@ -48,6 +50,13 @@ class TftpShareViewSet(viewsets.ModelViewSet):
     filter_class     = TftpShareFilter
 
 
+class TftpShareProxyViewSet(RequestHandlers, TftpShareViewSet):
+    queryset    = Instance.all_objects.all()
+    api_prefix  = 'tftpshares'
+    host_filter = 'volume__storageobj__host'
+    model       = Instance
+
+
 RESTAPI_VIEWSETS = [
-    ('tftpshares', TftpShareViewSet, 'tftpshare')
+    ('tftpshares', TftpShareProxyViewSet, 'tftpshare')
 ]
