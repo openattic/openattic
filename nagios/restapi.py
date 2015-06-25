@@ -22,6 +22,7 @@ from rest_framework.decorators import detail_route
 from nagios.models import Service, Graph
 from rest import relations
 
+from rest.multinode.handlers import RequestHandlers
 
 class ServiceSerializer(serializers.HyperlinkedModelSerializer):
     graphs  = serializers.SerializerMethodField('get_graphs')
@@ -97,8 +98,17 @@ class ServiceViewSet(viewsets.ReadOnlyModelViewSet):
         return Response(rrd.fetch(srcname, start, end))
 
 
+class ServiceProxyViewSet(RequestHandlers, ServiceViewSet):
+    queryset    = Service.all_objects.all()
+    api_prefix  = 'services'
+    model       = Service
+
+    @detail_route()
+    def fetch(self, request, *args, **kwargs):
+        return self.retrieve(request, 'fetch', *args, **kwargs)
+
 
 RESTAPI_VIEWSETS = [
-    ('services', ServiceViewSet),
+    ('services', ServiceProxyViewSet),
 ]
 
