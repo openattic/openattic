@@ -99,14 +99,22 @@ describe('Wizard panel', function(){
     size.sendKeys('100MB');
     element(by.id("ext4")).click();
     nextBtn.click();
-    //Step 2 - check at least the title then skip
+    
+    //Step 2 - check at least the title then skip and available buttons
     expect(element(by.css('.tc_step2')).getText()).toEqual('File Storage Step 2 - Create Mirror - Coming Soon...');
+    expect(wizardOverviewBtn.isDisplayed()).toBe(true);
+    expect(previousBtn.isDisplayed()).toBe(true);
+    expect(nextBtn.getText()).toEqual('Next');
     browser.sleep(400);
     nextBtn.click();
     
     //Step 3 - create share
     
     expect(element(by.css('.tc_step3')).getText()).toEqual('File Storage Step 3 - Which Shares do you need?');
+    
+    expect(wizardOverviewBtn.isDisplayed()).toBe(true);
+    expect(previousBtn.isDisplayed()).toBe(true);
+    expect(nextBtn.getText()).toEqual('Next');
     
     expect(element(by.model('input.cifs.create')).isPresent()).toBe(true);
     expect(element(by.model('input.nfs.create')).isPresent()).toBe(true);
@@ -132,8 +140,11 @@ describe('Wizard panel', function(){
     nextBtn.click();
     
     //Step 4 - Done
+    
+    browser.sleep(400);
+    
     nextBtn.click();
     
-    
+    //TODO check if volume exists and delete it; same for share
   });
 });
