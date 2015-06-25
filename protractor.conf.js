@@ -26,7 +26,7 @@ exports.config = {
     users              : 'test/e2e/users/**/*.e2e.js',
     auth               : 'test/e2e/auth/*.e2e.js',
     cmdlogs            : 'test/e2e/commandLogs/**/*.e2e.js',
-    //wizard_widget    : 'test/e2e/wizard/**/*.e2e.js'
+    wizards            : 'test/e2e/wizard/**/*.e2e.js'
   },
 
   onPrepare: function(){
