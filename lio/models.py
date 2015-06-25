@@ -27,6 +27,7 @@ from django.conf import settings
 from django.utils.translation import ugettext_lazy as _
 
 from systemd import get_dbus_object
+from systemd.helpers import Transaction
 from ifconfig.models import HostGroup, Host, IPAddress, HostDependentManager, getHostDependentManagerClass
 from volumes.models  import BlockVolume
 
