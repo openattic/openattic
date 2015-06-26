@@ -96,7 +96,7 @@ describe('Wizard panel', function(){
     volume.sendKeys('protractor_test_volume');
     size.clear();
     size.sendKeys('100MB');
-    element(by.id("ext4")).click();
+    element(by.id("btrfs")).click();
     nextBtn.click();
     
     //Step 2 - check at least the title then skip and available buttons
