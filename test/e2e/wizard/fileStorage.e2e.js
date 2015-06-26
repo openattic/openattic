@@ -2,7 +2,6 @@ var helpers = require('../common.js');
 var configs = require('../configs.js');
 
 describe('Wizard panel', function(){
-  
   var wizardOverviewBtn = element(by.css('.tc_wizardOverview'));
   var previousBtn = element(by.css('.tc_previousBtn'));
   //maye rename volume, pool, etc. -> isn't the actual 'object' instead it's just the input field
@@ -137,19 +136,21 @@ describe('Wizard panel', function(){
     nextBtn.click();
     expect(element(by.css('.tc_nfsPathRequired')).isDisplayed()).toBe(true);
     path.sendKeys('/media/protractor_test_volume');
+    address.sendKeys('oadev.domain.here');
     nextBtn.click();
     
     //Step 4 - Done
     
     browser.sleep(400);
     
+    browser.sleep(400);
+    expect(element(by.css('.tc_wizardDone')).getText()).toEqual('File Storage Step 4 - Save configuration');
     nextBtn.click();
-    
-    //TODO check if volume exists and delete it; same for share
+    console.log('<----- file storage test with NFS ended ------>');
   });
   
   afterAll(function(){
-    helpers.delete_volume();    
+    helpers.delete_volume();
+    console.log('<----- file storage test volume with NFS removed ------>');
   });
-  
 });
