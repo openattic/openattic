@@ -57,11 +57,8 @@
       browser.sleep(400);
       element(by.css('.tc_deleteItem')).click();
       browser.sleep(400);
-
       element(by.model('input.enteredName')).sendKeys(volumename);
       element(by.id('bot2-Msg1')).click();
-      volumesItem.click();
-      browser.sleep(400);
       expect(volume.isPresent()).toBe(false); 
     },
  
