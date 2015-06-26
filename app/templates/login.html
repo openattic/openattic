@@ -29,7 +29,7 @@
                         </span>
                     </div>
                 </fieldset>
-                <span class="errorbox" ng-show="submitted && loginFailed" ng-bind="correctInput">
+                <span class="errorbox" ng-show="submitted && loginFailed && (!loginForm.username.$error.required && !loginForm.password.$error.required)" ng-bind="correctInput">
                 </span>
             </div>
             <div class="panel-footer">
