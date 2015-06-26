@@ -2,7 +2,6 @@ var helpers = require('../common.js');
 var configs = require('../configs.js');
 
 describe('Wizard panel', function(){
-  
   var wizardOverviewBtn = element(by.css('.tc_wizardOverview'));
   var previousBtn = element(by.css('.tc_previousBtn'));
   //maye rename volume, pool, etc. -> isn't the actual 'object' instead it's just the input field
@@ -104,21 +103,21 @@ describe('Wizard panel', function(){
     var path = element(by.id('cifspath'));
     var comment = element(by.id('cifscomment'));
 
-    expect(cifsName.isDisplayed()).toBe(true);
+    //expect(cifsName.isDisplayed()).toBe(true);
     expect(cifsName.getAttribute('value')).toEqual('protractor_test_volume');
     expect(path.isDisplayed()).toBe(true);
     expect(path.getAttribute('value')).toEqual('/media/protractor_test_volume');
     
     expect(element(by.id('cifscomment')).isDisplayed()).toBe(true);
     
-    
     cifsName.clear();
     path.clear();
     nextBtn.click();
+    
     expect(element(by.css('.tc_cifsNameRequired')).isDisplayed()).toBe(true);
     expect(element(by.css('.tc_cifsPathRequired')).isDisplayed()).toBe(true);
     
-    nextBtn.click();
+
     cifsName.sendKeys('protractor_test_volume');
     path.sendKeys('/media/protractor_test_volume');
     nextBtn.click();
@@ -126,12 +125,15 @@ describe('Wizard panel', function(){
     //Step 4 - Done
     
     browser.sleep(400);
-    
+    expect(element(by.css('.tc_wizardDone')).getText()).toEqual('File Storage Step 4 - Save configuration');    
     nextBtn.click();
+    console.log('<----- file storage test with CIFS ended ------>');
   });
   
-  //TODO check if volume exists and delete it; same for share
   afterAll(function(){
+      
     helpers.delete_volume();
+    console.log('<----- file storage volume test with CIFS removed ------>');
+    
   });  
 });
