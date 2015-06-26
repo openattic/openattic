@@ -93,6 +93,7 @@ describe('Raw Block Storage Wizard', function(){
     
     //Finish
     expect(element(by.css('.tc_wizardDone')).getText()).toEqual('Raw Block Storage Step 4 - Save configuration');    
+    expect(nextBtn.getText()).toEqual('Done');    
     nextBtn.click();
     console.log('<----- raw block storage test ended ------>');    
   });

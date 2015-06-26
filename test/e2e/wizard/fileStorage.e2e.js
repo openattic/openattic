@@ -145,6 +145,7 @@ describe('Wizard panel', function(){
     
     browser.sleep(400);
     expect(element(by.css('.tc_wizardDone')).getText()).toEqual('File Storage Step 4 - Save configuration');
+    expect(nextBtn.getText()).toEqual('Done');
     nextBtn.click();
     console.log('<----- file storage test with NFS ended ------>');
   });

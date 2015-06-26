@@ -105,6 +105,7 @@ describe('VM Storage Wizard', function(){
     
     browser.sleep(400);
     expect(element(by.css('.tc_wizardDone')).getText()).toEqual('VM Storage Step 4 - Save configuration');
+    expect(nextBtn.getText()).toEqual('Done');
     nextBtn.click();
     console.log('<----- VM storage test with NFS ended ------>'); 
   });
