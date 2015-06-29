@@ -26,7 +26,11 @@ exports.config = {
     users              : 'test/e2e/users/**/*.e2e.js',
     auth               : 'test/e2e/auth/*.e2e.js',
     cmdlogs            : 'test/e2e/commandLogs/**/*.e2e.js',
-    wizards            : 'test/e2e/wizard/**/*.e2e.js'
+    //wizards            : 'test/e2e/wizards/**/*.e2e.js',
+    fs_wiz_btrfs_nfs   : 'test/e2e/wizards/file/fileStorage_btrfs_nfs.e2e.js',
+    fs_wiz_ext_cifs    : 'test/e2e/wizards/file/fileStorage_ext_cifs.e2e.js',
+    blockStorage       : 'test/e2e/wizards/block/blockStorage.e2e.js',
+    vmStorage_xfs_nfs  : 'test/e2e/wizards/vm/vmStorage_xfs_nfs.e2e.js'
   },
 
   onPrepare: function(){
