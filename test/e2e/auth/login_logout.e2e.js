@@ -4,6 +4,9 @@ describe('should test the login', function(){
   
   var name = element(by.model('username'));
   var passwd = element(by.model('password'));
+  var nameRequired = element(by.css('.tc_usernameRequired'));
+  var passwdRequired = element(by.css('.tc_passwdRequired'));
+  var correctInput = element(by.binding('correctInput'));
   
   var submitBtn = element(by.css('input[type="submit"]'));
   
@@ -42,13 +45,15 @@ describe('should test the login', function(){
       //make sure that input field username is empty
       name.clear();
       submitBtn.click();
+      expect(nameRequired.isDisplayed()).toBe(true);
       expect(element(by.css('.tc_usernameRequired')).getText()).toBe('This field is required.');
   });
   
   it('should show an error if password input field has no data', function(){
       passwd.clear();
       submitBtn.click();
-      expect(element(by.css('.tc_passwdRequired')).getText()).toBe('This field is required.');
+      expect(passwdRequired.isDisplayed()).toBe(true);
+      expect(passwdRequired.getText()).toBe('This field is required.');
   });
 
   it('should show an error if username and password input fields have no input data and submit button was clicked', function(){
@@ -56,8 +61,11 @@ describe('should test the login', function(){
       name.clear();
       passwd.clear();
       submitBtn.click();
-      expect(element(by.css('.tc_usernameRequired')).getText()).toBe('This field is required.');
-      expect(element(by.css('.tc_passwdRequired')).getText()).toBe('This field is required.');
+      expect(nameRequired.isDisplayed()).toBe(true);
+      expect(nameRequired.getText()).toBe('This field is required.');
+      expect(passwdRequired.isDisplayed()).toBe(true);
+      expect(passwdRequired.getText()).toBe('This field is required.');
+      expect(correctInput.isDisplayed()).toBe(false);
   });
   
   it('should display an error message if given credentials are incorrect', function(){
@@ -70,6 +78,10 @@ describe('should test the login', function(){
       passwd.clear();
       passwd.sendKeys('2943tr3befc vr');
       submitBtn.click();
-      expect(element(by.binding('correctInput')).getText()).toBe('The given credentials are not correct.');
+      expect(correctInput.isDisplayed()).toBe(true);
+      expect(correctInput.getText()).toBe('The given credentials are not correct.');
+      expect(nameRequired.isDisplayed()).toBe(false);
+      expect(passwdRequired.isDisplayed()).toBe(false);
+      
   });
 });     
