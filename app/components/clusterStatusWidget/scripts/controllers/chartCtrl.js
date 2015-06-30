@@ -44,7 +44,20 @@ angular.module('openattic.clusterstatuswidget', ['easypiechart', 'angular-flot']
                     date = new Date().getTime();
                     data = JSON.parse(e.data);
 
+                    console.log(e.data);
+
                     // Progress Bar
+                    $scope.hosts = 1 + " / " + 1;
+                    $scope.hosts_p = 1/1 * 100;
+                    $scope.hosts_t = "info"
+
+                    $scope.disks_online = data.disks.count_online + " / " + data.disks.count;
+                    $scope.disks_online_p = data.disks.count_online / data.disks.count * 100;
+                    $scope.disks_online_p < 80 ? $scope.disks_online_t = "danger" : $scope.disks_online_p < 100 ? $scope.disks_online_t = "warning" : $scope.disks_online_t = "success";
+
+                    $scope.disks_usage = 90 + "TB / " + 100 + "TB";
+                    $scope.disks_usage_p = 90/100 * 100;
+                    $scope.disks_usage_p > 80 ? $scope.disks_usage_t = "danger" : $scope.disks_usage_p > 50 ? $scope.disks_usage_t = "warning" : $scope.disks_usage_t = "success";
 
                     // Easy Pie
                     avgValues["disk_load"] += data.disks.load_percent;
