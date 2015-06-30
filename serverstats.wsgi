@@ -18,9 +18,17 @@ PROJECT_ROOT = dirname(abspath(__file__))
 sys.path.insert( 0, PROJECT_ROOT )
 os.environ['DJANGO_SETTINGS_MODULE'] = 'settings'
 
+# Setup Django
+import django
+try:
+    django.setup()
+except AttributeError:
+    pass
+
 # now we can use the openattic backend, for example
 # from ifconfig.models import Host
 # current_host = Host.objects.get_current()
+from volumes.models import PhysicalBlockDevice
 
 sse_data = """
 <!DOCTYPE html>
@@ -31,31 +39,35 @@ sse_data = """
         <script>
             $(document).ready(function() {
                 var es = new EventSource("stream" + location.search);
-                es.onmessage = function (e) {
+                es.addEventListener("serverstats", function (e) {
                     var data = JSON.parse(e.data);
                     console.log(e.data);
                     var date = new Date(data.timestamp*1000);
-                    var dmy = date.getDate() + '.' + (date.getMonth()+1) + '.' + date.getFullYear();
                     var seconds = date.getSeconds() < 10 ? '0' + date.getSeconds() : date.getSeconds();
                     var minutes = date.getMinutes() < 10 ? '0' + date.getMinutes() : date.getMinutes();
                     var hours = date.getHours() < 10 ? '0' + date.getHours() : date.getHours();
-                    var hms = hours + ':' + minutes + ':' + seconds;
-                    var time = "<td>" + dmy + ' ' + hms + "</td>";
+                    var time = "<td>" + hours + ':' + minutes + ':' + seconds + "</td>";
                     var uptime_d = Math.floor(data.sys.uptime / 86400);
                     var uptime_h = Math.floor((data.sys.uptime % 86400) / 3600);
                     var uptime_m = Math.floor(((data.sys.uptime % 86400) % 3600) / 60);
                     var uptime = "<td>" + uptime_d + 'D ' + uptime_h + 'H ' + uptime_m + 'M' + "</td>";
                     var cpu_load = "<td>" + data.cpu.load_percent + "</td>";
-                    var disks = "<td>" + data.disks.count + "</td>";
+                    var disks = "<td>" + data.disks.count_oa + "</td>";
+                    var disks_online = "<td>" + data.disks.count_online + '/' + data.disks.count + "</td>";
                     var disk_load = "<td>" + data.disks.load_percent + "</td>";
                     var disk_tb_per_day = "<td>" + data.disks.wr_tb_per_day + "</td>";
                     var nw_adapter = "<td>" + data.network.count + "</td>";
-                    var nw_traffic_mb = "<td>" + (data.network.traffic_r_mb+data.network.traffic_t_mb) + "</td>";
-                    $("tbody").prepend("<tr>" + time + uptime + cpu_load + disks + disk_load + disk_tb_per_day + nw_adapter + nw_traffic_mb + "</tr>");
-                };
+                    var nw_traffic_percent = "<td>" + data.network.traffic_percent + "</td>";
+                    var nw_traffic_rmb = "<td>" + data.network.tot_rb_in_mb + "</td>";
+                    var nw_traffic_tmb = "<td>" + data.network.tot_tb_in_mb + "</td>";
+                    $("tbody").prepend("<tr>" + time + uptime + cpu_load + disks + disks_online + disk_load + disk_tb_per_day + nw_adapter + nw_traffic_percent + nw_traffic_rmb + nw_traffic_tmb + "</tr>");
+                });
             })
         </script>
-        <style>table{border-collapse:collapse;}table,td,th{border:1px solid black;padding:5px;}</style>
+        <style>
+            body{font-family:'Courier New';font-size:12px}table{border-collapse:collapse;}table,td,th{border:1px solid black;padding:5px;}
+            th{background-color:#666;color:#fff}tr:nth-child(odd){background-color:#fff5dd;}
+        </style>
     </head>
     <body>
         <table>
@@ -64,11 +76,14 @@ sse_data = """
                     <th>Time</th>
                     <th>Uptime</th>
                     <th>CPU-load in %</th>
-                    <th>Disk</th>
+                    <th>Disk Count</th>
+                    <th>Disk Online</th>
                     <th>Disk-load in %</th>
                     <th>Expected wr TB per day</th>
-                    <th>Network Adapter</th>
-                    <th>Network Traffic in MB</th>
+                    <th>Transceiver Count</th>
+                    <th>Traffic in %</th>
+                    <th>Data received in MB</th>
+                    <th>Data transmitted in MB</th>
                 </tr>
             </thead>
             <tbody></tbody>
@@ -78,7 +93,6 @@ sse_data = """
 """
 
 def application(environ, start_response):
-
     status = '200 OK'
 
     if not environ["PATH_INFO"].startswith('/stream'):
@@ -95,7 +109,7 @@ def application(environ, start_response):
         yield 'retry: 100\n\n'
 
         # Dict filled with systemstats
-        system_stats = { "cpu": {}, "disks": {}, "network": {}, "temperature": {}, "sys": {}, "timestamp": 0}
+        system_stats = { "cpu": {}, "disks": {}, "network": {}, "temperature": {}, "sys": {}, "timestamp": 0, "debug": {}}
 
         # Dict filled with sysstats from the last and the actual call
         data = {}
@@ -111,6 +125,7 @@ def application(environ, start_response):
         request_GET_params = parse_qs(environ.get("QUERY_STRING", ""))
         itv = int(request_GET_params.get("interval", ["1"])[0])
         now  = time.time()
+        start = now
         end = now + 600
         while now < end:
             if now >= last + itv:
@@ -133,7 +148,18 @@ def application(environ, start_response):
                     tot_ticks = tot_ticks + (data["disk_stats_now"][key]["tot_ticks"] - data["disk_stats_old"][key]["tot_ticks"])
                     tot_wr_bps = tot_wr_bps + ((data["disk_stats_now"][key]["wr_sectors"] - data["disk_stats_old"][key]["wr_sectors"]) / (now - last) * bytes_per_sector)
 
-                system_stats["disks"].update({"count": len(data["disk_stats_now"])})
+                system_disks = 0
+                system_disks_online = 0
+                for pbd in PhysicalBlockDevice.objects.all():
+                    system_disks = system_disks + 1
+                    if(pbd.device.get_status()[0] == "online"):
+                        system_disks_online = system_disks_online + 1
+
+                # for pd in PhysicalBlockDevice.objects.all():
+                    # print "Size:%s  TextSize:%s" % (pd.storageobj.get_size()["size"],pd.storageobj.get_size()["size"])
+                system_stats["disks"].update({"count": system_disks})
+                system_stats["disks"].update({"count_online": system_disks_online})
+                system_stats["disks"].update({"count_oa": len(data["disk_stats_now"])})
                 system_stats["disks"].update({"load_percent": (tot_ticks / ((now - last) * 1000.) * 100.) / system_stats["disks"]["count"]})
                 system_stats["disks"].update({"wr_tb_per_day": (tot_wr_bps / float(1024**4)) * 86400})
 
@@ -141,23 +167,31 @@ def application(environ, start_response):
                 data["network_stats_now"] = getNetworkStats()
                 tot_bytes_received = 0
                 tot_bytes_transmitted = 0
+                tot_speed = 0
 
                 for key in data["network_stats_now"]:
-                    tot_bytes_received = tot_bytes_received + (data["network_stats_now"][key]["receive"]["bytes"] - 
-                                                               data["network_stats_old"][key]["receive"]["bytes"])
-                    tot_bytes_transmitted = tot_bytes_transmitted + (data["network_stats_now"][key]["transmit"]["bytes"] - 
-                                                                     data["network_stats_old"][key]["transmit"]["bytes"])
+                    tot_bytes_received = tot_bytes_received + (data["network_stats_now"][key]["received"]["bytes"] - 
+                                                               data["network_stats_old"][key]["received"]["bytes"])
+                    tot_bytes_transmitted = tot_bytes_transmitted + (data["network_stats_now"][key]["transmitted"]["bytes"] - 
+                                                                     data["network_stats_old"][key]["transmitted"]["bytes"])
+                    if data["network_stats_now"][key]["speed"] is not None:
+                        tot_speed = tot_speed + data["network_stats_now"][key]["speed"]
 
                 system_stats["network"].update({"count": len(data["network_stats_now"])})
-                system_stats["network"].update({"traffic_r_mb": tot_bytes_received / (1024**2)})
-                system_stats["network"].update({"traffic_t_mb": tot_bytes_transmitted / (1024**2)})
+                system_stats["network"].update({"tot_rb_in_mb": tot_bytes_received / (1024**2)})
+                system_stats["network"].update({"tot_tb_in_mb": tot_bytes_transmitted / (1024**2)})
+                tot_bytes = system_stats["network"]["tot_rb_in_mb"] + system_stats["network"]["tot_tb_in_mb"]
+                if tot_speed > 0:
+                    system_stats["network"].update({"traffic_percent": (tot_bytes/tot_speed*100)})
+                else:
+                    system_stats["network"].update({"traffic_percent": "NaN"})
 
                 # sys
                 uptime = getUptime()
                 system_stats["sys"].update({"uptime": uptime['uptime']})
 
                 # temperature
-			
+			    # /sys/class/hwmmon/hwmon*/temp*_input
 
                 # Update old stats
                 data["cpu_stats_old"] = data["cpu_stats_now"]
@@ -165,7 +199,9 @@ def application(environ, start_response):
                 data["network_stats_old"] = data["network_stats_now"]
 
                 last = now
-                yield 'data: %s\n\n' % (json.dumps(system_stats))
+                yield "id: %i\n" % (start)
+                yield "event: serverstats\n"
+                yield "data: %s\n\n" % (json.dumps(system_stats))#do not change this line
             time.sleep(1)
             now  = time.time()
 
@@ -200,31 +236,6 @@ def getCpuTime():
             cpu_infos.update({cpu_id:{'total':Total,'idle':Idle}})
         return cpu_infos
 
-def getNetworkStats():
-    '''
-    load from /proc/net/dev
-          rbytes  rpackets  rerrs  rdrop  rfifo  rframe  rcompressed rmulticast  tbytes  tpackets  terrs  tdrop  tfifo  tcolls  tcarrier  tcompressed
-    etc0  0       0         0      0      0      0       0           0           0       0         0      0      0      0       0         0
-    '''
-    network_infos = {}
-    with open("/proc/net/dev", "r") as net_stat:
-        lines = [line.split() for line in net_stat.readlines()[2:]]#skip row 1,2 and loop
-
-        #compute for every adapter
-        for adapter in lines:
-            if adapter[0].startswith("lo"):
-                continue
-            adapter = [adapter[0]]+[float(i) for i in adapter[1:]]
-            adapter_id,rbyte,rpack,rerrs,rdrop,rfifo,rframe,rcomp,rmult,tbyte,tpack,terrs,tdrop,tfifo,tcolls,tcarr,tcomp = adapter
-
-            network_infos.update({adapter_id[:-1]:{
-                                  "receive":{"bytes":rbyte,"packets":rpack,"errs":rerrs,"drop":rdrop,
-                                           "fifo":rfifo,"frame":rframe,"compressed":rcomp,"multicast":rmult},
-                                  "transmit":{"bytes":tbyte,"packets":tpack,"errs":terrs,"drop":tdrop,
-                                            "fifo":tfifo,"colls":tcolls,"carrier":tcarr,"compressed":tcomp}}
-                                })
-    return network_infos
-
 def getDiskStats():
     ctx = pyudev.Context()
     disk_stats = {}
@@ -233,6 +244,8 @@ def getDiskStats():
         if ("MAJOR" not in dev or int(dev["MAJOR"].strip("\0")) != 8) and "virtio" not in dev.device_path:
             continue
         if "MINOR" not in dev or int(dev["MINOR"].strip("\0")) % 16 != 0:
+            continue
+        if int(dev.attributes["size"].strip("\0")) == 0:
             continue
 
         device_path = str(dev.device_path.split("/")[-1])
@@ -245,6 +258,33 @@ def getDiskStats():
                                              "ios_in_prog": ios_in_prog, "tot_ticks": tot_ticks, "rq_ticks": rq_ticks}})
 
     return disk_stats
+
+def getNetworkStats():
+    '''
+    load from /sys/class/net/*eth0,eth1,lo/statistics
+    '''
+    network_infos = {}
+    ctx = pyudev.Context()
+
+    for dev in ctx.list_devices(subsystem='net'):
+        if(dev.attributes["operstate"] == "up" and dev.sys_name != "lo"):
+            try:
+                speed = float(dev.attributes["speed"])#is not defined on VMs
+            except KeyError:
+                speed = None
+
+            network_infos.update({dev.sys_name: {"status": dev.attributes["operstate"],"speed": speed}})
+
+    for dev in network_infos:
+        dev_path = "/sys/class/net/%s/statistics" % (dev)
+        with open("%s/rx_bytes" % (dev_path), "r") as net_stat: rx_bytes = net_stat.readline().split()[0]
+        with open("%s/rx_packets" % (dev_path), "r") as net_stat: rx_packets = net_stat.readline().split()[0]
+        with open("%s/tx_bytes" % (dev_path), "r") as net_stat: tx_bytes = net_stat.readline().split()[0]
+        with open("%s/tx_packets" % (dev_path), "r") as net_stat: tx_packets = net_stat.readline().split()[0]
+        network_infos[dev].update({"received": {"bytes":float(rx_bytes),"packets":float(rx_packets)}})
+        network_infos[dev].update({"transmitted": {"bytes":float(tx_bytes),"packets":float(tx_packets)}})
+
+    return network_infos
 
 def getUptime():
     uptime = {}
