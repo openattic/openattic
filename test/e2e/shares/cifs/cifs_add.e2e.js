@@ -8,31 +8,29 @@ describe('should add a CIFS share', function(){
 
   var sharename = 'protractor_test_cifsShare';
   var share = element(by.cssContainingText('tr', sharename));
+  var submitBtn = element(by.css('.tc_submitButton'));
+  var cifsShareTab = element(by.css('.tc_cifsShareTab'));
 
   beforeAll(function(){
     helpers.login();
     volumesItem.click();
     helpers.create_volume("xfs");
+    volume.click();
+    cifsShareTab.click();
   });
 
   it('should create a CIFS share', function(){
-    volume.click();
-    browser.sleep(400);
-    element(by.css('.tc_cifsShareTab')).click();
-    browser.sleep(400);
     element(by.css('.tc_cifsShareAdd')).click();
     browser.sleep(400);
     element(by.id('shareName')).clear();
     browser.sleep(400);
     element(by.model('share.name')).sendKeys(sharename);
     browser.sleep(400);
-    element(by.css('.tc_submitButton')).click();
+    submitBtn.click();
   });
 
   it('should display the cifs share "protractor_test_cifsShare" in the cifs panel', function(){
     expect(volume.isDisplayed()).toBe(true);
-    browser.sleep(400);
-    element(by.css('.tc_cifsShareTab')).click();
     browser.sleep(400);
     expect(share.isDisplayed()).toBe(true);
 
@@ -63,7 +61,7 @@ describe('should add a CIFS share', function(){
     expect(element(by.model('share.guest_ok')).isSelected()).toBe(true);
     element(by.model('share.comment')).sendKeys('this is a protractor test cifs share');
     browser.sleep(400);
-    element(by.css('.tc_submitButton')).click();
+    submitBtn.click();
     browser.sleep(400);
     var guestColumn = share.element(by.id('guest_ok'));
     expect(guestColumn.element(by.className('fa-check')).isPresent()).toBe(true);
@@ -74,8 +72,6 @@ describe('should add a CIFS share', function(){
 
   it('should remove the cifs share', function(){
     expect(volume.isDisplayed()).toBe(true);
-    browser.sleep(400);
-    element(by.css('.tc_cifsShareTab')).click();
     browser.sleep(400);
     expect(share.isDisplayed()).toBe(true);
     browser.sleep(400);
@@ -92,10 +88,6 @@ describe('should add a CIFS share', function(){
 
   it('should not show the cifs share anymore', function(){
     expect(volume.isDisplayed()).toBe(true);
-    browser.sleep(400);
-    volume.click();
-    element(by.css('.tc_cifsShareTab')).click();
-    browser.sleep(400);
     expect(share.isPresent()).toBe(false);
 
   });

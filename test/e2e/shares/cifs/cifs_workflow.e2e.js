@@ -8,6 +8,8 @@ describe('CIFS Share workflow', function(){
   var volumesItem = element.all(by.css('ul .tc_menuitem')).get(3);
   var name = element(by.id('shareName'));
   var path = element(by.id('sharePath'));
+  var pathRequired = element(by.css('.tc_cifsPathRequired'));
+  var nameRequired = element(by.css('.tc_cifsNameRequired'));
 
   beforeAll(function(){
     helpers.login();
@@ -89,21 +91,25 @@ describe('CIFS Share workflow', function(){
     name.clear();
     path.clear();
     submitButton.click();
-    expect(element(by.css('.tc_cifsNameRequired')).isDisplayed()).toBe(true);
-    expect(element(by.css('.tc_cifsPathRequired')).isDisplayed()).toBe(true);
+    expect(nameRequired.isDisplayed()).toBe(true);
+    expect(pathRequired.isDisplayed()).toBe(true);
+    
   });
 
   it('should show required message if "Name" is empty', function(){
     name.clear();
     submitButton.click();
-    expect(element(by.css('.tc_cifsNameRequired')).isDisplayed()).toBe(true);
+    expect(nameRequired.isDisplayed()).toBe(true);
+    expect(pathRequired.isDisplayed()).toBe(false);
+    
 
   });
 
   it('should show required message if "Path" is empty', function(){
     path.clear();
     submitButton.click();
-    expect(element(by.css('.tc_cifsPathRequired')).isDisplayed()).toBe(true);
+    expect(pathRequired.isDisplayed()).toBe(true);
+    expect(nameRequired.isDisplayed()).toBe(false);
 
   });
 
