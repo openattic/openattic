@@ -12,6 +12,7 @@ describe('should create a clone volume of a snapshot (base: filesystem volume)',
     helpers.create_volume("xfs");
     helpers.create_snapshot();
     helpers.create_snap_clone();
+    browser.sleep(800);
   });
   
   it('should display the clone in the volumes list', function(){

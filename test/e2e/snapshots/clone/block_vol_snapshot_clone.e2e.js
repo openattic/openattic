@@ -19,15 +19,13 @@ describe('should create a clone volume of a snapshot (base: blockvolume)', funct
     volumesItem.click();
     helpers.create_volume("lun");
     helpers.create_snapshot();
+    volume.click();
+    element(by.css('.tc_snapshotTab')).click();
     
   });
   
   it('should not allow spaces or additional characters', function(){
     expect(volume.isDisplayed()).toBe(true);
-    volume.click();
-    browser.sleep(400);
-    element(by.css('.tc_snapshotTab')).click();
-    browser.sleep(400);
     expect(snapshot.isDisplayed()).toBe(true);
     snapshot.click();
     browser.sleep(400);
@@ -45,12 +43,8 @@ describe('should create a clone volume of a snapshot (base: blockvolume)', funct
   
   it('should create a clone of the created snapshot', function(){
     expect(volume.isDisplayed()).toBe(true);
-    volume.click();
-    browser.sleep(400);
-    element(by.css('.tc_snapshotTab')).click();
-    browser.sleep(400);
     expect(snapshot.isDisplayed()).toBe(true);
-    snapshot.click();
+    
     snapMenuBtn.click();
     browser.sleep(400);
     element(by.css('.tc_snap_clone')).click();
