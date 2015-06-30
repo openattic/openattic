@@ -29,7 +29,7 @@ describe('Should map a LUN to an host', function(){
     element(by.model('data.iscsiInis')).click();
     element.all(by.model('newTag.text')).get(1).sendKeys(iqn);
     browser.sleep(400);
-    //get out of the iqn input field
+    //get out of the iqn input field in order to save entered iqn
     host.click();
   });
 
