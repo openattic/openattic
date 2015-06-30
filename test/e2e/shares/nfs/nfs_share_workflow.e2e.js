@@ -8,21 +8,14 @@ describe('NFS Share workflow', function(){
   var path = element(by.model('share.path'));
   var options = element(by.id('shareOptions'));
   var volumesItem = element.all(by.css('ul .tc_menuitem')).get(3);
+  var nfsShareTab = element(by.css('.tc_nfsShareTab'));
   
   beforeAll(function(){
     helpers.login();
     helpers.create_volume("xfs");
-  });
-  
-  beforeEach(function(){
-    volumesItem.click();
-    expect(volume.isDisplayed()).toBe(true);
     volume.click();
-    browser.sleep(400);
-    element(by.css('.tc_nfsShareTab')).click();
-    browser.sleep(400);
+    nfsShareTab.click();
     element(by.css('.tc_nfsShareAdd')).click();
-    browser.sleep(400);
   });
   
   it('should have a "Create NFS Share" title', function(){

@@ -7,20 +7,19 @@ describe('Should add a NFS Share', function(){
   //TODO -> shareAddress
   var shareAddress = 'srvoademo';
   var share = element(by.cssContainingText('td', shareAddress));
-  var volumesItem = element.all(by.css('ul .tc_menuitem')).get(3);  
+  var volumesItem = element.all(by.css('ul .tc_menuitem')).get(3);
+  var nfsShareTab = element(by.css('.tc_nfsShareTab'));
   
   beforeAll(function(){
     helpers.login();
     volumesItem.click();
     helpers.create_volume("xfs");
+    volume.click();
+    nfsShareTab.click();
   });
 
   it('should create the NFS share', function(){
     expect(volume.isDisplayed()).toBe(true);
-    volume.click();
-    browser.sleep(400);
-    element(by.css('.tc_nfsShareTab')).click();
-    browser.sleep(400);
     element(by.css('.tc_nfsShareAdd')).click();
     browser.sleep(400);      
     element(by.model('share.address')).sendKeys(shareAddress);
@@ -30,18 +29,11 @@ describe('Should add a NFS Share', function(){
 
   it('should display the NFS share in the NFS panel', function(){
     expect(volume.isDisplayed()).toBe(true);
-    volume.click();
-    browser.sleep(400);
-    element(by.css('.tc_nfsShareTab')).click();
-    browser.sleep(400);
     expect(share.isDisplayed()).toBe(true);
   });
   
   it('should remove the NFS share', function(){
     expect(volume.isDisplayed()).toBe(true);
-    volume.click();
-    browser.sleep(400);
-    element(by.css('.tc_nfsShareTab')).click();
     expect(share.isDisplayed()).toBe(true);
     share.click();
     browser.sleep(400);
@@ -54,9 +46,6 @@ describe('Should add a NFS Share', function(){
   
   it('should not show the NFS share anymore', function(){
     expect(volume.isDisplayed()).toBe(true);
-    volume.click();
-    browser.sleep(400);
-    element(by.css('.tc_nfsShareTab')).click();
     expect(share.isPresent()).toBe(false);      
   });  
   
