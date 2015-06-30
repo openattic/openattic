@@ -81,7 +81,7 @@ angular.module('openattic.clusterstatuswidget').service('lineChartService', func
                     colors: [{
                         opacity: 0.4
                     }, {
-                        opacity: 0.0
+                        opacity: 0.1
                     }]
                 },
                 steps: false

@@ -1,6 +1,8 @@
+'use strict';
+
 angular.module('openattic.clusterstatuswidget', ['easypiechart', 'angular-flot'])
-    .controller('chartCtrl', function ($scope, $timeout, lineChartService) {
-        // ColorSet
+    .controller('chartCtrl', function ($scope, lineChartService) {
+        /** Variables  ------------------------------------------------------------------------------------------------ */
         var colorSet = {
             white:  "#ffffff",  // white
             red:    "#f7464a",  // red
@@ -8,12 +10,68 @@ angular.module('openattic.clusterstatuswidget', ['easypiechart', 'angular-flot']
             yellow: "#fdb45c",  // yellow
             green:  "#5cb85c",  // green
             blue:   "#0091d9",  // blue
-            dblue:  "#598a9e",  // dark blue
+            dblue:  "#57889c",  // dark blue
             bgrey:  "#ebebeb",  // bright grey
             grey:   "#dcdcdc"   // grey
         };
+        var avgValues;
+        var count_messages;
+        var data;
+        var date;
+        var graph_data;
+        var graph_date;
+        var graph_interval;
+        var graph_maxValues;
+        var interval;
 
-        // Easy Pie Chart
+
+        /** EventSource --------------------------------------------------------------------------------------------- */
+        if (typeof(EventSource) !== "undefined") {
+            $scope.incompatibleBrowser = false;
+
+            avgValues = {};
+            count_messages = 0;
+            interval = 10;
+            // init
+            avgValues["disk_load"] = 0;
+
+            var evtSource = new EventSource("/openattic/serverstats/stream");
+            evtSource.addEventListener("serverstats", function (e) {
+                $scope.$apply(function () {
+                    count_messages++;
+                    if(count_messages === interval) count_messages = 0;
+
+                    date = new Date().getTime();
+                    data = JSON.parse(e.data);
+
+                    // Progress Bar
+
+                    // Easy Pie
+                    avgValues["disk_load"] += data.disks.load_percent;
+                    if(count_messages === 0) {
+                        $scope.percentDiscUsage = Math.round(avgValues.disk_load / interval);
+
+                        // Reset values
+                        avgValues.disk_load = 0;
+                    }
+
+                    // Line Chart
+                    $scope.lineChartDataset = lineChartService.getDataset([
+                        {id: 0, label: 'CPU Load', data: [[date, data.cpu.load_percent]]}
+                    ]);
+                });
+            }, false);
+            evtSource.addEventListener("error", function() {
+                evtSource.close();
+            }, false);
+        } else {
+            $scope.incompatibleBrowser = true;
+            $scope.incompatibleBrowserMessage = "Your browser is not compatible with server-sent-events. If you want to see the live-feed use a compatible browser";
+        }
+
+
+
+        /** Easy Pie Chart ------------------------------------------------------------------------------------------ */
         $scope.defaultOptions = {
             barColor:function(percent) {
                 return(percent<50 ? colorSet.green : percent<75 ? colorSet.yellow : colorSet.red);
@@ -43,33 +101,10 @@ angular.module('openattic.clusterstatuswidget', ['easypiechart', 'angular-flot']
             }
         };
 
-        $scope.percentDiscUsage = 70;
-        $scope.temperature = 23;
+        $scope.percentDiscUsage = 0;
 
-        //var last;
-        //var checkHosts = function() {
-        //    // ServerLoad
-        //    last = $scope.percentServerLoad;
-        //    $scope.percentServerLoad = Math.round(Math.random()*40+45);
-        //    if(last < $scope.percentServerLoad) $scope.percentServerLoadUp = true; else $scope.percentServerLoadUp = false;
-        //    $scope.percentServerLoadChange = (($scope.percentServerLoad / last) -1) *100;
-        //    $scope.percentServerLoadChange = Math.round($scope.percentServerLoadChange);
-        //
-        //    // DiscSpace
-        //    if($scope.percentDiscSpace > 90) $scope.percentDiscSpace = 10;
-        //    $scope.percentDiscSpace = $scope.percentDiscSpace + Math.random()*5;
-        //
-        //    // Hosts
-        //
-        //    // Temp
-        //    $scope.temperature = Math.round(Math.random()*3+23);
-        //
-        //    $timeout(checkHosts, 10000);
-        //};
-        //checkHosts();
-
-        /** Live Chart */
-        lineChartService.graphOptions.colors = [colorSet.blue,colorSet.yellow,colorSet.red];
+        /** Live Chart ---------------------------------------------------------------------------------------------- */
+        lineChartService.graphOptions.colors = [colorSet.dblue,colorSet.yellow,colorSet.red];
         lineChartService.graphOptions.series.lines.fill = true;
         lineChartService.graphOptions.xaxis.mode = 'time';
         lineChartService.graphOptions.xaxis.timezone = 'browser';
@@ -77,53 +112,20 @@ angular.module('openattic.clusterstatuswidget', ['easypiechart', 'angular-flot']
 
         $scope.lineChartOptions = lineChartService.graphOptions;
 
-        // init variables
-        var data;
-        var date;
-        var updatetime;
-        var maxValues;
-
-        // delcare variables
-        updatetime = 1000; // time in ms -> 1000ms equals 1s
-        maxValues = lineChartService.getMaxGraphValues();
-        data = [];
-        date = new Date().getTime();
+        graph_data = [];
+        graph_date = new Date().getTime();
+        graph_maxValues = lineChartService.getMaxGraphValues();
+        graph_interval = 1000; // time in ms -> 1000ms equals 1s
 
         // Init empty graph
-        for(var i=0; i<maxValues; i++) {
-            data.push([date - (((maxValues-i)-1) * updatetime),0]);
+        for(var i=0; i<graph_maxValues; i++) {
+            graph_data.push([graph_date - (((graph_maxValues-i)-1) * graph_interval),-1]);
         }
-        $scope.lineChartDataset = lineChartService.getDataset([{id: 0, data: data}]); // Init empty Graph
+        $scope.lineChartDataset = lineChartService.getDataset([{id: 0, data: graph_data}]); // Init empty Graph
 
-        // ------------------------- AKTUELLES LIVE BLAA START -------------------------
-        //var evtSource = new EventSource("../../derp/stream");
-        var evtSource = new EventSource("/openattic/serverstats/stream");
-        evtSource.onmessage = function(e) {
-            date = new Date().getTime();
-            data = JSON.parse(e.data);
 
-            $scope.lineChartDataset = lineChartService.getDataset([
-                {id: 0, label: 'CPU Load', data: [[date, data.cpu.load_percent]]}
-            ]);
-            $scope.$digest();
-        };
-        // ------------------------- AKTUELLES LIVE BLAA END -------------------------
 
-        //var drawGraph = function() {
-        //    //globalData3 = [[]];
-        //    //if(discLoad != null) {
-        //    //    globalData3[0].push([date, discLoad]);
-        //    //    counter++;
-        //    //    //console.log('Nummer:' + counter + ' Load:' + discLoad + ' in % um:' + date);
-        //    //    $scope.lineChartDataset = lineChartService.getDataset([
-        //    //        {id: 0, label: '', data: globalData3[0]},
-        //    //    ]);
-        //    //}
-        //    $timeout(drawGraph, 1000);
-        //};
-        //drawGraph();
-
-        /** bind functions on flot-element */
+        /** bind functions on flot-element -------------------------------------------------------------------------- */
         var graphElement = $("flot");
         graphElement.mousedown(function () { lineChartService.disableDrawing(); });
         $("body").mouseup(function () { lineChartService.enableDrawing(); });
@@ -148,20 +150,11 @@ angular.module('openattic.clusterstatuswidget', ['easypiechart', 'angular-flot']
             lineChartService.lockY(ranges.yaxis.from, ranges.yaxis.to);
             $scope.$digest();
         });
-        //graphElement.bind("plothover", function (event, pos, item)
-        //{
-        //    if (item) {
-        //        var x = item.datapoint[0].toFixed(2),
-        //            y = item.datapoint[1].toFixed(2);
-        //
-        //        var date = new Date(Math.floor(x));
-        //        var formattedDate = date.getHours() + ':' + date.getMinutes() + ':' + date.getSeconds();
-        //
-        //        $("#tooltip").html(y + " | " + formattedDate)
-        //            .css({top: item.pageY+5, left: item.pageX+5, border: "solid 1px black"})
-        //            .fadeIn(200);
-        //    } else {
-        //        $("#tooltip").hide();
-        //    }
-        //});
+
+
+
+        /** stop server-sent-events --------------------------------------------------------------------------------- */
+        $scope.$on('$destroy', function() {
+            evtSource.close();
+        });
     });
