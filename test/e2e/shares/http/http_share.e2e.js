@@ -6,20 +6,19 @@ describe('HTTP Share add', function(){
   var volume = element.all(by.cssContainingText('tr', volumename)).get(0);
   var share = element(by.css('.tc_http_share'));
   var volumesItem = element.all(by.css('ul .tc_menuitem')).get(3);
+  var httpShareTab = element(by.css('.tc_httpShareTab'));
 
 
   beforeAll(function(){
     helpers.login();
     volumesItem.click();
     helpers.create_volume("xfs");
+    volume.click();
+    httpShareTab.click();
   });
 
   function goToHTTPShare(){
     expect(volume.isDisplayed()).toBe(true);
-    volume.click();
-    browser.sleep(400);
-    element(by.css('.tc_httpShareTab')).click();
-    browser.sleep(400);
     element(by.css('.tc_httpShareAdd')).click();
     browser.sleep(400);
   }
@@ -31,20 +30,11 @@ describe('HTTP Share add', function(){
 
   it('should display the created http share in the http shares overview panel', function(){
     expect(volume.isDisplayed()).toBe(true);
-    volume.click();
-    browser.sleep(400);
-    element(by.css('.tc_httpShareTab')).click();
-    share.click();
-    browser.sleep(400);
     expect(share.isPresent()).toBe(true);
   });
 
   it('should delete the http-share', function(){
     expect(volume.isDisplayed()).toBe(true);
-    volume.click();
-    browser.sleep(400);
-    element(by.css('.tc_httpShareTab')).click();
-    browser.sleep(400);
     share.click();
     browser.sleep(400);
     element(by.css('.tc_deleteHttpShare')).click();
@@ -55,9 +45,6 @@ describe('HTTP Share add', function(){
 
   it('should not display the share anymore', function(){
     expect(volume.isDisplayed()).toBe(true);
-    volume.click();
-    browser.sleep(400);
-    element(by.css('.tc_httpShareTab')).click();
     expect(share.isPresent()).toBe(false);
   });
 
