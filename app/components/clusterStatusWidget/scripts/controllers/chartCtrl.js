@@ -44,7 +44,7 @@ angular.module('openattic.clusterstatuswidget', ['easypiechart', 'angular-flot']
                     date = new Date().getTime();
                     data = JSON.parse(e.data);
 
-                    console.log(e.data);
+                    //console.log(e.data);
 
                     // Progress Bar
                     $scope.hosts = 1 + " / " + 1;
