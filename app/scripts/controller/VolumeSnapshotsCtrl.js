@@ -72,7 +72,7 @@ angular.module('openattic')
       });
 
       modalInstance.result.then(function() {
-        $scope.snapshotsFilter.refresh = new Date();
+        $scope.filterConfig.refresh = new Date();
       });
     };
   });
