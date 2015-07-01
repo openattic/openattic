@@ -22,6 +22,7 @@ import uuid
 import operator
 
 from datetime import datetime, timedelta
+from math import trunc
 
 from django.db import models
 from django.db.models import signals
@@ -60,7 +61,7 @@ else:
     HAVE_NAGIOS = False
 
 
-def _to_number_with_unit(value, unit="B", base=1024):
+def _to_number_with_unit(value, unit="B", base=1024, round=False):
     """ Try to convert the given value to a number string like 14MiB. """
     if value is None:
         return None
@@ -73,12 +74,11 @@ def _to_number_with_unit(value, unit="B", base=1024):
             unit = facunit + unit
             break
     try:
+        if round:
+            value = float(trunc(value * 100)) / 100
         return "{:,.2f}{:}".format(value, unit)
     except (AttributeError, ValueError): # python 2.5 and 2.6 respectively
         return str(value) + unit
-
-
-
 
 class DeviceNotFound(Exception):
     pass
@@ -424,7 +424,7 @@ class StorageObject(models.Model):
         }
         _stats.update({
             "used_text":   _to_number_with_unit(_stats["used"]),
-            "free_text":   _to_number_with_unit(_stats["free"]),
+            "free_text":   _to_number_with_unit(_stats["free"], round=True),
             "steal_text":  _to_number_with_unit(_stats["steal"]),
             "usable_text": _to_number_with_unit(_stats["usable"]),
             "size_text":   _to_number_with_unit(_stats["size"]),
