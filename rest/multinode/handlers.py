@@ -71,7 +71,7 @@ class RequestHandlers(object):
                                                                  request.QUERY_PARAMS['page_size'])
 
         return Response(OrderedDict([
-            ('count',       len(queryset_total)),
+            ('count',       queryset.paginator.count),
             ('next',        next_page),
             ('previous',    prev_page),
             ('results',     results)
