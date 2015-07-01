@@ -29,6 +29,7 @@ except AttributeError:
 # from ifconfig.models import Host
 # current_host = Host.objects.get_current()
 from volumes.models import PhysicalBlockDevice
+from volumes.models import VolumePool
 
 sse_data = """
 <!DOCTYPE html>
@@ -143,10 +144,12 @@ def application(environ, start_response):
                 bytes_per_sector = 512
                 tot_ticks = 0
                 tot_wr_bps = 0
+                disks_size = 0
 
                 for key in data["disk_stats_now"]:
                     tot_ticks = tot_ticks + (data["disk_stats_now"][key]["tot_ticks"] - data["disk_stats_old"][key]["tot_ticks"])
                     tot_wr_bps = tot_wr_bps + ((data["disk_stats_now"][key]["wr_sectors"] - data["disk_stats_old"][key]["wr_sectors"]) / (now - last) * bytes_per_sector)
+                    disks_size = disks_size + (data["disk_stats_now"][key]["block_size"] * bytes_per_sector)
 
                 system_disks = 0
                 system_disks_online = 0
@@ -155,12 +158,13 @@ def application(environ, start_response):
                     if(pbd.device.get_status()[0] == "online"):
                         system_disks_online = system_disks_online + 1
 
-                # for pd in PhysicalBlockDevice.objects.all():
-                    # print "Size:%s  TextSize:%s" % (pd.storageobj.get_size()["size"],pd.storageobj.get_size()["size"])
                 system_stats["disks"].update({"count": system_disks})
                 system_stats["disks"].update({"count_online": system_disks_online})
                 system_stats["disks"].update({"count_oa": len(data["disk_stats_now"])})
                 system_stats["disks"].update({"load_percent": (tot_ticks / ((now - last) * 1000.) * 100.) / system_stats["disks"]["count"]})
+                system_stats["disks"].update({"size_b": disks_size})
+                system_stats["disks"].update({"size_gb": disks_size / float(1024**3)})
+                system_stats["disks"].update({"size_tb": disks_size / float(1024**4)})
                 system_stats["disks"].update({"wr_tb_per_day": (tot_wr_bps / float(1024**4)) * 86400})
 
                 # network
@@ -248,14 +252,17 @@ def getDiskStats():
         if int(dev.attributes["size"].strip("\0")) == 0:
             continue
 
-        device_path = str(dev.device_path.split("/")[-1])
-        with open("/sys/class/block/%s/stat" % (device_path), "r") as disk_stat:
+        device_name = str(dev.device_path.split("/")[-1])
+        with open("/sys/class/block/%s/stat" % (device_name), "r") as disk_stat:
             data = disk_stat.read().split()
             data = [float(i) for i in data]#type casting
             rd_ios,rd_merges,rd_sectors,rd_ticks,wr_ios,wr_merges,wr_sectors,wr_ticks,ios_in_prog,tot_ticks,rq_ticks = data
-            disk_stats.update({device_path: {"rd_ios": rd_ios, "rd_merges": rd_merges, "rd_sectors": rd_sectors, "rd_ticks": rd_ticks,
+            disk_stats.update({device_name: {"rd_ios": rd_ios, "rd_merges": rd_merges, "rd_sectors": rd_sectors, "rd_ticks": rd_ticks,
                                              "wr_ios": wr_ios, "wr_merges": wr_merges, "wr_sectors": wr_sectors, "wr_ticks": wr_ticks,
                                              "ios_in_prog": ios_in_prog, "tot_ticks": tot_ticks, "rq_ticks": rq_ticks}})
+
+        with open("/sys/class/block/%s/size" % (device_name), "r") as disk_size:
+            disk_stats[device_name]["block_size"] = int(disk_size.read().split()[0])
 
     return disk_stats
 
