@@ -3,11 +3,19 @@ describe('Volumes resize', function(){
   var volumename = 'protractor_test_volume';
   var pool;
 
+  
+  beforeAll(function(){
+    helpers.login();    
+  });
+  
   beforeEach(function(){
-    helpers.login();
-
-    var volumesItem = helpers.configs.menuitems.volumes;
-    element.all(by.css('ul .tc_menuitem')).get(volumesItem).click();
+    
+    //--> volumesItem is not defined    
+    //var volumesItem = helpers.configs.menuitems.volumes;
+    //element.all(by.css('ul .tc_menuitem')).get(volumesItem).click();
+    
+    var volumesItem = element.all(by.css('ul .tc_menuitem')).get(3);
+    volumesItem.click();    
     element(by.css('oadatatable .tc_add_btn')).click();
 
     for(var key in helpers.configs.pools) {
