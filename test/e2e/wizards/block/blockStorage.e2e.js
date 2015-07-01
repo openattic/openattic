@@ -1,5 +1,5 @@
-var helpers = require('../common.js');
-var configs = require('../configs.js');
+var helpers = require('../../common.js');
+var configs = require('../../configs.js');
 
 describe('Raw Block Storage Wizard', function(){
     

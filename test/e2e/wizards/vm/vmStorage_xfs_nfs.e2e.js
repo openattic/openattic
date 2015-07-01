@@ -1,5 +1,5 @@
-var helpers = require('../common.js');
-var configs = require('../configs.js');
+var helpers = require('../../common.js');
+var configs = require('../../configs.js');
 
 describe('VM Storage Wizard', function(){
   var wizardOverviewBtn = element(by.css('.tc_wizardOverview'));
