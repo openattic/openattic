@@ -70,6 +70,7 @@ angular.module('openattic.clusterstatuswidget').service('lineChartService', func
         legend: {
             show: true,
             position: 'nw',
+            margin: [0,5],
             backgroundOpacity: 0
         },
         series: {

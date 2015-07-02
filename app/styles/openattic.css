@@ -261,6 +261,12 @@ oadatatable .input-group {
 }
 
 /* Dashboard Clusterstatus */
+.cluster-status .legendColorBox div>div {
+    border-radius: 0!important;
+}
+.cluster-status .legendLabel {
+    padding-top: 5px!important;
+}
 .cluster-status {
     padding-bottom:0!important;
 }
@@ -268,7 +274,7 @@ oadatatable .input-group {
     margin-top: 10px!important;
 }
 .cluster-status .show-stat-microcharts > div {
-    margin-top: 0px!important;
+    margin-top: 0!important;
 }
 .cluster-status .show-stat-microcharts .easy-pie-title {
     width: 110px;

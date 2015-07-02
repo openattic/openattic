@@ -43,8 +43,8 @@
                                         <span class="pull-left">
                                             {{data.sourcePool.usage.used_text}} of
                                             {{data.sourcePool.usage.size_text}} used</span>
-                                        <span class="pull-right tc_poolAvailableSize"">
-                                            {{data.sourcePool.usage.free_text}} free
+                                        <span class="pull-right tc_poolAvailableSize">
+                                            {{data.sourcePool.usage.free_text}} free - <a ng-click="data.megs = data.sourcePool.usage.free + 'MB'">take value</a>
                                         </span>
                                 </div>
                                 <span class="help-block tc_poolRequired" ng-show="(submitted || volumeForm.pool.$dirty)
