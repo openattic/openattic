@@ -2,8 +2,7 @@
 
     <div class="row no-space">
         <div class="col-xs-12 col-sm-12 col-md-8 col-lg-8">
-            <flot ng-if="!incompatibleBrowser" dataset="lineChartDataset" options="lineChartOptions" height="250px"></flot>
-            <div ng-if="incompatibleBrowser" ng-bind="incompatibleBrowserMessage"></div>
+            <flot dataset="lineChartDataset" options="lineChartOptions" height="250px"></flot>
         </div>
         <div class="col-xs-12 col-sm-12 col-md-4 col-lg-4 show-stats">
             <div class="row">
@@ -21,37 +20,50 @@
                     <span class="text"> Disk Usage <span class="pull-right">{{disks_usage}}</span> </span>
                     <progressbar value="disks_usage_p" type="{{disks_usage_t}}"></progressbar>
                 </div>
+                <!--<button id="testFlotButton">Ich teste</button>-->
             </div>
         </div>
     </div>
 
     <div class="row show-stat-microcharts">
         <div class="col-xs-12 col-sm-6 col-md-6 col-lg-6">
-            <div class="easy-pie-chart" easypiechart ng-init="" percent="percentDiscUsage" options="defaultOptions">
-                <span class="percent percent-sign" ng-bind="percent"></span>
+            <div class="easy-pie-chart" easypiechart percent="percentCpuLoad" options="defaultOptions">
+                <span class="percent percent-sign" ng-bind="percentCpuLoad"></span>
             </div>
-            <span class="easy-pie-title"> Disk Usage <i class="fa fa-caret-up icon-color-bad"></i> </span>
-            <ul class="smaller-stat pull-right hidden-sm">
+            <span class="easy-pie-title"> CPU Load </span>
+            <ul class="smaller-stat pull-right">
                 <li>
-                    <span class="label bg-color-greenLight"><i class="fa fa-caret-up"></i> 57%</span>
-                </li>
-                <li>
-                    <span class="label bg-color-red"><i class="fa fa-caret-down"></i> 2%</span>
+                    <span class="label" ng-class="
+                                            {'bg-color-darken': percentCpuLoadTrend=='stable',
+                                             'bg-color-greenLight': percentCpuLoadTrend=='up',
+                                             'bg-color-red': percentCpuLoadTrend=='down'}">
+                        <i class="fa" ng-class="
+                                        {'fa-caret-right': percentCpuLoadTrend=='stable',
+                                         'fa-caret-up': percentCpuLoadTrend=='up',
+                                         'fa-caret-down': percentCpuLoadTrend=='down'}">
+                        </i> {{percentCpuLoadDiff}}%
+                    </span>
                 </li>
             </ul>
         </div>
 
         <div class="col-xs-12 col-sm-6 col-md-6 col-lg-6">
-            <div class="easy-pie-chart" easypiechart ng-init="" percent="temperature" options="defaultOptions">
-                <span class="percent degree-sign" ng-bind="percent"></span>
+            <div class="easy-pie-chart" easypiechart percent="percentDiscUsage" options="defaultOptions">
+                <span class="percent percent-sign" ng-bind="percentDiscUsage"></span>
             </div>
-            <span class="easy-pie-title"> Temperature <i class="fa fa-caret-down icon-color-bad"></i> </span>
+            <span class="easy-pie-title"> Disk Load </span>
             <ul class="smaller-stat pull-right">
                 <li>
-                    <span class="label bg-color-blueLight"><i class="fa fa-caret-up"></i> 0%</span>
-                </li>
-                <li>
-                    <span class="label bg-color-darken"><i class="fa fa-caret-down"></i> 2%</span>
+                    <span class="label" ng-class="
+                                            {'bg-color-darken': percentDiscUsageTrend=='stable',
+                                             'bg-color-greenLight': percentDiscUsageTrend=='up',
+                                             'bg-color-red': percentDiscUsageTrend=='down'}">
+                        <i class="fa" ng-class="
+                                        {'fa-caret-right': percentDiscUsageTrend=='stable',
+                                         'fa-caret-up': percentDiscUsageTrend=='up',
+                                         'fa-caret-down': percentDiscUsageTrend=='down'}">
+                        </i> {{percentDiscUsageDiff}}%
+                    </span>
                 </li>
             </ul>
         </div>

@@ -278,7 +278,10 @@ oadatatable .input-group {
 }
 .cluster-status .show-stat-microcharts .easy-pie-title {
     width: 110px;
-    padding-top: 3px;
+    padding-top: 5px;
+}
+.cluster-status .smaller-stat {
+    margin-top: 10px;
 }
 
 /* Celsius instead of Fahrenheit */
