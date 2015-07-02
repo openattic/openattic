@@ -12,6 +12,8 @@
  *  GNU General Public License for more details.
 """
 
+import django_filters
+
 from rest_framework import serializers, viewsets
 from rest_framework_bulk.generics import BulkDestroyAPIView
 
@@ -30,10 +32,20 @@ class LogEntrySerializer(serializers.HyperlinkedModelSerializer):
         fields = ('url', 'id', 'host', 'command', 'user', 'starttime', 'endtime', 'exitcode', 'text')
 
 
+class LogEntryFilter(django_filters.FilterSet):
+    start_datetime  = django_filters.DateTimeFilter(name='starttime', lookup_type='gte')
+    end_datetime    = django_filters.DateTimeFilter(name='endtime', lookup_type='lte')
+
+    class Meta:
+        model = models.LogEntry
+        fields = ['exitcode', 'start_datetime', 'end_datetime']
+
+
 class LogEntryViewSet(viewsets.ModelViewSet, BulkDestroyAPIView):
     queryset = models.LogEntry.objects.all()
     serializer_class = LogEntrySerializer
     search_fields = ('command', 'text')
+    filter_class = LogEntryFilter
 
     def filter_queryset(self, queryset):
         if self.request.method == 'DELETE':
