@@ -98,7 +98,6 @@ describe('Volumes add', function() {
   });
 
 // note: by using pool.size (see config.js) this test will only work with a brand new added pool!!! 
-
 //   it('should allow a volume size that is smaller than the selected pool capacity', function(){
 // 
 // 
@@ -179,6 +178,27 @@ describe('Volumes add', function() {
       volumeSizeInput.clear().sendKeys('abc');
       expect(element(by.css('.tc_noValidNumber')).isPresent()).toBe(true);
 
+      break;
+    }
+  });
+  
+  it('should show link text "take value" after selecting a pool', function(){
+    expect(element(by.linkText('take value')).isPresent()).toBe(false);
+    for(var key in helpers.configs.pools) {
+      var pool = helpers.configs.pools[key];
+      volumePoolSelect.click();
+      volumePoolSelect.element(by.cssContainingText('option', pool.name)).click();
+      expect(element(by.linkText('take value')).isDisplayed()).toBe(true);
+      element(by.linkText('take value')).click();
+      
+      var pool_size = element(by.id('data.megs')).evaluate('data.sourcePool.usage.free_text').then(function(psize){
+        browser.sleep(400);
+        expect(element(by.css('.tc_poolAvailableSize')).getText()).toContain(psize + ' free');
+        volumeSizeInput.getAttribute('value').then(function(sizeMB){
+            expect((parseInt(sizeMB, 10) / 1024.).toFixed(2) +  "GB").toEqual(psize);
+        });
+      });
+      
       break;
     }
   });
