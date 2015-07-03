@@ -426,7 +426,7 @@ class VolumeViewSet(viewsets.ModelViewSet):
 
 class VolumeProxyViewSet(RequestHandlers, VolumeViewSet):
     api_prefix = 'volumes'
-    host_filter = 'source_pool__volumepool__host'
+    host_filter = 'source_pool'
     model = models.StorageObject
 
     @detail_route(["post"])
