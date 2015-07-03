@@ -49,6 +49,7 @@ describe('Should create a Snapshot', function(){
   });
 
   afterAll(function(){
+    console.log('snapshot_add');
     helpers.delete_volume();  
   });
   

@@ -21,6 +21,7 @@ describe('should create a clone volume of a snapshot (base: filesystem volume)',
   });
   
   afterAll(function(){
+    console.log('filesystem_vol_snapshot_clone');
     helpers.delete_snapshot();
     helpers.delete_snap_clone();
     helpers.delete_volume();

@@ -264,6 +264,7 @@ describe('Volumes add', function() {
 
         expect(volume.isPresent()).toBe(false);
         addBtn.click();
+        console.log('volumes_add');
       }
     }
   });

@@ -88,5 +88,6 @@ describe('Volumes resize', function(){
     element(by.id('newsize')).sendKeys('170mb');
     expect(element(by.css('.tc_wrongSize')).isDisplayed()).toBe(true);
     element(by.id('bot1-Msg1')).click();
+    console.log('resize volume');
   });
 });

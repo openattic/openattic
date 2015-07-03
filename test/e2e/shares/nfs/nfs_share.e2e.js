@@ -50,6 +50,7 @@ describe('Should add a NFS Share', function(){
   });  
   
   afterAll(function(){
+    console.log('nfs_share');
     helpers.delete_volume();  
   });
 });

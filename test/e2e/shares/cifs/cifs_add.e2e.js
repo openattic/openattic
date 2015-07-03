@@ -93,6 +93,7 @@ describe('should add a CIFS share', function(){
   });
 
   afterAll(function(){
+    console.log('cifs_add');
     helpers.delete_volume();
   });
 });

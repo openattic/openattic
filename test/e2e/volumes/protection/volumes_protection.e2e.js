@@ -103,5 +103,6 @@ describe('Volume protection dialog', function() {
     element(by.model('volume.is_protected')).click();
     element(by.id('bot2-Msg1')).click();
     browser.sleep(helpers.configs.sleep);
+    console.log('volumes_protection in protection dir');
   });
 });

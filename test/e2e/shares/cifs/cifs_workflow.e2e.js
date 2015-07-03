@@ -114,6 +114,7 @@ describe('CIFS Share workflow', function(){
   });
 
   afterAll(function(){
+    console.log('cifs_workflow');
     helpers.delete_volume();
   });
 });

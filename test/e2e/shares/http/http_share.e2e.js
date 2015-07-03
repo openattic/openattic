@@ -49,6 +49,7 @@ describe('HTTP Share add', function(){
   });
 
   afterAll(function(){
+    console.log('http_share');
     helpers.delete_volume();
   });
 });

@@ -77,6 +77,7 @@ describe('NFS Share workflow', function(){
   });
   
   afterAll(function(){
+    console.log('nfs_share_workflow');
     helpers.delete_volume();    
   });
   

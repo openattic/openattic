@@ -116,6 +116,7 @@ describe('Should check the snapshot add workflow', function(){
   });  
   
   afterAll(function(){
+    console.log('snapshot_workflow');
     helpers.delete_volume();    
   });
   

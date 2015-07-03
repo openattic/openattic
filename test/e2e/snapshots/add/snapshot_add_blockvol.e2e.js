@@ -20,6 +20,7 @@ describe('Should create a Snapshot', function(){
   });
   
   afterAll(function(){
+    console.log('snapshot_add_blockvol');
     helpers.delete_snapshot();
     helpers.delete_volume();
   });

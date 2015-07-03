@@ -1,14 +1,17 @@
 var helpers = require('../../common.js');
 describe('Volumes add with protection', function() {
-  beforeEach(function() {
+  beforeAll(function() {
     helpers.login();
-
+  });
+  
+  beforeEach(function(){
     var volumesItem = element.all(by.css('ul .tc_menuitem')).get(3);
     volumesItem.click();
 
     var addBtn = element(by.css('oadatatable .tc_add_btn'));
     addBtn.click();
-  });
+});
+
 
   it('should have a deletion protection checkbox', function(){
     expect(element(by.id('volume.is_protected')).isPresent()).toBe(true);
@@ -65,6 +68,7 @@ describe('Volumes add with protection', function() {
       expect(volume.isPresent()).toBe(false);
 
       element(by.css('oadatatable .tc_add_btn')).click();
+      console.log('volume_protection');
     }
   });
 });

@@ -47,6 +47,7 @@ describe('Should map a LUN to an host', function(){
   });
 
   afterAll(function(){
+    console.log('map_lun');
     helpers.delete_volume();
     helpers.delete_host();
   });

@@ -52,6 +52,7 @@ describe('HTTP Share workflow', function(){
   });
   
   afterAll(function(){
+    console.log('http_share_workflow');
     helpers.delete_volume();    
   });
   
