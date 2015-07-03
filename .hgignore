@@ -11,6 +11,7 @@ syntax: glob
 .pc/
 
 .secret.txt
+.idea
 
 http/volumes
 
