@@ -148,7 +148,7 @@ class RequestHandlers(object):
 
         try:
             return self.model.objects.get(id=data[host_filter[0]]['id']).host
-        except AttributeError:
+        except:
             target_model = self.model._meta.get_field_by_name(host_filter[0])[0].related.parent_model
 
             if target_model == Host:
