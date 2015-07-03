@@ -179,23 +179,6 @@ Description: Cron module for openATTIC
  Cron is a service that provides scheduled task execution. This package
  provides configuration facilities for scheduled tasks (a.k.a. Cron jobs).
 
-Package: openattic-module-ftp
-Architecture: all
-Depends: ${misc:Depends}, openattic-base, openattic-module-samba,
- proftpd-basic (>= 1.3.3),
- proftpd-mod-winbind
-Conflicts: openattic-module-ftp-pgsql, openattic-module-ftp-mysql
-Replaces: openattic-module-ftp-pgsql, openattic-module-ftp-mysql
-Description: FTP module for openATTIC
- openATTIC is a storage management system based upon Open Source tools with
- a comprehensive user interface that allows you to create, share and backup
- storage space on demand.
- .
- The File Transfer Protocol is one of the most widely supported protocols for
- transferring files on the internet. This package provides a configuration
- interface along with a ProFTPd server configuration that uses the openATTIC
- database as configuration backend.
-
 Package: openattic-module-nagios
 Architecture: all
 Depends: ${misc:Depends}, python (>= 2.6),

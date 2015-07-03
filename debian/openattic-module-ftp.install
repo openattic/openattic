@@ -1,3 +1,0 @@
-ftp /usr/share/openattic
-installed_apps.d/60_ftp      /usr/share/openattic/installed_apps.d
-debian/proftpd/openattic.conf /etc/proftpd/conf.d
