@@ -134,20 +134,6 @@ Summary:  DRBD module for openATTIC
  This module provides the groundwork for building high availability clusters
  using openATTIC.
  
-%package       module-ftp
-Requires: 	proftpd
-Summary:  FTP module for openATTIC
- 
-%description module-ftp
- openATTIC is a storage management system based upon Open Source tools with
- a comprehensive user interface that allows you to create, share and backup
- storage space on demand.
- .
- The File Transfer Protocol is one of the most widely supported protocols for
- transferring files on the internet. This package provides a configuration
- interface along with a ProFTPd server configuration that uses the openATTIC
- database as configuration backend.
- 
 %package       module-http
 Requires:	httpd
 Summary:  HTTP module for openATTIC
@@ -277,23 +263,6 @@ Summary:  Samba module for openATTIC
  Samba implements the SMB/CIFS protocol and enables file sharing with hosts
  that run the Microsoft Windows family of operating systems. This package
  provides configuration facilities for Samba Shares.
- 
-%package       module-tftp
-Requires:	tftp-server
-Summary:  TFTP module for openATTIC
- 
-%description module-tftp
- openATTIC is a storage management system based upon Open Source tools with
- a comprehensive user interface that allows you to create, share and backup
- storage space on demand.
- .
- Trivial FTP is an extremely simple File Transfer Protocol often used in
- situations where the standard FTP protocol causes too much overhead. This
- situation is typically encountered when booting systems over the network,
- or transferring configurations for routers and switches.
- .
- This package installs a module which allows you to configure TFTP services
- through openATTIC.
  
 %package       module-twraid
 # TODO: List Requirements
@@ -627,12 +596,12 @@ chmod 644 /var/log/openattic_systemd
 
 %post base
 systemctl daemon-reload
-systemctl restart  dbus.service
+service dbus restart
 systemctl start httpd
 
 %postun base
 systemctl daemon-reload
-systemctl restart  dbus.service
+service dbus restart
 systemctl restart httpd
 
 %post pgsql
@@ -731,6 +700,7 @@ echo ""
 /usr/share/openattic/installed_apps.d/20_volumes
 /usr/share/openattic/urls.py
 /usr/share/openattic/openattic.wsgi
+/usr/share/openattic/serverstats.wsgi
 /usr/share/openattic/processors.py
 /usr/share/openattic/cmdlog/
 /usr/share/openattic/userprefs/
@@ -760,11 +730,6 @@ echo ""
 %defattr(-,openattic,openattic,-)
 /usr/share/openattic/drbd/
 /usr/share/openattic/installed_apps.d/60_drbd
-
-%files 	module-ftp
-%defattr(-,openattic,openattic,-)
-/usr/share/openattic/ftp/
-/usr/share/openattic/installed_apps.d/60_ftp
 
 %files 	module-http
 %defattr(-,openattic,openattic,-)
@@ -833,7 +798,7 @@ systemctl start lvm2-lvmetad
 %post module-nagios
 systemctl daemon-reload
 chkconfig nagios on
-systemctl start nagios
+systemctl start nagios.service
 
 %files 	module-nfs
 %defattr(-,openattic,openattic,-)
@@ -849,11 +814,6 @@ systemctl start nfs
 %defattr(-,openattic,openattic,-)
 /usr/share/openattic/installed_apps.d/60_samba
 /usr/share/openattic/samba/
-
-%files 	module-tftp
-%defattr(-,openattic,openattic,-)
-/usr/share/openattic/installed_apps.d/60_tftp
-/usr/share/openattic/tftp/
 
 %files 	module-twraid
 %defattr(-,openattic,openattic,-)
