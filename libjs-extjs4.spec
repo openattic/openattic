@@ -34,7 +34,7 @@ chown -R apache:apache ${RPM_BUILD_ROOT}/srv/ext-4.2.1.883/
 
 %post
 semanage fcontext -a -t httpd_sys_rw_content_t "/srv/ext-4.2.1.883(/.*)?"
-restorecon-vvR /srv
+restorecon -vvR /srv
 
 %postun
 semanage fcontext -d -t httpd_sys_rw_content_t "/srv/ext-4.2.1.883(/.*)?"
