@@ -219,23 +219,6 @@ Description: DRBD module for openATTIC
  This module provides the groundwork for building high availability clusters
  using openATTIC.
 
-Package: openattic-module-tftp
-Architecture: all
-Depends: ${misc:Depends}, openattic-base,
- xinetd, tftpd-hpa
-Description: TFTP module for openATTIC
- openATTIC is a storage management system based upon Open Source tools with
- a comprehensive user interface that allows you to create, share and backup
- storage space on demand.
- .
- Trivial FTP is an extremely simple File Transfer Protocol often used in
- situations where the standard FTP protocol causes too much overhead. This
- situation is typically encountered when booting systems over the network,
- or transferring configurations for routers and switches.
- .
- This package installs a module which allows you to configure TFTP services
- through openATTIC.
-
 Package: openattic-module-http
 Architecture: all
 Depends: ${misc:Depends}, openattic-base,
