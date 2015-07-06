@@ -133,7 +133,7 @@ class PoolSerializer(serializers.HyperlinkedModelSerializer):
 
     url         = serializers.HyperlinkedIdentityField(view_name="pool-detail")
     volumes     = relations.HyperlinkedIdentityField(view_name="pool-volumes")
-    source_pool = relations.HyperlinkedRelatedField(view_name="pool-detail", read_only=True)
+    source_pool = relations.HyperlinkedRelatedField(view_name="pool-detail", read_only=True, source="source_pool.storageobj")
     filesystems = relations.HyperlinkedIdentityField(view_name="pool-filesystems")
     usage       = serializers.SerializerMethodField("get_usage")
     status      = serializers.SerializerMethodField("get_status")
@@ -284,7 +284,7 @@ class VolumeSerializer(serializers.HyperlinkedModelSerializer):
     storage     = relations.HyperlinkedIdentityField(view_name="volume-storage")
     snapshots   = relations.HyperlinkedIdentityField(view_name="volume-snapshots")
     snapshot    = relations.HyperlinkedRelatedField(view_name="volume-detail", read_only=True)
-    source_pool = relations.HyperlinkedRelatedField(view_name="pool-detail",   read_only=True)
+    source_pool = relations.HyperlinkedRelatedField(view_name="pool-detail",   read_only=True, source="source_pool.storageobj")
     usage       = serializers.SerializerMethodField("get_usage")
     status      = serializers.SerializerMethodField("get_status")
 
