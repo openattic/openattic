@@ -17,6 +17,8 @@ openattic (2.0.1-1) UNRELEASED; urgency=medium
   * Add dependency to sg3-utils for disk detection.
   * Install serverstats.wsgi, adapt Apache config.
   * Remove openattic-module-{t,}ftp packages (support dropped upstream).
+  * Drop dependency to libjs-extjs and oxygen-icon-theme.
+  * Remove Apache Alias directives no longer needed for the new GUI.
 
  -- Michael Ziegler <diese-addy@funzt-halt.net>  Tue, 07 Jul 2015 12:09:17 +0200
 
