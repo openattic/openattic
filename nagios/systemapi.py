@@ -60,9 +60,14 @@ class SystemD(BasePlugin):
         finally:
             fd.close()
         invoke([nagios_settings.BINARY_NAME, "--verify-config", nagios_settings.NAGIOS_CFG_PATH])
-        service_command(nagios_settings.SERVICE_NAME, "reload")
-        while not os.path.exists(nagios_settings.STATUS_DAT_PATH):
-            sleep(0.1)
+        # Sometimes, reloading Nagios can cause it to not come up due to some strange errors that
+        # may or may not be fixed simply through retrying.
+        end = time() + 20
+        while time() < end:
+            service_command(nagios_settings.SERVICE_NAME, "reload")
+            retry = time() + 5
+            while not os.path.exists(nagios_settings.STATUS_DAT_PATH) and time() < retry:
+                sleep(0.1)
 
     @method(in_signature="", out_signature="i")
     def check_conf(self):
