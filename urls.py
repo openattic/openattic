@@ -62,4 +62,15 @@ for app in settings.INSTALLED_MODULES:
 if "rosetta" in settings.INSTALLED_APPS:
     urlpatterns.append( ( r'rosetta/', include( 'rosetta.urls' ) ) )
 
+# URLs for the GUI
+urlpatterns.extend([
+    # first, a catch-all URL that serves bower_components, css etc
+    url(r'^(?P<path>.+)$', 'django.views.static.serve', {
+        'document_root': settings.GUI_ROOT, 'show_indexes': False} ),
+    # second, a URL that serves index.html for "openattic/"
+    url(r'^$',             'django.views.static.serve', {
+        'document_root': settings.GUI_ROOT, 'path': 'index.html'} )
+    ])
+
+
 urlpatterns = patterns('', *urlpatterns)
