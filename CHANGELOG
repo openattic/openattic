@@ -1,10 +1,17 @@
 openATTIC Changelog
 ===================
 
-Version 2.0.0, ?? ?????? ????:
+Version 2.0.1, 10 July 2015:
 ---------------------------------
 
 * Added support for the "Restore previous versions" Windows Explorer feature.
+* Improved robustness of the LIO module.
+* Added physical block device abstraction.
+* Added basic volume pool creation.
+* Improved iSCSI performance.
+* Added serverstats URL that returns an eventstream of live statistics.
+* Improved robustness of share creation and deletion.
+* Removed support for FTP and TFTP.
 
 Version 1.2.1, 24 November 2014:
 ---------------------------------
