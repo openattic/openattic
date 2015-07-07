@@ -195,7 +195,10 @@ describe('Volumes add', function() {
         browser.sleep(400);
         expect(element(by.css('.tc_poolAvailableSize')).getText()).toContain(psize + ' free');
         volumeSizeInput.getAttribute('value').then(function(sizeMB){
-            expect((parseInt(sizeMB, 10) / 1024.).toFixed(2) +  "GB").toEqual(psize);
+          var cache_size = (parseInt(sizeMB, 10) / 1024).toString();
+          var final_size = cache_size.slice(0, cache_size.indexOf(".") + 3);
+          //console.log(final_size);
+          expect(final_size + 'GB').toEqual(psize); 
         });
       });
       
