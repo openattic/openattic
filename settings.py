@@ -37,8 +37,6 @@ APPEND_SLASH = False
 
 LVM_CHOWN_GROUP = "users"
 
-ANGULAR_LOGIN = True
-
 REST_FRAMEWORK = {
     'DEFAULT_AUTHENTICATION_CLASSES': (
         'oa_auth.ExtendedBasicAuthentication',
