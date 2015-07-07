@@ -18,12 +18,16 @@ angular.module('openattic.clusterstatuswidget', ['easypiechart', 'angular-flot']
         var count_messages;
         var data;
         var date;
+        var empty;
         var graph_data;
         var graph_date;
         var graph_interval;
         var graph_maxValues;
         var interval;
         var temp;
+
+
+        var cache = [];// TODO WEEEEEEEG
 
 
 
@@ -34,11 +38,7 @@ angular.module('openattic.clusterstatuswidget', ['easypiechart', 'angular-flot']
 
         // init
         avgValues["cpu_load"] = 0;
-        $scope.percentCpuLoadDiff = 0;
-        $scope.percentCpuLoadTrend = "stable";
         avgValues["disk_load"] = 0;
-        $scope.percentDiscUsageDiff = 0;
-        $scope.percentDiscUsageTrend = "stable";
 
         var evtSource = new EventSource("/openattic/serverstats/stream");
         evtSource.addEventListener("serverstats", function (e) {
@@ -68,11 +68,13 @@ angular.module('openattic.clusterstatuswidget', ['easypiechart', 'angular-flot']
                 avgValues.cpu_load += data.cpu.load_percent;
                 avgValues.disk_load += data.disks.load_percent;
                 if(count_messages === 0) {
+                    // CPU load in Percent
                     temp = $scope.percentCpuLoad;
                     $scope.percentCpuLoad = Math.round(avgValues.cpu_load / interval);
                     $scope.percentCpuLoadDiff = ($scope.percentCpuLoad - temp);
                     $scope.percentCpuLoadDiff < 0 ? $scope.percentCpuLoadTrend = "down" : $scope.percentCpuLoadDiff > 0 ? $scope.percentCpuLoadTrend = "up" : $scope.percentCpuLoadTrend = "stable";
 
+                    // Disk load in Percent
                     temp = $scope.percentDiscUsage;
                     $scope.percentDiscUsage = Math.round(avgValues.disk_load / interval);
                     $scope.percentDiscUsageDiff = ($scope.percentDiscUsage - temp);
@@ -83,9 +85,13 @@ angular.module('openattic.clusterstatuswidget', ['easypiechart', 'angular-flot']
                     avgValues.disk_load = 0;
                 }
 
+
+        // TODO lineChartService darf nur die benötigten liefern und nicht immer alle! :&
+
                 $scope.lineChartDataset = lineChartService.getDataset([
                     {id: 0, label: 'CPU Load', data: [[date, data.cpu.load_percent]]},
-                    {id: 1, label: 'Disk Load', data: [[date, data.disks.load_percent]]}
+                    {id: 1, label: 'Disk Load', data: [[date, data.disks.load_percent]]},
+                    {id: 2, label: 'Other Load', data: [[date, 8]]},
                 ]);
             });
         }, false);
@@ -111,21 +117,14 @@ angular.module('openattic.clusterstatuswidget', ['easypiechart', 'angular-flot']
             }
         };
 
-        $scope.hostOptions = {
-            barColor:colorSet.green,
-            trackColor:colorSet.red,
-            scaleColor:false,
-            size:50,
-            lineWidth:5,
-            trackWidth:4,
-            lineCap:'butt',
-            rotate:-90,
-            onStep: function(from, to, percent) {
-                $(this.el).find('.percent').text(Math.round(percent));
-            }
-        };
+        $scope.percentCpuUsage = 0;
+        $scope.percentCpuLoadDiff = 0;
+        $scope.percentCpuLoadTrend = "stable";
 
         $scope.percentDiscUsage = 0;
+        $scope.percentDiscUsageDiff = 0;
+        $scope.percentDiscUsageTrend = "stable";
+
 
         /** Live Chart ---------------------------------------------------------------------------------------------- */
         lineChartService.graphOptions.colors = [colorSet.dblue,colorSet.red,colorSet.yellow];
@@ -143,10 +142,13 @@ angular.module('openattic.clusterstatuswidget', ['easypiechart', 'angular-flot']
 
         // Init empty graph
         for(var i=0; i<graph_maxValues; i++) {
-            graph_data.push([graph_date - (((graph_maxValues-i)-1) * graph_interval),-1]);
+            graph_data.push([graph_date - (((graph_maxValues-i)-1) * graph_interval), -1]);
         }
-        $scope.lineChartDataset = lineChartService.getDataset([{id: 0, data: graph_data}]); // Init empty Graph
-        $scope.lineChartDataset = lineChartService.getDataset([{id: 1, data: graph_data}]); // Init empty Graph
+        $scope.lineChartDataset = lineChartService.getDataset([
+            {id: 0, data: graph_data},
+            {id: 1, data: graph_data},
+            {id: 2, data: graph_data}
+        ]); // Init empty Graph
 
 
 
@@ -186,4 +188,27 @@ angular.module('openattic.clusterstatuswidget', ['easypiechart', 'angular-flot']
 
 
         /** other stuff --------------------------------------------------------------------------------------------- */
+        $scope.graphCheckboxModel = {
+            value1: true,
+            value2: true,
+            value3: true
+        }; // TODO FEHLER WENN AM ANFANG WAS FALSE IST!!! ACHTUNGERINO
+
+        $scope.$watch('graphCheckboxModel',
+            function() {
+                empty = [];
+                for(var e in $scope.lineChartDataset[0].data) {
+                    empty.push([$scope.lineChartDataset[0].data[e][0], -1]);
+                }
+
+                var index = -1;
+                for(var key in $scope.graphCheckboxModel) {
+                    index++;
+                    if($scope.graphCheckboxModel[key]) continue;
+
+                    $scope.lineChartDataset.splice(index, 1, {id: index, label: '', data: empty}); // TODO GGF gar kein splice nötig ;)
+                }
+            },
+            true
+        );
     });
