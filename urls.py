@@ -22,7 +22,6 @@ admin.autodiscover()
 
 from django.conf import settings
 
-from rpcd.extdirect import PROVIDER
 from rest.router import ROUTER
 
 from views import AuthView
@@ -43,41 +42,12 @@ js_info_dict = { "packages": list(_get_openattic_apps()) }
 urlpatterns = [
     (r'^api/auth$', AuthView.as_view(), {}, 'authenticate'),
 
-    (r'^admin/doc/', include('django.contrib.admindocs.urls')),
-    (r'^admin/', include(admin.site.urls)),
-
-    (r'^accounts/login/$',  'django.contrib.auth.views.login' ),
-    (r'^accounts/logout/$', 'django.contrib.auth.views.logout', {'next_page': settings.PROJECT_URL+"/"}),
-
     (r'^api/',      include(ROUTER.urls)),
     (r'^api-auth/', include('rest_framework.urls', namespace='rest_framework')),
-
-    (r'^direct/', include(PROVIDER.urls)),
-    (r'^userprefs/',   include("userprefs.urls")),
-
-    (r'^accounts/logout.js$',    'views.do_logout', {}, 'logout' ),
-    (r'^accounts/login.js$',     'views.do_login',  {}, 'login'  ),
 
     # we need a second URL for the do_login view which can be configured using an Apache
     # <Location> directive to authenticate using Kerberos
     (r'^accounts/kerblogin.js$', 'views.do_login',  {}, 'kerblogin' ),
-
-    (r'^index.html$', 'views.index', {}, 'index'),
-
-    (r'^js/(?P<app>\w+)/(?P<file>\w+)\.js$',
-        lambda request, app, file: TemplateView.as_view(template_name="%s/%s.js" % (app, file), content_type="text/javascript")(request),
-        {},
-        'javascript'
-    ),
-    (r'^js/(?P<file>\w+)\.js$',
-        lambda request, file: TemplateView.as_view(template_name="%s.js" % file, content_type="text/javascript")(request),
-        {},
-        'javascript_main'
-    ),
-
-    (r'^jsi18n/$', 'django.views.i18n.javascript_catalog', js_info_dict),
-
-    (r'^/?$', 'views.index', {}, '__main__' ),
 ]
 
 for app in settings.INSTALLED_MODULES:
@@ -88,14 +58,6 @@ for app in settings.INSTALLED_MODULES:
     else:
         if hasattr(module.urls, "urlpatterns"):
             urlpatterns.append( ('^%s/' % app, include(app + ".urls")) )
-
-
-if settings.DEBUG or True:
-    urlpatterns.append(
-        (r'^%s(?P<path>.*)$' % settings.MEDIA_URL[1:],
-        'django.views.static.serve',
-        {'document_root': settings.MEDIA_ROOT, 'show_indexes': True} ),
-    )
 
 if "rosetta" in settings.INSTALLED_APPS:
     urlpatterns.append( ( r'rosetta/', include( 'rosetta.urls' ) ) )
