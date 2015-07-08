@@ -138,7 +138,8 @@ def service_command(service, command="reload"):
             obj = bus.get_object("org.freedesktop.systemd1", "/org/freedesktop/systemd1")
             systemd = dbus.Interface(obj, "org.freedesktop.systemd1.Manager")
         except dbus.DBusException:
-            logging.warn("service_command(%s): systemd(1) not available, falling back to invoke()" % service)
+            import traceback
+            logging.warn("service_command(%s): systemd(1) not available, falling back to invoke()\n%s" % (service, traceback.format_exc()))
         else:
             logging.info("service_command(%s): calling systemd(1)" % service)
             def passfn(*args):
