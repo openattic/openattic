@@ -29,7 +29,7 @@ describe('Volumes add with protection', function() {
       var pool = helpers.configs.pools[key];
       var volumePoolSelect = element(by.id('data.sourcePool'));
       volumePoolSelect.click();
-      volumePoolSelect.element(by.cssContainingText('option', pool.name)).click();
+      element.all(by.cssContainingText('option', '(volume group,')).get(0).click();
 
       element(by.model('data.megs')).sendKeys('100mb');
       element(by.model('volume.is_protected')).click();
