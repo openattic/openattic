@@ -68,7 +68,9 @@ class SystemD(BasePlugin):
             service_command(nagios_settings.SERVICE_NAME, command)
             command = "restart" # only try reload the first time, then restart
             retry = time() + 5
-            while not os.path.exists(nagios_settings.STATUS_DAT_PATH) and time() < retry:
+            while time() < retry:
+                if os.path.exists(nagios_settings.STATUS_DAT_PATH):
+                    return
                 sleep(0.1)
 
     @method(in_signature="", out_signature="i")
