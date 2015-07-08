@@ -63,8 +63,10 @@ class SystemD(BasePlugin):
         # Sometimes, reloading Nagios can cause it to not come up due to some strange errors that
         # may or may not be fixed simply through retrying.
         end = time() + 20
+        command = "reload"
         while time() < end:
-            service_command(nagios_settings.SERVICE_NAME, "reload")
+            service_command(nagios_settings.SERVICE_NAME, command)
+            command = "restart" # only try reload the first time, then restart
             retry = time() + 5
             while not os.path.exists(nagios_settings.STATUS_DAT_PATH) and time() < retry:
                 sleep(0.1)
