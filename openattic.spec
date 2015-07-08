@@ -75,7 +75,6 @@ Requires:	python-pyudev
 Requires:	mod_wsgi 
 Requires:	xfsprogs 
 Requires:	udisks2 
-Requires:	libjs-extjs4
 Requires:	djextdirect
 Requires:	djangorestframework
 Requires:	djangorestframework-bulk
@@ -488,14 +487,9 @@ mkdir -p ${RPM_BUILD_ROOT}/etc/httpd/conf.d/
 cat <<EOF >${RPM_BUILD_ROOT}/etc/httpd/conf.d/openattic.conf
 <IfModule mod_wsgi.c>
 
-Alias                   /openattic/static/extjs_themes/images/default/ /usr/share/javascript/extjs/resources/images/default/
-Alias                   /openattic/static/extjs/  /srv/ext-4.2.1.883/
-Alias                   /openattic/static/oxygen/ /usr/share/icons/oxygen/
-Alias                   /openattic/static/admin/  /usr/share/pyshared/django/contrib/admin/static/admin/
-Alias                   /openattic/static/        /usr/share/openattic/htdocs/
-Alias                   /openattic/angular/       /usr/share/openattic-gui/dist/
 Alias                   /openattic/staticfiles/   /var/lib/openattic/static/
 
+WSGIScriptAlias         /openattic/serverstats    /usr/share/openattic/serverstats.wsgi
 WSGIScriptAlias         /openattic                /usr/share/openattic/openattic.wsgi
 WSGIDaemonProcess       openattic threads=25 user=openattic group=openattic
 WSGIProcessGroup        openattic
@@ -509,26 +503,6 @@ WSGIPassAuthorization   On
 </Directory>
 
 <Directory /var/lib/openattic>
-        Options Indexes FollowSymLinks
-        AllowOverride None
-        Require all granted
-</Directory>
-
-<Directory /usr/share/openattic/htdocs>
-        <IfModule mod_headers.c>
-                <FilesMatch "\.(ico|pdf|flv|jpg|jpeg|png|gif|js|css|swf)$">
-                        Header set Cache-Control "max-age=86400, must-revalidate"
-                </FilesMatch>
-        </IfModule>
-</Directory>
-
-<Directory /usr/share/icons/oxygen>
-        Options Indexes FollowSymLinks
-        AllowOverride None
-        Require all granted
-</Directory>
-
-<Directory /srv/ext-4.2.1.883>
         Options Indexes FollowSymLinks
         AllowOverride None
         Require all granted
@@ -693,7 +667,6 @@ echo ""
 /usr/share/openattic/rest/
 /usr/share/openattic/templates/
 /usr/share/openattic/volumes/
-/usr/share/openattic/htdocs/
 /usr/share/openattic/ifconfig/
 /usr/share/openattic/systemd/
 /usr/share/openattic/sysutils/
