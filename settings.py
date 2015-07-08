@@ -126,7 +126,10 @@ else:
         LVM_HAVE_YES_OPTION = True
     elif distro == "Ubuntu":
         SAMBA_SERVICE_NAME = "smbd"
-        USE_SYSTEMD_IF_AVAIL = False # Ubuntu ships with broken systemd. *sigh*
+        USE_SYSTEMD_IF_AVAIL = False
+    elif distro == "debian":
+        USE_SYSTEMD_IF_AVAIL = False
+
 
 if exists('/var/run/rrdcached.sock'):
     NAGIOS_RRDCACHED_SOCKET = '/var/run/rrdcached.sock'
