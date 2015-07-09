@@ -31,7 +31,7 @@ angular.module('openattic').config(function($httpProvider){
 angular.module('openattic').run(function($rootScope, $state){
   $rootScope.loginActive = function(){
     return $state.is('login');
-  }
+  };
   var hostname = window.location.host.split('.')[0];
   // check if the hostname looks like the first octet of an IP address
   // and only change pageTitle if it does not
