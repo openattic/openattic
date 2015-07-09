@@ -116,7 +116,7 @@ def acquire_lock(lockfile, max_wait=600):
                 now = int(time.time())
                 if now - s[stat.ST_MTIME] >= max_wait:
                     # read lockfile contents to report the owner PID.
-                    pid = f.readline()
+                    pid = f.readline().strip()
                     logging.error("%s has been locked for more than "
                             "%d seconds (PID %s)" % (lockfile, max_wait, pid))
                     raise AlreadyLocked("timeout waiting for lockfile '%s'" % lockfile)
