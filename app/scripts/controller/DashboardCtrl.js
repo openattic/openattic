@@ -18,10 +18,10 @@ angular.module('openattic')
     directive: 'wizardselector',
     enableVerticalResize: false,
     size: {
-      width: '100%'
+      width: '50%'
     },
-    settingsModalOptions: {
-      lockHorizontalResize: true
+    style: {
+      minWidth: '270px'
     }
   }, {
     name: 'Volume Stats',
@@ -35,13 +35,16 @@ angular.module('openattic')
     name: 'ToDos',
     title: 'ToDos',
     directive: 'todowidget',
+    size: {
+      width: '50%'
+    },
     enableVerticalResize: false
   }])
   .value('defaultWidgets', [
     { name: 'Cluster Status' },
     { name: 'openATTIC Wizards' }
   ])
-  .controller('DashboardCtrl', function ($scope, $window, widgetDefinitions, defaultWidgets){
+  .controller('DashboardCtrl', function ($scope, $window,  widgetDefinitions, defaultWidgets){
     $scope.dashboardOptions = {
       widgetButtons: false,
       widgetDefinitions: widgetDefinitions,
