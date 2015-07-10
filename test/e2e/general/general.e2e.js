@@ -9,7 +9,7 @@ describe('General', function() {
   });
 
   it('should have a title', function(){
-    expect(browser.getTitle()).toEqual('openATTIC');
+    expect(browser.getTitle()).toContain('openATTIC');
   });
 
   it('should show the name of the current user', function(){
