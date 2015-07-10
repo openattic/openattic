@@ -504,6 +504,11 @@ class StorageObject(models.Model):
                     return qryset
         return []
 
+def __wait_for_released_lock(instance, **kwargs):
+    instance.wait()
+
+signals.pre_delete.connect(__wait_for_released_lock, sender=StorageObject)
+
 
 def create_volumepool(disks, options):
     with Transaction():
