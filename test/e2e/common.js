@@ -35,15 +35,24 @@
       for(var key in configs.pools) {
         element(by.id('volume.name')).sendKeys(volumename);
         var pool = configs.pools[key];
-        var volumePoolSelect = element(by.id('data.sourcePool'));
+        var exact_poolname = pool.name;
         volumePoolSelect.click();
-        volumePoolSelect.element(by.cssContainingText('option', pool.name)).click();
-        element(by.id(type)).click();
-
-        element(by.model('data.megs')).sendKeys('100MB');
-        element(by.css('.tc_submitButton')).click();
-        browser.sleep(configs.sleep);
-
+            element.all(by.cssContainingText('option', pool.name))      
+            .then(function findMatch(pname){
+            if (pool.name === pname){
+                exact_poolname = pname;
+                return true;
+            }
+        });
+        if(exact_poolname){
+          var volumePoolSelect = element(by.id('data.sourcePool'));
+          volumePoolSelect.click();
+          volumePoolSelect.element(by.cssContainingText('option', pool.name)).click();
+          element(by.id(type)).click();
+          element(by.model('data.megs')).sendKeys('100MB');
+          element(by.css('.tc_submitButton')).click();
+          browser.sleep(configs.sleep);
+        }
         break;
       }
     }, 
