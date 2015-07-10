@@ -18,16 +18,12 @@ angular.module('openattic.clusterstatuswidget', ['easypiechart', 'angular-flot']
         var count_messages;
         var data;
         var date;
-        var empty;
         var graph_data;
         var graph_date;
         var graph_interval;
         var graph_maxValues;
         var interval;
         var temp;
-
-
-        var cache = [];// TODO WEEEEEEEG
 
 
 
@@ -64,6 +60,9 @@ angular.module('openattic.clusterstatuswidget', ['easypiechart', 'angular-flot']
                 $scope.disks_usage_p = 90/100 * 100;
                 $scope.disks_usage_p > 80 ? $scope.disks_usage_t = "danger" : $scope.disks_usage_p > 50 ? $scope.disks_usage_t = "warning" : $scope.disks_usage_t = "success";
 
+                // Info Box
+                //$scope.sys_uptime = data.sys.uptime;
+
                 // Easy Pie
                 avgValues.cpu_load += data.cpu.load_percent;
                 avgValues.disk_load += data.disks.load_percent;
@@ -85,18 +84,11 @@ angular.module('openattic.clusterstatuswidget', ['easypiechart', 'angular-flot']
                     avgValues.disk_load = 0;
                 }
 
-
-        // TODO lineChartService darf nur die benötigten liefern und nicht immer alle! :&
-
                 $scope.lineChartDataset = lineChartService.getDataset([
-                    {id: 0, label: 'CPU Load', data: [[date, data.cpu.load_percent]]},
-                    {id: 1, label: 'Disk Load', data: [[date, data.disks.load_percent]]},
-                    {id: 2, label: 'Other Load', data: [[date, 8]]},
+                    {id: 0, label: 'written data', data: [[date, data.disks.wr_mb]]},
+                    {id: 1, label: 'network traffic', data: [[date, data.network.tot_in_mb]]}
                 ]);
             });
-        }, false);
-        evtSource.addEventListener("error", function() {
-            evtSource.close();
         }, false);
 
 
@@ -128,9 +120,14 @@ angular.module('openattic.clusterstatuswidget', ['easypiechart', 'angular-flot']
 
         /** Live Chart ---------------------------------------------------------------------------------------------- */
         lineChartService.graphOptions.colors = [colorSet.dblue,colorSet.red,colorSet.yellow];
-        lineChartService.graphOptions.series.lines.fill = false;
+        lineChartService.graphOptions.series.lines.fill = true;
+        lineChartService.graphOptions.series.lines.fillColor = "rgba(255, 255, 255, 0)";
+        lineChartService.graphOptions.series.lines.lineWidth = 1.5;
         lineChartService.graphOptions.xaxis.mode = 'time';
         lineChartService.graphOptions.xaxis.timezone = 'browser';
+        lineChartService.graphOptions.yaxis.tickFormatter = function euroFormatter(v, axis) {
+            return v.toFixed(axis.tickDecimals) + " MB";
+        };
         lineChartService.setMaxGraphValues(121);
 
         $scope.lineChartOptions = lineChartService.graphOptions;
@@ -142,12 +139,11 @@ angular.module('openattic.clusterstatuswidget', ['easypiechart', 'angular-flot']
 
         // Init empty graph
         for(var i=0; i<graph_maxValues; i++) {
-            graph_data.push([graph_date - (((graph_maxValues-i)-1) * graph_interval), -1]);
+            graph_data.push([graph_date - (((graph_maxValues-i)-1) * graph_interval), lineChartService.graphOptions.yaxis.min - 1]);
         }
         $scope.lineChartDataset = lineChartService.getDataset([
             {id: 0, data: graph_data},
-            {id: 1, data: graph_data},
-            {id: 2, data: graph_data}
+            {id: 1, data: graph_data}
         ]); // Init empty Graph
 
 
@@ -180,35 +176,35 @@ angular.module('openattic.clusterstatuswidget', ['easypiechart', 'angular-flot']
 
 
 
+        /** en-/disable graph --------------------------------------------------------------------------------------- */
+        $scope.checkBoxes = [
+            {label: 'Written data', id: 0, isChecked: true},
+            {label: 'Network traffic', id: 1, isChecked: true}
+        ];
+
+        $scope.$watch('checkBoxes',
+            function(newVal, oldVal) {
+                if(_.isEqual(newVal, oldVal)) { // first call
+                    lineChartService.buildCache();
+
+                    $scope.checkBoxes.forEach(function(element) {
+                        element.isChecked ? lineChartService.setActive(element.id) : lineChartService.setInactive(element.id);
+                    });
+                }
+
+                $scope.checkBoxes.forEach(function(element) {
+                    if(newVal[element.id].isChecked == oldVal[element.id].isChecked) {
+                        return;
+                    }
+                    newVal[element.id].isChecked ? lineChartService.setActive(element.id) : lineChartService.setInactive(element.id);
+                });
+            }, true
+        );
+
+
+
         /** stop server-sent-events --------------------------------------------------------------------------------- */
         $scope.$on('$destroy', function() {
             evtSource.close();
         });
-
-
-
-        /** other stuff --------------------------------------------------------------------------------------------- */
-        $scope.graphCheckboxModel = {
-            value1: true,
-            value2: true,
-            value3: true
-        }; // TODO FEHLER WENN AM ANFANG WAS FALSE IST!!! ACHTUNGERINO
-
-        $scope.$watch('graphCheckboxModel',
-            function() {
-                empty = [];
-                for(var e in $scope.lineChartDataset[0].data) {
-                    empty.push([$scope.lineChartDataset[0].data[e][0], -1]);
-                }
-
-                var index = -1;
-                for(var key in $scope.graphCheckboxModel) {
-                    index++;
-                    if($scope.graphCheckboxModel[key]) continue;
-
-                    $scope.lineChartDataset.splice(index, 1, {id: index, label: '', data: empty}); // TODO GGF gar kein splice nötig ;)
-                }
-            },
-            true
-        );
     });

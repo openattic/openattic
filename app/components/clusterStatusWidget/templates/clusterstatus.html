@@ -1,5 +1,19 @@
 <div ng-controller="chartCtrl" class="cluster-status container-fluid padding-10">
 
+    <div class="row np-space">
+        <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12">
+            <div class="smart-form">
+                <div class="inline-group">
+                    <label class="checkbox" ng-repeat="checkBox in checkBoxes">
+                        <input type="checkbox" ng-model="checkBox.isChecked">
+                        <i></i>
+                        {{checkBox.label}}
+                    </label>
+                </div>
+            </div>
+        </div>
+    </div>
+
     <div class="row no-space">
         <div class="col-xs-12 col-sm-12 col-md-8 col-lg-8">
             <flot dataset="lineChartDataset" options="lineChartOptions" height="250px"></flot>
@@ -15,13 +29,19 @@
                     <span class="text"> Disks <span class="pull-right">{{disks_online}}</span> </span>
                     <progressbar value="disks_online_p" type="{{disks_online_t}}"></progressbar>
                 </div>
-
+<!--
                 <div class="col-xs-12 col-sm-6 col-md-12 col-lg-12">
                     <span class="text"> Disk Usage <span class="pull-right">{{disks_usage}}</span> </span>
                     <progressbar value="disks_usage_p" type="{{disks_usage_t}}"></progressbar>
                 </div>
-                <!--<button id="testFlotButton">Ich teste</button>-->
             </div>
+            <div class="row">
+                <div class="col-xs-12 col-sm-6 col-md-12 col-lg-12">
+                    <div class="alert alert-info alert-block">
+                        Server-Uptime: {{sys_uptime}}
+                    </div>
+                </div>
+            </div>-->
         </div>
     </div>
 

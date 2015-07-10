@@ -261,11 +261,19 @@ oadatatable .input-group {
 }
 
 /* Dashboard Clusterstatus */
+.cluster-status .smart-form {
+    border-bottom: 1px solid #dadada;
+    margin: 0 -10px 8px -10px;
+    padding: 0 0 8px 10px;
+}
+
 .cluster-status .legendColorBox div>div {
     border-radius: 0!important;
 }
 .cluster-status .legendLabel {
     padding-top: 5px!important;
+    padding-left: 3px!important;
+    color: #000;
 }
 .cluster-status {
     padding-bottom:0!important;

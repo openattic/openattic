@@ -43,12 +43,38 @@
  *         $timeout(updateChart, 5000); // If you use mode = 'time' make sure that you use an interval matching your timestamps
  *     }
  *     updateChart();
+ *
+ *     // activeState
+ *     $scope.checkBoxes = [
+ *         {label: 'DiscLoad', id: 0, isChecked: true}
+ *     ];
+ *
+ *     $scope.$watch('checkBoxes',
+ *         function(newVal, oldVal) {
+ *             if(_.isEqual(newVal, oldVal)) { // first call
+ *                 lineChartService.buildCache();
+ *
+ *                 $scope.checkBoxes.forEach(function(element) {
+ *                     element.isChecked ? lineChartService.setActive(element.id) : lineChartService.setInactive(element.id);
+ *                 });
+ *             }
+ *
+ *             $scope.checkBoxes.forEach(function(element) {
+ *                 if(newVal[element.id].isChecked == oldVal[element.id].isChecked) {
+ *                     return;
+ *                 }
+ *                 newVal[element.id].isChecked ? lineChartService.setActive(element.id) : lineChartService.setInactive(element.id);
+ *             });
+ *         }, true
+ *     );
  * </code>
  */
 
 angular.module('openattic.clusterstatuswidget').service('lineChartService', function() {
     // private attributes
     var graphDataset = [];
+    var activeState = [];
+    var cache = [];
     var maxGraphValues = 200;
     var disableDrawing = false;
 
@@ -64,6 +90,7 @@ angular.module('openattic.clusterstatuswidget').service('lineChartService', func
                 bottom: '#000',
                 left: '#000'
             },
+            color: 'rgba(0, 0, 0, 0.5)',
             hoverable: false,
             clickable: false
         },
@@ -136,7 +163,8 @@ angular.module('openattic.clusterstatuswidget').service('lineChartService', func
             data = [];
 
             if (graphData.length >= maxGraphValues) {
-                data = graphData;
+                var sliceSize = graphData.length - maxGraphValues;
+                data = graphData.slice(sliceSize);
             } else {
                 if(!disableDrawing) {
                     var sliceSize = graphDataset[graphNumber].data.length - (maxGraphValues - graphData.length);
@@ -145,7 +173,17 @@ angular.module('openattic.clusterstatuswidget').service('lineChartService', func
                     data = graphDataset[graphNumber].data.slice(0);
                 }
                 for (var i in graphData) {
-                    data.push([graphData[i][0], graphData[i][1]]);
+                    if(activeState[graphNumber] || typeof activeState[graphNumber] === 'undefined') {
+                        data.push([graphData[i][0], graphData[i][1]]);
+                    } else {
+                        data.push([graphData[i][0], -1]); // TODO iwas sinnvolles statt -1
+
+                        // Cache
+                        cache[graphNumber].data.push([graphData[i][0], graphData[i][1]]);
+                        if(cache[graphNumber].data.length > maxGraphValues) {
+                            cache[graphNumber].data =  cache[graphNumber].data.slice(cache[graphNumber].data.length - maxGraphValues);
+                        }
+                    }
                 }
             }
 
@@ -205,12 +243,21 @@ angular.module('openattic.clusterstatuswidget').service('lineChartService', func
 
     // public methods
     this.getDataset = function(graphSets) {
-        for(var i in graphSets) {
-            graphDataset[graphSets[i].id] = {
-                label: graphSets[i].label,
-                data: buildGraph(graphSets[i].id, graphSets[i].data)
+        graphSets.forEach(function (element) {
+            if(typeof activeState[element.id] !== 'undefined' && !activeState[element.id]) {
+                cache[element.id].label = element.label;
+                graphDataset[element.id] = {
+                    label: '',
+                    data: buildGraph(element.id, element.data)
+                };
+                return;
+            }
+
+            graphDataset[element.id] = {
+                label: element.label,
+                data: buildGraph(element.id, element.data)
             };
-        }
+        });
 
         return graphDataset;
     };
@@ -297,4 +344,30 @@ angular.module('openattic.clusterstatuswidget').service('lineChartService', func
     this.enableDrawing = function() {
         disableDrawing = false;
     };
+
+    this.setActive = function(id) {
+        activeState[id] = true;
+
+        if (typeof cache[id] !== 'undefined') {
+            graphDataset[id].label = cache[id].label;
+            graphDataset[id].data = cache[id].data.slice(0);
+        }
+
+        cache[id] = {}; // reset cache
+    };
+
+    this.setInactive = function(id) {
+        activeState[id] = false;
+        cache[id] = {label: graphDataset[id].label, data: []};
+
+        graphDataset[id].label = '';
+        graphDataset[id].data.forEach(function (element) {
+            cache[id].data.push([element[0], element[1]]); // Copy current graph values
+            element[1] = -1; // TODO iwas sinnvolles statt -1
+        });
+    };
+
+    this.buildCache = function() {
+        cache = []; // clear cache, cause service is singleton
+    }
 });
