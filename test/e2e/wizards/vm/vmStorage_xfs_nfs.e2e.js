@@ -56,7 +56,7 @@ describe('VM Storage Wizard', function(){
         var pool = configs.pools[key];
         var volumePoolSelect = element(by.id('source_pool'));
         volumePoolSelect.click();
-        volumePoolSelect.element(by.cssContainingText('option', pool.name)).click();
+        element.all(by.cssContainingText('option', '(volume group,')).get(0).click();
         break;
       }    
     
