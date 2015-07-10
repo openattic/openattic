@@ -83,7 +83,7 @@ class RequestHandlers(object):
         if host == Host.objects.get_current():
             return super(RequestHandlers, self).create(request, args, kwargs)
 
-        return Response(self._remote_request(request, host))
+        return Response(json.loads(self._remote_request(request, host)))
 
     def destroy(self, request, *args, **kwargs):
         obj = self.get_object()
@@ -104,7 +104,7 @@ class RequestHandlers(object):
         if host == Host.objects.get_current():
             return super(RequestHandlers, self).update(request, args, kwargs)
 
-        return Response(self._remote_request(request, host, obj))
+        return Response(json.loads(self._remote_request(request, host, obj)))
 
     def _remote_request(self, request, host, obj=None, view_name=None):
         ip = host.get_primary_ip_address().host_part
