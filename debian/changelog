@@ -1,5 +1,5 @@
-openattic-gui (0.0.1-1) unstable; urgency=low
+openattic-gui (2.0.1-1) unstable; urgency=low
 
-  * Initial release (Closes: #nnnn)  <nnnn is the bug number of your ITP>
+  * Initial release.
 
  -- Michael Ziegler <diese-addy@funzt-halt.net>  Tue, 25 Nov 2014 10:31:49 +0100
