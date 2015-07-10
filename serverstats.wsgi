@@ -106,7 +106,7 @@ def application(environ, start_response):
                                               "count_online": data["disk_stats_now"]["disks"]["count_online"],
                                               "count_oa_disks": data["disk_stats_now"]["disks"]["count_oa_disks"],
                                               "load_percent": util_percent, "size_byte": disks_size,
-                                              "wr_b": tot_wr_bps,
+                                              "wr_b": tot_wr_b,
                                               "wr_mb": tot_wr_bps / float(1024 ** 2),
                                               "wr_b_per_day": tot_wr_bps * 86400,
                                               "wr_tb_per_day": (tot_wr_bps / float(1024 ** 4)) * 86400})
