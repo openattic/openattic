@@ -18,6 +18,8 @@
   var hostname ="protractor_test_host";
   var host = element(by.cssContainingText('tr', hostname));
   
+  var volumePoolSelect = element(by.id('data.sourcePool'));
+  
   module.exports = {
     configs: configs,
     login: function() {
@@ -45,9 +47,7 @@
             }
         });
         if(exact_poolname){
-          var volumePoolSelect = element(by.id('data.sourcePool'));
-          volumePoolSelect.click();
-          volumePoolSelect.element(by.cssContainingText('option', pool.name)).click();
+          element.all(by.cssContainingText('option',exact_poolname)).get(0).click();
           element(by.id(type)).click();
           element(by.model('data.megs')).sendKeys('100MB');
           element(by.css('.tc_submitButton')).click();
