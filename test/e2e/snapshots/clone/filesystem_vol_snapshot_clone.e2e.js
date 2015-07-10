@@ -3,7 +3,7 @@ var helpers = require('../../common.js');
 describe('should create a clone volume of a snapshot (base: filesystem volume)', function(){
 
   var clonename ="protractor_test_clone";
-  var clone = element(by.cssContainingText('tr', clonename));
+  var clone = element.all(by.cssContainingText('tr', clonename)).get(0);
   var volumesItem = element.all(by.css('ul .tc_menuitem')).get(3);
  
   beforeAll(function(){
