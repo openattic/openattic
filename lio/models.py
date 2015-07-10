@@ -302,7 +302,7 @@ class IscsiHandler(ProtocolHandler):
 
     def get_targets(self):
         """ Yield the target to be used for the volume. """
-        fabric = rtslib.FabricModule(self.module)
+        fabric = rtslib.FabricModule(self.module.encode("utf-8"))
         if not fabric.exists:
             raise SystemError("fabric %s not loaded" % self.module)
 
@@ -348,7 +348,7 @@ class FcHandler(ProtocolHandler):
 
     def get_targets(self):
         """ Yield all targets for this host (volume doesn't matter). """
-        fabric = rtslib.FabricModule(self.module)
+        fabric = rtslib.FabricModule(self.module.encode("utf-8"))
         if not fabric.exists:
             raise SystemError("fabric %s not loaded" % self.module)
 
