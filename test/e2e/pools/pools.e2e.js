@@ -14,5 +14,32 @@ describe('Pools panel', function(){
   it('should have an add button', function(){
     expect(element(by.css('.tc_addPoolBtn')).isDisplayed()).toBe(true);   
   });
+  
+  it('should have a delete button', function(){
+    element(by.css('.tc_menudropdown')).click();
+    expect(element(by.css('.tc_deletePoolBtn')).isPresent()).toBe(true);   
+  });
+  
+  it('should switch to delete button when selecting a pool', function(){
+    for(var key in helpers.configs.pools){
+      var pool = helpers.configs.pools[key];
+      element.all(by.cssContainingText('td', pool.name)).get(0).click();
+      expect(element(by.css('.tc_deletePoolBtn')).isDisplayed()).toBe(true);
+    }
+  });
+  
+  it('should display the configured pools', function(){
+    for(var key in helpers.configs.pools){
+      var pool = helpers.configs.pools[key];
+      expect(element(by.cssContainingText('td', pool.name)).isDisplayed()).toBe(true);
+    }
+  });
+  
+  it('should display the configured pools', function(){
+    for(var key in helpers.configs.pools){
+      var pool = helpers.configs.pools[key];
+      expect(element(by.cssContainingText('td', pool.size)).isDisplayed()).toBe(true);
+    }
+  });  
     
 });
