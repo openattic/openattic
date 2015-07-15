@@ -106,6 +106,10 @@ oadatatable .input-group {
     color: green;
 }
 
+.loginmain {
+    margin-left: 0 !important;
+}
+
 .redicon {
     color: red;
 }
@@ -147,8 +151,16 @@ oadatatable .input-group {
     line-height: 37px !important;
 }
 
-.wizard-selector-lower-row{
-    margin-top: 30px;
+.widget .btn-block+.btn-block {
+    margin-top: 0;
+}
+
+.widget .wizard-selector {
+    margin-top: -20px;
+}
+
+.wizard-selector-lower-row {
+    margin-top: 20px;
 }
 
 .wizard-nav-btn {
