@@ -31,7 +31,18 @@ describe('Pools panel', function(){
   it('should display the configured pools', function(){
     for(var key in helpers.configs.pools){
       var pool = helpers.configs.pools[key];
-      expect(element(by.cssContainingText('td', pool.name)).isDisplayed()).toBe(true);
+      var exact_poolname = pool.name;
+      element.all(by.cssContainingText('option', pool.name))
+        .then(function findMatch(pname){
+          if (pool.name === pname){
+            exact_poolname = pname;
+            return true;
+          }
+       });
+       
+      if (exact_poolname){
+         expect(element(by.cssContainingText('td', pool.name)).isDisplayed()).toBe(true);
+      }
     }
   });
   
