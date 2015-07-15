@@ -1,15 +1,15 @@
-<div class="panel-body">
-    <div ng-repeat="wizard in wizards">
-        <article class="col-sm-6 col-md-6 col-lg-6">
-            <button type="button" class="btn btn-default btn-lg btn-block"
-                    ng-class="{'wizard-selector-lower-row': $index > 1}" ng-click="selectPage(wizard.page)">
-                <i ng-show="!wizard.stackedIcon" ng-class="wizard.icon"></i>
-                <span ng-show="wizard.stackedIcon" class="fa-stack fa-2x">
-                    <i class="fa fa-square-o fa-stack-2x"></i>
-                    <i ng-class="wizard.icon"></i>
-                </span>
-                <br />{{wizard.title}}
-            </button>
-        </article>
+<div class="panel-body wizard-selector">
+    <div ng-repeat="wizard in wizards" class="col-xs-12 col-sm-6 col-md-6 col-lg-6">
+        <button type="button" class="btn btn-default btn-lg btn-block wizard-selector-lower-row"
+                ng-click="selectPage(wizard.page)">
+            <span ng-show="!wizard.stackedIcon" class="btn-block">
+                <i ng-class="wizard.icon"></i>
+            </span>
+            <span ng-show="wizard.stackedIcon" class="fa-stack fa-2x btn-block">
+                <i class="fa fa-square-o fa-stack-2x"></i>
+                <i ng-class="wizard.icon"></i>
+            </span>
+            <span class="btn-block">{{wizard.title}}</span>
+        </button>
     </div>
 </div>
