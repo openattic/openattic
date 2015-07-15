@@ -16,7 +16,9 @@
 
     <div class="row no-space">
         <div class="col-xs-12 col-sm-12 col-md-8 col-lg-8">
-            <flot dataset="lineChartDataset" options="lineChartOptions" height="250px"></flot>
+            <flot dataset="lineChartDataset" options="lineChartOptions" height="250px"
+                  ng-dblclick="dblClick()" ng-right-click="rightClick()" ng-mousedown="mouseDown()"
+                  ng-plotselected="selected($event, $ranges)"></flot>
         </div>
         <div class="col-xs-12 col-sm-12 col-md-4 col-lg-4 show-stats">
             <div class="row">

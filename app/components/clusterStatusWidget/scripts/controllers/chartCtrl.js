@@ -149,31 +149,22 @@ angular.module('openattic.clusterstatuswidget', ['easypiechart', 'angular-flot']
 
 
         /** bind functions on flot-element -------------------------------------------------------------------------- */
-        var graphElement = $("flot");
-        graphElement.mousedown(function () { lineChartService.disableDrawing(); });
         $("body").mouseup(function () { lineChartService.enableDrawing(); });
-        graphElement.bind("contextmenu",function(){
-            return false;
-        });
-        graphElement.bind("dblclick", function() {
+        $scope.mouseDown = function() {
+            lineChartService.disableDrawing();
+        };
+        $scope.dblClick = function() {
             lineChartService.unlockX(true);
-
             lineChartService.unlockY(true);
-            $scope.$digest();
-        });
-        graphElement.bind("mousedown", function(e) {
-            if(e.which == 3) {
-                lineChartService.unlockX();
-                lineChartService.unlockY();
-                $scope.$digest();
-            }
-        });
-        graphElement.bind("plotselected", function (event, ranges) {
+        };
+        $scope.rightClick = function() {
+            lineChartService.unlockX();
+            lineChartService.unlockY();
+        };
+        $scope.selected = function(event, ranges) {
             lineChartService.lockX(ranges.xaxis.from, ranges.xaxis.to);
             lineChartService.lockY(ranges.yaxis.from, ranges.yaxis.to);
-            $scope.$digest();
-        });
-
+        };
 
 
         /** en-/disable graph --------------------------------------------------------------------------------------- */
