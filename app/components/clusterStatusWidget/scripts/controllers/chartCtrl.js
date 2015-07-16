@@ -1,6 +1,6 @@
 'use strict';
 
-angular.module('openattic.clusterstatuswidget', ['easypiechart', 'angular-flot'])
+angular.module('openattic.clusterstatuswidget')
     .controller('chartCtrl', function ($scope, lineChartService) {
         /** Variables  ------------------------------------------------------------------------------------------------ */
         var colorSet = {
