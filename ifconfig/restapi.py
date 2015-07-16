@@ -33,11 +33,23 @@ class NetDeviceSerializer(serializers.HyperlinkedModelSerializer):
         model = models.NetDevice
 
 class HostSerializer(serializers.ModelSerializer):
-    netdevice_set = relations.HyperlinkedRelatedField(view_name='netdevice-detail', many=True, read_only=True)
-    hostgroup_set = relations.HyperlinkedRelatedField(view_name='hostgroup-detail', many=True, read_only=True)
+    netdevice_set       = relations.HyperlinkedRelatedField(view_name='netdevice-detail', many=True, read_only=True)
+    hostgroup_set       = relations.HyperlinkedRelatedField(view_name='hostgroup-detail', many=True, read_only=True)
+    primary_ip_address  = serializers.SerializerMethodField("serialize_primaryip")
 
     class Meta:
         model = models.Host
+
+    def serialize_primaryip(self, obj):
+        host = models.Host.objects.get(id=obj.id)
+
+        try:
+            ip = host.get_primary_ip_address()
+        except models.IPAddress.DoesNotExist:
+            return None
+        else:
+            serializer = IPAddressSerializer(ip, many=False, context=self.context)
+            return serializer.data
 
 class HostGroupSerializer(serializers.ModelSerializer):
     hosts = relations.HyperlinkedRelatedField(view_name='host-detail', many=True , read_only=True)
