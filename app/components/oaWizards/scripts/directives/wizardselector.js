@@ -23,7 +23,23 @@ angular.module('openattic.oaWizards')
   .directive('wizardselector', function(){
     return {
       template: '<div ng-include="page"></div>',
-      controller: function($scope){
+      controller: function($scope, $element){
+        var setSize = function(width) {
+          if(width >= 1200) {
+            $scope.size = 'lg';
+          } else if(width >= 992) {
+            $scope.size = 'md';
+          } else if(width >= 768) {
+            $scope.size = 'sm';
+          } else {
+            $scope.size = 'xs';
+          }
+        };
+        var initWidth = $element.closest('.dashboard-widget-area').width() / 100 * parseFloat($scope.widget.size.width);
+        setSize(initWidth);
+        $scope.$on('widgetResized', function(event, values) {
+          setSize(values.widthPx);
+        });
         $scope.page = 'components/oaWizards/templates/wizardSelector.html';
         $scope.wizards = wizardDefinitions;
         $scope.selectPage = function(page){
