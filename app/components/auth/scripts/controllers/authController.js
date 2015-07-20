@@ -17,6 +17,6 @@ angular.module('openattic.auth')
         $state.go('dashboard');
       }, function(){
         $scope.loginFailed = true;
-    });
+      });
     };
   });
