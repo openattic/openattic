@@ -9,8 +9,6 @@ angular.module('openattic', [
   'ngTagsInput',
   'ncy-angular-breadcrumb',
   'angular-md5',
-  'angular-flot',
-  'easypiechart',
   'openattic.auth',
   'openattic.apirecorder',
   'openattic.datatable',
