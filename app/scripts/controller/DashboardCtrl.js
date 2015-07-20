@@ -44,7 +44,7 @@ angular.module('openattic')
     { name: 'Cluster Status' },
     { name: 'openATTIC Wizards' }
   ])
-  .controller('DashboardCtrl', function ($scope, $window,  widgetDefinitions, defaultWidgets){
+  .controller('DashboardCtrl', function ($scope, $window, widgetDefinitions, defaultWidgets){
     $scope.dashboardOptions = {
       widgetButtons: false,
       widgetDefinitions: widgetDefinitions,
