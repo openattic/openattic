@@ -25,6 +25,7 @@ angular.module('openattic')
       .$promise
       .then(function (res) {
         $scope.data = res;
+            console.log($scope.data);
       })
       .catch(function (error) {
         console.log('An error occurred', error);
@@ -33,7 +34,7 @@ angular.module('openattic')
 
     $scope.$watch('selection.item', function(selitem){
       if (selitem) {
-        $state.go('disks.detail.status', {pool: selitem.id});
+        $state.go('disks.detail.status', {disk: selitem.id});
       }
       else {
         $state.go('disks');
