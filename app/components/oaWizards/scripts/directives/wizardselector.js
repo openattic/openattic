@@ -39,6 +39,10 @@ angular.module('openattic.oaWizards')
         setSize(initWidth);
         $scope.$on('widgetResized', function(event, values) {
           setSize(values.widthPx);
+          // Save apply
+          if ($scope.$root.$$phase != '$apply' && $scope.$root.$$phase != '$digest') {
+            $scope.$digest();
+          }
         });
         $scope.page = 'components/oaWizards/templates/wizardSelector.html';
         $scope.wizards = wizardDefinitions;
