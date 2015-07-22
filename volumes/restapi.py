@@ -75,7 +75,7 @@ class DiskSerializer(serializers.HyperlinkedModelSerializer):
 
     class Meta:
         model  = models.StorageObject
-        fields = ('url', 'id', 'status', 'size')
+        fields = ('name', 'url', 'id', 'status', 'size')
 
     def get_size(self, obj):
         return obj.get_size()
