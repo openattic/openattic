@@ -1,0 +1,40 @@
+<oadatatable class="tc_oadatatable_users" data="data" filter-config="filterConfig" selection="selection">
+    <actions>
+        <a class="btn btn-lg btn-primary tc_addUser" type="button" ng-click="addAction()" ng-hide="hasSelection"><i class="fa fa-fw fa-plus"></i> Add</a>
+        <a class="btn btn-lg btn-primary" type="button" ng-click="editAction()" ng-show="hasSelection"><i class="fa fa-fw fa-pencil"></i> Edit</a>
+        <li><a ng-click="addAction()"><i class="fa fa-fw fa-plus"></i> Add</a></li>
+        <li ng-class="{disabled: !hasSelection}"><a><i class="fa fa-fw fa-pencil"></i> Edit</a></li>
+        <li class="divider"></li>
+        <li class="tc_deleteUser" ng-class="{disabled: !hasSelection}" max-selected=1><a ng-click="deleteAction()"><i class="fa fa-fw fa-trash-o"></i> Delete</a></li>
+    </actions>
+    <table class="table table-striped table-bordered table-hover dataTable">
+        <thead>
+        <tr>
+            <th class="oadatatablecheckbox" ng-if="selection.available"><input type="checkbox" ng-model="selection.checkAll"/></th>
+            <th sortfield="username"     sortheaderclass sortdir="asc" sortdefault ng-show="columns['Username']">Username</th>
+            <th sortfield="first_name"   sortheaderclass ng-show="columns['Firstname']">Firstname</th>
+            <th sortfield="last_name"    sortheaderclass ng-show="columns['Lastname']">Lastname</th>
+            <th sortfield="email"        sortheaderclass ng-show="columns['E-Mail-Address']">E-Mail-Address</th>
+            <th sortfield="is_active"    sortheaderclass ng-show="columns['Active']">Active</th>
+            <th sortfield="is_staff"     sortheaderclass ng-show="columns['Is administrator']">Is administrator</th>
+            <th sortfield="is_superuser" sortheaderclass ng-show="columns['Has all privileges']">Has all privileges</th>
+            <th sortfield="last_login"   sortheaderclass ng-show="columns['Last Login']">Last Login</th>
+        </tr>
+        </thead>
+        <tbody>
+        <tr ng-repeat="row in data.results" ng-class="{ info: isRowSelected(row) }" ng-click="toggleSelection(row, $event)">
+            <td ng-if="selection.available"><input type="checkbox" checklist-model="selection.items" checklist-value="row"/></td>
+            <td ng-show="columns['Username']">
+                <a ui-sref="users-edit({user:row.id})" ng-bind="row.username"></a>
+            </td>
+            <td ng-show="columns['Firstname']"          ng-bind="row.first_name"></td>
+            <td ng-show="columns['Lastname']"           ng-bind="row.last_name"></td>
+            <td ng-show="columns['E-Mail-Address']"     ng-bind="row.email"></td>
+            <td ng-show="columns['Active']">            <i class="fa fa-check fa-fw" ng-show="row.is_active"></i></td>
+            <td ng-show="columns['Is administrator']">  <i class="fa fa-check fa-fw" ng-show="row.is_staff"></i></td>
+            <td ng-show="columns['Has all privileges']"><i class="fa fa-check fa-fw" ng-show="row.is_superuser"></i></td>
+            <td ng-show="columns['Last Login']"         ng-bind="row.last_login | date:'short'"></td>
+        </tr>
+        </tbody>
+    </table>
+</oadatatable>

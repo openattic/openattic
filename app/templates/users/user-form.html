@@ -1,0 +1,123 @@
+<article class="col-sm-12 col-md-12 col-lg-6">
+    <div class="jarviswidget" id="wid-id-1" data-widget-editbutton="false" data-widget-custombutton="false">
+        <header>
+            <span class="widget-icon"> <i class="fa fa-edit"></i></span>
+            <h2 class="tc_userAddTitle" ng-hide="editing">Create User: {{user.username}}</h2>
+            <h2 class="tc_userEditTitle" ng-show="editing">Edit User: {{user.username}}</h2>
+        </header>
+        <div>
+            <div class="widget-body">
+                <form name="userForm" role="form" class="form-horizontal" novalidate>
+                    <fieldset>
+                        <div class="form-group" ng-class="{'has-error': (submitted || userForm.username.$dirty) &&
+                        userForm.username.$invalid}">
+                            <label class="col-md-2 control-label" for="userUsername">Username</label>
+                            <div class="col-md-10">
+                                <div class="input-group">
+                                    <span class="input-group-addon"> <i class="icon-prepend fa fa-user"></i></span>
+                                    <input class="form-control" type="text" placeholder="Username..."
+                                           ng-model="user.username" name="username" id="userUsername" required validname>
+                                </div>
+                                <span class="help-block tc_usernameRequired" ng-show="(submitted ||userForm.username.$dirty)
+                                && userForm.username.$error.required">
+                                    The username is required.
+                                </span>
+                                <span class="help-block tc_userNameNotValid" ng-show="userForm.username.$error.validname">{{errortext}}</span>
+                            </div>
+                        </div>
+                        <div class="form-group" ng-if="!editing" ng-class="{'has-error': (submitted || userForm.password.$dirty)
+                        && userForm.password.$invalid}">
+                            <label class="col-md-2 control-label" for="userPassword">Password</label>
+                            <div class="col-md-10">
+                                <div class="input-group">
+                                    <span class="input-group-addon"> <i class="icon-prepend fa fa-key"></i></span>
+                                    <input class="form-control" type="password" placeholder="Password..."
+                                           ng-model="user.password" name="password" id="userPassword" required>
+                                </div>
+                                <span class="help-block tc_passwdRequired" ng-show="(submitted ||userForm.password.$dirty)
+                                && userForm.password.$error.required">
+                                    A password is required.
+                                </span>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label class="col-md-2 control-label" for="userFirstname">Firstname</label>
+                            <div class="col-md-10">
+                                <div class="input-group">
+                                    <span class="input-group-addon"><i class="icon-prepend fa fa-user"></i></span>
+                                    <input class="form-control" type="text" placeholder="Firstname..."
+                                           ng-model="user.first_name" name="firstname" id="userFirstname">
+                                </div>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label class="col-md-2 control-label" for="userLastname">Lastname</label>
+                            <div class="col-md-10">
+                                <div class="input-group">
+                                    <span class="input-group-addon"> <i class="icon-prepend fa fa-user"></i></span>
+                                    <input class="form-control" type="text" placeholder="Lastname..."
+                                           ng-model="user.last_name" name="last" id="userLastname">
+                                </div>
+                            </div>
+                        </div>
+                        <div class="form-group" ng-class="{'has-error': (submitted || userForm.email.$dirty) &&
+                        userForm.email.$invalid}">
+                            <label class="col-md-2 control-label" for="userEmail">Email Address</label>
+                            <div class="col-md-10">
+                                <div class="input-group">
+                                    <span class="input-group-addon"> <i class="icon-prepend fa fa-envelope-o"></i></span>
+                                    <input class="form-control" type="email" placeholder="Email Address..."
+                                           ng-model="user.email" name="email" id="userEmail">
+                                </div>
+                                <span class="tc_emailNotValid" ng-show="(submitted ||userForm.email.$dirty) && userForm.email.$error.email">
+                                    It's not a valid email address.
+                                </span>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <div class="col-sm-offset-2 col-sm-10">
+                                <div class="checkbox checkbox-primary">
+                                    <input type="checkbox" ng-model="user.is_active" name="active" id="userActive">
+                                    <label>
+                                        Is active
+                                    </label>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <div class="col-sm-offset-2 col-sm-10">
+                                <div class="checkbox checkbox-primary">
+                                    <input type="checkbox" ng-model="user.is_staff" name="staff" id="userStaff">
+                                    <label>
+                                        Is administrator
+                                    </label>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <div class="col-sm-offset-2 col-sm-10">
+                                <div class="checkbox checkbox-primary">
+                                    <input type="checkbox" ng-model="user.is_superuser" name="superuser"
+                                           id="userSuperuser">
+                                    <label>
+                                        Has all privileges
+                                    </label>
+                                </div>
+                            </div>
+                        </div>
+                    </fieldset>
+                    <div class="form-group">
+                        <div class="pull-right" style="padding: 6px 16px">
+                            <button type="submit" class="btn btn-primary tc_submitButton" ng-click="submitAction(userForm)">
+                                Submit
+                            </button>
+                            <button type="button" class="btn btn-default tc_backButton" ng-click="cancelAction()">
+                                Back
+                            </button>
+                        </div>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</article>

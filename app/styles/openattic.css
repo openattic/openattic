@@ -1,0 +1,310 @@
+.errorbox {
+    color: #a94442;
+}
+
+form .input-group-addon{
+    color: #A2A2A2 !important;
+    background-color: transparent;
+}
+
+accordion .panel-title {
+    font-size: 14px !important;
+}
+
+.MessageBoxContainer table {
+    color: black;
+}
+
+.oatodo {
+    padding-left: 20px;
+}
+
+oadatatable div.widget-body {
+    position: relative;
+}
+
+oadatatable div.overlay {
+    position:      absolute;
+    top:           0;
+    left:          0;
+    z-index:       10;
+    height:        100%;
+    width:         100%;
+    background-color: rgba(30, 30, 30, 0.2);
+}
+
+oadatatable div.overlay-content {
+    margin:        200px auto;
+    width:         50px;
+    height:        50px;
+    background-color: rgba(30, 30, 30, 0);
+}
+
+oadatatable th.oadatatablecheckbox {
+    width: 16px;
+}
+
+oadatatable .oadatatableshowhidemenu {
+    padding-left: 20px;
+}
+
+oadatatable .oadatatableactionsmenu a {
+    text-align: left;
+    padding-left: 40px;
+}
+
+oadatatable .oadatatableactionsmenu a i {
+    margin-left: -20px;
+}
+
+oadatatable .btn {
+    margin-top:   0px !important;
+    height:      32px !important;
+    line-height: 28px !important;
+    padding-top:    0 !important;
+}
+
+oadatatable .input-group {
+    width: 40%;
+}
+
+.oaprogress {
+    position: relative;
+    margin-bottom: 0;
+}
+
+.oaprogress div.progress-bar {
+    position: static;
+}
+
+.oaprogress span {
+    position: absolute;
+    display: block;
+    width: 100%;
+    color: black;
+    font-weight: normal;
+}
+
+.tabs-left .tab-content .row {
+    margin-left: 10px;
+}
+
+.tabs-left > .tab-content {
+    padding-left: 20px;
+}
+
+.tab-pane > h2 {
+    margin-top: 0;
+}
+
+.formactions.well {
+    overflow: auto;
+    padding: 10px 20px;
+}
+
+.greenicon {
+    color: green;
+}
+
+.loginmain {
+    margin-left: 0 !important;
+}
+
+.redicon {
+    color: red;
+}
+
+.progress-bar-freespace {
+    background-color: #ddd;
+}
+
+.progress-bar-stolenspace {
+    background-color: #aaa;
+}
+
+.progress-bar {
+    background-image: none !important;
+}
+
+.graph-widget ul {
+    width: 300px !important;
+}
+
+.graph-widget ul li {
+    padding: 0 !important;
+    background: none repeat scroll 0 0 transparent !important;
+}
+
+.statistics-content {
+    min-height: 700px;
+}
+
+/* dashboard widgets --> */
+.widget {
+    border: 0px solid #d4d4d4 !important;
+    margin-left: 10px;
+    margin-bottom: 10px;
+    margin-right: 10px;
+}
+
+.widget-icon {
+    line-height: 37px !important;
+}
+
+.widget .btn-block+.btn-block {
+    margin-top: 0;
+}
+
+.widget .wizard-selector {
+    margin-top: -20px;
+}
+
+.wizard-selector-lower-row {
+    margin-top: 20px;
+}
+
+.wizard-nav-btn {
+    margin-bottom: 10px !important;
+    margin-left: 5px !important;
+}
+
+.wizard-nav-items-4 {
+    left: 0%;
+}
+
+.wizard-nav-items-3 {
+    left: 15%;
+}
+
+.wizard-nav-items-2 {
+    left: 25%;
+}
+
+.wizard-pointer {
+    cursor: pointer;
+}
+
+.wizard-default {
+    cursor: default;
+}
+
+.progress-bar-outer{
+    margin-top: 5px !important;
+}
+
+.progress-bar-outer div {
+    border-radius: 31px;
+    background-color: #ffffff;
+    border: 1px solid #ccc;
+    box-shadow: 0 0 0 0;
+    -webkit-box-shadow: 0 0 0 0;
+    -moz-box-shadow: 0 0 0 0;
+    margin: 0;
+    height: 16px;
+}
+
+.progress-bar-outer div div {
+    background-color: #0091d9;
+}
+
+.progress-bar-outer div div span {
+    position: relative;
+    top: -3px;
+}
+
+.bootstrapWizard li.prevtab .step, .bootstrapWizard li.prevtab.complete .step {
+    background-image: initial;
+    background-position-x: initial;
+    background-position-y: initial;
+    background-size: initial;
+    background-attachment: initial;
+    background-origin: initial;
+    background-clip: initial;
+    background-color: #0aa66e;
+    color: #fff;
+    font-weight: 700;
+    padding-top: 7px;
+    padding-right: 13px;
+    padding-bottom: 7px;
+    padding-left: 13px;
+    font-size: 15px;
+    border-radius: 50%;
+    border-top-color: rgb(85, 96, 110);
+    border-top-style: solid;
+    border-top-width: 3px;
+    border-right-color: rgb(85, 96, 110);
+    border-right-style: solid;
+    border-right-width: 3px;
+    border-bottom-color: rgb(85, 96, 110);
+    border-bottom-style: solid;
+    border-bottom-width: 3px;
+    border-left-color: rgb(85, 96, 110);
+    border-left-style: solid;
+    border-left-width: 3px;
+}
+/* <-- dashboard widget */
+
+.required {
+    color: red;
+}
+.done-true {
+    text-decoration: line-through;
+    color: grey;
+}
+
+.thicker-border {
+    border-width: 2px !important;
+}
+
+/* Command Logs - CCS Fix */
+.code-clogs {
+    display: block;
+    padding: 9.5px;
+    margin: 0 0 10px;
+    font-size: 13px;
+    line-height: 1.42857143;
+    color: #333;
+    word-break: break-all;
+    word-wrap: break-word;
+    background-color: #f5f5f5;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    font-family: Menlo,Monaco,Consolas,"Courier New",monospace;
+}
+
+/* Dashboard Clusterstatus */
+.cluster-status .smart-form {
+    border-bottom: 1px solid #dadada;
+    margin: 0 -10px 8px -10px;
+    padding: 0 0 8px 10px;
+}
+
+.cluster-status .legendColorBox div>div {
+    border-radius: 0!important;
+}
+.cluster-status .legendLabel {
+    padding-top: 5px!important;
+    padding-left: 3px!important;
+    color: #000;
+}
+.cluster-status {
+    padding-bottom:0!important;
+}
+.cluster-status .show-stat-microcharts {
+    margin-top: 10px!important;
+}
+.cluster-status .show-stat-microcharts > div {
+    margin-top: 0!important;
+}
+.cluster-status .show-stat-microcharts .easy-pie-title {
+    width: 110px;
+    padding-top: 5px;
+}
+.cluster-status .smaller-stat {
+    margin-top: 10px;
+}
+
+/* Celsius instead of Fahrenheit */
+.degree-sign:after {
+    content: "\00B0 C"!important;
+}

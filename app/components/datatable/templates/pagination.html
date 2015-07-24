@@ -1,0 +1,20 @@
+<div class="dataTables_paginate paging_simple_numbers">
+    <ul class="pagination pagination-sm">
+        <li class="paginate_button previous"
+            ng-class="{disabled: page == 0}"
+            ng-click="page > 0 && switchPage(page - 1)" >
+            <a>Previous</a>
+        </li>
+        <li class="paginate_button "
+            ng-repeat="button in buttons track by $index"
+            ng-click="button != 'ellipsis' && switchPage(button)"
+            ng-class="{active: page == button, disabled: button == 'ellipsis'}">
+            <a ng-bind="button == 'ellipsis' && '&hellip;' || button + 1"></a>
+        </li>
+        <li class="paginate_button next"
+            ng-class="{disabled: page >= pages - 1}"
+            ng-click="page < pages - 1 && switchPage(page + 1)">
+            <a>Next</a>
+        </li>
+    </ul>
+</div>

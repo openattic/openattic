@@ -1,0 +1,13 @@
+<div class="widget-toolbar">
+    <a class="btn btn-default dropdown-toggle" data-toggle="dropdown">
+        <i class="fa fa-lg fa-table"></i>
+    </a>
+    <ul class="dropdown-menu arrow-box-up-right pull-right oadatatableshowhidemenu" role="menu">
+        <li ng-repeat="(text, checked) in columns">
+            <input type="checkbox" ng-model="columns[text]"></input>
+            <span>
+                &nbsp; {{text}}
+            </span>
+        </li>
+    </ul>
+</div>

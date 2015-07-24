@@ -1,0 +1,162 @@
+<!-- kate: space-indent on; indent-width 4; replace-tabs on; -->
+<div class="col-sm-12 col-md-12 col-lg-6">
+    <div class="panel panel-default">
+        <div class="panel-heading tc_formHeadline">
+            <i class="fa fa-edit"></i> Create Volume: {{volume.name}}
+        </div>
+        <div class="panel-body">
+            <form name="volumeForm" role="form" class="form-horizontal" novalidate>
+                <accordion>
+                    <accordion-group is-open="accordionOpen.properties">
+                        <accordion-heading>
+                            Volume Properties
+                            <i class="pull-right" ng-class="{'fa fa-angle-up': accordionOpen.properties,
+                            'fa fa-angle-down': !accordionOpen.properties}"></i>
+                        </accordion-heading>
+                        <div class="form-group" ng-class="{'has-error': (submitted || volumeForm.name.$dirty)
+                            && volumeForm.name.$invalid}">
+                            <label class="col-md-2 control-label" for="volume.name">Name</label>
+                            <div class="col-md-10">
+                                <input type="text" class="form-control" id="volume.name" placeholder="Name..."
+                                       ng-model="volume.name" name="name" validname uniquename required>
+                                <span class="help-block tc_nameRequired" ng-show="(submitted || volumeForm.name.$dirty)
+                                    && volumeForm.name.$error.required">This field is required!</span>
+                                <span class="help-block" ng-show="volumeForm.name.$error.validname">{{errortext}}</span>
+                                <span class="help-block tc_noUniqueName" ng-show="volumeForm.name.$error.uniquename">
+                                    The chosen volume name is already in use.
+                                </span>
+                            </div>
+                        </div>
+                        <div class="form-group" ng-class="{'has-error': (submitted || volumeForm.pool.$dirty)
+                            && volumeForm.pool.$invalid}">
+                            <label class="col-md-2 control-label" for="data.sourcePool">Pool</label>
+                            <div class="col-md-10">
+                                <select class="form-control" ng-model="data.sourcePool" id="data.sourcePool"
+                                        ng-options="(pool.name + ' (' + pool.type.name + ', ' + pool.usage.free_text +
+                                        ' free)') for pool in pools track by pool.id" name="pool" required>
+                                    <option class="tc_volumePoolOption" value="">-- Select a pool --</option>
+                                </select>
+                                <div ng-show="data.sourcePool" class="progress-bar-outer clearfix">
+                                    <progressbar max="100" class="progress-striped" value="selPoolUsedPercent">
+                                        <span></span>
+                                    </progressbar>
+                                        <span class="pull-left tc_poolSize">
+                                            {{data.sourcePool.usage.used_text}} of
+                                            {{data.sourcePool.usage.size_text}} used</span>
+                                        <span class="pull-right tc_poolAvailableSize">
+                                            {{data.sourcePool.usage.free_text}} free - <a ng-click="data.megs = data.sourcePool.usage.free + 'MB'">use max</a>
+                                        </span>
+                                </div>
+                                <span class="help-block tc_poolRequired" ng-show="(submitted || volumeForm.pool.$dirty)
+                                    && volumeForm.pool.$error.required">
+                                    This field is required!
+                                </span>
+                                <span class="help-block" ng-show="volumeForm.pool.$error.usablesize">
+                                    The selected volumepool provides less than 100MB free space, so it's not usable for
+                                    the new volume.
+                                </span>
+                            </div>
+                        </div>
+                        <div class="form-group" ng-class="{'has-error': (submitted || volumeForm.megs.$dirty)
+                            && volumeForm.megs.$invalid}">
+                            <label class="col-md-2 control-label" for="data.megs">Size</label>
+                            <div class="col-md-10">
+                                <input class="form-control" type="text" name="megs"
+                                       ng-disabled="data.sourcePool === null  || data.sourcePool.usage.free < 100"
+                                       volume-size-format volume-size-value max-value="{{data.sourcePool.usage.free}}"
+                                       ng-model="data.megs" placeholder="e.g., 10GB" id="data.megs" required>
+                                <span class="help-block tc_sizeRequired" ng-show="(submitted || volumeForm.megs.$dirty)
+                                    && volumeForm.megs.$error.required">
+                                    This field is required!
+                                </span>
+                                <span class="help-block tc_noValidNumber"
+                                      ng-show="volumeForm.megs.$error.volumeSizeFormat">
+                                    This is not a valid number.
+                                </span>
+                                <span class="help-block tc_wrongVolumeSize"
+                                      ng-show="volumeForm.megs.$error.volumeSizeValue">
+                                    The size must be at least 100MB and must not exceed
+                                    {{data.sourcePool.usage.free_text}}.
+                                </span>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label class="col-md-2 control-label">Type</label>
+                            <div class="col-md-10">
+                                <div class="radio radio-primary">
+                                    <input type="radio" ng-model="data.filesystem"
+                                               value="" ng-disabled="state.formatted" id="lun">
+                                    <label for="lun">Create LUN</label>
+                                </div>
+                                <div class="radio radio-primary" ng-show="supported_filesystems.xfs">
+                                    <input type="radio" ng-model="data.filesystem" value="xfs"
+                                           ng-disabled="state.formatted" id="xfs">
+                                    <label for="xfs">Create Virtualization Store -> XFS</label>
+                                </div>
+                                <div class="radio radio-primary" ng-show="supported_filesystems.zfs">
+                                    <input type="radio" ng-model="data.filesystem" value="zfs"
+                                           ng-disabled="state.formatted" id="zfs">
+                                    <label for="zfs">Create ZFS Volume</label>
+                                </div>
+                                <div class="radio radio-primary" ng-show="supported_filesystems.btrfs">
+                                    <input type="radio" ng-model="data.filesystem" value="btrfs"
+                                           ng-disabled="state.formatted" id="btrfs">
+                                    <label for="btrfs">Create File Store -> BTRFS</label>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <div class="col-sm-offset-2 col-sm-10">
+                                <div class="checkbox checkbox-primary">
+                                    <input type="checkbox" ng-model="volume.is_protected" id="volume.is_protected"
+                                               name="deletionProtection">
+                                    <label for="volume.is_protected">Deletion protection</label>
+                                </div>
+                            </div>
+                        </div>
+                    </accordion-group>
+                </accordion>
+                <accordion>
+                    <accordion-group is-open="accordionOpen.mirror" is-disabled="true">
+                        <accordion-heading>
+                            <div style="color: #BDBDBD;">
+                                Volume Mirroring - <i><b>Coming Soon...</b></i>
+                            <i class="pull-right" ng-class="{'fa fa-angle-up': accordionOpen.mirror,
+                            'fa fa-angle-down': !accordionOpen.mirror}"></i></div>
+                        </accordion-heading>
+                        <div class="form-group">
+                            <label class="col-md-2 control-label">Mirror Host</label>
+                            <div class="col-md-10">
+                                <select class="form-control" ng-model="data.mirrorHost" id="mirror-host"
+                                        ng-options="host.name for host in hosts track by host.name"
+                                        title="Coming soon...">
+                                    <option value="">-- Select a host --</option>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label class="col-md-2 control-label">Mirror Pool</label>
+                            <div class="col-md-10">
+                                <select class="form-control" ng-model="data.mirrorPool" ng-options="
+                                pool.name for pool in pools track by pool.name">
+                                    <option value="">-- Select a host --</option>
+                                </select>
+                            </div>
+                        </div>
+                    </accordion-group>
+                </accordion>
+                <div class="form-group">
+                    <div class="pull-right" style="padding: 0px 12px">
+                        <button type="submit" class="btn btn-primary tc_submitButton"
+                                ng-click="submitAction(volumeForm)">
+                            Submit
+                        </button>
+                        <button type="button" class="btn btn-default tc_backButton" ng-click="cancelAction()">
+                            Back
+                        </button>
+                    </div>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>

@@ -1,0 +1,49 @@
+<!-- kate: space-indent on; indent-width 4; replace-tabs on; -->
+<oadatatable data="cifsData" class="tc_oadatatable_cifs_shares" filter-config="cifsFilter" selection="cifsSelection">
+    <actions>
+        <a class="btn btn-lg btn-primary tc_cifsShareAdd" type="button" ng-click="addCifsAction()" ng-hide="cifsSelection.item"><i class="fa fa-fw fa-plus"></i> Add</a>
+        <a class="btn btn-lg btn-primary tc_cifsShareEdit" type="button" ng-click="editCifsAction()" ng-show="cifsSelection.item"><i class="fa fa-fw fa-pencil"></i> Edit</a>
+        <li><a ng-click="addCifsAction()"><i class="fa fa-fw fa-plus"></i> Add</a></li>
+        <li ng-class="{disabled: !cifsSelection.item}"><a ng-click="editCifsAction()"><i class="fa fa-fw fa-pencil"></i> Edit</a></li>
+        <li class="divider"></li>
+        <li ng-class="{disabled: !cifsSelection.item}" class="tc_cifsShareDelete" max-selected=1><a ng-click="deleteCifsAction()"><i class="fa fa-fw fa-trash-o"></i> Delete</a></li>
+    </actions>
+    <table class="table table-striped table-bordered table-hover">
+        <thead>
+            <tr>
+                <th class="oadatatablecheckbox" ng-if="cifsSelection.available"><input type="checkbox" ng-model="cifsSelection.checkAll"/></th>
+                <th sortfield="name"       sortdir="asc" sortheaderclass sortdefault ng-show="columns['Name']">Name</th>
+                <th sortfield="path"       sortdir="asc" sortheaderclass ng-show="columns['Path']"      >Path</th>
+                <th sortfield="available"  sortdir="asc" sortheaderclass ng-show="columns['Available']" >Available</th>
+                <th sortfield="browseable" sortdir="asc" sortheaderclass ng-show="columns['Browseable']">Browseable</th>
+                <th sortfield="guest_ok"   sortdir="asc" sortheaderclass ng-show="columns['Guest OK']"  >Guest OK</th>
+                <th sortfield="writeable"  sortdir="asc" sortheaderclass ng-show="columns['Writeable']" >Writeable</th>
+                <th sortfield="comment"    sortdir="asc" sortheaderclass ng-show="columns['Comment']"   >Comment</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr ng-repeat="row in data.results" ng-class="{ info: isRowSelected(row) }" ng-click="toggleSelection(row, $event)">
+                <td ng-if="cifsSelection.available"><input type="checkbox" checklist-model="cifsSelection.items" checklist-value="row"/></td>
+                <td ng-show="columns['Name']"       ng-bind="row.name"></td>
+                <td ng-show="columns['Path']"       ng-bind="row.path"></td>
+                <td ng-show="columns['Available']"  id="is_available"   ><i class="fa" ng-class="{
+                    'fa-check':  row.available,
+                    'fa-times': !row.available
+                    }"></i></td>
+                <td ng-show="columns['Browseable']" id="is_browseable"  ><i class="fa" ng-class="{
+                    'fa-check':  row.browseable,
+                    'fa-times': !row.browseable
+                    }"></i></td>
+                <td ng-show="columns['Guest OK']" id="guest_ok"         ><i class="fa" ng-class="{
+                    'fa-check':  row.guest_ok,
+                    'fa-times': !row.guest_ok
+                    }"></i></td>
+                <td ng-show="columns['Writeable']" id="is_writeable"    ><i class="fa" ng-class="{
+                    'fa-check':  row.writeable,
+                    'fa-times': !row.writeable
+                    }"></i></td>
+                <td ng-show="columns['Comment']"    ng-bind="row.comment"></td>
+            </tr>
+        </tbody>
+    </table>
+</oadatatable>

@@ -1,0 +1,46 @@
+<!-- kate: space-indent on; indent-width 4; replace-tabs on; -->
+<div class="col-sm-12 col-md-12 col-lg-6">
+    <div class="panel panel-default">
+        <div class="panel-heading tc_formHeadline">
+            <i class="fa fa-edit"></i> Create Pool: {{pool.name}}
+        </div>
+        <div class="panel-body">
+            <form name="poolForm" role="form" class="form-horizontal" novalidate>
+                <accordion>
+                    <accordion-group is-open="accordionOpen.properties">
+                        <accordion-heading>
+                            Pool Properties
+                            <i class="pull-right" ng-class="{'fa fa-angle-up': accordionOpen.properties,
+                            'fa fa-angle-down': !accordionOpen.properties}"></i>
+                        </accordion-heading>
+                        <div class="form-group" ng-class="{'has-error': (submitted || poolForm.name.$dirty)
+                            && poolForm.name.$invalid}">
+                            <label class="col-md-2 control-label" for="pool.name">Name</label>
+                            <div class="col-md-10">
+                                <input type="text" class="form-control" id="pool.name" placeholder="Name..."
+                                       ng-model="pool.name" name="name" validname uniquename required>
+                                <span class="help-block tc_nameRequired" ng-show="(submitted || poolForm.name.$dirty)
+                                    && poolForm.name.$error.required">This field is required!</span>
+                                <span class="help-block" ng-show="poolForm.name.$error.validname">{{errortext}}</span>
+                                <span class="help-block tc_noUniqueName" ng-show="poolForm.name.$error.uniquename">
+                                    The chosen pool name is already in use.
+                                </span>
+                            </div>
+                        </div>
+                    </accordion-group>
+                </accordion>
+                <div class="form-group">
+                    <div class="pull-right" style="padding: 0px 12px">
+                        <button type="submit" class="btn btn-primary tc_submitButton"
+                                ng-click="submitAction(poolForm)">
+                            Submit
+                        </button>
+                        <button type="button" class="btn btn-default tc_backButton" ng-click="cancelAction()">
+                            Back
+                        </button>
+                    </div>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>

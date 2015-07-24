@@ -1,0 +1,18 @@
+<div class="panel-body">
+    <div class="tc_totalTodos">
+        <i class="fa fa-warning"></i><label class="tc_headlinelabel">Tasks ({{getTotalTodos()}}) </label>
+    </div>
+    <div>
+        <ul class="list-unstyled" ng-repeat="todo in todos">
+            <li class="oatodo">
+                <div class="checkbox">
+                    <input type="checkbox" ng-model="todo.done" ng-change="saveCheck()">
+                    <label class="tc_link">
+                        <strong><span class="done-{{todo.done}}"> {{todo.text}} </span></strong>
+                        [<a ui-sref="{{todo.link}}" class="font-xs"> Start Task </a>]
+                    </label>
+                </div>
+            </li>
+        </ul>
+    </div>
+</div>

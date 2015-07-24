@@ -1,0 +1,33 @@
+<span class="MsgTitle">Resize volume "{{volume.name}}"</span>
+<p class="pText">You can resize the volume here. In order to do that enter the new volume size please.
+    The maximum volume size can be found below.
+</p>
+<p class="input-group">
+    <form name="input.resizeForm" role="form" class="form-horizontal" novalidate>
+        <div class="form-group" ng-class="{'has-error': (submitted || input.resizeForm.newsize.$dirty)
+            && input.resizeForm.newsize.$invalid}">
+            <div class="col-md-8">
+                <input type="text" class="form-control" id="newsize" placeholder="{{volume.usage.size_text}}"
+                       ng-model="input.newsize" name="newsize" ng-class="{'thicker-border': (submitted
+                       || input.resizeForm.newsize.$dirty) && input.resizeForm.newsize.$invalid}"
+                       max-value="{{pool.usage.max_new_fsv}}" min-value="{{volume.usage.size_text}}" volume-size-format
+                       volume-size-value required>
+                <p>{{pool.usage.max_new_fsv_text}} free</p>
+                <span class="help-block tc_required" ng-show="(submitted || input.resizeForm.newsize.$dirty) &&
+                    input.resizeForm.newsize.$error.required">
+                    This field is required!
+                </span>
+                <span class="help-block tc_noValidNumber" ng-show="input.resizeForm.newsize.$error.volumeSizeFormat">
+                    This is not a valid number.
+                </span>
+                <span class="help-block tc_wrongSize" ng-show="input.resizeForm.newsize.$error.volumeSizeValue">
+                    The size must greater than {{volume.usage.size_text}} and must not exceed {{pool.usage.max_new_fsv_text}}.
+                </span>
+                <div class="MessageBoxButtonSection">
+                    <button id="bot1-Msg1" class="btn btn-default btn-sm botTempo" ng-click="cancel()"> Cancel</button>
+                    <button id="bot2-Msg1" class="btn btn-default btn-sm botTempo" ng-click="resize()"> Resize</button>
+                </div>
+            </div>
+        </div>
+    </form>
+</p>
