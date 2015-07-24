@@ -34,11 +34,11 @@ nagios/_readstatus.so
 installed_apps.d
 
 # From openattic-gui
-node_modules
-dist
-bower_components
-app/index.html
-app/login.html
-coverage
-npm-debug.log
-test/e2e/configs.js
+webui/node_modules
+webui/dist
+webui/bower_components
+webui/app/index.html
+webui/app/login.html
+webui/coverage
+webui/npm-debug.log
+webui/test/e2e/configs.js
