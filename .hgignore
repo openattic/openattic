@@ -1,0 +1,9 @@
+syntax: glob
+
+*.orig
+*.swp
+*.kate-swp
+*.pyc
+
+conf/
+test-reports/
