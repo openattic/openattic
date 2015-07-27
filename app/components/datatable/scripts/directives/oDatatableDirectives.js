@@ -23,7 +23,7 @@ angular.module('openattic.datatable')
           });
         });
       },
-      controller: function ($scope, $timeout, PoolService, $http) {
+      controller: function ($scope, $timeout, $http) {
         $scope.$watch(function(){
           return $http.pendingRequests.length > 0;
         }, function(value) {
