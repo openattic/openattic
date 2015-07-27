@@ -23,13 +23,13 @@ angular.module('openattic.oaWizards')
   .directive('wizardselector', function(){
     return {
       template: '<div ng-include="page"></div>',
-      controller: function($scope, $element){
+      controller: function($scope, $element, RESPONSIVE){
         var setSize = function(width) {
-          if(width >= 1200) {
+          if(width >= RESPONSIVE.lg) {
             $scope.size = 'lg';
-          } else if(width >= 992) {
+          } else if(width >= RESPONSIVE.md) {
             $scope.size = 'md';
-          } else if(width >= 768) {
+          } else if(width >= RESPONSIVE.sm) {
             $scope.size = 'sm';
           } else {
             $scope.size = 'xs';

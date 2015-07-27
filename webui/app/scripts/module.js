@@ -28,6 +28,13 @@ angular.module('openattic').config(function($httpProvider){
   $httpProvider.defaults.xsrfHeaderName = 'X-CSRFToken';
 });
 
+angular.module('openattic').constant('RESPONSIVE', {
+  xs: 0,
+  sm: 768,
+  md: 992,
+  lg: 1200
+});
+
 angular.module('openattic').run(function($rootScope, $state){
   $rootScope.loginActive = function(){
     return $state.is('login');

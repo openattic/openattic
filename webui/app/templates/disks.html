@@ -14,13 +14,14 @@
                 <th class="oadatatablecheckbox" ng-if="selection.available">
                     <input type="checkbox" ng-model="selection.checkAll"/>
                 </th>
-                <th ng-show="columns['Slot']">Slot</th>
+                <th sortfield="name" sortdir="asc" sortheaderclass sortdefault ng-show="columns['Name']">Name</th>
+                <th ng-show="columns['Slot']" disable-column="sm,xs">Slot</th>
                 <th ng-show="columns['Status']">Status</th>
                 <th ng-show="columns['Size']">Size</th>
                 <th ng-show="columns['Type']">Type</th>
-                <th ng-show="columns['RPM']">RPM</th>
-                <th ng-show="columns['Model']">Model</th>
-                <th ng-show="columns['Serial']">Serial</th>
+                <th ng-show="columns['RPM']" disable-column="xs">RPM</th>
+                <th ng-show="columns['Model']" disable-column="sm,xs">Model</th>
+                <th ng-show="columns['Serial']" disable-column="xs">Serial</th>
             </tr>
         </thead>
         <tbody>
@@ -30,6 +31,7 @@
                 <td ng-if="selection.available">
                     <input type="checkbox" checklist-model="selection.items" checklist-value="row" />
                 </td>
+                <td ng-show="columns['Name']" ng-bind="row.name"></td>
                 <td ng-show="columns['Slot']" ng-bind="row.enclslot"></td>
                 <td ng-show="columns['Status']"><i class="fa" ng-class="{
                     'fa-question':             row.status.status == '',

@@ -33,7 +33,7 @@ angular.module('openattic')
 
     $scope.$watch('selection.item', function(item){
       $scope.hasSelection = !!item;
-      if( !item ){
+      if(!item){
         $state.go('volumes');
         return;
       }
