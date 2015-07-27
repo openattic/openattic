@@ -19,6 +19,7 @@ accordion .panel-title {
     padding-left: 20px;
 }
 
+/* oadatatable --> */
 oadatatable div.widget-body {
     position: relative;
 }
@@ -46,6 +47,13 @@ oadatatable th.oadatatablecheckbox {
 
 oadatatable .oadatatableshowhidemenu {
     padding-left: 20px;
+    cursor: default;
+}
+
+oadatatable .oadatatableshowhidemenu label {
+    margin-bottom: 0;
+    width: 100%;
+    cursor: pointer;
 }
 
 oadatatable .oadatatableactionsmenu a {
@@ -67,6 +75,15 @@ oadatatable .btn {
 oadatatable .input-group {
     width: 40%;
 }
+@media (max-width: 768px) {
+    oadatatable .input-group {
+        padding-bottom: 10px;
+    }
+    /*oadatatable .widget-toolbar {*/
+        /*float: left;*/
+    /*}*/
+}
+/* <-- oadatatable */
 
 .oaprogress {
     position: relative;
@@ -272,7 +289,7 @@ oadatatable .input-group {
     font-family: Menlo,Monaco,Consolas,"Courier New",monospace;
 }
 
-/* Dashboard Clusterstatus */
+/* clusterstatus --> */
 .cluster-status .smart-form {
     border-bottom: 1px solid #dadada;
     margin: 0 -10px 8px -10px;
@@ -303,6 +320,7 @@ oadatatable .input-group {
 .cluster-status .smaller-stat {
     margin-top: 10px;
 }
+/* <-- clusterstatus */
 
 /* Celsius instead of Fahrenheit */
 .degree-sign:after {
