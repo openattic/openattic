@@ -121,8 +121,8 @@ def main():
                     "%(text)s\n")
         for failedcmd in failedcmds['results']:
             print template % failedcmd
-        else:
-            print "openATTIC's command log did not record any failed commands during the test period."
+    else:
+        print "openATTIC's command log did not record any failed commands during the test period."
 
     if prog.result.wasSuccessful() and failedcmds['count'] > 0:
         return 0
