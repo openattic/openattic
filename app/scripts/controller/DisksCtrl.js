@@ -12,8 +12,7 @@ angular.module('openattic')
       sortorder: null
     };
 
-    $scope.selection = {
-    };
+    $scope.selection = {};
 
     $scope.$watch('filterConfig', function(){
       DiskService.filter({
@@ -25,7 +24,6 @@ angular.module('openattic')
       .$promise
       .then(function (res) {
         $scope.data = res;
-            console.log($scope.data);
       })
       .catch(function (error) {
         console.log('An error occurred', error);
