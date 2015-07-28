@@ -10,7 +10,9 @@
         <li>
             <a ng-click="addAction()"><i class="fa fa-fw fa-plus"></i> Add</a>
         </li>
-        <li ng-class="{disabled: !hasSelection}"><a><i class="fa fa-fw fa-upload"></i> Resize</a></li>
+        <li ng-class="{disabled: !hasSelection}">
+            <a ng-click="resizeAction()"><i class="fa fa-fw fa-upload"></i> Resize</a>
+        </li>
         <li ng-class="{disabled: !(hasSelection && cloneable)}" ng-click="cloneAction()">
             <a><i class="fa fa-fw fa-files-o"></i> Clone</a>
         </li>
