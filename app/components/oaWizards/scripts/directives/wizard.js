@@ -39,8 +39,8 @@ angular.module('openattic.oaWizards')
               $scope.activeTab++;
             }
             else if ($scope.activeTab === $scope.tabs.length) {
-	      var volume = $.extend({}, $scope.input.volume);
-	      volume.megs = SizeParserService.parseInt($scope.input.volume.megs);
+              var volume = $.extend({}, $scope.input.volume);
+              volume.megs = SizeParserService.parseInt($scope.input.volume.megs);
               VolumeService.save(volume)
                 .$promise
                 .then(function (res){
