@@ -124,7 +124,7 @@ def main():
     else:
         print "openATTIC's command log did not record any failed commands during the test period."
 
-    if prog.result.wasSuccessful() and failedcmds['count'] > 0:
+    if prog.result.wasSuccessful() and failedcmds['count'] == 0:
         return 0
     else:
         return 1
