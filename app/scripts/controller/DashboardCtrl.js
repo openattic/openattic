@@ -45,6 +45,10 @@ angular.module('openattic')
     { name: 'openATTIC Wizards' }
   ])
   .controller('DashboardCtrl', function ($scope, $window, widgetDefinitions, defaultWidgets){
+    if(!window.EventSource){
+      defaultWidgets.splice( _.findIndex(defaultWidgets, {name: 'Cluster Status'}) ,1);
+    }
+
     $scope.dashboardOptions = {
       widgetButtons: false,
       widgetDefinitions: widgetDefinitions,
