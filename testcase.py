@@ -5,8 +5,6 @@ import unittest
 import requests
 import json
 
-from xmlrpclib import Fault
-
 class GatlingTestCase(unittest.TestCase):
 
     @classmethod
