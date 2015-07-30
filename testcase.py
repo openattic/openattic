@@ -9,8 +9,9 @@ class GatlingTestCase(unittest.TestCase):
 
     @classmethod
     def require_config(cls, section, *options):
-        """ Make sure the given config section defines the given set of options.
-            Otherwise, skip the test case.
+        """
+        Make sure the given config section defines the given set of options.
+        Otherwise, skip the test case.
         """
         if not cls.conf.has_section(section):
             raise unittest.SkipTest("missing config section %s" % section)
@@ -20,8 +21,9 @@ class GatlingTestCase(unittest.TestCase):
 
     @classmethod
     def require_enabled(cls, section):
-        """ Make sure the given config section defines an "enabled" option set to "yes".
-            Otherwise, skip the test case.
+        """
+        Make sure the given config section defines an "enabled" option set to "yes".
+        Otherwise, skip the test case.
         """
         cls.require_config(section, "enabled")
         if not cls.conf.getboolean(section, "enabled"):
