@@ -24,7 +24,7 @@ class BtrfsVolumeTests(object):
         vol = self.send_request("POST", data=data)
         time.sleep(self.sleeptime)
         self.addCleanup(requests.request, "DELETE", vol["cleanup_url"], headers=vol["headers"])
-        self.check_base_properties(vol, size)
+        self.check_volume_properties(vol, size)
 
     def test_snapshot(self):
         """ Create a snapshot of a subvolume and check its properties. """
