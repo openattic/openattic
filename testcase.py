@@ -168,7 +168,10 @@ class GatlingTestCase(unittest.TestCase):
         if self.fstype is None:
             self.assertEqual(vol_res["path"], "/dev/%s/gatling_volume" % self._get_pool()["name"])
         else:
-            self.assertEqual(vol_res["path"], "/media/gatling_volume")
+            if self.fstype == "btrfs":
+                self.assertEqual(vol_res["path"], "/media/gatling_btrfs/gatling_volume")
+            else:
+                self.assertEqual(vol_res["path"], "/media/gatling_volume")
 
     def check_snapshot_properties(self, snap, vol_id, max_size=None):
         """
