@@ -153,8 +153,76 @@ class GatlingTestCase(unittest.TestCase):
                 for vol in res["response"]:
                     cls.send_request("DELETE", "volumes", obj_id=vol["id"])
 
+    def check_volume_properties(self, vol, max_size=None):
+        """
+        Checks the volume specific properties.
 
-    def check_base_properties(self, vol, max_size):
+        :param vol (dict): Response dictionary given by the REST api.
+        :param max_size (int): Optional parameter. Default is None. Allowed maximum size of the volume.
+        :return:  None
+        """
+        vol_res = self._check_base_properties(vol, max_size)
+
+        self.assertNotIn("snapshot", vol_res)
+        self.assertTrue(vol_res["is_blockvolume"])
+
+        if self.fstype is None:
+            self.assertEqual(vol_res["path"], "/dev/%s/gatling_volume" % self._get_pool()["name"])
+        else:
+            self.assertEqual(vol_res["path"], "/media/gatling_volume")
+
+    def check_snapshot_properties(self, snap, vol_id, max_size=None):
+        """
+        Checks the snapshot specific properties.
+
+        :param snap (dict): Response dictionary given by the REST api.
+        :param vol_id (int): ID of the related volume.
+        :param max_size (int): Optional parameter. Default is None. Allowed maximum size of the snapshot.
+        :return: None
+        """
+        snap_res = self._check_base_properties(snap, max_size)
+
+        self.assertIn("snapshot", snap_res)
+        self.assertIn("id", snap_res["snapshot"])
+        self.assertIn("source_pool", snap_res)
+        self.assertIn("id", snap_res["source_pool"])
+        self.assertEqual(snap_res["source_pool"]["id"], self._get_pool()["id"])
+        self.assertEqual(snap_res["snapshot"]["id"], vol_id)
+
+        if self.fstype is None:
+            self.assertEqual(snap_res["path"], "/dev/%s/volume_snapshot_made_by_gatling" % self._get_pool()["name"])
+        else:
+            if self.fstype == "btrfs":
+                vol_pool_name = "gatling_btrfs"
+            else:
+                vol_pool_name = "gatling_volume"
+
+            self.assertIn(snap_res["path"], ["/media/volume_snapshot_made_by_gatling",
+                                             ("/media/%s/.snapshots/volume_snapshot_made_by_gatling" % vol_pool_name)])
+
+    def check_clone_properties(self, clone, max_size=None):
+        """
+        Checks the clone specific properties.
+
+        :param clone (dict): Response dictionary given by the REST api.
+        :param max_size (int): Optional parameter. Default is None. Allowed maximum size of the clone.
+        :return: None
+        """
+        clone_res = self._check_base_properties(clone, max_size)
+
+        self.assertIn("source_pool", clone_res)
+        self.assertIn("id", clone_res["source_pool"])
+        self.assertEqual(clone_res["source_pool"]["id"], self._get_pool()["id"])
+
+        if "snapshot" in clone_res:
+            self.assertIsNone(clone_res["snapshot"])
+
+        if self.fstype is None:
+            self.assertEqual(clone_res["path"], "/dev/%s/gatling_clone" % self._get_pool()["name"])
+        else:
+            self.assertEqual(clone_res["path"], "/media/gatling_clone")
+
+    def _check_base_properties(self, vol, max_size):
         """
         Checks the general properties belonging to a volume, snapshot or clone like size, status or is_volumepool.
 
@@ -194,75 +262,6 @@ class GatlingTestCase(unittest.TestCase):
                 self.assertEqual(vol_res["type"]["name"], self.fstype)
 
         return vol_res
-
-    def check_volume_properties(self, vol, max_size=None):
-        """
-        Checks the volume specific properties.
-
-        :param vol (dict): Response dictionary given by the REST api.
-        :param max_size (int): Optional parameter. Default is None. Allowed maximum size of the volume.
-        :return:  None
-        """
-        vol_res = self.check_base_properties(vol, max_size)
-
-        self.assertNotIn("snapshot", vol_res)
-        self.assertTrue(vol_res["is_blockvolume"])
-
-        if self.fstype is None:
-            self.assertEqual(vol_res["path"], "/dev/%s/gatling_volume" % self._get_pool()["name"])
-        else:
-            self.assertEqual(vol_res["path"], "/media/gatling_volume")
-
-    def check_snapshot_properties(self, snap, vol_id, max_size=None):
-        """
-        Checks the snapshot specific properties.
-
-        :param snap (dict): Response dictionary given by the REST api.
-        :param vol_id (int): ID of the related volume.
-        :param max_size (int): Optional parameter. Default is None. Allowed maximum size of the snapshot.
-        :return: None
-        """
-        snap_res = self.check_base_properties(snap, max_size)
-
-        self.assertIn("snapshot", snap_res)
-        self.assertIn("id", snap_res["snapshot"])
-        self.assertIn("source_pool", snap_res)
-        self.assertIn("id", snap_res["source_pool"])
-        self.assertEqual(snap_res["source_pool"]["id"], self._get_pool()["id"])
-        self.assertEqual(snap_res["snapshot"]["id"], vol_id)
-
-        if self.fstype is None:
-            self.assertEqual(snap_res["path"], "/dev/%s/volume_snapshot_made_by_gatling" % self._get_pool()["name"])
-        else:
-            if self.fstype == "btrfs":
-                vol_pool_name = "gatling_btrfs"
-            else:
-                vol_pool_name = "gatling_volume"
-
-            self.assertIn(snap_res["path"], ["/media/volume_snapshot_made_by_gatling",
-                                             ("/media/%s/.snapshots/volume_snapshot_made_by_gatling" % vol_pool_name)])
-
-    def check_clone_properties(self, clone, max_size=None):
-        """
-        Checks the clone specific properties.
-
-        :param clone (dict): Response dictionary given by the REST api.
-        :param max_size (int): Optional parameter. Default is None. Allowed maximum size of the clone.
-        :return: None
-        """
-        clone_res = self.check_base_properties(clone, max_size)
-
-        self.assertIn("source_pool", clone_res)
-        self.assertIn("id", clone_res["source_pool"])
-        self.assertEqual(clone_res["source_pool"]["id"], self._get_pool()["id"])
-
-        if "snapshot" in clone_res:
-            self.assertIsNone(clone_res["snapshot"])
-
-        if self.fstype is None:
-            self.assertEqual(clone_res["path"], "/dev/%s/gatling_clone" % self._get_pool()["name"])
-        else:
-            self.assertEqual(clone_res["path"], "/media/gatling_clone")
 
     @classmethod
     def _get_sturctured_prefixes(cls, prefixes):
