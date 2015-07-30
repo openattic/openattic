@@ -42,41 +42,42 @@ class GatlingTestCase(unittest.TestCase):
 
     @classmethod
     def send_request(cls, method, prefixes=None, *args, **kwargs):
-        """ Sends a request to openATTICs REST API and returns the response
+        """
+        Sends a request to openATTICs REST API and returns the response
 
-        :param method:      HTTP-method: POST, PUT, GET, DELETE
-        :param prefixes:    Optional parameter. Defaults to None. If prefixes is None, the class must define a
-                            api_prefix class-variable otherwise the test will be skipped.
-                            Must contain at least 1 and at most 3 REST API navigation prefixes. The first string is the
-                            first navigation parameter. The second string is the subnavigation parameter in case of
-                            detail routes. The last parameter is the navigation parameter used by the cleanup_url.
+        :param method (str): HTTP-method: POST, PUT, GET, DELETE
+        :param prefixes (array of str): Optional parameter. Defaults to None. If prefixes is None, the class
+            must define a api_prefix class-variable otherwise the test will be skipped.
+            Must contain at least 1 and at most 3 REST API navigation prefixes. The first string is the first navigation
+            parameter. The second string is the subnavigation parameter in case of detail routes. The last parameter is
+            the navigation parameter used by the cleanup_url.
 
-                            If the array contains only one prefix, this prefix is used in all three cases.
-                            If the array contains two prefixes, the second prefix is also used by the cleanup_url.
+            If the array contains only one prefix, this prefix is used in all three cases.
+            If the array contains two prefixes, the second prefix is also used by the cleanup_url.
 
-                            Examples:
-                            ["volumes"]                         ->  http://host/openattic/api/volumes and returns
-                                                                    http://host/openattic/api/volumes/vol_id
-                            ["volumes", "snapshots"]            ->  http://host/openattic/api/volumes/vol_id/snapshots
-                                                                    and returns
-                                                                    http://host/openattic/api/snapshots/snap_id
-                            ["snapshots", "clone", "volumes"]   ->  http://host/openattic/api/snapshots/snap_id/clone
-                                                                    and returns
-                                                                    http://host/openattic/api/volumes/vol_id
-        :param args:        None
-        :param kwargs:      obj_id (int)      -> Object id to get a specific object by GET request.
-                            data (dict)       -> Data for creating a new object by POST request.
-                            search_param (str)-> Search param, e.g.: "name=vol_name" to search for a specific volume.
-                                                 It generates the following url:
-                                                 http://host/openattic/api/volumes?name=vol_name
-        :return:            In case of:
-                            -   POST and PUT requests: A dictionary {"response": api_response, "count": 1,
-                                "cleanup_url": cleanup_url, "headers": creation headers}
-                            -   DELETE requests: A dictionary {"response": api_response, "count": 1,
-                                "cleanup_url": cleanup_url, "headers": creation headers}
-                            -   GET requests: For a specific objects a dictionary {"response": api_response, "count": 1,
-                                "cleanup_url": cleanup_url, "headers": creation headers}. For a list of objects a
-                                dictionary {"response": api_response, "count": sum of returned objects}
+            Examples:
+                ["volumes"]                         ->  http://host/openattic/api/volumes and returns
+                                                        http://host/openattic/api/volumes/vol_id
+                ["volumes", "snapshots"]            ->  http://host/openattic/api/volumes/vol_id/snapshots
+                                                        and returns
+                                                        http://host/openattic/api/snapshots/snap_id
+                ["snapshots", "clone", "volumes"]   ->  http://host/openattic/api/snapshots/snap_id/clone
+                                                        and returns
+                                                        http://host/openattic/api/volumes/vol_id
+        :param args: None
+        :param kwargs:  obj_id (int)      -> Object id to get a specific object by GET request.
+                        data (dict)       -> Data for creating a new object by POST request.
+                        search_param (str)-> Search param, e.g.: "name=vol_name" to search for a specific volume.
+                                             It generates the following url:
+                                             http://host/openattic/api/volumes?name=vol_name
+        :return: In case of:
+            -   POST and PUT requests: A dictionary {"response": api_response, "count": 1,
+                "cleanup_url": cleanup_url, "headers": creation headers}
+            -   DELETE requests: A dictionary {"response": api_response, "count": 1,
+                "cleanup_url": cleanup_url, "headers": creation headers}
+            -   GET requests: For a specific objects a dictionary {"response": api_response, "count": 1,
+                "cleanup_url": cleanup_url, "headers": creation headers}. For a list of objects a
+                dictionary {"response": api_response, "count": sum of returned objects}
         """
         prefixes = cls._get_sturctured_prefixes(prefixes)
         header = cls.get_auth_header()
