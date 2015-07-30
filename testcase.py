@@ -164,7 +164,6 @@ class GatlingTestCase(unittest.TestCase):
         vol_res = self._check_base_properties(vol, max_size)
 
         self.assertNotIn("snapshot", vol_res)
-        self.assertTrue(vol_res["is_blockvolume"])
 
         if self.fstype is None:
             self.assertEqual(vol_res["path"], "/dev/%s/gatling_volume" % self._get_pool()["name"])
@@ -250,6 +249,7 @@ class GatlingTestCase(unittest.TestCase):
         self.assertIn(vol_res["status"]["status"], ["good", "locked"])
 
         if self.fstype is None:
+            self.assertTrue(vol_res["is_blockvolume"])
             self.assertFalse(vol_res["is_filesystemvolume"])
         else:
             self.assertIn("type", vol_res)
