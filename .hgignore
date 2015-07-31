@@ -42,3 +42,7 @@ webui/app/login.html
 webui/coverage
 webui/npm-debug.log
 webui/test/e2e/configs.js
+
+# From gatling-rest
+gatling/conf/
+gatling/test/reports/
