@@ -143,13 +143,13 @@ class Zfs(FileSystem):
         self.chown()
 
     def destroy(self):
-        self.dbus_object.zpool_destroy(self.zpool.storageobj.name)
+        self.dbus_object.zpool_destroy(self.zpool.storageobj.name, self.path)
 
     def mount(self):
         self.dbus_object.zfs_mount(self.volume.fullname)
 
     def unmount(self):
-        self.dbus_object.zfs_unmount(self.volume.fullname)
+        self.dbus_object.zfs_unmount(self.volume.fullname, self.path)
 
     def create_subvolume(self):
         megs = 0
