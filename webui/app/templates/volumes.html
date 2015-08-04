@@ -1,5 +1,5 @@
 <!-- kate: space-indent on; indent-width 4; replace-tabs on; -->
-<oadatatable data="data" class="tc_oadatatable_volumes" filter-config="filterConfig" selection="selection">
+<oadatatable data="data" class="oadatatable tc_oadatatable_volumes" filter-config="filterConfig" selection="selection">
     <actions>
         <a class="btn btn-lg btn-primary tc_add_btn" type="button" ng-click="addAction()" ng-hide="hasSelection">
             <i class="fa fa-fw fa-plus"></i> Add
@@ -10,7 +10,9 @@
         <li>
             <a ng-click="addAction()"><i class="fa fa-fw fa-plus"></i> Add</a>
         </li>
-        <li ng-class="{disabled: !hasSelection}"><a><i class="fa fa-fw fa-upload"></i> Resize</a></li>
+        <li ng-class="{disabled: !hasSelection}">
+            <a ng-click="resizeAction()"><i class="fa fa-fw fa-upload"></i> Resize</a>
+        </li>
         <li ng-class="{disabled: !(hasSelection && cloneable)}" ng-click="cloneAction()">
             <a><i class="fa fa-fw fa-files-o"></i> Clone</a>
         </li>
