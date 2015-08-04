@@ -1123,6 +1123,7 @@ class FileSystemProvider(FileSystemVolume):
 
 def __delete_filesystemprovider(instance, **kwargs):
     instance.fs.unmount()
+    instance.fs.write_fstab()
 
 signals.pre_delete.connect(__delete_filesystemprovider, sender=FileSystemProvider)
 

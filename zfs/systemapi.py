@@ -54,13 +54,15 @@ class SystemD(BasePlugin):
     def zfs_mount(self, device, sender):
         invoke(["zfs", "mount", device])
 
-    @deferredmethod(in_signature="s")
-    def zfs_unmount(self, device, sender):
+    @deferredmethod(in_signature="ss")
+    def zfs_unmount(self, device, mountpoint, sender):
         invoke(["zfs", "unmount", device])
+        os.rmdir(mountpoint)
 
-    @deferredmethod(in_signature="s")
-    def zpool_destroy(self, device, sender):
+    @deferredmethod(in_signature="ss")
+    def zpool_destroy(self, device, mountpoint, sender):
         invoke(["zpool", "destroy", device])
+        os.rmdir(mountpoint)
 
     @deferredmethod(in_signature="sss")
     def zpool_format(self, devpath, label, path, sender):
