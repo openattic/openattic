@@ -19,7 +19,7 @@
                 <div class="col-xs-12 col-sm-6 col-md-6 col-lg-6">
                     <div class="widget-toolbar">
                         <div class="dataTables_length" >
-                            <button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown"
+                            <button type="button" class="tc_entries_dropdown btn btn-default dropdown-toggle" data-toggle="dropdown"
                                     aria-expanded="false">
                                 {{ filterConfig.entries }} <span class="caret"></span>
                             </button>
@@ -36,7 +36,7 @@
                                 <li ng-class="{active: filterConfig.entries ===  50}">
                                     <a ng-click="filterConfig.entries =  50">  50 </a>
                                 </li>
-                                <li ng-class="{active: filterConfig.entries === 100}">
+                                <li class="tc_entries_100" ng-class="{active: filterConfig.entries === 100}">
                                     <a ng-click="filterConfig.entries = 100"> 100 </a>
                                 </li>
                             </ul>
