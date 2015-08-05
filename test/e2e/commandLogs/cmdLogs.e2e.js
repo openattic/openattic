@@ -45,7 +45,7 @@ describe('CommandLogs', function(){
             
       if (exact_poolname){
           
-        var lv_create = element.all(by.cssContainingText('tr', '/sbin/lvcreate')).get(0);
+        var lv_create = element(by.cssContainingText('tr', '/sbin/lvcreate'));
         lv_create.toString();
         expect(lv_create.getText()).toContain('"/sbin/lvcreate" "-L" "100M" "-n" "protractor_test_volume" "' +
                                               exact_poolname  + '"' + "\n" + 'O Logical volume "protractor_test_volume" created');
