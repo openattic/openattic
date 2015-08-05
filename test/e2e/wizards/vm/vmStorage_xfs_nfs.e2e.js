@@ -29,7 +29,7 @@ describe('VM Storage Wizard', function(){
   //   <-- VM Storage Wizard -->
    it('should have a button "VM Storage";navigate through the wizard', function(){
     var wizards = element.all(by.repeater('wizard in wizards')).then(function(wizards){
-      var fs_wizard = wizards[1].element(by.className('btn-block'));
+      var fs_wizard = wizards[1].element(by.cssContainingText('span', 'VM Storage'));
       expect(fs_wizard.isDisplayed()).toBe(true);
       fs_wizard.click();
       

@@ -29,14 +29,23 @@ describe('Wizard panel', function(){
   it('should check the titles', function(){
     var wizards = element.all(by.repeater('wizard in wizards'))
       .then(function(wizards){
-        var fsTitle = wizards[0].element(by.className('btn-block'));
-        expect(fsTitle.getText()).toEqual('File Storage');
-        var vmTitle = wizards[1].element(by.className('btn-block'));
-        expect(vmTitle.getText()).toEqual('VM Storage');
-        var blockTitle = wizards[2].element(by.className('btn-block'));
-        expect(blockTitle.getText()).toEqual('Raw Block Storage');
-      });    
-  });   
+        var fsTitle = element.all(by.className('btn-block')).get(0).evaluate('wizard.title').then(function(title){
+          expect(title).toEqual('File Storage');
+          console.log(title);
+        });
+
+        var vmTitle = wizards[1].element(by.className('btn-block')).evaluate('wizard.title').then(function(vm_title){
+          expect(vm_title).toEqual('VM Storage');
+          console.log(vm_title);
+        });
+        
+        var blockTitle = wizards[2].element(by.className('btn-block')).evaluate('wizard.title').then(function(block_title){
+          expect(block_title).toEqual('Raw Block Storage');
+          console.log(block_title);
+        });    
+    });
+      
+  });
   
   it('should a widget title', function(){
     expect(element.all(by.css('h2')).get(1).getText()).toEqual('openATTIC Wizards');
@@ -45,7 +54,7 @@ describe('Wizard panel', function(){
   //<-- File Storage Wizard -->
   it('should have a button "File Storage";navigate through this wizard', function(){
     var wizards = element.all(by.repeater('wizard in wizards')).then(function(wizards){
-      var fs_wizard = wizards[0].element(by.className('btn-block'));
+      var fs_wizard = wizards[0].element(by.cssContainingText('span', 'File Storage'));
       expect(fs_wizard.isDisplayed()).toBe(true);
       fs_wizard.click();
       
