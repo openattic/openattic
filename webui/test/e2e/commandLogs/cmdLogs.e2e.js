@@ -45,6 +45,10 @@ describe('CommandLogs', function(){
             
       if (exact_poolname){
           
+        element(by.css('.tc_entries_dropdown')).click();
+        element(by.css('.tc_entries_100')).click();
+        browser.sleep(400);  
+        
         var lv_create = element.all(by.cssContainingText('tr', '/sbin/lvcreate')).get(0);
         lv_create.toString();
         expect(lv_create.getText()).toContain('"/sbin/lvcreate" "-L" "100M" "-n" "protractor_test_volume" "' +

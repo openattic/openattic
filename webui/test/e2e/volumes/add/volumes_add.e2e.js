@@ -231,29 +231,29 @@ describe('Volumes add', function() {
     }
   });
   
-  it('should show link text "use max" after selecting a pool', function(){
-    expect(element(by.linkText('use max')).isPresent()).toBe(false);
-    for(var key in helpers.configs.pools) {
-      var pool = helpers.configs.pools[key];
-      volumePoolSelect.click();
-      element.all(by.cssContainingText('option', '(volume group,')).get(0).click();
-      expect(element(by.linkText('use max')).isDisplayed()).toBe(true);
-      element(by.linkText('use max')).click();
-      
-      var pool_size = element(by.id('data.megs')).evaluate('data.sourcePool.usage.free_text').then(function(psize){
-        browser.sleep(400);
-        expect(element(by.css('.tc_poolAvailableSize')).getText()).toContain(psize + ' free');
-        volumeSizeInput.getAttribute('value').then(function(sizeMB){
-          var cache_size = (parseInt(sizeMB, 10) / 1024).toString();
-          var final_size = cache_size.slice(0, cache_size.indexOf(".") + 3);
-          //console.log(final_size);
-          expect(final_size + 'GB').toEqual(psize);
-        });
-      });
-      
-      break;
-    }
-  });
+//   it('should show link text "use max" after selecting a pool', function(){
+//     expect(element(by.linkText('use max')).isPresent()).toBe(false);
+//     for(var key in helpers.configs.pools) {
+//       var pool = helpers.configs.pools[key];
+//       volumePoolSelect.click();
+//       element.all(by.cssContainingText('option', '(volume group,')).get(0).click();
+//       expect(element(by.linkText('use max')).isDisplayed()).toBe(true);
+//       element(by.linkText('use max')).click();
+//       
+//       var pool_size = element(by.id('data.megs')).evaluate('data.sourcePool.usage.free_text').then(function(psize){
+//         browser.sleep(400);
+//         expect(element(by.css('.tc_poolAvailableSize')).getText()).toContain(psize + ' free');
+//         volumeSizeInput.getAttribute('value').then(function(sizeMB){
+//           var cache_size = (parseInt(sizeMB, 10) / 1024).toString();
+//           var final_size = cache_size.slice(0, cache_size.indexOf(".") + 3);
+//           //console.log(final_size);
+//           expect(final_size + 'GB').toEqual(psize);
+//         });
+//       });
+//       
+//       break;
+//     }
+//   });
 
   it('should show a message if the given volume size is a combination of numbers and string', function(){
     for(var key in helpers.configs.pools) {
