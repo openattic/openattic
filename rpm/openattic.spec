@@ -664,14 +664,10 @@ echo ""
 %dir /usr/share/openattic/installed_apps.d
 %config(noreplace) /etc/default/openattic
 %config(noreplace) /etc/openattic/databases/pgsql.ini
-/usr/share/openattic/.jslint.sh
-/usr/share/openattic/.pylintrc
 /usr/share/openattic/__init__.pyc
 /usr/share/openattic/__init__.pyo
-/usr/share/openattic/bin/
 /usr/share/openattic/clustering/
 /usr/share/openattic/installed_apps.d/70_clustering
-/usr/share/openattic/etc/
 /usr/share/openattic/manage.pyc
 /usr/share/openattic/manage.pyo
 /usr/share/openattic/oa_auth.pyc
@@ -708,7 +704,6 @@ echo ""
 /usr/share/openattic/views.py
 /usr/share/openattic/oa_auth.py
 /usr/share/openattic/settings.py
-/usr/share/openattic/docs/openattic-client.php
 
 #./usr/share/man/
 #./usr/share/man/man1/
