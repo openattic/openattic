@@ -170,6 +170,8 @@ class GatlingTestCase(unittest.TestCase):
         else:
             if self.fstype == "btrfs":
                 self.assertEqual(vol_res["path"], "/media/gatling_btrfs/gatling_volume")
+            elif self.fstype == "zfs":
+                self.assertEqual(vol_res["path"], "/media/%s/gatling_volume" % self._get_pool()["name"])
             else:
                 self.assertEqual(vol_res["path"], "/media/gatling_volume")
 
