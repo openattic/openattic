@@ -90,10 +90,21 @@ Summary:  Basic requirements for openATTIC
  of the RPC and System daemons and the Web Interface. You will not be able
  to manage any storage using *just* this package, but the other packages
  require this one to be available.
+
+%package gui
+Requires:	openattic
+Summary:	New Openattic User Interface
  
 %package       module-btrfs
 Requires:	btrfs-progs 
 Summary:  BTRFS module for openATTIC
+
+%description gui
+openATTIC is a storage management system based upon Open Source tools with
+a comprehensive user interface that allows you to create, share and backup
+storage space on demand.
+.
+This is the new GUI.
  
 %description module-btrfs
  openATTIC is a storage management system based upon Open Source tools with
@@ -306,12 +317,20 @@ Summary:  PGSQL database for openATTIC
 
 
 %build
-
+cd openattic/webui
+which bower || npm install -g bower
+which grunt || npm install -g grunt-cli
+npm install
+bower --allow-root install
+grunt build
 
 %install
 
 mkdir -p ${RPM_BUILD_ROOT}/usr/share/
-rsync -aAX openattic ${RPM_BUILD_ROOT}/usr/share/
+rsync -aAX openattic ${RPM_BUILD_ROOT}/usr/share/ --exclude debian --exclude rpm --exclude webui
+
+mkdir -p ${RPM_BUILD_ROOT}/usr/share/openattic-gui
+rsync -aAX openattic/webui/dist/ ${RPM_BUILD_ROOT}/usr/share/openattic-gui/
 
 mkdir -p ${RPM_BUILD_ROOT}%{_defaultdocdir}/%{name}-%{version}
 
@@ -578,6 +597,16 @@ systemctl daemon-reload
 service dbus restart
 systemctl restart httpd
 
+%post gui
+semanage fcontext -a -t httpd_sys_rw_content_t "/usr/share/openattic-gui(/.*)?"
+restorecon -vvR
+service httpd restart
+
+%postun gui
+semanage fcontext -d -t httpd_sys_rw_content_t "/usr/share/openattic-gui(/.*)?"
+restorecon -vvR
+service httpd restart
+
 %post pgsql
 
 # Configure Postgres DB
@@ -693,6 +722,10 @@ echo ""
 %defattr(-,openattic,openattic,-)
 /usr/share/openattic/installed_apps.d/10_btrfs
 /usr/share/openattic/btrfs/
+
+%files gui
+%defattr(-,openattic,openattic,-)
+/usr/share/openattic-gui
 
 %files 	module-cron
 %defattr(-,openattic,openattic,-)
