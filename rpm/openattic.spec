@@ -55,6 +55,7 @@ Requires:	memcached
 Requires:	python-imaging 
 Requires:	numpy 
 Requires:	python-rtslib
+Requires:	python-requests
 Requires:	wget 
 Requires:	bzip2
 Requires:	oxygen-icon-theme
