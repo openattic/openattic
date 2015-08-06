@@ -1,0 +1,13 @@
+#!/bin/bash
+
+set -e
+
+if [ "$1" = "purge" ] ; then
+    update-rc.d openattic_systemd remove >/dev/null
+    update-rc.d openattic_rpcd    remove >/dev/null
+
+    rm -f /var/log/openattic_rpcd
+    rm -f /var/log/openattic_systemd
+fi
+
+#DEBHELPER#

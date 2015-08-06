@@ -1,0 +1,2 @@
+lvm  /usr/share/openattic
+installed_apps.d/10_lvm /usr/share/openattic/installed_apps.d

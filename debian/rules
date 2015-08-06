@@ -1,0 +1,20 @@
+#!/usr/bin/make -f
+# -*- makefile -*-
+
+# Uncomment this to turn on verbose mode.
+#export DH_VERBOSE=1
+
+export PATH=/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin
+
+override_dh_auto_install:
+	which bower || npm install -g bower
+	which grunt || npm install -g grunt-cli
+	
+	cd webui ; bower install --allow-root
+	cd webui ; npm install
+	cd webui ; grunt --no-color build
+	
+	dh_auto_install
+
+%:
+	dh $@ --with python2 --with apache2

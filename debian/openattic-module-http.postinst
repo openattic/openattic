@@ -1,0 +1,20 @@
+#!/bin/sh
+
+set -e
+
+if [ "$1" = "configure" ] ; then
+    setperm(){
+        FILE="$1"
+        PERM="$2"
+        dpkg-statoverride --list "$FILE" >/dev/null || \
+            dpkg-statoverride --update --add openattic openattic "$PERM" "$FILE"
+    }
+
+    setperm "/var/lib/openattic/http/volumes" 0750
+
+    if [ -x /etc/init.d/apache2 ]; then
+        invoke-rc.d --quiet apache2 reload
+    fi
+fi
+
+#DEBHELPER#

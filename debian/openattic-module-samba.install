@@ -1,0 +1,2 @@
+samba /usr/share/openattic
+installed_apps.d/60_samba /usr/share/openattic/installed_apps.d

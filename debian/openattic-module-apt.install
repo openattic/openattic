@@ -1,0 +1,2 @@
+pkgapt  /usr/share/openattic
+installed_apps.d/50_pkgapt /usr/share/openattic/installed_apps.d

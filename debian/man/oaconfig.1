@@ -1,0 +1,43 @@
+.TH OACONFIG 1 "2011 October 12"
+.SH NAME
+oaconfig \- wrapper script around openATTIC's management system that makes a few things easier
+.SH SYNOPSIS
+.B oaconfig <command> [<args>]
+.SH DESCRIPTION
+This script allows you to easily run openATTIC's management system, which takes
+care of creating and updating the database, creating new SuperUser accounts and
+various other tasks.
+
+In order to see the full list, run oaconfig without any command or with the help
+command.
+
+After installing openATTIC or one of its modules, please run oaconfig with the
+install command in order to update the database accordingly.
+.SH COMMANDS
+.TP
+\fBhelp\fR
+Show general usage information along with a list of commands.
+.TP
+\fBinstall\fR
+Run the installation sequence required to update the database.
+.TP
+\fBinstall-cli\fR
+Generate an API Key and a corresponding oacli configuration, so that oacli
+becomes usable.
+.TP
+\fBscan-vgs\fR
+Instruct LVM to search for existing VGs.
+.TP
+\fBadd-vg\fR
+Make an already existing LVM Volume Group known to openATTIC. (Requires oacli
+to have been configured beforehand, run oaconfig install-cli as needed.)
+.TP
+\fBrestart\fR
+Restart all services that are needed in order to run openATTIC.
+.TP
+\fBreload\fR
+Reload all services that are needed in order to run openATTIC.
+Note though that the Systemd and RPCd don't support reload, so they will instead
+be restarted.
+.SH AUTHOR
+oaconfig and this manpage have been written by Michael Ziegler <diese-addy@funzt-halt.net>.

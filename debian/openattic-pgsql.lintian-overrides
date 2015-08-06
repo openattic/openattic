@@ -1,0 +1,1 @@
+openattic-pgsql: package-contains-broken-symlink etc/openattic/database.ini databases/pgsql.ini

@@ -1,0 +1,47 @@
+# Python Modules
+rpcd      /usr/share/openattic
+rest      /usr/share/openattic
+systemd   /usr/share/openattic
+cmdlog    /usr/share/openattic
+peering   /usr/share/openattic
+ifconfig  /usr/share/openattic
+sysutils  /usr/share/openattic
+userprefs /usr/share/openattic
+volumes   /usr/share/openattic
+
+installed_apps.d/20_volumes /usr/share/openattic/installed_apps.d
+
+# Python files
+__init__.py    /usr/share/openattic
+settings.py    /etc/openattic
+manage.py      /usr/share/openattic
+oa_auth.py     /usr/share/openattic
+pamauth.py     /usr/share/openattic
+processors.py  /usr/share/openattic
+urls.py        /usr/share/openattic
+views.py       /usr/share/openattic
+openattic.wsgi /usr/share/openattic
+serverstats.wsgi /usr/share/openattic
+
+# Init scripts, configs that are shipped upstream
+etc/init.d/openattic-systemd        /etc/init.d
+etc/init.d/openattic-rpcd           /etc/init.d
+etc/bash_completion.d/openattic_bash_completion /etc/bash_completion.d
+etc/pam.d/openattic                 /etc/pam.d
+
+# Volume initializaition scripts
+etc/openattic/volume_init.d/*       /etc/openattic/volume_init.d
+
+# System Configs
+debian/apache2_conf.d/openattic.conf /etc/apache2/conf-available
+debian/default/openattic            /etc/default
+debian/dbus_system.d/openattic.conf /etc/dbus-1/system.d
+
+# Pacemaker resource agents
+bin/resource_agents/* /usr/lib/ocf/resource.d/openattic/
+
+bin/oaconfig    /usr/sbin
+bin/oacli       /usr/bin
+bin/oavgmanager /usr/sbin
+bin/backuptime  /usr/share/doc/openattic-base/examples/backuptime
+bin/blkdevzero  /usr/sbin

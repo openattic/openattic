@@ -1,0 +1,3 @@
+drbd /usr/share/openattic
+installed_apps.d/60_drbd /usr/share/openattic/installed_apps.d
+debian/modprobe.d/drbd.conf /etc/modprobe.d

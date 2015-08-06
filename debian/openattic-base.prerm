@@ -1,0 +1,10 @@
+#!/bin/bash
+
+set -e
+
+if [ "$1" = "purge" ]; then
+    rm -f /usr/share/openattic/certs/ssl-cert-snakeoil.pem
+    rm -f /usr/share/openattic/certs/ssl-cert-snakeoil.key
+fi
+
+#DEBHELPER#

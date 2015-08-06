@@ -1,0 +1,12 @@
+#!/bin/bash
+
+set -e
+
+if [ "$1" = "purge" ] ; then
+    rm -f /var/lib/nagios3/cputime.*
+    rm -f /var/lib/nagios3/diskstats.*
+    rm -f /var/lib/nagios3/ifstats_.*
+    rm -f /var/lib/nagios3/protocol_traffic.*
+fi
+
+#DEBHELPER#

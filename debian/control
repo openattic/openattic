@@ -1,0 +1,325 @@
+Source: openattic
+Section: python
+Priority: optional
+Maintainer: Michael Ziegler <diese-addy@funzt-halt.net>
+Build-Depends: debhelper (>= 8.0.0), python (>= 2.6.6-3~), python-setuptools (>= 0.6.10), po-debconf, quilt, apache2-dev, git, npm
+Standards-Version: 3.9.4
+Homepage: http://www.open-attic.org
+Vcs-Hg: https://bitbucket.org/openattic/openattic-debian
+
+Package: openattic
+Architecture: all
+Depends: ${misc:Depends},
+ openattic-module-nfs,
+ openattic-module-http,
+ openattic-module-lio,
+ openattic-module-samba,
+ openattic-module-apt,
+ openattic-module-nagios,
+ openattic-module-cron,
+ openattic-module-mailaliases
+Recommends:
+ openattic-module-btrfs,
+ openattic-module-lvm,
+Suggests: python-django-rosetta, lsscsi, openattic-module-twraid,
+ openattic-module-ipmi,
+ openattic-module-zfs
+Description: Comprehensive storage management system
+ openATTIC is a storage management system based upon Open Source tools with
+ a comprehensive user interface that allows you to create, share and backup
+ storage space on demand.
+ .
+ It comes with an extensible API focused on modularity, so you can tailor
+ your installation exactly to your needs and embed openATTIC in your existing
+ data center infrastructure.
+ .
+ This metapackage installs the most common set of openATTIC modules along
+ with the basic requirements. Those modules are:
+ .
+  * LVM
+  * NFS
+  * HTTP
+  * LIO (iSCSI, FC)
+  * Samba
+  * Apt
+  * Nagios
+  * FTP
+  * Cron
+  * MailAliases (EMail configuration)
+ .
+ Upstream URL: http://www.openattic.org
+
+Package: openattic-pgsql
+Architecture: all
+Depends: ${misc:Depends}, python-psycopg2, openattic-base,
+ dbconfig-common, postgresql-client, postgresql-contrib
+Recommends: postgresql
+Conflicts: openattic-mysql
+Description: PGSQL database for openATTIC
+ openATTIC is a storage management system based upon Open Source tools with
+ a comprehensive user interface that allows you to create, share and backup
+ storage space on demand.
+ .
+ This package configures the PostgreSQL database for openATTIC.
+
+Package: openattic-base
+Architecture: all
+Pre-Depends: adduser
+Depends: ${misc:Depends}, python (>= 2.6),
+ ${python:Depends},
+ python-django (>= 1.6),
+ python-django (<< 1.8),
+ dbus,
+ ntp,
+ resolvconf, bridge-utils, vlan, ifenslave-2.6,
+ sg3-utils,
+ python-dbus,
+ python-gobject,
+ python-pam,
+ python-m2crypto,
+ python-netifaces,
+ python-netaddr,
+ python-pyudev,
+ python-django-extdirect (>= 0.6),
+ python-djangorestframework,
+ python-django-rest-framework-bulk,
+ lsb-release,
+ openattic-pgsql,
+ libapache2-mod-wsgi, apache2 (>= 2.4),
+ memcached, python-memcache
+Recommends: sudo, xfsprogs
+Description: Basic requirements for openATTIC
+ openATTIC is a storage management system based upon Open Source tools with
+ a comprehensive user interface that allows you to create, share and backup
+ storage space on demand.
+ .
+ This package installs the basic framework for openATTIC, which consists
+ of the RPC and System daemons and the Web Interface. You will not be able
+ to manage any storage using *just* this package, but the other packages
+ require this one to be available.
+
+Package: openattic-gui
+Architecture: all
+Depends: ${misc:Depends}, apache2
+Description: Web GUI for openATTIC
+ openATTIC is a storage management system based upon Open Source tools with
+ a comprehensive user interface that allows you to create, share and backup
+ storage space on demand.
+ .
+ This package provides the web graphical user interface.
+
+Package: openattic-module-lvm
+Architecture: all
+Depends: ${misc:Depends}, openattic-base, lvm2, parted,
+ openattic-module-cron, file, udisks
+Enhances: lvm2
+Description: LVM module for openATTIC
+ openATTIC is a storage management system based upon Open Source tools with
+ a comprehensive user interface that allows you to create, share and backup
+ storage space on demand.
+ .
+ Handles partitioning of physical disks into volumes using the Linux Logical
+ Volume Manager. LVM supports enterprise level volume management of disk
+ and disk subsystems by grouping arbitrary disks into volume groups. The
+ total capacity of volume groups can be allocated to logical volumes, which
+ are accessed as regular block devices.
+
+Package: openattic-module-nfs
+Architecture: all
+Depends: ${misc:Depends}, openattic-base, nfs-kernel-server
+Description: NFS module for openATTIC
+ openATTIC is a storage management system based upon Open Source tools with
+ a comprehensive user interface that allows you to create, share and backup
+ storage space on demand.
+ .
+ Network File System is the most widely used mechanism for sharing files
+ between UNIX hosts. This package installs a module that allows Volumes to
+ be shared using NFS, which is the recommended way not only for UNIXes, but
+ also for VMware ESX virtualization hosts.
+
+Package: openattic-module-apt
+Architecture: all
+Depends: ${misc:Depends}, python-apt, openattic-base
+Description: APT module for openATTIC
+ openATTIC is a storage management system based upon Open Source tools with
+ a comprehensive user interface that allows you to create, share and backup
+ storage space on demand.
+ .
+ Debian's Advanced Package Tool handles installing, upgrading and removing
+ programs using packages. It keeps track of installed and available programs
+ and automates various procedures. This module extends the User interface
+ for a Front End, which allows you to check for available upgrades easily.
+
+Package: openattic-module-samba
+Architecture: all
+Depends: ${misc:Depends}, openattic-base, samba, samba-common-bin,
+ winbind, libnss-winbind
+Description: Samba module for openATTIC
+ openATTIC is a storage management system based upon Open Source tools with
+ a comprehensive user interface that allows you to create, share and backup
+ storage space on demand.
+ .
+ Samba implements the SMB/CIFS protocol and enables file sharing with hosts
+ that run the Microsoft Windows family of operating systems. This package
+ provides configuration facilities for Samba Shares.
+
+Package: openattic-auth-kerberos
+Architecture: all
+Depends: ${misc:Depends}, openattic-module-samba,
+ krb5-user | heimdal-clients, libpam-krb5, libapache2-mod-auth-kerb
+Description: Samba module for openATTIC
+ openATTIC is a storage management system based upon Open Source tools with
+ a comprehensive user interface that allows you to create, share and backup
+ storage space on demand.
+ .
+ This package installs dependencies necessary for Kerberos authentication.
+
+Package: openattic-module-cron
+Architecture: all
+Depends: ${misc:Depends}, cron, openattic-base
+Description: Cron module for openATTIC
+ openATTIC is a storage management system based upon Open Source tools with
+ a comprehensive user interface that allows you to create, share and backup
+ storage space on demand.
+ .
+ Cron is a service that provides scheduled task execution. This package
+ provides configuration facilities for scheduled tasks (a.k.a. Cron jobs).
+
+Package: openattic-module-nagios
+Architecture: all
+Depends: ${misc:Depends}, python (>= 2.6),
+ ${python:Depends}, python-imaging, python-numpy,
+ openattic-base, openattic-base,
+ bc, adduser,
+ nagios3-core, nagios-plugins-standard, nagios-plugins-basic,
+ pnp4nagios-bin, rrdtool
+Description: Nagios module for openATTIC
+ openATTIC is a storage management system based upon Open Source tools with
+ a comprehensive user interface that allows you to create, share and backup
+ storage space on demand.
+ .
+ Nagios is a widely used system monitoring solution. This package installs a
+ module which automatically configures service checks for your configured
+ volumes and shares, measures performance data, and provides you with an
+ intuitive user interface to view the graphs.
+ .
+ This package also contains the Nagios check plugins for openATTIC, namely:
+  * check_diskstats
+  * check_iface_traffic
+  * check_openattic_systemd
+  * check_openattic_rpcd
+
+Package: openattic-module-drbd
+Architecture: all
+Depends: ${misc:Depends}, openattic-module-lvm,
+ drbd8-utils
+Description: DRBD module for openATTIC
+ openATTIC is a storage management system based upon Open Source tools with
+ a comprehensive user interface that allows you to create, share and backup
+ storage space on demand.
+ .
+ LINBIT's Distributed Replicated Block Device is a data replication tool that
+ mirrors volumes to another openATTIC host in a block oriented fashion. It is
+ often referred to as RAID-1 over IP.
+ .
+ This module provides the groundwork for building high availability clusters
+ using openATTIC.
+
+Package: openattic-module-http
+Architecture: all
+Depends: ${misc:Depends}, openattic-base,
+ apache2
+Description: HTTP module for openATTIC
+ openATTIC is a storage management system based upon Open Source tools with
+ a comprehensive user interface that allows you to create, share and backup
+ storage space on demand.
+ .
+ The Hypertext Transfer Protocol is not only used for serving web sites, but
+ can also be used for serving other files in a read-only fashion. This is
+ commonly used for disk images or software repositories.
+ .
+ This package installs a module which allows you to share volumes or
+ subdirectories using Apache2.
+
+Package: openattic-module-ipmi
+Architecture: all
+Depends: ${misc:Depends}, ipmitool, openattic-base
+Description: IPMI module for openATTIC
+ openATTIC is a storage management system based upon Open Source tools with
+ a comprehensive user interface that allows you to create, share and backup
+ storage space on demand.
+ .
+ IPMI can be used to query a set of sensors installed in the system. This
+ module displays the current state of these sensors in the openATTIC GUI.
+
+Package: openattic-module-mailaliases
+Architecture: all
+Depends: ${misc:Depends}, openattic-base, mail-transport-agent
+Description: MailAliases module for openATTIC
+ openATTIC is a storage management system based upon Open Source tools with
+ a comprehensive user interface that allows you to create, share and backup
+ storage space on demand.
+ .
+ Mail Transfer Agents use a file named /etc/aliases in order to configure
+ mail redirection for certain users. This package contains an openATTIC module
+ which automatically alters this file to match the users configured in the
+ openATTIC database.
+
+Package: openattic-module-twraid
+Architecture: all
+Depends: ${misc:Depends}, openattic-base, tw-cli, cron
+Description: 3ware RAID module for openATTIC
+ openATTIC is a storage management system based upon Open Source tools with
+ a comprehensive user interface that allows you to create, share and backup
+ storage space on demand.
+ .
+ This package installs a module that allows administration of 3ware RAID
+ controllers through openATTIC.
+
+Package: openattic-module-lio
+Architecture: all
+Depends: ${misc:Depends}, openattic-base,
+ python-rtslib-fb | python-rtslib (>> 2.1-2)
+Conflicts: openattic-module-iet-iscsi
+Description: LIO module for openATTIC
+ openATTIC is a storage management system based upon Open Source tools with
+ a comprehensive user interface that allows you to create, share and backup
+ storage space on demand.
+ .
+ This package includes support for the LIO Linux SCSI Target, which allows
+ users to configure FibreChannel, FCoE and iSCSI targets over the openATTIC
+ user interface.
+
+Package: openattic-module-zfs
+Architecture: all
+Depends: ${misc:Depends}, openattic-base, debian-zfs | ubuntu-zfs
+Description: ZFS module for openATTIC
+ openATTIC is a storage management system based upon Open Source tools with
+ a comprehensive user interface that allows you to create, share and backup
+ storage space on demand.
+ .
+ This package includes support for ZFS, a pooled file system designed for
+ maximum data integrity, supporting data snapshots, multiple copies, and data
+ checksums. It depends on zfsonlinux, the native Linux port of ZFS.
+
+Package: openattic-module-btrfs
+Architecture: all
+Depends: ${misc:Depends}, openattic-base, btrfs-tools
+Description: BTRFS module for openATTIC
+ openATTIC is a storage management system based upon Open Source tools with
+ a comprehensive user interface that allows you to create, share and backup
+ storage space on demand.
+ .
+ This package includes support for BTRFS, a new copy on write filesystem for
+ Linux aimed at implementing advanced features while focusing on fault
+ tolerance, repair and easy administration.
+
+Package: openattic-module-mdraid
+Architecture: all
+Depends: ${misc:Depends}, openattic-base, mdadm
+Description: MDRAID module for openATTIC
+ openATTIC is a storage management system based upon Open Source tools with
+ a comprehensive user interface that allows you to create, share and backup
+ storage space on demand.
+ .
+ This package includes support for MD-RAID, the common Linux software RAID.

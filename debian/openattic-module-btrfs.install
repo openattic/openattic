@@ -1,0 +1,2 @@
+btrfs  /usr/share/openattic
+installed_apps.d/10_btrfs /usr/share/openattic/installed_apps.d

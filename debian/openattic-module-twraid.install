@@ -1,0 +1,3 @@
+twraid /usr/share/openattic
+debian/cron.d/updatetwraid /etc/cron.d
+installed_apps.d/09_twraid /usr/share/openattic/installed_apps.d

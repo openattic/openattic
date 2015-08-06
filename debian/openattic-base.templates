@@ -1,0 +1,12 @@
+Template: openattic-base/run-oaconfig-install
+Type: note
+_Description: The base packages have been unpacked and configured, but in order to
+ complete the installation of openATTIC, you need to run the following command:
+ .
+   oaconfig install
+ .
+ Afterwards, you can browse to the openATTIC user interface via the URL:
+ .
+   http://<IP or hostname>/openattic
+ .
+ Please refer to /usr/share/doc/openattic-base/README.Debian for more information.

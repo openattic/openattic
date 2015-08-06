@@ -1,0 +1,11 @@
+#!/bin/sh
+
+set -e
+
+if [ "$1" = "remove" -o "$1" = "purge" ] ; then
+    if [ -x /etc/init.d/apache2 ]; then
+        invoke-rc.d --quiet apache2 reload
+    fi
+fi
+
+#DEBHELPER#

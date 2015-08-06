@@ -1,0 +1,1 @@
+debian/database_install/pgsql_template.ini          /etc/openattic/databases

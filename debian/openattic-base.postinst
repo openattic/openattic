@@ -1,0 +1,44 @@
+#!/bin/sh
+
+set -e
+
+. /usr/share/debconf/confmodule
+
+if [ "$1" = "configure" ] ; then
+    setperm(){
+        FILE="$1"
+        PERM="$2"
+        dpkg-statoverride --list "$FILE" >/dev/null || \
+            dpkg-statoverride --update --add openattic openattic "$PERM" "$FILE"
+    }
+
+    setperm "/usr/share/openattic" 0750
+    setperm "/var/lib/openattic"   0755
+    setperm "/var/lock/openattic"  0755
+
+    touch /var/log/openattic_systemd
+    setperm /var/log/openattic_systemd 0640
+
+    touch /var/log/openattic_rpcd
+    setperm /var/log/openattic_rpcd 0640
+
+    touch /var/log/openattic_vgmanager
+    setperm /var/log/openattic_vgmanager 0640
+
+    update-rc.d openattic-systemd defaults >/dev/null
+    update-rc.d openattic-rpcd    defaults >/dev/null
+
+    if [ -x /etc/init.d/apache2 ]; then
+        invoke-rc.d --quiet apache2 reload
+    fi
+
+    if [ -x /etc/init.d/dbus ]; then
+        invoke-rc.d --quiet dbus reload
+    fi
+
+    db_input high openattic-base/run-oaconfig-install || true
+    db_go
+    db_stop
+fi
+
+#DEBHELPER#

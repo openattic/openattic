@@ -1,0 +1,9 @@
+#!/bin/bash
+
+set -e
+
+if [ "$1" = "configure" ] ; then
+	invoke-rc.d nfs-kernel-server start
+fi
+
+#DEBHELPER#

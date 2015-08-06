@@ -1,0 +1,138 @@
+openattic (2.0.1-2) UNRELEASED; urgency=medium
+
+  * Merge GUI tree.
+
+ -- Michael Ziegler <michael.ziegler@it-novum.com>  Thu, 06 Aug 2015 13:16:21 +0200
+
+openattic (2.0.1-1) unstable; urgency=medium
+
+  * New upstream release.
+  * Add dependencies to memcached and python-memcache.
+  * Add check_volume_utilization and check_pool_utilization commands to nagios
+    plugin config, install check_oa_utilization plugin.
+  * Add system customization variables to /etc/default/openattic.
+  * Rename the database to just "openattic".
+  * Add dependency to python-django-rest-framework-bulk.
+  * Reconfigure mod_wsgi to use processes instead of threads to avoid segfaults.
+  * Add new openattic-auth-kerberos package to avoid asking confusing Kerberos
+    questions unnecessarily during the installation.
+  * Drop dependency on lio-utils.
+  * Remove libnss-pgsql stuff (obsolete).
+  * Add dummy openattic_contacts.cfg to ensure nagios can restart before this
+    file has been overwritten by oA.
+  * Add dependency to sg3-utils for disk detection.
+  * Install serverstats.wsgi, adapt Apache config.
+  * Remove openattic-module-{t,}ftp packages (support dropped upstream).
+  * Drop dependency to libjs-extjs and oxygen-icon-theme.
+  * Remove Apache Alias directives no longer needed for the new GUI.
+
+ -- Michael Ziegler <diese-addy@funzt-halt.net>  Tue, 07 Jul 2015 12:09:17 +0200
+
+openattic (1.3.0-1) unstable; urgency=medium
+
+  * Merge the apache2.4 branch into default, thereby deprecating Debian Wheezy.
+
+ -- Michael Ziegler <diese-addy@funzt-halt.net>  Wed, 13 May 2015 15:34:46 +0200
+
+openattic (1.2.1-1apache241) unstable; urgency=medium
+
+  * New upstream version.
+
+ -- Michael Ziegler <diese-addy@funzt-halt.net>  Tue, 11 Nov 2014 14:10:40 +0100
+
+openattic (1.2.0-3) unstable; urgency=medium
+
+  * Invoke apache2 debhelper.
+  * Add apache2-dev to build-deps.
+
+ -- Michael Ziegler <diese-addy@funzt-halt.net>  Mon, 11 Aug 2014 10:50:08 +0200
+
+openattic (1.2.0-2) unstable; urgency=medium
+
+  * Adapt apache2 configurations for Apache 2.4.
+  * Bump apache2 dependency to 2.4.
+
+ -- Michael Ziegler <diese-addy@funzt-halt.net>  Mon, 11 Aug 2014 10:33:10 +0200
+
+openattic (1.2.0-1) unstable; urgency=medium
+
+  * New upstream release.
+  * Add dependency to postgresql-contrib.
+  * Remove dependency to python-statgrab.
+  * Update dependencies for Django 1.6.
+  * Remove obsolete AuthzLDAP directives from apache2.conf.
+  * Move pyudev dependency to openattic-base.
+  * Add openattic-module-ceph package.
+
+ -- Michael Ziegler <diese-addy@funzt-halt.net>  Mon, 11 Aug 2014 09:39:05 +0200
+
+openattic (1.1.1-1) unstable; urgency=low
+
+  * New upstream release.
+  * Include drbd kernel module config to increase the default maximum device
+    IDs to 255.
+  * Remove ocfs2-tools from suggests.
+
+ -- Michael Ziegler <diese-addy@funzt-halt.net>  Tue, 01 Apr 2014 13:05:23 +0200
+
+openattic (1.1.0-1) unstable; urgency=low
+
+  * New upstream release.
+  * Remove dependency to IET.
+  * Add dependency to LIO.
+
+ -- Michael Ziegler <diese-addy@funzt-halt.net>  Sun, 09 Mar 2014 15:45:55 +0100
+
+openattic (1.0.7-1) unstable; urgency=low
+
+  * New upstream release.
+  * Add dependency to rrdtool.
+  * Add openattic-module-cron package.
+  * Add openattic user to nagios group.
+  * Drop dependency to libpam-pgsql.
+  * Drop dependency to zfs-fuse and ntfs-3g.
+  * Add xfsprogs to recommends:.
+  * Add openattic-module-twraid package.
+  * Add openattic-module-ipmi package.
+  * Install updatetwraid cron job.
+  * Add a preinstall script that converts RRDs for STORAGE_TYPE=MULTIPLE.
+  * Remove openattic-module-ftp-{my,pg}sql packages which have been replaced by
+    a single openattic-module-ftp package.
+  * Add dependency to proftpd-mod-winbind for oa-m-ftp.
+  * Remove openattic-full-mysql and openattic-mysql packages.
+  * Rename openattic-full-pgsql to openattic-full.
+  * Add dependency to winbind, krb5-user, samba-common-bin and libnss-winbind
+    for oa-m-samba.
+  * Remove outdated oa-m-munin package.
+  * Remove ajaxterm dependency.
+  * Replace ifenslave dependency with ifenslave-2.6.
+  * Add zfsonlinux to recommends:.
+  * Depend on Django 1.4.
+  * Add ocfs2-tools to suggests:.
+  * Add vcs-hg: tag.
+  * Remove dependency to python-matplotlib.
+  * Add dependency to python-gobject.
+  * Add sudo to recommends:.
+  * Add dummy export to ensure nfs-kernel-server starts.
+
+ -- Michael Ziegler <diese-addy@funzt-halt.net>  Wed, 08 May 2013 11:46:09 +0200
+
+openattic (0.7.4-2) stable; urgency=low
+
+  * Remove ssmtp module (removed upstream).
+  * Add new mailaliases module.
+  * Adapt nss-mysql.conf to match nss-pgsql config.
+
+ -- Michael Ziegler <diese-addy@funzt-halt.net>  Mon, 12 Mar 2012 13:33:12 +0100
+
+openattic (0.7.4-1) stable; urgency=low
+
+  * New upstream release.
+
+ -- Michael Ziegler <diese-addy@funzt-halt.net>  Wed, 07 Mar 2012 17:02:16 +0100
+
+openattic (0.7.3-1) stable; urgency=low
+
+  * Initial release (Closes: #nnnn)  <nnnn is the bug number of your ITP>
+
+ -- Michael Ziegler <diese-addy@funzt-halt.net>  Mon, 05 Mar 2012 10:14:46 +0100

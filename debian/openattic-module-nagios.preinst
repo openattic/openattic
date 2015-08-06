@@ -1,0 +1,17 @@
+#!/bin/sh
+
+set -e
+
+if [ "$1" = "upgrade" ] ; then
+	cd /
+	if [ ! -e /etc/pnp4nagios/check_commands/check_diskstats.cfg ]; then
+		# we're installing this config file now, so before doing that, convert any RRDs that may exist
+		su nagios -s /bin/bash -c 'echo y | /usr/lib/pnp4nagios/libexec/rrd_convert.pl --check_command=check_diskstats --cfg_dir /etc/pnp4nagios/'
+	fi
+	
+	if [ ! -e /etc/pnp4nagios/check_commands/check_all_disks.cfg ]; then
+		su nagios -s /bin/bash -c 'echo y | /usr/lib/pnp4nagios/libexec/rrd_convert.pl --check_command=check_all_disks --cfg_dir /etc/pnp4nagios/'
+	fi
+fi
+
+#DEBHELPER#
