@@ -1,14 +1,15 @@
 <div ng-controller="chartCtrl" class="cluster-status container-fluid padding-10">
 
-    <div class="row np-space">
+    <div class="row no-space">
         <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12">
-            <div class="smart-form">
+            <div class="graph-form">
                 <div class="inline-group">
-                    <label class="checkbox" ng-repeat="checkBox in checkBoxes">
-                        <input type="checkbox" ng-model="checkBox.isChecked">
-                        <i></i>
-                        {{checkBox.label}}
-                    </label>
+                    <div class="checkbox checkbox-primary" ng-repeat="checkBox in checkBoxes">
+                        <input type="checkbox" ng-model="checkBox.isChecked" name="active" id="csw-{{checkBox.id}}">
+                        <label for="csw-{{checkBox.id}}">
+                            {{checkBox.label}}
+                        </label>
+                    </div>
                 </div>
             </div>
         </div>
@@ -42,8 +43,8 @@
                     <div class="alert alert-info alert-block">
                         Server-Uptime: {{sys_uptime}}
                     </div>
-                </div>
-            </div>-->
+                </div>-->
+            </div>
         </div>
     </div>
 
