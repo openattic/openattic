@@ -1,2 +1,2 @@
-zfs  /usr/share/openattic
-installed_apps.d/30_zfs /usr/share/openattic/installed_apps.d
+backend/zfs  /usr/share/openattic
+backend/installed_apps.d/30_zfs /usr/share/openattic/installed_apps.d

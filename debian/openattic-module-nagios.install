@@ -1,27 +1,27 @@
-nagios/*.py       /usr/share/openattic/nagios
-nagios/bin        /usr/share/openattic/nagios
-nagios/conf       /usr/share/openattic/nagios
-nagios/templates  /usr/share/openattic/nagios
-nagios/management /usr/share/openattic/nagios
-nagios/fixtures   /usr/share/openattic/nagios
-nagios/locale     /usr/share/openattic/nagios
+backend/nagios/*.py       /usr/share/openattic/nagios
+backend/nagios/bin        /usr/share/openattic/nagios
+backend/nagios/conf       /usr/share/openattic/nagios
+backend/nagios/templates  /usr/share/openattic/nagios
+backend/nagios/management /usr/share/openattic/nagios
+backend/nagios/fixtures   /usr/share/openattic/nagios
+backend/nagios/locale     /usr/share/openattic/nagios
 
-installed_apps.d/50_nagios /usr/share/openattic/installed_apps.d
+backend/installed_apps.d/50_nagios /usr/share/openattic/installed_apps.d
 
 debian/nagios_conf.d/openattic_static.cfg    /etc/nagios3/conf.d
 debian/nagios_conf.d/openattic_contacts.cfg  /etc/nagios3/conf.d
 debian/nagios_plugins_conf.d/openattic.cfg   /etc/nagios-plugins/config
 
-nagios/plugins/check_diskstats          /usr/lib/nagios/plugins
-nagios/plugins/check_oa_utilization     /usr/lib/nagios/plugins
-nagios/plugins/check_iface_traffic      /usr/lib/nagios/plugins
-nagios/plugins/check_openattic_rpcd     /usr/lib/nagios/plugins
-nagios/plugins/check_openattic_systemd  /usr/lib/nagios/plugins
-nagios/plugins/check_lvm_snapshot       /usr/lib/nagios/plugins
-nagios/plugins/check_cputime            /usr/lib/nagios/plugins
-nagios/plugins/check_protocol_traffic   /usr/lib/nagios/plugins
-nagios/plugins/check_twraid_unit        /usr/lib/nagios/plugins
+backend/nagios/plugins/check_diskstats          /usr/lib/nagios/plugins
+backend/nagios/plugins/check_oa_utilization     /usr/lib/nagios/plugins
+backend/nagios/plugins/check_iface_traffic      /usr/lib/nagios/plugins
+backend/nagios/plugins/check_openattic_rpcd     /usr/lib/nagios/plugins
+backend/nagios/plugins/check_openattic_systemd  /usr/lib/nagios/plugins
+backend/nagios/plugins/check_lvm_snapshot       /usr/lib/nagios/plugins
+backend/nagios/plugins/check_cputime            /usr/lib/nagios/plugins
+backend/nagios/plugins/check_protocol_traffic   /usr/lib/nagios/plugins
+backend/nagios/plugins/check_twraid_unit        /usr/lib/nagios/plugins
 
-nagios/plugins/notify_openattic         /usr/lib/nagios/plugins
+backend/nagios/plugins/notify_openattic         /usr/lib/nagios/plugins
 
 etc/pnp4nagios/check_commands/*.cfg     /etc/pnp4nagios/check_commands

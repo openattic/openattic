@@ -1,2 +1,2 @@
-mailaliases /usr/share/openattic
-installed_apps.d/50_mailaliases /usr/share/openattic/installed_apps.d
+backend/mailaliases /usr/share/openattic
+backend/installed_apps.d/50_mailaliases /usr/share/openattic/installed_apps.d

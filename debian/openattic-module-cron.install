@@ -1,2 +1,2 @@
-cron /usr/share/openattic
-installed_apps.d/09_cron /usr/share/openattic/installed_apps.d
+backend/cron /usr/share/openattic
+backend/installed_apps.d/09_cron /usr/share/openattic/installed_apps.d

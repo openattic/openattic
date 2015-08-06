@@ -1,27 +1,27 @@
 # Python Modules
-rpcd      /usr/share/openattic
-rest      /usr/share/openattic
-systemd   /usr/share/openattic
-cmdlog    /usr/share/openattic
-peering   /usr/share/openattic
-ifconfig  /usr/share/openattic
-sysutils  /usr/share/openattic
-userprefs /usr/share/openattic
-volumes   /usr/share/openattic
+backend/rpcd      /usr/share/openattic
+backend/rest      /usr/share/openattic
+backend/systemd   /usr/share/openattic
+backend/cmdlog    /usr/share/openattic
+backend/peering   /usr/share/openattic
+backend/ifconfig  /usr/share/openattic
+backend/sysutils  /usr/share/openattic
+backend/userprefs /usr/share/openattic
+backend/volumes   /usr/share/openattic
 
-installed_apps.d/20_volumes /usr/share/openattic/installed_apps.d
+backend/installed_apps.d/20_volumes /usr/share/openattic/installed_apps.d
 
 # Python files
-__init__.py    /usr/share/openattic
-settings.py    /etc/openattic
-manage.py      /usr/share/openattic
-oa_auth.py     /usr/share/openattic
-pamauth.py     /usr/share/openattic
-processors.py  /usr/share/openattic
-urls.py        /usr/share/openattic
-views.py       /usr/share/openattic
-openattic.wsgi /usr/share/openattic
-serverstats.wsgi /usr/share/openattic
+backend/__init__.py    /usr/share/openattic
+backend/settings.py    /etc/openattic
+backend/manage.py      /usr/share/openattic
+backend/oa_auth.py     /usr/share/openattic
+backend/pamauth.py     /usr/share/openattic
+backend/processors.py  /usr/share/openattic
+backend/urls.py        /usr/share/openattic
+backend/views.py       /usr/share/openattic
+backend/openattic.wsgi /usr/share/openattic
+backend/serverstats.wsgi /usr/share/openattic
 
 # Init scripts, configs that are shipped upstream
 etc/init.d/openattic-systemd        /etc/init.d

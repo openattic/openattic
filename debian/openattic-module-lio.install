@@ -1,2 +1,2 @@
-lio  /usr/share/openattic
-installed_apps.d/60_lio /usr/share/openattic/installed_apps.d
+backend/lio  /usr/share/openattic
+backend/installed_apps.d/60_lio /usr/share/openattic/installed_apps.d
