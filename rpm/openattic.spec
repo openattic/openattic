@@ -327,16 +327,19 @@ grunt build
 %install
 
 mkdir -p ${RPM_BUILD_ROOT}/usr/share/
-rsync -aAX openattic ${RPM_BUILD_ROOT}/usr/share/ --exclude debian --exclude rpm --exclude webui --exclude gatling
+rsync -aAX openattic/backend/ ${RPM_BUILD_ROOT}/usr/share/openattic/
+
+mkdir ${RPM_BUILD_ROOT}/usr/bin
+cp openattic/bin/oacli ${RPM_BUILD_ROOT}/usr/bin
+
+mkdir ${RPM_BUILD_ROOT}/usr/sbin
+cp openattic/bin/oaconfig   ${RPM_BUILD_ROOT}/usr/sbin
+cp openattic/bin/blkdevzero ${RPM_BUILD_ROOT}/usr/sbin
 
 mkdir -p ${RPM_BUILD_ROOT}/usr/share/openattic-gui
 rsync -aAX openattic/webui/dist/ ${RPM_BUILD_ROOT}/usr/share/openattic-gui/
 
 mkdir -p ${RPM_BUILD_ROOT}%{_defaultdocdir}/%{name}-%{version}
-
-rm ${RPM_BUILD_ROOT}/usr/share/openattic/CHANGELOG
-rm ${RPM_BUILD_ROOT}/usr/share/openattic/LICENSE
-rm ${RPM_BUILD_ROOT}/usr/share/openattic/README.rst
 
 cd ${RPM_BUILD_ROOT}
 mkdir -p ${RPM_BUILD_ROOT}/usr/share
@@ -348,12 +351,6 @@ mkdir -p ${RPM_BUILD_ROOT}/var/lib/openattic/static
 mkdir -p ${RPM_BUILD_ROOT}/var/lock/openattic
 
 cd ${RPM_BUILD_ROOT}/usr/share
-
-cd ${RPM_BUILD_ROOT}/usr/bin
-ln -s /usr/share/openattic/bin/oacli .
-cd ${RPM_BUILD_ROOT}/usr/sbin
-ln -s /usr/share/openattic/bin/blkdevzero .
-ln -s /usr/share/openattic/bin/oaconfig .
 
 sed -i -e 's/^ANGULAR_LOGIN.*$/ANGULAR_LOGIN = False/g' ${RPM_BUILD_ROOT}/usr/share/openattic/settings.py
 
