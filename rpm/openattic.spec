@@ -327,7 +327,7 @@ grunt build
 %install
 
 mkdir -p ${RPM_BUILD_ROOT}/usr/share/
-rsync -aAX openattic ${RPM_BUILD_ROOT}/usr/share/ --exclude debian --exclude rpm --exclude webui
+rsync -aAX openattic ${RPM_BUILD_ROOT}/usr/share/ --exclude debian --exclude rpm --exclude webui --exclude gatling
 
 mkdir -p ${RPM_BUILD_ROOT}/usr/share/openattic-gui
 rsync -aAX openattic/webui/dist/ ${RPM_BUILD_ROOT}/usr/share/openattic-gui/
