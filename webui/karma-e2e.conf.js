@@ -6,7 +6,7 @@ module.exports = function (config) {
         basePath: 'abc),
 
         files: [
-            'test/e2e/**/*.js'
+            '../e2e/**/*.js'
         ],
 
         logLevel: config.LOG_DEBUG,
