@@ -37,7 +37,7 @@ installed_apps.d
 # From openattic-gui
 webui/node_modules
 webui/dist
-webui/bower_components
+webui/app/bower_components
 webui/app/index.html
 webui/app/login.html
 webui/coverage
