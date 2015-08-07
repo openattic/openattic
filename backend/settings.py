@@ -29,10 +29,10 @@ if not PROJECT_ROOT or not exists( PROJECT_ROOT ):
 BASE_DIR = PROJECT_ROOT
 
 # Try to find the GUI
-if exists("/srv/openattic/webui/app"):
-    GUI_ROOT = "/srv/openattic/webui/app"
+if exists(join(PROJECT_ROOT, "..", "webui", "app")):
+    GUI_ROOT = join(PROJECT_ROOT, "..", "webui", "app")
 else:
-    GUI_ROOT = "/usr/share/openattic/webui"
+    GUI_ROOT = "/usr/share/openattic-gui"
 
 from ConfigParser import ConfigParser
 
