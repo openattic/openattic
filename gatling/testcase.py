@@ -197,6 +197,7 @@ class GatlingTestCase(unittest.TestCase):
             self.assertEqual(snap_res["path"], "/dev/%s/volume_snapshot_made_by_gatling" % self._get_pool()["name"])
         else:
             self.assertIn(snap_res["path"], ["/media/volume_snapshot_made_by_gatling",
+                                             "/media/gatling_volume/.snapshots/volume_snapshot_made_by_gatling",
                                              ("/media/%s/.snapshots/volume_snapshot_made_by_gatling" % self._get_pool()["name"])])
 
     def check_clone_properties(self, clone, max_size=None):
