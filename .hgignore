@@ -8,6 +8,7 @@ syntax: glob
 *.png
 *.iml
 *~
+e2e/configs.js
 .pc/
 
 .secret.txt
