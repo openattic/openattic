@@ -21,6 +21,7 @@ Depends: ${misc:Depends},
 Recommends:
  openattic-module-btrfs,
  openattic-module-lvm,
+ openattic-gui
 Suggests: python-django-rosetta, lsscsi, openattic-module-twraid,
  openattic-module-ipmi,
  openattic-module-zfs
