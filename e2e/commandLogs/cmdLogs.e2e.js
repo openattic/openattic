@@ -61,5 +61,7 @@ describe('CommandLogs', function(){
   
   afterAll(function(){
     helpers.delete_volume();
+    console.log('cmdLog test ended; test volume deleted');
+       
   });
 });
