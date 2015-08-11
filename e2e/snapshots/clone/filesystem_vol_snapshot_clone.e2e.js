@@ -5,7 +5,8 @@ describe('should create a clone volume of a snapshot (base: filesystem volume)',
   var clonename ="protractor_test_clone";
   var clone = element.all(by.cssContainingText('tr', clonename)).get(0);
   var volumesItem = element.all(by.css('ul .tc_menuitem')).get(3);
- 
+  var volume = element.all(by.cssContainingText('tr', 'protractor_test_volume')).get(0);
+
   beforeAll(function(){
     helpers.login();
     volumesItem.click();
@@ -14,17 +15,17 @@ describe('should create a clone volume of a snapshot (base: filesystem volume)',
     helpers.create_snap_clone();
     browser.sleep(800);
   });
-  
+
   it('should display the clone in the volumes list', function(){
     browser.sleep(800);
     expect(clone.isDisplayed()).toBe(true);
   });
-  
+
   afterAll(function(){
     console.log('filesystem_vol_snapshot_clone');
-    helpers.delete_snapshot();
     helpers.delete_snap_clone();
+    helpers.delete_snapshot();
     helpers.delete_volume();
   });
-  
+
 });

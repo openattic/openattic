@@ -1,19 +1,19 @@
 var helpers = require('../../common.js');
 
 describe('should create a clone volume of a snapshot (base: blockvolume)', function(){
-  
+
   var volumename = 'protractor_test_volume';
   var volume = element.all(by.cssContainingText('tr', volumename)).get(0);
-  
+
   var snapshotname = 'protractor_test_snap';
-  var snapshot = element(by.cssContainingText('tr', snapshotname));
-  
+  var snapshot = element.all(by.cssContainingText('tr', snapshotname)).get(0);
+
   var clonename ="protractor_test_clone";
   var clone = element.all(by.cssContainingText('tr', clonename)).get(0);
-    
+
   var snapMenuBtn = element.all(by.css('.tc_menudropdown')).get(1);
   var volumesItem = element.all(by.css('ul .tc_menuitem')).get(3);
-  
+
   beforeAll(function(){
     helpers.login();
     volumesItem.click();
@@ -21,9 +21,9 @@ describe('should create a clone volume of a snapshot (base: blockvolume)', funct
     helpers.create_snapshot();
     volume.click();
     element(by.css('.tc_snapshotTab')).click();
-    
+
   });
-  
+
   it('should not allow spaces or additional characters', function(){
     expect(volume.isDisplayed()).toBe(true);
     expect(snapshot.isDisplayed()).toBe(true);
@@ -40,42 +40,42 @@ describe('should create a clone volume of a snapshot (base: blockvolume)', funct
     element(by.id('bot1-Msg1')).click();
     expect(element(by.css('.tc_oadatatable_snapshots')).isPresent()).toBe(true);
   });
-  
+
   it('should create a clone of the created snapshot', function(){
     expect(volume.isDisplayed()).toBe(true);
     expect(snapshot.isDisplayed()).toBe(true);
-    
+
     snapMenuBtn.click();
     browser.sleep(400);
     element(by.css('.tc_snap_clone')).click();
     browser.sleep(400);
     element(by.model('clone_obj.name')).sendKeys(clonename);
     element(by.id('bot2-Msg1')).click();
-    browser.sleep(800);      
+    browser.sleep(800);
   });
-  
+
   it('should display the clone in the volumes list', function(){
     browser.sleep(600);
-    expect(clone.isPresent()).toBe(true);
+    expect(clone.isDisplayed()).toBe(true);
   });
-  
+
   it('should delete the clone volume', function(){
     expect(clone.isDisplayed()).toBe(true);
     clone.click();
     browser.sleep(400);
-    element(by.css('.tc_menudropdown')).click();
+    element.all(by.css('.tc_menudropdown')).get(0).click();
     browser.sleep(400);
     element(by.css('.tc_deleteItem')).click();
     browser.sleep(400);
 
     element(by.model('input.enteredName')).sendKeys(clonename);
-    element(by.id('bot2-Msg1')).click();        
+    element(by.id('bot2-Msg1')).click();
   });
-  
+
   afterAll(function(){
     console.log('block_vol_snapshot_clone');
     helpers.delete_snapshot();
     helpers.delete_volume();
-    
+
   });
 });
