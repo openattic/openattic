@@ -687,7 +687,9 @@ systemctl start lvm2-lvmetad
 %post module-nagios
 systemctl daemon-reload
 chkconfig nagios on
+chkconfig npcd on
 systemctl start nagios.service
+systemctl start npcd.service
 
 %files 	module-nfs
 %defattr(-,openattic,openattic,-)
