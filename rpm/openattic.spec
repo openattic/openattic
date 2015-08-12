@@ -314,6 +314,16 @@ Summary:  PGSQL database for openATTIC
  storage space on demand.
  .
  This package configures the PostgreSQL database for openATTIC.
+
+%package       release
+Summary:  openATTIC yum Repository Information
+ 
+%description release
+ openATTIC is a storage management system based upon Open Source tools with
+ a comprehensive user interface that allows you to create, share and backup
+ storage space on demand.
+ .
+ This package contains the yum repository file to install openATTIC.
  
 %prep
 
@@ -406,6 +416,10 @@ cp openattic/etc/dbus-1/system.d/openattic.conf ${RPM_BUILD_ROOT}/etc/dbus-1/sys
 
 mkdir -p  ${RPM_BUILD_ROOT}/etc/modprobe.d/
 cp openattic/etc/modprobe.d/drbd.conf ${RPM_BUILD_ROOT}/etc/modprobe.d/
+
+# configure yum repo
+install -m 755 -d  ${RPM_BUILD_ROOT}/%{sysconfdir}/yum.repos.d/
+install -m 744 openattic/etc/yum.repos.d/%{name}.repo ${RPM_BUILD_ROOT}/%{sysconfdir}/yum.repos.d/
 
 #configure nagios
 mkdir -p  ${RPM_BUILD_ROOT}/etc/nagios/conf.d/
@@ -703,6 +717,10 @@ systemctl start nfs
 %files 	pgsql
 %defattr(-,openattic,openattic,-)
 /etc/openattic/
+
+%files release
+%defattr(-,root,root,-)
+%{sysconfdir}/yum.repos.d/%{name}.repo
 
 
 %changelog
