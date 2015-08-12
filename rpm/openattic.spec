@@ -342,7 +342,6 @@ rsync -aAX openattic/webui/dist/ ${RPM_BUILD_ROOT}/usr/share/openattic-gui/
 
 mkdir -p ${RPM_BUILD_ROOT}%{_defaultdocdir}/%{name}-%{version}
 
-cd ${RPM_BUILD_ROOT}
 mkdir -p ${RPM_BUILD_ROOT}/usr/share
 mkdir -p ${RPM_BUILD_ROOT}%{_bindir}
 mkdir -p ${RPM_BUILD_ROOT}%{_sbindir}
@@ -350,8 +349,6 @@ mkdir -p ${RPM_BUILD_ROOT}/var/lib/openattic/http/volumes
 mkdir -p ${RPM_BUILD_ROOT}/var/lib/openattic/nfs_dummy
 mkdir -p ${RPM_BUILD_ROOT}/var/lib/openattic/static
 mkdir -p ${RPM_BUILD_ROOT}/var/lock/openattic
-
-cd ${RPM_BUILD_ROOT}/usr/share
 
 sed -i -e 's/^ANGULAR_LOGIN.*$/ANGULAR_LOGIN = False/g' ${RPM_BUILD_ROOT}/usr/share/openattic/settings.py
 
@@ -494,9 +491,7 @@ for NAGPLUGIN in `ls -1 ${RPM_BUILD_ROOT}/usr/share/openattic/nagios/plugins/`; 
 done
 
 mkdir -p ${RPM_BUILD_ROOT}/lib/systemd/system/
-cd ${RPM_BUILD_ROOT}/lib/systemd/system/
-ln -s /usr/share/openattic/etc/systemd/openattic-rpcd.service openattic-rpcd.service
-ln -s /usr/share/openattic/etc/systemd/openattic-systemd.service openattic-systemd.service
+cp etc/systemd/*.service ${RPM_BUILD_ROOT}/lib/systemd/system/
 
 
 # Openattic httpd config
