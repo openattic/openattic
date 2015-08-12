@@ -491,7 +491,7 @@ for NAGPLUGIN in `ls -1 ${RPM_BUILD_ROOT}/usr/share/openattic/nagios/plugins/`; 
 done
 
 mkdir -p ${RPM_BUILD_ROOT}/lib/systemd/system/
-cp etc/systemd/*.service ${RPM_BUILD_ROOT}/lib/systemd/system/
+cp openattic/etc/systemd/*.service ${RPM_BUILD_ROOT}/lib/systemd/system/
 
 
 # Openattic httpd config
