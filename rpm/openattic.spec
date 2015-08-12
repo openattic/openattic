@@ -50,6 +50,7 @@ BuildRequires:  mercurial
  Upstream URL: http://www.openattic.org
  
 %package       base
+Requires:	policycoreutils-python
 Requires:	python-memcached 
 Requires:	memcached
 Requires:	python-imaging 
