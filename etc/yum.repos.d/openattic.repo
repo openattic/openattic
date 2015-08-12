@@ -1,0 +1,13 @@
+[openattic-2.x]
+name=openATTIC v2.x
+baseurl=http://apt.openattic.org/rpm/openattic-2.x-el7-x86_64
+enabled=1
+gpgkey=http://apt.openattic.org/A7D3EAFA.txt
+gpgcheck=1
+
+[openattic-nightly]
+name=openATTIC nightly builds
+baseurl=http://apt.openattic.org/rpm/openattic-nightly-el7-x86_64
+enabled=0
+gpgkey=http://apt.openattic.org/A7D3EAFA.txt
+gpgcheck=1
