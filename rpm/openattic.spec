@@ -45,8 +45,6 @@ BuildRequires:  mercurial
   * Cron
   * MailAliases (EMail configuration)
  .
- You can install additional modules yourself or use the openattic-full package.
- .
  Upstream URL: http://www.openattic.org
  
 %package       base
@@ -89,9 +87,9 @@ Summary:  Basic requirements for openATTIC
  storage space on demand.
  .
  This package installs the basic framework for openATTIC, which consists
- of the RPC and System daemons and the Web Interface. You will not be able
- to manage any storage using *just* this package, but the other packages
- require this one to be available.
+ of the RPC and System daemons. You will not be able to manage any storage
+ using *just* this package, but the other packages require this one to be
+ available.
 
 %package gui
 Requires:	openattic
@@ -106,7 +104,7 @@ openATTIC is a storage management system based upon Open Source tools with
 a comprehensive user interface that allows you to create, share and backup
 storage space on demand.
 .
-This is the new GUI.
+This package includes the Web UI based on AngularJS/Bootstrap.
  
 %description module-btrfs
  openATTIC is a storage management system based upon Open Source tools with
@@ -364,8 +362,8 @@ mkdir -p ${RPM_BUILD_ROOT}/var/lock/openattic
 sed -i -e 's/^ANGULAR_LOGIN.*$/ANGULAR_LOGIN = False/g' ${RPM_BUILD_ROOT}/usr/share/openattic/settings.py
 
 # Configure /etc/default/openattic
-mkdir -p ${RPM_BUILD_ROOT}/etc/default/
-cat > ${RPM_BUILD_ROOT}/etc/default/openattic <<EOF
+mkdir -p ${RPM_BUILD_ROOT}/%{_sysconfdir}/default/
+cat > ${RPM_BUILD_ROOT}/%{_sysconfdir}/default/openattic <<EOF
 PYTHON="/usr/bin/python"
 OADIR="/usr/share/openattic"
 
@@ -397,8 +395,8 @@ EOF
 # database config
 ## TODO: generate random password
 
-mkdir -p   ${RPM_BUILD_ROOT}/etc/openattic/databases
-cat <<EOF > ${RPM_BUILD_ROOT}/etc/openattic/databases/pgsql.ini
+mkdir -p   ${RPM_BUILD_ROOT}/%{_sysconfdir}/openattic/databases
+cat <<EOF > ${RPM_BUILD_ROOT}/%{_sysconfdir}/openattic/databases/pgsql.ini
 [default]
 engine   = django.db.backends.postgresql_psycopg2
 name     = openattic
@@ -408,23 +406,28 @@ host     = localhost
 port     =
 EOF
 
-ln -s /etc/openattic/databases/pgsql.ini ${RPM_BUILD_ROOT}/etc/openattic/database.ini
+ln -s /etc/openattic/databases/pgsql.ini ${RPM_BUILD_ROOT}/%{_sysconfdir}/openattic/database.ini
 
 # configure dbus
-mkdir -p  ${RPM_BUILD_ROOT}/etc/dbus-1/system.d/
-cp openattic/etc/dbus-1/system.d/openattic.conf ${RPM_BUILD_ROOT}/etc/dbus-1/system.d/
+mkdir -p  ${RPM_BUILD_ROOT}/%{_sysconfdir}/dbus-1/system.d/
+cp openattic/etc/dbus-1/system.d/openattic.conf ${RPM_BUILD_ROOT}/%{_sysconfdir}/dbus-1/system.d/
 
-mkdir -p  ${RPM_BUILD_ROOT}/etc/modprobe.d/
-cp openattic/etc/modprobe.d/drbd.conf ${RPM_BUILD_ROOT}/etc/modprobe.d/
+mkdir -p  ${RPM_BUILD_ROOT}/%{_sysconfdir}/modprobe.d/
+cp openattic/etc/modprobe.d/drbd.conf ${RPM_BUILD_ROOT}/%{_sysconfdir}/modprobe.d/
 
 # configure yum repo
-install -m 755 -d  ${RPM_BUILD_ROOT}/%{sysconfdir}/yum.repos.d/
-install -m 744 openattic/etc/yum.repos.d/%{name}.repo ${RPM_BUILD_ROOT}/%{sysconfdir}/yum.repos.d/
+install -m 755 -d  ${RPM_BUILD_ROOT}/%{_sysconfdir}/yum.repos.d/
+install -m 744 openattic/etc/yum.repos.d/%{name}.repo ${RPM_BUILD_ROOT}/%{_sysconfdir}/yum.repos.d/
+
+# install man pages
+install -m 755 -d  ${RPM_BUILD_ROOT}/%{_mandir}/man1/
+install -m 644 openattic/debian/man/*.1 ${RPM_BUILD_ROOT}/%{_mandir}/man1/
+gzip ${RPM_BUILD_ROOT}/%{_mandir}/man1/*.1
 
 #configure nagios
-mkdir -p  ${RPM_BUILD_ROOT}/etc/nagios/conf.d/
-cp openattic/etc/nagios-plugins/config/openattic.cfg ${RPM_BUILD_ROOT}/etc/nagios/conf.d/openattic_plugins.cfg
-cp openattic/etc/nagios3/conf.d/openattic_*.cfg      ${RPM_BUILD_ROOT}/etc/nagios/conf.d/
+mkdir -p  ${RPM_BUILD_ROOT}/%{_sysconfdir}/nagios/conf.d/
+cp openattic/etc/nagios-plugins/config/openattic.cfg ${RPM_BUILD_ROOT}/%{_sysconfdir}/nagios/conf.d/openattic_plugins.cfg
+cp openattic/etc/nagios3/conf.d/openattic_*.cfg      ${RPM_BUILD_ROOT}/%{_sysconfdir}/nagios/conf.d/
 
 mkdir -p  ${RPM_BUILD_ROOT}/usr/lib64/nagios/plugins/
 for NAGPLUGIN in `ls -1 ${RPM_BUILD_ROOT}/usr/share/openattic/nagios/plugins/`; do
@@ -436,12 +439,12 @@ cp openattic/etc/systemd/*.service ${RPM_BUILD_ROOT}/lib/systemd/system/
 
 
 # Openattic httpd config
-mkdir -p ${RPM_BUILD_ROOT}/etc/httpd/conf.d/
-cp openattic/etc/apache2/conf-available/openattic-volumes.conf ${RPM_BUILD_ROOT}/etc/httpd/conf.d/
-cp openattic/etc/apache2/conf-available/openattic.conf         ${RPM_BUILD_ROOT}/etc/httpd/conf.d/
+mkdir -p ${RPM_BUILD_ROOT}/%{_sysconfdir}/httpd/conf.d/
+cp openattic/etc/apache2/conf-available/openattic-volumes.conf ${RPM_BUILD_ROOT}/%{_sysconfdir}/httpd/conf.d/
+cp openattic/etc/apache2/conf-available/openattic.conf         ${RPM_BUILD_ROOT}/%{_sysconfdir}/httpd/conf.d/
 
-mkdir -p ${RPM_BUILD_ROOT}/etc/cron.d/
-cp openattic/etc/cron.d/updatetwraid         ${RPM_BUILD_ROOT}/etc/cron.d/
+mkdir -p ${RPM_BUILD_ROOT}/%{_sysconfdir}/cron.d/
+cp openattic/etc/cron.d/updatetwraid         ${RPM_BUILD_ROOT}/%{_sysconfdir}/cron.d/
 
 %pre
 # create openattic user/group  if it does not exist
@@ -542,16 +545,18 @@ echo ""
 %{_bindir}/oacli
 %{_sbindir}/blkdevzero
 %{_sbindir}/oaconfig
-%config /etc/dbus-1/system.d/openattic.conf
+%config /%{_sysconfdir}/dbus-1/system.d/openattic.conf
 /lib/systemd/system/openattic-rpcd.service
 /lib/systemd/system/openattic-systemd.service
-%config /etc/httpd/conf.d/openattic.conf
+%config /%{_sysconfdir}/httpd/conf.d/openattic.conf
 %defattr(-,openattic,openattic,-)
 %dir /var/lib/openattic
 %dir /var/lock/openattic
 %dir /usr/share/openattic/installed_apps.d
-%config(noreplace) /etc/default/openattic
-%config(noreplace) /etc/openattic/databases/pgsql.ini
+%config(noreplace) /%{_sysconfdir}/default/openattic
+%config(noreplace) /%{_sysconfdir}/openattic/databases/pgsql.ini
+%doc %{_mandir}/man1/oaconfig.1.gz
+%doc %{_mandir}/man1/oacli.1.gz
 /usr/share/openattic/__init__.pyc
 /usr/share/openattic/__init__.pyo
 /usr/share/openattic/clustering/
@@ -593,10 +598,6 @@ echo ""
 /usr/share/openattic/oa_auth.py
 /usr/share/openattic/settings.py
 
-#./usr/share/man/
-#./usr/share/man/man1/
-#./usr/share/man/man1/oaconfig.1.gz
-#./usr/share/man/man1/oacli.1.gz
 
 %files 	module-btrfs
 %defattr(-,openattic,openattic,-)
@@ -614,7 +615,7 @@ echo ""
 
 %files 	module-drbd
 %defattr(-,openattic,openattic,-)
-%config /etc/modprobe.d/drbd.conf
+%config /%{_sysconfdir}/modprobe.d/drbd.conf
 /usr/share/openattic/drbd/
 /usr/share/openattic/installed_apps.d/60_drbd
 
@@ -623,7 +624,7 @@ echo ""
 /var/lib/openattic/http/
 /usr/share/openattic/http/
 /usr/share/openattic/installed_apps.d/60_http
-%config /etc/httpd/conf.d/openattic-volumes.conf
+%config /%{_sysconfdir}/httpd/conf.d/openattic-volumes.conf
 %defattr(-,openattic,openattic,-)
 
 %post module-http
@@ -664,9 +665,9 @@ systemctl start lvm2-lvmetad
 #/etc/pnp4nagios/check_commands/check_diskstats.cfg
 #/etc/pnp4nagios/check_commands/check_all_disks.cfg
 %defattr(-,root,root,-)
-%config /etc/nagios/conf.d/openattic_plugins.cfg
-%config /etc/nagios/conf.d/openattic_static.cfg
-%config /etc/nagios/conf.d/openattic_contacts.cfg
+%config /%{_sysconfdir}/nagios/conf.d/openattic_plugins.cfg
+%config /%{_sysconfdir}/nagios/conf.d/openattic_static.cfg
+%config /%{_sysconfdir}/nagios/conf.d/openattic_contacts.cfg
 /usr/lib64/nagios/plugins/check_cputime
 /usr/lib64/nagios/plugins/check_diskstats
 /usr/lib64/nagios/plugins/check_drbd
@@ -707,7 +708,7 @@ systemctl start nfs
 %defattr(-,openattic,openattic,-)
 /usr/share/openattic/installed_apps.d/09_twraid
 /usr/share/openattic/twraid/
-%config /etc/cron.d/updatetwraid
+%config /%{_sysconfdir}/cron.d/updatetwraid
 
 %files 	module-zfs
 %defattr(-,openattic,openattic,-)
@@ -716,11 +717,11 @@ systemctl start nfs
 
 %files 	pgsql
 %defattr(-,openattic,openattic,-)
-/etc/openattic/
+/%{_sysconfdir}/openattic/
 
 %files release
 %defattr(-,root,root,-)
-%{sysconfdir}/yum.repos.d/%{name}.repo
+%{_sysconfdir}/yum.repos.d/%{name}.repo
 
 
 %changelog
