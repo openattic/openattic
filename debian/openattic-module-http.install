@@ -1,3 +1,3 @@
 backend/http /usr/share/openattic
 backend/installed_apps.d/60_http /usr/share/openattic/installed_apps.d
-debian/apache2_conf.d/openattic-volumes.conf /etc/apache2/conf-available
+etc/apache2/conf-available/openattic-volumes.conf /etc/apache2/conf-available

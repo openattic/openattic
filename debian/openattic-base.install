@@ -33,9 +33,10 @@ etc/pam.d/openattic                 /etc/pam.d
 etc/openattic/volume_init.d/*       /etc/openattic/volume_init.d
 
 # System Configs
-debian/apache2_conf.d/openattic.conf /etc/apache2/conf-available
+etc/apache2/conf-available/openattic.conf /etc/apache2/conf-available
+etc/dbus-1/system.d/openattic.conf        /etc/dbus-1/system.d
+
 debian/default/openattic            /etc/default
-debian/dbus_system.d/openattic.conf /etc/dbus-1/system.d
 
 # Pacemaker resource agents
 bin/resource_agents/* /usr/lib/ocf/resource.d/openattic/

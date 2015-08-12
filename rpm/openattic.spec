@@ -401,89 +401,15 @@ ln -s /etc/openattic/databases/pgsql.ini ${RPM_BUILD_ROOT}/etc/openattic/databas
 
 # configure dbus
 mkdir -p  ${RPM_BUILD_ROOT}/etc/dbus-1/system.d/
-cat <<EOF >  ${RPM_BUILD_ROOT}/etc/dbus-1/system.d/openattic.conf
-<!DOCTYPE busconfig PUBLIC
-    "-//freedesktop//DTD D-BUS Bus Configuration 1.0//EN"
-    "http://www.freedesktop.org/standards/dbus/1.0/busconfig.dtd">
-<busconfig>
-    <policy user="root">
-            <allow own="org.openattic.systemd" />
-            <allow send_destination="org.openattic.systemd" />
-            <allow receive_sender="org.openattic.systemd"   />
-    </policy>
-    <policy user="openattic">
-            <allow send_destination="org.openattic.systemd" />
-            <allow receive_sender="org.openattic.systemd"   />
-    </policy>
-    <policy user="nagios">
-            <allow send_destination="org.openattic.systemd" />
-            <allow receive_sender="org.openattic.systemd"   />
-    </policy>
-    <policy context="default">
-            <deny  send_destination="org.openattic.systemd" />
-            <deny  receive_sender="org.openattic.systemd"   />
-    </policy>
-</busconfig>
-EOF
+cp openattic/etc/dbus-1/system.d/openattic.conf ${RPM_BUILD_ROOT}/etc/dbus-1/system.d/
+
+mkdir -p  ${RPM_BUILD_ROOT}/etc/modprobe.d/
+cp openattic/etc/modprobe.d/drbd.conf ${RPM_BUILD_ROOT}/etc/modprobe.d/
 
 #configure nagios
 mkdir -p  ${RPM_BUILD_ROOT}/etc/nagios/conf.d/
-cat <<EOF > ${RPM_BUILD_ROOT}/etc/nagios/conf.d/openattic_plugins.cfg
-define command{
-    command_name check_openattic_systemd
-    command_line $USER1$/check_openattic_systemd
-}
-
-define command{
-    command_name check_openattic_rpcd
-    command_line $USER1$/check_openattic_rpcd
-}
-
-define command{
-    command_name check_iface_traffic
-    command_line $USER1$/check_iface_traffic $ARG1$
-}
-
-define command{
-    command_name check_diskstats
-    command_line $USER1$/check_diskstats $ARG1$
-}
-
-define command{
-    command_name check_volume_utilization
-    command_line $USER1$/check_oa_utilization $ARG1$
-}
-
-define command{
-    command_name check_pool_utilization
-    command_line $USER1$/check_oa_utilization -p $ARG1$
-}
-
-define command{
-    command_name check_protocol_traffic
-    command_line $USER1$/check_protocol_traffic -i $ARG1$
-}
-
-define command{
-    command_name check_lvm_snapshot
-    command_line $USER1$/check_lvm_snapshot $ARG1$
-}
-
-define command{
-    command_name check_cputime
-    command_line $USER1$/check_cputime -c $ARG1$
-}
-
-define command{
-    command_name check_twraid_unit
-    command_line $USER1$/check_twraid_unit $ARG1$
-}
-
-define command{
-    command_name notify_openattic
-    command_line $USER1$/notify_openattic
-}
-EOF
+cp openattic/etc/nagios-plugins/config/openattic.cfg ${RPM_BUILD_ROOT}/etc/nagios/conf.d/openattic_plugins.cfg
+cp openattic/etc/nagios3/conf.d/openattic_*.cfg      ${RPM_BUILD_ROOT}/etc/nagios/conf.d/
 
 mkdir -p  ${RPM_BUILD_ROOT}/usr/lib64/nagios/plugins/
 for NAGPLUGIN in `ls -1 ${RPM_BUILD_ROOT}/usr/share/openattic/nagios/plugins/`; do
@@ -496,60 +422,11 @@ cp openattic/etc/systemd/*.service ${RPM_BUILD_ROOT}/lib/systemd/system/
 
 # Openattic httpd config
 mkdir -p ${RPM_BUILD_ROOT}/etc/httpd/conf.d/
-cat <<EOF >${RPM_BUILD_ROOT}/etc/httpd/conf.d/openattic.conf
-<IfModule mod_wsgi.c>
+cp openattic/etc/apache2/conf-available/openattic-volumes.conf ${RPM_BUILD_ROOT}/etc/httpd/conf.d/
+cp openattic/etc/apache2/conf-available/openattic.conf         ${RPM_BUILD_ROOT}/etc/httpd/conf.d/
 
-Alias                   /openattic/staticfiles/   /var/lib/openattic/static/
-
-WSGIScriptAlias         /openattic/serverstats    /usr/share/openattic/serverstats.wsgi
-WSGIScriptAlias         /openattic                /usr/share/openattic/openattic.wsgi
-WSGIDaemonProcess       openattic threads=25 user=openattic group=openattic
-WSGIProcessGroup        openattic
-WSGIScriptReloading     Off
-WSGIPassAuthorization   On
-
-<Directory /usr/share/openattic>
-        Options Indexes FollowSymLinks
-        AllowOverride None
-        Require all granted
-</Directory>
-
-<Directory /var/lib/openattic>
-        Options Indexes FollowSymLinks
-        AllowOverride None
-        Require all granted
-</Directory>
-
-<Location /openattic>
-        Allow from all
-        FileETag None
-        <IfModule mod_deflate.c>
-                AddOutputFilterByType DEFLATE text/html text/plain text/css text/javascript image/png image/jpeg image/gif
-                <IfModule mod_headers.c>
-                        # properly handle requests coming from behind proxies
-                        Header unset ETag
-                        Header append Vary User-Agent
-                </IfModule>
-        </IfModule>
-</Location>
-
-<IfModule mod_auth_kerb.c>
-# Enable this after you joined openAttic into the domain.
-#<Location /openattic/accounts/kerblogin.js>
-#    AuthType Kerberos
-#    KrbServiceName HTTP/13-19.master.dns@MASTER.DNS
-#    KrbAuthRealms MASTER.DNS
-#    Krb5Keytab /etc/krb5.keytab
-#    KrbMethodNegotiate on
-#    KrbMethodK5Passwd off
-#    KrbLocalUserMapping on
-#    Require valid-user
-#</Location>
-</IfModule>
-</IfModule>
-EOF
-
-
+mkdir -p ${RPM_BUILD_ROOT}/etc/cron.d/
+cp openattic/etc/cron.d/updatetwraid         ${RPM_BUILD_ROOT}/etc/cron.d/
 
 %pre
 # create openattic user/group  if it does not exist
@@ -722,6 +599,7 @@ echo ""
 
 %files 	module-drbd
 %defattr(-,openattic,openattic,-)
+%config /etc/modprobe.d/drbd.conf
 /usr/share/openattic/drbd/
 /usr/share/openattic/installed_apps.d/60_drbd
 
@@ -730,6 +608,7 @@ echo ""
 /var/lib/openattic/http/
 /usr/share/openattic/http/
 /usr/share/openattic/installed_apps.d/60_http
+%config /etc/httpd/conf.d/openattic-volumes.conf
 %defattr(-,openattic,openattic,-)
 
 %post module-http
@@ -769,10 +648,10 @@ systemctl start lvm2-lvmetad
 %files 	module-nagios
 #/etc/pnp4nagios/check_commands/check_diskstats.cfg
 #/etc/pnp4nagios/check_commands/check_all_disks.cfg
-#/etc/nagios-plugins/config/openattic.cfg
-#/etc/nagios/conf.d/openattic_static.cfg
 %defattr(-,root,root,-)
 %config /etc/nagios/conf.d/openattic_plugins.cfg
+%config /etc/nagios/conf.d/openattic_static.cfg
+%config /etc/nagios/conf.d/openattic_contacts.cfg
 /usr/lib64/nagios/plugins/check_cputime
 /usr/lib64/nagios/plugins/check_diskstats
 /usr/lib64/nagios/plugins/check_drbd
@@ -813,9 +692,7 @@ systemctl start nfs
 %defattr(-,openattic,openattic,-)
 /usr/share/openattic/installed_apps.d/09_twraid
 /usr/share/openattic/twraid/
-#./etc/
-#./etc/cron.d/
-#./etc/cron.d/updatetwraid
+%config /etc/cron.d/updatetwraid
 
 %files 	module-zfs
 %defattr(-,openattic,openattic,-)
