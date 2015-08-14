@@ -1,6 +1,7 @@
 openattic (2.0.1-2) UNRELEASED; urgency=medium
 
   * Merge GUI tree.
+  * Remove left-over statoverride for /var/lib/openattic/ftp.
 
  -- Michael Ziegler <michael.ziegler@it-novum.com>  Thu, 06 Aug 2015 13:16:21 +0200
 
