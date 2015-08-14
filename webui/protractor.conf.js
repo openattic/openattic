@@ -30,7 +30,8 @@ exports.config = {
     fs_wiz_btrfs_nfs   : '../e2e/wizards/file/fileStorage_btrfs_nfs.e2e.js',
     fs_wiz_ext_cifs    : '../e2e/wizards/file/fileStorage_ext_cifs.e2e.js',
     blockStorage       : '../e2e/wizards/block/blockStorage.e2e.js',
-    vmStorage_xfs_nfs  : '../e2e/wizards/vm/vmStorage_xfs_nfs.e2e.js'
+    vmStorage_xfs_nfs  : '../e2e/wizards/vm/vmStorage_xfs_nfs.e2e.js',
+    //note: please disable zvol_add suite if you do not have zfs pools configured!
     zvol_add	       : '../e2e/volumes/zvol.e2e.js',
   },
 
