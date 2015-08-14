@@ -31,6 +31,7 @@ exports.config = {
     fs_wiz_ext_cifs    : '../e2e/wizards/file/fileStorage_ext_cifs.e2e.js',
     blockStorage       : '../e2e/wizards/block/blockStorage.e2e.js',
     vmStorage_xfs_nfs  : '../e2e/wizards/vm/vmStorage_xfs_nfs.e2e.js'
+    zvol_add	       : '../e2e/volumes/zvol.e2e.js',
   },
 
   onPrepare: function(){
