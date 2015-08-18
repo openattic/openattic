@@ -7,12 +7,10 @@ exports.config = {
   framework: 'jasmine2',
 
   suites: {
-    //dashboard        : '../e2e/dashboard/**/*.e2e.js',
-    //todowidget       : '../e2e/dashboard/todoWidget/*.e2e.js',
     general            : '../e2e/general/**/*.e2e.js',
     disks              : '../e2e/disks/**/*.e2e.js',
     pools              : '../e2e/pools/**/*e2e.js',
-    volumes            : '../e2e/volumes/**/*.e2e.js',
+    volumes            : '../e2e/volumes/volumes.e2e.js',
     volumes_add        : '../e2e/volumes/add/**/*.e2e.js',
     volumes_protection : '../e2e/volumes/protection/**/*.e2e.js',
     volumes_resize     : '../e2e/volumes/resize/**/*.e2e.js',
@@ -26,7 +24,6 @@ exports.config = {
     users              : '../e2e/users/**/*.e2e.js',
     auth               : '../e2e/auth/*.e2e.js',
     cmdlogs            : '../e2e/commandLogs/**/*.e2e.js',
-    //wizards            : '../e2e/wizards/**/*.e2e.js',
     fs_wiz_btrfs_nfs   : '../e2e/wizards/file/fileStorage_btrfs_nfs.e2e.js',
     fs_wiz_ext_cifs    : '../e2e/wizards/file/fileStorage_ext_cifs.e2e.js',
     blockStorage       : '../e2e/wizards/block/blockStorage.e2e.js',
