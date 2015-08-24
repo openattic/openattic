@@ -84,3 +84,33 @@ class ZfsLvmPoolVolumeTestCase(ZfsLvmPoolTestScenario, ZfsVolumeTests):
     """ Runs our ZFS subvolume tests against the LVM zpool. """
     pass
 
+
+class NfsShareTest(object):
+    api_prefix  = "volumes"
+
+    def test_zfs_nfs_share(self):
+        """ Create an Export for a ZFS subvolume. """
+        # create a volume
+        data = {"name"          : "gatling_volume",
+                "megs"          : 1000,
+                "source_pool"   : {"id": self._get_pool()["id"]},
+                "filesystem"    : "zfs"}
+        vol = self.send_request("POST", data=data)
+        time.sleep(8)
+        self.addCleanup(requests.request, "DELETE", vol["cleanup_url"], headers=vol["headers"])
+
+        # create nfs export
+        export_data = {"volume" : {"id": vol["response"]["id"]},
+                       "path"   : "/media/%s/gatling_volume" % self._get_pool()["name"],
+                       "address": self.conf.get("nfs:export", "address"),
+                       "options": self.conf.get("nfs:export", "options")}
+        share = self.send_request("POST", "nfsshares", data=export_data)
+        self.addCleanup(requests.request, "DELETE", share["cleanup_url"], headers=share["headers"])
+
+
+class ZfsNativePoolNfsTestCase(ZfsNativePoolTestScenario, NfsTestScenario, NfsShareTest):
+    pass
+
+
+class ZfsLvmPoolNfsTestCase(ZfsLvmPoolTestScenario, NfsTestScenario, NfsShareTest):
+    pass
