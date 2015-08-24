@@ -57,6 +57,23 @@ class ZfsVolumeTests(object):
         self.addCleanup(requests.request, "DELETE", snap["cleanup_url"], headers=snap["headers"])
         self.check_snapshot_properties(snap, vol["response"]["id"])
 
+    def test_create_equal_space(self):
+        """ Create a volume of *exactly* the same size as the zpool, meaning there's no quota involved. """
+        data = self._get_volume_data(self._get_pool()["usage"]["size"])
+        vol = self.send_request("POST", data=data)
+        time.sleep(self.sleeptime)
+        self.addCleanup(requests.request, "DELETE", vol["cleanup_url"], headers=vol["headers"])
+        self.check_volume_properties(vol, self._get_pool()["usage"]["size"])
+
+    def test_create_not_enough_space(self):
+        """ Try creating a volume bigger than the pool and check that this fails. """
+        data = self._get_volume_data(self._get_pool()["usage"]["size"] * 2)
+
+        with self.assertRaises(requests.HTTPError) as err:
+            vol = self.send_request("POST", data=data)
+
+        self.assertTrue("500 Server Error: Internal Server Error" in err.exception)
+
 
 class ZfsNativePoolVolumeTestCase(ZfsNativePoolTestScenario, ZfsVolumeTests):
     """ Runs our ZFS subvolume tests against the native ZPool. """
