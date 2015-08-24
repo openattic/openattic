@@ -15,11 +15,14 @@ class ZfsVolumeTests(object):
     smallsize   = 1000
     fstype      = "zfs"
 
-    def _get_volume_data(self):
+    def _get_volume_data(self, size=None):
         """ Return volume creation data. """
+        if not size:
+            size = self.smallsize
+
         return {
             "name": "gatling_volume",
-            "megs": self.smallsize,
+            "megs": size,
             "source_pool": {"id": self._get_pool()["id"]},
             "filesystem": self.fstype
         }
