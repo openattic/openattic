@@ -33,6 +33,7 @@ class ZfsNativePoolTestScenario(GatlingTestCase):
 
 class ZfsLvmPoolTestScenario(LvTestScenario):
 
+    bigsize     = 800
     smallsize   = 500
 
     @classmethod
