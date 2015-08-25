@@ -189,6 +189,10 @@ class VolumeTests(object):
 
     def test_clone_not_enough_space_in_pool(self):
         """ Clone this volume to a volume created in the process when the volume pool does not have room. """
+        # wait while pool status is still locked
+        while self._get_pool()["status"]["status"] == 'locked':
+            time.sleep(self.sleeptime)
+
         # create a volume
         hugesize = self._get_pool()["usage"]["free"] - self.tinysize
         data = self._get_volume_data(hugesize)
