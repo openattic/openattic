@@ -17,7 +17,6 @@ class VolumeTests(object):
         * api_prefix: Prefix for the related REST API part (http://oaHost/openattic/api/<api_prefix>)
     """
     fstype      = None
-    tinysize    = 500
     smallsize   = 1000
     bigsize     = 2000
     api_prefix  = "volumes"
@@ -194,7 +193,7 @@ class VolumeTests(object):
             time.sleep(self.sleeptime)
 
         # create a volume
-        hugesize = self._get_pool()["usage"]["free"] - self.tinysize
+        hugesize = self._get_pool()["usage"]["free"] - self.smallsize
         data = self._get_volume_data(hugesize)
         vol = self.send_request("POST", data=data)
         time.sleep(self.sleeptime)

@@ -32,6 +32,9 @@ class ZfsNativePoolTestScenario(GatlingTestCase):
 
 
 class ZfsLvmPoolTestScenario(LvTestScenario):
+
+    smallsize   = 500
+
     @classmethod
     def setUpClass(cls):
         super(ZfsLvmPoolTestScenario, cls).setUpClass()
