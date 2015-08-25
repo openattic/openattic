@@ -17,6 +17,7 @@ class VolumeTests(object):
         * api_prefix: Prefix for the related REST API part (http://oaHost/openattic/api/<api_prefix>)
     """
     fstype      = None
+    tinysize    = 500
     smallsize   = 1000
     bigsize     = 2000
     api_prefix  = "volumes"
@@ -189,7 +190,7 @@ class VolumeTests(object):
     def test_clone_not_enough_space_in_pool(self):
         """ Clone this volume to a volume created in the process when the volume pool does not have room. """
         # create a volume
-        hugesize = self._get_pool()["usage"]["free"] - self.smallsize
+        hugesize = self._get_pool()["usage"]["free"] - self.tinysize
         data = self._get_volume_data(hugesize)
         vol = self.send_request("POST", data=data)
         time.sleep(self.sleeptime)
