@@ -71,7 +71,8 @@ class ZfsVolumeTests(object):
 
         with self.assertRaises(requests.HTTPError) as err:
             vol = self.send_request("POST", data=data)
-
+            time.sleep(self.sleeptime)
+            self.addCleanup(requests.request, "DELETE", vol["cleanup_url"], headers=vol["headers"])
         self.assertTrue("500 Server Error: Internal Server Error" in err.exception)
 
 
