@@ -55,4 +55,5 @@ class ZfsLvmPoolTestScenario(LvTestScenario):
         cls.send_request("DELETE", "volumes", obj_id=cls.zpool["id"])
 
     def _get_pool(self):
-        return self.zpool
+        zpool = self.send_request("GET", "volumes", obj_id=self.zpool["id"])
+        return zpool["response"]
