@@ -166,7 +166,8 @@ class GatlingTestCase(unittest.TestCase):
         self.assertNotIn("snapshot", vol_res)
 
         if self.fstype is None:
-            self.assertEqual(vol_res["path"], "/dev/%s/gatling_volume" % self._get_pool()["name"])
+            self.assertIn(vol_res["path"], ["/dev/%s/gatling_volume" % self._get_pool()["name"],
+                                            "/dev/zvol/%s/gatling_volume" % self._get_pool()["name"]])
         else:
             if self.fstype == "btrfs":
                 self.assertEqual(vol_res["path"], "/media/gatling_btrfs/gatling_volume")
@@ -194,7 +195,9 @@ class GatlingTestCase(unittest.TestCase):
         self.assertEqual(snap_res["snapshot"]["id"], vol_id)
 
         if self.fstype is None:
-            self.assertEqual(snap_res["path"], "/dev/%s/volume_snapshot_made_by_gatling" % self._get_pool()["name"])
+            self.assertIn(snap_res["path"], ["/dev/%s/volume_snapshot_made_by_gatling" % self._get_pool()["name"],
+                                             "/dev/zvol/%s/gatling_volume@volume_snapshot_made_by_gatling" %
+                                             self._get_pool()["name"]])
         else:
             self.assertIn(snap_res["path"], ["/media/volume_snapshot_made_by_gatling",
                                              "/media/gatling_volume/.snapshots/volume_snapshot_made_by_gatling",
@@ -218,7 +221,8 @@ class GatlingTestCase(unittest.TestCase):
             self.assertIsNone(clone_res["snapshot"])
 
         if self.fstype is None:
-            self.assertEqual(clone_res["path"], "/dev/%s/gatling_clone" % self._get_pool()["name"])
+            self.assertIn(clone_res["path"], ["/dev/%s/gatling_clone" % self._get_pool()["name"],
+                                              "/dev/zvol/%s/gatling_clone" % self._get_pool()["name"]])
         else:
             self.assertEqual(clone_res["path"], "/media/gatling_clone")
 
