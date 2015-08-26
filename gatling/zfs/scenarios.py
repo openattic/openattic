@@ -27,6 +27,10 @@ class ZfsNativePoolTestScenario(GatlingTestCase):
             print cls.zpool["name"]
             raise SkipTest("Zpool not found")
 
+    @classmethod
+    def setUp(self):
+        self.delete_old_existing_gatling_volumes()
+
     def _get_pool(self):
         return self.zpool
 
@@ -52,6 +56,10 @@ class ZfsLvmPoolTestScenario(LvTestScenario):
         if res["count"] != 1:
             raise SkipTest("REST api returned no or more than one object(s). But expected only one.")
         cls.zpool = res["response"]
+
+    @classmethod
+    def setUp(self):
+        self.delete_old_existing_gatling_volumes()
 
     @classmethod
     def tearDownClass(cls):

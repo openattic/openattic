@@ -40,6 +40,9 @@ class LunTestScenario(GatlingTestCase):
         cls.initiator2 = cls._get_or_create_object("initiators", ("host=%s" % cls.initiator_host2["id"]),
                                                    initiator_data2, "Initiator 2")
 
+    @classmethod
+    def setUp(self):
+        self.delete_old_existing_gatling_volumes()
 
     @classmethod
     def _get_or_create_object(cls, api_prefix, filter_params, create_params, err_str):
