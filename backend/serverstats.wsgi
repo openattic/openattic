@@ -112,10 +112,10 @@ def application(environ, start_response):
                                               "wr_tb_per_day": (tot_wr_bps / float(1024 ** 4)) * 86400})
 
                 # network
-                tot_bytes_received = wrapdiff(data["network_stats_now"]["interfaces"]["received_bytes"],
-                                              data["network_stats_old"]["interfaces"]["received_bytes"])
-                tot_bytes_transmitted = wrapdiff(data["network_stats_now"]["interfaces"]["transmitted_bytes"],
-                                                 data["network_stats_old"]["interfaces"]["transmitted_bytes"])
+                tot_bytes_received = wrapdiff(data["network_stats_now"]["interfaces"]["received"]["bytes"],
+                                              data["network_stats_old"]["interfaces"]["received"]["bytes"])
+                tot_bytes_transmitted = wrapdiff(data["network_stats_now"]["interfaces"]["transmitted"]["bytes"],
+                                                 data["network_stats_old"]["interfaces"]["transmitted"]["bytes"])
                 tot_speed = data["network_stats_now"]["interfaces"]["speed"]
                 tot_bytes = tot_bytes_received + tot_bytes_transmitted
                 if tot_speed > 0:
@@ -256,8 +256,8 @@ def get_network_stats():
             tx_packets = net_stat.readline().split()[0]
 
         interface_count += 1
-        network_stats[dev].update({"received_bytes": float(rx_bytes), "received_packets": float(rx_packets)})
-        network_stats[dev].update({"transmitted_bytes": float(tx_bytes), "transmitted_packets": float(tx_packets)})
+        network_stats[dev].update({"received":    Counter({"bytes": float(rx_bytes), "packets": float(rx_packets)}) })
+        network_stats[dev].update({"transmitted": Counter({"bytes": float(tx_bytes), "packets": float(tx_packets)}) })
 
     net_sum = Counter()
     for interface in network_stats.values():
