@@ -247,7 +247,7 @@ class StorageObject(models.Model):
 
     @property
     def authoritative_obj(self):
-        obj = self.volumepool_or_none or self.blockvolume_or_none or self.filesystemvolume_or_none
+        obj = self.volumepool_or_none or self.blockvolume_or_none or self.filesystemvolume_or_none or self.physicalblockdevice_or_none
         if obj is not None:
             return obj
         raise ValueError("No authoritative object found for storageobj %d ('%s')" % (self.id, self.name))
