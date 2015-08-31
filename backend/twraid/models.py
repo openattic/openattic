@@ -167,3 +167,7 @@ class Disk(PhysicalBlockDevice):
 
     def __unicode__(self):
         return "%s %dk (Slot %d)" % (self.type, self.rpm / 1000, self.enclslot)
+
+    @property
+    def host(self):
+        return self.controller.host
