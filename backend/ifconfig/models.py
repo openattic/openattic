@@ -93,7 +93,7 @@ class Host(models.Model):
 
 class HostDependentQuerySet(models.query.QuerySet):
     def iterator(self):
-        currhost = Host.objects.get_current();
+        currhost = Host.objects.get_current()
         for obj in super(HostDependentQuerySet, self).iterator():
             curr = obj
             for field in self.model.objects.hostfilter.split('__'):
