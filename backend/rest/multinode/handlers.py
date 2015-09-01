@@ -19,6 +19,7 @@ import requests, json
 from collections import OrderedDict
 
 from rest_framework.response import Response
+from rest_framework.request import Request
 
 from ifconfig.models import Host
 
@@ -170,3 +171,23 @@ class RequestHandlers(object):
     def _get_auth_header(self, request):
         auth_token = request.user.auth_token.key
         return {'Authorization': 'Token %s' % auth_token}
+
+    def _clone_request_with_new_data(self, request, data):
+        clone = Request(request=request._request,
+                        parsers=request.parsers,
+                        authenticators=request.authenticators,
+                        negotiator=request.negotiator,
+                        parser_context=request.parser_context)
+        clone._data = data
+        clone._files = request._files
+        clone._content_type = request._content_type
+        clone._stream = request._stream
+        clone._method = request._method
+        if hasattr(request, '_user'):
+            clone._user = request._user
+        if hasattr(request, '_auth'):
+            clone._auth = request._auth
+        if hasattr(request, '_authenticator'):
+            clone._authenticator = request._authenticator
+
+        return clone
