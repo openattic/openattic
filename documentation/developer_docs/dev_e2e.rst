@@ -187,24 +187,64 @@ than closing the browser. Just closing the browser window causes every single te
 because protractor now tries to execute the tests and can not find the browser window anymore.
 
 
+E2E-Test directory and file structure
+-------------------------------------
+
+In ``/srv/openattic/e2e/`` the following directories can be found:
+
+* auth
+* commandLogs
+* dashboard
+* disks
+* general
+* hosts
+  * peer
+* pools
+* shares
+  * cifs
+  * http
+  * lun
+  * nfs
+* snapshots
+  * add
+  * clone
+* users
+* volumes
+  * add
+  * protection
+  * resize
+  * zvol
+* wizards
+  * block
+  * file
+  * vm
+
+
+Most of the directories contain a ``.._workflow.e2e.js`` in which we only test things like validation, the number of input fields, the title of the form etc.
+Actions like ``add``, ``clone`` etc. are always in a spearate file.
+This makes it better to get an overview and prevents the files from getting very huge and confusing.
+
 Writing your own tests
 ----------------------
 
 Please include ``common.js`` in every '.e2e.js' file by adding "var helpers = require('../common.js');"
 In some cases (depending on how you've structured your tests) you need to adapt the path.
 
-You can make use of defined helper functions in the common.js file, i.e. the ``create_volume`` function.
-
-* ``create_volume``
-* ``delete_volume``
-* ``create_snapshot``
-* ``delete snapshot``
-* ``create_snap_clone``
-* ``delete_snap_clone``
-* ``create_host``
-* ``delete_host``
+By including it as ``var helpers`` you can now make use of helper functions from ``common.js``, i.e. the ``create_volume`` function, you
+just have to add ``helpers.`` to the function::
+  ``helpers.create_volume("volume_type_here");
 
 
+The following helper functions are implemented::
+
+  * ``create_volume``
+  * ``delete_volume``
+  * ``create_snapshot``
+  * ``delete_snapshot``
+  * ``create_snap_clone``
+  * ``delete_snap_clone``
+  * ``create_host``
+  * ``delete_host``
 
 So if you want to write a test and you need a volume to test an action which
 is based on a volume (i.e. creating a share) you can use the following lines::
@@ -213,9 +253,28 @@ is based on a volume (i.e. creating a share) you can use the following lines::
     helpers.login();
 
     //create an xfs volume before executing any test
-    helpers.create_volume("xfs"); //available options are "xfs", "btrfs", "zfs", "btrfs", "lun"
+    helpers.create_volume("xfs");
 
   });
+
+Depending on which volume type you need, you can set the parameter to::
+  * "xfs"
+  * "btrfs"
+  * "zfs" (if ``openattic-module-zfs`` is installed)
+  * "lun"
+
+All other helper functions can be used like this:
+
+``helpers.delete_volume();``
+``helpers.create_snapshot();`` ..and so on.
+
+Please make sure when using more than one helper function in one file that you use the right order of createing and deleting functions in beforeAll and afterAll.
+Example:
+
+if you put ``helpers.delete_volume();`` before ``helpers.delete_snapshot();`` the snapshot will be deleted with the volume
+and the second one (``delete_snapshot();``) will search for an element which does not longer exist. A second option is to only use ``helpes.delete_volume();``
+so everything which relates to this volumes (like snapshots, shares) will be deleted with the deletion of the volume automatically.
+
 
 If you need to navigate to a specific menu entry (everytime!)
 where your tests should take place, you can make use of::
