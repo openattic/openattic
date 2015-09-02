@@ -29,11 +29,11 @@ class DrbdConnectionSerializer(serializers.HyperlinkedModelSerializer):
     """ Serializer for DRBD connection """
 
     id  = serializers.HyperlinkedIdentityField(view_name="volume-detail")
-    url = serializers.HyperlinkedIdentityField(view_name="connection-detail")
+    url = serializers.HyperlinkedIdentityField(view_name="mirror-detail")
 
     class Meta:
         model = Connection
-        fields = ("id", "protocol", "syncer_rate")
+        fields = ("id", "url", "protocol", "syncer_rate")
 
 
 class DrbdConnectionViewSet(viewsets.ModelViewSet):
