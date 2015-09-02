@@ -44,14 +44,14 @@ Install Protractor
   latest major versions of Chrome, Firefox, Safari, and IE)
 
 * Please adapt the protractor.conf.js file which can be found in ``/openattic/webui/``
-  to your system setup -  see instructions below
+  to your system setup - see instructions below
 
 
 Protractor configuration
 ========================
 
-Before starting the tests, you need to configure or adapt some files
-* here's what you have to do in ``protractor.conf.js``:
+Before starting the tests, you need to configure and adapt some files
+Here's what you have to do in ``protractor.conf.js``:
 
 Enable BeforeAll / AfterAll
 ---------------------------
@@ -59,38 +59,40 @@ Enable BeforeAll / AfterAll
 In order to use 'beforeAll' and 'afterAll' you need to tell protractor to use 'jasmine2' as framework
 (protractor uses an older version by default, which does not support beforeAll/afterAll).
 
-Add the following line to your protractor.conf:
+Add the following line to your protractor.conf::
 
-exports.config = {
+  exports.config = {
 
-  seleniumAddress: ...
-  jasmineNodeOpts: {
-    ....
-  },
+    seleniumAddress: ...
+    jasmineNodeOpts: {
+     ....
+    },
 
   ``framework: 'jasmine2',``
 
-  suites: {
-    ...
-    ...
-    ..
+    suites: {
+      ...
+      ...
+      ..
 
-  },
-  ....
-}
+    },
+    ....
+  }
 
 
 Tell protractor where to connect
 --------------------------------
 
-(function() {
-  module.exports = {
-    url     : 'http://IP-to-your-oA-test-sys/openattic/#/login',
-    //leave this if you want to use openATTIC's default user for login
-    username: 'openattic',
-    password: 'openattic',
-  };
-}());
+..by adding the url to your openATTIC system as well as login data::
+
+  (function() {
+    module.exports = {
+      url     : 'http://IP-to-your-oA-test-sys/openattic/#/login',
+      //leave this if you want to use openATTIC's default user for login
+      username: 'openattic',
+      password: 'openattic',
+    };
+  }());
 
 
 Maximize browser window
@@ -99,28 +101,28 @@ Maximize browser window
 If the browser windows in which the tests will be executed is too small,
 it occours that protractor can't click an element and tests will fail.
 To prevent this, you can maximize your browser window by default by adding
-the following line to protractor.conf.js:
+the following line to protractor.conf.js::
 
-exports.config = {
+  exports.config = {
 
-  seleniumAddress: ...
-  jasmineNodeOpts: {
-    ....
-  },
+    seleniumAddress: ...
+    jasmineNodeOpts: {
+      ....
+    },
 
-  framework: 'jasmine2',
+    framework: 'jasmine2',
 
-  suites: {
-    ...
-    ...
-    ..
+    suites: {
+      ...
+      ...
+      ..
 
-  },
+    },
 
   ``onPrepare: function(){``
     ``browser.driver.manage().window().maximize();``
   ``},``
-}
+  }
 
 
 
@@ -136,8 +138,8 @@ please make sure that your openATTIC system at least has:
 and add them to ``configs.js`` (see examples). It is important that the first element
 in this config file is your volume group.
 
-If you do not have a zpool and you don't want to create one, you can skip the tests
-by removing the suite from ``protractor.conf.js``.
+If you do not have a zpool configured and you do not want to create one, you can of course skip those tests
+by removing the suite from ``protractor.conf.js`` or putting them in to the comment section.
 
 
 Start protractor
@@ -164,16 +166,16 @@ Start only a specific test suite
 If you only want to test a specific action, you can run i.e.
 ``protractor protractor.conf.js --suite snapshot_add``
 Available test cases can be looked up in protractor.conf.js,
-i.e.:
+i.e.::
 
-suites: {
-  //suite name       : '/path/to/e2e-test/file.e2e.js'
-  snapshot_add       : '../e2e/snapshots/add/**/*.e2e.js',
-}
+  suites: {
+    //suite name       : '/path/to/e2e-test/file.e2e.js'
+    snapshot_add       : '../e2e/snapshots/add/**/*.e2e.js',
+  }
 
 .. note:: When running protractor.conf and the browser window directly closes
-and you can see something like "user-data error" (i.e. when using chrome) in your
-console just create a dir (i.e. in /home/) and do ``chromium --user-data-dir=/path/to/created/dir``
+   and you can see something like "user-data error" (i.e. when using chrome) in your
+   console just create a dir (i.e. in /home/) and do ``chromium --user-data-dir=/path/to/created/dir``
 
 
 How to cancel the tests
@@ -191,31 +193,36 @@ Writing your own tests
 Please include ``common.js`` in every '.e2e.js' file by adding "var helpers = require('../common.js');"
 In some cases (depending on how you've structured your tests) you need to adapt the path.
 
-You can make use of defined helper functions in the common.js file, i.e. the "create_volume" function.
+You can make use of defined helper functions in the common.js file, i.e. the ``create_volume`` function.
 
-* create_volume
-* delete_volume
-* create_snapshot
-* delete snapshot
-* create_snap_clone
-* delete_snap_clone
-* create_host
-* delete_host
+* ``create_volume``
+* ``delete_volume``
+* ``create_snapshot``
+* ``delete snapshot``
+* ``create_snap_clone``
+* ``delete_snap_clone``
+* ``create_host``
+* ``delete_host``
 
 
 
 So if you want to write a test and you need a volume to test an action which
-is based on a volume (i.e. creating a share) you can use the following lines:
+is based on a volume (i.e. creating a share) you can use the following lines::
 
-beforeAll(function(){
-  //create an xfs volume before executing any test
-  create_volume("xfs"); //available options are "xfs", "btrfs", "zfs", "btrfs", "lun"
-});
+  beforeAll(function(){
+    helpers.login();
+
+    //create an xfs volume before executing any test
+    helpers.create_volume("xfs"); //available options are "xfs", "btrfs", "zfs", "btrfs", "lun"
+
+  });
 
 If you need to navigate to a specific menu entry (everytime!)
-where your tests should take place, you can make use of
+where your tests should take place, you can make use of::
 
-beforeEach(function(){
-  //always navigates to menu entry "Volumes" before executing the actions defined in 'it('', function(){});'
-  element.all(by.css('ul .tc_menuitem')).get(3);
-});
+  beforeEach(function(){
+
+    //always navigates to menu entry "Volumes" before executing the actions defined in 'it('', function(){});'
+    element.all(by.css('ul .tc_menuitem')).get(3);
+
+  });
