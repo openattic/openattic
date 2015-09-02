@@ -65,6 +65,7 @@ class DrbdConnectionViewSet(viewsets.ModelViewSet):
         local_volume = request.DATA['local_volume']
         Connection.objects.install_connection(connection_id, local_volume["id"])
 
+
 class DrbdConnectionProxyViewSet(DrbdConnectionViewSet, RequestHandlers):
     """ Proxy viewset for DRBD connection """
 
@@ -88,7 +89,6 @@ class DrbdConnectionProxyViewSet(DrbdConnectionViewSet, RequestHandlers):
             except Host.DoesNotExist:
                 return Response("Can't find the related host object of the volume that should be mirrored",
                                 status=status.HTTP_404_NOT_FOUND)
-
 
             # First find out whether we're supposed to be primary or secondary.
             if "connection_id" not in request.DATA:
@@ -121,7 +121,6 @@ class DrbdConnectionProxyViewSet(DrbdConnectionViewSet, RequestHandlers):
         except Exception, err:
             logging.error(err)
             logging.error("Received exception: " + traceback.format_exc())
-
 
 
 RESTAPI_VIEWSETS = [
