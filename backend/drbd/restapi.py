@@ -125,5 +125,5 @@ class DrbdConnectionProxyViewSet(DrbdConnectionViewSet, RequestHandlers):
 
 
 RESTAPI_VIEWSETS = [
-    ("mirrors", DrbdConnectionProxyViewSet,"mirror")
+    ("mirrors", DrbdConnectionProxyViewSet, "mirror")
 ]
