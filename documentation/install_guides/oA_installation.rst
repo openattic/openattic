@@ -243,6 +243,7 @@ delivered in the form of RPM packages via dedicated yum repositories.
 ..note::
   Currently, only nightly builds of the RPMs are available for preview purposes.
 
+
 Preliminary Preparations on RHEL 7
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
@@ -254,6 +255,11 @@ enable the "Optional" repo::
   # subscription-manager repos --enable=rhel-7-server-optional-rpms
 
 Afterwards, just follow the installation steps as outlined for CentOS 7.
+
+..note::
+  In order to allow external HTTP requests execute the following command::
+
+    # $ sudo firewall-cmd --zone=public --add-port=80/tcp --permanent
 
 Yum Repository Configuration
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -298,7 +304,13 @@ To install the packages on CentOS 7, run the following commands:
 
      # oaconfig install
 
-6. Open a web browser and navigate to http://yourhost/openattic/
+6. Install the GUI
+   The GUI is not installed automatically when using yum install openattic.
+   Instead, it should be installed with the following command::
+
+     # $ sudo yum install openattic-gui
+
+7. Open a web browser and navigate to http://yourhost/openattic/
 
 
 Installation Debian Jessie
@@ -353,5 +365,3 @@ After installing openATTIC, you can add install additional modules by using
 Installing a cluster
 ====================
 --- Waiting for feedback ---
-
-
