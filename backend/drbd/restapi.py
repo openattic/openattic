@@ -28,12 +28,12 @@ from rest.multinode.handlers import RequestHandlers
 class DrbdConnectionSerializer(serializers.HyperlinkedModelSerializer):
     """ Serializer for DRBD connection """
 
-    id  = serializers.HyperlinkedIdentityField(view_name="volume-detail")
+    volume = serializers.HyperlinkedIdentityField(view_name="volume-detail")
     url = serializers.HyperlinkedIdentityField(view_name="mirror-detail")
 
     class Meta:
         model = Connection
-        fields = ("id", "url", "protocol", "syncer_rate")
+        fields = ("id", "url", "protocol", "syncer_rate", "volume")
 
 
 class DrbdConnectionViewSet(viewsets.ModelViewSet):
