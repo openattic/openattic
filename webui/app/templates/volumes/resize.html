@@ -11,7 +11,7 @@
                        ng-model="input.newsize" name="newsize" ng-class="{'thicker-border': (submitted
                        || input.resizeForm.newsize.$dirty) && input.resizeForm.newsize.$invalid}"
                        max-value="{{pool.usage.max_new_fsv}}" min-value="{{volume.usage.size_text}}" volume-size-format
-                       volume-size-value required autofocus>
+                       volume-size-value required autofocus/>
                 <p>{{pool.usage.max_new_fsv_text}} free</p>
                 <span class="help-block tc_required" ng-show="(submitted || input.resizeForm.newsize.$dirty) &&
                     input.resizeForm.newsize.$error.required">
