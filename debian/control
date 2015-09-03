@@ -316,6 +316,17 @@ Description: BTRFS module for openATTIC
  Linux aimed at implementing advanced features while focusing on fault
  tolerance, repair and easy administration.
 
+Package: openattic-module-ceph
+Architecture: all
+Depends: ${misc:Depends}, openattic-base, ceph-common
+Description: Ceph module for openATTIC
+ openATTIC is a storage management system based upon Open Source tools with
+ a comprehensive user interface that allows you to create, share and backup
+ storage space on demand.
+ .
+ This package includes support for Ceph, a distributed storage system
+ designed to provide excellent performance, reliability, and scalability.
+
 Package: openattic-module-mdraid
 Architecture: all
 Depends: ${misc:Depends}, openattic-base, mdadm
