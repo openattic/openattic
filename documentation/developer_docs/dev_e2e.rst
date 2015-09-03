@@ -64,6 +64,7 @@ Add the following line to your protractor.conf::
   exports.config = {
 
     seleniumAddress: ...
+
     jasmineNodeOpts: {
      ....
     },
@@ -73,7 +74,6 @@ Add the following line to your protractor.conf::
     suites: {
       ...
       ...
-      ..
 
     },
     ....
@@ -219,10 +219,10 @@ In ``/srv/openattic/e2e/`` the following directories can be found:
   * file
   * vm
 
-
 Most of the directories contain a ``.._workflow.e2e.js`` in which we only test things like validation, the number of input fields, the title of the form etc.
 Actions like ``add``, ``clone`` etc. are always in a spearate file.
 This makes it better to get an overview and prevents the files from getting very huge and confusing.
+
 
 Writing your own tests
 ----------------------
@@ -233,7 +233,6 @@ In some cases (depending on how you've structured your tests) you need to adapt 
 By including it as ``var helpers`` you can now make use of helper functions from ``common.js``, i.e. the ``create_volume`` function, you
 just have to add ``helpers.`` to the function::
   ``helpers.create_volume("volume_type_here");
-
 
 The following helper functions are implemented::
 
@@ -274,7 +273,6 @@ Example:
 if you put ``helpers.delete_volume();`` before ``helpers.delete_snapshot();`` the snapshot will be deleted with the volume
 and the second one (``delete_snapshot();``) will search for an element which does not longer exist. A second option is to only use ``helpes.delete_volume();``
 so everything which relates to this volumes (like snapshots, shares) will be deleted with the deletion of the volume automatically.
-
 
 If you need to navigate to a specific menu entry (everytime!)
 where your tests should take place, you can make use of::
