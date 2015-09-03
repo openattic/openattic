@@ -5,11 +5,13 @@
 <form name="deleteForm" role="form" novalidate>
     <p class="input-group col-md-4">
         <input type="text" class="form-control" name="enteredName" placeholder="{{volume.name}}"
-               ng-model="input.enteredName" ng-pattern="volume.name" required/>
+               ng-model="input.enteredName" ng-pattern="volume.name" required autofocus/>
         <div class="MessageBoxButtonSection">
-            <button id="bot1-Msg1" class="btn btn-default btn-sm botTempo" ng-click="cancel()"> Cancel</button>
-            <button id="bot2-Msg1" class="btn btn-default btn-sm botTempo" ng-click="delete()"
-                    ng-disabled="deleteForm.$invalid"> Delete</button>
+            <div>
+                <button id="bot2-Msg1" class="btn btn-default btn-sm botTempo" ng-click="delete()"
+                        ng-disabled="deleteForm.$invalid"> Delete</button>
+                <button id="bot1-Msg1" class="btn btn-default btn-sm botTempo" ng-click="cancel()"> Cancel</button>
+            </div>
             <span ng-show="deleteForm.enteredName.$dirty && deleteForm.enteredName.$error.required">
                     This field is required.</span>
             <span ng-show="deleteForm.enteredName.$dirty && deleteForm.enteredName.$error.pattern">
