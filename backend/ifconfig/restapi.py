@@ -40,6 +40,7 @@ class HostSerializer(serializers.HyperlinkedModelSerializer):
 
     class Meta:
         model = models.Host
+        fields = ('id', 'name', 'url', 'netdevice_set', 'hostgroup_set', 'primary_ip_address')
 
     def serialize_primaryip(self, obj):
         host = models.Host.objects.get(id=obj.id)
