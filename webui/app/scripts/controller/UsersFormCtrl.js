@@ -5,7 +5,6 @@ angular.module('openattic')
     var gravatarId = $filter('gravatar')('');
 
     if(!$stateParams.user){
-      $scope.user = {'active': true};
       $scope.editing = false;
 
       $scope.image = 'http://www.gravatar.com/avatar/' + gravatarId + '.jpg?d=monsterid';
