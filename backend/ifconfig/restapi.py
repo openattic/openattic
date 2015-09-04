@@ -32,7 +32,8 @@ class NetDeviceSerializer(serializers.HyperlinkedModelSerializer):
     class Meta:
         model = models.NetDevice
 
-class HostSerializer(serializers.ModelSerializer):
+class HostSerializer(serializers.HyperlinkedModelSerializer):
+    url                 = serializers.HyperlinkedIdentityField(view_name='host-detail')
     netdevice_set       = relations.HyperlinkedRelatedField(view_name='netdevice-detail', many=True, read_only=True)
     hostgroup_set       = relations.HyperlinkedRelatedField(view_name='hostgroup-detail', many=True, read_only=True)
     primary_ip_address  = serializers.SerializerMethodField("serialize_primaryip")
