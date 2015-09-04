@@ -281,7 +281,8 @@ Description: 3ware RAID module for openATTIC
 Package: openattic-module-lio
 Architecture: all
 Depends: ${misc:Depends}, openattic-base,
- python-rtslib-fb | python-rtslib (>> 2.1-2)
+ python-rtslib-fb | python-rtslib (>> 2.1-2),
+ python-rtslib-fb | lio-utils
 Conflicts: openattic-module-iet-iscsi
 Description: LIO module for openATTIC
  openATTIC is a storage management system based upon Open Source tools with
