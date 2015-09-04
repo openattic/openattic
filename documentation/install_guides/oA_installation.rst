@@ -305,6 +305,7 @@ To install the packages on CentOS 7, run the following commands:
      # oaconfig install
 
 6. Install the GUI
+
    The GUI is not installed automatically when using yum install openattic.
    Instead, it should be installed with the following command::
 
