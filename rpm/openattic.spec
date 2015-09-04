@@ -93,6 +93,7 @@ Summary:  Basic requirements for openATTIC
 
 %package gui
 Requires:	openattic
+Requires: policycoreutils-python
 Summary:	openATTIC User Interface
 
 %description gui
