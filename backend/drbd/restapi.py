@@ -98,7 +98,7 @@ class DrbdConnectionProxyViewSet(DrbdConnectionViewSet, RequestHandlers):
                     connection_data = connection_resp.data
                     # Step 2: Call the secondary to create theirs
                     request = self._clone_request_with_new_data(request,
-                                dict(request.DATA, connection_id=connection_data["id"]))
+                                                                dict(request.DATA, connection_id=connection_data["id"]))
                     self._remote_request(request, remote_pool_host)
                     # Step 3: Install our local endpoint
                     self._install_connection(request, connection_data["id"])
