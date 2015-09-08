@@ -79,6 +79,31 @@ case $1 in
 		;;
 
 	install)
+		if [ "$#" -gt 1 ] && [ "$2" = "--allow-broken-hostname" ]; then
+			shift
+		else
+			if [[ "`hostname --fqdn`" != *.* ]]; then
+				echo "'`hostname --fqdn`' is not a fully-qualified domain name."
+				echo "You should fix this error before proceeding with the installation."
+				echo "To ignore this warning, use oaconfig install --allow-broken-hostname."
+				exit 2
+			fi
+			
+			if grep -qP '^\d+$' <<<"$HOSTNAME" ; then
+				echo "Your hostname is invalid because it consists of numbers only. (Consider adding a - somewhere.)"
+				echo "You should fix this error before proceeding with the installation."
+				echo "To ignore this warning, use oaconfig install --allow-broken-hostname."
+				exit 2
+			fi
+			
+			if grep -qP '^[\w\d\-]{16,}$' <<<"$HOSTNAME" ; then
+				echo "Your hostname is too long for a Windows domain (must be max. 15 characters)."
+				echo "You should fix this error before proceeding with the installation."
+				echo "To ignore this warning, use oaconfig install --allow-broken-hostname."
+				exit 2
+			fi
+		fi
+		
 		su "$OAUSER" -c 'python manage.py pre_install'
 		
 		chown $RPCD_CHUID /etc/openattic/databases/*sql.ini
