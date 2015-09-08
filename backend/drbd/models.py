@@ -77,9 +77,9 @@ class ConnectionManager(models.Manager):
 
                 return connection
 
-    def install_connection(self, connection_id, primary_volume_id, peer_volumepool_id=None):
+    def install_connection(self, connection_id, source_volume_id, peer_volumepool_id=None):
         connection = Connection.all_objects.get(id=connection_id)
-        primary_volume = StorageObject.objects.get(id=primary_volume_id).blockvolume_or_none
+        primary_volume = StorageObject.objects.get(id=source_volume_id).blockvolume_or_none
         if peer_volumepool_id is None:
             peer_volumepool = None
         else:
