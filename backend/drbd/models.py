@@ -46,8 +46,8 @@ class ConnectionManager(models.Manager):
     def _get_host_primary_ipaddress(self, host):
         return IPAddress.all_objects.get(device__host=host, primary_address=True)
 
-    def create_connection(self, protocol, syncer_rate, self_volume_id):
-        self_volume = StorageObject.objects.get(id=self_volume_id).blockvolume_or_none
+    def create_connection(self, protocol, syncer_rate, source_volume_id):
+        self_volume = StorageObject.objects.get(id=source_volume_id).blockvolume_or_none
 
         # create drbd connection object
         with Transaction():
