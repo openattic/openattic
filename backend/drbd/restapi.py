@@ -76,6 +76,7 @@ class DrbdConnectionProxyViewSet(DrbdConnectionViewSet, RequestHandlers):
 
     def create(self, request, *args, **kwargs):
         try:
+            # Get all needed information from request
             local_volume = request.DATA["local_volume"]
             remote_pool = request.DATA["remote_pool"]
 
@@ -89,17 +90,18 @@ class DrbdConnectionProxyViewSet(DrbdConnectionViewSet, RequestHandlers):
             # First find out whether we're supposed to be primary or secondary.
             if "connection_id" not in request.DATA:
                 # -> PRIMARY
-
                 # Check where the source volume is located
                 if local_volume_host == Host.objects.get_current():
-                    # -> source volume is a local volume
+                    # source volume is a local volume
                     # Step 1: Create the connection
                     connection_resp = super(DrbdConnectionProxyViewSet, self).create(request, args, kwargs)
                     connection_data = connection_resp.data
+
                     # Step 2: Call the secondary to create theirs
                     request = self._clone_request_with_new_data(request,
                                                                 dict(request.DATA, connection_id=connection_data["id"]))
                     self._remote_request(request, remote_pool_host)
+
                     # Step 3: Install our local endpoint
                     self._install_connection(request, connection_data["id"])
 
