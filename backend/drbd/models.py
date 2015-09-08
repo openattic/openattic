@@ -79,26 +79,26 @@ class ConnectionManager(models.Manager):
 
     def install_connection(self, connection_id, source_volume_id, peer_volumepool_id=None):
         connection = Connection.all_objects.get(id=connection_id)
-        primary_volume = StorageObject.objects.get(id=source_volume_id).blockvolume_or_none
+        source_volume = StorageObject.objects.get(id=source_volume_id).blockvolume_or_none
         if peer_volumepool_id is None:
             peer_volumepool = None
         else:
             peer_volumepool = StorageObject.objects.get(id=peer_volumepool_id).volumepool_or_none
         with Transaction():
-            self._install_connection(connection, primary_volume, peer_volumepool)
+            self._install_connection(connection, source_volume, peer_volumepool)
         return connection
 
-    def _install_connection(self, connection, primary_volume, peer_volumepool):
+    def _install_connection(self, connection, source_volume, peer_volumepool):
         if not peer_volumepool:
             # Primary host
-            volume = primary_volume
+            volume = source_volume
             endpoint = Endpoint.objects.get(volume=volume)
 
             is_primary = True
         else:
             # Secondary host
-            volume = peer_volumepool.volumepool._create_volume(primary_volume.storageobj.name,
-                                                               primary_volume.storageobj.megs, {})
+            volume = peer_volumepool.volumepool._create_volume(source_volume.storageobj.name,
+                                                               source_volume.storageobj.megs, {})
 
             host = Host.objects.get_current()
             # create drbd endpoint
