@@ -452,7 +452,8 @@ class StorageObject(models.Model):
         flags = set()
 
         for obj in self.base_set.all():
-            flags = flags.union(obj._get_status())
+            if obj.host == Host.objects.get_current():
+                flags = flags.union(obj._get_status())
 
         for obj in (self.blockvolume_or_none, self.volumepool_or_none, self.filesystemvolume_or_none, self.physicalblockdevice_or_none):
             if obj is not None:
