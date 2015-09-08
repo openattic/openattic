@@ -451,6 +451,7 @@ class StorageObject(models.Model):
 
         flags = set()
 
+
         for obj in self.base_set.all():
             flags = flags.union(obj._get_status())
 
