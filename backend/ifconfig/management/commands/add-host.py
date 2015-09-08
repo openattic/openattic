@@ -29,6 +29,6 @@ class Command( BaseCommand ):
         except Host.DoesNotExist:
             fqdn = socket.getfqdn()
             if '.' not in fqdn:
-                raise ValueError("'%s' does not look like a Fully Qualified Domain Name (FQDN)." % fqdn)
+                raise RuntimeWarning("'%s' does not look like a Fully Qualified Domain Name (FQDN)." % fqdn)
             host = Host(name=fqdn)
             host.save()
