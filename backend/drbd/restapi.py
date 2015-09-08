@@ -74,10 +74,6 @@ class DrbdConnectionProxyViewSet(DrbdConnectionViewSet, RequestHandlers):
     host_filter = "host"
     model = Connection
 
-    def _get_reqdata_host(self, data):
-        local_volume = request.DATA["local_volume"]
-        return Host.objects.get(id=local_volume["host"]["id"])
-
     def create(self, request, *args, **kwargs):
         try:
             local_volume = request.DATA["local_volume"]
