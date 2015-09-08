@@ -71,6 +71,10 @@ class ConnectionManager(models.Manager):
                 # Re-query the Connection so the deviceminor is known
                 connection = Connection.all_objects.get(id=connection.id)
 
+                host = Host.objects.get_current()
+                endpoint = Endpoint(connection=connection, ipaddress=host.get_primary_ip_address(), volume=self_volume)
+                endpoint.save()
+
                 return connection
 
     def install_connection(self, connection_id, primary_volume_id, peer_volumepool_id=None):
