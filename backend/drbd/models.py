@@ -108,8 +108,9 @@ class ConnectionManager(models.Manager):
             is_primary = False
 
         # set upper volume
-        volume.upper = connection.storageobj
-        volume.save()
+        volume_so = volume.storageobj
+        volume_so.upper = connection.storageobj
+        volume_so.save()
 
         endpoint.install(is_primary)
 
