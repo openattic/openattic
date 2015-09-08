@@ -333,7 +333,7 @@ storage space on demand.
 This package contains the yum repository file to install openATTIC.
 
 %prep
-%setup -q -n %{name}-%{version}-%{release}
+%setup -q -n %{name}-%{version}-%{PKGVERSION}
 
 %build
 cd webui
