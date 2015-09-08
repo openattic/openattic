@@ -64,9 +64,8 @@ def statfile(devname, fname):
 
 class HostManager(models.Manager):
     def get_current(self):
-        fqdn = socket.getfqdn()
         try:
-            return self.get(name=fqdn)
+            return self.get(name=socket.getfqdn())
         except Host.DoesNotExist:
             return self.get(name=socket.gethostname())
 
