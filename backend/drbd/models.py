@@ -92,22 +92,24 @@ class ConnectionManager(models.Manager):
         if not peer_volumepool:
             # Primary host
             volume = primary_volume
+            endpoint = Endpoint.objects.get(volume=volume)
+
             is_primary = True
         else:
             # Secondary host
             volume = peer_volumepool.volumepool._create_volume(primary_volume.storageobj.name,
                                                                primary_volume.storageobj.megs, {})
+
+            host = Host.objects.get_current()
+            # create drbd endpoint
+            endpoint = Endpoint(connection=connection, ipaddress=host.get_primary_ip_address(), volume=volume)
+            endpoint.save()
+
             is_primary = False
 
         # set upper volume
         volume.upper = connection.storageobj
         volume.save()
-
-        host = Host.objects.get_current()
-
-        # create drbd endpoint
-        endpoint = Endpoint(connection=connection, ipaddress=host.get_primary_ip_address(), volume=volume)
-        endpoint.save()
 
         endpoint.install(is_primary)
 
