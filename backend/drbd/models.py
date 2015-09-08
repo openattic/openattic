@@ -47,11 +47,11 @@ class ConnectionManager(models.Manager):
         return IPAddress.all_objects.get(device__host=host, primary_address=True)
 
     def create_connection(self, protocol, syncer_rate, source_volume_id):
-        self_volume = StorageObject.objects.get(id=source_volume_id).blockvolume_or_none
+        source_volume = StorageObject.objects.get(id=source_volume_id).blockvolume_or_none
 
         # create drbd connection object
         with Transaction():
-            with StorageObject(name=self_volume.storageobj.name, megs=self_volume.storageobj.megs, is_origin=True) as self_storageobj:
+            with StorageObject(name=source_volume.storageobj.name, megs=source_volume.storageobj.megs, is_origin=True) as self_storageobj:
                 connection = Connection(storageobj=self_storageobj, protocol=protocol, syncer_rate=syncer_rate)
                 connection.full_clean()
                 connection.save()
@@ -72,7 +72,7 @@ class ConnectionManager(models.Manager):
                 connection = Connection.all_objects.get(id=connection.id)
 
                 host = Host.objects.get_current()
-                endpoint = Endpoint(connection=connection, ipaddress=host.get_primary_ip_address(), volume=self_volume)
+                endpoint = Endpoint(connection=connection, ipaddress=host.get_primary_ip_address(), volume=source_volume)
                 endpoint.save()
 
                 return connection
