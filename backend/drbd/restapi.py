@@ -106,7 +106,8 @@ class DrbdConnectionProxyViewSet(DrbdConnectionViewSet, RequestHandlers):
                     return connection_resp
                 else:
                     # -> source volume is a remote volume, call remote host
-                    return Response(json.loads(self._remote_request(request, local_volume_host)), status=HTTP_201_CREATED)
+                    return Response(json.loads(self._remote_request(request, local_volume_host)),
+                                    status=status.HTTP_201_CREATED)
 
             else:
                 # -> SECONDARY
