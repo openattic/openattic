@@ -43,27 +43,27 @@ class DrbdConnectionViewSet(viewsets.ModelViewSet):
     serializer_class = DrbdConnectionSerializer
 
     def create(self, request, *args, **kwargs):
-        local_volume = request.DATA['local_volume']
+        source_volume = request.DATA['source_volume']
         remote_pool = request.DATA['remote_pool']
 
         if "connection_id" not in request.DATA:
             print "CREATE CONNECTION AND FIRST CONNECTION ENDPOINT"
             # CREATE CONNECTION
-            connection = Connection.objects.create_connection("C", "500K", local_volume["id"])
+            connection = Connection.objects.create_connection("C", "500K", source_volume["id"])
             print connection.id
         else:
             # CREATE VOLUME
             print "CREATE SECOND VOLUME AND ENDPOINT"
             connection_id = request.DATA["connection_id"]
-            connection = Connection.objects.install_connection(connection_id, local_volume["id"], remote_pool["id"])
+            connection = Connection.objects.install_connection(connection_id, source_volume["id"], remote_pool["id"])
 
         ser = DrbdConnectionSerializer(connection, context={"request": request})
         return Response(ser.data, status=status.HTTP_201_CREATED)
 
     def _install_connection(self, request, connection_id):
         # called on the primary only, not part of the REST API
-        local_volume = request.DATA['local_volume']
-        Connection.objects.install_connection(connection_id, local_volume["id"])
+        source_volume = request.DATA['source_volume']
+        Connection.objects.install_connection(connection_id, source_volume["id"])
 
 
 class DrbdConnectionProxyViewSet(DrbdConnectionViewSet, RequestHandlers):
@@ -77,11 +77,11 @@ class DrbdConnectionProxyViewSet(DrbdConnectionViewSet, RequestHandlers):
     def create(self, request, *args, **kwargs):
         try:
             # Get all needed information from request
-            local_volume = request.DATA["local_volume"]
+            source_volume = request.DATA["source_volume"]
             remote_pool = request.DATA["remote_pool"]
 
             try:
-                local_volume_host = Host.objects.get(id=local_volume["host"]["id"])
+                local_volume_host = Host.objects.get(id=source_volume["host"]["id"])
                 remote_pool_host = Host.objects.get(id=remote_pool["host"]["id"])
             except Host.DoesNotExist:
                 return Response("Can't find the related host object of the volume that should be mirrored",
