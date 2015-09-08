@@ -20,7 +20,7 @@ cd $OADIR
 OAUSER=` cut -d: -f1 <<< "$RPCD_CHUID"`
 
 if [ "$DJANGO_AUTO_COMPLETE" = "1" ]; then
-	MYCOMMANDS="install scan-vgs add-vg add-disk restart reload status dbdump"
+	MYCOMMANDS="install scan-vgs add-vg add-disk restart reload status dbdump domainjoin"
 	ARRAY_WORDS=( $COMP_WORDS )
 	compgen -W "$MYCOMMANDS" "${ARRAY_WORDS[COMP_CWORD]}"
 	su "$OAUSER" -c 'python manage.py'
@@ -55,6 +55,7 @@ usage () {
 	echo "    scan-vgs     Instruct LVM to search for existing VGs."
 	echo "    add-vg       Make an already existing LVM Volume Group known to openATTIC."
 	echo "    add-disk     Create a PV on the given disk/partition and add it to openATTIC."
+	echo "    domainjoin   Join a Windows Active Directory Domain."
 	echo "    restart      Restart all services that are needed to run openATTIC."
 	echo "    reload       Reload all services that are needed to run openATTIC."
 	echo "    status       Show the status of all services that are needed to run openATTIC."
