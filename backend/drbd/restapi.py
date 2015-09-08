@@ -81,7 +81,7 @@ class DrbdConnectionProxyViewSet(DrbdConnectionViewSet, RequestHandlers):
             remote_pool = request.DATA["remote_pool"]
 
             try:
-                local_volume_host = Host.objects.get(id=source_volume["host"]["id"])
+                source_volume_host = Host.objects.get(id=source_volume["host"]["id"])
                 remote_pool_host = Host.objects.get(id=remote_pool["host"]["id"])
             except Host.DoesNotExist:
                 return Response("Can't find the related host object of the volume that should be mirrored",
@@ -91,7 +91,7 @@ class DrbdConnectionProxyViewSet(DrbdConnectionViewSet, RequestHandlers):
             if "connection_id" not in request.DATA:
                 # -> PRIMARY
                 # Check where the source volume is located
-                if local_volume_host == Host.objects.get_current():
+                if source_volume_host == Host.objects.get_current():
                     # source volume is a local volume
                     # Step 1: Create the connection
                     connection_resp = super(DrbdConnectionProxyViewSet, self).create(request, args, kwargs)
@@ -108,7 +108,7 @@ class DrbdConnectionProxyViewSet(DrbdConnectionViewSet, RequestHandlers):
                     return connection_resp
                 else:
                     # -> source volume is a remote volume, call remote host
-                    return Response(json.loads(self._remote_request(request, local_volume_host)),
+                    return Response(json.loads(self._remote_request(request, source_volume_host)),
                                     status=status.HTTP_201_CREATED)
 
             else:
