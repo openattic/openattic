@@ -22,6 +22,7 @@ from ifconfig.models import Host
 from systemd         import dbus_to_python
 from systemd.plugins import logged, BasePlugin, method, deferredmethod
 from systemd.lockutils import Lockfile
+from systemd.procutils import invoke
 
 from lio             import models
 
