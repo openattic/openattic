@@ -1,7 +1,13 @@
-openattic (2.0.1-2) UNRELEASED; urgency=medium
+openattic (2.0.2-1) unstable; urgency=medium
 
   * Merge GUI tree.
   * Remove left-over statoverride for /var/lib/openattic/ftp.
+  * Add openattic-module-ceph package.
+  * Drop dependency on libjs-angularjs.
+  * Add build-depends to git, npm and apache2-dev.
+  * Add dependency on python-requests.
+  * Add dependency on lio-utils for distros that don't have python-rtslib-fb
+    (Ubuntu Trusty).
 
  -- Michael Ziegler <michael.ziegler@it-novum.com>  Thu, 06 Aug 2015 13:16:21 +0200
 
