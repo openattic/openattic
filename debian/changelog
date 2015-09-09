@@ -1,5 +1,6 @@
 openattic (2.0.2-1) unstable; urgency=medium
 
+  * New upstream release.
   * Merge GUI tree.
   * Remove left-over statoverride for /var/lib/openattic/ftp.
   * Add openattic-module-ceph package.
