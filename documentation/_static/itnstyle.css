@@ -1,0 +1,113 @@
+body {
+    border-top: 5px solid #288cea;
+    font-family: "Source Sans Pro", sans-serif;
+    font-size: 16px;
+    color: #373737;
+    line-height: 1.6;
+    font-weight: normal;
+    background-color: #ffffff;
+}
+
+div.body {
+  color: #373737 !important;
+}
+
+div.headerimg {
+    padding-top: 21px;
+    height: 76px;
+}
+
+div.document {
+    background-color: transparent;
+    margin: 0 0 10px;
+    padding: 3px;
+    text-align: left;
+}
+
+a, a:visited {
+    color:#288cea;
+    text-decoration:none;
+    display:inline-block;
+}
+
+a.external, a.external:visited {
+    padding-left: 15px;
+    background:url(images/red-arrow.png) no-repeat left 50% transparent;
+}
+
+a.headerlink {
+    color: #288cea !important;
+}
+
+a.headerlink:hover {
+    background-color: #288cea !important;
+    color: #ffffff !important;
+}
+
+div.related, div.related a, div.related a:visited {
+    background-color: transparent;
+    color: #373737 !important;
+}
+
+div.col-wrapper h3 {
+    margin-top: 20px !important;
+}
+
+div.body h1 {
+    font-size: 25px !important;
+    margin-top: 20px !important;
+}
+
+h1, h2, h3, h4, h3 a, h3 a:visited {
+    background-color: transparent !important;
+    font-family: "Droid Serif", serif !important;
+    color: #288cea !important;
+}
+
+.csc-firstHeader {
+    border-bottom: 2px solid #E2E4E4 !important;
+    border-top: 2px solid #E2E4E4 !important;
+}
+
+div.related li.right {
+    background-color: transparent;
+    float: right;
+}
+
+#bodywrapper {
+    margin-top: 0;
+}
+
+pre, div.seealso {
+    background-color: #EEEEEE;
+    border-color: #CCCCCC;
+}
+
+
+#mainnav {
+    border: none;
+    background: #eeeeee;
+    background-image: none;
+    padding: 5px 5px;
+}
+
+#mainnav *:link, #mainnav *:visited, #mainnav *:link:hover {
+    background: transparent;
+    background-image: none;
+    border-left: none;
+    border-right: none;
+    color: #373737;
+}
+
+#mainnav .active *:link, #mainnav .active *:visited {
+    background: transparent;
+    background-image: none;
+    color: #dc072e;
+    border-right: none;
+}
+
+#mainnav .active *:link:hover, #mainnav .active *:visited:hover {
+    border-right: none;
+    background: transparent;
+    background-image: none;
+}

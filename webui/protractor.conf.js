@@ -29,9 +29,9 @@ exports.config = {
     blockStorage       : '../e2e/wizards/block/blockStorage.e2e.js',
     vmStorage_xfs_nfs  : '../e2e/wizards/vm/vmStorage_xfs_nfs.e2e.js',
     //note: please disable zvol suites if you do not have at least one zfs pool configured!
-    zvol_add	       : '../e2e/volumes/zvol/zvol.e2e.js',
-    zvol_snap	       : '../e2e/volumes/zvol/zvol_snap.e2e.js',
-    zvol_share         : '../e2e/volumes/zvol/zvol_share.e2e.js'
+    //zvol_add	       : '../e2e/volumes/zvol/zvol.e2e.js',
+    //zvol_snap	       : '../e2e/volumes/zvol/zvol_snap.e2e.js',
+    //zvol_share         : '../e2e/volumes/zvol/zvol_share.e2e.js'
   },
 
   onPrepare: function(){
