@@ -1,6 +1,53 @@
 openATTIC Changelog
 ===================
 
+Version 2.0.2, 09 Sep 2015:
+---------------------------------
+
+* API: Merged the formerly separate REST API test suite into the
+  openATTIC code base (subdirectory "gatling").
+* Web UI: Merged the formerly separate Web UI into the openATTIC code base
+  (subdirectory "webui").
+* Documentation: Created an initial version of the 2.0 documentation (derived
+  from the 1.2 docs) and added it to the openATTIC code base (subdirectory
+  "documentation") (OP-502).
+* Added Ceph module and created openattic-module-ceph installation package
+  (OP-623, OP-624).
+* Installation: Fixed RPM installation error ("semanage: command not found)
+  (OP-571).
+* Installation: created "openattic-release" RPM package, to simplify the
+  installation process (OP-537).
+* Web UI: Fixed some UI usability issues, e.g. "When deleting a volume,
+  pressing "Enter" after confirming the volume name cancels the delete action"
+  (OP-565), "Pressing "Enter" in the volume resize dialoge cancels the
+  intended action" (OP-601).
+* WebUI: Heavily extended the UI test suite.
+* WebUI: Added missing Volume Resize option (OP-425).
+* WebUI: Fixed broken Disk Details URL on the Disk Management page (OP-540).
+* Installation: Fixed "/var/lib/openattic/ftp does not exist" warning during
+  the installation (OP-508).
+* Web UI: Fixed iSCSI LUNs not deletable (OP-618, thanks to Felix Netzel for
+  reporting).
+* Web UI: Fixed a login problem with a newly created user (OP-615, thanks to
+  Felix Netzel for reporting).
+* Installation: Fixed an issue with `oaconfig restart/reload` on RHEL 7 and
+  derivatives (OP-572).
+* Installation: Fixed "semanage: command not found" error during RPM upgrade
+  (OP-571).
+* WebUI: Unified the types of the checkboxes of the cluster status widget
+  (OP-566).
+* Installation: Fixed a missing "python-djangorestframework" dependency for
+  Ubuntu 14.04 (OP-510).
+* Installation: Overhauled the EL7 RPM packages. RPM packages are now signed
+  with GPG.
+* Adding iSCSI LUNs now only works for hosts that have iqn/wwn attributes
+  (OP-469).
+* WebUI: Added performance graph to the Dashboard.
+* Installation: Fixed oaconfig failure when /etc/aliases is missing (thanks
+  to Thomas Schweikle for reporting).
+* Installation: Added --allow-broken-hostname option to allow "oaconfig
+  install" to proceed without a correctly-configured FQDN (OP-501).
+
 Version 2.0.1, 10 July 2015:
 ---------------------------------
 
