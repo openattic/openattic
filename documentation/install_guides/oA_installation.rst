@@ -5,8 +5,8 @@ Operating System Requirements
 -----------------------------
 
 .. note::
-  |oA| has been designed to be installed on a 64-bit Linux operating system.
-  Installation on 32-bit systems is not supported.
+   |oA| has been designed to be installed on a 64-bit Linux operating system.
+   Installation on 32-bit systems is not supported.
 
 The following Linux distributions are currently supported:
 
@@ -379,8 +379,3 @@ After installing |oA|, you can install additional modules by using
   # oaconfig install openattic-module-btrfs
   # oaconfig install openattic-module-lio
 
-
-Installing a cluster
---------------------
-
-.. todo:: Waiting for feedback
