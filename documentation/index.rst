@@ -28,7 +28,7 @@ web interface or via the REST API.
 ..  gui_docs/index
   developer_docs/index
 
-.. seealso:: This documentation is also available `as a PDF file. </openATTIC.pdf>`_
+.. seealso:: This documentation is also available `as a PDF file. <openATTIC.pdf>`_
 
 Indices and Tables
 ##################
