@@ -14,6 +14,8 @@
  *  GNU General Public License for more details.
 """
 
+from os.path import exists
+
 from django.contrib.auth.models import User
 
 from systemd.procutils import invoke
@@ -26,11 +28,14 @@ class SystemD(BasePlugin):
     @method(in_signature="", out_signature="")
     def write_aliases(self):
         # read current aliases
-        fd = open( "/etc/aliases", "rb" )
-        try:
-            aliases = fd.read()
-        finally:
-            fd.close()
+        if exists("/etc/aliases"):
+            fd = open( "/etc/aliases", "rb" )
+            try:
+                aliases = fd.read()
+            finally:
+                fd.close()
+        else:
+            aliases = ""
 
         aliases = dict([
             [part.strip() for part in line.split(":")]

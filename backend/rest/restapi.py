@@ -20,6 +20,7 @@ from django.contrib.contenttypes.models import ContentType
 from rest_framework import serializers, viewsets
 from rest_framework.decorators import detail_route, list_route
 from rest_framework.response import Response
+from rest_framework.status import HTTP_201_CREATED
 
 from rest import relations
 
@@ -61,6 +62,19 @@ class UserViewSet(viewsets.ModelViewSet):
     def current(self, request, *args, **kwargs):
         serializer = UserSerializer(request.user, many=False, context={"request": request})
         return Response(serializer.data)
+
+    def create(self, request, *args, **kwargs):
+        user_data           = request.DATA
+        user                = User.objects.create_user(user_data["username"], user_data["email"], user_data["password"])
+        user.first_name     = user_data["first_name"]
+        user.last_name      = user_data["last_name"]
+        user.is_active      = user_data["is_active"]
+        user.is_superuser   = user_data["is_superuser"]
+        user.is_staff       = user_data["is_staff"]
+        user.save()
+
+        user_ret = UserSerializer(user, context={"request": request})
+        return Response(user_ret.data, status=HTTP_201_CREATED)
 
 
 RESTAPI_VIEWSETS = [

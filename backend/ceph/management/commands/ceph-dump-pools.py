@@ -14,19 +14,13 @@
  *  GNU General Public License for more details.
 """
 
-import socket
-
 from django.core.management.base import BaseCommand
 
-from ifconfig.models import Host
+from ceph.models import Pool
 
 class Command( BaseCommand ):
-    help = "Make sure a Host entry for this host exists."
+    help = "Dump the Ceph OSD tree as known to openATTIC."
 
     def handle(self, **options):
-        try:
-            host = Host.objects.get_current()
-        except Host.DoesNotExist:
-            fqdn = socket.getfqdn()
-            host = Host(name=fqdn)
-            host.save()
+        for pool in Pool.objects.all():
+            print " * %-20s size=%-3d min_size=%-3d rule: %s" % (pool, pool.size, pool.min_size, pool.ruleset.get_description())

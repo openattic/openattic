@@ -61,7 +61,7 @@ class HostACLProxyViewSet(RequestHandlers, HostACLViewSet):
 
 class InitiatorSerializer(serializers.HyperlinkedModelSerializer):
     """ Serializer for a Initiator. """
-    url         = serializers.HyperlinkedIdentityField(view_name="nfsshare-detail")
+    url         = serializers.HyperlinkedIdentityField(view_name="initiator-detail")
     host        = relations.HyperlinkedRelatedField(view_name="host-detail")
 
     class Meta:

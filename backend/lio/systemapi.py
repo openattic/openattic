@@ -30,6 +30,11 @@ from lio             import models
 class SystemD(BasePlugin):
     dbus_path = "/lio"
 
+    @deferredmethod(in_signature="")
+    def modprobe(self, sender):
+        invoke(["modprobe", "target_core_mod"]),
+        invoke(["modprobe", "iscsi_target_mod"])
+
     @deferredmethod(in_signature="i")
     def install_hostacl(self, id, sender):
         hostacl = models.HostACL.objects.get(id=id)

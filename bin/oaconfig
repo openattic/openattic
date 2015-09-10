@@ -20,7 +20,7 @@ cd $OADIR
 OAUSER=` cut -d: -f1 <<< "$RPCD_CHUID"`
 
 if [ "$DJANGO_AUTO_COMPLETE" = "1" ]; then
-	MYCOMMANDS="install scan-vgs add-vg add-disk restart reload status dbdump"
+	MYCOMMANDS="install scan-vgs add-vg add-disk restart reload status dbdump domainjoin"
 	ARRAY_WORDS=( $COMP_WORDS )
 	compgen -W "$MYCOMMANDS" "${ARRAY_WORDS[COMP_CWORD]}"
 	su "$OAUSER" -c 'python manage.py'
@@ -55,6 +55,7 @@ usage () {
 	echo "    scan-vgs     Instruct LVM to search for existing VGs."
 	echo "    add-vg       Make an already existing LVM Volume Group known to openATTIC."
 	echo "    add-disk     Create a PV on the given disk/partition and add it to openATTIC."
+	echo "    domainjoin   Join a Windows Active Directory Domain."
 	echo "    restart      Restart all services that are needed to run openATTIC."
 	echo "    reload       Reload all services that are needed to run openATTIC."
 	echo "    status       Show the status of all services that are needed to run openATTIC."
@@ -78,6 +79,31 @@ case $1 in
 		;;
 
 	install)
+		if [ "$#" -gt 1 ] && [ "$2" = "--allow-broken-hostname" ]; then
+			shift
+		else
+			if [[ "`hostname --fqdn`" != *.* ]]; then
+				echo "'`hostname --fqdn`' is not a fully-qualified domain name."
+				echo "You should fix this error before proceeding with the installation."
+				echo "To ignore this warning, use oaconfig install --allow-broken-hostname."
+				exit 2
+			fi
+			
+			if grep -qP '^\d+$' <<<"$HOSTNAME" ; then
+				echo "Your hostname is invalid because it consists of numbers only. (Consider adding a - somewhere.)"
+				echo "You should fix this error before proceeding with the installation."
+				echo "To ignore this warning, use oaconfig install --allow-broken-hostname."
+				exit 2
+			fi
+			
+			if grep -qP '^[\w\d\-]{16,}$' <<<"$HOSTNAME" ; then
+				echo "Your hostname is too long for a Windows domain (must be max. 15 characters)."
+				echo "You should fix this error before proceeding with the installation."
+				echo "To ignore this warning, use oaconfig install --allow-broken-hostname."
+				exit 2
+			fi
+		fi
+		
 		su "$OAUSER" -c 'python manage.py pre_install'
 		
 		chown $RPCD_CHUID /etc/openattic/databases/*sql.ini
