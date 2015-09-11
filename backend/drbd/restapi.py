@@ -16,20 +16,24 @@
 
 import json, logging, traceback
 
+from rest import relations
+
 from rest_framework import serializers, viewsets, status
 from rest_framework.response import Response
 from rest_framework import status
 
 from drbd.models import Connection, Endpoint
 from ifconfig.models import Host
+from volumes.models import StorageObject
 
 from rest.multinode.handlers import RequestHandlers
 
 class DrbdConnectionSerializer(serializers.HyperlinkedModelSerializer):
     """ Serializer for DRBD connection """
 
-    volume = serializers.HyperlinkedIdentityField(view_name="volume-detail")
-    url = serializers.HyperlinkedIdentityField(view_name="mirror-detail")
+    volume  = relations.HyperlinkedRelatedField(view_name="volume-detail", source="storageobj",
+                                                queryset=StorageObject.objects.all())
+    url     = serializers.HyperlinkedIdentityField(view_name="mirror-detail")
 
     class Meta:
         model = Connection
