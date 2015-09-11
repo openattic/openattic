@@ -5,8 +5,8 @@ Operating System Requirements
 -----------------------------
 
 .. note::
-  |oA| has been designed to be installed on a 64-bit Linux operating system.
-  Installation on 32-bit systems is not supported.
+   |oA| has been designed to be installed on a 64-bit Linux operating system.
+   Installation on 32-bit systems is not supported.
 
 The following Linux distributions are currently supported:
 
@@ -102,14 +102,12 @@ system.
 Preparing the Installation
 --------------------------
 
-Hardware / Physical setup
-
 #.  Always dedicate two disks to a RAID1 for the system. It doesn't matter if
     you use hardware or software RAID for this volume, just that you split it
     off from the rest.
 
-.. note::
-  You can also use other devices to boot from if they fit your redundancy needs.
+    .. note::
+      You can also use other devices to boot from if they fit your redundancy needs.
 
 #.  When using hardware RAID:
 
@@ -117,64 +115,65 @@ Hardware / Physical setup
         chunk size (strip size) of 256KiB.  Do not create a partition table on
         these devices. If your RAID controller does not support 256KiB chunks,
         use the largest supported chunk size.
-    #.	Using mdadm, create a Software-RAID0 device on exactly two or four of
+    #.  Using mdadm, create a Software-RAID0 device on exactly two or four of
         your hardware RAID devices.  Again, do not create a partition table on
         the resulting MD device. Make sure the chunk size of the RAID0 array
         matches that of the underlying RAID5 arrays.  This way, you will not
         be able to add more than 20 disks to one PV. This is intentional. If
         you need to add more disks, create multiple PVs in the same manner.
-    #.	Using pvcreate, create an LVM Physical Volume on the MD device and add
+    #.  Using pvcreate, create an LVM Physical Volume on the MD device and add
         it to a VG using vgcreate or vgextend.
-    #.	Do not mix PVs of different speeds in one single VG.
+    #.  Do not mix PVs of different speeds in one single VG.
 
 #.  When using ZFS:
 
- You will need to specify the complete layout in the zpool create command, so before running it, consider all the following points.
+    You will need to specify the complete layout in the zpool create command, so before running it, consider all the following points.
 
-    a.	Group exactly six disks in each raidz2. Use multiple raidz2 vdevs in order to add all disks to the zpool.
-    b.	When adding SSDs, add them as mirrored log devices.
-    c.	Set the mount point to /media/<poolname> instead of just /<poolname>.
-    d.	Do not use /dev/sdc etc, but use /dev/disk/by-id/... paths instead.
+    #.  Group exactly six disks in each raidz2. Use multiple raidz2 vdevs in order to add all disks to the zpool.
+    #.  When adding SSDs, add them as mirrored log devices.
+    #.  Set the mount point to /media/<poolname> instead of just /<poolname>.
+    #.  Do not use /dev/sdc etc, but use /dev/disk/by-id/... paths instead.
 
- So, the command you're going to use will look something like this::
+    So, the command you're going to use will look something like this::
 
-  # zpool create -m /media/tank tank \
-    raidz2 /dev/disk/by-id/scsi-3500000e1{1,2,3,4,5,6} \
-    raidz2 /dev/disk/by-id/scsi-350000392{1,2,3,4,5,6} \
-    log mirror /dev/disk/by-id/scsi-SATA_INTEL_SSD{1,2}
+        # zpool create -m /media/tank tank \
+          raidz2 /dev/disk/by-id/scsi-3500000e1{1,2,3,4,5,6} \
+          raidz2 /dev/disk/by-id/scsi-350000392{1,2,3,4,5,6} \
+          log mirror /dev/disk/by-id/scsi-SATA_INTEL_SSD{1,2}
 
 Operating System Configuration Hints
 ------------------------------------
 
-#.  Disable swap.
+#. Disable swap.
 
-#.  Make sure the output of ``hostname --fqdn`` is something that makes sense, e.g.
-    ``srvopenattic01.example.com`` instead of ``localhost.localdomain``.  If
-    this doesn't fit, edit ``/etc/hostname`` and ``/etc/hosts`` to contain the
-    correct names.
+#. Make sure the output of ``hostname --fqdn`` is something that makes sense, e.g.
+   ``srvopenattic01.example.com`` instead of ``localhost.localdomain``.  If
+   this doesn't fit, edit ``/etc/hostname`` and ``/etc/hosts`` to contain the
+   correct names.
 
-#.  In a two-node cluster, add a variable named ``$PEER`` to your environment
-    that contains the hostname (not the FQDN) of the cluster peer node.  This
-    simplifies every command that has something to do with the peer. Exchange
-    SSH keys.
+#. In a two-node cluster, add a variable named ``$PEER`` to your environment
+   that contains the hostname (not the FQDN) of the cluster peer node.  This
+   simplifies every command that has something to do with the peer. Exchange
+   SSH keys.
 
-#.  In pacemaker-based clusters, define the following Shell aliases to make
-    your life easier::
+#. In pacemaker-based clusters, define the following Shell aliases to make
+   your life easier::
 
-      alias maint="crm configure property maintenance-mode=true"
-      alias unmaint="crm configure property maintenance-mode=false"
+     alias maint="crm configure property maintenance-mode=true"
+     alias unmaint="crm configure property maintenance-mode=false"
 
-#.  After setting up MD raids, make sure ``mdadm.conf`` is up to date. This can
-    be ensured by running these commands::
+#. After setting up MD raids, make sure ``mdadm.conf`` is up to date. This can
+   be ensured by running these commands::
 
-      # /usr/share/mdadm/mkconf > /etc/mdadm/mdadm.conf
-      # update-initramfs -k all -u
+     # /usr/share/mdadm/mkconf > /etc/mdadm/mdadm.conf
+     # update-initramfs -k all -u
 
-#.  Install and configure an NTP daemon.
+#. Install and configure an NTP daemon.
 
-#.  You may want to install the ``ladvd`` package, which will ensure that your
-    switches correctly identify your system using LLDP.  Make sure
-    ``/etc/drbd.d/global_common.conf`` contains the following variables::
+#. You may want to install the ``ladvd`` package, which will ensure that your
+   switches correctly identify your system using LLDP.
+
+#. Make sure ``/etc/drbd.d/global_common.conf`` contains the following variables::
 
        disk {
         no-disk-barrier;
@@ -261,8 +260,6 @@ Installation (Debian Jessie)
   # echo deb http://apt.open-attic.org/ jessie main > /etc/apt/sources.list.d/openattic.list
   # apt-get update
   # apt-get install openattic
-  # apt-get install openattic-gui
-  # apt-get install python-requests
   # oaconfig install
 
 Installation (Ubuntu Trusty 14.04)
@@ -273,10 +270,8 @@ Installation (Ubuntu Trusty 14.04)
   # apt-key adv --recv --keyserver hkp://keyserver.ubuntu.com A7D3EAFA
   # echo deb http://apt.open-attic.org/ trusty main > /etc/apt/sources.list.d/openattic.list
   # apt-get update
-  # apt-get install openattic openattic-gui
+  # apt-get install openattic
   # oaconfig install
-  # pip install djangorestframework==2.4.3
-  # oaconfig reload
 
 
 Installation on Red Hat Enterprise Linux (and Derivatives)
@@ -288,7 +283,7 @@ CentOS 7, Oracle Linux 7 or Scientific Linux 7). The software will be
 delivered in the form of RPM packages via dedicated yum repositories.
 
 .. note::
-  Currently, only nightly builds of the RPMs are available for preview purposes.
+   Currently, only nightly builds of the RPMs are available for preview purposes.
 
 Preliminary Preparations on RHEL 7
 ----------------------------------
@@ -356,7 +351,7 @@ To install the packages on CentOS 7, run the following commands:
    openattic``, as it might not be required on each node of an |oA| cluster.
    Instead, it should be installed with the following command::
 
-     # $ sudo yum install openattic-gui
+     # sudo yum install openattic-gui
 
 Getting started
 ===============
@@ -377,16 +372,10 @@ Open a web browser and navigate to http://yourhost/openattic/
 Installing additional |oA| Modules
 ----------------------------------
 
-After installing |oA|, you can add install additional modules by using
-``oaconfig install openattic-module-<module-name>`` i.e.::
+After installing |oA|, you can install additional modules by using
+``oaconfig install openattic-module-<module-name>``, i.e.::
 
- # oaconfig install openattic-module-drbd
- # oaconfig install openattic-module-btrfs
- # oaconfig install openattic-module-lio
+  # oaconfig install openattic-module-drbd
+  # oaconfig install openattic-module-btrfs
+  # oaconfig install openattic-module-lio
 
-(<--------- list of all available modules here --------->)
-
-Installing a cluster
---------------------
-
-.. todo:: Waiting for feedback
