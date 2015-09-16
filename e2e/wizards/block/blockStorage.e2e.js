@@ -6,11 +6,14 @@ describe('Raw Block Storage Wizard', function(){
   var wizardOverviewBtn = element(by.css('.tc_wizardOverview'));
   var previousBtn = element(by.css('.tc_previousBtn'));
 
-  var volume = element(by.id('volumename'));
+	var volumename = 'protractor_test_volume';
+	var volumefield = element(by.id('volumename'));
+  var volume = element(by.cssContainingText('tr', volumename));
   var pool = element(by.id('source_pool'));
   var size = element(by.id('volumemegs'));
   var is_protected = element(by.id('volumeisprotected'));
-  var hostname = "protractor_test_host";
+
+	var hostname = "protractor_test_host";
   var host = element(by.cssContainingText('tr', hostname));
   var iqn = "iqn.1991-05.com.microsoft:protractor_test_host";
 
@@ -50,12 +53,12 @@ describe('Raw Block Storage Wizard', function(){
     var nextBtn = element(by.id('nextBtn')).evaluate('nextBtnText()');
     expect(nextBtn.getText()).toEqual('Next');
     expect(element.all(by.css('h3')).get(0).getText()).toEqual('Raw Block Storage Step 1 - Create Volume');
-    expect(volume.isDisplayed()).toBe(true);
+    expect(volumefield.isDisplayed()).toBe(true);
     expect(size.isDisplayed()).toBe(true);
     //expect(is_protected.Present()).toBe(true);
 
     //enter volume data
-    volume.sendKeys('protractor_test_volume');
+    volumefield.sendKeys(volumename);
 
     //in order to enter a size we need to choose a pool first
       for(var key in configs.pools) {
