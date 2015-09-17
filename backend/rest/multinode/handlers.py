@@ -118,13 +118,13 @@ class RequestHandlers(object):
         if view_name:
             url = '%s/%s' % (url, view_name)
 
-        auth_header = self._get_auth_header(request)
+        header = self._get_auth_header(request)
 
         if request.method == 'POST' or request.method =='PUT':
-            auth_header['content-type'] = 'application/json'
-            response = requests.request(request.method, url, data=json.dumps(request.DATA), headers=auth_header)
+            header['content-type'] = 'application/json'
+            response = requests.request(request.method, url, data=json.dumps(request.DATA), headers=header)
         else:
-            response = requests.request(request.method, url, headers=auth_header)
+            response = requests.request(request.method, url, headers=header)
 
         response.raise_for_status()
         return response.text
