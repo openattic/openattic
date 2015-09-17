@@ -119,9 +119,9 @@ class RequestHandlers(object):
             url = '%s/%s' % (url, view_name)
 
         header = self._get_auth_header(request)
+        header['content-type'] = 'application/json'
 
         if request.method == 'POST' or request.method =='PUT':
-            header['content-type'] = 'application/json'
             response = requests.request(request.method, url, data=json.dumps(request.DATA), headers=header)
         else:
             response = requests.request(request.method, url, headers=header)
