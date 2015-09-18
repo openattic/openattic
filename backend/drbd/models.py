@@ -249,6 +249,10 @@ class Connection(BlockVolume):
     def get_storage_devices(self):
         return Endpoint.all_objects.filter(connection=self)
 
+    def uninstall_local_storage_device(self):
+        local_endpoint = Endpoint.objects.get(connection=self)
+        local_endpoint.uninstall()
+
 
 class Endpoint(models.Model):
     connection  = models.ForeignKey(Connection, related_name="endpoint_set")
