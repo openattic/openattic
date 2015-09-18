@@ -6,7 +6,7 @@ describe('Raw Block Storage Wizard', function(){
   var wizardOverviewBtn = element(by.css('.tc_wizardOverview'));
   var previousBtn = element(by.css('.tc_previousBtn'));
 
-	var volumename = 'protractor_test_volume';
+	var volumename = 'protractor_wizardTest_blockvol';
 	var volumefield = element(by.id('volumename'));
   var volume = element(by.cssContainingText('tr', volumename));
   var pool = element(by.id('source_pool'));
@@ -134,7 +134,7 @@ describe('Raw Block Storage Wizard', function(){
   });
 
   afterAll(function(){
-    helpers.delete_volume();
+    helpers.delete_volume(volume, volumename);
 		helpers.delete_host();
     console.log('<-----Raw Block Storage volume and host removed --->');
   });
