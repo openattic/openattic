@@ -15,14 +15,14 @@ class LvTestScenario(GatlingTestCase):
         base_url = cls.conf.get("options", "connect")
         auth_token = cls.conf.get("options", "auth_token")
 
-        if not cls.__name__.startswith("Remote"):
-            cls.require_enabled("lvm")
-            cls.require_config("lvm", "vg")
-            lvm_conf_part = "lvm"
-        else:
+        if cls.__name__.startswith("Remote"):
             cls.require_enabled("lvm:remote")
             cls.require_config("lvm:remote", "vg")
             lvm_conf_part = "lvm:remote"
+        else:
+            cls.require_enabled("lvm")
+            cls.require_config("lvm", "vg")
+            lvm_conf_part = "lvm"
 
         vg_name = cls.conf.get(lvm_conf_part, "vg")
 
