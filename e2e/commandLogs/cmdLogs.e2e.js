@@ -5,11 +5,13 @@ describe('CommandLogs', function(){
   var systemItem = element.all(by.css('ul .tc_menuitem')).get(5);
   var cmdLogItem = systemItem.all(by.css('ul .tc_submenuitem')).get(1);
   var volumePoolSelect = element(by.model('data.sourcePool'));
+	var volumename = 'protractor_cmdlog_vol';
+	var volume = element(by.cssContainingText('tr', volumename));
 
   beforeAll(function(){
     helpers.login();
     //create a volume to check the lvcreate log entry
-    helpers.create_volume("lun");
+    helpers.create_volume(volumename, "lun");
     browser.sleep(400);
     systemItem.click();
     browser.sleep(400);
@@ -60,7 +62,7 @@ describe('CommandLogs', function(){
 //   });
 
   afterAll(function(){
-    helpers.delete_volume();
+    helpers.delete_volume(volume, volumename);
     console.log('cmdLog test ended; test volume deleted');
 
   });
