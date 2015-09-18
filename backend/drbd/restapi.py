@@ -64,6 +64,18 @@ class DrbdConnectionViewSet(viewsets.ModelViewSet):
         ser = DrbdConnectionSerializer(connection, context={"request": request})
         return Response(ser.data, status=status.HTTP_201_CREATED)
 
+    def destroy(self, request, *args, **kwargs):
+        connection = self.get_object()
+        print "REMOVE LOCAL ENDPOINT"
+        connection.uninstall_local_storage_device()
+
+        if len(connection.get_storage_devices()) == 0:
+            print "REMOVE DRBD CONNECTION"
+            connection.storageobj.delete()
+            return Response("DRBD connection removed", status=status.HTTP_200_OK)
+
+        return Response("Local DRBD endpoint removed", status=status.HTTP_200_OK)
+
     def _install_connection(self, request, connection_id):
         # called on the primary only, not part of the REST API
         source_volume = request.DATA['source_volume']
@@ -124,6 +136,29 @@ class DrbdConnectionProxyViewSet(DrbdConnectionViewSet, RequestHandlers):
         except Exception, err:
             logging.error(err)
             logging.error("Received exception: " + traceback.format_exc())
+
+    def destroy(self, request, *args, **kwargs):
+        connection = self.get_object()
+
+        if connection.host == Host.objects.get_current():
+            # Step 1: Call second host to delete his endpoint, if the request was not forwarded by secondary host
+            if len(connection.get_storage_devices()) > 1:
+                print "CALL SECOND HOST TO DELETE HIS ENDPOINT"
+                self._remote_request(request, connection.peerhost, connection)
+
+            # Step 2: Delete local endpoint and connection
+            print "DELETE OWN DATA"
+            return super(DrbdConnectionProxyViewSet, self).destroy(request, args, kwargs)
+        else:
+            # Step 1: Remove local endpoint
+            print "I  AM THE SECONDARY HOST, SO I REMOVE MY ENDPOINT AT FIRST"
+            super(DrbdConnectionProxyViewSet, self).destroy(request, args, kwargs)
+
+            # Step 2: Call Primary host, if this host was called by a client and not by the primary host
+            if "proxy_host_id" not in request.DATA:
+                self._remote_request(request, connection.host, connection)
+
+            return Response("DRBD connection removed", status=status.HTTP_200_OK)
 
 
 RESTAPI_VIEWSETS = [
