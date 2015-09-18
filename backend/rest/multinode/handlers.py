@@ -121,11 +121,10 @@ class RequestHandlers(object):
         header = self._get_auth_header(request)
         header['content-type'] = 'application/json'
 
-        if request.method == 'POST' or request.method =='PUT':
-            response = requests.request(request.method, url, data=json.dumps(request.DATA), headers=header)
-        else:
-            response = requests.request(request.method, url, headers=header)
+        current_host = Host.objects.get_current()
+        data = dict(request.DATA, proxy_host_id=current_host.id)
 
+        response = requests.request(request.method, url, data=json.dumps(data), headers=header)
         response.raise_for_status()
         return response.text
 
