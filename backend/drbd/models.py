@@ -250,17 +250,6 @@ class Connection(BlockVolume):
         return Endpoint.all_objects.filter(connection=self)
 
 
-def __connection_pre_delete(instance, **kwargs):
-    for endpoint in Endpoint.all_objects.filter(connection=instance):
-        if endpoint.host == Host.objects.get_current():
-            endpoint._uninstall()
-        else:
-            peer_host = PeerHost.objects.get(host_id=endpoint.host.id)
-            peer_host.drbd.Endpoint.uninstall(endpoint.id)
-
-models.signals.pre_delete.connect(__connection_pre_delete, sender=Connection)
-
-
 class Endpoint(models.Model):
     connection  = models.ForeignKey(Connection, related_name="endpoint_set")
     ipaddress   = models.ForeignKey(IPAddress)
