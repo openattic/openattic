@@ -1,6 +1,4 @@
 
-import requests, json
-
 from unittest import SkipTest
 
 from testcase import GatlingTestCase
@@ -26,13 +24,11 @@ class LvTestScenario(GatlingTestCase):
 
         vg_name = cls.conf.get(lvm_conf_part, "vg")
 
-        res = requests.request("GET", "%spools?name=%s" % (base_url, vg_name),
-                               headers={"Authorization": "Token %s" % auth_token})
-        res = json.loads(res.text)
+        res = cls.send_request("GET", "pools", search_param=("name=%s" % vg_name))
 
         if res["count"] != 1:
             raise SkipTest("REST api returned no or more than one object(s). But only one is expected.")
-        cls.vg = res["results"][0]
+        cls.vg = res["response"][0]
 
         if cls.vg["name"] != cls.conf.get(lvm_conf_part, "vg") or \
                         cls.vg["type"]["app_label"] != "lvm" or \
