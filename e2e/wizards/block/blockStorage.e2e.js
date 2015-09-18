@@ -103,8 +103,6 @@ describe('Raw Block Storage Wizard', function(){
 
 		//check if lun exists
     browser.sleep(400);
-    element.all(by.css('.tc_entries_dropdown')).get(0).click();
-    element.all(by.css('.tc_entries_100')).get(0).click();
     browser.sleep(400);
     expect(volume.isPresent()).toBe(true);
     volume.click();
@@ -116,8 +114,6 @@ describe('Raw Block Storage Wizard', function(){
 		//remove the lun map
 		element.all(by.css('ul .tc_menuitem')).get(3).click();
     browser.sleep(400);
-    element.all(by.css('.tc_entries_dropdown')).get(0).click();
-    element.all(by.css('.tc_entries_100')).get(0).click();
     browser.sleep(400);
     expect(volume.isPresent()).toBe(true);
     volume.click();
