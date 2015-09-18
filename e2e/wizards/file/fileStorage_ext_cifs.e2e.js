@@ -8,6 +8,8 @@ describe('Wizard panel', function(){
 	var volumename = 'protractor_wizard_fileVol02';
 	var volume = element.all(by.cssContainingText('tr', volumename)).get(0);
   var volumefield = element(by.id('volumename'));
+	var share = element(by.cssContainingText('tr', 'protractor_wizard_cifsShare'));
+
   var pool = element(by.id('source_pool'));
   var size = element(by.id('volumemegs'));
   var is_protected = element(by.id('isprotected'));
@@ -120,8 +122,8 @@ describe('Wizard panel', function(){
     expect(element(by.css('.tc_cifsPathRequired')).isDisplayed()).toBe(true);
 
 
-    cifsName.sendKeys('protractor_wizard_fileVol02');
-    path.sendKeys('/media/protractor_wizard_fileVol02');
+    cifsName.sendKeys('protractor_wizard_cifsShare');
+    path.sendKeys('/media/protractor_wizard_cifsShare');
     nextBtn.click();
 
     //Step 4 - Done
@@ -130,6 +132,24 @@ describe('Wizard panel', function(){
     expect(element(by.css('.tc_wizardDone')).getText()).toEqual('File Storage Step 4 - Save configuration');
     expect(nextBtn.getText()).toEqual('Done');
     nextBtn.click();
+
+
+		element.all(by.css('ul .tc_menuitem')).get(3).click();
+    expect(volume.isDisplayed()).toBe(true);
+    browser.sleep(400);
+		volume.click();
+		element(by.css('.tc_cifsShareTab')).click();
+    expect(share.isDisplayed()).toBe(true);
+    browser.sleep(400);
+    share.click();
+    browser.sleep(400);
+    element.all(by.css('.tc_menudropdown')).get(1).click();
+    browser.sleep(400);
+    element(by.css('.tc_cifsShareDelete')).click();
+    browser.sleep(400);
+    element(by.id('bot2-Msg1')).click();
+    browser.sleep(400);
+
     console.log('<----- file storage test with CIFS ended ------>');
   });
 

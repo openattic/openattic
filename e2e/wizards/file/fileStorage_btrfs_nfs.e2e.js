@@ -6,7 +6,8 @@ describe('Wizard panel', function(){
   var previousBtn = element(by.css('.tc_previousBtn'));
   //maye rename volume, pool, etc. -> isn't the actual 'object' instead it's just the input field
 	var volumename = 'protractor_wizard_fileVol01';
-	var volume = element.all(by.cssContainingText('tr', volumename)).get(0);
+	var volume = element(by.cssContainingText('tr', volumename));
+  var share = element(by.cssContainingText('td', 'oadev.domain.here'));
 
 	var volumefield = element(by.id('volumename'));
   var pool = element(by.id('source_pool'));
@@ -160,6 +161,19 @@ describe('Wizard panel', function(){
     expect(nextBtn.getText()).toEqual('Done');
     nextBtn.click();
     console.log('<----- file storage test with NFS ended ------>');
+
+		element.all(by.css('ul .tc_menuitem')).get(3).click();
+    expect(volume.isDisplayed()).toBe(true);
+		volume.click();
+		element(by.css('.tc_nfsShareTab')).click();
+    expect(share.isDisplayed()).toBe(true);
+    share.click();
+    browser.sleep(400);
+    element(by.css('.tc_nfsShareDelete')).click();
+    browser.sleep(400);
+    element(by.id('bot2-Msg1')).click();
+    browser.sleep(400);
+
   });
 
   afterAll(function(){

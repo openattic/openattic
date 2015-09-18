@@ -10,6 +10,7 @@ describe('VM Storage Wizard', function(){
   var volumefield = element(by.id('volumename'));
   var pool = element(by.id('source_pool'));
   var size = element(by.id('volumemegs'));
+	var share = element(by.cssContainingText('td', 'oadevhost.domain.here'));
   var is_protected = element(by.id('volumeisprotected'));
 
   var volume_required = element(by.css('.tc_nameRequired'));
@@ -109,9 +110,23 @@ describe('VM Storage Wizard', function(){
     expect(element(by.css('.tc_wizardDone')).getText()).toEqual('VM Storage Step 4 - Save configuration');
     expect(nextBtn.getText()).toEqual('Done');
     nextBtn.click();
+
+		element.all(by.css('ul .tc_menuitem')).get(3).click();
+    expect(volume.isDisplayed()).toBe(true);
+		volume.click();
+		element(by.css('.tc_nfsShareTab')).click();
+		browser.sleep(400);
+    expect(share.isDisplayed()).toBe(true);
+    share.click();
+    browser.sleep(400);
+    element(by.css('.tc_nfsShareDelete')).click();
+    browser.sleep(400);
+    element(by.id('bot2-Msg1')).click();
+    browser.sleep(400);
+
     console.log('<----- VM storage test with NFS ended ------>');
   });
-	 
+
   afterAll(function(){
     helpers.delete_volume(volume, volumename);
     console.log('<----- VM storage test volume removed ------>');
