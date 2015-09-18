@@ -2,13 +2,13 @@ var helpers = require('../../common.js');
 
 describe('HTTP Share workflow', function(){
 
-  var volumename = 'protractor_test_volume';
+  var volumename = 'protractor_httpWorkflow_vol';
   var volume = element.all(by.cssContainingText('tr', volumename)).get(0);
   var volumesItem = element.all(by.css('ul .tc_menuitem')).get(3);
-  
+
   beforeAll(function(){
     helpers.login();
-    helpers.create_volume("btrfs");    
+    helpers.create_volume(volumename, "btrfs");
   });
 
   beforeEach(function(){
@@ -50,10 +50,10 @@ describe('HTTP Share workflow', function(){
 
     expect(element(by.css('.tc_oadatatable_http_shares')).isPresent()).toBe(true);
   });
-  
+
   afterAll(function(){
     console.log('http_share_workflow');
-    helpers.delete_volume();    
+    helpers.delete_volume(volume, volumename);
   });
-  
+
 });
