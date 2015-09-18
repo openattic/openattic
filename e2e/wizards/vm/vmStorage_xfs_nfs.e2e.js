@@ -6,7 +6,7 @@ describe('VM Storage Wizard', function(){
   var previousBtn = element(by.css('.tc_previousBtn'));
 
 	var volumename = 'protractor_vmWizard_vol';
-	var volume = element(by.cssContainingText('tr', 'protractor_vmWizard_vol'));
+	var volume = element(by.cssContainingText('tr', volumename));
   var volumefield = element(by.id('volumename'));
   var pool = element(by.id('source_pool'));
   var size = element(by.id('volumemegs'));
@@ -112,6 +112,7 @@ describe('VM Storage Wizard', function(){
     nextBtn.click();
 
 		element.all(by.css('ul .tc_menuitem')).get(3).click();
+		browser.sleep(400);
     expect(volume.isDisplayed()).toBe(true);
 		volume.click();
 		element(by.css('.tc_nfsShareTab')).click();

@@ -6,7 +6,7 @@ describe('Wizard panel', function(){
   var previousBtn = element(by.css('.tc_previousBtn'));
   //maye rename volume, pool, etc. -> isn't the actual 'object' instead it's just the input field
 	var volumename = 'protractor_wizard_fileVol02';
-	var volume = element.all(by.cssContainingText('tr', volumename)).get(0);
+	var volume = element(by.cssContainingText('tr', volumename));
   var volumefield = element(by.id('volumename'));
 	var share = element(by.cssContainingText('tr', 'protractor_wizard_cifsShare'));
 
