@@ -2,7 +2,7 @@ var helpers = require('../../common.js');
 
 describe('CIFS Share workflow', function(){
 
-  var volumename = 'protractor_test_volume';
+  var volumename = 'protractor_cifsWorkflow_volume';
   var volume = element.all(by.cssContainingText('tr', volumename)).get(0);
   var submitButton = element(by.css('.tc_submitButton'));
   var volumesItem = element.all(by.css('ul .tc_menuitem')).get(3);
@@ -13,7 +13,7 @@ describe('CIFS Share workflow', function(){
 
   beforeAll(function(){
     helpers.login();
-    helpers.create_volume("xfs");
+    helpers.create_volume(volumename, "xfs");
   });
 
   beforeEach(function(){
@@ -72,7 +72,7 @@ describe('CIFS Share workflow', function(){
     expect(element(by.css('.tc_backButton')).isPresent()).toBe(true);
   });
 
-  it('should have name field filled in with "protractor_test_volume"', function(){
+  it('should have name field filled in with "<volumename>"', function(){
     expect(name.getAttribute('value')).toEqual(volumename);
   });
 
@@ -93,7 +93,7 @@ describe('CIFS Share workflow', function(){
     submitButton.click();
     expect(nameRequired.isDisplayed()).toBe(true);
     expect(pathRequired.isDisplayed()).toBe(true);
-    
+
   });
 
   it('should show required message if "Name" is empty', function(){
@@ -101,7 +101,7 @@ describe('CIFS Share workflow', function(){
     submitButton.click();
     expect(nameRequired.isDisplayed()).toBe(true);
     expect(pathRequired.isDisplayed()).toBe(false);
-    
+
 
   });
 
@@ -115,6 +115,6 @@ describe('CIFS Share workflow', function(){
 
   afterAll(function(){
     console.log('cifs_workflow');
-    helpers.delete_volume();
+    helpers.delete_volume(volume, volumename);
   });
 });
