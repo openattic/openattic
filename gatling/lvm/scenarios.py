@@ -51,3 +51,6 @@ class RemoteLvTestScenario(LvTestScenario):
         cls.require_enabled("lvm:remote")
         cls.require_config("lvm:remote", "vg")
         cls.remote_vg = cls._get_vg_by_name(cls.conf.get("lvm:remote", "vg"))
+
+    def _get_remote_pool(self):
+        return self.remote_vg
