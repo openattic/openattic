@@ -45,4 +45,9 @@ class LvTestScenario(GatlingTestCase):
 
 
 class RemoteLvTestScenario(LvTestScenario):
-    pass
+    @classmethod
+    def setUpClass(cls):
+        super(RemoteLvTestScenario, cls).setUpClass()
+        cls.require_enabled("lvm:remote")
+        cls.require_config("lvm:remote", "vg")
+        cls.remote_vg = cls._get_vg_by_name(cls.conf.get("lvm:remote", "vg"))
