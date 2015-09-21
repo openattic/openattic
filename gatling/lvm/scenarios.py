@@ -9,7 +9,6 @@ class LvTestScenario(GatlingTestCase):
     @classmethod
     def setUpClass(cls):
         super(LvTestScenario, cls).setUpClass()
-
         cls.require_config("options", "connect")
         cls.require_config("options", "auth_token")
 
