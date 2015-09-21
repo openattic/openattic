@@ -2,8 +2,8 @@ var helpers = require('../../common.js');
 
 describe('Should create a Snapshot', function(){
   var volumename = 'protractor_testvol_xfs';
-  var snapshotname = 'protractor_testvolxfs_snap';
-  var volume = element(by.cssContainingText('tr', volumename));
+  var snapshotname = 'protractor_test_snap';
+  var volume = element.all(by.cssContainingText('tr', volumename)).get(0);
   var snapshot = element(by.cssContainingText('tr', snapshotname));
   var volumesItem = element.all(by.css('ul .tc_menuitem')).get(3);
 
