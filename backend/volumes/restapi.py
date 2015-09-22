@@ -36,9 +36,7 @@ from volumes import models
 # * does not have an upper volume
 VOLUME_FILTER_Q = \
     Q(Q(filesystemvolume__isnull=False) | Q(blockvolume__isnull=False)) & \
-    Q(snapshot__isnull=True) & ~Q(name=".snapshots") & \
-    Q(upper__isnull=True)
-
+    Q(snapshot__isnull=True) & ~Q(name=".snapshots")
 
 
 ##################################
