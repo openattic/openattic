@@ -285,10 +285,11 @@ class VolumeSerializer(serializers.HyperlinkedModelSerializer):
     source_pool = relations.HyperlinkedRelatedField(view_name="pool-detail",   read_only=True, source="source_pool.storageobj")
     usage       = serializers.SerializerMethodField("get_usage")
     status      = serializers.SerializerMethodField("get_status")
+    upper       = relations.HyperlinkedRelatedField(view_name="volume-detail")
 
     class Meta:
         model  = models.StorageObject
-        fields = ('url', 'id', 'name', 'uuid', 'createdate', 'source_pool', 'snapshots', 'usage', 'status', 'is_protected')
+        fields = ('url', 'id', 'name', 'uuid', 'createdate', 'source_pool', 'snapshots', 'usage', 'status', 'is_protected', 'upper')
 
     def to_native(self, obj):
         data = dict([(key, None) for key in ("type", "host", "path",
