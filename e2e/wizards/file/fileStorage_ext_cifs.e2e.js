@@ -132,9 +132,11 @@ describe('Wizard panel', function(){
     expect(element(by.css('.tc_wizardDone')).getText()).toEqual('File Storage Step 4 - Save configuration');
     expect(nextBtn.getText()).toEqual('Done');
     nextBtn.click();
+		expect(browser.getCurrentUrl()).toContain('/openattic/#');
 
 
 		element.all(by.css('ul .tc_menuitem')).get(3).click();
+		expect(browser.getCurrentUrl()).toContain('/openattic/#/volumes');
     expect(volume.isDisplayed()).toBe(true);
     browser.sleep(400);
 		volume.click();

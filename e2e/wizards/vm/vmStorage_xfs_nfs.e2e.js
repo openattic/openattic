@@ -110,8 +110,10 @@ describe('VM Storage Wizard', function(){
     expect(element(by.css('.tc_wizardDone')).getText()).toEqual('VM Storage Step 4 - Save configuration');
     expect(nextBtn.getText()).toEqual('Done');
     nextBtn.click();
+		expect(browser.getCurrentUrl()).toContain('/openattic/#');
 
 		element.all(by.css('ul .tc_menuitem')).get(3).click();
+		expect(browser.getCurrentUrl()).toContain('/openattic/#/volumes');
 		browser.sleep(400);
     expect(volume.isDisplayed()).toBe(true);
 		volume.click();

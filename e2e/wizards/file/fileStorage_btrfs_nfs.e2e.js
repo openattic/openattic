@@ -106,7 +106,7 @@ describe('Wizard panel', function(){
 
     //enter some data to get to the next site
     volumefield.clear();
-    volumefield.sendKeys('protractor_wizard_fileVol01');
+    volumefield.sendKeys(volumename);
     size.clear();
     size.sendKeys('100MB');
     element(by.id("btrfs")).click();
@@ -160,9 +160,12 @@ describe('Wizard panel', function(){
     expect(element(by.css('.tc_wizardDone')).getText()).toEqual('File Storage Step 4 - Save configuration');
     expect(nextBtn.getText()).toEqual('Done');
     nextBtn.click();
+		expect(browser.getCurrentUrl()).toContain('/openattic/#');
     console.log('<----- file storage test with NFS ended ------>');
 
 		element.all(by.css('ul .tc_menuitem')).get(3).click();
+		expect(browser.getCurrentUrl()).toContain('/openattic/#/volumes');
+		browser.sleep(400);
     expect(volume.isDisplayed()).toBe(true);
 		volume.click();
 		element(by.css('.tc_nfsShareTab')).click();
