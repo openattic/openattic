@@ -3,7 +3,7 @@ var helpers = require('../../common.js');
 describe('should create a clone volume of a snapshot (base: blockvolume)', function(){
 
   var volumename = 'protractor_blockvol';
-  var volume = element(by.cssContainingText('tr', volumename));
+  var volume = element.all(by.cssContainingText('tr', volumename)).get(0);
 
   var snapshotname = 'protractor_test_snap';
   var snapshot = element.all(by.cssContainingText('tr', snapshotname)).get(0);
