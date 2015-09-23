@@ -100,6 +100,7 @@ describe('Raw Block Storage Wizard', function(){
     nextBtn.click();
 
     element.all(by.css('ul .tc_menuitem')).get(3).click();
+		expect(browser.getCurrentUrl()).toContain('/openattic/#/volumes');
 
 		//check if lun exists
     browser.sleep(400);
