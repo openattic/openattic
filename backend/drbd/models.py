@@ -263,7 +263,7 @@ class Endpoint(models.Model):
     all_objects = models.Manager()
 
     def __unicode__(self):
-        return self.ipaddress.device.host.name
+        return "Endpoint running on %s" % self.ipaddress.device.host.name
 
     @property
     def running_here(self):
