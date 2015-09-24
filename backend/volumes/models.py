@@ -1229,8 +1229,13 @@ class GenericDisk(BlockVolume):
 
 def get_storage_tree(top_obj):
     def serialize_obj(obj):
+        try:
+            status = obj.get_status()
+        except KeyError:
+            status = ["unknown"]
+
         return {
-            "status":  obj.get_status(),
+            "status":  status,
             "title":   unicode(obj)
             }
 
