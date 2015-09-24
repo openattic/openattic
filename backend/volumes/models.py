@@ -101,6 +101,8 @@ STORAGEOBJECT_STATUS_CHOICES = (
 
 STORAGEOBJECT_STATUS_FLAGS = {
     "unknown":       {"severity": -1, "desc": ugettext_noop("The status cannot be checked and is therefore unknown.")},
+    "locked":        {"severity": -1, "desc": ugettext_noop("The volume is currently locked. Its status cannot be "
+                                                            "checked.")},
     "online":        {"severity":  0, "desc": ugettext_noop("The volume is accessible.")},
     "readonly":      {"severity":  0, "desc": ugettext_noop("The volume cannot be written to.")},
     "offline":       {"severity":  0, "desc": ugettext_noop("The volume is inaccessible.")},
