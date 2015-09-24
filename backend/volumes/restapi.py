@@ -366,13 +366,16 @@ class VolumeViewSet(viewsets.ModelViewSet):
 
     def filter_queryset(self, queryset):
         filter_value = self.request.QUERY_PARAMS.get('upper__isnull')
-
         if filter_value:
             if filter_value.lower() == 'true':
                 filter = True
             else:
                 filter = False
             queryset = queryset.filter(upper__isnull=filter)
+
+        filter_value = self.request.QUERY_PARAMS.get('upper__id')
+        if filter_value:
+            queryset = queryset.filter(upper__id=filter_value)
 
         return super(VolumeViewSet, self).filter_queryset(queryset)
 
