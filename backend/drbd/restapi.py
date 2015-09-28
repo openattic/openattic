@@ -151,12 +151,15 @@ class DrbdConnectionProxyViewSet(DrbdConnectionViewSet, RequestHandlers):
             return super(DrbdConnectionProxyViewSet, self).destroy(request, args, kwargs)
         else:
             # Step 1: Remove local endpoint
+            # Store the connection host. After deleting the local endpoint the host property would return None
+            # because the current host gets a 'no resources defined!' by executing 'drbdadm role <connection_name>'
+            connection_host = connection.host
             print "I  AM THE SECONDARY HOST, SO I REMOVE MY ENDPOINT AT FIRST"
             super(DrbdConnectionProxyViewSet, self).destroy(request, args, kwargs)
 
             # Step 2: Call Primary host, if this host was called by a client and not by the primary host
             if "proxy_host_id" not in request.DATA:
-                self._remote_request(request, connection.host, connection)
+                self._remote_request(request, connection_host, connection)
 
             return Response("DRBD connection removed", status=status.HTTP_200_OK)
 
