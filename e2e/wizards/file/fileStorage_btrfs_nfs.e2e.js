@@ -138,7 +138,8 @@ describe('Wizard panel', function(){
     var options = element(by.id('nfsoptions'));
 
     expect(path.isPresent()).toBe(true);
-    expect(address.isDisplayed()).toBe(true);
+		browser.sleep(400);
+    expect(address.isPresent()).toBe(true);
     expect(element(by.id('nfsoptions')).isDisplayed()).toBe(true);
     expect(path.getAttribute('value')).toEqual('/media/protractor_wizard_fileVol01');
     expect(options.getAttribute('value')).toEqual('rw,no_subtree_check,no_root_squash');
@@ -167,6 +168,7 @@ describe('Wizard panel', function(){
 		expect(browser.getCurrentUrl()).toContain('/openattic/#/volumes');
 		browser.sleep(400);
     expect(volume.isDisplayed()).toBe(true);
+		browser.sleep(400);
 		volume.click();
 		element(by.css('.tc_nfsShareTab')).click();
     expect(share.isDisplayed()).toBe(true);
