@@ -22,6 +22,7 @@ from ifconfig.models import Host
 from systemd         import dbus_to_python
 from systemd.plugins import logged, BasePlugin, method, deferredmethod
 from systemd.lockutils import Lockfile
+from systemd.procutils import invoke
 
 from lio             import models
 
@@ -29,6 +30,11 @@ from lio             import models
 @logged
 class SystemD(BasePlugin):
     dbus_path = "/lio"
+
+    @deferredmethod(in_signature="")
+    def modprobe(self, sender):
+        invoke(["modprobe", "target_core_mod"]),
+        invoke(["modprobe", "iscsi_target_mod"])
 
     @deferredmethod(in_signature="i")
     def install_hostacl(self, id, sender):

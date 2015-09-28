@@ -47,3 +47,5 @@ webui/test/e2e/configs.js
 # From gatling-rest
 gatling/conf/
 gatling/test/reports/
+
+documentation/_build

@@ -6,7 +6,7 @@
   var volumesItem = element.all(by.css('ul .tc_menuitem')).get(3);
   var hostsItem = element.all(by.css('ul .tc_menuitem')).get(4);
 
-  var volumename = 'protractor_test_volume';
+  var volumename = '';
   var volume = element(by.cssContainingText('tr', volumename));
 
   var snapshotname = 'protractor_test_snap';
@@ -31,7 +31,7 @@
       browser.sleep(configs.sleep);
     },
 
-    create_volume: function(type){
+    create_volume: function(volumename, type){
       volumesItem.click();
       element(by.css('oadatatable .tc_add_btn')).click();
       for(var key in configs.pools) {
@@ -73,9 +73,12 @@
 //     },
 
 
-    delete_volume: function(){
+    delete_volume: function(volume, volumename){
       volumesItem.click();
       browser.sleep(400);
+//       element(by.css('.tc_entries_dropdown')).click();
+//       element(by.css('.tc_entries_100')).click();
+//       browser.sleep(400);
       volume.click();
       browser.sleep(400);
       element(by.css('.tc_menudropdown')).click();
@@ -84,10 +87,12 @@
       browser.sleep(400);
       element(by.model('input.enteredName')).sendKeys(volumename);
       element(by.id('bot2-Msg1')).click();
+			browser.sleep(600);
+			volume = element(by.cssContainingText('tr', volumename));
       expect(volume.isPresent()).toBe(false);
     },
 
-    create_snapshot: function(){
+    create_snapshot: function(volume){
       expect(volume.isDisplayed()).toBe(true);
       volume.click();
       browser.sleep(400);
@@ -102,7 +107,7 @@
       element(by.css('.tc_submitButton')).click();
     },
 
-    delete_snapshot: function(){
+    delete_snapshot: function(volume){
       volume.click();
       browser.sleep(400);
       element(by.css('.tc_snapshotTab')).click();
@@ -116,7 +121,7 @@
       browser.sleep(400);
     },
 
-    create_snap_clone: function(){
+    create_snap_clone: function(volume){
       volume.click();
       browser.sleep(400);
       element(by.css('.tc_snapshotTab')).click();

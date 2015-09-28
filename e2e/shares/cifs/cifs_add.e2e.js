@@ -3,7 +3,7 @@ var helpers = require('../../common.js');
 describe('should add a CIFS share', function(){
 
   var volumesItem = element.all(by.css('ul .tc_menuitem')).get(3);
-  var volumename = 'protractor_test_volume';
+  var volumename = 'protractor_cifs_vol';
   var volume = element.all(by.cssContainingText('tr', volumename)).get(0);
 
   var sharename = 'protractor_test_cifsShare';
@@ -14,7 +14,7 @@ describe('should add a CIFS share', function(){
   beforeAll(function(){
     helpers.login();
     volumesItem.click();
-    helpers.create_volume("xfs");
+    helpers.create_volume(volumename, "xfs");
     volume.click();
     cifsShareTab.click();
   });
@@ -35,7 +35,7 @@ describe('should add a CIFS share', function(){
     expect(share.isDisplayed()).toBe(true);
 
   });
-  
+
   //adds comment, unchecks "Guest ok" checkbox
   it('should edit the cifs share', function(){
     expect(share.isDisplayed()).toBe(true);
@@ -46,11 +46,11 @@ describe('should add a CIFS share', function(){
     //check the current share configuration first
     var cifsName = element(by.model('share.name'));
     expect(cifsName.getAttribute('value')).toEqual(sharename);
-    
+
     var cifsPath = element(by.model('share.path'));
-    expect(cifsPath.getAttribute('value')).toEqual('/media/protractor_test_volume');
+    expect(cifsPath.getAttribute('value')).toEqual('/media/' + volumename);
     browser.sleep(400);
-    
+
     expect(element(by.model('share.available')).isSelected()).toBe(true);
     expect(element(by.model('share.browseable')).isSelected()).toBe(true);
     expect(element(by.model('share.writeable')).isSelected()).toBe(true);
@@ -67,7 +67,7 @@ describe('should add a CIFS share', function(){
     expect(guestColumn.element(by.className('fa-check')).isPresent()).toBe(true);
     var comment = share.element(by.binding('row.comment'));
     expect(comment.getText()).toEqual('this is a protractor test cifs share');
-    
+
   });
 
   it('should remove the cifs share', function(){
@@ -94,6 +94,6 @@ describe('should add a CIFS share', function(){
 
   afterAll(function(){
     console.log('cifs_add');
-    helpers.delete_volume();
+    helpers.delete_volume(volume, volumename);
   });
 });

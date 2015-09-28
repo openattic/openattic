@@ -216,6 +216,14 @@
 }
 
 /* Misc */
+.MessageBoxButtonSection div {
+    float: right;
+}
+
+.MessageBoxButtonSection div button {
+    float: none;
+}
+
 .oaprogress {
     position: relative;
     margin-bottom: 0;

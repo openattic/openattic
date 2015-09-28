@@ -1,23 +1,23 @@
 var helpers = require('../../common.js');
 
 describe('Should create a Snapshot', function(){
-  var volumename = 'protractor_test_volume';
+  var volumename = 'protractor_testvol_xfs';
   var snapshotname = 'protractor_test_snap';
   var volume = element.all(by.cssContainingText('tr', volumename)).get(0);
   var snapshot = element(by.cssContainingText('tr', snapshotname));
   var volumesItem = element.all(by.css('ul .tc_menuitem')).get(3);
-  
+
   beforeAll(function() {
     helpers.login();
-    helpers.create_volume("xfs");
+    helpers.create_volume(volumename, "xfs");
     volume.click();
     element(by.css('.tc_snapshotTab')).click();
   });
 
 //   beforeEach(function(){
-//     volumesItem.click();  
+//     volumesItem.click();
 //   });
-  
+
   it('should create the snapshot "protractor_test_snap"', function(){
     expect(volume.isDisplayed()).toBe(true);
     element(by.css('.tc_snapshotAdd')).click();
@@ -28,14 +28,14 @@ describe('Should create a Snapshot', function(){
     browser.sleep(400);
     element(by.css('.tc_submitButton')).click();
     browser.sleep(400);
-    
+
   });
-  
+
   it('should display the snapshot in the snapshots overview panel', function(){
     expect(volume.isPresent()).toBe(true);
     expect(snapshot.isPresent()).toBe(true);
   });
-  
+
   it('should delete the "protractor_test_snap" snapshot', function(){
     expect(volume.isDisplayed()).toBe(true);
     expect(snapshot.isPresent()).toBe(true);
@@ -46,11 +46,12 @@ describe('Should create a Snapshot', function(){
     element(by.id('bot2-Msg1')).click();
     browser.sleep(400);
     expect(snapshot.isPresent()).toBe(false);
+		browser.sleep(400);
   });
 
   afterAll(function(){
     console.log('snapshot_add');
-    helpers.delete_volume();  
+    helpers.delete_volume(volume, volumename);
   });
-  
+
 });

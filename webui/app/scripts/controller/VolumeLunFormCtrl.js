@@ -1,5 +1,6 @@
 angular.module('openattic')
-  .controller('VolumeLunFormCtrl', function ($scope, $state, $stateParams, LunService, HostService, InitiatorService) {
+  .controller('VolumeLunFormCtrl', function ($scope, $state, $stateParams, $filter, LunService, HostService,
+                                             InitiatorService) {
     'use strict';
 
     $scope.share = {
@@ -11,7 +12,7 @@ angular.module('openattic')
     HostService.query()
       .$promise
       .then(function(res){
-        $scope.hosts = res;
+        $scope.hosts = $filter('initiatorsonly')(res);
       }, function (error) {
         console.log('An error occurred', error);
       });

@@ -381,6 +381,7 @@ class HostACL(models.Model):
             pre_install.send(sender=HostACL, instance=self)
             with Transaction():
                 self.volume.storageobj.lock()
+                get_dbus_object("/lio").modprobe()
                 get_dbus_object("/lio").install_hostacl(self.id)
                 get_dbus_object("/lio").saveconfig()
             post_install.send(sender=HostACL, instance=self)
@@ -390,6 +391,7 @@ class HostACL(models.Model):
 
 def __hostacl_pre_delete(instance, **kwargs):
     pre_uninstall.send(sender=HostACL, instance=instance)
+    get_dbus_object("/lio").modprobe()
     get_dbus_object("/lio").uninstall_hostacl(instance.id)
     get_dbus_object("/lio").saveconfig()
     post_uninstall.send(sender=HostACL, instance=instance)
@@ -401,6 +403,7 @@ def __hostacl_portals_changed(instance, reverse, action, pk_set, **kwargs):
         hostacls = [instance]
     else:
         hostacls = HostACL.objects.filter(id__in=pk_set)
+    get_dbus_object("/lio").modprobe()
     for hostacl in hostacls:
         get_dbus_object("/lio").install_hostacl(hostacl.id)
     get_dbus_object("/lio").saveconfig()
