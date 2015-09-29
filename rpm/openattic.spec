@@ -7,7 +7,6 @@ License: GPLv2
 URL: http://www.openattic.org
 BuildArch: noarch
 Source:	openattic-%{BUILDVERSION}-%{PKGVERSION}.tar.bz2
-Requires: openattic-base
 Requires:	openattic-module-cron
 Requires:	openattic-module-http
 Requires:	openattic-module-lvm
@@ -72,6 +71,7 @@ Requires:	udisks2
 Requires:	vconfig
 Requires:	wget
 Requires:	xfsprogs
+Requires(pre): shadow-utils
 Summary:  Basic requirements for openATTIC
 
 %description base
@@ -97,6 +97,7 @@ storage space on demand.
 This package includes the Web UI based on AngularJS/Bootstrap.
 
 %package module-ceph
+Requires: openattic-base
 Summary: Ceph module for openATTIC
 
 %description module-ceph
@@ -109,6 +110,7 @@ designed to provide excellent performance, reliability, and scalability.
 
 %package module-btrfs
 Requires:	btrfs-progs
+Requires: openattic-base
 Summary: BTRFS module for openATTIC
 
 %description module-btrfs
@@ -122,6 +124,7 @@ tolerance, repair and easy administration.
 
 %package module-cron
 Requires: cronie
+Requires: openattic-base
 Summary: Cron module for openATTIC
 
 %description module-cron
@@ -135,6 +138,7 @@ provides configuration facilities for scheduled tasks (a.k.a. Cron jobs).
 %package module-drbd
 Requires:	drbd84-utils
 Requires:	kmod-drbd84
+Requires: openattic-base
 Summary: DRBD module for openATTIC
 
 %description module-drbd
@@ -151,6 +155,7 @@ using openATTIC.
 
 %package module-http
 Requires:	httpd
+Requires: openattic-base
 Summary: HTTP module for openATTIC
 
 %description module-http
@@ -166,6 +171,7 @@ This package installs a module which allows you to share volumes or
 subdirectories using Apache2.
 
 %package module-ipmi
+Requires: openattic-base
 #require freeipmi oder OpenIPMI ??
 Summary:  IPMI module for openATTIC
 
@@ -178,6 +184,7 @@ IPMI can be used to query a set of sensors installed in the system. This
 module displays the current state of these sensors in the openATTIC GUI.
 
 %package module-lio
+Requires: openattic-base
 # Welche Pakte werden hierfür benötigt
 Summary:  LIO module for openATTIC
 
@@ -192,6 +199,7 @@ user interface.
 
 %package module-lvm
 Requires:	lvm2
+Requires: openattic-base
 Summary: LVM module for openATTIC
 
 %description module-lvm
@@ -206,6 +214,7 @@ total capacity of volume groups can be allocated to logical volumes, which
 are accessed as regular block devices.
 
 %package module-mailaliases
+Requires: openattic-base
 Requires:	server(smtp)
 Summary: MailAliases module for openATTIC
 
@@ -221,6 +230,7 @@ openATTIC database.
 
 %package module-mdraid
 Requires: mdadm
+Requires: openattic-base
 Summary: MDRAID module for openATTIC
 
 %description module-mdraid
@@ -233,6 +243,7 @@ This package includes support for MD-RAID, the common Linux software RAID.
 %package  module-nagios
 Requires:	nagios
 Requires:	nagios-plugins-all
+Requires: openattic-base
 Requires:	pnp4nagios
 Summary: Nagios module for openATTIC
 
@@ -254,6 +265,7 @@ This package also contains the Nagios check plugins for openATTIC, namely:
 
 %package module-nfs
 Requires:	nfs-utils
+Requires: openattic-base
 Summary: NFS module for openATTIC
 
 %description module-nfs
@@ -267,6 +279,7 @@ be shared using NFS, which is the recommended way not only for UNIXes, but
 also for VMware ESX virtualization hosts.
 
 %package module-samba
+Requires: openattic-base
 Requires:	samba
 Summary: Samba module for openATTIC
 
@@ -280,6 +293,7 @@ that run the Microsoft Windows family of operating systems. This package
 provides configuration facilities for Samba Shares.
 
 %package module-twraid
+Requires: openattic-base
 # TODO: List Requirements
 Summary: 3ware RAID module for openATTIC
 
@@ -294,6 +308,7 @@ controllers through openATTIC.
 %package module-zfs
 Requires:	zfs
 Requires:	kernel-devel
+Requires: openattic-base
 Summary: ZFS module for openATTIC
 
 %description module-zfs
@@ -347,6 +362,7 @@ mkdir -p %{buildroot}%{_localstatedir}/lib/%{name}/http/volumes
 mkdir -p %{buildroot}%{_localstatedir}/lib/%{name}/nfs_dummy
 mkdir -p %{buildroot}%{_localstatedir}/lib/%{name}/static
 mkdir -p %{buildroot}%{_localstatedir}/lib/nagios3
+mkdir -p %{buildroot}%{_localstatedir}/log/%{name}
 mkdir -p %{buildroot}%{_localstatedir}/lock/%{name}
 mkdir -p %{buildroot}%{_mandir}/man1/
 mkdir -p %{buildroot}%{_sbindir}
@@ -377,14 +393,14 @@ OADIR="/usr/share/openattic"
 
 RPCD_PIDFILE="/var/run/openattic_rpcd.pid"
 RPCD_CHUID="openattic:openattic"
-RPCD_LOGFILE="/var/log/openattic_rpcd"
+RPCD_LOGFILE="/var/log/openattic/openattic_rpcd.log"
 RPCD_LOGLEVEL="INFO"
 RPCD_OPTIONS="$OADIR/manage.py runrpcd"
 RPCD_CERTFILE=""
 RPCD_KEYFILE=""
 
 SYSD_PIDFILE="/var/run/openattic_systemd.pid"
-SYSD_LOGFILE="/var/log/openattic_systemd"
+SYSD_LOGFILE="/var/log/openattic/openattic_systemd.log"
 SYSD_LOGLEVEL="INFO"
 SYSD_OPTIONS="$OADIR/manage.py runsystemd"
 
@@ -444,55 +460,44 @@ install -m 644 etc/apache2/conf-available/openattic.conf         %{buildroot}%{_
 
 install -m 644 etc/cron.d/updatetwraid %{buildroot}%{_sysconfdir}/cron.d/
 
-%pre
+%pre base
 # create openattic user/group  if it does not exist
-if id -g openattic >/dev/null 2>&1; then
-        echo "openattic group exists"
+if getent group openattic > /dev/null ; then
+  echo "openattic group already exists"
 else
-        groupadd openattic &&  echo "openattic group created"
-fi
-if id -u openattic >/dev/null 2>&1; then
-        echo "openattic user exists"
-else
-	adduser --system --shell /bin/bash  --home /var/lib/openattic --gid openattic openattic &&\
-	groupmems -g openattic  -a apache &&\
-	groupmems -a openattic  -g apache &&\
-	groupmems -a openattic  -g nagios &&\
-	echo "openattic user created"
-	groupmems -g openattic  -a nagios
+  groupadd -r openattic
+  groupmems -g openattic -a apache
+  groupmems -g openattic -a nagios
 fi
 
-# for double security only, should be installed correctly
-chown -R openattic:openattic /var/lock/openattic
-chown -R openattic:openattic /var/lib/openattic
-
-# Sollte im Paket erledigt sein, aber wird zur Sicherheit noch angelegt
-touch /var/log/openattic_rpcd
-chown openattic:openattic /var/log/openattic_rpcd
-chmod 644 /var/log/openattic_rpcd
-touch /var/log/openattic_systemd
-chown openattic:openattic /var/log/openattic_systemd
-chmod 644 /var/log/openattic_systemd
+if getent passwd openattic > /dev/null ; then
+  echo "openattic user already exists"
+else
+  useradd -r -g openattic -d /var/lib/openattic -s /bin/bash -c "openATTIC System User" openattic
+  groupmems -g apache -a openattic
+  groupmems -g nagios -a openattic
+fi
+exit 0
 
 %post base
 systemctl daemon-reload
-service dbus restart
+systemctl restart dbus
 systemctl start httpd
 
 %postun base
 systemctl daemon-reload
-service dbus restart
+systemctl restart dbus
 systemctl restart httpd
 
 %post gui
 semanage fcontext -a -t httpd_sys_rw_content_t "/usr/share/openattic-gui(/.*)?"
 restorecon -vvR
-service httpd restart
+systemctl restart httpd
 
 %postun gui
 semanage fcontext -d -t httpd_sys_rw_content_t "/usr/share/openattic-gui(/.*)?"
 restorecon -vvR
-service httpd restart
+systemctl restart httpd
 
 %post pgsql
 
@@ -539,7 +544,7 @@ echo ""
 %defattr(-,root,root,-)
 %doc CHANGELOG LICENSE README.rst
 
-%files 	base
+%files base
 %defattr(-,root,root,-)
 %{_bindir}/oacli
 %{_sbindir}/blkdevzero
@@ -549,8 +554,9 @@ echo ""
 /lib/systemd/system/openattic-systemd.service
 %config %{_sysconfdir}/httpd/conf.d/openattic.conf
 %defattr(-,openattic,openattic,-)
-%dir %{_localstatedir}/lib/openattic
-%dir %{_localstatedir}/lock/openattic
+%dir %{_localstatedir}/lib/%{name}
+%dir %{_localstatedir}/log/%{name}
+%dir %{_localstatedir}/lock/%{name}
 %dir %{_datadir}/%{name}/installed_apps.d
 %config(noreplace) %{_sysconfdir}/default/%{name}
 %config(noreplace) %{_sysconfdir}/%{name}/databases/pgsql.ini
@@ -582,12 +588,12 @@ echo ""
 %{_datadir}/%{name}/volumes/
 
 
-%files 	module-btrfs
+%files module-btrfs
 %defattr(-,openattic,openattic,-)
 %{_datadir}/%{name}/installed_apps.d/10_btrfs
 %{_datadir}/%{name}/btrfs/
 
-%files 	module-ceph
+%files module-ceph
 %defattr(-,openattic,openattic,-)
 %{_datadir}/%{name}/installed_apps.d/60_ceph
 %{_datadir}/%{name}/ceph/
@@ -596,18 +602,18 @@ echo ""
 %defattr(-,openattic,openattic,-)
 %{_datadir}/%{name}-gui
 
-%files 	module-cron
+%files module-cron
 %defattr(-,openattic,openattic,-)
 %{_datadir}/%{name}/installed_apps.d/09_cron
 %{_datadir}/%{name}/cron/
 
-%files 	module-drbd
+%files module-drbd
 %defattr(-,openattic,openattic,-)
 %config %{_sysconfdir}/modprobe.d/drbd.conf
 %{_datadir}/%{name}/drbd/
 %{_datadir}/%{name}/installed_apps.d/60_drbd
 
-%files 	module-http
+%files module-http
 %defattr(-,openattic,openattic,-)
 %{_localstatedir}/lib/%{name}/http/
 %{_datadir}/%{name}/http/
@@ -618,17 +624,17 @@ echo ""
 systemctl daemon-reload
 systemctl restart httpd
 
-%files 	module-ipmi
+%files module-ipmi
 %defattr(-,openattic,openattic,-)
 %{_datadir}/%{name}/installed_apps.d/50_ipmi
 %{_datadir}/%{name}/ipmi/
 
-%files 	module-lio
+%files module-lio
 %defattr(-,openattic,openattic,-)
 %{_datadir}/%{name}/installed_apps.d/60_lio
 %{_datadir}/%{name}/lio/
 
-%files 	module-lvm
+%files module-lvm
 %defattr(-,openattic,openattic,-)
 %{_datadir}/%{name}/lvm/
 %{_datadir}/%{name}/installed_apps.d/10_lvm
@@ -638,17 +644,17 @@ systemctl daemon-reload
 systemctl enable lvm2-lvmetad
 systemctl start lvm2-lvmetad
 
-%files 	module-mailaliases
+%files module-mailaliases
 %defattr(-,openattic,openattic,-)
 %{_datadir}/%{name}/mailaliases/
 %{_datadir}/%{name}/installed_apps.d/50_mailaliases
 
-%files 	module-mdraid
+%files module-mdraid
 %defattr(-,openattic,openattic,-)
 %{_datadir}/%{name}/mdraid/
 %{_datadir}/%{name}/installed_apps.d/09_mdraid
 
-%files 	module-nagios
+%files module-nagios
 #/etc/pnp4nagios/check_commands/check_diskstats.cfg
 #/etc/pnp4nagios/check_commands/check_all_disks.cfg
 %defattr(-,root,root,-)
@@ -714,8 +720,14 @@ systemctl start nfs
 %defattr(-,root,root,-)
 %{_sysconfdir}/yum.repos.d/%{name}.repo
 
-
 %changelog
+* Tue Sep 29 2015 Lenz Grimmer <lenz@openattic.org> 2.0.3
+- Fixed dependencies and moved %pre section that creates the openattic
+  user/group to the base subpackage (OP-536)
+- Moved log files into /var/log/openattic, removed superflouous chown
+  in the %pre install
+- Replaced some legacy "system" calls with "systemctl"
+
 * Mon Sep 07 2015 Lenz Grimmer <lenz@openattic.org> 2.0.2
 - Updated package descriptions (fixed formatting)
 - Added openattic-module-ceph subpackage (OP-624)
