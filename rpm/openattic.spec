@@ -7,18 +7,14 @@ License: GPLv2
 URL: http://www.openattic.org
 BuildArch: noarch
 Source:	openattic-%{BUILDVERSION}-%{PKGVERSION}.tar.bz2
-
-## Documentation at https://fedoraproject.org/wiki/How_to_create_an_RPM_package
-#Requires:	zfs-release
-#Requires:	epel-release
 Requires: openattic-base
 Requires:	openattic-module-cron
-Requires:	openattic-module-lvm
-Requires:	openattic-module-nfs
 Requires:	openattic-module-http
-Requires:	openattic-module-samba
-Requires:	openattic-module-nagios
+Requires:	openattic-module-lvm
 Requires:	openattic-module-mailaliases
+Requires:	openattic-module-nagios
+Requires:	openattic-module-nfs
+Requires:	openattic-module-samba
 Requires:	openattic-pgsql
 
 %description
@@ -44,38 +40,38 @@ with the basic requirements. Those modules are:
 
 Upstream URL: http://www.openattic.org
 
-%package       base
-Requires:	policycoreutils-python
-Requires:	python-memcached
-Requires:	memcached
-Requires:	python-imaging
-Requires:	numpy
-Requires:	python-rtslib
-Requires:	python-requests
-Requires:	wget
-Requires:	bzip2
-Requires:	oxygen-icon-theme
-Requires:	python-django
-Requires:	python-psycopg2
-Requires:	dbus
-Requires:	ntp
+%package base
 Requires:	bridge-utils
-Requires:	vconfig
-Requires:	python-dbus
-Requires:	pygobject2
-Requires:	python-pam
-Requires:	python-m2ext
-Requires:	m2crypto
-Requires:	python-netifaces
-Requires:	python-netaddr
-Requires:	python-pyudev
-Requires:	mod_wsgi
-Requires:	xfsprogs
-Requires:	udisks2
-Requires:	djextdirect
+Requires:	bzip2
+Requires:	dbus
+Requires:	django-filter
 Requires:	djangorestframework
 Requires:	djangorestframework-bulk
-Requires:	django-filter
+Requires:	djextdirect
+Requires:	m2crypto
+Requires:	memcached
+Requires:	mod_wsgi
+Requires:	ntp
+Requires:	numpy
+Requires:	oxygen-icon-theme
+Requires:	policycoreutils-python
+Requires:	pygobject2
+Requires:	python-dbus
+Requires:	python-django
+Requires:	python-imaging
+Requires:	python-m2ext
+Requires:	python-memcached
+Requires:	python-netaddr
+Requires:	python-netifaces
+Requires:	python-pam
+Requires:	python-psycopg2
+Requires:	python-pyudev
+Requires:	python-requests
+Requires:	python-rtslib
+Requires:	udisks2
+Requires:	vconfig
+Requires:	wget
+Requires:	xfsprogs
 Summary:  Basic requirements for openATTIC
 
 %description base
@@ -89,9 +85,9 @@ using *just* this package, but the other packages require this one to be
 available.
 
 %package gui
-Requires:	openattic
+Requires: openattic-base
 Requires: policycoreutils-python
-Summary:	openATTIC User Interface
+Summary: openATTIC User Interface
 
 %description gui
 openATTIC is a storage management system based upon Open Source tools with
@@ -125,7 +121,7 @@ Linux aimed at implementing advanced features while focusing on fault
 tolerance, repair and easy administration.
 
 %package module-cron
-Requires:	/usr/sbin/crond
+Requires: cronie
 Summary: Cron module for openATTIC
 
 %description module-cron
@@ -181,7 +177,7 @@ storage space on demand.
 IPMI can be used to query a set of sensors installed in the system. This
 module displays the current state of these sensors in the openATTIC GUI.
 
-%package       module-lio
+%package module-lio
 # Welche Pakte werden hierfür benötigt
 Summary:  LIO module for openATTIC
 
