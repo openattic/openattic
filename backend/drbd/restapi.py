@@ -53,7 +53,12 @@ class DrbdConnectionViewSet(viewsets.ModelViewSet):
         if "connection_id" not in request.DATA:
             print "CREATE CONNECTION AND FIRST CONNECTION ENDPOINT"
             # CREATE CONNECTION
-            connection = Connection.objects.create_connection("C", "500K", source_volume["id"])
+            protocol_default = Connection._meta.get_field("protocol").get_default()
+            syncer_rate_default = Connection._meta.get_field("syncer_rate").get_default()
+
+            protocol = request.DATA.get("protocol", protocol_default)
+            syncer_rate = request.DATA.get("syncer_rate", syncer_rate_default)
+            connection = Connection.objects.create_connection(protocol, syncer_rate, source_volume["id"])
             print connection.id
         else:
             # CREATE VOLUME
