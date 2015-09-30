@@ -17,7 +17,9 @@ class DrbdTests(object):
 
         # Create the drbd mirror
         mirror_data = {"source_volume"  : vol_res["response"],
-                       "remote_pool"    : self._get_remote_pool()}
+                       "remote_pool"    : self._get_remote_pool(),
+                       "protocol"       : "C",
+                       "syncer_rate"    : "30M"}
         mirror_res = self.send_request("POST", "mirrors", data=mirror_data)
         time.sleep(self.sleeptime)
         self.addCleanup(requests.request, "DELETE", mirror_res["cleanup_url"], headers=mirror_res["headers"])
@@ -38,7 +40,9 @@ class DrbdTests(object):
 
         # Create a drbd mirror
         mirror_data = {"source_volume"  : vol_res["response"],
-                       "remote_pool"    : self._get_pool()}
+                       "remote_pool"    : self._get_pool(),
+                       "protocol"       : "C",
+                       "syncer_rate"    : "30M"}
         mirror_res = self.send_request("POST", "mirrors", data=mirror_data)
         time.sleep(self.sleeptime)
         self.addCleanup(requests.request, "DELETE", mirror_res["cleanup_url"], headers=mirror_res["headers"])
