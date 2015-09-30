@@ -8,6 +8,7 @@ if [ "$1" = "purge" ] ; then
 
     rm -f /var/log/openattic_rpcd
     rm -f /var/log/openattic_systemd
+    rm -f /var/log/openattic_vgmanager
 fi
 
 #DEBHELPER#
