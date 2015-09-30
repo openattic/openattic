@@ -156,19 +156,44 @@ describe('Wizard panel', function(){
     //Step 4 - Done
 
     browser.sleep(400);
-
-    browser.sleep(400);
     expect(element(by.css('.tc_wizardDone')).getText()).toEqual('File Storage Step 4 - Save configuration');
     expect(nextBtn.getText()).toEqual('Done');
     nextBtn.click();
+		browser.sleep(400);
 		expect(browser.getCurrentUrl()).toContain('/openattic/#');
-    console.log('<----- file storage test with NFS ended ------>');
+    var wizards = element.all(by.repeater('wizard in wizards'))
+      .then(function(wizards){
+        var fsTitle = element.all(by.className('btn-block')).get(0).evaluate('wizard.title').then(function(title){
+          expect(title).toEqual('File Storage');
+          console.log(title);
+        });
 
+        var vmTitle = wizards[1].element(by.className('btn-block')).evaluate('wizard.title').then(function(vm_title){
+          expect(vm_title).toEqual('VM Storage');
+          console.log(vm_title);
+        });
+
+        var blockTitle = wizards[2].element(by.className('btn-block')).evaluate('wizard.title').then(function(block_title){
+          expect(block_title).toEqual('Raw Block Storage');
+          console.log(block_title);
+        });
+    });
+
+		console.log('<----- file storage test with NFS ended ------>');
+    browser.sleep(400);
 		element.all(by.css('ul .tc_menuitem')).get(3).click();
 		expect(browser.getCurrentUrl()).toContain('/openattic/#/volumes');
+    /*	next line -> workaround (when checking if the volume is visible,
+		    protractor SOMETIMES throws 'element not visible error', but when
+		    protractor is about to delete the volume, it's visible and protractor is able to delete it
+		    couldn't reproduce this strange behavior and browser.sleep won't help)
+    */
+    element.all(by.css('ul .tc_menuitem')).get(4).click();
+		browser.sleep(400);
+		element.all(by.css('ul .tc_menuitem')).get(3).click();
 		browser.sleep(400);
     expect(volume.isDisplayed()).toBe(true);
-		browser.sleep(400);
+		browser.sleep(800);
 		volume.click();
 		element(by.css('.tc_nfsShareTab')).click();
     expect(share.isDisplayed()).toBe(true);

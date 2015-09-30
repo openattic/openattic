@@ -44,6 +44,7 @@ class Zpool(VolumePool):
         stat = self.fs.status.lower()
         if stat in ("faulted", "unavail"):
             stat = "failed"
+
         return [stat]
 
     @property
