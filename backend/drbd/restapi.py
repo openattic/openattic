@@ -119,6 +119,8 @@ class DrbdConnectionProxyViewSet(DrbdConnectionViewSet, RequestHandlers):
                     # source volume is a local volume
                     # Step 1: Create the connection
                     connection_resp = super(DrbdConnectionProxyViewSet, self).create(request, args, kwargs)
+                    if connection_resp.exception:
+                        return connection_resp
                     connection_data = connection_resp.data
 
                     # Step 2: Call the secondary to create theirs
