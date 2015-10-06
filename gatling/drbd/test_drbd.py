@@ -78,6 +78,57 @@ class DrbdTests(object):
         self.send_request("DELETE", "volumes", obj_id=vol["id"])
         self.assertEqual(str(err.exception), "400 Client Error: Bad Request")
 
+    def test_create_10g(self):
+        """ Try to create a Connection with syncer rate set to 10G. """
+        # Create a volume that should be mirrored
+        vol = self._get_mirror_volume(self._get_pool()["id"])
+
+        # Try to create the drbd mirror with syncer rate 10G
+        mirror_data = {"source_volume"  : vol,
+                       "remote_pool"    : self._get_remote_pool(),
+                       "protocol"       : "C",
+                       "syncer_rate"    : "10g"}
+        with self.assertRaises(requests.HTTPError) as err:
+            mirror_res = self.send_request("POST", "mirrors", data=mirror_data)
+            time.sleep(self.sleeptime)
+            self.send_request("DELETE", "mirrors", obj_id=mirror_res["response"]["id"])
+        self.send_request("DELETE", "volumes", obj_id=vol["id"])
+        self.assertEqual(str(err.exception), "400 Client Error: Bad Request")
+
+    def test_create_1t(self):
+        """ Try to create a Connection with syncer rate set to 1T (invalid unit). """
+        # Create a volume that should be mirrored
+        vol = self._get_mirror_volume(self._get_pool()["id"])
+
+        # Try to create the drbd mirror with syncer rate 1T
+        mirror_data = {"source_volume"  : vol,
+                       "remote_pool"    : self._get_remote_pool(),
+                       "protocol"       : "C",
+                       "syncer_rate"    : "1T"}
+        with self.assertRaises(requests.HTTPError) as err:
+            mirror_res = self.send_request("POST", "mirrors", data=mirror_data)
+            time.sleep(self.sleeptime)
+            self.send_request("DELETE", "mirrors", obj_id=mirror_res["response"]["id"])
+        self.send_request("DELETE", "volumes", obj_id=vol["id"])
+        self.assertEqual(str(err.exception), "400 Client Error: Bad Request")
+
+    def test_create_rate_with_space(self):
+        """ Try to create a Connection with syncer rate set to 10 M (space char is invalid). """
+        # Create a volume that should be mirrored
+        vol = self._get_mirror_volume(self._get_pool()["id"])
+
+        # Try to create the drbd mirror with syncer rate 1T
+        mirror_data = {"source_volume"  : vol,
+                       "remote_pool"    : self._get_remote_pool(),
+                       "protocol"       : "C",
+                       "syncer_rate"    : "10 M"}
+        with self.assertRaises(requests.HTTPError) as err:
+            mirror_res = self.send_request("POST", "mirrors", data=mirror_data)
+            time.sleep(self.sleeptime)
+            self.send_request("DELETE", "mirrors", obj_id=mirror_res["response"]["id"])
+        self.send_request("DELETE", "volumes", obj_id=vol["id"])
+        self.assertEqual(str(err.exception), "400 Client Error: Bad Request")
+
     def _get_mirror_volume(self, source_pool_id):
         vol_data = {"megs": 1000,
                     "name": "gatling_drbd_vol1",
