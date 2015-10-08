@@ -21,7 +21,7 @@ from django.db.models import Q
 from rest_framework import serializers, viewsets
 from rest_framework.decorators import detail_route
 from rest_framework.response import Response
-from rest_framework.status import HTTP_201_CREATED
+from rest_framework import status
 
 from rest import relations
 from rest.restapi import ContentTypeSerializer
@@ -177,7 +177,7 @@ class PoolViewSet(viewsets.ModelViewSet):
                 for disk_id in request.DATA.get("disks", [])],
             dict(request.DATA.get('options', {}), name=request.DATA["name"]))
         serializer = PoolSerializer(vp_so, many=False, context={"request": request})
-        return Response(serializer.data, status=HTTP_201_CREATED)
+        return Response(serializer.data, status=status.HTTP_201_CREATED)
 
     @detail_route()
     def volumes(self, request, *args, **kwargs):
@@ -334,7 +334,7 @@ class SnapshotViewSet(viewsets.ModelViewSet):
     def create(self, request, *args, **kwargs):
         volume_so = self.origin.create_snapshot(request.DATA["name"], request.DATA["megs"], {})
         serializer = SnapshotSerializer(volume_so, many=False, context={"request": request})
-        return Response(serializer.data, status=HTTP_201_CREATED)
+        return Response(serializer.data, status=status.HTTP_201_CREATED)
 
     @detail_route(["post"])
     def clone(self, request, *args, **kwargs):
@@ -345,7 +345,7 @@ class SnapshotViewSet(viewsets.ModelViewSet):
 
         serializedClone = SnapshotSerializer(clone, many=False, context={"request": request})
 
-        return Response(serializedClone.data, status=HTTP_201_CREATED)
+        return Response(serializedClone.data, status=status.HTTP_201_CREATED)
 
 
 class SnapshotProxyViewSet(RequestHandlers, SnapshotViewSet):
@@ -388,7 +388,7 @@ class VolumeViewSet(viewsets.ModelViewSet):
 
         serializedClone = VolumeSerializer(clone, many=False, context={"request": request})
 
-        return Response(serializedClone.data, status=HTTP_201_CREATED)
+        return Response(serializedClone.data, status=status.HTTP_201_CREATED)
 
     @detail_route(["get", "post"])
     def snapshots(self, request, *args, **kwargs):
@@ -415,7 +415,7 @@ class VolumeViewSet(viewsets.ModelViewSet):
             })
         serializer = VolumeSerializer(volume, many=False, context={"request": request})
 
-        return Response(serializer.data, status=HTTP_201_CREATED)
+        return Response(serializer.data, status=status.HTTP_201_CREATED)
 
     def update(self, request, *args, **kwargs):
         storageobj = models.StorageObject.objects.get(id=request.DATA["id"])
