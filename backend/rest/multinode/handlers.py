@@ -60,12 +60,12 @@ class RequestHandlers(object):
         ip = current_host.get_primary_ip_address().host_part
 
         if queryset.has_next():
-            next_page = '%s?ordering=%s&page=%s&page_size=%s' % (self._get_base_url(ip),
+            next_page = '%s?ordering=%s&page=%s&page_size=%s' % (self._get_base_url(ip, self.api_prefix),
                                                                  request.QUERY_PARAMS['ordering'],
                                                                  queryset.next_page_number(),
                                                                  request.QUERY_PARAMS['page_size'])
         if queryset.has_previous():
-            prev_page = '%s?ordering=%s&page=%s&page_size=%s' % (self._get_base_url(ip),
+            prev_page = '%s?ordering=%s&page=%s&page_size=%s' % (self._get_base_url(ip, self.api_prefix),
                                                                  request.QUERY_PARAMS['ordering'],
                                                                  queryset.previous_page_number(),
                                                                  request.QUERY_PARAMS['page_size'])
@@ -108,12 +108,13 @@ class RequestHandlers(object):
 
     def _remote_request(self, request, host, *args, **kwargs):
         ip = host.get_primary_ip_address().host_part
+        api_prefix = kwargs.get("api_prefix", self.api_prefix)
 
         if "obj" in kwargs and kwargs["obj"]:
             obj = kwargs["obj"]
-            url = '%s/%s' % (self._get_base_url(ip), str(obj.id))
+            url = '%s/%s' % (self._get_base_url(ip, api_prefix), str(obj.id))
         else:
-            url = self._get_base_url(ip)
+            url = self._get_base_url(ip, api_prefix)
 
         if "view_name" in kwargs and kwargs["view_name"]:
             url = '%s/%s' % (url, kwargs["view_name"])
@@ -128,8 +129,8 @@ class RequestHandlers(object):
         response.raise_for_status()
         return response.text
 
-    def _get_base_url(self, ip):
-        return 'http://%s/openattic/api/%s' % (ip, self.api_prefix)
+    def _get_base_url(self, ip, api_prefix):
+        return 'http://%s/openattic/api/%s' % (ip, api_prefix)
 
     def _get_object_host(self, obj):
         try:
