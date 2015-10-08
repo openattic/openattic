@@ -28,6 +28,7 @@ from rest.restapi import ContentTypeSerializer
 from rest.multinode.handlers import RequestHandlers
 
 from volumes import models
+from drbd.models import Connection
 
 
 # filter queryset by...
@@ -454,6 +455,17 @@ class VolumeProxyViewSet(RequestHandlers, VolumeViewSet):
     @detail_route()
     def storage(self, request, *args, **kwargs):
         return self.retrieve(request, 'storage', *args, **kwargs)
+
+    def destroy(self, request, *args, **kwargs):
+        obj = self.get_object()
+        blockvolume = obj.blockvolume_or_none
+
+        if blockvolume and type(blockvolume) == Connection:
+            # might be a remote_request
+            res = self._remote_request(request, blockvolume.host, api_prefix="mirrors", obj=blockvolume)
+            return Response(json.loads(res), status=status.HTTP_204_NO_CONTENT)
+
+        return super(VolumeProxyViewSet, self).destroy(request, args, kwargs)
 
 
 RESTAPI_VIEWSETS = [
