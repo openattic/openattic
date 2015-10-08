@@ -36,8 +36,7 @@ class RequestHandlers(object):
                 return local_view(request, args, kwargs)
 
             return super(RequestHandlers, self).retrieve(request, args, kwargs)
-
-        return Response(json.loads(self._remote_request(request, host, obj, view_name)))
+        return Response(json.loads(self._remote_request(request, host, obj=obj, view_name=view_name)))
 
     def list(self, request, *args, **kwargs):
         queryset_total = self.get_queryset()
@@ -53,7 +52,7 @@ class RequestHandlers(object):
                 serializer = self.get_serializer(obj)
                 results.append(serializer.data)
             else:
-                results.append(json.loads(self._remote_request(request, host, obj)))
+                results.append(json.loads(self._remote_request(request, host, obj=obj)))
 
         next_page = None
         prev_page = None
@@ -93,7 +92,7 @@ class RequestHandlers(object):
         if host == Host.objects.get_current():
             return super(RequestHandlers, self).destroy(request, args, kwargs)
 
-        return Response(self._remote_request(request, host, obj))
+        return Response(self._remote_request(request, host, obj=obj))
 
     def update(self, request, *args, **kwargs):
         obj = self.get_object_or_none()
@@ -105,18 +104,19 @@ class RequestHandlers(object):
         if host == Host.objects.get_current():
             return super(RequestHandlers, self).update(request, args, kwargs)
 
-        return Response(json.loads(self._remote_request(request, host, obj)))
+        return Response(json.loads(self._remote_request(request, host, obj=obj)))
 
-    def _remote_request(self, request, host, obj=None, view_name=None):
+    def _remote_request(self, request, host, *args, **kwargs):
         ip = host.get_primary_ip_address().host_part
 
-        if obj:
+        if "obj" in kwargs and kwargs["obj"]:
+            obj = kwargs["obj"]
             url = '%s/%s' % (self._get_base_url(ip), str(obj.id))
         else:
             url = self._get_base_url(ip)
 
-        if view_name:
-            url = '%s/%s' % (url, view_name)
+        if "view_name" in kwargs and kwargs["view_name"]:
+            url = '%s/%s' % (url, kwargs["view_name"])
 
         header = self._get_auth_header(request)
         header['content-type'] = 'application/json'

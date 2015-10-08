@@ -154,7 +154,7 @@ class DrbdConnectionProxyViewSet(DrbdConnectionViewSet, RequestHandlers):
             # Step 1: Call second host to delete his endpoint, if the request was not forwarded by secondary host
             if len(connection.get_storage_devices()) > 1:
                 print "CALL SECOND HOST TO DELETE HIS ENDPOINT"
-                self._remote_request(request, connection.peerhost, connection)
+                self._remote_request(request, connection.peerhost, obj=connection)
 
             # Step 2: Delete local endpoint and connection
             print "DELETE OWN DATA"
@@ -169,7 +169,7 @@ class DrbdConnectionProxyViewSet(DrbdConnectionViewSet, RequestHandlers):
 
             # Step 2: Call Primary host, if this host was called by a client and not by the primary host
             if "proxy_host_id" not in request.DATA:
-                self._remote_request(request, connection_host, connection)
+                self._remote_request(request, connection_host, obj=connection)
 
             return Response("DRBD connection removed", status=status.HTTP_200_OK)
 
