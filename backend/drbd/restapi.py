@@ -150,7 +150,7 @@ class DrbdConnectionProxyViewSet(DrbdConnectionViewSet, RequestHandlers):
     def destroy(self, request, *args, **kwargs):
         connection = self.get_object()
 
-        if connection.host == Host.objects.get_current(o):
+        if connection.host == Host.objects.get_current():
             # Step 1: Call second host to delete his endpoint, if the request was not forwarded by secondary host
             if len(connection.get_storage_devices()) > 1:
                 print "CALL SECOND HOST TO DELETE HIS ENDPOINT"
