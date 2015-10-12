@@ -95,9 +95,13 @@ class DrbdConnectionProxyViewSet(DrbdConnectionViewSet, RequestHandlers):
     model = Connection
 
     def create(self, request, *args, **kwargs):
-        # Get all needed information from request
-        source_volume = request.DATA["source_volume"]
-        remote_pool = request.DATA["remote_pool"]
+        try:
+            # Get all needed information from request
+            source_volume = request.DATA["source_volume"]
+            remote_pool = request.DATA["remote_pool"]
+        except KeyError:
+            return Response("The mandatory parameter(s) 'source_volume' and/or 'remote_pool' are missing.",
+                            status=status.HTTP_400_BAD_REQUEST)
 
         try:
             source_volume_host = Host.objects.get(id=source_volume["host"]["id"])
