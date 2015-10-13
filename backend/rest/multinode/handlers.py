@@ -18,6 +18,8 @@ import requests, json
 
 from collections import OrderedDict
 
+from django.conf import settings
+
 from rest_framework.response import Response
 from rest_framework.request import Request
 
@@ -130,7 +132,8 @@ class RequestHandlers(object):
         return response.text
 
     def _get_base_url(self, ip, api_prefix):
-        return 'http://%s/openattic/api/%s' % (ip, api_prefix)
+        api_root = getattr(settings, "API_ROOT")
+        return 'http://%s%s/%s' % (ip, api_root, api_prefix)
 
     def _get_object_host(self, obj):
         try:
