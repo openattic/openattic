@@ -21,13 +21,14 @@ from django.db.models import Q
 from rest_framework import serializers, viewsets
 from rest_framework.decorators import detail_route
 from rest_framework.response import Response
-from rest_framework.status import HTTP_201_CREATED
+from rest_framework import status
 
 from rest import relations
 from rest.restapi import ContentTypeSerializer
 from rest.multinode.handlers import RequestHandlers
 
 from volumes import models
+from drbd.models import Connection
 
 
 # filter queryset by...
@@ -36,9 +37,7 @@ from volumes import models
 # * does not have an upper volume
 VOLUME_FILTER_Q = \
     Q(Q(filesystemvolume__isnull=False) | Q(blockvolume__isnull=False)) & \
-    Q(snapshot__isnull=True) & ~Q(name=".snapshots") & \
-    Q(upper__isnull=True)
-
+    Q(snapshot__isnull=True) & ~Q(name=".snapshots")
 
 
 ##################################
@@ -179,7 +178,7 @@ class PoolViewSet(viewsets.ModelViewSet):
                 for disk_id in request.DATA.get("disks", [])],
             dict(request.DATA.get('options', {}), name=request.DATA["name"]))
         serializer = PoolSerializer(vp_so, many=False, context={"request": request})
-        return Response(serializer.data, status=HTTP_201_CREATED)
+        return Response(serializer.data, status=status.HTTP_201_CREATED)
 
     @detail_route()
     def volumes(self, request, *args, **kwargs):
@@ -287,10 +286,11 @@ class VolumeSerializer(serializers.HyperlinkedModelSerializer):
     source_pool = relations.HyperlinkedRelatedField(view_name="pool-detail",   read_only=True, source="source_pool.storageobj")
     usage       = serializers.SerializerMethodField("get_usage")
     status      = serializers.SerializerMethodField("get_status")
+    upper       = relations.HyperlinkedRelatedField(view_name="volume-detail")
 
     class Meta:
         model  = models.StorageObject
-        fields = ('url', 'id', 'name', 'uuid', 'createdate', 'source_pool', 'snapshots', 'usage', 'status', 'is_protected')
+        fields = ('url', 'id', 'name', 'uuid', 'createdate', 'source_pool', 'snapshots', 'usage', 'status', 'is_protected', 'upper')
 
     def to_native(self, obj):
         data = dict([(key, None) for key in ("type", "host", "path",
@@ -335,7 +335,7 @@ class SnapshotViewSet(viewsets.ModelViewSet):
     def create(self, request, *args, **kwargs):
         volume_so = self.origin.create_snapshot(request.DATA["name"], request.DATA["megs"], {})
         serializer = SnapshotSerializer(volume_so, many=False, context={"request": request})
-        return Response(serializer.data, status=HTTP_201_CREATED)
+        return Response(serializer.data, status=status.HTTP_201_CREATED)
 
     @detail_route(["post"])
     def clone(self, request, *args, **kwargs):
@@ -346,7 +346,7 @@ class SnapshotViewSet(viewsets.ModelViewSet):
 
         serializedClone = SnapshotSerializer(clone, many=False, context={"request": request})
 
-        return Response(serializedClone.data, status=HTTP_201_CREATED)
+        return Response(serializedClone.data, status=status.HTTP_201_CREATED)
 
 
 class SnapshotProxyViewSet(RequestHandlers, SnapshotViewSet):
@@ -365,6 +365,21 @@ class VolumeViewSet(viewsets.ModelViewSet):
     filter_fields = ('name', 'uuid', 'createdate')
     search_fields = ('name',)
 
+    def filter_queryset(self, queryset):
+        filter_value = self.request.QUERY_PARAMS.get('upper__isnull')
+        if filter_value:
+            if filter_value.lower() == 'true':
+                filter = True
+            else:
+                filter = False
+            queryset = queryset.filter(upper__isnull=filter)
+
+        filter_value = self.request.QUERY_PARAMS.get('upper__id')
+        if filter_value:
+            queryset = queryset.filter(upper__id=filter_value)
+
+        return super(VolumeViewSet, self).filter_queryset(queryset)
+
     @detail_route(["post"])
     def clone(self, request, *args, **kwargs):
         options = {"name": request.DATA["name"]}
@@ -374,7 +389,7 @@ class VolumeViewSet(viewsets.ModelViewSet):
 
         serializedClone = VolumeSerializer(clone, many=False, context={"request": request})
 
-        return Response(serializedClone.data, status=HTTP_201_CREATED)
+        return Response(serializedClone.data, status=status.HTTP_201_CREATED)
 
     @detail_route(["get", "post"])
     def snapshots(self, request, *args, **kwargs):
@@ -401,7 +416,7 @@ class VolumeViewSet(viewsets.ModelViewSet):
             })
         serializer = VolumeSerializer(volume, many=False, context={"request": request})
 
-        return Response(serializer.data, status=HTTP_201_CREATED)
+        return Response(serializer.data, status=status.HTTP_201_CREATED)
 
     def update(self, request, *args, **kwargs):
         storageobj = models.StorageObject.objects.get(id=request.DATA["id"])
@@ -440,6 +455,17 @@ class VolumeProxyViewSet(RequestHandlers, VolumeViewSet):
     @detail_route()
     def storage(self, request, *args, **kwargs):
         return self.retrieve(request, 'storage', *args, **kwargs)
+
+    def destroy(self, request, *args, **kwargs):
+        obj = self.get_object()
+        blockvolume = obj.blockvolume_or_none
+
+        if blockvolume and type(blockvolume) == Connection:
+            # might be a remote_request
+            res = self._remote_request(request, blockvolume.host, api_prefix="mirrors", obj=blockvolume)
+            return Response(json.loads(res), status=status.HTTP_204_NO_CONTENT)
+
+        return super(VolumeProxyViewSet, self).destroy(request, args, kwargs)
 
 
 RESTAPI_VIEWSETS = [

@@ -30,7 +30,6 @@ from django.utils.translation   import ugettext_noop as _
 from systemd                    import dbus_to_python, get_dbus_object
 from systemd.helpers            import Transaction
 
-from volumes                    import signals as volume_signals
 from volumes.models             import StorageObject, BlockVolume, VolumePool
 from ifconfig.models            import Host, IPAddress, getHostDependentManagerClass
 from peering.models             import PeerHost
@@ -47,13 +46,12 @@ class ConnectionManager(models.Manager):
     def _get_host_primary_ipaddress(self, host):
         return IPAddress.all_objects.get(device__host=host, primary_address=True)
 
-    def create_connection(self, other_host_id, peer_volumepool_id, protocol, syncer_rate, self_volume_id):
-        self_volume = BlockVolume.objects.get(id=self_volume_id)
-        other_host = Host.objects.get(id=other_host_id)
+    def create_connection(self, protocol, syncer_rate, source_volume_id):
+        source_volume = StorageObject.objects.get(id=source_volume_id).blockvolume_or_none
 
         # create drbd connection object
         with Transaction():
-            with StorageObject(name=self_volume.storageobj.name, megs=self_volume.storageobj.megs, is_origin=True) as self_storageobj:
+            with StorageObject(name=source_volume.storageobj.name, megs=source_volume.storageobj.megs, is_origin=True) as self_storageobj:
                 connection = Connection(storageobj=self_storageobj, protocol=protocol, syncer_rate=syncer_rate)
                 connection.full_clean()
                 connection.save()
@@ -64,7 +62,7 @@ class ConnectionManager(models.Manager):
                         # First we select all free minors, in the process locking them for the duration of this
                         # transaction, so no other process can steal the minor we're going to use.
                         free_minor = min([dm["minor"] for dm in
-                            DeviceMinor.objects.select_for_update().filter(connection__isnull=True).values("minor")])
+                                          DeviceMinor.objects.select_for_update().filter(connection__isnull=True).values("minor")])
                         # now update the minor with our ID.
                         DeviceMinor.objects.filter(minor=free_minor).update(connection=connection)
                 except ValueError:
@@ -73,47 +71,48 @@ class ConnectionManager(models.Manager):
                 # Re-query the Connection so the deviceminor is known
                 connection = Connection.all_objects.get(id=connection.id)
 
-                # self endpoint install
-                self._install_connection(connection, Host.objects.get_current(), other_host, True, self_volume, peer_volumepool_id)
+                host = Host.objects.get_current()
+                endpoint = Endpoint(connection=connection, ipaddress=host.get_primary_ip_address(), volume=source_volume)
+                endpoint.save()
 
-                volume_signals.post_install.send(sender=BlockVolume, instance=self)
+                return connection
 
-                return connection.id
-
-    def install_connection(self, connection, self_host, other_host, is_primary, primary_volume, peer_volumepool_id):
-        with Transaction():
-            return self._install_connection(connection, self_host, other_host, is_primary, primary_volume, peer_volumepool_id)
-
-    def _install_connection(self, connection, self_host, other_host, is_primary, primary_volume, peer_volumepool_id):
-        if is_primary:
-            volume = primary_volume
+    def install_connection(self, connection_id, source_volume_id, peer_volumepool_id=None):
+        connection = Connection.all_objects.get(id=connection_id)
+        source_volume = StorageObject.objects.get(id=source_volume_id).blockvolume_or_none
+        if peer_volumepool_id is None:
+            peer_volumepool = None
         else:
-            # create volume on peer host
-            vpool = VolumePool.objects.get(id=peer_volumepool_id)
-            peer_volume = vpool.volumepool._create_volume(primary_volume.storageobj.name, primary_volume.storageobj.megs, {})
-            volume = peer_volume
+            peer_volumepool = StorageObject.objects.get(id=peer_volumepool_id).volumepool_or_none
+        with Transaction():
+            self._install_connection(connection, source_volume, peer_volumepool)
+        return connection
+
+    def _install_connection(self, connection, source_volume, peer_volumepool):
+        if not peer_volumepool:
+            # Primary host
+            volume = source_volume
+            endpoint = Endpoint.objects.get(volume=volume)
+
+            is_primary = True
+        else:
+            # Secondary host
+            volume = peer_volumepool.volumepool._create_volume(source_volume.storageobj.name,
+                                                               source_volume.storageobj.megs, {})
+
+            host = Host.objects.get_current()
+            # create drbd endpoint
+            endpoint = Endpoint(connection=connection, ipaddress=host.get_primary_ip_address(), volume=volume)
+            endpoint.save()
+
+            is_primary = False
 
         # set upper volume
         volume_so = volume.storageobj
         volume_so.upper = connection.storageobj
         volume_so.save()
 
-        # get primary ip-address
-        ipaddress = self._get_host_primary_ipaddress(self_host)
-
-        # create drbd endpoint
-        endpoint = Endpoint(connection=connection, ipaddress=ipaddress, volume=volume)
-        endpoint.save()
-
-        if is_primary:
-            # peer endpoint install
-            peer_host = PeerHost.objects.get(host_id=other_host.id)
-            peer_host.drbd.Connection.install_connection(connection.id, other_host.id, self_host.id, False, primary_volume.id, peer_volumepool_id)
-
-
         endpoint.install(is_primary)
-
-        return endpoint.id
 
 class Connection(BlockVolume):
     protocol    = models.CharField(max_length=1, default="C", choices=DRBD_PROTOCOL_CHOICES)
@@ -250,16 +249,9 @@ class Connection(BlockVolume):
     def get_storage_devices(self):
         return Endpoint.all_objects.filter(connection=self)
 
-
-def __connection_pre_delete(instance, **kwargs):
-    for endpoint in Endpoint.all_objects.filter(connection=instance):
-        if endpoint.host == Host.objects.get_current():
-            endpoint._uninstall()
-        else:
-            peer_host = PeerHost.objects.get(host_id=endpoint.host.id)
-            peer_host.drbd.Endpoint.uninstall(endpoint.id)
-
-models.signals.pre_delete.connect(__connection_pre_delete, sender=Connection)
+    def uninstall_local_storage_device(self):
+        local_endpoint = Endpoint.objects.get(connection=self)
+        local_endpoint.uninstall()
 
 
 class Endpoint(models.Model):
@@ -271,7 +263,7 @@ class Endpoint(models.Model):
     all_objects = models.Manager()
 
     def __unicode__(self):
-        return self.ipaddress.device.host.name
+        return "Endpoint running on %s" % self.ipaddress.device.host.name
 
     @property
     def running_here(self):
@@ -375,4 +367,3 @@ class Endpoint(models.Model):
 class DeviceMinor(models.Model):
     minor       = models.IntegerField(unique=True)
     connection  = models.OneToOneField(Connection, null=True, on_delete=models.SET_NULL)
-
