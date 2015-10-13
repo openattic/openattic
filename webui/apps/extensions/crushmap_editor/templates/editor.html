@@ -1,0 +1,104 @@
+<!-- kate: space-indent on; indent-width 4; replace-tabs on; -->
+<div class="container-fluid">
+    <div class="row" ng-show="!clusters.$resolved">
+        Loading...
+    </div>
+    <div class="row" ng-show="clusters.$resolved && clusters.length === 0">
+        No Ceph clusters available.
+    </div>
+    <div class="row" ng-show="clusters.$resolved && clusters.length > 0">
+        <article class="col-sm-12 col-md-12 col-lg-6">
+            <div class="jarviswidget" id="wid-id-1" data-widget-editbutton="false" data-widget-custombutton="false">
+                <header>
+                    <div class="widget-toolbar" role="menu">
+                        <a ng-click="query()"><i class="fa fa-refresh"></i> Refresh</a>
+                        <a class="dropdown-toggle" data-toggle="dropdown" aria-expanded="false">
+                            <i class="fa fa-plus"></i> Add...
+                        </a>
+                        <ul class="dropdown-menu" role="menu">
+                            <li ng-repeat="btype in usableTypes"><a href="#" ng-bind="btype.name" ng-click="addBucket(btype)"></a></li>
+                        </ul>
+                        <a ng-click="activate()"><i class="fa fa-play-circle-o"></i> Activate</a>
+                    </div>
+                    <span class="widget-icon"> <i class="fa fa-edit"></i> </span>
+                    <h2>Physical setup</h2>
+                </header>
+                <div class="tree" ui-tree="treeOptions">
+                    <ul ui-tree-nodes="" ng-model="cluster.crushmap.crushmap.buckets">
+                        <li ui-tree-node
+                            ng-repeat="data in cluster.crushmap.crushmap.buckets"
+                            ng-include="'extensions/crushmap_editor/templates/crushMapNode.html'"></li>
+                    </ul>
+                </div>
+            </div>
+        </article>
+        <article class="col-sm-12 col-md-12 col-lg-6">
+            <div class="jarviswidget" id="wid-id-1" data-widget-editbutton="false" data-widget-custombutton="false">
+                <header>
+                    <div class="widget-toolbar" role="menu">
+                        <a ng-click="addRuleset()"><i class="fa fa-plus"></i> Add</a>
+                    </div>
+                    <span class="widget-icon"> <i class="fa fa-edit"></i> </span>
+                    <h2>Replication rules</h2>
+                </header>
+                <div>
+                    <form name="hostForm" role="form" class="form-horizontal" novalidate>
+                        <fieldset>
+                            <div class="form-group">
+                                <label class="col-md-2 control-label" for="ruleset">Content</label>
+                                <div class="col-md-10">
+                                    <select class="form-control"
+                                        ng-options="ruleset as ruleset.rule_name for ruleset in cluster.crushmap.crushmap.rules track by ruleset.rule_id"
+                                        ng-model="activeRuleset">
+                                        <option value="">Select a ruleset...</option>
+                                    </select>
+                                </div>
+                            </div>
+                        </fieldset>
+                        <fieldset ng-show="activeRuleset">
+                            <div class="form-group">
+                                <label class="col-md-2 control-label" for="replicas">Replicas</label>
+                                <div class="col-md-10">
+                                    <div class="row">
+                                        <div class="col-md-6">
+                                            <p><label class="control-label" for="min_size">Minimum</label></p>
+                                            <input type="number" class="form-control" id="min_size" ng-model="activeRuleset.min_size"
+                                            ng-model-options="{ updateOn: 'default blur', debounce: {'default': 1000, 'blur': 0} }" />
+                                        </div>
+                                        <div class="col-md-6">
+                                            <p><label class="control-label" for="max_size">Maximum</label></p>
+                                            <input type="number" class="form-control" id="max_size" ng-model="activeRuleset.max_size"
+                                            ng-model-options="{ updateOn: 'default blur', debounce: {'default': 1000, 'blur': 0} }" />
+                                        </div>
+                                    </div>
+                                    <p class="text-danger" style="padding-top: 7px" ng-show="activeRuleset.min_size === 1">
+                                        One replica means <em>no copies</em>. If you lose a storage node, your data is lost.
+                                    </p>
+                                    <p ng-show="activeRuleset.min_size > 1"
+                                       ng-class="{ 'text-warning': activeRuleset.min_size == 2, 'text-muted': activeRuleset.min_size > 2 }"
+                                       style="padding-top: 7px">
+                                        {{ activeRuleset.min_size|humanizeInt }} replicas means "the original file + {{ (activeRuleset.min_size - 1)|humanizeInt }}
+                                        <ng-pluralize count="activeRuleset.min_size - 1" when="{1: 'copy', 'other': 'copies'}"></ng-pluralize>".
+                                    </p>
+                                </div>
+                            </div>
+                        </fieldset>
+                        <fieldset ng-show="activeRuleset">
+                            <div class="form-group">
+                                <label class="col-md-2 control-label">Placement</label>
+                                <div class="col-md-10" style="padding-top: 7px">
+                                    <ceph-crush-stepset ng-repeat="stepset in stepsets" stepset="stepset" rule="activeRuleset" cluster="cluster"></ceph-crush-stepset>
+                                </div>
+                            </div>
+                            <button
+                                class="btn btn-default pull-right"
+                                ng-click="addStepset();">
+                                <i class="fa fa-fw fa-plus"></i>
+                            </button>
+                        </fieldset>
+                    </form>
+                </div>
+            </div>
+        </article>
+    </div>
+</div>
