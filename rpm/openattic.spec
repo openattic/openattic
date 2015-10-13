@@ -440,7 +440,7 @@ install -m 644 etc/modprobe.d/drbd.conf %{buildroot}%{_sysconfdir}/modprobe.d/
 install -m 644 etc/yum.repos.d/%{name}.repo %{buildroot}%{_sysconfdir}/yum.repos.d/
 
 # install man pages
-install -m 644 debian/man/*.1 %{buildroot}%{_mandir}/man1/
+install -m 644 man/*.1 %{buildroot}%{_mandir}/man1/
 gzip %{buildroot}%{_mandir}/man1/*.1
 
 #configure nagios
