@@ -15,7 +15,7 @@ if [ "$1" = "configure" ] ; then
     if [ -f /etc/default/openattic ]; then
       . /etc/default/openattic
     else
-      echo "Missing required file /etc/default/openattic."
+      echo "Missing required file /etc/default/openattic." 1>&2
       exit 1
     fi
 
