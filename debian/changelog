@@ -1,3 +1,10 @@
+openattic (2.0.3-1) unstable; urgency=medium
+
+  * New upstream release.
+  * Moved log files into /var/log/openattic.
+
+ -- Lenz Grimmer <lenz@openattic.org>  Wed, 14 Oct 2015 13:02:32 +0200
+
 openattic (2.0.2-2) unstable; urgency=medium
 
   * New upstream release.
