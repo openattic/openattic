@@ -1,4 +1,4 @@
-openattic (2.0.3-1) unstable; urgency=medium
+openattic (2.0.2-3) unstable; urgency=medium
 
   * New upstream release.
   * Moved log files into /var/log/openattic.
