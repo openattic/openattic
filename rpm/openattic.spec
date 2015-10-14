@@ -554,6 +554,7 @@ echo ""
 /lib/systemd/system/openattic-systemd.service
 %config %{_sysconfdir}/httpd/conf.d/openattic.conf
 %defattr(-,openattic,openattic,-)
+%dir %{_datadir}/%{name}
 %dir %{_localstatedir}/lib/%{name}
 %dir %{_localstatedir}/log/%{name}
 %dir %{_localstatedir}/lock/%{name}
