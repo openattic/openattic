@@ -20,13 +20,18 @@ class LogicalVolumeXfsTestCase(LvTestScenario, XfsVolumeTests):
 
 
 class RemoteLogicalVolumeTestCase(RemoteLvTestScenario, VolumeTests):
-    pass
+    def _get_pool(self):
+        return self._get_remote_pool()
+
 
 class RemoteLogicalVolumeExt4TestCase(RemoteLvTestScenario, Ext4VolumeTests):
-    pass
+    def _get_pool(self):
+        return self._get_remote_pool()
+
 
 class RemoteLogicalVolumeXfsTestCase(RemoteLvTestScenario, XfsVolumeTests):
-    pass
+    def _get_pool(self):
+        return self._get_remote_pool()
 
 
 class LvLioTests(object):
@@ -95,6 +100,7 @@ class LioTestCase(LvTestScenario, LunTestScenario, LvLioTests):
 class NfsShareTest(object):
 
     def test_lv_nfs_share(self):
+        print self.vg["name"]
         """ Create an export for an LV. """
         data = {"filesystem"    : "ext4",
                 "megs"          : 1000,

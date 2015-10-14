@@ -101,6 +101,8 @@ STORAGEOBJECT_STATUS_CHOICES = (
 
 STORAGEOBJECT_STATUS_FLAGS = {
     "unknown":       {"severity": -1, "desc": ugettext_noop("The status cannot be checked and is therefore unknown.")},
+    "locked":        {"severity": -1, "desc": ugettext_noop("The volume is currently locked. Its status cannot be "
+                                                            "checked.")},
     "online":        {"severity":  0, "desc": ugettext_noop("The volume is accessible.")},
     "readonly":      {"severity":  0, "desc": ugettext_noop("The volume cannot be written to.")},
     "offline":       {"severity":  0, "desc": ugettext_noop("The volume is inaccessible.")},
@@ -452,7 +454,8 @@ class StorageObject(models.Model):
         flags = set()
 
         for obj in self.base_set.all():
-            flags = flags.union(obj._get_status())
+            if obj.host == Host.objects.get_current():
+                flags = flags.union(obj._get_status())
 
         for obj in (self.blockvolume_or_none, self.volumepool_or_none, self.filesystemvolume_or_none, self.physicalblockdevice_or_none):
             if obj is not None:
@@ -1226,8 +1229,13 @@ class GenericDisk(BlockVolume):
 
 def get_storage_tree(top_obj):
     def serialize_obj(obj):
+        try:
+            status = obj.get_status()
+        except KeyError:
+            status = ["unknown"]
+
         return {
-            "status":  obj.get_status(),
+            "status":  status,
             "title":   unicode(obj)
             }
 

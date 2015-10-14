@@ -34,6 +34,8 @@ if exists(join(PROJECT_ROOT, "..", "webui", "app")):
 else:
     GUI_ROOT = "/usr/share/openattic-gui"
 
+API_ROOT = "/openattic/api"
+
 from ConfigParser import ConfigParser
 
 DEBUG = True
