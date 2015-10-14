@@ -3,14 +3,14 @@ OADIR="/usr/share/openattic"
 
 RPCD_PIDFILE="/var/run/openattic_rpcd.pid"
 RPCD_CHUID="openattic:openattic"
-RPCD_LOGFILE="/var/log/openattic_rpcd"
+RPCD_LOGFILE="/var/log/openattic/openattic_rpcd.log"
 RPCD_LOGLEVEL="INFO"
 RPCD_OPTIONS="$OADIR/manage.py runrpcd"
 RPCD_CERTFILE=""
 RPCD_KEYFILE=""
 
 SYSD_PIDFILE="/var/run/openattic_systemd.pid"
-SYSD_LOGFILE="/var/log/openattic_systemd"
+SYSD_LOGFILE="/var/log/openattic/openattic_systemd.log"
 SYSD_LOGLEVEL="INFO"
 SYSD_OPTIONS="$OADIR/manage.py runsystemd"
 
