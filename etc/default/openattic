@@ -14,13 +14,13 @@ OADIR="/srv/openattic"
 
 RPCD_PIDFILE="/var/run/openattic_rpcd.pid"
 RPCD_CHUID="www-data:www-data"
-RPCD_LOGFILE="/var/log/openattic_rpcd"
+RPCD_LOGFILE="/var/log/openattic/openattic_rpcd.log"
 RPCD_OPTIONS="$OADIR/manage.py runrpcd"
 RPCD_CERTFILE="" #"$OADIR/certs/ssl-cert-snakeoil.pem"
 RPCD_KEYFILE="" #"$OADIR/certs/ssl-cert-snakeoil.key"
 
 SYSD_PIDFILE="/var/run/openattic_systemd.pid"
-SYSD_LOGFILE="/var/log/openattic_systemd"
+SYSD_LOGFILE="/var/log/openattic/openattic_systemd.log"
 SYSD_OPTIONS="$OADIR/manage.py runsystemd"
 
 WEBSERVER_SERVICE="apache2"
