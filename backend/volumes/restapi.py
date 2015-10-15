@@ -17,6 +17,7 @@
 import django_filters, requests, json
 
 from django.db.models import Q
+from django.conf import settings
 
 from rest_framework import serializers, viewsets
 from rest_framework.decorators import detail_route
@@ -28,7 +29,6 @@ from rest.restapi import ContentTypeSerializer
 from rest.multinode.handlers import RequestHandlers
 
 from volumes import models
-from drbd.models import Connection
 
 
 # filter queryset by...
@@ -460,10 +460,12 @@ class VolumeProxyViewSet(RequestHandlers, VolumeViewSet):
         obj = self.get_object()
         blockvolume = obj.blockvolume_or_none
 
-        if blockvolume and type(blockvolume) == Connection:
-            # might be a remote_request
-            res = self._remote_request(request, blockvolume.host, api_prefix="mirrors", obj=blockvolume)
-            return Response(json.loads(res), status=status.HTTP_204_NO_CONTENT)
+        if "drbd" in settings.INSTALLED_APPS:
+            from drbd.models import Connection
+            if blockvolume and type(blockvolume) == Connection:
+                # might be a remote_request
+                res = self._remote_request(request, blockvolume.host, api_prefix="mirrors", obj=blockvolume)
+                return Response(json.loads(res), status=status.HTTP_204_NO_CONTENT)
 
         return super(VolumeProxyViewSet, self).destroy(request, args, kwargs)
 
