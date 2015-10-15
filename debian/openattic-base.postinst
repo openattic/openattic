@@ -24,7 +24,9 @@ if [ "$1" = "configure" ] ; then
     setperm "/var/lock/openattic"  0755
     setperm "/var/log/openattic"   0755
 
+    touch "$SYSD_LOGFILE"
     setperm "$SYSD_LOGFILE" 0640
+    touch "$RPCD_LOGFILE"
     setperm "$RPCD_LOGFILE" 0640
 
     update-rc.d openattic-systemd defaults >/dev/null
