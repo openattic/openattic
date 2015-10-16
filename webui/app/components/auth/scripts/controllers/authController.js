@@ -25,7 +25,7 @@ angular.module('openattic.auth')
       restrict: 'A',
       link: function($scope, $element){
         $timeout(function(){
-          $element[0].focus();
+          $element.focus();
         }, 0);
       }
     }
