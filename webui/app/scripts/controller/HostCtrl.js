@@ -50,6 +50,9 @@ angular.module('openattic')
     };
 
     $scope.deleteAction = function(){
+      if (! $scope.selection.item) {
+        return;
+      }
       var modalInstance = $modal.open({
         windowTemplateUrl: 'templates/messagebox.html',
         templateUrl: 'templates/hosts/delete-host.html',
