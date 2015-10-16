@@ -4,19 +4,20 @@ Administration Guide
 Introducting the New Graphical User Interface
 ---------------------------------------------
 
-The new user interface is now based on Bootstrap to make it look more modern -
-realizing this was a great advantage when we switched from JavaScript
-framework ``ExtJS`` to ``AngularJS``.  .. TODO add AngularJS link
+The new user interface is now based on Bootstrap to make it look more modern,
+realizing this was a great advantage when we switched from the `ExtJS
+<https://www.sencha.com/products/extjs/>`_ to the `AngularJS
+<https://angularjs.org/>`_ JavaScript framework.
 
-We restructured the |oA| menu in order to make it more intuitive and
+We restructured the |oA| user interface in order to make it more intuitive and
 user-friendly. This included a clean-up of the menu tree as well. Actions like
 snapshots and shares are now directly available in the volumes panel - by
 selecting a volume those options get activated and will only display useful
 actions, depending on the volume type.
 
 Also, we have integrated wizards on the dashboard so that users can be guided
-through the single steps based on specific use cases like ``VM storage`` or
-``Raw Block Storage``.
+through the single steps based on specific use cases like **VM storage** or
+**Raw Block Storage**.
 
 .. todo:: add screenshots for each panel / form screenshots
 
@@ -57,12 +58,9 @@ How to Perform Common Tasks
     * click volume and
 
        * make a snapshot
-
-         * create clone from snapshot
-
+       * create clone from snapshot
        * create a share
-
-         * automatically only shows available options for volume type
+       * automatically only shows available options for volume type
 
     * without filesystem
 

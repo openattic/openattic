@@ -1,0 +1,16 @@
+/var/log/openattic/openattic_rpcd.log {
+  rotate 12
+  monthly
+  compress
+  copytruncate
+  notifempty
+}
+
+/var/log/openattic/openattic_systemd.log {
+  rotate 12
+  monthly
+  compress
+  copytruncate
+  missingok
+  notifempty
+}
