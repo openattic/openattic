@@ -1,8 +1,31 @@
 openATTIC Changelog
 ===================
 
+Version 2.0.3, 16. Oct 2015:
+----------------------------
+
+* API/Backend: Created DRBD REST-API that supports creating and deleting
+  mirrored volumes (OP-216).
+* Web UI: Merged the Ceph Enterprise UI components (CRUSH map editing) into the
+  main repo (OP-675).
+* Web UI: The openATTIC login screen now automatically places the input focus
+  on the username input field, adjusted the login icon width (OP-688, OP-689)
+* Web UI: Created E2E tests for login with new created user account (OP-629),
+  extended and added numerous additional E2E tests.
+* Web UI: Clicking the Delete button with no host selected no longer triggers a
+  delete action (OP-683)
+* Installation: Fixed lots of "user/group does not exist" warnings that ocurred
+  when installing the EL7 RPMs (OP-536)
+* Installation: Moved log files into /var/log/openattic and created a
+  logrotate.conf file (OP-660, OP-661)
+* Installation: Removed /var/log/openattic_vgmanager from the Debian packages
+  (OP-663)
+* Installation: Fixed RPM dependencies: all modules depend on "openattic-base"
+  now, removed openattic-base dependency from the "openattic" meta package.
+* Documentation: Updated the installation and development system setup chapters.
+
 Version 2.0.2, 09 Sep 2015:
----------------------------------
+---------------------------
 
 * API: Merged the formerly separate REST API test suite into the
   openATTIC code base (subdirectory "gatling").
@@ -49,7 +72,7 @@ Version 2.0.2, 09 Sep 2015:
   install" to proceed without a correctly-configured FQDN (OP-501).
 
 Version 2.0.1, 10 July 2015:
----------------------------------
+----------------------------
 
 * Added support for the "Restore previous versions" Windows Explorer feature.
 * Improved robustness of the LIO module.
@@ -61,12 +84,12 @@ Version 2.0.1, 10 July 2015:
 * Removed support for FTP and TFTP.
 
 Version 1.2.1, 24 November 2014:
----------------------------------
+--------------------------------
 
 * Fixed mapping a LUN to multiple initiators.
 
 Version 1.2.0, 12 August 2014:
----------------------------------
+------------------------------
 
 * Fixed LVM snapshots being zeroed after creation.
 * Added ZFS snapshots.
@@ -166,12 +189,12 @@ Version 1.0.7, 22 May 2013:
 
 
 Version 0.7.4, 07 March 2012:
----------------------------------
+-----------------------------
 
 * Fixed the Nagios syncdb hook which caused the initial syncdb to fail.
 
 
 Version 0.7.3, 05 March 2012:
----------------------------------
+-----------------------------
 
 * First release.
