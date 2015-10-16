@@ -4,9 +4,9 @@ angular.module('openattic.auth')
   .controller('authController', function ($scope, $rootScope, $state, authService) {
     $scope.fieldRequired = 'This field is required.';
     $scope.correctInput = 'The given credentials are not correct.';
-    
+
     $scope.$watchGroup(['username', 'password'], function(){
-        $scope.submitted = false;
+      $scope.submitted = false;
     });
     $scope.login = function(){
       $scope.submitted = true;
@@ -19,4 +19,12 @@ angular.module('openattic.auth')
         $scope.loginFailed = true;
       });
     };
+  })
+  .directive('autoFocus', function(){
+    return {
+      restrict: 'AC',
+      link: function($scope, $element){
+        $element.focus();
+      }
+    }
   });
