@@ -25,7 +25,7 @@ web interface or via the REST API.
   :maxdepth: 2
 
   install_guides/index
-..  gui_docs/index
+  gui_docs/index
   developer_docs/index
 
 .. seealso:: This documentation is also available `as a PDF file. <openATTIC.pdf>`_
