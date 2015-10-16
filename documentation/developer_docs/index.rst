@@ -6,7 +6,7 @@ Developer Documentation
 |oA| consists of a set of components built on different frameworks, which work
 together to provide a comprehensive storage management platform.
 
-When an application (e.g. the |oA| web UI, a command line tool or an external
+When an application (e.g. the |oA| Web UI, a command line tool or an external
 application), wants to perform an action, the following happens:
 
 * The REST API receives a request in form of a function call, decides which host is

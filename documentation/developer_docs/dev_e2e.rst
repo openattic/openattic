@@ -194,33 +194,33 @@ E2E-Test Directory and File Structure
 
 In directory ``/srv/openattic/e2e/`` the following directories can be found::
 
-  ├── auth
-  ├── commandLogs
-  ├── dashboard
-  │   └── todoWidget
-  ├── disks
-  ├── general
-  ├── hosts
-  │   └── peer
-  ├── pools
-  ├── shares
-  │   ├── cifs
-  │   ├── http
-  │   ├── lun
-  │   └── nfs
-  ├── snapshots
-  │   ├── add
-  │   └── clone
-  ├── users
-  ├── volumes
-  │   ├── add
-  │   ├── protection
-  │   ├── resize
-  │   └── zvol
-  └── wizards
-      ├── block
-      ├── file
-      └── vm
+  +-- auth
+  +-- commandLogs
+  +-- dashboard
+  |   `-- todoWidget
+  +-- disks
+  +-- general
+  +-- hosts
+  |   `-- peer
+  +-- pools
+  +-- shares
+  |   +-- cifs
+  |   +-- http
+  |   +-- lun
+  |   `-- nfs
+  +-- snapshots
+  |   +-- add
+  |   `-- clone
+  +-- users
+  +-- volumes
+  |   +-- add
+  |   +-- protection
+  |   +-- resize
+  |   `-- zvol
+  `-- wizards
+      +-- block
+      +-- file
+      `-- vm
 
 Most of the directories contain a ``.._workflow.e2e.js`` in which we only test
 things like validation, the number of input fields, the title of the form etc.
