@@ -20,11 +20,13 @@ angular.module('openattic.auth')
       });
     };
   })
-  .directive('autoFocus', function(){
+  .directive('autoFocus', function($timeout){
     return {
-      restrict: 'AC',
+      restrict: 'A',
       link: function($scope, $element){
-        $element.focus();
+        $timeout(function(){
+          $element[0].focus();
+        }, 0);
       }
     }
   });
