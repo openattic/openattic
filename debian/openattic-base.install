@@ -35,6 +35,7 @@ etc/openattic/volume_init.d/*       /etc/openattic/volume_init.d
 # System Configs
 etc/apache2/conf-available/openattic.conf /etc/apache2/conf-available
 etc/dbus-1/system.d/openattic.conf        /etc/dbus-1/system.d
+etc/logrotate.d/openattic                 /etc/logrotate.d
 
 debian/default/openattic            /etc/default
 
