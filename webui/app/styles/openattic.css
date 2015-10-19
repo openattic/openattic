@@ -74,6 +74,11 @@
     padding-left: 20px;
     cursor: default;
 }
+.oadatatable .dataTables_length .oadatatableshowhidemenu {
+    padding-left: 0;
+    min-width: 80px;
+    text-align: right;
+}
 .oadatatable .oadatatableshowhidemenu label {
     margin-bottom: 0;
     width: 100%;
