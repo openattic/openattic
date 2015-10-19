@@ -4,6 +4,7 @@ angular.module('openattic')
     $scope.$watch('selection.item', function(item){
       if(item){
         $scope.storage = VolumeService.storage({id: item.id});
+        console.log($scope.storage);
       }
     });
   });
