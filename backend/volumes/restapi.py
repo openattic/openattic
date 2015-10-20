@@ -457,10 +457,10 @@ class VolumeProxyViewSet(RequestHandlers, VolumeViewSet):
         return self.retrieve(request, 'storage', *args, **kwargs)
 
     def destroy(self, request, *args, **kwargs):
-        obj = self.get_object()
-        blockvolume = obj.blockvolume_or_none
-
         if "drbd" in settings.INSTALLED_APPS:
+            obj = self.get_object()
+            blockvolume = obj.blockvolume_or_none
+
             from drbd.models import Connection
             if blockvolume and type(blockvolume) == Connection:
                 # might be a remote_request
