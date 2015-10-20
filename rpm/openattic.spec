@@ -370,6 +370,7 @@ mkdir -p %{buildroot}%{_sysconfdir}/cron.d/
 mkdir -p %{buildroot}%{_sysconfdir}/dbus-1/system.d/
 mkdir -p %{buildroot}%{_sysconfdir}/default/
 mkdir -p %{buildroot}%{_sysconfdir}/httpd/conf.d/
+mkdir -p %{buildroot}%{_sysconfdir}/logrotate.d/
 mkdir -p %{buildroot}%{_sysconfdir}/modprobe.d/
 mkdir -p %{buildroot}%{_sysconfdir}/nagios/conf.d/
 mkdir -p %{buildroot}%{_sysconfdir}/%{name}/databases
@@ -436,11 +437,13 @@ install -m 644 etc/dbus-1/system.d/openattic.conf %{buildroot}%{_sysconfdir}/dbu
 
 install -m 644 etc/modprobe.d/drbd.conf %{buildroot}%{_sysconfdir}/modprobe.d/
 
+install -m 644 etc/logrotate.d/%{name} %{buildroot}%{_sysconfdir}/logrotate.d/
+
 # configure yum repo
 install -m 644 etc/yum.repos.d/%{name}.repo %{buildroot}%{_sysconfdir}/yum.repos.d/
 
 # install man pages
-install -m 644 debian/man/*.1 %{buildroot}%{_mandir}/man1/
+install -m 644 man/*.1 %{buildroot}%{_mandir}/man1/
 gzip %{buildroot}%{_mandir}/man1/*.1
 
 #configure nagios
@@ -553,7 +556,9 @@ echo ""
 /lib/systemd/system/openattic-rpcd.service
 /lib/systemd/system/openattic-systemd.service
 %config %{_sysconfdir}/httpd/conf.d/openattic.conf
+%config %{_sysconfdir}/logrotate.d/%{name}
 %defattr(-,openattic,openattic,-)
+%dir %{_datadir}/%{name}
 %dir %{_localstatedir}/lib/%{name}
 %dir %{_localstatedir}/log/%{name}
 %dir %{_localstatedir}/lock/%{name}

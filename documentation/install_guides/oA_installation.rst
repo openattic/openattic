@@ -8,7 +8,8 @@ Operating System Requirements
    |oA| has been designed to be installed on a 64-bit Linux operating system.
    Installation on 32-bit systems is not supported.
 
-The following Linux distributions are currently supported:
+Installable packages of |oA| are currently available for the following Linux
+distributions:
 
 * Debian Linux 7 (Wheezy)
 * Debian Linux 8 (Jessie)
@@ -18,8 +19,8 @@ The following Linux distributions are currently supported:
   or Scientific Linux 7)
 
 In order to use the ZFS file system, you need to install ZFS on Linux
-separately. Installation packages for the distributions supported are
-available from the ZFS on Linux web site <http://zfsonlinux.org/>.
+separately. Installation packages for various Linux distributions are
+available from the `ZFS on Linux web site <http://zfsonlinux.org/>`_.
 
 FibreChannel support requires at least Linux kernel version 3.5.
 
@@ -31,7 +32,7 @@ to a specific vendor or hardware model.
 
 You need to make sure that your Linux distribution of choice supports the
 hardware you intend to use. Check the respective hardware compatibility lists
-or consult your vendor for details.
+or consult your hardware vendor for details.
 
 However, there are a couple of things you should be aware of when designing the
 system.
@@ -127,7 +128,8 @@ Preparing the Installation
 
 #.  When using ZFS:
 
-    You will need to specify the complete layout in the zpool create command, so before running it, consider all the following points.
+    You will need to specify the complete layout in the zpool create command,
+    so before running it, consider all the following points.
 
     #.  Group exactly six disks in each raidz2. Use multiple raidz2 vdevs in order to add all disks to the zpool.
     #.  When adding SSDs, add them as mirrored log devices.
@@ -168,12 +170,13 @@ Operating System Configuration Hints
      # /usr/share/mdadm/mkconf > /etc/mdadm/mdadm.conf
      # update-initramfs -k all -u
 
-#. Install and configure an NTP daemon.
+#. Install and configure an NTP daemon on every host.
 
 #. You may want to install the ``ladvd`` package, which will ensure that your
    switches correctly identify your system using LLDP.
 
-#. Make sure ``/etc/drbd.d/global_common.conf`` contains the following variables::
+#. Make sure ``/etc/drbd.d/global_common.conf`` contains the following
+   variables::
 
        disk {
         no-disk-barrier;
@@ -221,8 +224,8 @@ For Debian 8 (Jessie)
   deb     http://apt.openattic.org/ nightly  main
   deb-src http://apt.openattic.org/ nightly  main
 
-For Ubuntu 14.04 LTS
-~~~~~~~~~~~~~~~~~~~~
+For Ubuntu 14.04 LTS (Trusty)
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 ::
 
@@ -235,7 +238,7 @@ Enabling Nightly Builds (for Debian Jessie or Ubuntu Trusty)
 In addition to the offical releases, we also provide nightly builds, build off
 the current development branch.
 
-Add the following to the existing ``/etc/apt/sources.list.d/openattic.list```
+Add the following to the existing ``/etc/apt/sources.list.d/openattic.list``
 file::
 
   deb     http://apt.openattic.org/ nightly  main
@@ -277,13 +280,13 @@ Installation (Ubuntu Trusty 14.04)
 Installation on Red Hat Enterprise Linux (and Derivatives)
 ==========================================================
 
-Starting with version 2.0, |oA| will also be available for RPM-based Linux
+Starting with version 2.0, |oA| is also available for RPM-based Linux
 distributions, namely Red Hat Enterprise Linux 7 (RHEL) and derivatives (e.g.
-CentOS 7, Oracle Linux 7 or Scientific Linux 7). The software will be
-delivered in the form of RPM packages via dedicated yum repositories.
+CentOS 7, Oracle Linux 7 or Scientific Linux 7). For the sake of simplicy, we
+refer to these distributions as Enterprise Linux 7 (EL7).
 
-.. note::
-   Currently, only nightly builds of the RPMs are available for preview purposes.
+The software is delivered in the form of RPM packages via dedicated yum
+repositories.
 
 Preliminary Preparations on RHEL 7
 ----------------------------------
@@ -295,12 +298,8 @@ enable the "Optional" repo::
   # subscription-manager repos --disable=rhel-7-server-rt-rpms
   # subscription-manager repos --enable=rhel-7-server-optional-rpms
 
-Afterwards, just follow the installation steps as outlined for CentOS 7.
+Afterwards, just follow the installation steps as outlined for EL7.
 
-.. note::
-  In order to allow external HTTP requests execute the following command::
-
-    # $ sudo firewall-cmd --zone=public --add-port=80/tcp --permanent
 
 Yum Repository Configuration
 ----------------------------
@@ -308,7 +307,7 @@ Yum Repository Configuration
 Download and install the ``openattic-release`` RPM package located in the
 following directory::
 
-  # yum install http://apt.openattic.org/rpm/openattic-nightly-el7-x86_64/openattic-release.rpm
+  # yum install http://repo.openattic.org/rpm/openattic-2.x-el7-x86_64/openattic-release.rpm
 
 To enable the nightly RPM builds, edit ``/etc/yum.repos.d/openattic.repo`` and
 enable the ``[openattic-nightly]`` yum repository by setting ``enabled`` to
@@ -347,11 +346,11 @@ To install the packages on CentOS 7, run the following commands:
 
 6. Install the GUI
 
-   The GUI is not installed automatically when using yum ``install
+   The GUI is not installed automatically when using ``yum install
    openattic``, as it might not be required on each node of an |oA| cluster.
    Instead, it should be installed with the following command::
 
-     # sudo yum install openattic-gui
+     # yum install openattic-gui
 
 Getting started
 ===============
@@ -367,7 +366,14 @@ interface - have fun!
 Accessing the Web UI
 --------------------
 
-Open a web browser and navigate to http://yourhost/openattic/
+.. note::
+  HTTP access to the Web UI might be blocked by the default firewall
+  configuration. In order to allow external HTTP requests execute the
+  following command::
+
+    # firewall-cmd --zone=public --add-port=80/tcp --permanent
+
+Open a web browser and navigate to http://openattic.yourdomain.com/openattic
 
 Installing additional |oA| Modules
 ----------------------------------
@@ -379,3 +385,6 @@ After installing |oA|, you can install additional modules by using
   # oaconfig install openattic-module-btrfs
   # oaconfig install openattic-module-lio
 
+.. note::
+  ``oaconfig install`` currently works on Debian/Ubuntu only. On EL7, use
+  ``yum install openattic-module-<module-name>`` instead.

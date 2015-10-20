@@ -1,0 +1,33 @@
+<!-- kate: space-indent on; indent-width 4; replace-tabs on; -->
+<div>
+    <div class="row">
+        <article class="col-sm-12 col-md-12 col-lg-12">
+            <div class="jarviswidget" id="wid-id-1" data-widget-editbutton="false" data-widget-custombutton="false">
+                <header>
+                    <span class="widget-icon"> <i class="fa fa-edit"></i> </span>
+                    <h2>Ceph Attributes for {{pool.name}}</h2>
+                </header>
+                <div>
+                    <div class="widget-body no-padding">
+                        <form name="hostForm" role="form" class="smart-form" novalidate>
+                            <fieldset>
+                                <section>
+                                    <label class="col-md-2 control-label">Replicas</label>
+                                    <div class="col-md-10">
+                                        <input class="form-control" name="repsize" required ng-model="data.repsize">
+                                    </div>
+                                </section>
+                                <section>
+                                    <label class="col-md-2 control-label">Min. Replicas</label>
+                                    <div class="col-md-10">
+                                        <input class="form-control" name="minrepsize" required ng-model="data.minrepsize">
+                                    </div>
+                                </section>
+                            </fieldset>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </article>
+    </div>
+</div>
