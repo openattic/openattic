@@ -90,8 +90,8 @@
         <!-- end typo3 resources -->
         <link rel="stylesheet" href="{{ pathto('_static/' + style, 1) }}" type="text/css" />
         <link rel="stylesheet" href="{{ pathto('_static/pygments.css', 1) }}" type="text/css" />
-        <link rel="stylesheet" href="{{ pathto('_static/itnstyle.css', 1) }}" type="text/css" />
         <link rel="stylesheet" href="{{ pathto('_static/typo3_main.css', 1) }}" type="text/css" />
+        <link rel="stylesheet" href="{{ pathto('_static/itnstyle.css', 1) }}" type="text/css" />
         {%- for cssfile in css_files %}
         <link rel="stylesheet" href="{{ pathto(cssfile, 1) }}" type="text/css" />
         {%- endfor %}
@@ -206,7 +206,7 @@
                 {%- block content %}
                     <div id="content-wrapper" class="document">
                         <div class="clearer"></div>
-                        <div class="col-25 last-col">
+                        <div class="col-25 table-of-contents last-col">
                             <div class="col-wrapper">
                                 {%- block sidebar2 %}{{ sidebar() }}{% endblock %}
                             </div>
