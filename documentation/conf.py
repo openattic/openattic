@@ -84,6 +84,9 @@ exclude_patterns = ['_build']
 # output. They are ignored by default.
 #show_authors = False
 
+# Temporary style which allows us to use '#' as prefix for commands.
+highlight_language = 'text'
+
 # The name of the Pygments (syntax highlighting) style to use.
 pygments_style = 'sphinx'
 
