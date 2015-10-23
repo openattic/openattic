@@ -363,3 +363,7 @@ accordion .panel-title {
 .thicker-border {
     border-width: 2px !important;
 }
+
+#logo img {
+	width: auto;
+}
