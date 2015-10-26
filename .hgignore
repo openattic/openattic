@@ -5,7 +5,7 @@ syntax: glob
 *.kate-swp
 *.pyc
 *.swo
-*.png
+# *.png
 *.iml
 *~
 e2e/configs.js

@@ -263,10 +263,10 @@ is based on a volume (i.e. creating a share) you can use the following lines::
 
 Depending on which volume type you need, you can set the parameter to:
 
-  * ``xfs``
-  * ``btrfs``
-  * ``zfs`` (if ``openattic-module-zfs`` is installed)
-  * ``lun``
+* ``xfs``
+* ``btrfs``
+* ``zfs`` (if ``openattic-module-zfs`` is installed)
+* ``lun``
 
 All other helper functions can be used like this:
 

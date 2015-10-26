@@ -67,23 +67,24 @@ system.
     the integrated cache. For ZFS setups, consider adding two SSDs.
 
     .. note::
+
       When using SSDs for caching, the total size of the cache should be one
       tenth the size of the device being cached, and the cache needs to be ten
       times faster. So:
 
-        * only add a cache if you have to - no guessing allowed, measure!
-        * don't make it too large
-        * don't add an SSD cache to a volume that is itself on SSDs
+      * only add a cache if you have to - no guessing allowed, measure!
+      * don't make it too large
+      * don't add an SSD cache to a volume that is itself on SSDs
 
 #.  Do you plan on using replication in order to provide failure tolerance? If
     so, ...
 
-      * you will require the same hardware for all of your nodes, because when
-        using synchronous   replication, the slowest node limits the
-        performance of the whole system.
-      * make sure the network between the nodes has a low latency and enough
-        bandwidth to support not only the bandwidth your application needs, but
-        also has some extra for bursts and recovery traffic.
+    * you will require the same hardware for all of your nodes, because when
+      using synchronous   replication, the slowest node limits the
+      performance of the whole system.
+    * make sure the network between the nodes has a low latency and enough
+      bandwidth to support not only the bandwidth your application needs, but
+      also has some extra for bursts and recovery traffic.
 
     .. note::
       When running VMs, a Gigabit link will get you pretty far. Money for a
@@ -131,7 +132,8 @@ Preparing the Installation
     You will need to specify the complete layout in the zpool create command,
     so before running it, consider all the following points.
 
-    #.  Group exactly six disks in each raidz2. Use multiple raidz2 vdevs in order to add all disks to the zpool.
+    #.  Group exactly six disks in each raidz2. Use multiple raidz2 vdevs in 
+        order to add all disks to the zpool.
     #.  When adding SSDs, add them as mirrored log devices.
     #.  Set the mount point to /media/<poolname> instead of just /<poolname>.
     #.  Do not use /dev/sdc etc, but use /dev/disk/by-id/... paths instead.
