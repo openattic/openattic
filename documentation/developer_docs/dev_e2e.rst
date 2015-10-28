@@ -103,7 +103,7 @@ Maximize Browser Window
 If the browser windows in which the tests will be executed is too small, it
 occours that protractor can't click an element and tests will fail. To prevent
 this, you can maximize your browser window by default by adding the following
-line to ``protractor.conf.js``::
+line to ``webui/protractor.conf.js``::
 
   exports.config = {
 
@@ -135,7 +135,9 @@ In order to run our graphical user interface tests, please make sure that your
 - one volume group
 - one zpool
 
-and add them to ``configs.js`` (see examples). It is important that the first
+and add them to ``e2e/configs.js``. An example config can be found under
+``e2e/example_config.js``.
+It is important that the first
 element in this config file is your volume group.
 
 If you do not have a zpool configured and you do not want to create one, you
