@@ -351,6 +351,12 @@ class Endpoint(models.Model):
 
     def _uninstall(self):
         self.connection.storageobj.lock()
+
+        # if contains a filesystem. on primary only.
+        fs_volume = self.connection.storageobj.filesystemvolume_or_none
+        if fs_volume:
+            fs_volume.volume.unmount()
+
         self.connection.drbd.down(self.connection.name, False)
         self.connection.drbd.conf_delete(self.connection.name)
         self.volume.storageobj._delete()
