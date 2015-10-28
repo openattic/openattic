@@ -359,7 +359,7 @@ class Endpoint(models.Model):
 
         self.connection.drbd.down(self.connection.name, False)
         self.connection.drbd.conf_delete(self.connection.name)
-        self.volume.storageobj._delete()
+        self.volume.storageobj.delete()
 
     def uninstall(self):
         # wrapper around _uninstall() that runs uninstall in a Transaction.
