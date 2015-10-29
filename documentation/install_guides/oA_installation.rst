@@ -405,4 +405,7 @@ The next step is to install the |oA| Ceph module on your system.::
 
   # oaconfig install openattic-module-ceph
 
-The last step is to reload your |oA| configuration with ``oaconfig reload``.
+The last step is to reload your |oA| configuration.::
+
+  # oaconfig reload
+
