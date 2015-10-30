@@ -396,16 +396,16 @@ How to set up |oA| with Ceph
 
 To set up |oA| with Ceph you first have to copy the administrator keyring
 and configuration from your Ceph system to your |oA| system.
-The source and destination files should have identical paths.::
+The source and destination files should have identical paths::
 
     /etc/ceph/ceph.client.admin.keyring
     /etc/ceph/ceph.conf
 
-The next step is to install the |oA| Ceph module on your system.::
+The next step is to install the |oA| Ceph module on your system::
 
   # oaconfig install openattic-module-ceph
 
-The last step is to recreate your |oA| configuration.::
+The last step is to recreate your |oA| configuration::
 
   # oaconfig install
 
