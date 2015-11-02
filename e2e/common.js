@@ -3,8 +3,8 @@
 (function() {
 
   var configs = require('./configs.js');
-  var volumesItem = element.all(by.css('ul .tc_menuitem')).get(3);
-  var hostsItem = element.all(by.css('ul .tc_menuitem')).get(4);
+  var volumesItem = element.all(by.css('ul .tc_menuitem > a')).get(3);
+  var hostsItem = element.all(by.css('ul .tc_menuitem > a')).get(4);
 
   var volumename = '';
   var volume = element(by.cssContainingText('tr', volumename));
@@ -38,16 +38,16 @@
         element(by.id('volume.name')).sendKeys(volumename);
         var pool = configs.pools[key];
         var exact_poolname = pool.name;
-        volumePoolSelect.click();
-            element.all(by.cssContainingText('option', pool.name))
-            .then(function findMatch(pname){
-            if (pool.name === pname){
-                exact_poolname = pname;
-                return true;
-            }
+        volumePoolSelect.sendKeys(pool.name)
+          .then(function findMatch(pname){
+          if (pool.name === pname){
+            exact_poolname = pname;
+            return true;
+          }
         });
         if(exact_poolname){
-          element.all(by.cssContainingText('option',exact_poolname)).get(0).click();
+          browser.actions().sendKeys( protractor.Key.ENTER ).perform()
+          // In order to update the pool selection under firefox.
           element(by.id(type)).click();
           element(by.model('data.megs')).sendKeys('100MB');
           element(by.css('.tc_submitButton')).click();
@@ -83,12 +83,12 @@
       browser.sleep(400);
       element(by.css('.tc_menudropdown')).click();
       browser.sleep(400);
-      element(by.css('.tc_deleteItem')).click();
+      element(by.css('.tc_deleteItem > a')).click();
       browser.sleep(400);
       element(by.model('input.enteredName')).sendKeys(volumename);
       element(by.id('bot2-Msg1')).click();
-			browser.sleep(600);
-			volume = element(by.cssContainingText('tr', volumename));
+      browser.sleep(600);
+      volume = element(by.cssContainingText('tr', volumename));
       expect(volume.isPresent()).toBe(false);
     },
 
