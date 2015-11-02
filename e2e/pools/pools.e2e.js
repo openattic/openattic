@@ -7,7 +7,7 @@ describe('Pools panel', function(){
   });
 
   beforeEach(function(){
-    element.all(by.css('ul .tc_menuitem')).get(2).click();
+    element.all(by.css('ul .tc_menuitem > a')).get(2).click();
   });
 
   it('should show the oadatatable', function(){
@@ -47,7 +47,7 @@ describe('Pools panel', function(){
       element.all(by.cssContainingText('option', pool.name))
         .then(function findMatch(pname){
           if (pool.name === pname){
-	    var exact_pool = pname;
+            var exact_pool = pname;
             return true;
           }
 
