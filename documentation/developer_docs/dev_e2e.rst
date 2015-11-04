@@ -130,8 +130,8 @@ In order to run our graphical user interface tests, please make sure that your
 - one zpool
 
 and add them to ``e2e/configs.js``.
-.. note::
-  An example config can be found under ``e2e/example_config.js``.
+.. note:: For more information have a look at ``e2e/example_config.js``.
+
 It is important that the first
 element in this config file is your volume group.
 
@@ -265,7 +265,7 @@ Depending on which volume type you need, you can set the parameter to:
 * ``zfs`` (if ``openattic-module-zfs`` is installed)
 * ``lun``
 
-Every helper function which is based an a volume needs to get the volume object passed.::
+Every helper function which is based on a volume needs to get the volume object passed.::
 
   //var volumename = 'demo_volume';
   //volume: var volume = element(by.cssContainingText('tr', volumename));
