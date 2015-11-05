@@ -28,6 +28,7 @@ from volumes.models import StorageObject
 
 from rest.multinode.handlers import RequestHandlers
 
+
 class DrbdConnectionSerializer(serializers.HyperlinkedModelSerializer):
     """ Serializer for DRBD connection """
 
