@@ -174,7 +174,7 @@ class Connection(BlockVolume):
         try:
             info = dbus_to_python(self.drbd.get_role(self.name, False))
         except dbus.DBusException:
-            return None
+            raise SystemError("Can not determine the primary host. Is the DRBD connection possibly unconfigured?")
 
         info_count = Counter(info.values())
 

@@ -159,7 +159,12 @@ class DrbdConnectionProxyViewSet(DrbdConnectionViewSet, RequestHandlers):
     def destroy(self, request, *args, **kwargs):
         connection = self.get_object()
 
-        if connection.host == Host.objects.get_current():
+        try:
+            host = connection.host
+        except SystemError, e:
+            return Response(str(e), status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+
+        if host == Host.objects.get_current():
             # Step 1: Call second host to delete his endpoint, if the request was not forwarded by secondary host
             if len(connection.get_storage_devices()) > 1:
                 self._remote_request(request, connection.peerhost, obj=connection)
@@ -170,7 +175,7 @@ class DrbdConnectionProxyViewSet(DrbdConnectionViewSet, RequestHandlers):
             # Step 1: Remove local endpoint
             # Store the connection host. After deleting the local endpoint the host property would return None
             # because the current host gets a 'no resources defined!' by executing 'drbdadm role <connection_name>'
-            connection_host = connection.host
+            connection_host = host
             super(DrbdConnectionProxyViewSet, self).destroy(request, args, kwargs)
 
             # Step 2: Call Primary host, if this host was called by a client and not by the primary host
