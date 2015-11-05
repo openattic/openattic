@@ -14,7 +14,7 @@
  *  GNU General Public License for more details.
 """
 
-import json, logging, traceback
+import json
 
 from rest import relations
 
