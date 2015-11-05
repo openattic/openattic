@@ -46,15 +46,15 @@ describe('Pools panel', function(){
       var pool = helpers.configs.pools[key];
       element.all(by.cssContainingText('option', pool.name))
         .then(function findMatch(pname){
-          if (pool.name === pname){
-	    var exact_pool = pname;
+          if(pool.name === pname){
+            var exact_pool = pname;
             return true;
           }
 
-          if (exact_pool){
+          if(exact_pool){
             expect(element(by.cssContainingText('td', exact_pool)).isDisplayed()).toBe(true);
           }
-      });
+        });
     }
   });
 });

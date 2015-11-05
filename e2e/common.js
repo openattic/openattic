@@ -1,6 +1,6 @@
 'use strict';
 
-(function() {
+(function(){
 
   var configs = require('./configs.js');
   var volumesItem = element.all(by.css('ul .tc_menuitem > a')).get(3);
@@ -12,17 +12,17 @@
   var snapshotname = 'protractor_test_snap';
   var snapshot = element(by.cssContainingText('tr', snapshotname));
 
-  var clonename ="protractor_test_clone";
+  var clonename = "protractor_test_clone";
   var clone = element(by.cssContainingText('tr', clonename));
 
-  var hostname ="protractor_test_host";
+  var hostname = "protractor_test_host";
   var host = element(by.cssContainingText('tr', hostname));
 
   var volumePoolSelect = element(by.id('data.sourcePool'));
 
-  module.exports = {
+  module.exports ={
     configs: configs,
-    login: function() {
+    login: function(){
       browser.get(configs.url);
       element.all(by.model('username')).sendKeys(configs.username);
       element.all(by.model('password')).sendKeys(configs.password);
@@ -34,20 +34,20 @@
     create_volume: function(volumename, type){
       volumesItem.click();
       element(by.css('oadatatable .tc_add_btn')).click();
-      for(var key in configs.pools) {
+      for(var key in configs.pools){
         element(by.id('volume.name')).sendKeys(volumename);
         var pool = configs.pools[key];
         var exact_poolname = pool.name;
         volumePoolSelect.sendKeys(pool.name)
           .then(function findMatch(pname){
-          if (pool.name === pname){
-            exact_poolname = pname;
-            return true;
-          }
-        });
+            if(pool.name === pname){
+              exact_poolname = pname;
+              return true;
+            }
+          });
         if(exact_poolname){
-          browser.actions().sendKeys( protractor.Key.ENTER ).perform()
-          // In order to update the pool selection under firefox.
+          browser.actions().sendKeys(protractor.Key.ENTER).perform()
+            // In order to update the pool selection under firefox.
           element(by.id(type)).click();
           element(by.model('data.megs')).sendKeys('100MB');
           element(by.css('.tc_submitButton')).click();
@@ -57,28 +57,28 @@
       }
     },
 
-//     create_zvol: function(type){
-//       volumesItem.click();
-//       element(by.css('oadatatable .tc_add_btn')).click();
-//       for(var key in configs.pools) {
-//         element(by.id('volume.name')).sendKeys(volumename);
-//         volumePoolSelect.click();
-//         element.all(by.cssContainingText('option', 'zpool')).get(0).click();
-//         element(by.id(type)).click();
-//         element(by.model('data.megs')).sendKeys('100MB');
-//         element(by.css('.tc_submitButton')).click();
-//         browser.sleep(configs.sleep);
-//         break;
-//       }
-//     },
+    //     create_zvol: function(type){
+    //       volumesItem.click();
+    //       element(by.css('oadatatable .tc_add_btn')).click();
+    //       for(var key in configs.pools){
+    //         element(by.id('volume.name')).sendKeys(volumename);
+    //         volumePoolSelect.click();
+    //         element.all(by.cssContainingText('option', 'zpool')).get(0).click();
+    //         element(by.id(type)).click();
+    //         element(by.model('data.megs')).sendKeys('100MB');
+    //         element(by.css('.tc_submitButton')).click();
+    //         browser.sleep(configs.sleep);
+    //         break;
+    //       }
+    //     },
 
 
     delete_volume: function(volume, volumename){
       volumesItem.click();
       browser.sleep(400);
-//       element(by.css('.tc_entries_dropdown')).click();
-//       element(by.css('.tc_entries_100')).click();
-//       browser.sleep(400);
+      //       element(by.css('.tc_entries_dropdown')).click();
+      //       element(by.css('.tc_entries_100')).click();
+      //       browser.sleep(400);
       volume.click();
       browser.sleep(400);
       element(by.css('.tc_menudropdown')).click();
@@ -168,11 +168,11 @@
       element(by.id('bot2-Msg1')).click();
     },
 
-    selectDropdownByIndex: function (dropdown, index) {
+    selectDropdownByIndex: function(dropdown, index){
       dropdown.click();
-      if (index) {
+      if(index){
         dropdown.all(by.tagName('option'))
-          .then(function (options) {
+          .then(function(options){
             options[index].click();
           });
       }

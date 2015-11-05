@@ -1,8 +1,8 @@
 var helpers = require('../common.js');
 
 describe('Storage Tab Test based on filevol', function(){
-var volumename = 'filevol_storageTabTest';
-var volume = element.all(by.cssContainingText('tr', volumename)).get(0);
+  var volumename = 'filevol_storageTabTest';
+  var volume = element.all(by.cssContainingText('tr', volumename)).get(0);
 
 
   beforeAll(function(){
@@ -40,11 +40,11 @@ var volume = element.all(by.cssContainingText('tr', volumename)).get(0);
 
   });
 
-//TODO enable these tests after storage tabs bug has been fixed
-//  it('should not display any of the following tabs', function(){
-//    expect(element(by.css('.tc_iscsi_fcTab')).isDisplayed()).toBe(false);
-//    expect(element(by.css('.tc_blockStatisticsTab')).isDisplayed()).toBe(false);
-//  });
+  //TODO enable these tests after storage tabs bug has been fixed
+  //  it('should not display any of the following tabs', function(){
+  //    expect(element(by.css('.tc_iscsi_fcTab')).isDisplayed()).toBe(false);
+  //    expect(element(by.css('.tc_blockStatisticsTab')).isDisplayed()).toBe(false);
+  //  });
 
   afterAll(function(){
     console.log('filesystemvolume storage tab test ended');
@@ -52,5 +52,3 @@ var volume = element.all(by.cssContainingText('tr', volumename)).get(0);
   });
 
 });
-
-

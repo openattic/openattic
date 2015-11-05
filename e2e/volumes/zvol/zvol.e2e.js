@@ -18,7 +18,7 @@ describe('Zvol tests', function(){
 
   it('should have a zpool', function(){
     element(by.css('oadatatable .tc_add_btn')).click();
-    for(var key in helpers.configs.pools) {
+    for(var key in helpers.configs.pools){
       volumePoolSelect.click();
       var zpool = element.all(by.cssContainingText('option', 'zpool')).get(0);
       expect(zpool.isDisplayed()).toBe(true);
@@ -29,7 +29,7 @@ describe('Zvol tests', function(){
 
   it('should create a zvol', function(){
     element(by.css('oadatatable .tc_add_btn')).click();
-    for(var key in helpers.configs.pools) {
+    for(var key in helpers.configs.pools){
       element(by.id('volume.name')).sendKeys(volumename);
       volumePoolSelect.click();
       element.all(by.cssContainingText('option', 'zpool')).get(0).click();
@@ -39,7 +39,7 @@ describe('Zvol tests', function(){
       browser.sleep(helpers.configs.sleep);
 
       break;
-     }
+    }
   });
 
   it('should display the zvol in volumeslist', function(){

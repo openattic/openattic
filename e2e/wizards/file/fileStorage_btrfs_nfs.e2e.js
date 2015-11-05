@@ -5,11 +5,11 @@ describe('Wizard panel', function(){
   var wizardOverviewBtn = element(by.css('.tc_wizardOverview'));
   var previousBtn = element(by.css('.tc_previousBtn'));
   //maye rename volume, pool, etc. -> isn't the actual 'object' instead it's just the input field
-	var volumename = 'protractor_wizard_fileVol01';
-	var volume = element(by.cssContainingText('tr', volumename));
+  var volumename = 'protractor_wizard_fileVol01';
+  var volume = element(by.cssContainingText('tr', volumename));
   var share = element(by.cssContainingText('td', 'oadev.domain.here'));
 
-	var volumefield = element(by.id('volumename'));
+  var volumefield = element(by.id('volumename'));
   var pool = element(by.id('source_pool'));
   var size = element(by.id('volumemegs'));
   var is_protected = element(by.id('volumeisprotected'));
@@ -47,7 +47,7 @@ describe('Wizard panel', function(){
           expect(block_title).toEqual('Raw Block Storage');
           console.log(block_title);
         });
-    });
+      });
 
   });
 
@@ -90,13 +90,13 @@ describe('Wizard panel', function(){
     expect(noValidName.isDisplayed()).toBe(true);
 
     //in order to enter a size we need to choose a pool first
-      for(var key in configs.pools) {
-        var pool = configs.pools[key];
-        var volumePoolSelect = element(by.id('source_pool'));
-        volumePoolSelect.click();
-        element.all(by.cssContainingText('option', '(volume group,')).get(0).click();
-        break;
-      }
+    for(var key in configs.pools){
+      var pool = configs.pools[key];
+      var volumePoolSelect = element(by.id('source_pool'));
+      volumePoolSelect.click();
+      element.all(by.cssContainingText('option', '(volume group,')).get(0).click();
+      break;
+    }
 
     size.sendKeys('asdffffweee');
     expect(noValidNumber.isDisplayed()).toBe(true);
@@ -138,7 +138,7 @@ describe('Wizard panel', function(){
     var options = element(by.id('nfsoptions'));
 
     expect(path.isPresent()).toBe(true);
-		browser.sleep(400);
+    browser.sleep(400);
     expect(address.isPresent()).toBe(true);
     expect(element(by.id('nfsoptions')).isDisplayed()).toBe(true);
     expect(path.getAttribute('value')).toEqual('/media/protractor_wizard_fileVol01');
@@ -159,8 +159,8 @@ describe('Wizard panel', function(){
     expect(element(by.css('.tc_wizardDone')).getText()).toEqual('File Storage Step 4 - Save configuration');
     expect(nextBtn.getText()).toEqual('Done');
     nextBtn.click();
-		browser.sleep(400);
-		expect(browser.getCurrentUrl()).toContain('/openattic/#');
+    browser.sleep(400);
+    expect(browser.getCurrentUrl()).toContain('/openattic/#');
     var wizards = element.all(by.repeater('wizard in wizards'))
       .then(function(wizards){
         var fsTitle = element.all(by.className('btn-block')).get(0).evaluate('wizard.title').then(function(title){
@@ -177,25 +177,25 @@ describe('Wizard panel', function(){
           expect(block_title).toEqual('Raw Block Storage');
           console.log(block_title);
         });
-    });
+      });
 
-		console.log('<----- file storage test with NFS ended ------>');
+    console.log('<----- file storage test with NFS ended ------>');
     browser.sleep(400);
-		element.all(by.css('ul .tc_menuitem')).get(3).click();
-		expect(browser.getCurrentUrl()).toContain('/openattic/#/volumes');
+    element.all(by.css('ul .tc_menuitem')).get(3).click();
+    expect(browser.getCurrentUrl()).toContain('/openattic/#/volumes');
     /*	next line -> workaround (when checking if the volume is visible,
 		    protractor SOMETIMES throws 'element not visible error', but when
 		    protractor is about to delete the volume, it's visible and protractor is able to delete it
 		    couldn't reproduce this strange behavior and browser.sleep won't help)
     */
     element.all(by.css('ul .tc_menuitem')).get(4).click();
-		browser.sleep(400);
-		element.all(by.css('ul .tc_menuitem')).get(3).click();
-		browser.sleep(400);
+    browser.sleep(400);
+    element.all(by.css('ul .tc_menuitem')).get(3).click();
+    browser.sleep(400);
     expect(volume.isDisplayed()).toBe(true);
-		browser.sleep(800);
-		volume.click();
-		element(by.css('.tc_nfsShareTab')).click();
+    browser.sleep(800);
+    volume.click();
+    element(by.css('.tc_nfsShareTab')).click();
     expect(share.isDisplayed()).toBe(true);
     share.click();
     browser.sleep(400);

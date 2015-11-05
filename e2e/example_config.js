@@ -1,15 +1,15 @@
 /*
 'use strict';
 
-(function() {
-  module.exports = {
+(function(){
+  module.exports ={
     url     : '<openattic-url>/openattic/#/login',
     username: 'openattic',
     password: 'openattic',
     sleep   : 2000,
-    pools   : {
+    pools   :{
 // Please make sure that the first item in pools is a VG.
-      vg: {
+      vg:{
         name        : '<name>',
         size        : <size>,
         unit        : 'GB',
@@ -19,7 +19,7 @@
           'Create File Store -> BTRFS'
         ]
       },
-      vg2: {
+      vg2:{
         name        : '<name>',
         size        : <size>,
         unit        : 'GB',

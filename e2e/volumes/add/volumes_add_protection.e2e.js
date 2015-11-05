@@ -1,16 +1,16 @@
 var helpers = require('../../common.js');
-describe('Volumes add with protection', function() {
-  beforeAll(function() {
+describe('Volumes add with protection', function(){
+  beforeAll(function(){
     helpers.login();
   });
-  
+
   beforeEach(function(){
     var volumesItem = element.all(by.css('ul .tc_menuitem')).get(3);
     volumesItem.click();
 
     var addBtn = element(by.css('oadatatable .tc_add_btn'));
     addBtn.click();
-});
+  });
 
 
   it('should have a deletion protection checkbox', function(){
@@ -21,7 +21,7 @@ describe('Volumes add with protection', function() {
   });
 
   it('should create a volume with deletion protection', function(){
-    for(var key in helpers.configs.pools) {
+    for(var key in helpers.configs.pools){
       // create a protected volume
       var volumename = 'protractor_volume_protected';
       element(by.id('volume.name')).sendKeys(volumename);

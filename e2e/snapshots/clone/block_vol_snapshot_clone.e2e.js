@@ -8,7 +8,7 @@ describe('should create a clone volume of a snapshot (base: blockvolume)', funct
   var snapshotname = 'protractor_test_snap';
   var snapshot = element.all(by.cssContainingText('tr', snapshotname)).get(0);
 
-  var clonename ="protractor_block_clone";
+  var clonename = "protractor_block_clone";
   var clone = element.all(by.cssContainingText('tr', clonename)).get(0);
 
   var snapMenuBtn = element.all(by.css('.tc_menudropdown')).get(1);

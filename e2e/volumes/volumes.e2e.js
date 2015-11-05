@@ -1,6 +1,6 @@
 var helpers = require('../common.js');
-describe('Volumes', function() {
-  beforeEach(function() {
+describe('Volumes', function(){
+  beforeEach(function(){
     helpers.login();
 
     var volumesItem = element.all(by.css('ul .tc_menuitem')).get(3);
