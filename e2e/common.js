@@ -32,7 +32,8 @@
     },
 
     create_volume: function(volumename, type, size){
-      var pool, size = size == null ? "100MB" : size;
+      var pool,
+        size = size == null ? "100MB" : size;
       volumesItem.click();
       element(by.css('oadatatable .tc_add_btn')).click();
       for(var key in configs.pools){
