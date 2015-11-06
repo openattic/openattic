@@ -35,7 +35,7 @@
       var pool, size = size == null ? "100MB" : size;
       volumesItem.click();
       element(by.css('oadatatable .tc_add_btn')).click();
-      for(var key in configs.pools) {
+      for(var key in configs.pools){
         element(by.id('volume.name')).sendKeys(volumename);
         pool = configs.pools[key];
         var exact_poolname = pool.name;
