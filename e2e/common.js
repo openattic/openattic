@@ -33,15 +33,14 @@
 
     create_volume: function(volumename, type, size){
       var pool,
-        size = size == null ? "100MB" : size;
+          size = size == null ? "100MB" : size;
       volumesItem.click();
       element(by.css('oadatatable .tc_add_btn')).click();
       for(var key in configs.pools){
         element(by.id('volume.name')).sendKeys(volumename);
         pool = configs.pools[key];
         var exact_poolname = pool.name;
-        volumePoolSelect.sendKeys(pool.name)
-          .then(function findMatch(pname){
+        volumePoolSelect.sendKeys(pool.name).then(function findMatch(pname){
           if (pool.name === pname){
             exact_poolname = pname;
             return true;
