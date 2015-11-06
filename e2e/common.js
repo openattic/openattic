@@ -41,7 +41,7 @@
         pool = configs.pools[key];
         var exact_poolname = pool.name;
         volumePoolSelect.sendKeys(pool.name).then(function findMatch(pname){
-          if (pool.name === pname){
+          if(pool.name === pname){
             exact_poolname = pname;
             return true;
           }
