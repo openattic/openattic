@@ -230,22 +230,6 @@ class Connection(BlockVolume):
     def post_install(self):
         pass
 
-    def grow(self, oldmegs, newmegs):
-        if self.status != "Connected":
-            raise SystemError("Can only resize DRBD volumes in Connected state, current state is '%s'" % self.status)
-
-        # Trigger backing device resize
-        for endpoint in Endpoint.all_objects.filter(connection=self):
-            if endpoint.host == Host.objects.get_current():
-                endpoint.volume.storageobj._resize(newmegs)
-            else:
-                peer_host = PeerHost.objects.get(host_id=endpoint.host.id)
-                peer_host.volumes.StorageObject.resize(endpoint.volume.storageobj.id, newmegs)
-                peer_host.volumes.StorageObject.wait(endpoint.volume.storageobj.id, 600)
-
-        # now drbdadm resize the connection
-        self.drbd.resize(self.name, False)
-
     def get_storage_devices(self):
         return Endpoint.all_objects.filter(connection=self)
 
