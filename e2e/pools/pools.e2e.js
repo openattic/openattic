@@ -7,7 +7,7 @@ describe('Pools panel', function(){
   });
 
   beforeEach(function(){
-    element.all(by.css('ul .tc_menuitem')).get(2).click();
+    element.all(by.css('ul .tc_menuitem > a')).get(2).click();
   });
 
   it('should show the oadatatable', function(){
