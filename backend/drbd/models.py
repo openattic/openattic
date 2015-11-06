@@ -32,7 +32,6 @@ from systemd.helpers            import Transaction
 
 from volumes.models             import StorageObject, BlockVolume, VolumePool
 from ifconfig.models            import Host, IPAddress, getHostDependentManagerClass
-from peering.models             import PeerHost
 
 DRBD_PROTOCOL_CHOICES = (
     ('A', 'Protocol A: write IO is reported as completed, if it has reached local disk and local TCP send buffer.'),
