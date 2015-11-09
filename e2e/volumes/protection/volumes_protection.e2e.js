@@ -5,7 +5,7 @@ describe('Volume protection dialog', function(){
   beforeEach(function(){
     helpers.login();
 
-    element.all(by.css('ul .tc_menuitem')).get(3).click();
+    element.all(by.css('ul .tc_menuitem > a')).get(3).click();
     element(by.css('oadatatable .tc_add_btn')).click();
 
     helpers.create_volume(volumename, "lun");
@@ -14,7 +14,7 @@ describe('Volume protection dialog', function(){
     browser.sleep(helpers.configs.sleep);
     element(by.css('.tc_menudropdown')).click();
     browser.sleep(helpers.configs.sleep);
-    element(by.css('.tc_setProtection')).click();
+    element(by.css('.tc_setProtection > a')).click();
     browser.sleep(helpers.configs.sleep);
   });
 
@@ -44,7 +44,7 @@ describe('Volume protection dialog', function(){
     browser.sleep(helpers.configs.sleep);
     element(by.css('.tc_menudropdown')).click();
     browser.sleep(helpers.configs.sleep);
-    element(by.css('.tc_setProtection')).click();
+    element(by.css('.tc_setProtection > a')).click();
     browser.sleep(helpers.configs.sleep);
 
     element(by.model('volume.is_protected')).click();
@@ -67,7 +67,7 @@ describe('Volume protection dialog', function(){
     browser.sleep(helpers.configs.sleep);
     element(by.css('.tc_menudropdown')).click();
     browser.sleep(helpers.configs.sleep);
-    element(by.css('.tc_deleteItem')).click();
+    element(by.css('.tc_deleteItem > a')).click();
     browser.sleep(helpers.configs.sleep);
 
     // the volume management should show an error message
@@ -78,7 +78,7 @@ describe('Volume protection dialog', function(){
     browser.sleep(helpers.configs.sleep);
     element(by.css('.tc_menudropdown')).click();
     browser.sleep(helpers.configs.sleep);
-    element(by.css('.tc_setProtection')).click();
+    element(by.css('.tc_setProtection > a')).click();
     browser.sleep(helpers.configs.sleep);
     element(by.model('volume.is_protected')).click();
     element(by.id('bot2-Msg1')).click();
