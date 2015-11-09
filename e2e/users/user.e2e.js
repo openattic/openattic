@@ -46,8 +46,8 @@ describe('Should add an user', function(){
 
   //logout first
   it('should logout again', function(){
-     element(by.css('.tc_logout')).click();
-     expect(browser.getCurrentUrl()).toContain('/#/login');
+    element(by.css('.tc_logout')).click();
+    expect(browser.getCurrentUrl()).toContain('/#/login');
 
   });
 
@@ -66,8 +66,8 @@ describe('Should add an user', function(){
   });
 
   it('should logout protractor_test_user', function(){
-     element(by.css('.tc_logout')).click();
-     expect(browser.getCurrentUrl()).toContain('/#/login');
+    element(by.css('.tc_logout')).click();
+    expect(browser.getCurrentUrl()).toContain('/#/login');
 
   });
 

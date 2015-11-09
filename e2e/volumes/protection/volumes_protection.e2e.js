@@ -1,14 +1,14 @@
 var helpers = require('../../common.js');
-describe('Volume protection dialog', function() {
+describe('Volume protection dialog', function(){
   var volumename = 'protractor_test_volume';
 
-  beforeEach(function() {
+  beforeEach(function(){
     helpers.login();
 
     element.all(by.css('ul .tc_menuitem')).get(3).click();
     element(by.css('oadatatable .tc_add_btn')).click();
 
-    for(var key in helpers.configs.pools) {
+    for(var key in helpers.configs.pools){
       element(by.id('volume.name')).sendKeys(volumename);
 
       var pool = helpers.configs.pools[key];
@@ -31,7 +31,7 @@ describe('Volume protection dialog', function() {
     browser.sleep(helpers.configs.sleep);
   });
 
-  afterEach(function() {
+  afterEach(function(){
     element(by.cssContainingText('tr', volumename)).click();
     browser.sleep(helpers.configs.sleep);
     element(by.css('.tc_menudropdown')).click();

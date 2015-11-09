@@ -2,10 +2,10 @@ var helpers = require('../../common.js');
 
 describe('should create a clone volume of a snapshot (base: filesystem volume)', function(){
 
-  var clonename ="protractor_clone";
+  var clonename = "protractor_clone";
   var clone = element.all(by.cssContainingText('tr', clonename)).get(0);
   var volumesItem = element.all(by.css('ul .tc_menuitem')).get(3);
-	var volumename = 'protractor_clone_fsVol';
+  var volumename = 'protractor_clone_fsVol';
   var volume = element.all(by.cssContainingText('tr', volumename)).get(0);
 
   beforeAll(function(){
@@ -25,9 +25,9 @@ describe('should create a clone volume of a snapshot (base: filesystem volume)',
   afterAll(function(){
     console.log('filesystem_vol_snapshot_clone');
     helpers.delete_snap_clone();
-		browser.sleep(600);
+    browser.sleep(600);
     helpers.delete_snapshot(volume);
-		browser.sleep(600);
+    browser.sleep(600);
     helpers.delete_volume(volume, volumename);
   });
 

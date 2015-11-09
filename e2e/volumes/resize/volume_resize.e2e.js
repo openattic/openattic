@@ -3,22 +3,22 @@ describe('Volumes resize', function(){
   var volumename = 'protractor_test_volume';
   var pool;
 
-  
+
   beforeAll(function(){
-    helpers.login();    
+    helpers.login();
   });
-  
+
   beforeEach(function(){
-    
+
     //--> volumesItem is not defined    
     //var volumesItem = helpers.configs.menuitems.volumes;
     //element.all(by.css('ul .tc_menuitem')).get(volumesItem).click();
-    
+
     var volumesItem = element.all(by.css('ul .tc_menuitem')).get(3);
-    volumesItem.click();    
+    volumesItem.click();
     element(by.css('oadatatable .tc_add_btn')).click();
 
-    for(var key in helpers.configs.pools) {
+    for(var key in helpers.configs.pools){
       element(by.id('volume.name')).sendKeys(volumename);
 
       pool = helpers.configs.pools[key];
@@ -39,7 +39,7 @@ describe('Volumes resize', function(){
     browser.sleep(helpers.configs.sleep);
   });
 
-  afterEach(function() {
+  afterEach(function(){
     element(by.cssContainingText('tr', volumename)).click();
     browser.sleep(helpers.configs.sleep);
     element(by.css('.tc_menudropdown')).click();

@@ -56,10 +56,10 @@ describe('NFS Share workflow', function(){
     expect(element(by.css('.tc_addressRequired')).isDisplayed()).toBe(true);
   });
 
-    //TODO
-//   it('should show an error message if address is not in the correct format', function(){
-//
-//   });
+  //TODO
+  //   it('should show an error message if address is not in the correct format', function(){
+  //
+  //   });
 
   it('should have a submit button', function(){
     expect(element(by.css('.tc_submitButton')).isPresent()).toBe(true);
