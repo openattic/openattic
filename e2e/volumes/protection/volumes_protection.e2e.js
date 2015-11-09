@@ -1,6 +1,7 @@
 var helpers = require('../../common.js');
 describe('Volume protection dialog', function(){
   var volumename = 'protractor_test_volume';
+  var volume = element(by.cssContainingText('tr', volumename));
 
   beforeEach(function(){
     helpers.login();
