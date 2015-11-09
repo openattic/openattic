@@ -2,7 +2,7 @@ var helpers = require('../../common.js');
 
 describe('Volumes add', function(){
 
-  var volumesItem = element.all(by.css('ul .tc_menuitem')).get(3),
+  var volumesItem = element.all(by.css('ul .tc_menuitem > a')).get(3),
       volumeNameInput = element(by.model('volume.name')),
       volumePoolSelect = element(by.model('data.sourcePool')),
       volumeSizeInput = element(by.model('data.megs')),
@@ -12,6 +12,7 @@ describe('Volumes add', function(){
       addBtn = element(by.css('.tc_add_btn')),
       selectPool = function(pool_name){
         volumePoolSelect.sendKeys(pool_name).then(function (pname){
+          browser.actions().sendKeys( protractor.Key.ENTER ).perform();
           if(pool_name === pname){
             return pool_name;
           }
