@@ -2,6 +2,7 @@ var helpers = require('../../common.js');
 describe('Volumes resize', function(){
   var volumename = 'protractor_test_volume';
   var pool;
+  var volume = element(by.cssContainingText('tr', volumename));
 
 
   beforeAll(function(){
@@ -14,40 +15,17 @@ describe('Volumes resize', function(){
     //var volumesItem = helpers.configs.menuitems.volumes;
     //element.all(by.css('ul .tc_menuitem')).get(volumesItem).click();
 
-    var volumesItem = element.all(by.css('ul .tc_menuitem')).get(3);
-    volumesItem.click();
-    element(by.css('oadatatable .tc_add_btn')).click();
+    element.all(by.css('ul .tc_menuitem')).get(3).click();
+    pool = helpers.create_volume(volumename, "lun", "200mb", pool);
 
-    for(var key in helpers.configs.pools){
-      element(by.id('volume.name')).sendKeys(volumename);
-
-      pool = helpers.configs.pools[key];
-      var volumePoolSelect = element(by.id('data.sourcePool'));
-      volumePoolSelect.click();
-      element.all(by.cssContainingText('option', '(volume group,')).get(0).click();
-
-      element(by.model('data.megs')).sendKeys('200mb');
-      element(by.css('.tc_submitButton')).click();
-      browser.sleep(helpers.configs.sleep);
-
-      break;
-    }
-
-    element(by.cssContainingText('tr', volumename)).click();
+    volume.click();
     browser.sleep(helpers.configs.sleep);
     element(by.css('.tc_resize_btn')).click();
     browser.sleep(helpers.configs.sleep);
   });
 
   afterEach(function(){
-    element(by.cssContainingText('tr', volumename)).click();
-    browser.sleep(helpers.configs.sleep);
-    element(by.css('.tc_menudropdown')).click();
-    browser.sleep(helpers.configs.sleep);
-    element(by.css('.tc_deleteItem')).click();
-    browser.sleep(helpers.configs.sleep);
-    element(by.model('input.enteredName')).sendKeys(volumename);
-    element(by.id('bot2-Msg1')).click();
+    helpers.delete_volume(volume, volumename);
   });
 
   it('should have a resize and a cancel button', function(){
