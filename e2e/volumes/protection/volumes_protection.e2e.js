@@ -8,20 +8,7 @@ describe('Volume protection dialog', function(){
     element.all(by.css('ul .tc_menuitem')).get(3).click();
     element(by.css('oadatatable .tc_add_btn')).click();
 
-    for(var key in helpers.configs.pools){
-      element(by.id('volume.name')).sendKeys(volumename);
-
-      var pool = helpers.configs.pools[key];
-      var volumePoolSelect = element(by.id('data.sourcePool'));
-      volumePoolSelect.click();
-      element.all(by.cssContainingText('option', '(volume group,')).get(0).click();
-
-      element(by.model('data.megs')).sendKeys('100mb');
-      element(by.css('.tc_submitButton')).click();
-      browser.sleep(helpers.configs.sleep);
-
-      break;
-    }
+    helpers.create_volume(volumename, "lun");
 
     element(by.cssContainingText('tr', volumename)).click();
     browser.sleep(helpers.configs.sleep);
@@ -32,14 +19,7 @@ describe('Volume protection dialog', function(){
   });
 
   afterEach(function(){
-    element(by.cssContainingText('tr', volumename)).click();
-    browser.sleep(helpers.configs.sleep);
-    element(by.css('.tc_menudropdown')).click();
-    browser.sleep(helpers.configs.sleep);
-    element(by.css('.tc_deleteItem')).click();
-    browser.sleep(helpers.configs.sleep);
-    element(by.model('input.enteredName')).sendKeys(volumename);
-    element(by.id('bot2-Msg1')).click();
+    helpers.delete_volume(volume, volumename);
   });
 
   it('should have a deletion protection checkbox', function(){
