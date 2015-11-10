@@ -14,8 +14,6 @@
  *  GNU General Public License for more details.
 """
 
-import json, logging, traceback
-
 from rest import relations
 
 from rest_framework import serializers, viewsets, status

@@ -14,7 +14,7 @@
  *  GNU General Public License for more details.
 """
 
-import django_filters, requests, json
+import django_filters, requests
 
 from django.db.models import Q
 from django.conf import settings
