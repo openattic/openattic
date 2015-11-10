@@ -23,6 +23,8 @@ from django.conf import settings
 from rest_framework.response import Response
 from rest_framework.request import Request
 
+from simplejson import JSONDecodeError
+
 from ifconfig.models import Host
 
 class RequestHandlers(object):
@@ -38,7 +40,7 @@ class RequestHandlers(object):
                 return local_view(request, args, kwargs)
 
             return super(RequestHandlers, self).retrieve(request, args, kwargs)
-        return Response(json.loads(self._remote_request(request, host, obj=obj, view_name=view_name)))
+        return self._remote_request(request, host, obj=obj, view_name=view_name)
 
     def list(self, request, *args, **kwargs):
         queryset_total = self.get_queryset()
@@ -54,7 +56,8 @@ class RequestHandlers(object):
                 serializer = self.get_serializer(obj)
                 results.append(serializer.data)
             else:
-                results.append(json.loads(self._remote_request(request, host, obj=obj)))
+                response = self._remote_request(request, host, obj=obj)
+                results.append(response.data)
 
         next_page = None
         prev_page = None
@@ -85,7 +88,7 @@ class RequestHandlers(object):
         if host == Host.objects.get_current():
             return super(RequestHandlers, self).create(request, args, kwargs)
 
-        return Response(json.loads(self._remote_request(request, host)))
+        return self._remote_request(request, host)
 
     def destroy(self, request, *args, **kwargs):
         obj = self.get_object()
@@ -94,7 +97,7 @@ class RequestHandlers(object):
         if host == Host.objects.get_current():
             return super(RequestHandlers, self).destroy(request, args, kwargs)
 
-        return Response(self._remote_request(request, host, obj=obj))
+        return self._remote_request(request, host, obj=obj)
 
     def update(self, request, *args, **kwargs):
         obj = self.get_object_or_none()
@@ -106,7 +109,7 @@ class RequestHandlers(object):
         if host == Host.objects.get_current():
             return super(RequestHandlers, self).update(request, args, kwargs)
 
-        return Response(json.loads(self._remote_request(request, host, obj=obj)))
+        return self._remote_request(request, host, obj=obj)
 
     def _remote_request(self, request, host, *args, **kwargs):
         ip = host.get_primary_ip_address().host_part
@@ -129,7 +132,14 @@ class RequestHandlers(object):
 
         response = requests.request(request.method, url, data=json.dumps(data), headers=header)
         response.raise_for_status()
-        return response.text
+
+        try:
+            response_data = response.json()
+        except JSONDecodeError:
+            # For example in case of DELETE requests the response might contain no data
+            response_data = ""
+
+        return Response(response_data, status=response.status_code)
 
     def _get_base_url(self, ip, api_prefix):
         api_root = getattr(settings, "API_ROOT")
