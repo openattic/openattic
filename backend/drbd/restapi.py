@@ -14,8 +14,6 @@
  *  GNU General Public License for more details.
 """
 
-import json
-
 from rest import relations
 
 from rest_framework import serializers, viewsets, status
@@ -147,9 +145,7 @@ class DrbdConnectionProxyViewSet(DrbdConnectionViewSet, RequestHandlers):
                 return connection_resp
             else:
                 # -> source volume is a remote volume, call remote host
-                return Response(json.loads(self._remote_request(request, source_volume_host)),
-                                status=status.HTTP_201_CREATED)
-
+                return self._remote_request(request, source_volume_host)
         else:
             # -> SECONDARY
             # Secondary is always the correct host because the primary
