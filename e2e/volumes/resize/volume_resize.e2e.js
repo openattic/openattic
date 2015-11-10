@@ -3,6 +3,11 @@ describe('Volumes resize', function(){
   var volumename = 'protractor_test_volume';
   var pool;
   var volume = element(by.cssContainingText('tr', volumename));
+  var wrongSize = function(new_size){
+    element(by.id('newsize')).sendKeys(new_size);
+    expect(element(by.css('.tc_wrongSize')).isDisplayed()).toBe(true);
+    element(by.id('bot1-Msg1')).click();
+  };
 
 
   beforeAll(function(){
@@ -41,16 +46,11 @@ describe('Volumes resize', function(){
   });
 
   it('should show a message if the chosen size is smaller than 100mb', function(){
-    element(by.id('newsize')).sendKeys('99mb');
-    expect(element(by.css('.tc_wrongSize')).isDisplayed()).toBe(true);
-    element(by.id('bot1-Msg1')).click();
+    wrongSize('99mb');
   });
 
   it('should show a message if the chosen size is higher than the pool size', function(){
-    var newsize = pool.size + 201;
-    element(by.id('newsize')).sendKeys(newsize + pool.unit);
-    expect(element(by.css('.tc_wrongSize')).isDisplayed()).toBe(true);
-    element(by.id('bot1-Msg1')).click();
+    wrongSize(pool.size + 201 + pool.unit);
   });
 
   it('should be able to resize a volume with a valid size', function(){
@@ -63,9 +63,7 @@ describe('Volumes resize', function(){
   });
 
   it('should not allow to shrink the volume', function(){
-    element(by.id('newsize')).sendKeys('170mb');
-    expect(element(by.css('.tc_wrongSize')).isDisplayed()).toBe(true);
-    element(by.id('bot1-Msg1')).click();
+    wrongSize('170mb');
     console.log('resize volume');
   });
 });
