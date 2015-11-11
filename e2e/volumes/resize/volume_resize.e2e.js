@@ -3,12 +3,14 @@ describe('Volumes resize', function(){
   var volumename = 'protractor_test_volume';
   var pool;
   var volume = element(by.cssContainingText('tr', volumename));
+  var submit_button = element(by.id('bot2-Msg1'));
+  var cancel_button = element(by.id('bot1-Msg1'));
+
   var wrongSize = function(new_size){
     element(by.id('newsize')).sendKeys(new_size);
     expect(element(by.css('.tc_wrongSize')).isDisplayed()).toBe(true);
-    element(by.id('bot1-Msg1')).click();
+    cancel_button.click();
   };
-
 
   beforeAll(function(){
     helpers.login();
@@ -21,7 +23,7 @@ describe('Volumes resize', function(){
     //element.all(by.css('ul .tc_menuitem')).get(volumesItem).click();
 
     element.all(by.css('ul .tc_menuitem')).get(3).click();
-    pool = helpers.create_volume(volumename, "lun", "200mb", pool);
+    pool = helpers.create_volume(volumename, "lun", "200mb");
 
     volume.click();
     browser.sleep(helpers.configs.sleep);
@@ -34,15 +36,15 @@ describe('Volumes resize', function(){
   });
 
   it('should have a resize and a cancel button', function(){
-    expect(element(by.id('bot2-Msg1')).isDisplayed()).toBe(true);
-    expect(element(by.id('bot1-Msg1')).isDisplayed()).toBe(true);
-    element(by.id('bot1-Msg1')).click();
+    expect(submit_button.isDisplayed()).toBe(true);
+    expect(cancel_button.isDisplayed()).toBe(true);
+    cancel_button.click();
   });
 
   it('should show a required field error if the submit button is clicked without editing anything', function(){
-    element(by.id('bot2-Msg1')).click();
+    submit_button.click();
     expect(element(by.css('.tc_required')).isDisplayed()).toBe(true);
-    element(by.id('bot1-Msg1')).click();
+    cancel_button.click();
   });
 
   it('should show a message if the chosen size is smaller than 100mb', function(){
@@ -55,7 +57,7 @@ describe('Volumes resize', function(){
 
   it('should be able to resize a volume with a valid size', function(){
     element(by.id('newsize')).sendKeys('250mb');
-    element(by.id('bot2-Msg1')).click();
+    submit_button.click();
     browser.sleep(helpers.configs.sleep);
 
     var volume = element(by.cssContainingText('tr', volumename));
