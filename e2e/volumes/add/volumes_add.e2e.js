@@ -10,6 +10,7 @@ describe('Volumes add', function(){
       volume = element(by.cssContainingText('tr', volumename)),
       submitButton = element(by.css('.tc_submitButton')),
       addBtn = element(by.css('.tc_add_btn')),
+      
       selectPool = function(pool_name){
         volumePoolSelect.sendKeys(pool_name).then(function (pname){
           if(pool_name === pname){
