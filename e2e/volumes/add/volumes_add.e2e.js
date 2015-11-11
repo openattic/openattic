@@ -248,8 +248,18 @@ describe('Volumes add', function(){
         expect(volume.isDisplayed()).toBe(true);
 
         //delete the volume
-        helpers.delete_volume(volume, volumename);
+        volume.click();
+        browser.sleep(400);
+        element(by.css('.tc_menudropdown')).click();
+        browser.sleep(400);
+        element(by.css('.tc_deleteItem')).click();
+        browser.sleep(400);
 
+        element(by.model('input.enteredName')).sendKeys(volumename);
+        element(by.id('bot2-Msg1')).click();
+
+        expect(volume.isPresent()).toBe(false);
+        
         addBtn.click();
         console.log('volumes_add');
         selectPool(exact_poolname);
