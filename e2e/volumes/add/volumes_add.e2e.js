@@ -2,35 +2,46 @@ var helpers = require('../../common.js');
 
 describe('Volumes add', function(){
 
-  var volumesItem = element.all(by.css('ul .tc_menuitem')).get(3),
-      volumeNameInput = element(by.model('volume.name')),
-      volumePoolSelect = element(by.model('data.sourcePool')),
-      volumeSizeInput = element(by.model('data.megs')),
-      volumename = 'protractor_test_volume',
-      volume = element(by.cssContainingText('tr', volumename)),
-      submitButton = element(by.css('.tc_submitButton')),
-      addBtn = element(by.css('.tc_add_btn')),
-      selectPool = function(pool_name){
-        volumePoolSelect.sendKeys(pool_name).then(function (pname){
-          if(pool_name === pname){
-            return pool_name;
-          }
-        });
-      },
-      forEachPool = function(callback, onlyWithFirstPool){
-        for(var key in helpers.configs.pools){
-          var pool = helpers.configs.pools[key],
+  var volumesItem = element.all(by.css('ul .tc_menuitem')).get(3);
+  var volumeNameInput = element(by.model('volume.name'));
+  var volumePoolSelect = element(by.model('data.sourcePool'));
+  var volumeSizeInput = element(by.model('data.megs'));
+  var volumename = 'protractor_test_volume';
+  var volume = element(by.cssContainingText('tr', volumename));
+  var submitButton = element(by.css('.tc_submitButton'));
+  var addBtn = element(by.css('.tc_add_btn'));
+      
+  var selectPool = function(pool_name){
+    volumePoolSelect.sendKeys(pool_name).then(function (pname){
+      if(pool_name === pname){
+        return pool_name;
+      }
+    });
+  };
+  var forEachPool = function(callback){
+    for(var key in helpers.configs.pools){
+      var pool = helpers.configs.pools[key],
           exact_poolname = selectPool(pool.name);
 
-          if(exact_poolname){
-            callback(exact_poolname, pool);
-          }
+      if(exact_poolname){
+        console.log(exact_poolname);
+        callback(exact_poolname, pool);
+      }
+    }
+  };
+  var withFirstPool = function(callback){
+    for(var key in helpers.configs.pools){
+      var pool = helpers.configs.pools[key],
+          exact_poolname = selectPool(pool.name);
 
-          if(onlyWithFirstPool){
-            break;
-          }
-        }
-      };
+      if(exact_poolname){
+        console.log(exact_poolname);
+        callback(exact_poolname, pool);
+      }
+
+      break;
+    }
+  };
 
   beforeAll(function(){
     helpers.login();
@@ -145,6 +156,7 @@ describe('Volumes add', function(){
     forEachPool(function(exact_poolname){
       element.all(by.cssContainingText('option', exact_poolname)).get(0).click();
       var pool_size = element(by.id('data.megs')).evaluate('data.sourcePool.usage.free_text').then(function(psize){
+        //console.log(psize);
         browser.sleep(400);
         volumeSizeInput.clear().sendKeys(psize);
         expect(element(by.css('.tc_wrongVolumeSize')).isDisplayed()).toBe(false);
@@ -162,17 +174,17 @@ describe('Volumes add', function(){
   });
 
   it('should show a message if the chosen volume size is smaller than 100mb', function(){
-    forEachPool(function(exact_poolname, pool){
+    withFirstPool(function(exact_poolname, pool){
       volumeSizeInput.clear().sendKeys('99mb');
       expect(element(by.css('.tc_wrongVolumeSize')).isPresent()).toBe(true);
-    }, true);
+    });
   });
 
   it('should show a message if the given volume size is just a string', function(){
-    forEachPool(function(exact_poolname, pool){
+    withFirstPool(function(exact_poolname, pool){
       volumeSizeInput.clear().sendKeys('abc');
       expect(element(by.css('.tc_noValidNumber')).isPresent()).toBe(true);
-    }, true);
+    });
   });
 
   //   it('should show link text "use max" after selecting a pool', function(){
@@ -200,14 +212,14 @@ describe('Volumes add', function(){
   //   });
 
   it('should show a message if the given volume size is a combination of numbers and string', function(){
-    forEachPool(function(exact_poolname, pool){
+    withFirstPool(function(exact_poolname, pool){
       volumeSizeInput.clear().sendKeys('120asd');
       expect(element(by.css('.tc_noValidNumber')).isDisplayed()).toBe(true);
-    }, true);
+    });
   });
 
   it('should only allow unique volume names', function(){
-    forEachPool(function(exact_poolname, pool){
+    withFirstPool(function(exact_poolname, pool){
       //create a volume
       volumeNameInput.sendKeys(volumename);
       element(by.id('data.megs')).sendKeys('100mb');
@@ -222,15 +234,15 @@ describe('Volumes add', function(){
 
       //delete the volume
       helpers.delete_volume(volume, volumename);
-    }, true);
+    });
   });
 
   it('should create a volume of the configured volume types in the configured pools', function(){
     forEachPool(function(exact_poolname, pool){
       for(var i=0; i < pool.volumeTypes.length; i++){
-        var volumeType = pool.volumeTypes[i],
-            volumename = 'protractor_volume_' + exact_poolname,
-            volume = element(by.cssContainingText('tr', volumename));
+        var volumeType = pool.volumeTypes[i];
+        var volumename = 'protractor_volume_' + exact_poolname;
+        var volume = element(by.cssContainingText('tr', volumename));
 
         //create a volume
         volumeNameInput.sendKeys(volumename);
@@ -245,8 +257,18 @@ describe('Volumes add', function(){
         expect(volume.isDisplayed()).toBe(true);
 
         //delete the volume
-        helpers.delete_volume(volume, volumename);
+        volume.click();
+        browser.sleep(400);
+        element(by.css('.tc_menudropdown')).click();
+        browser.sleep(400);
+        element(by.css('.tc_deleteItem')).click();
+        browser.sleep(400);
 
+        element(by.model('input.enteredName')).sendKeys(volumename);
+        element(by.id('bot2-Msg1')).click();
+
+        expect(volume.isPresent()).toBe(false);
+        
         addBtn.click();
         console.log('volumes_add');
         selectPool(exact_poolname);

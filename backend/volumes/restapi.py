@@ -14,7 +14,7 @@
  *  GNU General Public License for more details.
 """
 
-import django_filters, requests, json
+import django_filters, requests
 
 from django.db.models import Q
 from django.conf import settings
@@ -464,9 +464,7 @@ class VolumeProxyViewSet(RequestHandlers, VolumeViewSet):
             from drbd.models import Connection
             if blockvolume and type(blockvolume) == Connection:
                 # might be a remote_request
-                res = self._remote_request(request, blockvolume.host, api_prefix="mirrors", obj=blockvolume)
-                return Response(json.loads(res), status=status.HTTP_204_NO_CONTENT)
-
+                return self._remote_request(request, blockvolume.host, api_prefix="mirrors", obj=blockvolume)
         return super(VolumeProxyViewSet, self).destroy(request, args, kwargs)
 
 

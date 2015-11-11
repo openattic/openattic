@@ -18,7 +18,10 @@ angular.module('openattic.apirecorder')
             var script = [
               '#!/usr/bin/env python',
               'import requests',
-              'auth = ("username", "password")',
+              'import json',
+              'auth = ("username", "password") # edit username and password',
+              '',
+              'headers = {\'content-type\': \'application/json\'}',
               ''
             ];
             var cmds = ApiRecorderService.stopRecording();
@@ -34,10 +37,13 @@ angular.module('openattic.apirecorder')
             }
             var i, url, args;
             for(i = 0; i < cmds.length; i++){
+              script.push('### recorded command ' + (i+1));
               url = window.location.origin + cmds[i].url;
               args = ['"' + url + '"', 'auth=auth'];
-              if(cmds[i].data){
-                args.push('data=' + angular.toJson(cmds[i].data, 4));
+              if(cmds[i].data) {
+                script.push('data=json.dumps(' + angular.toJson(cmds[i].data, 4) + ')');
+                args.push('data=data');
+                args.push('headers=headers');
               }
               script.push('requests.' + cmds[i].method.toLowerCase() + '(' + args.join(', ') + ')\n');
             }
