@@ -43,7 +43,7 @@ angular.module('openattic.apirecorder')
               if(cmds[i].data) {
                 script.push('data=json.dumps(' + angular.toJson(cmds[i].data, 4) + ')');
                 args.push('data=data');
-                args.push('header=headers');
+                args.push('headers=headers');
               }
               script.push('requests.' + cmds[i].method.toLowerCase() + '(' + args.join(', ') + ')\n');
             }
