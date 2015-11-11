@@ -2,28 +2,29 @@ var helpers = require('../../common.js');
 
 describe('Volumes add', function(){
 
-  var volumesItem = element.all(by.css('ul .tc_menuitem')).get(3),
-      volumeNameInput = element(by.model('volume.name')),
-      volumePoolSelect = element(by.model('data.sourcePool')),
-      volumeSizeInput = element(by.model('data.megs')),
-      volumename = 'protractor_test_volume',
-      volume = element(by.cssContainingText('tr', volumename)),
-      submitButton = element(by.css('.tc_submitButton')),
-      addBtn = element(by.css('.tc_add_btn')),
+  var volumesItem = element.all(by.css('ul .tc_menuitem')).get(3);
+  var volumeNameInput = element(by.model('volume.name'));
+  var volumePoolSelect = element(by.model('data.sourcePool'));
+  var volumeSizeInput = element(by.model('data.megs'));
+  var volumename = 'protractor_test_volume';
+  var volume = element(by.cssContainingText('tr', volumename));
+  var submitButton = element(by.css('.tc_submitButton'));
+  var addBtn = element(by.css('.tc_add_btn'));
       
-      selectPool = function(pool_name){
+  var selectPool = function(pool_name){
         volumePoolSelect.sendKeys(pool_name).then(function (pname){
           if(pool_name === pname){
             return pool_name;
           }
         });
-      },
-      forEachPool = function(callback, onlyWithFirstPool){
+      };
+  var forEachPool = function(callback, onlyWithFirstPool){
         for(var key in helpers.configs.pools){
           var pool = helpers.configs.pools[key],
           exact_poolname = selectPool(pool.name);
 
           if(exact_poolname){
+            console.log(exact_poolname);
             callback(exact_poolname, pool);
           }
 
@@ -146,6 +147,7 @@ describe('Volumes add', function(){
     forEachPool(function(exact_poolname){
       element.all(by.cssContainingText('option', exact_poolname)).get(0).click();
       var pool_size = element(by.id('data.megs')).evaluate('data.sourcePool.usage.free_text').then(function(psize){
+        //console.log(psize);
         browser.sleep(400);
         volumeSizeInput.clear().sendKeys(psize);
         expect(element(by.css('.tc_wrongVolumeSize')).isDisplayed()).toBe(false);
@@ -229,9 +231,9 @@ describe('Volumes add', function(){
   it('should create a volume of the configured volume types in the configured pools', function(){
     forEachPool(function(exact_poolname, pool){
       for(var i=0; i < pool.volumeTypes.length; i++){
-        var volumeType = pool.volumeTypes[i],
-            volumename = 'protractor_volume_' + exact_poolname,
-            volume = element(by.cssContainingText('tr', volumename));
+        var volumeType = pool.volumeTypes[i];
+        var volumename = 'protractor_volume_' + exact_poolname;
+        var volume = element(by.cssContainingText('tr', volumename));
 
         //create a volume
         volumeNameInput.sendKeys(volumename);
