@@ -3,13 +3,11 @@
 Contribute to |oA|
 ==================
 
-This is an introduction how to contribute to |oA|.
+This is an introduction on how to contribute to |oA|.
 
-The |oA| source code is managed using the Mercurial_ revision control system.
+The |oA| source code is managed using the `Mercurial <https://www.mercurial-scm.org/>`_ revision control system.
 Mercurial offers you a full-fledged source control, where you can commit and
 manage your source code.
-
-.. _Mercurial: https://www.mercurial-scm.org/
 
 Working on your fork
 --------------------
@@ -21,12 +19,10 @@ under "ACTIONS".
 
 After that you have your own |oA| fork :)
 
-You can now clone your |oA| fork to the system you are working on::
-
-    # hg clone https://hg@bitbucket.org/<Your user name>/openattic
-
-You need to edit the .hg/hgrc file in your local clone. It should contain the following
-three lines::
+At this point I assume you have followed the steps to set up a development
+system. This means you have cloned the |oA| repository.
+In your local clone edit the Mercurial configuration file `.hg/hgrc`. It
+should contain the following three lines::
 
     [paths]
     default = https://hg@bitbucket.org/openattic/openattic
@@ -35,12 +31,11 @@ three lines::
 With this configuration you always pull from the main |oA| repository and always
 push to your |oA| fork.
 
-If you want to push via SSH, you can. You only have to replacing your default-push with::
+If you want to push via SSH, you can. You only have to replace your default-push with::
 
     default-push = ssh://hg@bitbucket.org/<Your user name>/openattic
 
-.. _corkscrew: http://agroman.net/corkscrew/
-If you want to use SSH behind a proxy install corkscrew_. Now append the
+If you want to use SSH behind a proxy install `corkscrew <http://agroman.net/corkscrew/>`_. Now append the
 following two lines to your `$HOME/.ssh/config`::
 
     Host bitbucket.org
@@ -98,7 +93,7 @@ If you can't push them because a new remote head would be created use::
 
     # hg push -B <bookmark name> -f
 
-Now that your fork has your local changes too, now you can create a
+Now that your fork has your local changes, too, you can create a
 pull-request with the changes you have made. If your pull-request was merged
 into the main repository, you have to manually merge the accepted bookmark in
 your "master" bookmark. After that you can delete your local bookmark for a
@@ -113,19 +108,19 @@ After the pull request was merged into the main repository, your first
 committed changeset often has a new parent, but a hg pull looks only for new
 changesets not if they have a new parent. If you run hg pull it will have no
 new changesets for you. Thats why you have to manually merge your bookmark into
-your master. This is also closing the head if any. If there is no new head you
-can also just update your master.
+your master. This will close the head if one exists. If there is no new
+head you can also just update your master.
 
 
 The following images illustrate the concept.
 
 .. image:: workflow_bitbucket.png
 
-Here you see the different repositories and how they work together.
+Shows the different repositories and how they work together.
 
 .. image:: workflow_bookmarks.png
 
-Here you see the workflow with bookmarks.
+Describes the workflow with bookmarks.
 
 -------------------------
 
@@ -135,11 +130,11 @@ Work on this bookmark::
 
     # hg update <bookmark name>
 
-Fetching new revisions from |oA|::
+Fetch new revisions from |oA|::
 
     # hg pull
 
-Bringing your bookmark to the newest revision::
+Bring your bookmark to the newest revision::
 
     # hg update
 
