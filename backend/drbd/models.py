@@ -178,7 +178,7 @@ class Connection(BlockVolume):
         info_count = Counter(info.values())
 
         if info_count["Primary"] == 2 or \
-            (info_count["Primary"] == 1 and \
+            (info_count["Primary"] == 1 and
                 [host for host, status in info.items() if status == "Primary"][0] == "self"):
             return Host.objects.get_current()
         elif info_count["Primary"] == 0:
