@@ -65,6 +65,28 @@ class DrbdTests(object):
         self.assertTrue(mirror_vol_res["response"]["is_filesystemvolume"], True)
         self.assertEqual(mirror_vol_res["response"]["type"]["name"], "xfs")
 
+    def test_create_resize_get_delete(self):
+        """ Create a connection with 1000MB volumes and resize it to 2000MB. """
+        # Create a volume that should be mirrored
+        vol = self._get_mirror_volume(self._get_pool()["id"])
+
+        # Create a drbd mirror
+        mirror_data = {"source_volume"  : vol,
+                       "remote_pool"    : self._get_remote_pool(),
+                       "protocol"       : "C",
+                       "syncer_rate"    : "30M"}
+        mirror_res = self.send_request("POST", "mirrors", data=mirror_data)
+        mirror = mirror_res["response"]
+        time.sleep(self.sleeptime)
+        self.addCleanup(requests.request, "DELETE", mirror_res["cleanup_url"], header=mirror_res["headers"])
+
+        # TODO: Wait until the status of the drbd connection is 'Connected'
+        resize_data = {"new_size": 2000}
+        self.send_request("PUT", "mirrors", obj_id=mirror_res["response"]["id"], data=resize_data)
+
+        mirror_vol_res = self.send_request("GET", "volumes", obj_id=mirror["volume"]["id"])
+        self.assertEqual(mirror_vol_res["response"]["usage"]["size"], 2000)
+
     def test_create_protocol_f(self):
         """ Try to create a Connection with protocol F. """
         # Create a volume that should be mirrored
