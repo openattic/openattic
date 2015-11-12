@@ -136,7 +136,7 @@ class ProtocolHandler(object):
     def uninstall_hostacl(self, hostacl):
         # if we're uninstalling the hostacl, it has been installed already, so
         # install_hostacl won't actually create any new objects but only
-        # return a list of existing contexts. said list of contexts can then
+        # return a list of existing contexts. This list of contexts can then
         # be used to delete stuff.
         contexts = ProtocolHandler.install_hostacl(hostacl)
         # 0. Find eligible modules according to configured contexts
