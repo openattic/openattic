@@ -236,6 +236,19 @@ class Connection(BlockVolume):
         local_endpoint = Endpoint.objects.get(connection=self)
         local_endpoint.uninstall()
 
+    def grow(self, old_size, new_size):
+        self.drbd.resize(self.name, False)
+
+    def resize_local_storage_device(self, new_size):
+        if self.status != "Connected":
+            raise SystemError("Can only resize DRBD volumes in 'Connected' state, current state is '%s'" % self.status)
+        if self.storageobj.megs >= new_size:
+            raise SystemError("The size of a DRBD connection can only be increased but the new size is smaller than"
+                              " the current size.")
+
+        local_endpoint = Endpoint.objects.get(connection=self)
+        local_endpoint.volume.storageobj.resize(new_size)
+
 
 class Endpoint(models.Model):
     connection  = models.ForeignKey(Connection, related_name="endpoint_set")
