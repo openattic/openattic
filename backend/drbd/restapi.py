@@ -16,6 +16,8 @@
 
 from rest import relations
 
+from requests.exceptions import HTTPError
+
 from rest_framework import serializers, viewsets, status
 from rest_framework.response import Response
 from rest_framework import status
@@ -68,6 +70,24 @@ class DrbdConnectionViewSet(viewsets.ModelViewSet):
 
         ser = DrbdConnectionSerializer(connection, context={"request": request})
         return Response(ser.data, status=status.HTTP_201_CREATED)
+
+    def update(self, request, *args, **kwargs):
+        if "new_size" in request.DATA:
+            connection = self.get_object()
+
+            try:
+                # resize the local endpoint
+                connection.resize_local_storage_device(request.DATA["new_size"])
+            except SystemError, e:
+                return Response(e.message, status=status.HTTP_400_BAD_REQUEST, exception=True)
+
+            if connection.host == Host.objects.get_current():
+                # on the primary side resize drbd connection too
+                connection.storageobj.resize(request.DATA["new_size"])
+
+            ser = DrbdConnectionSerializer(connection, context={"request": request})
+            return Response(ser.data, status=status.HTTP_200_OK)
+        return super(DrbdConnectionViewSet, self).update(request, args, kwargs)
 
     def destroy(self, request, *args, **kwargs):
         connection = self.get_object()
@@ -151,6 +171,42 @@ class DrbdConnectionProxyViewSet(DrbdConnectionViewSet, RequestHandlers):
             # Secondary is always the correct host because the primary
             # forwards the request to the secondary ONLY.
             return super(DrbdConnectionProxyViewSet, self).create(request, args, kwargs)
+
+    def update(self, request, *args, **kwargs):
+        if "new_size" in request.DATA:
+            connection = self.get_object()
+
+            try:
+                host = connection.host
+            except SystemError, e:
+                return Response(str(e), status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+
+            if host == Host.objects.get_current():
+                # Step 1: Call second host to grow his endpoint, if the request was not forwarded by sencondary host
+                if "proxy_host_id" not in request.DATA:
+                    try:
+                        self._remote_request(request, connection.peerhost, obj=connection)
+                    except HTTPError, e:
+                        return Response(e.response.text, status=e.response.status_code)
+
+                # Step 2: Resize local endpoint and connection
+                return super(DrbdConnectionProxyViewSet, self).update(request, args, kwargs)
+            else:
+                # Step 1: Resize local endpoint
+                try:
+                    res = super(DrbdConnectionProxyViewSet, self).update(request, args, kwargs)
+                except HTTPError, e:
+                    return Response(e.response.text, status=e.response.status_code)
+
+                # Step 2: Call primary host to grow his endpoint and connection, if this was called by a client and not
+                # by the primary host.
+                if "proxy_host_id" not in request.DATA:
+                    try:
+                        res = self._remote_request(request, host, obj=connection)
+                    except HTTPError, e:
+                        return Response(e.response.text, status=e.response.status_code)
+                return res
+        return super(DrbdConnectionProxyViewSet, self).update(request, args, kwargs)
 
     def destroy(self, request, *args, **kwargs):
         connection = self.get_object()
