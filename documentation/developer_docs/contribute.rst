@@ -48,7 +48,7 @@ connections to bitbucket.org through the proxy.
 Working with bookmarks
 ----------------------
 
-First you create a bookmark called "master" in your "development" branch,
+First create a bookmark called "master" in your "development" branch,
 you only have to do this once::
 
     # hg update development
