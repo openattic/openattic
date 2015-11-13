@@ -19,8 +19,8 @@ under "ACTIONS".
 
 After that you have your own |oA| fork :)
 
-At this point I assume you have followed the steps to set up a development
-system. This means you have cloned the |oA| repository.
+At this point I assume you have followed the steps to :ref:`developer_setup_howto`.
+This means you have cloned the |oA| repository.
 In your local clone edit the Mercurial configuration file `.hg/hgrc`. It
 should contain the following three lines::
 
