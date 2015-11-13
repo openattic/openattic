@@ -144,7 +144,7 @@
       browser.sleep(400);
       element(by.css('.tc_menudropdown')).click();
       browser.sleep(400);
-      element(by.css('.tc_deleteItem')).click();
+      element(by.css('.tc_deleteItem > a')).click();
       browser.sleep(400);
 
       element(by.model('input.enteredName')).sendKeys(clonename);
@@ -152,7 +152,7 @@
     },
 
     create_host: function(){
-      element.all(by.css('ul .tc_menuitem')).get(4).click();
+      element.all(by.css('ul .tc_menuitem > a')).get(4).click();
       element(by.css('.tc_addHost')).click();
       element(by.model('host.name')).sendKeys(hostname);
       element(by.css('.tc_submitButton')).click();
@@ -165,7 +165,7 @@
       browser.sleep(400);
       element(by.css('.tc_menudropdown')).click();
       browser.sleep(400);
-      element(by.css('.tc_deleteHost')).click();
+      element(by.css('.tc_deleteHost > a')).click();
       browser.sleep(400);
       element(by.id('bot2-Msg1')).click();
     },

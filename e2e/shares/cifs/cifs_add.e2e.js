@@ -2,7 +2,7 @@ var helpers = require('../../common.js');
 
 describe('should add a CIFS share', function(){
 
-  var volumesItem = element.all(by.css('ul .tc_menuitem')).get(3);
+  var volumesItem = element.all(by.css('ul .tc_menuitem > a')).get(3);
   var volumename = 'protractor_cifs_vol';
   var volume = element.all(by.cssContainingText('tr', volumename)).get(0);
 
@@ -79,7 +79,7 @@ describe('should add a CIFS share', function(){
     browser.sleep(400);
     element.all(by.css('.tc_menudropdown')).get(1).click();
     browser.sleep(400);
-    element(by.css('.tc_cifsShareDelete')).click();
+    element(by.css('.tc_cifsShareDelete > a')).click();
     browser.sleep(400);
     element(by.id('bot2-Msg1')).click();
     browser.sleep(400);

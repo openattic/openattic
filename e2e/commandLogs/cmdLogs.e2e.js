@@ -3,7 +3,8 @@ var helpers = require('../common.js');
 describe('CommandLogs', function(){
 
   var systemItem = element.all(by.css('ul .tc_menuitem')).get(5);
-  var cmdLogItem = systemItem.all(by.css('ul .tc_submenuitem')).get(1);
+  var cmdLogItem = systemItem.all(by.css('ul .tc_submenuitem > a')).get(1);
+  systemItem = systemItem.all(by.css(' a')).first();
   var volumePoolSelect = element(by.model('data.sourcePool'));
   var volumename = 'protractor_cmdlog_vol';
   var volume = element(by.cssContainingText('tr', volumename));
