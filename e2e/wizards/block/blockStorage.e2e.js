@@ -17,6 +17,8 @@ describe('Raw Block Storage Wizard', function(){
   var host = element(by.cssContainingText('tr', hostname));
   var iqn = "iqn.1991-05.com.microsoft:protractor_test_host";
 
+  var menu = element.all(by.css('ul .tc_menuitem > a'));
+
   beforeAll(function(){
     helpers.login();
     helpers.create_host();
@@ -33,7 +35,7 @@ describe('Raw Block Storage Wizard', function(){
   });
 
   it('should navigate back to the dashboard after creating a host', function(){
-    var dashboard = element.all(by.css('ul .tc_menuitem')).get(0);
+    var dashboard = menu.get(0);
     dashboard.click();
   });
   //<-- Raw Block Storage Wizard --->
@@ -66,6 +68,7 @@ describe('Raw Block Storage Wizard', function(){
       var volumePoolSelect = element(by.id('source_pool'));
       volumePoolSelect.click();
       element.all(by.cssContainingText('option', '(volume group,')).get(0).click();
+      browser.actions().sendKeys( protractor.Key.ENTER ).perform();
       break;
     }
 
@@ -99,7 +102,7 @@ describe('Raw Block Storage Wizard', function(){
     expect(nextBtn.getText()).toEqual('Done');
     nextBtn.click();
 
-    element.all(by.css('ul .tc_menuitem')).get(3).click();
+    menu.get(3).click();
     expect(browser.getCurrentUrl()).toContain('/openattic/#/volumes');
 
     //check if lun exists
@@ -113,7 +116,7 @@ describe('Raw Block Storage Wizard', function(){
     expect(element(by.cssContainingText('tr', hostname)).isDisplayed()).toBe(true);
 
     //remove the lun map
-    element.all(by.css('ul .tc_menuitem')).get(3).click();
+    menu.get(3).click();
     browser.sleep(400);
     browser.sleep(400);
     expect(volume.isPresent()).toBe(true);
