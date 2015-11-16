@@ -1,12 +1,13 @@
 'use strict';
 
 angular.module('openattic')
-  .directive('uniqueHostName', function(HostService, $timeout) {
+  .directive('uniquename', function(VolumeService, HostService, $timeout) {
     return {
       restrict: 'A',
       require: 'ngModel',
       link: function(scope, elem, attrs, ctrl) {
         var stop_timeout;
+        ctrl.model=attrs.ngModel;
 
         return scope.$watch(function () {
           return ctrl.$modelValue;
@@ -16,10 +17,11 @@ angular.module('openattic')
 
           if (modelValue !== '' && typeof modelValue !== 'undefined') {
             stop_timeout = $timeout(function () {
-              HostService.query({'name': modelValue})
+              var model = ctrl.model.match(/host/) ? HostService : VolumeService;
+              model.query({'name': modelValue})
                 .$promise
                 .then(function (res) {
-                  return ctrl.$setValidity('uniqueHostName', res.length === 0);
+                  return ctrl.$setValidity('uniquename', res.length === 0);
                 })
                 .catch(function (error) {
                   console.log('An error occurred', error);

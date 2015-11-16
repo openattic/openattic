@@ -13,13 +13,13 @@
                         <div class="col-md-10">
                             <input type="text" class="form-control" placeholder="Hostname..."
                                    ng-model="host.name" name="name"
-                                    id="host.name" required validname unique-host-name>
+                                    id="host.name" required validname uniquename>
                             <span class="help-block tc_hostnameRequired" ng-show="(submitted || hostForm.name.$dirty)
                             && hostForm.name.$error.required">
                                 The name is required.
                             </span>
                             <span class="help-block tc_hostNameNotValid" ng-show="hostForm.name.$error.validname">{{errortext}}</span>
-                            <span class="help-block tc_noUniqueName" ng-show="hostForm.name.$error.uniqueHostName">
+                            <span class="help-block tc_noUniqueName" ng-show="hostForm.name.$error.uniquename">
                                 The chosen host name is already in use.
                             </span>
                         </div>
