@@ -67,6 +67,7 @@ Requires:	python-psycopg2
 Requires:	python-pyudev
 Requires:	python-requests
 Requires:	python-rtslib
+Requires:	python-simplejson
 Requires:	udisks2
 Requires:	vconfig
 Requires:	wget
