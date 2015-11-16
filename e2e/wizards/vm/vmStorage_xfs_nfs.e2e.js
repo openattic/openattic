@@ -21,6 +21,8 @@ describe('VM Storage Wizard', function(){
   var noUniqueName = element(by.css('.tc_noUniqueName'));
   var noValidNumber = element(by.css('.tc_noValidNumber'));
 
+  var menu = element.all(by.css('ul .tc_menuitem > a'));
+
   beforeAll(function(){
     helpers.login();
   });
@@ -60,6 +62,7 @@ describe('VM Storage Wizard', function(){
       var volumePoolSelect = element(by.id('source_pool'));
       volumePoolSelect.click();
       element.all(by.cssContainingText('option', '(volume group,')).get(0).click();
+      browser.actions().sendKeys( protractor.Key.ENTER ).perform();
       break;
     }
 
@@ -129,16 +132,16 @@ describe('VM Storage Wizard', function(){
         });
       });
 
-    element.all(by.css('ul .tc_menuitem')).get(3).click();
+    menu.get(3).click();
     expect(browser.getCurrentUrl()).toContain('/openattic/#/volumes');
     /*	next line -> workaround (when checking if the volume is visible,
 		    protractor SOMETIMES throws 'element not visible error', but when
 		    protractor is about to delete the volume, it's visible and protractor is able to delete it
 		    couldn't reproduce this strange behavior and browser.sleep won't help)
     */
-    element.all(by.css('ul .tc_menuitem')).get(4).click();
+    menu.get(4).click();
     browser.sleep(400);
-    element.all(by.css('ul .tc_menuitem')).get(3).click();
+    menu.get(3).click();
     browser.sleep(400);
     expect(volume.isDisplayed()).toBe(true);
     volume.click();

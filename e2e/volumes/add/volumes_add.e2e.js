@@ -2,7 +2,7 @@ var helpers = require('../../common.js');
 
 describe('Volumes add', function(){
 
-  var volumesItem = element.all(by.css('ul .tc_menuitem')).get(3);
+  var volumesItem = element.all(by.css('ul .tc_menuitem > a')).get(3);
   var volumeNameInput = element(by.model('volume.name'));
   var volumePoolSelect = element(by.model('data.sourcePool'));
   var volumeSizeInput = element(by.model('data.megs'));
@@ -10,7 +10,7 @@ describe('Volumes add', function(){
   var volume = element(by.cssContainingText('tr', volumename));
   var submitButton = element(by.css('.tc_submitButton'));
   var addBtn = element(by.css('.tc_add_btn'));
-      
+
   var selectPool = function(pool_name){
     volumePoolSelect.sendKeys(pool_name).then(function (pname){
       if(pool_name === pname){
