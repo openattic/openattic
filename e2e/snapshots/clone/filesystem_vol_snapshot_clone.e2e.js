@@ -4,7 +4,7 @@ describe('should create a clone volume of a snapshot (base: filesystem volume)',
 
   var clonename = "protractor_clone";
   var clone = element.all(by.cssContainingText('tr', clonename)).get(0);
-  var volumesItem = element.all(by.css('ul .tc_menuitem')).get(3);
+  var volumesItem = element.all(by.css('ul .tc_menuitem > a')).get(3);
   var volumename = 'protractor_clone_fsVol';
   var volume = element.all(by.cssContainingText('tr', volumename)).get(0);
 

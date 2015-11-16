@@ -5,7 +5,7 @@ describe('Should create a Snapshot', function(){
   var snapshotname = 'protractor_test_snap';
   var volume = element.all(by.cssContainingText('tr', volumename)).get(0);
   var snapshot = element(by.cssContainingText('tr', snapshotname));
-  var volumesItem = element.all(by.css('ul .tc_menuitem')).get(3);
+  var volumesItem = element.all(by.css('ul .tc_menuitem > a')).get(3);
 
   beforeAll(function(){
     helpers.login();

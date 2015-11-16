@@ -3,7 +3,7 @@ var helpers = require('../common.js');
 describe('Should add a host and attributes', function(){
   var hostname = "protractor_test_host";
   var host = element(by.cssContainingText('tr', hostname));
-  var hostsItem = element.all(by.css('ul .tc_menuitem')).get(4);
+  var hostsItem = element.all(by.css('ul .tc_menuitem > a')).get(4);
 
   beforeAll(function(){
     helpers.login();
@@ -42,7 +42,7 @@ describe('Should add a host and attributes', function(){
     browser.sleep(400);
     element(by.css('.tc_menudropdown')).click();
     browser.sleep(400);
-    element(by.css('.tc_deleteHost')).click();
+    element(by.css('.tc_deleteHost > a')).click();
     browser.sleep(400);
     element(by.id('bot2-Msg1')).click();
   });
