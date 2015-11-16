@@ -8,7 +8,7 @@ describe('Should create a Snapshot', function(){
 
   beforeAll(function(){
     helpers.login();
-    element.all(by.css('ul .tc_menuitem')).get(3).click();
+    element.all(by.css('ul .tc_menuitem > a')).get(3).click();
     helpers.create_volume(volumename, "lun");
     helpers.create_snapshot(volume);
 

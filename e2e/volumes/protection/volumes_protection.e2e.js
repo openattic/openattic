@@ -4,14 +4,14 @@ describe('Volume protection dialog', function(){
   var volume = element(by.cssContainingText('tr', volumename));
   var dropdown_menu = element(by.css('.tc_menudropdown'));
   var protected_volume = element(by.model('volume.is_protected'));
-  var protection = element(by.css('.tc_setProtection'));
+  var protection = element(by.css('.tc_setProtection > a'));
   var submit_button = element(by.id('bot2-Msg1'));
   var cancel_button = element(by.id('bot1-Msg1'));
 
   beforeEach(function(){
     helpers.login();
 
-    element.all(by.css('ul .tc_menuitem')).get(3).click();
+    element.all(by.css('ul .tc_menuitem > a')).get(3).click();
     element(by.css('oadatatable .tc_add_btn')).click();
 
     helpers.create_volume(volumename, "lun");
@@ -71,7 +71,7 @@ describe('Volume protection dialog', function(){
     browser.sleep(helpers.configs.sleep);
     dropdown_menu.click();
     browser.sleep(helpers.configs.sleep);
-    element(by.css('.tc_deleteItem')).click();
+    element(by.css('.tc_deleteItem > a')).click();
     browser.sleep(helpers.configs.sleep);
 
     // the volume management should show an error message
