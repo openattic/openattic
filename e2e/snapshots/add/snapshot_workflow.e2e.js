@@ -78,22 +78,22 @@ describe('Should check the snapshot add workflow', function(){
     expect(element(by.css('.tc_sizeRequired')).isDisplayed()).toBe(true);
   });
 
-//TODO fix!
-/*  it('should allow a snapshot size that is as big as the free left space of the pool', function(){
-    for(var key in helpers.configs.pools) {
-      var pool = helpers.configs.pools[key];
-      var pool_size = element(by.id('megs')).evaluate('pool.usage.max_new_fsv_text').then(function(psize){
-        snap_size.clear().sendKeys(psize);
-      });
-      browser.sleep(400);
-      expect(element(by.css('.tc_sizeExceeded')).isDisplayed()).toBe(false);
+  //TODO fix!
+  /*  it('should allow a snapshot size that is as big as the free left space of the pool', function(){
+      for(var key in helpers.configs.pools){
+        var pool = helpers.configs.pools[key];
+        var pool_size = element(by.id('megs')).evaluate('pool.usage.max_new_fsv_text').then(function(psize){
+          snap_size.clear().sendKeys(psize);
+        });
+        browser.sleep(400);
+        expect(element(by.css('.tc_sizeExceeded')).isDisplayed()).toBe(false);
 
-      break;
-    }
-  });*/
+        break;
+      }
+    });*/
 
   it('should show an error message when the given snapshot size is bigger than the source pool', function(){
-    for(var key in helpers.configs.pools) {
+    for(var key in helpers.configs.pools){
       var pool = helpers.configs.pools[key];
       var snapSize = (pool.size + 0.1).toFixed(2);
       snap_size.clear().sendKeys(snapSize + pool.unit);
@@ -108,7 +108,7 @@ describe('Should check the snapshot add workflow', function(){
     backBtn.click();
 
     expect(element(by.css('.tc_oadatatable_snapshots')).isPresent()).toBe(true);
-		browser.sleep(400);
+    browser.sleep(400);
   });
 
   afterAll(function(){

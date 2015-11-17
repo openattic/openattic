@@ -28,5 +28,6 @@ whatever changes you want to make.
    :maxdepth: 2
 
    setup_howto
+   contribute
    core
    dev_e2e

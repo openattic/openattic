@@ -81,29 +81,13 @@ Add the following line to your protractor.conf::
     ....
   }
 
-
-Tell protractor where to connect
---------------------------------
-
-..by adding the url to your |oA| system as well as login data::
-
-  (function() {
-    module.exports = {
-      url     : 'http://IP-to-your-oA-test-sys/openattic/#/login',
-      //leave this if you want to use openATTIC's default user for login
-      username: 'openattic',
-      password: 'openattic',
-    };
-  }());
-
-
 Maximize Browser Window
 -----------------------
 
 If the browser windows in which the tests will be executed is too small, it
 occours that protractor can't click an element and tests will fail. To prevent
 this, you can maximize your browser window by default by adding the following
-line to ``protractor.conf.js``::
+line to ``webui/protractor.conf.js``::
 
   exports.config = {
 
@@ -128,6 +112,16 @@ line to ``protractor.conf.js``::
 
 Set up configs.js
 -----------------
+Create a ``configs.js`` file in folder ``e2e`` and add the url to you |oA| system as well as login data - see below::
+
+  (function() {
+    module.exports = {
+      url     : 'http://IP-to-your-oA-test-sys/openattic/#/login',
+      //leave this if you want to use openATTIC's default user for login
+      username: 'openattic',
+      password: 'openattic',
+    };
+  }());
 
 In order to run our graphical user interface tests, please make sure that your
 |oA| system at least has:
@@ -135,15 +129,18 @@ In order to run our graphical user interface tests, please make sure that your
 - one volume group
 - one zpool
 
-and add them to ``configs.js`` (see examples). It is important that the first
+and add them to ``e2e/configs.js``.
+.. note:: For more information have a look at ``e2e/example_config.js``.
+
+It is important that the first
 element in this config file is your volume group.
 
 If you do not have a zpool configured and you do not want to create one, you
 can of course skip those tests by removing the suite from
 ``protractor.conf.js`` or putting them in to the comment section.
 
-Start Protractor
-----------------
+Start webdriver manager environment
+-----------------------------------
 
 use a separate tab/window to run the following command:
 
@@ -257,7 +254,7 @@ is based on a volume (i.e. creating a share) you can use the following lines::
     helpers.login();
 
     //create an xfs volume before executing any test
-    helpers.create_volume("xfs");
+    helpers.create_volume("volumename_here","xfs");
 
   });
 
@@ -268,10 +265,15 @@ Depending on which volume type you need, you can set the parameter to:
 * ``zfs`` (if ``openattic-module-zfs`` is installed)
 * ``lun``
 
-All other helper functions can be used like this:
+Every helper function which is based on a volume needs to get the volume object passed.::
 
-``helpers.delete_volume();``
-``helpers.create_snapshot();`` ..and so on.
+  //var volumename = 'demo_volume';
+  //volume: var volume = element(by.cssContainingText('tr', volumename));
+
+  * ``create_snap_clone(volume)``
+  * ``helpers.delete_volume(volume, volumename);``
+  * ``helpers.create_snapshot(volume);``
+  * ``helpers.delete_snapshot(volume);``
 
 When using more than one helper function in one file, please make sure that
 you use the right order of createing and deleting functions in ``beforeAll``

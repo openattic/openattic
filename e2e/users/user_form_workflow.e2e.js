@@ -3,7 +3,8 @@ var helpers = require('../common.js');
 describe('should test the user form', function(){
 
   var systemItem = element.all(by.css('ul .tc_menuitem')).get(5);
-  var usersItem = systemItem.all(by.css('ul .tc_submenuitem')).get(0);
+  var usersItem = systemItem.all(by.css('ul .tc_submenuitem > a')).get(0);
+  systemItem = systemItem.all(by.css(' a')).first();
 
   var name = element(by.model('user.username'));
   var passwd = element(by.model('user.email'));
@@ -76,12 +77,12 @@ describe('should test the user form', function(){
     submitButton.click();
     expect(element(by.css('.tc_passwdRequired')).isDisplayed()).toBe(true);
   });
-  
+
   it('should show an error message when data for field "username" does not match', function(){
     element(by.model('user.username')).sendKeys('öäüfasd  sadof');
     expect(element(by.css('.tc_userNameNotValid')).isDisplayed()).toBe(true);
   });
-  
+
   it('should show an error message when input for field "Email Address" is not valid', function(){
     element(by.model('user.email')).sendKeys('äü adsfo vfoe');
     expect(element(by.css('.tc_emailNotValid')).isDisplayed()).toBe(true);

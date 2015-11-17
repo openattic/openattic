@@ -10,7 +10,7 @@ describe('Zvol tests', function(){
   var volume = element.all(by.cssContainingText('tr', volumename)).get(0);
   var snapshotname = 'protractor_test_snap';
   var snapshot = element(by.cssContainingText('tr', snapshotname));
-  var clonename ="protractor_test_clone";
+  var clonename = "protractor_test_clone";
   var clone = element(by.cssContainingText('tr', clonename));
   var snapMenuBtn = element.all(by.css('.tc_menudropdown')).get(1);
 
@@ -24,7 +24,7 @@ describe('Zvol tests', function(){
 
   it('should have a zpool', function(){
     element(by.css('oadatatable .tc_add_btn')).click();
-    for(var key in helpers.configs.pools) {
+    for(var key in helpers.configs.pools){
       volumePoolSelect.click();
       var zpool = element.all(by.cssContainingText('option', 'zpool')).get(0);
       expect(zpool.isDisplayed()).toBe(true);
@@ -35,7 +35,7 @@ describe('Zvol tests', function(){
 
   it('should create a zvol', function(){
     element(by.css('oadatatable .tc_add_btn')).click();
-    for(var key in helpers.configs.pools) {
+    for(var key in helpers.configs.pools){
       element(by.id('volume.name')).sendKeys(volumename);
       volumePoolSelect.click();
       element.all(by.cssContainingText('option', 'zpool')).get(0).click();
@@ -45,7 +45,7 @@ describe('Zvol tests', function(){
       browser.sleep(helpers.configs.sleep);
 
       break;
-     }
+    }
   });
 
   it('should display the zvol in volumeslist', function(){
@@ -76,17 +76,17 @@ describe('Zvol tests', function(){
   });
 
   it('should delete the zvol snapshot', function(){
-      volume.click();
-      browser.sleep(400);
-      element(by.css('.tc_snapshotTab')).click();
-      browser.sleep(400);
-      expect(snapshot.isPresent()).toBe(true);
-      snapshot.click();
-      browser.sleep(400);
-      element(by.css('.tc_deleteSnapItem')).click();
-      browser.sleep(400);
-      element(by.id('bot2-Msg1')).click();
-      browser.sleep(400);
+    volume.click();
+    browser.sleep(400);
+    element(by.css('.tc_snapshotTab')).click();
+    browser.sleep(400);
+    expect(snapshot.isPresent()).toBe(true);
+    snapshot.click();
+    browser.sleep(400);
+    element(by.css('.tc_deleteSnapItem')).click();
+    browser.sleep(400);
+    element(by.id('bot2-Msg1')).click();
+    browser.sleep(400);
   });
 
   it('should delete the zvol', function(){

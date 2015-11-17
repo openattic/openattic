@@ -1,19 +1,20 @@
 var helpers = require('../common.js');
 
-describe('General', function() {
+describe('General', function(){
 
-  var dashboardItem = element.all(by.css('ul .tc_menuitem')).get(0);
-  var disksItem     = element.all(by.css('ul .tc_menuitem')).get(1);
-  var poolsItem     = element.all(by.css('ul .tc_menuitem')).get(2);
-  var volumesItem   = element.all(by.css('ul .tc_menuitem')).get(3);
-  var hostsItem     = element.all(by.css('ul .tc_menuitem')).get(4);
-  var systemItem    = element.all(by.css('ul .tc_menuitem')).get(5);
+  var menuItems = element.all(by.css('ul .tc_menuitem > a'));
+  var dashboardItem = menuItems.get(0);
+  var disksItem = menuItems.get(1);
+  var poolsItem = menuItems.get(2);
+  var volumesItem = menuItems.get(3);
+  var hostsItem = menuItems.get(4);
+  var systemItem = menuItems.get(5);
 
-  var oaLogo = element(by.id('logo'));
-  var hideBtn = element(by.id('hide-menu'));
+  var oaLogo = element(by.css('#logo a'));
+  var hideBtn = element(by.css('#hide-menu a'));
   var minifyArrow = element(by.css('.minifyme'));
 
-  beforeAll(function() {
+  beforeAll(function(){
     helpers.login();
   });
 
@@ -51,6 +52,7 @@ describe('General', function() {
 
   it('should have subitems under the system menu item', function(){
     systemItem.click();
+    systemItem = systemItem.all(by.xpath('..'));
     expect(systemItem.all(by.css('ul .tc_submenuitem')).count()).toBeGreaterThan(0);
   });
 

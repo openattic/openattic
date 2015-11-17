@@ -7,7 +7,7 @@ describe('NFS Share workflow', function(){
   var submitButton = element(by.css('.tc_submitButton'));
   var path = element(by.model('share.path'));
   var options = element(by.id('shareOptions'));
-  var volumesItem = element.all(by.css('ul .tc_menuitem')).get(3);
+  var volumesItem = element.all(by.css('ul .tc_menuitem > a')).get(3);
   var nfsShareTab = element(by.css('.tc_nfsShareTab'));
 
   beforeAll(function(){
@@ -56,10 +56,10 @@ describe('NFS Share workflow', function(){
     expect(element(by.css('.tc_addressRequired')).isDisplayed()).toBe(true);
   });
 
-    //TODO
-//   it('should show an error message if address is not in the correct format', function(){
-//
-//   });
+  //TODO
+  //   it('should show an error message if address is not in the correct format', function(){
+  //
+  //   });
 
   it('should have a submit button', function(){
     expect(element(by.css('.tc_submitButton')).isPresent()).toBe(true);

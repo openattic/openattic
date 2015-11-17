@@ -2,8 +2,8 @@ var helpers = require('../../common.js');
 
 describe('Should map a LUN to an host', function(){
 
-  var volumesItem = element.all(by.css('ul .tc_menuitem')).get(3);
-  var hostsItem = element.all(by.css('ul .tc_menuitem')).get(4);
+  var volumesItem = element.all(by.css('ul .tc_menuitem > a')).get(3);
+  var hostsItem = element.all(by.css('ul .tc_menuitem > a')).get(4);
 
   var hostSelect = element(by.model('share.host'));
   var hostname = "protractor_test_host";
@@ -36,8 +36,8 @@ describe('Should map a LUN to an host', function(){
   it('should configure the lun', function(){
     volumesItem.click();
     browser.sleep(400);
-//     element(by.css('.tc_entries_dropdown')).click();
-//     element(by.css('.tc_entries_100')).click();
+    //     element(by.css('.tc_entries_dropdown')).click();
+    //     element(by.css('.tc_entries_100')).click();
     browser.sleep(400);
     expect(volume.isPresent()).toBe(true);
     volume.click();
@@ -52,8 +52,8 @@ describe('Should map a LUN to an host', function(){
   it('should display the lun', function(){
     volumesItem.click();
     browser.sleep(400);
-//     element(by.css('.tc_entries_dropdown')).click();
-//     element(by.css('.tc_entries_100')).click();
+    //     element(by.css('.tc_entries_dropdown')).click();
+    //     element(by.css('.tc_entries_100')).click();
     browser.sleep(400);
     expect(volume.isPresent()).toBe(true);
     volume.click();
@@ -66,8 +66,8 @@ describe('Should map a LUN to an host', function(){
   it('should remove the lun', function(){
     volumesItem.click();
     browser.sleep(400);
-//     element(by.css('.tc_entries_dropdown')).click();
-//     element(by.css('.tc_entries_100')).click();
+    //     element(by.css('.tc_entries_dropdown')).click();
+    //     element(by.css('.tc_entries_100')).click();
     browser.sleep(400);
     expect(volume.isPresent()).toBe(true);
     volume.click();
@@ -84,8 +84,8 @@ describe('Should map a LUN to an host', function(){
   it('should not display the lun anymore', function(){
     volumesItem.click();
     browser.sleep(400);
-//     element(by.css('.tc_entries_dropdown')).click();
-//     element(by.css('.tc_entries_100')).click();
+    //     element(by.css('.tc_entries_dropdown')).click();
+    //     element(by.css('.tc_entries_100')).click();
     browser.sleep(400);
     expect(volume.isPresent()).toBe(true);
     volume.click();

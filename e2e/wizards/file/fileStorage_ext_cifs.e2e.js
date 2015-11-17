@@ -5,10 +5,10 @@ describe('Wizard panel', function(){
   var wizardOverviewBtn = element(by.css('.tc_wizardOverview'));
   var previousBtn = element(by.css('.tc_previousBtn'));
   //maye rename volume, pool, etc. -> isn't the actual 'object' instead it's just the input field
-	var volumename = 'protractor_wizard_fileVol02';
-	var volume = element(by.cssContainingText('tr', volumename));
+  var volumename = 'protractor_wizard_fileVol02';
+  var volume = element(by.cssContainingText('tr', volumename));
   var volumefield = element(by.id('volumename'));
-	var share = element(by.cssContainingText('tr', 'protractor_wizard_cifsShare'));
+  var share = element(by.cssContainingText('tr', 'protractor_wizard_cifsShare'));
 
   var pool = element(by.id('source_pool'));
   var size = element(by.id('volumemegs'));
@@ -18,6 +18,8 @@ describe('Wizard panel', function(){
   var noUniqueName = element(by.css('.tc_noUniqueName'));
   var noValidNumber = element(by.css('.tc_noValidNumber'));
 
+  var menu = element.all(by.css('ul .tc_menuitem > a'));
+
   beforeAll(function(){
     helpers.login();
   });
@@ -26,17 +28,17 @@ describe('Wizard panel', function(){
     expect(browser.getCurrentUrl()).toContain('#/dashboard');
   });
 
-/*  it('should check the titles', function(){
-    var wizards = element.all(by.repeater('wizard in wizards'))
-      .then(function(wizards){
-        var fsTitle = wizards[0].element(by.className('btn-block')).get(0);
-        expect(fsTitle.getText()).toEqual('File Storage');
-        var vmTitle = wizards[1].element(by.className('btn-block')).get(1);
-        expect(vmTitle.getText()).toEqual('VM Storage');
-        var blockTitle = wizards[2].element(by.className('btn-block')).get(2);
-        expect(blockTitle.getText()).toEqual('Raw Block Storage');
-      });
-  });*/
+  /*  it('should check the titles', function(){
+      var wizards = element.all(by.repeater('wizard in wizards'))
+        .then(function(wizards){
+          var fsTitle = wizards[0].element(by.className('btn-block')).get(0);
+          expect(fsTitle.getText()).toEqual('File Storage');
+          var vmTitle = wizards[1].element(by.className('btn-block')).get(1);
+          expect(vmTitle.getText()).toEqual('VM Storage');
+          var blockTitle = wizards[2].element(by.className('btn-block')).get(2);
+          expect(blockTitle.getText()).toEqual('Raw Block Storage');
+        });
+    });*/
 
   it('should a widget title', function(){
     expect(element.all(by.css('h2')).get(1).getText()).toEqual('openATTIC Wizards');
@@ -69,13 +71,14 @@ describe('Wizard panel', function(){
     volumefield.sendKeys('protractor_wizard_fileVol02');
 
     //in order to enter a size we need to choose a pool first
-      for(var key in configs.pools) {
-        var pool = configs.pools[key];
-        var volumePoolSelect = element(by.id('source_pool'));
-        volumePoolSelect.click();
-        element.all(by.cssContainingText('option', '(volume group,')).get(0).click();
-        break;
-      }
+    for(var key in configs.pools){
+      var pool = configs.pools[key];
+      var volumePoolSelect = element(by.id('source_pool'));
+      volumePoolSelect.click();
+      element.all(by.cssContainingText('option', '(volume group,')).get(0).click();
+      browser.actions().sendKeys( protractor.Key.ENTER ).perform();
+      break;
+    }
 
     //enter some data to get to the next site
     size.sendKeys('100MB');
@@ -132,7 +135,7 @@ describe('Wizard panel', function(){
     expect(element(by.css('.tc_wizardDone')).getText()).toEqual('File Storage Step 4 - Save configuration');
     expect(nextBtn.getText()).toEqual('Done');
     nextBtn.click();
-		expect(browser.getCurrentUrl()).toContain('/openattic/#');
+    expect(browser.getCurrentUrl()).toContain('/openattic/#');
 
     var wizards = element.all(by.repeater('wizard in wizards'))
       .then(function(wizards){
@@ -150,32 +153,32 @@ describe('Wizard panel', function(){
           expect(block_title).toEqual('Raw Block Storage');
           console.log(block_title);
         });
-    });
+      });
 
-		console.log('<----- file storage test with NFS ended ------>');
+    console.log('<----- file storage test with NFS ended ------>');
     browser.sleep(400);
-		element.all(by.css('ul .tc_menuitem')).get(3).click();
-		expect(browser.getCurrentUrl()).toContain('/openattic/#/volumes');
+    menu.get(3).click();
+    expect(browser.getCurrentUrl()).toContain('/openattic/#/volumes');
     /*	next line -> workaround (when checking if the volume is visible,
 		    protractor SOMETIMES throws 'element not visible error', but when
 		    protractor is about to delete the volume, it's visible and protractor is able to delete it
 		    couldn't reproduce this strange behavior and browser.sleep won't help)
     */
-    element.all(by.css('ul .tc_menuitem')).get(4).click();
-		browser.sleep(400);
-		element.all(by.css('ul .tc_menuitem')).get(3).click();
-		expect(browser.getCurrentUrl()).toContain('/openattic/#/volumes');
+    menu.get(4).click();
+    browser.sleep(400);
+    menu.get(3).click();
+    expect(browser.getCurrentUrl()).toContain('/openattic/#/volumes');
     expect(volume.isDisplayed()).toBe(true);
     browser.sleep(400);
-		volume.click();
-		element(by.css('.tc_cifsShareTab')).click();
+    volume.click();
+    element(by.css('.tc_cifsShareTab')).click();
     expect(share.isDisplayed()).toBe(true);
     browser.sleep(400);
     share.click();
     browser.sleep(400);
     element.all(by.css('.tc_menudropdown')).get(1).click();
     browser.sleep(400);
-    element(by.css('.tc_cifsShareDelete')).click();
+    element(by.css('.tc_cifsShareDelete > a')).click();
     browser.sleep(400);
     element(by.id('bot2-Msg1')).click();
     browser.sleep(400);

@@ -6,16 +6,18 @@ describe('Raw Block Storage Wizard', function(){
   var wizardOverviewBtn = element(by.css('.tc_wizardOverview'));
   var previousBtn = element(by.css('.tc_previousBtn'));
 
-	var volumename = 'protractor_wizardTest_blockvol';
-	var volumefield = element(by.id('volumename'));
+  var volumename = 'protractor_wizardTest_blockvol';
+  var volumefield = element(by.id('volumename'));
   var volume = element(by.cssContainingText('tr', volumename));
   var pool = element(by.id('source_pool'));
   var size = element(by.id('volumemegs'));
   var is_protected = element(by.id('volumeisprotected'));
 
-	var hostname = "protractor_test_host";
+  var hostname = "protractor_test_host";
   var host = element(by.cssContainingText('tr', hostname));
   var iqn = "iqn.1991-05.com.microsoft:protractor_test_host";
+
+  var menu = element.all(by.css('ul .tc_menuitem > a'));
 
   beforeAll(function(){
     helpers.login();
@@ -33,11 +35,11 @@ describe('Raw Block Storage Wizard', function(){
   });
 
   it('should navigate back to the dashboard after creating a host', function(){
-    var dashboard = element.all(by.css('ul .tc_menuitem')).get(0);
+    var dashboard = menu.get(0);
     dashboard.click();
   });
   //<-- Raw Block Storage Wizard --->
-  it ('should have a button "Raw Block Storage"; navigate through the wizard', function(){
+  it('should have a button "Raw Block Storage"; navigate through the wizard', function(){
     var wizards = element.all(by.repeater('wizard in wizards')).then(function(wizards){
       var fs_wizard = wizards[2].element(by.cssContainingText('span', 'Raw Block Storage'));
       expect(fs_wizard.isDisplayed()).toBe(true);
@@ -61,13 +63,14 @@ describe('Raw Block Storage Wizard', function(){
     volumefield.sendKeys(volumename);
 
     //in order to enter a size we need to choose a pool first
-      for(var key in configs.pools) {
-        var pool = configs.pools[key];
-        var volumePoolSelect = element(by.id('source_pool'));
-        volumePoolSelect.click();
-        element.all(by.cssContainingText('option', '(volume group,')).get(0).click();
-        break;
-      }
+    for(var key in configs.pools){
+      var pool = configs.pools[key];
+      var volumePoolSelect = element(by.id('source_pool'));
+      volumePoolSelect.click();
+      element.all(by.cssContainingText('option', '(volume group,')).get(0).click();
+      browser.actions().sendKeys( protractor.Key.ENTER ).perform();
+      break;
+    }
 
     //enter some data to get to the next site
     size.sendKeys('100MB');
@@ -99,10 +102,10 @@ describe('Raw Block Storage Wizard', function(){
     expect(nextBtn.getText()).toEqual('Done');
     nextBtn.click();
 
-    element.all(by.css('ul .tc_menuitem')).get(3).click();
-		expect(browser.getCurrentUrl()).toContain('/openattic/#/volumes');
+    menu.get(3).click();
+    expect(browser.getCurrentUrl()).toContain('/openattic/#/volumes');
 
-		//check if lun exists
+    //check if lun exists
     browser.sleep(400);
     browser.sleep(400);
     expect(volume.isPresent()).toBe(true);
@@ -112,8 +115,8 @@ describe('Raw Block Storage Wizard', function(){
     browser.sleep(400);
     expect(element(by.cssContainingText('tr', hostname)).isDisplayed()).toBe(true);
 
-		//remove the lun map
-		element.all(by.css('ul .tc_menuitem')).get(3).click();
+    //remove the lun map
+    menu.get(3).click();
     browser.sleep(400);
     browser.sleep(400);
     expect(volume.isPresent()).toBe(true);
@@ -126,15 +129,14 @@ describe('Raw Block Storage Wizard', function(){
     browser.sleep(400);
     element(by.id('bot2-Msg1')).click();
     browser.sleep(800);
-		expect(element(by.cssContainingText('tr', hostname)).isPresent()).toBe(false);
+    expect(element(by.cssContainingText('tr', hostname)).isPresent()).toBe(false);
     console.log('<----- raw block storage test ended ------>');
   });
 
   afterAll(function(){
     helpers.delete_volume(volume, volumename);
-		helpers.delete_host();
+    helpers.delete_host();
     console.log('<-----Raw Block Storage volume and host removed --->');
   });
 
 });
-

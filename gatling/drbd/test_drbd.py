@@ -44,6 +44,27 @@ class DrbdTests(object):
         endpoints_res = self.send_request("GET", "volumes", search_param=upper_id)
         self.assertEqual(endpoints_res["count"], 2, msg="number of endpoints is not equal 2")
 
+    def test_create_with_filesystem_get_delete(self):
+        """ Create a connection and format its /dev/drbdX with XFS. """
+        # Create a volume that should be mirrored
+        vol = self._get_mirror_volume(self._get_pool()["id"])
+
+        # Create the drbd mirror containing a filesystem
+        mirror_data = {"source_volume"  : vol,
+                       "remote_pool"    : self._get_remote_pool(),
+                       "protocol"       : "C",
+                       "syncer_rate"    : "30M",
+                       "filesystem"     : "xfs"}
+        mirror_res = self.send_request("POST", "mirrors", data=mirror_data)
+        mirror = mirror_res["response"]
+        time.sleep(self.sleeptime)
+        self.addCleanup(requests.request, "DELETE", mirror_res["cleanup_url"], headers=mirror_res["headers"])
+
+        # Check if the filesystem is created on top of the drbd connection
+        mirror_vol_res = self.send_request("GET", "volumes", obj_id=mirror["volume"]["id"])
+        self.assertTrue(mirror_vol_res["response"]["is_filesystemvolume"], True)
+        self.assertEqual(mirror_vol_res["response"]["type"]["name"], "xfs")
+
     def test_create_protocol_f(self):
         """ Try to create a Connection with protocol F. """
         # Create a volume that should be mirrored

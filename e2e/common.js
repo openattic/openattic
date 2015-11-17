@@ -1,10 +1,10 @@
 'use strict';
 
-(function() {
+(function(){
 
   var configs = require('./configs.js');
-  var volumesItem = element.all(by.css('ul .tc_menuitem')).get(3);
-  var hostsItem = element.all(by.css('ul .tc_menuitem')).get(4);
+  var volumesItem = element.all(by.css('ul .tc_menuitem > a')).get(3);
+  var hostsItem = element.all(by.css('ul .tc_menuitem > a')).get(4);
 
   var volumename = '';
   var volume = element(by.cssContainingText('tr', volumename));
@@ -12,17 +12,17 @@
   var snapshotname = 'protractor_test_snap';
   var snapshot = element(by.cssContainingText('tr', snapshotname));
 
-  var clonename ="protractor_test_clone";
+  var clonename = "protractor_test_clone";
   var clone = element(by.cssContainingText('tr', clonename));
 
-  var hostname ="protractor_test_host";
+  var hostname = "protractor_test_host";
   var host = element(by.cssContainingText('tr', hostname));
 
   var volumePoolSelect = element(by.id('data.sourcePool'));
 
   module.exports = {
     configs: configs,
-    login: function() {
+    login: function(){
       browser.get(configs.url);
       element.all(by.model('username')).sendKeys(configs.username);
       element.all(by.model('password')).sendKeys(configs.password);
@@ -31,64 +31,66 @@
       browser.sleep(configs.sleep);
     },
 
-    create_volume: function(volumename, type){
+    create_volume: function(volumename, type, size){
+      var pool,
+          size = size == null ? "100MB" : size;
       volumesItem.click();
       element(by.css('oadatatable .tc_add_btn')).click();
-      for(var key in configs.pools) {
+      for(var key in configs.pools){
         element(by.id('volume.name')).sendKeys(volumename);
-        var pool = configs.pools[key];
+        pool = configs.pools[key];
         var exact_poolname = pool.name;
-        volumePoolSelect.click();
-            element.all(by.cssContainingText('option', pool.name))
-            .then(function findMatch(pname){
-            if (pool.name === pname){
-                exact_poolname = pname;
-                return true;
-            }
+        volumePoolSelect.sendKeys(pool.name).then(function findMatch(pname){
+          if(pool.name === pname){
+            exact_poolname = pname;
+            return true;
+          }
         });
         if(exact_poolname){
-          element.all(by.cssContainingText('option',exact_poolname)).get(0).click();
+          browser.actions().sendKeys( protractor.Key.ENTER ).perform();
+          // In order to update the pool selection under firefox.
           element(by.id(type)).click();
-          element(by.model('data.megs')).sendKeys('100MB');
+          element(by.model('data.megs')).sendKeys(size);
           element(by.css('.tc_submitButton')).click();
           browser.sleep(configs.sleep);
         }
         break;
       }
+      return pool;
     },
 
-//     create_zvol: function(type){
-//       volumesItem.click();
-//       element(by.css('oadatatable .tc_add_btn')).click();
-//       for(var key in configs.pools) {
-//         element(by.id('volume.name')).sendKeys(volumename);
-//         volumePoolSelect.click();
-//         element.all(by.cssContainingText('option', 'zpool')).get(0).click();
-//         element(by.id(type)).click();
-//         element(by.model('data.megs')).sendKeys('100MB');
-//         element(by.css('.tc_submitButton')).click();
-//         browser.sleep(configs.sleep);
-//         break;
-//       }
-//     },
+    //     create_zvol: function(type){
+    //       volumesItem.click();
+    //       element(by.css('oadatatable .tc_add_btn')).click();
+    //       for(var key in configs.pools){
+    //         element(by.id('volume.name')).sendKeys(volumename);
+    //         volumePoolSelect.click();
+    //         element.all(by.cssContainingText('option', 'zpool')).get(0).click();
+    //         element(by.id(type)).click();
+    //         element(by.model('data.megs')).sendKeys('100MB');
+    //         element(by.css('.tc_submitButton')).click();
+    //         browser.sleep(configs.sleep);
+    //         break;
+    //       }
+    //     },
 
 
     delete_volume: function(volume, volumename){
       volumesItem.click();
       browser.sleep(400);
-//       element(by.css('.tc_entries_dropdown')).click();
-//       element(by.css('.tc_entries_100')).click();
-//       browser.sleep(400);
+      //       element(by.css('.tc_entries_dropdown')).click();
+      //       element(by.css('.tc_entries_100')).click();
+      //       browser.sleep(400);
       volume.click();
       browser.sleep(400);
       element(by.css('.tc_menudropdown')).click();
       browser.sleep(400);
-      element(by.css('.tc_deleteItem')).click();
+      element(by.css('.tc_deleteItem > a')).click();
       browser.sleep(400);
       element(by.model('input.enteredName')).sendKeys(volumename);
       element(by.id('bot2-Msg1')).click();
-			browser.sleep(600);
-			volume = element(by.cssContainingText('tr', volumename));
+      browser.sleep(600);
+      volume = element(by.cssContainingText('tr', volumename));
       expect(volume.isPresent()).toBe(false);
     },
 
@@ -142,7 +144,7 @@
       browser.sleep(400);
       element(by.css('.tc_menudropdown')).click();
       browser.sleep(400);
-      element(by.css('.tc_deleteItem')).click();
+      element(by.css('.tc_deleteItem > a')).click();
       browser.sleep(400);
 
       element(by.model('input.enteredName')).sendKeys(clonename);
@@ -150,7 +152,7 @@
     },
 
     create_host: function(){
-      element.all(by.css('ul .tc_menuitem')).get(4).click();
+      element.all(by.css('ul .tc_menuitem > a')).get(4).click();
       element(by.css('.tc_addHost')).click();
       element(by.model('host.name')).sendKeys(hostname);
       element(by.css('.tc_submitButton')).click();
@@ -163,16 +165,16 @@
       browser.sleep(400);
       element(by.css('.tc_menudropdown')).click();
       browser.sleep(400);
-      element(by.css('.tc_deleteHost')).click();
+      element(by.css('.tc_deleteHost > a')).click();
       browser.sleep(400);
       element(by.id('bot2-Msg1')).click();
     },
 
-    selectDropdownByIndex: function (dropdown, index) {
+    selectDropdownByIndex: function(dropdown, index){
       dropdown.click();
-      if (index) {
+      if(index){
         dropdown.all(by.tagName('option'))
-          .then(function (options) {
+          .then(function(options){
             options[index].click();
           });
       }

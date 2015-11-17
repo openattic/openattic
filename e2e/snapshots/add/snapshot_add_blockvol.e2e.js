@@ -6,9 +6,9 @@ describe('Should create a Snapshot', function(){
   var volume = element.all(by.cssContainingText('tr', volumename)).get(0);
   var snapshot = element(by.cssContainingText('tr', snapshotname));
 
-  beforeAll(function() {
+  beforeAll(function(){
     helpers.login();
-    element.all(by.css('ul .tc_menuitem')).get(3).click();
+    element.all(by.css('ul .tc_menuitem > a')).get(3).click();
     helpers.create_volume(volumename, "lun");
     helpers.create_snapshot(volume);
 

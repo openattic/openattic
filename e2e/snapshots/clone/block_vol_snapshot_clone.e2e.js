@@ -8,11 +8,11 @@ describe('should create a clone volume of a snapshot (base: blockvolume)', funct
   var snapshotname = 'protractor_test_snap';
   var snapshot = element.all(by.cssContainingText('tr', snapshotname)).get(0);
 
-  var clonename ="protractor_block_clone";
+  var clonename = "protractor_block_clone";
   var clone = element.all(by.cssContainingText('tr', clonename)).get(0);
 
   var snapMenuBtn = element.all(by.css('.tc_menudropdown')).get(1);
-  var volumesItem = element.all(by.css('ul .tc_menuitem')).get(3);
+  var volumesItem = element.all(by.css('ul .tc_menuitem > a')).get(3);
 
   beforeAll(function(){
     helpers.login();
@@ -61,15 +61,7 @@ describe('should create a clone volume of a snapshot (base: blockvolume)', funct
 
   it('should delete the clone volume', function(){
     expect(clone.isDisplayed()).toBe(true);
-    clone.click();
-    browser.sleep(400);
-    element.all(by.css('.tc_menudropdown')).get(0).click();
-    browser.sleep(400);
-    element(by.css('.tc_deleteItem')).click();
-    browser.sleep(400);
-
-    element(by.model('input.enteredName')).sendKeys(clonename);
-    element(by.id('bot2-Msg1')).click();
+    helpers.delete_volume(clone, clonename);
   });
 
   afterAll(function(){

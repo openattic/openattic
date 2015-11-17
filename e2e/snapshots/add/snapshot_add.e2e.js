@@ -5,18 +5,18 @@ describe('Should create a Snapshot', function(){
   var snapshotname = 'protractor_test_snap';
   var volume = element.all(by.cssContainingText('tr', volumename)).get(0);
   var snapshot = element(by.cssContainingText('tr', snapshotname));
-  var volumesItem = element.all(by.css('ul .tc_menuitem')).get(3);
+  var volumesItem = element.all(by.css('ul .tc_menuitem > a')).get(3);
 
-  beforeAll(function() {
+  beforeAll(function(){
     helpers.login();
     helpers.create_volume(volumename, "xfs");
     volume.click();
     element(by.css('.tc_snapshotTab')).click();
   });
 
-//   beforeEach(function(){
-//     volumesItem.click();
-//   });
+  //   beforeEach(function(){
+  //     volumesItem.click();
+  //   });
 
   it('should create the snapshot "protractor_test_snap"', function(){
     expect(volume.isDisplayed()).toBe(true);
@@ -46,7 +46,7 @@ describe('Should create a Snapshot', function(){
     element(by.id('bot2-Msg1')).click();
     browser.sleep(400);
     expect(snapshot.isPresent()).toBe(false);
-		browser.sleep(400);
+    browser.sleep(400);
   });
 
   afterAll(function(){

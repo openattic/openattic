@@ -14,8 +14,6 @@
  *  GNU General Public License for more details.
 """
 
-import json, logging, traceback
-
 from rest import relations
 
 from rest_framework import serializers, viewsets, status
@@ -85,6 +83,14 @@ class DrbdConnectionViewSet(viewsets.ModelViewSet):
         source_volume = request.DATA['source_volume']
         Connection.objects.install_connection(connection_id, source_volume["id"])
 
+    def _create_filesystem(self, request, connection_id, filesystem):
+        # called in the primary only, not part of the REST API
+        options = {"owner"      : request.user,
+                   "fswarning"  : 75,
+                   "fscritical" : 85}
+        connection = Connection.objects.get(id=connection_id)
+        connection.volume.create_filesystem(filesystem, options)
+
 
 class DrbdConnectionProxyViewSet(DrbdConnectionViewSet, RequestHandlers):
     """ Proxy viewset for DRBD connection """
@@ -130,12 +136,15 @@ class DrbdConnectionProxyViewSet(DrbdConnectionViewSet, RequestHandlers):
                 # Step 3: Install our local endpoint
                 self._install_connection(request, connection_data["id"])
 
+                # Step 4: Make filesystem if one is given
+                filesystem = request.DATA.get("filesystem", None)
+                if filesystem:
+                    self._create_filesystem(request, connection_data["id"], filesystem)
+
                 return connection_resp
             else:
                 # -> source volume is a remote volume, call remote host
-                return Response(json.loads(self._remote_request(request, source_volume_host)),
-                                status=status.HTTP_201_CREATED)
-
+                return self._remote_request(request, source_volume_host)
         else:
             # -> SECONDARY
             # Secondary is always the correct host because the primary
