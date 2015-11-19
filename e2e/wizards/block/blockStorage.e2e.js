@@ -102,6 +102,8 @@ describe('Raw Block Storage Wizard', function(){
     expect(nextBtn.getText()).toEqual('Done');
     nextBtn.click();
 
+    helpers.check_wizard_titles();
+
     menu.get(3).click();
     expect(browser.getCurrentUrl()).toContain('/openattic/#/volumes');
 

@@ -28,20 +28,9 @@ describe('Wizard panel', function(){
     expect(browser.getCurrentUrl()).toContain('#/dashboard');
   });
 
-  /*  it('should check the titles', function(){
-      var wizards = element.all(by.repeater('wizard in wizards'))
-        .then(function(wizards){
-          var fsTitle = wizards[0].element(by.className('btn-block')).get(0);
-          expect(fsTitle.getText()).toEqual('File Storage');
-          var vmTitle = wizards[1].element(by.className('btn-block')).get(1);
-          expect(vmTitle.getText()).toEqual('VM Storage');
-          var blockTitle = wizards[2].element(by.className('btn-block')).get(2);
-          expect(blockTitle.getText()).toEqual('Raw Block Storage');
-        });
-    });*/
-
   it('should a widget title', function(){
     expect(element.all(by.css('h2')).get(1).getText()).toEqual('openATTIC Wizards');
+    helpers.check_wizard_titles();
   });
 
   //<-- File Storage Wizard -->
@@ -137,23 +126,7 @@ describe('Wizard panel', function(){
     nextBtn.click();
     expect(browser.getCurrentUrl()).toContain('/openattic/#');
 
-    var wizards = element.all(by.repeater('wizard in wizards'))
-      .then(function(wizards){
-        var fsTitle = element.all(by.className('btn-block')).get(0).evaluate('wizard.title').then(function(title){
-          expect(title).toEqual('File Storage');
-          console.log(title);
-        });
-
-        var vmTitle = wizards[1].element(by.className('btn-block')).evaluate('wizard.title').then(function(vm_title){
-          expect(vm_title).toEqual('VM Storage');
-          console.log(vm_title);
-        });
-
-        var blockTitle = wizards[2].element(by.className('btn-block')).evaluate('wizard.title').then(function(block_title){
-          expect(block_title).toEqual('Raw Block Storage');
-          console.log(block_title);
-        });
-      });
+    helpers.check_wizard_titles();
 
     console.log('<----- file storage test with NFS ended ------>');
     browser.sleep(400);
