@@ -391,9 +391,10 @@ class HostACL(models.Model):
 
 def __hostacl_pre_delete(instance, **kwargs):
     pre_uninstall.send(sender=HostACL, instance=instance)
-    get_dbus_object("/lio").modprobe()
-    get_dbus_object("/lio").uninstall_hostacl(instance.id)
-    get_dbus_object("/lio").saveconfig()
+    with Transaction(background=False):
+        get_dbus_object("/lio").modprobe()
+        get_dbus_object("/lio").uninstall_hostacl(instance.id)
+        get_dbus_object("/lio").saveconfig()
     post_uninstall.send(sender=HostACL, instance=instance)
 
 models.signals.pre_delete.connect(__hostacl_pre_delete, sender=HostACL)
