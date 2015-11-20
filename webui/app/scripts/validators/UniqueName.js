@@ -7,7 +7,7 @@ angular.module('openattic')
       require: 'ngModel',
       link: function(scope, elem, attrs, ctrl) {
         var stop_timeout;
-        ctrl.model=attrs.ngModel;
+        ctrl.model=attrs.uniquename;
 
         return scope.$watch(function () {
           return ctrl.$modelValue;
@@ -17,7 +17,18 @@ angular.module('openattic')
 
           if (modelValue !== '' && typeof modelValue !== 'undefined') {
             stop_timeout = $timeout(function () {
-              var model = ctrl.model.match(/host/) ? HostService : VolumeService;
+              var model;
+              switch(ctrl.model){
+                case 'host':
+                  model = HostService;
+                  break;
+                case 'volume':
+                  model = VolumeService;
+                  break;
+                default:
+                  console.log('Error: Service not implemented yet');
+                  return;
+              }
               model.query({'name': modelValue})
                 .$promise
                 .then(function (res) {
