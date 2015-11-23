@@ -151,7 +151,7 @@ angular.module('openattic.clusterstatuswidget').service('lineChartService', func
             for(var i=0; i<maxGraphValues; i++) {
                 // fill empty data with 0
                 if(graphOptions.xaxis.mode === 'time') {
-                    graphDataset[graphNumber].data.push([graphData[0][0],0]); // TODO ggf besser lösen bei time mode
+                    graphDataset[graphNumber].data.push([graphData[0][0],0]); // TODO ggf besser l÷sen bei time mode
                 } else {
                     graphDataset[graphNumber].data.push([i * (graphOptions.xaxis.max/(maxGraphValues-1)),0]);
                 }

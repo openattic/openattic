@@ -26,11 +26,13 @@ angular.module('openattic.apirecorder')
   .factory('ApiRecordHttpInterceptor', function(ApiRecorderService) {
     return {
       'request': function(config) {
-        if( config.method !== 'GET'){
-          ApiRecorderService.recordCommand(config);
+        if(config.method !== 'GET') {
+          // Create Clone
+          var configClone = angular.copy(config);
+          ApiRecorderService.recordCommand(configClone);
         }
         return config;
-      },
+      }
     };
   })
   .config(function($httpProvider){

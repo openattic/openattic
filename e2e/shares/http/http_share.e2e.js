@@ -5,7 +5,7 @@ describe('HTTP Share add', function(){
   var volumename = 'protractor_httpShare_vol';
   var volume = element.all(by.cssContainingText('tr', volumename)).get(0);
   var share = element(by.css('.tc_http_share'));
-  var volumesItem = element.all(by.css('ul .tc_menuitem')).get(3);
+  var volumesItem = element.all(by.css('ul .tc_menuitem > a')).get(3);
   var httpShareTab = element(by.css('.tc_httpShareTab'));
 
 

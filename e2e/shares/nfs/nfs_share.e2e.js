@@ -7,7 +7,7 @@ describe('Should add a NFS Share', function(){
   //TODO -> shareAddress
   var shareAddress = 'srvoademo';
   var share = element(by.cssContainingText('td', shareAddress));
-  var volumesItem = element.all(by.css('ul .tc_menuitem')).get(3);
+  var volumesItem = element.all(by.css('ul .tc_menuitem > a')).get(3);
   var nfsShareTab = element(by.css('.tc_nfsShareTab'));
 
   beforeAll(function(){

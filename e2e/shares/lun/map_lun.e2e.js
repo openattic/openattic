@@ -2,8 +2,8 @@ var helpers = require('../../common.js');
 
 describe('Should map a LUN to an host', function(){
 
-  var volumesItem = element.all(by.css('ul .tc_menuitem')).get(3);
-  var hostsItem = element.all(by.css('ul .tc_menuitem')).get(4);
+  var volumesItem = element.all(by.css('ul .tc_menuitem > a')).get(3);
+  var hostsItem = element.all(by.css('ul .tc_menuitem > a')).get(4);
 
   var hostSelect = element(by.model('share.host'));
   var hostname = "protractor_test_host";

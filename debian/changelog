@@ -1,3 +1,31 @@
+openattic (2.0.4-1) UNRELEASED; urgency=medium
+
+  * Web UI: Fixed scripts created by the API Recorder (OP-608, OP-657, OP-712)
+  * Web UI: Created E2E tests for enabled/disabled storage tabs depending on the
+    clicked volume type (OP-690)
+  * Web UI: Fixed visibility of storage tabs based on the volume type (OP-692)
+  * Web UI: Updated end to end tests in order to run with Firefox (in addition to
+    Chromium) (OP-729)
+  * Web UI: Fixed look of dropdown list/menus, added autosizing support (OP-656)
+  * Web UI: Updated Logo. Clicking the logo now opens the Dashboard
+  * Web UI: Added example configuration template for the E2E tests
+  * Backend: Updated the DRBD module to use the RESTful API instead of the
+    peerhost module (which uses the XML-RPC API) (OP-586)
+  * Backend: Added functionality and RESTful API test cases (Gatling) to create a
+    filesystem on top of a DRBD connection (OP-681, OP-707)
+  * Installation: Removed executable bits from files that don't need it (OP-696)
+  * Installation: Fixed wrong end-of-line encodings in many files (CR+LF instead
+    of LF) (OP-695)
+  * Installation: Updated openattic.conf httpd configuration file to support both
+    the Apache 2.2 and 2.4 access control directives (OP-709)
+  * Documentation: Added note on basic Ceph configuration to the installation
+    chapter (OP-697)
+  * Documentation: Added chapter about contributing and working with Mercurial,
+    updated E2E test documentation
+  * Documentation: Improved the readability of the openATTIC documentation
+
+ -- Tatjana Dehler <tatjana.dehler@it-novum.com>  Tue, 17 Nov 2015 09:57:34 +0100
+
 openattic (2.0.3-1) unstable; urgency=medium
 
   * API/Backend: Created DRBD REST-API that supports creating and deleting

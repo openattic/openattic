@@ -144,7 +144,7 @@
       browser.sleep(400);
       element(by.css('.tc_menudropdown')).click();
       browser.sleep(400);
-      element(by.css('.tc_deleteItem')).click();
+      element(by.css('.tc_deleteItem > a')).click();
       browser.sleep(400);
 
       element(by.model('input.enteredName')).sendKeys(clonename);
@@ -152,7 +152,7 @@
     },
 
     create_host: function(){
-      element.all(by.css('ul .tc_menuitem')).get(4).click();
+      element.all(by.css('ul .tc_menuitem > a')).get(4).click();
       element(by.css('.tc_addHost')).click();
       element(by.model('host.name')).sendKeys(hostname);
       element(by.css('.tc_submitButton')).click();
@@ -165,7 +165,7 @@
       browser.sleep(400);
       element(by.css('.tc_menudropdown')).click();
       browser.sleep(400);
-      element(by.css('.tc_deleteHost')).click();
+      element(by.css('.tc_deleteHost > a')).click();
       browser.sleep(400);
       element(by.id('bot2-Msg1')).click();
     },
@@ -178,6 +178,26 @@
             options[index].click();
           });
       }
-    }
+    },
+
+    check_wizard_titles: function(){
+      var wizards = element.all(by.repeater('wizard in wizards'))
+        .then(function(wizards){
+          wizards[0].element(by.className('btn-block')).evaluate('wizard.title').then(function(title){
+            expect(title).toEqual('File Storage');
+            console.log(title);
+          });
+
+          wizards[1].element(by.className('btn-block')).evaluate('wizard.title').then(function(vm_title){
+            expect(vm_title).toEqual('VM Storage');
+            console.log(vm_title);
+          });
+
+          wizards[2].element(by.className('btn-block')).evaluate('wizard.title').then(function(block_title){
+            expect(block_title).toEqual('Raw Block Storage');
+            console.log(block_title);
+          });
+      });
+    },
   };
 }());

@@ -20,13 +20,12 @@ describe('should test the login', function(){
   });
 
   it('should click any menu entry', function(){
-    var test = element.all(by.css('ul .tc_menuitem')).get(3);
-    test.click();
+    element.all(by.css('ul .tc_menuitem > a')).get(3).click();
     expect(browser.getCurrentUrl()).toContain('#/volumes');
   });
 
   it('should logout again', function(){
-    element(by.css('.tc_logout')).click();
+    element(by.css('.tc_logout a')).click();
     expect(browser.getCurrentUrl()).toContain('/#/login');
 
   });
