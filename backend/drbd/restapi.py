@@ -35,10 +35,14 @@ class DrbdConnectionSerializer(serializers.HyperlinkedModelSerializer):
     volume  = relations.HyperlinkedRelatedField(view_name="volume-detail", source="storageobj",
                                                 queryset=StorageObject.objects.all())
     url     = serializers.HyperlinkedIdentityField(view_name="mirror-detail")
+    status  = serializers.SerializerMethodField("get_status")
 
     class Meta:
         model = Connection
-        fields = ("id", "url", "protocol", "syncer_rate", "volume")
+        fields = ("id", "url", "protocol", "syncer_rate", "volume", "status")
+
+    def get_status(self, obj):
+        return obj.get_status()
 
 
 class DrbdConnectionViewSet(viewsets.ModelViewSet):
