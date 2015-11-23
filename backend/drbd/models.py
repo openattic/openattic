@@ -200,7 +200,7 @@ class Connection(BlockVolume):
             return None
 
     def get_status(self):
-        return [{
+        stats = {
             "StandAlone":   "degraded",
             "WFConnection": "degraded",
             "Connected":    "online",
@@ -208,7 +208,8 @@ class Connection(BlockVolume):
             "WFBitMapT":    "rebuilding",
             "SyncSource":   "rebuilding",
             "SyncTarget":   "rebuilding",
-        }[self.status]]
+        }
+        return stats[self.status]
 
     def get_volume_usage(self, stats):
         stats["bd_megs"] = self.storageobj.megs
