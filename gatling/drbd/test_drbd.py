@@ -80,10 +80,19 @@ class DrbdTests(object):
         time.sleep(self.sleeptime)
         self.addCleanup(requests.request, "DELETE", mirror_res["cleanup_url"], headers=mirror_res["headers"])
 
-        # TODO: Wait until the status of the drbd connection is 'Connected'
-        resize_data = {"new_size": 2000}
-        self.send_request("PUT", "mirrors", obj_id=mirror_res["response"]["id"], data=resize_data)
+        # Wait for drbd mirror status online
+        while mirror["status"][0] !=  "online":
+            time.sleep(self.sleeptime)
+            mirror_res = self.send_request("GET", "mirrors", obj_id=mirror["id"])
+            mirror = mirror_res["response"]
 
+            if mirror["status"][0] == "degraded":
+                raise SystemError("Status of DRBD connection %s is degraded." % mirror["volume"]["title"])
+
+        # Resize drbd mirror
+        self.send_request("PUT", "mirrors", obj_id=mirror["id"], data={"new_size": 2000})
+
+        # Check if resize (grow) was successful
         mirror_vol_res = self.send_request("GET", "volumes", obj_id=mirror["volume"]["id"])
         self.assertEqual(mirror_vol_res["response"]["usage"]["size"], 2000)
 
