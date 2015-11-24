@@ -98,6 +98,42 @@ class DrbdTests(object):
         mirror_vol_res = self.send_request("GET", "volumes", obj_id=mirror["volume"]["id"])
         self.assertEqual(mirror_vol_res["response"]["usage"]["size"], self.growsize)
 
+    def test_create_with_filesystem_resize_get_delete(self):
+        """ Create a connection with 1000MB volumes, format it with XFS and resize it to 2000MB. """
+        # Create a volume that should be mirrored
+        vol = self._get_mirror_volume(self._get_pool()["id"])
+
+        # Create the drbd mirror containing a filesystem
+        mirror_data = {"source_volume"  : vol,
+                       "remote_pool"    : self._get_remote_pool(),
+                       "protocol"       : "C",
+                       "syncer_rate"    : "30M",
+                       "filesystem"     : "xfs"}
+        mirror_res = self.send_request("POST", "mirrors", data=mirror_data)
+
+        mirror = mirror_res["response"]
+        time.sleep(self.sleeptime)
+        self.addCleanup(requests.request, "DELETE", mirror_res["cleanup_url"], headers=mirror_res["headers"])
+
+         # Wait for drbd mirror status online
+        while mirror["status"][0] !=  "online":
+            time.sleep(self.sleeptime)
+            mirror_res = self.send_request("GET", "mirrors", obj_id=mirror["id"])
+            mirror = mirror_res["response"]
+
+            if mirror["status"][0] == "degraded":
+                raise SystemError("Status of DRBD connection %s is degraded." % mirror["volume"]["title"])
+
+        # Resize drbd mirror
+        self.send_request("PUT", "mirrors", obj_id=mirror["id"], data={"new_size": self.growsize})
+
+        # Check if resize (grow) was successful
+        time.sleep(self.sleeptime)
+        mirror_vol_res = self.send_request("GET", "volumes", obj_id=mirror["volume"]["id"])
+        self.assertGreater(mirror_vol_res["response"]["usage"]["size"], self.volumesize)
+        self.assertEqual(mirror_vol_res["response"]["is_filesystemvolume"], True)
+        self.assertEqual(mirror_vol_res["response"]["type"]["name"], "xfs")
+
     def test_create_protocol_f(self):
         """ Try to create a Connection with protocol F. """
         # Create a volume that should be mirrored
