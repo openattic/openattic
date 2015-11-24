@@ -3,6 +3,7 @@
 module.exports = function (grunt) {
   // load all tasks defined in node_modules starting with 'grunt-'
   require('load-grunt-tasks')(grunt);
+  grunt.loadNpmTasks('grunt-ng-annotate');
 
   var buildConfig = {
     src: 'app/',
@@ -84,7 +85,7 @@ module.exports = function (grunt) {
       },
 
       // Prepare angular js files for minification (prevent dependency injection from breaking)
-      ngmin: {
+      ngAnnotate: {
         dist: {
           files: [
             {
@@ -157,7 +158,7 @@ module.exports = function (grunt) {
     'copy',
     'concat',
     'cssmin',
-    'ngmin',
+    'ngAnnotate',
     'uglify',
     'rev',
     'usemin'
