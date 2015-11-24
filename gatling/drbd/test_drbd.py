@@ -78,7 +78,7 @@ class DrbdTests(object):
         mirror_res = self.send_request("POST", "mirrors", data=mirror_data)
         mirror = mirror_res["response"]
         time.sleep(self.sleeptime)
-        self.addCleanup(requests.request, "DELETE", mirror_res["cleanup_url"], header=mirror_res["headers"])
+        self.addCleanup(requests.request, "DELETE", mirror_res["cleanup_url"], headers=mirror_res["headers"])
 
         # TODO: Wait until the status of the drbd connection is 'Connected'
         resize_data = {"new_size": 2000}
