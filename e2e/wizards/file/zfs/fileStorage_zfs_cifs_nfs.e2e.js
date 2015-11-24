@@ -13,7 +13,7 @@ describe('Wizard panel', function(){
 
   var pool = element(by.id('source_pool'));
   var size = element(by.id('volumemegs'));
-  var is_protected = element(by.id('isprotected'));
+  var is_protected = element(by.id('volumeisprotected'));
 
   var size_exceeded = element(by.css('.tc_wrongVolumeSize'));
   var noUniqueName = element(by.css('.tc_noUniqueName'));
@@ -60,12 +60,11 @@ describe('Wizard panel', function(){
     //check content of first wizard site
     expect(element.all(by.css('h3')).get(0).getText()).toEqual('File Storage Step 1 - Create Volume');
     expect(volumefield.isDisplayed()).toBe(true);
-    //expect(pool.isDisplayed()).toBe(true);
     expect(size.isDisplayed()).toBe(true);
-    //expect(is_protected.Present()).toBe(true);
+    expect(is_protected.isPresent()).toBe(true);
 
     //enter volume data
-    volumefield.sendKeys('protractor_wizard_zVol02');
+    volumefield.sendKeys(volumename);
 
     //in order to enter a size we need to choose a pool first
     for(var key in configs.pools){
@@ -192,7 +191,6 @@ describe('Wizard panel', function(){
 
     //REMOVE NFS SHARE
     browser.sleep(400);
-    //volume.click();
     element(by.css('.tc_nfsShareTab')).click();
     expect(nfs_share.isDisplayed()).toBe(true);
     nfs_share.click();
