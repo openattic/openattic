@@ -201,6 +201,7 @@ class Connection(BlockVolume):
 
     def get_status(self):
         return [{
+            None:           "unknown",
             "locked":       "locked",
             "StandAlone":   "degraded",
             "WFConnection": "degraded",
