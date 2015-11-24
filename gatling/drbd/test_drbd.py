@@ -5,6 +5,8 @@ from drbd.scenarios import DrbdTestScenario
 
 class DrbdTests(object):
     sleeptime = 8
+    volumesize = 1000
+    growsize = 2000
 
     def test_create_get_delete(self):
         """ Create a Connection and check that its Endpoints are created correctly. """
@@ -90,11 +92,11 @@ class DrbdTests(object):
                 raise SystemError("Status of DRBD connection %s is degraded." % mirror["volume"]["title"])
 
         # Resize drbd mirror
-        self.send_request("PUT", "mirrors", obj_id=mirror["id"], data={"new_size": 2000})
+        self.send_request("PUT", "mirrors", obj_id=mirror["id"], data={"new_size": self.growsize})
 
         # Check if resize (grow) was successful
         mirror_vol_res = self.send_request("GET", "volumes", obj_id=mirror["volume"]["id"])
-        self.assertEqual(mirror_vol_res["response"]["usage"]["size"], 2000)
+        self.assertEqual(mirror_vol_res["response"]["usage"]["size"], self.growsize)
 
     def test_create_protocol_f(self):
         """ Try to create a Connection with protocol F. """
@@ -182,7 +184,7 @@ class DrbdTests(object):
         self.assertEqual(str(err.exception), "400 Client Error: Bad Request")
 
     def _get_mirror_volume(self, source_pool_id):
-        vol_data = {"megs": 1000,
+        vol_data = {"megs": self.volumesize,
                     "name": "gatling_drbd_vol1",
                     "source_pool": {"id": source_pool_id}}
         vol_res = self.send_request("POST", "volumes", data=vol_data)
