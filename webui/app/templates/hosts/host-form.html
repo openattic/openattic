@@ -9,16 +9,19 @@
                 <fieldset>
                     <div class="form-group" ng-class="{'has-error': (submitted || hostForm.name.$dirty)
                     && hostForm.name.$invalid}">
-                        <label class="col-md-2 control-label" for="hostHostname">Hostname</label>
+                        <label class="col-md-2 control-label" for="hostName">Hostname</label>
                         <div class="col-md-10">
                             <input type="text" class="form-control" placeholder="Hostname..."
-                                   ng-model="host.name" name="name"
-                                    id="hostHostname" required validname>
+                                   ng-model="hostName" name="name"
+                                    id="hostName" required validname uniquename="host">
                             <span class="help-block tc_hostnameRequired" ng-show="(submitted || hostForm.name.$dirty)
                             && hostForm.name.$error.required">
                                 The name is required.
                             </span>
                             <span class="help-block tc_hostNameNotValid" ng-show="hostForm.name.$error.validname">{{errortext}}</span>
+                            <span class="help-block tc_noUniqueName" ng-show="hostForm.name.$error.uniquename">
+                                The chosen host name is already in use.
+                            </span>
                         </div>
                     </div>
                 </fieldset>
