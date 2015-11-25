@@ -24,7 +24,7 @@ describe('Volumes add with protection', function(){
     for(var key in helpers.configs.pools){
       // create a protected volume
       var volumename = 'protractor_volume_protected';
-      element(by.id('volume.name')).sendKeys(volumename);
+      element(by.id('volumeName')).sendKeys(volumename);
 
       var pool = helpers.configs.pools[key];
       var volumePoolSelect = element(by.id('data.sourcePool'));

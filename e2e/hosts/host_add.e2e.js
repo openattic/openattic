@@ -12,7 +12,7 @@ describe('Should add a host and attributes', function(){
 
   it('should create a test host', function(){
     element(by.css('.tc_addHost')).click();
-    element(by.model('host.name')).sendKeys(hostname);
+    element(by.model('hostName')).sendKeys(hostname);
     element(by.css('.tc_submitButton')).click();
     browser.sleep(400);
   });
@@ -26,7 +26,7 @@ describe('Should add a host and attributes', function(){
     host.click();
     element(by.css('.tc_editHost')).click();
     browser.sleep(400);
-    var hostName = element(by.model('host.name'));
+    var hostName = element(by.model('hostName'));
     expect(hostName.getAttribute('value')).toEqual('protractor_test_host');
     hostName.clear();
     hostName.sendKeys('renamed_protractor_test_host');

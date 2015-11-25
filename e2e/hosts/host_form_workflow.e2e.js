@@ -19,7 +19,7 @@ describe('Host form workflow', function(){
   });
 
   it('Should have a host name input field', function(){
-    expect(element(by.id('hostHostname')).isDisplayed()).toBe(true);
+    expect(element(by.id('hostName')).isDisplayed()).toBe(true);
   });
 
   it('should have a submit button', function(){
