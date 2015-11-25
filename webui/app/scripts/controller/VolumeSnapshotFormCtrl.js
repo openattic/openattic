@@ -1,5 +1,6 @@
 angular.module('openattic')
-  .controller('VolumeSnapshotFormCtrl', function ($scope, $state, $filter, $stateParams, VolumeService, VolumeSnapshotService, PoolService, SizeParserService, poolCheckingService) {
+  .controller('VolumeSnapshotFormCtrl', function($scope, $state, $filter, $stateParams, VolumeService,
+    VolumeSnapshotService, PoolService, SizeParserService, poolCheckingService){
     'use strict';
 
     if(!$scope.selection){
