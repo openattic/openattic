@@ -20,7 +20,7 @@
                                 </span>
                             </div>
                         </div>
-                        <div class="form-group" ng-class="{'has-error': (submitted || snapForm.megs.$dirty) && snapForm.megs.$invalid}">
+                        <div class="form-group" ng-show="!source.special" ng-class="{'has-error': (submitted || snapForm.megs.$dirty) && snapForm.megs.$invalid}">
                             <label class="col-md-2 control-label" for="megs">Size</label>
                             <div class="col-md-10">
                                 <div class="input-group">

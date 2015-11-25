@@ -1,8 +1,10 @@
 angular.module('openattic')
-  .controller('VolumeSnapshotsCtrl', function ($scope, $state, VolumeService, SnapshotService, $modal) {
+  .controller('VolumeSnapshotsCtrl', function ($scope, $state, VolumeService, SnapshotService, $modal, poolCheckingService) {
     'use strict';
 
     $scope.snapshotsData = {};
+
+    $scope.source = poolCheckingService.get($scope.selection);
 
     $scope.snapshotsFilter = {
       page: 0,
