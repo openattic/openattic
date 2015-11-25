@@ -1,51 +1,13 @@
 angular.module('openattic')
-  .controller('HostAttributesCtrl', function ($scope, $state, $stateParams, PeerHostService, InitiatorService) {
+  .controller('HostAttributesCtrl', function ($scope, $state, $stateParams, InitiatorService) {
     'use strict';
 
     $scope.data = {
-      peerhosts: [],
       iscsiInis: [],
       fcInis:    []
     };
 
     $scope.host = $scope.selection.item;
-
-    $scope.peerHostAdded = function(tag){
-      PeerHostService.save({
-        'base_url': tag.text,
-        'host':     {'id': $scope.host.id}
-      })
-      .$promise
-      .then(function(res){
-        tag.id = res.id;
-      }, function(error){
-        var index = $scope.data.peerhosts.indexOf(tag);
-        if (index > -1) {
-          $scope.data.peerhosts.splice(index, 1);
-        }
-        $.smallBox({
-          title: 'Error adding Peer Host',
-          content: '<i class="fa fa-clock-o"></i> <i>' + error.data.base_url.join(', ') + '.</i>',
-          color: '#C46A69',
-          iconSmall: 'fa fa-times fa-2x fadeInRight animated',
-          timeout: 4000
-        });
-      });
-    };
-
-    $scope.peerHostRemoved = function(tag){
-      PeerHostService.delete({'id': tag.id});
-    };
-
-    PeerHostService.get({host: $stateParams.host})
-      .$promise
-      .then(function(res){
-        for( var i = 0; i < res.results.length; i++ ){
-          $scope.data.peerhosts.push({'text': res.results[i].base_url, 'id': res.results[i].id});
-        }
-      }, function(error){
-        console.log('An error occurred', error);
-      });
 
     var iniAdded = function(tag, type){
       InitiatorService.save({
