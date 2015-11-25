@@ -7,6 +7,7 @@ class DrbdTests(object):
     sleeptime = 8
     volumesize = 1000
     growsize = 2000
+    shrinksize = 500
 
     def test_create_get_delete(self):
         """ Create a Connection and check that its Endpoints are created correctly. """
@@ -133,6 +134,39 @@ class DrbdTests(object):
         self.assertGreater(mirror_vol_res["response"]["usage"]["size"], self.volumesize)
         self.assertEqual(mirror_vol_res["response"]["is_filesystemvolume"], True)
         self.assertEqual(mirror_vol_res["response"]["type"]["name"], "xfs")
+
+    def test_create_shrink_delete(self):
+        """ Create a connection with 1000MB volumes, try to shrink it to 500MB and check if it fails. """
+        # Create a volume that should be mirrored
+        vol = self._get_mirror_volume(self._get_pool()["id"])
+
+        # Create a drbd mirror
+        mirror_data = {"source_volume"  : vol,
+                       "remote_pool"    : self._get_remote_pool(),
+                       "protocol"       : "C",
+                       "syncer_rate"    : "30M"}
+        mirror_res = self.send_request("POST", "mirrors", data=mirror_data)
+        mirror = mirror_res["response"]
+        time.sleep(self.sleeptime)
+        self.addCleanup(requests.request, "DELETE", mirror_res["cleanup_url"], headers=mirror_res["headers"])
+
+        # Wait for drbd mirror status online
+        while mirror["status"][0] !=  "online":
+            time.sleep(self.sleeptime)
+            mirror_res = self.send_request("GET", "mirrors", obj_id=mirror["id"])
+            mirror = mirror_res["response"]
+
+            if mirror["status"][0] == "degraded":
+                raise SystemError("Status of DRBD connection %s is degraded." % mirror["volume"]["title"])
+
+        # Try to shrink drbd mirror
+        with self.assertRaises(requests.HTTPError):
+            res = self.send_request("PUT", "mirrors", obj_id=mirror["id"], data={"new_size": self.shrinksize})
+
+            # check status code and error message
+            self.assertEqual(400, res.status_code)
+            self.assertEqual(res.message, "The size of a DRBD connection can only be increased but the new size is "
+                                          "smaller than the current size.")
 
     def test_create_protocol_f(self):
         """ Try to create a Connection with protocol F. """
