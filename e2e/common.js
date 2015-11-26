@@ -154,7 +154,7 @@
     create_host: function(){
       element.all(by.css('ul .tc_menuitem > a')).get(4).click();
       element(by.css('.tc_addHost')).click();
-      element(by.model('hostName')).sendKeys(hostname);
+      element(by.model('host.name')).sendKeys(hostname);
       element(by.css('.tc_submitButton')).click();
       browser.sleep(400);
     },

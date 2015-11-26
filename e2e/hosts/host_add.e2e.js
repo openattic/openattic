@@ -12,7 +12,7 @@ describe('Should add a host and attributes', function(){
 
   it('should create a test host', function(){
     element(by.css('.tc_addHost')).click();
-    element(by.model('hostName')).sendKeys(hostname);
+    element(by.model('host.name')).sendKeys(hostname);
     element(by.css('.tc_submitButton')).click();
     browser.sleep(400);
   });
