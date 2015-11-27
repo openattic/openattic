@@ -32,7 +32,8 @@ exports.config = {
 	 //note: please disable zvol suites if you do not have at least one zfs pool configured!
    //zvol_add	       : '../e2e/volumes/zvol/zvol.e2e.js',
    //zvol_snap	       : '../e2e/volumes/zvol/zvol_snap.e2e.js',
-   //zvol_share         : '../e2e/volumes/zvol/zvol_share.e2e.js'
+   //zvol_share         : '../e2e/volumes/zvol/zvol_share.e2e.js',
+   //fs_wiz_zfs         : '../e2e/wizards/file/zfs/*.e2e.js'
   },
 
   onPrepare: function(){

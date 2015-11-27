@@ -15,10 +15,10 @@
                         </accordion-heading>
                         <div class="form-group" ng-class="{'has-error': (submitted || volumeForm.name.$dirty)
                             && volumeForm.name.$invalid}">
-                            <label class="col-md-2 control-label" for="volume.name">Name</label>
+                            <label class="col-md-2 control-label" for="volumeName">Name</label>
                             <div class="col-md-10">
-                                <input type="text" class="form-control" id="volume.name" placeholder="Name..."
-                                       ng-model="volume.name" name="name" validname uniquename required>
+                                <input type="text" class="form-control" id="volumeName" placeholder="Name..."
+                                       ng-model="volume.name" name="name" validname uniquename="volume" required>
                                 <span class="help-block tc_nameRequired" ng-show="(submitted || volumeForm.name.$dirty)
                                     && volumeForm.name.$error.required">This field is required!</span>
                                 <span class="help-block" ng-show="volumeForm.name.$error.validname">{{errortext}}</span>

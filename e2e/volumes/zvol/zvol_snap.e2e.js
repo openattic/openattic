@@ -36,7 +36,7 @@ describe('Zvol tests', function(){
   it('should create a zvol', function(){
     element(by.css('oadatatable .tc_add_btn')).click();
     for(var key in helpers.configs.pools){
-      element(by.id('volume.name')).sendKeys(volumename);
+      element(by.id('volumeName')).sendKeys(volumename);
       volumePoolSelect.click();
       element.all(by.cssContainingText('option', 'zpool')).get(0).click();
       element(by.id('zfs')).click();

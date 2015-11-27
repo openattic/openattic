@@ -1,6 +1,6 @@
 #!/bin/bash
 
-# Copyright (C) 2013, it-novum GmbH <community@open-attic.org>
+# Copyright (C) 2011-2015, it-novum GmbH <community@openattic.org>
 #
 # openATTIC is free software; you can redistribute it and/or modify it
 # under the terms of the GNU General Public License as published by
@@ -28,17 +28,15 @@ case "$COMMAND" in
 		echo "DESCRIPTION=Initializes a Volume to be used with oVirt."
 		echo "REQUIRES_FS=true"
 		;;
-	
+
 	initialize)
 		VOLUME="$2"
 		echo "Setting ownership of $VOLUME and all its subdirectories to 36:36."
 		chown -R 36:36 "$VOLUME"
 		;;
-	
+
 	*)
 		echo "Unknown command $COMMAND." >& 2
 		exit 2
 		;;
 esac
-
-

@@ -37,7 +37,7 @@
       volumesItem.click();
       element(by.css('oadatatable .tc_add_btn')).click();
       for(var key in configs.pools){
-        element(by.id('volume.name')).sendKeys(volumename);
+        element(by.id('volumeName')).sendKeys(volumename);
         pool = configs.pools[key];
         var exact_poolname = pool.name;
         volumePoolSelect.sendKeys(pool.name).then(function findMatch(pname){
