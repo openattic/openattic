@@ -30,7 +30,7 @@ from django.utils.translation   import ugettext_noop as _
 from systemd                    import dbus_to_python, get_dbus_object
 from systemd.helpers            import Transaction
 
-from volumes.models             import StorageObject, BlockVolume, VolumePool
+from volumes.models             import StorageObject, BlockVolume, VolumePool, _to_number_with_unit
 from ifconfig.models            import Host, IPAddress, getHostDependentManagerClass
 
 DRBD_PROTOCOL_CHOICES = (
@@ -245,8 +245,10 @@ class Connection(BlockVolume):
         if self.status != "Connected":
             raise SystemError("Can only resize DRBD volumes in 'Connected' state, current state is '%s'" % self.status)
         if self.storageobj.megs >= new_size:
-            raise SystemError("The size of a DRBD connection can only be increased but the new size is smaller than"
-                              " the current size.")
+            output_new_size = _to_number_with_unit(new_size)
+            output_megs = _to_number_with_unit(self.storageobj.megs)
+            raise SystemError("The size of a DRBD connection can only be increased but the new size (%s) is smaller than"
+                              " the current size (%s)." % (output_new_size, output_megs))
 
         local_endpoint = Endpoint.objects.get(connection=self)
         local_endpoint.volume.storageobj.resize(new_size)

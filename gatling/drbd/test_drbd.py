@@ -160,13 +160,15 @@ class DrbdTests(object):
                 raise SystemError("Status of DRBD connection %s is degraded." % mirror["volume"]["title"])
 
         # Try to shrink drbd mirror
-        with self.assertRaises(requests.HTTPError):
-            res = self.send_request("PUT", "mirrors", obj_id=mirror["id"], data={"new_size": self.shrinksize})
+        with self.assertRaises(requests.exceptions.HTTPError) as err:
+            self.send_request("PUT", "mirrors", obj_id=mirror["id"], data={"new_size": self.shrinksize})
 
-            # check status code and error message
-            self.assertEqual(400, res.status_code)
-            self.assertEqual(res.message, "The size of a DRBD connection can only be increased but the new size is "
-                                          "smaller than the current size.")
+        # check status code and error message
+        expected_err_message = "The size of a DRBD connection can only be increased but the new size (500.00MB) is " \
+                               "smaller than the current size (1,000.00MB)."
+        self.assertEqual(str(err.exception), "400 Client Error: Bad Request")
+        self.assertEqual(err.exception.response.status_code, 400)
+        self.assertEqual(str(err.exception.response.json()), expected_err_message)
 
     def test_create_protocol_f(self):
         """ Try to create a Connection with protocol F. """
