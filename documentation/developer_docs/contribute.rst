@@ -120,7 +120,7 @@ Shows the workflow between the main repository and your fork.
 
 .. image:: workflow_collaboration.png
 
-Displays the collaborate workflow between two forks.
+Illustrates the collaborate workflow between two forks.
 
 .. image:: workflow_branches.png
 
