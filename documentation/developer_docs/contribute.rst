@@ -61,7 +61,7 @@ To list your branches type::
 
     # hg branches
 
-To show the current branch you are working with type::
+To see the current branch you are working with type::
 
     # hg branch
 
@@ -87,9 +87,9 @@ if you have some, you have go back into your branch and update it::
 After you have resolved the merge conflicts you have to push them on your fork and make the pull-request.
 
 After the pull-request was reviewed and accepted your branch will be merged into the main repository.
-Than your branch will be deleted by the maintainer.
-You should not delete your then branch yourself, because after you pull again from the main repository,
-you also get the changeset that deletes your branch.
+Then your branch will be deleted by the maintainer.
+Please do not delete your branch, because after pulling from the main repository,
+you'll also get a changeset which deletes your branch.
 
 To push the deletion to your fork again you have to the following::
 
@@ -103,8 +103,8 @@ To pull a branch from another developer type the following::
 
     # hg pull <alias or fork URL> <branch name>
 
-If you plan to collaborate to the branch you have to push your changes to your branch.
-The other developer pulls than the changes from you with the same command you pulled his.
+If you plan to contribute something to the branch you have to push your changes to your fork.
+The other developer can pull the changes the other way round, see hg command above.
 
 To create and use an alias you have to edit your ``.hg/hgrc`` and add a new alias beneath ``[paths]``::
 
@@ -138,7 +138,7 @@ Fetch new revisions from |oA|::
 
     # hg pull -u
 
-Merge your branch to the newest revision::
+Merge your branch to the latest revision::
 
     # hg pull -u
     # hg merge development
