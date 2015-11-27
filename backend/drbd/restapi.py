@@ -191,7 +191,7 @@ class DrbdConnectionProxyViewSet(DrbdConnectionViewSet, RequestHandlers):
                     try:
                         self._remote_request(request, connection.peerhost, obj=connection)
                     except HTTPError, e:
-                        return Response(e.response.text, status=e.response.status_code)
+                        return Response(e.response.json(), status=e.response.status_code)
 
                 # Step 2: Resize local endpoint and connection
                 return super(DrbdConnectionProxyViewSet, self).update(request, args, kwargs)
@@ -200,7 +200,7 @@ class DrbdConnectionProxyViewSet(DrbdConnectionViewSet, RequestHandlers):
                 try:
                     res = super(DrbdConnectionProxyViewSet, self).update(request, args, kwargs)
                 except HTTPError, e:
-                    return Response(e.response.text, status=e.response.status_code)
+                    return Response(e.response.json(), status=e.response.status_code)
 
                 # Step 2: Call primary host to grow his endpoint and connection, if this was called by a client and not
                 # by the primary host.
@@ -208,7 +208,7 @@ class DrbdConnectionProxyViewSet(DrbdConnectionViewSet, RequestHandlers):
                     try:
                         res = self._remote_request(request, host, obj=connection)
                     except HTTPError, e:
-                        return Response(e.response.text, status=e.response.status_code)
+                        return Response(e.response.json(), status=e.response.status_code)
                 return res
         return super(DrbdConnectionProxyViewSet, self).update(request, args, kwargs)
 
