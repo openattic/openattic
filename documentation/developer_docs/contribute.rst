@@ -48,8 +48,8 @@ connections through the proxy to bitbucket.org.
 Working with branches
 ---------------------
 
-To create a new feature branch update to the development branch, update it and
-create a new branch in which you commit your feature changes::
+To create a new feature branch update your repository, change to the development branch and
+create your new branch on top of it, in which you commit your feature changes::
 
     # hg pull
     # hg update development
