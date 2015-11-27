@@ -30,9 +30,8 @@ from django.utils.translation   import ugettext_noop as _
 from systemd                    import dbus_to_python, get_dbus_object
 from systemd.helpers            import Transaction
 
-from volumes.models             import StorageObject, BlockVolume, VolumePool
+from volumes.models             import StorageObject, BlockVolume, VolumePool, _to_number_with_unit
 from ifconfig.models            import Host, IPAddress, getHostDependentManagerClass
-from peering.models             import PeerHost
 
 DRBD_PROTOCOL_CHOICES = (
     ('A', 'Protocol A: write IO is reported as completed, if it has reached local disk and local TCP send buffer.'),
@@ -174,12 +173,12 @@ class Connection(BlockVolume):
         try:
             info = dbus_to_python(self.drbd.get_role(self.name, False))
         except dbus.DBusException:
-            return None
+            raise SystemError("Can not determine the primary host. Is the DRBD connection possibly unconfigured?")
 
         info_count = Counter(info.values())
 
         if info_count["Primary"] == 2 or \
-            (info_count["Primary"] == 1 and \
+            (info_count["Primary"] == 1 and
                 [host for host, status in info.items() if status == "Primary"][0] == "self"):
             return Host.objects.get_current()
         elif info_count["Primary"] == 0:
@@ -202,6 +201,8 @@ class Connection(BlockVolume):
 
     def get_status(self):
         return [{
+            None:           "unknown",
+            "locked":       "locked",
             "StandAlone":   "degraded",
             "WFConnection": "degraded",
             "Connected":    "online",
@@ -230,28 +231,27 @@ class Connection(BlockVolume):
     def post_install(self):
         pass
 
-    def grow(self, oldmegs, newmegs):
-        if self.status != "Connected":
-            raise SystemError("Can only resize DRBD volumes in Connected state, current state is '%s'" % self.status)
-
-        # Trigger backing device resize
-        for endpoint in Endpoint.all_objects.filter(connection=self):
-            if endpoint.host == Host.objects.get_current():
-                endpoint.volume.storageobj._resize(newmegs)
-            else:
-                peer_host = PeerHost.objects.get(host_id=endpoint.host.id)
-                peer_host.volumes.StorageObject.resize(endpoint.volume.storageobj.id, newmegs)
-                peer_host.volumes.StorageObject.wait(endpoint.volume.storageobj.id, 600)
-
-        # now drbdadm resize the connection
-        self.drbd.resize(self.name, False)
-
     def get_storage_devices(self):
         return Endpoint.all_objects.filter(connection=self)
 
     def uninstall_local_storage_device(self):
         local_endpoint = Endpoint.objects.get(connection=self)
         local_endpoint.uninstall()
+
+    def grow(self, old_size, new_size):
+        self.drbd.resize(self.name, False)
+
+    def resize_local_storage_device(self, new_size):
+        if self.status != "Connected":
+            raise SystemError("Can only resize DRBD volumes in 'Connected' state, current state is '%s'" % self.status)
+        if self.storageobj.megs >= new_size:
+            output_new_size = _to_number_with_unit(new_size)
+            output_megs = _to_number_with_unit(self.storageobj.megs)
+            raise SystemError("The size of a DRBD connection can only be increased but the new size (%s) is smaller than"
+                              " the current size (%s)." % (output_new_size, output_megs))
+
+        local_endpoint = Endpoint.objects.get(connection=self)
+        local_endpoint.volume.storageobj.resize(new_size)
 
 
 class Endpoint(models.Model):
