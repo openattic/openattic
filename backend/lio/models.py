@@ -2,7 +2,7 @@
 # kate: space-indent on; indent-width 4; replace-tabs on;
 
 """
- *  Copyright (C) 2011-2013, it-novum GmbH <community@open-attic.org>
+ *  Copyright (C) 2011-2015, it-novum GmbH <community@openattic.org>
  *
  *  openATTIC is free software; you can redistribute it and/or modify it
  *  under the terms of the GNU General Public License as published by
@@ -136,7 +136,7 @@ class ProtocolHandler(object):
     def uninstall_hostacl(self, hostacl):
         # if we're uninstalling the hostacl, it has been installed already, so
         # install_hostacl won't actually create any new objects but only
-        # return a list of existing contexts. said list of contexts can then
+        # return a list of existing contexts. This list of contexts can then
         # be used to delete stuff.
         contexts = ProtocolHandler.install_hostacl(hostacl)
         # 0. Find eligible modules according to configured contexts
@@ -391,9 +391,10 @@ class HostACL(models.Model):
 
 def __hostacl_pre_delete(instance, **kwargs):
     pre_uninstall.send(sender=HostACL, instance=instance)
-    get_dbus_object("/lio").modprobe()
-    get_dbus_object("/lio").uninstall_hostacl(instance.id)
-    get_dbus_object("/lio").saveconfig()
+    with Transaction(background=False):
+        get_dbus_object("/lio").modprobe()
+        get_dbus_object("/lio").uninstall_hostacl(instance.id)
+        get_dbus_object("/lio").saveconfig()
     post_uninstall.send(sender=HostACL, instance=instance)
 
 models.signals.pre_delete.connect(__hostacl_pre_delete, sender=HostACL)
