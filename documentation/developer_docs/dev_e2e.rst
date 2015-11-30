@@ -57,8 +57,8 @@ what you have to do in ``protractor.conf.js``:
 Enable BeforeAll / AfterAll
 ---------------------------
 
-In order to use 'beforeAll' and 'afterAll' you need to tell protractor to use
-'jasmine2' as framework (protractor uses an older version by default, which
+In order to use ``beforeAll`` and ``afterAll`` you need to tell protractor to use
+``jasmine2`` as framework (protractor uses an older version by default, which
 does not support beforeAll/afterAll).
 
 Add the following line to your protractor.conf::
@@ -85,7 +85,7 @@ Maximize Browser Window
 -----------------------
 
 If the browser windows in which the tests will be executed is too small, it
-occours that protractor can't click an element and tests will fail. To prevent
+occurs that protractor can't click an element and tests will fail. To prevent
 this, you can maximize your browser window by default by adding the following
 line to ``webui/protractor.conf.js``::
 
@@ -110,9 +110,20 @@ line to ``webui/protractor.conf.js``::
   ``},``
   }
 
+Use multiple browsers
+---------------------
+
+To use Chromium and Firefox to run each test, you have to append the following to your ``protractor.conf.js``::
+
+    exports.config.multiCapabilities = [
+        {'browserName': 'chrome'},
+        {'browserName': 'firefox'}
+    ];
+    exports.config.maxSessions = 1; // To prevent running both browsers on the same time.
+
 Set up configs.js
 -----------------
-Create a ``configs.js`` file in folder ``e2e`` and add the url to you |oA| system as well as login data - see below::
+Create a ``configs.js`` file in folder ``e2e`` and add the URL to you |oA| system as well as login data - see below::
 
   (function() {
     module.exports = {
@@ -198,7 +209,6 @@ In directory ``/srv/openattic/e2e/`` the following directories can be found::
   +-- disks
   +-- general
   +-- hosts
-  |   `-- peer
   +-- pools
   +-- shares
   |   +-- cifs
@@ -221,7 +231,7 @@ In directory ``/srv/openattic/e2e/`` the following directories can be found::
 
 Most of the directories contain a ``.._workflow.e2e.js`` in which we only test
 things like validation, the number of input fields, the title of the form etc.
-Actions like ``add``, ``clone`` etc. are always in a spearate file. This
+Actions like ``add``, ``clone`` etc. are always in a separate file. This
 makes it better to get an overview and prevents the files from getting very
 huge and confusing.
 
@@ -234,7 +244,7 @@ structured your tests) you may need to adapt the path.
 
 By including it as ``var helpers`` you can now make use of helper functions
 from ``common.js``, i.e. the ``create_volume`` function, you just have to add
-``helpers.`` to the function: ``helpers.create_volume("volume_type_here")``.
+``helpers.`` to the function: ``helpers.create_volume( name , type [, size ] )``.
 
 The following helper functions are implemented:
 
@@ -248,7 +258,8 @@ The following helper functions are implemented:
 * ``delete_host``
 
 So if you want to write a test and you need a volume to test an action which
-is based on a volume (i.e. creating a share) you can use the following lines::
+is based on a volume (i.e. creating a share), you can use the following lines
+to create a new volume::
 
   beforeAll(function(){
     helpers.login();
@@ -257,6 +268,8 @@ is based on a volume (i.e. creating a share) you can use the following lines::
     helpers.create_volume("volumename_here","xfs");
 
   });
+
+You can also specify the size as a string as third argument, otherwise the volume will always be initiated with 100MB by default.
 
 Depending on which volume type you need, you can set the parameter to:
 
@@ -276,19 +289,19 @@ Every helper function which is based on a volume needs to get the volume object 
   * ``helpers.delete_snapshot(volume);``
 
 When using more than one helper function in one file, please make sure that
-you use the right order of createing and deleting functions in ``beforeAll``
+you use the right order of creating and deleting functions in ``beforeAll``
 and ``afterAll``.
 
 Example:
 
-if you put ``helpers.delete_volume();`` before ``helpers.delete_snapshot();``
+If you put ``helpers.delete_volume();`` before ``helpers.delete_snapshot();``
 the snapshot will be deleted with the volume and the second one
 (``delete_snapshot();``) will search for an element which does not longer
 exist. A second option is to only use ``helpes.delete_volume();`` so
 everything which relates to this volumes (like snapshots, shares) will be
 deleted with the deletion of the volume automatically.
 
-If you need to navigate to a specific menu entry (everytime!) where your tests
+If you need to navigate to a specific menu entry (every time!) where your tests
 should take place, you can make use of::
 
   beforeEach(function(){
@@ -297,3 +310,27 @@ should take place, you can make use of::
     element.all(by.css('ul .tc_menuitem')).get(3);
 
   });
+
+Tips to write tests that also support Firefox
+---------------------------------------------
+
+Let protractor only click on clickable elements, like ``a``, ``button`` or ``input``.
+
+If you want to select an option element use the following command to make sure that
+the item is selected (`issue #480 <https://github.com/angular/protractor/issues/480#issuecomment-122429984>`_)::
+
+	browser.actions().sendKeys( protractor.Key.ENTER ).perform();
+
+
+Debugging your tests
+--------------------
+
+To set a breakpoint use ``browser.pause()`` in your code.
+
+After your test pauses, go to the terminal window where you started the test.
+
+You can type ``c`` and hit enter to continue to the next command
+or you can type ``rep`` to enter the interactive mode, here you can type
+commands that will be executed in the test browser.
+
+To continue the test execution press ``ctrl + c``.
