@@ -1,5 +1,5 @@
 <!-- kate: space-indent on; indent-width 4; replace-tabs on; -->
-<oadatatable data="snapshotsData" class="oadatatable tc_oadatatable_snapshots" filter-config="snapshotsFilter" selection="snapshotsSelection">
+<oadatatable data="snapshotsData" class="oadatatable tc_oadatatable_snapshots" filter-config="snapshotsFilter" selection="snapshotsSelection" special="source.special">
     <actions>
         <a class="btn btn-lg btn-primary tc_snapshotAdd" type="button" ng-click="addAction()" ng-hide="snapshotsSelection.item"><i class="fa fa-fw fa-plus"></i> Add</a>
         <a class="btn btn-lg btn-primary tc_deleteSnapItem" type="button" ng-click="deleteAction()" ng-show="snapshotsSelection.item"><i class="fa fa-fw fa-trash-o"></i> Delete</a>
@@ -13,8 +13,8 @@
             <tr>
                 <th class="oadatatablecheckbox" ng-if="snapshotsSelection.available"><input type="checkbox" ng-model="snapshotsSelection.checkAll"/></th>
                 <th sortfield="name"     sortdir="asc" sortheaderclass sortdefault ng-show="columns['Name']">Name</th>
-                <th sortfield="megs"     sortdir="asc" sortheaderclass ng-show="columns['Size']">Size</th>
-                <th ng-show="columns['Used']">Used</th>
+                <th sortfield="megs"     sortdir="asc" sortheaderclass ng-show="!special && columns['Size']">Size</th>
+                <th ng-show="!special && columns['Used']">Used</th>
                 <th ng-show="columns['Type']">Type</th>
                 <th ng-show="columns['Status']">Status</th>
                 <th ng-show="columns['Path']">Path</th>
@@ -25,7 +25,7 @@
             <tr ng-repeat="row in data.results" ng-class="{ info: isRowSelected(row) }" ng-click="toggleSelection(row, $event)">
                 <td ng-if="snapshotsSelection.available"><input type="checkbox" checklist-model="snapshotsSelection.items" checklist-value="row"/></td>
                 <td ng-show="columns['Name']" ng-bind="row.name"></td>
-                <td ng-show="columns['Size']" ng-bind="row.usage.size_text"></td>
+                <td ng-show="!special && columns['Size']" ng-bind="row.usage.size_text"></td>
                 <td ng-show="columns['Used']">
                     <div class="progress oaprogress" ng-show="row.usage.used !== undefined"
                         data-toggle="tooltip" data-placement="right"

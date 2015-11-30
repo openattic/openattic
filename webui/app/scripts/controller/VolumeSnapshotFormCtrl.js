@@ -1,20 +1,27 @@
 angular.module('openattic')
-  .controller('VolumeSnapshotFormCtrl', function ($scope, $state, $filter, $stateParams, VolumeService, VolumeSnapshotService, PoolService, SizeParserService) {
+  .controller('VolumeSnapshotFormCtrl', function($scope, $state, $filter, $stateParams, VolumeService,
+    VolumeSnapshotService, PoolService, SizeParserService, poolCheckingService){
     'use strict';
 
+    if(!$scope.selection){
+      goToListView();
+      return;
+    }
+    var item = $scope.selection.item;
+
+    $scope.source = poolCheckingService.get($scope.selection);
+
     $scope.snap = {
-      'volumeId': $scope.selection.item.id,
+      'volumeId': item.id,
       'name': $filter('date')(new Date(), 'yyyy-MM-dd-HH-mm-ss'),
       'megs':  ''
     };
 
-    $scope.megs = $scope.selection.item.usage.size_text;
+    $scope.megs = item.usage.size_text;
 
     $scope.$watch('megs', function(megs){
       $scope.snap.megs = SizeParserService.parseInt(megs);
     });
-
-    $scope.pool = new PoolService.get($scope.selection.item.source_pool);
 
     $scope.submitAction = function(snapForm) {
       $scope.submitted = true;
