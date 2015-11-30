@@ -314,9 +314,9 @@ should take place, you can make use of::
 Tips to write multi browser supported tests
 -------------------------------------------
 
-Let protractor only click on click able elements, like ``a``, ``button`` or ``input``.
+Let protractor only click on clickable elements, like ``a``, ``button`` or ``input``.
 
-After selecting something in a list use the following command to make sure that the item is selected::
+After selecting an item in a list use the following command to make sure that the item is selected::
 
 	browser.actions().sendKeys( protractor.Key.ENTER ).perform();
 
