@@ -244,7 +244,7 @@ structured your tests) you may need to adapt the path.
 
 By including it as ``var helpers`` you can now make use of helper functions
 from ``common.js``, i.e. the ``create_volume`` function, you just have to add
-``helpers.`` to the function: ``helpers.create_volume("volume_type_here")``.
+``helpers.`` to the function: ``helpers.create_volume( name , type [, size ] )``
 
 The following helper functions are implemented:
 
@@ -258,8 +258,8 @@ The following helper functions are implemented:
 * ``delete_host``
 
 So if you want to write a test and you need a volume to test an action which
-is based on a volume (i.e. creating a share) you can use the following lines
-to create a new 100MB XFS-Volume::
+is based on a volume (i.e. creating a share), you can use the following lines
+to create a new volume::
 
   beforeAll(function(){
     helpers.login();
@@ -269,7 +269,7 @@ to create a new 100MB XFS-Volume::
 
   });
 
-You can also specify the size as a string as the third argument.
+You can also specify the size as a string as third argument, otherwise the volume will always be initiated with 100MB by default.
 
 Depending on which volume type you need, you can set the parameter to:
 
@@ -294,7 +294,7 @@ and ``afterAll``.
 
 Example:
 
-if you put ``helpers.delete_volume();`` before ``helpers.delete_snapshot();``
+If you put ``helpers.delete_volume();`` before ``helpers.delete_snapshot();``
 the snapshot will be deleted with the volume and the second one
 (``delete_snapshot();``) will search for an element which does not longer
 exist. A second option is to only use ``helpes.delete_volume();`` so
@@ -311,12 +311,13 @@ should take place, you can make use of::
 
   });
 
-Tips to write multi browser supported tests
--------------------------------------------
+Tips to write tests that also support Firefox
+---------------------------------------------
 
 Let protractor only click on clickable elements, like ``a``, ``button`` or ``input``.
 
-After selecting an item in a list use the following command to make sure that the item is selected::
+If you want to select an option element use the following command to make sure that
+the item is selected (`issue #480 <https://github.com/angular/protractor/issues/480#issuecomment-122429984>`_)::
 
 	browser.actions().sendKeys( protractor.Key.ENTER ).perform();
 
