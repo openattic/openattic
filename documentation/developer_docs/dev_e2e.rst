@@ -244,7 +244,7 @@ structured your tests) you may need to adapt the path.
 
 By including it as ``var helpers`` you can now make use of helper functions
 from ``common.js``, i.e. the ``create_volume`` function, you just have to add
-``helpers.`` to the function: ``helpers.create_volume( name , type [, size ] )``
+``helpers.`` to the function: ``helpers.create_volume( name , type [, size ] )``.
 
 The following helper functions are implemented:
 
