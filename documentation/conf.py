@@ -18,8 +18,8 @@ from datetime import datetime
 config = SafeConfigParser()
 config.read('../version.txt')
 datestring = datetime.utcnow().strftime('%Y%m%d%H%M')
-v = config.get('package', 'VERSION')
-read_out_version = v + r'\textasciitilde' + datestring
+config_version = config.get('package', 'VERSION')
+read_out_version = config_version + r'\textasciitilde' + datestring
 
 # If extensions (or modules to document with autodoc) are in another directory,
 # add these directories to sys.path here. If the directory is relative to the
@@ -56,7 +56,7 @@ copyright = u'2014-2015, it-novum GmbH'
 # built documents.
 #
 # The short X.Y version.
-version = '2.0'
+version = '.'.join(config_version.split('.')[:2])
 # The full version, including alpha/beta/rc tags.
 release = read_out_version
 
