@@ -9,7 +9,8 @@ angular.module('openattic.datatable')
       scope: {
         selection: '=',
         data: '=',
-        filterConfig: '='
+        filterConfig: '=',
+        special: '='
       },
       link: function (scope, element, attr, controller, transclude) {
         transclude(scope, function (clone, scope) {

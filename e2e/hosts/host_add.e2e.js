@@ -21,6 +21,15 @@ describe('Should add a host and attributes', function(){
     expect(host.isDisplayed()).toBe(true);
   });
 
+  it('should not allow adding the same host twice', function(){
+    element(by.css('.tc_addHost')).click();
+    browser.sleep(400);
+    element(by.model('host.name')).sendKeys("protractor_test_host");
+    expect(element(by.css('.tc_noUniqueName')).isDisplayed()).toBe(true);
+    expect(element(by.css('.tc_noUniqueName')).getText()).toEqual('The chosen host name is already in use.');
+    element(by.css('.tc_backButton')).click();
+  });
+
   it('should edit the created host', function(){
     expect(host.isDisplayed()).toBe(true);
     host.click();

@@ -13,8 +13,8 @@ Working on your fork
 --------------------
 
 A fork is a remote clone of a repository and every |oA| developer has an |oA|
-fork, to get one you first have to join Bitbucket. After that go to
-https://bitbucket.org/openattic/openattic and click on "Fork" on the left side
+fork, to get one you first have to join `Bitbucket <https://bitbucket.org>`_. After that go to
+`our main repository <https://bitbucket.org/openattic/openattic>`_ and click "Fork" on the left side
 under "ACTIONS".
 
 After that you have your own |oA| fork :)
@@ -28,141 +28,142 @@ should contain the following three lines::
     default = https://hg@bitbucket.org/openattic/openattic
     default-push = https://hg@bitbucket.org/<Your user name>/openattic
 
-With this configuration you always pull from the main |oA| repository and always
+With this configuration you will always pull from the main |oA| repository and always
 push to your |oA| fork.
 
-If you want to push via SSH, you can. You only have to replace your default-push with::
+If you want to push via SSH, you will only have to replace your ``default-push``::
 
     default-push = ssh://hg@bitbucket.org/<Your user name>/openattic
 
-If you want to use SSH behind a proxy install `corkscrew <http://agroman.net/corkscrew/>`_. Now append the
-following two lines to your `$HOME/.ssh/config`::
+If you want to use SSH behind a proxy you may use `corkscrew <http://agroman.net/corkscrew/>`_.
+After the installation append the following two lines to your `$HOME/.ssh/config`::
 
     Host bitbucket.org
         ProxyCommand corkscrew <proxy name or ip> <port number> %h %p
 
-Now you can use SSH behind your proxy, because corkscrew now tunnels your TCP
-connections to bitbucket.org through the proxy.
+Now you can use SSH behind the proxy, because corkscrew now tunnels your SSH
+connections through the proxy to bitbucket.org.
 
 
-Working with bookmarks
-----------------------
+Working with branches
+---------------------
 
-First create a bookmark called "master" in your "development" branch,
-you only have to do this once::
+To create a new feature branch update your repository, change to the development branch and
+create your new branch on top of it, in which you commit your feature changes::
 
+    # hg pull
     # hg update development
-    # hg pull
-    # hg update
-    # hg bookmark master
-
-Now you can update your development branch and your master bookmark like this::
-
-    # hg update master
-    # hg pull
-    < If anything was pulled, update your "master" bookmark. >
-    # hg update
-
-To create a new feature bookmark go into your "master" bookmark and create a
-new bookmark in which you commit your feature changes::
-
-    # hg update master
-    # hg bookmark feature
+    # hg branch feature
     < Your code changes. >
     # hg commit
 
-To list your bookmarks and show the current bookmark you are working in type::
+To list your branches type::
 
-    # hg bookmark
+    # hg branches
 
-For example the output could be::
+To see the current branch you are working with type::
 
-    >   feature                   1838:28ba1c97ef35
-    > * bugfix                    1841:a1b2c3d4e5f6
-    >   master                    1837:1a23b45c67ef
-
-In this case you are working on the bookmark "bugfix". Your "master" bookmark
-is behind your "feature" and your "bugfix" bookmark. This means you have two
-heads in your development branch. The "feature" head and the "bugfix" head.
+    # hg branch
 
 After you are done with your changes, you want to push them to your fork::
 
-    # hg push -B <bookmark name>
+    # hg push
 
-If you can't push them because a new remote head would be created use::
+If you can't push them because a new remote branch would be created use::
 
-    # hg push -B <bookmark name> -f
+    # hg push --new-branch
 
-Now that your fork has your local changes, too, you can create a
-pull-request with the changes you have made. If your pull-request was merged
-into the main repository, you have to manually merge the accepted bookmark in
-your "master" bookmark. After that you can delete your local bookmark for a
-better overview::
+Now that your fork contains your local changes, too, you can create a
+pull-request on `Bitbucket <https://bitbucket.org>`_ with the changes you have made.
 
-    # hg update master
-    # hg merge <accepted bookmark>
-    # hg bookmark -d <accepted bookmark>
+To do this, go to your fork on `Bitbucket <https://bitbucket.org>`_ and click ``Create pull request`` in the left panel.
+On the next page, choose as source the branch with your changes and as target the |oA| development branch.
+Beneath the formula your first check out the ``Diff`` part if there are any merge conflicts,
+if you have some, you have go back into your branch and update it::
 
-A few information why the merge is needed:
-After the pull request was merged into the main repository, your first
-committed changeset often has a new parent, but a hg pull looks only for new
-changesets not if they have a new parent. If you run hg pull it will have no
-new changesets for you. Thats why you have to manually merge your bookmark into
-your master. This will close the head if one exists. If there is no new
-head you can also just update your master.
+    # hg pull
+    # hg merge development
 
+After you have resolved the merge conflicts you have to push them on your fork and make the pull-request.
 
-The following images illustrate the concept.
+After the pull-request was reviewed and accepted your branch will be merged into the main repository.
+Then your branch will be deleted by the maintainer.
+Please do not delete your branch, because after pulling from the main repository,
+you'll also get a changeset which deletes your branch.
+
+To push the deletion to your fork again you have to the following::
+
+    #hg pull -u
+    #hg push
+
+Collaborate with others or test their code
+------------------------------------------
+
+To pull a branch from another developer type the following::
+
+    # hg pull <alias or fork URL> <branch name>
+
+If you plan to contribute something to the branch you have to push your changes to your fork.
+The other developer can pull the changes the other way round, see hg command above.
+
+To create and use an alias you have to edit your ``.hg/hgrc`` and add a new alias beneath ``[paths]``::
+
+    <alias name> = <fork clone URL>
+
+---------------
+
+The following images illustrate this concept.
 
 .. image:: workflow_bitbucket.png
 
-Shows the different repositories and how they work together.
+Shows the workflow between the main repository and your fork.
 
-.. image:: workflow_bookmarks.png
+.. image:: workflow_collaboration.png
 
-Describes the workflow with bookmarks.
+Illustrates the collaborate workflow between two forks.
+
+.. image:: workflow_branches.png
+
+Describes the workflow with branches.
 
 -------------------------
 
 **To sum it up**
 
-Work on this bookmark::
+Work on a specific branch::
 
-    # hg update <bookmark name>
+    # hg update <branch name>
 
 Fetch new revisions from |oA|::
 
-    # hg pull
+    # hg pull -u
 
-Bring your bookmark to the newest revision::
+Merge your branch to the latest revision::
 
-    # hg update
+    # hg pull -u
+    # hg merge development
 
-Create a new bookmark on the current revision and update to the new bookmark::
+Create a new branch on top of the current working branch::
 
-    # hg bookmark <bookmark name>
+    # hg branch <branch name>
 
-Create a new bookmark on the given revision::
+Lists all open branches::
 
-    # hg bookmark <bookmark name> -r <bookmark name or revision>
+    # hg branches
 
-Delete the specified bookmark, the commits will still be there::
+Show current working branch::
 
-    # hg bookmark -d <bookmark name>
+    # hg branch
 
-Lists all bookmarks with revisions and shows you on which you are working::
+Merges a branch into the current working branch::
 
-    # hg bookmark
+    # hg merge <branch name>
 
-Merges a bookmark into the current bookmark you are working in::
+Push your changes on your fork::
 
-    # hg merge <bookmark name>
+    # hg push
 
-Export your specified bookmark to your fork and pushes your changes::
+Does the above, but creates a new branch or deletes an old one::
 
-    # hg push -B <bookmark name>
-
-Does the above and forces the push even if a new head is created::
-
-    # hg push -B <bookmark name> -f
+    # hg push --new-branch
 
