@@ -64,6 +64,8 @@ describe('Zvol tests', function(){
     browser.sleep(400);
     element(by.model('snap.name')).sendKeys(snapshotname);
     browser.sleep(400);
+    //when creating a snapshot of a zfs volume the snapshot size field should not be visible
+    expect(element(by.id('megs')).isDisplayed()).toBe(false);
     element(by.css('.tc_submitButton')).click();
   });
 
