@@ -46,7 +46,6 @@ Requires:	dbus
 Requires:	django-filter
 Requires:	djangorestframework
 Requires:	djangorestframework-bulk
-Requires:	djextdirect
 Requires:	m2crypto
 Requires:	memcached
 Requires:	mod_wsgi
@@ -67,6 +66,7 @@ Requires:	python-psycopg2
 Requires:	python-pyudev
 Requires:	python-requests
 Requires:	python-rtslib
+Requires:	python-simplejson
 Requires:	udisks2
 Requires:	vconfig
 Requires:	wget

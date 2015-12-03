@@ -13,6 +13,14 @@
 
 import sys, os
 
+from ConfigParser import SafeConfigParser
+from datetime import datetime
+config = SafeConfigParser()
+config.read('../version.txt')
+datestring = datetime.utcnow().strftime('%Y%m%d%H%M')
+config_version = config.get('package', 'VERSION')
+read_out_version = config_version + r'\textasciitilde' + datestring
+
 # If extensions (or modules to document with autodoc) are in another directory,
 # add these directories to sys.path here. If the directory is relative to the
 # documentation root, use os.path.abspath to make it absolute, like shown here.
@@ -48,9 +56,9 @@ copyright = u'2014-2015, it-novum GmbH'
 # built documents.
 #
 # The short X.Y version.
-version = '2.0'
+version = '.'.join(config_version.split('.')[:2])
 # The full version, including alpha/beta/rc tags.
-release = '2.0.3'
+release = read_out_version
 
 rst_epilog = """
 .. |oA| replace:: openATTIC

@@ -19,6 +19,8 @@ angular.module('openattic')
 
     $scope.megs = item.usage.size_text;
 
+    $scope.pool = new PoolService.get($scope.selection.item.source_pool);
+
     $scope.$watch('megs', function(megs){
       $scope.snap.megs = SizeParserService.parseInt(megs);
     });
