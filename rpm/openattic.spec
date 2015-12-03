@@ -687,8 +687,8 @@ systemctl start lvm2-lvmetad
 
 %post module-nagios
 systemctl daemon-reload
-systemctl enable nagios.service
-systemctl enable npcd.service
+chkconfig nagios on
+chkconfig npcd on
 systemctl start nagios.service
 systemctl start npcd.service
 
