@@ -7,6 +7,8 @@ Version 2.0.5 (not released yet)
 * Installation: Removed dependency on the djextdirect Python module from the
   RPM and DEB packages, removed obsolete file backend/rpcd/extdirect.py
   (OP-784)
+* Web UI: Deactivated menu entry "iSCSI/FC" for physical disks listed in
+  volumes. (OP-542)
 
 Version 2.0.4, 17. Nov 2015:
 ----------------------------
@@ -34,8 +36,6 @@ Version 2.0.4, 17. Nov 2015:
 * Documentation: Added chapter about contributing and working with Mercurial,
   updated E2E test documentation
 * Documentation: Improved the readability of the openATTIC documentation
-* Web UI: Deactivated menu entry "iSCSI/FC" for physical disks listed in
-  volumes. (OP-542)
 
 Version 2.0.3, 16. Oct 2015:
 ----------------------------
