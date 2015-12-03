@@ -46,7 +46,6 @@ Requires:	dbus
 Requires:	django-filter
 Requires:	djangorestframework
 Requires:	djangorestframework-bulk
-Requires:	djextdirect
 Requires:	m2crypto
 Requires:	memcached
 Requires:	mod_wsgi
