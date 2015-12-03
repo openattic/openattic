@@ -1,7 +1,7 @@
 Source: openattic
 Section: python
 Priority: optional
-Maintainer: openATTIC Development Team <community@openattic.org>
+Maintainer: openATTIC Development Team <info@openattic.org>
 Build-Depends: debhelper (>= 8.0.0), python (>= 2.6.6-3~), python-setuptools (>= 0.6.10), po-debconf, quilt, apache2-dev, git, npm
 Standards-Version: 3.9.4
 Homepage: http://www.openattic.org
@@ -82,9 +82,9 @@ Depends: ${misc:Depends}, python (>= 2.6),
  python-netaddr,
  python-requests,
  python-pyudev,
- python-django-extdirect (>= 0.6),
  python-djangorestframework,
  python-django-rest-framework-bulk,
+ python-simplejson,
  lsb-release,
  openattic-pgsql,
  libapache2-mod-wsgi, apache2 (>= 2.4),

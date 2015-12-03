@@ -8,7 +8,7 @@ module.exports = function (grunt) {
   var buildConfig = {
     src: 'app/',
     dist: 'dist/',
-    name: 'bookmonkey-web',
+    name: 'openattic-web',
     applicationFiles: [
       '<%= buildConfig.src %>scripts/module_extensions.js',
       '<%= buildConfig.src %>scripts/**/module.js',
@@ -91,7 +91,7 @@ module.exports = function (grunt) {
             {
               expand: true,
               cwd: buildConfig.dist,
-              src: ['bm-app.js'],
+              src: ['oa-app.js'],
               dest: buildConfig.dist
             }
           ]
