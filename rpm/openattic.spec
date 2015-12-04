@@ -731,10 +731,9 @@ systemctl start nfs-server.service
 
 %changelog
 * Thu Dec 03 2015 Lenz Grimmer <lenz@openattic.org> 2.0.5
-- Replaced "chkconfig" calls with "systemctl enable"
+- Make sure to enable httpd upon restart
 - Make sure to start rpcbind before nfs-server in the module-nfs post
   scriptlet (OP-786)
-- Removed dependency on the obsolete djextdirect Python module (OP-784)
 * Tue Sep 29 2015 Lenz Grimmer <lenz@openattic.org> 2.0.3
 - Fixed dependencies and moved %pre section that creates the openattic
   user/group to the base subpackage (OP-536)
