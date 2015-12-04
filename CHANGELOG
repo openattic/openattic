@@ -7,10 +7,14 @@ Version 2.0.5 (not released yet)
 * Installation: Removed dependency on the djextdirect Python module from the
   RPM and DEB packages, removed obsolete file backend/rpcd/extdirect.py
   (OP-784)
+* Web UI: Changed Dashboard, Disks, Pools, Volumes, System and API-Recorder
+  icons
 * Installation: Added call to start and enable the rpcbind service before
   starting the NFS server in the openattic-module-nfs RPM package (OP-786)
 * Installation: Removed obsolete dependency on the Oxygen icon set from the
   RPM package dependencies (OP-787)
+* Installation: Make sure to start and enable Samba when installing the
+  openattic-module-samba RPM on RHEL7 and derivatives (OP-788)
 * Backend: added loading of kernel modules "target_core_iblock" and
   "target_core_pscsi" to the LIO backend, to fix a "fabric iscsi not
   loaded" error observed on CentOS 7 (OP-722).

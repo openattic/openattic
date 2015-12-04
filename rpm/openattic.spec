@@ -710,6 +710,13 @@ systemctl start nfs-server.service
 %{_datadir}/%{name}/installed_apps.d/60_samba
 %{_datadir}/%{name}/samba/
 
+%post module-samba
+systemctl daemon-reload
+systemctl enable nmb
+systemctl start nmb
+systemctl enable smb
+systemctl start smb
+
 %files 	module-twraid
 %defattr(-,openattic,openattic,-)
 %{_datadir}/%{name}/installed_apps.d/09_twraid
@@ -730,7 +737,8 @@ systemctl start nfs-server.service
 %{_sysconfdir}/yum.repos.d/%{name}.repo
 
 %changelog
-* Fri Dec 04 2015 Lenz Grimmer <lenz@openattic.org> 2.0.5
+* Fri Dec 04 2015 Lenz Grimmer <lenz@openattic.org> 2.0.3
+- Start and enable Samba in the samba subpackage (OP-788) 
 - Removed obsolete dependency on the Oxygen icon set (OP-787)
 - Added openattic-module-lio to the openattic metapackage dependencies
 * Thu Dec 03 2015 Lenz Grimmer <lenz@openattic.org> 2.0.5
