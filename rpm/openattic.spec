@@ -51,7 +51,6 @@ Requires:	memcached
 Requires:	mod_wsgi
 Requires:	ntp
 Requires:	numpy
-Requires:	oxygen-icon-theme
 Requires:	policycoreutils-python
 Requires:	pygobject2
 Requires:	python-dbus
@@ -726,6 +725,8 @@ systemctl start nfs
 %{_sysconfdir}/yum.repos.d/%{name}.repo
 
 %changelog
+* Fri Dec 04 2015 Lenz Grimmer <lenz@openattic.org> 2.0.5
+- Removed obsolete dependency on the Oxygen icon set (OP-787)
 * Tue Sep 29 2015 Lenz Grimmer <lenz@openattic.org> 2.0.3
 - Fixed dependencies and moved %pre section that creates the openattic
   user/group to the base subpackage (OP-536)
