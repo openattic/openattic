@@ -7,6 +7,8 @@ Version 2.0.5 (not released yet)
 * Installation: Removed dependency on the djextdirect Python module from the
   RPM and DEB packages, removed obsolete file backend/rpcd/extdirect.py
   (OP-784)
+* Installation: Added call to start and enable the rpcbind service before
+  starting the NFS server in the openattic-module-nfs RPM package (OP-786)
 
 Version 2.0.4, 17. Nov 2015:
 ----------------------------
