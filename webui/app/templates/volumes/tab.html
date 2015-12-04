@@ -24,7 +24,8 @@
             <a ui-sref="volumes.detail.http({volume: selection.item.id})" class="tc_httpShareTab" data-toggle="tab"
                data-target="#tab-content">HTTP</a>
         </li>
-        <li ui-sref-active="active" ng-show="selection.item.is_blockvolume && !selection.item.is_filesystemvolume">
+        <li ui-sref-active="active" ng-show="selection.item.source_pool && selection.item.is_blockvolume
+            && !selection.item.is_filesystemvolume">
             <a ui-sref="volumes.detail.luns({volume: selection.item.id})" class="tc_iscsi_fcTab" data-toggle="tab"
                data-target="#tab-content">iSCSI/FC</a>
         </li>
