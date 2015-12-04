@@ -8,6 +8,8 @@ Version 2.0.5 (not released yet)
   RPM and DEB packages, removed obsolete file backend/rpcd/extdirect.py
   (OP-784)
 * Web UI: Checking for an unique name for a new user now. (OP-588)
+* Web UI: Deactivated menu entry "iSCSI/FC" for physical disks listed in
+  volumes. (OP-542)
 * Web UI: Changed Dashboard, Disks, Pools, Volumes, System and API-Recorder
   icons
 * Installation: Added call to start and enable the rpcbind service before
