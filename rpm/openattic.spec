@@ -484,6 +484,7 @@ exit 0
 %post base
 systemctl daemon-reload
 systemctl restart dbus
+systemctl enable httpd
 systemctl start httpd
 
 %postun base
@@ -698,7 +699,10 @@ systemctl start npcd.service
 
 %post module-nfs
 systemctl daemon-reload
-systemctl start nfs
+systemctl enable rpcbind.service
+systemctl enable nfs-server.service
+systemctl start rpcbind.service
+systemctl start nfs-server.service
 
 %files 	module-samba
 %defattr(-,openattic,openattic,-)
@@ -727,6 +731,10 @@ systemctl start nfs
 %changelog
 * Fri Dec 04 2015 Lenz Grimmer <lenz@openattic.org> 2.0.5
 - Removed obsolete dependency on the Oxygen icon set (OP-787)
+* Thu Dec 03 2015 Lenz Grimmer <lenz@openattic.org> 2.0.5
+- Make sure to enable httpd upon restart
+- Make sure to start rpcbind before nfs-server in the module-nfs post
+  scriptlet (OP-786)
 * Tue Sep 29 2015 Lenz Grimmer <lenz@openattic.org> 2.0.3
 - Fixed dependencies and moved %pre section that creates the openattic
   user/group to the base subpackage (OP-536)
