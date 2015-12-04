@@ -11,6 +11,8 @@ Version 2.0.5 (not released yet)
   starting the NFS server in the openattic-module-nfs RPM package (OP-786)
 * Installation: Removed obsolete dependency on the Oxygen icon set from the
   RPM package dependencies (OP-787)
+* Installation: Make sure to start and enable Samba when installing the
+  openattic-module-samba RPM on RHEL7 and derivatives (OP-788)
 
 Version 2.0.4, 17. Nov 2015:
 ----------------------------
