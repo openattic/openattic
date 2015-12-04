@@ -51,7 +51,6 @@ Requires:	memcached
 Requires:	mod_wsgi
 Requires:	ntp
 Requires:	numpy
-Requires:	oxygen-icon-theme
 Requires:	policycoreutils-python
 Requires:	pygobject2
 Requires:	python-dbus
@@ -730,6 +729,8 @@ systemctl start nfs-server.service
 %{_sysconfdir}/yum.repos.d/%{name}.repo
 
 %changelog
+* Fri Dec 04 2015 Lenz Grimmer <lenz@openattic.org> 2.0.5
+- Removed obsolete dependency on the Oxygen icon set (OP-787)
 * Thu Dec 03 2015 Lenz Grimmer <lenz@openattic.org> 2.0.5
 - Make sure to enable httpd upon restart
 - Make sure to start rpcbind before nfs-server in the module-nfs post

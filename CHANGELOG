@@ -9,6 +9,8 @@ Version 2.0.5 (not released yet)
   (OP-784)
 * Installation: Added call to start and enable the rpcbind service before
   starting the NFS server in the openattic-module-nfs RPM package (OP-786)
+* Installation: Removed obsolete dependency on the Oxygen icon set from the
+  RPM package dependencies (OP-787)
 
 Version 2.0.4, 17. Nov 2015:
 ----------------------------
