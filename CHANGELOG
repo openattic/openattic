@@ -11,6 +11,11 @@ Version 2.0.5 (not released yet)
   starting the NFS server in the openattic-module-nfs RPM package (OP-786)
 * Installation: Removed obsolete dependency on the Oxygen icon set from the
   RPM package dependencies (OP-787)
+* Backend: added loading of kernel modules "target_core_iblock" and
+  "target_core_pscsi" to the LIO backend, to fix a "fabric iscsi not
+  loaded" error observed on CentOS 7 (OP-722).
+* Packaging: added openattic-module-lio to the openattic meta RPM package
+  dependencies (to be in line with the DEB packages)
 
 Version 2.0.4, 17. Nov 2015:
 ----------------------------
