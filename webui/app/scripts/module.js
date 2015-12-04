@@ -35,9 +35,16 @@ angular.module('openattic').constant('RESPONSIVE', {
   lg: 1200
 });
 
-angular.module('openattic').run(function($rootScope, $state){
+angular.module('openattic').run(function($rootScope, $state, UserService){
+  $rootScope.$on('$stateChangeSuccess',function(event, toState, toParams, fromState, fromParams){
+    UserService.current().$promise.then(function(){
+      $rootScope.loggedIn = true;
+    }).catch(function(){
+      $rootScope.loggedIn = false;
+    });
+  });
   $rootScope.loginActive = function(){
-    return $state.is('login');
+    return !$rootScope.loggedIn;
   };
   var hostname = window.location.host.split('.')[0];
   // check if the hostname looks like the first octet of an IP address
