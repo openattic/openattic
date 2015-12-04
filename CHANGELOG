@@ -7,6 +7,8 @@ Version 2.0.5 (not released yet)
 * Installation: Removed dependency on the djextdirect Python module from the
   RPM and DEB packages, removed obsolete file backend/rpcd/extdirect.py
   (OP-784)
+* Installation: Make sure to start and enable Samba when installing the
+  openattic-module-samba RPM on RHEL7 and derivatives (OP-788)
 
 Version 2.0.4, 17. Nov 2015:
 ----------------------------

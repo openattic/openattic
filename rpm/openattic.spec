@@ -706,6 +706,13 @@ systemctl start nfs
 %{_datadir}/%{name}/installed_apps.d/60_samba
 %{_datadir}/%{name}/samba/
 
+%post module-samba
+systemctl daemon-reload
+systemctl enable nmb
+systemctl start nmb
+systemctl enable smb
+systemctl start smb
+
 %files 	module-twraid
 %defattr(-,openattic,openattic,-)
 %{_datadir}/%{name}/installed_apps.d/09_twraid
@@ -726,6 +733,8 @@ systemctl start nfs
 %{_sysconfdir}/yum.repos.d/%{name}.repo
 
 %changelog
+* Fri Dec 04 2015 Lenz Grimmer <lenz@openattic.org> 2.0.3
+- Start and enable Samba in the samba subpackage (OP-788) 
 * Tue Sep 29 2015 Lenz Grimmer <lenz@openattic.org> 2.0.3
 - Fixed dependencies and moved %pre section that creates the openattic
   user/group to the base subpackage (OP-536)
