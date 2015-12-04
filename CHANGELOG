@@ -7,6 +7,7 @@ Version 2.0.5 (not released yet)
 * Installation: Removed dependency on the djextdirect Python module from the
   RPM and DEB packages, removed obsolete file backend/rpcd/extdirect.py
   (OP-784)
+* Web UI: Checking for an unique name for a new user now. (OP-588)
 
 Version 2.0.4, 17. Nov 2015:
 ----------------------------
