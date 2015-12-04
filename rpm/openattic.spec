@@ -9,6 +9,7 @@ BuildArch: noarch
 Source:	openattic-%{BUILDVERSION}-%{PKGVERSION}.tar.bz2
 Requires:	openattic-module-cron
 Requires:	openattic-module-http
+Requires:	openattic-module-lio
 Requires:	openattic-module-lvm
 Requires:	openattic-module-mailaliases
 Requires:	openattic-module-nagios
@@ -739,6 +740,7 @@ systemctl start smb
 * Fri Dec 04 2015 Lenz Grimmer <lenz@openattic.org> 2.0.3
 - Start and enable Samba in the samba subpackage (OP-788) 
 - Removed obsolete dependency on the Oxygen icon set (OP-787)
+- Added openattic-module-lio to the openattic metapackage dependencies
 * Thu Dec 03 2015 Lenz Grimmer <lenz@openattic.org> 2.0.5
 - Make sure to enable httpd upon restart
 - Make sure to start rpcbind before nfs-server in the module-nfs post
