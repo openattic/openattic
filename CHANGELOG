@@ -24,7 +24,9 @@ Version 2.0.5 (not released yet)
   "target_core_pscsi" to the LIO backend, to fix a "fabric iscsi not
   loaded" error observed on CentOS 7 (OP-722).
 * Packaging: added openattic-module-lio to the openattic meta RPM package
-  dependencies (to be in line with the DEB packages)
+  dependencies, moved dependency on python-rtslib from the openattic-base
+  package to the openattic-module-lio RPM, as it's the only one that requires
+  it (and to be in line with dependencies defined by the DEB packages).
 * Web UI: Fixed full screen mode. (OP-700)
 
 Version 2.0.4, 17. Nov 2015:
