@@ -17,7 +17,7 @@ angular.module('openattic')
           $timeout.cancel(stop_timeout);
 
           if(modelValue === '' && typeof modelValue === 'undefined'){
-            return
+            return;
           }
           stop_timeout = $timeout(function(){
             var model, current, query = {};
