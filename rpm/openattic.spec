@@ -65,7 +65,6 @@ Requires:	python-pam
 Requires:	python-psycopg2
 Requires:	python-pyudev
 Requires:	python-requests
-Requires:	python-rtslib
 Requires:	python-simplejson
 Requires:	udisks2
 Requires:	vconfig
@@ -185,6 +184,7 @@ module displays the current state of these sensors in the openATTIC GUI.
 
 %package module-lio
 Requires: openattic-base
+Requires:	python-rtslib
 # Welche Pakte werden hierfür benötigt
 Summary:  LIO module for openATTIC
 
@@ -737,7 +737,10 @@ systemctl start smb
 %{_sysconfdir}/yum.repos.d/%{name}.repo
 
 %changelog
-* Fri Dec 04 2015 Lenz Grimmer <lenz@openattic.org> 2.0.3
+* Mon Dec 07 2015 Lenz Grimmer <lenz@openattic.org> 2.0.5
+- Moved dependency on python-rtslib from the openattic-base package
+  to the openattic-module-lio RPM
+* Fri Dec 04 2015 Lenz Grimmer <lenz@openattic.org> 2.0.5
 - Start and enable Samba in the samba subpackage (OP-788) 
 - Removed obsolete dependency on the Oxygen icon set (OP-787)
 - Added openattic-module-lio to the openattic metapackage dependencies
