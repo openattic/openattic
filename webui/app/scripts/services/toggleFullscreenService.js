@@ -25,5 +25,5 @@ app.factory('toggleFullscreenService', function() {
                 }
             }
         }
-    }
+    };
 });
