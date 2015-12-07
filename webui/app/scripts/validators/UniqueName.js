@@ -16,34 +16,41 @@ angular.module('openattic')
           ctrl.$setValidity('uniquename', true);
           $timeout.cancel(stop_timeout);
 
-          if(modelValue !== '' && typeof modelValue !== 'undefined'){
-            stop_timeout = $timeout(function(){
-              var model, query = {};
-              switch(ctrl.model){
-                case 'host':
-                  model = HostService;
-                  break;
-                case 'volume':
-                  model = VolumeService;
-                  break;
-                case 'user':
-                  model = UserService;
-                  break;
-                default:
-                  console.log('Error: Service not implemented yet.');
-                  return;
-              }
-              query[ctrl.field] = modelValue;
-              model.query(query)
-                .$promise
-                .then(function (res) {
-                  return ctrl.$setValidity('uniquename', res.length === 0);
-                })
-                .catch(function (error) {
-                  console.log('An error occurred', error);
-                });
-            }, 300);
+          if(modelValue === '' && typeof modelValue === 'undefined'){
+            return
           }
+          stop_timeout = $timeout(function(){
+            var model, current, query = {};
+            switch(ctrl.model){
+              case 'host':
+                model = HostService;
+                current = scope.host.id;
+                break;
+              case 'volume':
+                model = VolumeService;
+                break;
+              case 'user':
+                model = UserService;
+                current = scope.user.id;
+                break;
+              default:
+                console.log('Error: Service not implemented yet.');
+                return;
+            }
+            query[ctrl.field] = modelValue;
+            model.query(query)
+              .$promise
+              .then(function (res) {
+                if(res.length !== 0 && current){
+                  ctrl.$setValidity('uniquename', res[0].id === current);
+                }else{
+                  ctrl.$setValidity('uniquename', res.length === 0);
+                }
+              })
+              .catch(function (error) {
+                console.log('An error occurred', error);
+              });
+          }, 300);
         });
       }
     };
