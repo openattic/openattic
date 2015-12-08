@@ -33,6 +33,8 @@ Version 2.0.5 (not released yet)
   appear in the "Volumes" overview and can be shared via iSCSI);
   since the iscsi/fc storage tab is no longer visible when
   clicking a disk in volumes panel, the respective test should check this
+* WebUI/QA: added E2E test for scenario described in OP-588 
+  ("When creating a new user, app should warn about existing user names.")
 
 Version 2.0.4, 17. Nov 2015:
 ----------------------------
