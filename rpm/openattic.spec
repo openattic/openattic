@@ -546,7 +546,7 @@ echo ""
 
 %files
 %defattr(-,root,root,-)
-%doc CHANGELOG LICENSE README.rst
+%doc CHANGELOG CONTRIBUTING.rst COPYING README.rst
 
 %files base
 %defattr(-,root,root,-)
