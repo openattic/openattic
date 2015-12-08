@@ -11,8 +11,6 @@ describe('Should add an user', function(){
   var correctInput = element(by.binding('correctInput'));
   var logout = element(by.css('.tc_logout a'));
 
-
-
   beforeAll(function(){
     helpers.login();
     systemItem.click();
@@ -38,19 +36,16 @@ describe('Should add an user', function(){
     browser.sleep(400);
     element(by.css('.tc_submitButton')).click();
     browser.sleep(400);
-
   });
 
   it('should display the "protractor_test_user" in the users panel', function(){
     expect(user.isDisplayed()).toBe(true);
-
   });
 
   //logout first
   it('should logout again', function(){
     logout.click();
     expect(browser.getCurrentUrl()).toContain('/#/login');
-
   });
 
   //test login with new user data
@@ -61,16 +56,14 @@ describe('Should add an user', function(){
   });
 
   //try to click something and expect that with a successful login the user should be able to click around
-  it('', function(){
+  it('should be able to click something now', function(){
     element.all(by.css('ul .tc_menuitem > a')).get(3).click();
     expect(browser.getCurrentUrl()).toContain('/#/volumes');
-
   });
 
   it('should logout protractor_test_user', function(){
     logout.click();
     expect(browser.getCurrentUrl()).toContain('/#/login');
-
   });
 
   it('should delete the "protractor_test_user"', function(){
@@ -91,7 +84,6 @@ describe('Should add an user', function(){
     browser.sleep(400);
   });
 
-
   it('should not show the "protractor_test_user" anymore', function(){
     expect(user.isPresent()).toBe(false);
     //expect that we are still on the users panel
@@ -107,7 +99,5 @@ describe('Should add an user', function(){
     element.all(by.css('input[type="submit"]')).click();
     expect(correctInput.isDisplayed()).toBe(true);
     expect(correctInput.getText()).toBe('The given credentials are not correct.');
-
   });
-
 });
