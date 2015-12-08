@@ -6,10 +6,12 @@ describe('Should add an user', function(){
   var user = element(by.cssContainingText('tr', username));
   var systemItem = element.all(by.css('ul .tc_menuitem')).get(5);
   var usersItem = systemItem.all(by.css('ul .tc_submenuitem > a')).get(0);
-  systemItem = systemItem.all(by.css(' a')).first();
+  //systemItem = systemItem.all(by.css(' a')).first();
   var userpasswd = 'test';
   var correctInput = element(by.binding('correctInput'));
   var logout = element(by.css('.tc_logout a'));
+  var addBtn = element(by.css('.tc_addUser'));
+  var noUniqueName = element(by.css('.tc_noUniqueName'));
 
   beforeAll(function(){
     helpers.login();
@@ -18,7 +20,7 @@ describe('Should add an user', function(){
   });
 
   it('should create an user', function(){
-    element(by.css('.tc_addUser')).click();
+    addBtn.click();
     browser.sleep(400);
     element(by.model('user.username')).sendKeys(username);
     browser.sleep(400);
@@ -59,6 +61,21 @@ describe('Should add an user', function(){
   it('should be able to click something now', function(){
     element.all(by.css('ul .tc_menuitem > a')).get(3).click();
     expect(browser.getCurrentUrl()).toContain('/#/volumes');
+  });
+
+  it('should display an error message if one tries to add an user with already taken username', function(){
+    systemItem.click();
+    browser.sleep(400);
+    usersItem.click();
+    browser.sleep(400);
+    addBtn.click();
+    browser.sleep(400);
+    element(by.model('user.username')).sendKeys(username);
+    expect(noUniqueName.isDisplayed()).toBe(true);
+  });
+
+  it('should check the user already taken error message', function(){
+    expect(noUniqueName.getText()).toEqual('The chosen user name is already in use.');
   });
 
   it('should logout protractor_test_user', function(){
