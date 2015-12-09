@@ -133,7 +133,7 @@ The distributed nature of Mercurial makes it possible to collaborate with
 other developers on the same set of changes, by pulling and pushing change
 sets between the personal forks of the |oA| repository.
 
-To pull changes from from another developer's branch, type the following::
+To pull changes from another developer's branch, type the following::
 
     # hg pull <alias or fork URL> <branch name>
 

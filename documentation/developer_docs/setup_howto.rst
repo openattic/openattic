@@ -37,7 +37,7 @@ consider creating a user account on BitBucket and create a "Fork".
 
 Take a look at the `BitBucket Documentation
 <https://confluence.atlassian.com/bitbucket/bitbucket-cloud-documentation-home-221448814.html>`_
-for instructions on how to get create a free BitBucket account. We prefer real
+for instructions on how to create a free BitBucket account. We require real
 user names over pseudonyms when working with contributors.
 
 Once you are logged into BitBucket, go to `the openATTIC main repository
@@ -110,10 +110,15 @@ based on the latest commit in the ``default`` branch.
       # bower install --allow-root
       # grunt build
 
+    If you intend to make changes to the web interface, it may be useful to
+    run ``grunt dev`` as a background task, which watches the project
+    directory for any changed files and triggers an automatic rebuild of the
+    web interface code (including the jshint output), if required.
+
 #.  Run ``oaconfig install`` and start |oA| by running ``oaconfig start``.
 
 The |oA| web interface should now be accessible from a local web browser via
-http://localhost/openattic/ . The default username and password is
+<http://localhost/openattic/>_ . The default username and password is
 "openattic".
 
 You can now start coding by making modifications to the files in
