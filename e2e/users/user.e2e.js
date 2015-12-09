@@ -52,7 +52,7 @@ describe('Should add an user', function(){
     expect(element(by.css('.tc_noUniqueName')).isDisplayed()).toBe(false);
   });
 
-  it('should verfy that if the "already in use" erro message is still working', function(){
+  it('should verfy that if the "already in use" error message is still working', function(){
     element(by.model('user.username')).clear().sendKeys('openattic');
     expect(element(by.css('.tc_noUniqueName')).isDisplayed()).toBe(true);
     element(by.css('.tc_backButton')).click();

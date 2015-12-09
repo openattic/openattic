@@ -1,7 +1,8 @@
+'use strict';
 var helpers = require('../common.js');
 
 describe('Should add a host and attributes', function(){
-  var hostname = "protractor_test_host";
+  var hostname = 'protractor_test_host';
   var host = element(by.cssContainingText('tr', hostname));
   var hostsItem = element.all(by.css('ul .tc_menuitem > a')).get(4);
 
@@ -24,19 +25,24 @@ describe('Should add a host and attributes', function(){
   it('should not allow adding the same host twice', function(){
     element(by.css('.tc_addHost')).click();
     browser.sleep(400);
-    element(by.model('host.name')).sendKeys("protractor_test_host");
+    element(by.model('host.name')).sendKeys('protractor_test_host');
     expect(element(by.css('.tc_noUniqueName')).isDisplayed()).toBe(true);
     expect(element(by.css('.tc_noUniqueName')).getText()).toEqual('The chosen host name is already in use.');
     element(by.css('.tc_backButton')).click();
   });
 
   it('should edit the created host', function(){
+    var firstName = element.all(by.css('tr.ng-scope')).first().all(by.css('a')).getInnerHtml();
     expect(host.isDisplayed()).toBe(true);
     host.click();
     element(by.css('.tc_editHost')).click();
     browser.sleep(400);
     var hostName = element(by.model('host.name'));
     expect(hostName.getAttribute('value')).toEqual('protractor_test_host');
+    expect(element(by.css('.tc_noUniqueName')).isDisplayed()).toBe(false);
+    hostName.clear();
+    hostName.sendKeys(firstName);
+    expect(element(by.css('.tc_noUniqueName')).isDisplayed()).toBe(true);
     hostName.clear();
     hostName.sendKeys('renamed_protractor_test_host');
     browser.sleep(400);
