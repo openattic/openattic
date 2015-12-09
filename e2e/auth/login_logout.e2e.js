@@ -7,6 +7,7 @@ describe('should test the login', function(){
   var nameRequired = element(by.css('.tc_usernameRequired'));
   var passwdRequired = element(by.css('.tc_passwdRequired'));
   var correctInput = element(by.binding('correctInput'));
+  var oaLogo = element(by.css('#logo a'));
 
   var submitBtn = element(by.css('input[type="submit"]'));
 
@@ -82,5 +83,10 @@ describe('should test the login', function(){
     expect(nameRequired.isDisplayed()).toBe(false);
     expect(passwdRequired.isDisplayed()).toBe(false);
 
+  });
+
+  it('clicking the openattic logo should not redirect to dashboard if user is not logged in', function(){
+    oaLogo.click();
+    expect(browser.getCurrentUrl()).toContain('/openattic/#/login');
   });
 });
