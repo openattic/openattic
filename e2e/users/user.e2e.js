@@ -1,3 +1,4 @@
+'use strict';
 var helpers = require('../common.js');
 
 describe('Should add an user', function(){
@@ -44,6 +45,17 @@ describe('Should add an user', function(){
   it('should display the "protractor_test_user" in the users panel', function(){
     expect(user.isDisplayed()).toBe(true);
 
+  });
+
+  it('should verfy that current name has no error message', function(){
+    user.all(by.css('a')).click();
+    expect(element(by.css('.tc_noUniqueName')).isDisplayed()).toBe(false);
+  });
+
+  it('should verfy that if the "already in use" erro message is still working', function(){
+    element(by.model('user.username')).clear().sendKeys('openattic');
+    expect(element(by.css('.tc_noUniqueName')).isDisplayed()).toBe(true);
+    element(by.css('.tc_backButton')).click();
   });
 
   //logout first
