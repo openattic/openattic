@@ -7,8 +7,7 @@ Version 2.0.5 (not released yet)
 * Installation: Removed dependency on the djextdirect Python module from the
   RPM and DEB packages, removed obsolete file backend/rpcd/extdirect.py
   (OP-784)
-* Web UI: Deactivated menu entry "iSCSI/FC" for physical disks listed in
-  volumes. (OP-542)
+* Web UI: Checking for an unique name for a new user now. (OP-588)
 * Web UI: Restrict unauthorized access to the UI. (OP-748)
 * Web UI: Deactivated menu entry "iSCSI/FC" for physical disks listed in
   volumes. (OP-542)
@@ -34,6 +33,8 @@ Version 2.0.5 (not released yet)
   appear in the "Volumes" overview and can be shared via iSCSI);
   since the iscsi/fc storage tab is no longer visible when
   clicking a disk in volumes panel, the respective test should check this
+* WebUI/QA: added E2E test for scenario described in OP-588 
+  ("When creating a new user, app should warn about existing user names.")
 
 Version 2.0.4, 17. Nov 2015:
 ----------------------------
