@@ -16,11 +16,13 @@ angular.module('openattic')
           ctrl.$setValidity('uniquename', true);
           $timeout.cancel(stop_timeout);
 
-          if(modelValue === '' && typeof modelValue === 'undefined'){
+          if(modelValue === '' || typeof modelValue === 'undefined'){
             return;
           }
           stop_timeout = $timeout(function(){
-            var model, current, query = {};
+            var model;
+            var current;
+            var query = {};
             switch(ctrl.model){
               case 'host':
                 model = HostService;
