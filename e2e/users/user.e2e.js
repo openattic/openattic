@@ -47,12 +47,12 @@ describe('Should add an user', function(){
 
   });
 
-  it('should verfy that current name has no error message', function(){
+  it('should verify that current name has no error message', function(){
     user.all(by.css('a')).click();
     expect(element(by.css('.tc_noUniqueName')).isDisplayed()).toBe(false);
   });
 
-  it('should verfy that if the "already in use" error message is still working', function(){
+  it('should verify that if the "already in use" error message is still working', function(){
     element(by.model('user.username')).clear().sendKeys('openattic');
     expect(element(by.css('.tc_noUniqueName')).isDisplayed()).toBe(true);
     element(by.css('.tc_backButton')).click();
