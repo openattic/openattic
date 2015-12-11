@@ -85,10 +85,6 @@ class DrbdConnectionViewSet(viewsets.ModelViewSet):
             except SystemError, e:
                 return Response(e.message, status=status.HTTP_400_BAD_REQUEST, exception=True)
 
-            if connection.host == Host.objects.get_current():
-                # on the primary side resize drbd connection too
-                connection.storageobj.resize(request.DATA["new_size"])
-
             ser = DrbdConnectionSerializer(connection, context={"request": request})
             return Response(ser.data, status=status.HTTP_200_OK)
         return super(DrbdConnectionViewSet, self).update(request, args, kwargs)
