@@ -22,6 +22,8 @@ Version 2.0.5 (not released yet)
 * Backend: added loading of kernel modules "target_core_iblock" and
   "target_core_pscsi" to the LIO backend, to fix a "fabric iscsi not
   loaded" error observed on CentOS 7 (OP-722).
+* Backend: Added RESTful API functionality to grow unformatted DRBD
+  connections and related Gatling API tests (OP-667 / OP-707)
 * Packaging: added openattic-module-lio to the openattic meta RPM package
   dependencies, moved dependency on python-rtslib from the openattic-base
   package to the openattic-module-lio RPM, as it's the only one that requires
