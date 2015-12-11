@@ -125,15 +125,21 @@ class DrbdTests(object):
             if mirror["status"][0] == "degraded":
                 raise SystemError("Status of DRBD connection %s is degraded." % mirror["volume"]["title"])
 
-        # Resize drbd mirror
-        self.send_request("PUT", "mirrors", obj_id=mirror["id"], data={"new_size": self.growsize})
+        with self.assertRaises(requests.exceptions.HTTPError) as err:
+            # Resize drbd mirror
+            self.send_request("PUT", "mirrors", obj_id=mirror["id"], data={"new_size": self.growsize})
+
+        self.assertEqual(str(err.exception), "501 Server Error: Not Implemented")
+        self.assertEqual(err.exception.response.status_code, 501)
+        self.assertEqual(str(err.exception.response.json()),
+                         "Resizing a formatted DRBD connection is not implemented yet.")
 
         # Check if resize (grow) was successful
-        time.sleep(self.sleeptime)
-        mirror_vol_res = self.send_request("GET", "volumes", obj_id=mirror["volume"]["id"])
-        self.assertGreater(mirror_vol_res["response"]["usage"]["size"], self.volumesize)
-        self.assertEqual(mirror_vol_res["response"]["is_filesystemvolume"], True)
-        self.assertEqual(mirror_vol_res["response"]["type"]["name"], "xfs")
+        # time.sleep(self.sleeptime)
+        # mirror_vol_res = self.send_request("GET", "volumes", obj_id=mirror["volume"]["id"])
+        # self.assertGreater(mirror_vol_res["response"]["usage"]["size"], self.volumesize)
+        # self.assertEqual(mirror_vol_res["response"]["is_filesystemvolume"], True)
+        # self.assertEqual(mirror_vol_res["response"]["type"]["name"], "xfs")
 
     def test_create_shrink_delete(self):
         """ Create a connection with 1000MB volumes, try to shrink it to 500MB and check if it fails. """
