@@ -29,6 +29,7 @@ Version 2.0.5 (not released yet)
   package to the openattic-module-lio RPM, as it's the only one that requires
   it (and to be in line with dependencies defined by the DEB packages).
 * Web UI: Fixed full screen mode. (OP-700)
+* Web UI: Snapshots are sortable by 'create date' now (OP-814)
 * Web UI/QA: added e2e test for bugfix OP-748 (Clicking the openATTIC icon
   on the login page bypasses the login prompt)
 * Web UI/QA: added e2e test for OP-542 (relates to bug OP-597 -> Raw hard Disks
