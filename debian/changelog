@@ -1,4 +1,4 @@
-openattic (2.0.4-1) UNRELEASED; urgency=medium
+openattic (2.0.4-1) unstable; urgency=medium
 
   * Web UI: Fixed scripts created by the API Recorder (OP-608, OP-657, OP-712)
   * Web UI: Created E2E tests for enabled/disabled storage tabs depending on the

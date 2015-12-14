@@ -35,6 +35,8 @@ class SystemD(BasePlugin):
     def modprobe(self, sender):
         invoke(["modprobe", "target_core_mod"]),
         invoke(["modprobe", "iscsi_target_mod"])
+        invoke(["modprobe", "target_core_iblock"])
+        invoke(["modprobe", "target_core_pscsi"])
 
     @deferredmethod(in_signature="i")
     def install_hostacl(self, id, sender):

@@ -1,42 +1,46 @@
 .. _developer_contribute:
 
-Contribute to |oA|
-==================
+Contributing Code to |oA|
+=========================
 
-This is an introduction on how to contribute to |oA|.
+This is an introduction on how to contribute code or patches to the |oA|
+upstream project. If you intend to submit your code upstream, please also
+review and consider the guidelines outlined in chapter
+:ref:`developer_contributing_guidelines`.
 
-The |oA| source code is managed using the `Mercurial <https://www.mercurial-scm.org/>`_ revision control system.
-Mercurial offers you a full-fledged source control, where you can commit and
-manage your source code.
+Keeping Your Local Repository in Sync
+-------------------------------------
 
-Working on your fork
---------------------
+If you have followed the instructions in :ref:`developer_setup_howto`, you
+should already have a local |oA| instance that is based on the current
+development branch.
 
-A fork is a remote clone of a repository and every |oA| developer has an |oA|
-fork, to get one you first have to join `Bitbucket <https://bitbucket.org>`_. After that go to
-`our main repository <https://bitbucket.org/openattic/openattic>`_ and click "Fork" on the left side
-under "ACTIONS".
+You should update your repository configuration so that you will always pull
+from the main |oA| repository and push to your |oA| fork by default. This
+ensures that your fork is always up to date, by tracking the upstream
+development.
 
-After that you have your own |oA| fork :)
-
-Please make sure you've followed the instructions described in chapter :ref:`developer_setup_howto`.
-This means you have cloned the |oA| repository.
-In your local clone edit the Mercurial configuration file `.hg/hgrc`. It
+In your local clone, edit the Mercurial configuration file ``.hg/hgrc``. It
 should contain the following three lines::
 
     [paths]
     default = https://hg@bitbucket.org/openattic/openattic
     default-push = https://hg@bitbucket.org/<Your user name>/openattic
 
-With this configuration you will always pull from the main |oA| repository and always
-push to your |oA| fork.
+The ``default-push`` location is the URL that you can obtain from your fork's
+repository overview page on BitBucket.
 
-If you want to push via SSH, you will only have to replace your ``default-push``::
+If you want to push via SSH, you just have to modify your ``default-push``
+URL::
 
     default-push = ssh://hg@bitbucket.org/<Your user name>/openattic
 
-If you want to use SSH behind a proxy you may use `corkscrew <http://agroman.net/corkscrew/>`_.
-After the installation append the following two lines to your `$HOME/.ssh/config`::
+This requires uploading your public SSH key to BitBucket first. Check the
+BitBucket documentation for details on how to accomplish this.
+
+If you want to use SSH behind a proxy you may use `corkscrew
+<http://agroman.net/corkscrew/>`_. After the installation, append the
+following two lines to your ``$HOME/.ssh/config`` file::
 
     Host bitbucket.org
         ProxyCommand corkscrew <proxy name or ip> <port number> %h %p
@@ -44,17 +48,25 @@ After the installation append the following two lines to your `$HOME/.ssh/config
 Now you can use SSH behind the proxy, because corkscrew now tunnels your SSH
 connections through the proxy to bitbucket.org.
 
-
-Working with branches
+Working With Branches
 ---------------------
 
-To create a new feature branch update your repository, change to the development branch and
-create your new branch on top of it, in which you commit your feature changes::
+It is strongly recommended to separate changes required for a new feature or
+for fixing a bug in a separate Mercurial branch. Please refer to the Mercurial
+documentation for a detailed introduction into working with branches.
+
+If you intend to submit a patch to the upstream |oA| repository via a pull
+request, please make sure to follow the
+:ref:`developer_contributing_guidelines`.
+
+To create a new feature branch update your repository, change to the
+development branch and create your new branch on top of it, in which you
+commit your feature changes::
 
     # hg pull
     # hg update development
-    # hg branch feature
-    < Your code changes. >
+    # hg branch <branchname>
+    < Your code changes >
     # hg commit
 
 To list your branches type::
@@ -73,58 +85,82 @@ If you can't push them because a new remote branch would be created use::
 
     # hg push --new-branch
 
-Now that your fork contains your local changes, too, you can create a
-pull-request on `Bitbucket <https://bitbucket.org>`_ with the changes you have made.
+.. _submitting_pull_requests:
 
-To do this, go to your fork on `Bitbucket <https://bitbucket.org>`_ and click ``Create pull request`` in the left panel.
-On the next page, choose as source the branch with your changes and as target the |oA| development branch.
-Beneath the formula your first check out the ``Diff`` part if there are any merge conflicts,
-if you have some, you have go back into your branch and update it::
+Submitting Pull Requests
+------------------------
+
+Now that your fork contains your local changes in a separate branch, you can
+create a pull-request on `Bitbucket <https://bitbucket.org>`_ to request an
+inclusion of the changes you have made into the ``development`` branch of the
+main |oA| repository.
+
+To do this, go to your fork on `Bitbucket <https://bitbucket.org>`_ and click
+``Create pull request`` in the left panel. On the next page, choose the branch
+with your changes as source and the main |oA| development branch as target.
+
+Below the **Create pull request** button, first check out the **Diff** part if
+there are any merge conflicts. If you have some, you have go back into your
+branch and update it::
 
     # hg pull
     # hg merge development
+    <test and review changes>
+    # hg commit -m "Merged development"
+    # hg push
 
-After you have resolved the merge conflicts you have to push them on your fork and make the pull-request.
+After you have resolved the merge conflicts and pushed them into your fork,
+retry submitting the pull-request. If you already created a pull request,
+BitBucket will update it automatically.
 
-After the pull-request was reviewed and accepted your branch will be merged into the main repository.
-Then your branch will be deleted by the maintainer.
-Please do not delete your branch, because after pulling from the main repository,
-you'll also get a changeset which deletes your branch.
+After the pull-request was reviewed and accepted, your feature branch will be
+merged into the main repository. The merged feature branch will then be
+closed in the main |oA| repository by the maintainer.
 
-To push the deletion to your fork again you have to the following::
+Please do not close the branch yourself, because after pulling from the main
+repository, you'll also receive a changeset which closes your local branch.
 
-    #hg pull -u
-    #hg push
+To push the merge and closing of your branch into your fork again you have to
+run the following command::
 
-Collaborate with others or test their code
-------------------------------------------
+    # hg pull -u
+    # hg push
 
-To pull a branch from another developer type the following::
+Collaborating With Other Developers
+-----------------------------------
+
+The distributed nature of Mercurial makes it possible to collaborate with
+other developers on the same set of changes, by pulling and pushing change
+sets between the personal forks of the |oA| repository.
+
+To pull changes from another developer's branch, type the following::
 
     # hg pull <alias or fork URL> <branch name>
 
-If you plan to contribute something to the branch you have to push your changes to your fork.
-The other developer can pull the changes the other way round, see hg command above.
+If you plan to contribute something to the branch you have to push your
+changes to your fork. The other developer can pull the changes the other way
+round, see hg command above.
 
-To create and use an alias you have to edit your ``.hg/hgrc`` and add a new alias beneath ``[paths]``::
+To create and use an alias you have to edit your ``.hg/hgrc`` and add a new
+alias beneath ``[paths]``::
 
     <alias name> = <fork clone URL>
 
 ---------------
 
-The following images illustrate this concept.
+The following images illustrate this concept:
 
-.. image:: workflow_bitbucket.png
+.. figure:: workflow_bitbucket.png
 
-Shows the workflow between the main repository and your fork.
+  Workflow between the main |oA| repository and your fork.
 
-.. image:: workflow_collaboration.png
+.. figure:: workflow_collaboration.png
 
-Illustrates the collaborate workflow between two forks.
+  A collaborative workflow between two forks.
 
-.. image:: workflow_branches.png
+.. figure:: workflow_branches.png
 
-Describes the workflow with branches.
+  The workflow with branches.
 
 -------------------------
 
@@ -166,4 +202,3 @@ Push your changes on your fork::
 Does the above, but creates a new branch or deletes an old one::
 
     # hg push --new-branch
-

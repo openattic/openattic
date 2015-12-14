@@ -6,12 +6,12 @@ describe('Should add an user', function(){
   var user = element(by.cssContainingText('tr', username));
   var systemItem = element.all(by.css('ul .tc_menuitem')).get(5);
   var usersItem = systemItem.all(by.css('ul .tc_submenuitem > a')).get(0);
-  systemItem = systemItem.all(by.css(' a')).first();
+  //systemItem = systemItem.all(by.css(' a')).first();
   var userpasswd = 'test';
   var correctInput = element(by.binding('correctInput'));
   var logout = element(by.css('.tc_logout a'));
-
-
+  var addBtn = element(by.css('.tc_addUser'));
+  var noUniqueName = element(by.css('.tc_noUniqueName'));
 
   beforeAll(function(){
     helpers.login();
@@ -20,7 +20,7 @@ describe('Should add an user', function(){
   });
 
   it('should create an user', function(){
-    element(by.css('.tc_addUser')).click();
+    addBtn.click();
     browser.sleep(400);
     element(by.model('user.username')).sendKeys(username);
     browser.sleep(400);
@@ -38,19 +38,16 @@ describe('Should add an user', function(){
     browser.sleep(400);
     element(by.css('.tc_submitButton')).click();
     browser.sleep(400);
-
   });
 
   it('should display the "protractor_test_user" in the users panel', function(){
     expect(user.isDisplayed()).toBe(true);
-
   });
 
   //logout first
   it('should logout again', function(){
     logout.click();
     expect(browser.getCurrentUrl()).toContain('/#/login');
-
   });
 
   //test login with new user data
@@ -61,16 +58,29 @@ describe('Should add an user', function(){
   });
 
   //try to click something and expect that with a successful login the user should be able to click around
-  it('', function(){
+  it('should be able to click something now', function(){
     element.all(by.css('ul .tc_menuitem > a')).get(3).click();
     expect(browser.getCurrentUrl()).toContain('/#/volumes');
+  });
 
+  it('should display an error message if one tries to add an user with already taken username', function(){
+    systemItem.click();
+    browser.sleep(400);
+    usersItem.click();
+    browser.sleep(400);
+    addBtn.click();
+    browser.sleep(400);
+    element(by.model('user.username')).sendKeys(username);
+    expect(noUniqueName.isDisplayed()).toBe(true);
+  });
+
+  it('should check the user already taken error message', function(){
+    expect(noUniqueName.getText()).toEqual('The chosen user name is already in use.');
   });
 
   it('should logout protractor_test_user', function(){
     logout.click();
     expect(browser.getCurrentUrl()).toContain('/#/login');
-
   });
 
   it('should delete the "protractor_test_user"', function(){
@@ -91,7 +101,6 @@ describe('Should add an user', function(){
     browser.sleep(400);
   });
 
-
   it('should not show the "protractor_test_user" anymore', function(){
     expect(user.isPresent()).toBe(false);
     //expect that we are still on the users panel
@@ -107,7 +116,5 @@ describe('Should add an user', function(){
     element.all(by.css('input[type="submit"]')).click();
     expect(correctInput.isDisplayed()).toBe(true);
     expect(correctInput.getText()).toBe('The given credentials are not correct.');
-
   });
-
 });
