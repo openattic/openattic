@@ -38,6 +38,8 @@ Version 2.0.5 (not released yet)
   clicking a disk in volumes panel, the respective test should check this
 * WebUI/QA: added E2E test for scenario described in OP-588 
   ("When creating a new user, app should warn about existing user names.")
+* Installation: Updated the RPM package installation to no longer install all 
+  files as owned by the openattic user (OP-819)
 
 Version 2.0.4, 17. Nov 2015:
 ----------------------------
