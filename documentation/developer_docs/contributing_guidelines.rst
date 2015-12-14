@@ -43,19 +43,27 @@ Signing Your Patch Contribution
 -------------------------------
 
 To improve tracking of who did what, we use the "sign-off" procedure
-introduced by the Linux kernel. The sign-off is a simple line at the end of
-the explanation for the patch, which certifies that you wrote it or otherwise
-have the right to pass it on as an open-source patch.
+`introduced by the Linux kernel
+<http://git.kernel.org/cgit/linux/kernel/git/torvalds/linux.git/tree/Documentation/SubmittingPatches>`_.
+The sign-off is a simple line at the end of the explanation for the patch,
+which certifies that you wrote it or otherwise have the right to pass it on as
+an open-source patch.
 
-The rules are pretty simple: if you can certify the Developer's Certificate of
-Origin 1.1 (see the file
-``documentation/developer_docs/developer-certificate-of-origin.txt`` in the
-source code), then you just add a line to your commit message and pull request
-saying::
+The rules are pretty simple: if you can certify the following:
+
+.. literalinclude:: developer-certificate-of-origin.txt
+
+then you just add the following line below your commit message and pull
+request saying::
 
   Signed-off-by: Random J Developer <random@developer.example.org>
 
-using your real name (sorry, no pseudonyms or anonymous contributions).
+using your **real name and email address**  (sorry, no pseudonyms or anonymous
+contributions).
+
+If you want to automate the task of adding that tag line, consider installing
+the `signoff.py Mercurial hook
+<https://bitbucket.org/snippets/LenzGr/aygXb/signoffpy-a-mercurial-hook-to>`_.
 
 If you like, you can put extra tags at the end:
 
