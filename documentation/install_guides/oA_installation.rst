@@ -132,7 +132,7 @@ Preparing the Installation
     You will need to specify the complete layout in the zpool create command,
     so before running it, consider all the following points.
 
-    #.  Group exactly six disks in each raidz2. Use multiple raidz2 vdevs in 
+    #.  Group exactly six disks in each raidz2. Use multiple raidz2 vdevs in
         order to add all disks to the zpool.
     #.  When adding SSDs, add them as mirrored log devices.
     #.  Set the mount point to /media/<poolname> instead of just /<poolname>.
@@ -391,15 +391,24 @@ After installing |oA|, you can install additional modules by using
   ``oaconfig install`` currently works on Debian/Ubuntu only. On EL7, use
   ``yum install openattic-module-<module-name>`` instead.
 
-How to set up |oA| with Ceph
-----------------------------
+Enabling Ceph Support in |oA|
+=============================
 
-To set up |oA| with Ceph you first have to copy the administrator keyring
-and configuration from your Ceph system to your |oA| system.
-The source and destination files should have identical paths::
+To set up |oA| with Ceph you first have to copy the Ceph administrator keyring
+and configuration from your Ceph admin node to your |oA| system.
 
-    /etc/ceph/ceph.client.admin.keyring
-    /etc/ceph/ceph.conf
+From your Ceph admin node, you can perform this step by using ``ceph-deploy``
+(assuming that you can perform SSH logins from the admin node into the
+|oA| host)::
+
+  # ceph-deploy admin openattic.yourdomain.com
+
+On the |oA| node, you should then have the following files::
+
+  /etc/ceph/ceph.client.admin.keyring
+  /etc/ceph/ceph.conf
+
+Alternatively, you can copy these files manually.
 
 The next step is to install the |oA| Ceph module on your system::
 
