@@ -4,7 +4,7 @@ describe('should test the user form', function(){
 
   var systemItem = element.all(by.css('ul .tc_menuitem')).get(5);
   var usersItem = systemItem.all(by.css('ul .tc_submenuitem > a')).get(0);
-  systemItem = systemItem.all(by.css(' a')).first();
+  //systemItem = systemItem.all(by.css(' a')).first();
 
   var name = element(by.model('user.username'));
   var passwd = element(by.model('user.email'));
