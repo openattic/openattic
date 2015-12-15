@@ -40,6 +40,9 @@ Version 2.0.5 (not released yet)
   ("When creating a new user, app should warn about existing user names.")
 * Installation: Updated the RPM package installation to no longer install all 
   files as owned by the openattic user (OP-819)
+* Web UI: Fixed checking for a name that has been already taken
+  while editing users or hosts. (OP-796)
+* Web UI / QA: Test to verify unique names in user and host editing mode.  
 
 Version 2.0.4, 17. Nov 2015:
 ----------------------------
