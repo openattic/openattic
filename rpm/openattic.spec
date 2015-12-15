@@ -546,9 +546,13 @@ echo ""
 
 %files
 %defattr(-,root,root,-)
-%doc CHANGELOG LICENSE README.rst
+%doc CHANGELOG CONTRIBUTING.rst COPYING README.rst
 
 %files base
+%defattr(-,openattic,openattic,-)
+%dir %{_localstatedir}/lib/%{name}
+%dir %{_localstatedir}/log/%{name}
+%dir %{_localstatedir}/lock/%{name}
 %defattr(-,root,root,-)
 %{_bindir}/oacli
 %{_sbindir}/blkdevzero
@@ -558,11 +562,7 @@ echo ""
 /lib/systemd/system/openattic-systemd.service
 %config %{_sysconfdir}/httpd/conf.d/openattic.conf
 %config %{_sysconfdir}/logrotate.d/%{name}
-%defattr(-,openattic,openattic,-)
 %dir %{_datadir}/%{name}
-%dir %{_localstatedir}/lib/%{name}
-%dir %{_localstatedir}/log/%{name}
-%dir %{_localstatedir}/lock/%{name}
 %dir %{_datadir}/%{name}/installed_apps.d
 %config(noreplace) %{_sysconfdir}/default/%{name}
 %config(noreplace) %{_sysconfdir}/%{name}/databases/pgsql.ini
@@ -593,55 +593,55 @@ echo ""
 %{_datadir}/%{name}/views.py*
 %{_datadir}/%{name}/volumes/
 
-
 %files module-btrfs
-%defattr(-,openattic,openattic,-)
+%defattr(-,root,root,-)
 %{_datadir}/%{name}/installed_apps.d/10_btrfs
 %{_datadir}/%{name}/btrfs/
 
 %files module-ceph
-%defattr(-,openattic,openattic,-)
+%defattr(-,root,root,-)
 %{_datadir}/%{name}/installed_apps.d/60_ceph
 %{_datadir}/%{name}/ceph/
 
 %files gui
-%defattr(-,openattic,openattic,-)
+%defattr(-,root,root,-)
 %{_datadir}/%{name}-gui
 
 %files module-cron
-%defattr(-,openattic,openattic,-)
+%defattr(-,root,root,-)
 %{_datadir}/%{name}/installed_apps.d/09_cron
 %{_datadir}/%{name}/cron/
 
 %files module-drbd
-%defattr(-,openattic,openattic,-)
+%defattr(-,root,root,-)
 %config %{_sysconfdir}/modprobe.d/drbd.conf
 %{_datadir}/%{name}/drbd/
 %{_datadir}/%{name}/installed_apps.d/60_drbd
 
 %files module-http
-%defattr(-,openattic,openattic,-)
-%{_localstatedir}/lib/%{name}/http/
+%defattr(-,root,root,-)
 %{_datadir}/%{name}/http/
 %{_datadir}/%{name}/installed_apps.d/60_http
 %config %{_sysconfdir}/httpd/conf.d/openattic-volumes.conf
+%defattr(-,openattic,openattic,-)
+%{_localstatedir}/lib/%{name}/http/
 
 %post module-http
 systemctl daemon-reload
 systemctl restart httpd
 
 %files module-ipmi
-%defattr(-,openattic,openattic,-)
+%defattr(-,root,root,-)
 %{_datadir}/%{name}/installed_apps.d/50_ipmi
 %{_datadir}/%{name}/ipmi/
 
 %files module-lio
-%defattr(-,openattic,openattic,-)
+%defattr(-,root,root,-)
 %{_datadir}/%{name}/installed_apps.d/60_lio
 %{_datadir}/%{name}/lio/
 
 %files module-lvm
-%defattr(-,openattic,openattic,-)
+%defattr(-,root,root,-)
 %{_datadir}/%{name}/lvm/
 %{_datadir}/%{name}/installed_apps.d/10_lvm
 
@@ -651,12 +651,12 @@ systemctl enable lvm2-lvmetad
 systemctl start lvm2-lvmetad
 
 %files module-mailaliases
-%defattr(-,openattic,openattic,-)
+%defattr(-,root,root,-)
 %{_datadir}/%{name}/mailaliases/
 %{_datadir}/%{name}/installed_apps.d/50_mailaliases
 
 %files module-mdraid
-%defattr(-,openattic,openattic,-)
+%defattr(-,root,root,-)
 %{_datadir}/%{name}/mdraid/
 %{_datadir}/%{name}/installed_apps.d/09_mdraid
 
@@ -679,7 +679,6 @@ systemctl start lvm2-lvmetad
 %{_libdir}/nagios/plugins/check_protocol_traffic
 %{_libdir}/nagios/plugins/check_twraid_unit
 %{_libdir}/nagios/plugins/notify_openattic
-%defattr(-,openattic,openattic,-)
 %{_datadir}/%{name}/installed_apps.d/50_nagios
 %{_datadir}/%{name}/nagios
 %defattr(-,nagios,nagios,-)
@@ -695,6 +694,7 @@ systemctl start npcd.service
 %files 	module-nfs
 %defattr(-,openattic,openattic,-)
 %{_localstatedir}/lib/%{name}/nfs_dummy/
+%defattr(-,root,root,-)
 %{_datadir}/%{name}/installed_apps.d/60_nfs
 %{_datadir}/%{name}/nfs/
 
@@ -706,7 +706,7 @@ systemctl start rpcbind.service
 systemctl start nfs-server.service
 
 %files 	module-samba
-%defattr(-,openattic,openattic,-)
+%defattr(-,root,root,-)
 %{_datadir}/%{name}/installed_apps.d/60_samba
 %{_datadir}/%{name}/samba/
 
@@ -718,18 +718,18 @@ systemctl enable smb
 systemctl start smb
 
 %files 	module-twraid
-%defattr(-,openattic,openattic,-)
+%defattr(-,root,root,-)
 %{_datadir}/%{name}/installed_apps.d/09_twraid
 %{_datadir}/%{name}/twraid/
 %config %{_sysconfdir}/cron.d/updatetwraid
 
 %files 	module-zfs
-%defattr(-,openattic,openattic,-)
+%defattr(-,root,root,-)
 %{_datadir}/%{name}/installed_apps.d/30_zfs
 %{_datadir}/%{name}/zfs/
 
 %files 	pgsql
-%defattr(-,openattic,openattic,-)
+%defattr(-,root,root,-)
 %{_sysconfdir}/openattic/
 
 %files release

@@ -30,7 +30,7 @@ describe('Raw Block Storage Wizard', function(){
     host.click();
     browser.sleep(400);
     element(by.model('data.iscsiInis')).click();
-    element.all(by.model('newTag.text')).get(1).sendKeys(iqn);
+    element.all(by.model('newTag.text')).get(0).sendKeys(iqn);
     browser.sleep(400);
   });
 

@@ -79,18 +79,17 @@ class DrbdConnectionViewSet(viewsets.ModelViewSet):
         if "new_size" in request.DATA:
             connection = self.get_object()
 
-            try:
-                # resize the local endpoint
-                connection.resize_local_storage_device(request.DATA["new_size"])
-            except SystemError, e:
-                return Response(e.message, status=status.HTTP_400_BAD_REQUEST, exception=True)
+            if not connection.storageobj.filesystemvolume_or_none:
+                try:
+                    # resize the local endpoint
+                    connection.resize_local_storage_device(request.DATA["new_size"])
+                except SystemError, e:
+                    return Response(e.message, status=status.HTTP_400_BAD_REQUEST, exception=True)
 
-            if connection.host == Host.objects.get_current():
-                # on the primary side resize drbd connection too
-                connection.storageobj.resize(request.DATA["new_size"])
-
-            ser = DrbdConnectionSerializer(connection, context={"request": request})
-            return Response(ser.data, status=status.HTTP_200_OK)
+                ser = DrbdConnectionSerializer(connection, context={"request": request})
+                return Response(ser.data, status=status.HTTP_200_OK)
+            return Response("Resizing a formatted DRBD connection is not implemented yet.",
+                            status=status.HTTP_501_NOT_IMPLEMENTED, exception=True)
         return super(DrbdConnectionViewSet, self).update(request, args, kwargs)
 
     def destroy(self, request, *args, **kwargs):

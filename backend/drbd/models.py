@@ -253,6 +253,10 @@ class Connection(BlockVolume):
         local_endpoint = Endpoint.objects.get(connection=self)
         local_endpoint.volume.storageobj.resize(new_size)
 
+        # on the primary side resize drbd connection too
+        if local_endpoint.is_primary:
+            self.storageobj.resize(new_size)
+
 
 class Endpoint(models.Model):
     connection  = models.ForeignKey(Connection, related_name="endpoint_set")

@@ -22,11 +22,14 @@ Version 2.0.5 (not released yet)
 * Backend: added loading of kernel modules "target_core_iblock" and
   "target_core_pscsi" to the LIO backend, to fix a "fabric iscsi not
   loaded" error observed on CentOS 7 (OP-722).
+* Backend: Added RESTful API functionality to grow unformatted DRBD
+  connections and related Gatling API tests (OP-667 / OP-707)
 * Packaging: added openattic-module-lio to the openattic meta RPM package
   dependencies, moved dependency on python-rtslib from the openattic-base
   package to the openattic-module-lio RPM, as it's the only one that requires
   it (and to be in line with dependencies defined by the DEB packages).
 * Web UI: Fixed full screen mode. (OP-700)
+* Web UI: Snapshots are sortable by 'create date' now (OP-814)
 * Web UI/QA: added e2e test for bugfix OP-748 (Clicking the openATTIC icon
   on the login page bypasses the login prompt)
 * Web UI/QA: added e2e test for OP-542 (relates to bug OP-597 -> Raw hard Disks
@@ -35,6 +38,8 @@ Version 2.0.5 (not released yet)
   clicking a disk in volumes panel, the respective test should check this
 * WebUI/QA: added E2E test for scenario described in OP-588 
   ("When creating a new user, app should warn about existing user names.")
+* Installation: Updated the RPM package installation to no longer install all 
+  files as owned by the openattic user (OP-819)
 
 Version 2.0.4, 17. Nov 2015:
 ----------------------------

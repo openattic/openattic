@@ -21,6 +21,18 @@ necessary to be intimately familiar with the inner workings of the individual
 storage tools. Any task can be carried out by either using |oA|'s intuitive
 web interface or via the REST API.
 
+This program is free software: you can redistribute it and/or modify it under
+the terms of the GNU General Public License version 2 as published by the Free
+Software Foundation.
+
+This program is distributed in the hope that it will be useful, but WITHOUT
+ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
+FOR A PARTICULAR PURPOSE.  See the GNU General Public License for more
+details.
+
+You should have received a copy of the GNU General Public License along with
+this program. If not, see <http://www.gnu.org/licenses/>.
+
 .. toctree::
   :maxdepth: 2
 
