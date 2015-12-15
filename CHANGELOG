@@ -20,7 +20,6 @@ Version 2.0.5 (not released yet)
   package to the openattic-module-lio RPM, as it's the only one that requires
   it (and to be in line with dependencies defined by the DEB packages).
   
-
 * Backend: added loading of kernel modules "target_core_iblock" and
   "target_core_pscsi" to the LIO backend, to fix a "fabric iscsi not
   loaded" error observed on CentOS 7 (OP-722).
