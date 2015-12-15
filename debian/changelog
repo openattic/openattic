@@ -1,3 +1,9 @@
+openattic (2.0.5-1) unstable; urgency=medium
+
+  * New upstream release 2.0.5-1, see CHANGELOG for details
+
+ -- Laura Paduano <laura.paduano@it-novum.com>  Tue, 15 Dec 2015 14:38:35 +0100
+
 openattic (2.0.4-1) unstable; urgency=medium
 
   * Web UI: Fixed scripts created by the API Recorder (OP-608, OP-657, OP-712)
