@@ -3,9 +3,9 @@
 <p class="pText" ng-if="volume">You are about to delete the volume "{{volume.name}}". Be aware that you will
     <b>lose all data</b> in that volume and that this operation <b>cannot be undone</b>. To confirm,
     please enter the volume name and click Accept.</p>
-<p class="pText" ng-if="volumes">You are about to delete multiple volumes Be aware that you will
+<p class="pText" ng-if="volumes">You are about to delete multiple volumes. Be aware that you will
     <b>lose all data</b> in the volumes and that this operation <b>cannot be undone</b>. To confirm,
-    please enter "I want to delete the volumes." to click Delete.</p>
+    please type "yes." to click Delete.</p>
 <p ng-if="volumes">
     <span>The following volumes will be deleted:</span>
     <li ng-repeat="volume in volumes">{{volume.name}} ({{volume.type.app_label}}, {{volume.usage.size_text}})</li>
@@ -14,7 +14,7 @@
     <p class="input-group col-md-4">
         <input ng-if="volume" type="text" class="form-control" name="enteredName" placeholder="{{volume.name}}"
                ng-model="input.enteredName" ng-pattern="volume.name" required autofocus/>
-        <input ng-if="volumes" type="text" class="form-control" name="enteredName" placeholder="I want to delete the volumes."
+        <input ng-if="volumes" type="text" class="form-control" name="enteredName" placeholder="yes"
                ng-model="input.enteredName" ng-pattern="volume.name" required autofocus/>
         <div class="MessageBoxButtonSection">
             <div>
