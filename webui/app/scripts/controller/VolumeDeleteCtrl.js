@@ -1,13 +1,26 @@
 angular.module('openattic')
-  .controller('VolumeDeleteCtrl', function($scope, VolumeService, $modalInstance, volume) {
+  .controller('VolumeDeleteCtrl', function($scope, VolumeService, $modalInstance, volumeSelection) {
     'use strict';
 
-    $scope.volume = volume;
+    if ($.isArray(volumeSelection)) {
+      $scope.volumes = volumeSelection;
+    } else {
+      $scope.volume = volumeSelection;
+    }
+
     $scope.input = {
       enteredName: ''
     };
 
     $scope.delete = function(){
+      if ($scope.volume) {
+        $scope.deleteOne();
+      } else if ($scope.volumes) {
+        $scope.deleteMulti();
+      }
+    };
+
+    $scope.deleteOne = function(){
       VolumeService.delete({id: $scope.volume.id})
         .$promise
         .then(function() {
@@ -15,6 +28,18 @@ angular.module('openattic')
         }, function(error){
           console.log('An error occured', error);
         });
+    };
+
+    $scope.deleteMulti = function(){
+      $scope.volumes.forEach(function(volume){
+        VolumeService.delete({id: volume.id})
+          .$promise
+          .then(function() {
+            $modalInstance.close('deleted');
+          }, function(error) {
+            console.log('An error occured', error);
+          });
+      });
     };
 
     $scope.cancel = function(){
