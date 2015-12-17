@@ -176,6 +176,6 @@ describe('Wizard panel', function(){
 
   afterAll(function(){
     helpers.delete_volume(volume, volumename);
-    console.log('<----- file storage test volume with NFS removed ------>');
+    console.log('<----- file storage wizard done (btrfs/nfs) ------>');
   });
 });

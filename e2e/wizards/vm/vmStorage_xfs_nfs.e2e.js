@@ -138,12 +138,10 @@ describe('VM Storage Wizard', function(){
     browser.sleep(400);
     element(by.id('bot2-Msg1')).click();
     browser.sleep(400);
-
-    console.log('<----- VM storage test with NFS ended ------>');
   });
 
   afterAll(function(){
     helpers.delete_volume(volume, volumename);
-    console.log('<----- VM storage test volume removed ------>');
+    console.log('<----- VM storage wizard done (xfs/nfs) ------>');
   });
 });
