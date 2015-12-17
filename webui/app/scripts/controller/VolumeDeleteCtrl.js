@@ -12,7 +12,7 @@ angular.module('openattic')
       enteredName: ''
     };
 
-    $scope.delete = function(){
+    $scope.delete = function () {
       if ($scope.volume) {
         $scope.deleteOne();
       } else if ($scope.volumes) {
@@ -20,29 +20,31 @@ angular.module('openattic')
       }
     };
 
-    $scope.deleteOne = function(){
-      VolumeService.delete({id: $scope.volume.id})
+    $scope.deleteOne = function () {
+      VolumeService
+        .delete({id: $scope.volume.id})
         .$promise
-        .then(function() {
+        .then(function () {
           $modalInstance.close('deleted');
-        }, function(error){
+        }, function (error) {
           console.log('An error occured', error);
         });
     };
 
-    $scope.deleteMulti = function(){
-      $scope.volumes.forEach(function(volume){
-        VolumeService.delete({id: volume.id})
+    $scope.deleteMulti = function () {
+      $scope.volumes.forEach(function (volume) {
+        VolumeService
+          .delete({id: volume.id})
           .$promise
-          .then(function() {
+          .then(function () {
             $modalInstance.close('deleted');
-          }, function(error) {
+          }, function (error) {
             console.log('An error occured', error);
           });
       });
     };
 
-    $scope.cancel = function(){
+    $scope.cancel = function () {
       $modalInstance.dismiss('cancel');
 
       $.smallBox({

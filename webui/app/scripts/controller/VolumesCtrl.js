@@ -32,17 +32,17 @@ angular.module('openattic')
       });
     }, true);
 
-    $scope.$watch('selection.items', function(items){
-      if (items){
+    $scope.$watch('selection.items', function (items) {
+      if (items) {
         $scope.multiSelection = Boolean(items.length);
-      }else {
+      } else {
         $scope.multiSelection = false;
       }
     });
 
-    $scope.$watch('selection.item', function(item){
+    $scope.$watch('selection.item', function (item) {
       $scope.hasSelection = Boolean(item);
-      if(!item){
+      if (!item) {
         $state.go('volumes');
         return;
       }
@@ -89,7 +89,9 @@ angular.module('openattic')
     };
 
     $scope.protectionAction = function(){
-      if (!$scope.selection.item){return;}
+      if (!$scope.selection.item) {
+        return;
+      }
       var modalInstance = $modal.open({
         windowTemplateUrl: 'templates/messagebox.html',
         templateUrl: 'templates/volumes/protection.html',
@@ -112,7 +114,7 @@ angular.module('openattic')
       $('#more').effect('highlight', {}, 3000);
     };
 
-    $scope.protectedMessage = function(item){
+    $scope.protectedMessage = function (item) {
         $.smallBox({
           title: item.name + ' is not deletable',
           content: '<i class="fa fa-clock-o tc_notDeletable"></i><i> Release the deletion protection in order to be' +
@@ -123,7 +125,7 @@ angular.module('openattic')
         });
     }
 
-    $scope.deletionDialog = function(selection){
+    $scope.deletionDialog = function (selection) {
         var modalInstance = $modal.open({
           windowTemplateUrl: 'templates/messagebox.html',
           templateUrl: 'templates/volumes/delete.html',
@@ -140,8 +142,10 @@ angular.module('openattic')
         });
     }
 
-    $scope.deleteAction = function(){
-      if (!$scope.hasSelection){return;}
+    $scope.deleteAction = function () {
+      if (!$scope.hasSelection) {
+        return;
+      }
       var item = $scope.selection.item;
       var items = $scope.selection.items;
       if (item && item.is_protected) {
