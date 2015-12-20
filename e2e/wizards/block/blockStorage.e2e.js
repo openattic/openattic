@@ -132,13 +132,12 @@ describe('Raw Block Storage Wizard', function(){
     element(by.id('bot2-Msg1')).click();
     browser.sleep(800);
     expect(element(by.cssContainingText('tr', hostname)).isPresent()).toBe(false);
-    console.log('<----- raw block storage test ended ------>');
   });
 
   afterAll(function(){
     helpers.delete_volume(volume, volumename);
     helpers.delete_host();
-    console.log('<-----Raw Block Storage volume and host removed --->');
+    console.log('<-----Raw Block Storage wizard done --->');
   });
 
 });
