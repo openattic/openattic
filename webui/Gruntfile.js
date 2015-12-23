@@ -36,7 +36,7 @@ module.exports = function (grunt) {
       watch: {
         dev: {
           files: buildConfig.watchFiles,
-          tasks: ['htmlbuild', 'jshint']
+          tasks: ['htmlbuild', 'jshint', 'jscs']
         }
       },
 
@@ -76,6 +76,18 @@ module.exports = function (grunt) {
       jshint: {
         options: {
           jshintrc: '.jshintrc'
+        },
+        all: [
+          '<%= buildConfig.src %>scripts/{,*/}*.js',
+          '<%= buildConfig.src %>components/{,**/}*.js',
+          '!<%= buildConfig.src %>components/smartadmin/{,**/}*.js',
+        ]
+      },
+
+      // check source files for violations of jscs rules defined in .jscsrc
+      jscs: {
+        options: {
+          config: ".jscsrc"
         },
         all: [
           '<%= buildConfig.src %>scripts/{,*/}*.js',
