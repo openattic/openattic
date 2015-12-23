@@ -80,6 +80,7 @@ module.exports = function (grunt) {
         all: [
           '<%= buildConfig.src %>scripts/{,*/}*.js',
           '<%= buildConfig.src %>components/{,**/}*.js',
+          '<%= buildConfig.src %>extensions/{,**/}*.js',
           '!<%= buildConfig.src %>components/smartadmin/{,**/}*.js',
         ]
       },
@@ -92,6 +93,7 @@ module.exports = function (grunt) {
         all: [
           '<%= buildConfig.src %>scripts/{,*/}*.js',
           '<%= buildConfig.src %>components/{,**/}*.js',
+          '<%= buildConfig.src %>extensions/{,**/}*.js',
           '!<%= buildConfig.src %>components/smartadmin/{,**/}*.js',
         ]
       },
