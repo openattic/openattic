@@ -30,6 +30,7 @@ class ContentTypeSerializer(serializers.HyperlinkedModelSerializer):
     class Meta:
         model = ContentType
 
+
 class ContentTypeViewSet(viewsets.ReadOnlyModelViewSet):
     queryset = ContentType.objects.all()
     serializer_class = ContentTypeSerializer
@@ -42,8 +43,8 @@ class UserSerializer(serializers.HyperlinkedModelSerializer):
 
     class Meta:
         model = User
-        fields = ('url', 'id', 'username', 'email', 'first_name', 'last_name', 'is_active', 'is_staff',
-                  'is_superuser', 'last_login', 'date_joined', 'volumes', 'auth_token')
+        fields = ('url', 'id', 'username', 'email', 'first_name', 'last_name', 'is_active',
+                  'is_staff', 'is_superuser', 'last_login', 'date_joined', 'volumes', 'auth_token')
 
     def get_auth_token(self, obj):
         current_user = self.context["request"].user
@@ -64,7 +65,8 @@ class UserSerializer(serializers.HyperlinkedModelSerializer):
 class UserViewSet(viewsets.ModelViewSet):
     queryset = User.objects.all()
     serializer_class = UserSerializer
-    filter_fields = ('username', 'first_name', 'last_name', 'email', 'is_active', 'is_staff', 'is_superuser')
+    filter_fields = ('username', 'first_name', 'last_name', 'email', 'is_active', 'is_staff',
+                     'is_superuser')
     search_fields = ('username', 'first_name', 'last_name', 'email')
 
     @detail_route()
@@ -106,13 +108,14 @@ class UserViewSet(viewsets.ModelViewSet):
         return Response(serializer.data)
 
     def create(self, request, *args, **kwargs):
-        user_data           = request.DATA
-        user                = User.objects.create_user(user_data["username"], user_data["email"], user_data["password"])
-        user.first_name     = user_data["first_name"]
-        user.last_name      = user_data["last_name"]
-        user.is_active      = user_data["is_active"]
-        user.is_superuser   = user_data["is_superuser"]
-        user.is_staff       = user_data["is_staff"]
+        user_data = request.DATA
+        user = User.objects.create_user(user_data["username"], user_data["email"],
+                                        user_data["password"])
+        user.first_name = user_data["first_name"]
+        user.last_name = user_data["last_name"]
+        user.is_active = user_data["is_active"]
+        user.is_superuser = user_data["is_superuser"]
+        user.is_staff = user_data["is_staff"]
         user.save()
 
         user_ret = UserSerializer(user, context={"request": request})
