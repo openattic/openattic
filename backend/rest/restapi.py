@@ -21,7 +21,7 @@ from rest_framework import serializers, viewsets
 from rest_framework.authtoken.models import Token
 from rest_framework.decorators import detail_route, list_route
 from rest_framework.response import Response
-from rest_framework.status import HTTP_201_CREATED
+from rest_framework.status import HTTP_201_CREATED, HTTP_403_FORBIDDEN
 
 from rest import relations
 
@@ -72,6 +72,31 @@ class UserViewSet(viewsets.ModelViewSet):
         vols = user.filesystemvolume_set.all()
         serializer = FileSystemVolumeSerializer(vols, many=True, context={'request': request})
         return Response(serializer.data)
+
+    @detail_route(["post", "put"])
+    def gen_new_token(self, request, *args, **kwargs):
+        user = self.get_object()
+
+        # Every user can have one authentication token at most, so check if a
+        # token already exists and if yes delete it.
+        try:
+            token = Token.objects.get(user=user)
+        except Token.DoesNotExist:
+            pass
+        else:
+            # If requesting user is not the user the authentication should be created for return
+            # error response. An user can only generate a token for another user if the other user
+            # does not already have an authentication token.
+            if request.user != user:
+                return Response("You can't refresh the authentication token of another user. Only "
+                                "the user '%s' is able to refresh his token." % user.username,
+                                status=HTTP_403_FORBIDDEN)
+            token.delete()
+
+        Token.objects.create(user=user)
+
+        user_ret = UserSerializer(user, many=False, context={"request": request})
+        return Response(user_ret.data, status=HTTP_201_CREATED)
 
     @list_route()
     def current(self, request, *args, **kwargs):
