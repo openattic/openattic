@@ -53,6 +53,8 @@ class UserSerializer(serializers.HyperlinkedModelSerializer):
         except Token.DoesNotExist:
             return {"token": "Not set yet!"}
         else:
+            # If the requesting user is not the user the authentication token should be returned
+            # for the key is masked so that users can only see their own token.
             if current_user != obj:
                 token.key = "*******"
             return {"token": token.key, "createdate": token.created}
