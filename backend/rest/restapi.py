@@ -18,6 +18,7 @@ from django.contrib.auth.models import User
 from django.contrib.contenttypes.models import ContentType
 
 from rest_framework import serializers, viewsets
+from rest_framework.authtoken.models import Token
 from rest_framework.decorators import detail_route, list_route
 from rest_framework.response import Response
 from rest_framework.status import HTTP_201_CREATED
@@ -37,11 +38,25 @@ class ContentTypeViewSet(viewsets.ReadOnlyModelViewSet):
 # Serializers define the API representation.
 class UserSerializer(serializers.HyperlinkedModelSerializer):
     volumes = relations.HyperlinkedIdentityField(view_name='user-volumes', format='html')
+    auth_token = serializers.SerializerMethodField("get_auth_token")
 
     class Meta:
         model = User
         fields = ('url', 'id', 'username', 'email', 'first_name', 'last_name', 'is_active', 'is_staff',
-                  'is_superuser', 'last_login', 'date_joined', 'volumes')
+                  'is_superuser', 'last_login', 'date_joined', 'volumes', 'auth_token')
+
+    def get_auth_token(self, obj):
+        current_user = self.context["request"].user
+
+        try:
+            token = Token.objects.get(user=obj)
+        except Token.DoesNotExist:
+            return {"token": "Not set yet!"}
+        else:
+            if current_user != obj:
+                token.key = "*******"
+            return {"token": token.key, "createdate": token.created}
+
 
 # ViewSets define the view behavior.
 class UserViewSet(viewsets.ModelViewSet):
