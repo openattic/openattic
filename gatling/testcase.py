@@ -94,7 +94,9 @@ class GatlingTestCase(unittest.TestCase):
 
             header["content-type"] = "application/json"
 
-            res = requests.request(method, url, data=json.dumps(kwargs["data"]), headers=header)
+            data = kwargs.get("data", None)
+
+            res = requests.request(method, url, data=json.dumps(data), headers=header)
             res.raise_for_status()
             res = json.loads(res.text)
 
