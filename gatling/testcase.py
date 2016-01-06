@@ -88,7 +88,7 @@ class GatlingTestCase(unittest.TestCase):
             url = "%s/%s" % (url, str(kwargs["obj_id"]))
 
         # POST, PUT
-        if "data" in kwargs:
+        if method in ["POST", "PUT"]:
             if prefixes["detail_route"]:
                 url = "%s/%s" % (url, prefixes["detail_route"])
 
@@ -105,7 +105,7 @@ class GatlingTestCase(unittest.TestCase):
                     "cleanup_url"   : cls._get_cleanup_url(res["id"], prefixes),
                     "headers"       : header}
         # GET, DELETE
-        else:
+        elif method in ["GET", "DELETE"]:
             if "search_param" in kwargs:
                 url = "%s?%s" % (url, kwargs["search_param"])
             res = requests.request(method, url, headers=header)
@@ -127,6 +127,9 @@ class GatlingTestCase(unittest.TestCase):
                 else:
                     return {"response"  : res["results"],
                             "count"     : res["count"]}
+        else:
+            print "Unknown request method '%s'" % method
+            raise unittest.SkipTest("Unknown request method '%s'" % method)
 
     @classmethod
     def get_auth_header(cls):
