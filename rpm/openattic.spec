@@ -740,7 +740,7 @@ systemctl start smb
 %changelog
 * Thu Jan 07 2016 Lenz Grimmer <lenz@openattic.org> 2.0.6
 - Make more use of the name macro, added cron to the requirements
-  of the openattic-module-twraid subpackage, 
+  of the openattic-module-twraid subpackage (OP-845)
 * Mon Dec 07 2015 Lenz Grimmer <lenz@openattic.org> 2.0.5
 - Moved dependency on python-rtslib from the openattic-base package
   to the openattic-module-lio RPM
