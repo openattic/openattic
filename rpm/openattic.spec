@@ -294,6 +294,7 @@ provides configuration facilities for Samba Shares.
 
 %package module-twraid
 Requires: openattic-base
+Requires: cron
 # TODO: List Requirements
 Summary: 3ware RAID module for openATTIC
 
@@ -375,6 +376,7 @@ mkdir -p %{buildroot}%{_sysconfdir}/modprobe.d/
 mkdir -p %{buildroot}%{_sysconfdir}/nagios/conf.d/
 mkdir -p %{buildroot}%{_sysconfdir}/%{name}/databases
 mkdir -p %{buildroot}%{_sysconfdir}/yum.repos.d/
+mkdir -p %{buildroot}/lib/systemd/system/
 
 # Install Backend and binaries
 rsync -aAX backend/ %{buildroot}%{_datadir}/%{name}
@@ -447,19 +449,18 @@ install -m 644 man/*.1 %{buildroot}%{_mandir}/man1/
 gzip %{buildroot}%{_mandir}/man1/*.1
 
 #configure nagios
-install -m 644 etc/nagios-plugins/config/openattic.cfg %{buildroot}%{_sysconfdir}/nagios/conf.d/openattic_plugins.cfg
-install -m 644 etc/nagios3/conf.d/openattic_*.cfg      %{buildroot}%{_sysconfdir}/nagios/conf.d/
+install -m 644 etc/nagios-plugins/config/%{name}.cfg %{buildroot}%{_sysconfdir}/nagios/conf.d/%{name}_plugins.cfg
+install -m 644 etc/nagios3/conf.d/%{name}_*.cfg      %{buildroot}%{_sysconfdir}/nagios/conf.d/
 
 for NAGPLUGIN in `ls -1 %{buildroot}%{_datadir}/%{name}/nagios/plugins/`; do
     ln -s "%{_datadir}/%{name}/nagios/plugins/$NAGPLUGIN" "%{buildroot}%{_libdir}/nagios/plugins/$NAGPLUGIN"
 done
 
-mkdir -p %{buildroot}/lib/systemd/system/
-install -m 644 etc/systemd/*.service %{buildroot}/lib/systemd/system/
+install -m 444 etc/systemd/*.service %{buildroot}/lib/systemd/system/
 
 # openATTIC httpd config
-install -m 644 etc/apache2/conf-available/openattic-volumes.conf %{buildroot}%{_sysconfdir}/httpd/conf.d/
-install -m 644 etc/apache2/conf-available/openattic.conf         %{buildroot}%{_sysconfdir}/httpd/conf.d/
+install -m 644 etc/apache2/conf-available/%{name}-volumes.conf %{buildroot}%{_sysconfdir}/httpd/conf.d/
+install -m 644 etc/apache2/conf-available/%{name}.conf         %{buildroot}%{_sysconfdir}/httpd/conf.d/
 
 install -m 644 etc/cron.d/updatetwraid %{buildroot}%{_sysconfdir}/cron.d/
 
@@ -557,10 +558,10 @@ echo ""
 %{_bindir}/oacli
 %{_sbindir}/blkdevzero
 %{_sbindir}/oaconfig
-%config %{_sysconfdir}/dbus-1/system.d/openattic.conf
-/lib/systemd/system/openattic-rpcd.service
-/lib/systemd/system/openattic-systemd.service
-%config %{_sysconfdir}/httpd/conf.d/openattic.conf
+%config %{_sysconfdir}/dbus-1/system.d/%{name}.conf
+/lib/systemd/system/%{name}-rpcd.service
+/lib/systemd/system/%{name}-systemd.service
+%config %{_sysconfdir}/httpd/conf.d/%{name}.conf
 %config %{_sysconfdir}/logrotate.d/%{name}
 %dir %{_datadir}/%{name}
 %dir %{_datadir}/%{name}/installed_apps.d
@@ -700,10 +701,10 @@ systemctl start npcd.service
 
 %post module-nfs
 systemctl daemon-reload
-systemctl enable rpcbind.service
-systemctl enable nfs-server.service
-systemctl start rpcbind.service
-systemctl start nfs-server.service
+systemctl enable rpcbind
+systemctl enable nfs-server
+systemctl start rpcbind
+systemctl start nfs-server
 
 %files 	module-samba
 %defattr(-,root,root,-)
@@ -737,6 +738,9 @@ systemctl start smb
 %{_sysconfdir}/yum.repos.d/%{name}.repo
 
 %changelog
+* Thu Jan 07 2016 Lenz Grimmer <lenz@openattic.org> 2.0.6
+- Make more use of the name macro, added cron to the requirements
+  of the openattic-module-twraid subpackage, 
 * Mon Dec 07 2015 Lenz Grimmer <lenz@openattic.org> 2.0.5
 - Moved dependency on python-rtslib from the openattic-base package
   to the openattic-module-lio RPM
