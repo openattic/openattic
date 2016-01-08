@@ -12,6 +12,9 @@ Version 2.0.6 (not released yet)
 * WebUI/QA: updated VM Storage wizard e2e (see OP-843)
 * Installation: Added cron to the requirements of the openattic-module-twraid
   RPM subpackage (OP-845)
+* Backend: The authentication token of a user is now obtainable by correct
+  username and password if the user is not logged in (OP-841)
+* Code cleanup: Updated date in copyright headers (OP-836)
 
 Version 2.0.5, 15. Dec 2015:
 ----------------------------
