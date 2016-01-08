@@ -24,6 +24,8 @@ from django.conf import settings
 
 from rest.router import ROUTER
 
+from rest_framework.authtoken import views
+
 from views import AuthView
 
 def _get_openattic_apps():
@@ -44,6 +46,7 @@ urlpatterns = [
 
     (r'^api/',      include(ROUTER.urls)),
     (r'^api-auth/', include('rest_framework.urls', namespace='rest_framework')),
+    (r'^api-token-auth/', views.obtain_auth_token),
 
     # we need a second URL for the do_login view which can be configured using an Apache
     # <Location> directive to authenticate using Kerberos
