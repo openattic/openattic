@@ -1,61 +1,58 @@
-angular.module('openattic')
-  .controller('HostFormCtrl', function ($scope, $state, $stateParams, HostService) {
-    'use strict';
+"use strict";
 
-    if(!$stateParams.host){
-      $scope.host = {};
-      $scope.editing = false;
+var app = angular.module("openattic");
+app.controller("HostFormCtrl", function ($scope, $state, $stateParams, HostService) {
+  var goToListView = function () {
+    $state.go("hosts");
+  };
 
-      $scope.submitAction = function(hostForm) {
-        $scope.submitted = true;
-        if(hostForm.$valid === true) {
-          HostService.save($scope.host)
-            .$promise
-            .then(function () {
-              goToListView();
-            }, function (error) {
-              console.log('An error occured', error);
-            });
-        }
-      };
-    }
-    else {
-      $scope.editing = true;
-      $scope.data = {
-        peerHostUrl: '',
-        iscsiIqn: '',
-        fcWwn: ''
-      };
+  if (!$stateParams.host) {
+    $scope.host = {};
+    $scope.editing = false;
 
-      HostService.get({id: $stateParams.host})
-        .$promise
-        .then(function(res){
-          $scope.host = res;
-        }, function(error){
-          console.log('An error occurred', error);
-        });
-
-      $scope.submitAction = function(hostForm) {
-        $scope.submitted = true;
-        if(hostForm.$valid === true) {
-          HostService.update({id: $scope.host.id}, $scope.host)
-            .$promise
-            .then(function () {
-              goToListView();
-            }, function (error) {
-              console.log('An error occured', error);
-            });
-        }
-      };
-    }
-
-    $scope.cancelAction = function() {
-      goToListView();
+    $scope.submitAction = function (hostForm) {
+      $scope.submitted = true;
+      if (hostForm.$valid === true) {
+        HostService.save($scope.host)
+          .$promise
+          .then(function () {
+            goToListView();
+          }, function (error) {
+            console.log("An error occured", error);
+          });
+      }
+    };
+  } else {
+    $scope.editing = true;
+    $scope.data = {
+      peerHostUrl: "",
+      iscsiIqn: "",
+      fcWwn: ""
     };
 
-    var goToListView = function() {
-      $state.go('hosts');
-    };
-  });
+    HostService.get({id: $stateParams.host})
+      .$promise
+      .then(function (res) {
+        $scope.host = res;
+      }, function (error) {
+        console.log("An error occurred", error);
+      });
 
-// kate: space-indent on; indent-width 2; replace-tabs on;
+    $scope.submitAction = function (hostForm) {
+      $scope.submitted = true;
+      if (hostForm.$valid === true) {
+        HostService.update({id: $scope.host.id}, $scope.host)
+          .$promise
+          .then(function () {
+            goToListView();
+          }, function (error) {
+            console.log("An error occured", error);
+          });
+      }
+    };
+  }
+
+  $scope.cancelAction = function () {
+    goToListView();
+  };
+});

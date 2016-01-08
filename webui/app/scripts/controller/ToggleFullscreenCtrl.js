@@ -1,7 +1,8 @@
-var app = angular.module('openattic');
+"use strict";
 
-app.controller('ToggleFullscreenCtrl', function($scope, toggleFullscreenService) {
-    $scope.toggleFullscreen = function() {
-        toggleFullscreenService.toggle();
-    }
+var app = angular.module("openattic");
+app.controller("ToggleFullscreenCtrl", function ($scope, toggleFullscreenService) {
+  $scope.toggleFullscreen = function () {
+    toggleFullscreenService.toggle();
+  };
 });

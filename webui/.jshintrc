@@ -7,8 +7,9 @@
 	"funcscope": true,
 	"futurehostile": true,
 	"globals": {
-        "angular": false,
-        "_": false
+    "angular": false,
+    "_": false,
+    "EventSource": false
 	},
 	"latedef": true,
 	"maxerr": 100,
