@@ -78,7 +78,7 @@ app.directive("wizard", function () {
             .catch(function (error) {
               console.log("An error occured", error);
             })
-            .then(function (res) {
+            .then(function () {
               $scope.selectSelector();
             });
           }

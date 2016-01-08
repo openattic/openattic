@@ -40,7 +40,7 @@ app.directive("wizardselector", function () {
       $scope.$on("widgetResized", function (event, values) {
         setSize(values.widthPx);
         // Save apply
-        if ($scope.$root.$$phase != "$apply" && $scope.$root.$$phase != "$digest") {
+        if ($scope.$root.$$phase !== "$apply" && $scope.$root.$$phase !== "$digest") {
           $scope.$digest();
         }
       });
