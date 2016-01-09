@@ -93,9 +93,13 @@ describe('VM Storage Wizard', function(){
     var path = element(by.id('nfspath'));
     var options = element(by.id('nfsoptions'));
 
-    expect(path.isPresent()).toBe(true);
+    browser.sleep(400);
+    expect(path.isDisplayed()).toBe(true);
+    browser.sleep(600);
     expect(address.isDisplayed()).toBe(true);
+    browser.sleep(600);
     expect(element(by.id('nfsoptions')).isDisplayed()).toBe(true);
+    browser.sleep(400);
     expect(path.getAttribute('value')).toEqual('/media/protractor_vmWizard_vol');
     expect(options.getAttribute('value')).toEqual('rw,no_subtree_check,no_root_squash');
     nextBtn.click();

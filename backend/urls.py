@@ -2,7 +2,7 @@
 # kate: space-indent on; indent-width 4; replace-tabs on;
 
 """
- *  Copyright (C) 2011-2015, it-novum GmbH <community@openattic.org>
+ *  Copyright (C) 2011-2016, it-novum GmbH <community@openattic.org>
  *
  *  openATTIC is free software; you can redistribute it and/or modify it
  *  under the terms of the GNU General Public License as published by
@@ -24,6 +24,8 @@ from django.conf import settings
 
 from rest.router import ROUTER
 
+from rest_framework.authtoken import views
+
 from views import AuthView
 
 def _get_openattic_apps():
@@ -44,6 +46,7 @@ urlpatterns = [
 
     (r'^api/',      include(ROUTER.urls)),
     (r'^api-auth/', include('rest_framework.urls', namespace='rest_framework')),
+    (r'^api/api-token-auth$', views.obtain_auth_token),
 
     # we need a second URL for the do_login view which can be configured using an Apache
     # <Location> directive to authenticate using Kerberos
