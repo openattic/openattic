@@ -100,7 +100,6 @@ class LioTestCase(LvTestScenario, LunTestScenario, LvLioTests):
 class NfsShareTest(object):
 
     def test_lv_nfs_share(self):
-        print self.vg["name"]
         """ Create an export for an LV. """
         data = {"filesystem"    : "ext4",
                 "megs"          : 1000,
