@@ -15,7 +15,7 @@ app.controller("VolumeCtrl", function ($scope, $state, VolumeService, SizeParser
   $scope.selection = {
   };
 
-  $scope.$watch("filterConfig", function(){
+  $scope.$watch("filterConfig", function () {
     VolumeService.filter({
       page: $scope.filterConfig.page + 1,
       page_size: $scope.filterConfig.entries,
@@ -85,7 +85,7 @@ app.controller("VolumeCtrl", function ($scope, $state, VolumeService, SizeParser
     }, function () {});
   };
 
-  $scope.protectionAction = function(){
+  $scope.protectionAction = function () {
     if (!$scope.selection.item) {
       return;
     }
@@ -112,31 +112,31 @@ app.controller("VolumeCtrl", function ($scope, $state, VolumeService, SizeParser
   };
 
   $scope.protectedMessage = function (item) {
-      $.smallBox({
-        title: item.name + " is not deletable",
-        content: "<i class=\"fa fa-clock-o tc_notDeletable\"></i><i> Release the deletion protection in order to be" +
-                 "able to delete the volume.</i>",
-        color: "#C46A69",
-        iconSmall: "fa fa-times fa-2x fadeInRight animated",
-        timeout: 6000
-      });
+    $.smallBox({
+      title: item.name + " is not deletable",
+      content: "<i class=\"fa fa-clock-o tc_notDeletable\"></i><i> Release the deletion protection in order to be" +
+               "able to delete the volume.</i>",
+      color: "#C46A69",
+      iconSmall: "fa fa-times fa-2x fadeInRight animated",
+      timeout: 6000
+    });
   }
 
   $scope.deletionDialog = function (selection) {
-      var modalInstance = $modal.open({
-        windowTemplateUrl: "templates/messagebox.html",
-        templateUrl: "templates/volumes/delete.html",
-        controller: "VolumeDeleteCtrl",
-        resolve: {
-          volumeSelection: function () {
-            return selection;
-          }
+    var modalInstance = $modal.open({
+      windowTemplateUrl: "templates/messagebox.html",
+      templateUrl: "templates/volumes/delete.html",
+      controller: "VolumeDeleteCtrl",
+      resolve: {
+        volumeSelection: function () {
+          return selection;
         }
-      });
+      }
+    });
 
-      modalInstance.result.then(function () {
-        $scope.filterConfig.refresh = new Date();
-      });
+    modalInstance.result.then(function () {
+      $scope.filterConfig.refresh = new Date();
+    });
   }
 
   $scope.deleteAction = function () {
@@ -154,7 +154,7 @@ app.controller("VolumeCtrl", function ($scope, $state, VolumeService, SizeParser
         return item.is_protected
       });
       if (protectedVolumes.length) {
-        protectedVolumes.forEach(function(volume){
+        protectedVolumes.forEach(function (volume) {
           $scope.protectedMessage(volume);
         });
       } else {

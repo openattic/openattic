@@ -1,5 +1,5 @@
 angular.module("openattic")
-  .controller("VolumeDeleteCtrl", function($scope, VolumeService, $modalInstance, volumeSelection) {
+  .controller("VolumeDeleteCtrl", function ($scope, VolumeService, $modalInstance, volumeSelection) {
     "use strict";
 
     if ($.isArray(volumeSelection)) {
@@ -14,24 +14,14 @@ angular.module("openattic")
 
     $scope.delete = function () {
       if ($scope.volume) {
-        $scope.deleteOne();
-      } else if ($scope.volumes) {
-        $scope.deleteMulti();
+        $scope.volumes = [ $scope.volume ];
+      }
+      if ($scope.volumes) {
+        $scope.deleteVolumes();
       }
     };
 
-    $scope.deleteOne = function () {
-      VolumeService
-        .delete({id: $scope.volume.id})
-        .$promise
-        .then(function () {
-          $modalInstance.close("deleted");
-        }, function (error) {
-          console.log("An error occured", error);
-        });
-    };
-
-    $scope.deleteMulti = function () {
+    $scope.deleteVolumes = function () {
       $scope.volumes.forEach(function (volume) {
         VolumeService
           .delete({id: volume.id})
