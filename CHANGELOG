@@ -6,6 +6,7 @@ Version 2.0.6 (not released yet)
 
 * WebUI: Added grunt-jscs v2.5.0 (OP-832)
 * WebUI: Updated grunt-contrib-jshint from 0.6.4 to 0.11.3 (OP-825)
+* WebUI: Fixed jshint and jscs errors (OP-826)
 * WebUI/QA: updated e2e wizard test by using the updated
   check_wizard titles helper function (OP-828)
 * WebUI/QA: check fullscreen mode (see OP-700 / OP-811)
