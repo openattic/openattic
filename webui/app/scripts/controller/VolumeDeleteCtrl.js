@@ -1,6 +1,6 @@
-angular.module('openattic')
-  .controller('VolumeDeleteCtrl', function($scope, VolumeService, $modalInstance, volumeSelection) {
-    'use strict';
+angular.module("openattic")
+  .controller("VolumeDeleteCtrl", function($scope, VolumeService, $modalInstance, volumeSelection) {
+    "use strict";
 
     if ($.isArray(volumeSelection)) {
       $scope.volumes = volumeSelection;
@@ -9,7 +9,7 @@ angular.module('openattic')
     }
 
     $scope.input = {
-      enteredName: ''
+      enteredName: ""
     };
 
     $scope.delete = function () {
@@ -25,9 +25,9 @@ angular.module('openattic')
         .delete({id: $scope.volume.id})
         .$promise
         .then(function () {
-          $modalInstance.close('deleted');
+          $modalInstance.close("deleted");
         }, function (error) {
-          console.log('An error occured', error);
+          console.log("An error occured", error);
         });
     };
 
@@ -37,21 +37,21 @@ angular.module('openattic')
           .delete({id: volume.id})
           .$promise
           .then(function () {
-            $modalInstance.close('deleted');
+            $modalInstance.close("deleted");
           }, function (error) {
-            console.log('An error occured', error);
+            console.log("An error occured", error);
           });
       });
     };
 
     $scope.cancel = function () {
-      $modalInstance.dismiss('cancel');
+      $modalInstance.dismiss("cancel");
 
       $.smallBox({
-        title: 'Delete volume',
-        content: '<i class="fa fa-clock-o"></i> <i>Cancelled</i>',
-        color: '#C46A69',
-        iconSmall: 'fa fa-times fa-2x fadeInRight animated',
+        title: "Delete volume",
+        content: "<i class=\"fa fa-clock-o\"></i> <i>Cancelled</i>",
+        color: "#C46A69",
+        iconSmall: "fa fa-times fa-2x fadeInRight animated",
         timeout: 4000
       });
     };

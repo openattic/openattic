@@ -1,50 +1,48 @@
-angular.module('openattic')
-  .controller('VolumeSnapshotFormCtrl', function($scope, $state, $filter, $stateParams, VolumeService,
-    VolumeSnapshotService, PoolService, SizeParserService, poolCheckingService){
-    'use strict';
+"use strict";
 
-    if(!$scope.selection){
-      goToListView();
-      return;
-    }
-    var item = $scope.selection.item;
+var app = angular.module("openattic");
+app.controller("VolumeSnapshotFormCtrl", function ($scope, $state, $filter, $stateParams, VolumeService,
+    VolumeSnapshotService, PoolService, SizeParserService, poolCheckingService) {
+  var goToListView = function () {
+    $state.go("volumes.detail.snapshots");
+  };
 
-    $scope.source = poolCheckingService.get($scope.selection);
+  if (!$scope.selection) {
+    goToListView();
+    return;
+  }
+  var item = $scope.selection.item;
 
-    $scope.snap = {
-      'volumeId': item.id,
-      'name': $filter('date')(new Date(), 'yyyy-MM-dd-HH-mm-ss'),
-      'megs':  ''
-    };
+  $scope.source = poolCheckingService.get($scope.selection);
 
-    $scope.megs = item.usage.size_text;
+  $scope.snap = {
+    "volumeId": item.id,
+    "name": $filter("date")(new Date(), "yyyy-MM-dd-HH-mm-ss"),
+    "megs": ""
+  };
 
-    $scope.pool = new PoolService.get($scope.selection.item.source_pool);
+  $scope.megs = item.usage.size_text;
 
-    $scope.$watch('megs', function(megs){
-      $scope.snap.megs = SizeParserService.parseInt(megs);
-    });
+  $scope.pool = new PoolService.get($scope.selection.item.source_pool);
 
-    $scope.submitAction = function(snapForm) {
-      $scope.submitted = true;
-      if(snapForm.$valid === true) {
-        new VolumeSnapshotService($scope.snap)
-          .$save()
-          .then(function () {
-            goToListView();
-          }, function (error) {
-            console.log('An error occured', error);
-          });
-      }
-    };
-
-    $scope.cancelAction = function() {
-      goToListView();
-    };
-
-    var goToListView = function() {
-      $state.go('volumes.detail.snapshots');
-    };
+  $scope.$watch("megs", function (megs) {
+    $scope.snap.megs = SizeParserService.parseInt(megs);
   });
 
-// kate: space-indent on; indent-width 2; replace-tabs on;
+  $scope.submitAction = function (snapForm) {
+    $scope.submitted = true;
+    if (snapForm.$valid === true) {
+      new VolumeSnapshotService($scope.snap)
+        .$save()
+        .then(function () {
+          goToListView();
+        }, function (error) {
+          console.log("An error occured", error);
+        });
+    }
+  };
+
+  $scope.cancelAction = function () {
+    goToListView();
+  };
+});

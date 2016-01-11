@@ -93,9 +93,13 @@ describe('VM Storage Wizard', function(){
     var path = element(by.id('nfspath'));
     var options = element(by.id('nfsoptions'));
 
-    expect(path.isPresent()).toBe(true);
+    browser.sleep(400);
+    expect(path.isDisplayed()).toBe(true);
+    browser.sleep(600);
     expect(address.isDisplayed()).toBe(true);
+    browser.sleep(600);
     expect(element(by.id('nfsoptions')).isDisplayed()).toBe(true);
+    browser.sleep(400);
     expect(path.getAttribute('value')).toEqual('/media/protractor_vmWizard_vol');
     expect(options.getAttribute('value')).toEqual('rw,no_subtree_check,no_root_squash');
     nextBtn.click();
@@ -114,23 +118,7 @@ describe('VM Storage Wizard', function(){
     expect(nextBtn.getText()).toEqual('Done');
     nextBtn.click();
     expect(browser.getCurrentUrl()).toContain('/openattic/#');
-    var wizards = element.all(by.repeater('wizard in wizards'))
-      .then(function(wizards){
-        var fsTitle = element.all(by.className('btn-block')).get(0).evaluate('wizard.title').then(function(title){
-          expect(title).toEqual('File Storage');
-          console.log(title);
-        });
-
-        var vmTitle = wizards[1].element(by.className('btn-block')).evaluate('wizard.title').then(function(vm_title){
-          expect(vm_title).toEqual('VM Storage');
-          console.log(vm_title);
-        });
-
-        var blockTitle = wizards[2].element(by.className('btn-block')).evaluate('wizard.title').then(function(block_title){
-          expect(block_title).toEqual('Raw Block Storage');
-          console.log(block_title);
-        });
-      });
+    helpers.check_wizard_titles();
 
     menu.get(3).click();
     expect(browser.getCurrentUrl()).toContain('/openattic/#/volumes');
@@ -154,12 +142,10 @@ describe('VM Storage Wizard', function(){
     browser.sleep(400);
     element(by.id('bot2-Msg1')).click();
     browser.sleep(400);
-
-    console.log('<----- VM storage test with NFS ended ------>');
   });
 
   afterAll(function(){
     helpers.delete_volume(volume, volumename);
-    console.log('<----- VM storage test volume removed ------>');
+    console.log('<----- VM storage wizard done (xfs/nfs) ------>');
   });
 });

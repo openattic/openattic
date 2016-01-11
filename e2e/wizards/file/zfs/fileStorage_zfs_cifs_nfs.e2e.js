@@ -209,6 +209,6 @@ describe('Wizard panel', function(){
 
   afterAll(function(){
     helpers.delete_volume(volume, volumename);
-    console.log('<----- file storage zvolume and shares removed ------>');
+    console.log('<----- file storage wizard done (zfs/cifs/nfs) ------>');
   });
 });

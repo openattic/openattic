@@ -1,9 +1,9 @@
-angular.module('openattic.datatable')
-  .directive('showhidecolumns', function () {
-    'use strict';
+"use strict";
 
-    return {
-      restrict: 'E',
-      templateUrl: 'components/datatable/templates/showhidecolumnsmenu.html'
-    };
-  });
+var app = angular.module("openattic.datatable");
+app.directive("showhidecolumns", function () {
+  return {
+    restrict: "E",
+    templateUrl: "components/datatable/templates/showhidecolumnsmenu.html"
+  };
+});

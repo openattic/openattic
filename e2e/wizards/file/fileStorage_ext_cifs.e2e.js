@@ -127,8 +127,6 @@ describe('Wizard panel', function(){
     expect(browser.getCurrentUrl()).toContain('/openattic/#');
 
     helpers.check_wizard_titles();
-
-    console.log('<----- file storage test with NFS ended ------>');
     browser.sleep(400);
     menu.get(3).click();
     expect(browser.getCurrentUrl()).toContain('/openattic/#/volumes');
@@ -155,14 +153,11 @@ describe('Wizard panel', function(){
     browser.sleep(400);
     element(by.id('bot2-Msg1')).click();
     browser.sleep(400);
-
-    console.log('<----- file storage test with CIFS ended ------>');
   });
 
   afterAll(function(){
 
     helpers.delete_volume(volume, volumename);
-    console.log('<----- file storage volume test with CIFS removed ------>');
-
+    console.log('<----- file storage wizard done (ext/cifs) ------>');
   });
 });

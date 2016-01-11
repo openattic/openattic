@@ -13,6 +13,7 @@ describe('General', function(){
   var oaLogo = element(by.css('#logo a'));
   var hideBtn = element(by.css('#hide-menu a'));
   var minifyArrow = element(by.css('.minifyme'));
+  var fullscreenBtn = element(by.id('fullscreen'));
 
   beforeAll(function(){
     helpers.login();
@@ -93,6 +94,58 @@ describe('General', function(){
     expect(browser.getCurrentUrl()).toContain('/openattic/#/dashboard');
   });
 
-  //TODO check full screen button
+  it('should check the fullscreen mode', function(){
+    expect(fullscreenBtn.isPresent()).toBe(true);
 
+    //enter fullscreen mode
+    fullscreenBtn.click();
+
+    browser.getCapabilities().then(function(capabilities) {
+      browser_name = capabilities.caps_.browserName;
+
+    }).then(function(){
+
+         if(browser_name == 'chrome'){
+           console.log('browser: ' + browser_name);
+           browser.executeScript('return document.webkitIsFullScreen').then(function(doc){
+             expect(doc).toBe(true);
+             //click somewhere else and expect that we're still in fullscreen mode
+             volumesItem.click();
+             expect(doc).toBe(true);
+           });
+
+           //leave fullscreen
+           fullscreenBtn.click();
+
+           browser.executeScript('return document.webkitIsFullScreen').then(function(doc){
+             browser.sleep(400);
+             expect(doc).toBe(false);
+           });
+
+         } else{
+               //this should work for firefox, but for some reasons firefox will return 'true' when fullscreen mode has been left
+               //TODO find fix for above mentioned problem
+               console.log('browser: ' + browser_name);
+               //fullscreenBtn.click();
+//                browser.executeScript('return document.mozFullScreen').then(function(doc){
+//                  browser.sleep(400);
+//                  expect(doc).toBe(true);
+//                  browser.sleep(400);
+//                  volumesItem.click();
+//                  browser.sleep(400);
+//                  expect(doc).toBe(true);
+//                });
+
+              //leave fullscreen
+              fullscreenBtn.click();
+              browser.sleep(400);
+              console.log('left fullscreen');
+
+//               browser.executeScript('return document.mozFullScreen').then(function(doc){
+//                 browser.sleep(400);
+//                 expect(doc).toBe(false);
+//               });
+         }
+    });
+  });
 });
