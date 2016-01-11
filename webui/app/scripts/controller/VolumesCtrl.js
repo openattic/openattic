@@ -32,35 +32,35 @@ app.controller("VolumeCtrl", function ($scope, $state, VolumeService, SizeParser
     });
   }, true);
 
-  $scope.$watch("selection.items", function (items) {
-    if (items) {
-      $scope.multiSelection = Boolean(items.length);
-    } else {
-      $scope.multiSelection = false;
-    }
-  });
+  $scope.$watchCollection("selection", function (selection) {
+    var item = selection.item;
+    var items = selection.items;
 
-  $scope.$watch("selection.item", function (item) {
+    $scope.multiSelection = Boolean(items);
     $scope.hasSelection = Boolean(item);
-    if (!item) {
+
+    if (!item && !items) {
       $state.go("volumes");
       return;
     }
-    $scope.cloneable = item.type.name !== "zfs";
 
-    if ($state.current.name === "volumes" ||
-        ($state.current.name === "volumes.detail.cifs" && !item.is_filesystemvolume) ||
-        ($state.current.name === "volumes.detail.nfs"  && !item.is_filesystemvolume) ||
-        ($state.current.name === "volumes.detail.http" && !item.is_filesystemvolume) ||
-        ($state.current.name === "volumes.detail.tftp" && !item.is_filesystemvolume) ||
-        ($state.current.name === "volumes.detail.luns" && (!item.is_blockvolume || item.is_filesystemvolume))) {
-      $state.go("volumes.detail.status", {volume: item.id});
-    } else if ($state.current.name === "volumes.detail.statistics.utilgraphs" && !item.is_filesystemvolume) {
-      $state.go("volumes.detail.statistics.perfgraphs", {volume: item.id});
-    } else if ($state.current.name === "volumes.detail.statistics.perfgraphs" && !item.is_blockvolume) {
-      $state.go("volumes.detail.statistics.utilgraphs", {volume: item.id});
-    } else {
-      $state.go($state.current.name, {volume: item.id});
+    if (item) {
+      $scope.cloneable = item.type.name !== "zfs";
+
+      if ($state.current.name === "volumes" ||
+          ($state.current.name === "volumes.detail.cifs" && !item.is_filesystemvolume) ||
+          ($state.current.name === "volumes.detail.nfs"  && !item.is_filesystemvolume) ||
+          ($state.current.name === "volumes.detail.http" && !item.is_filesystemvolume) ||
+          ($state.current.name === "volumes.detail.tftp" && !item.is_filesystemvolume) ||
+          ($state.current.name === "volumes.detail.luns" && (!item.is_blockvolume || item.is_filesystemvolume))) {
+        $state.go("volumes.detail.status", {volume: item.id});
+      } else if ($state.current.name === "volumes.detail.statistics.utilgraphs" && !item.is_filesystemvolume) {
+        $state.go("volumes.detail.statistics.perfgraphs", {volume: item.id});
+      } else if ($state.current.name === "volumes.detail.statistics.perfgraphs" && !item.is_blockvolume) {
+        $state.go("volumes.detail.statistics.utilgraphs", {volume: item.id});
+      } else {
+        $state.go($state.current.name, {volume: item.id});
+      }
     }
   });
 
@@ -120,7 +120,7 @@ app.controller("VolumeCtrl", function ($scope, $state, VolumeService, SizeParser
       iconSmall: "fa fa-times fa-2x fadeInRight animated",
       timeout: 6000
     });
-  }
+  };
 
   $scope.deletionDialog = function (selection) {
     var modalInstance = $modal.open({
@@ -137,10 +137,10 @@ app.controller("VolumeCtrl", function ($scope, $state, VolumeService, SizeParser
     modalInstance.result.then(function () {
       $scope.filterConfig.refresh = new Date();
     });
-  }
+  };
 
   $scope.deleteAction = function () {
-    if (!$scope.hasSelection) {
+    if (!$scope.hasSelection && !$scope.multiSelection) {
       return;
     }
     var item = $scope.selection.item;
@@ -148,17 +148,17 @@ app.controller("VolumeCtrl", function ($scope, $state, VolumeService, SizeParser
     if (item && item.is_protected) {
       $scope.protectedMessage(item);
     } else if (item) {
-      $scope.deletionDialog(item)
+      $scope.deletionDialog(item);
     } else if (items) {
       var protectedVolumes = items.filter(function (item) {
-        return item.is_protected
+        return item.is_protected;
       });
       if (protectedVolumes.length) {
         protectedVolumes.forEach(function (volume) {
           $scope.protectedMessage(volume);
         });
       } else {
-        $scope.deletionDialog(items)
+        $scope.deletionDialog(items);
       }
     }
   };

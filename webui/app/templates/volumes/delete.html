@@ -5,7 +5,7 @@
     please enter the volume name and click Accept.</p>
 <p class="pText" ng-if="!volume && volumes">You are about to delete multiple volumes. Be aware that you will
     <b>lose all data</b> in the volumes and that this operation <b>cannot be undone</b>. To confirm,
-    please type "yes." to click Delete.</p>
+    please type "yes" to click Delete.</p>
 <p ng-if="!volume && volumes">
     <span>The following volumes will be deleted:</span>
     <li ng-repeat="volume in volumes">{{volume.name}} ({{volume.type.app_label}}, {{volume.usage.size_text}})</li>
