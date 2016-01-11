@@ -1,10 +1,9 @@
-angular.module('openattic.extensions')
-  .directive('cephPoolAttributesEditor', function(){
-    return {
-      restrict: 'E',
-      templateUrl: 'extensions/ceph_pool_attributes_editor/templates/editor.html'
-    };
-  });
+"use strict";
 
-
-// kate: space-indent on; indent-width 2; replace-tabs on;
+var app = angular.module("openattic.extensions");
+app.directive("cephPoolAttributesEditor", function () {
+  return {
+    restrict: "E",
+    templateUrl: "extensions/ceph_pool_attributes_editor/templates/editor.html"
+  };
+});

@@ -1,1 +1,3 @@
-angular.module('openattic.apirecorder',[]);
+"use strict";
+
+angular.module("openattic.apirecorder", []);
