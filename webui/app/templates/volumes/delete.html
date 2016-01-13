@@ -8,7 +8,7 @@
     please type "yes" to click Delete.</p>
 <p ng-if="!volume && volumes">
     <span ng-if="!volume && volumes">The following volumes will be deleted:</span>
-    <li  ng-if="!volume && volumes" ng-repeat="volume in volumes">{{volume.name}} ({{volume.type.app_label}}, {{volume.usage.size_text}})</li>
+    <li ng-if="!volume && volumes" ng-repeat="vol in volumes">{{vol.name}} ({{vol.type.app_label}}, {{vol.usage.size_text}})</li>
 </p>
 <form name="deleteForm" role="form" novalidate>
     <p class="input-group col-md-4">
