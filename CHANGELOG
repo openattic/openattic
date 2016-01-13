@@ -6,9 +6,19 @@ Version 2.0.6 (not released yet)
 
 * WebUI: Added grunt-jscs v2.5.0 (OP-832)
 * WebUI: Updated grunt-contrib-jshint from 0.6.4 to 0.11.3 (OP-825)
+* WebUI: Fixed jshint and jscs errors (OP-826)
 * WebUI/QA: updated e2e wizard test by using the updated
   check_wizard titles helper function (OP-828)
 * WebUI/QA: check fullscreen mode (see OP-700 / OP-811)
+* WebUI/QA: updated VM Storage wizard e2e (see OP-843)
+* Installation: Added cron to the requirements of the openattic-module-twraid
+  RPM subpackage (OP-845)
+* Backend: The authentication token of a user is now obtainable by correct
+  username and password if the user is not logged in (OP-841)
+* Code cleanup: Updated date in copyright headers (OP-836)
+* Documentation: fixed package name and added protractor version
+  (section E2E), see OP-847
+* WebUI/QA: added wizard e2e test based on zfs/iscsi (see OP-628)  
 
 Version 2.0.5, 15. Dec 2015:
 ----------------------------

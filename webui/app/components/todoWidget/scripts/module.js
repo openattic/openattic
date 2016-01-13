@@ -1,1 +1,3 @@
-angular.module('openattic.todowidget',[]);
+"use strict";
+
+angular.module("openattic.todowidget", []);

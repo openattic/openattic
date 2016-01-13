@@ -1,1 +1,3 @@
-angular.module('openattic.graph',[]);
+"use strict";
+
+angular.module("openattic.graph", []);

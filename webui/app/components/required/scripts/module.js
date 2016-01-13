@@ -1,1 +1,3 @@
-angular.module('openattic.required', []);
+"use strict";
+
+angular.module("openattic.required", []);

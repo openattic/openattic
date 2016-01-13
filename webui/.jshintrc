@@ -1,24 +1,26 @@
 {
-	"bitwise": true,
-	"curly": true,
-	"eqeqeq": true,
-	"esnext": true,
-	"forin": false,
-	"funcscope": true,
-	"futurehostile": true,
-	"globals": {
-		"angular": false
-	},
-	"latedef": true,
-	"maxerr": 100,
-	"noarg": true,
-	"nonew": false,
-	"shadow": "inner",
-	"strict": true,
-	"undef": true,
-	"unused": true,
-	"varstmt": false,
-    "browser": true,
-    "jquery": true,
-    "node": true
+  "bitwise": true,
+  "curly": true,
+  "eqeqeq": true,
+  "esnext": true,
+  "forin": false,
+  "funcscope": true,
+  "futurehostile": true,
+  "globals": {
+    "angular": false,
+    "_": false,
+    "EventSource": false
+  },
+  "latedef": true,
+  "maxerr": 100,
+  "noarg": true,
+  "nonew": false,
+  "shadow": "inner",
+  "strict": true,
+  "undef": true,
+  "unused": true,
+  "varstmt": false,
+  "browser": true,
+  "jquery": true,
+  "node": true
 }
