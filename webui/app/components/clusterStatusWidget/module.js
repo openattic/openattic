@@ -1,6 +1,6 @@
-'use strict';
+"use strict";
 
-angular.module('openattic.clusterstatuswidget', [
-    'angular-flot',
-    'easypiechart'
+angular.module("openattic.clusterstatuswidget", [
+  "angular-flot",
+  "easypiechart"
 ]);

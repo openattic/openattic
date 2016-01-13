@@ -35,9 +35,9 @@ Testing VM:
 Install Protractor
 ------------------
 
-* ``npm install -g protractor``
+* ``npm install -g protractor`` (version 3.0.0)
 
-* ``apt-get install open-jdk-7-headless``
+* ``apt-get install openjdk-7-jre-headless``
 
 * ``npm install -g jasmine-beforeAll`` (in case this package is not available,
   try ``npm install -g jasmine-before-all``)

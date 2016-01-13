@@ -1,1 +1,3 @@
-angular.module('openattic.datatable',[]);
+"use strict";
+
+angular.module("openattic.datatable", []);

@@ -1,18 +1,19 @@
-angular.module('openattic')
-    .factory('ResponsiveSizeKey', function ($window, RESPONSIVE) {
-        'use strict';
-        return  {
-            getKey: function() {
-                var width = $window.innerWidth;
-                var key;
+"use strict";
 
-                for(var k in RESPONSIVE) {
-                    if(width > RESPONSIVE[k]) {
-                        key = k;
-                    }
-                }
+var app = angular.module("openattic");
+app.factory("ResponsiveSizeKey", function ($window, RESPONSIVE) {
+  return {
+    getKey: function () {
+      var width = $window.innerWidth;
+      var key;
 
-                return key;
-            }
+      for (var k in RESPONSIVE) {
+        if (width > RESPONSIVE[k]) {
+          key = k;
         }
-    });
+      }
+
+      return key;
+    }
+  };
+});

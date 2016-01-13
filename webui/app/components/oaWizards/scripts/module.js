@@ -1,1 +1,1 @@
-angular.module('openattic.oaWizards', []);
+angular.module("openattic.oaWizards", []);
