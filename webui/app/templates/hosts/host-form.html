@@ -2,7 +2,8 @@
     <div class="jarviswidget" id="wid-id-0">
         <header>
             <span class="widget-icon"> <i class="fa fa-edit"></i> </span>
-            <h2>Create Host: {{host.name}}</h2>
+            <h2 class="tc_hostAddTitle" ng-hide="editing">Create Host: {{host.name}}</h2>
+            <h2 class="tc_hostEditTitle" ng-show="editing">Edit Host: {{host.name}}</h2>
         </header>
         <div class="widget-body">
             <form name="hostForm" role="form" class="form-horizontal" novalidate>
