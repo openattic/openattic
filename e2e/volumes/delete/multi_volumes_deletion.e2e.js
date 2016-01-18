@@ -5,9 +5,6 @@ describe('Volumes delete', function(){
   var volumesItem = element.all(by.css('ul .tc_menuitem > a')).get(3);
   var volumeNameInput = element(by.model('volume.name'));
   var volumePoolSelect = element(by.model('data.sourcePool'));
-  var volumeSizeInput = element(by.model('data.megs'));
-  var volumename = 'protractor_test_volume';
-  var volume = element(by.cssContainingText('tr', volumename));
   var submitButton = element(by.css('.tc_submitButton'));
   var addBtn = element(by.css('.tc_add_btn'));
 
@@ -15,17 +12,6 @@ describe('Volumes delete', function(){
     addBtn.click();
     volumePoolSelect.sendKeys(pool.name);
     callback(pool.name, pool);
-  };
-  var forEachPool = function(callback){
-    for(var key in helpers.configs.pools){
-      usePool(helpers.configs.pools[key], callback);
-    }
-  };
-  var withFirstPool = function(callback){
-    for(var key in helpers.configs.pools){
-      usePool(helpers.configs.pools[key], callback);
-      break;
-    }
   };
 
   beforeAll(function(){
