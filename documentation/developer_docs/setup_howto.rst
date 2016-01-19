@@ -62,9 +62,9 @@ based on the latest commit in the ``default`` branch.
 
       # apt-mark hold 'openattic-.*'
 
-#.  Install Mercurial::
+#.  Install Mercurial and Git::
 
-      # apt-get install mercurial
+      # apt-get install mercurial && git
 
 #.  Install Node.JS and the Node Package Manager ``npm``::
 
