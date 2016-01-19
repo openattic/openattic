@@ -15,6 +15,12 @@ Version 2.0.6 (not released yet)
   RPM subpackage (OP-845)
 * Backend: The authentication token of a user is now obtainable by correct
   username and password if the user is not logged in (OP-841)
+* Backend: Added possibility to see the own authentication token via
+  http://<openattic-host>/openattic/api/users or
+  http://<openattic-host>/openattic/api/users/<user-id> views
+  (if one is set) (OP-833)
+* Backend: Added a detail route to create a new authentication token
+  for an existing user (OP-834)
 * Code cleanup: Updated date in copyright headers (OP-836)
 * Documentation: fixed package name and added protractor version
   (section E2E), see OP-847
