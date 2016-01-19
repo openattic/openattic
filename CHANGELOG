@@ -27,6 +27,7 @@ Version 2.0.6 (not released yet)
 * Code cleanup: Updated date in copyright headers (OP-836)
 * Documentation: fixed package name and added protractor version
   (section E2E), see OP-847
+* Documentation: updated developer documentation by adding missing git install  
 
 Version 2.0.5, 15. Dec 2015:
 ----------------------------
