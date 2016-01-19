@@ -28,6 +28,8 @@ Version 2.0.6 (not released yet)
 * Documentation: fixed package name and added protractor version
   (section E2E), see OP-847
 * Documentation: updated developer documentation by adding missing git install  
+* Documentation: added sections about authentication in general and how you
+  can get the authentication token of your own openattic user (OP-860).
 
 Version 2.0.5, 15. Dec 2015:
 ----------------------------
