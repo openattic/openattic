@@ -1,3 +1,9 @@
+openattic (2.0.6-1) unstable; urgency=medium
+
+  * New upstream release 2.0.6-1, see CHANGELOG for details
+
+ -- Sebastian Krah <sebastian.krah@it-novum.com>  Tue, 19 Jan 2016 15:21:20 +0100
+
 openattic (2.0.5-1) unstable; urgency=medium
 
   * New upstream release 2.0.5-1, see CHANGELOG for details
