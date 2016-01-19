@@ -17,12 +17,12 @@ app.controller("VolumeHttpSharesFormCtrl", function ($scope, $state, $stateParam
       $scope.submitted = true;
       if (httpForm.$valid === true) {
         HttpSharesService.save($scope.share)
-          .$promise
-          .then(function () {
-            goToListView();
-          }, function (error) {
-            console.log("An error occured", error);
-          });
+            .$promise
+            .then(function () {
+              goToListView();
+            }, function (error) {
+              console.log("An error occured", error);
+            });
       }
     };
   }

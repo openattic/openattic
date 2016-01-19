@@ -41,46 +41,46 @@ app.directive("wizard", function () {
             var volume = $.extend({}, $scope.input.volume);
             volume.megs = SizeParserService.parseInt($scope.input.volume.megs);
             VolumeService.save(volume)
-            .$promise
-            .then(function (res) {
-              if ("cifs" in $scope.input && "nfs" in $scope.input) {
-                if ($scope.input.cifs.create) {
-                  $scope.input.cifs.volume = {"id": res.id};
-                  CifsSharesService.save($scope.input.cifs)
-                  .$promise
-                  .then(function () {
-                  }, function (error) {
-                    console.log("An error occured", error);
-                  });
-                }
+                .$promise
+                .then(function (res) {
+                  if ("cifs" in $scope.input && "nfs" in $scope.input) {
+                    if ($scope.input.cifs.create) {
+                      $scope.input.cifs.volume = {"id": res.id};
+                      CifsSharesService.save($scope.input.cifs)
+                          .$promise
+                          .then(function () {
+                          }, function (error) {
+                            console.log("An error occured", error);
+                          });
+                    }
 
-                if ($scope.input.nfs.create) {
-                  $scope.input.nfs.volume = {"id": res.id};
-                  NfsSharesService.save($scope.input.nfs)
-                  .$promise
-                  .then(function () {
-                  }, function (error) {
-                    console.log("An error occured", error);
-                  });
-                }
-              } else if ("iscsi_fc" in $scope.input) {
-                if ($scope.input.iscsi_fc.create) {
-                  $scope.input.iscsi_fc.volume = {id: res.id};
-                  LunService.save($scope.input.iscsi_fc)
-                  .$promise
-                  .then(function () {
-                  }, function (error) {
-                    console.log("An error occured", error);
-                  });
-                }
-              }
-            })
-            .catch(function (error) {
-              console.log("An error occured", error);
-            })
-            .then(function () {
-              $scope.selectSelector();
-            });
+                    if ($scope.input.nfs.create) {
+                      $scope.input.nfs.volume = {"id": res.id};
+                      NfsSharesService.save($scope.input.nfs)
+                          .$promise
+                          .then(function () {
+                          }, function (error) {
+                            console.log("An error occured", error);
+                          });
+                    }
+                  } else if ("iscsi_fc" in $scope.input) {
+                    if ($scope.input.iscsi_fc.create) {
+                      $scope.input.iscsi_fc.volume = {id: res.id};
+                      LunService.save($scope.input.iscsi_fc)
+                          .$promise
+                          .then(function () {
+                          }, function (error) {
+                            console.log("An error occured", error);
+                          });
+                    }
+                  }
+                })
+                .catch(function (error) {
+                  console.log("An error occured", error);
+                })
+                .then(function () {
+                  $scope.selectSelector();
+                });
           }
         }
       };

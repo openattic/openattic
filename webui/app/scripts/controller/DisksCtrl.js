@@ -17,7 +17,7 @@ app.controller("DiskCtrl", function ($scope, $state, DiskService) {
   $scope.$watch("filterConfig", function () {
     DiskService.filter({
       page: $scope.filterConfig.page + 1,
-      page_size: $scope.filterConfig.entries,
+      pageSize: $scope.filterConfig.entries,
       search: $scope.filterConfig.search,
       ordering: ($scope.filterConfig.sortorder === "ASC" ? "" : "-") + $scope.filterConfig.sortfield
     })

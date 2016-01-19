@@ -17,18 +17,18 @@ app.controller("VolumeCtrl", function ($scope, $state, VolumeService, SizeParser
   $scope.$watch("filterConfig", function () {
     VolumeService.filter({
       page: $scope.filterConfig.page + 1,
-      page_size: $scope.filterConfig.entries,
+      pageSize: $scope.filterConfig.entries,
       search: $scope.filterConfig.search,
       ordering: ($scope.filterConfig.sortorder === "ASC" ? "" : "-") + $scope.filterConfig.sortfield,
       upper__isnull: "True"
     })
-    .$promise
-    .then(function (res) {
-      $scope.data = res;
-    })
-    .catch(function (error) {
-      console.log("An error occurred", error);
-    });
+        .$promise
+        .then(function (res) {
+          $scope.data = res;
+        })
+        .catch(function (error) {
+          console.log("An error occurred", error);
+        });
   }, true);
 
   $scope.$watch("selection.item", function (item) {

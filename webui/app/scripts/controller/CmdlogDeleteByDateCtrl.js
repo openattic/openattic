@@ -23,12 +23,12 @@ app.controller("CmdlogDeleteByDateCtrl", function ($scope, CmdlogService, $modal
 
   $scope.yes = function () {
     CmdlogService.delete({"datetime": $scope.datePicker.dateTime})
-      .$promise
-      .then(function () {
-        $modalInstance.close("deleted");
-      }, function (error) {
-        console.log("An error occured", error);
-      });
+        .$promise
+        .then(function () {
+          $modalInstance.close("deleted");
+        }, function (error) {
+          console.log("An error occured", error);
+        });
   };
 
   $scope.no = function () {

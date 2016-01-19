@@ -25,18 +25,18 @@ app.controller("VolumeCifsSharesCtrl", function ($scope, $state, CifsSharesServi
     }
     CifsSharesService.filter({
       page: $scope.cifsFilter.page + 1,
-      page_size: $scope.cifsFilter.entries,
+      pageSize: $scope.cifsFilter.entries,
       search: $scope.cifsFilter.search,
       ordering: ($scope.cifsFilter.sortorder === "ASC" ? "" : "-") + $scope.cifsFilter.sortfield,
       volume: $scope.cifsFilter.volume.id
     })
-    .$promise
-    .then(function (res) {
-      $scope.cifsData = res;
-    })
-    .catch(function (error) {
-      console.log("An error occurred", error);
-    });
+        .$promise
+        .then(function (res) {
+          $scope.cifsData = res;
+        })
+        .catch(function (error) {
+          console.log("An error occurred", error);
+        });
   }, true);
 
   $scope.addCifsAction = function () {
