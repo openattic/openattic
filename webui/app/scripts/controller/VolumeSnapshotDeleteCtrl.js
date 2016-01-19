@@ -6,12 +6,12 @@ app.controller("VolumeSnapshotDeleteCtrl", function ($scope, VolumeService, Snap
 
   $scope.delete = function () {
     SnapshotService.delete({id: $scope.snap.id})
-      .$promise
-      .then(function () {
-        $modalInstance.close("deleted");
-      }, function (error) {
-        console.log("An error occured", error);
-      });
+        .$promise
+        .then(function () {
+          $modalInstance.close("deleted");
+        }, function (error) {
+          console.log("An error occured", error);
+        });
   };
 
   $scope.cancel = function () {

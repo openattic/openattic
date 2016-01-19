@@ -21,7 +21,7 @@ app.factory("VolumeService", function ($resource) {
       method: "GET",
       url: "/openattic/api/volumes/:id/snapshots"
     },
-    create_snapshot: {
+    createSnapshot: {
       method: "POST",
       url: "/openattic/api/volumes/:id/snapshots"
     },

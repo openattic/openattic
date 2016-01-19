@@ -14,12 +14,12 @@ app.controller("HostFormCtrl", function ($scope, $state, $stateParams, HostServi
       $scope.submitted = true;
       if (hostForm.$valid === true) {
         HostService.save($scope.host)
-          .$promise
-          .then(function () {
-            goToListView();
-          }, function (error) {
-            console.log("An error occured", error);
-          });
+            .$promise
+            .then(function () {
+              goToListView();
+            }, function (error) {
+              console.log("An error occured", error);
+            });
       }
     };
   } else {
@@ -31,23 +31,23 @@ app.controller("HostFormCtrl", function ($scope, $state, $stateParams, HostServi
     };
 
     HostService.get({id: $stateParams.host})
-      .$promise
-      .then(function (res) {
-        $scope.host = res;
-      }, function (error) {
-        console.log("An error occurred", error);
-      });
+        .$promise
+        .then(function (res) {
+          $scope.host = res;
+        }, function (error) {
+          console.log("An error occurred", error);
+        });
 
     $scope.submitAction = function (hostForm) {
       $scope.submitted = true;
       if (hostForm.$valid === true) {
         HostService.update({id: $scope.host.id}, $scope.host)
-          .$promise
-          .then(function () {
-            goToListView();
-          }, function (error) {
-            console.log("An error occured", error);
-          });
+            .$promise
+            .then(function () {
+              goToListView();
+            }, function (error) {
+              console.log("An error occured", error);
+            });
       }
     };
   }

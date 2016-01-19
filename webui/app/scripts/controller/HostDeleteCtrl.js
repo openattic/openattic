@@ -6,12 +6,12 @@ app.controller("HostDeleteCtrl", function ($scope, HostService, $modalInstance, 
 
     $scope.delete = function () {
       HostService.delete({id: $scope.host.id})
-        .$promise
-        .then(function () {
-          $modalInstance.close("deleted");
-        }, function (error) {
-          console.log("An error occured", error);
-        });
+          .$promise
+          .then(function () {
+            $modalInstance.close("deleted");
+          }, function (error) {
+            console.log("An error occured", error);
+          });
     };
 
     $scope.cancel = function () {
