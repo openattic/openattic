@@ -17,17 +17,17 @@ app.controller("PoolCtrl", function ($scope, $state, PoolService) {
   $scope.$watch("filterConfig", function () {
     PoolService.filter({
       page: $scope.filterConfig.page + 1,
-      page_size: $scope.filterConfig.entries,
+      pageSize: $scope.filterConfig.entries,
       search: $scope.filterConfig.search,
       ordering: ($scope.filterConfig.sortorder === "ASC" ? "" : "-") + $scope.filterConfig.sortfield
     })
-    .$promise
-    .then(function (res) {
-      $scope.data = res;
-    })
-    .catch(function (error) {
-      console.log("An error occurred", error);
-    });
+        .$promise
+        .then(function (res) {
+          $scope.data = res;
+        })
+        .catch(function (error) {
+          console.log("An error occurred", error);
+        });
   }, true);
 
   $scope.$watch("selection.item", function (selitem) {
