@@ -33,12 +33,12 @@ app.controller("VolumeSnapshotFormCtrl", function ($scope, $state, $filter, $sta
     $scope.submitted = true;
     if (snapForm.$valid === true) {
       new VolumeSnapshotService($scope.snap)
-        .$save()
-        .then(function () {
-          goToListView();
-        }, function (error) {
-          console.log("An error occured", error);
-        });
+          .$save()
+          .then(function () {
+            goToListView();
+          }, function (error) {
+            console.log("An error occured", error);
+          });
     }
   };
 

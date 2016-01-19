@@ -25,18 +25,18 @@ app.controller("VolumeLunCtrl", function ($scope, $state, LunService) {
     }
     LunService.filter({
       page: $scope.lunFilter.page + 1,
-      page_size: $scope.lunFilter.entries,
+      pageSize: $scope.lunFilter.entries,
       search: $scope.lunFilter.search,
       ordering: ($scope.lunFilter.sortorder === "ASC" ? "" : "-") + $scope.lunFilter.sortfield,
       volume: $scope.lunFilter.volume.id
     })
-    .$promise
-    .then(function (res) {
-      $scope.lunData = res;
-    })
-    .catch(function (error) {
-      console.log("An error occurred", error);
-    });
+        .$promise
+        .then(function (res) {
+          $scope.lunData = res;
+        })
+        .catch(function (error) {
+          console.log("An error occurred", error);
+        });
   }, true);
   $scope.addLunAction = function () {
     $state.go("volumes.detail.luns-add");
@@ -50,12 +50,12 @@ app.controller("VolumeLunCtrl", function ($scope, $state, LunService) {
     }, function (ButtonPressed) {
       if (ButtonPressed === "Yes") {
         LunService.delete({id: $scope.lunSelection.item.id})
-          .$promise
-          .then(function () {
-            $scope.lunFilter.refresh = new Date();
-          }, function (error) {
-            console.log("An error occured", error);
-          });
+            .$promise
+            .then(function () {
+              $scope.lunFilter.refresh = new Date();
+            }, function (error) {
+              console.log("An error occured", error);
+            });
       }
       if (ButtonPressed === "No") {
         $.smallBox({

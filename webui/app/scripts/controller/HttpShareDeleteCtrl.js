@@ -6,12 +6,12 @@ app.controller("HttpShareDeleteCtrl", function ($scope, HttpSharesService, $moda
 
   $scope.delete = function () {
     HttpSharesService.delete({id: $scope.share.id})
-      .$promise
-      .then(function () {
-        $modalInstance.close("deleted");
-      }, function (error) {
-        console.log("An error occured", error);
-      });
+        .$promise
+        .then(function () {
+          $modalInstance.close("deleted");
+        }, function (error) {
+          console.log("An error occured", error);
+        });
   };
 
   $scope.cancel = function () {

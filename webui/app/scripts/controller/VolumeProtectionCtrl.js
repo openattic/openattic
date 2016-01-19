@@ -8,12 +8,13 @@ app.controller("VolumeProtectionCtrl", function ($scope, VolumeService, $modalIn
     new VolumeService({
       id: volume.id,
       is_protected: volume.is_protected
-    }).$update()
-      .then(function () {
-        $modalInstance.dismiss("protection set");
-      }, function (error) {
-        console.log("An error occured", error);
-      });
+    })
+        .$update()
+        .then(function () {
+          $modalInstance.dismiss("protection set");
+        }, function (error) {
+          console.log("An error occured", error);
+        });
   };
 
   $scope.cancel = function () {

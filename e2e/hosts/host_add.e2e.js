@@ -37,6 +37,10 @@ describe('Should add a host and attributes', function(){
     host.click();
     element(by.css('.tc_editHost')).click();
     browser.sleep(400);
+    expect(element(by.css('.tc_hostEditTitle')).isDisplayed()).toBe(true);
+    browser.sleep(400);
+    expect(element(by.css('.tc_hostEditTitle')).getText()).toContain('Edit Host:');
+    browser.sleep(400);
     var hostName = element(by.model('host.name'));
     expect(hostName.getAttribute('value')).toEqual('protractor_test_host');
     expect(element(by.css('.tc_noUniqueName')).isDisplayed()).toBe(false);

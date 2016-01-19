@@ -3,6 +3,7 @@
 var app = angular.module("openattic");
 app.controller("VolumeFormCtrl", function ($scope, $state, VolumeService, PoolService, SizeParserService) {
   $scope.volume = {};
+
   $scope.data = {
     sourcePool: null,
     megs: "",
@@ -23,12 +24,12 @@ app.controller("VolumeFormCtrl", function ($scope, $state, VolumeService, PoolSe
   $scope.selPoolUsedPercent = 0;
 
   PoolService.query()
-    .$promise
-    .then(function (res) {
-      $scope.pools = res;
-    }, function (error) {
-      console.log("An error occurred", error);
-    });
+      .$promise
+      .then(function (res) {
+        $scope.pools = res;
+      }, function (error) {
+        console.log("An error occurred", error);
+      });
 
   $scope.$watch("data.sourcePool", function (sourcePool) {
     if (sourcePool) {
@@ -52,10 +53,6 @@ app.controller("VolumeFormCtrl", function ($scope, $state, VolumeService, PoolSe
     $scope.volume.megs = SizeParserService.parseInt(megs);
   });
 
-  var goToListView = function () {
-    $state.go("volumes");
-  };
-
   $scope.submitAction = function (volumeForm) {
     $scope.submitted = true;
     if (volumeForm.$valid) {
@@ -64,15 +61,15 @@ app.controller("VolumeFormCtrl", function ($scope, $state, VolumeService, PoolSe
           $scope.volume.filesystem = $scope.data.filesystem;
         }
         VolumeService.save($scope.volume)
-          .$promise
-          .then(function (res) {
-            $scope.volume = res;
-            $scope.state.created = true;
-            $scope.state.formatted = $scope.volume.is_filesystemvolume;
-            goToListView();
-          }, function (error) {
-            console.log("An error occured", error);
-          });
+            .$promise
+            .then(function (res) {
+              $scope.volume = res;
+              $scope.state.created = true;
+              $scope.state.formatted = $scope.volume.is_filesystemvolume;
+              goToListView();
+            }, function (error) {
+              console.log("An error occured", error);
+            });
       } else if (!$scope.state.mirrored && $scope.data.mirrorHost !== "") {
         $.smallBox({
           title: "Mirror Volume",
@@ -99,5 +96,9 @@ app.controller("VolumeFormCtrl", function ($scope, $state, VolumeService, PoolSe
 
   $scope.cancelAction = function () {
     goToListView();
+  };
+
+  var goToListView = function () {
+    $state.go("volumes");
   };
 });

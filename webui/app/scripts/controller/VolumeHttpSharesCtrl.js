@@ -25,18 +25,18 @@ app.controller("VolumeHttpSharesCtrl", function ($scope, $state, HttpSharesServi
     }
     HttpSharesService.filter({
       page: $scope.httpFilter.page + 1,
-      page_size: $scope.httpFilter.entries,
+      pageSize: $scope.httpFilter.entries,
       search: $scope.httpFilter.search,
       ordering: ($scope.httpFilter.sortorder === "ASC" ? "" : "-") + $scope.httpFilter.sortfield,
       volume: $scope.httpFilter.volume.id
     })
-    .$promise
-    .then(function (res) {
-      $scope.httpData = res;
-    })
-    .catch(function (error) {
-      console.log("An error occurred", error);
-    });
+        .$promise
+        .then(function (res) {
+          $scope.httpData = res;
+        })
+        .catch(function (error) {
+          console.log("An error occurred", error);
+        });
   }, true);
 
   $scope.addHttpAction = function () {

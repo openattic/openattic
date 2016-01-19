@@ -10,11 +10,11 @@ app.controller("VolumeResizeCtrl", function ($scope, VolumeService, PoolService,
   };
 
   PoolService.get(volume.source_pool)
-    .$promise
-    .then(function (res) {
-      $scope.pool = res;
-      $scope.pool.usage.max_new_fsv = $scope.pool.usage.max_new_fsv + $scope.volume.usage.size;
-    });
+      .$promise
+      .then(function (res) {
+        $scope.pool = res;
+        $scope.pool.usage.max_new_fsv = $scope.pool.usage.max_new_fsv + $scope.volume.usage.size;
+      });
 
   $scope.resize = function () {
     $scope.submitted = true;
@@ -22,12 +22,13 @@ app.controller("VolumeResizeCtrl", function ($scope, VolumeService, PoolService,
       new VolumeService({
         id: $scope.volume.id,
         megs: SizeParserService.parseInt($scope.input.newsize)
-      }).$update()
-        .then(function () {
-          $modalInstance.close("resized");
-        }, function (error) {
-          console.log("An error occured", error);
-        });
+      })
+          .$update()
+          .then(function () {
+            $modalInstance.close("resized");
+          }, function (error) {
+            console.log("An error occured", error);
+          });
     }
   };
 
