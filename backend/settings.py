@@ -60,7 +60,7 @@ REST_FRAMEWORK = {
         'rest_framework.filters.OrderingFilter',
     ),
     'PAGINATE_BY':        50,
-    'PAGINATE_BY_PARAM': 'page_size',
+    'PAGINATE_BY_PARAM': 'pageSize',
     'MAX_PAGINATE_BY':   100,
     'URL_FIELD_NAME':    'url',
 }
