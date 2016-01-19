@@ -20,6 +20,7 @@ Version 2.0.6 (not released yet)
   (section E2E), see OP-847
 * WebUI/QA: added wizard e2e test based on zfs/iscsi (see OP-628)
 * WebUI: fixed wrong title header in host edit action, see OP-854
+* WebUI/QA: extended host e2e test in order to check the correct title (see OP-855)
 
 Version 2.0.5, 15. Dec 2015:
 ----------------------------

@@ -15,7 +15,7 @@ describe('Host form workflow', function(){
   });
 
   it('should have a "Create Host" title', function(){
-    expect(element(by.css('h2')).getText()).toEqual('Create Host:');
+    expect(element(by.css('.tc_hostAddTitle')).getText()).toEqual('Create Host:');
   });
 
   it('Should have a host name input field', function(){
