@@ -6,6 +6,7 @@ Version 2.0.8 (not released yet)
 
 Version 2.0.7, 19. Jan 2016:
 --------------------------------
+
 * WebUI: Fixed jshint and jscs errors (OP-826)
 * WebUI/QA: extended host e2e test in order to check the correct title (see OP-855)
 * Backend: Added possibility to see the own authentication token via
