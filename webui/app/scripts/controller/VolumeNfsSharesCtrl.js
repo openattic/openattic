@@ -25,18 +25,18 @@ app.controller("VolumeNfsSharesCtrl", function ($scope, $state, NfsSharesService
     }
     NfsSharesService.filter({
       page: $scope.nfsFilter.page + 1,
-      page_size: $scope.nfsFilter.entries,
+      pageSize: $scope.nfsFilter.entries,
       search: $scope.nfsFilter.search,
       ordering: ($scope.nfsFilter.sortorder === "ASC" ? "" : "-") + $scope.nfsFilter.sortfield,
       volume: $scope.nfsFilter.volume.id
     })
-    .$promise
-    .then(function (res) {
-      $scope.nfsData = res;
-    })
-    .catch(function (error) {
-      console.log("An error occurred", error);
-    });
+        .$promise
+        .then(function (res) {
+          $scope.nfsData = res;
+        })
+        .catch(function (error) {
+          console.log("An error occurred", error);
+        });
   }, true);
 
   $scope.addNfsAction = function () {

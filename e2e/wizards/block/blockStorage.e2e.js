@@ -41,9 +41,9 @@ describe('Raw Block Storage Wizard', function(){
   //<-- Raw Block Storage Wizard --->
   it('should have a button "Raw Block Storage"; navigate through the wizard', function(){
     var wizards = element.all(by.repeater('wizard in wizards')).then(function(wizards){
-      var fs_wizard = wizards[2].element(by.cssContainingText('span', 'Raw Block Storage'));
-      expect(fs_wizard.isDisplayed()).toBe(true);
-      fs_wizard.click();
+      var block_wizard = wizards[2].element(by.cssContainingText('span', 'Raw Block Storage'));
+      expect(block_wizard.isDisplayed()).toBe(true);
+      block_wizard.click();
 
       //first site
 

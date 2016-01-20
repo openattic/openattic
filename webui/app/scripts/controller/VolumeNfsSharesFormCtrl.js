@@ -14,12 +14,12 @@ app.controller("VolumeNfsSharesFormCtrl", function ($scope, $state, $stateParams
       $scope.submitted = true;
       if (shareForm.$valid === true) {
         NfsSharesService.save($scope.share)
-          .$promise
-          .then(function () {
-            goToListView();
-          }, function (error) {
-            console.log("An error occured", error);
-          });
+            .$promise
+            .then(function () {
+              goToListView();
+            }, function (error) {
+              console.log("An error occured", error);
+            });
       }
     };
   }

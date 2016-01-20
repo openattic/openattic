@@ -151,12 +151,13 @@ app.service("lineChartService", function () {
   // private methods
   function buildGraph(graphNumber, graphData) {
     var data;
+    var i;
 
     // On first call
     if (typeof graphDataset[graphNumber] === "undefined") {
       graphDataset[graphNumber] = {data: []};
 
-      for (var i = 0; i < maxGraphValues; i++) {
+      for (i = 0; i < maxGraphValues; i++) {
         // fill empty data with 0
         if (graphOptions.xaxis.mode === "time") {
           graphDataset[graphNumber].data.push([graphData[0][0], 0]); // TODO ggf besser loesen bei time mode

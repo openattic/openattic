@@ -6,12 +6,12 @@ app.controller("UserDeleteCtrl", function ($scope, UserService, $modalInstance, 
 
   $scope.delete = function () {
     UserService.delete({id: $scope.user.id})
-      .$promise
-      .then(function () {
-        $modalInstance.close("deleted");
-      }, function (error) {
-        console.log("An error occured", error);
-      });
+        .$promise
+        .then(function () {
+          $modalInstance.close("deleted");
+        }, function (error) {
+          console.log("An error occured", error);
+        });
   };
 
   $scope.cancel = function () {

@@ -65,15 +65,15 @@ class RequestHandlers(object):
         ip = current_host.get_primary_ip_address().host_part
 
         if queryset.has_next():
-            next_page = '%s?ordering=%s&page=%s&page_size=%s' % (self._get_base_url(ip, self.api_prefix),
+            next_page = '%s?ordering=%s&page=%s&pageSize=%s' % (self._get_base_url(ip, self.api_prefix),
                                                                  request.QUERY_PARAMS['ordering'],
                                                                  queryset.next_page_number(),
-                                                                 request.QUERY_PARAMS['page_size'])
+                                                                 request.QUERY_PARAMS['pageSize'])
         if queryset.has_previous():
-            prev_page = '%s?ordering=%s&page=%s&page_size=%s' % (self._get_base_url(ip, self.api_prefix),
+            prev_page = '%s?ordering=%s&page=%s&pageSize=%s' % (self._get_base_url(ip, self.api_prefix),
                                                                  request.QUERY_PARAMS['ordering'],
                                                                  queryset.previous_page_number(),
-                                                                 request.QUERY_PARAMS['page_size'])
+                                                                 request.QUERY_PARAMS['pageSize'])
 
         return Response(OrderedDict([
             ('count',       queryset.paginator.count),

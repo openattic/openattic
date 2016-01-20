@@ -6,12 +6,12 @@ app.controller("CifsShareDeleteCtrl", function ($scope, CifsSharesService, $moda
 
   $scope.delete = function () {
     CifsSharesService.delete({id: $scope.share.id})
-      .$promise
-      .then(function () {
-        $modalInstance.close("deleted");
-      }, function (error) {
-        console.log("An error occured", error);
-      });
+        .$promise
+        .then(function () {
+          $modalInstance.close("deleted");
+        }, function (error) {
+          console.log("An error occured", error);
+        });
   };
 
   $scope.cancel = function () {
