@@ -4,16 +4,7 @@ var app = angular.module("openattic");
 app.controller("UserFormCtrl", function ($scope, $state, $stateParams, UserService, $filter) {
   var gravatarId = $filter("gravatar")("");
 
-  $scope.user = {
-    "username": "",
-    "email": "",
-    "password": "",
-    "first_name": "",
-    "last_name": "",
-    "is_active": false,
-    "is_superuser": false,
-    "is_staff": false
-  };
+  $scope.isCurrentUser = false;
 
   var goToListView = function () {
     $state.go("users");
@@ -21,7 +12,16 @@ app.controller("UserFormCtrl", function ($scope, $state, $stateParams, UserServi
 
   if (!$stateParams.user) {
     $scope.editing = false;
-
+    $scope.user = {
+        "username": "",
+        "email": "",
+        "password": "",
+        "first_name": "",
+        "last_name": "",
+        "is_active": false,
+        "is_superuser": false,
+        "is_staff": false
+      };
     $scope.image = "http://www.gravatar.com/avatar/" + gravatarId + ".jpg?d=monsterid";
 
     $scope.submitAction = function (userForm) {
@@ -42,6 +42,7 @@ app.controller("UserFormCtrl", function ($scope, $state, $stateParams, UserServi
     UserService.get({id: $stateParams.user})
         .$promise
         .then(function (res) {
+          $scope.isCurrentUser = $scope.user.id === Number($stateParams.user);
           $scope.user = res;
 
           gravatarId = $filter("gravatar")($scope.user.email);
