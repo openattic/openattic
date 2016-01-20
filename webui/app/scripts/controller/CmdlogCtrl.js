@@ -17,17 +17,17 @@ app.controller("CmdlogCtrl", function ($scope, $state, CmdlogService, $modal) {
   $scope.$watch("filterConfig", function () {
     CmdlogService.filter({
       page: $scope.filterConfig.page + 1,
-      page_size: $scope.filterConfig.entries,
+      pageSize: $scope.filterConfig.entries,
       search: $scope.filterConfig.search,
       ordering: ($scope.filterConfig.sortorder === "ASC" ? "" : "-") + $scope.filterConfig.sortfield
     })
-      .$promise
-      .then(function (res) {
-        $scope.data = res;
-      })
-      .catch(function (error) {
-        console.log("An error occurred", error);
-      });
+        .$promise
+        .then(function (res) {
+          $scope.data = res;
+        })
+        .catch(function (error) {
+          console.log("An error occurred", error);
+        });
   }, true);
 
   $scope.$watchCollection("selection.items", function (items) {

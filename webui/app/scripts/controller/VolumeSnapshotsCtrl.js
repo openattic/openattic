@@ -28,17 +28,17 @@ app.controller("VolumeSnapshotsCtrl", function ($scope, $state, VolumeService, S
     }
     new VolumeService($scope.snapshotsFilter.volume).$snapshots({
       page: $scope.snapshotsFilter.page + 1,
-      page_size: $scope.snapshotsFilter.entries,
+      pageSize: $scope.snapshotsFilter.entries,
       search: $scope.snapshotsFilter.search,
       ordering: ($scope.snapshotsFilter.sortorder === "ASC" ? "" : "-") + $scope.snapshotsFilter.sortfield,
       volume: $scope.snapshotsFilter.volume.id
     })
-    .then(function (res) {
-      $scope.snapshotsData = res;
-    })
-    .catch(function (error) {
-      console.log("An error occurred", error);
-    });
+        .then(function (res) {
+          $scope.snapshotsData = res;
+        })
+        .catch(function (error) {
+          console.log("An error occurred", error);
+        });
   }, true);
 
   $scope.addAction = function () {

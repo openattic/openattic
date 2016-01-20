@@ -17,23 +17,23 @@ app.controller("VolumeCloneCtrl", function ($scope, VolumeService, SnapshotServi
         "id": $scope.volume.id,
         "name": $scope.clone_obj.name
       })
-      .$promise
-      .then(function () {
-        $modalInstance.close("cloned");
-      }, function (error) {
-        console.log("An error occured", error);
-      });
+          .$promise
+          .then(function () {
+            $modalInstance.close("cloned");
+          }, function (error) {
+            console.log("An error occured", error);
+          });
     } else {
       VolumeService.clone({
         "id": $scope.volume.id,
         "name": $scope.clone_obj.name
       })
-      .$promise
-      .then(function () {
-        $modalInstance.close("cloned");
-      }, function (error) {
-        console.log("An error occured", error);
-      });
+          .$promise
+          .then(function () {
+            $modalInstance.close("cloned");
+          }, function (error) {
+            console.log("An error occured", error);
+          });
     }
   };
 

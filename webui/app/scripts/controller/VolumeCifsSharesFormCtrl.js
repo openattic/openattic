@@ -8,10 +8,10 @@ app.controller("VolumeCifsSharesFormCtrl", function ($scope, $state, $stateParam
   $scope.domainconfig = {};
 
   CifsSharesService.domainconfig()
-  .$promise
-  .then(function (res) {
-    $scope.domainconfig = res;
-  });
+      .$promise
+      .then(function (res) {
+        $scope.domainconfig = res;
+      });
 
   if (!$stateParams.share) {
     $scope.share = {
@@ -46,23 +46,23 @@ app.controller("VolumeCifsSharesFormCtrl", function ($scope, $state, $stateParam
     $scope.editing = true;
 
     CifsSharesService.get({id: $stateParams.share})
-      .$promise
-      .then(function (res) {
-        $scope.share = res;
-      }, function (error) {
-        console.log("An error occurred", error);
-      });
+        .$promise
+        .then(function (res) {
+          $scope.share = res;
+        }, function (error) {
+          console.log("An error occurred", error);
+        });
 
     $scope.submitAction = function (shareForm) {
       $scope.submitted = true;
       if (shareForm.$valid === true) {
         CifsSharesService.update({id: $scope.share.id}, $scope.share)
-          .$promise
-          .then(function () {
-            goToListView();
-          }, function (error) {
-            console.log("An error occured", error);
-          });
+            .$promise
+            .then(function () {
+              goToListView();
+            }, function (error) {
+              console.log("An error occured", error);
+            });
       }
     };
   }

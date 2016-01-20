@@ -14,12 +14,12 @@ app.controller("VolumeLunFormCtrl", function ($scope, $state, $stateParams, $fil
   };
 
   HostService.query()
-    .$promise
-    .then(function (res) {
-      $scope.hosts = $filter("initiatorsonly")(res);
-    }, function (error) {
-      console.log("An error occurred", error);
-    });
+      .$promise
+      .then(function (res) {
+        $scope.hosts = $filter("initiatorsonly")(res);
+      }, function (error) {
+        console.log("An error occurred", error);
+      });
 
   $scope.$watch("share.host", function (host) {
     if (host) {
@@ -27,12 +27,12 @@ app.controller("VolumeLunFormCtrl", function ($scope, $state, $stateParams, $fil
         host: host.id,
         type: "qla2xxx"
       })
-      .$promise
-      .then(function (res) {
-        $scope.haz_initiator = (res.count > 0);
-      }, function (error) {
-        console.log("An error occured", error);
-      });
+          .$promise
+          .then(function (res) {
+            $scope.haz_initiator = (res.count > 0);
+          }, function (error) {
+            console.log("An error occured", error);
+          });
     }
   });
 
@@ -40,12 +40,12 @@ app.controller("VolumeLunFormCtrl", function ($scope, $state, $stateParams, $fil
     $scope.submitted = true;
     if (shareForm.$valid === true) {
       LunService.save($scope.share)
-        .$promise
-        .then(function () {
-          goToListView();
-        }, function (error) {
-          console.log("An error occured", error);
-        });
+          .$promise
+          .then(function () {
+            goToListView();
+          }, function (error) {
+            console.log("An error occured", error);
+          });
     }
   };
 

@@ -11,12 +11,13 @@ import datetime
 import requests
 import json
 
-from functools    import partial
+from functools import partial
 from ConfigParser import ConfigParser
-from optparse     import OptionParser
+from optparse import OptionParser
 from testtools.run import TestProgram
 
-from colorizer    import NovaTestResult
+from colorizer import NovaTestResult
+
 
 def main():
     basedir = os.path.dirname(os.path.abspath(__file__))
@@ -55,8 +56,9 @@ def main():
     parser.add_option("--config", action="append", default=[],
                       help="Location of gatling.conf. Can be used multiple times.")
     parser.add_option("-t", "--target", default="",
-                      help="Target node. Alias for '--config gatling.conf --config conf/<target>.conf'. "
-                           "If --target is specified, --config options are ignored.")
+                      help="Target node. Alias for '--config gatling.conf --config "
+                           "conf/<target>.conf'. If --target is specified, --config options are "
+                           "ignored.")
 
     options, posargs = parser.parse_args()
 
@@ -71,7 +73,6 @@ def main():
         conf.read(options.config)
     else:
         conf.read(os.path.join(basedir, "gatling.conf"))
-
 
     class GatlingTestSuite(unittest.TestSuite):
         """ TestSuite that monkeypatches loaded tests with config objects. """
@@ -105,7 +106,8 @@ def main():
     loader = GatlingTestLoader()
 
     starttime = datetime.datetime.now()
-    prog = GatlingTestProgram(argv=[' '.join(priorargs)] + posargs, testRunner=runner, testLoader=loader, exit=False)
+    prog = GatlingTestProgram(argv=[' '.join(priorargs)] + posargs, testRunner=runner,
+                              testLoader=loader, exit=False)
     endtime = datetime.datetime.now()
 
     header = {"Authorization": "Token %s" % conf.get("options", "auth_token")}
@@ -116,7 +118,8 @@ def main():
     failedcmds = json.loads(failedcmds.text)
 
     if failedcmds['count'] > 0:
-        print "openATTIC's command log recorded %d failed commands during the test period:" % failedcmds['count']
+        print "openATTIC's command log recorded %d failed commands during the test period:" % \
+              failedcmds['count']
         template = ("%(command)s (%(starttime)s - %(endtime)s):\n"
                     "%(text)s\n")
         for failedcmd in failedcmds['results']:
@@ -130,5 +133,4 @@ def main():
         return 1
 
 if __name__ == '__main__':
-        sys.exit(main())
-
+    sys.exit(main())
