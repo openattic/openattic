@@ -1,7 +1,25 @@
 openATTIC Changelog
 ===================
 
-Version 2.0.6 (not released yet)
+Version 2.0.8 (not released yet)
+--------------------------------
+
+Version 2.0.7, 19. Jan 2016:
+--------------------------------
+
+* WebUI: Fixed jshint and jscs errors (OP-826)
+* WebUI/QA: extended host e2e test in order to check the correct title (see OP-855)
+* Backend: Added possibility to see the own authentication token via
+  http://<openattic-host>/openattic/api/users or
+  http://<openattic-host>/openattic/api/users/<user-id> views
+  (if one is set) (OP-833)
+* Backend: Added a detail route to create a new authentication token
+  for an existing user (OP-834)
+* Documentation: updated developer documentation by adding missing git install
+* Documentation: added sections about authentication in general and how you
+  can get the authentication token of your own openattic user (OP-860).
+
+Version 2.0.6, 19. Jan 2016:
 --------------------------------
 
 * WebUI: Added grunt-jscs v2.5.0 (OP-832)
@@ -13,23 +31,13 @@ Version 2.0.6 (not released yet)
 * WebUI/QA: check fullscreen mode (see OP-700 / OP-811)
 * WebUI/QA: updated VM Storage wizard e2e (see OP-843)
 * WebUI/QA: added wizard e2e test based on zfs/iscsi (see OP-628)
-* WebUI/QA: extended host e2e test in order to check the correct title (see OP-855)
 * Installation: Added cron to the requirements of the openattic-module-twraid
   RPM subpackage (OP-845)
 * Backend: The authentication token of a user is now obtainable by correct
   username and password if the user is not logged in (OP-841)
-* Backend: Added possibility to see the own authentication token via
-  http://<openattic-host>/openattic/api/users or
-  http://<openattic-host>/openattic/api/users/<user-id> views
-  (if one is set) (OP-833)
-* Backend: Added a detail route to create a new authentication token
-  for an existing user (OP-834)
 * Code cleanup: Updated date in copyright headers (OP-836)
 * Documentation: fixed package name and added protractor version
   (section E2E), see OP-847
-* Documentation: updated developer documentation by adding missing git install  
-* Documentation: added sections about authentication in general and how you
-  can get the authentication token of your own openattic user (OP-860).
 
 Version 2.0.5, 15. Dec 2015:
 ----------------------------
