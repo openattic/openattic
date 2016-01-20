@@ -57,6 +57,6 @@ describe('Volumes delete', function(){
 
     // Check if they are deleted.
     browser.sleep(10000);
-    expect(element.all(by.cssContainingText('tr', 'e2e_')).isDisplayed()).toBe(false);
+    expect(element.all(by.cssContainingText('tr', 'e2e_'))).toEqual([]);
   });
 });
