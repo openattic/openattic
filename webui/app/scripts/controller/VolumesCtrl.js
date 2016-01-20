@@ -16,20 +16,21 @@ app.controller("VolumeCtrl", function ($scope, $state, VolumeService, SizeParser
   };
 
   $scope.$watch("filterConfig", function () {
-    VolumeService.filter({
-      page: $scope.filterConfig.page + 1,
-      page_size: $scope.filterConfig.entries,
-      search: $scope.filterConfig.search,
-      ordering: ($scope.filterConfig.sortorder === "ASC" ? "" : "-") + $scope.filterConfig.sortfield,
-      upper__isnull: "True"
-    })
-    .$promise
-    .then(function (res) {
-      $scope.data = res;
-    })
-    .catch(function (error) {
-      console.log("An error occurred", error);
-    });
+    VolumeService
+      .filter({
+        page: $scope.filterConfig.page + 1,
+        page_size: $scope.filterConfig.entries,
+        search: $scope.filterConfig.search,
+        ordering: ($scope.filterConfig.sortorder === "ASC" ? "" : "-") + $scope.filterConfig.sortfield,
+        upper__isnull: "True"
+      })
+      .$promise
+      .then(function (res) {
+        $scope.data = res;
+      })
+      .catch(function (error) {
+        console.log("An error occurred", error);
+      });
   }, true);
 
   $scope.$watchCollection("selection", function (selection) {
@@ -180,5 +181,3 @@ app.controller("VolumeCtrl", function ($scope, $state, VolumeService, SizeParser
     });
   };
 });
-
-// kate: space-indent on; indent-width 2; replace-tabs on;

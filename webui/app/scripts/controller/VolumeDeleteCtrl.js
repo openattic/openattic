@@ -1,7 +1,7 @@
 "use strict";
 
 var app = angular.module("openattic");
-app.controller("VolumeDeleteCtrl", function ($scope, VolumeService, $modalInstance, volumeSelection) {
+app.controller("VolumeDeleteCtrl", function ($scope, VolumeService, $modalInstance, volumeSelection, $q) {
   if ($.isArray(volumeSelection)) {
     $scope.volumes = volumeSelection;
   } else {
@@ -22,15 +22,16 @@ app.controller("VolumeDeleteCtrl", function ($scope, VolumeService, $modalInstan
   };
 
   $scope.deleteVolumes = function () {
+    var requests = [];
     $scope.volumes.forEach(function (volume) {
-      VolumeService
-        .delete({id: volume.id})
-        .$promise
-        .then(function () {
-          $modalInstance.close("deleted");
-        }, function (error) {
-          console.log("An error occured", error);
-        });
+      var deferred = $q.defer();
+      VolumeService.delete({id: volume.id}, deferred.resolve, deferred.reject);
+      requests.push(deferred.promise);
+    });
+    $q.all(requests).then(function () {
+      $modalInstance.close("deleted");
+    }, function (error) {
+      console.log("An error occured", error);
     });
   };
 
