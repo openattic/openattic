@@ -19,6 +19,7 @@ from volumes.rpcapi import AbstractVolumePoolHandler, AbstractBlockVolumeHandler
 
 from ceph import models
 
+
 class ClusterHandler(ModelHandler):
     model = models.Cluster
 
@@ -26,8 +27,10 @@ class ClusterHandler(ModelHandler):
         data["status"] = obj.status
         return data
 
+
 class PoolHandler(AbstractVolumePoolHandler):
     model = models.Pool
+
 
 class ImageHandler(AbstractBlockVolumeHandler):
     model = models.Image
