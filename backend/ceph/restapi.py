@@ -41,7 +41,6 @@ class ClusterSerializer(serializers.HyperlinkedModelSerializer):
                   'auth_cluster_required', 'auth_client_required', 'auth_service_required')
 
     def get_crushmap(self, obj):
-        return ""
         return CrushmapVersionSerializer(obj.get_crushmap(), many=False, read_only=True).data
 
 
