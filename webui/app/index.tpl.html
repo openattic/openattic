@@ -7,14 +7,9 @@
     <title ng-bind="pageTitle">openATTIC</title>
     <meta name="description" content="">
     <meta name="author" content="">
-
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
 
-
-    <!--
-        ### Stylesheets ###
-    -->
-
+    <!-- ### Stylesheets ### -->
     <link rel="stylesheet" type="text/css" media="screen" href="bower_components/fontawesome/css/font-awesome.css">
     <link rel="stylesheet" type="text/css" media="screen" href="bower_components/bootstrap/dist/css/bootstrap.min.css">
 
@@ -32,6 +27,8 @@
     <link rel="stylesheet" type="text/css" media="screen" href="css/smartadmin-skins.min.css">
 
     <link rel="stylesheet" type="text/css" media="screen" href="styles/awesome-bootstrap-checkbox.css">
+
+    <!-- oA stylesheets -->
     <link rel="stylesheet" type="text/css" media="screen" href="styles/openattic.css" />
 
     <!-- SmartAdmin RTL Support  -->
@@ -41,14 +38,11 @@
     <!-- Application -->
     <!-- /htmlbuild -->
 
-
     <!-- endbuild -->
 
     <!-- FAVICONS -->
     <link rel="shortcut icon" href="images/openattic_favicon_32x32.png" type="image/x-icon">
     <link rel="icon" href="images/openattic_favicon_32x32.png" type="image/x-icon">
-
-
 </head>
 <body>
 <header id="header">
@@ -63,7 +57,6 @@
         <!-- END LOGO PLACEHOLDER -->
 
     </div>
-
 
     <!-- pulled right: nav area -->
     <div class="pull-right" ng-hide="loginActive()">
@@ -85,10 +78,7 @@
 </header>
 <!-- END HEADER -->
 
-
-
 <aside id="left-panel" ng-hide="loginActive()">
-
     <userinfo></userinfo>
 
     <!-- NAVIGATION : This navigation is also responsive-->
@@ -130,18 +120,19 @@
                     </li>
                 </ul>
             </li>
-
         </ul>
     </nav>
+    <!-- END NAVIGATION -->
+
     <span class="minifyme" data-action="minifyMenu" minify-menu>
         <i class="fa fa-arrow-circle-left hit"></i>
     </span>
 </aside>
-<!-- END NAVIGATION -->
 
 
 
 <div id="main" role="main" ng-class="{loginmain : loginActive()}">
+
     <!-- RIBBON -->
     <div id="ribbon" ng-hide="loginActive()">
         <!-- breadcrumb -->
@@ -153,6 +144,7 @@
     <div id="content" ui-view="main">
     </div>
 </div>
+
 <!-- build:js oa-app.js -->
 
 <!-- 3rd-Party Libraries -->
