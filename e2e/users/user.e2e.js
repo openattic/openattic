@@ -46,9 +46,9 @@ describe('Should add an user', function(){
     browser.sleep(400);
   });
 
-   it('should display the "protractor_test_user" in the users panel', function(){
-     expect(user.isDisplayed()).toBe(true);
-   });
+  it('should display the "protractor_test_user" in the users panel', function(){
+    expect(user.isDisplayed()).toBe(true);
+  });
 
   it('should verify that current name has no error message', function(){
     user.all(by.css('a')).click();
