@@ -3,12 +3,17 @@ var helpers = require('../common.js');
 
 describe('Should add an user', function(){
 
-  var username = 'protractor_test_user';
-  var user = element(by.cssContainingText('tr', username));
+  var testUser = {
+    username: 'protractor_test_user',
+    userpasswd: 'test',
+    firstname: 'Herp',
+    lastname: 'Derp',
+    email: 'herp.derp@openattic.org'
+  }
+  var user = element(by.cssContainingText('tr', testUser.username));
   var systemItem = element.all(by.css('ul .tc_menuitem')).get(5);
   var usersItem = systemItem.all(by.css('ul .tc_submenuitem > a')).get(0);
   //systemItem = systemItem.all(by.css(' a')).first();
-  var userpasswd = 'test';
   var correctInput = element(by.binding('correctInput'));
   var logout = element(by.css('.tc_logout a'));
   var addBtn = element(by.css('.tc_addUser'));
@@ -23,15 +28,15 @@ describe('Should add an user', function(){
   it('should create an user', function(){
     addBtn.click();
     browser.sleep(400);
-    element(by.model('user.username')).sendKeys(username);
+    element(by.model('user.username')).sendKeys(testUser.username);
     browser.sleep(400);
-    element(by.model('user.password')).sendKeys(userpasswd);
+    element(by.model('user.password')).sendKeys(testUser.userpasswd);
     browser.sleep(400);
-    element(by.model('user.first_name')).sendKeys('herp');
+    element(by.model('user.first_name')).sendKeys(testUser.firstname);
     browser.sleep(400);
-    element(by.model('user.last_name')).sendKeys('derp');
+    element(by.model('user.last_name')).sendKeys(testUser.lastname);
     browser.sleep(400);
-    element(by.model('user.email')).sendKeys('herp.derp@openattic.org');
+    element(by.model('user.email')).sendKeys(testUser.email);
     browser.sleep(400);
     element(by.model('user.is_active')).click();
     browser.sleep(400);
@@ -41,9 +46,9 @@ describe('Should add an user', function(){
     browser.sleep(400);
   });
 
-  it('should display the "protractor_test_user" in the users panel', function(){
-    expect(user.isDisplayed()).toBe(true);
-  });
+   it('should display the "protractor_test_user" in the users panel', function(){
+     expect(user.isDisplayed()).toBe(true);
+   });
 
   it('should verify that current name has no error message', function(){
     user.all(by.css('a')).click();
@@ -64,8 +69,8 @@ describe('Should add an user', function(){
 
   //test login with new user data
   it('should login with the new created user', function(){
-    element.all(by.model('username')).sendKeys(username);
-    element.all(by.model('password')).sendKeys(userpasswd);
+    element.all(by.model('username')).sendKeys(testUser.username);
+    element.all(by.model('password')).sendKeys(testUser.userpasswd);
     element.all(by.css('input[type="submit"]')).click();
   });
 
@@ -82,12 +87,16 @@ describe('Should add an user', function(){
     browser.sleep(400);
     addBtn.click();
     browser.sleep(400);
-    element(by.model('user.username')).sendKeys(username);
+    element(by.model('user.username')).sendKeys(testUser.username);
     expect(noUniqueName.isDisplayed()).toBe(true);
   });
 
   it('should check the user already taken error message', function(){
     expect(noUniqueName.getText()).toEqual('The chosen user name is already in use.');
+  });
+
+  it('should show the first and last name of the current user in the left panel', function(){
+    expect(element(by.css('span .tc_usernameinfo')).getText()).toEqual(testUser.firstname + ' ' + testUser.lastname);
   });
 
   it('should logout protractor_test_user', function(){
@@ -123,8 +132,8 @@ describe('Should add an user', function(){
   it('should make sure that the user really does not exist anymore', function(){
     logout.click();
     expect(browser.getCurrentUrl()).toContain('/#/login');
-    element.all(by.model('username')).sendKeys(username);
-    element.all(by.model('password')).sendKeys(userpasswd);
+    element.all(by.model('username')).sendKeys(testUser.username);
+    element.all(by.model('password')).sendKeys(testUser.userpasswd);
     element.all(by.css('input[type="submit"]')).click();
     expect(correctInput.isDisplayed()).toBe(true);
     expect(correctInput.getText()).toBe('The given credentials are not correct.');
