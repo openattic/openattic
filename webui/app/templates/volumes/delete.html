@@ -2,10 +2,10 @@
 <span class="MsgTitle" ng-if="!volume && volumes">Delete Volumes</span>
 <p class="pText" ng-if="volume">You are about to delete the volume "{{volume.name}}". Be aware that you will
     <b>lose all data</b> in that volume and that this operation <b>cannot be undone</b>. To confirm,
-    please enter the volume name and click Accept.</p>
+    please enter the volume name and click Delete.</p>
 <p class="pText" ng-if="!volume && volumes">You are about to delete multiple volumes. Be aware that you will
     <b>lose all data</b> in the volumes and that this operation <b>cannot be undone</b>. To confirm,
-    please type "yes" to click Delete.</p>
+    please enter "yes" and click Delete.</p>
 <p ng-if="!volume && volumes">
     <span ng-if="!volume && volumes">The following volumes will be deleted:</span>
     <li ng-if="!volume && volumes" ng-repeat="vol in volumes">{{vol.name}} ({{vol.type.app_label}}, {{vol.usage.size_text}})</li>
