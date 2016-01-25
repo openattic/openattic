@@ -19,6 +19,7 @@ from django.test import TestCase
 
 from ceph.models import Cluster
 
+
 class ClusterTestCase(TestCase):
     def test_get_recommended_pg_num(self):
         with mock.patch("ceph.models.Cluster.osd_set") as mock_osd_set:
@@ -37,4 +38,3 @@ class ClusterTestCase(TestCase):
             # the next power of two above it, but keeps it unaltered
             mock_osd_set.count.return_value = 8192
             self.assertEqual(c.get_recommended_pg_num(100), 8192)
-

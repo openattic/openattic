@@ -85,23 +85,22 @@ based on the latest commit in the ``default`` branch.
 
 #.  Customize the Apache configuration by editing
     ``/etc/apache2/conf-available/openattic.conf`` and
-    replace ``/usr/share/openattic`` with ``/srv/openattic/backend``.
+    replace the path ``/usr/share/openattic`` with ``/srv/openattic/backend``.
     Also add the following directive::
 
       <Directory /srv/openattic>
         Require all granted
       </Directory>
 
+    Adapt the ``WSGIScriptAlias`` paths to your local clone::
+
+      WSGIScriptAlias /openattic/serverstats /srv/openattic/backend/serverstats.wsgi
+      WSGIScriptAlias /openattic             /srv/openattic/backend/openattic.wsgi
+
 #.  In file ``/etc/default/openattic``, change the ``OADIR`` variable to point
     to the local Mercurial clone::
 
       OADIR="/srv/openattic/backend"
-
-#.  In file ``/etc/apache2/conf-available/openattic``, change the ``WSGIScriptAlias``
-    line to point to the local clone::
-
-      WSGIScriptAlias  /openattic/serverstats  /srv/openattic/backend/serverstats.wsgi
-      WSGIScriptAlias  /openattic              /srv/openattic/backend/openattic.wsgi
 
 #.  Now build the Web UI::
 
