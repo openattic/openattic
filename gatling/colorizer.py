@@ -1,5 +1,5 @@
 #!/usr/bin/env python
-# kate: space-indent on; indent-width 4; replace-tabs on;
+# -*- coding: utf-8 -*-
 
 # Copyright (c) 2013, Nebula, Inc.
 # Copyright 2010 United States Government as represented by the
