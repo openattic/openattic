@@ -3,8 +3,9 @@ openATTIC Changelog
 
 Version 2.0.8 (not released yet)
 --------------------------------
-* WebUI: Updated favicon to newer version (OP-859)
+* WebUI: added copyright/license header (OP-837)
 * WebUI: Don't allow the user to deactivate himself (OP-851)
+* WebUI: Updated favicon to newer version (OP-859)
 * WebUI/QA: E2E test for OP-851, to verify that you can't deactivate your profile (OP-852)
 * Backend: added copyright/license header to gatling files (OP-844)
 
