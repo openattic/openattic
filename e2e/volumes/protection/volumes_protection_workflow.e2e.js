@@ -8,7 +8,7 @@ describe('Volume protection dialog', function(){
   var submit_button = element(by.id('bot2-Msg1'));
   var cancel_button = element(by.id('bot1-Msg1'));
 
-  beforeEach(function(){
+  beforeAll(function(){
     helpers.login();
 
     element.all(by.css('ul .tc_menuitem > a')).get(3).click();
@@ -22,10 +22,6 @@ describe('Volume protection dialog', function(){
     browser.sleep(helpers.configs.sleep);
     protection.click();
     browser.sleep(helpers.configs.sleep);
-  });
-
-  afterEach(function(){
-    helpers.delete_volume(volume, volumename);
   });
 
   it('should have a deletion protection checkbox', function(){
@@ -88,5 +84,9 @@ describe('Volume protection dialog', function(){
     submit_button.click();
     browser.sleep(helpers.configs.sleep);
     console.log('volumes_protection in protection dir');
+  });
+
+  afterAll(function(){
+    helpers.delete_volume(volume, volumename);
   });
 });
