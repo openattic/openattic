@@ -1,6 +1,6 @@
 var helpers = require('../../common.js');
 describe('Volume protection dialog', function(){
-  var volumename = 'protractor_test_volume';
+  var volumename = 'protractor_test_protected_volume';
   var volume = element(by.cssContainingText('tr', volumename));
   var dropdown_menu = element(by.css('.tc_menudropdown'));
   var protected_volume = element(by.model('volume.is_protected'));
@@ -8,7 +8,8 @@ describe('Volume protection dialog', function(){
   var submit_button = element(by.id('bot2-Msg1'));
   var cancel_button = element(by.id('bot1-Msg1'));
 
-  beforeAll(function(){
+
+  beforeEach(function(){
     helpers.login();
 
     element.all(by.css('ul .tc_menuitem > a')).get(3).click();
@@ -22,6 +23,10 @@ describe('Volume protection dialog', function(){
     browser.sleep(helpers.configs.sleep);
     protection.click();
     browser.sleep(helpers.configs.sleep);
+  });
+
+  afterEach(function(){
+    helpers.delete_volume(volume, volumename);
   });
 
   it('should have a deletion protection checkbox', function(){
@@ -84,9 +89,5 @@ describe('Volume protection dialog', function(){
     submit_button.click();
     browser.sleep(helpers.configs.sleep);
     console.log('volumes_protection in protection dir');
-  });
-
-  afterAll(function(){
-    helpers.delete_volume(volume, volumename);
   });
 });
