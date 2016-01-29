@@ -33,34 +33,32 @@ describe('CommandLogs', function(){
     expect(element(by.css('.tc_deleteBtn')).isDisplayed()).toBe(true);
   });
 
-  //   it('should show the lvcreate log entry', function(){
-  //
-  //     for(var key in helpers.configs.pools){
-  //       var pool = helpers.configs.pools[key];
-  //       var exact_poolname = pool.name;
-  //         element.all(by.cssContainingText('option', pool.name))
-  //         .then(function findMatch(pname){
-  //           if (pool.name === pname){
-  //             exact_poolname = pname;
-  //             return true;
-  //           }
-  //         });
-  //
-  //       if (exact_poolname){
-  //
-  //         element(by.css('.tc_entries_dropdown')).click();
-  //         element(by.css('.tc_entries_100')).click();
-  //         browser.sleep(400);
-  //
-  //         var lv_create = element.all(by.cssContainingText('tr', '/sbin/lvcreate')).get(0);
-  //         lv_create.toString();
-  //         expect(lv_create.getText()).toContain('"/sbin/lvcreate" "-L" "100M" "-n" "protractor_test_volume" "' +
-  //                                               exact_poolname  + '"' + "\n" + 'O Logical volume "protractor_test_volume" created');
-  //       }
-  //
-  //       break;
-  //     }
-  //   });
+  it('should contain the lvcreate log entry', function(){
+
+    for(var key in helpers.configs.pools){
+      var pool = helpers.configs.pools[key];
+      var exact_poolname = pool.name;
+      element.all(by.cssContainingText('option', pool.name)).then(function findMatch(pname){
+        if (pool.name === pname){
+          exact_poolname = pname;
+          return true;
+        }
+      });
+
+      if(exact_poolname){
+        element(by.css('.tc_entries_dropdown')).click();
+        browser.sleep(400);
+        element(by.css('.tc_entries_100')).click();
+        browser.sleep(400);
+        var lv_create = element.all(by.cssContainingText('tr', '/sbin/lvcreate')).get(0);
+        lv_create.toString();
+        expect(lv_create.getText()).toContain('"/sbin/lvcreate" "-L" "100M" "-n" "protractor_cmdlog_vol" "' +
+                                              exact_poolname  + '"' + "\n" + 'O Logical volume "protractor_cmdlog_vol" created');
+      }
+
+      break;
+    }
+  });
 
   afterAll(function(){
     helpers.delete_volume(volume, volumename);
