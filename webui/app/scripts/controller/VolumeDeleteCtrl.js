@@ -9,7 +9,8 @@ app.controller("VolumeDeleteCtrl", function ($scope, VolumeService, $modalInstan
   }
 
   $scope.input = {
-    enteredName: ""
+    enteredName: "",
+    pattern: "yes"
   };
 
   $scope.delete = function () {
