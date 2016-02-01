@@ -45,6 +45,7 @@ describe('Should create a Snapshot', function(){
     browser.sleep(400);
     element(by.id('bot2-Msg1')).click();
     browser.sleep(400);
+    browser.pause();
     expect(snapshot.isPresent()).toBe(false);
     browser.sleep(400);
   });

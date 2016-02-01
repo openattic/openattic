@@ -19,7 +19,7 @@ app.controller("VolumeCtrl", function ($scope, $state, VolumeService, SizeParser
     VolumeService
       .filter({
         page: $scope.filterConfig.page + 1,
-        page_size: $scope.filterConfig.entries,
+        pageSize: $scope.filterConfig.entries,
         search: $scope.filterConfig.search,
         ordering: ($scope.filterConfig.sortorder === "ASC" ? "" : "-") + $scope.filterConfig.sortfield,
         upper__isnull: "True"
