@@ -44,6 +44,7 @@ class Share(models.Model):
             samba = get_dbus_object("/samba")
             samba.writeconf("", "")
             samba.reload()
+            samba.fs_chmod(self.path)
         return ret
 
 def __share_post_delete(instance, **kwargs):

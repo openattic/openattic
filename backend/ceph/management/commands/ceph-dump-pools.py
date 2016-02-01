@@ -18,9 +18,11 @@ from django.core.management.base import BaseCommand
 
 from ceph.models import Pool
 
-class Command( BaseCommand ):
+
+class Command(BaseCommand):
     help = "Dump the Ceph OSD tree as known to openATTIC."
 
     def handle(self, **options):
         for pool in Pool.objects.all():
-            print " * %-20s size=%-3d min_size=%-3d rule: %s" % (pool, pool.size, pool.min_size, pool.ruleset.get_description())
+            print " * %-20s size=%-3d min_size=%-3d rule: %s" % \
+                  (pool, pool.size, pool.min_size, pool.ruleset.get_description())

@@ -14,19 +14,14 @@
  *  GNU General Public License for more details.
 """
 
-import django_filters
-
-from rest_framework import serializers, viewsets, status
-from rest_framework.decorators import detail_route
+from rest_framework import serializers, viewsets
 from rest_framework.response import Response
-
-from rest import relations
 
 from ceph.models import Cluster, CrushmapVersion
 
 
 class CrushmapVersionSerializer(serializers.ModelSerializer):
-    crushmap    = serializers.SerializerMethodField("get_crush_map")
+    crushmap = serializers.SerializerMethodField("get_crush_map")
 
     class Meta:
         model = CrushmapVersion
@@ -34,10 +29,11 @@ class CrushmapVersionSerializer(serializers.ModelSerializer):
     def get_crush_map(self, obj):
         return obj.get_tree()
 
+
 class ClusterSerializer(serializers.HyperlinkedModelSerializer):
     """ Serializer for a Ceph Cluster. """
-    url         = serializers.HyperlinkedIdentityField(view_name="cephcluster-detail")
-    crushmap    = serializers.SerializerMethodField("get_crushmap")
+    url = serializers.HyperlinkedIdentityField(view_name="cephcluster-detail")
+    crushmap = serializers.SerializerMethodField("get_crushmap")
 
     class Meta:
         model = Cluster
@@ -47,11 +43,12 @@ class ClusterSerializer(serializers.HyperlinkedModelSerializer):
     def get_crushmap(self, obj):
         return CrushmapVersionSerializer(obj.get_crushmap(), many=False, read_only=True).data
 
+
 class ClusterViewSet(viewsets.ModelViewSet):
-    queryset         = Cluster.objects.all()
+    queryset = Cluster.objects.all()
     serializer_class = ClusterSerializer
-    filter_fields    = ('name',)
-    search_fields    = ('name',)
+    filter_fields = ('name',)
+    search_fields = ('name',)
 
     def update(self, request, *args, **kwargs):
         cluster = self.get_object()

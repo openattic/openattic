@@ -18,7 +18,7 @@ import socket
 
 from django.template.loader import render_to_string
 
-from systemd.procutils import service_command
+from systemd.procutils import service_command, invoke
 from systemd.plugins   import logged, BasePlugin, deferredmethod
 from samba.models  import Share
 from samba.conf    import settings as samba_settings
@@ -44,3 +44,7 @@ class SystemD(BasePlugin):
     @deferredmethod(in_signature="")
     def reload(self, sender):
         return service_command(samba_settings.SERVICE_NAME, "reload")
+
+    @deferredmethod(in_signature="s")
+    def fs_chmod(self, path, sender):
+        invoke(["/bin/chmod", "-R", "777", path])
