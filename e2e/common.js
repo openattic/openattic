@@ -147,7 +147,7 @@
       element(by.css('.tc_deleteItem > a')).click();
       browser.sleep(400);
 
-      element(by.model('input.enteredName')).sendKeys(clonename);
+      element(by.model('input.enteredName')).sendKeys('yes');
       element(by.id('bot2-Msg1')).click();
     },
 
