@@ -57,6 +57,12 @@ describe('should test the user form', function(){
     expect(element(by.id('userActive')).isPresent()).toBe(true);
   });
 
+  it('should not have a checkbox title "Is active", while editing the own profile', function(){
+    usersItem.click();
+    element(by.cssContainingText('tr', 'openattic')).element(by.css('a')).click();
+    expect(element(by.id('userActive')).isPresent()).toBe(false);
+  });
+
   it('should have a chexkbox title "Is administrator"', function(){
     expect(element(by.id('userStaff')).isPresent()).toBe(true);
   });
