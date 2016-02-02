@@ -45,7 +45,7 @@ describe('Volumes delete', function(){
     }
   });
 
-  it('delete all e2e volumes', function(){
+  it('should delete all volumes that begin with "e2e_"', function(){
     // Select all e2e volumes.
     element.all(by.cssContainingText('tr', 'e2e_')).all(by.css("input")).click();
 
