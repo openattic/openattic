@@ -53,7 +53,7 @@ describe('Zvol tests', function(){
     browser.sleep(400);
     element(by.css('.tc_deleteItem')).click();
     browser.sleep(400);
-    element(by.model('input.enteredName')).sendKeys(volumename);
+    element(by.model('input.enteredName')).sendKeys('yes');
     element(by.id('bot2-Msg1')).click();
 
     expect(volume.isPresent()).toBe(false);
