@@ -1,3 +1,17 @@
+# -*- coding: utf-8 -*-
+
+"""
+ *  Copyright (C) 2011-2016, it-novum GmbH <community@openattic.org>
+ *
+ *  openATTIC is free software; you can redistribute it and/or modify it
+ *  under the terms of the GNU General Public License as published by
+ *  the Free Software Foundation; version 2.
+ *
+ *  This package is distributed in the hope that it will be useful,
+ *  but WITHOUT ANY WARRANTY; without even the implied warranty of
+ *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ *  GNU General Public License for more details.
+"""
 
 import requests, time
 
@@ -100,7 +114,6 @@ class LioTestCase(LvTestScenario, LunTestScenario, LvLioTests):
 class NfsShareTest(object):
 
     def test_lv_nfs_share(self):
-        print self.vg["name"]
         """ Create an export for an LV. """
         data = {"filesystem"    : "ext4",
                 "megs"          : 1000,

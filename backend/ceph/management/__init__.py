@@ -17,21 +17,19 @@
 import re
 import os
 import os.path
-import json
 import sysutils.models
 
 from ConfigParser import ConfigParser
 
 from django.contrib.auth.models import User
 
-from systemd import get_dbus_object, dbus_to_python
-from ifconfig.models import Host, IPAddress
+from ifconfig.models import IPAddress
 from ceph import models as ceph_models
 from volumes.models import StorageObject
 
 
 def update(**kwargs):
-    admin = User.objects.filter( is_superuser=True )[0]
+    admin = User.objects.filter(is_superuser=True)[0]
 
     if not os.path.exists("/etc/ceph"):
         print "Ceph does not appear to be installed, skipping detection"
@@ -55,18 +53,19 @@ def update(**kwargs):
             known = True
             print "known"
         except ceph_models.Cluster.DoesNotExist:
-            cluster = ceph_models.Cluster(uuid=conf.get("global", "fsid"), name=displayname,
-                                        auth_cluster_required = conf.get("global", "auth_cluster_required"),
-                                        auth_service_required = conf.get("global", "auth_service_required"),
-                                        auth_client_required  = conf.get("global", "auth_client_required"),
-                                        )
+            cluster = ceph_models.Cluster(
+                uuid=conf.get("global", "fsid"), name=displayname,
+                auth_cluster_required=conf.get("global", "auth_cluster_required"),
+                auth_service_required=conf.get("global", "auth_service_required"),
+                auth_client_required=conf.get("global", "auth_client_required"),
+            )
             known = False
 
-        osdmap   = cluster.get_osdmap()
+        osdmap = cluster.get_osdmap()
         mds_stat = cluster.get_mds_stat()
         mon_stat = cluster.get_mon_status()
-        auth_list= cluster.get_auth_list()
-        df       = cluster.df()
+        auth_list = cluster.get_auth_list()
+        df = cluster.df()
 
         megs = df["stats"]["total_space_megs"]
 
@@ -89,9 +88,10 @@ def update(**kwargs):
                 print "added"
 
             # If the volume is unknown and this is a local OSD, let's see if we can update that
-            osdpath = os.path.join("/var/lib/ceph/osd", "%s-%d" % (mdlosd.cluster.name, mdlosd.ceph_id))
+            osdpath = os.path.join("/var/lib/ceph/osd", "%s-%d" %
+                                   (mdlosd.cluster.name, mdlosd.ceph_id))
             if ((mdlosd.volume is None or mdlosd.journal is None) and
-                os.path.exists(osdpath) and os.path.islink(osdpath)):
+                    os.path.exists(osdpath) and os.path.islink(osdpath)):
                 volumepath = os.readlink(osdpath)
                 journalpath = os.path.join(osdpath, "journal")
                 if os.path.exists(journalpath) and os.path.islink(journalpath):
@@ -123,8 +123,9 @@ def update(**kwargs):
                 storageobj = StorageObject(name=cpool["pool_name"], megs=megs)
                 storageobj.full_clean()
                 storageobj.save()
-                mdlpool = ceph_models.Pool(cluster=cluster, ceph_id=cpool["pool"], storageobj=storageobj, size=cpool["size"],
-                              min_size=cpool["min_size"])
+                mdlpool = ceph_models.Pool(cluster=cluster, ceph_id=cpool["pool"],
+                                           storageobj=storageobj, size=cpool["size"],
+                                           min_size=cpool["min_size"])
                 mdlpool.full_clean()
                 mdlpool.save(database_only=True)
                 print "added"
@@ -175,7 +176,8 @@ def update(**kwargs):
                 mdlentity = ceph_models.Entity.objects.get(entity=centity["entity"])
                 print "found"
             except ceph_models.Entity.DoesNotExist:
-                mdlentity = ceph_models.Entity(cluster=cluster, entity=centity["entity"], key=centity["key"])
+                mdlentity = ceph_models.Entity(cluster=cluster, entity=centity["entity"],
+                                               key=centity["key"])
                 mdlentity.full_clean()
                 mdlentity.save(database_only=True)
                 print "added"

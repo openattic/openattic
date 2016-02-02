@@ -62,9 +62,9 @@ based on the latest commit in the ``default`` branch.
 
       # apt-mark hold 'openattic-.*'
 
-#.  Install Mercurial::
+#.  Install Mercurial and Git::
 
-      # apt-get install mercurial
+      # apt-get install mercurial && git
 
 #.  Install Node.JS and the Node Package Manager ``npm``::
 
@@ -85,23 +85,22 @@ based on the latest commit in the ``default`` branch.
 
 #.  Customize the Apache configuration by editing
     ``/etc/apache2/conf-available/openattic.conf`` and
-    replace ``/usr/share/openattic`` with ``/srv/openattic/backend``.
+    replace the path ``/usr/share/openattic`` with ``/srv/openattic/backend``.
     Also add the following directive::
 
       <Directory /srv/openattic>
         Require all granted
       </Directory>
 
+    Adapt the ``WSGIScriptAlias`` paths to your local clone::
+
+      WSGIScriptAlias /openattic/serverstats /srv/openattic/backend/serverstats.wsgi
+      WSGIScriptAlias /openattic             /srv/openattic/backend/openattic.wsgi
+
 #.  In file ``/etc/default/openattic``, change the ``OADIR`` variable to point
     to the local Mercurial clone::
 
       OADIR="/srv/openattic/backend"
-
-#.  In file ``/etc/apache2/conf-available/openattic``, change the ``WSGIScriptAlias``
-    line to point to the local clone::
-
-      WSGIScriptAlias  /openattic/serverstats  /srv/openattic/backend/serverstats.wsgi
-      WSGIScriptAlias  /openattic              /srv/openattic/backend/openattic.wsgi
 
 #.  Now build the Web UI::
 
@@ -128,3 +127,32 @@ automatically adapt to the new directory and use the code located therein.
 See chapters :ref:`developer_contribute` and
 :ref:`developer_contributing_guidelines` for further details on how to prepare
 your code contributions for upstream inclusion.
+
+How to get the authentication token for your own user
+-----------------------------------------------------
+
+If you like to use the |oa| TokenAuthentication (:ref:`admin_auth_methods`)
+in your own scripts in order to achieve automatization for example, you need
+to find out your own authentication token at first.
+
+Here are two examples how you can get your authentication token via the REST
+API:
+
+**Curl:**
+::
+
+    curl --data "username=username&password=password"
+    http://<openattic-host>/openattic/api/api-token-auth/
+
+**Python requests:**
+::
+
+    import requests
+
+    requests.post("http://<openattic-host>/openattic/api/api-token-auth/",
+    data={"username": "<username>", "password": "<password>"})
+
+Examples for additional scripts can be found here:
+
+* `Snapshot Python script with authtoken <http://blog.openattic.org/posts/snapshot-python-script-with-authtoken/>`_
+* `Cronjob Snapshot Script for openATTIC <http://blog.openattic.org/posts/cron-snapshot-script-for-openattic/>`_

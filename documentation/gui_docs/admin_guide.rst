@@ -1,6 +1,28 @@
 Administration Guide
 ====================
 
+.. _admin_auth_methods:
+
+Authentication
+--------------
+
+"Authentication is the mechanism of associating an incoming request with a set
+of identifying credentials, such as the user the request came from, or the
+token that it was signed with (Tom Christie)."
+
+The |oA| authentication is based on the Django REST framework authentication
+methods.
+Currently |oA| supports the following authentication methods of the Django REST
+framework:
+
+* BasicAuthentication
+* TokenAuthentication
+* SessionAuthentication
+
+Read more about the Django REST framework authentication methods here:
+`Django REST framework - Authentication
+<https://tomchristie.github.io/rest-framework-2-docs/api-guide/authentication>`_
+
 Introducting the New Graphical User Interface
 ---------------------------------------------
 

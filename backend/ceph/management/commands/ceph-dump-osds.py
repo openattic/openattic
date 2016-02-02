@@ -16,9 +16,10 @@
 
 from django.core.management.base import BaseCommand
 
-from ceph.models import Bucket, OSD
+from ceph.models import Bucket
 
-class Command( BaseCommand ):
+
+class Command(BaseCommand):
     help = "Dump the Ceph OSD tree as known to openATTIC."
 
     def handle(self, **options):

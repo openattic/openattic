@@ -1,9 +1,22 @@
 # -*- coding: utf-8 -*-
-# kate: space-indent on; indent-width 4; replace-tabs on;
+
+"""
+ *  Copyright (C) 2011-2016, it-novum GmbH <community@openattic.org>
+ *
+ *  openATTIC is free software; you can redistribute it and/or modify it
+ *  under the terms of the GNU General Public License as published by
+ *  the Free Software Foundation; version 2.
+ *
+ *  This package is distributed in the hope that it will be useful,
+ *  but WITHOUT ANY WARRANTY; without even the implied warranty of
+ *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ *  GNU General Public License for more details.
+"""
 
 import unittest
 import requests
 import time
+
 
 class VolumeTests(object):
     """ A collection of standardized tests to be run against some kind of
@@ -14,18 +27,18 @@ class VolumeTests(object):
         * fstype: The type of filesystem with which volumes are to be created.
         * smallsize: Small volume size (used for standard and shrink tests).
         * bigsize: Big volume size (used for grow and shrink tests).
-        * api_prefix: Prefix for the related REST API part (http://oaHost/openattic/api/<api_prefix>)
+        * api_prefix: Prefix for the related REST API part
+                      (http://oaHost/openattic/api/<api_prefix>)
     """
-    fstype      = None
-    smallsize   = 1000
-    bigsize     = 2000
-    api_prefix  = "volumes"
-    sleeptime   = 8
+    fstype = None
+    smallsize = 1000
+    bigsize = 2000
+    api_prefix = "volumes"
+    sleeptime = 8
 
     def _get_pool(self):
         """ This method returns the pool in which we are to create volumes and
-            is best provided by the test scenario classes.
-        """
+            is best provided by the test scenario classes. """
         raise NotImplemented("VolumeTests._get_pool needs to be overridden")
 
     def _get_volume_data(self, size, name=None):
@@ -150,7 +163,8 @@ class VolumeTests(object):
 
         # create a snapshot and check properties
         snap_data = self._get_snapshot_data(self.smallsize, vol["response"]["id"])
-        snap = self.send_request("POST", ["volumes", "snapshots"], obj_id=vol["response"]["id"], data=snap_data)
+        snap = self.send_request("POST", ["volumes", "snapshots"], obj_id=vol["response"]["id"],
+                                 data=snap_data)
         self.send_request("GET")
         time.sleep(self.sleeptime)
         self.addCleanup(requests.request, "DELETE", snap["cleanup_url"], headers=snap["headers"])
@@ -166,7 +180,8 @@ class VolumeTests(object):
 
         # create and delete a snapshot
         snap_data = self._get_snapshot_data(self.smallsize, vol["response"]["id"])
-        snap = self.send_request("POST", ["volumes", "snapshots"], obj_id=vol["response"]["id"], data=snap_data)
+        snap = self.send_request("POST", ["volumes", "snapshots"], obj_id=vol["response"]["id"],
+                                 data=snap_data)
         time.sleep(self.sleeptime)
         self.send_request("DELETE", "snapshots", obj_id=snap["response"]["id"])
         self.send_request("GET")
@@ -180,14 +195,16 @@ class VolumeTests(object):
         self.addCleanup(requests.request, "DELETE", vol["cleanup_url"], headers=vol["headers"])
 
         # create a clone
-        clone = self.send_request("POST", ["volumes", "clone", "volumes"], obj_id=vol["response"]["id"],
-                                  data={"id": vol["response"]["id"], "name": "gatling_clone"})
+        clone = self.send_request("POST", ["volumes", "clone", "volumes"],
+                                  obj_id=vol["response"]["id"], data={"id": vol["response"]["id"],
+                                                                      "name": "gatling_clone"})
         time.sleep(self.sleeptime)
         self.addCleanup(requests.request, "DELETE", clone["cleanup_url"], headers=clone["headers"])
         self.check_clone_properties(clone)
 
     def test_clone_not_enough_space_in_pool(self):
-        """ Clone this volume to a volume created in the process when the volume pool does not have room. """
+        """ Clone this volume to a volume created in the process when the volume pool does not have
+            room. """
         # wait while pool status is still locked
         while self._get_pool()["status"]["status"] == 'locked':
             time.sleep(self.sleeptime)
@@ -201,10 +218,12 @@ class VolumeTests(object):
 
         # try to create a clone
         with self.assertRaises(requests.HTTPError) as err:
-            clone = self.send_request("POST", ["volumes", "clone", "volumes"], obj_id=vol["response"]["id"],
+            clone = self.send_request("POST", ["volumes", "clone", "volumes"],
+                                      obj_id=vol["response"]["id"],
                                       data={"id": vol["response"]["id"], "name": "gatling_clone"})
             time.sleep(self.sleeptime)
-            self.addCleanup(requests.request, "DELETE", clone["cleanup_url"], headers=clone["headers"])
+            self.addCleanup(requests.request, "DELETE", clone["cleanup_url"],
+                            headers=clone["headers"])
 
     def test_clone_snapshot_to_new_vol(self):
         """ Clone a snapshot to a volume created in the process. """
@@ -216,12 +235,14 @@ class VolumeTests(object):
 
         # create snapshot
         snap_data = self._get_snapshot_data(self.smallsize, vol["response"]["id"])
-        snap = self.send_request("POST", ["volumes", "snapshots"], obj_id=vol["response"]["id"], data=snap_data)
+        snap = self.send_request("POST", ["volumes", "snapshots"], obj_id=vol["response"]["id"],
+                                 data=snap_data)
         time.sleep(self.sleeptime)
         self.addCleanup(requests.request, "DELETE", snap["cleanup_url"], headers=snap["headers"])
 
         # create snapshot clone
-        clone = self.send_request("POST", ["snapshots", "clone", "volumes"], obj_id=snap["response"]["id"],
+        clone = self.send_request("POST", ["snapshots", "clone", "volumes"],
+                                  obj_id=snap["response"]["id"],
                                   data={"id": snap["response"]["id"], "name": "gatling_clone"})
         self.addCleanup(requests.request, "DELETE", clone["cleanup_url"], headers=clone["headers"])
         self.check_clone_properties(clone)
@@ -258,7 +279,8 @@ class VolumeTests(object):
         self.addCleanup(requests.request, "DELETE", vol["cleanup_url"], headers=vol["headers"])
 
         with self.assertRaises(requests.HTTPError) as err:
-            self.send_request("PUT", obj_id=vol["response"]["id"], data={"megs": 0, "id": vol["response"]["id"]})
+            self.send_request("PUT", obj_id=vol["response"]["id"],
+                              data={"megs": 0, "id": vol["response"]["id"]})
         self.assertEqual(str(err.exception), "500 Server Error: Internal Server Error")
 
 
@@ -278,5 +300,6 @@ class XfsVolumeTests(VolumeTests):
         self.assertLessEqual(vol["response"]["usage"]["size"], self.bigsize)
 
         with self.assertRaises(requests.HTTPError) as err:
-            self.send_request("PUT", obj_id=vol["response"]["id"], data={"megs": 0, "id": vol["response"]["id"]})
+            self.send_request("PUT", obj_id=vol["response"]["id"],
+                              data={"megs": 0, "id": vol["response"]["id"]})
         self.assertEqual(str(err.exception), "500 Server Error: Internal Server Error")

@@ -36,9 +36,9 @@ class Cluster(StorageObject):
         ('cephx', _('CephX Authentication')),
         )
 
-    auth_cluster_required   = models.CharField(max_length=10, default='cephx', choices=AUTH_CHOICES)
-    auth_service_required   = models.CharField(max_length=10, default='cephx', choices=AUTH_CHOICES)
-    auth_client_required    = models.CharField(max_length=10, default='cephx', choices=AUTH_CHOICES)
+    auth_cluster_required = models.CharField(max_length=10, default='cephx', choices=AUTH_CHOICES)
+    auth_service_required = models.CharField(max_length=10, default='cephx', choices=AUTH_CHOICES)
+    auth_client_required = models.CharField(max_length=10, default='cephx', choices=AUTH_CHOICES)
 
     def get_status(self):
         return json.loads(dbus_to_python(get_dbus_object("/ceph").status(self.name)))
@@ -50,17 +50,17 @@ class Cluster(StorageObject):
         # See what we have and turn it all into megs.
         if "total_space" in _df["stats"]:
             _df["stats"]["total_space_megs"] = _df["stats"]["total_space"] / 1024.
-            _df["stats"]["total_used_megs" ] = _df["stats"]["total_used" ] / 1024.
+            _df["stats"]["total_used_megs"] = _df["stats"]["total_used"] / 1024.
             _df["stats"]["total_avail_megs"] = _df["stats"]["total_avail"] / 1024.
         else:
-            _df["stats"]["total_space_megs"] = _df["stats"]["total_bytes"]       / 1024. / 1024.
-            _df["stats"]["total_used_megs" ] = _df["stats"]["total_used_bytes" ] / 1024. / 1024.
+            _df["stats"]["total_space_megs"] = _df["stats"]["total_bytes"] / 1024. / 1024.
+            _df["stats"]["total_used_megs"] = _df["stats"]["total_used_bytes"] / 1024. / 1024.
             _df["stats"]["total_avail_megs"] = _df["stats"]["total_avail_bytes"] / 1024. / 1024.
 
         return _df
 
     def get_crushmap(self):
-        osdmap   = json.loads(dbus_to_python(get_dbus_object("/ceph").osd_dump(self.name)))
+        osdmap = json.loads(dbus_to_python(get_dbus_object("/ceph").osd_dump(self.name)))
         try:
             return self.crushmapversion_set.get(epoch=osdmap["epoch"])
         except CrushmapVersion.DoesNotExist:
@@ -84,7 +84,7 @@ class Cluster(StorageObject):
 
             See http://ceph.com/docs/master/rados/operations/placement-groups/ for details.
         """
-        return int(2 ** math.ceil(math.log(( self.osd_set.count() * 100 / repsize ), 2)))
+        return int(2 ** math.ceil(math.log((self.osd_set.count() * 100 / repsize), 2)))
 
     @property
     def status(self):
@@ -104,20 +104,24 @@ class Cluster(StorageObject):
                     print "make bucket", cbucket["name"], cbucket["type_name"]
                     ceph.osd_crush_add_bucket(self.name, cbucket["name"], cbucket["type_name"])
                 if cbucket["id"] in parentbucket:
-                    print "make move %s %s=%s" % (cbucket["name"], parentbucket[cbucket["id"]]["type_name"], parentbucket[cbucket["id"]]["name"])
-                    ceph.osd_crush_move(self.name, cbucket["name"], parentbucket[cbucket["id"]]["type_name"], parentbucket[cbucket["id"]]["name"])
+                    print "make move %s %s=%s" % \
+                          (cbucket["name"], parentbucket[cbucket["id"]]["type_name"],
+                           parentbucket[cbucket["id"]]["name"])
+                    ceph.osd_crush_move(self.name, cbucket["name"],
+                                        parentbucket[cbucket["id"]]["type_name"],
+                                        parentbucket[cbucket["id"]]["name"])
                 for member in cbucket["items"]:
                     parentbucket[member["id"]] = cbucket
                 buckets.extend(cbucket["items"])
 
 
 class CrushmapVersion(models.Model):
-    cluster     = models.ForeignKey(Cluster)
-    epoch       = models.IntegerField()
-    created_at  = models.DateTimeField(auto_now_add=True)
-    edited_at   = models.DateTimeField(auto_now=True)
-    author      = models.ForeignKey(User, null=True, blank=True)
-    crushmap    = models.TextField()
+    cluster = models.ForeignKey(Cluster)
+    epoch = models.IntegerField()
+    created_at = models.DateTimeField(auto_now_add=True)
+    edited_at = models.DateTimeField(auto_now=True)
+    author = models.ForeignKey(User, null=True, blank=True)
+    crushmap = models.TextField()
 
     class Meta:
         unique_together = (("cluster", "epoch"),)
@@ -127,7 +131,7 @@ class CrushmapVersion(models.Model):
         return self.epoch == self.cluster.get_osdmap()["epoch"]
 
     def get_tree(self):
-        crushmap  = json.loads(self.crushmap)
+        crushmap = json.loads(self.crushmap)
         crushtree = dict(crushmap, buckets=[])
 
         parentbucket = {}
@@ -152,11 +156,11 @@ class CrushmapVersion(models.Model):
 
 
 class OSD(models.Model):
-    cluster     = models.ForeignKey(Cluster)
-    ceph_id     = models.IntegerField()
-    uuid        = models.CharField(max_length=36, unique=True)
-    volume      = models.ForeignKey(FileSystemVolume, null=True, blank=True)
-    journal     = models.ForeignKey(BlockVolume,      null=True, blank=True)
+    cluster = models.ForeignKey(Cluster)
+    ceph_id = models.IntegerField()
+    uuid = models.CharField(max_length=36, unique=True)
+    volume = models.ForeignKey(FileSystemVolume, null=True, blank=True)
+    journal = models.ForeignKey(BlockVolume, null=True, blank=True)
 
     class Meta:
         unique_together = (('cluster', 'ceph_id'),)
@@ -164,13 +168,14 @@ class OSD(models.Model):
     def __unicode__(self):
         return "osd.%s (%s)" % (self.ceph_id, unicode(self.volume))
 
-    def save( self, database_only=False, *args, **kwargs ):
+    def save(self, database_only=False, *args, **kwargs):
         install = (self.id is None)
         super(OSD, self).save(*args, **kwargs)
         if install and not database_only:
             fspath = self.volume.volume.path
             jnldev = self.journal.volume.path if self.journal is not None else ""
-            get_dbus_object("/ceph").format_volume_as_osd(self.rbd_pool.cluster.name, fspath, jnldev)
+            get_dbus_object("/ceph").format_volume_as_osd(self.rbd_pool.cluster.name, fspath,
+                                                          jnldev)
             # set upper volume
             volume_so = self.volume.storageobj
             volume_so.upper = self.cluster
@@ -188,27 +193,27 @@ class OSD(models.Model):
 
 
 class Mon(models.Model):
-    cluster     = models.ForeignKey(Cluster)
-    host        = models.ForeignKey(Host)
+    cluster = models.ForeignKey(Cluster)
+    host = models.ForeignKey(Host)
 
     def __unicode__(self):
         return unicode(self.host)
 
 
 class MDS(models.Model):
-    cluster     = models.ForeignKey(Cluster)
-    host        = models.ForeignKey(Host)
+    cluster = models.ForeignKey(Cluster)
+    host = models.ForeignKey(Host)
 
     def __unicode__(self):
         return unicode(self.host)
 
 
 class Pool(VolumePool):
-    cluster     = models.ForeignKey(Cluster)
-    ceph_id     = models.IntegerField()
-    size        = models.IntegerField(default=3)
-    min_size    = models.IntegerField(default=2)
-    ruleset     = models.IntegerField(default=0)
+    cluster = models.ForeignKey(Cluster)
+    ceph_id = models.IntegerField()
+    size = models.IntegerField(default=3)
+    min_size = models.IntegerField(default=2)
+    ruleset = models.IntegerField(default=0)
 
     class Meta:
         unique_together = (('cluster', 'ceph_id'),)
@@ -221,7 +226,7 @@ class Pool(VolumePool):
         if self.min_size > self.size:
             raise ValidationError({"min_size": ["min_size must be less than or equal to size"]})
 
-    def save( self, database_only=False, *args, **kwargs ):
+    def save(self, database_only=False, *args, **kwargs):
         install = (self.id is None)
         super(Pool, self).save(*args, **kwargs)
         if database_only:
@@ -231,9 +236,12 @@ class Pool(VolumePool):
                                                      self.cluster.get_recommended_pg_num(self.size),
                                                      self.ruleset)
         else:
-            get_dbus_object("/ceph").osd_pool_set(self.cluster.name, self.storageobj.name, "size",          str(self.size))
-            get_dbus_object("/ceph").osd_pool_set(self.cluster.name, self.storageobj.name, "min_size",      str(self.min_size))
-            get_dbus_object("/ceph").osd_pool_set(self.cluster.name, self.storageobj.name, "crush_ruleset", str(self.ruleset))
+            get_dbus_object("/ceph").osd_pool_set(self.cluster.name, self.storageobj.name,
+                                                  "size", str(self.size))
+            get_dbus_object("/ceph").osd_pool_set(self.cluster.name, self.storageobj.name,
+                                                  "min_size", str(self.min_size))
+            get_dbus_object("/ceph").osd_pool_set(self.cluster.name, self.storageobj.name,
+                                                  "crush_ruleset", str(self.ruleset))
 
     def delete(self):
         super(Pool, self).delete()
@@ -281,24 +289,26 @@ class Pool(VolumePool):
                 stats["vp_megs"] = df["stats"]["total_space_megs"] / self.size
                 stats["vp_used"] = poolinfo["stats"]["kb_used"] / 1024.
                 stats["vp_free"] = df["stats"]["total_avail_megs"] / self.size
-                stats["steal"]   = df["stats"]["total_space_megs"] - stats["vp_used"] - stats["vp_free"]
-                stats["used"]  = max(stats.get("used", None),         stats["vp_used"])
-                stats["free"]  = min(stats.get("free", float("inf")), stats["vp_free"])
+                stats["steal"] = df["stats"]["total_space_megs"] - stats["vp_used"] - \
+                    stats["vp_free"]
+                stats["used"] = max(stats.get("used", None), stats["vp_used"])
+                stats["free"] = min(stats.get("free", float("inf")), stats["vp_free"])
                 stats["vp_max_new_fsv"] = stats["vp_free"]
-                stats["vp_max_new_bv"]  = stats["vp_free"]
+                stats["vp_max_new_bv"] = stats["vp_free"]
                 break
         return stats
 
 
 class Entity(models.Model):
-    cluster     = models.ForeignKey(Cluster)
-    entity      = models.CharField(max_length=250)
-    key         = models.CharField(max_length=50, blank=True)
+    cluster = models.ForeignKey(Cluster)
+    entity = models.CharField(max_length=250)
+    key = models.CharField(max_length=50, blank=True)
 
-    def save(self, database_only=False, *args, **kwargs ):
+    def save(self, database_only=False, *args, **kwargs):
         if self.id is None and not database_only:
             get_dbus_object("/ceph").auth_add(self.cluster.name, self.entity)
-            self.key = json.loads(get_dbus_object("/ceph").auth_get_key(self.cluster.name, self.entity))["key"]
+            self.key = json.loads(get_dbus_object("/ceph").auth_get_key(self.cluster.name,
+                                                                        self.entity))["key"]
         super(Entity, self).save(*args, **kwargs)
 
     def delete(self):
@@ -310,21 +320,26 @@ class Entity(models.Model):
 
 
 class Image(BlockVolume):
-    rbd_pool    = models.ForeignKey(Pool)
+    rbd_pool = models.ForeignKey(Pool)
 
-    def save( self, database_only=False, *args, **kwargs ):
+    def save(self, database_only=False, *args, **kwargs):
         if database_only:
             return BlockVolume.save(self, *args, **kwargs)
         install = (self.id is None)
         super(Image, self).save(*args, **kwargs)
         if install:
-            get_dbus_object("/ceph").rbd_create(self.rbd_pool.cluster.name, self.rbd_pool.storageobj.name, self.storageobj.name, self.storageobj.megs)
-            get_dbus_object("/ceph").rbd_map(   self.rbd_pool.cluster.name, self.rbd_pool.storageobj.name, self.storageobj.name)
+            get_dbus_object("/ceph").rbd_create(self.rbd_pool.cluster.name,
+                                                self.rbd_pool.storageobj.name,
+                                                self.storageobj.name, self.storageobj.megs)
+            get_dbus_object("/ceph").rbd_map(self.rbd_pool.cluster.name,
+                                             self.rbd_pool.storageobj.name, self.storageobj.name)
 
     def delete(self):
         super(Image, self).delete()
-        get_dbus_object("/ceph").rbd_unmap(self.rbd_pool.cluster.name, self.rbd_pool.storageobj.name, self.storageobj.name)
-        get_dbus_object("/ceph").rbd_rm(   self.rbd_pool.cluster.name, self.rbd_pool.storageobj.name, self.storageobj.name)
+        get_dbus_object("/ceph").rbd_unmap(self.rbd_pool.cluster.name,
+                                           self.rbd_pool.storageobj.name, self.storageobj.name)
+        get_dbus_object("/ceph").rbd_rm(self.rbd_pool.cluster.name,
+                                        self.rbd_pool.storageobj.name, self.storageobj.name)
 
     @property
     def host(self):

@@ -1,12 +1,13 @@
 var helpers = require('../../common.js');
 describe('Volume protection dialog', function(){
-  var volumename = 'protractor_test_volume';
+  var volumename = 'protractor_test_protected_volume';
   var volume = element(by.cssContainingText('tr', volumename));
   var dropdown_menu = element(by.css('.tc_menudropdown'));
   var protected_volume = element(by.model('volume.is_protected'));
   var protection = element(by.css('.tc_setProtection > a'));
   var submit_button = element(by.id('bot2-Msg1'));
   var cancel_button = element(by.id('bot1-Msg1'));
+
 
   beforeEach(function(){
     helpers.login();
