@@ -16,13 +16,8 @@ describe('Volumes delete', function(){
 
   beforeAll(function(){
     helpers.login();
-  });
-
-  beforeEach(function(){
     volumesItem.click();
-  });
-
-  it('should create a volume of each configured volume types in every configured pool', function(){
+    // should create a volume of each configured volume types in every configured pool
     for(var key in helpers.configs.pools){
       var pool = helpers.configs.pools[key];
       for(var i=0; i < pool.volumeTypes.length; i++){
@@ -45,10 +40,27 @@ describe('Volumes delete', function(){
     }
   });
 
-  it('should delete all volumes that begin with "e2e_"', function(){
+  beforeEach(function(){
+    volumesItem.click();
+    element(by.css('.tc_entries_dropdown')).click();
+    element(by.css('.tc_entries_100 > a')).click();
     // Select all e2e volumes.
     element.all(by.cssContainingText('tr', 'e2e_')).all(by.css("input")).click();
+  });
 
+  it('should not show any tab', function(){
+    expect(element(by.css('.tabbable.tabs-left')).isDisplayed()).toBe(false);
+  });
+
+  it('should only have add and delete avaiable in the dropdown action menu', function(){
+    element(by.css(".tc_menudropdown")).click();
+    var list = element.all(by.css('.oa-dropdown-actions li:not(.disabled) a'));
+    expect(list.count()).toBe(2);
+    expect(list.first().getText()).toBe('Add');
+    expect(list.last().getText()).toBe('Delete');
+  });
+
+  it('should delete all volumes that begin with "e2e_"', function(){
     // Delete all volumes.
     element(by.css('.tc_menudropdown')).click();
     element(by.css('.tc_deleteItem')).click();
@@ -56,7 +68,6 @@ describe('Volumes delete', function(){
     element(by.id('bot2-Msg1')).click();
 
     // Check if they are deleted.
-    browser.sleep(10000);
     expect(element.all(by.cssContainingText('tr', 'e2e_'))).toEqual([]);
   });
 });
