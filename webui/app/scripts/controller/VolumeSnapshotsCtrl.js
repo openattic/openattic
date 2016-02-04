@@ -56,13 +56,14 @@ app.controller("VolumeSnapshotsCtrl", function ($scope, $state, VolumeService, S
     if (!$scope.snapshotsFilter.volume) {
       return;
     }
-    new VolumeService($scope.snapshotsFilter.volume).$snapshots({
+    SnapshotService.filter({
       page: $scope.snapshotsFilter.page + 1,
       pageSize: $scope.snapshotsFilter.entries,
       search: $scope.snapshotsFilter.search,
       ordering: ($scope.snapshotsFilter.sortorder === "ASC" ? "" : "-") + $scope.snapshotsFilter.sortfield,
-      volume: $scope.snapshotsFilter.volume.id
+      snapshot: $scope.snapshotsFilter.volume.id
     })
+        .$promise
         .then(function (res) {
           $scope.snapshotsData = res;
         })
