@@ -44,7 +44,8 @@ app.factory("SnapshotService", function ($resource) {
       }
     },
     filter: {
-      method: "GET"
+      method: "GET",
+      url: "/openattic/api/snapshots"
     },
     clone: {
       method: "POST",
