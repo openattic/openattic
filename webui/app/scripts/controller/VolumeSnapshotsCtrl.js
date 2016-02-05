@@ -31,8 +31,7 @@
 "use strict";
 
 var app = angular.module("openattic");
-app.controller("VolumeSnapshotsCtrl", function ($scope, $state, VolumeService, SnapshotService, $modal,
-    poolCheckingService) {
+app.controller("VolumeSnapshotsCtrl", function ($scope, $state, SnapshotService, $modal, poolCheckingService) {
   $scope.snapshotsData = {};
 
   $scope.source = poolCheckingService.get($scope.selection);
@@ -105,7 +104,7 @@ app.controller("VolumeSnapshotsCtrl", function ($scope, $state, VolumeService, S
     });
 
     modalInstance.result.then(function () {
-      $scope.snapshotsFilter.refresh = new Date();
+      $scope.filterConfig.refresh = new Date();
     });
   };
 });
