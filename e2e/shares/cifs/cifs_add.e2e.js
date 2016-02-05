@@ -83,7 +83,7 @@ describe('should add a CIFS share', function(){
     browser.sleep(400);
     element(by.id('bot2-Msg1')).click();
     browser.sleep(400);
-    expect(browser.getCurrentUrl()).toContain('cifs');
+    expect(browser.getCurrentUrl()).toContain('/cifs');
     browser.sleep(400);
 
   });
