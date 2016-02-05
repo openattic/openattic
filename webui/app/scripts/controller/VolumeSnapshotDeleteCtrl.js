@@ -31,7 +31,7 @@
 "use strict";
 
 var app = angular.module("openattic");
-app.controller("VolumeSnapshotDeleteCtrl", function ($scope, VolumeService, SnapshotService, $modalInstance, snap) {
+app.controller("VolumeSnapshotDeleteCtrl", function ($scope, SnapshotService, $modalInstance, snap) {
   $scope.snap = snap;
 
   $scope.delete = function () {
