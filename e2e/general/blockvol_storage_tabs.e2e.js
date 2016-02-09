@@ -32,6 +32,16 @@ describe('Storage Tab Test based on blockvol', function(){
 
   });
 
+  it('should check the url of status tab', function(){
+    element(by.css('.tc_statusTab')).click();
+    expect(browser.getCurrentUrl()).toContain('status');
+  });
+
+  it('should check the url of statistics', function(){
+    element(by.css('.tc_blockStatisticsTab')).click();
+    expect(browser.getCurrentUrl()).toContain('statistics/perf');
+  });
+
   it('should not display any of the following tabs', function(){
 
     expect(element(by.css('.tc_fsStatisticsTab')).isDisplayed()).toBe(false);
