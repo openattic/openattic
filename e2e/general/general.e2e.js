@@ -94,6 +94,54 @@ describe('General', function(){
     expect(browser.getCurrentUrl()).toContain('/openattic/#/dashboard');
   });
 
+  it('should click on dashboard and check the url', function(){
+    dashboardItem.click();
+    browser.sleep(400);
+    expect(browser.getCurrentUrl()).toContain('/openattic/#/dashboard');
+  });
+
+  it('should click on disks and check the url', function(){
+    disksItem.click();
+    browser.sleep(400);
+    expect(browser.getCurrentUrl()).toContain('/openattic/#/disks');
+  });
+
+  it('should click on pools and check the url', function(){
+    poolsItem.click();
+    browser.sleep(400);
+    expect(browser.getCurrentUrl()).toContain('/openattic/#/pools');
+  });
+
+  it('should click on volumes and check the url', function(){
+    volumesItem.click();
+    browser.sleep(400);
+    expect(browser.getCurrentUrl()).toContain('/openattic/#/volumes');
+  });
+
+  it('should click on hosts and check the url', function(){
+    hostsItem.click();
+    browser.sleep(400);
+    expect(browser.getCurrentUrl()).toContain('/openattic/#/hosts');
+  });
+
+  it('should click on System->Users and check the url', function(){
+    systemItem.click();
+    systemItem.all(by.css('ul .tc_submenuitem')).get(0).click();
+    expect(browser.getCurrentUrl()).toContain('/openattic/#/users');
+  });
+
+  it('should click on System->Command Logs and check the url', function(){
+    systemItem.click();
+    systemItem.all(by.css('ul .tc_submenuitem')).get(1).click();
+    expect(browser.getCurrentUrl()).toContain('/openattic/#/cmdlogs');
+  });
+
+  it('should click on System->CRUSH Map and check the url', function(){
+    systemItem.click();
+    systemItem.all(by.css('ul .tc_submenuitem')).get(2).click();
+    expect(browser.getCurrentUrl()).toContain('/openattic/#/crushmap');
+  });
+
   it('should check the fullscreen mode', function(){
     expect(fullscreenBtn.isPresent()).toBe(true);
 
