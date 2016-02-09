@@ -45,9 +45,9 @@ describe('Should create a Snapshot', function(){
     browser.sleep(400);
     element(by.id('bot2-Msg1')).click();
     browser.sleep(400);
-    volume.click();
-    element(by.css('.tc_snapshotTab')).click();
-    snapshot = element(by.cssContainingText('tr', snapshotname));
+    //make sure that after deleting a snapshot the snapshot datatable is still visible
+    expect(browser.getCurrentUrl()).toContain('/snapshots');
+    browser.sleep(400);
     expect(snapshot.isPresent()).toBe(false);
     browser.sleep(400);
   });
