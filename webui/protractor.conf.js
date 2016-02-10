@@ -44,7 +44,7 @@ exports.config = {
    volumes_add          : '../e2e/volumes/add/volumes_add.e2e.js',
    volumes_protection   : '../e2e/volumes/protection/**/*.e2e.js',
    volumes_resize       : '../e2e/volumes/resize/**/*.e2e.js',
-   volumes_multible     : '../e2e/volumes/multible/**/*.e2e.js',
+   volumes_multiple     : '../e2e/volumes/multiple/**/*.e2e.js',
    snapshot             : '../e2e/snapshots/add/**/*.e2e.js',
    snapshot_clone       : '../e2e/snapshots/clone/**/*.e2e.js',
    http_share           : '../e2e/shares/http/*.e2e.js',
