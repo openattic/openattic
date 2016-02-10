@@ -45,30 +45,30 @@ app.controller("HostAttributesCtrl", function ($scope, $state, $stateParams, Ini
       "type": type,
       "host": {"id": $scope.host.id}
     })
-      .$promise
-      .then(function (res) {
-        tag.id = res.id;
-      }, function (error) {
-        var index;
-        if (type === "iscsi") {
-          index = $scope.data.iscsiInis.indexOf(tag);
-          if (index > -1) {
-            $scope.data.iscsiInis.splice(index, 1);
+        .$promise
+        .then(function (res) {
+          tag.id = res.id;
+        }, function (error) {
+          var index;
+          if (type === "iscsi") {
+            index = $scope.data.iscsiInis.indexOf(tag);
+            if (index > -1) {
+              $scope.data.iscsiInis.splice(index, 1);
+            }
+          } else {
+            index = $scope.data.fcInis.indexOf(tag);
+            if (index > -1) {
+              $scope.data.fcInis.splice(index, 1);
+            }
           }
-        } else {
-          index = $scope.data.fcInis.indexOf(tag);
-          if (index > -1) {
-            $scope.data.fcInis.splice(index, 1);
-          }
-        }
-        $.smallBox({
-          title: "Error adding Initiator",
-          content: "<i class=\"fa fa-clock-o\"></i> <i>" + error.data.wwn.join(", ") + ".</i>",
-          color: "#C46A69",
-          iconSmall: "fa fa-times fa-2x fadeInRight animated",
-          timeout: 4000
+          $.smallBox({
+            title: "Error adding Initiator",
+            content: "<i class=\"fa fa-clock-o\"></i> <i>" + error.data.wwn.join(", ") + ".</i>",
+            color: "#C46A69",
+            iconSmall: "fa fa-times fa-2x fadeInRight animated",
+            timeout: 4000
+          });
         });
-      });
   };
 
   $scope.iscsiIniAdded = function (tag) {
