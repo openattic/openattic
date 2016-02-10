@@ -15,6 +15,9 @@ Version 2.0.8 (not released yet)
 * WebUI/QA: E2E test for OP-792, to verify the displayed name (OP-868)
 * WebUI/QA: Adapted E2E tests related to OP-339 - Allow deletion of multiple volumes (OP-871)
 * WebUI/QA: re-added commandlog check ('lvcreate') for specific volume (see OP-873)
+* WebUI/QA: OP-891 - extended all storage tab tests by checking the url OP-891 (related to OP-817)
+* WebUI/QA: readded protractor zfs e2e test suits
+* WebUI/QA: extended general e2e tests by checking the url when menu entry has been clicked (OP-897)
 * Backend: added copyright/license header to gatling files (OP-844)
 
 Version 2.0.7, 19. Jan 2016:
