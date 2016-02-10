@@ -52,7 +52,7 @@
   "maximumLineLength": 120,
   "requireAlignedMultilineParams": 2,
   "requireBlocksOnNewline": true,
-  "requireCamelCaseOrUpperCaseIdentifiers": true,
+  "requireCamelCaseOrUpperCaseIdentifiers": ignoreProperties,
   "requireCapitalizedConstructors": true,
   "requireCommaBeforeLineBreak": true,
   "requireLineBreakAfterVariableAssignment": true,
