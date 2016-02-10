@@ -41,7 +41,8 @@ describe('Should add a NFS Share', function(){
     browser.sleep(400);
     element(by.id('bot2-Msg1')).click();
     browser.sleep(400);
-
+    expect(browser.getCurrentUrl()).toContain('/nfs');
+    browser.sleep(400);
   });
 
   it('should not show the NFS share anymore', function(){
