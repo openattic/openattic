@@ -68,7 +68,7 @@ describe('Raw Block Storage Wizard', function(){
       var volumePoolSelect = element(by.id('source_pool'));
       volumePoolSelect.click();
       element.all(by.cssContainingText('option', '(volume group,')).get(0).click();
-//      browser.actions().sendKeys( protractor.Key.ENTER ).perform();
+      browser.actions().sendKeys( protractor.Key.ENTER ).perform();
       break;
     }
 
