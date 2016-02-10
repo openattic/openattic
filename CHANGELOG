@@ -20,6 +20,7 @@ Version 2.0.8 (not released yet)
 * WebUI/QA: extended general e2e tests by checking the url when menu entry has been clicked (OP-897)
 * WebUI/QA: More tests for multiple selections (OP-875)
 * WebUI: Visibility of volume tab menu (OP-876)
+* WebUI: Redirect a logged in user to from login to dashboard (OP-799)
 * Backend: added copyright/license header to gatling files (OP-844)
 
 Version 2.0.7, 19. Jan 2016:
