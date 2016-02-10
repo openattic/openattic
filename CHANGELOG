@@ -18,6 +18,8 @@ Version 2.0.8 (not released yet)
 * WebUI/QA: OP-891 - extended all storage tab tests by checking the url OP-891 (related to OP-817)
 * WebUI/QA: readded protractor zfs e2e test suits
 * WebUI/QA: extended general e2e tests by checking the url when menu entry has been clicked (OP-897)
+* WebUI/QA: More tests for multiple selections (OP-875)
+* WebUI: Visibility of volume tab menu (OP-876)
 * Backend: added copyright/license header to gatling files (OP-844)
 
 Version 2.0.7, 19. Jan 2016:
