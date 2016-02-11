@@ -49,8 +49,6 @@ describe('Volumes add with protection', function(){
       element(by.css('.tc_setProtection')).click();
       browser.sleep(400);
 
-      element(by.model('volume.is_protected')).click();
-
       element(by.id('bot2-Msg1')).click();
       browser.sleep(400);
 
