@@ -5,23 +5,27 @@ Version 2.0.8 (not released yet)
 --------------------------------
 * WebUI: Allow deletion of multiple volumes (OP-339)
 * WebUI: Display first and last name instead of username (OP-792)
+* WebUI: Redirect a logged in user to from login to dashboard (OP-799)
 * WebUI: Refresh snapshot panel instead of volume panel (OP-817)
 * WebUI: Fixed all jshint and jscs errors (OP-826)
 * WebUI: added copyright/license header (OP-837)
 * WebUI: Don't allow the user to deactivate himself (OP-851)
 * WebUI: Updated favicon to newer version (OP-859)
-* WebUI/QA: fixed snapshot test related to OP-817 (OP-881)
-* WebUI/QA: E2E test for OP-851, to verify that you can't deactivate your profile (OP-852)
+* WebUI: Visibility of volume tab menu (OP-876)
+* WebUI/QA: readded protractor zfs e2e test suits
+* WebUI/QA: E2E test for OP-851, to verify that you can't deactivate your
+  profile (OP-852)
 * WebUI/QA: E2E test for deletion of multiple volumes (OP-853)
 * WebUI/QA: E2E test for OP-792, to verify the displayed name (OP-868)
-* WebUI/QA: Adapted E2E tests related to OP-339 - Allow deletion of multiple volumes (OP-871)
+* WebUI/QA: Adapted E2E tests related to OP-339 - Allow deletion of multiple
+  volumes (OP-871)
 * WebUI/QA: re-added commandlog check ('lvcreate') for specific volume (see OP-873)
-* WebUI/QA: OP-891 - extended all storage tab tests by checking the url OP-891 (related to OP-817)
-* WebUI/QA: readded protractor zfs e2e test suits
-* WebUI/QA: extended general e2e tests by checking the url when menu entry has been clicked (OP-897)
+* WebUI/QA: fixed snapshot test related to OP-817 (OP-881)
+* WebUI/QA: extended all storage tab tests by checking the url OP-891 - related
+  to OP-817 (OP-891)
+* WebUI/QA: extended general e2e tests by checking the url when menu entry has
+  been clicked (OP-897)
 * WebUI/QA: More tests for multiple selections (OP-875)
-* WebUI: Visibility of volume tab menu (OP-876)
-* WebUI: Redirect a logged in user to from login to dashboard (OP-799)
 * Backend: added copyright/license header to gatling files (OP-844)
 
 Version 2.0.7, 19. Jan 2016:
