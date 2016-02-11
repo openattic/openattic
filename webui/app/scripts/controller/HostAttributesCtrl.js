@@ -69,7 +69,7 @@ app.controller("HostAttributesCtrl", function ($scope, $state, $stateParams, Ini
             timeout: 4000
           });
         });
-      };
+  };
 
   $scope.iscsiIniAdded = function (tag) {
     return iniAdded(tag, "iscsi");
