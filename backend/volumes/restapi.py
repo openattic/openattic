@@ -329,7 +329,7 @@ class SnapshotSerializer(VolumeSerializer):
 class SnapshotViewSet(viewsets.ModelViewSet):
     queryset = models.StorageObject.objects.filter(snapshot__isnull=False)
     serializer_class = SnapshotSerializer
-    filter_fields = ('name', 'uuid', 'createdate')
+    filter_fields = ('name', 'uuid', 'createdate', 'snapshot')
     search_fields = ('name',)
 
     def create(self, request, *args, **kwargs):
