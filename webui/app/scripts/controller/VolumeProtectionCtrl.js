@@ -33,11 +33,15 @@
 var app = angular.module("openattic");
 app.controller("VolumeProtectionCtrl", function ($scope, VolumeService, $modalInstance, volume) {
   $scope.volume = volume;
+  $scope.dialogSet = "Set";
+  if (volume.is_protected) {
+    $scope.dialogSet = "Unset";
+  }
 
   $scope.setProtection = function () {
     new VolumeService({
       id: volume.id,
-      is_protected: volume.is_protected
+      is_protected: !volume.is_protected
     })
         .$update()
         .then(function () {
