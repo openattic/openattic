@@ -68,6 +68,10 @@ app.controller("VolumeCtrl", function ($scope, $state, VolumeService, SizeParser
     var items = selection.items;
 
     $scope.multiSelection = Boolean(items);
+    if (items) {
+      $scope.multiSelection = items ? items.length > 1 : false;
+    }
+
     $scope.hasSelection = Boolean(item);
 
     if (!item && !items) {

@@ -1,11 +1,14 @@
 <!-- kate: space-indent on; indent-width 4; replace-tabs on; -->
 <oadatatable data="data" class="oadatatable tc_oadatatable_volumes" filter-config="filterConfig" selection="selection">
     <actions>
-        <a class="btn btn-lg btn-primary tc_add_btn" type="button" ng-click="addAction()" ng-hide="hasSelection">
+        <a class="btn btn-lg btn-primary tc_add_btn" type="button" ng-click="addAction()" ng-hide="hasSelection || multiSelection">
             <i class="fa fa-fw fa-plus"></i> Add
         </a>
-        <a class="btn btn-lg btn-primary tc_resize_btn" type="button" ng-click="resizeAction()" ng-show="hasSelection">
+        <a class="btn btn-lg btn-primary tc_resize_btn" type="button" ng-click="resizeAction()" ng-show="hasSelection && !multiSelection">
             <i class="fa fa-fw fa-upload"></i> Resize
+        </a>
+        <a class="btn btn-lg btn-primary tc_delete_btn" type="button" ng-click="deleteAction()" ng-show="multiSelection">
+            <i class="fa fa-fw fa-trash-o"></i> Delete
         </a>
         <li>
             <a ng-click="addAction()"><i class="fa fa-fw fa-plus"></i> Add</a>
