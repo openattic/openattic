@@ -35,7 +35,8 @@ Testing VM:
 Install Protractor
 ------------------
 
-* ``npm install -g protractor`` (version 3.0.0)
+* ``npm install -g protractor`` (version 3.1.1)
+.. note:: protractor version 3.x.x requires node version 4.x (you can check your node version with "node -v").
 
 * ``apt-get install openjdk-7-jre-headless``
 
@@ -113,13 +114,17 @@ line to ``webui/protractor.conf.js``::
 Use multiple browsers
 ---------------------
 
-To use Chromium and Firefox to run each test, you have to append the following to your ``protractor.conf.js``::
+When using Chrome and Firefox for the tests, you could append the following to your ``protractor.conf.js`` so the test will running
+in both browsers::
 
     exports.config.multiCapabilities = [
         {'browserName': 'chrome'},
         {'browserName': 'firefox'}
     ];
-    exports.config.maxSessions = 1; // To prevent running both browsers on the same time.
+
+To prevent running both browsers at the same time you can add::
+
+    exports.config.maxSessions = 1;
 
 Set up configs.js
 -----------------
@@ -185,7 +190,7 @@ i.e.::
 .. note::
   When running protractor.conf and the browser window directly closes and you
   can see something like "user-data error" (i.e. when using chrome) in your
-  console just create a dir (i.e. in /home/) and do ``chromium
+  console just create a dir (i.e. in /home/) and do ``google-chrome
   --user-data-dir=/path/to/created/dir``
 
 How to Cancel the Tests
