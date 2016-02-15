@@ -11,12 +11,14 @@ Version 2.0.8 (not released yet)
 * WebUI: added copyright/license header (OP-837)
 * WebUI: Don't allow the user to deactivate himself (OP-851)
 * WebUI: Updated favicon to newer version (OP-859)
+* WebUI: Adjust the volume protection dialog box to be intuitive (OP-869)
 * WebUI: Visibility of volume tab menu (OP-876)
 * WebUI/QA: readded protractor zfs e2e test suits
 * WebUI/QA: E2E test for OP-851, to verify that you can't deactivate your
   profile (OP-852)
 * WebUI/QA: E2E test for deletion of multiple volumes (OP-853)
 * WebUI/QA: E2E test for OP-792, to verify the displayed name (OP-868)
+* WebUI/QA: Adjusted E2E tests with volume protection for OP-869 (OP-870)
 * WebUI/QA: Adapted E2E tests related to OP-339 - Allow deletion of multiple
   volumes (OP-871)
 * WebUI/QA: re-added commandlog check ('lvcreate') for specific volume (see OP-873)

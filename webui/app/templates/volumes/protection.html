@@ -1,7 +1,6 @@
 <span class="MsgTitle">{{dialogSet}} volume delete protection of "{{volume.name}}"</span>
-<p class="pText" ng-if="!volume.is_protected">If this option is set the volume can't deleted easily. The user has to unset this option first.
-After that he can delete the volume.</p>
-<p class="pText" ng-if="volume.is_protected">If this option is unset the volume can be deleted easily.</p>
+<p class="pText" ng-if="!volume.is_protected">If set the volume can't be deleted, until you unset the protection.</p>
+<p class="pText" ng-if="volume.is_protected">If unset, you can delete the volume.</p>
 <form name="protectionForm" role="form" class="form-horizontal" novalidate>
     <p class="input-group">
         <div class="MessageBoxButtonSection">
