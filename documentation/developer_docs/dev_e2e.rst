@@ -36,7 +36,7 @@ Install Protractor
 ------------------
 
 * ``npm install -g protractor`` (version 3.1.1)
-.. note:: protractor version 3.x.x requires node version 4.x (you can check your node version with "node -v").
+.. note:: protractor version 3.x.x requires Node.js® version 4.x (you can check your installed version with ``node -v``).
 
 * ``apt-get install openjdk-7-jre-headless``
 
@@ -114,7 +114,7 @@ line to ``webui/protractor.conf.js``::
 Use multiple browsers
 ---------------------
 
-When using Chrome and Firefox for the tests, you could append the following to your ``protractor.conf.js`` so the test will running
+When using Chrome and Firefox for the tests, you could append the following to your ``protractor.conf.js`` so the test will run
 in both browsers::
 
     exports.config.multiCapabilities = [
