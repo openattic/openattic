@@ -14,6 +14,9 @@
 """
 
 from django.conf import settings
+from .distro import distro_settings
+
+distro_settings()
 
 LV_UTIL_DESCRIPTION      = getattr( settings, "NAGIOS_LV_UTIL_DESCRIPTION",    "Utilization for %s" )
 LV_UTIL_CHECK_CMD        = getattr( settings, "NAGIOS_LV_UTIL_CHECK_CMD",      "check_volume_utilization" )
