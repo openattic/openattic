@@ -25,12 +25,11 @@ describe('Volume protection dialog', function(){
 
   beforeEach(function(){
     volume.click();
+    browser.sleep(400);
     dropdown_menu.click();
+    browser.sleep(400);
     protection.click();
-  });
-
-  afterAll(function(){
-    helpers.delete_volume(volume, volumename);
+    browser.sleep(400);
   });
 
   it('should have a submit button named "Set protection"', function(){
@@ -56,14 +55,14 @@ describe('Volume protection dialog', function(){
 
     // try to delete the volume
     volume.click();
+    browser.sleep(400);
     dropdown_menu.click();
     element(by.css('.tc_deleteItem > a')).click();
+    browser.sleep(400);
 
     // the volume management should show an error message
     expect(element(by.css('.tc_notDeletable')).isDisplayed()).toBe(true);
     closePopup();
-
-    console.log('volumes_protection in protection dir');
   });
 
   it('should have a submit button named "Unset protection"', function(){
@@ -76,10 +75,15 @@ describe('Volume protection dialog', function(){
   it('should be able to unset the volume protection', function(){
     // release volume protection
     submit_button.click();
+    browser.sleep(400);
 
     // is the volume protection released?
     var protectedColumn = volume.element(by.id('is_protected'));
     expect(protectedColumn.element(by.className('fa-check')).isPresent()).toBe(false);
   });
 
+  afterAll(function(){
+    console.log('volumes_protection_workflow');
+    helpers.delete_volume(volume, volumename);
+  });
 });
