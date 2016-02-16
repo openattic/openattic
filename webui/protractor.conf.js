@@ -41,7 +41,7 @@ exports.config = {
    disks                : '../e2e/disks/**/*.e2e.js',
    pools                : '../e2e/pools/**/*e2e.js',
    volumes              : '../e2e/volumes/volumes.e2e.js',
-   volumes_add          : '../e2e/volumes/add/volumes_add.e2e.js',
+   volumes_add          : '../e2e/volumes/add/**/*.e2e.js',
    volumes_protection   : '../e2e/volumes/protection/**/*.e2e.js',
    volumes_resize       : '../e2e/volumes/resize/**/*.e2e.js',
    volumes_multi_delete : '../e2e/volumes/delete/**/*.e2e.js',
