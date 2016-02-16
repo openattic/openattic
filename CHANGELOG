@@ -28,6 +28,7 @@ Version 2.0.8 (not released yet)
 * WebUI/QA: extended general e2e tests by checking the url when menu entry has
   been clicked (OP-897)
 * WebUI/QA: More tests for multiple selections (OP-875)
+* WebUI/QA: Fix selection problem in multiple_volume_deletion (OP-908)
 * Backend: added copyright/license header to gatling files (OP-844)
 * Documentation: updated documentation (section e2e, OP-910)
 
