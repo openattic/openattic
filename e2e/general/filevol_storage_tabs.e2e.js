@@ -45,6 +45,16 @@ describe('Storage Tab Test based on filevol', function(){
     expect(element(by.css('.tc_blockStatisticsTab')).isDisplayed()).toBe(false);
   });
 
+  it('should check the url of status tab', function(){
+    element(by.css('.tc_statusTab')).click();
+    expect(browser.getCurrentUrl()).toContain('status');
+  });
+
+  it('should check the url of statistics', function(){
+    element(by.css('.tc_fsStatisticsTab')).click();
+    expect(browser.getCurrentUrl()).toContain('statistics/util');
+  });
+
   afterAll(function(){
     console.log('filesystemvolume storage tab test ended');
     helpers.delete_volume(volume, volumename);
