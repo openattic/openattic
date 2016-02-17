@@ -1,4 +1,4 @@
-<oadatatable data="data" class="oadatatable tc_cephPoolTable" filter-config="filterConfig" selection="selection">
+<oadatatable ng-if="Boolean(data)" data="data" class="oadatatable tc_cephPoolTable" filter-config="filterConfig" selection="selection">
     <table class="table table-striped table-bordered table-hover dataTable">
         <thead>
             <tr>
@@ -26,3 +26,4 @@
         </tbody>
     </table>
 </oadatatable>
+<div ng-if="!Boolean(data)">No Ceph pools available.</div>
