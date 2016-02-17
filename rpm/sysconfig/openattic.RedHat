@@ -1,59 +1,90 @@
+#  Copyright (C) 2011-2016, it-novum GmbH <community@openattic.org>
+#
+#  openATTIC is free software; you can redistribute it and/or modify it
+#  under the terms of the GNU General Public License as published by
+#  the Free Software Foundation; version 2.
+#
+#  This package is distributed in the hope that it will be useful,
+#  but WITHOUT ANY WARRANTY; without even the implied warranty of
+#  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+#  GNU General Public License for more details.
+
+PYTHON="/usr/bin/python"
+OADIR="/usr/share/openattic"
+
+RPCD_PIDFILE="/var/run/openattic_rpcd.pid"
+RPCD_CHUID="openattic:openattic"
+RPCD_LOGFILE="/var/log/openattic/openattic_rpcd.log"
+RPCD_LOGLEVEL="INFO"
+RPCD_OPTIONS="$OADIR/manage.py runrpcd"
+RPCD_CERTFILE=""
+RPCD_KEYFILE=""
+
+SYSD_PIDFILE="/var/run/openattic_systemd.pid"
+SYSD_LOGFILE="/var/log/openattic/openattic_systemd.log"
+SYSD_LOGLEVEL="INFO"
+SYSD_OPTIONS="$OADIR/manage.py runsystemd"
+
+WEBSERVER_SERVICE="httpd"
+SAMBA_SERVICES="smb nmb"
+WINBIND_SERVICE="winbind"
+
 ## Type: string
-## Default: "/run/icinga/icinga.cmd"
+## Default: "/var/spool/nagios/cmd/nagios.cmd""
 #
 # Path for processing commands submitted by other applications
-NAGIOS_CMD_PATH="/run/icinga/icinga.cmd"
+NAGIOS_CMD_PATH="/var/spool/nagios/cmd/nagios.cmd"
 
 ## Type: string
-## Default: "/var/spool/icinga/status.dat"
+## Default: "/var/log/nagios/status.dat"
 #
 # The file that stores the current status, comment, and downtime information.
-NAGIOS_STATUS_DAT_PATH="/var/spool/icinga/status.dat"
-NAGIOS_STATUS_DAT="/var/spool/icinga/status.dat"
+NAGIOS_STATUS_DAT_PATH="/var/log/nagios/status.dat"
+NAGIOS_STATUS_DAT="/var/log/nagios/status.dat"
 
 ## Type: string
-## Default: "/etc/icinga/icinga.cfg"
+## Default: "/etc/nagios/nagios.cfg"
 #
 # The main configuration file
-NAGIOS_CFG_PATH="/etc/icinga/icinga.cfg"
-NAGIOS_CFG="/etc/icinga/icinga.cfg"
+NAGIOS_CFG_PATH="/etc/nagios/nagios.cfg"
+NAGIOS_CFG="/etc/nagios/nagios.cfg"
 
 ## Type: string
-## Default: "/etc/icinga/conf.d/openattic_contacts.cfg"
+## Default: "/etc/nagios/objects/contacts.cfg"
 #
 # Defines default contact groups
-NAGIOS_CONTACTS_CFG_PATH="/etc/icinga/conf.d/openattic_contacts.cfg"
+NAGIOS_CONTACTS_CFG_PATH="/etc/nagios/objects/contacts.cfg"
 
 ## Type: string
-## Default: "/etc/icinga/conf.d/openattic.cfg"
+## Default: "/etc/nagios/conf.d/openattic.cfg"
 #
 # Defines additional services
-NAGIOS_SERVICES_CFG_PATH="/etc/icinga/conf.d/openattic.cfg"
+NAGIOS_SERVICES_CFG_PATH="/etc/nagios/conf.d/openattic.cfg"
 
 ## Type: boolean
 ## Default: True
 #
-# 
+#
 NAGIOS_INCLUDE_HOST_IN_CFG=True
 
 ## Type: string
-## Default: "icinga"
+## Default: "nagios"
 #
 # Name of monitoring executable
-NAGIOS_BINARY_NAME="icinga"
+NAGIOS_BINARY_NAME="nagios"
 
 ## Type: string
-## Default: "icinga"
+## Default: "nagios"
 #
 # Name of systemd service
-NAGIOS_SERVICE_NAME="icinga"
-NAGIOS_SERVICE="icinga"
+NAGIOS_SERVICE_NAME="nagios"
+NAGIOS_SERVICE="nagios"
 
 ## Type: string
 ## Default: "/usr/lib64/npcdmod.o"
 #
 # Path to the npcd module
-NPCD_MOD="/usr/lib64/npcdmod.o"
+NPCD_MOD="/usr/lib64/nagios/brokers/npcdmod.o"
 
 ## Type: string
 ## Default: "/etc/pnp4nagios/npcd.cfg"
