@@ -50,10 +50,10 @@ NAGIOS_CFG_PATH="/etc/nagios/nagios.cfg"
 NAGIOS_CFG="/etc/nagios/nagios.cfg"
 
 ## Type: string
-## Default: "/etc/nagios/objects/contacts.cfg"
+## Default: "/etc/nagios/conf.d/openattic_contacts.cfg"
 #
 # Defines default contact groups
-NAGIOS_CONTACTS_CFG_PATH="/etc/nagios/objects/contacts.cfg"
+NAGIOS_CONTACTS_CFG_PATH="/etc/nagios/conf.d/openattic_contacts.cfg"
 
 ## Type: string
 ## Default: "/etc/nagios/conf.d/openattic.cfg"
