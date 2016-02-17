@@ -495,5 +495,17 @@ angular.module("openattic").config(function ($stateProvider, $urlRouterProvider)
       ncyBreadcrumb: {
         label: "CRUSH Map Editor"
       }
+    })
+    .state("cephPools", {
+      url: "/ceph/pools",
+      views: {
+        "main": {
+          templateUrl: "components/ceph-pools/templates/listing.html",
+          controller : "CephPoolsCtrl"
+        }
+      },
+      ncyBreadcrumb: {
+        label: "Ceph Pools"
+      }
     });
 });

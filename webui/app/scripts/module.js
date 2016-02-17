@@ -51,6 +51,7 @@ angular.module("openattic", [
   "openattic.oaWizards",
   "openattic.userinfo",
   "openattic.required",
+  "openattic.cephPools",
   "smartadmin.smartmenu"
 ]);
 
