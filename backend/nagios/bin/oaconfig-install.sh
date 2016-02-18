@@ -23,9 +23,21 @@ service $NPCD_SERVICE start
 
 if [ $NAGIOS_RESTART_REQ = "true" ]; then
 	service $NAGIOS_SERVICE restart
-	echo -n "Waiting for status.dat to appear... "
-	while [ ! -e $NAGIOS_STATUS_DAT ]; do
-		sleep 0.1
-	done
-	echo "done."
+  WAITTIME="15"
+  echo -n "Waiting for $NAGIOS_STATUS_DAT to appear"
+  for i in $(seq 1 $WAITTIME); do
+    if [ -e $NAGIOS_STATUS_DAT ]; then
+      echo " OK";
+      break;
+    fi
+    sleep 1
+    echo -n "."
+  done
+  if [ ! -e $NAGIOS_STATUS_DAT ]; then
+    echo ""
+    echo "Error: $NAGIOS_STATUS_DAT did not appear after $WAITTIME seconds!"
+    exit 1
+  else
+    exit 0
+  fi
 fi
