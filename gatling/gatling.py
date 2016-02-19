@@ -28,8 +28,6 @@ from ConfigParser import ConfigParser
 from optparse import OptionParser
 from testtools.run import TestProgram
 
-from colorizer import NovaTestResult
-
 
 def main():
     basedir = os.path.dirname(os.path.abspath(__file__))
@@ -107,7 +105,7 @@ def main():
     if options.xml:
         runner = partial(xmlrunner.XMLTestRunner, output=options.xml_reports, verbosity=2)
     else:
-        runner = partial(unittest.TextTestRunner, resultclass=NovaTestResult)
+        runner = partial(unittest.TextTestRunner)
 
     # If we don't have any arguments for TestProgram and this doesn't seem to be
     # intentional, discover tests and print individual results.
