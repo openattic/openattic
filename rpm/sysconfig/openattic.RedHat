@@ -30,7 +30,7 @@ SAMBA_SERVICES="smb nmb"
 WINBIND_SERVICE="winbind"
 
 ## Type: string
-## Default: "/var/spool/nagios/cmd/nagios.cmd""
+## Default: "/var/spool/nagios/cmd/nagios.cmd"
 #
 # Path for processing commands submitted by other applications
 NAGIOS_CMD_PATH="/var/spool/nagios/cmd/nagios.cmd"
