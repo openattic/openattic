@@ -388,36 +388,9 @@ install -m 755 bin/blkdevzero %{buildroot}%{_sbindir}
 rsync -aAX webui/dist/ %{buildroot}%{_datadir}/openattic-gui/
 sed -i -e 's/^ANGULAR_LOGIN.*$/ANGULAR_LOGIN = False/g' %{buildroot}%{_datadir}/%{name}/settings.py
 
-# Configure /etc/default/openattic
-# TODO: copy file from source tree and use sed to configure for EL7
-cat > %{buildroot}/%{_sysconfdir}/default/%{name} <<EOF
-PYTHON="/usr/bin/python"
-OADIR="/usr/share/openattic"
-
-RPCD_PIDFILE="/var/run/openattic_rpcd.pid"
-RPCD_CHUID="openattic:openattic"
-RPCD_LOGFILE="/var/log/openattic/openattic_rpcd.log"
-RPCD_LOGLEVEL="INFO"
-RPCD_OPTIONS="$OADIR/manage.py runrpcd"
-RPCD_CERTFILE=""
-RPCD_KEYFILE=""
-
-SYSD_PIDFILE="/var/run/openattic_systemd.pid"
-SYSD_LOGFILE="/var/log/openattic/openattic_systemd.log"
-SYSD_LOGLEVEL="INFO"
-SYSD_OPTIONS="$OADIR/manage.py runsystemd"
-
-WEBSERVER_SERVICE="httpd"
-SAMBA_SERVICES="smb nmb"
-WINBIND_SERVICE="winbind"
-
-NAGIOS_CFG="/etc/nagios/nagios.cfg"
-NAGIOS_STATUS_DAT="/var/log/nagios/status.dat"
-NAGIOS_SERVICE="nagios"
-NPCD_MOD="/usr/lib64/nagios/brokers/npcdmod.o"
-NPCD_CFG="/etc/pnp4nagios/npcd.cfg"
-NPCD_SERVICE="npcd"
-EOF
+# Install /etc/default/openattic
+# TODO: move file to /etc/sysconfig/openattic instead (requires fixing all scripts that source it)
+install -m 644 rpm/sysconfig/%{name}.RedHat %{buildroot}/%{_sysconfdir}/default/%{name}
 
 # database config
 ## TODO: generate random password
