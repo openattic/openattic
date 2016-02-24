@@ -347,12 +347,6 @@ This package contains the yum repository file to install openATTIC.
 %prep
 %setup -q -n %{name}-%{version}-%{PKGVERSION}
 
-%build
-cd webui
-npm install
-bower --allow-root install
-grunt build
-
 %install
 
 # Build up target directory structure
