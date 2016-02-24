@@ -46,7 +46,8 @@ app.factory("Paginator", function ($resource) {
     },
     filter: {
       method: "GET",
-      url: "/openattic/api/ceph-cluster"
+      url: "/openattic/api/ceph-cluster",
+      isArray: true
     }
   });
 });

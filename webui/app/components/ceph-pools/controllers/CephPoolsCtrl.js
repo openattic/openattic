@@ -50,7 +50,7 @@ app.controller("CephPoolsCtrl", function ($scope, Paginator) {
       .filter()
       .$promise
       .then(function (res) {
-        $scope.data = res;
+        $scope.data = res[0];
       })
       .catch(function (error) {
         console.log("An error occurred", error);
