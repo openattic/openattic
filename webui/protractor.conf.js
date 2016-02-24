@@ -41,7 +41,7 @@ exports.config = {
    disks                : '../e2e/disks/**/*.e2e.js',
    pools                : '../e2e/pools/**/*e2e.js',
    volumes              : '../e2e/volumes/volumes.e2e.js',
-   volumes_add          : '../e2e/volumes/add/volumes_add.e2e.js',
+   volumes_add          : '../e2e/volumes/add/**/*.e2e.js',
    volumes_protection   : '../e2e/volumes/protection/**/*.e2e.js',
    volumes_resize       : '../e2e/volumes/resize/**/*.e2e.js',
    volumes_multi_delete : '../e2e/volumes/delete/**/*.e2e.js',
@@ -61,11 +61,11 @@ exports.config = {
    blockStorage         : '../e2e/wizards/block/blockStorage.e2e.js',
    vmStorage_xfs_nfs    : '../e2e/wizards/vm/vmStorage_xfs_nfs.e2e.js',
    //note: please disable zvol suites if you do not have at least one zfs pool configured!
-   //fs_wiz_zfs         : '../e2e/wizards/file/zfs/*.e2e.js'
-   //zvol_add	          : '../e2e/volumes/zvol/zvol.e2e.js',
-   //zvol_snap	        : '../e2e/volumes/zvol/zvol_snap.e2e.js',
-   //zvol_share         : '../e2e/volumes/zvol/zvol_share.e2e.js',
-   //blockStorage_zfs   : '../e2e/wizards/block/zfs/blockStorage_zfs.e2e.js'
+   fs_wiz_zfs           : '../e2e/wizards/file/zfs/*.e2e.js',
+   zvol_add             : '../e2e/volumes/zvol/zvol.e2e.js',
+   zvol_snap            : '../e2e/volumes/zvol/zvol_snap.e2e.js',
+   zvol_share           : '../e2e/volumes/zvol/zvol_share.e2e.js',
+   blockStorage_zfs     : '../e2e/wizards/block/zfs/blockStorage_zfs.e2e.js'
 
   },
 

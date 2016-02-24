@@ -41,6 +41,8 @@ describe('HTTP Share add', function(){
     browser.sleep(400);
     element(by.id('bot2-Msg1')).click();
     browser.sleep(400);
+    expect(browser.getCurrentUrl()).toContain('/http');
+    browser.sleep(400);
   });
 
   it('should not display the share anymore', function(){

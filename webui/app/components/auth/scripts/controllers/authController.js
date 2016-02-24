@@ -38,6 +38,11 @@ app.controller("authController", function ($scope, $rootScope, $state, authServi
   $scope.$watchGroup(["username", "password"], function () {
     $scope.submitted = false;
   });
+
+  if ($scope.user) {
+    $state.go("dashboard");
+  }
+
   $scope.login = function () {
     $scope.submitted = true;
     $scope.loginFailed = false;

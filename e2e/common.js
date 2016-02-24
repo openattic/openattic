@@ -47,7 +47,7 @@
           }
         });
         if(exact_poolname){
-          browser.actions().sendKeys( protractor.Key.ENTER ).perform();
+          //browser.actions().sendKeys( protractor.Key.ENTER ).perform();
           // In order to update the pool selection under firefox.
           element(by.id(type)).click();
           element(by.model('data.megs')).sendKeys(size);
@@ -78,9 +78,10 @@
     delete_volume: function(volume, volumename){
       volumesItem.click();
       browser.sleep(400);
-      //       element(by.css('.tc_entries_dropdown')).click();
-      //       element(by.css('.tc_entries_100')).click();
-      //       browser.sleep(400);
+      element(by.css('.tc_entries_dropdown')).click();
+      browser.sleep(400);
+      element(by.css('.tc_entries_100')).click();
+      browser.sleep(400);
       volume.click();
       browser.sleep(400);
       element(by.css('.tc_menudropdown')).click();

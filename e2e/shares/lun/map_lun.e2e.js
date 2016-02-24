@@ -78,6 +78,8 @@ describe('Should map a LUN to an host', function(){
     element(by.css('.tc_lunDelete')).click();
     browser.sleep(400);
     element(by.id('bot2-Msg1')).click();
+    browser.sleep(400);
+    expect(browser.getCurrentUrl()).toContain('/luns');
     browser.sleep(800);
   });
 

@@ -74,7 +74,7 @@ describe('Wizard panel', function(){
       element.all(by.cssContainingText('option', '(zpool,')).get(0).click();
       browser.sleep(600);
       element(by.id('source_pool')).$('option:checked').getText().then(function(pname){
-        browser.actions().sendKeys(protractor.Key.ENTER).perform();
+        //browser.actions().sendKeys(protractor.Key.ENTER).perform();
         console.log(pname);
         pname = pname.substring(0, pname.indexOf(' '));
         console.log(pname);

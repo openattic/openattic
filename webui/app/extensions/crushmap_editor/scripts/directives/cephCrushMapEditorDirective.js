@@ -269,16 +269,16 @@ app.directive("cephCrushMapEditor", function () {
 
       $scope.deleteBucket = function (bucket) {
         // See if there are any hosts in the bucket's subtree
-        var has_hosts = false;
+        var hasHosts = false;
         var iterfn = function (item) {
           if (item.type_id <= 1) {
-            has_hosts = true;
+            hasHosts = true;
           } else {
             item.items.map(iterfn);
           }
         };
         bucket.items.map(iterfn);
-        if (has_hosts) {
+        if (hasHosts) {
           $.smallBox({
             title: "Bucket is not empty",
             content: ["<i class=\"fa fa-clock-o tc_notDeletable\"></i><i> ",

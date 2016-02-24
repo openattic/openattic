@@ -62,8 +62,8 @@ app.controller("chartCtrl", function ($scope, lineChartService) {
   interval = 10;
 
   // init
-  avgValues.cpu_load = 0;
-  avgValues.disk_load = 0;
+  avgValues.cpuLoad = 0;
+  avgValues.diskLoad = 0;
 
   var evtSource = new EventSource("/openattic/serverstats/stream");
   evtSource.addEventListener("serverstats", function (e) {
@@ -78,39 +78,39 @@ app.controller("chartCtrl", function ($scope, lineChartService) {
 
       // Progress Bar
       $scope.hosts = 1 + " / " + 1;
-      $scope.hosts_p = 1 / 1 * 100;
-      $scope.hosts_t = "info";
+      $scope.hostsPercent = 1 / 1 * 100;
+      $scope.hostsType = "info";
 
-      $scope.disks_online = data.disks.count_online + " / " + data.disks.count;
-      $scope.disks_online_p = data.disks.count_online / data.disks.count * 100;
-      if ($scope.disks_online_p < 80) {
-        $scope.disks_online_t = "danger";
-      } else if ($scope.disks_online_p < 100) {
-        $scope.disks_online_t = "warning";
+      $scope.disksOnline = data.disks.countOnline + " / " + data.disks.count;
+      $scope.disksOnlinePercent = data.disks.countOnline / data.disks.count * 100;
+      if ($scope.disksOnlinePercent < 80) {
+        $scope.disksOnlineType = "danger";
+      } else if ($scope.disksOnlinePercent < 100) {
+        $scope.disksOnlineType = "warning";
       } else {
-        $scope.disks_online_t = "success";
+        $scope.disksOnlineType = "success";
       }
 
-      $scope.disks_usage = 90 + "TB / " + 100 + "TB";
-      $scope.disks_usage_p = 90 / 100 * 100;
-      if ($scope.disks_usage_p > 80) {
-        $scope.disks_usage_t = "danger";
-      } else if ($scope.disks_usage_p > 50) {
-        $scope.disks_usage_t = "warning";
+      $scope.disksUsage = 90 + "TB / " + 100 + "TB";
+      $scope.disksUsagePercent = 90 / 100 * 100;
+      if ($scope.disksUsagePercent > 80) {
+        $scope.disksUsageType = "danger";
+      } else if ($scope.disksUsagePercent > 50) {
+        $scope.disksUsageType = "warning";
       } else {
-        $scope.disks_usage_t = "success";
+        $scope.disksUsageType = "success";
       }
 
       // Info Box
-      //$scope.sys_uptime = data.sys.uptime;
+      //$scope.sysUptime = data.sys.uptime;
 
       // Easy Pie
-      avgValues.cpu_load += data.cpu.load_percent;
-      avgValues.disk_load += data.disks.load_percent;
+      avgValues.cpuLoad += data.cpu.loadPercent;
+      avgValues.diskLoad += data.disks.loadPercent;
       if (countMessages === 0) {
         // CPU load in Percent
         temp = $scope.percentCpuLoad;
-        $scope.percentCpuLoad = Math.round(avgValues.cpu_load / interval);
+        $scope.percentCpuLoad = Math.round(avgValues.cpuLoad / interval);
         $scope.percentCpuLoadDiff = ($scope.percentCpuLoad - temp);
         if ($scope.percentCpuLoadDiff < 0) {
           $scope.percentCpuLoadTrend = "down";
@@ -122,7 +122,7 @@ app.controller("chartCtrl", function ($scope, lineChartService) {
 
         // Disk load in Percent
         temp = $scope.percentDiscUsage;
-        $scope.percentDiscUsage = Math.round(avgValues.disk_load / interval);
+        $scope.percentDiscUsage = Math.round(avgValues.diskLoad / interval);
         $scope.percentDiscUsageDiff = ($scope.percentDiscUsage - temp);
         if ($scope.percentDiscUsageDiff < 0) {
           $scope.percentDiscUsageTrend = "down";
@@ -133,18 +133,18 @@ app.controller("chartCtrl", function ($scope, lineChartService) {
         }
 
         // Reset values
-        avgValues.cpu_load = 0;
-        avgValues.disk_load = 0;
+        avgValues.cpuLoad = 0;
+        avgValues.diskLoad = 0;
       }
 
       $scope.lineChartDataset = lineChartService.getDataset([{
         id: 0,
         label: "written data",
-        data: [[date, data.disks.wr_mb]]
+        data: [[date, data.disks.wrMb]]
       }, {
         id: 1,
         label: "network traffic",
-        data: [[date, data.network.tot_in_mb]]
+        data: [[date, data.network.totInMb]]
       }]);
     });
   }, false);

@@ -14,7 +14,10 @@
 
 export OACONFIG="True"
 
-. /etc/default/openattic
+for settings in "/etc/default/openattic" "/etc/sysconfig/openattic"
+do
+	[ -f $settings ] && . $settings
+done
 
 cd $OADIR
 OAUSER=` cut -d: -f1 <<< "$RPCD_CHUID"`
