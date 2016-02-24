@@ -29,9 +29,71 @@ WEBSERVER_SERVICE="apache2"
 SAMBA_SERVICES="smbd nmbd"
 WINBIND_SERVICE="winbind"
 
-NAGIOS_CFG="/etc/nagios3/nagios.cfg"
+## Type: string
+## Default: "/var/lib/nagios3/rw/nagios.cmd"
+#
+# Path for processing commands submitted by other applications
+NAGIOS_CMD_PATH="/var/lib/nagios3/rw/nagios.cmd"
+
+## Type: string
+## Default: "/var/log/cache/nagios3/status.dat"
+#
+# The file that stores the current status, comment, and downtime information.
+NAGIOS_STATUS_DAT_PATH="/var/cache/nagios3/status.dat"
 NAGIOS_STATUS_DAT="/var/cache/nagios3/status.dat"
+
+## Type: string
+## Default: "/etc/nagios3/nagios.cfg"
+#
+# The main configuration file
+NAGIOS_CFG_PATH="/etc/nagios3/nagios.cfg"
+NAGIOS_CFG="/etc/nagios3/nagios.cfg"
+
+## Type: string
+## Default: "/etc/nagios3/conf.d/openattic_contacts.cfg"
+#
+# Defines default contact groups
+NAGIOS_CONTACTS_CFG_PATH="/etc/nagios3/conf.d/openattic_contacts.cfg"
+
+## Type: string
+## Default: "/etc/nagios3/conf.d/openattic_static.cfg"
+#
+# Defines additional services
+NAGIOS_SERVICES_CFG_PATH="/etc/nagios3/conf.d/openattic_static.cfg"
+
+## Type: boolean
+## Default: True
+#
+#
+NAGIOS_INCLUDE_HOST_IN_CFG=True
+
+## Type: string
+## Default: "nagios"
+#
+# Name of monitoring executable
+NAGIOS_BINARY_NAME="nagios3"
+
+## Type: string
+## Default: "nagios"
+#
+# Name of systemd service
+NAGIOS_SERVICE_NAME="nagios3"
 NAGIOS_SERVICE="nagios3"
+
+## Type: string
+## Default: "/usr/lib/pnp4nagios/npcdmod.o"
+#
+# Path to the npcd module
 NPCD_MOD="/usr/lib/pnp4nagios/npcdmod.o"
+
+## Type: string
+## Default: "/etc/pnp4nagios/npcd.cfg"
+#
+# Configuration for npcd
 NPCD_CFG="/etc/pnp4nagios/npcd.cfg"
+
+## Type: string
+## Default: "npcd"
+#
+# Name of systemd service
 NPCD_SERVICE="npcd"
