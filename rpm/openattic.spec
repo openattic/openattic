@@ -242,9 +242,18 @@ This package includes support for MD-RAID, the common Linux software RAID.
 
 %package  module-nagios
 Requires:	nagios
-Requires:	nagios-plugins-all
+Requires:	nagios-common
 Requires: openattic-base
 Requires:	pnp4nagios
+Requires: nagios-plugins-http
+Requires: nagios-plugins-swap
+Requires: nagios-plugins-ssh
+Requires: nagios-plugins-ping
+Requires: nagios-plugins-disk
+Requires: nagios-plugins-users
+Requires: nagios-plugins-procs
+Requires: nagios-plugins-load
+
 Summary: Nagios module for openATTIC
 
 %description module-nagios
@@ -347,12 +356,6 @@ This package contains the yum repository file to install openATTIC.
 %prep
 %setup -q -n %{name}-%{version}-%{PKGVERSION}
 
-%build
-cd webui
-npm install
-bower --allow-root install
-grunt build
-
 %install
 
 # Build up target directory structure
@@ -380,6 +383,8 @@ mkdir -p %{buildroot}/lib/systemd/system/
 
 # Install Backend and binaries
 rsync -aAX backend/ %{buildroot}%{_datadir}/%{name}
+rm -rf %{buildroot}%{_datadir}/%{name}/pkgapt
+rm -rf %{buildroot}%{_datadir}/%{name}/installed_apps.d/*_pkgapt
 install -m 755 bin/oacli %{buildroot}%{_bindir}
 install -m 755 bin/oaconfig   %{buildroot}%{_sbindir}
 install -m 755 bin/blkdevzero %{buildroot}%{_sbindir}
@@ -718,7 +723,7 @@ systemctl start smb
 - Moved dependency on python-rtslib from the openattic-base package
   to the openattic-module-lio RPM
 * Fri Dec 04 2015 Lenz Grimmer <lenz@openattic.org> 2.0.5
-- Start and enable Samba in the samba subpackage (OP-788) 
+- Start and enable Samba in the samba subpackage (OP-788)
 - Removed obsolete dependency on the Oxygen icon set (OP-787)
 - Added openattic-module-lio to the openattic metapackage dependencies
 * Thu Dec 03 2015 Lenz Grimmer <lenz@openattic.org> 2.0.5

@@ -39,9 +39,13 @@ Version 2.0.8 (not released yet)
   manually for the performance graphs to be displayed. (OP-820)
 * Installation: Updated and improved the installation and content of the default
   configuration file /etc/default/openattic (OP-920)
+* Packaging: Included the build scripts into the official repository. They can be used to
+  create a tar archive and with that, the corresponding Debian or RPM packages. (OP-892)
+* Installation: Trimmed down the list of required Nagios plugins in the RPM package (OP-942)
+
 
 Version 2.0.7, 19. Jan 2016:
---------------------------------
+----------------------------
 
 * WebUI: Fixed jshint and jscs errors (OP-826)
 * WebUI/QA: extended host e2e test in order to check the correct title (see OP-855)
@@ -56,7 +60,7 @@ Version 2.0.7, 19. Jan 2016:
   can get the authentication token of your own openattic user (OP-860).
 
 Version 2.0.6, 19. Jan 2016:
---------------------------------
+----------------------------
 
 * WebUI: Added grunt-jscs v2.5.0 (OP-832)
 * WebUI: Updated grunt-contrib-jshint from 0.6.4 to 0.11.3 (OP-825)
