@@ -88,7 +88,7 @@ describe('Volumes add', function(){
   it('should stay on the create volume form if the submit button is clicked without editing anything', function(){
     submitButton.click();
 
-    expect(element(by.id('ribbon')).getText()).toEqual('Volumes Add');
+    expect(browser.getCurrentUrl()).toContain('/openattic/#/volumes/add');
   });
 
   it('should show required field errors if the submit button is clicked without editing anything', function(){
