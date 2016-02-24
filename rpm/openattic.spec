@@ -1,12 +1,13 @@
 Name: openattic
-Version: %{BUILDVERSION}
-Release: %{PKGVERSION}%{?dist}
+# VERSION and RELEASE are passed via rpmbuild macro defines
+Version: %{VERSION}
+Release: %{RELEASE}
 Summary: openATTIC Comprehensive Storage Management System
 Group: System Environment/Libraries
 License: GPLv2
 URL: http://www.openattic.org
 BuildArch: noarch
-Source:	openattic-%{BUILDVERSION}-%{PKGVERSION}.tar.bz2
+Source:	%{name}-%{version}.tar.bz2
 Requires:	openattic-module-cron
 Requires:	openattic-module-http
 Requires:	openattic-module-lio
