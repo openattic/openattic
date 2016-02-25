@@ -21,17 +21,36 @@ Version 2.0.8 (not released yet)
 * WebUI/QA: Adjusted E2E tests with volume protection for OP-869 (OP-870)
 * WebUI/QA: Adapted E2E tests related to OP-339 - Allow deletion of multiple
   volumes (OP-871)
-* WebUI/QA: re-added commandlog check ('lvcreate') for specific volume (see OP-873)
+* WebUI/QA: re-added commandlog check ('lvcreate') for specific volume (see
+* OP-873)
 * WebUI/QA: fixed snapshot test related to OP-817 (OP-881)
 * WebUI/QA: extended all storage tab tests by checking the url OP-891 - related
   to OP-817 (OP-891)
 * WebUI/QA: extended general e2e tests by checking the url when menu entry has
   been clicked (OP-897)
 * WebUI/QA: More tests for multiple selections (OP-875)
+* WebUI/QA: Fix selection problem in multiple_volume_deletion (OP-908)
 * Backend: added copyright/license header to gatling files (OP-844)
+* Backend/Gatling: Removed colorizer.py from the Gatling API test framework due
+  to licensing concerns (OP-924)
+* Documentation: updated documentation (section e2e, OP-910)
+* Installation: Adding distro specific settings for monitoring (OP-842)
+  (thanks to Eric Jackson for the contribution)
+* Installation: Fixed installation errors on EL7 that were caused be the update
+  of Nagios to version 4 in the EPEL package repository. Currently, pnp4nagios
+  needs to be configured manually for the performance graphs to be displayed.
+  (OP-820)
+* Installation: Updated and improved the installation and content of the
+  default configuration file /etc/default/openattic (OP-920)
+* Packaging: Included the build scripts into the official repository. They can
+  be used to create a tar archive and with that, the corresponding Debian or
+  RPM packages. (OP-892)
+* Installation: Trimmed down the list of required Nagios plugins in the RPM
+  package (OP-942)
+
 
 Version 2.0.7, 19. Jan 2016:
---------------------------------
+----------------------------
 
 * WebUI: Fixed jshint and jscs errors (OP-826)
 * WebUI/QA: extended host e2e test in order to check the correct title (see OP-855)
@@ -46,7 +65,7 @@ Version 2.0.7, 19. Jan 2016:
   can get the authentication token of your own openattic user (OP-860).
 
 Version 2.0.6, 19. Jan 2016:
---------------------------------
+----------------------------
 
 * WebUI: Added grunt-jscs v2.5.0 (OP-832)
 * WebUI: Updated grunt-contrib-jshint from 0.6.4 to 0.11.3 (OP-825)

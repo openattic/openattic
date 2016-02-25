@@ -48,7 +48,9 @@ describe('Volumes add', function(){
 
   beforeEach(function(){
     element(by.css('ul .tc_menuitem_volumes > a')).click();
+    browser.sleep(400);
     addBtn.click();
+    browser.sleep(400);
   });
 
   it('should open an add volume form with "Create Volume:" header', function(){
@@ -92,7 +94,9 @@ describe('Volumes add', function(){
 
   it('should show required field errors if the submit button is clicked without editing anything', function(){
     volumeNameInput.clear();
+    browser.sleep(400);
     submitButton.click();
+    browser.sleep(400);
 
     expect(element(by.css('.tc_nameRequired')).isDisplayed()).toBe(true);
     expect(element(by.css('.tc_poolRequired')).isDisplayed()).toBe(true);
@@ -114,6 +118,7 @@ describe('Volumes add', function(){
   it('should show the correct size of the selected pool', function(){
     forEachPool(function(exact_poolname){
       element.all(by.cssContainingText('option', exact_poolname)).get(0).click();
+      browser.sleep(400);
       var pool_size = element(by.id('data.megs')).evaluate('data.sourcePool.usage.free_text').then(function(psize){
           browser.sleep(400);
           expect(element(by.css('.tc_poolAvailableSize')).getText()).toContain(psize + ' free');
@@ -128,16 +133,16 @@ describe('Volumes add', function(){
 
   // note: by using pool.size (see config.js) this test will only work with a brand new added pool!!! 
   //   it('should allow a volume size that is smaller than the selected pool capacity', function(){
-  // 
-  // 
+  //
+  //
   //     for(var key in helpers.configs.pools){
   //       var pool = helpers.configs.pools[key];
   //       volumePoolSelect.click();
   //       volumePoolSelect.element(by.cssContainingText('option', pool.name)).click();
-  // 
+  //
   //       var volumeSize = (pool.size - 0.1).toFixed(2);
   //       volumeSizeInput.clear().sendKeys(volumeSize + pool.unit);
-  // 
+  //
   //       expect(element(by.css('.tc_wrongVolumeSize')).isDisplayed()).toBe(false);
   //     }
   //   });
@@ -145,8 +150,10 @@ describe('Volumes add', function(){
   it('should not allow a volume size that is higher than the selected pool capacity', function(){
     forEachPool(function(exact_poolname, pool){
       element.all(by.cssContainingText('option', exact_poolname)).get(0).click();
+      browser.sleep(400);
       var volumeSize = (pool.size + 0.1).toFixed(2);
       volumeSizeInput.clear().sendKeys(volumeSize + pool.unit);
+      browser.sleep(400);
       expect(element(by.css('.tc_wrongVolumeSize')).isDisplayed()).toBe(true);
     });
   });
@@ -154,6 +161,7 @@ describe('Volumes add', function(){
   it('should allow a volume size that is as high as the selected pool capacity', function(){
     forEachPool(function(exact_poolname){
       element.all(by.cssContainingText('option', exact_poolname)).get(0).click();
+      browser.sleep(400);
       var pool_size = element(by.id('data.megs')).evaluate('data.sourcePool.usage.free_text').then(function(psize){
         //console.log(psize);
         browser.sleep(400);
@@ -166,6 +174,7 @@ describe('Volumes add', function(){
   it('should show the predefined volume types for each pool', function(){
     forEachPool(function(exact_poolname, pool){
       element.all(by.cssContainingText('option', exact_poolname)).get(0).click();
+      browser.sleep(400);
       for(var i = 0; i < pool.volumeTypes.length; i++){
         expect(element(by.cssContainingText('label', pool.volumeTypes[i])).isDisplayed()).toBe(true);
       }
@@ -175,6 +184,7 @@ describe('Volumes add', function(){
   it('should show a message if the chosen volume size is smaller than 100mb', function(){
     withFirstPool(function(exact_poolname, pool){
       volumeSizeInput.clear().sendKeys('99mb');
+      browser.sleep(400);
       expect(element(by.css('.tc_wrongVolumeSize')).isPresent()).toBe(true);
     });
   });
@@ -182,6 +192,7 @@ describe('Volumes add', function(){
   it('should show a message if the given volume size is just a string', function(){
     withFirstPool(function(exact_poolname, pool){
       volumeSizeInput.clear().sendKeys('abc');
+      browser.sleep(400);
       expect(element(by.css('.tc_noValidNumber')).isPresent()).toBe(true);
     });
   });
@@ -194,7 +205,7 @@ describe('Volumes add', function(){
   //       element.all(by.cssContainingText('option', '(volume group,')).get(0).click();
   //       expect(element(by.linkText('use max')).isDisplayed()).toBe(true);
   //       element(by.linkText('use max')).click();
-  //       
+  //
   //       var pool_size = element(by.id('data.megs')).evaluate('data.sourcePool.usage.free_text').then(function(psize){
   //         browser.sleep(400);
   //         expect(element(by.css('.tc_poolAvailableSize')).getText()).toContain(psize + ' free');
@@ -205,7 +216,7 @@ describe('Volumes add', function(){
   //           expect(final_size + 'GB').toEqual(psize);
   //         });
   //       });
-  //       
+  //
   //       break;
   //     }
   //   });
@@ -213,6 +224,7 @@ describe('Volumes add', function(){
   it('should show a message if the given volume size is a combination of numbers and string', function(){
     withFirstPool(function(exact_poolname, pool){
       volumeSizeInput.clear().sendKeys('120asd');
+      browser.sleep(400);
       expect(element(by.css('.tc_noValidNumber')).isDisplayed()).toBe(true);
     });
   });
@@ -221,15 +233,21 @@ describe('Volumes add', function(){
     withFirstPool(function(exact_poolname, pool){
       //create a volume
       volumeNameInput.sendKeys(volumename);
+      browser.sleep(400);
       element(by.id('data.megs')).sendKeys('100mb');
+      browser.sleep(400);
       submitButton.click();
       browser.sleep(helpers.configs.sleep);
 
       //try to create the volume again
       element(by.css('.tc_add_btn')).click();
+      browser.sleep(400);
       volumeNameInput.sendKeys(volumename);
+      browser.sleep(400);
       expect(element(by.css('.tc_noUniqueName')).isDisplayed()).toBe(true);
+      browser.sleep(400);
       element(by.css('.tc_backButton')).click();
+      browser.sleep(400);
 
       //delete the volume
       helpers.delete_volume(volume, volumename);
@@ -267,7 +285,7 @@ describe('Volumes add', function(){
         element(by.id('bot2-Msg1')).click();
 
         expect(volume.isPresent()).toBe(false);
-        
+
         addBtn.click();
         console.log('volumes_add');
         selectPool(exact_poolname);
