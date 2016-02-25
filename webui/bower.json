@@ -1,10 +1,10 @@
 {
   "name": "openattic-web",
   "private": true,
-  "license": ["GPL-2.0", "MIT", "OFL-1.1", "CC-BY-3.0", "BSD-3-Clause"],
+  "license": "GPL-2.0",
   "dependencies": {
     "angular": "1.5.0",
-    "angular-bootstrap": "0.12.1",
+    "angular-bootstrap": "0.14.3",
     "angular-breadcrumb": "0.4.1",
     "angular-flot": "0.0.16",
     "angular-md5": "0.1.8",
