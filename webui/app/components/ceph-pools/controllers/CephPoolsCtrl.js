@@ -52,8 +52,9 @@ app.controller("CephPoolsCtrl", function ($scope, Paginator) {
       .then(function (res) {
         $scope.data = res[0];
       })
-      .catch(function (error) {
-        console.log("An error occurred", error);
+      .catch(function () {
+        $scope.data = false;
+        console.log("Ceph not available.");
       });
   }, true);
 

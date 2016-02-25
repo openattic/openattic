@@ -131,7 +131,7 @@ describe('Volumes add', function(){
     });
   });
 
-  // note: by using pool.size (see config.js) this test will only work with a brand new added pool!!! 
+  // note: by using pool.size (see config.js) this test will only work with a brand new added pool!!!
   //   it('should allow a volume size that is smaller than the selected pool capacity', function(){
   //
   //
@@ -248,7 +248,6 @@ describe('Volumes add', function(){
       browser.sleep(400);
       element(by.css('.tc_backButton')).click();
       browser.sleep(400);
-
       //delete the volume
       helpers.delete_volume(volume, volumename);
     });

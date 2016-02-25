@@ -8,7 +8,6 @@ describe('General', function(){
   var fullscreenBtn = element(by.id('fullscreen'));
 
   var menuItems = element.all(by.css('ul .tc_menuitem > a'));
-  var menuCount = 0;
 
   var menuStructure = {
     dashboard: element(by.css('ul .tc_menuitem_dashboard > a')), //has to be there
