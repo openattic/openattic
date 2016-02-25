@@ -31,7 +31,7 @@
 "use strict";
 
 var app = angular.module("openattic");
-app.controller("UserCtrl", function ($scope, $state, UserService, $modal) {
+app.controller("UserCtrl", function ($scope, $state, UserService, $uibModal) {
   $scope.data = {};
 
   $scope.filterConfig = {
@@ -73,7 +73,7 @@ app.controller("UserCtrl", function ($scope, $state, UserService, $modal) {
   };
 
   $scope.deleteAction = function () {
-    var modalInstance = $modal.open({
+    var modalInstance = $uibModal.open({
       windowTemplateUrl: "templates/messagebox.html",
       templateUrl: "templates/users/user-delete.html",
       controller: "UserDeleteCtrl",

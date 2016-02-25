@@ -31,7 +31,7 @@
 "use strict";
 
 var app = angular.module("openattic");
-app.controller("HostCtrl", function ($scope, $state, HostService, $modal) {
+app.controller("HostCtrl", function ($scope, $state, HostService, $uibModal) {
   $scope.data = {};
 
   $scope.filterConfig = {
@@ -81,7 +81,7 @@ app.controller("HostCtrl", function ($scope, $state, HostService, $modal) {
     if (!$scope.selection.item) {
       return;
     }
-    var modalInstance = $modal.open({
+    var modalInstance = $uibModal.open({
       windowTemplateUrl: "templates/messagebox.html",
       templateUrl: "templates/hosts/delete-host.html",
       controller: "HostDeleteCtrl",
