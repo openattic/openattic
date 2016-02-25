@@ -4,7 +4,6 @@ describe('HTTP Share workflow', function(){
 
   var volumename = 'protractor_httpWorkflow_vol';
   var volume = element.all(by.cssContainingText('tr', volumename)).get(0);
-  var volumesItem = element.all(by.css('ul .tc_menuitem > a')).get(3);
 
   beforeAll(function(){
     helpers.login();
@@ -12,7 +11,6 @@ describe('HTTP Share workflow', function(){
   });
 
   beforeEach(function(){
-    volumesItem.click();
     expect(volume.isDisplayed()).toBe(true);
     volume.click();
     browser.sleep(400);

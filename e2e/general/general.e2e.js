@@ -2,18 +2,53 @@ var helpers = require('../common.js');
 
 describe('General', function(){
 
-  var menuItems = element.all(by.css('ul .tc_menuitem > a'));
-  var dashboardItem = menuItems.get(0);
-  var disksItem = menuItems.get(1);
-  var poolsItem = menuItems.get(2);
-  var volumesItem = menuItems.get(3);
-  var hostsItem = menuItems.get(4);
-  var systemItem = menuItems.get(5);
-
   var oaLogo = element(by.css('#logo a'));
   var hideBtn = element(by.css('#hide-menu a'));
   var minifyArrow = element(by.css('.minifyme'));
   var fullscreenBtn = element(by.id('fullscreen'));
+
+  var menuItems = element.all(by.css('ul .tc_menuitem > a'));
+  var menuCount = 0;
+
+  var menuStructure = {
+    dashboard: element(by.css('ul .tc_menuitem_dashboard > a')), //has to be there
+    disks: element(by.css('ul .tc_menuitem_disks > a')),
+    pools: element(by.css('ul .tc_menuitem_pools > a')),
+    volumes: element(by.css('ul .tc_menuitem_volumes > a')),
+    ceph: element(by.css('ul .tc_menuitem_ceph > a')),
+    hosts: element(by.css('ul .tc_menuitem_hosts > a')),
+    system: element(by.css('ul .tc_menuitem_system > a')) //has to be there
+  };
+
+  var menuOrder = [
+    'dashboard',
+    'disks',
+    'pools',
+    'volumes',
+    'ceph',
+    'hosts',
+    'system'
+  ];
+
+  var systemItems = {
+    users: element(by.css('ul .tc_submenuitem_system_users')),
+    cmdlogs: element(by.css('ul .tc_submenuitem_system_cmdlogs'))
+  };
+
+  var systemOrder = [
+    'users',
+    'cmdlogs'
+  ];
+
+  var cephItems = {
+    pools: element(by.css('ul .tc_submenuitem_ceph_pools')),
+    crushmap: element(by.css('ul .tc_submenuitem_ceph_crushmap'))
+  };
+
+  var cephOrder = [
+    'pools',
+    'crushmap'
+  ];
 
   beforeAll(function(){
     helpers.login();
@@ -27,41 +62,86 @@ describe('General', function(){
     expect(element(by.css('span .tc_usernameinfo')).getText()).toEqual('Openattic');
   });
 
-  it('should have dashboard as first nav item', function(){
-    expect(dashboardItem.getText()).toEqual('Dashboard');
+  /* Menuitems */
+  it('should have all menuitems into the right order', function(){
+    var menuCount = 0;
+    menuOrder.forEach(function(item){
+      if(menuStructure[item]){
+        expect(menuStructure[item].getText()).toEqual(menuItems.get(menuCount).getText());
+        menuCount++;
+      }
+    });
   });
 
-  it('should have disks as second nav item', function(){
-    expect(disksItem.getText()).toEqual('Disks');
+  it('should click all menuitems and check the url', function(){
+    for(item in menuStructure){
+      if(menuStructure[item]){
+        if(item != 'system' && item != 'ceph'){
+          menuStructure[item].click();
+          browser.sleep(400);
+          expect(browser.getCurrentUrl()).toContain('/openattic/#/' + item);
+        }
+      }
+    }
   });
 
-  it('should have pools as third nav item', function(){
-    expect(poolsItem.getText()).toEqual('Pools');
-  });
+  /* Ceph and its subitems */
+  if(menuStructure.ceph){
+    it('should have subitems under the system menu item', function(){
+      menuStructure.ceph.click();
+      menuStructure.ceph = menuStructure.ceph.all(by.xpath('..'));
+      expect(menuStructure.ceph.all(by.css('ul .tc_submenuitem')).count()).toBeGreaterThan(0);
+    });
 
-  it('should have volumes as fourth nav item', function(){
-    expect(volumesItem.getText()).toEqual('Volumes');
-  });
 
-  it('should have hosts as fifth nav item', function(){
-    expect(hostsItem.getText()).toEqual('Hosts');
-  });
+    it(' (ceph) should have the right orde of all subitems', function(){
+      var menuCount = 0;
+      var subitems = menuStructure.ceph.all(by.css('ul .tc_submenuitem'));
+      cephOrder.forEach(function(item){
+        if(cephItems[item]){
+          expect(cephItems[item].getText()).toEqual(subitems.get(menuCount).getText());
+          menuCount++;
+        }
+      });
+    });
 
-  it('should have system as sixth nav item', function(){
-    expect(systemItem.getText()).toEqual('System');
-  });
+    it(' (ceph) should click all subitems and check the url', function(){
+      for(subitem in cephItems){
+        cephItems[subitem].click();
+        browser.sleep(400);
+        expect(browser.getCurrentUrl()).toContain('/openattic/#/ceph/' + subitem);
+      }
+    });
+  }
 
-  it('should have subitems under the system menu item', function(){
-    systemItem.click();
-    systemItem = systemItem.all(by.xpath('..'));
-    expect(systemItem.all(by.css('ul .tc_submenuitem')).count()).toBeGreaterThan(0);
-  });
+  /* System and its subitems */
+  if(menuStructure.system){
+    it('should have subitems under the system menu item', function(){
+      menuStructure.system.click();
+      menuStructure.system = menuStructure.system.all(by.xpath('..'));
+      expect(menuStructure.system.all(by.css('ul .tc_submenuitem')).count()).toBeGreaterThan(0);
+    });
 
-  it('system should have "User", "Command Logs" and "CRUSH Map" as submenu items', function(){
-    expect(systemItem.all(by.css('ul .tc_submenuitem')).get(0).getText()).toEqual('Users');
-    expect(systemItem.all(by.css('ul .tc_submenuitem')).get(1).getText()).toEqual('Command Logs');
-    expect(systemItem.all(by.css('ul .tc_submenuitem')).get(2).getText()).toEqual('CRUSH Map');
-  });
+
+    it(' (system) should have the right orde of all subitems', function(){
+      var menuCount = 0;
+      var subitems = menuStructure.system.all(by.css('ul .tc_submenuitem'));
+      systemOrder.forEach(function(item){
+        if(systemItems[item]){
+          expect(systemItems[item].getText()).toEqual(subitems.get(menuCount).getText());
+          menuCount++;
+        }
+      });
+    });
+
+    it(' (system) should click all subitems and check the url', function(){
+      for(subitem in systemItems){
+        systemItems[subitem].click();
+        browser.sleep(400);
+        expect(browser.getCurrentUrl()).toContain('/openattic/#/' + subitem);
+      }
+    });
+  }
 
   it('should have a collapse menu button', function(){
     expect(hideBtn.isDisplayed()).toBe(true);
@@ -88,58 +168,10 @@ describe('General', function(){
 
   it('should redirect to dashboard panel when clicking the openATTIC logo', function(){
     //click somewhere else to change the url
-    poolsItem.click();
+    menuStructure.pools.click();
     expect(browser.getCurrentUrl()).toContain('/openattic/#/pools');
     oaLogo.click();
     expect(browser.getCurrentUrl()).toContain('/openattic/#/dashboard');
-  });
-
-  it('should click on dashboard and check the url', function(){
-    dashboardItem.click();
-    browser.sleep(400);
-    expect(browser.getCurrentUrl()).toContain('/openattic/#/dashboard');
-  });
-
-  it('should click on disks and check the url', function(){
-    disksItem.click();
-    browser.sleep(400);
-    expect(browser.getCurrentUrl()).toContain('/openattic/#/disks');
-  });
-
-  it('should click on pools and check the url', function(){
-    poolsItem.click();
-    browser.sleep(400);
-    expect(browser.getCurrentUrl()).toContain('/openattic/#/pools');
-  });
-
-  it('should click on volumes and check the url', function(){
-    volumesItem.click();
-    browser.sleep(400);
-    expect(browser.getCurrentUrl()).toContain('/openattic/#/volumes');
-  });
-
-  it('should click on hosts and check the url', function(){
-    hostsItem.click();
-    browser.sleep(400);
-    expect(browser.getCurrentUrl()).toContain('/openattic/#/hosts');
-  });
-
-  it('should click on System->Users and check the url', function(){
-    systemItem.click();
-    systemItem.all(by.css('ul .tc_submenuitem')).get(0).click();
-    expect(browser.getCurrentUrl()).toContain('/openattic/#/users');
-  });
-
-  it('should click on System->Command Logs and check the url', function(){
-    systemItem.click();
-    systemItem.all(by.css('ul .tc_submenuitem')).get(1).click();
-    expect(browser.getCurrentUrl()).toContain('/openattic/#/cmdlogs');
-  });
-
-  it('should click on System->CRUSH Map and check the url', function(){
-    systemItem.click();
-    systemItem.all(by.css('ul .tc_submenuitem')).get(2).click();
-    expect(browser.getCurrentUrl()).toContain('/openattic/#/crushmap');
   });
 
   it('should check the fullscreen mode', function(){
@@ -158,7 +190,7 @@ describe('General', function(){
            browser.executeScript('return document.webkitIsFullScreen').then(function(doc){
              expect(doc).toBe(true);
              //click somewhere else and expect that we're still in fullscreen mode
-             volumesItem.click();
+             menuStructure.volumes.click();
              expect(doc).toBe(true);
            });
 

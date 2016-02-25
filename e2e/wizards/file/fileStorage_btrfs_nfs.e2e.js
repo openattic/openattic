@@ -22,7 +22,8 @@ describe('Wizard panel', function(){
   var noUniqueName = element(by.css('.tc_noUniqueName'));
   var noValidNumber = element(by.css('.tc_noValidNumber'));
 
-  var menu = element.all(by.css('ul .tc_menuitem > a'));
+  var volumesItem = element(by.css('ul .tc_menuitem_volumes > a'));
+  var hostsItem = element(by.css('ul .tc_menuitem_hosts > a'));
 
   beforeAll(function(){
     helpers.login();
@@ -149,16 +150,17 @@ describe('Wizard panel', function(){
 
     console.log('<----- file storage test with NFS ended ------>');
     browser.sleep(400);
-    menu.get(3).click();
+    volumesItem.click();
     expect(browser.getCurrentUrl()).toContain('/openattic/#/volumes');
     /*	next line -> workaround (when checking if the volume is visible,
 		    protractor SOMETIMES throws 'element not visible error', but when
 		    protractor is about to delete the volume, it's visible and protractor is able to delete it
 		    couldn't reproduce this strange behavior and browser.sleep won't help)
     */
-    menu.get(4).click();
+    hostsItem.click();
     browser.sleep(400);
-    menu.get(3).click();
+    volumesItem.click();
+    expect(browser.getCurrentUrl()).toContain('/openattic/#/volumes');
     browser.sleep(400);
     expect(volume.isDisplayed()).toBe(true);
     browser.sleep(800);

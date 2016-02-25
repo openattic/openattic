@@ -18,6 +18,7 @@ describe('Raw Block Storage Wizard', function(){
   var iqn = "iqn.1991-05.com.microsoft:protractor_test_host";
 
   var menu = element.all(by.css('ul .tc_menuitem > a'));
+  var volumesItem = element(by.css('ul .tc_menuitem_volumes > a'));
 
   beforeAll(function(){
     helpers.login();
@@ -104,7 +105,7 @@ describe('Raw Block Storage Wizard', function(){
 
     helpers.check_wizard_titles();
 
-    menu.get(3).click();
+    volumesItem.click();
     expect(browser.getCurrentUrl()).toContain('/openattic/#/volumes');
 
     //check if lun exists
@@ -118,7 +119,7 @@ describe('Raw Block Storage Wizard', function(){
     expect(element(by.cssContainingText('tr', hostname)).isDisplayed()).toBe(true);
 
     //remove the lun map
-    menu.get(3).click();
+    volumesItem.click();
     browser.sleep(400);
     browser.sleep(400);
     expect(volume.isPresent()).toBe(true);

@@ -5,8 +5,7 @@ describe('Volumes add with protection', function(){
   });
 
   beforeEach(function(){
-    var volumesItem = element.all(by.css('ul .tc_menuitem')).get(3);
-    volumesItem.click();
+    element(by.css('ul .tc_menuitem_volumes > a')).click();
 
     var addBtn = element(by.css('oadatatable .tc_add_btn'));
     addBtn.click();

@@ -4,7 +4,7 @@ describe('Disks Panel', function(){
 
   beforeAll(function(){
     helpers.login();
-    element.all(by.css('ul .tc_menuitem > a')).get(1).click();
+    element(by.css('ul .tc_menuitem_disks > a')).click();
   });
 
   it('should display the disks table', function(){

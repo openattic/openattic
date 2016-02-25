@@ -2,7 +2,6 @@ var helpers = require('../../common.js');
 
 describe('should add a CIFS share', function(){
 
-  var volumesItem = element.all(by.css('ul .tc_menuitem > a')).get(3);
   var volumename = 'protractor_cifs_vol';
   var volume = element.all(by.cssContainingText('tr', volumename)).get(0);
 
@@ -13,7 +12,6 @@ describe('should add a CIFS share', function(){
 
   beforeAll(function(){
     helpers.login();
-    volumesItem.click();
     helpers.create_volume(volumename, "xfs");
     volume.click();
     cifsShareTab.click();

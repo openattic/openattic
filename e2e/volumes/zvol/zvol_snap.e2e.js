@@ -3,7 +3,6 @@ var helpers = require('../../common.js');
 
 describe('Zvol tests', function(){
 
-  var volumesItem = element.all(by.css('ul .tc_menuitem')).get(3);
   var volumePoolSelect = element(by.model('data.sourcePool'));
   var addBtn = element(by.css('.tc_add_btn'));
   var volumename = 'protractor_test_zvol';
@@ -19,7 +18,7 @@ describe('Zvol tests', function(){
   });
 
   beforeEach(function(){
-    volumesItem.click();
+    element(by.css('ul .tc_menuitem_volumes > a')).click();
   });
 
   it('should have a zpool', function(){

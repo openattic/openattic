@@ -22,7 +22,7 @@ describe('Volumes resize', function(){
     //var volumesItem = helpers.configs.menuitems.volumes;
     //element.all(by.css('ul .tc_menuitem')).get(volumesItem).click();
 
-    element.all(by.css('ul .tc_menuitem > a')).get(3).click();
+    element(by.css('ul .tc_menuitem_volumes > a')).click();
     pool = helpers.create_volume(volumename, "lun", "200mb");
 
     volume.click();

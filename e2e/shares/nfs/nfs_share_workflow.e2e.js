@@ -7,7 +7,6 @@ describe('NFS Share workflow', function(){
   var submitButton = element(by.css('.tc_submitButton'));
   var path = element(by.model('share.path'));
   var options = element(by.id('shareOptions'));
-  var volumesItem = element.all(by.css('ul .tc_menuitem > a')).get(3);
   var nfsShareTab = element(by.css('.tc_nfsShareTab'));
 
   beforeAll(function(){

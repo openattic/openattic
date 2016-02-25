@@ -5,7 +5,6 @@ describe('Should create a Snapshot', function(){
   var snapshotname = 'protractor_test_snap';
   var volume = element.all(by.cssContainingText('tr', volumename)).get(0);
   var snapshot = element(by.cssContainingText('tr', snapshotname));
-  var volumesItem = element.all(by.css('ul .tc_menuitem > a')).get(3);
 
   beforeAll(function(){
     helpers.login();
@@ -13,10 +12,6 @@ describe('Should create a Snapshot', function(){
     volume.click();
     element(by.css('.tc_snapshotTab')).click();
   });
-
-  //   beforeEach(function(){
-  //     volumesItem.click();
-  //   });
 
   it('should create the snapshot "protractor_test_snap"', function(){
     expect(volume.isDisplayed()).toBe(true);

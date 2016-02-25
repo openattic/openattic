@@ -84,65 +84,65 @@
     <!-- NAVIGATION : This navigation is also responsive-->
     <nav>
         <ul data-smart-menu>
-            <li data-ui-sref-active="active" class="tc_menuitem">
+            <li data-ui-sref-active="active" class="tc_menuitem tc_menuitem_dashboard">
                 <a data-ui-sref="dashboard" title="Dashboard"><i class="fa fa-lg fa-fw fa-tachometer"></i> <span
                         class="menu-item-parent">Dashboard</span></a>
             </li>
-            <li data-ui-sref-active="active" class="tc_menuitem">
+            <li data-ui-sref-active="active" class="tc_menuitem tc_menuitem_disks">
                 <a data-ui-sref="disks" title="Disks"><i class="fa fa-lg fa-fw fa-hdd-o"></i> <span
                         class="menu-item-parent">Disks</span></a>
             </li>
-            <li data-ui-sref-active="active" class="tc_menuitem">
+            <li data-ui-sref-active="active" class="tc_menuitem tc_menuitem_pools">
                 <a data-ui-sref="pools" title="Pools"><i class="fa fa-lg fa-fw fa-database"></i> <span
                         class="menu-item-parent">Pools</span></a>
             </li>
-            <li data-ui-sref-active="active" class="tc_menuitem">
+            <li data-ui-sref-active="active" class="tc_menuitem tc_menuitem_volumes">
                 <a data-ui-sref="volumes" data-ui-sref-opts="{reload: true}" title="Volumes">
                     <i class="fa fa-lg fa-fw glyphicon glyphicon-cd"></i> <span
                         class="menu-item-parent">Volumes</span>
                 </a>
             </li>
-            <li data-menu-collapse class="tc_menuitem">
+            <li data-menu-collapse class="tc_menuitem tc_menuitem_ceph">
                 <a href="#"><i class="fa fa-lg fa-fw fa-question"></i> <span class="menu-item-parent">Ceph</span></a>
                 <ul>
                     <!--
-                    <li data-ui-sref-active="active" class="tc_submenuitem">
+                    <li data-ui-sref-active="active" class="tc_submenuitem_ceph_osds">
                         <a data-ui-sref="cephOSDs">OSDs</a>
                     </li>
-                    <li data-ui-sref-active="active" class="tc_submenuitem">
+                    <li data-ui-sref-active="active" class="tc_submenuitem_ceph_mons">
                         <a data-ui-sref="cephMONs">MONs</a>
                     </li>
                     -->
-                    <li data-ui-sref-active="active" class="tc_submenuitem">
+                    <li data-ui-sref-active="active" class="tc_submenuitem tc_submenuitem_ceph_pools">
                         <a data-ui-sref="cephPools">Pools</a>
                     </li>
                     <!--
-                    <li data-ui-sref-active="active" class="tc_submenuitem">
+                    <li data-ui-sref-active="active" class="tc_submenuitem_ceph_rbd">
                         <a data-ui-sref="cephRBD">Block Devices (RBD)</a>
                     </li>
-                    <li data-ui-sref-active="active" class="tc_submenuitem">
+                    <li data-ui-sref-active="active" class="tc_submenuitem_ceph_rgw">
                         <a data-ui-sref="cephRGW">Object Gateway (RGW)</a>
                     </li>
-                    <li data-ui-sref-active="active" class="tc_submenuitem">
+                    <li data-ui-sref-active="active" class="tc_submenuitem_ceph_hosts">
                         <a data-ui-sref="cephHosts">Hosts</a>
                     </li>
                     -->
-                    <li data-ui-sref-active="active" class="tc_submenuitem">
+                    <li data-ui-sref-active="active" class="tc_submenuitem tc_submenuitem_ceph_crushmap">
                         <a data-ui-sref="crushmap">CRUSH Map</a>
                     </li>
                 </ul>
             </li>
-            <li data-ui-sref-active="active" class="tc_menuitem">
+            <li data-ui-sref-active="active" class="tc_menuitem tc_menuitem_hosts">
                 <a data-ui-sref="hosts" title="Hosts"><i class="fa fa-lg fa-fw fa-sitemap"></i> <span
                         class="menu-item-parent">Hosts</span></a>
             </li>
-            <li data-menu-collapse class="tc_menuitem">
+            <li data-menu-collapse class="tc_menuitem tc_menuitem_system">
                 <a href="#"><i class="fa fa-lg fa-fw fa-cog"></i> <span class="menu-item-parent">System</span></a>
                 <ul>
-                    <li data-ui-sref-active="active" class="tc_submenuitem">
+                    <li data-ui-sref-active="active" class="tc_submenuitem tc_submenuitem_system_users">
                         <a data-ui-sref="users">Users</a>
                     </li>
-                    <li data-ui-sref-active="active" class="tc_submenuitem">
+                    <li data-ui-sref-active="active" class="tc_submenuitem tc_submenuitem_system_cmdlogs">
                         <a data-ui-sref="cmdlogs">Command Logs</a>
                     </li>
                 </ul>

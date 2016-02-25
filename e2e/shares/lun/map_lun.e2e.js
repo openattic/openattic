@@ -2,8 +2,7 @@ var helpers = require('../../common.js');
 
 describe('Should map a LUN to an host', function(){
 
-  var volumesItem = element.all(by.css('ul .tc_menuitem > a')).get(3);
-  var hostsItem = element.all(by.css('ul .tc_menuitem > a')).get(4);
+  var hostsItem = element(by.css('ul .tc_menuitem_hosts > a'));
 
   var hostSelect = element(by.model('share.host'));
   var hostname = "protractor_test_host";
@@ -20,6 +19,18 @@ describe('Should map a LUN to an host', function(){
     helpers.create_volume(volumename, "lun");
   });
 
+  beforeEach(function(){
+    element(by.css('ul .tc_menuitem_volumes > a')).click();
+    browser.sleep(400);
+    //     element(by.css('.tc_entries_dropdown')).click();
+    //     element(by.css('.tc_entries_100')).click();
+    expect(volume.isPresent()).toBe(true);
+    volume.click();
+    browser.sleep(400);
+    iscsiShareTab.click();
+    browser.sleep(400);
+  });
+
   it('should add the iqn as attribute of the host', function(){
     hostsItem.click();
     browser.sleep(400);
@@ -34,46 +45,16 @@ describe('Should map a LUN to an host', function(){
   });
 
   it('should configure the lun', function(){
-    volumesItem.click();
-    browser.sleep(400);
-    //     element(by.css('.tc_entries_dropdown')).click();
-    //     element(by.css('.tc_entries_100')).click();
-    browser.sleep(400);
-    expect(volume.isPresent()).toBe(true);
-    volume.click();
-    browser.sleep(400);
-    iscsiShareTab.click();
-    browser.sleep(400);
     element(by.css('.tc_lunAdd')).click();
     hostSelect.element(by.cssContainingText('option', hostname)).click();
     element(by.css('.tc_submitButton')).click();
   });
 
   it('should display the lun', function(){
-    volumesItem.click();
-    browser.sleep(400);
-    //     element(by.css('.tc_entries_dropdown')).click();
-    //     element(by.css('.tc_entries_100')).click();
-    browser.sleep(400);
-    expect(volume.isPresent()).toBe(true);
-    volume.click();
-    browser.sleep(400);
-    iscsiShareTab.click();
-    browser.sleep(400);
     expect(element(by.cssContainingText('tr', hostname)).isPresent()).toBe(true);
   });
 
   it('should remove the lun', function(){
-    volumesItem.click();
-    browser.sleep(400);
-    //     element(by.css('.tc_entries_dropdown')).click();
-    //     element(by.css('.tc_entries_100')).click();
-    browser.sleep(400);
-    expect(volume.isPresent()).toBe(true);
-    volume.click();
-    browser.sleep(400);
-    iscsiShareTab.click();
-    browser.sleep(400);
     element(by.cssContainingText('tr', hostname)).click();
     element(by.css('.tc_lunDelete')).click();
     browser.sleep(400);
@@ -84,16 +65,6 @@ describe('Should map a LUN to an host', function(){
   });
 
   it('should not display the lun anymore', function(){
-    volumesItem.click();
-    browser.sleep(400);
-    //     element(by.css('.tc_entries_dropdown')).click();
-    //     element(by.css('.tc_entries_100')).click();
-    browser.sleep(400);
-    expect(volume.isPresent()).toBe(true);
-    volume.click();
-    browser.sleep(400);
-    iscsiShareTab.click();
-    browser.sleep(400);
     expect(element(by.cssContainingText('tr', hostname)).isPresent()).toBe(false);
   });
 

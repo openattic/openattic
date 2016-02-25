@@ -1,14 +1,13 @@
 var helpers = require('../common.js');
 
 describe('Host form workflow', function(){
-  var hostsItem = element.all(by.css('ul .tc_menuitem > a')).get(4);
 
   beforeAll(function(){
     helpers.login();
   });
 
   beforeEach(function(){
-    hostsItem.click();
+    element(by.css('ul .tc_menuitem_hosts > a')).click();
     browser.sleep(400);
     element(by.css('.tc_addHost')).click();
     browser.sleep(400);
