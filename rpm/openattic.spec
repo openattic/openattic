@@ -1,12 +1,13 @@
 Name: openattic
-Version: %{BUILDVERSION}
-Release: %{PKGVERSION}%{?dist}
+# VERSION and RELEASE are passed via rpmbuild macro defines
+Version: %{VERSION}
+Release: %{RELEASE}
 Summary: openATTIC Comprehensive Storage Management System
 Group: System Environment/Libraries
 License: GPLv2
 URL: http://www.openattic.org
 BuildArch: noarch
-Source:	openattic-%{BUILDVERSION}-%{PKGVERSION}.tar.bz2
+Source:	%{name}-%{version}.tar.bz2
 Requires:	openattic-module-cron
 Requires:	openattic-module-http
 Requires:	openattic-module-lio
@@ -242,9 +243,18 @@ This package includes support for MD-RAID, the common Linux software RAID.
 
 %package  module-nagios
 Requires:	nagios
-Requires:	nagios-plugins-all
+Requires:	nagios-common
 Requires: openattic-base
 Requires:	pnp4nagios
+Requires: nagios-plugins-http
+Requires: nagios-plugins-swap
+Requires: nagios-plugins-ssh
+Requires: nagios-plugins-ping
+Requires: nagios-plugins-disk
+Requires: nagios-plugins-users
+Requires: nagios-plugins-procs
+Requires: nagios-plugins-load
+
 Summary: Nagios module for openATTIC
 
 %description module-nagios
@@ -347,12 +357,6 @@ This package contains the yum repository file to install openATTIC.
 %prep
 %setup -q -n %{name}-%{version}-%{PKGVERSION}
 
-%build
-cd webui
-npm install
-bower --allow-root install
-grunt build
-
 %install
 
 # Build up target directory structure
@@ -380,6 +384,8 @@ mkdir -p %{buildroot}/lib/systemd/system/
 
 # Install Backend and binaries
 rsync -aAX backend/ %{buildroot}%{_datadir}/%{name}
+rm -rf %{buildroot}%{_datadir}/%{name}/pkgapt
+rm -rf %{buildroot}%{_datadir}/%{name}/installed_apps.d/*_pkgapt
 install -m 755 bin/oacli %{buildroot}%{_bindir}
 install -m 755 bin/oaconfig   %{buildroot}%{_sbindir}
 install -m 755 bin/blkdevzero %{buildroot}%{_sbindir}
@@ -388,36 +394,9 @@ install -m 755 bin/blkdevzero %{buildroot}%{_sbindir}
 rsync -aAX webui/dist/ %{buildroot}%{_datadir}/openattic-gui/
 sed -i -e 's/^ANGULAR_LOGIN.*$/ANGULAR_LOGIN = False/g' %{buildroot}%{_datadir}/%{name}/settings.py
 
-# Configure /etc/default/openattic
-# TODO: copy file from source tree and use sed to configure for EL7
-cat > %{buildroot}/%{_sysconfdir}/default/%{name} <<EOF
-PYTHON="/usr/bin/python"
-OADIR="/usr/share/openattic"
-
-RPCD_PIDFILE="/var/run/openattic_rpcd.pid"
-RPCD_CHUID="openattic:openattic"
-RPCD_LOGFILE="/var/log/openattic/openattic_rpcd.log"
-RPCD_LOGLEVEL="INFO"
-RPCD_OPTIONS="$OADIR/manage.py runrpcd"
-RPCD_CERTFILE=""
-RPCD_KEYFILE=""
-
-SYSD_PIDFILE="/var/run/openattic_systemd.pid"
-SYSD_LOGFILE="/var/log/openattic/openattic_systemd.log"
-SYSD_LOGLEVEL="INFO"
-SYSD_OPTIONS="$OADIR/manage.py runsystemd"
-
-WEBSERVER_SERVICE="httpd"
-SAMBA_SERVICES="smb nmb"
-WINBIND_SERVICE="winbind"
-
-NAGIOS_CFG="/etc/nagios/nagios.cfg"
-NAGIOS_STATUS_DAT="/var/log/nagios/status.dat"
-NAGIOS_SERVICE="nagios"
-NPCD_MOD="/usr/lib64/nagios/brokers/npcdmod.o"
-NPCD_CFG="/etc/pnp4nagios/npcd.cfg"
-NPCD_SERVICE="npcd"
-EOF
+# Install /etc/default/openattic
+# TODO: move file to /etc/sysconfig/openattic instead (requires fixing all scripts that source it)
+install -m 644 rpm/sysconfig/%{name}.RedHat %{buildroot}/%{_sysconfdir}/default/%{name}
 
 # database config
 ## TODO: generate random password
@@ -745,7 +724,7 @@ systemctl start smb
 - Moved dependency on python-rtslib from the openattic-base package
   to the openattic-module-lio RPM
 * Fri Dec 04 2015 Lenz Grimmer <lenz@openattic.org> 2.0.5
-- Start and enable Samba in the samba subpackage (OP-788) 
+- Start and enable Samba in the samba subpackage (OP-788)
 - Removed obsolete dependency on the Oxygen icon set (OP-787)
 - Added openattic-module-lio to the openattic metapackage dependencies
 * Thu Dec 03 2015 Lenz Grimmer <lenz@openattic.org> 2.0.5
