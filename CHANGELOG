@@ -30,6 +30,8 @@ Version 2.0.8 (not released yet)
   been clicked (OP-897)
 * WebUI/QA: More tests for multiple selections (OP-875)
 * WebUI/QA: Fix selection problem in multiple_volume_deletion (OP-908)
+* WebUI: Show a delete button if multiple volumes are selected (OP-884)
+* WebUI/QA: Adapt OP-884-related e2e tests (OP-916)
 * Backend: added copyright/license header to gatling files (OP-844)
 * Backend/Gatling: Removed colorizer.py from the Gatling API test framework due
   to licensing concerns (OP-924)
