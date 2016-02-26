@@ -9,45 +9,48 @@ describe('General', function(){
 
   var menuItems = element.all(by.css('ul .tc_menuitem > a'));
 
-  var menuStructure = {
-    dashboard: element(by.css('ul .tc_menuitem_dashboard > a')), //has to be there
-    disks: element(by.css('ul .tc_menuitem_disks > a')),
-    pools: element(by.css('ul .tc_menuitem_pools > a')),
-    volumes: element(by.css('ul .tc_menuitem_volumes > a')),
-    ceph: element(by.css('ul .tc_menuitem_ceph > a')),
-    hosts: element(by.css('ul .tc_menuitem_hosts > a')),
-    system: element(by.css('ul .tc_menuitem_system > a')) //has to be there
+  var menu = {
+    items: {
+      dashboard: element(by.css('ul .tc_menuitem_dashboard > a')), //has to be there
+      disks: element(by.css('ul .tc_menuitem_disks > a')),
+      pools: element(by.css('ul .tc_menuitem_pools > a')),
+      volumes: element(by.css('ul .tc_menuitem_volumes > a')),
+      ceph: element(by.css('ul .tc_menuitem_ceph > a')),
+      hosts: element(by.css('ul .tc_menuitem_hosts > a')),
+      system: element(by.css('ul .tc_menuitem_system > a')) //has to be there
+    },
+    order: [
+      'dashboard',
+      'disks',
+      'pools',
+      'volumes',
+      'ceph',
+      'hosts',
+      'system'
+    ]
   };
 
-  var menuOrder = [
-    'dashboard',
-    'disks',
-    'pools',
-    'volumes',
-    'ceph',
-    'hosts',
-    'system'
-  ];
-
-  var systemItems = {
-    users: element(by.css('ul .tc_submenuitem_system_users')),
-    cmdlogs: element(by.css('ul .tc_submenuitem_system_cmdlogs'))
+  var system = {
+    items: {
+      users: element(by.css('ul .tc_submenuitem_system_users')),
+      cmdlogs: element(by.css('ul .tc_submenuitem_system_cmdlogs'))
+    },
+    order: [
+      'users',
+      'cmdlogs'
+    ]
   };
 
-  var systemOrder = [
-    'users',
-    'cmdlogs'
-  ];
-
-  var cephItems = {
-    pools: element(by.css('ul .tc_submenuitem_ceph_pools')),
-    crushmap: element(by.css('ul .tc_submenuitem_ceph_crushmap'))
+  var ceph = {
+    items: {
+      pools: element(by.css('ul .tc_submenuitem_ceph_pools')),
+      crushmap: element(by.css('ul .tc_submenuitem_ceph_crushmap'))
+    },
+    order: [
+      'pools',
+      'crushmap'
+    ]
   };
-
-  var cephOrder = [
-    'pools',
-    'crushmap'
-  ];
 
   beforeAll(function(){
     helpers.login();
@@ -64,19 +67,19 @@ describe('General', function(){
   /* Menuitems */
   it('should have all menuitems into the right order', function(){
     var menuCount = 0;
-    menuOrder.forEach(function(item){
-      if(menuStructure[item]){
-        expect(menuStructure[item].getText()).toEqual(menuItems.get(menuCount).getText());
+    menu.order.forEach(function(item){
+      if(menu.items[item].isDisplayed()){
+        expect(menu.items[item].getText()).toEqual(menuItems.get(menuCount).getText());
         menuCount++;
       }
     });
   });
 
   it('should click all menuitems and check the url', function(){
-    for(item in menuStructure){
-      if(menuStructure[item]){
+    for(item in menu.items){
+      if(menu.items[item].isDisplayed()){
         if(item != 'system' && item != 'ceph'){
-          menuStructure[item].click();
+          menu.items[item].click();
           browser.sleep(400);
           expect(browser.getCurrentUrl()).toContain('/openattic/#/' + item);
         }
@@ -85,63 +88,64 @@ describe('General', function(){
   });
 
   /* Ceph and its subitems */
-  if(menuStructure.ceph){
-    it('should have subitems under the system menu item', function(){
-      menuStructure.ceph.click();
-      menuStructure.ceph = menuStructure.ceph.all(by.xpath('..'));
-      expect(menuStructure.ceph.all(by.css('ul .tc_submenuitem')).count()).toBeGreaterThan(0);
-    });
+  it('should have subitems under the system menu item', function(){
+    if(menu.items.ceph.isDisplayed()){
+      menu.items.ceph.click();
+      menu.items.ceph = menu.items.ceph.all(by.xpath('..'));
+      expect(menu.items.ceph.all(by.css('ul .tc_submenuitem')).count()).toBeGreaterThan(0);
+    }
+  });
 
 
-    it(' (ceph) should have the right orde of all subitems', function(){
+  it(' (ceph) should have the right orde of all subitems', function(){
+    if(menu.items.ceph.isDisplayed()){
       var menuCount = 0;
-      var subitems = menuStructure.ceph.all(by.css('ul .tc_submenuitem'));
-      cephOrder.forEach(function(item){
-        if(cephItems[item]){
-          expect(cephItems[item].getText()).toEqual(subitems.get(menuCount).getText());
+      var subitems = menu.items.ceph.all(by.css('ul .tc_submenuitem'));
+      ceph.order.forEach(function(item){
+        if(ceph.items[item]){
+          expect(ceph.items[item].getText()).toEqual(subitems.get(menuCount).getText());
           menuCount++;
         }
       });
-    });
+    }
+  });
 
-    it(' (ceph) should click all subitems and check the url', function(){
-      for(subitem in cephItems){
-        cephItems[subitem].click();
+  it(' (ceph) should click all subitems and check the url', function(){
+    if(menu.items.ceph.isDisplayed()){
+      for(subitem in ceph.items){
+        ceph.items[subitem].click();
         browser.sleep(400);
         expect(browser.getCurrentUrl()).toContain('/openattic/#/ceph/' + subitem);
       }
-    });
-  }
+    }
+  });
 
   /* System and its subitems */
-  if(menuStructure.system){
-    it('should have subitems under the system menu item', function(){
-      menuStructure.system.click();
-      menuStructure.system = menuStructure.system.all(by.xpath('..'));
-      expect(menuStructure.system.all(by.css('ul .tc_submenuitem')).count()).toBeGreaterThan(0);
+  it('should have subitems under the system menu item', function(){
+    menu.items.system.click();
+    menu.items.system = menu.items.system.all(by.xpath('..'));
+    expect(menu.items.system.all(by.css('ul .tc_submenuitem')).count()).toBeGreaterThan(0);
+  });
+
+
+  it(' (system) should have the right orde of all subitems', function(){
+    var menuCount = 0;
+    var subitems = menu.items.system.all(by.css('ul .tc_submenuitem'));
+    system.order.forEach(function(item){
+      expect(system.items[item].getText()).toEqual(subitems.get(menuCount).getText());
+      menuCount++;
     });
+  });
 
+  it(' (system) should click all subitems and check the url', function(){
+    for(subitem in system.items){
+      system.items[subitem].click();
+      browser.sleep(400);
+      expect(browser.getCurrentUrl()).toContain('/openattic/#/' + subitem);
+    }
+  });
 
-    it(' (system) should have the right orde of all subitems', function(){
-      var menuCount = 0;
-      var subitems = menuStructure.system.all(by.css('ul .tc_submenuitem'));
-      systemOrder.forEach(function(item){
-        if(systemItems[item]){
-          expect(systemItems[item].getText()).toEqual(subitems.get(menuCount).getText());
-          menuCount++;
-        }
-      });
-    });
-
-    it(' (system) should click all subitems and check the url', function(){
-      for(subitem in systemItems){
-        systemItems[subitem].click();
-        browser.sleep(400);
-        expect(browser.getCurrentUrl()).toContain('/openattic/#/' + subitem);
-      }
-    });
-  }
-
+  /*Buttons*/
   it('should have a collapse menu button', function(){
     expect(hideBtn.isDisplayed()).toBe(true);
   });
@@ -167,7 +171,7 @@ describe('General', function(){
 
   it('should redirect to dashboard panel when clicking the openATTIC logo', function(){
     //click somewhere else to change the url
-    menuStructure.pools.click();
+    menu.items.pools.click();
     expect(browser.getCurrentUrl()).toContain('/openattic/#/pools');
     oaLogo.click();
     expect(browser.getCurrentUrl()).toContain('/openattic/#/dashboard');
@@ -189,7 +193,7 @@ describe('General', function(){
            browser.executeScript('return document.webkitIsFullScreen').then(function(doc){
              expect(doc).toBe(true);
              //click somewhere else and expect that we're still in fullscreen mode
-             menuStructure.volumes.click();
+             menu.items.volumes.click();
              expect(doc).toBe(true);
            });
 
