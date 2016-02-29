@@ -13,18 +13,24 @@
 # *  GNU General Public License for more details.
 
 """Usage:
-    build_deb_packages.py <tarball> [<release_channel>]
+    build_deb_packages.py <tarball> [<release_channel>] [--publish=<repo_dir>]
 
 Create a deb package out of a tarball. The release channel is automatically determined, based on the
 file name of the tarball.
 
 Arguments:
     <tarball>           The path to the tarball file. Use "-" as path to read it from stdin.
-    <release_channel>   'stable' or 'unstable'. Skips automatic detection of the release channel.
-"""
+    <release_channel>   'stable' or 'nightly'. Skips automatic detection of the release channel.
 
-# Examples: TODO test this
-#    ./make_dist.py create stable -s | ./build_deb_packages.py
+Options:
+    --publish=<repo_dir>    Publish the created debian files using `reprepro`. Does also remove the
+                            nightly packages if the release channel is `nightly`.
+                            <repo_dir> is the directory of the repository to publish the built
+                            packages to.
+
+More sophisticated example:
+    ./make_dist.py create stable -s | ./build_deb_packages.py -
+"""
 
 import os
 import sys
@@ -54,9 +60,10 @@ class ParsingError(Exception):
 
 
 class DebPackageBuilder(object):
-    def __init__(self):
+    def __init__(self, args):
         self._process = Process()
         self._datetime = datetime.utcnow().strftime('%Y%m%d%H%M')
+        self._args = args
 
     @staticmethod
     def detect_release_with_filename(tarball_filename):
@@ -64,14 +71,13 @@ class DebPackageBuilder(object):
         unstable_re = r'\w+[_-]\d+\.\d+\.\d+(\.\d+)?\~\d{12}[\w+\.]+'
 
         if not tarball_filename or not isinstance(tarball_filename, str):
-            print 'tarball_filename', tarball_filename
             raise ArgumentError
 
         tarball_filename = os.path.basename(tarball_filename)
 
         # Test for unstable first, because the re it more exact.
         if re.match(unstable_re, tarball_filename):
-            return 'unstable'
+            return 'nightly'
         if re.match(stable_re, tarball_filename):
             return 'stable'
 
@@ -117,14 +123,40 @@ class DebPackageBuilder(object):
 
         raise ParsingError
 
+    def _publish_packages(self, pkgdir, release_channel, version, changes_filename):
+        """Publish a package using the `reprepro` command."""
+
+        small_version = version[0]
+        if version[1]:
+            small_version += '~' + version[1]
+        control_file = os.path.join(pkgdir, 'openattic-' + small_version, 'debian', 'control')
+        obsolete_packages = []
+        with open(control_file) as fcontrol:
+            for line in fcontrol:
+                match = re.search(r'^Package: (.*)\s*', line)
+                if match:
+                    obsolete_packages.append(match.group(1))
+
+        # Remove deprecated nightly packages.
+        if release_channel == 'nightly':
+            cmd = ['reprepro', '--basedir', self._args['--publish'], 'remove', release_channel]
+            cmd += obsolete_packages
+
+            self._process.run(cmd)
+
+        # Publish packages.
+        cmd = ['reprepro', '--basedir', self._args['--publish'], 'include', release_channel,
+               changes_filename]
+        self._process.run(cmd, cwd=pkgdir)
+
     def build(self, release_channel, tarball_file_path):
         """Build the debian packages.
 
-        release_channel -- Either 'stable' or 'unstable'.
+        release_channel -- Either 'stable' or 'nightly'.
         tarball_file_path -- The path of the tarball.
         """
 
-        if release_channel not in ('stable', 'unstable'):
+        if release_channel not in ('stable', 'nightly'):
             raise UnknownReleaseChannelError()
 
         build_dir = os.path.join(os.environ['HOME'], 'src', 'deb_builds')
@@ -140,7 +172,7 @@ class DebPackageBuilder(object):
         if os.path.isdir(source_dir):
             shutil.rmtree(source_dir)
 
-        # Extract tarball file.
+        # Extract the tarball.
         shutil.copy(tarball_file_path, build_dir)
         new_tarball_file_path = os.path.join(build_dir, os.path.basename(tarball_file_path))
         self._process.run(['tar', 'xf', tarball_file_path, '-C', build_dir], cwd=build_dir)
@@ -150,7 +182,7 @@ class DebPackageBuilder(object):
             # to create the stable deb files out of the tarball file, but also the checked out
             # repository.
             pass
-        elif release_channel == 'unstable':
+        elif release_channel == 'nightly' or release_channel == 'unstable':
             config = SafeConfigParser()
             config.read(os.path.join(source_dir, 'version.txt'))
             version = config.get('package', 'VERSION') + '-1'
@@ -160,12 +192,12 @@ class DebPackageBuilder(object):
             msg = 'Automatic build based on the state in Mercurial as of %s (%s)' % (pkgdate,
                                                                                      hg_id)
             env = {'DEBEMAIL': 'info@openattic.org', 'DEBFULLNAME': 'openATTIC Build Daemon', }
-            # Adapt the file 'debian/changelog' to build unstable.
+            # Adapt the file 'debian/changelog' to build nightly.
             self._process.run(
                 [
                     'debchange',
                     '--distribution',
-                    release_channel,
+                    'nightly',
                     '--force-distribution',
                     '-v',
                     version + '~' + pkgdate,
@@ -186,18 +218,22 @@ class DebPackageBuilder(object):
 
         # Get the version.
         version = self.extract_version(name)
-        final_version = version[0] + '-1'
+        small_version = version[0]
+        full_version = small_version + '-1'
         if version[1]:
-            final_version += '~' + version[1]
+            full_version += '~' + version[1]
+        changes_filename = 'openattic_%s_amd64.changes' % full_version
 
         # Sign the packages with changes file.
-        self._process.run(
-            ['debsign', '-k', 'A7D3EAFA', 'openattic_%s_amd64.changes' % final_version], build_dir)
+        self._process.run(['debsign', '-k', 'A7D3EAFA', changes_filename], build_dir)
 
         print
         print 'The packages have been created in %s' % build_dir
-        # TODO Show the user what was created and ask him interactively if the files should be uploaded/moved to the right location.
 
+        if self._args['--publish']:
+            self._publish_packages(build_dir, release_channel, version, changes_filename)
+            print 'The packages have been published'
+            # TODO Show the user what was uploaded optionally.. somehow..
 
 class DebPackageBuilderTest(unittest.TestCase):
     def test_detect_release_by_filename(self):
@@ -206,16 +242,16 @@ class DebPackageBuilderTest(unittest.TestCase):
             'openattic-2.0.2.1.tar.bz2': 'stable',
             'openattic_2.0.1.orig.tar.bz2': 'stable',
             'openattic_2.0.2.1.orig.tar.bz2': 'stable',
-            'openattic-2.0.4~201512040810.tar.bz2': 'unstable',
-            'openattic_2.0.4~201512040810.orig.tar.bz2': 'unstable',
-            '~/openattic_2.0.4~201512040810.orig.tar.bz2': 'unstable',
-            'openattic_2.0.4.1~201512040810.orig.tar.bz2': 'unstable',
+            'openattic-2.0.4~201512040810.tar.bz2': 'nightly',
+            'openattic_2.0.4~201512040810.orig.tar.bz2': 'nightly',
+            '~/openattic_2.0.4~201512040810.orig.tar.bz2': 'nightly',
+            'openattic_2.0.4.1~201512040810.orig.tar.bz2': 'nightly',
             'openattic.orig.tar.bz2': ParsingError,
             'openattic_2.orig.tar.bz2': ParsingError,
             'openattic-2.0.tar.bz2': 'stable',
-            'openattic_2.0.4~201512040810.orig.tar.xzx': 'unstable',
-            '~/openattic_2.0.4~201512040810.orig.tar.xz': 'unstable',
-            'openattic_2.0.4.1~201512040810.orig.tar.xz': 'unstable',
+            'openattic_2.0.4~201512040810.orig.tar.xzx': 'nightly',
+            '~/openattic_2.0.4~201512040810.orig.tar.xz': 'nightly',
+            'openattic_2.0.4.1~201512040810.orig.tar.xz': 'nightly',
             'openattic.orig.tar.xz': ParsingError,
             'openattic_2.orig.tar.xz': ParsingError,
             'openattic-2.0.tar.xz': 'stable',
@@ -299,8 +335,8 @@ def main():
     args = docopt.docopt(__doc__)
     path_to_tarball = args['<tarball>']
     if path_to_tarball == '-':
-        path_to_tarball = sys.stdin
-    deb_pkg_builder = DebPackageBuilder()
+        path_to_tarball = sys.stdin.readline().strip()
+    deb_pkg_builder = DebPackageBuilder(args)
     release_channel = DebPackageBuilder.detect_release_with_filename(path_to_tarball)
     deb_pkg_builder.build(release_channel, path_to_tarball)
 
