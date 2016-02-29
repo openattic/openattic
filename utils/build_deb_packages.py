@@ -11,9 +11,8 @@
 # *  but WITHOUT ANY WARRANTY; without even the implied warranty of
 # *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 # *  GNU General Public License for more details.
-
 """Usage:
-    build_deb_packages.py <tarball> [<release_channel>]
+    build_deb_packages.py <tarball> [<release_channel>] [--publish=<repo_dir>]
 
 Create a deb package out of a tarball. The release channel is automatically determined, based on the
 file name of the tarball.
@@ -21,6 +20,12 @@ file name of the tarball.
 Arguments:
     <tarball>           The path to the tarball file. Use "-" as path to read it from stdin.
     <release_channel>   'stable' or 'unstable'. Skips automatic detection of the release channel.
+
+Options:
+    --publish=<repo_dir>    Publish the created debian files using `reprepro`. Does also remove the
+                            nightly packages if the release channel is `unstable`.
+                            <repo_dir> is the directory of the repository to publish the built
+                            packages to.
 """
 
 # Examples: TODO test this
@@ -54,9 +59,10 @@ class ParsingError(Exception):
 
 
 class DebPackageBuilder(object):
-    def __init__(self):
+    def __init__(self, args):
         self._process = Process()
         self._datetime = datetime.utcnow().strftime('%Y%m%d%H%M')
+        self._args = args
 
     @staticmethod
     def detect_release_with_filename(tarball_filename):
@@ -64,7 +70,6 @@ class DebPackageBuilder(object):
         unstable_re = r'\w+[_-]\d+\.\d+\.\d+(\.\d+)?\~\d{12}[\w+\.]+'
 
         if not tarball_filename or not isinstance(tarball_filename, str):
-            print 'tarball_filename', tarball_filename
             raise ArgumentError
 
         tarball_filename = os.path.basename(tarball_filename)
@@ -117,6 +122,35 @@ class DebPackageBuilder(object):
 
         raise ParsingError
 
+    def _publish_packages(self, pkgdir, release_channel, version, changes_filename):
+        """Publish a package using the `reprepro` command."""
+
+        small_version = version[0]
+        if version[1]:
+            small_version += '~' + version[1]
+        control_file = os.path.join(pkgdir, 'openattic-' + small_version, 'debian', 'control')
+        obsolete_packages = []
+        with open(control_file) as fcontrol:
+            for line in fcontrol:
+                match = re.search(r'^Package: (.*)\s*', line)
+                if match:
+                    obsolete_packages.append(match.group(1))
+
+        # If we're going to publish our unstable build, it'll be a nightly.
+        if release_channel == 'unstable':
+            release_channel = 'nightly'
+
+        # Remove deprecated nightly packages.
+        if release_channel == 'unstable':
+            cmd = ['reprepro', '--basedir', self._args['--publish'], 'remove', release_channel,
+                   ' '.join(obsolete_packages)]
+            self._process.run(cmd)
+
+        # Publish packages.
+        cmd = ['reprepro', '--basedir', self._args['--publish'], 'include', release_channel,
+               changes_filename]
+        self._process.run(cmd, cwd=pkgdir)
+
     def build(self, release_channel, tarball_file_path):
         """Build the debian packages.
 
@@ -140,7 +174,7 @@ class DebPackageBuilder(object):
         if os.path.isdir(source_dir):
             shutil.rmtree(source_dir)
 
-        # Extract tarball file.
+        # Extract the tarball.
         shutil.copy(tarball_file_path, build_dir)
         new_tarball_file_path = os.path.join(build_dir, os.path.basename(tarball_file_path))
         self._process.run(['tar', 'xf', tarball_file_path, '-C', build_dir], cwd=build_dir)
@@ -186,13 +220,17 @@ class DebPackageBuilder(object):
 
         # Get the version.
         version = self.extract_version(name)
-        final_version = version[0] + '-1'
+        small_version = version[0]
+        full_version = small_version + '-1'
         if version[1]:
-            final_version += '~' + version[1]
+            full_version += '~' + version[1]
+        changes_filename = 'openattic_%s_amd64.changes' % full_version
 
         # Sign the packages with changes file.
-        self._process.run(
-            ['debsign', '-k', 'A7D3EAFA', 'openattic_%s_amd64.changes' % final_version], build_dir)
+        self._process.run(['debsign', '-k', 'A7D3EAFA', changes_filename], build_dir)
+
+        if self._args['--publish']:
+            self._publish_packages(build_dir, release_channel, version, changes_filename)
 
         print
         print 'The packages have been created in %s' % build_dir
@@ -300,7 +338,7 @@ def main():
     path_to_tarball = args['<tarball>']
     if path_to_tarball == '-':
         path_to_tarball = sys.stdin
-    deb_pkg_builder = DebPackageBuilder()
+    deb_pkg_builder = DebPackageBuilder(args)
     release_channel = DebPackageBuilder.detect_release_with_filename(path_to_tarball)
     deb_pkg_builder.build(release_channel, path_to_tarball)
 
