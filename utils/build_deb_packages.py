@@ -11,6 +11,7 @@
 # *  but WITHOUT ANY WARRANTY; without even the implied warranty of
 # *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 # *  GNU General Public License for more details.
+
 """Usage:
     build_deb_packages.py <tarball> [<release_channel>] [--publish=<repo_dir>]
 
@@ -26,10 +27,10 @@ Options:
                             nightly packages if the release channel is `nightly`.
                             <repo_dir> is the directory of the repository to publish the built
                             packages to.
-"""
 
-# Examples: TODO test this
-#    ./make_dist.py create stable -s | ./build_deb_packages.py
+More sophisticated example:
+    ./make_dist.py create stable -s | ./build_deb_packages.py -
+"""
 
 import os
 import sys
@@ -334,7 +335,7 @@ def main():
     args = docopt.docopt(__doc__)
     path_to_tarball = args['<tarball>']
     if path_to_tarball == '-':
-        path_to_tarball = sys.stdin
+        path_to_tarball = sys.stdin.readline().strip()
     deb_pkg_builder = DebPackageBuilder(args)
     release_channel = DebPackageBuilder.detect_release_with_filename(path_to_tarball)
     deb_pkg_builder.build(release_channel, path_to_tarball)
