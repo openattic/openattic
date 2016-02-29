@@ -378,6 +378,7 @@ mkdir -p %{buildroot}%{_sysconfdir}/httpd/conf.d/
 mkdir -p %{buildroot}%{_sysconfdir}/logrotate.d/
 mkdir -p %{buildroot}%{_sysconfdir}/modprobe.d/
 mkdir -p %{buildroot}%{_sysconfdir}/nagios/conf.d/
+mkdir -p %{buildroot}%{_sysconfdir}/profile.d/
 mkdir -p %{buildroot}%{_sysconfdir}/%{name}/databases
 mkdir -p %{buildroot}%{_sysconfdir}/yum.repos.d/
 mkdir -p %{buildroot}/lib/systemd/system/
@@ -442,6 +443,8 @@ install -m 644 etc/apache2/conf-available/%{name}-volumes.conf %{buildroot}%{_sy
 install -m 644 etc/apache2/conf-available/%{name}.conf         %{buildroot}%{_sysconfdir}/httpd/conf.d/
 
 install -m 644 etc/cron.d/updatetwraid %{buildroot}%{_sysconfdir}/cron.d/
+
+install -m 644 etc/profile.d/%{name}.*sh %{buildroot}%{_sysconfdir}/profile.d/
 
 %pre base
 # create openattic user/group  if it does not exist
@@ -546,6 +549,7 @@ echo ""
 %dir %{_datadir}/%{name}/installed_apps.d
 %config(noreplace) %{_sysconfdir}/default/%{name}
 %config(noreplace) %{_sysconfdir}/%{name}/databases/pgsql.ini
+%config %{_sysconfdir}/profile.d/%{name}.*sh
 %doc %{_mandir}/man1/oaconfig.1.gz
 %doc %{_mandir}/man1/oacli.1.gz
 %{_datadir}/%{name}/clustering/
