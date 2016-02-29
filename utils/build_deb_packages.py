@@ -229,13 +229,13 @@ class DebPackageBuilder(object):
         # Sign the packages with changes file.
         self._process.run(['debsign', '-k', 'A7D3EAFA', changes_filename], build_dir)
 
-        if self._args['--publish']:
-            self._publish_packages(build_dir, release_channel, version, changes_filename)
-
         print
         print 'The packages have been created in %s' % build_dir
-        # TODO Show the user what was created and ask him interactively if the files should be uploaded/moved to the right location.
 
+        if self._args['--publish']:
+            self._publish_packages(build_dir, release_channel, version, changes_filename)
+            print 'The packages have been published'
+            # TODO Show the user what was uploaded optionally.. somehow..
 
 class DebPackageBuilderTest(unittest.TestCase):
     def test_detect_release_by_filename(self):
