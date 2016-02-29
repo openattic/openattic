@@ -47,6 +47,8 @@ Version 2.0.8 (not released yet)
 * Packaging: Included the build scripts into the official repository. They can
   be used to create a tar archive and with that, the corresponding Debian or
   RPM packages. (OP-892)
+* Packaging: Introduced a new command line switch for build_deb_packages.py to
+  update a local repository with the newly built packages (OP-948)
 * Installation: Trimmed down the list of required Nagios plugins in the RPM
   package (OP-942)
 
