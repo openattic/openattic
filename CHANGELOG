@@ -1,8 +1,9 @@
 openATTIC Changelog
 ===================
 
-Version 2.0.8 (not released yet)
---------------------------------
+Version 2.0.8, 1. Mar 2016:
+---------------------------
+
 * WebUI: Allow deletion of multiple volumes (OP-339)
 * WebUI: Display first and last name instead of username (OP-792)
 * WebUI: Redirect a logged in user to from login to dashboard (OP-799)
