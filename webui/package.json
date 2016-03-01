@@ -1,6 +1,9 @@
 {
   "name": "openattic-web",
+  "description": "openATTIC graphical user interface",
   "version": "2.0.0",
+  "license": "GPL-2.0",
+  "repository": "bitbucket:openattic/openattic",
   "dependencies": {},
   "devDependencies": {
     "grunt": "0.4.5",
