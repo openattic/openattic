@@ -203,6 +203,7 @@ class DistBuilder(object):
         of the `source_dir`.
         """
 
+        self._process.run(['hg', 'pull'], cwd=source_dir)
         entry_list = self._process.run(
             ['hg', 'tags'],
             cwd=source_dir).stdout.split('\n')
