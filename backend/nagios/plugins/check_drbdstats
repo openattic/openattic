@@ -26,6 +26,11 @@ import subprocess
 from time import time
 from optparse import OptionParser
 
+from distro import distro_settings
+
+settings = distro_settings()
+
+
 def get_sh_status():
     proc = subprocess.Popen(["/sbin/drbdadm", "sh-status"], stdout=subprocess.PIPE, stderr=subprocess.PIPE)
     sh_status, _ = proc.communicate()
@@ -182,7 +187,7 @@ def main():
     for minor, info in status.items():
         if info["_res_name"] == resname:
             info["__timestamp__"] = time()
-            statfile = "/var/lib/nagios3/drbdstats.%s.json" % resname
+            statfile = "{}/drbdstats.{}.json".format(settings["NAGIOS_STATE_DIR"], resname)
             try:
                 if not os.path.exists(statfile):
                     print "Need state info, please wait until Nagios checks again."

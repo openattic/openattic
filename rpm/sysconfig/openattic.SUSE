@@ -77,3 +77,10 @@ NPCD_CFG="/etc/pnp4nagios/npcd.cfg"
 #
 # Name of systemd service
 NPCD_SERVICE="npcd"
+
+## Type: string
+## Default: "/var/lib/icinga"
+#
+# Name of systemd service
+NAGIOS_STATE_DIR="/var/lib/icinga"
+
