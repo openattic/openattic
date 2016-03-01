@@ -86,7 +86,7 @@ module.exports = function (grunt) {
           dest: "<%= buildConfig.src %>index.html",
           options: {
             relative: true,
-            prefix: "scripts/",
+            prefix: "",
             parseTag: "htmlbuild",
             scripts: {
               src: {
