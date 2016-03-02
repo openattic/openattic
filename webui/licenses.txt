@@ -1,5 +1,5 @@
 angular                         1.5.0               MIT
-angular-bootstrap                                   MIT
+angular-bootstrap               0.14.3              MIT
 angular-breadcrumb              0.4.1               MIT
 angular-flot                    0.0.16              MIT
 angular-md5                     0.1.8               MIT
@@ -16,6 +16,6 @@ jquery.easy-pie-chart           2.1.6               MIT
 jquery-flot                     0.8.3               MIT
 jquery-ui                       1.11.4              MIT
 lodash                          4.5.1               MIT
-malhar-angular-dashboard                            Apache-2.0
+malhar-angular-dashboard        1.0.1               Apache-2.0
 ng-tags-input                   3.0.0               MIT
 requirejs                       2.1.22              MIT, BSD-3-Clause
