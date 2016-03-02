@@ -19,8 +19,8 @@
     "grunt-ng-annotate": "1.0.1",
     "grunt-rev": "0.1.0",
     "grunt-usemin": "3.1.1",
-    "load-grunt-tasks": "~0.2.0",
-    "matchdep": "0.1.1"
+    "load-grunt-tasks": "3.4.1",
+    "matchdep": "1.0.1"
   },
   "engines": {
     "node": ">=4.3.0"
