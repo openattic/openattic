@@ -34,8 +34,7 @@
   },
   "resolutions": {
     "angular": "1.5.0",
-    "angular-ui-tree": "~2.15.0",
     "angular-bootstrap": "0.14.3",
-    "jquery": "2.2.1"
+    "lodash": "4.5.1"
   }
 }
