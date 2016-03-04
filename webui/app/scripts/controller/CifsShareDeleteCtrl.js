@@ -31,21 +31,21 @@
 "use strict";
 
 var app = angular.module("openattic");
-app.controller("CifsShareDeleteCtrl", function ($scope, CifsSharesService, $modalInstance, share) {
+app.controller("CifsShareDeleteCtrl", function ($scope, CifsSharesService, $uibModalInstance, share) {
   $scope.share = share;
 
   $scope.delete = function () {
     CifsSharesService.delete({id: $scope.share.id})
         .$promise
         .then(function () {
-          $modalInstance.close("deleted");
+          $uibModalInstance.close("deleted");
         }, function (error) {
           console.log("An error occured", error);
         });
   };
 
   $scope.cancel = function () {
-    $modalInstance.dismiss("cancel");
+    $uibModalInstance.dismiss("cancel");
 
     $.smallBox({
       title: "Delete share",

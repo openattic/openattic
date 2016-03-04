@@ -31,7 +31,7 @@
 "use strict";
 
 var app = angular.module("openattic");
-app.controller("VolumeSnapshotsCtrl", function ($scope, $state, SnapshotService, $modal, poolCheckingService) {
+app.controller("VolumeSnapshotsCtrl", function ($scope, $state, SnapshotService, $uibModal, poolCheckingService) {
   $scope.snapshotsData = {};
 
   $scope.source = poolCheckingService.get($scope.selection);
@@ -76,7 +76,7 @@ app.controller("VolumeSnapshotsCtrl", function ($scope, $state, SnapshotService,
   };
 
   $scope.deleteAction = function () {
-    var modalInstance = $modal.open({
+    var modalInstance = $uibModal.open({
       windowTemplateUrl: "templates/messagebox.html",
       templateUrl: "templates/volumes/snapshot-delete.html",
       controller: "VolumeSnapshotDeleteCtrl",
@@ -92,7 +92,7 @@ app.controller("VolumeSnapshotsCtrl", function ($scope, $state, SnapshotService,
   };
 
   $scope.cloneAction = function () {
-    var modalInstance = $modal.open({
+    var modalInstance = $uibModal.open({
       windowTemplateUrl: "templates/messagebox.html",
       templateUrl: "templates/volumes/clone.html",
       controller: "VolumeCloneCtrl",
