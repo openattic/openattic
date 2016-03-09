@@ -50,8 +50,7 @@ angular.module("openattic", [
   "openattic.clusterstatuswidget",
   "openattic.oaWizards",
   "openattic.userinfo",
-  "openattic.required",
-  "smartadmin.smartmenu"
+  "openattic.required"
 ]);
 
 var app = angular.module("openattic");
