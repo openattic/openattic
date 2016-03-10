@@ -31,7 +31,7 @@
 "use strict";
 
 var app = angular.module("openattic");
-app.controller("VolumeHttpSharesCtrl", function ($scope, $state, HttpSharesService, $modal) {
+app.controller("VolumeHttpSharesCtrl", function ($scope, $state, HttpSharesService, $uibModal) {
   $scope.httpData = {};
 
   $scope.httpFilter = {
@@ -74,7 +74,7 @@ app.controller("VolumeHttpSharesCtrl", function ($scope, $state, HttpSharesServi
   };
 
   $scope.deleteHttpAction = function () {
-    var modalInstance = $modal.open({
+    var modalInstance = $uibModal.open({
       windowTemplateUrl: "templates/messagebox.html",
       templateUrl: "templates/volumes/delete-http-share.html",
       controller: "HttpShareDeleteCtrl",

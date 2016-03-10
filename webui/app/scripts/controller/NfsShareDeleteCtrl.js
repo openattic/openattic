@@ -31,21 +31,21 @@
 "use strict";
 
 var app = angular.module("openattic");
-app.controller("NfsShareDeleteCtrl", function ($scope, NfsSharesService, $modalInstance, share) {
+app.controller("NfsShareDeleteCtrl", function ($scope, NfsSharesService, $uibModalInstance, share) {
   $scope.share = share;
 
   $scope.delete = function () {
     NfsSharesService.delete({id: $scope.share.id})
         .$promise
         .then(function () {
-          $modalInstance.close("deleted");
+          $uibModalInstance.close("deleted");
         }, function (error) {
           console.log("An error occured", error);
         });
   };
 
   $scope.cancel = function () {
-    $modalInstance.dismiss("cancel");
+    $uibModalInstance.dismiss("cancel");
 
     $.smallBox({
       title: "Delete share",
