@@ -12,7 +12,7 @@
     "angular-bootstrap": "1.2.4",
     "angular-breadcrumb": "0.4.1",
     "angular-flot": "0.0.16",
-    "angular-md5": "0.1.8",
+    "angular-md5": "0.1.10",
     "angular-resource": "1.5.0",
     "angular-sanitize": "1.5.0",
     "angular-ui-router": "0.2.18",
@@ -24,7 +24,7 @@
     "jquery.easy-pie-chart": "2.1.6",
     "jquery-flot": "0.8.3",
     "jquery-ui": "1.11.4",
-    "lodash": "4.5.1",
+    "lodash": "4.6.1",
     "malhar-angular-dashboard": "2.0.0",
     "ng-tags-input": "3.0.0",
     "requirejs": "2.1.22"
@@ -33,6 +33,7 @@
     "angular-mocks": "1.5.0"
   },
   "resolutions": {
-    "angular": "1.5.0"
+    "angular": "1.5.0",
+    "angular": "4.6.1"
   }
 }
