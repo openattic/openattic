@@ -31,7 +31,7 @@
 "use strict";
 
 var app = angular.module("openattic");
-app.controller("CmdlogDeleteBySelectionCtrl", function ($scope, CmdlogService, $modalInstance, $filter, selection) {
+app.controller("CmdlogDeleteBySelectionCtrl", function ($scope, CmdlogService, $uibModalInstance, $filter, selection) {
   $scope.selectionLength = selection.length;
   $scope.itemText = false;
   if (selection.length === 1) {
@@ -47,14 +47,14 @@ app.controller("CmdlogDeleteBySelectionCtrl", function ($scope, CmdlogService, $
     CmdlogService.delete({"ids": ids})
         .$promise
         .then(function () {
-          $modalInstance.close("cloned");
+          $uibModalInstance.close("cloned");
         }, function (error) {
           console.log("An error occured", error);
         });
   };
 
   $scope.no = function () {
-    $modalInstance.dismiss("cancel");
+    $uibModalInstance.dismiss("cancel");
 
     $.smallBox({
       title: "Delete log entry",

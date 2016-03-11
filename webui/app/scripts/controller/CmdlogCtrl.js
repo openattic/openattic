@@ -31,7 +31,7 @@
 "use strict";
 
 var app = angular.module("openattic");
-app.controller("CmdlogCtrl", function ($scope, $state, CmdlogService, $modal) {
+app.controller("CmdlogCtrl", function ($scope, $state, CmdlogService, $uibModal) {
   $scope.data = {};
 
   $scope.filterConfig = {
@@ -67,7 +67,7 @@ app.controller("CmdlogCtrl", function ($scope, $state, CmdlogService, $modal) {
   });
 
   $scope.deleteAction = function () {
-    var modalInstance = $modal.open({
+    var modalInstance = $uibModal.open({
       windowTemplateUrl: "templates/messagebox.html",
       templateUrl: "templates/cmdlogs/delete-by-selection.html",
       controller: "CmdlogDeleteBySelectionCtrl",
@@ -84,7 +84,7 @@ app.controller("CmdlogCtrl", function ($scope, $state, CmdlogService, $modal) {
   };
 
   $scope.deleteByDateAction = function () {
-    var modalInstance = $modal.open({
+    var modalInstance = $uibModal.open({
       windowTemplateUrl: "templates/messagebox.html",
       templateUrl: "templates/cmdlogs/delete-by-date.html",
       controller: "CmdlogDeleteByDateCtrl"

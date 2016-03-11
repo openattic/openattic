@@ -31,21 +31,21 @@
 "use strict";
 
 var app = angular.module("openattic");
-app.controller("HostDeleteCtrl", function ($scope, HostService, $modalInstance, host) {
+app.controller("HostDeleteCtrl", function ($scope, HostService, $uibModalInstance, host) {
     $scope.host = host;
 
     $scope.delete = function () {
       HostService.delete({id: $scope.host.id})
           .$promise
           .then(function () {
-            $modalInstance.close("deleted");
+            $uibModalInstance.close("deleted");
           }, function (error) {
             console.log("An error occured", error);
           });
     };
 
     $scope.cancel = function () {
-      $modalInstance.dismiss("cancel");
+      $uibModalInstance.dismiss("cancel");
 
       $.smallBox({
         title: "Delete host",

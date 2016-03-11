@@ -31,21 +31,21 @@
 "use strict";
 
 var app = angular.module("openattic");
-app.controller("VolumeSnapshotDeleteCtrl", function ($scope, SnapshotService, $modalInstance, snap) {
+app.controller("VolumeSnapshotDeleteCtrl", function ($scope, SnapshotService, $uibModalInstance, snap) {
   $scope.snap = snap;
 
   $scope.delete = function () {
     SnapshotService.delete({id: $scope.snap.id})
         .$promise
         .then(function () {
-          $modalInstance.close("deleted");
+          $uibModalInstance.close("deleted");
         }, function (error) {
           console.log("An error occured", error);
         });
   };
 
   $scope.cancel = function () {
-    $modalInstance.dismiss("cancel");
+    $uibModalInstance.dismiss("cancel");
 
     $.smallBox({
       title: "Delete snapshot",

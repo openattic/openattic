@@ -31,7 +31,7 @@
 "use strict";
 
 var app = angular.module("openattic");
-app.controller("VolumeNfsSharesCtrl", function ($scope, $state, NfsSharesService, $modal) {
+app.controller("VolumeNfsSharesCtrl", function ($scope, $state, NfsSharesService, $uibModal) {
   $scope.nfsData = {};
 
   $scope.nfsFilter = {
@@ -74,7 +74,7 @@ app.controller("VolumeNfsSharesCtrl", function ($scope, $state, NfsSharesService
   };
 
   $scope.deleteNfsAction = function () {
-    var modalInstance = $modal.open({
+    var modalInstance = $uibModal.open({
       windowTemplateUrl: "templates/messagebox.html",
       templateUrl: "templates/volumes/delete-nfs-share.html",
       controller: "NfsShareDeleteCtrl",

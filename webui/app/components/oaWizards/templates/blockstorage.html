@@ -37,9 +37,9 @@
                                     <option class="tc_volumePoolOption" value="">-- Select a pool --</option>
                                 </select>
                                 <div ng-show="input.volume.source_pool" class="progress-bar-outer clearfix">
-                                    <progressbar max="100" class="progress-striped" value="selPoolUsedPercent">
+                                    <uib-progressbar max="100" class="progress-striped" value="selPoolUsedPercent">
                                         <span></span>
-                                    </progressbar>
+                                    </uib-progressbar>
                                     <span class="pull-left">
                                         {{input.volume.source_pool.usage.used_text}} of
                                         {{input.volume.source_pool.usage.size_text}} used</span>

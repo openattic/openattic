@@ -54,7 +54,6 @@ usage () {
 	echo "Valid commands are:"
 	echo
 	echo "    install      Run this command after you installed new openATTIC modules."
-	echo "                 Any arguments to this command will be passed to apt-get install."
 	echo "    scan-vgs     Instruct LVM to search for existing VGs."
 	echo "    add-vg       Make an already existing LVM Volume Group known to openATTIC."
 	echo "    add-disk     Create a PV on the given disk/partition and add it to openATTIC."
@@ -113,7 +112,8 @@ case $1 in
 		
 		if [ "$#" -gt 1 ]; then
 			shift
-			apt-get install $@
+			echo "Please use your operating system's package manager"
+			echo "(e.g. apt-get or yum) to install package $@."
 		fi
 		
 		if service openattic-systemd status >/dev/null; then

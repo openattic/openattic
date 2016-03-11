@@ -380,16 +380,15 @@ Open a web browser and navigate to http://openattic.yourdomain.com/openattic
 Installing additional |oA| Modules
 ----------------------------------
 
-After installing |oA|, you can install additional modules by using
-``oaconfig install openattic-module-<module-name>``, i.e.::
+After installing |oA|, you can install additional modules
+(``openattic-module-<module-name>``), by using your operating system's native
+package manager, i.e.::
 
-  # oaconfig install openattic-module-drbd
-  # oaconfig install openattic-module-btrfs
-  # oaconfig install openattic-module-lio
+  # apt-get install openattic-module-drbd # Debian/Ubuntu
+  # yum install openattic-module-btrfs # RHEL/CentOS
 
 .. note::
-  ``oaconfig install`` currently works on Debian/Ubuntu only. On EL7, use
-  ``yum install openattic-module-<module-name>`` instead.
+  Don't forget to run ``oaconfig install`` after installing new modules.
 
 Enabling Ceph Support in |oA|
 =============================
@@ -412,7 +411,9 @@ Alternatively, you can copy these files manually.
 
 The next step is to install the |oA| Ceph module on your system::
 
-  # oaconfig install openattic-module-ceph
+  # apt-get install openattic-module-ceph
+  - or -
+  # yum install openattic-module-ceph
 
 The last step is to recreate your |oA| configuration::
 
