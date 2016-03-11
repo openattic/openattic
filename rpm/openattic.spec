@@ -242,6 +242,7 @@ storage space on demand.
 This package includes support for MD-RAID, the common Linux software RAID.
 
 %package  module-nagios
+Requires: bc
 Requires:	nagios
 Requires:	nagios-common
 Requires: openattic-base
