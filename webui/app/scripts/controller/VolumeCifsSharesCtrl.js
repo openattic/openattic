@@ -31,7 +31,7 @@
 "use strict";
 
 var app = angular.module("openattic");
-app.controller("VolumeCifsSharesCtrl", function ($scope, $state, CifsSharesService, $modal) {
+app.controller("VolumeCifsSharesCtrl", function ($scope, $state, CifsSharesService, $uibModal) {
   $scope.cifsData = {};
 
   $scope.cifsFilter = {
@@ -78,7 +78,7 @@ app.controller("VolumeCifsSharesCtrl", function ($scope, $state, CifsSharesServi
   };
 
   $scope.deleteCifsAction = function () {
-    var modalInstance = $modal.open({
+    var modalInstance = $uibModal.open({
       windowTemplateUrl: "templates/messagebox.html",
       templateUrl: "templates/volumes/delete-cifs-share.html",
       controller: "CifsShareDeleteCtrl",

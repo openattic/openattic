@@ -1,8 +1,19 @@
 openATTIC Changelog
 ===================
 
-Version 2.0.8 (not released yet)
---------------------------------
+Version 2.0.9, (not released yet):
+----------------------------------
+
+* WebUI: Review licenses of bower packages and NPM modules (OP-857)
+* WebUI: Update versions of bower dependencies (OP-904)
+* WebUI: Update versions of npm packages (OP-906)
+* Installation: Removed "oaconfig install <package>" functionality, as it
+  wasn't portable and package installation should rather be performed by
+  the dedicated OS tools (e.g. apt-get or yum) (OP-659)
+
+Version 2.0.8, 1. Mar 2016:
+---------------------------
+
 * WebUI: Allow deletion of multiple volumes (OP-339)
 * WebUI: Display first and last name instead of username (OP-792)
 * WebUI: Redirect a logged in user to from login to dashboard (OP-799)

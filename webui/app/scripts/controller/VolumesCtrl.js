@@ -31,7 +31,7 @@
 "use strict";
 
 var app = angular.module("openattic");
-app.controller("VolumeCtrl", function ($scope, $state, VolumeService, SizeParserService, $modal) {
+app.controller("VolumeCtrl", function ($scope, $state, VolumeService, SizeParserService, $uibModal) {
   $scope.data = {};
 
   $scope.filterConfig = {
@@ -101,7 +101,7 @@ app.controller("VolumeCtrl", function ($scope, $state, VolumeService, SizeParser
   };
 
   $scope.resizeAction = function () {
-    var modalInstance = $modal.open({
+    var modalInstance = $uibModal.open({
       windowTemplateUrl: "templates/messagebox.html",
       templateUrl: "templates/volumes/resize.html",
       controller: "VolumeResizeCtrl",
@@ -121,7 +121,7 @@ app.controller("VolumeCtrl", function ($scope, $state, VolumeService, SizeParser
     if (!$scope.selection.item) {
       return;
     }
-    var modalInstance = $modal.open({
+    var modalInstance = $uibModal.open({
       windowTemplateUrl: "templates/messagebox.html",
       templateUrl: "templates/volumes/protection.html",
       controller: "VolumeProtectionCtrl",
@@ -155,7 +155,7 @@ app.controller("VolumeCtrl", function ($scope, $state, VolumeService, SizeParser
   };
 
   $scope.deletionDialog = function (selection) {
-    var modalInstance = $modal.open({
+    var modalInstance = $uibModal.open({
       windowTemplateUrl: "templates/messagebox.html",
       templateUrl: "templates/volumes/delete.html",
       controller: "VolumeDeleteCtrl",
@@ -196,7 +196,7 @@ app.controller("VolumeCtrl", function ($scope, $state, VolumeService, SizeParser
   };
 
   $scope.cloneAction = function () {
-    var modalInstance = $modal.open({
+    var modalInstance = $uibModal.open({
       windowTemplateUrl: "templates/messagebox.html",
       templateUrl: "templates/volumes/clone.html",
       controller: "VolumeCloneCtrl",
