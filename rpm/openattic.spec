@@ -256,6 +256,7 @@ Requires: nagios-plugins-users
 Requires: nagios-plugins-procs
 Requires: nagios-plugins-load
 Requires: nagios-plugins-tcp
+Requires: python-configobj
 
 Summary: Nagios module for openATTIC
 

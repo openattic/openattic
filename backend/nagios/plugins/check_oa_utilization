@@ -16,11 +16,18 @@
 """
 
 import os, sys
+from configobj import ConfigObj
 
+distro_config = [ '/etc/default/openattic', '/etc/sysconfig/openattic' ]
+for filename in distro_config:
+    if os.path.isfile(filename):
+        config = ConfigObj(filename)
+        break
+
+sys.path.append(config['OADIR'])
 
 # environment variables
 os.environ['DJANGO_SETTINGS_MODULE'] = 'settings'
-sys.path.append('/usr/share/openattic')
 from nagios.conf.distro import distro_settings
 
 # If you get an error about Python not being able to write to the Python
