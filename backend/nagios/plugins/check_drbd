@@ -20,12 +20,9 @@ import sys
 
 from optparse import OptionParser
 
-basedir = dict([
-    line.strip().split("=") for line in open("/etc/default/openattic", "rb") if line.strip()
-    ])["OADIR"].replace('"', '')
-
-sys.path.append( basedir )
+sys.path.append('/usr/share/openattic')
 os.environ['DJANGO_SETTINGS_MODULE'] = 'settings'
+from nagios.conf.distro import distro_settings
 
 from drbd.rpcapi import DrbdConnectionProxy
 

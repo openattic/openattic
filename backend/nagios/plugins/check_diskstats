@@ -21,7 +21,8 @@ from time import time, mktime
 from datetime import datetime
 from ConfigParser import ConfigParser
 
-from distro import distro_settings
+sys.path.append('/usr/share/openattic')
+from nagios.conf.distro import distro_settings
 
 settings = distro_settings()
 

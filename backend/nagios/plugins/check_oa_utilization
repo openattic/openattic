@@ -17,17 +17,11 @@
 
 import os, sys
 
-def get_openattic_dir():
-    defaults = open("/etc/default/openattic")
-    for line in defaults:
-        key, val = line.strip().split("=", 1)
-        if key == "OADIR":
-            return val.replace('"', '')
-    raise KeyError("OADIR not found")
 
 # environment variables
-sys.path.insert( 0, get_openattic_dir() )
 os.environ['DJANGO_SETTINGS_MODULE'] = 'settings'
+sys.path.append('/usr/share/openattic')
+from nagios.conf.distro import distro_settings
 
 # If you get an error about Python not being able to write to the Python
 # egg cache, the egg cache path might be set awkwardly. This should not
