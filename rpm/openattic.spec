@@ -255,6 +255,7 @@ Requires: nagios-plugins-disk
 Requires: nagios-plugins-users
 Requires: nagios-plugins-procs
 Requires: nagios-plugins-load
+Requires: nagios-plugins-tcp
 
 Summary: Nagios module for openATTIC
 

@@ -103,3 +103,9 @@ NPCD_SERVICE="npcd"
 #
 # Directory in which to save states
 NAGIOS_STATE_DIR="/var/log/nagios"
+
+## Type: string
+## Default: "/usr/lib64/nagios/plugins"
+#
+# Location of the Nagios plugin directory
+NAGIOS_PLUGIN_DIR="/usr/lib64/nagios/plugins"
