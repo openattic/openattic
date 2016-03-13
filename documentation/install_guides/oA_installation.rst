@@ -293,6 +293,9 @@ repositories.
 Preliminary Preparations on RHEL 7
 ----------------------------------
 
+.. note::
+  This step is not required on CentOS and other RHEL derivatives.
+
 To install on RHEL 7, be sure to disable the "EUS" and "RT" yum repos, and
 enable the "Optional" repo::
 
@@ -300,78 +303,93 @@ enable the "Optional" repo::
   # subscription-manager repos --disable=rhel-7-server-rt-rpms
   # subscription-manager repos --enable=rhel-7-server-optional-rpms
 
-Afterwards, just follow the installation steps as outlined for EL7.
+Afterwards, just continue with the following installation steps.
 
+Disable SELinux
+---------------
+
+For the time being, SELinux needs to be disabled or put into "permissive"
+mode. On the command line, run the following command::
+
+  # setenforce 0
+
+To disable SELinux at system bootup, edit ``/etc/sysconfig/selinux`` and
+change the configuration option ``SELINUX`` to ``permissive``.
 
 Yum Repository Configuration
 ----------------------------
+
+|oA| requires some additional packages that are not part of the official EL7
+distribution, but can be obtained from the Extra Packages for Enterprise Linux
+(`EPEL <https://fedoraproject.org/wiki/EPEL>`_) yum repository.
+
+To enable the EPEL repository, you need to run the following command::
+
+  # yum install epel-release
 
 Download and install the ``openattic-release`` RPM package located in the
 following directory::
 
   # yum install http://repo.openattic.org/rpm/openattic-2.x-el7-x86_64/openattic-release.rpm
 
+This will automatically enable package installation from the |oA| Release
+repository.
+
 To enable the nightly RPM builds, edit ``/etc/yum.repos.d/openattic.repo`` and
 enable the ``[openattic-nightly]`` yum repository by setting ``enabled`` to
 ``1``.
 
+Disk preparation
+----------------
+
+If you have installed your system's root and swap file systems on logical
+volumes (which is the default), you can tag them with the ``@sys`` tag to
+prevent |oA| from using them::
+
+  # lvchange --addtag @sys /dev/centos/root
+  # lvchange --addtag @sys /dev/centos/swap
+
+Now create a logical volume Group for |oA| to use. In the following example,
+we'll use the second and third hard disk of the system. The volume group name
+and device names may differ on your system::
+
+  # vgcreate vgdata /dev/sdb /dev/sdc
+
 |oA| Installation
 -----------------
 
-To install the packages on CentOS 7, run the following commands:
+To install the |oA| base packages on EL7, run the following command::
 
-1. Disable SELinux::
+  # yum install openattic
 
-     # setenforce 0
+The |oA| web GUI is not installed automatically when using ``yum install
+openattic``, as it might not be required on each node of an |oA| cluster.
 
-   Edit ``/etc/sysconfig/selinux`` and set ``SELINUX`` to ``disabled``.
+It can be installed with the following command::
 
-2. Install packages::
+  # yum install openattic-gui
 
-     # yum install epel-release
-     # yum install openattic
+After all the required packages have been installed, you need to perform the
+actual |oA| configuration::
 
-3. If you have installed your system's root and swap file systems on Logical
-   Volumes, you can tag them to prevent |oA| from using them::
+  # oaconfig install
 
-     # lvchange --addtag @sys /dev/centos/root
-     # lvchange --addtag @sys /dev/centos/swap
+``oaconfig install`` will start a number of services, initialize the |oA|
+database and scan the system for pools and volumes to include.
 
-4. Create a Volume Group for |oA| to use::
-
-     # pvcreate /dev/sdb
-     # vgcreate vgdata /dev/sdb
-
-5. Install the database::
-
-     # oaconfig install
-
-6. Install the GUI
-
-   The GUI is not installed automatically when using ``yum install
-   openattic``, as it might not be required on each node of an |oA| cluster.
-   Instead, it should be installed with the following command::
-
-     # yum install openattic-gui
+After running this command, the whole storage system can be managed by the
+user interface - have fun!
 
 Getting started
 ===============
-
-In order to use the |oA| GUI, you need to run one last command in your
-shell::
-
-  # oaconfig add-disk /dev/<sdX> <vgname>
-
-After running this command, the whole storage system can be managed by the user
-interface - have fun!
 
 Accessing the Web UI
 --------------------
 
 .. note::
   HTTP access to the Web UI might be blocked by the default firewall
-  configuration. In order to allow external HTTP requests execute the
-  following command::
+  configuration. In order to allow external HTTP requests on an EL7
+  system, execute the following command::
 
     # firewall-cmd --zone=public --add-port=80/tcp --permanent
 
