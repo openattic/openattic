@@ -380,6 +380,7 @@ mkdir -p %{buildroot}%{_sysconfdir}/httpd/conf.d/
 mkdir -p %{buildroot}%{_sysconfdir}/logrotate.d/
 mkdir -p %{buildroot}%{_sysconfdir}/modprobe.d/
 mkdir -p %{buildroot}%{_sysconfdir}/nagios/conf.d/
+mkdir -p %{buildroot}%{_sysconfdir}/pnp4nagios/check_commands/
 mkdir -p %{buildroot}%{_sysconfdir}/%{name}/databases
 mkdir -p %{buildroot}%{_sysconfdir}/yum.repos.d/
 mkdir -p %{buildroot}/lib/systemd/system/
@@ -431,7 +432,8 @@ gzip %{buildroot}%{_mandir}/man1/*.1
 
 #configure nagios
 install -m 644 etc/nagios-plugins/config/%{name}.cfg %{buildroot}%{_sysconfdir}/nagios/conf.d/%{name}_plugins.cfg
-install -m 644 etc/nagios3/conf.d/%{name}_*.cfg      %{buildroot}%{_sysconfdir}/nagios/conf.d/
+install -m 644 etc/nagios3/conf.d/%{name}_*.cfg %{buildroot}%{_sysconfdir}/nagios/conf.d/
+install -m 644 etc/pnp4nagios/check_commands/check_*.cfg %{buildroot}%{_sysconfdir}/pnp4nagios/check_commands/
 
 for NAGPLUGIN in `ls -1 %{buildroot}%{_datadir}/%{name}/nagios/plugins/`; do
     ln -s "%{_datadir}/%{name}/nagios/plugins/$NAGPLUGIN" "%{buildroot}%{_libdir}/nagios/plugins/$NAGPLUGIN"
@@ -643,12 +645,12 @@ systemctl start lvm2-lvmetad
 %{_datadir}/%{name}/installed_apps.d/09_mdraid
 
 %files module-nagios
-#/etc/pnp4nagios/check_commands/check_diskstats.cfg
-#/etc/pnp4nagios/check_commands/check_all_disks.cfg
 %defattr(-,root,root,-)
 %config %{_sysconfdir}/nagios/conf.d/openattic_plugins.cfg
 %config %{_sysconfdir}/nagios/conf.d/openattic_static.cfg
 %config %{_sysconfdir}/nagios/conf.d/openattic_contacts.cfg
+%config %{_sysconfdir}/pnp4nagios/check_commands/check_all_disks.cfg
+%config %{_sysconfdir}/pnp4nagios/check_commands/check_diskstats.cfg
 %{_libdir}/nagios/plugins/check_cputime
 %{_libdir}/nagios/plugins/check_diskstats
 %{_libdir}/nagios/plugins/check_drbd
