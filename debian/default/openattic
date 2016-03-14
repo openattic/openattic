@@ -104,3 +104,8 @@ NPCD_SERVICE="npcd"
 # Name of systemd service
 NAGIOS_STATE_DIR="/var/lib/nagios3"
 
+## Type: string
+## Default: "/usr/lib/nagios/plugins"
+#
+# Location of the Nagios plugin directory
+NAGIOS_PLUGIN_DIR="/usr/lib/nagios/plugins"

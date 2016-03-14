@@ -99,8 +99,13 @@ NPCD_CFG="/etc/pnp4nagios/npcd.cfg"
 NPCD_SERVICE="npcd"
 
 ## Type: string
-## Default: "/var/lib/nagios"
+## Default: "/var/log/nagios"
 #
-# Name of systemd service
-NAGIOS_STATE_DIR="/var/lib/nagios"
+# Directory in which to save states
+NAGIOS_STATE_DIR="/var/log/nagios"
 
+## Type: string
+## Default: "/usr/lib64/nagios/plugins"
+#
+# Location of the Nagios plugin directory
+NAGIOS_PLUGIN_DIR="/usr/lib64/nagios/plugins"
