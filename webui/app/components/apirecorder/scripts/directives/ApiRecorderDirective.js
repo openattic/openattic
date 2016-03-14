@@ -35,7 +35,7 @@ app.directive("apiRecorder", function () {
   return {
     template: [
       "<a title=\"API Recorder\" ng-click=\"handleClick()\" >",
-      "<i class=\"fa\" ng-class=\"{'fa-circle': !isRecording(), 'fa-stop': isRecording() }\"></i>",
+      "<i class=\"fa\" ng-class=\"{'fa-circle': !isRecording(), 'fa-stop': isRecording() }\"></i> API-Recorder",
       "</a>"
     ].join(""),
     controller: function ($scope, ApiRecorderService) {
