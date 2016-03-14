@@ -383,6 +383,7 @@ mkdir -p %{buildroot}%{_sysconfdir}/nagios/conf.d/
 mkdir -p %{buildroot}%{_sysconfdir}/%{name}/databases
 mkdir -p %{buildroot}%{_sysconfdir}/yum.repos.d/
 mkdir -p %{buildroot}/lib/systemd/system/
+mkdir -p %{buildroot}/lib/tmpfiles.d/
 
 # Install Backend and binaries
 rsync -aAX backend/ %{buildroot}%{_datadir}/%{name}
@@ -438,6 +439,7 @@ for NAGPLUGIN in `ls -1 %{buildroot}%{_datadir}/%{name}/nagios/plugins/`; do
 done
 
 install -m 444 etc/systemd/*.service %{buildroot}/lib/systemd/system/
+install -m 644 etc/tmpfiles.d/%{name}.conf %{buildroot}/lib/tmpfiles.d/
 
 # openATTIC httpd config
 install -m 644 etc/apache2/conf-available/%{name}-volumes.conf %{buildroot}%{_sysconfdir}/httpd/conf.d/
@@ -542,6 +544,7 @@ echo ""
 %config %{_sysconfdir}/dbus-1/system.d/%{name}.conf
 /lib/systemd/system/%{name}-rpcd.service
 /lib/systemd/system/%{name}-systemd.service
+/lib/tmpfiles.d/%{name}.conf
 %config %{_sysconfdir}/httpd/conf.d/%{name}.conf
 %config %{_sysconfdir}/logrotate.d/%{name}
 %dir %{_datadir}/%{name}
