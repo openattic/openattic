@@ -242,6 +242,7 @@ storage space on demand.
 This package includes support for MD-RAID, the common Linux software RAID.
 
 %package  module-nagios
+Requires: bc
 Requires:	nagios
 Requires:	nagios-common
 Requires: openattic-base
@@ -254,6 +255,8 @@ Requires: nagios-plugins-disk
 Requires: nagios-plugins-users
 Requires: nagios-plugins-procs
 Requires: nagios-plugins-load
+Requires: nagios-plugins-tcp
+Requires: python-configobj
 
 Summary: Nagios module for openATTIC
 
@@ -366,7 +369,6 @@ mkdir -p %{buildroot}%{_libdir}/nagios/plugins/
 mkdir -p %{buildroot}%{_localstatedir}/lib/%{name}/http/volumes
 mkdir -p %{buildroot}%{_localstatedir}/lib/%{name}/nfs_dummy
 mkdir -p %{buildroot}%{_localstatedir}/lib/%{name}/static
-mkdir -p %{buildroot}%{_localstatedir}/lib/nagios3
 mkdir -p %{buildroot}%{_localstatedir}/log/%{name}
 mkdir -p %{buildroot}%{_localstatedir}/lock/%{name}
 mkdir -p %{buildroot}%{_mandir}/man1/
@@ -661,8 +663,6 @@ systemctl start lvm2-lvmetad
 %{_libdir}/nagios/plugins/notify_openattic
 %{_datadir}/%{name}/installed_apps.d/50_nagios
 %{_datadir}/%{name}/nagios
-%defattr(-,nagios,nagios,-)
-%{_localstatedir}/lib/nagios3
 
 %post module-nagios
 systemctl daemon-reload
