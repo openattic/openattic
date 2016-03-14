@@ -97,7 +97,7 @@ describe('General', function(){
   });
 
 
-  it(' (ceph) should have the right orde of all subitems', function(){
+  it('(ceph) should have the right order of all subitems', function(){
     if(menu.items.ceph.isDisplayed()){
       var menuCount = 0;
       var subitems = menu.items.ceph.all(by.css('ul .tc_submenuitem'));
@@ -110,7 +110,7 @@ describe('General', function(){
     }
   });
 
-  it(' (ceph) should click all subitems and check the url', function(){
+  it('(ceph) should click all subitems and check the url', function(){
     if(menu.items.ceph.isDisplayed()){
       for(subitem in ceph.items){
         ceph.items[subitem].click();
@@ -128,7 +128,7 @@ describe('General', function(){
   });
 
 
-  it(' (system) should have the right orde of all subitems', function(){
+  it('(system) should have the right order of all subitems', function(){
     var menuCount = 0;
     var subitems = menu.items.system.all(by.css('ul .tc_submenuitem'));
     system.order.forEach(function(item){
@@ -137,7 +137,7 @@ describe('General', function(){
     });
   });
 
-  it(' (system) should click all subitems and check the url', function(){
+  it('(system) should click all subitems and check the url', function(){
     for(subitem in system.items){
       system.items[subitem].click();
       browser.sleep(400);

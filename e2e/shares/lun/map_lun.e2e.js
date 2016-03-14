@@ -11,15 +11,7 @@ describe('Should map a LUN to an host', function(){
   var volumename = "protractor_iscsiMap_vol";
   var volume = element.all(by.cssContainingText('tr', volumename)).get(0);
   var iqn = "iqn.1991-05.com.microsoft:protractor_test_host";
-  var iscsiShareTab = element(by.css('.tc_iscsi_fcTab'));
-
-  beforeAll(function(){
-    helpers.login();
-    helpers.create_host();
-    helpers.create_volume(volumename, "lun");
-  });
-
-  beforeEach(function(){
+  var iscsiShareTab = function(){
     element(by.css('ul .tc_menuitem_volumes > a')).click();
     browser.sleep(400);
     //     element(by.css('.tc_entries_dropdown')).click();
@@ -27,8 +19,14 @@ describe('Should map a LUN to an host', function(){
     expect(volume.isPresent()).toBe(true);
     volume.click();
     browser.sleep(400);
-    iscsiShareTab.click();
+    element(by.css('.tc_iscsi_fcTab')).click();
     browser.sleep(400);
+  };
+
+  beforeAll(function(){
+    helpers.login();
+    helpers.create_host();
+    helpers.create_volume(volumename, "lun");
   });
 
   it('should add the iqn as attribute of the host', function(){
@@ -45,16 +43,19 @@ describe('Should map a LUN to an host', function(){
   });
 
   it('should configure the lun', function(){
+    iscsiShareTab();
     element(by.css('.tc_lunAdd')).click();
     hostSelect.element(by.cssContainingText('option', hostname)).click();
     element(by.css('.tc_submitButton')).click();
   });
 
   it('should display the lun', function(){
+    iscsiShareTab();
     expect(element(by.cssContainingText('tr', hostname)).isPresent()).toBe(true);
   });
 
   it('should remove the lun', function(){
+    iscsiShareTab();
     element(by.cssContainingText('tr', hostname)).click();
     element(by.css('.tc_lunDelete')).click();
     browser.sleep(400);
@@ -65,6 +66,7 @@ describe('Should map a LUN to an host', function(){
   });
 
   it('should not display the lun anymore', function(){
+    iscsiShareTab();
     expect(element(by.cssContainingText('tr', hostname)).isPresent()).toBe(false);
   });
 
