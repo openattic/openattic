@@ -7,6 +7,7 @@ Version 2.0.9, (not released yet):
 * WebUI: Review licenses of bower packages and NPM modules (OP-857)
 * WebUI: Update versions of bower dependencies (OP-904)
 * WebUI: Update versions of npm packages (OP-906)
+* WebUI/QA: Refactored "volumes add" E2E tests (OP-921)
 * Installation: Removed "oaconfig install <package>" functionality, as it
   wasn't portable and package installation should rather be performed by
   the dedicated OS tools (e.g. apt-get or yum) (OP-659)
