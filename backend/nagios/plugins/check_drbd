@@ -19,13 +19,17 @@ import os
 import sys
 
 from optparse import OptionParser
+from configobj import ConfigObj
 
-basedir = dict([
-    line.strip().split("=") for line in open("/etc/default/openattic", "rb") if line.strip()
-    ])["OADIR"].replace('"', '')
+distro_config = [ '/etc/default/openattic', '/etc/sysconfig/openattic' ]
+for filename in distro_config:
+    if os.path.isfile(filename):
+        config = ConfigObj(filename)
+        break
 
-sys.path.append( basedir )
+sys.path.append(config['OADIR'])
 os.environ['DJANGO_SETTINGS_MODULE'] = 'settings'
+from nagios.conf.distro import distro_settings
 
 from drbd.rpcapi import DrbdConnectionProxy
 
