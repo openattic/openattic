@@ -546,8 +546,8 @@ echo ""
 %config %{_sysconfdir}/logrotate.d/%{name}
 %dir %{_datadir}/%{name}
 %dir %{_datadir}/%{name}/installed_apps.d
+%dir %{_sysconfdir}/%{name}
 %config(noreplace) %{_sysconfdir}/default/%{name}
-%config(noreplace) %{_sysconfdir}/%{name}/databases/pgsql.ini
 %doc %{_mandir}/man1/oaconfig.1.gz
 %doc %{_mandir}/man1/oacli.1.gz
 %{_datadir}/%{name}/clustering/
@@ -710,7 +710,8 @@ systemctl start smb
 
 %files 	pgsql
 %defattr(-,root,root,-)
-%{_sysconfdir}/openattic/
+%config(noreplace) %{_sysconfdir}/%{name}/databases/pgsql.ini
+%{_sysconfdir}/%{name}/database.ini
 
 %files release
 %defattr(-,root,root,-)
