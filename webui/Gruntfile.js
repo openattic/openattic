@@ -182,6 +182,13 @@ module.exports = function (grunt) {
       // replaces js and css includes in index.html
       usemin: {
         html: ["<%= buildConfig.dist %>/index.html"]
+      },
+
+      uglify: {
+        options: {
+          report: 'min',
+          mangle: false
+        }
       }
     }
   );
