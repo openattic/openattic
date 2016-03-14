@@ -31,7 +31,7 @@
 "use strict";
 
 var app = angular.module("openattic");
-app.controller("CmdlogDeleteByDateCtrl", function ($scope, CmdlogService, $modalInstance) {
+app.controller("CmdlogDeleteByDateCtrl", function ($scope, CmdlogService, $uibModalInstance) {
   $scope.datePicker = {
     opened: false,
     maxDate: null,
@@ -55,14 +55,14 @@ app.controller("CmdlogDeleteByDateCtrl", function ($scope, CmdlogService, $modal
     CmdlogService.delete({"datetime": $scope.datePicker.dateTime})
         .$promise
         .then(function () {
-          $modalInstance.close("deleted");
+          $uibModalInstance.close("deleted");
         }, function (error) {
           console.log("An error occured", error);
         });
   };
 
   $scope.no = function () {
-    $modalInstance.dismiss("cancel");
+    $uibModalInstance.dismiss("cancel");
 
     $.smallBox({
       title: "Delete log entry",

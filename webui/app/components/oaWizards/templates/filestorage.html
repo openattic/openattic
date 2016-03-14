@@ -37,9 +37,9 @@
                                     <option class="tc_volumePoolOption" value="">-- Select a pool --</option>
                                 </select>
                                 <div ng-show="input.volume.source_pool" class="progress-bar-outer clearfix">
-                                    <progressbar max="100" class="progress-striped" value="selPoolUsedPercent">
+                                    <uib-progressbar max="100" class="progress-striped" value="selPoolUsedPercent">
                                         <span></span>
-                                    </progressbar>
+                                    </uib-progressbar>
                                     <span class="pull-left">
                                         {{input.volume.source_pool.usage.used_text}} of
                                         {{input.volume.source_pool.usage.size_text}} used</span>
@@ -154,13 +154,13 @@
                         <label for="neednfs">NFS Share</label>
                     </div><br /><br />
                     <form name="$parent.contentForm3" role="form" class="form-horizontal" novalidate>
-                        <accordion close-others="false">
-                            <accordion-group is-open="input.cifs.create">
-                                <accordion-heading>
+                        <uib-accordion close-others="false">
+                            <uib-accordion-group is-open="input.cifs.create">
+                                <uib-accordion-heading>
                                     CIFS
                                     <i class="pull-right" ng-class="{'fa fa-angle-up': input.cifs.create,
                                     'fa fa-angle-down': !input.cifs.create}"></i>
-                                </accordion-heading>
+                                </uib-accordion-heading>
                                 <div class="form-group" ng-class="{'has-error': (contentForm3.submitted ||
                                     contentForm3.cifsname.$dirty) && contentForm3.cifsname.$invalid}">
                                     <label class="col-md-2 control-label" for="cifsname">Name</label>
@@ -248,13 +248,13 @@
                                         </div>
                                     </div>
                                 </div>
-                            </accordion-group>
-                            <accordion-group is-open="input.nfs.create">
-                                <accordion-heading>
+                            </uib-accordion-group>
+                            <uib-accordion-group is-open="input.nfs.create">
+                                <uib-accordion-heading>
                                     NFS
                                     <i class="pull-right" ng-class="{'fa fa-angle-up': input.nfs.create,
                                     'fa fa-angle-down': !input.nfs.create}"></i>
-                                </accordion-heading>
+                                </uib-accordion-heading>
                                 <div class="form-group" ng-class="{'has-error': (contentForm3.submitted ||
                                     contentForm3.nfspath.$dirty) && contentForm3.nfspath.$invalid}">
                                     <label class="col-md-2 control-label" for="nfspath">Path</label>
@@ -304,8 +304,8 @@
                                         </div>
                                     </div>
                                 </div>
-                            </accordion-group>
-                        </accordion>
+                            </uib-accordion-group>
+                        </uib-accordion>
                     </form>
                 </div>
                 <div ng-class="{'active': isActiveTab(4)}" title="Save configuration" class="tab-pane">
