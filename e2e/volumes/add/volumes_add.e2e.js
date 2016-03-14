@@ -152,6 +152,7 @@ describe('Volumes add', function(){
       element.all(by.cssContainingText('option', exact_poolname)).get(0).click();
       browser.sleep(400);
       var pool_size = element(by.id('data.megs')).evaluate('data.sourcePool.usage.free_text').then(function(psize){
+        //console.log(psize);
         browser.sleep(400);
         volumeSizeInput.clear().sendKeys(psize);
         expect(element(by.css('.tc_wrongVolumeSize')).isDisplayed()).toBe(false);
@@ -249,7 +250,7 @@ describe('Volumes add', function(){
         browser.sleep(helpers.configs.sleep);
 
         var volumeType = pool.volumeTypes[i];
-        var volumename = 'e2e_' + key + '_' + i;
+        var volumename = 'protractor_volume_' + pool.name;
         var volume = element(by.cssContainingText('tr', volumename));
 
         //create a volume

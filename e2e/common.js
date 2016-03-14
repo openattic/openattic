@@ -90,7 +90,7 @@
       browser.sleep(400);
       element(by.model('input.enteredName')).sendKeys('yes');
       element(by.id('bot2-Msg1')).click();
-      browser.sleep(configs.sleep);
+      browser.sleep(600);
       volume = element(by.cssContainingText('tr', volumename));
       expect(volume.isPresent()).toBe(false);
     },
