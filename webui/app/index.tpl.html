@@ -45,18 +45,14 @@
 <body>
     <navigation ng-hide="loginActive()"></navigation>
 
-    <div id="main" role="main" ng-class="{loginmain : loginActive()}">
-
-        <!-- RIBBON -->
-        <div id="ribbon" ng-hide="loginActive()">
+    <div class="container-fluid main">
+        <div class="row" ng-hide="loginActive()">
             <!-- breadcrumb -->
             <div ncy-breadcrumb></div>
             <!-- end breadcrumb -->
         </div>
-        <!-- END RIBBON -->
 
-        <div id="content" ui-view="main">
-        </div>
+        <div class="row main" ui-view="main"></div>
     </div>
 
     <!-- build:js oa-app.js -->
