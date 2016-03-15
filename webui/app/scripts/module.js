@@ -40,6 +40,7 @@ angular.module("openattic", [
   "ngTagsInput",
   "ncy-angular-breadcrumb",
   "angular-md5",
+  "openattic.navigation",
   "openattic.auth",
   "openattic.apirecorder",
   "openattic.datatable",
