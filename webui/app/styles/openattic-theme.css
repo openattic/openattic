@@ -1,3 +1,15 @@
+/* Basics */
+html, body {
+  height: 100%;
+}
+.main {
+  height: 100%;
+}
+.vertical-align {
+    display: flex;
+    align-items: center;
+}
+
 /* Branding */
 .navbar-openattic .navbar-brand,
 .navbar-openattic .navbar-brand:hover{
@@ -165,5 +177,45 @@
 
 /* Login */
 .login {
+  color: #ececec;
   background-color: #474544;
+}
+.login,
+.login .row {
+  height: 100%;
+}
+.login h1 {
+  margin-top: 0;
+  margin-bottom: 30px;
+}
+.login .form-control {
+  color: #ececec;
+  background-color: #555555;
+}
+.login .col-lg-1, .login .col-lg-10, .login .col-lg-11, .login .col-lg-12, .login .col-lg-2, .login .col-lg-3,
+.login .col-lg-4, .login .col-lg-5, .login .col-lg-6, .login .col-lg-7, .login .col-lg-8, .login .col-lg-9 {
+  padding-left: 35px;
+  padding-right: 35px;
+}
+.login .col-md-1, .login .col-md-10, .login .col-md-11, .login .col-md-12, .login .col-md-2, .login .col-md-3,
+.login .col-md-4, .login .col-md-5, .login .col-md-6, .login .col-md-7, .login .col-md-8, .login .col-md-9 {
+  padding-left: 30px;
+  padding-right: 30px;
+}
+.login .col-sm-1, .login .col-sm-10, .login .col-sm-11, .login .col-sm-12, .login .col-sm-2, .login .col-sm-3,
+.login .col-sm-4, .login .col-sm-5, .login .col-sm-6, .login .col-sm-7, .login .col-sm-8, .login .col-sm-9 {
+  padding-left: 25px;
+  padding-right: 25px;
+}
+.login .col-xs-1, .col-xs-10, .login .col-xs-11, .login .col-xs-12, .login .col-xs-2, .login .col-xs-3,
+.login .col-xs-4, .login .col-xs-5, .login .col-xs-6, .login .col-xs-7, .login .col-xs-8, .login .col-xs-9 {
+  padding-left: 15px;
+  padding-right: 15px;
+}
+
+/* Buttons */
+.btn-openattic {
+  color: #ececec;
+  background-color: #288cea;
+  border-color: #288cea;
 }
