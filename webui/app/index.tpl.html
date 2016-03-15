@@ -28,8 +28,8 @@
     <link rel="stylesheet" type="text/css" media="screen" href="styles/awesome-bootstrap-checkbox.css">
 
     <!-- oA stylesheets -->
-    <link rel="stylesheet" type="text/css" media="screen" href="styles/openattic-theme.css">
     <link rel="stylesheet" type="text/css" media="screen" href="styles/openattic.css">
+    <link rel="stylesheet" type="text/css" media="screen" href="styles/openattic-theme.css">
     <link rel="stylesheet" type="text/css" media="screen" href="styles/vendor.css">
 
     <!-- htmlbuild:style bundle -->
@@ -43,130 +43,50 @@
     <link rel="icon" href="images/openattic_favicon_32x32.png" type="image/x-icon">
 </head>
 <body>
+    <navigation></navigation>
 
-<!--<header id="header">-->
-    <!--<div id="logo-group">-->
+    <div id="main" role="main" ng-class="{loginmain : loginActive()}">
 
-        <!--&lt;!&ndash; PLACE YOUR LOGO HERE &ndash;&gt;-->
-        <!--<span id="logo">-->
-            <!--<a data-ui-sref="dashboard">-->
-                <!--<img src="images/openattic.png" alt="openATTIC">-->
-            <!--</a>-->
-        <!--</span>-->
-        <!--&lt;!&ndash; END LOGO PLACEHOLDER &ndash;&gt;-->
+        <!-- RIBBON -->
+        <div id="ribbon" ng-hide="loginActive()">
+            <!-- breadcrumb -->
+            <div ncy-breadcrumb></div>
+            <!-- end breadcrumb -->
+        </div>
+        <!-- END RIBBON -->
 
-    <!--</div>-->
-
-    <!--&lt;!&ndash; pulled right: nav area &ndash;&gt;-->
-    <!--<div class="pull-right" ng-hide="loginActive()">-->
-        <!--<div id="hide-menu" class="btn-header transparent pull-right">-->
-            <!--<span> <a toggle-menu title="Collapse Menu"><i class="fa fa-reorder"></i></a> </span>-->
-        <!--</div>-->
-        <!--<div class="btn-header transparent pull-right ng-scope tc_logout">-->
-            <!--<span logout> </span>-->
-        <!--</div>-->
-        <!--<div id="api-recorder" class="btn-header transparent pull-right">-->
-            <!--<span api-recorder> </span>-->
-        <!--</div>-->
-        <!--<div id="fullscreen" class="btn-header transparent pull-right" ng-controller="ToggleFullscreenCtrl">-->
-            <!--<span><a ng-click="toggleFullscreen()" title="Full Screen"><i class="fa fa-arrows-alt"></i></a></span>-->
-        <!--</div>-->
-    <!--</div>-->
-    <!--&lt;!&ndash; end pulled right: nav area &ndash;&gt;-->
-
-<!--</header>-->
-<!-- END HEADER -->
-
-<nav class="navbar navbar-default navbar-openattic">
-    <!-- Brand and toggle get grouped for better mobile display -->
-
-    <div class="navbar-header">
-        <a class="navbar-brand" href="#"><img src="images/openattic_brand_bright.png" alt="openATTIC"></a>
-        <!--<a class="navbar-brand" href="#">openATTIC storage management framework</a>-->
-
-        <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#bs-example-navbar-collapse-1">
-            <span class="sr-only">Toggle navigation</span>
-            <span class="icon-bar"></span>
-            <span class="icon-bar"></span>
-            <span class="icon-bar"></span>
-        </button>
+        <div id="content" ui-view="main">
+        </div>
     </div>
 
-    <!-- Collect the nav links, forms, and other content for toggling -->
-    <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
-        <ul class="nav navbar-nav navbar-primary">
-            <li data-ui-sref-active="active" class="tc_menuitem tc_menuitem_dashboard"><a data-ui-sref="dashboard" title="Dashboard">Dashboard</a></li>
-            <li data-ui-sref-active="active" class="tc_menuitem tc_menuitem_disks"><a data-ui-sref="disks" title="Disks">Disks</a></li>
-            <li data-ui-sref-active="active" class="tc_menuitem tc_menuitem_pools"><a data-ui-sref="pools" title="Pools">Pools</a></li>
-            <li data-ui-sref-active="active" class="tc_menuitem tc_menuitem_volumes"><a data-ui-sref="volumes" title="Volumes">Volumes</a></li>
-            <li data-ui-sref-active="active" class="tc_menuitem tc_menuitem_hosts"><a data-ui-sref="hosts" title="Hosts">Hosts</a></li>
-            <!--<li class="dropdown tc_menuitem tc_menuitem_system">-->
-                <!--<a href="" class="dropdown-toggle" data-toggle="dropdown">CEPH <span class="caret"></span></a>-->
-                <!--<ul class="dropdown-menu">-->
-                    <!--<li data-ui-sref-active="active" class="tc_submenuitem tc_submenuitem_ceph_pools"><a data-ui-sref="cephPools">Pools</a></li>-->
-                <!--</ul>-->
-            <!--</li>-->
-            <li class="dropdown tc_menuitem tc_menuitem_system">
-                <a href="" class="dropdown-toggle" data-toggle="dropdown">System <span class="caret"></span></a>
-                <ul class="dropdown-menu">
-                    <li data-ui-sref-active="active" class="tc_submenuitem tc_submenuitem_system_users"><a data-ui-sref="users">Users</a></li>
-                    <li data-ui-sref-active="active" class="tc_submenuitem tc_submenuitem_system_cmdlogs"><a data-ui-sref="cmdlogs">Command Log</a></li>
-                    <li data-ui-sref-active="active" class="tc_submenuitem tc_submenuitem_ceph_crushmap"><a data-ui-sref="crushmap">CRUSH Map</a></li>
-                </ul>
-            </li>
-        </ul><!-- /.navbar-primary -->
+    <!-- build:js oa-app.js -->
 
-        <ul class="nav navbar-nav navbar-utility">
-            <li userinfo></li>
-            <li api-recorder class="tc_api-recorder"></li>
-            <li logout class="tc_logout"></li>
-        </ul><!-- /.navbar-utility -->
-    </div><!-- /.navbar-collapse -->
-</nav>
+    <!-- 3rd-Party Libraries -->
+    <script src="bower_components/jquery/dist/jquery.js"></script>
+    <script src="bower_components/jquery-ui/jquery-ui.js"></script>
+    <script src="bower_components/bootstrap/dist/js/bootstrap.js"></script>
+    <script src="bower_components/angular/angular.js"></script>
+    <script src="bower_components/angular-resource/angular-resource.js"></script>
+    <script src="bower_components/angular-ui-router/release/angular-ui-router.js"></script>
+    <script src="bower_components/ng-tags-input/ng-tags-input.js"></script>
+    <script src="bower_components/angular-breadcrumb/dist/angular-breadcrumb.js"></script>
+    <script src="bower_components/angular-bootstrap/ui-bootstrap-tpls.js"></script>
+    <script src="bower_components/lodash/dist/lodash.min.js"></script>
+    <script src="bower_components/angular-ui-sortable/sortable.js"></script>
+    <script src="bower_components/malhar-angular-dashboard/dist/malhar-angular-dashboard.js"></script>
+    <script src="bower_components/angular-md5/angular-md5.js"></script>
+    <script src="bower_components/angular-ui-tree/dist/angular-ui-tree.js"></script>
+    <script src="bower_components/angular-sanitize/angular-sanitize.js"></script>
+    <script src="bower_components/jquery.easy-pie-chart/dist/angular.easypiechart.min.js"></script>
+    <script src="bower_components/jquery-flot/jquery.flot.js"></script>
+    <script src="bower_components/jquery-flot/jquery.flot.resize.js"></script>
+    <script src="bower_components/jquery-flot/jquery.flot.selection.js"></script>
+    <script src="bower_components/jquery-flot/jquery.flot.time.js"></script>
+    <script src="bower_components/angular-flot/angular-flot.js"></script>
 
-<div id="main" role="main" ng-class="{loginmain : loginActive()}">
+    <!-- htmlbuild:script src -->
+    <!-- /htmlbuild -->
 
-    <!-- RIBBON -->
-    <div id="ribbon" ng-hide="loginActive()">
-        <!-- breadcrumb -->
-        <div ncy-breadcrumb></div>
-        <!-- end breadcrumb -->
-    </div>
-    <!-- END RIBBON -->
-
-    <div id="content" ui-view="main">
-    </div>
-</div>
-
-<!-- build:js oa-app.js -->
-
-<!-- 3rd-Party Libraries -->
-<script src="bower_components/jquery/dist/jquery.js"></script>
-<script src="bower_components/jquery-ui/jquery-ui.js"></script>
-<script src="bower_components/bootstrap/dist/js/bootstrap.js"></script>
-<script src="bower_components/angular/angular.js"></script>
-<script src="bower_components/angular-resource/angular-resource.js"></script>
-<script src="bower_components/angular-ui-router/release/angular-ui-router.js"></script>
-<script src="bower_components/ng-tags-input/ng-tags-input.js"></script>
-<script src="bower_components/angular-breadcrumb/dist/angular-breadcrumb.js"></script>
-<script src="bower_components/angular-bootstrap/ui-bootstrap-tpls.js"></script>
-<script src="bower_components/lodash/dist/lodash.min.js"></script>
-<script src="bower_components/angular-ui-sortable/sortable.js"></script>
-<script src="bower_components/malhar-angular-dashboard/dist/malhar-angular-dashboard.js"></script>
-<script src="bower_components/angular-md5/angular-md5.js"></script>
-<script src="bower_components/angular-ui-tree/dist/angular-ui-tree.js"></script>
-<script src="bower_components/angular-sanitize/angular-sanitize.js"></script>
-<script src="bower_components/jquery.easy-pie-chart/dist/angular.easypiechart.min.js"></script>
-<script src="bower_components/jquery-flot/jquery.flot.js"></script>
-<script src="bower_components/jquery-flot/jquery.flot.resize.js"></script>
-<script src="bower_components/jquery-flot/jquery.flot.selection.js"></script>
-<script src="bower_components/jquery-flot/jquery.flot.time.js"></script>
-<script src="bower_components/angular-flot/angular-flot.js"></script>
-
-<!-- htmlbuild:script src -->
-<!-- /htmlbuild -->
-
-<!-- endbuild -->
-
+    <!-- endbuild -->
 </body>
 </html>
