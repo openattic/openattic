@@ -34,6 +34,8 @@ Version 2.0.9, (not released yet):
   which still requires manual intervention on EL7) (OP-820).
 * Installation: added tmpfiles.d/openattic.conf to the RPM package to
   re-create /var/lock/openattic after a reboot (OP-738)
+* Installation: Added missing pnp4nagios config files to openattic-module-
+  nagios RPM (OP-983)
 * Documentation: Improved the EL7 installation instructions
 
 Version 2.0.8, 1. Mar 2016:
