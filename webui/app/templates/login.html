@@ -41,3 +41,23 @@
         </div>
     </form>
 </div>
+
+
+<div class="login container-fluid">
+    <div class="row">
+        <div class="col-sm-6 col-md-6 col-lg-6 hidden-xs">
+            <img src="images/openattic_favicon_256x256.png" alt="openATTIC" class="pull-right">
+        </div>
+        <div class="col-xs-10 col-sm-6 col-md-6 col-lg-6 ">
+            <form name="loginForm" ng-submit="login()" novalidate>
+                <div class="form-group" ng-class="{'has-error': (submitted || loginForm.username.$dirty) && loginForm.username.$invalid}">
+                    <input name="username" type="text" ng-model="username" placeholder="Enter your username..." class="form-control" required auto-focus>
+                </div>
+                <div class="form-group" ng-class="{'has-error': (submitted || loginForm.password.$dirty)    && loginForm.password.$invalid}">
+                    <input name="username" type="text" ng-model="username" placeholder="Enter your username..." class="form-control" required auto-focus>
+                    <input ng-model="password" name="password" type="password" placeholder="Enter your password..." class="form-control" required>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
