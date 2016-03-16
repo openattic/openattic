@@ -4,9 +4,43 @@ openATTIC Changelog
 Version 2.0.9, (not released yet):
 ----------------------------------
 
+* WebUI: Review licenses of bower packages and NPM modules (OP-857)
+* WebUI: Update versions of bower dependencies (OP-904)
+* WebUI: Update versions of npm packages (OP-906)
+* WebUI/QA: Refactored "volumes add" E2E tests (OP-921)
 * Installation: Removed "oaconfig install <package>" functionality, as it
   wasn't portable and package installation should rather be performed by
   the dedicated OS tools (e.g. apt-get or yum) (OP-659)
+* Installation: Fixed error in "oaconfig install" that resulted in an
+  incomplete installation ("This command requires oacli to be
+  configured") (OP-950)
+* Monitoring: Removed hard-code path names in the openATTIC Nagios plugins,
+  created distribution-specific configuration files and added configuration
+  options for Nagios-specific settings (OP-842) (thanks to Eric Jackson for
+  the patch)
+* Installation: The Nagios plugins now use the distribution's default
+  directory /var/lib/nagios on EL7 to store runtime information (as
+  configured via the setting NAGIOS_STATE_DIR in
+  /etc/(default|sysconfig)/openattic) instead of /var/lib/nagios3 (which is
+  the default in Debian). Removed directory /var/lib/nagios3 from the
+  openattic-module-nagios RPM package.
+* Installation: Added missing package dependencies (bc, nagios-plugins-tcp)
+  to the openattic-plugin-monitoring RPM so that the "check_openattic_*"
+  Nagios plugins actually work on EL7 (OP-976, OP-977)
+* Installation: The Nagios plugins now read /etc/(default|sysconfig)/openattic
+  to obtain distribution-specific configuration options (esp. path names).
+  This makes them more portable across distributions and resolves most the
+  issues observed on EL7 and SLES12 (except for the pnp4nagios configuration,
+  which still requires manual intervention on EL7) (OP-820).
+* Installation: added tmpfiles.d/openattic.conf to the RPM package to
+  re-create /var/lock/openattic after a reboot (OP-738)
+* Installation: Added missing pnp4nagios config files to openattic-module-
+  nagios RPM (OP-983)
+* Installation: Added /etc/openattic to the openattic-base RPM (OP-982)
+* Documentation: Improved the EL7 installation instructions, added note 
+  about pnp4nagios configuration (OP-981)
+* Documentation: Restructured and refined the installation instructions
+* Documentation: Added trade mark notice
 
 Version 2.0.8, 1. Mar 2016:
 ---------------------------
