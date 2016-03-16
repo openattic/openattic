@@ -32,7 +32,15 @@ Version 2.0.9, (not released yet):
   This makes them more portable across distributions and resolves most the
   issues observed on EL7 and SLES12 (except for the pnp4nagios configuration,
   which still requires manual intervention on EL7) (OP-820).
-* Documentation: Improved the EL7 installation instructions
+* Installation: added tmpfiles.d/openattic.conf to the RPM package to
+  re-create /var/lock/openattic after a reboot (OP-738)
+* Installation: Added missing pnp4nagios config files to openattic-module-
+  nagios RPM (OP-983)
+* Installation: Added /etc/openattic to the openattic-base RPM (OP-982)
+* Documentation: Improved the EL7 installation instructions, added note 
+  about pnp4nagios configuration (OP-981)
+* Documentation: Restructured and refined the installation instructions
+* Documentation: Added trade mark notice
 
 Version 2.0.8, 1. Mar 2016:
 ---------------------------
