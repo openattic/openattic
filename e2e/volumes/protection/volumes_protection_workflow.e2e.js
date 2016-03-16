@@ -7,12 +7,6 @@ describe('Volume protection dialog', function(){
   var protection = element(by.css('.tc_setProtection > a'));
   var submit_button = element(by.id('bot2-Msg1'));
   var cancel_button = element(by.id('bot1-Msg1'));
-  var closePopup = function(){
-    var popup = element(by.css('.SmallBox .textoFull'));
-    if (popup.isDisplayed()){
-      popup.click();
-    }
-  }
 
   beforeAll(function(){
     helpers.login();
@@ -36,7 +30,6 @@ describe('Volume protection dialog', function(){
     expect(submit_button.getText()).toBe("Set protection");
 
     cancel_button.click();
-    closePopup();
   });
 
   it('should be able to set the volume protection', function(){
@@ -51,7 +44,7 @@ describe('Volume protection dialog', function(){
   it('should not allow to delete a protected volume', function(){
     // set volume protection and close dialog window
     cancel_button.click();
-    closePopup();
+    helpers.closePopup();
 
     // try to delete the volume
     volume.click();
@@ -62,14 +55,12 @@ describe('Volume protection dialog', function(){
 
     // the volume management should show an error message
     expect(element(by.css('.tc_notDeletable')).isDisplayed()).toBe(true);
-    closePopup();
   });
 
   it('should have a submit button named "Unset protection"', function(){
     expect(submit_button.getText()).toBe("Unset protection");
 
     cancel_button.click();
-    closePopup();
   });
 
   it('should be able to unset the volume protection', function(){
@@ -82,8 +73,12 @@ describe('Volume protection dialog', function(){
     expect(protectedColumn.element(by.className('fa-check')).isPresent()).toBe(false);
   });
 
+  afterEach(function(){
+    helpers.closePopup();
+  });
+
   afterAll(function(){
-    console.log('volumes_protection_workflow');
     helpers.delete_volume(volume, volumename);
+    console.log('volumes_protection_workflow');
   });
 });
