@@ -18,12 +18,24 @@
 from __future__ import division
 
 import sys
+import os
 import posix
 
 from time import time
 from optparse import OptionParser
 from ConfigParser import ConfigParser
+from configobj import ConfigObj
 
+distro_config = [ '/etc/default/openattic', '/etc/sysconfig/openattic' ]
+for filename in distro_config:
+    if os.path.isfile(filename):
+        config = ConfigObj(filename)
+        break
+
+sys.path.append(config['OADIR'])
+from nagios.conf.distro import distro_settings
+
+settings = distro_settings()
 
 sys_hz = posix.sysconf( posix.sysconf_names['SC_CLK_TCK'] )
 
@@ -67,7 +79,8 @@ del stats["cpu"]
 
 # load savedstate
 savedstate = ConfigParser()
-havestate  = bool( savedstate.read("/var/lib/nagios3/cputime") ) and savedstate.has_section("state")
+cputime = "{}/cputime".format(settings["NAGIOS_STATE_DIR"])
+havestate  = bool( savedstate.read(cputime) ) and savedstate.has_section("state")
 
 
 def wrapdiff(curr, last):
@@ -128,6 +141,6 @@ for field in stats:
 
 savedstate.set("state", "timestamp", time())
 
-savedstate.write( open( "/var/lib/nagios3/cputime", "wb" ) )
+savedstate.write( open( cputime, "wb" ) )
 
 sys.exit(exit)

@@ -3,18 +3,22 @@
 import logging
 import os
 
-from django.conf import settings
-
+if os.environ.get("DJANGO_SETTINGS_MODULE"):
+    from django.conf import settings
 
 def distro_settings():
     """
     Read the custom settings for a distribution to override defaults. Debian
     and Ubuntu use /etc/default/openattic. SUSE and RedHat use 
     /etc/sysconfig/openattic.
+
+    Returns a dict for non-Django environments
+    Sets settings object for Django environments
     """
     distro_specific = [ '/etc/default/openattic', '/etc/sysconfig/openattic' ]
     logger = logging.getLogger(__name__)
     
+    _settings = {}
     for filename in distro_specific:
         if os.path.isfile(filename):
             logger.info("Reading %s", filename)
@@ -25,5 +29,9 @@ def distro_settings():
                         key, value = line.split('=')
                         value = value.strip('"\'')
                         logger.debug("Setting %s=%s", key, value)
-                        setattr(settings, key, value)
+                        _settings[key] = value
+                        if os.environ.get("DJANGO_SETTINGS_MODULE"):
+                            setattr(settings, key, value)
+                        
+    return _settings
 
