@@ -17,7 +17,7 @@
 from rest_framework import serializers, viewsets
 from rest_framework.response import Response
 
-from ceph.models import Cluster, CrushmapVersion
+from ceph.models import Cluster, CrushmapVersion, CliModel, CephClusterCliModel
 
 
 class CrushmapVersionSerializer(serializers.ModelSerializer):
@@ -60,6 +60,41 @@ class ClusterViewSet(viewsets.ModelViewSet):
         return Response(cluster_ser.data)
 
 
+class CliSerializer(serializers.ModelSerializer):
+
+    class Meta:
+        model = CliModel
+
+
+class CliCephClusterSerializer(CliSerializer):
+
+    class Meta:
+        model = CephClusterCliModel
+        fields = ('fsid', 'name')
+
+
+class CliViewSet(viewsets.ModelViewSet):
+    serializer_class = CliSerializer
+
+
+class CephClusterViewSet(CliViewSet):
+    queryset = CephClusterCliModel.all()
+    serializer_class = CliCephClusterSerializer
+
+#     def list(self, request, *args, **kwargs):
+#
+#         # obj = CephClusterCliModel(**result)  # Normally done by the manager
+#         queryset = self.get_queryset()
+#         queryset = self.paginate_queryset(queryset)
+#         print queryset.paginator.count
+#         ser = CliCephClusterSerializer(queryset, context={"request": request}, many=True)
+#         # ser = CliCephClusterSerializer(result[0], context={"request": request}, many=False)
+#         return Response(ser.data)
+
+    #def retrieve(self, request, *args, **kwargs):
+    #     return Response({})
+
 RESTAPI_VIEWSETS = [
+    ('ceph', CephClusterViewSet, 'ceph'),
     ('cephclusters', ClusterViewSet, 'cephcluster')
 ]
