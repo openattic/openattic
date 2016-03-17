@@ -1,13 +1,38 @@
 /* Basics */
-html, body {
+html,
+body {
   height: 100%;
+  font-size: 12px;
 }
-.main {
+.full-height {
   height: 100%;
 }
 .vertical-align {
-    display: flex;
-    align-items: center;
+  display: flex;
+  align-items: center;
+}
+.loading {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+}
+
+/* Grid */
+.container,
+.container-fluid {
+  padding-left: 20px;
+  padding-right: 20px;
+}
+.row {
+  margin-left: -20px;
+  margin-right: -20px;
+}
+.col-lg-1, .col-lg-10, .col-lg-11, .col-lg-12, .col-lg-2, .col-lg-3, .col-lg-4, .col-lg-5, .col-lg-6, .col-lg-7, .col-lg-8, .col-lg-9,
+.col-md-1, .col-md-10, .col-md-11, .col-md-12, .col-md-2, .col-md-3, .col-md-4, .col-md-5, .col-md-6, .col-md-7, .col-md-8, .col-md-9,
+.col-sm-1, .col-sm-10, .col-sm-11, .col-sm-12, .col-sm-2, .col-sm-3, .col-sm-4, .col-sm-5, .col-sm-6, .col-sm-7, .col-sm-8, .col-sm-9,
+.col-xs-1, .col-xs-10, .col-xs-11, .col-xs-12, .col-xs-2, .col-xs-3, .col-xs-4, .col-xs-5, .col-xs-6, .col-xs-7, .col-xs-8, .col-xs-9 {
+  padding-left: 20px;
+  padding-right: 20px;
 }
 
 /* Branding */
@@ -15,7 +40,7 @@ html, body {
 .navbar-openattic .navbar-brand:hover{
   color: #ececec;
   height: auto;
-  margin: 15px 0 15px 25px;
+  margin: 15px 0 15px 20px;
   padding: 0;
   -webkit-align-self: flex-start;
   align-self: flex-start;
@@ -31,6 +56,7 @@ html, body {
   border: 0;
   border-radius: 0;
   border-top: 4px solid #288cea;
+  font-size: 1.2em;
 }
 .navbar-openattic .navbar-header {
   display: flex;
@@ -54,7 +80,7 @@ html, body {
   box-shadow: 0 0 3px #fff;
 }
 .navbar-openattic .navbar-collapse {
-  padding: 0 5px;
+  padding: 0;
 }
 .navbar-openattic .navbar-nav>li>a {
   color: #ececec;
@@ -122,9 +148,6 @@ html, body {
   .navbar-openattic .navbar-collapse {
     padding: 0;
   }
-  .navbar-openattic .navbar-collapse .navbar-nav>li>a {
-    padding: 10px 25px;
-  }
   .navbar-nav .open .dropdown-menu {
     padding-top: 0;
     padding-bottom: 0;
@@ -177,12 +200,25 @@ html, body {
 
 /* Login */
 .login {
+  height: 100%;
+}
+.login .icon-bar {
+  position: absolute;
+  margin: 0;
+  padding: 0;
+  bottom: 10px;
+  left: 10px;
+}
+.login .icon-bar>a {
+  color: #ececec;
+  text-decoration: none;
+}
+.login .icon-bar>a .fa-dark {
+  color: #474544;
+}
+.login .row {
   color: #ececec;
   background-color: #474544;
-}
-.login,
-.login .row {
-  height: 100%;
 }
 .login h1 {
   margin-top: 0;
@@ -214,8 +250,91 @@ html, body {
 }
 
 /* Buttons */
+.btn-primary {
+  color: #ececec;
+  background-color: #288cea;
+  border-color: #288cea;
+}
 .btn-openattic {
   color: #ececec;
   background-color: #288cea;
   border-color: #288cea;
+}
+
+/* Breadcrumb */
+.breadcrumb {
+  padding: 8px 0;
+  background-color: transparent;
+  border-radius: 0;
+}
+.breadcrumb>li+li:before {
+    padding: 0 5px 0 7px;
+    color: #474544;
+    font-family: "FontAwesome";
+    content: "\f101";
+}
+.breadcrumb>li>span {
+  color: #474544;
+}
+
+/* Hyperlink */
+a {
+  color: #288cea;
+}
+a:hover,
+a:focus{
+  color: #474544;
+}
+
+/* Datatables */
+.dataTables_wrapper {
+  border: 1px solid #dddddd;
+}
+.dataTables_wrapper .table {
+  border-left: 0;
+  border-right: 0;
+}
+.dataTables_wrapper table th,
+.dataTables_wrapper table td {
+  border-left: 0;
+}
+
+.dataTables_wrapper .table-bordered>thead>tr>th:first-child,
+.dataTables_wrapper .table-bordered>thead>tr>td:first-child,
+.dataTables_wrapper .table-bordered>tbody>tr>th:first-child,
+.dataTables_wrapper .table-bordered>tbody>tr>td:first-child{
+  border-left: 0px;
+}
+.dataTables_wrapper .table-bordered>tbody>tr>td,
+.dataTables_wrapper .table-bordered>tbody>tr>th,
+.dataTables_wrapper .table-bordered>thead>tr>td,
+.dataTables_wrapper .table-bordered>thead>tr>th {
+  border-right: 0px;
+}
+
+
+
+
+.center {
+    margin-top:50px;
+}
+
+.modal-header {
+	padding-bottom: 5px;
+}
+
+.modal-footer {
+    	padding: 0;
+	}
+
+.modal-footer .btn-group button {
+	height:40px;
+	border-top-left-radius : 0;
+	border-top-right-radius : 0;
+	border: none;
+	border-right: 1px solid #ddd;
+}
+
+.modal-footer .btn-group:last-child > button {
+	border-right: 0;
 }
