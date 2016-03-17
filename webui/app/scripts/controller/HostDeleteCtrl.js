@@ -47,12 +47,16 @@ app.controller("HostDeleteCtrl", function ($scope, HostService, $uibModalInstanc
     $scope.cancel = function () {
       $uibModalInstance.dismiss("cancel");
 
-      $.smallBox({
-        title: "Delete host",
-        content: "<i class=\"fa fa-clock-o\"></i> <i>Cancelled</i>",
-        color: "#C46A69",
-        iconSmall: "fa fa-times fa-2x fadeInRight animated",
-        timeout: 4000
+      toasty.warning({
+        title: 'Ping!',
+        msg: '<a href="http://google.com">Take me to Google!</a>',
+        showClose: false,
+        clickToClose: true,
+        timeout: 10000,
+        sound: false,
+        html: true,
+        shake: true,
+        theme: 'bootstrap'
       });
     };
   });

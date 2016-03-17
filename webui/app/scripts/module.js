@@ -51,7 +51,8 @@ angular.module("openattic", [
   "openattic.clusterstatuswidget",
   "openattic.oaWizards",
   "openattic.userinfo",
-  "openattic.required"
+  "openattic.required",
+  "angular-toasty"
 ]);
 
 var app = angular.module("openattic");
