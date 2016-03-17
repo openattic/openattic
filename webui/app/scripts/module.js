@@ -40,6 +40,7 @@ angular.module("openattic", [
   "ngTagsInput",
   "ncy-angular-breadcrumb",
   "angular-md5",
+  "angular-toasty",
   "openattic.navigation",
   "openattic.auth",
   "openattic.apirecorder",
@@ -51,8 +52,7 @@ angular.module("openattic", [
   "openattic.clusterstatuswidget",
   "openattic.oaWizards",
   "openattic.userinfo",
-  "openattic.required",
-  "angular-toasty"
+  "openattic.required"
 ]);
 
 var app = angular.module("openattic");
