@@ -30,26 +30,21 @@ from systemd.helpers import Transaction
 from ifconfig.models import Host
 from volumes.models import StorageObject, FileSystemVolume, VolumePool, BlockVolume
 
-from nodb.models import QuerySet as QS
+from nodb.models import QuerySet, NodbModel
 
 
-class CliModel(models.Model):
 
-    @classmethod
-    def all(cls):
-        return QS(cls)
+class CephClusterNodbModel(NodbModel):
 
-
-class CephClusterCliModel(CliModel):
     fsid = models.CharField(max_length=36, primary_key=True)
     name = models.CharField(max_length=100)
 
     class Meta:
         managed = False
 
-    def __init__(self, **kwargs):  # TODO We need that constructor in the CliModel class (more generic than this one).
-        self.fsid = kwargs['fsid']
-        self.name = kwargs['name']
+    @classmethod
+    def all(cls):
+        return QuerySet(cls)
 
     @staticmethod
     def get_cluster_names():
@@ -61,14 +56,10 @@ class CephClusterCliModel(CliModel):
 
     @staticmethod
     def get_all_objects():
-        # TODO move the imports to the top of the file when done with testing.
-        from systemd import get_dbus_object, dbus_to_python
-        import json
-
         result = []
-        for cluster_name in CephClusterCliModel.get_cluster_names():
+        for cluster_name in CephClusterNodbModel.get_cluster_names():
             fsid = json.loads(dbus_to_python(get_dbus_object('/ceph').ceph_fsid(cluster_name)))['fsid']
-            result.append(CephClusterCliModel(fsid=fsid, name=cluster_name))
+            result.append(CephClusterNodbModel(fsid=fsid, name=cluster_name))
 
         return result
 

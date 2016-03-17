@@ -1,6 +1,27 @@
 from copy import copy
-#from django.db.models.query import QuerySet as _QuerySet
 from django.db.models import query
+from django.db import models
+
+
+
+class NodbModel(models.Model):
+
+    class Meta:
+        managed = False
+        abstract = True
+
+    def __init__(self, **kwargs):
+        for key, value in kwargs.items():
+            setattr(self, key, value)
+
+    @classmethod
+    def all(cls):
+        return QuerySet(cls)
+
+    @staticmethod
+    def get_all_objects():
+        msg = 'Every NodbModel must implement its own get_all_objects() method.'
+        raise NotImplementedError(msg)
 
 
 class QuerySet(query.QuerySet):
@@ -24,13 +45,25 @@ class QuerySet(query.QuerySet):
     def __getitem__(self, index):
         return self._data[index]
 
-#     def __getattribute__(self, name):
-#         print self.__hash__
-#         print self.__dict__
-#         if name not in vars(QuerySet):
-#             raise NotImplementedError(name)
-# 
-#         return super(QuerySet, self).__getattribute__(name)
+    def __getattribute__(self, attr_name):
+        try:  # Just return own attributes.
+            own_attr = super(QuerySet, self).__getattribute__(attr_name)
+        except AttributeError:
+            pass
+        else:
+            return own_attr
+
+        if attr_name in vars(self) or attr_name in vars(QuerySet):
+            attr = self.oInstance.__getattribute__(attr_name)
+            return attr
+
+        msg = 'Call to an attribute `{}` of {} which isn\'t intended to be accessed directly.'
+        msg = msg.format(attr_name, QuerySet)
+        raise AttributeError(msg)
+
+    def _clone(self):
+        return QuerySet(self.model)
+
 
     def count(self):
         return len(self._data)
@@ -54,9 +87,6 @@ class QuerySet(query.QuerySet):
                 num
             )
         )
-
-    def _clone(self):
-        return QuerySet(self.model)
 
     def filter(self, **kwargs):
         def f(obj):
