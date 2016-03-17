@@ -313,3 +313,8 @@ a:focus{
   display: block;
   margin: 0;
 }
+
+/* Modal */
+.modal {
+padding: 20px;
+}
