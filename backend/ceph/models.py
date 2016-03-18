@@ -33,18 +33,10 @@ from volumes.models import StorageObject, FileSystemVolume, VolumePool, BlockVol
 from nodb.models import QuerySet, NodbModel
 
 
-
 class CephClusterNodbModel(NodbModel):
 
     fsid = models.CharField(max_length=36, primary_key=True)
     name = models.CharField(max_length=100)
-
-    class Meta:
-        managed = False
-
-    @classmethod
-    def all(cls):
-        return QuerySet(cls)
 
     @staticmethod
     def get_cluster_names():
