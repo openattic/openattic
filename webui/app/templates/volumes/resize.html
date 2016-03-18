@@ -1,35 +1,39 @@
-<span class="MsgTitle">Resize volume "{{volume.name}}"</span>
-<p class="pText">You can resize the volume here. In order to do that enter the new volume size please.
-    The maximum volume size can be found below.
-</p>
-<p class="input-group">
-    <form name="input.resizeForm" role="form" class="form-horizontal" novalidate>
-        <div class="form-group" ng-class="{'has-error': (submitted || input.resizeForm.newsize.$dirty)
-            && input.resizeForm.newsize.$invalid}">
-            <div class="col-md-8">
-                <input type="text" class="form-control" id="newsize" placeholder="{{volume.usage.size_text}}"
-                       ng-model="input.newsize" name="newsize" ng-class="{'thicker-border': (submitted
-                       || input.resizeForm.newsize.$dirty) && input.resizeForm.newsize.$invalid}"
-                       max-value="{{pool.usage.max_new_fsv}}" min-value="{{volume.usage.size_text}}" volume-size-format
-                       volume-size-value required autofocus/>
-                <p>{{pool.usage.max_new_fsv_text}} free</p>
-                <span class="help-block tc_required" ng-show="(submitted || input.resizeForm.newsize.$dirty) &&
-                    input.resizeForm.newsize.$error.required">
-                    This field is required!
-                </span>
-                <span class="help-block tc_noValidNumber" ng-show="input.resizeForm.newsize.$error.volumeSizeFormat">
-                    This is not a valid number.
-                </span>
-                <span class="help-block tc_wrongSize" ng-show="input.resizeForm.newsize.$error.volumeSizeValue">
-                    The size must greater than {{volume.usage.size_text}} and must not exceed {{pool.usage.max_new_fsv_text}}.
-                </span>
-                <div class="MessageBoxButtonSection">
-                    <div>
-                        <button id="bot2-Msg1" class="btn btn-default btn-sm botTempo" ng-click="resize()"> Resize</button>
-                        <button id="bot1-Msg1" class="btn btn-default btn-sm botTempo" ng-click="cancel()"> Cancel</button>
-                    </div>
-                </div>
+<div class="openattic-modal-header">
+    <span>Resize Volume</span>
+</div>
+<div class="openattic-modal-content">
+    <p>You have selected to resize the volume <strong>{{volume.name}}</strong>.</p>
+    <p>
+        If this was the action that you wanted to do, please enter the new volume size and confirm your choice, or cancel and return to the page.
+        The maximum volume size can be found below.
+    </p>
+
+    <form name="input.resizeForm" role="form" novalidate>
+        <div class="form-group"
+             ng-class="{'has-error': (submitted || input.resizeForm.newsize.$dirty)  && input.resizeForm.newsize.$invalid}">
+            <input type="text" class="form-control" id="newsize" name="newsize" placeholder="{{volume.usage.size_text}}"
+                   ng-model="input.newsize" min-value="{{volume.usage.size_text}}" max-value="{{pool.usage.max_new_fsv}}"
+                   ng-class="{'thicker-border': (submitted || input.resizeForm.newsize.$dirty) && input.resizeForm.newsize.$invalid}"
+                   volume-size-format volume-size-value required autofocus>
+            <p>{{pool.usage.max_new_fsv_text}} free</p>
+
+            <span class="help-block tc_required"
+                  ng-show="(submitted || input.resizeForm.newsize.$dirty) && input.resizeForm.newsize.$error.required">
+                This field is required!
+            </span>
+            <span class="help-block tc_noValidNumber" ng-show="input.resizeForm.newsize.$error.volumeSizeFormat">
+                This is not a valid number.
+            </span>
+            <span class="help-block tc_wrongSize" ng-show="input.resizeForm.newsize.$error.volumeSizeValue">
+                The size must greater than {{volume.usage.size_text}} and must not exceed {{pool.usage.max_new_fsv_text}}.
+            </span>
+        </div>
+
+        <div class="MessageBoxButtonSection">
+            <div>
+                <button id="bot2-Msg1" class="btn btn-default btn-sm botTempo" ng-click="resize()">Resize</button>
+                <button id="bot1-Msg1" class="btn btn-default btn-sm botTempo" ng-click="cancel()">Cancel</button>
             </div>
         </div>
     </form>
-</p>
+</div>
