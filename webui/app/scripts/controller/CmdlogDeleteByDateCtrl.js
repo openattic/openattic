@@ -31,7 +31,7 @@
 "use strict";
 
 var app = angular.module("openattic");
-app.controller("CmdlogDeleteByDateCtrl", function ($scope, CmdlogService, $uibModalInstance) {
+app.controller("CmdlogDeleteByDateCtrl", function ($scope, CmdlogService, $uibModalInstance, toasty) {
   $scope.datePicker = {
     opened: false,
     maxDate: null,
@@ -64,12 +64,9 @@ app.controller("CmdlogDeleteByDateCtrl", function ($scope, CmdlogService, $uibMo
   $scope.no = function () {
     $uibModalInstance.dismiss("cancel");
 
-    $.smallBox({
+    toasty.warning({
       title: "Delete log entry",
-      content: "<i class=\"fa fa-clock-o\"></i> <i>Cancelled</i>",
-      color: "#C46A69",
-      iconSmall: "fa fa-times fa-2x fadeInRight animated",
-      timeout: 4000
+      msg: "Cancelled"
     });
   };
 });

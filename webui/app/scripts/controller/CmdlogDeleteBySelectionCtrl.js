@@ -31,7 +31,8 @@
 "use strict";
 
 var app = angular.module("openattic");
-app.controller("CmdlogDeleteBySelectionCtrl", function ($scope, CmdlogService, $uibModalInstance, $filter, selection) {
+app.controller("CmdlogDeleteBySelectionCtrl", function ($scope, CmdlogService, $uibModalInstance, $filter, selection,
+    toasty) {
   $scope.selectionLength = selection.length;
   $scope.itemText = false;
   if (selection.length === 1) {
@@ -56,12 +57,9 @@ app.controller("CmdlogDeleteBySelectionCtrl", function ($scope, CmdlogService, $
   $scope.no = function () {
     $uibModalInstance.dismiss("cancel");
 
-    $.smallBox({
+    toasty.warning({
       title: "Delete log entry",
-      content: "<i class=\"fa fa-clock-o\"></i> <i>Cancelled</i>",
-      color: "#C46A69",
-      iconSmall: "fa fa-times fa-2x fadeInRight animated",
-      timeout: 4000
+      msg: "Cancelled"
     });
   };
 });
