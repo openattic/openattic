@@ -175,13 +175,6 @@ body {
   .navbar-openattic .navbar-primary>.active>a:focus {
     background-color: #288cea;
   }
-
-  .navbar-openattic .tc_api-recorder a:after {
-    content: ";
-  }
-  .navbar-openattic .tc_logout a:after {
-    content: "";
-  }
 }
 
 /* Dropdown */
