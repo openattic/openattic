@@ -3,28 +3,40 @@
         <div class="col-sm-6 hidden-xs">
             <img src="images/openattic_favicon_256x256.png" alt="openATTIC" class="pull-right">
         </div>
-        <div class="col-xs-10 col-sm-4 col-md-4 col-lg-3 col-xs-offset-1 col-sm-offset-0 col-md-offset-0 col-lg-offset-0">
+        <div class="col-xs-10 col-sm-4 col-lg-3 col-xs-offset-1 col-sm-offset-0 col-md-offset-0 col-lg-offset-0">
             <h1>Sign in</h1>
             <form name="loginForm" ng-submit="login()" novalidate>
-                <div class="form-group" ng-class="{'has-error': (submitted || loginForm.username.$dirty) && loginForm.username.$invalid}">
-                    <input name="username" type="text" ng-model="username" placeholder="Enter your username..." class="form-control" required auto-focus>
+                <!-- username -->
+                <div class="form-group has-feedback"
+                     ng-class="{'has-error': (submitted || loginForm.username.$dirty) && loginForm.username.$invalid}">
+                    <input name="username" ng-model="username" type="text" placeholder="Enter your username..."
+                           class="form-control" required autofocus
+                           uib-tooltip="{{fieldRequired}}"
+                           tooltip-class="tc_usernameRequired"
+                           tooltip-trigger="none"
+                           tooltip-is-open="(submitted || loginForm.username.$dirty)&& loginForm.username.$error.required">
+                    <span class="glyphicon glyphicon-remove form-control-feedback" aria-hidden="true"
+                          ng-show="loginForm.username.$invalid"></span>
                 </div>
-                <span class="help-block tc_usernameRequired" ng-show="(submitted || loginForm.username.$dirty)
-                              && loginForm.username.$error.required" ng-bind="fieldRequired">
-                </span>
+                <!-- end username -->
 
-                <div class="form-group" ng-class="{'has-error': (submitted || loginForm.password.$dirty)    && loginForm.password.$invalid}">
-                    <input name="password" type="password" ng-model="password" placeholder="Enter your password..." class="form-control" required>
+                <!-- password -->
+                <div class="form-group has-feedback"
+                     ng-class="{'has-error': (submitted || loginForm.password.$dirty) && loginForm.password.$invalid}">
+                    <input name="password" type="password" ng-model="password" placeholder="Enter your password..."
+                           class="form-control" required
+                           uib-tooltip="{{fieldRequired}}"
+                           tooltip-class="tc_passwdRequired"
+                           tooltip-is-open="(submitted || loginForm.password.$dirty) && loginForm.password.$error.required">
+                    <span class="glyphicon glyphicon-remove form-control-feedback" aria-hidden="true"
+                          ng-show="loginForm.password.$invalid"></span>
                 </div>
-                <span class="help-block tc_passwdRequired" ng-show="(submitted || loginForm.password.$dirty)
-                              && loginForm.password.$error.required" ng-bind="fieldRequired">
-                </span>
+                <!-- end password -->
 
-                <span class="errorbox" ng-show="submitted && loginFailed && (!loginForm.username.$error.required && !loginForm.password.$error.required)" ng-bind="correctInput">
-
-                </span>
-
-                <button type="submit" class="btn btn-openattic btn-block">login</button>
+                <input type="submit" class="btn btn-openattic btn-block" value="login"
+                       uib-tooltip="{{correctInput}}"
+                       tooltip-class="tc_correctInput"
+                       tooltip-is-open="submitted && loginFailed && (!loginForm.username.$error.required && !loginForm.password.$error.required)">
             </form>
         </div>
     </div>
