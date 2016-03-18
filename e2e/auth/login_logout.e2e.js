@@ -6,8 +6,7 @@ describe('should test the login', function(){
   var passwd = element(by.model('password'));
   var nameRequired = element(by.css('.tc_usernameRequired'));
   var passwdRequired = element(by.css('.tc_passwdRequired'));
-  var correctInput = element(by.binding('correctInput'));
-  var oaLogo = element(by.css('#logo a'));
+  var correctInput = element(by.css('.tc_correctInput'));
 
   var submitBtn = element(by.css('input[type="submit"]'));
 
@@ -65,7 +64,7 @@ describe('should test the login', function(){
     expect(nameRequired.getText()).toBe('This field is required.');
     expect(passwdRequired.isDisplayed()).toBe(true);
     expect(passwdRequired.getText()).toBe('This field is required.');
-    expect(correctInput.isDisplayed()).toBe(false);
+    expect(correctInput.isPresent()).toBe(false);
   });
 
   it('should display an error message if given credentials are incorrect', function(){
@@ -80,13 +79,8 @@ describe('should test the login', function(){
     submitBtn.click();
     expect(correctInput.isDisplayed()).toBe(true);
     expect(correctInput.getText()).toBe('The given credentials are not correct.');
-    expect(nameRequired.isDisplayed()).toBe(false);
-    expect(passwdRequired.isDisplayed()).toBe(false);
+    expect(nameRequired.isPresent()).toBe(false);
+    expect(passwdRequired.isPresent()).toBe(false);
 
-  });
-
-  it('clicking the openattic logo should not redirect to dashboard if user is not logged in', function(){
-    oaLogo.click();
-    expect(browser.getCurrentUrl()).toContain('/openattic/#/login');
   });
 });
