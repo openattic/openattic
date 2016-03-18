@@ -16,7 +16,7 @@
                            tooltip-trigger="none"
                            tooltip-is-open="(submitted || loginForm.username.$dirty)&& loginForm.username.$error.required">
                     <span class="glyphicon glyphicon-remove form-control-feedback" aria-hidden="true"
-                          ng-show="loginForm.username.$invalid"></span>
+                          ng-show="(submitted || loginForm.username.$dirty) && loginForm.username.$invalid"></span>
                 </div>
                 <!-- end username -->
 
@@ -29,7 +29,7 @@
                            tooltip-class="tc_passwdRequired"
                            tooltip-is-open="(submitted || loginForm.password.$dirty) && loginForm.password.$error.required">
                     <span class="glyphicon glyphicon-remove form-control-feedback" aria-hidden="true"
-                          ng-show="loginForm.password.$invalid"></span>
+                          ng-show="(submitted || loginForm.password.$dirty) && loginForm.password.$invalid"></span>
                 </div>
                 <!-- end password -->
 
