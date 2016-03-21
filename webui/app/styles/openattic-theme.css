@@ -243,11 +243,6 @@ body {
 }
 
 /* Buttons */
-.btn-primary {
-  color: #ececec;
-  background-color: #288cea;
-  border-color: #288cea;
-}
 .btn-openattic {
   color: #ececec;
   background-color: #288cea;
@@ -324,20 +319,20 @@ a:focus{
 
 .modal .modal-content {
   background-color: #ececec;
+  -webkit-box-shadow: inset 0px 0px 20px 5px rgba(0,0,0,0.20);
+  -moz-box-shadow: inset 0px 0px 20px 5px rgba(0,0,0,0.20);
+  box-shadow: inset 0px 0px 20px 5px rgba(0,0,0,0.20);
 }
 .modal .modal-content .openattic-modal-header,
 .modal .modal-content .openattic-modal-content,
 .modal .modal-content .openattic-modal-footer {
   padding: 10px 20px;
 }
-.modal .modal-content .openattic-modal-header,
-.modal .modal-content .openattic-modal-content {
-  border-bottom: 1px solid #dddddd;
-}
+
 .modal .modal-content .openattic-modal-header span {
   display: block;
   font-size: 2em;
 }
 .modal .modal-content .openattic-modal-content p {
-  margin: 0;
+  margin-bottom: 10px;
 }
