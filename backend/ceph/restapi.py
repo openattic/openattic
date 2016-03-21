@@ -17,7 +17,7 @@
 from rest_framework import serializers, viewsets
 from rest_framework.response import Response
 
-from ceph.models import Cluster, CrushmapVersion, NodbModel, CephClusterNodbModel
+from ceph.models import Cluster, CrushmapVersion, NodbModel, CephClusterNodbModel, CephPoolNodbModel
 from nodb.restapi import NodbSerializer, NodbViewSet
 
 
@@ -69,11 +69,26 @@ class CephClusterSerializer(NodbSerializer):
 
 
 class CephClusterViewSet(NodbViewSet):
+
     queryset = CephClusterNodbModel.all()
     serializer_class = CephClusterSerializer
 
 
+class CephPoolSerializer(NodbSerializer):
+
+    class Meta:
+        model = CephPoolNodbModel
+        fields = ()
+
+
+class CephPoolViewSet(NodbViewSet):
+
+    queryset = CephPoolNodbModel.all()
+    serializer_class = CephPoolSerializer
+
+
 RESTAPI_VIEWSETS = [
-    ('ceph', CephClusterViewSet, 'ceph'),
+    ('ceph/clusters', CephClusterViewSet, 'ceph'),
+    ('ceph/pools', CephPoolViewSet, 'ceph'),
     ('cephclusters', ClusterViewSet, 'cephcluster')
 ]

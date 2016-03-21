@@ -1,10 +1,8 @@
 from copy import copy
-from django.db.models import query
-from django.db import models
+from django.db.models import Model, query
 
 
-
-class NodbModel(models.Model):
+class NodbModel(Model):
 
     class Meta:
         managed = False

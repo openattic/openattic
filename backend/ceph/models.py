@@ -31,6 +31,7 @@ from ifconfig.models import Host
 from volumes.models import StorageObject, FileSystemVolume, VolumePool, BlockVolume
 
 from nodb.models import QuerySet, NodbModel
+from ceph.librados import client as rados
 
 
 class CephClusterNodbModel(NodbModel):
@@ -55,6 +56,33 @@ class CephClusterNodbModel(NodbModel):
 
         return result
 
+
+class CephPoolNodbModel(NodbModel):
+
+    name = models.CharField(max_length=100, primary_key=True)
+    num_bytes = models.IntegerField()
+    num_kb = models.IntegerField()
+    num_object_clones = models.IntegerField()
+    num_object_copies = models.IntegerField()
+    num_objects = models.IntegerField()
+    num_objects_degraded = models.IntegerField()
+    num_objects_missing_on_primary = models.IntegerField()
+    num_objects_unfound = models.IntegerField()
+    num_rd = models.IntegerField()
+    num_rd_kb = models.IntegerField()
+    num_wr = models.IntegerField()
+    num_wr_kb = models.IntegerField()
+
+    @staticmethod
+    def get_all_objects():
+        result = []
+        for pool_name in rados.list_pools():
+            pool_stats = rados.get_stats(pool_name)
+            stats = pool_stats.copy()
+            stats['name'] = pool_name
+            result.append(CephPoolNodbModel(**stats))
+
+        return result
 
 class Cluster(StorageObject):
     AUTH_CHOICES = (
