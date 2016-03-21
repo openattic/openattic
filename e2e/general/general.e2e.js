@@ -10,9 +10,7 @@ describe('General', function(){
   var hostsItem = menuItems.get(4);
   var systemItem = menuItems.get(5);
 
-  var oaLogo = element(by.css('#logo a'));
-  var hideBtn = element(by.css('#hide-menu a'));
-  var minifyArrow = element(by.css('.minifyme'));
+  var oaLogo = element(by.css('.tc_logo_component a'));
   var fullscreenBtn = element(by.id('fullscreen'));
 
   beforeAll(function(){
