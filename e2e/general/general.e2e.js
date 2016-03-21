@@ -59,7 +59,7 @@ describe('General', function(){
 
   it('system should have "User", "Command Logs" and "CRUSH Map" as submenu items', function(){
     expect(systemItem.all(by.css('ul .tc_submenuitem')).get(0).getText()).toEqual('Users');
-    expect(systemItem.all(by.css('ul .tc_submenuitem')).get(1).getText()).toEqual('Command Logs');
+    expect(systemItem.all(by.css('ul .tc_submenuitem')).get(1).getText()).toEqual('Command Log');
     expect(systemItem.all(by.css('ul .tc_submenuitem')).get(2).getText()).toEqual('CRUSH Map');
   });
 
