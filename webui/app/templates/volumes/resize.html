@@ -15,8 +15,8 @@
                    ng-model="input.newsize" min-value="{{volume.usage.size_text}}" max-value="{{pool.usage.max_new_fsv}}"
                    ng-class="{'thicker-border': (submitted || input.resizeForm.newsize.$dirty) && input.resizeForm.newsize.$invalid}"
                    volume-size-format volume-size-value required autofocus>
-            <p>{{pool.usage.max_new_fsv_text}} free</p>
 
+            <!-- Error -->
             <span class="help-block tc_required"
                   ng-show="(submitted || input.resizeForm.newsize.$dirty) && input.resizeForm.newsize.$error.required">
                 This field is required!
@@ -27,13 +27,14 @@
             <span class="help-block tc_wrongSize" ng-show="input.resizeForm.newsize.$error.volumeSizeValue">
                 The size must greater than {{volume.usage.size_text}} and must not exceed {{pool.usage.max_new_fsv_text}}.
             </span>
+            <!-- end Error -->
+
+            <p>{{pool.usage.max_new_fsv_text}} free</p>
         </div>
 
-        <div class="MessageBoxButtonSection">
-            <div>
-                <button id="bot2-Msg1" class="btn btn-default btn-sm botTempo" ng-click="resize()">Resize</button>
-                <button id="bot1-Msg1" class="btn btn-default btn-sm botTempo" ng-click="cancel()">Cancel</button>
-            </div>
+        <div class="button-group">
+            <button id="bot2-Msg1" class="btn btn-success btn-sm botTempo" ng-click="resize()">Resize</button>
+            <button id="bot1-Msg1" class="btn btn-danger btn-sm botTempo" ng-click="cancel()">Cancel</button>
         </div>
     </form>
 </div>
