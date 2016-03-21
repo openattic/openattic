@@ -63,25 +63,6 @@ describe('General', function(){
     expect(systemItem.all(by.css('ul .tc_submenuitem')).get(2).getText()).toEqual('CRUSH Map');
   });
 
-  it('should have a collapse menu button', function(){
-    expect(hideBtn.isDisplayed()).toBe(true);
-  });
-
-  it('should click "collapse menu" button and check if associated css class is set', function(){
-    hideBtn.click();
-    expect(element(by.css('.hidden-menu')).isPresent()).toBe(true);
-    hideBtn.click();
-    expect(element(by.css('.hidden-menu')).isPresent()).toBe(false);
-  });
-
-  it('should check minify arrow ', function(){
-    minifyArrow.click();
-    expect(element(by.css('.minified')).isPresent()).toBe(true);
-
-    minifyArrow.click();
-    expect(element(by.css('.minified')).isPresent()).toBe(false);
-  });
-
   it('should check if the openATTIC logo is visible', function(){
     expect(oaLogo.isDisplayed()).toBe(true);
   });
