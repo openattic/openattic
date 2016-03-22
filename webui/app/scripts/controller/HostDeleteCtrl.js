@@ -48,8 +48,8 @@ app.controller("HostDeleteCtrl", function ($scope, HostService, $uibModalInstanc
       $uibModalInstance.dismiss("cancel");
 
       toasty.warning({
-        title: 'Delete host',
-        msg: 'Cancelled'
+        title: "Delete host",
+        msg: "Cancelled"
       });
     };
   });

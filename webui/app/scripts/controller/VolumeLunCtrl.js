@@ -78,7 +78,7 @@ app.controller("VolumeLunCtrl", function ($scope, $state, LunService, $uibModal)
       templateUrl: "templates/volumes/delete-lun.html",
       controller: "LunDeleteCtrl",
       reslove: {
-        lun: function (){
+        lun: function () {
           return $scope.lunSelection.item;
         }
       }

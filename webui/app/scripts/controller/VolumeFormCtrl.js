@@ -103,7 +103,7 @@ app.controller("VolumeFormCtrl", function ($scope, $state, VolumeService, PoolSe
       } else if (!$scope.state.mirrored && $scope.data.mirrorHost !== "") {
         toasty.warning({
           title: "Mirror Volume",
-          msg: "Sorry, we haven\'t implemented that yet.",
+          msg: "Sorry, we haven\'t implemented that yet."
         });
       } else if (!$scope.state.formatted) {
         new VolumeService({

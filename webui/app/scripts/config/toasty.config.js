@@ -31,7 +31,7 @@
 "use strict";
 
 var app = angular.module("openattic");
-app.config(["toastyConfigProvider", function(toastyConfigProvider) {
+app.config(["toastyConfigProvider", function (toastyConfigProvider) {
   toastyConfigProvider.setConfig({
     sound:        false,
     shake:        false,
