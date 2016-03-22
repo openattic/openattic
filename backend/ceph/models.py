@@ -30,7 +30,7 @@ from systemd.helpers import Transaction
 from ifconfig.models import Host
 from volumes.models import StorageObject, FileSystemVolume, VolumePool, BlockVolume
 
-from nodb.models import QuerySet, NodbModel
+from nodb.models import NodbModel
 from ceph.librados import client as rados
 
 
@@ -73,13 +73,19 @@ class CephPoolNodbModel(NodbModel):
     num_wr = models.IntegerField()
     num_wr_kb = models.IntegerField()
 
+    fsid = models.ForeignKey(CephClusterNodbModel)
+
     @staticmethod
     def get_all_objects():
         result = []
+        # TODO Get the right CephClusterNodbModel here.
+        cluster = CephClusterNodbModel(fsid='asdf')
+
         for pool_name in rados.list_pools():
             pool_stats = rados.get_stats(pool_name)
             stats = pool_stats.copy()
             stats['name'] = pool_name
+            stats['fsid'] = cluster
             result.append(CephPoolNodbModel(**stats))
 
         return result

@@ -22,7 +22,6 @@ class Client(object):
 
     def connect(self, conf_file):
         if self._cluster is None:
-            print('rados', rados)
             self._cluster = rados.Rados(conffile=conf_file)
 
         if not self.connected():
@@ -30,12 +29,21 @@ class Client(object):
 
         return self._cluster
 
-    def __del__(self):
+    def disconnect():
         for pool_name, pool in self._pools.items():
-            pool.close()
+            if pool and pool.close:
+                pool.close()
 
-        if self._cluster and self._cluster.state == 'connected':
+        if self.connected():
             self._cluster.shutdown()
+
+    # def __del__(self):
+    #     for pool_name, pool in self._pools.items():
+    #         if pool and pool.close:
+    #             pool.close()
+
+    #     if self.connected():
+    #         self._cluster.shutdown()
 
     # @classmethod
     # def get_instance(cls, cluster_name='ceph', conf_file=''):

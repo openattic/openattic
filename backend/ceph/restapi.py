@@ -63,6 +63,10 @@ class ClusterViewSet(viewsets.ModelViewSet):
 
 class CephClusterSerializer(NodbSerializer):
 
+    # pools = serializers.HyperlinkedRelatedField(many=True, read_only=True,
+    #                                             view_name='CephPoolViewSet')
+    # asdf = 'asdf'
+
     class Meta:
         model = CephClusterNodbModel
         fields = ('fsid', 'name')
@@ -88,7 +92,7 @@ class CephPoolViewSet(NodbViewSet):
 
 
 RESTAPI_VIEWSETS = [
-    ('ceph/clusters', CephClusterViewSet, 'ceph'),
-    ('ceph/pools', CephPoolViewSet, 'ceph'),
+    ('ceph/clusters', CephClusterViewSet, 'ceph/clusters'),
+    ('ceph/pools', CephPoolViewSet, 'ceph/pools'),
     ('cephclusters', ClusterViewSet, 'cephcluster')
 ]

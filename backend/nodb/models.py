@@ -1,30 +1,12 @@
 from copy import copy
-from django.db.models import Model, query
+from django.db import models
+from django.db.models.query import QuerySet
+from django.db.models.manager import BaseManager, Manager
 
 
-class NodbModel(Model):
+class NodbQuerySet(QuerySet):
 
-    class Meta:
-        managed = False
-        abstract = True
-
-    def __init__(self, **kwargs):
-        for key, value in kwargs.items():
-            setattr(self, key, value)
-
-    @classmethod
-    def all(cls):
-        return QuerySet(cls)
-
-    @staticmethod
-    def get_all_objects():
-        msg = 'Every NodbModel must implement its own get_all_objects() method.'
-        raise NotImplementedError(msg)
-
-
-class QuerySet(query.QuerySet):
-
-    def __init__(self, model):
+    def __init__(self, model, using=None, hints=None):
         self.model = model
         self._current = 0
         self._data = self.model.get_all_objects()
@@ -45,23 +27,22 @@ class QuerySet(query.QuerySet):
 
     def __getattribute__(self, attr_name):
         try:  # Just return own attributes.
-            own_attr = super(QuerySet, self).__getattribute__(attr_name)
+            own_attr = super(NodbQuerySet, self).__getattribute__(attr_name)
         except AttributeError:
             pass
         else:
             return own_attr
 
-        if attr_name in vars(self) or attr_name in vars(QuerySet):
+        if attr_name in vars(self) or attr_name in vars(NodbQuerySet):
             attr = self.oInstance.__getattribute__(attr_name)
             return attr
 
         msg = 'Call to an attribute `{}` of {} which isn\'t intended to be accessed directly.'
-        msg = msg.format(attr_name, QuerySet)
+        msg = msg.format(attr_name, NodbQuerySet)
         raise AttributeError(msg)
 
     def _clone(self):
-        return QuerySet(self.model)
-
+        return NodbQuerySet(self.model)
 
     def count(self):
         return len(self._data)
@@ -93,4 +74,35 @@ class QuerySet(query.QuerySet):
                     return True
             return False
         return filter(f, self._data)
+
+    # def _fetch_all(self):
+    #     pass
+
+
+class NodbManager(BaseManager.from_queryset(NodbQuerySet)):
+
+    use_for_related_fields = True
+
+
+class NodbModel(models.Model):
+
+    objects = NodbManager()
+
+    class Meta:
+        managed = False
+        abstract = True
+
+#     def __init__(self, *args, **kwargs):
+#         for key, value in kwargs.items():
+#             setattr(self, key, value)
+
+    @classmethod
+    def all(cls):
+        return NodbQuerySet(cls)
+
+    @staticmethod
+    def get_all_objects():
+        msg = 'Every NodbModel must implement its own get_all_objects() method.'
+        raise NotImplementedError(msg)
+
 
