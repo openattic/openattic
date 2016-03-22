@@ -31,7 +31,7 @@
 "use strict";
 
 var app = angular.module("openattic");
-app.controller("VolumeLunCtrl", function ($scope, $state, LunService, $uibModal, toasty) {
+app.controller("VolumeLunCtrl", function ($scope, $state, LunService, $uibModal) {
   $scope.lunData = {};
 
   $scope.lunFilter = {
