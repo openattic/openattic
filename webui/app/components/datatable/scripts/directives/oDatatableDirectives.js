@@ -45,7 +45,7 @@ app.directive("oadatatable", function () {
     link: function (scope, element, attr, controller, transclude) {
       transclude(scope, function (clone, scope) {
         element.find(".oadatatableactions").append(clone.filter("actions"));
-        element.find(".dataTables_wrapper .dataTables_content>div").append(clone.filter("table"));
+        element.find(".dataTables_wrapper .dataTables_content").append(clone.filter("table"));
         element.find("th").each(function (index, item) {
           scope.columns[$(item).text()] = true;
           if (item.attributes.sortfield !== undefined) {
