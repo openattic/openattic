@@ -1,20 +1,33 @@
-<div class="dataTables_paginate paging_simple_numbers">
-    <ul class="pagination pagination-sm">
-        <li class="paginate_button previous"
+<div class="dataTables_paginate">
+    <ul class="pagination">
+        <li class="first"
             ng-class="{disabled: page == 0}"
-            ng-click="page > 0 && switchPage(page - 1)" >
-            <a>Previous</a>
+            ng-click="page > 0 && switchPage(page = 0)">
+            <span class="i fa fa-angle-double-left"></span>
         </li>
+
+        <li class="prev"
+            ng-class="{disabled: page == 0}"
+            ng-click="page > 0 && switchPage(page - 1)">
+            <span class="i fa fa-angle-left"></span>
+        </li>
+
         <li class="paginate_button "
             ng-repeat="button in buttons track by $index"
             ng-click="button != 'ellipsis' && switchPage(button)"
             ng-class="{active: page == button, disabled: button == 'ellipsis'}">
-            <a ng-bind="button == 'ellipsis' && '&hellip;' || button + 1"></a>
+            <span ng-bind="button == 'ellipsis' && '&hellip;' || button + 1"></span>
         </li>
-        <li class="paginate_button next"
+
+        <li class="next"
             ng-class="{disabled: page >= pages - 1}"
             ng-click="page < pages - 1 && switchPage(page + 1)">
-            <a>Next</a>
+            <span class="i fa fa-angle-right"></span>
+        </li>
+        <li class="last"
+            ng-class="{disabled: page >= pages - 1}"
+            ng-click="page < pages - 1 && switchPage(page = (pages - 1))">
+            <span class="i fa fa-angle-double-right"></span>
         </li>
     </ul>
 </div>
