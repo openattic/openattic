@@ -40,7 +40,6 @@ app.config(["toastyConfigProvider", function(toastyConfigProvider) {
     showClose:    true,
     clickToClose: true,
     timeout:      4000,
-    sound:        false,
     html:         true,
     theme:        "bootstrap"
   });
