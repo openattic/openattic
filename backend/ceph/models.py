@@ -35,6 +35,7 @@ from ceph.librados import client as rados
 
 
 class CephClusterNodbModel(NodbModel):
+    """Represents a Ceph cluster."""
 
     fsid = models.CharField(max_length=36, primary_key=True)
     name = models.CharField(max_length=100)
@@ -52,7 +53,9 @@ class CephClusterNodbModel(NodbModel):
         result = []
         for cluster_name in CephClusterNodbModel.get_cluster_names():
             fsid = json.loads(dbus_to_python(get_dbus_object('/ceph').ceph_fsid(cluster_name)))['fsid']
-            result.append(CephClusterNodbModel(fsid=fsid, name=cluster_name))
+            cluster = CephClusterNodbModel(fsid=fsid, name=cluster_name)
+            cluster.pools = CephPoolNodbModel.objects.all()
+            result.append(cluster)
 
         return result
 
@@ -73,22 +76,23 @@ class CephPoolNodbModel(NodbModel):
     num_wr = models.IntegerField()
     num_wr_kb = models.IntegerField()
 
-    fsid = models.ForeignKey(CephClusterNodbModel)
+    cluster = models.ForeignKey(CephClusterNodbModel)
 
     @staticmethod
     def get_all_objects():
         result = []
         # TODO Get the right CephClusterNodbModel here.
-        cluster = CephClusterNodbModel(fsid='asdf')
+        cluster = CephClusterNodbModel(fsid='asdf', name='asdf')
 
         for pool_name in rados.list_pools():
             pool_stats = rados.get_stats(pool_name)
             stats = pool_stats.copy()
             stats['name'] = pool_name
-            stats['fsid'] = cluster
+            stats['cluster'] = cluster
             result.append(CephPoolNodbModel(**stats))
 
         return result
+
 
 class Cluster(StorageObject):
     AUTH_CHOICES = (

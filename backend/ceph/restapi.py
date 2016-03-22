@@ -16,6 +16,7 @@
 
 from rest_framework import serializers, viewsets
 from rest_framework.response import Response
+from rest_framework.decorators import detail_route
 
 from ceph.models import Cluster, CrushmapVersion, NodbModel, CephClusterNodbModel, CephPoolNodbModel
 from nodb.restapi import NodbSerializer, NodbViewSet
@@ -63,36 +64,37 @@ class ClusterViewSet(viewsets.ModelViewSet):
 
 class CephClusterSerializer(NodbSerializer):
 
-    # pools = serializers.HyperlinkedRelatedField(many=True, read_only=True,
-    #                                             view_name='CephPoolViewSet')
-    # asdf = 'asdf'
+    pools = serializers.HyperlinkedRelatedField(many=True, read_only=True,
+                                                view_name='cephpools-detail')
 
     class Meta:
         model = CephClusterNodbModel
-        fields = ('fsid', 'name')
+        # fields = ('fsid', 'name')
 
 
 class CephClusterViewSet(NodbViewSet):
 
-    queryset = CephClusterNodbModel.all()
+    queryset = CephClusterNodbModel.objects.all()
     serializer_class = CephClusterSerializer
 
 
 class CephPoolSerializer(NodbSerializer):
 
+    cluster = serializers.HyperlinkedRelatedField(view_name='ceph-detail')
+
     class Meta:
         model = CephPoolNodbModel
-        fields = ()
+        # fields = ()
 
 
 class CephPoolViewSet(NodbViewSet):
 
-    queryset = CephPoolNodbModel.all()
+    queryset = CephPoolNodbModel.objects.all()
     serializer_class = CephPoolSerializer
 
 
 RESTAPI_VIEWSETS = [
-    ('ceph/clusters', CephClusterViewSet, 'ceph/clusters'),
-    ('ceph/pools', CephPoolViewSet, 'ceph/pools'),
+    ('ceph', CephClusterViewSet, 'ceph'),
+    ('cephpools', CephPoolViewSet, 'cephpools'),
     ('cephclusters', ClusterViewSet, 'cephcluster')
 ]

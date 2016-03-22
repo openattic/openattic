@@ -92,14 +92,6 @@ class NodbModel(models.Model):
         managed = False
         abstract = True
 
-#     def __init__(self, *args, **kwargs):
-#         for key, value in kwargs.items():
-#             setattr(self, key, value)
-
-    @classmethod
-    def all(cls):
-        return NodbQuerySet(cls)
-
     @staticmethod
     def get_all_objects():
         msg = 'Every NodbModel must implement its own get_all_objects() method.'
