@@ -37,6 +37,7 @@ app.controller("CmdlogDeleteBySelectionCtrl", function ($scope, CmdlogService, $
   $scope.itemText = false;
   if (selection.length === 1) {
     $scope.itemText = $filter("shortlog")(selection[0].text);
+    $scope.command = selection[0].command;
   }
 
   var ids = [];
@@ -44,7 +45,7 @@ app.controller("CmdlogDeleteBySelectionCtrl", function ($scope, CmdlogService, $
     ids.push(selection[i].id);
   }
 
-  $scope.yes = function () {
+  $scope.delete = function () {
     CmdlogService.delete({"ids": ids})
         .$promise
         .then(function () {
@@ -54,7 +55,7 @@ app.controller("CmdlogDeleteBySelectionCtrl", function ($scope, CmdlogService, $
         });
   };
 
-  $scope.no = function () {
+  $scope.cancel = function () {
     $uibModalInstance.dismiss("cancel");
 
     toasty.warning({

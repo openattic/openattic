@@ -51,7 +51,7 @@ app.controller("CmdlogDeleteByDateCtrl", function ($scope, CmdlogService, $uibMo
     $scope.datePicker.opened = true;
   };
 
-  $scope.yes = function () {
+  $scope.delete = function () {
     CmdlogService.delete({"datetime": $scope.datePicker.dateTime})
         .$promise
         .then(function () {
@@ -61,7 +61,7 @@ app.controller("CmdlogDeleteByDateCtrl", function ($scope, CmdlogService, $uibMo
         });
   };
 
-  $scope.no = function () {
+  $scope.cancel = function () {
     $uibModalInstance.dismiss("cancel");
 
     toasty.warning({
