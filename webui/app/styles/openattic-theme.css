@@ -340,6 +340,9 @@ a:focus{
 .dataTables_wrapper .dropdown-menu {
   white-space: nowrap;
 }
+.dataTables_wrapper .dropdown-menu>li {
+  cursor: pointer;
+}
 .dataTables_wrapper .dropdown-menu>li>label {
   width: 100%;
   margin-bottom: 0;
