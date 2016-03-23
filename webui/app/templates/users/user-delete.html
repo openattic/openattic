@@ -1,15 +1,21 @@
 <div class="openattic-modal-header">
-    <span>Delete User</span>
+    <span>Delete user</span>
 </div>
 <div class="openattic-modal-content">
-    <p>You have selected to delete the user <strong>{{user.username}}</strong>.</p>
-    <p>If this was the action that you wanted to do, please confirm your choice, or cancel and return to the page.</p>
+    <p>
+        You are about to delete the user <strong>{{user.username}}</strong>.
+    </p>
+    <p>
+        To confirm, please click <kbd>Delete user</kbd>, or cancel and return to the page.
+    </p>
 
     <form name="deleteForm" role="form" novalidate>
-        <div class="MessageBoxButtonSection">
-            <button id="bot2-Msg1" class="btn btn-default btn-sm botTempo" ng-click="delete()"
-                    ng-disabled="deleteForm.$invalid">Delete User</button>
-            <button id="bot1-Msg1" class="btn btn-default btn-sm botTempo" ng-click="cancel()">Cancel</button>
+        <div class="button-group text-right">
+            <button id="bot2-Msg1" class="btn btn-primary btn-sm"
+                    ng-click="delete()" ng-disabled="deleteForm.$invalid">
+                Delete user
+            </button>
+            <button id="bot1-Msg1" class="btn btn-link btn-sm" ng-click="cancel()">Cancel</button>
         </div>
     </form>
 </div>
