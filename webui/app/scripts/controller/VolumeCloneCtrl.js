@@ -71,7 +71,7 @@ app.controller("VolumeCloneCtrl", function ($scope, VolumeService, SnapshotServi
     $uibModalInstance.dismiss("cancel");
 
     toasty.warning({
-      title: "Clone volume",
+      title: "Clone " + $scope.type,
       msg: "Cancelled"
     });
   };
