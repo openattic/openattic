@@ -87,7 +87,7 @@ def lvm_pvs():
     return info
 
 def lvm_vgs():
-    info = dict( [ (lv["LVM2_VG_NAME"], lv) for lv in lvm_command(["/sbin/vgs"]) ] )
+    info = dict( [ (lv["LVM2_VG_NAME"], lv) for lv in lvm_command(["/sbin/vgs", '-o', '+vg_tags']) ] )
     for field in ("LVM2_VG_SIZE", "LVM2_VG_FREE"):
         for vg in info:
             info[vg][field] = info[vg][field][:-1] # cut off the m from 13.37m
