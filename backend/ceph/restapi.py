@@ -18,7 +18,7 @@ from rest_framework import serializers, viewsets
 from rest_framework.response import Response
 from rest_framework.decorators import detail_route
 
-from ceph.models import Cluster, CrushmapVersion, CephClusterNodbModel, CephPoolNodbModel
+from ceph.models import Cluster, CrushmapVersion, CephCluster, CephPool
 from nodb.restapi import NodbSerializer, NodbViewSet
 from rest import relations
 
@@ -69,19 +69,19 @@ class CephClusterSerializer(NodbSerializer):
     pools = relations.HyperlinkedIdentityField(view_name='ceph-pools')
 
     class Meta:
-        model = CephClusterNodbModel
+        model = CephCluster
 
 
 class CephClusterViewSet(NodbViewSet):
 
-    queryset = CephClusterNodbModel.objects.all()
+    queryset = CephCluster.objects.all()
     serializer_class = CephClusterSerializer
 
     @detail_route()
     def pools(self, request, *args, **kwargs):
         cluster = self.get_object()
 
-        pools = CephPoolNodbModel.objects.all({'cluster': cluster})
+        pools = CephPool.objects.all({'cluster': cluster})
         serializer_instance = CephPoolSerializer(pools, many=True, context={"request": request})
 
         return Response(serializer_instance.data)
@@ -92,7 +92,7 @@ class CephPoolSerializer(NodbSerializer):
     cluster = relations.HyperlinkedRelatedField(view_name='ceph-detail')
 
     class Meta:
-        model = CephPoolNodbModel
+        model = CephPool
 
 
 RESTAPI_VIEWSETS = [

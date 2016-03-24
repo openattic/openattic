@@ -42,7 +42,7 @@ class RadosClientManager(object):
 
     def __getitem__(self, fsid):
         if fsid not in self.instances:
-            cluster_name = CephClusterNodbModel.get_name(fsid)
+            cluster_name = CephCluster.get_name(fsid)
             self.instances[fsid] = librados.Client(cluster_name)
 
         return self.instances[fsid]
@@ -50,7 +50,7 @@ class RadosClientManager(object):
 rados = RadosClientManager()
 
 
-class CephClusterNodbModel(NodbModel):
+class CephCluster(NodbModel):
     """Represents a Ceph cluster."""
 
     fsid = models.CharField(max_length=36, primary_key=True)
@@ -79,17 +79,17 @@ class CephClusterNodbModel(NodbModel):
     @staticmethod
     def get_all_objects(context=None):
         result = []
-        for cluster_name in CephClusterNodbModel.get_names():
+        for cluster_name in CephCluster.get_names():
             fsid = json.loads(dbus_to_python(get_dbus_object('/ceph').ceph_fsid(cluster_name)))
             fsid = fsid['fsid']
-            cluster = CephClusterNodbModel(fsid=fsid, name=cluster_name)
-            cluster.pools = CephPoolNodbModel.objects.all({'cluster': cluster})
+            cluster = CephCluster(fsid=fsid, name=cluster_name)
+            cluster.pools = CephPool.objects.all({'cluster': cluster})
             result.append(cluster)
 
         return result
 
 
-class CephPoolNodbModel(NodbModel):
+class CephPool(NodbModel):
 
     name = models.CharField(max_length=100, primary_key=True)
     num_bytes = models.IntegerField()
@@ -105,7 +105,7 @@ class CephPoolNodbModel(NodbModel):
     num_wr = models.IntegerField()
     num_wr_kb = models.IntegerField()
 
-    cluster = models.ForeignKey(CephClusterNodbModel)
+    cluster = models.ForeignKey(CephCluster)
 
     @staticmethod
     def get_all_objects(context):
@@ -121,7 +121,7 @@ class CephPoolNodbModel(NodbModel):
             stats['name'] = pool_name
             stats['cluster'] = cluster
 
-            result.append(CephPoolNodbModel(**stats))
+            result.append(CephPool(**stats))
 
         return result
 
