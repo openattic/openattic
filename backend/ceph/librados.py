@@ -51,8 +51,8 @@ class Client(object):
     def create_pool(self, pool_name, auid=None, crush_rule=None):
         return self._cluster.create_pool(pool_name, auid=auid, crush_rule=crush_rule)
 
-    def pool_exists(self, name):
-        return self._cluster.pool_exists()
+    def pool_exists(self, pool_name):
+        return self._cluster.pool_exists(pool_name)
 
     def delete_pool(self, pool_name):
         return self._cluster.delete_pool(pool_name)
