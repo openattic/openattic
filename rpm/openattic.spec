@@ -720,7 +720,7 @@ systemctl start smb
 
 %files release
 %defattr(-,root,root,-)
-%{_sysconfdir}/yum.repos.d/%{name}.repo
+%config(noreplace) %{_sysconfdir}/yum.repos.d/%{name}.repo
 
 %changelog
 * Thu Jan 07 2016 Lenz Grimmer <lenz@openattic.org> 2.0.6
