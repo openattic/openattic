@@ -3,7 +3,8 @@ openATTIC Changelog
 
 Version 2.0.10 (not released yet):
 ----------------------------------
-
+* Installation: Fixed deprecation warning when importing rtslib on systems that
+  ship rtslib-fb (e.g. EL7) (OP-953)
 
 Version 2.0.9, 16. Mar 2016:
 ----------------------------
