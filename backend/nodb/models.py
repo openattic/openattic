@@ -1,15 +1,16 @@
-from copy import copy
 from django.db import models
 from django.db.models.query import QuerySet
-from django.db.models.manager import BaseManager, Manager
+from django.db.models.manager import BaseManager
 
 
 class NodbQuerySet(QuerySet):
 
-    def __init__(self, model, using=None, hints=None):
+    def __init__(self, model, using=None, hints=None, request=None, context=None):
         self.model = model
+        self._context = context
         self._current = 0
-        self._data = self.model.get_all_objects()
+        self._data = None
+        self._data = self.model.get_all_objects(self._context)
         self._max = len(self._data) - 1
 
     def __iter__(self):
@@ -68,20 +69,52 @@ class NodbQuerySet(QuerySet):
         )
 
     def filter(self, **kwargs):
-        def f(obj):
-            for key, value in kwargs.items():
-                if getattr(obj, key) == value:
-                    return True
-            return False
-        return filter(f, self._data)
 
-    # def _fetch_all(self):
-    #     pass
+        def _filter(obj):
+            for key, value in kwargs.items():
+                keys = key.split('__')
+
+                attr = obj
+                for i, k in enumerate(keys):
+                    attr = getattr(attr, k)
+                    is_model = isinstance(attr, models.Model)
+
+                    if i == len(keys) - 1 and is_model:
+                        # We're at the end of the iteration but we found an object
+                        # instead of a comparable type.
+                        msg = 'Attribute {} is an object'.format(k)
+                        raise AttributeError(msg)
+
+                    if not is_model and i < len(keys) - 1:
+                        # We're still iterating keys but found a non object where we expected an
+                        # object.
+                        msg = 'Attribute {} is not an object'.format(k)
+                        raise AttributeError(msg)
+
+                    if is_model:
+                        continue
+                    elif attr == value:
+                        return True
+                    else:
+                        return False
+
+            return False
+
+        return filter(_filter, self._data)
+
+    def all(self, context):
+        super(NodbQuerySet, self).all(context)
 
 
 class NodbManager(BaseManager.from_queryset(NodbQuerySet)):
 
     use_for_related_fields = True
+
+    def all(self, context=None):
+        return self.get_queryset(context)
+
+    def get_queryset(self, context=None):
+        return self._queryset_class(self.model, using=self._db, hints=self._hints, context=context)
 
 
 class NodbModel(models.Model):
@@ -96,5 +129,3 @@ class NodbModel(models.Model):
     def get_all_objects():
         msg = 'Every NodbModel must implement its own get_all_objects() method.'
         raise NotImplementedError(msg)
-
-

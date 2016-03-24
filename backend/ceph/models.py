@@ -31,7 +31,23 @@ from ifconfig.models import Host
 from volumes.models import StorageObject, FileSystemVolume, VolumePool, BlockVolume
 
 from nodb.models import NodbModel
-from ceph.librados import client as rados
+
+from ceph import librados
+import ConfigParser
+
+
+class RadosClientManager(object):
+
+    instances = {}
+
+    def __getitem__(self, fsid):
+        if fsid not in self.instances:
+            cluster_name = CephClusterNodbModel.get_name(fsid)
+            self.instances[fsid] = librados.Client(cluster_name)
+
+        return self.instances[fsid]
+
+rados = RadosClientManager()
 
 
 class CephClusterNodbModel(NodbModel):
@@ -49,12 +65,25 @@ class CephClusterNodbModel(NodbModel):
         return clusters
 
     @staticmethod
-    def get_all_objects():
+    def get_name(fsid):
+        for conf_file in os.listdir('/etc/ceph'):
+            if conf_file.endswith('.conf'):
+                config = ConfigParser.ConfigParser()
+                config.read(os.path.join('/etc/ceph/', conf_file))
+
+                if config.get('global', 'fsid') == fsid:
+                    return os.path.splitext(conf_file)[0]
+
+        raise LookupError()
+
+    @staticmethod
+    def get_all_objects(context=None):
         result = []
         for cluster_name in CephClusterNodbModel.get_cluster_names():
-            fsid = json.loads(dbus_to_python(get_dbus_object('/ceph').ceph_fsid(cluster_name)))['fsid']
+            fsid = json.loads(dbus_to_python(get_dbus_object('/ceph').ceph_fsid(cluster_name)))
+            fsid = fsid['fsid']
             cluster = CephClusterNodbModel(fsid=fsid, name=cluster_name)
-            cluster.pools = CephPoolNodbModel.objects.all()
+            cluster.pools = CephPoolNodbModel.objects.all({'cluster': cluster})
             result.append(cluster)
 
         return result
@@ -79,16 +108,19 @@ class CephPoolNodbModel(NodbModel):
     cluster = models.ForeignKey(CephClusterNodbModel)
 
     @staticmethod
-    def get_all_objects():
+    def get_all_objects(context):
         result = []
-        # TODO Get the right CephClusterNodbModel here.
-        cluster = CephClusterNodbModel(fsid='asdf', name='asdf')
 
-        for pool_name in rados.list_pools():
-            pool_stats = rados.get_stats(pool_name)
+        cluster = context['cluster']
+
+        fsid = cluster.fsid
+
+        for pool_name in rados[fsid].list_pools():
+            pool_stats = rados[fsid].get_stats(pool_name)
             stats = pool_stats.copy()
             stats['name'] = pool_name
             stats['cluster'] = cluster
+
             result.append(CephPoolNodbModel(**stats))
 
         return result

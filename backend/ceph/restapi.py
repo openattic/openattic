@@ -18,8 +18,9 @@ from rest_framework import serializers, viewsets
 from rest_framework.response import Response
 from rest_framework.decorators import detail_route
 
-from ceph.models import Cluster, CrushmapVersion, NodbModel, CephClusterNodbModel, CephPoolNodbModel
+from ceph.models import Cluster, CrushmapVersion, CephClusterNodbModel, CephPoolNodbModel
 from nodb.restapi import NodbSerializer, NodbViewSet
+from rest import relations
 
 
 class CrushmapVersionSerializer(serializers.ModelSerializer):
@@ -59,17 +60,16 @@ class ClusterViewSet(viewsets.ModelViewSet):
             cluster.set_crushmap(request.DATA["crushmap"])
 
         cluster_ser = ClusterSerializer(cluster, many=False, context={"request": request})
+
         return Response(cluster_ser.data)
 
 
 class CephClusterSerializer(NodbSerializer):
 
-    pools = serializers.HyperlinkedRelatedField(many=True, read_only=True,
-                                                view_name='cephpools-detail')
+    pools = relations.HyperlinkedIdentityField(view_name='ceph-pools')
 
     class Meta:
         model = CephClusterNodbModel
-        # fields = ('fsid', 'name')
 
 
 class CephClusterViewSet(NodbViewSet):
@@ -77,24 +77,25 @@ class CephClusterViewSet(NodbViewSet):
     queryset = CephClusterNodbModel.objects.all()
     serializer_class = CephClusterSerializer
 
+    @detail_route()
+    def pools(self, request, *args, **kwargs):
+        cluster = self.get_object()
+
+        pools = CephPoolNodbModel.objects.all({'cluster': cluster})
+        serializer_instance = CephPoolSerializer(pools, many=True, context={"request": request})
+
+        return Response(serializer_instance.data)
+
 
 class CephPoolSerializer(NodbSerializer):
 
-    cluster = serializers.HyperlinkedRelatedField(view_name='ceph-detail')
+    cluster = relations.HyperlinkedRelatedField(view_name='ceph-detail')
 
     class Meta:
         model = CephPoolNodbModel
-        # fields = ()
-
-
-class CephPoolViewSet(NodbViewSet):
-
-    queryset = CephPoolNodbModel.objects.all()
-    serializer_class = CephPoolSerializer
 
 
 RESTAPI_VIEWSETS = [
     ('ceph', CephClusterViewSet, 'ceph'),
-    ('cephpools', CephPoolViewSet, 'cephpools'),
-    ('cephclusters', ClusterViewSet, 'cephcluster')
+    ('cephclusters', ClusterViewSet, 'cephcluster'),  # Old implementation, used by the CRUSH map
 ]
