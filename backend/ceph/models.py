@@ -57,7 +57,7 @@ class CephClusterNodbModel(NodbModel):
     name = models.CharField(max_length=100)
 
     @staticmethod
-    def get_cluster_names():
+    def get_names():
         clusters = []
         for file in os.listdir('/etc/ceph'):
             if file.endswith('.conf'):
@@ -79,7 +79,7 @@ class CephClusterNodbModel(NodbModel):
     @staticmethod
     def get_all_objects(context=None):
         result = []
-        for cluster_name in CephClusterNodbModel.get_cluster_names():
+        for cluster_name in CephClusterNodbModel.get_names():
             fsid = json.loads(dbus_to_python(get_dbus_object('/ceph').ceph_fsid(cluster_name)))
             fsid = fsid['fsid']
             cluster = CephClusterNodbModel(fsid=fsid, name=cluster_name)
