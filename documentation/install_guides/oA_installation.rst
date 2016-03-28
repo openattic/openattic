@@ -12,7 +12,6 @@ or consult your hardware vendor for details.
 Installable packages of |oA| are currently available for the following Linux
 distributions:
 
-* Debian Linux 7 (Wheezy)
 * Debian Linux 8 (Jessie)
 * Red Hat Enterprise Linux 7 (RHEL) and derivatives (CentOS 7, Oracle Linux 7
   or Scientific Linux 7)
@@ -156,14 +155,6 @@ Enabling the |oA| Apt package repository
 In order to use enable the |oA| Apt repository, create a file named
 ``/etc/apt/sources.list.d/openattic.list``, and put the following lines into
 it:
-
-For Debian 7 (Wheezy)
-~~~~~~~~~~~~~~~~~~~~~
-
-::
-
-  deb     http://apt.openattic.org/ wheezy   main
-  deb-src http://apt.openattic.org/ wheezy   main
 
 For Debian 8 (Jessie)
 ~~~~~~~~~~~~~~~~~~~~~
