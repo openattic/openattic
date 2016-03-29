@@ -44,7 +44,7 @@ NAGIOS_SERVICES_CFG_PATH="/etc/icinga/conf.d/openattic.cfg"
 ## Type: boolean
 ## Default: True
 #
-# 
+#
 NAGIOS_INCLUDE_HOST_IN_CFG=True
 
 ## Type: string
@@ -77,3 +77,15 @@ NPCD_CFG="/etc/pnp4nagios/npcd.cfg"
 #
 # Name of systemd service
 NPCD_SERVICE="npcd"
+
+## Type: string
+## Default: "/var/lib/icinga"
+#
+# Directory in which to save states
+NAGIOS_STATE_DIR="/var/lib/icinga"
+
+## Type: string
+## Default: "/usr/lib/nagios/plugins"
+#
+# Location of the Nagios plugin directory
+NAGIOS_PLUGIN_DIR="/usr/lib/nagios/plugins"

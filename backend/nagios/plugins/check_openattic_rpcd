@@ -14,7 +14,10 @@
 set -e
 set -u
 
-. /etc/default/openattic
+for settings in "/etc/default/openattic" "/etc/sysconfig/openattic"
+do
+        [ -f $settings ] && . $settings
+done
 
 if [ ! -z "$RPCD_CERTFILE" -a ! -z "$RPCD_KEYFILE" ]; then
     CHECKSSL="-S"
@@ -23,5 +26,5 @@ else
 fi
 
 set +e
-/usr/lib/nagios/plugins/check_tcp -H 127.0.0.1 -p 31234 $CHECKSSL
+"$NAGIOS_PLUGIN_DIR/check_tcp" -H 127.0.0.1 -p 31234 $CHECKSSL
 exit $?
