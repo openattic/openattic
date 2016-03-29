@@ -186,17 +186,17 @@
         .then(function(wizards){
           wizards[0].element(by.css('.tc_wizardTitle')).evaluate('wizard.title').then(function(title){
             expect(title).toEqual('File Storage');
-            console.log(title);
+            //console.log(title);
           });
 
           wizards[1].element(by.css('.tc_wizardTitle')).evaluate('wizard.title').then(function(vm_title){
             expect(vm_title).toEqual('VM Storage');
-            console.log(vm_title);
+            //console.log(vm_title);
           });
 
           wizards[2].element(by.css('.tc_wizardTitle')).evaluate('wizard.title').then(function(block_title){
             expect(block_title).toEqual('Raw Block Storage');
-            console.log(block_title);
+            //console.log(block_title);
           });
       });
     },

@@ -99,7 +99,9 @@ describe('Volumes delete', function(){
 
     // Check if they are deleted.
     expect(element.all(by.cssContainingText('tr', 'e2e_'))).toEqual([]);
-    console.log('multiple_volume_deletion');
   });
 
+  afterAll(function(){
+    console.log('volumes_multi_delete -> multiple_volume_deletion.e2e.js');
+  });
 });

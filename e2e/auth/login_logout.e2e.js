@@ -89,4 +89,8 @@ describe('should test the login', function(){
     oaLogo.click();
     expect(browser.getCurrentUrl()).toContain('/openattic/#/login');
   });
+
+  afterAll(function(){
+    console.log('auth -> login_logout.e2e.js');
+  });
 });

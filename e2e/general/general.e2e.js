@@ -196,4 +196,8 @@ describe('General', function(){
          }
     });
   });
+
+  afterAll(function(){
+    console.log('general -> general.e2e.js');
+  });
 });

@@ -137,7 +137,7 @@ describe('Raw Block Storage Wizard', function(){
   afterAll(function(){
     helpers.delete_volume(volume, volumename);
     helpers.delete_host();
-    console.log('<-----Raw Block Storage wizard done --->');
+    console.log('blockStorage -> blockStorage.e2e.js');
   });
 
 });

@@ -66,6 +66,9 @@ describe('Volumes resize', function(){
 
   it('should not allow to shrink the volume', function(){
     wrongSize('170mb');
-    console.log('resize volume');
+  });
+
+  afterAll(function(){
+    console.log('volumes_resize -> volume_resize.e2e.js');
   });
 });

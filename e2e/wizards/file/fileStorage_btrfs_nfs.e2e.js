@@ -176,6 +176,6 @@ describe('Wizard panel', function(){
 
   afterAll(function(){
     helpers.delete_volume(volume, volumename);
-    console.log('<----- file storage wizard done (btrfs/nfs) ------>');
+    console.log('fs_wiz_btrfs_nfs -> fileStorage_btrfs_nfs.e2e.js');
   });
 });
