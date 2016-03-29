@@ -35,7 +35,7 @@ app.directive("cephCrushMapEditor", function () {
   return {
     restrict: "E",
     templateUrl: "extensions/crushmap_editor/templates/editor.html",
-    controller: function ($scope, $timeout, ClusterResource) {
+    controller: function ($scope, $timeout, ClusterResource, toasty) {
       $scope.query = function () {
         $scope.clusters = ClusterResource.query(function (clusters) {
           $scope.cluster = clusters[0];
@@ -279,15 +279,10 @@ app.directive("cephCrushMapEditor", function () {
         };
         bucket.items.map(iterfn);
         if (hasHosts) {
-          $.smallBox({
+          toasty.warning({
             title: "Bucket is not empty",
-            content: ["<i class=\"fa fa-clock-o tc_notDeletable\"></i><i> ",
-                "The ", bucket.name, " ", (bucket.type_name === "root" ? "tree" : bucket.type_name),
-                " still contains some hosts. ",
-                "Please move the hosts away first.",
-                 "</i>"].join(""),
-            color: "#C46A69",
-            iconSmall: "fa fa-times fa-2x fadeInRight animated",
+            msg: "The " + bucket.name + " " + (bucket.type_name === "root" ? "tree" : bucket.type_name) +
+                 " still contains some hosts. Please move the hosts away first.",
             timeout: 6000
           });
         } else {
