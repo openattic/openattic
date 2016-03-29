@@ -11,34 +11,22 @@ describe('Volumes add', function(){
   var submitButton = element(by.css('.tc_submitButton'));
   var addBtn = element(by.css('.tc_add_btn'));
 
-  var selectPool = function(pool_name){
-    volumePoolSelect.sendKeys(pool_name).then(function (pname){
-      if(pool_name === pname){
-        return pool_name;
-      }
-    });
+
+  var usePool = function(pool, callback){
+    volumePoolSelect.sendKeys(pool.name);
+    browser.sleep(helpers.configs.sleep);
+    callback(pool.name, pool);
   };
+
   var forEachPool = function(callback){
     for(var key in helpers.configs.pools){
-      var pool = helpers.configs.pools[key],
-          exact_poolname = selectPool(pool.name);
-
-      if(exact_poolname){
-        console.log(exact_poolname);
-        callback(exact_poolname, pool);
-      }
+      usePool(helpers.configs.pools[key], callback);
     }
   };
+
   var withFirstPool = function(callback){
     for(var key in helpers.configs.pools){
-      var pool = helpers.configs.pools[key],
-          exact_poolname = selectPool(pool.name);
-
-      if(exact_poolname){
-        console.log(exact_poolname);
-        callback(exact_poolname, pool);
-      }
-
+      usePool(helpers.configs.pools[key], callback);
       break;
     }
   };
@@ -255,16 +243,18 @@ describe('Volumes add', function(){
   });
 
   it('should create a volume of the configured volume types in the configured pools', function(){
-    forEachPool(function(exact_poolname, pool){
-      for(var i=0; i < pool.volumeTypes.length; i++){
+    for(var key in helpers.configs.pools){
+      var pool = helpers.configs.pools[key];
+      for(var i = 0; i < pool.volumeTypes.length; i++){
+        volumePoolSelect.sendKeys(pool.name);
+        browser.sleep(helpers.configs.sleep);
+
         var volumeType = pool.volumeTypes[i];
-        var volumename = 'protractor_volume_' + exact_poolname;
+        var volumename = 'protractor_volume_' + pool.name;
         var volume = element(by.cssContainingText('tr', volumename));
 
         //create a volume
         volumeNameInput.sendKeys(volumename);
-        console.log(volumename);
-
         element(by.cssContainingText('label', volumeType)).click();
         element(by.id('data.megs')).sendKeys('100mb');
         submitButton.click();
@@ -274,22 +264,13 @@ describe('Volumes add', function(){
         expect(volume.isDisplayed()).toBe(true);
 
         //delete the volume
-        volume.click();
-        browser.sleep(400);
-        element(by.css('.tc_menudropdown')).click();
-        browser.sleep(400);
-        element(by.css('.tc_deleteItem')).click();
-        browser.sleep(400);
-
-        element(by.model('input.enteredName')).sendKeys('yes');
-        element(by.id('bot2-Msg1')).click();
-
-        expect(volume.isPresent()).toBe(false);
-
+        helpers.delete_volume(volume, volumename);
         addBtn.click();
-        console.log('volumes_add');
-        selectPool(exact_poolname);
       }
-    });
+    }
   });
+
+  afterAll(function(){
+    console.log('volume_add');
+  })
 });

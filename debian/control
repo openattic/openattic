@@ -190,7 +190,7 @@ Description: Cron module for openATTIC
 Package: openattic-module-nagios
 Architecture: all
 Depends: ${misc:Depends}, python (>= 2.6),
- ${python:Depends}, python-imaging, python-numpy,
+ ${python:Depends}, python-imaging, python-numpy, python-configobj,
  openattic-base, openattic-base,
  bc, adduser,
  nagios3-core, nagios-plugins-standard, nagios-plugins-basic,

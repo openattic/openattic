@@ -66,7 +66,10 @@ describe('Volumes add with protection', function(){
       expect(volume.isPresent()).toBe(false);
 
       element(by.css('oadatatable .tc_add_btn')).click();
-      console.log('volume_protection');
     }
   });
+
+  afterAll(function(){
+    console.log('volume_add_protection');
+  })
 });

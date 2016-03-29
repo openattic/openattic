@@ -20,6 +20,18 @@ import sys
 from time import time, mktime
 from datetime import datetime
 from ConfigParser import ConfigParser
+from configobj import ConfigObj
+
+distro_config = [ '/etc/default/openattic', '/etc/sysconfig/openattic' ]
+for filename in distro_config:
+    if os.path.isfile(filename):
+        config = ConfigObj(filename)
+        break
+
+sys.path.append(config['OADIR'])
+from nagios.conf.distro import distro_settings
+
+settings = distro_settings()
 
 try:
     # Uncomment the following line to disable the device UUID check.
@@ -36,7 +48,8 @@ disk = os.path.realpath(sys.argv[-1]).replace("/dev/", "")
 
 # Read the state file (if possible).
 state = ConfigParser()
-havestate = bool( state.read("/var/lib/nagios3/diskstats.%s" % disk) ) and state.has_section("state")
+diskstats = "{}/diskstats.{}".format(settings["NAGIOS_STATE_DIR"], disk)
+havestate = bool( state.read(diskstats) ) and state.has_section("state")
 
 exit = 0
 
@@ -226,6 +239,6 @@ else:
 for key in currstate:
     state.set("state", key, currstate[key])
 
-state.write( open( "/var/lib/nagios3/diskstats.%s" % disk, "wb" ) )
+state.write( open( diskstats, "wb" ) )
 
 sys.exit(exit)
