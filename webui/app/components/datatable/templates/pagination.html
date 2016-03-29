@@ -2,31 +2,32 @@
     <ul class="pagination">
         <li class="first"
             ng-class="{disabled: page == 0}"
-            ng-click="page > 0 && switchPage(page = 0)">
+            ng-click="page > 0 && switchPage(displayNumber = 1)">
             <span class="i fa fa-angle-double-left"></span>
         </li>
-
         <li class="prev"
             ng-class="{disabled: page == 0}"
-            ng-click="page > 0 && switchPage(page - 1)">
+            ng-click="page > 0 && switchPage(displayNumber - 1)">
             <span class="i fa fa-angle-left"></span>
         </li>
+    </ul>
 
-        <li class="paginate_button "
-            ng-repeat="button in buttons track by $index"
-            ng-click="button != 'ellipsis' && switchPage(button)"
-            ng-class="{active: page == button, disabled: button == 'ellipsis'}">
-            <span ng-bind="button == 'ellipsis' && '&hellip;' || button + 1"></span>
-        </li>
+    <div class="pagination paginate-input">
+        <input type="number" size="{{(pages+'').length}}"
+            min="1" max="{{pages}}" ng-model="displayNumber"
+            ng-change="switchPage(displayNumber)"/>
+        <span class="paginate_of"> of <b> {{pages}}</b></span>
+    </div>
 
+    <ul class="pagination">
         <li class="next"
-            ng-class="{disabled: page >= pages - 1}"
-            ng-click="page < pages - 1 && switchPage(page + 1)">
+            ng-class="{disabled: page >= pages}"
+            ng-click="page < pages - 1 && switchPage(displayNumber + 1)">
             <span class="i fa fa-angle-right"></span>
         </li>
         <li class="last"
-            ng-class="{disabled: page >= pages - 1}"
-            ng-click="page < pages - 1 && switchPage(page = (pages - 1))">
+            ng-class="{disabled: page >= pages}"
+            ng-click="page < pages - 1 && switchPage(displayNumber = pages)">
             <span class="i fa fa-angle-double-right"></span>
         </li>
     </ul>
