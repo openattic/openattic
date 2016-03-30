@@ -11,9 +11,9 @@
 
     <form name="cloneForm" role="form" novalidate>
         <div class="form-group"
-             ng-class="{'has-error': (submitted || cloneForm.clone_obj.name.$dirty) && cloneForm.clone_obj.name.$invalid}">
+             ng-class="{'has-error': (submitted || cloneForm.name.$dirty) && cloneForm.name.$invalid}">
             <input type="text" class="form-control" name="name" placeholder="Name..." autocomplete="off"
-                   ng-model="clone_obj.name" required autofocus>
+                   ng-model="clone_obj.name" validname required autofocus>
 
             <!-- Error -->
             <span class="help-block tc_cloneNameRequired"
