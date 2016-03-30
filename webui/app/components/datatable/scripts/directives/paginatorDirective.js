@@ -42,9 +42,20 @@ app.directive("paginator", function () {
     link: function (scope) {
       scope.displayNumber = scope.page + 1;
 
+      scope.instantChange = function (event) {
+        if (event.keyCode === 38) { //up arrow key
+          scope.switchPage(scope.displayNumber + 1);
+        } else if (event.keyCode === 40) { //down arrow key
+          scope.switchPage(scope.displayNumber - 1);
+        }
+      };
+
       scope.switchPage = function (page) {
-        if (page < 1 || page > scope.pages) {
-          return;
+        page = parseInt(page, 10);
+        if (!page || page < 1) {
+          page = 1;
+        } else if (page > scope.pages) {
+          page = scope.pages;
         }
         scope.page = page - 1;
         scope.displayNumber = page;

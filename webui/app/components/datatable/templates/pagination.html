@@ -13,9 +13,10 @@
     </ul>
 
     <div class="pagination paginate-input">
-        <input type="number" size="{{(pages+'').length}}"
-            min="1" max="{{pages}}" ng-model="displayNumber"
-            ng-model-options="{ updateOn: 'default blur', debounce: { default: 1000, blur: 0 } }"
+        <input type="text" size="{{(pages+'').length}}"
+            ng-model="displayNumber" class="text-right"
+            ng-keydown="instantChange($event)"
+            ng-model-options="{ updateOn: 'default blur', debounce: { default: 500, blur: 0 } }"
             ng-change="switchPage(displayNumber)"/>
         <span class="paginate_of"> of <b> {{pages}}</b></span>
     </div>
