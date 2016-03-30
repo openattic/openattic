@@ -11,7 +11,6 @@ describe('General', function(){
   var systemItem = menuItems.get(5);
 
   var oaLogo = element(by.css('.tc_logo_component a'));
-  var fullscreenBtn = element(by.id('fullscreen'));
 
   beforeAll(function(){
     helpers.login();
@@ -22,7 +21,7 @@ describe('General', function(){
   });
 
   it('should show the name of the current user', function(){
-    expect(element(by.css('span .tc_usernameinfo')).getText()).toEqual('Openattic');
+    expect(element(by.css('.tc_usernameinfo')).getText()).toEqual('openattic');
   });
 
   it('should have dashboard as first nav item', function(){

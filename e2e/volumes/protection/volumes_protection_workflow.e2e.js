@@ -8,10 +8,12 @@ describe('Volume protection dialog', function(){
   var submit_button = element(by.id('bot2-Msg1'));
   var cancel_button = element(by.id('bot1-Msg1'));
   var closePopup = function(){
-    var popup = element(by.css('.SmallBox .textoFull'));
+    browser.ignoreSynchronization = true;
+    var popup = element(by.css('.toast'));
     if (popup.isDisplayed()){
       popup.click();
     }
+    browser.ignoreSynchronization = false;
   }
 
   beforeAll(function(){
@@ -61,7 +63,10 @@ describe('Volume protection dialog', function(){
     browser.sleep(400);
 
     // the volume management should show an error message
-    expect(element(by.css('.tc_notDeletable')).isDisplayed()).toBe(true);
+    browser.ignoreSynchronization = true;
+    expect(element(by.css('.toast-title')).getText()).toEqual(volumename + ' is not deletable');
+    browser.ignoreSynchronization = false;
+
     closePopup();
   });
 
