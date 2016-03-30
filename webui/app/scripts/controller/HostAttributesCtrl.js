@@ -61,10 +61,9 @@ app.controller("HostAttributesCtrl", function ($scope, $state, $stateParams, Ini
               $scope.data.fcInis.splice(index, 1);
             }
           }
-          //content: "<i class=\"fa fa-clock-o\"></i> <i>" + error.data.wwn.join(", ") + ".</i>",
           toasty.error({
             title: "Error adding Initiator",
-            msg: error.data.wwn.join
+            msg: error.data.wwn
           });
         });
   };
