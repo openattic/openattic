@@ -563,6 +563,7 @@ echo ""
 %{_datadir}/%{name}/installed_apps.d/70_clustering
 %{_datadir}/%{name}/locale/
 %{_datadir}/%{name}/manage.py*
+%{_datadir}/%{name}/nodb/
 %{_datadir}/%{name}/oa_auth.py*
 %{_datadir}/%{name}/openattic.wsgi
 %{_datadir}/%{name}/pamauth.py*
