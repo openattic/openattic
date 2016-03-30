@@ -388,6 +388,7 @@ mkdir -p %{buildroot}/lib/tmpfiles.d/
 
 # Install Backend and binaries
 rsync -aAX backend/ %{buildroot}%{_datadir}/%{name}
+rm -f  %{buildroot}%{_datadir}/%{name}/.pep8
 rm -rf %{buildroot}%{_datadir}/%{name}/pkgapt
 rm -rf %{buildroot}%{_datadir}/%{name}/installed_apps.d/*_pkgapt
 install -m 755 bin/oacli %{buildroot}%{_bindir}
