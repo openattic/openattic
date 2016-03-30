@@ -4,6 +4,16 @@ openATTIC Changelog
 Version 2.0.10 (not released yet):
 ----------------------------------
 
+* Installation: Fixed deprecation warning when importing rtslib on systems that
+  ship rtslib-fb (e.g. EL7) (OP-953)
+* Installation: marked openattic.repo in the RPM subpackage openattic-release
+  as a configuration file, to protect it from getting mangled by RPM updates
+  (OP-987)
+* Installation: "oaconfig install" now skips all LVM volume groups tagged with
+  "sys", so they won't be added to the oA database (OP-564). Fixed oaconfig
+  add-vg <volume group> so that it aborts if the VG does not exist or is tagged
+  as "sys". Updated the installation documentation and replaced "@sys" with
+  "sys" (LVM strips the @-sign from the tag)
 
 Version 2.0.9, 16. Mar 2016:
 ----------------------------

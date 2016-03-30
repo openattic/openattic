@@ -17,7 +17,10 @@
 import re
 import os
 import os.path
-import rtslib
+try:
+    import rtslib_fb as rtslib
+except ImportError:
+    import rtslib
 
 from django.db.models import signals
 
