@@ -48,7 +48,7 @@ app.controller("LunDeleteCtrl", function ($scope, LunService, $uibModalInstance,
     $uibModalInstance.dismiss("cancel");
 
     toasty.warning({
-      title: "Delete lun",
+      title: "Delete LUN",
       msg: "Cancelled"
     });
   };

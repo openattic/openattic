@@ -37,7 +37,5 @@ if [ $NAGIOS_RESTART_REQ = "true" ]; then
     echo ""
     echo "Error: $NAGIOS_STATUS_DAT did not appear after $WAITTIME seconds!"
     exit 1
-  else
-    exit 0
   fi
 fi

@@ -1,3 +1,9 @@
+openattic (2.0.9-1) unstable; urgency=medium
+
+  * New upstream release 2.0.9-1, see CHANGELOG for details
+
+ -- Lenz Grimmer <lenz@openattic.org>  Wed, 16 Mar 2016 16:05:11 +0100
+
 openattic (2.0.8-1) unstable; urgency=medium
 
   * New upstream release 2.0.8-1, see CHANGELOG for details

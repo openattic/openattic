@@ -74,10 +74,10 @@ app.controller("VolumeLunCtrl", function ($scope, $state, LunService, $uibModal)
 
   $scope.deleteLunAction = function () {
     var modalInstance = $uibModal.open({
-      windowTemplateUrl: "templates/mesagebox.html",
+      windowTemplateUrl: "templates/messagebox.html",
       templateUrl: "templates/volumes/delete-lun.html",
       controller: "LunDeleteCtrl",
-      reslove: {
+      resolve: {
         lun: function () {
           return $scope.lunSelection.item;
         }
