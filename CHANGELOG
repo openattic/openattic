@@ -14,6 +14,8 @@ Version 2.0.10 (not released yet):
   add-vg <volume group> so that it aborts if the VG does not exist or is tagged
   as "sys". Updated the installation documentation and replaced "@sys" with
   "sys" (LVM strips the @-sign from the tag)
+* Backend: The name of a netdevice allows a length of up to 15 characters now
+  (OP-960) (thanks to Willi Fehler for reporting the issue)
 
 Version 2.0.9, 16. Mar 2016:
 ----------------------------
