@@ -237,14 +237,16 @@ class CrushmapVersion(models.Model):
                 parentbucket[member["id"]] = cbucket
             cbucket["items"] = []
 
+        print('crushmap', crushmap)
         buckets = crushmap["buckets"][:]
+        print('buckets', buckets)
         while buckets:
             cbucket = buckets.pop(0)
 
             if cbucket["id"] in parentbucket:
                 parentbucket[cbucket["id"]]["items"].append(cbucket)
-            elif cbucket["type_name"] != "root":
-                buckets.append(cbucket)
+            # elif cbucket["type_name"] != "root":
+            #     buckets.append(cbucket)
             else:
                 crushtree["buckets"].append(cbucket)
 
