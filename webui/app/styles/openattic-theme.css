@@ -446,34 +446,6 @@ a:focus{
   background-color: rgba(30, 30, 30, 0);
 }
 
-/*
-
-.dataTables_wrapper .datatable-toolbar {
-  padding: 5px;
-}
-.dataTables_wrapper .widget-toolbar {
-  display: inline-block;
-  float: right;
-  width: auto;
-  height: 32px;
-  line-height: 32px;
-  position: relative;
-  border-left: 1px solid rgba(0,0,0,.09);
-  cursor: pointer;
-  padding: 0 8px;
-  text-align: center;
-}
-.dataTables_wrapper .dataTables_info {
-  font-style: italic;
-  font-weight: bold;
-}
-.dataTables_wrapper th.oadatatablecheckbox {
-  width: 16px;
-}
-.oa-dropdown-numbers {
-  text-align: right;
-}*/
-
 /* Pagination */
 .pagination {
   display: block;
