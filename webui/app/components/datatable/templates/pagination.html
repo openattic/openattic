@@ -23,12 +23,12 @@
 
     <ul class="pagination">
         <li class="next"
-            ng-class="{disabled: page >= pages}"
+            ng-class="{disabled: page >= pages - 1}"
             ng-click="page < pages - 1 && switchPage(displayNumber + 1)">
             <span class="i fa fa-angle-right"></span>
         </li>
         <li class="last"
-            ng-class="{disabled: page >= pages}"
+            ng-class="{disabled: page >= pages - 1}"
             ng-click="page < pages - 1 && switchPage(displayNumber = pages)">
             <span class="i fa fa-angle-double-right"></span>
         </li>
