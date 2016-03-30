@@ -170,3 +170,8 @@ class SystemD(BasePlugin):
     @deferredmethod(in_signature="ssss")
     def osd_pool_set(self, cluster, poolname, key, value, sender):
         self.invoke_ceph(cluster, ["osd", "pool", "set", poolname, key, value])
+
+    @method(in_signature="s", out_signature="s")
+    def ceph_fsid(self, cluster):
+        ret, out, err = self.invoke_ceph(cluster, ["fsid"])
+        return out
