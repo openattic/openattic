@@ -16,6 +16,8 @@ Version 2.0.10 (not released yet):
   "sys" (LVM strips the @-sign from the tag)
 * Backend: The name of a netdevice allows a length of up to 15 characters now
   (OP-960) (thanks to Willi Fehler for reporting the issue)
+* Backend: Added basic infrastructure to directly gather information from Ceph
+  clusters (OP-1014)
 
 Version 2.0.9, 16. Mar 2016:
 ----------------------------
