@@ -10,197 +10,80 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
 
     <!-- ### Stylesheets ### -->
+    <!-- 3rd-Party Libraries -->
     <link rel="stylesheet" type="text/css" media="screen" href="bower_components/fontawesome/css/font-awesome.css">
     <link rel="stylesheet" type="text/css" media="screen" href="bower_components/bootstrap/dist/css/bootstrap.min.css">
+    <link rel="stylesheet" type="text/css" media="screen" href="bower_components/angular/angular-csp.css">
+    <link rel="stylesheet" type="text/css" media="screen" href="bower_components/angular-ui-tree/dist/angular-ui-tree.min.css">
+    <link rel="stylesheet" type="text/css" media="screen" href="bower_components/angular-toasty/dist/angular-toasty.min.css">
+    <link rel="stylesheet" type="text/css" media="screen" href="bower_components/ng-tags-input/ng-tags-input.css">
+    <!--<link rel="stylesheet" href="bower_components/malhar-angular-dashboard/dist/malhar-angular-dashboard.css">-->
+    <!--<link rel="stylesheet" href="bower_components/angular-ui-tree/dist/angular-ui-tree.min.css">-->
 
     <!-- build:css oa-app.css -->
-
-    <!-- 3rd-Party Libraries -->
-    <link rel="stylesheet" type="text/css" media="screen" href="bower_components/angular/angular-csp.css">
-    <link rel="stylesheet" type="text/css" media="screen" href="bower_components/ng-tags-input/ng-tags-input.css">
-    <link rel="stylesheet" href="bower_components/malhar-angular-dashboard/dist/angular-ui-dashboard.css">
-    <link rel="stylesheet" href="bower_components/angular-ui-tree/dist/angular-ui-tree.min.css">
-
-    <!-- SmartAdmin Styles : Caution! DO NOT change the order -->
-    <link rel="stylesheet" type="text/css" media="screen" href="css/smartadmin-production-plugins.min.css">
-    <link rel="stylesheet" type="text/css" media="screen" href="css/smartadmin-production.min.css">
-    <link rel="stylesheet" type="text/css" media="screen" href="css/smartadmin-skins.min.css">
-
     <link rel="stylesheet" type="text/css" media="screen" href="styles/awesome-bootstrap-checkbox.css">
 
     <!-- oA stylesheets -->
-    <link rel="stylesheet" type="text/css" media="screen" href="styles/openattic.css" />
-
-    <!-- SmartAdmin RTL Support  -->
-    <link rel="stylesheet" type="text/css" media="screen" href="css/smartadmin-rtl.min.css">
-
-    <!-- htmlbuild:style bundle -->
-    <!-- Application -->
-    <!-- /htmlbuild -->
+    <link rel="stylesheet" type="text/css" media="screen" href="styles/openattic.css">
+    <link rel="stylesheet" type="text/css" media="screen" href="styles/openattic-theme.css">
+    <link rel="stylesheet" type="text/css" media="screen" href="styles/vendor.css">
 
     <!-- endbuild -->
 
-    <!-- FAVICONS -->
+    <!-- favicons -->
     <link rel="shortcut icon" href="images/openattic_favicon_32x32.png" type="image/x-icon">
     <link rel="icon" href="images/openattic_favicon_32x32.png" type="image/x-icon">
 </head>
 <body>
-<header id="header">
-    <div id="logo-group">
+    <navigation ng-hide="loginActive()"></navigation>
 
-        <!-- PLACE YOUR LOGO HERE -->
-        <span id="logo">
-            <a data-ui-sref="dashboard">
-                <img src="images/openattic.png" alt="openATTIC">
-            </a>
-        </span>
-        <!-- END LOGO PLACEHOLDER -->
+    <div class="container-fluid" ng-class="{'full-height':loginActive()}">
+        <div class="row" ng-class="{'full-height':loginActive()}">
+            <div class="col-md-12" ng-class="{'full-height':loginActive()}">
+                <!-- breadcrumb -->
+                <div ncy-breadcrumb ng-hide="loginActive()"></div>
+                <!-- end breadcrumb -->
 
-    </div>
-
-    <!-- pulled right: nav area -->
-    <div class="pull-right" ng-hide="loginActive()">
-        <div id="hide-menu" class="btn-header transparent pull-right">
-            <span> <a toggle-menu title="Collapse Menu"><i class="fa fa-reorder"></i></a> </span>
-        </div>
-        <div class="btn-header transparent pull-right ng-scope tc_logout">
-            <span logout> </span>
-        </div>
-        <div id="api-recorder" class="btn-header transparent pull-right">
-            <span api-recorder> </span>
-        </div>
-        <div id="fullscreen" class="btn-header transparent pull-right" ng-controller="ToggleFullscreenCtrl">
-            <span><a ng-click="toggleFullscreen()" title="Full Screen"><i class="fa fa-arrows-alt"></i></a></span>
+                <!-- content -->
+                <div ui-view="main" ng-class="{'full-height':loginActive()}"></div>
+                <!-- end content -->
+            </div>
         </div>
     </div>
-    <!-- end pulled right: nav area -->
 
-</header>
-<!-- END HEADER -->
+    <!-- toasty -->
+    <toasty></toasty>
+    <!-- end toasty -->
 
-<aside id="left-panel" ng-hide="loginActive()">
-    <userinfo></userinfo>
+    <!-- 3rd-Party Libraries -->
+    <script src="bower_components/jquery/dist/jquery.min.js"></script>
+    <script src="bower_components/jquery-ui/jquery-ui.min.js"></script>
+    <script src="bower_components/bootstrap/dist/js/bootstrap.min.js"></script>
+    <script src="bower_components/angular/angular.min.js"></script>
+    <script src="bower_components/angular-resource/angular-resource.min.js"></script>
+    <script src="bower_components/angular-ui-router/release/angular-ui-router.min.js"></script>
+    <script src="bower_components/ng-tags-input/ng-tags-input.min.js"></script>
+    <script src="bower_components/angular-breadcrumb/dist/angular-breadcrumb.min.js"></script>
+    <script src="bower_components/angular-bootstrap/ui-bootstrap-tpls.min.js"></script>
+    <script src="bower_components/lodash/dist/lodash.min.js"></script>
+    <script src="bower_components/angular-ui-sortable/sortable.min.js"></script>
+    <script src="bower_components/malhar-angular-dashboard/dist/malhar-angular-dashboard.js"></script>
+    <script src="bower_components/angular-md5/angular-md5.min.js"></script>
+    <script src="bower_components/angular-ui-tree/dist/angular-ui-tree.min.js"></script>
+    <script src="bower_components/angular-sanitize/angular-sanitize.min.js"></script>
+    <script src="bower_components/jquery.easy-pie-chart/dist/angular.easypiechart.min.js"></script>
+    <script src="bower_components/jquery-flot/jquery.flot.js"></script>
+    <script src="bower_components/jquery-flot/jquery.flot.resize.js"></script>
+    <script src="bower_components/jquery-flot/jquery.flot.selection.js"></script>
+    <script src="bower_components/jquery-flot/jquery.flot.time.js"></script>
+    <script src="bower_components/angular-flot/angular-flot.js"></script>
+    <script src="bower_components/angular-toasty/dist/angular-toasty.min.js"></script>
 
-    <!-- NAVIGATION : This navigation is also responsive-->
-    <nav>
-        <ul data-smart-menu>
-            <li data-ui-sref-active="active" class="tc_menuitem tc_menuitem_dashboard">
-                <a data-ui-sref="dashboard" title="Dashboard"><i class="fa fa-lg fa-fw fa-tachometer"></i> <span
-                        class="menu-item-parent">Dashboard</span></a>
-            </li>
-            <li data-ui-sref-active="active" class="tc_menuitem tc_menuitem_disks">
-                <a data-ui-sref="disks" title="Disks"><i class="fa fa-lg fa-fw fa-hdd-o"></i> <span
-                        class="menu-item-parent">Disks</span></a>
-            </li>
-            <li data-ui-sref-active="active" class="tc_menuitem tc_menuitem_pools">
-                <a data-ui-sref="pools" title="Pools"><i class="fa fa-lg fa-fw fa-database"></i> <span
-                        class="menu-item-parent">Pools</span></a>
-            </li>
-            <li data-ui-sref-active="active" class="tc_menuitem tc_menuitem_volumes">
-                <a data-ui-sref="volumes" data-ui-sref-opts="{reload: true}" title="Volumes">
-                    <i class="fa fa-lg fa-fw glyphicon glyphicon-cd"></i> <span
-                        class="menu-item-parent">Volumes</span>
-                </a>
-            </li>
-            <li data-menu-collapse class="tc_menuitem tc_menuitem_ceph">
-                <a href="#"><i class="fa fa-lg fa-fw fa-question"></i> <span class="menu-item-parent">Ceph</span></a>
-                <ul>
-                    <!--
-                    <li data-ui-sref-active="active" class="tc_submenuitem_ceph_osds">
-                        <a data-ui-sref="cephOSDs">OSDs</a>
-                    </li>
-                    <li data-ui-sref-active="active" class="tc_submenuitem_ceph_mons">
-                        <a data-ui-sref="cephMONs">MONs</a>
-                    </li>
-                    -->
-                    <li data-ui-sref-active="active" class="tc_submenuitem tc_submenuitem_ceph_pools">
-                        <a data-ui-sref="cephPools">Pools</a>
-                    </li>
-                    <!--
-                    <li data-ui-sref-active="active" class="tc_submenuitem_ceph_rbd">
-                        <a data-ui-sref="cephRBD">Block Devices (RBD)</a>
-                    </li>
-                    <li data-ui-sref-active="active" class="tc_submenuitem_ceph_rgw">
-                        <a data-ui-sref="cephRGW">Object Gateway (RGW)</a>
-                    </li>
-                    <li data-ui-sref-active="active" class="tc_submenuitem_ceph_hosts">
-                        <a data-ui-sref="cephHosts">Hosts</a>
-                    </li>
-                    -->
-                    <li data-ui-sref-active="active" class="tc_submenuitem tc_submenuitem_ceph_crushmap">
-                        <a data-ui-sref="crushmap">CRUSH Map</a>
-                    </li>
-                </ul>
-            </li>
-            <li data-ui-sref-active="active" class="tc_menuitem tc_menuitem_hosts">
-                <a data-ui-sref="hosts" title="Hosts"><i class="fa fa-lg fa-fw fa-sitemap"></i> <span
-                        class="menu-item-parent">Hosts</span></a>
-            </li>
-            <li data-menu-collapse class="tc_menuitem tc_menuitem_system">
-                <a href="#"><i class="fa fa-lg fa-fw fa-cog"></i> <span class="menu-item-parent">System</span></a>
-                <ul>
-                    <li data-ui-sref-active="active" class="tc_submenuitem tc_submenuitem_system_users">
-                        <a data-ui-sref="users">Users</a>
-                    </li>
-                    <li data-ui-sref-active="active" class="tc_submenuitem tc_submenuitem_system_cmdlogs">
-                        <a data-ui-sref="cmdlogs">Command Logs</a>
-                    </li>
-                </ul>
-            </li>
-        </ul>
-    </nav>
-    <!-- END NAVIGATION -->
+    <!-- build:js oa-app.js -->
 
-    <span class="minifyme" data-action="minifyMenu" minify-menu>
-        <i class="fa fa-arrow-circle-left hit"></i>
-    </span>
-</aside>
+    <!-- htmlbuild:script src -->
+    <!-- /htmlbuild -->
 
-
-
-<div id="main" role="main" ng-class="{loginmain : loginActive()}">
-
-    <!-- RIBBON -->
-    <div id="ribbon" ng-hide="loginActive()">
-        <!-- breadcrumb -->
-        <div ncy-breadcrumb></div>
-        <!-- end breadcrumb -->
-    </div>
-    <!-- END RIBBON -->
-
-    <div id="content" ui-view="main">
-    </div>
-</div>
-
-<!-- build:js oa-app.js -->
-
-<!-- 3rd-Party Libraries -->
-<script src="bower_components/jquery/dist/jquery.js"></script>
-<script src="bower_components/jquery-ui/jquery-ui.js"></script>
-<script src="bower_components/bootstrap/dist/js/bootstrap.js"></script>
-<script src="bower_components/angular/angular.js"></script>
-<script src="bower_components/angular-resource/angular-resource.js"></script>
-<script src="bower_components/ui-router/release/angular-ui-router.js"></script>
-<script src="bower_components/ng-tags-input/ng-tags-input.js"></script>
-<script src="bower_components/angular-breadcrumb/dist/angular-breadcrumb.js"></script>
-<script src="bower_components/angular-bootstrap/ui-bootstrap-tpls.js"></script>
-<script src="bower_components/underscore/underscore.js"></script>
-<script src="bower_components/angular-ui-sortable/sortable.js"></script>
-<script src="bower_components/malhar-angular-dashboard/dist/angular-ui-dashboard.js"></script>
-<script src="bower_components/angular-md5/angular-md5.js"></script>
-<script src="bower_components/angular-ui-tree/dist/angular-ui-tree.js"></script>
-<script src="bower_components/angular-sanitize/angular-sanitize.js"></script>
-<script src="bower_components/jquery.easy-pie-chart/dist/angular.easypiechart.min.js"></script>
-<script src="bower_components/jquery-flot/jquery.flot.js"></script>
-<script src="bower_components/jquery-flot/jquery.flot.resize.js"></script>
-<script src="bower_components/jquery-flot/jquery.flot.selection.js"></script>
-<script src="bower_components/jquery-flot/jquery.flot.time.js"></script>
-<script src="bower_components/angular-flot/angular-flot.js"></script>
-
-<!-- htmlbuild:script src -->
-<!-- /htmlbuild -->
-
-<!-- endbuild -->
-
+    <!-- endbuild -->
 </body>
 </html>

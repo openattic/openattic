@@ -86,7 +86,7 @@ module.exports = function (grunt) {
           dest: "<%= buildConfig.src %>index.html",
           options: {
             relative: true,
-            prefix: "scripts/",
+            prefix: "",
             parseTag: "htmlbuild",
             scripts: {
               src: {
@@ -182,6 +182,13 @@ module.exports = function (grunt) {
       // replaces js and css includes in index.html
       usemin: {
         html: ["<%= buildConfig.dist %>/index.html"]
+      },
+
+      uglify: {
+        options: {
+          report: 'min',
+          mangle: false
+        }
       }
     }
   );

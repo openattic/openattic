@@ -40,6 +40,8 @@ angular.module("openattic", [
   "ngTagsInput",
   "ncy-angular-breadcrumb",
   "angular-md5",
+  "angular-toasty",
+  "openattic.navigation",
   "openattic.auth",
   "openattic.apirecorder",
   "openattic.datatable",
@@ -51,8 +53,7 @@ angular.module("openattic", [
   "openattic.oaWizards",
   "openattic.userinfo",
   "openattic.required",
-  "openattic.cephPools",
-  "smartadmin.smartmenu"
+  "openattic.cephPools"
 ]);
 
 var app = angular.module("openattic");

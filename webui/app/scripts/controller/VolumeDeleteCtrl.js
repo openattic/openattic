@@ -31,7 +31,7 @@
 "use strict";
 
 var app = angular.module("openattic");
-app.controller("VolumeDeleteCtrl", function ($scope, VolumeService, $modalInstance, volumeSelection, $q) {
+app.controller("VolumeDeleteCtrl", function ($scope, VolumeService, $uibModalInstance, volumeSelection, $q, toasty) {
   if ($.isArray(volumeSelection)) {
     $scope.volumes = volumeSelection;
   } else {
@@ -60,21 +60,18 @@ app.controller("VolumeDeleteCtrl", function ($scope, VolumeService, $modalInstan
       requests.push(deferred.promise);
     });
     $q.all(requests).then(function () {
-      $modalInstance.close("deleted");
+      $uibModalInstance.close("deleted");
     }, function (error) {
       console.log("An error occured", error);
     });
   };
 
   $scope.cancel = function () {
-    $modalInstance.dismiss("cancel");
+    $uibModalInstance.dismiss("cancel");
 
-    $.smallBox({
+    toasty.warning({
       title: "Delete volume",
-      content: "<i class=\"fa fa-clock-o\"></i> <i>Cancelled</i>",
-      color: "#C46A69",
-      iconSmall: "fa fa-times fa-2x fadeInRight animated",
-      timeout: 4000
+      msg: "Cancelled"
     });
   };
 });

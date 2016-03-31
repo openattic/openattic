@@ -203,6 +203,7 @@ class DistBuilder(object):
         of the `source_dir`.
         """
 
+        self._process.run(['hg', 'pull'], cwd=source_dir)
         entry_list = self._process.run(
             ['hg', 'tags'],
             cwd=source_dir).stdout.split('\n')
@@ -281,7 +282,7 @@ class DistBuilder(object):
 
         Any other revisions are passed trough.
         """
-        
+
         if rev == 'stable':
             rev = self._get_latest_existing_tag()
         elif rev == 'unstable':
@@ -564,8 +565,8 @@ class DistBuilder(object):
         # Prepare sources.
         repositories = {
             'oa_cache': [['hg', 'pull', '--update']],
-            'openattic': [['hg', 'update', '--clean', '-r', hg_rev],
-                          ['hg', 'pull', '--update']],
+            'openattic': [['hg', 'pull'],
+                          ['hg', 'update', '--clean', '-r', hg_rev]]
         }
         for repo_name, commands in repositories.items():
             for command in commands:

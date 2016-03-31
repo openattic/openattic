@@ -242,6 +242,7 @@ storage space on demand.
 This package includes support for MD-RAID, the common Linux software RAID.
 
 %package  module-nagios
+Requires: bc
 Requires:	nagios
 Requires:	nagios-common
 Requires: openattic-base
@@ -254,6 +255,8 @@ Requires: nagios-plugins-disk
 Requires: nagios-plugins-users
 Requires: nagios-plugins-procs
 Requires: nagios-plugins-load
+Requires: nagios-plugins-tcp
+Requires: python-configobj
 
 Summary: Nagios module for openATTIC
 
@@ -355,7 +358,7 @@ storage space on demand.
 This package contains the yum repository file to install openATTIC.
 
 %prep
-%setup -q -n %{name}-%{version}-%{PKGVERSION}
+%setup -q
 
 %install
 
@@ -366,7 +369,6 @@ mkdir -p %{buildroot}%{_libdir}/nagios/plugins/
 mkdir -p %{buildroot}%{_localstatedir}/lib/%{name}/http/volumes
 mkdir -p %{buildroot}%{_localstatedir}/lib/%{name}/nfs_dummy
 mkdir -p %{buildroot}%{_localstatedir}/lib/%{name}/static
-mkdir -p %{buildroot}%{_localstatedir}/lib/nagios3
 mkdir -p %{buildroot}%{_localstatedir}/log/%{name}
 mkdir -p %{buildroot}%{_localstatedir}/lock/%{name}
 mkdir -p %{buildroot}%{_mandir}/man1/
@@ -378,9 +380,11 @@ mkdir -p %{buildroot}%{_sysconfdir}/httpd/conf.d/
 mkdir -p %{buildroot}%{_sysconfdir}/logrotate.d/
 mkdir -p %{buildroot}%{_sysconfdir}/modprobe.d/
 mkdir -p %{buildroot}%{_sysconfdir}/nagios/conf.d/
+mkdir -p %{buildroot}%{_sysconfdir}/pnp4nagios/check_commands/
 mkdir -p %{buildroot}%{_sysconfdir}/%{name}/databases
 mkdir -p %{buildroot}%{_sysconfdir}/yum.repos.d/
 mkdir -p %{buildroot}/lib/systemd/system/
+mkdir -p %{buildroot}/lib/tmpfiles.d/
 
 # Install Backend and binaries
 rsync -aAX backend/ %{buildroot}%{_datadir}/%{name}
@@ -429,13 +433,15 @@ gzip %{buildroot}%{_mandir}/man1/*.1
 
 #configure nagios
 install -m 644 etc/nagios-plugins/config/%{name}.cfg %{buildroot}%{_sysconfdir}/nagios/conf.d/%{name}_plugins.cfg
-install -m 644 etc/nagios3/conf.d/%{name}_*.cfg      %{buildroot}%{_sysconfdir}/nagios/conf.d/
+install -m 644 etc/nagios3/conf.d/%{name}_*.cfg %{buildroot}%{_sysconfdir}/nagios/conf.d/
+install -m 644 etc/pnp4nagios/check_commands/check_*.cfg %{buildroot}%{_sysconfdir}/pnp4nagios/check_commands/
 
 for NAGPLUGIN in `ls -1 %{buildroot}%{_datadir}/%{name}/nagios/plugins/`; do
     ln -s "%{_datadir}/%{name}/nagios/plugins/$NAGPLUGIN" "%{buildroot}%{_libdir}/nagios/plugins/$NAGPLUGIN"
 done
 
 install -m 444 etc/systemd/*.service %{buildroot}/lib/systemd/system/
+install -m 644 etc/tmpfiles.d/%{name}.conf %{buildroot}/lib/tmpfiles.d/
 
 # openATTIC httpd config
 install -m 644 etc/apache2/conf-available/%{name}-volumes.conf %{buildroot}%{_sysconfdir}/httpd/conf.d/
@@ -540,12 +546,13 @@ echo ""
 %config %{_sysconfdir}/dbus-1/system.d/%{name}.conf
 /lib/systemd/system/%{name}-rpcd.service
 /lib/systemd/system/%{name}-systemd.service
+/lib/tmpfiles.d/%{name}.conf
 %config %{_sysconfdir}/httpd/conf.d/%{name}.conf
 %config %{_sysconfdir}/logrotate.d/%{name}
 %dir %{_datadir}/%{name}
 %dir %{_datadir}/%{name}/installed_apps.d
+%dir %{_sysconfdir}/%{name}
 %config(noreplace) %{_sysconfdir}/default/%{name}
-%config(noreplace) %{_sysconfdir}/%{name}/databases/pgsql.ini
 %doc %{_mandir}/man1/oaconfig.1.gz
 %doc %{_mandir}/man1/oacli.1.gz
 %{_datadir}/%{name}/clustering/
@@ -641,12 +648,12 @@ systemctl start lvm2-lvmetad
 %{_datadir}/%{name}/installed_apps.d/09_mdraid
 
 %files module-nagios
-#/etc/pnp4nagios/check_commands/check_diskstats.cfg
-#/etc/pnp4nagios/check_commands/check_all_disks.cfg
 %defattr(-,root,root,-)
 %config %{_sysconfdir}/nagios/conf.d/openattic_plugins.cfg
 %config %{_sysconfdir}/nagios/conf.d/openattic_static.cfg
 %config %{_sysconfdir}/nagios/conf.d/openattic_contacts.cfg
+%config %{_sysconfdir}/pnp4nagios/check_commands/check_all_disks.cfg
+%config %{_sysconfdir}/pnp4nagios/check_commands/check_diskstats.cfg
 %{_libdir}/nagios/plugins/check_cputime
 %{_libdir}/nagios/plugins/check_diskstats
 %{_libdir}/nagios/plugins/check_drbd
@@ -661,8 +668,6 @@ systemctl start lvm2-lvmetad
 %{_libdir}/nagios/plugins/notify_openattic
 %{_datadir}/%{name}/installed_apps.d/50_nagios
 %{_datadir}/%{name}/nagios
-%defattr(-,nagios,nagios,-)
-%{_localstatedir}/lib/nagios3
 
 %post module-nagios
 systemctl daemon-reload
@@ -710,7 +715,8 @@ systemctl start smb
 
 %files 	pgsql
 %defattr(-,root,root,-)
-%{_sysconfdir}/openattic/
+%config(noreplace) %{_sysconfdir}/%{name}/databases/pgsql.ini
+%{_sysconfdir}/%{name}/database.ini
 
 %files release
 %defattr(-,root,root,-)

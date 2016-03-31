@@ -162,6 +162,19 @@ angular.module("openattic").config(function ($stateProvider, $urlRouterProvider)
         label: "Volumes"
       }
     })
+    .state("volumes-add", {
+      url: "/volumes/add",
+      views: {
+        "main": {
+          templateUrl: "templates/volumes/volume-form.html",
+          controller : "VolumeFormCtrl"
+        }
+      },
+      ncyBreadcrumb: {
+        parent: "volumes",
+        label: "Add"
+      }
+    })
     .state("volumes.detail", {
       url: "/:volume",
       views: {
@@ -358,19 +371,6 @@ angular.module("openattic").config(function ($stateProvider, $urlRouterProvider)
       ncyBreadcrumb: {
         label: "Add",
         parent: "volumes.detail.snapshots"
-      }
-    })
-    .state("volumes-add", {
-      url: "/volumes/add",
-      views: {
-        "main": {
-          templateUrl: "templates/volumes/volume-form.html",
-          controller : "VolumeFormCtrl"
-        }
-      },
-      ncyBreadcrumb: {
-        parent: "volumes",
-        label: "Add"
       }
     })
     .state("hosts", {

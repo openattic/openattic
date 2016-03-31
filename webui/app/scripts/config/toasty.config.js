@@ -28,32 +28,19 @@
  * for the JavaScript code in this page.
  *
  */
-// Karma configuration for e2e tests
+"use strict";
 
-module.exports = function (config) {
-    config.set({
-
-        basePath: 'abc),
-
-        files: [
-            '../e2e/**/*.js'
-        ],
-
-        logLevel: config.LOG_DEBUG,
-
-        autoWatch: false,
-
-        browsers: ['Chrome'],
-
-        frameworks: ['ng-scenario'],
-
-        singleRun: true,
-
-        urlRoot: '/_karma_/',
-
-        proxies: {
-            '/': 'http://localhost:8080/'
-        }
-
-    });
-};
+var app = angular.module("openattic");
+app.config(["toastyConfigProvider", function (toastyConfigProvider) {
+  toastyConfigProvider.setConfig({
+    sound:        false,
+    shake:        false,
+    limit:        5,
+    position:     "top-center",
+    showClose:    true,
+    clickToClose: true,
+    timeout:      4000,
+    html:         true,
+    theme:        "bootstrap"
+  });
+}]);

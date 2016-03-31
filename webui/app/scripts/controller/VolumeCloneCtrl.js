@@ -31,7 +31,7 @@
 "use strict";
 
 var app = angular.module("openattic");
-app.controller("VolumeCloneCtrl", function ($scope, VolumeService, SnapshotService, $modalInstance, volume) {
+app.controller("VolumeCloneCtrl", function ($scope, VolumeService, SnapshotService, $uibModalInstance, volume, toasty) {
   $scope.volume = volume;
   $scope.clone_obj = {};
 
@@ -49,7 +49,7 @@ app.controller("VolumeCloneCtrl", function ($scope, VolumeService, SnapshotServi
       })
           .$promise
           .then(function () {
-            $modalInstance.close("cloned");
+            $uibModalInstance.close("cloned");
           }, function (error) {
             console.log("An error occured", error);
           });
@@ -60,7 +60,7 @@ app.controller("VolumeCloneCtrl", function ($scope, VolumeService, SnapshotServi
       })
           .$promise
           .then(function () {
-            $modalInstance.close("cloned");
+            $uibModalInstance.close("cloned");
           }, function (error) {
             console.log("An error occured", error);
           });
@@ -68,14 +68,11 @@ app.controller("VolumeCloneCtrl", function ($scope, VolumeService, SnapshotServi
   };
 
   $scope.cancel = function () {
-    $modalInstance.dismiss("cancel");
+    $uibModalInstance.dismiss("cancel");
 
-    $.smallBox({
-      title: "Clone volume",
-      content: "<i class=\"fa fa-clock-o\"></i> <i>Cancelled</i>",
-      color: "#C46A69",
-      iconSmall: "fa fa-times fa-2x fadeInRight animated",
-      timeout: 4000
+    toasty.warning({
+      title: "Clone " + $scope.type,
+      msg: "Cancelled"
     });
   };
 });

@@ -36,6 +36,7 @@ this program. If not, see <http://www.gnu.org/licenses/>.
 .. toctree::
   :maxdepth: 2
 
+  trademarks
   install_guides/index
   gui_docs/index
   developer_docs/index

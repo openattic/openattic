@@ -41,12 +41,6 @@ describe('Volumes resize', function(){
     cancel_button.click();
   });
 
-  it('should show a required field error if the submit button is clicked without editing anything', function(){
-    submit_button.click();
-    expect(element(by.css('.tc_required')).isDisplayed()).toBe(true);
-    cancel_button.click();
-  });
-
   it('should show a message if the chosen size is smaller than 100mb', function(){
     wrongSize('99mb');
   });

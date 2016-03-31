@@ -13,7 +13,7 @@ describe('Should add an user', function(){
   var user = element(by.cssContainingText('tr', testUser.username));
   var systemItem = element(by.css('ul .tc_menuitem_system'));
   var usersItem = systemItem.element(by.css('ul .tc_submenuitem_system_users > a'));
-  var correctInput = element(by.binding('correctInput'));
+  var correctInput = element(by.css('.tc_correctInput'));
   var logout = element(by.css('.tc_logout a'));
   var addBtn = element(by.css('.tc_addUser'));
   var noUniqueName = element(by.css('.tc_noUniqueName'));
@@ -95,7 +95,7 @@ describe('Should add an user', function(){
   });
 
   it('should show the first and last name of the current user in the left panel', function(){
-    expect(element(by.css('span .tc_usernameinfo')).getText()).toEqual(testUser.firstname + ' ' + testUser.lastname);
+    expect(element(by.css('.tc_usernameinfo')).getText()).toEqual(testUser.firstname + ' ' + testUser.lastname);
   });
 
   it('should logout protractor_test_user', function(){

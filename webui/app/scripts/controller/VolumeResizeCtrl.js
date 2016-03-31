@@ -31,8 +31,8 @@
 "use strict";
 
 var app = angular.module("openattic");
-app.controller("VolumeResizeCtrl", function ($scope, VolumeService, PoolService, SizeParserService, $modalInstance,
-    volume) {
+app.controller("VolumeResizeCtrl", function ($scope, VolumeService, PoolService, SizeParserService, $uibModalInstance,
+    volume, toasty) {
   $scope.volume = volume;
   $scope.input = {
     newsize: "",
@@ -55,7 +55,7 @@ app.controller("VolumeResizeCtrl", function ($scope, VolumeService, PoolService,
       })
           .$update()
           .then(function () {
-            $modalInstance.close("resized");
+            $uibModalInstance.close("resized");
           }, function (error) {
             console.log("An error occured", error);
           });
@@ -63,14 +63,11 @@ app.controller("VolumeResizeCtrl", function ($scope, VolumeService, PoolService,
   };
 
   $scope.cancel = function () {
-    $modalInstance.dismiss("cancel");
+    $uibModalInstance.dismiss("cancel");
 
-    $.smallBox({
+    toasty.warning({
       title: "Resize volume",
-      content: "<i class=\"fa fa-clock-o\"></i> <i>Cancelled</i>",
-      color: "#C46A69",
-      iconSmall: "fa fa-times fa-2x fadeInRight animated",
-      timeout: 4000
+      msg: "Cancelled"
     });
   };
 });

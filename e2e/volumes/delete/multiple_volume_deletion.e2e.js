@@ -11,6 +11,7 @@ describe('Volumes delete', function(){
 
   var usePool = function(pool, callback){
     addBtn.click();
+    browser.sleep(400);
     volumePoolSelect.sendKeys(pool.name);
     browser.sleep(helpers.configs.sleep);
     callback(pool.name, pool);
@@ -18,6 +19,7 @@ describe('Volumes delete', function(){
 
   beforeAll(function(){
     helpers.login();
+    browser.sleep(400);
     volumesItem.click();
     // should create a volume of each configured volume types in every configured pool
     for(var key in helpers.configs.pools){
@@ -30,16 +32,22 @@ describe('Volumes delete', function(){
 
           //create a volume
           volumeNameInput.sendKeys(volumename);
+          browser.sleep(400);
           element(by.cssContainingText('label', volumeType)).click();
+          browser.sleep(400);
           element(by.id('data.megs')).sendKeys('100mb');
+          browser.sleep(400);
           submitButton.click();
+          browser.sleep(400);
         });
       }
     }
 
     // Select all e2e volumes.
     element(by.css('.tc_entries_dropdown')).click();
+    browser.sleep(400);
     element(by.css('.tc_entries_100 > a')).click();
+    browser.sleep(400);
     element.all(by.cssContainingText('tr', 'e2e_')).all(by.css("input")).each(function(e, index){
       e.click();
       if(index === 0){
@@ -52,21 +60,42 @@ describe('Volumes delete', function(){
     expect(element(by.css('.tabbable.tabs-left')).isDisplayed()).toBe(false);
   });
 
+  it('should display the delete button when selecting several volumes', function(){
+    expect(element(by.css('.tc_delete_btn')).isDisplayed()).toBe(true);
+    browser.sleep(400);
+  });
+
   it('should only have add and delete avaiable in the dropdown action menu', function(){
     actionMenu.click();
+    browser.sleep(400);
     var list = element.all(by.css('.oa-dropdown-actions li:not(.disabled) a'));
+    browser.sleep(400);
     expect(list.count()).toBe(2);
+    browser.sleep(400);
     expect(list.first().getText()).toBe('Add');
+    browser.sleep(400);
     expect(list.last().getText()).toBe('Delete');
+    browser.sleep(400);
+    var disabledOptionList = element.all(by.css('.oa-dropdown-actions .disabled'));
+
+    disabledOptionList.getText().then(function(disabledOptionList){
+      expect(disabledOptionList.toString()).toEqual('Resize,Clone,Protection,More Options');
+    });
+
+    browser.sleep(400);
     actionMenu.click();
   });
 
   it('should delete all volumes that begin with "e2e_"', function(){
     // Delete all volumes.
     actionMenu.click();
+    browser.sleep(400);
     element(by.css('.tc_deleteItem')).click();
+    browser.sleep(400);
     element(by.model('input.enteredName')).sendKeys("yes");
+    browser.sleep(400);
     element(by.id('bot2-Msg1')).click();
+    browser.sleep(helpers.configs.sleep);
 
     // Check if they are deleted.
     expect(element.all(by.cssContainingText('tr', 'e2e_'))).toEqual([]);

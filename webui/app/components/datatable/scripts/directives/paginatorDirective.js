@@ -31,7 +31,7 @@
 "use strict";
 
 var app = angular.module("openattic.datatable");
-app.directive("paginator", function (paginatorService) {
+app.directive("paginator", function () {
   return {
     restrict: "E",
     templateUrl: "components/datatable/templates/pagination.html",
@@ -40,19 +40,27 @@ app.directive("paginator", function (paginatorService) {
       pages: "="
     },
     link: function (scope) {
+      scope.displayNumber = scope.page + 1;
 
-      var updatePages = function () {
-        scope.buttons = paginatorService.getNumbers(scope.page, scope.pages, 7);
+      scope.instantChange = function (event) {
+        if (event.keyCode === 38) { //up arrow key
+          scope.switchPage(scope.displayNumber + 1);
+        } else if (event.keyCode === 40) { //down arrow key
+          scope.switchPage(scope.displayNumber - 1);
+        }
       };
 
       scope.switchPage = function (page) {
-        scope.page = page;
+        page = parseInt(page, 10);
+        if (!page || page < 1) {
+          page = 1;
+        } else if (page > scope.pages) {
+          page = scope.pages;
+        }
+        scope.page = page - 1;
+        scope.displayNumber = page;
         // TODO: Should be done automatically, we should take a look at it
-        updatePages();
       };
-
-      // TODO: Should be done automatically via view, we should take a look at it
-      scope.$watch("pages", updatePages);
     }
   };
 });

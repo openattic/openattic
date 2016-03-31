@@ -31,7 +31,7 @@
 "use strict";
 
 var app = angular.module("openattic");
-app.controller("VolumeCtrl", function ($scope, $state, VolumeService, SizeParserService, $modal) {
+app.controller("VolumeCtrl", function ($scope, $state, VolumeService, SizeParserService, $uibModal, toasty) {
   $scope.data = {};
 
   $scope.filterConfig = {
@@ -67,7 +67,8 @@ app.controller("VolumeCtrl", function ($scope, $state, VolumeService, SizeParser
     var item = selection.item;
     var items = selection.items;
 
-    $scope.multiSelection = Boolean(items);
+    $scope.multiSelection = Boolean(items) && items.length > 1;
+
     $scope.hasSelection = Boolean(item);
 
     if (!item && !items) {
@@ -100,7 +101,7 @@ app.controller("VolumeCtrl", function ($scope, $state, VolumeService, SizeParser
   };
 
   $scope.resizeAction = function () {
-    var modalInstance = $modal.open({
+    var modalInstance = $uibModal.open({
       windowTemplateUrl: "templates/messagebox.html",
       templateUrl: "templates/volumes/resize.html",
       controller: "VolumeResizeCtrl",
@@ -120,7 +121,7 @@ app.controller("VolumeCtrl", function ($scope, $state, VolumeService, SizeParser
     if (!$scope.selection.item) {
       return;
     }
-    var modalInstance = $modal.open({
+    var modalInstance = $uibModal.open({
       windowTemplateUrl: "templates/messagebox.html",
       templateUrl: "templates/volumes/protection.html",
       controller: "VolumeProtectionCtrl",
@@ -143,18 +144,15 @@ app.controller("VolumeCtrl", function ($scope, $state, VolumeService, SizeParser
   };
 
   $scope.protectedMessage = function (item) {
-    $.smallBox({
+    toasty.warning({
       title: item.name + " is not deletable",
-      content: "<i class=\"fa fa-clock-o tc_notDeletable\"></i><i> Release the deletion protection in order to be " +
-               "able to delete the volume.</i>",
-      color: "#C46A69",
-      iconSmall: "fa fa-times fa-2x fadeInRight animated",
+      msg: "Release the deletion protection in order to be able to delete the volume.",
       timeout: 6000
     });
   };
 
   $scope.deletionDialog = function (selection) {
-    var modalInstance = $modal.open({
+    var modalInstance = $uibModal.open({
       windowTemplateUrl: "templates/messagebox.html",
       templateUrl: "templates/volumes/delete.html",
       controller: "VolumeDeleteCtrl",
@@ -195,7 +193,7 @@ app.controller("VolumeCtrl", function ($scope, $state, VolumeService, SizeParser
   };
 
   $scope.cloneAction = function () {
-    var modalInstance = $modal.open({
+    var modalInstance = $uibModal.open({
       windowTemplateUrl: "templates/messagebox.html",
       templateUrl: "templates/volumes/clone.html",
       controller: "VolumeCloneCtrl",

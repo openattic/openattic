@@ -31,11 +31,13 @@
 "use strict";
 
 var app = angular.module("openattic");
-app.controller("CmdlogDeleteBySelectionCtrl", function ($scope, CmdlogService, $modalInstance, $filter, selection) {
+app.controller("CmdlogDeleteBySelectionCtrl", function ($scope, CmdlogService, $uibModalInstance, $filter, selection,
+    toasty) {
   $scope.selectionLength = selection.length;
   $scope.itemText = false;
   if (selection.length === 1) {
     $scope.itemText = $filter("shortlog")(selection[0].text);
+    $scope.command = selection[0].command;
   }
 
   var ids = [];
@@ -43,25 +45,22 @@ app.controller("CmdlogDeleteBySelectionCtrl", function ($scope, CmdlogService, $
     ids.push(selection[i].id);
   }
 
-  $scope.yes = function () {
+  $scope.delete = function () {
     CmdlogService.delete({"ids": ids})
         .$promise
         .then(function () {
-          $modalInstance.close("cloned");
+          $uibModalInstance.close("cloned");
         }, function (error) {
           console.log("An error occured", error);
         });
   };
 
-  $scope.no = function () {
-    $modalInstance.dismiss("cancel");
+  $scope.cancel = function () {
+    $uibModalInstance.dismiss("cancel");
 
-    $.smallBox({
+    toasty.warning({
       title: "Delete log entry",
-      content: "<i class=\"fa fa-clock-o\"></i> <i>Cancelled</i>",
-      color: "#C46A69",
-      iconSmall: "fa fa-times fa-2x fadeInRight animated",
-      timeout: 4000
+      msg: "Cancelled"
     });
   };
 });
