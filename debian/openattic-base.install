@@ -1,10 +1,11 @@
 # Python Modules
-backend/rpcd      /usr/share/openattic
-backend/rest      /usr/share/openattic
-backend/systemd   /usr/share/openattic
 backend/cmdlog    /usr/share/openattic
-backend/peering   /usr/share/openattic
 backend/ifconfig  /usr/share/openattic
+backend/nodb      /usr/share/openattic
+backend/peering   /usr/share/openattic
+backend/rest      /usr/share/openattic
+backend/rpcd      /usr/share/openattic
+backend/systemd   /usr/share/openattic
 backend/sysutils  /usr/share/openattic
 backend/userprefs /usr/share/openattic
 backend/volumes   /usr/share/openattic
