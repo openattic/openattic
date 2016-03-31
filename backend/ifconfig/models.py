@@ -129,7 +129,7 @@ class HostGroup(models.Model):
 
 class NetDevice(models.Model):
     host        = models.ForeignKey(Host)
-    devname     = models.CharField(max_length=10)
+    devname     = models.CharField(max_length=15)
     dhcp        = models.BooleanField(default=False, blank=True)
     auto        = models.BooleanField(default=True,  blank=True)
     jumbo       = models.BooleanField(default=False, blank=True)

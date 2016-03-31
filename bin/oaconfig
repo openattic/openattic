@@ -166,7 +166,17 @@ case $1 in
 			exit 1
 		fi
 		HOSTID=`oacli 'ifconfig.Host.current' | grep '^id' | cut -d\' -f2`
-		eval `LANG=C vgs --units M -o vg_size,vg_uuid --noheadings --nameprefixes --nosuffix "$2"`
+
+		# Check if VG actually exists
+		vgs "$2" > /dev/null || exit 1
+		eval $(LANG=C vgs --units M -o vg_size,vg_uuid,vg_tags --noheadings --nameprefixes --nosuffix "$2")
+		for tag in $(echo "$LVM2_VG_TAGS"|sed s/,/\\n/g)
+		do
+			if [ $tag == "sys" ]; then
+				echo "Volume Group $2 is tagged as sys, aborting."
+				exit 1
+			fi
+		done
 		ROUNDEDMEGS=`awk '{printf "%.0f\n", $1}' <<< $LVM2_VG_SIZE`
 		STOROBJID=`oacli volumes.StorageObject.create 'json:{"name": "'$2'", "megs": "'$ROUNDEDMEGS'", "uuid": "'$LVM2_VG_UUID'", "is_origin": true }' | grep '^id' | cut -d\' -f2`
 		oacli lvm.VolumeGroup.create 'json:{"storageobj": {"app": "volumes", "obj": "StorageObject", "id": '$STOROBJID'}, "host": {"app":"ifconfig", "obj":"Host", "id":'$HOSTID'} }'
