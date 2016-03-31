@@ -1,6 +1,17 @@
 from django.db import models
 from django.db.models.query import QuerySet
-from django.db.models.manager import BaseManager
+
+import django
+minor_version = django.VERSION[1]
+if minor_version == 6:
+	# Work around
+	from django.utils import six
+	from django.db.models.manager import RenameManagerMethods
+	base_class = six.with_metaclass(RenameManagerMethods)
+else:
+	# Default
+	from django.db.models.manager import BaseManager
+	base_class = BaseManager.from_queryset(NodbQuerySet)
 
 
 class NodbQuerySet(QuerySet):
@@ -106,7 +117,7 @@ class NodbQuerySet(QuerySet):
         super(NodbQuerySet, self).all(context)
 
 
-class NodbManager(BaseManager.from_queryset(NodbQuerySet)):
+class NodbManager(base_class):
 
     use_for_related_fields = True
 
@@ -122,8 +133,10 @@ class NodbModel(models.Model):
     objects = NodbManager()
 
     class Meta:
-        managed = False
-        abstract = True
+	# Needs to be true to be able to create the necessary database tables by using Django migrations and
+	# the table needs to exist to be able to use Django model relations.
+        managed = True          
+	abstract = True
 
     @staticmethod
     def get_all_objects():
