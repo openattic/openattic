@@ -1,4 +1,4 @@
-<oadatatable ng-if="data" data="data" class="oadatatable tc_cephPoolTable" filter-config="filterConfig" selection="selection">
+<oadatatable ng-if="clusters" data="pools" class="oadatatable tc_cephPoolTable" filter-config="filterConfig" selection="selection">
     <table class="table table-striped table-bordered table-hover dataTable">
         <thead>
             <tr>
@@ -6,24 +6,22 @@
                     <input type="checkbox" ng-model="selection.checkAll"/>
                 </th>
                 <th ng-show="columns['Name']">Name</th>
-                <th ng-show="columns['ID']">ID</th>
-                <th ng-show="columns['Replicas']">Replicas</th>
-                <th ng-show="columns['Placement Groups']">Placement Groups</th>
+                <th ng-show="columns['Clones']">Clones</th>
+                <th ng-show="columns['Copies']">Copies</th>
             </tr>
         </thead>
         <tbody>
-            <tr ng-repeat="row in data.pool"
+            <tr ng-repeat="row in data"
                 ng-class="{ info: isRowSelected(row) }"
                 ng-click="toggleSelection(row, $event)">
                 <td ng-if="selection.available">
                     <input type="checkbox" checklist-model="selection.items" checklist-value="row"/>
                 </td>
-                <td ng-show="columns['Name']"><i class="fa fa-bomb" ng-show="row.full"></i> {{row.name}}</td>
-                <td ng-show="columns['ID']" ng-bind="row.id"></td>
-                <td ng-show="columns['Replicas']" ng-bind="row.size"></td>
-                <td ng-show="columns['Placement Groups']" ng-bind="row.pg_num"></td>
+                <td ng-show="columns['Name']" ng-bind="row.name"></td>
+                <td ng-show="columns['Clones']" ng-bind="row.num_object_clones"></td>
+                <td ng-show="columns['Copies']" ng-bind="row.num_object_copies"></td>
             </tr>
         </tbody>
     </table>
 </oadatatable>
-<div ng-if="data === false">No Ceph pools available.</div>
+<div ng-if="clusters === false">No Ceph clusters available.</div>

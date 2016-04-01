@@ -33,7 +33,7 @@
 var app = angular.module("openattic.cephPools");
 app.factory("Paginator", function ($resource) {
   //return $resource("/openattic/api/ceph-cluster/:id", {
-  return $resource("http://172.16.13.233/openattic/api/ceph-cluster/:id", {
+  return $resource("/openattic/api/ceph/:id", {
     id: "@id"
   }, {
     update: {method: "PUT"},
@@ -44,9 +44,13 @@ app.factory("Paginator", function ($resource) {
         return JSON.parse(data).results;
       }
     },
-    filter: {
+    clusters: {
       method: "GET",
-      url: "/openattic/api/ceph-cluster",
+      url: "/openattic/api/ceph"
+    },
+    pools: {
+      method: "GET",
+      url: "/openattic/api/ceph/:id/pools",
       isArray: true
     }
   });

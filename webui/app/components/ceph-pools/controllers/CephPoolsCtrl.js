@@ -32,11 +32,12 @@
 
 var app = angular.module("openattic.cephPools");
 app.controller("CephPoolsCtrl", function ($scope, Paginator) {
-  $scope.data = {};
+  $scope.clusters = {};
+  $scope.pools = [];
 
   $scope.filterConfig = {
     page: 0,
-    entries: 100,
+    entries: 10,
     search: "",
     sortfield: null,
     sortorder: null
@@ -47,13 +48,29 @@ app.controller("CephPoolsCtrl", function ($scope, Paginator) {
 
   $scope.$watch("filterConfig", function () {
     Paginator
-      .filter()
+      .clusters()
       .$promise
       .then(function (res) {
-        $scope.data = res[0];
+        $scope.clusters = res.results;
+        $scope.clusters.forEach(function (cluster) {
+          Paginator
+             .pools({
+               id: cluster.fsid
+             })
+             .$promise
+             .then(function (res) {
+               res.forEach(function (pool) {
+                 $scope.pools.push(pool);
+               });
+               console.log($scope.pools);
+             })
+            .catch(function () {
+              console.log("Ceph has no pools");
+            });
+        });
       })
       .catch(function () {
-        $scope.data = false;
+        $scope.clusters = false;
         console.log("Ceph not available.");
       });
   }, true);
