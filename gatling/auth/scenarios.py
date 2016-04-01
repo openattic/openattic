@@ -26,6 +26,5 @@ class TokenAuthTestScenario(GatlingTestCase):
         cls.require_config("options", "admin")
         cls.require_config("options", "password")
         cls.require_config("options", "connect")
-        cls.require_config("options", "auth_token")
         cls.require_enabled("auth")
-        cls.auth_token = cls.conf.get("options", "auth_token")
+        cls.auth_token = cls.get_auth_token()

@@ -170,8 +170,7 @@ class GatlingTestCase(unittest.TestCase):
         """
 
         if not auth_token:
-            cls.require_config("options", "auth_token")
-            auth_token = cls.conf.get("options", "auth_token")
+            auth_token = cls.get_auth_token()
         return {"Authorization": "Token %s" % auth_token}
 
     @classmethod
