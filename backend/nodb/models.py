@@ -1,17 +1,6 @@
+import django
 from django.db import models
 from django.db.models.query import QuerySet
-
-import django
-minor_version = django.VERSION[1]
-if minor_version == 6:
-	# Work around
-	from django.utils import six
-	from django.db.models.manager import RenameManagerMethods
-	base_class = six.with_metaclass(RenameManagerMethods)
-else:
-	# Default
-	from django.db.models.manager import BaseManager
-	base_class = BaseManager.from_queryset(NodbQuerySet)
 
 
 class NodbQuerySet(QuerySet):
@@ -117,7 +106,14 @@ class NodbQuerySet(QuerySet):
         super(NodbQuerySet, self).all(context)
 
 
-class NodbManager(base_class):
+if django.VERSION[1] == 6:
+    from django.db.models.manager import Manager
+    base_manager_class = Manager
+else:
+    from django.db.models.manager import BaseManager
+    base_manager_class = BaseManager.from_queryset(NodbQuerySet)
+
+class NodbManager(base_manager_class):
 
     use_for_related_fields = True
 
@@ -125,7 +121,10 @@ class NodbManager(base_class):
         return self.get_queryset(context)
 
     def get_queryset(self, context=None):
-        return self._queryset_class(self.model, using=self._db, hints=self._hints, context=context)
+        if django.VERSION[1] == 6:
+            return NodbQuerySet(self.model, using=self._db, context=context)
+        else:
+            return self._queryset_class(self.model, using=self._db, hints=self._hints, context=context)
 
 
 class NodbModel(models.Model):
