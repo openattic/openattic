@@ -1,4 +1,4 @@
-<div class="tabbable tabs-left">
+<div id="more">
     <ul class="nav nav-tabs">
         <li ui-sref-active="active">
             <a ui-sref="pools.detail.status({pool:  selection.item.id })" data-toggle="tab" data-target="#tab-content">Status</a>
@@ -10,6 +10,6 @@
             <a ui-sref="pools.detail.cephpool({pool: selection.item.id})" data-toggle="tab" data-target="#tab-content">Ceph Pool</a>
         </li>
     </ul>
-    <div class="tab-content" ui-view="tab-content">
-    </div>
+
+    <div class="tab-content" ui-view="tab-content"></div>
 </div>

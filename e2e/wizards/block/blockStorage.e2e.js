@@ -55,7 +55,7 @@ describe('Raw Block Storage Wizard', function(){
     //check if angular expression contains 'Next' or 'Done
     var nextBtn = element(by.id('nextBtn')).evaluate('nextBtnText()');
     expect(nextBtn.getText()).toEqual('Next');
-    expect(element.all(by.css('h3')).get(0).getText()).toEqual('Raw Block Storage Step 1 - Create Volume');
+    expect(element(by.css('.tc_oawizard_h3')).getText()).toEqual('Raw Block Storage Step 1 - Create Volume');
     expect(volumefield.isDisplayed()).toBe(true);
     expect(size.isDisplayed()).toBe(true);
     //expect(is_protected.Present()).toBe(true);

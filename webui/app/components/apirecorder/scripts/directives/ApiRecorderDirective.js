@@ -38,7 +38,7 @@ app.directive("apiRecorder", function () {
       "<i class=\"fa\" ng-class=\"{'fa-circle': !isRecording(), 'fa-stop': isRecording() }\"></i> API-Recorder",
       "</a>"
     ].join(""),
-    controller: function ($scope, ApiRecorderService, toasty) {
+    controller: function ($scope, ApiRecorderService, toasty, $uibModal) {
       $scope.isRecording = ApiRecorderService.isRecording;
       $scope.handleClick = function () {
         if (!ApiRecorderService.isRecording()) {
@@ -75,15 +75,13 @@ app.directive("apiRecorder", function () {
             }
             script.push("requests." + cmds[i].method.toLowerCase() + "(" + args.join(", ") + ")\n");
           }
-          $.SmartMessageBox({
-            title: "API Recorder",
-            content: [
-              "Replay the actions you recorded by running this Python script:<br />",
-              "<textarea rows=\"14\" cols=\"80\" style=\"color: black\">",
-              script.join("\n"),
-              "</textarea>"
-            ].join(""),
-            buttons: "[OK]"
+
+          $scope.script = script.join("\n");
+
+          $uibModal.open({
+            windowTemplateUrl: "templates/messagebox.html",
+            templateUrl: "components/apirecorder/templates/snippet.view.html",
+            controller: "ApiRecorderCtrl"
           });
         }
       };

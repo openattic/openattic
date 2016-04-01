@@ -28,7 +28,7 @@ describe('CIFS Share workflow', function(){
   });
 
   it('should have the title "Create CIFS Share"', function(){
-    expect(element(by.css('h2')).getText()).toEqual('Create CIFS Share');
+    expect(element(by.css('.tc_formHeadline h3')).getText()).toEqual('Create CIFS Share');
   });
 
   it('should have the input field "Name"', function(){

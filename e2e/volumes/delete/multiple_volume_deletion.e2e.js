@@ -57,7 +57,7 @@ describe('Volumes delete', function(){
   });
 
   it('should not show any tab', function(){
-    expect(element(by.css('.tabbable.tabs-left')).isDisplayed()).toBe(false);
+    expect(element(by.id('more')).isDisplayed()).toBe(false);
   });
 
   it('should display the delete button when selecting several volumes', function(){
