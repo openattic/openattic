@@ -83,4 +83,8 @@ describe('should test the login', function(){
     expect(passwdRequired.isPresent()).toBe(false);
 
   });
+
+  afterAll(function(){
+    console.log('auth -> login_logout.e2e.js');
+  });
 });

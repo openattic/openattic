@@ -55,8 +55,8 @@ describe('Storage Tab Test based on filevol', function(){
   });
 
   afterAll(function(){
-    console.log('filesystemvolume storage tab test ended');
     helpers.delete_volume(volume, volumename);
+    console.log('general -> filevol_storage_tabs.e2e.js');
   });
 
 });

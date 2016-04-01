@@ -270,6 +270,6 @@ describe('Volumes add', function(){
   });
 
   afterAll(function(){
-    console.log('volume_add');
-  })
+    console.log('volumes_add -> volumes_add.e2e.js');
+  });
 });

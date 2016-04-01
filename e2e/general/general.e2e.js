@@ -177,4 +177,7 @@ describe('General', function(){
     expect(browser.getCurrentUrl()).toContain('/openattic/#/dashboard');
   });
 
+  afterAll(function(){
+    console.log('general -> general.e2e.js');
+  });
 });

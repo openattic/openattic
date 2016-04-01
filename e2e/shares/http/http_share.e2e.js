@@ -49,7 +49,7 @@ describe('HTTP Share add', function(){
   });
 
   afterAll(function(){
-    console.log('http_share');
     helpers.delete_volume(volume, volumename);
+    console.log('http_share -> http_share.e2e.js');
   });
 });

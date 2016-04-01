@@ -159,6 +159,6 @@ describe('Wizard panel', function(){
   afterAll(function(){
 
     helpers.delete_volume(volume, volumename);
-    console.log('<----- file storage wizard done (ext/cifs) ------>');
+    console.log('fs_wiz_ext_cifs -> fileStorage_ext_cifs.e2e.js');
   });
 });

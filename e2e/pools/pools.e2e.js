@@ -57,4 +57,8 @@ describe('Pools panel', function(){
         });
     }
   });
+
+  afterAll(function(){
+    console.log('pools -> pools.e2e.js');
+  });
 });

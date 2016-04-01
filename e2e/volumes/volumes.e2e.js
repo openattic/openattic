@@ -13,4 +13,8 @@ describe('Volumes', function(){
   it('should have an add button', function(){
     expect(element(by.css('oadatatable .tc_add_btn')).isPresent()).toBe(true);
   });
+
+  afterAll(function(){
+    console.log('volumes -> volumes.e2e.js');
+  });
 });

@@ -21,12 +21,12 @@ describe('should create a clone volume of a snapshot (base: filesystem volume)',
   });
 
   afterAll(function(){
-    console.log('filesystem_vol_snapshot_clone');
     helpers.delete_snap_clone();
     browser.sleep(600);
     helpers.delete_snapshot(volume);
     browser.sleep(600);
     helpers.delete_volume(volume, volumename);
+    console.log('snapshot_clone -> filesystem_vol_snapshot_clone.e2e.js');
   });
 
 });

@@ -42,6 +42,9 @@ describe('Host form workflow', function(){
   it('should navigate back to the Host overview when hitting the button', function(){
     element(by.css('.tc_backButton')).click();
     expect(element(by.css('.tc_oadatatable_hosts')).isPresent()).toBe(true);
-    console.log('host workflow test ended');
+  });
+
+  afterAll(function(){
+    console.log('hosts -> host_form_workflow.e2e.js');
   });
 });

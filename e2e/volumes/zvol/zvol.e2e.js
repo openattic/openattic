@@ -58,4 +58,7 @@ describe('Zvol tests', function(){
     expect(volume.isPresent()).toBe(false);
   });
 
+  afterAll(function(){
+    console.log('zvol_add -> zvol.e2e.js');
+  });
 });

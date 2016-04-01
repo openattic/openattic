@@ -137,4 +137,8 @@ describe('Should add an user', function(){
     expect(correctInput.isDisplayed()).toBe(true);
     expect(correctInput.getText()).toBe('The given credentials are not correct.');
   });
+
+  afterAll(function(){
+    console.log('users -> user.e2e.js');
+  });
 });

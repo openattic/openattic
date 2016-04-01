@@ -88,7 +88,7 @@ describe('Volume protection dialog', function(){
   });
 
   afterAll(function(){
-    console.log('volumes_protection_workflow');
     helpers.delete_volume(volume, volumename);
+    console.log('volumes_protection -> volumes_protection_workflow.e2e.js');
   });
 });

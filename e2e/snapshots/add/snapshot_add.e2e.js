@@ -48,8 +48,8 @@ describe('Should create a Snapshot', function(){
   });
 
   afterAll(function(){
-    console.log('snapshot_add');
     helpers.delete_volume(volume, volumename);
+    console.log('snapshot -> snapshot_add.e2e.js');
   });
 
 });

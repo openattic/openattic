@@ -76,9 +76,9 @@ describe('Wizard panel', function(){
       browser.sleep(600);
       element(by.id('source_pool')).$('option:checked').getText().then(function(pname){
         //browser.actions().sendKeys(protractor.Key.ENTER).perform();
-        console.log(pname);
+        //console.log(pname);
         pname = pname.substring(0, pname.indexOf(' '));
-        console.log(pname);
+        //console.log(pname);
 
         //enter some data to get to the next site
         size.sendKeys('100MB');
@@ -210,6 +210,6 @@ describe('Wizard panel', function(){
 
   afterAll(function(){
     helpers.delete_volume(volume, volumename);
-    console.log('<----- file storage wizard done (zfs/cifs/nfs) ------>');
+    console.log('fs_wiz_zfs -> fileStorage_zfs_cifs_nfs.e2e.js');
   });
 });

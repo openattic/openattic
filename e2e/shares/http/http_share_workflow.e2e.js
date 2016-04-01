@@ -50,8 +50,8 @@ describe('HTTP Share workflow', function(){
   });
 
   afterAll(function(){
-    console.log('http_share_workflow');
     helpers.delete_volume(volume, volumename);
+    console.log('http_share -> http_share_workflow.e2e.js');
   });
 
 });

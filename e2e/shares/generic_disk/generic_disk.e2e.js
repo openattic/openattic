@@ -16,4 +16,8 @@ describe('should not allow sharing a disk via iscsi/fc in the volumes panel', fu
     disk.click();
     expect(element(by.css('.tc_iscsi_fcTab')).isDisplayed()).toBe(false);
   });
+
+  afterAll(function(){
+    console.log('disk_share -> generic_disk.e2e.js');
+  });
 });

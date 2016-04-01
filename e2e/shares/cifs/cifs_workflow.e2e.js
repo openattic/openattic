@@ -113,7 +113,7 @@ describe('CIFS Share workflow', function(){
   });
 
   afterAll(function(){
-    console.log('cifs_workflow');
     helpers.delete_volume(volume, volumename);
+    console.log('cifs_share -> cifs_workflow.e2e.js');
   });
 });

@@ -148,7 +148,7 @@ describe('Wizard panel', function(){
 
     helpers.check_wizard_titles();
 
-    console.log('<----- file storage test with NFS ended ------>');
+    //console.log('<----- file storage test with NFS ended ------>');
     browser.sleep(400);
     volumesItem.click();
     expect(browser.getCurrentUrl()).toContain('/openattic/#/volumes');
@@ -178,6 +178,6 @@ describe('Wizard panel', function(){
 
   afterAll(function(){
     helpers.delete_volume(volume, volumename);
-    console.log('<----- file storage wizard done (btrfs/nfs) ------>');
+    console.log('fs_wiz_btrfs_nfs -> fileStorage_btrfs_nfs.e2e.js');
   });
 });

@@ -52,8 +52,8 @@ describe('Storage Tab Test based on blockvol', function(){
   });
 
   afterAll(function(){
-    console.log('blockvolume storage tab test ended');
     helpers.delete_volume(volume, volumename);
+    console.log('general -> blockvol_storage_tabs.e2e.js');
   });
 
 });

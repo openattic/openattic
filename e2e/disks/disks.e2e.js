@@ -14,4 +14,8 @@ describe('Disks Panel', function(){
   it('should have a create pool button', function(){
     expect(element(by.css('.tc_createPoolBtn')).isDisplayed()).toBe(true);
   });
+
+  afterAll(function(){
+    console.log('disks -> disks.e2e.js');
+  });
 });
