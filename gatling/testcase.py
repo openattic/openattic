@@ -175,6 +175,20 @@ class GatlingTestCase(unittest.TestCase):
         return {"Authorization": "Token %s" % auth_token}
 
     @classmethod
+    def get_auth_token(cls, **kwargs):
+        cls.require_config("options", "connect")
+        cls.require_config("options", "admin")
+        cls.require_config("options", "password")
+
+        request_url = cls.conf.get("options", "connect") + "api-token-auth"
+        username = kwargs.get("username", cls.conf.get("options", "admin"))
+        password = kwargs.get("password", cls.conf.get("options", "password"))
+
+        res = requests.post(request_url, data={"username": username, "password": password})
+        res.raise_for_status()
+        return res.json()["token"]
+
+    @classmethod
     def delete_old_existing_gatling_volumes(cls):
         """
         Searches for old existing gatling volumes that were not deleted correctly by the last test
