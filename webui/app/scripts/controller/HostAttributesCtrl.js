@@ -31,7 +31,7 @@
 "use strict";
 
 var app = angular.module("openattic");
-app.controller("HostAttributesCtrl", function ($scope, $state, $stateParams, InitiatorService) {
+app.controller("HostAttributesCtrl", function ($scope, $state, $stateParams, InitiatorService, toasty) {
   $scope.data = {
     iscsiInis: [],
     fcInis: []
@@ -61,12 +61,9 @@ app.controller("HostAttributesCtrl", function ($scope, $state, $stateParams, Ini
               $scope.data.fcInis.splice(index, 1);
             }
           }
-          $.smallBox({
+          toasty.error({
             title: "Error adding Initiator",
-            content: "<i class=\"fa fa-clock-o\"></i> <i>" + error.data.wwn.join(", ") + ".</i>",
-            color: "#C46A69",
-            iconSmall: "fa fa-times fa-2x fadeInRight animated",
-            timeout: 4000
+            msg: error.data.wwn
           });
         });
   };

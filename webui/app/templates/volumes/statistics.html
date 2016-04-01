@@ -1,22 +1,19 @@
-<!-- kate: space-indent on; indent-width 4; replace-tabs on; -->
-<div class="tab-pane active fuelux">
-    <div class="wizard">
-        <ul class="steps">
-            <li ui-sref-active="active" data-target="#utilgraphs" ng-show="selection.item.is_filesystemvolume">
-                <a ui-sref="volumes.detail.statistics.utilgraphs">Utilization</a>
-                <span class="chevron"></span>
-            </li>
-            <li ui-sref-active="active" data-target="#perfgraphs" ng-show="selection.item.is_blockvolume">
-                <a ui-sref="volumes.detail.statistics.perfgraphs">Performance</a>
-                <span class="chevron"></span>
-            </li>
-        </ul>
-        <div class="actions">
-            <span ng-show="state.name === 'volumes.detail.statistics.utilgraphs'"><graph-widget params="utilparams"></graph-widget></span>
-            <span ng-show="state.name === 'volumes.detail.statistics.perfgraphs'"><graph-widget params="perfparams"></graph-widget></span>
-        </div>
-        <div class="clearfix"></div>
-        <div class="step-content statistics-content" ui-view="statistics-content">
-        </div>
-    </div>
+<ul class="nav nav-tabs nav-tabs-openattic">
+    <li role="presentation" ui-sref-active="active" ng-show="selection.item.is_filesystemvolume">
+        <a ui-sref="volumes.detail.statistics.utilgraphs">Utilization</a>
+    </li>
+    <li role="presentation" ui-sref-active="active" ng-show="selection.item.is_blockvolume">
+        <a ui-sref="volumes.detail.statistics.perfgraphs">Performance</a>
+    </li>
+</ul>
+
+<div class="actions">
+    <span ng-show="state.name === 'volumes.detail.statistics.utilgraphs'">
+        <graph-widget params="utilparams"></graph-widget>
+    </span>
+    <span ng-show="state.name === 'volumes.detail.statistics.perfgraphs'">
+        <graph-widget params="perfparams"></graph-widget>
+    </span>
 </div>
+<div class="clearfix"></div>
+<div class="statistics-content" ui-view="statistics-content"></div>

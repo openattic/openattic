@@ -1,24 +1,24 @@
-<div class="step-pane active utilgraphs">
+<div class="col-xs-12">
     <div class="row" ng-show="selection.item.is_filesystemvolume">
-        <div class="jarviswidget col-lg-12" role="widget">
-            <header role="heading">
-                <h2>Volume Usage</h2>
-            </header>
-            <div role="content">
-                <div role="widget-body">
-                    <graph title="Volume Usage" profile="3m"  volume="selection.item" width="660" profile="3m" global-params="utilparams" />
+        <div class="col-lg-12">
+            <div class="panel panel-default">
+                <div class="panel-heading">
+                    <h3 class="panel-title">Volume Usage</h3>
+                </div>
+                <div class="panel-body graph">
+                    <graph title="Volume Usage" profile="3m" volume="selection.item" width="660" profile="3m" global-params="utilparams" />
                 </div>
             </div>
         </div>
     </div>
     <div class="row" ng-show="selection.item.is_blockvolume">
-        <div class="jarviswidget col-lg-12" role="widget">
-            <header role="heading">
-                <h2>Disk load</h2>
-            </header>
-            <div role="content">
-                <div role="widget-body">
-                    <graph title="Disk Load"    profile="48h" volume="selection.item" width="660" profile="3m" global-params="utilparams" />
+        <div class="col-lg-12">
+            <div class="panel panel-default">
+                <div class="panel-heading">
+                    <h3 class="panel-title">Disk load</h3>
+                </div>
+                <div class="panel-body graph">
+                    <graph title="Disk Load"  profile="48h" volume="selection.item" width="660" profile="3m" global-params="utilparams" />
                 </div>
             </div>
         </div>

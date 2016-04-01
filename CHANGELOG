@@ -1,8 +1,12 @@
 openATTIC Changelog
 ===================
 
-Version 2.0.9, (not released yet):
+Version 2.0.10 (not released yet):
 ----------------------------------
+
+
+Version 2.0.9, 16. Mar 2016:
+----------------------------
 
 * WebUI: Review licenses of bower packages and NPM modules (OP-857)
 * WebUI: Update versions of bower dependencies (OP-904)

@@ -1,6 +1,9 @@
-<div class="divMessageBox animated fadeIn fast" id="MsgBoxBack">
-    <div class="MessageBoxContainer animated fadeIn fast" id="MsgDeleteByDate">
-        <div class="MessageBoxMiddle" ng-transclude>
-        </div>
+<div modal-render="{{$isRendered}}" tabindex="-1" role="dialog" class="modal vertical-align"
+     uib-modal-animation-class="fade"
+     modal-in-class="in"
+     ng-style="{'z-index': 1050 + index*10}">
+
+    <div class="modal-dialog {{size ? 'modal-' + size : ''}}">
+        <div class="modal-content" uib-modal-transclude></div>
     </div>
 </div>

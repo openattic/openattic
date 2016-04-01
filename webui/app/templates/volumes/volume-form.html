@@ -1,11 +1,10 @@
-<!-- kate: space-indent on; indent-width 4; replace-tabs on; -->
-<div class="col-sm-12 col-md-12 col-lg-6">
-    <div class="panel panel-default">
-        <div class="panel-heading tc_formHeadline">
-            <i class="fa fa-edit"></i> Create Volume: {{volume.name}}
-        </div>
-        <div class="panel-body">
-            <form name="volumeForm" role="form" class="form-horizontal" novalidate>
+<div class="col-sm-12 col-lg-6">
+    <form name="volumeForm" role="form" class="form-horizontal" novalidate>
+        <div class="panel panel-default">
+            <div class="panel-heading tc_formHeadline">
+                <h3 class="panel-title">Create Volume: {{volume.name}}</h3>
+            </div>
+            <div class="panel-body">
                 <uib-accordion>
                     <uib-accordion-group is-open="accordionOpen.properties">
                         <uib-accordion-heading>
@@ -15,10 +14,10 @@
                         </uib-accordion-heading>
                         <div class="form-group" ng-class="{'has-error': (submitted || volumeForm.name.$dirty)
                             && volumeForm.name.$invalid}">
-                            <label class="col-md-2 control-label" for="volumeName">Name</label>
-                            <div class="col-md-10">
+                            <label class="col-sm-3 control-label" for="volumeName">Name</label>
+                            <div class="col-sm-9">
                                 <input type="text" class="form-control" id="volumeName" placeholder="Name..."
-                                       ng-model="volume.name" name="name" validname uniquename="volume" required>
+                                       ng-model="volume.name" name="name" validname uniquename="volume" required autofocus>
                                 <span class="help-block tc_nameRequired" ng-show="(submitted || volumeForm.name.$dirty)
                                     && volumeForm.name.$error.required">This field is required!</span>
                                 <span class="help-block" ng-show="volumeForm.name.$error.validname">{{errortext}}</span>
@@ -29,8 +28,8 @@
                         </div>
                         <div class="form-group" ng-class="{'has-error': (submitted || volumeForm.pool.$dirty)
                             && volumeForm.pool.$invalid}">
-                            <label class="col-md-2 control-label" for="data.sourcePool">Pool</label>
-                            <div class="col-md-10">
+                            <label class="col-sm-3 control-label" for="data.sourcePool">Pool</label>
+                            <div class="col-sm-9">
                                 <select class="form-control" ng-model="data.sourcePool" id="data.sourcePool"
                                         ng-options="(pool.name + ' (' + pool.type.name + ', ' + pool.usage.free_text +
                                         ' free)') for pool in pools track by pool.id" name="pool" required>
@@ -59,8 +58,8 @@
                         </div>
                         <div class="form-group" ng-class="{'has-error': (submitted || volumeForm.megs.$dirty)
                             && volumeForm.megs.$invalid}">
-                            <label class="col-md-2 control-label" for="data.megs">Size</label>
-                            <div class="col-md-10">
+                            <label class="col-sm-3 control-label" for="data.megs">Size</label>
+                            <div class="col-sm-9">
                                 <input class="form-control" type="text" name="megs"
                                        ng-disabled="data.sourcePool === null  || data.sourcePool.usage.free < 100"
                                        volume-size-format volume-size-value max-value="{{data.sourcePool.usage.free}}"
@@ -81,8 +80,8 @@
                             </div>
                         </div>
                         <div class="form-group">
-                            <label class="col-md-2 control-label">Type</label>
-                            <div class="col-md-10">
+                            <label class="col-sm-3 control-label">Type</label>
+                            <div class="col-sm-9">
                                 <div class="radio radio-primary">
                                     <input type="radio" ng-model="data.filesystem"
                                                value="" ng-disabled="state.formatted" id="lun">
@@ -106,7 +105,7 @@
                             </div>
                         </div>
                         <div class="form-group">
-                            <div class="col-sm-offset-2 col-sm-10">
+                            <div class="col-sm-offset-3 col-sm-9">
                                 <div class="checkbox checkbox-primary">
                                     <input type="checkbox" ng-model="volume.is_protected" id="volume.is_protected"
                                                name="deletionProtection">
@@ -145,18 +144,18 @@
                         </div>
                     </uib-accordion-group>
                 </uib-accordion>
-                <div class="form-group">
-                    <div class="pull-right" style="padding: 0px 12px">
-                        <button type="submit" class="btn btn-primary tc_submitButton"
-                                ng-click="submitAction(volumeForm)">
-                            Submit
-                        </button>
-                        <button type="button" class="btn btn-default tc_backButton" ng-click="cancelAction()">
-                            Back
-                        </button>
-                    </div>
+            </div>
+            <div class="panel-footer">
+                <div class="button-group text-right">
+                    <button type="submit" class="btn btn-sm btn-primary tc_submitButton"
+                            ng-click="submitAction(volumeForm)">
+                        Submit
+                    </button>
+                    <button type="button" class="btn btn-sm btn-default tc_backButton" ng-click="cancelAction()">
+                        Back
+                    </button>
                 </div>
-            </form>
+            </div>
         </div>
-    </div>
+    </form>
 </div>

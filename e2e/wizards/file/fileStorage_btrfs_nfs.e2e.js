@@ -147,7 +147,7 @@ describe('Wizard panel', function(){
 
     helpers.check_wizard_titles();
 
-    console.log('<----- file storage test with NFS ended ------>');
+    //console.log('<----- file storage test with NFS ended ------>');
     browser.sleep(400);
     menu.get(3).click();
     expect(browser.getCurrentUrl()).toContain('/openattic/#/volumes');
