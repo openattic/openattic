@@ -170,6 +170,14 @@ class GatlingTestCase(unittest.TestCase):
 
     @classmethod
     def get_auth_token(cls, **kwargs):
+        """
+        Returns the auth token for a given user by username and password. If username and/or
+        password are not included in kwargs, Gatling tries to get them from the configuration file.
+
+        :param kwargs:  username(str)   -> Name of the user
+                        password(str)   -> Password of the user
+        :return: Auth token for the given user
+        """
         cls.require_config("options", "connect")
         cls.require_config("options", "admin")
         cls.require_config("options", "password")
