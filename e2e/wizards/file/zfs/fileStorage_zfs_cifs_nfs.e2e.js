@@ -58,7 +58,7 @@ describe('Wizard panel', function(){
     var nextBtn = element(by.id('nextBtn')).evaluate('nextBtnText()');
     expect(nextBtn.getText()).toEqual('Next');
     //check content of first wizard site
-    expect(element.all(by.css('tc_oawizard_h3')).getText()).toEqual('File Storage Step 1 - Create Volume');
+    expect(element.all(by.css('.tc_oawizard_h3')).getText()).toEqual('File Storage Step 1 - Create Volume');
     expect(volumefield.isDisplayed()).toBe(true);
     expect(size.isDisplayed()).toBe(true);
     expect(is_protected.isPresent()).toBe(true);
