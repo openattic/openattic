@@ -13,7 +13,9 @@
  *  GNU General Public License for more details.
 """
 
-import unittest, requests, json
+import unittest
+import requests
+import json
 
 
 class GatlingTestCase(unittest.TestCase):

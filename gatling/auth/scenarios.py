@@ -13,8 +13,6 @@
  *  GNU General Public License for more details.
 """
 
-import requests
-
 from testcase import GatlingTestCase
 
 

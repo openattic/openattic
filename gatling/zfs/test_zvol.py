@@ -13,7 +13,8 @@
  *  GNU General Public License for more details.
 """
 
-import time, requests
+import time
+import requests
 
 from zfs.scenarios import ZfsNativePoolTestScenario, ZfsLvmPoolTestScenario
 from lio.scenarios import LunTestScenario
@@ -42,19 +43,20 @@ class ZfsZvolLioTests(object):
     def test_hostacl_create_get_delete(self):
         """ Create a HostACL for a ZVol. """
         # create a zvol
-        data = {"megs"          : 1000,
-                "name"          : "gatling_volume",
-                "source_pool"   : {"id": self._get_pool()["id"]}}
+        data = {"megs": 1000,
+                "name": "gatling_volume",
+                "source_pool": {"id": self._get_pool()["id"]}}
         vol = self.send_request("POST", data=data)
         time.sleep(8)
         self.addCleanup(requests.request, "DELETE", vol["cleanup_url"], headers=vol["headers"])
 
         # create hostacl for zvol
         lun_data = {"volume": {"id": vol["response"]["id"]},
-                    "host"  : self.initiator_host,
+                    "host": self.initiator_host,
                     "lun_id": 1}
         host_acl = self.send_request("POST", "luns", data=lun_data)
-        self.addCleanup(requests.request, "DELETE", host_acl["cleanup_url"], headers=host_acl["headers"])
+        self.addCleanup(requests.request, "DELETE", host_acl["cleanup_url"],
+                        headers=host_acl["headers"])
 
 
 class ZfsNativePoolZvolLioTestCase(ZfsNativePoolTestScenario, LunTestScenario, ZfsZvolLioTests):
