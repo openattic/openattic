@@ -113,6 +113,7 @@ else:
     from django.db.models.manager import BaseManager
     base_manager_class = BaseManager.from_queryset(NodbQuerySet)
 
+
 class NodbManager(base_manager_class):
 
     use_for_related_fields = True
@@ -124,7 +125,8 @@ class NodbManager(base_manager_class):
         if django.VERSION[1] == 6:
             return NodbQuerySet(self.model, using=self._db, context=context)
         else:
-            return self._queryset_class(self.model, using=self._db, hints=self._hints, context=context)
+            return self._queryset_class(self.model, using=self._db, hints=self._hints,
+                                        context=context)
 
 
 class NodbModel(models.Model):
@@ -132,10 +134,10 @@ class NodbModel(models.Model):
     objects = NodbManager()
 
     class Meta:
-	# Needs to be true to be able to create the necessary database tables by using Django migrations and
-	# the table needs to exist to be able to use Django model relations.
-        managed = True          
-	abstract = True
+        # Needs to be true to be able to create the necessary database tables by using Django
+        # migrations. The table is necessary to be able to use Django model relations.
+        managed = True
+        abstract = True
 
     @staticmethod
     def get_all_objects():
