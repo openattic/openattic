@@ -22,11 +22,8 @@ class TokenAuthTestCase(TokenAuthTestScenario):
 
     def test_get_authtoken_by_username_and_password(self):
         """ Try to request the auth token with correct user data. """
-        res = self.send_api_token_auth_request()
-        self.assertIn("token", res)
-        self.assertIsNotNone(res["token"])
-        self.assertEqual(res["token"], self.auth_token)
-
+        res = self.get_auth_token()
+        self.assertIsNotNone(res)
 
     def test_get_authtoken_wrong_password(self):
         """ Try to request the auth token with a wrong password. """
