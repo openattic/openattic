@@ -103,8 +103,7 @@ class GatlingTestCase(unittest.TestCase):
         """
         prefixes = cls._get_sturctured_prefixes(prefixes)
         header = cls.get_auth_header(auth_token)
-        base_url = cls.conf.get("options", "connect")
-        url = "%s%s" % (base_url, prefixes["api_prefix"])
+        url = "%s%s" % (cls.base_url, prefixes["api_prefix"])
 
         if "obj_id" in kwargs:
             url = "%s/%s" % (url, str(kwargs["obj_id"]))
@@ -178,11 +177,10 @@ class GatlingTestCase(unittest.TestCase):
                         password(str)   -> Password of the user
         :return: Auth token for the given user
         """
-        cls.require_config("options", "connect")
         cls.require_config("options", "admin")
         cls.require_config("options", "password")
 
-        request_url = cls.conf.get("options", "connect") + "api-token-auth"
+        request_url = cls.base_url + "api-token-auth"
         username = kwargs.get("username", cls.conf.get("options", "admin"))
         password = kwargs.get("password", cls.conf.get("options", "password"))
 
@@ -375,12 +373,11 @@ class GatlingTestCase(unittest.TestCase):
         :param prefixes (array of str): Array containing the available prefixes.
         :return: The correct cleanup_url.
         """
-        base_url = cls.conf.get("options", "connect")
 
         if prefixes["detail_route"]:
             if prefixes["cleanup_route"]:
-                return "%s%s/%s" % (base_url, prefixes["cleanup_route"], str(obj_id))
+                return "%s%s/%s" % (cls.base_url, prefixes["cleanup_route"], str(obj_id))
             else:
-                return "%s%s/%s" % (base_url, prefixes["detail_route"], str(obj_id))
+                return "%s%s/%s" % (cls.base_url, prefixes["detail_route"], str(obj_id))
         else:
-            return "%s%s/%s" % (base_url, prefixes["api_prefix"], str(obj_id))
+            return "%s%s/%s" % (cls.base_url, prefixes["api_prefix"], str(obj_id))

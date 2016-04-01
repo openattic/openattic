@@ -83,12 +83,18 @@ def main():
     else:
         conf.read(os.path.join(basedir, "gatling.conf"))
 
+    host_name = conf.get("options", "host_name")
+    base_url = "http://" + host_name + "/openattic/api/"
+
     class GatlingTestSuite(unittest.TestSuite):
         """ TestSuite that monkeypatches loaded tests with config objects. """
         def addTest(self, test):
             unittest.TestSuite.addTest(self, test)
             test.__class__.conf = conf
             test.conf = conf
+
+            test.__class__.base_url = base_url
+            test.base_url = base_url
 
     class GatlingTestLoader(unittest.TestLoader):
         """ TestLoader that uses GatlingTestSuite to load tests. """
@@ -119,7 +125,6 @@ def main():
                               testLoader=loader, exit=False)
     endtime = datetime.datetime.now()
 
-    base_url = conf.get("options", "connect")
     username = conf.get("options", "admin")
     password = conf.get("options", "password")
     cmdlog_filter = "cmdlogs?exitcode=1&start_datetime=%s&end_datetime=%s" % (starttime, endtime)

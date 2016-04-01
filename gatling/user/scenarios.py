@@ -26,7 +26,6 @@ class AuthTokenTestScenario(GatlingTestCase):
     @classmethod
     def setUpClass(cls):
         super(AuthTokenTestScenario, cls).setUpClass()
-        cls.require_config("options", "connect")
         cls.require_enabled("user")
 
     @classmethod
