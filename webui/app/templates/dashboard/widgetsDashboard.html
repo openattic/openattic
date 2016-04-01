@@ -36,18 +36,9 @@
     </div>
     <div ui-sortable="sortableOptions" ng-model="widgets" class="dashboard-widget-area">
         <div ng-repeat="widget in widgets" ng-style="widget.containerStyle" class="widget-container" widget>
-            <div class="jarviswidget jarviswidget-color-blueDark jarviswidget-sortable widget panel panel-default">
-                <header class="widget-header" role="heading">
-                    <div class="jarviswidget-ctrls" role="menu">
-                        <span ng-click="removeWidget(widget);" class="glyphicon glyphicon-remove"
-                              ng-if="!options.hideWidgetClose"></span>
-                        <span ng-click="openWidgetSettings(widget);" class="glyphicon glyphicon-cog"
-                              ng-if="!options.hideWidgetSettings"></span>
-                    </div>
-                    <span class="widget-icon">
-                        <i class="fa fa-pencil-square-o"></i>
-                    </span>
-                    <h2>
+            <div class="widget panel panel-default">
+                <div class="widget-header panel-heading">
+                    <h3 class="panel-title">
                         <span class="widget-title" ng-dblclick="editTitle(widget)" ng-hide="widget.editingTitle">
                             {{widget.title}}
                         </span>
@@ -55,17 +46,18 @@
                             <input type="text" ng-model="widget.title" class="form-control">
                         </form>
                         <span class="label label-primary" ng-if="!options.hideWidgetName">{{widget.name}}</span>
-                    </h2>
-                </header>
-                <div role="content" class="no-padding">
-                    <div class="widget-content"></div>
-                    <div ng-if="!widget.settingsModalOptions.lockHorizontalResize" class="widget-ew-resizer"
-                         ng-mousedown="grabResizer($event)"></div>
-                    <div ng-if="widget.enableVerticalResize" class="widget-s-resizer"
-                         ng-mousedown="grabSouthResizer($event)"></div>
+                    </h3>
                 </div>
+                <!--<div class="widget-content panel-body"></div>-->
+                <div role="content" class="no-padding">
+                    <div class="widget-content panel-body"></div>
+                </div>
+
+                <div ng-if="!widget.settingsModalOptions.lockHorizontalResize" class="widget-ew-resizer"
+                     ng-mousedown="grabResizer($event)"></div>
+                <div ng-if="widget.enableVerticalResize" class="widget-s-resizer"
+                     ng-mousedown="grabSouthResizer($event)"></div>
             </div>
         </div>
     </div>
-
 </div>
