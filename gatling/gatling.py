@@ -21,7 +21,6 @@ import unittest
 import xmlrunner
 import datetime
 import requests
-import json
 
 from functools import partial
 from ConfigParser import ConfigParser
@@ -120,12 +119,14 @@ def main():
                               testLoader=loader, exit=False)
     endtime = datetime.datetime.now()
 
-    header = {"Authorization": "Token %s" % conf.get("options", "auth_token")}
     base_url = conf.get("options", "connect")
+    username = conf.get("options", "admin")
+    password = conf.get("options", "password")
     cmdlog_filter = "cmdlogs?exitcode=1&start_datetime=%s&end_datetime=%s" % (starttime, endtime)
 
-    failedcmds = requests.request("GET", "%s%s" % (base_url, cmdlog_filter), headers=header)
-    failedcmds = json.loads(failedcmds.text)
+    failedcmds = requests.request("GET", "%s%s" % (base_url, cmdlog_filter),
+                                  auth=(username, password))
+    failedcmds = failedcmds.json()
 
     if failedcmds['count'] > 0:
         print "openATTIC's command log recorded %d failed commands during the test period:" % \
