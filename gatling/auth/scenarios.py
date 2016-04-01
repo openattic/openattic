@@ -23,8 +23,8 @@ class TokenAuthTestScenario(GatlingTestCase):
     @classmethod
     def setUpClass(cls):
         super(TokenAuthTestScenario, cls).setUpClass()
-        cls.require_config("users", "admin")
-        cls.require_config("users", "password")
+        cls.require_config("options", "admin")
+        cls.require_config("options", "password")
         cls.require_config("options", "connect")
         cls.require_config("options", "auth_token")
         cls.require_enabled("auth")
@@ -33,8 +33,8 @@ class TokenAuthTestScenario(GatlingTestCase):
     @classmethod
     def send_api_token_auth_request(cls, *args, **kwargs):
         request_url = cls.conf.get("options", "connect") + "api-token-auth"
-        username = kwargs.get("username", cls.conf.get("users", "admin"))
-        password = kwargs.get("password", cls.conf.get("users", "password"))
+        username = kwargs.get("username", cls.conf.get("options", "admin"))
+        password = kwargs.get("password", cls.conf.get("options", "password"))
 
         res = requests.post(request_url, data={"username": username, "password": password})
         res.raise_for_status()
