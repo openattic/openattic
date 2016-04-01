@@ -23,7 +23,7 @@ describe('HTTP Share workflow', function(){
   });
 
   it('should have a "Create HTTP Share" title', function(){
-    expect(element(by.css('h2')).getText()).toEqual('Create HTTP Share');
+    expect(element(by.css('.tc_formHeadline h3')).getText()).toEqual('Create HTTP Share');
   });
 
   it('should have one input field', function(){
