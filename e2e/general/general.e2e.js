@@ -119,4 +119,8 @@ describe('General', function(){
     systemItem.all(by.css('ul .tc_submenuitem')).get(2).click();
     expect(browser.getCurrentUrl()).toContain('/openattic/#/crushmap');
   });
+
+  afterAll(function(){
+    console.log('general -> general.e2e.js');
+  });
 });

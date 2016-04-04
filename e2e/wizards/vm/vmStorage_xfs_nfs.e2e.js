@@ -146,6 +146,6 @@ describe('VM Storage Wizard', function(){
 
   afterAll(function(){
     helpers.delete_volume(volume, volumename);
-    console.log('<----- VM storage wizard done (xfs/nfs) ------>');
+    console.log('vmStorage_xfs_nfs -> vmStorage_xfs_nfs.e2e.js');
   });
 });

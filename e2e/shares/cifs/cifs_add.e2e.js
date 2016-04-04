@@ -95,7 +95,7 @@ describe('should add a CIFS share', function(){
   });
 
   afterAll(function(){
-    console.log('cifs_add');
     helpers.delete_volume(volume, volumename);
+    console.log('cifs_share -> cifs_add.e2e.js');
   });
 });

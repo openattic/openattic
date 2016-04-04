@@ -112,8 +112,8 @@ describe('Should check the snapshot add workflow', function(){
   });
 
   afterAll(function(){
-    console.log('snapshot_workflow');
     helpers.delete_volume(volume, volumename);
+    console.log('snapshot -> snapshot_workflow.e2e.js');
   });
 
 });

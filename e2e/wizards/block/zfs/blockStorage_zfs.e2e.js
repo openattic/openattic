@@ -136,7 +136,7 @@ describe('Raw Block Storage Wizard', function(){
   afterAll(function(){
     helpers.delete_volume(volume, volumename);
     helpers.delete_host();
-    console.log('<-----Raw Block Storage wizard (ZFS) done --->');
+    console.log('blockStorage_zfs -> blockStorage_zfs.e2e.js');
   });
 
 });

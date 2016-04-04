@@ -118,4 +118,7 @@ describe('should test the user form', function(){
     expect(element(by.css('.tc_oadatatable_users')).isDisplayed()).toBe(true);
   });
 
+  afterAll(function(){
+    console.log('users -> user_form_workflow.e2e.js');
+  });
 });
