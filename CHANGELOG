@@ -18,6 +18,7 @@ Version 2.0.10 (not released yet):
   (OP-960) (thanks to Willi Fehler for reporting the issue)
 * Backend: Added basic infrastructure to directly gather information from Ceph
   clusters (OP-1014)
+* Backend/Gatling: Cleaned up Gatling (OP-1025)
 * Installation: Updated RPM and DEB packaging to include the new "nodb" Python
   modules, added dependency on the "python-rados" package (OP-1021)
 
