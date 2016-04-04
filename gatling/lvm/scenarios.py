@@ -24,7 +24,6 @@ class LvTestScenario(GatlingTestCase):
     @classmethod
     def setUpClass(cls):
         super(LvTestScenario, cls).setUpClass()
-        cls.require_config("options", "auth_token")
         cls.require_enabled("lvm")
         cls.require_config("lvm", "vg")
         cls.vg = cls._get_vg_by_name(cls.conf.get("lvm", "vg"))
