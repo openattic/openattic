@@ -97,7 +97,7 @@ def main():
     users = requests.request("GET", "{}users".format(base_url), auth=(username, password))
     try:
         users.raise_for_status()
-    except requests.HTTPError, e:
+    except requests.HTTPError:
         if users.status_code == 401:
             print "The given login credentials ('admin' and 'password') are not correct. Please " \
                   "check your configuration or define 'admin' and 'password' in you config file " \
