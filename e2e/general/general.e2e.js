@@ -3,30 +3,32 @@ var helpers = require('../common.js');
 describe('General', function(){
 
   var oaLogo = element(by.css('.tc_logo_component a'));
-  var menuItems = element.all(by.css('.tc_menuitem > a'));
 
-  var menu = {
-    items: {
-      dashboard: element(by.css('.tc_menuitem_dashboard > a')), //has to be there
-      disks: element(by.css('.tc_menuitem_disks > a')),
-      pools: element(by.css('.tc_menuitem_pools > a')),
-      volumes: element(by.css('.tc_menuitem_volumes > a')),
-      ceph: element(by.css('.tc_menuitem_ceph > a')),
-      hosts: element(by.css('.tc_menuitem_hosts > a')),
-      system: element(by.css('.tc_menuitem_system > a')) //has to be there
-    },
-    order: [
-      'dashboard',
-      'disks',
-      'pools',
-      'volumes',
-      'ceph',
-      'hosts',
-      'system'
-    ]
-  };
+  var menuCheck = function(menu){
+    var menuCount = 0;
+    var menuItems = element.all(by.css('.tc_menuitem > a'));
 
-  var subitemTests = function(dropdown){
+    menu.forEach(function(name){
+      var item = element(by.css('.tc_menuitem_' + name + ' > a'));
+      it('should have ' + name + ' into the right order', function(){
+        if(item.isDisplayed()){
+          expect(item.getText()).toEqual(menuItems.get(menuCount).getText());
+          menuCount++;
+        }
+      });
+      it('should click ' + item + ' and check the url', function(){
+        if(item.isDisplayed()){
+          if(name != 'system' && name != 'ceph'){
+            item.click();
+            browser.sleep(400);
+            expect(browser.getCurrentUrl()).toContain('/openattic/#/' + name);
+          }
+        }
+      });
+    });
+  }
+
+  var subitemCheck = function(dropdown){
     var subitems = dropdown.item.all(by.xpath('..')).all(by.css('ul .tc_submenuitem'));
     var menuCount = 0;
 
@@ -70,27 +72,18 @@ describe('General', function(){
   });
 
   /* Menuitems */
-  var menuCount = 0;
-  menu.order.forEach(function(item){
-    it('should have ' + item + ' into the right order', function(){
-      if(menu.items[item].isDisplayed()){
-        expect(menu.items[item].getText()).toEqual(menuItems.get(menuCount).getText());
-        menuCount++;
-      }
-    });
-    it('should click ' + item + ' and check the url', function(){
-      if(menu.items[item].isDisplayed()){
-        if(item != 'system' && item != 'ceph'){
-          menu.items[item].click();
-          browser.sleep(400);
-          expect(browser.getCurrentUrl()).toContain('/openattic/#/' + item);
-        }
-      }
-    });
-  });
+  menuCheck([ //Put here the final menu order
+    'dashboard', //has to be there
+    'disks',
+    'pools',
+    'volumes',
+    'ceph',
+    'hosts',
+    'system' //has to be there
+  ]);
 
   /* Ceph and its subitems */
-  subitemTests({
+  subitemCheck({
     name: 'ceph',
     item: element(by.css('.tc_menuitem_ceph > a')),
     url: '/openattic/#/ceph/',
@@ -105,7 +98,7 @@ describe('General', function(){
   });
 
   /* System and its subitems */
-  subitemTests({
+  subitemCheck({
     name: 'system',
     item: element(by.css('.tc_menuitem_system > a')),
     url: '/openattic/#/',
@@ -125,7 +118,7 @@ describe('General', function(){
 
   it('should redirect to dashboard panel when clicking the openATTIC logo', function(){
     //click somewhere else to change the url
-    menu.items.pools.click();
+    element(by.css('.tc_menuitem_pools > a')).click();
     expect(browser.getCurrentUrl()).toContain('/openattic/#/pools');
     oaLogo.click();
     expect(browser.getCurrentUrl()).toContain('/openattic/#/dashboard');
