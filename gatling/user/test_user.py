@@ -43,14 +43,14 @@ class AuthTokenTestCase(AuthTokenTestScenario, TokenAuthTestScenario):
         self.assertEqual(self.testuser["auth_token"]["token"], self.token_not_set_message)
 
         # create and get auth token by api_token_auth view
-        testuser_auth_token = self.send_api_token_auth_request(username=self.testuser["username"],
-                                                               password=self.testuser["password"])
+        testuser_auth_token = self.get_auth_token(username=self.testuser["username"],
+                                                  password=self.testuser["password"])
         res = self.send_request("GET", "users", obj_id=self.testuser["id"],
-                                auth_token=testuser_auth_token["token"])
+                                auth_token=testuser_auth_token)
         self.assertIsNotNone(res["response"]["auth_token"]["token"])
         self.assertNotEqual(res["response"]["auth_token"]["token"], self.token_not_set_message)
         self.assertNotEqual(res["response"]["auth_token"]["token"], "*******")
-        self.assertEqual(res["response"]["auth_token"]["token"], testuser_auth_token["token"])
+        self.assertEqual(res["response"]["auth_token"]["token"], testuser_auth_token)
 
     def test_create_refresh_auth_token_for_testuser(self):
         """ Try to refresh the auth token for testuser by default user and see if it fails. """
@@ -68,23 +68,23 @@ class AuthTokenTestCase(AuthTokenTestScenario, TokenAuthTestScenario):
     def test_create_auth_token_for_testuser_and_self_refresh(self):
         """ Try to create the auth token by the default user and refresh it by the testuser. """
         # create and get auth token by api_token_auth view
-        testuser_auth_token = self.send_api_token_auth_request(username=self.testuser["username"],
-                                                               password=self.testuser["password"])
+        testuser_auth_token = self.get_auth_token(username=self.testuser["username"],
+                                                  password=self.testuser["password"])
 
         # refresh auth token by testuser
         res = self.send_request("POST", ["users", "gen_new_token"], obj_id=self.testuser["id"],
-                                auth_token=testuser_auth_token["token"])
+                                auth_token=testuser_auth_token)
         self.assertIsNotNone(res["response"]["auth_token"]["token"])
         self.assertNotEqual(res["response"]["auth_token"]["token"], self.token_not_set_message)
         self.assertNotEqual(res["response"]["auth_token"]["token"], "*******")
-        self.assertNotEqual(res["response"]["auth_token"]["token"], testuser_auth_token["token"])
+        self.assertNotEqual(res["response"]["auth_token"]["token"], testuser_auth_token)
 
     def test_auth_token_self_refresh_wrong_token(self):
         """ Try to refresh the auth token of the testuser by using a not existing auth token and
             see if it fails. """
         # create and get auth token by api_token_auth view
-        self.send_api_token_auth_request(username=self.testuser["username"],
-                                         password=self.testuser["password"])
+        self.get_auth_token(username=self.testuser["username"],
+                            password=self.testuser["password"])
 
         with self.assertRaises(requests.HTTPError) as err:
             # try to refresh it with wrong token

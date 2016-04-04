@@ -15,6 +15,7 @@
 
 from lvm.scenarios import RemoteLvTestScenario
 
+
 class DrbdTestScenario(RemoteLvTestScenario):
     @classmethod
     def setUpClass(cls):

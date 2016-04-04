@@ -15,6 +15,7 @@
 
 from testcase import GatlingTestCase
 
+
 class HttpTestScenario(GatlingTestCase):
     @classmethod
     def setUpClass(cls):

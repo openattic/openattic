@@ -217,7 +217,7 @@ class VolumeTests(object):
         self.addCleanup(requests.request, "DELETE", vol["cleanup_url"], headers=vol["headers"])
 
         # try to create a clone
-        with self.assertRaises(requests.HTTPError) as err:
+        with self.assertRaises(requests.HTTPError):
             clone = self.send_request("POST", ["volumes", "clone", "volumes"],
                                       obj_id=vol["response"]["id"],
                                       data={"id": vol["response"]["id"], "name": "gatling_clone"})
