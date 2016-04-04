@@ -1,11 +1,21 @@
-<span class="MsgTitle">Delete Share</span>
-<p class="pText">Do you really want to delete the LUN ACL for "{{lun.host.title}}"?</p>
-<form name="deleteForm" role="form" novalidate>
-    <p class="input-group col-md-4">
-        <div class="MessageBoxButtonSection">
-            <button id="bot1-Msg1" class="btn btn-default btn-sm botTempo" ng-click="cancel()"> Cancel</button>
-            <button id="bot2-Msg1" class="btn btn-default btn-sm botTempo" ng-click="delete()"
-                    ng-disabled="deleteForm.$invalid"> Delete</button>
-        </div>
+<div class="openattic-modal-header">
+    <span>Delete LUN</span>
+</div>
+<div class="openattic-modal-content">
+    <p>
+        You are about to delete the the LUN ACL for <strong>{{lun.host.title}}</strong>.
     </p>
-</form>
+    <p>
+        To confirm, please click <kbd>Delete LUN</kbd>, or cancel and return to the page.
+    </p>
+
+    <form name="deleteForm" role="form" novalidate>
+        <div class="button-group text-right">
+            <button id="bot2-Msg1" class="btn btn-primary btn-sm"
+                    ng-click="delete()" ng-disabled="deleteForm.$invalid">
+                Delete LUN
+            </button>
+            <button id="bot1-Msg1" class="btn btn-link btn-sm" ng-click="cancel()">Cancel</button>
+        </div>
+    </form>
+</div>

@@ -31,7 +31,7 @@
 "use strict";
 
 var app = angular.module("openattic");
-app.controller("NfsShareDeleteCtrl", function ($scope, NfsSharesService, $uibModalInstance, share) {
+app.controller("NfsShareDeleteCtrl", function ($scope, NfsSharesService, $uibModalInstance, share, toasty) {
   $scope.share = share;
 
   $scope.delete = function () {
@@ -47,12 +47,9 @@ app.controller("NfsShareDeleteCtrl", function ($scope, NfsSharesService, $uibMod
   $scope.cancel = function () {
     $uibModalInstance.dismiss("cancel");
 
-    $.smallBox({
+    toasty.warning({
       title: "Delete share",
-      content: "<i class=\"fa fa-clock-o\"></i> <i>Cancelled</i>",
-      color: "#C46A69",
-      iconSmall: "fa fa-times fa-2x fadeInRight animated",
-      timeout: 4000
+      msg: "Cancelled"
     });
   };
 });

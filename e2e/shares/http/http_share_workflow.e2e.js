@@ -23,7 +23,7 @@ describe('HTTP Share workflow', function(){
   });
 
   it('should have a "Create HTTP Share" title', function(){
-    expect(element(by.css('h2')).getText()).toEqual('Create HTTP Share');
+    expect(element(by.css('.tc_formHeadline h3')).getText()).toEqual('Create HTTP Share');
   });
 
   it('should have one input field', function(){
@@ -52,8 +52,8 @@ describe('HTTP Share workflow', function(){
   });
 
   afterAll(function(){
-    console.log('http_share_workflow');
     helpers.delete_volume(volume, volumename);
+    console.log('http_share -> http_share_workflow.e2e.js');
   });
 
 });

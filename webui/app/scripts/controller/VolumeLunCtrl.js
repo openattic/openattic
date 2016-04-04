@@ -31,7 +31,7 @@
 "use strict";
 
 var app = angular.module("openattic");
-app.controller("VolumeLunCtrl", function ($scope, $state, LunService) {
+app.controller("VolumeLunCtrl", function ($scope, $state, LunService, $uibModal) {
   $scope.lunData = {};
 
   $scope.lunFilter = {
@@ -73,29 +73,19 @@ app.controller("VolumeLunCtrl", function ($scope, $state, LunService) {
   };
 
   $scope.deleteLunAction = function () {
-    $.SmartMessageBox({
-      title: "Delete LUN",
-      content: "Do you really want to delete the LUN ACL for \"" + $scope.lunSelection.item.host.title + "\"?",
-      buttons: "[No][Yes]"
-    }, function (ButtonPressed) {
-      if (ButtonPressed === "Yes") {
-        LunService.delete({id: $scope.lunSelection.item.id})
-            .$promise
-            .then(function () {
-              $scope.lunFilter.refresh = new Date();
-            }, function (error) {
-              console.log("An error occured", error);
-            });
+    var modalInstance = $uibModal.open({
+      windowTemplateUrl: "templates/messagebox.html",
+      templateUrl: "templates/volumes/delete-lun.html",
+      controller: "LunDeleteCtrl",
+      resolve: {
+        lun: function () {
+          return $scope.lunSelection.item;
+        }
       }
-      if (ButtonPressed === "No") {
-        $.smallBox({
-          title: "Delete LUN",
-          content: "<i class=\"fa fa-clock-o\"></i> <i>Cancelled</i>",
-          color: "#C46A69",
-          iconSmall: "fa fa-times fa-2x fadeInRight animated",
-          timeout: 4000
-        });
-      }
+    });
+
+    modalInstance.result.then(function () {
+      $scope.lunFilter.refresh = new Date();
     });
   };
 });

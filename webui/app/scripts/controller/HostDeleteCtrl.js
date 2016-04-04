@@ -31,7 +31,7 @@
 "use strict";
 
 var app = angular.module("openattic");
-app.controller("HostDeleteCtrl", function ($scope, HostService, $uibModalInstance, host) {
+app.controller("HostDeleteCtrl", function ($scope, HostService, $uibModalInstance, host, toasty) {
     $scope.host = host;
 
     $scope.delete = function () {
@@ -47,12 +47,9 @@ app.controller("HostDeleteCtrl", function ($scope, HostService, $uibModalInstanc
     $scope.cancel = function () {
       $uibModalInstance.dismiss("cancel");
 
-      $.smallBox({
+      toasty.warning({
         title: "Delete host",
-        content: "<i class=\"fa fa-clock-o\"></i> <i>Cancelled</i>",
-        color: "#C46A69",
-        iconSmall: "fa fa-times fa-2x fadeInRight animated",
-        timeout: 4000
+        msg: "Cancelled"
       });
     };
   });

@@ -1,0 +1,8 @@
+<a ui-sref="users-edit({user:user.id})" id="show-shortcut" data-action="toggleShortcut" class="tc_usernameinfo"
+        ng-if="user.first_name === '' && user.last_name === ''">
+    <i class="fa fa-user"></i> {{user.username}}
+</a>
+<a ui-sref="users-edit({user:user.id})" id="show-shortcut" data-action="toggleShortcut" class="tc_usernameinfo"
+        ng-if="user.first_name !== '' || user.last_name !== ''">
+    <i class="fa fa-user"></i> {{user.first_name}} {{user.last_name}}
+</a>

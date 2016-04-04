@@ -1,69 +1,73 @@
-<div class="jarviswidget">
-    <div>
-        <div class="widget-body no-padding">
-            <div class="overlay" ng-show="waiting">
-                <div class="overlay-content">
-                    <i class="fa fa-4x fa-spinner fa-spin"></i>
-                </div>
-            </div>
-            <div class="dt-toolbar" role="menu" style="border-top: 1px solid #c2c2c2; padding-bottom: 6px;">
-                <div class="col-xs-12 col-sm-6 col-md-6 col-lg-6">
-                    <div class="input-group">
-                            <span class="input-group-addon">
-                                <i class="glyphicon glyphicon-search"></i>
-                            </span>
-                            <input class="form-control" type="search" ng-model="filterConfig.search"
-                                   ng-model-options="searchModelOptions" />
-                    </div>
-                </div>
-                <div class="col-xs-12 col-sm-6 col-md-6 col-lg-6">
-                    <div class="widget-toolbar">
-                        <div class="dataTables_length" >
-                            <button type="button" class="tc_entries_dropdown btn btn-default dropdown-toggle" data-toggle="dropdown"
-                                    aria-expanded="false">
-                                {{ filterConfig.entries }} <span class="caret"></span>
-                            </button>
-                            <ul class="dropdown-menu arrow-box-up-right pull-right oa-dropdown-menu oa-dropdown-numbers" role="menu">
-                                <li ng-class="{active: filterConfig.entries ===   2}">
-                                    <a ng-click="filterConfig.entries =   2">   2 </a>
-                                </li>
-                                <li ng-class="{active: filterConfig.entries ===  10}">
-                                    <a ng-click="filterConfig.entries =  10">  10 </a>
-                                </li>
-                                <li ng-class="{active: filterConfig.entries ===  25}">
-                                    <a ng-click="filterConfig.entries =  25">  25 </a>
-                                </li>
-                                <li ng-class="{active: filterConfig.entries ===  50}">
-                                    <a ng-click="filterConfig.entries =  50">  50 </a>
-                                </li>
-                                <li class="tc_entries_100" ng-class="{active: filterConfig.entries === 100}">
-                                    <a ng-click="filterConfig.entries = 100"> 100 </a>
-                                </li>
-                            </ul>
-                        </div>
-                    </div>
-                    <div class="oadatatableactions"></div>
-                    <showhidecolumns></showhidecolumns>
-                    <div class="widget-toolbar">
-                        <a ng-click="reloadTable()">
-                            <i class="fa fa-lg fa-refresh"></i>
-                        </a>
-                    </div>
-                </div>
-            </div>
-            <div class="dataTables_wrapper clearfix"></div>
-            <div class="dt-toolbar-footer">
-                <div class="col-xs-12 col-sm-6">
-                    <div class="dataTables_info" role="status" aria-live="polite">
-                        <span class="text-danger">
-                            Showing {{firstEntry}} to {{lastEntry}} of {{totalEntries}} entries
-                        </span>
-                    </div>
-                </div>
-                <div class="col-xs-12 col-sm-6">
-                    <paginator page="filterConfig.page" pages="pages"></paginator>
-                </div>
-            </div>
+<div class="overlay" ng-show="waiting">
+    <div class="overlay-content">
+        <i class="fa fa-4x fa-spinner fa-spin"></i>
+    </div>
+</div>
+<div class="dataTables_wrapper">
+    <div class="dataTables_header clearfix">
+        <!-- actions -->
+        <div class="oadatatableactions"></div>
+        <!-- end actions -->
+
+        <!-- search -->
+        <div class="input-group">
+                    <span class="input-group-addon">
+                        <i class="glyphicon glyphicon-search"></i>
+                    </span>
+            <input class="form-control" type="search" ng-model="filterConfig.search" ng-model-options="searchModelOptions" />
         </div>
+        <!-- end search -->
+
+        <!-- entries -->
+        <div class="dataTables_length widget-toolbar">
+            <button type="button" class="btn btn-sm btn-default dropdown-toggle tc_entries_dropdown" data-toggle="dropdown"
+                    aria-expanded="false">
+                {{ filterConfig.entries }}
+                <span class="caret"></span>
+            </button>
+            <ul class="dropdown-menu arrow-box-up-right oa-dropdown-menu oa-dropdown-numbers" role="menu">
+                <li class="tc_entries_2" ng-class="{active: filterConfig.entries ===   2}">
+                    <a ng-click="filterConfig.entries =   2">  2</a>
+                </li>
+                <li class="tc_entries_10" ng-class="{active: filterConfig.entries ===  10}">
+                    <a ng-click="filterConfig.entries =  10"> 10</a>
+                </li>
+                <li class="tc_entries_25" ng-class="{active: filterConfig.entries ===  25}">
+                    <a ng-click="filterConfig.entries =  25"> 25</a>
+                </li>
+                <li class="tc_entries_50" ng-class="{active: filterConfig.entries ===  50}">
+                    <a ng-click="filterConfig.entries =  50"> 50</a>
+                </li>
+                <li class="tc_entries_100" ng-class="{active: filterConfig.entries === 100}">
+                    <a ng-click="filterConfig.entries = 100">100</a>
+                </li>
+            </ul>
+        </div>
+        <!-- end entries-->
+
+        <!-- hide columns -->
+        <showhidecolumns></showhidecolumns>
+        <!-- end hide columns -->
+
+        <!-- refresh -->
+        <div class="widget-toolbar tc_refreshBtn">
+            <a ng-click="reloadTable()">
+                <i class="fa fa-lg fa-refresh"></i>
+            </a>
+        </div>
+        <!-- end refresh -->
+    </div>
+    <div class="table-responsive dataTables_content"></div>
+    <div class="dataTables_footer">
+        <!-- number of items -->
+        <div class="dataTables_info">
+            Showing <strong>{{firstEntry}}</strong> to <strong>{{lastEntry}}</strong>
+            of <strong>{{totalEntries}}</strong> items
+        </div>
+        <!-- end number of items -->
+
+        <!-- pagination -->
+        <paginator page="filterConfig.page" pages="pages"></paginator>
+        <!-- end pagination -->
     </div>
 </div>

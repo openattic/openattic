@@ -31,7 +31,7 @@
 "use strict";
 
 var app = angular.module("openattic");
-app.controller("VolumeCtrl", function ($scope, $state, VolumeService, SizeParserService, $uibModal) {
+app.controller("VolumeCtrl", function ($scope, $state, VolumeService, SizeParserService, $uibModal, toasty) {
   $scope.data = {};
 
   $scope.filterConfig = {
@@ -144,12 +144,9 @@ app.controller("VolumeCtrl", function ($scope, $state, VolumeService, SizeParser
   };
 
   $scope.protectedMessage = function (item) {
-    $.smallBox({
+    toasty.warning({
       title: item.name + " is not deletable",
-      content: "<i class=\"fa fa-clock-o tc_notDeletable\"></i><i> Release the deletion protection in order to be " +
-               "able to delete the volume.</i>",
-      color: "#C46A69",
-      iconSmall: "fa fa-times fa-2x fadeInRight animated",
+      msg: "Release the deletion protection in order to be able to delete the volume.",
       timeout: 6000
     });
   };

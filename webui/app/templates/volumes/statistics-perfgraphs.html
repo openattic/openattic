@@ -1,64 +1,69 @@
-<div class="step-pane active perfgraphs">
+<div class="col-xs-12">
     <div class="row" ng-show="selection.item.is_blockvolume">
-        <div class="jarviswidget col-lg-4" role="widget">
-            <header role="heading">
-                <h2>Throughput per Day</h2>
-            </header>
-            <div role="content">
-                <div role="widget-body">
-                    <graph title="Throughput per day"          volume="selection.item" width="200" profile="4h" global-params="perfparams" />
+        <div class="col-lg-6">
+            <div class="panel panel-default">
+                <div class="panel-heading">
+                    <h3 class="panel-title">Throughput per Day</h3>
+                </div>
+                <div class="panel-body graph">
+                    <graph title="Throughput per day" volume="selection.item" width="200" profile="4h" global-params="perfparams" />
                 </div>
             </div>
         </div>
-        <div class="jarviswidget col-lg-4" role="widget">
-            <header role="heading">
-                <h2>IOs per second (Normalized)</h2>
-            </header>
-            <div role="content">
-                <div role="widget-body">
+
+        <div class="col-lg-6">
+            <div class="panel panel-default">
+                <div class="panel-heading">
+                    <h3 class="panel-title">IOs per second (Normalized)</h3>
+                </div>
+                <div class="panel-body graph">
                     <graph title="IOs per Second (Normalized)" volume="selection.item" width="200" profile="4h" global-params="perfparams" />
-                </div>
-            </div>
-        </div>
-        <div class="jarviswidget col-lg-4" role="widget">
-            <header role="heading">
-                <h2>Request size</h2>
-            </header>
-            <div role="content">
-                <div role="widget-body">
-                    <graph title="Average Request size (r/w)"  volume="selection.item" width="200" profile="4h" global-params="perfparams" />
                 </div>
             </div>
         </div>
     </div>
     <div class="row" ng-show="selection.item.is_blockvolume">
-        <div class="jarviswidget col-lg-4" role="widget">
-            <header role="heading">
-                <h2>Latency</h2>
-            </header>
-            <div role="content">
-                <div role="widget-body">
-                    <graph title="Average Latency (r/w)"       volume="selection.item" width="200" profile="4h" global-params="perfparams" />
+        <div class="col-lg-6">
+            <div class="panel panel-default">
+                <div class="panel-heading">
+                    <h3 class="panel-title">Request size</h3>
+                </div>
+                <div class="panel-body graph">
+                    <graph title="Average Request size (r/w)" volume="selection.item" width="200" profile="4h" global-params="perfparams" />
                 </div>
             </div>
         </div>
-        <div class="jarviswidget col-lg-4" role="widget">
-            <header role="heading">
-                <h2>IOs per second</h2>
-            </header>
-            <div role="content">
-                <div role="widget-body">
-                    <graph title="IOs per second"              volume="selection.item" width="200" profile="4h" global-params="perfparams" />
+
+        <div class="col-lg-6">
+            <div class="panel panel-default">
+                <div class="panel-heading">
+                    <h3 class="panel-title">Latency</h3>
+                </div>
+                <div class="panel-body graph">
+                    <graph title="Average Latency (r/w)" volume="selection.item" width="200" profile="4h" global-params="perfparams" />
                 </div>
             </div>
         </div>
-        <div class="jarviswidget col-lg-4" role="widget">
-            <header role="heading">
-                <h2>Disk Load</h2>
-            </header>
-            <div role="content">
-                <div role="widget-body">
-                    <graph title="Disk Load"                   volume="selection.item" width="200" profile="4h" global-params="perfparams" />
+    </div>
+    <div class="row" ng-show="selection.item.is_blockvolume">
+        <div class="col-lg-6">
+            <div class="panel panel-default">
+                <div class="panel-heading">
+                    <h3 class="panel-title">IOs per second</h3>
+                </div>
+                <div class="panel-body graph">
+                    <graph title="IOs per second" volume="selection.item" width="200" profile="4h" global-params="perfparams" />
+                </div>
+            </div>
+        </div>
+
+        <div class="col-lg-6">
+            <div class="panel panel-default">
+                <div class="panel-heading">
+                    <h3 class="panel-title">Disk Load</h3>
+                </div>
+                <div class="panel-body graph">
+                    <graph title="Disk Load" volume="selection.item" width="200" profile="4h" global-params="perfparams" />
                 </div>
             </div>
         </div>
