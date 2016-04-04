@@ -68,21 +68,21 @@ describe('Pagination', function(){
 
   it('should click the next page button and jump to page 2', function(){
     switchPage(function(){
-      nextPage.element(by.tagName('span')).click()
+      nextPage.element(by.tagName('span')).click();
     });
     expect(currentPage()).toBe('2');
   });
 
   it('should click the last page button and jump to page the last page', function(){
     switchPage(function(){
-      lastPage.element(by.tagName('span')).click()
+      lastPage.element(by.tagName('span')).click();
     });
     expect(currentPage()).toBe(lastPageNumber.getText());
   });
 
   it('should show last page and next page button as disabled on the last page', function(){
     switchPage(function(){
-      lastPage.element(by.tagName('span')).click()
+      lastPage.element(by.tagName('span')).click();
     });
     expect(currentPage()).toBe(lastPageNumber.getText());
     expect(elementIsDisabled(nextPage)).toBe(true);
@@ -91,22 +91,22 @@ describe('Pagination', function(){
 
   it('should go to the next page than click the previous page button and jump to last page 1', function(){
     switchPage(function(){
-      nextPage.element(by.tagName('span')).click()
+      nextPage.element(by.tagName('span')).click();
     });
     expect(currentPage()).toBe('2');
     switchPage(function(){
-      prevPage.element(by.tagName('span')).click()
+      prevPage.element(by.tagName('span')).click();
     });
     expect(currentPage(), 10).toBe('1');
   });
 
   it('should go to the last page than click the first page button and jump to last page 1', function(){
     switchPage(function(){
-      lastPage.element(by.tagName('span')).click()
+      lastPage.element(by.tagName('span')).click();
     });
     expect(currentPage()).toBe(lastPageNumber.getText());
     switchPage(function(){
-      firstPage.element(by.tagName('span')).click()
+      firstPage.element(by.tagName('span')).click();
     });
     expect(currentPage(), 10).toBe('1');
   });
