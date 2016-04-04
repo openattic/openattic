@@ -1,6 +1,6 @@
+import django
 from django.db import models
 from django.db.models.query import QuerySet
-from django.db.models.manager import BaseManager
 
 
 class NodbQuerySet(QuerySet):
@@ -106,7 +106,15 @@ class NodbQuerySet(QuerySet):
         super(NodbQuerySet, self).all(context)
 
 
-class NodbManager(BaseManager.from_queryset(NodbQuerySet)):
+if django.VERSION[1] == 6:
+    from django.db.models.manager import Manager
+    base_manager_class = Manager
+else:
+    from django.db.models.manager import BaseManager
+    base_manager_class = BaseManager.from_queryset(NodbQuerySet)
+
+
+class NodbManager(base_manager_class):
 
     use_for_related_fields = True
 
@@ -114,7 +122,11 @@ class NodbManager(BaseManager.from_queryset(NodbQuerySet)):
         return self.get_queryset(context)
 
     def get_queryset(self, context=None):
-        return self._queryset_class(self.model, using=self._db, hints=self._hints, context=context)
+        if django.VERSION[1] == 6:
+            return NodbQuerySet(self.model, using=self._db, context=context)
+        else:
+            return self._queryset_class(self.model, using=self._db, hints=self._hints,
+                                        context=context)
 
 
 class NodbModel(models.Model):
@@ -122,7 +134,9 @@ class NodbModel(models.Model):
     objects = NodbManager()
 
     class Meta:
-        managed = False
+        # Needs to be true to be able to create the necessary database tables by using Django
+        # migrations. The table is necessary to be able to use Django model relations.
+        managed = True
         abstract = True
 
     @staticmethod
