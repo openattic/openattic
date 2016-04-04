@@ -21,7 +21,5 @@ class TokenAuthTestScenario(GatlingTestCase):
     @classmethod
     def setUpClass(cls):
         super(TokenAuthTestScenario, cls).setUpClass()
-        cls.require_config("options", "admin")
-        cls.require_config("options", "password")
         cls.require_enabled("auth")
         cls.auth_token = cls.get_auth_token()

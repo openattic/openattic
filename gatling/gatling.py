@@ -83,7 +83,15 @@ def main():
     else:
         conf.read(os.path.join(basedir, "gatling.conf"))
 
-    host_name = conf.get("options", "host_name")
+    try:
+        host_name = conf.get("options", "host_name")
+        username = conf.get("options", "admin")
+        password = conf.get("options", "password")
+    except ConfigParser.NoOptionError, e:
+        print "Option '{}' not found in config files. This option is mandatory. Please define it " \
+              "in your Gatling config file.".format(e.option)
+        return 1
+
     base_url = "http://" + host_name + "/openattic/api/"
 
     class GatlingTestSuite(unittest.TestSuite):
@@ -125,8 +133,6 @@ def main():
                               testLoader=loader, exit=False)
     endtime = datetime.datetime.now()
 
-    username = conf.get("options", "admin")
-    password = conf.get("options", "password")
     cmdlog_filter = "cmdlogs?exitcode=1&start_datetime=%s&end_datetime=%s" % (starttime, endtime)
 
     failedcmds = requests.request("GET", "%s%s" % (base_url, cmdlog_filter),

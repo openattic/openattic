@@ -26,7 +26,6 @@ class LunTestScenario(GatlingTestCase):
         cls.require_enabled("lio")
         cls.require_config("lio:initiator",   "host", "iqn", "type")
         cls.require_config("lio:initiator:2", "host", "iqn", "type")
-        cls.require_config("options", "host_name")
 
         host_name = cls.conf.get("options", "host_name")
         res_host = cls.send_request("GET", "hosts", search_param=("name=%s" % host_name))

@@ -179,9 +179,6 @@ class GatlingTestCase(unittest.TestCase):
                         password(str)   -> Password of the user
         :return: Auth token for the given user
         """
-        cls.require_config("options", "admin")
-        cls.require_config("options", "password")
-
         request_url = cls.base_url + "api-token-auth"
         username = kwargs.get("username", cls.conf.get("options", "admin"))
         password = kwargs.get("password", cls.conf.get("options", "password"))
