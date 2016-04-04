@@ -143,7 +143,7 @@
     delete_snap_clone: function(){
       clone.click();
       browser.sleep(400);
-      element(by.css('.tc_menudropdown')).click();
+      element.all(by.css('.tc_menudropdown')).get(0).click();
       browser.sleep(400);
       element(by.css('.tc_deleteItem > a')).click();
       browser.sleep(400);
