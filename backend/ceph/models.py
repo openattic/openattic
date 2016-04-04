@@ -77,11 +77,22 @@ class CephCluster(NodbModel):
         raise LookupError()
 
     @staticmethod
+    def get_fsid(cluster_name):
+        f = '/etc/ceph/{name}.conf'.format(name=cluster_name)
+        if os.path.isfile(f):
+            config = ConfigParser.ConfigParser()
+            config.read(f)
+            fsid = config.get('global', 'fsid')
+
+            return fsid
+
+        raise LookupError()
+
+    @staticmethod
     def get_all_objects(context=None):
         result = []
         for cluster_name in CephCluster.get_names():
-            fsid = json.loads(dbus_to_python(get_dbus_object('/ceph').ceph_fsid(cluster_name)))
-            fsid = fsid['fsid']
+            fsid = CephCluster.get_fsid(cluster_name)
             cluster = CephCluster(fsid=fsid, name=cluster_name)
             cluster.pools = CephPool.objects.all({'cluster': cluster})
             result.append(cluster)
