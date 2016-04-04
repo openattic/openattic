@@ -21,9 +21,9 @@ import unittest
 import xmlrunner
 import datetime
 import requests
+import ConfigParser
 
 from functools import partial
-from ConfigParser import ConfigParser
 from optparse import OptionParser
 from testtools.run import TestProgram
 
@@ -71,7 +71,7 @@ def main():
 
     options, posargs = parser.parse_args()
 
-    conf = ConfigParser()
+    conf = ConfigParser.ConfigParser()
 
     if options.target:
         conf.read([
