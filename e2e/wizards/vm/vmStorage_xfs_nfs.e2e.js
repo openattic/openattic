@@ -48,7 +48,7 @@ describe('VM Storage Wizard', function(){
     //check if angular expression contains 'Next' or 'Done
     var nextBtn = element(by.id('nextBtn')).evaluate('nextBtnText()');
     expect(nextBtn.getText()).toEqual('Next');
-    expect(element.all(by.css('tc_oawizard_h3')).getText()).toEqual('VM Storage Step 1 - Create Volume');
+    expect(element(by.css('.tc_oawizard_h3')).getText()).toEqual('VM Storage Step 1 - Create Volume');
     expect(volumefield.isDisplayed()).toBe(true);
     //expect(pool.isDisplayed()).toBe(true);
     expect(size.isDisplayed()).toBe(true);

@@ -38,7 +38,7 @@ describe('Wizard panel', function(){
   });
 
   it('should a widget title', function(){
-    expect(element(by.css('.tc_widget_title')).getText()).toEqual('openATTIC Wizards');
+    expect(element.all(by.css('.tc_widget_title')).get(1).getText()).toEqual('openATTIC Wizards');
     helpers.check_wizard_titles();
   });
 
