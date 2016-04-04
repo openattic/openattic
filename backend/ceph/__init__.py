@@ -4,7 +4,8 @@ import os
 def has_executable(name):
     """Look in PATH if there's a file `ceph` which is callable."""
     for path in os.environ['PATH'].split(':'):
-        if os.access(os.path.join(path, name), os.R_OK):
+        file_path = os.path.join(path, name)
+        if os.access(file_path, os.X_OK) and os.path.isfile(file_path):
             return True
 
     return False
