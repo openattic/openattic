@@ -94,11 +94,12 @@ def main():
 
     base_url = "http://" + host_name + "/openattic/api/"
 
-    users = requests.request("GET", "{}users".format(base_url), auth=(username, password))
+    user = requests.request("GET", "{}users?username={}".format(base_url, username),
+                            auth=(username, password))
     try:
-        users.raise_for_status()
+        user.raise_for_status()
     except requests.HTTPError:
-        if users.status_code == 401:
+        if user.status_code == 401:
             print "The given login credentials ('admin' and 'password') are not correct. Please " \
                   "check your configuration or define 'admin' and 'password' in you config file " \
                   "if you are not using the default credentials."
@@ -107,6 +108,8 @@ def main():
                   "check your configuration or define 'host_name' in your config " \
                   "file.".format(host_name)
         return 1
+    else:
+        userid = user.json()["results"][0]["id"]
 
     class GatlingTestSuite(unittest.TestSuite):
         """ TestSuite that monkeypatches loaded tests with config objects. """
@@ -117,6 +120,9 @@ def main():
 
             test.__class__.base_url = base_url
             test.base_url = base_url
+
+            test.__class__.userid = userid
+            test.userid = userid
 
     class GatlingTestLoader(unittest.TestLoader):
         """ TestLoader that uses GatlingTestSuite to load tests. """

@@ -44,18 +44,6 @@ class GatlingTestCase(unittest.TestCase):
             raise unittest.SkipTest("%s tests disabled in configuration" % section)
 
     @classmethod
-    def setUpClass(cls):
-        try:
-            res = cls.send_request("GET", "users", search_param="username=openattic")
-        except requests.HTTPError:
-            raise unittest.SkipTest("openATTIC REST api login failed. Check api url and"
-                                    "authentication token")
-        else:
-            if res["count"] == 0:
-                raise unittest.SkipTest("admin user not found")
-            cls.userid = res["response"][0]["id"]
-
-    @classmethod
     def send_request(cls, method, prefixes=None, auth_token=None, *args, **kwargs):
         """
         Sends a request to openATTICs REST API and returns the response
