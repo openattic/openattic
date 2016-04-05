@@ -135,7 +135,7 @@ app.service("lineChartService", function () {
     legend: {
       show: true,
       position: "nw",
-      margin: [0, 5],
+      margin: [10, 10],
       backgroundOpacity: 0
     },
     series: {

@@ -1,11 +1,23 @@
-<span class="MsgTitle">{{dialogSet}} volume delete protection of "{{volume.name}}"</span>
-<p class="pText" ng-if="!volume.is_protected">If set the volume can't be deleted, until you unset the protection.</p>
-<p class="pText" ng-if="volume.is_protected">If unset, you can delete the volume.</p>
-<form name="protectionForm" role="form" class="form-horizontal" novalidate>
-    <p class="input-group">
-        <div class="MessageBoxButtonSection">
-            <button id="bot1-Msg1" class="btn btn-default btn-sm botTempo" ng-click="cancel()"> Cancel</button>
-            <button id="bot2-Msg1" class="btn btn-default btn-sm botTempo" ng-click="setProtection()"> {{dialogSet}} protection</button>
-        </div>
+<div class="openattic-modal-header">
+    <span>{{dialogSet}} volume delete protection</span>
+</div>
+<div class="openattic-modal-content">
+    <p>
+        You are about to {{dialogSet}} the volume delete protection of <strong>{{volume.name}}</strong>.
     </p>
-</form>
+    <p ng-if="!volume.is_protected">If set the volume can't be deleted, until you unset the protection.</p>
+    <p ng-if="volume.is_protected">If unset, you can delete the volume.</p>
+    <p>
+        To confirm, please click <kbd>{{dialogSet}} protection</kbd>, or cancel and return to the page.
+    </p>
+
+    <form name="protectionForm" role="form" novalidate>
+        <div class="button-group text-right">
+            <button id="bot2-Msg1" class="btn btn-primary btn-sm"
+                    ng-click="setProtection()" ng-disabled="deleteForm.$invalid">
+                {{dialogSet}} protection
+            </button>
+            <button id="bot1-Msg1" class="btn btn-link btn-sm" ng-click="cancel()">Cancel</button>
+        </div>
+    </form>
+</div>

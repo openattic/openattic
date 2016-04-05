@@ -35,7 +35,7 @@ app.directive("logout", function () {
   return {
     template: [
       "<a title=\"Sign Out\" ng-click=\"handleLogout()\">",
-      "<i class=\"fa fa-sign-out\"></i>",
+      "<i class=\"fa fa-sign-out\"></i> Logout",
       "</a>"
     ].join(""),
     controller: function ($scope, $rootScope, $state, authService) {

@@ -29,7 +29,7 @@ describe('CIFS Share workflow', function(){
   });
 
   it('should have the title "Create CIFS Share"', function(){
-    expect(element(by.css('h2')).getText()).toEqual('Create CIFS Share');
+    expect(element(by.css('.tc_formHeadline h3')).getText()).toEqual('Create CIFS Share');
   });
 
   it('should have the input field "Name"', function(){
@@ -114,7 +114,7 @@ describe('CIFS Share workflow', function(){
   });
 
   afterAll(function(){
-    console.log('cifs_workflow');
     helpers.delete_volume(volume, volumename);
+    console.log('cifs_share -> cifs_workflow.e2e.js');
   });
 });

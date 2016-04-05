@@ -31,7 +31,7 @@
 "use strict";
 
 var app = angular.module("openattic");
-app.controller("UserDeleteCtrl", function ($scope, UserService, $uibModalInstance, user) {
+app.controller("UserDeleteCtrl", function ($scope, UserService, $uibModalInstance, user, toasty) {
   $scope.user = user;
 
   $scope.delete = function () {
@@ -47,12 +47,9 @@ app.controller("UserDeleteCtrl", function ($scope, UserService, $uibModalInstanc
   $scope.cancel = function () {
     $uibModalInstance.dismiss("cancel");
 
-    $.smallBox({
+    toasty.warning({
       title: "Delete user",
-      content: "<i class=\"fa fa-clock-o\"></i> <i>Cancelled</i>",
-      color: "#C46A69",
-      iconSmall: "fa fa-times fa-2x fadeInRight animated",
-      timeout: 4000
+      msg: "Cancelled"
     });
   };
 });

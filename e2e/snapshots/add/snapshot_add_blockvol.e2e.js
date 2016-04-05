@@ -20,9 +20,9 @@ describe('Should create a Snapshot', function(){
   });
 
   afterAll(function(){
-    console.log('snapshot_add_blockvol');
     helpers.delete_snapshot(volume);
     helpers.delete_volume(volume, volumename);
+    console.log('snapshot -> snapshot_add_blockvol.e2e.js');
   });
 
 });

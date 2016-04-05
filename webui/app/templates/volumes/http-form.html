@@ -1,16 +1,15 @@
-<article class="col-sm-12 col-md-12 col-lg-6">
-    <div class="jarviswidget" id="wid-id-0">
-        <header>
-            <span class="widget-icon"> <i class="fa fa-edit"></i></span>
-            <h2>Create HTTP Share</h2>
-        </header>
-        <div class="widget-body">
-            <form name="shareForm" role="form" class="form-horizontal" novalidate>
+<div class="col-sm-12 col-lg-6">
+    <form name="shareForm" role="form" class="form-horizontal" novalidate>
+        <div class="panel panel-default">
+            <div class="panel-heading tc_formHeadline">
+                <h3 class="panel-title">Create HTTP Share</h3>
+            </div>
+            <div class="panel-body">
                 <fieldset>
                     <div class="form-group" ng-class="{'has-error': (submitted || shareForm.path.$dirty)
                     && shareForm.path.$invalid }">
-                        <label class="col-md-2 control-label" for="sharePath">Path</label>
-                        <div class="col-md-10">
+                        <label class="col-sm-3 control-label" for="sharePath">Path</label>
+                        <div class="col-sm-9">
                             <div class="input-group">
                                 <span class="input-group-addon"><i class="fa fa-share"></i></span>
                                 <input type="text" class="form-control" placeholder="Path..."
@@ -22,15 +21,17 @@
                         </div>
                     </div>
                 </fieldset>
-                <div class="pull-right" style="padding: 6px 16px">
-                    <button type="submit" class="btn btn-primary tc_submitButton" ng-click="submitAction(shareForm)">
+            </div>
+            <div class="panel-footer">
+                <div class="button-group text-right">
+                    <button type="submit" class="btn btn-sm btn-primary tc_submitButton" ng-click="submitAction(shareForm)">
                         Submit
                     </button>
-                    <button type="button" class="btn btn-default tc_backButton" ng-click="cancelAction()">
+                    <button type="button" class="btn btn-sm btn-default tc_backButton" ng-click="cancelAction()">
                         Back
                     </button>
                 </div>
-            </form>
+            </div>
         </div>
-    </div>
-</article>
+    </form>
+</div>

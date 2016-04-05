@@ -41,12 +41,6 @@ describe('Volumes resize', function(){
     cancel_button.click();
   });
 
-  it('should show a required field error if the submit button is clicked without editing anything', function(){
-    submit_button.click();
-    expect(element(by.css('.tc_required')).isDisplayed()).toBe(true);
-    cancel_button.click();
-  });
-
   it('should show a message if the chosen size is smaller than 100mb', function(){
     wrongSize('99mb');
   });
@@ -66,6 +60,9 @@ describe('Volumes resize', function(){
 
   it('should not allow to shrink the volume', function(){
     wrongSize('170mb');
-    console.log('resize volume');
+  });
+
+  afterAll(function(){
+    console.log('volumes_resize -> volume_resize.e2e.js');
   });
 });
