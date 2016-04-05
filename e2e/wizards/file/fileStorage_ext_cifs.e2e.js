@@ -29,7 +29,7 @@ describe('Wizard panel', function(){
   });
 
   it('should a widget title', function(){
-    expect(element.all(by.css('h2')).get(1).getText()).toEqual('openATTIC Wizards');
+    expect(element.all(by.css('.tc_widget_title')).get(1).getText()).toEqual('openATTIC Wizards');
     helpers.check_wizard_titles();
   });
 
@@ -50,7 +50,7 @@ describe('Wizard panel', function(){
     var nextBtn = element(by.id('nextBtn')).evaluate('nextBtnText()');
     expect(nextBtn.getText()).toEqual('Next');
     //check content of first wizard site
-    expect(element.all(by.css('h3')).get(0).getText()).toEqual('File Storage Step 1 - Create Volume');
+    expect(element(by.css('.tc_oawizard_h3')).getText()).toEqual('File Storage Step 1 - Create Volume');
     expect(volumefield.isDisplayed()).toBe(true);
     //expect(pool.isDisplayed()).toBe(true);
     expect(size.isDisplayed()).toBe(true);
@@ -158,6 +158,6 @@ describe('Wizard panel', function(){
   afterAll(function(){
 
     helpers.delete_volume(volume, volumename);
-    console.log('<----- file storage wizard done (ext/cifs) ------>');
+    console.log('fs_wiz_ext_cifs -> fileStorage_ext_cifs.e2e.js');
   });
 });

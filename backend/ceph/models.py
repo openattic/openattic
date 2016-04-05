@@ -18,6 +18,7 @@ from __future__ import division
 
 import json
 import math
+import os
 
 from django.db import models
 from django.utils.translation import ugettext_noop as _
@@ -28,6 +29,112 @@ from systemd import get_dbus_object, dbus_to_python
 from systemd.helpers import Transaction
 from ifconfig.models import Host
 from volumes.models import StorageObject, FileSystemVolume, VolumePool, BlockVolume
+
+from nodb.models import NodbModel
+
+from ceph import librados
+import ConfigParser
+
+
+class RadosClientManager(object):
+
+    instances = {}
+
+    def __getitem__(self, fsid):
+        if fsid not in self.instances:
+            cluster_name = CephCluster.get_name(fsid)
+            self.instances[fsid] = librados.Client(cluster_name)
+
+        return self.instances[fsid]
+
+rados = RadosClientManager()
+
+
+class CephCluster(NodbModel):
+    """Represents a Ceph cluster."""
+
+    fsid = models.CharField(max_length=36, primary_key=True)
+    name = models.CharField(max_length=100)
+
+    @staticmethod
+    def get_names():
+        clusters = []
+        for file in os.listdir('/etc/ceph'):
+            if file.endswith('.conf'):
+                clusters.append(os.path.splitext(file)[0])
+        return clusters
+
+    @staticmethod
+    def get_name(fsid):
+        for conf_file in os.listdir('/etc/ceph'):
+            if conf_file.endswith('.conf'):
+                config = ConfigParser.ConfigParser()
+                config.read(os.path.join('/etc/ceph/', conf_file))
+
+                if config.get('global', 'fsid') == fsid:
+                    return os.path.splitext(conf_file)[0]
+
+        raise LookupError()
+
+    @staticmethod
+    def get_fsid(cluster_name):
+        f = '/etc/ceph/{name}.conf'.format(name=cluster_name)
+        if os.path.isfile(f):
+            config = ConfigParser.ConfigParser()
+            config.read(f)
+            fsid = config.get('global', 'fsid')
+
+            return fsid
+
+        raise LookupError()
+
+    @staticmethod
+    def get_all_objects(context=None):
+        result = []
+        for cluster_name in CephCluster.get_names():
+            fsid = CephCluster.get_fsid(cluster_name)
+            cluster = CephCluster(fsid=fsid, name=cluster_name)
+            cluster.pools = CephPool.objects.all({'cluster': cluster})
+            result.append(cluster)
+
+        return result
+
+
+class CephPool(NodbModel):
+
+    name = models.CharField(max_length=100, primary_key=True)
+    num_bytes = models.IntegerField()
+    num_kb = models.IntegerField()
+    num_object_clones = models.IntegerField()
+    num_object_copies = models.IntegerField()
+    num_objects = models.IntegerField()
+    num_objects_degraded = models.IntegerField()
+    num_objects_missing_on_primary = models.IntegerField()
+    num_objects_unfound = models.IntegerField()
+    num_rd = models.IntegerField()
+    num_rd_kb = models.IntegerField()
+    num_wr = models.IntegerField()
+    num_wr_kb = models.IntegerField()
+
+    cluster = models.ForeignKey(CephCluster)
+
+    @staticmethod
+    def get_all_objects(context):
+        result = []
+
+        cluster = context['cluster']
+
+        fsid = cluster.fsid
+
+        for pool_name in rados[fsid].list_pools():
+            pool_stats = rados[fsid].get_stats(pool_name)
+            stats = pool_stats.copy()
+            stats['name'] = pool_name
+            stats['cluster'] = cluster
+
+            result.append(CephPool(**stats))
+
+        return result
 
 
 class Cluster(StorageObject):

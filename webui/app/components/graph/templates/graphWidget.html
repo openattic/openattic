@@ -1,19 +1,15 @@
-<!-- kate: space-indent on; indent-width 4; replace-tabs on; -->
-<span class="graph-widget">
-    <a class="dropdown-toggle" data-toggle="dropdown"><i class="fa fa-clock-o"></i></a>
-    <ul class="dropdown-menu arrow-box-up-right pull-right">
-        <li class="pull-left" ng-repeat="profile in profiles">
-            <button class="btn btn-sm"
-                ng-bind="profile.title"
-                ng-click="setActiveProfile(profile)"
-                ng-class="{
-                    'btn-default': params.profile !== profile,
-                    'btn-primary': params.profile === profile
-                }"
-                ></button>
+<div class="dropdown">
+    <button class="btn btn-sm btn-default dropdown-toggle" type="button" id="filterDropdown"
+            data-toggle="dropdown" aria-haspopup="true" aria-expanded="true">
+        Filter
+        <span class="caret"></span>
+    </button>
+    <ul class="dropdown-menu" aria-labelledby="filterDropdown">
+        <li ng-repeat="profile in profiles">
+            <a ng-bind="profile.title" ng-click="setActiveProfile(profile)"></a>
         </li>
-        <li class="pull-left">
-            <button class="btn btn-sm btn-default" ng-click="setActiveProfile(null)">Default</button>
+        <li>
+            <a ng-click="setActiveProfile(null)">Default</a>
         </li>
     </ul>
-</span>
+</div>

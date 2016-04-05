@@ -1,8 +1,15 @@
-<div class="tree">
-    <ul>
-        <li><span ng-bind="selection.item.name"></span></li>
-        <ul>
-            <li ng-repeat="data in storage.devices" ng-include="'templates/storageTreeNode.html'"></li>
-        </ul>
-    </ul>
+<div class="panel panel-default">
+    <div class="panel-heading">
+        <h3 class="panel-title">Storage tree of {{selection.item.name}}</h3>
+    </div>
+    <div class="panel-body">
+        <div class="tree">
+            <ul>
+                <li><span ng-bind="selection.item.name"></span></li>
+                <ul>
+                    <li ng-repeat="data in storage.devices" ng-include="'templates/storageTreeNode.html'"></li>
+                </ul>
+            </ul>
+        </div>
+    </div>
 </div>

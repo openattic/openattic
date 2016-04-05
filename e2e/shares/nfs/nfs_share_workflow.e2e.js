@@ -19,7 +19,7 @@ describe('NFS Share workflow', function(){
   });
 
   it('should have a "Create NFS Share" title', function(){
-    expect(element(by.css('h2')).getText()).toEqual('Create NFS Share');
+    expect(element(by.css('.tc_formHeadline h3')).getText()).toEqual('Create NFS Share');
   });
 
   it('should have the input field "Path"', function(){
@@ -77,8 +77,8 @@ describe('NFS Share workflow', function(){
   });
 
   afterAll(function(){
-    console.log('nfs_share_workflow');
     helpers.delete_volume(volume, volumename);
+    console.log('nfs_share -> nfs_share_workflow.e2e.js');
   });
 
 });

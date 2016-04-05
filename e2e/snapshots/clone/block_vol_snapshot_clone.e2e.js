@@ -65,9 +65,8 @@ describe('should create a clone volume of a snapshot (base: blockvolume)', funct
   });
 
   afterAll(function(){
-    console.log('block_vol_snapshot_clone');
     helpers.delete_snapshot(volume);
     helpers.delete_volume(volume, volumename);
-
+    console.log('snapshot_clone -> block_vol_snapshot_clone.e2e.js');
   });
 });

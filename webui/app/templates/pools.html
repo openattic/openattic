@@ -2,10 +2,10 @@
 <!-- TODO: Data-Table -->
 <oadatatable data="data" class="oadatatable tc_oadatatable_pools" filter-config="filterConfig" selection="selection">
     <actions>
-        <a class="btn btn-lg btn-primary tc_addPoolBtn" type="button" ng-click="addAction()" ng-hide="hasSelection">
+        <a class="btn btn-sm btn-primary tc_addPoolBtn" type="button" ng-click="addAction()" ng-hide="hasSelection">
             <i class="fa fa-fw fa-plus"></i> Add
         </a>
-        <a class="btn btn-lg btn-primary tc_deletePoolBtn" type="button" ng-click="deleteAction()" ng-show="hasSelection">
+        <a class="btn btn-sm btn-primary tc_deletePoolBtn" type="button" ng-click="deleteAction()" ng-show="hasSelection">
             <i class="fa fa-fw fa-trash-o"></i> Delete
         </a>
         <li><a ng-click="addAction(oadatatable)"><i class="fa fa-fw fa-plus"></i> Add</a></li>
@@ -13,7 +13,7 @@
             <a ng-click="deleteAction()"><i class="fa fa-fw fa-trash-o"></i> Delete</a>
         </li>
     </actions>
-    <table class="table table-striped table-bordered table-hover dataTable">
+    <table class="datatable table table-striped table-bordered table-hover dataTable">
         <thead>
         <tr>
             <th class="oadatatablecheckbox" ng-if="selection.available">

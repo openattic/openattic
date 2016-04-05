@@ -15,6 +15,7 @@
 
 from testcase import GatlingTestCase
 
+
 class SambaTestScenario(GatlingTestCase):
     @classmethod
     def setUpClass(cls):

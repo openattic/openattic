@@ -111,7 +111,6 @@ module.exports = function (grunt) {
           "<%= buildConfig.src %>scripts/{,**/}*.js",
           "<%= buildConfig.src %>components/{,**/}*.js",
           "<%= buildConfig.src %>extensions/{,**/}*.js",
-          "!<%= buildConfig.src %>components/smartadmin/{,**/}*.js",
         ]
       },
 
@@ -124,7 +123,6 @@ module.exports = function (grunt) {
           "<%= buildConfig.src %>scripts/{,**/}*.js",
           "<%= buildConfig.src %>components/{,**/}*.js",
           "<%= buildConfig.src %>extensions/{,**/}*.js",
-          "!<%= buildConfig.src %>components/smartadmin/{,**/}*.js",
         ]
       },
 
@@ -156,6 +154,12 @@ module.exports = function (grunt) {
               expand: true,
               cwd: buildConfig.src,
               src: ["bower_components/**", "fonts/**", "images/**"],
+              dest: buildConfig.dist
+            },
+            {
+              expand: true,
+              cwd: buildConfig.src,
+              src: ["styles/awesome-bootstrap-checkbox.css"],
               dest: buildConfig.dist
             }
           ]

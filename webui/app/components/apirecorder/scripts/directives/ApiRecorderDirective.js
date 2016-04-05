@@ -35,10 +35,10 @@ app.directive("apiRecorder", function () {
   return {
     template: [
       "<a title=\"API Recorder\" ng-click=\"handleClick()\" >",
-      "<i class=\"fa\" ng-class=\"{'fa-circle': !isRecording(), 'fa-stop': isRecording() }\"></i>",
+      "<i class=\"fa\" ng-class=\"{'fa-circle': !isRecording(), 'fa-stop': isRecording() }\"></i> API-Recorder",
       "</a>"
     ].join(""),
-    controller: function ($scope, ApiRecorderService) {
+    controller: function ($scope, ApiRecorderService, toasty, $uibModal) {
       $scope.isRecording = ApiRecorderService.isRecording;
       $scope.handleClick = function () {
         if (!ApiRecorderService.isRecording()) {
@@ -55,12 +55,9 @@ app.directive("apiRecorder", function () {
           ];
           var cmds = ApiRecorderService.stopRecording();
           if (cmds.length === 0) {
-            $.smallBox({
+            toasty.warning({
               title: "API Recorder",
-              content: "<i class=\"fa fa-clock-o\"></i> <i>Did not capture any API requests.</i>",
-              color: "#C46A69",
-              iconSmall: "fa fa-times fa-2x fadeInRight animated",
-              timeout: 4000
+              msg: "Did not capture any API requests."
             });
             return;
           }
@@ -78,15 +75,13 @@ app.directive("apiRecorder", function () {
             }
             script.push("requests." + cmds[i].method.toLowerCase() + "(" + args.join(", ") + ")\n");
           }
-          $.SmartMessageBox({
-            title: "API Recorder",
-            content: [
-              "Replay the actions you recorded by running this Python script:<br />",
-              "<textarea rows=\"14\" cols=\"80\" style=\"color: black\">",
-              script.join("\n"),
-              "</textarea>"
-            ].join(""),
-            buttons: "[OK]"
+
+          $scope.script = script.join("\n");
+
+          $uibModal.open({
+            windowTemplateUrl: "templates/messagebox.html",
+            templateUrl: "components/apirecorder/templates/snippet.view.html",
+            controller: "ApiRecorderCtrl"
           });
         }
       };

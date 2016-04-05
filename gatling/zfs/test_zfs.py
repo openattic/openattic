@@ -13,10 +13,12 @@
  *  GNU General Public License for more details.
 """
 
-import requests, time
+import requests
+import time
 
 from nfs.scenarios import NfsTestScenario
 from zfs.scenarios import ZfsNativePoolTestScenario, ZfsLvmPoolTestScenario
+
 
 class ZfsVolumeTests(object):
     """ Contains tests concerning ZFS subvolumes (file systems). """
@@ -25,10 +27,10 @@ class ZfsVolumeTests(object):
     # tested by VolumeTests are not supported for Zfs subvolumes, and those that are
     # require being tested differently because they don't use any blockdevices.
 
-    api_prefix  = "volumes"
-    sleeptime   = 8
-    smallsize   = 1000
-    fstype      = "zfs"
+    api_prefix = "volumes"
+    sleeptime = 8
+    smallsize = 1000
+    fstype = "zfs"
 
     def _get_volume_data(self, size=None):
         """ Return volume creation data. """
@@ -67,13 +69,15 @@ class ZfsVolumeTests(object):
 
         # create a snapshot
         snap_data = self._get_snapshot_data(vol["response"]["id"])
-        snap = self.send_request("POST", ["volumes", "snapshots"], obj_id=vol["response"]["id"], data=snap_data)
+        snap = self.send_request("POST", ["volumes", "snapshots"], obj_id=vol["response"]["id"],
+                                 data=snap_data)
         time.sleep(self.sleeptime)
         self.addCleanup(requests.request, "DELETE", snap["cleanup_url"], headers=snap["headers"])
         self.check_snapshot_properties(snap, vol["response"]["id"])
 
     def test_create_equal_space(self):
-        """ Create a volume of *exactly* the same size as the zpool, meaning there's no quota involved. """
+        """ Create a volume of *exactly* the same size as the zpool, meaning there's no quota
+        involved. """
         data = self._get_volume_data(self._get_pool()["usage"]["free"])
         vol = self.send_request("POST", data=data)
         time.sleep(self.sleeptime)
@@ -102,22 +106,22 @@ class ZfsLvmPoolVolumeTestCase(ZfsLvmPoolTestScenario, ZfsVolumeTests):
 
 
 class NfsShareTest(object):
-    api_prefix  = "volumes"
+    api_prefix = "volumes"
 
     def test_zfs_nfs_share(self):
         """ Create an Export for a ZFS subvolume. """
         # create a volume
-        data = {"name"          : "gatling_volume",
-                "megs"          : 1000,
-                "source_pool"   : {"id": self._get_pool()["id"]},
-                "filesystem"    : "zfs"}
+        data = {"name": "gatling_volume",
+                "megs": 1000,
+                "source_pool": {"id": self._get_pool()["id"]},
+                "filesystem": "zfs"}
         vol = self.send_request("POST", data=data)
         time.sleep(8)
         self.addCleanup(requests.request, "DELETE", vol["cleanup_url"], headers=vol["headers"])
 
         # create nfs export
-        export_data = {"volume" : {"id": vol["response"]["id"]},
-                       "path"   : "/media/%s/gatling_volume" % self._get_pool()["name"],
+        export_data = {"volume": {"id": vol["response"]["id"]},
+                       "path": "/media/%s/gatling_volume" % self._get_pool()["name"],
                        "address": self.conf.get("nfs:export", "address"),
                        "options": self.conf.get("nfs:export", "options")}
         share = self.send_request("POST", "nfsshares", data=export_data)

@@ -17,6 +17,7 @@ from unittest import SkipTest
 
 from testcase import GatlingTestCase
 
+
 class NfsTestScenario(GatlingTestCase):
     @classmethod
     def setUpClass(cls):

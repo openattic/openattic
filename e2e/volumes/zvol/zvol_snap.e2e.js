@@ -104,4 +104,7 @@ describe('Zvol tests', function(){
     expect(element(by.cssContainingText('tr', volumename)).isPresent()).toBe(false);
   });
 
+  afterAll(function(){
+    console.log('zvol_snap -> zvol_snap.e2e.js');
+  });
 });

@@ -98,9 +98,9 @@ describe('Should map a LUN to an host', function(){
   });
 
   afterAll(function(){
-    console.log('map_lun');
     helpers.delete_volume(volume, volumename);
     helpers.delete_host();
+    console.log('lun -> map_lun.e2e.js');
   });
 
 });

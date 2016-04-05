@@ -70,6 +70,6 @@ describe('Volumes add with protection', function(){
   });
 
   afterAll(function(){
-    console.log('volume_add_protection');
-  })
+    console.log('volumes_add -> volumes_add_protection.e2e.js');
+  });
 });

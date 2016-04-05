@@ -31,7 +31,7 @@
 "use strict";
 
 var app = angular.module("openattic");
-app.controller("VolumeCloneCtrl", function ($scope, VolumeService, SnapshotService, $uibModalInstance, volume) {
+app.controller("VolumeCloneCtrl", function ($scope, VolumeService, SnapshotService, $uibModalInstance, volume, toasty) {
   $scope.volume = volume;
   $scope.clone_obj = {};
 
@@ -70,12 +70,9 @@ app.controller("VolumeCloneCtrl", function ($scope, VolumeService, SnapshotServi
   $scope.cancel = function () {
     $uibModalInstance.dismiss("cancel");
 
-    $.smallBox({
-      title: "Clone volume",
-      content: "<i class=\"fa fa-clock-o\"></i> <i>Cancelled</i>",
-      color: "#C46A69",
-      iconSmall: "fa fa-times fa-2x fadeInRight animated",
-      timeout: 4000
+    toasty.warning({
+      title: "Clone " + $scope.type,
+      msg: "Cancelled"
     });
   };
 });

@@ -31,7 +31,7 @@
 "use strict";
 
 var app = angular.module("openattic");
-app.controller("VolumeSnapshotDeleteCtrl", function ($scope, SnapshotService, $uibModalInstance, snap) {
+app.controller("VolumeSnapshotDeleteCtrl", function ($scope, SnapshotService, $uibModalInstance, snap, toasty) {
   $scope.snap = snap;
 
   $scope.delete = function () {
@@ -47,12 +47,9 @@ app.controller("VolumeSnapshotDeleteCtrl", function ($scope, SnapshotService, $u
   $scope.cancel = function () {
     $uibModalInstance.dismiss("cancel");
 
-    $.smallBox({
+    toasty.warning({
       title: "Delete snapshot",
-      content: "<i class=\"fa fa-clock-o\"></i> <i>Cancelled</i>",
-      color: "#C46A69",
-      iconSmall: "fa fa-times fa-2x fadeInRight animated",
-      timeout: 4000
+      msg: "Cancelled"
     });
   };
 });

@@ -58,6 +58,7 @@ describe('should test the user form', function(){
   });
 
   it('should not have a checkbox title "Is active", while editing the own profile', function(){
+    systemItem.click();
     usersItem.click();
     element(by.cssContainingText('tr', 'openattic')).element(by.css('a')).click();
     expect(element(by.id('userActive')).isPresent()).toBe(false);
@@ -117,4 +118,7 @@ describe('should test the user form', function(){
     expect(element(by.css('.tc_oadatatable_users')).isDisplayed()).toBe(true);
   });
 
+  afterAll(function(){
+    console.log('users -> user_form_workflow.e2e.js');
+  });
 });

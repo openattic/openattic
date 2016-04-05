@@ -93,4 +93,8 @@ describe('Zvol tests', function(){
 
     expect(volume.isPresent()).toBe(false);
   });
+
+  afterAll(function(){
+    console.log('zvol_share -> zvol_share.e2e.js');
+  });
 });
