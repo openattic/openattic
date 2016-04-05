@@ -18,7 +18,7 @@ describe('Should check the snapshot add workflow', function(){
   });
 
   it('should a "Create Snapshot" header', function(){
-    expect(element(by.css('h2')).getText()).toEqual('Create Snapshot');
+    expect(element(by.css('.tc_formHeadline h3')).getText()).toEqual('Create Snapshot');
   });
 
   it('should have a back button', function(){
@@ -112,8 +112,8 @@ describe('Should check the snapshot add workflow', function(){
   });
 
   afterAll(function(){
-    console.log('snapshot_workflow');
     helpers.delete_volume(volume, volumename);
+    console.log('snapshot -> snapshot_workflow.e2e.js');
   });
 
 });

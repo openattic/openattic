@@ -15,12 +15,13 @@
 """
 
 import socket
-import rtslib
+try:
+    import rtslib_fb as rtslib
+except ImportError:
+    import rtslib
 import os
 
 from os.path   import realpath
-from rtslib        import target, tcm
-from rtslib.utils  import generate_wwn
 
 from django.db   import models
 from django.conf import settings

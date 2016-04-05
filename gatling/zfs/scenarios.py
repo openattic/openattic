@@ -20,6 +20,7 @@ from unittest import SkipTest
 from testcase import GatlingTestCase
 from lvm.scenarios import LvTestScenario
 
+
 class ZfsNativePoolTestScenario(GatlingTestCase):
     """ Runs ZFS tests against a native ZPool that already exists on the target system. """
     @classmethod
@@ -32,19 +33,20 @@ class ZfsNativePoolTestScenario(GatlingTestCase):
 
         res = cls.send_request("GET", "pools", search_param=("name=%s" % pool_name))
         if res["count"] != 1:
-            raise SkipTest("REST api returned no or more than one object(s). But expected only one.")
+            raise SkipTest("REST api returned no or more than one object(s). But expected only "
+                           "one.")
         cls.zpool = res["response"][0]
 
         if cls.zpool["name"] != cls.conf.get("zfs", "zpool") or \
-            cls.zpool["type"]["app_label"] != "zfs" or \
-            cls.zpool["type"]["model"] != "zpool":
+           cls.zpool["type"]["app_label"] != "zfs" or \
+           cls.zpool["type"]["model"] != "zpool":
             print "Zpool not found"
             print cls.zpool["name"]
             raise SkipTest("Zpool not found")
 
     @classmethod
-    def setUp(self):
-        self.delete_old_existing_gatling_volumes()
+    def setUp(cls):
+        cls.delete_old_existing_gatling_volumes()
 
     def _get_pool(self):
         return self.zpool
@@ -52,8 +54,8 @@ class ZfsNativePoolTestScenario(GatlingTestCase):
 
 class ZfsLvmPoolTestScenario(LvTestScenario):
 
-    bigsize     = 800
-    smallsize   = 500
+    bigsize = 800
+    smallsize = 500
 
     @classmethod
     def setUpClass(cls):
@@ -69,12 +71,13 @@ class ZfsLvmPoolTestScenario(LvTestScenario):
         res = cls.send_request("POST", "volumes", data=data)
         time.sleep(6)
         if res["count"] != 1:
-            raise SkipTest("REST api returned no or more than one object(s). But expected only one.")
+            raise SkipTest("REST api returned no or more than one object(s). But expected only "
+                           "one.")
         cls.zpool = res["response"]
 
     @classmethod
-    def setUp(self):
-        self.delete_old_existing_gatling_volumes()
+    def setUp(cls):
+        cls.delete_old_existing_gatling_volumes()
 
     @classmethod
     def tearDownClass(cls):

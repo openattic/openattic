@@ -21,10 +21,9 @@ import unittest
 import xmlrunner
 import datetime
 import requests
-import json
+import ConfigParser
 
 from functools import partial
-from ConfigParser import ConfigParser
 from optparse import OptionParser
 from testtools.run import TestProgram
 
@@ -72,7 +71,7 @@ def main():
 
     options, posargs = parser.parse_args()
 
-    conf = ConfigParser()
+    conf = ConfigParser.ConfigParser()
 
     if options.target:
         conf.read([
@@ -84,12 +83,46 @@ def main():
     else:
         conf.read(os.path.join(basedir, "gatling.conf"))
 
+    try:
+        host_name = conf.get("options", "host_name")
+        username = conf.get("options", "admin")
+        password = conf.get("options", "password")
+    except ConfigParser.NoOptionError, e:
+        print "Option '{}' not found in config files. This option is mandatory. Please define it " \
+              "in your Gatling config file.".format(e.option)
+        return 1
+
+    base_url = "http://" + host_name + "/openattic/api/"
+
+    user = requests.request("GET", "{}users?username={}".format(base_url, username),
+                            auth=(username, password))
+    try:
+        user.raise_for_status()
+    except requests.HTTPError:
+        if user.status_code == 401:
+            print "The given login credentials ('admin' and 'password') are not correct. Please " \
+                  "check your configuration or define 'admin' and 'password' in you config file " \
+                  "if you are not using the default credentials."
+        else:
+            print "The given name of the openATTIC host '{}' might be wrong. Please " \
+                  "check your configuration or define 'host_name' in your config " \
+                  "file.".format(host_name)
+        return 1
+    else:
+        userid = user.json()["results"][0]["id"]
+
     class GatlingTestSuite(unittest.TestSuite):
         """ TestSuite that monkeypatches loaded tests with config objects. """
         def addTest(self, test):
             unittest.TestSuite.addTest(self, test)
             test.__class__.conf = conf
             test.conf = conf
+
+            test.__class__.base_url = base_url
+            test.base_url = base_url
+
+            test.__class__.userid = userid
+            test.userid = userid
 
     class GatlingTestLoader(unittest.TestLoader):
         """ TestLoader that uses GatlingTestSuite to load tests. """
@@ -120,12 +153,11 @@ def main():
                               testLoader=loader, exit=False)
     endtime = datetime.datetime.now()
 
-    header = {"Authorization": "Token %s" % conf.get("options", "auth_token")}
-    base_url = conf.get("options", "connect")
     cmdlog_filter = "cmdlogs?exitcode=1&start_datetime=%s&end_datetime=%s" % (starttime, endtime)
 
-    failedcmds = requests.request("GET", "%s%s" % (base_url, cmdlog_filter), headers=header)
-    failedcmds = json.loads(failedcmds.text)
+    failedcmds = requests.request("GET", "%s%s" % (base_url, cmdlog_filter),
+                                  auth=(username, password))
+    failedcmds = failedcmds.json()
 
     if failedcmds['count'] > 0:
         print "openATTIC's command log recorded %d failed commands during the test period:" % \

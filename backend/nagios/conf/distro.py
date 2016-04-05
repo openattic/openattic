@@ -6,7 +6,7 @@ import os
 if os.environ.get("DJANGO_SETTINGS_MODULE"):
     from django.conf import settings
 
-def distro_settings():
+def distro_settings( distro_specific = [ '/etc/default/openattic', '/etc/sysconfig/openattic' ]):
     """
     Read the custom settings for a distribution to override defaults. Debian
     and Ubuntu use /etc/default/openattic. SUSE and RedHat use 
@@ -15,7 +15,6 @@ def distro_settings():
     Returns a dict for non-Django environments
     Sets settings object for Django environments
     """
-    distro_specific = [ '/etc/default/openattic', '/etc/sysconfig/openattic' ]
     logger = logging.getLogger(__name__)
     
     _settings = {}

@@ -10,7 +10,7 @@ describe('Volumes resize', function(){
   var wrongSize = function(new_size){
     element(by.id('newsize')).sendKeys(new_size);
     expect(element(by.css('.tc_wrongSize')).isDisplayed()).toBe(true);
-    element(by.id('newsize')).clear();
+    cancel_button.click();
   };
 
   var createNewTestVol = function(fs, size){
@@ -20,19 +20,31 @@ describe('Volumes resize', function(){
 
   beforeAll(function(){
     helpers.login();
+  });
+
+  beforeEach(function(){
+
+    //--> volumesItem is not defined    
+    //var volumesItem = helpers.configs.menuitems.volumes;
+    //element.all(by.css('ul .tc_menuitem')).get(volumesItem).click();
+
+    element.all(by.css('ul .tc_menuitem > a')).get(3).click();
     pool = helpers.create_volume(volumename, "lun", "200mb");
+
     volume.click();
+    browser.sleep(helpers.configs.sleep);
+    element(by.css('.tc_resize_btn')).click();
+    browser.sleep(helpers.configs.sleep);
+  });
+
+  afterEach(function(){
+    helpers.delete_volume(volume, volumename);
   });
 
   it('should have a resize and a cancel button', function(){
-    element(by.css('.tc_resize_btn')).click();
     expect(submit_button.isDisplayed()).toBe(true);
     expect(cancel_button.isDisplayed()).toBe(true);
-  });
-
-  it('should show a required field error if the submit button is clicked without editing anything', function(){
-    submit_button.click();
-    expect(element(by.css('.tc_required')).isDisplayed()).toBe(true);
+    cancel_button.click();
   });
 
   it('should show a message if the chosen size is smaller than 100mb', function(){
@@ -43,16 +55,17 @@ describe('Volumes resize', function(){
     wrongSize(pool.size + 201 + pool.unit);
   });
 
-  it('should not allow to shrink the volume', function(){
-    wrongSize('170mb');
-  });
-
   it('should be able to resize a volume with a valid size', function(){
     element(by.id('newsize')).sendKeys('250mb');
     submit_button.click();
+    browser.sleep(helpers.configs.sleep);
 
     var volume = element(by.cssContainingText('tr', volumename));
     expect(volume.element(by.binding('row.usage.size_text')).getText()).toEqual('250.00MB');
+  });
+
+  it('should not allow to shrink the volume', function(){
+    wrongSize('170mb');
   });
 
   it('btrfs: should have a clone button instead of a resize button', function(){
@@ -70,6 +83,6 @@ describe('Volumes resize', function(){
 
   afterAll(function(){
     helpers.delete_volume(volume, volumename);
-    console.log('resize volume');
+    console.log('volumes_resize -> volume_resize.e2e.js');
   });
 });

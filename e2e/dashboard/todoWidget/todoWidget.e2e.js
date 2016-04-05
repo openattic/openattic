@@ -34,4 +34,7 @@ describe('Todo Widget', function(){
   });
 
   //TODO: test disks- and pools link later on
+  afterAll(function(){
+    console.log('dashboard -> todoWidget.e2e.js (NA)');
+  });
 });

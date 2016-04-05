@@ -97,7 +97,9 @@ storage space on demand.
 This package includes the Web UI based on AngularJS/Bootstrap.
 
 %package module-ceph
+Requires: ceph-common
 Requires: openattic-base
+Requires: python-rados
 Summary: Ceph module for openATTIC
 
 %description module-ceph
@@ -388,6 +390,7 @@ mkdir -p %{buildroot}/lib/tmpfiles.d/
 
 # Install Backend and binaries
 rsync -aAX backend/ %{buildroot}%{_datadir}/%{name}
+rm -f  %{buildroot}%{_datadir}/%{name}/.pep8
 rm -rf %{buildroot}%{_datadir}/%{name}/pkgapt
 rm -rf %{buildroot}%{_datadir}/%{name}/installed_apps.d/*_pkgapt
 install -m 755 bin/oacli %{buildroot}%{_bindir}
@@ -563,6 +566,7 @@ echo ""
 %{_datadir}/%{name}/installed_apps.d/70_clustering
 %{_datadir}/%{name}/locale/
 %{_datadir}/%{name}/manage.py*
+%{_datadir}/%{name}/nodb/
 %{_datadir}/%{name}/oa_auth.py*
 %{_datadir}/%{name}/openattic.wsgi
 %{_datadir}/%{name}/pamauth.py*
@@ -720,7 +724,7 @@ systemctl start smb
 
 %files release
 %defattr(-,root,root,-)
-%{_sysconfdir}/yum.repos.d/%{name}.repo
+%config(noreplace) %{_sysconfdir}/yum.repos.d/%{name}.repo
 
 %changelog
 * Thu Jan 07 2016 Lenz Grimmer <lenz@openattic.org> 2.0.6

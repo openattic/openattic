@@ -1,37 +1,32 @@
-<!-- kate: space-indent on; indent-width 4; replace-tabs on; -->
-<article class="col-sm-12 col-md-12 col-lg-12">
-    <div class="jarviswidget" id="wid-id-1" data-widget-editbutton="false" data-widget-custombutton="false">
-        <header>
-            <span class="widget-icon"> <i class="fa fa-edit"></i> </span>
-            <h2>Attributes for {{host.name}}</h2>
-        </header>
-        <div>
-            <div class="widget-body no-padding">
-                <form name="hostForm" role="form" class="smart-form" novalidate>
-                    <fieldset>
-                        <section>
-                            <label class="label" for="hostLastname">iSCSI IQN</label>
-                            <label class="input"> <i class="icon-prepend fa fa-host"></i>
-                                <tags-input class="tags-input-home" placeholder="Add an IQN"
-                                            ng-model="data.iscsiInis"
-                                            on-tag-added="iscsiIniAdded($tag)"
-                                            on-tag-removed="iniRemoved($tag)">
-                                </tags-input>
-                            </label>
-                        </section>
-                        <section>
-                            <label class="label" for="hostLastname">FC WWN</label>
-                            <label class="input"> <i class="icon-prepend fa fa-host"></i>
-                                <tags-input class="tags-input-home" placeholder="Add a WWN"
-                                            ng-model="data.fcInis"
-                                            on-tag-added="fcIniAdded($tag)"
-                                            on-tag-removed="iniRemoved($tag)">
-                                </tags-input>
-                            </label>
-                        </section>
-                    </fieldset>
-                </form>
-            </div>
-        </div>
+<div class="panel panel-default">
+    <div class="panel-heading">
+        <h3 class="panel-title">Attributes for {{host.name}}</h3>
     </div>
-</article>
+    <div class="panel-body">
+        <form name="hostForm" role="form" class="tag-form" novalidate>
+            <fieldset>
+                <section>
+                    <label>iSCSI IQN</label>
+                    <div class="form-group">
+                        <tags-input class="tags-input-home" placeholder="Add an IQN"
+                                    ng-model="data.iscsiInis"
+                                    on-tag-added="iscsiIniAdded($tag)"
+                                    on-tag-removed="iniRemoved($tag)">
+                        </tags-input>
+                    </div>
+                </section>
+                <section>
+                    <label>FC WWN</label>
+                    <div class="form-group">
+                        <tags-input class="tags-input-home" placeholder="Add a WWN"
+                                    ng-model="data.fcInis"
+                                    on-tag-added="fcIniAdded($tag)"
+                                    on-tag-removed="iniRemoved($tag)">
+
+                        </tags-input>
+                    </div>
+                </section>
+            </fieldset>
+        </form>
+    </div>
+</div>

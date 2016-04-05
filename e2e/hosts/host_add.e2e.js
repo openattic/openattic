@@ -68,6 +68,9 @@ describe('Should add a host and attributes', function(){
 
   it('should not list the host any longer', function(){
     expect(host.isPresent()).toBe(false);
-    console.log('host_add test ended');
+  });
+
+  afterAll(function(){
+    console.log('hosts -> host_add.e2e.js');
   });
 });

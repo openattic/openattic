@@ -1,20 +1,36 @@
-<div class="dataTables_paginate paging_simple_numbers">
-    <ul class="pagination pagination-sm">
-        <li class="paginate_button previous"
+<div class="dataTables_paginate">
+    <ul class="pagination">
+        <li class="first"
             ng-class="{disabled: page == 0}"
-            ng-click="page > 0 && switchPage(page - 1)" >
-            <a>Previous</a>
+            ng-click="page > 0 && switchPage(displayNumber = 1)">
+            <span class="i fa fa-angle-double-left"></span>
         </li>
-        <li class="paginate_button "
-            ng-repeat="button in buttons track by $index"
-            ng-click="button != 'ellipsis' && switchPage(button)"
-            ng-class="{active: page == button, disabled: button == 'ellipsis'}">
-            <a ng-bind="button == 'ellipsis' && '&hellip;' || button + 1"></a>
+        <li class="prev"
+            ng-class="{disabled: page == 0}"
+            ng-click="page > 0 && switchPage(displayNumber - 1)">
+            <span class="i fa fa-angle-left"></span>
         </li>
-        <li class="paginate_button next"
+    </ul>
+
+    <div class="pagination paginate-input">
+        <input type="text" size="{{(pages+'').length}}"
+            ng-model="displayNumber" class="text-right"
+            ng-keydown="instantChange($event)"
+            ng-model-options="{ updateOn: 'default blur', debounce: { default: 500, blur: 0 } }"
+            ng-change="switchPage(displayNumber)"/>
+        <span class="paginate_of"> of <b> {{pages}}</b></span>
+    </div>
+
+    <ul class="pagination">
+        <li class="next"
             ng-class="{disabled: page >= pages - 1}"
-            ng-click="page < pages - 1 && switchPage(page + 1)">
-            <a>Next</a>
+            ng-click="page < pages - 1 && switchPage(displayNumber + 1)">
+            <span class="i fa fa-angle-right"></span>
+        </li>
+        <li class="last"
+            ng-class="{disabled: page >= pages - 1}"
+            ng-click="page < pages - 1 && switchPage(displayNumber = pages)">
+            <span class="i fa fa-angle-double-right"></span>
         </li>
     </ul>
 </div>

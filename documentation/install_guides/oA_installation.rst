@@ -12,7 +12,6 @@ or consult your hardware vendor for details.
 Installable packages of |oA| are currently available for the following Linux
 distributions:
 
-* Debian Linux 7 (Wheezy)
 * Debian Linux 8 (Jessie)
 * Red Hat Enterprise Linux 7 (RHEL) and derivatives (CentOS 7, Oracle Linux 7
   or Scientific Linux 7)
@@ -83,7 +82,8 @@ Basic Storage Configuration
 ===========================
 
 At a minimum, |oA| should have one dedicated storage pool (e.g. an LVM volume
-group or a ZFS zpool) for creating storage volumes.
+group or a ZFS zpool) for creating storage volumes. In the following chapter,
+we'll create an LVM volume group.
 
 Configuring storage for |oA| depends on a number of factors. See :ref:`storage
 recommendations` and :ref:`hardware recommendations` for further details.
@@ -94,23 +94,6 @@ recommendations` and :ref:`hardware recommendations` for further details.
   functionality has been implemented. See `OP-108
   <https://tracker.openattic.org/browse/OP-108>`_ and `OP-109
   <https://tracker.openattic.org/browse/OP-109>`_ for details.
-
-Tag OS Logical Volumes
-----------------------
-
-If you have installed your operating system's root and swap file systems on
-logical volumes (which is the default for many distributions), you can tag
-them with the ``@sys`` tag to prevent |oA| from using them.
-
-For example, on CentOS you could run the following command::
-
-  # lvchange --addtag @sys /dev/centos/root
-  # lvchange --addtag @sys /dev/centos/swap
-
-.. note::
-  Note that tagging currently only works for logical volumes (LVs), not entire
-  volume groups. See `OP-564 <https://tracker.openattic.org/browse/OP-564>`_
-  for more information.
 
 Create a Volume Group for |oA|
 ------------------------------
@@ -124,8 +107,34 @@ system, and create a volume group named ``vgdata``::
 
   # vgcreate vgdata /dev/sdb /dev/sdc
 
-Consult the Linux LVM documentation for further information on how to create
-volume groups and the supported modes of redundancy and performance.
+Consult the :manpage:`lvm(8)` manual page and the `Linux LVM documentation
+<http://www.tldp.org/HOWTO/LVM-HOWTO/index.html>`_ for further information on
+how to create volume groups and the supported modes of redundancy and
+performance.
+
+Tag OS Volume Groups / Logical Volumes
+--------------------------------------
+
+If you have installed your operating system's file systems on logical volumes
+(which is the default for many distributions), you can tag these volumes or
+the entire volume group with a ``sys`` tag to prevent |oA| from registering
+them for usage by ``oaconfig install``.
+
+For example, on CentOS, you could run the following command to mark the entire
+``centos`` volume group as reserved for the operating system::
+
+  # vgchange --addtag sys centos
+
+This will prevent the entire ``centos`` volume group from being registered for
+management by |oA|.
+
+Alternatively, you can tag selected logical volumes within the volume group::
+
+  # lvchange --addtag sys centos/root
+  # lvchange --addtag sys centos/swap
+
+The ``centos`` volume group will be visible in |oA| and you can create and
+manage volumes in there, except for the ``root`` and ``swap`` volumes.
 
 .. _installation on debian/ubuntu linux:
 
@@ -146,14 +155,6 @@ Enabling the |oA| Apt package repository
 In order to use enable the |oA| Apt repository, create a file named
 ``/etc/apt/sources.list.d/openattic.list``, and put the following lines into
 it:
-
-For Debian 7 (Wheezy)
-~~~~~~~~~~~~~~~~~~~~~
-
-::
-
-  deb     http://apt.openattic.org/ wheezy   main
-  deb-src http://apt.openattic.org/ wheezy   main
 
 For Debian 8 (Jessie)
 ~~~~~~~~~~~~~~~~~~~~~
