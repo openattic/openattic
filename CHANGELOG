@@ -4,20 +4,26 @@ openATTIC Changelog
 Version 2.0.10 (not released yet):
 ----------------------------------
 
-* Installation: Fixed deprecation warning when importing rtslib on systems that
-  ship rtslib-fb (e.g. EL7) (OP-953)
-* Installation: marked openattic.repo in the RPM subpackage openattic-release
-  as a configuration file, to protect it from getting mangled by RPM updates
-  (OP-987)
+* WebUI: Remove Smartadmin and added a new openATTIC theme (OP-585)
+* WebUI: replaced all SmallBox notifications by toasty notifications (OP-720)
+* WebUI: New pagination template/layout (OP-1003)
+* WebUI/QA: Added afterAll function to all tests (OP-980)
+* WebUI/QA: Added e2e tests to test the pagination (OP-1010)
+* Backend: The name of a netdevice allows a length of up to 15 characters now
+  (OP-960) (thanks to Willi Fehler for reporting the issue)
+* Backend: Added basic infrastructure to directly gather information from Ceph
+  clusters (OP-1014)
+* Backend/Gatling: Cleaned up Gatling (OP-1025)
 * Installation: "oaconfig install" now skips all LVM volume groups tagged with
   "sys", so they won't be added to the oA database (OP-564). Fixed oaconfig
   add-vg <volume group> so that it aborts if the VG does not exist or is tagged
   as "sys". Updated the installation documentation and replaced "@sys" with
   "sys" (LVM strips the @-sign from the tag)
-* Backend: The name of a netdevice allows a length of up to 15 characters now
-  (OP-960) (thanks to Willi Fehler for reporting the issue)
-* Backend: Added basic infrastructure to directly gather information from Ceph
-  clusters (OP-1014)
+* Installation: Fixed deprecation warning when importing rtslib on systems that
+  ship rtslib-fb (e.g. EL7) (OP-953)
+* Installation: marked openattic.repo in the RPM subpackage openattic-release
+  as a configuration file, to protect it from getting mangled by RPM updates
+  (OP-987)
 * Installation: Updated RPM and DEB packaging to include the new "nodb" Python
   modules, added dependency on the "python-rados" package (OP-1021)
 

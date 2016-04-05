@@ -16,6 +16,7 @@
 import time
 from lvm.scenarios import LvTestScenario
 
+
 class BtrfsLvmPoolTestScenario(LvTestScenario):
     api_prefix = "volumes"
 
@@ -24,11 +25,11 @@ class BtrfsLvmPoolTestScenario(LvTestScenario):
         super(BtrfsLvmPoolTestScenario, cls).setUpClass()
         cls.require_config("btrfs:lvm")
 
-        data = {"filesystem"    : "btrfs",
-                "megs"          : 8000,
-                "name"          : "gatling_btrfs",
-                "source_pool"   : {"id": cls.vg["id"]}}
-        res  = cls.send_request("POST", data=data)
+        data = {"filesystem": "btrfs",
+                "megs": 8000,
+                "name": "gatling_btrfs",
+                "source_pool": {"id": cls.vg["id"]}}
+        res = cls.send_request("POST", data=data)
         time.sleep(8)
         cls.btrfs = res["response"]
 
