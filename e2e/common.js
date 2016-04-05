@@ -37,31 +37,26 @@
       });
     },
 
-    create_volume: function(volumename, type, size){
-      var pool,
-          size = size == null ? "100MB" : size;
+    create_volume: function(volumename, type, size, poolName){
+      var pool;
+      var size = size == null ? "100MB" : size;
+
       volumesItem.click();
       element(by.css('oadatatable .tc_add_btn')).click();
-      for(var key in configs.pools){
-        element(by.id('volumeName')).sendKeys(volumename);
-        pool = configs.pools[key];
-        var exact_poolname = pool.name;
-        volumePoolSelect.sendKeys(pool.name).then(function findMatch(pname){
-          if(pool.name === pname){
-            exact_poolname = pname;
-            return true;
-          }
-        });
-        if(exact_poolname){
-          //browser.actions().sendKeys( protractor.Key.ENTER ).perform();
-          // In order to update the pool selection under firefox.
-          element(by.id(type)).click();
-          element(by.model('data.megs')).sendKeys(size);
-          element(by.css('.tc_submitButton')).click();
-          browser.sleep(configs.sleep);
+
+      if(!poolName){
+        for(var key in configs.pools){
+          pool = configs.pools[key];
+          poolName = pool.name;
+          break;
         }
-        break;
       }
+      element(by.id('volumeName')).sendKeys(volumename);
+      volumePoolSelect.sendKeys(poolName);
+      element(by.id(type)).click();
+      element(by.model('data.megs')).sendKeys(size);
+      element(by.css('.tc_submitButton')).click();
+      browser.sleep(configs.sleep);
       return pool;
     },
 

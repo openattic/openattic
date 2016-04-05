@@ -13,38 +13,26 @@ describe('Volumes resize', function(){
     cancel_button.click();
   };
 
-  var createNewTestVol = function(fs, size){
-    helpers.delete_volume(volume, volumename);
-    pool = helpers.create_volume(volumename, fs, size);
-  };
-
   beforeAll(function(){
     helpers.login();
+    element(by.css('ul .tc_menuitem_volumes > a')).click();
+    pool = helpers.create_volume(volumename, "lun", "200mb");
   });
 
   beforeEach(function(){
-
-    //--> volumesItem is not defined    
-    //var volumesItem = helpers.configs.menuitems.volumes;
-    //element.all(by.css('ul .tc_menuitem')).get(volumesItem).click();
-
-    element.all(by.css('ul .tc_menuitem > a')).get(3).click();
-    pool = helpers.create_volume(volumename, "lun", "200mb");
+    browser.refresh();
 
     volume.click();
-    browser.sleep(helpers.configs.sleep);
     element(by.css('.tc_resize_btn')).click();
     browser.sleep(helpers.configs.sleep);
   });
 
   afterEach(function(){
-    helpers.delete_volume(volume, volumename);
   });
 
   it('should have a resize and a cancel button', function(){
     expect(submit_button.isDisplayed()).toBe(true);
     expect(cancel_button.isDisplayed()).toBe(true);
-    cancel_button.click();
   });
 
   it('should show a message if the chosen size is smaller than 100mb', function(){
@@ -68,18 +56,6 @@ describe('Volumes resize', function(){
     wrongSize('170mb');
   });
 
-  it('btrfs: should have a clone button instead of a resize button', function(){
-    createNewTestVol("btrfs", "200mb");
-    volume.click();
-    expect(element(by.css('.tc_resize_btn')).isDisplayed()).toBe(false);
-    expect(element(by.css('.tc_clone_btn')).isDisplayed()).toBe(true);
-  });
-
-  it('btrfs: should have a disabled resize menu entry', function(){
-    actionMenu.click();
-    expect(element(by.css('.oa-dropdown-actions li.disabled a')).getText()).toBe("Resize");
-    //createNewTestVol("lun", "200mb"); // Enable if another test follows.
-  });
 
   afterAll(function(){
     helpers.delete_volume(volume, volumename);

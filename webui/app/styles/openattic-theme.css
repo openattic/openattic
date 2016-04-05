@@ -1213,3 +1213,6 @@ uib-accordion .panel-title {
   overflow: auto;
   padding: 10px 20px;
 }
+.disabled {
+    pointer-events: none;
+}

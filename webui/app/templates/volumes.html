@@ -4,7 +4,7 @@
         <a class="btn btn-sm btn-primary tc_add_btn" type="button" ng-click="addAction()" ng-hide="hasSelection || multiSelection">
             <i class="fa fa-fw fa-plus"></i>Add
         </a>
-        <a class="btn btn-sm btn-primary tc_resize_btn" type="button" ng-click="resizeAction()" ng-show="hasSelection && !multiSelection">
+        <a class="btn btn-sm btn-primary tc_resize_btn" type="button" ng-click="resizeAction()" ng-show="hasSelection && !multiSelection && resizeable">
             <i class="fa fa-fw fa-upload"></i>Resize
         </a>
         <a class="btn btn-sm btn-primary tc_clone_btn" type="button" ng-click="cloneAction()" ng-show="hasSelection && !multiSelection && !resizeable">
