@@ -31,12 +31,6 @@
       browser.sleep(configs.sleep);
     },
 
-    closePopup: function(){
-      element.all(by.css('.SmallBox .textoFull')).each(function(popup){
-        popup.click();
-      });
-    },
-
     create_volume: function(volumename, type, size, poolName){
       var pool;
       var size = size == null ? "100MB" : size;
