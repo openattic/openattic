@@ -1213,3 +1213,8 @@ uib-accordion .panel-title {
   overflow: auto;
   padding: 10px 20px;
 }
+
+/* If javacript is disabled. */
+.noscript {
+  padding-top: 5em;
+}
