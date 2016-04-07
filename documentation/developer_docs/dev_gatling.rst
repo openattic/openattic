@@ -1,5 +1,5 @@
-|oA| Gatling Tests
-==================
+|oA| REST API Tests - Gatling Test Suite
+========================================
 
 Gatling is the |oA| integration test suite. It contains a bunch of unit tests
 to be run against a live |oA| installation. It tests |oA|'s behaviour in
