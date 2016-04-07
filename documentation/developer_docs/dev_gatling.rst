@@ -1,9 +1,17 @@
 |oA| REST API Tests - Gatling Test Suite
 ========================================
 
-Gatling is the |oA| integration test suite. It contains a bunch of unit tests
-to be run against a live |oA| installation. It tests |oA|'s behaviour in
-a series of different scenarios.
+Gatling is the |oA| integration test suite. It's based on the
+`Python unit testing framework <https://docs.python.org/2/library/unittest.html>`_
+and contains a bunch of tests to be run against a live |oA| installation.
+
+Gatling sends requests |oA|'s REST API and checks if the responses are
+correct. For example Gatling tries to create a volume via |oA|'s REST API and
+checks if it's getable and deletable afterwards. If an error should be included
+in a response, Gatling checks if it is really included.
+
+Afterwards Gatling checks the |oA| internal command log if errors occurred
+during execution time.
 
 
 Quick start
