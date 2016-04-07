@@ -18,10 +18,11 @@ Quick start
 -----------
 
 To run Gatling, you need to have an |oA| host set up that has all the
-features installed which you intend to test. Then create a configuration
-file in the *conf* subdirectory (i.e., *conf/<yourhost>.conf*) as explained in
-section :ref:`developer_dev_gatling_configuration` and run Gatling with the
-following command::
+features installed (have a look at :ref:`install_guides_index`) which you
+intend to test. Then create a configuration file in the *conf* subdirectory
+(i.e., *conf/<yourhost>.conf*) as explained in section
+:ref:`developer_dev_gatling_configuration` and run Gatling with the following
+command::
 
     python gatling.py -t yourhost
 
