@@ -27,9 +27,6 @@ describe('Volumes resize', function(){
     browser.sleep(helpers.configs.sleep);
   });
 
-  afterEach(function(){
-  });
-
   it('should have a resize and a cancel button', function(){
     expect(submit_button.isDisplayed()).toBe(true);
     expect(cancel_button.isDisplayed()).toBe(true);
