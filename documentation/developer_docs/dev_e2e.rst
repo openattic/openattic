@@ -1,5 +1,5 @@
-|oA| E2E Tests
-==============
+|oA| Web UI Tests - E2E Test Suite
+==================================
 
 This section describes how our test environment is set up, as well as how you
 can run our existing tests on your |oA| system and how to write your own
