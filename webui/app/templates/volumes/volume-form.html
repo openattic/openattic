@@ -31,8 +31,9 @@
                             <label class="col-sm-3 control-label" for="data.sourcePool">Pool</label>
                             <div class="col-sm-9">
                                 <select class="form-control" ng-model="data.sourcePool" id="data.sourcePool"
-                                        ng-options="(pool.name + ' (' + pool.type.name + ', ' + pool.usage.free_text +
-                                        ' free)') for pool in pools track by pool.id" name="pool" required>
+                                        ng-options="(pool.name + ' (' + pool.type.name + ', ' +
+                                        pool.host.title + ', ' + pool.usage.free_text + ' free)')
+                                        for pool in pools track by pool.id" name="pool" required>
                                     <option class="tc_volumePoolOption" value="">-- Select a pool --</option>
                                 </select>
                                 <div ng-show="data.sourcePool" class="progress-bar-outer clearfix">
