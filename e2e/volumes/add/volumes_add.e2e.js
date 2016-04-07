@@ -120,6 +120,17 @@ describe('Volumes add', function(){
     });
   });
 
+  it('should show the correct hostname of the selected pool', function(){
+    forEachPool(function(exact_poolname){
+      element.all(by.cssContainingText('option', exact_poolname)).get(0).click();
+      browser.sleep(400);
+      element(by.css('.tc_pool_selection')).evaluate('data.sourcePool.host.title').then(function(host){
+        browser.sleep(400);
+        expect(element(by.css('.tc_pool_selection')).getText()).toContain(host);
+      });
+    });
+  });
+
   // note: by using pool.size (see config.js) this test will only work with a brand new added pool!!!
   //   it('should allow a volume size that is smaller than the selected pool capacity', function(){
   //
