@@ -69,7 +69,7 @@ class Client(object):
         """Calls a monitor command and returns the result as dict.
 
         If `cmd` is a string, it'll be used as the argument to 'prefix'. If `cmd` is a dict
-        otherweise, it'll be used directly as input for the mon_command and you'll have to specify
+        otherwise, it'll be used directly as input for the mon_command and you'll have to specify
         the 'prefix' argument yourself.
         """
 
