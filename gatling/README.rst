@@ -20,10 +20,6 @@ Gatling will adapt to your environment, automatically skipping tests that
 cannot be run on your installation, and run all tests that can run in your
 environment.
 
-If you run Gatling directly on the openATTIC host, it will read its
-configuration from ``/etc/openattic/cli.conf`` and connect to the local
-host automatically, so you won't even have to use the ``-t`` parameter.
-
 
 Dependencies
 ------------

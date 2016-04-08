@@ -13,9 +13,11 @@
  *  GNU General Public License for more details.
 """
 
-import requests, time
+import requests
+import time
 
 from drbd.scenarios import DrbdTestScenario
+
 
 class DrbdTests(object):
     sleeptime = 8
@@ -29,13 +31,14 @@ class DrbdTests(object):
         vol = self._get_mirror_volume(self._get_pool()["id"])
 
         # Create the drbd mirror
-        mirror_data = {"source_volume"  : vol,
-                       "remote_pool"    : self._get_remote_pool(),
-                       "protocol"       : "C",
-                       "syncer_rate"    : "30M"}
+        mirror_data = {"source_volume": vol,
+                       "remote_pool": self._get_remote_pool(),
+                       "protocol": "C",
+                       "syncer_rate": "30M"}
         mirror_res = self.send_request("POST", "mirrors", data=mirror_data)
         time.sleep(self.sleeptime)
-        self.addCleanup(requests.request, "DELETE", mirror_res["cleanup_url"], headers=mirror_res["headers"])
+        self.addCleanup(requests.request, "DELETE", mirror_res["cleanup_url"],
+                        headers=mirror_res["headers"])
 
         # Check if there are to endpoints (volumes) related to this drbd mirror
         upper_id = "upper__id=%s" % mirror_res["response"]["volume"]["id"]
@@ -48,13 +51,14 @@ class DrbdTests(object):
         vol = self._get_mirror_volume(self._get_remote_pool()["id"])
 
         # Create a drbd mirror
-        mirror_data = {"source_volume"  : vol,
-                       "remote_pool"    : self._get_pool(),
-                       "protocol"       : "C",
-                       "syncer_rate"    : "30M"}
+        mirror_data = {"source_volume": vol,
+                       "remote_pool": self._get_pool(),
+                       "protocol": "C",
+                       "syncer_rate": "30M"}
         mirror_res = self.send_request("POST", "mirrors", data=mirror_data)
         time.sleep(self.sleeptime)
-        self.addCleanup(requests.request, "DELETE", mirror_res["cleanup_url"], headers=mirror_res["headers"])
+        self.addCleanup(requests.request, "DELETE", mirror_res["cleanup_url"],
+                        headers=mirror_res["headers"])
 
         # Check if there are to endpoints (volumes) related to this drbd mirror
         upper_id = "upper__id=%s" % mirror_res["response"]["volume"]["id"]
@@ -67,15 +71,16 @@ class DrbdTests(object):
         vol = self._get_mirror_volume(self._get_pool()["id"])
 
         # Create the drbd mirror containing a filesystem
-        mirror_data = {"source_volume"  : vol,
-                       "remote_pool"    : self._get_remote_pool(),
-                       "protocol"       : "C",
-                       "syncer_rate"    : "30M",
-                       "filesystem"     : "xfs"}
+        mirror_data = {"source_volume": vol,
+                       "remote_pool": self._get_remote_pool(),
+                       "protocol": "C",
+                       "syncer_rate": "30M",
+                       "filesystem": "xfs"}
         mirror_res = self.send_request("POST", "mirrors", data=mirror_data)
         mirror = mirror_res["response"]
         time.sleep(self.sleeptime)
-        self.addCleanup(requests.request, "DELETE", mirror_res["cleanup_url"], headers=mirror_res["headers"])
+        self.addCleanup(requests.request, "DELETE", mirror_res["cleanup_url"],
+                        headers=mirror_res["headers"])
 
         # Check if the filesystem is created on top of the drbd connection
         mirror_vol_res = self.send_request("GET", "volumes", obj_id=mirror["volume"]["id"])
@@ -88,23 +93,25 @@ class DrbdTests(object):
         vol = self._get_mirror_volume(self._get_pool()["id"])
 
         # Create a drbd mirror
-        mirror_data = {"source_volume"  : vol,
-                       "remote_pool"    : self._get_remote_pool(),
-                       "protocol"       : "C",
-                       "syncer_rate"    : "30M"}
+        mirror_data = {"source_volume": vol,
+                       "remote_pool": self._get_remote_pool(),
+                       "protocol": "C",
+                       "syncer_rate": "30M"}
         mirror_res = self.send_request("POST", "mirrors", data=mirror_data)
         mirror = mirror_res["response"]
         time.sleep(self.sleeptime)
-        self.addCleanup(requests.request, "DELETE", mirror_res["cleanup_url"], headers=mirror_res["headers"])
+        self.addCleanup(requests.request, "DELETE", mirror_res["cleanup_url"],
+                        headers=mirror_res["headers"])
 
         # Wait for drbd mirror status online
-        while mirror["status"][0] !=  "online":
+        while mirror["status"][0] != "online":
             time.sleep(self.sleeptime)
             mirror_res = self.send_request("GET", "mirrors", obj_id=mirror["id"])
             mirror = mirror_res["response"]
 
             if mirror["status"][0] == "degraded":
-                raise SystemError("Status of DRBD connection %s is degraded." % mirror["volume"]["title"])
+                raise SystemError("Status of DRBD connection %s is degraded." %
+                                  mirror["volume"]["title"])
 
         # Resize drbd mirror
         self.send_request("PUT", "mirrors", obj_id=mirror["id"], data={"new_size": self.growsize})
@@ -119,29 +126,32 @@ class DrbdTests(object):
         vol = self._get_mirror_volume(self._get_pool()["id"])
 
         # Create the drbd mirror containing a filesystem
-        mirror_data = {"source_volume"  : vol,
-                       "remote_pool"    : self._get_remote_pool(),
-                       "protocol"       : "C",
-                       "syncer_rate"    : "30M",
-                       "filesystem"     : "xfs"}
+        mirror_data = {"source_volume": vol,
+                       "remote_pool": self._get_remote_pool(),
+                       "protocol": "C",
+                       "syncer_rate": "30M",
+                       "filesystem": "xfs"}
         mirror_res = self.send_request("POST", "mirrors", data=mirror_data)
 
         mirror = mirror_res["response"]
         time.sleep(self.sleeptime)
-        self.addCleanup(requests.request, "DELETE", mirror_res["cleanup_url"], headers=mirror_res["headers"])
+        self.addCleanup(requests.request, "DELETE", mirror_res["cleanup_url"],
+                        headers=mirror_res["headers"])
 
-         # Wait for drbd mirror status online
-        while mirror["status"][0] !=  "online":
+        # Wait for drbd mirror status online
+        while mirror["status"][0] != "online":
             time.sleep(self.sleeptime)
             mirror_res = self.send_request("GET", "mirrors", obj_id=mirror["id"])
             mirror = mirror_res["response"]
 
             if mirror["status"][0] == "degraded":
-                raise SystemError("Status of DRBD connection %s is degraded." % mirror["volume"]["title"])
+                raise SystemError("Status of DRBD connection %s is degraded." %
+                                  mirror["volume"]["title"])
 
         with self.assertRaises(requests.exceptions.HTTPError) as err:
             # Resize drbd mirror
-            self.send_request("PUT", "mirrors", obj_id=mirror["id"], data={"new_size": self.growsize})
+            self.send_request("PUT", "mirrors", obj_id=mirror["id"],
+                              data={"new_size": self.growsize})
 
         self.assertEqual(str(err.exception), "501 Server Error: Not Implemented")
         self.assertEqual(err.exception.response.status_code, 501)
@@ -156,36 +166,40 @@ class DrbdTests(object):
         # self.assertEqual(mirror_vol_res["response"]["type"]["name"], "xfs")
 
     def test_create_shrink_delete(self):
-        """ Create a connection with 1000MB volumes, try to shrink it to 500MB and check if it fails. """
+        """ Create a connection with 1000MB volumes, try to shrink it to 500MB and check if it
+        fails. """
         # Create a volume that should be mirrored
         vol = self._get_mirror_volume(self._get_pool()["id"])
 
         # Create a drbd mirror
-        mirror_data = {"source_volume"  : vol,
-                       "remote_pool"    : self._get_remote_pool(),
-                       "protocol"       : "C",
-                       "syncer_rate"    : "30M"}
+        mirror_data = {"source_volume": vol,
+                       "remote_pool": self._get_remote_pool(),
+                       "protocol": "C",
+                       "syncer_rate": "30M"}
         mirror_res = self.send_request("POST", "mirrors", data=mirror_data)
         mirror = mirror_res["response"]
         time.sleep(self.sleeptime)
-        self.addCleanup(requests.request, "DELETE", mirror_res["cleanup_url"], headers=mirror_res["headers"])
+        self.addCleanup(requests.request, "DELETE", mirror_res["cleanup_url"],
+                        headers=mirror_res["headers"])
 
         # Wait for drbd mirror status online
-        while mirror["status"][0] !=  "online":
+        while mirror["status"][0] != "online":
             time.sleep(self.sleeptime)
             mirror_res = self.send_request("GET", "mirrors", obj_id=mirror["id"])
             mirror = mirror_res["response"]
 
             if mirror["status"][0] == "degraded":
-                raise SystemError("Status of DRBD connection %s is degraded." % mirror["volume"]["title"])
+                raise SystemError("Status of DRBD connection %s is degraded." %
+                                  mirror["volume"]["title"])
 
         # Try to shrink drbd mirror
         with self.assertRaises(requests.exceptions.HTTPError) as err:
-            self.send_request("PUT", "mirrors", obj_id=mirror["id"], data={"new_size": self.shrinksize})
+            self.send_request("PUT", "mirrors", obj_id=mirror["id"],
+                              data={"new_size": self.shrinksize})
 
         # check status code and error message
-        expected_err_message = "The size of a DRBD connection can only be increased but the new size (500.00MB) is " \
-                               "smaller than the current size (1,000.00MB)."
+        expected_err_message = "The size of a DRBD connection can only be increased but the new " \
+                               "size (500.00MB) is smaller than the current size (1,000.00MB)."
         self.assertEqual(str(err.exception), "400 Client Error: Bad Request")
         self.assertEqual(err.exception.response.status_code, 400)
         self.assertEqual(str(err.exception.response.json()), expected_err_message)
@@ -196,10 +210,10 @@ class DrbdTests(object):
         vol = self._get_mirror_volume(self._get_pool()["id"])
 
         # Try to create the drbd mirror with protocol F
-        mirror_data = {"source_volume"  : vol,
-                       "remote_pool"    : self._get_remote_pool(),
-                       "protocol"       : "F",
-                       "syncer_rate"    : "30M"}
+        mirror_data = {"source_volume": vol,
+                       "remote_pool": self._get_remote_pool(),
+                       "protocol": "F",
+                       "syncer_rate": "30M"}
         with self.assertRaises(requests.HTTPError) as err:
             mirror_res = self.send_request("POST", "mirrors", data=mirror_data)
             time.sleep(self.sleeptime)
@@ -213,10 +227,10 @@ class DrbdTests(object):
         vol = self._get_mirror_volume(self._get_pool()["id"])
 
         # Try to create the drbd mirror with syncer rate 0M
-        mirror_data = {"source_volume"  : vol,
-                       "remote_pool"    : self._get_remote_pool(),
-                       "protocol"       : "C",
-                       "syncer_rate"    : "0M"}
+        mirror_data = {"source_volume": vol,
+                       "remote_pool": self._get_remote_pool(),
+                       "protocol": "C",
+                       "syncer_rate": "0M"}
         with self.assertRaises(requests.HTTPError) as err:
             mirror_res = self.send_request("POST", "mirrors", data=mirror_data)
             time.sleep(self.sleeptime)
@@ -230,10 +244,10 @@ class DrbdTests(object):
         vol = self._get_mirror_volume(self._get_pool()["id"])
 
         # Try to create the drbd mirror with syncer rate 10G
-        mirror_data = {"source_volume"  : vol,
-                       "remote_pool"    : self._get_remote_pool(),
-                       "protocol"       : "C",
-                       "syncer_rate"    : "10g"}
+        mirror_data = {"source_volume": vol,
+                       "remote_pool": self._get_remote_pool(),
+                       "protocol": "C",
+                       "syncer_rate": "10g"}
         with self.assertRaises(requests.HTTPError) as err:
             mirror_res = self.send_request("POST", "mirrors", data=mirror_data)
             time.sleep(self.sleeptime)
@@ -247,10 +261,10 @@ class DrbdTests(object):
         vol = self._get_mirror_volume(self._get_pool()["id"])
 
         # Try to create the drbd mirror with syncer rate 1T
-        mirror_data = {"source_volume"  : vol,
-                       "remote_pool"    : self._get_remote_pool(),
-                       "protocol"       : "C",
-                       "syncer_rate"    : "1T"}
+        mirror_data = {"source_volume": vol,
+                       "remote_pool": self._get_remote_pool(),
+                       "protocol": "C",
+                       "syncer_rate": "1T"}
         with self.assertRaises(requests.HTTPError) as err:
             mirror_res = self.send_request("POST", "mirrors", data=mirror_data)
             time.sleep(self.sleeptime)
@@ -264,10 +278,10 @@ class DrbdTests(object):
         vol = self._get_mirror_volume(self._get_pool()["id"])
 
         # Try to create the drbd mirror with syncer rate 1T
-        mirror_data = {"source_volume"  : vol,
-                       "remote_pool"    : self._get_remote_pool(),
-                       "protocol"       : "C",
-                       "syncer_rate"    : "10 M"}
+        mirror_data = {"source_volume": vol,
+                       "remote_pool": self._get_remote_pool(),
+                       "protocol": "C",
+                       "syncer_rate": "10 M"}
         with self.assertRaises(requests.HTTPError) as err:
             mirror_res = self.send_request("POST", "mirrors", data=mirror_data)
             time.sleep(self.sleeptime)

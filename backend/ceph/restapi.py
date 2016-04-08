@@ -16,8 +16,12 @@
 
 from rest_framework import serializers, viewsets
 from rest_framework.response import Response
+from rest_framework.decorators import detail_route
+from rest_framework.pagination import PaginationSerializer
 
-from ceph.models import Cluster, CrushmapVersion
+from ceph.models import Cluster, CrushmapVersion, CephCluster, CephPool
+from nodb.restapi import NodbSerializer, NodbViewSet
+from rest import relations
 
 
 class CrushmapVersionSerializer(serializers.ModelSerializer):
@@ -57,9 +61,50 @@ class ClusterViewSet(viewsets.ModelViewSet):
             cluster.set_crushmap(request.DATA["crushmap"])
 
         cluster_ser = ClusterSerializer(cluster, many=False, context={"request": request})
+
         return Response(cluster_ser.data)
 
 
+class CephClusterSerializer(NodbSerializer):
+
+    pools = relations.HyperlinkedIdentityField(view_name='ceph-pools')
+
+    class Meta:
+        model = CephCluster
+
+
+class CephClusterViewSet(NodbViewSet):
+
+    queryset = CephCluster.objects.all()
+    serializer_class = CephClusterSerializer
+
+    @detail_route()
+    def pools(self, request, *args, **kwargs):
+        cluster = self.get_object()
+
+        pools = CephPool.objects.all({'cluster': cluster})
+        pools = self.paginate(pools, request)
+
+        serializer_instance = PaginatedCephPoolSerializer(pools, context={'request': request})
+
+        return Response(serializer_instance.data)
+
+
+class CephPoolSerializer(NodbSerializer):
+
+    cluster = relations.HyperlinkedRelatedField(view_name='ceph-detail')
+
+    class Meta:
+        model = CephPool
+
+
+class PaginatedCephPoolSerializer(PaginationSerializer):
+
+    class Meta:
+        object_serializer_class = CephPoolSerializer
+
+
 RESTAPI_VIEWSETS = [
-    ('cephclusters', ClusterViewSet, 'cephcluster')
+    ('ceph', CephClusterViewSet, 'ceph'),
+    ('cephclusters', ClusterViewSet, 'cephcluster'),  # Old implementation, used by the CRUSH map
 ]
