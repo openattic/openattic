@@ -1,13 +1,13 @@
 <div>
     <ul class="nav nav-tabs">
         <li ui-sref-active="active">
-            <a ui-sref="pools.detail.status({pool:  selection.item.id })" data-toggle="tab" data-target="#tab-content">Status</a>
+            <a ui-sref="pools.detail.status({pool: selection.item.id, '#': 'more'})" data-toggle="tab" data-target="#tab-content">Status</a>
         </li>
         <li ui-sref-active="active">
-            <a ui-sref="pools.detail.storage({pool: selection.item.id})" data-toggle="tab" data-target="#tab-content">Storage</a>
+            <a ui-sref="pools.detail.storage({pool: selection.item.id, '#': 'more'})" data-toggle="tab" data-target="#tab-content">Storage</a>
         </li>
         <li ui-sref-active="active" ng-show="selection.item && selection.item.type.app_label === 'ceph'">
-            <a ui-sref="pools.detail.cephpool({pool: selection.item.id})" data-toggle="tab" data-target="#tab-content">Ceph Pool</a>
+            <a ui-sref="pools.detail.cephpool({pool: selection.item.id, '#': 'more'})" data-toggle="tab" data-target="#tab-content">Ceph Pool</a>
         </li>
     </ul>
 
