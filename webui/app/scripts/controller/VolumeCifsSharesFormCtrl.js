@@ -33,7 +33,7 @@
 var app = angular.module("openattic");
 app.controller("VolumeCifsSharesFormCtrl", function ($scope, $state, $stateParams, CifsSharesService) {
   var goToListView = function () {
-    $state.go("volumes.detail.cifs");
+    $state.go("volumes.detail.cifs", {"#": "more"});
   };
   $scope.domainconfig = {};
 

@@ -34,7 +34,7 @@ var app = angular.module("openattic");
 app.controller("VolumeSnapshotFormCtrl", function ($scope, $state, $filter, $stateParams, VolumeService,
     VolumeSnapshotService, PoolService, SizeParserService, poolCheckingService) {
   var goToListView = function () {
-    $state.go("volumes.detail.snapshots");
+    $state.go("volumes.detail.snapshots", {"#": "more"});
   };
 
   if (!$scope.selection) {
