@@ -66,6 +66,13 @@ class Client(object):
         return self._get_pool(pool_name).change_auid(auid)
 
     def mon_command(self, cmd):
+        """Calls a monitor command and returns the result as dict.
+
+        If `cmd` is a string, it'll be used as the argument to 'prefix'. If `cmd` is a dict
+        otherweise, it'll be used directly as input for the mon_command and you'll have to specify
+        the 'prefix' argument yourself.
+        """
+
         if type(cmd) is str:
             (ret, out, err) = self._cluster.mon_command(json.dumps(
                 {'prefix': cmd,
