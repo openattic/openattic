@@ -85,13 +85,25 @@ app.controller("VolumeCtrl", function ($scope, $state, VolumeService, SizeParser
           ($state.current.name === "volumes.detail.http" && !item.is_filesystemvolume) ||
           ($state.current.name === "volumes.detail.tftp" && !item.is_filesystemvolume) ||
           ($state.current.name === "volumes.detail.luns" && (!item.is_blockvolume || item.is_filesystemvolume))) {
-        $state.go("volumes.detail.status", {volume: item.id});
+        $state.go("volumes.detail.status", {
+          volume: item.id,
+          "#": "more"
+        });
       } else if ($state.current.name === "volumes.detail.statistics.utilgraphs" && !item.is_filesystemvolume) {
-        $state.go("volumes.detail.statistics.perfgraphs", {volume: item.id});
+        $state.go("volumes.detail.statistics.perfgraphs", {
+          volume: item.id,
+          "#": "more"
+        });
       } else if ($state.current.name === "volumes.detail.statistics.perfgraphs" && !item.is_blockvolume) {
-        $state.go("volumes.detail.statistics.utilgraphs", {volume: item.id});
+        $state.go("volumes.detail.statistics.utilgraphs", {
+          volume: item.id,
+          "#": "more"
+        });
       } else {
-        $state.go($state.current.name, {volume: item.id});
+        $state.go($state.current.name, {
+          volume: item.id,
+          "#": "more"
+        });
       }
     }
   });

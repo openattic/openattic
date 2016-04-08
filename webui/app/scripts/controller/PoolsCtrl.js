@@ -62,7 +62,10 @@ app.controller("PoolCtrl", function ($scope, $state, PoolService) {
 
   $scope.$watch("selection.item", function (selitem) {
     if (selitem) {
-      $state.go("pools.detail.status", {pool: selitem.id});
+      $state.go("pools.detail.status", {
+        pool: selitem.id,
+        "#": "more"
+      });
     } else {
       $state.go("pools");
     }

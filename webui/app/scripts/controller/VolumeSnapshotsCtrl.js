@@ -72,7 +72,7 @@ app.controller("VolumeSnapshotsCtrl", function ($scope, $state, SnapshotService,
   }, true);
 
   $scope.addAction = function () {
-    $state.go("volumes.detail.snapshots-add");
+    $state.go("volumes.detail.snapshots-add", {"#": "more"});
   };
 
   $scope.deleteAction = function () {

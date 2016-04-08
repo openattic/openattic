@@ -1,40 +1,40 @@
-<div id="more" ng-show="selection.item">
+<div ng-show="selection.item">
     <ul class="nav nav-tabs">
         <li ui-sref-active="active">
-            <a ui-sref="volumes.detail.status({volume:  selection.item.id})" class="tc_statusTab" data-toggle="tab"
+            <a ui-sref="volumes.detail.status({volume: selection.item.id, '#': 'more'})" class="tc_statusTab" data-toggle="tab"
                data-target="#tab-content">Status</a>
         </li>
         <li ui-sref-active="active" ng-show="selection.item.is_filesystemvolume">
-            <a ui-sref="volumes.detail.statistics.utilgraphs({volume: selection.item.id})" class="tc_fsStatisticsTab"
+            <a ui-sref="volumes.detail.statistics.utilgraphs({volume: selection.item.id, '#': 'more'})" class="tc_fsStatisticsTab"
                data-toggle="tab" data-target="#tab-content">Statistics</a>
         </li>
         <li ui-sref-active="active" ng-show="selection.item.is_blockvolume && !selection.item.is_filesystemvolume">
-            <a ui-sref="volumes.detail.statistics.perfgraphs({volume: selection.item.id})" class="tc_blockStatisticsTab"
+            <a ui-sref="volumes.detail.statistics.perfgraphs({volume: selection.item.id, '#': 'more'})" class="tc_blockStatisticsTab"
                data-toggle="tab" data-target="#tab-content">Statistics</a>
         </li>
         <li ui-sref-active="active" ng-show="selection.item.is_filesystemvolume">
-            <a ui-sref="volumes.detail.cifs({volume: selection.item.id})" class="tc_cifsShareTab" data-toggle="tab"
+            <a ui-sref="volumes.detail.cifs({volume: selection.item.id, '#': 'more'})" class="tc_cifsShareTab" data-toggle="tab"
                data-target="#tab-content">CIFS</a>
         </li>
         <li ui-sref-active="active" ng-show="selection.item.is_filesystemvolume">
-            <a ui-sref="volumes.detail.nfs({volume: selection.item.id})" class="tc_nfsShareTab" data-toggle="tab"
+            <a ui-sref="volumes.detail.nfs({volume: selection.item.id, '#': 'more'})" class="tc_nfsShareTab" data-toggle="tab"
                data-target="#tab-content">NFS</a>
         </li>
         <li ui-sref-active="active" ng-show="selection.item.is_filesystemvolume">
-            <a ui-sref="volumes.detail.http({volume: selection.item.id})" class="tc_httpShareTab" data-toggle="tab"
+            <a ui-sref="volumes.detail.http({volume: selection.item.id, '#': 'more'})" class="tc_httpShareTab" data-toggle="tab"
                data-target="#tab-content">HTTP</a>
         </li>
         <li ui-sref-active="active" ng-show="selection.item.source_pool && selection.item.is_blockvolume
             && !selection.item.is_filesystemvolume">
-            <a ui-sref="volumes.detail.luns({volume: selection.item.id})" class="tc_iscsi_fcTab" data-toggle="tab"
+            <a ui-sref="volumes.detail.luns({volume: selection.item.id, '#': 'more'})" class="tc_iscsi_fcTab" data-toggle="tab"
                data-target="#tab-content">iSCSI/FC</a>
         </li>
         <li ui-sref-active="active">
-            <a ui-sref="volumes.detail.storage({volume: selection.item.id})" class="tc_storageTab" data-toggle="tab"
+            <a ui-sref="volumes.detail.storage({volume: selection.item.id, '#': 'more'})" class="tc_storageTab" data-toggle="tab"
                data-target="#tab-content">Storage</a>
         </li>
         <li ui-sref-active="active">
-            <a ui-sref="volumes.detail.snapshots({volume: selection.item.id})" class="tc_snapshotTab" data-toggle="tab"
+            <a ui-sref="volumes.detail.snapshots({volume: selection.item.id, '#': 'more'})" class="tc_snapshotTab" data-toggle="tab"
                data-target="#tab-content">Snapshots</a>
         </li>
     </ul>
