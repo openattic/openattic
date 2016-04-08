@@ -27,6 +27,7 @@ Version 2.0.10 (not released yet):
   (OP-987)
 * Installation: Updated RPM and DEB packaging to include the new "nodb" Python
   modules, added dependency on the "python-rados" package (OP-1021)
+* Documentation: Added Gatling document to openATTIC documentation (OP-894)
 
 Version 2.0.9, 16. Mar 2016:
 ----------------------------
