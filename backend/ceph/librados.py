@@ -1,5 +1,6 @@
-import rados  # TODO add this to the dependecy of the ceph deb/rpm package.
+import rados
 import os
+import json
 
 
 class Client(object):
@@ -10,6 +11,7 @@ class Client(object):
         self._keyring = os.path.join('/etc/ceph', cluster_name + '.client.admin.keyring')
         self._pools = {}
         self._cluster = None
+        self._default_timeout = 30
         self.connect(self._conf_file)
 
     def _get_pool(self, pool_name):
@@ -62,3 +64,25 @@ class Client(object):
 
     def change_pool_owner(self, pool_name, auid):
         return self._get_pool(pool_name).change_auid(auid)
+
+    def mon_command(self, cmd):
+        if type(cmd) is str:
+            (ret, out, err) = self._cluster.mon_command(json.dumps(
+                {'prefix': cmd,
+                 'format': 'json'}),
+                '',
+                timeout=self._default_timeout)
+        elif type(cmd) is dict:
+            (ret, out, err) =  self._cluster.mon_command(
+                json.dumps(cmd),
+                '',
+                timeout=self._default_timeout)
+
+        if ret == 0:
+            return json.loads(out)
+        else:
+            raise ExternalCommandError()
+
+
+class ExternalCommandError(Exception):
+    pass
