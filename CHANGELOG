@@ -16,6 +16,7 @@ Version 2.0.10 (not released yet):
   (OP-960) (thanks to Willi Fehler for reporting the issue)
 * Backend: Added basic infrastructure to directly gather information from Ceph
   clusters (OP-1014)
+* Backend: Fixed bug - add local volumes to local fstab only (OP-1058)
 * Backend/Gatling: Cleaned up Gatling (OP-1025)
 * Installation: "oaconfig install" now skips all LVM volume groups tagged with
   "sys", so they won't be added to the oA database (OP-564). Fixed oaconfig
