@@ -21,6 +21,7 @@ from systemd.plugins   import logged, BasePlugin, method, signal, deferredmethod
 
 from volumes.conf import settings as volumes_settings
 from volumes.models import StorageObject, VolumePool, BlockVolume, FileSystemVolume
+from ifconfig.models import Host
 from volumes import capabilities
 
 @logged
@@ -157,8 +158,10 @@ class SystemD(BasePlugin):
                 try:
                     if not hasattr(obj.filesystemvolume.volume, "fstype"):
                         continue
-                    newlines.append( "%-50s %-50s %-8s %s %d %d" % (
-                        obj.blockvolume.volume.path, obj.filesystemvolume.volume.path, obj.filesystemvolume.volume.fstype, "defaults", 0, 0
+                    if obj.host == Host.objects.get_current():
+                        newlines.append( "%-50s %-50s %-8s %s %d %d" % (
+                            obj.blockvolume.volume.path, obj.filesystemvolume.volume.path,
+                            obj.filesystemvolume.volume.fstype, "defaults", 0, 0
                         ) )
                 except (BlockVolume.DoesNotExist, FileSystemVolume.DoesNotExist):
                     pass
