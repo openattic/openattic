@@ -17,11 +17,12 @@
 import os
 import os.path
 from systemd.procutils import invoke
-from systemd.plugins   import logged, BasePlugin, method, signal, deferredmethod
+from systemd.plugins import logged, BasePlugin, method, deferredmethod
 
 from volumes.conf import settings as volumes_settings
-from volumes.models import StorageObject, VolumePool, BlockVolume, FileSystemVolume
-from volumes import capabilities
+from volumes.models import StorageObject, BlockVolume, FileSystemVolume
+from ifconfig.models import Host
+
 
 @logged
 class SystemD(BasePlugin):
@@ -73,7 +74,9 @@ class SystemD(BasePlugin):
     @method(in_signature="s", out_signature="a{ss}")
     def e2fs_info(self, devpath):
         ret, out, err = invoke(["/sbin/tune2fs", "-l", devpath], return_out_err=True)
-        return dict([ [part.strip() for part in line.split(":", 1)] for line in out.split("\n")[1:] if line ])
+        return dict(
+            [[part.strip() for part in line.split(":", 1)] for line in out.split("\n")[1:] if line]
+        )
 
     @deferredmethod(in_signature="ssii")
     def e2fs_format(self, devpath, label, chunksize, datadisks, sender):
@@ -81,8 +84,8 @@ class SystemD(BasePlugin):
         if chunksize != -1 and datadisks != -1:
             stride = chunksize / 4096
             stripe_width = stride * datadisks
-            cmd.extend([ "-E", "stride=%d,stripe_width=%d" % (stride, stripe_width) ])
-        cmd.extend([ "-q", "-m0", "-L", label, devpath ])
+            cmd.extend(["-E", "stride=%d,stripe_width=%d" % (stride, stripe_width)])
+        cmd.extend(["-q", "-m0", "-L", label, devpath])
         invoke(cmd)
 
     @deferredmethod(in_signature="s")
@@ -103,8 +106,8 @@ class SystemD(BasePlugin):
         if chunksize != -1 and datadisks != -1:
             stride = chunksize / 4096
             stripe_width = stride * datadisks
-            cmd.extend([ "-E", "stride=%d,stripe_width=%d" % (stride, stripe_width) ])
-        cmd.extend([ "-q", "-j", "-m0", "-L", label, devpath ])
+            cmd.extend(["-E", "stride=%d,stripe_width=%d" % (stride, stripe_width)])
+        cmd.extend(["-q", "-j", "-m0", "-L", label, devpath])
         invoke(cmd)
 
     @deferredmethod(in_signature="ssii")
@@ -113,8 +116,8 @@ class SystemD(BasePlugin):
         if chunksize != -1 and datadisks != -1:
             stride = chunksize / 4096
             stripe_width = stride * datadisks
-            cmd.extend([ "-E", "stride=%d,stripe_width=%d" % (stride, stripe_width) ])
-        cmd.extend([ "-q", "-m0", "-L", label, devpath ])
+            cmd.extend(["-E", "stride=%d,stripe_width=%d" % (stride, stripe_width)])
+        cmd.extend(["-q", "-m0", "-L", label, devpath])
         invoke(cmd)
 
     @deferredmethod(in_signature="siii")
@@ -125,7 +128,7 @@ class SystemD(BasePlugin):
                 "-d", "su=%dk" % (chunksize / 1024),
                 "-d", "sw=%d" % datadisks,
                 ])
-        cmd.extend([ "-d", "agcount=%d" % agcount, devpath ])
+        cmd.extend(["-d", "agcount=%d" % agcount, devpath])
         invoke(cmd)
 
     @deferredmethod(in_signature="si")
@@ -139,7 +142,7 @@ class SystemD(BasePlugin):
     @deferredmethod(in_signature="")
     def write_fstab(self, sender):
         # read current fstab
-        with open( "/etc/fstab", "rb" ) as fstab:
+        with open("/etc/fstab", "rb") as fstab:
 
             delim = "# # openATTIC mounts. Insert your own before this line. # #"
 
@@ -157,9 +160,11 @@ class SystemD(BasePlugin):
                 try:
                     if not hasattr(obj.filesystemvolume.volume, "fstype"):
                         continue
-                    newlines.append( "%-50s %-50s %-8s %s %d %d" % (
-                        obj.blockvolume.volume.path, obj.filesystemvolume.volume.path, obj.filesystemvolume.volume.fstype, "defaults", 0, 0
-                        ) )
+                    if obj.host == Host.objects.get_current():
+                        newlines.append("%-50s %-50s %-8s %s %d %d" % (
+                            obj.blockvolume.volume.path, obj.filesystemvolume.volume.path,
+                            obj.filesystemvolume.volume.fstype, "defaults", 0, 0
+                        ))
                 except (BlockVolume.DoesNotExist, FileSystemVolume.DoesNotExist):
                     pass
 
@@ -177,9 +182,9 @@ class SystemD(BasePlugin):
             if not delimfound:
                 newlines.append(delim)
 
-        with open( "/etc/fstab", "wb" ) as fstab:
+        with open("/etc/fstab", "wb") as fstab:
             for line in newlines:
-                fstab.write( line + "\n" )
+                fstab.write(line + "\n")
 
     @method(in_signature="ss", out_signature="i")
     def run_initscript(self, script, path):
@@ -210,6 +215,5 @@ class SystemD(BasePlugin):
     @method(in_signature="s", out_signature="i")
     def get_disk_size(self, device):
         with open(device, "rb") as fd:
-            fd.seek(0, 2) # seek to the end
+            fd.seek(0, 2)  # seek to the end
             return fd.tell() / 1024 / 1024
-
