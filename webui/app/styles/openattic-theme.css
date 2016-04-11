@@ -1216,3 +1216,11 @@ uib-accordion .panel-title {
 .disabled {
     pointer-events: none;
 }
+
+/* If javascript is disabled. */
+.noscript {
+  padding-top: 5em;
+}
+.noscript p {
+  color: #777;
+}

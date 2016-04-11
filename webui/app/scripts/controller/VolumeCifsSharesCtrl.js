@@ -70,11 +70,17 @@ app.controller("VolumeCifsSharesCtrl", function ($scope, $state, CifsSharesServi
   }, true);
 
   $scope.addCifsAction = function () {
-    $state.go("volumes.detail.cifs-add");
+    $state.go("volumes.detail.cifs-add", {
+      "#":
+      "more"
+    });
   };
 
   $scope.editCifsAction = function () {
-    $state.go("volumes.detail.cifs-edit", {share: $scope.cifsSelection.item.id});
+    $state.go("volumes.detail.cifs-edit", {
+      share: $scope.cifsSelection.item.id,
+      "#": "more"
+    });
   };
 
   $scope.deleteCifsAction = function () {
