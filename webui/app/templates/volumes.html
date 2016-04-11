@@ -3,8 +3,11 @@
         <a class="btn btn-sm btn-primary tc_add_btn" type="button" ng-click="addAction()" ng-hide="hasSelection || multiSelection">
             <i class="fa fa-fw fa-plus"></i>Add
         </a>
-        <a class="btn btn-sm btn-primary tc_resize_btn" type="button" ng-click="resizeAction()" ng-show="hasSelection && !multiSelection">
+        <a class="btn btn-sm btn-primary tc_resize_btn" type="button" ng-click="resizeAction()" ng-show="hasSelection && !multiSelection && resizeable">
             <i class="fa fa-fw fa-upload"></i>Resize
+        </a>
+        <a class="btn btn-sm btn-primary tc_clone_btn" type="button" ng-click="cloneAction()" ng-show="hasSelection && !multiSelection && !resizeable">
+            <i class="fa fa-fw fa-files-o"></i> Clone
         </a>
         <a class="btn btn-sm btn-primary tc_delete_btn" type="button" ng-click="deleteAction()" ng-show="multiSelection">
             <i class="fa fa-fw fa-trash-o"></i>Delete
@@ -14,7 +17,7 @@
                 <i class="fa fa-fw fa-plus"></i>Add
             </a>
         </li>
-        <li ng-class="{disabled: !hasSelection}">
+        <li ng-class="{disabled: !(hasSelection && resizeable)}">
             <a ng-click="resizeAction()">
                 <i class="fa fa-fw fa-upload"></i>Resize
             </a>
@@ -110,5 +113,5 @@
         </tbody>
     </table>
 </oadatatable>
-<div ui-view="tab">
+<div id="more" ui-view="tab">
 </div>

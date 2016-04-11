@@ -70,7 +70,7 @@ app.controller("VolumeNfsSharesCtrl", function ($scope, $state, NfsSharesService
   }, true);
 
   $scope.addNfsAction = function () {
-    $state.go("volumes.detail.nfs-add");
+    $state.go("volumes.detail.nfs-add", {"#": "more"});
   };
 
   $scope.deleteNfsAction = function () {

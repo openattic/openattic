@@ -70,7 +70,7 @@ app.controller("VolumeHttpSharesCtrl", function ($scope, $state, HttpSharesServi
   }, true);
 
   $scope.addHttpAction = function () {
-    $state.go("volumes.detail.http-add");
+    $state.go("volumes.detail.http-add", {"#": "more"});
   };
 
   $scope.deleteHttpAction = function () {
