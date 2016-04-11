@@ -720,7 +720,8 @@ h6{
   float: right;
   border-left: 1px solid rgba(0,0,0,.09);
   padding-left: 8px;
-  width: 40%
+  width: 40%;
+  max-width: 350px;
 }
 .dataTables_header .input-group .input-group-addon {
 }
@@ -1214,7 +1215,7 @@ uib-accordion .panel-title {
   padding: 10px 20px;
 }
 .disabled {
-    pointer-events: none;
+  pointer-events: none;
 }
 
 /* If javascript is disabled. */
