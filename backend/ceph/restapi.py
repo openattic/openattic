@@ -19,7 +19,7 @@ from rest_framework.response import Response
 from rest_framework.decorators import detail_route
 from rest_framework.pagination import PaginationSerializer
 
-from ceph.models import Cluster, CrushmapVersion, CephCluster, CephPool
+from ceph.models import Cluster, CrushmapVersion, CephCluster, CephPool, CephPoolHitSetParams
 from nodb.restapi import NodbSerializer, NodbViewSet
 from rest import relations
 
@@ -90,9 +90,16 @@ class CephClusterViewSet(NodbViewSet):
         return Response(serializer_instance.data)
 
 
+class PoolHitSetParamsSerializer(NodbSerializer):
+
+    class Meta:
+        model = CephPoolHitSetParams
+
+
 class CephPoolSerializer(NodbSerializer):
 
     cluster = relations.HyperlinkedRelatedField(view_name='ceph-detail')
+    hit_set_params = PoolHitSetParamsSerializer()
 
     class Meta:
         model = CephPool
