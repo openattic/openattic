@@ -1,9 +1,8 @@
-<!-- kate: space-indent on; indent-width 4; replace-tabs on; -->
 <oadatatable data="data" class="oadatatable tc_oadatatable_disks" filter-config="filterConfig" selection="selection">
     <actions>
         <a class="btn btn-sm btn-primary tc_createPoolBtn" type="button"
            ng-class="{disabled: !hasSelection}" ng-click="createPoolAction()">
-            <i class="fa fa-fw fa-plus"></i> Create pool...
+            <i class="fa fa-fw fa-plus"></i>Create pool...
         </a>
         <li ng-class="{disabled: !hasSelection}" max-selected=1>
             <a ng-click="createPoolAction()">
