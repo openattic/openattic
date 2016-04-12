@@ -1,6 +1,5 @@
 # -*- coding: utf-8 -*-
 # kate: space-indent on; indent-width 4; replace-tabs on;
-
 """
  *  Copyright (C) 2011-2016, it-novum GmbH <community@openattic.org>
  *
@@ -99,40 +98,108 @@ class CephCluster(NodbModel):
 
         return result
 
+    def __str__(self):
+        return self.name
+
+
+class CephPoolHitSetParams(NodbModel):
+
+    type = models.CharField(max_length=100)
+
+
+class CephPoolTier(NodbModel):
+
+    pool_id = models.IntegerField()
+
 
 class CephPool(NodbModel):
 
-    name = models.CharField(max_length=100, primary_key=True)
-    num_bytes = models.IntegerField()
-    num_kb = models.IntegerField()
-    num_object_clones = models.IntegerField()
-    num_object_copies = models.IntegerField()
-    num_objects = models.IntegerField()
-    num_objects_degraded = models.IntegerField()
-    num_objects_missing_on_primary = models.IntegerField()
-    num_objects_unfound = models.IntegerField()
-    num_rd = models.IntegerField()
-    num_rd_kb = models.IntegerField()
-    num_wr = models.IntegerField()
-    num_wr_kb = models.IntegerField()
-
+    id = models.IntegerField(primary_key=True)
     cluster = models.ForeignKey(CephCluster)
+    name = models.CharField(max_length=100)
+    replicated = models.BooleanField()
+    type = models.IntegerField()
+    erasure_coded = models.BooleanField()
+    erasure_code_profile = models.CharField(max_length=100)
+    last_change = models.IntegerField()
+    quota_max_objects = models.IntegerField()
+    quota_max_bytes = models.IntegerField()
+    hashpspool = models.BooleanField()
+    full = models.BooleanField()
+    pg_num = models.IntegerField()
+    pgp_num = models.IntegerField()
+    size = models.IntegerField()
+    min_size = models.IntegerField()
+    crush_ruleset = models.IntegerField()
+    crash_replay_interval = models.IntegerField()
+    num_bytes = models.IntegerField()
+    num_objects = models.IntegerField()
+    max_avail = models.IntegerField()
+    kb_used = models.IntegerField()
+    stripe_width = models.IntegerField()
+    tier_of = models.IntegerField()
+    write_tier = models.IntegerField()
+    read_tier = models.IntegerField()
+    target_max_bytes = models.IntegerField()
+    hit_set_period = models.IntegerField()
+    hit_set_count = models.IntegerField()
+    hit_set_params = models.OneToOneField(CephPoolHitSetParams)
 
     @staticmethod
     def get_all_objects(context):
         result = []
-
         cluster = context['cluster']
-
         fsid = cluster.fsid
 
-        for pool_name in rados[fsid].list_pools():
-            pool_stats = rados[fsid].get_stats(pool_name)
-            stats = pool_stats.copy()
-            stats['name'] = pool_name
-            stats['cluster'] = cluster
+        osd_dump_data = rados[fsid].mon_command('osd dump')
+        df_data = rados[fsid].mon_command('df')
 
-            result.append(CephPool(**stats))
+        for pool_data in osd_dump_data['pools']:
+
+            pool_id = pool_data['pool']
+            stats = rados[fsid].get_stats(str(pool_data['pool_name']))
+            disk_free_data = [elem for elem in df_data['pools'] if elem['id'] == pool_id][0]
+
+            object_data = {
+                'id': pool_id,
+                'cluster': cluster,
+                'name': pool_data['pool_name'],
+                'replicated': pool_data['erasure_code_profile'] == '',
+                'type': pool_data['type'],
+                'erasure_coded': pool_data['erasure_code_profile'] != '',
+                'erasure_code_profile': pool_data['erasure_code_profile'],
+                'last_change': pool_data['last_change'],
+                'hashpspool': 'hashpspool' in pool_data['flags_names'],
+                'full': 'full' in pool_data['flags_names'],
+                'min_size': pool_data['min_size'],
+                'crash_replay_interval': pool_data['crash_replay_interval'],
+                'pg_num': pool_data['pg_num'],
+                'size': pool_data['size'],
+                'crush_ruleset': pool_data['crush_ruleset'],
+                'num_bytes': stats['num_bytes'],
+                'num_objects': stats['num_objects'],
+                'max_avail': disk_free_data['stats']['max_avail'],
+                'kb_used': disk_free_data['stats']['kb_used'],
+                # Considered advanced options
+                'pgp_num': pool_data['pg_placement_num'],
+                'stripe_width': pool_data['stripe_width'],
+                'quota_max_bytes': pool_data['quota_max_bytes'],
+                'quota_max_objects': pool_data['quota_max_objects'],
+                # Cache tiering related
+                'tier_of': pool_data['tier_of'],
+                'write_tier': pool_data['write_tier'],
+                'read_tier': pool_data['read_tier'],
+                # Attributes for cache tiering
+                'target_max_bytes': pool_data['target_max_bytes'],
+                'hit_set_period': pool_data['hit_set_period'],
+                'hit_set_count': pool_data['hit_set_count'],
+                'hit_set_params': CephPoolHitSetParams(**pool_data['hit_set_params']),
+            }
+
+            ceph_pool = CephPool(**object_data)
+            ceph_pool.tiers = [CephPoolTier(pool_id=id) for id in pool_data['tiers']]
+
+            result.append(ceph_pool)
 
         return result
 
@@ -223,6 +290,7 @@ class Cluster(StorageObject):
 
 
 class CrushmapVersion(models.Model):
+
     cluster = models.ForeignKey(Cluster)
     epoch = models.IntegerField()
     created_at = models.DateTimeField(auto_now_add=True)
