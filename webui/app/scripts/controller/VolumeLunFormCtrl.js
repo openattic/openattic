@@ -34,7 +34,7 @@ var app = angular.module("openattic");
 app.controller("VolumeLunFormCtrl", function ($scope, $state, $stateParams, $filter, LunService, HostService,
     InitiatorService) {
   var goToListView = function () {
-    $state.go("volumes.detail.luns");
+    $state.go("volumes.detail.luns", {"#": "more"});
   };
 
   $scope.share = {

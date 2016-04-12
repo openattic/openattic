@@ -33,7 +33,7 @@
 var app = angular.module("openattic");
 app.controller("VolumeHttpSharesFormCtrl", function ($scope, $state, $stateParams, HttpSharesService) {
   var goToListView = function () {
-    $state.go("volumes.detail.http");
+    $state.go("volumes.detail.http", {"#": "more"});
   };
 
   if (!$stateParams.share) {

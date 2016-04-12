@@ -62,7 +62,10 @@ app.controller("DiskCtrl", function ($scope, $state, DiskService) {
 
   $scope.$watch("selection.item", function (selitem) {
     if (selitem) {
-      $state.go("disks.detail.status", {disk: selitem.id});
+      $state.go("disks.detail.status", {
+        disk: selitem.id,
+        "#": "more"
+      });
     } else {
       $state.go("disks");
     }

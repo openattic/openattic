@@ -720,7 +720,8 @@ h6{
   float: right;
   border-left: 1px solid rgba(0,0,0,.09);
   padding-left: 8px;
-  width: 40%
+  width: 40%;
+  max-width: 350px;
 }
 .dataTables_header .input-group .input-group-addon {
 }
@@ -1212,4 +1213,15 @@ uib-accordion .panel-title {
 .formactions.well {
   overflow: auto;
   padding: 10px 20px;
+}
+.disabled {
+  pointer-events: none;
+}
+
+/* If javascript is disabled. */
+.noscript {
+  padding-top: 5em;
+}
+.noscript p {
+  color: #777;
 }

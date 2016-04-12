@@ -17,8 +17,11 @@
 from rest_framework import serializers, viewsets
 from rest_framework.response import Response
 from rest_framework.decorators import detail_route
+from rest_framework.pagination import PaginationSerializer
 
-from ceph.models import Cluster, CrushmapVersion, CephCluster, CephPool
+from ceph.models import Cluster, CrushmapVersion, CephCluster, CephPool, CephPoolHitSetParams
+from ceph.models import CephPoolTier
+
 from nodb.restapi import NodbSerializer, NodbViewSet
 from rest import relations
 
@@ -82,17 +85,39 @@ class CephClusterViewSet(NodbViewSet):
         cluster = self.get_object()
 
         pools = CephPool.objects.all({'cluster': cluster})
-        serializer_instance = CephPoolSerializer(pools, many=True, context={"request": request})
+        pools = self.paginate(pools, request)
+
+        serializer_instance = PaginatedCephPoolSerializer(pools, context={'request': request})
 
         return Response(serializer_instance.data)
+
+
+class CephPoolTierSerializer(NodbSerializer):
+
+    class Meta:
+        model = CephPoolTier
+
+
+class PoolHitSetParamsSerializer(NodbSerializer):
+
+    class Meta:
+        model = CephPoolHitSetParams
 
 
 class CephPoolSerializer(NodbSerializer):
 
     cluster = relations.HyperlinkedRelatedField(view_name='ceph-detail')
+    hit_set_params = PoolHitSetParamsSerializer()
+    tiers = CephPoolTierSerializer(many=True)
 
     class Meta:
         model = CephPool
+
+
+class PaginatedCephPoolSerializer(PaginationSerializer):
+
+    class Meta:
+        object_serializer_class = CephPoolSerializer
 
 
 RESTAPI_VIEWSETS = [
