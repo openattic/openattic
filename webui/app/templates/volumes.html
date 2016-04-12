@@ -1,4 +1,3 @@
-<!-- kate: space-indent on; indent-width 4; replace-tabs on; -->
 <oadatatable data="data" class="oadatatable tc_oadatatable_volumes" filter-config="filterConfig" selection="selection">
     <actions>
         <a class="btn btn-sm btn-primary tc_add_btn" type="button" ng-click="addAction()" ng-hide="hasSelection || multiSelection">
@@ -14,24 +13,36 @@
             <i class="fa fa-fw fa-trash-o"></i>Delete
         </a>
         <li>
-            <a ng-click="addAction()"><i class="fa fa-fw fa-plus"></i>Add</a>
+            <a ng-click="addAction()">
+                <i class="fa fa-fw fa-plus"></i>Add
+            </a>
         </li>
         <li ng-class="{disabled: !(hasSelection && resizeable)}">
-            <a ng-click="resizeAction()"><i class="fa fa-fw fa-upload"></i>Resize</a>
+            <a ng-click="resizeAction()">
+                <i class="fa fa-fw fa-upload"></i>Resize
+            </a>
         </li>
         <li ng-class="{disabled: !(hasSelection && cloneable)}" ng-click="cloneAction()">
-            <a><i class="fa fa-fw fa-files-o"></i>Clone</a>
+            <a>
+                <i class="fa fa-fw fa-files-o"></i>Clone
+            </a>
         </li>
         <li class="tc_setProtection" ng-class="{disabled: !hasSelection}" ng-click="protectionAction()">
-            <a><i class="fa fa-fw fa-ban"></i>Protection</a>
+            <a>
+                <i class="fa fa-fw fa-ban"></i>Protection
+            </a>
         </li>
         <li class="divider"></li>
         <li ng-class="{disabled: !hasSelection}" ng-click="moreOptionsAction()" uib-tooltip="E.g. snapshots, shares">
-            <a><i class="fa fa-fw fa-star"></i>More Options</a>
+            <a>
+                <i class="fa fa-fw fa-star"></i>More Options
+            </a>
         </li>
         <li class="divider"></li>
         <li class="tc_deleteItem" ng-click="deleteAction()" ng-class="{disabled: !hasSelection && !multiSelection}">
-            <a><i class="fa fa-fw fa-trash-o"></i>Delete</a>
+            <a>
+                <i class="fa fa-fw fa-trash-o"></i>Delete
+            </a>
         </li>
     </actions>
     <table class="datatable table table-striped table-bordered table-hover dataTable">
