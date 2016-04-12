@@ -107,9 +107,9 @@ class CephPoolHitSetParams(NodbModel):
     type = models.CharField(max_length=100)
 
 
-# class CephPoolTier(NodbModel):
+class CephPoolTier(NodbModel):
 
-#     id = models.IntegerField()
+    pool_id = models.IntegerField()
 
 
 class CephPool(NodbModel):
@@ -139,8 +139,6 @@ class CephPool(NodbModel):
     stripe_width = models.IntegerField()
     tier_of = models.IntegerField()
     write_tier = models.IntegerField()
-    # tiers = models.  # TODO `tiers` is received as empty array; find out what data is
-                       # transmitted when it isn't empty.
     read_tier = models.IntegerField()
     target_max_bytes = models.IntegerField()
     hit_set_period = models.IntegerField()
@@ -161,9 +159,6 @@ class CephPool(NodbModel):
             pool_id = pool_data['pool']
             stats = rados[fsid].get_stats(str(pool_data['pool_name']))
             disk_free_data = [elem for elem in df_data['pools'] if elem['id'] == pool_id][0]
-
-#             from debug.helper import pp
-#             pp(pool_data)
 
             object_data = {
                 'id': pool_id,
@@ -193,7 +188,6 @@ class CephPool(NodbModel):
                 # Cache tiering related
                 'tier_of': pool_data['tier_of'],
                 'write_tier': pool_data['write_tier'],
-                # 'tiers': [CephPoolTier(id=id) for id in pool_data['tiers']],
                 'read_tier': pool_data['read_tier'],
                 # Attributes for cache tiering
                 'target_max_bytes': pool_data['target_max_bytes'],
@@ -201,7 +195,11 @@ class CephPool(NodbModel):
                 'hit_set_count': pool_data['hit_set_count'],
                 'hit_set_params': CephPoolHitSetParams(**pool_data['hit_set_params']),
             }
-            result.append(CephPool(**object_data))
+
+            ceph_pool = CephPool(**object_data)
+            ceph_pool.tiers = [CephPoolTier(pool_id=id) for id in pool_data['tiers']]
+
+            result.append(ceph_pool)
 
         return result
 
