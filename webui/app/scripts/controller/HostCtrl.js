@@ -63,7 +63,10 @@ app.controller("HostCtrl", function ($scope, $state, HostService, $uibModal) {
   $scope.$watch("selection.item", function (selitem) {
     $scope.hasSelection = Boolean(selitem);
     if (selitem) {
-      $state.go("hosts.attributes", {host: selitem.id});
+      $state.go("hosts.attributes", {
+        host: selitem.id,
+        "#": "more"
+      });
     } else {
       $state.go("hosts");
     }

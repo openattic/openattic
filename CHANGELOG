@@ -4,15 +4,19 @@ openATTIC Changelog
 Version 2.0.10 (not released yet):
 ----------------------------------
 
+* WebUI: Show an error message if javascript is disabled (OP-580)
 * WebUI: Remove Smartadmin and added a new openATTIC theme (OP-585)
 * WebUI: replaced all SmallBox notifications by toasty notifications (OP-720)
+* WebUI: Disable resize for btrfs volumes (OP-911)
 * WebUI: New pagination template/layout (OP-1003)
+* WebUI/QA: Refactor and add tests to volume_resize.e2e.js (OP-912)
 * WebUI/QA: Added afterAll function to all tests (OP-980)
 * WebUI/QA: Added e2e tests to test the pagination (OP-1010)
 * Backend: The name of a netdevice allows a length of up to 15 characters now
   (OP-960) (thanks to Willi Fehler for reporting the issue)
 * Backend: Added basic infrastructure to directly gather information from Ceph
   clusters (OP-1014)
+* Backend: Fixed bug - add local volumes to local fstab only (OP-1058)
 * Backend/Gatling: Cleaned up Gatling (OP-1025)
 * Installation: "oaconfig install" now skips all LVM volume groups tagged with
   "sys", so they won't be added to the oA database (OP-564). Fixed oaconfig
@@ -26,6 +30,7 @@ Version 2.0.10 (not released yet):
   (OP-987)
 * Installation: Updated RPM and DEB packaging to include the new "nodb" Python
   modules, added dependency on the "python-rados" package (OP-1021)
+* Documentation: Added Gatling document to openATTIC documentation (OP-894)
 
 Version 2.0.9, 16. Mar 2016:
 ----------------------------

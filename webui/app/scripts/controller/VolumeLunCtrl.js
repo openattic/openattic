@@ -69,7 +69,7 @@ app.controller("VolumeLunCtrl", function ($scope, $state, LunService, $uibModal)
         });
   }, true);
   $scope.addLunAction = function () {
-    $state.go("volumes.detail.luns-add");
+    $state.go("volumes.detail.luns-add", {"#": "more"});
   };
 
   $scope.deleteLunAction = function () {
