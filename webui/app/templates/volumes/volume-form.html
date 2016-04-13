@@ -82,25 +82,16 @@
                         <div class="form-group">
                             <label class="col-sm-3 control-label">Type</label>
                             <div class="col-sm-9">
-                                <div class="radio radio-primary">
-                                    <input type="radio" ng-model="data.filesystem"
-                                               value="" ng-disabled="state.formatted" id="lun">
-                                    <label for="lun">Create LUN</label>
-                                </div>
-                                <div class="radio radio-primary" ng-show="supported_filesystems.xfs">
-                                    <input type="radio" ng-model="data.filesystem" value="xfs"
-                                           ng-disabled="state.formatted" id="xfs">
-                                    <label for="xfs">Create Virtualization Store -> XFS</label>
-                                </div>
-                                <div class="radio radio-primary" ng-show="supported_filesystems.zfs">
-                                    <input type="radio" ng-model="data.filesystem" value="zfs"
-                                           ng-disabled="state.formatted" id="zfs">
-                                    <label for="zfs">Create ZFS Volume</label>
-                                </div>
-                                <div class="radio radio-primary" ng-show="supported_filesystems.btrfs">
-                                    <input type="radio" ng-model="data.filesystem" value="btrfs"
-                                           ng-disabled="state.formatted" id="btrfs">
-                                    <label for="btrfs">Create File Store -> BTRFS</label>
+                                <div ng-repeat="(fs, text) in filesystems"
+                                        ng-show="supported_filesystems[fs]">
+                                    <div class="radio radio-primary">
+                                        <input type="radio" ng-model="data.filesystem"
+                                            value="{{fs}}" ng-disabled="state.formatted" id="{{fs}}">
+                                        <label for="{{fs}}">{{text}}
+                                            <span class="text-info" ng-show="data.filesystem === fs">
+                                                &nbsp;-&nbsp;{{supported_filesystems[fs]}}</span>
+                                        </label>
+                                    </div>
                                 </div>
                             </div>
                         </div>
