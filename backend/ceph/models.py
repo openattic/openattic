@@ -306,25 +306,39 @@ class CrushmapVersion(models.Model):
         return self.epoch == self.cluster.get_osdmap()["epoch"]
 
     def get_tree(self):
+        """Get the (slightly modified) CRUSH tree.
+
+        Returns the CRUSH tree for the cluster. The `items` array of the `buckets` are modified so
+        that they don't contain the OSDs anymore, but the children buckets.
+        """
+
         crushmap = json.loads(self.crushmap)
         crushtree = dict(crushmap, buckets=[])
 
         parentbucket = {}
 
         for cbucket in crushmap["buckets"]:
+
             for member in cbucket["items"]:
+                # Creates an array with all children using their IDs as keys and themselves as
+                # values. This already excludes the root buckets!
                 parentbucket[member["id"]] = cbucket
+
+            # Clears the items of `crushmap['buckets']`.
             cbucket["items"] = []
 
-        buckets = crushmap["buckets"][:]
+        buckets = crushmap["buckets"][:]  # Make a copy of the `buckets` array.
         while buckets:
             cbucket = buckets.pop(0)
 
-            if cbucket["id"] in parentbucket:
+            if cbucket["id"] in parentbucket:  # If the current bucket has a parent.
+
+                # Add the child (cbucket) to the `items` array of the parent object.
                 parentbucket[cbucket["id"]]["items"].append(cbucket)
-            elif cbucket["type_name"] != "root":
-                buckets.append(cbucket)
-            else:
+
+            else:  # Has to be a root bucket.
+
+                # Add the root bucket to the `buckets` array. It would be empty otherwise!
                 crushtree["buckets"].append(cbucket)
 
         return crushtree
