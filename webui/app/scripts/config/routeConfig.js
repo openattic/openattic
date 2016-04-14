@@ -507,5 +507,23 @@ angular.module("openattic").config(function ($stateProvider, $urlRouterProvider)
       ncyBreadcrumb: {
         label: "Ceph Pools"
       }
+    })
+    .state("cephPools.detail", {
+      url: "/:cephPools",
+      views: {
+        "tab": {templateUrl: "components/ceph-pools/templates/tab.html"}
+      },
+      ncyBreadcrumb: {
+        skip: true
+      }
+    })
+    .state("cephPools.detail.status", {
+      url: "/status",
+      views: {
+        "tab-content": {templateUrl: "templates/volumes/status.html"}
+      },
+      ncyBreadcrumb: {
+        label: "{{selection.item.name}} Status"
+      }
     });
 });

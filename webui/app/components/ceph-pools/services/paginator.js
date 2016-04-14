@@ -50,8 +50,7 @@ app.factory("Paginator", function ($resource) {
     },
     pools: {
       method: "GET",
-      url: "/openattic/api/ceph/:id/pools",
-      isArray: true
+      url: "/openattic/api/ceph/:id/pools"
     }
   });
 });

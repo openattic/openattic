@@ -31,9 +31,10 @@
 "use strict";
 
 var app = angular.module("openattic.cephPools");
-app.controller("CephPoolsCtrl", function ($scope, Paginator) {
+app.controller("CephPoolsCtrl", function ($scope, $state, Paginator) {
   $scope.clusters = {};
-  $scope.pools = [];
+  $scope.pools = {};
+  //$scope.pools = [];
 
   $scope.filterConfig = {
     page: 0,
@@ -43,8 +44,7 @@ app.controller("CephPoolsCtrl", function ($scope, Paginator) {
     sortorder: null
   };
 
-  $scope.selection = {
-  };
+  $scope.selection = {};
 
   $scope.$watch("filterConfig", function () {
     Paginator
@@ -54,19 +54,22 @@ app.controller("CephPoolsCtrl", function ($scope, Paginator) {
         $scope.clusters = res.results;
         $scope.clusters.forEach(function (cluster) {
           Paginator
-             .pools({
-               id: cluster.fsid
-             })
-             .$promise
-             .then(function (res) {
-               res.forEach(function (pool) {
-                 $scope.pools.push(pool);
-               });
-               console.log($scope.pools);
-             })
-            .catch(function () {
-              console.log("Ceph has no pools");
-            });
+              .pools({
+                id: cluster.fsid,
+                page: $scope.filterConfig.page + 1,
+                pageSize: $scope.filterConfig.entries,
+                search: $scope.filterConfig.search,
+                ordering: ($scope.filterConfig.sortorder === "ASC" ? "" : "-") + $scope.filterConfig.sortfield,
+                upper__isnull: "True"
+              })
+              .$promise
+              .then(function (res) {
+                console.log(res);
+                $scope.pools = res;
+              })
+              .catch(function (error) {
+                console.log("Ceph has no pools", error);
+              });
         });
       })
       .catch(function () {
@@ -81,6 +84,19 @@ app.controller("CephPoolsCtrl", function ($scope, Paginator) {
 
     $scope.multiSelection = Boolean(items);
     $scope.hasSelection = Boolean(item);
-  });
 
+    console.log(selection);
+
+    if (!item && !items) {
+      $state.go("cephPools");
+      return;
+    }
+
+    if (item) {
+      $state.go("volumes.detail.status", {
+        volume: item.id,
+        "#": "more"
+      });
+    }
+  });
 });
