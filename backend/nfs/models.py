@@ -38,14 +38,14 @@ class Export(models.Model):
         with Transaction():
             self.volume.storageobj.lock()
             nfs = get_dbus_object("/nfs")
-            nfs.writeconf()
+            nfs.writeconf(False, 0)
             nfs.exportfs(True, self.path, self.address, self.options)
         return ret
 
 def __export_post_delete(instance, **kwargs):
     with Transaction():
         nfs = get_dbus_object("/nfs")
-        nfs.writeconf()
+        nfs.writeconf(True, instance.id)
         nfs.exportfs(False, instance.path, instance.address, instance.options)
 
 models.signals.post_delete.connect(__export_post_delete, sender=Export)

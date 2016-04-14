@@ -23,11 +23,34 @@ from nfs.conf      import settings as nfs_settings
 class SystemD(BasePlugin):
     dbus_path = "/nfs"
 
-    @deferredmethod(in_signature="")
-    def writeconf(self, sender):
+    @deferredmethod(in_signature="bi")
+    def writeconf(self, delete, id, sender):
+        """
+        Writes all known exports of Export.objects.all() into /etc/exports. The deletion of exports
+        is handled by this method as well because it refreshes the whole /etc/exports file.
+
+        The Parameters 'delete' and 'id 'are needed if the method is called by a post_delete signal.
+        The Export object still exists during this signal but isn't allowed to be added to
+        /etc/exports again.
+        Handling this situation by one Parameter only is not possible because the DBUS protocol
+        doesn't accept optional parameters or None.
+
+        :param delete (bool): Does the current call delete an export? In the case of a delete-
+            call there might be an object that should be skipped.
+        :param id (int): Delete-calls: ID of the object that should be skipped and not be added to
+            /etc/exports again.
+            Save-calls: Any other Integer value (because the DBUS protocol doesn't accept optional
+            parameters or None) - you could choose for example 0.
+        :param sender: Unique ID of DBUS sender object
+
+        :return: None
+        """
         fd = open( nfs_settings.EXPORTS, "wb" )
         try:
             for export in Export.objects.all():
+                if delete and id == export.id:
+                    continue
+
                 fd.write( "%-50s %s(%s)\n" % ( export.path, export.address, export.options ) )
         finally:
             fd.close()
