@@ -520,7 +520,7 @@ angular.module("openattic").config(function ($stateProvider, $urlRouterProvider)
     .state("cephPools.detail.status", {
       url: "/status",
       views: {
-        "tab-content": {templateUrl: "templates/volumes/status.html"}
+        "tab-content": {templateUrl: "components/ceph-pools/templates/status.html"}
       },
       ncyBreadcrumb: {
         label: "{{selection.item.name}} Status"

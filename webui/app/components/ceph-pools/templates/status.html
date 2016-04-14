@@ -1,0 +1,64 @@
+<div class="panel panel-default">
+    <div class="panel-heading">
+        <h3 class="panel-title">Status of {{selection.item.name}}</h3>
+    </div>
+    <div class="panel-body">
+        <h2>Basic information:</h2>
+        <dl class="dl-horizontal">
+            <dt>Name:</dt>
+            <dd ng-bind="selection.item.name"></dd>
+            <dt>ID:</dt>
+            <dd ng-bind="selection.item.id"></dd>
+            <dt>Size (MB):</dt>
+            <dd ng-bind="selection.item.mb_size | number: 2"></dd>
+            <dt>Used (MB):</dt>
+            <dd ng-bind="selection.item.mb_used | number: 2"></dd>
+            <dt>Placement Groups:</dt>
+            <dd ng-bind="selection.item.pg_num"></dd>
+            <dt>Replica Size:</dt>
+            <dd ng-bind="selection.item.size"></dd>
+            <dt>Erasure code profile:</dt>
+            <dd ng-bind="selection.item.erasure_code_profile"></dd>
+            <dt>Last change:</dt>
+            <dd ng-bind="selection.item.last_change"></dd>
+            <dt>Type:</dt>
+            <dd ng-bind="selection.item.type"></dd>
+            <dt>Crush ruleset:</dt>
+            <dd ng-bind="selection.item.crush_ruleset"></dd>
+        </dl>
+
+        <h2>Advanced information:</h2>
+        <dl class="dl-horizontal">
+            <dt>pg_placement_num:</dt>
+            <dd ng-bind="selection.item.pgp_num"></dd>
+            <dt>stripe_width:</dt>
+            <dd ng-bind="selection.item.stripe_width"></dd>
+            <dt>quota_max_bytes:</dt>
+            <dd ng-bind="selection.item.quota_max_bytes"></dd>
+            <dt>quota_max_objects:</dt>
+            <dd ng-bind="selection.item.quota_max_objects"></dd>
+        </dl>
+
+        <h2>Cache tiering - Basic information:</h2>
+        <dl class="dl-horizontal">
+            <dt>tier_of:</dt>
+            <dd ng-bind="selection.item.tier_of"></dd>
+            <dt>write_tier:</dt>
+            <dd ng-bind="selection.item.write_tier"></dd>
+            <dt>tiers:</dt>
+            <dd ng-bind="selection.item.tiers | json"></dd>
+        </dl>
+
+        <h2>Cache tiering - Advanced information:</h2>
+        <dl class="dl-horizontal">
+            <dt>target_max_bytes:</dt>
+            <dd ng-bind="selection.item.target_max_bytes"></dd>
+            <dt>hit_set_period:</dt>
+            <dd ng-bind="selection.item.hit_set_period"></dd>
+            <dt>hit_set_count:</dt>
+            <dd ng-bind="selection.item.hit_set_count"></dd>
+            <dt>hit_set_params:</dt>
+            <dd ng-bind="selection.item.hit_set_params | json"></dd>
+        </dl>
+    </div>
+</div>

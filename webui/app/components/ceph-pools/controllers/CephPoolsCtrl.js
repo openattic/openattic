@@ -46,6 +46,17 @@ app.controller("CephPoolsCtrl", function ($scope, $state, Paginator) {
 
   $scope.selection = {};
 
+  var updateResults = function () {
+    $scope.pools.results.forEach(function (pool, index) {
+      pool.mb_used = pool.kb_used / 1024;
+      pool.used = pool.num_bytes / pool.max_avail * 100;
+      pool.unused = 100 - pool.used;
+      pool.free = pool.max_avail - pool.num_bytes;
+      pool.mb_size = pool.max_avail / Math.pow(1024, 2);
+      $scope.pools.results[index] = pool;
+    });
+  };
+
   $scope.$watch("filterConfig", function () {
     Paginator
       .clusters()
@@ -66,6 +77,7 @@ app.controller("CephPoolsCtrl", function ($scope, $state, Paginator) {
               .then(function (res) {
                 console.log(res);
                 $scope.pools = res;
+                updateResults();
               })
               .catch(function (error) {
                 console.log("Ceph has no pools", error);
@@ -93,8 +105,8 @@ app.controller("CephPoolsCtrl", function ($scope, $state, Paginator) {
     }
 
     if (item) {
-      $state.go("volumes.detail.status", {
-        volume: item.id,
+      $state.go("cephPools.detail.status", {
+        cephPool: item.id,
         "#": "more"
       });
     }
