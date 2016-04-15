@@ -1124,11 +1124,16 @@ class FileSystemProvider(FileSystemVolume):
 
         return stats
 
+
 def __delete_filesystemprovider(instance, **kwargs):
     instance.fs.unmount()
+
+
+def __delete_filesystemprovider_post(instance, **kwargs):
     instance.fs.write_fstab()
 
 signals.pre_delete.connect(__delete_filesystemprovider, sender=FileSystemProvider)
+signals.post_delete.connect(__delete_filesystemprovider_post, sender=FileSystemProvider)
 
 
 class DiskDevice(PhysicalBlockDevice):
