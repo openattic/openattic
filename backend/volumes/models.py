@@ -1130,7 +1130,7 @@ def __delete_filesystemprovider(instance, **kwargs):
 
 
 def __delete_filesystemprovider_post(instance, **kwargs):
-    instance.fs.write_fstab()
+    instance.fs.write_fstab(True, instance.storageobj.id)
 
 signals.pre_delete.connect(__delete_filesystemprovider, sender=FileSystemProvider)
 signals.post_delete.connect(__delete_filesystemprovider_post, sender=FileSystemProvider)

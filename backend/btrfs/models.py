@@ -119,7 +119,7 @@ class BtrfsSubvolume(FileSystemVolume):
         else:
             self.fs.delete_subvolume()
         FileSystemVolume.delete(self)
-        self.fs.write_fstab()
+        self.fs.write_fstab(True, self.id)
 
     @property
     def fs(self):

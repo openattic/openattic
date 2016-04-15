@@ -139,8 +139,30 @@ class SystemD(BasePlugin):
     def xfs_set_uuid(self, devpath, uuid, sender):
         invoke(["/usr/sbin/xfs_admin", "-U", uuid, devpath])
 
-    @deferredmethod(in_signature="")
-    def write_fstab(self, sender):
+    @deferredmethod(in_signature="bi")
+    def write_fstab(self, delete, id, sender):
+        """
+        Writes all known filesystem volumes of StorageObject.objects.all() on their related
+        openATTIC host into /etc/fstab. The deletion of entries is handled by this method as well
+        because is just refreshes the whole /etc/fstab file.
+
+        The parameters 'delete' and 'id' are needed if the method is called by a post_delete signal
+        (see Jira issue OP-736 for more information).
+        The StorageObject of the deleted volume still exists during this signal but isn't allowed to
+        be added to /etc/fstab again.
+        Handling this situation by one Parameter only is not possible because the DBUS protocol
+        doesn't accept optional parameters or None.
+
+        :param delete (bool): Does the current call delete a filesystem volume? If yes there might
+            be an object that should be skipped.
+        :param id (int): Delete-calls: ID of the object that should be skipped and not be added to
+            /etc/fstab again.
+            Save-calls: Any other Integer value (because the DBUS protocol doesn't accept optional
+            parameters or None) - you could choose for example 0.
+        :param sender: Unique ID of DBUS sender object
+
+        :return: None
+        """
         # read current fstab
         with open("/etc/fstab", "rb") as fstab:
 
@@ -157,6 +179,9 @@ class SystemD(BasePlugin):
             newlines.append(delim)
 
             for obj in StorageObject.objects.all():
+                if delete and id == obj.id:
+                    continue
+
                 try:
                     if not hasattr(obj.filesystemvolume.volume, "fstype"):
                         continue
