@@ -13,6 +13,7 @@
     "angular-breadcrumb": "0.4.1",
     "angular-flot": "0.0.16",
     "angular-md5": "0.1.10",
+    "angular-nvd3": "1.0.6",
     "angular-resource": "1.5.0",
     "angular-sanitize": "1.5.0",
     "angular-toasty": "1.0.5",
@@ -20,6 +21,7 @@
     "angular-ui-sortable": "0.13.4",
     "angular-ui-tree": "2.15.0",
     "bootstrap": "3.3.6",
+    "d3": "3.5.16",
     "fontawesome": "4.5.0",
     "jquery": "2.2.1",
     "jquery.easy-pie-chart": "2.1.6",
@@ -28,6 +30,7 @@
     "lodash": "4.6.1",
     "malhar-angular-dashboard": "2.0.0",
     "ng-tags-input": "3.0.0",
+    "nvd3": "1.8.2",
     "requirejs": "2.1.22"
   },
   "devDependencies": {
