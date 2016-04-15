@@ -31,8 +31,8 @@
 "use strict";
 
 var app = angular.module("openattic");
-app.factory("ClusterResource", function ($resource) {
-  return $resource("/openattic/api/cephclusters/:id", {
+app.factory("ClusterResource", function ($resource, API) {
+  return $resource(API.URL + "cephclusters/:id", {
     id: "@id"
   }, {
     update: {method: "PUT"},

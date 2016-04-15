@@ -31,8 +31,8 @@
 "use strict";
 
 var app = angular.module("openattic");
-app.factory("SnapshotService", function ($resource) {
-  return $resource("/openattic/api/snapshots/:id", {
+app.factory("SnapshotService", function ($resource, API) {
+  return $resource(API.URL + "snapshots/:id", {
     id: "@id"
   }, {
     update: {method: "PUT"},
@@ -45,11 +45,11 @@ app.factory("SnapshotService", function ($resource) {
     },
     filter: {
       method: "GET",
-      url: "/openattic/api/snapshots"
+      url: API.URL + "snapshots"
     },
     clone: {
       method: "POST",
-      url: "/openattic/api/snapshots/:id/clone"
+      url: API.URL + "snapshots/:id/clone"
     }
   });
 });

@@ -31,8 +31,8 @@
 "use strict";
 
 var app = angular.module("openattic");
-app.factory("CmdlogService", function ($resource) {
-  return $resource("/openattic/api/cmdlogs/:id", {
+app.factory("CmdlogService", function ($resource, API) {
+  return $resource(API.URL + "cmdlogs/:id", {
     id: "@id"
   }, {
     query: {
@@ -44,7 +44,7 @@ app.factory("CmdlogService", function ($resource) {
     },
     filter: {
       method: "GET",
-      url: "/openattic/api/cmdlogs"
+      url: API.URL + "cmdlogs"
     }
   });
 });

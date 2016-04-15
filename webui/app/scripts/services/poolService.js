@@ -31,8 +31,8 @@
 "use strict";
 
 var app = angular.module("openattic");
-app.factory("PoolService", function ($resource) {
-    return $resource("/openattic/api/pools/:id", {
+app.factory("PoolService", function ($resource, API) {
+    return $resource(API.URL + "pools/:id", {
       id: "@id"
     }, {
       update: {method: "PUT"},
@@ -45,15 +45,15 @@ app.factory("PoolService", function ($resource) {
       },
       storage: {
         method: "GET",
-        url: "/openattic/api/pools/:id/storage"
+        url: API.URL + "pools/:id/storage"
       },
       filesystems: {
         method: "GET",
-        url: "/openattic/api/pools/:id/filesystems"
+        url: API.URL + "pools/:id/filesystems"
       },
       filter: {
         method: "GET",
-        url: "/openattic/api/pools"
+        url: API.URL + "pools"
       }
     });
   });

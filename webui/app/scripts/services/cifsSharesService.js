@@ -31,8 +31,8 @@
 "use strict";
 
 var app = angular.module("openattic");
-app.factory("CifsSharesService", function ($resource) {
-  return $resource("/openattic/api/sambashares/:id", {
+app.factory("CifsSharesService", function ($resource, API) {
+  return $resource(API.URL + "sambashares/:id", {
     id: "@id"
   }, {
     update: {method: "PUT"},
@@ -45,11 +45,11 @@ app.factory("CifsSharesService", function ($resource) {
     },
     filter: {
       method: "GET",
-      url: "/openattic/api/sambashares"
+      url: API.URL + "sambashares"
     },
     domainconfig: {
       method: "GET",
-      url: "/openattic/api/sambashares/domainconfig"
+      url: API.URL + "sambashares/domainconfig"
     }
   });
 });

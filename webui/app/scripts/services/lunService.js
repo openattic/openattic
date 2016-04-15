@@ -31,8 +31,8 @@
 "use strict";
 
 var app = angular.module("openattic");
-app.factory("LunService", function ($resource) {
-  return $resource("/openattic/api/luns/:id", {
+app.factory("LunService", function ($resource, API) {
+  return $resource(API.URL + "luns/:id", {
     id: "@id"
   }, {
     update: {method: "PUT"},
@@ -45,7 +45,7 @@ app.factory("LunService", function ($resource) {
     },
     filter: {
       method: "GET",
-      url: "/openattic/api/luns"
+      url: API.URL + "luns"
     }
   });
 });
