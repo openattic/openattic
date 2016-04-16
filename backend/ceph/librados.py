@@ -1,6 +1,63 @@
 import rados
 import os
 import json
+import glob
+import logging
+import ConfigParser
+
+logger = logging.getLogger(__name__)
+
+class Keyring(object):
+    """
+    Returns usable keyring
+    """
+    def __init__(self, cluster_name='ceph', ceph_dir='/etc/ceph'):
+        """
+        Sets keyring filename and username
+        """
+        self.filename = None
+        self.username = None
+
+        keyrings = glob.glob("{}/{}.client.*.keyring".format(ceph_dir, cluster_name))
+        self._find(keyrings)
+
+        if self.filename:
+            logger.info("Selected keyring {}".format(self.filename))
+        else:
+            logger.error("No usable keyring")
+            raise RuntimeError("Check keyring permissions")
+
+        self._username()
+        logger.info("Connecting as {}".format(self.username))
+
+    def _find(self, keyrings):
+        """
+        Check permissions on keyrings, set last usable keyring
+        """
+        for keyring in keyrings:
+            if os.access(keyring, os.R_OK):
+                self.filename = keyring
+            else:
+                logger.info("Skipping {}, permission denied".format(keyring))
+
+    def _username(self):
+        """
+        Parse keyring for username
+        """
+        _config = ConfigParser.ConfigParser()
+        try:
+            _config.read(self.filename)
+        except ConfigParser.ParsingError:
+            # ConfigParser fails on leading whitespace for keys
+            pass
+
+        try:
+            self.username = _config.sections()[0]
+        except IndexError:
+            error_msg = "Corrupt keyring, check {}".format(self.filename)
+            logger.error(error_msg)
+            raise RuntimeError(error_msg)
+
 
 
 class Client(object):
@@ -8,7 +65,9 @@ class Client(object):
 
     def __init__(self, cluster_name='ceph'):
         self._conf_file = os.path.join('/etc/ceph/', cluster_name + '.conf')
-        self._keyring = os.path.join('/etc/ceph', cluster_name + '.client.admin.keyring')
+        keyring = Keyring(cluster_name)
+        self._keyring = keyring.filename
+        self._name = keyring.username
         self._pools = {}
         self._cluster = None
         self._default_timeout = 30
@@ -23,7 +82,7 @@ class Client(object):
 
     def connect(self, conf_file):
         if self._cluster is None:
-            self._cluster = rados.Rados(conffile=conf_file, conf={'keyring': self._keyring})
+            self._cluster = rados.Rados(conffile=conf_file, name=self._name, conf={'keyring': self._keyring})
 
         if not self.connected():
             self._cluster.connect()
@@ -93,3 +152,4 @@ class Client(object):
 
 class ExternalCommandError(Exception):
     pass
+
