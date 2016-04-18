@@ -26,8 +26,8 @@ class SystemD(BasePlugin):
     @deferredmethod(in_signature="bi")
     def writeconf(self, delete, id, sender):
         """
-        Writes all known exports of Export.objects.all() into /etc/exports. The deletion of exports
-        is handled by this method as well because it just refreshes the whole /etc/exports file.
+        Writes all known exports of into /etc/exports. The deletion of exports is handled by this
+        method as well because it just refreshes the whole /etc/exports file.
 
         The parameters 'delete' and 'id' are needed if the method is called by a post_delete signal
         (see Jira issue OP-736 for more information).

@@ -142,9 +142,9 @@ class SystemD(BasePlugin):
     @deferredmethod(in_signature="bi")
     def write_fstab(self, delete, id, sender):
         """
-        Writes all known filesystem volumes of StorageObject.objects.all() on their related
-        openATTIC host into /etc/fstab. The deletion of entries is handled by this method as well
-        because is just refreshes the whole /etc/fstab file.
+        Writes all known filesystem volumes on their related openATTIC host into /etc/fstab. The
+        deletion of entries is handled by this method as well because is just refreshes the whole
+        /etc/fstab file.
 
         The parameters 'delete' and 'id' are needed if the method is called by a post_delete signal
         (see Jira issue OP-736 for more information).
