@@ -178,10 +178,12 @@ class SystemD(BasePlugin):
 
             newlines.append(delim)
 
-            for obj in StorageObject.objects.all():
-                if delete and id == obj.id:
-                    continue
+            if delete:
+                storage_objects = StorageObject.objects.exclude(id=id)
+            else:
+                storage_objects = StorageObject.objects.all()
 
+            for obj in storage_objects:
                 try:
                     if not hasattr(obj.filesystemvolume.volume, "fstype"):
                         continue

@@ -47,11 +47,14 @@ class SystemD(BasePlugin):
         :return: None
         """
         fd = open( nfs_settings.EXPORTS, "wb" )
-        try:
-            for export in Export.objects.all():
-                if delete and id == export.id:
-                    continue
 
+        if delete:
+            exports = Export.objects.exclude(id=id)
+        else:
+            exports = Export.objects.all()
+
+        try:
+            for export in exports:
                 fd.write( "%-50s %s(%s)\n" % ( export.path, export.address, export.options ) )
         finally:
             fd.close()
