@@ -14,26 +14,27 @@
  *  GNU General Public License for more details.
 """
 
-from django.db   import models
+from django.db import models
 
 from systemd.helpers import get_dbus_object, Transaction
 from ifconfig.models import getHostDependentManagerClass
 from volumes.models import FileSystemVolume
 
-class Export(models.Model):
-    volume      = models.ForeignKey(FileSystemVolume)
-    path        = models.CharField(max_length=255)
-    address     = models.CharField(max_length=250)
-    options     = models.CharField(max_length=250, default="rw,no_subtree_check,no_root_squash")
 
-    objects     = getHostDependentManagerClass("volume__storageobj__host")()
+class Export(models.Model):
+    volume = models.ForeignKey(FileSystemVolume)
+    path = models.CharField(max_length=255)
+    address = models.CharField(max_length=250)
+    options = models.CharField(max_length=250, default="rw,no_subtree_check,no_root_squash")
+
+    objects = getHostDependentManagerClass("volume__storageobj__host")()
     all_objects = models.Manager()
-    share_type  = "nfs"
+    share_type = "nfs"
 
     def __unicode__(self):
-        return "%s - %s" % ( self.volume, self.address )
+        return "%s - %s" % (self.volume, self.address)
 
-    def save( self, *args, **kwargs ):
+    def save(self, *args, **kwargs):
         ret = models.Model.save(self, *args, **kwargs)
         with Transaction():
             self.volume.storageobj.lock()
@@ -42,6 +43,7 @@ class Export(models.Model):
             nfs.exportfs(True, self.path, self.address, self.options)
         return ret
 
+
 def __export_post_delete(instance, **kwargs):
     with Transaction():
         nfs = get_dbus_object("/nfs")
@@ -49,4 +51,3 @@ def __export_post_delete(instance, **kwargs):
         nfs.exportfs(False, instance.path, instance.address, instance.options)
 
 models.signals.post_delete.connect(__export_post_delete, sender=Export)
-

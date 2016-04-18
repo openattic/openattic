@@ -19,9 +19,10 @@ import socket
 from django.template.loader import render_to_string
 
 from systemd.procutils import service_command, invoke
-from systemd.plugins   import logged, BasePlugin, deferredmethod
-from samba.models  import Share
-from samba.conf    import settings as samba_settings
+from systemd.plugins import logged, BasePlugin, deferredmethod
+from samba.models import Share
+from samba.conf import settings as samba_settings
+
 
 @logged
 class SystemD(BasePlugin):
@@ -58,14 +59,14 @@ class SystemD(BasePlugin):
         else:
             shares = Share.objects.all()
 
-        fd = open( samba_settings.SMB_CONF, "wb" )
+        fd = open(samba_settings.SMB_CONF, "wb")
         try:
-            fd.write( render_to_string( "samba/smb.conf", {
-                'Hostname':  socket.gethostname(),
-                'Domain':    samba_settings.DOMAIN    or fake_domain,
+            fd.write(render_to_string("samba/smb.conf", {
+                'Hostname': socket.gethostname(),
+                'Domain': samba_settings.DOMAIN or fake_domain,
                 'Workgroup': samba_settings.WORKGROUP or fake_workgroup,
-                'Shares':    shares
-                } ).encode("UTF-8") )
+                'Shares': shares
+                }).encode("UTF-8"))
         finally:
             fd.close()
 

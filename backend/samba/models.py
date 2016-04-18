@@ -20,24 +20,25 @@ from systemd.helpers import get_dbus_object, Transaction
 from ifconfig.models import getHostDependentManagerClass
 from volumes.models import FileSystemVolume
 
-class Share(models.Model):
-    volume        = models.ForeignKey(FileSystemVolume)
-    name          = models.CharField(max_length=50, unique=True)
-    path          = models.CharField(max_length=255)
-    available     = models.BooleanField(default=True,  blank=True)
-    browseable    = models.BooleanField(default=True,  blank=True)
-    guest_ok      = models.BooleanField(default=False, blank=True)
-    writeable     = models.BooleanField(default=True,  blank=True)
-    comment       = models.CharField(max_length=250, blank=True)
 
-    share_type    = "samba"
-    objects       = getHostDependentManagerClass("volume__storageobj__host")()
-    all_objects   = models.Manager()
+class Share(models.Model):
+    volume = models.ForeignKey(FileSystemVolume)
+    name = models.CharField(max_length=50, unique=True)
+    path = models.CharField(max_length=255)
+    available = models.BooleanField(default=True,  blank=True)
+    browseable = models.BooleanField(default=True,  blank=True)
+    guest_ok = models.BooleanField(default=False, blank=True)
+    writeable = models.BooleanField(default=True,  blank=True)
+    comment = models.CharField(max_length=250, blank=True)
+
+    share_type = "samba"
+    objects = getHostDependentManagerClass("volume__storageobj__host")()
+    all_objects = models.Manager()
 
     def __unicode__(self):
         return unicode(self.volume)
 
-    def save( self, *args, **kwargs ):
+    def save(self, *args, **kwargs):
         ret = models.Model.save(self, *args, **kwargs)
         with Transaction():
             self.volume.storageobj.lock()
@@ -47,6 +48,7 @@ class Share(models.Model):
             samba.fs_chmod(self.path)
         return ret
 
+
 def __share_post_delete(instance, **kwargs):
     with Transaction():
         samba = get_dbus_object("/samba")
@@ -54,4 +56,3 @@ def __share_post_delete(instance, **kwargs):
         samba.reload()
 
 models.signals.post_delete.connect(__share_post_delete, sender=Share)
-
