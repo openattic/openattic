@@ -9,6 +9,7 @@ Version 2.0.10 (not released yet):
 * WebUI: replaced all SmallBox notifications by toasty notifications (OP-720)
 * WebUI: Disable resize for btrfs volumes (OP-911)
 * WebUI: New pagination template/layout (OP-1003)
+* WebUI: Accordion header is now clickalbe (OP-1064)
 * WebUI/QA: Refactor and add tests to volume_resize.e2e.js (OP-912)
 * WebUI/QA: Added afterAll function to all tests (OP-980)
 * WebUI/QA: Added e2e tests to test the pagination (OP-1010)
