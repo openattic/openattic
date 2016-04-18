@@ -509,7 +509,6 @@ angular.module("openattic").config(function ($stateProvider, $urlRouterProvider)
       }
     })
     .state("cephPools.detail", {
-      url: "/:cephPools",
       views: {
         "tab": {templateUrl: "components/ceph-pools/templates/tab.html"}
       },
@@ -523,7 +522,16 @@ angular.module("openattic").config(function ($stateProvider, $urlRouterProvider)
         "tab-content": {templateUrl: "components/ceph-pools/templates/status.html"}
       },
       ncyBreadcrumb: {
-        label: "{{selection.item.name}} Status"
+        label: "{{selection.item.name}} status"
+      }
+    })
+    .state("cephPools.detail.cacheTier", {
+      url: "/status",
+      views: {
+        "tab-content": {templateUrl: "components/ceph-pools/templates/cacheTier.html"}
+      },
+      ncyBreadcrumb: {
+        label: "{{selection.item.name}} cache tier"
       }
     });
 });

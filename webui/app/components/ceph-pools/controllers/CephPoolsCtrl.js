@@ -31,6 +31,28 @@
 "use strict";
 
 var app = angular.module("openattic.cephPools");
+
+app.filter("bytes", function () {
+  return function (bytes, precision, unit) {
+    var units = ["bytes", "kB", "MB", "GB", "TB", "PB"];
+    if (isNaN(parseFloat(bytes)) || !isFinite(bytes)) {
+      return "-";
+    }
+    if (bytes === 0) {
+      return bytes + " " + units[0];
+    }
+    precision = precision || 2;
+    if (!unit || unit < 0 || unit > units.length) {
+      unit = 0;
+    }
+    if (typeof unit === "string") {
+      unit = units.indexOf(unit);
+    }
+    var number = Math.floor(Math.log(bytes) / Math.log(1024));
+    return (bytes / Math.pow(1024, number)).toFixed(precision) +  " " + units[number];
+  };
+});
+
 app.controller("CephPoolsCtrl", function ($scope, $state, Paginator) {
   $scope.clusters = {};
   $scope.pools = {};
@@ -48,11 +70,9 @@ app.controller("CephPoolsCtrl", function ($scope, $state, Paginator) {
 
   var updateResults = function () {
     $scope.pools.results.forEach(function (pool, index) {
-      pool.mb_used = pool.kb_used / 1024;
       pool.used = pool.num_bytes / pool.max_avail * 100;
       pool.unused = 100 - pool.used;
       pool.free = pool.max_avail - pool.num_bytes;
-      pool.mb_size = pool.max_avail / Math.pow(1024, 2);
       $scope.pools.results[index] = pool;
     });
   };

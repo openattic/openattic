@@ -9,10 +9,10 @@
             <dd ng-bind="selection.item.name"></dd>
             <dt>ID:</dt>
             <dd ng-bind="selection.item.id"></dd>
-            <dt>Size (MB):</dt>
-            <dd ng-bind="selection.item.mb_size | number: 2"></dd>
-            <dt>Used (MB):</dt>
-            <dd ng-bind="selection.item.mb_used | number: 2"></dd>
+            <dt>Size:</dt>
+            <dd ng-bind="selection.item.max_avail | bytes"></dd>
+            <dt>Used:</dt>
+            <dd ng-bind="selection.item.num_bytes | bytes"></dd>
             <dt>Placement Groups:</dt>
             <dd ng-bind="selection.item.pg_num"></dd>
             <dt>Replica Size:</dt>
@@ -37,28 +37,6 @@
             <dd ng-bind="selection.item.quota_max_bytes"></dd>
             <dt>quota_max_objects:</dt>
             <dd ng-bind="selection.item.quota_max_objects"></dd>
-        </dl>
-
-        <h2>Cache tiering - Basic information:</h2>
-        <dl class="dl-horizontal">
-            <dt>tier_of:</dt>
-            <dd ng-bind="selection.item.tier_of"></dd>
-            <dt>write_tier:</dt>
-            <dd ng-bind="selection.item.write_tier"></dd>
-            <dt>tiers:</dt>
-            <dd ng-bind="selection.item.tiers | json"></dd>
-        </dl>
-
-        <h2>Cache tiering - Advanced information:</h2>
-        <dl class="dl-horizontal">
-            <dt>target_max_bytes:</dt>
-            <dd ng-bind="selection.item.target_max_bytes"></dd>
-            <dt>hit_set_period:</dt>
-            <dd ng-bind="selection.item.hit_set_period"></dd>
-            <dt>hit_set_count:</dt>
-            <dd ng-bind="selection.item.hit_set_count"></dd>
-            <dt>hit_set_params:</dt>
-            <dd ng-bind="selection.item.hit_set_params | json"></dd>
         </dl>
     </div>
 </div>
