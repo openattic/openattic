@@ -42,7 +42,7 @@ class Share(models.Model):
         with Transaction():
             self.volume.storageobj.lock()
             samba = get_dbus_object("/samba")
-            samba.writeconf("", "")
+            samba.writeconf("", "", False, 0)
             samba.reload()
             samba.fs_chmod(self.path)
         return ret
@@ -50,7 +50,7 @@ class Share(models.Model):
 def __share_post_delete(instance, **kwargs):
     with Transaction():
         samba = get_dbus_object("/samba")
-        samba.writeconf("", "")
+        samba.writeconf("", "", True, instance.id)
         samba.reload()
 
 models.signals.post_delete.connect(__share_post_delete, sender=Share)
