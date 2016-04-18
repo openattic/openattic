@@ -7,6 +7,8 @@
         <dl class="dl-horizontal">
             <dt>Name:</dt>
             <dd ng-bind="selection.item.name"></dd>
+            <dt>Cluster:</dt>
+            <dd ng-bind="selection.item.cluster.title"></dd>
             <dt>ID:</dt>
             <dd ng-bind="selection.item.id"></dd>
             <dt>Size:</dt>
@@ -29,6 +31,8 @@
 
         <h2>Advanced information:</h2>
         <dl class="dl-horizontal">
+            <dt>Cluster ID:</dt>
+            <dd ng-bind="selection.item.cluster.id"></dd>
             <dt>pg_placement_num:</dt>
             <dd ng-bind="selection.item.pgp_num"></dd>
             <dt>stripe_width:</dt>

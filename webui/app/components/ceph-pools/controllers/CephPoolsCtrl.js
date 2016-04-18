@@ -68,13 +68,28 @@ app.controller("CephPoolsCtrl", function ($scope, $state, Paginator) {
 
   $scope.selection = {};
 
-  var updateResults = function () {
-    $scope.pools.results.forEach(function (pool, index) {
+  var updateResults = function (res, clusterId) {
+    res.results.forEach(function (pool, index) {
       pool.used = pool.num_bytes / pool.max_avail * 100;
       pool.unused = 100 - pool.used;
       pool.free = pool.max_avail - pool.num_bytes;
-      $scope.pools.results[index] = pool;
+      res.results[index] = pool;
     });
+    if ($scope.pools.hasOwnProperty("results")) {
+      // Does the pool contains information about antother cluster?
+      var otherClusterPools = $scope.pools.results.filter(function (pool) {
+        return pool.cluster.id !== clusterId;
+      });
+
+      if (otherClusterPools.length === $scope.pools.results.length) {
+        //do a merge
+        res.count += $scope.pools.count;
+        $scope.pools.results.forEach(function (pool) {
+          res.results.push(pool);
+        });
+      }
+    }
+    return res;
   };
 
   $scope.$watch("filterConfig", function () {
@@ -85,23 +100,21 @@ app.controller("CephPoolsCtrl", function ($scope, $state, Paginator) {
         $scope.clusters = res.results;
         $scope.clusters.forEach(function (cluster) {
           Paginator
-              .pools({
-                id: cluster.fsid,
-                page: $scope.filterConfig.page + 1,
-                pageSize: $scope.filterConfig.entries,
-                search: $scope.filterConfig.search,
-                ordering: ($scope.filterConfig.sortorder === "ASC" ? "" : "-") + $scope.filterConfig.sortfield,
-                upper__isnull: "True"
-              })
-              .$promise
-              .then(function (res) {
-                console.log(res);
-                $scope.pools = res;
-                updateResults();
-              })
-              .catch(function (error) {
-                console.log("Ceph has no pools", error);
-              });
+            .pools({
+              id: cluster.fsid,
+              page: $scope.filterConfig.page + 1,
+              pageSize: $scope.filterConfig.entries,
+              search: $scope.filterConfig.search,
+              ordering: ($scope.filterConfig.sortorder === "ASC" ? "" : "-") + $scope.filterConfig.sortfield,
+              upper__isnull: "True"
+            })
+            .$promise
+            .then(function (res) {
+              $scope.pools = updateResults(res, cluster.fsid);
+            })
+            .catch(function (error) {
+              console.log("Ceph has no pools", error);
+            });
         });
       })
       .catch(function () {
@@ -116,8 +129,6 @@ app.controller("CephPoolsCtrl", function ($scope, $state, Paginator) {
 
     $scope.multiSelection = Boolean(items);
     $scope.hasSelection = Boolean(item);
-
-    console.log(selection);
 
     if (!item && !items) {
       $state.go("cephPools");
