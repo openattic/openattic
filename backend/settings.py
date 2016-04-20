@@ -208,7 +208,7 @@ LOGGING = {
         'file': {
             'level': 'INFO',
             'class': 'logging.FileHandler',
-            'filename': '/var/log/openattic/openattic_gui.log'
+            'filename': '/var/log/openattic/openattic.log'
         }
     },
     'loggers': {
