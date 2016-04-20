@@ -1,8 +1,12 @@
 openATTIC Changelog
 ===================
 
-Version 2.0.10 (not released yet):
-----------------------------------
+Version 2.0.11, (not released yet):
+-----------------------------------
+
+
+Version 2.0.10, 20. Apr 2016:
+-----------------------------
 
 * WebUI: Show an error message if javascript is disabled (OP-580)
 * WebUI: Remove Smartadmin and added a new openATTIC theme (OP-585)
