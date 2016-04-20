@@ -2,7 +2,7 @@ var helpers = require('../../common.js');
 
 describe('Volumes delete', function(){
 
-  var volumesItem = element.all(by.css('ul .tc_menuitem > a')).get(3);
+  var volumesItem = element(by.css('ul .tc_menuitem_volumes > a'));
   var volumeNameInput = element(by.model('volume.name'));
   var volumePoolSelect = element(by.model('data.sourcePool'));
   var submitButton = element(by.css('.tc_submitButton'));

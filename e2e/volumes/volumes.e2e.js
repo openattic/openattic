@@ -3,8 +3,7 @@ describe('Volumes', function(){
   beforeEach(function(){
     helpers.login();
 
-    var volumesItem = element.all(by.css('ul .tc_menuitem > a')).get(3);
-    volumesItem.click();
+    element(by.css('ul .tc_menuitem_volumes > a')).click();
   });
 
   it('should have a oadatatable element', function(){

@@ -3,8 +3,8 @@
 (function(){
 
   var configs = require('./configs.js');
-  var volumesItem = element.all(by.css('ul .tc_menuitem > a')).get(3);
-  var hostsItem = element.all(by.css('ul .tc_menuitem > a')).get(4);
+  var volumesItem = element(by.css('ul .tc_menuitem_volumes > a'));
+  var hostsItem = element(by.css('ul .tc_menuitem_hosts > a'));
 
   var volumename = '';
   var volume = element(by.cssContainingText('tr', volumename));
@@ -148,7 +148,7 @@
     },
 
     create_host: function(){
-      element.all(by.css('ul .tc_menuitem > a')).get(4).click();
+      element(by.css('ul .tc_menuitem_hosts > a')).click();
       element(by.css('.tc_addHost')).click();
       element(by.model('host.name')).sendKeys(hostname);
       element(by.css('.tc_submitButton')).click();
