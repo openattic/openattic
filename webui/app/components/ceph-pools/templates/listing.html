@@ -1,5 +1,13 @@
-<div ng-if="clusters === false">No Ceph clusters available.</div>
-<div nf-if="clusters">
+<div class="panel panel-default" ng-show="clusters === false">
+    <div class="panel-heading">
+        <h3 class="panel-title">Sorry folks...</h3>
+    </div>
+    <div class="panel-body">
+        No Ceph clusters available.
+    </div>
+</div>
+
+<div ng-show="clusters">
     <oadatatable data="pools" class="oadatatable tc_cephPoolTable" filter-config="filterConfig" selection="selection">
         <table class="table table-striped table-bordered table-hover dataTable datatable">
             <thead>
